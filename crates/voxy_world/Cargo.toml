@@ -1,0 +1,12 @@
+[package]
+name = "voxy_world"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+voxy_core = { path = "../voxy_core" }
+
+[lints]
+workspace = true

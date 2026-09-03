@@ -1,0 +1,16 @@
+[package]
+name = "voxy_runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+voxy_core = { path = "../voxy_core" }
+voxy_lighting = { path = "../voxy_lighting" }
+voxy_mesher = { path = "../voxy_mesher" }
+voxy_storage = { path = "../voxy_storage" }
+voxy_world = { path = "../voxy_world" }
+
+[lints]
+workspace = true

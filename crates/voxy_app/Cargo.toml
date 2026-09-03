@@ -1,0 +1,18 @@
+[package]
+name = "voxy_app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+pollster = "1.0.1"
+glam = "0.33.6"
+voxy_animation = { path = "../voxy_animation" }
+voxy_render = { path = "../voxy_render" }
+voxy_runtime = { path = "../voxy_runtime" }
+voxy_world = { path = "../voxy_world" }
+winit = "0.30.13"
+
+[lints]
+workspace = true
