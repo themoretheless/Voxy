@@ -1,10 +1,10 @@
 use std::fmt;
 
-use voxy_world::{
-    BlockRegistry, DestructionError, DestructionPlan, EditSource, Explosion, RayOrigin,
-    RaycastConfig, RaycastError, RaycastResult, UnavailableReason, VoxelHit, VoxelView,
-    plan_explosion, raycast,
+use crate::{
+    DestructionError, DestructionPlan, Explosion, RayOrigin, RaycastConfig, RaycastError,
+    RaycastResult, VoxelHit, plan_explosion, raycast,
 };
+use voxy_world::{BlockRegistry, EditSource, UnavailableReason, VoxelView};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ProjectileConfig {

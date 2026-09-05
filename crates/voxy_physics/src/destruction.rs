@@ -3,7 +3,9 @@ use std::fmt;
 
 use voxy_core::{ChunkPos, VoxelPos, split_voxel};
 
-use crate::{BlockStateId, EditSource, EditTxn, Sample, UnavailableReason, VoxelView, VoxelWrite};
+use voxy_world::{
+    BlockStateId, EditSource, EditTxn, Sample, UnavailableReason, VoxelView, VoxelWrite,
+};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct Explosion {
@@ -38,7 +40,7 @@ pub enum DestructionPlan {
 ///
 /// A block is removed when `power - distance_squared * attenuation` is strictly greater than its
 /// blast resistance. The planner aborts before producing writes if any required voxel is missing.
-/// Its expected revisions make the later [`crate::World::commit`] fail atomically after a race.
+/// Its expected revisions make the later [`voxy_world::World::commit`] fail atomically after a race.
 ///
 /// # Errors
 ///
@@ -47,7 +49,7 @@ pub enum DestructionPlan {
 #[allow(clippy::too_many_lines)]
 pub fn plan_explosion(
     view: &impl VoxelView,
-    registry: &crate::BlockRegistry,
+    registry: &voxy_world::BlockRegistry,
     source: EditSource,
     explosion: Explosion,
 ) -> Result<DestructionPlan, DestructionError> {
@@ -198,12 +200,10 @@ mod tests {
     use voxy_core::WorldEpoch;
 
     use super::*;
-    use crate::{
-        ChunkData, GeneratedChunk, PalettedBlocks, ResourceKey, World, WorldLimits, block,
-    };
+    use voxy_world::{ChunkData, GeneratedChunk, PalettedBlocks, ResourceKey, World, WorldLimits};
 
-    fn stone_world() -> (World, Arc<crate::BlockRegistry>, BlockStateId) {
-        let registry = Arc::new(block::test_registry());
+    fn stone_world() -> (World, Arc<voxy_world::BlockRegistry>, BlockStateId) {
+        let registry = Arc::new(crate::test_support::test_registry());
         let stone = registry
             .find(&ResourceKey::parse("voxy:stone").unwrap())
             .unwrap();

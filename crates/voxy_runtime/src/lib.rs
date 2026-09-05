@@ -1,10 +1,6 @@
 //! Renderer-neutral authoritative runtime contracts.
 
 mod bootstrap;
-mod character;
-mod projectile;
-mod vehicle;
-mod water;
 
 use std::collections::BTreeMap;
 
@@ -14,19 +10,6 @@ pub use bootstrap::{
     BootstrapChunk, BootstrapError, BootstrapScene, build_bootstrap_mesh, build_bootstrap_scene,
     rebuild_bootstrap_chunks,
 };
-pub use character::{
-    CharacterConfig, CharacterContact, CharacterError, CharacterInput, CharacterState,
-    CharacterStep, step_character,
-};
-pub use projectile::{
-    ProjectileConfig, ProjectileError, ProjectileOutcome, ProjectileState, plan_impact_explosion,
-    spawn_projectile, step_projectile,
-};
-pub use vehicle::{
-    RaceCheckpoint, RaceError, RaceProgress, RaceTrack, VehicleConfig, VehicleError, VehicleInput,
-    VehicleState, VehicleStep, step_vehicle, update_race,
-};
-pub use water::{WaterBudget, WaterError, WaterPlan, WaterStates, step_water};
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
 pub enum JobClass {

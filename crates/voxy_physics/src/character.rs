@@ -1,8 +1,7 @@
 use std::fmt;
 
-use voxy_world::{
-    AnchoredAabb, BlockRegistry, SweepConfig, SweepError, SweepObstacle, VoxelView, sweep_aabb,
-};
+use crate::{AnchoredAabb, SweepConfig, SweepError, SweepObstacle, sweep_aabb};
+use voxy_world::{BlockRegistry, VoxelView};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct CharacterState {

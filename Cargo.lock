@@ -1801,6 +1801,7 @@ dependencies = [
  "glam",
  "pollster",
  "voxy_animation",
+ "voxy_physics",
  "voxy_render",
  "voxy_runtime",
  "voxy_world",
@@ -1828,6 +1829,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "voxy_physics"
+version = "0.1.0"
+dependencies = [
+ "voxy_core",
+ "voxy_world",
+]
+
+[[package]]
 name = "voxy_render"
 version = "0.1.0"
 dependencies = [
@@ -1848,6 +1857,7 @@ dependencies = [
  "voxy_core",
  "voxy_lighting",
  "voxy_mesher",
+ "voxy_physics",
  "voxy_storage",
  "voxy_world",
 ]

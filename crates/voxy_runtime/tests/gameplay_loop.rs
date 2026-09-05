@@ -1,12 +1,12 @@
-use voxy_runtime::{
+use voxy_physics::{AnchoredAabb, DestructionPlan, Explosion, RayOrigin};
+use voxy_physics::{
     CharacterConfig, CharacterInput, CharacterState, ProjectileConfig, ProjectileOutcome,
     VehicleConfig, VehicleInput, VehicleState, WaterBudget, WaterPlan, WaterStates,
-    build_bootstrap_scene, plan_impact_explosion, spawn_projectile, step_character,
-    step_projectile, step_vehicle, step_water,
+    plan_impact_explosion, spawn_projectile, step_character, step_projectile, step_vehicle,
+    step_water,
 };
-use voxy_world::{
-    AnchoredAabb, DestructionPlan, EditSource, Explosion, RayOrigin, ResourceKey, VoxelPos,
-};
+use voxy_runtime::build_bootstrap_scene;
+use voxy_world::{EditSource, ResourceKey, VoxelPos};
 
 const DT: f64 = 1.0 / 60.0;
 

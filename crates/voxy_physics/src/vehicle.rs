@@ -1,6 +1,7 @@
 use std::fmt;
 
-use voxy_world::{AnchoredAabb, BlockRegistry, VoxelView};
+use crate::AnchoredAabb;
+use voxy_world::{BlockRegistry, VoxelView};
 
 use crate::{
     CharacterConfig, CharacterError, CharacterInput, CharacterState, CharacterStep, step_character,

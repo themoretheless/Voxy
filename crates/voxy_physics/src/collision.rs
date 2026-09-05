@@ -2,7 +2,9 @@ use std::fmt;
 
 use voxy_core::{ChunkPos, VoxelPos};
 
-use crate::{BlockRegistry, BlockStateId, CollisionShape, Sample, UnavailableReason, VoxelView};
+use voxy_world::{
+    BlockRegistry, BlockStateId, CollisionShape, Sample, UnavailableReason, VoxelView,
+};
 
 const MAX_LOCAL_MAGNITUDE: f64 = 1_048_576.0;
 
@@ -295,7 +297,7 @@ mod tests {
     use voxy_core::split_voxel;
 
     use super::*;
-    use crate::{
+    use voxy_world::{
         BlockDef, ChunkSnapshot, MaterialId, Occlusion, RegistryError, RenderKind, ResourceKey,
     };
 
@@ -366,8 +368,12 @@ mod tests {
     #[test]
     fn sweep_prevents_tunneling_and_returns_surface_normal() {
         let mut view = TestView::default();
-        view.blocks
-            .insert(VoxelPos { x: 5, y: 0, z: 0 }, BlockStateId::from_test(1));
+        view.blocks.insert(
+            VoxelPos { x: 5, y: 0, z: 0 },
+            crate::test_support::test_registry()
+                .find(&voxy_world::ResourceKey::parse("voxy:stone").unwrap())
+                .unwrap(),
+        );
         let hit = sweep_aabb(
             &view,
             &registry().unwrap(),

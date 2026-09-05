@@ -2,7 +2,7 @@ use std::fmt;
 
 use voxy_core::VoxelPos;
 
-use crate::{BlockStateId, Sample, UnavailableReason, VoxelView};
+use voxy_world::{BlockStateId, Sample, UnavailableReason, VoxelView};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct RayOrigin {
@@ -193,7 +193,7 @@ mod tests {
     use voxy_core::{ChunkPos, split_voxel};
 
     use super::*;
-    use crate::ChunkSnapshot;
+    use voxy_world::ChunkSnapshot;
 
     #[derive(Default)]
     struct TestView {
@@ -230,8 +230,12 @@ mod tests {
     #[test]
     fn hits_block_with_distance_and_entry_normal() {
         let mut view = TestView::default();
-        view.voxels
-            .insert(VoxelPos { x: 3, y: 0, z: 0 }, BlockStateId::from_test(1));
+        view.voxels.insert(
+            VoxelPos { x: 3, y: 0, z: 0 },
+            crate::test_support::test_registry()
+                .find(&voxy_world::ResourceKey::parse("voxy:stone").unwrap())
+                .unwrap(),
+        );
         let result = raycast(&view, origin(), [2.0, 0.0, 0.0], RaycastConfig::default()).unwrap();
         let RaycastResult::Hit(hit) = result else {
             panic!("expected hit");
@@ -244,8 +248,12 @@ mod tests {
     #[test]
     fn ties_step_x_before_y() {
         let mut view = TestView::default();
-        view.voxels
-            .insert(VoxelPos { x: 1, y: 0, z: 0 }, BlockStateId::from_test(1));
+        view.voxels.insert(
+            VoxelPos { x: 1, y: 0, z: 0 },
+            crate::test_support::test_registry()
+                .find(&voxy_world::ResourceKey::parse("voxy:stone").unwrap())
+                .unwrap(),
+        );
         assert!(matches!(
             raycast(&view, origin(), [1.0, 1.0, 0.0], RaycastConfig::default()).unwrap(),
             RaycastResult::Hit(VoxelHit {

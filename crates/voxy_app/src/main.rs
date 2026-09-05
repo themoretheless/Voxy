@@ -10,18 +10,18 @@ use pet::{PetAction, PetState};
 use voxy_animation::{
     AnimationClip, Animator, Joint, JointTrack, Playback, QuatKey, Skeleton, Transform,
 };
+use voxy_physics::{
+    AnchoredAabb, DestructionPlan, Explosion, RayOrigin, RaycastConfig, RaycastResult, raycast,
+};
+use voxy_physics::{
+    CharacterConfig, CharacterInput, CharacterState, ProjectileConfig, ProjectileOutcome,
+    ProjectileState, RaceCheckpoint, RaceProgress, RaceTrack, VehicleConfig, VehicleInput,
+    VehicleState, WaterBudget, WaterPlan, WaterStates, plan_impact_explosion, spawn_projectile,
+    step_character, step_projectile, step_vehicle, step_water, update_race,
+};
 use voxy_render::{CameraView, RenderOutcome, Renderer, RendererError, SkinnedMesh, SkinnedVertex};
-use voxy_runtime::{
-    BootstrapScene, CharacterConfig, CharacterInput, CharacterState, ProjectileConfig,
-    ProjectileOutcome, ProjectileState, RaceCheckpoint, RaceProgress, RaceTrack, VehicleConfig,
-    VehicleInput, VehicleState, WaterBudget, WaterPlan, WaterStates, build_bootstrap_scene,
-    plan_impact_explosion, rebuild_bootstrap_chunks, spawn_projectile, step_character,
-    step_projectile, step_vehicle, step_water, update_race,
-};
-use voxy_world::{
-    AnchoredAabb, ChunkPos, DestructionPlan, EditSource, Explosion, RayOrigin, RaycastConfig,
-    RaycastResult, ResourceKey, VoxelPos, World, raycast,
-};
+use voxy_runtime::{BootstrapScene, build_bootstrap_scene, rebuild_bootstrap_chunks};
+use voxy_world::{ChunkPos, EditSource, ResourceKey, VoxelPos, World};
 use winit::application::ApplicationHandler;
 use winit::event::{
     DeviceEvent, DeviceId, ElementState, MouseButton, MouseScrollDelta, WindowEvent,
@@ -526,7 +526,7 @@ impl VoxyApp {
         }
     }
 
-    fn spawn_shot(&mut self) -> Result<(), voxy_runtime::ProjectileError> {
+    fn spawn_shot(&mut self) -> Result<(), voxy_physics::ProjectileError> {
         let (eye, target) = self.camera.eye_and_target(self.actor_position);
         let direction = (target - eye).normalize_or_zero();
         let muzzle = target + direction;

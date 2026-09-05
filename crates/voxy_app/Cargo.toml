@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+voxy_physics = { path = "../voxy_physics" }
 pollster = "1.0.1"
 glam = "0.33.6"
 voxy_animation = { path = "../voxy_animation" }
