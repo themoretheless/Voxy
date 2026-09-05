@@ -50,6 +50,8 @@ struct VoxyApp {
     resident_positions: Vec<ChunkPos>,
     camera_anchor: ChunkPos,
     derivation_epoch: u64,
+    rebuild: Option<std::thread::JoinHandle<RebuildResult>>,
+    rebuild_pending: Option<u64>,
     water_states: Option<WaterStates>,
     water_active: Vec<VoxelPos>,
     water_tick_divider: u8,
@@ -75,6 +77,12 @@ struct AnimatedActor {
     skeleton: Skeleton,
     animator: Animator,
 }
+
+type RebuildResult = (
+    u64,
+    std::time::Duration,
+    Result<Vec<voxy_runtime::BootstrapChunk>, voxy_runtime::BootstrapError>,
+);
 
 impl ApplicationHandler for VoxyApp {
     #[allow(clippy::too_many_lines)]
@@ -260,6 +268,7 @@ impl ApplicationHandler for VoxyApp {
             }
             WindowEvent::RedrawRequested => {
                 self.advance_animation(event_loop);
+                self.poll_rebuild(event_loop);
                 if let Some(renderer) = &mut self.renderer {
                     match renderer.render() {
                         Ok(outcome @ (RenderOutcome::Presented | RenderOutcome::Reconfigured)) => {
@@ -703,15 +712,54 @@ impl VoxyApp {
     }
 
     fn refresh_world_geometry(&mut self, event_loop: &ActiveEventLoop) {
-        let Some(world) = &self.world else {
-            return;
-        };
         let Some(next_epoch) = self.derivation_epoch.checked_add(1) else {
             eprintln!("Voxy derived-data epoch exhausted");
             event_loop.exit();
             return;
         };
-        let chunks = match rebuild_bootstrap_chunks(world, &self.resident_positions, next_epoch) {
+        self.derivation_epoch = next_epoch;
+        self.rebuild_pending = Some(next_epoch);
+        self.start_rebuild();
+    }
+
+    fn start_rebuild(&mut self) {
+        if self.rebuild.is_some() || self.rebuild_pending.is_none() {
+            return;
+        }
+        let Some(world) = self.world.clone() else {
+            return;
+        };
+        let positions = self.resident_positions.clone();
+        let epoch = self.derivation_epoch;
+        self.rebuild_pending = None;
+        self.rebuild = Some(std::thread::spawn(move || {
+            let started = Instant::now();
+            let result = rebuild_bootstrap_chunks(&world, &positions, epoch);
+            (epoch, started.elapsed(), result)
+        }));
+    }
+
+    fn poll_rebuild(&mut self, event_loop: &ActiveEventLoop) {
+        if !self
+            .rebuild
+            .as_ref()
+            .is_some_and(std::thread::JoinHandle::is_finished)
+        {
+            return;
+        }
+        let Some(worker) = self.rebuild.take() else {
+            return;
+        };
+        let Ok((epoch, duration, result)) = worker.join() else {
+            eprintln!("Voxy geometry worker panicked");
+            event_loop.exit();
+            return;
+        };
+        if epoch != self.derivation_epoch {
+            self.start_rebuild();
+            return;
+        }
+        let chunks = match result {
             Ok(chunks) => chunks,
             Err(error) => {
                 eprintln!("Voxy post-destruction rebuild failed: {error}");
@@ -730,7 +778,10 @@ impl VoxyApp {
             event_loop.exit();
             return;
         }
-        self.derivation_epoch = next_epoch;
+        println!(
+            "Voxy background rebuild: {:.2}ms",
+            duration.as_secs_f64() * 1000.0
+        );
     }
 
     fn advance_water(&mut self, event_loop: &ActiveEventLoop) {

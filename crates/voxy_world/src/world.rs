@@ -113,13 +113,13 @@ impl Default for WorldLimits {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct ChunkSlot {
     revision: ChunkRevision,
     data: Arc<ChunkData>,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct World {
     epoch: WorldEpoch,
     registry: Arc<BlockRegistry>,
