@@ -146,6 +146,7 @@ pub struct Renderer {
     material_bind_group: wgpu::BindGroup,
     quad_buffer: wgpu::Buffer,
     quad_count: u32,
+    chunk_draws: Vec<([i32; 4], std::ops::Range<u32>)>,
     depth_texture: wgpu::Texture,
     depth_view: wgpu::TextureView,
 }
@@ -263,6 +264,7 @@ impl Renderer {
             material_bind_group,
             quad_buffer,
             quad_count: 0,
+            chunk_draws: Vec::new(),
             depth_texture,
             depth_view,
         })
@@ -340,13 +342,10 @@ impl Renderer {
         let mut quads = Vec::new();
         let mut metadata = Vec::with_capacity(chunks.len().max(1));
         let mut light_words = Vec::new();
-        let view_projection =
-            camera_view_projection(self.config.width, self.config.height, self.camera);
+        let mut chunk_draws = Vec::with_capacity(chunks.len());
         for &(pos, mesh, light) in chunks {
             let relative_origin = relative_chunk_origin(pos, camera_anchor)?;
-            if !chunk_intersects_frustum(view_projection, relative_origin) {
-                continue;
-            }
+            let start = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
             let slot = metadata.len();
             let slot =
                 u16::try_from(slot).map_err(|_| RendererError::TooManyChunks(chunks.len()))?;
@@ -365,6 +364,8 @@ impl Renderer {
                     .copied()
                     .map(|quad| GpuQuad::from(quad).with_chunk_slot(slot)),
             );
+            let end = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
+            chunk_draws.push((relative_origin, start..end));
         }
         let quad_count = u32::try_from(quads.len()).map_err(|_| RendererError::MeshTooLarge)?;
         if metadata.is_empty() {
@@ -413,6 +414,7 @@ impl Renderer {
             self.quad_buffer = buffer;
         }
         self.quad_count = quad_count;
+        self.chunk_draws = chunk_draws;
         Ok(())
     }
 
@@ -577,7 +579,13 @@ impl Renderer {
                 pass.set_bind_group(0, &self.camera_bind_group, &[]);
                 pass.set_bind_group(1, &self.material_bind_group, &[]);
                 pass.set_vertex_buffer(0, self.quad_buffer.slice(..));
-                pass.draw(0..6, 0..self.quad_count);
+                let view_projection =
+                    camera_view_projection(self.config.width, self.config.height, self.camera);
+                for (origin, instances) in &self.chunk_draws {
+                    if chunk_intersects_frustum(view_projection, *origin) {
+                        pass.draw(0..6, instances.clone());
+                    }
+                }
             }
             if let Some(skinned) = &self.skinned {
                 pass.set_pipeline(&self.skinned_pipeline);
