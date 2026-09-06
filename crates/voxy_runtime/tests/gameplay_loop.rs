@@ -1,5 +1,5 @@
-use voxy_physics::{AnchoredAabb, DestructionPlan, Explosion, RayOrigin};
-use voxy_physics::{
+use physics::{AnchoredAabb, DestructionPlan, Explosion, RayOrigin};
+use physics::{
     CharacterConfig, CharacterInput, CharacterState, ProjectileConfig, ProjectileOutcome,
     VehicleConfig, VehicleInput, VehicleState, WaterBudget, WaterPlan, WaterStates,
     plan_impact_explosion, spawn_projectile, step_character, step_projectile, step_vehicle,
