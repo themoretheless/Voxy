@@ -2,7 +2,7 @@
 
 Voxy — воксельный Tamagotchi-движок на Rust с нативным desktop-клиентом.
 
-Cargo-workspace повторяет границы архитектуры: `voxy_core` содержит координатные и временные контракты, `voxy_world` — registry блоков, palette chunks, детерминированные проходимые горы и атомарные edit-транзакции, `voxy_mesher` — naive oracle и production greedy meshing, `voxy_render` — `wgpu` surface lifecycle, ортографическую камеру, skeletal GPU skinning, 32-уровневый чёрно-серый LCD shader и alpha blending, а `voxy_runtime` — fixed-step simulation, физику персонажа, воду, разрушения и renderer-neutral bootstrap сцены.
+Cargo-workspace повторяет границы архитектуры: `voxy_core` содержит координатные и временные контракты, `voxy_world` — registry блоков, palette chunks, детерминированные проходимые горы и атомарные edit-транзакции, `voxy_mesher` — naive oracle и production greedy meshing, `voxy_render` — `wgpu` surface lifecycle, ортографическую камеру, skeletal GPU skinning, 32-уровневый чёрно-серый LCD shader и alpha blending, `physics` — независимую кинематическую физику, `physics_voxel` — её воксельный адаптер, воду и разрушения, а `voxy_runtime` — fixed-step simulation и renderer-neutral bootstrap сцены.
 
 `voxy_app` реализует игровой Tamagotchi-цикл: объёмный питомец ходит и прыгает по миру, стареет, испытывает голод, теряет энергию, настроение, здоровье и чистоту, спит и реагирует на уход. Окно движка остаётся скрытым до готовности мира и GPU-ресурсов; после запуска в заголовке показываются состояние питомца и измеренное время загрузки.
 

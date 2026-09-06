@@ -1213,7 +1213,12 @@ checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 [[package]]
 name = "physics"
 version = "0.1.0"
+
+[[package]]
+name = "physics_voxel"
+version = "0.1.0"
 dependencies = [
+ "physics",
  "voxy_core",
  "voxy_world",
 ]
@@ -1807,7 +1812,7 @@ name = "voxy_app"
 version = "0.1.0"
 dependencies = [
  "glam",
- "physics",
+ "physics_voxel",
  "pollster",
  "voxy_animation",
  "voxy_render",
@@ -1854,7 +1859,7 @@ dependencies = [
 name = "voxy_runtime"
 version = "0.1.0"
 dependencies = [
- "physics",
+ "physics_voxel",
  "voxy_core",
  "voxy_lighting",
  "voxy_mesher",

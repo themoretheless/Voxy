@@ -1,5 +1,5 @@
-use physics::{AnchoredAabb, DestructionPlan, Explosion, RayOrigin};
-use physics::{
+use physics_voxel::{AnchoredAabb, DestructionPlan, Explosion, RayOrigin};
+use physics_voxel::{
     CharacterConfig, CharacterInput, CharacterState, ProjectileConfig, ProjectileOutcome,
     VehicleConfig, VehicleInput, VehicleState, WaterBudget, WaterPlan, WaterStates,
     plan_impact_explosion, spawn_projectile, step_character, step_projectile, step_vehicle,

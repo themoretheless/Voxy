@@ -175,41 +175,18 @@ fn obstacle_position(obstacle: SweepObstacle) -> VoxelPos {
 }
 
 fn contact(aabb: AnchoredAabb, displacement: [f64; 3], voxel: [i64; 3]) -> Option<(f64, [i8; 3])> {
-    let mut enter = f64::NEG_INFINITY;
-    let mut exit = f64::INFINITY;
-    let mut normal = [0_i8; 3];
-    for (axis, &axis_displacement) in displacement.iter().enumerate() {
-        #[allow(clippy::cast_precision_loss)]
-        let voxel_min = voxel[axis] as f64;
-        let voxel_max = voxel_min + 1.0;
-        let velocity = axis_displacement;
-        if velocity == 0.0 {
-            if aabb.max[axis] <= voxel_min || aabb.min[axis] >= voxel_max {
-                return None;
-            }
-            continue;
-        }
-        let first = (voxel_min - aabb.max[axis]) / velocity;
-        let second = (voxel_max - aabb.min[axis]) / velocity;
-        let axis_enter = first.min(second);
-        let axis_exit = first.max(second);
-        if axis_enter > enter {
-            enter = axis_enter;
-            normal = [0; 3];
-            normal[axis] = if velocity > 0.0 { -1 } else { 1 };
-        }
-        exit = exit.min(axis_exit);
-        if enter > exit {
-            return None;
-        }
-    }
-    if exit < 0.0 || enter > 1.0 {
-        None
-    } else if enter < 0.0 {
-        Some((0.0, [0; 3]))
-    } else {
-        Some((enter, normal))
-    }
+    #[allow(clippy::cast_precision_loss)]
+    let min = voxel.map(|value| value as f64);
+    physics::sweep_box(
+        physics::AnchoredAabb {
+            anchor: physics::Origin::default(),
+            min: aabb.min,
+            max: aabb.max,
+        },
+        displacement,
+        min,
+        min.map(|value| value + 1.0),
+    )
 }
 
 fn candidate_count(min: [i64; 3], max: [i64; 3]) -> Result<usize, SweepError> {

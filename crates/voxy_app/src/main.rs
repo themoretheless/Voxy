@@ -7,10 +7,10 @@ use std::time::Instant;
 use controls::{CameraRig, InputState};
 use glam::{Mat4, Quat, Vec3};
 use pet::{PetAction, PetState};
-use physics::{
+use physics_voxel::{
     AnchoredAabb, DestructionPlan, Explosion, RayOrigin, RaycastConfig, RaycastResult, raycast,
 };
-use physics::{
+use physics_voxel::{
     CharacterConfig, CharacterInput, CharacterState, ProjectileConfig, ProjectileOutcome,
     ProjectileState, RaceCheckpoint, RaceProgress, RaceTrack, VehicleConfig, VehicleInput,
     VehicleState, WaterBudget, WaterPlan, WaterStates, plan_impact_explosion, spawn_projectile,
@@ -526,7 +526,7 @@ impl VoxyApp {
         }
     }
 
-    fn spawn_shot(&mut self) -> Result<(), physics::ProjectileError> {
+    fn spawn_shot(&mut self) -> Result<(), physics_voxel::ProjectileError> {
         let (eye, target) = self.camera.eye_and_target(self.actor_position);
         let direction = (target - eye).normalize_or_zero();
         let muzzle = target + direction;

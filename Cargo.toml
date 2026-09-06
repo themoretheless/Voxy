@@ -8,6 +8,7 @@ members = [
     "crates/voxy_lighting",
     "crates/voxy_animation",
     "crates/physics",
+    "crates/physics_voxel",
     "crates/voxy_runtime",
     "crates/voxy_render",
     "crates/voxy_app",
