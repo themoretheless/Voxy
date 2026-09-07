@@ -1,5 +1,6 @@
 //! Geometry-independent kinematic physics. No renderer, voxel world or ECS dependencies.
 mod character;
+pub mod planar;
 pub use character::*;
 
 /// Integer origin plus local floating-point bounds preserve precision in large worlds.

@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
 pollster = "1.0.1"
 glam = "0.33.6"
@@ -17,3 +18,8 @@ winit = "0.30.13"
 
 [lints]
 workspace = true
+
+[[example]]
+name = "pinball"
+path = "examples/pinball/main.rs"
+test = true

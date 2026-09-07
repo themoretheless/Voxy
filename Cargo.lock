@@ -1812,6 +1812,7 @@ name = "voxy_app"
 version = "0.1.0"
 dependencies = [
  "glam",
+ "physics",
  "physics_voxel",
  "pollster",
  "voxy_animation",
