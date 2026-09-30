@@ -5,6 +5,7 @@ use game::{Game, Input, STEP};
 use glam::{Mat4, Vec3};
 use std::{sync::Arc, time::Instant};
 use voxy_render::{CameraView, RenderOutcome, Renderer};
+use voxy_runtime::SimulationClock;
 use winit::{
     application::ApplicationHandler,
     event::{ElementState, WindowEvent},
@@ -20,7 +21,9 @@ struct App {
     game: Game,
     input: Input,
     last: Option<Instant>,
-    accumulator: f64,
+    clock: SimulationClock,
+    previous: Game,
+    speed: f64,
     paused: bool,
     display: Option<(u32, u32, bool, bool)>,
     smoke: bool,
@@ -35,20 +38,45 @@ impl App {
             .last
             .replace(now)
             .map_or(0.0, |last| now.duration_since(last).as_secs_f64().min(0.1));
-        if !self.paused {
-            self.accumulator += dt;
-            while self.accumulator >= STEP {
-                if self.smoke {
-                    self.input = Input {
-                        launch: self.game.ready && self.ticks % 200 < 150,
-                        left: self.ticks % 90 < 45,
-                        right: self.ticks % 110 < 55,
-                    };
-                }
-                self.game.tick(self.input);
-                self.ticks += 1;
-                self.accumulator -= STEP;
+        let frame = self.clock.advance(dt, STEP, 128);
+        for _ in 0..frame.steps {
+            if self.smoke {
+                self.input = Input {
+                    launch: self.game.ready && self.ticks % 200 < 150,
+                    left: self.ticks % 90 < 45,
+                    right: self.ticks % 110 < 55,
+                };
             }
+            self.previous = self.game.clone();
+            self.game.tick(self.input);
+            if self.game.ready != self.previous.ready {
+                self.previous = self.game.clone();
+            }
+            self.ticks += 1;
+            if self.smoke {
+                match self.ticks {
+                    300 => {
+                        self.clock.set_target(0.1);
+                    }
+                    400 => {
+                        self.clock.set_target(1.0);
+                    }
+                    700 => {
+                        self.clock.set_target(4.0);
+                    }
+                    1000 => {
+                        self.clock.set_target(1.0);
+                    }
+                    _ => {}
+                }
+            }
+        }
+        let mut rendered = self.game.clone();
+        rendered.ball.position = self.previous.ball.position * (1.0 - frame.alpha)
+            + self.game.ball.position * frame.alpha;
+        for i in 0..2 {
+            rendered.angles[i] =
+                self.previous.angles[i] * (1.0 - frame.alpha) + self.game.angles[i] * frame.alpha;
         }
         let renderer = self.renderer.as_mut().expect("initialized renderer");
         let display = (
@@ -66,13 +94,15 @@ impl App {
             )?;
             self.display = Some(display);
         }
-        renderer.update_skin_matrices(&visual::matrices(&self.game))?;
+        renderer.update_skin_matrices(&visual::matrices(&rendered))?;
         let outcome = renderer.render()?;
         if matches!(outcome, RenderOutcome::Presented) {
             self.frames += 1;
         }
         if let Some(window) = &self.window {
-            window.set_title(&format!("Voxy Pinball | {:07} | Balls {} | Charge {:.0}% | A/L or arrows: flippers | Space: launch | P: pause | R: reset",self.game.score,self.game.lives,self.game.charge*100.0));
+            window.set_title(&format!("Voxy Pinball | {:07} | Balls {} | Charge {:.0}% | Time {:.2}x → {:.2}x{} | S: slow | 1/2/4: speed | P: pause | N: step | R: reset | A/L: flippers | Space: launch",
+                self.game.score, self.game.lives, self.game.charge * 100.0, self.clock.scale(), self.clock.target_scale(),
+                if frame.overloaded { " (overloaded)" } else { "" }));
         }
         if self.smoke && self.ticks >= 2400 {
             assert!(self.frames > 0, "no presented frames");
@@ -142,7 +172,7 @@ impl ApplicationHandler for App {
             WindowEvent::Focused(false) if !self.smoke => {
                 self.input = Input::default();
                 self.paused = true;
-                self.accumulator = 0.0;
+                self.clock.freeze();
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 let pressed = event.state == ElementState::Pressed;
@@ -153,13 +183,34 @@ impl ApplicationHandler for App {
                         KeyCode::Space => self.input.launch = pressed,
                         KeyCode::KeyP if pressed && !event.repeat => {
                             self.paused = !self.paused;
+                            self.clock
+                                .set_target(if self.paused { 0.0 } else { self.speed });
                             self.last = Some(Instant::now());
                         }
                         KeyCode::KeyR if pressed && !event.repeat => {
                             self.game = Game::default();
                             self.input = Input::default();
-                            self.accumulator = 0.0;
+                            self.clock = SimulationClock::default();
+                            self.previous = self.game.clone();
+                            self.speed = 1.0;
                             self.paused = false;
+                        }
+                        KeyCode::KeyS | KeyCode::Digit1 | KeyCode::Digit2 | KeyCode::Digit4
+                            if pressed && !event.repeat =>
+                        {
+                            self.speed = match key {
+                                KeyCode::KeyS => 0.1,
+                                KeyCode::Digit2 => 2.0,
+                                KeyCode::Digit4 => 4.0,
+                                _ => 1.0,
+                            };
+                            self.paused = false;
+                            self.clock.set_target(self.speed);
+                        }
+                        KeyCode::KeyN if pressed && !event.repeat && self.clock.scale() == 0.0 => {
+                            self.game.tick(self.input);
+                            self.previous = self.game.clone();
+                            self.ticks += 1;
                         }
                         KeyCode::Escape if pressed => event_loop.exit(),
                         _ => {}
@@ -186,6 +237,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let event_loop = EventLoop::new()?;
     event_loop.set_control_flow(ControlFlow::Poll);
     let mut app = App {
+        speed: 1.0,
         smoke: std::env::args().any(|arg| arg == "--smoke"),
         ..App::default()
     };

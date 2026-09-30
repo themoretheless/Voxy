@@ -84,3 +84,25 @@ cargo fmt --all -- --check. cargo tree -p physics должен показыва�
 запуск, три потери шара, быстрый удар о борт, бампер и 30 000 шагов автопилота.
 Они включены в `cargo test --workspace`. `--smoke` дополнительно требует реальные
 показанные кадры и попадания в бамперы; это проверка запуска, а не оценка игрового баланса.
+
+## Smooth simulation time
+
+`voxy_runtime::SimulationClock` advances from real elapsed seconds, even when
+simulation time is paused. It integrates the scale into a fixed-step accumulator;
+physics always receives the same step. Decreasing the target uses critical damping.
+Increasing it uses a damped spring (frequency 12 rad/s, damping ratio 0.55), with
+roughly 12% overshoot of the speed change before settling. Retargeting preserves
+both current scale and its velocity. The scale cannot become negative.
+
+`advance(real_dt, step, max_steps)` returns a step count, interpolation fraction,
+and overload flag. Real frame time is capped at 100 ms; excess whole simulation
+steps beyond the budget are dropped, so sustained overload slows effective time.
+Targets must be finite and between 0 and 4. `freeze()` stops immediately for focus
+loss; normal pauses set the target to zero and brake smoothly.
+
+Pinball uses a 240 Hz physics step, a 128-step frame budget, and interpolated ball
+and flipper transforms. Controls: S = 0.1x, 1/2/4 = target speed, P = smooth
+pause/resume, N = one step after fully pausing, R = reset. The window title shows
+current and target speed and overload. Focus loss freezes immediately.
+Run `cargo run -p voxy_app --example pinball`; `--smoke` also exercises slow motion,
+spring recovery, and 4x speed during the automated collision run.

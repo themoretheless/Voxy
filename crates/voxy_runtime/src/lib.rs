@@ -1,6 +1,8 @@
 //! Renderer-neutral authoritative runtime contracts.
 
 mod bootstrap;
+mod time;
+pub use time::{SimulationClock, TimeFrame};
 
 use std::collections::BTreeMap;
 
