@@ -73,19 +73,82 @@ pub fn step_character<W: CollisionWorld>(
     dt: f64,
     config: CharacterConfig,
 ) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
+    step_character_with_acceleration(world, state, input, dt, config, [0.0, config.gravity, 0.0])
+}
+
+/// Samples an external field at the character center before the collision step.
+/// The controller remains Y-up: jumping, ground detection and stairs use Y.
+/// # Errors
+/// Returns field errors or the same atomic validation/collision errors as `step_character`.
+pub fn step_character_in_field<W: CollisionWorld>(
+    world: &W,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    field: &impl crate::gravity_field::GravityField,
+) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
+    let center = std::array::from_fn(|k| state.body.min[k] * 0.5 + state.body.max[k] * 0.5);
+    let acceleration = field
+        .acceleration(state.body.anchor, center)
+        .map_err(CharacterError::Gravity)?;
+    step_character_with_acceleration(world, state, input, dt, config, acceleration)
+}
+
+/// Applies a sampled 3D acceleration while preserving Y-up locomotion semantics.
+/// # Errors
+/// Invalid acceleration or controller/collision failures leave state unchanged.
+pub fn step_character_with_acceleration<W: CollisionWorld>(
+    world: &W,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    acceleration: [f64; 3],
+) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
     validate(state, input, dt, config)?;
+    if acceleration.iter().any(|v| !v.is_finite()) {
+        return Err(CharacterError::NonFiniteState);
+    }
+    let mut velocity = state.velocity;
+    velocity[0] = input.planar_velocity[0];
+    velocity[2] = input.planar_velocity[1];
+    if input.jump_pressed && state.grounded {
+        velocity[1] = config.jump_speed;
+    }
+    for (k, a) in acceleration.iter().enumerate() {
+        velocity[k] += a * dt;
+    }
+    velocity[1] = velocity[1].max(-config.terminal_fall_speed);
+    let displacement = velocity.map(|value| value * dt);
+    step_character_with_motion(world, state, input, dt, config, velocity, displacement)
+}
+
+/// Applies externally integrated velocity and displacement through the complete
+/// sweep-and-slide/step-up solver. Input still controls the original step-up rule.
+/// Absolute body anchors remain integral; publication remains atomic.
+/// # Errors
+/// Invalid controller state, nonfinite motion or collision/rebase failures leave
+/// the character unchanged. The caller is responsible for integration semantics.
+#[allow(clippy::too_many_arguments)]
+pub fn step_character_with_motion<W: CollisionWorld>(
+    world: &W,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    velocity: [f64; 3],
+    requested: [f64; 3],
+) -> Result<CharacterStep<W::Obstacle>, CharacterError<W::Error>> {
+    validate(state, input, dt, config)?;
+    if velocity.iter().chain(&requested).any(|v| !v.is_finite()) {
+        return Err(CharacterError::NonFiniteState);
+    }
     let mut next = *state;
     let step_start = next.body;
     let may_step = next.grounded
         && squared_length([input.planar_velocity[0], 0.0, input.planar_velocity[1]]) > f64::EPSILON;
-    next.velocity[0] = input.planar_velocity[0];
-    next.velocity[2] = input.planar_velocity[1];
-    if input.jump_pressed && next.grounded {
-        next.velocity[1] = config.jump_speed;
-        next.grounded = false;
-    }
-    next.velocity[1] = (next.velocity[1] + config.gravity * dt).max(-config.terminal_fall_speed);
-    let requested = next.velocity.map(|velocity| velocity * dt);
+    next.velocity = velocity;
     let mut remaining = requested;
     let mut applied = [0.0; 3];
     let mut contacts = Vec::new();
@@ -298,6 +361,7 @@ fn validate<E>(
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum CharacterError<E> {
+    Gravity(crate::gravity::Error),
     NonFiniteState,
     InvalidBounds,
     InvalidTimeStep,

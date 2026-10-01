@@ -1,0 +1,3 @@
+
+# REACLIB records preserve fixed-width source fields.
+crates/physics/tests/data/*.reaclib whitespace=-blank-at-eol

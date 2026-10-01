@@ -1,4 +1,27 @@
 //! Geometry-independent kinematic physics. No renderer, voxel world or ECS dependencies.
+pub mod astrophysics;
+pub mod astrophysics_atmosphere;
+pub mod astrophysics_binary;
+pub mod astrophysics_column;
+pub mod astrophysics_eos;
+pub mod astrophysics_equilibrium;
+pub mod astrophysics_evolution;
+pub mod astrophysics_gas;
+pub mod astrophysics_gas_gravity;
+pub mod astrophysics_nuclear;
+pub mod astrophysics_opacity;
+pub mod astrophysics_radhydro;
+pub mod astrophysics_radiation;
+pub mod astrophysics_reaclib;
+pub mod astrophysics_spherical;
+pub mod astrophysics_spherical_radiation;
+pub mod astrophysics_spin;
+pub mod astrophysics_star;
+pub mod astrophysics_thermal;
+pub mod gravity;
+pub mod gravity_character;
+pub mod gravity_field;
+pub mod gravity_spheres;
 mod character;
 pub mod planar;
 pub use character::*;
