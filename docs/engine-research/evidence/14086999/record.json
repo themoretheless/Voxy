@@ -1,0 +1,94 @@
+{
+  "repository": "mogemimi/pomdog",
+  "repository_id": 14086999,
+  "commit": "0a6b997a721639efd7fa4a5e3cff62544ed84044",
+  "source_url": "https://github.com/mogemimi/pomdog/tree/0a6b997a721639efd7fa4a5e3cff62544ed84044",
+  "readme_path": "README.md",
+  "readme_sha256": "6c75a543ceeefb69f830563debfccf66c9b441ae0638939e1350324a946a65f6",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "81e4f3077d0d89c3a2c16b50492a2f2204b9a562"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7020478a9df488defcab2f4e91473443fe778a52"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9de2f1c8c3be945c0d69f5563b8b035d3ba1b4ba"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "961bb3ecd04aa73ed850e9f83b2b46402e2b4493"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "49b56144dabc29c9940f6b76bd11a39feb24f5cd"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "5f5f90ec4a37ccf555bf06226d84ecdf864947d1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7d1fe13e6b94a9673811cf17316edfcd510102aa"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "79bc6c326392e719ddef53b04160030a06afc38d"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "a03ff66664e9319531c3a56136e8116db08ca188"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ee590b32b94cbc3ef8c1da14c6f62ff5fdb5a0b7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "5403ae77622cfb8f6b88e49fb34c0411ea285bc9"
+    },
+    {
+      "path": "pomdog",
+      "type": "dir",
+      "sha": "2b7ba300c2d9ca3c562b43dc458070d75ea6fd21"
+    },
+    {
+      "path": "schemas",
+      "type": "dir",
+      "sha": "1dcf056f18dbbeebdc3956385001b031c3f65d41"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "5eafd160fe707a537a3b8a4397e19885c2c303e7"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "070fea439c36a18c1654ccf39a2e687b16cacda2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "49912f8825431bedbaf51c0ea755be2fa6d6d110"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies experimental native game engine; owned pomdog runtime/schema/tools and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

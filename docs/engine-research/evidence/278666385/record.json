@@ -1,0 +1,19 @@
+{
+  "repository": "soywiz-archive/korge-next",
+  "repository_id": 278666385,
+  "commit": "a76278aa412f0c0ceff13ae30fecf519ed0b3ad7",
+  "source_url": "https://github.com/soywiz-archive/korge-next/tree/a76278aa412f0c0ceff13ae30fecf519ed0b3ad7",
+  "readme_path": "README.md",
+  "readme_sha256": "e84747f42fc937bb38c632a22abec56fd54ee681dbac77e8b202c020c5e50823",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e8367d76f2cc62065e3a74d67cfd2a508007a04e"
+    }
+  ],
+  "classification": "excluded_redirect",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned root only README redirects to korlibs/korge; historical backup branch not inspected.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

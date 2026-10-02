@@ -1,0 +1,54 @@
+{
+  "repository": "Blotch3D/Blotch3D",
+  "repository_id": 136465095,
+  "commit": "86dbe46adf0fc249322ec55efd51e6addc7cd667",
+  "source_url": "https://github.com/Blotch3D/Blotch3D/tree/86dbe46adf0fc249322ec55efd51e6addc7cd667",
+  "readme_path": "readme.md",
+  "readme_sha256": "8fd5568dbc2daa4d47619eadf0a1c87e46e9fb1f1f5ea191c3a1f6da822dc5d5",
+  "entries": [
+    {
+      "path": "Blotch3D.sln",
+      "type": "file",
+      "sha": "0069ca7d0d972717466f21093848a4e72e36f36b"
+    },
+    {
+      "path": "BlotchExample13_UseBlotch3DThruNuGet.sln",
+      "type": "file",
+      "sha": "1c94b8bb7e9e8d5e4db7caca4cb7c35ed7a92f29"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a096e1cde34e3186f2e5965ce16b95e1f51c6c5f"
+    },
+    {
+      "path": "Local_packages",
+      "type": "dir",
+      "sha": "284aa029deb7fd9a671e332a074d537816222edf"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "402b4f9098d0ae0ff6147174200431cb15f7fb28"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b5da5ab760c7c36ac7eb78c7687b5e8fb3a3a950"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "a1f8780b29d3ba5e23ad947e52acd452e3e21942"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9369989294ea032fdda17ea18b8edd15fe4aea6b"
+    }
+  ],
+  "classification": "rendering_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "High-level C# 3D class library over MonoGame with scene graphs and examples; underlying game facilities remain MonoGame APIs.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

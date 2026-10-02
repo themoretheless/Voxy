@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-02",
+  "scope": "Static hill mesh in native editor; not general image equivalence",
+  "near": {
+    "camera_distance": 5,
+    "selected_triangles": 512
+  },
+  "far": {
+    "camera_distance": 32,
+    "selected_triangles": 256
+  },
+  "visually_observed": "Both meshes visible without missing surfaces; failed certificate import retains previous model; restoring certificate recovers loaded title and geometry",
+  "screenshots": {
+    "near": {
+      "file": "native-visual-near-2026-10-02.png",
+      "dimensions": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "791f2e0588f65570dbf5c45d3c7e187dee16fbad028e910b49e3f79ffa85fdbb"
+    },
+    "far": {
+      "file": "native-visual-far-2026-10-02.png",
+      "dimensions": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "f52a24bac883b56ca4e039ef9e554fd07a9a7c90cbd2eabff8e7c9c320e85a80"
+    },
+    "failed-reload": {
+      "file": "native-visual-failed-reload-2026-10-02.png",
+      "dimensions": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "6de700be2f01d7c96e2dee9a2755a7bbae12463aa89c61b26f87bc826770fb5e"
+    },
+    "recovered": {
+      "file": "native-visual-recovered-2026-10-02.png",
+      "dimensions": [
+        4718592,
+        4292935744
+      ],
+      "sha256": "cc9999a2458c7130ac5c8fd3eba906578e056195776f5b5eef2f7eacdcca9095"
+    }
+  },
+  "certificate_sha256": "fad6f586f35dfad557715a9b022a25d71b1787003d0c3f51d14fe559f0b2f65b",
+  "native_binary_sha256": "17db66aec86f40642acf54d6c7ffbc47338f026a4d83394325f127d888d779ce",
+  "validation": {
+    "editor_lib_tests": {
+      "passed": 24,
+      "failed": 0
+    },
+    "strict_editor_lib_example_clippy": "passed"
+  }
+}

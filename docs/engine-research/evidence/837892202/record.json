@@ -1,0 +1,49 @@
+{
+  "repository": "phoboslab/high_impact",
+  "repository_id": 837892202,
+  "commit": "580d71e19ae87fa947d8bb298f44349cd0a67c6d",
+  "source_url": "https://github.com/phoboslab/high_impact/tree/580d71e19ae87fa947d8bb298f44349cd0a67c6d",
+  "readme_path": "README.md",
+  "readme_sha256": "c82297cfc809b355fb5aa1d79fabe22a8069778c9a3f1b3227b652429b55d0bd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c50f923c7b3136a16bd0bd82cc32a79ea06824c2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "90961f3fe3c14858c0d2e446c6ec07fcafdec3f7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a3b2a5afde22a691f79c2dbd4ab623f649225834"
+    },
+    {
+      "path": "font_tool.html",
+      "type": "file",
+      "sha": "a1d227abc8e2bf8c1ef38a06317b235ab87753c4"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "9b533fa7467780741adf4d93f421839f9527f716"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ef0210a8ff28bedb1d6ea3936211a80187947f0a"
+    },
+    {
+      "path": "weltmeister.html",
+      "type": "file",
+      "sha": "465ef5b30b2b34cdf37c03d6fc00f411a277dddb"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C callback-driven 2D action game runtime and level/font tools; explicitly specialized experimental scope, not general Unity/Godot parity.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

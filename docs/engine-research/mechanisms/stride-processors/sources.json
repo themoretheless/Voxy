@@ -1,0 +1,18 @@
+{
+  "repository": "stride3d/stride",
+  "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+  "sources": [
+    {
+      "path": "sources/engine/Stride.Engine/Engine/EntityManager.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Engine/Engine/EntityManager.cs",
+      "file": "sources__engine__Stride.Engine__Engine__EntityManager.cs",
+      "sha256": "3fea0dd151c27e1589a7db92e93402a883f87f7ecef331f375fbce1d0db93ac5"
+    },
+    {
+      "path": "sources/engine/Stride.Engine/Engine/EntityProcessor.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Engine/Engine/EntityProcessor.cs",
+      "file": "sources__engine__Stride.Engine__Engine__EntityProcessor.cs",
+      "sha256": "202f98456392069ef030eec74208943ccbab43c77666941750419f95811310b2"
+    }
+  ]
+}

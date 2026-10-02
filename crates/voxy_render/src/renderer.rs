@@ -12,6 +12,7 @@ use wgpu::util::DeviceExt;
 use crate::skinned::{GpuSkinnedMesh, create_skin_layout, create_skinned_pipeline, upload_skinned};
 use crate::{MaterialLayer, MaterialPack, MaterialSet};
 use crate::{SkinnedMesh, SkinnedUploadError};
+mod skinned_lod;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Pod, Zeroable)]
@@ -121,11 +122,22 @@ impl Default for CameraView {
     }
 }
 
+/// Partial-scene skeletal motion from one successfully presented resident frame.
+#[derive(Debug)]
+pub struct SkinnedMotionOutput<'a> {
+    pub presentation_id: u64,
+    pub reset_history: bool,
+    pub motion: &'a wgpu::Texture,
+}
+
 #[derive(Debug)]
 pub struct Renderer {
     surface: wgpu::Surface<'static>,
     adapter: wgpu::Adapter,
+    readback_pool: crate::ComputeReadbackPool,
+    compute_memory_budget: crate::ComputeMemoryBudget,
     device: wgpu::Device,
+    device_failure: std::sync::Arc<std::sync::OnceLock<String>>,
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
     state: SurfaceState,
@@ -134,6 +146,14 @@ pub struct Renderer {
     skinned_pipeline: wgpu::RenderPipeline,
     skin_layout: wgpu::BindGroupLayout,
     skinned: Option<GpuSkinnedMesh>,
+    skinned_lod: Option<crate::skinned_lod_gpu::GpuSkinnedLod>,
+    skinned_motion: Option<crate::skinned_motion::ResidentSkinnedMotion>,
+    skinned_camera_history: crate::MotionHistory,
+    skinned_motion_enabled: bool,
+    skinned_motion_output: Option<crate::RasterMotionPass>,
+    scene_depth_motion: Option<crate::DepthMotionPass>,
+    skinned_motion_metadata: Option<(u64, bool)>,
+    resident_presented_frames: u64,
     camera_layout: wgpu::BindGroupLayout,
     camera_buffer: wgpu::Buffer,
     camera_bind_group: wgpu::BindGroup,
@@ -147,11 +167,23 @@ pub struct Renderer {
     quad_buffer: wgpu::Buffer,
     quad_count: u32,
     chunk_draws: Vec<([i32; 4], std::ops::Range<u32>)>,
+    resident_camera_anchor: ChunkPos,
     depth_texture: wgpu::Texture,
     depth_view: wgpu::TextureView,
 }
 
 impl Renderer {
+    /// First driver-reported device-loss diagnostic, retained for this renderer.
+    #[must_use]
+    pub fn device_failure(&self) -> Option<&str> {
+        self.device_failure.get().map(String::as_str)
+    }
+    fn check_device(&self) -> Result<(), RendererError> {
+        match self.device_failure() {
+            Some(message) => Err(RendererError::DeviceLost(message.to_owned())),
+            None => Ok(()),
+        }
+    }
     /// Creates a GPU instance, owned surface, adapter, and device.
     ///
     /// # Errors
@@ -162,14 +194,49 @@ impl Renderer {
     where
         T: Into<wgpu::SurfaceTarget<'static>>,
     {
-        let instance = wgpu::Instance::default();
+        Self::new_with_options(target, width, height, crate::GraphicsOptions::default()).await
+    }
+
+    /// Creates a renderer with an explicit backend policy.
+    ///
+    /// # Errors
+    /// Returns an initialization error if the selected backend or surface is unavailable.
+    #[allow(clippy::too_many_lines)]
+    pub async fn new_with_options<T>(
+        target: T,
+        width: u32,
+        height: u32,
+        options: crate::GraphicsOptions,
+    ) -> Result<Self, RendererError>
+    where
+        T: Into<wgpu::SurfaceTarget<'static>>,
+    {
+        let instance = options.create_instance();
+        Self::new_with_instance(target, width, height, options, instance).await
+    }
+
+    /// Creates a voxel renderer using the caller's platform/display instance.
+    /// Instance backend policy must match `options`; its display must match target.
+    /// # Errors
+    /// Reports unavailable surfaces, adapters, devices and renderer capabilities.
+    #[allow(clippy::too_many_lines)]
+    pub async fn new_with_instance<T>(
+        target: T,
+        width: u32,
+        height: u32,
+        options: crate::GraphicsOptions,
+        instance: wgpu::Instance,
+    ) -> Result<Self, RendererError>
+    where
+        T: Into<wgpu::SurfaceTarget<'static>>,
+    {
         let surface = instance
             .create_surface(target)
             .map_err(RendererError::CreateSurface)?;
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::HighPerformance,
-                force_fallback_adapter: false,
+                power_preference: options.power_preference,
+                force_fallback_adapter: options.force_fallback_adapter,
                 compatible_surface: Some(&surface),
                 apply_limit_buckets: false,
             })
@@ -182,9 +249,19 @@ impl Renderer {
             })
             .await
             .map_err(RendererError::RequestDevice)?;
+        let device_failure = std::sync::Arc::new(std::sync::OnceLock::new());
+        let failure_callback = std::sync::Arc::clone(&device_failure);
+        device.set_device_lost_callback(move |reason, message| {
+            let _ = failure_callback.set(format!("{reason:?}: {message}"));
+        });
         let config = surface
             .get_default_config(&adapter, width.max(1), height.max(1))
             .ok_or(RendererError::UnsupportedSurface)?;
+        // This device is still private to initialization, so error scopes cannot
+        // capture another caller's resource operations. Unsupported shader/limit
+        // combinations and allocations must return errors rather than panic.
+        let allocation_scope = device.push_error_scope(wgpu::ErrorFilter::OutOfMemory);
+        let validation_scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
         let state = if width == 0 || height == 0 {
             SurfaceState::Suspended
         } else {
@@ -235,10 +312,18 @@ impl Renderer {
             usage: wgpu::BufferUsages::VERTEX,
         });
         let (depth_texture, depth_view) = create_depth(&device, config.width, config.height);
+        let validation_error = validation_scope.pop().await;
+        let allocation_error = allocation_scope.pop().await;
+        if let Some(error) = validation_error.or(allocation_error) {
+            return Err(RendererError::Initialization(error));
+        }
         Ok(Self {
             surface,
             adapter,
+            readback_pool: crate::ComputeReadbackPool::for_device(&device),
+            compute_memory_budget: crate::ComputeMemoryBudget::for_device(&device),
             device,
+            device_failure,
             queue,
             config,
             state,
@@ -252,6 +337,14 @@ impl Renderer {
             skinned_pipeline,
             skin_layout,
             skinned: None,
+            skinned_lod: None,
+            skinned_motion: None,
+            skinned_camera_history: crate::MotionHistory::default(),
+            skinned_motion_enabled: false,
+            skinned_motion_output: None,
+            scene_depth_motion: None,
+            skinned_motion_metadata: None,
+            resident_presented_frames: 0,
             camera_layout,
             camera_buffer,
             camera_bind_group,
@@ -265,12 +358,17 @@ impl Renderer {
             quad_buffer,
             quad_count: 0,
             chunk_draws: Vec::new(),
+            resident_camera_anchor: ChunkPos { x: 0, y: 0, z: 0 },
             depth_texture,
             depth_view,
         })
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
+        if self.device_failure().is_some() {
+            return;
+        }
+        self.reset_skinned_motion();
         if width == 0 || height == 0 {
             self.state = SurfaceState::Suspended;
             return;
@@ -307,6 +405,7 @@ impl Renderer {
         chunks: &[(ChunkPos, &ChunkMesh)],
         camera_anchor: ChunkPos,
     ) -> Result<(), RendererError> {
+        self.check_device()?;
         let chunks = chunks
             .iter()
             .map(|&(pos, mesh)| (pos, mesh, None))
@@ -324,6 +423,7 @@ impl Renderer {
         chunks: &[(ChunkPos, &ChunkMesh, &LightVolume)],
         camera_anchor: ChunkPos,
     ) -> Result<(), RendererError> {
+        self.check_device()?;
         let chunks = chunks
             .iter()
             .map(|&(pos, mesh, light)| (pos, mesh, Some(light.bytes())))
@@ -336,6 +436,7 @@ impl Renderer {
         chunks: &[(ChunkPos, &ChunkMesh, Option<&[u8]>)],
         camera_anchor: ChunkPos,
     ) -> Result<(), RendererError> {
+        self.check_device()?;
         if chunks.len() > 1024 {
             return Err(RendererError::TooManyChunks(chunks.len()));
         }
@@ -415,10 +516,17 @@ impl Renderer {
         }
         self.quad_count = quad_count;
         self.chunk_draws = chunk_draws;
+        if self.resident_camera_anchor != camera_anchor {
+            self.reset_skinned_motion();
+            self.resident_camera_anchor = camera_anchor;
+        }
         Ok(())
     }
 
     pub fn set_material_pack(&mut self, pack: MaterialPack) {
+        if self.device_failure().is_some() {
+            return;
+        }
         let set = MaterialSet::upload(&self.device, &self.queue, &pack);
         self.material_bind_group =
             create_material_bind_group(&self.device, &self.material_layout, &set);
@@ -432,6 +540,7 @@ impl Renderer {
     ///
     /// Rejects non-finite or degenerate camera parameters.
     pub fn update_camera(&mut self, camera: CameraView) -> Result<(), RendererError> {
+        self.check_device()?;
         if !camera.eye.is_finite()
             || !camera.target.is_finite()
             || !camera.up.is_finite()
@@ -469,6 +578,7 @@ impl Renderer {
         model: Mat4,
         material_layer: u32,
     ) -> Result<(), RendererError> {
+        self.check_device()?;
         self.skinned = Some(
             upload_skinned(
                 &self.device,
@@ -480,7 +590,123 @@ impl Renderer {
             )
             .map_err(RendererError::Skinned)?,
         );
+        self.skinned_lod = None;
+        self.skinned_camera_history.reset();
+        self.skinned_motion_output = None;
+        self.scene_depth_motion = None;
+        self.skinned_motion_metadata = None;
+        self.skinned_motion = Some(crate::skinned_motion::ResidentSkinnedMotion {
+            history: crate::SkinnedMotionHistory::new(mesh.clone()),
+            joints: joints.to_vec(),
+            model,
+        });
         Ok(())
+    }
+
+    /// Prepare deformation correspondence against the last presented resident pose.
+    /// First/reset frames report invalid history; propagate that to temporal consumers.
+    /// # Errors
+    /// Reports missing geometry or unsupported/nonfinite pose transforms.
+    pub fn prepare_skinned_motion(&self) -> Result<crate::SkinnedMotionFrame, RendererError> {
+        let motion = self
+            .skinned_motion
+            .as_ref()
+            .ok_or(RendererError::NoSkinnedMesh)?;
+        motion
+            .history
+            .prepare(&motion.joints, motion.model)
+            .map_err(RendererError::Skinned)
+    }
+    /// Current/last-presented unjittered camera for resident skeletal motion.
+    /// Uses the same reverse-Z projection and view as the primary renderer.
+    /// # Errors
+    /// Rejects nonfinite camera matrices without advancing history.
+    pub fn prepare_skinned_motion_camera(
+        &self,
+    ) -> Result<crate::MotionMatrices, crate::InvalidMotionMatrix> {
+        self.skinned_camera_history.prepare(camera_view_projection(
+            self.config.width,
+            self.config.height,
+            self.camera,
+        ))
+    }
+    /// Enable automatic resident skeletal RG16 motion output on presented frames.
+    /// Currently recreates paired geometry each frame; defaults to disabled.
+    pub fn set_skinned_motion_enabled(&mut self, enabled: bool) {
+        if self.skinned_motion_enabled != enabled {
+            self.skinned_motion_enabled = enabled;
+            self.reset_skinned_motion();
+        }
+    }
+    /// Last presented motion texture: skeletal motion plus static-world camera motion.
+    /// Resize/reset/replacement clears access; moving non-skeletal geometry still requires its own correspondence.
+    #[must_use]
+    pub fn skinned_motion_texture(&self) -> Option<&wgpu::Texture> {
+        self.scene_depth_motion
+            .as_ref()
+            .map(crate::DepthMotionPass::output)
+    }
+    /// Motion and reset metadata share the same successfully presented frame ID.
+    #[must_use]
+    pub fn skinned_motion_output(&self) -> Option<SkinnedMotionOutput<'_>> {
+        let (presentation_id, reset_history) = self.skinned_motion_metadata?;
+        Some(SkinnedMotionOutput {
+            presentation_id,
+            reset_history,
+            motion: self.skinned_motion_texture()?,
+        })
+    }
+    fn create_skinned_motion_pass(
+        &self,
+    ) -> Result<
+        (
+            Option<crate::RasterMotionPass>,
+            Option<crate::DepthMotionPass>,
+            bool,
+        ),
+        RendererError,
+    > {
+        if !self.skinned_motion_enabled || self.skinned_motion.is_none() {
+            return Ok((None, None, true));
+        }
+        let frame = self.prepare_skinned_motion()?;
+        let camera = self
+            .prepare_skinned_motion_camera()
+            .map_err(|_| RendererError::InvalidCamera)?;
+        let reset = !frame.history_valid || !camera.history_valid;
+        let cameras = [camera.current, camera.previous];
+        let candidate = if let Some(previous) = &self.skinned_motion_output {
+            previous.next_frame(
+                &self.device,
+                &self.depth_texture,
+                cameras,
+                &frame.vertices,
+                reset,
+            )
+        } else {
+            crate::RasterMotionPass::new(
+                &self.device,
+                &self.depth_texture,
+                cameras,
+                &frame.vertices,
+                reset,
+            )
+        };
+        let pass = candidate.map_err(RendererError::Ray)?;
+        let base =
+            crate::DepthMotionPass::new(&self.device, &self.depth_texture, cameras, 0.0, reset)
+                .map_err(RendererError::Ray)?;
+        Ok((Some(pass), Some(base), reset))
+    }
+    /// Invalidate animated temporal history after a camera cut or teleport.
+    pub fn reset_skinned_motion(&mut self) {
+        self.skinned_motion_output = None;
+        self.scene_depth_motion = None;
+        self.skinned_motion_metadata = None;
+        self.skinned_camera_history.reset();
+        if let Some(motion) = &mut self.skinned_motion {
+            motion.history.reset();
+        }
     }
 
     /// Updates only the animated joint palette without reallocating geometry.
@@ -489,6 +715,17 @@ impl Renderer {
     ///
     /// Rejects missing geometry, palette length mismatch, or non-finite matrices.
     pub fn update_skin_matrices(&mut self, joints: &[Mat4]) -> Result<(), RendererError> {
+        self.check_device()?;
+        let lod_pose = self
+            .skinned_lod
+            .as_ref()
+            .map(|lod| {
+                lod.pose
+                    .source()
+                    .prepare(joints, lod.pose.model())
+                    .map_err(|error| RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error)))
+            })
+            .transpose()?;
         let skinned = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
         if joints.len() != skinned.joint_count {
             return Err(RendererError::Skinned(
@@ -500,6 +737,16 @@ impl Renderer {
         }
         self.queue
             .write_buffer(&skinned.joint_buffer, 0, bytemuck::cast_slice(joints));
+        if let Some(motion) = &mut self.skinned_motion {
+            motion.joints.clone_from_slice(joints);
+        }
+        if let Some(pose) = lod_pose {
+            self.skinned_lod
+                .as_mut()
+                .ok_or(RendererError::NoSkinnedLod)?
+                .pose = pose;
+            self.bind_skinned_lod_level(0)?;
+        }
         Ok(())
     }
 
@@ -509,13 +756,34 @@ impl Renderer {
     ///
     /// Rejects a missing skinned mesh or non-finite transform.
     pub fn update_skinned_model(&mut self, model: Mat4) -> Result<(), RendererError> {
+        self.check_device()?;
         if !model.is_finite() {
             return Err(RendererError::Skinned(SkinnedUploadError::NonFiniteMatrix));
         }
+        let lod_pose = self
+            .skinned_lod
+            .as_ref()
+            .map(|lod| {
+                lod.pose
+                    .source()
+                    .prepare(lod.pose.joints(), model)
+                    .map_err(|error| RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error)))
+            })
+            .transpose()?;
         let skinned = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
         let uniform = crate::skinned::object_uniform(model, skinned.material_layer);
         self.queue
             .write_buffer(&skinned.object_buffer, 0, bytemuck::bytes_of(&uniform));
+        if let Some(motion) = &mut self.skinned_motion {
+            motion.model = model;
+        }
+        if let Some(pose) = lod_pose {
+            self.skinned_lod
+                .as_mut()
+                .ok_or(RendererError::NoSkinnedLod)?
+                .pose = pose;
+            self.bind_skinned_lod_level(0)?;
+        }
         Ok(())
     }
 
@@ -523,25 +791,37 @@ impl Renderer {
     ///
     /// # Errors
     ///
-    /// Returns [`RendererError::SurfaceLost`] when the native surface must be recreated.
+    /// Returns surface/device-loss errors when native graphics must be recreated.
     pub fn render(&mut self) -> Result<RenderOutcome, RendererError> {
+        self.check_device()?;
         if self.state == SurfaceState::Suspended {
             return Ok(RenderOutcome::Suspended);
         }
+        let frame_id = self
+            .resident_presented_frames
+            .checked_add(1)
+            .ok_or(RendererError::FrameIdExhausted)?;
         let (frame, suboptimal) = match self.surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
             wgpu::CurrentSurfaceTexture::Outdated => {
+                self.reset_skinned_motion();
                 self.surface.configure(&self.device, &self.config);
                 return Ok(RenderOutcome::Reconfigured);
             }
-            wgpu::CurrentSurfaceTexture::Lost => return Err(RendererError::SurfaceLost),
+            wgpu::CurrentSurfaceTexture::Lost => {
+                self.reset_skinned_motion();
+                return Err(RendererError::SurfaceLost);
+            }
             wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
             wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
             wgpu::CurrentSurfaceTexture::Validation => {
+                self.reset_skinned_motion();
                 return Ok(RenderOutcome::SkippedValidation);
             }
         };
+        self.refresh_skinned_lod()?;
+        let (motion_pass, base_motion, reset_motion) = self.create_skinned_motion_pass()?;
         let view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
@@ -597,6 +877,91 @@ impl Renderer {
                 pass.draw_indexed(0..skinned.index_count, 0, 0..1);
             }
         }
+        encode_motion_layers(&mut encoder, motion_pass.as_ref(), base_motion.as_ref())?;
+        self.queue.submit([encoder.finish()]);
+        self.queue.present(frame);
+        self.resident_presented_frames = frame_id;
+        self.skinned_motion_metadata = motion_pass.as_ref().map(|_| (frame_id, reset_motion));
+        self.skinned_motion_output = motion_pass;
+        self.scene_depth_motion = base_motion;
+        self.commit_skinned_temporal_history();
+        if suboptimal {
+            self.surface.configure(&self.device, &self.config);
+            Ok(RenderOutcome::Reconfigured)
+        } else {
+            Ok(RenderOutcome::Presented)
+        }
+    }
+
+    fn commit_skinned_temporal_history(&mut self) {
+        let pose_valid = self
+            .skinned_motion
+            .as_mut()
+            .is_none_or(crate::skinned_motion::ResidentSkinnedMotion::commit_presented);
+        if !pose_valid
+            || self
+                .skinned_camera_history
+                .presented(camera_view_projection(
+                    self.config.width,
+                    self.config.height,
+                    self.camera,
+                ))
+                .is_err()
+        {
+            self.reset_skinned_motion();
+        }
+    }
+
+    /// Creates the general scene pipelines for this surface's color format.
+    #[must_use]
+    pub fn create_scene_renderer(&self) -> crate::SceneRenderer {
+        crate::SceneRenderer::new(&self.device, self.config.format)
+    }
+
+    /// Presents a general scene using this renderer's surface lifecycle.
+    /// Scene resources must have been created on this device.
+    ///
+    /// # Errors
+    /// Returns surface/device-loss errors requiring the platform shell to recreate graphics.
+    pub fn render_scene(
+        &mut self,
+        scene: &crate::SceneRenderer,
+        draws: &[crate::SceneDraw<'_>],
+    ) -> Result<RenderOutcome, RendererError> {
+        self.check_device()?;
+        self.reset_skinned_motion();
+        if self.state == SurfaceState::Suspended {
+            return Ok(RenderOutcome::Suspended);
+        }
+        let (frame, suboptimal) = match self.surface.get_current_texture() {
+            wgpu::CurrentSurfaceTexture::Success(frame) => (frame, false),
+            wgpu::CurrentSurfaceTexture::Suboptimal(frame) => (frame, true),
+            wgpu::CurrentSurfaceTexture::Outdated => {
+                self.surface.configure(&self.device, &self.config);
+                return Ok(RenderOutcome::Reconfigured);
+            }
+            wgpu::CurrentSurfaceTexture::Lost => return Err(RendererError::SurfaceLost),
+            wgpu::CurrentSurfaceTexture::Timeout => return Ok(RenderOutcome::SkippedTimeout),
+            wgpu::CurrentSurfaceTexture::Occluded => return Ok(RenderOutcome::SkippedOccluded),
+            wgpu::CurrentSurfaceTexture::Validation => {
+                return Ok(RenderOutcome::SkippedValidation);
+            }
+        };
+        let view = frame
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = self
+            .device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor {
+                label: Some("Voxy frame encoder"),
+            });
+        scene.encode(
+            &mut encoder,
+            &view,
+            &self.depth_view,
+            self.clear_color,
+            draws,
+        );
         self.queue.submit([encoder.finish()]);
         self.queue.present(frame);
         if suboptimal {
@@ -615,6 +980,18 @@ impl Renderer {
     #[must_use]
     pub fn adapter_info(&self) -> wgpu::AdapterInfo {
         self.adapter.get_info()
+    }
+
+    /// Shared managed compute-storage budget retained by this device owner.
+    #[must_use]
+    pub fn compute_memory_budget(&self) -> &crate::ComputeMemoryBudget {
+        &self.compute_memory_budget
+    }
+
+    /// Shared staging pool retained for the lifetime of this renderer.
+    #[must_use]
+    pub fn readback_pool(&self) -> &crate::ComputeReadbackPool {
+        &self.readback_pool
     }
 
     #[must_use]
@@ -818,7 +1195,7 @@ fn create_depth(
         sample_count: 1,
         dimension: wgpu::TextureDimension::D2,
         format: wgpu::TextureFormat::Depth32Float,
-        usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
         view_formats: &[],
     });
     let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
@@ -834,10 +1211,7 @@ fn camera_uniform(width: u32, height: u32, camera: CameraView) -> CameraUniform 
 
 #[allow(clippy::cast_precision_loss)]
 fn camera_view_projection(width: u32, height: u32, camera: CameraView) -> Mat4 {
-    let aspect = width.max(1) as f32 / height.max(1) as f32;
-    let distance = camera.eye.distance(camera.target);
-    let half_height = (distance * (camera.vertical_fov_radians * 0.5).tan()).max(1.0);
-    let half_width = half_height * aspect;
+    let [half_width, half_height] = camera_half_extents(width, height, camera);
     // Swap near/far to retain the renderer's reverse-Z depth convention.
     let projection = orthographic(
         -half_width,
@@ -849,6 +1223,15 @@ fn camera_view_projection(width: u32, height: u32, camera: CameraView) -> Mat4 {
     );
     let view = look_at_mat4(camera.eye, camera.target, camera.up);
     projection * view
+}
+
+#[allow(clippy::cast_precision_loss)]
+fn camera_half_extents(width: u32, height: u32, camera: CameraView) -> [f32; 2] {
+    let aspect = width.max(1) as f32 / height.max(1) as f32;
+    let distance = camera.eye.distance(camera.target);
+    let half_height = (distance * (camera.vertical_fov_radians * 0.5).tan()).max(1.0);
+    let half_width = half_height * aspect;
+    [half_width, half_height]
 }
 
 fn chunk_intersects_frustum(view_projection: Mat4, relative_origin: [i32; 4]) -> bool {
@@ -953,19 +1336,35 @@ fn pack_light_words(light: Option<&[u8]>, output: &mut Vec<u32>) -> Result<(), R
 
 #[derive(Debug)]
 pub enum RendererError {
+    InvalidPrefilterSamples(u32),
+    /// Shader, pipeline, surface configuration or allocation failed before use.
+    Initialization(wgpu::Error),
+    InvalidSurfaceSize {
+        width: u32,
+        height: u32,
+        max_dimension: u32,
+    },
     CreateSurface(wgpu::CreateSurfaceError),
     RequestAdapter(wgpu::RequestAdapterError),
     RequestDevice(wgpu::RequestDeviceError),
     UnsupportedSurface,
+    FrameIdExhausted,
+    /// A native/temporal consumer failed after scene submission, before present.
+    TemporalConsumer(String),
     SurfaceLost,
+    DeviceLost(String),
     MeshTooLarge,
     TooManyChunks(usize),
     OriginOutOfRange,
     InvalidLightVolume(usize),
     LightDataTooLarge,
     Skinned(SkinnedUploadError),
+    SkinnedLod(crate::SkinnedLodGpuError),
+    Ray(crate::RaySceneError),
     NoSkinnedMesh,
+    NoSkinnedLod,
     InvalidCamera,
+    Scene(crate::SceneError),
 }
 
 impl fmt::Display for RendererError {
@@ -974,7 +1373,20 @@ impl fmt::Display for RendererError {
     }
 }
 
-impl std::error::Error for RendererError {}
+impl std::error::Error for RendererError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::CreateSurface(error) => Some(error),
+            Self::RequestAdapter(error) => Some(error),
+            Self::RequestDevice(error) => Some(error),
+            Self::Skinned(error) => Some(error),
+            Self::SkinnedLod(error) => Some(error),
+            Self::Ray(error) => Some(error),
+            Self::Scene(error) => Some(error),
+            _ => None,
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -1171,4 +1583,18 @@ mod tests {
         let validation_error = pollster::block_on(error_scope.pop());
         assert!(validation_error.is_none(), "{validation_error:?}");
     }
+}
+
+fn encode_motion_layers(
+    encoder: &mut wgpu::CommandEncoder,
+    motion: Option<&crate::RasterMotionPass>,
+    base: Option<&crate::DepthMotionPass>,
+) -> Result<(), RendererError> {
+    if let (Some(motion), Some(base)) = (motion, base) {
+        base.encode(encoder);
+        motion
+            .encode_over(encoder, base.output())
+            .map_err(RendererError::Ray)?;
+    }
+    Ok(())
 }

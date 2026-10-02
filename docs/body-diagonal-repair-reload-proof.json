@@ -1,0 +1,25 @@
+{
+  "sourceSha256": "48575b87bdec019e59eac5d9fb17fd2faaf7759306de7d6d9c1312971232d8da",
+  "candidateSha256": "bdd8795e5b2df655cb39ddeb37ed03a4371bf23c5df743879e32b73ae44b2384",
+  "coordinatesExactlyPreserved": true,
+  "sameTriangleCount": true,
+  "audit": {
+    "vertices": 76052,
+    "triangles": 152100,
+    "area_m2": 1.5671277200581992,
+    "max_edge_m": 0.011999540395577154,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "crossingPairs": 107,
+  "searchCapped": false,
+  "regionFaceOccurrences": {
+    "left_foot": 10,
+    "right_foot": 14,
+    "head": 190
+  },
+  "scope": "Prepared candidate only, still intersecting; not adopted by runtime."
+}

@@ -1,0 +1,74 @@
+{
+  "repository": "mosra/flextgl",
+  "repository_id": 1620626,
+  "commit": "034ae6c62d172790882ab0dae85ad695d3a78a42",
+  "source_url": "https://github.com/mosra/flextgl/tree/034ae6c62d172790882ab0dae85ad695d3a78a42",
+  "readme_path": "README.md",
+  "readme_sha256": "546db5a6011181c90cd0cf15052b5274312c076d84a55884b0e23a584d5b1022",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".coveragerc",
+      "type": "file",
+      "sha": "7d801dba4d8523404bb750c3cda15f5139241984"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cad4061e96bf20826f722f1946352840c441cf5d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cbbeff4863a4979672d48eb151fa9f281c49d003"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "3babd5d6f6bdf820b86ef3041e4b260e95bd2145"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fabad5a5c7b3bb1bab96185e9b28d7a37eb111ba"
+    },
+    {
+      "path": "flext.py",
+      "type": "file",
+      "sha": "231f1be75fda867af973be1f2e0cf1ab9f8846de"
+    },
+    {
+      "path": "flextGLgen.py",
+      "type": "file",
+      "sha": "d5e3077f541782dbda7d7ad38a3880cce883105b"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "3ee100391b6c3eeab26ff71cf30f60672f6b5606"
+    },
+    {
+      "path": "profiles",
+      "type": "dir",
+      "sha": "b31310e0952e2672cb56026041da80f7c93d30f6"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "1948bb66a342c399624f76bd8ccba1db31502dfb"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "2ee309df39eaea182f5a13f82f33bc0ab8dff02a"
+    }
+  ],
+  "classification": "excluded_build_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify graphics API header/loader generator; Python/templates/tests, not engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

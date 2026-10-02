@@ -1,0 +1,109 @@
+{
+  "repository": "crawsome/PyRPG_Mini",
+  "repository_id": 109791842,
+  "commit": "a53a409bc2ef48ec72ef57bf0ee249d203c5e248",
+  "source_url": "https://github.com/crawsome/PyRPG_Mini/tree/a53a409bc2ef48ec72ef57bf0ee249d203c5e248",
+  "readme_path": "README.md",
+  "readme_sha256": "c1d40188784ced1ed27b387051152ecf00ea6a1694c761138ea47e107e0f1e39",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "4c889e0f4edc24810a0688025fbbaaa03afe6536"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "eba1110b5794582b53554bb1e4224b860d4e173f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1cf4b93c23446c0021a429a8109d93de06918702"
+    },
+    {
+      "path": "Armor.py",
+      "type": "file",
+      "sha": "49f2a92746f7592daf8fc3b9d98949ee1df5b69e"
+    },
+    {
+      "path": "Enemy.py",
+      "type": "file",
+      "sha": "1bd682449be8247b6e7d894c97b2c699aacd3dec"
+    },
+    {
+      "path": "Game.py",
+      "type": "file",
+      "sha": "55d5383554f85043e0c63db46c081d0d9604131c"
+    },
+    {
+      "path": "Hero.py",
+      "type": "file",
+      "sha": "7edf557f5ce532e1803f2b40f42be809773cd36a"
+    },
+    {
+      "path": "Item.py",
+      "type": "file",
+      "sha": "7627d8fe494a70619ec467a1f64a99c64cfacc53"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8fe2fd7a1736b711daae20959dce4201553caf36"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c2afa322254755a83dc56c93221d470ce81e57e5"
+    },
+    {
+      "path": "Shield.py",
+      "type": "file",
+      "sha": "13bf3374bde62eb06bcdc2e8489794c3f6de1c0a"
+    },
+    {
+      "path": "Weapon.py",
+      "type": "file",
+      "sha": "16de44403561f3a3254fc2cfd85f5ef6d005ce50"
+    },
+    {
+      "path": "__init__.py",
+      "type": "file",
+      "sha": "4cdf482325d7b06a1abb8a0d9849960c7b22dd15"
+    },
+    {
+      "path": "csv",
+      "type": "dir",
+      "sha": "7e04e85fc02260c441e2748b70dcc12646245b9b"
+    },
+    {
+      "path": "db",
+      "type": "dir",
+      "sha": "128a0f1c4ae6a1dfc12afebe6197162876058660"
+    },
+    {
+      "path": "dbsetup.py",
+      "type": "file",
+      "sha": "00d64586a1cc3b4cc1261f736ab09d5ac1a7bca5"
+    },
+    {
+      "path": "quoteslist.txt",
+      "type": "file",
+      "sha": "5f6817018d06e98d5fd0868b8585c9b9c79c28de"
+    },
+    {
+      "path": "saves",
+      "type": "dir",
+      "sha": "d0bcd8e172db172c5f4b4ddeabc58c9159de215e"
+    },
+    {
+      "path": "texttools.py",
+      "type": "file",
+      "sha": "0f155274938fe46ffdbf033ea16e4f698955a037"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python text RPG with configurable CSV content and save/load, not separately identified engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

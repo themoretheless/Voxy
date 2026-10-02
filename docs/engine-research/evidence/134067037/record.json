@@ -1,0 +1,384 @@
+{
+  "repository": "btarg/Xash3D-Emscripten",
+  "repository_id": 134067037,
+  "commit": "0c2f84f9ae9855a7d4dc8692e8a11536fac6e1c0",
+  "source_url": "https://github.com/btarg/Xash3D-Emscripten/tree/0c2f84f9ae9855a7d4dc8692e8a11536fac6e1c0",
+  "readme_path": "README.md",
+  "readme_sha256": "2d0436b7fe55d7120d10b02f547a6f67274614f71a0455d725a5db4100365133",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": "1.js",
+      "type": "file",
+      "sha": "f7202e12fb840ef8bd215b4af4d550edb263143d"
+    },
+    {
+      "path": "404.html",
+      "type": "file",
+      "sha": "49ffe676308f0d7cb6b4f14f358ce5df743c8b94"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b2aad0c229eb25e838a8944f704b1bc837a3c299"
+    },
+    {
+      "path": "browserfs.min.js",
+      "type": "file",
+      "sha": "4f91a51d27efa2a18a30de24ef9d395d2e3afc81"
+    },
+    {
+      "path": "browserfs.min.js.gz",
+      "type": "file",
+      "sha": "29eea64c384611b3d902eeb1cf879757b0c9d639"
+    },
+    {
+      "path": "client.js",
+      "type": "file",
+      "sha": "3b76dcda694c2574c0d1c7f3954790810d945d39"
+    },
+    {
+      "path": "client.js.gz",
+      "type": "file",
+      "sha": "a0c5bb0d0e464d6da453b715683779b77b74c740"
+    },
+    {
+      "path": "dayone.zip",
+      "type": "file",
+      "sha": "e2c9e0f1efc06d884ba04ced2762c11d3592beb4"
+    },
+    {
+      "path": "dayone.zip.gz",
+      "type": "file",
+      "sha": "c0d99b5aa3a836f5a1d921f9445ce109ef8171e5"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "c7fe72d459c91cb623f0bd473f9942cf55ed6678"
+    },
+    {
+      "path": "firebug-lite-compressed.js",
+      "type": "file",
+      "sha": "1b27e5cef28badddbe4edf6d5402220458509dc3"
+    },
+    {
+      "path": "hc-cache.html",
+      "type": "file",
+      "sha": "a90c07d475097bcb95e70b61494456e7cd788f2f"
+    },
+    {
+      "path": "hc.appcache",
+      "type": "file",
+      "sha": "420856ae03c1b2a725c88ccd54d8359454f3d50b"
+    },
+    {
+      "path": "hc.data",
+      "type": "file",
+      "sha": "5d1cc9419ee596b624ea517e9f81b56a029f6715"
+    },
+    {
+      "path": "hc.data.gz",
+      "type": "file",
+      "sha": "d54067c1aae1015824f062f64bc7ddbac75ad2d8"
+    },
+    {
+      "path": "hc.js",
+      "type": "file",
+      "sha": "d2c88ac463eacd83136c75161743a066dd0bcc96"
+    },
+    {
+      "path": "hc.js.gz",
+      "type": "file",
+      "sha": "f51fdda846cc8b72355bfeca61da6589e2547f7d"
+    },
+    {
+      "path": "hc.zip",
+      "type": "file",
+      "sha": "cf7db659e4a0dfca777d8649a3541fde0ee19856"
+    },
+    {
+      "path": "hc.zip.gz",
+      "type": "file",
+      "sha": "2218ef6e25405beebb540369477134f21a6781bf"
+    },
+    {
+      "path": "hldm-cache-split.html",
+      "type": "file",
+      "sha": "b401c7bbd83d6f71a94cd951bb1f8af2de1f3a73"
+    },
+    {
+      "path": "hldm-cache-split2.html",
+      "type": "file",
+      "sha": "81169de43f56b969adcefff01cc745f0bd200009"
+    },
+    {
+      "path": "hldm-cache.html",
+      "type": "file",
+      "sha": "ae3585c50b4563e2d9f5e0b06bb52801dd964388"
+    },
+    {
+      "path": "hldm-split-1.appcache",
+      "type": "file",
+      "sha": "e1a59029784e0cc901a57a0082530848048d62f3"
+    },
+    {
+      "path": "hldm-split-2.appcache",
+      "type": "file",
+      "sha": "b1b04bc2a5c83311900ebf622ad10d6d2750280b"
+    },
+    {
+      "path": "hldm-split.zip.part1",
+      "type": "file",
+      "sha": "df78bdfa53a888d6323309c76a06d9682effb1c0"
+    },
+    {
+      "path": "hldm-split.zip.part2",
+      "type": "file",
+      "sha": "b591125bc5f859bd62bbe7014bcb4a1a105698a9"
+    },
+    {
+      "path": "hldm.appcache",
+      "type": "file",
+      "sha": "37510d1d699c7de1297d4e6163ec0b6a190619b8"
+    },
+    {
+      "path": "hldm.data",
+      "type": "file",
+      "sha": "63931e6915589cf8886e48d22a9ae801c6eea225"
+    },
+    {
+      "path": "hldm.data.gz",
+      "type": "file",
+      "sha": "1d6978b82d03d13432930c5e7cfacc9a996828d6"
+    },
+    {
+      "path": "hldm.js",
+      "type": "file",
+      "sha": "fad731b6d44e9053f4e6777e80777c7e121e69ed"
+    },
+    {
+      "path": "hldm.js.gz",
+      "type": "file",
+      "sha": "2ee0733476a2cd2df7fb6497a687ef2b78dfa7d0"
+    },
+    {
+      "path": "hldm.zip",
+      "type": "file",
+      "sha": "4a563021b47804c185d2f9b61991a07b383f5d84"
+    },
+    {
+      "path": "hldm.zip.gz",
+      "type": "file",
+      "sha": "2402d6f518a4a004e1ebd06fd2c2143b898eec99"
+    },
+    {
+      "path": "home.png",
+      "type": "file",
+      "sha": "29940fdda2fc98e5a5c2ddc87ac4b36fb425b8cd"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "2d9bf04edfc91687724f15dac4a79119c75c42bc"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "a0cf7d5d14bbe7321e1a9f5068bf61b8e20c82b8"
+    },
+    {
+      "path": "menu.js",
+      "type": "file",
+      "sha": "0f5e35a008205b6e118c1e28f8fa286fad3b7a4b"
+    },
+    {
+      "path": "menu.js.gz",
+      "type": "file",
+      "sha": "61171e14eba84a12ac233d3614a7e8f77c409be5"
+    },
+    {
+      "path": "mods-offline.js",
+      "type": "file",
+      "sha": "9e0b47974738d8b3c00bb72cdebf67f103db9ea8"
+    },
+    {
+      "path": "mods.js",
+      "type": "file",
+      "sha": "40c88290ceb8e4baa001698b67202093a2e9f6e3"
+    },
+    {
+      "path": "mods.js.gz",
+      "type": "file",
+      "sha": "3cb64017b914b8171fc33525107db396841c37ce"
+    },
+    {
+      "path": "server.js",
+      "type": "file",
+      "sha": "24d43f8dc9de174266cbb09f8fd840b33baa1a86"
+    },
+    {
+      "path": "server.js.gz",
+      "type": "file",
+      "sha": "eaf6a19c9922105ba5b87c0bb8a9a2c033fcb715"
+    },
+    {
+      "path": "uplink-cache.html",
+      "type": "file",
+      "sha": "beb3a9e3fce425eedb3c9a2890a969399caa7b0b"
+    },
+    {
+      "path": "uplink-nohc.zip",
+      "type": "file",
+      "sha": "1e64a771fdc1a8212add77d4a6df2315bf1ea232"
+    },
+    {
+      "path": "uplink-nohc.zip.gz",
+      "type": "file",
+      "sha": "6295d6ff62e022e596b26b070c0d7b219f26e3c4"
+    },
+    {
+      "path": "uplink.appcache",
+      "type": "file",
+      "sha": "5fefd7b633979bf02b87c04059255375fdd40aa2"
+    },
+    {
+      "path": "uplink.data",
+      "type": "file",
+      "sha": "62e7c9575bebb68e8d09a243913d669364fdc45a"
+    },
+    {
+      "path": "uplink.data.gz",
+      "type": "file",
+      "sha": "78ec04ee3892fbab950c2b2a56e80be762f3ebdc"
+    },
+    {
+      "path": "uplink.js",
+      "type": "file",
+      "sha": "176d23d05c1505891f6469ac0ba2d04f690debab"
+    },
+    {
+      "path": "uplink.js.gz",
+      "type": "file",
+      "sha": "caa21eddb4cd432d89af705d8b005e7400e80791"
+    },
+    {
+      "path": "uplink.zip",
+      "type": "file",
+      "sha": "28eed6670fc73197af0c08f139ef77e3e92025bd"
+    },
+    {
+      "path": "uplink.zip.gz",
+      "type": "file",
+      "sha": "8f1ff92c01eeadd659c604b81f5d06bdce0e2c18"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "0e37563133f7b760cf8c866d4a45bcedabed049a"
+    },
+    {
+      "path": "xash-intro.html",
+      "type": "file",
+      "sha": "7d52089ba18230263cdb84097cda652ecf46080b"
+    },
+    {
+      "path": "xash-test-develop-intro.html",
+      "type": "file",
+      "sha": "977b2faaa32d18997b3183679197362f07521afc"
+    },
+    {
+      "path": "xash-test-develop.html",
+      "type": "file",
+      "sha": "2f475fe47945a4a78fbc9127b2dd2a04252c568e"
+    },
+    {
+      "path": "xash-test-develop.js",
+      "type": "file",
+      "sha": "cfacc0ce24e17989e5f4d44d90adb8f690fe2944"
+    },
+    {
+      "path": "xash-test-offline.html",
+      "type": "file",
+      "sha": "1313eca19c095e0b85a8a5f7aef121eedcfec7ae"
+    },
+    {
+      "path": "xash-test-offline.html~",
+      "type": "file",
+      "sha": "cff733ba8da7221f4cdc68d6ae04fe8d0afa3b25"
+    },
+    {
+      "path": "xash-test.html",
+      "type": "file",
+      "sha": "a5bde949c02be58c1629f4a4e6bdcc53bda3461f"
+    },
+    {
+      "path": "xash-test.html~",
+      "type": "file",
+      "sha": "f5f41d6da0bbcb632106012788869e403c3e0d44"
+    },
+    {
+      "path": "xash.appcache",
+      "type": "file",
+      "sha": "f10df8386fd23fae45772b450426ce76af3dcf13"
+    },
+    {
+      "path": "xash.appcache~",
+      "type": "file",
+      "sha": "5099cf1a680ac3d15de66bfca5f67be704bc70c7"
+    },
+    {
+      "path": "xash.html",
+      "type": "file",
+      "sha": "a6952700257eb9db000bae049aaa89db726a0d87"
+    },
+    {
+      "path": "xash.html.gz",
+      "type": "file",
+      "sha": "d0bc96f10f0814c4a1bdee0c41e9b93adb378364"
+    },
+    {
+      "path": "xash.html.mem",
+      "type": "file",
+      "sha": "816edfa9077a9df896ff6fc80ff6ede32242c400"
+    },
+    {
+      "path": "xash.html.mem.gz",
+      "type": "file",
+      "sha": "87cc0d1c60cd3824ec188b166550c6de94da043a"
+    },
+    {
+      "path": "xash.js",
+      "type": "file",
+      "sha": "ac737cfb0435665d45988c66cec35fdc08c9ce52"
+    },
+    {
+      "path": "xash.js.gz",
+      "type": "file",
+      "sha": "b78a3171185653f89f8d5ea97e32c4ad44f5150c"
+    },
+    {
+      "path": "xash.webmanifest",
+      "type": "file",
+      "sha": "23994ff5089a72f6f782fe868f0327c71f25cc62"
+    },
+    {
+      "path": "xash2.appcache",
+      "type": "file",
+      "sha": "d3143277086ce28361eed26247ad13428d1aac6b"
+    },
+    {
+      "path": "xash2.appcache~",
+      "type": "file",
+      "sha": "0b5ee2603ae8410d5ec3d40f22d080cdee0b4d23"
+    }
+  ],
+  "classification": "excluded_binary_distribution",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Re-uploaded compiled browser port with JS bundles and game data; root evidence does not provide underlying native engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

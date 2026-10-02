@@ -1,0 +1,59 @@
+{
+  "repository": "paladin-t/b8",
+  "repository_id": 80491949,
+  "commit": "f025e2555aac7afced7321419cee2619a17603e6",
+  "source_url": "https://github.com/paladin-t/b8/tree/f025e2555aac7afced7321419cee2619a17603e6",
+  "readme_path": "README.md",
+  "readme_sha256": "4f06ce5e100408f7cfa06511db0aa9586e5383f0333c6399acf6de5036c187df",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8409397e47dddf3f24e0fba5f712f4fd48bf348e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1818a8a84c7e0699de4c58189ded1393481efefa"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "4421bb984558b7ba4ea68fe34c1da78ec23a3d7e"
+    },
+    {
+      "path": "builds",
+      "type": "dir",
+      "sha": "b192e753ac8c6a0f4292bb0343332dd855862d29"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7eee1bee3b518b106be284c2b94599131d932c4b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "eea2897116540556147daf26a8a37128bea52f59"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "101ec9f2b5a0545e20890976d7d87830060b742d"
+    },
+    {
+      "path": "pages",
+      "type": "dir",
+      "sha": "bdf98f7f36a4043bd7a162b3cd1b1981dd0b5ff3"
+    },
+    {
+      "path": "vars",
+      "type": "dir",
+      "sha": "f578d010882b5498714afe3885b11229869f5d5a"
+    }
+  ],
+  "classification": "excluded_closed_source_reference",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify fantasy-console product/docs/builds; owned runtime source not established at pinned revision.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

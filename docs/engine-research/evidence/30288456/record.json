@@ -1,0 +1,89 @@
+{
+  "repository": "redeclipse/base",
+  "repository_id": 30288456,
+  "commit": "faf378d12558addc700d0e464e7e8c3a39fbceee",
+  "source_url": "https://github.com/redeclipse/base/tree/faf378d12558addc700d0e464e7e8c3a39fbceee",
+  "readme_path": "readme.md",
+  "readme_sha256": "9e6e4772050998a5c0dc3c61acf3dab0a7e594566171fa5746d6b62f9598efb6",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6008432cd72caf67a297e3ea18644eccfe38fa74"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3f7e4cb3c602d12bdc1d48052ad232bc0cfe5611"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4f84427131c435d1e2dac9cd46b293a5c4190da6"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "220a512cc1508095841e319c108fde8c5cb75237"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "f6d17b56d3fc7a9a722743f87e7f75cb20448352"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "e4b0bbd881f4c2442bd63f08589a371642d129c3"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "e1a61452eddfbf622f9d654ba8c568035f619e5b"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "d84965cf3ef43ea089c00e8168389543cab2f224"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "0d79d56d9fbcc141687a5879eb653e3e8a6db563"
+    },
+    {
+      "path": "readme.txt",
+      "type": "file",
+      "sha": "f2188f721c94c4d58a4da156f903becdfa199fa9"
+    },
+    {
+      "path": "redeclipse.bat",
+      "type": "file",
+      "sha": "33d50d28b82ff1a5ead9d7208a4a0dbe9ccd581c"
+    },
+    {
+      "path": "redeclipse.sh",
+      "type": "file",
+      "sha": "d15b77756d4a5274559865eedfe2e9243b0fa35a"
+    },
+    {
+      "path": "redeclipse_server.bat",
+      "type": "file",
+      "sha": "8fb50563859b43a81e709b38c2a6a3c1c91ac8d8"
+    },
+    {
+      "path": "redeclipse_server.sh",
+      "type": "file",
+      "sha": "ed0c10db2b531281400f196f7f83830288da219b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5cd08843c78b8df7c48956389be32721a6e496be"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Red Eclipse runtime distribution; owned src plus platform launch/build environment. Not independent architecture-family claim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

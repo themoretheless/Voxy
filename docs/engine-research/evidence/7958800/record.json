@@ -1,0 +1,102 @@
+{
+  "repository": "nadult/FreeFT",
+  "repository_id": 7958800,
+  "commit": "d0b09a3bbc189fc777b4f62864ccbd4838fd146b",
+  "source_url": "https://github.com/nadult/FreeFT/tree/d0b09a3bbc189fc777b4f62864ccbd4838fd146b",
+  "readme_path": "readme.md",
+  "readme_sha256": "bdae4d1453cec15362137dcb7c535de7b14daef4db48a55ee8264a0b7cade569",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "aaa1aa5c48dee9a952295d8edcfa09ff4a3f96df"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "f747d4a54ce034f0fd54f886a5e6eaf05413bcad"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "549e2d93bea2e8b2da5abb955856c42d405ebc2b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b400aa0666e282e565433224305aaeeaafddf76a"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "25c7c8537fa9c67cdf44bc23a788b16845adc66d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "699ddca42692f1e7a72e675baed2c83cee975064"
+    },
+    {
+      "path": "bugs.txt",
+      "type": "file",
+      "sha": "acbb1ff55dfeffb40fd3a58c58821dd69dcf1700"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "8bea082eebcecc09ca007077cf734ade76e749d1"
+    },
+    {
+      "path": "default_server.cfg",
+      "type": "file",
+      "sha": "336b28727d72b06a9f789ebdfe730aa35368e14f"
+    },
+    {
+      "path": "dependencies.json",
+      "type": "file",
+      "sha": "22d0c0ac77556c3ae3525ce8fc764dbf693a4e32"
+    },
+    {
+      "path": "libfwk",
+      "type": "file",
+      "sha": "4dc62211425fcc009dca479488cc932bd32e4d34"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "dc081ad378985163a76c3d8ed5afc7f9d1dceff8"
+    },
+    {
+      "path": "make_mod.sh",
+      "type": "file",
+      "sha": "0bf1fdfbf783308fed8e2f4146f00b67b2580131"
+    },
+    {
+      "path": "plan",
+      "type": "dir",
+      "sha": "d5b0db6cb245987999338bc530f903e0d33290c1"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "7670a07455df5901463d07d64f7b127d82948a2d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8c93ff4fc999067e87d6fada5421cfc4a569702e"
+    },
+    {
+      "path": "todo.txt",
+      "type": "file",
+      "sha": "8d55f086911c67a99650c0db98dd6925a4e12efe"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "576e5483f0f88c18847331aeae399e38a91da8d9"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

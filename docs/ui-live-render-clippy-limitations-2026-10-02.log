@@ -1,0 +1,125 @@
+    Blocking waiting for file lock on build directory
+    Checking half v2.7.1
+    Checking physics_voxel v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics_voxel)
+    Checking voxy_ui_winit v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_ui_winit)
+    Checking naga v30.0.1
+    Checking wgpu-naga-bridge v30.0.1
+    Checking wgpu-hal v30.0.1 (/Users/themoretheless/Documents/ChatGPT/Voxy/vendor/wgpu-hal)
+    Checking wgpu-core-deps-apple v30.0.1
+    Checking wgpu-core v30.0.1
+    Checking wgpu v30.0.1 (/Users/themoretheless/Documents/ChatGPT/Voxy/vendor/wgpu)
+    Checking voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+error: useless conversion to the same type: `u64`
+  --> crates/voxy_render/src/fluid_screen.rs:95:31
+   |
+95 |             || bytes as u64 > u64::from(device.limits().max_storage_buffer_binding_size)
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider removing `u64::from()`: `device.limits().max_storage_buffer_binding_size`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#useless_conversion
+   = note: `-D clippy::useless-conversion` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::useless_conversion)]`
+
+error: calling `TextureViewDescriptor::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:114:45
+    |
+114 |             let view = texture.create_view(&Default::default());
+    |                                             ^^^^^^^^^^^^^^^^^^ help: try: `TextureViewDescriptor::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+    = note: `-D clippy::default-trait-access` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::default_trait_access)]`
+
+error: calling `PipelineCompilationOptions::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:294:42
+    |
+294 |                     compilation_options: Default::default(),
+    |                                          ^^^^^^^^^^^^^^^^^^ help: try: `PipelineCompilationOptions::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+
+error: calling `PipelineCompilationOptions::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:300:42
+    |
+300 |                     compilation_options: Default::default(),
+    |                                          ^^^^^^^^^^^^^^^^^^ help: try: `PipelineCompilationOptions::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+
+error: calling `PrimitiveState::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:303:28
+    |
+303 |                 primitive: Default::default(),
+    |                            ^^^^^^^^^^^^^^^^^^ help: try: `PrimitiveState::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+
+error: calling `MultisampleState::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:305:30
+    |
+305 |                 multisample: Default::default(),
+    |                              ^^^^^^^^^^^^^^^^^^ help: try: `MultisampleState::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+
+error: calling `StencilState::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:331:26
+    |
+331 |                 stencil: Default::default(),
+    |                          ^^^^^^^^^^^^^^^^^^ help: try: `StencilState::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+
+error: calling `DepthBiasState::default()` is more clear than this expression
+   --> crates/voxy_render/src/fluid_screen.rs:332:23
+    |
+332 |                 bias: Default::default(),
+    |                       ^^^^^^^^^^^^^^^^^^ help: try: `DepthBiasState::default()`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#default_trait_access
+
+error: casting `u32` to `f32` may cause a loss of precision (`u32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_render/src/fluid_screen.rs:454:17
+    |
+454 |                 self.size[0] as f32,
+    |                 ^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+    = note: `-D clippy::cast-precision-loss` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::cast_precision_loss)]`
+
+error: casting `u32` to `f32` may cause a loss of precision (`u32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_render/src/fluid_screen.rs:455:17
+    |
+455 |                 self.size[1] as f32,
+    |                 ^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+error: casting `usize` to `u32` may truncate the value on targets with 64-bit wide pointers
+   --> crates/voxy_render/src/fluid_screen.rs:468:22
+    |
+468 |         self.count = particles.len() as u32;
+    |                      ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+    = note: `-D clippy::cast-possible-truncation` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::cast_possible_truncation)]`
+help: ... or use `try_from` and handle the error accordingly
+    |
+468 -         self.count = particles.len() as u32;
+468 +         self.count = u32::try_from(particles.len());
+    |
+
+error: unused `self` argument
+   --> crates/voxy_render/src/fluid_screen.rs:563:9
+    |
+563 |         &self,
+    |         ^^^^^
+    |
+    = help: consider refactoring to an associated function
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unused_self
+    = note: `-D clippy::unused-self` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::unused_self)]`
+
+error: could not compile `voxy_render` (lib) due to 12 previous errors

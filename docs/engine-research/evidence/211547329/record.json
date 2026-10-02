@@ -1,0 +1,79 @@
+{
+  "repository": "Kermalis/PokemonGameEngine",
+  "repository_id": 211547329,
+  "commit": "754bc3ccac6aa2b479f998a88b607e3e1b7b3c61",
+  "source_url": "https://github.com/Kermalis/PokemonGameEngine/tree/754bc3ccac6aa2b479f998a88b607e3e1b7b3c61",
+  "readme_path": "README.md",
+  "readme_sha256": "25e32eab327c173498e19286110380982cb21499bd553549795658fbce56d49e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a000127611bb2baca979f4fd70d89b862868d236"
+    },
+    {
+      "path": ".nuke",
+      "type": "dir",
+      "sha": "341db9dfbe7dd95d8939a3c24dd97a5ca45e2f1b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "52693fc89cf8b41501d1e06687c43c8a96f87394"
+    },
+    {
+      "path": "MapEditor",
+      "type": "dir",
+      "sha": "e8b1b53f4e7dbe921e09118acbccf1d6413a3bbb"
+    },
+    {
+      "path": "PokemonDumper",
+      "type": "dir",
+      "sha": "5a3d449aea936ce27ff2a1869f3c8e85161cbce5"
+    },
+    {
+      "path": "PokemonGameEngine.sln",
+      "type": "file",
+      "sha": "53c5726a68b78229a2349419a1c698857d9f62f8"
+    },
+    {
+      "path": "PokemonGameEngine",
+      "type": "dir",
+      "sha": "9440683e0c8b59e087f2525b8dbf213e70a8afc7"
+    },
+    {
+      "path": "Previews",
+      "type": "dir",
+      "sha": "8a5f2d58736168c265daf72d81cb717beda12eee"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3ce91e6e02e54e858cf1db7672598ab124558f3a"
+    },
+    {
+      "path": "Shared Dependencies",
+      "type": "dir",
+      "sha": "5b50927bf16e4883a19bf4476618730e1b286fcd"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "e51774105228094fcf906ebd37b7fe012f619ad1"
+    },
+    {
+      "path": "nukebuild",
+      "type": "dir",
+      "sha": "a8abb3e8e0dda4b93492d6025ef5684d227b0763"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies managed Pokemon-style engine and editor; owned runtime/MapEditor and .NET solution/build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

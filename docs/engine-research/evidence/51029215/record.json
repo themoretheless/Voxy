@@ -1,0 +1,114 @@
+{
+  "repository": "GlPortal/RadixEngine",
+  "repository_id": 51029215,
+  "commit": "4bf4f48b894e910cc855eda43c6ee496ec482b37",
+  "source_url": "https://github.com/GlPortal/RadixEngine/tree/4bf4f48b894e910cc855eda43c6ee496ec482b37",
+  "readme_path": "README.md",
+  "readme_sha256": "b07f7cbca2b561698e5129076f378084d10b2019274d62a4d0c73cff47fdf67e",
+  "entries": [
+    {
+      "path": ".coveralls.yml",
+      "type": "file",
+      "sha": "d306144cddda5bc631221af51d27c6002e528d79"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "25ce9677419757eb94290226164825542d791885"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8bbe9beefb12f60d51b632b63f68c2cfcd87320b"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "cf366d02281cfeed99131cdbdefd2803f936501c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d5d59e405bd096867fc09d0ca9418ed9b6b6a1fe"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "9a54095abb75ec2afdc5d1a8167951115970538c"
+    },
+    {
+      "path": "CODING_GUIDELINES.md",
+      "type": "file",
+      "sha": "5475b4b855b6d8ca31ef2df4d137d2ecdec195e0"
+    },
+    {
+      "path": "COMPILE.md",
+      "type": "file",
+      "sha": "3598c164dd9deef8e588e8c0aa8f94c59a1aac4e"
+    },
+    {
+      "path": "CONTRIBUTE.md",
+      "type": "file",
+      "sha": "de1b6ea857fd941df0d692435fba7636130d1570"
+    },
+    {
+      "path": "CTestCustom.cmake",
+      "type": "file",
+      "sha": "8c954069f7908ccfa9cb6d4bf29285439292469d"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "13f3b987f5345e11385c2d1cdbb385ac40dfec5e"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "b3a396d3e20ce222e0cbcebc4fb389738b0a9332"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8f1bedcd15d73e38b993daec66a08dbb74aefd76"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "937274d6b0f0c0198f0a4f6ce8bbb274a2b65cad"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "2357b0a00e1f805aa7567872a0de909cc1a83ecc"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "6159e37d3dedb871963c3095bc202974a12422ae"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "a3dc1fc763690c05547bbca27130f1d82757f646"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "f334a2f6238b5e700eb6188a747b3583c7cdcfbd"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "7c048aad1643383527391b88b2b5aa7b00806ccd"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "ce520f81251ef20c2e81e0334c41e4f5fdc18474"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ 3D game engine describing physics simulation with source/include, tests and CMake build files.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

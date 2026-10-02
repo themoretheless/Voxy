@@ -1,0 +1,84 @@
+{
+  "repository": "yushroom/FishEngine-legacy",
+  "repository_id": 68491302,
+  "commit": "a4b9fb9b0a6dc202f7990e75f4b7d8d5163209d9",
+  "source_url": "https://github.com/yushroom/FishEngine-legacy/tree/a4b9fb9b0a6dc202f7990e75f4b7d8d5163209d9",
+  "readme_path": "README.md",
+  "readme_sha256": "8b73bc2c83814e0c884c7b09e71371363ec32712326eda691c86c1ef9a6e0d7d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "34730fb2b74b3afccd1322b32e7f36a7ed650ce5"
+    },
+    {
+      "path": "Doc",
+      "type": "dir",
+      "sha": "dabe3533e6a42f375402ac3316a3d80b28fba4ec"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "d4622526b6a239deaf9ff13db7985e4fafdb8af3"
+    },
+    {
+      "path": "Example",
+      "type": "dir",
+      "sha": "37ac35d5d8121f4d8bb4c4f8e99e6d290b0d7a41"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "804d178d07daf636e77cb00c33c6a92cafa0b8e0"
+    },
+    {
+      "path": "Notes",
+      "type": "dir",
+      "sha": "ae59bf88660add8ccc4e34c246fe6f6d65ee837f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d03d4d8cb6811bedc915970ec5afba9390466d4e"
+    },
+    {
+      "path": "Script",
+      "type": "dir",
+      "sha": "14eb8ff53bde7db0cd2452023c244b1fa79992ba"
+    },
+    {
+      "path": "Snapshot",
+      "type": "dir",
+      "sha": "753ff4a185d1725ac9846fc294fc83a323d2da11"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4b5833efc6fd0b6e0620c64d731e6597dc7282fe"
+    },
+    {
+      "path": "cmake_osx.sh",
+      "type": "file",
+      "sha": "e3e3b400e578173b5e76615040fdbf4280b3e61f"
+    },
+    {
+      "path": "cmake_win.bat",
+      "type": "file",
+      "sha": "ae1e13299b62f568f0b126d2e180bfbded8b9908"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "de9aebc4f35ee2c3a6380973e962b7bd8930f598"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "ac4fec3d1bfc564dffcbfbb2ce6ed30826845cfe"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native Unity-inspired engine; owned Engine/Script/Example and platform build scripts. Architectural quality unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

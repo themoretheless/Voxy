@@ -1,0 +1,49 @@
+{
+  "repository": "mchakravarty/HaskellSpriteKit",
+  "repository_id": 65123141,
+  "commit": "f4ed000f0c0e0055d0f6d2d87a1e3d6f38996bed",
+  "source_url": "https://github.com/mchakravarty/HaskellSpriteKit/tree/f4ed000f0c0e0055d0f6d2d87a1e3d6f38996bed",
+  "readme_path": "README.md",
+  "readme_sha256": "7b4ae43e5be789596de4917ee7c0a588f55b3da248bef3e7b0ce8071fd4d8c20",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a7a2b82d3090fb909e83165160823b56aa27a3a3"
+    },
+    {
+      "path": "HaskellSpriteKit.xcodeproj",
+      "type": "dir",
+      "sha": "431495a13e1e1126213d001f632fb7b46db50eaa"
+    },
+    {
+      "path": "HaskellSpriteKit",
+      "type": "dir",
+      "sha": "4a63766bdd12d0a93ca7bacceb57b3f878905033"
+    },
+    {
+      "path": "HaskellSpriteKitTests",
+      "type": "dir",
+      "sha": "48de0a43e38defa1aa1fc603de212ec8a902c280"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "b9f4bf1dfd9fe6e6e0f568b82c560103bd197565"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "de93278c1fdb1e17ccfb5d69df657bdce43952a1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6b6086c37c72872b0d0dca799efba2a01789c40a"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Haskell SpriteKit wrapper; native bindings/Xcode build, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

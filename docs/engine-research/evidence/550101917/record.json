@@ -1,0 +1,84 @@
+{
+  "repository": "EggyStudio/3DEngine",
+  "repository_id": 550101917,
+  "commit": "dfe6ab926090e51342382ab263f98a48b29ec1ca",
+  "source_url": "https://github.com/EggyStudio/3DEngine/tree/dfe6ab926090e51342382ab263f98a48b29ec1ca",
+  "readme_path": "README.md",
+  "readme_sha256": "25e6c4fbf70f3b61dc69908d237bac8b61e95f83440bf066e1f1110d746665c2",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "09137014dcee96e75848cd5a2126707345a18d5a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "32517a4a2f27f40ea6281541c71502ad47b8d749"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ed1ddde26ebb21d7d25a402c19acf0dbdd198235"
+    },
+    {
+      "path": "3DEngine.Database",
+      "type": "dir",
+      "sha": "f466e2737251c5149e85aeef0f3157b7fb345c62"
+    },
+    {
+      "path": "3DEngine.Generator",
+      "type": "dir",
+      "sha": "68af1b1e513eb98d4b0c7f79c630eb0b22ff8f1e"
+    },
+    {
+      "path": "3DEngine.Server",
+      "type": "dir",
+      "sha": "3344a3e5113642044a6a7dc2e2fd22aba3445f4c"
+    },
+    {
+      "path": "3DEngine.Tests",
+      "type": "dir",
+      "sha": "57daf28f9406604cdeb30157f5ef4304045e707a"
+    },
+    {
+      "path": "3DEngine.sln",
+      "type": "file",
+      "sha": "7b47167bd3e877512e8f43fe726d65d7b58c154d"
+    },
+    {
+      "path": "3DEngine",
+      "type": "dir",
+      "sha": "bca96823b07898416613efe84435690fc95f0d9f"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "9c602a2b9b69d929108fd218d46f85d3d523df10"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "69efd3b5a42a0c61392972ece298f6e1ec023639"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d0a1fa1482eea82e19510e7920cbe3a03e41f691"
+    },
+    {
+      "path": "Modules",
+      "type": "dir",
+      "sha": "9f57a18b647764d6c386bf2a2451eb68c8f858fc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1a7a87365aa3d0af2cf3e88351a90a03c5fbe49b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# Vulkan/SDL3 game runtime with ECS staged loop and editor projects; early preview, scheduler safety unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

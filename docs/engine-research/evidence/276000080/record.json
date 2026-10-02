@@ -1,0 +1,42 @@
+{
+  "repository": "JamesMcMahon/monocle-engine",
+  "repository_id": 276000080,
+  "commit": "759c15ad6a59c4855db36fd0dfc1970cef9607a5",
+  "source_url": "https://github.com/JamesMcMahon/monocle-engine/tree/759c15ad6a59c4855db36fd0dfc1970cef9607a5",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".hgignore",
+      "type": "file",
+      "sha": "38632efa7451889a44fe6567ec586bda40d6fa29"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "6d120781eeb71d63b0cd37a36c45d045cbb52158"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "7e75cf619c54f7332ab18eb1a6b641010181730c"
+    },
+    {
+      "path": "Monocle.FNA.sln",
+      "type": "file",
+      "sha": "4b0b83c0875d7c89c98807cfca1f2e9aa7ccfc67"
+    },
+    {
+      "path": "Monocle.sln",
+      "type": "file",
+      "sha": "49fb0cd9fe0d4cc906aa44486c3b9ba87c0f0113"
+    },
+    {
+      "path": "Monocle",
+      "type": "dir",
+      "sha": "792f3d1a0639a40500eabee01edcac13b1bad261"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

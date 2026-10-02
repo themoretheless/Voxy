@@ -1,0 +1,174 @@
+{
+  "repository": "loicbourgois/gravitle",
+  "repository_id": 184451320,
+  "commit": "b4a1976e639f3ae2c96934a96847d320fbdb10fa",
+  "source_url": "https://github.com/loicbourgois/gravitle/tree/b4a1976e639f3ae2c96934a96847d320fbdb10fa",
+  "readme_path": "README.md",
+  "readme_sha256": "3714ab14e7a7bcec47befcceb4bf483284581eb2a4371ec577aac809e45e8f9d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "149972fece0f9689f25a0bcb79276e4045b64ef9"
+    },
+    {
+      "path": ".ruff.toml",
+      "type": "file",
+      "sha": "14b2f588d0f0aa20ffa51f3ab97576a1bf67cee2"
+    },
+    {
+      "path": "DEV.md",
+      "type": "file",
+      "sha": "89c28cfc22adf0613d43db3095b436bfcaebe356"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "02e3d2707afe114fb661f8438a4a28c6cf3899f7"
+    },
+    {
+      "path": "all.sh",
+      "type": "file",
+      "sha": "998af23f64ef388f883a9807aa97516cc783a7d0"
+    },
+    {
+      "path": "bench.sh",
+      "type": "file",
+      "sha": "0ccecd8bc2e97f24ada20360cd6f268bb0b9b032"
+    },
+    {
+      "path": "blueprint",
+      "type": "dir",
+      "sha": "cc50c686f5e7bd502cd321d25b0ea538bebf4bff"
+    },
+    {
+      "path": "build_chrono.sh",
+      "type": "file",
+      "sha": "caaf7bde372550198b0909f93f92e5eff43c8e10"
+    },
+    {
+      "path": "build_mining.sh",
+      "type": "file",
+      "sha": "b1f14daf725e435836736ad0ecc3e54a9a8e1a1d"
+    },
+    {
+      "path": "build_slingshot.sh",
+      "type": "file",
+      "sha": "a600d0e400d44d36c4db5eafc4620dbae0531f83"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "feda1dd4606dc5f3bea02381e16c9315860751d5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d5b90b4ab7e026c16766e48d851e56899cb9fbc4"
+    },
+    {
+      "path": "format.sh",
+      "type": "file",
+      "sha": "d810cf348fc059fb8ae46c6c0190c9e96fb547e7"
+    },
+    {
+      "path": "front.sh",
+      "type": "file",
+      "sha": "531f8e63ddf18d4bb62ecd2c2b40d60a0fa1bfd7"
+    },
+    {
+      "path": "front",
+      "type": "dir",
+      "sha": "5dc409a29be9e972c2a1b9ea304414f871cc5c56"
+    },
+    {
+      "path": "front_deployed.sh",
+      "type": "file",
+      "sha": "2649039792d018226dbb459e92a2fbe3af3ac399"
+    },
+    {
+      "path": "generate.sh",
+      "type": "file",
+      "sha": "959697e70a4a5bc1da304e11c90cdbbd03be3bb2"
+    },
+    {
+      "path": "generate",
+      "type": "dir",
+      "sha": "e9d4fa892a7969b117f213f17eb1c23a0f61ef7c"
+    },
+    {
+      "path": "gravithrust",
+      "type": "dir",
+      "sha": "bb7bf39e5d8cd5dbe17fdbeb10b803219f67e36d"
+    },
+    {
+      "path": "issues",
+      "type": "dir",
+      "sha": "45b1142e8020d89e43945ab164097edbad66f48d"
+    },
+    {
+      "path": "lint_all.sh",
+      "type": "file",
+      "sha": "952439dea02c0ee0b2d6693aacbe8c57d56e5970"
+    },
+    {
+      "path": "lint_chrono.sh",
+      "type": "file",
+      "sha": "ba87342a9a44e093e0001a8a610a1b8e36b25b35"
+    },
+    {
+      "path": "lint_gravithrust.sh",
+      "type": "file",
+      "sha": "73498066d4998447452a9cad92839d4650a38c9f"
+    },
+    {
+      "path": "lint_python.sh",
+      "type": "file",
+      "sha": "fbc239f265d480a90e1a30e697bfa5ddc627a944"
+    },
+    {
+      "path": "lint_slingshot.sh",
+      "type": "file",
+      "sha": "9a34a9a1860ab46b227687f70e17a466fc79822c"
+    },
+    {
+      "path": "predeploy.sh",
+      "type": "file",
+      "sha": "6adc1b067be43df772c90c069fae398fb2a72048"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "ede3eb4e8ab900b597892cef77a87a8c621007bd"
+    },
+    {
+      "path": "research",
+      "type": "dir",
+      "sha": "69c2dd06948ddaba087832e66cd5be907f608dfc"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "a3a059009ad833a2a2ae5c78779815e680f42ff5"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "0be75b39495eac70f4db193c9aa4f8f4a1d5d3c6"
+    },
+    {
+      "path": "test.sh",
+      "type": "file",
+      "sha": "9c1d3c25276a2af9230271cae659bfaf420c7cc7"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Space game project with build/frontend tools; README does not establish a reusable engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,54 @@
+{
+  "repository": "LazyTurtle/YetAnotherGraphPlugin",
+  "repository_id": 150600541,
+  "commit": "5a947ea166140a9f941b0bc19597e2909eeeab45",
+  "source_url": "https://github.com/LazyTurtle/YetAnotherGraphPlugin/tree/5a947ea166140a9f941b0bc19597e2909eeeab45",
+  "readme_path": "README.md",
+  "readme_sha256": "454f453a5e4fd6287bfbd77d8dc66b3bfa3144cc7a5fd2cb708a58517806c910",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d8de67d1fb1ff537a6624a5311e86d29dc0b15a1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "507d19c13c205d9acf0e853c4aafdba9c8e6e6ce"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "85b5c1eac283083deb7885677e6a5ffe2f462e7b"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "e8a0ab134dd9c3835a425249ab90d91dea8c9e28"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "1e4cff1bef6d043463317216df64a50363c3c8c0"
+    },
+    {
+      "path": "YetAnotherGraphPlugin.uplugin",
+      "type": "file",
+      "sha": "df65f6b8658a8b8395deb87c4addf15f708e5297"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6eefb346e2ca7b16015e0291c78ecda9471519b4"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "UE4 graph asset authoring/navigation plugin with blueprintable nodes, external Unreal runtime required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,37 @@
+{
+  "repository": "tomankirilov/VPainter",
+  "repository_id": 253270755,
+  "commit": "4008958674894cf1e043822eb540bd96dac53328",
+  "source_url": "https://github.com/tomankirilov/VPainter/tree/4008958674894cf1e043822eb540bd96dac53328",
+  "readme_path": "README.md",
+  "readme_sha256": "82110e6b7847afe870fefcceb95c9377dac10c65bbd34abce1dabae9d156cea6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "407895b718dafa9fc7e8ec74c06d64ba9c2bc791"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ace50d935800dd4ca1b41f15ce053ab441d68677"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b97a483d84ea98a389d3f562deeae7aec121bf5b"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "1ba51501598d8384ba5f795285ab1751821601c4"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "552912bb5d6caa44865fa1e630f37d4507983fec"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

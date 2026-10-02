@@ -1,0 +1,149 @@
+{
+  "repository": "piqnt/planck.js",
+  "repository_id": 54445812,
+  "commit": "93dd64df0fd2e5388551b159bebc6306e7af580a",
+  "source_url": "https://github.com/piqnt/planck.js/tree/93dd64df0fd2e5388551b159bebc6306e7af580a",
+  "readme_path": "README.md",
+  "readme_sha256": "9b9c99248959f370409c11ff8db2bccbe1d988101976750bc5bb7b728cb56785",
+  "entries": [
+    {
+      "path": ".changeset",
+      "type": "dir",
+      "sha": "7b21b058fd0bd4fe628d9b5b14d7d8f1147b3726"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "176a458f94e0ea5272ce67c36bf30b6be9caf623"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b91b220bb4a00493245b80f912e0f39927b234dd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "74906e1f4da3e964702471727cc9a0424b5e50fe"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "1f04cba4feb0959bf3eb1f80d7c72394f2591592"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "a02cfa248c241dc39dd88ef68196e1c98e696312"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "039c8724dae805ad179271021a7bf3b66f476e6d"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "50f78de35df83673b8d78f5cec4b531c829abe33"
+    },
+    {
+      "path": "HelloWorld.ts",
+      "type": "file",
+      "sha": "e74f1b044b12fd1ed69e8572e4e4e2a33907e4f5"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "494699749e775cc8e2ee447162f0461d56bdadea"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "40c1670f71e62134e44998bd4826c0eea7c44513"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "4d7770aedfd53dac70347ebea242b1683d453bd0"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "0be1a3e7e6d5ccb54b952a65b081932d7cb70df5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "1fdc50b59e34a50e00e0675eb270f20d070a5b3b"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "0ff6b7f114a0fa9f94c43d293630298efc4a4e52"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "b3eaa095ccf07b16d13a51b1ad79544e859289de"
+    },
+    {
+      "path": "index.d.ts",
+      "type": "file",
+      "sha": "f9fd185ccd46bd9a1151c6b8dc7acc859661c93e"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "e86d02f8bf518d042cb4911ab3a93f9def521922"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a3e64fa99ef6563254fd2b50248d0d7c1b3b6e3f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "334c63ab9da21c6b5bd7125044bd50b22b94d78d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4f65891a3b9bb14e2dfb071dbc09daceb3972ee9"
+    },
+    {
+      "path": "test-d",
+      "type": "dir",
+      "sha": "965fc316a9248d2d2510a74fd98ac44083af03fe"
+    },
+    {
+      "path": "testbed",
+      "type": "dir",
+      "sha": "2dfad58595839a5d61c38311f730d08f5709c648"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "531aff283d50349a1bc8ec8ecb1a4b8ab3fd8275"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "84d5412cad5c5b2ba87614f120ce62de2e7f9429"
+    },
+    {
+      "path": "types",
+      "type": "dir",
+      "sha": "1506caa722f53f72c8135a9ae1a815d73f0de70e"
+    },
+    {
+      "path": "vite.config.mts",
+      "type": "file",
+      "sha": "89cb2723013270ae922dd86fb2a5e4b846568664"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Box2D physics rewrite; src and physics testbed implement subsystem.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

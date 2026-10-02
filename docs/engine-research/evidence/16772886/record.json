@@ -1,0 +1,64 @@
+{
+  "repository": "egret-labs/egret-core",
+  "repository_id": 16772886,
+  "commit": "5913071f8e7c35ae223d44b1f681f814333bfcc3",
+  "source_url": "https://github.com/egret-labs/egret-core/tree/5913071f8e7c35ae223d44b1f681f814333bfcc3",
+  "readme_path": "README.md",
+  "readme_sha256": "71febf9451c1f34f411f832f70d8b2a03443f8be4c68a399e77dfdc9c290a23e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "135a7d6223b17d8c1a45a19d7556d6d8a756a3ae"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "6f876e9c61232b7a14eb0f66c2c1b9b05052f583"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d02532cdb01343b5189a2c04e5ad900a004cae5f"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "0691c5e0e78a802a8319d5bf466d8309963f4012"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "95771286896c838f1d6c87c230abfb2bd5d16a10"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0d2718cb651c473acf4946debce64523a389a121"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "fbe8ff7a9e19f1eea8bb3bfe95bf845bff5994ef"
+    },
+    {
+      "path": "package_en.json",
+      "type": "file",
+      "sha": "fcdb96fbe7409980ddccc0c6045e87ce3f16f0f5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fc31e54f230ee31664572c5a5390d437e92aaec1"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a50e5c12739f75de7fbf6636f03554d344cb1702"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies HTML5 engine with rendering/GUI/audio/assets; src/tools and npm build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

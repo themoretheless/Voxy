@@ -1,0 +1,1118 @@
+{
+  "before": 25,
+  "after": 25,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        23018,
+        45208
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0035991597913051982,
+      "local_measure_after_m": 0.0035399591649096264
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        45208,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.005340787984095699,
+      "local_measure_after_m": 0.005033816413089581
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00154891386745379,
+      "local_measure_after_m": 0.0015439116345108644
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        45210,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0018293208045531645,
+      "local_measure_after_m": 0.0017947382850894938
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        45211,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00139586184163466,
+      "local_measure_after_m": 0.0013957749382527117
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002432665776496949,
+      "local_measure_after_m": 0.0023953840977018683
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        45210,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0024113619024063466,
+      "local_measure_after_m": 0.0023712783570669247
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001654413336259767,
+      "local_measure_after_m": 0.0016318520206032496
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020485747408900993,
+      "local_measure_after_m": 0.0020036238781202245
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914,
+        45217,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0016835312287670635,
+      "local_measure_after_m": 0.001658481481203769
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        23018,
+        45205,
+        45234
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.003576059944251712,
+      "local_measure_after_m": 0.0034015781672787227
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        28061,
+        45232,
+        45241
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002705302982446432,
+      "local_measure_after_m": 0.0027024918432595286
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37467,
+        45232,
+        45241
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0027024918432595286,
+      "local_measure_after_m": 0.0026971566396901494
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37467,
+        45241,
+        45245
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0026971566396901494,
+      "local_measure_after_m": 0.0026817999372706815
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37487,
+        45208,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.005024932927050234,
+      "local_measure_after_m": 0.004961318727431702
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37487,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002236462286742697,
+      "local_measure_after_m": 0.0022286730742659302
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37487,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0028311485847511736,
+      "local_measure_after_m": 0.0028299048905647485
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37488,
+        45205,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004688018858726714,
+      "local_measure_after_m": 0.00461381035552516
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37488,
+        45217,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002942611110732568,
+      "local_measure_after_m": 0.002935425079748666
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45205,
+        45234,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004690286925567759,
+      "local_measure_after_m": 0.004592049906930924
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45211,
+        45249,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002324351279804509,
+      "local_measure_after_m": 0.0023035127200865834
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45217,
+        45231,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0028220041575848704,
+      "local_measure_after_m": 0.002813099664890901
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45217,
+        45231,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0015272336148897073,
+      "local_measure_after_m": 0.0015271196996270464
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45230,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0016092879439328974,
+      "local_measure_after_m": 0.0015655835336203074
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45230,
+        45249,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002253507213849044,
+      "local_measure_after_m": 0.0022235072991539317
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        45208,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00458652182571231,
+      "local_measure_after_m": 0.004565868839261038
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001392166612586067,
+      "local_measure_after_m": 0.0012374429728906323
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        45210,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0014874623843680042,
+      "local_measure_after_m": 0.0014114318866644544
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        45211,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001169615480373697,
+      "local_measure_after_m": 0.0011695848533048267
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5579,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020319337312569583,
+      "local_measure_after_m": 0.0018891545238382598
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5579,
+        45210,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001956091854617858,
+      "local_measure_after_m": 0.0019161057137821746
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        10914,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0017605193482641745,
+      "local_measure_after_m": 0.0017306500088201996
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        23018,
+        45205,
+        45234
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.003304289965235392,
+      "local_measure_after_m": 0.0032849697266454864
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        28061,
+        45232,
+        45241
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002173706939822817,
+      "local_measure_after_m": 0.0021710043945623626
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37487,
+        45208,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004704803379648691,
+      "local_measure_after_m": 0.004630095817596659
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37487,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002458447516478731,
+      "local_measure_after_m": 0.002457227057632373
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37487,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002601149297156371,
+      "local_measure_after_m": 0.0025930791097179785
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37488,
+        45205,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0042772212031662775,
+      "local_measure_after_m": 0.00425289920758408
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45205,
+        45234,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00425289920758408,
+      "local_measure_after_m": 0.004235748298809495
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45217,
+        45231,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0025779440179905036,
+      "local_measure_after_m": 0.0025776084163909516
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45230,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001351252341163478,
+      "local_measure_after_m": 0.0012966288993423213
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5539,
+        23018,
+        45208
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0030624097926434204,
+      "local_measure_after_m": 0.0030181763335368045
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5539,
+        45208,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004338221330375942,
+      "local_measure_after_m": 0.004278922989629359
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5577,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0010038954443739572,
+      "local_measure_after_m": 0.0009426218682670278
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5577,
+        45211,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0010082221033597086,
+      "local_measure_after_m": 0.001008213080541109
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5579,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001725797643711291,
+      "local_measure_after_m": 0.0016556767912134084
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5579,
+        45210,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0017313717545284315,
+      "local_measure_after_m": 0.0016937277312130228
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        10914,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0015430185151273442,
+      "local_measure_after_m": 0.0015405986300433318
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        23018,
+        45205,
+        45234
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.003143772935104305,
+      "local_measure_after_m": 0.003120164182681824
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        28061,
+        45232,
+        45241
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0019473334780023858,
+      "local_measure_after_m": 0.0019404784677985742
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37487,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0021755605695463996,
+      "local_measure_after_m": 0.0021751425064316606
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37487,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0023455952863683216,
+      "local_measure_after_m": 0.002343219530061984
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37488,
+        45205,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004104450206166904,
+      "local_measure_after_m": 0.004055758388827333
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37488,
+        45217,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00233091052457915,
+      "local_measure_after_m": 0.002322349479920115
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45205,
+        45234,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0041163101309710315,
+      "local_measure_after_m": 0.004104300876042694
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45211,
+        45249,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0018102426029945851,
+      "local_measure_after_m": 0.0018059556126861652
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45217,
+        45231,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0023323484004082145,
+      "local_measure_after_m": 0.002315420186251688
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45217,
+        45231,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00130112399630596,
+      "local_measure_after_m": 0.001298912653840341
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45230,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001181205431456183,
+      "local_measure_after_m": 0.0011584706361473106
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45230,
+        45249,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0018042896536327887,
+      "local_measure_after_m": 0.0017669627142338385
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5539,
+        45208,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004176445384451509,
+      "local_measure_after_m": 0.0041756004737785015
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5577,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0008346058392759702,
+      "local_measure_after_m": 0.0007490690668806832
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5577,
+        45211,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0008551701606146968,
+      "local_measure_after_m": 0.000854594081545671
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5579,
+        45210,
+        45239
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001481069387302393,
+      "local_measure_after_m": 0.001474604120456413
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5579,
+        45210,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001518213153705468,
+      "local_measure_after_m": 0.0015015086568298563
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5579,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0010816808463096391,
+      "local_measure_after_m": 0.0010630880402198633
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        10914,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001472042676617759,
+      "local_measure_after_m": 0.001459775387721156
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        10914,
+        45217,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0013044889448137616,
+      "local_measure_after_m": 0.001288927083435092
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        28061,
+        45232,
+        45241
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001748254321506651,
+      "local_measure_after_m": 0.0017411076877339362
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37467,
+        45232,
+        45241
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0017411076877339362,
+      "local_measure_after_m": 0.0017172816488392726
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37467,
+        45241,
+        45245
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0017172816488392726,
+      "local_measure_after_m": 0.001706222152886564
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37487,
+        45216,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0021811097910444006,
+      "local_measure_after_m": 0.0021794570315204044
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37487,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0022754690744785926,
+      "local_measure_after_m": 0.002274816093031617
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37488,
+        45205,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004118541658161817,
+      "local_measure_after_m": 0.004112190688208955
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37488,
+        45217,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0023288154798795633,
+      "local_measure_after_m": 0.002308363010326333
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45205,
+        45234,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.003996763624455398,
+      "local_measure_after_m": 0.003961671155214837
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45211,
+        45249,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0015037703549925173,
+      "local_measure_after_m": 0.0015022262637740765
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45217,
+        45231,
+        45261
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0022420035507092965,
+      "local_measure_after_m": 0.0022406168434884396
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45217,
+        45231,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0012697286758592368,
+      "local_measure_after_m": 0.0012680645695200103
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45230,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0009999514200910542,
+      "local_measure_after_m": 0.0009733189591378689
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": true,
+  "edge_groups": false,
+  "project_bound": true,
+  "reduce_measure": true,
+  "diagonal_directions": true,
+  "initial_measure_m": 0.008515615411216336,
+  "final_measure_m": 0.005964476448802668,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        47274,
+        48800
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48801,
+        48843
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48856
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33128,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554562,
+      "forbidden_pairs": [
+        [
+          47084,
+          49012
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.0029999999999970116,
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5670818431281526,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "3040455d78022ba100e07cf87b06377270d3935dcd5781965c124df682c7fe98",
+  "reference_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa",
+  "candidate_sha256": "001a58bba05c88ba70e7f5f4062defe7ac2b300dd898bd7baa7327954cc32476",
+  "proposal_distances_m": [
+    0.002,
+    -0.002,
+    0.0015,
+    -0.0015,
+    0.0003,
+    -0.0003,
+    0.0001,
+    -0.0001,
+    5e-05,
+    -5e-05,
+    2.5e-05,
+    -2.5e-05
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

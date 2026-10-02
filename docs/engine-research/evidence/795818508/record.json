@@ -1,0 +1,109 @@
+{
+  "repository": "Syrillian/syrillian",
+  "repository_id": 795818508,
+  "commit": "7da8ec209957b828cea9f2d88da4155a465d107a",
+  "source_url": "https://github.com/Syrillian/syrillian/tree/7da8ec209957b828cea9f2d88da4155a465d107a",
+  "readme_path": "README.md",
+  "readme_sha256": "ce39cc34adc317ef0ea7f84b6c1d6845a3dc0a0f7190e99810d46eb235edbf17",
+  "entries": [
+    {
+      "path": ".deepsource.toml",
+      "type": "file",
+      "sha": "029a8db954deec51602795913a8838a20bf797b5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e4c8ec6f61e0ee45e6d6af9832820c1d646e62db"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6875ed37238b52c31789d0a2ec6c6a3a8b6b37d0"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "24cc18878f8a824bd2854d3d09e0d5fb9dd6b1ef"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "d51790861778c8d39641da296d5cc3859bf74b59"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d410b6701ded86f592a2b86bb6b3ab8975c9963b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4b62cf71a0142e6d8a2106aceb686197ff4739bd"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "1387dc38fa09e8152925fa89e9bc8bf1dd64bb23"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "d47d88c200899fc1b79659641ae609dd80279a03"
+    },
+    {
+      "path": "syrillian",
+      "type": "dir",
+      "sha": "a237177109d35b599c4a3b920676ae2144ea6596"
+    },
+    {
+      "path": "syrillian_asset",
+      "type": "dir",
+      "sha": "360c084d5e31fdcebf09d2fed6fffbbce042e2d7"
+    },
+    {
+      "path": "syrillian_components",
+      "type": "dir",
+      "sha": "fc6c373e97359419881f3e4504c776c314adf74a"
+    },
+    {
+      "path": "syrillian_examples",
+      "type": "dir",
+      "sha": "137a528278e2488180766591fcaff43752a40d39"
+    },
+    {
+      "path": "syrillian_macros",
+      "type": "dir",
+      "sha": "5156778cc0c89406f8c60eb826809e9cf4d2517b"
+    },
+    {
+      "path": "syrillian_reflect",
+      "type": "dir",
+      "sha": "f3809cab1798a8194065bb7af5b3feeb6914fac3"
+    },
+    {
+      "path": "syrillian_render",
+      "type": "dir",
+      "sha": "91d0a299ffe81c3a957e00b86b59423240de2b43"
+    },
+    {
+      "path": "syrillian_scene",
+      "type": "dir",
+      "sha": "74230f0ebd435a6343d110feb29c50f1012b6ccd"
+    },
+    {
+      "path": "syrillian_shadergen",
+      "type": "dir",
+      "sha": "af9fd57f381f10ded95699d44836a368d58bc610"
+    },
+    {
+      "path": "syrillian_utils",
+      "type": "dir",
+      "sha": "2f3b3aa36a66c34378d5b8c63c6d33b99113a752"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust world/scene/component/prefab runtime with separated assets/rendering, Rapier physics, winit/gilrs input and examples; GUI editor remains underway.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

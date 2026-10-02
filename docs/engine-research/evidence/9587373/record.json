@@ -1,0 +1,139 @@
+{
+  "repository": "jdolan/quetoo",
+  "repository_id": 9587373,
+  "commit": "15b2982005e929fde974a760e3a65b357169bdfd",
+  "source_url": "https://github.com/jdolan/quetoo/tree/15b2982005e929fde974a760e3a65b357169bdfd",
+  "readme_path": "README.md",
+  "readme_sha256": "efe7d390bb06e979d906fbf540f7636f3df47822e5c1ccb7cb4bccc0790bf2b6",
+  "entries": [
+    {
+      "path": ".autotools",
+      "type": "file",
+      "sha": "7e2a9de3c58843ca51f18300260a39692bee9bb6"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "5eeae3536130378f81cf3a8f372c41292245c10a"
+    },
+    {
+      "path": ".cproject",
+      "type": "file",
+      "sha": "2a7cad27a630af9519a09ecaaf9041ff4d47e50c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f11cfd857a82eea17d351f3a18b134777d4c93c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6a9b6dd693d37a785a2178eb2cfa214188bff4c3"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "0532b1153dd45a14589bf73608572e8006b06668"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "0b60ac5727e9da1041eb9250226f6202dfc8fb62"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "fa07185dea28b03e137471dab73eaf3b363e203e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "403ea7b000a2110596a55a59eb86abe160bdc7fa"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "ccbb51203410c7f78d0ee3ace1388c36ea7f39fd"
+    },
+    {
+      "path": "Makefile.am",
+      "type": "file",
+      "sha": "c50cb06ae9d19cd31461800866458a903ee67fc6"
+    },
+    {
+      "path": "Quetoo.code-workspace",
+      "type": "file",
+      "sha": "a7b67dccb5318917c5aabbb428734b3062d70f33"
+    },
+    {
+      "path": "Quetoo.vs15",
+      "type": "dir",
+      "sha": "6cbde953556b1054cb224a6b1d6cfbb2cff1b03e"
+    },
+    {
+      "path": "Quetoo.xcodeproj",
+      "type": "dir",
+      "sha": "2b47710454aff5728e0221c5607e3ef2ee3155f8"
+    },
+    {
+      "path": "Quetoo.xcworkspace",
+      "type": "dir",
+      "sha": "a836c3058ea4992b057ec294ef18d18380a3cd0d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "73a70c9e81dec3a52fa93f982b898e26a3895011"
+    },
+    {
+      "path": "TODO",
+      "type": "file",
+      "sha": "35c756974c8ddb35434be8f72b5e2e99b625c226"
+    },
+    {
+      "path": "apple",
+      "type": "dir",
+      "sha": "4005f8159c665f6ddd1a011142308f6e92aa3bf8"
+    },
+    {
+      "path": "configure.ac",
+      "type": "file",
+      "sha": "c538259be17d18a69e969b274e34e6795bc4b413"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "ac99355af67c3f2dff51784285c8a67780530118"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "9933e33c97b6af5f2ba1e80612fda257e69cfd6a"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "42b16b99d20bf33dcbd6a75e1713d4b4b2b9f49d"
+    },
+    {
+      "path": "m4",
+      "type": "dir",
+      "sha": "a12c47c34511d13a4ab5df68e876a0e93da865e2"
+    },
+    {
+      "path": "quetoo-edge.jpg",
+      "type": "file",
+      "sha": "c8fcf639e940325a95b140f44430947cd0403fad"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c6232b0be5809771d16243baeafd4607a3e6ec71"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify id Tech 2-derived FPS runtime; native source/platform projects and autotools build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

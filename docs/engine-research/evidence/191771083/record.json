@@ -1,0 +1,89 @@
+{
+  "repository": "Overload-Technologies/Overload",
+  "repository_id": 191771083,
+  "commit": "d013cf05a90b033f1a02604aedc39d84050662ff",
+  "source_url": "https://github.com/Overload-Technologies/Overload/tree/d013cf05a90b033f1a02604aedc39d84050662ff",
+  "readme_path": "README.md",
+  "readme_sha256": "5f11a9fe2e53e0d51a093857bfc7ef4a20d38072a04db5e8b99a6b2ba4eefbd0",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0717edc0de9f723f979128786c44dae5c9769ebc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "56642482c3fa37b5fbc5a8f49f5189f4519a12bb"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "07e27130bd941308995820a4e087d096439bda27"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2f7ddf58e602cecc75a2fc94d2d502db999af69f"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "c9aed6c3965c8e3250ce7961f8c7853ba603cce1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "28d8eedc9f76e1675f44808a0c0cdb142731a42e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ba3172f231d8b6b3392e589f745b0c06a1a2eac7"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "e92cf61b7bffde8e7f0330bbf39c0e4d89105c3f"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "80799dbeca8b781c84ccaf00966fe62ef5eb0bf7"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "b87a4942dbafee3f3434c22d2de2d09de6962516"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "5095e7e66fdedc1eedcce58c3ab4e586c056c9e8"
+    },
+    {
+      "path": "VERSION.txt",
+      "type": "file",
+      "sha": "2e0e38c63a62a412640833b517f8f2a46418cd27"
+    },
+    {
+      "path": "gen_proj.bat",
+      "type": "file",
+      "sha": "a93d741338c2051d0426de39dad1202bd68cdcb5"
+    },
+    {
+      "path": "gen_proj.sh",
+      "type": "file",
+      "sha": "0f0613dfbf232cc27e41d5507124f0999d9da7d3"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "471efcd547cf9c5c45f644f97b700b5074002344"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C++/Lua engine and SDK for game/editor; Sources plus premake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

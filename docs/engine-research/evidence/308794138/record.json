@@ -1,0 +1,84 @@
+{
+  "repository": "LAGameStudio/apolune",
+  "repository_id": 308794138,
+  "commit": "f83bdbfb4df45bb96a8f0bf3e4ec33ed72218fec",
+  "source_url": "https://github.com/LAGameStudio/apolune/tree/f83bdbfb4df45bb96a8f0bf3e4ec33ed72218fec",
+  "readme_path": "README.md",
+  "readme_sha256": "971626b1ab0786cf179d9c83af122713e7b1db93461e6d6d79f2686e2b5d7665",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "41bfe9ff622310b9a604a9a3cecddf8cd88d4a8f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "081c85524f098fe8a38a0712257a977419ac55db"
+    },
+    {
+      "path": "Apolune.sln",
+      "type": "file",
+      "sha": "bc2671eac0091bed5fd386692fbf5c6663b0cb49"
+    },
+    {
+      "path": "Apolune",
+      "type": "dir",
+      "sha": "5364afb8ec776c4cf75fcb310893365b043cb2fa"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "28375a95d350ce23e2b6a515ebc96d0c381f4b61"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d1a54bfaee1a0673cbc4559b4215037f88dcc3c6"
+    },
+    {
+      "path": "DLLs",
+      "type": "dir",
+      "sha": "881bcfecc5ff446de21ab014568ca70522656694"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2fe6650434ed33f701c050a1751950fda2a25286"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4c5afff86b7d5bf2ca7c6a08ba3d1ef724fcaba8"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "034e848032092eaf8ef96eac731b6ed5961987f3"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "fc24e7a62dc288c776f8448cd073a01e7721ed32"
+    },
+    {
+      "path": "libdeps",
+      "type": "dir",
+      "sha": "d6af7b9489bb0defc33a79abb2ff8cdc4b6eb1cb"
+    },
+    {
+      "path": "pingme.txt",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "pull_request_template.md",
+      "type": "file",
+      "sha": "46b4f283db51672827e9cac7e471cbf22499ffa1"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Lost Astronaut game creation framework bundled with Apolune game example; README identifies primary framework scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

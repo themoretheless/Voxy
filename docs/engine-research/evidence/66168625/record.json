@@ -1,0 +1,124 @@
+{
+  "repository": "bitwes/Gut",
+  "repository_id": 66168625,
+  "commit": "cf45f668709d988346e766afee916d4169a9283b",
+  "source_url": "https://github.com/bitwes/Gut/tree/cf45f668709d988346e766afee916d4169a9283b",
+  "readme_path": "README.md",
+  "readme_sha256": "79e2b77c2c490f2ea7be2763c781e97c8b19a31bedfbc7510ac3610edf37373a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "96aa1cd269a63605ba4668ba8c8943d09e2bcfe4"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d35560a45b0a2bccba147d7db2bc442ad04db91e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3ddb461c94a3bbc77b3d9551fdb1f8128856650f"
+    },
+    {
+      "path": ".gutconfig.json",
+      "type": "file",
+      "sha": "d8a04816f25ab3704b75d1ed2d8915f552379d6c"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "812fe7fc1651684d5b6d905ca2c13020eea120fd"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "c4ad511bab9474d5c4c77f600afbea96a765f079"
+    },
+    {
+      "path": "GODOT_4_README.md",
+      "type": "file",
+      "sha": "817a7ddaf630402e38dca12ae3bc0d4e0e64e110"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f96ec82b96c4fd06abdb2e297fd12ee06e1c148b"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "63e20e26dbf8f4609a923998ed51ac9973155a8f"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "a1cabde43ea4ef2bb83f561364cf41aa5a5ad0e3"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "3cf9cda5ce6fcad694a09b3a86debc713b4d4fa2"
+    },
+    {
+      "path": "error_tracker.gd.uid",
+      "type": "file",
+      "sha": "8c40e7a5d4f0053f16a2c4a936aa93067ae7fa83"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "27178277312e6162496af9ac2e29ed3c9a1a9ca3"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "430b967c95e4fcd04392db6abbd35572fdbc12a2"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "a88c701dfd31165c7a88a3abe5615300a0c956ea"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "e1c445cf6acad460c892ce8d9dfa67e331b00a4a"
+    },
+    {
+      "path": "readme_gutconfig.json",
+      "type": "file",
+      "sha": "65b7b72ed0fa4b45a4c0fb75168b28b00ff67d64"
+    },
+    {
+      "path": "scenes",
+      "type": "dir",
+      "sha": "b6487754079f31a07fef5fed791ad222aee722f4"
+    },
+    {
+      "path": "scratch",
+      "type": "dir",
+      "sha": "199fd5bd915ae59bcffd18823b138dcf514b9672"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f6526351d27cda0e8913a04960ccf877ed4507b1"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "c8818c06bc4f614426e820b2ae0a82bd96eb183c"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "6b01e344c8accc6867f6510eaee82f537cceeb40"
+    }
+  ],
+  "classification": "excluded_test_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot GDScript unit-test framework, not engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

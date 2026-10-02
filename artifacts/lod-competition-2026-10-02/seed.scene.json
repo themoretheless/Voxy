@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "model-a",
+      "parent": null,
+      "name": "Model A",
+      "active": true,
+      "translation": [
+        -0.25,
+        0,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "a"
+      }
+    },
+    {
+      "id": "model-b",
+      "parent": null,
+      "name": "Model B",
+      "active": true,
+      "translation": [
+        0.25,
+        0,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "b"
+      }
+    }
+  ]
+}

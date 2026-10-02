@@ -1,0 +1,154 @@
+{
+  "repository": "jjppof/goldensun_html5",
+  "repository_id": 78283334,
+  "commit": "b8b086dc4a15025778acd1ce861c4ef7d6fda426",
+  "source_url": "https://github.com/jjppof/goldensun_html5/tree/b8b086dc4a15025778acd1ce861c4ef7d6fda426",
+  "readme_path": "README.md",
+  "readme_sha256": "c1d395a5e734564d789d9a78b549448113ce2fa964feb0d4058c27aaf30f7a9c",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "45d6d5736c1ec432e3c88bfd78e2240656d1104c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b99567489a9ebbf98d3d15aa9cf90b3e3d1053df"
+    },
+    {
+      "path": ".gitconfig",
+      "type": "file",
+      "sha": "7b2b20f00d521a8d2c49fb181faf6d7add79c89f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0ff01d2a40bd4bdf6480330ad2a47d5e663494bc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2ffa309d2c76e323ad6a552da0d7a888b5a9da82"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "5561fd8b89b0facab3c153555362ad674bf72ce2"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "b283d0491c048ca6edbf3a592101de57b4535442"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "8b6b07769028195175874b93c7621471d27f7795"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "72fa8910e2f734740feab57aeb8042a96f0a5ab3"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "8bc993abe56a873906b96139154365a69cf6d0b5"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "4c9bb0ad061102d5263469ae44e347db1cc85708"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5e09d54237d3fc9ca2c14574699b64c57cce64b3"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "247fdab3f5d38edb991fe7ba521c8d97d12cba66"
+    },
+    {
+      "path": "base",
+      "type": "dir",
+      "sha": "329c79aa87f42d95aee8c6cd09d2a853f6601447"
+    },
+    {
+      "path": "electron",
+      "type": "dir",
+      "sha": "f77a67a5d1e7558c3c0f1293046082c6af2b41d4"
+    },
+    {
+      "path": "help",
+      "type": "dir",
+      "sha": "ee9d6873d206eab43425e211bcb88971bfe07d24"
+    },
+    {
+      "path": "index-electron.html",
+      "type": "file",
+      "sha": "c68518294833ffdb4877252cae196993d4dfc70f"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "1a7ac541cd61b718820578999d19e2f4ae9420ac"
+    },
+    {
+      "path": "npm-shrinkwrap.json",
+      "type": "file",
+      "sha": "96d8202d6fec7b9b49d99dbad6a7aca6fa6af641"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "a5715bcc50f7c6c48b37c238be76bc9b363ce51c"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "0498da58503d0be2334b6bd860779491043ca2ab"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "270b265caba966973c504d913b1c27e8730e1fe9"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "4a1718516e2f344fef18fba4bf867fc6721de4e9"
+    },
+    {
+      "path": "tsconfig.prod.json",
+      "type": "file",
+      "sha": "8831d47805aa95762547490060f9f4d2d62b0d43"
+    },
+    {
+      "path": "types",
+      "type": "dir",
+      "sha": "e65db6984e8f9244a18d5f45ab58bbfdd7771c0a"
+    },
+    {
+      "path": "webpack.config.common.js",
+      "type": "file",
+      "sha": "d131824332856dab1d6c6918cb1b1393b549a1c6"
+    },
+    {
+      "path": "webpack.config.dev.js",
+      "type": "file",
+      "sha": "bda3194355e934e600f0e42e94a348073e84b7b2"
+    },
+    {
+      "path": "webpack.config.prod.js",
+      "type": "file",
+      "sha": "83a7e8c80b7a37fb21354c6dbb705ad25f9d6ceb"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Golden Sun-oriented runtime on Phaser; base/assets and TypeScript/npm build, underlying engine dependency retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

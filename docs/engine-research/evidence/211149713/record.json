@@ -1,0 +1,97 @@
+{
+  "repository": "NeoSpark314/godot_oculus_quest_toolkit",
+  "repository_id": 211149713,
+  "commit": "6567608db369d098af8b89dd552b53773e1ebe98",
+  "source_url": "https://github.com/NeoSpark314/godot_oculus_quest_toolkit/tree/6567608db369d098af8b89dd552b53773e1ebe98",
+  "readme_path": "README.md",
+  "readme_sha256": "894e5941cc3ac4735967ebb06364a28f9c38cbd219287cb1804e9377799efbb2",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3186df9031aa6edf9d65091aac48664523685afb"
+    },
+    {
+      "path": "GameMain.gd",
+      "type": "file",
+      "sha": "e2524b89637793ddc6bdf8a2cfbae31804cb3563"
+    },
+    {
+      "path": "GameMain.tscn",
+      "type": "file",
+      "sha": "e95fdf7eece4d5a6f4a5f48688e38cc122c22eaa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "58ba33e77190e326b6a00a36e27f2d3617a86b65"
+    },
+    {
+      "path": "OQ_Toolkit",
+      "type": "dir",
+      "sha": "3bd0c715d4d83ce151cd6580109968d6fee22bf1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cfa20860b6c5b62d89b3d6333810540f767e7455"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "978e3a59bca4bd7d6ce7b3c66afeb7c6fec36abb"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "8ca3c2f2f81aef0876eef485195d5d53bf2ab9f9"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "09512dd9293537d6f7670f46a27dda0242ddf2d6"
+    },
+    {
+      "path": "demo_games",
+      "type": "dir",
+      "sha": "8fbaef5d7de1f73e493db22fa303ea4892ae09ac"
+    },
+    {
+      "path": "demo_scenes",
+      "type": "dir",
+      "sha": "227d4a735209dfb08b9bb53b209fe0aec0863fe2"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "ab133766256af7f43664497f77ead112c54cc616"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "8e0dbfe6026c8638ab9276cc2aa9081b1e5aade2"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "fb342e623afb91e7199b8c4abba39580c6e411a7"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "d320925d29fa3eab3ba4a5fa446edf809dcf745f"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "008ce0ad4130cfc21963b2093cb591b7eaa2d3ac"
+    },
+    {
+      "path": "utilities",
+      "type": "dir",
+      "sha": "b81b877261bc29a7c9c855f0a56973b49c261081"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

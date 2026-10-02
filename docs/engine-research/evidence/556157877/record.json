@@ -1,0 +1,79 @@
+{
+  "repository": "isadorasophia/murder",
+  "repository_id": 556157877,
+  "commit": "1c6b281958d921ff52677f6f9e2cbcf51540466d",
+  "source_url": "https://github.com/isadorasophia/murder/tree/1c6b281958d921ff52677f6f9e2cbcf51540466d",
+  "readme_path": "README.md",
+  "readme_sha256": "0a700288ccef2c23e2dcdef97400d53642ec915801af054df45b2c32bcdb26f3",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "47aedba064ac423c5c9f26a96fa5cfddf48dc1cc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6e3172e66361698ff11652917b29186d6abcb755"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ae13e5c9310a38a49495eb0bb79a470e69cc3283"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "224fa5e3a8e8e9604bb47de20d52e0385ceb35f1"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "039646eb4223b9d4c23b3a8c6aa74b6f3c395d35"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9b37abd582a7aea6a7197b5b8b1ce427fc267307"
+    },
+    {
+      "path": "Murder.sln",
+      "type": "file",
+      "sha": "03c44899bb8c2115a18e585e8a721ba2c010ac7d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8968b1ec0704dd5021a17abb7a6d795444caf3a8"
+    },
+    {
+      "path": "bang",
+      "type": "file",
+      "sha": "4390a82b0d324018a69494b76f910846156ebd9d"
+    },
+    {
+      "path": "gum",
+      "type": "file",
+      "sha": "375deff6efe933b26bc57afbeb8c582a865bc229"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "22ec3f014d4d880f33c5b47e027dfd831311badf"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "3b931acf73bcd4ae887cbf91afc4497a249ce542"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0091fc06958c0c449561d5ba1168a09fb0c9631d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ECS game engine on FNA; owned src plus solution/build metadata. Backend library dependency does not by itself disqualify engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

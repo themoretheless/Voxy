@@ -1,0 +1,67 @@
+{
+  "repository": "Pryaxis/TSAPI",
+  "repository_id": 34953780,
+  "commit": "33cbc2a598a7173f63e23d420b70f1be17f27844",
+  "source_url": "https://github.com/Pryaxis/TSAPI/tree/33cbc2a598a7173f63e23d420b70f1be17f27844",
+  "readme_path": "README.md",
+  "readme_sha256": "21f3f05fad5328a1bd2a36522c1158604b92d56531f336b7661a3bbae78522db",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "0e8a99908d05eb90087fb37607c2486d9f863394"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "026167bb454406e47080fd58449177f1d06ecedf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fea98e7ba651d63e52f916f9110f13d509c65a95"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb65b22ba2cadb9dba388caa7a91e6446e904878"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "127e376d004be9d882a421b6ac983db7c3b3d437"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "20d40b6bceca3a6c0237d7455ebf1820aeff3680"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d253e5b3c26de0592dcac8f46f19bee388bff2b6"
+    },
+    {
+      "path": "TSAPI.sln",
+      "type": "file",
+      "sha": "f7dfe2858e25be144aec555dde332eecafecf730"
+    },
+    {
+      "path": "TerrariaServerAPI.Tests",
+      "type": "dir",
+      "sha": "e06e3f46d69571fb77810d9f0b04f433275ed21f"
+    },
+    {
+      "path": "TerrariaServerAPI",
+      "type": "dir",
+      "sha": "577106506b8cf7d26d00d9fa39bb894d48bdf447"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "6ca4e6e8ab5432b08d7b25794ff8590745070e94"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

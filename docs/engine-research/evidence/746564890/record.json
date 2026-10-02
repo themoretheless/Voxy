@@ -1,0 +1,117 @@
+{
+  "repository": "hugemenace/resonate",
+  "repository_id": 746564890,
+  "commit": "1675fa3596855e9388a8de526a376707008aedeb",
+  "source_url": "https://github.com/hugemenace/resonate/tree/1675fa3596855e9388a8de526a376707008aedeb",
+  "readme_path": "README.md",
+  "readme_sha256": "26837111710d9d08b6a42ebf650474bb8d8311e078cff017e0e853dee35c3b37",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d8763811b641fcff8e77028452a96f1fa358ead4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4709183670ac629a32ff7df40816c79c7c932daa"
+    },
+    {
+      "path": ".release-please-manifest.json",
+      "type": "file",
+      "sha": "edb1d1b648f0a17409096dd8acd3cb2ee2af1218"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "29fbeec1002bb40626f695f960ed0050590cdbb2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "aff64af0bfc74e60b9791f323d851b6ec6dd5bd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f34abc5ee6f1dc2a363f3719ba9bc85b45c7eb9c"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "cd3d847928fb49e3351240e701bbbec0a0f26b65"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "7e58674e2ce996ae1040a1fd8e2ca8ceeb86f3be"
+    },
+    {
+      "path": "default_bus_layout.tres",
+      "type": "file",
+      "sha": "07acb9d373c39ee6b42159adbf6ee0bed94dce3a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f01382c226f33905d67dc94d21116172e759bcb3"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7b359dc56379a12082a8b57ba0ee3bac9145fcf3"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "b370ceb72740b9a759fe11b364f0d4de27df42f8"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "879e35fde582feb4ceb12149d240ab81edaa2601"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "cbd6aad2fd2c8c0cdce644e831e8371dcd7d57fa"
+    },
+    {
+      "path": "reasonate-github-header.jpg",
+      "type": "file",
+      "sha": "ff0a992b44b3e54a34c7bb45d64de68cf004c076"
+    },
+    {
+      "path": "reasonate-github-header.jpg.import",
+      "type": "file",
+      "sha": "c4593275bb783cbee059bd1e5073ef94b5b991e0"
+    },
+    {
+      "path": "release-please-config.json",
+      "type": "file",
+      "sha": "b7c3983f67d8640bd65e2177cc81607006a6b50e"
+    },
+    {
+      "path": "resonate-logo.png",
+      "type": "file",
+      "sha": "9773f386b811df0c7a5d7899210399633850b93a"
+    },
+    {
+      "path": "resonate-logo.png.import",
+      "type": "file",
+      "sha": "ba68cdd6bb7fe3c1d8d5465c4043a8dc61a1af44"
+    },
+    {
+      "path": "shared",
+      "type": "dir",
+      "sha": "75faa9489583cdfb0a00807e345a70e7ae321142"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

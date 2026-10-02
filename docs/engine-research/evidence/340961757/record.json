@@ -1,0 +1,74 @@
+{
+  "repository": "kacperks/Fractal_Engine",
+  "repository_id": 340961757,
+  "commit": "88360551a97095447215a47bac81ffca696f7086",
+  "source_url": "https://github.com/kacperks/Fractal_Engine/tree/88360551a97095447215a47bac81ffca696f7086",
+  "readme_path": "README.MD",
+  "readme_sha256": "afcb2a937e8f0b8a1e6819765a986937f98971da64cf1fbe7afc96e395b63d91",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dd4298e79816e6665101f2e2ad216067906d7621"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "f58528e4f4b49de406a93246f5f056ca08fadd0c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "84a8bb52b0add83973c07b34c74e271a9d575f35"
+    },
+    {
+      "path": "Deploy.bat",
+      "type": "file",
+      "sha": "3e03214daf704176e115859502e448ca5c9a3d70"
+    },
+    {
+      "path": "Deploy.sh",
+      "type": "file",
+      "sha": "baa20fc3d631452b2d3a562cc57d2bf4c448874b"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "e5a061985ed2e4e55521f1b9228c2645fc1c7179"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "e11568ac6754c2d1911664a83ac57ff6fb4a7d03"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "66f1d9934b6f66f60c77d6f6dc63cef76cdce51e"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "c34939a0bc7894ffd6e87cea76bf3d2551ecfa01"
+    },
+    {
+      "path": "Runtime",
+      "type": "dir",
+      "sha": "e18664151e02d5a0e547f3dbad8c01e68ed62523"
+    },
+    {
+      "path": "ScreenShot.png",
+      "type": "file",
+      "sha": "90d7ac269a287dac14636e163a9eed9b5033b4a4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D game engine; owned Engine/Runtime/Editor and CMake deployment build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

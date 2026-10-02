@@ -1,0 +1,27 @@
+{
+  "repository": "Ishaan35/Unity3D-Mario-Kart-Racing-Game",
+  "repository_id": 305448553,
+  "commit": "97a9a7f1d957cd16c1ab0f7f85c1e64f7701a5ce",
+  "source_url": "https://github.com/Ishaan35/Unity3D-Mario-Kart-Racing-Game/tree/97a9a7f1d957cd16c1ab0f7f85c1e64f7701a5ce",
+  "readme_path": "README.md",
+  "readme_sha256": "7996748aa66581e2f476845be2f21615b7ec8f64e1726e6ca975ad8c105fb97c",
+  "entries": [
+    {
+      "path": "3D Mario Kart",
+      "type": "dir",
+      "sha": "ec130d9c4c8d02e38a0c756b29d2737b524b9df9"
+    },
+    {
+      "path": "GameSnapshot.png",
+      "type": "file",
+      "sha": "b6f4b8767ab38731267df78e8c16c050368e7866"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa4f817e4eae600413a76ff9ec6d77e878376c4f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

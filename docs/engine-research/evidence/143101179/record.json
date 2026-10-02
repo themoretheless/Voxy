@@ -1,0 +1,44 @@
+{
+  "repository": "gh123man/Portal-Raycaster",
+  "repository_id": 143101179,
+  "commit": "b1fc40aa5c47680a3b05de314c151664d36d1d8b",
+  "source_url": "https://github.com/gh123man/Portal-Raycaster/tree/b1fc40aa5c47680a3b05de314c151664d36d1d8b",
+  "readme_path": "README.md",
+  "readme_sha256": "08a5c0903f148c99fe3089f619b58d782d6cc2d56a6438acb747fbe65dd84409",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "37e24c81418a1f34a206b9e6303dd267d3fa83a1"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "addead293d838c74a04e0ed5542ac930d3663ec9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5f309fba915fb88667c96dcfcda8d307f6e97a90"
+    },
+    {
+      "path": "photos",
+      "type": "dir",
+      "sha": "e02ccca420eaa4ae1f5fd95afb59fac71d04dc47"
+    },
+    {
+      "path": "raycast.iml",
+      "type": "file",
+      "sha": "245d3429faae22cba4ef10f7379236b6756defe1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c70c64faf089eab50fc54d34bb64817731c41c30"
+    }
+  ],
+  "classification": "rendering_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Early Kotlin game prototype demonstrating portal raycasting; README explicitly frames sample renderer experiment rather than reusable game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

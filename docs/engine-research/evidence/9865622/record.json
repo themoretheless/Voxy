@@ -1,0 +1,104 @@
+{
+  "repository": "Stencyl/stencyl-engine",
+  "repository_id": 9865622,
+  "commit": "c0eaac2b54d7893ea4d520367afd24d256dd688c",
+  "source_url": "https://github.com/Stencyl/stencyl-engine/tree/c0eaac2b54d7893ea4d520367afd24d256dd688c",
+  "readme_path": "README.md",
+  "readme_sha256": "4c20fa7732673c9d6eff380d7fcdf2a7d5c91429e79e8196cdae4748c9379196",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a24346e8d30f453ff6e46f2e23b25e6239869321"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b92e10e90611a45aaaf9ca4771bc82949c335fe"
+    },
+    {
+      "path": "Universal.hx",
+      "type": "file",
+      "sha": "5b67448dab018025b8a02af08f07bb2288e24ac1"
+    },
+    {
+      "path": "block-icons",
+      "type": "dir",
+      "sha": "2e1870bf51d48484d99b44d42fee35f1595b0ba5"
+    },
+    {
+      "path": "blocks.xml",
+      "type": "file",
+      "sha": "e6d82c651092f308db4929d6b7868653c18f7bfd"
+    },
+    {
+      "path": "com",
+      "type": "dir",
+      "sha": "f8fa09a318952a5406f499dcfe0eece5b6331cec"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0e626669d03d2bed104178ab2ceb92c91a587410"
+    },
+    {
+      "path": "events.xml",
+      "type": "file",
+      "sha": "c4a93902186b34125f2cf40aae99ea0e8d41ecb6"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "32a96974ca1e40a58bee59503f4ba3fa7958fe36"
+    },
+    {
+      "path": "include.xml",
+      "type": "file",
+      "sha": "ee8381638d4da921a3a22a9f4d59bf7b5132a991"
+    },
+    {
+      "path": "info.txt",
+      "type": "file",
+      "sha": "a7c0dae52ef75ab1a97d07df92e10d71985a50ea"
+    },
+    {
+      "path": "lang",
+      "type": "dir",
+      "sha": "a3a0d6bb1931308372e30a4a7d4f37f2e5289fa0"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "7f99fbad4983ba1d7286fd5ad071b8f704271c01"
+    },
+    {
+      "path": "palette.xml",
+      "type": "file",
+      "sha": "0d89ea420599b3bbc240ef43627f9346c7c778a6"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "351db9f5ce39042c570b22851c781e7a76271f41"
+    },
+    {
+      "path": "src-override",
+      "type": "dir",
+      "sha": "28725cdd5ca3481f5bffcad404a52945c7a45902"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "086bd1c378ffd4b078380e214d1c35a9d6aa28cc"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "bac75bc3420c345ef2fcd536252e9f564d6cfa12"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Stencyl's owned Haxe runtime; com/native/source with Haxe build metadata. Authoring product separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

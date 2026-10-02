@@ -1,0 +1,79 @@
+{
+  "repository": "project-valhalla/base",
+  "repository_id": 174724266,
+  "commit": "4124d685d7c38705dd547e7ea3648126dd2dccac",
+  "source_url": "https://github.com/project-valhalla/base/tree/4124d685d7c38705dd547e7ea3648126dd2dccac",
+  "readme_path": "readme.md",
+  "readme_sha256": "40ad50a0059aa01b7b36ef34f49bbc01af79ab27b9bd38bd0ffbf5dc1259aa2b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3667eba5f231a3635f486377fb6a3e1da8c71a40"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "54df32fd687e19d014a5d356ad55e4060ac006d7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "00cb6933611a902c21af52aee40da9532cbe1d82"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "d5813e7195af2b7d96fe2753428dccda38238d38"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "d0ebb9fd982dc63d767fc87cbf1b88c5e88d47cd"
+    },
+    {
+      "path": "contributors.md",
+      "type": "file",
+      "sha": "3cf39178298d1d56ff2d6d28d9db60d5be381241"
+    },
+    {
+      "path": "data",
+      "type": "file",
+      "sha": "c3e70ba48f26c5f9ea566052545ce874f7b20eea"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "b885d08d7915ffdd5922fa658a66fe8827bc8fcf"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "273e94eab72a760512a331e0f73fb7ac74e7de28"
+    },
+    {
+      "path": "server.bat",
+      "type": "file",
+      "sha": "0d1ceb92f5b670202d6189d357708d44c14addf7"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "1c4a69cb1fdb0af80823582cc276579e68f46b8a"
+    },
+    {
+      "path": "valhalla.bat",
+      "type": "file",
+      "sha": "5849f274faf031bd242c865cd472323fb05407f9"
+    },
+    {
+      "path": "valhalla_unix",
+      "type": "file",
+      "sha": "f13e33c89d794d624f9a030d88b890bd6a89424d"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Arena shooter based on Tesseract; primary product is Valhalla game, not a separately identified engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

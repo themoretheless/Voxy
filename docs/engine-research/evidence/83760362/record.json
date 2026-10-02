@@ -1,0 +1,199 @@
+{
+  "repository": "PolygonTek/BlueshiftEngine",
+  "repository_id": 83760362,
+  "commit": "fbc374cbc391e1147c744649f405a66a27c35d89",
+  "source_url": "https://github.com/PolygonTek/BlueshiftEngine/tree/fbc374cbc391e1147c744649f405a66a27c35d89",
+  "readme_path": "README.md",
+  "readme_sha256": "f452e44a5097dac30ed2a872a3cb4ccb80347cce556e010d79fc2e43a45a41a2",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "2b6703dbb215c3c7a22b5077213c1ff41f383d5f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "deb95a92621a092d4bc720ebe6bd996fcbf2a8e3"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "Bin",
+      "type": "dir",
+      "sha": "b782ca92cf3bc3a7ed035bc872ca912c44d3b100"
+    },
+    {
+      "path": "Build-Sample.md",
+      "type": "file",
+      "sha": "cb1a0326fea5170f3b377130cbdc71b304cfc9fc"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "8491c079688a0ea68798d200aff451266329baef"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0438cc1f5ee037b863869892c93f7291c3759250"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "626067cb374d3a1cccb207889b6922e3b1cd4db6"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "66cc230c2db9ee0129dd966173d952d0a14a63d6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "db44751e7f907fdacc0056c86d97b784d7acc95f"
+    },
+    {
+      "path": "Config",
+      "type": "dir",
+      "sha": "ad9c57cbcd862a2ec609309760a12d56a668ca1b"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "4c6030ad39be93b7cc47bfbd20f39625c2f67f5b"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "3c7d5d4e915f70d9ef0bd7255892840061ffbef3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "Project",
+      "type": "dir",
+      "sha": "b208a24a8a002e94573e67d1e7273db8427deb42"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cde4192addafa65377868bf042ee6099c61691ac"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "61e5ca50b12f1a4f4c4b5b9bdf564b616886a6ea"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "f7a1909e71e5c3ecb9a738cfb160ac1165074368"
+    },
+    {
+      "path": "Shaders",
+      "type": "dir",
+      "sha": "59eff4820bc94a4266932a3147e8ced8ad0c3ab2"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "d53d9f82981096cb03929ef498abd48404129df9"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "ca63b454f372caf24bc59f17567dc102dcf9524c"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "50f126706534553183606675dda265999b7b8c01"
+    },
+    {
+      "path": "cmake-vs2017-Win64-All.bat",
+      "type": "file",
+      "sha": "8eb003d3b22abc0ab8cfdd0e5c25dfec15dfa248"
+    },
+    {
+      "path": "cmake-vs2017-Win64-Editor.bat",
+      "type": "file",
+      "sha": "c9b3272f8e6db45a2e19fb9c2fe263a49430519b"
+    },
+    {
+      "path": "cmake-vs2017-Win64.bat",
+      "type": "file",
+      "sha": "14fde16c5a6073c163a2e99c7e580a15b3e3f71c"
+    },
+    {
+      "path": "cmake-vs2017-XamarinAndroid.bat",
+      "type": "file",
+      "sha": "eca9016f7bd5e7e85783c3b2af752210c95ac889"
+    },
+    {
+      "path": "cmake-vs2019-Win64-All.bat",
+      "type": "file",
+      "sha": "b0dcc5f4d9745a1ecec2054e83b38397aebef11c"
+    },
+    {
+      "path": "cmake-vs2019-Win64-Editor.bat",
+      "type": "file",
+      "sha": "63f068b35c4660c2104108825b9a84ad181ddf05"
+    },
+    {
+      "path": "cmake-vs2019-Win64.bat",
+      "type": "file",
+      "sha": "ce3d8f500e4beaca02278946fd5659bf9028c700"
+    },
+    {
+      "path": "cmake-xcode-iOS-All.command",
+      "type": "file",
+      "sha": "b706e49adc252007d72f4c4fbdb05cab900fadd9"
+    },
+    {
+      "path": "cmake-xcode-iOS.command",
+      "type": "file",
+      "sha": "60f597484cc50d2088d81574014814d25b05d6ca"
+    },
+    {
+      "path": "cmake-xcode-macOS-All.command",
+      "type": "file",
+      "sha": "dfec0822632c86ee6f62ffce6e9a0822898c71a1"
+    },
+    {
+      "path": "cmake-xcode-macOS-Editor.command",
+      "type": "file",
+      "sha": "cebe392aad3dd9ccf93656faf3a52da1c9af5a65"
+    },
+    {
+      "path": "cmake-xcode-macOS.command",
+      "type": "file",
+      "sha": "844a98eef2c9f2b565213bf5bd7b5b148980296a"
+    },
+    {
+      "path": "generate-XML.bat",
+      "type": "file",
+      "sha": "c948cf3a1b6d2f1013d907bcd7dcb1f747ead1b0"
+    },
+    {
+      "path": "generate-XML.sh",
+      "type": "file",
+      "sha": "32e3a27ac7682e0dd61fabd40b4493c79c4f6d95"
+    },
+    {
+      "path": "xmlgen.doxyfile",
+      "type": "file",
+      "sha": "b54e9284e90d42d1fc1928e64de4b614b706207f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D engine; owned source/build/project/script and CMake infrastructure. Platform claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

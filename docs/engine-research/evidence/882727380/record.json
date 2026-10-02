@@ -1,0 +1,107 @@
+{
+  "repository": "pandulapeter/kubriko",
+  "repository_id": 882727380,
+  "commit": "0e2f2ea81a3967b2df68362b2e1c8edf79abf810",
+  "source_url": "https://github.com/pandulapeter/kubriko/tree/0e2f2ea81a3967b2df68362b2e1c8edf79abf810",
+  "readme_path": "README.md",
+  "readme_sha256": "8424db8a6b34504b49e1d9819c8572df5078ab7af80ad2bd6490424cbb549cfd",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "55c435a5d59f52f87aba053a788e8ecb133eedbf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8c44a9843a759afb09f4e08a27b691b936628c3b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d47369f971b9ccebaa15565596d5154d09f91641"
+    },
+    {
+      "path": ".run",
+      "type": "dir",
+      "sha": "16a5531b49744e54b208cf921860599bad693b51"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "4e07633dfedaae055e2785b98a5fbfbb92944881"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4f275af184a112f7c6b57f05da5c234383faebf0"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "f60648430a7b0c541163c5bce29fe8c5259f633d"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "a903963beb8df498aad747750bb4705d6700d07d"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "f6faf9b2e69a3bda9c5107b145fa5c656a53f03f"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "141dcaa2c4dadc0858f77f80b6fbed878d5c992b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "be2e2597f3599db28624553683cddb50bea69d63"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "9302093a2a67d789f592c20f226401c3c0b9019a"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "c91184594bd991e45c3371462ed6b281b6eb07f2"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "1aa94a4269074199e6ed2c37e8db3e0826030965"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "93e3f59f135dd2dd498de4beb5c64338cc33beeb"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "acaa0beddbbb06967e08c1c86f9db37d391978f3"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "a3304a4eda7b2e777c3eba6c748f11d577d5f80e"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "aa0fe4ce2a0fdeb957a693cc8f73ccd907ae9836"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

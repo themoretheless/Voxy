@@ -1,0 +1,104 @@
+{
+  "repository": "agentodyssey/agentodyssey",
+  "repository_id": 1215609896,
+  "commit": "248430692a9d4a61d38c6c03ab2126287faaf450",
+  "source_url": "https://github.com/agentodyssey/agentodyssey/tree/248430692a9d4a61d38c6c03ab2126287faaf450",
+  "readme_path": "README.md",
+  "readme_sha256": "e217eb6b05b4afbd05ccaa46b3ed1f72dc9868545f19eabcd42792da79d11922",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e4188a2f6b91467480ea5d7408288420c926b75f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5ba9e3f58abdaaddc997513a004043b28af4b1eb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "53f8781a9a46f662d8569e412576c54d1b548614"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c4a05e58401a0d2e84af10d688aa779ae13ba334"
+    },
+    {
+      "path": "agentodyssey.py",
+      "type": "file",
+      "sha": "32e6e946bd2ccb1254f58b8f74fdd4faa138dde6"
+    },
+    {
+      "path": "agents",
+      "type": "dir",
+      "sha": "d43a4e360fc42aea9f46949b403950453e912d6e"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d6fa6a54b04c15c1cc8824d815d60dcfdc6ba03c"
+    },
+    {
+      "path": "challenge_eval.py",
+      "type": "file",
+      "sha": "f9d6d9663443aa9a8878e03a5f6d78522ef494fd"
+    },
+    {
+      "path": "eval.py",
+      "type": "file",
+      "sha": "87b754277b17a3d5d0f9277e7efbd14210868e79"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "5ac4cb9ead215d078413dc70513879108ab2c93e"
+    },
+    {
+      "path": "providers",
+      "type": "dir",
+      "sha": "321386ec7cd78f87e9cd29365d4e439688e1ea4b"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "140178d2f22891d3615c2109e998222825505483"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "92814f0e38d3642bd2c443122e8853798b031456"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "23fc7b52db1ff2e3175ba5f26b06661ed349ca24"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e4830227e1bcf38e4ae129413949191b95d635b6"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "5efaefc3e63fb462f59abf64ef769cd08c014834"
+    },
+    {
+      "path": "utils.py",
+      "type": "file",
+      "sha": "53e6f16496f0116ee4a5db75e7d8708b8d6104c7"
+    }
+  ],
+  "classification": "excluded_evaluation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "LLM text-game generation and continual-learning evaluation environment; broad game-engine runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

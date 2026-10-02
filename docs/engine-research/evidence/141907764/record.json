@@ -1,0 +1,69 @@
+{
+  "repository": "klaussilveira/qengine",
+  "repository_id": 141907764,
+  "commit": "4bbbb604e5ce578541c8ed8c9f1f428d4fbf6c32",
+  "source_url": "https://github.com/klaussilveira/qengine/tree/4bbbb604e5ce578541c8ed8c9f1f428d4fbf6c32",
+  "readme_path": "README.md",
+  "readme_sha256": "2fde53cb191dc95cbce6090ad35edad3fe5e7df82d3c10e60096d1300563b955",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2c72679c780393353cdf797f73d4610a39253dbb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e23378d927fdc7c120951b77eb106d58c7465be3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0e1d2c1a28ef53623c190a42c9bee7637369f268"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "5eeaf1c776065e6b0ed2f1fe305a7274207cc521"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f179396ffb42fe2ef5bfdd19d90c17c560e114fb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd82ced827323b87bfb24da890cf3b0ed955738b"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "704994aa283f5de2f50bcffff60a34219b9874d9"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d1c049d01e476583e63bb68e752e9d45d5012581"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "24b20323e96716af890b59af9031cb093b231094"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b874a4debd053f47782caf05c065abfb459fd82f"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "2518eaae702dff8fed10bb08819fac48fb09cdfd"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies retro cross-platform engine; src/assets and CMake native build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

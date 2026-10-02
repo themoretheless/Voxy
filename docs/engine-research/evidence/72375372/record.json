@@ -1,0 +1,39 @@
+{
+  "repository": "Kavex/GameDev-Resources",
+  "repository_id": 72375372,
+  "commit": "f7c89aae1128fe1ab5f5acaec4c1ab76ee87c7c3",
+  "source_url": "https://github.com/Kavex/GameDev-Resources/tree/f7c89aae1128fe1ab5f5acaec4c1ab76ee87c7c3",
+  "readme_path": "README.md",
+  "readme_sha256": "884c0e3dbb1b88dfd99084d9dfd96c0cadd92ca1f648446826c2914c0f98cddd",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d645a2d8474bc34cdcfc69861bfddee9cc5acb54"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "c1fd995607914e446489d58a6f8daa0a9adc997e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4ed6e920be4322c3ed80255c95953bf89149a436"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "685f424e92697d654837d05fe98c30ff8c5011a5"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "e5b0f265704d1c801e303d9230f4a48d12d9bdca"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README links engines/frameworks/resources; root contains documentation and images.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,154 @@
+{
+  "before": 24,
+  "after": 18,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        16111,
+        26346,
+        32250
+      ],
+      "before": 24,
+      "after": 22
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        18409,
+        20469,
+        28061
+      ],
+      "before": 22,
+      "after": 20
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        446,
+        22481,
+        32252
+      ],
+      "before": 20,
+      "after": 18
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": true,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        2977,
+        4002
+      ],
+      [
+        2977,
+        3993
+      ],
+      [
+        2977,
+        4003
+      ],
+      [
+        2466,
+        2977
+      ],
+      [
+        47250,
+        48771
+      ],
+      [
+        48771,
+        48786
+      ],
+      [
+        48776,
+        48786
+      ],
+      [
+        48771,
+        48778
+      ],
+      [
+        48771,
+        48779
+      ],
+      [
+        48776,
+        48779
+      ],
+      [
+        48776,
+        48788
+      ],
+      [
+        47081,
+        48932
+      ],
+      [
+        48932,
+        48938
+      ],
+      [
+        48933,
+        48938
+      ],
+      [
+        48934,
+        48938
+      ],
+      [
+        48934,
+        48941
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 32469,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 553389,
+      "forbidden_pairs": [
+        [
+          47082,
+          48932
+        ],
+        [
+          48936,
+          48941
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.002946770718901115,
+  "audit": {
+    "vertices": 45203,
+    "triangles": 90402,
+    "area_m2": 1.567085800276051,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "5d969d513f5e45a544f566476e557d424c0404493a37a98999206bcfdd332ffa",
+  "reference_sha256": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+  "candidate_sha256": "dae60d84c181060bbd293c239c8657938a9b47de8ee1e65b4b32b44e511a5a33",
+  "proposal_distances_m": [
+    2.5e-05,
+    -2.5e-05,
+    5e-05,
+    -5e-05,
+    0.0001,
+    -0.0001,
+    0.0003,
+    -0.0003,
+    0.0015,
+    -0.0015,
+    0.002,
+    -0.002
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

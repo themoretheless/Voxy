@@ -1,0 +1,164 @@
+{
+  "repository": "GoMudEngine/GoMud",
+  "repository_id": 750563000,
+  "commit": "39e440131769545b61e37bdb3ea89e64ed424871",
+  "source_url": "https://github.com/GoMudEngine/GoMud/tree/39e440131769545b61e37bdb3ea89e64ed424871",
+  "readme_path": "README.md",
+  "readme_sha256": "3244c4d30184f315f32a676b4487c5af9221ac2efcbecb818eb98724ee92cff8",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "9f0f2902c973661dcfdd1c93029a351ea7ea1a60"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "236b8f7c64d62a7bca5f50940322bf8d323220db"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ccf700d70972c0a5cad4fad5cb3e36dcdb9702e7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d3387986820fdda4ae2e3e71f28be52a8529f1e6"
+    },
+    {
+      "path": ".jshintignore",
+      "type": "file",
+      "sha": "06a5abc7bb615774cde94b1633247de3fe5a93c5"
+    },
+    {
+      "path": ".jshintrc",
+      "type": "file",
+      "sha": "da9c63f4930701d0641a396518ebb69399c08ebf"
+    },
+    {
+      "path": ".jshintrc.webclient-windows",
+      "type": "file",
+      "sha": "5486e6a7b55be949a0c5fbf00d0e3c433f25b26e"
+    },
+    {
+      "path": ".luacheckrc",
+      "type": "file",
+      "sha": "e60a1a4813e425f83194958394835f6fe7b90e00"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "c028ea3b7d013020b00e97ce359a3e36f0d072c3"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "43c994c2d3617f947bcb5adf1933e21dabe46bb5"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "a3f1f0a7d05507f7874dadab9165bc351bbf0b13"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "450b57582340af107478ad7591654a7552105a54"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c0c3be033f747395e64d28ec80426766465f93e0"
+    },
+    {
+      "path": "_datafiles",
+      "type": "dir",
+      "sha": "76dcb5ad8c0d97d7186afb091d24f47e1f1b9375"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "ef57c9d29c0f5bc6e976cb5d4b9fba642d506e0f"
+    },
+    {
+      "path": "compose.yml",
+      "type": "file",
+      "sha": "4c8b286f6966787f62c3f4bc403293dc9cd1263e"
+    },
+    {
+      "path": "copyover.go",
+      "type": "file",
+      "sha": "247ae70af2b55c944e079537cc441352a46d0176"
+    },
+    {
+      "path": "election-tax-plan.md",
+      "type": "file",
+      "sha": "afd0dea5a4a7471a1d7cd2a315a2bd3220ef7440"
+    },
+    {
+      "path": "feature-screenshots",
+      "type": "dir",
+      "sha": "5e5e4008a3985d1b9c478aa9be56d698669e6938"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "f6ddfe0e57c998b802608c3785d3d9c23c2bfd30"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "81afe95fbc00ab559518d3941d05fdf859326f9c"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "c7acf5fbd198817389a923f6080e8fc35b2ad61f"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "7e35190af6d35ccd2a30aec02beda7d8fee932f2"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "7e249ff5dab7cc67079c2943c5cfaa6e9a708473"
+    },
+    {
+      "path": "notes.md",
+      "type": "file",
+      "sha": "1c5be9d055d7ae4cc9552883a8d3895bddbe9ed9"
+    },
+    {
+      "path": "provisioning",
+      "type": "dir",
+      "sha": "c190f060d8d736e74dff624a76614278e06fbefa"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9cea204d42ce545b20efc592b7084ea800d5b2d3"
+    },
+    {
+      "path": "signals_unix.go",
+      "type": "file",
+      "sha": "b65a09b048f89c638a0fe0cc5be640515a2b730e"
+    },
+    {
+      "path": "signals_windows.go",
+      "type": "file",
+      "sha": "6cb84e561788cfd5107df6825ceba9b157226566"
+    },
+    {
+      "path": "world.go",
+      "type": "file",
+      "sha": "6bf9b631a818cb725dfed8eb7e7e47e4951453ba"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent MUD runtime/server; owned commands/game data/src and Go/Make build. Text engine scope retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

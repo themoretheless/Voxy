@@ -1,0 +1,64 @@
+{
+  "repository": "infinitelives/px3d",
+  "repository_id": 198596980,
+  "commit": "888a29f4171b871d1665e813f39a567a1827a46f",
+  "source_url": "https://github.com/infinitelives/px3d/tree/888a29f4171b871d1665e813f39a567a1827a46f",
+  "readme_path": "README.md",
+  "readme_sha256": "be353ac7c4b8ba4d3e8223be0e97140eb8cb9f6387a21c8c41b1786d79865061",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2064224b292e08f506e1dfd4e5336cb7bc180132"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3260e4f239a6dac9f7d09f34ea731b1fbfc03a1e"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "1f88b86cfe679aa369cb4c16119401d9b915a2e8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bc77a44d250f30ce095051622a9f028dac59fc03"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "1ca610d865dae4bb3b5b3fa6a59fff0d6998f6e6"
+    },
+    {
+      "path": "gifs",
+      "type": "dir",
+      "sha": "20f0052df80bf22476c1dfe562d47a1c5a56d2a9"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ee3879f272bd6db28980fa42220e951012089a05"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "2bfce1ade2e743d320c7b8bc1a92de3863061974"
+    },
+    {
+      "path": "shadow-cljs.edn",
+      "type": "file",
+      "sha": "2e25337f5b0d3c48c5fd745021a5436a3272a5f0"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "343752164992dc86c313a9dc161841c71de65e82"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies experimental pixel renderer; owned src and ClojureScript/npm/Makefile build, gameplay scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

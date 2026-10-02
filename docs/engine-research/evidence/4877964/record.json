@@ -1,0 +1,37 @@
+{
+  "repository": "RandyGaul/AsciiEngine",
+  "repository_id": 4877964,
+  "commit": "ffd4766e0f81c5b2efa347484585d09a6e4d2b26",
+  "source_url": "https://github.com/RandyGaul/AsciiEngine/tree/ffd4766e0f81c5b2efa347484585d09a6e4d2b26",
+  "readme_path": "README.txt",
+  "readme_sha256": "f12e53c6c8de5815092cb1ba8fef74f54bb50cb8ef8250efc7af2b98a334b5b5",
+  "entries": [
+    {
+      "path": "AEImageEditor",
+      "type": "dir",
+      "sha": "716e7e9e25cbeb7b7ae56a9d27715ca80b57b5b1"
+    },
+    {
+      "path": "AsciiEngine",
+      "type": "dir",
+      "sha": "8bf7fa35015de5f94b9d110809257b44caa0c1d8"
+    },
+    {
+      "path": "CHANGELOG.txt",
+      "type": "file",
+      "sha": "8c75c2a28890c7dc9b6aa54479225a4d06d48cbe"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "e81cb687fc0e693884a5796c8e55c5a91f94c041"
+    },
+    {
+      "path": "README.txt",
+      "type": "file",
+      "sha": "d62cd227591d70a7ab246dfaacea017d41bd2542"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

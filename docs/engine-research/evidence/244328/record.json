@@ -1,0 +1,124 @@
+{
+  "repository": "ricardojmendez/UnitySteer",
+  "repository_id": 244328,
+  "commit": "1a2404d50b911e4adab5c43ae92ec3e34de0ef2c",
+  "source_url": "https://github.com/ricardojmendez/UnitySteer/tree/1a2404d50b911e4adab5c43ae92ec3e34de0ef2c",
+  "readme_path": "README.md",
+  "readme_sha256": "4ced46f38cac8fb81a8f550b2269180be3e883e5482fe79360b8945587a277f7",
+  "entries": [
+    {
+      "path": ".deploy.ini",
+      "type": "file",
+      "sha": "7bbb0b2b0c8d7b09a130a9f6ee2459dfa0c96958"
+    },
+    {
+      "path": ".deploy",
+      "type": "dir",
+      "sha": "03b99d87da3d065f7cb1dcbb7c95e9e67ead8d16"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e3842f0ee34ee8b43d1dc54e774840b35fff09af"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "9e2befc09966cbb38f42a24021075ae9a7bb494a"
+    },
+    {
+      "path": "2D.meta",
+      "type": "file",
+      "sha": "fd88014e2bdb9ed334ca7a5cbab1e298998ccadc"
+    },
+    {
+      "path": "2D",
+      "type": "dir",
+      "sha": "330d147d9cf28e2702001aeda27f5afd07c8161a"
+    },
+    {
+      "path": "3D.meta",
+      "type": "file",
+      "sha": "921bb98e91a052f44903c88a61eabcc1cbe6e02a"
+    },
+    {
+      "path": "3D",
+      "type": "dir",
+      "sha": "195afc6ec82bf439c4569718de16e1bcdd4c29f2"
+    },
+    {
+      "path": "Attributes.meta",
+      "type": "file",
+      "sha": "257435365843d6a451cc2ca2c8cd80550bc648be"
+    },
+    {
+      "path": "Attributes",
+      "type": "dir",
+      "sha": "023c65c4b8ae7667bbe1ca951aa2c4fdad143aa3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "2de3ef53c9ba370f5c615ecb7778b062830d0888"
+    },
+    {
+      "path": "CHANGELOG.md.meta",
+      "type": "file",
+      "sha": "2814e2c9f7372862c6b227e05d05079ca6928923"
+    },
+    {
+      "path": "CHANGELOG.v2.md",
+      "type": "file",
+      "sha": "934b47c25f1925485216aea2a6cf76afc8b2a61c"
+    },
+    {
+      "path": "CHANGELOG.v2.md.meta",
+      "type": "file",
+      "sha": "c0c19022fd13ef085c722e56735b6cdcc07598ca"
+    },
+    {
+      "path": "Editor.meta",
+      "type": "file",
+      "sha": "6e6d2a86894576db05df10baa42cbfcd6bb91ae0"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "461fc02a14e3d7767fdf3bc6071732e96c440f1b"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "2602524cecbe89a0bf228369df3659f60a781cca"
+    },
+    {
+      "path": "License.txt.meta",
+      "type": "file",
+      "sha": "2e8d7a02677a3648a1d8a57261a883631de72115"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "96009fc24e841f40c45f9790dcd6bac16179bb2f"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "7d8d5ed05bd27cbfd75ea1b98520d75049a2d4dc"
+    },
+    {
+      "path": "TickedPriorityQueue.meta",
+      "type": "file",
+      "sha": "b8920f72864549b6886598b005b4d84456eadf82"
+    },
+    {
+      "path": "TickedPriorityQueue",
+      "type": "dir",
+      "sha": "5c105a1b7cdbcf5989e64c01e05979363e132bff"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity steering/obstacle/path-following toolkit derived from OpenSteer concepts/code; existing runtime required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

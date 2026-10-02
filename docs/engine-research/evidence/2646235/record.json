@@ -1,0 +1,77 @@
+{
+  "repository": "Senscape/Dagon",
+  "repository_id": 2646235,
+  "commit": "c683c0278c6a97400acb18c7fa48aacf179d4b6c",
+  "source_url": "https://github.com/Senscape/Dagon/tree/c683c0278c6a97400acb18c7fa48aacf179d4b6c",
+  "readme_path": "readme.md",
+  "readme_sha256": "80a0ce3c8509726f8f076fb61b927a042b556f6aaac3191503241d0dfc1a361e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9dd9986f258542b1553e3c214fc2c75972178d54"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "a0ee65046d1a7c71117c0fb44e8bd1caf3f93e14"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ae658b5f17fc864616bc5baeb4381a768fd8d664"
+    },
+    {
+      "path": "extlibs",
+      "type": "dir",
+      "sha": "d9dc0146cf8fcb3ad00f7d55a929cbdaf3dfaba3"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "e0fbecac9f2f9c258032f67072ff11b5817d991e"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "14e2f777f6c395e7e04ab4aa306bbcc4b0c1120e"
+    },
+    {
+      "path": "mingw",
+      "type": "dir",
+      "sha": "a970d7b217cbbde12887101fc1dca0d41022f0f3"
+    },
+    {
+      "path": "premake4.lua",
+      "type": "file",
+      "sha": "9f7b90eb8ed6de3977a277434e8f8d416986e9c0"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "800cc14115b157c33941249c5a40e6a20304fc98"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c936f4e2fb314e97c492e0a7014161770b7626e5"
+    },
+    {
+      "path": "visualc",
+      "type": "dir",
+      "sha": "5060721cc52c53662d7571b951416d274050c040"
+    },
+    {
+      "path": "xcode",
+      "type": "dir",
+      "sha": "21289dc039a368ce1d649adf143b56539210b740"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

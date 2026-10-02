@@ -1,0 +1,144 @@
+{
+  "repository": "spring/spring",
+  "repository_id": 95456,
+  "commit": "2925abc99980eb3b08f421a6a45a184938611c40",
+  "source_url": "https://github.com/spring/spring/tree/2925abc99980eb3b08f421a6a45a184938611c40",
+  "readme_path": "README.markdown",
+  "readme_sha256": "c1f10b5db9ceefd16ac8b8b8f13a274262853649140d07dc70ba23fe52603304",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1cb3d2064d8c4100094c2e7e2ab1c2250c94c1d8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2c9113ec48476f46622457fedff5f9c1ffec6100"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2edc8822fa332231052a7f9649c71c368a95985e"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "af22fc9e5f1517bdd56768979f8dea3568dbd535"
+    },
+    {
+      "path": "AI",
+      "type": "dir",
+      "sha": "0dba5f312503241612a46c4c67aca7ee9fdfd02c"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "711e2f0116b795560ca0ccba1466ad764dbbee7c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "877de5f754f9459a72886aecf37a653cc86d3951"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "d5a10e36d0ebd6b279429cdba68ded89a6c530ae"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "aabd9f4d9716327062a906d96bf3a73e06dfa462"
+    },
+    {
+      "path": "FAQ",
+      "type": "file",
+      "sha": "640b164a05b12f27f1815096c38d9e16756927ee"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "992e6a7ffa20f26fb7e42ecc5b02391f0782c9d8"
+    },
+    {
+      "path": "LICENSE.html",
+      "type": "file",
+      "sha": "0b5ed432089bfd9d26726ce43be073f9352184af"
+    },
+    {
+      "path": "README.markdown",
+      "type": "file",
+      "sha": "a49b133c5276427e5a396856c2349e2839f0f001"
+    },
+    {
+      "path": "THANKS",
+      "type": "file",
+      "sha": "1d73f742ce136476cbc6c3869328883206843986"
+    },
+    {
+      "path": "VERSION.template",
+      "type": "file",
+      "sha": "08faffbaae3f7d6c982780f6a7f9085b92a957a1"
+    },
+    {
+      "path": "buildbot",
+      "type": "dir",
+      "sha": "145f4b3b19aadf7d3e1f3e7ea1a3a27c14332a22"
+    },
+    {
+      "path": "cont",
+      "type": "dir",
+      "sha": "8b023ed1ec2b8bec20807ac248aff10611055387"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "139e0a2a6c45fd398d28e219127e2faa90064078"
+    },
+    {
+      "path": "gpl-2.0.html",
+      "type": "file",
+      "sha": "6003232d584075012a70766a916811c035152ef3"
+    },
+    {
+      "path": "gpl-2.0.txt",
+      "type": "file",
+      "sha": "d511905c1647a1e311e8b20d5930a37a9c2531cd"
+    },
+    {
+      "path": "gpl-3.0.html",
+      "type": "file",
+      "sha": "d64890f8cfadcc54287219fbbdd0a126a315334e"
+    },
+    {
+      "path": "gpl-3.0.txt",
+      "type": "file",
+      "sha": "10926e87f113fb026c366866d6fa466061562870"
+    },
+    {
+      "path": "installer",
+      "type": "dir",
+      "sha": "0d688fe7498dc30628897f33d486618fc4c9b838"
+    },
+    {
+      "path": "rts",
+      "type": "dir",
+      "sha": "f7517b53f2fec6ca4c64a635a5b6cf8deb752767"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "4cc61ba51c5a71b32a3380596148768f5358a761"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "e8608ea20ac4ee145e3868cf5b602c3ad7544bba"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies RTS engine; rts/AI and CMake source build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

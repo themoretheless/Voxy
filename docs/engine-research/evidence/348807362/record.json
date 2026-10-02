@@ -1,0 +1,84 @@
+{
+  "repository": "NobleRobot/NobleEngine",
+  "repository_id": 348807362,
+  "commit": "93ffd6eb29d61c1af1cb8d40b78daf75c4e85946",
+  "source_url": "https://github.com/NobleRobot/NobleEngine/tree/93ffd6eb29d61c1af1cb8d40b78daf75c4e85946",
+  "readme_path": "README.md",
+  "readme_sha256": "373787c4dfe809dccc0352e50962d323afb900c612a91485928e2dfe69dbaf52",
+  "entries": [
+    {
+      "path": ".docs",
+      "type": "dir",
+      "sha": "8352879d081d7f568379d3d68c769e8557eb677d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "315844cd3da1f03cf9f0694ce45b8b9b6533321d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3cdf325f86d723da9285f0c95be2877ea1e13539"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9fd34dbba68894675351d0c8aa824943180b1373"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a280aa12cb49feb9242b9e0fb58b57f35a55bd5c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f44b80bb7c2dc71541d288f8d2dcdf608bb2f80f"
+    },
+    {
+      "path": "Noble.lua",
+      "type": "file",
+      "sha": "9f69600112bab4dc22ce6f5ddfcdb5dcf5feb21c"
+    },
+    {
+      "path": "README.gif",
+      "type": "file",
+      "sha": "6d9e7477dc6fb945d34a54245b247dec4d5f7ad8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2cc94bd9aad36b8dff2dda823e31215663345db3"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "19afc6daeec38d1a0ae8661d8416acdeb940cd23"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "d635e3be2af79fc26c2a0935e0a910401d16a747"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "c44ffaf3c632999467022e11d47e955c6da63170"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "2083183b00b0ca155ddc055b8cab2b557e84a3b9"
+    },
+    {
+      "path": "utilities",
+      "type": "dir",
+      "sha": "8cabf9f982c1ba5f7c28e2961d128cbd2fac56ce"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Playdate engine; owned Lua runtime/modules/templates over device SDK.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

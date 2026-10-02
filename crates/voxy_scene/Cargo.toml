@@ -1,0 +1,28 @@
+[package]
+name = "voxy_scene"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+voxy_time = { path = "../voxy_time" }
+glam = "0.33.6"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+voxy_assets = { path = "../voxy_assets" }
+voxy_navigation = { path = "../voxy_navigation" }
+voxy_input = { path = "../voxy_input" }
+
+[[bench]]
+name = "scene_scaling"
+harness = false
+
+[[bench]]
+name = "processor_requirements"
+harness = false

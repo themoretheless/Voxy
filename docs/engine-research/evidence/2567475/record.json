@@ -1,0 +1,104 @@
+{
+  "repository": "gameplay3d/gameplay",
+  "repository_id": 2567475,
+  "commit": "70c90a49dffda3b287487d261ada9c7f889c8eb0",
+  "source_url": "https://github.com/gameplay3d/gameplay/tree/70c90a49dffda3b287487d261ada9c7f889c8eb0",
+  "readme_path": "README.md",
+  "readme_sha256": "c9f9aeacddbd00d2dbf2015b405593724dd1568b4079fba6ce243b671a3843c6",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d7dba378e6c701b921325903bb6c6bb86322d325"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ec8e897a7329d82f7d75f1974d501539da31eb88"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "73cee3ee93e0de5188ea0259f4d4014f8a9d03fd"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "64d2382ac8777fb460e7526afe76c70d5c8360e8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "5372ae9bbc402c4514156b51e462a1d10737434a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "af474829498a9601acc3f813d1d4d552653231b0"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "88a3db0726fe594977f0f06a432bd57bd7f2fe8a"
+    },
+    {
+      "path": "gameplay.doxyfile",
+      "type": "file",
+      "sha": "674ef8723babb0106d9f0900ec0fc27b5ba228df"
+    },
+    {
+      "path": "gameplay.sln",
+      "type": "file",
+      "sha": "9d914d664d320fbcafc36af0649e8ec9d117bd9d"
+    },
+    {
+      "path": "gameplay.xcworkspace",
+      "type": "dir",
+      "sha": "397e33382a4768a7ae1a7a7c013854e9cd1684c5"
+    },
+    {
+      "path": "gameplay",
+      "type": "dir",
+      "sha": "1497f8380e96e9dd050f5dff0bb4a49e5d4ef3f9"
+    },
+    {
+      "path": "install.bat",
+      "type": "file",
+      "sha": "0758f6877a4e7062b69284eb039e1bbc8db2ee40"
+    },
+    {
+      "path": "install.sh",
+      "type": "file",
+      "sha": "ace7e471b2a08c3c0003877bb674201a8d7aab39"
+    },
+    {
+      "path": "newproject.bat",
+      "type": "file",
+      "sha": "beec8efd64230fe0ec60cb2246ee8efe07482274"
+    },
+    {
+      "path": "newproject.sh",
+      "type": "file",
+      "sha": "e6307d31b412ebf323168123b4380c88692c67cf"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "933d6b0a9478718bb15e4e255d7b34bc00607c1d"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "7c40476fa9d59e9aefb84b394f6cba75a9b5ccda"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "db3ae1747538d51e1303c968b7a6258a8a7f5ddc"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ 2D/3D mobile/desktop engine source with API/tools/samples/template and project creation workflows; runtime/platform scope not locally executed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

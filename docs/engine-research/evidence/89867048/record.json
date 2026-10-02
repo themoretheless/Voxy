@@ -1,0 +1,84 @@
+{
+  "repository": "phisko/kengine",
+  "repository_id": 89867048,
+  "commit": "5a0ad085cdefaffe56e2b049e9772ac7a2d05d15",
+  "source_url": "https://github.com/phisko/kengine/tree/5a0ad085cdefaffe56e2b049e9772ac7a2d05d15",
+  "readme_path": "README.md",
+  "readme_sha256": "34dfb93dd702dd5c81d0e293cea4e6dcf8b81f1bde17b9ddf7e9f6b667f0141f",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "be1d86eb71ffe035c87a2605beeac54dfc22c698"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5481e0dc437793701679918c1ba150e4f2abd61a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "17996e1502218dfb3ce8eda82a3d5e8f2d4bc0a4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "96c4396f9a9cb45e953b230e8068af02157cda39"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "98f621b61d4a07fd7c68f3fe358fc5ee97cf41d8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "99dac7631d1334e4e19272e58ed9530bc7591bc0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "707bba085768084e8a36919b871ebcc812069afc"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "a9fc8fce0f9503161cea9d8395f6d2a928ad2cbb"
+    },
+    {
+      "path": "kengine",
+      "type": "dir",
+      "sha": "65731b43c36a92328f7f5b59bb767cad6ebf3eb2"
+    },
+    {
+      "path": "koala.png",
+      "type": "file",
+      "sha": "932b0f9d7cb71a62c53401eb2c5e5af26fef4f3b"
+    },
+    {
+      "path": "opengl.png",
+      "type": "file",
+      "sha": "7a9241da89e5a3795a918fa195adf321bc5cf09a"
+    },
+    {
+      "path": "putils",
+      "type": "file",
+      "sha": "96b0764678280a59f73a499f9647673c18560c83"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "cbcca5b7b202761b0583248e3fed2612dd6079b7"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "99960bf0883247d77cf450e84acc133aa67485dc"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ECS game engine over EnTT storage library; owned kengine runtime and CMake/examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,57 @@
+{
+  "repository": "libsm64/libsm64",
+  "repository_id": 302426793,
+  "commit": "fd11813208272b4271d92bd92feb8f3fdbe61be5",
+  "source_url": "https://github.com/libsm64/libsm64/tree/fd11813208272b4271d92bd92feb8f3fdbe61be5",
+  "readme_path": "README.md",
+  "readme_sha256": "caaef2cabb0e6265fda79321656034ad74849518332be46236a51564826fbfbb",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6cb445fad5d43bba4291f5bc08d514987368a65e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a2af3428812951c941014a25edcdacd6d75455e4"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0e259d42c996742e9e3cba14c677129b2c1b6311"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "a6dae58c2de7002f1fe0ccb18f5159297b2b97d3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cb777c89ae01a26e8b7f35d57a16319ebea5c833"
+    },
+    {
+      "path": "import-mario-geo.py",
+      "type": "file",
+      "sha": "0aa1397b4b14db81c27b9f6288ad31c2f860101f"
+    },
+    {
+      "path": "import-test-collision.py",
+      "type": "file",
+      "sha": "54b2c1f553c79c1686287b105a0c27551dee128d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dc6b0894dda622add5301d05a2cc002c148ba188"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "91422bc3d390139b2a70a859b07fd7dd6b787c1c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

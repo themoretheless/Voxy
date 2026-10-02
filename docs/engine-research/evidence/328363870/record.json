@@ -1,0 +1,69 @@
+{
+  "repository": "vladbat00/bevy_egui",
+  "repository_id": 328363870,
+  "commit": "fc3e83cfafa2b59bca9411c8cae5a1dea013d0cb",
+  "source_url": "https://github.com/vladbat00/bevy_egui/tree/fc3e83cfafa2b59bca9411c8cae5a1dea013d0cb",
+  "readme_path": "README.md",
+  "readme_sha256": "a8b21f048ec880b6779dd5ff56fbd317579b272dd7f8792872079d656d9182d8",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5c516b21e5b3e82560b8541edb9e9aea6b710982"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d02371e5677902daa588715c92244a218b6e39b8"
+    },
+    {
+      "path": ".rustfmt.toml",
+      "type": "file",
+      "sha": "e86028b10d6146c6e1ac232f0378dbf8d689bbc6"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "62bc7270e6800cc7201dba826b299a1228f5f112"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "bd14bf1b1d5228a093247bb58b04a352f320ad52"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8746d35744a745771131c6c5921e735073b28138"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d46202c590b98db403eec593f84dd693149b31a0"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "efeae619dd8dfb9adc4f2630997b290366cb284a"
+    },
+    {
+      "path": "bevy_egui.png",
+      "type": "file",
+      "sha": "b05d7e5afcd4db35238add81cb860125976f86aa"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "85ff8ff88ddfa4875f8ff3bc00d8c5fae74b76df"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0c44e09ffbf4fd45460411c89b15ffa3b2549085"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "egui integration plugin for existing Bevy runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

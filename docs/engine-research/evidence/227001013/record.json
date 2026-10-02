@@ -1,0 +1,94 @@
+{
+  "repository": "nidorx/ecs-lib",
+  "repository_id": 227001013,
+  "commit": "e4738e088e4653b6ae37ad5d45cac0d2e00be6d9",
+  "source_url": "https://github.com/nidorx/ecs-lib/tree/e4738e088e4653b6ae37ad5d45cac0d2e00be6d9",
+  "readme_path": "README.md",
+  "readme_sha256": "20b9d3b9229e5089beff7067adcb0d5ccbffcc17745b122b1c6024f6d65b3175",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2ec6e6a24bb98d276e1e76d0b69d99858a0ba386"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "9981c21fc254500c83b0a83a4afdbe9405fb62d9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3848efb94eba5544906488aefdce598df563dd20"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3dc04fc9c96f8b40a4bc378c7095ffef5982f6e8"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "6db49144edbf9dee0c622bdd322f889503c4a96b"
+    },
+    {
+      "path": "logo.jpg",
+      "type": "file",
+      "sha": "acac9e0bdde095ce8bab7f76cd4f959f8ce5656f"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a9af8517a4fc06a9ef5f44dfd3be50723d9b5146"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ca8839a7f1814cdf1906090bf279bb6568806b43"
+    },
+    {
+      "path": "publish.js",
+      "type": "file",
+      "sha": "b63d6f7d5a964bd4fab555eb1bd152ff93f1d179"
+    },
+    {
+      "path": "repository-open-graph.png",
+      "type": "file",
+      "sha": "4a1f17637a3fef2393e3577fd418eb8169c3f129"
+    },
+    {
+      "path": "repository-open-graph.psd",
+      "type": "file",
+      "sha": "731b26fd6f7eaf525ef9a679e41a69e6252a77a5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "31ef3c8c06924180a0c96b38fe3e5cc27e01b009"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "ea82ecb7f4045b77141281a3e01b23072e79ae25"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "119a6b639f61d605bfdba7a00c8ef21fcfc31114"
+    },
+    {
+      "path": "v-release.js",
+      "type": "file",
+      "sha": "76d9d9a37f6c727e94ce01ad3cdb6ef53f1a469e"
+    },
+    {
+      "path": "v-snapshot.js",
+      "type": "file",
+      "sha": "563ac4dde4517b23f526dc0f28b4b2ddc938b559"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies TypeScript ECS library; src/npm/tests, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

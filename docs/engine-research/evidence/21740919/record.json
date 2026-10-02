@@ -1,0 +1,62 @@
+{
+  "repository": "kittykatattack/ga",
+  "repository_id": 21740919,
+  "commit": "28e76ee9c727c71237da9e5deea5f2dc15a51fad",
+  "source_url": "https://github.com/kittykatattack/ga/tree/28e76ee9c727c71237da9e5deea5f2dc15a51fad",
+  "readme_path": "README.md",
+  "readme_sha256": "bc5b5e7e8a8af74a8528dfdec1e5bee5ad23a4652d45e385dd9e793b87fb498c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ba04cb3c6efdb38efeab9758e0c81cf74e457ff8"
+    },
+    {
+      "path": "Gruntfile.js",
+      "type": "file",
+      "sha": "f3866077daac856704b474d54c92eb30c39a919a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c3cf71a37b46782fce128fde5027565ff35e28c6"
+    },
+    {
+      "path": "README_zh_CN.md",
+      "type": "file",
+      "sha": "b2650f35cf2247a1a20d225d9e9ccc978eeda418"
+    },
+    {
+      "path": "bower.json",
+      "type": "file",
+      "sha": "cb693c1e8d4f853b75a20712d3905d83093833fd"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "9362b7613066e31e7e2f088dc8506fe852d434b6"
+    },
+    {
+      "path": "ga.js",
+      "type": "file",
+      "sha": "38f985de62162e36a67c46b427dbbc5f252e7366"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "e013b2adbff993c9e4a076cd13bd2608d05ab2a2"
+    },
+    {
+      "path": "plugins.js",
+      "type": "file",
+      "sha": "69b2ca3cc79ac4beb701d8389e3d4dd0f0466c40"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "5b39ad65da32e9486a03085c48f28d9403b08add"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

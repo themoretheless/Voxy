@@ -1,0 +1,49 @@
+{
+  "repository": "r-lyeh/v2",
+  "repository_id": 825424135,
+  "commit": "a64324da388551032a15a550ab05f9fe82abfe29",
+  "source_url": "https://github.com/r-lyeh/v2/tree/a64324da388551032a15a550ab05f9fe82abfe29",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e964fa71f46f0aaf5df6bb5c568c324143f04f09"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b876a4b36d89823573afaa10fb554264e1e4d6a6"
+    },
+    {
+      "path": "MAKE.bat",
+      "type": "file",
+      "sha": "ce83c6762512f7ff7b43a2c2c88520a8c9ad637f"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "bcae398f96296dad42da3bd7f03f645d0013d4a1"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "207227e78e579ceb13ff4a74ef6f925584054f4b"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "80a01d583c9e134dfd785dd997c3885bb4982519"
+    },
+    {
+      "path": "hello.c",
+      "type": "file",
+      "sha": "ca64d01bac90741308ffcb88e94fec8250b57fd8"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Discovery identifies C 3D framework; pinned root contains code/demos/build entrypoint but no README confirming broader engine scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

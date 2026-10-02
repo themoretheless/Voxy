@@ -1,0 +1,159 @@
+{
+  "repository": "UPBGE/upbge",
+  "repository_id": 46817566,
+  "commit": "7069330ba4ac0b442bd84aba44477dca800e6269",
+  "source_url": "https://github.com/UPBGE/upbge/tree/7069330ba4ac0b442bd84aba44477dca800e6269",
+  "readme_path": "README.md",
+  "readme_sha256": "4029bbce588ac34cb76a04892bce880092bfe240798057b09dc09b536746e9c8",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "0930ab169c81d80e8eb49e2977e14d1e625b237c"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "7de75d9d332a0d23440ed84da6ab81d639eb6805"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6e786cce49f188f84d25df5a87fd2dd543915ce0"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "bd67ddbcf871647bc80417326c091bb032f93866"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3b31db27c556def634195701bac7c3e5020d6ecc"
+    },
+    {
+      "path": ".gitea",
+      "type": "dir",
+      "sha": "52cd51e9b399ab109bfb0f17a456ba29b6f665db"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2f2896e8eec04d8d4a90ad5a852fa832e8e33359"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9921a1fd88cbdcb8b79110542a0e0aa4bb81b852"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "06a8f36d5b1544456a989b7dda86121b1706cd37"
+    },
+    {
+      "path": ".well-known",
+      "type": "dir",
+      "sha": "c73b2fa5cb31d56f0bcfc7c99974f129496151ef"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "2716771233c63934231c48bdd059c7f7c0ceb3cb"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "27107fd2cdfb2c7fac086e8b099695d8277323c7"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "3be7c91320a650eb99fc4ebda1f5fab48c7dbea2"
+    },
+    {
+      "path": "GNUmakefile",
+      "type": "file",
+      "sha": "e47c9798d656ad94f3e101f66b491ed2fd76d5f8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e49e5d794e612e9d339bbec17b3696dea082d19d"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "576411e9d4ac104aa69b530df79223d70b41bbf4"
+    },
+    {
+      "path": "build_files",
+      "type": "dir",
+      "sha": "8c92b75dd8da059a4908a984c8fccb70108a9e8a"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "cf0262abcd816c4e08c4161cd43443b4d4fbd711"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "50d07119fa927540ab4bc7c1f7f4ede1942646d3"
+    },
+    {
+      "path": "intern",
+      "type": "dir",
+      "sha": "3a8e44938399e908b153974d33c99fa5bc487b9b"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "81f899c0119ca233da69b3b29ce8e3b1ee2469cd"
+    },
+    {
+      "path": "locale",
+      "type": "dir",
+      "sha": "f14c390c57059c2ca2c52c76969ab3828910600c"
+    },
+    {
+      "path": "make.bat",
+      "type": "file",
+      "sha": "174d9e86bddccbea0027e9f272c619cec4084375"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "17b907281d89c36fb94d73cf74abd49de81b3c79"
+    },
+    {
+      "path": "release",
+      "type": "dir",
+      "sha": "933986ee5c13d53f9559b9fcc81a8cf60ea76547"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "452352ec8d389c2382595a610fe4aca421a392e0"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "59169de8e58b36ea1fb04751a1e26a6b6b6ad87e"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2339545abec77abef8ae1a429f4f66abf2402947"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a59d054f5ca7f9f27f11574cc9f696194c78350a"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit Blender/BGE branch retaining integrated game runtime and extending upstream source; not independent architecture family.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

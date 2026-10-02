@@ -1,0 +1,139 @@
+{
+  "repository": "skylicht-lab/skylicht-engine",
+  "repository_id": 220988542,
+  "commit": "bc6235b64bff61595a4072a0aae93d52ade56863",
+  "source_url": "https://github.com/skylicht-lab/skylicht-engine/tree/bc6235b64bff61595a4072a0aae93d52ade56863",
+  "readme_path": "README.md",
+  "readme_sha256": "93431f5c8a2140c70802acbc41460288a8aa6bd36fd7f785b30ab614a5f08570",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "257479df7c821f2a371bc27ce4883e900e38a0e0"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c2cbaa24fe8df61700fba7d72e9a7c5b1746e23e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e31d0036b7d050266eb4a82ee6dc2eb470790f89"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d5e8917407df17494576a4064c73e504c3d18f37"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "64682d572a227d3c390816d28b5a6e9ed0ec9d16"
+    },
+    {
+      "path": "BuildCommand",
+      "type": "dir",
+      "sha": "00b7ad4c92d7fcb8ad34b188028aea760099a9d8"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "95f73232441942d8a71783a852f811ae61a851ec"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "3b3c1df0d62f7dfd7265b40b403aa9f68f1daf6a"
+    },
+    {
+      "path": "CMakeProjects.cmake",
+      "type": "file",
+      "sha": "1b0f14e029e4e059307e088bb5a6c7137c47f7f8"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "a90933f3dea422e5979789245d6fe1b464b15227"
+    },
+    {
+      "path": "Doxygen",
+      "type": "dir",
+      "sha": "9c406187aac5f901b0eaabccb0de33cf816f4f6c"
+    },
+    {
+      "path": "GenerateVCPrj.cmd",
+      "type": "file",
+      "sha": "3cc05f1771fa42baf4f2da0ade17f55fcbbb2064"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0dea7016b4d28bd5da5d93882024d1c997cf016a"
+    },
+    {
+      "path": "PlatformConfig.cmake",
+      "type": "file",
+      "sha": "33d59ef099aca5fb49b9dea140c98657b426f290"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "a9e737467f355056754358e8a0e23b1472b473ec"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "64ca665d776f4bfc2d13f4d67fa411675c57cbb6"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "34540cdfbe94ffe89ed42033ad0a4f8f23f46b67"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "381943fd836e4b994902dbc27f9e87bff607e52b"
+    },
+    {
+      "path": "SkylichtConfig.cmake",
+      "type": "file",
+      "sha": "e2074aaa528b5eea504ab527d12eb32ce5a59ad2"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "115709507db966f2751ece93878ff669ffed0439"
+    },
+    {
+      "path": "UnitTest",
+      "type": "dir",
+      "sha": "ffef08fb3a004ebd7dcfd58d54f7d7c4cdd02282"
+    },
+    {
+      "path": "UpdateMakeForSamples.cmd",
+      "type": "file",
+      "sha": "860376a347f19995ad6eccbdbad663d9673740e2"
+    },
+    {
+      "path": "Version.txt",
+      "type": "file",
+      "sha": "bcab45af15a0f1b0166daf8cbf18b17cd8649277"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "6b310519d95de6ac27edff884bde5688b0432d4d"
+    },
+    {
+      "path": "ios.cmake",
+      "type": "file",
+      "sha": "379014166243560bd8f170dcf5aabf2dfbe93a1e"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Irrlicht evolution with added audio/physics/particles; owned runtime/projects and CMake platform build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

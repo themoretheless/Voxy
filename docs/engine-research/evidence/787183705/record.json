@@ -1,0 +1,304 @@
+{
+  "repository": "DescentDevelopers/Descent3",
+  "repository_id": 787183705,
+  "commit": "a3e82bc292dab95afd2bf3dc0988c065e041b3ef",
+  "source_url": "https://github.com/DescentDevelopers/Descent3/tree/a3e82bc292dab95afd2bf3dc0988c065e041b3ef",
+  "readme_path": "README.md",
+  "readme_sha256": "94b7291e4a59e8ada9b75470369164d1fa9a86a63045447d16388039ba8c2fc5",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "3a39fe3ff3c8de01275def380464f8b61f987cfa"
+    },
+    {
+      "path": ".clang-format-ignore",
+      "type": "file",
+      "sha": "4cdb88741790d84276a6c7158b356ae97a64a6a6"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "acd10aaf8a8881b7e23234eb8a47e9c7bdbdef9f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "aa1783a6d865b79e98ecabc3375a87ba20ec435e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ef4c7c71632eeb0a746e72e091cf1e4983167e4e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "29f22795def43f07749bafa78d6d1c6c3e570c2c"
+    },
+    {
+      "path": "2dlib",
+      "type": "dir",
+      "sha": "87144c60dd9d42fb3318c8edc2b078d7e6b61d9c"
+    },
+    {
+      "path": "AudioEncode",
+      "type": "dir",
+      "sha": "4f6dfdfb70ccb97094d9e8e41001d6d55005d347"
+    },
+    {
+      "path": "BUILD.md",
+      "type": "file",
+      "sha": "7782e0fea5714652796ead54258b5aeba1c65afa"
+    },
+    {
+      "path": "Brewfile",
+      "type": "file",
+      "sha": "354b59746d811971ef11502f22d828a89817b7a1"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7e34ad57b5bcf0b9b8f37ad5a2c7d0cd8a0335ec"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c7221eea64cbc28d1632878a66447d5c30b536cf"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "6713710204d7fd64e6fc5fb1037a5eb24f164062"
+    },
+    {
+      "path": "Descent3",
+      "type": "dir",
+      "sha": "2c98dd88e552eb951bbce05c1a1e66bd69bec9fe"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e72bfddabc15be5718a7cc061ac10e47741d8219"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5fb127a1eeec953d1785d0d586b4362507c71198"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "type": "file",
+      "sha": "c37a83d5c1ec60715ef180c09e11238d7c2d2539"
+    },
+    {
+      "path": "USAGE.md",
+      "type": "file",
+      "sha": "c4a7f54c90fe03557a795734aedfe51393f406aa"
+    },
+    {
+      "path": "bitmap",
+      "type": "dir",
+      "sha": "669c1c0260d3db0a36bfb069172fd11641a022de"
+    },
+    {
+      "path": "cfile",
+      "type": "dir",
+      "sha": "17556934f1be9579c3a887f4694023767d02f005"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "f981a8d704041962c14b518279e94b2b05466261"
+    },
+    {
+      "path": "dd_grwin32",
+      "type": "dir",
+      "sha": "8165c6fc0109f1f1f53b0d66406f74353bbf2e23"
+    },
+    {
+      "path": "ddebug",
+      "type": "dir",
+      "sha": "1ddafeb429c37b01f179b8c6ab374d0a47bdb425"
+    },
+    {
+      "path": "ddio",
+      "type": "dir",
+      "sha": "ecbde45eaed07384a098fe1e0ee30d03f859f19a"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "b4ebf785e8fd7532799fc38e9ba66f944495cace"
+    },
+    {
+      "path": "fix",
+      "type": "dir",
+      "sha": "059b3be01be15e8a580192ed8118a74247d0c953"
+    },
+    {
+      "path": "grtext",
+      "type": "dir",
+      "sha": "f9ef9b25e7f7f372c75588434f00603fbe98e97d"
+    },
+    {
+      "path": "legacy",
+      "type": "dir",
+      "sha": "1eaa661e9efee6cb522a7e54f5f85329fc1747fd"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "a16418443b250917f85e48b600516b99f8954232"
+    },
+    {
+      "path": "libmve",
+      "type": "dir",
+      "sha": "947fc71dbfcaae5c08ad20a12f9ddb8d165bdf8d"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "431d2162ec3a5e804d36201de7194d28a55fd81c"
+    },
+    {
+      "path": "logger",
+      "type": "dir",
+      "sha": "5accec6e89ed40fee0faa1b664c062734d98c0ef"
+    },
+    {
+      "path": "manage",
+      "type": "dir",
+      "sha": "54fb484269d5f816b61e6e92d3c4c9c61c214349"
+    },
+    {
+      "path": "md5",
+      "type": "dir",
+      "sha": "a0301a218a637ac49738936e576d5d11196d38fc"
+    },
+    {
+      "path": "mem",
+      "type": "dir",
+      "sha": "7e327a3454b48bc3251145b125c7adfb026e9647"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "4c220641a9ca0121905776c95229cdd20edf2549"
+    },
+    {
+      "path": "model",
+      "type": "dir",
+      "sha": "875d67bba92687a3f817e30094c2fb5ba2e45bac"
+    },
+    {
+      "path": "module",
+      "type": "dir",
+      "sha": "ec608d1b9c822e1260c7b691b7fb26dac116a150"
+    },
+    {
+      "path": "music",
+      "type": "dir",
+      "sha": "0503744f829748cd50794e36580daa0a6f1c8006"
+    },
+    {
+      "path": "netcon",
+      "type": "dir",
+      "sha": "e43b9af1f2f62a01d353323f4a1fbf502796437e"
+    },
+    {
+      "path": "netgames",
+      "type": "dir",
+      "sha": "8e9434bd901e073335d14e55d4b8feee3acd9b9d"
+    },
+    {
+      "path": "networking",
+      "type": "dir",
+      "sha": "eca9459c878331e27dd7f17f6bd091b3af771da3"
+    },
+    {
+      "path": "overlays",
+      "type": "dir",
+      "sha": "bd8e4dbe997471e33e5bb4a6df4cf64a737a43bb"
+    },
+    {
+      "path": "physics",
+      "type": "dir",
+      "sha": "a8fc2db8b60320d22f344b139820c4272c581e2d"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "866ececb517047c8332fd77c98e118c4945e5a84"
+    },
+    {
+      "path": "rtperformance",
+      "type": "dir",
+      "sha": "95c7baa1fc4bcfefec951dfaef452d2f0eb0ebe9"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f96e4d305f0ef7b26d7756bc4d32ecd47fb02aab"
+    },
+    {
+      "path": "sndlib",
+      "type": "dir",
+      "sha": "4998843dcf66e331cf555f2ecbd3454ef60613d6"
+    },
+    {
+      "path": "stream_audio",
+      "type": "dir",
+      "sha": "7b50ba43e4f55b59e9c3f849e9067614d3b534b9"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e4db8ab594ebe0e8eb8e7cf080ad8f3f81fb37a9"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "ca2e8184ac40cf9d1f939a3c3e72f07d41cc0f1a"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "3943c3b69c8f4e208e041567bb7387cd986aeca8"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "1ed395557d4307eb3c5c7d248263a41b905a390b"
+    },
+    {
+      "path": "unzip",
+      "type": "dir",
+      "sha": "ebd06889226a84f890170a70405a7ac166dd1924"
+    },
+    {
+      "path": "vcpkg-configuration.json",
+      "type": "file",
+      "sha": "95a67c09cd2ca7229d377337467a385f4ae7a5fc"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "714b8538a3e07227fabad64afeb676011803f828"
+    },
+    {
+      "path": "vecmat",
+      "type": "dir",
+      "sha": "b1c41685e68e438751cf31b015dfdc9b9fce1b2e"
+    },
+    {
+      "path": "win32",
+      "type": "dir",
+      "sha": "be0c34f0d8bcca6171612f5f0ece8a06f886d5e5"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Descent engine source release; owned renderer/physics/network/audio/editor and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

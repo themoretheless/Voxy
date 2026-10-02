@@ -1,0 +1,124 @@
+{
+  "repository": "elliotfontaine/yard-godot",
+  "repository_id": 1117535188,
+  "commit": "e92f2d02e962abe8dfd5a1a020e0de34d7b5133c",
+  "source_url": "https://github.com/elliotfontaine/yard-godot/tree/e92f2d02e962abe8dfd5a1a020e0de34d7b5133c",
+  "readme_path": "README.md",
+  "readme_sha256": "6698219e21046991bbe5956a361360ab5ac5acb952f1e8105c500decc75b4cee",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d0f4e1dfa10ad778f3efa89c15aef53bdbd72fb8"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "cf0a5c3446de0e3346d1c24b89c9d0d0fb5bfb0f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7d437462c36957c7b8a20a9a1f700a74fc8fddc3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a7c1ca7cc321b05686dc75e4307fe0c393abdd11"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "cabc501b0f92ae3c8a4f9dab05e17795828f825f"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "a82c792ecc060c099dd9211414bda3de24048adb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e9c4cf519157550cacccbd445ac7897dbf135bb7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b9266ad3124875cb74987809c4712f68451da070"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "820f4558bf511906e2d0c8d705c17a67d67923a2"
+    },
+    {
+      "path": "LICENSES",
+      "type": "dir",
+      "sha": "99512298f87e5649a23e6e1f48d30f613218ff1b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "42bd4abe19943121f78e589ab5b1e9a223f2e263"
+    },
+    {
+      "path": "REUSE.toml",
+      "type": "file",
+      "sha": "fc4eace2c758be32e11386d62cd28a02ab8d8f0c"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "5f6635ea44c90307281f6ad858016b3ab1585ed2"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "bf161c0e7823f0b81be34e97e967a447ddc981a6"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "80bf53307334b14b670e24c2f66059722c6c0225"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "73f02a1c0f5f857bb64c22b94024b3de6379a65e"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "1219b366b9e0d203d56b2317d3b720a7483c7532"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "33dadbbca410936438a0658b316469fcea6adca7"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "103a4748f1bcac31fcda1deb1e503bf632db874c"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "812055438c82bfd22eed942ea12bf38934f88c53"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "66c6f0e1c16bd354134bebae4f65a952187c54b9"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0de670c88d1129749ee02cceff26c43da19e6e86"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Godot editor/resource-query add-on; addons/examples depend on existing engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

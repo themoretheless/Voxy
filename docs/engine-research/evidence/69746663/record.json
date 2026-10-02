@@ -1,0 +1,84 @@
+{
+  "repository": "FlaxEngine/FlaxAPI",
+  "repository_id": 69746663,
+  "commit": "3aea51ad86deb865a0a9be5b897aa77c22132a14",
+  "source_url": "https://github.com/FlaxEngine/FlaxAPI/tree/3aea51ad86deb865a0a9be5b897aa77c22132a14",
+  "readme_path": "README.md",
+  "readme_sha256": "235621563896489cac0189d1b9179b73e3c1a0dbb9241c3dc8b229ac97b605c5",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "291c2f8c78ce1d1cceda47b37285c9541d88ff0c"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "1ca777cd6a4db523fd08a78e0d70e1eabb23aebb"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "03fff1aa18044e0659700fd27fd6a222d13bc456"
+    },
+    {
+      "path": "FlaxAPI.sln",
+      "type": "file",
+      "sha": "20a13455f25a7089941a452f85bed6c1ecbdb595"
+    },
+    {
+      "path": "FlaxAPI.sln.DotSettings",
+      "type": "file",
+      "sha": "1607e1fc3c674714a966c00d71a1cfec448364de"
+    },
+    {
+      "path": "FlaxEditor.Tests",
+      "type": "dir",
+      "sha": "f95f4b03e83a39e9809fde9c581bb35cf7eaa905"
+    },
+    {
+      "path": "FlaxEditor",
+      "type": "dir",
+      "sha": "8aa0770bffb1f3783158289a43ff5e734bd3f6f1"
+    },
+    {
+      "path": "FlaxEngine.Tests",
+      "type": "dir",
+      "sha": "b9b61d361ed4e9fcb150f3bf4f677ef4482eedf3"
+    },
+    {
+      "path": "FlaxEngine",
+      "type": "dir",
+      "sha": "c5752a7782291ad4d8446cea4ddc2022e4214718"
+    },
+    {
+      "path": "ISSUE_TEMPLATE.md",
+      "type": "file",
+      "sha": "cf07cc7852b56db36208024f4c72e05d56c5b306"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "95355e2a70a9d88bfa6407b07c1038e894e76288"
+    },
+    {
+      "path": "Logo.png",
+      "type": "file",
+      "sha": "36075f1807b7b50ec1e415110ff87d1407939cd1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c833f9662f236587d60ddccc1b4ce95fd74df9a3"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "841dc8888189d80fa980060a809cc220862a80d4"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Historical C# Flax API and editor repository, distinct from underlying C++ Flax engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

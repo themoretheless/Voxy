@@ -1,0 +1,89 @@
+{
+  "repository": "rafaelcp/Super-Mega-Engine",
+  "repository_id": 67567812,
+  "commit": "eb86703eb2e4f5bd4d3d7d5f63f8ff8b6060a54a",
+  "source_url": "https://github.com/rafaelcp/Super-Mega-Engine/tree/eb86703eb2e4f5bd4d3d7d5f63f8ff8b6060a54a",
+  "readme_path": "README.md",
+  "readme_sha256": "1ca512dfa3e69391050bbfb0cab9e4a87e5f666e29841c0d236952c58a406c9c",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cd2946ad76b4402e5b3cab9243a9281aad228670"
+    },
+    {
+      "path": "Configs",
+      "type": "dir",
+      "sha": "e611bb85d1a3ae540b545724b20613861683a8a8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "faab74042ca014564da7f9474020a7d35eab1b41"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "de8339bc28587bfa69e62213ae407f0fa12e2296"
+    },
+    {
+      "path": "SuperMegaEngine.project.gmx",
+      "type": "file",
+      "sha": "26b953c8d56b36646bdb07990bd910d62c8d6ab9"
+    },
+    {
+      "path": "background",
+      "type": "dir",
+      "sha": "1c361b7baec734d302b8259cf277c6970ddfbcb9"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "14596db82b3b32b254c4259baaad76e19c1a7bf2"
+    },
+    {
+      "path": "help.rtf",
+      "type": "file",
+      "sha": "2fcbb56552f2215306f12cacd4e32cba250bb05f"
+    },
+    {
+      "path": "objects",
+      "type": "dir",
+      "sha": "405b11ce3869cae7da3bfe8b52c112256d2cc4e4"
+    },
+    {
+      "path": "rooms",
+      "type": "dir",
+      "sha": "8277f6d957a845b9808bfdaaf0e29e8af11fc15b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "b09b1c90339cfafb54d713f78435c0234175acc3"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "68ff880b0f58692b60d2957f962abe72c7c01e00"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "f34b7e7dad1295d0e5c022e2032c5b78b10e3742"
+    },
+    {
+      "path": "sprites",
+      "type": "dir",
+      "sha": "8cdc870ba7697a00e70cdeb68be0afe74f17e92d"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Megaman gameplay engine inside GameMaker Studio; fork of game-specific Mega Engine, not independent graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

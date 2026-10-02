@@ -1,0 +1,82 @@
+{
+  "repository": "induktio/thinker",
+  "repository_id": 144423230,
+  "commit": "f851165e0df99d571f605e6fd8ec1092fbaca85a",
+  "source_url": "https://github.com/induktio/thinker/tree/f851165e0df99d571f605e6fd8ec1092fbaca85a",
+  "readme_path": "Readme.md",
+  "readme_sha256": "c9ddbc3a303c422d75017d5681ff6ca7a45448a980b9a3d7973f997ff634732a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "db19761f84a9f78e2776848c8d6ceebfa5c8e4db"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b86893b458fca7f8cad57468cfb7b4a82f86cefd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b117ae6ba9f9819524c17b6c8920a2ad6c3111e4"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "7b2006b8a6b35474b24168cbc1ef519986d34388"
+    },
+    {
+      "path": "Changelog.md",
+      "type": "file",
+      "sha": "631207afd289acb6813beabec7026fd0350207df"
+    },
+    {
+      "path": "Details.md",
+      "type": "file",
+      "sha": "2b239d956f99746eb82c459c284ea846511d86d5"
+    },
+    {
+      "path": "License.md",
+      "type": "file",
+      "sha": "9d6f2b9e10bd7535b3e94f49c69b02c547673e3f"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "e3cc408f9740429a9d5f06865ee1524ac45716a2"
+    },
+    {
+      "path": "Technical.md",
+      "type": "file",
+      "sha": "61c98cbe1293744dcf77dc243ae5a5652b925f17"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "eb68ff41a0bc4f58da92714d60230af43a703dd1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "676e4f604ebc7fff6f460f42f4ab086642a4ff55"
+    },
+    {
+      "path": "thinker.cbp",
+      "type": "file",
+      "sha": "c84afd27cf05ba40fb1d4e8383990799130aaa67"
+    },
+    {
+      "path": "thinkerlaunch.cbp",
+      "type": "file",
+      "sha": "0c7d2a96669311d9b8512780c5730bb86630735c"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "8eaa32003c1aca95d26ca2260c2ae07c68a587a1"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

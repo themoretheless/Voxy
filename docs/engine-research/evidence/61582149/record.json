@@ -1,0 +1,127 @@
+{
+  "repository": "grit-engine/grit-engine",
+  "repository_id": 61582149,
+  "commit": "772ec99daffccc99d9b67bd78deacf856cc8d1f9",
+  "source_url": "https://github.com/grit-engine/grit-engine/tree/772ec99daffccc99d9b67bd78deacf856cc8d1f9",
+  "readme_path": "README.md",
+  "readme_sha256": "ef53fda9202b2d979c707ef80a40dccf901bb9c262898f35ee71bf3ec60ef9f2",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "fab7764a952a0fd986ccd53306bae6da6cdfef7e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "33afe072c4df2d23c1fc832c64b6536ad1d48498"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "938f33a1670a72aadc3d182a0b9e3cf37c3a5204"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "c16b047ce229b22bb985533de7738e0f501785c2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94bee70118f53bdf3cd9383834d0d1355493da56"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "fe594a90db5f76a7660855b1c035dfe87ca622ac"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1c55d23aec366d487e54fd597d5be36172dfa196"
+    },
+    {
+      "path": "build_and_copy_to_bucket.bat",
+      "type": "file",
+      "sha": "123a8f9ba0262b65a2db631de9619af63f910bc8"
+    },
+    {
+      "path": "copy_executables_from_bucket.sh",
+      "type": "file",
+      "sha": "fc271e5f859c607cafe94d33ce87335025f790a1"
+    },
+    {
+      "path": "copy_executables_to_media.bat",
+      "type": "file",
+      "sha": "4682567511a03a3f79add1a585df4b0c83fa79d0"
+    },
+    {
+      "path": "copy_executables_to_media.sh",
+      "type": "file",
+      "sha": "9b1bbdb181b1e796c1a24318195fa7b3e5ba29e8"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "d9b9f992b6f4c4f2d5d403e87447090cd968f331"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "844f657fc21b0343c50a1d83b7f11500808b1776"
+    },
+    {
+      "path": "exporters",
+      "type": "dir",
+      "sha": "b63ac30ee9461534806aa181c7805dcccf2f242c"
+    },
+    {
+      "path": "grit-engine.sln",
+      "type": "file",
+      "sha": "dcf2be2d8e01c74a514a079704975deeeb2a3728"
+    },
+    {
+      "path": "gtasa",
+      "type": "dir",
+      "sha": "3376e3189edeee7e052c654e21f30c738b2810fa"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "af09ac651af16f629a714f8f35b60371f1f3c5cc"
+    },
+    {
+      "path": "pch.props",
+      "type": "file",
+      "sha": "fea4fa899ceb188b637b9257335c3f2d74d26b95"
+    },
+    {
+      "path": "problems_with_ogre.txt",
+      "type": "file",
+      "sha": "bc07c9d1bb3b0567867d5d4054316ee801a5ffb5"
+    },
+    {
+      "path": "remote_build.sh",
+      "type": "file",
+      "sha": "1560d39739335759dd55729138e4ccd3c2dc3523"
+    },
+    {
+      "path": "solution.props",
+      "type": "file",
+      "sha": "1dc708d8de5ffb2d252c9166567babb18c3a67b3"
+    },
+    {
+      "path": "solution_debug.props",
+      "type": "file",
+      "sha": "92100e7f83fe63c6ef6591b89ac5008bbdc5cc0d"
+    },
+    {
+      "path": "solution_normal.props",
+      "type": "file",
+      "sha": "e67464fe900d7204a08016aabafba8092933e552"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

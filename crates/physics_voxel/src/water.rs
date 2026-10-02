@@ -34,14 +34,14 @@ impl WaterStates {
         Ok(self)
     }
 
-    fn level(self, state: BlockStateId) -> Option<u8> {
+    pub(crate) fn level(self, state: BlockStateId) -> Option<u8> {
         self.0
             .iter()
             .position(|&candidate| candidate == state)
             .and_then(|index| u8::try_from(index + 1).ok())
     }
 
-    fn state(self, level: u8) -> BlockStateId {
+    pub(crate) fn state(self, level: u8) -> BlockStateId {
         if level == 0 {
             BlockStateId::AIR
         } else {
@@ -76,6 +76,35 @@ pub enum WaterPlan {
     },
 }
 
+/// Eight registered fill levels of one liquid. Different liquids must use disjoint states.
+pub type LiquidStates = WaterStates;
+pub type LiquidBudget = WaterBudget;
+pub type LiquidPlan = WaterPlan;
+pub type LiquidError = WaterError;
+
+/// Discrete transfer limits per active cell per tick, in eighths of a voxel.
+/// These are gameplay parameters, not physical viscosity measurements.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LiquidFlow {
+    pub max_downward: u8,
+    pub max_horizontal: u8,
+}
+
+impl LiquidFlow {
+    pub const WATER: Self = Self {
+        max_downward: 8,
+        max_horizontal: 4,
+    };
+    pub const OIL: Self = Self {
+        max_downward: 2,
+        max_horizontal: 2,
+    };
+    pub const LAVA: Self = Self {
+        max_downward: 1,
+        max_horizontal: 1,
+    };
+}
+
 /// Plans one deterministic, volume-conserving voxel-water tick.
 ///
 /// Full cells contain eight units. Each active cell first transfers as much as possible downward,
@@ -95,6 +124,38 @@ pub fn step_water(
     source: EditSource,
     budget: WaterBudget,
 ) -> Result<WaterPlan, WaterError> {
+    step_liquid(
+        view,
+        registry,
+        states,
+        active,
+        source,
+        budget,
+        LiquidFlow::WATER,
+    )
+}
+
+/// Plans a volume-conserving tick for one liquid with configurable flow limits.
+/// Other registered liquids are impermeable boundaries; they are not replaced or mixed.
+/// Commit each liquid's transaction before planning the next liquid against the updated world.
+///
+/// # Errors
+/// Returns the same errors as `step_water`, plus `InvalidFlow` for limits outside 1..=8.
+#[allow(clippy::too_many_lines, clippy::too_many_arguments)]
+pub fn step_liquid(
+    view: &impl VoxelView,
+    registry: &BlockRegistry,
+    states: LiquidStates,
+    active: &[VoxelPos],
+    source: EditSource,
+    budget: LiquidBudget,
+    flow: LiquidFlow,
+) -> Result<LiquidPlan, LiquidError> {
+    if !(1..=MAX_LEVEL).contains(&flow.max_downward)
+        || !(1..=MAX_LEVEL).contains(&flow.max_horizontal)
+    {
+        return Err(WaterError::InvalidFlow);
+    }
     let states = states.validate(registry)?;
     if budget.max_active == 0 || budget.max_samples == 0 || budget.max_writes == 0 {
         return Err(WaterError::InvalidBudget);
@@ -111,16 +172,16 @@ pub fn step_water(
     let mut amounts = BTreeMap::new();
     let mut touched = BTreeSet::new();
     for position in active {
-        let sampled = sample_amount(
+        let sampled = get_amount(
             view,
             registry,
             states,
             position,
+            &mut initial,
+            &mut amounts,
             &mut sample_count,
             budget.max_samples,
         )?;
-        initial.entry(position).or_insert(sampled);
-        amounts.entry(position).or_insert(sampled);
         let Some(mut amount) = sampled else {
             continue;
         };
@@ -139,7 +200,7 @@ pub fn step_water(
             budget.max_samples,
         )?;
         if let Some(below_amount) = below_amount {
-            let transfer = amount.min(MAX_LEVEL - below_amount);
+            let transfer = amount.min(MAX_LEVEL - below_amount).min(flow.max_downward);
             if transfer > 0 {
                 amount -= transfer;
                 amounts.insert(position, Some(amount));
@@ -151,6 +212,7 @@ pub fn step_water(
         if amount == 0 {
             continue;
         }
+        let mut horizontal_transferred = 0;
         for (dx, dz) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
             let neighbor = offset(position, dx, 0, dz)?;
             let Some(neighbor_amount) = get_amount(
@@ -166,7 +228,11 @@ pub fn step_water(
             else {
                 continue;
             };
-            if amount > 1 && neighbor_amount + 1 < amount {
+            if horizontal_transferred < flow.max_horizontal
+                && amount > 1
+                && neighbor_amount + 1 < amount
+            {
+                horizontal_transferred += 1;
                 amount -= 1;
                 amounts.insert(position, Some(amount));
                 amounts.insert(neighbor, Some(neighbor_amount + 1));
@@ -196,9 +262,9 @@ pub fn step_water(
             limit: budget.max_writes,
         });
     }
-    let chunks: BTreeSet<ChunkPos> = writes
-        .iter()
-        .map(|write| split_voxel(write.pos).0)
+    let chunks: BTreeSet<ChunkPos> = initial
+        .keys()
+        .map(|position| split_voxel(*position).0)
         .collect();
     let expected = chunks
         .into_iter()
@@ -312,6 +378,8 @@ pub enum WaterError {
     InvalidStates,
     UnknownState(BlockStateId),
     InvalidBudget,
+    InvalidFlow,
+    InvalidMaterials,
     ActiveBudgetExceeded {
         required: usize,
         limit: usize,
@@ -387,6 +455,18 @@ mod tests {
                 collision: CollisionShape::Empty,
                 face_materials: [MaterialId(2); 6],
                 translucent_interface_group: Some(InterfaceGroupId(1)),
+                emission: 0,
+                blast_resistance: 0,
+            });
+        }
+        for level in 1..=8 {
+            definitions.push(BlockDef {
+                key: ResourceKey::parse(format!("voxy:oil_{level}")).unwrap(),
+                render: RenderKind::Translucent,
+                occlusion: Occlusion::None,
+                collision: CollisionShape::Empty,
+                face_materials: [MaterialId(3); 6],
+                translucent_interface_group: Some(InterfaceGroupId(2)),
                 emission: 0,
                 blast_resistance: 0,
             });
@@ -501,5 +581,313 @@ mod tests {
             .map(u16::from)
             .sum::<u16>();
         assert_eq!(total, 8);
+    }
+    #[test]
+    fn adjacent_active_cells_use_transferred_volume() {
+        let (mut world, registry, states, stone) = fixture();
+        let left = VoxelPos { x: 8, y: 8, z: 8 };
+        let right = VoxelPos { x: 9, ..left };
+        let mut writes = vec![
+            VoxelWrite {
+                pos: left,
+                block: states.0[7],
+            },
+            VoxelWrite {
+                pos: right,
+                block: states.0[1],
+            },
+        ];
+        for cell in [left, right] {
+            for (dx, dy, dz) in [(0, -1, 0), (-1, 0, 0), (1, 0, 0), (0, 0, -1), (0, 0, 1)] {
+                let pos = offset(cell, dx, dy, dz).unwrap();
+                if pos != left && pos != right {
+                    writes.push(VoxelWrite { pos, block: stone });
+                }
+            }
+        }
+        world
+            .commit(EditTxn {
+                source: EditSource::Simulation,
+                expected: vec![],
+                writes,
+            })
+            .unwrap();
+        for _ in 0..10 {
+            let plan = step_water(
+                &world,
+                &registry,
+                states,
+                &[right, left, right],
+                EditSource::Simulation,
+                WaterBudget::default(),
+            )
+            .unwrap();
+            if let WaterPlan::Transaction { edit, .. } = plan {
+                world.commit(edit).unwrap();
+            }
+            let total: u8 = [left, right]
+                .into_iter()
+                .map(|pos| match world.sample(pos) {
+                    Sample::Loaded(block) => states.level(block).unwrap_or(0),
+                    _ => panic!("missing cell"),
+                })
+                .sum();
+            assert_eq!(total, 10);
+        }
+    }
+    #[test]
+    fn liquid_presets_limit_fall_and_preserve_volume() {
+        for (flow, expected_fall) in [
+            (LiquidFlow::WATER, 8),
+            (LiquidFlow::OIL, 2),
+            (LiquidFlow::LAVA, 1),
+        ] {
+            let (mut world, registry, states, stone) = fixture();
+            let pos = VoxelPos { x: 8, y: 8, z: 8 };
+            let mut writes = vec![VoxelWrite {
+                pos,
+                block: states.0[7],
+            }];
+            for (dx, dz) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+                writes.push(VoxelWrite {
+                    pos: offset(pos, dx, 0, dz).unwrap(),
+                    block: stone,
+                });
+            }
+            world
+                .commit(EditTxn {
+                    source: EditSource::Simulation,
+                    expected: vec![],
+                    writes,
+                })
+                .unwrap();
+            let LiquidPlan::Transaction { edit, .. } = step_liquid(
+                &world,
+                &registry,
+                states,
+                &[pos],
+                EditSource::Simulation,
+                LiquidBudget::default(),
+                flow,
+            )
+            .unwrap() else {
+                panic!("must flow")
+            };
+            world.commit(edit).unwrap();
+            let Sample::Loaded(below) = world.sample(offset(pos, 0, -1, 0).unwrap()) else {
+                panic!("missing cell")
+            };
+            let Sample::Loaded(above) = world.sample(pos) else {
+                panic!("missing cell")
+            };
+            assert_eq!(states.level(below), Some(expected_fall));
+            assert_eq!(
+                states.level(below).unwrap() + states.level(above).unwrap_or(0),
+                8
+            );
+        }
+    }
+
+    #[test]
+    fn invalid_flow_is_rejected() {
+        let (world, registry, states, _) = fixture();
+        for flow in [
+            LiquidFlow {
+                max_downward: 0,
+                max_horizontal: 1,
+            },
+            LiquidFlow {
+                max_downward: 1,
+                max_horizontal: 9,
+            },
+        ] {
+            assert_eq!(
+                step_liquid(
+                    &world,
+                    &registry,
+                    states,
+                    &[],
+                    EditSource::Simulation,
+                    LiquidBudget::default(),
+                    flow
+                ),
+                Err(LiquidError::InvalidFlow)
+            );
+        }
+    }
+    #[test]
+    fn other_liquid_is_not_overwritten() {
+        let (mut world, registry, states, stone) = fixture();
+        let pos = VoxelPos { x: 8, y: 8, z: 8 };
+        let oil = registry
+            .find(&ResourceKey::parse("voxy:oil_8").unwrap())
+            .unwrap();
+        let mut writes = vec![
+            VoxelWrite {
+                pos,
+                block: states.0[7],
+            },
+            VoxelWrite {
+                pos: offset(pos, 0, -1, 0).unwrap(),
+                block: oil,
+            },
+        ];
+        for (dx, dz) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+            writes.push(VoxelWrite {
+                pos: offset(pos, dx, 0, dz).unwrap(),
+                block: stone,
+            });
+        }
+        world
+            .commit(EditTxn {
+                source: EditSource::Simulation,
+                expected: vec![],
+                writes,
+            })
+            .unwrap();
+        assert_eq!(
+            step_liquid(
+                &world,
+                &registry,
+                states,
+                &[pos],
+                EditSource::Simulation,
+                LiquidBudget::default(),
+                LiquidFlow::WATER
+            )
+            .unwrap(),
+            LiquidPlan::Settled
+        );
+        assert_eq!(
+            world.sample(offset(pos, 0, -1, 0).unwrap()),
+            Sample::Loaded(oil)
+        );
+    }
+    #[test]
+    fn density_layers_preserve_partial_volumes_and_stay_stable() {
+        use crate::{LiquidMaterial, step_liquid_layers};
+        let (mut world, registry, water, _) = fixture();
+        let oil = WaterStates(std::array::from_fn(|i| {
+            registry
+                .find(&ResourceKey::parse(format!("voxy:oil_{}", i + 1)).unwrap())
+                .unwrap()
+        }));
+        let materials = [
+            LiquidMaterial {
+                states: water,
+                density: 1000,
+            },
+            LiquidMaterial {
+                states: oil,
+                density: 800,
+            },
+        ];
+        let top = VoxelPos { x: 8, y: 8, z: 8 };
+        let bottom = VoxelPos { y: 7, ..top };
+        world
+            .commit(EditTxn {
+                source: EditSource::Simulation,
+                expected: vec![],
+                writes: vec![
+                    VoxelWrite {
+                        pos: top,
+                        block: water.0[4],
+                    },
+                    VoxelWrite {
+                        pos: bottom,
+                        block: oil.0[2],
+                    },
+                ],
+            })
+            .unwrap();
+        let LiquidPlan::Transaction { edit, .. } = step_liquid_layers(
+            &world,
+            &registry,
+            &materials,
+            &[top, bottom, top],
+            EditSource::Simulation,
+            LiquidBudget::default(),
+        )
+        .unwrap() else {
+            panic!("must separate")
+        };
+        assert_eq!(
+            step_liquid_layers(
+                &world,
+                &registry,
+                &materials,
+                &[top],
+                EditSource::Simulation,
+                LiquidBudget {
+                    max_writes: 1,
+                    ..LiquidBudget::default()
+                }
+            ),
+            Err(LiquidError::WriteBudgetExceeded {
+                required: 2,
+                limit: 1
+            })
+        );
+        assert_eq!(world.sample(top), Sample::Loaded(water.0[4]));
+        assert_eq!(
+            step_liquid_layers(
+                &world,
+                &registry,
+                &materials,
+                &[top],
+                EditSource::Simulation,
+                LiquidBudget {
+                    max_samples: 1,
+                    ..LiquidBudget::default()
+                }
+            ),
+            Err(LiquidError::SampleBudgetExceeded { limit: 1 })
+        );
+        world.commit(edit).unwrap();
+        assert_eq!(world.sample(top), Sample::Loaded(oil.0[2]));
+        assert_eq!(world.sample(bottom), Sample::Loaded(water.0[4]));
+        assert_eq!(
+            step_liquid_layers(
+                &world,
+                &registry,
+                &materials,
+                &[top, bottom],
+                EditSource::Simulation,
+                LiquidBudget::default()
+            )
+            .unwrap(),
+            LiquidPlan::Settled
+        );
+        let overlapping = [materials[0], materials[0]];
+        assert_eq!(
+            step_liquid_layers(
+                &world,
+                &registry,
+                &overlapping,
+                &[top],
+                EditSource::Simulation,
+                LiquidBudget::default()
+            ),
+            Err(LiquidError::InvalidMaterials)
+        );
+        let equal = [
+            materials[0],
+            LiquidMaterial {
+                density: 1000,
+                ..materials[1]
+            },
+        ];
+        assert_eq!(
+            step_liquid_layers(
+                &world,
+                &registry,
+                &equal,
+                &[top],
+                EditSource::Simulation,
+                LiquidBudget::default()
+            )
+            .unwrap(),
+            LiquidPlan::Settled
+        );
     }
 }

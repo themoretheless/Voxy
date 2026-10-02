@@ -1,0 +1,114 @@
+{
+  "repository": "wasmi-labs/wasmi",
+  "repository_id": 118469706,
+  "commit": "2970aa871cc1001b57b267ccecdcd1e42306199e",
+  "source_url": "https://github.com/wasmi-labs/wasmi/tree/2970aa871cc1001b57b267ccecdcd1e42306199e",
+  "readme_path": "README.md",
+  "readme_sha256": "8f8d9239660a55a3a37e5ac0fea2cdc2387918ccadd49936b75901ab00e7670f",
+  "entries": [
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "74c572f5fae3bfb99696cc3951b021c5c8d3600a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "32828eacd6244529e74cd5a950bb9954d0820dff"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "08f2b95e18d918e7c905ffead0f4c1d187b9c1b9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ec4049b154d200ef306d7c64af0a0ea81ad47ef2"
+    },
+    {
+      "path": ".rustfmt.toml",
+      "type": "file",
+      "sha": "cbd89f50b44b5203c9e8411f812343213e4ff364"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9ddc885091dd679e68ff3d709de07fab896d9816"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "b22493025edc2977d34ac2b386dc0b4a0e769688"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "310377485f759c2a2e910d468f6a06fd0155e6a0"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "8f8581b66132a50edc41475b68e7027c5254c14f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "dcc2fa88570e78a5a9337f514db12619e991653f"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "b35f96d23531d1d9108fdbfe418eba812d3f3fb7"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "1399b075915d94e530b1aa7de1938139d713ab31"
+    },
+    {
+      "path": "NEWS.md",
+      "type": "file",
+      "sha": "47cabd9069650cba9bba8dc82f85477fb7630977"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5a194c47783b91dfd9430a6a908f1ddc310ffa32"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "b97a135b06d730ccc71cbb99e47010f5c6d79c64"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "f3bc1bfe4c12dc960f979ec4e298e3a183090c81"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "4b847691d8e8d89b4ac4ec5a43e4e865f8bb6eaf"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e1734edc6b92b07383b644d3023ee491ef7cdf67"
+    },
+    {
+      "path": "fuzz",
+      "type": "dir",
+      "sha": "c4d227bf39594c20b53c4c631603a8402feec264"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "fe603d999b8b552b986dc46816b30c648de20e0f"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify Wasm interpreter with Cargo crates; scripting subsystem, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

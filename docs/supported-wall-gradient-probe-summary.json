@@ -1,0 +1,17 @@
+[
+  {
+    "step_m": 1e-08,
+    "max_abs_gradient_error_n": 1.976696999985393e-10,
+    "max_one_sided_split_n": 7.946274592600009e-06
+  },
+  {
+    "step_m": 1e-09,
+    "max_abs_gradient_error_n": 2.51330000648059e-12,
+    "max_one_sided_split_n": 7.946287128000082e-07
+  },
+  {
+    "step_m": 1e-10,
+    "max_abs_gradient_error_n": 5.2349000243152866e-12,
+    "max_one_sided_split_n": 7.946863119997778e-08
+  }
+]

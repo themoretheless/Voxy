@@ -1,0 +1,124 @@
+{
+  "repository": "Legacy-LuaSTG-Engine/LuaSTG-Sub",
+  "repository_id": 463752585,
+  "commit": "8728b3f9e91e6cd577665a7f5777c6c7c23b5f31",
+  "source_url": "https://github.com/Legacy-LuaSTG-Engine/LuaSTG-Sub/tree/8728b3f9e91e6cd577665a7f5777c6c7c23b5f31",
+  "readme_path": "Readme.md",
+  "readme_sha256": "618d33a866561f54d91330ca944ed3ba49d9f0d59036c79186939669ec701079",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7103a53a04f5cf2785e7e3e6441d0440b08514ea"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "042c4022ca9e0ea07ca60a5aea1b516b3adca4e6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d3eb3fb4dea531d140321cd8bce21d671a5fd593"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "fb04809040c44297964ebf3d70b5549591d4a3b4"
+    },
+    {
+      "path": "BUILD.md",
+      "type": "file",
+      "sha": "d30c4828286397b9523ac29c4dee13ac3f0dfd41"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "55373daf58c66a189db68bceaa159eba911c3b14"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "072d8fe0fda7cd25a3224e4b12af1c372eb0fa22"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "252f0ade36ef7d676a6264d6737598f9a2e8bd86"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3f9ea75cf8187bfe850cf1ec65bfc9f11acaff90"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "47f1c92aa06436b16f86a3aa7ac37096167736a6"
+    },
+    {
+      "path": "LuaSTG",
+      "type": "dir",
+      "sha": "53dc8927c7fab54485c4b0d827bc323361756c6b"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "2eb7a19327c0ae74d60d6ddd1aca973380d498a7"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "49d165268ad099385f4f434afb4a124a66160b4d"
+    },
+    {
+      "path": "artwork",
+      "type": "dir",
+      "sha": "879c4ad305f8eb64ad3a6a86a0d47d92ff054590"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "a82e870802382c8b07dae1ca2f1502ec1fed28ae"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "48bc4983f52fa6d4a42e82562c050383eb780d23"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "25f45842f9021cce4533b9ecda7e44139771448e"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "a8f70926bf3870d48e5bdd48c7377209a9213bea"
+    },
+    {
+      "path": "imgui",
+      "type": "dir",
+      "sha": "a28e53bd2e131c9e7ed25d4fe438aca6bbd2f13f"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "e39b7021435f7bfbb26def5d1b5e4df1b6ffdb89"
+    },
+    {
+      "path": "version.json",
+      "type": "file",
+      "sha": "18adc73402f53a58c3c9bc1b08ebc9bfaa56845c"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit LuaSTG branch migrating system APIs; engine/runtime, tools and build sources. Separate game script/resource libraries are not assumed redistributable.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

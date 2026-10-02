@@ -1,0 +1,94 @@
+{
+  "repository": "DerSchmale/helixjs",
+  "repository_id": 97395223,
+  "commit": "f669b1c3426840ed47891a52c34687b94dabcdca",
+  "source_url": "https://github.com/DerSchmale/helixjs/tree/f669b1c3426840ed47891a52c34687b94dabcdca",
+  "readme_path": "README.md",
+  "readme_sha256": "839bdaaa0565e98f7adad073c2d54c2565402b664c81fb816add6068426d70b1",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "727fd03a3fee123f85bff99b8dbcaf22f0c43839"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "b9200c94c03ded9571c40ffa1e13a958c8c4857e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "98e418f88ee8f216b3b83334e8bf98bf9cfa4a2b"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "fe7d0c3ed23a4e97adb05781bc2209d7ceff8653"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "156f7c61bab66f1f71e434b8e22d13afc63d581c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "93e52191e67aedd8c1e5fff1b1216dca653486ad"
+    },
+    {
+      "path": "gulpfile.js",
+      "type": "file",
+      "sha": "35678c6e0f9e07cdd9a58017bc5731b07b96341d"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "082f3544e1f665dae755db6483f258d2b8b6c4a9"
+    },
+    {
+      "path": "jsdoc-core.json",
+      "type": "file",
+      "sha": "3bd196d5c63590603b07e3b2294dfa18c7b96c6a"
+    },
+    {
+      "path": "jsdoc-io.json",
+      "type": "file",
+      "sha": "75b46f4959978bfb4f740b3e1b3e8c3f5655a68f"
+    },
+    {
+      "path": "jsdoc-physics.json",
+      "type": "file",
+      "sha": "1d53ec5e5611e89185511658072333d698245fcd"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "9606356ff715d81dfbad3eb705ba47aa736c71a4"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "20c4857af7ae4f73543a235ef2dc5aaef4fc50ab"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "97af4902a306fe19c6eb34030c965c690f7849f3"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "b2895c018c70435bc203aa0faead220a26c59b84"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ebfc37926941a7e82ebc75f7d97ba540babad73b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaScript WebGL 3D/game engine with src and physics documentation; personal C++ project port, compatibility/readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,92 @@
+{
+  "repository": "linebender/bevy_vello",
+  "repository_id": 633589935,
+  "commit": "659b06fdb422dcd9992446d2c30cda024659b9f4",
+  "source_url": "https://github.com/linebender/bevy_vello/tree/659b06fdb422dcd9992446d2c30cda024659b9f4",
+  "readme_path": "README.md",
+  "readme_sha256": "6240013b36c6e20f5531d430235d7f1e086d40d38cccd58453f304b995328a0e",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "590eaf4bb8d7cf3a97bb4bae8551a94bd9f87bc0"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "36a9fb1336d64c44d8ddf468b416c76837e170cb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5f8981bc8304b45afae540f1a01bb27e6c3f2dc3"
+    },
+    {
+      "path": ".typos.toml",
+      "type": "file",
+      "sha": "59a9b7f1d2e0f55934cdbd5f1a9fc0fb2f8a5828"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "2ac7652177e421c596acb7131d63c5d232cd1b2d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "96b2501bea7b2c4eb01adef7511811b0b2f61a58"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "9347180aef3a663aeb995a564c8c404e9652dac7"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "587ab27b3e8210ce911731aaa5eb93dc11b48da4"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "2bb9ad240fa04c8cf706a4901c4807878e90c2dc"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "6802bc4b80c0f8df1413d55b16267c0969e352c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2f0f4c2821e976d2680f415e07e4d5ccf33d236c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fc46f0444c6d61d590ac9dee3f859cd5bc02744b"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "c399bf81d4839ef600f5e8c479b0910dc51d40fb"
+    },
+    {
+      "path": "screenshot.png",
+      "type": "file",
+      "sha": "e642348b260568b1d49c386f254c65eb29d805c1"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "35657db39c57feb6002433e24e1be9823f40a440"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dfbd792e095024762b87bde5cb02e30c3be00f13"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

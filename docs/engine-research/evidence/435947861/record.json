@@ -1,0 +1,92 @@
+{
+  "repository": "Strrationalism/CPyMO",
+  "repository_id": 435947861,
+  "commit": "5a746bc72a4a8c127e0aee7deb20bf415c385ae2",
+  "source_url": "https://github.com/Strrationalism/CPyMO/tree/5a746bc72a4a8c127e0aee7deb20bf415c385ae2",
+  "readme_path": "README.md",
+  "readme_sha256": "1b829b548f3fe4aa71d1d61e7e923b7c9d1baacbd1a8e73a89dbe20a1090c524",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "014c4af825eb29f35b1b4819072e12b4a152517c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f6e4a8c5818fd8b946f416d6f5dee5619dc0b271"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "81792d22efe4b55f4788faad22fa2a011ef337a9"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "bcfe34eb011bb46db177f1a536fd3a8b574cb5a3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "308b3d9f07e2f2711a5545854c82c793ceaaf14e"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "5ab1d164d7c126ec2ee4ce7113d9c5a46585c69d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "be3f7b28e564e7dd05eaf59d64adba1a4065ac0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "acf295d2b7068bd776ff390ef1b375ebaa8ad8f0"
+    },
+    {
+      "path": "Song of PyMO.mscz",
+      "type": "file",
+      "sha": "12b2bb922b65cd180bda4d650325422ed47e96e0"
+    },
+    {
+      "path": "cpymo-backends",
+      "type": "dir",
+      "sha": "c169c11b9d11121ff8db7f65315e64a9c02cd35b"
+    },
+    {
+      "path": "cpymo-tool",
+      "type": "dir",
+      "sha": "3ec880773f07d6599c1b21bd2e78f05a31ee5407"
+    },
+    {
+      "path": "cpymo",
+      "type": "dir",
+      "sha": "c7be5f18e07b46182d8d6faaaaad8ef89b7995ce"
+    },
+    {
+      "path": "endianness.h",
+      "type": "file",
+      "sha": "7fc56770cb93ed16fee25d3b45e65e49b5e443e8"
+    },
+    {
+      "path": "libpymo.ykm",
+      "type": "file",
+      "sha": "b69c721d0d28fc0458b0ef43ebc3ea84c1f80500"
+    },
+    {
+      "path": "pymo2ykm.ps1",
+      "type": "file",
+      "sha": "1bf6d7f7a443186a8d315c4a1b76e6cca728649c"
+    },
+    {
+      "path": "stb",
+      "type": "file",
+      "sha": "af1a5bc352164740c1cc1354942b1c6b72eacb8a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

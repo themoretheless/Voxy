@@ -1,0 +1,104 @@
+{
+  "repository": "jglrxavpok/Carrot",
+  "repository_id": 314832017,
+  "commit": "66cdd8932d1bc17da655cc60fcd4762b159cdbd1",
+  "source_url": "https://github.com/jglrxavpok/Carrot/tree/66cdd8932d1bc17da655cc60fcd4762b159cdbd1",
+  "readme_path": "README.md",
+  "readme_sha256": "41365e70817aa418968cfcdba3e7c2991747dad9b5f482b5c2fa53daabd3f386",
+  "entries": [
+    {
+      "path": ".gdbinit",
+      "type": "file",
+      "sha": "308b00d5ef6199151228d7136d08f9be549856d4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "140545ebaa2866fa9247c850427e589d40fa536d"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9a7d4cc0a7dc138cce1a19db4dcf416eaa45848c"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "9e91de0fca814b3415745290aba98d542fb3a585"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4f5ba70eb5c94537ebb1ec682716b7c70c6634fe"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "acde869700c3d5bca175c3c42cd4f7845816e387"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ce7c59d90fe8f654cd52fdb427bcb330dae88c4b"
+    },
+    {
+      "path": "asset_tools",
+      "type": "dir",
+      "sha": "73beb45b8e35b9a458d581496ddc7eb26e8ecafb"
+    },
+    {
+      "path": "blender_models",
+      "type": "dir",
+      "sha": "2b0c6b878705369f49d1da2cf551f2565b64a888"
+    },
+    {
+      "path": "cmake_modules",
+      "type": "dir",
+      "sha": "c9169026f231046c2e1e6db0a6f26ee0c66852b4"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "d7935a97af04cc68825c88e4f94d8f3550a2285e"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "f5cf04cef96dd619c314145df96cb8bff9825a4f"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "68f6836b2ad039f0d102e2dbf31a9ad7bfef8dfc"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "c1342996e14b1510fbd70b5172142a426323cc89"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "7b99876f02c468b506f13f85970f9b3d182d2b40"
+    },
+    {
+      "path": "screenshot.png",
+      "type": "file",
+      "sha": "42489b17928e43ce16004fb1c99de4abae0a30f4"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "0e65ec86d074c105edf830c197b4707ad3b5d411"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "4fae40d172eb9399cbb42e62800f0c996ef415e8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ runtime with asset tools, editor, Lua/C# scripting support, samples and tests; support/readiness not verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

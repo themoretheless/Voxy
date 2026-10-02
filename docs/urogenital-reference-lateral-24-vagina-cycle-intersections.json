@@ -1,0 +1,44 @@
+{
+  "scope": "Static floating-point classification; shared-vertex pairs excluded; no CCD or anatomy certification.",
+  "states": [
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-reference-lateral-24/vagina-rest.obj",
+      "sha256": "9ea6ff5e0d98ec4660c0c5fb6a6885b0a144502c11d54991dbe88b5c3a5ad1db",
+      "vertices": 5200,
+      "triangles": 2304,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 10728
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-reference-lateral-24/vagina-barrier.obj",
+      "sha256": "0364073ca7c8b057b7217e05162027b73739cbd56db09ab8ef87715dc5b2624c",
+      "vertices": 5200,
+      "triangles": 2304,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 10004
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-reference-lateral-24/vagina-released.obj",
+      "sha256": "29cd7f9bc410a81a3059631435e5d132df29a9c0435966b5eb6cb16c51c4f7c3",
+      "vertices": 5200,
+      "triangles": 2304,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 6503
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "repository": "PRDeving/GameEngine-C89-tutorial",
+  "repository_id": 189294328,
+  "commit": "c6a1449b2d607f2e3d64fc4d603a6be31c264f22",
+  "source_url": "https://github.com/PRDeving/GameEngine-C89-tutorial/tree/c6a1449b2d607f2e3d64fc4d603a6be31c264f22",
+  "readme_path": "README.md",
+  "readme_sha256": "1aa8fdd087527d24feccb4c07a4dda2b69bbe842ad0fc3e10582c29e237516bb",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "18806b3f3add6e0cba1fc5cd8253b5b007c644dd"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "00a556194bee8b5432cee6bc351dda33e362e3da"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "03fda83c22540323e7236633c40e17e730348cdf"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "8e618d48a73c07afbb5b4977d3ac27c62d6034c8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "09fd9724bfc5db2c2d2efc945c40ff07a73945ce"
+    },
+    {
+      "path": "main.c",
+      "type": "file",
+      "sha": "3807334e10d680b6d9e2b56ed2072b91b4c71233"
+    },
+    {
+      "path": "raylib",
+      "type": "file",
+      "sha": "c387bc586d9c8b9fe9bb840926d12526aaad9116"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b421d2a8f3d68c2d6c384ccfc8dae28a995d60ec"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

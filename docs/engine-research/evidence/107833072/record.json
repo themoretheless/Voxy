@@ -1,0 +1,94 @@
+{
+  "repository": "flame-engine/flame",
+  "repository_id": 107833072,
+  "commit": "b9ef18eaf66b516ac65d2d4de690a2b73dc96c7a",
+  "source_url": "https://github.com/flame-engine/flame/tree/b9ef18eaf66b516ac65d2d4de690a2b73dc96c7a",
+  "readme_path": "README.md",
+  "readme_sha256": "07808409d6d737f984cc25778e0e77fee3ad6c9507c75b85e5ab8453323dd8cb",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9140fb5c107a2e3b3a9ab55e4fa2e917b958a594"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3c82a340d55d07b59256de558dc2e205cbbeb3a2"
+    },
+    {
+      "path": ".markdownlint.yaml",
+      "type": "file",
+      "sha": "ac763cf43c2c778a9fc0ea1802155d4f55f4c84b"
+    },
+    {
+      "path": ".markdownlintignore",
+      "type": "file",
+      "sha": "cd710658fa3d3cfdeb5ecadc5d90a231414e821a"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "8067b6f3ebdb3dd20895af3a74ed53f7e75ccea7"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "bd8866c247b2596b7537c639ad9270aceccef9f6"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "fbceceaf601d52d8293e5571580ca110deff19dc"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "dae29170c2845dce192eafc59b9f11e5656043da"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3897c4d092db91ce89056aad6e3f9c5ba510f8ad"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b88d768a14f374e46be973a9c290a53d391a5b5"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "bdd8682d8b9902c41ff80b559a72111e53afa687"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c8eeb6ff61a25f4df8b1553ef654d4b77fc2172a"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "937e0abfcdd5301406f24e8414f0f4c281546842"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "fea80fb76e84c99fa6324bcb6a97125dd3e75a5e"
+    },
+    {
+      "path": "pubspec.yaml",
+      "type": "file",
+      "sha": "d208a277a4ed0b085d4931c5fda4e3ef031610ef"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3750b3317bee368ac1bfe575e91e6e55c440d251"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Flutter game engine; owned runtime packages and Dart build manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,69 @@
+{
+  "repository": "PistonDevelopers/piston_window",
+  "repository_id": 33863322,
+  "commit": "37a89a2c9c9ce83ed757ff1487e99d8b8a749f5c",
+  "source_url": "https://github.com/PistonDevelopers/piston_window/tree/37a89a2c9c9ce83ed757ff1487e99d8b8a749f5c",
+  "readme_path": "README.md",
+  "readme_sha256": "517a0737e47c337473402cd16b5fc270928d525b04ec241d149644f9db75f6ae",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "861900ded35bbf63f7ad8bd7a0f32a6373247c96"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "bd42fcbfbc3fb4195c0dd61738bc6b36e5f8cba1"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "2941eb86fae7d2a307dba1509e31318fd8431fb6"
+    },
+    {
+      "path": "DYON-API.md",
+      "type": "file",
+      "sha": "a84652102ec535fa82fdac97e28888d1c819b503"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "83894dfaa09cb39f4978eb96399066df937bba5d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d0f3921a17673cc8d70c716d1a92fab1348b7611"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "5c685afce2481a9c945154d9931510d39bc947b7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "842d5707a8faf353677928f9f201ff3c9ed10018"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f4dc0c5567430f53fcfb2cd5052176e437c45d58"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "dff5aa716bc39f0080b1d4a4cb2a175648eef12b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "23905d2e448e11db7fb3fbdd990be75ae8841cf9"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Window integration and convenience APIs for Piston rather than a separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,129 @@
+{
+  "repository": "eva-engine/eva.js",
+  "repository_id": 345595887,
+  "commit": "792ede99108c5af56ff724c2e136747406895d02",
+  "source_url": "https://github.com/eva-engine/eva.js/tree/792ede99108c5af56ff724c2e136747406895d02",
+  "readme_path": "README.md",
+  "readme_sha256": "5ce0f19e3a5c1490a24f87229e539ec97bffeee8f6db4be17d4f923b3f96b45e",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e336416682659b32a9dbbe5264577d1015ceb284"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "d812b837a3bd05ea1ac26dba0327954ee5e2f196"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "b589324dffc0841aa5f9bafee2862a465fde2a05"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7f7488f0e42d4a28ddf35017f18b9ef511517edd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b3a4839e145039d84f088d2c2c8422ddfe10de70"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "cbeaf85e44355421e6e062c0117ef48a0b63ca7d"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "6b864fe9b15f6794139b13bb8c6610999ef00dfc"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "1b95c083875396634b88c72584afb2aeb572e1a4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2eec7d3cad7b4e873321fcc64e86194046e81691"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9e156304954a6c094b7cef4b552c82a89222463a"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "7c50a961e7db628a90fa78a4378f14415009faec"
+    },
+    {
+      "path": "api-extractor.json",
+      "type": "file",
+      "sha": "16c23ddb4e395e0718ab28f050a75af8df67f489"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "012b531b373888c3088e9ba28b80881dc232fdbd"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6fd9da0c8a160a7762c6f25301cf2d2a785b6d21"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "2500561a951c827b564b56e65ebffd3ef8ab0519"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "9e542e2fc6648365089b604c3a695f3dd4a1ac87"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0f0bba0cbbb5d04f1d69d80550fd21ead5b1c875"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "16c8b9114f97e2487408a0d6aaf708c8ab03e076"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "07a59b3fa52698350c6953775957239b7dc98a9d"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "807f7c7a95c6c244a8b05be646be418881b22fb8"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ebc4cfd1425aed3d7b69fa539c387880e4ad7a6f"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "b4afcd67945aa791e1d6ea3c34ba6546f05aa910"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "016189d52ffa534cec438960c89d202e9297c0ac"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies interactive web game engine; packages and JS/TS build/test manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

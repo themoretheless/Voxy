@@ -1,0 +1,154 @@
+{
+  "repository": "tido64/rainbow",
+  "repository_id": 20939716,
+  "commit": "b54b84860979eca86e7d32ab61f92d9745fecfaa",
+  "source_url": "https://github.com/tido64/rainbow/tree/b54b84860979eca86e7d32ab61f92d9745fecfaa",
+  "readme_path": "README.md",
+  "readme_sha256": "5f8fc1fb55edea009c6938878d7ddf14e45991033529233974bdb5018c8f4b31",
+  "entries": [
+    {
+      "path": ".codecov.yml",
+      "type": "file",
+      "sha": "8a9aa02d63c59ba50a1c6d6de6e0b602f95128e4"
+    },
+    {
+      "path": ".doozer.json",
+      "type": "file",
+      "sha": "b601b8ab9631f0fa80301d6a504e666850503914"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "661276a34b90f8972de6a80f978bf9e4b98ef278"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "176a458f94e0ea5272ce67c36bf30b6be9caf623"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4ce062a7d72e44d77aa5742aca5444c871cd3815"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7fd5a7c54fc71e8934690d68824357229f6d2274"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "98bbeeeee881520dd170051296a1fe5db7c3c6ce"
+    },
+    {
+      "path": ".lgtm.yml",
+      "type": "file",
+      "sha": "77df55da84945e975f425b09e48a40b4c5feb77a"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "a60e3b8463322e44db117a91171f0471192c27f0"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "ef7c48735e2e38787e242612e61ddcfbdecb2e10"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "595b9d9fbe9e0c91791bb5bbe67ef54dfe62b26b"
+    },
+    {
+      "path": "Brewfile",
+      "type": "file",
+      "sha": "49e4c886a3bfc502a7a1be67b7f03f59e465e87a"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "ed6c7823981b0157b34a1c203fbcdf6ac7bd8f0d"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "272eeb4a2223100a65540db0c8b6dc76231e83ce"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "0756a0192bd05afb1862d1c2ec14d01e65345111"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6e203de1331e2b971d0858f34b19e93b60cc2993"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b55404ff3eaeb580fc3f7c226472b939259d1191"
+    },
+    {
+      "path": "THIRDPARTY",
+      "type": "file",
+      "sha": "27cb7eb63eb072eca87a280c636d9e9331bf99da"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "31fc8a8813c2c3fa72a08e4acd503275ad0a58d8"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "5b6a5905e1f569d4333b311dbc439b4c75f18302"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "14dc5d709dbfbfe28eafd1364c70b1de454268f1"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "1981c6023467ad56ea3f4b9a318a9d573530cf2f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "11f0f2dc370ab3b0bc17b78a01bfbf7c2bfc83cd"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "daef1737adf691d688bbc228517a2570f8a87549"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a1c030147a7c357b62a673bbb9a5f0335d8923bb"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "5a76a380e3cfb409a30afc9298f0cebec2d11389"
+    },
+    {
+      "path": "tsconfig.tools.json",
+      "type": "file",
+      "sha": "2e94a71bb87132b4945e4f5f65641e0d5da4bd98"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "33b1e966055c68e7b9162da024ec451ca6045324"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++/JavaScript/TypeScript scriptable cross-platform 2D game runtime with sources, bindings and tool directories; platform support not locally verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

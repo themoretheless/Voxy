@@ -1,0 +1,22 @@
+{
+  "file": "assets/characters/blender-female/prepared/body-segment-descent-repair-v11.obj",
+  "sha256": "138ff32a6d2a47e423a4f6250ffed31041dd41c5e221aa7a2f4a0818db14bb10",
+  "reloadedCrossingPairs": 98,
+  "totalIntersectionSegmentLengthM": 0.023559892709871293,
+  "audit": {
+    "vertices": 76052,
+    "triangles": 152100,
+    "area_m2": 1.5671294032796295,
+    "max_edge_m": 0.011999540395577154,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "sameTriangulation": true,
+  "outsideFootCoordinatesPreserved": true,
+  "faceNormalReversals": 0,
+  "maximumCumulativeDisplacementM": 0.0021435344750506667,
+  "scope": "Static candidate still intersecting; not runtime or physiological validation."
+}

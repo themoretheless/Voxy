@@ -1,0 +1,74 @@
+{
+  "repository": "smlu/OpenJones3D",
+  "repository_id": 873864894,
+  "commit": "a675b395a5d5cff238332d091368483b849e8b5b",
+  "source_url": "https://github.com/smlu/OpenJones3D/tree/a675b395a5d5cff238332d091368483b849e8b5b",
+  "readme_path": "README.md",
+  "readme_sha256": "606089b620efa318883a13bbcf65669f086d6d4c980841c1cdf77a1580be1a24",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6dd4ea691464a63d452c1bffb92434611cb366d4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f56510e019db3978297ebb29e0d306be7e973d4d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "82be834f2009fcd3e19d8b9ebf1e89b0b7190f4d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f757b00aec70d15c443fe793adc317590a7f2271"
+    },
+    {
+      "path": "Jones3D",
+      "type": "dir",
+      "sha": "366451f8a46d5a818ef6efd83c4e651b09e8a151"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6686a11844fdbd8e1cfa4382847f8fdf96e8c4f5"
+    },
+    {
+      "path": "Libs",
+      "type": "dir",
+      "sha": "a80044fb100b768bbdc258da14f157dd63efec9c"
+    },
+    {
+      "path": "Programs",
+      "type": "dir",
+      "sha": "85bbeab9164878e7687513b43c577c0b1fd62ae0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0147abc921b31b60d2cba47e6ff316af0e2dc889"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "2a1dc37bdf3611177b3d79583c3592a5886fe7a6"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "9d41ac2de20fa2825173d41a734fb91f383f04e7"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C reconstruction of Jones3D runtime with libraries and programs; requires original executable and game assets. Reconstruction is not evidence of a source fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,104 @@
+{
+  "repository": "dimi309/small3d",
+  "repository_id": 219152383,
+  "commit": "57093aed4355e1a9015b454834b6c9aec884f7cd",
+  "source_url": "https://github.com/dimi309/small3d/tree/57093aed4355e1a9015b454834b6c9aec884f7cd",
+  "readme_path": "README.md",
+  "readme_sha256": "142dce79d5722de7153f0b61913652da2f8a56338682d3f130a3702cc3325962",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f234d75ca16e011f46b2089e7affcb5e08a3733e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4c900b91a36780fb81151cc441f61c598664af9f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7fe61680843e4eac6e9c7c20e65417b836873df4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "540a783971238df2f689e5b669a7b7bcf85629bd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b29beb40bcd42dbc0c7c8aab41368659736bf93a"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "010e463a5ccb95ebf0e7b024e920f5ae4778b47c"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e94c92998199fd8ab6faef8bb198dab5b88d8e68"
+    },
+    {
+      "path": "deps-licenses",
+      "type": "dir",
+      "sha": "801ee40bb8624f27817ba21ee3a6e750f8ba0348"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "b1e2a3bea771acbd9209ca292c4796f950509429"
+    },
+    {
+      "path": "docs-source",
+      "type": "dir",
+      "sha": "87bb62968758f2466d485807158c67a0c81684d4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b8ae7fdf31b14f042933da8df4d07d7285ca39d1"
+    },
+    {
+      "path": "format-converter",
+      "type": "dir",
+      "sha": "8633e71cffe068236dccf47bd16c37d575d33d80"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "5e7093efe93f347e1ca72ba5fbff74d0881cf742"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "1a50b249d6d4da5834c126a3b38a0ea161ae884b"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "0d9c6a76157fa5296aa1dbb62830940d9e4b3b1d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "63abec3d05ccefb129a89305264493d83704dcbb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2991703a4b75cb26deb58c25ad7951487c0f700e"
+    },
+    {
+      "path": "unit-tests",
+      "type": "dir",
+      "sha": "cf8398f2e4d3fac3eac1ad064ec271e17f8103d7"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Minimal C++ 3D development library; README identifies library API and dependent games rather than a separate engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

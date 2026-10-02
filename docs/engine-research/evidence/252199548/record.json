@@ -1,0 +1,159 @@
+{
+  "repository": "Yaro2709/New-Star",
+  "repository_id": 252199548,
+  "commit": "fe07f7b6d2c76feea6187e5c341a5295e2d54d19",
+  "source_url": "https://github.com/Yaro2709/New-Star/tree/fe07f7b6d2c76feea6187e5c341a5295e2d54d19",
+  "readme_path": "README.md",
+  "readme_sha256": "6390a1d1f6e62542647371b2f7ec67e84a83a7a14276d100a2f07bc04e53d559",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4de36c62ac752afdc083a18df664ee3e33e65a9f"
+    },
+    {
+      "path": ".htaccess",
+      "type": "file",
+      "sha": "e5efd41e557ca1495504cb83464e24cc79bead24"
+    },
+    {
+      "path": "CombatReport.php",
+      "type": "file",
+      "sha": "78fcb20eb6bb19871b2b9e161b4c3d4edd434fc5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f837224f90758cde05e1b584b01c8c9355683acb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa95fe5e26621534590be32ab2bbae7c3b60c74e"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "ab42663727627b6205e0839ac0d56f92973bcad5"
+    },
+    {
+      "path": "admin.php",
+      "type": "file",
+      "sha": "6128a380d09d2f30799e961e6061c140ff0cc231"
+    },
+    {
+      "path": "botnames.txt",
+      "type": "file",
+      "sha": "f6c750f4c35f2ad7b7d1e62835f61503358efca6"
+    },
+    {
+      "path": "cache",
+      "type": "dir",
+      "sha": "2f88ccd1e8b4b26cc8c4cfe3af680aa5ae3b361f"
+    },
+    {
+      "path": "cronjob.php",
+      "type": "file",
+      "sha": "79741f71f0e96d133b626ed5b844e71ca5751159"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "483b61aaef7ca346df708cf209f8ac44ddb54158"
+    },
+    {
+      "path": "game.php",
+      "type": "file",
+      "sha": "4b3c00d7bb274e4e5de34f33d2de3fc37ef45f83"
+    },
+    {
+      "path": "includes",
+      "type": "dir",
+      "sha": "a3dd138d6e0589932c30e50f1b9365279d54c9a6"
+    },
+    {
+      "path": "index.php",
+      "type": "file",
+      "sha": "0577f8b9b2228fbbf4982331fcba1901aba8a747"
+    },
+    {
+      "path": "install",
+      "type": "dir",
+      "sha": "f06118ee7993fd330231c993cdd2b0875ae4e0fa"
+    },
+    {
+      "path": "json.php",
+      "type": "file",
+      "sha": "2e9ede88be03fb628e937c502b502628270e6498"
+    },
+    {
+      "path": "language",
+      "type": "dir",
+      "sha": "fb24e8acd11079896e400a8a7b355a3826f808a9"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "3e41e557b72f653a587c0c2adb701fcbaadc0786"
+    },
+    {
+      "path": "manifest.js",
+      "type": "file",
+      "sha": "b0cdb34aadc609333f0f670b5e3bc7f98a8a93e1"
+    },
+    {
+      "path": "manifest.json",
+      "type": "file",
+      "sha": "c740806f6773968d8373b3697292926418a3b35b"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "83b4c7eadb14e426c002fd614eb53c9d05201c98"
+    },
+    {
+      "path": "nginx.md",
+      "type": "file",
+      "sha": "5f9f735fae9d31f46fce3898668209aaa589952b"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "4e32ce2e4dd4520f13e8b3e999b17b931fb32852"
+    },
+    {
+      "path": "robots.txt",
+      "type": "file",
+      "sha": "716f7a154fc40731708a1ce3f1c49c438f08a831"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5738b0ba96d453e0d1f71280eaeebe7465b0a150"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "81c7115b711e504dbe1b770af96816ef1f143919"
+    },
+    {
+      "path": "styles",
+      "type": "dir",
+      "sha": "13ee5ee0dab7785d7d643da04aea72cd4e73d5d5"
+    },
+    {
+      "path": "userpic.php",
+      "type": "file",
+      "sha": "199b46c89198d27dcf0c57bf4aa440016af0ce18"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "2Moons-derived PHP browsergame framework with gameplay scripts and plugins, rather than a general graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

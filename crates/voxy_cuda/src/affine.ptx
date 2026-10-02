@@ -1,0 +1,30 @@
+.version 6.0
+.target sm_50
+.address_size 64
+.visible .entry affine_u32(
+    .param .u64 data,
+    .param .u32 count,
+    .param .u32 multiplier,
+    .param .u32 bias
+) {
+    .reg .pred %p;
+    .reg .u32 %r<9>;
+    .reg .u64 %rd<4>;
+    ld.param.u64 %rd0, [data];
+    ld.param.u32 %r0, [count];
+    ld.param.u32 %r1, [multiplier];
+    ld.param.u32 %r2, [bias];
+    mov.u32 %r3, %ctaid.x;
+    mov.u32 %r4, %ntid.x;
+    mov.u32 %r5, %tid.x;
+    mad.lo.u32 %r6, %r3, %r4, %r5;
+    setp.ge.u32 %p, %r6, %r0;
+    @%p bra done;
+    mul.wide.u32 %rd1, %r6, 4;
+    add.u64 %rd2, %rd0, %rd1;
+    ld.global.u32 %r7, [%rd2];
+    mad.lo.u32 %r8, %r7, %r1, %r2;
+    st.global.u32 [%rd2], %r8;
+done:
+    ret;
+}

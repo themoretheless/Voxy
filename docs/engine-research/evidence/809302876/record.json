@@ -1,0 +1,144 @@
+{
+  "repository": "gameknife/gkNextEngine",
+  "repository_id": 809302876,
+  "commit": "4ba5b7cd106c282e7ed166ff853aeea87b392680",
+  "source_url": "https://github.com/gameknife/gkNextEngine/tree/4ba5b7cd106c282e7ed166ff853aeea87b392680",
+  "readme_path": "README.md",
+  "readme_sha256": "1ddeeb49a286103425637013b5bcbd3e0f4469530c2e2629b5145ca6faa44497",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2987a7fa1893a715c13df453acf3f70c23bd4e12"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "87e008f847db5e66537b64a4a1ab84ff04e2a844"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "029d2303789075a5e2d446bb57aba8e9ad6d3df8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "70b334f19652251e85b613998374f359d1433357"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "127ed315095d92adc2d24b1f744be68ecd2efe22"
+    },
+    {
+      "path": ".spec",
+      "type": "dir",
+      "sha": "af5cfd9cb3cc75f7bc92759c1074dc88d67276dd"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "63550a33464f29662d3fa885003f7074922090f1"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "43c994c2d3617f947bcb5adf1933e21dabe46bb5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "28e1bc203f01f7de505aa4d7777d9f0f535d5177"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "1464cf2d8722129092650f5e3faf83bfb7410aba"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b3c623d727a624f803cac2313ba588c92d641e77"
+    },
+    {
+      "path": "README.en.md",
+      "type": "file",
+      "sha": "48b8dc1ae1a6fe3096762ae5561090cae60fa66d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1eacdff3055c65995a078b8156fa37d1d0ecc6cf"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "type": "file",
+      "sha": "ef3a632945d7074e35aa88b140acc6f3d65194fb"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "88afc18d1f43787fff534bc1d30ae6c57a3bd7b1"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "23bc9e300394b303b3ecb6d4c8f85c4dd8938c3f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9a0fac4a32a84c8b68812bcf9c901b4815007a17"
+    },
+    {
+      "path": "gnb.bat",
+      "type": "file",
+      "sha": "8657c08bcbf2974e1d55b89ec263411fd6278a3b"
+    },
+    {
+      "path": "gnb.sh",
+      "type": "file",
+      "sha": "b8173a37b15c079095e0d43a6e03fc5a6a6649e6"
+    },
+    {
+      "path": "gnb.toml",
+      "type": "file",
+      "sha": "fe33133a024bff32aeaf373a489290601ebde2d5"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "e104c7d29f69357a8e6794e7565d9cc6ea93836d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d1b872a38399015748888e3cb9749c3d19f692d2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "7646b11b7997bf26212e365880ec333dec1df3de"
+    },
+    {
+      "path": "vcpkg-configuration.json",
+      "type": "file",
+      "sha": "23b90cd4f8db906082072256ed82c5efa7ceba90"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "91ad0ed5d78220a4fd9fa92bcae76653161cc441"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "5d21720dd53446d10fba9c4777015ec465115ddb"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify native game engine core; owned src/assets/build and CMake infrastructure. Size/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

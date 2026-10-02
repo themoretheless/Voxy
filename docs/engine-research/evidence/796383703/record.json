@@ -1,0 +1,149 @@
+{
+  "repository": "kaplayjs/kaplayground",
+  "repository_id": 796383703,
+  "commit": "02a05ddb9aa902dc45c36ce11fb7ae781b1fb81c",
+  "source_url": "https://github.com/kaplayjs/kaplayground/tree/02a05ddb9aa902dc45c36ce11fb7ae781b1fb81c",
+  "readme_path": "README.md",
+  "readme_sha256": "0b237c567042879b5d1cb2f2da630e806f956c216092dcbd983b0256d9f3ae73",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9b015b668f9b4afba833dab79124f75967176304"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e76fa950388eebae24bda296ba003e45c4235936"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "146f1567f42f01202f679c0b5314892959a1120f"
+    },
+    {
+      "path": ".tmp",
+      "type": "dir",
+      "sha": "f46ac2cc20dfda7cba5b7434aff4e5b2e393c8c3"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a06d61964eef987b73a52b67ae040d6f553d414a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "a7e65d80017918ec07f9cf773ceca72e469eadbc"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1ebed5290ed286debea45b2d41508e8b340d48d4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bebeade75f07963ca8c99172633e1014010133c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bb875e244f987b3977c01b278e23e03ad09273ed"
+    },
+    {
+      "path": "assets.json",
+      "type": "file",
+      "sha": "fa29eae3c41b1e80b70af91ca63a030e0ee0430d"
+    },
+    {
+      "path": "dprint.json",
+      "type": "file",
+      "sha": "4db81cb99944427565b73605cf0c0ebde7512f0e"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "f4c3bbed3a02071f94962c147f71213c90154139"
+    },
+    {
+      "path": "kaplay",
+      "type": "file",
+      "sha": "e1b28457b4e062699d8c40cd4962d7336a936643"
+    },
+    {
+      "path": "kaplayground.png",
+      "type": "file",
+      "sha": "ec4afe85d555f65a3d49ae1490ad4c609fcae532"
+    },
+    {
+      "path": "neutralino.config.json",
+      "type": "file",
+      "sha": "7eefa37ec895bc0a0078c915565e38927fb03ad3"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "89faf6833a862f0461feb3ef6e2c437c91c06820"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "40b4492d9327cba16fa3d6ff3e6a759c64e911c6"
+    },
+    {
+      "path": "postcss.config.js",
+      "type": "file",
+      "sha": "49c0612d5c24aa905f8b947afbf3367746452476"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "0a2b1f453d41a46795b223097ab7c1e2eaedca5a"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "b79d03110bfb8ba13a590f2ee364f5e7c5cc8ab4"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "398ce9085734342bf795e201feed780347cfe8ce"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a087b41cd98b5461e6e6839ded844259e5a085cc"
+    },
+    {
+      "path": "tailwind.config.js",
+      "type": "file",
+      "sha": "4858d692e5b2719de50a6a1fc350d48da234ddec"
+    },
+    {
+      "path": "tsconfig.app.json",
+      "type": "file",
+      "sha": "ec00d6bacaf77be5320a6c46acb4116529adb00b"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "ea9d0cd8255683d84f125948115daf1de0f06b1f"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "type": "file",
+      "sha": "9dbaccb54f0018b882ddc9b4a4cdaeb39ebb0bdf"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "2f0fc2bbc6fd4cc7033daefb74ff705fa4ad8c20"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Web code/project editor for externally supplied KAPLAY runtime, not separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

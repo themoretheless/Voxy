@@ -1,0 +1,102 @@
+{
+  "repository": "rerun-io/revy",
+  "repository_id": 759495269,
+  "commit": "f3beb707eea8dd186f226cb5e689922f1ade62e7",
+  "source_url": "https://github.com/rerun-io/revy/tree/f3beb707eea8dd186f226cb5e689922f1ade62e7",
+  "readme_path": "README.md",
+  "readme_sha256": "80e1575138482c7d0f3e28d624e086c2b37b28d5b0f5f65328cd74be13ac56b1",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3c2baf860cc79bb82b639ecee8f07ea947d755c4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b99da30983bbb4d455245fcaa053726edb7fb567"
+    },
+    {
+      "path": ".typos.toml",
+      "type": "file",
+      "sha": "aeeedafe182faa915127a01547c4f73b51359e5b"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "1fbf07ca34c3ac0b88fdfde2f045f678769d52f6"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "316da3a9c7ec5687a4a3ed89b0d57c527ebf9c38"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "a058cad2d80314e1ac97abb4319fef4d45aef374"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "11069edd79019f7dafbe3138841cf289209270dd"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "3f6d1ede3c9d2ff700f95d5de076fc1b73f25112"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8570a3a900a67d5f73433efeb16ef919afeeaa74"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "ca5d3f7c0a19f07ca8a2f309f5b975f2441882b2"
+    },
+    {
+      "path": "bacon.toml",
+      "type": "file",
+      "sha": "0476b3e051e93f54020b59afdf6477efb8f89245"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "e0d6172569c57b6a37d39672a039b5ba6dae8c38"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "5ea42fba7c7393285232e977aad6ab9953dd2325"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "143b4f982eb79cfc667127fcbe938e8e9b7491ae"
+    },
+    {
+      "path": "lychee.toml",
+      "type": "file",
+      "sha": "36d3115a65f6a84dffd86c26ca84d8a1aaf5e9ed"
+    },
+    {
+      "path": "rust-toolchain",
+      "type": "file",
+      "sha": "c161c77e28a9cec3e5ba30315449ee697f5f3650"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5eca58114f42256861c77a93e0995801d1cb69d2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "bb16883f09db5731cae9fc712c161fac9a7bfa79"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

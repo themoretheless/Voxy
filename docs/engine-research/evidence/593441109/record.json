@@ -1,0 +1,94 @@
+{
+  "repository": "m969/AOGame",
+  "repository_id": 593441109,
+  "commit": "a0fd2bf69e5f4eaeb5f4bdbf85e98d7a4353a910",
+  "source_url": "https://github.com/m969/AOGame/tree/a0fd2bf69e5f4eaeb5f4bdbf85e98d7a4353a910",
+  "readme_path": "README.md",
+  "readme_sha256": "89b263c38ca1f5f7bf185dcaf11ef2be162d159f8ee6706240df80dc4f305b7d",
+  "entries": [
+    {
+      "path": ".cache.meta",
+      "type": "file",
+      "sha": "804c8366af932577926656475f5c44b5792195c2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d5c3a7563737926e81d81068c3125ebc4c8ec079"
+    },
+    {
+      "path": "AOClient",
+      "type": "dir",
+      "sha": "4763e07c77dc9afedfd7146a98cad617323c3d25"
+    },
+    {
+      "path": "AOServer",
+      "type": "dir",
+      "sha": "dfc3bbca33cef839de4e5cef4982eb0e22c3fcbb"
+    },
+    {
+      "path": "AOTools",
+      "type": "dir",
+      "sha": "b6ab0ba12c33572e4b14d2fb86dd0487a089eded"
+    },
+    {
+      "path": "AppConfigs",
+      "type": "dir",
+      "sha": "ecaa2eb4ae3426ab7a9d7846120e7d0406f17dd7"
+    },
+    {
+      "path": "CS-Share-Restructure.sln",
+      "type": "file",
+      "sha": "0f8d3814f2532a45325ad9045bd438e10a3c6529"
+    },
+    {
+      "path": "ExcelTables",
+      "type": "dir",
+      "sha": "7d31525795f059471fa813471bec5b08603f5b04"
+    },
+    {
+      "path": "ExcelTablesData",
+      "type": "dir",
+      "sha": "efb2555e917426980915ed9fab7b1ff6c200601a"
+    },
+    {
+      "path": "Proto",
+      "type": "dir",
+      "sha": "8f4250cff4ed2f9e819f1accbafbcf9000a01de3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bfb206b8dc2db99cabf720da43836243fc0e0cf7"
+    },
+    {
+      "path": "Readme",
+      "type": "dir",
+      "sha": "1478a94e3ec4fb9bde0012804534ef0efa9f0c7f"
+    },
+    {
+      "path": "SkillConfigs",
+      "type": "dir",
+      "sha": "579ace063b375a18b7bf78059d83daa163c14898"
+    },
+    {
+      "path": "StatusConfigs",
+      "type": "dir",
+      "sha": "a8e583d94660041a40e24a9a3675a60abe088569"
+    },
+    {
+      "path": "gen_proto_messages.bat",
+      "type": "file",
+      "sha": "0536e0092f2fee8cc3296fd6a2266c4632803c0e"
+    },
+    {
+      "path": "gen_tables_data.bat",
+      "type": "file",
+      "sha": "27cc5b6eef02d30af2b256fb8ea90d675e1fe7c3"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ET-derived client/server framework whose client runs inside Unity; not another complete graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

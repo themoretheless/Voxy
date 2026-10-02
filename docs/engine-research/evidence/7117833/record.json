@@ -1,0 +1,67 @@
+{
+  "repository": "endel/joy.js",
+  "repository_id": 7117833,
+  "commit": "ce7f0546d42fd16758ee2f6e21a49296172e8b91",
+  "source_url": "https://github.com/endel/joy.js/tree/ce7f0546d42fd16758ee2f6e21a49296172e8b91",
+  "readme_path": "README.md",
+  "readme_sha256": "234978e143d62627858a78cdc9873fe50bd387a9055d8047224cb9933f62ac90",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9c810863f2b138eb5d318199937fdb471170ae80"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "6a2f925ad4cad95df9950d1e578a3e419acd95d5"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ffff336ee55f361176569faa44aa8e5766033b56"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "99fc6f74c0421ced13f8c0e12715857be6e00d66"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "73ddfb2bc9e4c9b8ebbc02241ac062a2640a8bd3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3a8265cd54c3af39e9b2cf7ec9a4ac920c7ba695"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "1cd9c83faa07725fda993c2549f1491f864fa9f5"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "987b2fc6525a8d24f2546f7fc4607e6842b44487"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "bb60a0040d22f8b0b9be353231e574094ce1d3e9"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "84e03b50eb2ebd28529d5614c5ca95ebdc430102"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "37a1b42e901ae2b3f6f036418c7110983086d32e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,54 @@
+{
+  "repository": "friflo/Friflo.Engine.ECS",
+  "repository_id": 833054804,
+  "commit": "717caad3ae2b9714d8e35cda08f3f5796204cd7e",
+  "source_url": "https://github.com/friflo/Friflo.Engine.ECS/tree/717caad3ae2b9714d8e35cda08f3f5796204cd7e",
+  "readme_path": "README.md",
+  "readme_sha256": "e46a946b7d20bdf89318e3261f20e0a6a2a3b6252c0e26a2a4d88bc6648ea249",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a1a0d0ab72fe810c88c1536de58d16967c04a25d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2a1037f834498cd886a9c18eca51d4a1fb803b5e"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "815a48b1ae90dd62ab82325af1f1f3443b1d1f59"
+    },
+    {
+      "path": "Engine.sln",
+      "type": "file",
+      "sha": "f86d3f9a1a5c223c85477bfaae2352f6e65f8814"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f8aaa3f98d4384460b4b228aa360160ac76ca3cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "617e4e29a6f734237e90a3e7954584e6d21f662d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "16d9a7a9e27c3bd525ce28e604f2b73aba1f4536"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6a12a785d64b042fc8cd57315b15d9b2e6fbe236"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/description identify C# ECS library; src/docs/solution, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

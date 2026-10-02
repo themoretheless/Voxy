@@ -1,0 +1,18 @@
+WGSL inventory: 32 files, 37 variants, 59 validated entrypoints, 0 failures; no GPU execution
+Rendering on AdapterInfo { name: "llvmpipe (LLVM 19.1.7, 128 bits)", vendor: 65541, device: 0, device_type: Cpu, device_pci_bus_id: "", driver: "llvmpipe", driver_info: "Mesa 25.0.7-2+deb13u1 (LLVM 19.1.7)", backend: Vulkan, subgroup_min_size: 4, subgroup_max_size: 4, transient_saves_memory: Some(false), limit_bucket: None }
+PASS: shader replacement, unchanged-source cache and rejection of syntax/entrypoint/binding errors
+PASS: clear, indexed mesh, depth occlusion, textured RGBA and overlay alpha; /tmp/voxy-shader-smoke.ppm
+Rendering on AdapterInfo { name: "llvmpipe (LLVM 19.1.7, 128 bits)", vendor: 65541, device: 0, device_type: Cpu, device_pci_bus_id: "", driver: "llvmpipe", driver_info: "Mesa 25.0.7-2+deb13u1 (LLVM 19.1.7)", backend: Vulkan, subgroup_min_size: 4, subgroup_max_size: 4, transient_saves_memory: Some(false), limit_bucket: None }
+PASS: shader replacement, unchanged-source cache and rejection of syntax/entrypoint/binding errors
+PASS: clear, indexed mesh, depth occlusion, textured RGBA and overlay alpha; /tmp/voxy-shader-smoke.ppm
+Voxel diagonal GPU: AdapterInfo { name: "llvmpipe (LLVM 19.1.7, 128 bits)", vendor: 65541, device: 0, device_type: Cpu, device_pci_bus_id: "", driver: "llvmpipe", driver_info: "Mesa 25.0.7-2+deb13u1 (LLVM 19.1.7)", backend: Vulkan, subgroup_min_size: 4, subgroup_max_size: 4, transient_saves_memory: Some(false), limit_bucket: None }
+PASS: production voxel Uv/Vu diagonals, 128 AO pixels match analytic interpolation
+Rendering on AdapterInfo { name: "llvmpipe (LLVM 19.1.7, 128 bits)", vendor: 65541, device: 0, device_type: Cpu, device_pci_bus_id: "", driver: "", driver_info: "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1", backend: Gl, subgroup_min_size: 4, subgroup_max_size: 128, transient_saves_memory: None, limit_bucket: None }
+PASS: shader replacement, unchanged-source cache and rejection of syntax/entrypoint/binding errors
+PASS: clear, indexed mesh, depth occlusion, textured RGBA and overlay alpha; /tmp/voxy-shader-smoke.ppm
+Rendering on AdapterInfo { name: "llvmpipe (LLVM 19.1.7, 128 bits)", vendor: 65541, device: 0, device_type: Cpu, device_pci_bus_id: "", driver: "", driver_info: "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1", backend: Gl, subgroup_min_size: 4, subgroup_max_size: 128, transient_saves_memory: None, limit_bucket: None }
+PASS: shader replacement, unchanged-source cache and rejection of syntax/entrypoint/binding errors
+PASS: clear, indexed mesh, depth occlusion, textured RGBA and overlay alpha; /tmp/voxy-shader-smoke.ppm
+Voxel diagonal GPU: AdapterInfo { name: "llvmpipe (LLVM 19.1.7, 128 bits)", vendor: 65541, device: 0, device_type: Cpu, device_pci_bus_id: "", driver: "", driver_info: "4.5 (Core Profile) Mesa 25.0.7-2+deb13u1", backend: Gl, subgroup_min_size: 4, subgroup_max_size: 128, transient_saves_memory: None, limit_bucket: None }
+PASS: production voxel Uv/Vu diagonals, 128 AO pixels match analytic interpolation
+Execution used CPU Mesa llvmpipe; no physical GPU proof.

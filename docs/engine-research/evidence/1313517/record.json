@@ -1,0 +1,119 @@
+{
+  "repository": "jhasse/jngl",
+  "repository_id": 1313517,
+  "commit": "4f032c409b8f0a1ccfab3a6ffb7944d8998a0981",
+  "source_url": "https://github.com/jhasse/jngl/tree/4f032c409b8f0a1ccfab3a6ffb7944d8998a0981",
+  "readme_path": "README.md",
+  "readme_sha256": "3fa20d600c1bea882955966c28857c264facc6d6120279885997be9de857b56c",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "ee95eca837d5ded98ae5fd02a06b28422eaad1ae"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "736d65e32ac8bbc3576c4f6a9f3fa3f858139c79"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "08400e261c97b8d81539b2f1f0194ef05db639ee"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "94326f0a622c07a90e35def4c4a6a2fb6a258ee9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "19be933ab29417fa933bfa9644e008b1edb59b8e"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "8f8de4e3ba03848373cdaef43e45710ad6f6cb02"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "b5a640b8de84310448aaf97fd1e1b8c2f5b10358"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5cf86a771cd07b22261399bcd80636f40362176c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6c7e8ef8c6d3c5ebc9075c2edab6914b033b2944"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "ec8dea6ff8d835e7c83276916d784a9ad213b1ef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a4265d7011cb33358946e677a34dd2a2719dc375"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "ff8204861ce2d1844122cbe8f0a383a519b208cd"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "2b40c6651c29baf5717dac34031d78bab1e16d14"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "3809f13fa4ba1bcd7d85b8f59899880ae19b74b2"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "af3c0a6029bd6058a2befb7de00296003e10e304"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "803ea713e696b06f0c1812896476ab2949928ca5"
+    },
+    {
+      "path": "glad",
+      "type": "dir",
+      "sha": "75cadaa30f25c28cfd28c8633d6d6dd3a9a040e0"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "5a90c73a866317472848204caf878390f7360744"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "6ce008ebdcaa6e82cad5ea95b41b49de2503f790"
+    },
+    {
+      "path": "lus.kdl",
+      "type": "file",
+      "sha": "b4c7bca184da1c4a26b6265fe54ebb3bbeedd81a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "019c0d6ab562790b1695803e4696fd91fd51f89f"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies native game library; include/src and CMake/platform build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

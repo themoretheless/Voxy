@@ -1,0 +1,74 @@
+{
+  "repository": "hadashiA/VContainer",
+  "repository_id": 268788240,
+  "commit": "4fc1ed47dff1314e73fbf2a85ab88f53601414f6",
+  "source_url": "https://github.com/hadashiA/VContainer/tree/4fc1ed47dff1314e73fbf2a85ab88f53601414f6",
+  "readme_path": "README.md",
+  "readme_sha256": "b0a078fbeb9cee1ea3343cfe9b341472faaf2acc01d656ef5d352641e46350a2",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9a353ae956e3a30d265c7ab29793329b73f816a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "da80d3c6b6d327079820b7c7e209b9ed3e8a3b3e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "097673bfe6511cf4b72ce26d937441c0ffe733f5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fb186aefcf56b4ed3d899b0577eefaa6787e35be"
+    },
+    {
+      "path": "TestSettings.json",
+      "type": "file",
+      "sha": "a764de3d7a08f41b59f76ab1dac90bc623cdbf43"
+    },
+    {
+      "path": "VContainer.SourceGenerator.Roslyn3",
+      "type": "dir",
+      "sha": "89a6a80ee8db5534150aaa5499f8223d9c1f2043"
+    },
+    {
+      "path": "VContainer.SourceGenerator",
+      "type": "dir",
+      "sha": "c9456b925acf32e856d703476b57e43b6d4b9a0d"
+    },
+    {
+      "path": "VContainer.Standalone",
+      "type": "dir",
+      "sha": "de1f8aabbe41b4ce3afc799cfbbb2d315aa3f85c"
+    },
+    {
+      "path": "VContainer.sln",
+      "type": "file",
+      "sha": "24ce89d4c5d398d3bb888a881ae8546b10f6e7ed"
+    },
+    {
+      "path": "VContainer",
+      "type": "dir",
+      "sha": "51649772c3709ee58223979f437208505ac6c82b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ea9115d715c3fa59c7951dc4b4546bb960c1a89d"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "76876b91a2fb96b188453369fef5e274ebc0f3af"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity DI/container/lifetime library, external engine required; allocation/speed claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

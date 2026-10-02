@@ -1,0 +1,21 @@
+{
+  "binary_sha256": "61f695313ea28856b3d2ba33f103090797a05a151ce013fea6ed2ec856727ae1",
+  "standalone_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"textured-root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"textured\"}},{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5}}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5}}}]}\nGAME CHECK PASS ticks=120 objects=3 prefab_instances=2",
+  "export_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME PACKAGE PASS sources=8 bytes=8023",
+  "packaged_paths": [
+    "__voxy_game.json",
+    "assets.json",
+    "buffers/mesh.bin",
+    "leaf.prefab",
+    "mesh.gltf",
+    "mesh.obj",
+    "nested.prefab",
+    "scene.json",
+    "textures/albedo.png"
+  ],
+  "corrupt_prefab_error": "Error: Json(Error(\"expected value\", line: 1, column: 1))",
+  "corrupt_model_error": "Error: \"game asset mesh failed: OBJ line 1: unsupported OBJ directive\"",
+  "scope": "actual standalone executable, nested composition, OBJ and textured glTF with external BIN/PNG dependency closure, 120 fixed steps with authored behavior and failure diagnostics; game-check alone makes no window/GPU presentation claim",
+  "packaged_run_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"textured-root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"textured\"}},{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5}}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5}}}]}\nGAME CHECK PASS ticks=120 objects=3 prefab_instances=2",
+  "damaged_package_error": "Error: \"package integrity failure: mesh.obj\""
+}

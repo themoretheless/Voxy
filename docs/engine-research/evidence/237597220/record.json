@@ -1,0 +1,154 @@
+{
+  "repository": "ryanpcmcquen/basque",
+  "repository_id": 237597220,
+  "commit": "da59ea94202f499e2b8bd95b69d59610ff0c7002",
+  "source_url": "https://github.com/ryanpcmcquen/basque/tree/da59ea94202f499e2b8bd95b69d59610ff0c7002",
+  "readme_path": "README.md",
+  "readme_sha256": "c404a0d32fe840bcf6f5e4221d055f51be0be3c7baf16d44b6ee0cb50edb6687",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "f802ebd33c4e665ea9d6144465cd3725563909df"
+    },
+    {
+      "path": ".clang_complete",
+      "type": "file",
+      "sha": "b95928d360ef84acc15f1bb31aed41b1dd07509a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "67a78605851de8ec1d949c19457bb0221f9af2c8"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2010dd66571fee38fb9f23d62a3fa9fedc9e18fb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b25607889d4250648c1256758df4baec311f63fd"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "8c8115847a95063d31b96c6eedd13c40fdcf1d98"
+    },
+    {
+      "path": ".gitpod.Dockerfile",
+      "type": "file",
+      "sha": "01c9131249a74861cf74bc2fcc3259fafb877d8d"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "5b4b09460b772d4430c25c761aac6f9cfe6e9ef3"
+    },
+    {
+      "path": ".replit",
+      "type": "file",
+      "sha": "1e1d5b5690362dcfc29672358b012cb66ce19d84"
+    },
+    {
+      "path": ".theia",
+      "type": "dir",
+      "sha": "88d96b589c36766601599411bc5a920159c89005"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "0d062780558aefa4ae4426727bb8efb62d6738ba"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2dea2b2806fe5d802e31ac474379b22ebb0d3d55"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "d5fcc7b11f1c424711297934643f1fe563db20ff"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "2e856b207037a5e476d4d9d2aa32abcbaff6432f"
+    },
+    {
+      "path": "basque.rdbg",
+      "type": "file",
+      "sha": "b7ac07eadf5b2f4f36407fb93c143cf360757568"
+    },
+    {
+      "path": "cloc_it.cmd",
+      "type": "file",
+      "sha": "a236f2243a2df5dd3e3806114420465747703312"
+    },
+    {
+      "path": "convert_to_lf_line_endings.cmd",
+      "type": "file",
+      "sha": "ee9aaeb59911f12aad6fecd1811dc579476c40bc"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "573f2c65755b3787289cb3e39e0f523d2c1bfa9a"
+    },
+    {
+      "path": "install_sdl_on_windows.cmd",
+      "type": "file",
+      "sha": "e81ece105b6f896cdd9f858111d752ba3741bca3"
+    },
+    {
+      "path": "line_count.md",
+      "type": "file",
+      "sha": "207099f5bd981c6e40d7639a9cfb6b0a007067a1"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "799d0a574f88f408df9a4f5caaaed4959b0da7c2"
+    },
+    {
+      "path": "mac",
+      "type": "dir",
+      "sha": "60a6e40b65404058b8e6ab180f48a6b41204c6db"
+    },
+    {
+      "path": "replit.nix",
+      "type": "file",
+      "sha": "b80d3cc7423cf96c6c2252c0602cb83a34e16888"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "7d897164fee1c73b27f2dc21e6d640dc8ff69dc5"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "c12b64b53856eb04fcf962c31b45d1388559cdff"
+    },
+    {
+      "path": "windows",
+      "type": "dir",
+      "sha": "68265fb95a91d2c6de39031e0c160a008f656067"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies minimal native top-down game engine; owned runtime/assets/demos and Makefile.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

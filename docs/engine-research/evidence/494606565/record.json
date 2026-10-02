@@ -1,0 +1,104 @@
+{
+  "repository": "Chukobyte/crescent",
+  "repository_id": 494606565,
+  "commit": "a82be5da90b1633a82d06641e2d158cbaec19f6e",
+  "source_url": "https://github.com/Chukobyte/crescent/tree/a82be5da90b1633a82d06641e2d158cbaec19f6e",
+  "readme_path": "README.md",
+  "readme_sha256": "f7ff51f3605664ef897ce54c98e9a5b7838d6459ce4a56ecaac29ae434b9b22b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b67171057e0c3fc2f08885a5ac0178059ecc461b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ed7e903e3a5e2fddc021407f807bfd15f37c1688"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "75a3aa62b3b2971f43a3c165102815a7b6c78e15"
+    },
+    {
+      "path": "Dependencies.cmake",
+      "type": "file",
+      "sha": "79392a70744c0626b4faf0a69d558e820d477a47"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "8fb28a23a394bd178db285f87c8ad5c70408e14e"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "fcc97c1caf08029603fe459b3c49733c7a10b58e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "44ccd8f586022e391e32f33e0da1abbfa97908d4"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f0900e677976df25b32f0520e83444dc40afa782"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "d9f106510c93d59ed52b426ec6b22a9dd792ee84"
+    },
+    {
+      "path": "crescent_py_api",
+      "type": "dir",
+      "sha": "12e322c278e537f56c765e946989c4edec2e9a98"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "19a5ca637c44db2cdf59ec02a6771e774ab3cfb3"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "75c327f9a75528b5da7dde9b3178535f56d093ed"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "99ae73eb2f991b4a5c6995250a99b173e1c9bfce"
+    },
+    {
+      "path": "fa-solid-900.ttf",
+      "type": "file",
+      "sha": "94135a209a82ee537eab4cc4f6c62d4879ae3a41"
+    },
+    {
+      "path": "icons.yml",
+      "type": "file",
+      "sha": "621fc827bca6fbc6c4f2c7d50929f662af5976d7"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "d3228f11633742db8629d8f15472e39f5e903d6a"
+    },
+    {
+      "path": "test_games",
+      "type": "dir",
+      "sha": "3645d93d8e3b06c8d86c8246b0527ea81c790000"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "c58f6471fd2a3b8865a28065b567af152532c940"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C11 fighting/beat-em-up runtime with Python scripting, separate C++ editor, engine source and test games; target genres and WIP status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

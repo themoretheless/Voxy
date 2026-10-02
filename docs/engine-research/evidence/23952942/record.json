@@ -1,0 +1,189 @@
+{
+  "repository": "gildor2/Quake2",
+  "repository_id": 23952942,
+  "commit": "d2727a14f608764b8fd1be7b713b1a5ff14284f1",
+  "source_url": "https://github.com/gildor2/Quake2/tree/d2727a14f608764b8fd1be7b713b1a5ff14284f1",
+  "readme_path": "README.md",
+  "readme_sha256": "f6bf9b55f9e1643a96b6d72585ab9ea17f9272dd71a52320ec9efd45003892ad",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cd4de30e53575eb0cfc20b652b78401e227bac7b"
+    },
+    {
+      "path": "4.XX_Changes.txt",
+      "type": "file",
+      "sha": "b7472f76da43d958049c0477d50e96a8ec4c1a32"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "516869857420baaa84513ff35426a99bb4e7ef64"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "cc52c35a1b1d62fcf2b851c37f8dcd09921cf1db"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9b88d1b52b35ecb1827fbec2245dfe3acc0201c0"
+    },
+    {
+      "path": "Release",
+      "type": "dir",
+      "sha": "99384484e7bf878cc3c62a55b9a6e32bea5f8c25"
+    },
+    {
+      "path": "SDK",
+      "type": "dir",
+      "sha": "a77c4fad5e6662ce085f3efa34f5974d07521493"
+    },
+    {
+      "path": "TestApp",
+      "type": "dir",
+      "sha": "cf1cb3a933d6e3b423118877d8a743b3cec2ced2"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "9c5b3da157e95ad7d66b1087c2422adce1b382d0"
+    },
+    {
+      "path": "bugs.!!!",
+      "type": "file",
+      "sha": "b9020b2515213ceacc4b01ac74d8a1d5359c8ef8"
+    },
+    {
+      "path": "build-common",
+      "type": "file",
+      "sha": "ef9b95bc4a6056aa62ae18979b9c94faaa6daea3"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "4d4da439bc3ad1d8da3e5cf327d8d8d77ddfa75f"
+    },
+    {
+      "path": "fast.txt",
+      "type": "file",
+      "sha": "833d487b254d85868e1dd83827a7c6d6300bd8ef"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "0f774ddb92ab1b4b2fa9fd037a70a7b7b2d70d36"
+    },
+    {
+      "path": "linux.txt",
+      "type": "file",
+      "sha": "52673b0a96e1c1162c1ae954b7f6e52a7cbef26b"
+    },
+    {
+      "path": "makefile-cygwin",
+      "type": "file",
+      "sha": "426fdbf983e67029e6ae2743f3755defe82a3965"
+    },
+    {
+      "path": "makefile-mingw32",
+      "type": "file",
+      "sha": "7908f0eae22bee5256a4accfbd1fb1752f0ddd6c"
+    },
+    {
+      "path": "makefile-vc-win32",
+      "type": "file",
+      "sha": "0582b1c086771d57ba98d887404d8d5542e36fa0"
+    },
+    {
+      "path": "makefiles.sh",
+      "type": "file",
+      "sha": "546f793e9bb5e947b3d79779c35fb6aa88d5a989"
+    },
+    {
+      "path": "mapcheck.!!!",
+      "type": "file",
+      "sha": "dc9a9aeee24b7093b553fa2634ba751637dad214"
+    },
+    {
+      "path": "net.txt",
+      "type": "file",
+      "sha": "a94718b073f3d39db89f7263f91c67543bce1bd4"
+    },
+    {
+      "path": "newengine.txt",
+      "type": "file",
+      "sha": "8b777cef85e23bb0d863f810dc9e06a0a737d6db"
+    },
+    {
+      "path": "q1-map-bugs.txt",
+      "type": "file",
+      "sha": "45d080bcad3ecf3da5a1f114fd2ac256488ecdda"
+    },
+    {
+      "path": "q1_rest.txt",
+      "type": "file",
+      "sha": "fa4a81d80ad0b137727fb1f4de7b8a101b12f666"
+    },
+    {
+      "path": "q3-map-bugs.txt",
+      "type": "file",
+      "sha": "d1fb0534461d2b0cece1a92798a5f621ee86bd3a"
+    },
+    {
+      "path": "q3_rest.txt",
+      "type": "file",
+      "sha": "cd1331fd67ddad4d89902c2f454c3d6124e38d03"
+    },
+    {
+      "path": "qcommon",
+      "type": "dir",
+      "sha": "f88cce30a345b903f35cb9f70383da0575481f02"
+    },
+    {
+      "path": "quake2.project",
+      "type": "file",
+      "sha": "54a7945b434937d6f72f3358da876c3842797c96"
+    },
+    {
+      "path": "readme.!!!",
+      "type": "file",
+      "sha": "531ddbb281250247afb1badded61c88860dd1060"
+    },
+    {
+      "path": "ref_gl",
+      "type": "dir",
+      "sha": "05dce9d594b197a5513e873d34c1a3049766a4da"
+    },
+    {
+      "path": "resource",
+      "type": "dir",
+      "sha": "1cf8bac74cf1ae5096bf7e2c1c360296ea2781a5"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "64e9263c971dee883759e04a348a0179014fd72d"
+    },
+    {
+      "path": "todo.!!!",
+      "type": "file",
+      "sha": "1dddbdd895d0e8b8d8373b2182e9d8030497ad89"
+    },
+    {
+      "path": "todo2.!!!",
+      "type": "file",
+      "sha": "cd671501c90cefb6408e8c588f594721b8ad82e0"
+    },
+    {
+      "path": "win32",
+      "type": "dir",
+      "sha": "447ddd198e1b4ec58b619b0cf12a5cd4fa348549"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit Quake2 engine modification with client/core/server tooling, map conversion, networking and physics changes; compatibility claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

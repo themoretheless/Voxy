@@ -1,0 +1,99 @@
+{
+  "repository": "mahdisml/DartGodot",
+  "repository_id": 290848039,
+  "commit": "c144a1f1669c74e5e63482d15207c3fb294fbb43",
+  "source_url": "https://github.com/mahdisml/DartGodot/tree/c144a1f1669c74e5e63482d15207c3fb294fbb43",
+  "readme_path": "README.md",
+  "readme_sha256": "98276c9e3a2f31999dfd822b81fe1ab36a949a3713a3f3ef549ca71746fae516",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6bd50e2611d986d6319017e7fd1e95e54bda43cb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dbef116d224d8f796abe72ecfef9271f9d79f069"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "10e977368f2ed04e7c24044717c41e5c5d27bc02"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "1c50e2edd886d31a78f7635b35d3b79965b8b7de"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a101cce25fe3f9f3b9263dab224c3df361908c28"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f0d6515f4b6f7e953113a4e6897cb97bfa3f7e3f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e69c47baa6a9c7e8d7201992347f2dbdecba73c0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f01938d5fe814b2b5a0a9c26f5d4a3db07347f05"
+    },
+    {
+      "path": "analysis_options.yaml",
+      "type": "file",
+      "sha": "8217bcea022323630d1602bec9b1fef13c9b7097"
+    },
+    {
+      "path": "compiled",
+      "type": "dir",
+      "sha": "bd52e3f58b6c1f1a4f36fec320a56111150a0c9f"
+    },
+    {
+      "path": "compiler.dart",
+      "type": "file",
+      "sha": "7db7185b78e910a65dbaf7d850a726dca552c3e5"
+    },
+    {
+      "path": "cs",
+      "type": "dir",
+      "sha": "ba627ca7d8a3f1c562c15f8c850a014f69e93aef"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "84817a563d11f70d72e386fa6530c5bfff5a8185"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "f9931b71a112559cb35df374640764bfbcefdacb"
+    },
+    {
+      "path": "pubspec.yaml",
+      "type": "file",
+      "sha": "7e6f169a91b0902f351b662e3e1de9ec5f0b2a65"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "818c5d5c1726627231d8815c783d3be4c297946c"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Dart framework/compiler targeting Godot Mono; Godot supplies the underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

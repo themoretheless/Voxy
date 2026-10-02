@@ -1,0 +1,84 @@
+{
+  "repository": "ChristopherDay/Gangster-Legends-V2",
+  "repository_id": 15677039,
+  "commit": "065269acfaa5ee408bc67a0234a5a852627d7ff7",
+  "source_url": "https://github.com/ChristopherDay/Gangster-Legends-V2/tree/065269acfaa5ee408bc67a0234a5a852627d7ff7",
+  "readme_path": "README.md",
+  "readme_sha256": "c1702505ed8debeb2165452363b9d21b0cd3042d0aa8dd09f6f816134a6d13f4",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "0f72ff4d9d0524f12f3021d938352a0e1948fb5a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "adbc1517c9975ee526fd03e4525c7cfc9e074119"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ec49a682a3e05db81b1dec92211eced46da37ee6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ee7a05684c7ffd017d546db6c24f93787de57af5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "361ea704f1294f073262beff202fddb2f48a736d"
+    },
+    {
+      "path": "class",
+      "type": "dir",
+      "sha": "b3f07a1593ac0730c974766c234d3edab26d4829"
+    },
+    {
+      "path": "config.php",
+      "type": "file",
+      "sha": "5365e9e357f3892d2d23969a1545b07531753fb2"
+    },
+    {
+      "path": "dbconn.php",
+      "type": "file",
+      "sha": "23023c45396b71eeee9a953d081cda6cf3ac7d9c"
+    },
+    {
+      "path": "index.php",
+      "type": "file",
+      "sha": "e3da2aed2e638cd5d2e5a93ef5ff4f62fcdfcc24"
+    },
+    {
+      "path": "init.php",
+      "type": "file",
+      "sha": "b4780b8e6fcc36382de5bf4e1bb8e38bff4b784f"
+    },
+    {
+      "path": "install",
+      "type": "dir",
+      "sha": "bc3d137d8781ea9400f70c1f45b1086646e71883"
+    },
+    {
+      "path": "logs",
+      "type": "dir",
+      "sha": "38b287a4b18c73a95ee6706945c1a87ac1af8f18"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "b9fca8a116bf32e3cebbdd091e59766fdfe2706e"
+    },
+    {
+      "path": "themes",
+      "type": "dir",
+      "sha": "dd7f61cb77b9c23f77f3d54a5d6a3a4789d02eb3"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "PHP/MySQL text persistent-browsergame script/framework, not general graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

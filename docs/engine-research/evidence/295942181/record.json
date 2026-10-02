@@ -1,0 +1,69 @@
+{
+  "repository": "Squirrel-Engine/Squirrel-Engine",
+  "repository_id": 295942181,
+  "commit": "ed1eac80443e6ea74e649ef7a18d57c9f64905b5",
+  "source_url": "https://github.com/Squirrel-Engine/Squirrel-Engine/tree/ed1eac80443e6ea74e649ef7a18d57c9f64905b5",
+  "readme_path": "README.md",
+  "readme_sha256": "289c29a8f5429e4670cdfea3705f6f834eb4f7592938d8d528a3eebd66e64ab9",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "958475083aec755358a502a7f7a38cea2943b430"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7504409e12d90912a992697c7125e9fa28a84502"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5033964fc013e4e9da00463478191ef696eea14b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ae5fdbd3d45e1ec5eaf5229947fb7be08ac552ff"
+    },
+    {
+      "path": "Squirrel-Engine",
+      "type": "dir",
+      "sha": "287c55d42f983b1609bccf456198c455f645c39f"
+    },
+    {
+      "path": "Squirrel-Game",
+      "type": "dir",
+      "sha": "5019f7a9d3bada2298d7365c290752a993205da1"
+    },
+    {
+      "path": "Squirrel-Launcher",
+      "type": "dir",
+      "sha": "f4c6add8b8a6b6ca6b55e3661dc67fdf3fbd46eb"
+    },
+    {
+      "path": "gitattributes",
+      "type": "file",
+      "sha": "036f9a16fe1824b79137083a59f3b427c4da00d8"
+    },
+    {
+      "path": "googletest",
+      "type": "dir",
+      "sha": "d4a19ee74ace80a826ff4f94da5f944b5c21c3de"
+    },
+    {
+      "path": "pictures",
+      "type": "dir",
+      "sha": "66cd756c1eca64e56ef27ff8acc41627d0400f95"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "76c3c7f55079f84d8da356b8aa97cc0037cebf96"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Educational C++ engine with rendering, audio and behavior-tree AI plus engine/game/launcher projects; job-system performance unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,13 @@
+{
+  "binary_sha256": "08a2385160a2e45d33b31d82dd7481db5582012357262b202df4627567c6ee5f",
+  "font_source": "/System/Library/Fonts/Supplemental/Arial.ttf",
+  "font_sha256": "525979822591a3447cfc49d943d6f7683508e25543407871c0ed8fed05fd2bd9",
+  "observed": [
+    "Two colored buttons displayed Reload: Hello 123 after Play and raising/zooming the native window"
+  ],
+  "not_verified": [
+    "Corrupt-font retention and recovery: native window restarted during experiment; original publication was no longer available for comparison"
+  ],
+  "cleanup": "Fixture font restored from its original backup",
+  "scope": "Manual native baseline text rendering only; no reload acceptance, timing or pixel-equivalence claim"
+}

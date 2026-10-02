@@ -1,0 +1,134 @@
+{
+  "repository": "jedld/natural_20",
+  "repository_id": 324759040,
+  "commit": "17f70395fa11b0862b1f56f66cf34341c6529590",
+  "source_url": "https://github.com/jedld/natural_20/tree/17f70395fa11b0862b1f56f66cf34341c6529590",
+  "readme_path": "README.md",
+  "readme_sha256": "f175204b07f6da4f7a6566ee442735cc3eb8f160c6868f9b3a87cef2e89ab43f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8b5d2efe9a693051d575da04187d599a578bd75a"
+    },
+    {
+      "path": ".rspec",
+      "type": "file",
+      "sha": "34c5164d9b56c7d528f061c97f2d2fe02c834bdd"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "774944cb12a0c08c82a556cb45d331cd22c8c9d6"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d211f70af3936fb03d50ac01ade0ec72cd0bcf4a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0f9a5bda19f41cab963344b0edd5a0a7a808a6f3"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "2aa852e00822915f33997ca308483b6fd1a89590"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "4c72e28b1e55e04397c33aefb009db910e2b2eaa"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "40713a5294e6f38a03574e367050afb8637a4d16"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9e5896c6f7cc0fa722cd8902fb0b2e5309c7ba25"
+    },
+    {
+      "path": "Rakefile",
+      "type": "file",
+      "sha": "b7e9ed549be37412bd2f7e90f0b33165e3052ceb"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "79896243a38dc156a97badfe8f310da38f703218"
+    },
+    {
+      "path": "char_classes",
+      "type": "dir",
+      "sha": "a264694f83d5237fcc6844cfc951fc2d32453415"
+    },
+    {
+      "path": "characters",
+      "type": "dir",
+      "sha": "eb83a6e6d784ff7be34a3513f50b8c485ebce4c5"
+    },
+    {
+      "path": "fixtures",
+      "type": "dir",
+      "sha": "bdca17c1176bb33b05120d33a0943a8bf4da2039"
+    },
+    {
+      "path": "game.yml",
+      "type": "file",
+      "sha": "ea9096bf9eff4df345f30fbfe5ccdfbeca114449"
+    },
+    {
+      "path": "items",
+      "type": "dir",
+      "sha": "ee49e1cc5a9100d693c393e109ccd94503e5d427"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "21c5e3871e6e6e7c4a4b8485bc331e300018ee95"
+    },
+    {
+      "path": "locales",
+      "type": "dir",
+      "sha": "5b48d65dac2a457fba0eae9a58d6d33c53093ec0"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "1bb15038ba2c300db60782b97ab760d30e3a1fe1"
+    },
+    {
+      "path": "natural_20-0.1.0.gem",
+      "type": "file",
+      "sha": "c25d82afd043991631d47a208440d2a778db659a"
+    },
+    {
+      "path": "natural_20.gemspec",
+      "type": "file",
+      "sha": "12b961ca796202f7b0309ce8789ded722b29560f"
+    },
+    {
+      "path": "npcs",
+      "type": "dir",
+      "sha": "3098393ce506b494bae7478245157a5c09dec997"
+    },
+    {
+      "path": "races",
+      "type": "dir",
+      "sha": "44ffb0a35c3f4a4a5004262559e543bfd44f7cec"
+    },
+    {
+      "path": "spec",
+      "type": "dir",
+      "sha": "376f7631f7913c58b9b0dec28b00f9111007197b"
+    }
+  ],
+  "classification": "specialized_rules_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Ruby text RPG toolkit implementing DnD rules, encounters and text UI.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

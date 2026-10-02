@@ -1,0 +1,59 @@
+{
+  "repository": "McDevon/taxman-engine",
+  "repository_id": 293328457,
+  "commit": "51981885dcb9bb7b467cb578785ac68a084fd8ab",
+  "source_url": "https://github.com/McDevon/taxman-engine/tree/51981885dcb9bb7b467cb578785ac68a084fd8ab",
+  "readme_path": "README.md",
+  "readme_sha256": "423fb52051c3837901066da0de21d0dc9c4ffbb27b3ba9a1a7a4aabc720b9e62",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "09612f9bd19c3809899f0d377832693d8792c96c"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "f6abc105022ad70df6250648d29ceb5556f5f0b2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "84401b30d07eec4ec0e13f616222fe6635382b0f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2daa5ff84c7218a992c3bba94fe8172bcf3c6cb3"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "f33a2ec6b2e5d2a0c418fcffee980ee4ab4b9358"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "a55f1ae01717eabf2b97ed588d20aef42d0dcc4c"
+    },
+    {
+      "path": "taxman-demo-1.gif",
+      "type": "file",
+      "sha": "940dd7d9d42c680993fec2caf1f1ead292894c19"
+    },
+    {
+      "path": "taxman-demo-2.gif",
+      "type": "file",
+      "sha": "55f74396a6b9735521a393e718595e675fa3d48c"
+    },
+    {
+      "path": "taxman-device.gif",
+      "type": "file",
+      "sha": "6937b95ba52d2ef62c345759e1b6b33b9cbc48ab"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C 2D engine with entity-component structure and scene management, using external platform adapters; no optimization claims accepted.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

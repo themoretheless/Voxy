@@ -1,0 +1,179 @@
+{
+  "repository": "monteslu/jsgamelauncher",
+  "repository_id": 901541044,
+  "commit": "a003fc99624700e42a14ad2222c2f161fd86d970",
+  "source_url": "https://github.com/monteslu/jsgamelauncher/tree/a003fc99624700e42a14ad2222c2f161fd86d970",
+  "readme_path": "README.md",
+  "readme_sha256": "eb7c5b2c745402f0b8841b33f3b8eba5dc962fa2390b1110e3206700bff932ab",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "373c5df0f10ef1870524bd92c5d40c841a57056f"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "f59ec20aabf5842d237244ece8c81ab184faeac1"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "97979556b7b2ba735c98e2f5d7a981df50d96ea4"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "360c1283473d7efb7a99c75efc655382d260c16a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "152ce6941f2433a4fcd9909aab8a213e26ee4e65"
+    },
+    {
+      "path": "MEDIA.md",
+      "type": "file",
+      "sha": "c13ebecb2acfd33b1a9b0eb3108ab35e655bfbc8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "affad55e98ba038b3ac07cd79a0a71526d0351d2"
+    },
+    {
+      "path": "audio.js",
+      "type": "file",
+      "sha": "5827b448e7b34f4d5c8db2d71d5a5ab2f5a7c8f8"
+    },
+    {
+      "path": "blob.js",
+      "type": "file",
+      "sha": "5e3cd37ef325ec6b372f68e1ba3b9f388fd0e85f"
+    },
+    {
+      "path": "canvas.js",
+      "type": "file",
+      "sha": "f8e7c580253119dc19b0ba166b42496a203bdcd4"
+    },
+    {
+      "path": "cli.js",
+      "type": "file",
+      "sha": "93bae12669565fbd8ad3adf67bd61a2d0274152e"
+    },
+    {
+      "path": "controllers",
+      "type": "dir",
+      "sha": "f8e84eca78a1e0bdeb2016d5f4815a3b0d9a5841"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "cb6e3315f0c9140acdab6ca6d37e28ebefa708ba"
+    },
+    {
+      "path": "events.js",
+      "type": "file",
+      "sha": "bfbdf81ae5dd14b285836c8f0d66a8f35d4fcde3"
+    },
+    {
+      "path": "fetch.js",
+      "type": "file",
+      "sha": "40bb3b03725f2f0629d1073813d46ea806ea4de9"
+    },
+    {
+      "path": "fontface.js",
+      "type": "file",
+      "sha": "f0f2c333485de28c78afbefcad881d129a2314ec"
+    },
+    {
+      "path": "gamepads.js",
+      "type": "file",
+      "sha": "d4910e2ef1819074a26a658b3ca6b3486f2dca9c"
+    },
+    {
+      "path": "image.js",
+      "type": "file",
+      "sha": "cc3e39ab7c07b555e6e3224ac39e31426527a90c"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "7db6f1fafae10ea44d6c8c9b7caea459e76b1b9a"
+    },
+    {
+      "path": "installers",
+      "type": "dir",
+      "sha": "c58639f7d6fa2e1b4149975ad3721dcc74f5e833"
+    },
+    {
+      "path": "knulli",
+      "type": "dir",
+      "sha": "c4cf74c20f6c8618334543358835919962a76871"
+    },
+    {
+      "path": "launcher.js",
+      "type": "file",
+      "sha": "a082be59ec0de522f8593e2844a76d5f9d138ab1"
+    },
+    {
+      "path": "llms.txt",
+      "type": "file",
+      "sha": "87e441978f5ea6a78e5c826ae06a369c8048e810"
+    },
+    {
+      "path": "localstorage.js",
+      "type": "file",
+      "sha": "80482868ee1303eefef6a10434a51484cd9bc94b"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "820bc1e7d65589f994ffc50a9cf870fb9bc31872"
+    },
+    {
+      "path": "options.js",
+      "type": "file",
+      "sha": "f6b29dbcc9ab9c64f924990e6db66c29944b7c77"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "81d01ea030610f44107b16d7b72cc7689460f4c6"
+    },
+    {
+      "path": "realm.js",
+      "type": "file",
+      "sha": "e592a029e706f25c186b40a0c7b90c2d2fdd1b51"
+    },
+    {
+      "path": "rg40xxv_demo.jpg",
+      "type": "file",
+      "sha": "0eae7199d5bec0bdcaec7647415ddb5597c535f4"
+    },
+    {
+      "path": "systems",
+      "type": "dir",
+      "sha": "9749c16664dc8184cc4f7ba53b9b4297e5c2da90"
+    },
+    {
+      "path": "video.js",
+      "type": "file",
+      "sha": "443432d318bd598c0b82d69a3ce789fda1709dc9"
+    },
+    {
+      "path": "worker-module-bootstrap.mjs",
+      "type": "file",
+      "sha": "cb0eb85601119c95583ea3cc563fb4d19478544c"
+    },
+    {
+      "path": "xhr.js",
+      "type": "file",
+      "sha": "5c07906caadb50b770bd5f4fd5163955897d1262"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Web API compatibility layer for running JavaScript games outside browsers; existing games/engines supply gameplay.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

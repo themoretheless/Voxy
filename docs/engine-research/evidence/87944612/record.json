@@ -1,0 +1,114 @@
+{
+  "repository": "gurkenlabs/litiengine",
+  "repository_id": 87944612,
+  "commit": "ce91406988d92ab9b3b1950e7fcf66f80c5821f6",
+  "source_url": "https://github.com/gurkenlabs/litiengine/tree/ce91406988d92ab9b3b1950e7fcf66f80c5821f6",
+  "readme_path": "README.md",
+  "readme_sha256": "f0ef4dfc4a50104aa68fda0ee5598a643ad1d9303fcfe15fa85a0ad3e63077fd",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a66e7da2d35637ecb71379ce2f6e2a7424352ee0"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e0495fbf21ca650972f48251b36b217f7f845b55"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "508a0f31ba6fc57295bbc5d98db5cc7534b8102d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "753f594f631b97bdfa0e445cbe8e9bcffb955080"
+    },
+    {
+      "path": "CITATION.cff",
+      "type": "file",
+      "sha": "2675cded74eaac543a124679dac7b2abe4a67c63"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "d3824bf4578bce00c1c3656d27e1f33115f846e9"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1d4ee6488b18691c7ceacca23b6dfe94f1a9f1dc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "712da0a2d5816e01693bc985c66f9e4092790b0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e475304376dac2de8717a993b2b1e7177f607981"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "71679d6c2518be541449d2f4753a9f4fb183af9a"
+    },
+    {
+      "path": "buildSrc",
+      "type": "dir",
+      "sha": "b039aa0b7d84244c38dc27206e68728e5b602e88"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "d521817b2e926384f91bfdec80209a4619ec7671"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "2a1ce4fa4e790a1c33f8d57ebf144f50982f96a1"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "38787fb6d2e81a11833314ce741ac9f8479f97b0"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "b9bb139f790567973216cd313e69ae65789c3754"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "24c62d56f2d4a91975bd1aa72103d2ec628e449f"
+    },
+    {
+      "path": "litiengine",
+      "type": "dir",
+      "sha": "df76c9c0c2eb3f85455574cac01119a32c9373e0"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "dc8bb37c9afe92ba53f109f0d7b2e1326a2f351d"
+    },
+    {
+      "path": "shared",
+      "type": "dir",
+      "sha": "904368552f28fff103481325595672567390c1cb"
+    },
+    {
+      "path": "utiliti",
+      "type": "dir",
+      "sha": "c8f98e412086de98f670703181f480213a68c6b9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Java 2D engine with map editor/runtime library; owned source and Gradle build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

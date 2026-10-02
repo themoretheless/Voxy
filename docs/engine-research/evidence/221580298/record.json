@@ -1,0 +1,42 @@
+{
+  "repository": "vini-guerrero/godot_game_tools",
+  "repository_id": 221580298,
+  "commit": "f776fbc48c04c6dc985fd0f86b2b9e36b4bac536",
+  "source_url": "https://github.com/vini-guerrero/godot_game_tools/tree/f776fbc48c04c6dc985fd0f86b2b9e36b4bac536",
+  "readme_path": "README.md",
+  "readme_sha256": "76871fac997ee3a7f1a0db62b3a83a9b93ddd2370a05fbdf2f4331236f2a1fb4",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b21e1e0e5ffa0bc9f256290ac31cef6917724276"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "912cf65fa4cad055871c9b6aaa76dda5834f68ca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "623df85848f9b9fa6c7de59702e253d30e3af780"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "3024d0b0b8fbc579c30f641b2e7e27747c87223f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "73a2946af950c25f749c702985bbd2c937eeae0d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

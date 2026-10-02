@@ -1,0 +1,134 @@
+{
+  "repository": "magefree/mage",
+  "repository_id": 4158448,
+  "commit": "7c517e0f88b7981b58225a2cb8aa185c6adc1931",
+  "source_url": "https://github.com/magefree/mage/tree/7c517e0f88b7981b58225a2cb8aa185c6adc1931",
+  "readme_path": "readme.md",
+  "readme_sha256": "89b967fe79cca0878c799f5d7ecaadbeeb87c524eca7ea73172371ccf6d645e3",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "4dbbdeb63caa3e3ea0d4396dc9bd36935c1ad6df"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "14b1b5aea82e6563367a5d42de606f9b3746e6f2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "47959b6abce0b0efcf4362d3b2e2412327aecae7"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "91b52ed33ab9ed82bdb4b878bb2563193aa43f0f"
+    },
+    {
+      "path": ".travis",
+      "type": "dir",
+      "sha": "c647e9e7d4aeea945976999e6209a5425c027e39"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "3575e469d848ca405ccc8d0ac9d711c94120eb45"
+    },
+    {
+      "path": "Mage.Client",
+      "type": "dir",
+      "sha": "b26768dcd9dd692ca2bb158c3f9e11baec7f1f8f"
+    },
+    {
+      "path": "Mage.Common",
+      "type": "dir",
+      "sha": "2c47695fb012aadf083c24bdc2185c830dd27dfc"
+    },
+    {
+      "path": "Mage.Plugins",
+      "type": "dir",
+      "sha": "af7c335adbf9415b0be33ba47bcf643d7183cc10"
+    },
+    {
+      "path": "Mage.Reports",
+      "type": "dir",
+      "sha": "a0c2473a58209f57473737dbea90943610da9a2f"
+    },
+    {
+      "path": "Mage.Server.Console",
+      "type": "dir",
+      "sha": "717845b4a27bf609e9dbb0e504c30fcb7bbc8455"
+    },
+    {
+      "path": "Mage.Server.Plugins",
+      "type": "dir",
+      "sha": "6a039f91f3a5da575cdf58c84d9a57f9de287ef8"
+    },
+    {
+      "path": "Mage.Server",
+      "type": "dir",
+      "sha": "31c4871af4ffb60ac69c224e80140ed319f509ad"
+    },
+    {
+      "path": "Mage.Sets",
+      "type": "dir",
+      "sha": "9c1aaa31e3c451c547f1d38220f2ef760e2b76aa"
+    },
+    {
+      "path": "Mage.Tests",
+      "type": "dir",
+      "sha": "84b8834ab9d0aa826038dfa2786694c3ea04ccc2"
+    },
+    {
+      "path": "Mage.Verify",
+      "type": "dir",
+      "sha": "fb7885adc222d10c77dd76802d36df220c15a6b2"
+    },
+    {
+      "path": "Mage",
+      "type": "dir",
+      "sha": "e02eda0aa6775b77e8e352fbc37e622b1b7d5ed6"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "b073f43d38482f5d89d313ec38e84f5959126070"
+    },
+    {
+      "path": "Utils",
+      "type": "dir",
+      "sha": "37406a19a715811836b5927fcb44fc6560484fde"
+    },
+    {
+      "path": "clean_dbs.sh",
+      "type": "file",
+      "sha": "48141fedaecb8da5be1d1f9ccd2e2826a488402c"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "510aa402b6bb7abce96b9a89e5471b016ba4134c"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "be49ba4a6716cdf5d309511f77e315504852c52f"
+    },
+    {
+      "path": "repository",
+      "type": "dir",
+      "sha": "6f504293f41249794da700680cda5f989b9c523d"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "9b5b43fcd3bcd3b703e606e80f59cf65130402f1"
+    }
+  ],
+  "classification": "specialized_rules_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Magic rules-enforcement engine; server/client/sets and Maven. Domain rules engine kept outside graphical game-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

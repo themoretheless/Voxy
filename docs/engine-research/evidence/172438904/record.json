@@ -1,0 +1,77 @@
+{
+  "repository": "pickitup247/pyckitup",
+  "repository_id": 172438904,
+  "commit": "d29d4a26241deeb6a7596a450d0d35370185c40f",
+  "source_url": "https://github.com/pickitup247/pyckitup/tree/d29d4a26241deeb6a7596a450d0d35370185c40f",
+  "readme_path": "README.md",
+  "readme_sha256": "3d09ad2a8b2870d25c57a507f90dd95be6240a2154aa5c1a085709eb3dc8801f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f11566f778d8a743f9c86ae6becb8183ef50f9c1"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "02ef2b4574ba3c229c698a2652e7492d008c9e8d"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "88a9a1afc6b4c988d5c870968d60eb82580b6814"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "4f10c093e9dd3d1627f4e62f2870bae222b1aea5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "52f0a8e4dae04845a6c2f4439e4a9874fb3619ea"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "8e318287c8259f4b34629f5f7d7c406f3dcaf5ac"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a2dde21854ba9df089199df3bf5f353831e20c06"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "5b8f3da3651f2d9f3063d8889922ef4833e9d16a"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "a39e47e68471cc8fa1bdce180da9afc34e0f3bdc"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "3dcb9a671087931d76ac28feb26f19cd7fff357e"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "e43466dd3efb2a9d2bd87171be483ec2ae26b43c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2eeba431bf1fb2bcdb40a2a082481901a0d88774"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "801e465e9f1df1984cb0ad92d5527b12d1a5da73"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

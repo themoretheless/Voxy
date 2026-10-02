@@ -1,0 +1,159 @@
+{
+  "repository": "WelderFoundation/WelderEngineRevamp",
+  "repository_id": 173042782,
+  "commit": "0ec92e79678bbcd7591ad67dcb10ac0bf5e3905f",
+  "source_url": "https://github.com/WelderFoundation/WelderEngineRevamp/tree/0ec92e79678bbcd7591ad67dcb10ac0bf5e3905f",
+  "readme_path": "README.md",
+  "readme_sha256": "a42374649ed070c4ccd1a37273d5b033cd8cb9b7779da7719ffbb4fe26fda300",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "cd4f84c76b5045d28d3ab48de90bb4b146f1c61a"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "5691905e386ed2e0c3ee85d4952d73b37143ad37"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "05ce909da0b9952e9e4cf59ba5692faa633528fa"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "eb765ddd2707a2bd761f6f107d0aa9c22e323322"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "80db671a0e3e0ae32cb2b3786c458894b642beb9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "94f480de94e1d767531580401cbf13844868e82b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "74cf7e60969bcf1bc7e54a45d203c41a30d0c7cd"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e8cb96488fed6b4303848b57fa4eef8b8adbc5db"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "db165a6810cbf89c59a06f39f689ae342d175a5e"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "79a89cc3548fec742a199cf303b7ad64dfd64542"
+    },
+    {
+      "path": ".welder",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CMakeFiles",
+      "type": "dir",
+      "sha": "8ac9fda6bd5a9038c09ae850a09379776ba97e06"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "744d5a2b5177b5248f16f292ccb27b86dc5c69c6"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "2822730c8a27037e617396f146d01a7315341de0"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "d2d29e1d718592253b0f63b0092aa90cfa78df94"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "4104aff4a9f3e179c84768217480cccacf471dd5"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "a4f29c311fa3a60dbd5980c1fdeca5e15725b180"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "a795457618d171d7b39afeb1434f2bb9d738f800"
+    },
+    {
+      "path": "LauncherTemplates",
+      "type": "dir",
+      "sha": "53945fc7e2342e3866c1a7dba7d28050209b421f"
+    },
+    {
+      "path": "PlatformData",
+      "type": "dir",
+      "sha": "396394bb6b5a0a716f8bfd1c6d80532d373ab98c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "77466824b6b8b1b8a1089d0bb5b7d8982136a90c"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "8a6af4c44641dfca64d2060140ad49c91d7760de"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "c614ea9e9932e8f2ce1c2fbae9a20f0874a723ef"
+    },
+    {
+      "path": "dockerbuild.sh",
+      "type": "file",
+      "sha": "2d858ea0ebf63c6e0f845b62e3e3c940e37da821"
+    },
+    {
+      "path": "dockerbuildserver.sh",
+      "type": "file",
+      "sha": "26a1a7576a98ada7ce20a9622fe88e81969fc794"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "2f5939db961b86022a2a8da2ba53a85a2af05080"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "f713bc855d06db3be74ea157b6730a53a5215a9f"
+    },
+    {
+      "path": "suppress.txt",
+      "type": "file",
+      "sha": "581d3c517203cbbd4a4aef84d9280faace4a51f8"
+    },
+    {
+      "path": "weld.sh",
+      "type": "file",
+      "sha": "eafbee00c2ea6484944ddc80c172fbf66ae6109e"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit overhaul and renaming of Zero Engine; editor, scripting, component resource metadata, graphics, physics and audio are documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

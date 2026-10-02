@@ -1,0 +1,69 @@
+{
+  "repository": "PistonDevelopers/turbine",
+  "repository_id": 44633743,
+  "commit": "71f15ea57a817decbae942230b75f81fa582347a",
+  "source_url": "https://github.com/PistonDevelopers/turbine/tree/71f15ea57a817decbae942230b75f81fa582347a",
+  "readme_path": "README.md",
+  "readme_sha256": "7210575ecc2364a1b890c036457479dc36e29446a3266b6a0062d3303f21460b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "db2b510d8f96ed789cc3dd2a712250d9dd43258a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "606f7a045d4ded956ac36b5fe92e5777c88ff48e"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "7bcb7368a01639b20f54e1c544b549439a36e441"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "8f71f43fee3f78649d238238cbde51e6d7055c82"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9203baa055d41d89e1ab8f4d6aa9180a49e078a7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "beef7a748dde9dafef313ad92b655ed7934a9d38"
+    },
+    {
+      "path": "external-overhead-per-item.ods",
+      "type": "file",
+      "sha": "b2de084d6bb580d587ab1be47c31936ab2279426"
+    },
+    {
+      "path": "process3d",
+      "type": "dir",
+      "sha": "b3afdb45d0b14993367b6e9cfef350542aa7b059"
+    },
+    {
+      "path": "reactive",
+      "type": "dir",
+      "sha": "a201bcf98a178e5e6ca9b7226b0fc8f1e5df3b9a"
+    },
+    {
+      "path": "scene3d",
+      "type": "dir",
+      "sha": "8ff3895b4f07f865554d02ec7b72e88a7df79825"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d53cb9fbb00d5754463858973911785a33310fb5"
+    }
+  ],
+  "classification": "engine_toolkit_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Content-production integration and process/reactive/scene libraries; README distinguishes its meaning of engine from game runtime, completeness unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

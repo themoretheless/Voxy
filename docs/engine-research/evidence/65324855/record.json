@@ -1,0 +1,54 @@
+{
+  "repository": "Vladar4/nimgame2",
+  "repository_id": 65324855,
+  "commit": "afd289aefd84aa4f89435f5fa0306da62f2023cc",
+  "source_url": "https://github.com/Vladar4/nimgame2/tree/afd289aefd84aa4f89435f5fa0306da62f2023cc",
+  "readme_path": "README.md",
+  "readme_sha256": "0a27d255b4b5df30c8d4ed8d7060b364434dc834e50577392507fdbf3d97531f",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ef42eaeee07527eecd513164de75b328a39f3bb2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "da4a4d6af56b923911de0d7aea5814d2671d783b"
+    },
+    {
+      "path": "STYLE.md",
+      "type": "file",
+      "sha": "bac0f0fcc250ba3dcca1943489756b44582ff938"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "4be0ffcf81abc3682fe3b4f12ac00443681d155f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "551adec8bccf5e9a784efc437acc0c5aafa5a0bb"
+    },
+    {
+      "path": "nimgame2.nim",
+      "type": "file",
+      "sha": "fb4d378b4c71b848bc1eb656b8e6f4fe43fc1395"
+    },
+    {
+      "path": "nimgame2.nimble",
+      "type": "file",
+      "sha": "d93bb4bf055e457c8eba0f615af06124ac3e87bb"
+    },
+    {
+      "path": "nimgame2",
+      "type": "dir",
+      "sha": "e5f3bbd27fe12ecc53bd150e8c567eeebcfc09f4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Nim 2D engine; owned nimgame2 runtime and Nimble build/examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,17 @@
+{
+  "scope": "Matched static torso snapshots; image differences do not establish physiological realism, deformation attachment or GPU performance.",
+  "before": "docs/body-skin-spectral-diffuse.png",
+  "after": "docs/body-skin-pigmentation.png",
+  "beforeSha256": "6b1a8df1cf454c878e5b3333796b872f0b6a53c444079649d1ceefa1c4c374c6",
+  "afterSha256": "c82a1bf3307425961df25f5403c60ae9d9a1a57177a4c4f7fef4711bdc163bad",
+  "dimensions": [
+    576,
+    768
+  ],
+  "changedPixels": 376684,
+  "maxChannelDifference8bit": 6,
+  "meanAbsoluteChannelDifference8bit": 0.9858285409432871,
+  "renderer": "Apple M4 Max / Metal",
+  "renderPassed": true,
+  "visuallyInspected": true
+}

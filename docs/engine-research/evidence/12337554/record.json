@@ -1,0 +1,117 @@
+{
+  "repository": "BennyQBD/3DEngineCpp",
+  "repository_id": 12337554,
+  "commit": "a9264241bfa553ca1dde0277391c6c7e69854f26",
+  "source_url": "https://github.com/BennyQBD/3DEngineCpp/tree/a9264241bfa553ca1dde0277391c6c7e69854f26",
+  "readme_path": "README.md",
+  "readme_sha256": "462edbdd44eb822bb4c9ee01341d0a42cc2ee6639b2bccc2aff23a3b92e898e3",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "66094bf41eae99e017f3cfb495bc34d62543bbbc"
+    },
+    {
+      "path": "C++CodingStyleGuide.txt",
+      "type": "file",
+      "sha": "bcfed56e066d8da766d855b371c7c2ef5b36d08f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "21493124af3ea5985d833ef3dbe7f3301036d591"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "1b318b4a5029fd46c5003e4a5fa8e1454b360acb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e5cf47a2f4151c0d59e9062949bca0768346af9f"
+    },
+    {
+      "path": "Unix-Build.sh",
+      "type": "file",
+      "sha": "44d3dbff115e5ee1994400184ff57c8ad4e60b28"
+    },
+    {
+      "path": "Unix-BuildDebug.sh",
+      "type": "file",
+      "sha": "f8e8cda5cde1c78474aaf91521425784cf7caeed"
+    },
+    {
+      "path": "Unix-Clean.sh",
+      "type": "file",
+      "sha": "e9e26bec356d4f66180c517eed3b6b36a8f21bae"
+    },
+    {
+      "path": "Unix-GenCodeBlocksProject.sh",
+      "type": "file",
+      "sha": "a2a6167b5fa91538ecb320ac79e8ff3e9a85dac7"
+    },
+    {
+      "path": "Unix-GitPull.sh",
+      "type": "file",
+      "sha": "e0b9372dde3ad440d506fe55c120dcffc587c16f"
+    },
+    {
+      "path": "Unix-GitPush.sh",
+      "type": "file",
+      "sha": "d7b9a1434c4f7eb6d6acca9aa46795973f11c925"
+    },
+    {
+      "path": "Windows-Clean.bat",
+      "type": "file",
+      "sha": "bf7ffb46bce1eb133835b3820c7709538d35278c"
+    },
+    {
+      "path": "Windows-GenVisualStudioProject.bat",
+      "type": "file",
+      "sha": "ad5c73d81dcbffe9d3b681ade15935ccc335ea09"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "f3aa77a08ec6a50bb796b6454c28b7b3638a8afe"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "8d55384f891d1b8bc52f2dbe47be46d3ed7b4ea0"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "66fe88d1e1f473ea7f945c65df16eadde17ccfa0"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "92b17992203db885760138e08a9fdf6be31d2522"
+    },
+    {
+      "path": "run",
+      "type": "file",
+      "sha": "9ecfd3ac8e742076845faf64f040099037f40653"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7fac710a4b4f5938421a99659041340cc4198489"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

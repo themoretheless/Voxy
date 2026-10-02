@@ -1,0 +1,34 @@
+{
+  "repository": "gamedev-js/gamedev-js",
+  "repository_id": 84060977,
+  "commit": "f746413315718c1f53418d5e924b44970f02263b",
+  "source_url": "https://github.com/gamedev-js/gamedev-js/tree/f746413315718c1f53418d5e924b44970f02263b",
+  "readme_path": "README.md",
+  "readme_sha256": "49782a2b32368b9e126733a16564c7280a6239553c2429a4f2886cd48d32ab84",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5148e527a7e286a1efcc44d65a7f8241267dce9b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23e640d9f7a890884ed5d0839d9c2a31f9094efd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1c3ca8d2c8de613d3004eff16d3694dac75699f5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0e4e7ce88e5d5d24560d0ea8716d1665d88dcc2e"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Curated references used in WebGL game development, not engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

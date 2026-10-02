@@ -1,0 +1,1584 @@
+{
+  "repository": "ohrrpgce/ohrrpgce",
+  "repository_id": 196002593,
+  "commit": "dea1d27cba47d7d92fb7482f07323eb4504e7327",
+  "source_url": "https://github.com/ohrrpgce/ohrrpgce/tree/dea1d27cba47d7d92fb7482f07323eb4504e7327",
+  "readme_path": "README.txt",
+  "readme_sha256": "c2184205da0b645bd1378accd3f078cb3aed40632b16352ee06c1bf1a8dde20d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1eacb2de67f1f9e06ae6b33adc0cbe85120ba949"
+    },
+    {
+      "path": "IMPORTANT-nightly.txt",
+      "type": "file",
+      "sha": "b1cf9c4d279100441491a2fac57108cff609e919"
+    },
+    {
+      "path": "Jenkinsfile",
+      "type": "file",
+      "sha": "2f8ceff6c8d09b7c54a6d546b2f984313c225a56"
+    },
+    {
+      "path": "LICENSE-binary-for-consoles.txt",
+      "type": "file",
+      "sha": "78a21f8e68362ee5d8be5ae2c915768d9c453d19"
+    },
+    {
+      "path": "LICENSE-binary.txt",
+      "type": "file",
+      "sha": "4320a937d936bc9cec73d7d1c4d7217b7dc18578"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "b8c1c6e65d073b6f0d608767a74695bce18a0bf5"
+    },
+    {
+      "path": "README-custom.txt",
+      "type": "file",
+      "sha": "5e12296d7ab36193c9938fcda465ad1bafcdb58f"
+    },
+    {
+      "path": "README-game.txt",
+      "type": "file",
+      "sha": "070363b2adb434e810db2f01b6ed4357c6889285"
+    },
+    {
+      "path": "README-mac.txt",
+      "type": "file",
+      "sha": "28657664b902f4c1480896630aeb45097b396d21"
+    },
+    {
+      "path": "README-nightly.txt",
+      "type": "file",
+      "sha": "7f43575d89a11bb19c9528bcdf6f0ae86fddc20f"
+    },
+    {
+      "path": "README-player-only.txt",
+      "type": "file",
+      "sha": "d28605576ad9d97e6daabd0136f786f23f2b6809"
+    },
+    {
+      "path": "README.txt",
+      "type": "file",
+      "sha": "1ed1069cf3c36d2317ff9f9f0726e3ece8e2daf4"
+    },
+    {
+      "path": "SConscript",
+      "type": "file",
+      "sha": "e3f693d7890597c93720c8ee6af62df8565c4435"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "8f2e6ce1680ba866d09c96f397844ca00116bd06"
+    },
+    {
+      "path": "SDL.dll",
+      "type": "file",
+      "sha": "781b54d6ee5d89abc7e26f8405ef29f99ee68c2f"
+    },
+    {
+      "path": "SDL2.dll",
+      "type": "file",
+      "sha": "9c25aa573c9e38840c614b9adc3d53500b7b864f"
+    },
+    {
+      "path": "SDL2_mixer.dll",
+      "type": "file",
+      "sha": "4c1e1cc3d7183cc09ac706a9e4530dfa466684fb"
+    },
+    {
+      "path": "SDL_mixer.dll",
+      "type": "file",
+      "sha": "27c84ec2dad2d65496b7922ff3653b4417e0a698"
+    },
+    {
+      "path": "achievements.bi",
+      "type": "file",
+      "sha": "45644f5135adc0133e6314cfe362e8f2671a218d"
+    },
+    {
+      "path": "achievements.rbas",
+      "type": "file",
+      "sha": "bf5e924742f52d0d185afa191aff891f243931ab"
+    },
+    {
+      "path": "achievements_runtime.bi",
+      "type": "file",
+      "sha": "f4cf6e46f9203729ebbb50f7133a42b6b983fa3d"
+    },
+    {
+      "path": "achievements_runtime.rbas",
+      "type": "file",
+      "sha": "be7ca3296c22268adc32bcaa927cd433dd0637d4"
+    },
+    {
+      "path": "alleg40.dll",
+      "type": "file",
+      "sha": "6901d3dd43c7f1064aba6a64ecb3989d75505db5"
+    },
+    {
+      "path": "allmodex.bas",
+      "type": "file",
+      "sha": "354d5405b1412397b92ad0e86f24fe02265eec1d"
+    },
+    {
+      "path": "allmodex.bi",
+      "type": "file",
+      "sha": "71690840400264e09af33fdc42ac411ecb27ee5f"
+    },
+    {
+      "path": "allmodex.h",
+      "type": "file",
+      "sha": "636c154fa7b7acc6107760dc55dc0ecaad4e8568"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "e7026272a4e6467da744411267fe004d648c77bb"
+    },
+    {
+      "path": "animationedit.rbas",
+      "type": "file",
+      "sha": "8be25d1c0bdfb5e36895654a0819f61dcf774c8b"
+    },
+    {
+      "path": "animations.bi",
+      "type": "file",
+      "sha": "3438a9a34c94f1ec3f31e756a7f6596bc82f01cc"
+    },
+    {
+      "path": "animations.rbas",
+      "type": "file",
+      "sha": "f4e3585c9ce14281c0af69f66ad10953628b9bde"
+    },
+    {
+      "path": "ansible",
+      "type": "dir",
+      "sha": "9f6cb1f8c6769dcbf8330c6698c9ff34d3c3c694"
+    },
+    {
+      "path": "array.c",
+      "type": "file",
+      "sha": "ea0f3a1041167b9e96f02b16b95f80a5b62228dd"
+    },
+    {
+      "path": "array.h",
+      "type": "file",
+      "sha": "5302025773999d95cf5d574396ec96f5abb58259"
+    },
+    {
+      "path": "attackedit.bas",
+      "type": "file",
+      "sha": "9e13acd32cbaeaa2b74baa6cc95940fd5842c1db"
+    },
+    {
+      "path": "audiere.dll",
+      "type": "file",
+      "sha": "c4c2cee80cd1614cb53f33afbc269f1b94c02387"
+    },
+    {
+      "path": "audiere.dll.a",
+      "type": "file",
+      "sha": "c104541dfbc6e6d330cd9c1ce487f039c12f4aec"
+    },
+    {
+      "path": "audioedit.bas",
+      "type": "file",
+      "sha": "e17a918e88ee1a5ce526b48f2da6bf30a574ba67"
+    },
+    {
+      "path": "audiofile.bas",
+      "type": "file",
+      "sha": "c0ad91278ca59b023fa3011c25bd8756f2b0762d"
+    },
+    {
+      "path": "audiofile.bi",
+      "type": "file",
+      "sha": "5e7c1d416d3bf060e45edebdfb1e636e95b84965"
+    },
+    {
+      "path": "audwrap",
+      "type": "dir",
+      "sha": "cbb0734b70c2a6109bc85b6280546f9da4b1111f"
+    },
+    {
+      "path": "autotest.py",
+      "type": "file",
+      "sha": "cb08b2e5975715d212d82cac3a0172ec1863e97f"
+    },
+    {
+      "path": "backends.bas",
+      "type": "file",
+      "sha": "aad8a81d98b004ce4d4fe4bcc168f1e29ca636de"
+    },
+    {
+      "path": "backends.bi",
+      "type": "file",
+      "sha": "1baf53b005168216d0ba6a612f0f6ad00ded03f0"
+    },
+    {
+      "path": "bam2mid.bas",
+      "type": "file",
+      "sha": "8cc20df4056d8ce79560403c79049a4fea5c7302"
+    },
+    {
+      "path": "bam2mid.txt",
+      "type": "file",
+      "sha": "90e0d9c0454aa66845aeaabf123dc2d8975db846"
+    },
+    {
+      "path": "banks.bi",
+      "type": "file",
+      "sha": "93eb45b82e059b5a58f59939891e2b9232733887"
+    },
+    {
+      "path": "base64.bas",
+      "type": "file",
+      "sha": "8a056b0279a2aa1926d030b38d1ce099eb605693"
+    },
+    {
+      "path": "base64.bi",
+      "type": "file",
+      "sha": "b882af5d4e2c508b189ee327215bafde1fb61b61"
+    },
+    {
+      "path": "battle_layout.slice",
+      "type": "file",
+      "sha": "94dc683acc17a7832edc86da6494eccd0ae2df7f"
+    },
+    {
+      "path": "battle_udts.bi",
+      "type": "file",
+      "sha": "7e94186a547e64c13c46a5479b3b941ae45f5136"
+    },
+    {
+      "path": "bcommon.bas",
+      "type": "file",
+      "sha": "4b16d4ba1807ca3f891953440ea045c9869013be"
+    },
+    {
+      "path": "bcommon.bi",
+      "type": "file",
+      "sha": "ef5e478d6eb74be1297ef9da701bef4ad34ad0f0"
+    },
+    {
+      "path": "bihead.txt",
+      "type": "file",
+      "sha": "47a27b95df6b53178ae9a959209b649791ce7432"
+    },
+    {
+      "path": "bitmap.bi",
+      "type": "file",
+      "sha": "4e1b000fca54b9f7c158fd28d4b62b4f0e7ca587"
+    },
+    {
+      "path": "blend.h",
+      "type": "file",
+      "sha": "22cd1750249d5c0c17f384dda598930a6905f434"
+    },
+    {
+      "path": "blit.cpp",
+      "type": "file",
+      "sha": "36841057ce1f3518750aea1f5e485581fc663c7f"
+    },
+    {
+      "path": "bmod.bi",
+      "type": "file",
+      "sha": "0fd5b9e39ddc62b880e129f620f0a57f8b541442"
+    },
+    {
+      "path": "bmod.rbas",
+      "type": "file",
+      "sha": "8e8a3dddc67679a9fed11d6c1e64ec5e47c94d29"
+    },
+    {
+      "path": "bmodsubs.bas",
+      "type": "file",
+      "sha": "adbb6535a447726fb75df2a1962b29ecd52fb2db"
+    },
+    {
+      "path": "bmodsubs.bi",
+      "type": "file",
+      "sha": "d10a96495e6e5f68057f64457177d6554c3ae7cc"
+    },
+    {
+      "path": "browse.bas",
+      "type": "file",
+      "sha": "8c99cd5d8404afcf819a6dc357909c4c7992e183"
+    },
+    {
+      "path": "browse.bi",
+      "type": "file",
+      "sha": "a283d8c44b752937528d6191f35e32d9035b25b8"
+    },
+    {
+      "path": "bundle-apps.sh",
+      "type": "file",
+      "sha": "686bbffbc5852fba1197a9c2868c803c506bca93"
+    },
+    {
+      "path": "cglobals.bi",
+      "type": "file",
+      "sha": "c51a9dcd95604e53d3cba1d950c69f7936f0f390"
+    },
+    {
+      "path": "cicon.rc",
+      "type": "file",
+      "sha": "e46c130e1153f2de22a8a1a62d2c28057f16a6fd"
+    },
+    {
+      "path": "cmdline.bas",
+      "type": "file",
+      "sha": "9b1bf61772fa06b3d08586694d2ff842dce17242"
+    },
+    {
+      "path": "cmdline.bi",
+      "type": "file",
+      "sha": "a72cb28efc5e0adc1a7750a4105eaab9069a040e"
+    },
+    {
+      "path": "codename.txt",
+      "type": "file",
+      "sha": "08fbc7e2e8f8dc6f723e938bb55b061e12b3d646"
+    },
+    {
+      "path": "common.bi",
+      "type": "file",
+      "sha": "9df9933b63e79c9abfa1403f542b2190c265a392"
+    },
+    {
+      "path": "common.rbas",
+      "type": "file",
+      "sha": "cc38de4f61630042ab88fa0e4125fda180ee3d94"
+    },
+    {
+      "path": "common_base.bas",
+      "type": "file",
+      "sha": "c4888dfae2cb6d7b1dc1e51963b5d9a0fb8cad3a"
+    },
+    {
+      "path": "common_base.bi",
+      "type": "file",
+      "sha": "39b510614f419369b509f98d9a6d5c62849239d3"
+    },
+    {
+      "path": "common_menus.bas",
+      "type": "file",
+      "sha": "9124bcc4d575e9b99121cff69a8f8ce8623db16f"
+    },
+    {
+      "path": "common_menus.bi",
+      "type": "file",
+      "sha": "75ca3e9831a8b637055124b824f2a334f0a5c580"
+    },
+    {
+      "path": "config.bi",
+      "type": "file",
+      "sha": "1c7069fda9e303d2fc499de6e48ddaeb9778f65f"
+    },
+    {
+      "path": "config.h",
+      "type": "file",
+      "sha": "526899b657f72828d8fb30f4aaeebbfc904a9397"
+    },
+    {
+      "path": "const.bi",
+      "type": "file",
+      "sha": "42f217008efcdb354e195ab032097673a57da495"
+    },
+    {
+      "path": "custom.bas",
+      "type": "file",
+      "sha": "a815bdfcfd609521f30f3f870cbe8b40debf43de"
+    },
+    {
+      "path": "custom.bi",
+      "type": "file",
+      "sha": "ffc8907bc4bc7fca65542a9fb8c77b4d011b7f3c"
+    },
+    {
+      "path": "custom.ico",
+      "type": "file",
+      "sha": "6fdbb42affec2f41e1d2f79b7c9fa3e48b84ab49"
+    },
+    {
+      "path": "custom.sh",
+      "type": "file",
+      "sha": "9f0e3f1e10b83742331d8b963bde1130317b2068"
+    },
+    {
+      "path": "custom_udts.bi",
+      "type": "file",
+      "sha": "dfa042d5b09140d3554e4a6ce19a5323c227ad17"
+    },
+    {
+      "path": "customsubs.bi",
+      "type": "file",
+      "sha": "793584afa34fd10b78812ff5488981ff8b22b0bd"
+    },
+    {
+      "path": "customsubs.rbas",
+      "type": "file",
+      "sha": "ff2e975ba254384e3301377871d8324bcaef3842"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "f4f9e7dc0956172a9ff9fb550e965cdc1c1138fd"
+    },
+    {
+      "path": "distrib-linux.sh",
+      "type": "file",
+      "sha": "f6bcefa16129c6498dcc5d6fdbd43d5833debbff"
+    },
+    {
+      "path": "distrib-mac.sh",
+      "type": "file",
+      "sha": "2e81d7fab97affb6373244757c57b3ef9e1ef6a6"
+    },
+    {
+      "path": "distrib-nightly-android.sh",
+      "type": "file",
+      "sha": "03d9e4e1b17deecfd0deb95135cecd0199769700"
+    },
+    {
+      "path": "distrib-nightly-mac.sh",
+      "type": "file",
+      "sha": "01478feb0db9e9cd296ab4fe126de8838ef93411"
+    },
+    {
+      "path": "distrib-nightly-web.sh",
+      "type": "file",
+      "sha": "b32863ca7ab231e99b8f850497bb9d5db02c93b0"
+    },
+    {
+      "path": "distrib-nightly-win-packnupload.bat",
+      "type": "file",
+      "sha": "302f6f9d6c55558af0a89830bc1330fc57f16c05"
+    },
+    {
+      "path": "distrib-nightly-win.bat",
+      "type": "file",
+      "sha": "6ce9c51e2200b281117fd0a471ec47fc2a0b9c8e"
+    },
+    {
+      "path": "distrib-nightly-wine.sh",
+      "type": "file",
+      "sha": "efaccd7d535786d1ad5fc622f554991dbeba3f6b"
+    },
+    {
+      "path": "distrib-web.sh",
+      "type": "file",
+      "sha": "17e4ae69f3f7e0aca058240637f3569a785259cb"
+    },
+    {
+      "path": "distrib-win-setup.bat",
+      "type": "file",
+      "sha": "8701f9ffe186b6df5d9537be38be6932a3bfd5f0"
+    },
+    {
+      "path": "distrib-win.bat",
+      "type": "file",
+      "sha": "092850dab149577b5979ccccfafcba484027910e"
+    },
+    {
+      "path": "distrib-wine.sh",
+      "type": "file",
+      "sha": "06469aa7b81adccf3cd8974f2d21ecaba48ff567"
+    },
+    {
+      "path": "distribmenu.bas",
+      "type": "file",
+      "sha": "8e7922a4a5eb02512f48d475cd355e90db0a610c"
+    },
+    {
+      "path": "distribmenu.bi",
+      "type": "file",
+      "sha": "22304a33442cdf8c6718c7ffbe00c1e226f37da8"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "f69f7909c609b6bb08cfbd8979980acfb67c7bd9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b35a413b7d7b5a5f412ef511458daf68f2edc770"
+    },
+    {
+      "path": "downloadworker.js",
+      "type": "file",
+      "sha": "2306d52d477294a86f38a9950d1483871a66034b"
+    },
+    {
+      "path": "drawing.bas",
+      "type": "file",
+      "sha": "2b75ce94ac19c63dc99447bba0035f019c334d7b"
+    },
+    {
+      "path": "dumpohrkey.bas",
+      "type": "file",
+      "sha": "07841eab68acefa8293f5145d0a76b76fd0eb431"
+    },
+    {
+      "path": "editedit.bas",
+      "type": "file",
+      "sha": "7a3449347a2759296883a355dd7f45a451236fd4"
+    },
+    {
+      "path": "editedit.bi",
+      "type": "file",
+      "sha": "cadeffbec7eecf6690f8b9ef88ae513953452e85"
+    },
+    {
+      "path": "editorkit.bas",
+      "type": "file",
+      "sha": "9fcac496cc209aa56b72ad0f20cfa976788581f2"
+    },
+    {
+      "path": "editorkit.bi",
+      "type": "file",
+      "sha": "7b7ce5236ce611629d9528ba8a8be5f5016ffcf8"
+    },
+    {
+      "path": "editrunner.bas",
+      "type": "file",
+      "sha": "3a89b54fe42a4d892c9ed48c2b13a5c570bd0429"
+    },
+    {
+      "path": "editrunner.bi",
+      "type": "file",
+      "sha": "ebd16afb4731cb3759ab3aded77c63f2c633c7ae"
+    },
+    {
+      "path": "enemyedit.bas",
+      "type": "file",
+      "sha": "8996954b8d706bf762c4a34e43b6ecb7779393b8"
+    },
+    {
+      "path": "errorlevel.h",
+      "type": "file",
+      "sha": "526ec09d863497ace10b267b63e838cb2b595188"
+    },
+    {
+      "path": "errorlog.h",
+      "type": "file",
+      "sha": "1a83d482ae1f315539f58b967e07cedfa288b969"
+    },
+    {
+      "path": "euphoria",
+      "type": "dir",
+      "sha": "7276a225b73804ef5e128050e05de082eca5a2b7"
+    },
+    {
+      "path": "fb",
+      "type": "dir",
+      "sha": "e667d6265e99b6ed335bd47507f69b255311599d"
+    },
+    {
+      "path": "filelayer.cpp",
+      "type": "file",
+      "sha": "a6135da61f7ae8fe865ab0d18d95271c0e338176"
+    },
+    {
+      "path": "filelayer.hpp",
+      "type": "file",
+      "sha": "7967cd7b6ee23253cae0aba906178ceb70fadf28"
+    },
+    {
+      "path": "filetest.bas",
+      "type": "file",
+      "sha": "b0aecf5ac3cc7697071164c224764163bee78ea6"
+    },
+    {
+      "path": "filetest_helper.bas",
+      "type": "file",
+      "sha": "5fc0c47356de761921b8ca4cf0d2e1ecdfcd71a5"
+    },
+    {
+      "path": "fixqb.bas",
+      "type": "file",
+      "sha": "2303ffbb00e566ff331dd4a99a1dd6a771d0e534"
+    },
+    {
+      "path": "flexmenu.bi",
+      "type": "file",
+      "sha": "8211659393579d2627ec06809afb697f5f46d218"
+    },
+    {
+      "path": "fontdata.bi",
+      "type": "file",
+      "sha": "cd04b02c3fa9d8277db9f82edc6b3ee009899e81"
+    },
+    {
+      "path": "fontedit.bas",
+      "type": "file",
+      "sha": "f218b4a168e5eba1cb414cb45ad921acc590b502"
+    },
+    {
+      "path": "fonttests",
+      "type": "dir",
+      "sha": "daa6ed70fedda600d9883095328d8a71f95d780e"
+    },
+    {
+      "path": "formationedit.bas",
+      "type": "file",
+      "sha": "b01fb062b22a4d3ece08f198e3861edfd2e67570"
+    },
+    {
+      "path": "fpInt.hpp",
+      "type": "file",
+      "sha": "a45e19b4c2a48a32f0a0244aac3a310171ada84d"
+    },
+    {
+      "path": "game.bas",
+      "type": "file",
+      "sha": "177511bc483e1e375c29384f2646be2fa1520f78"
+    },
+    {
+      "path": "game.bi",
+      "type": "file",
+      "sha": "ca04d6e9aa1ce2af856069ed4183e99ad583c733"
+    },
+    {
+      "path": "game.ico",
+      "type": "file",
+      "sha": "6ceaba6e897e9506f9e22ca48c1fb91ded796efe"
+    },
+    {
+      "path": "game.sh",
+      "type": "file",
+      "sha": "a538ed7406d0afa451688e24df79792c2aef349b"
+    },
+    {
+      "path": "game_udts.bi",
+      "type": "file",
+      "sha": "0f4927d96f0e84ef35e3de4198280c531575c8a6"
+    },
+    {
+      "path": "gamepad.slice",
+      "type": "file",
+      "sha": "7a043dff51583ccf69477302836956ddef08774f"
+    },
+    {
+      "path": "gdbcustom.bat",
+      "type": "file",
+      "sha": "ddfdeba1df706e6edecf4e009ab9c300d6fc5f4a"
+    },
+    {
+      "path": "gdbcustom.sh",
+      "type": "file",
+      "sha": "4fa434af5b5789f8a9186b467a2fd3ad4dd7315f"
+    },
+    {
+      "path": "gdbgame.bat",
+      "type": "file",
+      "sha": "4abef9625c728c6947bc1b580a3de0c283f33399"
+    },
+    {
+      "path": "gdbgame.sh",
+      "type": "file",
+      "sha": "58c7206ef3f938f43f9473e520e9aa707ca624ec"
+    },
+    {
+      "path": "generaledit.rbas",
+      "type": "file",
+      "sha": "5ace0c899ac37b722712b6a9386dd93c9f816678"
+    },
+    {
+      "path": "gfx.bi",
+      "type": "file",
+      "sha": "7892731dd7c673b465ff50a9325cf502807506f0"
+    },
+    {
+      "path": "gfx.h",
+      "type": "file",
+      "sha": "66699381657f28128902b953a7c907df901bfa69"
+    },
+    {
+      "path": "gfx.new.bi",
+      "type": "file",
+      "sha": "f003ffa3f80c3501d81670494e54145e19f1d28b"
+    },
+    {
+      "path": "gfx.new_x.bi",
+      "type": "file",
+      "sha": "5142929f410809337016009fe046d33240ec080f"
+    },
+    {
+      "path": "gfxRender.hpp",
+      "type": "file",
+      "sha": "c1a6c1f1484a83d271199cf73318161865a6a80b"
+    },
+    {
+      "path": "gfx_alleg.bas",
+      "type": "file",
+      "sha": "252906ce556d740bd86db1e644e4c54d9387feed"
+    },
+    {
+      "path": "gfx_common",
+      "type": "dir",
+      "sha": "59d8d4cb7bea80c8427023369ec77a4d5f981d6f"
+    },
+    {
+      "path": "gfx_console.bas",
+      "type": "file",
+      "sha": "bd22c4676ff0cf4e660f4a25bf26b99cc09c365a"
+    },
+    {
+      "path": "gfx_directx.dll",
+      "type": "file",
+      "sha": "bb89df130785a5d50b57ecbe39620e46ce55dc4d"
+    },
+    {
+      "path": "gfx_directx",
+      "type": "dir",
+      "sha": "22aa23dcaa30bc9d5c31c8f8c13398c92bb22a40"
+    },
+    {
+      "path": "gfx_fb.bas",
+      "type": "file",
+      "sha": "1ef7076f1cf0f66fb774bdef0138c9682ad7110f"
+    },
+    {
+      "path": "gfx_msg.bi",
+      "type": "file",
+      "sha": "84c9ced2826ac99e6eb191c3807834ff0379efaf"
+    },
+    {
+      "path": "gfx_msg.h",
+      "type": "file",
+      "sha": "7d66447a6df496a2ef8a04311a3e25386a6c8633"
+    },
+    {
+      "path": "gfx_sdl.bas",
+      "type": "file",
+      "sha": "43210619a353a7693faadacac27fd04d42e2142e"
+    },
+    {
+      "path": "gfx_sdl.dll",
+      "type": "file",
+      "sha": "b58e0de3452777e6b354a55fb3692403513b81a0"
+    },
+    {
+      "path": "gfx_sdl2.bas",
+      "type": "file",
+      "sha": "faeff61abea9d6612210754da8083deadd12a9ef"
+    },
+    {
+      "path": "gfx_sdl_common.bas",
+      "type": "file",
+      "sha": "37ae375e0fa2adc0587b266582a9c1f4c3611039"
+    },
+    {
+      "path": "gfx_sdl_common.bi",
+      "type": "file",
+      "sha": "41356edd3e5d39a63600aabf6fde5cd1e999fe63"
+    },
+    {
+      "path": "gfx_sdlpp",
+      "type": "dir",
+      "sha": "9f2cd1277c762fb1048e457ecec75d0649f85510"
+    },
+    {
+      "path": "gfxtest.bas",
+      "type": "file",
+      "sha": "9879dd40ce2af95b53b113a0165125520014139e"
+    },
+    {
+      "path": "gglobals.bi",
+      "type": "file",
+      "sha": "b7e86d526e78ff0b4e54ab71b645834eaaf159e6"
+    },
+    {
+      "path": "gicon.rc",
+      "type": "file",
+      "sha": "db14f93d71396ad00d23b1e3cab4f67fbc061693"
+    },
+    {
+      "path": "globalstredit.bas",
+      "type": "file",
+      "sha": "c2e971564669cd85e714d85e73919d97cdd90314"
+    },
+    {
+      "path": "hamsterspeak.hsd",
+      "type": "file",
+      "sha": "256957c383ab27df80835f5bba817879fd40c04f"
+    },
+    {
+      "path": "heroedit.rbas",
+      "type": "file",
+      "sha": "35f6b4e9907049e888a092d3cf8dd3610df0dc3a"
+    },
+    {
+      "path": "heroes.reld.editor",
+      "type": "file",
+      "sha": "3d1c85161d4b101bd04867b89acb65f17b49ad20"
+    },
+    {
+      "path": "hspeak.exw",
+      "type": "file",
+      "sha": "82e312e3d08d2195d474341c94fa7e4506bbadef"
+    },
+    {
+      "path": "hspeaktest.py",
+      "type": "file",
+      "sha": "fa98726373a77a7306f4e78ca7c7110f51f1e8b8"
+    },
+    {
+      "path": "hsspiffy.e",
+      "type": "file",
+      "sha": "47d60c68bbbf41e4d7b0a74ba9ed5e38d20958ad"
+    },
+    {
+      "path": "imageconv.bas",
+      "type": "file",
+      "sha": "4d2533ab638c5544b2791f68decce55c2de67630"
+    },
+    {
+      "path": "import",
+      "type": "dir",
+      "sha": "fe8f58683d0a5542d58aec9ef4ae2001c6e4b13f"
+    },
+    {
+      "path": "itemedit.bas",
+      "type": "file",
+      "sha": "0d769b25b17ca0849e92879a58d406d0398b5c4d"
+    },
+    {
+      "path": "items.reld.editor",
+      "type": "file",
+      "sha": "680e5268bacb8bdf051050960140c829bdf01fe9"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "cad126281fee6a40ddb873bd4d21ce0116a47939"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "00966dbf13b4a2816fba33db0a504e00cda9ff58"
+    },
+    {
+      "path": "loading.bi",
+      "type": "file",
+      "sha": "02ebee7f2339e88e2f78fc52e307b834d84489e8"
+    },
+    {
+      "path": "loading.rbas",
+      "type": "file",
+      "sha": "e99108d5b2f8f88cb49aadadc51dff78ddd91571"
+    },
+    {
+      "path": "lumpfile.bas",
+      "type": "file",
+      "sha": "8b93ab9828cc9bd7a645130bdb1e269a44af3881"
+    },
+    {
+      "path": "lumpfile.bi",
+      "type": "file",
+      "sha": "7f004144a88414cb26e3b87b0fab6a511cc75c33"
+    },
+    {
+      "path": "lumpfile.h",
+      "type": "file",
+      "sha": "3b035d3c7f01e2298ac225b7318592c9423de20a"
+    },
+    {
+      "path": "mac",
+      "type": "dir",
+      "sha": "751b38d4a39e3290ba7fb17afd3f2a5c06f63fe8"
+    },
+    {
+      "path": "mapsubs.bas",
+      "type": "file",
+      "sha": "38b1c22bcb8e572ea715c261faa8cd00acc4ad89"
+    },
+    {
+      "path": "matrixMath.bi",
+      "type": "file",
+      "sha": "c9bc987ed45b3f06d1b3ba8dee0825ae5a43cb6f"
+    },
+    {
+      "path": "matrixMath.cpp",
+      "type": "file",
+      "sha": "7f8a4c2670c99af9b6b0fa1e801b5edfcfdded8b"
+    },
+    {
+      "path": "matrixMath.h",
+      "type": "file",
+      "sha": "b436d2043e7679472bfa8fee2dc7ef6a72ac412d"
+    },
+    {
+      "path": "menuedit.bas",
+      "type": "file",
+      "sha": "2631850ba8010389aa39c888a8c88d4a0adeba5c"
+    },
+    {
+      "path": "menus.bas",
+      "type": "file",
+      "sha": "da2f94439a7d9003fa60afbe7aec69ea1faaf583"
+    },
+    {
+      "path": "menus.bi",
+      "type": "file",
+      "sha": "238e50ef6d68dba9c1f400f770a13598fe3391c1"
+    },
+    {
+      "path": "menustuf.bi",
+      "type": "file",
+      "sha": "ef3c207984e01d013b191d920fa09c93a9f76054"
+    },
+    {
+      "path": "menustuf.rbas",
+      "type": "file",
+      "sha": "70a1f612d321c0bb5f1465fbe5e3348bd1044cd3"
+    },
+    {
+      "path": "miditest.bas",
+      "type": "file",
+      "sha": "d31e8643fbbb3f1292ba441512797efc6b667f71"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "5348d5ceb228f8e0d0d8feea51fc05d7f0bbbdc0"
+    },
+    {
+      "path": "miscc.bi",
+      "type": "file",
+      "sha": "03c949858190a71dbd8dc9d5bb7095e485ec37c3"
+    },
+    {
+      "path": "miscc.c",
+      "type": "file",
+      "sha": "53050a0272c171e90e8b40e55c7c777fc0d98ac6"
+    },
+    {
+      "path": "miscc.h",
+      "type": "file",
+      "sha": "8d24287f4bf48378375c23497d315903d2ea4b1c"
+    },
+    {
+      "path": "moresubs.bi",
+      "type": "file",
+      "sha": "ca91701626ae3246c7f6a2ebcadbea89240bfe55"
+    },
+    {
+      "path": "moresubs.rbas",
+      "type": "file",
+      "sha": "d11ae228ad043fede706906eaea9624c0c796414"
+    },
+    {
+      "path": "music.bi",
+      "type": "file",
+      "sha": "42daf3f56352b2489040656f04ea5a80c3f457de"
+    },
+    {
+      "path": "music_allegro.bas",
+      "type": "file",
+      "sha": "fffd1e4edb14027d1a4114887b184426ede023ae"
+    },
+    {
+      "path": "music_audiere.bas",
+      "type": "file",
+      "sha": "f52355df8a59693acae4a94ee5cc8d3ca4e73873"
+    },
+    {
+      "path": "music_blackbox.bas",
+      "type": "file",
+      "sha": "6bba59e9bd7f46bdf9e05ddbfda331538baca5ad"
+    },
+    {
+      "path": "music_native.bas",
+      "type": "file",
+      "sha": "99d6d10e4c8105232715ba1ce02d8ee8fdf1b891"
+    },
+    {
+      "path": "music_native2.bas",
+      "type": "file",
+      "sha": "4deb62a24036e09542199579b037200217aa45f7"
+    },
+    {
+      "path": "music_native_subs.bas",
+      "type": "file",
+      "sha": "754e980dbf4caea13cff3d85fadd2ae45378f99b"
+    },
+    {
+      "path": "music_native_subs.bi",
+      "type": "file",
+      "sha": "aff5819c907abebe04053533817314e51971d6df"
+    },
+    {
+      "path": "music_sdl.bas",
+      "type": "file",
+      "sha": "003e2cd5d92b073ca52cb87020ccb8a16f19b3d5"
+    },
+    {
+      "path": "music_sdl2.bas",
+      "type": "file",
+      "sha": "8bb0a1afb4c5bb214521c86b77217ed77f6c5ec6"
+    },
+    {
+      "path": "music_silence.bas",
+      "type": "file",
+      "sha": "eeebb1b394c0b1718e08bdc2829b2f7472e93367"
+    },
+    {
+      "path": "mutex.hpp",
+      "type": "file",
+      "sha": "3c75fd370bb39cbf812d7c3a77c1ee064ddf57ce"
+    },
+    {
+      "path": "networkutil.bas",
+      "type": "file",
+      "sha": "6410bdad98fe38e485f99d5cc5d2cbd019748f93"
+    },
+    {
+      "path": "nightly",
+      "type": "dir",
+      "sha": "71c3c5684ed173b65285dbefe5246e25792b3503"
+    },
+    {
+      "path": "node_hsint.js",
+      "type": "file",
+      "sha": "5bfb48ab56c0a648ea750fc1a7ce7ac8b83143fc"
+    },
+    {
+      "path": "ohrbuild.py",
+      "type": "file",
+      "sha": "ebf9067c145bc1769ae690f2ed0c373063f952e1"
+    },
+    {
+      "path": "ohrhelp",
+      "type": "dir",
+      "sha": "23723dc0c7940bc0dad991f81df86564e1a1d7ee"
+    },
+    {
+      "path": "ohrpackage.py",
+      "type": "file",
+      "sha": "14b51980d8ca53d933830f1da7c456234f91512f"
+    },
+    {
+      "path": "ohrrpgce-custom.png",
+      "type": "file",
+      "sha": "6877188ea8d1eeae4b067778c4f6ef517ac3c84c"
+    },
+    {
+      "path": "ohrrpgce-game.png",
+      "type": "file",
+      "sha": "d848221170d13719a6bb8820761650e6e5b14fdc"
+    },
+    {
+      "path": "ohrrpgce.iss",
+      "type": "file",
+      "sha": "535c6e5dc0ebdc64f6b8222b8152c91f36d14e6d"
+    },
+    {
+      "path": "oldhsinterpreter.bas",
+      "type": "file",
+      "sha": "0940e743aa26db2edcf12b8aa23f565481b47f33"
+    },
+    {
+      "path": "os.bi",
+      "type": "file",
+      "sha": "e9729022a0d845d40211875ce907d4002c7146cc"
+    },
+    {
+      "path": "os.h",
+      "type": "file",
+      "sha": "2fcee5974ec50a175ac37b10e9530f4d209a703f"
+    },
+    {
+      "path": "os_minimal.bas",
+      "type": "file",
+      "sha": "48ce5692f6ee061743388d46b22ad0b1a3966d8c"
+    },
+    {
+      "path": "os_sockets.c",
+      "type": "file",
+      "sha": "ecae6e235a0ee6dfa187d28f116b7fc9211fa552"
+    },
+    {
+      "path": "os_unix.c",
+      "type": "file",
+      "sha": "f33623d93e9a5be72e0a67e2600231e9c4f520da"
+    },
+    {
+      "path": "os_unix2.bas",
+      "type": "file",
+      "sha": "17137b33b6d769a8fd76fd60d88274784f060c35"
+    },
+    {
+      "path": "os_unix_wm.c",
+      "type": "file",
+      "sha": "0f487155cdf0759c46e979d216d9f6968ff9ffed"
+    },
+    {
+      "path": "os_windows.bas",
+      "type": "file",
+      "sha": "1dae1bf6fa5eb856eb207dc205c3b00e56029793"
+    },
+    {
+      "path": "os_windows2.c",
+      "type": "file",
+      "sha": "0b3f70462f55ee9110f5bd7b8a1045e03a72f3a5"
+    },
+    {
+      "path": "pathfinding.bas",
+      "type": "file",
+      "sha": "80e8c19827ead474b8bb77a0a44e93d977e87865"
+    },
+    {
+      "path": "pathfinding.bi",
+      "type": "file",
+      "sha": "da2079412d72f8d352f64c9bd92373183be502b4"
+    },
+    {
+      "path": "physpeak",
+      "type": "dir",
+      "sha": "eca751f4239f7612dab71bded3dccb8d48c48b75"
+    },
+    {
+      "path": "plankmenu.bas",
+      "type": "file",
+      "sha": "1feb6269d6cebb1904d58efa3834e2f68e8617c4"
+    },
+    {
+      "path": "plankmenu.bi",
+      "type": "file",
+      "sha": "16dcd22c1e2df59d45de13d2495fe0c6c91c8001"
+    },
+    {
+      "path": "plotscr.hsd",
+      "type": "file",
+      "sha": "b2048b0e3531b916d32c56c2d5ad989fe61ac24c"
+    },
+    {
+      "path": "purchase.bi",
+      "type": "file",
+      "sha": "256e3f369f36236525785f2b1baf6a77a2da7fc7"
+    },
+    {
+      "path": "purchase.rbas",
+      "type": "file",
+      "sha": "5e98ba0bd60cc40878329eaa69fc622d16b8a277"
+    },
+    {
+      "path": "rasterizer.cpp",
+      "type": "file",
+      "sha": "e4a0f7bfa35a452a1f2866181037caa2800fa691"
+    },
+    {
+      "path": "rasterizer.hpp",
+      "type": "file",
+      "sha": "820ce22ac295bdcdf0f2fe2576dbbecc861ab887"
+    },
+    {
+      "path": "rbtest.rbas",
+      "type": "file",
+      "sha": "f1dd71599a2bbdb178dec09634d68e4f39443302"
+    },
+    {
+      "path": "rbtest2.rbas",
+      "type": "file",
+      "sha": "9448c0ae9f63158b804b1d1f3b958432030e2078"
+    },
+    {
+      "path": "release",
+      "type": "dir",
+      "sha": "eef0ebe6f0ccc4142743c2dfff2d1ae05f9fa838"
+    },
+    {
+      "path": "reload.bas",
+      "type": "file",
+      "sha": "104392ccb41ae83b3ef13792e6f854e8f836bdb4"
+    },
+    {
+      "path": "reload.bi",
+      "type": "file",
+      "sha": "5863acd03a22edfe01af61b939a67f38ce711190"
+    },
+    {
+      "path": "reload2xml.bas",
+      "type": "file",
+      "sha": "92b3d428d54d34dae3ee7c1160c1a0e5b849cdf8"
+    },
+    {
+      "path": "reloadbasic",
+      "type": "dir",
+      "sha": "950584080f6ace64a7f8575102f395c69548df61"
+    },
+    {
+      "path": "reloadedit.bas",
+      "type": "file",
+      "sha": "8e4e22a3e72e465c69ac7cb83c72fb7b0a385a0c"
+    },
+    {
+      "path": "reloadedit.bi",
+      "type": "file",
+      "sha": "ef1e05cc4cae7df06eafb7979a2ce6f2185b8afb"
+    },
+    {
+      "path": "reloadext.bas",
+      "type": "file",
+      "sha": "8b92620aa579881f22a8cc6faae041b5c355f244"
+    },
+    {
+      "path": "reloadext.bi",
+      "type": "file",
+      "sha": "5c9527e2f6a4149f0a3977d17c2672907f8938f8"
+    },
+    {
+      "path": "reloadtest.bas",
+      "type": "file",
+      "sha": "c026cce390337e9456e36e41b118e8411b85216a"
+    },
+    {
+      "path": "reloadutil.bas",
+      "type": "file",
+      "sha": "ee26359e1b2c4cf717dc5718764d1b4bf340b3ff"
+    },
+    {
+      "path": "relump.bas",
+      "type": "file",
+      "sha": "d1692771b0253a68d43065636da55fd8cd366275"
+    },
+    {
+      "path": "rotozoom.c",
+      "type": "file",
+      "sha": "38d758db5b7bc87dc8ccd5f19bb03f7504602871"
+    },
+    {
+      "path": "savegame.bi",
+      "type": "file",
+      "sha": "81e26b79ac8721a62093730f0c6ba50fc10d8c82"
+    },
+    {
+      "path": "savegame.rbas",
+      "type": "file",
+      "sha": "771ccc596a28115595d128c5ac3f91c6d26aa469"
+    },
+    {
+      "path": "scancode.hsi",
+      "type": "file",
+      "sha": "27e6ed81a5c295523704bf3bd9d93b61b171d7d4"
+    },
+    {
+      "path": "scancodenames.bi",
+      "type": "file",
+      "sha": "33a01e38332122f6968b91636598f5522f1ddeba"
+    },
+    {
+      "path": "scancodes.bi",
+      "type": "file",
+      "sha": "4b5a927d38839bbcd979bbcfc6c8cde9b012f9fb"
+    },
+    {
+      "path": "scancodes.h",
+      "type": "file",
+      "sha": "f2eb8af4e5ad3dc9ec972133f4f579966cedf880"
+    },
+    {
+      "path": "scrcommands.bi",
+      "type": "file",
+      "sha": "4352a7ba763c2896e4b2b55c906713ce76ca085d"
+    },
+    {
+      "path": "scrconst.bi",
+      "type": "file",
+      "sha": "99e2c98927baeba851a18e0a5e855570f74af04f"
+    },
+    {
+      "path": "scriptcommands.bas",
+      "type": "file",
+      "sha": "f3a579ac5a381a938cae579a25e3c0dc9df5d6ba"
+    },
+    {
+      "path": "scriptcommands.bi",
+      "type": "file",
+      "sha": "789ac13369378ffa92ad41c775549eb3a7b645a1"
+    },
+    {
+      "path": "scriptedit.bas",
+      "type": "file",
+      "sha": "115571059caf524d5fc370ec9779975f2e7aa125"
+    },
+    {
+      "path": "scripting.bas",
+      "type": "file",
+      "sha": "cf2215a1bd59adfe4cae6e32138dac12865d0f0f"
+    },
+    {
+      "path": "scripting.bi",
+      "type": "file",
+      "sha": "bda6873087a0b64de6c836dd6314d8e1d37cd790"
+    },
+    {
+      "path": "sdl_lumprwops.bas",
+      "type": "file",
+      "sha": "83425f96bb2b5b24c7ca341bb1cb026f08ab0ea2"
+    },
+    {
+      "path": "shopedit.bas",
+      "type": "file",
+      "sha": "c2176a382fe0f57753b64e6645aefba4449dabb3"
+    },
+    {
+      "path": "slice_propnames.bi",
+      "type": "file",
+      "sha": "2219be7049c2941d9883ddfaa5f2ad9c3f6de5b3"
+    },
+    {
+      "path": "sliceedit.bas",
+      "type": "file",
+      "sha": "6935ec8ddd67a9042a82314cf430bea98f949d4d"
+    },
+    {
+      "path": "sliceedit.bi",
+      "type": "file",
+      "sha": "133e5acb3a7bc7c5c5af04832c9ebfb4f398ccd4"
+    },
+    {
+      "path": "sliceedit_edkit.bas",
+      "type": "file",
+      "sha": "4de0253db523e01ba17ba660f29b55f825862766"
+    },
+    {
+      "path": "slices.bas",
+      "type": "file",
+      "sha": "3cab9e367da01add641298c759a306009eb98232"
+    },
+    {
+      "path": "slices.bi",
+      "type": "file",
+      "sha": "15a7a2c8758831e766f058e93e9fc38a33ecc035"
+    },
+    {
+      "path": "slices.h",
+      "type": "file",
+      "sha": "e11d697d4beec292c2a33d3451abdb1aea050bc7"
+    },
+    {
+      "path": "soundcard.bi",
+      "type": "file",
+      "sha": "8f4030b1eb5325edafb71972b54e1ac70147946e"
+    },
+    {
+      "path": "sourceslices",
+      "type": "dir",
+      "sha": "28a9989bf8be16199a1339310ebeb34211eed5ec"
+    },
+    {
+      "path": "specialslices.bas",
+      "type": "file",
+      "sha": "ea47cc32f28f1e628d8340926b4ebc31a034d1da"
+    },
+    {
+      "path": "specialslices.bi",
+      "type": "file",
+      "sha": "ff3acce2dc9024dc5158b7950a828cdd5236051a"
+    },
+    {
+      "path": "steam.bas",
+      "type": "file",
+      "sha": "8e3242ef0b0f427c9f6160da0b2a559029da971e"
+    },
+    {
+      "path": "steam.bi",
+      "type": "file",
+      "sha": "f08ba25f1e0a4f05ca01f2f3f06d423a07dc9919"
+    },
+    {
+      "path": "steam_internal.bi",
+      "type": "file",
+      "sha": "ddfb2b5da7f984a2f610ce7ccab458c7565f34ee"
+    },
+    {
+      "path": "support",
+      "type": "dir",
+      "sha": "0f472207c7de1c5cc8c90a81ec4c919cfb7fd648"
+    },
+    {
+      "path": "surface.bi",
+      "type": "file",
+      "sha": "e61183e7f856835ba7e3df0141eae378d1011b5f"
+    },
+    {
+      "path": "surface.cpp",
+      "type": "file",
+      "sha": "60b17d16e3d58c382066f545d857dd1f4cab2b63"
+    },
+    {
+      "path": "surface.h",
+      "type": "file",
+      "sha": "5c949a808ff92a69ea3318b5c63328d181736222"
+    },
+    {
+      "path": "testfiles",
+      "type": "dir",
+      "sha": "c4affd6dedc3f96be24c20915a613025ba6c7601"
+    },
+    {
+      "path": "testgame",
+      "type": "dir",
+      "sha": "00be463a89a194521465648c09971475e5aafc6b"
+    },
+    {
+      "path": "testing.bi",
+      "type": "file",
+      "sha": "6fc158fa4120d921bfb1e2563c1dd18c27151359"
+    },
+    {
+      "path": "textboxedit.bas",
+      "type": "file",
+      "sha": "5e75b5829bc7dd7ae543ff3605bb6757b5ae12f9"
+    },
+    {
+      "path": "thingbrowser.bas",
+      "type": "file",
+      "sha": "6e25b38e47d5531aed0ba20e53d65fd7c8052764"
+    },
+    {
+      "path": "thingbrowser.bi",
+      "type": "file",
+      "sha": "91ab7538cc17f5b89ee8e66718197dedfac3828c"
+    },
+    {
+      "path": "udts.bi",
+      "type": "file",
+      "sha": "71b8e345b0bf653b486eb1d3a37f3d1ab35cd858"
+    },
+    {
+      "path": "uiconst.bi",
+      "type": "file",
+      "sha": "28c452301485093588dade8db7ae9c9078570786"
+    },
+    {
+      "path": "unicode.bi",
+      "type": "file",
+      "sha": "ebd1d3651cf9f6b67f0a74d43afed36e8904a520"
+    },
+    {
+      "path": "unicode.c",
+      "type": "file",
+      "sha": "2902a03d82809c743e4d161b3f556a49672ad95c"
+    },
+    {
+      "path": "unicode.h",
+      "type": "file",
+      "sha": "5f48bef98caa5a24becaa1656d869d788c5fbb51"
+    },
+    {
+      "path": "unlump.bas",
+      "type": "file",
+      "sha": "5fad4dd44233de543e7fa74b069a5b001a1c2a2b"
+    },
+    {
+      "path": "updatecheck.bas",
+      "type": "file",
+      "sha": "f7b568402dd0f6a3e19960b48c165236e0e3360d"
+    },
+    {
+      "path": "util.bas",
+      "type": "file",
+      "sha": "f7f95c95c12a0b6c7a7cf536c0855e8b856525f1"
+    },
+    {
+      "path": "util.bi",
+      "type": "file",
+      "sha": "ebe9879ee6dcfdc76c3192364f472566929d4472"
+    },
+    {
+      "path": "valcustom.sh",
+      "type": "file",
+      "sha": "a918c5feaa7c662b1146829e71fb06ef124adf33"
+    },
+    {
+      "path": "valgame.sh",
+      "type": "file",
+      "sha": "000785f636e29d9a6e3c4383f2acdfd335532bb8"
+    },
+    {
+      "path": "vector.bas",
+      "type": "file",
+      "sha": "795f59ee77c514eccbd775189f5ec296466986d3"
+    },
+    {
+      "path": "vector.bi",
+      "type": "file",
+      "sha": "e0b4ac490f8ef0f3b8559cf9579a9ee2cb3f7ad3"
+    },
+    {
+      "path": "vectortest.bas",
+      "type": "file",
+      "sha": "895764ef44464fd1a03aa9d19244980937a16651"
+    },
+    {
+      "path": "vikings",
+      "type": "dir",
+      "sha": "1760305a25073412b93af0568a956034db4fad7c"
+    },
+    {
+      "path": "walkabouts.bas",
+      "type": "file",
+      "sha": "8cd862a00f52e36b8bb6c60341a709eb33cf3a1e"
+    },
+    {
+      "path": "walkabouts.bi",
+      "type": "file",
+      "sha": "382d11e618a7a9367f5d0e24c653bd5fb2efe2ed"
+    },
+    {
+      "path": "web.bi",
+      "type": "file",
+      "sha": "526b0f1c8b9cf0203e99e0febd07da9244b0c6ab"
+    },
+    {
+      "path": "web.cpp",
+      "type": "file",
+      "sha": "63288f4363b6e26fa47c19b5add64c34a85e1795"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "fcfc1f24219916bb9fe0f582edcb21dc30a3bb55"
+    },
+    {
+      "path": "whatsnew.txt",
+      "type": "file",
+      "sha": "12377e141a2b35d086929935eee2b2b710780fdb"
+    },
+    {
+      "path": "win32",
+      "type": "dir",
+      "sha": "4ec27a556539b5423c688b22b07ff285ae610c32"
+    },
+    {
+      "path": "xml2reload.bas",
+      "type": "file",
+      "sha": "1654fdaca7fdf0e9e5ff1162001b75f6a33fb0b3"
+    },
+    {
+      "path": "yetmore2.bas",
+      "type": "file",
+      "sha": "f3218c24d4ed541c7dcefe8909a386b5ca658b44"
+    },
+    {
+      "path": "yetmore2.bi",
+      "type": "file",
+      "sha": "836af7720e235ca4da76ea112172f5603fd1c4ef"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "RPG Construction Engine source with FreeBASIC runtime and authoring tool build instructions.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

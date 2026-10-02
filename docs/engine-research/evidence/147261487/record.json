@@ -1,0 +1,89 @@
+{
+  "repository": "acoto87/war1",
+  "repository_id": 147261487,
+  "commit": "ea3093beeed9cebe1adbb4c40cbea0c8ce9585c3",
+  "source_url": "https://github.com/acoto87/war1/tree/ea3093beeed9cebe1adbb4c40cbea0c8ce9585c3",
+  "readme_path": "README.md",
+  "readme_sha256": "398a4bd73466dd66562544f9dd6f094b1b12408cb5036fb7b8b00531b146120a",
+  "entries": [
+    {
+      "path": ".clangformat",
+      "type": "file",
+      "sha": "75c5daef9d9ac4be5df55b4fb2497cfed82af192"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0fe0d58ac22055da33600ddfdb58a43e208dee44"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1851fbc36c12399de97bc5dc57c402e5157e6691"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c51076a35a75fb0f645fdfdf073285c469c8fc94"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3c72d2f889fc3beeaecf08dd059dfec9512993c5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "aae5be42a248be611625f43da79819dc2a3f6afa"
+    },
+    {
+      "path": "cinematics.txt",
+      "type": "file",
+      "sha": "8dd1f332bcbd8a00be612b576bd9170d08d29665"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "465f8b7d087cb56a96e2b0ebcda782e71f81f9dd"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8fd476c40d8e4109dbe055ff782012e119aff252"
+    },
+    {
+      "path": "nob.c",
+      "type": "file",
+      "sha": "12f40d494ed4807469dbd2884babb6796d090ea2"
+    },
+    {
+      "path": "nob.h",
+      "type": "file",
+      "sha": "2735a931d9bb687f55addcedaa3b6071d15f818c"
+    },
+    {
+      "path": "pics",
+      "type": "dir",
+      "sha": "edeefe02fe5565953f893ebff8290ae3ddc5c24a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a3edcb9d343014c5c4c6677a8817b2528e8eb8e1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "866d6c3d3341915572803a70855108a1dc00bfdc"
+    },
+    {
+      "path": "todo.md",
+      "type": "file",
+      "sha": "4347a1b7e8c6a4e77bbb98881af9565abbf92bcf"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C Warcraft runtime recreation loading original WAR assets; src and tests accompany documented implemented gameplay systems and explicit missing features.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

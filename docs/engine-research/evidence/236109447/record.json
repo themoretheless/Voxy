@@ -1,0 +1,114 @@
+{
+  "repository": "TheOpenSpaceProgram/osp-magnum",
+  "repository_id": 236109447,
+  "commit": "9939731f421e8c9c8ee90c55c62e2477f3fb19f6",
+  "source_url": "https://github.com/TheOpenSpaceProgram/osp-magnum/tree/9939731f421e8c9c8ee90c55c62e2477f3fb19f6",
+  "readme_path": "README.md",
+  "readme_sha256": "ce949bb6be52b2e674035450ef686a0fbd025fc81e042597dd16e41604526230",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "e597a2feda8b83f7fd01a74db41ba0d65b0df9e5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a434432a8154be349948770ce81a4c6ecd541c21"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4d6350f0e1d7f56f058bcdb1d1704c9b805b4314"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0a3c79fe7b9cec487addd489fb7785900f35393f"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "917cdd86dd9e83a18f5008c2c819b4d89a0a5441"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "dfd53a6ab4de645ace275abd58d8344ac35e48f6"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4399a211dc74151dc1edab2bed446d28322e126c"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "fbe2691b48ed7a5500b4b8b4af31cd7d34b4a6bc"
+    },
+    {
+      "path": "OSP-MAGNUM.cbp",
+      "type": "file",
+      "sha": "810aaa9a9af247a30adab2a11ca8f76e8d7987df"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "02971a3d48b9fef20495ffa82538a23173ba5170"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "d250e368f349d8f72da00422df76da2aa7296bf9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d7f9700619f146aa990fed7f66e6fcb437f67097"
+    },
+    {
+      "path": "gtest-iwyu.imp",
+      "type": "file",
+      "sha": "09b91af2fc43b825c3d9a8a98b3587d2364605f1"
+    },
+    {
+      "path": "iwyu-gentoo.imp",
+      "type": "file",
+      "sha": "4e792d97a7a73419f600c57b92b5145c6b652b41"
+    },
+    {
+      "path": "iwyu-ubuntu.imp",
+      "type": "file",
+      "sha": "c4b2287b523b27946a25c18a8af7147bf8cd71ee"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "a2bba15f2d08d9b704581ce48eac584a80c8f686"
+    },
+    {
+      "path": "screenshot0.png",
+      "type": "file",
+      "sha": "6826f4ed91f63b9b7769c804a5442d23a4e84e54"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "0703af5bd7e10c07138769a0182201392cf5c5d1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d635e9dae88221623a5c53b23b690fe1e82009e4"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "23b7fb55ff44b97e007b951e6c4b2623d0996a1a"
+    }
+  ],
+  "classification": "game_library_toolkit",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies spaceship application built from reusable planet/vehicle libraries; modules/CMake do not establish generic independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

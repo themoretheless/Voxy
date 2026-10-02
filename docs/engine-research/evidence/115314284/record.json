@@ -1,0 +1,182 @@
+{
+  "repository": "chrisheninger/matchimals.fun",
+  "repository_id": 115314284,
+  "commit": "0393c72e8bb3ed080f3e5b07bb4e486cf18e9853",
+  "source_url": "https://github.com/chrisheninger/matchimals.fun/tree/0393c72e8bb3ed080f3e5b07bb4e486cf18e9853",
+  "readme_path": "README.md",
+  "readme_sha256": "397307a3d8c32cd9e83967befc1778deb9666b171decc9addff3f96712e4ccf8",
+  "entries": [
+    {
+      "path": ".bundle",
+      "type": "dir",
+      "sha": "c3249afc565ace28458d2bf31d87adf72de8cd79"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "a9ecf4f264eaa66bcfb46c7fd4d3fc0b9a471454"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "52cc1abfec5ce4e1e7a3a775670e818deac74e15"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06d2b90adc49b1afe1a5c4f533b24b4abe2f0369"
+    },
+    {
+      "path": ".lintstagedrc",
+      "type": "file",
+      "sha": "c89cd48546e5645131e6470e32cff6bf68f6f685"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "a45fd52cc5891570d6299fab38643103c3955474"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "2ff8622f1722a68bc847401c516380d24b54c961"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "fad35d304b8620bc563d63f1112076da3762402a"
+    },
+    {
+      "path": ".ruby-version",
+      "type": "file",
+      "sha": "a603bb50a29e354cfdf452850141fcb013b0a71a"
+    },
+    {
+      "path": ".watchmanconfig",
+      "type": "file",
+      "sha": "9e26dfeeb6e641a33dae4961196235bdb965b21b"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "ee11586685df7fc0ed03a8903845775e4695e372"
+    },
+    {
+      "path": "GoogleService-Info.plist",
+      "type": "file",
+      "sha": "5872dd0d745f425da30e02d5343d5048a49d3dca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c3703367dd9d7f123baf79f6ed93727cd2e0e50f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c3eed91e1a4bf7e85355b81fb17a79c421244c20"
+    },
+    {
+      "path": "app.json",
+      "type": "file",
+      "sha": "d31daca18ed7dd2ceb748cbca3ad14c15d120034"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4d7e6002373a071bb311af8e5a24892bf25bdaff"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "54751c2de33bd22ef335792e88588d27d7b58a49"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "4acf83e0e4b7ae221ce458391b9657efe8d49c44"
+    },
+    {
+      "path": "ideas.md",
+      "type": "file",
+      "sha": "61bcbfce249c78315576b956e32580380d6dda05"
+    },
+    {
+      "path": "index.ts",
+      "type": "file",
+      "sha": "febabbfe399e922aa841152938f86f986b8d4d66"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "e8b02c845bfbe3f52ad5f42284cc8d7bb7ef0b06"
+    },
+    {
+      "path": "matchimals-icon.png",
+      "type": "file",
+      "sha": "d255db4db869a51864c9684d28d6b49b6b77e582"
+    },
+    {
+      "path": "matchimals-logo.svg",
+      "type": "file",
+      "sha": "9a82fb8f4d4ce7d4a728f06aec14878af2b18d1f"
+    },
+    {
+      "path": "metro.config.js",
+      "type": "file",
+      "sha": "aad375dc06d1e678ec1b093b91cb70713065ee4a"
+    },
+    {
+      "path": "netlify.toml",
+      "type": "file",
+      "sha": "60909421795d88c4ed44b851b6876fd9074273b5"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "7c1170aac1e73895166864df32e5103b9bc01b7b"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "943ad3c13844b6b7bb2963e94c798e7179b3afc1"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "64c2d6b6b7e79de70a0c14ae6fb2e6c545175fcf"
+    },
+    {
+      "path": "screenshots-captioned",
+      "type": "dir",
+      "sha": "08db903fa9641cd43683b9d38718b7c004469ec7"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "30b1446c40558e49deb03eb5027a6c84bab91f20"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "fdcaa72298a6578609ed02c9a1545a98dd5fe626"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3934726453d612b906808e8e9fefb2ec8643f643"
+    },
+    {
+      "path": "store",
+      "type": "dir",
+      "sha": "8adf66969bbc4357b8e1cb269f8e773b6ee21002"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "b9567f6052d70ca2c9035e33667fded3cc4ed71f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

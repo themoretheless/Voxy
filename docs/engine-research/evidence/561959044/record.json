@@ -1,0 +1,89 @@
+{
+  "repository": "AuzFox/Raylib.nelua",
+  "repository_id": 561959044,
+  "commit": "6ccd53dee24c7c59f94be66092d5deec680306be",
+  "source_url": "https://github.com/AuzFox/Raylib.nelua/tree/6ccd53dee24c7c59f94be66092d5deec680306be",
+  "readme_path": "README.md",
+  "readme_sha256": "7c6bc50d0ad83482d22937db25ecbf70f18743fcd340bd4d626b758db535f62f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "625f8c14acba9643eb573f6389ab0d66c685290a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f4181f16a025af0de27d81abedae4ee7e26773d"
+    },
+    {
+      "path": "CHANGELOG.txt",
+      "type": "file",
+      "sha": "1cf76a5efd9da8c443fb080256e8eec242353c4e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "18cbd6a6148e49f7d81bb796c30b20cbcfa9fdab"
+    },
+    {
+      "path": "DEVELOPMENT.md",
+      "type": "file",
+      "sha": "6d8e5dcc05410afc76907796bdaec8e90e6b42d7"
+    },
+    {
+      "path": "INSTALL.md",
+      "type": "file",
+      "sha": "961170f7fc4c8349fe0cfe270b2842ee75d20bec"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5a47aab92baa827add35150851f985ede44de780"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c57a3ddcd2caef3df344ae7576bf45016be15633"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "16746bea908c03c518df95acc553552341ab33f3"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6d1de53179ef8763eda88f76e86ca4467b7a45c1"
+    },
+    {
+      "path": "rayeasings.nelua",
+      "type": "file",
+      "sha": "8d8ad425a440aae484a595239e79cea8ce4f2e43"
+    },
+    {
+      "path": "raygui.nelua",
+      "type": "file",
+      "sha": "a9a13dd24c859508803440d1e623cec156257da1"
+    },
+    {
+      "path": "raylib.nelua",
+      "type": "file",
+      "sha": "050b1b3b4141c8c4a5c968ec2be13b382e6c952f"
+    },
+    {
+      "path": "rcamera.nelua",
+      "type": "file",
+      "sha": "5a40e154c6b6763aaa5d969b48737a2f083595d7"
+    },
+    {
+      "path": "rlgl.nelua",
+      "type": "file",
+      "sha": "45c322e809a645af29becd4cad43901499face95"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nelua raylib and extras binding with examples, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

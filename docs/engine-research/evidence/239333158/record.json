@@ -1,0 +1,254 @@
+{
+  "repository": "AscensionGameDev/Intersect-Engine",
+  "repository_id": 239333158,
+  "commit": "47bccc0070c62259ec70e7f102033d4c8e263299",
+  "source_url": "https://github.com/AscensionGameDev/Intersect-Engine/tree/47bccc0070c62259ec70e7f102033d4c8e263299",
+  "readme_path": "README.md",
+  "readme_sha256": "dbf62a167d6eb3e03814c08899dacedc04d87016f957e6119787ab59d99eb304",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "cd967fc3a29985bd1e9bcc194d6d804d35689a5c"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "0751a9d64b55cd90284c09a46a316ab66dc0773b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "276d039ded78a886a9fa05604905587b2fa51d16"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9081fe36c1098ee2852fc2dfd8c1a3165e991369"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "f40fb2636e7ce6e18254ba500d4830eac322400d"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "f2815ca2fe073ce661434d02a99183bf7f9b2e6a"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "bc9b6d5a714019f99a88280818d26245a2c23601"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "1a961d88499002890f4ab040533d3ac8a305e29b"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "679c6528ed9fee7c656912e30ffc6fdaf0a0b6c5"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "29fce0e7306cbe4212b828f1f7e96105d32bf1ee"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2ca34375c38810da5d172610b2bafc866e1979b5"
+    },
+    {
+      "path": "Common.props",
+      "type": "file",
+      "sha": "f50ce79de34a4728c9c77646b5ad0b1816da72bd"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "9bdaff7035285fa9018c91d72e5ac3b0081b9a7c"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "7d8414ff7fb7dd791689bb8b408b37831ac8d1d5"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "af9a738168b8e948b8393edac1892a2bd1d46d39"
+    },
+    {
+      "path": "Framework",
+      "type": "dir",
+      "sha": "61b45868503d079afcf2bdf0eecc733a4f70d89e"
+    },
+    {
+      "path": "Intersect (Core)",
+      "type": "dir",
+      "sha": "59877a9fb255f0c1e06eabe70fd614e42682ac00"
+    },
+    {
+      "path": "Intersect.Client.Core",
+      "type": "dir",
+      "sha": "bcb69945836fd337160d696a09f4561110831eff"
+    },
+    {
+      "path": "Intersect.Client.Framework",
+      "type": "dir",
+      "sha": "0ebc89f7850d851949ec98b0dd79d585548addbb"
+    },
+    {
+      "path": "Intersect.Client",
+      "type": "dir",
+      "sha": "38118cccf7414de2dc992c1a8d21f5b145113ae8"
+    },
+    {
+      "path": "Intersect.Editor",
+      "type": "dir",
+      "sha": "fde97e6c9ec7d0345c2493e883cec7aea4f0a27b"
+    },
+    {
+      "path": "Intersect.Network",
+      "type": "dir",
+      "sha": "7d97941a2474cb6fcfbe3d8ddcfa6e580a4e31ee"
+    },
+    {
+      "path": "Intersect.Server.Core",
+      "type": "dir",
+      "sha": "d3372d01873b985c1ec334013a61385981621c0d"
+    },
+    {
+      "path": "Intersect.Server.Framework",
+      "type": "dir",
+      "sha": "67073918fa43c6169d2b3df4aa78490521e4b5fd"
+    },
+    {
+      "path": "Intersect.Server",
+      "type": "dir",
+      "sha": "ac453ae3b34b7b57f58cdbacbcc4fe2be32c71ec"
+    },
+    {
+      "path": "Intersect.SinglePlayer",
+      "type": "dir",
+      "sha": "4b701a8e8ce6c9a073337dc5cadab87ed6a6f115"
+    },
+    {
+      "path": "Intersect.Tests.Client.Framework",
+      "type": "dir",
+      "sha": "cb37a63d2a9d19801563f0ba678062a3c0756ce3"
+    },
+    {
+      "path": "Intersect.Tests.Client",
+      "type": "dir",
+      "sha": "48f61e5100b0141c12a2dbd132b218b70d851cc7"
+    },
+    {
+      "path": "Intersect.Tests.Editor",
+      "type": "dir",
+      "sha": "2f8b0983d9d6ec84dc0c9c3791ebe6ed29775975"
+    },
+    {
+      "path": "Intersect.Tests.Network",
+      "type": "dir",
+      "sha": "1bd2d51410f438e9825c87f07ac5fdb7fb85a739"
+    },
+    {
+      "path": "Intersect.Tests.Server",
+      "type": "dir",
+      "sha": "fa7885ec05b5de9942b5a17e52087a8ecfc4a020"
+    },
+    {
+      "path": "Intersect.Tests",
+      "type": "dir",
+      "sha": "be25acbf70a8fe995999194d6294be0631fe4865"
+    },
+    {
+      "path": "Intersect.props",
+      "type": "file",
+      "sha": "306a8563787b98c2be48a162c4e967b878af42be"
+    },
+    {
+      "path": "Intersect.sln",
+      "type": "file",
+      "sha": "e9d78f28326ffe84ab88bc1830556839eb8b511e"
+    },
+    {
+      "path": "Intersect.sln.DotSettings",
+      "type": "file",
+      "sha": "7cf5f649303b67809ad3f4432fa3b1bd2bdaaa00"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "18311a315105e31e429e134612b9185a6796929e"
+    },
+    {
+      "path": "NuGet.Config",
+      "type": "file",
+      "sha": "5a679c8281904397fab654cfa9573845ce7fffc2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "573c89a0a192774c32a16e85df9e718022685271"
+    },
+    {
+      "path": "REQUIREMENTS.md",
+      "type": "file",
+      "sha": "283435c4a15fad6798075531a20681c8825c04bc"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "cd74df29d21da1960efe1c47d65c0bf0d003edb5"
+    },
+    {
+      "path": "Utilities",
+      "type": "dir",
+      "sha": "798a50826e007d1f93895a4c102487df00f8f3ef"
+    },
+    {
+      "path": "VERSIONING.md",
+      "type": "file",
+      "sha": "f45e16272388fadf8840d421c152f81d0e9bfb4b"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f66e49bea139a629bb43cc05d6efce97b0e95d21"
+    },
+    {
+      "path": "disable-windows-only.patch",
+      "type": "file",
+      "sha": "77be5bb3ddaa1497f98a2c20668695da0bd4a27d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "537dd027f4998373a4197467efeb36ae44596856"
+    },
+    {
+      "path": "targets",
+      "type": "dir",
+      "sha": "af53ed2ea839d17b448a1a9b43afdb09a49d91ac"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "78bd7ac004951c0b89578a20226eeb037da7e9ee"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies MMORPG development suite; owned client/server/framework/editor source and .NET build manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

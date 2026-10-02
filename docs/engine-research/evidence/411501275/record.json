@@ -1,0 +1,99 @@
+{
+  "repository": "GamesRightMeow/playbit",
+  "repository_id": 411501275,
+  "commit": "1b66259e093f3f2612414f61b5810be29989e7b8",
+  "source_url": "https://github.com/GamesRightMeow/playbit/tree/1b66259e093f3f2612414f61b5810be29989e7b8",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0dcf58f06fc899eca4fe1ea39701c1ef416ca272"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "745999d77d68adb09471b17ae9f7cc32bfad1c14"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "75235a7d29c45355a0d3f7d736a327739d8206dd"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "1dcca511084c584247e6485a0edd8b1bbb883170"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "914097bf6c7a5e1ffdace7e02b943796a515291f"
+    },
+    {
+      "path": "LuaPreprocess",
+      "type": "file",
+      "sha": "02f2b774f1152b7f518a17c4517328aeee8b1ea0"
+    },
+    {
+      "path": "build.lua",
+      "type": "file",
+      "sha": "2f4ab27cdf5d7184086669361a8854b591d58d88"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "1baf88839d33d58cd8d409896226cd68431e6a29"
+    },
+    {
+      "path": "conf.lua",
+      "type": "file",
+      "sha": "ed71ae3b8a9ae490d94d59c07650b580fcfda898"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "68557c5b3470f2a2f5cbc5117a0bb7a7151c474f"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "ce50fe97d8039e2f746fdfa02be8e0b8fadf8cc6"
+    },
+    {
+      "path": "header.lua",
+      "type": "file",
+      "sha": "045a94c29a737460a2ad0a8136fddcc86b0b9447"
+    },
+    {
+      "path": "json",
+      "type": "file",
+      "sha": "dbf4b2dd2eb7c23be2773c89eb059dadd6436f94"
+    },
+    {
+      "path": "playbit",
+      "type": "dir",
+      "sha": "30479914688ce2b431999474a5c5edefc0b6a8f8"
+    },
+    {
+      "path": "playdate",
+      "type": "dir",
+      "sha": "7b9ac2d7c8112aac59a0e1f5ed41030b03f8e150"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "b13d476aa4255c80980d6f99edba1980aaee51ad"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c50ed99695f7f14105e5772fa791b7311bde7ed7"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Cross-platform Playdate Lua framework and tooling; pinned README absent, discovery and root establish framework identity only.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,152 @@
+{
+  "repository": "raverie-us/raverie-engine",
+  "repository_id": 686226407,
+  "commit": "e29a83886362356c6ad7f3dec2a439895d0d9cc6",
+  "source_url": "https://github.com/raverie-us/raverie-engine/tree/e29a83886362356c6ad7f3dec2a439895d0d9cc6",
+  "readme_path": "README.md",
+  "readme_sha256": "2bd89a64acb40177c1ba53cec3c5209838ef7d359259bfd92dfab4c59e555b90",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "292f1a9ad74d178d67c21429abd5580ca78af7fa"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "5691905e386ed2e0c3ee85d4952d73b37143ad37"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "8bea5843696aa0e500d7d165054cfc86dedf1ffc"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "eb765ddd2707a2bd761f6f107d0aa9c22e323322"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "0abba56b7c35e509fb113179a8f16dfc3ea70193"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5378fe089bc26362223167a4771b7b58464812dc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a5538549c93a76cc04651d19489b8ba9a04d6b9a"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "994e47d8483df3b7bf998bc85e4e5eea0c2a72c8"
+    },
+    {
+      "path": ".raverie",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "Browser",
+      "type": "dir",
+      "sha": "6b40e13c2efe3208215611f0e0942570d999b430"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fa6b9b32a2efecd0f12a56e11a016d25f78e9979"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "a36554c55c5b2fb0bf327a117f839aa43f4922d8"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "3276da83bedd0e82f6154d49cade805213b515eb"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "5cb5bf743ae487ea75087b489ba2ebdc2efe3de6"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "327bdb54c422156900bbaf053cd302c8d598473b"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "3a82b2ff0d35c16ea7e79ae94932812229ae270a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "096647d5fd5b1f7f02b4517b36b5eaeff71e468a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e934292432d5e25ec041e9ee5a7082f670b9fdc2"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "94830b2354919f92fcdedfd4449f050ef09fe438"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "190a5912edabe5eff9aec11a556e5d4078500e00"
+    },
+    {
+      "path": "dockerbuild.sh",
+      "type": "file",
+      "sha": "d13dd97e7ce5c705e36538f960dde36b1c2104c5"
+    },
+    {
+      "path": "dockerbuildserver.sh",
+      "type": "file",
+      "sha": "571f579db07e79314b3e75a5bfb2934e1ff53cea"
+    },
+    {
+      "path": "index.ts",
+      "type": "file",
+      "sha": "c0839580b976a6fa9e35d34c39e16e4e5bbc661c"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "aa0787b40f3be23dc44670790e52d4b9e7bdd9df"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d6f14929bde440c37a7d2444963874d410db9ff7"
+    },
+    {
+      "path": "projectUpgrade.ts",
+      "type": "file",
+      "sha": "48216856ab7657fce5ed069b5d1e10d5a273addc"
+    },
+    {
+      "path": "run.sh",
+      "type": "file",
+      "sha": "61ea00e874865be24dfcb58aeeb2f227fe1ca483"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "da4e59bb994091f3fe1685b14942408c467d9566"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

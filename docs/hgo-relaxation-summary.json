@@ -1,0 +1,12 @@
+{
+  "scope": "Actual Rust experimental constitutive-point response; imposed homogeneous J=1 deformation, synthetic coefficients, no FEM specimen or experimental fit",
+  "samples": 1000,
+  "dt_s": 0.1,
+  "ramp_s": 10.0,
+  "hold_s": 900.0,
+  "stretch": 1.2,
+  "peak_cauchy_x_pa": 15062.45181697,
+  "final_cauchy_x_pa": 9380.013698738,
+  "stress_drop_fraction": 0.3772585092574321,
+  "source_sha256": "644c8637444a03aa4d516f9ca8bfbca44e684e692f479b732cdea392cd7db966"
+}

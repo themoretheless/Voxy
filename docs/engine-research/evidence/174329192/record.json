@@ -1,0 +1,97 @@
+{
+  "repository": "AlexDarigan/wat",
+  "repository_id": 174329192,
+  "commit": "d0ec950c95ce4fe906cafd46bbb35ae705e6786b",
+  "source_url": "https://github.com/AlexDarigan/wat/tree/d0ec950c95ce4fe906cafd46bbb35ae705e6786b",
+  "readme_path": "README.md",
+  "readme_sha256": "d6c5706c44f24ac501e79f63f50a24d7ddb416a52739aada94162dcf09ba2f68",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ac8f25a1f1785f2f6b4ad36a7b53fd5a1da2c23c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "78c0d1035ecac0ca3df93c8f0118a3cf26d89902"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6fadac822f94e66a7a1feb075b5a44121b5af0ea"
+    },
+    {
+      "path": "OldExamples",
+      "type": "dir",
+      "sha": "b7a2de702fb98de97119084be9a4f19428ec01a9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "84ccf567bd8489bf7a85ee3fbcb2e3d08a988059"
+    },
+    {
+      "path": "StubProj",
+      "type": "dir",
+      "sha": "58ae6a4517f7507cd5bf3e43f5bdaa1d4df8ccfd"
+    },
+    {
+      "path": "WAT5.csproj",
+      "type": "file",
+      "sha": "08bfe406038e82ff4208fb4483175c9f9d1ded7e"
+    },
+    {
+      "path": "WAT5.sln",
+      "type": "file",
+      "sha": "64dd4d3a0efd08bcb08a713c186636cfa13f89bf"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "ac7117f62d6cc840c13ff12b3018e919ac461c58"
+    },
+    {
+      "path": "changelist.md",
+      "type": "file",
+      "sha": "da05f9e779964f1e4cb09b8fd1a0adfd6d4dba62"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0f4f3dc2df7dcd37e2d9cad53f79eb742f8dbb30"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "15785a1ffef6431ce95ab0c481e48078bc00c2a6"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "d9462fac8ddb2227d0c225395f322ea801868d75"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "1294646b37cfcf30ba42bc3dcf94cd8037e0e3e5"
+    },
+    {
+      "path": "new_script.gd",
+      "type": "file",
+      "sha": "1eccaec1b84c0a0b6db3b487297501c5ff8b46b1"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "24074522e34df65b07f21d2e3d7870e940469358"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "9977105445220e3120b2976345acca2b9f69db9e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

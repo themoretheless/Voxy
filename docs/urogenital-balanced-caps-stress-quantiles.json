@@ -1,0 +1,53 @@
+[
+  {
+    "source": "/tmp/voxy-balanced-caps-radial-1-stress/vagina-barrier-stress.csv",
+    "sha256": "458107da284e16ea70bf7bdd178d6f28926d338e83e596de6400c56bccceac23",
+    "elements": 9216,
+    "reference_volume_m3": 2.204256570422976e-06,
+    "mean_von_mises_pa": 50.42481906295664,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 109.2473067484,
+      "0.99": 179.1110481931,
+      "0.999": 197.5980147803
+    },
+    "peak_von_mises_pa": 199.5962406716,
+    "peak_element": 8117,
+    "peak_region": 84,
+    "peak_reference_z_m": 0.026875,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-balanced-caps-radial-2-stress/vagina-barrier-stress.csv",
+    "sha256": "825bc7468e6c56a5ad1603ddddf7b1798f52a94ec2a749a320a6732c702d573b",
+    "elements": 18432,
+    "reference_volume_m3": 2.2042565704230566e-06,
+    "mean_von_mises_pa": 50.71796576394135,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 109.1358666559,
+      "0.99": 192.4121821549,
+      "0.999": 241.4887282529
+    },
+    "peak_von_mises_pa": 253.2806454769,
+    "peak_element": 15406,
+    "peak_region": 80,
+    "peak_reference_z_m": 0.0259375,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-balanced-caps-radial-3-stress/vagina-barrier-stress.csv",
+    "sha256": "2d7be8496fe8a1c254c0583b0aa70dc706ed73b8d5cd83de4da63d2cc8a81106",
+    "elements": 27648,
+    "reference_volume_m3": 2.204256570422927e-06,
+    "mean_von_mises_pa": 50.748216524682206,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 110.4838897959,
+      "0.99": 185.2876676504,
+      "0.999": 254.6381940581
+    },
+    "peak_von_mises_pa": 274.705789609,
+    "peak_element": 23134,
+    "peak_region": 80,
+    "peak_reference_z_m": 0.0259375,
+    "peak_base_nodes": 0
+  }
+]

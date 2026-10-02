@@ -1,0 +1,59 @@
+{
+  "repository": "SpectralVectors/RightMouseNavigation",
+  "repository_id": 297636279,
+  "commit": "53a47c2ac83dae1e7d6e3bd94486490b6f38d609",
+  "source_url": "https://github.com/SpectralVectors/RightMouseNavigation/tree/53a47c2ac83dae1e7d6e3bd94486490b6f38d609",
+  "readme_path": "README.md",
+  "readme_sha256": "eb5bf7f78f9c9fb3d3f0a3dc8d090441c215636b516267a036ef5b087cf81652",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a50ab984b3c363494e45e2e8de732f85f9719774"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ed8ebf583f771da9150c35db3955987b7d757904"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b7a1305575c0a2e0ff88f6ab2685b9f0c7d96d54"
+    },
+    {
+      "path": "RightMouseNavigationLogoV2.png",
+      "type": "file",
+      "sha": "1fa0c3228873c989b876d303cacaf42ea84906f1"
+    },
+    {
+      "path": "__init__.py",
+      "type": "file",
+      "sha": "08ed1f37df2f11578d47b56f64945934dff836a0"
+    },
+    {
+      "path": "blender_manifest.toml",
+      "type": "file",
+      "sha": "00e73b0dd27a796a826e8283040811fc643da48f"
+    },
+    {
+      "path": "operators.py",
+      "type": "file",
+      "sha": "60f7011a9dee5ec093e1ec06ad6c0c7a6eb57103"
+    },
+    {
+      "path": "preferences.py",
+      "type": "file",
+      "sha": "cc0e625eabb79ef114c01066b69319ad2419865e"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify Blender navigation/node workflow add-on; no owned game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

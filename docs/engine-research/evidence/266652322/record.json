@@ -1,0 +1,39 @@
+{
+  "repository": "TeamRizu/OutFox",
+  "repository_id": 266652322,
+  "commit": "2a84415d6cf0ebd45fe42458d8e8b0da33053c31",
+  "source_url": "https://github.com/TeamRizu/OutFox/tree/2a84415d6cf0ebd45fe42458d8e8b0da33053c31",
+  "readme_path": "README.md",
+  "readme_sha256": "446786e1feb569828ad86dd87f90aca7b176784e1b825a76d1414b4d7828af22",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8f023105f4005ac51f379d0c1b4789933274c5ca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8571b8a3edc07d0a3a70f1a22bda94cff4ed06d6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "378ae7ba1c12900bb79c33d33704db67e50245e8"
+    },
+    {
+      "path": "international",
+      "type": "dir",
+      "sha": "fb4cc9d78b87c8d577aac0f8f554d1ac6b8c0ff0"
+    },
+    {
+      "path": "leaderboard.md",
+      "type": "file",
+      "sha": "b5a02873e840b3ab8c9a4a4929bce2689fd1dd30"
+    }
+  ],
+  "classification": "excluded_issue_repository",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify bug-report repository for external builds; README/localization, runtime source absent.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

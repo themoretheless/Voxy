@@ -1,0 +1,119 @@
+{
+  "repository": "XadillaX/sfml.js",
+  "repository_id": 411999677,
+  "commit": "1c826b0796ec1f53dd0a099dacb01389a60f0c8a",
+  "source_url": "https://github.com/XadillaX/sfml.js/tree/1c826b0796ec1f53dd0a099dacb01389a60f0c8a",
+  "readme_path": "README.md",
+  "readme_sha256": "6ac770a29ef71ef48865ac90dd151536ae16e24787db0afdcde0bb73747ab190",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "d10e166aa4740499d3499c2058dbb96877d4ce82"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "4aad29c328abd4906e1524198356bd6f4984303d"
+    },
+    {
+      "path": ".cpplint",
+      "type": "file",
+      "sha": "629138ed296ac468857c3626812661d7e0a39324"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c15de51a699dc9002f683885236ecee110e66ce8"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "5bba27723b1813ddfad2966a8889a62ab3b059bf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c0f7599b0bedd165b0ff9c46cd7a914e2d62b530"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68f42e4c96681c3db43748c370a25bab7d455754"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "c1ca392feaa48b046ffc56d4feed1887af232461"
+    },
+    {
+      "path": "CPPLINT.cfg",
+      "type": "file",
+      "sha": "f6e10f039634051327a918d562fb66785c02b8ad"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2c8c672c4071b7b339675c0c25684356103b04a9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6831c2025075c033a435a06f4a4db7deb6394cad"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "39eafaf63d1096b9c61fbbf19122a5a67fc5ab79"
+    },
+    {
+      "path": "binding.gyp",
+      "type": "file",
+      "sha": "342d9c7e5402be5155dcc55217d9912289aca2a8"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "a39ddcd426603d1d6c3d1e6ae6d5f28f63c1c232"
+    },
+    {
+      "path": "index.d.ts",
+      "type": "file",
+      "sha": "bc20808e3534e95244b9a0832235eb8370d48b06"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "03c7a2e11c99627a9584f553702df9a3779ab0b0"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "5f4f8c95fde12ee2bba3e6edaea2167b58444cfe"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b874b54a06e136b5461f67eb01bece0da4fb0509"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "96c50976e0d0ce7a8a0fd2d02a8059d5044985d7"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "14dabb6e4b18d28c54fd110705827360cffdf4f4"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "8fbf1ed0067d75c23e431e476db6cb420446a204"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Node.js binding for SFML multimedia library, not a new engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

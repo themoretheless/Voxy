@@ -1,0 +1,52 @@
+{
+  "repository": "Game4all/vx_bevy",
+  "repository_id": 369599865,
+  "commit": "da4335a047779519908705e9c129f7bd982a9009",
+  "source_url": "https://github.com/Game4all/vx_bevy/tree/da4335a047779519908705e9c129f7bd982a9009",
+  "readme_path": "README.md",
+  "readme_sha256": "bd021c46d9ec01121aaa039d429f3f1033ca6f473964d5cc73a37c229c399e6b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "147efd3e6a99128c189abd492c179d880e80ddfa"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d649c430b97be966ba5318609d6d2ab140488224"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "9a8135f082038116d9e1fd038ef1c12f0e244c25"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "851a319da2145df7288f2fd34b2b4d102a40f673"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b9694f0a293715de420e9201487ca1104e570660"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4da75865a20a5602b134569b7086fb4eb8d974a2"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9b97c41c1851bf66704f262aa7a4c1f1f567cdc6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fdd9f9f638168c7a9def1e7abd81cc6f79d98278"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

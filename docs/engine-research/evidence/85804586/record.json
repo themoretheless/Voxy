@@ -1,0 +1,59 @@
+{
+  "repository": "SunQQQ/snake",
+  "repository_id": 85804586,
+  "commit": "0f272a018df84056eccab78e24e7649c8d194f6b",
+  "source_url": "https://github.com/SunQQQ/snake/tree/0f272a018df84056eccab78e24e7649c8d194f6b",
+  "readme_path": "README.md",
+  "readme_sha256": "aba5850580102d716ff719e86fe6b5faa95637b46220b869360369f1093222b3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c88ea1933deeeaf1a24c8c68257d47536ad7bc53"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "582013069d105641a1b4420a358c0fb5a26f5f8d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "150a10b9a9a4a67db55d24b5d5e01df6221b699d"
+    },
+    {
+      "path": "app.js",
+      "type": "file",
+      "sha": "5099b037242900e89544557c23b23da750f06640"
+    },
+    {
+      "path": "css",
+      "type": "dir",
+      "sha": "dcf7371eb65ca51f1c59120c42392748cd52a7df"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "7bffe7c42076c77d5f2b9b5fc3302708776ad990"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "9f39e98dd38698ad63b958e61b14ecff16857df3"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "461022e050ca6bbbae36a9bd5abd7d53bb63e6fd"
+    },
+    {
+      "path": "old_version.html",
+      "type": "file",
+      "sha": "d8639967096298e22ddb3070dc5bccf76b57e602"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Small vanilla JavaScript Snake example.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

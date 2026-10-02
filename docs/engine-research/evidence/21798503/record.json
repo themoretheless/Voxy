@@ -1,0 +1,109 @@
+{
+  "repository": "MrSmith33/voxelman",
+  "repository_id": 21798503,
+  "commit": "5bd75ca443966d323dab04044b6a807731888eaa",
+  "source_url": "https://github.com/MrSmith33/voxelman/tree/5bd75ca443966d323dab04044b6a807731888eaa",
+  "readme_path": "README.md",
+  "readme_sha256": "5cec8e88a0f57e0877c4420717964aaa2703e618fa3d0bf37830648ef4097843",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e0b4e26f82ac20fa89997deac431c7ed8f5f14cf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "82263be694b2f82e5e574520657d06ad2ae422b2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "545384816c92a5c74858314e234b19ceffc70094"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "23be8712de0e988aa771e4e3aedd04e29af3d6a3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "066b894805b3b6d2bd33fa5ccb15b7c066e27e44"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "9aada15f65dfdcff164bbadf25ec92047e36bba5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7b200e29d854f24e3ec0808b8db7e2826ca9b6ae"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "5035ba1060ba0a3b43bc52864ac445459dd6849a"
+    },
+    {
+      "path": "builds",
+      "type": "dir",
+      "sha": "794b438b48ef6b1ff8d295f21209f490f41165b4"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "6e85fcae28eade1efa580c93b7bdc6daa2173cb5"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "13ed010dfea22575f10fc5e8400eaf321bcb5b4d"
+    },
+    {
+      "path": "dub.json",
+      "type": "file",
+      "sha": "de15c04c31189369cf19f8bed4d29becfb74d922"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "1ca42da317f6700b0594870b8fdd4cb5741e1c17"
+    },
+    {
+      "path": "pluginpacks",
+      "type": "dir",
+      "sha": "36b0270a4942e7c5e11509bae728ecb0fdf4d449"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "f0136f9259511b3b18b1e799586c4677f858a257"
+    },
+    {
+      "path": "res",
+      "type": "file",
+      "sha": "13c9c9fd83d1d0c1e981e7b7f135563592b56b12"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "fe878dcdddff953a2ea6b311007407d3c678a4fc"
+    },
+    {
+      "path": "subprojects",
+      "type": "dir",
+      "sha": "b5dc484f1498ceee9afdc3140b5d18983e7c64b6"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "53bee4f8fe97086a345410386c01c6781e401f1b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "D plugin-based engine and voxel game plugin pack with launcher/server design; source and plugin directories present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

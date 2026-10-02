@@ -1,0 +1,47 @@
+{
+  "repository": "Gibberlings3/Tweaks-Anthology",
+  "repository_id": 53005636,
+  "commit": "7649ced6cd25865874d787ec1a9abbc67b068729",
+  "source_url": "https://github.com/Gibberlings3/Tweaks-Anthology/tree/7649ced6cd25865874d787ec1a9abbc67b068729",
+  "readme_path": "readme.md",
+  "readme_sha256": "260b4a092490d538df7a9643e670630bdb0e04f85a18edfcdfb8206710a35495",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4ea18fb5c52551825ee5763cd1be5d34dd8b1ca7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "37d586cfdb3056c7700ef588bd6c76590b284f45"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "317696f1e08bd235585e354f078335003c900226"
+    },
+    {
+      "path": "cdtweaks",
+      "type": "dir",
+      "sha": "5f8d7cd73b0baf7cf4d47e6c8349e3c467866cb9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "80e854d30769535c9c6e7374b45df82ef6e0d697"
+    },
+    {
+      "path": "package_mod.bat",
+      "type": "file",
+      "sha": "908694c907efc04e7d981de6c9a5bcd96945da1c"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "ec1c38004cc1c20d6c2ef1fa29502c91c70bab46"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

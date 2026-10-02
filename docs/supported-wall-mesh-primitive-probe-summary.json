@@ -1,0 +1,24 @@
+{
+  "scope": "Six previously problematic free components on the frozen full mesh; diagnostic primitive energy only, not solver equilibrium or global smoothness proof",
+  "sha256": "9d53e7651921bf32b806169ddd75a070625f25a2bc5d8bd49ec54e5c05232127",
+  "measurements": [
+    {
+      "step_m": 1e-08,
+      "components": 6,
+      "max_analytic_central_error_n": 7.065600003946376e-11,
+      "max_left_right_split_n": 4.1387237349998747e-07
+    },
+    {
+      "step_m": 1e-09,
+      "components": 6,
+      "max_analytic_central_error_n": 6.292999975288094e-13,
+      "max_left_right_split_n": 4.1387115100007584e-08
+    },
+    {
+      "step_m": 1e-10,
+      "components": 6,
+      "max_analytic_central_error_n": 1.5558000309064124e-12,
+      "max_left_right_split_n": 4.1369619000006935e-09
+    }
+  ]
+}

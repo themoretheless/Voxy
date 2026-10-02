@@ -1,0 +1,54 @@
+{
+  "repository": "TheSpectreZ/Nexus",
+  "repository_id": 589942835,
+  "commit": "20c3f82e3e92ec7e0ba1263d06d8e47dd2eba7fd",
+  "source_url": "https://github.com/TheSpectreZ/Nexus/tree/20c3f82e3e92ec7e0ba1263d06d8e47dd2eba7fd",
+  "readme_path": "README.md",
+  "readme_sha256": "d8576c35e84bcf771b8867f822822a78fcb9ba6e7c2688d7c00f0397c70f1425",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ccd988d56be75d60d3782f87a9013d718b155021"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c10a7618996144b895c59ccf65947c1b3cbe8cfc"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "4eb264e7be366c505cd4f36c0cd6c54fca7e1598"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dbaf5a7bfcc8109a160b2f9937b91dcf5d269951"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "668e04933dca04bc1f8d5f0b71d00ebb26fc096e"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "86995b4f15ffd6c90ebd97320320c3229f11815e"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "dbfa0e09c37d8ab7c0dd2370454f6a2237d74d82"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Engine/rendering-framework project inspired by Hazel tutorial; current gameplay scope unresolved by introductory README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

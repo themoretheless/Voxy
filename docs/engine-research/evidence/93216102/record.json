@@ -1,0 +1,54 @@
+{
+  "repository": "lnguyenfx/simplemud",
+  "repository_id": 93216102,
+  "commit": "5aae7ad6eb202a85668506c92c68471166507818",
+  "source_url": "https://github.com/lnguyenfx/simplemud/tree/5aae7ad6eb202a85668506c92c68471166507818",
+  "readme_path": "README.mkd",
+  "readme_sha256": "e6e935de07018f74e01b72fb4933ab2051148b926c32289a69bd0ba49379766e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "00cbbdf53f6c487c8392d936ce7225824c11446e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "cbc0106daafe1ecfeb4e9cfafd315e8fd435648d"
+    },
+    {
+      "path": "README.mkd",
+      "type": "file",
+      "sha": "c50527d1013ad2a55ead5ec5a7c6d8271be82220"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "a05aab92906944e4e221005b235426c10e3f103e"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "7eec0e243b03e5b5546f6fd416876482c171c999"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0ca3e9bf02a8c3d91f27e50da5f5084a6a198725"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cf243ea2fa630340602374a7f30562173a285789"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0341e64e9bb76170c9de7f984d981468916ac6a6"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Node MUD runtime port with JSON rooms/items/players/enemies/timers and tests; content-driven text multiplayer engine, test-count claim not locally validated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

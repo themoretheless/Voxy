@@ -1,0 +1,149 @@
+{
+  "repository": "sbarisic/libTech",
+  "repository_id": 116566628,
+  "commit": "568d0653a9d7832d7a91253db701c88714dc46ec",
+  "source_url": "https://github.com/sbarisic/libTech/tree/568d0653a9d7832d7a91253db701c88714dc46ec",
+  "readme_path": "README.md",
+  "readme_sha256": "0376c20c0f3ad80e9fd80c1e65e77900468f45f056170eca58d2ae2ee1810a21",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9b4252ddd7f3bb174f6ad383e134ee5b4c0967f9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "73558b08a25de645ff3e98400b023ed8219aed69"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8f5c3f9251b69b6fe769ce0c24b1af695583f5b8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e6d7773e21b4197f2c0062c397106624f6f7155b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "536de53e90150ab5c7d674696a1202968444a90f"
+    },
+    {
+      "path": "3rdParty",
+      "type": "dir",
+      "sha": "728fa51f7de96b133b98f1b03b5141f3a18c7d29"
+    },
+    {
+      "path": "DllExport.bat",
+      "type": "file",
+      "sha": "5ee4bfd3302860e4fe786bd14c9007129854f89c"
+    },
+    {
+      "path": "DllExport_Configure.bat",
+      "type": "file",
+      "sha": "18d30f933dad70aee5cc8aecfbf873e43b6b76cc"
+    },
+    {
+      "path": "FML",
+      "type": "file",
+      "sha": "ebb929b08d2470241b5435070aa7b96e356d7b51"
+    },
+    {
+      "path": "FishGfx",
+      "type": "file",
+      "sha": "27a81b28422c85d7a4a0d082b8c229a5e1217bd3"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "7681226380519f013569d39928a1127e5a4202b3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "382abab4d941ac9a6e1380c9b710d8c42e596fde"
+    },
+    {
+      "path": "LegProcessor_Game",
+      "type": "dir",
+      "sha": "ea1e6c48bc3ab49c88f3256616ee986b8f373e99"
+    },
+    {
+      "path": "LuaDotNet",
+      "type": "file",
+      "sha": "1d5c989004b9cc7af892a6e111cebcb687316d15"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "83e28315f6a824524daa3426decb66bf514a672e"
+    },
+    {
+      "path": "Rebracer.xml",
+      "type": "file",
+      "sha": "2df6478a4e619146e30015a34446a546a58c5a9d"
+    },
+    {
+      "path": "RenderDoc.cap",
+      "type": "file",
+      "sha": "7460bd822c92f2b21cb7df111b43b14497f2d98c"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "608e508bf8f8729c53d7efab5e321b469edbe8f9"
+    },
+    {
+      "path": "ico.ico",
+      "type": "file",
+      "sha": "d3ce7aa49482915860e1727f649ff0149afe752c"
+    },
+    {
+      "path": "libNative",
+      "type": "dir",
+      "sha": "04db2ed1ab1ab4aac7339f1af3daee96998ad763"
+    },
+    {
+      "path": "libTech.sln",
+      "type": "file",
+      "sha": "c5cebb052252293985c08b1930c22db5700eab9b"
+    },
+    {
+      "path": "libTech",
+      "type": "dir",
+      "sha": "38e7835a5e965f9f1c80a1c3320a59c36697f91c"
+    },
+    {
+      "path": "libTech2",
+      "type": "dir",
+      "sha": "d432baf220fb5242272f7c546b3584630c6b6432"
+    },
+    {
+      "path": "libTech_Bootstrapper",
+      "type": "dir",
+      "sha": "21c071ebea3c752fb565903875c2f5d683040094"
+    },
+    {
+      "path": "libTech_DedicatedGPU",
+      "type": "dir",
+      "sha": "bfced118d7918de5d7c8069137ba384be9959a75"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "a551086538ec20b87f6819a9146166fe212de880"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "8e452e3e325b47c7f0c9b1f9fd4cd16e07856021"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# game engine with Source asset loading, engine projects and bootstrapper; inspiration does not establish source fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

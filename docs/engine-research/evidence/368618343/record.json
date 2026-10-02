@@ -1,0 +1,74 @@
+{
+  "repository": "rust-gamedev/rust-game-ports",
+  "repository_id": 368618343,
+  "commit": "e2034449c27775ea6e95fd17a393d8f612eacb24",
+  "source_url": "https://github.com/rust-gamedev/rust-game-ports/tree/e2034449c27775ea6e95fd17a393d8f612eacb24",
+  "readme_path": "README.md",
+  "readme_sha256": "ed077932e93ae41cf9516b7269ca960ed6a35b06dc9f9feb50eabd8f8616a9ec",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f0251a24aededf386abe01fb3c1d97c8b740785a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c54127d45e79a6f8b32994032b7aeff5d653231c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "242ce9ce16de6fdf4be4f90565e4711b676bc5c3"
+    },
+    {
+      "path": "boing-ggez",
+      "type": "dir",
+      "sha": "5375bd4fca2b03c87af1e8c10972002e43482351"
+    },
+    {
+      "path": "bunner-macroquad",
+      "type": "dir",
+      "sha": "eea1b447cd63d45f5368f0245fcbeba8822b066d"
+    },
+    {
+      "path": "catacomb_2-sdl2",
+      "type": "dir",
+      "sha": "d7def69321e7dbac00e533f4b1bb3766f4d32a50"
+    },
+    {
+      "path": "cavern-macroquad",
+      "type": "dir",
+      "sha": "15657811cae0861427e17ad194a875aa62645870"
+    },
+    {
+      "path": "collage",
+      "type": "dir",
+      "sha": "f5c1aa47260457ed339c1617a2d297a425e18fea"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "a9b5bbef16eaa0b7c5ba088b56e4d0e5e6a8f8fa"
+    },
+    {
+      "path": "rusty_roguelike-bevy",
+      "type": "dir",
+      "sha": "5e3c278ec9af92171a957f84f00f8acc5e1a1f94"
+    },
+    {
+      "path": "rusty_roguelike-macroquad",
+      "type": "dir",
+      "sha": "1fa1e588ebedfc3a767cb99a5417d536111d4a42"
+    },
+    {
+      "path": "soccer-fyrox",
+      "type": "dir",
+      "sha": "790f2f9904bb5d946d7ec765f986114ba934e81a"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Games ported using existing Rust engines and libraries, not a new engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

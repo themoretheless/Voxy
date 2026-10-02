@@ -1,0 +1,84 @@
+{
+  "repository": "hoyt-tian/FEngine",
+  "repository_id": 135877745,
+  "commit": "83a322f16fb2b94250b99d65524276c9ad817b34",
+  "source_url": "https://github.com/hoyt-tian/FEngine/tree/83a322f16fb2b94250b99d65524276c9ad817b34",
+  "readme_path": "README.md",
+  "readme_sha256": "12d3efc03200f1b4a1054e43ce1d06ea3704d84d1b420b1040e46005c1d15a5e",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "924f8498562ceb4d8fd1c002cea5d0d626cee177"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "6add84bc4b3bce51e9663575727198031f57b5fc"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "ee9df066a61d135fb4163bb3807a5ebdcc6aab02"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2c1c5b89c48c50a2993499de512add96064ca536"
+    },
+    {
+      "path": ".stylelintrc",
+      "type": "file",
+      "sha": "654d9e23805cc5d8a7f97f608f825c8bdcfa396e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2613cbe39d2683d2cb9a589531afced9d92426eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a61896ddad2112367d1b73124ee0ac20db448f4b"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "ad14d54a25601e12f99d0a0426d69145d04e2ecd"
+    },
+    {
+      "path": "fetch.sh",
+      "type": "file",
+      "sha": "8a5a119b68ee06979c789b8b17130303064ee4e2"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "404c7b9fae7a82c81205c10866708ffb69ac3eab"
+    },
+    {
+      "path": "rename.sh",
+      "type": "file",
+      "sha": "f1bea419de0e25788a33ec5e5315f23dd9e48a71"
+    },
+    {
+      "path": "screenshoots",
+      "type": "dir",
+      "sha": "eac2bc21ddf6f0c071616ae76f8965b41de4d57f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6ada9a86f4d6c7851051a501414e4d04cc0c08fb"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "5cdd2387b7228390ce1703c9e5da1521c9b865c9"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Canvas fighting runtime with custom character loading and desktop/mobile input; editor and gallery publishing are listed as future features.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,204 @@
+{
+  "repository": "larpon/shy",
+  "repository_id": 521920054,
+  "commit": "da930a346e045fab153de8cb3df70a884a883b24",
+  "source_url": "https://github.com/larpon/shy/tree/da930a346e045fab153de8cb3df70a884a883b24",
+  "readme_path": "README.md",
+  "readme_sha256": "b060d15a48c0fdfb67b40807506f751f4094a6dbde585cca2a644c7f1668a38e",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "517d63e22041b274c1afd0e50a6a64dd369b396a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "97038dfedfb05e4cdab70903309926364a4e61b2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2eae4be15c897a1289026e6b74571c0fabee7eaf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "249ba46e947236ebd1929bc96f5d06613f30fd2f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a521a487a163af0480b0e937296cef0eb3539310"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2e3fc04c865366b64173f2f456365d5657bea064"
+    },
+    {
+      "path": "analyse",
+      "type": "dir",
+      "sha": "f713062b6f6a24425ee701ca3d6c0de413722bb6"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "7fab9f6dace638712515004ad560630e32dc9d6e"
+    },
+    {
+      "path": "cli",
+      "type": "dir",
+      "sha": "7bbf089816155a1bf233a7aefbd481d2cf1f7946"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "3aaab47208a8c7aa3da9523495afa9cfcc8e7284"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6a9afb49c88991f153717373be75df0e723d9fd4"
+    },
+    {
+      "path": "ease",
+      "type": "dir",
+      "sha": "d938acf189d8606551d7e316042c8ab483c1a16b"
+    },
+    {
+      "path": "easy",
+      "type": "dir",
+      "sha": "8b67354965f5abb6cbccdcc3379b40223dded711"
+    },
+    {
+      "path": "embed",
+      "type": "dir",
+      "sha": "b8506c62401f32c6cc3b1360cadb47379c6eef10"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "01ff326aca27e7e2f890c02c5156fc368d2b2dc3"
+    },
+    {
+      "path": "export",
+      "type": "dir",
+      "sha": "a24331185fe5bb16c632fa73122ebc9e2f646a38"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "42183fbe82868c5f48b8c4edcc477fe7728821b9"
+    },
+    {
+      "path": "fetch",
+      "type": "dir",
+      "sha": "f844465a1020c1b51e83d1996a540bd37ad033f4"
+    },
+    {
+      "path": "graph",
+      "type": "dir",
+      "sha": "2798d20ce756135e3c4f639e651decdb8d677e6f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "c8a5d86a13f91cab24e894b4f925989ce19d6d20"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "d814d6a75de794b435886baa75106c2dd1779fd4"
+    },
+    {
+      "path": "mth",
+      "type": "dir",
+      "sha": "c21877032ab8376de56eebd3d2caf04a1d6d69a7"
+    },
+    {
+      "path": "particle",
+      "type": "dir",
+      "sha": "31b259c427f58a0f257f1f6c112bd9b30daaba8d"
+    },
+    {
+      "path": "patches",
+      "type": "dir",
+      "sha": "721ae9ad59b847ac7a31f01342a32224e2a3c41a"
+    },
+    {
+      "path": "paths",
+      "type": "dir",
+      "sha": "4e40feed1b2898cfbedad317b2a0bf301f9515d7"
+    },
+    {
+      "path": "platforms",
+      "type": "dir",
+      "sha": "d175a19f9484925733409f8c604a394f3a29e98d"
+    },
+    {
+      "path": "shape",
+      "type": "dir",
+      "sha": "f5455121b6783a3c79c02551502266e14178edf8"
+    },
+    {
+      "path": "shy.default.config.toml",
+      "type": "file",
+      "sha": "e07e234c1df7f0d9e77e3bd5771f7b75f96132b0"
+    },
+    {
+      "path": "shy.svg",
+      "type": "file",
+      "sha": "b71c272997886e3290d646eff227b9f0c01ba194"
+    },
+    {
+      "path": "shy.v",
+      "type": "file",
+      "sha": "afc00d63ec3810a7fc92d4596b12d47f5ac449e1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e6e631c8191cc46f348a7c45540dc20df3a3bd11"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "946e4cfb172b5848a8eefe548096d29e303549cd"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "b18b422c3969d56e52a3c276bdc6938050b40049"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "623ac10556dc1c62ae02ad1473716951ff3e7487"
+    },
+    {
+      "path": "v.mod",
+      "type": "file",
+      "sha": "7e850144c0991fc26f7b610cf05a436cf6fcff0f"
+    },
+    {
+      "path": "vec",
+      "type": "dir",
+      "sha": "6244e70604335dae4120c0214cb999dc367b02e6"
+    },
+    {
+      "path": "vxt",
+      "type": "dir",
+      "sha": "53f69f0d27a8d1515c8a02b0b157166825b11fa6"
+    },
+    {
+      "path": "wraps",
+      "type": "dir",
+      "sha": "e319f5e0cb15179fa19688059e3dbd48ea6bab3d"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "V game/creative-coding foundation and CLI with modular examples; platform export is partly WIP.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

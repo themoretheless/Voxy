@@ -1,0 +1,229 @@
+{
+  "repository": "MonoGame/MonoGame",
+  "repository_id": 1579990,
+  "commit": "0a9c2a7c1af5ed482f4b1ff781e28520865b11c4",
+  "source_url": "https://github.com/MonoGame/MonoGame/tree/0a9c2a7c1af5ed482f4b1ff781e28520865b11c4",
+  "readme_path": "README.md",
+  "readme_sha256": "cc592c3f617582a05d5be2dcf4d151fedc4cff746f5db735f0547c6662a146e2",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "bf5b52ba06c2ad3d659cf20d2c5d56f54a903684"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "439c2e4c6f42c81815340617a2dde4a61fbb4550"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2a9d7aea4838db023acc5830d910944c8cfa7a60"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "52100be9e6e4a13ea96bab9c503958435c03d6df"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b920473c6ca4aadf9e0edb833c31dca294708d06"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "32249349ce7cf4a4519a52d3360a5dd10fb4d229"
+    },
+    {
+      "path": "AGENTS.MD",
+      "type": "file",
+      "sha": "a46c0505bcd9bf04514c3a5d6fbd895496a1d09b"
+    },
+    {
+      "path": "Build.sln",
+      "type": "file",
+      "sha": "5e34658fb4ab6ddb34f479383ecf522f80944a9b"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "79b3214a7cdb404d5454c6337d1ca141cc468702"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "679c6528ed9fee7c656912e30ffc6fdaf0a0b6c5"
+    },
+    {
+      "path": "CODESTYLE.md",
+      "type": "file",
+      "sha": "c2ec2bdeec77ba8ae7912b0a41dd312149cf4611"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "0555fcbb6a26b5d90388f2dd5c6b6784955b2158"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "55aa342fd343360a147d39cd21efbab07fcc8341"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "75a672ff6b9b80e75648239ad6094179a6d4e9eb"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "c1012ce5caab73b49bcadfee80e736619c2b58e9"
+    },
+    {
+      "path": "MonoGame.Framework.Android.sln",
+      "type": "file",
+      "sha": "47afa05e530e51e79431d7f2ce573d90f0d3af33"
+    },
+    {
+      "path": "MonoGame.Framework.Content.Pipeline",
+      "type": "dir",
+      "sha": "641f0d60cbf1427c74c355afe0d82608f7996bbe"
+    },
+    {
+      "path": "MonoGame.Framework.DesktopGL.sln",
+      "type": "file",
+      "sha": "d5661193e55670edac83cca109abcda2a1f48f0a"
+    },
+    {
+      "path": "MonoGame.Framework.Native.sln",
+      "type": "file",
+      "sha": "e3d4954ed401b56963298af8a874ae18c307ec67"
+    },
+    {
+      "path": "MonoGame.Framework.WindowsDX.sln",
+      "type": "file",
+      "sha": "66343643c330a939e2a3d9cd585695a0aab4fb21"
+    },
+    {
+      "path": "MonoGame.Framework.iOS.sln",
+      "type": "file",
+      "sha": "e27ee27ae382cb8cd65e3be6475bad9600606600"
+    },
+    {
+      "path": "MonoGame.Framework",
+      "type": "dir",
+      "sha": "f9b0477bc0c44aac325b2b30b19bc290749fa2a6"
+    },
+    {
+      "path": "MonoGame.Tools.Linux.sln",
+      "type": "file",
+      "sha": "6cf18432dcc9b297a6fe92f65e3171c1b223ac36"
+    },
+    {
+      "path": "MonoGame.Tools.Mac.sln",
+      "type": "file",
+      "sha": "11c8142314c80fd4711114f479c305d125782c6f"
+    },
+    {
+      "path": "MonoGame.Tools.Windows.sln",
+      "type": "file",
+      "sha": "3d99240725d58f30e8cdb58fa6f8fbb9fbb3a83f"
+    },
+    {
+      "path": "MonoGame.code-workspace",
+      "type": "file",
+      "sha": "2d9af28ab047249c5addd30b6f38976d1b544d01"
+    },
+    {
+      "path": "MonoGame.props",
+      "type": "file",
+      "sha": "74cccb0020c4a24bcea8c4478548a0d7cc35ec56"
+    },
+    {
+      "path": "README-packages.md",
+      "type": "file",
+      "sha": "de0273c832db4b55e9d9c0cd4a4e13591794a01e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "048e777aab001fd67ec693881a72db241122a9d1"
+    },
+    {
+      "path": "REQUIREMENTS.md",
+      "type": "file",
+      "sha": "075931f96f190faa5230e9fee4cd999e803608a4"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.txt",
+      "type": "file",
+      "sha": "6e4c8bd29e7d29ea00e5467e2c2767fadd59336e"
+    },
+    {
+      "path": "TRIAGE.md",
+      "type": "file",
+      "sha": "b3c25be2e3062aad4a2209e93f2dda6c071812e1"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "f66dcea990c54fcb01be2ac0ccc9e1672f850c8d"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "0100a8c4d67738b9940576531410670e577842bf"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "76b1fa9882720ab9dc6907adbfed7555eb732c56"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "55427541ebaca2b4096815b52666e38e1b5d52e6"
+    },
+    {
+      "path": "build.ps1",
+      "type": "file",
+      "sha": "a7077190ae8b8b3de3dce74545afbeafb243623b"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "dfd6b854b72a019edec0443a98497af86c712ecd"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "8f06fd3931fe1bef312b6f435594729ae3a576b6"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "7ea4789cdf01ebce7d419d3bc2439ec69f8ad8fb"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "4e05b33d0aa84ea2a71b5abdf0c2cc807f84cdd3"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "01c743c71d8427bacbdcc46f2133f4dcc036e3bc"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2ac0bdfd9deacba9b9562320cdc3bea68b017a4f"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly calls it a .NET framework and XNA reimplementation; Framework/Content.Pipeline/Tools native build projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

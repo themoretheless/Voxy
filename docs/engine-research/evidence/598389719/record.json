@@ -1,0 +1,99 @@
+{
+  "repository": "cBournhonesque/lightyear",
+  "repository_id": 598389719,
+  "commit": "320f825bbeeab62715f0158d07d03320fb1c9cd0",
+  "source_url": "https://github.com/cBournhonesque/lightyear/tree/320f825bbeeab62715f0158d07d03320fb1c9cd0",
+  "readme_path": "README.md",
+  "readme_sha256": "e3fbab1613f9a59767d6183181df7258711cf81399b70a4d2129fb183ae38b24",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "59e2095daf5b4c69e3999205f31005f09f676145"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "3ea08526b0400c627db89846e3bc5f6bbc6a5c5c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bebeed8da8e0055621d70483fc2bff2c14396ba2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c16d81abca09cdb29c268dc7ab0e880b8bf4ee77"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "bde9ef1a3b2fab48b9fd52555c73a957c540f489"
+    },
+    {
+      "path": ".release.toml",
+      "type": "file",
+      "sha": "20a037211e4ef31e4e08ccbd04ed4567831997d6"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "2258cbe889080527618d110b3f8da8fe35bc5db3"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "2bb9ad240fa04c8cf706a4901c4807878e90c2dc"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "6802bc4b80c0f8df1413d55b16267c0969e352c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b23df1907637eb3771f27dc43a9f777fb779fc5f"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "ecdef45dfb3cfb534d83037312f0630e716a626c"
+    },
+    {
+      "path": "book",
+      "type": "dir",
+      "sha": "9c64aebd71b7f608f060ca02b9c7ed7d0c2ca535"
+    },
+    {
+      "path": "certificates",
+      "type": "dir",
+      "sha": "f247442d4e9f5258c587738f43dcb2070c2c5ab6"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "bf661fe599d670ae144162c4054cea7c87cf19df"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "8ec2b2e7bccb4bf8b0a373997a0a7211787f1c13"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "d13f38ab3535d36e87e101d6ef23d0929698a9f9"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "96935671c697a4027e85d13752eeff0b91976f7a"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy server-authoritative multiplayer networking library, external engine required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

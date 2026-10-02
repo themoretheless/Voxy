@@ -1,0 +1,94 @@
+{
+  "repository": "EasyRPG/Player",
+  "repository_id": 3297519,
+  "commit": "e68fff4a13a3dd5d40678ae66ee60f85ccb04153",
+  "source_url": "https://github.com/EasyRPG/Player/tree/e68fff4a13a3dd5d40678ae66ee60f85ccb04153",
+  "readme_path": "README.md",
+  "readme_sha256": "3c75a2ec0aaa13710f93ee74135e3ee9db74dc3bdb336df41872d5cb6d8b88f1",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c93375ed857d9d02a2fdec6d99da03f79d6ea02f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1e048646e5fe63e9743885160cece2332f9bcdd5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c6c20e85092126d097d75359ee1198433f72e4af"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c620459d13cc3014a2a3bb4ceb0d0931fbc74628"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ae73a2ecec52d4ab546d904f907dbef00000135f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a66e526ed7e1532e028dbda0f66f5f00366d7280"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "16306072bc7bf2ce676738f6f305b69523401678"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "52c414e9ce05a3df5d877acf122ce012fe81b083"
+    },
+    {
+      "path": "bench",
+      "type": "dir",
+      "sha": "eb4fc9d9cfc542917753f820de21bb9fdcde212f"
+    },
+    {
+      "path": "builds",
+      "type": "dir",
+      "sha": "1543f9dbf77e679e0b266ad8dac7fa662877aebd"
+    },
+    {
+      "path": "configure",
+      "type": "file",
+      "sha": "5fbae8127b444bc72a7744af45f2348b4d7870a2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "906d925d2559b032e57599a8eab25399c28ff760"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "ee49107ed417bfb828a99ba7b0940337a6b14cff"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "27ef98d4bd13074d5cf1283e9ad4c1e9104fc687"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "5e0585b59d7f3d9ca01e2d257f728b6d0969fe25"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent RPG Maker-compatible interpreter/runtime; src/builds/CMake/tests, using data/backend libraries rather than original runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

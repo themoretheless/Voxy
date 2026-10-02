@@ -1,0 +1,14 @@
+{
+  "scope": "Uncalibrated heterogeneous Ogden-Maxwell coupled-contact benchmark, dt 0.1 s; no temporal refinement or anatomical certification",
+  "committed_steps": 23,
+  "final_physical_time_s": 2.3,
+  "max_residual_n": 9.980316738881e-08,
+  "min_j": 0.7233315220467,
+  "minimum_surface_distance_m": 1.358899277789e-06,
+  "wall_loaded_displacement_m": 0.001845008814049,
+  "wall_end_hold_displacement_m": 0.00201330173203,
+  "wall_after_unload_displacement_m": 0.0003167266748429,
+  "wall_after_recovery_displacement_m": 0.0001217874543716,
+  "wall_hold_creep_percent": 9.121523794331864,
+  "csv_sha256": "338004de0fe26fd4eaf6b257f522c7871a566c82d2c14d40af5ce3cb0632502a"
+}

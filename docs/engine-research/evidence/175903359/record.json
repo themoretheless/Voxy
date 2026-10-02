@@ -1,0 +1,119 @@
+{
+  "repository": "RandyGaul/cute_framework",
+  "repository_id": 175903359,
+  "commit": "353ba14ca34f066cb612013937890f226d2cac3d",
+  "source_url": "https://github.com/RandyGaul/cute_framework/tree/353ba14ca34f066cb612013937890f226d2cac3d",
+  "readme_path": "README.md",
+  "readme_sha256": "c92dac035500ac0a00a8cc17732b43e1035fa3e20643f711665886d46f61c4e0",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "d1b29945666c0db7daa3a68708f7cbe8734d6384"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "45b675ef3f366c496efd2ceb27e86b5bf4217e60"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "61d42310a3c438901a397540056191100ddf986a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "549ae10c5229fd67d7a87c077cda945dc5c99832"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "2fc80d0dde2ba7fd4ee9316db82559ff030a1e05"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "185914395bd4fc2b401dd8f8b81500e0b4bc2bd4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1c40ad102afc9fbb7e94d7ca4552e27aa34dd423"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1529b75987351a669a8b531986bb4a2a99b25dc9"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "459d340a04111b2cad000fb5f995f5a5739083e2"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "fd8a24886898267263d199abf4a339d621a51867"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d94fae65ff43a64b876fdefac6cfe84860db6c3b"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "40fbf586cd7decc8496657743fca28617d99a50e"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "e51d05910e35ec2d1095b7e4e448b489654f4189"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "d419edbbaf9321d85c78dba0642860a0283d0845"
+    },
+    {
+      "path": "msvc2026.cmd",
+      "type": "file",
+      "sha": "a43cdf99874a938a699ad5362c94e8af7e405a17"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "a885e2a2a4886e03ea0182f2bd3d6b4c4d3aad99"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "b00792fac64d1d30f956216481d96282023948c0"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "07d3aeb5d0b691f8bfb7b4b092d6d9d97ee9a6bb"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "1de424be146dc2c9135fcc95cb9de0d4f0cd8478"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "6712189ee58f8d22accac1425dd0782724110a4f"
+    },
+    {
+      "path": "web.cmd",
+      "type": "file",
+      "sha": "958536e42d67990ad43256f6bff7f6206ba7c564"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies portable native game foundation; src/include/tests and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "scemino/engge",
+  "repository_id": 157253104,
+  "commit": "641208858f4a8ffd152cda017d4317b609b8637f",
+  "source_url": "https://github.com/scemino/engge/tree/641208858f4a8ffd152cda017d4317b609b8637f",
+  "readme_path": "README.MD",
+  "readme_sha256": "a21e9f56a47b0871cc0413ca75aa0416f2130fdf3f97b75d0ab958cb054d6a89",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ab4d56c7895bca4d1df61036bae6bf2c2543b90a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2ab8081552a596e2c028842acd9872ee6599eff0"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "69005a74596afd2c2c69fb087268bb63d0181db9"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "99ef5b511d3a7a2bf9c39753d9cc878bee2585d6"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "15e2fc3719b730fb5cf2e20cdffc90c1e7ed0393"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "790a02b40028a62fc00be756a356603295f4d00c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "689ea421fd0c4d868cebf59b5717e22c2dc621d1"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "1eac57d2843d0d2e25c63915a8886fecf79110fe"
+    },
+    {
+      "path": "appInfo.cmake",
+      "type": "file",
+      "sha": "c85ae778434276b904ef35cb8638187eed8927e5"
+    },
+    {
+      "path": "extlibs",
+      "type": "dir",
+      "sha": "abb5f608048f28c22c75aa10b6b4ed73ed861f35"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "e988943affa2a79d0557336e308f76f1b7e132ad"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c81255a08cd9fc0a82d3f4b3adf3b0b97542c86f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Thimbleweed Park adventure runtime reimplementation with source and include directories; original assets required, gameplay completeness not independently verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

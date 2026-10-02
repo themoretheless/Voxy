@@ -1,0 +1,169 @@
+{
+  "repository": "InvadingOctopus/comedot",
+  "repository_id": 789659549,
+  "commit": "39c70e478bb4b394dd74c39faac4d1416659d821",
+  "source_url": "https://github.com/InvadingOctopus/comedot/tree/39c70e478bb4b394dd74c39faac4d1416659d821",
+  "readme_path": "README.md",
+  "readme_sha256": "8ea5615d691cdba0f1c8ef8f27aa199955dbe4b2a6835592e7a56b104e4e057f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0f66a849b908a4ff330c23b91783e74997ae255b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "32e953ed0b2817b0c98670226bf0340fca036fa9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "07865a2e3fd71d33ed4ca97eb8976b91862a7756"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "467c624989d0cd1e473bf9fb68181ec7fd439e09"
+    },
+    {
+      "path": "2D Only.gdbuild",
+      "type": "file",
+      "sha": "2f936847a3dd48a2b759f9e730716f67574068f1"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "9d0db55dcd3d06a311f025c3c4929986e6c69f36"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "6f1c121ccb0b09cbcb74832941ffc12967bf8c05"
+    },
+    {
+      "path": "AutoLoad",
+      "type": "dir",
+      "sha": "c3abacae8678ee53f2d0a7f186d23f63d9a3ca1c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3dcf75d5e09c70bdccbf999d8805b798a61c08e7"
+    },
+    {
+      "path": "Comedot for Godot Asset Store.md",
+      "type": "file",
+      "sha": "19d5dfb360dad668e34eea7c7f7eaaf525173137"
+    },
+    {
+      "path": "ComedotProjectSettings.tres",
+      "type": "file",
+      "sha": "5d5ea6ee71771fbe6655d6a9ccd4f64d7e88f49d"
+    },
+    {
+      "path": "Components",
+      "type": "dir",
+      "sha": "86c3c88ad3d57e2584dcef3ec2d2b625abc0cc07"
+    },
+    {
+      "path": "Conventions.md",
+      "type": "file",
+      "sha": "a4d1fbd460b442921b35f8c5bbe2fba0a5adbed7"
+    },
+    {
+      "path": "Entities",
+      "type": "dir",
+      "sha": "6c85f0309d2b4b783df7fe2f569dda5ea0c3a667"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "178417568161340519f9c876d74ca53cc3f545f6"
+    },
+    {
+      "path": "Godot LICENSE.txt",
+      "type": "file",
+      "sha": "f7190519eb0eaaddd45f41f6b328b6dc824920df"
+    },
+    {
+      "path": "HowTo.md",
+      "type": "file",
+      "sha": "95261382d753f26a7c3482ca87d826c70288e296"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "802096bdee8e77530d1d3512c726f05313baeb30"
+    },
+    {
+      "path": "Lab",
+      "type": "dir",
+      "sha": "646bc41a3ba6b2345e9ad1aef45a9a53520b91e5"
+    },
+    {
+      "path": "Notes",
+      "type": "dir",
+      "sha": "560024cf894a2581d36be71e0286303ba2122ad5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "64f0aaf16915dd5ce6a5a053171539c2ccd99b72"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "125af4c26b2442d7ef6c33497147e69d95405628"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "94b8b7124b35f640e51e4a8b1ad6718b0b2b7ad8"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "8b2c624d1da408e3052457b43ccb1f5c2cd8b0fc"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "ee2003fa3932dd1dfa90f318a0bae8224732567d"
+    },
+    {
+      "path": "Temporary",
+      "type": "dir",
+      "sha": "41e63549af4db2377e03c21e25ccf04ae8cf98a6"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "6b7c4be1af6a6e79e7b1db3a4b9a0790de8a3be3"
+    },
+    {
+      "path": "ToDo.md",
+      "type": "file",
+      "sha": "5b89be22acd6ba2601635a2e9c60b80358e9565a"
+    },
+    {
+      "path": "UI",
+      "type": "dir",
+      "sha": "019cf0bb5c84f968a2710c2710e8ff0d38349259"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "65b29eaed8fbf7e0830e5279f1ad2f603b679317"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "ae40beb39fdeb7c86ccbe637e8c90a7c24d52a7f"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Godot components/template framework; project/components/assets depend on underlying Godot engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

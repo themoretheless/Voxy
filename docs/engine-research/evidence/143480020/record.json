@@ -1,0 +1,59 @@
+{
+  "repository": "PsiLupan/FRAY",
+  "repository_id": 143480020,
+  "commit": "fe65dcbc5656be5936fc96b56d797a4b7f9f958d",
+  "source_url": "https://github.com/PsiLupan/FRAY/tree/fe65dcbc5656be5936fc96b56d797a4b7f9f958d",
+  "readme_path": "README.md",
+  "readme_sha256": "dad50cf48dc1f591a40fbaa9f848cfe0aba829b35cdddca081cb373b58c04727",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ed3f8806784a13798db47c75f67507dbeb575d20"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "115b4bdbe1dd1da73b11db0928ac4df6a794856f"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "3fed41f8373337863284e2ec16dcb6126e2411fb"
+    },
+    {
+      "path": "HAL_sysdolphin",
+      "type": "dir",
+      "sha": "afabce50ea98b290c2d857732c25db531123c4f3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cf1ab25da0349f84a3fdd40032f0ce99db813b8b"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "e86b76f32157c51ae6f0c80089d6d15f335d556b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "37c1d6be75a4d9c51dbf9be665889f5b5ce795ba"
+    },
+    {
+      "path": "ogc.ld",
+      "type": "file",
+      "sha": "0d902a42f68148020be18ca99e9f962413895d04"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "246490d839d875218375a5659bc07477b8a6da09"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Incomplete Super Smash Bros Melee recompilation project, not a reusable engine product; README notes fluctuating compilation status.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

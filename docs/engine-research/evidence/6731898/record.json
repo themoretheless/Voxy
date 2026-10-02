@@ -1,0 +1,79 @@
+{
+  "repository": "Hirato/lamiae",
+  "repository_id": 6731898,
+  "commit": "27d4e274d909e837aebdc4a4d0ed6667f4580b08",
+  "source_url": "https://github.com/Hirato/lamiae/tree/27d4e274d909e837aebdc4a4d0ed6667f4580b08",
+  "readme_path": "README.md",
+  "readme_sha256": "11dd1935fab10371dedfbb6f5ae2c10bd56012ea864e883f07f135534a20955b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2079e79ea1f5e2dc2f354ff866eeef433d65bdb2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f8888795a2aa312abd861fbe94e8daa506c56166"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "42e07b64d5d6995729f802ab4e3b68fe9f6d44a3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "123a8e86079bdc9d5fdc496de7956547cd26588c"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "c0b4e971fea178a975ae198f1a21f5bf3e0d1665"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "c49f5190bbb503de6da1bac8a825547c5f5c276b"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "7edae766d8853444d803c0f55a27bac9ef1fb0fd"
+    },
+    {
+      "path": "lamiae.bat",
+      "type": "file",
+      "sha": "052f916ca067a4647f06dfd2437ef09c3533cfeb"
+    },
+    {
+      "path": "lamiae.sh",
+      "type": "file",
+      "sha": "6fdfec45e08c514acad7a3d155c8a581671627e0"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "700d32e547926206be48ce40491cd2febc5ee689"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "3dda488c5511ae03fc4dfe2b309fb71dea32fdb0"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "9105f51d3b641e59ed3f4aaf6eaab30f7947f36f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c3ce66f6be64a8ec871849274caa741ecc9b2ca3"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "RPG runtime fork of Platinum Arts Sandbox/Cube 2 with bundled Tesseract; src and game content present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

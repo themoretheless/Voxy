@@ -1,0 +1,39 @@
+{
+  "repository": "fynnfluegge/oreon-engine",
+  "repository_id": 48134060,
+  "commit": "c05557700f5ab5d02337a1c84a242ed67866094d",
+  "source_url": "https://github.com/fynnfluegge/oreon-engine/tree/c05557700f5ab5d02337a1c84a242ed67866094d",
+  "readme_path": "README.md",
+  "readme_sha256": "cc3e7c479a118a3386ef35e427c60b49eaf1e97443b4768d77433c165195f27d",
+  "entries": [
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e6546ca580c1b2d67cd30a14aaddd150f84805cb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4b1ed4559416ddcf20cd20ed9e7b61080528a05b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "88d57a154a7d30e107eb33235e1e6beb4363b2aa"
+    },
+    {
+      "path": "oreonengine",
+      "type": "dir",
+      "sha": "df4543cb61dbbaaad5850d888ca0e8632bed2fb5"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies OpenGL/Vulkan Java engine; oreonengine source. Complete gameplay runtime not established from collected evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

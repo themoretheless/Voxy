@@ -1,0 +1,127 @@
+{
+  "repository": "sdslabs/Rootex",
+  "repository_id": 190610922,
+  "commit": "5fb00345b88b7e0e441c73e3f6d5f96455be269f",
+  "source_url": "https://github.com/sdslabs/Rootex/tree/5fb00345b88b7e0e441c73e3f6d5f96455be269f",
+  "readme_path": "README.md",
+  "readme_sha256": "335133a7f9cc06932085908fffd814ea23fa0f8c36db4a599c02b4935d013570",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d3448c6fa70414e346d5587866fccb8681e13726"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a752ab0fefd1f92720d72c6afd942669e6a43625"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7e0054d73e5eb2ae0a7ed88ae592cdcc918f2f5f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "84651ab73c3b745c7ed515861aa2446d3ab4035f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2ce8c6c626ceee76f58fede9d3c4eb832cfa5935"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "10cc60e5ca71197c5ec3e453f121a5276bc94d2e"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "a36db8a13998d337a2e418dced58b9dbef272f78"
+    },
+    {
+      "path": "ASSETS.md",
+      "type": "file",
+      "sha": "7fe8cf26c4170988e59c88a1bbe06f19ac951f82"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "287bd2774e029c5e2ecb8bf492591c9343e1a682"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "149679e731fd339ffc56dbf507c93dedd06b85f5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c31c6221dae032feda1aaa1ee27dd555454c42a3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3593f1b3df1346a698b725bedf292a89d054efe6"
+    },
+    {
+      "path": "THIRDPARTY.md",
+      "type": "file",
+      "sha": "a5164ecacb5dabe1b49cf5a9be542e8187a0143c"
+    },
+    {
+      "path": "assets.bat",
+      "type": "file",
+      "sha": "8e1e609e8025594c083de0e84dce4093190ec0e3"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "bb583eb06c745ee28ce5843b590cda3b65a985f7"
+    },
+    {
+      "path": "build_fonts.bat",
+      "type": "file",
+      "sha": "4f7fcbb179406621f325d39ce64f25219bd60c28"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "acc4b95c03f15a0ef264809002639d9dd3c2dd6a"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "451057b7d31abf4b740405f189d639f24e9f3f21"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "defaa1fd5a50427c34ccff0c18bdedb05d7ec21d"
+    },
+    {
+      "path": "generate_cache.bat",
+      "type": "file",
+      "sha": "ae8a267805a90e3f136c22c576e638407db34a52"
+    },
+    {
+      "path": "imgui.ini",
+      "type": "file",
+      "sha": "37d35e982d1c54da828149f1964620b85f1513fe"
+    },
+    {
+      "path": "rootex.root",
+      "type": "file",
+      "sha": "8a418975f6001f48b534dd467fc6ea535f70970c"
+    },
+    {
+      "path": "rootex",
+      "type": "dir",
+      "sha": "58cb516f31cf36f8f53843688e72527511ac6d12"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

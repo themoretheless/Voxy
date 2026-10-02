@@ -1,0 +1,54 @@
+{
+  "repository": "SirFroweey/PyDark",
+  "repository_id": 26162682,
+  "commit": "617c2bfda360afa7750c4707ecacd4ec82fa29af",
+  "source_url": "https://github.com/SirFroweey/PyDark/tree/617c2bfda360afa7750c4707ecacd4ec82fa29af",
+  "readme_path": "README.md",
+  "readme_sha256": "4e533ba8415a95ffda207c743a30569409d22f48de38a67ecba1d102c3afcebd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ac43ebca1b1d7787a5b8cdee18958282e3a38d2d"
+    },
+    {
+      "path": "PyDark",
+      "type": "dir",
+      "sha": "0891658efb98b184ed46708ffd36a77ebbf55399"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4fe1fb9c16b0787769e717bfe7874101b3e9606d"
+    },
+    {
+      "path": "basics.py",
+      "type": "file",
+      "sha": "d8fdf971e3c4e29be195a503ff084925c94081f4"
+    },
+    {
+      "path": "client.py",
+      "type": "file",
+      "sha": "8544104bb8e068a0860e42eb4584b5e4ef8e583a"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "7e58c57a7eab61237c95b1bb7a078546f38697dc"
+    },
+    {
+      "path": "server.py",
+      "type": "file",
+      "sha": "8377ee93144eb37e3f9ddc6e83408dd620c5c94e"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "acaaab83405a7f514db545858ee9eeef0225d0a9"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Python/Pygame multiplayer framework; owned scene/runtime/server and Python build, complete engine ownership distinct.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,139 @@
+{
+  "repository": "regb/scala-game-library",
+  "repository_id": 59868379,
+  "commit": "39591f6c6d65828fd48ba0d327143f10bc6c3d50",
+  "source_url": "https://github.com/regb/scala-game-library/tree/39591f6c6d65828fd48ba0d327143f10bc6c3d50",
+  "readme_path": "README.md",
+  "readme_sha256": "beb427c338c605d8a6c4e33ac016289825437bf2aea461b234584cc7c2512ef3",
+  "entries": [
+    {
+      "path": ".bazelrc",
+      "type": "file",
+      "sha": "9a5cf86d50c80bf14a6600c2f84cf29a6f3d18bf"
+    },
+    {
+      "path": ".bazelversion",
+      "type": "file",
+      "sha": "44931da2660ca67c08fcd4b4682fb89bf00bbdb9"
+    },
+    {
+      "path": ".buildifier.json",
+      "type": "file",
+      "sha": "cda9ecb3cc907eb6c48b5bd2295548a26b97a451"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "eb9db34a92f7968054cc4e0208d1fe0d6c39270e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8f289bf8a1a6cbec1090b47ffa7f5d4b8126b553"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "5b55e2679e5e19c9516026904a52b017a085067a"
+    },
+    {
+      "path": "BUILD",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0557bc96514d01eb4be4f021417bb5482aa1a764"
+    },
+    {
+      "path": "MODULE.bazel",
+      "type": "file",
+      "sha": "427a4fe6e7af2b48b4821716d54ca734fc4539b2"
+    },
+    {
+      "path": "MODULE.bazel.lock",
+      "type": "file",
+      "sha": "72510173ebc14ebbe2d70b941d0bf0bf60d67331"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "180b242bbafc01ae6560d508be242e8e0245885c"
+    },
+    {
+      "path": "TODO",
+      "type": "file",
+      "sha": "2faf74dd9bc85df22e40ad1cb15205a4a572beda"
+    },
+    {
+      "path": "backends",
+      "type": "dir",
+      "sha": "7b0b1a4b7a34dfb21a17dd90758f2c457bd547e5"
+    },
+    {
+      "path": "bazel",
+      "type": "dir",
+      "sha": "890b2015c0484628290e1c53d7e27cee017a0269"
+    },
+    {
+      "path": "build.sbt",
+      "type": "file",
+      "sha": "1d43de413074983672785e7dc01a1080bd624abe"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "e3829de4e37a99c5246c48af4aa02b3d8a2a226e"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "b247c39387af86f0c5f850ceb6a5397489ee6c89"
+    },
+    {
+      "path": "engines",
+      "type": "dir",
+      "sha": "e2efda78679d645e008ea7f4588505e56653a34f"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "9630d984112a8676c5538c460ce9fd46faee4c7e"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "f02161cba6983c7efb39743ca1baa86b75b88f04"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "7ba6b48c7979576ff3578731d00375600239dcb7"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "9fbc2657fe5caa2e8720c48278ff1946932b8898"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "d421fa847a224f4497719bdc48d35badd2e4c3ec"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "550b578c88e4cbf02ac6e4e5c7f53c530b00ea41"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "74823b2578b3420d4a48fef64fb7b5c07e342eee"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Scala platform abstraction/toolkit with optional GameObject engine; README presents the primary product as a modular library.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,61 @@
+> [!WARNING]
+> This repository has been moved to [codeberg.org/nils-soderman/vscode-unreal-python](https://codeberg.org/nils-soderman/vscode-unreal-python)
+
+# Unreal Engine Python (Visual Studio Code)
+
+Editor features to assist when writing Python code for Unreal Engine.
+
+<br>
+
+## Features
+
+### Execute Code
+
+Run code in Unreal Engine directly from within the editor:
+
+![execute code in unreal demo](https://github.com/nils-soderman/vscode-unreal-python/blob/main/media/demo/demo-exec.webp?raw=true)
+
+Command: `Unreal Python: Execute` <br>
+Keyboard Shortcut: <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
+
+The selected text will be executed, or if nothing is selected the entire document will be executed.
+
+<br>
+
+### Setup Code Completion
+Setup code completion for the `unreal` module based on the current project.
+
+![code completion demo](https://github.com/nils-soderman/vscode-unreal-python/blob/main/media/demo/demo-codecompletion.jpg?raw=true)
+
+Command: `Unreal Python: Setup code completion`
+
+<br>
+
+### Debugging
+Attach VS Code to Unreal Engine to debug your scripts, set breakpoints and step through the code.
+
+![debug unreal python scripts demo](https://github.com/nils-soderman/vscode-unreal-python/blob/main/media/demo/demo-attach.webp?raw=true)
+
+Command: `Unreal Python: Attach Debugger`
+
+<br>
+
+
+### Documentation
+Browse the Unreal Engine Python documentation inside VS Code. This documentation is generated on the fly based on the currently opened Unreal Engine instance, therefore it will always be up to date & include any custom C++ functions/classes that you have exposed to Blueprint/Python.
+
+![browse Unreal Engine's Python Documentation in VS Code demo](https://github.com/nils-soderman/vscode-unreal-python/blob/main/media/demo/demo-documentation.webp?raw=true)
+
+Command: `Unreal Python: Open Documentation`
+
+<br>
+
+#### Notes:
+* Commands can be run from the command palette, `Show All Commands` _(Default shortcut: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>)_
+* Remote Execution must be enabled in Unreal Engine for this extension to work, [more details here](https://codeberg.org/nils-soderman/vscode-unreal-python/wiki/Failed-to-connect-to-Unreal-Engine "Enable Unreal Engine Remote Execution - Wiki").
+
+<br>
+
+# Contact
+If you have any questions, suggestions or run into issues, please [open an issue](https://codeberg.org/nils-soderman/vscode-unreal-python/issues) on the repository.
+

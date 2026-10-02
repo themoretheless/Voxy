@@ -1,0 +1,67 @@
+{
+  "repository": "PacktPublishing/Godot-Game-Engine-Projects",
+  "repository_id": 129213754,
+  "commit": "4752a708c1a2b3831f5e1acb058fa513e109f329",
+  "source_url": "https://github.com/PacktPublishing/Godot-Game-Engine-Projects/tree/4752a708c1a2b3831f5e1acb058fa513e109f329",
+  "readme_path": "README.md",
+  "readme_sha256": "373ca506fdbaec49231db12ab042154a2440ef94c41a09d15cdbc4c23b70b117",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fd0cf683a099122d01bf9dd31f5f81c668c627c7"
+    },
+    {
+      "path": "Chapter 2 - Coin Dash",
+      "type": "dir",
+      "sha": "aa374120009ad53b2f0997227cb7d3380c5d0a5c"
+    },
+    {
+      "path": "Chapter 3 - Escape the Maze",
+      "type": "dir",
+      "sha": "b706f6821ae1c1a59d3b29380f5f1fb97f7c2de5"
+    },
+    {
+      "path": "Chapter 4 - Space Rocks",
+      "type": "dir",
+      "sha": "56b63a973c77e8937af5a68755596030acaaa98a"
+    },
+    {
+      "path": "Chapter 5 - Jungle Jump",
+      "type": "dir",
+      "sha": "a544b8f2813e51e33f8195943b3615dafc66f01b"
+    },
+    {
+      "path": "Chapter 6 - 3D Minigolf",
+      "type": "dir",
+      "sha": "a09b023c94e0ab1853993a4594d2912c18c7b8e0"
+    },
+    {
+      "path": "Downloads",
+      "type": "dir",
+      "sha": "2f2bc195fe3e20c3dc1b6711a7af0e6c3fed018a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4f1ec73e13ef76915942dca44033b2462cde7f95"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ef6878030143ea3e8c6a154cf2d32845f54d661b"
+    },
+    {
+      "path": "Shader Example",
+      "type": "dir",
+      "sha": "cbbeddbe2e0e36e19ca0355009c50d6b3cbc956b"
+    },
+    {
+      "path": "errata.md",
+      "type": "file",
+      "sha": "7107b815683d5934bae3afd2b3c1182f6b7a5e1c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

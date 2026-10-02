@@ -1,0 +1,33 @@
+[package]
+name = "voxy_ray_probe"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["face-demo"]
+face-demo = ["dep:voxy_app"]
+
+[dependencies]
+voxy_app = { path = "../voxy_app", optional = true }
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+voxy_render = { path = "../voxy_render" }
+wgpu = "30.0.1"
+pollster = "1.0.1"
+glam = "0.33.6"
+half = "2.7.1"
+serde_json = "1.0"
+
+[dev-dependencies]
+voxy_runtime = { path = "../voxy_runtime" }
+voxy_ui = { path = "../voxy_ui" }
+voxy_ui_winit = { path = "../voxy_ui_winit" }
+winit = "0.30.13"
+bytemuck = "1.25.0"
+
+[lints.rust]
+unsafe_code = "deny"
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }

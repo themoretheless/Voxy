@@ -1,0 +1,139 @@
+{
+  "repository": "reworks-org/galaxy",
+  "repository_id": 62887639,
+  "commit": "2ef3083e63d39cbcacb4e3752a0e80c6abfd72fd",
+  "source_url": "https://github.com/reworks-org/galaxy/tree/2ef3083e63d39cbcacb4e3752a0e80c6abfd72fd",
+  "readme_path": "README.md",
+  "readme_sha256": "4035787fe142af902c97b35bb1fbc54f7605350ff8890cc572cfdf94b186f9c7",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a7ddb43088451431625ddc1e1ea00fb6754d5a03"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "96901131ad756e2c6ff84c01dc4b3273d570256b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8612267899715e85599685773ab3924628bf27e7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c7a41f5dffdb824cc6dc81ed64315d4385e964f2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "82182853002cb962284e926cc758abece38fe999"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "2585995667597815ec742a3cde59857cee50bfbe"
+    },
+    {
+      "path": "CODE_STYLE.md",
+      "type": "file",
+      "sha": "3ce43c35b32a642d31d52b88d63007098c5ec345"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "923e57e01e891f6bfb02af8f4569def9e4b16b6a"
+    },
+    {
+      "path": "CodeAnalysis.ruleset",
+      "type": "file",
+      "sha": "4dadc343af5c151b046942e48698fefd8023a1f5"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "9b08c763a9e82d1a7ae321c3bf2294774c07dc42"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "41592a00909e445aa40813985a79fccb57865143"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bcf50659830d52561ad95391c20b0cf85eab74e2"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "e84d71e217dc9583e8e2d49c3f78d585eb0d9cc4"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "52b2b29ad57f7e6ddc3ccbe1daf70f74287b7dc5"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "5fad038a6e73d74aa3cf06b52f6bba8a32eca11d"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "b02189f54bc78bf30ad53c35e3e76c4493794b97"
+    },
+    {
+      "path": "galaxy.sln",
+      "type": "file",
+      "sha": "a37ebbc581bbe6f9023b14a3cc78cae332edd38e"
+    },
+    {
+      "path": "galaxy",
+      "type": "dir",
+      "sha": "660aa9df399f9b4295fd2aac98359e10865821e4"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "fb3185c05f3298ca43efe923aa7d79c546e53efa"
+    },
+    {
+      "path": "logo_docs.png",
+      "type": "file",
+      "sha": "ec99b4726905b5a1d0f24b698d35967b1244fbc2"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "74e867ae2eba016fa2db2b6c37af8c58b89973f4"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "184d9b889f6966cfc97722e6edef154767867bb2"
+    },
+    {
+      "path": "supercluster",
+      "type": "dir",
+      "sha": "7a24a20233c443a37faa3b12f1937497f65fa82c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c534b8ac46f7ba541babd9c5be48791e4093eb3f"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "b5cdb54d307d2e90a53a6bb10ff17df0ad04d941"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++23 real-time game/app engine with source project, sandbox, tools and tests; architectural/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

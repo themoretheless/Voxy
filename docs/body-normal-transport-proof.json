@@ -1,0 +1,13 @@
+{
+  "image_sha256": "905d9a5eef21345ae3fa34896600e07254ce0e038b5fa4209f2f64fe7804f074",
+  "renderer": "Metal Apple M4 Max",
+  "visually_inspected": true,
+  "mesh_update_cpu_ms": 57.67,
+  "performance_benchmark": false,
+  "tests": [
+    "surface_normals identity refinement",
+    "surface_normals rotation and affine stretch",
+    "nipple_refinement full bindings and response"
+  ],
+  "calibrated": false
+}

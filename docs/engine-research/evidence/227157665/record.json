@@ -1,0 +1,119 @@
+{
+  "repository": "inexorgame/vulkan-renderer",
+  "repository_id": 227157665,
+  "commit": "ac0b20fd80b987b3cdf567143147bc2fd054751d",
+  "source_url": "https://github.com/inexorgame/vulkan-renderer/tree/ac0b20fd80b987b3cdf567143147bc2fd054751d",
+  "readme_path": "README.rst",
+  "readme_sha256": "6067a9270470704042269d664fc9403fa5c903da64627e3953ef31b43532a0e3",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "c94a5ff6ce5de9b5122d5cd6af391c674daef6a6"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "3d99556e8ceb288bfe4257824a980bd1e468dc8c"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "4899cab53e9511feeed28477b6831ec78e1a6d43"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e16c8cbbe67c810d3b931441b42212615ee851e8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5808493caadf8a7cfa76ed6ad01f23d97aaab681"
+    },
+    {
+      "path": ".readthedocs.yml",
+      "type": "file",
+      "sha": "fb7399bae8bde7073a5c5fc75ae1d728043b4f0f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8c2d3369a304a6325a0519b2157e7e949b52ed63"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "364fc25cb56ef2921aad807d04ad143f2438a898"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "745b43c7de3e7dbf6339050d8a9e996915a6af39"
+    },
+    {
+      "path": "README.rst",
+      "type": "file",
+      "sha": "7a548a3c929d20412fafa0b4a477a70af73cc4e3"
+    },
+    {
+      "path": "SECURITY.rst",
+      "type": "file",
+      "sha": "bddab660ccb02ac0bcd5949820c9dd2ddc0414ac"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "76d2947abe697e105e65c9d73b00f6a6b9164f5a"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "126e78bc519ea1719014eff99258816231df4d54"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "bafd9e955b141775e0d5cf131abffa82495a4e2f"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "9283bae6c5d742dc2afc4fb1719125cd2aa58662"
+    },
+    {
+      "path": "example-app",
+      "type": "dir",
+      "sha": "90210774bbd367cd30492e811250d91be306f835"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "f8580edca164b2bb7ef20bede845cf409cbbd181"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "31e527c49a6ebc1f3f9fdc30faaefdad87b03f66"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "b5cb5eada7d8fe908baf49bc74558513b84cd48f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a328806be54c16c2c27081697bf2ebf42c3b45b2"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2e92db0009d3d019011926b74482140de612f199"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README states objective of future octree game engine; present include/src/shaders/benchmarks and CMake establish rendering project. Full gameplay engine not proven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

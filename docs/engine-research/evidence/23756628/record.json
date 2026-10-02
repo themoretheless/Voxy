@@ -1,0 +1,149 @@
+{
+  "repository": "Selinux24/Skirmish",
+  "repository_id": 23756628,
+  "commit": "242d421098fb9cbba63e43a71bd34db32203709c",
+  "source_url": "https://github.com/Selinux24/Skirmish/tree/242d421098fb9cbba63e43a71bd34db32203709c",
+  "readme_path": "README.md",
+  "readme_sha256": "9b9bbfff055dfd07501c5c134c4ffc716f055d085f0c2827a767397c1bd30854",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "776b99378ef81d4a389aa8afc33d925198088764"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "39626700751a60df35781eb7a4837cb49c589e73"
+    },
+    {
+      "path": ".sonarlint",
+      "type": "dir",
+      "sha": "23275531b4c3440a08d1f4cce516140b2281a4e8"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "570f6894dbb78156bd7b32a935a02d066f89fb5b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "380356a201b609e29d3bdc74e71eaff168f792e1"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "cd1560f34603179b6ada0f9a09c88924c3422182"
+    },
+    {
+      "path": "Engine.Audio",
+      "type": "dir",
+      "sha": "9c579634806e2daaabcdd6ca759c7e61283192d2"
+    },
+    {
+      "path": "Engine.Collada",
+      "type": "dir",
+      "sha": "66df1a975065e9355ca58a40cf8016855f2e24aa"
+    },
+    {
+      "path": "Engine.Content.FmtCollada",
+      "type": "dir",
+      "sha": "0118a5b718e1b3a2b3e0a0e6eb71c8b718d2fb14"
+    },
+    {
+      "path": "Engine.Content.FmtObj",
+      "type": "dir",
+      "sha": "54f8c8f266955ed71dcb1befeed317cc81c7a02e"
+    },
+    {
+      "path": "Engine.Content.OnePageDungeon",
+      "type": "dir",
+      "sha": "0da6b1288931aa292b91908de9de3d1b44a83e33"
+    },
+    {
+      "path": "Engine.ModularScenery",
+      "type": "dir",
+      "sha": "876cfd8b68f180ad52dfc94f0251b0c5df25b21d"
+    },
+    {
+      "path": "Engine.PathFinding.AStar",
+      "type": "dir",
+      "sha": "d97d3289c8f8aa5de57e266ce33fbf0ca8f1c94f"
+    },
+    {
+      "path": "Engine.PathFinding.RecastNavigation",
+      "type": "dir",
+      "sha": "b211023233a5772b6d66eef64b3f2a12d12687e8"
+    },
+    {
+      "path": "Engine.PathFinding",
+      "type": "dir",
+      "sha": "e513f9c8221ef8d8c10c1c8e98512ad91d666ba8"
+    },
+    {
+      "path": "Engine.Physics",
+      "type": "dir",
+      "sha": "e9c4a8084cb91b5bad00212725ed5ef5f69132f1"
+    },
+    {
+      "path": "Engine.Shaders",
+      "type": "dir",
+      "sha": "c7b63028ef2acf011e5351c90aa7d7c0d7912ca6"
+    },
+    {
+      "path": "Engine.Windows",
+      "type": "dir",
+      "sha": "c8a4e97e102c032df2e21aacfb939035bb838060"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "cdab6f5443e18fcc4b5e32cb15783526ab834878"
+    },
+    {
+      "path": "Games",
+      "type": "dir",
+      "sha": "caa149d33e8f8f7af2c8391c77c7866d0b668dfe"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "89ccce07bd03758121b1fa152afbb1ebe6096e94"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bac9080491932dfa564ad4c83076d8e3de1c1672"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "ec08fe3a5605fafdc50e5e632a4496fa8d4b17d3"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "f90b864544b4d6201ae05d7a02855a7f75e64c34"
+    },
+    {
+      "path": "Skirmish.sln",
+      "type": "file",
+      "sha": "b6006a7f2a67a9fce5ae5fe8ce4f79401ab6a416"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "18bc501fcdd126d9e89ce6b9268192260ecac238"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate engine audio/content/physics/navigation/shader modules with game-oriented scene/input prototypes; tailored runtime, not general maturity claim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

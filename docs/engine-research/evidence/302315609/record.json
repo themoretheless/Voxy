@@ -1,0 +1,172 @@
+{
+  "repository": "beyond-all-reason/RecoilEngine",
+  "repository_id": 302315609,
+  "commit": "ff8e2a171613321c8dadca995fd74583d25f4c3e",
+  "source_url": "https://github.com/beyond-all-reason/RecoilEngine/tree/ff8e2a171613321c8dadca995fd74583d25f4c3e",
+  "readme_path": "README.markdown",
+  "readme_sha256": "d18d329fe418bd7eca2ee194564175156e2244bb1c424f81e83a9ac37b44c93e",
+  "entries": [
+    {
+      "path": ".cmakelintrc",
+      "type": "file",
+      "sha": "678cdce66dbf7669c00f4b8ba58121310ca7f6f5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "1a0bc7a65bcc5c2f101a9b644a4143e9e2feba1b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1cb3d2064d8c4100094c2e7e2ab1c2250c94c1d8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ffd056880bdcdc3471c43bb59c9731350627f1aa"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "833220ecc57475d0fcebd6c198357e747ad5caf7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "676c51327eb283b7d2680abff981129ca07a95ba"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5883efb4eca4809381beea063b28ab6d9cb7ecda"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "4d346e245001cb533f6edff5898ca0e45b6bc92c"
+    },
+    {
+      "path": "AI",
+      "type": "dir",
+      "sha": "12fe9dde92e873e8c294f9bdb1d4475cfc9a22b0"
+    },
+    {
+      "path": "AI_POLICY.md",
+      "type": "file",
+      "sha": "c43ca41d6c34fa33f828b9d4ca97b784b805995d"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "711e2f0116b795560ca0ccba1466ad764dbbee7c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "da60d1095f14870e04835c98f580b0fe940bb713"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "d5a10e36d0ebd6b279429cdba68ded89a6c530ae"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "aabd9f4d9716327062a906d96bf3a73e06dfa462"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "992e6a7ffa20f26fb7e42ecc5b02391f0782c9d8"
+    },
+    {
+      "path": "LICENSE.html",
+      "type": "file",
+      "sha": "0b5ed432089bfd9d26726ce43be073f9352184af"
+    },
+    {
+      "path": "README.markdown",
+      "type": "file",
+      "sha": "b6b1fa3ce8e3a2d82bb9c4d5355ff85c873d6ee4"
+    },
+    {
+      "path": "THANKS",
+      "type": "file",
+      "sha": "1d73f742ce136476cbc6c3869328883206843986"
+    },
+    {
+      "path": "VERSION.template",
+      "type": "file",
+      "sha": "08faffbaae3f7d6c982780f6a7f9085b92a957a1"
+    },
+    {
+      "path": "coding-agents",
+      "type": "dir",
+      "sha": "1bfec4ddc436d4a60473ff5f6f8967fabbd56a39"
+    },
+    {
+      "path": "cont",
+      "type": "dir",
+      "sha": "fc75db2c023a72e93373fcd73906ef6cd1a37187"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "f2bff71b8d75dec7d32ae310c78059c0bf481ad6"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "eea721406f56d0126085bd852b02140c9e33d501"
+    },
+    {
+      "path": "docker-build-v2",
+      "type": "dir",
+      "sha": "25722c20f28cbcec373db2138cbb0f707e28c1ce"
+    },
+    {
+      "path": "gpl-2.0.html",
+      "type": "file",
+      "sha": "6003232d584075012a70766a916811c035152ef3"
+    },
+    {
+      "path": "gpl-2.0.txt",
+      "type": "file",
+      "sha": "d511905c1647a1e311e8b20d5930a37a9c2531cd"
+    },
+    {
+      "path": "gpl-3.0.html",
+      "type": "file",
+      "sha": "d64890f8cfadcc54287219fbbdd0a126a315334e"
+    },
+    {
+      "path": "gpl-3.0.txt",
+      "type": "file",
+      "sha": "10926e87f113fb026c366866d6fa466061562870"
+    },
+    {
+      "path": "installer",
+      "type": "dir",
+      "sha": "5e5090c8aec408e8a7759fe6356cc28788a5df6e"
+    },
+    {
+      "path": "rts",
+      "type": "dir",
+      "sha": "bfe3d9a1bb352a7f87e684592eab74a4d4528e23"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0377eeaf116bce92dfc84b81f608825bc6d246a2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "5c8d26bbf474b2a40fed6972ecab815b63709a50"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

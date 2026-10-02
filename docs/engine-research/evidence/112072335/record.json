@@ -1,0 +1,49 @@
+{
+  "repository": "0xE111/cat-400",
+  "repository_id": 112072335,
+  "commit": "df9f2fea2430ffca8461279ca93a7a00c7c9a763",
+  "source_url": "https://github.com/0xE111/cat-400/tree/df9f2fea2430ffca8461279ca93a7a00c7c9a763",
+  "readme_path": "README.md",
+  "readme_sha256": "14cd4b7334b1fd8f9c158b7c289edf91d11a3d565a5cb30e5bb261f35af38b18",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fff8c0de9eded084f4a17e8666e599d8a46017d6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f7b0b10ab5246c8b83f6be6c2f79eee7c6d1b3d1"
+    },
+    {
+      "path": "c4.nimble",
+      "type": "file",
+      "sha": "90d1d7118dd634aa5618dc61b130b451ceee5e84"
+    },
+    {
+      "path": "c4",
+      "type": "dir",
+      "sha": "f5c749068e8d26e14bed281947fea492994e1a69"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "28f2411d85d8bfa6730f3b635ab34a1a7c3c34a0"
+    },
+    {
+      "path": "nim.cfg",
+      "type": "file",
+      "sha": "ed8aa44eee25dba02e772473afdabf8a3a9fae3a"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nim modular ECS/message-based game framework explicitly identified as framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

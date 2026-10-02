@@ -1,0 +1,59 @@
+{
+  "repository": "yoyoengine/yoyoengine",
+  "repository_id": 679954837,
+  "commit": "b74763e9bbe00c5d15f676b7d56f643586ec0c1b",
+  "source_url": "https://github.com/yoyoengine/yoyoengine/tree/b74763e9bbe00c5d15f676b7d56f643586ec0c1b",
+  "readme_path": "README.md",
+  "readme_sha256": "4e9802226c88af254c915584d40f8b7ab4f962e4f7039e5f1f810555ce11d822",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a8ce3d73d61cc92131d925625b9a21cdeba94b38"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0acfc183465aaed9b73f161395bb07e07b0babb9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2eaeaefbfd0c0acd7fc339c2df3985f62b28d2ef"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "23c5586769a35bcdd4f1a57f4f78cbc900601777"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "5f17ef8de17cbb10a5b25c43ea30ad9d4deeea56"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e4adef84d6a4c5345579728cdfcdeb23a22f553e"
+    },
+    {
+      "path": "RELEASE_CHECKLIST.md",
+      "type": "file",
+      "sha": "40dde9745ec2e75d8d7076fc9727775b076e4aca"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "a3ea57f303b460c4deb68ac918c99021e7166ff7"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "12e717adcf5f554564b831533729a436f510b589"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate C 2D engine/tools, event scripting API, asset bundling and visual editor workflow with game consumers documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,134 @@
+{
+  "repository": "evennia/evennia",
+  "repository_id": 16120959,
+  "commit": "a89a9b94e4d7ed0acfee86def533b77bf6baa512",
+  "source_url": "https://github.com/evennia/evennia/tree/a89a9b94e4d7ed0acfee86def533b77bf6baa512",
+  "readme_path": "README.md",
+  "readme_sha256": "9adec77ac824519679bf443677a900a20548d3f9bb206829a76176ab5ee6303f",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "c96b281fd1f63eef2de3d3ae1c449c0f20767b96"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "db7303d7253e65d1b1ca5eb38dc6c91e72b18b1a"
+    },
+    {
+      "path": ".flake8",
+      "type": "file",
+      "sha": "7da1f9608ee1595463f3aefec0e087e57ca6c49f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1b26c4ccfdbac81ab0026c55a4b1b73e1da1d83d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bb0bcd929aac896d782381acaa91965e365dcef5"
+    },
+    {
+      "path": ".release.sh",
+      "type": "file",
+      "sha": "783d4688724822e0b605a82dafb3e54ca51ad587"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "be37a8c75c5483ac40becfbb08c6e199c87ce6af"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "29bb00fcd3e000076b8dd63f57742a5bb090915e"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "43c994c2d3617f947bcb5adf1933e21dabe46bb5"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "ef731d5e22d389ef03bb3b93c652be17c4e09b03"
+    },
+    {
+      "path": "CODING_STYLE.md",
+      "type": "file",
+      "sha": "52b6bcfb6a393b9cb3579475b280cea69775fa33"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a26ed037d0442183f797be5826d23d277170c987"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "0ca2a8dd74bd533c319f76fe65551df16a536027"
+    },
+    {
+      "path": "INSTALL.md",
+      "type": "file",
+      "sha": "54cc9532af5a62832f2d4967d5cadea3fb9f701d"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "0daabf80bb4de11911418b7d418d7972109e92ac"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "f3765916945ece9c899ea35b658c058270752311"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "35f766ae5a71be209fd65d42eca5063f994fc52b"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "4e77f162a543d41060091901019d7672919c3889"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "5346ab4fd722f05e1762f2b2ef85d7e9e626536f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "844fa36aee9e73a69ec3acc0dfcfeb644d7c2222"
+    },
+    {
+      "path": "evennia",
+      "type": "dir",
+      "sha": "b8d121cb6c6310d445c5335a418f12c9de078c35"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "ec76ca258c3d6f4f7c6412f00dc372c53161f3d3"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "246c1c2fcdda80b8e29ac9f02f1d9db81bd1a196"
+    },
+    {
+      "path": "uv.lock",
+      "type": "file",
+      "sha": "46895bdb2e490ebbc0c675582e56cb4a320d74a2"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies text-multiplayer library/framework; evennia runtime with Python build and tools. Separate from engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

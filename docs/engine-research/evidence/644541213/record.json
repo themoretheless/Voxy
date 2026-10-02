@@ -1,0 +1,154 @@
+{
+  "repository": "WorldQL/dreamlab-engine",
+  "repository_id": 644541213,
+  "commit": "d7024b37f6eb818d566a905abcaea12c17e0f3e1",
+  "source_url": "https://github.com/WorldQL/dreamlab-engine/tree/d7024b37f6eb818d566a905abcaea12c17e0f3e1",
+  "readme_path": "README.md",
+  "readme_sha256": "196aa80ab4c01adf536e5d762dda6021e40673ff95e399ff031c5330affae0e9",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "204c27e35fa0212c126c0751c11d9fa90d78b413"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "383809536e5880f559649b5d118e17a89820d9b4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0ddcf430ad2f3ec975ced10c2b31c83f716ce9f8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ee8404c07e88d6102c949c03ec040ee469394213"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b0ac3ed9c09f528e05b0668aacb8b046dd3bdcb5"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8438984b19f8880006e809026e38b2a8fd535001"
+    },
+    {
+      "path": ".prettierignore.ci",
+      "type": "file",
+      "sha": "f0f96f80b6cee0c0903b537d7ceaab7a36f371d2"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "b9533e12b153d91c6cbc8a0d2c43953f4b9657cb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a3a9015b6bbcb1398ce0fb7430fb3ffebb0f083a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e6aff997aa5f5b58f15b4f10839b9fb2a96168e8"
+    },
+    {
+      "path": "_pre-commit.sh",
+      "type": "file",
+      "sha": "b5cf263c8948e9cef65f2d1a1384566706e0c66c"
+    },
+    {
+      "path": "build-system",
+      "type": "dir",
+      "sha": "00b0c8b52a01fe2dcd6d9a8447648bad4e9a8953"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "d95635d701b3ef4d24e8d153e86495c7b86a3833"
+    },
+    {
+      "path": "coding-service",
+      "type": "dir",
+      "sha": "8b8314d4a0e0fcbc4281f3cb466122016d053dad"
+    },
+    {
+      "path": "deno.json",
+      "type": "file",
+      "sha": "80c86f1a44bd8c9990526215ae529daddab9dce6"
+    },
+    {
+      "path": "docker-bake.hcl",
+      "type": "file",
+      "sha": "957ec8bcfb3860389deea79b82a4cc8572f617b0"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "a069c39602eaf45cd324d588af679490d4c860dd"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "0efd0e0ec087d321cd07748340679f6990090e23"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "91955345ff095d34cd76a6af4a1f21651fe629d0"
+    },
+    {
+      "path": "multiplayer",
+      "type": "dir",
+      "sha": "9b0f7391e3f2b6a3e0b6ef5d72d0a85dd9826830"
+    },
+    {
+      "path": "proto",
+      "type": "dir",
+      "sha": "9be7410693d0a7302ee2d7a9160c0d75030818e3"
+    },
+    {
+      "path": "scene-graph",
+      "type": "dir",
+      "sha": "2f29690df0036258b365ecf3bef1b1423a345f99"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "09b44d5434ba1ccc20031dec59bcdc9fcf1aa072"
+    },
+    {
+      "path": "singleplayer",
+      "type": "dir",
+      "sha": "06676236c9064ff57be9d3f7a6d09a03f1bea215"
+    },
+    {
+      "path": "standalone",
+      "type": "dir",
+      "sha": "cc48d261dca07707d3299d0c74ffc4b46507866b"
+    },
+    {
+      "path": "typedef-gen",
+      "type": "dir",
+      "sha": "4c71d1e0c8715288972e3018eb5205033ada2e41"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "59f37eb61a264a0201a91c726610200a78779b16"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "b73746ba3d25041c1d3b9adad9d73f42eca1a189"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies multiplayer 2D engine/editor; owned engine/editor/multiplayer/client with Deno/TypeScript build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

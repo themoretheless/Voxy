@@ -1,0 +1,24 @@
+{
+  "repository": "mhttp-org/web-sdk",
+  "repository_id": 493091787,
+  "commit": "ccc00f1150dae6a3293b0aedfc72cb29a703106b",
+  "source_url": "https://github.com/mhttp-org/web-sdk/tree/ccc00f1150dae6a3293b0aedfc72cb29a703106b",
+  "readme_path": "README.md",
+  "readme_sha256": "5d48de745c9bc591ae9c1cd5a19ee394798e4a40b62d54015a246a175182181f",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a43eac8577841a69c0b72c462a45b5f3ab001cb6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8afe169395d42ca8e1f1a025babe1a929a997e09"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Web portal SDK landing README and license only; no runtime source in pinned root.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

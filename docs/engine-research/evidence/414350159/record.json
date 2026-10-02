@@ -1,0 +1,89 @@
+{
+  "repository": "AbyssEngine/AbyssEngineOld",
+  "repository_id": 414350159,
+  "commit": "b0adec178eda170b8d9b2fc02c3b66b3978e2319",
+  "source_url": "https://github.com/AbyssEngine/AbyssEngineOld/tree/b0adec178eda170b8d9b2fc02c3b66b3978e2319",
+  "readme_path": "README.md",
+  "readme_sha256": "48cdcd1233d3a9c2f3048b6f3b72128f5a22a4f41504d4ec6e6add5239355998",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "9a550771d189aae84a8f019060f4083c1299a787"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ec8da56071115ceda90d2e7417d35c6c9d382e35"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c39eb92758b0d237d9827530c2122deb49e31ae7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2911dd4adcaca926c415c622dced9604c619ba03"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c5fd402effab49fe481465111c90bd295c6e81b6"
+    },
+    {
+      "path": "CMakeDMGSetup.scp",
+      "type": "file",
+      "sha": "cd0c5cc816c7645abb3d9da4f24c7ddf7d33d724"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "80f4dd4aadbe631da41e449d1d43ca47737eb8cc"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "680509d7336901b3d1c88c945cb2682ecdbe742b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "52bb0dcaf2c5f8947605ce896bfe0e8e9f98b734"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "8afd2075e565c49ac2307d3734bac3d738e6e16d"
+    },
+    {
+      "path": "content",
+      "type": "dir",
+      "sha": "6997e134ca2733cea81440cb9c1e319f89be6512"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "e3d634c7145f47b1d91209bb1d3611704aa7e322"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "644ad15f5f82c3121cc7c7501d27d2d03e78ea56"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "92936d8311cd7763276bc98aa7b9bbaa1850792a"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ARPG engine; owned src/content and CMake/vcpkg build, historical repository tracked.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

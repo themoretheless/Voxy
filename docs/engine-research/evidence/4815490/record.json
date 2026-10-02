@@ -1,0 +1,159 @@
+{
+  "repository": "renpy/renpy",
+  "repository_id": 4815490,
+  "commit": "e46bb291c86c87de1c3d853a632507381db7df64",
+  "source_url": "https://github.com/renpy/renpy/tree/e46bb291c86c87de1c3d853a632507381db7df64",
+  "readme_path": "README.rst",
+  "readme_sha256": "97601d9e0b5b487043206da6910a8334b7e35159bb59fd10091652cab0bdd031",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "26bb59e312d2bb3ac168b5d837de18acdbb743b3"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "a9029a5c54a9de0715788d6e7086659e812be70d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "60544ac1efc18d0e90bba43b4a2f2f6535fb1de2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5f44964e753f7a6c8be740f4c2e95fb0b2ce6476"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "14685fd74d99aaccff83a58f143d6ce4e6b5a05f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "fca17bb85c3ec5d4be2d9a673910f634a5933bed"
+    },
+    {
+      "path": "README.rst",
+      "type": "file",
+      "sha": "fc23005c1d003b93552cd884eef0d3094c67c63a"
+    },
+    {
+      "path": "TRANSLATORS.rst",
+      "type": "file",
+      "sha": "cb28e52654407c2248156627c521d168759c5c29"
+    },
+    {
+      "path": "add.py",
+      "type": "file",
+      "sha": "1b226f2ccfcd52f0707d82ee0b7ef4fcc4355416"
+    },
+    {
+      "path": "after_checkout.sh",
+      "type": "file",
+      "sha": "564825de2b56f2f84d7a609b7dce3fe70466c508"
+    },
+    {
+      "path": "distribute.py",
+      "type": "file",
+      "sha": "70292cfb6ee9f7b9bf960e32fdd7e97676313a2c"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "9fee411455ef03b06777ffadbf6e32f725c96578"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "586141886af84a7b2283eef404bc9790f78ecc7a"
+    },
+    {
+      "path": "main.py",
+      "type": "file",
+      "sha": "60633b4ff4d4033f98d77f6a32425d6eff799f8e"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "f52666c84251118558f586902921766f9c2120a5"
+    },
+    {
+      "path": "renpy.py",
+      "type": "file",
+      "sha": "e1aed205d52b8b5e07d105c6a6a2d626090fdfb7"
+    },
+    {
+      "path": "renpy",
+      "type": "dir",
+      "sha": "01a45a15388232a92c0ee10a95fd589d4996ca1a"
+    },
+    {
+      "path": "run.sh",
+      "type": "file",
+      "sha": "bd5f9f87d8309dc97041bd83d8986549df60ec9d"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "e59d7fd6b220253ce09628a10a54ae82a338dced"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "e1eb4fe3a3550e36de5976cbfd7af8603d588c94"
+    },
+    {
+      "path": "sdk-fonts",
+      "type": "dir",
+      "sha": "7d398a7371a8b8c57361e8998ef5574ba71884f9"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "63a94c329fdff25a0503c9c7ded48463c5c7bf7b"
+    },
+    {
+      "path": "sphinx",
+      "type": "dir",
+      "sha": "3580f038279a2eacd1e88e5d61f25248f89dd9e7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dcde3e97eeb0f5a72ef29e1ea51198203d64c358"
+    },
+    {
+      "path": "test_dlc.sh",
+      "type": "file",
+      "sha": "073615f7b0dccacb9eb1f790bee2ef82ca751048"
+    },
+    {
+      "path": "testcases",
+      "type": "dir",
+      "sha": "6f90735933f3d6b5cd36316d0cd9497f02c30da2"
+    },
+    {
+      "path": "the_question",
+      "type": "dir",
+      "sha": "e5d7f9d249472ef80fa1994e116aea5a1717d5f0"
+    },
+    {
+      "path": "tutorial",
+      "type": "dir",
+      "sha": "b182aa2dc59fc3393e0e16aa51089edc373afd8e"
+    },
+    {
+      "path": "unittests",
+      "type": "dir",
+      "sha": "a3c867735105070963ef73f4e59eae8c7d134eb7"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies visual-novel engine; runtime, renpy/src, launcher and build metadata.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

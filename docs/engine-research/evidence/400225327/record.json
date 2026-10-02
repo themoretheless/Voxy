@@ -1,0 +1,52 @@
+{
+  "repository": "MinaPecheux/UnityTutorials-RTS",
+  "repository_id": 400225327,
+  "commit": "152128b8dde0c87fa09e2f915957e9b81f4510e0",
+  "source_url": "https://github.com/MinaPecheux/UnityTutorials-RTS/tree/152128b8dde0c87fa09e2f915957e9b81f4510e0",
+  "readme_path": "README.md",
+  "readme_sha256": "e03909b46aad77220ffb7c1ff836a788f6d80b1065e35167d9bef2b833e00665",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "739b0040cbcd090d0c8044e2597c4fa7522930c6"
+    },
+    {
+      "path": ".vsconfig",
+      "type": "file",
+      "sha": "1f4894be0a53f2c39359548582f7cefd4432fad5"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "841c837e210f6e07e5d217eddfd1a117e82f5950"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9aeae68eb5a3b7b7e4e2a5ccdca1253aca729dca"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "e8685411e3191c118fc74ffea3fa282c5e94f04b"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "de09618f7a74b0a3ecd4f87bf0aa76cd1bb21603"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa75ae7c0c88c4ed8825339479c93595a170891c"
+    },
+    {
+      "path": "imgs",
+      "type": "dir",
+      "sha": "1a177383efd781de9c7e8badb4e415d12c080087"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

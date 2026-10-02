@@ -1,0 +1,79 @@
+{
+  "repository": "adrianensis/DruidEngine",
+  "repository_id": 90478457,
+  "commit": "6ffed8e78c1956b08944c348a646bfc1a025dedc",
+  "source_url": "https://github.com/adrianensis/DruidEngine/tree/6ffed8e78c1956b08944c348a646bfc1a025dedc",
+  "readme_path": "README.md",
+  "readme_sha256": "83cd67fd0375126fa52873aae204d8617652c88695a045499a7a145271ab7e2d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3defc4f8ae8155561ee77a3944068fd2b19fe7c8"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "84235236de1805855f75081c828f79655ec06ba0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "cf3593c2910fa86474ae93ce58f79fda98afbe32"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "b6f13ab3ddbb67029bbb8cf4df92b9da8d79cab5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "54f6a81d187a2da85ec8ede9febb2ea7dab1c1cc"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "802e4a8d8623385b337ba308d7d506a3d93cc538"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "b027dc1bfec1e6c69690a7b1597fd0b37ca36938"
+    },
+    {
+      "path": "druid.jpg",
+      "type": "file",
+      "sha": "94cd4391b539f7ba37553f0abd8344ae69da548f"
+    },
+    {
+      "path": "druid.png",
+      "type": "file",
+      "sha": "f8eb290431b29ef393176db9aa2f98005fb7ed21"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "188ccd56fe919f97ec502dcb6b1bb16fce0f5669"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "43a0fe8f094bbfe71e168e6d196b91173168268e"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "62a5e4060e3a5de81170719d6b207a3332d88a91"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "2e1a3b7befc2d83e98bac2e7ea723ed6401fa63f"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Learning engine with source/config/tools/tests and Linux build; pinned README does not establish actual runtime subsystem coverage.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

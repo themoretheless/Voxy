@@ -1,0 +1,64 @@
+{
+  "repository": "schell/apecs",
+  "repository_id": 469533347,
+  "commit": "c45239fc439804438a3cf2da8391362e27e0efdc",
+  "source_url": "https://github.com/schell/apecs/tree/c45239fc439804438a3cf2da8391362e27e0efdc",
+  "readme_path": "README.md",
+  "readme_sha256": "8ed28170bca53f97cc54e73a9f56918b5bea622695962cc137383dcbf6b23095",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "dcff3bdd2faf91180f95487b3f424ee166f757f2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "18efd9b4a6757483acbde79405906ea23a5558e9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9b2f4aaa6ec5d6362367dd632d3332e1d9042240"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "c3addc777e00d5bdf665beaaad270c824111d3c3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6904e5ff3983187cb1d49e0e0c684c9f535c2670"
+    },
+    {
+      "path": "benchmarks.yaml",
+      "type": "file",
+      "sha": "112e3ef4a135663d2fe34dc7391e6e563ed107b3"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "ad9bd114bed6804f059147fddc831c8e233a55cd"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "6f5b287bec673c7cb090a0e503e8f0b7ae148dd7"
+    },
+    {
+      "path": "manual",
+      "type": "dir",
+      "sha": "d96c73cc41bf83c8f8c15112439b7a558ec5e280"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "fcb4fe46a3933cd0f344089ddefb440e6873e867"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust async-friendly ECS/resource sharing library, not complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

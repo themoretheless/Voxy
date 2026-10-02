@@ -1,0 +1,79 @@
+{
+  "repository": "fusionengine-org/fusion",
+  "repository_id": 646354600,
+  "commit": "9c30a1ffa1cd9e63dc32dd332a7f27c8d032f5a4",
+  "source_url": "https://github.com/fusionengine-org/fusion/tree/9c30a1ffa1cd9e63dc32dd332a7f27c8d032f5a4",
+  "readme_path": "README.md",
+  "readme_sha256": "3847101657f86e7cbe01b84d1902fba4d573be7f15735acaf754445d49da4375",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b03355ab9b2bf1d0b91bb121f33832be408f18e8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f8aafc4c770cfbda3d57e879c19d497d462a534c"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "392a4f521cf9019202c0f9494a485052b73fbc01"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "24d914a0f153effd0df19b9fa0c5ba8035a08380"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "de832ec6a4b6f63ba52fee8a5a1201234ca988e1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6899acc8d82bbdd08b7ed861a75b6f4c741be190"
+    },
+    {
+      "path": "icon",
+      "type": "dir",
+      "sha": "4052c4e8278ef2aec3967a66bdf13eca2ab0e489"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "4930af60a552f3435b007de9a0880c2b51e05438"
+    },
+    {
+      "path": "pdm.lock",
+      "type": "file",
+      "sha": "1468d08c58baf941d53b20e128fbe596fb79ade0"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "cbec9135058ee14cdb357ec4a81dcb0a9ec27ee6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2d5dfc430a1be1df03031e4ac33f37480bed1285"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "b84f136b2f7e13dc391a7309a7b13f9c7dcd4286"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python/Pygame game engine with src and tests; README explicitly says project/infrastructure abandoned.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,72 @@
+{
+  "repository": "GDQuest/zed-gdscript",
+  "repository_id": 763677579,
+  "commit": "1804869fbd50837b80007b067d5f2b3bb965eb5e",
+  "source_url": "https://github.com/GDQuest/zed-gdscript/tree/1804869fbd50837b80007b067d5f2b3bb965eb5e",
+  "readme_path": "README.md",
+  "readme_sha256": "19f5d0ea71b6e650130b5bc1ce067d9cbae1eb479c7eb70252b27737626c9ce5",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "63f3a134d24aab1e7108bc79ca32ecc583bd5f2b"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "58f6dfd6a84667635baa0ae4f37b13d1afe51d3f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "5468707509edb890ad2839ce501882ea7a06503f"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "7b57a192533e0746cfea168ac1d68e6fd8301b5b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "600968dd355267b073d2c8cab0c5dcdd4940df0a"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "29bc2593dc57a6027f0ba0abc20fa6c38ff12a70"
+    },
+    {
+      "path": "debug_adapter_schemas",
+      "type": "dir",
+      "sha": "d74a77ee8b01f0e94a9f816a106bf5ec588a49ad"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3abd034a9e355fbd1578461efc6600a499da4997"
+    },
+    {
+      "path": "extension.toml",
+      "type": "file",
+      "sha": "46368bffcbf97c961f493967ea69954ac4831fa2"
+    },
+    {
+      "path": "languages",
+      "type": "dir",
+      "sha": "3904cd2ce5779f0dd5e8113275458b1e12732b40"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "b5414c606ae5f9fe9feb0c40ea5fb7cfbd502491"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "11d101f4eaf6632e9debcddf6dfc2447c474edda"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

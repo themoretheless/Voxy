@@ -1,0 +1,114 @@
+{
+  "repository": "fibbojs/fibbo",
+  "repository_id": 793629680,
+  "commit": "56f7ad7e37972a6e6a06024bf024fe522cf90c2d",
+  "source_url": "https://github.com/fibbojs/fibbo/tree/56f7ad7e37972a6e6a06024bf024fe522cf90c2d",
+  "readme_path": "README.md",
+  "readme_sha256": "e443223f23bc68df4e8dc576b31e18db756c3e96e81164462e773d7a35abf9b9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "10eaacc62dd080a90550426f1e205cf3267f66e3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d163231d512f8850473e02f6a78be1efddc219e2"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2d1f7dfe07094f3708e35c97fa363b7a89156c3e"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "666b53036992c24b8d5209930cc8bda561360d35"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bbea9620a1a71e9ea946514e32f780d9186f0645"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "881ab12d8997c517b69ecacb1be9a7abdcbd9dd9"
+    },
+    {
+      "path": "biome.json",
+      "type": "file",
+      "sha": "145899c1e318f30f57b48ab0308e0f5bcb17ba05"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d3220070a4f92ce6e348e7c765b18b69e303be06"
+    },
+    {
+      "path": "nx.json",
+      "type": "file",
+      "sha": "b3426343650bef6a0e5b80c406689f5eb20ae726"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "83e584e2998b7c9122c607ef64d16cdef4145175"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d03661c0fda12c2912dbcb5b818ef20457ad2f0e"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "f6a86cc294fa05bbf1048feee96719a9ddb2c638"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "6578334ee7208087ff1a0d64c8eba4ffe85cdef5"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "5ed6515deba9cc1d0a5fc2ff75e7d0d8a3303fd9"
+    },
+    {
+      "path": "tsdown.config.mjs",
+      "type": "file",
+      "sha": "1295278968d28f3e3a3a413dc841a6bc6aa800a7"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "bb5bbe19ba72958a871fd4caddd0e9d280a686bd"
+    },
+    {
+      "path": "vitest.config.global.ts",
+      "type": "file",
+      "sha": "574c197215ccce0e63c0e99960f4b9c28d63c0a8"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "aa2918c9d79c6614728d035e3d7533bb76268f20"
+    },
+    {
+      "path": "vitest.workspace.ts",
+      "type": "file",
+      "sha": "1d5eb28fd6a4908cefd57f70a3b7b72e72386965"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Web 2D/3D scene-object game engine with packages and playgrounds; functionality and extensibility unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

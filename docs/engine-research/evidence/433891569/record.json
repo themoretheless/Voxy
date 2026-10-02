@@ -1,0 +1,89 @@
+{
+  "repository": "load1n9/caviar",
+  "repository_id": 433891569,
+  "commit": "4b7ae04cfbd22e645e91278ed9820b85cf948c7b",
+  "source_url": "https://github.com/load1n9/caviar/tree/4b7ae04cfbd22e645e91278ed9820b85cf948c7b",
+  "readme_path": "README.md",
+  "readme_sha256": "cd54962e4b33297df3512ac8d71e646af37267e92813b8f5b662e86a3806588f",
+  "entries": [
+    {
+      "path": ".deepsource.toml",
+      "type": "file",
+      "sha": "18b001a523738b8027fe23bc2735a64aad6840f6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "42c6367c804ce916ce264ea0940e08a25b75c9e0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "35d0fcdd105d838dec3885b0a1d264725df1a8c3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2435c84ef3768b244229cc02833de5fec413e5da"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8031fcd875f4d0a547c17e5cae3f0405f64fc2c5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "550a83591a3ec77e11686c348cec51820c8887ee"
+    },
+    {
+      "path": "cli",
+      "type": "dir",
+      "sha": "b9689df547d70ed653b3833f09207dcb5f23fd32"
+    },
+    {
+      "path": "deno.json",
+      "type": "file",
+      "sha": "9f12b432571748925df45439bb2d0cbe45b3d12b"
+    },
+    {
+      "path": "deps.ts",
+      "type": "file",
+      "sha": "fd3c337b68f1a435b3f648269a59f899695b8ec1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "989321b2461f112e8827dfb0db70aff952f8aec7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c672f646c88716a0947902f771ab51599b35eaff"
+    },
+    {
+      "path": "generate_version.ts",
+      "type": "file",
+      "sha": "3968a3af0f9340ce5a0f274b1d62322d4668a601"
+    },
+    {
+      "path": "mod.ts",
+      "type": "file",
+      "sha": "c11db906bfa14c5522637495ef4011023f545213"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8b06b84a83dfef5e304a54d8f2df983792e864af"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "f53a4da852879f7a978dd88e69b01147cab4eba8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes a native and browser game engine; Deno entrypoints, examples and src are present. Backend libraries do not imply a fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

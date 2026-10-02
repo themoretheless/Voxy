@@ -1,0 +1,54 @@
+{
+  "repository": "lemunozm/ruscii",
+  "repository_id": 221491982,
+  "commit": "2db68e50f10735a70eaa5f433723b38a88af3ed6",
+  "source_url": "https://github.com/lemunozm/ruscii/tree/2db68e50f10735a70eaa5f433723b38a88af3ed6",
+  "readme_path": "README.md",
+  "readme_sha256": "20ebd1a15f1d2a4ab438146558f7c1af63d1577d0d9bc2f7c158b4a44685d01e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "84c369cb82f14dafddba4904dbc1328a301c59ae"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "693699042b1a8ccf697636d3cd34b200f3a8278b"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f287c92ee790a2fe905c2552fade899f3bdb50fa"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "638ab1f4f2a3eb09c8a2121b5f70adc041d2ad3f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "df5a2cad5b803ddba94f6446540bac6ad7318558"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7ee6a6e4e7eeb73424a87b9f9e4934aaaee52f8f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d1a6ff1c1e2d1aa312c0e93f00b9e9955127f86c"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Rust terminal application/game library; src/Cargo/examples, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

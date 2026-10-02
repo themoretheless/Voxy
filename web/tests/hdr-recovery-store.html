@@ -1,0 +1,44 @@
+<!doctype html><meta charset="utf-8"><title>HDR recovery storage acceptance</title>
+<pre id="result">Running real IndexedDB acceptance…</pre>
+<script type="module">
+import {openHdrRecoveryStore} from '../hdr-recovery-store.mjs';
+const result=document.querySelector('#result');
+const databaseName='voxy-hdr-recovery-test-'+crypto.randomUUID();
+let clock=1000,store;
+function check(condition,message){if(!condition) throw new Error(message);}
+try {
+  const options={databaseName,now:()=>clock};
+  store=await openHdrRecoveryStore(indexedDB,options);
+  const source={name:'studio.hdr',bytes:new Uint8Array([2,4,8])};
+  await store.save('active',source);source.bytes.fill(0);
+  const retained=await store.read('active');
+  check(retained.name==='studio.hdr' && retained.bytes.join(',')==='2,4,8','structured clone ownership');
+  retained.bytes.fill(1);
+  check((await store.read('active')).bytes.join(',')==='2,4,8','read mutation isolation');
+  await store.save('abandoned',{name:'old.hdr',bytes:new Uint8Array([16])});
+  store.close();clock+=60*60*1000+1;
+  store=await openHdrRecoveryStore(indexedDB,options);
+  const inspectDb=await new Promise((resolve,reject)=>{
+    const request=indexedDB.open(databaseName,1);
+    request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
+  });
+  const remaining=await new Promise((resolve,reject)=>{
+    const request=inspectDb.transaction('sources','readonly').objectStore('sources').count();
+    request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);
+  });
+  inspectDb.close();check(remaining===0,'expired records physically deleted on open');
+  check(await store.read('active')===null && await store.read('abandoned')===null,'expiry cleanup');
+  await store.save('new',{name:'new.hdr',bytes:new Uint8Array([32])});
+  check((await store.read('new')).bytes[0]===32,'save after cleanup');
+  await store.remove('new');check(await store.read('new')===null,'successful transfer deletion');
+  let rejected=false;
+  try {await store.save('empty',{name:'bad',bytes:new Uint8Array()});} catch {rejected=true;}
+  check(rejected,'invalid source rejection');
+  result.textContent='PASS: real IndexedDB commit/read, clone isolation, expiry cleanup, retry, deletion and invalid source rejection';
+  result.dataset.status='passed';
+} catch(error) {result.textContent='FAIL: '+error;result.dataset.status='failed';}
+finally {
+  store?.close();
+  await new Promise((resolve,reject)=>{const request=indexedDB.deleteDatabase(databaseName);request.onsuccess=resolve;request.onerror=()=>reject(request.error);});
+}
+</script>

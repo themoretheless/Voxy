@@ -1,0 +1,154 @@
+{
+  "repository": "opentk/opentk",
+  "repository_id": 14318990,
+  "commit": "513d56e1a1ffd94f53e1e8148137f49b0eb8c86a",
+  "source_url": "https://github.com/opentk/opentk/tree/513d56e1a1ffd94f53e1e8148137f49b0eb8c86a",
+  "readme_path": "README.md",
+  "readme_sha256": "2bc408997550e929969bf77d9d67fccae316b165d07e8c31ffead2f8b2339e3a",
+  "entries": [
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "f46b0e66f0ef829f3b7638fc6ed5d7bd1721927b"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cf4473724604df7ed8f79fa4680cf99179be541d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5811d7907a1404bd0c6ce803313c846917b1656f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5a31665e38149de7a6c79d53917d6400d8262faa"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2521edbfe565acddd69631076db96fc65e4dca8b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8086f352e1ec6d976ec6e4aa2c35e85a47394b22"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "dac5891990a734f1de85614675b6b130fab22940"
+    },
+    {
+      "path": "OpenTK.nuspec",
+      "type": "file",
+      "sha": "effd09581cc621515c08ab406b5bac32b41baef4"
+    },
+    {
+      "path": "OpenTK.sln",
+      "type": "file",
+      "sha": "c220971e88772b9af86404486b3a7c64a74b5545"
+    },
+    {
+      "path": "OpenTK.sln.DotSettings",
+      "type": "file",
+      "sha": "0aeeda8af8460ce565b8ed62b2bed0ca9e2f75a5"
+    },
+    {
+      "path": "OpenTK.snk",
+      "type": "file",
+      "sha": "9a58f7b25d06030b086440c66e74793df2610a66"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "971972b4189afc89669dd37b4c252b913b5763be"
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "type": "file",
+      "sha": "7f66309cd290d3e50950ce7e5668039952a723c7"
+    },
+    {
+      "path": "THIRD_PARTIES.md",
+      "type": "file",
+      "sha": "df61c8589fb3bad52b5de41040e5073b7d9db1bc"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "d5d6a3f59879929f667bd9806819b75deaa51e56"
+    },
+    {
+      "path": "build.ps1",
+      "type": "file",
+      "sha": "f63bd5d7be687d81e7d66485eea2bb16cb3451d7"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "946495c60dfec88a92c819b8798a0d190eda9a05"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "2ed735795cfc82ab12c3b42d6c8ef9f99ac3cb6d"
+    },
+    {
+      "path": "install-opengl.ps1",
+      "type": "file",
+      "sha": "7f5b23144958fa23d142e7512426eb940aba45af"
+    },
+    {
+      "path": "paket.dependencies",
+      "type": "file",
+      "sha": "4a188698271ea9df71afbc5ca7660a1a45044910"
+    },
+    {
+      "path": "paket.lock",
+      "type": "file",
+      "sha": "bdaed335540a4cdf6dd906ae10078a90e8b7b725"
+    },
+    {
+      "path": "props",
+      "type": "dir",
+      "sha": "16f48e39747cc65144295cf09023c6f9afcc1b14"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "882b741663db2bbf79802274d4f5c24e504b648b"
+    },
+    {
+      "path": "stylecop.json",
+      "type": "file",
+      "sha": "ad5d482a7cb9efb77122487da88052e9d626ccfe"
+    },
+    {
+      "path": "stylecop.ruleset",
+      "type": "file",
+      "sha": "4b7eaa42e54cf60d3385f75ab3cc701a87ad804b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "b88afc9bd1321ae3dab154c99b619ef9138b4f3e"
+    },
+    {
+      "path": "update-bindings.bat",
+      "type": "file",
+      "sha": "bb40080f983401ab30f3042163430bd8f17981fd"
+    },
+    {
+      "path": "update-specifications.bat",
+      "type": "file",
+      "sha": "9bc115696fba47107a27219406ae8166efbe36b9"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies low-level graphics/audio/compute bindings and math; .NET build, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

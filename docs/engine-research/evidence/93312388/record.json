@@ -1,0 +1,77 @@
+{
+  "repository": "GodotExplorer/spine",
+  "repository_id": 93312388,
+  "commit": "3abeaaff6cc7dcf77f0f0a3c3fd2e737169d20a5",
+  "source_url": "https://github.com/GodotExplorer/spine/tree/3abeaaff6cc7dcf77f0f0a3c3fd2e737169d20a5",
+  "readme_path": "README.md",
+  "readme_sha256": "41247a39d39a5ed1d475366e0c55ad102d5221484e0c24034fbcf58a6a725efe",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f0d6e3f29d28343b42baaa964750a4485656b2bf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "daceab94a4c9419c3767d516b1f22aa035a227ef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d287cbfdc26b3d8b5ab8279586b8ebee49146bd3"
+    },
+    {
+      "path": "SCsub",
+      "type": "file",
+      "sha": "40e77be8693829362756372a6663e930caa2c7cb"
+    },
+    {
+      "path": "config.py",
+      "type": "file",
+      "sha": "9259763fcf55bc20d0e031576ef41d16b50c873e"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "f636099428405854251043294c7034289239d93b"
+    },
+    {
+      "path": "register_types.cpp",
+      "type": "file",
+      "sha": "91b6a6dac7ddc2e265d4c6ebf0e2d832f7a8573d"
+    },
+    {
+      "path": "register_types.h",
+      "type": "file",
+      "sha": "c7693eb132312c704c7d830eea5e83a7c6ab366a"
+    },
+    {
+      "path": "spine.cpp",
+      "type": "file",
+      "sha": "910f5b2672f1fd34c88276f81be5fba56517d0f7"
+    },
+    {
+      "path": "spine.h",
+      "type": "file",
+      "sha": "cef1356d2ee40ba1b43863ed05c68349e37b41a8"
+    },
+    {
+      "path": "spine_batcher.cpp",
+      "type": "file",
+      "sha": "778d3a3f2d95dac7a76cd1fe53f75a1249eea1a2"
+    },
+    {
+      "path": "spine_batcher.h",
+      "type": "file",
+      "sha": "37f5860fee08390a0b19dc2587a4eddcd6475037"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f597388d1dcfadfc98839193dabff007a167d1aa"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

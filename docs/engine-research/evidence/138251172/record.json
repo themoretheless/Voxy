@@ -1,0 +1,109 @@
+{
+  "repository": "gilmore606/ure",
+  "repository_id": 138251172,
+  "commit": "cac23dc3f1a7f86b933716574d2336950cf2666a",
+  "source_url": "https://github.com/gilmore606/ure/tree/cac23dc3f1a7f86b933716574d2336950cf2666a",
+  "readme_path": "README.md",
+  "readme_sha256": "17eda365d82609695d57965878c6375054201276a3a59f9e9eabb8a6423f2dfd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "295467c04e8a5fe274f1c1fdb029d49790ea29d8"
+    },
+    {
+      "path": "HOWTO.md",
+      "type": "file",
+      "sha": "28eed8ae56b889d681caa6090418c39575596d0d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8aa26455d23acf904be3ed9dfb3a3efe3e49245a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "02f5719f97b694b42aeed0d9d86e372b723941ce"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "04c8c44920fa609de817f196aca73ce9d566944d"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "fc24e7a62dc288c776f8448cd073a01e7721ed32"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "ac3b18010a861dd78c9c15777d0afa69ed43cd15"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "dfcd20146213ab959ded555d093ebc598747d86e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ea00406ccc1a4e4f5d48bf7a5c6c51501cef941c"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "3341605ad3b26fce195d36c072731f481411e8c2"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "cccdd3d517fc5249beaefa600691cf150f2fa3e6"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "e95643d6a2ca62258464e83c72f5156dc941c609"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "a9c056a5702971d7e7cbf62f1794a3fbe6eba445"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d250bf93eeece35c9ed9017754744f286911dec0"
+    },
+    {
+      "path": "thumb1.png",
+      "type": "file",
+      "sha": "d6814f9c3912d17ef71f3dcd55ee085f9a0fadd4"
+    },
+    {
+      "path": "thumb2.gif",
+      "type": "file",
+      "sha": "4116324041d7a833551e1a69a337348e12eacdf2"
+    },
+    {
+      "path": "thumb3.gif",
+      "type": "file",
+      "sha": "33114f25ec3c22def0847f0980e2d5fde4d418a2"
+    },
+    {
+      "path": "ure-water.gif",
+      "type": "file",
+      "sha": "f01f582abc7e64abf27811f55261260117e16ee1"
+    },
+    {
+      "path": "ure-water.mp4",
+      "type": "file",
+      "sha": "153ae1d2ae10dd12db7ad7ad61dcf9822b8417c2"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java roguelike runtime/library integrating cell-grid world abstraction, turn-based actions, procedural content and display; src and Gradle build present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

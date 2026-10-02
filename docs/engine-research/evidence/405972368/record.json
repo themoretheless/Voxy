@@ -1,0 +1,109 @@
+{
+  "repository": "vectozavr/shooter",
+  "repository_id": 405972368,
+  "commit": "0db33018c5b08f32d29e9ccc71a6164a0d4952a8",
+  "source_url": "https://github.com/vectozavr/shooter/tree/0db33018c5b08f32d29e9ccc71a6164a0d4952a8",
+  "readme_path": "README.md",
+  "readme_sha256": "a3ba02c724bd630616b1f5727fa7bed0c392533966cf6597d20adcda8ae4a17a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c552df65f3954a2d0f20b2ae0f4950dc7f96da9d"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "566e10e4cf911d4b321e1c4332e00d07137f45e4"
+    },
+    {
+      "path": "3dzavr",
+      "type": "file",
+      "sha": "3af8e6c6fb8a685647ed97054392c716423e719d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0091a241e84fd9ca2b9c611cbe2329a2966197f7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9b401c557a3141b7499b1d126682e4937fdce7c5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "94429d99e8e04aa30ec25b2e412c0eee0103ac58"
+    },
+    {
+      "path": "Shooter.cpp",
+      "type": "file",
+      "sha": "c0c532024e129e9e66f2f6a4f4504d5a7a74ad4e"
+    },
+    {
+      "path": "Shooter.h",
+      "type": "file",
+      "sha": "a26c3bced059af194412dd96db48538172b912d9"
+    },
+    {
+      "path": "ShooterConsts.h",
+      "type": "file",
+      "sha": "ef217db413f512e2807a82a4fd77f923de23fafd"
+    },
+    {
+      "path": "Source.cpp",
+      "type": "file",
+      "sha": "bb97154898e941488375396b9cf324e6ca721327"
+    },
+    {
+      "path": "connect.txt",
+      "type": "file",
+      "sha": "40e1c50ffbc3b29bf9160273096c7ab17f683893"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "02c9cb0ce2b10ebe7427dc15d7a1781f9a7d8a44"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "f2088c4448da744352273858f32c0dc9d0f83204"
+    },
+    {
+      "path": "obj",
+      "type": "dir",
+      "sha": "bb16de92f3b8e8a9027a4eb22a7297f6b7844416"
+    },
+    {
+      "path": "player",
+      "type": "dir",
+      "sha": "a3b0fce799344d348ea6edc56c49357c1f18d66c"
+    },
+    {
+      "path": "server.txt",
+      "type": "file",
+      "sha": "f09631e021f63263ecc7d3e018ec4537c223aa02"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "4eb39b2e8bb8bbea1fe11087d5513829a417a32e"
+    },
+    {
+      "path": "textures",
+      "type": "dir",
+      "sha": "fd76a883aa816f557f938516ae440b2e9688303c"
+    },
+    {
+      "path": "weapon",
+      "type": "dir",
+      "sha": "3b36acf9a2c60afab935b6b1d8719017651337ca"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "FPS game consuming 3dzavr, not separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

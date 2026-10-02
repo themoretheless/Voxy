@@ -1,0 +1,234 @@
+{
+  "repository": "WohlSoft/Moondust-Project",
+  "repository_id": 20043757,
+  "commit": "366cadc494e2a60d0c76af66ab61e627d3061df0",
+  "source_url": "https://github.com/WohlSoft/Moondust-Project/tree/366cadc494e2a60d0c76af66ab61e627d3061df0",
+  "readme_path": "README.md",
+  "readme_sha256": "69265ccb641e2bbe46330cbf87093dd0227a28ccbe4c7ad88615c9e8dfc1077f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "edcc897e7776744b10d7dd6d9fc9193561b4423a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "717bd841de48cd5d944850cab483542ee07c32fa"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c31bdfb28751c10cd6e2ece600c3f46f42659825"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "dc8f06563ed2736ac5cc31284d2c229f7273fb1d"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "ebd5872bfa1a25b0f4cbaa48847e089c001a8956"
+    },
+    {
+      "path": ".semaphore",
+      "type": "dir",
+      "sha": "82a0c0bde773304a621feee129c5c0a583c4a87b"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "fde2784924d1a165a2df832de0c88beddb054a86"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "04c57680b1f69352c0ed41e337c7d26dd136c6f5"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "04c57680b1f69352c0ed41e337c7d26dd136c6f5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4368bdc4ef654f9414a96a983ad3c8b8981ca36f"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "efb2aecd8c3ee6e3566e4cb709155fa613c33aea"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "2e7a9d51cbbe4b5351eca7bf469d4930ceea57e0"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "f3dd96aac910089828dac2db4a008a75ec5edbb5"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "cfce0c2c9f9107173fb3282b5ff03a4bdd9e65c9"
+    },
+    {
+      "path": "GIFs2PNG",
+      "type": "dir",
+      "sha": "e73aba8ccd4a448a5779b3e35f7360a8d4dc2e89"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ef7e7efc09c9d471c391f05b9567966928085840"
+    },
+    {
+      "path": "LazyFixTool",
+      "type": "dir",
+      "sha": "1b8b15b67beaeb50353f29ccda6800de2a733adc"
+    },
+    {
+      "path": "Maintainer",
+      "type": "dir",
+      "sha": "f2beb5d39d5b8da9413623ac0c4739f9f7212353"
+    },
+    {
+      "path": "Manager",
+      "type": "dir",
+      "sha": "a200dfe51bb7ea0d9be0f8de92de1daf8ea4d8fd"
+    },
+    {
+      "path": "MusicPlayer",
+      "type": "dir",
+      "sha": "0245062dde2c4661afa4d9b869337d2ab00a2b0a"
+    },
+    {
+      "path": "PNG2GIFs",
+      "type": "dir",
+      "sha": "5fefb7cb996c72b6502d18f8ab3832da95c68067"
+    },
+    {
+      "path": "PaletteFilter",
+      "type": "dir",
+      "sha": "1e03617c7eb43d7692f6cce7818f07f97157b375"
+    },
+    {
+      "path": "PlayableCalibrator",
+      "type": "dir",
+      "sha": "ee4f1d9e8db2034ba7b53a432865159e89776d87"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7d4a7df17f8f6adff1456fb914974a9a085041e5"
+    },
+    {
+      "path": "ServerLib",
+      "type": "dir",
+      "sha": "bf3038e1d50f039c3d51bb238bac067369f6d4b3"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "bb1f99ea79efe1f7188c1d34eb3fe87cae5a54a6"
+    },
+    {
+      "path": "Translator",
+      "type": "dir",
+      "sha": "d34b854366b313bcb7faa7a997ea19093e2e85b3"
+    },
+    {
+      "path": "_Libs",
+      "type": "dir",
+      "sha": "2424c639e2ebb85c3b8611ae819a409e7e56f469"
+    },
+    {
+      "path": "_Misc",
+      "type": "dir",
+      "sha": "8d6666cc88fb94d2082e5510ca0650efa25c15a5"
+    },
+    {
+      "path": "_common",
+      "type": "dir",
+      "sha": "7f8caf31fd36d82c8229373ce250d02ed2b707ec"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "cc2d5f89c04481f680c1d711f9e6c831a0a4ce80"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "ccf66133adee70b47b90796ac93937650c9c9947"
+    },
+    {
+      "path": "changelog.calibrator.txt",
+      "type": "file",
+      "sha": "a98d1fdf85f6c41161e41ec86516bbd1760f6e39"
+    },
+    {
+      "path": "changelog.common.txt",
+      "type": "file",
+      "sha": "bbb3e2e8f4697df38b81fc2443457c93e03b3ec5"
+    },
+    {
+      "path": "changelog.editor.txt",
+      "type": "file",
+      "sha": "e79311bf10f5118637806855dcfeea8fd0e81c4d"
+    },
+    {
+      "path": "changelog.engine.txt",
+      "type": "file",
+      "sha": "590ff0b9b24fa53722a477aa1da0f8733254ca42"
+    },
+    {
+      "path": "changelog.musplay.txt",
+      "type": "file",
+      "sha": "770e7aae025a38cb925d0151161fa62aec927c0c"
+    },
+    {
+      "path": "changelog.translator.txt",
+      "type": "file",
+      "sha": "00d7bdd40d52ecbdd87a3407d58e9a315b6ec965"
+    },
+    {
+      "path": "generate_paths.bat",
+      "type": "file",
+      "sha": "6a462c5507c6651ae3054c818116820d16881fc0"
+    },
+    {
+      "path": "generate_paths.sh",
+      "type": "file",
+      "sha": "649d01fdcb9a970f5ae8467b7ba7ee5e59795744"
+    },
+    {
+      "path": "luadoc",
+      "type": "dir",
+      "sha": "27eeaf9c788abf94d91be573abcc88b08cc7ad00"
+    },
+    {
+      "path": "pge_version.h",
+      "type": "file",
+      "sha": "5b1da12a6f6ec8323ab843b5b0839668d6dc9abc"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "3def55ae3f54e727706b5493415ce17422d6fb8b"
+    },
+    {
+      "path": "version.cmake",
+      "type": "file",
+      "sha": "ba3b1cdc8c724d63561d8471424557c7cf094ee3"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies platform-game engine and development kit; owned Engine/Editor/Manager and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

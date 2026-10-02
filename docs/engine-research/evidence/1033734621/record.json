@@ -1,0 +1,162 @@
+{
+  "repository": "renzora/engine",
+  "repository_id": 1033734621,
+  "commit": "3e8d951067c2d598534646fe62878b0d6a46cd41",
+  "source_url": "https://github.com/renzora/engine/tree/3e8d951067c2d598534646fe62878b0d6a46cd41",
+  "readme_path": "README.md",
+  "readme_sha256": "b5d0f1832d7e44984561a1fe281d435ec87828288df98edf3605d568701c88a6",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "c5f4a5cd015971349ca2a99b55ea4d77ac341c9d"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "f044dd6a3cae0d55b5d0b1e849304607c2f42f4e"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "4d47038de08fc752a126402390b5ee5e3ec3f84a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "316e91a356379feeb37db9c542075c27ddd521b2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a68b06d5b1a13f02f9680634943c41ebb4def8e7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "07b1299976684ad37f13028061f19d876e650ee7"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "7bc5ecdf553e53e33b92b923e9f283a88be41f93"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "706e4870f8d66809bddc4b0c45cbd98d70dca0e4"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "54d3a3bea468fb3573b2d6f2e05d13ca4cee8bd0"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "924f571a2849f048daab4f2ed9f64a50bb3caa76"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "cdb9bde339dda042e15e40a10dbac0af4774bc64"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "0a753413ff9ebb905b505b74feec95f4da75864c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "009f98b85fee2545586a18c213941c544bf4e069"
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "type": "file",
+      "sha": "57cf261d3f996e10b316c0eb4277452261c120d7"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "790a9fdf2aaf305fe2bd39b9bcbe859f0b6604c2"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "1384db4c64c6bbaa87079c3114c0496d9e90bbdb"
+    },
+    {
+      "path": "coverage-floors.txt",
+      "type": "file",
+      "sha": "bbf4dcb9e0410f4d08deff29f446fe55dbde81e3"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "615911e87af92a2526285af720ed9b83f0bdd6f7"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "0d2a34374e19a4e23da65535efc5e4ed18c613ac"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "94fcf195eca967f61ac7d988d880137e72c87d63"
+    },
+    {
+      "path": "icon.ico",
+      "type": "file",
+      "sha": "54494862078b23abf070db01cd06186d5c5b3217"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "f7756d1aa82ec9660040e97a7218ab307a832009"
+    },
+    {
+      "path": "languages",
+      "type": "dir",
+      "sha": "3e20fb266321c3b2dc5a7926bffb94c8f94465bd"
+    },
+    {
+      "path": "releases.json",
+      "type": "file",
+      "sha": "0d97c3a3c6e86c36ce5d86303029aa47da0286e6"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "757ef832e7749fba3845ee76e8a5193928191359"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "814a4efebe3ca85dde3c2d6eecfa955463ec33e8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "46392e1f4ad8452e7c5b833895449b9d6bd8da74"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "bfd6c548b7f81c3e9b1b5eaa8e9a1e0a84c47c7d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0144589c1a77d5e664cf9b6c643153b222a91ffd"
+    },
+    {
+      "path": "xtask",
+      "type": "dir",
+      "sha": "5bbc538617690743ae49ad6d624ba965260c873e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

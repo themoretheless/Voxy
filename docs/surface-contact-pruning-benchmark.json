@@ -1,0 +1,14 @@
+{
+  "scope": "Contact energy and gradient kernel on one frozen 16-sector wall pose; not a whole FEM runtime benchmark.",
+  "mesh_sha256": "571717a9ceefd0dbb732d1bbb0fc9204a22ebd0fd9d8511339f95e88a3b76e7c",
+  "triangles": 448,
+  "candidate_pairs_per_evaluation": 3017,
+  "culled_pairs_per_evaluation": 2422,
+  "exact_pairs_after_pruning": 595,
+  "evaluations": 100,
+  "baseline_seconds": 0.058264625,
+  "optimized_seconds": 0.018388875,
+  "energy_and_gradient_equal": true,
+  "random_configuration_equivalence_cases": 10000,
+  "random_distance_bound_cases": 10000
+}

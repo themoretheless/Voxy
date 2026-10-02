@@ -1,0 +1,49 @@
+{
+  "repository": "sjoerdev/concrete",
+  "repository_id": 803410384,
+  "commit": "6347c057a4f50a359688a679e92d4c63af23a96b",
+  "source_url": "https://github.com/sjoerdev/concrete/tree/6347c057a4f50a359688a679e92d4c63af23a96b",
+  "readme_path": "README.md",
+  "readme_sha256": "3a3c1d6cc03caa74457ada4dcd18ca0b8c9ffa1425e387f8643c5de3e00216dc",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c32fb58db3c5955dcb0e8102de2e214bcf529274"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c322d8127eef7787408639977783a2cee8719d4d"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "0e0e7a5579e62e39a81e9af96d5d0288b721641f"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "8c05adfdae33db4a7ebdd5df3ea4b5271c2562fd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "192303e07a0858dab40c4feba9e1e9b35c91dc7c"
+    },
+    {
+      "path": "build_delete.bat",
+      "type": "file",
+      "sha": "a1783b0d7a8b062365693c0adad7aa85c4b905d4"
+    },
+    {
+      "path": "build_windows.bat",
+      "type": "file",
+      "sha": "8bedc2da4cec647830e3d316fc94695282864d1e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate Engine/Game source with scene/game-object/component API, editor, GL renderer and glTF/skinned mesh support documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

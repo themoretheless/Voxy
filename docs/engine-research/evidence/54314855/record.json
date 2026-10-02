@@ -1,0 +1,544 @@
+{
+  "repository": "Shirakumo/trial",
+  "repository_id": 54314855,
+  "commit": "5629b23d099df7d682093e56abc270c46340cd4e",
+  "source_url": "https://github.com/Shirakumo/trial/tree/5629b23d099df7d682093e56abc270c46340cd4e",
+  "readme_path": "README.md",
+  "readme_sha256": "6e49bbbcdc9bbec95bd4f90047de31d6763fc057c0704e73ad0cc9556dc58984",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d7c444cb1214382e5c6bbe63824aa9b39990c894"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0cf6d814ee874315047f6c797489d7f17c11f5da"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "730b89abf5d66f3328adc2a49c18fda4f94b50b6"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "590b49d83ec006b20c5b3a24209b36457810edec"
+    },
+    {
+      "path": "CONTRIBUTING.mess",
+      "type": "file",
+      "sha": "ba59711d95bb974ebccd7fc1059e3a9ab6ebc419"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cc977a69592dd6079735001bd7c9d11920a38e7f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c0eca6ce26ff47f850eab71b6978f8233738b89d"
+    },
+    {
+      "path": "achievements.lisp",
+      "type": "file",
+      "sha": "615e13e75c9cb09794aec29e1a9a7aa66d067d11"
+    },
+    {
+      "path": "actions.lisp",
+      "type": "file",
+      "sha": "eb1564d090f4ccd8d36acbd9435982c1e1e4262c"
+    },
+    {
+      "path": "alloy",
+      "type": "dir",
+      "sha": "8bd4fde579e26d6097f0023fa47c91298e330c54"
+    },
+    {
+      "path": "animation",
+      "type": "dir",
+      "sha": "3ad817c2fc25070ef2a451ff88c04c42f50a3191"
+    },
+    {
+      "path": "array-container.lisp",
+      "type": "file",
+      "sha": "d1ff2a4ff353698a20e6b43098a0f54259057a4c"
+    },
+    {
+      "path": "asset-pool.lisp",
+      "type": "file",
+      "sha": "dbe55b3a38cc22b110339a8b2834840ca2112081"
+    },
+    {
+      "path": "asset.lisp",
+      "type": "file",
+      "sha": "d1f9ec85848459c060c07c3d24189d06f91cf6cb"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "68024d51aa7aa509c77d1aec2fd1c774b4e9ad64"
+    },
+    {
+      "path": "async.lisp",
+      "type": "file",
+      "sha": "c3130e0c977daf3340d1e85e7681e6f5d333f966"
+    },
+    {
+      "path": "backends",
+      "type": "dir",
+      "sha": "042c6b6002ed4e3b25aa1818fbc6f6a7e63d15b2"
+    },
+    {
+      "path": "bag.lisp",
+      "type": "file",
+      "sha": "2c0bb924d808f690bef37dffdcbf6dcebb3c2fa4"
+    },
+    {
+      "path": "bounds.lisp",
+      "type": "file",
+      "sha": "4bee5a1b0e3629581c6d990f4e7c28a62009bce0"
+    },
+    {
+      "path": "camera.lisp",
+      "type": "file",
+      "sha": "568a98b082b7ad337062519052bfa12597e71efa"
+    },
+    {
+      "path": "capture.lisp",
+      "type": "file",
+      "sha": "b9b23017c53cdccc170793aac3771426048a895d"
+    },
+    {
+      "path": "command-line.lisp",
+      "type": "file",
+      "sha": "ee6b6f18e7cb11e85f5e8aa096adaf029b8bc3de"
+    },
+    {
+      "path": "conditions.lisp",
+      "type": "file",
+      "sha": "00941f033e179c8d0c23a48e81dff92e09eccb57"
+    },
+    {
+      "path": "container.lisp",
+      "type": "file",
+      "sha": "fe40e87ac900d8af69aef9d649b56bf7a7912419"
+    },
+    {
+      "path": "context.lisp",
+      "type": "file",
+      "sha": "c80e705267406ff28d6bc5fe8b392513128f83a0"
+    },
+    {
+      "path": "controller.lisp",
+      "type": "file",
+      "sha": "0c3ec2c5f8e3be2cde76d738e1f442cea25f6036"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "5787da8a5987a04003dc36de0d88a33fd9ef12bb"
+    },
+    {
+      "path": "debug-draw.lisp",
+      "type": "file",
+      "sha": "101edcf1aa4ebf674060afa2fa6d02cf53204699"
+    },
+    {
+      "path": "deploy.lisp",
+      "type": "file",
+      "sha": "c897f4255fd6aa0045cf0be6f397d9b0b2914303"
+    },
+    {
+      "path": "display.lisp",
+      "type": "file",
+      "sha": "45025265c6daa2806327ea28333ad9104e9b3205"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "680fe18c9bd996976945f44c31ebf0bbe93e1557"
+    },
+    {
+      "path": "documentation.lisp",
+      "type": "file",
+      "sha": "ddb465913676b4d4f06754244da7627d8f7bcea4"
+    },
+    {
+      "path": "effects.lisp",
+      "type": "file",
+      "sha": "008e991522e4cf888dadda130e384f2e09125ac8"
+    },
+    {
+      "path": "error-handling.lisp",
+      "type": "file",
+      "sha": "b0d5a409899cb5c73bec80cb48451db2e5502cd2"
+    },
+    {
+      "path": "event-loop.lisp",
+      "type": "file",
+      "sha": "6885ffd7b6959e106bd25f8c5367c9b6eb70427f"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "84d2eede31178ddf8d93326238a1d556f516bd19"
+    },
+    {
+      "path": "features.lisp",
+      "type": "file",
+      "sha": "0fcf5fadd828ae0843c85002a13289f80b6dbca1"
+    },
+    {
+      "path": "feedback",
+      "type": "dir",
+      "sha": "44d79e0aecd214335577f53d9a2b8273afb268f5"
+    },
+    {
+      "path": "flicker.lisp",
+      "type": "file",
+      "sha": "65ce8c2192961462c07f429ecab084f2f75afebf"
+    },
+    {
+      "path": "formats",
+      "type": "dir",
+      "sha": "8023a3e6ab4be76e351246a8ad8a78684508242b"
+    },
+    {
+      "path": "fps.lisp",
+      "type": "file",
+      "sha": "39d5ef04e320388062cc52c444964e98ae4afd55"
+    },
+    {
+      "path": "gamepad.lisp",
+      "type": "file",
+      "sha": "8027aba0ce86031380957e09407cc4103fcc4eff"
+    },
+    {
+      "path": "geometry-shapes.lisp",
+      "type": "file",
+      "sha": "924664971ee68722143af9c9c045f5c9865ed29f"
+    },
+    {
+      "path": "geometry.lisp",
+      "type": "file",
+      "sha": "753c2f4562f652dec61077d45fe1b0e31a0ea171"
+    },
+    {
+      "path": "gl-features.lisp",
+      "type": "file",
+      "sha": "ca44988a262db9a469ccae834469446480ec5b08"
+    },
+    {
+      "path": "gl-struct.lisp",
+      "type": "file",
+      "sha": "483813b803f6b00ed12bd0a5ccd9ee8de1fccc32"
+    },
+    {
+      "path": "gog",
+      "type": "dir",
+      "sha": "5aa15d890583d70d8c31cfff3cba54035b19879e"
+    },
+    {
+      "path": "harmony",
+      "type": "dir",
+      "sha": "4c4df6053c0dcf0cd5755fa5b18b916468bb7549"
+    },
+    {
+      "path": "hash-table-container.lisp",
+      "type": "file",
+      "sha": "8d47738e8742378a19b88724f8280547acb34b6f"
+    },
+    {
+      "path": "helpers.lisp",
+      "type": "file",
+      "sha": "6836b85a5c158f0498982d24ba260ffa9cd518a6"
+    },
+    {
+      "path": "input.lisp",
+      "type": "file",
+      "sha": "1855cf3462240aca4e0ac970dd83ad18bceb62f0"
+    },
+    {
+      "path": "interpolation.lisp",
+      "type": "file",
+      "sha": "1147d48af9ce870e9346d762fec4c2e140a8ef54"
+    },
+    {
+      "path": "language.lisp",
+      "type": "file",
+      "sha": "19e01842b278fb3ac0c47a7be11f47bc33190686"
+    },
+    {
+      "path": "layered-container.lisp",
+      "type": "file",
+      "sha": "e9d10b75e59417961c17b1777253adb3ed5b13ca"
+    },
+    {
+      "path": "lines.lisp",
+      "type": "file",
+      "sha": "c016476bb8a7364dc485a51bf25f453d7bbd4a72"
+    },
+    {
+      "path": "list-container.lisp",
+      "type": "file",
+      "sha": "334571beb1c272396100906ac09528574fe355b5"
+    },
+    {
+      "path": "loader.lisp",
+      "type": "file",
+      "sha": "2a40e105faaca7d376912989b47ca21e51de8829"
+    },
+    {
+      "path": "logos.svg",
+      "type": "file",
+      "sha": "56fd294260ee98b9de3f8af26b4ff5afb92f5b13"
+    },
+    {
+      "path": "main.lisp",
+      "type": "file",
+      "sha": "e41d8aba927d8f72e6a151d4cf351eb9ec8439ae"
+    },
+    {
+      "path": "mapping.lisp",
+      "type": "file",
+      "sha": "67257914c012e9f5b641f06c2707ca8725760956"
+    },
+    {
+      "path": "model.lisp",
+      "type": "file",
+      "sha": "2f59ecb58f990296b5443e95152ad84eb0718f73"
+    },
+    {
+      "path": "notify",
+      "type": "dir",
+      "sha": "5ec437669702c5ebeec76ef95cced59ea39a373d"
+    },
+    {
+      "path": "os-resources.lisp",
+      "type": "file",
+      "sha": "45554532f1bada8d17db9e75971b417a81239387"
+    },
+    {
+      "path": "package.lisp",
+      "type": "file",
+      "sha": "c094be6841497d1a5024efb350ad3dfd01bcdd4d"
+    },
+    {
+      "path": "parallax.lisp",
+      "type": "file",
+      "sha": "1c4bfe86ef50eec1279fa38ac09804d6a4ab662b"
+    },
+    {
+      "path": "particle-studio",
+      "type": "dir",
+      "sha": "06e9bf0721b80087d4891fd991431a287677fc21"
+    },
+    {
+      "path": "physics",
+      "type": "dir",
+      "sha": "c38ae6cf91b97080e3a646e5a072cb5a4b3646fd"
+    },
+    {
+      "path": "pipeline.lisp",
+      "type": "file",
+      "sha": "cc7a719b27ff4724c237e0428a289fa9f20aa46f"
+    },
+    {
+      "path": "pipelined-scene.lisp",
+      "type": "file",
+      "sha": "45ee9faade5db5c86b0fe29e61a45335d57117a3"
+    },
+    {
+      "path": "pixel-pipeline.lisp",
+      "type": "file",
+      "sha": "96bd1e63ee874b41a3da582ed4d90f81a4e2d618"
+    },
+    {
+      "path": "power.lisp",
+      "type": "file",
+      "sha": "66c2b95cbaa0c0536cc4d476c49daaf9870046d0"
+    },
+    {
+      "path": "prefab.lisp",
+      "type": "file",
+      "sha": "40dd76b2f27bc09527adc4546c945f87130c9d33"
+    },
+    {
+      "path": "prompt-gen.lisp",
+      "type": "file",
+      "sha": "bb098f8ca31e1780a788aa4800a61a3acec50db3"
+    },
+    {
+      "path": "prompt-tables.lisp",
+      "type": "file",
+      "sha": "01877f4ca3dbe2f1bea5b8023475f501f3608ad3"
+    },
+    {
+      "path": "prompt.lisp",
+      "type": "file",
+      "sha": "e55cccf260e62d05fac4e941931daab5f5db80d5"
+    },
+    {
+      "path": "queue.lisp",
+      "type": "file",
+      "sha": "9bbdbbc45c6b7a62b48f85da6cfcbd9d7a66114a"
+    },
+    {
+      "path": "random.lisp",
+      "type": "file",
+      "sha": "6f84ced48198bc8c136fc0687aa8ffa15e783b30"
+    },
+    {
+      "path": "release",
+      "type": "dir",
+      "sha": "b10ff2356f2fee7bfcc8bdff7aca219975117b62"
+    },
+    {
+      "path": "render-loop.lisp",
+      "type": "file",
+      "sha": "1b648b9b1f6ee7ef371a423f1bfc96145203b6cf"
+    },
+    {
+      "path": "renderdoc.lisp",
+      "type": "file",
+      "sha": "3594e9cccd303c54d9c37f5957443e4cb3a7eb71"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "d20e4c1dc858839ac8a1c12001335f94a52bb45f"
+    },
+    {
+      "path": "resource-generator.lisp",
+      "type": "file",
+      "sha": "ecae9ee027bc87b2931ed16bd54d5ece21e90c9d"
+    },
+    {
+      "path": "resource.lisp",
+      "type": "file",
+      "sha": "c059608ee8cea34b00cd09ddf714c3b0c08eb97d"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "c756fea9fa2ce16a0c3cf948ce6c0983f014211c"
+    },
+    {
+      "path": "save-data.lisp",
+      "type": "file",
+      "sha": "b84a25b39d3ef89a420b8a67514fe5e07b793635"
+    },
+    {
+      "path": "scene.lisp",
+      "type": "file",
+      "sha": "61081edbe877d79c3831c268f14809a778ccf5a3"
+    },
+    {
+      "path": "selection.lisp",
+      "type": "file",
+      "sha": "a97a52ac24fc617d898dcbe30ad736d6d456bc53"
+    },
+    {
+      "path": "serialize.lisp",
+      "type": "file",
+      "sha": "0d704317be3cf58012d5e04c953b07bcafb9cd01"
+    },
+    {
+      "path": "settings.lisp",
+      "type": "file",
+      "sha": "716dd65f66e4384cfbb14bc3bc9615972595980c"
+    },
+    {
+      "path": "shader-entity.lisp",
+      "type": "file",
+      "sha": "1ea23071ef45e8e91cb3725b11c2c7e5b7ce0de2"
+    },
+    {
+      "path": "shader-pass.lisp",
+      "type": "file",
+      "sha": "586cb3d412b2689b39ef5eb23fb5c00f9799dbd3"
+    },
+    {
+      "path": "skybox.lisp",
+      "type": "file",
+      "sha": "26bd3643cfa3bab16f8eb183ed39ecce1f85e1d5"
+    },
+    {
+      "path": "sprite.lisp",
+      "type": "file",
+      "sha": "fca83282c41eea07657823b8c68b98285f9648fa"
+    },
+    {
+      "path": "staple.ext.lisp",
+      "type": "file",
+      "sha": "bee09a36b2be076b1f8a5b8fa28d0f08a06c3f57"
+    },
+    {
+      "path": "steam",
+      "type": "dir",
+      "sha": "512a935063ffbd139b2dbc0b2f3338c1417a8145"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "966f734f917f5b803d17c2475ebe1708f625dde9"
+    },
+    {
+      "path": "text.lisp",
+      "type": "file",
+      "sha": "14fad4fa3a96ccc33c0b744a6ab6bb1ac1c5f52e"
+    },
+    {
+      "path": "texture-source.lisp",
+      "type": "file",
+      "sha": "eca9f6dd7ead4cccec6425851e4d788c4dee970b"
+    },
+    {
+      "path": "tile-layer.lisp",
+      "type": "file",
+      "sha": "8ed288744df643e6627beb791a71daa985440f44"
+    },
+    {
+      "path": "toolkit.lisp",
+      "type": "file",
+      "sha": "019767e91d1cc86f4b18bc47dc0cb537a09286bd"
+    },
+    {
+      "path": "transforms.lisp",
+      "type": "file",
+      "sha": "e69a80fb8a01134fe7f5d7bf33dca1c6cc8afc19"
+    },
+    {
+      "path": "trial-workbench.asd",
+      "type": "file",
+      "sha": "a64e91d397e054e2eb2a2cd0177b94dcea21f178"
+    },
+    {
+      "path": "trial.asd",
+      "type": "file",
+      "sha": "ce1eb035f28564a0e8f0f1a86ecb67d94b3a264e"
+    },
+    {
+      "path": "type-info.lisp",
+      "type": "file",
+      "sha": "fd68935ddde1017d5c4e6d9e152996eefc03b324"
+    },
+    {
+      "path": "video.lisp",
+      "type": "file",
+      "sha": "94fc2ae08150182e15e4b1c9943f6cc8ef0826e8"
+    },
+    {
+      "path": "workbench.lisp",
+      "type": "file",
+      "sha": "1c576b2dcd006e03c9a2edd11b0e000e2252be4c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies Common Lisp engine; owned animation/assets/actions/runtime Lisp modules and source tree. Build/runtime unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

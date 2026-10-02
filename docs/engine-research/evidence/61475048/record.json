@@ -1,0 +1,129 @@
+{
+  "repository": "dgcor/DGEngine",
+  "repository_id": 61475048,
+  "commit": "ae6dcabf4f824d617dc4b15ead1f0ef206c9a106",
+  "source_url": "https://github.com/dgcor/DGEngine/tree/ae6dcabf4f824d617dc4b15ead1f0ef206c9a106",
+  "readme_path": "README.md",
+  "readme_sha256": "77d0ca7309e80071d8a15b296610fea97c846c27ae90935e2f449e3d9d618f9f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ac2a359447dad0d47e00657565b5e49ab517c1c9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "fd9a78b57d64912d3515c2af4116cc2a8d2826e3"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0835309dd196d6cda7f200c4dcc4dc97337d0e84"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e359c3992d64a31ed5ccd2bf518bbe33d749f898"
+    },
+    {
+      "path": "BUILD.txt",
+      "type": "file",
+      "sha": "3e7e2ea880581ef9d2a2c84fe297adb7f0b41302"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4981c3c909bc3ee34a2d10994484a6ce66494c94"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "864d6a19e7ee3d2641ecc77341fdc6fe5565a490"
+    },
+    {
+      "path": "DGEngine.core",
+      "type": "dir",
+      "sha": "82de9c8ca5f3962c2be0f6c401a3b4ddfdac8644"
+    },
+    {
+      "path": "LICENSE.GPL3.txt",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "LICENSE.Zlib.txt",
+      "type": "file",
+      "sha": "937d6059220c247bcc6b295482f16594877b0194"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f7e2ad1c4ba819125442b6d84d83111a9cf1ffe3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1ec21dd69f063d632fc9d4b9a8e38f830fef7e92"
+    },
+    {
+      "path": "gamefilesd",
+      "type": "dir",
+      "sha": "f77b258a765b67be5b573165d9f5a0543120a926"
+    },
+    {
+      "path": "gamefilesd2",
+      "type": "dir",
+      "sha": "c669eb70731e815257049920086503bbbb361a54"
+    },
+    {
+      "path": "gamefilesdex",
+      "type": "dir",
+      "sha": "852aff61d23dd02c823361aaf989fa48df1fc6da"
+    },
+    {
+      "path": "gamefilesflare",
+      "type": "dir",
+      "sha": "06020cc2d0d378914824090650fc97f235664421"
+    },
+    {
+      "path": "gamefileshf",
+      "type": "dir",
+      "sha": "01077db504f31b0c589793bcb700babf136eaf1e"
+    },
+    {
+      "path": "launch.vs.json",
+      "type": "file",
+      "sha": "1b68498372ace98c0fbf7f168483857bb7ec2f5f"
+    },
+    {
+      "path": "main.json",
+      "type": "file",
+      "sha": "91ac82137d1a0bbf9774c9888c807dc7857496ee"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "d2088d42e952be79d7de7e7e980e950d99f6a68e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "69d6e9c493f451424740c8745cbd2ab13f31f132"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "12ffcba125e56cb860ebc1186e7e9fc47b12627e"
+    },
+    {
+      "path": "vcpkg",
+      "type": "dir",
+      "sha": "6aa4c538e663e9b655d869099f82aab79f0cf95b"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Diablo-compatible independent runtime; owned DGEngine.core/source and CMake build; game assets separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,74 @@
+{
+  "repository": "mukeshsolanki/snake-game-android",
+  "repository_id": 496139030,
+  "commit": "cda74cc67b53eaf5a2fb665118b51d472e70dab4",
+  "source_url": "https://github.com/mukeshsolanki/snake-game-android/tree/cda74cc67b53eaf5a2fb665118b51d472e70dab4",
+  "readme_path": "README.md",
+  "readme_sha256": "ee38821439115e8e095de1b3a6863881da7892309a215fbc0200e1948862264f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6b8b2f14f841923a70923aed5253fca285042056"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "050d01186ff742fa6e6da25cf923f1633ca68d3b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "eff3c612d9163c98d0a34976e4a22f82d10222cd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6189d96cc3096628fb58924721c76bd4fd597251"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "10288b157f2cdd8cdffafbaedeef93e4d755d781"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "b267ca58ed3488547b08960819cd9a6c7a241589"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "cd0519bb2a9450033b80e5906f766b71d176014f"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "e184a6f47b8362fa9c4e0ef9a06595dc9504d5ae"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4f906e0c811fc9e230eb44819f509cd0627f2600"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "ac1b06f93825db68fb0c0b5150917f340eaa5d02"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "7d2d171c57636bb271322a4a7d227ae85017a229"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "0fe708b6965fc46a6b248ba58609352bed28ac55"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Android Jetpack Compose Snake game.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

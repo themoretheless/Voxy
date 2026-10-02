@@ -1,0 +1,139 @@
+{
+  "repository": "falltergeist/falltergeist",
+  "repository_id": 6838493,
+  "commit": "32cbee70af05eab32cd3907f9387c64ce66d1366",
+  "source_url": "https://github.com/falltergeist/falltergeist/tree/32cbee70af05eab32cd3907f9387c64ce66d1366",
+  "readme_path": "README.md",
+  "readme_sha256": "5c552c99aa7c83cb8d2e9171f4bd0edf10032fbee11d2a42de425ecfad7c23d6",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "b5ac618987017cca7b80d0c99c64427da422cf1c"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "b8d6d9f224a9408dd8e6b9399fae66d565185f87"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "c906627cfbca84a155861334b8d2424f78834e1b"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "783ea01747761486f6a9d9315186cd8ee8e32efc"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a19ade077d36b05ff659abf5bcbd8a9723b96495"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0546bd59e6ce771f5e9ffc4d97101cba968d6102"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d46c9b08711fd7bab05cfebba95ceb29bb1dfc3b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a778d23b1c81f6ce8330a06d284d3c7a961cd4d8"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "c5fa69ca75a2d210b633d036f867c58d0c3f86dd"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d33ea47c5d2ee62a62dce1d0cc742c32fbb93b53"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0f621484aa17fd6e612b9e8ab573b650a3930abe"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "0af8e5418ccfb4f9deebb9488d00e29d16b7e80f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "be3233efb7c48b1097932c7d627e6e89b1a2ce54"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0a83a3b738a2a2ea1cfeaf0fafc677408c56a655"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "5f7cf63ededf350628c886365873f5c20d3f776a"
+    },
+    {
+      "path": "conanfile.txt",
+      "type": "file",
+      "sha": "185499525c5a25a269abe898b472e79218c5fc3a"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "8abab335c6781b7ee0e7e1e387812152a800e904"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "08450c5e9d3069dd315348f8277f025eb56e9e9f"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "189e19509f8964b35d388b8b496566bedcdcf891"
+    },
+    {
+      "path": "pchheader.cpp",
+      "type": "file",
+      "sha": "1643c637f0764f821b95876d69334a0d4e097fac"
+    },
+    {
+      "path": "pchheader.h",
+      "type": "file",
+      "sha": "6582407306ed411b073b712b7b354cc9507de4c8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fe2688df84a8851e6d07485f82e9a54ffd0f7dd7"
+    },
+    {
+      "path": "submodules",
+      "type": "dir",
+      "sha": "d11a5f8b368f66d4aba8811e1a510dac6299c441"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "47885bd7552301298b2fb8f0869537840715b76f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent Fallout-compatible engine; owned native source and CMake/conan build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

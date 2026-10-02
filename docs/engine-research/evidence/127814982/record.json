@@ -1,0 +1,144 @@
+{
+  "repository": "FWGS/xash3d-fwgs",
+  "repository_id": 127814982,
+  "commit": "1414fc281b6dc986378ea7ae35086c62d782a865",
+  "source_url": "https://github.com/FWGS/xash3d-fwgs/tree/1414fc281b6dc986378ea7ae35086c62d782a865",
+  "readme_path": "README.md",
+  "readme_sha256": "011d1104c85c4395f28c7892369c430d2598845ba46128b7cc7cbe4bd60634a8",
+  "entries": [
+    {
+      "path": ".builds",
+      "type": "dir",
+      "sha": "935b1d6c78303e191c06f88b8208e2bedb6b471b"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1a00a0eb39fea3d65b2b5d443a01c38e937b0dcb"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c17cdd5d31a76b8382289a56a26a3d5ca75a9516"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3f0665602542464c794b9ff63201e9766ee0a6bf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bc20f03857d5e912fafb2221b8e8b47db6be9db7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bec6b66eaf561ac12bc5c9d05a47e5adb9c4b232"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "57faf0617d2dfecc0201a86af8d8b595ae84555d"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "a51b859adb5bc9433abf4fefae916f8be7d1aa53"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e53fc280044bd3e68943c1332e5e6001bdb4d059"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "133b2794beb6d46a118c610fcff381209d1d66c0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ccec88e4db5b691e3fd7b7a2ee22f66ae2bd778c"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "ca32b1da08b4d8b388d6224ed726fb098f6031b6"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "9fb911e752405597818d59fbb32700acaae2aa7c"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "69e1997f4a290afa8242f1e83306271d0fc92238"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "19aeced8fb78f085759b0d82c5fed3384e2c469c"
+    },
+    {
+      "path": "filesystem",
+      "type": "dir",
+      "sha": "c137a27f4eb731a07fa26dd23a386bd6711c1bb1"
+    },
+    {
+      "path": "game_launch",
+      "type": "dir",
+      "sha": "509027f23aebab791d444d8ff4a275a68c57beae"
+    },
+    {
+      "path": "pm_shared",
+      "type": "dir",
+      "sha": "0beceb6a80f08207f9bb167165f72b60e3560fdf"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "ccb9d466673c735d76eabed8a93093c4467aab83"
+    },
+    {
+      "path": "ref",
+      "type": "dir",
+      "sha": "51a687fa8fb3ac6d746c66d0347afe2be67ba17d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a502d4e08eada512478ef3756f351e0c1b66d96f"
+    },
+    {
+      "path": "uncrustify.cfg",
+      "type": "file",
+      "sha": "04f8149fec5d08499ffd3e8191e3ac1d0b633fe5"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "8fca37624ca33dc7e94331ea008148028566192c"
+    },
+    {
+      "path": "waf",
+      "type": "file",
+      "sha": "5abf839a1c27dcd43e82157b9ae54f2e31988a96"
+    },
+    {
+      "path": "waf.bat",
+      "type": "file",
+      "sha": "f468505c807ff3506645d85e656a2241ce44c8e7"
+    },
+    {
+      "path": "wscript",
+      "type": "file",
+      "sha": "3158145e170cb12de8e96a6724145312d987cb33"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Half-Life-compatible engine; engine/ref/filesystem/common source and waf build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

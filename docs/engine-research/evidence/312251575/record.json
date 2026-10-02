@@ -1,0 +1,72 @@
+{
+  "repository": "mrk-its/bevy_webgl2",
+  "repository_id": 312251575,
+  "commit": "3c42f2cad2f6fabb54511db9221aa1ac1292a55c",
+  "source_url": "https://github.com/mrk-its/bevy_webgl2/tree/3c42f2cad2f6fabb54511db9221aa1ac1292a55c",
+  "readme_path": "README.md",
+  "readme_sha256": "631f1dc2b6b5630a1c88e04082d74a7bf94afac29e90387eb95e250cea37e31d",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "6f1e920885a23f8642987721efc77c31960366fb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "200fbe1bf973a0b3b58362dcd8423da8de72589b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a21e40d31b56f946eb8390019e497944d9859221"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "85fc35874483a9c66cd8e620cd6c1f8fa3411263"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b51221873cdabb2c0fbca408434f5bb07f7f9c3"
+    },
+    {
+      "path": "Makefile.toml",
+      "type": "file",
+      "sha": "b1110a4f26e0f7fdff899a85d4dacdff9457ba90"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "17bafa4a4e65fccd8498dc9ff9ff18793b9d6f51"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3951a7353438d2dbbc0df624c42ece23450fa19a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "33dab3dc4f65bd79e1a15091a422660ce936090e"
+    },
+    {
+      "path": "fix_bevy_example.sh",
+      "type": "file",
+      "sha": "d08914ac70bffb0eab586a47416bc783c0af3599"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "2439e286d1f8aac0ff37b4a3fbc20f06378c012e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9f388d9e2503602355bf35de82d5da6395ef28cb"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

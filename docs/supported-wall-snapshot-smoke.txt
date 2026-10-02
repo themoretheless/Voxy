@@ -1,0 +1,7 @@
+equilibrium_certified=false
+iteration=1
+energy_j=-1.522619432039e-4
+residual_n=8.220442577189e-5
+load_factor=1.000000000000e0
+applied_support_pressure_pa=2.000000000000e2
+contact_law=ExperimentalPrimitiveSum

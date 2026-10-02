@@ -1,0 +1,47 @@
+{
+  "repository": "andrewrk/chem",
+  "repository_id": 4723501,
+  "commit": "57aa724b2fec1302f89fb38022d0bdc58e22902a",
+  "source_url": "https://github.com/andrewrk/chem/tree/57aa724b2fec1302f89fb38022d0bdc58e22902a",
+  "readme_path": "README.md",
+  "readme_sha256": "4302c26e708a5daa28e43375388b0796593c1a24c0e9d47e5d389b9dec9fad41",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "07e6e472cc75fafa944e2a6d4b0f101bc476c060"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f5992df592570758041fa77ca841809eb771132e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e6014dcec6deaf366f15f5e5d6f191ccaadffc9f"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "4ba232b2d3aca2d2268ddb461268ee12d7227217"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "36b150afb7ce90e189f09a103189de282802b22f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "cd793b86261663c9d8be37e4bfc8b5eb5d48ec70"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6c7eb62ba9d6dda3b1c4ecd83d60b0ade44ada97"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

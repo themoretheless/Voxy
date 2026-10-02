@@ -1,0 +1,19 @@
+{
+  "before": "docs/body-surface-diffusion-off.png",
+  "after": "docs/body-surface-diffusion.png",
+  "beforeSha256": "c82a1bf3307425961df25f5403c60ae9d9a1a57177a4c4f7fef4711bdc163bad",
+  "afterSha256": "ffc315031b6ccbe24e2475e28fdf486d4af7f684b693f3f2a8b46f48d6f6e530",
+  "changedPixels": 52300,
+  "max8bitChannelDifference": 4,
+  "meanAbsolute8bitChannelDifference": 0.045633951822916664,
+  "singleSampleMeshCpuMs": {
+    "diffusionEnabled": 115.08,
+    "diffusionDisabled": 20.48
+  },
+  "illustrativeRadiiM": [
+    0.002,
+    0.001,
+    0.0005
+  ],
+  "scope": "Matched static snapshots in one release binary; CPU samples are not a benchmark or GPU/frame-rate measurement. Surface diffusion is not full volumetric SSS or calibrated tissue optics."
+}

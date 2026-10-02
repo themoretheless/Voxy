@@ -1,0 +1,54 @@
+{
+  "repository": "SilenceSu/Easy3dNav",
+  "repository_id": 209951072,
+  "commit": "22b87c1cdb042a4aa988adac49fdd481cec8ceb0",
+  "source_url": "https://github.com/SilenceSu/Easy3dNav/tree/22b87c1cdb042a4aa988adac49fdd481cec8ceb0",
+  "readme_path": "README.md",
+  "readme_sha256": "8fe37d5a7e8efb9c7ff18df1034dfbbcf7ce663a7d54f61e364fd768f597f5b3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2cbe259f0475aebe4467465210d8e9f062e1e850"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "d70cc3a8581c0043cb48b4e0aada9c763f66dee5"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "f77661abf385ee1ecd0c9004368dbc90db8f5038"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "df3a1ffde69ab097806729095f39ebe02f32d198"
+    },
+    {
+      "path": "RECAST4J_API_GAP.md",
+      "type": "file",
+      "sha": "e69aa196ea6cb838dbf999c2a52d70158b56e640"
+    },
+    {
+      "path": "openspec",
+      "type": "dir",
+      "sha": "d1f8f0d0b80a33b7c6917e99eca7bdc07a21c035"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "326bf38ec872823efcca42fe2f5f9d907cd7e720"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cb0864471f3440e3da54b6ce979de1f8a6f9db93"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java recast4j Detour server NavMesh query wrapper, not game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

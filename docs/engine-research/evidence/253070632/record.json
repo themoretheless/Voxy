@@ -1,0 +1,59 @@
+{
+  "repository": "Bombfuse/emerald",
+  "repository_id": 253070632,
+  "commit": "1dfebcda33499e32cf6a4fcbc010417213b567de",
+  "source_url": "https://github.com/Bombfuse/emerald/tree/1dfebcda33499e32cf6a4fcbc010417213b567de",
+  "readme_path": "README.md",
+  "readme_sha256": "9e401c3212a898d8f5d25ef8c381aa15cc00e55396dfc08de459ca6aa27e7de3",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "00edd26f670c24c2ee9a83197c90417a9844d7c4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6af8d6cd2bb73a355593efd9f7da1fd561a51b20"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "95813994f89de0c84776579d7b744615a500f2db"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "903ace020b131c163a5419911aa7c5b24e5eca76"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e624ef189f4c2652126a367ef68603edda576bce"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "96f86287b5e391ac0e3e33f16faa644cdb5fe68f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3210144edc2a35726ca9fa052b47392470f64a56"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "1abfb420f5b810b83267666105b007e53f49f472"
+    },
+    {
+      "path": "emerald",
+      "type": "dir",
+      "sha": "83a075728784c026a8111624e39bd1e46af7b635"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Rust game engine; owned emerald/editor runtime and Cargo manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

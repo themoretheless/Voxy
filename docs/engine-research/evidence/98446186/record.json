@@ -1,0 +1,72 @@
+{
+  "repository": "yoanlcq/vek",
+  "repository_id": 98446186,
+  "commit": "b4c02f9d339e513fd22d756b0f37efb780c0be73",
+  "source_url": "https://github.com/yoanlcq/vek/tree/b4c02f9d339e513fd22d756b0f37efb780c0be73",
+  "readme_path": "README.md",
+  "readme_sha256": "6fcd102a46f317f2f73834c73aacebec51bf340852862aa9d6e1350dd4f2b3c0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2cb91edfbf72d898916b7b17dc01fecc25a0e944"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "6093cde4fbb39b185472a79f155af9029057f7ff"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b7e4779265cf21688bb069af775e0c6bc59e6ab0"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "a9a2767c25cf5a35208cfcc0eee75646aa523c45"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "c2e417ccd275b130dbac1e35a42de30a1a831ff4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "375a0be9af7f9ff38489d86d235293517137f80c"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "a93525fa9eec0498d655f99917a0386673be1e6e"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "70f8b80d60564fb92b02b0684c43608e794ddc4b"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "39cf63c3ddd683c53e9f326ae988f8a0075f35fa"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0f700e2e9015a9f861c2dab4f4d6eb25bda29236"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2ebfca58ec3762d969ad90795ee2330774c4af77"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

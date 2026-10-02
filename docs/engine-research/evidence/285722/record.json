@@ -1,0 +1,144 @@
+{
+  "repository": "OpenMW/openmw",
+  "repository_id": 285722,
+  "commit": "543d644c4335780c6a7541159984b2abbc21c4ad",
+  "source_url": "https://github.com/OpenMW/openmw/tree/543d644c4335780c6a7541159984b2abbc21c4ad",
+  "readme_path": "README.md",
+  "readme_sha256": "3b5fc6fc6f28681872098faf61c3d660f200da094975cc8ad3636a5b3f493537",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a4dcc74a36a1933ff328e415bc8d229542714bdc"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "17d99a3ad5e8def76e6cdd5002aa0aa05ef2b632"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "97db8e0b548d19925dac8dc9ea655acc1c6422bc"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "c3e22b841253fc5750cbefd6d729925fd6ba919c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "52b8f4fb0174af62acaea4c68bcb1b25962c5464"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2ab4711216724f17a942dac304df0d08a2e5a123"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "ed9be83dd21fae8c2192b7b9da72bba78784fe60"
+    },
+    {
+      "path": ".gitlab",
+      "type": "dir",
+      "sha": "ec41febdace239963e8a005a0a834a9612f11894"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "926dd3dbf6666201ff9d2f8ce6eeceb3d1b8d7b0"
+    },
+    {
+      "path": ".resubmitted_merge_requests.txt",
+      "type": "file",
+      "sha": "1585a60ec1d7b246d3ecdc9c6efd547fd5e2f323"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "a3332267af17f082b466b46823a128719b5e6e6d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "68d34d7fba8c87b3411afb25a83a9745a93ce4bd"
+    },
+    {
+      "path": "CI",
+      "type": "dir",
+      "sha": "b2ea96e1efb8a516ba02004162553c7ab4a41444"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a37763286e4a420a7bd1eecb3174929c9a898091"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8aeb455543c3337a247bed06d0a57207836d9514"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9d742475fed99e0263fcf25849f0133137c06355"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d777ba8ef534b37b8e03da52bf9e5dbca9f454b0"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "9147d61f2a92ec0e13d1fee0635337daa8456396"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "08b24cd982e53389186232c7863b3f2eb05c6fbe"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "2eadd534b082334e7f2ee2e3d3cbab4e79ec8a7a"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "8d3c87ad887a7da554f3f7df388da43c3cd4812b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b941fea2021dc0615f9ee699febf2f01728a1426"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "848ecf51e5c2b9808d742845250fc1a1336ff896"
+    },
+    {
+      "path": "files",
+      "type": "dir",
+      "sha": "d4784eaf9b5e50feab175eec9e3a52997e3f572d"
+    },
+    {
+      "path": "manual",
+      "type": "dir",
+      "sha": "794cf1adc43722c58d4968d75f1f665865b84fdc"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "dfcffb2c8ef9ae3e0032ea248a79bddca0dc07e7"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Open-world RPG/Morrowind replacement runtime and construction editor with apps/components source; original game assets required, mirror provenance noted.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

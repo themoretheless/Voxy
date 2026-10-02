@@ -1,0 +1,182 @@
+{
+  "repository": "lee-orr/dexterous_developer",
+  "repository_id": 679881286,
+  "commit": "d7064e931b25a9e1328f55e1bcf62e5c1edbe0e5",
+  "source_url": "https://github.com/lee-orr/dexterous_developer/tree/d7064e931b25a9e1328f55e1bcf62e5c1edbe0e5",
+  "readme_path": "README.md",
+  "readme_sha256": "2d185af61a1a7cace2c79e158b67219357cd5aa581f84524bc6e149a4afb9ed6",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "fa72dfa7fa784dab0ace977c45efcf9dc87f8978"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "612d1f18089fa5920ab1be2ec4dfc3b11ecfaaca"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bf3540033262296f80c949edb6017238db8055fa"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "985663596184c709aa8caab143cdc7135b86be43"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e8a14973688bda65636b2281f69a40aed100dae8"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "4ded6976940a67b821313ebe33dd2efaad21b045"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7504faa62a8a47f6146632680f0ff45404d07363"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "032db6feb8d001e9d0ba4556b7d19522aa0dd2cc"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "d3c020e8b7b45273bf59348dc6d3630a2311d67e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c5aec5142d11b14aa657b1f436cfedf355ddff9d"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "de2b20b2342a2717d58ff6df5edc8dd167eae01f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "0c5cd81bf6d19988ab76ace31d62b8c68883837b"
+    },
+    {
+      "path": "Dexterous.toml",
+      "type": "file",
+      "sha": "9c9f41cc6f12964b5ac77444cfabfda9a9fd0255"
+    },
+    {
+      "path": "LICENSE-APACHE.md",
+      "type": "file",
+      "sha": "476ab72091fa9d6ff6f4dfe1924482f33b3f60e8"
+    },
+    {
+      "path": "LICENSE-MIT.md",
+      "type": "file",
+      "sha": "8603322886c9dec61e401509042945b4806771ec"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "28065abe20f6c9f5db70cfd3133f7a8aa4f138e7"
+    },
+    {
+      "path": "adapters",
+      "type": "dir",
+      "sha": "0badc7756939981e0c946e28dd0d4d5245f3b6dc"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d3e363edbf822166ad103bf7dc65e1ae7a7a49c1"
+    },
+    {
+      "path": "book.toml",
+      "type": "file",
+      "sha": "545cb75016f068390249cffaf20dd5a82d9fe370"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "23f0e9339a5d562aff6b110d1cd0a7a9b044c5ca"
+    },
+    {
+      "path": "clippy.sh",
+      "type": "file",
+      "sha": "4da25fc047ba06b1998370599dfa56ca1483b345"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "c83edae920614c64417dce9705fabf12102ec3cd"
+    },
+    {
+      "path": "dexterous_developer_builder",
+      "type": "dir",
+      "sha": "9a7a05a0540ae27b55b5ccdb67ef7eff95212e18"
+    },
+    {
+      "path": "dexterous_developer_cli",
+      "type": "dir",
+      "sha": "a3fb9b6f8df0ee915c9748cdd05f11e33f5930b0"
+    },
+    {
+      "path": "dexterous_developer_dylib_runner",
+      "type": "dir",
+      "sha": "668053b69ea5ade3fd32818f987bbb16eace21ea"
+    },
+    {
+      "path": "dexterous_developer_dynamic",
+      "type": "dir",
+      "sha": "dfa4fe2c3f91184d50383feebb2dbca970bb1a2e"
+    },
+    {
+      "path": "dexterous_developer_instance",
+      "type": "dir",
+      "sha": "5763efe6a06fcb9ed213a852d5155fd8bd20bfa3"
+    },
+    {
+      "path": "dexterous_developer_manager",
+      "type": "dir",
+      "sha": "9e40a350e48864f5dabcee965ce1540d91330160"
+    },
+    {
+      "path": "dexterous_developer_test_utils",
+      "type": "dir",
+      "sha": "25bca16787d20bd99ffb76f67a63bf8534effda6"
+    },
+    {
+      "path": "dexterous_developer_types",
+      "type": "dir",
+      "sha": "237b7f4882e6d575c7b1f849b5efccfd84df3da5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3dce0f58523ac474ccce2b3ab0e91b10c1775d5e"
+    },
+    {
+      "path": "nextest.sh",
+      "type": "file",
+      "sha": "85b97bc30d2857606bbbaa2d4f8c552a864c5b7e"
+    },
+    {
+      "path": "release-plz.toml",
+      "type": "file",
+      "sha": "bc87d6d1be407aa3bf3683bf511e20c16a3c088a"
+    },
+    {
+      "path": "test.sh",
+      "type": "file",
+      "sha": "205cadd3f2969a026edc684633c13482dc234e84"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

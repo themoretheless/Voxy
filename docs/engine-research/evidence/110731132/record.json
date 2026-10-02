@@ -1,0 +1,47 @@
+{
+  "repository": "google-deepmind/pycolab",
+  "repository_id": 110731132,
+  "commit": "6504c8065dd5322438f23a2a9026649904f3322a",
+  "source_url": "https://github.com/google-deepmind/pycolab/tree/6504c8065dd5322438f23a2a9026649904f3322a",
+  "readme_path": "README.md",
+  "readme_sha256": "fafaeecad531a7ce144d4ae2c114df19e1058bed439c04fae34375ede809445a",
+  "entries": [
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "41a8e4d460ba9cfb2e4a8692a4ddb8c5c719a714"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4fe36f7286321fc25c486eab55bc118e3016e456"
+    },
+    {
+      "path": "FAQ.md",
+      "type": "file",
+      "sha": "3cab8ffe77922bb34fcb8813c1685dd0cc6eee74"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd0f53ee2ea9a46042f629d06e97215d045d6a0c"
+    },
+    {
+      "path": "pycolab",
+      "type": "dir",
+      "sha": "1a65aa2a8bf9a9adac5c24961fbddf94c082bb38"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "984d8a9fb5f5215a1587a400916b8632ae69d1de"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

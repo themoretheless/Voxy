@@ -1,0 +1,27 @@
+{
+  "repository": "bobeff/open-source-engines",
+  "repository_id": 719762084,
+  "commit": "4d54f3995140e64beebef6575760996bf14324ec",
+  "source_url": "https://github.com/bobeff/open-source-engines/tree/4d54f3995140e64beebef6575760996bf14324ec",
+  "readme_path": "README.md",
+  "readme_sha256": "075c794da0482a7bff6f46d67956ef2e62486a1914fc78cda3d239bbf3a54a92",
+  "entries": [
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0aadb7c5d31fab37ec7374065556173993f250f2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0e259d42c996742e9e3cba14c677129b2c1b6311"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f315c4b33c4369db78cda7c6dbf8c407342f64f7"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

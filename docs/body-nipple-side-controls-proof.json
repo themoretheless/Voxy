@@ -1,0 +1,54 @@
+{
+  "body_parameter_tests_passed": 15,
+  "mcp_tests_passed": 4,
+  "nipple_dynamic_binding_tests_passed": 3,
+  "features": [
+    "glam/serde"
+  ],
+  "renderer": "native Metal offscreen",
+  "live_panel_verified": false,
+  "calibrated_anatomical_morphs": false,
+  "side_factors": {
+    "minimum": 0.6,
+    "maximum": 1.6,
+    "default": 1
+  },
+  "combined_reference_bounds_mm": {
+    "radius": [
+      3,
+      25
+    ],
+    "projection_before_cold": [
+      0,
+      12
+    ]
+  },
+  "images": {
+    "docs/body-female-nipple-asymmetric.png": "b8eba7cf733233af671f6a8b6948d5b0849ef0210350eaf567dc700c25ebd95f",
+    "docs/body-male-nipple-asymmetric.png": "0b40bcf5ea3d80b9baee11bc6c63cbd481ff86c64c80d14b79279d4cf10919ee"
+  },
+  "presets": {
+    "female": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 8,
+      "nipple_projection_mm": 4,
+      "areola_radius_mm": 18.5,
+      "nipple_cold_response": 0,
+      "left_nipple_radius_scale": 1.5,
+      "right_nipple_radius_scale": 0.6,
+      "left_nipple_projection_scale": 1.5,
+      "right_nipple_projection_scale": 0.6
+    },
+    "male": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 5,
+      "nipple_projection_mm": 4,
+      "areola_radius_mm": 10,
+      "nipple_cold_response": 0,
+      "left_nipple_radius_scale": 1.5,
+      "right_nipple_radius_scale": 0.6,
+      "left_nipple_projection_scale": 1.5,
+      "right_nipple_projection_scale": 0.6
+    }
+  }
+}

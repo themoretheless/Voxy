@@ -1,0 +1,109 @@
+{
+  "repository": "juicycleff/flutter-unity-view-widget",
+  "repository_id": 174713363,
+  "commit": "8de767fda7a1296f2de55b9af8e73a2bbfa53001",
+  "source_url": "https://github.com/juicycleff/flutter-unity-view-widget/tree/8de767fda7a1296f2de55b9af8e73a2bbfa53001",
+  "readme_path": "README.md",
+  "readme_sha256": "eeef5b8e76aee02d36f83d8acf8cccdcd319d1b8e1110a2f94722bf26132e0da",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "37b06540c6be88b274ed48db14dfd017cfa46778"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c19be721f72905c12954153f061d610d9059018b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7ab497a4b80c4db6816c9bdbe8fae5ece584dd39"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b85901206dbc621e4fd7b6de06eae5817434e003"
+    },
+    {
+      "path": ".metadata",
+      "type": "file",
+      "sha": "70a9f94368a07dda77388c4d95bee2762886da1c"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "afa4cf0f5615b4390dc189496c773f345d823e99"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "09da4728d7720b4150f6ae334ef10541218e76d4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "abeadf92f6c9dc7f9f727103eec5b86a248f48a9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "749af9d939331c3ae590cbf7f446e3ee0c0f8cbc"
+    },
+    {
+      "path": "analysis_options.yaml",
+      "type": "file",
+      "sha": "448d91f71ba9b36024ded929212765a4fb64bc2f"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "5048c870d57f935ae361473b42e65e92d7afbfa4"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "cd591ea6a0b82f92e0c6740397a1073774fe69ec"
+    },
+    {
+      "path": "files",
+      "type": "dir",
+      "sha": "aa8d11b9cb5d88ef39112b4be2baf57f314769b6"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "f1ea69defbc8f9cc117dd8546a43a1a9659873d3"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "409caa5a99c0644c3a9ffbaffa7a6c53172acc7d"
+    },
+    {
+      "path": "pubspec.yaml",
+      "type": "file",
+      "sha": "b31ee931180e29d8d21df2c13c92f2d0b69e954b"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "db9e06e5b882c1ee220f32e91cdfb325b287ca1e"
+    },
+    {
+      "path": "unitypackages",
+      "type": "dir",
+      "sha": "b931b77d16fb9b341005d848fdf1603abfc236e5"
+    },
+    {
+      "path": "windows",
+      "type": "dir",
+      "sha": "a200d12b80227d8586ccb564c0a0770d2ada7aeb"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies embedding Unity in Flutter; platform wrappers and Unity packages, not engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

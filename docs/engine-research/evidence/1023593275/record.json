@@ -1,0 +1,74 @@
+{
+  "repository": "Floating-Trees-Inc/Kaleidoscope",
+  "repository_id": 1023593275,
+  "commit": "d0bd24ba9e18b3480ec11554ee8d7a040f02191b",
+  "source_url": "https://github.com/Floating-Trees-Inc/Kaleidoscope/tree/d0bd24ba9e18b3480ec11554ee8d7a040f02191b",
+  "readme_path": "README.md",
+  "readme_sha256": "1c43b0cd7a1dd58539cefeb977244d2cdfe115a4570d7b0634584ec7e7159725",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f2aae7e14b9523d727a67f01f170cdc7f4d7c7ed"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a7a9307795eba611013a591b5d47e236a4f00c15"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c889a22ed742d80f8d6afb7fa9d6964ab73acb75"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b38fcf829e694c1467dfabe234df3e8fa97dcdb5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bc97d38db948756cebfc14957977c82e45d4a3b9"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "72f930edfe151cd12cb431e822e02f3695ae3eb1"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "1221ec381bf0881d91c2fc51526c961ed6796a80"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "900658d853d722894763f29684120ba789a3ffe2"
+    },
+    {
+      "path": "dlls",
+      "type": "dir",
+      "sha": "29bd0489f365dc4c5c6249e7f601ddd412a3a5cd"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "0b360ea7a5859394fc17ad344508b5903cb3e2b5"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "be17e1ba653c32f0dfe307a998ae47f55ab30600"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "590b5544f0d91dde60688cf279a8f0a7d58e5524"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Internal game engine with input, audio access and graphics backends plus code/tests described; platform readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

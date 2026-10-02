@@ -1,0 +1,94 @@
+{
+  "repository": "awemorris/suika3",
+  "repository_id": 1129931895,
+  "commit": "4d9d0f3961710734fdc59139d8f159ea6ed0918f",
+  "source_url": "https://github.com/awemorris/suika3/tree/4d9d0f3961710734fdc59139d8f159ea6ed0918f",
+  "readme_path": "README.md",
+  "readme_sha256": "8a21c1ae71756ab863cb0d4da597749b023e83b0d1e8e14a03afd708ccc1060f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "39d101da73d78066a679e8e2a12a3a0141787701"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f2424b1612b2c490d9f269f47dccd96360bce6a7"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "767fb9ba51171ec71bf4fe29dbfbd4ce406255ef"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "9af4b5a4de71ea5d5930fa175fe9445560884a6f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "574ecd43505d6c12cb9406242218c3e19f9feea4"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "093991f7f6879f1f4a1f1326e87a6fc8135e5e73"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c751442d6c86eb6eab555d1f858e62d864e84f9e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "6c2950be152156d08f64456921ba43b14a2f2fcc"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b1c9e75b6addebb91ab2ccbf409ed04465e17b6a"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "46b4f71682b91b12d524daf8cbb028ec4165c359"
+    },
+    {
+      "path": "game-beat",
+      "type": "dir",
+      "sha": "be03d84a1069ec361f06bb5ce36f692cdb991b76"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "be0c46ea73107f0da22a2cfb2ab99e98bb0b8449"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "07013aaf3bd4b92e63d43d4c171539383b7c8975"
+    },
+    {
+      "path": "locale",
+      "type": "dir",
+      "sha": "b12f360c6a2f478d4754d3a5cd3752759a9da5f9"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "6400bc374bad6fec4bd39286f7235051c9890db1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "88339bb7f72a98e08956c79b41ed0cb8d29e2037"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C visual-novel/2D runtime with script VM, platform/build source and sample games; README platform/completion/JIT claims not independently verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

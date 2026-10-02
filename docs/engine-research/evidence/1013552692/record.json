@@ -1,0 +1,114 @@
+{
+  "repository": "ViciousSquid/Fio",
+  "repository_id": 1013552692,
+  "commit": "3955c78fe3438a5ee6a172e1b5278764c8ee36c6",
+  "source_url": "https://github.com/ViciousSquid/Fio/tree/3955c78fe3438a5ee6a172e1b5278764c8ee36c6",
+  "readme_path": "README.md",
+  "readme_sha256": "6768cb755bf74479d347fc3d6e4051dc623b804206acaefe74930accb445ecaf",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "dc85f83d6b32e3129c1983a300289c0828a9f824"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "da9d9d9f7c2e09cd4c5e2f2788636e558ff69223"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "2c4d6eca54049c35ebc3b57fbf4afd8ca71dfa7f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8f0e60714ccb78a9f7d870df108e349c62289174"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9fd953e59962b691e53f9def6357e67fdf5bd3d5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9bee7deae4f61f84f9aceb6522ca064b9db62c7a"
+    },
+    {
+      "path": "clean.py",
+      "type": "file",
+      "sha": "1b45b17b50db32ab116cae3748b34d1bafce2d64"
+    },
+    {
+      "path": "conftest.py",
+      "type": "file",
+      "sha": "345934e34df63c261814b3534928a6582a719964"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "18241b2bd61dfb70a4a39f0c9c55dc4abcfe54af"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "273b16ce1f2a50025f7f9153386d218962755249"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "a2dab819a2c56c3759a72c32be6fde5ed8f8b84c"
+    },
+    {
+      "path": "main.py",
+      "type": "file",
+      "sha": "5b0127508061d505c84fd8562d1535b827e78db7"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "935e0b748ba3d498510451f5152ec845406f6d70"
+    },
+    {
+      "path": "player",
+      "type": "dir",
+      "sha": "cc5a58d51532b33093439c12aef6cbfbb0ff7fdc"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "f27873658ca24c8aca35c75812d85cbc722ed53d"
+    },
+    {
+      "path": "pytest.ini",
+      "type": "file",
+      "sha": "9fcb961865d578a2d2237c64c376b468019893a2"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "64bcbed8cc8caa4fe8a393947bba28efeb75b1fe"
+    },
+    {
+      "path": "settings.ini",
+      "type": "file",
+      "sha": "f36e049d77a83b082b8a74cd7d37922c12651996"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "b1998c78b3adcfe54d2a8759f2da2a5a6b7b6c36"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "26f1a08ae4984ba6f2694cb4645d7159aeddb530"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "World authoring and real-time simulation engine with editor, engine, player and tests; shared edit/play state is documented, efficiency claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

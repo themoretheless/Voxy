@@ -1,0 +1,237 @@
+{
+  "before": 46,
+  "after": 46,
+  "steps": [],
+  "includes_adjacent": true,
+  "face_groups": false,
+  "edge_groups": false,
+  "project_bound": true,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48801,
+        48843
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48802,
+        48848
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48802,
+        48827
+      ],
+      [
+        48802,
+        48847
+      ],
+      [
+        48802,
+        48828
+      ],
+      [
+        48818,
+        48847
+      ],
+      [
+        48818,
+        48828
+      ],
+      [
+        48818,
+        48853
+      ],
+      [
+        48818,
+        48829
+      ],
+      [
+        48818,
+        48858
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        47088,
+        49017
+      ],
+      [
+        47087,
+        49017
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        47092,
+        49017
+      ],
+      [
+        47081,
+        49017
+      ],
+      [
+        47081,
+        49012
+      ],
+      [
+        47086,
+        49012
+      ],
+      [
+        47085,
+        49012
+      ],
+      [
+        47084,
+        49012
+      ],
+      [
+        49012,
+        49044
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        47272,
+        48800
+      ],
+      [
+        47273,
+        48800
+      ],
+      [
+        48818,
+        48854
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49035,
+        49061
+      ],
+      [
+        49036,
+        49061
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49028,
+        49048
+      ],
+      [
+        49028,
+        49047
+      ],
+      [
+        49028,
+        49063
+      ],
+      [
+        49027,
+        49061
+      ],
+      [
+        49028,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33256,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554478,
+      "forbidden_pairs": [
+        [
+          47088,
+          49016
+        ],
+        [
+          49034,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.002946770718901115,
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5670889427328125,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "cce7835d5a0dd8beb9b623cda718730256719f30c09c2db6a66c18a23bc7d423",
+  "reference_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa",
+  "candidate_sha256": "cce7835d5a0dd8beb9b623cda718730256719f30c09c2db6a66c18a23bc7d423",
+  "proposal_distances_m": [
+    2.5e-05,
+    -2.5e-05,
+    5e-05,
+    -5e-05,
+    0.0001,
+    -0.0001,
+    0.0003,
+    -0.0003,
+    0.0015,
+    -0.0015,
+    0.002,
+    -0.002
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

@@ -1,0 +1,42 @@
+{
+  "repository": "gdquest-demos/godot-2d-jrpg-combat",
+  "repository_id": 289789722,
+  "commit": "9b02e97c1501585ca731263c2e7cd44907dd8a2b",
+  "source_url": "https://github.com/gdquest-demos/godot-2d-jrpg-combat/tree/9b02e97c1501585ca731263c2e7cd44907dd8a2b",
+  "readme_path": "README.md",
+  "readme_sha256": "13cd53ea4535193d27efc78fd89ec493fe311f1e8185c08773b2e9bdbb8cf192",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1c33225a5c36da5b4f250639eb0d6dd5a04cdfc4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a9934954a93725d4da46306b451ccdc7dbcced35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ca16162b42e933e869dffcb32fc42cd10c2afc6e"
+    },
+    {
+      "path": "godot",
+      "type": "dir",
+      "sha": "63490f4e660ef634097deea142142b2bbc785ec7"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "6c6e81be959ae916765ac7f2fe0d375352d49e79"
+    },
+    {
+      "path": "start",
+      "type": "dir",
+      "sha": "1f8319b5a54fc08df2384e52f1a3de1276e47cb2"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,32 @@
+{
+  "renderer": "Apple M4 Max / Metal offscreen",
+  "identityPixelsEqualDry": true,
+  "redAbsorptionOnlyRedChannel": true,
+  "redAbsorptionChangedPixels": 16924,
+  "refractionChangedPixels": 3443,
+  "refractionMaxChannelDifference": 1,
+  "stressVolumeMultiplier": 100,
+  "stressPhysiologicallyCalibrated": false,
+  "stressSourceSha256": "5cdeec6426af99efa4246a12c69ac358a0f53040510f6b04071588c0dd6d394e",
+  "numericalFilmUnchangedInOrdinaryRender": true,
+  "hashes": {
+    "body-film-scene-optics.png": "fbee52f982b964707b7139a703f2fae829beec5d5c3bfe6deb86d5d28d197b50",
+    "body-film-scene-identity.png": "5b8e1d897482534f2d1b178ec3a0371d9001092449d77b20b59b2092f7159f70",
+    "body-film-scene-red-absorption.png": "8cb03dd341e0a8fb4764d406c2b3550fba102954c73e5fe179ffdc1ebb733a34",
+    "body-film-scene-refraction-stress.png": "81723f63e5361d1dcfa1a9c8420a7b121a4e829378ffa67de320e5aef3f8adfc",
+    "body-film-scene-refraction-control.png": "cc08aa030261a037ffb94f35f3f44fe4a9bbc68f1f441c11e6568fbf795c24a8",
+    "body-film-scene-optics-state.json": "8657d7077c30e91b757de72d29e2016f8ded5ffb5cafb2a2cb8194950682d3c7"
+  },
+  "sources": {
+    "crates/voxy_render/src/scene.rs": "548582071747380771b839ede35a5f85ec71624fe205fd08a5a8a0bc1d9ec17d",
+    "crates/voxy_app/src/female_material.wgsl": "a699ddb9197f329eea751b8bb8511889e1e8c12f37335073c7aa6878e70e83cf",
+    "crates/voxy_app/examples/female_render.rs": "9bf3cf67ae336aa08759c04ec7eb9079dd5a1d37a04a24ce09d1f7cb6bf0bfad"
+  },
+  "limits": [
+    "Opt-in female_render --film-scene-optics; not integrated into live SceneApp viewer.",
+    "Screen-space thin-interface approximation; no offscreen visibility, ray tracing, multiple interfaces or volumetric SSS.",
+    "Depth testing enabled; explicit foreground occlusion fixture not yet tested.",
+    "Geometry is split/uploaded for two passes, with additional CPU/GPU cost; no real-time performance claim.",
+    "Stress test amplifies film volumes 100 times for observable optical displacement; not a physiological film example."
+  ]
+}

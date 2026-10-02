@@ -1,0 +1,124 @@
+{
+  "repository": "fanchy/h2engine",
+  "repository_id": 102413220,
+  "commit": "6b505a7cc9b66ff7695820efb685f8240778430b",
+  "source_url": "https://github.com/fanchy/h2engine/tree/6b505a7cc9b66ff7695820efb685f8240778430b",
+  "readme_path": "README.md",
+  "readme_sha256": "1037a934a30e49773e0cade9fd3e10be8ef87e40f2b38cc5c7fe66d98821dd18",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "259148fa18f9fb7ef58563f4ff15fc7b172339fb"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f7eea3783a8e2a49eafb06ca1fae099ba6189d62"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "5faf5217f15952d51cc069a348962b9235e04e10"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "56b7bd1d7fca3949e3414f1407cb8e619766c31c"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "580549bd0c5c986811ff12cdcb708e8c6b03b8e1"
+    },
+    {
+      "path": "fflib",
+      "type": "dir",
+      "sha": "94b639e8fbf0162d4bda1e2b8898e817e4880898"
+    },
+    {
+      "path": "h2.conf",
+      "type": "file",
+      "sha": "8af2e248a31f1e12fb9f719fd39c04a26ee41619"
+    },
+    {
+      "path": "lib3party",
+      "type": "dir",
+      "sha": "ed0619dcb003f137b395b9530cc3dc88e034988b"
+    },
+    {
+      "path": "main.js",
+      "type": "file",
+      "sha": "9b9429d8276c326f3c525acd07840dca3221a659"
+    },
+    {
+      "path": "main.lua",
+      "type": "file",
+      "sha": "539cb22c54cb798faa0800d5d319676596046dc5"
+    },
+    {
+      "path": "main.php",
+      "type": "file",
+      "sha": "12ad1b7fb1b196ad279485cc1c59af6aac2064ad"
+    },
+    {
+      "path": "main.py",
+      "type": "file",
+      "sha": "5840ccd19ba380ff2a26d3911b59418f5e99c07d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "972956f8b49f71904beeea6e6569fc79a9ff6b27"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "b357cabf93aae6266e4f5b9d65a78db813574213"
+    },
+    {
+      "path": "winbuild",
+      "type": "dir",
+      "sha": "d6bf822a43c1607743fb10692abae7f24de742a5"
+    },
+    {
+      "path": "workercpp",
+      "type": "dir",
+      "sha": "ff0d05c1a5883aa46684af1d4e373b353b6a55c3"
+    },
+    {
+      "path": "workercs",
+      "type": "dir",
+      "sha": "4f7875e7ddc0cbc1ac64d907a6e4e1c11e93ac94"
+    },
+    {
+      "path": "workerjs",
+      "type": "dir",
+      "sha": "f2ad3e1a0327f64137acb7490fddc8fda892a059"
+    },
+    {
+      "path": "workerlua",
+      "type": "dir",
+      "sha": "b70bb9756021f7bf8e970fff6e53ec30a6440e75"
+    },
+    {
+      "path": "workerphp",
+      "type": "dir",
+      "sha": "684f73a006376c499241c61bc1d13c65ede488f6"
+    },
+    {
+      "path": "workerpy",
+      "type": "dir",
+      "sha": "d1ba2cc6d2611098fcff2791a0d5d002e66b2fbc"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify extensible multilingual server platform; engine/worker/network source and CMake, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

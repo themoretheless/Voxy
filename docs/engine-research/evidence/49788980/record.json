@@ -1,0 +1,49 @@
+{
+  "repository": "MrSapps/msgi",
+  "repository_id": 49788980,
+  "commit": "dd0dd0992aa0b612bf852b8bc823c9b56d263637",
+  "source_url": "https://github.com/MrSapps/msgi/tree/dd0dd0992aa0b612bf852b8bc823c9b56d263637",
+  "readme_path": "README.md",
+  "readme_sha256": "c84215cd33d86f0f797cd17ad232f7dcd2282336d1a6c741b0b4b7265ce4e619",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fa862320faf6d2468b3bfcc87ee10c930a2c1eaa"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2aa3bdc3b9a6a350b54a37f410919b4bc8cb3b70"
+    },
+    {
+      "path": "3rdParty",
+      "type": "dir",
+      "sha": "ee83acb56aee2c0c6e0ff46e8997f0ee67e998a1"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "76ba7d6c91ad6a19041fb83f41d7d84312c711ea"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "100048a2fe1c2210839edaf2594efaf86aa143b7"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "276f05e95ef1660649df36bf99271754c3b8894f"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "8d2bed3ce64e3646689cce463fd74251d070af96"
+    }
+  ],
+  "classification": "excluded_game_mod",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Partial reverse-engineering replacement DLL loaded by original MGSI executable, rather than a complete independent runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,375 @@
+Analysis of sampling urogenital_contact (pid 93762) every 1 millisecond
+Process:         urogenital_contact [93762]
+Path:            /Users/USER/Documents/*/urogenital_contact
+Load Address:    0x1009c0000
+Identifier:      urogenital_contact
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  codex [1802]
+Target Type:     live task
+
+Date/Time:       2026-10-01 19:15:20.811 +0400
+Launch Time:     2026-10-01 18:50:59.937 +0400
+OS Version:      macOS 26.7.1 (25G313)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         6720K
+Physical footprint (peak):  11.9M
+Idle exit:                  untracked
+----
+
+Call graph:
+    1685 Thread_9525318   DispatchQueue_1: com.apple.main-thread  (serial)
+      1685 start  (in dyld) + 6992  [0x18b4a44e4]
+        1685 main  (in urogenital_contact) + 52  [0x1009c4cb4]
+          1685 _RNvNtCsswPLdGB7Xs_3std2rt19lang_start_internal  (in urogenital_contact) + 952  [0x1009f5764]
+            1685 _RNCINvNtCsswPLdGB7Xs_3std2rt10lang_startINtNtCsfIBWXedyoEb_4core6result6ResultuINtNtCs7CMGwZ9BQm0_5alloc5boxed3BoxDNtNtBH_5error5ErrorEL_EEE0Cs8alh1FmYpT5_18urogenital_contact  (in urogenital_contact) + 24  [0x1009c0c60]
+              1685 _RINvNtNtCsswPLdGB7Xs_3std3sys9backtrace28___rust_begin_short_backtraceFEINtNtCsfIBWXedyoEb_4core6result6ResultuINtNtCs7CMGwZ9BQm0_5alloc5boxed3BoxDNtNtB1d_5error5ErrorEL_EEB18_ECs8alh1FmYpT5_18urogenital_contact  (in urogenital_contact) + 12  [0x1009c0c40]
+                1685 _RNvCs8alh1FmYpT5_18urogenital_contact4main  (in urogenital_contact) + 2640  [0x1009c2fec]
+                  1018 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 5284  [0x1009cfff0]
+                  + 715 _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact) + 2152  [0x1009d330c]
+                  + ! 715 _RNvMs_NtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB6_4Body23surface_energy_gradient  (in urogenital_contact) + 100  [0x1009d3e28]
+                  + !   253 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 824  [0x1009ca9c8]
+                  + !   : 121 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 992  [0x1009d5300]
+                  + !   : | 118 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 1648,1408,...  [0x1009d5590,0x1009d54a0,...]
+                  + !   : | 3 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 180,192,...  [0x1009d4b34,0x1009d4b40,...]
+                  + !   : 14 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 720  [0x1009d51f0]
+                  + !   : | 14 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 144,172,...  [0x1009d4d98,0x1009d4db4,...]
+                  + !   : 12 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 512  [0x1009d5120]
+                  + !   : | 12 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 256,168,...  [0x1009d4c78,0x1009d4c20,...]
+                  + !   : 10 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 824  [0x1009d5258]
+                  + !   : | 10 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 192,244,...  [0x1009d4b40,0x1009d4b74,...]
+                  + !   : 9 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 432  [0x1009d50d0]
+                  + !   : | 9 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 256,4,...  [0x1009d4c78,0x1009d4b7c,...]
+                  + !   : 8 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 452  [0x1009d50e4]
+                  + !   : | 8 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 344,168,...  [0x1009d4cd0,0x1009d4c20,...]
+                  + !   : 8 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 660  [0x1009d51b4]
+                  + !   : | 8 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 120,96,...  [0x1009d4d80,0x1009d4d68,...]
+                  + !   : 7 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 564,772,...  [0x1009ca8c4,0x1009ca994,...]
+                  + !   : 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 532  [0x1009d5134]
+                  + !   : | 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 256,264,...  [0x1009d4c78,0x1009d4c80,...]
+                  + !   : 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 956  [0x1009d52dc]
+                  + !   : | 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 276,60,...  [0x1009d4e1c,0x1009d4d44,...]
+                  + !   : | 1 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 972  [0x1009d52ec]
+                  + !   : 6 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 824  [0x1009ca9c8]
+                  + !   : | 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 196,268,...  [0x1009d4fe4,0x1009d502c,...]
+                  + !   : 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 884  [0x1009d5294]
+                  + !   : | 6 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 152,244,...  [0x1009d4b18,0x1009d4b74,...]
+                  + !   : 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 900  [0x1009d52a4]
+                  + !   : | 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 144,172,...  [0x1009d4d98,0x1009d4db4,...]
+                  + !   : 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 472  [0x1009d50f8]
+                  + !   : | 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 36,128,...  [0x1009d4b9c,0x1009d4bf8,...]
+                  + !   : 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 772  [0x1009d5224]
+                  + !   : | 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 60,144,...  [0x1009d4d44,0x1009d4d98,...]
+                  + !   : 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 940  [0x1009d52cc]
+                  + !   : | 5 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 180,8,...  [0x1009d4b34,0x1009d4a88,...]
+                  + !   : 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 492  [0x1009d510c]
+                  + !   : | 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 196,140,...  [0x1009d4c3c,0x1009d4c04,...]
+                  + !   : 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 756  [0x1009d5214]
+                  + !   : | 4 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 180,192,...  [0x1009d4b34,0x1009d4b40,...]
+                  + !   : 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 840  [0x1009d5268]
+                  + !   : | 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 52,96,...  [0x1009d4d3c,0x1009d4d68,...]
+                  + !   : 3 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 600,32  [0x1009d5178,0x1009d4f40]
+                  + !   : 2 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 704  [0x1009d51e0]
+                  + !   :   2 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 180,224  [0x1009d4b34,0x1009d4b60]
+                  + !   247 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 800  [0x1009ca9b0]
+                  + !   : 184 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance22separation_lower_bound  (in urogenital_contact) + 1176,1236,...  [0x1009d5cc4,0x1009d5d00,...]
+                  + !   : 63 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 808,420,...  [0x1009ca9b8,0x1009ca834,...]
+                  + !   212 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 336  [0x1009ca7e0]
+                  + !   : 164 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 504,592,...  [0x1009c9f34,0x1009c9f8c,...]
+                  + !   : 30 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 792  [0x1009ca054]
+                  + !   : | 29 _RINvNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable14driftsort_mainTjAdj3_B11_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSBZ_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB20_20TissueSurfaceContact10candidatess_0E0INtNtB1j_3vec3VecBZ_EEB24_  (in urogenital_contact) + 200  [0x1009c80a0]
+                  + !   : | + 29 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable5drift4sortTjAdj3_BY_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSBW_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB1W_20TissueSurfaceContact10candidatess_0E0EB20_  (in urogenital_contact) + 1444  [0x1009d8018]
+                  + !   : | +   23 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  + !   : | +   ! 11 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  + !   : | +   ! : 6 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 968,1096,...  [0x1009d89b8,0x1009d8a38,...]
+                  + !   : | +   ! : 5 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  + !   : | +   ! :   3 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1096,1832,...  [0x1009d8a38,0x1009d8d18,...]
+                  + !   : | +   ! :   1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1204  [0x1009d8aa4]
+                  + !   : | +   ! :   + 1 DYLD-STUB$$memcpy  (in urogenital_contact) + 0  [0x100a15ef4]
+                  + !   : | +   ! :   1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  + !   : | +   ! :     1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 2136  [0x1009d8e48]
+                  + !   : | +   ! 11 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1100,2152,...  [0x1009d8a3c,0x1009d8e58,...]
+                  + !   : | +   ! 1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 908  [0x1009d897c]
+                  + !   : | +   !   1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6shared5pivot11median3_recTjAdj3_B16_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB14_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB26_20TissueSurfaceContact10candidatess_0E0EB2a_  (in urogenital_contact) + 120  [0x1009d73a4]
+                  + !   : | +   !     1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6shared5pivot11median3_recTjAdj3_B16_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB14_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB26_20TissueSurfaceContact10candidatess_0E0EB2a_  (in urogenital_contact) + 12  [0x1009d7338]
+                  + !   : | +   3 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1204  [0x1009d8aa4]
+                  + !   : | +   ! 3 _platform_memmove  (in libsystem_platform.dylib) + 44,88,...  [0x18b87938c,0x18b8793b8,...]
+                  + !   : | +   3 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1248,1100  [0x1009d8ad0,0x1009d8a3c]
+                  + !   : | 1 _RINvNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable14driftsort_mainTjAdj3_B11_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSBZ_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB20_20TissueSurfaceContact10candidatess_0E0INtNtB1j_3vec3VecBZ_EEB24_  (in urogenital_contact) + 228  [0x1009c80bc]
+                  + !   : |   1 xzm_segment_group_free_chunk  (in libsystem_malloc.dylib) + 860  [0x18b67549c]
+                  + !   : |     1 _xzm_segment_group_span_mark_free  (in libsystem_malloc.dylib) + 136  [0x18b675bfc]
+                  + !   : |       1 _xzm_reclaim_mark_free  (in libsystem_malloc.dylib) + 112  [0x18b673df0]
+                  + !   : |         1 xzm_reclaim_mark_free_locked  (in libsystem_malloc.dylib) + 116  [0x18b673968]
+                  + !   : |           1 mach_vm_reclaim_try_enter  (in libsystem_kernel.dylib) + 296  [0x18b83f17c]
+                  + !   : |             1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18b82c10c]
+                  + !   : 15 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 96  [0x1009c9d9c]
+                  + !   : | 15 _RNvXs_NtNtCs7CMGwZ9BQm0_5alloc3vec21spec_from_iter_nestedINtB6_3VecTjAdj3_B15_EEINtB4_18SpecFromIterNestedB13_INtNtNtNtCsfIBWXedyoEb_4core4iter8adapters3map3MapINtNtB1P_9enumerate9EnumerateINtNtNtB1T_5slice4iter4IterAjB17_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB3F_20TissueSurfaceContact10candidates0EE9from_iterB3J_  (in urogenital_contact) + 184  [0x1009c7640]
+                  + !   : |   6 _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact) + 332  [0x1009c908c]
+                  + !   : |   + 4 _platform_memset_pattern16  (in libsystem_platform.dylib) + 300,272  [0x18b87724c,0x18b877230]
+                  + !   : |   + 2 DYLD-STUB$$memset_pattern16  (in urogenital_contact) + 4  [0x100a15f1c]
+                  + !   : |   5 _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact) + 312  [0x1009c9078]
+                  + !   : |   + 5 _platform_memset_pattern16  (in libsystem_platform.dylib) + 0,300,...  [0x18b877120,0x18b87724c,...]
+                  + !   : |   4 _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact) + 472,648,...  [0x1009c9118,0x1009c91c8,...]
+                  + !   : 3 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 724  [0x1009ca010]
+                  + !   :   3 _RNvMs3_NtCs7CMGwZ9BQm0_5alloc7raw_vecINtB5_6RawVecAdj2_E8grow_oneCs7KDHeV3lXiN_7physics  (in urogenital_contact) + 60  [0x100a11308]
+                  + !   :     3 _RNvMs4_NtCs7CMGwZ9BQm0_5alloc7raw_vecNtB5_11RawVecInner11finish_growCs7KDHeV3lXiN_7physics  (in urogenital_contact) + 92  [0x100a11668]
+                  + !   :       3 _realloc  (in libsystem_malloc.dylib) + 452  [0x18b69bf14]
+                  + !   :         3 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x18b69b6f8]
+                  + !   :           2 xzm_realloc  (in libsystem_malloc.dylib) + 880  [0x18b68bef4]
+                  + !   :           + 2 _platform_memmove  (in libsystem_platform.dylib) + 88  [0x18b8793b8]
+                  + !   :           1 xzm_realloc  (in libsystem_malloc.dylib) + 808  [0x18b68beac]
+                  + !   :             1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18b68b458]
+                  + !   :               1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18b6745f4]
+                  + !   :                 1 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 528  [0x18b674c30]
+                  + !   :                   1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 240  [0x18b676148]
+                  + !   :                     1 _xzm_reclaim_mark_used_locked  (in libsystem_malloc.dylib) + 60  [0x18b676a9c]
+                  + !   :                       1 mach_vm_reclaim_try_cancel  (in libsystem_kernel.dylib) + 260  [0x18b83f2f8]
+                  + !   :                         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18b82c10c]
+                  + !   2 _RNvMs_NtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB6_4Body23surface_energy_gradient  (in urogenital_contact) + 100  [0x1009d3e28]
+                  + !   : 2 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 220,264  [0x1009ca76c,0x1009ca798]
+                  + !   1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact) + 948  [0x1009caa44]
+                  + !     1 log  (in libsystem_m.dylib) + 12  [0x19b62c18c]
+                  + 255 _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact) + 1460  [0x1009d3058]
+                  + ! 88 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1228  [0x1009cce3c]
+                  + ! : 84 _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE13iter_try_folduNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator8try_fold7flattenB1I_uINtNtNtBc_3ops12control_flow11ControlFlowuENCINvNvB2r_3all5checkRdNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB4u_8Material27response_with_active_lengths1_0E0E0B3l_EB4w_  (in urogenital_contact) + 228,124,...  [0x1009cbf10,0x1009cbea8,...]
+                  + ! : 4 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1444,1228,...  [0x1009ccf14,0x1009cce3c,...]
+                  + ! 30 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1048  [0x1009ccd88]
+                  + ! : 22 pow  (in libsystem_m.dylib) + 180,236,...  [0x19b6300b4,0x19b6300ec,...]
+                  + ! : 5 DYLD-STUB$$pow  (in urogenital_contact) + 4,0  [0x100a15f88,0x100a15f84]
+                  + ! : 3 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1084,1080  [0x1009ccdac,0x1009ccda8]
+                  + ! 28 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1460  [0x1009ccf24]
+                  + ! : 17 _RINvNtCsfIBWXedyoEb_4core5array11try_from_fnINtNtNtB4_3ops9try_trait17NeverShortCircuitAdj3_EKB1p_NCINvMBJ_BG_10wrap_mut_1jNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB22_8Material27response_with_active_lengths2_0E0EB24_  (in urogenital_contact) + 188,172,...  [0x1009cc968,0x1009cc958,...]
+                  + ! : 11 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 2320,1980,...  [0x1009cd280,0x1009cd12c,...]
+                  + ! 23 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 2368  [0x1009cd2b0]
+                  + ! : 15 _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE13iter_try_folduNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator8try_fold7flattenB1I_uINtNtNtBc_3ops12control_flow11ControlFlowuENCINvNvB2r_3any5checkRdNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB4u_8Material27response_with_active_lengths4_0E0E0B3l_EB4w_  (in urogenital_contact) + 84,104,...  [0x1009cbf78,0x1009cbf8c,...]
+                  + ! : 8 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 2424,648,...  [0x1009cd2e8,0x1009ccbf8,...]
+                  + ! 19 _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact) + 1460  [0x1009d3058]
+                  + ! : 19 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 888,408,...  [0x1009ccce8,0x1009ccb08,...]
+                  + ! 15 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1572  [0x1009ccf94]
+                  + ! : 10 expm1  (in libsystem_m.dylib) + 60,304,...  [0x19b6332cc,0x19b6333c0,...]
+                  + ! : 4 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1736,1640,...  [0x1009cd038,0x1009ccfd8,...]
+                  + ! : 1 DYLD-STUB$$expm1  (in urogenital_contact) + 4  [0x100a15e74]
+                  + ! 14 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1104  [0x1009ccdc0]
+                  + ! : 7 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1156,1216,...  [0x1009ccdf4,0x1009cce30,...]
+                  + ! : 7 _RNvNtCs7KDHeV3lXiN_7physics12biomechanics2mm  (in urogenital_contact) + 156,128,...  [0x1009d4234,0x1009d4218,...]
+                  + ! 13 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 1020  [0x1009ccd6c]
+                  + ! : 13 _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE9iter_folddNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator4fold7flattenB1I_dNCINvNtB8_3map8map_foldRdddNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB3I_8Material27response_with_active_lengths_0NCINvXs26_NtB2q_5accumdNtB5f_3Sum3sumINtB3h_3MapINtB6_7FlattenB1c_EB3D_EE0E0E0EB3K_  (in urogenital_contact) + 200,260,...  [0x1009cc0c0,0x1009cc0fc,...]
+                  + ! 11 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 936  [0x1009ccd18]
+                  + ! : 7 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 936,988,...  [0x1009ccd18,0x1009ccd4c,...]
+                  + ! : 4 _RNvNtCs7KDHeV3lXiN_7physics12biomechanics7inverse  (in urogenital_contact) + 16,104,...  [0x1009d4318,0x1009d4370,...]
+                  + ! 10 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 0,684,...  [0x1009cc970,0x1009ccc1c,...]
+                  + ! 2 pow  (in libsystem_m.dylib) + 520  [0x19b630208]
+                  + ! 1 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 2180  [0x1009cd1f4]
+                  + ! : 1 <deduplicated_symbol>  (in urogenital_contact) + 84  [0x1009d9bf8]
+                  + ! 1 _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 2256  [0x1009cd240]
+                  + !   1 DYLD-STUB$$exp  (in urogenital_contact) + 4  [0x100a15e68]
+                  + 46 _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact) + 1332,1536,...  [0x1009d2fd8,0x1009d30a4,...]
+                  + 1 _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact) + 332  [0x1009d2bf0]
+                  + ! 1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics16cell_poroelasticNtB4_4Body14pore_fields_at  (in urogenital_contact) + 364  [0x1009ce08c]
+                  + !   1 _RNvCsF9ekSxeM8E_7___rustc35___rust_no_alloc_shim_is_unstable_v2  (in urogenital_contact) + 0  [0x1009c4cd0]
+                  + 1 _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact) + 3088  [0x1009d36b4]
+                  +   1 _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE13iter_try_folduNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator8try_fold7flattenB1I_uINtNtNtBc_3ops12control_flow11ControlFlowuENCINvNvB2r_3any5checkRdNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB4u_8Material27response_with_active_lengths4_0E0E0B3l_EB4w_  (in urogenital_contact) + 72  [0x1009cbf6c]
+                  664 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 5260  [0x1009cffd8]
+                  + 664 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics11tissue_gapsNtB4_4Body16gap_path_is_open  (in urogenital_contact) + 96  [0x1009cdafc]
+                  +   214 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 1060  [0x1009ca4c8]
+                  +   ! 123 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance22separation_lower_bound  (in urogenital_contact) + 1236,812,...  [0x1009d5d00,0x1009d5b58,...]
+                  +   ! 91 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 1084,528,...  [0x1009ca4e0,0x1009ca2b4,...]
+                  +   199 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 104  [0x1009ca10c]
+                  +   ! 144 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 504,592,...  [0x1009c9f34,0x1009c9f8c,...]
+                  +   ! 32 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 792  [0x1009ca054]
+                  +   ! : 31 _RINvNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable14driftsort_mainTjAdj3_B11_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSBZ_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB20_20TissueSurfaceContact10candidatess_0E0INtNtB1j_3vec3VecBZ_EEB24_  (in urogenital_contact) + 200  [0x1009c80a0]
+                  +   ! : | 31 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable5drift4sortTjAdj3_BY_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSBW_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB1W_20TissueSurfaceContact10candidatess_0E0EB20_  (in urogenital_contact) + 1444  [0x1009d8018]
+                  +   ! : |   23 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  +   ! : |   + 15 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  +   ! : |   + ! 10 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1100,1096,...  [0x1009d8a3c,0x1009d8a38,...]
+                  +   ! : |   + ! 4 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  +   ! : |   + ! : 2 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+                  +   ! : |   + ! : | 2 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1248  [0x1009d8ad0]
+                  +   ! : |   + ! : 2 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 2100,2140  [0x1009d8e24,0x1009d8e4c]
+                  +   ! : |   + ! 1 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1204  [0x1009d8aa4]
+                  +   ! : |   + !   1 _platform_memmove  (in libsystem_platform.dylib) + 180  [0x18b879414]
+                  +   ! : |   + 6 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1096,1100,...  [0x1009d8a38,0x1009d8a3c,...]
+                  +   ! : |   + 2 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1204  [0x1009d8aa4]
+                  +   ! : |   +   2 _platform_memmove  (in libsystem_platform.dylib) + 180  [0x18b879414]
+                  +   ! : |   5 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1100,1096,...  [0x1009d8a3c,0x1009d8a38,...]
+                  +   ! : |   3 _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1204  [0x1009d8aa4]
+                  +   ! : |     3 _platform_memmove  (in libsystem_platform.dylib) + 88,180  [0x18b8793b8,0x18b879414]
+                  +   ! : 1 _RINvNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable14driftsort_mainTjAdj3_B11_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSBZ_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB20_20TissueSurfaceContact10candidatess_0E0INtNtB1j_3vec3VecBZ_EEB24_  (in urogenital_contact) + 160  [0x1009c8078]
+                  +   ! :   1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18b68b458]
+                  +   ! :     1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18b6745f4]
+                  +   ! :       1 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 528  [0x18b674c30]
+                  +   ! :         1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 240  [0x18b676148]
+                  +   ! :           1 _xzm_reclaim_mark_used_locked  (in libsystem_malloc.dylib) + 60  [0x18b676a9c]
+                  +   ! :             1 mach_vm_reclaim_try_cancel  (in libsystem_kernel.dylib) + 260  [0x18b83f2f8]
+                  +   ! :               1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18b82c10c]
+                  +   ! 15 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 96  [0x1009c9d9c]
+                  +   ! : 15 _RNvXs_NtNtCs7CMGwZ9BQm0_5alloc3vec21spec_from_iter_nestedINtB6_3VecTjAdj3_B15_EEINtB4_18SpecFromIterNestedB13_INtNtNtNtCsfIBWXedyoEb_4core4iter8adapters3map3MapINtNtB1P_9enumerate9EnumerateINtNtNtB1T_5slice4iter4IterAjB17_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB3F_20TissueSurfaceContact10candidates0EE9from_iterB3J_  (in urogenital_contact) + 184  [0x1009c7640]
+                  +   ! :   8 _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact) + 632,148,...  [0x1009c91b8,0x1009c8fd4,...]
+                  +   ! :   4 _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact) + 312  [0x1009c9078]
+                  +   ! :   | 2 DYLD-STUB$$memset_pattern16  (in urogenital_contact) + 4  [0x100a15f1c]
+                  +   ! :   | 2 _platform_memset_pattern16  (in libsystem_platform.dylib) + 300,320  [0x18b87724c,0x18b877260]
+                  +   ! :   3 _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact) + 332  [0x1009c908c]
+                  +   ! :     3 _platform_memset_pattern16  (in libsystem_platform.dylib) + 300  [0x18b87724c]
+                  +   ! 8 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact) + 724  [0x1009ca010]
+                  +   !   8 _RNvMs3_NtCs7CMGwZ9BQm0_5alloc7raw_vecINtB5_6RawVecAdj2_E8grow_oneCs7KDHeV3lXiN_7physics  (in urogenital_contact) + 60  [0x100a11308]
+                  +   !     8 _RNvMs4_NtCs7CMGwZ9BQm0_5alloc7raw_vecNtB5_11RawVecInner11finish_growCs7KDHeV3lXiN_7physics  (in urogenital_contact) + 92  [0x100a11668]
+                  +   !       8 _realloc  (in libsystem_malloc.dylib) + 452  [0x18b69bf14]
+                  +   !         8 _malloc_zone_realloc  (in libsystem_malloc.dylib) + 148  [0x18b69b6f8]
+                  +   !           6 xzm_realloc  (in libsystem_malloc.dylib) + 880  [0x18b68bef4]
+                  +   !           | 6 _platform_memmove  (in libsystem_platform.dylib) + 88,180  [0x18b8793b8,0x18b879414]
+                  +   !           1 xzm_realloc  (in libsystem_malloc.dylib) + 756  [0x18b68be78]
+                  +   !           | 1 xzm_segment_group_try_realloc_large_chunk  (in libsystem_malloc.dylib) + 532  [0x18b675e20]
+                  +   !           |   1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 240  [0x18b676148]
+                  +   !           |     1 _xzm_reclaim_mark_used_locked  (in libsystem_malloc.dylib) + 60  [0x18b676a9c]
+                  +   !           |       1 mach_vm_reclaim_try_cancel  (in libsystem_kernel.dylib) + 260  [0x18b83f2f8]
+                  +   !           |         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18b82c10c]
+                  +   !           1 xzm_realloc  (in libsystem_malloc.dylib) + 808  [0x18b68beac]
+                  +   !             1 _xzm_malloc_large_huge  (in libsystem_malloc.dylib) + 464  [0x18b68b458]
+                  +   !               1 xzm_segment_group_alloc_chunk  (in libsystem_malloc.dylib) + 504  [0x18b6745f4]
+                  +   !                 1 _xzm_segment_group_find_and_allocate_chunk  (in libsystem_malloc.dylib) + 528  [0x18b674c30]
+                  +   !                   1 _xzm_segment_group_span_mark_smaller  (in libsystem_malloc.dylib) + 240  [0x18b676148]
+                  +   !                     1 _xzm_reclaim_mark_used_locked  (in libsystem_malloc.dylib) + 60  [0x18b676a9c]
+                  +   !                       1 mach_vm_reclaim_try_cancel  (in libsystem_kernel.dylib) + 260  [0x18b83f2f8]
+                  +   !                         1 mach_absolute_time  (in libsystem_kernel.dylib) + 108  [0x18b82c10c]
+                  +   187 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 1100  [0x1009ca4f0]
+                  +   ! 81 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 992  [0x1009d5300]
+                  +   ! : 80 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 1408,1412,...  [0x1009d54a0,0x1009d54a4,...]
+                  +   ! : 1 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 124  [0x1009d4afc]
+                  +   ! 14 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 432  [0x1009d50d0]
+                  +   ! : 14 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 256,140,...  [0x1009d4c78,0x1009d4c04,...]
+                  +   ! 11 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 1224,272,...  [0x1009ca56c,0x1009ca1b4,...]
+                  +   ! 8 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 1100  [0x1009ca4f0]
+                  +   ! : 8 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 68,92,...  [0x1009d4f64,0x1009d4f7c,...]
+                  +   ! 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 532  [0x1009d5134]
+                  +   ! : 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 256,264,...  [0x1009d4c78,0x1009d4c80,...]
+                  +   ! 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 956  [0x1009d52dc]
+                  +   ! : 7 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 64,128,...  [0x1009d4d48,0x1009d4d88,...]
+                  +   ! 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 452  [0x1009d50e4]
+                  +   ! : 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 36,136,...  [0x1009d4b9c,0x1009d4c00,...]
+                  +   ! 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 756  [0x1009d5214]
+                  +   ! : 6 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 12,180,...  [0x1009d4a8c,0x1009d4b34,...]
+                  +   ! 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 824  [0x1009d5258]
+                  +   ! : 6 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 192,52,...  [0x1009d4b40,0x1009d4ab4,...]
+                  +   ! 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 900  [0x1009d52a4]
+                  +   ! : 6 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 172,68,...  [0x1009d4db4,0x1009d4d4c,...]
+                  +   ! 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 660  [0x1009d51b4]
+                  +   ! : 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 144,120,...  [0x1009d4d98,0x1009d4d80,...]
+                  +   ! 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 840  [0x1009d5268]
+                  +   ! : 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 96,120,...  [0x1009d4d68,0x1009d4d80,...]
+                  +   ! 5 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 580,0,...  [0x1009d5164,0x1009d4f20,...]
+                  +   ! 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 472  [0x1009d50f8]
+                  +   ! : 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 32,84,...  [0x1009d4b98,0x1009d4bcc,...]
+                  +   ! 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 720  [0x1009d51f0]
+                  +   ! : 4 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 276,96,...  [0x1009d4e1c,0x1009d4d68,...]
+                  +   ! 3 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 772  [0x1009d5224]
+                  +   ! : 3 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 96,120,...  [0x1009d4d68,0x1009d4d80,...]
+                  +   ! 3 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 884  [0x1009d5294]
+                  +   ! : 3 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 244,192  [0x1009d4b74,0x1009d4b40]
+                  +   ! 2 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 492  [0x1009d510c]
+                  +   ! : 2 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 120,240  [0x1009d4bf0,0x1009d4c68]
+                  +   ! 2 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 512  [0x1009d5120]
+                  +   ! : 2 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 240,256  [0x1009d4c68,0x1009d4c78]
+                  +   ! 1 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 704  [0x1009d51e0]
+                  +   ! : 1 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 124  [0x1009d4afc]
+                  +   ! 1 _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 940  [0x1009d52cc]
+                  +   !   1 _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 180  [0x1009d4b34]
+                  +   48 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 968  [0x1009ca46c]
+                  +   ! 39 _RINvMsm_NtCsfIBWXedyoEb_4core5arrayAjj3_7try_mapINtNtNtB8_3ops9try_trait17NeverShortCircuitAdBz_ENCINvMBN_BK_10wrap_mut_1jNCNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB23_20TissueSurfaceContact12path_is_opens_00E0EB27_  (in urogenital_contact) + 276,40,...  [0x1009d9d14,0x1009d9c28,...]
+                  +   ! 9 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 992,1016  [0x1009ca484,0x1009ca49c]
+                  +   16 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 920  [0x1009ca43c]
+                  +     14 _RINvMsm_NtCsfIBWXedyoEb_4core5arrayAjj3_7try_mapINtNtNtB8_3ops9try_trait17NeverShortCircuitAdBz_ENCINvMBN_BK_10wrap_mut_1jNCNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB23_20TissueSurfaceContact12path_is_opens_00E0EB27_  (in urogenital_contact) + 16,276,...  [0x1009d9c10,0x1009d9d14,...]
+                  +     2 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact) + 940  [0x1009ca450]
+                  1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 2968  [0x1009cf6e4]
+                  + 1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 3540  [0x1009cf920]
+                  1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 6592  [0x1009d050c]
+                  + 1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 7104  [0x1009d070c]
+                  1 _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics5lbfgsNtB4_4Body17equilibrate_lbfgs  (in urogenital_contact) + 5196  [0x1009cff98]
+
+Total number in stack (recursive counted multiple, when >=5):
+        12       _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact) + 0  [0x1009d4a80]
+        12       _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact) + 0  [0x1009d4b78]
+        12       _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact) + 0  [0x1009d4d08]
+        10       _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 0  [0x1009d85f0]
+        9       _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact) + 0  [0x1009cc970]
+        8       _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1308  [0x1009d8b0c]
+        7       _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact) + 0  [0x1009d4f20]
+        6       _platform_memmove  (in libsystem_platform.dylib) + 0  [0x18b879360]
+        5       _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact) + 1204  [0x1009d8aa4]
+        5       mach_absolute_time  (in libsystem_kernel.dylib) + 0  [0x18b82c0a0]
+
+Sort by top of stack, same collapsed (when >= 5):
+        _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact10candidates  (in urogenital_contact)        308
+        _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance22separation_lower_bound  (in urogenital_contact)        307
+        _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance  (in urogenital_contact)        221
+        _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact12path_is_open  (in urogenital_contact)        113
+        _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE13iter_try_folduNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator8try_fold7flattenB1I_uINtNtNtBc_3ops12control_flow11ControlFlowuENCINvNvB2r_3all5checkRdNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB4u_8Material27response_with_active_lengths1_0E0E0B3l_EB4w_  (in urogenital_contact)        84
+        _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance12segment_hits  (in urogenital_contact)        80
+        _RNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB2_8Material27response_with_active_length  (in urogenital_contact)        73
+        _RNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance16triangle_weights  (in urogenital_contact)        73
+        _RNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB2_20TissueSurfaceContact15energy_gradient  (in urogenital_contact)        72
+        _RINvMsm_NtCsfIBWXedyoEb_4core5arrayAjj3_7try_mapINtNtNtB8_3ops9try_trait17NeverShortCircuitAdBz_ENCINvMBN_BK_10wrap_mut_1jNCNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB23_20TissueSurfaceContact12path_is_opens_00E0EB27_  (in urogenital_contact)        53
+        _RINvNtNtNtNtCsfIBWXedyoEb_4core5slice4sort6stable9quicksort9quicksortTjAdj3_B17_ENCINvMNtCs7CMGwZ9BQm0_5alloc5sliceSB15_7sort_byNCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB27_20TissueSurfaceContact10candidatess_0E0EB2b_  (in urogenital_contact)        49
+        _RNCNvNtNtCs7KDHeV3lXiN_7physics12biomechanics16surface_distance17triangle_distance0B7_  (in urogenital_contact)        48
+        _RNvMs0_NtCs7KDHeV3lXiN_7physics12biomechanicsNtB5_4Body8evaluate  (in urogenital_contact)        46
+        pow  (in libsystem_m.dylib)        24
+        _RINvNtCsfIBWXedyoEb_4core5array11try_from_fnINtNtNtB4_3ops9try_trait17NeverShortCircuitAdj3_EKB1p_NCINvMBJ_BG_10wrap_mut_1jNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB22_8Material27response_with_active_lengths2_0E0EB24_  (in urogenital_contact)        17
+        _platform_memmove  (in libsystem_platform.dylib)        17
+        _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE13iter_try_folduNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator8try_fold7flattenB1I_uINtNtNtBc_3ops12control_flow11ControlFlowuENCINvNvB2r_3any5checkRdNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB4u_8Material27response_with_active_lengths4_0E0E0B3l_EB4w_  (in urogenital_contact)        16
+        _platform_memset_pattern16  (in libsystem_platform.dylib)        14
+        _RINvMsg_NtNtNtCsfIBWXedyoEb_4core4iter8adapters7flattenINtB6_13FlattenCompatINtNtNtBc_5slice4iter4IterAdj3_EIB1d_dEE9iter_folddNCINvNvXsi_B6_IBS_ppENtNtNtBa_6traits8iterator8Iterator4fold7flattenB1I_dNCINvNtB8_3map8map_foldRdddNCNvMNtCs7KDHeV3lXiN_7physics12biomechanicsNtB3I_8Material27response_with_active_lengths_0NCINvXs26_NtB2q_5accumdNtB5f_3Sum3sumINtB3h_3MapINtB6_7FlattenB1c_EB3D_EE0E0E0EB3K_  (in urogenital_contact)        13
+        _RINvXs0_NtNtNtCsfIBWXedyoEb_4core4iter8adapters3mapINtB6_3MapINtNtB8_9enumerate9EnumerateINtNtNtBc_5slice4iter4IterAjj3_EENCNvMNtNtCs7KDHeV3lXiN_7physics12biomechanics15surface_contactNtB21_20TissueSurfaceContact10candidates0ENtNtNtBa_6traits8iterator8Iterator4folduNCINvNvB3C_8for_each4callTjAdB1R_B4H_ENCINvMsj_NtCs7CMGwZ9BQm0_5alloc3vecINtB51_3VecB4F_E14extend_trustedBN_E0E0EB25_  (in urogenital_contact)        12
+        expm1  (in libsystem_m.dylib)        10
+        _RNvNtCs7KDHeV3lXiN_7physics12biomechanics2mm  (in urogenital_contact)        7
+        DYLD-STUB$$pow  (in urogenital_contact)        5
+        mach_absolute_time  (in libsystem_kernel.dylib)        5
+
+Binary Images:
+       0x1009c0000 -        0x100a2a0eb +urogenital_contact (0) <24B784F8-60DA-3833-AED3-3E42F212B84F> /Users/*/Documents/*/urogenital_contact
+       0x18b3fc000 -        0x18b44eb4b  libobjc.A.dylib (951.7) <1D62B376-2303-376A-B993-9432A2004EB6> /usr/lib/libobjc.A.dylib
+       0x18b44f000 -        0x18b483d58  libdyld.dylib (1387) <00D0926E-2EAD-3810-9D40-F8E1F054BDC9> /usr/lib/system/libdyld.dylib
+       0x18b484000 -        0x18b537503  dyld (1.0.0 - 1387) <8B859F47-7C96-34F6-9D07-6F55CE3625C6> /usr/lib/dyld
+       0x18b538000 -        0x18b53b228  libsystem_blocks.dylib (96) <B33F1440-9364-38E4-AF85-8A21BFF24324> /usr/lib/system/libsystem_blocks.dylib
+       0x18b53c000 -        0x18b59055f  libxpc.dylib (3102.160.5) <325B7B6F-A547-30B6-9417-94915D72B91E> /usr/lib/system/libxpc.dylib
+       0x18b591000 -        0x18b5b19ff  libsystem_trace.dylib (1861.160.4) <2DE27033-24FB-30FB-BF15-7BC4BB913EBA> /usr/lib/system/libsystem_trace.dylib
+       0x18b5b2000 -        0x18b6606b7  libcorecrypto.dylib (1922.160.10.700.1) <1AB30A65-3FE6-3A5A-9078-796D9D590B7C> /usr/lib/system/libcorecrypto.dylib
+       0x18b661000 -        0x18b6b1257  libsystem_malloc.dylib (812.160.5) <BE7DCE21-9656-3C9E-9B8A-A26D090CAEC3> /usr/lib/system/libsystem_malloc.dylib
+       0x18b6b2000 -        0x18b6f923f  libdispatch.dylib (1542.160.2) <80E75F3F-333F-38A8-A3DD-6279FCDB771B> /usr/lib/system/libdispatch.dylib
+       0x18b6fa000 -        0x18b6fcffb  libsystem_featureflags.dylib (103) <5725BCFE-07F3-3629-9B44-551A435E2DE2> /usr/lib/system/libsystem_featureflags.dylib
+       0x18b6fd000 -        0x18b77e1e7  libsystem_c.dylib (1752.160.4) <3498CA79-EF40-3587-AD44-75187CEE7D95> /usr/lib/system/libsystem_c.dylib
+       0x18b77f000 -        0x18b80fae7  libc++.1.dylib (2100.43) <D6EADBE3-BA0C-3862-B84A-3B907CF4641C> /usr/lib/libc++.1.dylib
+       0x18b810000 -        0x18b82a75f  libc++abi.dylib (2100.43) <9106CD43-009C-3B85-8FC5-9CE451DC5B78> /usr/lib/libc++abi.dylib
+       0x18b82b000 -        0x18b8682f7  libsystem_kernel.dylib (12377.161.15.701.19) <9AA2E0EB-68FE-3A5C-A673-C09024878B22> /usr/lib/system/libsystem_kernel.dylib
+       0x18b869000 -        0x18b875b3b  libsystem_pthread.dylib (539.100.4) <275D7230-23C1-32EF-B22B-14F61E30AA89> /usr/lib/system/libsystem_pthread.dylib
+       0x18b876000 -        0x18b87e963  libsystem_platform.dylib (375.120.2) <3AF14164-15FE-3623-9EE3-46DE29FD5B5A> /usr/lib/system/libsystem_platform.dylib
+       0x18b87f000 -        0x18b8ae6eb  libsystem_info.dylib (600) <0037F576-2C50-36F0-9F36-6CB7A049D5B1> /usr/lib/system/libsystem_info.dylib
+       0x18f851000 -        0x18f85ae5f  libsystem_darwin.dylib (1752.160.4) <B808D04B-2798-36C9-96F6-35534BDFCF11> /usr/lib/system/libsystem_darwin.dylib
+       0x18fcbc000 -        0x18fcce1b6  libsystem_notify.dylib (348.160.3) <922BDCF4-CD33-3EEB-BC56-9DCAE54F8F65> /usr/lib/system/libsystem_notify.dylib
+       0x191f8d000 -        0x191fa7f7b  libsystem_networkextension.dylib (2226.161.1.700.2) <83F224A4-40C4-3106-A97B-788D1D961DCB> /usr/lib/system/libsystem_networkextension.dylib
+       0x19202a000 -        0x192041fdf  libsystem_asl.dylib (406) <FF6BE113-1093-3D23-8A55-E0A5B327CA8E> /usr/lib/system/libsystem_asl.dylib
+       0x193be6000 -        0x193bee387  libsystem_symptoms.dylib (2169.160.3.701.1) <7F0D4E31-268A-3EBB-8A2C-30CCC771A5A5> /usr/lib/system/libsystem_symptoms.dylib
+       0x197e8b000 -        0x197ec3373  libsystem_containermanager.dylib (725.160.3.701.2) <1207D51D-2B9C-3B08-91DA-99A9D0394312> /usr/lib/system/libsystem_containermanager.dylib
+       0x19929d000 -        0x1992a15d7  libsystem_configuration.dylib (1405.160.3.702.1) <0C344D77-0ED6-342F-BBCD-52C6593FAAAD> /usr/lib/system/libsystem_configuration.dylib
+       0x1992a2000 -        0x1992a899f  libsystem_sandbox.dylib (2680.160.6.700.3) <57AC636C-C7C7-3A9B-A7CA-2ACD0458D721> /usr/lib/system/libsystem_sandbox.dylib
+       0x19a8fd000 -        0x19a9001fb  libquarantine.dylib (196.160.2.700.3) <0C2FD596-CB4D-3B9B-8414-50338B7DEF1F> /usr/lib/system/libquarantine.dylib
+       0x19b09c000 -        0x19b0a2d03  libsystem_coreservices.dylib (191.5.1) <BF51842C-BC69-3725-9EB2-7A52804963F8> /usr/lib/system/libsystem_coreservices.dylib
+       0x19b62b000 -        0x19b668a77  libsystem_m.dylib (3312.100.1) <E1EEE243-AA66-3CE8-8648-B4E2CD10589D> /usr/lib/system/libsystem_m.dylib
+       0x19b66a000 -        0x19b66d527  libmacho.dylib (1387) <F07DDA12-CC51-3CE9-AC26-D7B73C130F73> /usr/lib/system/libmacho.dylib
+       0x19b687000 -        0x19b6943a7  libcommonCrypto.dylib (600035) <EBA6E4D0-4DD2-33BB-BF95-48A58591AAAD> /usr/lib/system/libcommonCrypto.dylib
+       0x19b695000 -        0x19b69eca3  libunwind.dylib (2100.2) <81A35518-53E4-3519-B5BC-AE6A796E9DE1> /usr/lib/system/libunwind.dylib
+       0x19b6a7000 -        0x19b6b1d2b  libcopyfile.dylib (240.160.2.703.1) <16861DD1-EA84-358E-A019-816FB5A69685> /usr/lib/system/libcopyfile.dylib
+       0x19b6b2000 -        0x19b6b5987  libcompiler_rt.dylib (103.3) <65D09B50-BE7D-3491-8547-6B85A3C2216D> /usr/lib/system/libcompiler_rt.dylib
+       0x19b6b6000 -        0x19b6ba78b  libsystem_collections.dylib (1752.160.4) <34CEFA68-1E15-32F2-A5B1-97C0170A77C5> /usr/lib/system/libsystem_collections.dylib
+       0x19b6bb000 -        0x19b6be4cf  libsystem_secinit.dylib (168.100.7) <B6B286B6-6E08-3578-8AFC-E4C55697C760> /usr/lib/system/libsystem_secinit.dylib
+       0x19b6bf000 -        0x19b6c1bf7  libremovefile.dylib (85.100.6) <33530415-3DB6-3556-A59A-24C22681D632> /usr/lib/system/libremovefile.dylib
+       0x19b6c2000 -        0x19b6c2f27  libkeymgr.dylib (31) <AD45B9EE-CE2B-3E1F-B96B-15F7F9FA3712> /usr/lib/system/libkeymgr.dylib
+       0x19b6c3000 -        0x19b6cbe3f  libsystem_dnssd.dylib (2881.160.4.700.1) <865BFB9D-4EDD-3866-B0D8-E5FAB1D0C61F> /usr/lib/system/libsystem_dnssd.dylib
+       0x19b6cc000 -        0x19b6d109b  libcache.dylib (95) <A13AF0DC-5928-38BE-97FF-E04C29EF96AF> /usr/lib/system/libcache.dylib
+       0x19b6d2000 -        0x19b6d3ce3  libSystem.B.dylib (1356) <8A197E38-519D-32D1-9011-49E892FA320D> /usr/lib/libSystem.B.dylib
+       0x28f3b7000 -        0x28f3be349  libRosetta.dylib (367.9) <3DBB2990-262D-3776-8FAC-B88C0373DCF0> /usr/lib/libRosetta.dylib
+       0x290fc9000 -        0x290fcca4b  libsystem_darwindirectory.dylib (122) <6246210A-5279-391D-8F58-E62A87CAB309> /usr/lib/system/libsystem_darwindirectory.dylib
+       0x290fcd000 -        0x290fd739b  libsystem_eligibility.dylib (319.160.17) <85C0486B-60BE-3E10-ABBF-DD74341B7376> /usr/lib/system/libsystem_eligibility.dylib
+       0x290fd8000 -        0x290fdf88b  libsystem_sanitizers.dylib (26.1) <A8C4F7FC-3443-35F7-B306-068D06237ED0> /usr/lib/system/libsystem_sanitizers.dylib
+       0x290fe0000 -        0x290fe0bbf  libsystem_trial.dylib (474.2.18.2.1) <83FF8DEB-1153-35BA-99C3-2AEF9B7559CD> /usr/lib/system/libsystem_trial.dylib

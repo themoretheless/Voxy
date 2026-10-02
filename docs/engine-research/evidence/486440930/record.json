@@ -1,0 +1,62 @@
+{
+  "repository": "eliotbo/bevy_shadertoy_wgsl",
+  "repository_id": 486440930,
+  "commit": "e3221a81dd6f1668d7d6695f06353b373db47979",
+  "source_url": "https://github.com/eliotbo/bevy_shadertoy_wgsl/tree/e3221a81dd6f1668d7d6695f06353b373db47979",
+  "readme_path": "README.md",
+  "readme_sha256": "f3a7e5787620ba65943f7f0e587b28d3601b3d24d796c6d033ef7913f9015c65",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "aeac41370d046efdc5ad8920a2d433133dc37c8f"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "02fb35f4c031140ab950d19260760e1b8dd7fc8e"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "699b16a242595b50da46ffdbc4221d95d5821021"
+    },
+    {
+      "path": "LICENSES",
+      "type": "file",
+      "sha": "fc288d365d6b733bd8a6fe0db2f0780d2ead38cd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9a76cd3f8cabb92cf3890e64bf2ee82bfcf178d8"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b4175257170f3c6ffb481f560ba57c769a749f78"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "76a55c3f69604772846188000f9db057686d490e"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c69ec277f3f515432db8e011ddf02d1d09d664ef"
+    },
+    {
+      "path": "showcase.gif",
+      "type": "file",
+      "sha": "8d5c37ab1c494d447222fff07830d29b81235fb1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "16a04fd41ea09a38656ac145904ca7695c83620b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

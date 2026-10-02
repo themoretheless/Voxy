@@ -1,0 +1,96 @@
+{
+  "before": 21,
+  "after": 0,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertex": 32056,
+      "before": 21,
+      "after": 18
+    },
+    {
+      "pass_index": 0,
+      "vertex": 32066,
+      "before": 18,
+      "after": 17
+    },
+    {
+      "pass_index": 1,
+      "vertex": 13502,
+      "before": 17,
+      "after": 14
+    },
+    {
+      "pass_index": 1,
+      "vertex": 15289,
+      "before": 14,
+      "after": 12
+    },
+    {
+      "pass_index": 1,
+      "vertex": 15819,
+      "before": 12,
+      "after": 8
+    },
+    {
+      "pass_index": 1,
+      "vertex": 18414,
+      "before": 8,
+      "after": 6
+    },
+    {
+      "pass_index": 1,
+      "vertex": 18415,
+      "before": 6,
+      "after": 4
+    },
+    {
+      "pass_index": 1,
+      "vertex": 32056,
+      "before": 4,
+      "after": 1
+    },
+    {
+      "pass_index": 2,
+      "vertex": 437,
+      "before": 1,
+      "after": 0
+    }
+  ],
+  "remaining": {
+    "intersection_pairs": [],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 31841,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded"
+  },
+  "maximum_cumulative_displacement_m": 0.00240491972071099,
+  "audit": {
+    "vertices": 44880,
+    "triangles": 89756,
+    "area_m2": 1.6831298421260894,
+    "max_edge_m": 0.03577672886317052,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "6f055addf016104130768d3784eccd7887b0ad28dcffb25be73cbc1a3c066876",
+  "candidate_sha256": "6decd722e5303ba22d2702ef0899011bb174e35a234f31b6ffcac55983b95425",
+  "proposal_distances_m": [
+    2.5e-05,
+    -2.5e-05,
+    5e-05,
+    -5e-05,
+    0.0001,
+    -0.0001,
+    0.0003,
+    -0.0003,
+    0.0015,
+    -0.0015,
+    0.002,
+    -0.002
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

@@ -1,0 +1,57 @@
+{
+  "repository": "sandsmark/freeaoe",
+  "repository_id": 220293899,
+  "commit": "f5e46da59761868aa1814037f712f277c71b5bb3",
+  "source_url": "https://github.com/sandsmark/freeaoe/tree/f5e46da59761868aa1814037f712f277c71b5bb3",
+  "readme_path": "README.md",
+  "readme_sha256": "633a36ccd8747b137f1eff2c27f813395820b3163be581b560eccc716222ec13",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a8f70d8b11d9cfd4d4d3efd51a6e0dd136ff1e08"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8ba6fede558701b54d1102aad236ab23c6a16b0b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "be93714ab994439e0f5c0d39fef7b5561c6db80e"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1ce52e4d26ff190142c8ce3b1819766c8729af43"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "a0b7f4e92d1dc7614c3a30380e4f538e51922788"
+    },
+    {
+      "path": "lgtm.yml",
+      "type": "file",
+      "sha": "cba0e60e406d31c13af65c76726f4835596329fb"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "6800cf795b37770d3379ab280a59e4821b83910f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "41da7c3b378426a851f4e28e46fc3f6c4ba7d72d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

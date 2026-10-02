@@ -1,0 +1,44 @@
+{
+  "repository": "eubrunomiguel/garuna",
+  "repository_id": 88639005,
+  "commit": "e18d54213b561fbc7075eaf2acb131b2084a6434",
+  "source_url": "https://github.com/eubrunomiguel/garuna/tree/e18d54213b561fbc7075eaf2acb131b2084a6434",
+  "readme_path": "README.md",
+  "readme_sha256": "e8b608109d87218405c935e94e71b8081db39286aa9c1ef93fb5f85685adde4d",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "75c476ec85fc57d2d7e64a0a0bb5cb7c0444d0eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4a69d1c387a321726a00bf05f2c577df62a06974"
+    },
+    {
+      "path": "headers",
+      "type": "dir",
+      "sha": "d353a8ed840c27a2db5dca5df82a0814346be068"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "72cc646ed711c070f2d026b705d79806375798d3"
+    },
+    {
+      "path": "mapinformation.txt",
+      "type": "file",
+      "sha": "b4e91eec5d30c34acb2fcf7257ec05b0dfcf7618"
+    },
+    {
+      "path": "sources",
+      "type": "dir",
+      "sha": "aba4375ebc7af47187a9712ba0be58f736d3e3fd"
+    }
+  ],
+  "classification": "specialized_server",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ single-threaded game server for custom Unity client; not an independent graphical game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

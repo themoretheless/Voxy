@@ -1,0 +1,94 @@
+{
+  "repository": "but0n/Ashes",
+  "repository_id": 154073402,
+  "commit": "054286f013c47057ce665455d56207883cce32c9",
+  "source_url": "https://github.com/but0n/Ashes/tree/054286f013c47057ce665455d56207883cce32c9",
+  "readme_path": "README.md",
+  "readme_sha256": "8c5f980360b98c19e4df3edf8583c3c56079455886d0d4237639a8cae2a293f3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9c16131ba1fb67c549e7633da54be814b802850e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "db24ac3f5d63487d8bac2d9d12f6a5f935000e4e"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "01d970789c00903a5207c7a5010aeeced801b750"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "09164e86403d0db95475dc5946f22a7add9e5399"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d4221c17509697fec19b65d55bf7a51694f02bbf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f8ff0ec217f638f678782c9eccf1db02898a16ee"
+    },
+    {
+      "path": "bvh.html",
+      "type": "file",
+      "sha": "8c3cfac5839059978f9410cd86187049f627e149"
+    },
+    {
+      "path": "demo.html",
+      "type": "file",
+      "sha": "583304d5ad92d232bf071de40f2148a62ead26ec"
+    },
+    {
+      "path": "gltfsamples",
+      "type": "file",
+      "sha": "ae382ff9172b6f6aef298174900cba1f45bae234"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "033ff2ae1add4aeb2563f155cc57a53dc88b7df4"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "9a2949d694bf9d9317fdb40f46d3b5ee6211bd17"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "42da9dffb0f5d4c1d701b2d1c0811e79f4a9e7d9"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "216d311436db0995e65a5b41eee3ed0ddc8817bc"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "63a832091df88f641cd4cb53554db06b9ea54c51"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "f608fb1f3a5e213f0914744da65f0a0e94b325ed"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "064bfec2008222ba14c3483c2e51e62596c3b375"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify WebGL 3D renderer with GI/ray tracing; src/npm/rollup build, complete gameplay scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

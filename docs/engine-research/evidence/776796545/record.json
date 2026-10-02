@@ -1,0 +1,79 @@
+{
+  "repository": "achtaitaipai/odyc",
+  "repository_id": 776796545,
+  "commit": "6cb119e0bc90833ea0384cac9064f94e3c2f8d09",
+  "source_url": "https://github.com/achtaitaipai/odyc/tree/6cb119e0bc90833ea0384cac9064f94e3c2f8d09",
+  "readme_path": "README.md",
+  "readme_sha256": "3b373bcabba3907104062eb47c87437707e1461fb13e1d4809918c7ebf1fb8d1",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7a293623f9649a78661a6b9c1df1e92fb55effbb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "303836ca4c08459b98aaeb2edb672062b650a619"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "5fe9f753aa6688b3e5452e84271cf54af9bd2cf1"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "08a5e8c93ad5044bf1bf5d7c60a082b288da10c2"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "9b8be77a1261a24eb883968c4b9873c7beeade2e"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "c410ddcb98b34364fbc4a97292d50021c79adc2f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a3e615325707f2a2ce1e7c8b7867dfd02a653e86"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "8cb09b376922141e83295b103e951a1f072f3c0f"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "8d2b8d3541bacfcfa75c81225fe20520ba567255"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d349bec5a3a569fa326d6111486317a2c7f4394b"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "feecd571003220da9a213b3082e54a2c3e2388a7"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2fce4ffc49005c260e6786383a801ceb926b197e"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "7a370b36f811996833256c251310f4cbf7176a98"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies narrative-game JS library; packages/build/tests kept distinct from complete engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

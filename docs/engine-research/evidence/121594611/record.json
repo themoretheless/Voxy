@@ -1,0 +1,39 @@
+{
+  "repository": "JohnLamontagne/Lunar-Engine",
+  "repository_id": 121594611,
+  "commit": "74599289354e8c44c1220d340c2aae7162817dc7",
+  "source_url": "https://github.com/JohnLamontagne/Lunar-Engine/tree/74599289354e8c44c1220d340c2aae7162817dc7",
+  "readme_path": "README.md",
+  "readme_sha256": "852639bc3b76de0e3649b58c168d34d7781dc7d5090e0559320dceef1495ee0c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "940794e60f21bbcbd6a04b87b08ac92ab9303511"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1168c82f7790101b87742e454f1c85ea6b56b6b2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9e19c9155b1e94e623dc1027c3b0d44098fa9c82"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4cbf3bf572d2329add65da2c7c3707457b378f5a"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# online RPG engine with rendering client, gameplay server and game editor, built using MonoGame and networking libraries.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

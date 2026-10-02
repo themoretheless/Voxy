@@ -1,0 +1,77 @@
+{
+  "repository": "Cat-Lips/GodotSharp.SourceGenerators",
+  "repository_id": 329297875,
+  "commit": "da5524d937a31a28322f845f2043e1ce6ca18551",
+  "source_url": "https://github.com/Cat-Lips/GodotSharp.SourceGenerators/tree/da5524d937a31a28322f845f2043e1ce6ca18551",
+  "readme_path": "README.md",
+  "readme_sha256": "543cea042ecc78f4f0234f9ecbd2c5a4f6c6545058e24bbe6f851c1af67cb4a9",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e9c0257877d64832d2df8e6dee554a7592a9eb09"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "464971cb25e40d558b14e3c92a1ce667ac416223"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "821ed1ee467d704e0c88ed0968dbf64a4defc38d"
+    },
+    {
+      "path": "CustomGeneratorTests",
+      "type": "dir",
+      "sha": "887b4c9e8ba19a3291edf7f83b7f023da4e995e2"
+    },
+    {
+      "path": "Godot 3 Tests",
+      "type": "dir",
+      "sha": "1e02d4a3a76c10c2e982d1427701cd1f4cc7163d"
+    },
+    {
+      "path": "Godot 4 Tests",
+      "type": "dir",
+      "sha": "c5f999aa6023f03eaa361a3e7ee2e0c0091ad6be"
+    },
+    {
+      "path": "GodotSharp.SourceGenerators.log.lnk",
+      "type": "file",
+      "sha": "d0ccc0240c0f5fa206a1dc4a6ebc565ae22a2ba4"
+    },
+    {
+      "path": "GodotSharp.sln",
+      "type": "file",
+      "sha": "6c5e1ba5cd4cc3a2045c17a4aa169332c38ba21d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1d98b8603fec6fd29141f7f5fd4a634a06513036"
+    },
+    {
+      "path": "NRT.Tests",
+      "type": "dir",
+      "sha": "0bf318c1cac99834642b9869e67f3d423eeb6529"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "70b6fe81bd6364d2881baeea47729caf2a21da33"
+    },
+    {
+      "path": "SourceGenerators",
+      "type": "dir",
+      "sha": "17a4b27d5e88827881f8045a9586ad497f625894"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "8d44e122188c4da6a48b5f964e406fdda641c191"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

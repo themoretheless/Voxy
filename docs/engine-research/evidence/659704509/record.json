@@ -1,0 +1,79 @@
+{
+  "repository": "open-threed/studio",
+  "repository_id": 659704509,
+  "commit": "a69dcfe3d2ef67c439caf96c8de0bd1ba3e3da5d",
+  "source_url": "https://github.com/open-threed/studio/tree/a69dcfe3d2ef67c439caf96c8de0bd1ba3e3da5d",
+  "readme_path": "README.md",
+  "readme_sha256": "64f5d185f9654fe81fe23b9b39f66d15f3ae6c52a7178d73de7cd95412069da2",
+  "entries": [
+    {
+      "path": ".eslintrc.cjs",
+      "type": "file",
+      "sha": "4020bcbf409dd22c168179e0d148dbebdf10054e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a547bf36d8d11a4f89c59c144f24795749086dd1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7ea75c91d4609b86d59af7753185102321496aea"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "96a15fa358f5fb3420ac713215951bb4a6f642ee"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "a0819ac97b26a00a9e521ddf1c8b7ff123f3c168"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "39158db4b7c574cfd373cb15c4d13ae4a3c3160c"
+    },
+    {
+      "path": "postcss.config.js",
+      "type": "file",
+      "sha": "2e7af2b7f1a6f391da1631d93968a9d487ba977d"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "03a29430cb495628f15c9cf8c1c2d04b8d4cc823"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "148451d49042b10d5aafebfd91518149f2babc3b"
+    },
+    {
+      "path": "tailwind.config.js",
+      "type": "file",
+      "sha": "d1b716f6925bbbe2830cc815551de76de877c104"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "46ca0083121b7a1edd14d00e27421a90c7f6bcc0"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "type": "file",
+      "sha": "42872c59f5b01c9155864572bc2fbd5833a7406c"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "31d84bf5d3e2c9942cf5bc830078fef64e45ce3f"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Three.js scene/animation editor rather than independent gameplay runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

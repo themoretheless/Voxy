@@ -1,0 +1,82 @@
+{
+  "repository": "jsfehler/phaser-ui-tools",
+  "repository_id": 92358199,
+  "commit": "f3306cf9aa5e95ea746001e8c48448d24c9c4af4",
+  "source_url": "https://github.com/jsfehler/phaser-ui-tools/tree/f3306cf9aa5e95ea746001e8c48448d24c9c4af4",
+  "readme_path": "README.md",
+  "readme_sha256": "e0d819d4de72fad2547ea0bd7f096ab403f7eff9978a9567cf25f997d72191e8",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "c1653879814592a5fe7805d53e61b54ace0210b9"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "3ceac62f933d934f5a0f5a6c36c936b3d58fe5a8"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "d4b44bfebf8864722ff3dd65e77cc757a492f874"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fc1157bba3cd7cdd2ec6f140d81c19bdc37230b5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "34112f8f2a0665b0ec084d9401da2061573189e6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "dc31f51afbe36cbd1e16de5383bfdcc45e972aa3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "877262d06fb2bd0185178a39467549c05cf34189"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "25877d4410b779985b727676ad39bd3728904ab7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0e9161581ae0d90a8ec3b0a410f65ad8e782ef59"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "aa4db097ad2aa164436db3d15531894f042d37a6"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "7c558f04518c8e61562445b3ddade5a23050d3b1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "55a1da6fbed6e67bc695e63d7f0dab8556089766"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c355739f4278887f97fe0762bcc50dabe7d404a8"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "64540cf0bab8ed04a977bc1dcbf7bf7c1c439386"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

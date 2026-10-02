@@ -1,0 +1,79 @@
+{
+  "repository": "shixiangxi0/Cobweb",
+  "repository_id": 1226085740,
+  "commit": "67bacc0f7ffe7aa65538d2cbc872fdc942bfc12a",
+  "source_url": "https://github.com/shixiangxi0/Cobweb/tree/67bacc0f7ffe7aa65538d2cbc872fdc942bfc12a",
+  "readme_path": "README.md",
+  "readme_sha256": "a10a8541378fefbc3fc3ccc8671d6c16f97f0e3a40a4f6d543da67025a7fb722",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3b1cfb0b8eb66e1d4461d170e29e0a5707d8216b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2fdd3c2bd8e357e41be6de6433a7b3e59914fbec"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f60cf5e34d3ebe5842754891eeb5a01cbc9f1b27"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "3bd719828a7323fee51b9daa7216aab6156dc15e"
+    },
+    {
+      "path": "asset",
+      "type": "dir",
+      "sha": "5ecba6c928bf107fe24c630ca94bd2f40015b90f"
+    },
+    {
+      "path": "clients",
+      "type": "dir",
+      "sha": "6488a1248a8a9ef725b1c55617b23a29d17a0216"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c71f04042b8f380855c357fc4d8acd596eb6e9c3"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "1025bbdfd069428eea7858fe4158a5060d4fe8b3"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "2a345b76d23d0b29753e27fe5f9738bae3954523"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "f88bc205d15096d3e12cd4ddc354230076ec706b"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "19f82b477ac44d0de3f695b9011921dc56845d42"
+    },
+    {
+      "path": "vite.phaser.config.js",
+      "type": "file",
+      "sha": "f37cffc0f78cce733e4c6b848b62bf3c47e531c2"
+    },
+    {
+      "path": "vitest.config.js",
+      "type": "file",
+      "sha": "3aa661539c6a1bd3e57a89f0b4dca0f6ef181c1a"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Event-driven game-state framework with Phaser presentation clients and games; primary product is state/presentation architecture framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

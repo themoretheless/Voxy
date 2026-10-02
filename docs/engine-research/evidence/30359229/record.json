@@ -1,0 +1,124 @@
+{
+  "repository": "FWGS/xash3d",
+  "repository_id": 30359229,
+  "commit": "de8ab25ca0bd8a9882d4a1859235e7f08d020b4d",
+  "source_url": "https://github.com/FWGS/xash3d/tree/de8ab25ca0bd8a9882d4a1859235e7f08d020b4d",
+  "readme_path": "README.md",
+  "readme_sha256": "c5291a066f59ff758e3b951ff54ead01a65f7ff4219b9d606b0cfabc657dc6c7",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "09b29d4db74f03a2514c5d2856eeced1afe982b6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bde4a5a6fb3d358d2829e80e38c30af612685a8b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "41b36cd86ed62682e6af1339a785b06be136a810"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "6683d698288979d2957101f1cba981c0427437a3"
+    },
+    {
+      "path": "Android.mk",
+      "type": "file",
+      "sha": "d8b752f3427e7d3be7a77055b15d435d4bf98ea8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d437f3d0d922214d44176dec109c9d15182c3ce0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b6dd026f1f3e93c92ccef246b2f6d89e21c4d2da"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "e587591e143165eb560c2385f0652ac369fc6595"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5e6a28242018627241d4f8e433e7898400a7df6b"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "2f968126d2f41a612b03608c845e9ceb6f6012cc"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "442a9cd4c8e96a5de1c4e2ccc65638db88230fda"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "d834fab7f65f1ede086ccfef43abd9d209721d68"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "39d0a50ec62185a7ba3d9ef30a35e77b7d8456e6"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "f1c1338a108f330554177b14467130d90dd74ab6"
+    },
+    {
+      "path": "game_launch",
+      "type": "dir",
+      "sha": "46087494aec01e7e4de4c935c7dcc4306e3457b7"
+    },
+    {
+      "path": "loader",
+      "type": "dir",
+      "sha": "3516f8f392876cdb43fef65f6ecc28ef703944d7"
+    },
+    {
+      "path": "mainui",
+      "type": "file",
+      "sha": "0a8651a0fd05fe21adec4043262f2c33ef2666c8"
+    },
+    {
+      "path": "pm_shared",
+      "type": "dir",
+      "sha": "ba09c7561c409171c0bb5b3075df2327dacb3886"
+    },
+    {
+      "path": "ports",
+      "type": "dir",
+      "sha": "4fddfb61c2dd96ea7e62e57ea9535176f953fe54"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d66c8648646e742cc993ff4c837dc284a6fc0365"
+    },
+    {
+      "path": "vgui_support",
+      "type": "dir",
+      "sha": "7e06bb4dfae682dd105c74f04886f2339cd6a14a"
+    },
+    {
+      "path": "xashds@.service",
+      "type": "file",
+      "sha": "531229e3525a0f3bc6d0126628d4b07774f3f166"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies historical Xash3D runtime with current successor; engine/common/platform source and CMake build, not just redirect.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,49 @@
+{
+  "repository": "Valkryst/VTerminal",
+  "repository_id": 91964549,
+  "commit": "17e734414b32a3fdea3925eebd8def36b49e318f",
+  "source_url": "https://github.com/Valkryst/VTerminal/tree/17e734414b32a3fdea3925eebd8def36b49e318f",
+  "readme_path": "README.MD",
+  "readme_sha256": "00488e08cbd6f8caec45a880b81f1f0bf2e500dae17d8f9c0bcf4a67038b8f58",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5a1521e470d9b07d9736d279f3923e7bb0876605"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3181258db35f28e9b1fdbc73370c8a48276e49a6"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "e3a1473d34fe837ec4fd8eacbfc84ea20e22a84a"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "e99e811a34c6b59fe94479b08533cb6981fc42aa"
+    },
+    {
+      "path": "jitpack.yml",
+      "type": "file",
+      "sha": "45e0902b079b8e1201530fe6958a6209e7df6231"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "88fe969cbf855681a824f2f86118829f09685240"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "76fc34dad8967c5a92bf310b227701eaf99199b5"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Swing look-and-feel for Unicode cell-grid rendering, not complete roguelike engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

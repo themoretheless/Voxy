@@ -1,0 +1,124 @@
+{
+  "repository": "morgan3d/quadplay",
+  "repository_id": 189204570,
+  "commit": "24f90205f5b7f308c7c771313d51f307d30c3788",
+  "source_url": "https://github.com/morgan3d/quadplay/tree/24f90205f5b7f308c7c771313d51f307d30c3788",
+  "readme_path": "README.md",
+  "readme_sha256": "15c91f3a5d7baeffe42fcbe2fa2ae9930d83bdd08be375539b3bf30c89966c7c",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2af3d801b6d3ec61b418c751e9c5bfe2e34c71ed"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b28f591a879402651d95da81af10714dcf32a227"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6ebaf14497b5b7c1c09a614cd71ccd1d250863cf"
+    },
+    {
+      "path": ".nojekyll",
+      "type": "file",
+      "sha": "4f6ad384d10773c30188d6bdc1ad00f1e8beb7d5"
+    },
+    {
+      "path": "INSTALL.txt",
+      "type": "file",
+      "sha": "c84dc79849ec8668074586200c1c3c4b812b2bb8"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4890d25ffca2dee076e137e18de4c98107c7392f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3569062093498f9522a646a54f5fe1108d8d502f"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "f8c1aa2c64df32477b8195df0d023330c92156d9"
+    },
+    {
+      "path": "console",
+      "type": "dir",
+      "sha": "1e67d1e54ae65bfc8bf18b0139df343e8c7d8ba7"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "50afba5a01fbe5cd1dabdebbe2c318924ff3e6b9"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "d24931a8dc01ec973d40aaa4240c31fdeb7d78df"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "993f31ae8bb83fa7e44aa97df5924598566721bc"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "4974913076f679465f83208938956701108ab0da"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "2cf054804c522fbe8dd76e39c707b728b1042f94"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "739620c60e6dd1c9f2e24612bec0e19fd2c55a78"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "95bfea6a6dcd873d89b75eac9512c6daf23ef92f"
+    },
+    {
+      "path": "quadplay",
+      "type": "file",
+      "sha": "54e05f3027b8ab5bf484eb185863e6f7feee0c69"
+    },
+    {
+      "path": "quadplay.vbs",
+      "type": "file",
+      "sha": "3271ecdcb31deba15b4e378234c29561af307b1d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ab2f14eed0016364a38d2e8fea730a7c5b55f7c3"
+    },
+    {
+      "path": "sounds",
+      "type": "dir",
+      "sha": "3b25acefb1fe8d8f4899d9586874b5a9e601189b"
+    },
+    {
+      "path": "sprites",
+      "type": "dir",
+      "sha": "6be7a796c7b7f3de017a8b8b2279f6e6955fea2a"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "63419ab8a5ab53a9a959a7854be3b04019f68215"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies owned fantasy-console runtime/compiler/emulator; console/source/scripts and browser/npm infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

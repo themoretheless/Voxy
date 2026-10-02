@@ -1,0 +1,92 @@
+{
+  "repository": "NeoSpark314/BeepSaber",
+  "repository_id": 305454259,
+  "commit": "9052bc78c6cb41124ec191f029615165c0f75d08",
+  "source_url": "https://github.com/NeoSpark314/BeepSaber/tree/9052bc78c6cb41124ec191f029615165c0f75d08",
+  "readme_path": "README.md",
+  "readme_sha256": "a9096c4ec9d4979a3021624d1a4e5bf78a5e4d30a759c2d65c140583524afd3b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e9af2b2f0060acb2ce7ad7bc2b3982e764fa651a"
+    },
+    {
+      "path": "GameMain.gd",
+      "type": "file",
+      "sha": "c992fcbfab43e985fb387760e1f4f1b4270bf2fa"
+    },
+    {
+      "path": "GameMain.tscn",
+      "type": "file",
+      "sha": "e95fdf7eece4d5a6f4a5f48688e38cc122c22eaa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c11cc860e1e9da564238264a4654696f2d674fca"
+    },
+    {
+      "path": "OQ_Toolkit",
+      "type": "dir",
+      "sha": "342d9ff4295507a23db420fe9c0c7de55a7e60af"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "425ee532aecf9562db61cbadcae059a20b7c5fd1"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "e9cd941cd2bc0c4882aedd469c6e0938307aaea3"
+    },
+    {
+      "path": "audiobuslayout.tres",
+      "type": "file",
+      "sha": "0d9ac2a9bd4b0f6a288c78b0ccd7c81d629d9855"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "00d3dc4f631c6d6ee6de10c7895e32f669eae773"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "4f0db6ef7f6a0be8ef30a389100a74db1e77aaad"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "ce590059c701c1d417a7c6b6408183bd71972d23"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "7bdae7bc7270fa7e8eba8eca2e18e735acd07400"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "20a4b3e4fb9dfb17ddab82391282cca6e2502a91"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "e5345aee264495e9eabc56bfaa9998336149e9f9"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "7e96f1b6c34ded34de7be49d8e36b52e86a47c48"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,32 @@
+{
+  "female-to-male": {
+    "donors": 90402,
+    "recipients": 89756,
+    "shared_quads": 42340,
+    "maximum_raw_row_sum_error": 2.596811654598241e-13,
+    "entries": 116794,
+    "mapping": "piecewise affine shared quad charts; no physiological calibration",
+    "mesh_sha256": {
+      "assets/characters/blender-female/body.obj": "7ba47f9a806d5dd98e7d87e462bda9df4ae33b0c8f70deab2d724efd46aff526",
+      "assets/characters/blender-male/body.obj": "cd50c84486bdb276537d739efe385ec6b36dc592cb1c65a169b09baf98edc8ab",
+      "assets/characters/blender-female/prepared/body-nipple-refined.obj": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+      "assets/characters/blender-male/body-refined.obj": "b3a61fc99c037bc8c95c7f82a4f0de00473b9ae8d19e7d20978ede6239445c14"
+    },
+    "maximum_normalized_row_sum_error": 2.220446049250313e-16
+  },
+  "male-to-female": {
+    "donors": 89756,
+    "recipients": 90402,
+    "shared_quads": 42340,
+    "maximum_raw_row_sum_error": 1.8474111129762605e-13,
+    "entries": 116542,
+    "mapping": "piecewise affine shared quad charts; no physiological calibration",
+    "mesh_sha256": {
+      "assets/characters/blender-male/body.obj": "cd50c84486bdb276537d739efe385ec6b36dc592cb1c65a169b09baf98edc8ab",
+      "assets/characters/blender-female/body.obj": "7ba47f9a806d5dd98e7d87e462bda9df4ae33b0c8f70deab2d724efd46aff526",
+      "assets/characters/blender-male/body-refined.obj": "b3a61fc99c037bc8c95c7f82a4f0de00473b9ae8d19e7d20978ede6239445c14",
+      "assets/characters/blender-female/prepared/body-nipple-refined.obj": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48"
+    },
+    "maximum_normalized_row_sum_error": 2.220446049250313e-16
+  }
+}

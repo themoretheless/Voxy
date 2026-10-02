@@ -1,0 +1,169 @@
+{
+  "repository": "AmbientRun/Ambient",
+  "repository_id": 579990612,
+  "commit": "ef44a742ef8e1467a6b7485e61f9e28095fc8764",
+  "source_url": "https://github.com/AmbientRun/Ambient/tree/ef44a742ef8e1467a6b7485e61f9e28095fc8764",
+  "readme_path": "README.md",
+  "readme_sha256": "ade36c19654bbebffd3cfcd223c5593251e3a082b6d0c2fb0bd0108ecdf6f2f8",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "dfd695f0e0a2afd1c6275f1bc0dd16aa381cc486"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "3f131135909df529d73d3a84384a53a97947c6c2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "69ab7be3a225bc0beff3504766c19e6a135d58db"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1c1bef8a23501292f738aa9d50bcb64b1fb63028"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".rusty-hook.toml",
+      "type": "file",
+      "sha": "c6b73203a21c4e6c300a41057f6653c4239d2f70"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "cb8b64e4b35c8d3b4793d06d3049c0e741550258"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1a8db3112d003e3d6ba111a677a243bafe0b3592"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "33aca8bf3501904e2457c6a14e160cf39ba04c6f"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "27024be96049a3a90f178d7e88a4284b82a751fd"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "6238c779bd410ba43d3ceb4fc65dfbee85ef9cb8"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "7cb0681c6b1250cd11d7cae5745b2beeea028d2b"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "36d99e08de5384ff11aac4dd695fc63b94d4db0a"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ef97e413fd9ee9372ccd71e43c6b37efe41dca37"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "28016d6dc170e698588087c0c7ea94da6c6c2b23"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "31ac3abbcd0b5dba3a0240974f936777274c09ed"
+    },
+    {
+      "path": "campfire",
+      "type": "dir",
+      "sha": "34c0a9981a29b49a62fef2fa0ca5d8a4f5d8468f"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "3bdd66437190403e74c7a71d7719500363594574"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "67339f1934d4cd0af39c8e3e9e6c886d354bb443"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "dd5e55be52aa56fe3f36b521d5e978b78dc03462"
+    },
+    {
+      "path": "guest",
+      "type": "dir",
+      "sha": "40336ddafb042e3a73e6a270f2d09f6780bc2968"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "63df61ea4d9b9a20bf5426dee5d48e93e872e1dc"
+    },
+    {
+      "path": "localhost.crt",
+      "type": "file",
+      "sha": "406b6021c29f9b074306df043b9a4db0ea704bb7"
+    },
+    {
+      "path": "localhost.key",
+      "type": "file",
+      "sha": "ae4cfc7e761b3fd7817e845cd417ec1b99a5d06f"
+    },
+    {
+      "path": "recipes.json",
+      "type": "file",
+      "sha": "5c1423a498803992195a92d6a466cdc4a80c053d"
+    },
+    {
+      "path": "schema",
+      "type": "dir",
+      "sha": "7c442a0c3037deb977c31b60f037d2d85d399c63"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "790a4501bd6df41a14ed9b4b390d22b73448fd65"
+    },
+    {
+      "path": "shared_crates",
+      "type": "dir",
+      "sha": "c3c8e669eccf48bdabf33035ce9146bf146a282b"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "eea144ba5fba01e8147e9960bf0ddd4fa13444cf"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies multiplayer runtime engine; owned crates/guest/schema and Cargo build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "DaVikingCode/Citrus-Engine",
+  "repository_id": 5315612,
+  "commit": "3967ad6b61a6d7d641d26b38128b056025f02487",
+  "source_url": "https://github.com/DaVikingCode/Citrus-Engine/tree/3967ad6b61a6d7d641d26b38128b056025f02487",
+  "readme_path": "README.md",
+  "readme_sha256": "a0e53bff13d6260da634e8ffb9b4d9a38e6d8e37733516b942023e8640c3b467",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a5a68e4f18620e9bb988d9f03f6e87f6fab0aee6"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "b1d24ccb024d97adf7d50f42dbce08e8a3ce30a9"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "461fdfe7a78bf9450fe512650ecb88a3b7eb1e92"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "51523c4a4974edabf9c9dee52ee2725e4caf6de4"
+    },
+    {
+      "path": "ant",
+      "type": "dir",
+      "sha": "28edf25ecce45134594f526f1fbf900e86887737"
+    },
+    {
+      "path": "ce-asdoc",
+      "type": "dir",
+      "sha": "7ec6a7e1e6306d734358bd01b7a3d0d0ab5e05a2"
+    },
+    {
+      "path": "fla",
+      "type": "dir",
+      "sha": "535a7f15b01c7ca612969867042ead6aca999225"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "18b2f13d35169f0cc4666ea6e891b818c8f18dcf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "350e870a4b0f2aa613720a191cb0e3ec1d9f59fc"
+    },
+    {
+      "path": "srclib",
+      "type": "dir",
+      "sha": "3de81a37b67cff7990ae80eb26f82af51fb7cbf6"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

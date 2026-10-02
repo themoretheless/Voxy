@@ -1,0 +1,124 @@
+{
+  "repository": "kaplayjs/kaplay",
+  "repository_id": 803898449,
+  "commit": "6b6d01d63b790ecc22e1cbfd03577a4d9ad4ddda",
+  "source_url": "https://github.com/kaplayjs/kaplay/tree/6b6d01d63b790ecc22e1cbfd03577a4d9ad4ddda",
+  "readme_path": "README.md",
+  "readme_sha256": "42695044b3d55d578f5635669f3bd7a3ac03be2de724b35804c5e97e5434ae0d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a84a74c9c95fb8b7510bcc13ab83bd1df4ef0dfb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8241a83c384b09a84a944883c3cad3ee64e29379"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2cacc5b18517d6ece39779ef3e29a37486b6a0eb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d549691767efff10a475798273acde3d8c4abb34"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "de8e238ae1b4cf31446e6598c2c9a919fa6c2555"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "9946720e524a78c097fbcf9615975e9a74d4a370"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bebeade75f07963ca8c99172633e1014010133c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ebb1bf4b3a7a4358e0ef7a35ed87dd08bfa3a5de"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "bb0c28f00022ce72e2ee1427c5fd92b061b6322e"
+    },
+    {
+      "path": "dprint.json",
+      "type": "file",
+      "sha": "ffd4f75f9bdd798b18c0edd70c499f74afaafbd3"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "07fa944895b4d7a3d5ad0c928a545bfd76821e8a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "470a3d09451994588c434049b290ec00fc787f20"
+    },
+    {
+      "path": "kaplay.webp",
+      "type": "file",
+      "sha": "5f1ef0f226c3f11533233a548212215db8f58358"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "79d813780651350eb58fbb904a29ae1c2b07112b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "942ff99cc131281ca3903e885951e355207b64eb"
+    },
+    {
+      "path": "playwright.config.ts",
+      "type": "file",
+      "sha": "279dfb9fe83750f04b505560ab3e2d7802a77ca7"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "28c191dc01c40ee1751ddaced3172291b74557b6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e8cf9095e783e34c524e5915a2eca103dbd3a545"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "74f0e381327b886dbbec6cf98420d4fecaf58476"
+    },
+    {
+      "path": "tsconfig.build.json",
+      "type": "file",
+      "sha": "e6fc46d415551335f680360613da54dfd577eb6b"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "95580cbaa52b62567136c1dca74dfca838bdc43c"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies 2D JavaScript game library; src/examples/npm tests/build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

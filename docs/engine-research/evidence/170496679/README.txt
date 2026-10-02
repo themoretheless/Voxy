@@ -1,0 +1,359 @@
+[![Build Windows](https://github.com/Silverlan/pragma/actions/workflows/build-and-release-windows-clang.yml/badge.svg?branch=main)](https://github.com/Silverlan/pragma/actions/workflows/build-and-release-windows-clang.yml) [![Build Linux](https://github.com/Silverlan/pragma/actions/workflows/build-and-release-linux-clang.yml/badge.svg?branch=main)](https://github.com/Silverlan/pragma/actions/workflows/build-and-release-linux-clang.yml) [![License](https://img.shields.io/github/license/Silverlan/pragma)](#license)
+
+<img align="right" width="150" height="150" alt="Pragma Logo" title="Pragma Logo" src="https://wiki.pragma-engine.com/uploads/images/gallery/2022-09/scaled-1680-/pragma-logo-256.png">
+
+What is this?
+------
+This is the repository for the Pragma Game Engine. For more information, visit the official website: https://pragma-engine.com/
+
+
+Download
+------
+All versions include the core Engine, as well as the Pragma Filmmaker (PFM).
+###### Stable
+[![Download](https://wiki.pragma-engine.com/uploads/images/gallery/2020-08/firefox_2020-08-14_10-46-44.png)](https://github.com/Silverlan/pragma/releases/latest)
+
+You can find older releases in the [releases section](https://github.com/Silverlan/pragma/releases) of this repository. No installation is required, simply extract the archive somewhere and launch the `pragma` or `pfm` executable.
+
+Supported languages: English, Deutsch, Français, Español, Italiano, Polski, 日本語, 中文 (Zhōngwén), 
+
+###### Nightly
+In addition, there is also an automated nightly release with all of the latest features which you can find [here](https://github.com/Silverlan/pragma/releases/tag/nightly), but it is not guaranteed to be stable or functional.
+
+###### Updating
+PFM automatically checks for updates when you launch it, and can automatically install them as well, so you don't have to download new releases manually.
+
+Media
+------
+<p float="left">
+  <img src="https://wiki.pragma-engine.com/uploads/images/gallery/2022-11/scaled-1680-/pragma-2022-11-21-16-31-04.png" width="380" />
+  <img src="https://wiki.pragma-engine.com/uploads/images/gallery/2022-11/scaled-1680-/pragma-2022-11-21-16-35-19.png" width="444" /> 
+</p>
+
+What platforms and hardware does it work on?
+------
+- Windows 10 (or newer) / Ubuntu 24.04 (or newer)
+- Graphics card: GTX 1050 Ti or newer
+
+Contributions
+------
+###### PFM
+If you would like to contribute to the development of the Pragma Filmmaker, please go to the [PFM repository](https://github.com/Silverlan/pfm#contributions) for more information.
+
+###### Pragma
+The recommended way to work with Pragma is through the [Lua API](https://wiki.pragma-engine.com/books/lua-api). If this is not enough, and you need more control, you will have to build Pragma manually. You can find the build instructions below.
+
+Please consider creating a [binary module](https://github.com/Silverlan/pragma#modules) if you're planning on adding new features that don't require any changes to the existing code files. This way the module can simply be installed into existing releases of Pragma. (You will still have to set up a build of Pragma before creating a binary module.)
+
+Build Requirements
+------
+- [CMake](https://cmake.org/download/) 4.2.0 or newer *
+- [Ninja-build](https://ninja-build.org/)
+- [Python 3](https://www.python.org/downloads/)
+- At least 16 GiB of RAM
+- Recommended IDE: [CLion](https://www.jetbrains.com/clion/)
+
+<sub>\* CMake 4.3.x is currently not supported and will cause errors during configuration due to a [regression issue](https://gitlab.kitware.com/cmake/cmake/-/issues/27600).</sub>
+
+###### Linux (Recommended)
+- ~30 GiB of disk space
+
+Supported Distros:
+- Ubuntu 24.04 or newer (recommended)
+- Arch with up-to-date packages
+- Fedora 43 or newer
+- Void Linux with up-to-date-packages
+
+Please note that the automated GitHub workflows currently only test for Ubuntu, so this is the recommended distribution for the smoothest build experience. Other listed distros *should* work as well, but you *may* encounter issues.
+The following system packages have to be installed (these will be installed automatically if you're using the build script):
+
+**Ubuntu / apt**:
+```bash
+sudo apt update
+sudo apt install cmake ninja-build gcc g++ libfreetype6-dev libnotify-dev libwayland-dev libx11-dev libxkbcommon-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev pkg-config libxcb-keysyms1-dev libx11-xcb-dev libssl-dev
+```
+(`libssl-dev` is only required if you're building with PFM.)
+
+**Arch / pacman**:
+```bash
+sudo pacman -Sy --needed cmake ninja libnotify
+```
+
+**Fedora / dnf**:
+```bash
+sudo dnf install cmake ninja gcc g++ freetype-devel libnotify-devel wayland-devel libxkbcommon-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel xcb-util-keysyms-devel openssl-devel
+```
+(`openssl-devel` is only required if you're building with PFM.)
+
+**Void Linux / xbps**:
+```bash
+sudo xbps-install -S cmake ninja base-devel freetype-devel libnotify-devel wayland-devel libxkbcommon-devel libXrandr-devel libXinerama-devel libXcursor-devel libXi-devel xcb-util-keysyms-devel openssl-devel
+```
+(`openssl-devel` is only required if you're building with PFM.)
+
+###### Windows
+- ~80 GiB of disk space
+- Visual Studio 2022 *
+- Windows SDK 10.0.22000.0 or newer
+
+<sub>\* Generating a Visual Studio project is currently not supported, but you can still use the MSVC 2022 compiler. Please note that the MSVC 2026 compiler will *not* work.</sub>
+
+Build Instructions
+------
+To clone Pragma, run:
+```bash
+git clone https://github.com/Silverlan/pragma.git
+```
+
+Then use the build method of your choice below. CMake will be used regardless of which build method you choose. The build files will be placed in "pragma/build", and Pragma will be installed to "pragma/build/install" by default. The default (and recommended) compiler (regardless of the os) is clang and the default build system is Ninja.
+
+To cut down on disk space, Pragma uses prebuilt binaries for a lot of third-party dependencies by default. You can use the build script if you want to build those as well, but this will **significantly** increase the build time and disk space usage and is generally not recommended.
+
+### CLion (Recommended)
+
+If you're using the [CLion IDE](https://www.jetbrains.com/clion/), you can simply open the cloned Pragma repository and it should prompt you with a list of the available profiles. Make sure to **delete or disable the default Debug profile**, then enable the profile of your choice:
+
+<img src="https://wiki.pragma-engine.com/uploads/images/gallery/2026-01/clion-profiles.png" width="800" />
+
+Use a profile with the `-full` suffix if you want to have all features available, including VR support and PFM. If you only want the core Engine, use a profile without the suffix. Whether you use a `build-` profile or not should not matter. Enabling more than one profile is not recommended.
+
+Press OK and CLion will configure the project automatically. Once the configuration, you should restart CLion at least once to make sure CLion loads the most up-to-date configuration files, otherwise you may get issues when trying to run Pragma through CLion.
+
+You can then build, install and launch Pragma using the "pragma" configuration. If you have chosen a `-full` profile, you can use the "pfm" configuration respectively to launch PFM.
+
+> :warning:<br/>
+> When using CLion, it is recommended to use the prebuilt binaries for third-party dependencies (which is the default behavior).
+> If you enable dependency builds, make sure to set the dependency directory somewhere outside of the Pragma directory, otherwise
+> you may experience freezes, crashes and general instability with CLion. You can use the `--deps-directory` argument for the build script, and `-DPRAGMA_DEPS_DIR`
+> CMake argument in CLion to specify a custom directory.
+> If you're not using the build script, or you haven't enabled the `--build-all` option, you can ignore this warning.
+<br/>
+
+### CMake
+If you want to use a different IDE or just want to set up Pragma via command-line, you can set up Pragma using a CMake workflow preset:
+
+**Linux**:
+```bash
+git clone https://github.com/Silverlan/pragma.git
+cd pragma
+cmake --workflow --preset linux-clang
+```
+
+**Windows**:
+```bash
+git clone https://github.com/Silverlan/pragma.git
+cd pragma
+cmake --workflow --preset windows-clang-ninja
+```
+
+Available presets are:
+* linux-clang
+* linux-clang-full
+* windows-clang-ninja
+* windows-clang-ninja-full
+* windows-msvc-ninja *
+* windows-msvc-ninja-full *
+
+Use the `-full` suffix if you want all features, including PFM and VR support.
+
+Please note that all presets will use the **Ninja** generator. No other generators are supported at the moment.
+
+<sub>\* Using the MSVC compiler will **significantly** increase build times and disk space usage and is therefore not recommended until MSVC support for C++20 modules improves substantially.</sub>
+<br/><br/><br/>
+The following CMake options are available when using this method:
+
+| Option | Description | Default |
+|---|---|:---:|
+| `PRAGMA_DEBUG` | Build without optimizations? | `OFF` |
+| `PRAGMA_WITH_VR` | Build with VR support? | `OFF` |
+| `PRAGMA_WITH_NETWORKING` | Build with networking support? | `OFF` |
+| `PRAGMA_WITH_COMMON_ENTITIES` | Build with common entity scripts? | `OFF` |
+| `PRAGMA_WITH_COMMON_MODULES` | Build with common modules? | `ON` |
+| `PRAGMA_WITH_ESSENTIAL_CLIENT_MODULES` | Build with essential client modules? | `ON` |
+| `PRAGMA_WITH_PFM` | Build with Pragma Filmmaker? | `OFF` |
+| `PRAGMA_WITH_CORE_PFM_MODULES` | Include essential PFM modules. | `ON` |
+| `PRAGMA_WITH_ALL_PFM_MODULES` | Include non-essential PFM modules (e.g. chromium and cycles). | `ON` |
+
+Example usage:
+```
+cmake --workflow --preset linux-clang -DPRAGMA_WITH_VR=ON
+```
+Please note that the `-full` preset variants already enable all of these options by default.
+
+Once the project has been generated, you can build the "pragma" (or "pfm", if enabled) target to build and install Pragma:
+```bash
+cd build
+cmake --build . --config RelWithDebInfo --target pragma
+```
+
+### Build Script
+This method requires Python 3.9.5 or newer (with NumPy).
+
+To build Pragma using the build script, simply launch "build.bat" for Windows, or "build.sh" for Linux. Use the "build_full" version if you want to include additional features such as VR support and PFM.
+
+You can also invoke the build script using python like so:
+```bash
+git clone https://github.com/Silverlan/pragma.git
+cd pragma
+python build_scripts/build.py
+```
+(On some systems you may have to substitute the "python" command with "python3".)
+
+> :warning: Linux<br/>
+> Do **not** run the script as superuser.<br/>
+> The script will automatically install all required system packages. Since this requires admin priviliges, you may be prompted for your password several times.<br/>
+> You can disable confirmation prompts (e.g. for automated builds) by adding the `--no-confirm` argument, however entering your password may still be required.
+<br/>
+
+By default the build script will set up Pragma with core features only, but you can use the options below to customize the build. The build script also allows you to build all of the third-party dependencies yourself instead of using prebuilt binaries, but this is generally not recommended as it significantly increases build times and disk space usage.
+
+Once the project has been generated, you can build the "pragma" (or "pfm", if enabled) target to build and install Pragma:
+```bash
+cd build
+cmake --build . --config RelWithDebInfo --target pragma
+```
+
+#### Build Customization
+
+You can configure the build to your liking with the following parameters:
+
+| Parameter                               | Description                                                                                  | Default          |
+| --------------------------------------- | -------------------------------------------------------------------------------------------- | ---------------- |
+| `--help`                                | Display this help                                                                            |                  |
+| `--generator <generator>`               | The generator to use.                                                                        | Linux: `Ninja Multi-Config` |
+| `--c-compiler`                          | [Linux only] The C-compiler to use.                                                          | `clang-22`       |
+| `--cxx-compiler`                        | [Linux only] The C++-compiler to use.                                                        | `clang++-22`     |
+| `--no-sudo`                             | [Linux only] Will not run sudo commands. System packages will have to be installed manually. | `0`              |
+| `--no-confirm`                          | [Linux only] Disable any interaction with user (suitable for automated run).                 | `0`              |
+| `--debug`                               | [Linux only] Enable debug assertions and disable code optimizations.                         | `0`              |
+| `--with-essential-client-modules <1/0>` | Include essential modules required to run Pragma.                                            | `1`              |
+| `--with-common-modules <1/0>`           | Include non-essential but commonly used modules (e.g. audio and physics modules).            | `1`              |
+| `--with-pfm <1/0>`                      | Include the Pragma Filmmaker.                                                                | `0`              |
+| `--with-core-pfm-modules <1/0>`         | Include essential PFM modules.                                                               | `1`              |
+| `--with-all-pfm-modules <1/0>`          | Include non-essential PFM modules (e.g. chromium and cycles).                                | `0`              |
+| `--with-vr <1/0>`                       | Include Virtual Reality support.                                                             | `0`              |
+| `--with-networking <1/0>`               | Include networking module(s) for multiplayer support.                                        | `0`              |
+| `--with-lua-debugger <1/0>`             | Include Lua-debugger support.                                                                | `0`              |
+| `--with-swiftshader <1/0>`              | Include SwiftShader support for CPU-only rendering.                                          | `0`              |
+| `--build-swiftshader <1/0>`             | Builds SwiftShader from source instead of downloading prebuilt binaries.                     | `0`              |
+| `--build-cycles <1/0>`                  | Build the Cycles library (otherwise uses pre-built binaries). Requires --with-all-pfm-modules| `0`              |
+| `--build <1/0>`                         | Build Pragma after configurating and generating build files.                                 | `1`              |
+| `--build-all <1/0>`                     | Build all dependencies instead of downloading prebuilt binaries where available.             | `0`              |
+| `--build-config <config>`               | The build configuration to use.                                                              | `RelWithDebInfo` |
+| `--build-directory <path>`              | Directory to write the build files to. Can be relative or absolute.                          | `build`          |
+| `--deps-directory <path>`               | Directory to write the dependency files to. Can be relative or absolute.                     | `deps`           |
+| `--install-directory <path>`            | Installation directory. Can be relative (to build directory) or absolute.                    | `install`        |
+| `--verbose <1/0>`                       | Print additional debug information.                                                          | `0`              |
+| `--update <1/0>`                        | Update Pragma and all submodules and modules to the latest versions.                         | `0`              |
+| `--rerun <1/0>`                         | Re-run the build script with the previous arguments.                                         | `0`              |
+| `--module <moduleName>:<gitUrl>`        | Custom modules to install. Use this parameter multiple times to use multiple modules.        |                  |
+| `--cmake-arg <arg>`                     | Custom CMake configuration option. Use this parameter multiple times for multiple options.   |                  |
+| `--vtune-include-path <path>`           | Path to VTune include folder. Required for CPU profiling with Intel VTune Profiler.          |                  |
+| `--vtune-library-path <libPath>`        | Path to "libittnotify" VTune library. Required for CPU profiling with Intel VTune Profiler.  |                  |
+
+Example for using the `--module` parameter:
+```bash
+--module pr_physx:"https://github.com/Silverlan/pr_physx.git"
+```
+
+Alternatively you can also add custom modules by editing `pragma/build_scripts/user_modules.py`. (This is the recommended method.)
+
+###### PFM
+To build Pragma with PFM, add the `--with-pfm --with-all-pfm-modules` options. Due to licensing issues, this will only include a pre-built version of the Cycles renderer **without** OptiX support.
+If you want to have full CUDA and OptiX support when rendering with Cycles, you will have to add the `--build-cycles` option as well. You will also have to install the following before you do so:
+- [SlikSVN](https://sliksvn.com/download/) (Windows only)
+- [CUDA Toolkit 12.2](https://developer.nvidia.com/cuda-12-2-0-download-archive)
+- [OptiX SDK 7.3.0](https://developer.nvidia.com/designworks/optix/download) (NVIDIA account required)
+
+Please note that newer versions of CUDA or OptiX will likely not work.
+
+###### Update
+To update Pragma to a newer version (assuming the command above has completed successfully at least once), you can use the following command:
+```bash
+python build_scripts/build.py --update
+```
+
+This will pull all of the latest changes for the Pragma repository and the modules. The `--update` option will re-use all of the arguments used in the last execution of the build script, so you don't have to specify them again.
+
+If you just wish to re-run the build script without updating to the latest commit, you can use the `--rerun` option instead. Like the `--update` option, this will also re-use the arguments used in the last execution of the build script.
+
+Branches
+------
+The purpose of the branches is as follows:
+### `main` Branch
+- **Purpose:** The `main` branch is the primary branch that contains the latest functional code and should always be deployable. The [nightly pre-release builds](https://github.com/Silverlan/pragma/releases/tag/nightly) are generated from this branch. Please note that only [commits tagged with release points](https://github.com/Silverlan/pragma/tags) (e.g. v1.3.0) are considered stable!
+- **Usage:** 
+  - Only tested and approved features or bug fixes from the `develop` branch should be merged into `main`.
+  - Direct commits to `main` are discouraged.
+  - A stable release can be generated from `main` using the `Create Stable Release` action once the nightly release has been thoroughly tested.
+
+### `develop` Branch
+- **Purpose:** The `develop` branch is used as the integration branch for new features, bug fixes, and other changes. It acts as the "working" version of the codebase where ongoing development takes place. This branch is *not* considered stable and may not be functional or even build without errors.
+- **Usage:** 
+  - Developers create feature branches (e.g., `feature/feature-name`) off the `develop` branch for new features or improvements.
+  - Once a feature is complete and tested, it is merged back into `develop`.
+
+Modules
+------
+If you want to add functionality to Pragma without changing the core source code, you can do so by creating a custom binary module. The setup for this is very simple and only takes a few minutes. For more information, please check out the [wiki article](https://wiki.pragma-engine.com/books/pragma-engine/page/binary-modules#bkmrk-custom-modules).
+
+There are also various pre-made binary modules available for Pragma, some of which are already included with this repository, and some of which can be found online:
+> :warning: Some of these modules have not been maintained and may no longer be compatible with the latest version of Pragma.
+- pr_chromium: https://github.com/Silverlan/pr_chromium
+- pr_curl: https://github.com/Silverlan/pr_curl
+- pr_mysql: https://github.com/Silverlan/pragma/tree/main/modules/pr_mysql
+- pr_pcl: https://github.com/Silverlan/pragma/tree/main/modules/pr_pcl
+- pr_prosper_opengl: https://github.com/Silverlan/pr_prosper_opengl
+- pr_prosper_vulkan: https://github.com/Silverlan/pr_prosper_vulkan
+- pr_socket: https://github.com/Silverlan/pragma/tree/main/modules/pr_socket
+- pr_video_recorder: https://github.com/Silverlan/pragma/tree/main/modules/pr_video_recorder
+- pr_xml: https://github.com/Silverlan/pragma/tree/main/modules/pr_xml
+- pr_audio_dummy: https://github.com/Silverlan/pragma/tree/main/modules/pr_audio_dummy
+- pr_cycles: https://github.com/Silverlan/pr_cycles
+- pr_source: https://github.com/Silverlan/pr_source
+- pr_xatlas: https://github.com/Silverlan/pr_xatlas
+- pr_openvr: https://github.com/Silverlan/pr_openvr
+- pr_truesky: https://github.com/Silverlan/pr_truesky
+- pr_opensubdiv: https://github.com/Silverlan/pr_opensubdiv
+- pr_sqlite: https://github.com/Silverlan/pr_sqlite
+- pr_xnalara: https://github.com/Silverlan/pr_xnalara
+- pr_mpv: https://github.com/Silverlan/pr_mpv
+- pr_dmx: https://github.com/Silverlan/pr_dmx
+- pr_steamworks: https://github.com/Silverlan/pr_steamworks
+- pr_gpl: https://github.com/Silverlan/pr_gpl
+- pr_steam_networking_sockets: https://github.com/Silverlan/pr_steam_networking_sockets
+- pr_physx: https://github.com/Silverlan/pr_physx
+- pr_bullet: https://github.com/Silverlan/pr_bullet
+- pr_audio_fmod: https://github.com/Silverlan/pr_audio_fmod
+- pr_audio_alure: https://github.com/Silverlan/pr_audio_alure
+
+To build a module, simply run the build-script with the following parameter:
+```bash
+--module <moduleName>:<gitUrl>
+```
+
+The build script will clone, build and install the module automatically. Alternatively you can also download the module manually to `pragma/modules` and omit the `:<gitUrl>` portion of the parameter.
+
+If you only want to install a module without building it, you can also run the following console command from within Pragma to download and install the module automatically:
+```console
+install_module <githubModuleName> [<version>]
+```
+The `githubModuleName` consists of the GitHub username and the repository name.
+If no version is specified, the latest release binaries will be used.
+
+Example:
+```console
+install_module Silverlan/pr_curl
+```
+
+Addons
+------
+In addition to binary modules, Pragma also uses Lua as scripting language, with thousands of available function, class and library bindings. To get more information about the Lua API, check out the [official wiki](https://wiki.pragma-engine.com/books/lua-api).
+An example for a Lua-addon is the [Pragma Filmmaker](https://github.com/Silverlan/pfm).
+
+Special Thanks
+------
+- [SlawekNowy](https://github.com/SlawekNowy): For helping to make Linux support possible
+- [REDxEYE](https://github.com/REDxEYE): For creating the [Pragma asset import plugin for Blender](https://github.com/REDxEYE/pragma_udm_io)
+- [ZeqMacaw](https://github.com/ZeqMacaw): For their work on [Crowbar](https://github.com/ZeqMacaw/Crowbar)
+- All of the contributors of the [third-party libraries](https://github.com/Silverlan/pragma/blob/main/build_scripts/scripts/third_party_libs.py) used by Pragma/PFM

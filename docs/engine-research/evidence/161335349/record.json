@@ -1,0 +1,74 @@
+{
+  "repository": "PardCode/CPP-3D-Game-Tutorial-Series",
+  "repository_id": 161335349,
+  "commit": "32bdaab5f151b6b02fa61a45644efc85aa5ad270",
+  "source_url": "https://github.com/PardCode/CPP-3D-Game-Tutorial-Series/tree/32bdaab5f151b6b02fa61a45644efc85aa5ad270",
+  "readme_path": "README.md",
+  "readme_sha256": "3b53541003a1eb552621513c5a3ef7b9ed3143a0814fa3b8d382c8729f575adf",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ea691f590d67ed01a4c17d4ed1826ef0408e734d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dcc8d62ccfa1bda3f186926d4e21cea9aab75d63"
+    },
+    {
+      "path": ".media",
+      "type": "dir",
+      "sha": "05167d851f28e180d32133ea2677886d2b50ea96"
+    },
+    {
+      "path": "DX3D",
+      "type": "dir",
+      "sha": "f67a8aa5fb7aedcd57520eda682ce6304fb357cb"
+    },
+    {
+      "path": "DirectXGame.sln",
+      "type": "file",
+      "sha": "1ed5afde02c7d28d29bb03d908729736345475b3"
+    },
+    {
+      "path": "DirectXGame.vcxproj",
+      "type": "file",
+      "sha": "ed752e7ac1168a44a156c5fd1a6e995f6a6218e5"
+    },
+    {
+      "path": "DirectXGame.vcxproj.user",
+      "type": "file",
+      "sha": "429333de94d9d4d5a454d1585c5a8a42d006fd88"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "4dbe34f36290e45bdee396faf5217b590d6091ce"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f41efe4a9658b04e1f09a331a53dcebf2876834b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c089d2c1cc5815eebede3bb1613607ac1a836d93"
+    },
+    {
+      "path": "THIRD_PARTY_LICENSES.md",
+      "type": "file",
+      "sha": "a2e6328bcc9047d80b0e8a56365c2b14c9aa525c"
+    },
+    {
+      "path": "shadertoolsconfig.json",
+      "type": "file",
+      "sha": "64a7e7a734e2bd81c0676b67ef1f268e6f7be8ec"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies educational DX3D subsystem engine; owned DX3D source plus game/example native solution.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

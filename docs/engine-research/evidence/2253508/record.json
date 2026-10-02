@@ -1,0 +1,72 @@
+{
+  "repository": "bendangelo/EntityJS",
+  "repository_id": 2253508,
+  "commit": "b2f633e0ddb68374f53840a52605c073523be05c",
+  "source_url": "https://github.com/bendangelo/EntityJS/tree/b2f633e0ddb68374f53840a52605c073523be05c",
+  "readme_path": "README.md",
+  "readme_sha256": "0a8097ed92483b50bdafc86e784ce1f6030196f85a35833bc108b8d3bdd95e9f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3725aee41eb6ad806adba55a7bf16c8c73eca33c"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "53bc172bfaf277953d6d6a948b4f49dc21c00757"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "96c55e3300d906e4f03f2a86dad00c8943153255"
+    },
+    {
+      "path": "Rakefile",
+      "type": "file",
+      "sha": "2dec9af34763cf8f9fa0afcab02edcec7b216ccb"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "fa71d8fb67e09d455e90cca34a1eb20fcb3422c8"
+    },
+    {
+      "path": "entityjs.gemspec",
+      "type": "file",
+      "sha": "c24e5c148c688cb03b9b9d649718abaa1465b030"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "39998ba746d00bb067e5508c98c3eee45c6886c8"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "c326bd779f2c9a4d7874d948b725fc5627cfb8df"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "948fd0f6eaf37cbf672fda3a35be2698dee8016a"
+    },
+    {
+      "path": "spec",
+      "type": "dir",
+      "sha": "97c10896f57738cd7d12c49ea05ad0af2e9e18e8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8c4d248810b1a1281bba4332b41c7651faf6380f"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "534fd3d22f8eb1184f92ce1bbb7175bc112cce3a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

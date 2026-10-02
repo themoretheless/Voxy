@@ -1,0 +1,11 @@
+[package]
+name = "voxy_text"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[dependencies]
+fontdue = "0.9.3"
+rustybuzz = "0.20.1"
+[lints]
+workspace = true

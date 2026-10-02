@@ -1,0 +1,114 @@
+{
+  "repository": "godlikepanos/anki-3d-engine",
+  "repository_id": 23955091,
+  "commit": "7ea70050a4de716c3e1e36e130d79e57bcb00c53",
+  "source_url": "https://github.com/godlikepanos/anki-3d-engine/tree/7ea70050a4de716c3e1e36e130d79e57bcb00c53",
+  "readme_path": "README.md",
+  "readme_sha256": "f40591334cb2d4cb56456c3eecd1ded3b3a2f134565ba844dcdd3b709cf61d34",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "e4427709e43ae3c7b591604a6f42dd8adc92719d"
+    },
+    {
+      "path": ".clang-format-hlsl",
+      "type": "file",
+      "sha": "0f08565f89fd8ec2cad987d08c15ce49789cc1af"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "44ea86322c91c030caa8c77502fc52262bbd86d5"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0fc2ec19b6a882c6fd13680c0a251f0ab28a572a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b10b1d1f8884073fad8e94b85dad72e09d6dab35"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "761799486b61335dea497b88fa64f6300cd396d1"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".luarc.json",
+      "type": "file",
+      "sha": "b50d8a34b22a69c2c89c2231acb7b4211c0fe8cf"
+    },
+    {
+      "path": "AnKi.natvis",
+      "type": "file",
+      "sha": "73ee0bfb427e22b8fddf38c67960c6d8e132a594"
+    },
+    {
+      "path": "AnKi",
+      "type": "dir",
+      "sha": "70e69a0952634699d883810e24514f078055c926"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "98cb5dded99b5f8e5e11014c205bf96824baecc3"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "15864234cf019a859b7715b0047d73c5884fe240"
+    },
+    {
+      "path": "EngineAssets",
+      "type": "dir",
+      "sha": "c38c930f08d91d3f939499e4aa556f2651ddfcca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "eb8658a5aea311f6380007e268342a5eadadb133"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "81d8d5cb45f76b5a7d4afe4bb5d1fafb42121277"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "d44f807832905f556d50f42f4df7cab2470ba23d"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "c0bbf9e99e66082b58e6975d111bf02d52ac0d8b"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "1635832f8001152a9c82dc208ff2d8becb708687"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "b248e73cf61e572266173ca3eda698a33ba20f95"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "0365c493abc0eeb08583056191577da9bb58d653"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D engine; AnKi source, engine assets/tools and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

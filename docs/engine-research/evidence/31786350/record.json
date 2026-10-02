@@ -1,0 +1,87 @@
+{
+  "repository": "atraczyk/2d-engine",
+  "repository_id": 31786350,
+  "commit": "9b8ba9ad67cba4b02eff5b7137e9522b06aca3fe",
+  "source_url": "https://github.com/atraczyk/2d-engine/tree/9b8ba9ad67cba4b02eff5b7137e9522b06aca3fe",
+  "readme_path": "README.md",
+  "readme_sha256": "7dfe669af24c484083d8c0161516f06df01e12a015eb202a7f1fadcb6702e23b",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "51aa079ef4851cea9e28b764a14802765f8285ee"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d032e0f96e4da8fd10237716c8cd923d2b97c665"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "db639561c91c04236e0ba40f3844765c9ac981d6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5e45e086e815bda634155589b8c12213fc848cbc"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "61cd03bfe1a18e99e497a9567ea40af0b500d99e"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "eef4bd20cf972fc2f3c7405fdae3fdcff80e59d4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "cfeb1c0d7520e27993c05cefd055b95c17b1da10"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "66f34c761bfc81e41556cf165e5eaaf3a63ca913"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c4b4d5675b8e2cbe6b25e73732c7a329b5cccd60"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "e989d7769198dd6f9e62ebfa7e6159a05a5edb4f"
+    },
+    {
+      "path": "build.py",
+      "type": "file",
+      "sha": "49d4e169e65ffd26eaed8bb1905b0b6b682d9b70"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "7477a8da270f1705ea4abb9d405199ec68d0a0d9"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "6bef10008209eaa5a14f895a51d03a7705b02093"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "617714a43c765f21607d7746b6d57e2813395496"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "b52f7650fd188022f9951a893cdfff772ce19d58"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

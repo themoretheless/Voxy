@@ -1,0 +1,49 @@
+{
+  "repository": "MatinAfzal/OpenUniverse",
+  "repository_id": 796394089,
+  "commit": "520b1022ef95555df8254a6f4c4b8e13d236107b",
+  "source_url": "https://github.com/MatinAfzal/OpenUniverse/tree/520b1022ef95555df8254a6f4c4b8e13d236107b",
+  "readme_path": "README.md",
+  "readme_sha256": "6f8a475a3af2fed486778f7d37c00bb0c6dcfa2f2cc57c7d0969338ccfc455cf",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "83010ef8574f8c3f0fd0d49ca47834f79ab19eb2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5a96d74a3def9f7b5ebd7f0ccbc200aeba218f4b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "22183e96f4b117e17805d0a329e3991a666afc48"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fbe13c28cd5f3489d3cf8a3b2419e09ad484c783"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "029911e74d24a78a32943f841fa86ae74ab3cd73"
+    },
+    {
+      "path": "report",
+      "type": "dir",
+      "sha": "59fb244f922a8b62804e2c29febd12d4a466f3df"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "5baeb058e086768de74e6da83247a33f0d7af699"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python voxel universe exploration/learning project; README does not establish separately reusable game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,39 @@
+{
+  "repository": "Druidman/minecraft-clone-opengl",
+  "repository_id": 1011805549,
+  "commit": "12bdf5b1348d6c5720eadd3a478a10840ff18734",
+  "source_url": "https://github.com/Druidman/minecraft-clone-opengl/tree/12bdf5b1348d6c5720eadd3a478a10840ff18734",
+  "readme_path": "README.md",
+  "readme_sha256": "50ff849ba7ae5af7fbb8043bcb2fc3eb420b9c2d1edda10df50b6ea106f0b954",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cd6da87c94864f8f6b16c36833dc9af75d6cf57f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "79b9df1612be4ebd6cf59b1221dee919c1af1577"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ab73b5de3b33b39f9eb452fa07ef1573fda768e4"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "b247c3d663a934f9e234b1954295ebc7442f386c"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "21ebc28b47fb3077e7cd44c13a8c2bb50febee1b"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ Minecraft clone with desktop/web build instructions.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

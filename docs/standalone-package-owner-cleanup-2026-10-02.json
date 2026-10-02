@@ -1,0 +1,21 @@
+{
+  "binary_sha256": "dfb21989fd17ed8e34bb6c27e371ce3dbc30e5d1ad926b16b9bdaa84a585b4f2",
+  "standalone_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME CHECK PASS ticks=120 objects=3 prefab_instances=2",
+  "export_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME PACKAGE PASS sources=8 bytes=7771",
+  "packaged_paths": [
+    "__voxy_game.json",
+    "assets.json",
+    "buffers/mesh.bin",
+    "leaf.prefab",
+    "mesh.gltf",
+    "mesh.obj",
+    "nested.prefab",
+    "scene.json",
+    "textures/albedo.png"
+  ],
+  "corrupt_prefab_error": "Error: Json(Error(\"expected value\", line: 1, column: 1))",
+  "corrupt_model_error": "Error: \"game asset mesh failed: OBJ line 1: unsupported OBJ directive\"",
+  "scope": "actual standalone executable, nested composition, OBJ and textured glTF with external BIN/PNG dependency closure, 120 fixed steps and failure diagnostics; game-check alone makes no window/GPU presentation claim",
+  "packaged_run_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME CHECK PASS ticks=120 objects=3 prefab_instances=2",
+  "damaged_package_error": "Error: \"package integrity failure: mesh.obj\""
+}

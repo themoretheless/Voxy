@@ -1,0 +1,219 @@
+{
+  "repository": "etlegacy/etlegacy",
+  "repository_id": 245171699,
+  "commit": "063ef3cc27c076d1e0a09feb090541b675aa2ea0",
+  "source_url": "https://github.com/etlegacy/etlegacy/tree/063ef3cc27c076d1e0a09feb090541b675aa2ea0",
+  "readme_path": "README.md",
+  "readme_sha256": "a748f83fb428ece3e18f9964e7544397e32361f20238ca02c7e0b62079cfd686",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "67766ded08a3b3518ce9c0c7da546de3a246186c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5537b3a0096fc9d44822cd49b2c1843dc645e6b5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5b4061c9e6efcb601b465da75d33bcb38b734b47"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "aa3aa35daf857ce4bd5595cdddfed3369062a419"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7d3d737ddf3f3aea29bf0170a42a1ea0ca37e60a"
+    },
+    {
+      "path": ".ignore",
+      "type": "file",
+      "sha": "734f7065b0af20cb85e4c49f9ab188ac528c3a9e"
+    },
+    {
+      "path": ".tx",
+      "type": "dir",
+      "sha": "92849d5e92e08eb0f65cf07a90d7227dfb8be684"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "70bd447a5703a220f3e993b731c8b548bfd4b512"
+    },
+    {
+      "path": "Brewfile",
+      "type": "file",
+      "sha": "c8a80c8b76888c929e572e6724ff843c1c10ffcf"
+    },
+    {
+      "path": "CHANGELOG.yml",
+      "type": "file",
+      "sha": "abc2941bf2722980e402d38f1c32219853555a0b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9bce4a23d350598411544c0933b408f43b7c99e5"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "5d3bd4e0947c75e7f86d4632a18e589de6dc9d25"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a3375364e4efc17d0758d2e83b340f65f7d3fb2b"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "ee2f635aaadd7e8f7ecaff6d4b613d7396aa0263"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "b930ae981a185454f52ccf06befcc6926e3e1c51"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "056f66c67f044d28f4a3ee314c79438e3a23b018"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "7fc0151ef4b1e3beb5cabe7211006c9244a29fa8"
+    },
+    {
+      "path": "VERSION.txt",
+      "type": "file",
+      "sha": "77e1beb863fbd99134fda235dbbb762961365985"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "2c675e56e3a4ca13a4c4f05c321729349c323cc9"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "939f08032640ad426a7f9cb412f97527af5a4405"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "1d404680b4ee7065eea22795f972be307544b1b6"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e5a2947324317d78723066bb95c5127613d1e417"
+    },
+    {
+      "path": "easybuild.bat",
+      "type": "file",
+      "sha": "109c0540fb1a084abb69a89c588c96aa9e501dc4"
+    },
+    {
+      "path": "easybuild.sh",
+      "type": "file",
+      "sha": "d2d3052427f6797fc304371be99deda229c2a115"
+    },
+    {
+      "path": "etl.keystore",
+      "type": "file",
+      "sha": "3c5a5134d8e1c279e0e418dc4de90ee44976d393"
+    },
+    {
+      "path": "etlkey.jks",
+      "type": "file",
+      "sha": "66dc9d98a114548c3b006aa5ec459dd16fa31faf"
+    },
+    {
+      "path": "etmain",
+      "type": "dir",
+      "sha": "bd0962e5d81302f0a7002ffcaa95f36a093eb40a"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "fe7177e8990f9ca2638b1d79c599019f9c3c9085"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "6fd3b70da03d7f2ae0b2991aca75eef8fae80bbb"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "9d82f78915133e1c35a6ea51252590fb38efac2f"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "8a0b282aa6885fb573c106b3551f7275c5f17e8e"
+    },
+    {
+      "path": "libs",
+      "type": "file",
+      "sha": "ebd7680c7f5c6675fdc3f4f61fa0911e7b6d2b44"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "38cdf4dfadca05852b7b8e3e0b5c25e8234e7ff0"
+    },
+    {
+      "path": "pixi.lock",
+      "type": "file",
+      "sha": "85994612daa32051c5194ed796c00df271135956"
+    },
+    {
+      "path": "pixi.toml",
+      "type": "file",
+      "sha": "9ac91e6b9deb86374387d8f3511722a81a26f44e"
+    },
+    {
+      "path": "release.bat",
+      "type": "file",
+      "sha": "60f4137cb99aef78a80fe29d0d264d417b42858a"
+    },
+    {
+      "path": "release.sh",
+      "type": "file",
+      "sha": "e0b82549a0454961674f2de60a7cdbc21c341d89"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "122d34fb328102c3bbdac2dbf8777c20d8548341"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c8393f3a9a9834e90217d04dee31b996d11e51fe"
+    },
+    {
+      "path": "uncrustify.cfg",
+      "type": "file",
+      "sha": "55202f3b2bbc3371b425461d1ce5cd17215616b0"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "25e8e0be73ae00b5948911dc074d9cdc7a406526"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies updated Enemy Territory engine source; native app/build/CMake with retained upstream lineage.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

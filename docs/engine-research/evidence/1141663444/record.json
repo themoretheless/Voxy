@@ -1,0 +1,224 @@
+{
+  "repository": "esengine/estella",
+  "repository_id": 1141663444,
+  "commit": "9218cb2c0933f941011258c25531a49cf12cdc6b",
+  "source_url": "https://github.com/esengine/estella/tree/9218cb2c0933f941011258c25531a49cf12cdc6b",
+  "readme_path": "README.md",
+  "readme_sha256": "70f063c201d3e5616e4d69fba7fc1c411fc10c929ff3e8272c7b9fa3301a9088",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "33e8e106b1d555479e0f407b53efd7b6451722ed"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "872a7a062c140b4f1ceb6a9d1a4cfb34e3351427"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e004693429a6c0e25dae298ba39787581eedf51e"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "b464a660f6d516bb988fbb0250b4b8ba41d387e2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e499d0733df757255c50ceb552ddf0329c71c213"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5c0f7e555a55c2bf2b5c9b117c1b6b73e68bd2cf"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3bf082b1e657b18680f0366779fe66e7a375f3bb"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "cd1e62acc3e0b15654016aa39e62dba1820224a3"
+    },
+    {
+      "path": "BUSINESS_MODEL.md",
+      "type": "file",
+      "sha": "55b0c9ebcae9f53e0499d3d3fe395f367b94d586"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "43bf8f712d5a9f5e89f9941b343a80db9e990bf1"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b30ebaf5e906a10e39088a4fd211b511721fc74b"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a226daa87c263ef815d329265052594ea65fd6b4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "00e5c93f8ccc5e9b2d2e3b99e38b79b842016501"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cb488cf12f7aff5f3f647793e63ae919ea8d9205"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "e626b922f13342c87d184caaeb76b59adc33b62f"
+    },
+    {
+      "path": "PROVENANCE.md",
+      "type": "file",
+      "sha": "2bf548adf71562dbc78637daac108a47357f6ed8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f151a02aa52ce42f44b0e8637401dbeddf751613"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "57a9023138708b396b37f1da332c971d1ce0cfa0"
+    },
+    {
+      "path": "VERSIONING.md",
+      "type": "file",
+      "sha": "a1eef832a47f7fe4c494693c6fc9128cd9b74fbc"
+    },
+    {
+      "path": "bench",
+      "type": "dir",
+      "sha": "02d2e0bdb6e1d41d412b8de50a3123e4140857c7"
+    },
+    {
+      "path": "build-tools",
+      "type": "dir",
+      "sha": "35a216abb81d8322a352382be692e293599b94f4"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "5c163bf667a4ac20457899da12e82963655cbf87"
+    },
+    {
+      "path": "compiler",
+      "type": "dir",
+      "sha": "bb0d45f27471efc63d467cf318f17d1cbf61007c"
+    },
+    {
+      "path": "desktop",
+      "type": "file",
+      "sha": "3e3a8932fb1c6d4a7d4de20b7842974e17c2e53e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4f24644287ce36c7d5b31f3083962633d18440b3"
+    },
+    {
+      "path": "editor-api",
+      "type": "dir",
+      "sha": "69d594da43bd1f65b7f330c375240369a2460568"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "354b29c174630866015eb214f61fa92721980421"
+    },
+    {
+      "path": "fixtures",
+      "type": "dir",
+      "sha": "b8a2907f761cd8252ed6de802f6b41a8915a225a"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "05c9941de79c986e8416ae4d0b35e5b37df41c16"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "e5c8d8ce61f1974fcbce050a2e66c6d5a57d0caa"
+    },
+    {
+      "path": "pipeline",
+      "type": "dir",
+      "sha": "7cf1eb8aebd43d2e299e116d2a08f1fd335dc2ca"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "bf33fbdf6fc1ab5650f59b9a4c491500a8587ed0"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "662608150f0f8d07620cfd38389bf0761003d8f4"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "bd77f70d99b33d048bacb046cdff6b5bfad87b20"
+    },
+    {
+      "path": "sdk",
+      "type": "dir",
+      "sha": "cdf9c410ef7963353498f8610cbce2b60d47ec6a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "408b7a7644e7a93f33a1c2e750b061a88023c263"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "4412c1589fff7a47bf8722a8d5e8c8906c5ee363"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "61b0df81a79aed2819191c3e0269d2b0d371ad75"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "73e95545c45ca20aaf4b6e8af81bac4c11ba8aa0"
+    },
+    {
+      "path": "toolchain.manifest.json",
+      "type": "file",
+      "sha": "55bf77d3f70e433b3567b2f77640fc5a7ca093fd"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c4e0cf139edb4b1e16d535f4c7c3c9aeb65bf178"
+    },
+    {
+      "path": "vitest.engine.config.ts",
+      "type": "file",
+      "sha": "a19e813ddd172d803239a31a4251f7d8416a61d5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies TS/native game engine; owned core/editor/runtime roots and CMake/npm infrastructure. Platform/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

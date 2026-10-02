@@ -1,0 +1,7 @@
+{
+  "scope": "Broad-phase unique primitive candidates, not active contacts or solver energy.",
+  "counts": {
+    "vertex_face": 15334,
+    "edge_edge": 24720
+  }
+}

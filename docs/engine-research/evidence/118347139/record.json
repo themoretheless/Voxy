@@ -1,0 +1,47 @@
+{
+  "repository": "mattiasgustavsson/pixie",
+  "repository_id": 118347139,
+  "commit": "590856bd400d40ab5b8c5ae013f72e3e59677b5e",
+  "source_url": "https://github.com/mattiasgustavsson/pixie/tree/590856bd400d40ab5b8c5ae013f72e3e59677b5e",
+  "readme_path": "readme.md",
+  "readme_sha256": "d1cedb8d73daf1d6f30cf353ee654d29375027e49c65d978462f06c173cf685d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f272db0e983af5508c2141f1affc45bbdcd22caf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "46ddd50241d3217d8619ad1a6eecb6681bfc83a4"
+    },
+    {
+      "path": "app_icon.ico",
+      "type": "file",
+      "sha": "73bda2e933b10fa355fbcd9549869f3e65c5ef0b"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "92d6a42630cba2b2dbafc822534b6dbe0a883b79"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "0d0b8d0e4927f07070d11504261be19f9fd31fd9"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "befbf8dc179bebe6792df35f70cd1f952d116e45"
+    },
+    {
+      "path": "source_data",
+      "type": "dir",
+      "sha": "663c831c4c43dae3acb43f7a07a1717447308fff"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

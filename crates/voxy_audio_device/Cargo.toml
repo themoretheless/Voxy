@@ -1,0 +1,12 @@
+[package]
+name = "voxy_audio_device"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[dependencies]
+cpal = "0.15.3"
+voxy_audio = { path = "../voxy_audio" }
+[lints]
+workspace = true
+

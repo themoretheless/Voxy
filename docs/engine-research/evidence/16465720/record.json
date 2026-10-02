@@ -1,0 +1,107 @@
+{
+  "repository": "JohnSundell/SuperSpriteKit",
+  "repository_id": 16465720,
+  "commit": "82e7accb995a2518fd7a302ab6dc60ac8f246027",
+  "source_url": "https://github.com/JohnSundell/SuperSpriteKit/tree/82e7accb995a2518fd7a302ab6dc60ac8f246027",
+  "readme_path": "README.md",
+  "readme_sha256": "86ffb4a48e9963925b2766e3b6f5d4c18ab8dc6f36eebd7e40b1786e6396c2ac",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6e137049a0cb2fe9740dd7afca5d92493d8f221f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e6298c6e73ea0561ffb8def6fa77b8190e012082"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4ccccb74b6b7f9bdbafdaa2f5ee56a5647ee2865"
+    },
+    {
+      "path": "SKNode+SSKTags.h",
+      "type": "file",
+      "sha": "c1da0ead9eb1249c38c443357aaf68bf3209ae0a"
+    },
+    {
+      "path": "SKNode+SSKTags.m",
+      "type": "file",
+      "sha": "025f59a8994f381c871c9032228f32d45f23a3fa"
+    },
+    {
+      "path": "SKSpriteNode+SSKAnimation.h",
+      "type": "file",
+      "sha": "8e2b01a678a4901aa9b3e290e4f733bf2a56f524"
+    },
+    {
+      "path": "SKSpriteNode+SSKAnimation.m",
+      "type": "file",
+      "sha": "2bb34af8374b5780eb9b87c3d109ec6db6601763"
+    },
+    {
+      "path": "SSKButtonNode.h",
+      "type": "file",
+      "sha": "b1686ff8436d458a0cecb1a2023b03ecf47a06cf"
+    },
+    {
+      "path": "SSKButtonNode.m",
+      "type": "file",
+      "sha": "ea6573ba5f307591e12d01e0e5968bb7c76fac60"
+    },
+    {
+      "path": "SSKInteractionHandler.h",
+      "type": "file",
+      "sha": "d667467cf4a7af169514a5c77ceed8e35ab3d512"
+    },
+    {
+      "path": "SSKInteractionHandler.m",
+      "type": "file",
+      "sha": "8ecf05e1819c90c4a99e110960b6eeebb3842fbf"
+    },
+    {
+      "path": "SSKMultiLineLabelNode.h",
+      "type": "file",
+      "sha": "63a5f4300dd865d4699da13ca08e588cb46786eb"
+    },
+    {
+      "path": "SSKMultiLineLabelNode.m",
+      "type": "file",
+      "sha": "d0a2d77646cd406f5f0b2a91beba402fb4838ffc"
+    },
+    {
+      "path": "SSKMultiplatform.h",
+      "type": "file",
+      "sha": "abbedc3ef62d77aa480bab43f43b019b62934dc4"
+    },
+    {
+      "path": "SSKStretchableNode.h",
+      "type": "file",
+      "sha": "faca47558385fbcba93f330e44c5ae679c6a68d2"
+    },
+    {
+      "path": "SSKStretchableNode.m",
+      "type": "file",
+      "sha": "e2a85a4d5a1a0db4164be91385e5300304607a0e"
+    },
+    {
+      "path": "SSKTileableNode.h",
+      "type": "file",
+      "sha": "aa13c4e072d99ac387167134ef257d3b9805812c"
+    },
+    {
+      "path": "SSKTileableNode.m",
+      "type": "file",
+      "sha": "277cc414d814c9b74dcd22c33b8edb3dc671f202"
+    },
+    {
+      "path": "SuperSpriteKit.h",
+      "type": "file",
+      "sha": "c4d564462ff697427cb3ca4b7183285bc1b4ca66"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

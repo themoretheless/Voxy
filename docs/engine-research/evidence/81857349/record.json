@@ -1,0 +1,32 @@
+{
+  "repository": "solenum/exengine",
+  "repository_id": 81857349,
+  "commit": "710e3eb2da57d7edf6e9ffc2477a5b4223023161",
+  "source_url": "https://github.com/solenum/exengine/tree/710e3eb2da57d7edf6e9ffc2477a5b4223023161",
+  "readme_path": "README.md",
+  "readme_sha256": "0d9ea2f29c64a9f04aa4c2614e0e74f04d3480e33bb56387fc829ed36bb96799",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b4d5d36913d3576fdc47f40576799f1968708802"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6298d1959869cc92c09205914ec6951c0c4e3054"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "42a4396ed921ffa3551619139cb1af47aa0e9c54"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8d30c3a8e39ea26cf8e55821c9e960bd2eb97723"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

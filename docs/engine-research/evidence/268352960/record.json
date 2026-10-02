@@ -1,0 +1,184 @@
+{
+  "repository": "TorqueGameEngines/Torque2D",
+  "repository_id": 268352960,
+  "commit": "e7b0011a913793fabb5e564549b3d3ddb3913fe9",
+  "source_url": "https://github.com/TorqueGameEngines/Torque2D/tree/e7b0011a913793fabb5e564549b3d3ddb3913fe9",
+  "readme_path": "README.md",
+  "readme_sha256": "51d7060251effaeaacaf23201b0e7cd74d2c9ce36af9edb0cdbc4414b35f6c87",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "66f01a6c584f242537d1f9640456ec44d872883b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "91a74440fb68839955ada2be5304c5ee8bb6e7d3"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d65c967252df7988e1df4431b0c680db734edb8c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e68bcf412682c7551fd90db2c229b43dac085e80"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d91a24bb4cc8d31a3c78d2b293940bfd0c344a50"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "306c11128b211c1cba364856356787f554bef84f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "408507c15696c1f49a638cfe57fe1e7d3a6757da"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "1aa1658bdb19819fde503a066e269bbb9cd3a2d9"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "7d37236c009ab60f6baebe27d8d2b494d1d1486a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "63362bcbc87c92c6ef04cc60af818708366752fd"
+    },
+    {
+      "path": "PlanetX",
+      "type": "dir",
+      "sha": "29ea6aa7ea01ed21ec757a46cea03ca0135b5d09"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ce992bcc21ce2c012eec1f3ad31e7ed4dfc60a2d"
+    },
+    {
+      "path": "TORQUE_SCRIPT.md",
+      "type": "file",
+      "sha": "409fc1931d52d3ecf2d4f466e5a765c55e9853dd"
+    },
+    {
+      "path": "build-linux.sh",
+      "type": "file",
+      "sha": "471c1b2586c569f2f71cc89c0d9baee6a0b25483"
+    },
+    {
+      "path": "cleandso.bat",
+      "type": "file",
+      "sha": "fdaec0f0d49795f56330f6729b2bd4894dc4a297"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "6393d95d806d9c618fb4173cfa528437a6593607"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "70bbd82fd8354c76d846169651b327afb3c0b618"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "fbb5c6869a18415198fd090d363efb1e0f94d405"
+    },
+    {
+      "path": "generate-emscripten.sh",
+      "type": "file",
+      "sha": "51ef0372ee8bf8532c56fedfa5f63622a6cee74a"
+    },
+    {
+      "path": "generate-make.sh",
+      "type": "file",
+      "sha": "06e5dcd0fb55e598e6db49ee03b40fd3a4b4c468"
+    },
+    {
+      "path": "generate-vs2022.bat",
+      "type": "file",
+      "sha": "026db1a12bbbab60e8b2262b1585a22491d9d8b9"
+    },
+    {
+      "path": "generate-vs2026.bat",
+      "type": "file",
+      "sha": "ebd928eb0d8977c93cce1fd884bcce3597a11b16"
+    },
+    {
+      "path": "generate-xcode-ios-device.command",
+      "type": "file",
+      "sha": "9692a85754a33620c92d9b669bb51ba109e6e086"
+    },
+    {
+      "path": "generate-xcode-ios.command",
+      "type": "file",
+      "sha": "6a9698db9710675563c337f266158493c2ee82cb"
+    },
+    {
+      "path": "generate-xcode.command",
+      "type": "file",
+      "sha": "032b06bb78bdf6b168e5bbb6095ccc3dc1230ac2"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "109a82e6e3f04487ee990d1b3a93635e63df0582"
+    },
+    {
+      "path": "library",
+      "type": "dir",
+      "sha": "2b2641c4f5ca01b7974b268016dd996f278596f3"
+    },
+    {
+      "path": "main.cs",
+      "type": "file",
+      "sha": "f0182691c3908c0c3c864ac0a78adcbb6ca15e45"
+    },
+    {
+      "path": "main.runAllUnitTests.cs",
+      "type": "file",
+      "sha": "2e4492812def75936385b1d8efb14244607209cc"
+    },
+    {
+      "path": "sandbox.torsion",
+      "type": "file",
+      "sha": "861ed13a95ab688f9f3331385b2c59644082ad1b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ae536aec2806cface107f679b070cc463a54fbe7"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "7bb655a4a370cb2c3d14a65b31dce9ba02ed4f03"
+    },
+    {
+      "path": "toybox",
+      "type": "dir",
+      "sha": "01c40642517c068fa82fa55c4685b55ebb3d1ff8"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "6e406ac0e4db30ef2997b55db21856645e6def3b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Torque2D engine with physics/audio/animation/assets/persistence/scripting and editor source; maintainers continue GarageGames engine, no independent shipped-game-count proof.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

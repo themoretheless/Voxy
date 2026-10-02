@@ -1,0 +1,54 @@
+{
+  "repository": "jslee02/awesome-graphics-libraries",
+  "repository_id": 174568488,
+  "commit": "2d139979e76bec13311adb7234137c8e32982da9",
+  "source_url": "https://github.com/jslee02/awesome-graphics-libraries/tree/2d139979e76bec13311adb7234137c8e32982da9",
+  "readme_path": "README.md",
+  "readme_sha256": "f30745588bd17ed4ecb145add634eb9e349ff0d706392110facfd0110b5d5534",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6ae576f5e9d4a68b625edb9e4693551a7b2bc520"
+    },
+    {
+      "path": ".lychee.toml",
+      "type": "file",
+      "sha": "6abb254f6b76ce6886886e5a1253e1b4b373ce5a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b0e32408e2f4d3bcdfa013f97dd2e9dcfeab3a7e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "670154e3538863b2d9891fd5483160fbdfc89164"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f24d20de9407f3641ab51a1f73d6f042829cdb5e"
+    },
+    {
+      "path": "awesome-list.yaml",
+      "type": "file",
+      "sha": "a64807b2909da5f706a6dabe86dd99fb1e5d8245"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "95d9139c85c1630a06904b622621ad2adae9e236"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "bf8963688b7c5914422f99c12be97e3982697bd7"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README curates graphics libraries; data/scripts/documentation rather than owned runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

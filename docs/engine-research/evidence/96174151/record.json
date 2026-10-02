@@ -1,0 +1,84 @@
+{
+  "repository": "EQMG/Acid",
+  "repository_id": 96174151,
+  "commit": "2ff8adee30cfb571d27a1d937689608ccea12734",
+  "source_url": "https://github.com/EQMG/Acid/tree/2ff8adee30cfb571d27a1d937689608ccea12734",
+  "readme_path": "README.md",
+  "readme_sha256": "ec85ed302b030f6f07b8b47764800e918ae3b1b03310b03eda63409e518ff3c2",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "3e34822545d181c829d6327b2a3d0ae1cc18b1bb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c22a1d1a20e847227471b5bf41e94269d0bff7c9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2e86b82c4a59cf83f15abc39cd453664999c6a10"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "bdfcd0d47f6204c390cc32357b91a15d0b12aa0a"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "aa6be9edcbfa75f8dbc65fcbdd76a687fec21d37"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "33710207ebb9b512a3d3540b933d01fa47296980"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "1d71bb7c91e0a1cbf293f71f050096ca812279b6"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "d03994dae03fab41021dc9b4360e8b4df46093de"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "2b51e3f621ce2734ee8cd45daacc1065f33ea0f8"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "72ce0419c342d4abb635df1ac1bb29a294e24dcd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90bddf8c17d09355c846213d5036091cb4e893ff"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "b968334c6d140097432be9c103ecbff889fb7a23"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "8e3fcd6b5647067f496719f437570a9418e2075b"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "09f77d86365d2a95bc6db5abc9781fe6ad669998"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies modular native game engine; Sources/Tests and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

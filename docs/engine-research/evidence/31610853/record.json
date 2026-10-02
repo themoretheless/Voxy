@@ -1,0 +1,64 @@
+{
+  "repository": "boldtempleGaming/Engine",
+  "repository_id": 31610853,
+  "commit": "8ed73a49777b59f0af1031d9787c7bdaa98ba3cb",
+  "source_url": "https://github.com/boldtempleGaming/Engine/tree/8ed73a49777b59f0af1031d9787c7bdaa98ba3cb",
+  "readme_path": "readme.md",
+  "readme_sha256": "f46dda32ed5404050440f692a9be0206071936507043ddeb15716701a91417f0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b25f7db6dfe42fc0b28af4f18f4471dc3306087e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "391f591013898df3cbbe358d2cf08b69d80a2e6c"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5c4c027cb9d835103db9daad89f6f9af777d7f7f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b9ed23af7b02d88d967043f8304078d96c4d8ced"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "d1a04ae007055576b072e2e14330c8e391b612c5"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "eca98c042f4e421b73a448607c7689fdbdd10264"
+    },
+    {
+      "path": "Third-party",
+      "type": "dir",
+      "sha": "147f77664d40f2ea011886eefacb8e385e1a53d2"
+    },
+    {
+      "path": "license",
+      "type": "file",
+      "sha": "0ae49da3c9af1a482825fb09fa1d3ea30a3a98e4"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "7fa99618ece9df73e802e80741f51855b6edeb80"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "45b1cc9ba2749d73e52471af896302a790315932"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++11 SDL2 lightweight 2D framework explicitly identified as framework and pre-alpha.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

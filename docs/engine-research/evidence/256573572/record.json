@@ -1,0 +1,99 @@
+{
+  "repository": "openc2e/openc2e",
+  "repository_id": 256573572,
+  "commit": "7af016b0e76b76cf8ce979848dc236c18c64f04d",
+  "source_url": "https://github.com/openc2e/openc2e/tree/7af016b0e76b76cf8ce979848dc236c18c64f04d",
+  "readme_path": "README.md",
+  "readme_sha256": "f5b8d3bdf5c72a6306ae566535c7f44d760e538d41020ab9bbbb2115328fb55d",
+  "entries": [
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "99baf3db2f625d08768655705710d5ee70a6fada"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "176a458f94e0ea5272ce67c36bf30b6be9caf623"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5d7ad3c4aac78ef7ef56752911147c8204250f89"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2cdb37e9651e5181d4a1a75c0e855ce3293b1544"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "be8b605454916e827fde7943ff0d555bedc75b3d"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "9965ccc69463d6f10e4e9da2341a156f32ecad1c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4e05d526ee13652800be8de885b273742f34ce47"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "f2db12fd69c900328bce0bc8e5f0a39f354ba941"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "44552db52b69fcb13254f10a05f5f7ab8e90c076"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "8add30ad590a65db7e5914f5417eac39a64402a3"
+    },
+    {
+      "path": "Openc2e-logo2008.png",
+      "type": "file",
+      "sha": "365c7cad05d66b1e92a38132f8c185b55a40d5a7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8fbfa1c5cca3e7ccf9cca7c44e028077493199e3"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "c6cd464cbd3533fbf4603e503191f21141b43219"
+    },
+    {
+      "path": "externals",
+      "type": "dir",
+      "sha": "76414408266e6fda5270cfa5842787c8a1245baf"
+    },
+    {
+      "path": "openc2e.ico",
+      "type": "file",
+      "sha": "d8feebae0538a720a187818c55e78ff281102b03"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a68950e94e127bf68a173c14ee12cda7198e4e08"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8ac9921bf8c3e03e5d5d8a52ed5ae19519d8515f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Free implementation of the Creatures runtime requiring game files; CMake and src are present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

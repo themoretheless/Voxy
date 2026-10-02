@@ -1,0 +1,25 @@
+{
+  "binary_sha256": "7a546bc243a10f06916d675333ecfb5eb861b2972102637cdbae96deb116e348",
+  "fixture_sha256": {
+    "assets.json": "a424746e28df772682a610f867a34d7e8ed68ab37f84c4c244848257a24371af",
+    "a.vmodel": "c121eae00d8e1c329941f5050aba2e7cdcbf05bb663196ba6a32e25404c1f2de",
+    "b.vmodel": "c121eae00d8e1c329941f5050aba2e7cdcbf05bb663196ba6a32e25404c1f2de",
+    "base.obj": "5c3f123fc66f8bde141b640e1bbd6bcb9465689a06fc93fb091038bdfd2239e9",
+    "proof.lod": "03adaece5d8caa8af729b1f816b5059d2b2df98fc168e6b30b58cb627c6c404d",
+    "seed.scene.json": "c8047074f759ece5fbde6b307d0b3c704a773160b8159437a8208f4f00a93951"
+  },
+  "source_log": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-18373-1790968797677546000/native.log",
+  "checks": [
+    "outcome=Presented",
+    "LOD NATIVE COMPETITION CONTRACT frames=24 mandatory=62816 optional=[3072, 3072] budget=65888",
+    "LOD NATIVE COMPETITION FALLBACK PASS frames=27 live=65888 budget=65888",
+    "LOD NATIVE COMPETITION RECOVERY PASS frames=30 live=68960 budget=268435456"
+  ],
+  "scope": "two distinct logical model assets, presented native frames, shared budget contraction, exactly one deferred LOD, base fallback, accounting stays within limit, recovery after restoring budget",
+  "limitations": [
+    "automated actions do not prove manual input delivery",
+    "logical geometry accounting is not total physical GPU memory",
+    "same topology fixture under distinct resource identities",
+    "no animated LOD or image equivalence"
+  ]
+}

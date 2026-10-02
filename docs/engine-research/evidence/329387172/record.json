@@ -1,0 +1,84 @@
+{
+  "repository": "AryanpurTech/BlueEngine",
+  "repository_id": 329387172,
+  "commit": "566c90aa2e4f4cf9cfb2ef0c8293888f654631c2",
+  "source_url": "https://github.com/AryanpurTech/BlueEngine/tree/566c90aa2e4f4cf9cfb2ef0c8293888f654631c2",
+  "readme_path": "README.md",
+  "readme_sha256": "c8c78cdf819a772c848a0aa08d28000b10f34eaf87c2aab0edfc4fd55c0623d6",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7973f81a7caf470ba38d040416b019c111408bd3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a724964ffedf6ec6ecc497dd2accc66d8dbd3a6d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f44804fbf56d5713bdc29c2d3e790a6e756718ef"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "7df40eeb05e28903eb625231443d22d510aaa554"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e7f0614105c9638fabff79258e4969e9a7e53623"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "99560dd4462b701d7e60ff2619a60f753ac5c668"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "4a75632746c98b0bb65a9c006756efc2fe61605d"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "b96f804d49f66ea06771f48e6c6e5b1c6ce941c6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "298880aeeb2c524fa8f0a0386779501f90829ef7"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "4f98f07ee6ab22142240ec5171a508c2f6a43545"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "005c10b2994718e6f30609bb31ccfe6d7548ae19"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "49e6fa60d81084d20ca073a21d472d739ff44745"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "bd7641e4809484306bb3adeb79ec589d41af7288"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0bec2b96159a3ab5d251a42e03ac805397d1317c"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies graphics engine; src/crates/Cargo builds, gameplay engine scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

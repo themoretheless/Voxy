@@ -1,0 +1,94 @@
+{
+  "repository": "asc-community/MxEngine",
+  "repository_id": 228222817,
+  "commit": "599eb5f4e55c5039a04ff5fe548bfc8d43a3d58a",
+  "source_url": "https://github.com/asc-community/MxEngine/tree/599eb5f4e55c5039a04ff5fe548bfc8d43a3d58a",
+  "readme_path": "README.md",
+  "readme_sha256": "c1658f4fbbf96742a9dc6e1fb18d51fe841f2f9893dda501a6e1414c4c5e9e38",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "dd3baf0ecc84aa0825a8adc832f412eb3a159b3a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d2e8c85333827b6c2a33ec23cf30528f31e8404b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7c719741092049974815771652c78beb4a74e445"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "cb9cfb4ab925ce815242f934fad7fafaa5fb3831"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fd5a283ed267a3e4e47d1d2b3d14b8edcfffc61a"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "6c4bf3e8143368d7cfa046fcd2bd18ac3d0feaa3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bb799cd4ee3e4b8ad5f34f5839982fba4690785e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "96d15eafccceeff43f6a36ed947ce4bad45d3545"
+    },
+    {
+      "path": "articles",
+      "type": "dir",
+      "sha": "1f190204d3f20457cae98fe1de9c932d1c37b732"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "048b9c2054b86a487bd0cbe5114b1a2d41b0413a"
+    },
+    {
+      "path": "dependencies.md",
+      "type": "file",
+      "sha": "0f40cd4a2d9331fe509526501c84ec635ff929e9"
+    },
+    {
+      "path": "preview_images",
+      "type": "dir",
+      "sha": "cd6aad66ab458a793ecc44c011e33aa5d371f106"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "81d14bf963467c9c15d9db8ba563983421cab1a6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2db4cdcd6dd3e01a0f9945d920c7d7d58efcffeb"
+    },
+    {
+      "path": "submodules",
+      "type": "dir",
+      "sha": "bab45c3ad0cd1ca3d6e95cdc32e900ffa4a38cd6"
+    },
+    {
+      "path": "versions.md",
+      "type": "file",
+      "sha": "83a5af6fc1295aa3ed9b02b8680e062f9c3f2bfe"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies educational native general-purpose engine; src/samples and CMake. Vulkan port remains unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

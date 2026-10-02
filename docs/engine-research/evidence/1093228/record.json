@@ -1,0 +1,134 @@
+{
+  "repository": "cocos2d/cocos2d-x",
+  "repository_id": 1093228,
+  "commit": "7a5282a301a13e467bdcc3466d3cd3883862aadf",
+  "source_url": "https://github.com/cocos2d/cocos2d-x/tree/7a5282a301a13e467bdcc3466d3cd3883862aadf",
+  "readme_path": "README.md",
+  "readme_sha256": "6d6d2573fcc6187e54bded50906390a690f913fc022927d47d6b79693a8965ee",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "820224f3e15354f70406cb4b12ac317ecdbf1858"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e46801e67a635c90ed8d53e6ffdba35e37982577"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "42e4d5535e602d3261ce184eace2ec1203251cd7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b3bdfed93f49e2f564dba4fe4925300c70fe8809"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "908a8ed9440cfdaf0894692ab7f9f63521812310"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "c6dc2d0bc00e4ee0db4504058b4ced29f0f3c0e7"
+    },
+    {
+      "path": "CHANGELOG",
+      "type": "file",
+      "sha": "3e4023dd7de4486c95f5ff054087b3b1c8ca7264"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "856d9843e173d526a6d07c7d045213c3335ed62e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6f47871848717f6869e27b6384fb70867d5221da"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ece40e0876361dae0da0ae2d15c9c7e04776fce0"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "eab0afa54a98584bf7e3da374f11c5001b140b89"
+    },
+    {
+      "path": "cocos",
+      "type": "dir",
+      "sha": "4296daeea802aecfa298fa674f0f78e70f342e99"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2cde77f1b8ba7b91a90f8237a77ff72e312ad88c"
+    },
+    {
+      "path": "download-deps.py",
+      "type": "file",
+      "sha": "07afedb174b95ba742028fa710a122ac792efb64"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "4d284d9a12a6e4b5af0c0128c407890f4472b2ab"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "a523eb33c6c69c37a57cbcb325bc8b9574447f8f"
+    },
+    {
+      "path": "install-deps-linux.sh",
+      "type": "file",
+      "sha": "104414ecd84d62eee388bbced25497d717313391"
+    },
+    {
+      "path": "issue_template.md",
+      "type": "file",
+      "sha": "f8d1313f09101c645095f0e1d7c1288733608354"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "9196ceb3fff951bd54033fa17c1946262f15956e"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "ebc01264b9bd703842e866184709e16570d60713"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "8671731edf094f0f3e90acada588cb4366531e18"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c1cea87ef1e8b2d3c703040eefd11621587e3570"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "45e913b19ace5b7edfa2217534951251ee4cec56"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies a multi-platform 2D framework; cocos/extensions native source and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

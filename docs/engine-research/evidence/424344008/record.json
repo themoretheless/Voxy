@@ -1,0 +1,62 @@
+{
+  "repository": "Wsm2110/Faster.Map",
+  "repository_id": 424344008,
+  "commit": "cf384aade5518a1cc0a7ffc927d62d53b846d587",
+  "source_url": "https://github.com/Wsm2110/Faster.Map/tree/cf384aade5518a1cc0a7ffc927d62d53b846d587",
+  "readme_path": "README.md",
+  "readme_sha256": "75626e677f3e507a776a43ff6c1be5105a9cd5d5ebf139de1394c9aaa73fce93",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "67a9b46372f17ce55392bc7e95648c47789321da"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b45ed142447612d43a9d0c8ca31f897ef02abb59"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "72e796333d408a55368dca86e78db334af2be58d"
+    },
+    {
+      "path": "Faster.Map.sln",
+      "type": "file",
+      "sha": "7fe2af45fc4b4fda97cc7738716590f8c3d73ee8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "15bc72f8da540982436f0c0cae6710260a6fa8c6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "82776545e495c7548e8298484487082ff9fd2911"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "b0e3ad3b9ba015ee755eda355507040d43aa22c8"
+    },
+    {
+      "path": "largestringBenchmark.png",
+      "type": "file",
+      "sha": "77fc79e889bc3036eace8f85ab01e1b0ab80de11"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "311f36f6119bb0d53d1b0d838247b3e1ea8779d0"
+    },
+    {
+      "path": "unittests",
+      "type": "dir",
+      "sha": "72b81f3b46a85bc0596ff602bec5fb91f997e397"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

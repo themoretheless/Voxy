@@ -1,0 +1,107 @@
+{
+  "repository": "NauEngine/NauEnginePublic",
+  "repository_id": 893512863,
+  "commit": "8840fb3cb7ad69045f2d9f64cd7bfffc8ddc0b82",
+  "source_url": "https://github.com/NauEngine/NauEnginePublic/tree/8840fb3cb7ad69045f2d9f64cd7bfffc8ddc0b82",
+  "readme_path": "README.md",
+  "readme_sha256": "933f2ede0f538e28381132343e382c80f4e027ab502d5f5eca9c4d3d46bdcfab",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "17872f74a61f673fcd3cec0ab90deb6bb1eabb4b"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "ba4cbb36d6dcb96595d8cddaaedcdffbca2dbbe4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8e831c79088f3041bf0d2258fb8f538cf9c7c65c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9717300cfb339b2f011578f022fc954a99c9776a"
+    },
+    {
+      "path": ".nauversion",
+      "type": "file",
+      "sha": "09a3acfa138db01dc50a688796b2861638c369ec"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9a174238ecc2f67738b33ab2cf5a999330e2c8f0"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "f4b7a5e49e1c0c1ba408ab80678270f6b0bdeee8"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.MD",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CONTRIBUTING.MD",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3f53988ea55caac1f5dd33c221012fa32a229f90"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a807f55f798c0780d451ff65340a953a6a52e587"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "dc236af2e04352c19e8a8096781ebb7d0ec474c6"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "1e781c96b9ed0e743ea0a86d39ae4c85760e4c73"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "5e7d924bead88dbb3bca443045b43a7c5aede5c1"
+    },
+    {
+      "path": "project_templates",
+      "type": "dir",
+      "sha": "29f853682eea2f9de7b9fe74c5783cc10b31583b"
+    },
+    {
+      "path": "run_tests.bat.in",
+      "type": "file",
+      "sha": "d8902f9d59e1227fb65b47911b2f0f4caeaf9954"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "bf69e874ba647f763848ed07c3dec32e8a1060f2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "3d8ca3e8ae021f96d1dfa53a076c3e8412d1280e"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "bf073bb71e25a34d598855f859bf66ab03e3c924"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

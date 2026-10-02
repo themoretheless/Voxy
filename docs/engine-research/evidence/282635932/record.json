@@ -1,0 +1,99 @@
+{
+  "repository": "0xsmft/Saturn-Engine",
+  "repository_id": 282635932,
+  "commit": "ca6cfe3a862e6ac74a63f776380e7f0be0245646",
+  "source_url": "https://github.com/0xsmft/Saturn-Engine/tree/ca6cfe3a862e6ac74a63f776380e7f0be0245646",
+  "readme_path": "README.md",
+  "readme_sha256": "89b11072de96289f72f1f0cea8a1cc9ec45d5ad15b5dfb903d6a5af249fdde3d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "24232f20893638d713dda6ea5686e328b9687f4f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "78643f65ca2c5dccd37e477565e539c809fda472"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b0b5ddfb38f606aae1c65988663aaf9410350e05"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "48be033c7daee9177ae4ad90936fcab7eb6c567b"
+    },
+    {
+      "path": "BuildScripts",
+      "type": "dir",
+      "sha": "4634a13827db8b3e906398c731d30a20045e172b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3c42e100e23da408a1d50bac631a5ce027f94203"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fb79443bf2418068a7fb0ed3f9b66015c9cfb776"
+    },
+    {
+      "path": "Saturn-CrashReporter",
+      "type": "dir",
+      "sha": "81ac357a31ffe7298d435ffe1459ba0a1a9c63c9"
+    },
+    {
+      "path": "Saturn-Editor",
+      "type": "dir",
+      "sha": "80ea108dc33ca58782bd9a04c217833b63faf6ee"
+    },
+    {
+      "path": "Saturn-ProjectBrowser",
+      "type": "dir",
+      "sha": "f761ad742430e3e61f4f84b3829bb2c41de64eea"
+    },
+    {
+      "path": "Saturn-SharedStorage",
+      "type": "dir",
+      "sha": "614f137b74f55d755c8ab457c68239017d672396"
+    },
+    {
+      "path": "Saturn",
+      "type": "dir",
+      "sha": "cd88dd47133d1591ec402c300d6ebf4d6999f054"
+    },
+    {
+      "path": "SaturnBuildTool",
+      "type": "dir",
+      "sha": "25ce54b25e8aa78664fa8c408544c54a07497165"
+    },
+    {
+      "path": "SaturnHeaderTool",
+      "type": "dir",
+      "sha": "97219027a05f5197e02498116c4e2f7a02b58826"
+    },
+    {
+      "path": "premake5-AArch.lua",
+      "type": "file",
+      "sha": "f55b65ce44f3280c37cfbd58b7b7e9f92b1eeba7"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "7fd12d32d01e19a217ceb86755b4eabbaa2d33de"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Early C++ Vulkan 3D game engine with editor, project browser, header/build tools and engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

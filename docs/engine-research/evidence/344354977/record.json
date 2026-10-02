@@ -1,0 +1,57 @@
+{
+  "repository": "RuolinZheng08/renpy-rhythm",
+  "repository_id": 344354977,
+  "commit": "3beddddc5a1ce3d00009d2c624f508eabb3ce363",
+  "source_url": "https://github.com/RuolinZheng08/renpy-rhythm/tree/3beddddc5a1ce3d00009d2c624f508eabb3ce363",
+  "readme_path": "README.md",
+  "readme_sha256": "561984f73a86cbbcf7b20b55ec51143a81950599f106382fca4f5c915e5680b1",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ba76038cf827f36ef33cdcd0e56cc3c5a5f60739"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4816c247c5e5368d04af1e9623c0751cbbec3f9d"
+    },
+    {
+      "path": "00-renpy-rhythm-utils",
+      "type": "dir",
+      "sha": "063957de101a0ae9d2ebcf40da0a81a7e2833a39"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e79dd84a1cccc3d877fa998cd72cc5c8b4d3a9a5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2cba1ca12ea78c185619a782a5633fbf2a5d9659"
+    },
+    {
+      "path": "demo.gif",
+      "type": "file",
+      "sha": "77a425f0e0ed367f4192ed198144e41052a42858"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "49117877dc05788d226fefe1c2a64d87e1730974"
+    },
+    {
+      "path": "high_score.gif",
+      "type": "file",
+      "sha": "a80029cf885606beda877a14a498c9517a9226ca"
+    },
+    {
+      "path": "project.json",
+      "type": "file",
+      "sha": "be6ec61b281f34c089b47312991ac580a131a52a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

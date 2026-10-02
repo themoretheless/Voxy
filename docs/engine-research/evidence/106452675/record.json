@@ -1,0 +1,104 @@
+{
+  "repository": "JohnSundell/ImagineEngine",
+  "repository_id": 106452675,
+  "commit": "51651193cffb9762f92b99181881ea98e869431e",
+  "source_url": "https://github.com/JohnSundell/ImagineEngine/tree/51651193cffb9762f92b99181881ea98e869431e",
+  "readme_path": "README.md",
+  "readme_sha256": "39338be1b1d57c79060607e88a6ca74d2771fb5880605d99e5b86126214daccf",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4c884b6c9be88119911e7cdaa70936de9ae97f6f"
+    },
+    {
+      "path": ".swift-version",
+      "type": "file",
+      "sha": "bf77d549685a9e09678fbbda05a071b312cf2de3"
+    },
+    {
+      "path": ".swiftlint.yml",
+      "type": "file",
+      "sha": "2db23383afc7b6fbf53352992eed0c2cae878570"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ecb529e85385dfc1860324a9fb04e1549493533a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e64dd261816361bb9f4b1a2e0ff12e4a57223594"
+    },
+    {
+      "path": "Configs",
+      "type": "dir",
+      "sha": "db6a18a9a188a1a78a4bb728efe8f22e5ccf61ff"
+    },
+    {
+      "path": "Dangerfile",
+      "type": "file",
+      "sha": "c78d8319a32b97f80fc1c0545a3523b319117269"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "08e3020d4c590607c9330971ddaa44114f63c3bb"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "17b048138c9f0fa92a443c9ec679148eef6e3ee2"
+    },
+    {
+      "path": "ImagineEngine.podspec",
+      "type": "file",
+      "sha": "f716a333cc5445f061cc82a42f7605bfdff5651d"
+    },
+    {
+      "path": "ImagineEngine.xcodeproj",
+      "type": "dir",
+      "sha": "965ea8d4f884e8161fdcd6bbfba180fb14952c8b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b1559059164991960a8c6a16362610eec8e22c8e"
+    },
+    {
+      "path": "Logo.png",
+      "type": "file",
+      "sha": "5b9dc11d662f73cb06cc2b299cbfc09d18d0ce2c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e4c4396ca3582167fc91f1f35024cfd5a551e289"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "9522f55ed5976225be072b85136bd5a03c952f57"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "ede448cb20253844f977ac8e24078c6a41c44c28"
+    },
+    {
+      "path": "XcodeTemplates",
+      "type": "dir",
+      "sha": "e8d52bd4925460bd9ecdc9acdf1ec8db0d2dd00e"
+    },
+    {
+      "path": "fastlane",
+      "type": "dir",
+      "sha": "8a962d780910e1b7b8d65416314c9a05de98c222"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Swift 2D engine; Sources/Tests and Xcode/pod build metadata.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

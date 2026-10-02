@@ -1,0 +1,174 @@
+{
+  "repository": "cmilr/Unity2D-Components",
+  "repository_id": 30558960,
+  "commit": "2c6039c7df4fcadf0e76bc5707c0dd1c00cbc4be",
+  "source_url": "https://github.com/cmilr/Unity2D-Components/tree/2c6039c7df4fcadf0e76bc5707c0dd1c00cbc4be",
+  "readme_path": "README.md",
+  "readme_sha256": "3590a1bfcc8c06c3be3e195fc3bcb1cb8323894ec8e4c3dd70d5e0e29ef4422e",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "edf70ca43658f8c26e3864b7a3e6be0ff81eeb0f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1f9f0b953448541fa7c60e0b6b02070b4dd53ea5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2a58f0ad5dbe756a0da5861159e42c69c4503f3b"
+    },
+    {
+      "path": "Behaviours",
+      "type": "dir",
+      "sha": "475eab6698c7ea0c57bbe3a711336cd6c21edfd3"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "77ca486045babc58fa9b6c1592a11b3b054b07ba"
+    },
+    {
+      "path": "Camera",
+      "type": "dir",
+      "sha": "e4aa7455b21bbc8df71c0dcabd60c1f24a491c90"
+    },
+    {
+      "path": "Debug",
+      "type": "dir",
+      "sha": "3e57f2854ba22eb5382cf2c024088b5649cf13a7"
+    },
+    {
+      "path": "Enemies",
+      "type": "dir",
+      "sha": "2191874003160b8a42ccd9bcff5803de53907def"
+    },
+    {
+      "path": "Entities",
+      "type": "dir",
+      "sha": "d66566a1fedda267de49fe64c08757a97fb1c0e7"
+    },
+    {
+      "path": "EventKit",
+      "type": "dir",
+      "sha": "13319c50a17b1c2590ebd853b40a9198ee47b114"
+    },
+    {
+      "path": "Extensions",
+      "type": "dir",
+      "sha": "3ffa61f96370f38c56cbe7041814f663c6d5a12f"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "edc6c0bc857132cee3ac402984303e092214cc4d"
+    },
+    {
+      "path": "Global",
+      "type": "dir",
+      "sha": "2b77a4a4aadf317172ce18ac33ea9054994a0159"
+    },
+    {
+      "path": "HUD",
+      "type": "dir",
+      "sha": "aaee3c556db38f7a67fe0d85efae85a3489969c6"
+    },
+    {
+      "path": "Interfaces",
+      "type": "dir",
+      "sha": "cd60c183f68a5fd4154e1506e4220b2fecd6f701"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "866bba051d99e6630f730b073884bf8925671c54"
+    },
+    {
+      "path": "Lerps",
+      "type": "dir",
+      "sha": "6060432373b4a73f63d5e3bfebf9381b99924854"
+    },
+    {
+      "path": "Level",
+      "type": "dir",
+      "sha": "a486659b1a4102ddfb12aaeb1670581a2ee55ad3"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "cfc125b31827af573f605ed0c6c7c67d96063c0b"
+    },
+    {
+      "path": "Misc",
+      "type": "dir",
+      "sha": "e026d559ca11a6e2af13f97bb95d363c3a6e0b9f"
+    },
+    {
+      "path": "ObjectPool",
+      "type": "dir",
+      "sha": "5eb2b6d27faadc24ccd95f5747a5415064527919"
+    },
+    {
+      "path": "Obstacles",
+      "type": "dir",
+      "sha": "0827f2b0c174f755d020458f312213010ff670ac"
+    },
+    {
+      "path": "Player",
+      "type": "dir",
+      "sha": "cbb21bcf92d355963abd0dc63da6bb29cba867e4"
+    },
+    {
+      "path": "Projectiles",
+      "type": "dir",
+      "sha": "04fceef19a5e0d6388cce75dcb52ff9663a3b113"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "58c7e2a4db3617a4a5d7359bbe2238235864b3c8"
+    },
+    {
+      "path": "Sound",
+      "type": "dir",
+      "sha": "b408d1966986ac8f8ca70e4a1e5378b6d3ab7ad1"
+    },
+    {
+      "path": "Tiles",
+      "type": "dir",
+      "sha": "114444b2047074224a5b37c687b5b97780903652"
+    },
+    {
+      "path": "Utilities",
+      "type": "dir",
+      "sha": "3c61b748e7463a1d696b2ff5696f67911a388a06"
+    },
+    {
+      "path": "Weapons",
+      "type": "dir",
+      "sha": "99620f5842adf133079f5338b6a4c4eda14470b5"
+    },
+    {
+      "path": "Websites",
+      "type": "dir",
+      "sha": "91bc0d2a431a650310fc9f623bc1bdb4e5e95f98"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "6643fa72df2365bfd2b4a3d67ac57f6e3ce2a53d"
+    },
+    {
+      "path": "screenshot.png",
+      "type": "file",
+      "sha": "840acd161a2e2641794841388537b4030740ea6f"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Unity behavior/camera/event component collection; depends on Unity engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

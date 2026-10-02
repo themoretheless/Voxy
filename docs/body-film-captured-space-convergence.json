@@ -1,0 +1,45 @@
+{
+  "captureSource": "docs/body-film-native-state.json",
+  "capturedFrame": 0,
+  "dtSeconds": 0.00025,
+  "initialMassKg": 4.999999999999997e-05,
+  "normalizedVolumeL1CoarseVsFinest": 8.451343300722085e-05,
+  "normalizedVolumeL1FineVsFinest": 5.6489673128663615e-05,
+  "runs": [
+    {
+      "cells": 90175,
+      "initialRelativeMassError": 0.0,
+      "level": 0,
+      "normalizedVolumeL1Change": 5.633390837994639e-05,
+      "relativeMassError": 1.3552527156068813e-16,
+      "vertices": 45203,
+      "wallSeconds": 0.241112917
+    },
+    {
+      "cells": 360700,
+      "initialRelativeMassError": 5.421010862427525e-16,
+      "level": 1,
+      "normalizedVolumeL1Change": 7.795435427421162e-05,
+      "relativeMassError": 2.7105054312137626e-16,
+      "vertices": 180582,
+      "wallSeconds": 1.4184801249999999
+    },
+    {
+      "cells": 1442800,
+      "initialRelativeMassError": 6.098637220230966e-15,
+      "level": 2,
+      "normalizedVolumeL1Change": 0.00012457502767559424,
+      "relativeMassError": 4.065758146820644e-16,
+      "vertices": 721865,
+      "wallSeconds": 4.763715917
+    }
+  ],
+  "scope": "Fixed captured piecewise-planar surface with conforming 1-to-4 subdivisions and original material/wetting. Child volumes inherit parent thickness. Restricted comparisons; no geometry smoothing, source/contact/body motion replay or physiology calibration.",
+  "simulationSeconds": 0.02,
+  "spatialRefinementTrend": true,
+  "captureSha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "executableSha256": "d62f842864c97a0857e2dd8bd8f92786ff98688c9151205cd92ca15d9a534296",
+  "sourceSha256": "cfd5ed08c8881f9d71bc8bfdd281ac4ca8a9c48565d5541e0358fd69840ae755",
+  "fineToCoarseErrorRatio": 0.6684105841947885,
+  "verificationLimit": "Three meshes and one short static replay show a decreasing restricted error, not an asymptotic order or moving-body/contact convergence proof."
+}

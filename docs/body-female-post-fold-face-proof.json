@@ -1,0 +1,287 @@
+{
+  "before": 23,
+  "after": 23,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        45210,
+        45239
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0009456197022646683,
+      "local_measure_after_m": 0.0009336229828576105,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.0,
+      "local_fold_deficit_after": 0.0
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        45210,
+        45247
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0011994551992847216,
+      "local_measure_after_m": 0.0011988076773795046,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.0,
+      "local_fold_deficit_after": 0.0
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        45247,
+        45251
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0007610172271781586,
+      "local_measure_after_m": 0.0007596595439500118,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.0,
+      "local_fold_deficit_after": 0.0
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914,
+        45216,
+        45257
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0012707196297814809,
+      "local_measure_after_m": 0.0012500555406950646,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.0,
+      "local_fold_deficit_after": 0.0
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        23018,
+        45227,
+        45235
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0020517501293300933,
+      "local_measure_after_m": 0.0021491426629399904,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.21607097183411117,
+      "local_fold_deficit_after": 0.2118586456939169
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        28061,
+        45232,
+        45241
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0012016431825905892,
+      "local_measure_after_m": 0.001201302499817521,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.0,
+      "local_fold_deficit_after": 0.0
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        10914,
+        45216,
+        45257
+      ],
+      "before": 23,
+      "after": 23,
+      "local_measure_before_m": 0.0012500555406950646,
+      "local_measure_after_m": 0.0012303089427657407,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": 0.0,
+      "local_fold_deficit_after": 0.0
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": true,
+  "edge_groups": false,
+  "ring_groups": false,
+  "fairing": true,
+  "repair_slivers": false,
+  "quality_audit": {
+    "floor": 0.05,
+    "initial_minimum": 0.050132027920765036,
+    "final_minimum": 0.05001921906365435,
+    "initial_below_floor": 0,
+    "final_below_floor": 0,
+    "verified": true
+  },
+  "fold_audit": {
+    "threshold_degrees": 100.0,
+    "bounds_m": [
+      0.15,
+      0.2,
+      -0.82,
+      -0.78,
+      0.08,
+      0.12
+    ],
+    "selected_edges": 3688,
+    "initial_deficit": 0.21607097183411117,
+    "final_deficit": 0.2118586456939169
+  },
+  "project_bound": true,
+  "reduce_measure": true,
+  "diagonal_directions": true,
+  "initial_measure_m": 0.0052527123375693974,
+  "final_measure_m": 0.0052953515768500645,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48801,
+        48848
+      ],
+      [
+        48801,
+        48843
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33063,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554579,
+      "forbidden_pairs": [
+        [
+          47084,
+          49012
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.0039702453754871135,
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5671237483588658,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "7147e37be3d2f2c1829df4858dfc93d253adf9134585b0d478bd8d684e4fa843",
+  "reference_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa",
+  "candidate_sha256": "515c6a8db313087d7c81d51131edafd42dada4882ed3103b96b0b8c509ad99d6",
+  "proposal_distances_m": [
+    0.002,
+    -0.002,
+    0.0015,
+    -0.0015,
+    0.0003,
+    -0.0003,
+    0.0001,
+    -0.0001,
+    5e-05,
+    -5e-05,
+    2.5e-05,
+    -2.5e-05
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

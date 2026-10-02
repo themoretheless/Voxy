@@ -1,0 +1,84 @@
+{
+  "repository": "geng-engine/geng",
+  "repository_id": 234378402,
+  "commit": "1e35585545463c919ff0da849af4fdad69ab02fa",
+  "source_url": "https://github.com/geng-engine/geng/tree/1e35585545463c919ff0da849af4fdad69ab02fa",
+  "readme_path": "README.md",
+  "readme_sha256": "8359b47d0f9a248962300e10bf606b3fcf3dd5baf74b4fab3b7b68985c151a3f",
+  "entries": [
+    {
+      "path": ".envrc",
+      "type": "file",
+      "sha": "3550a30f2de389e537ee40ca5e64a77dc185c79b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4c12d2a3aedb0943294db1aa8aa1db5d32e6fd51"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "901a21a50b0f194d712a120bed504612bbddb6aa"
+    },
+    {
+      "path": ".justfile",
+      "type": "file",
+      "sha": "12e988578cb353c147288bad94c508d340e8ce62"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "25ad833083ca08288bc3218f4d89caae04fe0649"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "cc45d4ae63a4e8245e68d8afe4dc11b09e9de66d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b606340c1102b7b643f1f246ca65b3a8afd03912"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7815aa241a495af0d05cd878719d06492733708b"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "23fbff893610a0b4600a5c663ed461dde75cead0"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6487d67360a5907607d59991495744f86949ecc2"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "88c19fa93b2f67a16ee1e3a849c41937c1beb00d"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "c8e13a6f646cba7f49a4e138f538d521e898a870"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a88fceb9560a3cac19242cdd470bdafa1110e0a5"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "778bc7fb8efdb518cec91df175413f73a6268e15"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust game engine with crates, examples and documented dependent game-jam games; functionality not independently executed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

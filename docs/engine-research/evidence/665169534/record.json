@@ -1,0 +1,59 @@
+{
+  "repository": "OTFCG/Awesome-Game-Analysis",
+  "repository_id": 665169534,
+  "commit": "9b9866dfe480706e14886a86665061e7d29de1d7",
+  "source_url": "https://github.com/OTFCG/Awesome-Game-Analysis/tree/9b9866dfe480706e14886a86665061e7d29de1d7",
+  "readme_path": "README.md",
+  "readme_sha256": "538234ce7a629ed5d44cdd00fbad4691bf681e14c1e7e1575b40893f1b73d86d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "530fd4384f73e3e2326b6d7cf72c4b977d291bb7"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "f655450d33c12153d189a0fc1ab1eae9ba3c5ef4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8e1b692044e8b536c03bc3ae4269354017f11007"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0e259d42c996742e9e3cba14c677129b2c1b6311"
+    },
+    {
+      "path": "LOGO.png",
+      "type": "file",
+      "sha": "8f8ecb9df9c380bfdd22909b80563e5c2f9ff0be"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "88a1b11a9fd24366d13850600026ad86c9ba950b"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "543b3d152e31bcc4da36146ac6ea5b23cab197ad"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "72fdd4678afbcef3fdd869b004c085d83fab07df"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a5de4d1b6e2fcf538203d3575802d09ecea71af5"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README tables curate game technical analyses; no owned engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

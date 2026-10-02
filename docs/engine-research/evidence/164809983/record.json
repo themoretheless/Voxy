@@ -1,0 +1,114 @@
+{
+  "repository": "amerkoleci/alimer",
+  "repository_id": 164809983,
+  "commit": "2ae96fe70771819584727a63187ab30a16d2df3a",
+  "source_url": "https://github.com/amerkoleci/alimer/tree/2ae96fe70771819584727a63187ab30a16d2df3a",
+  "readme_path": "README.md",
+  "readme_sha256": "ff7df8285f7077065730863283328151291c1ae340ab0f6dac058f7e542dc06b",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c8137f688a4709eff8b061b205f0b79d5eb813d9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dea280d292cd991b84a7a5d24c85590e4dc298c3"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e35153a48154ba5923feda3322f40f12ba5d9814"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "822d684b568408d638701830582c1affd61ade36"
+    },
+    {
+      "path": "Alimer.MultiTargeting.targets",
+      "type": "file",
+      "sha": "652e0b7147181e2631349c26758ac5e0ea68ac06"
+    },
+    {
+      "path": "Alimer.Native.targets",
+      "type": "file",
+      "sha": "13f0c6de02e11a51d12eed7cc150862a66a19fbf"
+    },
+    {
+      "path": "Alimer.slnx",
+      "type": "file",
+      "sha": "1e109d37c3fb5d1dcab4083fd5e2b96d82f1324a"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "c6f7a2a97ca53ee9c1208c6a66eaf6bb5adcf373"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "1d38674b01b432c64e0edf37c3f05b2468de87cf"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "type": "file",
+      "sha": "926dac050983a6dbd3e1a694e88761ff264d10b7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b679a324927ad827ca4a36d545f7db3e51c2280f"
+    },
+    {
+      "path": "NuGet.config",
+      "type": "file",
+      "sha": "fbcef10112958204ed00b87a59fa395679fcd73d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1e9e6173daf1bb0ce09b0f7663bf2cc8ef84c530"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "33d0d7dc9d5f9ec12f81053668f3558d65288daf"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "0f76d2669efdacb216752b658134f8f2dc9b4f38"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "29ed0492ff3b72e42d808be3e2a46e3676157c26"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "8b316e20d1514e52c19166daf26fa9c91ae9fa08"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "52dfcd5fb8ce457a0bda757ab3ebb8838e0e3d93"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "16387335ff4b5f85bba0eae5bf3b358d7e471dc1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "6dad179fa74768f7368b752dcb7424a86f4c2d9a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C# game engine; owned .NET/native projects and solution/build manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

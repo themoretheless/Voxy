@@ -1,0 +1,59 @@
+{
+  "repository": "weigert/TinyEngine",
+  "repository_id": 254903894,
+  "commit": "1248cc02a04fc31025544a02552033edc0f4b418",
+  "source_url": "https://github.com/weigert/TinyEngine/tree/1248cc02a04fc31025544a02552033edc0f4b418",
+  "readme_path": "README.md",
+  "readme_sha256": "5e9fcc361cf67aaff427af1ad3e5b5b91974550a4874d84335d6518d17df37fa",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d8648785398e7add0879e3011e57938540019c9c"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "b95126414d20498d3250b7323db6bec7c4f1c4b9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "97eae148a5d1fde396deb58f83adeb50881e685c"
+    },
+    {
+      "path": "TinyEngine.cpp",
+      "type": "file",
+      "sha": "29864c3bc1e790be2012cc101ba2fa7969dda49f"
+    },
+    {
+      "path": "TinyEngine.hpp",
+      "type": "file",
+      "sha": "3a073eb08f03dfd95fff4c64eb8dda1212afc988"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "79a3591bc2559721fa00a15e3fbca126283626a4"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "b6a4b98d194f8a647109460427f32fd17bf280e0"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "7df884f0d9b35cb8428863f6ce6553b0c082c32a"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "4623ec891a2f4ebbef40f4ab596570649fbab7df"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies OpenGL wrapper/visualization engine; TinyEngine source/include and Makefile. Complete gameplay scope not proven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

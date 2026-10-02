@@ -1,0 +1,109 @@
+{
+  "repository": "nfrechette/rtm",
+  "repository_id": 155649584,
+  "commit": "d046447cfa67d94e1ed15b465fd9cb6fec75e1cb",
+  "source_url": "https://github.com/nfrechette/rtm/tree/d046447cfa67d94e1ed15b465fd9cb6fec75e1cb",
+  "readme_path": "README.md",
+  "readme_sha256": "9649eca00b312f032a1429dbabe0dd9f9bbe893adb7e5bda06abdf3a292bf0f0",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "a7feff898ba2b505d3eae3921578e61dfb14826d"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "224521192504d927abf8d897432f6f8d2fe8e1d3"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b85f8e16d7823d421f6dfabbf61abbf7a8e8a17c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "053145c1acbc0c912d72c472d2ffaa7c5ac75c9e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "1064c225c188d477eb2ef99c4f05e2aa1747bae7"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c8a696d139cdd4028108bd986b6e16399a3ed3d8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "50f61036630be7180dbf387490f1b5f2940e608f"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "48fcffad2f62af1908ecbd3e4ce1ba50ff2bf560"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f0a21e289c86f74bb2a970c5ed7805afd988a8aa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "56c93514db8532f83ea62a6cc1d916c051980c2c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6cc97f482e67c2e641b45025985ad0900757e113"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "659e1dfb323c4e471b266b988d162c9f42291c7f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e54464c1e495fca63c2d34541c6a119494257cfa"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "b80a41342db014b1b0f58bae4178164f4cd9b221"
+    },
+    {
+      "path": "includes",
+      "type": "dir",
+      "sha": "e4569383915b87cb9d12a43c8bebaa910c203ab7"
+    },
+    {
+      "path": "make.py",
+      "type": "file",
+      "sha": "1dc87371bb93f2dfcb4db55722bad479acd389f8"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "2219b055e023c8c70e26bc46da9c9cdda76d2d2d"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "971e4180da2ea60021f890530b69c6adb0233a78"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c382683389901c6fb59fc6ac6d36c6698b806230"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies optimized real-time math library; includes/tests/CMake rather than game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

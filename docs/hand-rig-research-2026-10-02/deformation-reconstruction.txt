@@ -1,0 +1,30 @@
+Isolated deformation reconstruction investigation, 2026-10-02
+
+Not installed in the production rig. Production still uses the 46-joint rig.
+Candidate uses 54 joints and conditioned independent bone-heat weights.
+No object and no legacy PBD correction; five left-hand closure samples only.
+
+A fixed skeletal rotation field, normalized inverse-squared edge weights,
+soft skeletal position anchors, and pinned pure-bone cores form an SPD
+least-squares edge reconstruction. Replaced unconverged Gauss-Seidel with
+Jacobi-preconditioned conjugate gradients. Assemble right-hand side in f64:
+f32 accumulation caused cancellation and unwanted rest displacement.
+PCG restores open rest pose to float32 precision. Convergence alone does
+not remove the thumb-web defect.
+
+Permit thumb-web vertices to move even where their binding is pure.
+Then alternate local proper-rotation fitting (quaternion torque iteration)
+and global PCG solves, 20 local/global iterations.
+Full-closure LEFT measurements: raw extra thumb-web crease 1.668771 rad,
+minimum whole-hand triangle area ratio 0.0999753; corrected crease
+0.523656 rad, minimum area ratio 0.5522114. Crease still fails the .30
+acceptance threshold. These measurements do not establish both-hand,
+121-sample, contact, intersection, performance or native-runtime quality.
+
+Self-viewed finger-0-arap-1-minus.png. Smoothness improved but it is not
+proof of a natural grasp. The image is an isolated no-object diagnostic.
+
+Measurement mapping uses exact float32 source positions, not 1um rounded
+keys; rounded keys had collapsed nearby vertices in older auxiliary audits.
+Files are prototypes, not shipped changes. Runtime and source hashes for
+the original metacarpal binding are in metacarpal-adaptation.txt.

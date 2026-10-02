@@ -1,0 +1,42 @@
+{
+  "repository": "matthewrdev/UnityUaal.Maui",
+  "repository_id": 665751682,
+  "commit": "211201d146140038a1fd405a6993455828f6bb5b",
+  "source_url": "https://github.com/matthewrdev/UnityUaal.Maui/tree/211201d146140038a1fd405a6993455828f6bb5b",
+  "readme_path": "README.md",
+  "readme_sha256": "ac4c4a8f52cd883f2ab3cc447adfa565c94eaf21ac825b07520314392bfec0ea",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a24a0258db0cbdedbcc1838e8abea06485028e5a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a3bb2becaf2a606318143fca284a09fee63ac8c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6db106ba65d26c276dde945a7644cdce9df2bc42"
+    },
+    {
+      "path": "UnityApp",
+      "type": "dir",
+      "sha": "ba75f2a9bd5f2f4c298a8365243eb47d4ded7dd9"
+    },
+    {
+      "path": "UnityUaalMaui",
+      "type": "dir",
+      "sha": "d6eb73f7853d84330eb01750d4065750b404e72e"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "a75416e64c7c2730563cbb05e1d714a0172953c2"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

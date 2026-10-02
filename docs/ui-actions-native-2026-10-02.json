@@ -1,0 +1,31 @@
+{
+  "binary_sha256": "2750ae99c5b3d9e48212a271296c39529a6502ad82875c49d29c8696edfc68dc",
+  "standalone_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME UI MESH draws=4 glyph_quads=12\nGAME UI TEXT fonts=1 runs=2 glyphs=12\nGAME UI LAYOUT elements=2 buttons=2\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"textured-root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"textured\",\"game.audio-bus.v1\":{\"bus\":0,\"gain\":0.5}}},{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5},\"game.audio-source.v1\":{\"asset\":\"tone\",\"bus\":0,\"far\":5.0,\"gain\":0.25,\"import_settings\":\"tone-settings\",\"looping\":true,\"near\":1.0,\"spatial\":false},\"game.ui-element.v1\":{\"action\":\"jump\",\"color\":[0.20000000298023224,0.4000000059604645,0.800000011920929,1.0],\"enabled\":true,\"layer\":0,\"origin\":[0.10000000149011612,0.10000000149011612],\"size\":[0.25,0.10000000149011612],\"text\":{\"color\":[1.0,1.0,1.0,1.0],\"content\":\"\u041f\u0440\u0438\u0432\u0435\u0442\",\"font\":\"interface\",\"size\":20.0}}}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5},\"game.audio-source.v1\":{\"asset\":\"tone\",\"bus\":0,\"far\":5.0,\"gain\":0.25,\"import_settings\":\"tone-settings\",\"looping\":true,\"near\":1.0,\"spatial\":false},\"game.ui-element.v1\":{\"action\":\"jump\",\"color\":[0.20000000298023224,0.4000000059604645,0.800000011920929,1.0],\"enabled\":true,\"layer\":0,\"origin\":[0.10000000149011612,0.10000000149011612],\"size\":[0.25,0.10000000149011612],\"text\":{\"color\":[1.0,1.0,1.0,1.0],\"content\":\"\u041f\u0440\u0438\u0432\u0435\u0442\",\"font\":\"interface\",\"size\":20.0}}}}]}\nGAME AUDIO frames=96000 peak=0.0625\nGAME CHECK PASS ticks=120 objects=3 prefab_instances=2",
+  "export_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME PACKAGE PASS sources=11 bytes=2276186",
+  "packaged_paths": [
+    "__voxy_game.json",
+    "assets.json",
+    "buffers/mesh.bin",
+    "fonts/ui.ttf",
+    "leaf.prefab",
+    "mesh.gltf",
+    "mesh.obj",
+    "nested.prefab",
+    "scene.json",
+    "textures/albedo.png",
+    "tone.import.json",
+    "tone.wav"
+  ],
+  "corrupt_prefab_error": "Error: Json(Error(\"expected value\", line: 1, column: 1))",
+  "corrupt_model_error": "Error: \"game asset mesh failed: OBJ line 1: unsupported OBJ directive\"",
+  "scope": "actual standalone executable, nested composition, OBJ and textured glTF with external BIN/PNG dependency closure, 120 fixed steps with authored behavior, saved nested UI layout/keyboard events and observed Unicode font/glyph preparation, clipped UI mesh staging and failure diagnostics; game-check alone makes no window/GPU presentation claim",
+  "invalid_ui_error": "Error: \"invalid scene UI descriptor\"",
+  "invalid_font_error": "Error: \"UI font: text error: InvalidFont\"",
+  "packaged_run_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nGAME UI MESH draws=4 glyph_quads=12\nGAME UI TEXT fonts=1 runs=2 glyphs=12\nGAME UI LAYOUT elements=2 buttons=2\nGAME STATE {\"version\":1,\"objects\":[{\"id\":\"textured-root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.0,1.0],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"textured\",\"game.audio-bus.v1\":{\"bus\":0,\"gain\":0.5}}},{\"id\":\"5:first13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5},\"game.audio-source.v1\":{\"asset\":\"tone\",\"bus\":0,\"far\":5.0,\"gain\":0.25,\"import_settings\":\"tone-settings\",\"looping\":true,\"near\":1.0,\"spatial\":false},\"game.ui-element.v1\":{\"action\":\"jump\",\"color\":[0.20000000298023224,0.4000000059604645,0.800000011920929,1.0],\"enabled\":true,\"layer\":0,\"origin\":[0.10000000149011612,0.10000000149011612],\"size\":[0.25,0.10000000149011612],\"text\":{\"color\":[1.0,1.0,1.0,1.0],\"content\":\"\u041f\u0440\u0438\u0432\u0435\u0442\",\"font\":\"interface\",\"size\":20.0}}}},{\"id\":\"6:second13:5:child4:root\",\"parent\":null,\"name\":\"Game model\",\"active\":true,\"translation\":[0.0,0.0,0.0],\"rotation\":[0.0,0.0,0.47942537,0.8775826],\"scale\":[1.0,1.0,1.0],\"components\":{\"editor.model.v1\":\"mesh\",\"game.angular-motion.v1\":{\"axis\":[0.0,0.0,1.0],\"radians_per_second\":0.5},\"game.audio-source.v1\":{\"asset\":\"tone\",\"bus\":0,\"far\":5.0,\"gain\":0.25,\"import_settings\":\"tone-settings\",\"looping\":true,\"near\":1.0,\"spatial\":false},\"game.ui-element.v1\":{\"action\":\"jump\",\"color\":[0.20000000298023224,0.4000000059604645,0.800000011920929,1.0],\"enabled\":true,\"layer\":0,\"origin\":[0.10000000149011612,0.10000000149011612],\"size\":[0.25,0.10000000149011612],\"text\":{\"color\":[1.0,1.0,1.0,1.0],\"content\":\"\u041f\u0440\u0438\u0432\u0435\u0442\",\"font\":\"interface\",\"size\":20.0}}}}]}\nGAME AUDIO frames=96000 peak=0.0625\nGAME CHECK PASS ticks=120 objects=3 prefab_instances=2",
+  "damaged_package_error": "Error: \"package integrity failure: mesh.obj\"",
+  "native": {
+    "passed": true,
+    "returncode": 0,
+    "log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nMODEL PUBLISHED frames=0 first_x=0 asset=textured\nMODEL PUBLISHED frames=2 first_x=0 asset=mesh\nMODEL PUBLISHED frames=3 first_x=0 asset=textured\nGAME UI GPU PUBLISHED draws=4\nGAME NATIVE PASS frames=12 ticks=8\nGAME NATIVE PASS frames=12 ticks=8"
+  }
+}

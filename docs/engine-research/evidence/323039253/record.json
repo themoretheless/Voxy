@@ -1,0 +1,184 @@
+{
+  "repository": "GodotECS/godex",
+  "repository_id": 323039253,
+  "commit": "dafb7b0fc80248fdbe9ea8cfa474ac0a2f9daa73",
+  "source_url": "https://github.com/GodotECS/godex/tree/dafb7b0fc80248fdbe9ea8cfa474ac0a2f9daa73",
+  "readme_path": "README.md",
+  "readme_sha256": "55069303e7ec24461b40d2e1d26fd95aefafb218e6af26d7bc2a0d890af3feb9",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1c26421a7f4348ca04b0f20b3af49396e24a5f40"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2ba468ab13006229d34692f01c8b9544c5630db9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f928c2e6ece5964acf5eda847047542d7817a177"
+    },
+    {
+      "path": ".project_alt.json",
+      "type": "file",
+      "sha": "c416636f4bc16e3e121ecedff7cc17b5eb7ede3d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "96d9d8f9dfbb9f66c384db1362ea5b58ac063026"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "565fc4c4a65fd8235c5cc2e58e1d849358c54b48"
+    },
+    {
+      "path": "SCsub",
+      "type": "file",
+      "sha": "97b6641cf5fb8ba7ab003ba9d1d49650aa5263d4"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "7223e383f7043e10b60e76d606f902b3d7e4c6d3"
+    },
+    {
+      "path": "config.py",
+      "type": "file",
+      "sha": "4647ff040f613b9cd40aebe74c807458f5fcb450"
+    },
+    {
+      "path": "databags",
+      "type": "dir",
+      "sha": "e6deb9a6c80943640bd0600230ff347174f0e559"
+    },
+    {
+      "path": "doc_classes",
+      "type": "dir",
+      "sha": "40b8a1f171476ad0b3f9ad5216d77b339fff3aa8"
+    },
+    {
+      "path": "ecs.cpp",
+      "type": "file",
+      "sha": "9c75da928b151a27326b2dd2769e9f6e70c03523"
+    },
+    {
+      "path": "ecs.h",
+      "type": "file",
+      "sha": "505f70c2c7fb30db1d0b9e4fec85f98b8503a078"
+    },
+    {
+      "path": "ecs_types.cpp",
+      "type": "file",
+      "sha": "eb7b00b2d9748b19649195fc16d3ede25898414c"
+    },
+    {
+      "path": "ecs_types.h",
+      "type": "file",
+      "sha": "53a711cd947d234b6a8a1f359dd31b1a855eff5f"
+    },
+    {
+      "path": "events",
+      "type": "dir",
+      "sha": "367c89297b39c2b58a3fa7d3f7937565ea704bf2"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "df65c35755fa0b794a5d860565333ef534f547c9"
+    },
+    {
+      "path": "iterators",
+      "type": "dir",
+      "sha": "83e84de22b4f785918af215dab90173cec84767c"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "1d98b6cdd8e6cdf856cdedc015a46967af87b7b0"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "1a777d9551087dbb195037509bf36ac9b8a3b7e9"
+    },
+    {
+      "path": "methods_ecs.py",
+      "type": "file",
+      "sha": "778e657cd95fa768b05d9a9e038b9b7776a5080f"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "928f6027eab3d9a37beb68b30237c4b438617bde"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "67395d5ea0c46d870ea3efa0f892c852f2acc382"
+    },
+    {
+      "path": "patches",
+      "type": "dir",
+      "sha": "8b67456097a6354fa78190e5026d40b01808d99e"
+    },
+    {
+      "path": "pipeline",
+      "type": "dir",
+      "sha": "84c2ae517eb0599f1036ed230a83d3f8bd4e2fa1"
+    },
+    {
+      "path": "register_types.cpp",
+      "type": "file",
+      "sha": "56dc141fcd1b8e9498e3e6c7c034eff9a431b780"
+    },
+    {
+      "path": "register_types.h",
+      "type": "file",
+      "sha": "02c755be54605e607cdea2f7f12af067cd16d3a2"
+    },
+    {
+      "path": "spawners",
+      "type": "dir",
+      "sha": "24a98511860cb170322eba6001109cbe8b348e1b"
+    },
+    {
+      "path": "storage",
+      "type": "dir",
+      "sha": "eeda07edfa7f9222e5f1236bb408f6e2c1637672"
+    },
+    {
+      "path": "systems",
+      "type": "dir",
+      "sha": "25572b97971db27207672ade403c908233db11da"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2e7b8d38577d559d485228a4e7fbd91599fbf9ab"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "010c5783a3e203f26504fca86e8e03df2a8cf819"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "15252b133a1a6a646a042689c9111fb3438fa03c"
+    },
+    {
+      "path": "world",
+      "type": "dir",
+      "sha": "926ae701b28d0c4d702efec56c45372037c23e2d"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Godot ECS library; components/iterators and SCsub integrate into Godot.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "subsoap/defos",
+  "repository_id": 90181794,
+  "commit": "b03999f4dd62fdf1b98adf2e32759d242ed18365",
+  "source_url": "https://github.com/subsoap/defos/tree/b03999f4dd62fdf1b98adf2e32759d242ed18365",
+  "readme_path": "README.md",
+  "readme_sha256": "e4c8b575c53a601b79dc7721b79e853c07be7615853b49656c60695cf4aa274e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "01bc89e53ca9f24a23dc452f7001ead07072f016"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "670154e3538863b2d9891fd5483160fbdfc89164"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "99b53250fffd55a1a09fa0475053a72a28ff8c5e"
+    },
+    {
+      "path": "defos",
+      "type": "dir",
+      "sha": "03ae401c0d5372f46e972ab40ab7cb4282d40223"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "87864f3c65d438b7aed804bb6c35c2fec7bad83e"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "54f2b045930ccafec59053d7dc8dfe11c93b4fe2"
+    },
+    {
+      "path": "game.project",
+      "type": "file",
+      "sha": "3ed3c01754aa8d843d315ea100ffba2f0b5b9c59"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "7fb623b77ab91c65599f83a6ece104f8fce8b458"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "2b2ec3634ebfda9281528afdb204be9c965be408"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "7c9d309e5c47d55f95945e55f823140644a59213"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

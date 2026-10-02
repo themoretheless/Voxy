@@ -1,0 +1,52 @@
+{
+  "repository": "Federico-Ciuffardi/GodotTouchInputManager",
+  "repository_id": 232853406,
+  "commit": "3023aaee0ce1616b1b46a4b4b4f1914b1ab43919",
+  "source_url": "https://github.com/Federico-Ciuffardi/GodotTouchInputManager/tree/3023aaee0ce1616b1b46a4b4b4f1914b1ab43919",
+  "readme_path": "README.md",
+  "readme_sha256": "7758c71b436953cfdaa397b0592f649884cc30378f6058f08bd07ed23a1445c4",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4533436ce87210904333860fdb9066a3dd22cb05"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d9aac213e776ee95d2c2274ccce2493a6402628c"
+    },
+    {
+      "path": "CustomInputEvents",
+      "type": "dir",
+      "sha": "faa66550dd196b5af5e3a70f38f825516dd7ea57"
+    },
+    {
+      "path": "InputManager.gd",
+      "type": "file",
+      "sha": "c6b9f82dd2b274a487c26d213cc9c26e11e19664"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ddca91147d23d5d9011fae3168b854e6aebfc8a6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fc1ef17c058058d22f9594bbbf6b17a0e000fb3c"
+    },
+    {
+      "path": "RawGesture.gd",
+      "type": "file",
+      "sha": "dbe24d6dfd8414dbec8aca193a58b28844fc1957"
+    },
+    {
+      "path": "Util.gd",
+      "type": "file",
+      "sha": "8a2d76b00e0aaf16d86cf4febb67e71119377936"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

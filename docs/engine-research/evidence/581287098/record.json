@@ -1,0 +1,134 @@
+{
+  "repository": "fishfolk/bones",
+  "repository_id": 581287098,
+  "commit": "4e72b70f1742489b1b9ced0462c66283ea8877dc",
+  "source_url": "https://github.com/fishfolk/bones/tree/4e72b70f1742489b1b9ced0462c66283ea8877dc",
+  "readme_path": "README.md",
+  "readme_sha256": "a9e1c929dc60d061356869b1333b5f225cca30cf18a584deb39c372f66045e93",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "fac71227c9f0ae4fa030e13ca674ffb5b6779973"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7047f27942bd02f7fefa138ef58aef5048c64f09"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "68a7fbd64058eab2ade892ee8e499c13ed0a937d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "46c08a0d90feb7f6f00fcbdc6b988ddbab83200f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "73d685602d369446c1390a900c48f9134272df56"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "815bd107ed2c4132a69cb66899ea043a7b9367d0"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "4257079eb177e3c2567a9c0c868ada6b07bc16b4"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "2a2e86c44022847ed524a74972b4a679153c501e"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "18172254bf586127edb3b22a7e96c1bbfa8619ee"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "90c5d0ca9e569d8d0e65e9f48203d11fc8fbe22f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6eb0e2bf942bc7b57e2055d7b1f87377b41bc40b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "eba69c2b18392ceaa38dc92e6065d7401c79b3cd"
+    },
+    {
+      "path": "RELEASE.md",
+      "type": "file",
+      "sha": "512a028f2a169dd8a41143e7893cac80f0161b59"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "d1cee8c8aca63745fb20b29cd7c1dde4b9e64cef"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "6b52d081c998117cc6ab2866c89a6cf42a75b6c9"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "d5771c75fd7adc87f6c31963e4edb3fd205862a9"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "070e6a606a184e9d8d81a2e141372e4307e4cd3c"
+    },
+    {
+      "path": "framework_crates",
+      "type": "dir",
+      "sha": "388ef710a6da47dc015473dcde2ddcf8bee91325"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "023720320627f6c8e09652dbc346b4f8c600283f"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "2073457d359386ed9268f6ed60cb599a8df6f686"
+    },
+    {
+      "path": "other_crates",
+      "type": "dir",
+      "sha": "d56f4aaddb4c8e620ab0a53bcdbad154e1289b02"
+    },
+    {
+      "path": "release-plz.toml",
+      "type": "file",
+      "sha": "63668cb025ff5d9935ef5814d2b29014b57316fd"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "075062e5e6b648bab97af61a9cb8b47b534e8c66"
+    },
+    {
+      "path": "taplo.toml",
+      "type": "file",
+      "sha": "df1b55010a1e82eba34619e72f55bc49987632e8"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies meta-engine framework; framework/crates/Cargo/demos, complete engine scope needs deeper inspection.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

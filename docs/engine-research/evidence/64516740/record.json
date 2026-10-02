@@ -1,0 +1,99 @@
+{
+  "repository": "doriaxengine/doriax",
+  "repository_id": 64516740,
+  "commit": "74dd260f8ce2c66cb1f11dd65441c852c8acb4c9",
+  "source_url": "https://github.com/doriaxengine/doriax/tree/74dd260f8ce2c66cb1f11dd65441c852c8acb4c9",
+  "readme_path": "README.md",
+  "readme_sha256": "1fdfdae28544c2760a99f9a3d22a820e0b1ed56046bdfa52761818e263d8c772",
+  "entries": [
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "7684f8a301c4d69e168890800283b63ad7ec7584"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "350b79a0a0eabd5dc36d2dca8fd4e01786d0cbd7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f7d121719bf78d96415ff5e53d5ced69e8e31972"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6a9a9dd9458a8a6e0fd2b3c49b52d663718b7066"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "01a780199a3c465244f23ba48db2a2c4d7b3b61b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "84d3cd618a95d55b94eda579086177b6b2277dd8"
+    },
+    {
+      "path": "copy_headers.cmake",
+      "type": "file",
+      "sha": "29ff0dce859802feceaf6659f874cdca4d0cf0ae"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "b757f85da6cc79bdb6d00c51948a039034a83452"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "0bc9b238fea6066c41b3416899cfde80bcd62ba4"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "c50829616bd3ecbe1fdc59f3565ea8a1ead6b7a5"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "3d4613981f186b8d5216ac7fc3342340ce5c0c57"
+    },
+    {
+      "path": "generate_api_suggestions.py",
+      "type": "file",
+      "sha": "53df42c6903f05f379751f5b9b6a8ce4aafb783a"
+    },
+    {
+      "path": "generate_gamepad_mappings.py",
+      "type": "file",
+      "sha": "2823b41da18852a9fd2eb12eea8ad26b4206248d"
+    },
+    {
+      "path": "generate_shaders.cmake",
+      "type": "file",
+      "sha": "7868dbd3c6cc664d15057fd38360af8ddf043115"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "49c61588be8e7f4291fd098462b7bc22c30d2245"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "5919a61ec817634ffe1b60945a440f8efc28d4e3"
+    },
+    {
+      "path": "shadercompiler",
+      "type": "dir",
+      "sha": "ca83c1f07aea7c3b0d93bf6ca983348429cb0610"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 2D/3D engine with editor/scripting; owned engine/editor and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

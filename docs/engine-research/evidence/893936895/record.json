@@ -1,0 +1,82 @@
+{
+  "repository": "NauEngine/NauEditorPublic",
+  "repository_id": 893936895,
+  "commit": "5b6880a9876543c41d07dfb0f57e2dc6784b13fa",
+  "source_url": "https://github.com/NauEngine/NauEditorPublic/tree/5b6880a9876543c41d07dfb0f57e2dc6784b13fa",
+  "readme_path": "README.md",
+  "readme_sha256": "0ccb7926537c26a8dba64d3e24761ddd4c0039d340013a8200322289a02ff20e",
+  "entries": [
+    {
+      "path": ".enginehash",
+      "type": "file",
+      "sha": "634109902f1a3b61c3b97126d355b994b7340591"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a28c358c541087d3c4a82254c2f1e2d4f4aa27c0"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6ef05d139703c6a2c40d495867e773aa6cb7c00e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "26aac0e30c58fb53ada071e95bf54ca6a40941f9"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "e9ef9a63eb106e2a01479ffd8830100b3369552b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "138c4fd9fb4f53cbdd9f6b9b0167c33a2647087d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "89a97897cbfd7387d9feb03d988562ebeb8f7a22"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e3d82d3a822e8fcb8db21f23baf896fcec53da02"
+    },
+    {
+      "path": "documents",
+      "type": "dir",
+      "sha": "e014b281a6ac3a651cd5016b1286b2d18ae427b7"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "4ad0406be1ce2c459c88f1685b744672733f9448"
+    },
+    {
+      "path": "installer",
+      "type": "dir",
+      "sha": "d14638e0285130832b8830c7115e1787dc08e994"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "a5a4960daa00600c78ba628338ed08b75436e1cd"
+    },
+    {
+      "path": "translations",
+      "type": "dir",
+      "sha": "490b02880dcb5df4feb7bfe272c262c12853bd89"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "bf073bb71e25a34d598855f859bf66ab03e3c924"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

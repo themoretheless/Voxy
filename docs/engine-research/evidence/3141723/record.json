@@ -1,0 +1,59 @@
+{
+  "repository": "autch/aquaplus_gpl",
+  "repository_id": 3141723,
+  "commit": "4670ec4c8d8465e13d0b9cba53c87c5272f60a7a",
+  "source_url": "https://github.com/autch/aquaplus_gpl/tree/4670ec4c8d8465e13d0b9cba53c87c5272f60a7a",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "3d6c5500a95dde55bb4e2d6a48f37dfbbfc85cbd"
+    },
+    {
+      "path": "OGG",
+      "type": "dir",
+      "sha": "cbe333cf229dd4844dbdc5e3279dcdb655c06dae"
+    },
+    {
+      "path": "ToHeart2",
+      "type": "dir",
+      "sha": "045c75e6f4c2f38c5c0e9fa1ed9bea425498c7cf"
+    },
+    {
+      "path": "TtT",
+      "type": "dir",
+      "sha": "0c2f5827333143423f1dbbf8f1496bfcba2c65b9"
+    },
+    {
+      "path": "XViD",
+      "type": "dir",
+      "sha": "6b886a477f4a124b7b5e19c1a8243539df566dc2"
+    },
+    {
+      "path": "アルルゥとあそぼっ",
+      "type": "dir",
+      "sha": "e20871cf46fe7f74aa75cab26efc9b5bd220e342"
+    },
+    {
+      "path": "ソースコードとバイナリの不一致について.txt",
+      "type": "file",
+      "sha": "a2f1cefadfa146e62739b8ca23f73b6ce54c57d3"
+    },
+    {
+      "path": "ライセンスについて.txt",
+      "type": "file",
+      "sha": "272cace182985a11a0d5c1e9404e9baee8d3b43b"
+    },
+    {
+      "path": "鎖",
+      "type": "dir",
+      "sha": "05ef54ba27891437d4e27cf7252d6136fd78e2ca"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Mirror of source releases for four AQUAPLUS games; no README establishing a reusable engine product.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

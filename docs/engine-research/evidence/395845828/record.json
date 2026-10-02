@@ -1,0 +1,134 @@
+{
+  "repository": "AdaEngine/Ada",
+  "repository_id": 395845828,
+  "commit": "df044628a713092fda47a3771686b8e1d7c03e5f",
+  "source_url": "https://github.com/AdaEngine/Ada/tree/df044628a713092fda47a3771686b8e1d7c03e5f",
+  "readme_path": "README.md",
+  "readme_sha256": "736f0692a067937389a072b36e0c6ff0addce385a8fc9f916facf54b2113cf05",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "af7f0507ecccc3bd01d31c7a2bcf69ab4d3f2baf"
+    },
+    {
+      "path": ".codex",
+      "type": "dir",
+      "sha": "21025b962d646318e0b67a5881e0bd09f46c5a51"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "838c4f501eb132530d71267b7f72dd1b33838fed"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1a5b3c0ad4df2f5b9b8f41652c78910e5af78d02"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e6732176e1879ebc2e3b76a805071e0103e70514"
+    },
+    {
+      "path": ".spi.yml",
+      "type": "file",
+      "sha": "c815f84222517ed7d8337da4fbd75b80a06fe492"
+    },
+    {
+      "path": ".swiftlint.yml",
+      "type": "file",
+      "sha": "6937d28035e9c9195a909cea325a671cf4c562a9"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "cfb3d7ec73c5eb72a112069c01505324c2842640"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "6de0957eba5dd0003a7738b463a76693e809eea3"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "42b35374dbddff6cbaf1ac0cd761a545e3eb8028"
+    },
+    {
+      "path": "Bundler.toml",
+      "type": "file",
+      "sha": "583d49a7dc7eed4ad66a259ace62a4628329e5f4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6c89d967a5071d0d30fc9fee46f4694eebe89aa3"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "00fdf9852728b63d35545840c2eeb26383d463c2"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "a0ce8511a508a8d14d1df3ed3215fa9c2a28a93e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0b99e13363729bb7cb948a3211f71a8d93ca72c5"
+    },
+    {
+      "path": "Package.resolved",
+      "type": "file",
+      "sha": "ca3e181b3f1fade0c3388891e0a2172f059d53d9"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "55c9919bbd3094792c9b2d4f7f1d6b4b56b22a3c"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "3de8ff26c07bca01bf1546fc4ccd7329579c9223"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "525849cbb44e6a1205dd21897f454880f1ab04c8"
+    },
+    {
+      "path": "SLOPPY.md",
+      "type": "file",
+      "sha": "a6b8463509566f96ebabe04f2e4eab208c1f7f62"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "dff713ca38d356ac780e972c1943abe3551176ea"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "eb5ca4b61ac7c8947abe307a14fb18868d88e5e1"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "34d5b0d2bb42b8cb136db6bffd64a6f42bd65e62"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "133a137bf5d7b276397ec4e87bd9a06611a509c8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Swift game/UI engine; Sources/Editor/Plugins and Swift package/build infrastructure. Platform claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

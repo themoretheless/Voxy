@@ -1,0 +1,28 @@
+[![](https://github.com/dviglo/dviglo/actions/workflows/main.yml/badge.svg)](https://github.com/dviglo/dviglo/actions)
+
+# Dviglo
+
+Игровой движок Dviglo - это форк движка Urho3D, ориентированный на русскоязычное сообщество.
+
+![](https://raw.githubusercontent.com/urho3d-learn/flappy-urho/main/screen.png)
+
+## Лицензия
+
+Dviglo распространяется под лицензией MIT.
+
+Тексты лицензий:
+* [Проект Dviglo](licenses/dviglo/LICENSE)
+* [Проект Urho3D](licenses/urho3d/LICENSE)
+* [Третьесторонние библиотеки](licenses)
+
+Папку [licenses](licenses) удобно распространять вместе с игрой.
+
+## Важные ссылки:
+
+* [Использование движка](https://github.com/dviglo-learn/minimal_app)
+* [Обучающие материалы](https://github.com/dviglo-learn)
+* [Документация, сгенерированная Doxygen](https://urho3d-doxygen.github.io)
+* [Форум](https://github.com/dviglo-community/discussions/discussions)
+* [Wiki](https://github.com/urho3d-community/wiki/wiki)
+* [Архив англоязычной Wiki](https://github.com/urho3d-community/wiki-archive/wiki)
+* [Инструменты и утилиты](https://github.com/urho3d-tools)

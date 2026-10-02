@@ -1,0 +1,34 @@
+{
+  "repository": "passivestar/godot-minimal-theme",
+  "repository_id": 748101394,
+  "commit": "3250c3c79860a4ec734ed7e6d73cf4031dff1b4b",
+  "source_url": "https://github.com/passivestar/godot-minimal-theme/tree/3250c3c79860a4ec734ed7e6d73cf4031dff1b4b",
+  "readme_path": "README.md",
+  "readme_sha256": "70c9c385804177ce60464685ce9ac435b264e78b71b3897fad5d50a49bd10da1",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "39df223678add518186c98d3aedb2692e58a0ace"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b60837268158952669c676dcb3bcb38908935d3c"
+    },
+    {
+      "path": "minimal_theme.tres",
+      "type": "file",
+      "sha": "40ddf1df4b3187db2d4b027097ae350118d647ad"
+    }
+  ],
+  "classification": "excluded_theme",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README and minimal_theme.tres constitute a Godot theme, not an engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "mocha-engine/mocha",
+  "repository_id": 477911943,
+  "commit": "cc2d1a9ad109fe0fb7eeabbf1f9031a430d9d853",
+  "source_url": "https://github.com/mocha-engine/mocha/tree/cc2d1a9ad109fe0fb7eeabbf1f9031a430d9d853",
+  "readme_path": "README.md",
+  "readme_sha256": "ddd24eb49abe0de5e9f9c79a29feac604ffe774e8a7dc0c9e1c4e1092716079a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "afd0049f50d11d1c6b70dc43814c2e69eb830a16"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "b5943267d5b1744d1e07b1884aa12ca971421a30"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "34cb3b2e629a669f807f8ac3be85938c09256e17"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "397840e6e2dca69d6b87cfd600f2100bdd329887"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "368ebc316528155660cfdcb35fa79e3afc59a809"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3025f2f32631ba499a953abf965d9fac6e67dad2"
+    },
+    {
+      "path": "ACKNOWLEDGEMENTS.md",
+      "type": "file",
+      "sha": "09e63f4ace6639197c168c00dfe3329b55c9ea21"
+    },
+    {
+      "path": "BuildContent.bat",
+      "type": "file",
+      "sha": "3bae086dff58825946c61d6a0d9b817b5c269028"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "19ebf708da5fe6c03f271442734445c48b3dbce1"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "cb564dabeb29dd072fb252024a34d129c0fa3c44"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa7ba24878494491f179c1d8b3905749fa98d2df"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "cca256952b073d70ab3e6394dbc85de58981016f"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "5602066981593d18aeced9095dcee8adf74296d8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WIP 3D game engine with Vulkan renderer, C# scripting and HTML/CSS UI; Source and Samples present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,77 @@
+{
+  "repository": "cloud9c/taro",
+  "repository_id": 270208710,
+  "commit": "14c40e7ec60e4389f29d8a3f183802176bf834dd",
+  "source_url": "https://github.com/cloud9c/taro/tree/14c40e7ec60e4389f29d8a3f183802176bf834dd",
+  "readme_path": "README.md",
+  "readme_sha256": "5d954a9368beff1225c953d854cad1d72622055d2e2bd9c9d6fdedb870987f19",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "425ec21126625681fccc2a231a8585310d2fcfb6"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "607f22133f4a1131eee9c8e8041030329aac05be"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2858279d67276bfdf9018ad35835087862cece5f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "81c965b1d6a06fefefa9f2a23a85e219c31f4971"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1af208f02c5efcbc4dc1b3db089234c3e12a4f2f"
+    },
+    {
+      "path": "README.gif",
+      "type": "file",
+      "sha": "ee771e617cff0bd558b2fb764adca05e60992a21"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bf647a705ba6758820a0f0691420872ebda364be"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "80c445db1c2b0e3c9acd3ab60f8db896cc88828c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "1f4b3d5ba06e5052a5d9013c272776cfb13b19d9"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "f734b390f799dc46296d74c03278b8a408ad695d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "be15bfa051d973617f8d47d3285038e90df8bce9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "da8c6791987edd17d03fec33205565aed7f393df"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "9c0cc0aab93775f8490dcb391b16bd0dfe1fcb9f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

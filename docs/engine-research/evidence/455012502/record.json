@@ -1,0 +1,189 @@
+{
+  "repository": "voxelize/voxelize",
+  "repository_id": 455012502,
+  "commit": "839ed5f410d69ef26f52992fbb49fb4239848a58",
+  "source_url": "https://github.com/voxelize/voxelize/tree/839ed5f410d69ef26f52992fbb49fb4239848a58",
+  "readme_path": "README.md",
+  "readme_sha256": "3ddea8753422be681f7bc34adfb567e45a31462655b1f766e6403e7628dff753",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "ceff7c19db7a588e0985716c092d5fe91f270070"
+    },
+    {
+      "path": ".cursor",
+      "type": "dir",
+      "sha": "f2cf00eefe06d6216ae6d743bdfc754087d852b6"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "dc033ef4a5056bd2a1b907ee4d075cf97633dede"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "f0236be6646a991f4da987335379ffaee73deee2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "52e5e0670af6005d86745c21f4547d1e298b1bc5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7b984a94fc4365ae82975a39ffeba1aed2cd3e11"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "50b0c03c58eb9498ef2537ba411f4511f2d72f28"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "4c4c4f5ceee6b60a56bac1b0d4a061361ef2f992"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "9171729239803a31d17b380f82cbd067fffb3abb"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "3ff57c9de9173112d8a9d3cef65faa3dca6c65d4"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "bf357fbbc081d991705e0ed49539c433b003b6f3"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "89d7662bf4a4ef0a125bf71e08f97a0f125ce877"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "dcab28a9e08e24c0fb2e135c92c9267987c743d4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "133445deedbb5554301e353c5f142ade08ec074b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d794ebd1171c7b7cb17b51327a8508471854b8ec"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9a0e998aedec449f482d057185a4c67e26a215ae"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "e1b707df13b8936f193068da970b0e6fb5d8116b"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "5bae5b99e0f316a99ceeaec2a817719b901b544f"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "9222833e3b07f1cebc780435cccf670aa1128035"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5fcf781ae5758c31bb15d8a8896ac96ead627cae"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a38e06f4a8041058b88b369cf125d77570e4c788"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "1431bd98ff77275063594cc1e5295ba9fc696f47"
+    },
+    {
+      "path": "messages.proto",
+      "type": "file",
+      "sha": "38db09aced74df0ba16cc1ba43a89adb9e45a5cc"
+    },
+    {
+      "path": "notes",
+      "type": "dir",
+      "sha": "a07497533e46ecca97ba733a75bf27322668701b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "fcf779eb3f83fa958452dfc8d082f1961995238d"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "bee30a5cc0e1376a81f3d8063f784220fd6c5a31"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "6f2600d18a7146d496ec0c2c00e29c357e687d00"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "d871d2d13224a22784678c36b12a55d01a3d55c7"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "b8e5452ce49f3f02e822d068314b9b96a326890e"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8ba1f5e9766cba6a82a27632771ff42d049816f3"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "4851a37868fcc1aeee791559149bd1fb024e08ec"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "70718c6daedd47b616a1666d2dc3f86cc872154e"
+    },
+    {
+      "path": "tsconfig.build.json",
+      "type": "file",
+      "sha": "8a77ef0088eb3f2550dad207a2e1363199c57569"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "68d1d3c07f335490fe56fd3ebeed253657e671ba"
+    },
+    {
+      "path": "tutorial",
+      "type": "file",
+      "sha": "46784d1d667e24320b73cb8dad06c81c69684020"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies browser multiplayer voxel engine; owned server/client/meshing/physics crates/packages and Cargo/npm build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

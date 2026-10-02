@@ -1,0 +1,12 @@
+{
+  "vertices": 60866,
+  "reprojected_vertices": 0,
+  "added_vertices": 0,
+  "preserved_vertices": 60866,
+  "maximum_reprojected_distance_m": 0,
+  "shell_unchanged": true,
+  "source_sha256": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+  "skin_sha256": "1d85b9280105ff4e6bb36ed92ce5af62bda2a8fbed05657eba7428460d825ab8",
+  "baseline_bindings_preserved": true,
+  "candidate_adopted": false
+}

@@ -1,0 +1,214 @@
+{
+  "repository": "amethyst/amethyst",
+  "repository_id": 48364554,
+  "commit": "69c62327b66593a09fe53076fdcbc38c0499f018",
+  "source_url": "https://github.com/amethyst/amethyst/tree/69c62327b66593a09fe53076fdcbc38c0499f018",
+  "readme_path": "README.md",
+  "readme_sha256": "4885e2e21931768fb1e4a94b254dfd600b3d5288bc5edbe64aaf522859f51ea2",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c3f83d0272db62a63506638bc7d26e6c930e0ea4"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ac225daabf2741ce395e7f9fe8cd4b66057229b6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "86879e5c0e8d81ea7c825ace97e80dc3f2a4ad03"
+    },
+    {
+      "path": ".rusty-hook.toml",
+      "type": "file",
+      "sha": "75ff06de4fdce56be2a75444514196852ac11e0b"
+    },
+    {
+      "path": ".sentry_dsn.txt",
+      "type": "file",
+      "sha": "669fc849478d87ae3626e8135668540024146691"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "f1f4d4a65e08c39e95262b16fa336ef4964f0e51"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "0c8e2a86c7c135313a7462ebf313a55bec4532b9"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "4e31888b926242007acff3a4c13c21558ca1e0ed"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "7ba2ea63c204e7f5d6a66244ffe56e78433ef65c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "42a00fae38bafdc564f95bf2927b3a4aecd1508a"
+    },
+    {
+      "path": "amethyst_animation",
+      "type": "dir",
+      "sha": "4811cc2e718e01c700340a656fa225ff7a855916"
+    },
+    {
+      "path": "amethyst_assets",
+      "type": "dir",
+      "sha": "c0f19c7195902882cb3399bc54f392a21e887582"
+    },
+    {
+      "path": "amethyst_audio",
+      "type": "dir",
+      "sha": "3d7ba05e753ec447f3bf2d95839a7c9c6440f189"
+    },
+    {
+      "path": "amethyst_config",
+      "type": "dir",
+      "sha": "f9569b885e3c8b744ff25d7cfe9d5d421ee23b25"
+    },
+    {
+      "path": "amethyst_controls",
+      "type": "dir",
+      "sha": "2417f5340a2cf35bc62ac0d4ea7d95901a7e8a87"
+    },
+    {
+      "path": "amethyst_core",
+      "type": "dir",
+      "sha": "9ace7ac8e76ed8780976e5b320b970ba391dc938"
+    },
+    {
+      "path": "amethyst_derive",
+      "type": "dir",
+      "sha": "e3e320981b9580601b75ec8cb5acb139ae3824a0"
+    },
+    {
+      "path": "amethyst_error",
+      "type": "dir",
+      "sha": "10512bc09fa6b5fdbc5dbcf44758866e3234c96c"
+    },
+    {
+      "path": "amethyst_gltf",
+      "type": "dir",
+      "sha": "ebb14be94de8ff01b57a739c5f6a49257d6da8b5"
+    },
+    {
+      "path": "amethyst_input",
+      "type": "dir",
+      "sha": "3db040e6f3d404b1d4a2c5ebeb2079e38c633a26"
+    },
+    {
+      "path": "amethyst_locale",
+      "type": "dir",
+      "sha": "62cb5270f9dde7e30137dfa2ba776c727040733d"
+    },
+    {
+      "path": "amethyst_network",
+      "type": "dir",
+      "sha": "ab19275e6ac7206fc6c0ff1c78d26ed301bc396b"
+    },
+    {
+      "path": "amethyst_rendy",
+      "type": "dir",
+      "sha": "40c3ed88246b333a90b54f355b995f31fd74a328"
+    },
+    {
+      "path": "amethyst_test",
+      "type": "dir",
+      "sha": "2b64f2b37d2f97f6aeea6fc20552876ac66e7781"
+    },
+    {
+      "path": "amethyst_tiles",
+      "type": "dir",
+      "sha": "54412ac4992e307da547a023f22e778a7a119c38"
+    },
+    {
+      "path": "amethyst_ui",
+      "type": "dir",
+      "sha": "1da29322ce21dc607c7dd54c737d21210cf5848e"
+    },
+    {
+      "path": "amethyst_utils",
+      "type": "dir",
+      "sha": "b50dd7f8253a10a03612e9824ef343750425d6e0"
+    },
+    {
+      "path": "amethyst_window",
+      "type": "dir",
+      "sha": "c2806e53acd128d6b926983097d7a00b8703e66b"
+    },
+    {
+      "path": "book",
+      "type": "dir",
+      "sha": "1701aab4fa9211510979b780527556ef605db9d3"
+    },
+    {
+      "path": "bors.toml",
+      "type": "file",
+      "sha": "2ff07fac64029fc259bfaf47744d37a886cc394d"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "4d1100bb0dad28dd4ec67ddeef72a76f6fc99a1b"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "dae56cfc29f31666652762a87b577609fef71c65"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "936a765d70f9ca669fde2e2c7dad7f6170bc7522"
+    },
+    {
+      "path": "docs-nginx.conf.sigil",
+      "type": "file",
+      "sha": "4e8410a913aeb9324a75f7b8665a0db028306bf4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2da2094c8dc9a991867d2496d882d84c4d28ebbf"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "75dce6c6ecfab411c8903d7052083996fbae365c"
+    },
+    {
+      "path": "find_glslc.sh",
+      "type": "file",
+      "sha": "8dabee795f473726e25451336398c804b529ae20"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "f0068a099638a0e35841a7c63c397ebc0322c73c"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "cfcfb01eb1070126ee4a5824d111653209549e2a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "71e6bf857c452329736cfb814459865a91ac72ef"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies halted Rust engine; owned animation/assets/audio/core/render/UI subsystems and Cargo workspace. Inactive development retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

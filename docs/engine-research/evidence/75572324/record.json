@@ -1,0 +1,132 @@
+{
+  "repository": "OpenEnroth/OpenEnroth",
+  "repository_id": 75572324,
+  "commit": "fff3bbc9fad29c10dbef137e2ea6e9b8a86ffe61",
+  "source_url": "https://github.com/OpenEnroth/OpenEnroth/tree/fff3bbc9fad29c10dbef137e2ea6e9b8a86ffe61",
+  "readme_path": "README.md",
+  "readme_sha256": "cc36208cf9f5f081523f15d6b36528419d4f89953e3ba59e05426abde42e1da9",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "bac0b01231237591f14dba6cf05f2eb0616ff5ff"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "4460edc6f7d44897fd5b821bd4b8856695673a86"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "d2eee3982fef71a574836a3cbf72c713820fdaf7"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ac059dae2f6fb52db43999e0bce4dd46e05ebdc3"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7a128961361ce35364c7ba030b1d04a3bbd0b15d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e5f387dca1cb6ea909d48a29bf59bcb7bde18964"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "54e22bd0fec7894258065263c1165ad5dbb28b1f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "90f3b65f3fd745b680497fc49e5955a37daee726"
+    },
+    {
+      "path": ".luarc.json",
+      "type": "file",
+      "sha": "537a4ab88282bb7d83b744a55a11a30e93cb3fb4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c4f3b0026b82cc8c46797aaac20d0721ecfc46d6"
+    },
+    {
+      "path": "CMakeModules",
+      "type": "dir",
+      "sha": "0e4ab8011676030c35c4ac0ca84a2b9028ef9dbc"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "5f56524f6c8687b177a57ba9b2c4b80790521392"
+    },
+    {
+      "path": "CPPLINT.cfg",
+      "type": "file",
+      "sha": "d9814513b68c31e56ad4fd5f780dc7c8175fe4a1"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "5b027579897bff588a100be9cfdd0d46caedc1d2"
+    },
+    {
+      "path": "HACKING.md",
+      "type": "file",
+      "sha": "a9829bdbcecce8947093271d8f615bf25083fb1a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f17f6cc1bf86bb6e83c77f3070f79e7d7652bac3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "420edc09ec962068b0a2287221750ae4c0ee8afb"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "7b21bed2b940093c5048128c1d5ce742958bc403"
+    },
+    {
+      "path": "distribution",
+      "type": "dir",
+      "sha": "477e9e534b57f6955775a1007502f4da5273884d"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "72dd12c05b36b7a3a6db8f4bdf2d3a9093d0867d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3156c0da491454f023bde3ae9d511f53555413f7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fd14c29360c1a3415e2002455e1b658b5cd96040"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "1e25728dc19d5fdb531262dc98eeec720a4c737c"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "7de1908d99c0064c6285c59a9e479675f2e17271"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

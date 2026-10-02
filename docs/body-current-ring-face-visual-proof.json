@@ -1,0 +1,20 @@
+{
+  "rendererSha256": "a9a87b3f0cefbf80c3e1c4b58e93bb4ceec15feac8c4b3b520c9885b9822a9d8",
+  "changedPixels": 325,
+  "differenceBounds": [
+    210,
+    486,
+    353,
+    525
+  ],
+  "inspected": true,
+  "images": {
+    "docs/body-current-face-ring-baseline.png": "5b18c9752b6691caa50f7e9cf672b40779e667e2089aea31dae3cdab99ef193f",
+    "docs/body-current-face-ring.png": "ac33b898f1e2724706cbcc549782074726bd08e3cd33547f1ef2c9a12fb75254"
+  },
+  "limitations": [
+    "Frontal static face only",
+    "Candidate remains intersecting and unadopted",
+    "Hair raster artifacts remain"
+  ]
+}

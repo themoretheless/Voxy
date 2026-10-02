@@ -1,0 +1,72 @@
+{
+  "repository": "EOS-Contrib/eos_plugin_for_unity",
+  "repository_id": 375427349,
+  "commit": "c4f5c043f3f15c82170f5e082e4d5cf473ad533f",
+  "source_url": "https://github.com/EOS-Contrib/eos_plugin_for_unity/tree/c4f5c043f3f15c82170f5e082e4d5cf473ad533f",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "eacc0c92f9b86472aad194de561b02afac33ec70"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5e5acbf484f5bf3789b9612180332bbee2b30171"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2846e7fbabf24c4f8e839345367577235080ede1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c39a0eeb9176ad53fad30fea32a60072222cf2f9"
+    },
+    {
+      "path": ".vsconfig",
+      "type": "file",
+      "sha": "aade28f674e0c08b5e520ccbde4fc9e8aeb95ac5"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "96879c53a23fc2cb713a4ab8f8b937956c8e7463"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "2ec76c461d8483092d2d73c75ddccc384bd57e31"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "84c52bbf7336f3244cb1875c5198dcbc4b09db93"
+    },
+    {
+      "path": "com.playeveryware.eos",
+      "type": "dir",
+      "sha": "90150ea2db94e251d13316c6ca343a914ec6655e"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "1ac44abc861344d77e771c89be23012662b42839"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "8d71c94e3a6ea086f0d3bcb93c6c9774ff705806"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0420904ce5e1564a7c276161e5d863eba2a8f675"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

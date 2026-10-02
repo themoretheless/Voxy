@@ -1,0 +1,124 @@
+{
+  "repository": "KaijuEngine/kaiju",
+  "repository_id": 720186073,
+  "commit": "5eda268233b160d3644904d0e8376861e2092306",
+  "source_url": "https://github.com/KaijuEngine/kaiju/tree/5eda268233b160d3644904d0e8376861e2092306",
+  "readme_path": "README.md",
+  "readme_sha256": "43ab58924712408946dc0f3b5d64e998cb1c06f6d451414c1f84766e2f1078ab",
+  "entries": [
+    {
+      "path": ".echo",
+      "type": "dir",
+      "sha": "e6b5d0c098fbc26be51361ec8fdd3e6738b850aa"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b34f78382b45a0548ffee1f2d984cbfa93b4b3c2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a4d677781a44fbde7b3ab6442f0c0a9705800d4d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "444948736d15279860076743f51e7dbddd441457"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e7faef439bc1218ac4df1af9b2eaeadb3fb74522"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "df87f9a6b3e29a974ff43cf16128df8e09143b91"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "cb94bff04cea1d06bbb77dcba661db80e17cf4d7"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "64a683ec21c749268381653b380c2c17a53bff0e"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "24040901a88e26c611cc4d6b38e840164b3a3212"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6e016262c96a2b7bfefe23d98d4f318eb276f341"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "7dbf6c0c6402cef8c8f4d015a4e1c05ba85ee41d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5db36bf4dc553401bedc4c5beb939978558cb5a5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8d9026912f8f97d8edffdec77bf3e49f6206f39e"
+    },
+    {
+      "path": "agent_skill",
+      "type": "dir",
+      "sha": "50e28606c08e6fdc4f1e5d0da5f78bfac5d75674"
+    },
+    {
+      "path": "artwork",
+      "type": "dir",
+      "sha": "b9c12a44732ecb0096943f8d07b5939268ac1363"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7a14fea34378b7776778a9e50701fbd702835eb8"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "31b98c537e6795a94daa3f7374db57ed203a7c5b"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "547788d69b31fb11c5cb9457be451e757ccaaf0d"
+    },
+    {
+      "path": "profiles",
+      "type": "dir",
+      "sha": "2243172c4f23a975d2251c7ffc553bf371fff0c7"
+    },
+    {
+      "path": "publishing",
+      "type": "dir",
+      "sha": "1d7ebcb6f8a1614e4bb7c76a2dc3877d0c7c9320"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1eae99aaf3e77e7fd9fdefe700c14765eed38d88"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "10681e922b5d9dadf339e5c9d058adb562ff584e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine; owned src, publishing and tools structure. Build/runtime status remains unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "Hekbas/Luth",
+  "repository_id": 931158872,
+  "commit": "23fc12a6a24b5c92143a6e4380ef57494d571f6b",
+  "source_url": "https://github.com/Hekbas/Luth/tree/23fc12a6a24b5c92143a6e4380ef57494d571f6b",
+  "readme_path": "README.md",
+  "readme_sha256": "2e09c3f4340b286084548f78f2757f8a4448c24cfc8ed5fc31d8767c984b20db",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "58fc270a723b8f6944ab8dbdca1bdd8b0e836a18"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "adacf81b957dfd4612f61f3ca95eff8c3c1a9299"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "5a16b4f33c80e6f9a968242b07fc409935e9b1b8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2d5831e120cb317dfe760736071f3623644cf636"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8323498ea434595fbbcb342d738c5f8d9f923c7f"
+    },
+    {
+      "path": "dependencies.lua",
+      "type": "file",
+      "sha": "b4ab0fd3a37fe5576e1e706709005aa5c47c8c92"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "03b1bbdfcef35d9ef8dc5f8a381fc1c5d9783344"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "8cff1a71cd74a30f15c12f3dedaaf3d1dade206f"
+    },
+    {
+      "path": "luth",
+      "type": "dir",
+      "sha": "be76800e391b5abbbea56f592c08d1d49f92b3fe"
+    },
+    {
+      "path": "luthien",
+      "type": "dir",
+      "sha": "984e931af7264cf244daade96f1e97ba3d575019"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "924a94820fc152382386ca2b604430aea18f62f5"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "6f4c03ce754616be021700e23af89c8c9203a967"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "a41981cc2465d5441f0eede2a3df1f5012a6586b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "50c6a1f6d81cc3f808db5ca3cf1e3c0091644aa4"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "48e62c3dbf3a254076d8d86497642fbee37360ea"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ engine with runtime, editor-related luthien, samples and tests; fiber and renderer performance claims are unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

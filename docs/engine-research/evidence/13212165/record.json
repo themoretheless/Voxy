@@ -1,0 +1,134 @@
+{
+  "repository": "panda3d/panda3d",
+  "repository_id": 13212165,
+  "commit": "ec9ea0a93a7de249efea3f41b4fdf878f5e1650b",
+  "source_url": "https://github.com/panda3d/panda3d/tree/ec9ea0a93a7de249efea3f41b4fdf878f5e1650b",
+  "readme_path": "README.md",
+  "readme_sha256": "05766f5a556fc1e6c2b11710920b02c0b958cc363d3920a8090a4e9c083acc1a",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "880f30b52e71028942d967ee27d2c75c6e59327b"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "3a4198fdaae226618b71160c2d81f9cc4098b81b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d5a26c7c2d0a7957a8b5b0eabf5d214ec52fe78f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e387e1331f912c0348766c6d99d8b35d5338851f"
+    },
+    {
+      "path": ".pylintrc",
+      "type": "file",
+      "sha": "d0c95ee5a8aeb3348338f5e19a3b521aeb652a79"
+    },
+    {
+      "path": "BACKERS.md",
+      "type": "file",
+      "sha": "269e617d67e998358de16ff560d81dbfa78df34a"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "521ac95695a276bdc1d5d27cf3efc42a95857b09"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f75d356a3f490129d5cfc5e77b28b5fc4958d98a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d23c5832664b476e90998de8e281330797201f64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d729059cf22551450ccda2bb0fd1e535b17af1f3"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "b0f7d15b7cffacacc91f09506f0dc52a7b7a8e1e"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "d38ba9eb5cb7b412f12ab680f44091ee7ed22174"
+    },
+    {
+      "path": "direct",
+      "type": "dir",
+      "sha": "99f7b9b2429d798e780666fc8a3b86373f4a0f95"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "3058e8c9e64d34ced754f9b86030c94244d60cb6"
+    },
+    {
+      "path": "dtool",
+      "type": "dir",
+      "sha": "819392b5027251b6da918f82bc60579e3f429aee"
+    },
+    {
+      "path": "makepanda",
+      "type": "dir",
+      "sha": "1e86a41d6734e8994233a2fa3f7ce781d4601dbe"
+    },
+    {
+      "path": "models",
+      "type": "dir",
+      "sha": "878d2927148d5ad7e765c2dd1f37a4118f63fcb7"
+    },
+    {
+      "path": "mypy.ini",
+      "type": "file",
+      "sha": "696e4894b0eaf3f60e6b4e9b02a2ea7a99e7d3ca"
+    },
+    {
+      "path": "panda",
+      "type": "dir",
+      "sha": "c2cf2be86b27a9b78e5630612e27d84e0f44a353"
+    },
+    {
+      "path": "pandatool",
+      "type": "dir",
+      "sha": "536a09f1d5e52ae22452ef5e9bc36b65471f84de"
+    },
+    {
+      "path": "requirements-test.txt",
+      "type": "file",
+      "sha": "2f9b041024432cae66085d0392c272c4433ba628"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "267ab154b7ad1fd1ed379d8609a30e8fc7da96ad"
+    },
+    {
+      "path": "setup.cfg",
+      "type": "file",
+      "sha": "4fdd24c9e869fd03049b41f9c59ad0a914e652c1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "fb8d3e2bc88505c7197ed8b52c84d1ce3a69e8c6"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 3D engine; panda/direct/tool source with CMake and tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,6 +1,5 @@
-//! Geometry-independent kinematic physics. No renderer, voxel world or ECS dependencies.
+//! Geometry-independent mechanics. No renderer, voxel world or ECS dependencies.
 pub mod astrophysics;
-pub mod astrophysics_atmosphere;
 pub mod astrophysics_binary;
 pub mod astrophysics_column;
 pub mod astrophysics_eos;
@@ -9,21 +8,22 @@ pub mod astrophysics_evolution;
 pub mod astrophysics_gas;
 pub mod astrophysics_gas_gravity;
 pub mod astrophysics_nuclear;
-pub mod astrophysics_opacity;
 pub mod astrophysics_radhydro;
 pub mod astrophysics_radiation;
-pub mod astrophysics_reaclib;
 pub mod astrophysics_spherical;
 pub mod astrophysics_spherical_radiation;
 pub mod astrophysics_spin;
 pub mod astrophysics_star;
 pub mod astrophysics_thermal;
+mod character;
 pub mod gravity;
 pub mod gravity_character;
 pub mod gravity_field;
 pub mod gravity_spheres;
-mod character;
+pub mod moisture;
 pub mod planar;
+pub mod strand;
+pub mod wear;
 pub use character::*;
 
 /// Integer origin plus local floating-point bounds preserve precision in large worlds.
@@ -111,3 +111,46 @@ pub fn sweep_box(
         Some((enter, normal))
     }
 }
+
+pub mod liquid;
+
+pub mod soft_body;
+
+pub mod tissue;
+
+pub mod skin;
+
+pub mod biomechanics;
+
+pub mod cohesive;
+pub mod friction;
+pub mod plasticity;
+
+pub mod tissue_surface;
+
+pub mod hair;
+
+/// Airway volume-flow and compliant lung-unit mechanics in SI units.
+pub mod respiration;
+
+pub mod secondary_motion;
+
+/// Closed-loop blood-volume, chamber and valve mechanics in SI units.
+pub mod circulation;
+
+pub mod astrophysics_reaclib;
+
+/// Conservative plasma/interstitial/lymph fluid and protein exchange.
+pub mod lymph;
+
+pub mod astrophysics_opacity;
+
+pub mod astrophysics_atmosphere;
+
+mod tissue_contact;
+
+pub mod surface_film;
+
+mod surface_film_contact;
+
+pub mod suspension;

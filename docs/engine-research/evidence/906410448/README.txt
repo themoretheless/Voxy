@@ -1,0 +1,82 @@
+# Aztecs
+
+[![License](https://img.shields.io/badge/license-BSD3-blue.svg)](https://github.com/aztecs-hs/aztecs/blob/main/LICENSE)
+[![Package](https://img.shields.io/hackage/v/aztecs.svg)](https://hackage.haskell.org/package/aztecs)
+[![CI status](https://github.com/aztecs-hs/aztecs/actions/workflows/ci.yml/badge.svg)](https://github.com/aztecs-hs/aztecs/actions)
+
+A modular game engine and [ECS](https://en.wikipedia.org/wiki/Entity_component_system) for Haskell.
+An ECS is a modern approach to organizing your application state as a database,
+providing patterns for data-oriented design and parallel processing.
+
+[Examples](https://github.com/aztecs-hs/examples)
+
+## Features
+
+- Type-safe: Queries and systems use fully type-checked access with compile-time gurantees
+- High-performance: Components are stored by their unique sets in archetypes
+- Reactive: Component lifecycle hooks enable change-detection and event-based state management
+- Modular design: Aztecs can be extended for a variety of use cases
+
+```hs
+newtype Position = Position Int deriving (Show)
+
+instance (Monad m) => Component m Position
+
+newtype Velocity = Velocity Int deriving (Show)
+
+instance (Monad m) => Component m Velocity
+
+move :: (Monad m) => Query m Position
+move = queryMapWith go query
+  where
+    go (Velocity v) (Position p) = Position $ p + v
+
+app :: Access IO ()
+app = do
+  spawn_ $ bundle (Position 0) <> bundle (Velocity 1)
+  positions <- system $ runQuery move
+  liftIO $ print positions
+
+main :: IO ()
+main = runAccess_ app
+```
+
+## Packages
+
+- [Examples](https://github.com/aztecs-hs/examples)
+
+- [`aztecs`](https://github.com/aztecs-hs/aztecs)
+
+  The core ECS
+
+  [![Package](https://img.shields.io/hackage/v/aztecs.svg)](https://hackage.haskell.org/package/aztecs)
+
+- [`aztecs-gl`](https://github.com/aztecs-hs/aztecs-gl)
+
+  OpenGL rendering support
+
+  [![Package](https://img.shields.io/hackage/v/aztecs-gl.svg)](https://hackage.haskell.org/package/aztecs-gl)
+
+- [`aztecs-gl-text`](https://github.com/aztecs-hs/aztecs-gl-text)
+
+  OpenGL text rendering support
+
+  [![Package](https://img.shields.io/hackage/v/aztecs-gl-text.svg)](https://hackage.haskell.org/package/aztecs-gl-text)
+
+- [`aztecs-glfw`](https://github.com/aztecs-hs/aztecs-glfw)
+
+  GLFW window support
+
+  [![Package](https://img.shields.io/hackage/v/aztecs-glfw.svg)](https://hackage.haskell.org/package/aztecs-glfw)
+
+- [`aztecs-transform`](https://github.com/aztecs-hs/aztecs-transform)
+
+  Transform components
+
+  [![Package](https://img.shields.io/hackage/v/aztecs-transform.svg)](https://hackage.haskell.org/package/aztecs-transform)
+
+## Prior art
+
+Aztecs' approach to archetypical ECS is inspired by [Bevy](https://github.com/bevyengine/bevy/) and [Flecs](https://github.com/SanderMertens/flecs).
+
+A fantastic lower-level (but higher-performance) Haskell ECS [Apecs](https://github.com/jonascarpay/apecs)

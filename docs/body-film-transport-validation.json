@@ -1,0 +1,19 @@
+{
+  "checkedAtUtc": "2026-10-01T11:59:49.134057+00:00",
+  "command": "cargo test -p voxy_app --lib surface_film_preview::tests::body_ -- --ignored --nocapture",
+  "testsPassed": 2,
+  "triangles": 84680,
+  "normalizedL1FineVsReference": 0.0005873452990149253,
+  "maximumMovingMassError": 1.4473572690947267e-15,
+  "reports": [
+    "body-film-time-convergence.json",
+    "body-film-deformation-budget.json"
+  ],
+  "scope": "0.05 second static time refinement and 0.04 second prescribed moving morph; no full-body spatial convergence, physiological calibration, liquid inertia or two-way force proof",
+  "spatialStudyReport": "body-film-space-convergence.json",
+  "spatialStudyFineVsReference": 0.021288815226736393,
+  "fullBodySpatialAccuracyEstablished": false,
+  "gravityConormalCorrectionVerified": true,
+  "temporalStudyAfterGravityCorrectionPassed": true,
+  "movingStudyAfterGravityCorrectionPassed": true
+}

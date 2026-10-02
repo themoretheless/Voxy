@@ -1,0 +1,89 @@
+{
+  "repository": "CleanCut/rusty_engine",
+  "repository_id": 247404772,
+  "commit": "95ef835fc69ba6bcd96eb57acedb2145c7eb948c",
+  "source_url": "https://github.com/CleanCut/rusty_engine/tree/95ef835fc69ba6bcd96eb57acedb2145c7eb948c",
+  "readme_path": "README.md",
+  "readme_sha256": "475cb20f6b2ea3a2b89a013c812fb6285e8668c9b48487b0d896e2874b3d3191",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6eb8a9a56bf305d4da32dd3bd045f08a1fd95566"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d4faaf35fbc2cd434d1e6582e43388c15f013c38"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "dac7277294d3ae77e9c41f5329a28b956050cf18"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "e9f33d18f424d75415092506ef7032477cccfc16"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "81638b7acb4af3614bc19158bd149f9852561d85"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "623aee14d23b5fe6441a2e760d99d994fc5f4fcb"
+    },
+    {
+      "path": "RELEASE.md",
+      "type": "file",
+      "sha": "069d72dd9b4618cebbe4f0581468117b8b0da08f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "a0f8c428ad5413054726876978b699bd365db213"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c803982e1db44e3ed12a96ca6e23f25f8157a067"
+    },
+    {
+      "path": "license",
+      "type": "dir",
+      "sha": "2ea9b94fd3b4124b3f46ab7073fbd5809e57866f"
+    },
+    {
+      "path": "release.toml",
+      "type": "file",
+      "sha": "1982fc6d5d5498b941d1710b383ed7b27b87d01f"
+    },
+    {
+      "path": "scenarios",
+      "type": "dir",
+      "sha": "9ca4603e872f122c269b1f904514c9cffe1cff39"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "8f3c2d4d57dd9e7d4c6210e3b0681375501e3371"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "273a10493835e3db3afaa6a24f341c1e9791aff8"
+    },
+    {
+      "path": "tutorial",
+      "type": "dir",
+      "sha": "787eaee0b11081ee5a51e6c6f7dc3941786e2e26"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies simplified Rust learning engine; src/Cargo/examples, underlying runtime ownership needs deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

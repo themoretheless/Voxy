@@ -1,0 +1,224 @@
+{
+  "original": {
+    "ageSeconds": 0.09778618812561035,
+    "frame": 0,
+    "fresh": true,
+    "liveApplied": true,
+    "measurements": {
+      "anatomicalVolumeMeasurement": false,
+      "fluid": {
+        "calibratedPhysiology": false,
+        "initialMassKg": 5e-05,
+        "massKg": 4.999999999999997e-05,
+        "maximumCellThicknessM": 3.0676847440144855e-05,
+        "settings": {
+          "density": 1000.0,
+          "source_rate_m3_s": 0.0,
+          "surface_tension": 0.04,
+          "viscosity": 0.05,
+          "wetting": 1e-07
+        },
+        "sourceAddedMassKg": 0.0,
+        "volumeM3": 4.999999999999997e-08
+      },
+      "tissueCageOrder": [
+        "leftBreast",
+        "rightBreast",
+        "leftButtock",
+        "rightButtock"
+      ],
+      "tissueCageVolumesM3": [
+        0.006144537330452605,
+        0.0061445373304526,
+        0.006144537321793619,
+        0.006144537321793619
+      ]
+    },
+    "parameters": {
+      "arm_length": 1.0,
+      "breast_size": 1.0,
+      "buttock_size": 1.0,
+      "calf_width": 1.0,
+      "foot_size": 1.0,
+      "forearm_length": 1.0,
+      "forearm_width": 1.0,
+      "hand_size": 1.0,
+      "head_size": 1.0,
+      "height_cm": 164.0,
+      "hip_width": 1.0,
+      "left_breast_size": 1.0,
+      "left_buttock_size": 1.0,
+      "leg_length": 1.0,
+      "navel_depth_mm": 4.0,
+      "navel_height_mm": 20.0,
+      "navel_shape": "reference",
+      "navel_width_mm": 16.0,
+      "neck_length": 1.0,
+      "nipple_projection_mm": 3.0,
+      "nipple_radius_mm": 8.0,
+      "nipple_type": "reference",
+      "right_breast_size": 1.0,
+      "right_buttock_size": 1.0,
+      "shin_length": 1.0,
+      "shoulder_width": 1.0,
+      "thigh_length": 1.0,
+      "thigh_width": 1.0,
+      "torso_depth": 1.0,
+      "torso_length": 1.0,
+      "upper_arm_length": 1.0,
+      "upper_arm_width": 1.0,
+      "waist_width": 1.0,
+      "weight_kg": 60.0
+    },
+    "reason": "Fresh renderer presentation receipt; screenshot not captured",
+    "simulationTime": 0.011290375143289566
+  },
+  "densityChanged": {
+    "ageSeconds": 0.10189199447631836,
+    "frame": 3,
+    "fresh": true,
+    "liveApplied": true,
+    "measurements": {
+      "anatomicalVolumeMeasurement": false,
+      "fluid": {
+        "calibratedPhysiology": false,
+        "initialMassKg": 5e-05,
+        "massKg": 4.999999999999997e-05,
+        "maximumCellThicknessM": 1.5526963894554848e-05,
+        "settings": {
+          "density": 2000.0,
+          "source_rate_m3_s": 0.0,
+          "surface_tension": 0.04,
+          "viscosity": 0.2,
+          "wetting": 1e-07
+        },
+        "sourceAddedMassKg": 0.0,
+        "volumeM3": 2.4999999999999986e-08
+      },
+      "tissueCageOrder": [
+        "leftBreast",
+        "rightBreast",
+        "leftButtock",
+        "rightButtock"
+      ],
+      "tissueCageVolumesM3": [
+        0.00614481103218931,
+        0.006144811032189313,
+        0.006144811002760946,
+        0.006144811002760944
+      ]
+    },
+    "parameters": {
+      "arm_length": 1.0,
+      "breast_size": 1.0,
+      "buttock_size": 1.0,
+      "calf_width": 1.0,
+      "foot_size": 1.0,
+      "forearm_length": 1.0,
+      "forearm_width": 1.0,
+      "hand_size": 1.0,
+      "head_size": 1.0,
+      "height_cm": 164.0,
+      "hip_width": 1.0,
+      "left_breast_size": 1.0,
+      "left_buttock_size": 1.0,
+      "leg_length": 1.0,
+      "navel_depth_mm": 4.0,
+      "navel_height_mm": 20.0,
+      "navel_shape": "reference",
+      "navel_width_mm": 16.0,
+      "neck_length": 1.0,
+      "nipple_projection_mm": 3.0,
+      "nipple_radius_mm": 8.0,
+      "nipple_type": "reference",
+      "right_breast_size": 1.0,
+      "right_buttock_size": 1.0,
+      "shin_length": 1.0,
+      "shoulder_width": 1.0,
+      "thigh_length": 1.0,
+      "thigh_width": 1.0,
+      "torso_depth": 1.0,
+      "torso_length": 1.0,
+      "upper_arm_length": 1.0,
+      "upper_arm_width": 1.0,
+      "waist_width": 1.0,
+      "weight_kg": 60.0
+    },
+    "reason": "Fresh renderer presentation receipt; screenshot not captured",
+    "simulationTime": 0.1612903751432896
+  },
+  "sourceEnabled": {
+    "ageSeconds": 0.06688308715820312,
+    "frame": 6,
+    "fresh": true,
+    "liveApplied": true,
+    "measurements": {
+      "anatomicalVolumeMeasurement": false,
+      "fluid": {
+        "calibratedPhysiology": false,
+        "initialMassKg": 5e-05,
+        "massKg": 5.0399999999999985e-05,
+        "maximumCellThicknessM": 1.496991793215404e-05,
+        "settings": {
+          "density": 2000.0,
+          "source_rate_m3_s": 1e-09,
+          "surface_tension": 0.04,
+          "viscosity": 0.2,
+          "wetting": 1e-07
+        },
+        "sourceAddedMassKg": 4.000000000000002e-07,
+        "volumeM3": 2.5199999999999994e-08
+      },
+      "tissueCageOrder": [
+        "leftBreast",
+        "rightBreast",
+        "leftButtock",
+        "rightButtock"
+      ],
+      "tissueCageVolumesM3": [
+        0.006143333476984507,
+        0.0061433334769845065,
+        0.0061433335232374455,
+        0.00614333352323745
+      ]
+    },
+    "parameters": {
+      "arm_length": 1.0,
+      "breast_size": 1.0,
+      "buttock_size": 1.0,
+      "calf_width": 1.0,
+      "foot_size": 1.0,
+      "forearm_length": 1.0,
+      "forearm_width": 1.0,
+      "hand_size": 1.0,
+      "head_size": 1.0,
+      "height_cm": 164.0,
+      "hip_width": 1.0,
+      "left_breast_size": 1.0,
+      "left_buttock_size": 1.0,
+      "leg_length": 1.0,
+      "navel_depth_mm": 4.0,
+      "navel_height_mm": 20.0,
+      "navel_shape": "reference",
+      "navel_width_mm": 16.0,
+      "neck_length": 1.0,
+      "nipple_projection_mm": 3.0,
+      "nipple_radius_mm": 8.0,
+      "nipple_type": "reference",
+      "right_breast_size": 1.0,
+      "right_buttock_size": 1.0,
+      "shin_length": 1.0,
+      "shoulder_width": 1.0,
+      "thigh_length": 1.0,
+      "thigh_width": 1.0,
+      "torso_depth": 1.0,
+      "torso_length": 1.0,
+      "upper_arm_length": 1.0,
+      "upper_arm_width": 1.0,
+      "waist_width": 1.0,
+      "weight_kg": 60.0
+    },
+    "reason": "Fresh renderer presentation receipt; screenshot not captured",
+    "simulationTime": 0.31129037514328955
+  }
+}

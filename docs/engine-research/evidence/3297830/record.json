@@ -1,0 +1,159 @@
+{
+  "repository": "gemrb/gemrb",
+  "repository_id": 3297830,
+  "commit": "5552ade1d360fc487be0450eb2a4044fc969439b",
+  "source_url": "https://github.com/gemrb/gemrb/tree/5552ade1d360fc487be0450eb2a4044fc969439b",
+  "readme_path": "README.md",
+  "readme_sha256": "196a4f4f09b37cee42325df8e6f76241e572aa860666296973269cefc9e4ca14",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "6be5fcfdad1843522b7378c38aa8548a86738455"
+    },
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "af41ffc5b0c887b9091d36c65f02ff78335eb04a"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "0923edf8d22ec65e82bf76509f4d8d538eca0b6f"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7ec2382ffd813fb5d7b972db12235441748c0b99"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "3e6d269168d53ce0758f43f0d8fd1932197fbf42"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9b1715279ed9bfb64a7c4454f1d294c6cf09c9ef"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b4cf1edc1b76d46fc7e0e440f53e22b9047e76f9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e465d24e8bc6ec3c4ee3e03f107be602acdd76ea"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "a2640d61bb90b6c3d881365a2947c99369ac8289"
+    },
+    {
+      "path": ".sonarcloud.properties",
+      "type": "file",
+      "sha": "c3cfb77db67f766da6c8a92f3921d345fa7669fd"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "29cb8cc68fca3b529163ca8d2745a080fcec325e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e27ed2801a5ad66d4fa53fc28368cd96ee00bff0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c0fcd1142827c1659b8e6def5765ece65bb8020e"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "e065ffa05152375052eee223e8875b4397ff823d"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "a5977b9ab408676fcfc3244f30a17f850b1c5815"
+    },
+    {
+      "path": "INSTALL",
+      "type": "file",
+      "sha": "aadf141bde59a001893105d314073dd2fabcfdb1"
+    },
+    {
+      "path": "LICENSES",
+      "type": "dir",
+      "sha": "b004221962801838bd9a46c599f0b22342b4fdfa"
+    },
+    {
+      "path": "NEWS",
+      "type": "file",
+      "sha": "911f75efcc9ead4b2910047f83b622da77ed7dcb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "21257cc8eaea2101566850603aab88b816395d06"
+    },
+    {
+      "path": "REUSE.toml",
+      "type": "file",
+      "sha": "9a0a85f55c14429da3b0ea110e280d4bc8240394"
+    },
+    {
+      "path": "admin",
+      "type": "dir",
+      "sha": "a5aa941c6f4327a69524318c2cab930276ec6442"
+    },
+    {
+      "path": "artwork",
+      "type": "dir",
+      "sha": "bb13196e230ced7b248315ad0f52f4f6e067657b"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "5fccdf71bc146f1faac143e9c15086830e5d26e6"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "780e6b54169f363da33be30a716d4cec0e3b7ca3"
+    },
+    {
+      "path": "gemrb.6.in",
+      "type": "file",
+      "sha": "b0905913b6ab02a631a69c524f2e6078067b8130"
+    },
+    {
+      "path": "gemrb",
+      "type": "dir",
+      "sha": "1bf6db3f4a161082961e87635f9ba734828d2147"
+    },
+    {
+      "path": "platforms",
+      "type": "dir",
+      "sha": "874b8c6ddc135f20e234bdb7e1cae9560f387490"
+    },
+    {
+      "path": "testing",
+      "type": "dir",
+      "sha": "49797099ac161fb36950775cb5c25da6b0c7024d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "dcb1fe3084963f28d8d321fe104d22341ccd9493"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Infinity Engine reimplementation; owned gemrb runtime and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

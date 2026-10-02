@@ -1,0 +1,109 @@
+{
+  "repository": "dontpanic92/OpenPAL3",
+  "repository_id": 240800643,
+  "commit": "fde930b6b0301ed8dcd9bd6487fcd1f988938a54",
+  "source_url": "https://github.com/dontpanic92/OpenPAL3/tree/fde930b6b0301ed8dcd9bd6487fcd1f988938a54",
+  "readme_path": "README.md",
+  "readme_sha256": "c89e165d5491db78fd24871b35cb61ec2d0738703030229b461fbe8a74aa96b8",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "82218d5a8ef0b7c94a289bbb388aa4e6a4cca173"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a3648d5346917e11f5f718d3edfe38c78095b0c6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3279e4ce1039915ea9cd65497cab53b63f9925ea"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "384377e1b54b9434a6014eaee8f63e8ff4443be5"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4d7e1bbca379cd666a9efec2cf558c1479536bb3"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "043d06fecfb73d9eded94f68b410cca8952230d5"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "ff4712b4931daf154bcd221932346387507ecfc9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "LICENSE_RADIANCE",
+      "type": "file",
+      "sha": "2952f55d35ca017fee45f66d47751277cc76d83c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dee15c086f2de60ed51d0f85cdc8c97253c9d972"
+    },
+    {
+      "path": "crosscom",
+      "type": "dir",
+      "sha": "093036495443cd0b0160a8bbcb098232e5df51ea"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "70d8ef0f175c66b47865b8fb3177e86cf62584d2"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "55f135754ca3ce9d043cc2536344e8c9db450dd3"
+    },
+    {
+      "path": "pal5_grass_re.md",
+      "type": "file",
+      "sha": "5aeaf38165b81e95c9b7f2147853a27c95eed939"
+    },
+    {
+      "path": "radiance",
+      "type": "dir",
+      "sha": "be3899be8c7b8891a0382b89d725f34212107193"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "43d4840c79959bac434e1bfffceb36d158bc665a"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "2452714d715c337160624cd1168a46fb99095040"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "e52456a28d8ddac4aec141b1fa18412ce68efc8a"
+    },
+    {
+      "path": "yaobow",
+      "type": "dir",
+      "sha": "127df7a1c544e5c178e19c0c408458d3148248ff"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies independent Paladin runtime recreation; owned radiance/crosscom runtime and Cargo build. Portability claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

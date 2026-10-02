@@ -1,0 +1,104 @@
+{
+  "repository": "matt77hias/Hieroglyph-v3",
+  "repository_id": 94206546,
+  "commit": "d08fa5b3195f85d228d02c4b31b394bbb912770a",
+  "source_url": "https://github.com/matt77hias/Hieroglyph-v3/tree/d08fa5b3195f85d228d02c4b31b394bbb912770a",
+  "readme_path": "README.md",
+  "readme_sha256": "dea233758bb86d9e8b57d217ca57a01f7bebd070b8e791f70fb89b50c42c0d5a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9b6319ad8f34dd66d256b88ce16775ec15ac4d24"
+    },
+    {
+      "path": "Applications",
+      "type": "dir",
+      "sha": "18b4ec766cafdd27ab83152edb2d01cbe3e0b54a"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "49d2a6dc497e0b72e97f992b44c879fa25dccf84"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "e093bc5ebb93a9925918735f17abd9c01998e55c"
+    },
+    {
+      "path": "Extensions",
+      "type": "dir",
+      "sha": "346c4f9b044bcd0c96c97797ae202f92e0997774"
+    },
+    {
+      "path": "Hieroglyph3_Desktop.sln",
+      "type": "file",
+      "sha": "b3eab6ed8b3a45bcab4f89161ae554388458f299"
+    },
+    {
+      "path": "Hieroglyph3_Desktop_Kinect.sln",
+      "type": "file",
+      "sha": "ccbe3b9210a6e273b71b81470f3b1dd0f6d49339"
+    },
+    {
+      "path": "Hieroglyph3_Desktop_Kinect2.sln",
+      "type": "file",
+      "sha": "dac8f71ae765fe835d0dc51296b6c922c226e6e9"
+    },
+    {
+      "path": "Hieroglyph3_Desktop_MFC.sln",
+      "type": "file",
+      "sha": "b80e447ba79caeb8fa51a7f8cc5b4221c19dc488"
+    },
+    {
+      "path": "Hieroglyph3_Desktop_Rift.sln",
+      "type": "file",
+      "sha": "73148b58977f8dfab8cb42287372be783fa374d1"
+    },
+    {
+      "path": "Hieroglyph3_Desktop_SDK.sln",
+      "type": "file",
+      "sha": "9b63c794bf35c165775cf72b28b9a6e3781058fb"
+    },
+    {
+      "path": "Hieroglyph3_Desktop_WPF.sln",
+      "type": "file",
+      "sha": "92a6e2a15159b0eb9289afc08f621ff1317387dc"
+    },
+    {
+      "path": "Include",
+      "type": "dir",
+      "sha": "364aab54a362696543f9d46f2ea589a3ffab0440"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "84fe37e3e95de78a83e3b6ccfecbaae0186bd618"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b02edacfb2f5d34f854bbe1e11c2f620cb868c1c"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "3a46897044c1bb74d18543573eb678e3d14c475e"
+    },
+    {
+      "path": "sdk_build.bat",
+      "type": "file",
+      "sha": "9eb4415ec52af84f80d32d336386127dd8907aca"
+    },
+    {
+      "path": "sdk_clean.bat",
+      "type": "file",
+      "sha": "3ba4a008874b7432d307505236ff47bbf0b2a67f"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Direct3D11 library for demo programs and graphics algorithm prototyping with Lua and optional device input; broader game runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

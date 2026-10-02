@@ -1,0 +1,74 @@
+{
+  "repository": "mathew-odwyer/FinalEngine",
+  "repository_id": 227028216,
+  "commit": "1bbd0f2f0728fdbdb2457382e57df3442038a7c4",
+  "source_url": "https://github.com/mathew-odwyer/FinalEngine/tree/1bbd0f2f0728fdbdb2457382e57df3442038a7c4",
+  "readme_path": "README.md",
+  "readme_sha256": "b75c3faf6b7714b0aea8e5a520898f9b8aea9f07aae0451b349fa9498a0a617c",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2160fa55563fa74e46edb0648b48129569b84eff"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "90a512750b2dda384a7b80bcb157736743f4ad7f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "3fd3c57317d73b91c437f544cf02430abfafa026"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "6b4ef7b4ca7e55364db058027b066092e3a09c58"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "facccf38777e67e0bb1c43aee03365bb85c5f0b1"
+    },
+    {
+      "path": "FUNDING.yml",
+      "type": "file",
+      "sha": "f7e4c291bafb6eded89f04b837b168303e36d79c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "555e952f4a93f09ccb495f8905b366be80a001e3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f08481fb06b5710b8df1f0ad58a526947d199c61"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "186ac58b62726f412d4c3e3ad73c6af1f89b57f2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ae826ba5e0f2a3332f08550e705108bf901120ac"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "495f192ac0b4345e85da6a214c23295c9722d043"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# game engine with rendering abstraction, source and documentation; future graphics backends are not treated as implemented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

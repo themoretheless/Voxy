@@ -1,0 +1,194 @@
+{
+  "repository": "ZQuestClassic/ZQuestClassic",
+  "repository_id": 30955718,
+  "commit": "185fe97fb252f21d243a3f4cd21d13ab6c2f3f8a",
+  "source_url": "https://github.com/ZQuestClassic/ZQuestClassic/tree/185fe97fb252f21d243a3f4cd21d13ab6c2f3f8a",
+  "readme_path": "README.md",
+  "readme_sha256": "1080a24ee5009600d4eb57516fc8a276ee8401dafe9c8e9c376953b92b64f610",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "043465d50f16e80e059339870ce0399985425c8f"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "bce7b80af62c2b42c1fcddf2252d421618395876"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c302799b0bd051d698f255469ef1826634c60e5f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "95810fd979bd1019ece2144535cc4307107caddf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "905cf6c51febb40bf470d6efb715692ead7b58cf"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "b1afc075bbcab0a516b16383cc675e5c91ecb300"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "36426fcf5242cb4cdf5460cec7a1236e0cd96c88"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "bd1a9c738702fc9a9931914dc5cad3df5a9c7bd1"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "8b3daae9681b03a5484c9ef906364e23e603fb12"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b2f28faced8d22421ca6e52f486dcf587b7a7346"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6b6c61f49b7a466b94427909c9916a1de31ba681"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "66b9f27f0a2c7a3c042afc921b78c9a30c37a769"
+    },
+    {
+      "path": "api_server",
+      "type": "dir",
+      "sha": "10f06c418c5594f8407e6981e1d467d4e59dd458"
+    },
+    {
+      "path": "changelogs",
+      "type": "dir",
+      "sha": "c1a330a8caad038841842e9410fe8d257e00c432"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "8323817a7983bb504d0e6c0aa1ed457439f20358"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "bfdc9877d9acc165c0342befa33f2e8f769538cf"
+    },
+    {
+      "path": "docs-www",
+      "type": "dir",
+      "sha": "0347a72d74cfa2b9573acdb524801022d8f59a74"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d5e17aec32c380111523a36e67cefc28bf31dc0c"
+    },
+    {
+      "path": "icons.icns",
+      "type": "file",
+      "sha": "439e2b5c1167f6e7fae2cf443c617db8509e8123"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "2ea7e5461d2536e29e12aa939486f75a64728dab"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "c9f94ca7709e48ba04c3bd331c7c6ad327c75388"
+    },
+    {
+      "path": "infra",
+      "type": "dir",
+      "sha": "6b598c7dfcef5693ffc063d502ddc2593216bfc0"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "98886005749aa7099731da3c117c6d681755d3c8"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "16481106c9603cfb74a2c57b3dd3895bd18cadc0"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "529fcdc466c01011c0daf47af860c3c45c61c7a4"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "3d4eccd958659fbecb675e2e4ab727c17dda53c1"
+    },
+    {
+      "path": "resources-extra",
+      "type": "dir",
+      "sha": "b13864b765db42bbc7b6ac0e352091761cb0d117"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "b34bdd53c27de691970220da2b4565f8690b4fdd"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "c3f194505e667dafb34c4af9d574b229894312d0"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "db4abe7eb1ec4e940cb39e33e4f616d21ca1992d"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "1e09e8e5833890752168e438a2db793bb5d4bbbe"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "aa7ac3a71514423a7b7e53b1a2a0c9319e5bab6c"
+    },
+    {
+      "path": "timidity",
+      "type": "dir",
+      "sha": "1ce2200e899055a1fbf8535f3bb70d0e8e41c8ba"
+    },
+    {
+      "path": "vscode-extension",
+      "type": "dir",
+      "sha": "674d488929d89a4197970de320f9742682a2630c"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "e9afc74bd5e77a9213af544c17e64737db253c24"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies editable Zelda-style engine; owned runtime/editor source and CMake/docs build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

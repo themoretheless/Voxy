@@ -1,0 +1,137 @@
+{
+  "repository": "Unvanquished/Unvanquished",
+  "repository_id": 2490468,
+  "commit": "b11fa74849effcf00357665ae172cbc51c9d13fc",
+  "source_url": "https://github.com/Unvanquished/Unvanquished/tree/b11fa74849effcf00357665ae172cbc51c9d13fc",
+  "readme_path": "README.md",
+  "readme_sha256": "9b2ab59dc4f35a795835e8c4d78b07a02d25a24d82a8d3d3ddb55550d0f80f3c",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "3188822be33dcff5dc911bc9383844e0a198a25c"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "e24ef029d4fe5b3f1831732447182c4c196f1e90"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "590b21b1c5ce148db90ebf398d5e5b15f54ae093"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "efef5b58b54f0eac95e0dc9a4819ea2eb83a7264"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "951e6173a6be851a7d807c4c244dc0cf235719c2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "bf3993dc7f9f4b93c16ba5b3aea888cf868a82eb"
+    },
+    {
+      "path": ".urcheon",
+      "type": "dir",
+      "sha": "4ccf7306d5ce0e2a170638757a5428014492ee60"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "445082d98b2892ab3f995032734bdb2a501a6342"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "f63cf1bc42327482bb7dbfc345e612eca1bae2d8"
+    },
+    {
+      "path": "GPL.txt",
+      "type": "file",
+      "sha": "8f04a80137c123bff854625ed03dd440cc379725"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8be1197acf319740fb8dde0bfdb957e9681bc2f1"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "ea31e233ec58d5d1a5f89ccc994065f7394f376a"
+    },
+    {
+      "path": "daemon",
+      "type": "file",
+      "sha": "a985f1f94d8219449dd384a2de74690e2fa69587"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "883bfbf4610cf23b0cfe92d8ab733d3122048b38"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "58d9b1bec078e76461dc4a08a85d081efdf15702"
+    },
+    {
+      "path": "download-paks",
+      "type": "file",
+      "sha": "520776e82bb2a28d456b9000daade40f968a0221"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "8b6c607489ce077cf61a556870bd7c0773bd9e9e"
+    },
+    {
+      "path": "lua.cmake",
+      "type": "file",
+      "sha": "c3337c7151e5ffef07751cbdd2d73ce0b5b5ca33"
+    },
+    {
+      "path": "macosx",
+      "type": "dir",
+      "sha": "73d24ac24eb673fc5e2c190ca22b7411607dfb2c"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "a7c152b07e3ceb20fd038ae778cb2d278fc8b3f6"
+    },
+    {
+      "path": "rmlui.cmake",
+      "type": "file",
+      "sha": "0b7f337ea73d6bffb0350f38b1da88fab8342c9e"
+    },
+    {
+      "path": "src.cmake",
+      "type": "file",
+      "sha": "be4d53c7048735d458c3986394bc48b737ec22d9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "14743a7426ef9fd8472bf5cdd434ccb3442f8041"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c8aa6d575f982c3ab0ff177b28a93c1587a8d7d1"
+    },
+    {
+      "path": "update-version-number.py",
+      "type": "file",
+      "sha": "cab9a251b59c2368766f71fca96a7c5aaf2d7fa1"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

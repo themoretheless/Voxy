@@ -1,0 +1,174 @@
+{
+  "repository": "gameguild-gg/mobagen",
+  "repository_id": 35370123,
+  "commit": "b85e5ced5afffe8f1b267fd6d37b114dc502c235",
+  "source_url": "https://github.com/gameguild-gg/mobagen/tree/b85e5ced5afffe8f1b267fd6d37b114dc502c235",
+  "readme_path": "README.md",
+  "readme_sha256": "3269981f6bd91044548980a9ce0bcecb2cc5c5e7ad104b80fcd86c47ec7de7ce",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "77e86a86ca0587fdce660ca4ede8856a13b4aa58"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "3e83c04367380e874dc20f5b13f6cad2e620fc47"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "4365c88d959104e00de80adee9d4612ca81fbeb7"
+    },
+    {
+      "path": ".cmake-format",
+      "type": "file",
+      "sha": "703cc9dd75eeca524e8294cc5aee43669ca24e5d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3cf977dc830cf1123cfde3391e9c7272452a9ae1"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "23a2160acd380c8563a907cabae4cf5229cfa63d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5da08cfb678dd3b91f732799d2e9e4f4915284c4"
+    },
+    {
+      "path": ".releaserc.json",
+      "type": "file",
+      "sha": "f16eaff54fc34def4b13ee5a41dd929773e58716"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0de548539a7667970bfc51f9e841c6903b297175"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "38a8cf21a1f6732afcd5ab2a2cb2ebf4ba40ba74"
+    },
+    {
+      "path": "FolderStructure.md",
+      "type": "file",
+      "sha": "b3f78295ca8269e702bb0d1e27206d3911a5badf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8f71f43fee3f78649d238238cbde51e6d7055c82"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f4ac8d337f23e620e847e1a883bdc040d598a962"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "e7ac449ca0b64f884397e5e04bad515dd43f9299"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "977f11bc4d8c98e46930606ea2a78daf22264bd7"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d422f3fa3e788239f6bc2f3aafd22212df7c913a"
+    },
+    {
+      "path": "codecov.yaml",
+      "type": "file",
+      "sha": "c9e883458dea18620e0af150637678d816d3b70b"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "6d331bcaa24a8b3ad16fe317e3b3f5f1340912f9"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "a16d0ca7e8778889fa7a710cc5e6bc2557f2cb81"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3a24662860b9e83b8700815142f5db7fbf00fe10"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "adbfc7f487ec65026271444f73894e3d5e951b64"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "adbdd29af0626117faa700559cb6c23bc8ef700d"
+    },
+    {
+      "path": "htmls",
+      "type": "dir",
+      "sha": "e6b6a652ddda4b5a4b4d0bf4db43a1d8fc6b85eb"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "3dca95fcf6b48777c18f4f05c0e3e65aa46904ce"
+    },
+    {
+      "path": "opencode.json",
+      "type": "file",
+      "sha": "9e0bf6cedb03bd02f39df650f8fbe5d3eb33cdf8"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "e229450bf29e008c3982ecf65a0a8e2fb02949ac"
+    },
+    {
+      "path": "platforms",
+      "type": "dir",
+      "sha": "09ff6701251cc75906fde47d5f56fc0f352e0e53"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "4f648b20fce54e70693397a9c5c5689bd07a357e"
+    },
+    {
+      "path": "sdk",
+      "type": "dir",
+      "sha": "0115da679a5b7bb1efda9884af59a3b34b1e48bd"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0dfae682763f7076acac7fb994b4958ba57d6be9"
+    },
+    {
+      "path": "third_party.txt",
+      "type": "file",
+      "sha": "3f9c6376cf63c3793507a2a254d3687bf0092586"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "48ce49dd2f69c254a786a02352549307818cea25"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Educational module-based game engine with core/modules/platforms and SDK sources; not a course-resource list only.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-02",
+  "cpu": "Apple M4 Max",
+  "command": "cargo bench -p voxy_gameplay --bench angular_motion",
+  "profile": "optimized",
+  "warmup_rounds": 3,
+  "sample_rounds": 21,
+  "order": "alternates first legacy/batch each round",
+  "scene": "balanced, all active, 1k/10k/100k owners; runtime descriptors reconciled each batch tick",
+  "rows": [
+    {
+      "objects": "1000",
+      "path": "behavior",
+      "median_ns": "173083",
+      "sample20_ns": "175916",
+      "max_ns": "176042"
+    },
+    {
+      "objects": "1000",
+      "path": "batch",
+      "median_ns": "71667",
+      "sample20_ns": "73042",
+      "max_ns": "74250"
+    },
+    {
+      "objects": "10000",
+      "path": "behavior",
+      "median_ns": "2195542",
+      "sample20_ns": "2260667",
+      "max_ns": "2264208"
+    },
+    {
+      "objects": "10000",
+      "path": "batch",
+      "median_ns": "767083",
+      "sample20_ns": "817250",
+      "max_ns": "834417"
+    },
+    {
+      "objects": "100000",
+      "path": "behavior",
+      "median_ns": "28644875",
+      "sample20_ns": "29361083",
+      "max_ns": "29656083"
+    },
+    {
+      "objects": "100000",
+      "path": "batch",
+      "median_ns": "10082166",
+      "sample20_ns": "11155541",
+      "max_ns": "12200083"
+    }
+  ],
+  "production_sha256": "a749c5f74f4710d04549502e97410a29d142eb642c161179f5993989fd854584",
+  "binary_sha256": "e6947d4d02da52c92cf93ae35c39b38e3f15e24cfe2a9e8dbfb79cf700e5bc1a",
+  "validation": {
+    "gameplay_lib_passed": 21,
+    "editor_lib_passed": 57,
+    "editor_lib_ignored": 1
+  },
+  "limits": [
+    "single shared-host CPU-domain run; not total frame latency",
+    "21 timing samples do not establish production tails",
+    "100k domain benchmark does not enlarge editor 128-motion admission",
+    "dynamic component changes have dedicated tests; timing uses static descriptors"
+  ]
+}

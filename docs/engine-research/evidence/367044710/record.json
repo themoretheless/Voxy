@@ -1,0 +1,209 @@
+{
+  "repository": "HellRok/Taylor",
+  "repository_id": 367044710,
+  "commit": "11f1d1e4808543cc2c09b6d9ac531876d471dc6e",
+  "source_url": "https://github.com/HellRok/Taylor/tree/11f1d1e4808543cc2c09b6d9ac531876d471dc6e",
+  "readme_path": "README.md",
+  "readme_sha256": "772371d2ecee862894032316e35020fea0e2307a7e62c21b130789f4d8e83a2e",
+  "entries": [
+    {
+      "path": ".buildkite",
+      "type": "dir",
+      "sha": "0b10e77402d6d162f106ed7eb971b8ad29380c01"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "87d5fe7a80aab5d8fb2cee3f2234be174e8e906a"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "e649a8e7987e7d87a895b47069d6ebe676338239"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "e89a97b08b215b9013d574623821b05ca55af4b3"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "039d3e599badc512c62bf820d889c0388c10b6ea"
+    },
+    {
+      "path": ".git-hooks",
+      "type": "dir",
+      "sha": "2811800431eb1cb72c850c6859d32d18dfd19b84"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c759ccf776b135ce4dedd731ec0b9873f5291916"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cc048b98473eb8a99d43ea083caf44c97a038e41"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9dde2351dc024232209e130dd6c0836dfb4a1ce4"
+    },
+    {
+      "path": ".gitpod.Dockerfile",
+      "type": "file",
+      "sha": "04b6f21c661772b1a71249c9685977156675eb97"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "527c76d392d56fc68126766e15d6a1182e30cec6"
+    },
+    {
+      "path": ".solargraph.yml",
+      "type": "file",
+      "sha": "1c44f9074a5c4f882de1674dee3903cdf956c375"
+    },
+    {
+      "path": ".standard.yml",
+      "type": "file",
+      "sha": "f7eea72bc9fabec7dd0c665d2e48d3dfffce299a"
+    },
+    {
+      "path": ".tool-versions",
+      "type": "file",
+      "sha": "0f1e605ab840c3890f2555b117e2df69198796d3"
+    },
+    {
+      "path": ".yardopts",
+      "type": "file",
+      "sha": "e5226f51f575ed9210c82cd54b2652e5689ea787"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "a810f75c0f3d4234dd268bcacc9b7d9543d73f68"
+    },
+    {
+      "path": "Dockerfile.dev",
+      "type": "file",
+      "sha": "2e6dc4e06f9aa55f7af84137f563d8b558a7b495"
+    },
+    {
+      "path": "Dockerfile.export",
+      "type": "file",
+      "sha": "d4a8d56c0391d0e8ded0758c22bd31d251c55b99"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "65c1e2baca64b198a86880077b40499411c11ec8"
+    },
+    {
+      "path": "Gemfile.lock",
+      "type": "file",
+      "sha": "162f44bfdca7a65953c5de03d0ef2214509557b8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5c156766cada796e24cb34c8fa15225cf5a43ad2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "73c1037431c7f111687f179a9e2b07e3cf498d9f"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "3608d1f3a5c50f0875dbb61e1e0a686a23de6cd9"
+    },
+    {
+      "path": "Rakefile",
+      "type": "file",
+      "sha": "cdcfd8e79d602fe894f03ddb3573d119b41d5e4e"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "00b9321547aa4e527678341f4f798de8b24d256b"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "151e649cfa79c3a58e021210f73eac93d7e7faed"
+    },
+    {
+      "path": "cli-tool",
+      "type": "dir",
+      "sha": "03f901689ecaa67b4db3cd2b34b251dea8b279d8"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "c2591856208c61ff200dd984a5d3db2e9356c6d7"
+    },
+    {
+      "path": "dx",
+      "type": "dir",
+      "sha": "f41a801501a1499ffe29d54fbc3e4f0f7a8e92e4"
+    },
+    {
+      "path": "gem",
+      "type": "dir",
+      "sha": "e055375dd7ee369895e097ab991bdca11120d851"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "7e35b94466b547bb379fd346acc0f13bf7c71c69"
+    },
+    {
+      "path": "mrb_doc",
+      "type": "dir",
+      "sha": "24cd40cee1048b6aa63381498e0aaa30bfe80ca8"
+    },
+    {
+      "path": "rakelib",
+      "type": "dir",
+      "sha": "bd0e87ef87abb0d3a8d43de6fa3a4022fd1e49d0"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "84e5747ee1fa8b17bd3fb474ad7d0523eef23d81"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6295354d6d6fabceab70464ab0e6b55cd7ee7048"
+    },
+    {
+      "path": "taylor-config.json",
+      "type": "file",
+      "sha": "304a7b74a4c55d3dab6d871f51c673ecc831098c"
+    },
+    {
+      "path": "taylor-config.json.md",
+      "type": "file",
+      "sha": "bfd3b62f0f1dd8d3ab022c08ba6986af5f43f821"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "341df8c6f3a0c43c89c3c7f2f5e5388b03453c71"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "1310372dd1f5bfb57088aabc1ca070a6e11cc3d4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "mruby/raylib game engine with native src/include, CLI, export configuration and tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

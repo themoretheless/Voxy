@@ -1,0 +1,89 @@
+{
+  "repository": "OpenSAGE/OpenSAGE",
+  "repository_id": 94316145,
+  "commit": "588ac477367a0022adf29f20a084e8873014e6ce",
+  "source_url": "https://github.com/OpenSAGE/OpenSAGE/tree/588ac477367a0022adf29f20a084e8873014e6ce",
+  "readme_path": "README.md",
+  "readme_sha256": "ce4d816796354bda20436960fca6cb07947d2c6c798a9606b4064d4b348b8622",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "336bb43a7d56d3cdce0972dd630b5c0f14d4048c"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "3ba6300b977788c30fce3b5e4ed6814738589972"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f7f3599da8290addfe3d0f37f29750a1a63a7a16"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c6e937f3a5ff169bf0263b8ecbba12c5d667d5fb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dc0bfddf3431d9ec97d70d8be78fb802f85a74f0"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b03d2cd898fdefc3bce1a9d6cba17ab0af330cf7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d126c36a00f4d081b56a5afb01e51728202a4f41"
+    },
+    {
+      "path": "LICENSE-EA.md",
+      "type": "file",
+      "sha": "8c13acc1961a5c8c65769d392afc901c0366a4c6"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "c7974dbb76c9fe1c47ad5120923b2474f10bc8ca"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e9325b460f2c03a16539f693d321e6ed69fb306a"
+    },
+    {
+      "path": "art",
+      "type": "dir",
+      "sha": "b622403eda1eae1788debea71822024f4e761838"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "932f76798e747def9347557b55cae66d330f081c"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "b92d01b2949880762f388baa981904ad5db3176c"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "b52265de7e24ab9faca0ea1ee9adec17237f8e37"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6cb3d60f38512df7b331de1bd49c425f4ee4a39d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C# SAGE RTS engine recreation; src/lib/docs and .NET version manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

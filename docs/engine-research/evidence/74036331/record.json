@@ -1,0 +1,69 @@
+{
+  "repository": "Gigoteur/UnicornConsole",
+  "repository_id": 74036331,
+  "commit": "d1bc2aa03c418013809fa914241aa8c28de56d77",
+  "source_url": "https://github.com/Gigoteur/UnicornConsole/tree/d1bc2aa03c418013809fa914241aa8c28de56d77",
+  "readme_path": "README.md",
+  "readme_sha256": "9e1f677d9d29b60979aba7bf4ffc8a9e8f95dcdc6696b3cc2363e6c84162118b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ada8be928d8354117a641ab97802e5bb42740ae9"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "19b707d8138d6a7f32f7c1eccd71605a678cdb77"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "01b708354d03acfea034a1f0a7bf9f53cc8145d4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "83a4198b423e4a1bd25293df512f6776844a7bf6"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f4ed524d172a10e067ac100b112e9143a839e28b"
+    },
+    {
+      "path": "unicorn-console",
+      "type": "dir",
+      "sha": "bfffd850f6f90aeb6f8e615e8beba8d806a69d62"
+    },
+    {
+      "path": "unicorn-docs",
+      "type": "dir",
+      "sha": "a7043f6970b2c8d1adc3b2dc1cf94b6774218c76"
+    },
+    {
+      "path": "unicorn-editor",
+      "type": "dir",
+      "sha": "78f3c014442de35a8393bec09b0a80689ca7a861"
+    },
+    {
+      "path": "unicorn-examples",
+      "type": "dir",
+      "sha": "4541ff5b5a301d53a5c80cceb536b7c09c321ab1"
+    },
+    {
+      "path": "unicorn-rs",
+      "type": "dir",
+      "sha": "119607ede84bc768dd4eaabbda0eb3ef4d4430a0"
+    },
+    {
+      "path": "unicorn",
+      "type": "dir",
+      "sha": "c235d9c5c2caef347388ef560b4449d3eede4cb8"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies fantasy-console runtime; owned unicorn-rs/console/editor/examples source roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

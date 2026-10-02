@@ -1,0 +1,119 @@
+{
+  "repository": "o2-engine/o2",
+  "repository_id": 14099848,
+  "commit": "770121ed5b99a796e95e40994f236ccbb90d1716",
+  "source_url": "https://github.com/o2-engine/o2/tree/770121ed5b99a796e95e40994f236ccbb90d1716",
+  "readme_path": "README.md",
+  "readme_sha256": "3e3a6fd74a385557d532baf4d990c2ce9aed94d6672ade17147d67dc3354fb61",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a9e0afa90faef74e71222da42950309a4bd3f37a"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a712ce398fe297d355e320f0b5019ccd68060502"
+    },
+    {
+      "path": "AssetsBuildTool",
+      "type": "dir",
+      "sha": "8204b64424557740dd14339fc600e869169dfed0"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "37bd6a068e84e977f6d6fb4351388b4b1b963336"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "af21f194a1101754439a0ae9842f85cce2f7c192"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "122e11ca08a7e4a2c0087ce52bae64bd311fdfc0"
+    },
+    {
+      "path": "CodeTool",
+      "type": "dir",
+      "sha": "8112ee59428ca1108892858125bdccc29a23b284"
+    },
+    {
+      "path": "CompressToolsConfig.json",
+      "type": "file",
+      "sha": "7bc7f4e1ca59f7b447c95db278c83b8da7b6e75d"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "4c82e526960d59b1362389df2a2e98204d0e8835"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "8e9e70704ef2671ec0abd1e25deb744d80c38dc8"
+    },
+    {
+      "path": "FindOpenGLES2.cmake",
+      "type": "file",
+      "sha": "4a4075f8d345a83bc5c0ac3f4a37cd88597fa7ea"
+    },
+    {
+      "path": "Framework",
+      "type": "dir",
+      "sha": "301c215ebb67f53e21bd2fd772ba94f92dfc65d6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d79a17f18586accaa85329ceede73247850a2f6a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9fd8a19378982410522c52d6138033fbf2d14137"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "60376241c71dc976b49a2126409b9de01d262561"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "63406ed715cf53c8d164459d4f4da4a93df84cd0"
+    },
+    {
+      "path": "UI",
+      "type": "dir",
+      "sha": "110884c91dbf5fa34d544360097c7a6675401e9c"
+    },
+    {
+      "path": "editor.png",
+      "type": "file",
+      "sha": "a38866890b165d5958cc9fd85ece24f52c52eca0"
+    },
+    {
+      "path": "settings.vssettings",
+      "type": "file",
+      "sha": "061d87d88664575993efc14add9ce4db31f4cfde"
+    },
+    {
+      "path": "settings2.vssettings",
+      "type": "file",
+      "sha": "d2be55b4666e632f8dc2526513fbf163b0c0c5b1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify native 2D engine/editor/script runtime; Framework/Editor/asset tools and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

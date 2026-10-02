@@ -1,0 +1,74 @@
+{
+  "repository": "DeanEncoded/HannaCLIEngine",
+  "repository_id": 177043186,
+  "commit": "e67fb2881756e37c053bf457c974e76f0dd23d4d",
+  "source_url": "https://github.com/DeanEncoded/HannaCLIEngine/tree/e67fb2881756e37c053bf457c974e76f0dd23d4d",
+  "readme_path": "README.md",
+  "readme_sha256": "fbbe5c88c0424d24b9fe89c1eecd21e7bf5cc0aa0ec1a599cd27a7bb8752324d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "67e693590df00518275352ad214973ce775f2288"
+    },
+    {
+      "path": "Hanna-Studio",
+      "type": "dir",
+      "sha": "8d64abd5cdca556852069b8078fff2e3964b1a61"
+    },
+    {
+      "path": "HannaCLIEngine.sln",
+      "type": "file",
+      "sha": "9b20bb5aaf4930e1fdb2b6ff1ef7df8ede0983c6"
+    },
+    {
+      "path": "HannaCLIEngine",
+      "type": "dir",
+      "sha": "b45f5cc52472177d9cd5f31ef8642afd16c525f4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "61d18602bd64e167b6fe05ee64bcd79bc67157fb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90599c914d204deba9ccc46bb886d262f88195bd"
+    },
+    {
+      "path": "hanna_assets",
+      "type": "dir",
+      "sha": "49c918bb2a063553186b745a740f1326ded8e47c"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "908919c4d6752f76ba77301d057c719b808956d5"
+    },
+    {
+      "path": "preview-images",
+      "type": "dir",
+      "sha": "87e7f67f0dbd95ad029659675284ac7862f00960"
+    },
+    {
+      "path": "references",
+      "type": "dir",
+      "sha": "355fc43b7538e1e6e257da701a224b369eaf973d"
+    },
+    {
+      "path": "sample-projects",
+      "type": "dir",
+      "sha": "82dd5c76bf42d737a61ce0abcad49363f177afc8"
+    }
+  ],
+  "classification": "specialized_rules_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Command-line branching-story JSON interpreter with authoring studio, not graphical game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

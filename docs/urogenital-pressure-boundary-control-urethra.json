@@ -1,0 +1,53 @@
+[
+  {
+    "source": "/tmp/voxy-reference-lateral-24-protected-stress/urethra-barrier-stress.csv",
+    "sha256": "fae750682b38f6c2c05477e2a797140814794c270b5e37763d2a8fe05584b6cc",
+    "elements": 27648,
+    "reference_volume_m3": 2.479788641725711e-07,
+    "mean_von_mises_pa": 235.32407344297457,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 605.4921284911,
+      "0.99": 702.4272516616,
+      "0.999": 808.8473432331
+    },
+    "peak_von_mises_pa": 919.2773449984,
+    "peak_element": 2213,
+    "peak_region": 7,
+    "peak_reference_z_m": 0.00125,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-reference-closed-24-stress/urethra-barrier-stress.csv",
+    "sha256": "5d1ab7251461b28483d7e9574d47ae18ce37bf6c0c2f9ac776328d2eca47a3e8",
+    "elements": 27648,
+    "reference_volume_m3": 2.479788641725711e-07,
+    "mean_von_mises_pa": 242.01265154986356,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 605.2843452157,
+      "0.99": 705.1077183975,
+      "0.999": 806.1755752367
+    },
+    "peak_von_mises_pa": 920.8322976588,
+    "peak_element": 2213,
+    "peak_region": 7,
+    "peak_reference_z_m": 0.00125,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-balanced-caps-radial-3-stress/urethra-barrier-stress.csv",
+    "sha256": "8ba46beaa2d66fdb65de18578d025efd8c673e4b246fdf6a74208f49cf2e38fb",
+    "elements": 27648,
+    "reference_volume_m3": 2.479788641725711e-07,
+    "mean_von_mises_pa": 21.267249716435217,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 46.58182502479,
+      "0.99": 68.55534609104,
+      "0.999": 88.0265269041
+    },
+    "peak_von_mises_pa": 101.5618369883,
+    "peak_element": 27561,
+    "peak_region": 95,
+    "peak_reference_z_m": 0.01979166666667,
+    "peak_base_nodes": 0
+  }
+]

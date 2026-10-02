@@ -1,0 +1,157 @@
+{
+  "repository": "backtrace-labs/backtrace-unity",
+  "repository_id": 154177145,
+  "commit": "e4b6130ccb8fc363407bfc73573bdb90d224eaea",
+  "source_url": "https://github.com/backtrace-labs/backtrace-unity/tree/e4b6130ccb8fc363407bfc73573bdb90d224eaea",
+  "readme_path": "README.md",
+  "readme_sha256": "04e3294c102c875223a0a5b7eb7ad9972241f0df0d9fc8a307f2d73ee9ed698f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0bdb274ef79604180c3a848ff08470691c70ac20"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e09e65f2ec6c67d04bdcbb0e5f32409ea45ec73e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "716f9ab5086941a2d38c190481f00d65b0d034c6"
+    },
+    {
+      "path": ".gitignore.meta",
+      "type": "file",
+      "sha": "acd00b965a15ee5d119124c059b0c5f4f8e2c9ff"
+    },
+    {
+      "path": "Android.meta",
+      "type": "file",
+      "sha": "ccf220a80d4b6fc1140aa2e5696dd46767af15fa"
+    },
+    {
+      "path": "Android",
+      "type": "dir",
+      "sha": "b7c8b31aec8ff0790bbdccaa5d1c5fe70055b858"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1b49acec1a1370fcd48f515d63f1ec8faa4b9423"
+    },
+    {
+      "path": "CHANGELOG.md.meta",
+      "type": "file",
+      "sha": "b838c785832c40fef79edc527eb9a1c58927d46b"
+    },
+    {
+      "path": "Editor.meta",
+      "type": "file",
+      "sha": "73c8db647b8b608b090dc5d8ece4b22159994b2c"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "70e2d2a076c5803147bbfe4dcba30364b18b5043"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "65689e3555eb0980ba6f380c3393c7ca231ab8b3"
+    },
+    {
+      "path": "LICENSE.md.meta",
+      "type": "file",
+      "sha": "169acf4eafc4187fddc57cd391e5454efb25b73d"
+    },
+    {
+      "path": "Mac.meta",
+      "type": "file",
+      "sha": "e37431ea7f94ff9e4d6d27af8e69da98e3159464"
+    },
+    {
+      "path": "Mac",
+      "type": "dir",
+      "sha": "cc994ed9208a51c670019ed4908bc99821307021"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cf3c8fc56834d20651d7633ead3858c0838b3d9a"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "6d52729257acf366b6065c2948c5de2d947680fd"
+    },
+    {
+      "path": "README_ja_JP.md",
+      "type": "file",
+      "sha": "e9e7fd3125634e0b6739643296aad0a1956fc394"
+    },
+    {
+      "path": "README_ja_JP.md.meta",
+      "type": "file",
+      "sha": "d42a44657acfc54de9225db8032ca0c31ddbdd51"
+    },
+    {
+      "path": "Runtime.meta",
+      "type": "file",
+      "sha": "b4771ac6cb061604f8f9a39fd59dd19eb0645167"
+    },
+    {
+      "path": "Runtime",
+      "type": "dir",
+      "sha": "273eb5e9993cddc1cf039174c6aeaaa8302bf0f6"
+    },
+    {
+      "path": "Scripts~",
+      "type": "dir",
+      "sha": "a0afea25ccb6f498d9451fb2b6e68f47f47efa0b"
+    },
+    {
+      "path": "Tests.meta",
+      "type": "file",
+      "sha": "b7e381313a5024fb045373e058dc8a0df08f9660"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "2148c31bd438c0fb1cde679d5e2706fe56a9f141"
+    },
+    {
+      "path": "Windows.meta",
+      "type": "file",
+      "sha": "2a2479ecf43b615cb0dd08e3d33e635b9e72413d"
+    },
+    {
+      "path": "Windows",
+      "type": "dir",
+      "sha": "c926d273bf2832495c0f90f34bba1f62ae775da5"
+    },
+    {
+      "path": "iOS.meta",
+      "type": "file",
+      "sha": "2612b1f018fcbb3cabacd3e5b2c319805a4c6341"
+    },
+    {
+      "path": "iOS",
+      "type": "dir",
+      "sha": "065423c78005378a1c772060c689a9464dcb3116"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "b905a30800738e0ed0284a5c04115faab4710a29"
+    },
+    {
+      "path": "package.json.meta",
+      "type": "file",
+      "sha": "8c62108f1db448fa2c9948d086095ed8cd1d8be6"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,109 @@
+{
+  "repository": "dust-engine/dust",
+  "repository_id": 345777856,
+  "commit": "ede7221225ea9f0a89edfaa55ef7b9eb83a81dc2",
+  "source_url": "https://github.com/dust-engine/dust/tree/ede7221225ea9f0a89edfaa55ef7b9eb83a81dc2",
+  "readme_path": "README.md",
+  "readme_sha256": "6fa4fe84e7b0498047507cf24e6d286ceed34ba8908405ad04779cfd7b0ad711",
+  "entries": [
+    {
+      "path": ".bazelrc",
+      "type": "file",
+      "sha": "3af478c3df060cf212b8f629e1211fbc9fbe9ba0"
+    },
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "e3275811d981a99a7ef016545c25bf2c8a81bb39"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6e0a44b6539e4911336ab26a739d81d1c7094265"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5bde647cada89903fa3e81bd2c4775c2d4611790"
+    },
+    {
+      "path": "BUILD.bazel",
+      "type": "file",
+      "sha": "53a7332b3abc38ccc04091385fa158fd37089daa"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "ee78313a78a50a1afde9211d05b89fb797ffc408"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "89257a681b668ae2e0eca26bed3cd004b310d7bb"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f441eded199e5a1e12e4c114210c4048b46bf6a1"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "MODULE.bazel",
+      "type": "file",
+      "sha": "b1cb700b179545aef96e4a5e3bb18c5b70624158"
+    },
+    {
+      "path": "MODULE.bazel.lock",
+      "type": "file",
+      "sha": "9e0cdf75bec75443825b87d024cafb2dc1a98aa4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0e70166e87d5c3e71e0edaf027c7f59b0ca76eac"
+    },
+    {
+      "path": "apple",
+      "type": "dir",
+      "sha": "4079862d8234cdba5bb2ec47a6b8b3462b1dbc1f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "fe5ed7cc1c62610576b449284b088400dad15c60"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "2e9cf58c7656f35e1b8bf59dd4ed57ead5df4f3b"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "1e24a6ff6481ae20abb84f9ede3c2e1d0a650085"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "73616f8795ace3fb3069083a29ef869405713849"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "deb4b4a5b04bc42793bbbb09a88a28c394693005"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "ba4fbe850f21d556e979f14d3b32462e375ec952"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust voxel ray-tracing renderer built on Bevy ECS; README scope is rendering and voxel geometry rather than a complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

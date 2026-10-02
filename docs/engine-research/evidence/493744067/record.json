@@ -1,0 +1,74 @@
+{
+  "repository": "Hyrdaboo/DwarfGameEngine",
+  "repository_id": 493744067,
+  "commit": "f509727521ac1526a139490c55119307286377e9",
+  "source_url": "https://github.com/Hyrdaboo/DwarfGameEngine/tree/f509727521ac1526a139490c55119307286377e9",
+  "readme_path": "README.md",
+  "readme_sha256": "414323474499eafc5b4acce387666240950cc74ddca8b264cad207aa71b2e9bd",
+  "entries": [
+    {
+      "path": ".classpath",
+      "type": "file",
+      "sha": "5bec5b14585f241d3bd4848de46dbcfdb050104c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "abddecb501e0d40bb22de18191567e323c518211"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "f9d0225f4e41c12c323e12e55ea79b609cebef7c"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "db9b9e3460e9cee7db2577f0456ad947416925a2"
+    },
+    {
+      "path": ".settings",
+      "type": "dir",
+      "sha": "3ad76d62eb562464e90d74d5975cec146ccbec53"
+    },
+    {
+      "path": "DemoResources",
+      "type": "dir",
+      "sha": "da6276c09d93b8e437ac9b3e23f5fa6417954321"
+    },
+    {
+      "path": "DwarfGameEngine.iml",
+      "type": "file",
+      "sha": "d5c479b2d1f30c1967bb497cf32e99bfac79a399"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4201fb9f28d623e24f08e42d5b91ce1a453eddb0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d5a099d22b579d194cc8faece53f7aa059c2b938"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "0575454f880e12def8c5adfee15f00994c1a4170"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "26c53b8e206dc4f3afdc66876d6a43b246071843"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b9b16ef2b58fa611f349229f915b6f789a8fd947"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java software renderer with OBJ loading and scene management; README features primarily rasterization and graphics, broader gameplay runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

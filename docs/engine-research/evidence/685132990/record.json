@@ -1,0 +1,87 @@
+{
+  "repository": "skaarj1989/SupernovaEngine",
+  "repository_id": 685132990,
+  "commit": "ed04baf18e4f722b0f67c75d11c08f02b960a777",
+  "source_url": "https://github.com/skaarj1989/SupernovaEngine/tree/ed04baf18e4f722b0f67c75d11c08f02b960a777",
+  "readme_path": "README.md",
+  "readme_sha256": "eb5dc3e9375b5c5004e8aa292b27f2e87538fc25536a7a644a4837e46ab122ab",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "85272c9bb09474afb5ea2adc1b7144b7cfa4106e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3c4eecbe3ea5251bc68b94ab47c20beeb52a61da"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6bd7a84f827a4ec7b4222625c3430c83a0800ca1"
+    },
+    {
+      "path": "InstallAnnotations.bat",
+      "type": "file",
+      "sha": "bef16b22ec76bdfc8f535614b6073fa5151091ec"
+    },
+    {
+      "path": "InstallAnnotations.sh",
+      "type": "file",
+      "sha": "1167a85bb9001a1197f7bec1ba14ae21d2122d68"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3cf3ab493c2daf66e46207d71246fe51e4e206b4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7303a5c06fa107172a398bb6a3082493bfccc3da"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "457efea84a67e4606ef45c88d5a61d6ecd9b315e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a2c619e066b070095ecf2cfbf4df85efaf42a216"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "4fbadc3c61106eff109d1b75a19b205a0f5ad8f3"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "671ecf00a39cc83aa7ac8ea7727a93a3a7c1e717"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "16c169690a3dd49cab1253bf4b02c955b9613755"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "57c263363bed796e75d9d84862933d86066d8c8c"
+    },
+    {
+      "path": "projects",
+      "type": "dir",
+      "sha": "e70d8def71d6eafb50aca1f17dd0ca00dcdb669c"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "be1d25bc70225f9662b340716f38602cc1a077d6"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

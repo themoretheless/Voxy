@@ -1,0 +1,94 @@
+{
+  "repository": "NcStudios/NcEngine",
+  "repository_id": 194200737,
+  "commit": "0a59da45a91ae8473bf450eacedffbb6a22a16cb",
+  "source_url": "https://github.com/NcStudios/NcEngine/tree/0a59da45a91ae8473bf450eacedffbb6a22a16cb",
+  "readme_path": "readme.md",
+  "readme_sha256": "c3ebb46dc6c3e3682e4743dd976874b16ecfbd1d0c31a95e9162686dd3b6c1c2",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "09b7a7ca549f3bc1181a15a24b241e30f5586caa"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "bdf62ddc14a0e72dfa9472538e2542f1cfd6b022"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d93595ac1e5382c322306d055bb26c43b6700c8e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "91663d8039eebb21a101b140f10c6ae8773362be"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6f9969e19d76765acd642d69661e2e548ad4b875"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e709fb6b62a2d4ea2f5805778a7d16c59e74c4e5"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "472e8eed2751e89aeecc29a25173a36f13e936ed"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "10231de613d8be1829def6ee1eef90bf9eee0376"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "980122ec75d57e2e7b2b4674f865fc46101bf8ed"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "433a14efd264ad14ebc71a9f8c571e19db88eb77"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "1de009bc21770782a178f605a6d478fe3ccaeb84"
+    },
+    {
+      "path": "sample",
+      "type": "dir",
+      "sha": "fb7cf608542b6e266450f271072e63f2492f2ff7"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "ad7a59258a3d7be658752a652f6919d8db31bcd7"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "e4c70c6d99e902c271c671bcd4f4b335700c4cfa"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "560227465668d4f24d0186560a28721ef9f35408"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D game engine; source/include/script/test and CMake build. Platform completeness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

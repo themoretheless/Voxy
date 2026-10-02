@@ -1,0 +1,25 @@
+{
+  "change": "Film transport runs after physical integration on current deformed surface, using consumed solver time. No transport/source advancement during an unconsumed accumulator frame.",
+  "releaseTestCommand": "cargo test -p voxy_app --release --lib film_state_capture_tests --features glam/serde",
+  "passedTests": 4,
+  "physicalCases": [
+    "Secondary soft regions",
+    "Full implicit skin solver"
+  ],
+  "verifiedFrame": {
+    "inputAccumulationSeconds": [
+      0.001,
+      0.1
+    ],
+    "consumedSolverSeconds": 0.05,
+    "sourceRateM3S": 1e-09,
+    "sourceMassRelativeTolerance": 1e-12,
+    "referencedGeometryComparison": "exact against current posed mesh"
+  },
+  "sourceSha256": "dd41f89df119c73cb315481e95264da2e43e6e1a98928da948a3e352956b3d64",
+  "limitations": [
+    "One-step integration and backlog proof, not long-duration or step refinement proof.",
+    "If fluid fails after tissue success, this does not roll back the entire tissue solver.",
+    "No two-way fluid force, contact pressure or physiology calibration introduced."
+  ]
+}

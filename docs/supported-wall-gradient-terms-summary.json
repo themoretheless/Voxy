@@ -1,0 +1,38 @@
+[
+  {
+    "term": "without_surface_contact",
+    "step_m": 1e-08,
+    "max_split_n": 4.86773741100008e-06,
+    "max_gradient_error_n": 1.7154000008651193e-11
+  },
+  {
+    "term": "without_surface_contact",
+    "step_m": 1e-09,
+    "max_split_n": 4.867728939999486e-07,
+    "max_gradient_error_n": 2.0759999622144143e-12
+  },
+  {
+    "term": "without_surface_contact",
+    "step_m": 1e-10,
+    "max_split_n": 4.870439399983113e-08,
+    "max_gradient_error_n": 1.3860799986074868e-11
+  },
+  {
+    "term": "surface_contact",
+    "step_m": 1e-08,
+    "max_split_n": 0.0004794595005308001,
+    "max_gradient_error_n": 0.00023930697455570003
+  },
+  {
+    "term": "surface_contact",
+    "step_m": 1e-09,
+    "max_split_n": 0.00047848285053600005,
+    "max_gradient_error_n": 0.00023919913421669998
+  },
+  {
+    "term": "surface_contact",
+    "step_m": 1e-10,
+    "max_split_n": 0.0004783802375773,
+    "max_gradient_error_n": 0.0002391858967857001
+  }
+]

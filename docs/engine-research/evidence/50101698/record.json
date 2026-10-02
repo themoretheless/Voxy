@@ -1,0 +1,84 @@
+{
+  "repository": "jbaicoianu/janusweb",
+  "repository_id": 50101698,
+  "commit": "f0bb95f20bfb14c4fe60491ceeb9eb31816346c9",
+  "source_url": "https://github.com/jbaicoianu/janusweb/tree/f0bb95f20bfb14c4fe60491ceeb9eb31816346c9",
+  "readme_path": "README.md",
+  "readme_sha256": "e8f0634a2747344127c76b83209a1994af47fc5fa8143b5277e27c99acb16c7a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8410989b7bb31f95da0df696f35cac2053685536"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "e2aa634761b83dcd053d977baa2dac836163ce11"
+    },
+    {
+      "path": "CHANGELOG",
+      "type": "file",
+      "sha": "3d23b05a7b2235bc77793448e802950645f2a126"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "1cbe05bdcacfe40af09bc02565135063e6f844e7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2bd276a579cd0d626c47012d48151ed5d23795a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4f2c634ff0ba89a951b968db4e7757f8c51cd228"
+    },
+    {
+      "path": "css",
+      "type": "dir",
+      "sha": "eecf2a755f8ac831f98b15b2efaab8647c051a8b"
+    },
+    {
+      "path": "janusxr.com",
+      "type": "dir",
+      "sha": "43914829b4b4f50865350fd48a8b9bf20df6dce2"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "72a59e0938808c17ce804e31f83315c3eaf8ea81"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "85d81d7fa75bcab812f15965a3ee131bb535036c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c88c58fd26628a543d2934d63286a26c98645a3a"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8d45c0c414404c741b962b323577f5a7cf7b5bea"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "f4ad4cabddb43a93e03bf5582d549c276e34a54f"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "7c9913a478f87848db01d5b70d24ec38f63a71a5"
+    }
+  ],
+  "classification": "virtual_world_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies VR world browser/framework; owned web runtime and npm build, separate from complete game-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

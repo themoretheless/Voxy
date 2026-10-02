@@ -1,0 +1,22 @@
+{
+  "repository": "smix8/GodotAnimationRetargeting",
+  "repository_id": 360589154,
+  "commit": "19de05c7435e3c240fe18e4d1d6e079a19585d6f",
+  "source_url": "https://github.com/smix8/GodotAnimationRetargeting/tree/19de05c7435e3c240fe18e4d1d6e079a19585d6f",
+  "readme_path": "README.md",
+  "readme_sha256": "76eaf3be38145399a7c7467b9a1d89e5de226787bdfcf2e6e29b452778624bc7",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "433ac051ac3b905163c80563b26c2cb22eac32a8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0a478edbe1eeba4bb9d88604a083d94e128ba291"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

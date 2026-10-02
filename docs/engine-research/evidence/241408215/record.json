@@ -1,0 +1,54 @@
+{
+  "repository": "vmbatlle/super-mario-kart",
+  "repository_id": 241408215,
+  "commit": "d3ab83d2694f3fa3c244e79cfd31a8265b243c82",
+  "source_url": "https://github.com/vmbatlle/super-mario-kart/tree/d3ab83d2694f3fa3c244e79cfd31a8265b243c82",
+  "readme_path": "README.md",
+  "readme_sha256": "39ea44be72b28071756d91f1a49fdda7497316d426f56b921e23bd9946b1e490",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2463f0843548a896442869ad392edeb78527642f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "265ab50bb32a1286035bd73388a9f6ad6490ba2c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b9f280170238bec8e334f2f066e55c643d3969dd"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "817ad21bbd3767ac6a98eb33be35975deccb0348"
+    },
+    {
+      "path": "memoria.pdf",
+      "type": "file",
+      "sha": "2ea0fab477160274ff6e9783387059f1932535e6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "750e770889a955258e3e31a7d2ac75e98044665a"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "fce2154f42e96a7e65b02cb83ccc0f7c97516c00"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "SFML Super Mario Kart clone intended as educational game implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

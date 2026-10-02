@@ -1,0 +1,124 @@
+{
+  "repository": "etlegacy/etlegacy-deprecated",
+  "repository_id": 3570951,
+  "commit": "a67dc24fff0d9a7bb8e6f034264df1de0b48a967",
+  "source_url": "https://github.com/etlegacy/etlegacy-deprecated/tree/a67dc24fff0d9a7bb8e6f034264df1de0b48a967",
+  "readme_path": "README.md",
+  "readme_sha256": "6ec5d9130ee2031d04642f3a6643ad48ec258af76c822f363eb639be16acff3f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9b88bb242404b27f47576ac33a05c9174155b157"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5537b3a0096fc9d44822cd49b2c1843dc645e6b5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c82a762101a0f209ed3ffcf0f7d0e3784afe25e8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "5d094332dab673cc7cd110403d43a959e4714cd0"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "feca63909e7d2b2e38a81dac4ee57c9e35f4ce83"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "70bd447a5703a220f3e993b731c8b548bfd4b512"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1e70b7793d101d1f5bde8a37442157dd3d68e929"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "046572a65540e37d2ee5723cf7e21545ea5e9506"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "ee2f635aaadd7e8f7ecaff6d4b613d7396aa0263"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "82e1a940a74532f77b22ae1317434b1a4fd7256e"
+    },
+    {
+      "path": "Info.plist",
+      "type": "file",
+      "sha": "e6792a0700045bad0e03383082c69035fd2dfec4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e5026343946f90617272303892cdd94c4bb7d3c5"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "f366583d3a9092acefabd3d4940457a8902f2cc6"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "2920f12cd5708a75a25e90ab5e371bdc743a445e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a5b07c8780f5f1b86424dbc70c9d08fa05d7f505"
+    },
+    {
+      "path": "easybuild.bat",
+      "type": "file",
+      "sha": "74c57f09e33cac8730f586d716ff7fa3b25f7419"
+    },
+    {
+      "path": "easybuild.sh",
+      "type": "file",
+      "sha": "a92475458ebf5495549f13e7d0ec98254589ab53"
+    },
+    {
+      "path": "etmain",
+      "type": "dir",
+      "sha": "6741158b852c97507b7915581b348cd9aec62e8b"
+    },
+    {
+      "path": "libs",
+      "type": "file",
+      "sha": "ee9e1b7c3d4c70e206507bb402a32e677aacb14a"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "65ca502be7a7b0ebe06daf20d622b557fb6b1802"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "069027bc27dac616006dcbcd94ec830f0a85011d"
+    },
+    {
+      "path": "uncrustify.cfg",
+      "type": "file",
+      "sha": "841558638a628268e5b395e1b1c7e33a327835cb"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies historical engine/mod source without game data; native source/build and CMake present, superseded lineage retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

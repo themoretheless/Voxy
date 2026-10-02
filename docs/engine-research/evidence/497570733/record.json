@@ -1,0 +1,89 @@
+{
+  "repository": "avianphysics/avian",
+  "repository_id": 497570733,
+  "commit": "af7e99c5c1da386aaa2b4c330e2adc96fa7ca6eb",
+  "source_url": "https://github.com/avianphysics/avian/tree/af7e99c5c1da386aaa2b4c330e2adc96fa7ca6eb",
+  "readme_path": "README.md",
+  "readme_sha256": "630626cf74616b6fcb905802099f59ef3ebd467cecb4de78eb519648b5dccae8",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "a3c73f64bf0e65872d3412609db0bd6a35aa8e46"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "29931db7d981d0e0462fc71c26d395f81c4cb46e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8354f52fdc1f2a740892e88c32ae657d02682ee6"
+    },
+    {
+      "path": "AI_POLICY.md",
+      "type": "file",
+      "sha": "0f245e37ec47dccef8b7b10f0af0cf64b4a77190"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "de3ad6d50e9ab3abc1136395e3612a3ff6ae89a5"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "60c964925b4371120e3521f33462215926b8c208"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "2bb9ad240fa04c8cf706a4901c4807878e90c2dc"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "cc9ad60f7af5d2c8a7ff23b3fe56364af5b9cb62"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f861f648eb157331ada8d279269881c2a23ee8b7"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "af4a29aeabe89d8f5278190c2274815604b1f230"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "99a128bd64d43dfc100716590e9870ae38bd6d60"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "142b92c9b58268d195c880f5f0c2c2fe21565e1f"
+    },
+    {
+      "path": "migration-guides",
+      "type": "dir",
+      "sha": "d5bf7a8b34a4852d2b949f639858aab509512e8a"
+    },
+    {
+      "path": "publish.sh",
+      "type": "file",
+      "sha": "483a9d484c6d0cb9dd7328c5e697f61569599c65"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a113d446bd65e4273cf2ea5908c09c9401e77fb2"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy-hosted ECS physics engine/plugin, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

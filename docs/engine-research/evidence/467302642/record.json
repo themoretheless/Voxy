@@ -1,0 +1,59 @@
+{
+  "repository": "xiaopeng12138/WACVR",
+  "repository_id": 467302642,
+  "commit": "c98216990436bd8932161d19bc3659719fb0e401",
+  "source_url": "https://github.com/xiaopeng12138/WACVR/tree/c98216990436bd8932161d19bc3659719fb0e401",
+  "readme_path": "README.md",
+  "readme_sha256": "1eebd33420ae2649c9f95d0e376930d6dd26ff40dcdefff8d15785f0dec23fb6",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a4cb1fe9a0bae4bef00d94e38f9a6783a16b5b38"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5e94577f0f5395a6ce9df46a01d49e02dd348df9"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "1caad69e53317c737e5eb27b7504b7eb00f93da1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "07c6c898acc4449b81eae2463aebc55da171b525"
+    },
+    {
+      "path": "PreviewImages",
+      "type": "dir",
+      "sha": "95eb85618048bc6264834e9baa71acbc1c765050"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "5dc761b314621a719dd8c81c63cd26f84f07a5c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ae8466be00daf28e08bc602824a764d9c34c1e81"
+    },
+    {
+      "path": "mercuryio",
+      "type": "dir",
+      "sha": "e9bd2a8d72b4c36995fba0a28dd73152a8905a16"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify VR arcade application over Unity; Assets/ProjectSettings depend on existing engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

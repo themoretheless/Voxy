@@ -1,0 +1,28 @@
+[package]
+name = "voxy_gpu"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[features]
+default = []
+cuda = ["voxy_cuda/cuda"]
+
+[dependencies]
+physics = { path = "../physics" }
+physics_voxel = { path = "../physics_voxel" }
+voxy_cuda = { path = "../voxy_cuda" }
+voxy_core = { path = "../voxy_core" }
+voxy_world = { path = "../voxy_world" }
+voxy_render = { path = "../voxy_render" }
+wgpu = "30.0.1"
+pollster = "1.0.1"
+bytemuck = "1.25.2"
+
+[lints]
+workspace = true
+
+
+[dev-dependencies]
+voxy_runtime = { path = "../voxy_runtime" }

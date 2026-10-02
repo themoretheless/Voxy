@@ -1,0 +1,214 @@
+{
+  "repository": "luanti-org/luanti",
+  "repository_id": 2168780,
+  "commit": "6c4c384dad062a44a31a6d67a498731d4bf8207c",
+  "source_url": "https://github.com/luanti-org/luanti/tree/6c4c384dad062a44a31a6d67a498731d4bf8207c",
+  "readme_path": "README.md",
+  "readme_sha256": "c2b3cf8420dfbc076003fb0ec34ac5298466fec9046ede17cf9ae32b951708ab",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "db4529b8a118db3e0b2e8cf064222bc858df9fbb"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "bda43ebc07b3bf01f86cdd2ffce21fd75e84a270"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a2cc31dc107b4fb2a56161327943628285f0ba10"
+    },
+    {
+      "path": ".envrc",
+      "type": "file",
+      "sha": "1d953f4bd73593aba0a2af3db2d14178e2b8b9fe"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "41a6c097930d5e97ffad15c5965612909499ec34"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "dc94dff983abc8b24e7a1e794d3905cf10243d57"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a4931b80cce0de1fda678a6c0ab7d66db69efb25"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "d4c5525aa9e01a335ef98d7cba3cd41264174f10"
+    },
+    {
+      "path": ".luacheckrc",
+      "type": "file",
+      "sha": "20f67cc609c9409d1a114442ada61b3e05487705"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "c3467f4b6c3c6b8e69f963eff86989d56405936f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "c34dc5f17c4536d653dce88426b795c233181a34"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "146eae6970fde8d5e37d641f13e5b9f1a8138665"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "d1e6a40374601af963c1a7e684ffe2fd072e0f88"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "cd4ccafcca12043272ecdf33dfca16f843f39d80"
+    },
+    {
+      "path": "COPYING.LESSER",
+      "type": "file",
+      "sha": "99f47575b5b0f10bd1035444d143fb0a865d8d19"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "96f313174dce9123e0951a1c0671b48e7dbd9557"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "5ad892b702af65b3d1fd0573094aba09e49aa4e3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "07244389126bb1a6e4fe743b1e1599c5eebeb591"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "1688ebaba071abd5af2e1a6f3ad28f85398bc2aa"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "2340f568ba4b8de1da2a0fd5a49b3241bd00b4ff"
+    },
+    {
+      "path": "builtin",
+      "type": "dir",
+      "sha": "8f80bf419db970591c5f44f9e9b4409d36890188"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "8355a03f864eedfc31e7a5c006accddd65f1dd82"
+    },
+    {
+      "path": "clientmods",
+      "type": "dir",
+      "sha": "161c48875e0f5cb7b29f65b025cac23354f03823"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "63e612f6d1ebc8462bfd8bfc40c53df224067994"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "8f19924e17348f4a91a0a4da667b861f93377cdf"
+    },
+    {
+      "path": "fastlane",
+      "type": "dir",
+      "sha": "d1737e0122066becbab4c283c88c8324e306d6ef"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "8b9d02e614271f60acf228af8963aae26d696c5c"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "ea761e2a87c2c0434a908185b514420c6102fee6"
+    },
+    {
+      "path": "irr",
+      "type": "dir",
+      "sha": "7c1202a8ac5dd8e7dba0b95fb696d1a6efc96ecd"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "d928eabdf2e6b7a41e121bb90cf539ee09888860"
+    },
+    {
+      "path": "minetest.conf.example",
+      "type": "file",
+      "sha": "9e734218c374fa4d08ce072175c5201e2baa94df"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "a4b46d8c4cea64362adb443dd7f85fe6d5883f99"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "a31f946084eca9c243f11142a33cb3fcf78a1038"
+    },
+    {
+      "path": "po",
+      "type": "dir",
+      "sha": "53672071d728a655aa0c48a1ff841323629bd6f3"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "f22f0a83f4ed3795cca8683ae2833440b21f7490"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "668281c93b3c3cb53c8515a4857b0ad732e3d802"
+    },
+    {
+      "path": "textures",
+      "type": "dir",
+      "sha": "15256c1f9d256c67cb1c2ced39773c5ed5412617"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "49dedc918f1d18351d4d6b50ff4cea3acb3689c7"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "f394538edea0452039f66bbb866101d7ddf39588"
+    },
+    {
+      "path": "worlds",
+      "type": "dir",
+      "sha": "843a09b863e38777e320f0d2e3c2be54f819a2c2"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies voxel game engine; src, builtin, mods and client with CMake/platform builds.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

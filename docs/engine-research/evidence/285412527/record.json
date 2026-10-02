@@ -1,0 +1,109 @@
+{
+  "repository": "RavEngine/RavEngine",
+  "repository_id": 285412527,
+  "commit": "f5853bcb50a5b80f79fcfae515f06cc2c7a4db48",
+  "source_url": "https://github.com/RavEngine/RavEngine/tree/f5853bcb50a5b80f79fcfae515f06cc2c7a4db48",
+  "readme_path": "README.md",
+  "readme_sha256": "aa68ca0927d201c8a544e1336f88c1249dc2d0f1e4341fc501dd53cc139bb230",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3af9e23b2e53b5bbbc68122b3a81b3997168a266"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a970983263d72497763d27900ec8c8fb62a182fe"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "774e22d2f75fed18846a6238c7c01b529329545f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "23e5ce64e4062df301add193fe2a33dc0196741a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0dc4e9bfee54515e26e99616c733c164fd079eca"
+    },
+    {
+      "path": "README-android.md",
+      "type": "file",
+      "sha": "bc422da2a2880bbffcf93a9b0c1c51d70fe915f0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "33e001244a20832d967a180a06f60f94a3a62f6f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "11276146ee2da3257ade24848c84c0cd29f469ce"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "250d7ec6e549dbc140ff1d7fd09ef5f9b176ab2c"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "bd725ed174305ce0b5326223ec5401ae8d1626b0"
+    },
+    {
+      "path": "gen_license.py",
+      "type": "file",
+      "sha": "68d1e86a7907f395dd56f512e61fee456650ecf8"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "a8fc664329c19b1d29a7b9c47faa0e077afed4fd"
+    },
+    {
+      "path": "materials",
+      "type": "dir",
+      "sha": "b3775b80617a6a69181fd6c4e78e1c1d2b72196e"
+    },
+    {
+      "path": "meshes",
+      "type": "dir",
+      "sha": "32aef8cdddb5450857dcad21a0b6343e3c352acd"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "4207b849cc033b78859e565caa62342e528b68bf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3056a37b6920fe0bc9516194aebe5ed95a221c69"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "e13138da0d40895f6855e1d105e2f48491e3aecc"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "1a872dd076cb69f11bc39b472dbd9b13cb31ac9c"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "2ff8829cd225edb2dba2fc3bdda7f3b58fd7b021"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies C++ game framework; owned renderer/runtime with CMake/tests. Complete engine scope needs further review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

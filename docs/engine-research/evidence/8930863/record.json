@@ -1,0 +1,84 @@
+{
+  "repository": "mosra/magnum-integration",
+  "repository_id": 8930863,
+  "commit": "915a1af0a530ba9fe1730da69e253c9dee41701b",
+  "source_url": "https://github.com/mosra/magnum-integration/tree/915a1af0a530ba9fe1730da69e253c9dee41701b",
+  "readme_path": "README.md",
+  "readme_sha256": "3f39293e829f42b0218391032c66e2a5e486b053de87ec5e625b8f942869026d",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "4c86f3ff1618bb6c8e065a68506ab163fd013211"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6e0c247b7a4c90db5ce987c4df0c26485d34577b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0bd99777a93c17e1b4a19e8368ed5d993aea2793"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "cb463e12eb0c7aba33b079421474dd89828c6b57"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "38c7cadd69396a49fba29cfb420544a50a776e4c"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "6409b7e3f18ce08e7630ce335b1dc2e13ff74244"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "d1b9710eee31e7c0d4dbcd130a81d39fca7b75e1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6ef53994a7ec173e9b439cf7c76f7774573b2e40"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "74a5c2a0a3a227994ab853f0239193c90c5d9fe9"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "8ecc8c2457fa9d6b295482a3a3a73771fc7db799"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "5f40e20c8d281f2d0fe40ffcf83dcfece84f0e73"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "11a3a082c220d17034058eb12c6ee6c332443aec"
+    },
+    {
+      "path": "toolchains",
+      "type": "file",
+      "sha": "fa282e82b5ef058e361f64672e09be5bfc5e6e76"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Math and physics integrations for Magnum rather than another runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

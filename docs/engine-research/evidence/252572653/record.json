@@ -1,0 +1,94 @@
+{
+  "repository": "NateTheGreatt/bitECS",
+  "repository_id": 252572653,
+  "commit": "1585cdb4ae9a6586aef5e4d9d30d7039e22cd543",
+  "source_url": "https://github.com/NateTheGreatt/bitECS/tree/1585cdb4ae9a6586aef5e4d9d30d7039e22cd543",
+  "readme_path": "README.md",
+  "readme_sha256": "d54beeecd3e2dd0fe2e910c264f4e2273da91722b6ca5f8f29a1732f62c0acc3",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7ce6db0ae69d1b0ab205776c72f58de01e79098a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "db65a5b75d59f63ffa8cf60c476045367d356f72"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "6a0f5ea9cfaef5ade232c621a5d0475227d187d6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f7916c51ac1422ef1bbc4db610127ad7b9285fa1"
+    },
+    {
+      "path": "bun.lockb",
+      "type": "file",
+      "sha": "0eccd103185217e64c92c04664e39ea7b16eec00"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "5382a4c3d368646eec12458b2e46a07c10980bd1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "802e3f10df93002caa632ea08154b1443a63fcdc"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e60b704fef05328b67f0395fc0f28b8dc9f8fae8"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "01beeb2058accbe7b9e7a7a2bc244fec9ce087cd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2e2efbb4df613e43c40eaf814299ad5994ba8073"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "c2d676cf53beac8e91699f57c5f75b5ed0aed46c"
+    },
+    {
+      "path": "tsconfig.core.json",
+      "type": "file",
+      "sha": "5c1200e7bd92e24b3b7a46aceacfe914612a32be"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "16318545bd31bfb4e9b5bce367e2ee21ee9ad31b"
+    },
+    {
+      "path": "tsconfig.serialization.json",
+      "type": "file",
+      "sha": "d56eb6b5cbeb2864df4e906e3fee857772cc1758"
+    },
+    {
+      "path": "tsconfig.tests.json",
+      "type": "file",
+      "sha": "79bc0f3bc1d2652aab79f9fc822170c11441f4a5"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies data-oriented ECS library; src/build/tests implement subsystem rather than complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,49 @@
+{
+  "repository": "nhn/gpm.unity",
+  "repository_id": 319873829,
+  "commit": "7db950f91cb1ebcf65c19371b42b64aabba781fc",
+  "source_url": "https://github.com/nhn/gpm.unity/tree/7db950f91cb1ebcf65c19371b42b64aabba781fc",
+  "readme_path": "README.md",
+  "readme_sha256": "5a812d76687a7e15455d881b19fb6e6026948d26d33d681d7f24192d73c851ea",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "be82e58349ba798d0bc328e9aac4047292cc6acd"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "09ef08920004e8376efb3f74aa1d40c5e86ee6a3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "decad3e168c4eb54efdf23f0617ddeaf72a13456"
+    },
+    {
+      "path": "README.en.md",
+      "type": "file",
+      "sha": "94214400ec1c642cdb158d82ed709ae552f6b4de"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0148e52d9170189a8d6dd10d8b86e28dc910ff99"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f4a1b0f5bbc521b07b92ff7f1eebbeec123f6e5d"
+    },
+    {
+      "path": "release",
+      "type": "dir",
+      "sha": "f2c8987b231663cf035e13345173002772f6adab"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Unity service/integration toolkit; release/docs rather than separate game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

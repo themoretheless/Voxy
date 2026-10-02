@@ -1,0 +1,10 @@
+{
+  "true": {
+    "pairs": 572,
+    "energy_j": 2.9775294497994593e-07
+  },
+  "false": {
+    "pairs": 0,
+    "energy_j": 0
+  }
+}

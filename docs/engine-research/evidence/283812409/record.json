@@ -1,0 +1,199 @@
+{
+  "repository": "kpreid/all-is-cubes",
+  "repository_id": 283812409,
+  "commit": "050c6b4fbe0caafd243fa224de571724b558ca3b",
+  "source_url": "https://github.com/kpreid/all-is-cubes/tree/050c6b4fbe0caafd243fa224de571724b558ca3b",
+  "readme_path": "README.md",
+  "readme_sha256": "42ea021ad3f2664fa918dfb397067f9823b45ba75ce5881c7caed5ab77467630",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "8c6a14e36d400ed1c6ab51177aff223347efed91"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "32155307906fabc39ffc83b9d601159e8a02e20e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "07991d93a717b4089142052c6270e8bf40f05591"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "88df5171263a23efa2d2013d63f71dd771df9f82"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "19c4ef9044839595ae0ee6b90689383a766c3775"
+    },
+    {
+      "path": ".tm_properties",
+      "type": "file",
+      "sha": "4876d78d5c26d4aca959fe42bc10613672d1179f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ea060870431cd865ec8e544d9d67511b0638f71f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c51ba9ff5790d299702840782e62b55f8037429f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8e86221dc60b820f0522c738beb10707364c2185"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "d75553c38336a26cdb3d6675fb5fd5b42abac401"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "57bc9c49cb59878d5a6c64928dfa225da98edf4d"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "8de3036c3bfe2a750d204a42fb6f904ebf09c708"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9369b256d89b1d08b57a0e476e819558c158226c"
+    },
+    {
+      "path": "all-is-cubes-base",
+      "type": "dir",
+      "sha": "6c3c183448faa762273864ba766008297c883324"
+    },
+    {
+      "path": "all-is-cubes-content",
+      "type": "dir",
+      "sha": "f633b7e3cec69ba4ca1ac11de29013ca2b34408f"
+    },
+    {
+      "path": "all-is-cubes-desktop",
+      "type": "dir",
+      "sha": "76efd5ce344d32eed1f23dd3a6ca6245a21248d2"
+    },
+    {
+      "path": "all-is-cubes-gpu",
+      "type": "dir",
+      "sha": "be133e41061e5625820dfa808f665045874f7e3d"
+    },
+    {
+      "path": "all-is-cubes-mesh",
+      "type": "dir",
+      "sha": "04ea0cfd0087ee099b2e7bdcd359e4ea294c3d62"
+    },
+    {
+      "path": "all-is-cubes-port",
+      "type": "dir",
+      "sha": "8542f39871ef965df41d04767fa97601c91337a9"
+    },
+    {
+      "path": "all-is-cubes-render",
+      "type": "dir",
+      "sha": "fe3d01d86b9d8329f4bc731b3e0eb59668508248"
+    },
+    {
+      "path": "all-is-cubes-server",
+      "type": "dir",
+      "sha": "e90ceb5999741bb97ed2905760a3c8962497c94d"
+    },
+    {
+      "path": "all-is-cubes-ui",
+      "type": "dir",
+      "sha": "2e5c348529b3e639a389ba91c93d7bbe122a7317"
+    },
+    {
+      "path": "all-is-cubes-wasm",
+      "type": "dir",
+      "sha": "979d478d388ac5d0ea5a54d142afa999198cda8c"
+    },
+    {
+      "path": "all-is-cubes",
+      "type": "dir",
+      "sha": "9fadcc8311d00daa932e190b341527f29d3c20fe"
+    },
+    {
+      "path": "bacon.toml",
+      "type": "file",
+      "sha": "9b8c89b96e87e785874fcb58b026b25d0238ca86"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "d71679b4bb15f00e15aa77fa7b105c2dbaa4995c"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "57cb482eab36c267ea530271c4c537af331bdf12"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "a964059ca19c929ccc88df199f9e2c86e0314d00"
+    },
+    {
+      "path": "fuzz",
+      "type": "dir",
+      "sha": "4c777ebeab745d5c483d9959fa0c467cfde06ef9"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "a01bbcd6c99c4e8583599c32a09811ac34b30fec"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "5f85401109add1f6e5b5c32f40a39a3a6c7acb1b"
+    },
+    {
+      "path": "supply-chain",
+      "type": "dir",
+      "sha": "2f3af579a91b44a2d1b721ecfb2471736bb07b67"
+    },
+    {
+      "path": "test-aic",
+      "type": "dir",
+      "sha": "33be73c5461ffebbc3ae47501b86f0040f53ef8f"
+    },
+    {
+      "path": "test-mesh",
+      "type": "dir",
+      "sha": "ff38a433e57e4799e85572c6b061624e199d88b3"
+    },
+    {
+      "path": "test-renderers",
+      "type": "dir",
+      "sha": "869a3669d2693dbcc0127c4c516c3f511947fcb2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "d64f51cbebcee5690a920111f85dea46053b1666"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README says future voxel game engine; owned Cargo/runtime crates present, current complete-engine scope needs deeper inspection.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

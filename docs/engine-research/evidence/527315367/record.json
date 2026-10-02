@@ -1,0 +1,129 @@
+{
+  "repository": "NewKrok/nape-js",
+  "repository_id": 527315367,
+  "commit": "3c9220d95e6b31a4c0f39121017cb587ce685662",
+  "source_url": "https://github.com/NewKrok/nape-js/tree/3c9220d95e6b31a4c0f39121017cb587ce685662",
+  "readme_path": "README.md",
+  "readme_sha256": "9a42fef706fab32375e51b9188e1c2dd3ee3e31be5238da50a671691f6561b5a",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "e00d5240aa258dfb07dd8c38b098b9f4a995e95f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "71fc8d9292d14c1d8348cb812ddd83bf33fee624"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8be647211e8fc1a60681f6b4a64b2bde47253948"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "521a9f7c0773588848ad5fa8a074ceca964a6b41"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "0ff4955220fe33fec0006b80f1d679358bcb8ee0"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "bccee911b6b0dac9051d360fbc5e0a6303eed8fb"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "9edd91f13a2a06b1949dab3b48ea5dfa67972bd7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1ae3b78481f7e15feccb3ba19cc7f64c60a60cd9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "dd895eb5a6db556e2587b7abd16b44cc48df1a3b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "231623ec4ad090f76fc8ff08792e37988dcd2843"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "a6939e87f8d96e1ffba71ff074a46ee3cf9e302b"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "0378745be08487129d0a97937e431b59f06179bc"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "330057696e226595daee361230985d95a7539446"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4743d34fab261f6278f8aac04c9d6ac8dcdcdebc"
+    },
+    {
+      "path": "eslint.config.js",
+      "type": "file",
+      "sha": "a59d3b32718d3e6686da005abfb90c12277397ba"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "da345bba14777b957a59d50d57c4441d4e53ec77"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8a0d3e70133a48b2d0ff994cc23f5b90aa06bc9c"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "736915c1b587093baaefe2ceaa6066bfeebdd6a0"
+    },
+    {
+      "path": "railway.toml",
+      "type": "file",
+      "sha": "2a81ff968e64b784e0afd85555a5ec1e022e4761"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "005d361d8e31a739f24647efa263627df8842afb"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "d1e2f3f12cfe61cd63694707bda2fa630972d99d"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "828dee6b762b2337048044108258020287089b23"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "8826157213281744a0979822074edc69f5e1c059"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "TypeScript 2D physics runtime rewritten from Nape, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

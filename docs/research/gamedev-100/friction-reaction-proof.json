@@ -1,0 +1,25 @@
+{
+  "fixture": "elastic-pressure-with-zero-incoming-normal-speed",
+  "dt_s": 0.001,
+  "iterations": 64,
+  "friction_coefficient": 0.5,
+  "tangent_speed_without_friction_m_s": 0.952027601,
+  "tangent_speed_with_friction_m_s": 0.452003398,
+  "budget_regression": {
+    "dt_s": [
+      0.001,
+      0.002,
+      0.004
+    ],
+    "inverse_mass_kg_inverse": [
+      0.25,
+      1,
+      4
+    ],
+    "iterations": [
+      1,
+      32
+    ]
+  },
+  "scope": "Discrete XPBD contact, not calibrated tissue friction or CCD"
+}

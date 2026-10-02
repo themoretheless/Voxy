@@ -1,0 +1,82 @@
+{
+  "repository": "JJJJJJJustin/Nut",
+  "repository_id": 773598173,
+  "commit": "7bc0e2f31acf18e9e136b9b88ab3d6852a1fa1cc",
+  "source_url": "https://github.com/JJJJJJJustin/Nut/tree/7bc0e2f31acf18e9e136b9b88ab3d6852a1fa1cc",
+  "readme_path": "README.md",
+  "readme_sha256": "984a9f5d9df6bfa7d56b0876d3f2033ade8e32e6a6fa2994f999f3e4aa05500e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a8df64933a1b77fa27197371b307e5b9c121165c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "5e79cfded088eb3853b7fd0e093afe39532fe1c0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Nut-Editor",
+      "type": "dir",
+      "sha": "7d66c7f85e5ee7cdb780b310e7788f7676a3f1cc"
+    },
+    {
+      "path": "Nut.sln",
+      "type": "file",
+      "sha": "8205d49be1592f756449ba29441b3b16743d9dab"
+    },
+    {
+      "path": "Nut",
+      "type": "dir",
+      "sha": "f375112b733f4fa29939b996907fae6b11d062b3"
+    },
+    {
+      "path": "OSAlgorithms",
+      "type": "dir",
+      "sha": "51ad7d506eeabfd70111ab9a985b871eae03e977"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "883b7e684c7853d0f7544ea5f812e3d2a27147ca"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "0504dfae7da7cf787499afd1dd8319ffab5c1624"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "9c75a023fe10ed24170fb7943a80a381e6ed4f4c"
+    },
+    {
+      "path": "premakeDependencies.lua",
+      "type": "file",
+      "sha": "bd3363b1aa4f4deacf6005f9420d9821068743ea"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "aa93f53a305d15006049f0063dea0c3fd17b9184"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "ef39bfd3435d5f235ffc5bb5b29678bd5979a1d7"
+    },
+    {
+      "path": "z笔记(notebook)",
+      "type": "dir",
+      "sha": "1422978a7ac7a8dc90bf0fec620bf62c991d03ca"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

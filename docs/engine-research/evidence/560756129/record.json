@@ -1,0 +1,104 @@
+{
+  "repository": "paladin-t/gbb",
+  "repository_id": 560756129,
+  "commit": "7b266193af9f0b41e481935dc068f81d2a40fe69",
+  "source_url": "https://github.com/paladin-t/gbb/tree/7b266193af9f0b41e481935dc068f81d2a40fe69",
+  "readme_path": "README.md",
+  "readme_sha256": "0dae2ce67a4fb8230e8e48d048043b1911d86622353069fb6e0908ab49b93150",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "60d9ad2b040342a5ad2f160e11be578cf467ae72"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "507a4fccc0a28931dfd204bb6543b1147e89001a"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d80d29c82038c55167ad6207d6ead19a46e553f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5b3a3761cf932bac2aa9f519301ef42f25fa3e19"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "36671ca69ba1d2fd9a3263f75231fb81874a5782"
+    },
+    {
+      "path": "gbbasic.linux",
+      "type": "dir",
+      "sha": "a5d02c4ada2c168e72adda194fb2141204061eec"
+    },
+    {
+      "path": "gbbasic.sln",
+      "type": "file",
+      "sha": "b7f09d85b1ff2ca4e481469e38ec08f44845b027"
+    },
+    {
+      "path": "gbbasic.vcxproj",
+      "type": "file",
+      "sha": "ae7b256be145765f1b033aef21dc45834a539871"
+    },
+    {
+      "path": "gbbasic.vcxproj.filters",
+      "type": "file",
+      "sha": "2fb72cd8e3f21e35851b1b3fa72a6837df5046b8"
+    },
+    {
+      "path": "gbbasic.vcxproj.user",
+      "type": "file",
+      "sha": "a46e09fa01b6d84247a8a572b89bb68b66ef4095"
+    },
+    {
+      "path": "gbbasic.xcodeproj",
+      "type": "dir",
+      "sha": "e59bc0120661598265910713f5805c85d30a614c"
+    },
+    {
+      "path": "gbbasic",
+      "type": "dir",
+      "sha": "44d1697dd1623ca8bc426821c90cfe8f1b80e0d3"
+    },
+    {
+      "path": "gbbvm.cmd",
+      "type": "file",
+      "sha": "863c8ac8ccca751137e3e96cffbfac9e2efc7e5b"
+    },
+    {
+      "path": "gbbvm.sh",
+      "type": "file",
+      "sha": "4b63ad7c4e028df6ef566380b996ced30f20eb78"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "ecbe12b30db3d026fda0ecb337573692ff30b011"
+    },
+    {
+      "path": "output",
+      "type": "dir",
+      "sha": "20159102fcf5f21078a72207029482898742873b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a53a78f9e4ebc9284502da309e9401ced265aea0"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "2423a0579496523489d7a512f8ff3d171e52ba60"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Fantasy-console game builder includes runtime VM, BASIC compiler and editors as explicitly documented source components.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

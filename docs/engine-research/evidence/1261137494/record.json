@@ -1,0 +1,59 @@
+{
+  "repository": "IvanSobolev/Neo3dEngine",
+  "repository_id": 1261137494,
+  "commit": "4ba538a0c3606ea9b657318c76be86f74797f3e6",
+  "source_url": "https://github.com/IvanSobolev/Neo3dEngine/tree/4ba538a0c3606ea9b657318c76be86f74797f3e6",
+  "readme_path": "readme.md",
+  "readme_sha256": "4debde0cc1134f1b29ad9b7cfef75cbbabf62f25deb955b3914537a8bfd3106d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4df0e7e888670d5b166a721d9a18bb7f36befe4b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e994e4495af82a0b3c29de2637ee0b1989dac08c"
+    },
+    {
+      "path": "3dEngine.sln",
+      "type": "file",
+      "sha": "78ce2aff2e60870bcef4df619af2782a0d4f34e5"
+    },
+    {
+      "path": "3dEngine",
+      "type": "dir",
+      "sha": "d6b962630ab25b62bb3e6f8ad29c8e6bc47542c5"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f87bab983971620e3ff8234e56157f256aef4f9c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "SampleGame",
+      "type": "dir",
+      "sha": "5c2861de64510ad676e019a2347234864b8218e8"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "6f89f32ec8173957d418e2d7d64da40f894e2203"
+    },
+    {
+      "path": "readmeRU.md",
+      "type": "file",
+      "sha": "4492e55d4e10036eddf7982d26e53ae8929f7d96"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies console 3D engine with game elements; native .NET runtime/sample build. Full game-engine scope not yet established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

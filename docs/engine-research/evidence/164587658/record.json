@@ -1,0 +1,47 @@
+{
+  "repository": "gdquest-demos/godot-kickstarter-2019",
+  "repository_id": 164587658,
+  "commit": "aebd540cdaf0b0f73f3f64cdb9fd92fa86a4d8fc",
+  "source_url": "https://github.com/gdquest-demos/godot-kickstarter-2019/tree/aebd540cdaf0b0f73f3f64cdb9fd92fa86a4d8fc",
+  "readme_path": "README.md",
+  "readme_sha256": "158a7ca8c3c3822aa762a5c51e71c6feb79e0da1ea4c79176a21f141537285a0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3d7bb75476ba7e70bf9c2eb4578c4c217cc12ee7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5a22217a5d9ec53453b23fb0168e182df2b2c13b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "05c673f21cd9852766c1168cb29102dea5bba0fa"
+    },
+    {
+      "path": "gdquest-godot-theme",
+      "type": "dir",
+      "sha": "4b3dbc7fadcc3f3a8fdab27d80485e8d7cfa0489"
+    },
+    {
+      "path": "metroidvania-prototypes",
+      "type": "dir",
+      "sha": "d81ccf91cea583f9a81731b6f88d31266e96b26f"
+    },
+    {
+      "path": "platformer-2d-rework",
+      "type": "dir",
+      "sha": "f234486c0bd2e43eaaca401184d1be1cbe78cba9"
+    },
+    {
+      "path": "youtube-tutorial-demos",
+      "type": "dir",
+      "sha": "3b17652a2ec894d52e27e93b9dcc4fba3d04da25"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "PlatinumSrc/PlatinumSrc",
+  "repository_id": 428182901,
+  "commit": "f5cb79aa90ba11473acf7ef93cbce2069b3e4ba8",
+  "source_url": "https://github.com/PlatinumSrc/PlatinumSrc/tree/f5cb79aa90ba11473acf7ef93cbce2069b3e4ba8",
+  "readme_path": "README.md",
+  "readme_sha256": "c65fcb7a81b00172c49caaea24948494a73f0715eb98e52dee244e36410b979a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "36f803917a9f210cdff6997e0e28a9dd989515ca"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d4e2c9533b692f43e8adba9d9337cd2d72bc409e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "36b7cd93cdfbac762f5be4c6ce276df2ea6305c2"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "1a448aaab5f4ee004e68bf1613b5fc3d1ff70b73"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8066a63b99c4ddd5452fb4b7c2c77a4e004a388e"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "225903c785f8aae15ba1b89b9d26b4fee17728bf"
+    },
+    {
+      "path": "buildrelease.sh",
+      "type": "file",
+      "sha": "584c5bd0b2de682060c8892f60d5835793ffc39d"
+    },
+    {
+      "path": "cleanrelease.sh",
+      "type": "file",
+      "sha": "d41d17e1f48540e499d511bb54990c99005104a7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "de9ce32578182d1e037df26d916c8f977760fe80"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "46ef716351ce5339b31b680700c1e4f49d63c523"
+    },
+    {
+      "path": "mkrelease.sh",
+      "type": "file",
+      "sha": "3f81a1166e958b098f849d66f9e5a17695dcddc5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b67c187131e69b37fba5be472d37e7bfb2468045"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "bc821e1be29f66f966a7e5cfcdf902fdfee850b7"
+    },
+    {
+      "path": "updatever.sh",
+      "type": "file",
+      "sha": "1b2632147f2e24d902511aae31c969ed8799f0c2"
+    },
+    {
+      "path": "util.sh",
+      "type": "file",
+      "sha": "c134ba4d0dffb7d3c1dad4874a8bea329953f172"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Standalone retro 3D runtime loads separately downloaded games; sources/tools/build and game consumer documented, inspired by Quake/GoldSrc not established as fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

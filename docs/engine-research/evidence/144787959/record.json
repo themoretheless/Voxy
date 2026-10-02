@@ -1,0 +1,94 @@
+{
+  "repository": "opyapeus/purescript-emo8",
+  "repository_id": 144787959,
+  "commit": "2cc4589057444367d17a8c10cdecbcc0bbac2ebc",
+  "source_url": "https://github.com/opyapeus/purescript-emo8/tree/2cc4589057444367d17a8c10cdecbcc0bbac2ebc",
+  "readme_path": "README.md",
+  "readme_sha256": "0db78623309d5e0d2f5a3c93b5c252a534ccf0b3240c3f7531869f1dc20b6af6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c4d1c917a2b0340590f8013069849e2f465ab9f8"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ea4e5ab2689821c53747b0c9d7dfd95876348931"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "15fa24709f79cd60dc99ae9bf11417e5efe66e54"
+    },
+    {
+      "path": "README.ja.md",
+      "type": "file",
+      "sha": "b6d76293b8ef683ab01bc188427fa71a81421bdf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9ff583086604de84612cf09df162c14ebdcf91f3"
+    },
+    {
+      "path": "asset",
+      "type": "dir",
+      "sha": "d35b20240299c091f1ce393af57e8d3669409bff"
+    },
+    {
+      "path": "bower.json",
+      "type": "file",
+      "sha": "14e7dd4d476ca0aab7553d2aed687e0f041e4ee5"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "e2f520fd6f3cb5b2310b7f95993ba2fa8630911a"
+    },
+    {
+      "path": "emo8.jpg",
+      "type": "file",
+      "sha": "a2c3e2bb2383398cdfd2f934dea0650b594caa62"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "b90e5905b845b17b27da1e42e198bdbf0ef83db0"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6f7cd286002648a97fd2d8521ac5dcbe1566ef86"
+    },
+    {
+      "path": "packages.dhall",
+      "type": "file",
+      "sha": "0b5aba4556071eb8895af769c24660072ac7be45"
+    },
+    {
+      "path": "spago.dhall",
+      "type": "file",
+      "sha": "5b0c7ebd1564b74b9b212522f107ba3c358d0d03"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "60a08a60e7a6871634a68dbfbc69157fc81eb507"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "9164debf986da73dfce5a2134e9c8d1b7480595e"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "a1dc16cb0c848be634dc46b05af127b34009fb03"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "PureScript emoji game runtime with maps/audio/controller/frame-loop and resource editing, source/tests/examples; restricted single-codepoint emoji rendering.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

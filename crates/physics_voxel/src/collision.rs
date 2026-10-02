@@ -70,6 +70,20 @@ pub fn sweep_aabb(
     displacement: [f64; 3],
     config: SweepConfig,
 ) -> Result<SweepResult, SweepError> {
+    sweep_aabb_with_bounds(view, registry, aabb, displacement, config, |_, _| {
+        Ok(([0.; 3], [1.; 3]))
+    })
+}
+
+/// Validates a sweep and returns inclusive voxel bounds relative to its integer anchor.
+/// GPU broadphase callers use the same exclusive-maximum and budget rules as CPU sweep.
+/// # Errors
+/// Returns malformed input, candidate budget or world-coordinate overflow errors.
+pub fn sweep_candidate_bounds(
+    aabb: AnchoredAabb,
+    displacement: [f64; 3],
+    config: SweepConfig,
+) -> Result<([i64; 3], [i64; 3]), SweepError> {
     validate(aabb, displacement, config)?;
     let broad_min = std::array::from_fn(|axis| aabb.min[axis] + displacement[axis].min(0.0));
     let broad_max = std::array::from_fn(|axis| aabb.max[axis] + displacement[axis].max(0.0));
@@ -84,6 +98,32 @@ pub fn sweep_aabb(
             limit: config.max_candidate_voxels,
         });
     }
+
+    for axis in 0..3 {
+        let anchor = [aabb.anchor.x, aabb.anchor.y, aabb.anchor.z][axis];
+        anchor
+            .checked_add(min_voxel[axis])
+            .ok_or(SweepError::CoordinateOverflow)?;
+        anchor
+            .checked_add(max_voxel[axis])
+            .ok_or(SweepError::CoordinateOverflow)?;
+    }
+    Ok((min_voxel, max_voxel))
+}
+
+/// Sweeps against caller-provided local block bounds within the unit voxel.
+/// Missing voxels retain conservative full-cube bounds.
+/// # Errors
+/// Normal sweep errors plus invalid/stale geometry supplied by the callback.
+pub fn sweep_aabb_with_bounds(
+    view: &impl VoxelView,
+    registry: &BlockRegistry,
+    aabb: AnchoredAabb,
+    displacement: [f64; 3],
+    config: SweepConfig,
+    mut bounds: impl FnMut(VoxelPos, BlockStateId) -> Result<([f64; 3], [f64; 3]), SweepError>,
+) -> Result<SweepResult, SweepError> {
+    let (min_voxel, max_voxel) = sweep_candidate_bounds(aabb, displacement, config)?;
 
     let mut best: Option<Contact> = None;
     for x in min_voxel[0]..=max_voxel[0] {
@@ -122,7 +162,33 @@ pub fn sweep_aabb(
                         cause,
                     },
                 };
-                if let Some((fraction, normal)) = contact(aabb, displacement, [x, y, z]) {
+                let (local_min, local_max) = match obstacle {
+                    SweepObstacle::Block { pos, block } => bounds(pos, block)?,
+                    _ => ([0.; 3], [1.; 3]),
+                };
+                if (0..3).any(|i| {
+                    !local_min[i].is_finite()
+                        || !local_max[i].is_finite()
+                        || local_min[i] < 0.
+                        || local_max[i] > 1.
+                        || local_min[i] >= local_max[i]
+                }) {
+                    return Err(SweepError::InvalidCollisionBounds);
+                }
+                #[allow(clippy::cast_precision_loss)]
+                let base = [x as f64, y as f64, z as f64];
+                let obstacle_min = std::array::from_fn(|i| base[i] + local_min[i]);
+                let obstacle_max = std::array::from_fn(|i| base[i] + local_max[i]);
+                if let Some((fraction, normal)) = physics::sweep_box(
+                    physics::AnchoredAabb {
+                        anchor: physics::Origin::default(),
+                        min: aabb.min,
+                        max: aabb.max,
+                    },
+                    displacement,
+                    obstacle_min,
+                    obstacle_max,
+                ) {
                     let candidate = Contact {
                         fraction,
                         normal,
@@ -172,21 +238,6 @@ fn obstacle_position(obstacle: SweepObstacle) -> VoxelPos {
         SweepObstacle::Block { pos, .. } => pos,
         SweepObstacle::Unloaded { at, .. } | SweepObstacle::Unavailable { at, .. } => at,
     }
-}
-
-fn contact(aabb: AnchoredAabb, displacement: [f64; 3], voxel: [i64; 3]) -> Option<(f64, [i8; 3])> {
-    #[allow(clippy::cast_precision_loss)]
-    let min = voxel.map(|value| value as f64);
-    physics::sweep_box(
-        physics::AnchoredAabb {
-            anchor: physics::Origin::default(),
-            min: aabb.min,
-            max: aabb.max,
-        },
-        displacement,
-        min,
-        min.map(|value| value + 1.0),
-    )
 }
 
 fn candidate_count(min: [i64; 3], max: [i64; 3]) -> Result<usize, SweepError> {
@@ -249,6 +300,8 @@ fn validate(
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SweepError {
+    InvalidCollisionBounds,
+    StaleWearGeometry,
     InvalidAabb,
     InvalidDisplacement,
     InvalidCandidateBudget,

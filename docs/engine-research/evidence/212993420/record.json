@@ -1,0 +1,47 @@
+{
+  "repository": "Ruddle/oxidator",
+  "repository_id": 212993420,
+  "commit": "ba77b3419a1c285fb6c63b2590bf138ce3ab661d",
+  "source_url": "https://github.com/Ruddle/oxidator/tree/ba77b3419a1c285fb6c63b2590bf138ce3ab661d",
+  "readme_path": "README.md",
+  "readme_sha256": "b17ceffcab5d5ba56423e01c3f939dd24f4110a5720f04b71bada892451a27a9",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f0ca41b26bf14b839c0ab4c18cdff14ba636062e"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "2d99d958b70a8d579cdeca892a90a4f7f82fd23d"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "60f9f101a20e3a87da5ae2128d2e25f58f76d0a9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "248ae5a6c9b19aaa41886bdfd19a4bed3a7a2c1c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "11eb834582afec303958bd0912f87dd8563a4230"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "6bc54c292a2686ae6cce505f47fb5e49a779571f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "26d49b8a98862c1ec230e22f955a51365b2b8e8f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

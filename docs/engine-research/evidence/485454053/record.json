@@ -1,0 +1,79 @@
+{
+  "repository": "Dreamtowards/Ethertia",
+  "repository_id": 485454053,
+  "commit": "4f20eced707d8c2e958adcc7df0e160d4d5dcf95",
+  "source_url": "https://github.com/Dreamtowards/Ethertia/tree/4f20eced707d8c2e958adcc7df0e160d4d5dcf95",
+  "readme_path": "README.md",
+  "readme_sha256": "a1f430704e9df2c7f9074e8d0cc78ca0a4d259ff0d292c725dd4e452adb23f14",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "724e7cfc04796d0ab87e91dcfa233158fbc2258d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "785952fef0ac4e73cbeb63ad15716ac3ccac6684"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "341c80eff2c70907377bd2c64cd8d6a273260765"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "082a2bd45b3ff930b4cd8496f3ee2f9b46f1bcf2"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "23d8f237b349526bc60c1afce89dd4d111380055"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "5db076b213b2ceb2610308f698d206c0e858eca5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4004535dc3e6fa0b453f05992a8e6e382553ac7d"
+    },
+    {
+      "path": "build_darwin.command",
+      "type": "file",
+      "sha": "025b3b4b60e6c53414e25c5bd9379f5185d62087"
+    },
+    {
+      "path": "build_windows.bat",
+      "type": "file",
+      "sha": "32a6156a81d9bedc5e91b7c1432680521e8fdbbb"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "4c82b926e706e57146b32cd53df27669980e9d8f"
+    },
+    {
+      "path": "run",
+      "type": "dir",
+      "sha": "824b7663953c8a86992870f40197d8fb0a90bc9a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e4c889e3d141819856b12231f19d6ad1ec310c72"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify voxel survival game; src/build exists but reusable independent engine scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

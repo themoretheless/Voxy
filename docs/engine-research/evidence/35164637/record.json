@@ -1,0 +1,184 @@
+{
+  "repository": "trillek-team/tec",
+  "repository_id": 35164637,
+  "commit": "fef5f94a1537524946259c256d2002e303792dad",
+  "source_url": "https://github.com/trillek-team/tec/tree/fef5f94a1537524946259c256d2002e303792dad",
+  "readme_path": "README.md",
+  "readme_sha256": "5a0a3d9f8e36aef289525d40d4257d0fdd472eaf9c22a0163ef978f134c29d57",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "09c5d8c49dee703d0caed7b8d4ea004322dd3558"
+    },
+    {
+      "path": ".clang-format-ignore",
+      "type": "file",
+      "sha": "abd56428539a3e4ad14e6417a41206c447c2ef22"
+    },
+    {
+      "path": ".cmake-format.yaml",
+      "type": "file",
+      "sha": "bd0f8ef909241a9a5b57340cc954e4d4f4d23ef4"
+    },
+    {
+      "path": ".doxybook",
+      "type": "dir",
+      "sha": "ec8d549e3a855d9c754df8d8c5ca6965e3ef6c80"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "0a4b91c8d7ada65449394724f90117edd9b8fc5c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0542e46ccf34ee72bd46a14c073ca0fdc2e0825c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b33f66babd927547347080a517804204af6ff4aa"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b95b288dd583d2711c7978b122704ce9b2f1aa14"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a186b71cc2a82ef28aefef76bc136244a3295643"
+    },
+    {
+      "path": ".readthedocs.yml",
+      "type": "file",
+      "sha": "1addf2b98bf4b79a4689e75606fe107895a562ff"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "9a229cf4120435740372c21b00a2ad4043a610c9"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "aac53e0cad1921674a13ec1765ce767afff022e0"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "0da48343528847771f22fb158a96f8b65a3e63d6"
+    },
+    {
+      "path": "AUTHORS.txt",
+      "type": "file",
+      "sha": "f5df9bc20729df0a5dea6bc958a786c47718442f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6279bbea4861836fcd6d6457d4d16555c86303e7"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "098e3cd79f2ac902d5eb2e10682089b32015743a"
+    },
+    {
+      "path": "CODE_STYLE_GUIDE.md",
+      "type": "file",
+      "sha": "c9ded43c8740e209ddabe89cec313c1a0a316ee3"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d37c7bb2fddf4b70034922610e87bd75ac2948a7"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "3660e5437ec52a1dfb936ee11464a439feb86714"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0a041280bd00a9d068f503b8ee7ce35214bd24a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "00b050c7dd4fa15d0fba45873b76d779e9af9442"
+    },
+    {
+      "path": "assets",
+      "type": "file",
+      "sha": "175983d77001bf838a987fe650cc02980fc4acf5"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "9d3dbd2727376d64a70afc675c817ef3463f8bad"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "4356c2c43ee8114528b86ee54399276b6d29a803"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "5f33412eb7ecd49fcab8eb3a3e46581c40f4cd66"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "c07fa8e5d30da9c04006e2f73a0c267d2e47b6ad"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6c5c3bcdcd64ed1cb7fd11c642b32977ea2a263e"
+    },
+    {
+      "path": "docs_targets",
+      "type": "dir",
+      "sha": "77e574f5eb37f9f1653d85a94196eaae23f09075"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "91d1a700fdc109da1640fef3686397e87a9775d5"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "82262869ee3d2005099792a9161250c02759713c"
+    },
+    {
+      "path": "opencppcovconfig.txt",
+      "type": "file",
+      "sha": "b36c4d796cc73185de9bff201e106a208e72f131"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "954b45095ae36062c6f75b6a49a0de43255d0a93"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "736f50a8caba2a691c54ca6d81f19c9372c4e222"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "e71ab0ac1a3bd8e9de8fedd36cea7d140ec61073"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Trillek engine with client/server/common source, tests and CMake manifests plus graphics, physics, scripting and audio dependencies.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

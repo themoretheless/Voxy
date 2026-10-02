@@ -1,0 +1,104 @@
+{
+  "repository": "fishfolk/punchy",
+  "repository_id": 447260716,
+  "commit": "ab48fe1545bba2c9bc8d0c971d8d7fc4efd7f74e",
+  "source_url": "https://github.com/fishfolk/punchy/tree/ab48fe1545bba2c9bc8d0c971d8d7fc4efd7f74e",
+  "readme_path": "README.md",
+  "readme_sha256": "59957a2c68af85ea2ef4a6508d54aded1f44eb0dbe57a1ee8f6d65ee4478fc3b",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "3bb62f5308dba661305eac3f97489b6a24101282"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1ce3fa59839cf56d16bb3fab85b52b988916cae7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "28d6660cf477a46d37b496d38f42b642d40c5eef"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "0035193904a3032121891040b6a0d86c72a4c22c"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "f1e66c16584f6ad50a8c062f63879098547c103a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "a010cd4c2d15f6cf4c0bc6f8b72b4a5b3fea1819"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "112595b48897c11b4c0428394c1c410e33fbfb45"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8bb63810da7dc030fa61912f0c845bbc4aab52d1"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "89acaa98a90ff15288c2bd67b6bb4e67e8745458"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "702207588f0ac3a735a8297278ce1e9316363731"
+    },
+    {
+      "path": "lib.bevy.d.ts",
+      "type": "file",
+      "sha": "5987fdadf6f39cc4cd723de0968072adb4bae27e"
+    },
+    {
+      "path": "lib.bevy.types.ts",
+      "type": "file",
+      "sha": "3989b3c27c488d058987b95b64737b7ca0b0e158"
+    },
+    {
+      "path": "lib.punchy.d.ts",
+      "type": "file",
+      "sha": "bb4184383760a9be886f7f6e4e63bd39168ad803"
+    },
+    {
+      "path": "macros",
+      "type": "dir",
+      "sha": "a2d96a3b9107f1b8c34a118d06fb302cd3de5709"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8928eb2e595087619d81eb0db61c99f92f835be2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dc443a3a23d75c2197b6a0f8b327f892b37ebbd4"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "765779bfecea41244fc8eb866f581ce873d659b1"
+    },
+    {
+      "path": "wasm_resources",
+      "type": "dir",
+      "sha": "23b97dd48c939060f4eb800ef591e0a8aa9d518c"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Bevy side-scroller application; game assets/src depend on underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

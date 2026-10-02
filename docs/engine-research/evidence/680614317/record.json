@@ -1,0 +1,59 @@
+{
+  "repository": "FosterFramework/Foster",
+  "repository_id": 680614317,
+  "commit": "3f796f3a004f0c1d5b667e7ce10b3a6abaff577f",
+  "source_url": "https://github.com/FosterFramework/Foster/tree/3f796f3a004f0c1d5b667e7ce10b3a6abaff577f",
+  "readme_path": "README.md",
+  "readme_sha256": "8ca73ff42559ba6c434536d0a252d1b1ba511efaef866303b6528ef7f064b6fc",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "96a9ebf98146d653f5ac6621a45e0be0b482274a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "aeb11999703dde455ba31f9c5a0562f2fa02e132"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7031e07e6bf7e8c33e1cc5676fbd7ef6373f38a7"
+    },
+    {
+      "path": "Foster.png",
+      "type": "file",
+      "sha": "f74587d0958e98ed5f609c08e4246c7cd9bf45e2"
+    },
+    {
+      "path": "Foster.slnx",
+      "type": "file",
+      "sha": "1f7670fb1f40de3797eeb1ab0bbe1ce9fe14d9e8"
+    },
+    {
+      "path": "Framework",
+      "type": "dir",
+      "sha": "553d28b7503bedc7544562a61ca5d7f93d195e11"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b7daad0ebb71dfc0354507c5f6c9e104cd9f2d6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2116841bad49ce15c7b9b169a4917684c6dea34a"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "93689512275d994b33cd60d336c430c1def807c1"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies C# 2D framework; Framework runtime and .NET solution.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

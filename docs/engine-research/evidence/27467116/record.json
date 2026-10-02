@@ -1,0 +1,164 @@
+{
+  "repository": "ensisoft/detonator",
+  "repository_id": 27467116,
+  "commit": "9790e03c822d972eda35d4d4542d30a515c006c4",
+  "source_url": "https://github.com/ensisoft/detonator/tree/9790e03c822d972eda35d4d4542d30a515c006c4",
+  "readme_path": "README.md",
+  "readme_sha256": "a5d3a96639178b139fb6490caa81bba741c55051eeeb5b069ee34f40e9d95c21",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2c25637dfb5c73b9345d001bd18e6e18ee0c8114"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cef9d950c699533884c383db4d0c03f4aa15152c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "5a761ad05f208a352a55ace63dab8b5f2c89fb2e"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "e36ca3bbbac67a06002eace17d22c2a6dc43fcb7"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "75e67e14febfb3cd7d480de0153bee534793b617"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8c01cf7f7b755b3bd9a43d195cdb9797becd5839"
+    },
+    {
+      "path": "DESIGN.md",
+      "type": "file",
+      "sha": "90e1b6fe1a317f7165d3385c127cfc8321014a1c"
+    },
+    {
+      "path": "ISSUES.md",
+      "type": "file",
+      "sha": "01ed5fd3301cfd5b0f51953827837262306e12d3"
+    },
+    {
+      "path": "PROFILING.md",
+      "type": "file",
+      "sha": "f2208983a95ad269e9bcdd703353e9916cba01a5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "685da7d46a25e40864e371f6ed058485ca39c17d"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "471690d67374c2d90dd802c7c16e45e3293177f5"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "fd0f8e7e806ab9022007e3e36efbc7d860c3a8b5"
+    },
+    {
+      "path": "base",
+      "type": "dir",
+      "sha": "cb6045ea0e9d25b441146dd7edd609e03e0d054b"
+    },
+    {
+      "path": "conanfile.txt",
+      "type": "file",
+      "sha": "731d95d42c86d6dcc1817e6fb3bcb65e0b567b74"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "83d71b5add29c02aba340602857e63ff754cb28b"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "f22d6ae6ce46089776fe168d0a834144411f2537"
+    },
+    {
+      "path": "device",
+      "type": "dir",
+      "sha": "fdea3e90948c645e9f834aaee79fa67bbf7f9124"
+    },
+    {
+      "path": "docu",
+      "type": "dir",
+      "sha": "7117636e8bd129343bea37ca834637213c9e2a41"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "dae8684919670dbb445ee35a6d04a5e93af66b63"
+    },
+    {
+      "path": "emscripten",
+      "type": "dir",
+      "sha": "61abc39532691d5b960f65e922b78d3c7b06577a"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "4711dedca36e30adc75361e1a65173c749c7deca"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "058acca690e87df9a30383afae62cddd581bf3b8"
+    },
+    {
+      "path": "graphics",
+      "type": "dir",
+      "sha": "a3db928f736008745a3acd0d35c5f48168415dd5"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "6a3fa76691810f347cd322a605877cd0b08d6f51"
+    },
+    {
+      "path": "screens",
+      "type": "dir",
+      "sha": "f9d1d168f683561be7b1f8fd7c7c25643894de40"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "54450ae1becff2ac479d310c55df92eb03aefa20"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "3e5d5c876854b785c6e2a05f7e17d5336b24a1c0"
+    },
+    {
+      "path": "uikit",
+      "type": "dir",
+      "sha": "01d895abbc68c5f94a4af699511413adc34af7e7"
+    },
+    {
+      "path": "wdk",
+      "type": "file",
+      "sha": "0f4b05b0e92d94474badae930691c666cda9055e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 2.5D engine/editor; owned audio/device/base/runtime source with CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

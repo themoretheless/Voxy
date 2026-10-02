@@ -1,0 +1,89 @@
+{
+  "repository": "fabsgc/TweedeEngine",
+  "repository_id": 199914888,
+  "commit": "dd5a5fc1ea72a0d8de725bee55ba6c767f8240fe",
+  "source_url": "https://github.com/fabsgc/TweedeEngine/tree/dd5a5fc1ea72a0d8de725bee55ba6c767f8240fe",
+  "readme_path": "README.md",
+  "readme_sha256": "3431bb9c6aa73986debccbc5787937c7d45aa4cde367aa79dd76c3266fd18af4",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "6b8ab0cbeec22349d785cd27bdd42500f06cd2f4"
+    },
+    {
+      "path": ".codacy.yml",
+      "type": "file",
+      "sha": "c4c70dd375b6c7536ff1435287ac1e38c0cd25fa"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "b3d257948feba4b97beb9a963a797aba03b16c61"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "113ddd01be4c9764589b85e23654fc843f31910b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "df3f5adfc04dcc9d9325a0aceba5ed2701cc933a"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0369ac27820eab0143c7cd157fcc449ef6a01f9f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0cb1a10e540f704f53b9febb3c6be36cadedb2ac"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "7166ab69ca27d46647079ffdf4617666016bf8da"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "599efef0134638bcb30c679e15b375d2053865d3"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "f4242164973e8d131c3bf267266cd1c0421c2177"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1a0287a7599e848102792110e3c00b390c1a7a8a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "50b2f9e93d37591858844e8d5b69578e4b64b651"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "9d1a2f92768ce6af87e930b46a905384bb335351"
+    },
+    {
+      "path": "lines.sh",
+      "type": "file",
+      "sha": "a41f7e7960d54a7ef0ab14b50f8e76ebabe085cc"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ engine framework whose complete game foundation is stated as a future aim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

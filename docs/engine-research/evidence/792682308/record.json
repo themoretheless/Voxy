@@ -1,0 +1,112 @@
+{
+  "repository": "Insality/panthera",
+  "repository_id": 792682308,
+  "commit": "896ac573bf0b49d99eb5c5654f48b05c7e2240d1",
+  "source_url": "https://github.com/Insality/panthera/tree/896ac573bf0b49d99eb5c5654f48b05c7e2240d1",
+  "readme_path": "README.md",
+  "readme_sha256": "1f53759a05a27a3d9adef6dab3890edb8ce4768bff917ba932fc6c3ae06af743",
+  "entries": [
+    {
+      "path": ".defignore",
+      "type": "file",
+      "sha": "107e5e9c6524407a56fc0d2d7e1fd3710b8de31d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8a069c9d8fc0189de8c3e2fc27ee5f7036757b68"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "75ed822add8512cf97b06b0e62a0f1948a5555f2"
+    },
+    {
+      "path": ".luacov",
+      "type": "file",
+      "sha": "310e6b5dc85e69855b49a5c68cc7e9d00dc66be7"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "121316e5089639bbe95767ec2f6f3b35ad392d34"
+    },
+    {
+      "path": "API_REFERENCE.md",
+      "type": "file",
+      "sha": "841fd6b93f9e08ee5cead163971014389776d9d3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "789f7d55a6050038fb37944a34770ad58e8eb34c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "85dd565303fedfa8d2ba718b344fde00fdb82e1e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3587fc9a1684fe4455b52773b2e7e68d559215df"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "736825250dbb84caa353bff90dadda78f0ae7dc5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d1381f6e76090589a0c6539b0ee4ef3fd10048ff"
+    },
+    {
+      "path": "docs_editor",
+      "type": "dir",
+      "sha": "eae30176dbf33cdc78016a8e95ce1e9cfd87cb0d"
+    },
+    {
+      "path": "editor_scripts",
+      "type": "dir",
+      "sha": "8b327176008ac52acf60ba16d423fc80f146abf1"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "9cd3e25b55a085c05d17e1d1a9f6fcbb793baff7"
+    },
+    {
+      "path": "game.project",
+      "type": "file",
+      "sha": "de242f2af690ec71cd928835c4393b4150d83bdb"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "e0eab835035223fb760e9998a9eb3a128cc867cc"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "50b19e33f830b119a410583f45d6b3fa901f2f39"
+    },
+    {
+      "path": "panthera",
+      "type": "dir",
+      "sha": "7ac27f51b2053595ebfd020d351d1377085a2cde"
+    },
+    {
+      "path": "settings_deployer",
+      "type": "file",
+      "sha": "07ddefe3badf48ae65d283f9753724074296ed19"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "e923fcc40e4ebf6f26b8b2a7673f367ef1da29d0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

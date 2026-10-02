@@ -1,0 +1,9 @@
+{
+  "upstream_commit": "084a2caa05119b625a99b6b51d44b459a26362de",
+  "editor_sha256": "2bf8567176041156d0e30fbce42e740f33973e8cc507564139a736556c064dc1",
+  "verifier_sha256": "5f6cc048b0c7ff3653a205a90870a5a3738856aee31ce367acaef5847185ba3e",
+  "archive_sha256": "03adaece5d8caa8af729b1f816b5059d2b2df98fc168e6b30b58cb627c6c404d",
+  "certification": "base_triangles=512 variant_triangles=256 geometric_bound=0.047309662758212655 logical_index_bytes=9216",
+  "native_log": "MODEL PUBLISHED frames=0 first_x=0 asset=model.vmodel\nLOD NATIVE SNAPSHOT PASS frames=3 owners=1\nLOD NATIVE FAR PASS frames=3 levels=[1] bytes=34076\nLOD NATIVE SNAPSHOT PASS frames=6 owners=1\nLOD NATIVE NEAR AND LAST GOOD PASS frames=6 levels=[0]\nLOD NATIVE SNAPSHOT PASS frames=9 owners=1\nLOD NATIVE BUDGET RECOVERY PASS frames=9\nLOD NATIVE PRESENTED AFTER FAILURE PASS frames=9\nGPU MODEL DEFERRED asset=model.vmodel error=GPU geometry budget exceeded: live=34076 additional=34076 limit=0",
+  "scope": "presented native editor frames, near/far selection, resident-byte agreement and ordinary residency retry rejection preserving previous geometry and recovery after restoring budget; no image-equivalence claim"
+}

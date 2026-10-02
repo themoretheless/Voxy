@@ -1,0 +1,70 @@
+{
+  "source_sha256": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+  "source_skin_sha256": "b2afe74c925963212cfcf1efc42cc4065f542836a68fa8e984eec41a19e22f9b",
+  "mesh_sha256": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+  "skin_sha256": "1d85b9280105ff4e6bb36ed92ce5af62bda2a8fbed05657eba7428460d825ab8",
+  "before": {
+    "vertices": 45203,
+    "triangles": 90402,
+    "area_m2": 1.567076085744554,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "after": {
+    "vertices": 60866,
+    "triangles": 121728,
+    "area_m2": 1.5670760857445953,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "stages": [
+    {
+      "split_edges": 2241,
+      "vertices": 47444,
+      "triangles": 94884
+    },
+    {
+      "split_edges": 8797,
+      "vertices": 56241,
+      "triangles": 112478
+    },
+    {
+      "split_edges": 4522,
+      "vertices": 60763,
+      "triangles": 121522
+    },
+    {
+      "split_edges": 81,
+      "vertices": 60844,
+      "triangles": 121684
+    },
+    {
+      "split_edges": 19,
+      "vertices": 60863,
+      "triangles": 121722
+    },
+    {
+      "split_edges": 2,
+      "vertices": 60865,
+      "triangles": 121726
+    },
+    {
+      "split_edges": 1,
+      "vertices": 60866,
+      "triangles": 121728
+    }
+  ],
+  "maximum_local_edge_m": 0.0011998569957744965,
+  "preserved_bindings": 45203,
+  "added_bindings": 15663,
+  "maximum_added_binding_distance_m": 0.0029039940394387795,
+  "shell_unchanged": true
+}

@@ -6,3 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 [lints]
 workspace = true
+
+[[bench]]
+name = "sphere_contact"
+harness = false

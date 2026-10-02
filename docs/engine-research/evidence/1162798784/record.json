@@ -1,0 +1,129 @@
+{
+  "repository": "pybevy/pybevy",
+  "repository_id": 1162798784,
+  "commit": "d6ba02f2a18fa1fe6f221c081cabc285089118b1",
+  "source_url": "https://github.com/pybevy/pybevy/tree/d6ba02f2a18fa1fe6f221c081cabc285089118b1",
+  "readme_path": "README.md",
+  "readme_sha256": "1c78719519b3406a0334d305f6b72310a58cfba6c13834f8945b389d18c21053",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "79b0eff456531957f8b0ae1aa7a9fe15bcbd63be"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "13738c793a0d139d95cecdd8f30a05ca1385f112"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0e44b852f1928b9ec8bd849cf70a5112dc60d4d6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "10c25c0bb134a74641db757243509215c497a8a6"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "8d28920152b724f0fc1688985c795eccaf735f33"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "53473809512c4a7a724a7e1c67cd22f106582913"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fbfb44a1f6f5269470bb3bf5a85dadf4fd68c071"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "afa60a4e041e07dc61c519d1ad67957bd732f2c9"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b92ac6ec67aea8cd82a45a94a529800ec6621102"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "230d55a5566823288302d7df57fd1fcc09631680"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "ef23ad3ad48978e0384c240d8752e59790c2faf1"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "77c3b06ce6dbf0560621c3c9c5ecba37f690739a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a74f10b992449ca5878b7573a49c1a004c4f07fb"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b9ac9ae6320b6339bcec7326612a0a94af3f3828"
+    },
+    {
+      "path": "poetry.lock",
+      "type": "file",
+      "sha": "b1015a03d89afd643f406bc04d6002e0dab39f6d"
+    },
+    {
+      "path": "pybevy",
+      "type": "dir",
+      "sha": "f02c2edf096a1f7142558ef8564bb1493f4a3888"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "07aa8321612df762efc5e4091aaa590292da94e0"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "455c8209c562a13c41ecbc91acdeff0d81908282"
+    },
+    {
+      "path": "scanoss.json",
+      "type": "file",
+      "sha": "22673f1303ba6aefb749b73118a9a50f96491072"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c835bef796ea837411f718a8811df3ed8ec3290b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ee5106b99737a3c6b1cbb4ec7739977727568fe8"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python integration over Bevy renderer/runtime with source and tests; not an independent engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

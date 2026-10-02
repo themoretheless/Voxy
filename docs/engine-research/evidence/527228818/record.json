@@ -1,0 +1,49 @@
+{
+  "repository": "jkatsanis/SpriteEngineUI",
+  "repository_id": 527228818,
+  "commit": "63a0a0e8c444bd3cc8946b202daf69a654cd1428",
+  "source_url": "https://github.com/jkatsanis/SpriteEngineUI/tree/63a0a0e8c444bd3cc8946b202daf69a654cd1428",
+  "readme_path": "Readme.md",
+  "readme_sha256": "8d49c6c7ceb2b162ee2577fa774ef25de9dc4c52952c2d683692910b9fa55b0d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "15c087de3df90cabe130b1f793eec757ff480d8f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1901364dde8ef620fa0614bf99d4e788f03c2111"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "18b36d1f889af05a4e04f554fde5cf713d2269e9"
+    },
+    {
+      "path": "Github",
+      "type": "dir",
+      "sha": "fb34a3cd7282b913615a31af1c271dd3684c586d"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d73c4c784af34395dec2d86cdd5d1a8b3cdcef29"
+    },
+    {
+      "path": "RUNME.sh",
+      "type": "file",
+      "sha": "3e0bec00af90579e204a7403cea29b10504794ce"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "a95c74b9188edad3d4337931dce29e81498181b4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "SFML-based 2D engine with Engine source and editor UI; implementation/readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

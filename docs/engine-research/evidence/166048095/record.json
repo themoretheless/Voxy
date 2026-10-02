@@ -1,0 +1,159 @@
+{
+  "repository": "mosra/magnum-singles",
+  "repository_id": 166048095,
+  "commit": "ac3d3edaaf363cc8bc33ee19fded3c021acdaa9d",
+  "source_url": "https://github.com/mosra/magnum-singles/tree/ac3d3edaaf363cc8bc33ee19fded3c021acdaa9d",
+  "readme_path": "README.md",
+  "readme_sha256": "96fa15c326859ff68ec9feb18ad5ae146dd62c187de8cbdf96aea242f4a44fb3",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cad4061e96bf20826f722f1946352840c441cf5d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "082a1604415a7c4d771422e3f1627eff02c0c80f"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "b23555f28a362e4e4a2639ca820e2ae59e48e73c"
+    },
+    {
+      "path": "CorradeArray.h",
+      "type": "file",
+      "sha": "66bb075045574262523815e1e997654ffbd14adf"
+    },
+    {
+      "path": "CorradeArrayView.h",
+      "type": "file",
+      "sha": "a8982d8373c0e4c19ff1d626361194a0d4f0f709"
+    },
+    {
+      "path": "CorradeCpu.hpp",
+      "type": "file",
+      "sha": "90e9a474ee14f76583c26b72c1d5fa40185f44d2"
+    },
+    {
+      "path": "CorradeEnumSet.h",
+      "type": "file",
+      "sha": "9673179e311b2252b1637c5c606dee30384b54c2"
+    },
+    {
+      "path": "CorradeFunction.h",
+      "type": "file",
+      "sha": "e8349078e9bc798a14d8ed74fa76fbcbb0e6beec"
+    },
+    {
+      "path": "CorradeGrowableArray.h",
+      "type": "file",
+      "sha": "c86ecbca283471d6f9a57f38e75bb4d9497d3080"
+    },
+    {
+      "path": "CorradeOptional.h",
+      "type": "file",
+      "sha": "37869077c7266ced85b5a6e786af0b25c88b85b6"
+    },
+    {
+      "path": "CorradePair.h",
+      "type": "file",
+      "sha": "e18174a8659690bb8362936f2d9a8be7cbec8311"
+    },
+    {
+      "path": "CorradePointer.h",
+      "type": "file",
+      "sha": "1b8b590a8774d8fac2c1379ff36c4b1e588ecf9b"
+    },
+    {
+      "path": "CorradeReference.h",
+      "type": "file",
+      "sha": "30684ee89a5be5a0aebee315a190935aa364d032"
+    },
+    {
+      "path": "CorradeScopeGuard.h",
+      "type": "file",
+      "sha": "ce9640d16ad7c3bec3593a55f2ce968df083c430"
+    },
+    {
+      "path": "CorradeStlForwardArray.h",
+      "type": "file",
+      "sha": "ff0aa17de6334dfbb4944dd466bfe14d6125cd95"
+    },
+    {
+      "path": "CorradeStlForwardString.h",
+      "type": "file",
+      "sha": "01f722cbb1ca26273113d9235cba0c51296c607f"
+    },
+    {
+      "path": "CorradeStlForwardTuple.h",
+      "type": "file",
+      "sha": "0250a8197b0dd60a9dd3e53475b8d571dfbf07f0"
+    },
+    {
+      "path": "CorradeStlForwardVector.h",
+      "type": "file",
+      "sha": "460e751fa1690d550f28ede8bc268eee3446a935"
+    },
+    {
+      "path": "CorradeStlMath.h",
+      "type": "file",
+      "sha": "ab3eb81e0530e76f68bfb696438ccaa53f787186"
+    },
+    {
+      "path": "CorradeStridedArrayView.h",
+      "type": "file",
+      "sha": "cc0641fd623bc9868bcf7306092e8024cce427e3"
+    },
+    {
+      "path": "CorradeString.hpp",
+      "type": "file",
+      "sha": "bcda3c7aad8034cfa91d17fba9cbd11b1405db6e"
+    },
+    {
+      "path": "CorradeTriple.h",
+      "type": "file",
+      "sha": "bed2eaf473cadedc144363f47fa4b153e0dcfc38"
+    },
+    {
+      "path": "MagnumMath.hpp",
+      "type": "file",
+      "sha": "13a3b614aaddcef933f36038981ebd5e607aef35"
+    },
+    {
+      "path": "MagnumMathBatch.hpp",
+      "type": "file",
+      "sha": "ad53ba7fece232691d06c224b8613f1079f57f0f"
+    },
+    {
+      "path": "MagnumMeshTools.hpp",
+      "type": "file",
+      "sha": "8d57b0745afed8657d49ee29f07f6e5dd0b3fbff"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d221f4cef4c7885ba13e21f328c2a8e1f735e361"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "4777d0d1060a8df6aa8c1abe4898e5b2d56510c5"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "6a9d83ac6e38fd462955e1b6ffa54e63e6b11f31"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Single-header utility libraries extracted from Magnum, not the engine itself.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

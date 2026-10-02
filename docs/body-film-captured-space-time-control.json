@@ -1,0 +1,59 @@
+{
+  "captureSource": "docs/body-film-native-state.json",
+  "capturedFrame": 0,
+  "dtSeconds": 0.00025,
+  "halfDtSeconds": 0.000125,
+  "initialMassKg": 4.999999999999997e-05,
+  "maxTemporalToSpatialErrorRatio": 1.804677054855251e-05,
+  "normalizedVolumeL1CoarseVsFinest": 8.451343300722085e-05,
+  "normalizedVolumeL1FineVsFinest": 5.6489673128663615e-05,
+  "runs": [
+    {
+      "cells": 90175,
+      "halfStepRelativeMassError": 2.7105054312137626e-16,
+      "halfStepWallSeconds": 0.328555208,
+      "initialRelativeMassError": 0.0,
+      "level": 0,
+      "normalizedVolumeL1Change": 5.633390837994639e-05,
+      "normalizedVolumeL1DtVsHalfDt": 6.472084814241856e-11,
+      "relativeMassError": 1.3552527156068813e-16,
+      "vertices": 45203,
+      "wallSeconds": 0.19932325
+    },
+    {
+      "cells": 360700,
+      "halfStepRelativeMassError": 1.3552527156068813e-16,
+      "halfStepWallSeconds": 1.879751834,
+      "initialRelativeMassError": 5.421010862427525e-16,
+      "level": 1,
+      "normalizedVolumeL1Change": 7.795435427421162e-05,
+      "normalizedVolumeL1DtVsHalfDt": 1.9020292550966736e-10,
+      "relativeMassError": 2.7105054312137626e-16,
+      "vertices": 180582,
+      "wallSeconds": 0.9242915
+    },
+    {
+      "cells": 1442800,
+      "halfStepRelativeMassError": 1.3552527156068813e-15,
+      "halfStepWallSeconds": 13.589104542,
+      "initialRelativeMassError": 6.098637220230966e-15,
+      "level": 2,
+      "normalizedVolumeL1Change": 0.00012457502767559424,
+      "normalizedVolumeL1DtVsHalfDt": 1.0194561693157246e-09,
+      "relativeMassError": 4.065758146820644e-16,
+      "vertices": 721865,
+      "wallSeconds": 4.3656585
+    }
+  ],
+  "scope": "Fixed captured piecewise-planar surface with conforming 1-to-4 subdivisions and original material/wetting. Child volumes inherit parent thickness. Restricted comparisons; no geometry smoothing, source/contact/body motion replay or physiology calibration.",
+  "simulationSeconds": 0.02,
+  "spatialRefinementTrend": true,
+  "captureSha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "executableSha256": "f175a5fb3c1dedfe070b5597d9cef3147d42b762818d5c94285bf4f03258f1bc",
+  "sourceSha256": "e6d104e651e844253c67b17ba412a9cdc30229d1800415135a3c7e72f7d4a1be",
+  "validation": {
+    "releaseBuildPassed": true,
+    "sharedMidpointMassRestrictionTestPassed": true,
+    "scope": "Temporal control of the same short fixed-substrate replay; no source/contact/motion validation."
+  }
+}

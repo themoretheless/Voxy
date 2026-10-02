@@ -1,0 +1,110 @@
+[
+  {
+    "index": 54,
+    "name": "jinleili/simuverse",
+    "commit": "599d81143c0cca2bf665cde763993f478243cd85",
+    "path": "assets/wgsl/pbd/xxpbd/cloth_stretch_solver.wgsl",
+    "line_start": 1,
+    "line_end": 48,
+    "source_sha256": "576e3daf4929190f6641216e4a89f6d70f3d474aca758d44c6eba77872594c6d",
+    "source_url": "https://github.com/jinleili/simuverse/blob/599d81143c0cca2bf665cde763993f478243cd85/assets/wgsl/pbd/xxpbd/cloth_stretch_solver.wgsl#L1",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "WGSL distance kernel updates both endpoints in-place, uses uniform compliance and epsilon length denominator, skips inverse-mass sum below .01. No accumulated lambda in this kernel; correctness requires non-overlapping constraint groups and verified host dt scaling."
+  },
+  {
+    "index": 55,
+    "name": "alexrodag/spg",
+    "commit": "75122ceaea951b02d05f8914e48557ddd0bbb494",
+    "path": "spg/source/sim/solver/xpbd.cpp",
+    "line_start": 30,
+    "line_end": 130,
+    "source_sha256": "4f433c3347bf4ec375db855509311ec79821480e7cdb7c200f0f635d78508bc5",
+    "source_url": "https://github.com/alexrodag/spg/blob/75122ceaea951b02d05f8914e48557ddd0bbb494/spg/source/sim/solver/xpbd.cpp#L30",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Substep orchestration predicts positions then projects per-energy stencil groups in OpenMP parallel Gauss-Seidel, serial fallback, reconstructs velocities. Group conflict freedom and actual energy projection still require inspection; this is solver scheduling reading."
+  },
+  {
+    "index": 56,
+    "name": "openxrlab/xrtailor",
+    "commit": "a5a4a1cb88354fcd1e9eae186e227bb6e2e4ec88",
+    "path": "xrtailor/src/physics/ClothSolverHelper.cu",
+    "line_start": 171,
+    "line_end": 211,
+    "source_sha256": "f567daf8cd76fa6cda1363491adccdb2223f370f92823115b7a28727e32b3f22",
+    "source_url": "https://github.com/openxrlab/xrtailor/blob/a5a4a1cb88354fcd1e9eae186e227bb6e2e4ec88/xrtailor/src/physics/ClothSolverHelper.cu#L171",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "CUDA particle collision reads shared input positions and writes per-particle delta/count; mass-weighted distance projection plus friction helper. Neighbor termination uses j>num_particles, so validity of equality/sentinel must be checked before indexing. Pair particles are not a triangle CCD guarantee."
+  },
+  {
+    "index": 57,
+    "name": "ximiwu/Potentia",
+    "commit": "3b95929ff01493e4ca8be7df54a4a520bfee417a",
+    "path": "solvers/xpbd_solver.py",
+    "line_start": 35,
+    "line_end": 113,
+    "source_sha256": "1120171468f78b10ff94ca8c4a0370362744d9acab17c6f22b79992d23416b55",
+    "source_url": "https://github.com/ximiwu/Potentia/blob/3b95929ff01493e4ca8be7df54a4a520bfee417a/solvers/xpbd_solver.py#L35",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Serialized Taichi constraint loop computes alpha=1/(stiffness*dt\u00b2), includes alpha*current_lambda and accumulates lambda. Zero stiffness guard and lambda lifecycle are not established here; iteration callbacks catch and print exceptions."
+  },
+  {
+    "index": 58,
+    "name": "ChengzhuUwU/libAtsSim",
+    "commit": "1f8c0cb54ea0ee3d5c2ebca5c01bf3de33644168",
+    "path": "src/Solver/fem_energy.h",
+    "line_start": 143,
+    "line_end": 183,
+    "source_sha256": "4e086269929c268601e4c64e207f352513a81a1e4d9a4a9f263d8dc5bfbf5c67",
+    "source_url": "https://github.com/ChengzhuUwU/libAtsSim/blob/1f8c0cb54ea0ee3d5c2ebca5c01bf3de33644168/src/Solver/fem_energy.h#L143",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Executable triangle StVK energy uses Green strain, .5*lambda*trace(E)^2+mu*||E||\u00b2; Piola stress lambda*trace(E)*F+2*mu*F*E. Nearby comment simplifies formula incorrectly; use executable expression. Isotropic triangle law has no calibrated tissue fibers in this block."
+  },
+  {
+    "index": 59,
+    "name": "bailus/Cloth",
+    "commit": "f46817bbf1a193d42716b6d24ea317081ec7194c",
+    "path": "Constraint.cpp",
+    "line_start": 10,
+    "line_end": 25,
+    "source_sha256": "e7cac51f8aebcca5483ba5d5f90d65ecae83fb6487ae3a636346b56997a38cb8",
+    "source_url": "https://github.com/bailus/Cloth/blob/f46817bbf1a193d42716b6d24ea317081ec7194c/Constraint.cpp#L10",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Distance projection scales full relative vector by .8 and moves both particles oppositely; no inv-mass/compliance/dt in satisfy itself, zero current length is unguarded. Effective correction also depends on Particle::move not read here."
+  },
+  {
+    "index": 60,
+    "name": "srl-ethz/sors",
+    "commit": "5355490a3a51bb60e41e393259b372403415b892",
+    "path": "cpp/src/solver.cpp",
+    "line_start": 201,
+    "line_end": 264,
+    "source_sha256": "0fe9332f07c45032bfecd8e9ae025935ec4146da0b886a79879f6c12dfaefb74",
+    "source_url": "https://github.com/srl-ethz/sors/blob/5355490a3a51bb60e41e393259b372403415b892/cpp/src/solver.cpp#L201",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Sparse LDLT Newton direction, Armijo energy backtracking halves alpha with unbounded while(true); convergence tests accepted displacement norm, not force residual. Failed convergence throws, but linear-solve status, descent guarantee and backtracking floor not checked in viewed method."
+  },
+  {
+    "index": 61,
+    "name": "mattoverby/mpm-optimization",
+    "commit": "058c0c337f9505e92e0432b14966532c67c05bc6",
+    "path": "src/Solver.cpp",
+    "line_start": 178,
+    "line_end": 284,
+    "source_sha256": "bdf5323e832692853518ae04f9156f2b9312de3fb19f278359f8aa26ba2cca2f",
+    "source_url": "https://github.com/mattoverby/mpm-optimization/blob/058c0c337f9505e92e0432b14966532c67c05bc6/src/Solver.cpp#L178",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Implicit grid-velocity objective combines elastic energy at F_new=(I+dt*grad(v))*F with mass-weighted velocity change. L-BFGS minimizes objective then copies velocities and explicitly adds gravity. Viewed caller does not inspect optimizer convergence before committing."
+  },
+  {
+    "index": 62,
+    "name": "Wumpf/blub",
+    "commit": "939f346cf3a8e2173834d46fe6979ae42a0d4cc2",
+    "path": "src/simulation/pressure_solver.rs",
+    "line_start": 645,
+    "line_end": 711,
+    "source_sha256": "91e7cdab7be8ebd6581a30401de80ebe65c3a64cc2e0b5a5131daec491558e9e",
+    "source_url": "https://github.com/Wumpf/blub/blob/939f346cf3a8e2173834d46fe6979ae42a0d4cc2/src/simulation/pressure_solver.rs#L645",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "WebGPU pressure PCG host stages apply A, reduce alpha, update pressure/residual, periodically reduce max error, two-pass preconditioner then beta. Indirect dispatch supports GPU-side no-ops after convergence; host comments are not proof of residual kernel correctness."
+  }
+]

@@ -1,0 +1,214 @@
+{
+  "repository": "CodeSmile-0000011110110111/LunyScript-RFC",
+  "repository_id": 1087720945,
+  "commit": "8c1db693e912e112a5b62131de7d96b2ff7b0913",
+  "source_url": "https://github.com/CodeSmile-0000011110110111/LunyScript-RFC/tree/8c1db693e912e112a5b62131de7d96b2ff7b0913",
+  "readme_path": "README.md",
+  "readme_sha256": "6617e1334075168403ff929e507f8a79214ec9f78b9986279d0ace95c474d5a3",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "213b264a2bd664fda63eef74a1cb706f29a9321d"
+    },
+    {
+      "path": ".gdignore",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5f9b3e22b5861a50362019255a4ae6dbff4554a0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d551a5fcf8324740e63764da0184ca45e296be87"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2061f5a367cd99f8c46aa161388e2f7d7db99eb7"
+    },
+    {
+      "path": ".nojekyll",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "AI-USAGE.md",
+      "type": "file",
+      "sha": "93eab99c7ec1ee5bb1e6ec1ca34e1ab69dea4e74"
+    },
+    {
+      "path": "AUTHOR.md",
+      "type": "file",
+      "sha": "7561cd30c15808bf657d1fe0fe12d10b9e69a0f8"
+    },
+    {
+      "path": "BACKLOG.md",
+      "type": "file",
+      "sha": "00d239ee1ca14113187805088a18f0b6826510bf"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9a17619d85d62465b095387bc988e8919a0af9cf"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "4f5e02c780b7ceeecc533d314181c904e52547f0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e62cfb166b22b1fc4765dad0b5823cf08269b6ec"
+    },
+    {
+      "path": "FAQ.md",
+      "type": "file",
+      "sha": "3cc27940c59a8d78bd8f00c3e94e60374be0af5e"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "69379e62873d6cdbd1a9521f8b35eacf90daac25"
+    },
+    {
+      "path": "Guidelines.md",
+      "type": "file",
+      "sha": "a3d3d47d0a487229a30e5fed5a64d06ca3881671"
+    },
+    {
+      "path": "IDEAS.md",
+      "type": "file",
+      "sha": "f18fd2bc6536635e3c9e73e771a8f4c5987a1602"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8d6a26a82ec891db3abca942b998252067850cac"
+    },
+    {
+      "path": "LIMITATIONS.md",
+      "type": "file",
+      "sha": "5ca8a68cca200824f708b663e1a891c4a710cebe"
+    },
+    {
+      "path": "MAINTENANCE.md",
+      "type": "file",
+      "sha": "06e258a08d87381c33f6dc7f792b75e1098df23c"
+    },
+    {
+      "path": "PoC_2025-10",
+      "type": "dir",
+      "sha": "1186e1b4e93808d9b0e4dd4860e9899ad08d5e08"
+    },
+    {
+      "path": "QUESTIONS.md",
+      "type": "file",
+      "sha": "0495303f6dfcf9b6f27f3480da9041edec411615"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "36b92cbf14e4bfc006f9ea1a3f77f15aef37b71b"
+    },
+    {
+      "path": "REPOSITORY-INDEX.md",
+      "type": "file",
+      "sha": "7f4a4baec07594272cd60a0704cca07a608e22d4"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "9001d4dcb279311d745bd9426a75e1ae720c371d"
+    },
+    {
+      "path": "VISION.md",
+      "type": "file",
+      "sha": "5e4c8e6db98dd78148883e129635dff6896c2507"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "38b3a930822115a8b50bf55b8a35e3c08cd824f2"
+    },
+    {
+      "path": "_includes",
+      "type": "dir",
+      "sha": "47eb7dea95d63f954b3a58d8b8c47098ce826e80"
+    },
+    {
+      "path": "_layouts",
+      "type": "dir",
+      "sha": "65f76a2abdd2c96a3ba6b9a6fbcb13d6c1849d0b"
+    },
+    {
+      "path": "_posts",
+      "type": "dir",
+      "sha": "3e26124990e4bde9eed80ac5e6581fedfbadcb46"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "fe948b973721335acb8931ac10da92d9d61251de"
+    },
+    {
+      "path": "blog",
+      "type": "dir",
+      "sha": "d597697042ba1d4d211a2ce7a8bd545b6d8d6908"
+    },
+    {
+      "path": "context_portal",
+      "type": "dir",
+      "sha": "82596a0ab2e886a1ab850fca9a974b9f7ab8f2b3"
+    },
+    {
+      "path": "decisions",
+      "type": "dir",
+      "sha": "4a1008e3c0a497aad2932abd74459a54d154851d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ae170fb87fafe45475f9a61a05a1a7b2e6bda8ec"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "301047334aa3312c9c1816258063594c8101f812"
+    },
+    {
+      "path": "index.md",
+      "type": "file",
+      "sha": "15daa714f18b22958292646fbfc77b3146caf312"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "331b9a0065c1fad1851f12e4345c6ca3f96058f9"
+    },
+    {
+      "path": "private",
+      "type": "file",
+      "sha": "d9e7e431be69f2d0ae076d0533b9547a358c5d65"
+    },
+    {
+      "path": "robots.txt",
+      "type": "file",
+      "sha": "feec650b637f01bc56d31c906001f7e2e236b3e4"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8cdb946c18e27f8fde3a5056ed6a3ce6a37427bf"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Portable gameplay scripting proof of concept and RFC targeting existing Godot/Unity engines, not a separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

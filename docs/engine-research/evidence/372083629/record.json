@@ -1,0 +1,59 @@
+{
+  "repository": "deg3x/Ember-old",
+  "repository_id": 372083629,
+  "commit": "ca02cbe2bc10691ba003bde2ab9295ec532b966a",
+  "source_url": "https://github.com/deg3x/Ember-old/tree/ca02cbe2bc10691ba003bde2ab9295ec532b966a",
+  "readme_path": "README.md",
+  "readme_sha256": "f4a80aeed6dd8f4688a12516d2a964d0b739ed8b9f9948798fe50b587d594bc6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e64793b084abfa6aa5e1d618b6ea3cac30eaf59c"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "ee8a3dba37fa096e277db5454e6d9a6590d398e3"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "ac7dfe92406a66c3d318f455ee5669ee65b343c3"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c55a327c9e405c2bb6e1c8db2294ad3815949db8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a5975234bd1abbcd7f0316706dd9b0a9c1f4e306"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "be09450a9cf8bd664daacc6fa85784b9909d8438"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "a2ae7cfbfa6e2d1af19422a240b70628ec718306"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "4e8f77eb57adccb5233a8ee82b837945586f8564"
+    },
+    {
+      "path": "generate_project.py",
+      "type": "file",
+      "sha": "05f018b6962c0b91e2e54fd74be8f50ff60abc6a"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Historical engine/editor graphics learning base; feature-complete game tooling is a goal, deeper lifecycle source review needed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

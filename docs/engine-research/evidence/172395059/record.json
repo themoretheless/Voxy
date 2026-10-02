@@ -1,0 +1,89 @@
+{
+  "repository": "OpenGMK/OpenGMK",
+  "repository_id": 172395059,
+  "commit": "9ccc47a9cab4681a889866f7233a6b016d36a15e",
+  "source_url": "https://github.com/OpenGMK/OpenGMK/tree/9ccc47a9cab4681a889866f7233a6b016d36a15e",
+  "readme_path": "README.org",
+  "readme_sha256": "313f993543ea7541c767198fd2635f976baa4154caba2731e101dc9ce5d18ac9",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0bc01b099fced5f78667f992b8d3d32a3dcf0dc2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".rustfmt.toml",
+      "type": "file",
+      "sha": "6468736fb0a391d212b1d846cebe884e560f3e93"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "87c18d61858403be895e8ec7e7196a2524681c6c"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f5501b2fff7bfa88b74f4ead887d1a0c3c88c287"
+    },
+    {
+      "path": "LICENCE.md",
+      "type": "file",
+      "sha": "50c978511036c3bb557acd0a74297f004005ecda"
+    },
+    {
+      "path": "README.org",
+      "type": "file",
+      "sha": "d4995e3825c0a2c4ccb432d5423af9789e790b27"
+    },
+    {
+      "path": "Xargo.toml",
+      "type": "file",
+      "sha": "bbb315a1263ca79f75cbe74934027e0df2cff2e6"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "2598466ad6570178571e3e37dd9d3538b8480d5d"
+    },
+    {
+      "path": "gm8decompiler",
+      "type": "dir",
+      "sha": "7095f0bc4464fa7f00987addc06b1bb4b5edab06"
+    },
+    {
+      "path": "gm8emulator-wow64",
+      "type": "dir",
+      "sha": "7350207248f39b8436d31825c7446d87624234ce"
+    },
+    {
+      "path": "gm8emulator",
+      "type": "dir",
+      "sha": "f68d8a545c1e9b1bb04c614b3b7a12f69bf29171"
+    },
+    {
+      "path": "gm8exe",
+      "type": "dir",
+      "sha": "2e819032bf822f2cec86e5a1e6d6433b95140dc1"
+    },
+    {
+      "path": "gml-parser",
+      "type": "dir",
+      "sha": "418e59ea0f3579abceae258960adba61e102c5fb"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "fcc85b9ecbf95aabc8a8caab37cf30506a602586"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent GameMaker-compatible runner rewrite; owned emulator/parser/decompiler and Cargo build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

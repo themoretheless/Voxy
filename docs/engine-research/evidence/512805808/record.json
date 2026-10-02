@@ -1,0 +1,214 @@
+{
+  "repository": "HexaEngine/HexaEngine",
+  "repository_id": 512805808,
+  "commit": "a77c0f4e008d41d3f80c55c35599bbeb510c62d6",
+  "source_url": "https://github.com/HexaEngine/HexaEngine/tree/a77c0f4e008d41d3f80c55c35599bbeb510c62d6",
+  "readme_path": "README.md",
+  "readme_sha256": "a206939628d64b111a7c2cee7a2c5736470075dfb984e84abc3cc16ad8b64d12",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8306ca6f89d1a7759cf92d8d6c2aa2bfde3a9cad"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7f5fc828227c43650536d169684a421ed064d043"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a9c5e2eb009c20489fd50b7f24f09ec3bb2f3b24"
+    },
+    {
+      "path": "App",
+      "type": "dir",
+      "sha": "de4937e758541ad6f79d0fcd1ab32aebbf201449"
+    },
+    {
+      "path": "CrashReporter",
+      "type": "dir",
+      "sha": "74b707b3fc3a22d618f5da7a55d1f0253969083b"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "35c4594c60551c283eeac0b094de2fef9f6a6282"
+    },
+    {
+      "path": "HexaAssetTool",
+      "type": "dir",
+      "sha": "07122b3b1a07634d4793a876682a83da67233d35"
+    },
+    {
+      "path": "HexaEngine.Analyzers.Annotations",
+      "type": "dir",
+      "sha": "7aac0519b7a20161ff30c08dfda627cbd18c3a8c"
+    },
+    {
+      "path": "HexaEngine.Analyzers.Tests",
+      "type": "dir",
+      "sha": "2cfd5a7e4524ac5b56a4ae35f7da2c487b2fddd6"
+    },
+    {
+      "path": "HexaEngine.Analyzers",
+      "type": "dir",
+      "sha": "d7493a0da8e35b374b2c51fef8fe07635a423a76"
+    },
+    {
+      "path": "HexaEngine.Audio.Common",
+      "type": "dir",
+      "sha": "39169cb1ee1825044f81455e223d56d6a3cb94ea"
+    },
+    {
+      "path": "HexaEngine.Base",
+      "type": "dir",
+      "sha": "66d478c326280cb21d905e736fc620553efbb4ed"
+    },
+    {
+      "path": "HexaEngine.Core",
+      "type": "dir",
+      "sha": "c59821fff27a659a187bde81b43fe20f8a34e768"
+    },
+    {
+      "path": "HexaEngine.D3D11",
+      "type": "dir",
+      "sha": "32d9c187bbe4e00dc3e9bbef80b4f6d5849574e8"
+    },
+    {
+      "path": "HexaEngine.D3D12",
+      "type": "dir",
+      "sha": "01e8875079f057042b90ba0e44aba58ac0a1d732"
+    },
+    {
+      "path": "HexaEngine.Dotnet",
+      "type": "dir",
+      "sha": "118cd5f0356e1a7aa8a9d455dbf102babf95eb7b"
+    },
+    {
+      "path": "HexaEngine.Dummy",
+      "type": "dir",
+      "sha": "f9672590b977f9c936dfede3f309df64dd340262"
+    },
+    {
+      "path": "HexaEngine.Editor",
+      "type": "dir",
+      "sha": "d2c8f306b496fc255f281d821157eabe05e2bc1c"
+    },
+    {
+      "path": "HexaEngine.MiniAudio",
+      "type": "dir",
+      "sha": "fc676eebdbe87d1c6bcd4b5bac128ce0f6bc30c4"
+    },
+    {
+      "path": "HexaEngine.OpenAL",
+      "type": "dir",
+      "sha": "fd0a5a9870d0d68b677c66da98071ead38d0dec4"
+    },
+    {
+      "path": "HexaEngine.PerformanceTests",
+      "type": "dir",
+      "sha": "9407e301d0f04e7876ab9a2c79aa0964f67c753b"
+    },
+    {
+      "path": "HexaEngine.Sdk",
+      "type": "dir",
+      "sha": "d56fe595cb862f059c8927c6f849e8bdfb963e17"
+    },
+    {
+      "path": "HexaEngine.Tests",
+      "type": "dir",
+      "sha": "96d31e6751a007fc52bacab383937fee58278350"
+    },
+    {
+      "path": "HexaEngine.Vulkan",
+      "type": "dir",
+      "sha": "63a8bd9932d9f6a68ad4dfa9f2d6ae2e8d5133f4"
+    },
+    {
+      "path": "HexaEngine.XAudio",
+      "type": "dir",
+      "sha": "e78545e17b1fc0ffa733535904df51e590c839f0"
+    },
+    {
+      "path": "HexaEngine.lutconfig",
+      "type": "file",
+      "sha": "596a86030158e4f6f475508114f6af137fb63054"
+    },
+    {
+      "path": "HexaEngine.slnx",
+      "type": "file",
+      "sha": "40836709829958233cf8a2466b628921e3c85cf6"
+    },
+    {
+      "path": "HexaEngine",
+      "type": "dir",
+      "sha": "04f6ca111cc6f8c5a1f7b69ae8331f6cc3682346"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f48dac104b49a6b399d026de235226f000ea499d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b5439264fda247b4375b2ba8351cf5a34632c835"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "da4231c369411ea1de03d5c046026a96801a5a04"
+    },
+    {
+      "path": "TestApp",
+      "type": "dir",
+      "sha": "627f32f2ac482dc22a21b2c7fb41629517c8ca39"
+    },
+    {
+      "path": "UIApp",
+      "type": "dir",
+      "sha": "a170cdd18a59cd764d8a84264011c3740ab70dbb"
+    },
+    {
+      "path": "docfx_project",
+      "type": "dir",
+      "sha": "433689a5a4f529ec93bb2aff1b192d9a1c769841"
+    },
+    {
+      "path": "icon.ico",
+      "type": "file",
+      "sha": "d5f35ac1967dc6897af1e62e82ce7def3e1c1941"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "46efcf209c51ecb4744fa09c582d2af5b0e9e6b0"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "d3ca650654ae309a75f3c42a037a7d6dd1b7e956"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "8e7d9f1019d726c5185d94e6002b450acee9c55c"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "9eaffe4ed2f608c257e581ec09467529da45e3c7"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies managed work-in-progress game engine; owned engine/audio/editor/asset tool and .NET source/build roots. Current Windows-only limitation retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "tengge1/ShadowEditor",
+  "repository_id": 94691677,
+  "commit": "49a6e7d506d3e859bfcfe6f175896f7c72d7a10a",
+  "source_url": "https://github.com/tengge1/ShadowEditor/tree/49a6e7d506d3e859bfcfe6f175896f7c72d7a10a",
+  "readme_path": "README.md",
+  "readme_sha256": "3d1fd8d423e688cbe21d99463fdceb7fc4140b9e6bbcee35da38e3f0250b19af",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2cbee6b5ef5529856258f27f7fc2668fafeadd9d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b2fae7cbc8232ed1ec93e7d3f67afe4ab81515ad"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "a32a6bdeca2a2678aa2a753531dd4e60fe5d538f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "48f79a12918b8cddbda80dee48263af04ecd264b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d2a31cf125a6bb3a1a8d6b8dfde9f52dfafc4492"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "725ef1a158d43f2e225317504d9ac23e58e54917"
+    },
+    {
+      "path": "README_new.md",
+      "type": "file",
+      "sha": "e6d0fc69df377992d4af1aa6a7d57e503d5a18a8"
+    },
+    {
+      "path": "README_zh.md",
+      "type": "file",
+      "sha": "1112a87a02882f3029b2d3699fa131acf7814c3c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d7cd0fece8b2e34653b869b905061798dfe800cc"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "67c220b53d1f8e30def3c6c8a472fd6daf6c53fe"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "76ff22ac29dd2626198df0e88da2bd862cfd324d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "e1fdce66cb80c98fd65b560f7337384523c2daef"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "524159bf88181c6baea92d0b0a0a365a0c009d74"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "df2cbd8e9a4e4a2af36be3acfa0fa1d44df2e504"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "d9eefbd90c266ebd7c048d6e29de46d2e6f35e7e"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify Three.js scene editor, server and web client; no independent engine ownership proven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

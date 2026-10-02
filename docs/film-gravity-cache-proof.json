@@ -1,0 +1,20 @@
+{
+  "before": {
+    "medianBatchSeconds": 0.002237584,
+    "medianSinglesSeconds": 0.002247417,
+    "medianPairedRatio": 1.0396529577119924,
+    "maximumThicknessDifferenceM": 0.0,
+    "samples": 7
+  },
+  "after": {
+    "medianBatchSeconds": 0.00178075,
+    "medianSinglesSeconds": 0.00212475,
+    "medianPairedRatio": 0.8405561262706824,
+    "maximumThicknessDifferenceM": 0.0,
+    "samples": 7
+  },
+  "observedBatchMedianReduction": 0.2041639554090483,
+  "scope": "release CPU integration; 3200 flat triangles, 50 internal steps; seven samples per version on shared host; not full-body frame throughput",
+  "retainsArithmeticOrder": true,
+  "recomputedPerCallAfterGeometryMaterialOrGravityChanges": true
+}

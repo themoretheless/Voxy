@@ -1,0 +1,92 @@
+{
+  "binary_sha256": "af7be16ab30aa2e099b67b243053536a0b253a22c623c177b94213a47d4f5052",
+  "scope": "Actual stdio protocol with no running viewer and no receipt; not live application proof",
+  "responses": [
+    {
+      "id": 1,
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": {}
+        },
+        "protocolVersion": "2025-06-18",
+        "serverInfo": {
+          "name": "voxy-models",
+          "version": "0.1.0"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "jsonrpc": "2.0",
+      "result": {
+        "content": [
+          {
+            "text": "{\"filmEnabled\":null,\"filmSettingsApplied\":null,\"liveApplied\":null,\"reason\":\"No presentation receipt\",\"savedFilm\":{\"absorption_b_per_m\":0.04,\"absorption_g_per_m\":0.08,\"absorption_r_per_m\":0.2,\"contact_angle_rad\":0.1,\"density\":1000.0,\"display_mode\":\"material\",\"precursor_thickness_m\":1e-7,\"precursor_wetting_enabled\":false,\"refractive_index\":1.333,\"self_contact_enabled\":false,\"self_contact_max_gap_m\":0.001,\"self_contact_transfer_speed_m_s\":0.0001,\"source_radius_m\":0.04,\"source_rate_m3_s\":0.0,\"source_x_m\":0.0,\"source_y_m\":0.2,\"source_z_m\":0.13,\"sources\":[],\"surface_tension\":0.04,\"viscosity\":0.05,\"wetting\":1e-7},\"savedView\":{\"mode\":\"material\"},\"viewApplied\":null}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": {
+          "filmEnabled": null,
+          "filmSettingsApplied": null,
+          "liveApplied": null,
+          "reason": "No presentation receipt",
+          "savedFilm": {
+            "absorption_b_per_m": 0.04,
+            "absorption_g_per_m": 0.08,
+            "absorption_r_per_m": 0.2,
+            "contact_angle_rad": 0.1,
+            "density": 1000.0,
+            "display_mode": "material",
+            "precursor_thickness_m": 1e-07,
+            "precursor_wetting_enabled": false,
+            "refractive_index": 1.333,
+            "self_contact_enabled": false,
+            "self_contact_max_gap_m": 0.001,
+            "self_contact_transfer_speed_m_s": 0.0001,
+            "source_radius_m": 0.04,
+            "source_rate_m3_s": 0.0,
+            "source_x_m": 0.0,
+            "source_y_m": 0.2,
+            "source_z_m": 0.13,
+            "sources": [],
+            "surface_tension": 0.04,
+            "viscosity": 0.05,
+            "wetting": 1e-07
+          },
+          "savedView": {
+            "mode": "material"
+          },
+          "viewApplied": null
+        }
+      }
+    },
+    {
+      "id": 3,
+      "jsonrpc": "2.0",
+      "result": {
+        "content": [
+          {
+            "text": "{\"ageSeconds\":null,\"filmEnabled\":null,\"filmSettingsApplied\":null,\"frame\":null,\"fresh\":null,\"liveApplied\":null,\"measurements\":null,\"parameters\":null,\"reason\":\"No presentation receipt\",\"simulationTime\":null,\"viewApplied\":null}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": {
+          "ageSeconds": null,
+          "filmEnabled": null,
+          "filmSettingsApplied": null,
+          "frame": null,
+          "fresh": null,
+          "liveApplied": null,
+          "measurements": null,
+          "parameters": null,
+          "reason": "No presentation receipt",
+          "simulationTime": null,
+          "viewApplied": null
+        }
+      }
+    }
+  ]
+}

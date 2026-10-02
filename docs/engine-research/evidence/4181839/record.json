@@ -1,0 +1,149 @@
+{
+  "repository": "FUSEEProjectTeam/Fusee",
+  "repository_id": 4181839,
+  "commit": "686fe5bc26152a58c7baa66594f2b45bad52e6f7",
+  "source_url": "https://github.com/FUSEEProjectTeam/Fusee/tree/686fe5bc26152a58c7baa66594f2b45bad52e6f7",
+  "readme_path": "README.md",
+  "readme_sha256": "a7250c028ebe05aa9f14d7da30c62c5228bd0a657fc60b9f4e1a04fbac22cd98",
+  "entries": [
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "bc1374345709523e092cb313361559ffa27b3865"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ed3ef24af964e93935bf67a6575cb8f7fcbafbcc"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "298e26cd111009cc43740ab28426bfbb3b6737d5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0cccdd3d30c8ade40797fd6277051e6e7a8be9bb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9988c594003a78bb24a5300b9e48b3034fcc6f2a"
+    },
+    {
+      "path": "BuildNuget.cmd",
+      "type": "file",
+      "sha": "c996e2de57a2d0a436e59af8b24060807b158f60"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "7748f48f0d445c793d0f3aed59d97c35239ce907"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "28aed38b252f20b63f5e2e64b8049461f4cf6ed6"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "34f613323086eaf3cacb43903cfddbbd844f8ea6"
+    },
+    {
+      "path": "Fusee.Engine.slnf",
+      "type": "file",
+      "sha": "1d52dae831c3360939765ba673d4bb877ba41f17"
+    },
+    {
+      "path": "Fusee.NuGet.slnf",
+      "type": "file",
+      "sha": "1d2590ff89ad7030ae964597820e839427d96c1e"
+    },
+    {
+      "path": "Fusee.Player.Android.slnf",
+      "type": "file",
+      "sha": "25e0e89c905e688971b992fc1c17b64fc9fd961e"
+    },
+    {
+      "path": "Fusee.Player.Desktop.slnf",
+      "type": "file",
+      "sha": "7136c22e343daa43950a7fe6347b8f6a623589d3"
+    },
+    {
+      "path": "Fusee.sln",
+      "type": "file",
+      "sha": "eaac7aeb65109559ed36a8e5790eeb9c1a587cfd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4bcebea8e071046e2fb2af163281d722000286f9"
+    },
+    {
+      "path": "LICENSE-THIRD-PARTY",
+      "type": "file",
+      "sha": "89602ef2a3dd5b0b1964aade16415568f83d7c07"
+    },
+    {
+      "path": "NuGet.config",
+      "type": "file",
+      "sha": "2c705390539718b4ce74ad1c6d1cfdf3d0416c50"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "61fc5dcd8e3b2544b5572eb026a7c144c90df84c"
+    },
+    {
+      "path": "ShaderRef",
+      "type": "dir",
+      "sha": "97aadc867113586fce2b2b43ae98906488a0bade"
+    },
+    {
+      "path": "ThreeDFontTest.png",
+      "type": "file",
+      "sha": "b7958934d2a61c52bb8a752ddcf7102f03cdbca3"
+    },
+    {
+      "path": "UITest.png",
+      "type": "file",
+      "sha": "d756e3af641633122291e9926d1ce7479b857b92"
+    },
+    {
+      "path": "UpdateVersionNumber.cmd",
+      "type": "file",
+      "sha": "902f5d369502bd1fe27f8a76ce366a5d4eb7683e"
+    },
+    {
+      "path": "VS2019.vsconfig",
+      "type": "file",
+      "sha": "a58a49b1655218e9c8c1e8715cda5ba98a83f06a"
+    },
+    {
+      "path": "art",
+      "type": "dir",
+      "sha": "73165e48abc77eca6e4a8a22ebc209064cd7899b"
+    },
+    {
+      "path": "dis",
+      "type": "dir",
+      "sha": "292b2caca4af4f4fcaca1576f533caa9986d9465"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "1b100da2fb94b8a0b5feaaf8001e15be241fa099"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c8d56393a46109b466389d73429715db70e806cc"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# real-time 3D engine focused on content transformation/manipulation; broader gameplay runtime not established by pinned README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

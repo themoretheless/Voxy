@@ -1,0 +1,69 @@
+{
+  "repository": "ErfanMo77/Syndra",
+  "repository_id": 321979095,
+  "commit": "2d1a19aa01763eb0cfea364bec3fa971e86ec1fe",
+  "source_url": "https://github.com/ErfanMo77/Syndra/tree/2d1a19aa01763eb0cfea364bec3fa971e86ec1fe",
+  "readme_path": "README.md",
+  "readme_sha256": "adc4871beb94d63982e35d7dd51854c14f2e769cad297316a9b5e9d5a97ffadf",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4458788c056bd9712bea7dbc5400b15da7f6bd69"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "1e188e4672d1aeb5aa255497caa75b5acd76580f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "404d1aa194be4b51042c38f5f3382f5b5c96934f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "084bf5fcc38ab4db8a0a32ccf2f7d57163dfdae3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "287e9c87f900c5cbba3dd6bd5cc2e388514a4b46"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "b711b96a742600d365ce7d4ed2c9cd194375f506"
+    },
+    {
+      "path": "Showcase",
+      "type": "dir",
+      "sha": "61579a2c1ee92121078c73aa1f38e5ce69457982"
+    },
+    {
+      "path": "Syndra-Editor",
+      "type": "dir",
+      "sha": "ee11784a427c4da5a99a88a0c3664e2b9a3e3184"
+    },
+    {
+      "path": "Syndra",
+      "type": "dir",
+      "sha": "ccde72d94057692104c98f33209290f9ff58c8ab"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "1c3f32b3c3b192934291d761de97cc12b833e18e"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate engine/editor/sandbox sources; documented ECS, events, asset loading and serialized scenes with Vulkan/OpenGL rendering.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

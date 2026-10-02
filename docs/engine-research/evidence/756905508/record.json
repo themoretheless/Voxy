@@ -1,0 +1,62 @@
+{
+  "repository": "Rubonnek/dialogue-engine",
+  "repository_id": 756905508,
+  "commit": "1e9e837c57c9d917f72134f5c90b84deb61188cb",
+  "source_url": "https://github.com/Rubonnek/dialogue-engine/tree/1e9e837c57c9d917f72134f5c90b84deb61188cb",
+  "readme_path": "README.md",
+  "readme_sha256": "0b1769e2b9695b5b796d8033ae83fee0784e5a0c722ad4ad119320e435190c46",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c49627a910a012d6456d19d642e6e085f90a5080"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0d5cf4eeae65fda6467469f4ef45ea6bb9025145"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8c2d63879151b0543253e246b35e89f34905ab8c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9e9e837c84573ae668f65c91e5d2b8dd547ee5df"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3d820ea7c3ec46ae3a49a112b5b65119d5c554a8"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "980579b4a04dc421bb2ec0282508e39a236de616"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "020bf4d0f111c56f7da6e993a1bd5c2367701675"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "2a3779dca975e47a941e7da0d13bca7ebdb33edb"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "7a1cbb0a04daf15d29353468253c4b9d8aa18312"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "a60defb730c5b07919b5dd57d504fdfa745e25c8"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

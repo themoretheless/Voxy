@@ -1,0 +1,99 @@
+{
+  "repository": "fdivitto/FabGL",
+  "repository_id": 169951787,
+  "commit": "fd6f1e3504581056b34d626b15c27d2bf7d86bad",
+  "source_url": "https://github.com/fdivitto/FabGL/tree/fd6f1e3504581056b34d626b15c27d2bf7d86bad",
+  "readme_path": "README.md",
+  "readme_sha256": "9b3d55a1d66b2f7cccf0973b5d2f4fd54d1be561ce666a87b136b7ac4a0d214b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3ac0198b18a04666dccdc78daddea8858d3981ed"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "47381331a4abe481b4c82460047ae2338c3ffe16"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "2f1d9f3beec1f8ee0541ad309cd1d1caf00b8ec7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2f1d9f3beec1f8ee0541ad309cd1d1caf00b8ec7"
+    },
+    {
+      "path": "Extras",
+      "type": "dir",
+      "sha": "92ad3deec68625e9e5bda4d2815f1e99df7d899d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "88c4a195b2a0348455b7412d0874d3e8bbb7c83e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "96c720871ed911ec596cd0f9b000f8917a271c46"
+    },
+    {
+      "path": "component.mk",
+      "type": "file",
+      "sha": "ee0b033e0dae120337800d0dd4900901b8612f69"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "064bbf7d70c370160a88d569fd59d38d69c89f40"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c604726ef14a9ef4694952bdf2807f59f6abf0f8"
+    },
+    {
+      "path": "fabgl GPIOs assignment.txt",
+      "type": "file",
+      "sha": "d92efd71e7b89493f6f0bef3d88b4068abbf3024"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "870cd715aa034b9a8401ec4812a18ee8b60072f1"
+    },
+    {
+      "path": "keywords.txt",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "library.json",
+      "type": "file",
+      "sha": "a5e77bd1ad93a5e2cd05640be4d324e908665f74"
+    },
+    {
+      "path": "library.properties",
+      "type": "file",
+      "sha": "84ee7151b429fcc2f17f03f858dfee428b647879"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "800b9309230cd6778421734237b3221f13f45e83"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "e741215b161ca09f9f9f33acfe2b8912c4bb3aea"
+    }
+  ],
+  "classification": "embedded_multimedia_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies display/input/graphics/sound/GUI/terminal controller stack; embedded component build. Not accepted as complete game engine from root evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

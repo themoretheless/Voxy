@@ -1,0 +1,32 @@
+{
+  "scope": "Manufactured analytical stress-history oracle; not experimental data or a calibrated tissue law",
+  "equation": "dQ/dt + Q/tau = beta*dS/dt",
+  "interpolation": "Elastic stress linear on each interval, all components in a fixed reference measure",
+  "tau_s": 31.75,
+  "beta": 0.24,
+  "elastic_stress_rate_pa_s": 100.0,
+  "duration_s": 120.0,
+  "analytical_memory_pa": 744.6008910240331,
+  "refinement_checks": [
+    {
+      "substeps": 1,
+      "absolute_error_pa": 0.0
+    },
+    {
+      "substeps": 12,
+      "absolute_error_pa": 2.2737367544323206e-13
+    },
+    {
+      "substeps": 120,
+      "absolute_error_pa": 2.2737367544323206e-13
+    },
+    {
+      "substeps": 1200,
+      "absolute_error_pa": 1.2846612662542611e-11
+    }
+  ],
+  "constant_stress_decay_verified": true,
+  "tiny_interval_verified": true,
+  "tensor_components_verified": true,
+  "invalid_duration_rejected": true
+}

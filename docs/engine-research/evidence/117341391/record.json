@@ -1,0 +1,134 @@
+{
+  "repository": "thunder-engine/thunder",
+  "repository_id": 117341391,
+  "commit": "85e944aed6d461cd7e43e2f8b85da12e252f1198",
+  "source_url": "https://github.com/thunder-engine/thunder/tree/85e944aed6d461cd7e43e2f8b85da12e252f1198",
+  "readme_path": "README.md",
+  "readme_sha256": "c4df001425edbd4ff8a43704054679840f022de6a408eb1adc2e1cf3ca8def77",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fdb98551ad6cb03701839732a37851ce217fea19"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d00bffbec82d38312ea59c1789e766250439f010"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4642a58b4679a891c862a5856412200f4f54261c"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a155d9039dde164b9dda949d1a62ff07f8e18f28"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3870ea4df86eace41b19b46d5f865001a5f69efd"
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "type": "file",
+      "sha": "40720ca517598c8d5adf424fe5d228a5f0d73e84"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b90dc6db132b699281bddc8670fdb0a54324054"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "948e9656d5f14695d40bad04c51e21766bfa5292"
+    },
+    {
+      "path": "Thunder.qbs",
+      "type": "file",
+      "sha": "d94dc5af921dee7b55cebd71f2230cc6701521c4"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "d3c094da41e08bff9f22559239d40ff92c43be47"
+    },
+    {
+      "path": "builder",
+      "type": "dir",
+      "sha": "83caed981338bc224603e26ba80ceb65eea253f3"
+    },
+    {
+      "path": "config.h",
+      "type": "file",
+      "sha": "6f60fa69c852ac62e4b628e4350ed532e946b8ca"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "1e7798ecdf226462fae7cd5a97ac0dd4ccd8a0b6"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "637d1cf418e66b2159143b1c6eab15edc4d697dc"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "7ccc52350ae4651981b3e62b9e796ea9419e971c"
+    },
+    {
+      "path": "legal",
+      "type": "file",
+      "sha": "cd194df019ca0921f2b75c9a7c95c541c89b085a"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "1d77ab03dae6bb1351f35f65de4a52fd54be1e56"
+    },
+    {
+      "path": "sponsors.md",
+      "type": "file",
+      "sha": "1807c88caf14c1e716d795bc9290416b1da62484"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "16ec1458b6be0730f9fb4733ee42c108a14f2062"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "e3205db2d4c46c3a4d8f408cdb183d7185062897"
+    },
+    {
+      "path": "translations",
+      "type": "dir",
+      "sha": "58730e6dd10f9b4ec9ded96442e8bd36b3075e1e"
+    },
+    {
+      "path": "version.cfg",
+      "type": "file",
+      "sha": "45826d6def4295f11803838a17b103fc31336f71"
+    },
+    {
+      "path": "worldeditor",
+      "type": "dir",
+      "sha": "af66a444d6a1254687ce74b6d6b0a4eb9924ac2c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies modular 2D/3D engine; owned engine/editor/builder and CMake/QBS build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

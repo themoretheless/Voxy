@@ -1,0 +1,21 @@
+{
+  "binary_sha256": "78ccdf1403f70e0a5a18a8ea2d615359254f4cd3d2367256aed0bce26db174f4",
+  "archive_sha256": "03adaece5d8caa8af729b1f816b5059d2b2df98fc168e6b30b58cb627c6c404d",
+  "recipe_sha256": "cebe545b903824a3554991d9d78f783c8e72c5719ae09477182ca96a21f52850",
+  "source_log": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-8488-1790968181526813000/native.log",
+  "retained_log": "native-direct-review.log",
+  "checks": [
+    "outcome=Presented",
+    "LOD NATIVE FAR PASS",
+    "LOD NATIVE NEAR AND LAST GOOD PASS",
+    "LOD NATIVE BUDGET RECOVERY PASS",
+    "LOD NATIVE PRESENTED AFTER FAILURE PASS"
+  ],
+  "scope": "native presented frames; static near/far LOD selection; logical geometry accounting; budget rejection retains previous geometry; recovery after restoring budget",
+  "limitations": [
+    "no image equivalence proof",
+    "no manual F4/F10 acceptance",
+    "no animated LOD",
+    "budget is logical geometry bytes, not total physical GPU memory"
+  ]
+}

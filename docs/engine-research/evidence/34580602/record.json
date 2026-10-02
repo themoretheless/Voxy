@@ -1,0 +1,49 @@
+{
+  "repository": "CWBudde/PasSFML",
+  "repository_id": 34580602,
+  "commit": "be7812f94264276329fa40584371315644465ff4",
+  "source_url": "https://github.com/CWBudde/PasSFML/tree/be7812f94264276329fa40584371315644465ff4",
+  "readme_path": "README.md",
+  "readme_sha256": "84e56f5a45d244d15cf0ad521e06bcc7a8f61e732240f281ba9303be4a4d0ebb",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8d5d458f0d07dcf9c8e359937372bad01614ef40"
+    },
+    {
+      "path": "Binaries",
+      "type": "dir",
+      "sha": "089f8029dbda38587e35a24ba5254142b8ad8119"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "75f7db23c1b7786aafcf4b0873da28aabf7eaf9b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "daa95b083728a5dce7d2ee53066305d7a8154b4d"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "90edc5aef93fd364265dc4b659eb8ed6a8b0c5d2"
+    },
+    {
+      "path": "Unit Test",
+      "type": "dir",
+      "sha": "87284fe0657c91ca9b989392b9b5ecbc2e03385a"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "a2d5e7bd0c5402b9eae2f54fbca1a941caaab4c1"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pascal SFML binding through CSFML; examples and tests do not make it a separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

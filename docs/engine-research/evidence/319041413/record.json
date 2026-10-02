@@ -1,0 +1,114 @@
+{
+  "repository": "GuvaCode/ray4laz",
+  "repository_id": 319041413,
+  "commit": "f7b283552eb1055d3c746b0673522a556aebe84a",
+  "source_url": "https://github.com/GuvaCode/ray4laz/tree/f7b283552eb1055d3c746b0673522a556aebe84a",
+  "readme_path": "README.md",
+  "readme_sha256": "836f2a7dc3db2b79b5df64f0453bca334762743e4e58a8917c0ebc9810cec555",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ff1005d9a679a6521912a1828e3f4c0412f130fd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0b893778765b870aaadfd1a203e2dab78d8d098f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "35971854378065abe88ea54428e50f81d344aba4"
+    },
+    {
+      "path": "MSEIde",
+      "type": "dir",
+      "sha": "b10907c54be7fa346c2abc1e487964dabd3c5d5f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "020fb5e4ba5ffae9f858cccf5c0d12f2fcc7ba01"
+    },
+    {
+      "path": "README_mac_mseries.md",
+      "type": "file",
+      "sha": "c94d15d8f1c6dbb95f54b8fabf57e1a36968b764"
+    },
+    {
+      "path": "binary",
+      "type": "dir",
+      "sha": "c98e6e14ee745533e178ed1b30d7fba1ff110c46"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "1e1c1f6c2da63801bdd48c8438058e8f4e83df0d"
+    },
+    {
+      "path": "build_all_examples.sh",
+      "type": "file",
+      "sha": "bd0c92f51ec50dd6bcab8992ec6d6bc8befe3a6e"
+    },
+    {
+      "path": "clean.sh",
+      "type": "file",
+      "sha": "e0df8564153df916edd8bd4e8134e76f0d2670c8"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "10880b281caa85907c0f62ff05585273395e1936"
+    },
+    {
+      "path": "fpc-wrapper.bat",
+      "type": "file",
+      "sha": "24eff81e3d58ce2fdfe64b493716c89b60c5ef68"
+    },
+    {
+      "path": "fpc-wrapper.sh",
+      "type": "file",
+      "sha": "d8310fac13fbe5a52bb155b54b82e2cd3e6ae191"
+    },
+    {
+      "path": "gui_style",
+      "type": "dir",
+      "sha": "82173a44259768598af031b3fdb163e48501ddfd"
+    },
+    {
+      "path": "headers",
+      "type": "dir",
+      "sha": "87a499cb2d27324bf372e878d13dc612e0cbaee9"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "724f749e1f07c5335d4a9811272d4d75f9333e2e"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "2f2b604ede9b3e5a9665a349727ee87654a461cf"
+    },
+    {
+      "path": "registeringDelphi.exe",
+      "type": "file",
+      "sha": "15131e111456760d839d026f0f6738412ac8f0b0"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "284a0ff70c22f5ed53d40f9817397e51db09877d"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "329c652f591e4f0ddeeeadc8f456453013c7fbde"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Pascal raylib bindings; platform wrappers and examples, not independent game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

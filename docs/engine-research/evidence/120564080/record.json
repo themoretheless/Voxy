@@ -1,0 +1,109 @@
+{
+  "repository": "ray-cast/AnimatorGo",
+  "repository_id": 120564080,
+  "commit": "473539b34b9b7986538a2053004e1c1292129bc0",
+  "source_url": "https://github.com/ray-cast/AnimatorGo/tree/473539b34b9b7986538a2053004e1c1292129bc0",
+  "readme_path": "README.md",
+  "readme_sha256": "24162d4cab85a98695661be9000c80640053378a6f71615fbe477fbaf7a496ba",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a36981a70c8b81a964c025252670b2e8a6480d29"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d33eea597055b610950f4f4f21ed260bf19e1cd5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "afad41153c88f399559bb30e13bc4af34dd446e5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "697d68808c08ae6c05720403e2cf20232b6e434f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "abe85aa021348b6c7f31f72c651d17a50fc662c6"
+    },
+    {
+      "path": "NEWS.md",
+      "type": "file",
+      "sha": "fca89a859da7dd906a144843475eee5be99c86f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9059ee1e4ec787a41eefa7baf68934515219bb3f"
+    },
+    {
+      "path": "README_en.md",
+      "type": "file",
+      "sha": "891c8254a47c87bea42cf1c510c5a14ddce994b9"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "13dbfe659c1c0536c1bcf580986918ad22fde1ce"
+    },
+    {
+      "path": "build_from_source.bat",
+      "type": "file",
+      "sha": "092f5fe4407fa2b3cbeb6415c9389930525bdb00"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "105fd0393a717fad498bcebad44db96ee9438797"
+    },
+    {
+      "path": "conanfile.txt",
+      "type": "file",
+      "sha": "d0b104c1d3d25b651e4993b1105bce60e6410950"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "5e626358d4052070f7ad2b837345570b122fc731"
+    },
+    {
+      "path": "document",
+      "type": "dir",
+      "sha": "34ea76c84ca68e0540381d913502ec89459fc6ca"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "75a473b179cfc5b1fa232dfa8a5cbb3255f4d16f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "57a123430cf070ac3c32fc8e420e7e9a5acc2292"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "d7290be2e261eff5c1aa55c8f7cfcdcdd0b258aa"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "9d2526172b52b99050fc4bbf47544e4800a5b85b"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "44a4b2e743df21b38891ec9f72637c75b12be066"
+    }
+  ],
+  "classification": "excluded_media_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify animation/video authoring tool; native libraries/samples/CMake do not establish game-engine ownership.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,72 @@
+{
+  "repository": "ThePat02/BehaviourToolkit",
+  "repository_id": 707151216,
+  "commit": "8c8164c19c63377d8decb1c369dc0c47c418e756",
+  "source_url": "https://github.com/ThePat02/BehaviourToolkit/tree/8c8164c19c63377d8decb1c369dc0c47c418e756",
+  "readme_path": "README.md",
+  "readme_sha256": "2092bb0cde762d09e2a9b4b8ecd573944df32cd1809c508341eceed3f9d559ca",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "56104b7777188b0f5dc5d9570de883213f9e58f6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4709183670ac629a32ff7df40816c79c7c932daa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7f9b570e6860fd897587c1608ee870da218e64e0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "92564215ce1a8c665cc323afcea13f530bc78d2b"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "b0122a0468405cb58734bcafa61351378aa71190"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "057eb6e133b9788f56bfd47f910643a5631a5216"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0734e1b849beb35da2e13e33f5e7dd8b1aa52308"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "b370ceb72740b9a759fe11b364f0d4de27df42f8"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "8351812239536103d71d9923abd3dbf5d699a477"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "9ad0de7e366dbec88701e0eac2d11f5098424238"
+    },
+    {
+      "path": "script_templates",
+      "type": "dir",
+      "sha": "eee6d8c6f4831ff617d20d6551db75364c04e0c8"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

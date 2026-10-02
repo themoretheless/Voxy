@@ -1,0 +1,102 @@
+{
+  "repository": "indiesoftby/defold-scene3d",
+  "repository_id": 378890256,
+  "commit": "3b7048a45e6b6dacea580d530644b5ff03fd27c1",
+  "source_url": "https://github.com/indiesoftby/defold-scene3d/tree/3b7048a45e6b6dacea580d530644b5ff03fd27c1",
+  "readme_path": "README.md",
+  "readme_sha256": "e9fbc8873641e91f1957e9d8bdedaa90f198ff317b585e77f8e30781cdfdd975",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "242a80c6734f346bf64dfe59bd61122143cb6400"
+    },
+    {
+      "path": ".defignore",
+      "type": "file",
+      "sha": "a2e7bec1d73582ca5114c870badc41458012ba97"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9e11e8a86822ffbe8a5cb618aacf18f088db6125"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c3b1185d68e99d61a69fc4757e1321b424c3683b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7bc216ff5dece4c06c6907b600e0d7951f83c632"
+    },
+    {
+      "path": ".lua-format",
+      "type": "file",
+      "sha": "df5c0bb69c0673129e866a02947bb19eefadc3e9"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "d0ca347c61bab834e00cf896ddfd6a2ca8b483eb"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "6efd2cb60284cdb6963142da598af8ea6c827bc0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "05b51f633bfc8bd0439f33eaa2362956568753a1"
+    },
+    {
+      "path": "cover.jpg",
+      "type": "file",
+      "sha": "29a3769286af1f1195bd96099bcbce47451812fc"
+    },
+    {
+      "path": "cover_opengraph.jpg",
+      "type": "file",
+      "sha": "466da7a77e774946b291c460989e9ed1c9427e28"
+    },
+    {
+      "path": "cover_thumb.jpg",
+      "type": "file",
+      "sha": "c44a8623d3a194d368a78de8f6ec266e99df51e9"
+    },
+    {
+      "path": "cover_web.png",
+      "type": "file",
+      "sha": "042eb039b8ac1819de2f2761d78f4b599718c4d6"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b5900949db504fc5d793a4f74f9d55c348b339b2"
+    },
+    {
+      "path": "examples_html5",
+      "type": "dir",
+      "sha": "e47d8f8861efc73358df231272568b972a8da245"
+    },
+    {
+      "path": "game.project",
+      "type": "file",
+      "sha": "bd67e7c7f357ded77938195bd82a5b79aaf73e3f"
+    },
+    {
+      "path": "scene3d",
+      "type": "dir",
+      "sha": "51f387e6e016f74da7c8e45c3dd42279108dae2b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "165d962f45745458ae25ceaf3428d631b237a623"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

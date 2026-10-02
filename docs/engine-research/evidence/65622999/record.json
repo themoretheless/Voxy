@@ -1,0 +1,44 @@
+{
+  "repository": "RobinPerris/EclipseOrigins",
+  "repository_id": 65622999,
+  "commit": "c6ce66562af8590b526f2e7ed6586a6d8ca329e1",
+  "source_url": "https://github.com/RobinPerris/EclipseOrigins/tree/c6ce66562af8590b526f2e7ed6586a6d8ca329e1",
+  "readme_path": "README.md",
+  "readme_sha256": "396813e2d511f799d96f60fc71d00dc537b218b58fcddac48df4974deae63e7b",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "617826bd5839839c26612e11be6bed093411c202"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9668dee2ceb99efd0e6e6ca7c00aa073927ad6f3"
+    },
+    {
+      "path": "changelog.txt",
+      "type": "file",
+      "sha": "f98722c3a7802f93056f17d4d85a74c2fa441c29"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "083fdf52c5f25c085c6800977358ccf595bfdee4"
+    },
+    {
+      "path": "credits.txt",
+      "type": "file",
+      "sha": "248648a1c32e5002cd01882a3faf0d631e86ad3e"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "6443bbb9bd86001be1bc8d2ecdc42b947264ac2c"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit Mirage Source modification for authoring persistent online RPG worlds; VB6 client/server sources, discontinued since 2011.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

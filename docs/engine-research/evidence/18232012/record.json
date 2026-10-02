@@ -1,0 +1,234 @@
+{
+  "repository": "Thraka/SadConsole",
+  "repository_id": 18232012,
+  "commit": "89bd2cf597c62c124f2e5560ae4a14b154b6e441",
+  "source_url": "https://github.com/Thraka/SadConsole/tree/89bd2cf597c62c124f2e5560ae4a14b154b6e441",
+  "readme_path": "README.md",
+  "readme_sha256": "f57d44a251921630e71f85a49eab408b28bef2f661ddc829338f02d87887046f",
+  "entries": [
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "bb0283c2c9db8d095f3c65f8166955809d603769"
+    },
+    {
+      "path": ".copilot",
+      "type": "dir",
+      "sha": "468f7c2934f5ff5503e38c39a33a9c28b6a851e6"
+    },
+    {
+      "path": ".dependabot",
+      "type": "dir",
+      "sha": "0670e7290f016e0b858abaef66acace0a325d636"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c57335163cd0d2b531ed4ac431e6f7a3d68cabfe"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9b9f0dd04000774f3493728dbc27f81278d31dd4"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "31a9ca4e115ff506977715c852362452b00b655b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "76f01ebc6de2ae29f377d7b801909a258fff81ee"
+    },
+    {
+      "path": ".squad",
+      "type": "dir",
+      "sha": "fc8362f2935403155b76d6ad1ea6beb6f8aae1b6"
+    },
+    {
+      "path": "Editor.Addin",
+      "type": "dir",
+      "sha": "0ba27dd9851fb26d6b2775dcdeea246183c6e779"
+    },
+    {
+      "path": "Editor.Serialization",
+      "type": "dir",
+      "sha": "f03e0fb90ffe4ddb7d30d4a5562f804064a46879"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "d20d9e412c2f09edd8174da328ac2e828b3ba9fd"
+    },
+    {
+      "path": "Fonts",
+      "type": "dir",
+      "sha": "faf3dbcf03fcc1d70021c7486cb2700d87f38534"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "deda8d38a4553355c5587130b3932b64a4d90d12"
+    },
+    {
+      "path": "MSBuild",
+      "type": "dir",
+      "sha": "a5abca08fb111c97ea761a13b2c0ee19854bf543"
+    },
+    {
+      "path": "MigrationNotes.md",
+      "type": "file",
+      "sha": "aa9b05958a07a85c876f8fa8efbf6d96692d735e"
+    },
+    {
+      "path": "MiscCodeFragments",
+      "type": "dir",
+      "sha": "d072b5eb6fbc56490a391fc5b3adec2047c88402"
+    },
+    {
+      "path": "PerformanceTests",
+      "type": "dir",
+      "sha": "b15bd2426f6aa13ce0bed8819a92c08f55a5b0cf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "53a3de4a72e27fe6ba26bfcfc1e5e291d2c0e2c8"
+    },
+    {
+      "path": "SadConsole.Analyzers",
+      "type": "dir",
+      "sha": "533a578b32bc9612354dd48c5dc2cb5c7905ba51"
+    },
+    {
+      "path": "SadConsole.Editor.slnx",
+      "type": "file",
+      "sha": "ce573abda5a92b2dcd2c90edb07bb14862c936ff"
+    },
+    {
+      "path": "SadConsole.Extended",
+      "type": "dir",
+      "sha": "05052c1229bd85e6e882243a75a66a85763126ad"
+    },
+    {
+      "path": "SadConsole.Host.FNA",
+      "type": "dir",
+      "sha": "a6bc2700f8943365afa7dbb017310d4d576fbf51"
+    },
+    {
+      "path": "SadConsole.Host.KNI",
+      "type": "dir",
+      "sha": "ac0f5f2a5123b42fa95e4bb1acfc8a758c0ee587"
+    },
+    {
+      "path": "SadConsole.Host.MonoGame",
+      "type": "dir",
+      "sha": "62d642ee2dba5a75f708e4b27c78859afbe06cc7"
+    },
+    {
+      "path": "SadConsole.Host.MonoGameWPF",
+      "type": "dir",
+      "sha": "be883f3136ddac8b23466af2c7433b96b8030a66"
+    },
+    {
+      "path": "SadConsole.Host.SFML",
+      "type": "dir",
+      "sha": "17688862440c6efca26cefea2b7ec59cd05d1ab2"
+    },
+    {
+      "path": "SadConsole.Host.Shared",
+      "type": "dir",
+      "sha": "ec29387b3bc146cdc47483a29ae4c7d314bfc59e"
+    },
+    {
+      "path": "SadConsole.ImGui.MonoGame",
+      "type": "dir",
+      "sha": "ff0fe4315459fdb8c14aa3dadeadb0d2930625fa"
+    },
+    {
+      "path": "SadConsole.ImGui.SFML",
+      "type": "dir",
+      "sha": "cb47a1eb7fc0095e7724ad17956733cb4dc83d5a"
+    },
+    {
+      "path": "SadConsole.ImGui.Shared",
+      "type": "dir",
+      "sha": "7f1b3b62bab75f28e97e8ad7dc10675bfac2b128"
+    },
+    {
+      "path": "SadConsole.Simple.slnx",
+      "type": "file",
+      "sha": "041264a33027b758adbcf671fa6e0d2af2ed3367"
+    },
+    {
+      "path": "SadConsole.kni.Blazor.slnx",
+      "type": "file",
+      "sha": "88b050ad81cd1c7b0e17eafa68897846b8506fa2"
+    },
+    {
+      "path": "SadConsole.slnx",
+      "type": "file",
+      "sha": "0df4faafe425ede94b7b31c1556ef392c4016a56"
+    },
+    {
+      "path": "SadConsole",
+      "type": "dir",
+      "sha": "1cc5aff58e6b25677d6358010cbca030fa640598"
+    },
+    {
+      "path": "SadConsoleWPF.slnx",
+      "type": "file",
+      "sha": "d6205387193930ab70781e85a3504891b9926031"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "b91e409aaf8c6b07fe72ff3362f870fab2344ead"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "1f823866f932c92119145e36cb57a0317e76bbcb"
+    },
+    {
+      "path": "ThemeEditor.slnx",
+      "type": "file",
+      "sha": "11f25b93341112cfa4a10d4068320ccbe84e131f"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "849e065a6efa5cc87629c87afbc2ccb5a4d30ba5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "90ae63e814c90e52396bc33cdd96c5b2c95854b9"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "9d5e570063988d4daceb115d5afbb1fff8b1e90a"
+    },
+    {
+      "path": "nuget",
+      "type": "dir",
+      "sha": "4ca89ec3dd8d1a147593f0ba5e1131978f6f7432"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "9c890e58a5888d27f95acc2f724e20e3718650b0"
+    },
+    {
+      "path": "test.slnx",
+      "type": "file",
+      "sha": "2a10251473e0aff137740de658da52c457b0761b"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies terminal/tile game engine; owned runtime/editor and .NET build infrastructure over graphical backend libraries.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

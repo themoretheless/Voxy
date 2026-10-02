@@ -1,0 +1,47 @@
+{
+  "repository": "PrimaryFeather/Sparrow-Framework",
+  "repository_id": 1275916,
+  "commit": "a37cbc36ca45c7bcc8e7cddcd21ddb7fdb66bd8a",
+  "source_url": "https://github.com/PrimaryFeather/Sparrow-Framework/tree/a37cbc36ca45c7bcc8e7cddcd21ddb7fdb66bd8a",
+  "readme_path": "README.md",
+  "readme_sha256": "6bb04f4863ca689ed34f0bd0bf704f7509bddb2197be75166a56c795e0d9b5a8",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "608bc0eaea13664b7db88f112b27bb7eecaac5ab"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "5c30d7ba8f3f719c98392a2f1597254c263edfe2"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "a93af1863d04a401a663a783582fd490d1ddcf3f"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "664fc1e48d367ef3d4a3b5bafe633006ac981ab8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7ab7ba27824c72c399e92b8af6fd764ac1a8c449"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "39b9ce872f54ed2538bbdf4084c5087461547df8"
+    },
+    {
+      "path": "sparrow",
+      "type": "dir",
+      "sha": "23da3d9ef9176d015069d9402414bf485b6622e4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

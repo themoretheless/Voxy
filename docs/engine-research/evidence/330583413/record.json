@@ -1,0 +1,79 @@
+{
+  "repository": "krgamestudios/MERN-template",
+  "repository_id": 330583413,
+  "commit": "21f1eac5548115eba9464bd84a6f2fb1830919ad",
+  "source_url": "https://github.com/krgamestudios/MERN-template/tree/21f1eac5548115eba9464bd84a6f2fb1830919ad",
+  "readme_path": "README.md",
+  "readme_sha256": "8981d88e8270afdd38df994d19f5a3402754c763de2dc16ef7c884370643e6e3",
+  "entries": [
+    {
+      "path": ".envdev",
+      "type": "file",
+      "sha": "19f5d0828bf59c29196c6d8a8fc6b993bc739145"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "812482a96f8154262462bdcfe448c23ec46b3d64"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a2eddca83fecbf3041f4da324c559a1f5d7e379a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b8406b7717e1942b5764b953df323265986d975c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f1bf0bec4d4d5b65e9ea351a146756729a452d24"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "630e714fb0910d78481df72bb8fcfc76503ededb"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "0426b22474f3fe29fceb28920e058cb1de7e1328"
+    },
+    {
+      "path": "configure-script.js",
+      "type": "file",
+      "sha": "c77ce150b775959c73bc0f38310dbb946abba7b4"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "8c95c8c6d8400b5694de9f892cf9d58d67218fa9"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "a464cbb59a9324377b93806679c41f51f59b17c1"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "7f9132020b134f405a4fd525511a0d51667cccde"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "77b7798b3b6618c3dae8a027f9014ca52db5fb8c"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "578beb33923a7f4a1826de6b8a8e538761f7e989"
+    }
+  ],
+  "classification": "excluded_game_template",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Persistent-browsergame-oriented web template and microservices.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

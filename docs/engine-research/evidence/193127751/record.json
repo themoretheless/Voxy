@@ -1,0 +1,37 @@
+{
+  "repository": "CptPotato/GodotThings",
+  "repository_id": 193127751,
+  "commit": "9de47f1874532953edc3e3668c19c6755fee86ea",
+  "source_url": "https://github.com/CptPotato/GodotThings/tree/9de47f1874532953edc3e3668c19c6755fee86ea",
+  "readme_path": "README.md",
+  "readme_sha256": "fef86adf6794a1d86aed74b58d841f128558d40fb06f5b7346658310372b469d",
+  "entries": [
+    {
+      "path": "ColorGrading",
+      "type": "dir",
+      "sha": "afd01845a0f4af6e81bf43c062b8cbf60c0ab726"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "e10a64e344042e6ccd291b6a3515492fd6218be6"
+    },
+    {
+      "path": "ProceduralCheckerboard",
+      "type": "dir",
+      "sha": "19b992b2ab266976d5bd35c8469e0525e19015d1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b107a4936f77c8a3c547619f7e98a3ac450c23c7"
+    },
+    {
+      "path": "SmoothPixelFiltering",
+      "type": "dir",
+      "sha": "99d5eb0cdc47b438c23bdfdcd8e69a6d344c14cc"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

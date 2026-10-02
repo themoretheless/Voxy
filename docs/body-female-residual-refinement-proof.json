@@ -1,0 +1,33 @@
+{
+  "source_sha256": "1e688e51724f35ed6fa4801f89ac170a457d669c0664dd9b2118b8ef2810e816",
+  "reference_sha256": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+  "marked_edges": 31,
+  "added_vertices": 63,
+  "before": {
+    "vertices": 45203,
+    "triangles": 90402,
+    "area_m2": 1.5670857483795182,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "after": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5670857483795189,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "surface_preserved": true,
+  "maximum_cumulative_displacement_m": 0.0029467707189011145,
+  "adopted": false,
+  "output_sha256": "37ef78f5a5f32a905cc24983828c75e8a7e558791922384cfb1c997612cd5cee",
+  "reference_output_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa"
+}

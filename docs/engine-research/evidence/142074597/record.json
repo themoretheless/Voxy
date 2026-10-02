@@ -1,0 +1,54 @@
+{
+  "repository": "tffdev/Leafgem",
+  "repository_id": 142074597,
+  "commit": "3e701fc6369da719096585b0e7363c0e17c103dc",
+  "source_url": "https://github.com/tffdev/Leafgem/tree/3e701fc6369da719096585b0e7363c0e17c103dc",
+  "readme_path": "README.md",
+  "readme_sha256": "db5822e97d4d71b2d174c4abc896e700d44589f1efe4d7e0c2787dbff8253482",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b51d060a4f48c846b1f25b45fc996280445b910f"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ffc7b6ac56d181e10a191d2c4115aa8d83aec847"
+    },
+    {
+      "path": "Docs.md",
+      "type": "file",
+      "sha": "0dd303909e85d20dbf36a4d6af77055dd0b28d4a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d0c1a0b19c10dbdeff34a322a11c4df5a0d84fec"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e637b328b4e82231434ded79b740aebcba3bf9c2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "78fb212665d73d6ec484a8ea03d9e469f271ce62"
+    },
+    {
+      "path": "shard.yml",
+      "type": "file",
+      "sha": "5384f66c77c1053d5477aebbd57bccaf166e12cb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4bc7dfacc85e1f1d365e78405d1e01b8d3b7d21a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Crystal 2D game engine with src, package manifest and demo; humble early implementation and checklist do not prove completeness.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

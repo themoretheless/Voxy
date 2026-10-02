@@ -1,0 +1,89 @@
+{
+  "repository": "seedhartha/reone",
+  "repository_id": 275369055,
+  "commit": "9417f636f2d13c7b2f359308525009f286d765c0",
+  "source_url": "https://github.com/seedhartha/reone/tree/9417f636f2d13c7b2f359308525009f286d765c0",
+  "readme_path": "README.md",
+  "readme_sha256": "6eef4824de02905f7f0f3b8a853f398333f616b94619756125bf2faf02dac6aa",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d882fe235a399d833703221c1db2c01cef42524d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0f564e8fe4e099436cf24de7a8dfdb6470bebfd7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "11791d1da1c1f3876e4aece3de65e5869713133f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d76a7c6775c422c557dc960ba80e1e0f308253f5"
+    },
+    {
+      "path": "CONTRIBUTORS",
+      "type": "file",
+      "sha": "9a3b5e50713acee5dbfbaae5664285a109f96aad"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "04eb5b7661d011a46cd8d286fb916423a075e085"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "5e3ee05a8e0d0302e68bab80b9a5647ef23718ed"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "5ba15fb0301c7cfef29bea001f33e993380caaa9"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "cb5051b1f2785c611ba3e32eb32fe7720b9f237a"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "ec8c6656313696c83578c4ff5888e427372f522e"
+    },
+    {
+      "path": "glsl",
+      "type": "dir",
+      "sha": "3996282e41664e0963801ccc0de45894633c8d7c"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "76ec0a8c45828957e86a6415e9117369fd8c5707"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6fa4a1565edd374b2a23e1d78b2f281633a1a6f8"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "f3f0c7a2623c16dc01fd1a957a18f5cc9f9da8e5"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent KotOR-compatible runtime; owned src/include/shaders and CMake/tests, development limitations retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "eduard-permyakov/permafrost-engine",
+  "repository_id": 115817873,
+  "commit": "0ac50ba52e45e6eaa003341162abe232eaa5a4f2",
+  "source_url": "https://github.com/eduard-permyakov/permafrost-engine/tree/0ac50ba52e45e6eaa003341162abe232eaa5a4f2",
+  "readme_path": "README.md",
+  "readme_sha256": "f357c15e5ed623a6a5878bc6070570de359890460e3764f6db6f1213144f26b1",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "997d9003a0f049743a36f33a3dae6257f7f0c714"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "95b88a93f64468c6c74d681d7c5642b6165ca281"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "604db8385a8ab7116ecc5dafc63fbe6b690ec30a"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3e9ad2ff0d99fb24d176e44aeda3a2d6f349fef6"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "c6787f60bb2a12503b7fafc9560ceb6c50891f47"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ea122e28dde84683d2f59d360fb42b2d2f399bfd"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "0950de8dacc6df9ca4d7f9cf3e402e7417d996c6"
+    },
+    {
+      "path": "permafrost-engine.sln",
+      "type": "file",
+      "sha": "02bce089a75c43c8e09650f109a86a972355d90e"
+    },
+    {
+      "path": "permafrost-engine.vcxproj",
+      "type": "file",
+      "sha": "e95561da22fef07d1db4169830939d506d6d3af8"
+    },
+    {
+      "path": "permafrost-engine.vcxproj.filters",
+      "type": "file",
+      "sha": "2fb5f39ce3dbb17bf3db3f55292d1abfa8740ce3"
+    },
+    {
+      "path": "permafrost-engine.vcxproj.user",
+      "type": "file",
+      "sha": "0474a5d4196ed55e741409e804c162be7ce67892"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "62aefe0b11e8f725a1ef7d2e82771f3e9b9aa823"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "1f4de70cc7fc770f4eb459952dc748810cac757a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "23fabbfe03e0042499330ccf551d94fe73fbc4fc"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "1fbef38d5dc2d420fd2f09d81f187200196654b7"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native RTS engine; src/shaders and make/native project build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

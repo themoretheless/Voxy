@@ -1,0 +1,114 @@
+{
+  "repository": "endlesstravel/Love2dCS",
+  "repository_id": 111911813,
+  "commit": "d92682024ef2a57292cf65ca86f3a35cbc477a6a",
+  "source_url": "https://github.com/endlesstravel/Love2dCS/tree/d92682024ef2a57292cf65ca86f3a35cbc477a6a",
+  "readme_path": "README.md",
+  "readme_sha256": "da841236945926dbfd24923dd5ce5fa4b840e29b179a1d24735b7b907de39ce2",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "091f1639f25b875b5bc54f2fe3d4ddcd5eb030b9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2885c8780c4e596e5d1374010994c245a054f1ad"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e3b7ec38f3815026dba8c3d5df3abbc0ce7ba569"
+    },
+    {
+      "path": "Module-devlop-log.md",
+      "type": "file",
+      "sha": "e65889df0592682d598393db758688aab4bdc1fd"
+    },
+    {
+      "path": "README-getting-started.md",
+      "type": "file",
+      "sha": "593c4317203b878c93e77bfe391cae16dd26f8e7"
+    },
+    {
+      "path": "README-zh.md",
+      "type": "file",
+      "sha": "1f10fc3a83f8740ae9e6c1db73899371ae271f1b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "23a359dad8e0c46578f5f20517ae0d8ce621c283"
+    },
+    {
+      "path": "c_api_src",
+      "type": "dir",
+      "sha": "327a6fd12d2c257ae67aca84ca759758ce720962"
+    },
+    {
+      "path": "changelog.txt",
+      "type": "file",
+      "sha": "438a811913c070f05c3dd88ef15ea3ab09c853ff"
+    },
+    {
+      "path": "convert_code_tool",
+      "type": "dir",
+      "sha": "e3a5c1ea4c0b68a2dbe69d31ed98ccebd80be7e4"
+    },
+    {
+      "path": "csharp_src",
+      "type": "dir",
+      "sha": "7669d5c9b95abe6316d10b79cf4017ea2a1fc984"
+    },
+    {
+      "path": "csharp_test",
+      "type": "dir",
+      "sha": "7c5e9d6c9e91de5d7894e0c78f466ca174327093"
+    },
+    {
+      "path": "develop.md",
+      "type": "file",
+      "sha": "9a2ef906b52f8eec29da847dc276bb348d5cfd33"
+    },
+    {
+      "path": "distribute.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "d16a200e469c7d09026c8cc255bc45e6acb77dbf"
+    },
+    {
+      "path": "install-linux.md",
+      "type": "file",
+      "sha": "25a09a40eb99050482a2422b3c3799adb2340452"
+    },
+    {
+      "path": "native_lib",
+      "type": "dir",
+      "sha": "896fd3d545e156e846cccb6d160a873130aac399"
+    },
+    {
+      "path": "project_dotnet",
+      "type": "dir",
+      "sha": "274877ca2bdd7f1ac5d717e4d934632e743a8b55"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "61a70067d7bf233d48ba5f8f6882db990486ff00"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies managed LÖVE wrapper; c_api/csharp source, not independent underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

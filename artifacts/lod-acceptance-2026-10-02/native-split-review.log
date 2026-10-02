@@ -1,0 +1,44 @@
+NATIVE REVIEW project=/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-11927-1790968401029159000 pid=11927
+METAL WINDOW number=25489 occlusion=8192 visible=true miniaturized=false key=false
+EDITOR PRESENT frames=0 draws=0 outcome=SkippedOccluded positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+METAL WINDOW number=25489 occlusion=8194 visible=true miniaturized=false key=true
+EDITOR PRESENT frames=0 draws=0 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+LOD NATIVE SNAPSHOT PASS frames=3 owners=1
+MODEL PUBLISHED frames=3 first_x=0 asset=model.vmodel
+LOD DRAW view=0 asset=model.vmodel level=Some(1) triangles=256 viewport=[1280, 1360]
+LOD NATIVE SNAPSHOT PASS frames=4 owners=1
+LOD NATIVE FAR PASS frames=4 levels=[1] bytes=34076
+LOD DRAW view=0 asset=model.vmodel level=Some(0) triangles=512 viewport=[1280, 1360]
+LOD NATIVE SNAPSHOT PASS frames=7 owners=1
+GPU MODEL DEFERRED asset=model.vmodel error=GPU geometry budget exceeded: live=31812 additional=31004 limit=0
+LOD NATIVE NEAR AND LAST GOOD PASS frames=7 levels=[0]
+LOD DRAW view=0 asset=model.vmodel level=Some(0) triangles=512 viewport=[1280, 1360]
+LOD NATIVE SNAPSHOT PASS frames=10 owners=1
+LOD NATIVE BUDGET RECOVERY PASS frames=10
+LOD NATIVE PRESENTED AFTER FAILURE PASS frames=10
+EDITOR KEY frames=10 key=F4
+LOD DRAW view=0 asset=model.vmodel level=Some(0) triangles=512 viewport=[640, 1360]
+LOD DRAW view=1 asset=model.vmodel level=Some(1) triangles=256 viewport=[640, 1360]
+EDITOR PRESENT frames=10 draws=6 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+LOD NATIVE SNAPSHOT PASS frames=13 owners=1
+LOD NATIVE SPLIT PASS frames=13 phase=3 msaa4=false levels=[[Some(0)], [Some(1)]] bytes=34076
+EDITOR KEY frames=13 key=F10
+EDITOR PRESENT frames=13 draws=6 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+LOD NATIVE SNAPSHOT PASS frames=16 owners=1
+LOD NATIVE SPLIT PASS frames=16 phase=4 msaa4=true levels=[[Some(0)], [Some(1)]] bytes=34076
+MODEL PUBLISHED frames=16 first_x=0 asset=model.vmodel
+LOD DRAW view=0 asset=model.vmodel level=Some(1) triangles=256 viewport=[640, 1360]
+LOD DRAW view=1 asset=model.vmodel level=Some(0) triangles=512 viewport=[640, 1360]
+LOD NATIVE SNAPSHOT PASS frames=19 owners=1
+LOD NATIVE SPLIT PASS frames=19 phase=5 msaa4=true levels=[[Some(1)], [Some(0)]] bytes=34076
+EDITOR KEY frames=19 key=F10
+EDITOR KEY frames=19 key=F4
+LOD DRAW view=0 asset=model.vmodel level=Some(0) triangles=512 viewport=[1280, 1360]
+EDITOR PRESENT frames=19 draws=3 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+LOD NATIVE SNAPSHOT PASS frames=22 owners=1
+LOD NATIVE SINGLE RESTORED PASS frames=22

@@ -1,0 +1,74 @@
+{
+  "repository": "EllanJiang/UnityGameFramework",
+  "repository_id": 96181975,
+  "commit": "e7eb3ef11393df0ac504204c480cdb839752b05f",
+  "source_url": "https://github.com/EllanJiang/UnityGameFramework/tree/e7eb3ef11393df0ac504204c480cdb839752b05f",
+  "readme_path": "README.md",
+  "readme_sha256": "6a8c0a087c6e8706077da8d10e49b04d9428ff56e1dff3e7cb30928c6f178ec2",
+  "entries": [
+    {
+      "path": "GameFramework.prefab",
+      "type": "file",
+      "sha": "bd77cd0269f6ff7917a717b62271ca4dc8468ae8"
+    },
+    {
+      "path": "GameFramework.prefab.meta",
+      "type": "file",
+      "sha": "2361c7804ba9f862b628622cc65ee65de36aaae6"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "384b88260bdfde55fdd39d87520cb027294da893"
+    },
+    {
+      "path": "LICENSE.md.meta",
+      "type": "file",
+      "sha": "5d4cce527cdb3ab70feb7d0111bc6a3d8fc4b8d3"
+    },
+    {
+      "path": "Libraries.meta",
+      "type": "file",
+      "sha": "ac0c9e51f2ae27a8ba2cea0c1218d370ba2e61ee"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "7256e77022ec2e26d6d52ae94f6aa53000b970e1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dd3d1f3cc2baa6d35233540b2e9048bcda9c8a5e"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "ad872cce00d4f959bdf6509d5f14d2f2ec2b8399"
+    },
+    {
+      "path": "Scripts.meta",
+      "type": "file",
+      "sha": "73bcc5eca49cd63e1f1a262d894f014d0e5b37bd"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "1d622c617499edaa08f2569228e8dbe4328869f5"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8f255ca035e93c29513e7d73ce5242ad00bf28ac"
+    },
+    {
+      "path": "package.json.meta",
+      "type": "file",
+      "sha": "fa568a91f487638b27a4d7e5727befbfb2cb93f7"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity-hosted common game module integration, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

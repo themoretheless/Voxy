@@ -1,0 +1,199 @@
+{
+  "repository": "godotengine/godot",
+  "repository_id": 15634981,
+  "commit": "084a2caa05119b625a99b6b51d44b459a26362de",
+  "source_url": "https://github.com/godotengine/godot/tree/084a2caa05119b625a99b6b51d44b459a26362de",
+  "readme_path": "README.md",
+  "readme_sha256": "999955511e1d54b0abe323ad899633a5a22c14c4899d46e31d06de2175bd19f0",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "5d932e013f29ad5722b30592660097cade5388d9"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "0c25a3a015a3b3aad64c54e0b2b1295b4bed1447"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "648086e63a3342d3b8cbc3581c4f550db63ec468"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c79c816e35cbc89d3daa88d04c402d176f7c5967"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "d48f39f9ff78faf0bfb0c5666a24556b46411113"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "943d6b5d7cec34e3a76838c40425b00ce5a49738"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "36c7163574af341afb5b4ada877cb9ef92be475a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1406aa529c15fca631e402d6461635f22fbc60c5"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "75379c4e4623eeff05fc06a762dd01314ac83e27"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "2d4de89e356e757e50aab8561ea89609c243153b"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "194393493b165a53f2fe9c630688c30786d8a22b"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "76e8dae7b76065b93a9f4757a7f4066cee0ae27b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e35ded74c50c6ae554882914da5767e54faae43b"
+    },
+    {
+      "path": "COPYRIGHT.txt",
+      "type": "file",
+      "sha": "b18c237d4b2766d71ca69098b910628e99aa022a"
+    },
+    {
+      "path": "DONORS.md",
+      "type": "file",
+      "sha": "8e71547f94889cc4aaf55ba26e9c65044f958e27"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "0e3ba08d6b2e8cf435241829c96f10b74e4356fe"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aa4bc5f484dbf486a2bd7f1773fdc7ec97f210e1"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "cf4beb08cd725799ce6a920ddae7bf3ae3fceafd"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "d3a4606e87f77803df55f6a12bb993ef616f576a"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "b006ca9232b9a06d97dd52b7c3364d51fc40b020"
+    },
+    {
+      "path": "drivers",
+      "type": "dir",
+      "sha": "a87a57701944efb668d50147e95c6153394fa413"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "2cc58bce11807a4610e7c484c66086664d20f993"
+    },
+    {
+      "path": "gles3_builders.py",
+      "type": "file",
+      "sha": "c0cf7aca82d460b707740e7d69e859c6d1b138ae"
+    },
+    {
+      "path": "glsl_builders.py",
+      "type": "file",
+      "sha": "ce4545f67755eef924c5310e5946b426feecb4d2"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "91313805b3350050c0b484c144c90a098fac0703"
+    },
+    {
+      "path": "methods.py",
+      "type": "file",
+      "sha": "1431e486248ae9d12e8972c8d10d094dcb46d885"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "2cb943935ec875bdfef13f0207d00c6dd160c436"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "8d6b0a519cba94a855671a8fdd068eb09178fac8"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "96fa057667ef5472884f6450acc247d3eb7cb4af"
+    },
+    {
+      "path": "platform_methods.py",
+      "type": "file",
+      "sha": "f95db2f692f551ef25b5ebce0d1d2bd4986a2a45"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "a8caa39a1ef6949a0b2a3744acdda2122e56c7c1"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "e26eb23033f611f617f8f3918db79a8e06d99de3"
+    },
+    {
+      "path": "scu_builders.py",
+      "type": "file",
+      "sha": "49acbe57409ed201befdfdf2fa44f1c5225fd93c"
+    },
+    {
+      "path": "servers",
+      "type": "dir",
+      "sha": "b322ba9bb39c179e0b5fedc6c3de9d9bfc692901"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e837a897e457c2c2fd78e295ff254c106fb4d8cd"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "96f88ec26a1c2f079022ad49181645df10d6ec7e"
+    },
+    {
+      "path": "version.py",
+      "type": "file",
+      "sha": "b87f18efd5e6131f8220fdb37d7053c5c3cc6dd6"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README names the engine; SConstruct and scene/servers/core/editor/platform source roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

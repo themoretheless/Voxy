@@ -1,0 +1,54 @@
+{
+  "repository": "MarilynDafa/Bulllord-Engine",
+  "repository_id": 79809096,
+  "commit": "ae05f36285b32352d4cec2ffea501ff0e5dc4a67",
+  "source_url": "https://github.com/MarilynDafa/Bulllord-Engine/tree/ae05f36285b32352d4cec2ffea501ff0e5dc4a67",
+  "readme_path": "README.md",
+  "readme_sha256": "40e92c8c5934c392c8e72696f0ef7a8d03a12e8c29c0dd8c25593d608f589f25",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ba3dd795936b40ad94978284ccd469ec0695a999"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5c5a4c2d2de04b83da927a6fd35e5cf277e56b19"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e78736c79dc5f7afd5c0f6943ca705b57e087996"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "b5560fc8f9aa1ed8e4beec0c2aa90cf8fc40fc73"
+    },
+    {
+      "path": "covenant",
+      "type": "file",
+      "sha": "2b58b17e24c931a8c2528b470cf5cf50ef5a8021"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "1ccb5240c78f1dceeb902c65563000444f0c8925"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "bf126c82f7e13aa33e1940a82f04416f8e28ca2e"
+    },
+    {
+      "path": "proj",
+      "type": "dir",
+      "sha": "d86d21e7ec62b9e279242df6b26971ae44004837"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies native C engine; code/plugins/proj source-build roots. Runtime quality unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,122 @@
+{
+  "repository": "phpgl/visu",
+  "repository_id": 522609733,
+  "commit": "c6addbcc681c2636fd463ce154dfba38d3abaa61",
+  "source_url": "https://github.com/phpgl/visu/tree/c6addbcc681c2636fd463ce154dfba38d3abaa61",
+  "readme_path": "README.md",
+  "readme_sha256": "5e92c3c78e71e6822304dc07301bf4b7ff246ed4ecddae859c8cf8be6d0fbe57",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3d0c77bd10392d56830037391c66517c22127b96"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fff46e72ef363e998c648af705fd85f75e9963fc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2214f4af8acdebcbc65d7e751c8c0501cf4431ee"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "255d0bc832a745bb0a61d896ab6d63d4fc0bc827"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "4708d6e5f959025d505b6e29a96fc625082e9e88"
+    },
+    {
+      "path": "bootstrap.php",
+      "type": "file",
+      "sha": "bc04ae8198fccd16d6f9a063eb30217413dfedbc"
+    },
+    {
+      "path": "bootstrap_inline.php",
+      "type": "file",
+      "sha": "decbe5ce2ef841087d727e26194f67d8de99ccd6"
+    },
+    {
+      "path": "composer.json",
+      "type": "file",
+      "sha": "7b3ed5316ba318dc73eea1cfe3911c22c7354b77"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b5fa5dcaccde232ac7af4e2519a64126ae612eb5"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "85cf2d8b6cb8c904ab5e7c31687607883866d385"
+    },
+    {
+      "path": "mkdocs.insiders.yml",
+      "type": "file",
+      "sha": "5bf99da2590baa66a9e29737e36f8ba05668259e"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "a18337e97993725181af2e325335f0dbe16fa38f"
+    },
+    {
+      "path": "phpbench.json",
+      "type": "file",
+      "sha": "e367762fb7d29ddb700951702020255d96c59135"
+    },
+    {
+      "path": "phpdoc.xml",
+      "type": "file",
+      "sha": "240609729140f37f5cc629f7bd60ba672e556955"
+    },
+    {
+      "path": "phpstan.neon",
+      "type": "file",
+      "sha": "97cae0e550c143ed36331ec848d99090130f0a92"
+    },
+    {
+      "path": "phpunit.php",
+      "type": "file",
+      "sha": "e97b6953a61873ec1e4fb91f2123b15f5c3985e7"
+    },
+    {
+      "path": "phpunit.xml",
+      "type": "file",
+      "sha": "d40ac112f88525d479d46a054cebe45e854444f2"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "c53c6c8a6e5bb912f12ed9fecf7622461b7a6fb9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "eb36837dcea554f1a0ce70a0157c029f171912c7"
+    },
+    {
+      "path": "test.php",
+      "type": "file",
+      "sha": "6913ba662dab5b5cb488526b4a20e14c76a65240"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "6c0525e01f13b151771044f0da9b5453d1c4d325"
+    },
+    {
+      "path": "visu.ctn",
+      "type": "file",
+      "sha": "ab98e9546c2ea87c9bf2d116005309e045db0803"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

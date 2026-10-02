@@ -1,0 +1,74 @@
+{
+  "repository": "Shmellyorc/Void",
+  "repository_id": 1329422807,
+  "commit": "07218f4b7323089249b04c00b35a21ee01f05c48",
+  "source_url": "https://github.com/Shmellyorc/Void/tree/07218f4b7323089249b04c00b35a21ee01f05c48",
+  "readme_path": "README.md",
+  "readme_sha256": "6b3a2474303c853b134898b965f7e877a5f33bf34db982ea26d359f36dd9ff56",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "af3d70051e21e8ae941c9ec5a40064a56413d0de"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "038fc998d9b1b90ba57eb98b54f4f7d0dc58c527"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "22b361384af26c70edaac765703e3010b312a259"
+    },
+    {
+      "path": "Benchmarks",
+      "type": "dir",
+      "sha": "4c2b1abe927cb373222a213dc7d72f7f5ba15fb8"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "98dab931044b315cd0a02d998b68e38d9e9c21ba"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "1bb04a940002cc556d8c8988a4e7157e9d74ea29"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a186da2ab12fdc6aa085a0c29880b13f11cf3a0a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "80c102f365ef2fe2c4821358ccfc57b2e885fcc2"
+    },
+    {
+      "path": "Src",
+      "type": "dir",
+      "sha": "fbb4cdcf82cb84a8eb848ac2b55749ed64200be8"
+    },
+    {
+      "path": "Void.slnx",
+      "type": "file",
+      "sha": "9f68f42aee789d5a14d1f4e8de44b28346017b56"
+    },
+    {
+      "path": "VoidSpecSheet.pdf",
+      "type": "file",
+      "sha": "c270cfe1ec21d685426fa14778e8708f23c5bed8"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8fd226cfd507e3926984d1801038c78fff656da2"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Modular .NET 2D framework explicitly leaves full physics and UI frameworks to consumers.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "nicolasgramlich/AndEngine",
+  "repository_id": 2828194,
+  "commit": "720897f99d2c56ba357e8fe361454bd8d88c37ed",
+  "source_url": "https://github.com/nicolasgramlich/AndEngine/tree/720897f99d2c56ba357e8fe361454bd8d88c37ed",
+  "readme_path": "README.md",
+  "readme_sha256": "68038aeebaef3cb540f7dcaf45e14892b2fa885e1d4a4a1c266c9b65121db250",
+  "entries": [
+    {
+      "path": ".classpath",
+      "type": "file",
+      "sha": "d3bb07b44c75e9b0f2685c25e4254f367811125c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c71b14cb42c8032a9f86895134e502e51ce7a17c"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "61cf9ecd5e755947197c5e56f3397c2ffbac2188"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "04786c3a5b7cb47fdbdc4a1501ccc929ac40ed67"
+    },
+    {
+      "path": "AndroidManifest.xml",
+      "type": "file",
+      "sha": "f206a68bfdfdc1670bc9798488c77723415b5a72"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "35cfa48aab50b2bcfde893f36592857eda2ca95d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "12881f40aeccbbd713c2f6a4ceee0eb592e2973a"
+    },
+    {
+      "path": "build.xml",
+      "type": "file",
+      "sha": "e30400456a575028aad7e734711584acffb00024"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "695853a95cce9458f66a097dc34ce1638a12a426"
+    },
+    {
+      "path": "jni",
+      "type": "dir",
+      "sha": "88a6a0da2a40a2af7e472eadf75cc65cb8233c47"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "69b51dcbcf45c741acf851d5be14b8cf3eaeb79a"
+    },
+    {
+      "path": "proguard.cfg",
+      "type": "file",
+      "sha": "b1cdf17b5bb40b4839cfc80f7e91bbcf7b94f798"
+    },
+    {
+      "path": "project.properties",
+      "type": "file",
+      "sha": "b3dbf357e63c7b01c1c4255f9fc34629d5377543"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "82e3a754b6a0fcb238b03c0e47d05219fbf9cf89"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8b7c82ccad8fb29694ecfcce3bcf5a7be2438efe"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README references owned game engine; src/jni and Android Ant/build metadata.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

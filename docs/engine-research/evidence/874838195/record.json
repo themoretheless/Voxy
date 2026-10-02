@@ -1,0 +1,79 @@
+{
+  "repository": "Henrique-Henrique/Hengo",
+  "repository_id": 874838195,
+  "commit": "51662389d62f7ee8bf22790a224a5c67a4be26e9",
+  "source_url": "https://github.com/Henrique-Henrique/Hengo/tree/51662389d62f7ee8bf22790a224a5c67a4be26e9",
+  "readme_path": "README.md",
+  "readme_sha256": "0d167877c3cb5e8a83da0c4a72f93792f4b305be189bb45f85c614ba2a208e3c",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bbf727f34b605f8db68b727279f62c5d50c36643"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7dfb505ac1898ba2612f48b847d3efc59eda2550"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "00f4697d15200e3db98337e83e9fe6302fdd73c6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a4acff117863b64f6c6f1b57bda3fdc10f1cc35c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "30b3a6f526e248153cfddbabadea3db94591e708"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "5085ae63b47ca1b70e5698dd7dce7d2befa69dbf"
+    },
+    {
+      "path": "demo.tscn",
+      "type": "file",
+      "sha": "391e67ef367e3d557c051f0ed0848261dd9c14e0"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "b370ceb72740b9a759fe11b364f0d4de27df42f8"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "f96fa74519626cd2c533ce4fb77a3212ddaacc51"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "910609f5733e2be003d73a24b3b7bcfbe53c3a5c"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "2e8c01e533ba86446de788ac33e14e5208029017"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "d59ec5f12e542f7f5ab75627ea079fc39d8a771d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "726c63c1f6b556653bb28511bcf5bb86beb1ea5e"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Godot visual scripting add-on; addons/project.godot/tests depend on existing engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

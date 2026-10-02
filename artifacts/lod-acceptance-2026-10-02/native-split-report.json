@@ -1,0 +1,19 @@
+{
+  "binary_sha256": "2c25d57466217271654c0f0c5965799278b9143607cdab6e7a3f3ce7b7f5b4d2",
+  "archive_sha256": "03adaece5d8caa8af729b1f816b5059d2b2df98fc168e6b30b58cb627c6c404d",
+  "source_log": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-11927-1790968401029159000/native.log",
+  "checks": [
+    "phase=3 msaa4=false levels=[[Some(0)], [Some(1)]]",
+    "phase=4 msaa4=true levels=[[Some(0)], [Some(1)]]",
+    "phase=5 msaa4=true levels=[[Some(1)], [Some(0)]]",
+    "LOD NATIVE SINGLE RESTORED PASS",
+    "LOD NATIVE PRESENTED AFTER FAILURE PASS"
+  ],
+  "scope": "presented native single/split views, independent per-view LOD, MSAA4 enable/disable, camera swap, restored single view prunes secondary LOD history, budget failure and recovery",
+  "limitations": [
+    "one model asset",
+    "automated edit_key actions do not prove manual keyboard/pointer delivery",
+    "no image equivalence or animated LOD",
+    "logical geometry bytes are not total physical GPU memory"
+  ]
+}

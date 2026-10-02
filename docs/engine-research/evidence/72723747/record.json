@@ -1,0 +1,84 @@
+{
+  "repository": "mrlitong/fpsgame",
+  "repository_id": 72723747,
+  "commit": "95697c4bfb507cfb38dbe0f632740e2a7eac71fb",
+  "source_url": "https://github.com/mrlitong/fpsgame/tree/95697c4bfb507cfb38dbe0f632740e2a7eac71fb",
+  "readme_path": "README.md",
+  "readme_sha256": "7dde0afed7a8ae6568a54722208a13daf4a22b657d7d4ed21a5aa1ea072c01fe",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d4ad39504c2249dfc832e2a225e7abc15b1f6501"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1ddcf01624b741243319725ab60d575c6dcebabd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "04a9b782fd19381a5b50cec3046b0e7e41900d31"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "d5a905b03a71091c55e0dacb8679ca9f1620d2b7"
+    },
+    {
+      "path": "fpsgame.ico",
+      "type": "file",
+      "sha": "b3ec03bd617f32e58128fa977fd6ac9605124f4b"
+    },
+    {
+      "path": "fpsgame.rc",
+      "type": "file",
+      "sha": "bacec43f15591172cac52b0b44c43567d7241803"
+    },
+    {
+      "path": "fpsgame.sdf",
+      "type": "file",
+      "sha": "f623d5660506de7cc797009be59b5cb4a69d3883"
+    },
+    {
+      "path": "fpsgame.sln",
+      "type": "file",
+      "sha": "56863b1937b1f5b3b80333d1915d8af50472f914"
+    },
+    {
+      "path": "fpsgame.v12.suo",
+      "type": "file",
+      "sha": "4dcc66e0dbd84158532d8f2f5230e25f8541eddb"
+    },
+    {
+      "path": "fpsgame.vcxproj",
+      "type": "file",
+      "sha": "16a0da97094859a694f6f2a289236499453284a3"
+    },
+    {
+      "path": "fpsgame",
+      "type": "dir",
+      "sha": "8f28d9e362ddae1e0402c49ec1d35062e921e271"
+    },
+    {
+      "path": "ipch",
+      "type": "dir",
+      "sha": "3019fa24b6324f42aaa55a6f67510c154fa8ddbb"
+    },
+    {
+      "path": "sys",
+      "type": "dir",
+      "sha": "f5a66f1dce9aaf3aa830ee549917a2195936167f"
+    },
+    {
+      "path": "x64",
+      "type": "dir",
+      "sha": "1f64369ce8c6ff8d6b864de683af5784b7730b2c"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "FPS game based on 0 A.D., rather than a reusable engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,129 @@
+{
+  "repository": "fury-gl/fury",
+  "repository_id": 149529946,
+  "commit": "bd71f05969276126067a5e9caecfd0cfb1cbe6f9",
+  "source_url": "https://github.com/fury-gl/fury/tree/bd71f05969276126067a5e9caecfd0cfb1cbe6f9",
+  "readme_path": "README.md",
+  "readme_sha256": "a221ff71470ce77b932cb88e6d49db666a0e800121b37e851e23137c67cbc5a4",
+  "entries": [
+    {
+      "path": ".codecov.yml",
+      "type": "file",
+      "sha": "bda688980c4a4100568225f35a12cdf742da9d79"
+    },
+    {
+      "path": ".codespellrc",
+      "type": "file",
+      "sha": "c48cd788cd657148f17e7cc509ca03643af51a36"
+    },
+    {
+      "path": ".coveragerc",
+      "type": "file",
+      "sha": "176cfa09a0f146c13612c3eaee6dfb96f30da25d"
+    },
+    {
+      "path": ".git_archival.txt",
+      "type": "file",
+      "sha": "62556c52022f66658e821a39069c00f58f3b4791"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d3678838b1be8684619eaa246b6dd1e57c569787"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9e8940531c1e448f81e3ae0bb6f509fc99cedfc8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ee5169a22d8a9e910472dcdd5e9005c51443418a"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "18540b19eedc1811d5f3333c58e728247cad9c11"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "e0f91858a73223e27593f0df18038dfd1080200a"
+    },
+    {
+      "path": "AUTHORS.rst",
+      "type": "file",
+      "sha": "59605d52a7b365572078e1349dce31a305682117"
+    },
+    {
+      "path": "CONTRIBUTING.rst",
+      "type": "file",
+      "sha": "d6ef9842a71a49b13fd7108946e0a4eba6e496ed"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6cf7cbfaacf6717d0ac50255ebbe85e2cc2b0ab8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4790c8b638d9236941b18bf798b93543dcee74f1"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "a43627d003fa5d953dff876684bc8b725f6ebdcd"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ab7ac7a96524395762835c51b5a357a05a4946cc"
+    },
+    {
+      "path": "fury",
+      "type": "dir",
+      "sha": "afdcec6f4544b5cf6bb6533dd79cf0779c360a51"
+    },
+    {
+      "path": "paper.bib",
+      "type": "file",
+      "sha": "b9e3e80bdc3af8adb5e1a7fa9a347d97babd484a"
+    },
+    {
+      "path": "paper.md",
+      "type": "file",
+      "sha": "6b3fd339a703ce64a599eb622d992d7afa9033bc"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "2df8c6f9f4b2856efbf849b4be4ebf9171f2e5c1"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "64c94012cc700d08b28449e5d1b31f1609ee5ee7"
+    },
+    {
+      "path": "requirements",
+      "type": "dir",
+      "sha": "e9af8d1a4ce2c92b743583c274a0e166af00e76b"
+    },
+    {
+      "path": "ruff.toml",
+      "type": "file",
+      "sha": "8923c7f78b1d889a8b4bc1de680fa8c17b8603a9"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "32072320163f2be1fdd14e4a7d2f6eca0867e4ea"
+    }
+  ],
+  "classification": "graphics_middleware",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Python scientific visualization library; fury/Python build, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

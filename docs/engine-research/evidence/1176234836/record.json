@@ -1,0 +1,74 @@
+{
+  "repository": "hayowei/aisandboxgame",
+  "repository_id": 1176234836,
+  "commit": "850a1e57c7a15fc7f2009b10f615bc153cd24ede",
+  "source_url": "https://github.com/hayowei/aisandboxgame/tree/850a1e57c7a15fc7f2009b10f615bc153cd24ede",
+  "readme_path": "README.md",
+  "readme_sha256": "d8097a1348e768e4f34431a40c58401d182d46b1783d2e3ffb45e1dc85cac747",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c3c1fb503c7eebc7a43f6f50cf2343dc70dbef23"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6301776f29d6e2440c4c03b73a848afed0b49333"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4730a73abba5068a96b8ffd844654b44bcfdb2a3"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "type": "file",
+      "sha": "86a451d65b93cf9ebc12542c220bd4ecfafd35f5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9416106dbe43000fb05ec3ac814f095593713404"
+    },
+    {
+      "path": "css",
+      "type": "dir",
+      "sha": "5367effb365ce30c4e9e2a484b7beeaabf162912"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "5370fc4099953d1457fb8deb990525b1ec1d6e59"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "bb05b098c7cc723e4350c50606afe79db0dbfc17"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "b44cadf8b22b7bfe76983394b805d9fa5b41186c"
+    },
+    {
+      "path": "offline.html",
+      "type": "file",
+      "sha": "5c1738c39f008ef624cb5bd66cb92859c8ae59a8"
+    },
+    {
+      "path": "prompts",
+      "type": "dir",
+      "sha": "0ebcf76b3f78538e14cb10cdc1b563108c543088"
+    },
+    {
+      "path": "sw.js",
+      "type": "file",
+      "sha": "3a5d46542bdf34bb231910598524a29382ac9ddd"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "LLM-driven browser text RPG and interaction framework, not independently identified graphical engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

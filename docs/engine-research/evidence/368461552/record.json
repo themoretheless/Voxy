@@ -1,0 +1,99 @@
+{
+  "repository": "ounols/CSEngine",
+  "repository_id": 368461552,
+  "commit": "52688ea45728cccbca661948f4be4950174402f3",
+  "source_url": "https://github.com/ounols/CSEngine/tree/52688ea45728cccbca661948f4be4950174402f3",
+  "readme_path": "README.md",
+  "readme_sha256": "37b6ee7179c06cf341813246c640e38746796462ecec5719733c19b07d86b454",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7c941b9a43db5c0c42ccf9e72e079ec4f1244348"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f05ca8abd3dbd351d32c1abd3fa0b3d5a04b3e8b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ff7a49a927ef3e9abe87928e09be2e279bef8015"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5e698271cf32f2eef91ab6ccc0e569980be77769"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "f6ddc927f0ba19e639dc072600f66068df4d2826"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "250e0f00e97e7410bbffdab4f9005f47fa0c3617"
+    },
+    {
+      "path": "EngineDiag.de",
+      "type": "file",
+      "sha": "59c04c0d649d725877421a1ccf9f1a6b5f9c0d4e"
+    },
+    {
+      "path": "EnginrDiag.png",
+      "type": "file",
+      "sha": "98ab572d6fee26f38e62f1e5611cce78304712f3"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "cc3b1d08a27a5c8e7857f0264a1469cb4be8de8e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a9b8e959395a3830f726c297a40667d4e9821796"
+    },
+    {
+      "path": "README-ko.md",
+      "type": "file",
+      "sha": "3ce4d02a7e5f9a3921c8f9ffe0e4ff37e8f15344"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b59793e60893181a3df2a49cf769ad6c13184b55"
+    },
+    {
+      "path": "bitbucket-pipelines.yml",
+      "type": "file",
+      "sha": "bd91d96ce920ffae2ee699c443df873bddda16f6"
+    },
+    {
+      "path": "intro_image.png",
+      "type": "file",
+      "sha": "8831341d6ab8885d23c2882bac8a6bee685a3d12"
+    },
+    {
+      "path": "intro_image2.gif",
+      "type": "file",
+      "sha": "896ecd06b2e7c9caeb342a2ec23ec5e14de92f6d"
+    },
+    {
+      "path": "platforms",
+      "type": "dir",
+      "sha": "61a5c4abdf60afe5373b2fcbc2e47f8d309dc326"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9f74834fa2ae13eee9e46f914f17209655a658e2"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ cross-platform game engine with src, Editor and platform directories and Squirrel dependency; platform readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

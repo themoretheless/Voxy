@@ -1,0 +1,16 @@
+{
+  "vertices": 60866,
+  "triangles": 121728,
+  "rest_max_component_error": 2.220446049250313e-16,
+  "maximum_normal_change_degrees": 164.5764501267851,
+  "reference_sha256": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+  "candidate_sha256": "6399dc634300b0eba1612d8a042da5ae44281e31a5a454fd9eff6e9fe5b609a4",
+  "output_sha256": "5202bd736b8613ba9e8bbaf5b80af833e018681d1a99efab962d71a40a7aa074",
+  "geometry_preserved": true,
+  "adopted": false,
+  "transport_reference_topology": false,
+  "vertex_frame": true,
+  "source_vertex_frames": false,
+  "normals_opposed_to_current_geometry": 10,
+  "maximum_current_geometry_angle_degrees": 159.34886425687156
+}

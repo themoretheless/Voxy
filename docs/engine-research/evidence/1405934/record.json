@@ -1,0 +1,69 @@
+{
+  "repository": "yangboz/godpaper",
+  "repository_id": 1405934,
+  "commit": "62ddf88cf637ab96d95d2c6e94721b3ba2f52a09",
+  "source_url": "https://github.com/yangboz/godpaper/tree/62ddf88cf637ab96d95d2c6e94721b3ba2f52a09",
+  "readme_path": "README.md",
+  "readme_sha256": "7e85c608c0f7adfc8ae53dde6999bb4cd342354aedbb831777c69a9b7234b8c2",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "0c4b9ce28f2d29a00c3d0cf17923cc4273e2c4a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7d2f397f6b6a55629ab1eb64618957f39754cba7"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "007a3548cd94a1dd36e9feba73e04b07a336e42c"
+    },
+    {
+      "path": "Docker",
+      "type": "dir",
+      "sha": "5bbbbfb426749faa4471762be384dcc4ab823db7"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "7d780541abd50c3192aac6032cfee2235aaae689"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bc1f4d58b5921b779a5e972310c79cb273ac5b1a"
+    },
+    {
+      "path": "ServerSide",
+      "type": "dir",
+      "sha": "7e87bcc0b2ca71f100c5151024acf0b99100c63d"
+    },
+    {
+      "path": "TheKnightErrant",
+      "type": "dir",
+      "sha": "eeb370cf5778cc8a2efdae388c9c2882d5679370"
+    },
+    {
+      "path": "TheRealBishop",
+      "type": "dir",
+      "sha": "dc67b3790ae5b67d0a33faf65dcceb1f880e9707"
+    },
+    {
+      "path": "Wiki",
+      "type": "dir",
+      "sha": "8b7745fab17844952b64fbd5bac209fcd51d2e81"
+    },
+    {
+      "path": "jQueryMobile",
+      "type": "dir",
+      "sha": "da37e73e4d3351a36d7813864601b89d1ee6ed86"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit Flash/iOS board-game framework implementations, not established general engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

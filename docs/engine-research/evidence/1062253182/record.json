@@ -1,0 +1,94 @@
+{
+  "repository": "papercraftgames/folded-paper-engine",
+  "repository_id": 1062253182,
+  "commit": "8810eb8b034bcc368c9103c194e29be3cf0d88a1",
+  "source_url": "https://github.com/papercraftgames/folded-paper-engine/tree/8810eb8b034bcc368c9103c194e29be3cf0d88a1",
+  "readme_path": "README.md",
+  "readme_sha256": "cb89c9e921f40ac8dbd2b4290b2fb76336432cca883fe3ba627aaff9bf635e4d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "93efba2a1477f1cb4f64165925dc76797f1b7a30"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "32cfeba239dca3980dff4eba24e971e47bc36f4c"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "4993270bf5d2d97371421539d81f6d69499ff88c"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "9fc6a0271c7e7a98ee6a34c20197939c5a44fd50"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "c219b2cf8e75292bae3728d73b09591dbf34ae5b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c54c51510d1c6456c466b81da46f98a7a0fd1443"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d3f8ad0e043c3a6a53456ee2dc61e19f30ffa0a2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c0e45455306156d0f29205d95e0a6cd5508c1bde"
+    },
+    {
+      "path": "astro.config.mjs",
+      "type": "file",
+      "sha": "fcb6d0e8ffcfbd5395def028dbbe341bb51f6381"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0c96b53c2858260cdb18dc55146b2cd0cf442b95"
+    },
+    {
+      "path": "planning",
+      "type": "dir",
+      "sha": "ba2402e9e3d523e5e1b6e3e53d70031f3dc47712"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "e21f9285371fb4551c068a1da66732c75724c541"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "04ca8c051a81b04326a8f14e882713016d092a11"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7216b4c52466bac766d7fa1773ac979df709198a"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "2ebc65fe6fc6fe7a1c4429d7e3ef951c91d4e382"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "c82aab0a78bdf0eed5e599386218c982ca5df835"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Blender-to-Godot addon and accompanying site, rather than an independent game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

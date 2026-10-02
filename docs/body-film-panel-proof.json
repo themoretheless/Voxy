@@ -1,0 +1,20 @@
+{
+  "savedSettings": {
+    "absorption_b_per_m": 0.04,
+    "absorption_g_per_m": 0.08,
+    "absorption_r_per_m": 0.2,
+    "density": 1000.0,
+    "refractive_index": 1.45,
+    "source_radius_m": 0.04,
+    "source_rate_m3_s": 1e-09,
+    "source_x_m": 0.0,
+    "source_y_m": 0.2,
+    "source_z_m": 0.13,
+    "sources": [],
+    "surface_tension": 0.04,
+    "viscosity": 0.05,
+    "wetting": 1e-07
+  },
+  "invalidDensityRejected": true,
+  "liveViewerConnected": false
+}

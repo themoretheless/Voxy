@@ -1,0 +1,712 @@
+[
+  {
+    "repository": "godotengine/godot",
+    "commit": "12c17c187e88efa23e6bbd6689630e256eca6523",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "bevyengine/bevy",
+    "commit": "5f7f4ce67bd063efdbadf9acacd4bf711f51f0c0",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "FyroxEngine/Fyrox",
+    "commit": "85cf468a2abf178472cc856613d1664678850d52",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "PistonDevelopers/piston",
+    "commit": "21b8719a0606bb4e8612c36a2016e5b685c609f9",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "ggez/ggez",
+    "commit": "9c865474504084b60204874bc028ba91c5f013b9",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "not-fl3/macroquad",
+    "commit": "8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "not-fl3/miniquad",
+    "commit": "39c928fb7e09fd44e45f37fe9a98503968bca412",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "hecrj/iced",
+    "commit": "84f785b06ac02a49901e4113451fedd31c9c3326",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "bkaradzic/bgfx",
+    "commit": "8d4af17207542afa0551cb105141f89621089114",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "bkaradzic/bx",
+    "commit": "1c986bd1e9a176a08ae885a6cdcefe76c3f700fc",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "floooh/sokol",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "raylib-extras/rlImGui",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "raysan5/raylib",
+    "commit": "987a0e54c7ab1bdab459989b319a9064bb088b69",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "urho3d/Urho3D",
+    "commit": "e0ce107356b255bf2e24d94a41d00b512b9ce633",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "rbfx/rbfx",
+    "commit": "2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "OGRECave/ogre",
+    "commit": "4e06404ff4d4dafba52ac8b923fa5231de111136",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "OGRECave/ogre-next",
+    "commit": "475f783d76f21b530e718aab4a548cdd9a222e50",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "DiligentGraphics/DiligentCore",
+    "commit": "bcb8b11eecd0899962c330b798ebe3e786b02bbb",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "DiligentGraphics/DiligentEngine",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "ConfettiFX/The-Forge",
+    "commit": "cd5046893faba2dc7869243873bf01f02a6f0df9",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "google/filament",
+    "commit": "3630bd4e7348fdc270545acc7dc4bb66d9e43aa8",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "WickedEngine/WickedEngine",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "TheCherno/Hazel",
+    "commit": "1feb70572fa87fa1c4ba784a2cfeada5b4a500db",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nem0/LumixEngine",
+    "commit": "e72a9d26c48b6823b55118f5921e46cb2ae01a4e",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "FlaxEngine/FlaxEngine",
+    "commit": "19ecbef585a50e162a790747fe08174c4d114e44",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "stride3d/stride",
+    "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "defold/defold",
+    "commit": "9614cb812c53d149ac84eac8c98e7b670b68f4bd",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "cocos/cocos-engine",
+    "commit": "4bbfb6f521936e87284cf5b3e59e6b8139411d7e",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "cocos2d/cocos2d-x",
+    "commit": "7a5282a301a13e467bdcc3466d3cd3883862aadf",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "BabylonJS/Babylon.js",
+    "commit": "02b5a5e79b0140f79dc75f703e82cb79d8b5fa4c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "mrdoob/three.js",
+    "commit": "f0f145592e96cf13280b5bea8d8454b29eb94fb1",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "playcanvas/engine",
+    "commit": "b9cd8470860b09ff8bd020e0c360a1fb2706fa44",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "pixijs/pixijs",
+    "commit": "5b41ee37fd36c61e089113345a8f12cf1c3323cf",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "phaserjs/phaser",
+    "commit": "02d8931b626d9764c133cbb3fbf99966c03c757c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "pmndrs/react-three-fiber",
+    "commit": "13e5e0e152562a9cb64c31dee1d10a2af7aa39c4",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "melonjs/melonJS",
+    "commit": "16df0bf10b374cdd216354df2964174812f2bc93",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "armory3d/armory",
+    "commit": "f9642c643c8ebf8ec3e98081d1e433d306c50b77",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "blender/blender",
+    "commit": "64d181010e0dbc49d2faaaa057357aef8d9a809c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "OpenMW/openmw",
+    "commit": "75da08331a1d30db612529f4630bc757e427038f",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "luanti-org/luanti",
+    "commit": "6c4c384dad062a44a31a6d67a498731d4bf8207c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "veloren/veloren",
+    "commit": "585a91b4a76fcf5df7a4851127cf5907a3ce34df",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "sp4cerat/Fast-Quadric-Mesh-Simplification",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "zeux/meshoptimizer",
+    "commit": "4c203430ca565cb59a468a91922c76c208169536",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "zeux/niagara",
+    "commit": "fc3ff108503fbac78cc0cdee051b27a5c3839718",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "GameTechDev/Intel-Extensions-for-Vulkan",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "GPUOpen-Effects/FidelityFX-SDK",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "GPUOpen-LibrariesAndSDKs/Cauldron",
+    "commit": "b92d559bd083f44df9f8f42a6ad149c1584ae94c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "GPUOpen-Effects/FidelityFX-FSR2",
+    "commit": "1680d1edd5c034f88ebbbb793d8b88f8842cf804",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "GPUOpen-Effects/FidelityFX-FSR",
+    "commit": "a21ffb8f6c13233ba336352bdff293894c706575",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "GPUOpen-Effects/FidelityFX-CAS",
+    "commit": "9fabcc9a2c45f958aff55ddfda337e74ef894b7f",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIAGameWorks/donut",
+    "commit": "bd498ea39c35abbf764c10b6302ff3bbfee1ebb3",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIAGameWorks/nvrhi",
+    "commit": "de5defced491e9c6392098723a08f3fe135aaa3a",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIAGameWorks/Falcor",
+    "commit": "759aad033ff610fb0d82c74f7e0a508d0096d5f2",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA-RTX/RTXDI",
+    "commit": "a6efab966b7c3b272da0461578eb56ac61c7cbff",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA-RTX/NRD",
+    "commit": "fddfb7c922681fb0011c1d84d25834e7507a878c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA-RTX/Streamline",
+    "commit": "2122257e0fce486f91b385aa63b9a09b0a34b363",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA/cuda-samples",
+    "commit": "5443602d89ed99aede2e4b7bf329daddeadb320e",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA/warp",
+    "commit": "fea3ebd1c823de2365ebe3bb1b55de98ffeb663d",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA/PhysX",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "NVIDIAGameWorks/Flow",
+    "commit": "5f7db82d72bb7427ea09d14b50aaed276e553632",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIAGameWorks/Blast",
+    "commit": "636e7eb43b8d41e44c40eb1b4799bfd027f17ba7",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA/cutlass",
+    "commit": "0b55a2f691d69981583568fd9eb69687b1f0de8a",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA/thrust",
+    "commit": "756c5afc0750f1413da05bd2b6505180e84c53d4",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "NVIDIA/cub",
+    "commit": "0fc3c3701632a4be906765b73be20a9ad0da603d",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "coreylowman/cudarc",
+    "commit": "ec1cac71dab29498240704a9e4a264fbbec19495",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "EmbarkStudios/rust-gpu",
+    "commit": "39c25f02410375a0e67690f822f422431bab0dfb",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "gfx-rs/wgpu",
+    "commit": "dd033bfb7fb3690eb2e80a971877a1ef8ecabe59",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "gfx-rs/naga",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "gfx-rs/gfx",
+    "commit": "bc77309afdb0829605982370a3e17382c5968071",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "ash-rs/ash",
+    "commit": "f4c2ca3e4f6b998d5254ad101a32f024d87cdec2",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "vulkano-rs/vulkano",
+    "commit": "9a80c29e7f8a90d7f39564b31769d6a9c85f6cc4",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/Vulkan-Samples",
+    "commit": "177edebf0cd7d4f669667e49f052cfb56b17e004",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/Vulkan-Tools",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "KhronosGroup/Vulkan-ValidationLayers",
+    "commit": "394ccee0f6d2d202d0755a85b8a111c6a97511ef",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/SPIRV-Tools",
+    "commit": "4f3a92dfbd5b49593e43b3c245b6688da2ad933a",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/glslang",
+    "commit": "c8095022ee39c7482071bc3177f93f4bca42a6d9",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/SPIRV-Cross",
+    "commit": "aa217aeb6c9f0ace7a0ab233b28807edf45eb165",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/OpenCL-SDK",
+    "commit": "6090378a113db8dab20ae278c8fa57ab10b92300",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/OpenXR-SDK-Source",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "microsoft/DirectX-Graphics-Samples",
+    "commit": "e5975f9b0744fc5096dd593ed72bf8f5c004164f",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "microsoft/DirectXShaderCompiler",
+    "commit": "4781bc2115d6e64f8f344664de0f0b6ec1d93015",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "microsoft/DirectXTK12",
+    "commit": "6fc18afe6dc4875fef662d8d7f27241afa51f4f4",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "microsoft/DirectXTex",
+    "commit": "20f7316f1b55dcab3479636015e643c9559fa193",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "microsoft/DirectXMesh",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "google/dawn",
+    "commit": "55d8e74564c189193c900125b32c8f2996b2bfa3",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "google/shaderc",
+    "commit": "f6949aa1ddaac54a10268ed55ad71a0d2e441b5c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "google/angle",
+    "commit": "0855dd00f9c0e449207bb141fb03067469e69d56",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "sdl-org/SDL",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "glfw/glfw",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "libsdl-org/SDL_image",
+    "commit": "f7ec8b3631f5eeb4497bf4a581547409dfaa55c4",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "SaschaWillems/Vulkan",
+    "commit": "41a4410243fca7640a2dd0115a5ff5cb9a29494b",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/nvpro_core",
+    "commit": "bc19d6ac3ef62938d0ea0e099735878457ce1b6e",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/vk_raytracing_tutorial_KHR",
+    "commit": "952a1a8e8b85f25781db7014d4d2bda124435e79",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/vk_compute_mipmaps",
+    "commit": "6c248f554e91329875e9860f2258019a32b44ee9",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/gl_cuda_interop_pingpong_st",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "baldurk/renderdoc",
+    "commit": "42e52b48a3888bb5713c5fa91bf10bf0eec96908",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "wolfpld/tracy",
+    "commit": "f55c69603f42daf05d15acce38ffc683bd07c5a3",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "jk-ander/earcut",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "jrouwe/JoltPhysics",
+    "commit": "5830c342b90fa087f118aa0f086d541a4950b1d9",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "bulletphysics/bullet3",
+    "commit": "63c4d67e337017f9d8b298c900e9aabdb69296e7",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "dimforge/rapier",
+    "commit": "846c463e47ef654d6a6ce6fa0e455f3a1e98c2ec",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "dimforge/parry",
+    "commit": "3383f51cbbe9af70565427e7a66c605e1557c1fc",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "needle-mirror/com.unity.render-pipelines.core",
+    "commit": "3d17782646d86c6bbe963b693d1748e5931fe4ab",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "needle-mirror/com.unity.render-pipelines.universal",
+    "commit": "8de5d7f7c63a433f5134fc8ce941072a08371ddc",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "Unity-Technologies/Graphics",
+    "commit": "a7e4c051d256a781ab362c64316b125a1e104694",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "Unity-Technologies/EntityComponentSystemSamples",
+    "commit": "6786a741ee1f118ed14cecfa02beae8e926937b0",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "Unity-Technologies/arfoundation-samples",
+    "commit": "16489599d11baf15548b1d8b632bc455c65e07ca",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "v1mm/voxel-rs",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "DavidGoldberg/raytracer",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "karimnaaji/voxelizer",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "microsoft/DirectXTK",
+    "commit": "74e9b3c3871280b3a8b9907f862c55a50ae392ef",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "walterpie/ldtk_rust",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "SaschaWillems/Vulkan-glTF-PBR",
+    "commit": "128db90d18c9a68294ee845f9d7e779fbba8dc74",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/vk_mini_samples",
+    "commit": "1ca74a9c2b459848fded141dc14392dcc9e88029",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/vk_raytrace",
+    "commit": "1f5d00d5bbda01e65dac95202f59b2db9fb1bd2d",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "nvpro-samples/vk_raytracing_tutorial",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "NVIDIA-RTX/Path-Tracing-SDK",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "NVIDIA-RTX/RTXGI-DDGI",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "NVIDIA-RTX/DLSS",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "KhronosGroup/Vulkan-Hpp",
+    "commit": "280a182789277676a870d8afaa30ab9810be076a",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/MoltenVK",
+    "commit": "52aa21f54d7a84c5c441fc26359692b0980b384c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "KhronosGroup/OpenCL-ICD-Loader",
+    "commit": "5192c84f8059e5f703e5452929b613f9487f6e4c",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "EmbarkStudios/puffin",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "Traverse-Research/gpu-allocator",
+    "commit": "5d8be6b0b68376d12c392a822fcee89ec22e995b",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "Traverse-Research/rust-gpu",
+    "commit": "24a91b2bbfca9a9eefcf6466c7d7755b54de510e",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "Traverse-Research/buffet",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "sebastianstarke/AI4Animation",
+    "commit": "98aff6c87d73e4af0cbf50df2586f58532475662",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "DiligentGraphics/DiligentSamples",
+    "commit": "7c96699bdd8392d1fbe5174a6c02e08f5109dd22",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "google/graphicsfuzz",
+    "commit": "aa32d4cb556647ddaaf2048815bd6bca07d1bdab",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "google/clspv",
+    "commit": "8cffac9f97795ce7cc4e3447baa9284bfb9a824f",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "shader-slang/slang",
+    "commit": "c43281adccb020c09a5ae4d2001c146e85278c65",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "shader-slang/slang-rhi",
+    "commit": "0bd799a7c04ea7dc5597ff811fb08fdb1b6fab43",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "IntelRealSense/librealsense",
+    "commit": "e15c5d6bb1563e778d116f682aeefffbae2daedc",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "chinedufn/webgl-water",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "clayjohn/godot-volumetric-cloud-demo-v2",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "Scthe/WebGPU-Sponza",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "toji/webgpu-bundle",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  },
+  {
+    "repository": "jagenjo/litescene.js",
+    "commit": "2f72d0d2296158a049de34c4ff6d104c4191d8d6",
+    "status": "collected_not_reviewed"
+  },
+  {
+    "repository": "Twinklebear/webgpu-volume-raycaster",
+    "status": "failed",
+    "error": "no selected implementation files"
+  },
+  {
+    "repository": "microsoft/WebGPU-D3D12",
+    "status": "failed",
+    "error": "gh: Not Found (HTTP 404)\n"
+  }
+]

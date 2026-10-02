@@ -1,0 +1,129 @@
+{
+  "repository": "tx00100xt/SeriousSamClassic",
+  "repository_id": 490742641,
+  "commit": "80b9893e5b74e5a2160eaf63e6d6b3f3981dfbbd",
+  "source_url": "https://github.com/tx00100xt/SeriousSamClassic/tree/80b9893e5b74e5a2160eaf63e6d6b3f3981dfbbd",
+  "readme_path": "README.md",
+  "readme_sha256": "82dbc5d09047164c15889bb905c50f6f26a00fd33660a9385a0f310e54fbcb8f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "4cd037f0e90b503b36fb4c8d9f0092ab9bdab890"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f980372965daa48dddf5075e034570d37f49f3fe"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ef38106d9360caeb424594df4290da7b2d7e5374"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "932c59fe9f927281ef1c66753ba158395f64dbbc"
+    },
+    {
+      "path": "CHANGELOG.old",
+      "type": "file",
+      "sha": "e7e472a5633215218fd87869ab5d1ab6c718ff08"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "eba812cc8585903ddfee6dfedf54d55408e5f948"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "686ba32c58add264929d6f28ff8f373b0309420f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23cb790338e191e29205d6f4123882c0583ef8eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6b0fd85e110cbc69e6b03c96ce97ab3b21e62914"
+    },
+    {
+      "path": "SamTFE",
+      "type": "dir",
+      "sha": "04cf1f59949ec803e655b8507aa7eff39764eddb"
+    },
+    {
+      "path": "SamTSE",
+      "type": "dir",
+      "sha": "f193fe531d740f704e9554ef3c420900a5702bfa"
+    },
+    {
+      "path": "appimage",
+      "type": "dir",
+      "sha": "86e28df53253e643f3fe569525e7649c0da1adda"
+    },
+    {
+      "path": "build-appimage.sh",
+      "type": "file",
+      "sha": "a653243c33033cd953b843f537d184effda83ca3"
+    },
+    {
+      "path": "build-linux32demo.sh",
+      "type": "file",
+      "sha": "cca53688e17811c1d23e8b2066b7fb55105417bd"
+    },
+    {
+      "path": "build-linux64demo.sh",
+      "type": "file",
+      "sha": "bc5bf65dd992cd038511e13fe61fa8cf06808d89"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "aea8468374411b2eb2ab59287efd8ea9eed0be73"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "f28870eec8ec9e53c3b180b8e6f1bc80c8014719"
+    },
+    {
+      "path": "flatpak",
+      "type": "dir",
+      "sha": "b51e6c0fce9d471cdfc7f83591b97b262e3b4874"
+    },
+    {
+      "path": "man",
+      "type": "dir",
+      "sha": "0de289d0438ad943ee9dfa74045a18451bb5c1ee"
+    },
+    {
+      "path": "run_game.sh",
+      "type": "file",
+      "sha": "96fe4b1276e1039a6ca4a872f98109c6a3a1a29f"
+    },
+    {
+      "path": "run_game_hud.sh",
+      "type": "file",
+      "sha": "00b0f937ff671db4793e75c66577817ebd9d17bf"
+    },
+    {
+      "path": "run_server.sh",
+      "type": "file",
+      "sha": "b28e1a5d862b42bb420307bc03e21f8308f5aa90"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "e0e2c2d650da4eddeb25040a3882638e178dae71"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Serious Engine source and compatible games; owned native engine/game roots and CMake builds.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

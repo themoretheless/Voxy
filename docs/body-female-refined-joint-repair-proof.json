@@ -1,0 +1,269 @@
+{
+  "before": 56,
+  "after": 48,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579
+      ],
+      "before": 56,
+      "after": 54
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        12891
+      ],
+      "before": 54,
+      "after": 52
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45245
+      ],
+      "before": 52,
+      "after": 48
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": false,
+  "edge_groups": false,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48801,
+        48843
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48802,
+        48848
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48802,
+        48827
+      ],
+      [
+        48802,
+        48847
+      ],
+      [
+        48802,
+        48828
+      ],
+      [
+        48818,
+        48847
+      ],
+      [
+        48818,
+        48828
+      ],
+      [
+        48818,
+        48853
+      ],
+      [
+        48818,
+        48829
+      ],
+      [
+        48818,
+        48858
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        47088,
+        49017
+      ],
+      [
+        47087,
+        49017
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        47092,
+        49017
+      ],
+      [
+        47081,
+        49017
+      ],
+      [
+        47081,
+        49012
+      ],
+      [
+        47086,
+        49012
+      ],
+      [
+        47085,
+        49012
+      ],
+      [
+        47084,
+        49012
+      ],
+      [
+        49012,
+        49044
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        47272,
+        48800
+      ],
+      [
+        47273,
+        48800
+      ],
+      [
+        48818,
+        48854
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49027,
+        49061
+      ],
+      [
+        49036,
+        49061
+      ],
+      [
+        49022,
+        49048
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49029,
+        49048
+      ],
+      [
+        49029,
+        49047
+      ],
+      [
+        49029,
+        49063
+      ],
+      [
+        49029,
+        49062
+      ],
+      [
+        49028,
+        49061
+      ],
+      [
+        49028,
+        49062
+      ],
+      [
+        49035,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33246,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554478,
+      "forbidden_pairs": [
+        [
+          47088,
+          49016
+        ],
+        [
+          49034,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.002946770718901115,
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5670884009183508,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "37ef78f5a5f32a905cc24983828c75e8a7e558791922384cfb1c997612cd5cee",
+  "reference_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa",
+  "candidate_sha256": "57a8c754975659ba17e39e7c49dc54069f7e0aecafd4a0009330fcca10bc17ca",
+  "proposal_distances_m": [
+    2.5e-05,
+    -2.5e-05,
+    5e-05,
+    -5e-05,
+    0.0001,
+    -0.0001,
+    0.0003,
+    -0.0003,
+    0.0015,
+    -0.0015,
+    0.002,
+    -0.002
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

@@ -1,0 +1,54 @@
+{
+  "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12660666/#Tab1",
+  "article_doi": "10.1038/s41598-025-26576-y",
+  "scope": "Published relaxation times only. Exponential branch-retention calculations are analytical diagnostics, not experimental stress curves, fitted coefficients or FEM validation.",
+  "units": "seconds",
+  "installed_as_material": false,
+  "cases": [
+    {
+      "published_case_label": "minimum",
+      "relaxation_seconds": [
+        49.73,
+        1189.62
+      ],
+      "branch_retention_at_2_3_s": [
+        0.954803471539562,
+        0.9980684773010384
+      ],
+      "branch_retention_at_900_s": [
+        1.3812004525890162e-08,
+        0.4692854283018338
+      ]
+    },
+    {
+      "published_case_label": "mean",
+      "relaxation_seconds": [
+        31.75,
+        334.03
+      ],
+      "branch_retention_at_2_3_s": [
+        0.9301206734246351,
+        0.9931380424130458
+      ],
+      "branch_retention_at_900_s": [
+        4.889790773710837e-13,
+        0.0675850300600659
+      ]
+    },
+    {
+      "published_case_label": "maximum",
+      "relaxation_seconds": [
+        130.76,
+        1333.56
+      ],
+      "branch_retention_at_2_3_s": [
+        0.9825643149185662,
+        0.9982767796522412
+      ],
+      "branch_retention_at_900_s": [
+        0.0010252295004047375,
+        0.5092148397272964
+      ]
+    }
+  ]
+}

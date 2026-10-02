@@ -1,0 +1,84 @@
+{
+  "repository": "Facepunch/sbox-public",
+  "repository_id": 1102932625,
+  "commit": "f888d120230d8bc88b4292a76ccf8b4cdbaf95bf",
+  "source_url": "https://github.com/Facepunch/sbox-public/tree/f888d120230d8bc88b4292a76ccf8b4cdbaf95bf",
+  "readme_path": "README.md",
+  "readme_sha256": "f568eeeeb5608ac1fd193aa4d6719d28ebdba81e5bbec3f6fa35b57944b1e195",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ac48305d75a3a6008cea125cf7bdcad5dbf99a11"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3986028f566931f7440b1725cf69d040d49b9b5b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0647f807f3b91a83d89c975ddf8839bee2477c89"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "beaf86bab96b62ae32762baa6a8450f6dd9ac2ec"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "38fe7abf682d54455a90be6b7000dab084f444c9"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "43c994c2d3617f947bcb5adf1933e21dabe46bb5"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d0d60afd2cae26159414e4c485dd1ea434ea4acd"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "65684eba70c1b07e879202285ad4fad4dce8f716"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3095cd9bcd95ffe37efd562c6138fc2a7b3714a0"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "f3e92235030b5a0f335f685f1588d84cf6f54cbd"
+    },
+    {
+      "path": "Setup.bat",
+      "type": "file",
+      "sha": "5aa5719ff1e82ffb2fd6218fe0c1964abfd4d634"
+    },
+    {
+      "path": "Setup.sh",
+      "type": "file",
+      "sha": "539e85640f24784b6a91d297f10fdc16848d40b0"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "28f33782224086b1b0d4c1722c6dc4110de6789d"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "24659662c9e30cdb4eab6a37fceaebeb43cfd07f"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# engine/editor/tooling built on Source2; native Source2 core distributed as prebuilt binaries, not fully open-source independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

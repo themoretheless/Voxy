@@ -1,0 +1,36 @@
+{
+  "urethra": {
+    "8": {
+      "loaded_volume_ratio": 0.9036748235539694,
+      "released_volume_ratio": 0.9999992423823554,
+      "minimum_pair_distance_m": 0.001517915961075
+    },
+    "16": {
+      "loaded_volume_ratio": 0.8490328860131964,
+      "released_volume_ratio": 1.0000003727209184,
+      "minimum_pair_distance_m": 0.001487330206352
+    },
+    "32": {
+      "loaded_volume_ratio": 0.809372040137344,
+      "released_volume_ratio": 1.0000005488587846,
+      "minimum_pair_distance_m": 0.001488849240566
+    }
+  },
+  "vagina": {
+    "8": {
+      "loaded_volume_ratio": 0.8554305562607553,
+      "released_volume_ratio": 0.9999998087797894,
+      "minimum_pair_distance_m": 0.003789760341306
+    },
+    "16": {
+      "loaded_volume_ratio": 0.5238068925191823,
+      "released_volume_ratio": 1.0000008008062782,
+      "minimum_pair_distance_m": 0.003868378746206
+    },
+    "32": {
+      "loaded_volume_ratio": 0.02314999404892582,
+      "released_volume_ratio": 0.999998323554624,
+      "minimum_pair_distance_m": 0.003873802241099
+    }
+  }
+}

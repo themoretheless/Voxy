@@ -1,0 +1,13 @@
+{
+  "requestId": "51853-1790880263090081000",
+  "frame": 0,
+  "simulationTime": 0.00947004184126854,
+  "viewerPid": 51860,
+  "cells": 90175,
+  "massKg": 4.999999999999998e-05,
+  "summedMassKg": 4.9999999999999996e-05,
+  "fileBytes": 22890580,
+  "snapshot_sha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "snapshotPath": "/tmp/voxy-live-film-check/body.film-state-51853-1790880263090081000.json",
+  "savedSnapshotPath": "/Users/themoretheless/Documents/ChatGPT/Voxy/docs/body-film-native-state.json"
+}

@@ -1,0 +1,119 @@
+{
+  "repository": "AlmasB/FXGL",
+  "repository_id": 32761091,
+  "commit": "2a63641cff0636fe2bdd9e8f51ea6a838a599ea1",
+  "source_url": "https://github.com/AlmasB/FXGL/tree/2a63641cff0636fe2bdd9e8f51ea6a838a599ea1",
+  "readme_path": "README.md",
+  "readme_sha256": "f55fc55a7e09a29df93dc6451d0789a3b6943ec02a318240d8e32c88d40cf03f",
+  "entries": [
+    {
+      "path": ".LICENSE_3RD_PARTY",
+      "type": "dir",
+      "sha": "31d9cf2fdbfcf15e6d60308e5e68bfe9681e26ab"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "86d3c6201dedcc90bfad53dea24ecc4a857d4887"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1b999969e2bceeb34a8e10a538fe7737a5e69d3c"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "9e857227781a30e0e9c7622ea2872dcbfc8a4f62"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4bfc82a8b77e8586e2c45b9aa062153081f05cc1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "41b185b8244f58f6506396787d628d1554ea6dcc"
+    },
+    {
+      "path": "LICENSE_HEADER",
+      "type": "file",
+      "sha": "fcc326aa5af8bf76352ffbeaca1c860935dc1a16"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f0844721a79f76d37bda39b864a2201a0d69f2e1"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "59dd76f862e88404432dd6efd29df8234ea73add"
+    },
+    {
+      "path": "README_RU.md",
+      "type": "file",
+      "sha": "ea26fc0035a56abd73896ee6b09a6dc981487b86"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "c4192631f25b34d77a7f159aa0da0e3ae99c4ef4"
+    },
+    {
+      "path": "fxgl-controllerinput",
+      "type": "dir",
+      "sha": "a784be014340e8d35632a0c6527e346e5614f5b9"
+    },
+    {
+      "path": "fxgl-core",
+      "type": "dir",
+      "sha": "cdef19270b7e1dd9e595562b25d1e41516f9f669"
+    },
+    {
+      "path": "fxgl-intelligence",
+      "type": "dir",
+      "sha": "f52ca547fa91e4f0ac5bd82b25c2b3d8316d7f57"
+    },
+    {
+      "path": "fxgl-io",
+      "type": "dir",
+      "sha": "4273d6a66fcd579c63c137433207bf21e5a2e760"
+    },
+    {
+      "path": "fxgl-samples",
+      "type": "dir",
+      "sha": "484b78fdd563938c3678b4766bd5489ab4b62a98"
+    },
+    {
+      "path": "fxgl-scene",
+      "type": "dir",
+      "sha": "686a2203245364e5fe452138c49ef343b306ff7d"
+    },
+    {
+      "path": "fxgl-test",
+      "type": "dir",
+      "sha": "5552a7133b19cf26204ee97c11a15eacd231a51e"
+    },
+    {
+      "path": "fxgl-tools",
+      "type": "dir",
+      "sha": "d2c806069b5accc17d5eb1dd700c6dd2a0d39fa7"
+    },
+    {
+      "path": "fxgl",
+      "type": "dir",
+      "sha": "d2d4697ae0db0be004c7c69c2bad3f26b060c80a"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "b3af3117b1dead483725873632c63bc7db8d8938"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies JavaFX development framework; fxgl core/scene/io modules and Maven manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

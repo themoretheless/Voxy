@@ -1,0 +1,124 @@
+{
+  "repository": "efroemling/ballistica",
+  "repository_id": 203883148,
+  "commit": "a0436a4615fe8aa994c331c9e329f1321f1c431d",
+  "source_url": "https://github.com/efroemling/ballistica/tree/a0436a4615fe8aa994c331c9e329f1321f1c431d",
+  "readme_path": "README.md",
+  "readme_sha256": "f98455ab0a0050e8adfdba43e376e0961d8fe76cc8f26c359d2ff2a81ae8e6f7",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "249ace41d139427115f7d5917eb37041daf1042f"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5ca61d1288132ed99f83f0f4062b05240fb87ba7"
+    },
+    {
+      "path": ".efrocachemap",
+      "type": "file",
+      "sha": "944c660ce2e89abc084b6e18029621282190e94d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "99c447e9556bb92f3cf21e2ed1ac3d10a2194819"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3dc3c580c6a77dd04b788ee0f3b31c6e7afee8dd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4723d171023bb7a2a05944b9ace9c561710aac1c"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "0ed5469ab0978fce38132924b1c5961a33f6e6ca"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a3276e901ceb9a2142e6f3ab28b1435ead2d3b00"
+    },
+    {
+      "path": ".woodpecker",
+      "type": "dir",
+      "sha": "cab31ae4bee554bf1bf7bfb9c36217c222053d3c"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "abe6c296993fc424e0ac3274ac9c1ee96d666cba"
+    },
+    {
+      "path": "CHANGELOG_API_VERSIONS.md",
+      "type": "file",
+      "sha": "ef0ba1a6678c4d68dbb17fceeafe868b4307cc08"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "8599e9994a0fc523b66e2b3fd6cf21b8bae6c495"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5c2f6162db297b930e613c32915a54c64c871233"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "7f9e927a47fde84d2ea7570afc22c47435fe883c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c0c9d0a1ba47c9c57674d5aa7014eaafa0666337"
+    },
+    {
+      "path": "ballisticakit-cmake",
+      "type": "dir",
+      "sha": "2b549ca44173fb688695c64debefe979c1ae60a9"
+    },
+    {
+      "path": "ballisticakit-windows",
+      "type": "dir",
+      "sha": "c9ad904dfb2983590f39a10e0d37138a52a3deeb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "42dca10588ec996a3ae73a169ded9e08e32a4c58"
+    },
+    {
+      "path": "pconfig",
+      "type": "dir",
+      "sha": "398daa7649dfa3bcffbc9aa82ccec7c24a3b1cac"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "79caea318ff19ca4453342a9eb56b2ea3787dcf2"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "81cf93beec995fefa26b387a1409444217e3c8a2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "9388e7cab0667b2026e072395cc2ec5752d53563"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies intentionally specialized BombSquad engine; owned src/platform builds and Makefile.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

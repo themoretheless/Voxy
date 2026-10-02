@@ -56,7 +56,12 @@ fn vs_main(input: VertexInput) -> VertexOutput {
         vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0),
         vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 1.0), vec2<f32>(0.0, 1.0),
     );
-    let corner = corners[input.vertex_index];
+    let flipped_corners = array<vec2<f32>, 6>(
+        vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
+        vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0), vec2<f32>(0.0, 1.0),
+    );
+    let corner = select(corners[input.vertex_index], flipped_corners[input.vertex_index],
+        (input.ao_diagonal.w & 0x80u) != 0u);
     let face = input.extent_face.z;
     var axis_u = vec3<f32>(1.0, 0.0, 0.0);
     var axis_v = vec3<f32>(0.0, 1.0, 0.0);

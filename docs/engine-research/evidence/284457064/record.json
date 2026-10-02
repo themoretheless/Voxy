@@ -1,0 +1,104 @@
+{
+  "repository": "codewriter-packages/UniMob",
+  "repository_id": 284457064,
+  "commit": "8a523c3b26b66bb81e7a2ee6b8f4038cca3300aa",
+  "source_url": "https://github.com/codewriter-packages/UniMob/tree/8a523c3b26b66bb81e7a2ee6b8f4038cca3300aa",
+  "readme_path": "README.md",
+  "readme_sha256": "2b46bdea03309e32593fb1f52d5904747381fef1a0b5202e9ac053c924507f89",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "88d64456a87c86ab3efcf6bc653da1ecaed877c5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "818077105f621599c22af7115e54cd91d7ba0687"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "015dd0e76b56ca4a3f8093a664e082482ed7360b"
+    },
+    {
+      "path": "CodeGen.meta",
+      "type": "file",
+      "sha": "c2c6e34224724990e2eebf2c4cd9633f17e1986a"
+    },
+    {
+      "path": "CodeGen",
+      "type": "dir",
+      "sha": "670cd07f6bdc07de3831a7edc3ef6fabf3cc73c7"
+    },
+    {
+      "path": "Editor.meta",
+      "type": "file",
+      "sha": "93ac452a61a2cf235c36daa6632d5193af5d6aeb"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "b7f3a40d98f72590c3eda0199d6ca670b291b2d2"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "2dc38e0a60814c8601920cd810f841a4c07fca6b"
+    },
+    {
+      "path": "LICENSE.md.meta",
+      "type": "file",
+      "sha": "93e23b6d6db4b5901302ab1ecda58bc59a1502f1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b9d894199cf3d21802e8899ec3485a4c742f33b8"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "f64c2d4fc9146cd9c6ea212b5e1ca86c169b2483"
+    },
+    {
+      "path": "Runtime.meta",
+      "type": "file",
+      "sha": "017b07ef4c8c5487651649691855e82d0a99be83"
+    },
+    {
+      "path": "Runtime",
+      "type": "dir",
+      "sha": "90727b59062cda9d68daadf2de7fd6eb9f8a64f0"
+    },
+    {
+      "path": "Sources~",
+      "type": "dir",
+      "sha": "10b0d90f225f8e08e5205eb22df5fad389fc351c"
+    },
+    {
+      "path": "Tests.meta",
+      "type": "file",
+      "sha": "eabfc7cd3cd3e71e1977f10ba411dc6530056d8a"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "29eefb9b50112f7927124cc8054434ab6484a320"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "7adee32b12a6adf8678a2c59a57fd6911f218de5"
+    },
+    {
+      "path": "package.json.meta",
+      "type": "file",
+      "sha": "caceba704b5f976182880bb684c56e2b8d4a0703"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Unity reactive state library; Runtime/Editor/tests/codegen, not separate game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

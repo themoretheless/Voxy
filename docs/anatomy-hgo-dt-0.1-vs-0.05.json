@@ -1,0 +1,81 @@
+{
+  "scope": "Full-field temporal sensitivity of a synthetic HGO law on atlas geometry; no anatomical calibration or formal order claim",
+  "coarse_csv_sha256": "1029f2e378377d44acb6e8172f100998ef0280768f4dfa3d1b004ac9d6804580",
+  "fine_csv_sha256": "095dd2b1cd6f2e02a061ea386ff56bdb6fc88740a4e6caeeb609174ef49f1977",
+  "profile_hashes": {
+    "material-profile.txt": "89fee35521d063f12b64a0cb5fdca90633f99d40bdfe570b76bc0b75e6a06709",
+    "force-targets.txt": "bebf68b9c3ad032d993d11a6eb5699a6803e62f7d95b2392be522da4d7e424f3"
+  },
+  "coarse_steps": 6,
+  "fine_steps": 12,
+  "duration_s": 0.6,
+  "comparisons": [
+    {
+      "time_s": 0.1,
+      "force_n": 0.001,
+      "stage": "loaded",
+      "fine_stage": "loaded",
+      "max_node_difference_m": 2.4410624327831378e-06,
+      "rms_node_difference_m": 1.3132737453914528e-06,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "8edbb90cf66d5c40942faf41bfa4d29df7b9973cc3367e65054dd500e9d35683",
+      "fine_mesh_sha256": "e883951aa6eb01171122af8401d6c32a81edbb882f69937d9255a17068c3aa44"
+    },
+    {
+      "time_s": 0.2,
+      "force_n": 0.001,
+      "stage": "hold-1",
+      "fine_stage": "hold-1",
+      "max_node_difference_m": 1.7219715565328269e-06,
+      "rms_node_difference_m": 9.412113008229424e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "0102674fc00ee83cab064f4896829855f98aa672a39de81b6d6d0ebd4c6d24dc",
+      "fine_mesh_sha256": "251676e203ff0b9b4b6404fe6aed6e8433b876ad57294e4dfcac85731de9cef6"
+    },
+    {
+      "time_s": 0.3,
+      "force_n": 0.001,
+      "stage": "hold-2",
+      "fine_stage": "hold-2",
+      "max_node_difference_m": 1.259193218720084e-06,
+      "rms_node_difference_m": 6.953409031223097e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "5247b699d20b12386770319d543c4f354e26ff55e83bfedc5cfa28c20a5b6f6d",
+      "fine_mesh_sha256": "a71b5bb5406310d0d74f6adda56c69be8a84896755faa416be3dd885ef89cbb1"
+    },
+    {
+      "time_s": 0.4,
+      "force_n": 0.0,
+      "stage": "released",
+      "fine_stage": "released",
+      "max_node_difference_m": 2.093607878437603e-06,
+      "rms_node_difference_m": 1.1250990150711518e-06,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "f09ea4476be33f1b0b5094d5c887971b310300c4e391f30500ebffb9e320d7f3",
+      "fine_mesh_sha256": "f052f53d01c1915e3386df88e3fdbab54c462c10ab37150bd3445ecf64b1fde6"
+    },
+    {
+      "time_s": 0.5,
+      "force_n": 0.0,
+      "stage": "recover-1",
+      "fine_stage": "recover-1",
+      "max_node_difference_m": 1.236222659535241e-06,
+      "rms_node_difference_m": 6.653071559456489e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "b701391dd3da6bf8e34bae1a1122e78fab9de2e9f3dac62aec78ec2c05e2e31e",
+      "fine_mesh_sha256": "1e4fa7441213385aeb0ac919da807cea098635e962432d8f653f0ed96373cbab"
+    },
+    {
+      "time_s": 0.6,
+      "force_n": 0.0,
+      "stage": "recover-2",
+      "fine_stage": "recover-2",
+      "max_node_difference_m": 9.189337387590969e-07,
+      "rms_node_difference_m": 5.043374874888894e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "905479445a5561b20084062051b0ceb8579d760407c628cfc4c5b9efbdfa24a8",
+      "fine_mesh_sha256": "bc29c9481fd25418b2911309b5cc59f19740cf11c0e280304164218b92c29260"
+    }
+  ],
+  "max_node_difference_m": 2.4410624327831378e-06
+}

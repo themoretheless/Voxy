@@ -1,0 +1,139 @@
+{
+  "repository": "TreePuncher/gamekit",
+  "repository_id": 54880710,
+  "commit": "576790d52191cf08e1fb14b63049557590f37aeb",
+  "source_url": "https://github.com/TreePuncher/gamekit/tree/576790d52191cf08e1fb14b63049557590f37aeb",
+  "readme_path": "README.md",
+  "readme_sha256": "f73ab550d02e5d7f8b03e89be7cce032c204f81ad64f122fe88fc1165644f457",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c8289c2b9eaa5bd8b94aaf9ef2ef638d55184429"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f0b7f4e7306c9a47204928bd9523e0d8612ea06c"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "a0a919964731c5cb2dc242e9e4f631a120403dee"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6955d835fc85960f87d3a4d6d5d11f3dd110c547"
+    },
+    {
+      "path": "BlenderUtilityScripts",
+      "type": "dir",
+      "sha": "771f10aabb40edc9efe0bb8a8d8cc23645b15764"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "afa656f5cdb18ff2c927a3676dbb99bb28930f9a"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "d6916525366aa23754ffbcf3aa3bc01d8b0a3a5e"
+    },
+    {
+      "path": "Components",
+      "type": "dir",
+      "sha": "183164344827bd78fa7953fd75f7bbb9a0208a6e"
+    },
+    {
+      "path": "Containers.natvis",
+      "type": "file",
+      "sha": "5a63a7a1eccaaea0db329cc6a870c543c2e921c6"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "1e53541fcbd7c2daa203f4eab1d9602493d27305"
+    },
+    {
+      "path": "EditorReflection",
+      "type": "dir",
+      "sha": "ea928391e2e8e6753261ba6a8632cf2a7aeac055"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "fb513cb9aa7779596ff2d140e902daa914fac044"
+    },
+    {
+      "path": "Experiments",
+      "type": "dir",
+      "sha": "d6f7f808073a79f35831d6c4894763a2d81c0bda"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e615bf9840427a733025cf935c843c2c0cfc9311"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "434454568d6327907e01168416038af2e961b68e"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "2bf76e1e162d03659bcd62584a80a6f5b6b8304a"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "c50ff38dab8ef223835a49e42f396137d1c3354a"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "f060194d0feb80b79e1babc0e80dbdcec1c7f8f1"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "83cdaca00b3e810a1473b9a86f5a4c7185b1c2f7"
+    },
+    {
+      "path": "notes.xlsx",
+      "type": "file",
+      "sha": "8cca7b0d65f7b64fa952714dd9d1d59e9666712e"
+    },
+    {
+      "path": "pch.h",
+      "type": "file",
+      "sha": "88c918c7518e936b9412c57222c719c3988bc479"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "0a3ae46b70fa34aaa679ef4b3c061ee66582238e"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f8c51673abd362c9a5ccc155a26b16446a51d707"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "72a6837b2ec317bf907904c7c99f81fc15cb5069"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "70af9be5b3099bd081d2d94306e4a9e8867a646f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "FlexKit ECS/frame-graph/work scheduler engine with editor, components and examples; Windows target and external SDK dependencies retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

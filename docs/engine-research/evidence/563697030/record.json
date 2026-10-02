@@ -1,0 +1,94 @@
+{
+  "repository": "lamarrr/ashura",
+  "repository_id": 563697030,
+  "commit": "79585360665425696dbdb8fceebfefb2ba2a1a68",
+  "source_url": "https://github.com/lamarrr/ashura/tree/79585360665425696dbdb8fceebfefb2ba2a1a68",
+  "readme_path": "README.md",
+  "readme_sha256": "49be1317a8701476e2e207d1a1f16ded4ee2552545e5759034a138d8f7cad455",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2f8f0a043da5d5528664535a0cba7e65775d9f14"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "8e5b6b980039c9218baa0c1e2fb5b24d6065836e"
+    },
+    {
+      "path": ".cmake-format.json",
+      "type": "file",
+      "sha": "cf3e48e937f81ee9939c5ebabb01d76237c57d75"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b4ce72143174feb4fb870fa8060d18222a4b3269"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3df2b2b231c0f2a918aa0459223e17dd70aa4b82"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1f0590ba7eeb689661c6086222521659f1ee99cb"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "153120671188b3dd40afa6516914926410992755"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "Doxyfile.in",
+      "type": "file",
+      "sha": "0b11395bb4cd8c159d11c74038ce78fc070b499c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2af11e7858c08836cc8df313e62695e5804a169e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "729c0066c141b90661f9fd029705d50e62ae2468"
+    },
+    {
+      "path": "ashura",
+      "type": "dir",
+      "sha": "23626e98869b9e1b412a170341c2367534031ee1"
+    },
+    {
+      "path": "format.ps1",
+      "type": "file",
+      "sha": "ba5f613a102164ccc9fffd49466181786a985635"
+    },
+    {
+      "path": "format.sh",
+      "type": "file",
+      "sha": "48ce47cb9007b919f83f54f82e1b53767a896caf"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "a8b996561dd12ed66be6cab497d5377a5da61b89"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "App/game graphics/UI/ECS/async engine source; asset pipeline/editor still upcoming and actual game lifecycle needs source review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

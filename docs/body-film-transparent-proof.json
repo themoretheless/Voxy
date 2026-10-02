@@ -1,0 +1,21 @@
+{
+  "renderer": "Apple M4 Max / Metal offscreen",
+  "identityPixelsEqualDry": true,
+  "oldVsNewChangedPixels": 25393,
+  "newFilmVsDryChangedPixels": 17677,
+  "maxNewVsDryChannelDifference": 2,
+  "numericalFilmUnchanged": true,
+  "hashes": {
+    "body-film-current-restored.png": "8c50209bb722f791dc5e54209e2267cae6de21fa097c34eb0761392c4f6b6684",
+    "body-film-transparent.png": "8ab5684476a3068c538c5886ce9bfffdbac4403da1342c9105437d70e2360c84",
+    "body-film-dry-reference.png": "5b8e1d897482534f2d1b178ec3a0371d9001092449d77b20b59b2092f7159f70",
+    "body-film-identity-optics.png": "5b8e1d897482534f2d1b178ec3a0371d9001092449d77b20b59b2092f7159f70",
+    "body-film-transparent-state.json": "8657d7077c30e91b757de72d29e2016f8ded5ffb5cafb2a2cb8194950682d3c7"
+  },
+  "shaderSha256": "e8076ac4dcfd2f38a015bf32025261c4fef8926a365dfb380d129dec84fe33b3",
+  "limits": [
+    "Straight-alpha composite over shaded skin. RGB absorption approximated by darkest transmitted channel.",
+    "No scene-colour refraction, multiple optical interfaces or volumetric SSS.",
+    "Procedural film coverage and initial distribution are not physiologically calibrated."
+  ]
+}

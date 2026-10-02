@@ -1,0 +1,109 @@
+{
+  "repository": "transferthought/transfer-thought",
+  "repository_id": 805525946,
+  "commit": "f21f12769b430e9db05d954dd2c82253578e0587",
+  "source_url": "https://github.com/transferthought/transfer-thought/tree/f21f12769b430e9db05d954dd2c82253578e0587",
+  "readme_path": "README.md",
+  "readme_sha256": "e277c720ee3ceac1e3ca96b3d2e607f9d65cde27b88d5c8a0bee32d9afbc5e48",
+  "entries": [
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "d3b5bfe3069d7408082615c587f6baaef6dbd3fa"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "cd4a1d8e417289c9f19e1ac1be159fb137a3a29c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "34bdc2c835597e227372616063dd48296c4e2755"
+    },
+    {
+      "path": ".graphqlconfig.yml",
+      "type": "file",
+      "sha": "8d09bafc6c0ca5e554ec5bf1168e774395ddf987"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "482092c0ee09d298b8ca00ae9ebefa3a1a1a4d24"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c1b07e5eb316b2b9c6a183a6af6e7f5aecaf1205"
+    },
+    {
+      "path": "Transfer Thought Tests.side",
+      "type": "file",
+      "sha": "66eab29a05782853ac6be6657d3828b70290bf27"
+    },
+    {
+      "path": "amplify",
+      "type": "dir",
+      "sha": "ca29c3e99d1a08cccc13994ade96453ad9a44d12"
+    },
+    {
+      "path": "amplifyPublishIgnore.json",
+      "type": "file",
+      "sha": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "b4a1af74811adc0991522c89b481046dffd606f8"
+    },
+    {
+      "path": "cypress.config.js",
+      "type": "file",
+      "sha": "965e0ad25372a27483b47d5a953f1ebf715aae9b"
+    },
+    {
+      "path": "cypress",
+      "type": "dir",
+      "sha": "27755d72592e592f37438781b61469b7f8d8ad5b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "5948aeddf7d208d4905e2af4e50123934522535c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0441960322595c629e4b955a26d240f6573725f7"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "dc6425c01b58ccb18f3681bc75c88ef658142bd2"
+    },
+    {
+      "path": "record.js",
+      "type": "file",
+      "sha": "3427bcecbef20689f202e41e7b94bc893dc8bf42"
+    },
+    {
+      "path": "split.js",
+      "type": "file",
+      "sha": "33b2bcd058f46cd7049b912100e9da658fcfee2a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1ecdc0a8a69ddd2b129162b42acd9bb4d00978c5"
+    },
+    {
+      "path": "vue.config.js",
+      "type": "file",
+      "sha": "a75bd0dfb7c784e19792986d19f88910fb4eadb5"
+    }
+  ],
+  "classification": "virtual_world_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify VR authoring platform/application; web source/build, independent underlying engine unproven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,39 @@
+{
+  "repository": "Symbitic/awesome-babylonjs",
+  "repository_id": 366793984,
+  "commit": "33c0202a11db5f43833b63b79e801e911897fdcb",
+  "source_url": "https://github.com/Symbitic/awesome-babylonjs/tree/33c0202a11db5f43833b63b79e801e911897fdcb",
+  "readme_path": "README.md",
+  "readme_sha256": "ca164d2cb8e915232925b2595d4e86685be865c06b35651d91fa6bc8c8d867bd",
+  "entries": [
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e923eca34f00940b809f72a9d5959ccc2a2af1db"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6c49869c5971c967d1e1a9916265bd10f517e830"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "755a24c33051bbcc75bae9ce995803b37fc3e423"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8d99edf8dcc6e796fc7060ac4d003a3006a59de6"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "0eba2ff0294e3a1792b87dc60a551c8e3f7b55de"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README curates Babylon-related resources; root documentation/media rather than owned engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

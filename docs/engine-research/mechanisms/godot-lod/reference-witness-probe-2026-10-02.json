@@ -1,0 +1,10 @@
+{
+  "fixture": "flat-grid-base.obj and flat-grid-coarse.obj",
+  "base_triangles": 32,
+  "variant_triangles": 8,
+  "max_triangle_pairs": 512,
+  "verified_bound": 0.2500000000000001,
+  "exact_surface_distance": 0,
+  "logical_index_bytes": 480,
+  "interpretation": "conservative but loose whole-triangle witnesses; not a quality or performance improvement claim"
+}

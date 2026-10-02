@@ -1,0 +1,164 @@
+{
+  "repository": "LBALab/lba2remake",
+  "repository_id": 121687054,
+  "commit": "db54f5de071354939a8b02e71e47c53343ab6ee5",
+  "source_url": "https://github.com/LBALab/lba2remake/tree/db54f5de071354939a8b02e71e47c53343ab6ee5",
+  "readme_path": "README.md",
+  "readme_sha256": "7d7466116d8edccb138c82c132144d21a7a1717b5c02d8d68f6371c83a904ee9",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "fd6b16f5208c3aa7d819888eae7180ff476754af"
+    },
+    {
+      "path": ".build-config.js",
+      "type": "file",
+      "sha": "4e1e47654008cc0e898ed21f7555a79db042faec"
+    },
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "15e6c06c59c2e1219ecf4ce7651ab6ff7f7c37bb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b83def88e272d66687c1ea2c867812100731b91b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a7092628fb01b50a13983bcf43ac3e84758df844"
+    },
+    {
+      "path": ".lgtm.yml",
+      "type": "file",
+      "sha": "79fd2c36f841be68236d3c2505310c39dfee92f2"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "b581655773714574d096995755ce5b20c84c8688"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ae77dbbe9ea81b6234f5d2bc8614f2f303c45aff"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "a00e8bda5cbeb356cca74f940e9e2c63029df3a5"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "10029a2b12c76739a2593cb5bc1a9eca9c34ec04"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "7e77a3a298526bfa71a01d78ecd3535930155706"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e4b31c08fec7cdc4a32e5ba3c0450832717c09ec"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "07728d547f6126bb101c138fb34774b1e106cbea"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d228c75c1e9fc727a2fd8d50421610f002fd15b9"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "3173ac244ce8f79e2b2583ea5766c77053ea0b66"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "740a884eda68e0f23cb77a4e86be9c4a66c6eeb1"
+    },
+    {
+      "path": "assetsSource",
+      "type": "dir",
+      "sha": "807ce743feac0a4a4165de2e75a2a8943835a8aa"
+    },
+    {
+      "path": "devserver.js",
+      "type": "file",
+      "sha": "d4a6c405d9262a5a07f944737f81d1b316d94f14"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "72e77d819d96c6d54a48c0aeefa3f67b67c5d00b"
+    },
+    {
+      "path": "main.jsx",
+      "type": "file",
+      "sha": "6badccc7c67e34d2a6d5791f7ba2a54445794eff"
+    },
+    {
+      "path": "netlify.toml",
+      "type": "file",
+      "sha": "f67cd7cab9cbe9cf9d64d07705788f80cc458c10"
+    },
+    {
+      "path": "netlify",
+      "type": "dir",
+      "sha": "7ed2a4a3af1a0adef14f1e6f0771a8fbd70f0478"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "eae0ccc942bed318a5b7094fc4f276493d3649e2"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "bfb722087a388f2bd1da44086d23e4a45b9d7ed6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "30d4a74258edd139c6186bc83a762c3176203534"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "049f0405fe74c13cd84826e802a65087b2d0abce"
+    },
+    {
+      "path": "tslint.yaml",
+      "type": "file",
+      "sha": "bcaeafc6ff29e8e06b045d35963f8faf4f6b7314"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "50f8f35e6ed2fc32fddf5ea66c4d1ce48d474c9b"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "03ad194c85bd826f87186345cca6eeae58e5860c"
+    },
+    {
+      "path": "www",
+      "type": "dir",
+      "sha": "afbbf65dc59b7f7dbff43a99d32de8eccf8fca8d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies LBA-compatible runtime reimplementation with script debugging/editor; owned src/apps and JS build over Three.js backend.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

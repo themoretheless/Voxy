@@ -1,0 +1,64 @@
+{
+  "repository": "oguzeroglu/Ego",
+  "repository_id": 290009052,
+  "commit": "bf2c0af389471be8c9743aa441b9693cc56fe7eb",
+  "source_url": "https://github.com/oguzeroglu/Ego/tree/bf2c0af389471be8c9743aa441b9693cc56fe7eb",
+  "readme_path": "README.md",
+  "readme_sha256": "197874ea4768b9c876897ea9d3583f8450a818f7f050f3ed3e406284e391bd46",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "bea32a4a7f89dc52640ffa76b517b1f459bd2421"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e4bf041a87db963481b7244f0babcea37e5221af"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b57cbad1ab7bf88c3acf740c672a57da8b97e3bc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "604ddda1fca6e686c83f3f4f648c06aa982ae7e7"
+    },
+    {
+      "path": "example-images",
+      "type": "dir",
+      "sha": "88c5645be176fec642d3ce03ee70196dce31c885"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "78aed9ad65307f10a6650f7e5f5f08bdb32be455"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "9782d068ecf129e28e68beff34098d95ffeac331"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d35eaad771c9dab6e894c7bf9a500ba73f9be08e"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "0175f45241e6ea51a0b78253124f81876d9ff6eb"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0a36fd76b7ae0d7c3bf4c5f3b93873a074e977f5"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Standalone AI decision trees and state machines library, originally used by ROYGBIV.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

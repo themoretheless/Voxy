@@ -1,0 +1,9 @@
+{
+  "scope": "Opt-in solver telemetry smoke test on synthetic atlas protocol; no refined convergence claim",
+  "steps": 6,
+  "duration_s": 0.6,
+  "max_committed_residual_n": 9.660354206677e-08,
+  "progress_records": 54,
+  "csv_sha256": "079d21b96371b13836078a860ae55b49d237843d05d4161ffcf7da0ca5687b3d",
+  "log_sha256": "9849fee0ed03473b5f051a2c1118e10c321c0bac148c10c55d5edaf186fe0385"
+}

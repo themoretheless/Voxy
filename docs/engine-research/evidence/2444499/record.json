@@ -1,0 +1,99 @@
+{
+  "repository": "kvakvs/hge",
+  "repository_id": 2444499,
+  "commit": "713d6e8ae45d522e2c32732613b8444a05ef8353",
+  "source_url": "https://github.com/kvakvs/hge/tree/713d6e8ae45d522e2c32732613b8444a05ef8353",
+  "readme_path": "README.md",
+  "readme_sha256": "cb03404eb02f8395a8c1f42b058b70d9df6a98df9c6180412d7f19a5cf248a5b",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ff72f51fe34a9399f2198625ee0f67ae8eb85b28"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "251397ca6291c4ba2510f6edf39e5e068bd67b03"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "de94c077fb1541cfbf5cfc48806ca5b40c184ce0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "637543f7490daaca313d3ae635df779897f8149d"
+    },
+    {
+      "path": "Original_README.txt",
+      "type": "file",
+      "sha": "6aa1876dea9261349e203e52e18ada399b54c8ef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa542a0dac2b6454889971022a1aa4e85211d635"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "5e4bc6fee05e95821c073666c201f5a9ed053a6a"
+    },
+    {
+      "path": "cmake_studio2012.bat",
+      "type": "file",
+      "sha": "ee3349e94ae1e76e7b8589c504b362278f590669"
+    },
+    {
+      "path": "cmake_studio2015.bat",
+      "type": "file",
+      "sha": "b778520d9364fb0f0fb06b3790faebd2d7f67ed8"
+    },
+    {
+      "path": "cmake_studio2017.bat",
+      "type": "file",
+      "sha": "878a7b9529420490ace5c97dad275ebddb867397"
+    },
+    {
+      "path": "cmake_studio2019.bat",
+      "type": "file",
+      "sha": "f89b3a7b24f1d71db1d8600fe4c0d23fb43eec98"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "4573b9fa3f15324b70feb848a8af2c1f3b815d8e"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "ac961849eba0e4ac71a4e7a0638b4a17e5681b14"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "e1b1dd842993aaee7d73a6a2f339a1b5fb1f4b9b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "59c8906a8f3235b9356831332411f3da802c973b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "fee00b29f8438543210169f6dd70d9b41f2141bc"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "93fa5adb95b75591a67e9517ce41a9ac246399b9"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies HGE native shared/static library distribution; source/CMake present, full-engine scope needs deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

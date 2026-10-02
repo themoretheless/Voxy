@@ -1,0 +1,144 @@
+{
+  "repository": "tophat2d/tophat",
+  "repository_id": 339848677,
+  "commit": "7d64f5962f697acdcd4e42cae177d6f660de9e0c",
+  "source_url": "https://github.com/tophat2d/tophat/tree/7d64f5962f697acdcd4e42cae177d6f660de9e0c",
+  "readme_path": "README.md",
+  "readme_sha256": "2dc9326a6610cbcd6caa5f5bf197d3779956ca056067a079bd0f4935c6d62cff",
+  "entries": [
+    {
+      "path": ".build.yml",
+      "type": "file",
+      "sha": "b5a8d277a1de7f8be93f39544736c7d89855a065"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1bbea96388217db343ef8ab9b259c232e10d18d6"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "efbc76751096cd08933244331b22064048902dae"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "466503e75469ad45806e5d3ce6f9bea19a71d691"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2b132fb4c42024d6a75d736dab4bbaf6cf9f8cd8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ec452f12d36448ac7d1d35ba789357baea1100f8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0aab7a45b996f013756a26456dcffdd5037e2060"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0683052e9a6cfe327c2b944ca5bfaac2e6aef2c5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "57b0fda5d1941558c1319dad6e34b18817973505"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "b67e630bbf496bd9ac64e2789a58607bc1273fe0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "30e6e6dfa4564093dc9ebd5a3f94a4fa7a87a17b"
+    },
+    {
+      "path": "box.json",
+      "type": "file",
+      "sha": "75f8e6d095cc8446bcad3ad0043d22d3dba17ba4"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "95ebde334f7988aba758470c47af54414f26bf7f"
+    },
+    {
+      "path": "build.um",
+      "type": "file",
+      "sha": "15d3c126e9602378ce1b7d696f3357df4cf02d0b"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "da5ba3565b8c8239f6bf864df35534b8241d1792"
+    },
+    {
+      "path": "compile_flags.txt",
+      "type": "file",
+      "sha": "4b101db9fb58ebd13ccb110c8b65b46fdcafec8c"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "b53d9e67b17916a54f501f821c6c3c128d445097"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "da31927e6be6f59413ae54db23df05434cb48c29"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "073f5cf35d1498f661923c858489ef1f827e19c0"
+    },
+    {
+      "path": "main.um",
+      "type": "file",
+      "sha": "041efe8aaa5233abdf5424b2a88dda0ce67c5302"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "7b4f3acf3685a06725825c04a5602720ec8ac39c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a6456bb74a885817b99cf4101e8b077a2bbf68ef"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ec80398e91798f1ccf8c90935ee1b4a2ce02de75"
+    },
+    {
+      "path": "tophat.1",
+      "type": "file",
+      "sha": "34fe0fa601c89cf2379893a399093ab660f93493"
+    },
+    {
+      "path": "umka",
+      "type": "dir",
+      "sha": "64d51077d48ef778b0fc70fcd61ef6ea3342bb67"
+    },
+    {
+      "path": "version",
+      "type": "file",
+      "sha": "1ce69a78a37b9e9eab59e1e2b563feb248074c65"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Umka 2D framework providing graphics/audio/input and UI/particles/tilemaps.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

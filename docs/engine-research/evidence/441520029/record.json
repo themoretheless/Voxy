@@ -1,0 +1,102 @@
+{
+  "repository": "Leafwing-Studios/leafwing-input-manager",
+  "repository_id": 441520029,
+  "commit": "a9f1822dd31aa7be28d7a04b9306efa2e3a5df35",
+  "source_url": "https://github.com/Leafwing-Studios/leafwing-input-manager/tree/a9f1822dd31aa7be28d7a04b9306efa2e3a5df35",
+  "readme_path": "README.md",
+  "readme_sha256": "540e516a4c90b28f8ea511ac11c7864032b08eb243113f351fc5f2117ce170b0",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b89ef269853a0082d76b94a4ba19c7c1b22ef739"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bff81c08378debbc4079c496924610699bea5c95"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "23fd8a7f8346ec30f2be2b47ede5f0b10f36cdf1"
+    },
+    {
+      "path": ".markdownlint.json",
+      "type": "file",
+      "sha": "cd1cf2539a13b4aca44113e49ac26e6c1ab8a0ca"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "64977b0921fc0d9eafcf4964a3985c1b97789892"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "2a2fa97000a97d07105e502f94bdef0be0ac8cf2"
+    },
+    {
+      "path": "LICENSE-APACHE.md",
+      "type": "file",
+      "sha": "19c8aa18ad46904d1fee3736698f8421e197fe7d"
+    },
+    {
+      "path": "LICENSE-MIT.md",
+      "type": "file",
+      "sha": "f164e958818edafa7f3452be75a0fc468f7db923"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "92720ded012b176ed729c86dc15206956d6725ca"
+    },
+    {
+      "path": "RELEASE-CHECKLIST.md",
+      "type": "file",
+      "sha": "990930f016b201dbebfd2023be7cb22ef3c6d6bc"
+    },
+    {
+      "path": "RELEASES.md",
+      "type": "file",
+      "sha": "fdd54fdd4d758e873a0bb0a2255a387e135fc07c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "a5e88a90780c713f62274f8e926d7c75ffee7ed9"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "c83edae920614c64417dce9705fabf12102ec3cd"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fa933031ccd89901dd0d8ad59819855c6f1c67d3"
+    },
+    {
+      "path": "macros",
+      "type": "dir",
+      "sha": "03cecae82712cb692015e037629abfb0df14e16d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5a7d1f1a53be268fcf7283b00980547404abf1c7"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "bda7053d221f55296a5d1508ba5db3959a968331"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "7b532dba3b91d9eb2e453359f1e98ae2d9c09af8"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

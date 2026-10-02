@@ -1,0 +1,144 @@
+{
+  "repository": "eevee/lexys-labyrinth",
+  "repository_id": 291992452,
+  "commit": "c86661cbbbde39beb1d3386cf19f290462693e54",
+  "source_url": "https://github.com/eevee/lexys-labyrinth/tree/c86661cbbbde39beb1d3386cf19f290462693e54",
+  "readme_path": "README.md",
+  "readme_sha256": "ea91cce1adbdf37bc18142b71f2a7e530ce39673530ce815ceecf58d3e57f15b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "64f8761831d93bbc2397fc19530ba9373817c749"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ebcd8d8cb97e64c16afd34d001b002867a4d1f03"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c145bbe103e0aac183f13dc095c31d78988ba762"
+    },
+    {
+      "path": "background.svg",
+      "type": "file",
+      "sha": "4722888398d145c4e1734037d574c96a7b0617bb"
+    },
+    {
+      "path": "ending.png",
+      "type": "file",
+      "sha": "9db497cc444ab107558bc99b256412f89b12946f"
+    },
+    {
+      "path": "gamepad-mappings.json",
+      "type": "file",
+      "sha": "178c0ccfbfa8795a57aba65eb26f5154762fa601"
+    },
+    {
+      "path": "icon-debug.png",
+      "type": "file",
+      "sha": "aaf1ec77d6b630d50a72174e3a565db377e881a6"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "5e6f7990045bf6a618060c0a86f261a04738cb49"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "7f61b92c33b1fdf32664df6a5a8e77ddea29e4e4"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "8b3d8782ecee501f1ff20997adddcc79ea9b4888"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "daeafe80a6a084a04c98fcf56663a0823c0085b2"
+    },
+    {
+      "path": "levels",
+      "type": "dir",
+      "sha": "b37fbec66ef6c7bacf36df36b102b05656b2f0c6"
+    },
+    {
+      "path": "loading.gif",
+      "type": "file",
+      "sha": "fd87996e8c5320c6fcc014bfed40aed915ba0670"
+    },
+    {
+      "path": "music",
+      "type": "dir",
+      "sha": "5839c8f10eb01eb1036cbbb54060c40fcba563f8"
+    },
+    {
+      "path": "og-preview.png",
+      "type": "file",
+      "sha": "47dec98ddcb1c9b37c3df2561841d22d145c5726"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "3dbc1ca591c0557e35b6004aeba250e6a70b56e3"
+    },
+    {
+      "path": "read-sdl-mappings.py",
+      "type": "file",
+      "sha": "f85832f8c0704890faae10192d69a7d48b31c2cc"
+    },
+    {
+      "path": "sfx",
+      "type": "dir",
+      "sha": "4b45f568badfd216a8aca07199bd615602aded23"
+    },
+    {
+      "path": "style.css",
+      "type": "file",
+      "sha": "ddca597c8648e5a272bf3c5e015af4dfba9e62dd"
+    },
+    {
+      "path": "tileset-lexy-cc2.png",
+      "type": "file",
+      "sha": "fcbad13d2c8649aa3f07c95e7874811735955b2e"
+    },
+    {
+      "path": "tileset-lexy-tw-editor-base.png",
+      "type": "file",
+      "sha": "01aabceebdf23d7badd9766a0b3683de180d3107"
+    },
+    {
+      "path": "tileset-lexy-tw-editor-overlay.png",
+      "type": "file",
+      "sha": "16b14557d2a35de2ab905e83d15676a37a02c472"
+    },
+    {
+      "path": "tileset-lexy-tw-static.png",
+      "type": "file",
+      "sha": "997a3ae6e7025450ed2df5680e5f2c9de1207095"
+    },
+    {
+      "path": "tileset-lexy.png",
+      "type": "file",
+      "sha": "f6025808686814078d8673aeaea2bf4fa7eda45f"
+    },
+    {
+      "path": "tileset-src",
+      "type": "dir",
+      "sha": "df3e9fef364a5259a3f0548ba7a4af1236869989"
+    },
+    {
+      "path": "tileset-tworld.png",
+      "type": "file",
+      "sha": "fb0acc0acd80f92f0d62f972ffb1447bded7f52e"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Browser Chip Challenge runtime recreation loads original and fan-authored levels, with JS source and built-in content.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

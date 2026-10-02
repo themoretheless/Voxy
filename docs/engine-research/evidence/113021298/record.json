@@ -1,0 +1,49 @@
+{
+  "repository": "roy-t/MiniRTS",
+  "repository_id": 113021298,
+  "commit": "4e9d8b3999513ab11199f7666ae5976e18b192b8",
+  "source_url": "https://github.com/roy-t/MiniRTS/tree/4e9d8b3999513ab11199f7666ae5976e18b192b8",
+  "readme_path": "README.md",
+  "readme_sha256": "f0f02840e761b1961d7520647abe15db8f61681cd6aca6942281a028b2f98182",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f9077fcf3a93e4f625b95328088d42fda9f3b903"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a6c963612cb1c17b8fa7106c083e22da4ff60229"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ead325e951b19d80e3bec01fa73878e94fde032e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "313f18514dbba20e95269e2000b40cf3f1a1d00f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "1b6925417f7201b0c69e5dedbb1eb51b7a6d8858"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a837354d6d96083e7ad970e4d550897327b4ebf4"
+    },
+    {
+      "path": "vOld",
+      "type": "dir",
+      "sha": "8497967328b7cf6a6924e844ca947a4558fa0441"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies current project as an educational game engine, with ECS and content tooling; src and old versions present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "fastjengine/FastJ",
+  "repository_id": 340289137,
+  "commit": "7083ad08e9e572ad8af0098a4cc346321dd201ee",
+  "source_url": "https://github.com/fastjengine/FastJ/tree/7083ad08e9e572ad8af0098a4cc346321dd201ee",
+  "readme_path": "README.md",
+  "readme_sha256": "35340ce034fecca63f9b5f3c6eb28371d95848474a8366f105e89641189775c0",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fbbb71991225843b9fc2d937d56336ae101dde07"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2c0f8451744ae6b9ce233c13ef06579e2e3c1ba1"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "1ebcc430d8b39cd7591dc8ce8210fcfd485af573"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "fd1d36b390242008c8d3da1181d5ff8ff08a1061"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6739e6083d3a19623d0432bf088e50b446c041c3"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "32a9da9c3e462c7b1fe5e594e75a8f2412cd2757"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "35e7b0a755a2e5218dbff2a18a15004d09f8cf95"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "e49ea4300d301054c3e91d26d6f9a85524f8f9d5"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "a69d9cb6c20655813e44515156e7253a2a239138"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f127cfd49d4024c3e1e0d08ba56399221b4fb25d"
+    },
+    {
+      "path": "jitpack.yml",
+      "type": "file",
+      "sha": "35f77a4d3a5cce85b680cc65cda903f5a3225b73"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "baabcb6f149235055b7ba886724d3eb22bdbaeff"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "5560b0cc4525d3edee53d39c596aa9034c97f2e3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3cf1ebeeeb3d5226c21a45943cea0135d972a4ac"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java 2D game engine with source and examples; README explicitly warns incomplete test coverage and heavy development.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

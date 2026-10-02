@@ -1,0 +1,6025 @@
+{
+  "before": 284,
+  "after": 199,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        404,
+        406,
+        15371,
+        22422,
+        22472,
+        27258,
+        30254,
+        31369,
+        32040,
+        32041,
+        32270
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0241852495559493,
+      "local_measure_after_m": 0.02410827903123978,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        404,
+        720,
+        721,
+        10827,
+        15001,
+        15370,
+        22472,
+        27258,
+        30254,
+        32270,
+        32271
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.023754248012650782,
+      "local_measure_after_m": 0.023692879234235416,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        450,
+        567,
+        13572,
+        15280,
+        15924,
+        26346,
+        29115,
+        32062,
+        32124,
+        32250
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.012236743592134683,
+      "local_measure_after_m": 0.012226655663412167,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        404,
+        405,
+        15370,
+        15371,
+        18389,
+        24286,
+        30254,
+        32039,
+        32040
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.022953707207019676,
+      "local_measure_after_m": 0.022825047181698352,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        444,
+        446,
+        447,
+        15397,
+        17581,
+        22481,
+        28014,
+        29114,
+        32060
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.016346572243000342,
+      "local_measure_after_m": 0.01633948353610424,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        444,
+        446,
+        704,
+        12064,
+        17973,
+        22481,
+        23694,
+        32251,
+        32252
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01633948353610424,
+      "local_measure_after_m": 0.016333652877490928,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        444,
+        15396,
+        15397,
+        17973,
+        22481,
+        23694,
+        32060,
+        32252,
+        32253
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.016333652877490928,
+      "local_measure_after_m": 0.01628871141570528,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        446,
+        448,
+        703,
+        704,
+        16111,
+        17973,
+        23438,
+        25992,
+        32251
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.012259527089924586,
+      "local_measure_after_m": 0.01221574552382342,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        448,
+        449,
+        13572,
+        19044,
+        26346,
+        28014,
+        29114,
+        29115,
+        32062
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01244671263724126,
+      "local_measure_after_m": 0.012436403005774317,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        448,
+        13572,
+        16111,
+        23438,
+        28014,
+        29115,
+        32061,
+        32250,
+        32251
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.016234620218137173,
+      "local_measure_after_m": 0.016224421919481574,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1216,
+        1218,
+        14104,
+        16722,
+        17091,
+        24663,
+        32947,
+        32977,
+        32978
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.003862882732794041,
+      "local_measure_after_m": 0.0038484898018996258,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1266,
+        18794,
+        23031,
+        23269,
+        25667,
+        28288,
+        32978,
+        32979,
+        33000
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.006965292884651867,
+      "local_measure_after_m": 0.006962262494556203,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1531,
+        1634,
+        1655,
+        11586,
+        11587,
+        15112,
+        17736,
+        27306,
+        33899
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005319806084982806,
+      "local_measure_after_m": 0.005222698704031877,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1534,
+        13867,
+        24333,
+        24334,
+        27022,
+        30961,
+        33570,
+        33618,
+        33700
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0029327268138063856,
+      "local_measure_after_m": 0.002927971359307606,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535,
+        5536,
+        11749,
+        12008,
+        18333,
+        27874,
+        28591,
+        37255,
+        37256
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.028136647326072222,
+      "local_measure_after_m": 0.027985875413419296,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        5854,
+        10914,
+        20665,
+        20886,
+        23018,
+        27874,
+        37487,
+        37488
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.025243328128290936,
+      "local_measure_after_m": 0.025148797200125146,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        5541,
+        12891,
+        14644,
+        18236,
+        18789,
+        19592,
+        37258,
+        37486
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01705926761072088,
+      "local_measure_after_m": 0.017042893300500357,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6399,
+        6400,
+        14311,
+        15475,
+        23659,
+        28420,
+        38196,
+        38197,
+        38218
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005232581223484429,
+      "local_measure_after_m": 0.005212768454116538,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        402,
+        403,
+        13896,
+        15370,
+        16410,
+        24286,
+        32038,
+        32039
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.02391825022750309,
+      "local_measure_after_m": 0.023735002171877614,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        402,
+        404,
+        15370,
+        15371,
+        16410,
+        27258,
+        32039,
+        32271
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.023735002171877614,
+      "local_measure_after_m": 0.023694142991802548,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        406,
+        408,
+        26364,
+        30222,
+        30254,
+        31369,
+        32041,
+        32269
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.014017242558950545,
+      "local_measure_after_m": 0.013960444043766092,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        406,
+        720,
+        22472,
+        27258,
+        27308,
+        30254,
+        32269,
+        32270
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01887146797119483,
+      "local_measure_after_m": 0.01881131772910581,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        481,
+        482,
+        483,
+        18756,
+        22972,
+        28916,
+        32078,
+        32079
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.007307074393900163,
+      "local_measure_after_m": 0.0073038744758130054,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1212,
+        1214,
+        25693,
+        30913,
+        31513,
+        32944,
+        32945,
+        32980
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004517360475517938,
+      "local_measure_after_m": 0.004515909291621836,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1214,
+        1217,
+        25693,
+        25694,
+        30913,
+        31595,
+        31628,
+        32945
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005667532736043109,
+      "local_measure_after_m": 0.005592287879467093,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1216,
+        1217,
+        14104,
+        20146,
+        25694,
+        31595,
+        32945,
+        32946
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005433863446606246,
+      "local_measure_after_m": 0.005423510947659616,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1216,
+        1218,
+        1266,
+        1286,
+        18794,
+        23031,
+        24663,
+        32978
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005933951768317073,
+      "local_measure_after_m": 0.005915643107073043,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1531,
+        11586,
+        12895,
+        17736,
+        19215,
+        33899,
+        33998,
+        34043
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.007142308888834257,
+      "local_measure_after_m": 0.0070918813956321,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1532,
+        12464,
+        14900,
+        19215,
+        20271,
+        23638,
+        33692,
+        33808
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.008011609093952482,
+      "local_measure_after_m": 0.008011484196563954,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1535,
+        1549,
+        19613,
+        19615,
+        30252,
+        33453,
+        33470,
+        33481
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.007604124101703075,
+      "local_measure_after_m": 0.007602774158618657,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1549,
+        1884,
+        15830,
+        19614,
+        19615,
+        30252,
+        31023,
+        33470
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.003933990045394006,
+      "local_measure_after_m": 0.0038307724578794194,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1642,
+        11020,
+        15918,
+        16935,
+        23357,
+        33616,
+        33694,
+        33695
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.00207853319398454,
+      "local_measure_after_m": 0.0020522624983169186,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1665,
+        2239,
+        22428,
+        27952,
+        27953,
+        29364,
+        33526,
+        34032
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0023193629818351806,
+      "local_measure_after_m": 0.002315351481743908,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1882,
+        2243,
+        12331,
+        13117,
+        17864,
+        24719,
+        33431,
+        33991
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004837588105079522,
+      "local_measure_after_m": 0.004834179209445499,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2237,
+        2431,
+        18375,
+        20345,
+        25574,
+        27760,
+        33767,
+        34192
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.003780775964554325,
+      "local_measure_after_m": 0.0037767465578205633,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2239,
+        2240,
+        14867,
+        22981,
+        27952,
+        27953,
+        33520,
+        33526
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0025867447723629034,
+      "local_measure_after_m": 0.0025766183586951588,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2443,
+        18274,
+        24978,
+        25574,
+        29326,
+        33767,
+        34190,
+        34191
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.008248463588416459,
+      "local_measure_after_m": 0.008245827210527582,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        5538,
+        5539,
+        11749,
+        15271,
+        18789,
+        23018,
+        37257
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.025478354247750055,
+      "local_measure_after_m": 0.025383000929015433,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        5538,
+        11749,
+        12008,
+        27874,
+        28591,
+        37256,
+        37257
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.02379841297535242,
+      "local_measure_after_m": 0.02358300479362449,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        5540,
+        15271,
+        18789,
+        19592,
+        22215,
+        37257,
+        37258
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.015111816494933865,
+      "local_measure_after_m": 0.015054687543437575,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        5578,
+        11862,
+        24758,
+        26695,
+        29354,
+        37276,
+        37277
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.014258934443901921,
+      "local_measure_after_m": 0.014154245607936098,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        5580,
+        11862,
+        13201,
+        24758,
+        29354,
+        37277,
+        37278
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01835082067761304,
+      "local_measure_after_m": 0.018347687076720413,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        5581,
+        18409,
+        19227,
+        20469,
+        22462,
+        37278,
+        37468
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.018347687076720413,
+      "local_measure_after_m": 0.018190559098610292,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        5836,
+        5837,
+        15484,
+        17191,
+        19227,
+        20469,
+        37468
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.012607198965443838,
+      "local_measure_after_m": 0.012588914692945095,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5581,
+        18409,
+        19227,
+        22462,
+        27991,
+        28061,
+        37279,
+        37467
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.015388993184828155,
+      "local_measure_after_m": 0.015375993765423252,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5583,
+        5584,
+        18409,
+        27991,
+        28061,
+        29672,
+        37279,
+        37280
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.010076635437877922,
+      "local_measure_after_m": 0.010060078667252592,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5583,
+        5700,
+        14974,
+        18409,
+        27991,
+        28061,
+        37341,
+        37467
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.013172873033016086,
+      "local_measure_after_m": 0.013168333410123948,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5611,
+        5612,
+        15334,
+        17904,
+        18125,
+        22378,
+        37293,
+        37294
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0052010216882974695,
+      "local_measure_after_m": 0.005192742409333318,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5614,
+        5615,
+        5616,
+        22328,
+        27492,
+        27894,
+        37295,
+        37538
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.007252285054191884,
+      "local_measure_after_m": 0.007234428528241481,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5836,
+        17191,
+        20469,
+        20961,
+        22611,
+        37468,
+        37774,
+        37781
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.008411755626130243,
+      "local_measure_after_m": 0.00838453861575177,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5853,
+        5854,
+        10914,
+        12891,
+        20694,
+        20886,
+        37487,
+        37789
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.014794455664671177,
+      "local_measure_after_m": 0.014752429886220088,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6345,
+        6347,
+        14311,
+        15475,
+        23067,
+        23659,
+        38161,
+        38197
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004828573372699569,
+      "local_measure_after_m": 0.004809154497544912,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6347,
+        6349,
+        14311,
+        18003,
+        18932,
+        31545,
+        38162,
+        38196
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.010050405636013936,
+      "local_measure_after_m": 0.010037177771409469,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6348,
+        6349,
+        18003,
+        18932,
+        20427,
+        25488,
+        38162,
+        38163
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004555683840165474,
+      "local_measure_after_m": 0.004539111866848996,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6349,
+        6351,
+        11903,
+        20429,
+        31027,
+        31545,
+        38163,
+        38195
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.007106216379653716,
+      "local_measure_after_m": 0.007067053932899828,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6349,
+        6352,
+        11073,
+        11903,
+        20427,
+        20429,
+        38162,
+        38163
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.006227426774154313,
+      "local_measure_after_m": 0.006200636637488531,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6399,
+        15467,
+        15475,
+        21995,
+        31545,
+        38195,
+        38196,
+        38218
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004511104683450686,
+      "local_measure_after_m": 0.004510258009040786,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        7064,
+        7371,
+        20190,
+        26414,
+        27459,
+        29826,
+        38911,
+        38912
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0032010545135336575,
+      "local_measure_after_m": 0.0031994919924633967,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        400,
+        402,
+        11405,
+        13896,
+        16410,
+        32038,
+        32272
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.016636531691483613,
+      "local_measure_after_m": 0.01641847002755934,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        402,
+        722,
+        11405,
+        13896,
+        15001,
+        32271,
+        32272
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.016014478359466233,
+      "local_measure_after_m": 0.015896895774624387,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        406,
+        575,
+        22472,
+        26364,
+        27308,
+        31369,
+        32269
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.012405598995215417,
+      "local_measure_after_m": 0.01239393453350348,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        409,
+        22422,
+        27942,
+        30222,
+        30254,
+        31369,
+        32041
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.013286754335326093,
+      "local_measure_after_m": 0.013284678713440688,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        446,
+        17973,
+        22481,
+        23438,
+        28014,
+        32060,
+        32251
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.016224421919481574,
+      "local_measure_after_m": 0.01619689676866093,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        448,
+        567,
+        13572,
+        16111,
+        26346,
+        29502,
+        32250
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01619689676866093,
+      "local_measure_after_m": 0.016170993468658003,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        478,
+        480,
+        19651,
+        28626,
+        28899,
+        32077,
+        32236
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.006338980500796841,
+      "local_measure_after_m": 0.0063155930124925526,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        478,
+        481,
+        22222,
+        27721,
+        28626,
+        28899,
+        32077
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.00787057608063046,
+      "local_measure_after_m": 0.007845071083593388,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        567,
+        703,
+        16111,
+        26729,
+        29502,
+        32250,
+        32564
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.011406082366427159,
+      "local_measure_after_m": 0.011405689577561672,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        703,
+        16111,
+        25992,
+        26729,
+        29502,
+        32251,
+        32557
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.007304896205840718,
+      "local_measure_after_m": 0.007299231212611078,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        720,
+        10827,
+        22472,
+        26174,
+        27258,
+        27308,
+        32579
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.013629304375995157,
+      "local_measure_after_m": 0.01357037886689488,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1216,
+        1218,
+        14104,
+        18794,
+        25694,
+        31595,
+        32978
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.006327226763658261,
+      "local_measure_after_m": 0.006305628210884656,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1531,
+        1532,
+        12895,
+        19215,
+        20271,
+        33808,
+        34043
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.010187305929138177,
+      "local_measure_after_m": 0.010186781192453878,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1532,
+        2422,
+        12464,
+        14900,
+        24978,
+        33692,
+        34191
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.006934491116588608,
+      "local_measure_after_m": 0.00693409873537281,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1533,
+        1534,
+        24334,
+        27022,
+        30961,
+        33573,
+        33696
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0022072587266970803,
+      "local_measure_after_m": 0.0021964261845926506,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1534,
+        1551,
+        18601,
+        24333,
+        29986,
+        33570,
+        33618
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004070514960299279,
+      "local_measure_after_m": 0.004070294769383427,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1534,
+        1881,
+        24334,
+        29717,
+        30961,
+        33570,
+        33573
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005040022626393238,
+      "local_measure_after_m": 0.005030337309074368,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1534,
+        2061,
+        18601,
+        24333,
+        24334,
+        29717,
+        33570
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.005730719175001046,
+      "local_measure_after_m": 0.005705152970643366,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1535,
+        1551,
+        29939,
+        30234,
+        30253,
+        33479,
+        33572
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.00527733685418683,
+      "local_measure_after_m": 0.005277234897459714,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1535,
+        29939,
+        30234,
+        30252,
+        30253,
+        33453,
+        33481
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.008972676285129048,
+      "local_measure_after_m": 0.00897249693837018,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1550,
+        1642,
+        14237,
+        15918,
+        16935,
+        24261,
+        33694
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.002590424627068924,
+      "local_measure_after_m": 0.0025797375305920676,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1551,
+        18601,
+        24333,
+        29939,
+        29986,
+        33479,
+        33572
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004508473975584563,
+      "local_measure_after_m": 0.004508006399713698,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1883,
+        1884,
+        13117,
+        19615,
+        31023,
+        33380,
+        33470
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.003733598864332281,
+      "local_measure_after_m": 0.003732238013196104,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1931,
+        2443,
+        18274,
+        20345,
+        25574,
+        27760,
+        33767
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.006687995332012665,
+      "local_measure_after_m": 0.006687003682172165,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2237,
+        18375,
+        20345,
+        27760,
+        31136,
+        33571,
+        33695
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.001873033119689786,
+      "local_measure_after_m": 0.0018573876612777553,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2240,
+        2241,
+        15558,
+        19806,
+        22981,
+        33452,
+        33482
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0028996247698241965,
+      "local_measure_after_m": 0.002895976471748691,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2240,
+        19806,
+        22981,
+        24456,
+        27953,
+        33452,
+        33520
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.00166698905077631,
+      "local_measure_after_m": 0.0016651032656950415,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2422,
+        2443,
+        12464,
+        23622,
+        24978,
+        29326,
+        34191
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.0073599746235617595,
+      "local_measure_after_m": 0.007359566728566736,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2423,
+        2443,
+        23622,
+        24293,
+        29326,
+        34190,
+        34191
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.004514409884574316,
+      "local_measure_after_m": 0.004513678633991894,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        2442,
+        12129,
+        20271,
+        24978,
+        30178,
+        33692,
+        34187
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.010248389901829172,
+      "local_measure_after_m": 0.010248347165585392,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5533,
+        5535,
+        12008,
+        18333,
+        27913,
+        37255,
+        37489
+      ],
+      "before": 284,
+      "after": 284,
+      "local_measure_before_m": 0.01801491706465019,
+      "local_measure_after_m": 0.01775881286180979,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535,
+        5537,
+        10914,
+        11749,
+        12008,
+        27874,
+        37488
+      ],
+      "before": 284,
+      "after": 282,
+      "local_measure_before_m": 0.027208949741782652,
+      "local_measure_after_m": 0.02710957204762196,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535,
+        5855,
+        18333,
+        20665,
+        27913,
+        37488,
+        37489
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.016867719271404517,
+      "local_measure_after_m": 0.016687251006254993,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        5853,
+        12891,
+        19592,
+        20886,
+        37486,
+        37487
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.018387471055795475,
+      "local_measure_after_m": 0.018345503461982184,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        12891,
+        18789,
+        19592,
+        23018,
+        37257,
+        37487
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.018345503461982184,
+      "local_measure_after_m": 0.018315798305860814,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        5579,
+        11862,
+        15484,
+        24758,
+        37277,
+        37469
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.0181109620028107,
+      "local_measure_after_m": 0.018103852910127047,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        5837,
+        15484,
+        20643,
+        24758,
+        37468,
+        37469
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.018103852910127047,
+      "local_measure_after_m": 0.018014260567390028,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5581,
+        5836,
+        19227,
+        20469,
+        22611,
+        37467,
+        37468
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.01289677554894684,
+      "local_measure_after_m": 0.012893361632207499,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5582,
+        11174,
+        18409,
+        19227,
+        22462,
+        37278,
+        37279
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.012149184008163425,
+      "local_measure_after_m": 0.012145628753896128,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5612,
+        5614,
+        17904,
+        22328,
+        22378,
+        37294,
+        37539
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.0060653918391457345,
+      "local_measure_after_m": 0.0060570923823745374,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5613,
+        5614,
+        18125,
+        18340,
+        18341,
+        37294,
+        37295
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.011993116920503947,
+      "local_measure_after_m": 0.011989174202724764,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5613,
+        5615,
+        18340,
+        18341,
+        26627,
+        37295,
+        37344
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.010229953117294521,
+      "local_measure_after_m": 0.010214318575031023,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5614,
+        18340,
+        22328,
+        22378,
+        27492,
+        37294,
+        37295
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.011973539660461267,
+      "local_measure_after_m": 0.011972429024979829,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5615,
+        18341,
+        26627,
+        27492,
+        27894,
+        27897,
+        37295
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.006898644895368225,
+      "local_measure_after_m": 0.006879463488640259,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6347,
+        6348,
+        17012,
+        18003,
+        18932,
+        38161,
+        38162
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.005094193029789683,
+      "local_measure_after_m": 0.00507448196552018,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6349,
+        6399,
+        18003,
+        20429,
+        31545,
+        38195,
+        38196
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.010104238651764038,
+      "local_measure_after_m": 0.010075680713865349,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6351,
+        6352,
+        11903,
+        20429,
+        28548,
+        38163,
+        38164
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.004986715452590138,
+      "local_measure_after_m": 0.004975295712424964,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6399,
+        6419,
+        15467,
+        20429,
+        31027,
+        31545,
+        38195
+      ],
+      "before": 282,
+      "after": 282,
+      "local_measure_before_m": 0.005640576485697685,
+      "local_measure_after_m": 0.005636596558195399,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6667,
+        7014,
+        23460,
+        27578,
+        29696,
+        38787,
+        38790
+      ],
+      "before": 282,
+      "after": 250,
+      "local_measure_before_m": 0.007274920959943024,
+      "local_measure_after_m": 0.0,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6668,
+        7015,
+        23489,
+        24280,
+        29082,
+        38670,
+        38696
+      ],
+      "before": 250,
+      "after": 224,
+      "local_measure_before_m": 0.009202435058853781,
+      "local_measure_after_m": 0.0,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        402,
+        11405,
+        13896,
+        15370,
+        16410,
+        32271
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.023168884393065338,
+      "local_measure_after_m": 0.02310295114865758,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        402,
+        11405,
+        15001,
+        15370,
+        27258,
+        32271
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02310295114865758,
+      "local_measure_after_m": 0.023101991842770703,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        444,
+        446,
+        17973,
+        22481,
+        32060,
+        32252
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.016164935686562878,
+      "local_measure_after_m": 0.01614467243526403,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        448,
+        703,
+        16111,
+        29502,
+        32250,
+        32251
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.013248415020306584,
+      "local_measure_after_m": 0.013237411649871429,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1216,
+        1218,
+        14104,
+        16722,
+        31595,
+        32946
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.003963235148134771,
+      "local_measure_after_m": 0.003884580008585438,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1216,
+        1266,
+        18794,
+        25694,
+        32978,
+        32979
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.007731065522836736,
+      "local_measure_after_m": 0.007712093200743501,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1532,
+        2442,
+        12464,
+        20271,
+        24978,
+        33692
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.010248347165585392,
+      "local_measure_after_m": 0.01024834084651078,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1665,
+        11020,
+        19729,
+        27952,
+        29364,
+        34032
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.001591398130810649,
+      "local_measure_after_m": 0.001590499051806796,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        1931,
+        2443,
+        14237,
+        18274,
+        33767,
+        34190
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.005175881209835044,
+      "local_measure_after_m": 0.005171210496287806,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535,
+        10914,
+        20665,
+        27874,
+        27913,
+        37488
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.026857431032537772,
+      "local_measure_after_m": 0.026847162892140876,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535,
+        12008,
+        18333,
+        27874,
+        27913,
+        37488
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.026847162892140876,
+      "local_measure_after_m": 0.026784278992123017,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        5539,
+        10914,
+        23018,
+        37257,
+        37487
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.026784278992123017,
+      "local_measure_after_m": 0.026727070519654752,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        10914,
+        11749,
+        23018,
+        27874,
+        37257
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.020932242115348467,
+      "local_measure_after_m": 0.020797012462663137,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        10914,
+        12891,
+        20886,
+        23018,
+        37487
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02246246197454005,
+      "local_measure_after_m": 0.022448610378088128,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        10989,
+        11862,
+        24758,
+        26695,
+        37469
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.013949698553115368,
+      "local_measure_after_m": 0.013929332966618012,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        10989,
+        15484,
+        20643,
+        24758,
+        37469
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.015867999657628747,
+      "local_measure_after_m": 0.015844193079215942,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5584,
+        11174,
+        18409,
+        22462,
+        27991,
+        37279
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.009995790269716268,
+      "local_measure_after_m": 0.009982179484351913,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5613,
+        18125,
+        18340,
+        18341,
+        18385,
+        37344
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.008148551430551532,
+      "local_measure_after_m": 0.008146874806864051,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5614,
+        5615,
+        18340,
+        18341,
+        27492,
+        37295
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.010708510122860513,
+      "local_measure_after_m": 0.010689433394114059,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5614,
+        17904,
+        18125,
+        18340,
+        22378,
+        37294
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.008652846639366283,
+      "local_measure_after_m": 0.008643616418927295,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6347,
+        14311,
+        15475,
+        18003,
+        23659,
+        38196
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.006851806868243153,
+      "local_measure_after_m": 0.006835356459080209,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6347,
+        14311,
+        18003,
+        18932,
+        23659,
+        38161
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00586129356971579,
+      "local_measure_after_m": 0.0058452156268353405,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6349,
+        18003,
+        20429,
+        31545,
+        38162,
+        38163
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00879428326560843,
+      "local_measure_after_m": 0.008765228161568453,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        6399,
+        14311,
+        15475,
+        18003,
+        31545,
+        38196
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.008223528081668516,
+      "local_measure_after_m": 0.00820795070821428,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        404,
+        15370,
+        15371,
+        27258,
+        30254
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02230795040709112,
+      "local_measure_after_m": 0.022232293661857933,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        406,
+        22472,
+        30254,
+        31369,
+        32269
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.014569187213833731,
+      "local_measure_after_m": 0.014562233449654863,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        448,
+        13572,
+        26346,
+        29115,
+        32250
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01333147259566026,
+      "local_measure_after_m": 0.01332892803748429,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        15370,
+        15371,
+        16410,
+        24286,
+        32039
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01866096880681159,
+      "local_measure_after_m": 0.01865909208615058,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        444,
+        17973,
+        22481,
+        32252
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.016131124506652904,
+      "local_measure_after_m": 0.016124335015194512,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        22472,
+        27258,
+        30254,
+        32270
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01834797414759987,
+      "local_measure_after_m": 0.018289126478017767,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        404,
+        406,
+        15371,
+        22422,
+        22472,
+        27258,
+        30254,
+        31369,
+        32040,
+        32041,
+        32270
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02295865694311553,
+      "local_measure_after_m": 0.022860286283616138,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        404,
+        720,
+        721,
+        10827,
+        15001,
+        15370,
+        22472,
+        27258,
+        30254,
+        32270,
+        32271
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.022500548801847736,
+      "local_measure_after_m": 0.0224375118720383,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        450,
+        567,
+        13572,
+        15280,
+        15924,
+        26346,
+        29115,
+        32062,
+        32124,
+        32250
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.012129254835215283,
+      "local_measure_after_m": 0.012108224862174005,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        404,
+        405,
+        15370,
+        15371,
+        18389,
+        24286,
+        30254,
+        32039,
+        32040
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02167398788691867,
+      "local_measure_after_m": 0.02154482647937,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        444,
+        446,
+        447,
+        15397,
+        17581,
+        22481,
+        28014,
+        29114,
+        32060
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.016103305042153234,
+      "local_measure_after_m": 0.016095594212463066,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        444,
+        446,
+        704,
+        12064,
+        17973,
+        22481,
+        23694,
+        32251,
+        32252
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.016095594212463066,
+      "local_measure_after_m": 0.01608795358732537,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        444,
+        15396,
+        15397,
+        17973,
+        22481,
+        23694,
+        32060,
+        32252,
+        32253
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01608795358732537,
+      "local_measure_after_m": 0.016044188162005805,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        446,
+        448,
+        703,
+        704,
+        16111,
+        17973,
+        23438,
+        25992,
+        32251
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01206892052516121,
+      "local_measure_after_m": 0.01204295754966761,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        448,
+        449,
+        13572,
+        19044,
+        26346,
+        28014,
+        29114,
+        29115,
+        32062
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.012305792674260541,
+      "local_measure_after_m": 0.012297136263009545,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        448,
+        13572,
+        16111,
+        23438,
+        28014,
+        29115,
+        32061,
+        32250,
+        32251
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01600956877526121,
+      "local_measure_after_m": 0.01597262213761966,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1216,
+        1218,
+        14104,
+        16722,
+        17091,
+        24663,
+        32947,
+        32977,
+        32978
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.0038161050867557703,
+      "local_measure_after_m": 0.0038018894079519007,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1266,
+        18794,
+        23031,
+        23269,
+        25667,
+        28288,
+        32978,
+        32979,
+        33000
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00684769247439506,
+      "local_measure_after_m": 0.006844827218801383,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1534,
+        13867,
+        24333,
+        24334,
+        27022,
+        30961,
+        33570,
+        33618,
+        33700
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.002932490086822539,
+      "local_measure_after_m": 0.0029287523804122717,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5535,
+        5536,
+        11749,
+        12008,
+        18333,
+        27874,
+        28591,
+        37255,
+        37256
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.026577989270517504,
+      "local_measure_after_m": 0.02644549333662287,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        5854,
+        10914,
+        20665,
+        20886,
+        23018,
+        27874,
+        37487,
+        37488
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02385326337609889,
+      "local_measure_after_m": 0.023757671972075095,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        5541,
+        12891,
+        14644,
+        18236,
+        18789,
+        19592,
+        37258,
+        37486
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.016296177969302675,
+      "local_measure_after_m": 0.016286990422597184,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6399,
+        6400,
+        14311,
+        15475,
+        23659,
+        28420,
+        38196,
+        38197,
+        38218
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.005153548779504004,
+      "local_measure_after_m": 0.0051219346042862815,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        402,
+        403,
+        13896,
+        15370,
+        16410,
+        24286,
+        32038,
+        32039
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.022668087946258034,
+      "local_measure_after_m": 0.022661172362437965,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        402,
+        404,
+        15370,
+        15371,
+        16410,
+        27258,
+        32039,
+        32271
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.022661172362437965,
+      "local_measure_after_m": 0.022606957380517004,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        406,
+        408,
+        26364,
+        30222,
+        30254,
+        31369,
+        32041,
+        32269
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.013485141249522268,
+      "local_measure_after_m": 0.013481615123549387,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        406,
+        720,
+        22472,
+        27258,
+        27308,
+        30254,
+        32269,
+        32270
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.018536532713392784,
+      "local_measure_after_m": 0.018484848652439857,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1212,
+        1214,
+        25693,
+        30913,
+        31513,
+        32944,
+        32945,
+        32980
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.004372092792008957,
+      "local_measure_after_m": 0.0043711353838295055,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1214,
+        1217,
+        25693,
+        25694,
+        30913,
+        31595,
+        31628,
+        32945
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00549432687775087,
+      "local_measure_after_m": 0.005490878923023704,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1214,
+        1266,
+        1267,
+        23269,
+        25667,
+        31504,
+        32979,
+        32980
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.006223098792714531,
+      "local_measure_after_m": 0.006214469410455511,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1216,
+        1217,
+        14104,
+        20146,
+        25694,
+        31595,
+        32945,
+        32946
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.005284389945753868,
+      "local_measure_after_m": 0.005222376936379641,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1216,
+        1218,
+        1266,
+        1286,
+        18794,
+        23031,
+        24663,
+        32978
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.0057697675939555855,
+      "local_measure_after_m": 0.005750743376916375,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1532,
+        12464,
+        14900,
+        19215,
+        20271,
+        23638,
+        33692,
+        33808
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.008073699375898788,
+      "local_measure_after_m": 0.008073519148938765,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1668,
+        12129,
+        15112,
+        20271,
+        27656,
+        33766,
+        34043,
+        34186
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.010066405195263762,
+      "local_measure_after_m": 0.01006567309529715,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1882,
+        2243,
+        12331,
+        13117,
+        17864,
+        24719,
+        33431,
+        33991
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.004860000324702718,
+      "local_measure_after_m": 0.004856629035128727,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        2443,
+        18274,
+        24978,
+        25574,
+        29326,
+        33767,
+        34190,
+        34191
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00812017067640192,
+      "local_measure_after_m": 0.008120073780911518,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        5538,
+        5539,
+        11749,
+        15271,
+        18789,
+        23018,
+        37257
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.02385111913353894,
+      "local_measure_after_m": 0.02377475440745697,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        5538,
+        11749,
+        12008,
+        27874,
+        28591,
+        37256,
+        37257
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.022363548724111403,
+      "local_measure_after_m": 0.02215573516161513,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        5540,
+        15271,
+        18789,
+        19592,
+        22215,
+        37257,
+        37258
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.014450464896640876,
+      "local_measure_after_m": 0.014409976268016973,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        5578,
+        11862,
+        24758,
+        26695,
+        29354,
+        37276,
+        37277
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.013979348976644353,
+      "local_measure_after_m": 0.013940176838881584,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5579,
+        5580,
+        11862,
+        13201,
+        24758,
+        29354,
+        37277,
+        37278
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.0179103363083461,
+      "local_measure_after_m": 0.017908741743024766,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5579,
+        5581,
+        18409,
+        19227,
+        20469,
+        22462,
+        37278,
+        37468
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.017908741743024766,
+      "local_measure_after_m": 0.01778748504773462,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5579,
+        5836,
+        5837,
+        15484,
+        17191,
+        19227,
+        20469,
+        37468
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.012360042080062455,
+      "local_measure_after_m": 0.012343552312676071,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5581,
+        18409,
+        19227,
+        22462,
+        27991,
+        28061,
+        37279,
+        37467
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.014968510753557112,
+      "local_measure_after_m": 0.014962240957190792,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5611,
+        5613,
+        17904,
+        18125,
+        18340,
+        18385,
+        37294,
+        37453
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00801996530058202,
+      "local_measure_after_m": 0.007998865906153013,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5614,
+        5615,
+        5616,
+        22328,
+        27492,
+        27894,
+        37295,
+        37538
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.00704754995756043,
+      "local_measure_after_m": 0.007035742338697405,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5836,
+        17191,
+        20469,
+        20961,
+        22611,
+        37468,
+        37774,
+        37781
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.008330784754535468,
+      "local_measure_after_m": 0.008325900654885325,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5853,
+        5854,
+        10914,
+        12891,
+        20694,
+        20886,
+        37487,
+        37789
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01473939341104719,
+      "local_measure_after_m": 0.014696692797750965,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6345,
+        6347,
+        14311,
+        15475,
+        23067,
+        23659,
+        38161,
+        38197
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.004680370348783226,
+      "local_measure_after_m": 0.00466146353301864,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6347,
+        6349,
+        14311,
+        18003,
+        18932,
+        31545,
+        38162,
+        38196
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.009658124132430196,
+      "local_measure_after_m": 0.00964605347279811,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6348,
+        6349,
+        18003,
+        18932,
+        20427,
+        25488,
+        38162,
+        38163
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.004288446857493545,
+      "local_measure_after_m": 0.004282518612971464,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6349,
+        6352,
+        11073,
+        11903,
+        20427,
+        20429,
+        38162,
+        38163
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.0060536537767756525,
+      "local_measure_after_m": 0.006046882060850259,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6399,
+        15467,
+        15475,
+        21995,
+        31545,
+        38195,
+        38196,
+        38218
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.004332661360628627,
+      "local_measure_after_m": 0.004319162699855894,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        400,
+        402,
+        11405,
+        13896,
+        16410,
+        32038,
+        32272
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01567868450541659,
+      "local_measure_after_m": 0.0156556822164127,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        402,
+        722,
+        11405,
+        13896,
+        15001,
+        32271,
+        32272
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01532323678602903,
+      "local_measure_after_m": 0.015254878802392015,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        406,
+        575,
+        22472,
+        26364,
+        27308,
+        31369,
+        32269
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.011897365915340968,
+      "local_measure_after_m": 0.011893388486821138,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        409,
+        22422,
+        27942,
+        30222,
+        30254,
+        31369,
+        32041
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01310966355621073,
+      "local_measure_after_m": 0.013108202855417306,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        446,
+        17973,
+        22481,
+        23438,
+        28014,
+        32060,
+        32251
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01597262213761966,
+      "local_measure_after_m": 0.01594464503682436,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        448,
+        567,
+        13572,
+        16111,
+        26346,
+        29502,
+        32250
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.01594464503682436,
+      "local_measure_after_m": 0.015933097072529056,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        478,
+        480,
+        19651,
+        28626,
+        28899,
+        32077,
+        32236
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.006101119141535672,
+      "local_measure_after_m": 0.006043911768487368,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        478,
+        481,
+        22222,
+        27721,
+        28626,
+        28899,
+        32077
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.007560972211250782,
+      "local_measure_after_m": 0.0075499486101154615,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        480,
+        481,
+        15682,
+        28626,
+        28899,
+        32077,
+        32078
+      ],
+      "before": 224,
+      "after": 224,
+      "local_measure_before_m": 0.009983264319939636,
+      "local_measure_after_m": 0.009980422671538747,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        480,
+        482,
+        15682,
+        28626,
+        30039,
+        32078,
+        32127
+      ],
+      "before": 224,
+      "after": 201,
+      "local_measure_before_m": 0.009980422671538747,
+      "local_measure_after_m": 0.0,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        567,
+        703,
+        16111,
+        26729,
+        29502,
+        32250,
+        32564
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.011197486684617494,
+      "local_measure_after_m": 0.011193179833161421,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        703,
+        16111,
+        25992,
+        26729,
+        29502,
+        32251,
+        32557
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.007269488866991785,
+      "local_measure_after_m": 0.007267450685756183,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        720,
+        10827,
+        22472,
+        26174,
+        27258,
+        27308,
+        32579
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.013399044237396133,
+      "local_measure_after_m": 0.01330711825331173,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1532,
+        2422,
+        12464,
+        14900,
+        24978,
+        33692,
+        34191
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.006813084978187735,
+      "local_measure_after_m": 0.006812831926599257,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1533,
+        1534,
+        24334,
+        27022,
+        30961,
+        33573,
+        33696
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.002186659197068756,
+      "local_measure_after_m": 0.0021761444985251674,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1534,
+        1551,
+        18601,
+        24333,
+        29986,
+        33570,
+        33618
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.004035862452470736,
+      "local_measure_after_m": 0.004035856639445907,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1534,
+        1881,
+        24334,
+        29717,
+        30961,
+        33570,
+        33573
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.004951708471379488,
+      "local_measure_after_m": 0.0049425384118858785,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1534,
+        2061,
+        18601,
+        24333,
+        24334,
+        29717,
+        33570
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.005573002860548544,
+      "local_measure_after_m": 0.005555974306542662,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1535,
+        1551,
+        29939,
+        30234,
+        30253,
+        33479,
+        33572
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0052284015790520525,
+      "local_measure_after_m": 0.005227061395363428,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1535,
+        29939,
+        30234,
+        30252,
+        30253,
+        33453,
+        33481
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.00891761582445097,
+      "local_measure_after_m": 0.008917210069616417,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1550,
+        1642,
+        14237,
+        15918,
+        16935,
+        24261,
+        33694
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.002543660793483265,
+      "local_measure_after_m": 0.0025328484983601594,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1550,
+        2443,
+        14237,
+        18274,
+        24293,
+        29326,
+        34190
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0044613759396813415,
+      "local_measure_after_m": 0.004454262189616617,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1551,
+        18601,
+        24333,
+        29939,
+        29986,
+        33479,
+        33572
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.004402477870893473,
+      "local_measure_after_m": 0.00440231778295828,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        2240,
+        2241,
+        15558,
+        19806,
+        22981,
+        33452,
+        33482
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.002905324160073303,
+      "local_measure_after_m": 0.002900351340750411,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        2240,
+        19806,
+        22981,
+        24456,
+        27953,
+        33452,
+        33520
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0016828208600823348,
+      "local_measure_after_m": 0.0016826530172592208,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        2423,
+        2443,
+        23622,
+        24293,
+        29326,
+        34190,
+        34191
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.004471184142574629,
+      "local_measure_after_m": 0.004471114627732669,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        2431,
+        2443,
+        24978,
+        25574,
+        27760,
+        33767,
+        34187
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.007491196793760472,
+      "local_measure_after_m": 0.007487890652801068,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5533,
+        5535,
+        12008,
+        18333,
+        27913,
+        37255,
+        37489
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.016787924092944467,
+      "local_measure_after_m": 0.016529048123331898,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5535,
+        5537,
+        10914,
+        11749,
+        12008,
+        27874,
+        37488
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.025714470885782638,
+      "local_measure_after_m": 0.025622691299163516,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5535,
+        5855,
+        18333,
+        20665,
+        27913,
+        37488,
+        37489
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.01565848911663081,
+      "local_measure_after_m": 0.015450841879001823,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        5853,
+        12891,
+        19592,
+        20886,
+        37486,
+        37487
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.017744451219676275,
+      "local_measure_after_m": 0.01771420792743068,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        12891,
+        18789,
+        19592,
+        23018,
+        37257,
+        37487
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.01771420792743068,
+      "local_measure_after_m": 0.017686790369784405,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        5579,
+        11862,
+        15484,
+        24758,
+        37277,
+        37469
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.017759841384331773,
+      "local_measure_after_m": 0.017736225665560972,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5579,
+        5837,
+        15484,
+        20643,
+        24758,
+        37468,
+        37469
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.017736225665560972,
+      "local_measure_after_m": 0.017634176178670007,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5581,
+        5836,
+        19227,
+        20469,
+        22611,
+        37467,
+        37468
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.013116023943443198,
+      "local_measure_after_m": 0.01311122917078179,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5582,
+        11174,
+        18409,
+        19227,
+        22462,
+        37278,
+        37279
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.011875385451310146,
+      "local_measure_after_m": 0.011804190317180937,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5612,
+        5614,
+        17904,
+        22328,
+        22378,
+        37294,
+        37539
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0058302587426472905,
+      "local_measure_after_m": 0.005799660972541214,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5613,
+        5614,
+        18125,
+        18340,
+        18341,
+        37294,
+        37295
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.01163013949077297,
+      "local_measure_after_m": 0.011615092847253376,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5613,
+        5615,
+        18340,
+        18341,
+        26627,
+        37295,
+        37344
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.010003211850903684,
+      "local_measure_after_m": 0.009992837996116112,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5615,
+        18341,
+        26627,
+        27492,
+        27894,
+        27897,
+        37295
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0067856652949766704,
+      "local_measure_after_m": 0.006770903643462342,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6347,
+        6348,
+        17012,
+        18003,
+        18932,
+        38161,
+        38162
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.005018445381835884,
+      "local_measure_after_m": 0.004972274943944478,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6351,
+        6352,
+        11903,
+        20429,
+        28548,
+        38163,
+        38164
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0048713660113946945,
+      "local_measure_after_m": 0.004867536134015428,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6351,
+        6419,
+        11251,
+        20429,
+        31027,
+        38194,
+        38195
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.004494583055657303,
+      "local_measure_after_m": 0.00449251815139713,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6351,
+        11903,
+        20429,
+        31027,
+        31405,
+        38164,
+        38194
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.004476987093606793,
+      "local_measure_after_m": 0.004442517143162919,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        402,
+        11405,
+        13896,
+        15370,
+        16410,
+        32271
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.022363022807552636,
+      "local_measure_after_m": 0.022358113822994845,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        402,
+        11405,
+        15001,
+        15370,
+        27258,
+        32271
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.022358113822994845,
+      "local_measure_after_m": 0.022291721787086213,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        444,
+        446,
+        17973,
+        22481,
+        32060,
+        32252
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.015926752039837382,
+      "local_measure_after_m": 0.01590068750647452,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        448,
+        703,
+        16111,
+        29502,
+        32250,
+        32251
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.01347506571403695,
+      "local_measure_after_m": 0.013464892769435619,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1535,
+        1882,
+        29939,
+        30253,
+        33453,
+        33479
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.011816892273857205,
+      "local_measure_after_m": 0.011816115233485476,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        1665,
+        11020,
+        19729,
+        27952,
+        29364,
+        34032
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.0015474744420786812,
+      "local_measure_after_m": 0.0015403090393823397,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5535,
+        10914,
+        20665,
+        27874,
+        27913,
+        37488
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.025357383211642655,
+      "local_measure_after_m": 0.02534473522418869,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5535,
+        12008,
+        18333,
+        27874,
+        27913,
+        37488
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.02534473522418869,
+      "local_measure_after_m": 0.025282865443407476,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        5539,
+        10914,
+        23018,
+        37257,
+        37487
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.025282865443407476,
+      "local_measure_after_m": 0.025236814769432344,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        10914,
+        11749,
+        23018,
+        27874,
+        37257
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.019878238636184313,
+      "local_measure_after_m": 0.019748055184013322,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        10914,
+        12891,
+        20886,
+        23018,
+        37487
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.021972233672727853,
+      "local_measure_after_m": 0.021961862109046194,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        10989,
+        11862,
+        24758,
+        26695,
+        37469
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.01359023562249831,
+      "local_measure_after_m": 0.013581645016574861,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        10989,
+        15484,
+        20643,
+        24758,
+        37469
+      ],
+      "before": 201,
+      "after": 201,
+      "local_measure_before_m": 0.01546725135418203,
+      "local_measure_after_m": 0.015456362271324095,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5584,
+        11174,
+        18409,
+        22462,
+        27991,
+        37279
+      ],
+      "before": 201,
+      "after": 199,
+      "local_measure_before_m": 0.009723263861072737,
+      "local_measure_after_m": 0.009660737929357776,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5613,
+        18125,
+        18340,
+        18341,
+        18385,
+        37344
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.008072933553666981,
+      "local_measure_after_m": 0.008072476345682564,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5614,
+        5615,
+        18340,
+        18341,
+        27492,
+        37295
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.010461461606565872,
+      "local_measure_after_m": 0.010451037507585944,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6347,
+        14311,
+        15475,
+        18003,
+        23659,
+        38196
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.006645153428736313,
+      "local_measure_after_m": 0.0066291016880013695,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6347,
+        14311,
+        18003,
+        18932,
+        23659,
+        38161
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.005709837772617961,
+      "local_measure_after_m": 0.0057088076127744585,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        6399,
+        14311,
+        15475,
+        18003,
+        31545,
+        38196
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.008108648614603297,
+      "local_measure_after_m": 0.008093670863408722,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        404,
+        15370,
+        15371,
+        27258,
+        30254
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.02151614469550407,
+      "local_measure_after_m": 0.021514089491432534,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        406,
+        22472,
+        30254,
+        31369,
+        32269
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.014204539742349401,
+      "local_measure_after_m": 0.014187299803827628,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        448,
+        13572,
+        26346,
+        29115,
+        32250
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.013164215793272139,
+      "local_measure_after_m": 0.013154370612536366,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        15370,
+        15371,
+        16410,
+        24286,
+        32039
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.01796047759080155,
+      "local_measure_after_m": 0.017957098388384485,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        444,
+        17973,
+        22481,
+        32252
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.015880669381137413,
+      "local_measure_after_m": 0.01586495127663048,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        22472,
+        27258,
+        30254,
+        32270
+      ],
+      "before": 199,
+      "after": 199,
+      "local_measure_before_m": 0.01794272951460668,
+      "local_measure_after_m": 0.017891989706413626,
+      "local_quality_deficit_before": null,
+      "local_quality_deficit_after": null,
+      "local_fold_deficit_before": null,
+      "local_fold_deficit_after": null
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": false,
+  "edge_groups": false,
+  "ring_groups": true,
+  "fairing": false,
+  "repair_slivers": false,
+  "quality_audit": {
+    "floor": 0.05,
+    "initial_minimum": 0.018097731164283242,
+    "final_minimum": 0.018097731164283242,
+    "initial_below_floor": 34,
+    "final_below_floor": 33,
+    "verified": true
+  },
+  "fold_audit": null,
+  "project_bound": false,
+  "reduce_measure": true,
+  "diagonal_directions": true,
+  "initial_measure_m": 0.14800520692733518,
+  "final_measure_m": 0.113410477627335,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        3997,
+        4002
+      ],
+      [
+        3997,
+        4003
+      ],
+      [
+        3991,
+        4003
+      ],
+      [
+        3991,
+        4004
+      ],
+      [
+        3990,
+        4004
+      ],
+      [
+        2466,
+        2480
+      ],
+      [
+        2464,
+        2480
+      ],
+      [
+        2466,
+        3988
+      ],
+      [
+        2464,
+        3986
+      ],
+      [
+        3988,
+        4002
+      ],
+      [
+        3986,
+        4004
+      ],
+      [
+        3988,
+        4004
+      ],
+      [
+        3989,
+        4004
+      ],
+      [
+        2466,
+        3987
+      ],
+      [
+        3987,
+        4002
+      ],
+      [
+        3987,
+        4004
+      ],
+      [
+        3988,
+        3992
+      ],
+      [
+        3989,
+        3992
+      ],
+      [
+        2290,
+        2298
+      ],
+      [
+        2290,
+        2313
+      ],
+      [
+        2290,
+        2312
+      ],
+      [
+        2290,
+        4137
+      ],
+      [
+        2290,
+        4136
+      ],
+      [
+        2299,
+        2313
+      ],
+      [
+        4145,
+        4157
+      ],
+      [
+        2297,
+        2313
+      ],
+      [
+        2296,
+        2313
+      ],
+      [
+        2298,
+        2313
+      ],
+      [
+        2298,
+        2312
+      ],
+      [
+        2298,
+        4151
+      ],
+      [
+        2298,
+        4167
+      ],
+      [
+        4151,
+        4167
+      ],
+      [
+        4151,
+        4154
+      ],
+      [
+        4136,
+        4167
+      ],
+      [
+        4150,
+        4167
+      ],
+      [
+        4150,
+        4154
+      ],
+      [
+        4150,
+        4157
+      ],
+      [
+        4154,
+        4167
+      ],
+      [
+        4154,
+        4157
+      ],
+      [
+        4147,
+        4157
+      ],
+      [
+        4148,
+        4157
+      ],
+      [
+        4148,
+        4156
+      ],
+      [
+        61476,
+        61482
+      ],
+      [
+        61476,
+        63319
+      ],
+      [
+        63319,
+        63327
+      ],
+      [
+        61468,
+        61485
+      ],
+      [
+        61468,
+        61476
+      ],
+      [
+        61470,
+        61485
+      ],
+      [
+        61469,
+        61485
+      ],
+      [
+        61476,
+        61481
+      ],
+      [
+        61476,
+        61485
+      ],
+      [
+        61468,
+        63316
+      ],
+      [
+        61476,
+        63335
+      ],
+      [
+        63316,
+        63335
+      ],
+      [
+        63320,
+        63335
+      ],
+      [
+        63320,
+        63326
+      ],
+      [
+        63327,
+        63335
+      ],
+      [
+        63326,
+        63327
+      ],
+      [
+        63321,
+        63327
+      ],
+      [
+        63321,
+        63326
+      ],
+      [
+        63321,
+        63325
+      ],
+      [
+        63321,
+        63328
+      ],
+      [
+        61781,
+        68720
+      ],
+      [
+        61781,
+        68719
+      ],
+      [
+        61782,
+        68718
+      ],
+      [
+        61782,
+        68720
+      ],
+      [
+        61782,
+        68717
+      ],
+      [
+        61784,
+        68719
+      ],
+      [
+        61784,
+        68999
+      ],
+      [
+        61784,
+        68994
+      ],
+      [
+        61786,
+        68999
+      ],
+      [
+        61778,
+        68718
+      ],
+      [
+        61777,
+        68731
+      ],
+      [
+        61777,
+        68732
+      ],
+      [
+        61777,
+        68726
+      ],
+      [
+        61776,
+        68732
+      ],
+      [
+        61778,
+        68726
+      ],
+      [
+        63157,
+        63166
+      ],
+      [
+        63166,
+        63167
+      ],
+      [
+        63158,
+        63166
+      ],
+      [
+        61638,
+        61659
+      ],
+      [
+        61643,
+        61659
+      ],
+      [
+        61638,
+        61654
+      ],
+      [
+        61643,
+        61654
+      ],
+      [
+        61637,
+        61660
+      ],
+      [
+        61638,
+        61660
+      ],
+      [
+        61643,
+        61660
+      ],
+      [
+        63157,
+        63173
+      ],
+      [
+        61637,
+        63160
+      ],
+      [
+        63160,
+        63173
+      ],
+      [
+        61643,
+        63160
+      ],
+      [
+        63157,
+        63175
+      ],
+      [
+        63160,
+        63175
+      ],
+      [
+        63158,
+        63173
+      ],
+      [
+        63164,
+        63173
+      ],
+      [
+        63169,
+        63175
+      ],
+      [
+        63169,
+        63176
+      ],
+      [
+        63164,
+        63176
+      ],
+      [
+        63163,
+        63173
+      ],
+      [
+        61786,
+        68991
+      ],
+      [
+        61786,
+        68992
+      ],
+      [
+        61787,
+        68992
+      ],
+      [
+        61776,
+        68983
+      ],
+      [
+        61788,
+        68992
+      ],
+      [
+        61788,
+        68990
+      ],
+      [
+        61788,
+        68989
+      ],
+      [
+        61779,
+        68982
+      ],
+      [
+        61780,
+        68982
+      ],
+      [
+        61780,
+        68987
+      ],
+      [
+        61780,
+        68990
+      ],
+      [
+        61774,
+        68983
+      ],
+      [
+        61774,
+        68984
+      ],
+      [
+        61779,
+        68984
+      ],
+      [
+        14443,
+        18726
+      ],
+      [
+        14440,
+        18726
+      ],
+      [
+        14441,
+        18726
+      ],
+      [
+        13843,
+        21251
+      ],
+      [
+        15410,
+        18726
+      ],
+      [
+        14443,
+        18727
+      ],
+      [
+        14444,
+        18727
+      ],
+      [
+        14444,
+        21255
+      ],
+      [
+        14444,
+        21254
+      ],
+      [
+        14445,
+        21254
+      ],
+      [
+        13842,
+        21254
+      ],
+      [
+        13842,
+        21252
+      ],
+      [
+        13843,
+        21252
+      ],
+      [
+        15414,
+        18717
+      ],
+      [
+        15410,
+        18719
+      ],
+      [
+        15411,
+        18719
+      ],
+      [
+        15411,
+        18718
+      ],
+      [
+        15412,
+        18718
+      ],
+      [
+        15413,
+        18718
+      ],
+      [
+        15413,
+        18717
+      ],
+      [
+        15410,
+        18723
+      ],
+      [
+        13843,
+        30510
+      ],
+      [
+        13844,
+        30510
+      ],
+      [
+        15414,
+        30534
+      ],
+      [
+        15415,
+        30534
+      ],
+      [
+        15384,
+        30534
+      ],
+      [
+        15384,
+        30533
+      ],
+      [
+        15384,
+        30532
+      ],
+      [
+        15384,
+        30531
+      ],
+      [
+        15385,
+        30531
+      ],
+      [
+        13846,
+        30509
+      ],
+      [
+        13846,
+        30504
+      ],
+      [
+        13845,
+        30510
+      ],
+      [
+        13845,
+        30509
+      ],
+      [
+        15390,
+        30531
+      ],
+      [
+        15390,
+        30540
+      ],
+      [
+        15391,
+        30540
+      ],
+      [
+        15391,
+        30539
+      ],
+      [
+        13816,
+        30539
+      ],
+      [
+        28815,
+        30504
+      ],
+      [
+        13816,
+        30538
+      ],
+      [
+        28815,
+        30503
+      ],
+      [
+        28816,
+        30503
+      ],
+      [
+        28816,
+        30497
+      ],
+      [
+        18703,
+        28816
+      ],
+      [
+        13817,
+        30538
+      ],
+      [
+        13817,
+        18704
+      ],
+      [
+        13822,
+        18704
+      ],
+      [
+        18703,
+        28813
+      ],
+      [
+        18701,
+        28814
+      ],
+      [
+        28814,
+        29234
+      ],
+      [
+        13433,
+        29234
+      ],
+      [
+        13433,
+        29233
+      ],
+      [
+        13822,
+        18705
+      ],
+      [
+        13822,
+        18699
+      ],
+      [
+        13823,
+        18699
+      ],
+      [
+        13608,
+        18699
+      ],
+      [
+        13608,
+        29236
+      ],
+      [
+        13609,
+        29235
+      ],
+      [
+        13608,
+        29235
+      ],
+      [
+        18701,
+        28813
+      ],
+      [
+        13611,
+        29233
+      ],
+      [
+        13611,
+        29232
+      ],
+      [
+        13609,
+        29230
+      ],
+      [
+        13612,
+        29232
+      ],
+      [
+        13613,
+        29232
+      ],
+      [
+        13614,
+        29230
+      ],
+      [
+        13614,
+        29229
+      ],
+      [
+        13614,
+        26114
+      ],
+      [
+        13744,
+        26114
+      ],
+      [
+        13613,
+        26119
+      ],
+      [
+        13746,
+        26119
+      ],
+      [
+        13747,
+        26119
+      ],
+      [
+        13747,
+        26114
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 39254,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 759535,
+      "forbidden_pairs": [
+        [
+          2296,
+          2298
+        ],
+        [
+          3992,
+          3997
+        ],
+        [
+          3992,
+          3999
+        ],
+        [
+          4145,
+          4154
+        ],
+        [
+          4148,
+          4155
+        ],
+        [
+          4155,
+          4157
+        ],
+        [
+          61469,
+          61476
+        ],
+        [
+          63165,
+          63167
+        ],
+        [
+          63166,
+          63169
+        ],
+        [
+          63318,
+          63327
+        ],
+        [
+          63323,
+          63327
+        ],
+        [
+          63326,
+          63328
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.00045070237188518203,
+  "audit": {
+    "vertices": 60866,
+    "triangles": 121728,
+    "area_m2": 1.5670566071804566,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "23f694c18f8a652f0cc488e7cdff70ad5a3588b81d6b7903b199dccda54d3126",
+  "reference_sha256": "76572c8cd0f80f1530c13e06c26526e14ca0da820886685f9376f3ebfc8ef16a",
+  "candidate_sha256": "8e4755ae82f756a53a72022971a4c5cec4b06bc695edc1955a9683e35716f99f",
+  "proposal_distances_m": [
+    2.5e-05,
+    -2.5e-05,
+    5e-05,
+    -5e-05,
+    0.0001,
+    -0.0001,
+    0.0003,
+    -0.0003,
+    0.0015,
+    -0.0015,
+    0.002,
+    -0.002
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

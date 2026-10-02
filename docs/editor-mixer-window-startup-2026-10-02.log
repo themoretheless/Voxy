@@ -1,0 +1,23 @@
+Fresh voxy_app PID 98560; UI binding timed out while process remained live.
+Sample captured during launch of Voxy Mixer Review; not proof of a rendered current inspector.
+Call graph:
+    89 Thread_14986845: Main Thread   DispatchQueue_<multiple>
+      89 start  (in dyld) + 6904  [0x18b4a448c]
+        89 dyld4::start(dyld4::KernelArgs*, void*, void*, unsigned long long)::$_1::operator()() const  (in dyld) + 320  [0x18b4a4b30]
+          89 dyld4::prepare(dyld4::APIs&, mach_o::UnsafeHeader const*)  (in dyld) + 512  [0x18b4a4d4c]
+            89 dyld4::JustInTimeLoader::makeLaunchLoader(Diagnostics&, dyld4::RuntimeState&)  (in dyld) + 136  [0x18b4c7514]
+              89 dyld4::Loader::getOnDiskBinarySliceOffset(dyld4::RuntimeState&, dyld3::MachOFile const*, char const*)  (in dyld) + 256  [0x18b4d1a74]
+                89 dyld4::SyscallDelegate::withReadOnlyMappedFile(Diagnostics&, char const*, bool, void (void const*, unsigned long, bool, dyld4::FileID const&, char const*, int) block_pointer) const  (in dyld) + 104  [0x18b4a15e0]
+                  89 dyld4::SyscallDelegate::mapFileReadOnly(Diagnostics&, char const*, int*, unsigned long*, dyld4::FileID*, bool*, char*) const  (in dyld) + 108  [0x18b4a1ee4]
+                    89 dyld3::open(char const*, int, int)  (in dyld) + 52  [0x18b4e25fc]
+                      89 open_with_subsystem  (in dyld) + 60  [0x18b5085d8]
+                        89 open  (in dyld) + 40  [0x18b486664]
+                          89 __open  (in dyld) + 8  [0x18b489f70]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        __open  (in dyld)        89
+
+Binary images description not available
+

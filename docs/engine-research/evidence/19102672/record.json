@@ -1,0 +1,69 @@
+{
+  "repository": "PistonDevelopers/piston",
+  "repository_id": 19102672,
+  "commit": "21b8719a0606bb4e8612c36a2016e5b685c609f9",
+  "source_url": "https://github.com/PistonDevelopers/piston/tree/21b8719a0606bb4e8612c36a2016e5b685c609f9",
+  "readme_path": "README.md",
+  "readme_sha256": "4ccffae3ea3e891472f883f56824167f610e0a9edfa0d807b8bafdc056bdbe02",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "db2b510d8f96ed789cc3dd2a712250d9dd43258a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a305b351d54204cd26b62a10bf16690ad691daf6"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "c7fee9f83694be9cd6a9cecd934217fd54fb4fa0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0cc8c58df9793866c370791bbff28a3daee7ec2f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "5902e7ed77ed4c275b0236d5b17041bf0088dcd6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1ffbbbd63151059fcbe89d539c29bb6f8517fbcf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d288616a5f8dbf356b3398d285761dbe62d548e6"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "5859031e67edb60f5cece5a9e871358ca77e5c36"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "667f688dcb28ac061d431cd99e90d8ca1e69d2d7"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "c8b7df104ac52ebbed0d072a8c5e79ddf32ff1e4"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0bba9b68af552ee58bf04f36c5e42ef1d36541c5"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Piston core decoupled window/event abstractions for distributed modular ecosystem; this repository alone does not establish complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

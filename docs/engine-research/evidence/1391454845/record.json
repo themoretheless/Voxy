@@ -1,0 +1,99 @@
+{
+  "repository": "turbo-devv/openOMSI",
+  "repository_id": 1391454845,
+  "commit": "92fe9e470bbdd20017c88d6058842d63d2ad4742",
+  "source_url": "https://github.com/turbo-devv/openOMSI/tree/92fe9e470bbdd20017c88d6058842d63d2ad4742",
+  "readme_path": "README.md",
+  "readme_sha256": "cfd71530e5f6db42da0ec861bbc8ce465a2537c423c2a27d78e0da954c0e26f0",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "6260a620830e10f52c03d2caa954aacd887b8002"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "82d1cb8f9c26c0027af0847216732932af8420bb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f193d262abe63040775db98300ad3c415ef8eb7a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "6d1c140a6669c74addac3749a5323b5bd875cee3"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "527acbe32769d7d3ff80413a25f588f0ac0afed9"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "8a5d377da825247b2c29c3440808dc30eeaeb611"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f363a855cbac3561b9bc18d282edacf1e4ae0c85"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "686214500d71ed2d88bd861fda0b6a60e7944fc2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "22fafca861e8ae8b240eac2248421297f74858cf"
+    },
+    {
+      "path": "VERSION",
+      "type": "file",
+      "sha": "49d59571fbf6e077eece30f8c418b6aad15e20b0"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "17348978e9eeb239a2219ee9f99699a009ba230c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3147beceefc4ecf2d8a4ef0224cd105d3e99aab3"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "13528382f67b15eed2978da5679c70f4a47f1243"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "fa6eed1c55ce96a766cd85a9cf041762f78105fc"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a64d658610061bb37221ed0fe2034d52bf0c70cb"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "20235d935843676b5f37f0e88108c7c11b544980"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "ed4fefbd40d097a9514ff72f1ba51ed32c4c9e9c"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust recreation of the OMSI 2 runtime with crates and asset-loading documentation; compatibility and performance remain unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

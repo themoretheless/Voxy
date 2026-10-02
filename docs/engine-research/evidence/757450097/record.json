@@ -1,0 +1,104 @@
+{
+  "repository": "DRincs-Productions/pixi-vn",
+  "repository_id": 757450097,
+  "commit": "01c19cb44b4fa752732f57adb6dcaeb57137ec72",
+  "source_url": "https://github.com/DRincs-Productions/pixi-vn/tree/01c19cb44b4fa752732f57adb6dcaeb57137ec72",
+  "readme_path": "README.md",
+  "readme_sha256": "4c0e15a898dbc7d4f5c8c89eeda616c262525807be665da183eb9041140c9cd0",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "495fdc9474e987fe5509729530b957445c34bc7f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bf94cc2fabb20f9fe97e1dcb27265a43e99acd83"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d34f19e0f0bae61ac996f8354efe74c583924750"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "b1b0db830c44223bfd6a34e7d4e422e29bdcd6e5"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c93a8b05dbf42c69857232005f4763282c90d27c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8000a6faacf471c537530805ab29523c7732e11a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "83a8212df5bd806aaead5d6f38c61ddee94d0aeb"
+    },
+    {
+      "path": "biome.json",
+      "type": "file",
+      "sha": "6153237e113e0b64c27d57f19c0509928c6039ab"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "13a4e2ae833a7694f48e6efea64801c08e1a239b"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "7cad8404a4b8d9ee19988e4cdd46af4727365226"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "dba01dc6a609b4b1aff71bee14341ea0015dfcde"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "636e25f0e11647defc8432cae95f1b359d7a8112"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "16c303dd4358e00f1587ea2d048d4fe0df1bda38"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "1c3df49d060f5b3bc87f29d7c8c058fff1327384"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "7c92a4b90cad51980385db2164976e74942f29f9"
+    },
+    {
+      "path": "tsup.config.ts",
+      "type": "file",
+      "sha": "ad7dbf7b3bfd3ca2178e63a6fe753633eeb33f6e"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "3822e8bb87d45782a29cd3c490a3e9cf74eb0f07"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "3c9311659656813ed921d967139ec09b02081c1b"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "PixiJS-based narrative runtime with choices, history and state save/load, src and tests; backend library is not an engine fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

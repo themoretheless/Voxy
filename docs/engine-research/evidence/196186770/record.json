@@ -1,0 +1,59 @@
+{
+  "repository": "jbikker/lighthouse2",
+  "repository_id": 196186770,
+  "commit": "e61e65444d8ed3074775003f7aa7d60cb0d4792e",
+  "source_url": "https://github.com/jbikker/lighthouse2/tree/e61e65444d8ed3074775003f7aa7d60cb0d4792e",
+  "readme_path": "README.md",
+  "readme_sha256": "a26c91871ba38ea44deff8d35478da732b4614a9237f40198349361895ce7b34",
+  "entries": [
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "fc103342c88890c8ec61513b2933b8dface99297"
+    },
+    {
+      "path": "LightHouse2.sln",
+      "type": "file",
+      "sha": "2fb89078a322dde96c27808391794379f7bfbda5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9e1e3e0894fa2000b89a2191ad5eae187d7394a7"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "2772874c050882a6e1d578089bb6d1b4e4ffb14b"
+    },
+    {
+      "path": "clean.bat",
+      "type": "file",
+      "sha": "643753de949bd30c18c7a4d27697d78cfe414ad5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "1b2afc94323aab4f7466fa8ee379c3dea50a8762"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "d57a1fbf9fba47e5a3db73d2ad930d124e3e68bf"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "88051fc8cd84059cec042766ecce1750c6d6bc47"
+    },
+    {
+      "path": "update_CUDA_version.bat",
+      "type": "file",
+      "sha": "f2f1e53aea0bd3f572e340e0d203e26dd1886f09"
+    }
+  ],
+  "classification": "rendering_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ray/path tracing experiments framework; lib/apps and native build, not complete gameplay engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

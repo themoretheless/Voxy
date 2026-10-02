@@ -1,0 +1,157 @@
+{
+  "repository": "Stem-Studio/Engine",
+  "repository_id": 1244155788,
+  "commit": "a637ee4e0f9d64fa47c5e271a0d3678a084edcbc",
+  "source_url": "https://github.com/Stem-Studio/Engine/tree/a637ee4e0f9d64fa47c5e271a0d3678a084edcbc",
+  "readme_path": "README.md",
+  "readme_sha256": "b0a0e74c2b2734873cbd47111f13c7c21d347a7e6fcdb09fc14bbf0a44c57b09",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "aea755e28ba53d931e0428abb28457d5c5b4feed"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "5c13c1fd837bcf2067e7c45518d53260e40e0f7a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2268fa425a5bbe5a4134c916c12e6741d348c668"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a37a1a7a6d35d1a3ae57f50fe6e7d849fb9464f2"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "f285efed7f14e15b3c5e4920f85f19dc10229032"
+    },
+    {
+      "path": "CODEX.md",
+      "type": "file",
+      "sha": "d7e9ac6e6ddbcb9d39091ebda29e1aa9f4626078"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "7e05df8844a0584ed4eeb7413911df55f80b0028"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "17c324a25af7291a6e1da9eb21a789cc8227eafa"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "c85333aa539cf07f03c8c2239134d11ae9ca94e0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8ed9ae42b5d15a4b10830e348ee7d68ab8b9ba41"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fd1243380ac8de7b45bad852e3df91696e06f907"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "ecfe0f70c4874fd71befda3070b32d56d8c06ab9"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "type": "file",
+      "sha": "61f28906d9ab9340babaf63bd9bd84e224d4436f"
+    },
+    {
+      "path": "blog",
+      "type": "dir",
+      "sha": "f41e25edbb489a97bc0b02374887eeeeff16ceb4"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "1377c5b3363fec26a60a1bd203a5b6d6f414b707"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "4f77ae6e806b00cf5a8fa4087fc574b1a7aaee2b"
+    },
+    {
+      "path": "docker-compose.full.yml",
+      "type": "file",
+      "sha": "0b020b2b8dda94f22ae683fba53415d2bd8b366e"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "7de6c40b979b15e5de6618f7adbc0b79aee3abb9"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "9b295ec4c8320e5d784fd8f86742905ed45260dd"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2b871e27b7a03ecee28f74f9a7e0b76fd4ba2904"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "13403cb6b43d9716051b79f3841217675c4ddaac"
+    },
+    {
+      "path": "patches",
+      "type": "dir",
+      "sha": "64d1059563cf0260fdcb4f8a2c969b8f6fb9d3e2"
+    },
+    {
+      "path": "render.yaml",
+      "type": "file",
+      "sha": "0eadf34c4f7bdbcbad009fec54bb3ac212c0eb9f"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "973f9461c9166741afd89f7607d70304d72d261f"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "3dff80732d6ce8fde88fdc04e720cb4c1458ed4d"
+    },
+    {
+      "path": "stemstudio-copilot",
+      "type": "dir",
+      "sha": "2df344176c0221a50558c8383dcd9e51b49c5941"
+    },
+    {
+      "path": "stemstudio-multiplayer",
+      "type": "dir",
+      "sha": "ca0a8b6c50919ecc839a8d2c7efb1c7dffc9f6df"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "336b01acd8c7cecf431bed237d77633f445ff1b0"
+    },
+    {
+      "path": "wrangler.toml",
+      "type": "file",
+      "sha": "48fde38759103004597a592153cc5ee4176d844f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "hecrj/coffee",
+  "repository_id": 179140142,
+  "commit": "5bb04cf8483188582a2adb8c36567242af86f49d",
+  "source_url": "https://github.com/hecrj/coffee/tree/5bb04cf8483188582a2adb8c36567242af86f49d",
+  "readme_path": "README.md",
+  "readme_sha256": "bf8cdf3d9eb3329d6ce6673195e83235cebfdc9b3cf08a7e3ef37452ebb88cb5",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8815e4947a4994b8e3f78df0d56af5552e189613"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "12c28073acac8916c9b06ee763e9efcf1bd821e9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0aa4a88c2c1cc6c1d961b81e0156ed1f7dceff52"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "81a715d21705c083f02741f6df189f51482d6102"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c4297dd31124f8e19da5e3cec5eec8f37c7349a8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e7c5205ffffd7a2548bdff01d311997232ca2d55"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "5d66a60243c9f44df81ec09933c52a158dd52846"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7f93fa0504d0fc73388e00e64f16fd4c0963d34a"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "ece2d0b63b5c03361f5ab80d616130df255f8bca"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "5a7d30dc09e37ae9c39d80f5dc94f8ea8837dd7c"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "d979d31769e94112af58354d4b0e5ae9390914d3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c00f8884c96cb0ee8267e074ae9c763583eebc80"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "358b57f2b9e72d4a05b2e5fe9ec03355cd91716f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Rust 2D engine; src, Cargo manifest, build/tests and examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

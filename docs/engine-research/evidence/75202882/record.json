@@ -1,0 +1,54 @@
+{
+  "repository": "cmilr/DeadSimple-Pixel-Perfect-Camera",
+  "repository_id": 75202882,
+  "commit": "2749dddd6d646f094e04cbe2d674159ffccfaa61",
+  "source_url": "https://github.com/cmilr/DeadSimple-Pixel-Perfect-Camera/tree/2749dddd6d646f094e04cbe2d674159ffccfaa61",
+  "readme_path": "README.md",
+  "readme_sha256": "278172e0bf12a9dd16b68f9575ac9d7f7b4e751bdaef68ba347c3e9278fd8a50",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "edf70ca43658f8c26e3864b7a3e6be0ff81eeb0f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "faa90d4f0c4d8e2ea88065cbc2aea9b99f37b194"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "0f83ff6d1fbdb08c9a0a3fb56157c09d557bd85b"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "77ca486045babc58fa9b6c1592a11b3b054b07ba"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7ce5f3116e3345e1344def1f7f88463c43acb587"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "e002e1ead799f5ab4e3996eb9e3a20e53c48c474"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "616e2621b7951b963603605b3d15d52d4bf3cf92"
+    },
+    {
+      "path": "screenshot.png",
+      "type": "file",
+      "sha": "42a07c3959da29206595ec34080cfeb66f5afa66"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Unity camera component; Assets/ProjectSettings depend on existing engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

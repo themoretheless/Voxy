@@ -1,0 +1,324 @@
+{
+  "repository": "space-wizards/RobustToolbox",
+  "repository_id": 29376123,
+  "commit": "117ca4d96bd879b87146dc8da5589245355a4a36",
+  "source_url": "https://github.com/space-wizards/RobustToolbox/tree/117ca4d96bd879b87146dc8da5589245355a4a36",
+  "readme_path": "README.md",
+  "readme_sha256": "a2ffccf7953536c73079ff33099246b8177bb1195f7eaf82f9f6a33aed945ef2",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c2a9068d1aa5f58a2965e2976a8719aa7004a855"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "176a458f94e0ea5272ce67c36bf30b6be9caf623"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c3ddbc13217cc5cf28731233aa8c7456981612a9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "781d10b905c6fd5b26702e994227e12f5680f2c4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "30c23aed2dfe2d58676e7dcaba049867927e11af"
+    },
+    {
+      "path": "Avalonia.Base",
+      "type": "dir",
+      "sha": "d4198685bb056beecadbe375cda0e37d5d718398"
+    },
+    {
+      "path": "BuildFiles",
+      "type": "dir",
+      "sha": "fcbcc33a79df64ea4477a8aa571d5fe74aee679b"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "8d99816591124fa23e4f28bf1f8746b3ad344b35"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "type": "file",
+      "sha": "a08ae7d9d4093b2404796072e4e3c68053053d84"
+    },
+    {
+      "path": "Imports",
+      "type": "dir",
+      "sha": "c9538abb4fd903aa83dd9c1093689ae87f15eb03"
+    },
+    {
+      "path": "LICENSE-ASSETS.TXT",
+      "type": "file",
+      "sha": "521104ba281e5a8e205a03ba919cd50626fab1d8"
+    },
+    {
+      "path": "LICENSE-GPLv3.TXT",
+      "type": "file",
+      "sha": "6b156fe1db9c5cd21ca1c68b7025bae40d0c5764"
+    },
+    {
+      "path": "LICENSE-MIT.TXT",
+      "type": "file",
+      "sha": "afcfede1199e36c13ee7df12ffdb3f99ea90d22a"
+    },
+    {
+      "path": "Lidgren.Network",
+      "type": "dir",
+      "sha": "1dd2242e2e9d83d0abd2a33af312f68b0f3ad9ba"
+    },
+    {
+      "path": "MSBuild",
+      "type": "dir",
+      "sha": "2bdeed074cfbe2284cf6c4099092c9ee3ba84a2b"
+    },
+    {
+      "path": "NetSerializer",
+      "type": "file",
+      "sha": "c32b75671acd1c52be7fe2674de0c5a3b1ddeff0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a8d9fc8c08ea1bbde483fba720d47bf73eb6bdf9"
+    },
+    {
+      "path": "RELEASE-NOTES.md",
+      "type": "file",
+      "sha": "6e1fa2fdf9139a22a81b7cb38a89bc17d8afae23"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "d32225f9602b6aa0f06de88a5a3e2e4509393130"
+    },
+    {
+      "path": "Robust.Analyzers.Tests",
+      "type": "dir",
+      "sha": "ccc4a85547e24a2b771c39203094ce85dc46e7a9"
+    },
+    {
+      "path": "Robust.Analyzers",
+      "type": "dir",
+      "sha": "d2a814c2231e9106cfa69233846cff139ee776d1"
+    },
+    {
+      "path": "Robust.Benchmarks",
+      "type": "dir",
+      "sha": "857709e6c8b766dbc5ed641fa60f3f893063c611"
+    },
+    {
+      "path": "Robust.Client.Injectors",
+      "type": "dir",
+      "sha": "f49921ff85e124061abd566b6830c6dcdac8148f"
+    },
+    {
+      "path": "Robust.Client.IntegrationTests",
+      "type": "dir",
+      "sha": "7542f2d1ce33f38bc3e2685e190a1de739440683"
+    },
+    {
+      "path": "Robust.Client.NameGenerator",
+      "type": "dir",
+      "sha": "95a33647d1a038063e0c8ee758bf4e2527265fcd"
+    },
+    {
+      "path": "Robust.Client.Tests",
+      "type": "dir",
+      "sha": "94078453cca045b86848c1f54d761cfdc5387470"
+    },
+    {
+      "path": "Robust.Client.WebView",
+      "type": "dir",
+      "sha": "973c74a626e99178131a45b4a1483d6988d9dd64"
+    },
+    {
+      "path": "Robust.Client",
+      "type": "dir",
+      "sha": "7885fdefefc35bbd61da5c0e5660f00cd81c341b"
+    },
+    {
+      "path": "Robust.Docfx",
+      "type": "dir",
+      "sha": "d5a5cc7a5f18792f7693473ffc2a9224a29db339"
+    },
+    {
+      "path": "Robust.Generators.UnitTesting",
+      "type": "dir",
+      "sha": "35eb44662c560d4385ab9876ca447dd87b1f6837"
+    },
+    {
+      "path": "Robust.Generators",
+      "type": "dir",
+      "sha": "47b4b80ecd367e3a7dbbabecebffbd054663ca52"
+    },
+    {
+      "path": "Robust.LoaderApi",
+      "type": "file",
+      "sha": "2b6a7db8d85166b345302e446a8492a213fc92aa"
+    },
+    {
+      "path": "Robust.Packaging.Tests",
+      "type": "dir",
+      "sha": "def4ea9d2870651b679ddf09590fa862a1172ab0"
+    },
+    {
+      "path": "Robust.Packaging",
+      "type": "dir",
+      "sha": "15d5d49284c1f591d0b60c4341998a5386f8835d"
+    },
+    {
+      "path": "Robust.Roslyn.Shared",
+      "type": "dir",
+      "sha": "fc4d211631f094d7b196372c50aa30c21d757d97"
+    },
+    {
+      "path": "Robust.Serialization.Generator",
+      "type": "dir",
+      "sha": "e47700ad93492a903bb155479fb08e793f89ade5"
+    },
+    {
+      "path": "Robust.Server.IntegrationTests",
+      "type": "dir",
+      "sha": "c7a2c20d5c6c75aa4ed88995c286f4b24d750833"
+    },
+    {
+      "path": "Robust.Server.Testing",
+      "type": "dir",
+      "sha": "f630454f954b164e212b304979d3dca2daa16a95"
+    },
+    {
+      "path": "Robust.Server",
+      "type": "dir",
+      "sha": "c6384565a86ba5a756db035722d2734201ad2ec4"
+    },
+    {
+      "path": "Robust.Shared.CompNetworkGenerator",
+      "type": "dir",
+      "sha": "fdfdcec8ddf82b7ab3b0bf50c15112193f2d89fb"
+    },
+    {
+      "path": "Robust.Shared.EntitySystemSubscriptionsGenerator",
+      "type": "dir",
+      "sha": "1086fc1694c6f400765deec4996426f5063a44e4"
+    },
+    {
+      "path": "Robust.Shared.IntegrationTests",
+      "type": "dir",
+      "sha": "80d2f7413d7966867436d5191e7d5885e04f289a"
+    },
+    {
+      "path": "Robust.Shared.Maths.Testing",
+      "type": "dir",
+      "sha": "5cdf1393384add2b97091cbdb45badfbdce9f617"
+    },
+    {
+      "path": "Robust.Shared.Maths.Tests",
+      "type": "dir",
+      "sha": "8b7c313fe9e5cc389c3f41ed2a199a897082976f"
+    },
+    {
+      "path": "Robust.Shared.Maths",
+      "type": "dir",
+      "sha": "682e3ff04b2abc5e45962c175b13af5e0166c5a9"
+    },
+    {
+      "path": "Robust.Shared.Scripting",
+      "type": "dir",
+      "sha": "2a9fc189f6ead7e97379bfe83bb436099ceb1d4c"
+    },
+    {
+      "path": "Robust.Shared.Testing",
+      "type": "dir",
+      "sha": "d3b7ee3d4b033dcc42a01991448810e079192de8"
+    },
+    {
+      "path": "Robust.Shared.Tests",
+      "type": "dir",
+      "sha": "4876c243792cfbbd366ab291eda7833f67bc2ed4"
+    },
+    {
+      "path": "Robust.Shared",
+      "type": "dir",
+      "sha": "be09e428bf38598c9d9acd2003db52b76c956690"
+    },
+    {
+      "path": "Robust.UnitTesting",
+      "type": "dir",
+      "sha": "32674eb6a309c6eec637577944cfc704ef598c66"
+    },
+    {
+      "path": "Robust.Xaml",
+      "type": "dir",
+      "sha": "143c76c7c6c925714bf6d524b232b2fb5b5e266e"
+    },
+    {
+      "path": "RobustToolbox.sln.DotSettings",
+      "type": "file",
+      "sha": "734ff9e31ffe7ce790e8fdf58afa950d176a2beb"
+    },
+    {
+      "path": "RobustToolbox.slnx",
+      "type": "file",
+      "sha": "5dd38516a24d3d2ae73b38ed0c179bdb9dff600d"
+    },
+    {
+      "path": "Schemas",
+      "type": "dir",
+      "sha": "46f653c3611b71c3ef9c5058508b1d4dadda6142"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "3b6b3cc2f69e4dc072b6c9d2acbffd96afe6a775"
+    },
+    {
+      "path": "XamlX",
+      "type": "file",
+      "sha": "8d9b5a8c670cf410308f85e3914373d848ccf698"
+    },
+    {
+      "path": "cefglue",
+      "type": "file",
+      "sha": "f8f5135dbcb6d1c1638043966d7a7c620676b5f8"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3bbd051bc5f0a0f723eb78e1bdd20aa12598c924"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "512142d2bea1add9d1cf54884a7fde22666bad51"
+    },
+    {
+      "path": "legal.md",
+      "type": "file",
+      "sha": "fc8b5d7dce24fbdf34d17c55f57c843157b611d9"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "bc2c5f59fd82dde63bade837e19ae2e9f0476541"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "9e5b0064c6c19c890e2058b7c71a4bcdb489a3bb"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies multiplayer runtime used by SS14; owned .NET runtime/build/platform source. Engine separated from dependent game repository.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,74 @@
+{
+  "repository": "PistonDevelopers/hematite",
+  "repository_id": 21311275,
+  "commit": "073d96f3e20f75dbffb35ef46cffab24d45bbe9f",
+  "source_url": "https://github.com/PistonDevelopers/hematite/tree/073d96f3e20f75dbffb35ef46cffab24d45bbe9f",
+  "readme_path": "README.md",
+  "readme_sha256": "c88abd570a68b489ccf74fbbe37c95d876004037ec61b48110b960f793cbb4c5",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "17bae0a73a322530234c9bbe74b79ce5598946f2"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "92f41ff01d1062805991fbc7f5135f86001f9b55"
+    },
+    {
+      "path": "Cargo.dot",
+      "type": "file",
+      "sha": "8bb30711f0930e3865ba70d3a7eb0f97ba8dddc8"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "1ad64f27ac860325c9c0d38541c47fca75536a61"
+    },
+    {
+      "path": "Cargo.png",
+      "type": "file",
+      "sha": "a35ea8b92759b8ca95bb168e246d59ea29649639"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "7f417d44f5250dd718b93bd05e868c2e976e5973"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "25bfe60dfe69a91e97eb539c631113822014d1f7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b9e051b69a06e3290501af7c2d75034236413a89"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "682d606021d34b616fee183b84c8254a0cc101a9"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "91b5446c26c715e28dd6b18cfc5c1c366f250903"
+    },
+    {
+      "path": "screenshot.png",
+      "type": "file",
+      "sha": "d17a575116d80100d11d1c1e76dc4233992e87df"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c27d28667b15479dc24e64138f3c8c2f7ebc7c51"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Minecraft-like game using external Piston engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

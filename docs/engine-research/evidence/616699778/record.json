@@ -1,0 +1,24 @@
+{
+  "repository": "Doprez/Awesome-Stride",
+  "repository_id": 616699778,
+  "commit": "1dd3b765e944868f68a597bc882aac3ab11b5458",
+  "source_url": "https://github.com/Doprez/Awesome-Stride/tree/1dd3b765e944868f68a597bc882aac3ab11b5458",
+  "readme_path": "README.md",
+  "readme_sha256": "9d0a72e4d67a538aa0a4e67edb4c10932fc71f494f3a69deb9e0c9d91ec3e67e",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2ddaa83441738fa604cf2f432bcac954513f0d9e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d81852e4b31ac79554ec21d8dd38010b016ea566"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Resource list for Stride rather than its runtime source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

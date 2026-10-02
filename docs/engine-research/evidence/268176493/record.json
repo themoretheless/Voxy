@@ -1,0 +1,59 @@
+{
+  "repository": "Bagoum/danmokou",
+  "repository_id": 268176493,
+  "commit": "cd21229fbce6deddfad360497ead6263c04ba6cf",
+  "source_url": "https://github.com/Bagoum/danmokou/tree/cd21229fbce6deddfad360497ead6263c04ba6cf",
+  "readme_path": "README.md",
+  "readme_sha256": "578988161b00a614bf1d698f9445a29e8fb109d0e9340ffc460f03ac8be02017",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "733305c9fcb301e75cb2a465f3892634b51b4c1f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "adc2eea9f0039237ef6c51c9ae5aa5556ae8ab1f"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "d4588e7222b4e34f32e44340df45d730ad4ec871"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "cfd3c712877390b103f8960d19960ff5b2b75b5a"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "efb141f9c412df70cbbd4d8ed4a24a26b6c66a3a"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "6a40c56ce764390c5b9944c1b9e00572c220a441"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "54ee8d793585311113f23070e871b0ce4ad183c0"
+    },
+    {
+      "path": "UIElementsSchema",
+      "type": "dir",
+      "sha": "0e9aafe630ac595083fbb13ebc409fa71d72110b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3c3ee84e90e9245a6d90c9c9c3a1120be4b04fff"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bullet-hell scripting/gameplay system built inside Unity; Unity supplies the graphical engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

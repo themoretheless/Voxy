@@ -1,0 +1,122 @@
+[
+  {
+    "index": 27,
+    "name": "shizsun0609tw/SoftBodySimulation",
+    "commit": "dd870d630e6a7cf432e170685198304c33929c37",
+    "path": "src/simulation/integrator.cpp",
+    "line_start": 32,
+    "line_end": 116,
+    "source_sha256": "8693f01810f1b26850961125064f034b0a16396ba82fb8dccaee52c4ff944104",
+    "source_url": "https://github.com/shizsun0609tw/SoftBodySimulation/blob/dd870d630e6a7cf432e170685198304c33929c37/src/simulation/integrator.cpp#L32",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Velocity-first Euler is explicit in the viewed update. ImplicitEuler evaluates forces on a copy of current cube then advances; no nonlinear future-state solve appears in the selected method. Integrator names need equation-level verification."
+  },
+  {
+    "index": 28,
+    "name": "Hykudoru/Softbody-Physics-Simulation",
+    "commit": "26c52286ebbd2c188a3907efab3de8b42d53fbf5",
+    "path": "src/softbody_physics/softbody_physics.py",
+    "line_start": 20,
+    "line_end": 98,
+    "source_sha256": "77dd787db8906fefb43622693d2b91549090ac198ba04dba63c5c01d627ea9b8",
+    "source_url": "https://github.com/Hykudoru/Softbody-Physics-Simulation/blob/26c52286ebbd2c188a3907efab3de8b42d53fbf5/src/softbody_physics/softbody_physics.py#L20",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Spring holds a rest vector offset rather than rest scalar length; each spring applies velocity damping to endpoints, particle adds velocity directly to position. No dt parameter in selected update; rotation invariance and valence/frame dependence require tests."
+  },
+  {
+    "index": 29,
+    "name": "amaury-aubel/PBD-2d-sim-gpu",
+    "commit": "14f7a10b4bd3fdfade6baace491833b67edb7e08",
+    "path": "pbd-solver-gpu.js",
+    "line_start": 680,
+    "line_end": 729,
+    "source_sha256": "25aa21b3dd55b03399369c8b39a9c99b3c94cb1fea447b13541c818a685627dd",
+    "source_url": "https://github.com/amaury-aubel/PBD-2d-sim-gpu/blob/14f7a10b4bd3fdfade6baace491833b67edb7e08/pbd-solver-gpu.js#L680",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Viewed CPU contact branch applies equal/opposite positional overlap corrections and tangential displacement scaling. Does not prove GPU path equivalence or Coulomb friction/CCD."
+  },
+  {
+    "index": 30,
+    "name": "JohannHotzel/UnitySimplePhysics",
+    "commit": "092d766c57201454e2f5a8302047797c313b1c99",
+    "path": "Assets/SimplePhysics/Scripts/SoftBody/EmbeddedSoftBody.cs",
+    "line_start": 721,
+    "line_end": 768,
+    "source_sha256": "b6986ff314a7ec6603fb9a67d61d1b6d55161ff5735a3c7ff6439caf0d502fb0",
+    "source_url": "https://github.com/JohannHotzel/UnitySimplePhysics/blob/092d766c57201454e2f5a8302047797c313b1c99/Assets/SimplePhysics/Scripts/SoftBody/EmbeddedSoftBody.cs#L721",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Surface skinned from up to four rigid particle transforms using current*rest.inverse and stored weights, then mesh bounds/normals refreshed. Earlier joint setup has linear/angular drives and force limits; skinning is a render embedding, not volumetric tissue elasticity."
+  },
+  {
+    "index": 31,
+    "name": "wlgys8/PBDClothLearn",
+    "commit": "836a3f2028591f9fa96822eaf0dc0c79b93bf9bd",
+    "path": "Assets/PBDLearn/Scripts/Cloth/ClothJobs.cs",
+    "line_start": 195,
+    "line_end": 274,
+    "source_sha256": "d928ad197d5d208cedbab552e061e86af0c3f89fafd21eefe5271942e75ad187",
+    "source_url": "https://github.com/wlgys8/PBDClothLearn/blob/836a3f2028591f9fa96822eaf0dc0c79b93bf9bd/Assets/PBDLearn/Scripts/Cloth/ClothJobs.cs#L195",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Unity jobs generate distance corrections with separate compression/stretch coefficients; bending uses normal/area gradients and inverse masses. Shared correction accumulation requires caller scheduling audit; no race asserted from fragment alone."
+  },
+  {
+    "index": 32,
+    "name": "Jenny19880324/XPBD",
+    "commit": "08b70f577fee80dcccf2ebdd95562d9ad00aaecf",
+    "path": "src/xpbd.cpp",
+    "line_start": 61,
+    "line_end": 123,
+    "source_sha256": "2f95e9f58409cac04744a02ab5baee7f1a8b7cfa18f9c48368a96fd94ed41e71",
+    "source_url": "https://github.com/Jenny19880324/XPBD/blob/08b70f577fee80dcccf2ebdd95562d9ad00aaecf/src/xpbd.cpp#L61",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Distance XPBD iterates with accumulated lambda, alpha=1/(ym*h\u00b2), fixed-node update exclusions and recomputed velocity. Static rest-length vector and degenerate edge normalization need independent multi-mesh/zero-length tests."
+  },
+  {
+    "index": 33,
+    "name": "WindQAQ/MPM",
+    "commit": "cfb79ff6683ee1158eeb185f99fb07419e40b1d4",
+    "path": "src/mpm_solver.cu",
+    "line_start": 166,
+    "line_end": 206,
+    "source_sha256": "4ae626f8d92024a45fd0e82bc9105edb74ca37433153b2ff31ec6de07153226d",
+    "source_url": "https://github.com/WindQAQ/MPM/blob/cfb79ff6683ee1158eeb185f99fb07419e40b1d4/src/mpm_solver.cu#L166",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "CUDA/Thrust P2G computes force from particle energy derivative, scatters mass/momentum/force through atomicAdd and ignores out-of-grid neighbor nodes. Requires boundary mass/momentum conservation checks, not assumed from kernel."
+  },
+  {
+    "index": 34,
+    "name": "Elias-Gu/MPM2D",
+    "commit": "2fd28cd9633fedcbe6d8641859c8a36d8cb55d5c",
+    "path": "MPM2D/src/solver.cpp",
+    "line_start": 23,
+    "line_end": 78,
+    "source_sha256": "d4a81546c4d07027071e0dd6519bcb8f26522afa1f9a1bb7b8681311c79ef6dc",
+    "source_url": "https://github.com/Elias-Gu/MPM2D/blob/2fd28cd9633fedcbe6d8641859c8a36d8cb55d5c/MPM2D/src/solver.cpp#L23",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "OpenMP P2G calls particle constitutive model then scatters weighted mass/APIC momentum/force with per-component atomics. Constitutive implementation remains to inspect; 2D transfer is not an organ profile."
+  },
+  {
+    "index": 35,
+    "name": "jspdown/cloth",
+    "commit": "2f942b9ac025a2a95c01c3ab5aa8800714d2c956",
+    "path": "src/physic/shaders/apply_constraint.compute.wgsl",
+    "line_start": 1,
+    "line_end": 65,
+    "source_sha256": "04c3cc7ff0fed8d776234271d916ac93621f7c561dda52cd67fa35759673cd02",
+    "source_url": "https://github.com/jspdown/cloth/blob/2f942b9ac025a2a95c01c3ab5aa8800714d2c956/src/physic/shaders/apply_constraint.compute.wgsl#L1",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "WGSL uses color ranges and in-place distance corrections with compliance/dt\u00b2; no accumulated lambda buffer in viewed kernel. Concurrent safety depends on disjoint vertices inside each color; buffers encode affected particle IDs as f32."
+  },
+  {
+    "index": 36,
+    "name": "bennybroseph/Unity-Physics",
+    "commit": "f9fb588345b113ec5d8c8cf235f6b81311d7fc98",
+    "path": "Assets/Scripts/Cloth/SpringDamper.cs",
+    "line_start": 66,
+    "line_end": 112,
+    "source_sha256": "966f25660e07002796e96da3d4f21887099356261d24c19fc800f7e1b36b9f38",
+    "source_url": "https://github.com/bennybroseph/Unity-Physics/blob/f9fb588345b113ec5d8c8cf235f6b81311d7fc98/Assets/Scripts/Cloth/SpringDamper.cs#L66",
+    "reading_scope": "Bounded code reading; not full audit/build/benchmark",
+    "finding": "Spring/damper updates endpoint forces, initial rest length is 0.8 of distance, tear threshold marks linked triangles. Zero distance normalization unguarded in selected method; tearing criterion is geometric, not calibrated tissue damage."
+  }
+]

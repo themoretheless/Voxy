@@ -1,0 +1,104 @@
+{
+  "repository": "Croteam-official/Serious-Engine",
+  "repository_id": 53668878,
+  "commit": "b408e88a16fd01aa1cfd0e0a999c86c2c1437c9e",
+  "source_url": "https://github.com/Croteam-official/Serious-Engine/tree/b408e88a16fd01aa1cfd0e0a999c86c2c1437c9e",
+  "readme_path": "README.md",
+  "readme_sha256": "cc3e4b342daf2d01ed3bdfda25e8148257c0575c7badcdee700c90df129be513",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "4cd037f0e90b503b36fb4c8d9f0092ab9bdab890"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "94566927d1f817d043e54c699204dee1632e18e2"
+    },
+    {
+      "path": "Bin",
+      "type": "dir",
+      "sha": "acd0812c3edd9fb080610c070b00d6713546b4f5"
+    },
+    {
+      "path": "Controls",
+      "type": "dir",
+      "sha": "e8b4f7d58c228d5ca1fca4a6bca999b0fb7bf515"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "4d8b68089aaa8c2e31eb938e5f41dd50aabaef4d"
+    },
+    {
+      "path": "GameAgent",
+      "type": "dir",
+      "sha": "5cb5d6db68eb9762d163a564c162560b4de11b6b"
+    },
+    {
+      "path": "Help",
+      "type": "dir",
+      "sha": "2e6c118d9f64932709124937f19fd9ea404b1ff3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23cb790338e191e29205d6f4123882c0583ef8eb"
+    },
+    {
+      "path": "Levels",
+      "type": "dir",
+      "sha": "417c01c8795a35b8e835113a85a5c0c1c77f67fb"
+    },
+    {
+      "path": "ModEXT.txt",
+      "type": "file",
+      "sha": "a05adbd35e127660d93e36337d5ee31a731e262f"
+    },
+    {
+      "path": "Players",
+      "type": "dir",
+      "sha": "9dae59ec32c695f51d9a0d2c462d0f66fbab7360"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90a3ad3da0db2951cacc7b6ccb361706f7d86a80"
+    },
+    {
+      "path": "SE1_10.gro",
+      "type": "file",
+      "sha": "52e2a83b740a18420f024c2ad120f37472a20188"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "0789bdbe1c637ecb17dd1617ee19057e502906e8"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "7622605d1b047e7e5de1de5f6db374417f5ba5a1"
+    },
+    {
+      "path": "Temp",
+      "type": "dir",
+      "sha": "417c01c8795a35b8e835113a85a5c0c1c77f67fb"
+    },
+    {
+      "path": "Tools.Win32",
+      "type": "dir",
+      "sha": "ddcb49ded3678fc464766d9db6b886adeadf10f4"
+    },
+    {
+      "path": "VirtualTrees",
+      "type": "dir",
+      "sha": "4aeb2eb7b194887c1c4a61a26345d44acc1d8531"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Official Serious Engine 1.10 source with separate engine/game/entity compiler/dedicated server/world editor/model tools; original content separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

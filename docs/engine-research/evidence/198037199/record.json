@@ -1,0 +1,54 @@
+{
+  "repository": "sigmaco/rwsrc-v3.7.0.2",
+  "repository_id": 198037199,
+  "commit": "43f26d89b2fd4c01b70712b55bcc7f375af4ca09",
+  "source_url": "https://github.com/sigmaco/rwsrc-v3.7.0.2/tree/43f26d89b2fd4c01b70712b55bcc7f375af4ca09",
+  "readme_path": "README.md",
+  "readme_sha256": "14e8749a2b7458ef1917aa85e95483d0d0f259f51cf376436190083a6d4978f3",
+  "entries": [
+    {
+      "path": "2005-12-8",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3de7b60a584e6fc8340ba7ee5500bee95c19c913"
+    },
+    {
+      "path": "RenderWare @ SIGMA.url",
+      "type": "file",
+      "sha": "77bca66d47466c50f08639e5ffb597818c69940f"
+    },
+    {
+      "path": "collis",
+      "type": "dir",
+      "sha": "0d5fdc24b9289572765459b11b722d1840b1ab73"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "c5e45e16c285324db5b08dc1063ee9eac38a1212"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "367315f453e98ceb6b55415162d43e6c4d9a14aa"
+    },
+    {
+      "path": "toon",
+      "type": "dir",
+      "sha": "43465da14420170d380deabe9ce5af29c86c6853"
+    },
+    {
+      "path": "world",
+      "type": "dir",
+      "sha": "710db2c77ed4195ebd536234523f0fab446697c9"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Commercial RenderWare source snapshot; README product description does not establish redistribution authorization or license provenance.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

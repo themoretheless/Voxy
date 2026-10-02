@@ -1,0 +1,172 @@
+{
+  "repository": "stgatilov/darkmod_src",
+  "repository_id": 451513246,
+  "commit": "693d138e0632095b9c1c93081ce049609542c6cb",
+  "source_url": "https://github.com/stgatilov/darkmod_src/tree/693d138e0632095b9c1c93081ce049609542c6cb",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6fb5681603088c4034e610fdd450902770ed954d"
+    },
+    {
+      "path": ".gdbinit",
+      "type": "file",
+      "sha": "9e2682694087b1fa688c0b0ce8ad1031f856368c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d35960cde44ad843b44a189612a99dc4fe1d63a4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d4764e534054e77a3bae46b43f6b246af006c083"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "acd3470aa1e33b120a21fe104126d17d5c4c3bf2"
+    },
+    {
+      "path": "COMPILING.txt",
+      "type": "file",
+      "sha": "6ab24da779a4b581ce91798cd7b3f95722a0ec26"
+    },
+    {
+      "path": "CiScripts",
+      "type": "dir",
+      "sha": "0aba3642ba8d78a6fc0cfb1059c5f2a4dd47d57a"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "b99175170226066f75bb37951e55caeefc5f3ed4"
+    },
+    {
+      "path": "MayaImport.vcxproj",
+      "type": "file",
+      "sha": "d1e292b37bfe08b16525fe5e831ef755f60eb06d"
+    },
+    {
+      "path": "MayaImport.vcxproj.filters",
+      "type": "file",
+      "sha": "f5ae3a87421ac037400c816d870829d09af960d8"
+    },
+    {
+      "path": "MayaImport",
+      "type": "dir",
+      "sha": "c79df636d220283232270b7a5d478009759c3948"
+    },
+    {
+      "path": "TheDarkMod.sln",
+      "type": "file",
+      "sha": "fd25ca0bfcb3d51a24c02e5158d7e4b8ce919fe5"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "a0c20630d07f8248ef54da9eeecda1bb6aad774c"
+    },
+    {
+      "path": "TypeInfo",
+      "type": "dir",
+      "sha": "132783704c288662ffe2de51ed9816f2838e3746"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "24957e3d90b8fe03e05ab351b7a09ef381678da7"
+    },
+    {
+      "path": "cm",
+      "type": "dir",
+      "sha": "9b2798b36ee24399f491333abdc7be1d42f8abcb"
+    },
+    {
+      "path": "engine.vcxproj",
+      "type": "file",
+      "sha": "f518d30c7f104d5ff844de1624de308da6fec1c3"
+    },
+    {
+      "path": "engine.vcxproj.filters",
+      "type": "file",
+      "sha": "22ec56085172f03c3766a667c7746a5d44b98169"
+    },
+    {
+      "path": "engine.vcxproj.user",
+      "type": "file",
+      "sha": "f484f5df33cd7a3a9cc39f2dd89de7f1f50beb7e"
+    },
+    {
+      "path": "framework",
+      "type": "dir",
+      "sha": "984e26fccbc924d736cdb4626740c853378454c2"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "760eea6fdbe2413041ef59876ef0eb047cb7e6d0"
+    },
+    {
+      "path": "gen_svnversion.cmd",
+      "type": "file",
+      "sha": "abfca4de596a5da83e744c73592b5317d966114e"
+    },
+    {
+      "path": "glprogs",
+      "type": "dir",
+      "sha": "76e25d702367c7873e0c3f53a3967f8f42dbb8f3"
+    },
+    {
+      "path": "idlib",
+      "type": "dir",
+      "sha": "4e437eff0a6271ca29e91e3a69be11af13276b47"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "1a63bf801a6c92c12f84d9e3b833c3124b74676f"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "b9ba7d1b2af5ea1ce05ba8bc96420dbf1492c17a"
+    },
+    {
+      "path": "sys",
+      "type": "dir",
+      "sha": "e749e9b6697c481afd397b60b6af8dd4855c5032"
+    },
+    {
+      "path": "tdm_installer",
+      "type": "dir",
+      "sha": "3be9bb11be09a5ca4cfa3f7517b1d85c880552c8"
+    },
+    {
+      "path": "tdm_package",
+      "type": "dir",
+      "sha": "2ce02e862c177d0f50fcd3471dd1ecb1d366e82b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "4a136b7f0d9d8efa4e402f6d9566e146c5fc4072"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "88432f049f311c977fda9382439cce71b50668e4"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "f7d493dd51a7c825fadd3769ebb82bd95b716a0e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

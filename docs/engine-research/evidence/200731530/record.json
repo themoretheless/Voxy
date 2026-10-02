@@ -1,0 +1,42 @@
+{
+  "repository": "larpon/ingrid",
+  "repository_id": 200731530,
+  "commit": "8baac9b0e18b5f2ddafd1f5932721c9f2899fb7e",
+  "source_url": "https://github.com/larpon/ingrid/tree/8baac9b0e18b5f2ddafd1f5932721c9f2899fb7e",
+  "readme_path": "README.md",
+  "readme_sha256": "a9375f5c5a2561e545434f9303896542c6446aaf37f234e0b5726b1cdcdb952b",
+  "entries": [
+    {
+      "path": "Cell.gd",
+      "type": "file",
+      "sha": "41100471490d39003a54b9e05e2c2b4a77f3c3d9"
+    },
+    {
+      "path": "Cell.tscn",
+      "type": "file",
+      "sha": "c3f077059b0a685a1a1fe05b21b9bdf61581913d"
+    },
+    {
+      "path": "Grid2D.gd",
+      "type": "file",
+      "sha": "6879c71c7830fde4afbaacf7de9c52323545245e"
+    },
+    {
+      "path": "Grid2D.tscn",
+      "type": "file",
+      "sha": "b69c97c59614b8b22ce082cabeb03759410eee9c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b38b3c543bd68c8ff18581ebcd76a23a54fa5d01"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f0eb6a61cd9a422e2c0173baa51be91916f781ea"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

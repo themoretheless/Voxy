@@ -1,0 +1,89 @@
+{
+  "repository": "increpare/PuzzleScript",
+  "repository_id": 13189252,
+  "commit": "d236596d993b6ebb7988f1a078f582c0840ccbca",
+  "source_url": "https://github.com/increpare/PuzzleScript/tree/d236596d993b6ebb7988f1a078f582c0840ccbca",
+  "readme_path": "README.md",
+  "readme_sha256": "dd0113c89152ad25e19e58730e4cc82283308d02cf5f78769e1ec89f1e5134ee",
+  "entries": [
+    {
+      "path": ".build",
+      "type": "dir",
+      "sha": "ef820c9cedd619e1d8b8ed27952128a51015e40a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f3fc9d2276010b55873f6a9de7b6e5077f04489d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "889166dfbac31083d6c443fc0df674c53e2f3785"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "7e2e223d4de31f19e9e3015ce81f7d1276f575c0"
+    },
+    {
+      "path": "DEVELOPMENT.md",
+      "type": "file",
+      "sha": "93c13ca9286debd1a7c4b5d1ad37ac96e55991f0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "465ebdc284a6e5736ef8adf6ce71f00f16def513"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "785ad4b79479a9f9347c13d4caf6df515093473a"
+    },
+    {
+      "path": "compile.js",
+      "type": "file",
+      "sha": "f81a2b6844ef5b9aeb049f1cf62584d2f690d1f3"
+    },
+    {
+      "path": "installing_on_windows_diary.txt",
+      "type": "file",
+      "sha": "ba6c188afc3c273b4ce57c880322dd535ca404f8"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "c698dee9e7714d03321b24e3f8f509f3699872cc"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "c1d8a83c7e0e0417261d95be3c4b85591a616c1f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0fa2614fc33c02486536245df4a71854e0e32253"
+    },
+    {
+      "path": "runserver.bat",
+      "type": "file",
+      "sha": "94b5f79a5fa6dbc2d8d3e2f6f1417687c704d01e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ee80fef7c6b0bc819c7eee59ca3bd283fcc580ca"
+    },
+    {
+      "path": "upload",
+      "type": "file",
+      "sha": "406df1ce1d1c0623670db5166822446ce1a1f005"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies HTML5 puzzle engine; owned src/compiler/runtime and npm development build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

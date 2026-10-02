@@ -1,0 +1,284 @@
+{
+  "repository": "aperture-software/colditz-escape",
+  "repository_id": 32637422,
+  "commit": "5478bcd34e44f3a4a4a4520c6e7d17a53ad9f12a",
+  "source_url": "https://github.com/aperture-software/colditz-escape/tree/5478bcd34e44f3a4a4a4520c6e7d17a53ad9f12a",
+  "readme_path": "README.md",
+  "readme_sha256": "72bb3361a59a0f073673becd711c11e0e5f644de67b52b139d6424fbbe0e87db",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e13552d46d65e95c33c3b8f74cf833265527b273"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "eaff88b08b51f8956813a41a43633ec8f5236e05"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b9267a720eaaadb2fc34c4a6b439f1f6d6f463c1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e32575f35927ded75aa1337e19c6ca50d4de4d82"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "1409996b1d88d8528134153875ed20f1eaa9d837"
+    },
+    {
+      "path": "CHANGELOG.txt",
+      "type": "file",
+      "sha": "e2a3dd58142d03959acdf3f47b2a6f07b059dd09"
+    },
+    {
+      "path": "COMPILING.txt",
+      "type": "file",
+      "sha": "756f61e98081eeb903a5b19be64804356b1fbd12"
+    },
+    {
+      "path": "Colditz Escape",
+      "type": "dir",
+      "sha": "5e1089d21e73b70ccda3637debfb354cc3e132df"
+    },
+    {
+      "path": "GL",
+      "type": "dir",
+      "sha": "66500aa699db5acf9d14112bbb0ae4b865a9f349"
+    },
+    {
+      "path": "LICENSING.txt",
+      "type": "file",
+      "sha": "6f0714773a6dfc8aa280987bc5bbb7d918e76270"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "49f6434b0c2855f13035c69f08663a980e83daea"
+    },
+    {
+      "path": "Makefile.linux",
+      "type": "file",
+      "sha": "7892a8db3cff140173dd06dbc1edad1fed1cc575"
+    },
+    {
+      "path": "Makefile.mac",
+      "type": "file",
+      "sha": "a5e759c6da53d07f6283a8c70548451e9ea622fc"
+    },
+    {
+      "path": "Makefile.psp",
+      "type": "file",
+      "sha": "969ca8bee2046ef253351ffa272da4325e561024"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f267b22a16034c6de755d7df2597b4b97500dd2a"
+    },
+    {
+      "path": "_detect-amend.sh",
+      "type": "file",
+      "sha": "97c833ee77bebf3a81719900bfd9275d94db61dd"
+    },
+    {
+      "path": "_pre-commit.sh",
+      "type": "file",
+      "sha": "178f9ba0b1e57d84d94bfabacfdaf3dd63dfd0e2"
+    },
+    {
+      "path": "activity_log.txt",
+      "type": "file",
+      "sha": "c22259da147af18db73e89f5bf83b5ce97889be0"
+    },
+    {
+      "path": "anti-tampering.h",
+      "type": "file",
+      "sha": "8206ca200db68787a384ec9404a0a727ec5d5fdf"
+    },
+    {
+      "path": "audio_backend.h",
+      "type": "file",
+      "sha": "b3b4ae53dae7e7e3079f98c6df795701f6af6b6f"
+    },
+    {
+      "path": "cluck.h",
+      "type": "file",
+      "sha": "3b48605e420b203c7d8bba0771ffbc43156f317c"
+    },
+    {
+      "path": "colditz.h",
+      "type": "file",
+      "sha": "ca00b5dfd394c813eab58c2c6f09063775b455ca"
+    },
+    {
+      "path": "colditz.ico",
+      "type": "file",
+      "sha": "f2fb3ac0ebdd569517138a65ac5eca44159d2255"
+    },
+    {
+      "path": "colditz.rc",
+      "type": "file",
+      "sha": "7c4d5965a8be030c131a01542a2ee10b249d0f70"
+    },
+    {
+      "path": "colditz.sln",
+      "type": "file",
+      "sha": "0e9a6fcb22141b1014be4c2f28bace8a743027f9"
+    },
+    {
+      "path": "conf.c",
+      "type": "file",
+      "sha": "68c8d580ad90b6659bbbe959d9f2bb0b69d6dcd5"
+    },
+    {
+      "path": "conf.h",
+      "type": "file",
+      "sha": "4a7c5b98614f5e303d4130d229f5841013a4e28d"
+    },
+    {
+      "path": "dictionary.c",
+      "type": "file",
+      "sha": "cb7ccd49e16b4f7c8e608e3b321665c07b0f901a"
+    },
+    {
+      "path": "dictionary.h",
+      "type": "file",
+      "sha": "d04b6ce715d91efc2fd0f57b2f5e962ed4ac49c9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ae402f7474c3412016256fb3f6a437079e24a074"
+    },
+    {
+      "path": "freeglut",
+      "type": "dir",
+      "sha": "fa2572d8069e0601e0b3b2f719a11b391d59b170"
+    },
+    {
+      "path": "game.c",
+      "type": "file",
+      "sha": "ff048ecbf518a6ec0ea96bb7f3eaf6c9aa146282"
+    },
+    {
+      "path": "game.h",
+      "type": "file",
+      "sha": "5914cee51c4a5371320ceee7efd8d42d7d6ff73c"
+    },
+    {
+      "path": "getopt.c",
+      "type": "file",
+      "sha": "cd59a49446fe57587317e36f33b439bdb861683c"
+    },
+    {
+      "path": "getopt.h",
+      "type": "file",
+      "sha": "cfb814fcab965a988e3a8a38a7ed3d4292ce80de"
+    },
+    {
+      "path": "getopt_int.h",
+      "type": "file",
+      "sha": "d44ee064a8d8895cbb7fb842d9f96c9e2801a90d"
+    },
+    {
+      "path": "gettext.h",
+      "type": "file",
+      "sha": "d4d5af0b278868fad53b4c834436b433ab4ad891"
+    },
+    {
+      "path": "graphics.c",
+      "type": "file",
+      "sha": "ebc5b89b6849316549e54fa49956196fe838a5db"
+    },
+    {
+      "path": "graphics.h",
+      "type": "file",
+      "sha": "4026e591af9fe37e9f0a43ae40bb742c52a201d1"
+    },
+    {
+      "path": "iniparser.c",
+      "type": "file",
+      "sha": "b2c152e153398178498b89b3ce22edb6fadebce7"
+    },
+    {
+      "path": "iniparser.h",
+      "type": "file",
+      "sha": "ce576e0c8c6fb9db564d158c30b9d060add51069"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "ecc175210a38ef1a08e3c93f57c2b3b6dd5cb721"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "a53c1f2348f5394f1aa85c272d68c2a7cfb25945"
+    },
+    {
+      "path": "low-level.c",
+      "type": "file",
+      "sha": "3300c9a5011f2a33baa09673ccad6d66dbd78fa2"
+    },
+    {
+      "path": "low-level.h",
+      "type": "file",
+      "sha": "e0360be9342040bcf424fa8fabcc64f413ae93f5"
+    },
+    {
+      "path": "main.c",
+      "type": "file",
+      "sha": "44e3f7b1ada5e58524c17446691de48df24759dc"
+    },
+    {
+      "path": "md5.c",
+      "type": "file",
+      "sha": "119a063c20e107e2595be2594508b0239549e5ca"
+    },
+    {
+      "path": "md5.h",
+      "type": "file",
+      "sha": "baad48fa2c704bbc782ed8e63b6e40a4423740d6"
+    },
+    {
+      "path": "osx",
+      "type": "dir",
+      "sha": "236dba051db966f2b3f3d20c5c82721a3da79b58"
+    },
+    {
+      "path": "psp",
+      "type": "dir",
+      "sha": "22182619adf23b4bf695f7090b91ab9082a3fe5a"
+    },
+    {
+      "path": "soundplayer.c",
+      "type": "file",
+      "sha": "45d85709f4f3dc869423a254637d03ca750ad651"
+    },
+    {
+      "path": "soundplayer.h",
+      "type": "file",
+      "sha": "299837b64998241771693dca6f0f5362b6721e4b"
+    },
+    {
+      "path": "soundtables.h",
+      "type": "file",
+      "sha": "a3afcabcaf941871617d9f811088235d81547e30"
+    },
+    {
+      "path": "windows",
+      "type": "dir",
+      "sha": "a4af2517ab04a586ed016d219634123c953474f2"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Reverse-engineered Escape From Colditz runtime with cross-platform builds and engine/audio sources; original game content rights remain separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

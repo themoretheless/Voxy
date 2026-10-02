@@ -1,0 +1,104 @@
+{
+  "repository": "IridescentRose/Stardust-Engine",
+  "repository_id": 241991936,
+  "commit": "ee6a6b5841c16dddf367564a92eb263827631200",
+  "source_url": "https://github.com/IridescentRose/Stardust-Engine/tree/ee6a6b5841c16dddf367564a92eb263827631200",
+  "readme_path": "README.md",
+  "readme_sha256": "a192ca48d96136b1b64e17900882414ebede65a5368ce8e5b69d8573a0123414",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0080f82d6a26bb4324af1300cebbb1ee467b6700"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f15cc789d016b744c005af7a8d458d498a0848b0"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "0eba6fd6ac263cb85b2d3a6025c01c642252a689"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "99cfe9f6e0a40f2d9eab9ad916d6780e1b531849"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f05614802c9ffab0b45d68eaf38dcfda1963182c"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "50567b3db74409e14e0f4449883ec319ae31511c"
+    },
+    {
+      "path": "Deps",
+      "type": "dir",
+      "sha": "d342597b250ec9283cae3905ab4498e6941eb19c"
+    },
+    {
+      "path": "Engines",
+      "type": "dir",
+      "sha": "60c597ce79b5462d56067c8b92a752c6c884d629"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "693e882ca43d16a2f823537f8fb0b6f266f37464"
+    },
+    {
+      "path": "MakefileVita",
+      "type": "file",
+      "sha": "4a31e6bbd02f9413ca88141181d999c6fc67380a"
+    },
+    {
+      "path": "Platform",
+      "type": "dir",
+      "sha": "9c8325812dce8b98afd49dc089b7f07763ba24e8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "957c16853dc1f1015e6d575d3c83879fac943c3c"
+    },
+    {
+      "path": "Script",
+      "type": "dir",
+      "sha": "9781552b78ff3812a98ecdd1f1c47af90befa0e9"
+    },
+    {
+      "path": "Stardust",
+      "type": "dir",
+      "sha": "04e45650bd95ba3207f5a1d88ccb94ba15fa3839"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "af355aaddec52779e76005db37bfb354e153a1b5"
+    },
+    {
+      "path": "Utilities",
+      "type": "dir",
+      "sha": "c85703cd0479d42dd7f4b23bfb9b9e73a46d4a01"
+    },
+    {
+      "path": "cleanup.sh",
+      "type": "file",
+      "sha": "b5180fb14d845493f0db7b07e995d63161a75892"
+    },
+    {
+      "path": "stardustLogo.png",
+      "type": "file",
+      "sha": "d86cdf5862f2c4b2f8f2adf3fef1b32ade547437"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Game engine with core, platform, scripting and engine directories; README describes GameObjects and components. Platform readiness is unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

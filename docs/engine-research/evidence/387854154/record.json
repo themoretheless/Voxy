@@ -1,0 +1,77 @@
+{
+  "repository": "SteamDatabase/FileDetectionRuleSets",
+  "repository_id": 387854154,
+  "commit": "243cf741921d2c8fd6b844f83831edf4692cf788",
+  "source_url": "https://github.com/SteamDatabase/FileDetectionRuleSets/tree/243cf741921d2c8fd6b844f83831edf4692cf788",
+  "readme_path": "README.md",
+  "readme_sha256": "0e3c7d6be651e7bc571e773861c8b3c6d68ef3d6371707d7f6f578bc51a4f9cd",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "7282c89afd91e8bbd17abdcecf71ed2eb11674c8"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8974e92c50b4915d394e7cfd35296a4df6f58e51"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "176a458f94e0ea5272ce67c36bf30b6be9caf623"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "700d2ad82bcc1f1ec11510d4c0431d8b3a7881c1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "33753697779863bff0e8a399920604b7321ef804"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ddce441d26bad6af0f7cca4d365e628b93719336"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "50c51a84573b55006ac8b2741e09a63bf183032a"
+    },
+    {
+      "path": "KNOWN_UNDETECTIONS.md",
+      "type": "file",
+      "sha": "319bff8d1c0aa054d8e13170af5dcc36cec76f1b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f6a81580a333db001306c483211ecb73e7608dc0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0c47bdea31685b0f76251140d4f132e69903ccec"
+    },
+    {
+      "path": "descriptions",
+      "type": "dir",
+      "sha": "f6274a4af1feb9d74ebce7931a9935919860f64e"
+    },
+    {
+      "path": "rules.ini",
+      "type": "file",
+      "sha": "e65448e6570b1d809570864706b0f452c574d6d9"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e5e859775e154d23b1fe2a211b6816a8eb2513c4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

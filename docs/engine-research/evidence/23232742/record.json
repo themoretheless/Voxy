@@ -1,0 +1,284 @@
+{
+  "repository": "gideros/gideros",
+  "repository_id": 23232742,
+  "commit": "2b9fd29f70e084f4b44780520983edf504b61cb4",
+  "source_url": "https://github.com/gideros/gideros/tree/2b9fd29f70e084f4b44780520983edf504b61cb4",
+  "readme_path": "README.md",
+  "readme_sha256": "e4995d1b15a17f40b2f6769ecb58dc34f905cec2ce69be2801307f2c9e100fc0",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8b7df6a328ac3d1154a8008988eeea37b267cd13"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b6889ac431fd778622b7223d71db2c227e8cad3d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dcf17871602fb9d6e07d01c6c301bf0a7c2e6914"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "dbb08d24186a4ea9eef0fb059d52d01e5e620994"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ba43e0b9c1402662f15d9b3e11116804a6c66fa4"
+    },
+    {
+      "path": "2dsg",
+      "type": "dir",
+      "sha": "3eed9c19efa2214e35e5feb58affe922ab0d3382"
+    },
+    {
+      "path": "Library",
+      "type": "dir",
+      "sha": "794531a0c5a5ad18657e100c60cf809ef770e426"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d40bd43cb01698b15089a6b6edec82bc5ac61ca7"
+    },
+    {
+      "path": "Release",
+      "type": "dir",
+      "sha": "ca8b3ae7a02b355366198239d3cde92f2e84df3d"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "c0f2fe94600677d864516de401aa0512e7401502"
+    },
+    {
+      "path": "desktop",
+      "type": "dir",
+      "sha": "a365bf9e151868175c56baa14b9d1cee00c41d58"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "874f51e7f2cddb9e551fe905d5c636bc12ff8fca"
+    },
+    {
+      "path": "docsrc",
+      "type": "dir",
+      "sha": "b76f63efa544e97f3807d50de2bc07ef72042007"
+    },
+    {
+      "path": "donors.txt",
+      "type": "file",
+      "sha": "0a67c818f9fa3ce4f1351fc7ca4685871d0d88c6"
+    },
+    {
+      "path": "emscripten",
+      "type": "dir",
+      "sha": "b0fc5030e838f3b18682853063b4aba11f15c86f"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "50acba4be1cc3ff3eea5f384171351496a216b4a"
+    },
+    {
+      "path": "fontcreator",
+      "type": "dir",
+      "sha": "e6c752080ea1f834d657dd6495cbf0b2826b7a4e"
+    },
+    {
+      "path": "gdrbridge",
+      "type": "dir",
+      "sha": "9cb10746683843d173d45d1ee2efb21c3b84b5a0"
+    },
+    {
+      "path": "gdrdeamon",
+      "type": "dir",
+      "sha": "13b328a597430328135abc7d3ccfdecab80a3915"
+    },
+    {
+      "path": "gdrexport",
+      "type": "dir",
+      "sha": "9d3f9fc74fd105435b2eb43ea3576e72d4964fb1"
+    },
+    {
+      "path": "iconlibrary",
+      "type": "dir",
+      "sha": "afa78fe63dfde7b695a5715afa076e2451c6b55d"
+    },
+    {
+      "path": "image2array",
+      "type": "dir",
+      "sha": "957e70fd418f73692fec430a34ae28bde83ae2d3"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "7c3fdf6363948dee98e601bc7d743509664b1e23"
+    },
+    {
+      "path": "libgid",
+      "type": "dir",
+      "sha": "d6e2d6b643548bc7540d9ce0e65776a29910fc55"
+    },
+    {
+      "path": "libgideros",
+      "type": "dir",
+      "sha": "415a528966856adcf4d13ac5f50ca8f741402be1"
+    },
+    {
+      "path": "libgvfs",
+      "type": "dir",
+      "sha": "5f58f9215b711f953ab896c4246ef12b1923858a"
+    },
+    {
+      "path": "libnetwork",
+      "type": "dir",
+      "sha": "730ac2aa5ac0f035a6870eb5818ab68b6a9ad8fd"
+    },
+    {
+      "path": "libpreviewwidget",
+      "type": "dir",
+      "sha": "8a767fc12b75ebfa6ab97203267d27e0179ea829"
+    },
+    {
+      "path": "libpvrt",
+      "type": "dir",
+      "sha": "8a7e1d05ea3d8903534d8c3d5a79f906918fb47c"
+    },
+    {
+      "path": "libpystring",
+      "type": "dir",
+      "sha": "7db24f5fbc45b11ecd99ef156c7106a4779b3ae5"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "947edf1183499c6c9402cb99cc0aab680233e9df"
+    },
+    {
+      "path": "licenses.txt",
+      "type": "file",
+      "sha": "8a53fcf44c3dc998532274211c943792962f229c"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "b298ac3882828c7eebafdd150fe42c466bf27b83"
+    },
+    {
+      "path": "lua",
+      "type": "dir",
+      "sha": "b9bb685eea66ce56cbaa7a155622637f7776b66c"
+    },
+    {
+      "path": "lua514u",
+      "type": "dir",
+      "sha": "1e1d611ce4916e282cc771472f86c65767969664"
+    },
+    {
+      "path": "luabinding",
+      "type": "dir",
+      "sha": "b614e32b2af8c8c0385fc40b2c7a57e84696d76c"
+    },
+    {
+      "path": "luajit-bleedingedge",
+      "type": "dir",
+      "sha": "873a138af3938487d429a801e76c82ad1511d03e"
+    },
+    {
+      "path": "luajit",
+      "type": "dir",
+      "sha": "58637000ff19fb261ddbd818908aec055d5b80a8"
+    },
+    {
+      "path": "osx",
+      "type": "dir",
+      "sha": "821484ade27436b7cfec0b4128fa793a53b6153a"
+    },
+    {
+      "path": "pi_example",
+      "type": "dir",
+      "sha": "3856afc139a42380edf6ad0c2fc29a35eab2d563"
+    },
+    {
+      "path": "player",
+      "type": "dir",
+      "sha": "6a24c0ecba0aa48e41964e4024cfe5ca3d2cd529"
+    },
+    {
+      "path": "plugins-bleedingedge",
+      "type": "dir",
+      "sha": "8ebae41ec666c8636b787d8f6ff4e59e7f866de2"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "c2a9d82afde75c1749bf2af987b0ce05046a4131"
+    },
+    {
+      "path": "samplecode-bleedingedge",
+      "type": "dir",
+      "sha": "fd87c7371c52ec758bca1368ec069603c6bf4bae"
+    },
+    {
+      "path": "samplecode-test",
+      "type": "dir",
+      "sha": "c664a1adc22da46cad1d6a4beb3e31102e160a08"
+    },
+    {
+      "path": "samplecode",
+      "type": "dir",
+      "sha": "a184fbf4480c2adbdf5a1036bc50c63f7ee9a46f"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "29742f2cb0949ef1d4a0868c4247e3e42a59ed57"
+    },
+    {
+      "path": "studio_addons",
+      "type": "dir",
+      "sha": "fd408dc773627e7c0c40f27256c3660682745e60"
+    },
+    {
+      "path": "texturepacker",
+      "type": "dir",
+      "sha": "67b9bf7d0b6af587ec1721bd94e6d4eb4464b57a"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "ce7e0db43b154c2319d8a5e0daff8f0d1c9ec852"
+    },
+    {
+      "path": "win32_example",
+      "type": "dir",
+      "sha": "7fe097337c41906f5faef84e7137b47319a337f0"
+    },
+    {
+      "path": "winrt",
+      "type": "dir",
+      "sha": "505913ac5a450d7369851fc3f59e71c7bf41f457"
+    },
+    {
+      "path": "winrt_example",
+      "type": "dir",
+      "sha": "7da0115463e543a1d8b855ae9a8a0e4c55de9325"
+    },
+    {
+      "path": "winrt_xaml",
+      "type": "dir",
+      "sha": "eff1595ec21dfc60a38c8a22cbc545a06080d6f8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description and owned 2dsg/runtime/export/platform roots identify Gideros engine distribution; independent native runtime source, build/runtime status unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

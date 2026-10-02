@@ -1,0 +1,44 @@
+{
+  "repository": "praxhna/3D_interactive_graphics_rendering_engine",
+  "repository_id": 137118712,
+  "commit": "ce23f0ec44ce14f7ee62393f2fb38ec69fd13045",
+  "source_url": "https://github.com/praxhna/3D_interactive_graphics_rendering_engine/tree/ce23f0ec44ce14f7ee62393f2fb38ec69fd13045",
+  "readme_path": "README.md",
+  "readme_sha256": "a84677ac874fa5b5f0ea3c6884e4d3195c3f849858073c4ca6cf19e6c60fa03a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b234b1cbabd27ac0a78437303359854c5007935c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c046ce8b46cfcc9bdf5559bda1c09a25e2be9c31"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "711e2884a0120f5511129866bd18d86c2dfba012"
+    },
+    {
+      "path": "header",
+      "type": "dir",
+      "sha": "0c4909aae605c82b293afc9c0d325e805dad52f3"
+    },
+    {
+      "path": "includes",
+      "type": "dir",
+      "sha": "9a72f9c6b9a3021b2fff97f6293b8597711385b8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2b5f6de5c8f548d942226426913508b46924a832"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes GPU/OpenGL/OpenCL learning playground; game-engine reuse is an aspiration without broader runtime evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

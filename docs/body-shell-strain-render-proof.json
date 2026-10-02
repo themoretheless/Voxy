@@ -1,0 +1,15 @@
+{
+  "rest": {
+    "sha256": "7c02143076789eb2344cc7f3a42f68e499c757f09ad91521db6e2c25c240c39b",
+    "arguments": [
+      "--strain"
+    ]
+  },
+  "stretched": {
+    "sha256": "c70e9454f25ec00e5526f637100de5ab1f30fc5b4faa68da751d4c02f22ef32b",
+    "arguments": [
+      "--strain-fixture",
+      "1.05"
+    ]
+  }
+}

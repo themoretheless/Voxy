@@ -1,0 +1,142 @@
+{
+  "repository": "Irrelon/ige",
+  "repository_id": 5040057,
+  "commit": "ce335338476c63c75cf039a7d8fc2e8ab20e2371",
+  "source_url": "https://github.com/Irrelon/ige/tree/ce335338476c63c75cf039a7d8fc2e8ab20e2371",
+  "readme_path": "readme.md",
+  "readme_sha256": "7ed7694045d97390a1761cf3ad6c9d2fbbd87aa43193290836246b317a48dacb",
+  "entries": [
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "27be0044b772833f16efbb2fff4923652a8ded6b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "594b5ca580b6910fd8e1f73a38ae25c9afa14ee3"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "0310135c481bd1aa3a4eeeeba1b12573df59c81f"
+    },
+    {
+      "path": ".prettierrc.yml",
+      "type": "file",
+      "sha": "872c87be74161f98e7151327313e9b796101ee64"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "6127bbfd180d7f8942e6c356966b953c98771a9c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "031bea446f2b90f9d92ce23edd5d7c5ab3191d91"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "f9f3bec2884c35d592435c2dd1715d4b72b646f7"
+    },
+    {
+      "path": "fixup-cjs.sh",
+      "type": "file",
+      "sha": "30781be0e9317c701a288c53e9a6dd3394f13aa6"
+    },
+    {
+      "path": "fixup-esm.sh",
+      "type": "file",
+      "sha": "82bbc80dd3a87a65135746ebe88115b527a23503"
+    },
+    {
+      "path": "jest.config.cjs",
+      "type": "file",
+      "sha": "2a2e13f0719ea147c7b5836baa53df50437ab0a0"
+    },
+    {
+      "path": "old_documentation",
+      "type": "dir",
+      "sha": "3dffe3a00c03fd6c332308ecbd3e2b9838755a26"
+    },
+    {
+      "path": "other",
+      "type": "dir",
+      "sha": "56c5ce49767dfef8e4a1ae53d4c7d0210173757b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "8df52a2f9f7c737b5a8c7794116f586a52fa50a9"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "dd3e3763e789fe64a4d1da9e66095c937bf34174"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "81ab2d5ae44dd3c62dfe1861b9ea86a690ed407b"
+    },
+    {
+      "path": "removeFiles.sh",
+      "type": "file",
+      "sha": "df0e45f78991477ac873dab4caf81ebc94cbdeef"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "9af449086333fc101a5f8295c2d29fa50c3f62df"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3a0860431849564b80687d8e9966ac1eb615952a"
+    },
+    {
+      "path": "tsconfig-cjs.json",
+      "type": "file",
+      "sha": "da9e65e28c6a6e8dae7887727300ef8247625fd4"
+    },
+    {
+      "path": "tsconfig-esm.json",
+      "type": "file",
+      "sha": "fb076f490c268f4a8e69b68b60fb9b5d403e2f10"
+    },
+    {
+      "path": "tsconfig-tests.json",
+      "type": "file",
+      "sha": "c40a0947598fc21520455e461b2dff643006b41e"
+    },
+    {
+      "path": "tsconfig-types.json",
+      "type": "file",
+      "sha": "ec3afa99edcc204b2f170b21b7b23ae41ff42759"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "022cbf636bf5e2c6bafcfd52b2ba94f863d8f176"
+    },
+    {
+      "path": "typedoc.cjs",
+      "type": "file",
+      "sha": "1c53dacaa3ebf7018a4e3f45c15f009bcdef107a"
+    },
+    {
+      "path": "update-indexes.cjs",
+      "type": "file",
+      "sha": "eac5184905dc81f7a85a013207e35686b9f9e6ed"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

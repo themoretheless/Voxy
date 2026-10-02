@@ -1,0 +1,154 @@
+{
+  "repository": "instead-hub/instead",
+  "repository_id": 15939273,
+  "commit": "65905c74b7f00a2afec6cc12ad6edb61ec2ffd99",
+  "source_url": "https://github.com/instead-hub/instead/tree/65905c74b7f00a2afec6cc12ad6edb61ec2ffd99",
+  "readme_path": "README.md",
+  "readme_sha256": "58119fcecaa4c2b0606da45aff32f51550858da299dd7e8d1e8f70ca6a86c4a6",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bf1b9a88e3384d1309ad5d6445d7ad9a4ea41d7a"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "5c1aa00d58bcb90086eb8456c8c78314c7b77ab0"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "c0ee1f5e2e4aefa24677107cbf1d2b64734d578d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6524681b119a6f2f763592f3bf28a801f7330c82"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "67b3f4d0bfe79eb1fd7234e90faf2d224f76c3b4"
+    },
+    {
+      "path": "ChangeLog",
+      "type": "file",
+      "sha": "74e3ab1c8f7ee3cd78d9a68af68032693e211f40"
+    },
+    {
+      "path": "INSTALL",
+      "type": "file",
+      "sha": "7c33c1e71a4471ca39db0f9e384bbf5e37128f85"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "48d95bc8c05ec7bfa58daa08b1823a4555005781"
+    },
+    {
+      "path": "Makefile.mingw",
+      "type": "file",
+      "sha": "f3e31042ee31345c3444986b7ff0c371db7f6f6a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d03e98521e68e7b61a1a12215efd6d31102decfc"
+    },
+    {
+      "path": "Rules.make.macosx",
+      "type": "file",
+      "sha": "e13827e2c4b9a473ade309aee87adf4c41121e3a"
+    },
+    {
+      "path": "Rules.make.standalone",
+      "type": "file",
+      "sha": "732b98c109ed75add54199e6380e3d802d480de2"
+    },
+    {
+      "path": "Rules.make.system",
+      "type": "file",
+      "sha": "4ca16bcbabdc6ff1ab768ab452d37a95329f46a7"
+    },
+    {
+      "path": "Rules.mingw",
+      "type": "file",
+      "sha": "eb956492c049e6670d4dcb7ccd916f12525542c8"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "9ace206c4595e1220945d0da7664060ec727fb66"
+    },
+    {
+      "path": "configure-mingw32.sh",
+      "type": "file",
+      "sha": "22999f63d6b21329eb80409ffa36b5b191d37541"
+    },
+    {
+      "path": "configure.sh",
+      "type": "file",
+      "sha": "ef1d22001303dd0506966e1727f9ab267286fcc7"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "50890c006f3ac0645cb560404c892db5e5b49a7e"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "ec4369debcd31591252f12edb816c1f3efdff2e8"
+    },
+    {
+      "path": "desktop",
+      "type": "dir",
+      "sha": "df5b8f7a06d7f699a8e86c096193f71f3643206f"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "aff0ab0b868d036831c636b1c37bff45ee1fd097"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "e330d7d75612915afc4c65f95204d3e4c4e285a6"
+    },
+    {
+      "path": "icon",
+      "type": "dir",
+      "sha": "6ce0427606ae07c706fb8d4a534a0e125fe88b76"
+    },
+    {
+      "path": "lang",
+      "type": "dir",
+      "sha": "40335152281f0feffd1a05b620894070251a80c8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e4c1c41077e340cc71870e355d3f26f4022d4b69"
+    },
+    {
+      "path": "stead",
+      "type": "dir",
+      "sha": "8881cb607ee7dbf6ff336a4a986f7dd90aa88871"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e74c5d6478a65424700a9173e2ebf580016908e0"
+    },
+    {
+      "path": "themes",
+      "type": "dir",
+      "sha": "02bd9cab02731129265a565ccce69bcee662bae9"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies independent text-adventure interpreter; owned native/script source with CMake/make platform build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

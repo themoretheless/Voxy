@@ -1,0 +1,59 @@
+{
+  "repository": "Espyo/Pikifen",
+  "repository_id": 13527012,
+  "commit": "c3d0abed0d5827270907e88d6ec282784f72cb2e",
+  "source_url": "https://github.com/Espyo/Pikifen/tree/c3d0abed0d5827270907e88d6ec282784f72cb2e",
+  "readme_path": "readme.md",
+  "readme_sha256": "7ec36645a86a4cf4d16650079c6cf42c1ffded006641a4105521ffaa21c27cb0",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9d5cc6a184c8909e7ccd2f9aad295f74d5003dc4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b79b1dadf38487515c29914e54e01250fbbcb49e"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "26dca7e2c46ce24ff06d141bf3302ce4dd95f66f"
+    },
+    {
+      "path": "game_data",
+      "type": "dir",
+      "sha": "ba99bf6d0fb7e169756d7742f7b1bc2d2d841700"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "979977cb2765c516a386d4c4b0b3ff1fe036808b"
+    },
+    {
+      "path": "manual.html",
+      "type": "file",
+      "sha": "93c0c35f070620ea8c901d06675e51598be5fab0"
+    },
+    {
+      "path": "manual",
+      "type": "dir",
+      "sha": "cfe00b1629f866a25f489201f9d2967bcd118e4d"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "f2cb8b26f83e7960a82fecc9e57e4eb7dd980572"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "13db7cde28418fa548a7c54087333e34bccb5a86"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pikmin-style game/content engine with source and manuals for fan-created enemies and areas.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

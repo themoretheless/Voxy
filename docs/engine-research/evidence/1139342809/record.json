@@ -1,0 +1,64 @@
+{
+  "repository": "Yellow-Dog-Man/Resonite.UnitySDK",
+  "repository_id": 1139342809,
+  "commit": "5eea4b032d1eb4d42a9d6df522a8888506c93bba",
+  "source_url": "https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/tree/5eea4b032d1eb4d42a9d6df522a8888506c93bba",
+  "readme_path": "README.md",
+  "readme_sha256": "f1d3d20669841e822cb9e58f3619dbec3226e73be1094aa687780235ac31a7fe",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "29e282bd1300b33b1cdca6af684defe49144c24c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "67f88b1759478d2c91192b2531cd68a9fbb55123"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "69162589fa69664ca3e86a4e379073f8810fcec2"
+    },
+    {
+      "path": ".vsconfig",
+      "type": "file",
+      "sha": "f019fd0ad121bf5f9c0eb35e29cd09d56ce712b3"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "f3ee6712416432560add26d3efdb0c66165768ee"
+    },
+    {
+      "path": "BindingsGenerator",
+      "type": "dir",
+      "sha": "7610072a6472cf3aabee00bfadb30b03976020ab"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3d907bc93f9f333b4b4143b2c2d15c3f1eeb1a33"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "a5b4a7888340b2936ead99ed0b1b21b4c5ea5de8"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "7214f514d6425e4202ca495857e1e17f19558480"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4e9c9a4a6b0569a06780600c43974a586ba3d262"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity Editor content bridge to Resonite, not Resonite runtime source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

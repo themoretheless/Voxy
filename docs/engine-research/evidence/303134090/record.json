@@ -1,0 +1,99 @@
+{
+  "repository": "laineus/phavuer",
+  "repository_id": 303134090,
+  "commit": "04ea5dcc228247dd624e76a29009a3b4c0b50e19",
+  "source_url": "https://github.com/laineus/phavuer/tree/04ea5dcc228247dd624e76a29009a3b4c0b50e19",
+  "readme_path": "README.md",
+  "readme_sha256": "ba543407b66753159edc8c01db225b20c11e44abe8d513684acf27ea32bae27a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a547bf36d8d11a4f89c59c144f24795749086dd1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d701466b8adf74751c7a203b60a4cc61b9bbbab3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bc0b215d5ab2cec2bbcca0fc0de9175e984eed05"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c3017ef008058d8f6798d5d5da110ff9fbdf8571"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "0bdc9a59c2b311cb3f9591abc569456fff160ab8"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "03d35e6f03954428d54cb87281ee2d6fc8ccb0dc"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "3b73136c68024ab83f397242fd902c76a89b6a90"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "9dc26788b96034d92e42680b67ff2e819b5b9fb4"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d0058b1d7dc81cb84af8451485ad8da7e6ae6bc9"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d2ef2771394bfcff15c868f9a8f76507feaf1978"
+    },
+    {
+      "path": "tsconfig.app.json",
+      "type": "file",
+      "sha": "d369de3603924a0e558616e227cca8ee40db4ac0"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "a2efd4691a30dd3e734defc6de89da483ef19844"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "type": "file",
+      "sha": "25c8417e582e12a9717f0aa476f0d3cbacc97195"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "b9ce253f81dd4abbedc61acc7251da0b7786214c"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "899e99a2486c748d31db885dfdf369db8f182cf1"
+    },
+    {
+      "path": "vitest.setup.ts",
+      "type": "file",
+      "sha": "b3882a86c48f8555fee727d81bd54dd87f63cde1"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Vue/Phaser wrapper; JS/TS source/build, no independent underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

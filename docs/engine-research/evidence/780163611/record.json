@@ -1,0 +1,124 @@
+{
+  "repository": "asbott/jamgine",
+  "repository_id": 780163611,
+  "commit": "6f717d9add409cdd1580c85c794a6eb0281e5be5",
+  "source_url": "https://github.com/asbott/jamgine/tree/6f717d9add409cdd1580c85c794a6eb0281e5be5",
+  "readme_path": "README.md",
+  "readme_sha256": "e63b058d683df2ce798ae408e5bfbda28c14cec8fcb33c9145e93c7493a93f4d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e4b6e191ad8bd2e40696fd364f394c061065e96d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f9c37f728215dbea4a8cc35534dd41b8f69eb518"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "713448d0cbcd6d563e8590cb9b665632db9ebbb7"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "f307763806e82872755860e3288187e4460afce5"
+    },
+    {
+      "path": "console",
+      "type": "dir",
+      "sha": "bf39e826906f043d3e4e6184e5d64471921a9a97"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "383fed7ae3f468677b028cafe15bcdeb64fb14e4"
+    },
+    {
+      "path": "default_style.json",
+      "type": "file",
+      "sha": "b031e9c84ed8a575bb91b7fce60af636a2ab3545"
+    },
+    {
+      "path": "emitter_test_scene.json",
+      "type": "file",
+      "sha": "00445d486b05a206d82f7c230df832cfae67fbad"
+    },
+    {
+      "path": "entities",
+      "type": "dir",
+      "sha": "46b14e9d8da20407a646e57411777fc019ac26cb"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "874e5615a89df638cf4939e7c49c72ad55200645"
+    },
+    {
+      "path": "gfx",
+      "type": "dir",
+      "sha": "5784e23d51df101da0a6183910bfe7c60244c588"
+    },
+    {
+      "path": "image_loader",
+      "type": "dir",
+      "sha": "f4a6fc659619f246e20ada0637b90a15464e6742"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "f7ac007990f3453dbacb218bc608d37294a890e8"
+    },
+    {
+      "path": "lin",
+      "type": "dir",
+      "sha": "b98e4d8e7acd0abce8f2b7401429a7ef96294bae"
+    },
+    {
+      "path": "osext",
+      "type": "dir",
+      "sha": "e06274ef0051fccc42adc55d79b523d787792df6"
+    },
+    {
+      "path": "projects",
+      "type": "dir",
+      "sha": "efad0dac8b3a7dd3eb1f99024df92da9136cb119"
+    },
+    {
+      "path": "repo",
+      "type": "dir",
+      "sha": "27106be4b2ffe3e8500486098f63e94a27c47f79"
+    },
+    {
+      "path": "serial",
+      "type": "dir",
+      "sha": "3e0d360e315b3d68d46d97abf2c26daad73441b5"
+    },
+    {
+      "path": "shaderc",
+      "type": "dir",
+      "sha": "243e30359873cc115abe17623d5accd53ee065f3"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "3d98c60f7a972b1e297ba78d80137bfc3f9a6e1e"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "d1e83afed4b1bda97e23db5f2756de5283a5e15c"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Odin modular graphical application engine/sandbox with graphics, entities and input; audio is documented on separate branch.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

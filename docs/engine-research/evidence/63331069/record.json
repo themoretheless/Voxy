@@ -1,0 +1,62 @@
+{
+  "repository": "slages/love-imgui",
+  "repository_id": 63331069,
+  "commit": "c401a8dc616407b5348247bd05c6ea7076161fa9",
+  "source_url": "https://github.com/slages/love-imgui/tree/c401a8dc616407b5348247bd05c6ea7076161fa9",
+  "readme_path": "README.md",
+  "readme_sha256": "3f59d44bebf4de44a0e61ccfd312255188fe581323022aa1b6f89162bf672d6c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "26c43f259931f4e948cd03150086498f57d4166a"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9465b755289d819499767b0a24a64b0e0c4ecce4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "494f79e9b0b6a3e30cdde4de1ba69e68f7d22ea4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "81a9a2a26ec4a6020dc496b4f39ab8b508456013"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "157f76a1755dad3979cfb98e0c32052b3b465534"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "0f78ae7b492b48a82adb2c46d94a8e430b186bd8"
+    },
+    {
+      "path": "generate_imgui_bindings.pl",
+      "type": "file",
+      "sha": "34a90d69e21914afe636d9527a2500098902732c"
+    },
+    {
+      "path": "love-imgui-scm-1.rockspec",
+      "type": "file",
+      "sha": "f1004323e9c42e4365db3f53aaeab3dfc4e057bd"
+    },
+    {
+      "path": "rockspecs",
+      "type": "dir",
+      "sha": "e7442f77fe644ce5f6c94da7a2183edfd418f600"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8d27c83c3757dbc6de01d227ebf47f51bee43ef2"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

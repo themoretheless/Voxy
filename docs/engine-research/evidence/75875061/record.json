@@ -1,0 +1,89 @@
+{
+  "repository": "cx-language/cx",
+  "repository_id": 75875061,
+  "commit": "73499927be6731d3b6f7a2e8ab58b33b79e2e65d",
+  "source_url": "https://github.com/cx-language/cx/tree/73499927be6731d3b6f7a2e8ab58b33b79e2e65d",
+  "readme_path": "README.md",
+  "readme_sha256": "b5eb6c49284ac702b8582353c9b19986005f38db05f372339ecd78f3fb1cb7d7",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a41e55b264b118220135f64e91830b1bc66c8e78"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "14c4ab3336f3ce5f7a5505dc1ff0cae64ff9f8d1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ca57354adc12d149c6b864933b39da9e07ca7a37"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "99e8ead9a82d06cf1634029559f785f83e491867"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "7bcc61aa7a3806fe3483db4a761902453fc3a5fa"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f5e32b7e8caaeeb22ad93d218439705c9e849efa"
+    },
+    {
+      "path": "bench",
+      "type": "dir",
+      "sha": "d7b3178406b0959040804baff00a0a34b517be5a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5307278eb6f2cd61cef20e419b59ee105bfdecb6"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b4eacd08a4ed577474f3c9fa4f1c3a6528e7e20b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d2e0d003f51044e2bb6e802370fe5f5a936d5a20"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1c279b2b441b1774f361f7843093881befcf90e2"
+    },
+    {
+      "path": "std",
+      "type": "dir",
+      "sha": "1b9b59541e6f3b03a38668105fa4d9a0d4b0e172"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "33190d3620863f1b61d19819cd15d0cd135d3a8f"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "fbf330f4a9cf644c526e0f0a980863f7760c26ec"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "739afff7b5cc96eb3aeeeec6fbbd40c4b69ced4c"
+    }
+  ],
+  "classification": "excluded_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Systems programming language compiler and standard library; gamedev applicability does not make it a game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

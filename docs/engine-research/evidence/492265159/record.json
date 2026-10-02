@@ -1,0 +1,64 @@
+{
+  "repository": "chunquedong/mgp",
+  "repository_id": 492265159,
+  "commit": "d54cc032a383335411d9aefa27a599a5abf5166e",
+  "source_url": "https://github.com/chunquedong/mgp/tree/d54cc032a383335411d9aefa27a599a5abf5166e",
+  "readme_path": "README.md",
+  "readme_sha256": "637d7233e5db38f92ceeb1fa3b3e9789113c1ace2bc8c60dd6fbf44872f15e9e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4845f7d4c94d249bb735338fc48c3a4d90552ea4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b8f71ab0ffbeafdba3789747f82542e7b05bbd3c"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "f1f7f5b1d7622fffb73fd22fb564413d2826c4e2"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "2115fefd7d4998c079b8c4ef6693c847bfa54397"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "82c165bb19fa9dffcb4e5a2eb2418f6229162fbc"
+    },
+    {
+      "path": "doxygen.conf",
+      "type": "file",
+      "sha": "96305cd2035b66e9acf1aa4218721c706f2d8d03"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "9176d46592752e5f33297481fb40d98865dded50"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "5b95fabcaf9a53ccba65de05a6418cef1fc65cf8"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "3daf1d6bab8d7278d9b7be0ecb4b87f4bc5fc7b6"
+    },
+    {
+      "path": "screenshot",
+      "type": "dir",
+      "sha": "07a894f4201fed2b8f8505fa8a6e138ef92c17cf"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Gameplay3D-derived C++ runtime per discovery description, with rendering, animation, Bullet physics and audio documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

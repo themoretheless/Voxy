@@ -1,0 +1,167 @@
+{
+  "repository": "liana-p/narrat-engine",
+  "repository_id": 520580590,
+  "commit": "5ab42d5fcd798011770093e5148baffde2cbef6f",
+  "source_url": "https://github.com/liana-p/narrat-engine/tree/5ab42d5fcd798011770093e5148baffde2cbef6f",
+  "readme_path": "README.md",
+  "readme_sha256": "d1d552295bb310f8ab8d3df24ccd07e68b5e5f90ab7b7f400499869f8d252856",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9d08a1a828a3bd2d60de3952744df29f9add27fa"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "94f480de94e1d767531580401cbf13844868e82b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "893fef3a56b292fc34c3b982203b38733158be22"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6b3e6a13478e5e9cb3107cba476848485a0ad9f4"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "8051a481eac845f602102969e462f86c054fa95e"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "5536e69e7095fbf8bfa3c220d310a20daa99a1dc"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "e2b95c718e8913a9015e2e110d217a9ee0d48d4e"
+    },
+    {
+      "path": ".stackblitzrc",
+      "type": "file",
+      "sha": "3276eb4b409025be736bb4e94faeb038260a437c"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a5ef87f06621fb09156b95a5dcfda9d2cdcc3171"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ce55eebf29469f077ea9bd6ee2f7e256c4591c4a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "1ad0ff7d76ad5dd998092377311adfae291cb071"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d409cd0993102b77bc165732040772693b1d1ed1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c9df3798022adadecf8eed042b7f959d33a1e239"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "241e2eeb74da707896bbcc6b798e67e14331f836"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "95ab32399645f8d3f945184998c33c2dea683b02"
+    },
+    {
+      "path": "create-narrat.code-workspace",
+      "type": "file",
+      "sha": "75125e130ae49a5a3c426c2ed4ac2e7ed85fcaa2"
+    },
+    {
+      "path": "demo-template",
+      "type": "dir",
+      "sha": "7ab9410b256553251f5ec528901f0453c82ca23e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "aa0f59fa79b8681bed0f8af734f222e3cf05caf8"
+    },
+    {
+      "path": "editor.code-workspace",
+      "type": "file",
+      "sha": "9c2135ca94c5c351a131716428b0cd058b2fd341"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c08c4ca45acaf698d88612c2b1e7c90ade0935a9"
+    },
+    {
+      "path": "ide.code-workspace",
+      "type": "file",
+      "sha": "9d5258fc5ec6ec7b57412ef60678488887ad4dfb"
+    },
+    {
+      "path": "narrat.code-workspace",
+      "type": "file",
+      "sha": "eef793be13bbf07b28e84dcd7c5da908057f2608"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "5e949680de7ead9193ed8394817993d18a96faba"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "394b2e6d6d5572c303bf97eeada2ae5cd3d0ebb5"
+    },
+    {
+      "path": "placeholder-narrat-bg-darker.webp",
+      "type": "file",
+      "sha": "3cc460a197769e55a1dc960097ba4d6298c72dd6"
+    },
+    {
+      "path": "placeholder-narrat-bg.psd",
+      "type": "file",
+      "sha": "2eefe54d97f397c4983cbd495a27ae07d50947bc"
+    },
+    {
+      "path": "placeholder-narrat-bg.webp",
+      "type": "file",
+      "sha": "2078bfd0076e885dbb5dee0bc47d55286ded56de"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "b7e8c4dac20225122f57dc43740924acdab5f1b3"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "ccdc80cde720285b2c7283ed2abb9c6d48677f30"
+    },
+    {
+      "path": "pull_request_template.md",
+      "type": "file",
+      "sha": "b1ad1eee329e32e64c3514fef89795b6f068815b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "b581906b29c988a4fb788c5d68787b459ade8291"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

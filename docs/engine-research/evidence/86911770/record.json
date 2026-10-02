@@ -1,0 +1,84 @@
+{
+  "repository": "PixelVision8/PixelVision8",
+  "repository_id": 86911770,
+  "commit": "fb53119247415c6c91f96e8654e246eb526a80fe",
+  "source_url": "https://github.com/PixelVision8/PixelVision8/tree/fb53119247415c6c91f96e8654e246eb526a80fe",
+  "readme_path": "README.md",
+  "readme_sha256": "b8ce7ec77c80a6c3617334c25d50622fde12e0f90c368898de20276c15c3dc84",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "56010a4140190cc5a43202f89480c0918e4706c9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5f9912b28d69c575d34b953e54038e8b658f30ef"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5c67b29536b5e8ed19c793b0e9a7208a8493fec3"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "b2ec7b7f8e74a812d24317b95a584a6224511cce"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "ad035eb2d765a7315205ed7fea6a8d95630bcf4b"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "6dd95a0bbf42b6fe402e68147b14a505a01158ed"
+    },
+    {
+      "path": "Effects",
+      "type": "dir",
+      "sha": "023554c1aff4fc8dacd83e7e82b83b9f6869f7bd"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "9e9a1b0ccf91e957c613263433bfb09963e942ff"
+    },
+    {
+      "path": "PixelVision8.sln",
+      "type": "file",
+      "sha": "9511a1e40c41c64f35ad43b002bbf8bd0f9658a0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "86c6a91eda7e52cd9185c3478f5b41088bdb5d48"
+    },
+    {
+      "path": "Runners",
+      "type": "dir",
+      "sha": "b4c91fa59c61876db919813e72a93abc5682a1ce"
+    },
+    {
+      "path": "SDK",
+      "type": "dir",
+      "sha": "0f651b858d95e29a6aab3f657e46e10213350e27"
+    },
+    {
+      "path": "gulpfile.js",
+      "type": "file",
+      "sha": "b9c5089f3a4b9268a02a31b1dcb471e9ddeec328"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "2081cb8bf3c6d61f98d21649215d26b35c6361dc"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies fantasy-console engine over MonoGame backend; owned SDK/Runners/Effects and .NET build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

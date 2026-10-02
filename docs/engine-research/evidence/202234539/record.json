@@ -1,0 +1,72 @@
+{
+  "repository": "AnyRPG/AnyRPGCore",
+  "repository_id": 202234539,
+  "commit": "3930edbd6db51aaf894b3f956751d59c4c47c722",
+  "source_url": "https://github.com/AnyRPG/AnyRPGCore/tree/3930edbd6db51aaf894b3f956751d59c4c47c722",
+  "readme_path": "README.md",
+  "readme_sha256": "22bffe8d8f6e351fb28958ab0d50a937e1c170ef510a18ea9f5678a239458a98",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "57779a44df7cdc20a7d98e71b22bbfd16cdb794a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a510aa72d92aefc5cb751784fdedef3ec42ecfbc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "36dcc45fc895b9b6aa371c433a58f3f343d47b50"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f00c8b0bce0d8ca6d0f4fe60ec019ef6f079c49f"
+    },
+    {
+      "path": ".vsconfig",
+      "type": "file",
+      "sha": "aade28f674e0c08b5e520ccbde4fc9e8aeb95ac5"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "530bc07e6b4d2a14d279bb06d7b655eb0f0c4387"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "38974143eaa2b4d1588bf78f19ef7c01021169e9"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "01d656c46059a513a07d08db25c14b8cd9dc7071"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "603aaaefb38b38bce24df55e702672f2f16a8a64"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "1bb145e2f05db19dafc8f95105e707aebb0bed86"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "6c23488d8ae1372e190a90569ae51ce9d7b9971a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0bea68b7c71d2af87bf93747be519962b73a5950"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

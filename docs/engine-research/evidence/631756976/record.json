@@ -1,0 +1,62 @@
+{
+  "repository": "james-j-obrien/bevy_vector_shapes",
+  "repository_id": 631756976,
+  "commit": "623868d437c416216201e0707704fdc988cc4147",
+  "source_url": "https://github.com/james-j-obrien/bevy_vector_shapes/tree/623868d437c416216201e0707704fdc988cc4147",
+  "readme_path": "README.md",
+  "readme_sha256": "51986290b8960f0e05b65cf14b40168c972f5668bf1643ebc979a490324bb7bd",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5c196cc24dba21534261c6a48605b1d0ba367348"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "5676bc591fccee7da0067b1c1fd9d1cde379f6f4"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "6cd83a7231c9e43c87c95990ae5011634cdbba3b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0b2ac86e7a7ef02cf49ee73284d3c6b7e843e21f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "67ae40cae5d0043e473597769cdca4e5b421768b"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "04708305c75cb81eb71db6dc2d0c08fdea86c156"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ee589aee1322e803ae34fa7a8e197155b87e9d78"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "97cb6f127b0c2bb1e2829260309cb227fd62c3f7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "656d64a31e308847f1d16aeecca75a3c66f6ba80"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

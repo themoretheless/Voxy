@@ -1,0 +1,54 @@
+{
+  "repository": "aws/lumberyard",
+  "repository_id": 95851346,
+  "commit": "413ecaf24d7a534801cac64f50272fe3191d278f",
+  "source_url": "https://github.com/aws/lumberyard/tree/413ecaf24d7a534801cac64f50272fe3191d278f",
+  "readme_path": "README.md",
+  "readme_sha256": "5bf3309df7d1460d6d2feefa4fca50052b826767e1325f528ac59a339c81b30a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "53ab0c1166e52ff2f89df0891048e7d68b932b2f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "87b396777f6c6a75866997a19e63109c6ca79558"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b3a5ac3158e02998788772396c696d622ce7c4db"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "fdce77e738f7e1fa9a46a9b070565f61b5eafd5b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b452041723416ff3a3fdd20ab23c5bd558f2004"
+    },
+    {
+      "path": "bootstrap_config.json",
+      "type": "file",
+      "sha": "0aca15e8c14de6d32ce191bdccd902cacfbfb955"
+    },
+    {
+      "path": "dev",
+      "type": "dir",
+      "sha": "f0f02764f2c6c415776e21a3f20e39a800ca7bb1"
+    },
+    {
+      "path": "git_bootstrap.exe",
+      "type": "file",
+      "sha": "aab003d6aa70c3f777365da99e89799937b1b148"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies archived engine source; dev and bootstrap configuration/build root. Archive status is not runtime quality evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

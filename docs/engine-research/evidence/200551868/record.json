@@ -1,0 +1,124 @@
+{
+  "repository": "zoloypzuo/ZeloEngine",
+  "repository_id": 200551868,
+  "commit": "4e80d624b9696c0caae42d1ba71e3e26928f7f35",
+  "source_url": "https://github.com/zoloypzuo/ZeloEngine/tree/4e80d624b9696c0caae42d1ba71e3e26928f7f35",
+  "readme_path": "README.md",
+  "readme_sha256": "1dbc854afd736fc386789ac614e73b1dfe008ece0d4756e142f9d0f92bd1a94b",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "df14193e54121843e76d78c40e6385083516f70c"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "fa2a488033ee3bad42dd26cc4f8f733b5381f130"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "56ac4e4b8e035da770483833755b1df228803543"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1cbfebc3ba12b1b81d5629608a7f0d753018e61d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "13a63b7b0396e33c9787679a084f45fed15d3df7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3730fdd9035c1394bc6c93ecf8477302727dabab"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "47d825b080adf2e70125e6de150127f525401e08"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "3228994e054c38da58afe3b184485e48d478ce7b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7c1a57dcfa2667891dcbb7c3ce5159c0b81d46d0"
+    },
+    {
+      "path": "Config",
+      "type": "dir",
+      "sha": "907583b32b30fbf839978814ddbba00f5e6ee25a"
+    },
+    {
+      "path": "Doc",
+      "type": "dir",
+      "sha": "78ecfd3b3503babc253f8ca4c0dd2be5afcafae2"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "b15df35d82a6215ac4d0f496e2c9e2d6b9be31b6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9102a2b5dc015fecc9d09aa4733477d08bf99888"
+    },
+    {
+      "path": "LuaBind",
+      "type": "dir",
+      "sha": "273eb05d29ac03819432cc7fe876cbbf5cc0ea20"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1fa1cedb0196074b5cfa03805b2597a1e878a382"
+    },
+    {
+      "path": "README_EN.md",
+      "type": "file",
+      "sha": "35979ad6eba6dd3b1f525f9bbc0df9a63d27d705"
+    },
+    {
+      "path": "ResourceDB",
+      "type": "dir",
+      "sha": "03a983b4268879e3d587e14e7ae396f660a48f69"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "22da375741e568a16d018556c2367134a8a9d2c2"
+    },
+    {
+      "path": "Script",
+      "type": "dir",
+      "sha": "814b4706817b6bbdc436cafb998cf59ca7b43365"
+    },
+    {
+      "path": "Shader",
+      "type": "dir",
+      "sha": "a754945ec9e5e097f11af2a68b4668f215352b9f"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "49e540b2aad740f7991585f94e5a88492ea337fa"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "af11e03cff19fe44300d11be83a4a0c738324c79"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ OpenGL/Lua game engine with Engine, LuaBind, resources and sandbox projects; functionality unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

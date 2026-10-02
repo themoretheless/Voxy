@@ -1,0 +1,74 @@
+{
+  "repository": "MenacingMecha/godot-psx-style-demo",
+  "repository_id": 283311182,
+  "commit": "91bd24988f70636efca505e2c8022b143b61780e",
+  "source_url": "https://github.com/MenacingMecha/godot-psx-style-demo/tree/91bd24988f70636efca505e2c8022b143b61780e",
+  "readme_path": "README.md",
+  "readme_sha256": "341f06dc24515f6c903b01f9f614f7a5e644adf3c943102ef18de35dc964748e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1fd8b5ab9f48eec087ffc26cfdc152fc47991f47"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "004f2f111d64be644ff95f1519525de70b5257d9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bd5ad4bac86abeecf891b3f6688c3fab68851ae5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0c42ee18e00391785ab61d25f7df436b0ce9a9a9"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "2da6f99b7cc4e2a56640fac3aa878f440a0e05d3"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "4bd20895c8ac351f8d08816879b3939bbfb3c547"
+    },
+    {
+      "path": "post_process",
+      "type": "dir",
+      "sha": "98d5314db0625f4a0b4807a85c8aa859da0d4404"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "068003c192d4e9d28aa7523bd0c5f3450045ba6e"
+    },
+    {
+      "path": "readme-assets",
+      "type": "dir",
+      "sha": "b4bc219ff434c983589b236214b002c750f70066"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "618c162afc042ed3ab30c03a605c4fa2e0785568"
+    },
+    {
+      "path": "world",
+      "type": "dir",
+      "sha": "390cebb95f30a9e461e536e9179de7f8c2810b4e"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Godot shader/material demonstration; project.godot and assets, not owned engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

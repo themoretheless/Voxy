@@ -1,0 +1,69 @@
+{
+  "repository": "coinbump/PhaseJumpPro",
+  "repository_id": 127684651,
+  "commit": "0b14559c1df53c19c4b3509843f7c8fd80d5c96a",
+  "source_url": "https://github.com/coinbump/PhaseJumpPro/tree/0b14559c1df53c19c4b3509843f7c8fd80d5c96a",
+  "readme_path": "README.md",
+  "readme_sha256": "f8ccaeb343d7b4eb15245b7c66409136d9bb3340421b60eca397463fc7507f13",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b2aa39e8c32943f27038cc60ac583c04ef26caba"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c44453821d47c07c3278eca560853d10614732bf"
+    },
+    {
+      "path": "CodeStyle.md",
+      "type": "file",
+      "sha": "c0854ea32a77bd4b9b6f21155d9c5ad6df211b7f"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "808e2831c7480ff14976789c12038b7b8e410c4a"
+    },
+    {
+      "path": "Experimental",
+      "type": "dir",
+      "sha": "8606486e4a04bd92e52572629e2722229abd1aeb"
+    },
+    {
+      "path": "Kaiju",
+      "type": "dir",
+      "sha": "22807d7ade456a327a689ed88681ca56ac3c74c8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "77b0cf2d457d7ffb0a254386250067089671bbae"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "36325fb40528a756603bb04bec39b478384f186c"
+    },
+    {
+      "path": "PhaseJump",
+      "type": "dir",
+      "sha": "dddd8c285902a99b6c492000f59fba8cf768763c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d1777c98a3b0a19c136242bf0de409143f21591a"
+    },
+    {
+      "path": "submodules",
+      "type": "dir",
+      "sha": "4a6d5101b1ffbd91690b058114fc93c38d795e69"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit engine-neutral game design-pattern library rewritten in C++ with Kaiju consumer; not accepted from graphics-engine description alone.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

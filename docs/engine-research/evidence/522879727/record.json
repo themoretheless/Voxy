@@ -1,0 +1,44 @@
+{
+  "repository": "sjoerdev/voxel-engine",
+  "repository_id": 522879727,
+  "commit": "85c14ee3d03a9f4a9bcac5712e48d4be4e626946",
+  "source_url": "https://github.com/sjoerdev/voxel-engine/tree/85c14ee3d03a9f4a9bcac5712e48d4be4e626946",
+  "readme_path": "README.md",
+  "readme_sha256": "98c22f6c11fa0cc130e29735d0e049f4cf16e057ed0f6fdadfc01c99541e9b05",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "03eef67c45ea03e9cee42a3ba665ba4e6e62c493"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8b9f0d6b6b7989f0f14f25f81e9da9acf92a579f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "420b25f033351945945da12a88aa120e76b6d55e"
+    },
+    {
+      "path": "program.csproj",
+      "type": "file",
+      "sha": "ac868418a1f8eaec6e167656025590580ce03efc"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "38f3f7a0b66d32619d799d162a6de36a0294f052"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9927555b919822af40fd1e8b8cb164d07c46aacf"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Dynamic voxel ray-tracing graphics engine; README scope is rendering rather than broader gameplay runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

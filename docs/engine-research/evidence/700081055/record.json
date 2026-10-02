@@ -1,0 +1,59 @@
+{
+  "repository": "catppuccin/godot",
+  "repository_id": 700081055,
+  "commit": "d8b72b679078f0103a5e5c1ef793c1d698a563b1",
+  "source_url": "https://github.com/catppuccin/godot/tree/d8b72b679078f0103a5e5c1ef793c1d698a563b1",
+  "readme_path": "README.md",
+  "readme_sha256": "79c726bca0cb77642c8a3b2d62a7b643646ec672c20bc5471695b79e82afb183",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d86ac0270aa6774faaf2aadace96e770fcd53bd5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1998c294f84ec0ff4b32396e4cd8e74e352672e6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "006383b861d7a9b11ebbaf84ec679b0e3c189bac"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "906c6de38166b7aca23bb1b889581f8293b7d785"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d026505f17c999aa7672537a5f66ab237614dfd9"
+    },
+    {
+      "path": "godot.tera",
+      "type": "file",
+      "sha": "b4abb6c8f44008dacefdb52b53fadd3d3a33dbf8"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "b8059b1ea585c8735f27bde3e98228083e51e696"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "a22200053b222458502a1e7715c2a366e8c4994b"
+    },
+    {
+      "path": "themes",
+      "type": "dir",
+      "sha": "80360e41b427f9a93d6a8a1bb8240b553fad9688"
+    }
+  ],
+  "classification": "excluded_theme",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify Godot theme package; themes/templates/assets, not owned runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

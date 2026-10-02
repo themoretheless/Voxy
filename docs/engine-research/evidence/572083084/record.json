@@ -1,0 +1,57 @@
+{
+  "repository": "mit-ll/spacegym-kspdg",
+  "repository_id": 572083084,
+  "commit": "6251ca3e30cd3b9fcaf4d29d8a134ab144386125",
+  "source_url": "https://github.com/mit-ll/spacegym-kspdg/tree/6251ca3e30cd3b9fcaf4d29d8a134ab144386125",
+  "readme_path": "README.md",
+  "readme_sha256": "7289b50225f075658715c78b82fa1aaef857a3153bb19fcd122bde700e67b423",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "23376acce5b1763e60721f39b3acaa44f5ea951f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "5215306f6d8a821e464995955ae5e977efdfe50d"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "3ad148af6dc6106d99faf4af55309f6b84a55d3d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ba8dc76737894f3213a602e8eeec496a14e90651"
+    },
+    {
+      "path": "SPDX.spdx",
+      "type": "file",
+      "sha": "905a3636781c4af389e786a09769f2647e4fd55e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "60e4bb557fb06e6cb8bc0ba2d79f3f799184e131"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "79a5679adf1a595a77ca49f987243189b7ca5bbf"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ca1808e67f5eabc8ed91a90eb234762f621373de"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "79d0dc46d52ea45a54870f8858688fb18c9302bf"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

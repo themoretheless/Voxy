@@ -1,0 +1,92 @@
+{
+  "repository": "fanyer/mugen",
+  "repository_id": 74551773,
+  "commit": "b6885c654ba830157f5dd4f257bebfa738300df3",
+  "source_url": "https://github.com/fanyer/mugen/tree/b6885c654ba830157f5dd4f257bebfa738300df3",
+  "readme_path": "readme.md",
+  "readme_sha256": "815e814208145283779c16510ed3b698e329aa82d8866604985661a6e7d00ebc",
+  "entries": [
+    {
+      "path": "Elecbyte.MUGEN.libs",
+      "type": "dir",
+      "sha": "e452e0ad084df9862bdbfdd6a2358215de020631"
+    },
+    {
+      "path": "Microsoft.VC90.CRT",
+      "type": "dir",
+      "sha": "6304082374556f0fe7a5e227dbc5ba4fb85e6998"
+    },
+    {
+      "path": "chars",
+      "type": "dir",
+      "sha": "2afbb231a43f8c38e2682e939896e76e0a663796"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "c87b8876a5706de4fdd7df99a4ae6432a472b286"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5a7849606f0c747361a2d8ffc0cd507220ba4fa4"
+    },
+    {
+      "path": "font",
+      "type": "dir",
+      "sha": "f1e40a90195c7b7b5c457f0074bd4c9df155760a"
+    },
+    {
+      "path": "mugen.exe",
+      "type": "file",
+      "sha": "326de868e5bdb929384e5ef3664db605dd256939"
+    },
+    {
+      "path": "old_tools",
+      "type": "dir",
+      "sha": "9b40fc174090d005da4395a7b8533ac8ca6a272d"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "78898866e60abe047101277ba131c9c1a69a600b"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "4585cd82a14d0c5596ccc7ebe9e0d034de3cb9d5"
+    },
+    {
+      "path": "readme.txt",
+      "type": "file",
+      "sha": "4585cd82a14d0c5596ccc7ebe9e0d034de3cb9d5"
+    },
+    {
+      "path": "sff2png.exe",
+      "type": "file",
+      "sha": "4ef460d4428d3ecc9f29883811509e45e8c5b681"
+    },
+    {
+      "path": "sndmaker.exe",
+      "type": "file",
+      "sha": "8cfe760c9f57273aa485e6334df6e2c0d93d3852"
+    },
+    {
+      "path": "sprmake2.exe",
+      "type": "file",
+      "sha": "395e9abeaa08699f4f3072227d63ae4e0f3f2123"
+    },
+    {
+      "path": "stages",
+      "type": "dir",
+      "sha": "e0bff6ec179edd307fd92003d8a96dfa368f7875"
+    },
+    {
+      "path": "work",
+      "type": "dir",
+      "sha": "ff8cb243e462db93510e7d4b109c6e381ab3f6b3"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,52 @@
+{
+  "repository": "carlosmaniero/pygamii",
+  "repository_id": 47847892,
+  "commit": "b728b54031fdb67f68e4ba848aa40bbdfa6b1d3d",
+  "source_url": "https://github.com/carlosmaniero/pygamii/tree/b728b54031fdb67f68e4ba848aa40bbdfa6b1d3d",
+  "readme_path": "README.md",
+  "readme_sha256": "5e3d05b65068e9a8054099de2ae456c0122e548ccdf2678d381b46c7bf8864ac",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "00471dfa021433d173b48a70d74abc6e07d00247"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b0123d36f8c371f393c6f391956ec57096d515ae"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3dd2b796927fa00122dad477b6de9e223bede697"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "9eb7544026ac9c0392dd9ef1354da9aa76818b21"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "486e550df730ae367c32d57ae9200e0387c7550f"
+    },
+    {
+      "path": "pygamii",
+      "type": "dir",
+      "sha": "adcc4867ad1b6ca34d0f969acbd2dba75cd3be7d"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "e2763410f1492fa3cf2721e4abf1842a00a5e774"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

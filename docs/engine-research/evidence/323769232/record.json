@@ -1,0 +1,114 @@
+{
+  "repository": "Monadical-SAS/oddslingers.poker",
+  "repository_id": 323769232,
+  "commit": "a3dcf1eeb264c364f653f1062333161861ec7c01",
+  "source_url": "https://github.com/Monadical-SAS/oddslingers.poker/tree/a3dcf1eeb264c364f653f1062333161861ec7c01",
+  "readme_path": "README.md",
+  "readme_sha256": "bf78e621805ae844a57a46ab372b1e15c7df9dfe0cdd04f262fd3811f66352e2",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "9b16371a632cf537a02b123056469a7acdbdef0d"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "f16a32180a8c60ccb09c673d4790ada49d0df1a0"
+    },
+    {
+      "path": ".env",
+      "type": "file",
+      "sha": "645b2064312a44dc1d41b4ab0eff784f7d3cddee"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3726de7dcd012f8b08a5b3d6bdf47b17135a3a34"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2a3832e142f8c79d087b102cf3ef6882c3324a5b"
+    },
+    {
+      "path": ".secrets.env",
+      "type": "file",
+      "sha": "011f65559ce1919bc1d27ed8a723d1c7584a31f5"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "b47a0f7b0ea30babcd8ace454dbf276c8e95963f"
+    },
+    {
+      "path": "Dockerfile.webpack",
+      "type": "file",
+      "sha": "2108b1392e481f7efc7eace0efc80942cecb5842"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8000a6faacf471c537530805ab29523c7732e11a"
+    },
+    {
+      "path": "PRINCIPLES.md",
+      "type": "file",
+      "sha": "ff605345c072537344eb721d6e703faca8a7d519"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "99cea5d3a1022ac7899c0c17ad5ae7628c62ad84"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "d1ad5e5e979d8def9712b410f41b22702fb32713"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "d19c7ab9c158c20b6ae2ebce637226fb7b66b423"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "96f710605da0822bbc5183a1d0b7aaab29ce4f21"
+    },
+    {
+      "path": "docker-compose.beta.yml",
+      "type": "file",
+      "sha": "95201898a37090ed69ce76ad15d69b46ebf1201e"
+    },
+    {
+      "path": "docker-compose.prod.yml",
+      "type": "file",
+      "sha": "d3ae08737dfd1c06429bc5d977ae0add9b32f14f"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "776d2b4c75e0184bcb213c962f72040ad9719cc1"
+    },
+    {
+      "path": "env",
+      "type": "dir",
+      "sha": "79d2c22d5186866c85e077fec6f6fc6f5c135842"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "174d6c8c8ed9900f81982e63ea04012a4b5d96de"
+    },
+    {
+      "path": "playbook.yml",
+      "type": "file",
+      "sha": "0ef565121494b5573fb379fc4ac20f40f449f665"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Django/React poker platform application.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

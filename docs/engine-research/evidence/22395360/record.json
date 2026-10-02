@@ -1,0 +1,87 @@
+{
+  "repository": "arjanfrans/mario-game",
+  "repository_id": 22395360,
+  "commit": "e86a8e1d6f8593ec6f4f83814152df56e2b89ff0",
+  "source_url": "https://github.com/arjanfrans/mario-game/tree/e86a8e1d6f8593ec6f4f83814152df56e2b89ff0",
+  "readme_path": "README.md",
+  "readme_sha256": "13bdfbb46c4730b4b3e7f6caa7430aabd843594c003715d48318b00ce48c9b40",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "47454eed4a29a26344ae7b0bebd7dab7646c7006"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "fc8a789b6957db217a5ef5bea16e36ea5c77d99e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0515a48b25fcbadefd2c6d23b5ac1a4066d0b657"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "c09afc6e93857bbde3be18ceba6c2541b4a4df3d"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "44cc1875d198eae91e825f82a975b2cf21b42d2f"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "3b9cce5514324af8faf20124f9646f49cc4bc099"
+    },
+    {
+      "path": "desktop",
+      "type": "dir",
+      "sha": "36875458e9a9e613283712e3e82951c6446736bb"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "fa55fd1e14b8d2fed73f35d83db8fd615562e510"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "70114a783fd8b15624fcfae6cbf116dd2c02a887"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "91a7e269e19dfc62e27137a0b57ef3e430cee4fd"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "8a0b282aa6885fb573c106b3551f7275c5f17e8e"
+    },
+    {
+      "path": "html",
+      "type": "dir",
+      "sha": "26f9f3935427955c07c4fc29b44fd707c1bc317c"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "19c7046570d940cd3c83b7f7196e6b612d3f8b64"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "8625b4650b5b03fd84ecb43971488a05915c7a3d"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "965b6a3a01179f9bcad6a74d8fa428ae2cd2e795"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

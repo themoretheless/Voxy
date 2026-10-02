@@ -1,0 +1,22 @@
+{
+  "sourceSha256": "31c190b6d44454b82d991f3fb1567aad54cc42c59777511734d9b2c6df045890",
+  "candidate": "assets/characters/blender-female/prepared/body-local-repair-v5.obj",
+  "candidateSha256": "48575b87bdec019e59eac5d9fb17fd2faaf7759306de7d6d9c1312971232d8da",
+  "reloadedAudit": {
+    "vertices": 76052,
+    "triangles": 152100,
+    "area_m2": 1.5671124921276778,
+    "max_edge_m": 0.011999540395577154,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "crossingPairs": 300,
+  "searchCapped": false,
+  "sameTopology": true,
+  "faceNormalReversals": 0,
+  "maximumDisplacementM": 0.0021435344750506667,
+  "scope": "Prepared candidate, still intersecting, not adopted by runtime."
+}

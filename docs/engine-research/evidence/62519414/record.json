@@ -1,0 +1,74 @@
+{
+  "repository": "bjornbytes/lovr",
+  "repository_id": 62519414,
+  "commit": "88fa3d43698fd986f275d16956871e38111e0fca",
+  "source_url": "https://github.com/bjornbytes/lovr/tree/88fa3d43698fd986f275d16956871e38111e0fca",
+  "readme_path": "README.md",
+  "readme_sha256": "c37a8b9d45fa79f46084e52c7f1da723c0025229ebc4d21a41a7b1217ef1087c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a3680bd45057d32d85f3936151329f7a7bff5afb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cc17b87d2ab500a7b6a0e6b7a617a3a7cdce2b01"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "09df37a786654fd9e0b3037739cc906933fc7bdd"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "d6bcfba8b41b42114a171daf6bffb26920faae35"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b8a1b013106a11c5eaa95addb739fb2d86756236"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "46159a11e2faa7b2e97ae60887e93bbeb42cb20d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e355d2db94644e95e46a02d1f31fbe6f6759bc1f"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "39c7a6baaeebd85fa26816f689eeca9410509640"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "97d7dc186138a3a43d0c6cccd8c9c6b050a5f992"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "724ca27579ae4b1b207eca5612cf3b7b8653df30"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9d0e42d4468fef9589faebbd3453302885705581"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "b41450437b16253409a5b4a2010514eb59f0f435"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Lua 3D/VR framework; src/modules and CMake build. Kept separate from complete-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

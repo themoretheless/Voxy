@@ -1,0 +1,7 @@
+{
+  "binary_sha256": "a1afe6b6560d9fd68973e9f838d9402be1ad984b7e8c7f8943efd4e5788d55d1",
+  "exit_code": 1,
+  "stderr": "Facial render mouth opening: 227 seal triangles\nError: \"candidate preset cannot change body source without rebuilt correspondence\"\n",
+  "snapshot_created": false,
+  "scope": "Actual candidate preview refuses source-changing preset before rendering"
+}

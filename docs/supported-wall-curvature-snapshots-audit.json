@@ -1,0 +1,229 @@
+{
+  "scope": "Static nonadjacent face audit and outer ring centres; synthetic 16-sector 6-segment benchmark, no equilibrium certification",
+  "states": [
+    {
+      "iteration": 1000,
+      "metadata": {
+        "equilibrium_certified": "false",
+        "iteration": "1000",
+        "energy_j": "-1.522625153328e-4",
+        "residual_n": "6.818827793573e-6",
+        "load_factor": "1.000000000000e0",
+        "applied_support_pressure_pa": "2.000000000000e2",
+        "contact_law": "ExperimentalPrimitiveSum",
+        "contact_curvature_preconditioner": "true"
+      },
+      "source": "/tmp/voxy-supported-wall-contact-curvature-200/loaded-iterate-1000.obj",
+      "sha256": "bcff0fcbbe47c33a6b794170829aa74067b46d0900938be5a2c380adbe99e203",
+      "classification_counts": {},
+      "limit_reached": false,
+      "wall_outer_ring_centres_m": [
+        [
+          -7.965799220516294e-19,
+          4.494986686778331e-22,
+          0.0
+        ],
+        [
+          -4.6682688238953714e-08,
+          1.7377840539278892e-07,
+          0.004947097602294254
+        ],
+        [
+          -5.8944951723482694e-08,
+          8.884921041683785e-07,
+          0.009923725456470849
+        ],
+        [
+          4.966684795317151e-09,
+          2.291516544747421e-06,
+          0.014963273436450047
+        ],
+        [
+          2.7348546566856915e-07,
+          4.319189393339833e-06,
+          0.02003779960421576
+        ],
+        [
+          7.194358669631185e-07,
+          6.830251655133487e-06,
+          0.025119216967921933
+        ],
+        [
+          1.2757269887465634e-06,
+          9.668556696046787e-06,
+          0.030212398095066383
+        ]
+      ],
+      "max_outer_ring_lateral_shift_m": 9.752357045068005e-06,
+      "distal_centre_z_m": 0.030212398095066383
+    },
+    {
+      "iteration": 2000,
+      "metadata": {
+        "equilibrium_certified": "false",
+        "iteration": "2000",
+        "energy_j": "-1.550588633229e-4",
+        "residual_n": "6.788174614612e-2",
+        "load_factor": "1.000000000000e0",
+        "applied_support_pressure_pa": "2.000000000000e2",
+        "contact_law": "ExperimentalPrimitiveSum",
+        "contact_curvature_preconditioner": "true"
+      },
+      "source": "/tmp/voxy-supported-wall-contact-curvature-200/loaded-iterate-2000.obj",
+      "sha256": "85c39040e1630ddc40597ea794251edd267c3554f3a8c76aa19efa30daa2240e",
+      "classification_counts": {},
+      "limit_reached": false,
+      "wall_outer_ring_centres_m": [
+        [
+          -7.965799220516294e-19,
+          4.494986686778331e-22,
+          0.0
+        ],
+        [
+          1.8199037882819765e-05,
+          3.815357422902026e-05,
+          0.004989139481794632
+        ],
+        [
+          5.47798539878797e-05,
+          0.00031311119990529846,
+          0.010006893631868633
+        ],
+        [
+          0.00014406543550495325,
+          0.0009263285418515061,
+          0.015062683121601925
+        ],
+        [
+          0.0002934695195771851,
+          0.001866797491390762,
+          0.020101033440704748
+        ],
+        [
+          0.00047882249350937963,
+          0.0030692237017451184,
+          0.025083184046762286
+        ],
+        [
+          0.0007107578733734715,
+          0.004422622978381788,
+          0.030008800901480486
+        ]
+      ],
+      "max_outer_ring_lateral_shift_m": 0.004479371692935627,
+      "distal_centre_z_m": 0.030008800901480486
+    },
+    {
+      "iteration": 4000,
+      "metadata": {
+        "equilibrium_certified": "false",
+        "iteration": "4000",
+        "energy_j": "-1.585932912247e-4",
+        "residual_n": "2.790538932852e-1",
+        "load_factor": "1.000000000000e0",
+        "applied_support_pressure_pa": "2.000000000000e2",
+        "contact_law": "ExperimentalPrimitiveSum",
+        "contact_curvature_preconditioner": "true"
+      },
+      "source": "/tmp/voxy-supported-wall-contact-curvature-200/loaded-iterate-4000.obj",
+      "sha256": "d2b2e384c0b9fd2412273f1e86db45c577c0d4a8109039ad0a242b87f4bb6477",
+      "classification_counts": {},
+      "limit_reached": false,
+      "wall_outer_ring_centres_m": [
+        [
+          -7.965799220516294e-19,
+          4.494986686778331e-22,
+          0.0
+        ],
+        [
+          3.379619288342923e-05,
+          0.0001183878446140793,
+          0.005033916470348046
+        ],
+        [
+          9.655317661585819e-05,
+          0.0006265910783032788,
+          0.0100902610021678
+        ],
+        [
+          0.00022384604698143893,
+          0.0016357121460625317,
+          0.015132106977348623
+        ],
+        [
+          0.00045125521054008934,
+          0.0031408080760000146,
+          0.020080177432362335
+        ],
+        [
+          0.0007737474474952565,
+          0.005065602954549859,
+          0.024863903775314822
+        ],
+        [
+          0.0011601247451256587,
+          0.007186814238006209,
+          0.02950304371214182
+        ]
+      ],
+      "max_outer_ring_lateral_shift_m": 0.007279848097032083,
+      "distal_centre_z_m": 0.02950304371214182
+    },
+    {
+      "iteration": 6000,
+      "metadata": {
+        "equilibrium_certified": "false",
+        "iteration": "6000",
+        "energy_j": "-1.818072992307e-4",
+        "residual_n": "6.442832104881e-1",
+        "load_factor": "1.000000000000e0",
+        "applied_support_pressure_pa": "2.000000000000e2",
+        "contact_law": "ExperimentalPrimitiveSum",
+        "contact_curvature_preconditioner": "true"
+      },
+      "source": "/tmp/voxy-supported-wall-contact-curvature-200/loaded-iterate-6000.obj",
+      "sha256": "0497fad9a429be387a3056b034bf5c2ea3782998a78fc47e6bbc8f1b83d7d9ba",
+      "classification_counts": {},
+      "limit_reached": false,
+      "wall_outer_ring_centres_m": [
+        [
+          -7.965799220516294e-19,
+          4.494986686778331e-22,
+          0.0
+        ],
+        [
+          6.843023190963347e-05,
+          0.00035818690465596703,
+          0.005108977297754201
+        ],
+        [
+          0.00017600378287668705,
+          0.0013712056929295168,
+          0.010189206734089275
+        ],
+        [
+          0.00037293814685690604,
+          0.0031073590851658285,
+          0.015107151753940644
+        ],
+        [
+          0.0007340764969614062,
+          0.005526542973874398,
+          0.019661858139318773
+        ],
+        [
+          0.001277748645951325,
+          0.00849500827345775,
+          0.02377353436768876
+        ],
+        [
+          0.001891966733951028,
+          0.011807996827137087,
+          0.027592685285199633
+        ]
+      ],
+      "max_outer_ring_lateral_shift_m": 0.011958608915423935,
+      "distal_centre_z_m": 0.027592685285199633
+    }
+  ]
+}

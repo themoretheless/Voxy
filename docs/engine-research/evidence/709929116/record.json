@@ -1,0 +1,119 @@
+{
+  "repository": "magicblock-labs/bolt",
+  "repository_id": 709929116,
+  "commit": "719060783fe67a786cb179eab8d60ddfec7de25f",
+  "source_url": "https://github.com/magicblock-labs/bolt/tree/719060783fe67a786cb179eab8d60ddfec7de25f",
+  "readme_path": "README.md",
+  "readme_sha256": "9dd4e551a6a41a63f32ce543735babbf21aef9214f59e419a315dd7ed6b84168",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "19df874e33f118b253a3f5093060e165f674e6ac"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "38b0d521fcc1e0a57f4d69ae2f382dc0b5c4560e"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "727ba9db4e05470ac57d856ef9f87b98abac8931"
+    },
+    {
+      "path": "Anchor.toml",
+      "type": "file",
+      "sha": "39056e1b756ad449cb818a3a6458c47bb9d1940c"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "b0151bef773060ffb0ca1f6c1a57c40247e743fa"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "fc13c77fa5aa945e73cc2437bfdfa097a4de441b"
+    },
+    {
+      "path": "Cliff.toml",
+      "type": "file",
+      "sha": "91eded6cfc634845c6e7edbf4d81de42c732086c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "20344056d13b26ef448d1a8d3dd005c379a389cb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5bbe7a12bc13979c37546c3bae1cc1b7e1833052"
+    },
+    {
+      "path": "clients",
+      "type": "dir",
+      "sha": "e374aa908cce2fcfd2db8a981ea49ae24810e90b"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "73d6c012f14194da6d796c6f9f76375ef6eec5dd"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "83c6f80112476ed5312201fbecabbc5f40569c00"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "4348a7446c9a3d8272eda578855bb45e9e26edc5"
+    },
+    {
+      "path": "migrations",
+      "type": "dir",
+      "sha": "be44ece343cbea164f5e3bd40f72e375bf658889"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "d87e9fd37d99c1521945ad5fa5e0aa64553c1f5c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "b3184d6f6de2f1494db4fdbc975a7f51b8975136"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "d09294494b086d18d94089a2b777b64fbefeae29"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f89c61e9814f76b9dbe49df7564b9ad25a4d3e6e"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "28e8966240745b7c8c9c928da7ef08ad88b2720a"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "a8947213f33f1236757cf1c564a44b918f8c3a6f"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "db2ea4d4b7de00988f9615217247aa2aece9c5c9"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Deprecated on-chain SVM game-state framework, not graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

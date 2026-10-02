@@ -1,0 +1,139 @@
+{
+  "repository": "geektcp/UeCore",
+  "repository_id": 79633427,
+  "commit": "da40c4ffa99c682303318c8f90dbf00a63a4d973",
+  "source_url": "https://github.com/geektcp/UeCore/tree/da40c4ffa99c682303318c8f90dbf00a63a4d973",
+  "readme_path": "README.md",
+  "readme_sha256": "776544b2f75dcc49200b36777ef56d5bcbabee9a24b8ee123fe3b9fd825972a2",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ef3fe38c23811562509ecbfaabd565da0a58c0de"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "825499322671163b870ab017e2b517190f0fac57"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "758b7d1d86b660633249dfd36abda364e57439db"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "cb5951da781c2353de4bf1d474b1012d024a5d2b"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "73333d62aa049abce58597cd38a2a1d3168191d2"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "ff5cb4a2eba125e5243ef27d27581dd79091d29d"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "d60c31a97a544b53039088d14fe9114583c0efc3"
+    },
+    {
+      "path": "ChangeLog.md",
+      "type": "file",
+      "sha": "812f65ef54c47741cb71ef3c1141f5ab8199ea7c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "NEW.md",
+      "type": "file",
+      "sha": "fc2f4b4b9f47480ceb3d011f952bccf9ad80b2b1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6f14b523aff5d87c765ebb97bac9c6127f874971"
+    },
+    {
+      "path": "THANKS",
+      "type": "file",
+      "sha": "67265008f9bd333f1e6437276b79dce381e47cb7"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "5f32ce2689843ec9cbce4563e40f3d9b3ed88437"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "d371e23b8371a27a4893235413737960ed5e0f01"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "53ab06e07f58f502c068e68d771ff9b649017698"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "73b18c58e953a962dfbf40658c9d2a77f2472397"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "6f2806a64d261f0313a8518762fc5c447c44185e"
+    },
+    {
+      "path": "dep",
+      "type": "dir",
+      "sha": "9c33e39a83ae4357f282b23f427a3b5f74c52c55"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "f8e5de4e34399e2f7bc25776f4a89998a936324b"
+    },
+    {
+      "path": "release.md",
+      "type": "file",
+      "sha": "5192f1df12c4fc6c1bfed083e0b90c3e80f76228"
+    },
+    {
+      "path": "screen",
+      "type": "dir",
+      "sha": "a3480d0d4d68f7a59e9f05fbefb6cc39086734c5"
+    },
+    {
+      "path": "security.md",
+      "type": "file",
+      "sha": "4482a59cebabf91c0fa4427a448c11b77630361e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a3785d1309b0d2297646a490fc87e94b282ce7a2"
+    },
+    {
+      "path": "version.txt",
+      "type": "file",
+      "sha": "eb069cd47a88eedbdaf1f4c16cdebf0d478136a1"
+    },
+    {
+      "path": "win",
+      "type": "dir",
+      "sha": "2206fea6fc72a6ec2bd7dcf2a44d5cc1bc2be1a3"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies WoW/MMO server framework; app/core/native build rather than graphical game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

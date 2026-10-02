@@ -1,0 +1,92 @@
+{
+  "repository": "ee0pdt/Godot-MCP",
+  "repository_id": 940211008,
+  "commit": "b7d08eb43ac938bf64ebd27e474619b8cc020ecc",
+  "source_url": "https://github.com/ee0pdt/Godot-MCP/tree/b7d08eb43ac938bf64ebd27e474619b8cc020ecc",
+  "readme_path": "README.md",
+  "readme_sha256": "5eef86e64460200c5ff55a857e3bfbcbbb13abcb0a2a68fa3355dedc033156de",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "f28239ba52858394ae47b28ba1602bbd54baa833"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "36d08a73a96c6b6ea7e8dc181a242c1da7c78261"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b644253482b2dbde550ea936efda1efa65593117"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "8adf055598feb309279d249af13cdb85fd2b73b9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2be05532ba02f95f1326d8920a63f8b49166582a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6b1ab6e5c3091a23618c8560961a3ad63f8a9489"
+    },
+    {
+      "path": "TestScene.tscn",
+      "type": "file",
+      "sha": "f49db198b3056a5c4e40adc15e959da19c7f8ca2"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "bedf0c53ff393c14e1db733e989b4894afa8081b"
+    },
+    {
+      "path": "claude_desktop_config.json",
+      "type": "file",
+      "sha": "4a6020469c55fc9fca85ebd7ac1f6f97642ba1d6"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a42055eb54a8b31089966aa83875282b7ec2c8b6"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "9d8b7fa14f06c0de54ca2d69fe2ca52875b38017"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "a4de6d453721c3ac2a7e17c4c07153c4c1ea1fa5"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "c9dc3dd1afb518e40c21dff19a0ebd835f05a51a"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "6007d090b7c75743c2c321fe1e34d78612ad1c3f"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "253e43e85c22450bfe2a21e361dfb41d77000626"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

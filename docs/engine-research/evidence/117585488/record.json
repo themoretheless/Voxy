@@ -1,0 +1,154 @@
+{
+  "repository": "openblack/openblack",
+  "repository_id": 117585488,
+  "commit": "d804e19201cda0fead4ee226e8b1f9b8059d27a9",
+  "source_url": "https://github.com/openblack/openblack/tree/d804e19201cda0fead4ee226e8b1f9b8059d27a9",
+  "readme_path": "readme.md",
+  "readme_sha256": "3ffaaa0dde9c1743ce69a5b989ad3e1f168bcae55b3cd09131d7f5add201116a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "4c3a29f65674df7d26e0324a8ce2f92c5f6f3695"
+    },
+    {
+      "path": ".clang-format-ignore",
+      "type": "file",
+      "sha": "89daa0943a38365468b57ec151cfa2cc6ab1156c"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "411144d097b2ad2a7385e0f1bd339439f6d62578"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "18481fdeabb8f322a07d73e2b71a2f0ca4178f9d"
+    },
+    {
+      "path": ".cmake-format.py",
+      "type": "file",
+      "sha": "fc9b8b1562ee34d98a79d40d2bd2d0f1a29b4d6e"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5c3e18e754d3637efdbd1e13c67e7fc2bda8d45a"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "9ad30bf8f5c5272c683523e38b088890aeeb708e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "49df89eea129da0d83d7ad3abfcbc397c4971f6b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3b7363aa521c3a5e4aaff35d207fe795dc5f8812"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "828ce9a2196f852afdaa905f3d2de5deb87fcaa2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e41f858c6c8d1858ac5abcf1a2fc97a04371c13a"
+    },
+    {
+      "path": ".licenserc.json",
+      "type": "file",
+      "sha": "6af9871f3bbc1e4b79258e3af407ddb5319656b8"
+    },
+    {
+      "path": ".linelint.yml",
+      "type": "file",
+      "sha": "d0e18dd15044fe5d32315a2b95c1094e6cc121a8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8088e9f8c7e9e6dc2420e3c58bd0af30919250b0"
+    },
+    {
+      "path": "CMakeModules",
+      "type": "dir",
+      "sha": "1712eed45a81c2df829264f0fa64ba892378fb90"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "a05e2a337bec5519c0bc864de69a564fdbc1a471"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "0b8bb43ebd9d311cce44cda32f1b039997319c84"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "cde2c3cdbc962f46bfd6fbd3a0a6fa1fbe49d736"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b6c3c8738151bcdcc49b594a52df605823e2d0d5"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "bf050b9cc631ce56cdf94dbcbfff61b383534b8d"
+    },
+    {
+      "path": "contributors.md",
+      "type": "file",
+      "sha": "b52a4f0c1350df23b0c3807f3e3db165322c6085"
+    },
+    {
+      "path": "externals",
+      "type": "dir",
+      "sha": "34cfc447a82a72ab5d3192df90761ac4cb9d47a8"
+    },
+    {
+      "path": "license",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "36821f5be4d969667520876bfabdece5c8e05d05"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c8266099e312c2e3fdc3fd817820552d4c45fdca"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "fadd03b0b03077a43a999fcc559f2d27dc70d737"
+    },
+    {
+      "path": "vcpkg",
+      "type": "file",
+      "sha": "5de6d1ffae6f4576699acb79c102a0c3eec3a788"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "a9e771a3ac98393a372e8184667f6aa282ebc98c"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ Black & White replacement runtime with apps/components/tests and original asset loading; not executed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

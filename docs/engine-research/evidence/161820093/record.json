@@ -1,0 +1,84 @@
+{
+  "repository": "liquidev/rapid",
+  "repository_id": 161820093,
+  "commit": "e9712c8dc35954e950c554e75d1fdd1e7548d664",
+  "source_url": "https://github.com/liquidev/rapid/tree/e9712c8dc35954e950c554e75d1fdd1e7548d664",
+  "readme_path": "README.md",
+  "readme_sha256": "832bbbec65a6c15990ae253fa72e21b6417249f5f2f1298056aa6eb3a711f358",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "07cf553363059de0c342283816b321dafa853ff2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a7f1f107cddd7421346d67ece3cff1c46b93770b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "17154e41e0d47ff2647f63c0659f0e460c5dcf74"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e352bca37e7196c88564c96a0f982caa49fb0f70"
+    },
+    {
+      "path": "code_style.md",
+      "type": "file",
+      "sha": "4bd8ac9ce0c930c15fa11f101993a071528451a5"
+    },
+    {
+      "path": "icon-1x.png",
+      "type": "file",
+      "sha": "dd8bcae7d4761cdf37da2a285898e302efead368"
+    },
+    {
+      "path": "icon-8x.png",
+      "type": "file",
+      "sha": "f2720c5a20fa87547af5e673a46b9ae949a68b6b"
+    },
+    {
+      "path": "icon.ase",
+      "type": "file",
+      "sha": "f9532fdd418fa8a6f0cfc7cecf2b1cf5b9b714b3"
+    },
+    {
+      "path": "logo-1x.png",
+      "type": "file",
+      "sha": "881f863a19f5d14b23f8e2b4c1a8049d38b07f47"
+    },
+    {
+      "path": "logo-8x.png",
+      "type": "file",
+      "sha": "f42de3e2358d4a88da31ccb2f8d2f5d89fd269f9"
+    },
+    {
+      "path": "logo.ase",
+      "type": "file",
+      "sha": "9e496c829c889751f8890b9d08c647442968bb12"
+    },
+    {
+      "path": "rapid.nimble",
+      "type": "file",
+      "sha": "fe119b74cff8f1717c4deae0eff76cded2e11468"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0ccc0784403fe167013691f887ff9ca478b2b771"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "7f90e5eadcee205169e22264fb576e000cec95ff"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nim game engine with rendering, physics and UI modules, src and tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

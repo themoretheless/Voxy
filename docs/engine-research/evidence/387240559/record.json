@@ -1,0 +1,122 @@
+{
+  "repository": "MateuSai/Godot-Roguelike-Tutorial",
+  "repository_id": 387240559,
+  "commit": "c70e30b71d4558940f78c7b7323f8978598626e3",
+  "source_url": "https://github.com/MateuSai/Godot-Roguelike-Tutorial/tree/c70e30b71d4558940f78c7b7323f8978598626e3",
+  "readme_path": "README.md",
+  "readme_sha256": "1fb88c47abbe4b4edba3896bb16b545e1e39af0f83d0b14c01fcf8f292240c3b",
+  "entries": [
+    {
+      "path": ".godot",
+      "type": "dir",
+      "sha": "1baa980fb6aa8a5af7ad564199ef37d44100a92a"
+    },
+    {
+      "path": ".import",
+      "type": "dir",
+      "sha": "204174a481d451f8d91117ea531973226c09dfeb"
+    },
+    {
+      "path": "Art",
+      "type": "dir",
+      "sha": "7c9b1ac86bd8fecdabe108edd2f56970cae44730"
+    },
+    {
+      "path": "Autoloads",
+      "type": "dir",
+      "sha": "901cd903ebfbbeaeea1b95100c0f4b77c7c7dc07"
+    },
+    {
+      "path": "Characters",
+      "type": "dir",
+      "sha": "25b63603284cfee418ec0ea34a54b6e2e7a198db"
+    },
+    {
+      "path": "Game.gd",
+      "type": "file",
+      "sha": "857e73fae952cf2d32fd55c23f0d0a40c2e41e25"
+    },
+    {
+      "path": "Game.tscn",
+      "type": "file",
+      "sha": "f9a3551a7032108fee2bdb8364471e85f3476fcc"
+    },
+    {
+      "path": "InventoryItem.gd",
+      "type": "file",
+      "sha": "4cc87fa76030dc12a7461aa92a88e94e9d379c01"
+    },
+    {
+      "path": "InventoryItem.tscn",
+      "type": "file",
+      "sha": "23065a74bb4f4be2118429be5810738e32f67415"
+    },
+    {
+      "path": "Items",
+      "type": "dir",
+      "sha": "f8d3797c21935f8090c8b59d967a00f4b3ae80d4"
+    },
+    {
+      "path": "PlayAnimation.gd",
+      "type": "file",
+      "sha": "77aa6640cf823f325e2c56c5e2c71e2e47c4e8b2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "29035c3368345cc44245c409599ec1de58bbd892"
+    },
+    {
+      "path": "Rooms.gd",
+      "type": "file",
+      "sha": "6288f21836c890158ee9a6f251c6dac89438f08c"
+    },
+    {
+      "path": "Rooms",
+      "type": "dir",
+      "sha": "9d474d5dbeddb11f86cd71957e648ce30251f878"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "0e388e93c6436b174f80387ea49edb8d8c5a6f16"
+    },
+    {
+      "path": "UI.gd",
+      "type": "file",
+      "sha": "cabad413c24507f46113630da99d48fcb7c6442f"
+    },
+    {
+      "path": "Weapons",
+      "type": "dir",
+      "sha": "cec19d369b8fa0b362b6a804cee009ca18480e16"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "1e82e7adc9c8aa3cabac88c31f4a3f9fd6ca224c"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "861baa3a2c273a31f889e3f27bf04d1200bfbfc3"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "02ec5e7aee506e57f7fa47867387af90b96fdbef"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "2bd31b54a14efa593a8a96494b2a5d3a06c6919c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

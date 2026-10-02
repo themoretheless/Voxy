@@ -1,0 +1,84 @@
+{
+  "repository": "Qfusion/qfusion",
+  "repository_id": 10675052,
+  "commit": "132628efc05714c68cbb3a60ffee062de587678a",
+  "source_url": "https://github.com/Qfusion/qfusion/tree/132628efc05714c68cbb3a60ffee062de587678a",
+  "readme_path": "README.md",
+  "readme_sha256": "cd8a0dfb1bc9fd88ad343b79f770995912b0dd45a85f8b2b981dd871f554e3e1",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "6721384ec9aacfb0969eb27180f97647e0eb0c2f"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "927d8ae4884e665b939294c2fcb1299c94f9006e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "28c9dd7a758d1415b7b5bac1854b1ca1ace8886d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8acf5f0a8d9bfbb43149f15f5b91102c2c5342cf"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "1de760b85efdb274572313179359b9f60977071a"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5b360788af5843e2e5ae71f3b9aca8639e264b3f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "43d3512d747f4588ab022411bb9a93b8e3c20dcc"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "f4dff8e544918ef3d1e6d1c8d98d840df0ac7bb8"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "c960e4d794070ad235fcb7a447171fe523d20452"
+    },
+    {
+      "path": "libsrcs",
+      "type": "file",
+      "sha": "eac01f2db3beac9589e2f0e77b30a2ef0fb26ee5"
+    },
+    {
+      "path": "platforms",
+      "type": "dir",
+      "sha": "cedf1a8bb4d1f9a2a7a012aee0185dfa00e24185"
+    },
+    {
+      "path": "progs",
+      "type": "dir",
+      "sha": "7e09f7c1279e0cb2820fd67b706da2246afb4503"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "a8828ba0ad6873cbc90a47d9affb35aaa633688e"
+    },
+    {
+      "path": "third-party",
+      "type": "dir",
+      "sha": "56cb61d537cce8fd7358cf933573f4b9429d0b56"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies id Tech 2-derived runtime; source/platform/game modules and native build roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

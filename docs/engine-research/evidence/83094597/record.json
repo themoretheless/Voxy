@@ -1,0 +1,112 @@
+{
+  "repository": "kichikuou/xsystem35-sdl2",
+  "repository_id": 83094597,
+  "commit": "82c8b76a58a19ff1f87b4bdadbaef169c4b37f46",
+  "source_url": "https://github.com/kichikuou/xsystem35-sdl2/tree/82c8b76a58a19ff1f87b4bdadbaef169c4b37f46",
+  "readme_path": "README.md",
+  "readme_sha256": "954b2280ef89df632dab4e8e111913c5a702d291ce05705c20f62189f7960040",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d65a0fac32da9e01a9a13e84bde7a6c5b74d720d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5cbf3adcc7949d5b1c527a3bf2e636b9e11ff933"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b1e72821bf464f64639b707f9458091ae24dc035"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f99f357e3668bc5c500d3eacc530f39c79d69d52"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "98dd2428e1183e7c10c02ef73a1259138c5e3c18"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "60549be514af76c5db0c17ce6bbe01b2f81e2d9e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d79ce69a9e5412240f97d8ea40f294d5eaf49fde"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "75c902ac441fb8dc7aa23a5b62a62d4216552ba2"
+    },
+    {
+      "path": "config.h.in",
+      "type": "file",
+      "sha": "6065b942368a0dc15ef4122445a9f3b954c2ed31"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "20789dd0251039db9b43dcec7961e124f964da06"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "4ba3252f6afb3c7e0e0db3aee23e54dbdc479528"
+    },
+    {
+      "path": "game_compatibility.md",
+      "type": "file",
+      "sha": "aab63e10b0fdc914fad6081be51e397758564220"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "14f0c86d81d212e551c6a7d561ef20fbcb61f6ff"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "d6c4f23ce16cf81ca6f3ad9663deed4a8b98db68"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "5fe95cad91fb93b595e6be3a8a0f19e27b31ecd5"
+    },
+    {
+      "path": "po",
+      "type": "dir",
+      "sha": "500b3a1fc667379b4e50d0b2dc39c068918aedb7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0d30e64f84a0525bda28368c68f74d624b54c448"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "6be2035f2fbf28b27e6f66e1c0ae5bee653c98e6"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "e1b63d40bd5e3e7ebe84d324c5a18a217e23c980"
+    },
+    {
+      "path": "xsys35rc.sample",
+      "type": "file",
+      "sha": "8b14b9e10126f29b2d68376a091b5da050e3d89d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

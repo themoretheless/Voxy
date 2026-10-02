@@ -1,0 +1,84 @@
+{
+  "repository": "morganbengtsson/mos",
+  "repository_id": 19118434,
+  "commit": "8ed64981982aebddeadf045d5d22d29094c77ac0",
+  "source_url": "https://github.com/morganbengtsson/mos/tree/8ed64981982aebddeadf045d5d22d29094c77ac0",
+  "readme_path": "README.md",
+  "readme_sha256": "cddb841bf4230782a1d5f0a61cddd1c2b3e31021a8733614bfab5ebef5e07a22",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "3d584a65e166032704019506b0f1882cd55e1d17"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "97b5562929103f1a2b8631609d39ed111b9a4822"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8ea630d1388b8e7129ad846333f68447ba7d6884"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "77cd766f839b1958184b2694c290f1d84733c531"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0ab537b1dd2ee7ef637ac46bcccef5fcde06bb3d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "83d6e1dea52e807c5552d9807449af64a78050fb"
+    },
+    {
+      "path": "LICENCE.rst",
+      "type": "file",
+      "sha": "be8a3c04ff844e66f6c5572ef65cd2515dc71f68"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2e268766a4468cc2b932bb3fc97ea4c87c5b87f6"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "7adafed707dbaea1945fe7b3c33fe7b4bef8add8"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "3d26ce81203deb4c70f662ada29ba0db4ddb7d1e"
+    },
+    {
+      "path": "externals",
+      "type": "dir",
+      "sha": "607f734bace4d26b2fcb3b854206bcaa72cd2d42"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "10960f1d181cec8bce9528a411def392feca125a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0fe4371cff1c07bddabc52364e0834170c066f01"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c01f2d6548591c79b80caa77ec74d1d083ba5e19"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native engine/library; src/include/CMake, complete gameplay scope needs deeper inspection.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,104 @@
+{
+  "repository": "KernelOverseer/KSICARDOOM",
+  "repository_id": 226744592,
+  "commit": "71be42cb53b439cb96c922efdec11c15c0513550",
+  "source_url": "https://github.com/KernelOverseer/KSICARDOOM/tree/71be42cb53b439cb96c922efdec11c15c0513550",
+  "readme_path": "README.md",
+  "readme_sha256": "28a76a1fd169e4c48545c3ae31dea8e4553f2acdb77c930e490d037ed5d8ed9a",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "41bf2e95eba947103f7ec35fcc0ade6b5ec597d8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0db384d0b017a801bd69fe0d1bad71b46e2f5f53"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "884272bb6b1832fcf397413a10ba663b04f8eede"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "2650f5d4fe489ec4c5d1f4b3fe4811bd2f3dbd07"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5bc0c5414de7a4232e87993cf162ea9eca04d2cd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2cdccffe56f4e2551f8e0a709376ee992e7863ba"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "88784221f4b15c031bc3922a9104bde8564fdd35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "24bb5cc0df55b6b2cbf7558c13a44adc3cdb63c7"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f6a3518f4bc43bee3bf22cc9b31e25c5f785dd13"
+    },
+    {
+      "path": "doom_nukem",
+      "type": "file",
+      "sha": "84a989f9a323b7936bb79f1a1ceafe1abb7c90b1"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "7e186c665492502e617325c90296d54b9ac9affe"
+    },
+    {
+      "path": "includes",
+      "type": "dir",
+      "sha": "b8eb0e6e56a57276fe96ed27bbaaf5cf8e84aed6"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "eac8f71aacd855d0e861bd929e45907458be07af"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "13eef5eae75a2170614b07d7e561ea727acdcc16"
+    },
+    {
+      "path": "objects",
+      "type": "dir",
+      "sha": "9d0d9ba8bc6180fd7ca66ca530646d8817c630ca"
+    },
+    {
+      "path": "piano.wav",
+      "type": "file",
+      "sha": "fb594bf5439a44648f69bbe8d9c610f133af852f"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "121ff0bc86e2e924b1d9e7253a6407a4f1fc1148"
+    },
+    {
+      "path": "sources",
+      "type": "dir",
+      "sha": "b836362c82d3f38e06a495050fa42f56a1b8e2d7"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C raycasting runtime includes loadable maps, events, projectiles, audio and multiplayer plus editor/source; game-specific and unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

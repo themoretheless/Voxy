@@ -1,0 +1,27 @@
+{
+  "scope": "Actual one-tetrahedron Body test, synthetic HGO, three numerical pins and 0.01 N nodal force; not an anatomical experiment",
+  "source_log_sha256": "b0c0f7f9e423eb6fb37f1e28b01a4cadba340129eee46f267ea25f11f66d5c91",
+  "samples": [
+    {
+      "time_s": 0.1,
+      "displacement_m": 7.348587644807e-05,
+      "residual_n": 7.25630897383e-10
+    },
+    {
+      "time_s": 0.2,
+      "displacement_m": 7.517093565682e-05,
+      "residual_n": 1.426182977271e-09
+    },
+    {
+      "time_s": 0.3,
+      "displacement_m": 7.635013057943e-05,
+      "residual_n": 6.989064309931e-10
+    },
+    {
+      "time_s": 0.4,
+      "displacement_m": 7.72078233262e-05,
+      "residual_n": 3.699370670907e-10
+    }
+  ],
+  "creep_fraction": 0.050648465501533346
+}

@@ -1,0 +1,42 @@
+{
+  "repository": "oscarmcnulty/gta-3d-dataset",
+  "repository_id": 108848070,
+  "commit": "25b4592325df845f49d86129941de407c4c78d65",
+  "source_url": "https://github.com/oscarmcnulty/gta-3d-dataset/tree/25b4592325df845f49d86129941de407c4c78d65",
+  "readme_path": "README.md",
+  "readme_sha256": "0e137dcd0b8780552a58fbacd691ab0dc0ffc793c13730da6900c9778bc74ab2",
+  "entries": [
+    {
+      "path": "3D-object-localisation-with-cnns.pdf",
+      "type": "file",
+      "sha": "04bc99bf2d2b31f5220a3c414d5cd667f2aa66c4"
+    },
+    {
+      "path": "3fd50f7b-658b-4ef4-bb17-dfc1f287def8_00000134.jpg",
+      "type": "file",
+      "sha": "ac307f10ad2715babd473d05810406d899234b00"
+    },
+    {
+      "path": "3fd50f7b-658b-4ef4-bb17-dfc1f287def8_00000134_preds.png",
+      "type": "file",
+      "sha": "bcaf0982dd5ac2041d1a80ed7b5cdf02bf23fdcc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6d5ca148f836dd7b3c232aa0f8f6411b3b8e592f"
+    },
+    {
+      "path": "gta.py",
+      "type": "file",
+      "sha": "89b26544384912ae2062639c62f3d2b228f9a783"
+    },
+    {
+      "path": "test_vis.py",
+      "type": "file",
+      "sha": "bff1556baef82f85d05961213619bf448467d519"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

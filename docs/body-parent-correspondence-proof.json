@@ -1,0 +1,23 @@
+{
+  "models": [
+    {
+      "model": "female",
+      "refined_topology_verified": true,
+      "source_topology_sha256": "dcd35e40a5ab66b9c3ddbe6b51ade5d302c166fa168d02352dd1c4d73eab8bc9",
+      "maximum_parent_area_relative_error": 7.24727971233936e-15,
+      "paired_faces_with_four_vertices": 42340,
+      "source_face_pairs": 42340
+    },
+    {
+      "model": "male",
+      "refined_topology_verified": true,
+      "source_topology_sha256": "f17d611a988c26ea0a76a39c896526f49263d0c5a1c0924dadc7cd903c78e59d",
+      "maximum_parent_area_relative_error": 1.050277137251954e-14,
+      "paired_faces_with_four_vertices": 42340,
+      "source_face_pairs": 42340
+    }
+  ],
+  "same_base_triangle_topology": false,
+  "paired_quad_topology_matches": false,
+  "runtime_fluid_transfer": false
+}

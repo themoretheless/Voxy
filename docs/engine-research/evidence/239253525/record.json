@@ -1,0 +1,104 @@
+{
+  "repository": "Lawrencemm/LM-Engine",
+  "repository_id": 239253525,
+  "commit": "421f64dacc7a7fa5bc6e1c87736b3fb5d3434dee",
+  "source_url": "https://github.com/Lawrencemm/LM-Engine/tree/421f64dacc7a7fa5bc6e1c87736b3fb5d3434dee",
+  "readme_path": "README.md",
+  "readme_sha256": "46302e0f9aab13399ddb5db15a6396124208d1cadb4f4c6692b66063a31f4a06",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a0174256aff9703e0e29a263267292479aa8e719"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c0dc731cb6e26ea77882f2b0e4840976039a7b37"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "473a52769db41509e22732ea226156f8d43fa39e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "aee09abea3e328b71ad5ee09d10ba3737000277b"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "5b7f456cfa8492fdfa6ee918d7eb55267c9dec88"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ddeaabe1e4eef991f0e6495ef96d4f41ba15dee1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aa5d96d53cf5779e1ede05f40ea783d6085e3481"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "ea891f0e1ed3d7c395f2ef2f0619b5e77014a44f"
+    },
+    {
+      "path": "conan",
+      "type": "dir",
+      "sha": "4daf65ba28162bbdb2072dd7588c18442c19c6f9"
+    },
+    {
+      "path": "conanfile.txt",
+      "type": "file",
+      "sha": "11f3dc084767c07f4daa3fd3345474e5313bdb3f"
+    },
+    {
+      "path": "lmeditor",
+      "type": "dir",
+      "sha": "acd04f7746f80f3ba237ce71057df05d084c5531"
+    },
+    {
+      "path": "lmgl",
+      "type": "dir",
+      "sha": "d58dc24674449df708bb6956ebfbb5132b11823b"
+    },
+    {
+      "path": "lmhuv",
+      "type": "dir",
+      "sha": "3d0f541ae93a443fb42cd7e67d910b808ef3458b"
+    },
+    {
+      "path": "lmlib",
+      "type": "dir",
+      "sha": "04c4516e9d39e077b1ddb7a0a95d67b7ca90f6e3"
+    },
+    {
+      "path": "lmng",
+      "type": "dir",
+      "sha": "daddde52b8a395e98678bdbeb88f8e7f2874fef3"
+    },
+    {
+      "path": "lmpl",
+      "type": "dir",
+      "sha": "875bc35285984b0a898ab8f23e66c8b6aa8147ab"
+    },
+    {
+      "path": "lmtk",
+      "type": "dir",
+      "sha": "579a888fdbeb9f689735cf9d57420f9528ab0b3e"
+    },
+    {
+      "path": "sample",
+      "type": "dir",
+      "sha": "66d8a917101c820fa6f5527e0462fb2d06dd2cca"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separated platform/graphics/toolkit/game simulation/editor/presentation modules using ECS/Bullet and text assets; WIP status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

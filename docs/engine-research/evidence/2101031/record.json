@@ -1,0 +1,119 @@
+{
+  "repository": "HaxeFlixel/flixel",
+  "repository_id": 2101031,
+  "commit": "5e147e81bb59a441f4afed72ab9a8299d8211216",
+  "source_url": "https://github.com/HaxeFlixel/flixel/tree/5e147e81bb59a441f4afed72ab9a8299d8211216",
+  "readme_path": "README.md",
+  "readme_sha256": "3a5926e487172a234a379f91ecce890ec5c1b4f648a21557e342d9ace1e22ae8",
+  "entries": [
+    {
+      "path": ".codeclimate.yml",
+      "type": "file",
+      "sha": "b47730929ed3ceb04bf2cb18d2091493c164ff47"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "913f232bf75c6fd8d4539a3b675ae576de394893"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c7e8b47dc22fd9827a1b22a32e39accdc54dcb66"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cf4a5e8e5ac313c533437ac5f7cd3d6cccd0adf0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "19df7b5a47cbc9c333315c9adcb566ca65640adf"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7318be983bbdcb32fda8cd8af48eed252a3e499a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1e7517a59a46dfc0d55fc8dffcdc58432e871cda"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "3c7a76ed26c89ff5ee449324e22f6ff37c2c1e96"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "829256482e5e2a4c682ef90b273aab504f538456"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "26a87a99ccfa9dcd4977b659eb7fddd0b3bed340"
+    },
+    {
+      "path": "checkstyle.json",
+      "type": "file",
+      "sha": "a1f2045fd4e06ad7537fc7c305249edc9b203485"
+    },
+    {
+      "path": "flixel",
+      "type": "dir",
+      "sha": "22c585a87322ef04ab1031bfa7884bcdf97de260"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "f1e4f21fcb20b7e8624693ddd479fa37eb049042"
+    },
+    {
+      "path": "hxformat.json",
+      "type": "file",
+      "sha": "d747ff50fded053fcef24811fdcffc5b81ff68ff"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "70d6dbd03a1f652df850966cc7d35898e1a405d1"
+    },
+    {
+      "path": "include.xml",
+      "type": "file",
+      "sha": "9a0f3548b7369724a4935ef4c5da34e0d2c9d03c"
+    },
+    {
+      "path": "release.bat",
+      "type": "file",
+      "sha": "d7f94d9887282e45dfdec058afed2b516b3ed777"
+    },
+    {
+      "path": "release.sh",
+      "type": "file",
+      "sha": "eb8ce2316584e2ab2ae3c1c426435c8b1714cdd5"
+    },
+    {
+      "path": "run.n",
+      "type": "file",
+      "sha": "98a918ab7b494c6ad1c81e35cf0162d1c1e2f025"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "4d5ea4ccd3b6a5a5dfaa9bb0d41c3973e468f9c0"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "1195cca6a72ff341d8c7ba1a4e6e1a8b9af01f34"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies core engine; owned flixel source plus haxelib/build/tests. Backend dependency retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

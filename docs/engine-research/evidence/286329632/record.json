@@ -1,0 +1,49 @@
+{
+  "repository": "VacaRoxa/gamedev4noobs",
+  "repository_id": 286329632,
+  "commit": "1a5e39719ab6b719a0ad7d597f23bacd32b2c8b8",
+  "source_url": "https://github.com/VacaRoxa/gamedev4noobs/tree/1a5e39719ab6b719a0ad7d597f23bacd32b2c8b8",
+  "readme_path": "README.md",
+  "readme_sha256": "31e1415dbb8c8c442aabe9fff129d7859887e8f65828510c6f5324485632a8b0",
+  "entries": [
+    {
+      "path": "Empreendedorismo.md",
+      "type": "file",
+      "sha": "5dc59034ad47f52fa8527bffb84fc619038c1eef"
+    },
+    {
+      "path": "Empreendedorismo",
+      "type": "dir",
+      "sha": "36cc161eb6886c676a3eaffbf2ec9be23e3e5348"
+    },
+    {
+      "path": "GameDesign",
+      "type": "dir",
+      "sha": "90d6ca93abebf727775a46540e43882ccb5496de"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7fc396423372e1c15f841e158fea311cfdd05d7d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "208432c0f19a112406045c5ccfc9c9e200a9d073"
+    },
+    {
+      "path": "Unreal.md",
+      "type": "file",
+      "sha": "f3d318a8ee86e14bec485f0ac8be558e2d1cbb29"
+    },
+    {
+      "path": "Unreal",
+      "type": "dir",
+      "sha": "43b3e347bc4d3faac81c40048a4bd68aa2920073"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify game-development teaching resources; no owned engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

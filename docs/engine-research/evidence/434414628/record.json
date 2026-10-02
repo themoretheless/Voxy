@@ -1,0 +1,67 @@
+{
+  "repository": "r4gus/nodus",
+  "repository_id": 434414628,
+  "commit": "853a0f42a05913674b30e2a3b0a79317887422ba",
+  "source_url": "https://github.com/r4gus/nodus/tree/853a0f42a05913674b30e2a3b0a79317887422ba",
+  "readme_path": "README.md",
+  "readme_sha256": "c8ab8bb75597af2dab1c18fa2848b49cfdccfb50a9f9c36122d66f9532a63517",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8d82b7d6b8675aa1724d2cefaa92b94ff0779e2b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "473e9d2a3ed73ce75910fc8847c484474ee311ad"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "b44e7d1c9f815ae43a70d72e402e4cc4753d60b4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "44b831cddad25b9e41812e1fa9be09b6e91ac463"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "18d58c4724e6dd2fc7e232d9e81271470bde0112"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3c0dab55759826f8995e9754482351019a3a57c1"
+    },
+    {
+      "path": "circuits",
+      "type": "dir",
+      "sha": "0cd8566daeeaa93917f959dee0751ed56ce8afe2"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "05a935b2f11ac47d581df073297b3014b1cb2f57"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "26519877bdf7d6eb1f12ef9b5ffe604ffc0351f6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1bbb7fa62f1c661edbb252a1f2a550601a1019b9"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

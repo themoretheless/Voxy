@@ -1,0 +1,119 @@
+{
+  "repository": "cohaereo/alkahest",
+  "repository_id": 672898004,
+  "commit": "c2f87e574681dddb9ccb30cac49fa678df88869b",
+  "source_url": "https://github.com/cohaereo/alkahest/tree/c2f87e574681dddb9ccb30cac49fa678df88869b",
+  "readme_path": "README.md",
+  "readme_sha256": "0ab90bb8a0ca2ffb6542d1232635d2e7cab626f453879ab42c9f9cb7140d228a",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "006bc2fc77947fe7b757f8901b291dc5493ef1a1"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2125666142eb661091cc5f32af2ed2f3fc65571d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "acb586aadcb85533ed3766837f58aeb1ce733cdd"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ee1954d960d1469c058fb5bd591ac9da69c46bbd"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "04ace07349e60b2fb1fcab63611771e363c54b12"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "529b58c944404b198a8c3ad52ae9e541f8a20c63"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4159f713be9eae1cbe32ba6e999f0e96a7d4af04"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "adc5ad4f27088d1ddec0e3a8f0c39ce744695afa"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "56bbabb84e290f973c27a14d55b9b88ea4e3b6f5"
+    },
+    {
+      "path": "cargo-appimage.desktop",
+      "type": "file",
+      "sha": "24dcc21c75805e0aade4d4a65bb51b72934f57d9"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "5e328844766b357fdeabad577d71acbe41cdf69c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a97d465df735487c42ea2d8d421a947fce190dce"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c6f02897182adb5cac9245bfa96f3ccd39c73448"
+    },
+    {
+      "path": "hotreload.sh",
+      "type": "file",
+      "sha": "dd0cbaac14ddb28de5af9a3f357f95da0eb524a1"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "03974f738f958e3143d4cd3a5d0e1f0f2a5a19f6"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "02c3287cdbc8dcb909bfbd90bf34469d71f8c91f"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "dafd2d81706c8fb0bb0fae3d2658018c10a0a01d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9afec57d50cea0dfd218d0855dcf853a2a0daee9"
+    },
+    {
+      "path": "wordlist.txt",
+      "type": "file",
+      "sha": "bf3b6fea8a4bc45821a0b823b71f328bc39353f9"
+    },
+    {
+      "path": "wordlist.txt.zst",
+      "type": "file",
+      "sha": "51d8808944f1d1aa3e5c7a69a28a7ba4ed7746ba"
+    }
+  ],
+  "classification": "excluded_authoring_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Destiny asset viewer and renderer recreation tooling rather than complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

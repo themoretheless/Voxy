@@ -1,0 +1,87 @@
+{
+  "repository": "engineio/web-sdk",
+  "repository_id": 949736745,
+  "commit": "1843d60cedb94b390e641b563f32ad64353bec5e",
+  "source_url": "https://github.com/engineio/web-sdk/tree/1843d60cedb94b390e641b563f32ad64353bec5e",
+  "readme_path": "README.md",
+  "readme_sha256": "35c1b1865a0c83ee7635b01414bdfc5cb1b75ebed30f44e5e1335daa340bbb15",
+  "entries": [
+    {
+      "path": ".eslintrc.cjs",
+      "type": "file",
+      "sha": "782eaf8e2ed1f09153071bd3d03b66de45631fd0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3f896492f26549d36dd84ba84b06fb4499f9ff57"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "b2d77c18742e3c9ed9ab718c16bdcf119c8023fd"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "44939d4a3eea86231d74b8552d6bdb0a912fa44b"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "82810aa5a2a9f8e3532e03ed4c9d7a40956e9502"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "602ff670a61d0cae9dea75d788f04182e8c75355"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dc3b62a1b4550d775818d28b0ac746dd4901d492"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "b16b2e246dcf1dd0b62f983c2b481e9ca5d73a73"
+    },
+    {
+      "path": "caddyfile",
+      "type": "file",
+      "sha": "50bac51b877279a5dab159f8566e45774377bdb4"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "329fc7da765ac382b6972381875f77b8852d6139"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "3f7602c7966733b47986d046fa24dbd730ef454b"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "36e41bb450ef5b06b4fa34acad17d5f72230ccd3"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "d904fe31bc727e2f0215028d55eb5da2ed2f7f6d"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "3ff5faaaf5f139c707e338e7e89e51606e9e0ace"
+    },
+    {
+      "path": "turbo.json",
+      "type": "file",
+      "sha": "2ddc150174811909be1c39e39aa6d82b9365711c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

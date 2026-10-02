@@ -1,0 +1,72 @@
+{
+  "repository": "Shin-NiL/Godot-Android-Admob-Plugin",
+  "repository_id": 192226296,
+  "commit": "459293ea8be1c64a88b4307a82c5514401327408",
+  "source_url": "https://github.com/Shin-NiL/Godot-Android-Admob-Plugin/tree/459293ea8be1c64a88b4307a82c5514401327408",
+  "readme_path": "README.md",
+  "readme_sha256": "e182c0777743a364e769d11e20175d922c5cb2a94e54bc091efb8e7db61479ac",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9ff04bea58ba71f85d2130b7b559aefeb6cd58bb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4188e942309b7fe5c4d4308a998ee5a53924bfdb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ee7e3dec58fd25db61daad2bdedf5ec9a2d4c7c4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9d4c903bba2853fd6255aca30ff2b4f6b9f5805c"
+    },
+    {
+      "path": "admob-lib",
+      "type": "dir",
+      "sha": "12611ccdf49be4943141d8f24ec31a97d7d29f42"
+    },
+    {
+      "path": "admob-plugin",
+      "type": "dir",
+      "sha": "94c40b29c74c36e4a5590ef47b2e42d4ef1bea34"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "c7f4d54485c1e5c7af0d6f1d108a60d379e14e7a"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "9c7c7aa312facd2fbba5b79bff14f92016f78514"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "02c5734a0d7b24da70c6c2671971b7cbd9623006"
+    },
+    {
+      "path": "issue_template.md",
+      "type": "file",
+      "sha": "f33408a9274eaec7de184ff54c4e24ca7cdc32ac"
+    },
+    {
+      "path": "showcase.md",
+      "type": "file",
+      "sha": "18c88a8273ed1bddf1d6bc3b4edf0bdbbbb786c4"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "465fb247691d836602cfd1d447db7d5a72e555ed"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

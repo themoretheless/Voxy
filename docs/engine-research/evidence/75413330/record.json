@@ -1,0 +1,84 @@
+{
+  "repository": "jondubois/iogrid",
+  "repository_id": 75413330,
+  "commit": "5ee7e86143b30bc714ad175e11221aaa948c2bef",
+  "source_url": "https://github.com/jondubois/iogrid/tree/5ee7e86143b30bc714ad175e11221aaa948c2bef",
+  "readme_path": "README.md",
+  "readme_sha256": "ff2ca0b96ad3b1428292103fbe724bbaa2cefe56a96c74ec2fc8c6975d105237",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c2658d7d1b31848c3b71960543cb0368e56cd4c7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "05a96af84d66810c3e60fb94e7c248177d1c94a6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "96fb4f92cbec2c9304fc7d1e514145201a7ed835"
+    },
+    {
+      "path": "bot-manager.js",
+      "type": "file",
+      "sha": "ec78c6fac4a9ab5c22f1f2201e2f83bb14e9671e"
+    },
+    {
+      "path": "broker.js",
+      "type": "file",
+      "sha": "d1b3f50e21fcdf391455947adfa22f4a45488486"
+    },
+    {
+      "path": "cell.js",
+      "type": "file",
+      "sha": "bdf2d93c754a3248c170b864423632490e38549e"
+    },
+    {
+      "path": "coin-manager.js",
+      "type": "file",
+      "sha": "ae19a23514142c5b2d6f2a2ce7988e8260d1c66c"
+    },
+    {
+      "path": "config.js",
+      "type": "file",
+      "sha": "f326e2a7f85870525bfc4322ab20eab258daa24f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "2fdc430bac207c84013c9bc424f48bb5fa446957"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "bd163904602d4d77c8caeb9128d06fa1f441214b"
+    },
+    {
+      "path": "server.js",
+      "type": "file",
+      "sha": "6149ab979f4f3c19aeff15456ed2d5547ead6c8f"
+    },
+    {
+      "path": "state-manager.js",
+      "type": "file",
+      "sha": "20228edb318fbc6514ace3c2a96e300c7a043902"
+    },
+    {
+      "path": "util.js",
+      "type": "file",
+      "sha": "8b4e55e3b64898abdcdff8e436969d1e82ebc217"
+    },
+    {
+      "path": "worker.js",
+      "type": "file",
+      "sha": "634c8d59c3ffb94207fd904e1998cd039a5428d5"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies multiplayer engine/framework using SocketCluster/Phaser; server/state/cell runtime and npm build. Independent underlying engine not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,109 @@
+{
+  "repository": "Junchao-cs/SolarWM",
+  "repository_id": 1342101236,
+  "commit": "ce1da4e7705391eda8eeda6016c0fd3f614b975e",
+  "source_url": "https://github.com/Junchao-cs/SolarWM/tree/ce1da4e7705391eda8eeda6016c0fd3f614b975e",
+  "readme_path": "README.md",
+  "readme_sha256": "ad1fd44acab6e330f96d9aaee03e51c5898b760965563b7138a94d476a09ab0d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6bfa3497a81ded05d0b5c5900b539578fd96ab63"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f559f84001675cce7d27de5124120fbaf50fd60c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "72dcdc0d74aefe86ff892aca5abf745abc346e2a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "46244adc5863ce0264fe7b1287efd82c68cd91ec"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "c2e254998327e7c23a187a2f1192f18ffe5ec017"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "a56177b51969eb27faecd1798941989be04b38ba"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1222c71c76536bf9e62ed3b56f835abb584e344c"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "cace6c8aa13d3f8e429d29dc73a82c898c0516fd"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "ec48d2782790d8e3b5dad8a4fcb0a7a1ebbd8033"
+    },
+    {
+      "path": "configs",
+      "type": "dir",
+      "sha": "1482ffb62b184aac4606de6e41789bfd99229007"
+    },
+    {
+      "path": "data-engine",
+      "type": "file",
+      "sha": "d1c6e7213d0836c9c5de4d586a4963e5f688485e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "83c6ff1fcf0efc22f9512881f83bb0bb1ef754e4"
+    },
+    {
+      "path": "environments",
+      "type": "dir",
+      "sha": "7c4c2907d30bf060020cf17f0921100b568c945c"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "78b69cd60cf750cbe4c0b6fbaa3ab17610e73c22"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "8dc6c80367ae844e0743523b95b0e7e45eecb41e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "47667903b1bd4ef5f3badc26523c2497b5af5493"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "22fda69ebd96fbc5fecfd2c3589261e0c176ee43"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "fd6692e76fdbc9a1ed16d64a308dca456ec1c53f"
+    }
+  ],
+  "classification": "excluded_ml_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies video world-model training framework; Python src/config/data engine, not game runtime engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

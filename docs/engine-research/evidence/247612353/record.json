@@ -1,0 +1,99 @@
+{
+  "repository": "regaxjs/regax",
+  "repository_id": 247612353,
+  "commit": "9acb14810a90648bd41f45fe49a858a918fe53ea",
+  "source_url": "https://github.com/regaxjs/regax/tree/9acb14810a90648bd41f45fe49a858a918fe53ea",
+  "readme_path": "README.md",
+  "readme_sha256": "cf398b04621efa4864c9b2e89552e3bbb98c1355076f83c034d306129741eb58",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "dd80e331892a1e4cb1841f7424bce51095ae85db"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "da6c5b1f282caa124e2f7d94a22889fd8b11f6e7"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "81d6cd1b0260bb00b554a2316eb26490f0ce78e3"
+    },
+    {
+      "path": ".nycrc",
+      "type": "file",
+      "sha": "b7902c451d5fc9f3143495b223a6b029fb8bd720"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "03127091b1b2f40d97e4b0c500467fffc5c6a8f0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fb4dde6262a04bdd00701a06c0972613bf4f8b9f"
+    },
+    {
+      "path": "configs",
+      "type": "dir",
+      "sha": "ab0068462a8990c9272c408bb885de34a69886e6"
+    },
+    {
+      "path": "dev-packages",
+      "type": "dir",
+      "sha": "67433e2c5f669d0fe833d3154daacc36adbad6f2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9bc1d84cf443e189a1ae536dc78ede7e8aa5e9c6"
+    },
+    {
+      "path": "example-packages",
+      "type": "dir",
+      "sha": "3b0a85f23938484ce8d8037146abecd67f68431f"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "a7242454638d12a10d6383c6522005a1d521766a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "362f2b782e614588fa5f1072a7cc551fb8e35296"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "8a54355f5366e75e972b8f2be77b77ca698c6b1d"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "22757b777bcec40f916b605f5181fddbb004d673"
+    },
+    {
+      "path": "tsfmt.json",
+      "type": "file",
+      "sha": "5bfb47223ce5bc43289ec4e8d7e48509cc9f19b8"
+    },
+    {
+      "path": "tslint.json",
+      "type": "file",
+      "sha": "e3a38cec479d530fbe7cd9177589fbbedc941993"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "4b2ead479fb41f87e7e5d9c2b901737aa71d7bce"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Distributed Node multiplayer server framework with packages/configs/build workflow; not counted as general game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

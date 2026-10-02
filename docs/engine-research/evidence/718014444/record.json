@@ -1,0 +1,119 @@
+{
+  "repository": "ProwlEngine/Prowl",
+  "repository_id": 718014444,
+  "commit": "7e4f5c004072e348457b0bbd5038dc0d885ff288",
+  "source_url": "https://github.com/ProwlEngine/Prowl/tree/7e4f5c004072e348457b0bbd5038dc0d885ff288",
+  "readme_path": "README.md",
+  "readme_sha256": "030c714eeee185610bd3efe68e38e4435c83ed65daa8d345f598d72b65593605",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5eac0878b34b71e14e9a27f8ea4333083a9a1a82"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "de92a09a9ca08ecda85e10272fdef7997801839e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c24c6c85352f954ebc1c450264c5eb9eaa97af5f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "72d3336c2d279f2c492680cf1376722c3c830e80"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "77c7dafda5ff47bcb9dbc98e513612158050d5e3"
+    },
+    {
+      "path": "BRDFGen",
+      "type": "dir",
+      "sha": "6c0fdd078d8e43bb98c60182641269c85fb478ef"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "2ec11eb9c97da30c39e26ec84af368f188b04e10"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "77380bce9dcfe1f4ef17f8fcf06ba116c7650bb0"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "f08cdc3722cbcc448e2e09777413acfc2d92393d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ddaf85e1371ea0dd267e6a0b8fc35d6ad12a633c"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "152540d56f37709d2c629d3341f27c528fcfaaa0"
+    },
+    {
+      "path": "Players",
+      "type": "dir",
+      "sha": "5f473348ebfe85d311a73fd5ffa3e1905c350470"
+    },
+    {
+      "path": "Prowl.Analyzers",
+      "type": "dir",
+      "sha": "18e6e9c2f5a15bf28d6341ff6210703b4d3e0880"
+    },
+    {
+      "path": "Prowl.Editor.Test",
+      "type": "dir",
+      "sha": "b96e3eada39a946a5b6e4ac47221bd3309034c4b"
+    },
+    {
+      "path": "Prowl.Editor",
+      "type": "dir",
+      "sha": "7f7cc3a739dd784703bccb14d455c33fdcaee446"
+    },
+    {
+      "path": "Prowl.Runtime.Test",
+      "type": "dir",
+      "sha": "a99a386257462abfe40c61fcc98cdaea28cd344f"
+    },
+    {
+      "path": "Prowl.Runtime",
+      "type": "dir",
+      "sha": "571da3d62fd8f6e5493bb1ae7beb0e3841c90c50"
+    },
+    {
+      "path": "Prowl.slnx",
+      "type": "file",
+      "sha": "a7ad20fd896e66ce2c9da39c159acebb8e0cc02c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b7d2a09eea75f0eaa0b000571f2197a9e555df8a"
+    },
+    {
+      "path": "Run.md",
+      "type": "file",
+      "sha": "88f642be35f16cdd6f88e40fd4517c360a1a8b25"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "d45824b3077e9e865ed369c89c0f3ca130ccded0"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C# engine; owned runtime/editor/player/analyzer projects and .NET build manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

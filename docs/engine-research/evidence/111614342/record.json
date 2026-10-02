@@ -1,0 +1,189 @@
+{
+  "repository": "boardgameio/boardgame.io",
+  "repository_id": 111614342,
+  "commit": "5e9a2c94bde803fae8b081958c406c4d0a7be8ae",
+  "source_url": "https://github.com/boardgameio/boardgame.io/tree/5e9a2c94bde803fae8b081958c406c4d0a7be8ae",
+  "readme_path": "README.md",
+  "readme_sha256": "9ef0a43068674b595d8406da3e277ce0550ef9c39640fbb4a018d51cea1bffae",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "cc03394e02b168caae48f36e6f7cdcd6a750b371"
+    },
+    {
+      "path": ".empty_module.js",
+      "type": "file",
+      "sha": "11f07a8938ccc6c12094af751e08e3e8c86d3c02"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f81b619a19e00483828029274759ae68d5c4ca96"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "667562b66c74b7f32dcd87efc62facb0db0672d4"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "7c645cd6294ee6a1088555c6e6ddfea9e927e449"
+    },
+    {
+      "path": ".lintstagedrc",
+      "type": "file",
+      "sha": "e06dd67490d659d64eeb9d0e7c02b916d66d47ca"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "0d6d761edf848d9396aa0dca4818a206802640ed"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "cbde560b73c528de9bb0036e2dc05d5ddc9083a0"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "e20fd59397e690ef44710e44b45eff5df06aaf1b"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "0d296cbb41b813648b4acc6c13afc9ee33598055"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "9f145a6d18f96105a14b22def0b04652fa6b48c0"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e8d2718c68f0530ff3e06ff46a2348b304fb4429"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "199315488834d56b506783cd2832f84bbb0198f6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "73286ca8024e1227fc045294fdc1022e449fcb25"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c58742c439b1cffae1dcc5887a86a47a12041a30"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "e6455e02e8e7de918efe2f74d1f2fab422eed672"
+    },
+    {
+      "path": "babel.config.test.js",
+      "type": "file",
+      "sha": "2d04c2413d41ebcf17d4d95226cc727b19441315"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "3962224ed498472fb61732f007f081f2996d74a0"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5769db9b2d41784abac40df3187c70f350d75a4a"
+    },
+    {
+      "path": "eslint.config.js",
+      "type": "file",
+      "sha": "ac1f9abec018288dd089e76af6a48084d558d331"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "5164aa83ea632d53e25e84b226fb9d024a0af92e"
+    },
+    {
+      "path": "integration",
+      "type": "dir",
+      "sha": "2dc27a52b8ef3e8fba47806595df2aa7ec16a9b0"
+    },
+    {
+      "path": "jest-svelte-transformer.cjs",
+      "type": "file",
+      "sha": "8f967e7c6432b3e0fe03990269aac7495aa1f711"
+    },
+    {
+      "path": "jest.setup.js",
+      "type": "file",
+      "sha": "cb38ad50eb861e3a0180f663d91c8d346cc4862a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8db9a7628391e1e5dd341562ce72270e760151d2"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "52858245ec550e845e04790500eb369ee22718fb"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "bc473f46d72e1f04b5474579b2c9266438ec7856"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "027ee77ba0e8f69364c882755d1017e0cb005740"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "9039aa0c829f081ab65949edf8acbfdf80eecf24"
+    },
+    {
+      "path": "roadmap.md",
+      "type": "file",
+      "sha": "78b51e862e14d7f3597636d99371d5180355121d"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "376b8eb7ddd4de98810fafdc256884e209673396"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "7cc3199ccce9eaa6fa38d661987b5c29b4ed1ed2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "605250d1eef2aef31c35146058b3edb87cf8d479"
+    },
+    {
+      "path": "subpackages.js",
+      "type": "file",
+      "sha": "2a0f1d2f27542d0671e6017ee57887df57fdb256"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "9f650ffc2980e3742bd801752bab2f5b925d5f62"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies turn-based game engine; owned state/network runtime source and packages/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "katharostech/bevy_retrograde",
+  "repository_id": 346839766,
+  "commit": "7dc1df612ea10a46012630adb6f99fe21eb83cb0",
+  "source_url": "https://github.com/katharostech/bevy_retrograde/tree/7dc1df612ea10a46012630adb6f99fe21eb83cb0",
+  "readme_path": "README.md",
+  "readme_sha256": "11f057d98c5fc1ed03872c6a4c2249031348e84d063a58ee1e217840e63bb5aa",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d31931a6010217897617a01ba8d938affb8dfa6b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "34d67156829f871ca5f233660ea6e125fb4672db"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "b4e46d591f3f1884ea7eaf6d4c3edad9d114bbcc"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "c9909be884c87e86f9e9d35d74bdbe6b77dd6f9a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "cee3ec6ba58f09dd5c02873e26950a2cc27e32a0"
+    },
+    {
+      "path": "README.j2",
+      "type": "file",
+      "sha": "78f246f5b373206ad22a0a35a5b6e43690ff71c0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c6c36b0e5c0c84d8ce6fd63ee683956528bbd00f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "6e44b2eb438742372705407935484b0365f48dde"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "70390c69b91c179081c852ea716ec4df3d5641c7"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "c62b658d04f7c21199ce9b4eff0902ab9ab4bbc4"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "2105a8d04e5f13bd622ac4e1b9e5b9fb217663d7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "8b9eda460369964cdb6ad1b9d4f8fd786889d13c"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "476c2cc995eb039cf6d2e47e2b860fccc3bff2dd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b68867cd0a87187913e125067b297ad049abd08b"
+    },
+    {
+      "path": "wasm_resources",
+      "type": "dir",
+      "sha": "ecacacade49136bae5c8398f91c22498d57e2e71"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies discontinued Bevy plugin pack; adapter crates/Cargo and examples, not separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

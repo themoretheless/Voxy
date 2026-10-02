@@ -1,0 +1,67 @@
+{
+  "repository": "Marisa-Chan/UA_source",
+  "repository_id": 43061075,
+  "commit": "c7c68061845fa89bdbc653f244d5bc5b97939bb8",
+  "source_url": "https://github.com/Marisa-Chan/UA_source/tree/c7c68061845fa89bdbc653f244d5bc5b97939bb8",
+  "readme_path": "README.md",
+  "readme_sha256": "374e452439b2900d5ddf0156ea00463eea48bbc94f647cfc41d31bda298221f3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "595bbaac4dbc41fdc6b833d0b943b39d1d094da2"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "00702708495dcf882b41185c72a4416183bafd58"
+    },
+    {
+      "path": "ShaderExample",
+      "type": "dir",
+      "sha": "acb622b9eb80a708b010625cd132fd3bf2d58492"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "f4f08c938abfa4329afce6a77bdb3aff88a3787b"
+    },
+    {
+      "path": "locale",
+      "type": "dir",
+      "sha": "f79789a6f9b3703ba6c793f418a83ea37ef919df"
+    },
+    {
+      "path": "localexp",
+      "type": "dir",
+      "sha": "aa23ca001744bfa6cdbc0261a18016d19a5b2d14"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "26c24c079cc3475e0ec6d4faeeaf476fd0f78f12"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2b63fa5b10f73e09c88563975324b8438a1fe551"
+    },
+    {
+      "path": "svg",
+      "type": "dir",
+      "sha": "c837cf83c7ff4981eba21ae6977990df7c40dfd7"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "0a6383d5872233b9235ab64f015b684188fc6358"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

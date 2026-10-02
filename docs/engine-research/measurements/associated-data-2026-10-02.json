@@ -1,0 +1,13 @@
+{
+  "command": "cargo bench -p voxy_scene --bench processor_requirements",
+  "samples": 21,
+  "warmups": 3,
+  "cpu": "Apple M4 Max",
+  "scope": "Concurrent host work; substantial tail noise; CPU primitive probe only",
+  "source_sha256": {
+    "crates/voxy_scene/benches/processor_requirements.rs": "a773fb83f55ced94ee4fec204eaec3b724848daa4828c48700c563465b5fa252",
+    "crates/voxy_scene/src/associated.rs": "c3b4522bfbf60605ca73e80cb27067e508e23c1bcf013a480d7325979ef44cc0",
+    "crates/voxy_scene/src/table.rs": "52ceb4de25c5fa7a2966a1fbb5289e263aa7e1eaa12c696e6c4cf42fc136e5f6",
+    "crates/voxy_scene/src/lib.rs": "706be6736d85585af9835b3f0ef55987c099aa40e0a2362ec5b1154167cd2e1c"
+  }
+}

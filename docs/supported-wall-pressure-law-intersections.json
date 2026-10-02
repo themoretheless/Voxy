@@ -1,0 +1,101 @@
+{
+  "scope": "Static nonadjacent-face classification; no CCD or anatomical certification",
+  "states": [
+    {
+      "load_law": "closed-follower",
+      "stage": "rest",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/rest.obj",
+      "sha256": "3d9052288563e12741b605f1dfeabdfac56fda6f64ac0276a40147f1f2085a3a",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "load-1",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/load-1.obj",
+      "sha256": "d6807e30b42b734f44bbd4df607e02024ce4f09de3653ddff4671aef545c9856",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "load-2",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/load-2.obj",
+      "sha256": "8ddf05610d2d94c59c3e7d57fb97060a262b2d85289ae082b6e9405cd145e2c4",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "load-3",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/load-3.obj",
+      "sha256": "5cd872c4ee58cac372c5cf0a02bd7960238a23e37f5b3bae8058f20245f7d5fa",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "loaded",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/loaded.obj",
+      "sha256": "eee9ab9a4849adb1ab04180c709489e8cdeac860b67613c85fbbd97cd7854967",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "unload-1",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/unload-1.obj",
+      "sha256": "0a3a736a2f10ef703adf6704259dd0b181d609924115b1908fd25f653375120a",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "unload-2",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/unload-2.obj",
+      "sha256": "1e4deb2b1a469163e2ae50dfdc2267a0b00abe9eae88620139d33928ef3b47ea",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "unload-3",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/unload-3.obj",
+      "sha256": "082ce7fda2eaaed530feec22ea0943551ebe7b25b782d8dd0a548f49037737f2",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-follower",
+      "stage": "released",
+      "source": "/tmp/voxy-supported-wall-closed-follower-200/released.obj",
+      "sha256": "bc9239b144e7111279991721354609b19a568b791b99b9b7e098936b90c091af",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-reference",
+      "stage": "rest",
+      "source": "/tmp/voxy-supported-wall-closed-reference-200/rest.obj",
+      "sha256": "3d9052288563e12741b605f1dfeabdfac56fda6f64ac0276a40147f1f2085a3a",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-reference",
+      "stage": "load-1",
+      "source": "/tmp/voxy-supported-wall-closed-reference-200/load-1.obj",
+      "sha256": "a0faa1e9ffba8b886c5164af1c15ab4c3d65089428548f4dfcc988a5fe223149",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "load_law": "closed-reference",
+      "stage": "load-2",
+      "source": "/tmp/voxy-supported-wall-closed-reference-200/load-2.obj",
+      "sha256": "fa6b3ff3b56d5355cb6625288d079416ef9755dbd0f913e38c92f864891e3857",
+      "classification_counts": {},
+      "limit_reached": false
+    }
+  ]
+}

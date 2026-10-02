@@ -1,0 +1,54 @@
+{
+  "repository": "roy-t/MiniEngine3",
+  "repository_id": 371504832,
+  "commit": "23e4e7d92ad6d563448146484b9b48f9d943b4bc",
+  "source_url": "https://github.com/roy-t/MiniEngine3/tree/23e4e7d92ad6d563448146484b9b48f9d943b4bc",
+  "readme_path": "README.MD",
+  "readme_sha256": "55f30a29494789ef9bd2b992a5b1f01c4bc3009e0a70bfd12af1dd70141c3c1d",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "87f1611df971a839b35fa7672f825c98ea50094e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e1b1161d8453a263b2c28a247e54a2c027a2452e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c74770a3336f03d23a1822beb4b4f5441d6872a6"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "50bd3ef30cc9755b2b293470577f6a0bde1623bb"
+    },
+    {
+      "path": "MiniEngine.sln",
+      "type": "file",
+      "sha": "0aeb2390d0f250bdd383ab1f9ad357bd278d498c"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "fbc904b63fea17be49e4455e8c86461ad293d8c2"
+    },
+    {
+      "path": "TODO.MD",
+      "type": "file",
+      "sha": "357448ec57c95a386e33284931d8aae98a922472"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "50a109a92c66aa288e17d69b5b2bb38f2a62eea8"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Early DX11 abstraction/content-management rewrite; README focuses on basics, broader game runtime unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,99 @@
+{
+  "repository": "Xrysnow/LuaSTG-x",
+  "repository_id": 178587001,
+  "commit": "67931e657c7b789ea7098f9e4a270a96b6239a5c",
+  "source_url": "https://github.com/Xrysnow/LuaSTG-x/tree/67931e657c7b789ea7098f9e4a270a96b6239a5c",
+  "readme_path": "README.md",
+  "readme_sha256": "568efa1ce3fd6ee7d8571e17e2f99523e5dd51d0c0feceb74e906ab8f142b32c",
+  "entries": [
+    {
+      "path": ".cocos-project.json",
+      "type": "file",
+      "sha": "aed6325ea47dd2bf0bef951b14e42cf3f3191001"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fa9d0149d0aac4022382a78c202edfd142a4fa1f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "88200983976935c6a0fe5bdf43bbc37874aa63f9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8913ce26d5c10bad12e46fafaf46e77a2e88aec2"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "94b7c8c1d099bdcfb2d237d28f732b66dbf1afd7"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e95f88925d0664789ac530e610ccc909c66e7f82"
+    },
+    {
+      "path": "CMakeModules.cmake",
+      "type": "file",
+      "sha": "993002b7c87069871c2dadf27b74395491a6695b"
+    },
+    {
+      "path": "CMakeSources.cmake",
+      "type": "file",
+      "sha": "74c5296fc08898a872607e890458ac36cae875cb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c70f4290c14fedd741ee366fe4db98fe53b62424"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f36174315800d194cc057f07daf43f3c9fb251fc"
+    },
+    {
+      "path": "README_ZH.md",
+      "type": "file",
+      "sha": "852b2e8778bc4f97889c64853e2bd39758a3f3b0"
+    },
+    {
+      "path": "config.json",
+      "type": "file",
+      "sha": "756216fef746a3bfae92c685799e3b6f836f525e"
+    },
+    {
+      "path": "doc",
+      "type": "file",
+      "sha": "563c27b3ee6ed23851fab2d5f5f9113046aa1832"
+    },
+    {
+      "path": "frameworks",
+      "type": "dir",
+      "sha": "9eed8f3ab4a35a8f9f9d025a4a3479455a5c2b7e"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "5d12ad94523db2a46c29cb0b705518a38f6a5413"
+    },
+    {
+      "path": "src",
+      "type": "file",
+      "sha": "14025ff28d5c5ca9b9f1bb0c6de8c2a3563e9482"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "LuaSTG game runtime explicitly based on cocos2d-x and LuaSTGPlus, aimed at bullet-hell games; source/build files present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

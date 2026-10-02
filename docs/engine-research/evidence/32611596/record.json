@@ -1,0 +1,154 @@
+{
+  "repository": "multitheftauto/mtasa-blue",
+  "repository_id": 32611596,
+  "commit": "80689a6e7a4eef1243edcd784b60c4c44a276ac4",
+  "source_url": "https://github.com/multitheftauto/mtasa-blue/tree/80689a6e7a4eef1243edcd784b60c4c44a276ac4",
+  "readme_path": "README.md",
+  "readme_sha256": "497817f7d550b92db0ffa3649e8a59a154dac7c1ffe9afbf4f81c335d228abe9",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2ee80c3f694b03c405e2ce01ca2d8efaf32318bc"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "46755683d785fb4676eeefa207b91880981a185c"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5cc2e746f40eb164a31c6920b3b7d288996d3b16"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "ea06dd30ffc4ecd0f9d1b5b26e07cdca9c406d96"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "57c838085c21299ee911196ecfc5ba176e233671"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "656268179ee034248a6c83c7dbb789c3685e1d32"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "282354b8431b8f6bd0c0a15cf7aec2932684cf48"
+    },
+    {
+      "path": ".ignore",
+      "type": "file",
+      "sha": "22d0d82f8095e9c0ed572776afb47f9ca293ce00"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a79fe7b7c06839a7224595e028283a5337ad1014"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "bfbfcb8af18f02504b359de2b62b032e3506c4f8"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a6b9aadfe96c22a4ae1ccd77afff061b31dd794b"
+    },
+    {
+      "path": "Client",
+      "type": "dir",
+      "sha": "97b0304490dc41f62e9a077042c275f350d5a952"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "818433ecc0e094a4db1023c68b33f24344643ad8"
+    },
+    {
+      "path": "MAETRO.md",
+      "type": "file",
+      "sha": "48d2075dcc59e4e4684aef95b710db0e4e3b0519"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e8abb8d38169f3d58951d418ddcc897aaf51df53"
+    },
+    {
+      "path": "Server",
+      "type": "dir",
+      "sha": "3dd91844202db3449275f5513b0e6a6aeaaee32a"
+    },
+    {
+      "path": "Shared",
+      "type": "dir",
+      "sha": "a2724e6597c477d78cf199d99df1fd6a90ff93b2"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "516b0091ae2ad1b38f6c9d215dd3d296b415c4df"
+    },
+    {
+      "path": "crowdin.yml",
+      "type": "file",
+      "sha": "8355b173868c021d75a58265f7e5b430e55c5d5d"
+    },
+    {
+      "path": "linux-build.sh",
+      "type": "file",
+      "sha": "8c45d8664757abdc4b07cb981820223188e4a97a"
+    },
+    {
+      "path": "linux-install-data.sh",
+      "type": "file",
+      "sha": "c12b14208d433e3386b6eb46eacab77c15973f2d"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "62d8d0d05e14912f05bb6880a12ecd499f74b676"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "a5c7e7874a46bbb7281f59d119f282b2dd409383"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "b3e59dd789bcf7f5bb912f31153d3b29ab5036fe"
+    },
+    {
+      "path": "win-build.bat",
+      "type": "file",
+      "sha": "32862140eb62758b7f7c049f6294682a5d39dcb9"
+    },
+    {
+      "path": "win-create-projects.bat",
+      "type": "file",
+      "sha": "35909ead6d028bafe03dbc2797b0f00c7af8cf82"
+    },
+    {
+      "path": "win-install-data.bat",
+      "type": "file",
+      "sha": "3b1fbb5dbc5cdf264e558c22d962dcd1ed32bf06"
+    },
+    {
+      "path": "wine-build.sh",
+      "type": "file",
+      "sha": "58022d56cafd11136610dba8cf19ec8045b87644"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies injection/hooking extension of GTA runtime; Client/Server/Shared with premake build. Not independent underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

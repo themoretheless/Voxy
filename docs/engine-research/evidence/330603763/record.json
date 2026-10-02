@@ -1,0 +1,54 @@
+{
+  "repository": "jakobhellermann/bevy-inspector-egui",
+  "repository_id": 330603763,
+  "commit": "ac6729854a97a9abcd7657b29d7356bdea63c568",
+  "source_url": "https://github.com/jakobhellermann/bevy-inspector-egui/tree/ac6729854a97a9abcd7657b29d7356bdea63c568",
+  "readme_path": "README.md",
+  "readme_sha256": "920d5e323b7dc2def5738abce6c227aa4e4a7432e2879c76d6b1b6d60a651ddc",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "baa15941b8bb8c6c8ca932deec5b9e1064cc96bf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "96ef6c0b944e24fc22f51f18136cd62ffd5b0b8f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "df85a7450f96210bd2e31e0f32ad69b8f6efec38"
+    },
+    {
+      "path": "LICENSE-APACHE.md",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT.md",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "968e46968597a205f10ba8c8debe2eb563fc1a33"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "785810bd3d73d684ae0785d91765076f57c2a20b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "504ea39bb10b382e5fda7f555c9f2c1d2d0e8e92"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy reflection/resource/entity/asset inspector plugin, external runtime required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

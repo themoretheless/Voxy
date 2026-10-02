@@ -1,0 +1,144 @@
+{
+  "repository": "NeoAxis/NeoAxisEngine",
+  "repository_id": 274298106,
+  "commit": "708989e227f2a95e21a3e199f64efee0c6b00b6f",
+  "source_url": "https://github.com/NeoAxis/NeoAxisEngine/tree/708989e227f2a95e21a3e199f64efee0c6b00b6f",
+  "readme_path": "README.md",
+  "readme_sha256": "584367b203a5f14152e08bfc6a900a5ab589e6b8708892a46957e045255df270",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7f4850df722e8cc9f1d0543c08d2faf10be74f91"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b10e14458d26ff524e36a60b83a8921472c87b86"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "675307fe745287da476db8e813e7f9e1694cbe7d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "c4b6a24fe1b3b6c960040727891745ae1d06d5ff"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "2ad266846145ab7ca2346da89c1c576123cd9d0a"
+    },
+    {
+      "path": "NeoAxis.Android.sln",
+      "type": "file",
+      "sha": "a8dd535b50f19a7656bb3355b1ece9e591ecbc40"
+    },
+    {
+      "path": "NeoAxis.Linux.Native.sln",
+      "type": "file",
+      "sha": "7b912ebf8acd33bfdf50999dfc62aa44d7425f0d"
+    },
+    {
+      "path": "NeoAxis.Managed.sln",
+      "type": "file",
+      "sha": "c45d85ad5928cf0dc1f07bb0b6e316382b00acb8"
+    },
+    {
+      "path": "NeoAxis.ProjectOnly.AnyIDE.sln",
+      "type": "file",
+      "sha": "10356ebd6bb71c5727300115fe3796baa9d8ce8e"
+    },
+    {
+      "path": "NeoAxis.UWP.sln",
+      "type": "file",
+      "sha": "54c2e341267e1b575acd782b10901b33b81f3e2f"
+    },
+    {
+      "path": "NeoAxis.Web.Native.Debug.cmd",
+      "type": "file",
+      "sha": "75b71922811c9548e7be74c2e53c96ca9be97fff"
+    },
+    {
+      "path": "NeoAxis.Web.Native.cmd",
+      "type": "file",
+      "sha": "13aca71bda5a4a4707dadd3330b8e23781f28daf"
+    },
+    {
+      "path": "NeoAxis.Web.sln",
+      "type": "file",
+      "sha": "0ae591c07fbc68ab2e1f7fb10a78de42bece3df8"
+    },
+    {
+      "path": "NeoAxis.Windows.All.sln",
+      "type": "file",
+      "sha": "fb5f3fc9846f4831cce5d7ca3764c232c01fa354"
+    },
+    {
+      "path": "NeoAxis.Windows.Native.sln",
+      "type": "file",
+      "sha": "37ac816eea08c4638027c91483cf8b3612d4dd57"
+    },
+    {
+      "path": "NeoAxis.iOS.Native.Simulator.cmd",
+      "type": "file",
+      "sha": "58e6811c3abc51521bca9e962cc6cafdffa63446"
+    },
+    {
+      "path": "NeoAxis.iOS.Native.cmd",
+      "type": "file",
+      "sha": "7525671d1b81f5fe6845757b9cb619d6b21ce3f5"
+    },
+    {
+      "path": "NeoAxis.iOS.sln",
+      "type": "file",
+      "sha": "c31cca3bb5866bf92682671a718c0953a35b834f"
+    },
+    {
+      "path": "NeoAxis.macOS.Native.Debug.cmd",
+      "type": "file",
+      "sha": "c1649b3da3dff804314f13fec3de29c1adba6cb1"
+    },
+    {
+      "path": "NeoAxis.macOS.Native.cmd",
+      "type": "file",
+      "sha": "0ef3a51c08bd732832a2f6e03140c566ad9d219d"
+    },
+    {
+      "path": "NeoAxis.macOS.Synchronize.cmd",
+      "type": "file",
+      "sha": "1cb483beedf1ce87b18f03397ca536e22a1eaa24"
+    },
+    {
+      "path": "Project",
+      "type": "dir",
+      "sha": "9e2e89bb04e09d05e9dddcb995aa915d0d69dcae"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "eabdbd97d5d82a3393250cdd510f81bf962a756b"
+    },
+    {
+      "path": "Run.Editor.cmd",
+      "type": "file",
+      "sha": "d277ea0e98dcf1f98495ecba570cc8b457d1d445"
+    },
+    {
+      "path": "Run.Player.cmd",
+      "type": "file",
+      "sha": "fbed80c9cde009f3aeaa3f9e79102a24dd523645"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "bce2df06aece23bf5a805a41e38b0fd7bcc0830e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies game/real-time application engine; owned native/managed runtime/editor with platform solution builds. License/adoption and runtime status separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

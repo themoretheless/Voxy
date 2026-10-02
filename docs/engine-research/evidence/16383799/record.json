@@ -1,0 +1,89 @@
+{
+  "repository": "vujadin/BabylonHx",
+  "repository_id": 16383799,
+  "commit": "3fb7a51f7045d4b6a270c7d993e608c665d8120b",
+  "source_url": "https://github.com/vujadin/BabylonHx/tree/3fb7a51f7045d4b6a270c7d993e608c665d8120b",
+  "readme_path": "README.md",
+  "readme_sha256": "47566f5455c74f65af0f6c640ddb5c0991271a381d2e345ac034e83184491293",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d66ff898e06d6a15c9d9d89cb05c6246c29a3ce9"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "bcb82461c946a837588f7d703c9fd26a94dd447f"
+    },
+    {
+      "path": "BabylonHx_Lime.hxproj",
+      "type": "file",
+      "sha": "1fd9a7a8073dc87598326683db4c0c7c9f02b339"
+    },
+    {
+      "path": "BabylonHx_OpenFL.hxproj",
+      "type": "file",
+      "sha": "851c8442055d3bd7506cc85b325d8afa3bde01e3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e06d2081865a766a8668acc12878f98b27fc9ea0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a741585c4fd8afd4c0ddea97167a82ae115ab326"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "c265048685df2c5b7ec30f07e80a5a0f69fe412c"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "8fb6dfbc265c7ed53c1ae03d4cb21bb1e4b4f6f3"
+    },
+    {
+      "path": "com",
+      "type": "dir",
+      "sha": "e76989c607cb013cdb03ed247bcbe300cd1fab34"
+    },
+    {
+      "path": "gulpfile.js",
+      "type": "file",
+      "sha": "352d0e3f097f5146bdfd574a0164c6d66059eb55"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "64fdf2a2ea85f964761d35aad118747ea0f09d44"
+    },
+    {
+      "path": "project.xml",
+      "type": "file",
+      "sha": "741065dd722024255002fa1f34225b968c305359"
+    },
+    {
+      "path": "project_openfl.xml",
+      "type": "file",
+      "sha": "88624d3b1e4e8738e2f4d8685bd44abe1c4a69b5"
+    },
+    {
+      "path": "scrshot.jpg",
+      "type": "file",
+      "sha": "b5820944390bef2760e6874238c0e2ad90fbdd2b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9ad0d9cc33f1866c3ed64c5bfe025da880ed53a6"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Babylon graphics engine port; owned Haxe runtime and platform build metadata. Full gameplay scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

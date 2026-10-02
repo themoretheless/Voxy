@@ -1,0 +1,76 @@
+                               _                            _             
+                              | |                          (_)            
+ ____   ___  ____   ___   ____| | ____     ____ ____   ____ _ ____   ____ 
+|    \ / _ \|  _ \ / _ \ / ___) |/ _  )   / _  )  _ \ / _  | |  _ \ / _  )
+| | | | |_| | | | | |_| ( (___| ( (/ /   ( (/ /| | | ( ( | | | | | ( (/ / 
+|_|_|_|\___/|_| |_|\___/ \____)_|\____)   \____)_| |_|\_|| |_|_| |_|\____)
+                                                     (_____|            
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+== Branches ==
+
+"development" - the latest code
+"master" - the last 'stable' code
+
+i.e. If you want to check out the latest, grab "development."
+
+== Building ==
+
+To build Monocle, use one of the included project files.
+
+If there is no project file for your platform, generate one automatically using Premake4.
+
+See: http://industriousone.com/premake
+
+Run: premake4.exe --help
+to see all options.
+
+Windows:
+Generate Windows project files with Premake4. To do this, you must download premake4.exe.
+Place it in your root Monocle-Engine directory. Then run it with commands through the 
+Windows commandline. (cmd.exe)
+
+e.g. To generate project files for vs2010, including tests
+
+run:
+	premake4.exe --testapp=all vs2010
+in the Monocle-Engine root directory.
+
+The project files will show up in Build/gen-vs2010-All and Build/gen-vs2010-Monocle
+
+To run tests on Windows, make sure the project's working directory is set to:
+$(SolutionDir)..\..\..\Build\bin\
+
+Mac OSX:
+You can use the XCode project file included.
+Make sure you're using XCode version 4 and that you have the shared Scheme selected.
+
+Linux:
+Generate makefiles with Premake4.
+They will show up in Build/gen-*
+
+Tests:
+Change premake4 commandline to build a project file with tests included.
+
+== Test Controls ==
+
+Updated test controls coming soon...

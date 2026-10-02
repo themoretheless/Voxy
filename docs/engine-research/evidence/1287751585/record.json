@@ -1,0 +1,104 @@
+{
+  "repository": "echoo19/hearth",
+  "repository_id": 1287751585,
+  "commit": "34124e53fdf5b2febe1186471c6d9b44c255d9cd",
+  "source_url": "https://github.com/echoo19/hearth/tree/34124e53fdf5b2febe1186471c6d9b44c255d9cd",
+  "readme_path": "README.md",
+  "readme_sha256": "ad7f9e11ad7a65e18df6c9ec3cf00340039ea41907b974ffe641508d211aeefe",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "322f575412e6056233a0a87b725c7ca6a429f648"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "46fcfca7babf4bfddbd791a8cc4ecf724f13c87e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ef5d73c9f39c82923c99059c20c76001c00b8f15"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a467a1046f2146e25dada0bf03f878f6eea94e9c"
+    },
+    {
+      "path": "DESIGN.md",
+      "type": "file",
+      "sha": "0e5919cdff35f08feb0944392790d10c01dfab6a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "71cd185938854607f80254898fb411416efda740"
+    },
+    {
+      "path": "PRODUCT.md",
+      "type": "file",
+      "sha": "f351b9109e1b5e8e4fa9b96f74948f4e8aba1768"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e08af576d02ec18213e0002dc4d0f6e00343c126"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "70c69efcf3b05eb8055b6249eec96ab059308b11"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "30e156698c7dcaa66092f3eacb9a0c1811f27d9f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "cfab54441ad05350cd21791c0b119f41b78ee1da"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a78172e6d8e3e52105c396413413621b8987e1ed"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "83deba648a30ef4356f30a8518d4cc9e1f116885"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "7661d69d6d2aad70d0bcba15f703436812660625"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "4d238b9a9f286c7aede28f2ae90ccf2c460703aa"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "fdb43f0e5a0591a20da9ec343708a223a486a4dc"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "type": "file",
+      "sha": "b2fcd033d3f97d75563101fbbe9f6f0c99ba3be8"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "bcc6e889f1b8fc1de38bf01604c38537268c4e7a"
+    }
+  ],
+  "classification": "excluded_automation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Agentic game-development desktop host for arbitrary browser games; README explicitly establishes no engine/project format.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

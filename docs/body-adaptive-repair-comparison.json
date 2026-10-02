@@ -1,0 +1,41 @@
+{
+  "candidates": [
+    {
+      "file": "body-foot-local-repair-v9.obj",
+      "sha256": "74ea18bae0acf6902d9eac048079ab3115cbd9ab5e1f516bf8a58780deaeab22",
+      "audit": {
+        "vertices": 76052,
+        "triangles": 152100,
+        "area_m2": 1.567127683557361,
+        "max_edge_m": 0.011999540395577154,
+        "degenerate_triangles": [],
+        "duplicate_triangles": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0
+      },
+      "crossingPairs": 105,
+      "implicatedTriangles": 106,
+      "totalImplicatedFaceAreaM2": 6.274173887267744e-05
+    },
+    {
+      "file": "body-adaptive-diagonal-repair-v10.obj",
+      "sha256": "dcec3b684c9a59c1e885f2849cb068ab6daa81278eae3bf962509252ae1b3463",
+      "audit": {
+        "vertices": 76497,
+        "triangles": 152990,
+        "area_m2": 1.5671267207823119,
+        "max_edge_m": 0.011999540395577154,
+        "degenerate_triangles": [],
+        "duplicate_triangles": 0,
+        "boundary_edges": 0,
+        "nonmanifold_edges": 0,
+        "inconsistent_winding_edges": 0
+      },
+      "crossingPairs": 218,
+      "implicatedTriangles": 219,
+      "totalImplicatedFaceAreaM2": 1.7407522080042868e-05
+    }
+  ],
+  "scope": "Implicated face area is a mesh-dependent localization metric, not penetration area/volume or proof one candidate is better; both remain invalid for intersection-free requirement."
+}

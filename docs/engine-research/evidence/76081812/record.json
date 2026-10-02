@@ -1,0 +1,99 @@
+{
+  "repository": "ftsf/nico",
+  "repository_id": 76081812,
+  "commit": "409eec1eeab05f5eb07d17343992638ce37f25ed",
+  "source_url": "https://github.com/ftsf/nico/tree/409eec1eeab05f5eb07d17343992638ce37f25ed",
+  "readme_path": "README.md",
+  "readme_sha256": "44a8c3a5728c250ba730b2ba183056e3d002155b3aaab1b9818a83f0065a2773",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f88b90bd4a33dc38268a1784790d1eef9d2c4f69"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "78626846b9fca59feb886a14ac182cf7eb0ece55"
+    },
+    {
+      "path": "API.md",
+      "type": "file",
+      "sha": "3cee769daca011f006c8c8e2b5f8645d1e390810"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "662caa3e046e2d148e91b2755508eb662a0c041d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "00217f177813a3471d95b57d1cfcdb2f0a4be3fc"
+    },
+    {
+      "path": "exampleApp",
+      "type": "dir",
+      "sha": "16c3752f19c5e1ea2ce6b526809c96087df22d67"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fce589160a758309b60794d67478528fd194c873"
+    },
+    {
+      "path": "nico.nim",
+      "type": "file",
+      "sha": "4c821e443461148c541cae7ec1f06f18e0b6d223"
+    },
+    {
+      "path": "nico.nim.cfg",
+      "type": "file",
+      "sha": "c5f949f696203b885bea560d48adfb592d1d2d5f"
+    },
+    {
+      "path": "nico.nimble",
+      "type": "file",
+      "sha": "0839d0d4c283bf1ca77d26a6820270c9b3f6a757"
+    },
+    {
+      "path": "nico",
+      "type": "dir",
+      "sha": "710793e9908be0364f7499710355c29b55517995"
+    },
+    {
+      "path": "nicoandroid.nim",
+      "type": "file",
+      "sha": "eef027653076ecf31b4b75aa5cc6d4c2b4e3f344"
+    },
+    {
+      "path": "nicoandroid.nim.cfg",
+      "type": "file",
+      "sha": "fc86e83808260111e5dc81c605f62e949de7acde"
+    },
+    {
+      "path": "nicoboot.nim",
+      "type": "file",
+      "sha": "e2d355a836952d174976a77a47b8cf014f808b8e"
+    },
+    {
+      "path": "nicosynth.nim",
+      "type": "file",
+      "sha": "23f9bde5de03f4a5b2ebd7f5d9c1da6c7b399e24"
+    },
+    {
+      "path": "nicosynth.nim.cfg",
+      "type": "file",
+      "sha": "437fdb93d19e51622d7f5bd36ac2fa21807e6f97"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "1cc3a6eec3db3d7db015a5d8e87b534c216291aa"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Nim framework inspired by fantasy-console API; nico runtime/modules and Nimble build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

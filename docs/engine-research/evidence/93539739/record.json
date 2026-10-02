@@ -1,0 +1,89 @@
+{
+  "repository": "tanis2000/minigame-rust",
+  "repository_id": 93539739,
+  "commit": "4707fbea5e6150653860e331c4921c1b0f17bc59",
+  "source_url": "https://github.com/tanis2000/minigame-rust/tree/4707fbea5e6150653860e331c4921c1b0f17bc59",
+  "readme_path": "README.md",
+  "readme_sha256": "e6d8ba64f196050c6e41635f13d37edad4ee99180025feca581d494d323198fc",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9339e7015a5550e444207dfb3448d2cdaa32f2aa"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5d1047bdab176e6d1875c3876381ef55c35d1273"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "b425ad86df5cb60fecbff8ccb5c52aa2ec408c96"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "91085e6363183f69c4c59129fe4f8e8e85f2158a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "02793dd200d6403e85c371411564cb1f4ad980d6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ad24410ca01a367853becb243618e57277088a1a"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "aa2fb827bcb6bce2578e70bd81975cb5f425b769"
+    },
+    {
+      "path": "Web.toml",
+      "type": "file",
+      "sha": "7b3bdb6433f413a82fb45c8784aaa3bfcc0bcfc4"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "baf70ac721a4fc7792b00ebd6cf49a3d02e5275c"
+    },
+    {
+      "path": "android_make.sh",
+      "type": "file",
+      "sha": "48328e0f4797c4501b52f486c6530258d68a6167"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "236891af2caf739f52be57816b2493b05fd06c95"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "ccf29d17186037817b7b5042590c9c2923d1ef7a"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "f8aa7e12f852f75340c9cca30cb31b1107c20b1d"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "8cc1bb85f319ab26f27663cdad11361af48c552e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "00ef626a28666719dc0c843c65316ac0c22f9aa0"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Cross-platform Rust sample game demonstrating mobile builds and desktop hot code reload.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

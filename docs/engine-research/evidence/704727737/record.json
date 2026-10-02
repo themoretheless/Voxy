@@ -1,0 +1,154 @@
+{
+  "repository": "wabiverse/swift-usd",
+  "repository_id": 704727737,
+  "commit": "51753fc9587445aaa48224bb36c40f67772b29a2",
+  "source_url": "https://github.com/wabiverse/swift-usd/tree/51753fc9587445aaa48224bb36c40f67772b29a2",
+  "readme_path": "README.md",
+  "readme_sha256": "afefba98f1dcd4498f6f4f7dfb51ada9631240d60e0cd5e13b8fc11dc527958d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "b7cf05a9d4c904579cefed961688b9e283a9c010"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "11c53eca1112a7c0e43433cf139fe0445b1dcd83"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "941ab8e19d29674978b9b7c569939e1e53b7d861"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fd815c203d2fc75c826c72858745d4a19555e2ba"
+    },
+    {
+      "path": ".spi.yml",
+      "type": "file",
+      "sha": "9a5c30b39488d6ca87c4ea80e2ce6d7d9c4eb612"
+    },
+    {
+      "path": ".swiftformat",
+      "type": "file",
+      "sha": "a7dc6ca3f07de6f3d1c5496524182092d3a622ec"
+    },
+    {
+      "path": ".zed",
+      "type": "dir",
+      "sha": "371c25a511652198dc606243dde2ac064017dc37"
+    },
+    {
+      "path": "Bundler.toml",
+      "type": "file",
+      "sha": "fda8f0a7d1e598a852d23fd6b6cd133cd93fa41c"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "89363f66ffe5e4c8314614604dcd1df15454336f"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "96034f66260592306c3a3fa3fe47969aea3ff112"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "ee7152d6a4c9985af4a95acb85a94a9d07da42b6"
+    },
+    {
+      "path": "Destinations",
+      "type": "dir",
+      "sha": "6931bd852af25b8895a524f69fc4911ad498b432"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "51957e51ed196b9dd48989d3fb9a9ba1fa826178"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "a3c8d6344235ecf177ed55d46b8ddf93af6a2761"
+    },
+    {
+      "path": "NOTICE.txt",
+      "type": "file",
+      "sha": "52b304e9c7558aa139c567020d0eef881ab12e36"
+    },
+    {
+      "path": "Package.resolved",
+      "type": "file",
+      "sha": "5589691b571872763d9eb9c9906d5e7c39836ab3"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "8573b4f82023f9379306528af995cfe99b8aa89f"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "88e021bd1e42bd66b28612a3c41dd64415b97d02"
+    },
+    {
+      "path": "Python",
+      "type": "dir",
+      "sha": "f6ba356cee0b3bacef5cfa9bb28470fcde994142"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f08f629e49f70ec4b3ed45363cc6b1c1cde85fab"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "c933d0ebb2e7b1f7ebde245f579336eed96147e7"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "d87542311708f2c573ea54320f4d73f4cc3f23f5"
+    },
+    {
+      "path": "VERSIONS.md",
+      "type": "file",
+      "sha": "3f95d3ee4455199d02eee7945c0b74112eb9ce11"
+    },
+    {
+      "path": "ci_scripts",
+      "type": "dir",
+      "sha": "b9ebe638997c336bcabad2b6fea7cb2acb84b5d7"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "35f0ee3cd14c4607c66381df7779f558b315b48a"
+    },
+    {
+      "path": "swiftlymetaversingwordsdark.svg",
+      "type": "file",
+      "sha": "104e1f45b54724679c2c586aeb5902b18ad365f8"
+    },
+    {
+      "path": "swiftlymetaversingwordslight.svg",
+      "type": "file",
+      "sha": "c248d797a02ccc55510ed88d6d1aa9aa07acfdc6"
+    },
+    {
+      "path": "usdview.png",
+      "type": "file",
+      "sha": "9e2608c892651e87f1cdf9873bec79b4438788a1"
+    }
+  ],
+  "classification": "application_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Swift framework for OpenUSD applications rather than a complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

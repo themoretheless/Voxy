@@ -1,0 +1,52 @@
+{
+  "repository": "britzl/defold-orthographic",
+  "repository_id": 95710564,
+  "commit": "387370806f7689114ade6d77f98a4341e6b5c062",
+  "source_url": "https://github.com/britzl/defold-orthographic/tree/387370806f7689114ade6d77f98a4341e6b5c062",
+  "readme_path": "README.md",
+  "readme_sha256": "688407034ede0cc4b3ddd6d79609d0e965123c6781724828ac9ced401c6b9995",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8f8f90171eea2280a336fa9c8fc6a4aeff500ff9"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "ad995a04e09177303a127e6ae671f348973a71a8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5420e7321930828b61e4e20d3a93204ab42a5105"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "427e82123ac3a70780747336396f5fd5b08e2923"
+    },
+    {
+      "path": "game.project",
+      "type": "file",
+      "sha": "5447a33f7a53ccbb74b6671b8cb0dd11340e4a35"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "9228bea4068f6967a7d749919cb8864a0f30f7e7"
+    },
+    {
+      "path": "orthographic",
+      "type": "dir",
+      "sha": "2e2c6049c226389bd94fbfbb9bdc3533712f5f29"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "ab8f7121c92cec1783eae798ecc422096c9956ee"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

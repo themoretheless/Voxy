@@ -1,0 +1,18 @@
+{
+  "command": "cargo bench -p voxy_scene --bench processor_requirements",
+  "cpu": "Apple M4 Max",
+  "os": "macOS 26.7.1 (25G313)",
+  "rustc": "1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "profile": "bench optimized",
+  "warmup_operations": 3,
+  "samples": 21,
+  "source_sha256": {
+    "crates/voxy_scene/benches/processor_requirements.rs": "37b465830aafa25075691019d287b22ed4275e1be2b5c2ff81d1f2500053af67",
+    "crates/voxy_scene/src/table.rs": "31ea47c0a80a6444afe04d4e90c9164feae959e4afe3c1ab6e49c047ba024f90",
+    "crates/voxy_scene/src/lib.rs": "303f36d2e6d6cc33bd6a4c15240b08c7eca0b7c69321e2143e2e7ff5283257b3",
+    "crates/voxy_scene/Cargo.toml": "b2bd3170d3786881fe17957430a5ae50cf1db62106e4fb9a635ccc9522ae40d9",
+    "Cargo.lock": "cec9d082008a07600ea4fdc40380cc2dbec10b394d72cf8467d2b7b41c76338a"
+  },
+  "csv_sha256": "8aa665213b7d38476baeabaf40068f1f83b1c2417c6c7fb257d7b035d9bc86d9",
+  "scope": "CPU probe in a dirty shared worktree; concurrent host work was present; not frame/performance parity proof"
+}

@@ -1,0 +1,499 @@
+Исследование рига кистей и обхвата — 2026-10-02
+
+Объём: 100 репозиториев, выборочное чтение относящихся участков исходников. Это не полный аудит всего кода каждого проекта. Часть проектов основана на общих библиотеках MANO/dex-retargeting; количество репозиториев не означает 100 независимых методов.
+
+Подробно разобраны Rigify (finger/palm), manotorch (анатомические локальные оси и ограничения), ContactOpt (контакт и проникновение), GrabNet (уточнение исходной позы), adaptive-hands (поиск степени закрытия по коллизиям поверх готовой анимации).
+
+Выводы для Voxy:
+1. Сначала определить и визуализировать локальные оси каждого сустава на нашей модели. Отделить сгибание, разведение и скручивание. Знак угла без локального базиса ничего не доказывает. manotorch формирует базисы отдельно для левой и правой кисти; числа из его ограничений не переносить напрямую.
+2. Проверить положение основания большого пальца и влияние его пястной кости на возвышение ладони. Не добавлять четвёртую кость автоматически: три кости большого пальца уже могут представлять пястную кость и две фаланги. Нужна проверка семантики существующей цепи.
+3. Для чашеобразного движения ладони рассмотреть отдельные пястные кости, особенно со стороны мизинца. Rigify имеет отдельный super_palm. Риг без этого может быть достаточен для отдельных поз, но его пределы надо видеть.
+4. Веса проверить в простых изолированных движениях каждого сустава до solver контакта и коррекций. Советы форумов о сглаживании весов — гипотезы; прошлые эксперименты Voxy уже показывают, что простое размытие не гарантирует улучшения.
+5. Получить визуально правильные опорные позы открытой руки и обхвата. adaptive-hands ищет параметр закрытия готовой анимации; коллизии не создают правильную анатомию этой анимации.
+6. Оценивать контакт выбранных участков подушечек, его расположение и при необходимости ориентацию поверхности, отдельно от проникновения и самопересечений. Минимальный зазор всей кисти не доказывает правильный хват. ContactOpt поддерживает контакт на обеих поверхностях и отдельную цену проникновения; использование нормалей там опционально.
+7. После исправления поз — проверить открытие, половинное закрытие, полный хват и обратный ход, обе руки, ладонь/тыл/бок, цилиндр/сфера/рукоять. Численные проверки и просмотр анимации нужны вместе.
+
+Подтверждённые наблюдения в текущем Voxy: cylinder_thumb_contact_path последовательно умножает повороты вокруг мировых и продольной осей и в последнем варианте меняет знак сгибания дочерних суставов. finger_weights_uncorrected получает веса по пространственной близости и расстоянию вдоль цепи. Это места для проверки, а не доказанная причина дефекта.
+
+Статус: исследование завершено; новый риг и качественный хват ещё не реализованы. Код рига в этом исследовании не изменялся.
+
+Прочитанные форумы и подробные заметки:
+Read forum threads (2026-10-02):
+https://polycount.com/discussion/62918/modeling-rigging-hands — thumb metacarpal independently rotates; web/thenar weights; palm metacarpals matter.
+https://polycount.com/discussion/160537/hand-topology-help — relaxed bind pose; web morphology and weighting; topology alone insufficient.
+https://blenderartists.org/t/rigging-hands-and-thumb/1111225 — reported thumb dent, inspect thumb/hand weight transition; advice is hypothesis, not proof for Voxy.
+https://polycount.com/discussion/173876/hand-rigging-for-games-in-the-year-2016-techniques — extra palm joints for cupping, especially little-finger side; driven keys.
+https://polycount.com/discussion/222689/i-can-039-t-make-a-fist — joint placement, terminal nondeform joint, loops and visual comparison.
+https://forums.unrealengine.com/t/best-practice-to-implement-and-animate-hands/107264 — object-specific relative offsets and authored poses blended in animation blueprint.
+https://forums.unrealengine.com/t/vr-hands-not-animated-not-grabbing/422221 — pose blendspaces, retargeted custom skeleton caveats.
+https://gamedev.net/forums/topic/699428-tips-for-learning-ikprocedural-animation/ — IK solves positioning; motion timing and dynamics also matter. Mostly full-body, indirect relevance.
+Primary source code read:
+Blender Rigify super_finger.py — align_chain_x_axis; explicit signed bend axes; child IK stiffness; use_stretch=False.
+Blender Rigify super_palm.py — sibling palm bones; local transforms blended by position; separate deform/control bones.
+ContactOpt optimize_pose.py — match contact maps on both hand and object, separate penetration penalty, optimize pose/rotation/translation; optional normal-based methods not universally enabled.
+ContactOpt diffcontact.py — normal-oriented capsule surface queries, selectable normal-aware contact, separate penetration allowance.
+GrabNet models.py — coarse learned pose then iterative RefineNet using signed hand-object distances, updates both translation and pose; requires learned model and MANO, not a drop-in game rig.
+Voxy inspected: FINGER_CHAINS; cylinder_thumb_contact_path; finger_weights_uncorrected. Current cylinder path compounds world-axis and longitudinal rotations, then reverses child bend signs; weights derived by spatial/arc distance; no explicit palm metacarpal cupping in this chain. These observations are verified; causality/anatomical sign remain hypotheses requiring mesh-axis comparison.
+
+
+100 репозиториев и выбранные файлы:
+
+1. 12-Twelve-12/robolings — https://github.com/12-Twelve-12/robolings
+   tests/test_03_hand.py
+   tools/mutants.py
+   exercises/03_hand/force_closure.py
+
+2. 2303886347/linkerhand_gesture_control_sim — https://github.com/2303886347/linkerhand_gesture_control_sim
+   src/linkerhand_calibration/test/test_calibration.py
+   src/linkerhand_model_profiles/linkerhand_model_profiles/profile.py
+   src/linkerhand_calibration/linkerhand_calibration/calibration_gui.py
+
+3. Alestainer/retargeting-controller — https://github.com/Alestainer/retargeting-controller
+   src/retarget_controller/features/hand_topology.py
+   web/src/rendering/handOverlay.ts
+   web/src/features/handTopology.ts
+
+4. Alex-Alexiev/Dexterous-Hand-Retargeting — https://github.com/Alex-Alexiev/Dexterous-Hand-Retargeting
+   utils/dataset/grasp_phase_utils.py
+   view_pca_thumb_velocity_viser.py
+   random_dexycb_retargeting_viser.py
+
+5. ArshiaGalaxy/movli — https://github.com/ArshiaGalaxy/movli
+   src/render/vrm/fingerPose.test.ts
+   src/render/vrm/fingerMapper.ts
+   src/render/vrm/fingerPose.ts
+
+6. Bobyue0118/BrainCo-Revo2-Dex-Retargeting — https://github.com/Bobyue0118/BrainCo-Revo2-Dex-Retargeting
+   hand_retargeting.py
+   examples.py
+   visualize_trajectory.py
+
+7. BotRunner64/somehand — https://github.com/BotRunner64/somehand
+   src/somehand/infrastructure/controllers/adapters.py
+   src/somehand/infrastructure/model_name_resolver.py
+   tests/test_config_model.py
+
+8. CalciferZh/MANO-Hand — https://github.com/CalciferZh/MANO-Hand
+   mano_np.py
+   mano_tf.py
+   dump_model.py
+
+9. ClonedPuppy/Blender_OpenXR_Hand_Rigging — https://github.com/ClonedPuppy/Blender_OpenXR_Hand_Rigging
+   blender/rotateThemBones.py
+
+10. DaphneAntotsiou/task-oriented-hand-retargeting — https://github.com/DaphneAntotsiou/task-oriented-hand-retargeting
+   functions.py
+   pso.py
+   robot_hand/envs/hand_env.py
+
+11. Democratizing-Dexterous/gex_retargeting_sim — https://github.com/Democratizing-Dexterous/gex_retargeting_sim
+   demo_retarget_pybullet.py
+   demo_retarget_real.py
+   retargeting/gex_retarget.py
+
+12. Extrys/XRMasterHands — https://github.com/Extrys/XRMasterHands
+   Runtime/Scripts/XRMasterHandSkeletonDriverUtility.cs
+   Runtime/Scripts/XRMasterHandSkeletonDriver.cs
+   Runtime/Scripts/Simulators/PinchJoystickSimulator.cs
+
+13. G-Abyss/ILDA — https://github.com/G-Abyss/ILDA
+   matlab/example_usage.m
+   python/ilda_ik.py
+   python/example_usage_python.py
+
+14. GodotVR/godot-xr-tools — https://github.com/GodotVR/godot-xr-tools
+   addons/godot-xr-tools/hands/physics_hand.gd
+   addons/godot-xr-tools/hands/collision_hand.gd
+
+15. JYChen18/DexLearn — https://github.com/JYChen18/DexLearn
+   dexlearn/network/final_layers/normalizing_flow.py
+   dexlearn/dataset/base_dex.py
+   dexlearn/network/final_layers/diffusion.py
+
+16. JYChen18/TaskDexGrasp — https://github.com/JYChen18/TaskDexGrasp
+   main.py
+
+17. Jerry-LiuBB/gazebo_grasp — https://github.com/Jerry-LiuBB/gazebo_grasp
+   gazebo-pkgs-noetic/gazebo_grasp_plugin/src/GazeboGraspFix.cpp
+   gazebo-pkgs-noetic/gazebo_grasp_plugin/src/GazeboGraspGripper.cpp
+   gazebo-pkgs-noetic/gazebo_grasp_plugin/include/gazebo_grasp_plugin/GazeboGraspFix.h
+
+18. Jetpack-Crow/autogrip — https://github.com/Jetpack-Crow/autogrip
+   handrig.py
+
+19. JonasMedu/learn_grasping — https://github.com/JonasMedu/learn_grasping
+   src/setting_utils/positions.py
+   src/hand_env/hand_interface.py
+   src/hand_env/allegro_env_unsupervised.py
+
+20. KailinLi/mano2nimble — https://github.com/KailinLi/mano2nimble
+   nimble/NIMBLELayer.py
+
+21. KevinyWu/manosim — https://github.com/KevinyWu/manosim
+   src/mano_build.py
+   src/build_mjcf.py
+   src/visualize_hand.py
+
+22. LimbusSpace/ego2dex — https://github.com/LimbusSpace/ego2dex
+   src/ego2dex/topology.py
+   src/ego2dex/retarget/robots.py
+   tests/test_topology.py
+
+23. LuisMiguelAlmeida/Syngrasp — https://github.com/LuisMiguelAlmeida/Syngrasp
+   Syngrasp2.2/GUI/Syngrasp_GUI.m
+   Syngrasp2.2/VizzyHand/Set_Smat.m
+   Syngrasp2.2/utils/Set_Smat.m
+
+24. MHeeChan/Retarget — https://github.com/MHeeChan/Retarget
+   PostProcesserRetargeting.cs
+
+25. MatchaChoco010/UnityAnimationRiggingHandArmRig — https://github.com/MatchaChoco010/UnityAnimationRiggingHandArmRig
+   Assets/Rig/RigConstraint/HandConstraint.cs
+
+26. MephestoKhaan/HandPosing_Demo — https://github.com/MephestoKhaan/HandPosing_Demo
+   Assets/Oculus/SampleFramework/Core/HandsInteraction/Scripts/Tools/FingerTipPokeTool.cs
+   Assets/Oculus/SampleFramework/Core/HandsInteraction/Scripts/Tools/FingerTipPokeToolView.cs
+   Assets/Oculus/SampleFramework/Core/Locomotion/Scripts/TeleportOrientationHandlerThumbstick.cs
+
+27. NVIDIA/soma-retargeter — https://github.com/NVIDIA/soma-retargeter
+   soma_retargeter/animation/skeleton.py
+   soma_retargeter/renderers/skeleton_renderer.py
+
+28. SSModelGit/PowerGrab — https://github.com/SSModelGit/PowerGrab
+   Working Files/JModelicaScriptFIles/Hand Test Scripts/Precision Grasp Test Scripts/PlotHandTestDegFreedomSpecPrecision.py
+   Working Files/JModelicaScriptFIles/Hand Test Scripts/Prehensile Grasp Test Scripts/PlotHandTestDegFreedomSpecPrehensile.py
+   Working Files/JModelicaScriptFIles/Hand Test Scripts/Prehensile Grasp Test Scripts/PlotHandTestDegFreedomSpecPrehensile1.py
+
+29. SherwinDengxiong/dex_retargeting_local — https://github.com/SherwinDengxiong/dex_retargeting_local
+   dex_retargeting/optimizer.py
+   dex_retargeting/seq_retarget.py
+   dex_retargeting/retargeting_config.py
+
+30. TUSZ-AGDR/SixDOF-GelSightHand — https://github.com/TUSZ-AGDR/SixDOF-GelSightHand
+   matlab/dh_validation/Finger_model.m
+   matlab/workspace_analysis/ur3_workspace_analysis.m
+   tools/generate_platform_variants.py
+
+31. ValveSoftware/steamvr_unity_plugin — https://github.com/ValveSoftware/steamvr_unity_plugin
+   Assets/SteamVR/Input/SteamVR_Skeleton_Pose.cs
+   Assets/SteamVR/Input/SteamVR_Skeleton_Poser.cs
+   Assets/SteamVR/Input/SteamVR_Action_Skeleton.cs
+
+32. WT-MM/HandPose — https://github.com/WT-MM/HandPose
+   handpose/retargeting.py
+   handpose/ik_retargeting.py
+   handpose/tracker/mediapipe.py
+
+33. YuyangLee/mano-urdf — https://github.com/YuyangLee/mano-urdf
+   show_urdf.py
+
+34. armin3731/grasp-rl-mujoco — https://github.com/armin3731/grasp-rl-mujoco
+   train.py
+   predict.py
+   utils.py
+
+35. aryan-410/PPO-Trained-Prosthesis-Project — https://github.com/aryan-410/PPO-Trained-Prosthesis-Project
+   simox_ros/sr_grasp_mesh_planner/src/grasp_planner_window.cpp
+   simox_ros/sr_grasp_mesh_planner/src/grasp_action_server.cpp
+   simox_ros/sr_grasp_mesh_planner/include/sr_grasp_mesh_planner/grasp_planner_window.hpp
+
+36. axioxmedia/Maya_Animation_Batch_Fixer_Tool — https://github.com/axioxmedia/Maya_Animation_Batch_Fixer_Tool
+   ALPHAOption1CalibrationTest.py
+
+37. baraaHassan/Controlling-Avatar-Robot-Fingertips — https://github.com/baraaHassan/Controlling-Avatar-Robot-Fingertips
+   hand_ik.cpp
+   hand_controller.cpp
+   hand_ik.h
+
+38. blender/blender-addons — https://github.com/blender/blender-addons
+   rigify/metarigs/human.py
+   rigify/metarigs/Animals/wolf.py
+   rigify/metarigs/Animals/cat.py
+
+39. borjagq/HandyVariations — https://github.com/borjagq/HandyVariations
+   HandyVariations/main.cpp
+   Hand Detection/funcs.py
+   HandyVariations/imgui/imgui_internal.h
+
+40. bybaa/universal-hand-retargeting — https://github.com/bybaa/universal-hand-retargeting
+   src/hand_retargeting/optimizers/vector.py
+   src/hand_retargeting/model/profile.py
+   src/hand_retargeting/types.py
+
+41. chenjoya/manogcn — https://github.com/chenjoya/manogcn
+   manogcn/modeling/mano/mano.py
+   manogcn/data/datasets/freihand.py
+
+42. dexsuite/dex-retargeting — https://github.com/dexsuite/dex-retargeting
+   src/dex_retargeting/optimizer.py
+   src/dex_retargeting/seq_retarget.py
+   src/dex_retargeting/retargeting_config.py
+
+43. facebookincubator/Momentum — https://github.com/facebookincubator/Momentum
+   momentum/character/linear_skinning.h
+   pymomentum/geometry/array_skinning.h
+   pymomentum/backend/triton_skinning.py
+
+44. facebookresearch/ContactOpt — https://github.com/facebookresearch/ContactOpt
+   contactopt/arguments.py
+   contactopt/create_dataset_contactpose.py
+
+45. facebookresearch/ContactPose — https://github.com/facebookresearch/ContactPose
+   utilities/misc.py
+   scripts/data_analysis/active_areas.py
+   scripts/download_data.py
+
+46. gszauer/GameAnimationProgramming — https://github.com/gszauer/GameAnimationProgramming
+   AllChapters/Code/Chapter10Sample02.cpp
+   AllChapters/Code/Chapter11Sample02.cpp
+   AllChapters/Code/Chapter11Sample03.cpp
+
+47. handx-project/HandX — https://github.com/handx-project/HandX
+   data/processing/single_code.py
+   diffusion/src/feature/single_motioncode.py
+   evaluation/single_motioncode.py
+
+48. hassony2/manopth — https://github.com/hassony2/manopth
+   manopth/manolayer.py
+
+49. hjlllll/Functionalgrasp — https://github.com/hjlllll/Functionalgrasp
+   GraspNet/datasets/GraspNet.py
+   Grasptype_bruch/grasptype_brunch/dataloader_grasptype.py
+   GraspNet/models/architectures.py
+
+50. humanoidintelligence/HiRetarget — https://github.com/humanoidintelligence/HiRetarget
+   body_retarget/smpl_parser.py
+   hand_retarget/retarget_hand.py
+   mano/joints_info.py
+
+51. ikalevatykh/mano_grasp — https://github.com/ikalevatykh/mano_grasp
+   mano_grasp/grasp_miner.py
+   mano_grasp/graspit_scene.py
+   mano_grasp/generate_grasps.py
+
+52. ikalevatykh/mano_pybullet — https://github.com/ikalevatykh/mano_pybullet
+   mano_pybullet/hand_model.py
+   mano_pybullet/hand_body.py
+   mano_pybullet/mano_model.py
+
+53. jayam-joshi/Hand-Imitation — https://github.com/jayam-joshi/Hand-Imitation
+   ik_hand.py
+
+54. jborbik/hand_pose_retargeting — https://github.com/jborbik/hand_pose_retargeting
+   pose_retargeting/optimization/miscellaneous.py
+   pose_retargeting/optimization/pso.py
+   scripts/hand.py
+
+55. jeremiah-stevens/adaptive-hands — https://github.com/jeremiah-stevens/adaptive-hands
+   Packages/com.jeremiah-stevens.adaptive-hands/Runtime/Scripts/FollowHand.cs
+   Packages/com.jeremiah-stevens.adaptive-hands/Runtime/Scripts/RiggedHand.cs
+   Packages/com.jeremiah-stevens.adaptive-hands/Runtime/Scripts/RiggedHandControllerInput.cs
+
+56. jorgejgnz/HPTK — https://github.com/jorgejgnz/HPTK
+   Runtime/Utils/GesturePanel/FingerGesturesPanel.cs
+   Runtime/Modules/Avatar/SubViews/PartSpecific/FingerView.cs
+   Runtime/Modules/Avatar/SubModels/PartSpecific/FingerModel.cs
+
+57. jsoorii/hand_retargeting — https://github.com/jsoorii/hand_retargeting
+   hand_retarget.py
+   glove_source.py
+   calibration.py
+
+58. jtseng20/MANO-IK — https://github.com/jtseng20/MANO-IK
+   IK_hand.py
+
+59. kvoeten/UnrealBodyPlugin — https://github.com/kvoeten/UnrealBodyPlugin
+   Source/UnrealBody/Private/CharacterComponents/IKBodyComponent.cpp
+   Source/UnrealBody/Public/Library/AnimationStructLibrary.h
+   Source/UnrealBody/Public/CharacterComponents/IKBodyComponent.h
+
+60. leapmotion/RiggedHandVisualizer — https://github.com/leapmotion/RiggedHandVisualizer
+   Assets/Resources/Scripts/LeapHand.cs
+   Assets/Resources/Scripts/LeapLegacyHand.cs
+   Assets/Resources/Scripts/LeapFinger.cs
+
+61. leapmotion/UnityModules — https://github.com/leapmotion/UnityModules
+   Packages/Tracking/Core/Runtime/Plugins/LeapCSharp/Finger.cs
+   Packages/Tracking/Core/Runtime/Scripts/Hands/FingerModel.cs
+   Packages/Tracking/Hands/Editor/HandBinderEditor.cs
+
+62. leapmotion/leapjs-rigged-hand — https://github.com/leapmotion/leapjs-rigged-hand
+   examples/advanced.js
+
+63. leiyaocui/MHR_Hand — https://github.com/leiyaocui/MHR_Hand
+   prune_MHR_to_pytorch.py
+   mhr_hand.py
+   test_prune_MHR_to_pytorch.py
+
+64. lifchrs/wuji-hand-retargeting — https://github.com/lifchrs/wuji-hand-retargeting
+   examples/vitra3d_wuji_comparison.py
+   wuji_retargeting/mano_to_wuji.py
+
+65. ligerfotis/morph-retargeter — https://github.com/ligerfotis/morph-retargeter
+   scripts/teleop_leap_with_viz.py
+   scripts/record_retargeting_demo.py
+   scripts/index_angles_demo.py
+
+66. lixiny/manotorch — https://github.com/lixiny/manotorch
+   manotorch/anatomy_loss.py
+   manotorch/manolayer.py
+   scripts/simple_anatomy_loss.py
+
+67. makehumancommunity/makehuman — https://github.com/makehumancommunity/makehuman
+   makehuman/shared/skeleton.py
+   makehuman/shared/skeleton_drawing.py
+   makehuman/plugins/1_mhapi/_skeleton.py
+
+68. makehumancommunity/mhx2-makehuman-exchange — https://github.com/makehumancommunity/mhx2-makehuman-exchange
+   import_runtime_mhx2/armature/rig_hand.py
+
+69. mrdoob/three.js — https://github.com/mrdoob/three.js
+   src/nodes/accessors/Skinning.js
+   src/renderers/shaders/ShaderChunk/skinning_vertex.glsl.js
+   src/renderers/shaders/ShaderChunk/skinning_pars_vertex.glsl.js
+
+70. mveres01/multi-contact-grasping — https://github.com/mveres01/multi-contact-grasping
+   src/collect_images.py
+   src/collect_grasps.py
+   src/postprocess.py
+
+71. namaewa-im/inspire-hand-retargeting — https://github.com/namaewa-im/inspire-hand-retargeting
+   realsense/test/hand_joint_estimator_no_hyperextension_clip.py
+   realsense/hand_joint_estimator.py
+   realsense/hand_joint_estimator (before_scale).py
+
+72. nickthelegend/fidelify-landing — https://github.com/nickthelegend/fidelify-landing
+   src/lib/rig.ts
+   src/lib/links.ts
+   src/lib/waitlist-email.ts
+
+73. nkyriazis/MBV_InverseKinematics — https://github.com/nkyriazis/MBV_InverseKinematics
+   PySurfaceConstrainedPose/PySurfaceConstrainedPose.cpp
+   SurfaceConstrainedPose/KDTree.hpp
+   SurfaceConstrainedPose/PointConstraintDecoder.cpp
+
+74. oakink/OakInk — https://github.com/oakink/OakInk
+   oikit/oi_shape/oi_shape.py
+   oikit/oi_shape/utils.py
+
+75. otaheri/GrabNet — https://github.com/otaheri/GrabNet
+   grabnet/tests/test.py
+   grabnet/tests/demo_colab.py
+   grabnet/tests/grab_new_objects.py
+
+76. otaheri/MANO — https://github.com/otaheri/MANO
+   mano/joints_info.py
+   mano/lbs.py
+   mano/model.py
+
+77. r00tman/EventHands — https://github.com/r00tman/EventHands
+   evsim_joints/mano.cpp
+   model/train.py
+   evsim_joints/evis60.py
+
+78. ruiming-wu/modified-dex-retargeting — https://github.com/ruiming-wu/modified-dex-retargeting
+   src/dex_retargeting/optimizer.py
+   src/dex_retargeting/retargeting_config.py
+   src/dex_retargeting/seq_retarget.py
+
+79. samarth-robo/GraspIt2URDF — https://github.com/samarth-robo/GraspIt2URDF
+   scripts/graspit2urdf.py
+
+80. shawnaron/hand-simulation — https://github.com/shawnaron/hand-simulation
+   Assets/Scripts/InverseKinematicsJacobian.cs
+   Assets/Samples/HandTracking/HandLandmarkDetect.cs
+   Assets/Scripts/FinThumbPosition.cs
+
+81. shkwon98/grasp_synergy_adapter — https://github.com/shkwon98/grasp_synergy_adapter
+   src/grasp_synergy_adapter.cpp
+   src/grasp_profile.hpp
+   test/test_grasp_profile.cpp
+
+82. svnvav/HandManipulator2D — https://github.com/svnvav/HandManipulator2D
+   Assets/HandManipulator.cs
+
+83. taeyunwoo/DexHOI2Sim — https://github.com/taeyunwoo/DexHOI2Sim
+   mano2urdf/mano2urdf/urdf.py
+   mano2urdf/mano2urdf/mano_helpers.py
+   mano2urdf/scripts/fk_compare.py
+
+84. tengyu-liu/GenDexGrasp — https://github.com/tengyu-liu/GenDexGrasp
+   utils_model/HandModel.py
+   run_grasp_test.py
+   utils_model/CMapAdam.py
+
+85. umiyuki/HumanoidHandPoseHelper — https://github.com/umiyuki/HumanoidHandPoseHelper
+   Assets/HumanoidHandPoseHelper/HumanoidHandPoseHelper.cs
+
+86. vchoutas/smplx — https://github.com/vchoutas/smplx
+   smplx/joint_names.py
+   smplx/vertex_ids.py
+   smplx/lbs.py
+
+87. vizitei-dmitri/hand_hybryd_retargeting — https://github.com/vizitei-dmitri/hand_hybryd_retargeting
+   src/lerobot_robot_dg5f/lerobot_robot_dg5f/object_contact.py
+   isaaclab_ext/dg5f_isaaclab/source/dg5f_isaaclab/dg5f_isaaclab/tasks/direct/dg5f_cube/dg5f_cube_env_cfg.py
+   src/dg5f_teleop/dg5f_teleop/retarget_node.py
+
+88. vladenysiuk/hand-retarget — https://github.com/vladenysiuk/hand-retarget
+   src/hand_retarget/app.py
+   src/hand_retarget/pose/artifact.py
+   tests/test_app.py
+
+89. vrm-c/UniVRM — https://github.com/vrm-c/UniVRM
+   Packages/UniGLTF/Runtime/UniGLTF/IO/MeshIO/SkinningInfo.cs
+   Packages/UniGLTF/Runtime/UniHumanoid/Skeleton.cs
+   Packages/VRM/Runtime/BlendShape/BlendShapeClipHandler.cs
+
+90. wa-ys/HY-Motion-Pipeline — https://github.com/wa-ys/HY-Motion-Pipeline
+   blender/hym_retarget.py
+   app/hymstudio/main.py
+   blender/hymotion_to_unity.py
+
+91. wangduo159/dexterous-hand-visualizer — https://github.com/wangduo159/dexterous-hand-visualizer
+   examples/demo_retarget_hands.py
+   examples/demo_new_hands.py
+   examples/demo_dex3.py
+
+92. wangzivector/SpaHybGen — https://github.com/wangzivector/SpaHybGen
+   src/spahybgen/grasptip.py
+   src/spahybgen/utils/utils_rosvis.py
+   src/spahybgen/pipeline/optimization_node.py
+
+93. wenbowen123/icra20-hand-object-pose — https://github.com/wenbowen123/icra20-hand-object-pose
+   src/perception/src/Hand.cpp
+   src/perception/src/PoseEstimator.cpp
+   src/perception/src/app/main_realdata_auto.cpp
+
+94. wengmister/mano_convert — https://github.com/wengmister/mano_convert
+   generate_pose.py
+
+95. wuji-technology/wuji-retargeting — https://github.com/wuji-technology/wuji-retargeting
+   wuji_retargeting/viz/param_map.py
+   example/calibrate_offset.py
+   wuji_retargeting/opt/base.py
+
+96. wwwond/hybrid-hand-retargeting — https://github.com/wwwond/hybrid-hand-retargeting
+   ros2_ws/src/hand_teleop/hand_teleop/hand_tracker_node.py
+   src/perception/collect_dyn2.py
+   src/perception/collect_dynamic.py
+
+97. y2y6q/vision-based-hand-arm-retargeting — https://github.com/y2y6q/vision-based-hand-arm-retargeting
+   src/wrist_teleop/grasp_validation.py
+   scripts/run_camera_panda_allegro_teleop.py
+   src/wrist_teleop/config.py
+
+98. yanming03/BimanGrasp-Generation — https://github.com/yanming03/BimanGrasp-Generation
+   BimanGrasp-Optimization/utils/bimanual_energy.py
+   BimanGrasp-Optimization/utils/bimanual_handler.py
+   BimanGrasp-Optimization/main.py
+
+99. yijie21/toporetarget_reimp — https://github.com/yijie21/toporetarget_reimp
+   toporetarget/data.py
+   toporetarget/robot.py
+   tests/test_datasets.py
+
+100. zeljkovranjes/humanoid-retargeter — https://github.com/zeljkovranjes/humanoid-retargeter
+   Code/HumanoidRetargeter/Mapping/ProfileLibrary.cs
+   Code/HumanoidRetargeter/Mapping/AutoMapper.cs
+   Code/HumanoidRetargeter/Mapping/BoneRole.cs

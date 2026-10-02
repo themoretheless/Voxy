@@ -1,0 +1,89 @@
+{
+  "repository": "Ravbug/UnityHubNative",
+  "repository_id": 206668792,
+  "commit": "7d0ec118b3d07e369518b0a1a2a1c827ca647de6",
+  "source_url": "https://github.com/Ravbug/UnityHubNative/tree/7d0ec118b3d07e369518b0a1a2a1c827ca647de6",
+  "readme_path": "README.md",
+  "readme_sha256": "a2f6b7de5242718dfdace79ba5339590ef66c787500cdc641bf88f1ebd376449",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2c58a62ed3491aec05f8b98b4b49c39850ac991c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ed86553f499d6f394c47bdeef39e27e1f3ddc335"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "13a55dd89f8a14d07ea87d9af3cb066563b8fecd"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4bfa151a224543295daca7072a978f13bc7e3528"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7390d7d16f69e895207db5d1200a9c06a19916f9"
+    },
+    {
+      "path": "_site",
+      "type": "dir",
+      "sha": "1c4e54c5b74e5c754bb93d35d9d9493f066e3b14"
+    },
+    {
+      "path": "appimage.cmake",
+      "type": "file",
+      "sha": "c8485f91133ed2d7b06d637f2f03199bee3edb31"
+    },
+    {
+      "path": "init-linux.sh",
+      "type": "file",
+      "sha": "6128062f61d2b5a2ada09c30f6514aa354385a08"
+    },
+    {
+      "path": "init-mac.sh",
+      "type": "file",
+      "sha": "9ba9d17ecb20fcb4e0a51406ebd2c41af940c085"
+    },
+    {
+      "path": "init-win.bat",
+      "type": "file",
+      "sha": "645ccd568a0d8de2b5607d5d13979dc511d9ef43"
+    },
+    {
+      "path": "pkg-linux.sh",
+      "type": "file",
+      "sha": "5259bf9e31de48d5f40c3a361c1559ab27894b9f"
+    },
+    {
+      "path": "pkg-mac.sh",
+      "type": "file",
+      "sha": "834952a78eb99150bef7e2f5a841165bd2652457"
+    },
+    {
+      "path": "pkg-win.bat",
+      "type": "file",
+      "sha": "bf457e795c0dbbe17bfc14dd23d275d80f96284d"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "af21919b8fbb2959eb62e3cfd50af61743e06178"
+    },
+    {
+      "path": "wxWidgets",
+      "type": "dir",
+      "sha": "b33e5ee2d1cf04d5976e77b165eede025c3e1dd2"
+    }
+  ],
+  "classification": "excluded_launcher_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Unity project/install launcher; native source/build do not implement underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

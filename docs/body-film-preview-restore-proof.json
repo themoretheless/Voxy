@@ -1,0 +1,31 @@
+{
+  "behavior": "Atomic FilmPreview numerical checkpoint restore on the same canonical chart and topology; retains exact saved source weights and history. Reconstructs geometry-derived operators.",
+  "releaseRestoreTestsPassed": 3,
+  "actualNativeCaptureRestore": {
+    "cells": 90175,
+    "archivedFacesVerifiedAgainstImportedObj": true,
+    "entireStateSnapshotEqual": true,
+    "nextStepCellVolumesEqual": true
+  },
+  "sourceWeightValidation": {
+    "observedMaxRecalculationDifference": 1.3877787807814457e-17,
+    "normalizedL1Tolerance": 2.842170943040401e-14,
+    "savedWeightsRetainedExactly": true
+  },
+  "renderer": {
+    "buildPassed": true,
+    "option": "--film --film-state PATH.json",
+    "oldCaptureCurrentModelAttempt": "Rejected incompatible canonical chart; no image generated."
+  },
+  "limits": [
+    "Current runtime facial cut yielded 90062 film cells versus 90175 in the archived capture. Automatic topology migration is not implemented.",
+    "Body pose, tissue solver and full viewer checkpoint are not restored.",
+    "MCP viewer-side restore command is not integrated."
+  ],
+  "sourceHashes": {
+    "crates/voxy_app/src/surface_film_preview.rs": "5e13cb973db71d89d512065263bedc8b7e4010a82d5dcecb3297f01c425787ec",
+    "crates/voxy_app/examples/female_render.rs": "bab04135500196c34013ac79bf51f9dc8c74288453f1df6b03df93b3a651895c",
+    "crates/voxy_app/Cargo.toml": "4c5190cddccbc1549ae91d7f024bbcbcdb8361f91f46a6a80fb7cd63d53ea80d",
+    "docs/body-film-native-state.json": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6"
+  }
+}

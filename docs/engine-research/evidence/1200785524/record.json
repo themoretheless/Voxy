@@ -1,0 +1,54 @@
+{
+  "repository": "SedulousWorks/SedulousEngine",
+  "repository_id": 1200785524,
+  "commit": "773b2379964758ce3634fc9986022df0878a7e7b",
+  "source_url": "https://github.com/SedulousWorks/SedulousEngine/tree/773b2379964758ce3634fc9986022df0878a7e7b",
+  "readme_path": "README.md",
+  "readme_sha256": "6d20c97ac245ade7e6c27f1dddd8da28d206635134761760d9fa25a4998e8935",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "adf1a21ccdb7c53ed4274ab8d31f7742460eff9e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5ee64e5661000c1d225cfdb661c799f68ec54c0c"
+    },
+    {
+      "path": "Bin",
+      "type": "dir",
+      "sha": "ca8b9f422bda5ed9d04d5aa75667efb92b206193"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "e1823897fc26c919d9f0ae5cde985704d054be1f"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "65a6e8415a011fac6d566d89334af627a175b2de"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "342d26008a6458359238fb1dd3b40d413a963c23"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "268fa5f82962897563e9b91d5c1f7c3980a80bda"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "922a744c000469b15d3d049dac2b4ac975eff09b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Beef engine with Code, dependencies and documentation covering layered runtime, scene editor and asset pipeline; feature claims remain unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

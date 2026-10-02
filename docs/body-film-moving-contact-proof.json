@@ -1,0 +1,21 @@
+{
+  "testSuite": "surface_film_atomic_contact",
+  "passed": 3,
+  "failed": 0,
+  "session": 23808,
+  "exitCode": 0,
+  "movingContact": {
+    "steps": 200,
+    "timeSeconds": 2.0,
+    "stepsWithTransfer": 56,
+    "stepsBeyondMaxGap": 126,
+    "grossTransferredVolumeM3": 4.26764606e-10,
+    "maximumMassRelativeError": 8.687517408e-15
+  },
+  "testSourceSha256": "d1f0fdfa07e8b6b7f86ec31c7be4967e93880e40e443079016257a23c31c1812",
+  "limitations": [
+    "Two-triangle prescribed-motion fixture",
+    "No whole-body collision, CCD or physiological calibration",
+    "No GPU image validation"
+  ]
+}

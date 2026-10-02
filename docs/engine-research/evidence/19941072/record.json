@@ -1,0 +1,52 @@
+{
+  "repository": "coeuvre/rust-2048",
+  "repository_id": 19941072,
+  "commit": "ebf96d9b89c9c1e11383f87d35408c22d0839b8c",
+  "source_url": "https://github.com/coeuvre/rust-2048/tree/ebf96d9b89c9c1e11383f87d35408c22d0839b8c",
+  "readme_path": "README.md",
+  "readme_sha256": "e024c40b1f12b018d50ec2cd8bb2a45230c57bfa145276805970c9afcd8cbb31",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1750ac13ccafcbfee8a9c77d96a8c56f3f56dc26"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "59161ab790394b25505ece4809d90b0e93bca452"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "4d5ca5e49c54103b35c12023692c13bc141a4454"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f4298a284cb25805d509d0ebceb81c5d34ecfb80"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c3aafc35b033f5976530cd11bea607f137100a19"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "1bf6a0f6d554af0038ec583df17702e5217ac2ab"
+    },
+    {
+      "path": "rust-2048.png",
+      "type": "file",
+      "sha": "1cd7b52420e03bb099f23291fda8ab70ee28cecd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4d4c3629bfbfff64eb919d4eabe75028f54ee290"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

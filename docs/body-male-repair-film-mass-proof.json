@@ -1,0 +1,26 @@
+{
+  "male-original-to-repaired-film-map.json": {
+    "donors": 89756,
+    "recipients": 89756,
+    "relative_volume_error": 0.0,
+    "maximum_row_sum_error": 2.220446049250313e-16
+  },
+  "male-repaired-to-original-film-map.json": {
+    "donors": 89756,
+    "recipients": 89756,
+    "relative_volume_error": 0.0,
+    "maximum_row_sum_error": 2.220446049250313e-16
+  },
+  "female-to-repaired-male-film-map.json": {
+    "donors": 90402,
+    "recipients": 89756,
+    "relative_volume_error": 0.0,
+    "maximum_row_sum_error": 1.1102230246251565e-16
+  },
+  "repaired-male-to-female-film-map.json": {
+    "donors": 89756,
+    "recipients": 90402,
+    "relative_volume_error": 0.0,
+    "maximum_row_sum_error": 0.0
+  }
+}

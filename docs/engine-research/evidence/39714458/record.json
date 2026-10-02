@@ -1,0 +1,144 @@
+{
+  "repository": "orx/orx",
+  "repository_id": 39714458,
+  "commit": "3473e3a560ba0407b7c4d6cf17f848a53c28faa4",
+  "source_url": "https://github.com/orx/orx/tree/3473e3a560ba0407b7c4d6cf17f848a53c28faa4",
+  "readme_path": "README.md",
+  "readme_sha256": "97a1db918089b28954c84126ae58cf1db53a7e22a69e501e54fc6979fed660b4",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "b192d58969aee88ad9479f31e755ba05f139ccfe"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c6928f3677535cabf19ee6b5dbf84760526806c2"
+    },
+    {
+      "path": ".extern",
+      "type": "file",
+      "sha": "d54ae6244294c9de502d8159315ec66efbf1a362"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5ae40720827a674f9921ba452fbdf389488b3d5c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "544315aba035a72a8f5460f0b62579865933ce40"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8f2404d42aff061931fb1955f7fb84c758203520"
+    },
+    {
+      "path": ".hgignore",
+      "type": "file",
+      "sha": "9d014089bc3b58404df0fc6da7e6219b08716da1"
+    },
+    {
+      "path": ".hgtags",
+      "type": "file",
+      "sha": "fe57fb6b8893b9c92758d1f6600743058c9d937d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d1121838d284c2c86e1b41aaa4011715b02ff332"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "0379ee33fc588633755af34ebb4e30ce89e04a7f"
+    },
+    {
+      "path": "CHANGELOG",
+      "type": "file",
+      "sha": "41a8f6c021cec965d0bbe15e4284798cbdf5d658"
+    },
+    {
+      "path": "COPYRIGHT",
+      "type": "file",
+      "sha": "0a1a369eb3c5c95de76caaf2b47fd21e08f07003"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "93a10a1497eccb938782c937d159f2ce8ce30d9d"
+    },
+    {
+      "path": "README.html",
+      "type": "file",
+      "sha": "e8040afc2d5c718f945833b371369e35741624e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ad5473680707d03617005bd7083e11ebd109a89a"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "24082d7f39d26e57d0e62a82194128167d3ed2f9"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "f7ec22b5e514f24ae5efb6e18601c6568eedf588"
+    },
+    {
+      "path": "doxyfile",
+      "type": "file",
+      "sha": "ef22afde0e7a82b0c8baf491ce2c0b524fc08955"
+    },
+    {
+      "path": "init.bat",
+      "type": "file",
+      "sha": "74642cd7611f24005ea78931ceacb4b56d8af3b8"
+    },
+    {
+      "path": "init.sh",
+      "type": "file",
+      "sha": "a6aee4e71f140ba25d9f625f374e3d04513153f4"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "3b2e2ad7e250098839a40d0e67946930be1fa548"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "273b64bbdc43048a230a730fd0cf35e9916d88dd"
+    },
+    {
+      "path": "setup.bat",
+      "type": "file",
+      "sha": "0fdb30dcf4380f6bf31f757d6228c79f96a83ee2"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "29ced208f9596454626ebaf31f0f6d4f499f264a"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c5164d9e27cd2145649ae50d742e4a31d4183bf5"
+    },
+    {
+      "path": "tutorial",
+      "type": "dir",
+      "sha": "2154fe6aaf07bbc4ff8fbe3ddeab1bd5b25e7bd5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies data-driven 2D game engine; owned code and setup/build/tool roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,87 @@
+{
+  "repository": "luis-l/BonsaiBehaviourTree",
+  "repository_id": 267209704,
+  "commit": "6aa41f3006e94ddb1d8e77811e1d74970572f088",
+  "source_url": "https://github.com/luis-l/BonsaiBehaviourTree/tree/6aa41f3006e94ddb1d8e77811e1d74970572f088",
+  "readme_path": "README.md",
+  "readme_sha256": "d0ed80b470e27ee1622c2e7cbff181b7924462348da21a90823480ed2f9d291a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2fb0b15e5324e0b617e3061427c4d43e430e938b"
+    },
+    {
+      "path": "BonsaiAssembly.asmdef",
+      "type": "file",
+      "sha": "f1f3a7a8376f3567faf30d2a96e7dcb76a2111db"
+    },
+    {
+      "path": "BonsaiAssembly.asmdef.meta",
+      "type": "file",
+      "sha": "08112f3360b731926d3729db10f9330fc8335dc7"
+    },
+    {
+      "path": "Core.meta",
+      "type": "file",
+      "sha": "e010fef2f0a35cff721e5e3dba4adb86326679bb"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "0b7b9d7f5f50d2819e46d4fd103aa2980ce9e337"
+    },
+    {
+      "path": "Editor.meta",
+      "type": "file",
+      "sha": "87ce20e81b576fe0d3acc4182172970829087656"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "d0cfaa575232a967d1b2b148939a2e2689d66d97"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9126e0834677e131461b3392e8a39008d9bf8e8d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1c010dc22077f980d273c3244f30900f79767ee5"
+    },
+    {
+      "path": "Standard.meta",
+      "type": "file",
+      "sha": "d86d40e2c2a7bea183c7d7794cb48a45d3d5fdfa"
+    },
+    {
+      "path": "Standard",
+      "type": "dir",
+      "sha": "6f77471bb5da77f573541350930626293fb7607e"
+    },
+    {
+      "path": "Tests.meta",
+      "type": "file",
+      "sha": "bbad9b42819bdf19f7d9c46f8b63cfde9a5a59e4"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "4b803ed9cb6327ea655f6a7a2b63c9a6d692692d"
+    },
+    {
+      "path": "Utility.meta",
+      "type": "file",
+      "sha": "dc35f44860834f1de7d552058b6d501ff4652562"
+    },
+    {
+      "path": "Utility",
+      "type": "dir",
+      "sha": "52dbbc95a225152f8cf6bdbf1827f3f4500d1f86"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

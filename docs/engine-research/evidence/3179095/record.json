@@ -1,0 +1,64 @@
+{
+  "repository": "dhewm/dhewm3",
+  "repository_id": 3179095,
+  "commit": "455b88e8dff2be822f08eb498f51b383e851fa38",
+  "source_url": "https://github.com/dhewm/dhewm3/tree/455b88e8dff2be822f08eb498f51b383e851fa38",
+  "readme_path": "README.md",
+  "readme_sha256": "caadbd2197e3da340340fd3ca312f664e99d8950986083fbd197248137b01884",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fdc645c2c01c4e00fbc95afff3cbf800f70ae767"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f174fc5853e975f5c93d6af437a821b5c9f98130"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "c6e7765a66630e132096224c277114b3b2eef0a7"
+    },
+    {
+      "path": "Changelog.md",
+      "type": "file",
+      "sha": "56d12b9c883734d6b9fa7760d6a45388584b53ec"
+    },
+    {
+      "path": "Configuration.md",
+      "type": "file",
+      "sha": "2d4bc5696673a4b7c489bca8d0353004a00a3790"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "51ec13359e97f1c42e5da7d1dbcc821369ec55e5"
+    },
+    {
+      "path": "base",
+      "type": "dir",
+      "sha": "9fc7a7b65989e12ff1aee82c5ed5795687d4f7f5"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "47d046af6a98ba67377fa329d622e69bca535af4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "24584d0108a9adf435400b638499033617e8bd51"
+    },
+    {
+      "path": "neo",
+      "type": "dir",
+      "sha": "ef18b0600131bd2016d4bf206e102c7b0a281aaf"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Doom 3 GPL runtime port with platform, rendering and audio backend changes; neo source and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

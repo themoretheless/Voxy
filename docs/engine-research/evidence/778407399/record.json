@@ -1,0 +1,69 @@
+{
+  "repository": "AmelieHeinrich/Oni",
+  "repository_id": 778407399,
+  "commit": "f2d74e8ebb6dd840505a3a79a508a29d127caf9c",
+  "source_url": "https://github.com/AmelieHeinrich/Oni/tree/f2d74e8ebb6dd840505a3a79a508a29d127caf9c",
+  "readme_path": "README.md",
+  "readme_sha256": "c4580fc6c2ad691e0312f5527dc2ea38e9ddc94747184456d814c9e2004ede5c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e4441e8384fc47465cc5c4c5c680eeb913c42157"
+    },
+    {
+      "path": "D3D12",
+      "type": "dir",
+      "sha": "84cd0cabe8a52b695fdbe34fec791ae01653ed2f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4151fc061bc6339b0b603d358d7cee84a7fd72de"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f789066b5799fc7b55e2c28a1e86debbeff2f3a8"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "42712ae92968ca0be31588160ba5d73aa5c12a05"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "294de99e6b99ce5dc0347c8092dc149429fbf00e"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "48fb2b9d2439d5a96bcfc8ee9091d076b162b546"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "2f78a724893e59a1f5fcee3d48c56074f9b95044"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "27639aa86dd12803b14a5b04232bb64a342caaf7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "aa0ba6c76c54cf44520f8fc4e276bc89ee51c6d6"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "57da7ca039e83b8d3427de1a7a48b3b8d33e14f0"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "DX12 graphics showcase/toy renderer; evidence does not establish a broader game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,82 @@
+{
+  "repository": "heroiclabs/fishgame-macroquad",
+  "repository_id": 318581059,
+  "commit": "25a9872b540035f2998f8624eba5423066d4715d",
+  "source_url": "https://github.com/heroiclabs/fishgame-macroquad/tree/25a9872b540035f2998f8624eba5423066d4715d",
+  "readme_path": "README.md",
+  "readme_sha256": "a4c7a157f96e470aff0d354d021336d5716256b528eba9f5dc15b6b7db25a340",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5cd63084ef0c6d7337114e8fb847fbcfae3fdd5a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "5d010b990ecb88654502eff8acc717c3b7ffcfb6"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "84795cfd0455c88560497286a6f0ce199c9a4949"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a95a9bb5b8045d01c5d9e66ae59832f7b9ae62eb"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "79e1ed4bb610e3d97740ca25484f1964de652378"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "cf27b4ef8b1f767db6d6b3e21e95b117743dbef7"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "a4bb1a03d72860136c676d6e09ee57cbb9931934"
+    },
+    {
+      "path": "leaderboard.lua",
+      "type": "file",
+      "sha": "1f54070d79d0282f704d7e8832741a611658a4c1"
+    },
+    {
+      "path": "match.lua",
+      "type": "file",
+      "sha": "b6e9bafc5f1d27bd0227bf6fcb23b3d583512733"
+    },
+    {
+      "path": "match_rpc.lua",
+      "type": "file",
+      "sha": "5934abbd264dcb4714534750ad9b6619b8aa320c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1c1d6894232371bd65741a77238d49039695f297"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "5f0395fcdebddfca822f51802a3ccee58891aac1"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

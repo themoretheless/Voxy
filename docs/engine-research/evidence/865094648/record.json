@@ -1,0 +1,164 @@
+{
+  "repository": "Gallasko/ColumbaEngine",
+  "repository_id": 865094648,
+  "commit": "e0054e56cec81c5ef2df6d908b4ab97237dd9f27",
+  "source_url": "https://github.com/Gallasko/ColumbaEngine/tree/e0054e56cec81c5ef2df6d908b4ab97237dd9f27",
+  "readme_path": "readme.md",
+  "readme_sha256": "2917912adc3ab15395b9987ef884d89182ca4cc0c6f9dee61d126d733955ad64",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "5d1359c862ecccfeb864cee918c11d8e3bbbc01b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4290449469986e10783219b92008cf0784eb32ab"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "65d3d0dd5c8540c1088abd5f785a12ba82205a01"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "83ba37df67bcaeb5bb8ad97be17df1906f2fb598"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ef2552905ec6e8316ecf5d740defb2b073129247"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ab29f806b8c5a85a3210e4b003d4e6b9829375a9"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6bcb5d9733baee4674b11aba5e0b04e1767ba3e6"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "2a2d4d78290fe79584268015b3e782944d891f55"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "eab1ba0d88fb986c0fd26eb1909409b08755ab6a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "76cea938a72338064fae8beb8937e368b0e1610a"
+    },
+    {
+      "path": "analytics-server",
+      "type": "dir",
+      "sha": "5f6ede1a93e15c84563773e0ec40bfe6d576ed11"
+    },
+    {
+      "path": "asan_play.sh",
+      "type": "file",
+      "sha": "38146aa870f9ca5fb756f633a0466f051b3bb634"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "eabc202eae14135e363d554aeda386ca26ceb019"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "7a060d6074f11b858f44e91545fb48a8d7cef4f7"
+    },
+    {
+      "path": "codingstyle.md",
+      "type": "file",
+      "sha": "1d8477bd051d3c53cfdb073c14ae112e2044e06d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4195a32bcd9070d442ee6766323ab0798ea9b780"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "06f147a87f358221ec11636b797d2dd6da249b6f"
+    },
+    {
+      "path": "import",
+      "type": "dir",
+      "sha": "2235e447adc6abd1417656f4cf616c63b3de6f7c"
+    },
+    {
+      "path": "make_and_play.sh",
+      "type": "file",
+      "sha": "21e2a9ed8df214eb51caeed1e917297f2db2d6c8"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "fc7aa9f9531392d7fbb0b0afdbc7324fa0510a7e"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "e1158889e4752241fe359ecaca74e5c31017f235"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ff486a64663ebeef2ee9265a99e560386984e5f7"
+    },
+    {
+      "path": "shader",
+      "type": "dir",
+      "sha": "2d342066a06dc7e36e2c3d25eb264f20f2a1e859"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b162736779d2511fd626cda0331ec6adef1b4483"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "465e85528d814ddbd7eef6608add0dbdde8d82d1"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "5d8eb5195122ee2e2baf9da110d177a2906d3c4a"
+    },
+    {
+      "path": "test_anonymous_function.pg",
+      "type": "file",
+      "sha": "cdde9e787fda87ac24cc1082e6df0d50dbcfa36c"
+    },
+    {
+      "path": "testdeps",
+      "type": "dir",
+      "sha": "a83cdacc303a1dc80fb4fb71616ac8671a1522e3"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "21747acf028528d8f6061a1f14747f84b2de5685"
+    },
+    {
+      "path": "visualize_profile.py",
+      "type": "file",
+      "sha": "ee3c4e34885ded5c3bd4896b054943f27064c594"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ ECS game engine with source, import/tools, examples and tests. Performance and architecture quality remain unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

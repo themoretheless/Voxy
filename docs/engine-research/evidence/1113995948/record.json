@@ -1,0 +1,79 @@
+{
+  "repository": "VertexF/Void",
+  "repository_id": 1113995948,
+  "commit": "2d77a41bd21889a93e5a674725e83aefe3e408da",
+  "source_url": "https://github.com/VertexF/Void/tree/2d77a41bd21889a93e5a674725e83aefe3e408da",
+  "readme_path": "README.md",
+  "readme_sha256": "d8c15f3cf22950ac338405a931f7402ba813603d8eb2d661af6855fa19f1d27f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "db5d4ecdea407ab5373980dbe2a8312105951880"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2242b31c900c3094b9f47ccae142a06111611c12"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e9281f8a12b154a63e8a7b8419127725c7acadf6"
+    },
+    {
+      "path": "JOLT_LICENSE",
+      "type": "file",
+      "sha": "4f0976848529e8243687918193e0742032aef7dc"
+    },
+    {
+      "path": "KTX_LICENSE",
+      "type": "file",
+      "sha": "fce6489b1be26a12537cc7fae6cd793c51f792ec"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a773e36f001edf52d1e2288a7605d1e115ff545f"
+    },
+    {
+      "path": "clean_build.cmd",
+      "type": "file",
+      "sha": "65090e5359fc7ba65fe6affaec4f3f8597997f5c"
+    },
+    {
+      "path": "clean_linux.sh",
+      "type": "file",
+      "sha": "84016c11032848583f0693023c62eb915dd14279"
+    },
+    {
+      "path": "dirty_build.cmd",
+      "type": "file",
+      "sha": "caf0ff0da9b6caf507e1c9055ecf5da37b3126a6"
+    },
+    {
+      "path": "dirty_linux.sh",
+      "type": "file",
+      "sha": "b57d5529d3e2e90d190469811ff80dec48024a01"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "447497079793d1407e31e4c773e4ffa6e8a46e85"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7cfebdd38c306fcdf1d1ac0bd87a70d3707bbace"
+    },
+    {
+      "path": "vender",
+      "type": "dir",
+      "sha": "2118381ab78fc02bac6da760ec7a41db53e229a8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Vulkan 3D game engine source intended for platformer development; assets unavailable, feature completeness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

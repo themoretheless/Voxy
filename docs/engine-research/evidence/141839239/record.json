@@ -1,0 +1,62 @@
+{
+  "repository": "Isetta-Team/Isetta-Engine",
+  "repository_id": 141839239,
+  "commit": "9f9bd0a2785ee7d944c4e251127ff57970f25754",
+  "source_url": "https://github.com/Isetta-Team/Isetta-Engine/tree/9f9bd0a2785ee7d944c4e251127ff57970f25754",
+  "readme_path": "README.md",
+  "readme_sha256": "32c8eb1e5ad34722652f2bf3a5c65720720d3b6de8bfee1d49b5bd1b9bedb406",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d8d751de38856dd0bce81ed33f5b8f90855205a2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cc0ec17039a3a27bc299f316f61b5ff0d19e5382"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c3ae6716ff431388e9f7c584ac4c66d4244b5273"
+    },
+    {
+      "path": "ArchitectureDiagram.png",
+      "type": "file",
+      "sha": "3de4b537b819e3a8f44ce63d769a63b72cd149f5"
+    },
+    {
+      "path": "BuildAndExportEngine.bat",
+      "type": "file",
+      "sha": "dc4da56d13d12f1a55dcdf462c5d0133eb4acc26"
+    },
+    {
+      "path": "Dependency.bat",
+      "type": "file",
+      "sha": "782ac61b23ccdbf5b59f2e49ce120bc9d1fb24e1"
+    },
+    {
+      "path": "ExportHeaders.bat",
+      "type": "file",
+      "sha": "24755e4fa410a20bbc168f5f1a967e16e17d5a7b"
+    },
+    {
+      "path": "Isetta",
+      "type": "dir",
+      "sha": "7284af8f7749abfe92918326801afaa3d3a9287d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "62346e97d9cb10120e3a5519afe49c40da6c2486"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d3af514c858eac495e857830781186a51f626347"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

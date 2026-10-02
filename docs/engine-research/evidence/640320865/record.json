@@ -1,0 +1,162 @@
+{
+  "repository": "corepunch/open-realm",
+  "repository_id": 640320865,
+  "commit": "4395340661e3c59d5ea52904880bccc4bafaf3a1",
+  "source_url": "https://github.com/corepunch/open-realm/tree/4395340661e3c59d5ea52904880bccc4bafaf3a1",
+  "readme_path": "README.md",
+  "readme_sha256": "0e27aacaaa1bd4b94b254ae89a22bb3c39d263353bc2396bbb8d70ff19ffa869",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b56f90f0ab3bfd0132443d9d7e3df63cc00f6465"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4990954f25a719ce0a17394ed3ca750e2a88f9eb"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "54ac5375025ba5d56e868da5c043fef5c147c51c"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "988d1bc270f95a24c54cd9de87b97987922a59b5"
+    },
+    {
+      "path": "AXIS.md",
+      "type": "file",
+      "sha": "4e35f62f42b491ecec0e8e435b1c56bd10b1a159"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "93872dac9806c2d51d75ba6acee4f3f7676a8ad7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2912f1eb3048765e4f968767aa5bd59a492c58f9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94f40e6874b6d3cb5c7636f22dc1f14a4b53d820"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "998303ab44ff0784e18305e9d2cc677d404a5449"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1e242c340632ef5ab5c2d4faf9fb34e735a58847"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "030964c7e0097ca5f50a0a18f69f16b089f59fe6"
+    },
+    {
+      "path": "architecture",
+      "type": "dir",
+      "sha": "9a8002392a44678c2753e522b9305aababbb17b8"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "bd23bb43933302270eb0ff2bb29c79d5f044a9c6"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "7ccd12c41b56231aaa2940aa3b8d2fe72bccf0a0"
+    },
+    {
+      "path": "dist-scripts",
+      "type": "dir",
+      "sha": "98e2efd91378bd1435e89976fa342b2a746e0ab3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6b6d49a80d1786a4d57493dc9fb842c9dc36bc6d"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "f1786f49ed3c9b8c157314d105522b05c05619cf"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "8af43f0d8e93709a0dfc22cecbb69a773a5ef00e"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "4c2eea85ce671c84e82f546ba04da690cf43b36b"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "52546c0f5637eab97a97a1b3f9be40c81ebfde51"
+    },
+    {
+      "path": "sbxenv.yaml",
+      "type": "file",
+      "sha": "f7f820099372d437f0fe680bb789de59aa75ae04"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "01ecdfc2c53da029fb7fd5bd0b9c53bc0463de77"
+    },
+    {
+      "path": "serverdata",
+      "type": "dir",
+      "sha": "389918acc55dc7877a1e61139fea94650c2c539b"
+    },
+    {
+      "path": "share",
+      "type": "dir",
+      "sha": "5368b46306b1e2c065a227622f43435cbd0bdd5c"
+    },
+    {
+      "path": "shared",
+      "type": "dir",
+      "sha": "dfed60f7324c5ebcac439de72a94f1f59b0866e9"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "8c7772d2edcc316d10e33f03fe867a24227a1b30"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "25568ec3a24177efc54ba3c03e13ab6f930fa514"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "28b55db412cd46099eb8f87303c81c4309380a32"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "496c080b218a883b045c8fdb580d59783598e490"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,17 @@
+{
+  "imageSha256": "e4524d8842b90ef961e911f48c61595a1d0fd4d1349ccbd7ed02eff7e286e1c5",
+  "rendererSha256": "a9a87b3f0cefbf80c3e1c4b58e93bb4ceec15feac8c4b3b520c9885b9822a9d8",
+  "session": 25833,
+  "exitCode": 0,
+  "backend": "Metal",
+  "inspected": true,
+  "renderVertices": 61513,
+  "renderTriangles": 123022,
+  "bindings": 61513,
+  "limitations": [
+    "Static frontal face only",
+    "Hair raster artifacts persist",
+    "Refinement itself does not remove intersections",
+    "No moving tissue/film checkpoint correspondence validation"
+  ]
+}

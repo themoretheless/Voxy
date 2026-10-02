@@ -1,0 +1,27 @@
+{
+  "repository": "erickpassos/MiniMOBA",
+  "repository_id": 12907657,
+  "commit": "b6d2eb374c2261e0bbb8fdd2822869f9f4be24aa",
+  "source_url": "https://github.com/erickpassos/MiniMOBA/tree/b6d2eb374c2261e0bbb8fdd2822869f9f4be24aa",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3a434084cba9bbc744378a7bc5297217d99157b7"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "d7e8facb1592b493698f4f64c64bb2b976ec494d"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "09bdc39aba7b063e3e167814f5eb18e926e7a39f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

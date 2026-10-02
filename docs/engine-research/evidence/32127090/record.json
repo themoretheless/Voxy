@@ -1,0 +1,114 @@
+{
+  "repository": "DaemonEngine/Daemon",
+  "repository_id": 32127090,
+  "commit": "67cc704084066cd1ab2b9f5b6b944b98f5b5fed9",
+  "source_url": "https://github.com/DaemonEngine/Daemon/tree/67cc704084066cd1ab2b9f5b6b944b98f5b5fed9",
+  "readme_path": "README.md",
+  "readme_sha256": "c1dd378c2df5cf74f55b83798300f7936e3e6befdd49ca27b5fff7842fff7b80",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "5b29ca6ea2878cfc5c38c70257f12dd7d7220aa6"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "35606a00d3dca2bf3f25f1b1f222890777854d77"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c397ab38dfa06c2dffff092c3e5f39c4e4b37cb3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "00e20db8da718270f5c6285c2bd55505aebbe59b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "fe18d462cb43dc62cf9ac07be2bd48cbaede8605"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "65ff1a430b98d0a76ac1a8366c36fd1b7ce77c9c"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "09777714e0c6f31b379a69717fc801b6cf7678d9"
+    },
+    {
+      "path": "GPL.txt",
+      "type": "file",
+      "sha": "8f04a80137c123bff854625ed03dd440cc379725"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "681708a688cfc99de19b6b50f9f72b7f1bdb7bcf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "69c8cd83bbacc905fb59fc5fb6350a69615fbc90"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "4140a21f14c664c476cd84763ab202980deed444"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "47f0aaddf11086a61704aeed479909ee86ff248e"
+    },
+    {
+      "path": "external_deps",
+      "type": "dir",
+      "sha": "793e41db6ee5fdff1f1c8fb9da79cd61a13a2518"
+    },
+    {
+      "path": "freetype.cmake",
+      "type": "file",
+      "sha": "10fcfc38fdd8483b419989f607dc40d0091bf243"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "c09fc64f7d73159e79f295c13fe102c3761ad2c2"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "fc292da7245e6a19a21ab2d1a3d5f8c9829ccb5d"
+    },
+    {
+      "path": "src.cmake",
+      "type": "file",
+      "sha": "df4b327340e31c0ddcbde04a1b115e34d73a8c4c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "478be973ed511440e603ea69eb0d59666afdafa8"
+    },
+    {
+      "path": "srclibs.cmake",
+      "type": "file",
+      "sha": "2fa3241d8fe9850e75dae38e9f29af8e71d1e0d0"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0c50b80846904de19ba87c3e51fc6f01131b86fe"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies standalone shooter engine from id-derived lineage; src/libs and CMake build, separated from dependent Unvanquished game.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

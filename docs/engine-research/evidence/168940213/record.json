@@ -1,0 +1,49 @@
+{
+  "repository": "Dvergar/awesome-haxe-gamedev",
+  "repository_id": 168940213,
+  "commit": "6731f6ebc91caa68bc3d104efd49f6cdc1e79ec7",
+  "source_url": "https://github.com/Dvergar/awesome-haxe-gamedev/tree/6731f6ebc91caa68bc3d104efd49f6cdc1e79ec7",
+  "readme_path": "README.md",
+  "readme_sha256": "101f3f94ff09b88ca1b28b1c5a275ac7a275cdcafdb9aee8c03e1142f3fc5e29",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "fc589a2ddb3ec25f52a0d2b5091709ae95cc9f76"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5c03fa3a90be2482022471493a18688bef15a263"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6fe7c2b3d0f4419c5c4583beda0fd7f843465849"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "670154e3538863b2d9891fd5483160fbdfc89164"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ab99cff65413400f64ca1ede9e8d132ad0853b5e"
+    },
+    {
+      "path": "community.md",
+      "type": "file",
+      "sha": "3c2df88a0f233054b0e89ddd35539046a567f432"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "c4de96fb9dc416c35d370f24861920cd98a9b0e7"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README lists Haxe engines/tools; root documentation/images rather than owned runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

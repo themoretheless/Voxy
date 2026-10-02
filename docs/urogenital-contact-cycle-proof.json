@@ -1,0 +1,10 @@
+{
+  "urethra": {
+    "released_volume_ratio": 0.9999992423823554,
+    "maximum_rest_released_node_distance_m": 1.1912682095221015e-06
+  },
+  "vagina": {
+    "released_volume_ratio": 0.9999998087797894,
+    "maximum_rest_released_node_distance_m": 4.3529749614480474e-07
+  }
+}

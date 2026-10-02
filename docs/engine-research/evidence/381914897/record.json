@@ -1,0 +1,129 @@
+{
+  "repository": "lo-th/phy",
+  "repository_id": 381914897,
+  "commit": "7fe6ca802f581bfdeb3835147bb1923f372cc622",
+  "source_url": "https://github.com/lo-th/phy/tree/7fe6ca802f581bfdeb3835147bb1923f372cc622",
+  "readme_path": "README.md",
+  "readme_sha256": "0c1d0bc60fdde103d4918b54731d9f0633e56890509dc142e28dc35bf35b48f5",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f2d4fbb49cb1176b2b1555b4e230a5e4b09734c9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "86df953f62193b3957183715dd4d5f236cc3cfac"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8bd5ca301ba38e2ee558ceccbf80a83528af17dd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "51a7866b127a4c817999530f1c7d8e58dcfdb0aa"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4e3a223765070125a3a8c1c33f506b2d88bf01d6"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "65a8fa4b0158f53cc6052d07d4a26cd7aa55908f"
+    },
+    {
+      "path": "compact",
+      "type": "dir",
+      "sha": "f8ad05a8302a61cc055d1bff5954e7d6499acfb7"
+    },
+    {
+      "path": "demos.json",
+      "type": "file",
+      "sha": "942bf706dc04796f6960f8ba4f8191e6b9b2a32e"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "58b37fb3f66e98e326d480eb761e73b316bebe2b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b53f823500f9106da3a7ef5e4f505e3da2b9bbc9"
+    },
+    {
+      "path": "double.html",
+      "type": "file",
+      "sha": "8f83d14971d9083e07ab770478c5600c004a60cf"
+    },
+    {
+      "path": "editor.html",
+      "type": "file",
+      "sha": "5a4d7277040817cf95eef5b8880f3abc161f4fcb"
+    },
+    {
+      "path": "heroes.html",
+      "type": "file",
+      "sha": "6d4b03f1da93518db822230378668154ba904273"
+    },
+    {
+      "path": "heroes2.html",
+      "type": "file",
+      "sha": "83487eabec9959117837506c51a37f9a773a2ff9"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "53274b1c2d293a79b251465101303f7e7d20508e"
+    },
+    {
+      "path": "index_gpu.html",
+      "type": "file",
+      "sha": "72f15a2268f174479398884cd973d666b1e480c3"
+    },
+    {
+      "path": "manifest.json",
+      "type": "file",
+      "sha": "e6a64de408436e4e6547b403228a80be5865e5c1"
+    },
+    {
+      "path": "node_modules",
+      "type": "dir",
+      "sha": "90aa6a2a1a8b1cb22ab0648243092fdc9733f89a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "9ab421aa48ee2d72646616317457e367e545779e"
+    },
+    {
+      "path": "rollup",
+      "type": "dir",
+      "sha": "7db6cb03905c95a50bf86170ebe33f16c0cf7c2c"
+    },
+    {
+      "path": "simple.html",
+      "type": "file",
+      "sha": "6fedc3f3b64ee781e3b6eb63e432d39309b52755"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a3b498e0ece95a03c0e7ec4c161daf5877c1ac78"
+    },
+    {
+      "path": "three",
+      "type": "dir",
+      "sha": "2993b03202d1f78147f2dcf51a39282f876b0f55"
+    }
+  ],
+  "classification": "physics_integration_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify worker/direct physics integration and demos; complete gameplay engine not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,114 @@
+{
+  "repository": "bates64/papermario-dx",
+  "repository_id": 618291547,
+  "commit": "eab65d0e0cdb3afcb79b821b7de3d8cf2468a83f",
+  "source_url": "https://github.com/bates64/papermario-dx/tree/eab65d0e0cdb3afcb79b821b7de3d8cf2468a83f",
+  "readme_path": "README.md",
+  "readme_sha256": "797585a5b548fff1bbf6fc0eb06fd338ba27d9ab4f3f0a5297c4e816ca37150e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "78dda2055160fc34b7972b4b8916d01435f80c97"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "68153ccf5fd0a7d9f71996d31bf6ca8bdb2d3cd0"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "33134b18421ced0b8bd6b507c9deb4bd836e6993"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "fad242ebea10f52d85d3833f360003723cada839"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "f54b5787a7dd87a020cb778634bc3d651fd1da78"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c3d9164c337635ca553603340e9f302abc5d7315"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "96c35d609c3ef5dd85d6c8a6b431f32978dedab0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "185cc4f5441ef74dc96e0e3c4251a3452cbf3f66"
+    },
+    {
+      "path": ".tangled",
+      "type": "dir",
+      "sha": "2c6f77b1d497b1a035a4032852aeddb86ff290b7"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "c70226960c5544f88dd65cf48edc87ebba9ecb63"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f0e13c68c2befd195baff53c03316ae1cfce3224"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "8abfb3581cba63a5f0577dd4f8b58430b0f3a4f1"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "0a25da045029efef84710974387a0c82c008387f"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "c7213efa104275832978e9f89bec8aad22110b42"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "fa7b42e443eb965837e042cf944088961c621d60"
+    },
+    {
+      "path": "manual",
+      "type": "dir",
+      "sha": "1c018161749366c5cd735635d2588852113d064f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5a9d298989a4ace985d3ce5220c9b4b6d0f8be8a"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "02c59e159afd845a92a595cf0b955c95f9255022"
+    },
+    {
+      "path": "treefmt.toml",
+      "type": "file",
+      "sha": "bc54d8690ba0456013249a79aee47d1c6152f335"
+    },
+    {
+      "path": "ver",
+      "type": "dir",
+      "sha": "4a57026cbefe581ad11a58e8b65a45d12d599e32"
+    }
+  ],
+  "classification": "excluded_game_mod",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Fork of Paper Mario decompilation for ROM hacks; game-specific modification base rather than independently supplied engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

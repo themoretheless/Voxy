@@ -1,0 +1,79 @@
+{
+  "repository": "Deali-Axy/CrazyAlpha",
+  "repository_id": 163120151,
+  "commit": "4ff9ab7f7c8963387b069ed7b28ab9460d93d8f6",
+  "source_url": "https://github.com/Deali-Axy/CrazyAlpha/tree/4ff9ab7f7c8963387b069ed7b28ab9460d93d8f6",
+  "readme_path": "README.md",
+  "readme_sha256": "2078d449e37f5d7a0049359d444f6c2f6a815ac9031df405ef301c7ea72f8c65",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8c30685d9a3594744c648228a9376f9d47626e06"
+    },
+    {
+      "path": "CourseDesign.ipr",
+      "type": "file",
+      "sha": "712b4cbf73890bf4e77638aadb1c03924c9bb80f"
+    },
+    {
+      "path": "CourseDesign.iws",
+      "type": "file",
+      "sha": "d5bc7591fbe133b3a30a1e35d15086dbc4bbf149"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bdc13bd0a8c07309170768d562094f22102f0658"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "e8988e8fa597f6bf10a9382c58437f60f9e5eac1"
+    },
+    {
+      "path": "Screenshot",
+      "type": "dir",
+      "sha": "e2e47b66f7be2a4e3b866c3a2c41d7ce031b3b62"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "d9c43563a3ad52dbdc6edcc0156688daaf24c740"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "af6708ff229fda75da4f7cc4da4747217bac4d53"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "0f8d5937c4ad18feb44a19e55ad1e37cc159260f"
+    },
+    {
+      "path": "score.data",
+      "type": "file",
+      "sha": "b912dc118c6d152c61ec7a6dd1962596853bc8f7"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "d458dae7db4abdedc93442b04c97c74c45a23a0a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "76b07b286675426d03fca89f5889755e3e994f7f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaFX music game contains explicitly separated XEngine package with resource/model/lifecycle/view abstractions and rendering; game-specific package boundaries documented. General reusability unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

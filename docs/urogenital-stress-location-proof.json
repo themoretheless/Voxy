@@ -1,0 +1,23 @@
+{
+  "scope": "Actual saved loaded positions; continuum stress; reference z and base-node membership identify location, not cause.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "peak_pa": 477.5727894585,
+      "peak_reference_z_m": 0.01979166666667,
+      "peak_base_nodes": 0,
+      "peak_element": 27646,
+      "max_away_first_segment_pa": 477.5727894585,
+      "csv_sha256": "dc8067b3287dedb80a9b818306f8aa73c7db225eb647dad1e0aa3e98ec65bd19"
+    },
+    {
+      "specimen": "vagina",
+      "peak_pa": 819.6521627303,
+      "peak_reference_z_m": 0.0296875,
+      "peak_base_nodes": 0,
+      "peak_element": 27646,
+      "max_away_first_segment_pa": 819.6521627303,
+      "csv_sha256": "9fffee787280dde2cbf6638ca5d7d154d1ed26e61500a3699a31593118194f9c"
+    }
+  ]
+}

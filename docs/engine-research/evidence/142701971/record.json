@@ -1,0 +1,149 @@
+{
+  "repository": "oguzeroglu/ROYGBIV",
+  "repository_id": 142701971,
+  "commit": "897862bb6ccba1ccfce0ed57109c51a8f493cac2",
+  "source_url": "https://github.com/oguzeroglu/ROYGBIV/tree/897862bb6ccba1ccfce0ed57109c51a8f493cac2",
+  "readme_path": "README.md",
+  "readme_sha256": "cffdb6ad1ac66ed7203cd27dee2f17a159ac8205dbde92ff36476ce6867e06f7",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "911161763cc80e3637d12cf110f161dbc8284ccd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6c838d42a70742e2cc5135f449454c5f6a726cb8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5dc8c583a88b5ce5749d2cdfe92ae6942e78d256"
+    },
+    {
+      "path": "analytics_server",
+      "type": "dir",
+      "sha": "e8b9171b60aebfc66eb5c6a65ecb0e5c90a15de4"
+    },
+    {
+      "path": "bootscreens",
+      "type": "dir",
+      "sha": "a59dd7011127d91962ccc2002e899229773d102d"
+    },
+    {
+      "path": "css",
+      "type": "dir",
+      "sha": "e9771c5e1d77efb2447704950feab119ef25bfed"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "afd5d45e6bc32eacebb0da49bc43fa64f2bafaba"
+    },
+    {
+      "path": "dynamic_textures",
+      "type": "dir",
+      "sha": "78a565f92bc73a0f9a92e6787900ad09e382a926"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "435d2b2538a2ddd655358a053bdc8cc70b9a8ad4"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "9daeafb9864cf43055ae93beb0afd6c7d144bfa4"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "65790353a44f1217e626a24edafcda758f3af825"
+    },
+    {
+      "path": "models",
+      "type": "dir",
+      "sha": "ac16fa39d14c6ba3658a84331654532bf1c607e1"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "4f5b2f4e9b198400676eec3936c01b4166291a66"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a1e6aa0dcd30a00a254a284617cd4ff776b591bf"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "625d1d2ba414d65917929d9f576d2814b40570fa"
+    },
+    {
+      "path": "protocol_definitions",
+      "type": "dir",
+      "sha": "c48127bd97fe79f6332544648b734348e0e593b3"
+    },
+    {
+      "path": "roygbiv.html",
+      "type": "file",
+      "sha": "1805b6a58fa3eccced6cb08eb1f0a031b463057b"
+    },
+    {
+      "path": "screen_shots",
+      "type": "dir",
+      "sha": "73c5ca298cc5bf55ea18b01823e1feed298bf919"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "20cd716e3f585e3d20fb8715b254ff97b1482bf8"
+    },
+    {
+      "path": "server.js",
+      "type": "file",
+      "sha": "4a7dd4ca7bd43d648c866ca1db6144d65095b5fd"
+    },
+    {
+      "path": "shader",
+      "type": "dir",
+      "sha": "d2d43b051bd1c0bbe24c85bc038430fc913ec878"
+    },
+    {
+      "path": "skybox",
+      "type": "dir",
+      "sha": "d7364f8b852a5c2e6154ad17be6bb8977b582449"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "32822b406a1ff6b1bc918992fd463320d5e8b9e1"
+    },
+    {
+      "path": "textureCompressor.js",
+      "type": "file",
+      "sha": "f7a306e2ab10e7839c7cfe1a1c9d02f8d958a552"
+    },
+    {
+      "path": "texture_atlas",
+      "type": "dir",
+      "sha": "9253a6e47b41d7ea90609407826dbe8c7b380b28"
+    },
+    {
+      "path": "texture_packs",
+      "type": "dir",
+      "sha": "73ee06dc0e2403ba679f979eb4c73194dd9053df"
+    },
+    {
+      "path": "third_party_licenses",
+      "type": "dir",
+      "sha": "12051aa5ef5538b297741ddc464ea44bfd30cdf3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies browser engine for applications/games; owned js/modules runtime, assets and npm build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

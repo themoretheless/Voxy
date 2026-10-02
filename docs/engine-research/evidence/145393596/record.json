@@ -1,0 +1,64 @@
+{
+  "repository": "da1nerd/prism",
+  "repository_id": 145393596,
+  "commit": "184d0ecdcd4795398f2216444fb818b01d1d747b",
+  "source_url": "https://github.com/da1nerd/prism/tree/184d0ecdcd4795398f2216444fb818b01d1d747b",
+  "readme_path": "README.md",
+  "readme_sha256": "73e0132b3ec0bb9207997f4982c3eb3de8cda2dab70167109941c66b6dee92f9",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "163eb75c85257e212368c0694a2947ebcd4c9bcc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5896de7f3e5f182d6f7633da82808228f296ceda"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e29dae78f6352ab795edd721a60e0ea393166166"
+    },
+    {
+      "path": ".netlify",
+      "type": "dir",
+      "sha": "53983c2102f401b66e58e9f39e6a72ea5e4779f9"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "dcea911e3cdfaef1c11589614c78d3a8e2c73eb0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8437af3d69c85ddae330dd1ba5b4866a9f339b0b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2aab3b537b2ddd7b444c705ca4ba54c563c10779"
+    },
+    {
+      "path": "shard.yml",
+      "type": "file",
+      "sha": "d97f86fcdc6db59295694c4f5a6e5cf4283590f7"
+    },
+    {
+      "path": "spec",
+      "type": "dir",
+      "sha": "8b92e835187d49823df0f63199fe7de0db2bf253"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fd1a1582abf3a27a4b671ea7dc01e863584d3563"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Crystal 3D engine with package manifest, src and specs; stability statement is an author claim, not runtime verification.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

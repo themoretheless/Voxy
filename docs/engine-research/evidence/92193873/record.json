@@ -1,0 +1,69 @@
+{
+  "repository": "gdquest-demos/godot-3-demos",
+  "repository_id": 92193873,
+  "commit": "ab7a55c539b67c55ecd0d164e2ff8f96bd7756e0",
+  "source_url": "https://github.com/gdquest-demos/godot-3-demos/tree/ab7a55c539b67c55ecd0d164e2ff8f96bd7756e0",
+  "readme_path": "README.md",
+  "readme_sha256": "0ad61d008af7fafba94effa643e723817c8d514d72a8337c790767100427429e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "343efe47a901c8b4a541ca3ea8b3b497e2aa77f3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4ee4a2fa1a4b61881883d2680fdf917724e1505f"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "7106fe583743e2ea6fcf06001296b03c88557cb4"
+    },
+    {
+      "path": "2017",
+      "type": "dir",
+      "sha": "e3d479f1808e8815ef22635567dfeb3063d7fc4e"
+    },
+    {
+      "path": "2018",
+      "type": "dir",
+      "sha": "b56aaa6f40b508105010cedf4bceab18105270c0"
+    },
+    {
+      "path": "2019",
+      "type": "dir",
+      "sha": "109bb426de369ae48728551f6b6f8c7be368ae14"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c6b2955535364623df15957673c7c8ee1f315c8c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "16efb83f51a62247542dee230e1f629ce79f3986"
+    },
+    {
+      "path": "checkerrors.sh",
+      "type": "file",
+      "sha": "c5c8f74f0cb4effcb0fc8f2ea4386569f7b7bb7c"
+    },
+    {
+      "path": "format.sh",
+      "type": "file",
+      "sha": "f96caef259afe5f70e7d6a414281cf37683ed9c1"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "884aa037bd69ee1268b66e8119f32837e963379b"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot3 tutorial/demo projects hosted by external engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

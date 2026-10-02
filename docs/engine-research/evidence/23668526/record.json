@@ -1,0 +1,1439 @@
+{
+  "repository": "xonotic/darkplaces",
+  "repository_id": 23668526,
+  "commit": "d93f9c4292039354a2b8d40d11bc386891e55fe5",
+  "source_url": "https://github.com/xonotic/darkplaces/tree/d93f9c4292039354a2b8d40d11bc386891e55fe5",
+  "readme_path": "README.md",
+  "readme_sha256": "c459ddf52ed0e04377182baf71dffe5273c0ef3889f794bf40be86a27b0811c3",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7e8260ee271ee66f1360ae10d8c0ee771291b834"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8cea86c64116049ccfa93441adcd14301f78f782"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1270a5524f77d2e9340c55ff339a0d153c4c507b"
+    },
+    {
+      "path": ".travis-before_install-xonotic.sh",
+      "type": "file",
+      "sha": "dc3cccea5c457b1e601914f0fbbe860bd6773564"
+    },
+    {
+      "path": ".travis-id_xonotic.enc",
+      "type": "file",
+      "sha": "675b5a734e52755a378459760fce10360c3ceaa9"
+    },
+    {
+      "path": ".travis-script-xonotic.sh",
+      "type": "file",
+      "sha": "8ffd76db14ec21b6ca9ce489960de2a068520817"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "fbea9bb77b3696aca588f713738e0bafffab8032"
+    },
+    {
+      "path": "BSDmakefile",
+      "type": "file",
+      "sha": "b98686dccb87bd85d723b4d3744eaf5ebc5b479b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "fbeaa2b4d49d41988031fedca6f4a70d4e939a42"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "e90dfed1a31ed1c0c22befce22c6f37f9cf5f2bb"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "aab45580711816f7567662619d5a322903cd9bac"
+    },
+    {
+      "path": "DPiOS.xcodeproj",
+      "type": "dir",
+      "sha": "ca78825468f9374d563dce8170301dc1f93ae7c0"
+    },
+    {
+      "path": "Darkplaces.app",
+      "type": "dir",
+      "sha": "25dd8c2240f7ff30f3d098be9e9c78b46f936708"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "5ab1e3b6a2e841012a1e523184141bc7313ad18d"
+    },
+    {
+      "path": "Info.plist",
+      "type": "file",
+      "sha": "55160a83273a969a567f189ca6e9db24b805f5d8"
+    },
+    {
+      "path": "README.iOS",
+      "type": "file",
+      "sha": "58007ed087a85b51e7b7ab663a2f2c181d55f481"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "98b60bc525fc8cb17bb84926c40eadab1231a80e"
+    },
+    {
+      "path": "av_backend_libav.c",
+      "type": "file",
+      "sha": "653c9b4217f9a3371203bf4170f5fb0dda50e462"
+    },
+    {
+      "path": "bih.c",
+      "type": "file",
+      "sha": "8f631623aa4726d35a4171bb6317e262816a5cbf"
+    },
+    {
+      "path": "bih.h",
+      "type": "file",
+      "sha": "32b1d4b5d3a3d1b87469ae3ba6623697ee09f247"
+    },
+    {
+      "path": "bspfile.h",
+      "type": "file",
+      "sha": "1341b9e07aa8c470b6eb92e5860afb223ed4dfcc"
+    },
+    {
+      "path": "builddate.c",
+      "type": "file",
+      "sha": "161c095b15ea0298253447bc769a2ae744733e72"
+    },
+    {
+      "path": "cap.h",
+      "type": "file",
+      "sha": "da5d0649906971518254bfbf5db68eea7d911c06"
+    },
+    {
+      "path": "cap_avi.c",
+      "type": "file",
+      "sha": "df06faa10ed6ec97c6c6862a236525903799cbe7"
+    },
+    {
+      "path": "cap_avi.h",
+      "type": "file",
+      "sha": "2cf15d6a0401fe28cc0e362b23956803be32e97b"
+    },
+    {
+      "path": "cap_ogg.c",
+      "type": "file",
+      "sha": "096c26751333f10a57a0d0bbbe8e2056c3da8828"
+    },
+    {
+      "path": "cap_ogg.h",
+      "type": "file",
+      "sha": "1dfbab273ce5c700e76079bbf750f36aa87f5766"
+    },
+    {
+      "path": "cd_shared.c",
+      "type": "file",
+      "sha": "389675f80395cf66dceede7da6c3fde86ea1f9d5"
+    },
+    {
+      "path": "cdaudio.h",
+      "type": "file",
+      "sha": "09099190e1fa2c4cd0a7b70de94fc8818fcd3595"
+    },
+    {
+      "path": "cl_cmd.c",
+      "type": "file",
+      "sha": "4556d2cf7ec8292c6b8bd0395945c69c8e102850"
+    },
+    {
+      "path": "cl_collision.c",
+      "type": "file",
+      "sha": "2ba9dc499a8b65f9a8e078d59b85b70d0e62ef3a"
+    },
+    {
+      "path": "cl_collision.h",
+      "type": "file",
+      "sha": "620ea045f08baa975a25727f16c216029f46bf70"
+    },
+    {
+      "path": "cl_demo.c",
+      "type": "file",
+      "sha": "0f42a7d0d4a1fc3c6e8332f820a16407e4a8a332"
+    },
+    {
+      "path": "cl_ents.c",
+      "type": "file",
+      "sha": "b5e93f61852bfa8aff7c22053e104a4c39a81985"
+    },
+    {
+      "path": "cl_ents4.c",
+      "type": "file",
+      "sha": "49b2db339f4f4aa801adf6051d073864299091e1"
+    },
+    {
+      "path": "cl_ents5.c",
+      "type": "file",
+      "sha": "fceb5b3d3554e7bc78c388852112d840f5451a94"
+    },
+    {
+      "path": "cl_ents_nq.c",
+      "type": "file",
+      "sha": "0edd34e3cbc92a4ee0c13c9b509dd91676ea5330"
+    },
+    {
+      "path": "cl_ents_qw.c",
+      "type": "file",
+      "sha": "dcbe749088fa9804744480dfbea45a4ab66030fb"
+    },
+    {
+      "path": "cl_input.c",
+      "type": "file",
+      "sha": "eb3118b0caf213e9c72437ba613ab77c8b8fb4b1"
+    },
+    {
+      "path": "cl_main.c",
+      "type": "file",
+      "sha": "fd5746d964de56e656e751f70a21f5538be528ce"
+    },
+    {
+      "path": "cl_parse.c",
+      "type": "file",
+      "sha": "30c455f521bdf61788a9de56a4406484fe82689a"
+    },
+    {
+      "path": "cl_parse.h",
+      "type": "file",
+      "sha": "f9ae8b64a5e755123345f8b8439f97f160b195f6"
+    },
+    {
+      "path": "cl_particles.c",
+      "type": "file",
+      "sha": "6a19bfd627b6e4f5d576854a901597da493ff4d0"
+    },
+    {
+      "path": "cl_particles.h",
+      "type": "file",
+      "sha": "38f36ad87295bf0dac304ff93039ef43c71ec0d7"
+    },
+    {
+      "path": "cl_screen.c",
+      "type": "file",
+      "sha": "fcec138368ea9de6dbcbae4e3ceed98730e24c10"
+    },
+    {
+      "path": "cl_screen.h",
+      "type": "file",
+      "sha": "57cfd282a135f2b2c027afda24556d6f455f51e9"
+    },
+    {
+      "path": "cl_video.c",
+      "type": "file",
+      "sha": "ca9396fb6c11b0bb37af91a09faf17f17fbee30c"
+    },
+    {
+      "path": "cl_video.h",
+      "type": "file",
+      "sha": "7c6140fa26545a34e5b028d2156bac69d48924b3"
+    },
+    {
+      "path": "cl_video_jamdecode.c",
+      "type": "file",
+      "sha": "49d8e96e86da312514943a89fd4be4e3c43a38f2"
+    },
+    {
+      "path": "cl_video_libavw.c",
+      "type": "file",
+      "sha": "b0181be0dd7d71f409aa74ca2bbe0a0abae342f4"
+    },
+    {
+      "path": "cl_video_libavw.h",
+      "type": "file",
+      "sha": "07d42c544d014039332390fccbb186a981fa17a2"
+    },
+    {
+      "path": "client.h",
+      "type": "file",
+      "sha": "38acdf98f8434a771c991d2ac566cd4cf821a941"
+    },
+    {
+      "path": "clprogdefs.h",
+      "type": "file",
+      "sha": "bee62abdcdd0a4e84d2319315d13928f3ba644ba"
+    },
+    {
+      "path": "clvm_cmds.c",
+      "type": "file",
+      "sha": "08a629f341743dd270fea72f992c0d54fdef1d69"
+    },
+    {
+      "path": "clvm_cmds.h",
+      "type": "file",
+      "sha": "259991ff3f0ebf2416a1e2c0458f6ce0d09e45a0"
+    },
+    {
+      "path": "cmd.c",
+      "type": "file",
+      "sha": "ec1c6baf480651c77a5c5dc06a055250bf062165"
+    },
+    {
+      "path": "cmd.h",
+      "type": "file",
+      "sha": "9aa59adbdc7140fba1388317aa9e40865ce3036c"
+    },
+    {
+      "path": "collision.c",
+      "type": "file",
+      "sha": "02115ccbfc4a22d8d4513c0d6ef3ff3c159c98e1"
+    },
+    {
+      "path": "collision.h",
+      "type": "file",
+      "sha": "71bc57f0caa81e8c99611804fbb2a7f5c5786ae1"
+    },
+    {
+      "path": "com_crc16.c",
+      "type": "file",
+      "sha": "f98260573cd94d6f88d601c741cffc128a616fef"
+    },
+    {
+      "path": "com_ents.c",
+      "type": "file",
+      "sha": "fe7a3bc1c27f1e5dcb65a3e368012df4549038dd"
+    },
+    {
+      "path": "com_ents4.c",
+      "type": "file",
+      "sha": "67bfba093df88e302b89522309c40102d371e455"
+    },
+    {
+      "path": "com_game.c",
+      "type": "file",
+      "sha": "62b94b85f605991fe3c556c9a21a7ac2dff702d0"
+    },
+    {
+      "path": "com_game.h",
+      "type": "file",
+      "sha": "b7352f67e62f61768a2efc980715265fe68d03b6"
+    },
+    {
+      "path": "com_infostring.c",
+      "type": "file",
+      "sha": "9af6e357edac8c92c273b9e30b329f2e4fa13719"
+    },
+    {
+      "path": "com_infostring.h",
+      "type": "file",
+      "sha": "ae274bb7f3c4f31ef467dd2da35bb3c8cefd836a"
+    },
+    {
+      "path": "com_list.h",
+      "type": "file",
+      "sha": "4bbeb7d632b9930d91025aee608919c99e03caa8"
+    },
+    {
+      "path": "com_msg.c",
+      "type": "file",
+      "sha": "aaded00d3fc84d2699eeadb51d6d282e125509f4"
+    },
+    {
+      "path": "common.c",
+      "type": "file",
+      "sha": "0870a4547d26035cf25edf054282728c28cd8b1c"
+    },
+    {
+      "path": "common.h",
+      "type": "file",
+      "sha": "cde830dcfdc7e51fac232f75fee227459d8cfbcd"
+    },
+    {
+      "path": "console.c",
+      "type": "file",
+      "sha": "180f895796f108dff827c014a66f47aebf95fdc1"
+    },
+    {
+      "path": "console.h",
+      "type": "file",
+      "sha": "0f350376edc84273a745ea91d0e59f46ced911b9"
+    },
+    {
+      "path": "convex.c",
+      "type": "file",
+      "sha": "139fd7e4be43737cc1fa1e2575060e7de4567525"
+    },
+    {
+      "path": "convex.h",
+      "type": "file",
+      "sha": "f8881c862e2449c6d78fa23ff0a3b5e4aeecbfd1"
+    },
+    {
+      "path": "crypto-keygen-standalone-brute.sh",
+      "type": "file",
+      "sha": "a081b0684d956f1340c7365cf7d19c85b72bfce6"
+    },
+    {
+      "path": "crypto-keygen-standalone.c",
+      "type": "file",
+      "sha": "d9206915a775453043d36bc3817e9f0fccd362da"
+    },
+    {
+      "path": "crypto.c",
+      "type": "file",
+      "sha": "501bef0be7d15400b602c17f86308db4ec1e41c9"
+    },
+    {
+      "path": "crypto.h",
+      "type": "file",
+      "sha": "bbb4ea1fa4526513eca80f838c18070df625b35b"
+    },
+    {
+      "path": "csprogs.c",
+      "type": "file",
+      "sha": "b868b4fb744188f284ac368cd2e4f4e55283f8af"
+    },
+    {
+      "path": "csprogs.h",
+      "type": "file",
+      "sha": "922c8c5252e24561034c61d3d5229b98dd9854ed"
+    },
+    {
+      "path": "curves.c",
+      "type": "file",
+      "sha": "1d9b2941934ebcc0ecb947f6dfce267a01dd3654"
+    },
+    {
+      "path": "curves.h",
+      "type": "file",
+      "sha": "7c592b3ac060168ee2f8711caac35ea3d41b6863"
+    },
+    {
+      "path": "cvar.c",
+      "type": "file",
+      "sha": "1c347193787b09119f06f782ce3d880b53c78d3d"
+    },
+    {
+      "path": "cvar.h",
+      "type": "file",
+      "sha": "a0a8716776db1933b1b5b86cc6771b92bbbc19d3"
+    },
+    {
+      "path": "darkplaces-sdl2-vs2019.vcxproj",
+      "type": "file",
+      "sha": "f68f7c973d563d0aca1db702b608584758db90e3"
+    },
+    {
+      "path": "darkplaces-vs2019.sln",
+      "type": "file",
+      "sha": "14a8b287643d0b2e7a3eac054a7611935655d1a7"
+    },
+    {
+      "path": "darkplaces.h",
+      "type": "file",
+      "sha": "0d04dd45eca661bb1e546de1850424f7ad96c749"
+    },
+    {
+      "path": "darkplaces.ico",
+      "type": "file",
+      "sha": "99ec69991e8b093ec65178e987ca580f0d7806c2"
+    },
+    {
+      "path": "darkplaces.rc",
+      "type": "file",
+      "sha": "5580b29cb5220b1a106b33314a11b17dbe3ba033"
+    },
+    {
+      "path": "darkplaces.txt",
+      "type": "file",
+      "sha": "569879c35d30a655dab05bc234c4f2a1499a8e3f"
+    },
+    {
+      "path": "darkplaces.xpm",
+      "type": "file",
+      "sha": "befce123b9b56a229fe165a816385e5d9943b600"
+    },
+    {
+      "path": "darkplaces16x16.png",
+      "type": "file",
+      "sha": "0e729dc8f4e51cde96a356a0fd85a027f55da766"
+    },
+    {
+      "path": "darkplaces24x24.png",
+      "type": "file",
+      "sha": "2c52833bbbe39d3c9d53da40cdf93cbf72a42bc6"
+    },
+    {
+      "path": "darkplaces32x32.png",
+      "type": "file",
+      "sha": "1b69f313d9acef7d9ee8fbb45c74bd354f259b7e"
+    },
+    {
+      "path": "darkplaces48x48.png",
+      "type": "file",
+      "sha": "65f6bbcae7d4b9d150ad3801bf0fca50e308ea3a"
+    },
+    {
+      "path": "darkplaces64x64.png",
+      "type": "file",
+      "sha": "708c8e25a1d6c4c7832a6e0e0b76356712432172"
+    },
+    {
+      "path": "darkplaces72x72.png",
+      "type": "file",
+      "sha": "c399edd7129bd89e57c759470175f1f1cb37d511"
+    },
+    {
+      "path": "dpdefs",
+      "type": "dir",
+      "sha": "cfc124050a732ab0ac50c2f772b48e6b1a8c919c"
+    },
+    {
+      "path": "dpvsimpledecode.c",
+      "type": "file",
+      "sha": "244387ab6dc55f5edebc912d82dc782ae8e91413"
+    },
+    {
+      "path": "dpvsimpledecode.h",
+      "type": "file",
+      "sha": "0125d301413284bc3233d877ebf0d35ce76ba3cd"
+    },
+    {
+      "path": "draw.h",
+      "type": "file",
+      "sha": "76b24e0de283b03d48b2c81ae95b206f0398ab40"
+    },
+    {
+      "path": "filematch.c",
+      "type": "file",
+      "sha": "38ee0372e940211702ecb710b3504852bd5c26b3"
+    },
+    {
+      "path": "filematch.h",
+      "type": "file",
+      "sha": "a35fee6ea51eabc27bf6add43d65011e648dba4d"
+    },
+    {
+      "path": "fogeval.pl",
+      "type": "file",
+      "sha": "fe4d0523f5a8dd1fe7cd95ee9499dc18f05b8fe3"
+    },
+    {
+      "path": "fractalnoise.c",
+      "type": "file",
+      "sha": "979954565c7894860897c77a1c24e60d00b356a7"
+    },
+    {
+      "path": "fs.c",
+      "type": "file",
+      "sha": "16d466033d482f7af2babaa4f8e7d260605eb009"
+    },
+    {
+      "path": "fs.h",
+      "type": "file",
+      "sha": "b81d84d2d88a4ba248e976beb77c607a4ddfc4f5"
+    },
+    {
+      "path": "ft2.c",
+      "type": "file",
+      "sha": "c7fe3ace1f46896eb31a9b0c0c6025514b8405b6"
+    },
+    {
+      "path": "ft2.h",
+      "type": "file",
+      "sha": "6495d3eb57b8f603c2c02995a950592272ac92d4"
+    },
+    {
+      "path": "ft2_defs.h",
+      "type": "file",
+      "sha": "c8d38c6e98b7a589457e8a986bfcc3a4c28885f4"
+    },
+    {
+      "path": "ft2_fontdefs.h",
+      "type": "file",
+      "sha": "68956b9082d6682c42c7b8492bd2801155071502"
+    },
+    {
+      "path": "gl_backend.c",
+      "type": "file",
+      "sha": "9710c0495cfc97f08ca7a438aca929509537139e"
+    },
+    {
+      "path": "gl_backend.h",
+      "type": "file",
+      "sha": "d0d23148957a377dd00a4eaa25f087505632c3d0"
+    },
+    {
+      "path": "gl_draw.c",
+      "type": "file",
+      "sha": "b5a8be69a381cbbd52a1087d0aea2d6e4481aff3"
+    },
+    {
+      "path": "gl_rmain.c",
+      "type": "file",
+      "sha": "f9007cafba90b11c174152e4d4406cb527997a08"
+    },
+    {
+      "path": "gl_rsurf.c",
+      "type": "file",
+      "sha": "d9f0c461837d96c7e6278f31a0c77e4e6a357ffa"
+    },
+    {
+      "path": "gl_textures.c",
+      "type": "file",
+      "sha": "049240b63bccb4d80c842c4c3f577c7345d19620"
+    },
+    {
+      "path": "glquake.h",
+      "type": "file",
+      "sha": "8d603ad6df5dcc0b7fc7b6bcb970fd19d2204a12"
+    },
+    {
+      "path": "hmac.c",
+      "type": "file",
+      "sha": "8b6d2f6234caa8e612d2710e35daaacc16bd40bb"
+    },
+    {
+      "path": "hmac.h",
+      "type": "file",
+      "sha": "71108ab65d9a1679d55801cbe7276d851484fe35"
+    },
+    {
+      "path": "host.c",
+      "type": "file",
+      "sha": "031841c074839ba95e3b1a3467daf8c0ac6528f0"
+    },
+    {
+      "path": "host.h",
+      "type": "file",
+      "sha": "b8dfcf3b3337d1a349d29c3bd5b4c1a6aa2ee180"
+    },
+    {
+      "path": "image.c",
+      "type": "file",
+      "sha": "a30d89e1ae0a684e0f23557932010929565a0c9f"
+    },
+    {
+      "path": "image.h",
+      "type": "file",
+      "sha": "99fd28c35d16bbba373d92664386fdc985c045e8"
+    },
+    {
+      "path": "image_png.c",
+      "type": "file",
+      "sha": "6b226af060d7f4f1eb85276a1ca3f8b08216757c"
+    },
+    {
+      "path": "image_png.h",
+      "type": "file",
+      "sha": "af3ab97a7241c5a71cfce0c7b2fc30b6686cc38f"
+    },
+    {
+      "path": "input.h",
+      "type": "file",
+      "sha": "9c94beedb973fc1fbcb6ce92ab2697c92b674bef"
+    },
+    {
+      "path": "jpeg.c",
+      "type": "file",
+      "sha": "70eb3e472d1478c5ff7736447e84e488ef99e767"
+    },
+    {
+      "path": "jpeg.h",
+      "type": "file",
+      "sha": "f869d6a091dd2e77741fa6f657b30c5b130678e6"
+    },
+    {
+      "path": "keys.c",
+      "type": "file",
+      "sha": "0762490e5fee4b634e68cb02191a0bf13b1f9660"
+    },
+    {
+      "path": "keys.h",
+      "type": "file",
+      "sha": "2081e8009e21d9322df83943a5b834df86b8cf81"
+    },
+    {
+      "path": "lhfont.h",
+      "type": "file",
+      "sha": "83aedb5d564c08177986e9941ba75b39fe88bae9"
+    },
+    {
+      "path": "lhnet.c",
+      "type": "file",
+      "sha": "e6a688de7c3fd67c4ee7108597da998dc947f284"
+    },
+    {
+      "path": "lhnet.h",
+      "type": "file",
+      "sha": "d368940dbf2a04d79eb2243a4f18acda48f8cbce"
+    },
+    {
+      "path": "libcurl.c",
+      "type": "file",
+      "sha": "d843572055b897b026c9e17d0eceb3620a5fa2fd"
+    },
+    {
+      "path": "libcurl.h",
+      "type": "file",
+      "sha": "a494c93703caa2289a4ed5446cac3b03ed3a6956"
+    },
+    {
+      "path": "makefile",
+      "type": "file",
+      "sha": "923c8d8e11e698f560f887b9e17d81b324693dbc"
+    },
+    {
+      "path": "makefile.inc",
+      "type": "file",
+      "sha": "9cfed413ec5fe295ed0054564e0c54bb1d470be5"
+    },
+    {
+      "path": "mathlib.c",
+      "type": "file",
+      "sha": "4c19dfe1d38e558af013e23da358031a563bf443"
+    },
+    {
+      "path": "mathlib.h",
+      "type": "file",
+      "sha": "fa05d1c67e79b34d01ee7f18d4c3edb33cd8ef2a"
+    },
+    {
+      "path": "matrixlib.c",
+      "type": "file",
+      "sha": "ed9d141341ce7b181dd6a42a49c4d518cff40988"
+    },
+    {
+      "path": "matrixlib.h",
+      "type": "file",
+      "sha": "bfae8c47a3b335605bd694e105a695abbc51c2c5"
+    },
+    {
+      "path": "mdfour.c",
+      "type": "file",
+      "sha": "5164994a01e246974c6ae8995a072c1f4b39f1b6"
+    },
+    {
+      "path": "mdfour.h",
+      "type": "file",
+      "sha": "5a141755a2cb396f80ff2369fc6086470c00101b"
+    },
+    {
+      "path": "menu.c",
+      "type": "file",
+      "sha": "6c935ef78398772176503a01525fcc26f9323485"
+    },
+    {
+      "path": "menu.h",
+      "type": "file",
+      "sha": "b9624942f7b220a5ade95a11610e157c6385a57a"
+    },
+    {
+      "path": "meshqueue.c",
+      "type": "file",
+      "sha": "af8c3ea5faa3607cbd846c3dcbc94b8f1ada021a"
+    },
+    {
+      "path": "meshqueue.h",
+      "type": "file",
+      "sha": "68fa4d0da4ad84677070e904a012cf9bab52818e"
+    },
+    {
+      "path": "mingw_note.txt",
+      "type": "file",
+      "sha": "c5ca2c777e2430fff0131c613147170db7a8efd6"
+    },
+    {
+      "path": "mod_skeletal_animatevertices_generic.c",
+      "type": "file",
+      "sha": "932546eb50ede3b111e219b6daeeac23c9862ac3"
+    },
+    {
+      "path": "mod_skeletal_animatevertices_generic.h",
+      "type": "file",
+      "sha": "672e4324ca8783c143f9143a493cd4cf64fedae4"
+    },
+    {
+      "path": "mod_skeletal_animatevertices_sse.c",
+      "type": "file",
+      "sha": "0c2fa5d9b2b477e632f6606eed3f0377133f230a"
+    },
+    {
+      "path": "mod_skeletal_animatevertices_sse.h",
+      "type": "file",
+      "sha": "aa98fce8e88bc041245352f9b4f586004c6f03b9"
+    },
+    {
+      "path": "model_alias.c",
+      "type": "file",
+      "sha": "a18de3095dcc498534dbdb54ec979da5ef7a5698"
+    },
+    {
+      "path": "model_alias.h",
+      "type": "file",
+      "sha": "8f153e555fb818866d3c4f18d3823acdd97ea737"
+    },
+    {
+      "path": "model_brush.c",
+      "type": "file",
+      "sha": "69082e61b8fdb7723b2a2ba7aa3297b56f68e703"
+    },
+    {
+      "path": "model_brush.h",
+      "type": "file",
+      "sha": "dae4a3cfdeb6a01993466086f734bb30ed4239e7"
+    },
+    {
+      "path": "model_dpmodel.h",
+      "type": "file",
+      "sha": "52ad0ce0ce909eb0de592b4b20650f311aa8fdf5"
+    },
+    {
+      "path": "model_hlmdl.h",
+      "type": "file",
+      "sha": "125afd54b1e6f13072c9602156339ff8fda6affb"
+    },
+    {
+      "path": "model_iqm.h",
+      "type": "file",
+      "sha": "1dbb940c65b98ccafea62b95cf153594a0f57717"
+    },
+    {
+      "path": "model_psk.h",
+      "type": "file",
+      "sha": "480386f015d1974cd979934ad97e3856b38597cd"
+    },
+    {
+      "path": "model_q1bsp.h",
+      "type": "file",
+      "sha": "e5a0cdcbd82e7c910de0f565bc3d14abec82ac70"
+    },
+    {
+      "path": "model_q2bsp.h",
+      "type": "file",
+      "sha": "7c81ab3922e82d271e56a76eb40ed9589c7488aa"
+    },
+    {
+      "path": "model_q3bsp.h",
+      "type": "file",
+      "sha": "dc368be5f61e5befbba8d3992ec30bcc6d3f1771"
+    },
+    {
+      "path": "model_shared.c",
+      "type": "file",
+      "sha": "9a87c4db09504ce0ab98dd0985e9f0257dea6e94"
+    },
+    {
+      "path": "model_shared.h",
+      "type": "file",
+      "sha": "39572b5408315dc02d7dd7a8bba25a8483849620"
+    },
+    {
+      "path": "model_sprite.c",
+      "type": "file",
+      "sha": "7e96f676f751a16f0e645c883392de85bca21f74"
+    },
+    {
+      "path": "model_sprite.h",
+      "type": "file",
+      "sha": "d28174dfd957e2a672ba02bec638ec23ad8f9ac4"
+    },
+    {
+      "path": "model_vbsp.h",
+      "type": "file",
+      "sha": "6de783b2cd681f88417ec67d27baeb09769b7db4"
+    },
+    {
+      "path": "model_zymotic.h",
+      "type": "file",
+      "sha": "d43f72c505f2586b989e58dacfe8c9092fa2cdef"
+    },
+    {
+      "path": "modelgen.h",
+      "type": "file",
+      "sha": "cd48ed096c1bcc6cba25da9f7754415d3aba6cb2"
+    },
+    {
+      "path": "mprogdefs.h",
+      "type": "file",
+      "sha": "c7993b7dd85b2eb61ccab8f3d86338a7c525da9a"
+    },
+    {
+      "path": "mvm_cmds.c",
+      "type": "file",
+      "sha": "4dc597d7270a9262e4fb376d0e16aadd63c0e57b"
+    },
+    {
+      "path": "netconn.c",
+      "type": "file",
+      "sha": "e1da0e3dc4f5874d186605e1540ab3513fe98bd6"
+    },
+    {
+      "path": "netconn.h",
+      "type": "file",
+      "sha": "ef926883c28fbd7a1e141b707bd93801c445c70e"
+    },
+    {
+      "path": "nexuiz.ico",
+      "type": "file",
+      "sha": "e9b76b080afea535c511813540170420b670973b"
+    },
+    {
+      "path": "nexuiz.rc",
+      "type": "file",
+      "sha": "1de869534aadd092c0d4b40ee0f3c845d32e4201"
+    },
+    {
+      "path": "nexuiz.xpm",
+      "type": "file",
+      "sha": "f80343d5627a59eb1da2d4980c68b9ab6faf4398"
+    },
+    {
+      "path": "packages.config",
+      "type": "file",
+      "sha": "4892fdc1d436c359c7be87bb8e5d1b5503cc1b0a"
+    },
+    {
+      "path": "palette.c",
+      "type": "file",
+      "sha": "8d66b2674cc70ff65492dbc432efe4df313aefbd"
+    },
+    {
+      "path": "palette.h",
+      "type": "file",
+      "sha": "8658f128442514be1083dc22715235bfcb88c998"
+    },
+    {
+      "path": "phys.c",
+      "type": "file",
+      "sha": "9aca309ddd528d9905f9fe5035bc926fd024f893"
+    },
+    {
+      "path": "phys.h",
+      "type": "file",
+      "sha": "cbb3d2cc71fb660e53e0d09ca19415b4640b7b69"
+    },
+    {
+      "path": "pmove.h",
+      "type": "file",
+      "sha": "3f2dad1157ee005005d99d580ecd842e30e17c7b"
+    },
+    {
+      "path": "polygon.c",
+      "type": "file",
+      "sha": "9a0f1de6d103817924403c9772cbd7ac6c62b049"
+    },
+    {
+      "path": "polygon.h",
+      "type": "file",
+      "sha": "e229dc1a4811bebce121dac713489d18139828cd"
+    },
+    {
+      "path": "portals.c",
+      "type": "file",
+      "sha": "e831466a6fc98a8e57754da2ba00e74afa0603e5"
+    },
+    {
+      "path": "portals.h",
+      "type": "file",
+      "sha": "6715f796f9557ff4fee9638b29fdef0b97ec730b"
+    },
+    {
+      "path": "pr_comp.h",
+      "type": "file",
+      "sha": "e95089dae0104b177bbfe699b6aa9025c4c61b46"
+    },
+    {
+      "path": "progdefs.h",
+      "type": "file",
+      "sha": "7086dbdc459767c2d70a87b8e7d92cd5e8d4cd78"
+    },
+    {
+      "path": "progs.h",
+      "type": "file",
+      "sha": "466521a7530cdc1cc3cd1f7e9b6a53e073c7c65b"
+    },
+    {
+      "path": "progsvm.h",
+      "type": "file",
+      "sha": "87f73d4c55d06abb2cfceee5cd92eaf8e9f96b0a"
+    },
+    {
+      "path": "protocol.c",
+      "type": "file",
+      "sha": "d72e961571fb698cda74276421b2da6609caf224"
+    },
+    {
+      "path": "protocol.h",
+      "type": "file",
+      "sha": "92b98dba248374ee33ee479a07bae0f8a663e69b"
+    },
+    {
+      "path": "prvm_cmds.c",
+      "type": "file",
+      "sha": "e540e8517da3a991c8070ab1a0515ad953600139"
+    },
+    {
+      "path": "prvm_cmds.h",
+      "type": "file",
+      "sha": "292e8f556b7da7c0b1d4c84f2f447c1a6f63a5d2"
+    },
+    {
+      "path": "prvm_edict.c",
+      "type": "file",
+      "sha": "874c37df0e5e65296c82ab7f82d69c3e95398e67"
+    },
+    {
+      "path": "prvm_exec.c",
+      "type": "file",
+      "sha": "75b31440ba06d658ce32aa8c507ca522d9f07aee"
+    },
+    {
+      "path": "prvm_execprogram.h",
+      "type": "file",
+      "sha": "77dcdbef3b11edbae2dda6adebcbcd5f7e320664"
+    },
+    {
+      "path": "prvm_offsets.h",
+      "type": "file",
+      "sha": "aacadb392069e89f058655d4f72a000e2240f52d"
+    },
+    {
+      "path": "qdefs.h",
+      "type": "file",
+      "sha": "78f668d899fc895823eaf91b2cfb8fec2094fc9e"
+    },
+    {
+      "path": "qstats.h",
+      "type": "file",
+      "sha": "098b82d418c53c4dfff8f151cc2205c1ba64f71b"
+    },
+    {
+      "path": "qtypes.h",
+      "type": "file",
+      "sha": "653364b9f10019f98dc8d1284e65a5eca9f76fe9"
+    },
+    {
+      "path": "quakedef.h",
+      "type": "file",
+      "sha": "510b4ec20bc7b4d90ae6228d96ffcb42c5814a11"
+    },
+    {
+      "path": "r_explosion.c",
+      "type": "file",
+      "sha": "104a9753d477f19f53447632a4bc6610167b207b"
+    },
+    {
+      "path": "r_lightning.c",
+      "type": "file",
+      "sha": "9a73a50f1b6bbd1be825301182c08296e033189d"
+    },
+    {
+      "path": "r_modules.c",
+      "type": "file",
+      "sha": "dd76b6cae9d4be1fcf74b17d74e09f2e85a0838e"
+    },
+    {
+      "path": "r_modules.h",
+      "type": "file",
+      "sha": "0b8d4b38f676f2118d3a50c26d7a638e9b231e70"
+    },
+    {
+      "path": "r_qshader.h",
+      "type": "file",
+      "sha": "ce38ff7f0cfe9606617024a729e80174140a511a"
+    },
+    {
+      "path": "r_shadow.c",
+      "type": "file",
+      "sha": "136927fdae26212e1706449563ecf6ae72a6181a"
+    },
+    {
+      "path": "r_shadow.h",
+      "type": "file",
+      "sha": "b11420c2056d9f61ba97250f6ab939618724913f"
+    },
+    {
+      "path": "r_sky.c",
+      "type": "file",
+      "sha": "67ece7289ce60c8d8bc4e89f31c0af1114216bce"
+    },
+    {
+      "path": "r_sprites.c",
+      "type": "file",
+      "sha": "9bf13fb912f61542abc3bebc5eb473f007d1a939"
+    },
+    {
+      "path": "r_stats.c",
+      "type": "file",
+      "sha": "55c43e7ed8a7272a689baa23a463c6c434091e98"
+    },
+    {
+      "path": "r_stats.h",
+      "type": "file",
+      "sha": "f985991e548f6a5f48c9a43784b8676c9a11c1d1"
+    },
+    {
+      "path": "r_textures.h",
+      "type": "file",
+      "sha": "cf2c0f3f3fb9974f5da2dd28b2ee6ae47c5ee65c"
+    },
+    {
+      "path": "render.h",
+      "type": "file",
+      "sha": "7fbcd0b35170ab61b571c90a0f29e17b880c78e1"
+    },
+    {
+      "path": "resource.h",
+      "type": "file",
+      "sha": "27fc918d187ce150e83a3c7fd51af2ff78d40523"
+    },
+    {
+      "path": "sbar.c",
+      "type": "file",
+      "sha": "8c0f0cf5e67e500d333a7184dc90237c1fc1f81a"
+    },
+    {
+      "path": "sbar.h",
+      "type": "file",
+      "sha": "5de4c91d468368a4ea8b5c5304bec4bbdd2bc31b"
+    },
+    {
+      "path": "screen.h",
+      "type": "file",
+      "sha": "b018ad1eec10862788f2a04abdfc6a21d126de19"
+    },
+    {
+      "path": "server.h",
+      "type": "file",
+      "sha": "9c442c96b9bac16faa00c5d6ce08d789de39d51f"
+    },
+    {
+      "path": "shader_glsl.h",
+      "type": "file",
+      "sha": "dc56d085033a7d52f35384bd8f7aeffeb794dc5b"
+    },
+    {
+      "path": "snd_main.c",
+      "type": "file",
+      "sha": "cee8ec583900fae6c2f80b64cdf7a6fdbf6db82b"
+    },
+    {
+      "path": "snd_main.h",
+      "type": "file",
+      "sha": "f276f8d5ad1196357c4b7b49ad7331e10912e785"
+    },
+    {
+      "path": "snd_mem.c",
+      "type": "file",
+      "sha": "519ef0e27924a3049b533a8c6ee33ed64208161e"
+    },
+    {
+      "path": "snd_mix.c",
+      "type": "file",
+      "sha": "41358feeb6f987292bdd75e9ef3adaef90d01422"
+    },
+    {
+      "path": "snd_null.c",
+      "type": "file",
+      "sha": "5d15bff0f194143804f474d11c5ab10ff8669c9d"
+    },
+    {
+      "path": "snd_ogg.c",
+      "type": "file",
+      "sha": "09d20c8e307c0e2d9c9c93397c5cf8577957dff4"
+    },
+    {
+      "path": "snd_ogg.h",
+      "type": "file",
+      "sha": "35296e1acf013cc671d87b84bd1e5852263bcfd5"
+    },
+    {
+      "path": "snd_sdl.c",
+      "type": "file",
+      "sha": "706fa30479dc8883b189edfce872c0bfd04b3a09"
+    },
+    {
+      "path": "snd_wav.c",
+      "type": "file",
+      "sha": "d23a8b5126487ca3b01196c8c5c17ffc61492565"
+    },
+    {
+      "path": "snd_wav.h",
+      "type": "file",
+      "sha": "68fc6d64276380f9113231ef342ef0b5fc35a36a"
+    },
+    {
+      "path": "snd_xmp.c",
+      "type": "file",
+      "sha": "9876803d571fbcfc8c0922ba1d513b5100d1f2d5"
+    },
+    {
+      "path": "snd_xmp.h",
+      "type": "file",
+      "sha": "3268dee8aa2705038bae7622598559a45868ee76"
+    },
+    {
+      "path": "sound.h",
+      "type": "file",
+      "sha": "58a14fc3138b51c7d6a706c3360eec9473319829"
+    },
+    {
+      "path": "spritegn.h",
+      "type": "file",
+      "sha": "a64f4be958904d1d774f7d1c2258d981604521cd"
+    },
+    {
+      "path": "sv_ccmds.c",
+      "type": "file",
+      "sha": "4998a4bfa50783f97c57ea6586261d33c274c375"
+    },
+    {
+      "path": "sv_demo.c",
+      "type": "file",
+      "sha": "de267620568d8b404ac39e24be2488c7c9ecdc20"
+    },
+    {
+      "path": "sv_demo.h",
+      "type": "file",
+      "sha": "fed19257654d7c0555a42f078e4a6210c00599c3"
+    },
+    {
+      "path": "sv_ents.c",
+      "type": "file",
+      "sha": "7d82a48091de71ff437f50b384c204b2ae1b09a5"
+    },
+    {
+      "path": "sv_ents4.c",
+      "type": "file",
+      "sha": "c6e40ea18124e107da9fac0ecdd354411887a856"
+    },
+    {
+      "path": "sv_ents5.c",
+      "type": "file",
+      "sha": "4ede6d3d04a0d6c412c84ac74cd968694d60060e"
+    },
+    {
+      "path": "sv_ents_csqc.c",
+      "type": "file",
+      "sha": "2be0df8b192273fa595d079e5ac402fcecbe0be7"
+    },
+    {
+      "path": "sv_ents_nq.c",
+      "type": "file",
+      "sha": "8db8a62398756a0737f60261205e277d864affe8"
+    },
+    {
+      "path": "sv_main.c",
+      "type": "file",
+      "sha": "5fded4c8b7a05e534a89a550dcf27f0abc984ebc"
+    },
+    {
+      "path": "sv_move.c",
+      "type": "file",
+      "sha": "0699180d12f6e3bcdd1460723a6a157ff346d9e8"
+    },
+    {
+      "path": "sv_phys.c",
+      "type": "file",
+      "sha": "e67f518c52b8e38852cff6588db312d90ba5696d"
+    },
+    {
+      "path": "sv_save.c",
+      "type": "file",
+      "sha": "653292a066067e3ac2c3f7bd78eb9c15382dde82"
+    },
+    {
+      "path": "sv_send.c",
+      "type": "file",
+      "sha": "455e2ff807669552d557bb1c65421219faf6bfbe"
+    },
+    {
+      "path": "sv_user.c",
+      "type": "file",
+      "sha": "1192e58698f2500d64f305075471a0ff2d0b227e"
+    },
+    {
+      "path": "svbsp.c",
+      "type": "file",
+      "sha": "1ad7fafc82248c7826c96da409514800468c1fa4"
+    },
+    {
+      "path": "svbsp.h",
+      "type": "file",
+      "sha": "857b6b563f05596abd8dae5d99ea7dd894ee97f9"
+    },
+    {
+      "path": "svn-eol-style-from-gitattributes.sh",
+      "type": "file",
+      "sha": "7c1085cd1fdfa78560d073f684fedaf38bdb701f"
+    },
+    {
+      "path": "svvm_cmds.c",
+      "type": "file",
+      "sha": "770f1abededce1e8f91b465b3187c0ad606f49cd"
+    },
+    {
+      "path": "sys.h",
+      "type": "file",
+      "sha": "4c46754f5aeade66dce2bc1d265f653c72c43636"
+    },
+    {
+      "path": "sys_null.c",
+      "type": "file",
+      "sha": "bb2885867f22af7d6945069cfbf7c38bf0c352d5"
+    },
+    {
+      "path": "sys_sdl.c",
+      "type": "file",
+      "sha": "574f1355aacedb76cb10b57d497f29c910effe8b"
+    },
+    {
+      "path": "sys_shared.c",
+      "type": "file",
+      "sha": "9b25fd1ce17fa113cb43a743c29a9cdb0049fd33"
+    },
+    {
+      "path": "sys_wasm.c",
+      "type": "file",
+      "sha": "167cea5c2bf223a4b66e82a32dc5a5f16d37657a"
+    },
+    {
+      "path": "taskqueue.c",
+      "type": "file",
+      "sha": "175a28af7c21c74aea3562ea4423b99c4c701a24"
+    },
+    {
+      "path": "taskqueue.h",
+      "type": "file",
+      "sha": "0f64cf6fc35035f6c28b660804855651f5ccb111"
+    },
+    {
+      "path": "thread.h",
+      "type": "file",
+      "sha": "ac72b2827e22955788278655c1e1b6c63a430d1b"
+    },
+    {
+      "path": "thread_null.c",
+      "type": "file",
+      "sha": "a38a15b6f68fda6be37376343b3479e03789c117"
+    },
+    {
+      "path": "thread_pthread.c",
+      "type": "file",
+      "sha": "bd96b101653ab9016675dadfbcea997dc3a4bc46"
+    },
+    {
+      "path": "thread_sdl.c",
+      "type": "file",
+      "sha": "8e0f49b79177c7d036115f2015f9f20e1b5b47c8"
+    },
+    {
+      "path": "thread_win.c",
+      "type": "file",
+      "sha": "1cfad9a40031eabbd32d9412e45a4b5976de680d"
+    },
+    {
+      "path": "timing.h",
+      "type": "file",
+      "sha": "33da8584e95f2817b84fcdfb08e53181d8d42f9c"
+    },
+    {
+      "path": "todo",
+      "type": "file",
+      "sha": "19c25c34b47e9d650b9b9ffda9b4c314e53dd80d"
+    },
+    {
+      "path": "utf8lib.c",
+      "type": "file",
+      "sha": "620601325bd8dd51c346539692f6249accb1ceb7"
+    },
+    {
+      "path": "utf8lib.h",
+      "type": "file",
+      "sha": "fb75018d4725006dba16b9f4ff36f3bf644f1407"
+    },
+    {
+      "path": "vid.h",
+      "type": "file",
+      "sha": "f1d57ab6e842769913bb3da424ff817a0af2cc61"
+    },
+    {
+      "path": "vid_null.c",
+      "type": "file",
+      "sha": "0ec517c0bdba8266b232e7f55e09d9679ee1d7e7"
+    },
+    {
+      "path": "vid_sdl.c",
+      "type": "file",
+      "sha": "ea6fe26e0f900d626b686ac226442fd69d7d4385"
+    },
+    {
+      "path": "vid_shared.c",
+      "type": "file",
+      "sha": "29baba255b76b6aab7fdfcafb9cdef0104add6f2"
+    },
+    {
+      "path": "view.c",
+      "type": "file",
+      "sha": "e8eaec7e26a7b5a81d3fa500124c1d693ee674a1"
+    },
+    {
+      "path": "view.h",
+      "type": "file",
+      "sha": "2c6c311be278ba0ee843fe5c7b48f8624348a35d"
+    },
+    {
+      "path": "vpk.h",
+      "type": "file",
+      "sha": "3490766f23227fd7195e8d3c3d7c7702cbb44de8"
+    },
+    {
+      "path": "wad.c",
+      "type": "file",
+      "sha": "55da49963bd731d96f612fa426a0173e5c7f2cbf"
+    },
+    {
+      "path": "wad.h",
+      "type": "file",
+      "sha": "2aaa1b8d30d92a8525066cdb97cf4d6fc47e540c"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "f347432853434cea72a8d59dacfa1de64dd554f4"
+    },
+    {
+      "path": "world.c",
+      "type": "file",
+      "sha": "a95330fae99a4ba0ed9dc3d138d7038a6dcb9b78"
+    },
+    {
+      "path": "world.h",
+      "type": "file",
+      "sha": "9e0e01010aa18089ea5ac68a9e07258d0692109e"
+    },
+    {
+      "path": "zone.c",
+      "type": "file",
+      "sha": "5d69213c006c4dda6a624a363a7567c2bbf33560"
+    },
+    {
+      "path": "zone.h",
+      "type": "file",
+      "sha": "b0dedc9dc2126ced5e04efc2513294e778462c21"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Quake-derived runtime; owned engine source and make/native platform builds. Mirror/family lineage retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

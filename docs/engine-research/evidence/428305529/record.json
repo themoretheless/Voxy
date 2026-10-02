@@ -1,0 +1,39 @@
+{
+  "repository": "EmmetOT/BoundingVolumeHierarchy",
+  "repository_id": 428305529,
+  "commit": "8cf0c5fae66627a50adc656e10651c2e4aa3958a",
+  "source_url": "https://github.com/EmmetOT/BoundingVolumeHierarchy/tree/8cf0c5fae66627a50adc656e10651c2e4aa3958a",
+  "readme_path": "README.md",
+  "readme_sha256": "8545b4f8e1e9d26ed1157a9f18e488025cc3fea23a1ea9b385acfec6d0de6544",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "88c47d0142b394232980a0e496b0e9c7162d5a36"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5782723b8c2657cc59c89c345c1807bcd0580111"
+    },
+    {
+      "path": "BoundingVolumeHierarchy",
+      "type": "dir",
+      "sha": "f1af9cf86de037639c9f81639adbd40627ccc644"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b05bedc2681e148a54f8cf1454681149f5c584f1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8c9049fc2f470fc10fc677a1279ee4b71b950d52"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# port of Box2D dynamic tree adapted to 3D queries; spatial acceleration subsystem for Unity.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,54 @@
+{
+  "repository": "hiulit/Unofficial-Godot-Engine-Raspberry-Pi",
+  "repository_id": 317482700,
+  "commit": "ce610e3bb29dddebaf8a031740fc386f900ec6fd",
+  "source_url": "https://github.com/hiulit/Unofficial-Godot-Engine-Raspberry-Pi/tree/ce610e3bb29dddebaf8a031740fc386f900ec6fd",
+  "readme_path": "README.md",
+  "readme_sha256": "51839b73577da2705449e72834df71367e9f8fbb76a9e5c5e07c653db9febc90",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "43761df7d76e5afff5141c66e09f8492c2b4a404"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "6bbdc17da46f0c37f6f7257555cb6ce61b65d18d"
+    },
+    {
+      "path": "COMPILING.md",
+      "type": "file",
+      "sha": "579fbc5554a613b52735b86cbd8f153d099f7c0f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2dddb40e313dd96caa4065eabe7aebe8b5e48c99"
+    },
+    {
+      "path": "LICENSE_GODOT.txt",
+      "type": "file",
+      "sha": "561ff47ef0f9ac6f51e9eee8bbb72e69162dfbcf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2232f5baecc59a7a39640cd01c8b304447578590"
+    },
+    {
+      "path": "compiling",
+      "type": "dir",
+      "sha": "64f83609983e667904d24638d60b1511b0feceb3"
+    },
+    {
+      "path": "unofficial-godot-raspberry-pi.jpg",
+      "type": "file",
+      "sha": "dc7e22d0d1c69a0dd80bdabd0b72746760dac9d5"
+    }
+  ],
+  "classification": "excluded_binary_distribution",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies unofficial Godot binaries/build instructions; no separate owned engine implementation at pinned root.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

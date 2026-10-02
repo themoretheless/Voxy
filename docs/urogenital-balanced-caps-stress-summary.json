@@ -1,0 +1,12 @@
+{
+  "urethra": {
+    "peak_von_mises_pa": 101.5618369883,
+    "element": 27561,
+    "weighted_mean_von_mises_pa": 21.267249716435217
+  },
+  "vagina": {
+    "peak_von_mises_pa": 274.705789609,
+    "element": 23134,
+    "weighted_mean_von_mises_pa": 50.748216524682206
+  }
+}

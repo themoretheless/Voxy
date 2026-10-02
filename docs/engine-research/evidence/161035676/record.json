@@ -1,0 +1,129 @@
+{
+  "repository": "mrDIMAS/DmitrysEngine",
+  "repository_id": 161035676,
+  "commit": "aec10f41d58653796fb7a855a5acf534d1dd291c",
+  "source_url": "https://github.com/mrDIMAS/DmitrysEngine/tree/aec10f41d58653796fb7a855a5acf534d1dd291c",
+  "readme_path": "README.md",
+  "readme_sha256": "52a3692c9a6fa7402fb97c1193c4a13576d748ab6493e92b6900c66ce0ec9287",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d9abbf2a0c31761e9f106ed89ae2328638d0a70b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "26754e23dfd3c937af33fb87476dc5425f54eb27"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "def00e6476933d1296fd9be42ff70ff1b696281d"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "56663289e9a993cecdead7f1db3638b076eca48f"
+    },
+    {
+      "path": "de_main.c",
+      "type": "file",
+      "sha": "2a1f40ef9c7f937632552209f4263c53bb63084d"
+    },
+    {
+      "path": "de_main.h",
+      "type": "file",
+      "sha": "5adf490f4738a175be0a047bc2c9ec76999ee79f"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "9a21ea442584ad07a6239bd8bc2745f298fddf0c"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "7b1a45fbcad52f1d06ac6bba6ca403d39835ae85"
+    },
+    {
+      "path": "fbx",
+      "type": "dir",
+      "sha": "0fa80c6c9849efc84bcb75426820620c08f09bdf"
+    },
+    {
+      "path": "font",
+      "type": "dir",
+      "sha": "2919bb0c45915df64fe8eebe5036cce3181f91f1"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "f3d24596897441d1115aa8226931d1c08ddc3c93"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "57f69e4e207f2fe08a6f600c0d6c6c1e8cd9a28b"
+    },
+    {
+      "path": "math",
+      "type": "dir",
+      "sha": "186490da80e2a0e4f98f9d5eb3c0097981a71663"
+    },
+    {
+      "path": "physics",
+      "type": "dir",
+      "sha": "692c1433cb764c4fe03c0d21f476f1080590cb1a"
+    },
+    {
+      "path": "pics",
+      "type": "dir",
+      "sha": "59d062fc903deea282ad8ba2d68b404569048776"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "4ceae9d20a4145d204fbffbf78b83b5bdd949df7"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "9d50e8fcdf3174faeac1f12fb43ee0326f27e056"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "e8a4344f3de7a45579012cdf34a08ddb3f0589a1"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "25f154b381039d002db41278fe5cdc291e5136de"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "52033387f199221db8b6c7997d55d86c9055865c"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "dd51207c8dc22c944e0483df0ecba9f44166e6d4"
+    },
+    {
+      "path": "vg",
+      "type": "dir",
+      "sha": "f73b6f6e539e416b79691b5eebadd9aa016b4677"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C99 game engine with scene, renderer, physics, sound and editor source directories; abandoned status is not runtime verification.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

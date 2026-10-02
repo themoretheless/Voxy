@@ -1,0 +1,122 @@
+{
+  "repository": "openfl/starling",
+  "repository_id": 23665851,
+  "commit": "592ad54b1f4648741ef96975fd814ec721d9480f",
+  "source_url": "https://github.com/openfl/starling/tree/592ad54b1f4648741ef96975fd814ec721d9480f",
+  "readme_path": "README.md",
+  "readme_sha256": "ae64f07d47ab943468845e165f2a2871f7da30a0b9a619b53d3192e3bbd4a018",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e37f24613c0e7f5060d12812687e1fc1fd71d851"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "73746e7460f0d0761f6646186fc4cc3a5461844d"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "c8c75685bf2d3baebaed03eee2c8188c954b53b3"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "58984f80de4d7f8f6f2cc6ec092dd6ce57854d10"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c02c091ec420e87963bbdca1894d5c9fd694c89a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "040347c7cce0f07d23559a6857d4b0b04459f823"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "be2f77d43eec96c125aea6ff5824dc311505385c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b42cd98561fc7eafcbcee8794eefa31a15eebac3"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "b4c90ff16655f4bd044d2fe1a6dc6a0581263bc2"
+    },
+    {
+      "path": "include.xml",
+      "type": "file",
+      "sha": "26010e32062c5a79d27a4a3bc56400af4367f316"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "2e399e4e874a11ed81458ad523e904e4a1ca115b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "b0336cb8af458d3018e2ac78276a9855500fce68"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c95284df4d8ac8bfe1ba77181022685e2b03b2f2"
+    },
+    {
+      "path": "release-checklist.md",
+      "type": "file",
+      "sha": "9de8af7a773af0eeab637654a3010b2168fd28e9"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "ac960bc3dc4032ec77ee0036ad60d9d0c844e92f"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "746c5ca5750d0f30a8d06886b0bef35ad3e78636"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "969410834a6570964fb9f31721b148acc0394ebe"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "fa6408832d8df0e95eb3a0895f8ff2849ec75773"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "aa6e969b1d5e29b5df3cd027a18ef544416ab4fe"
+    },
+    {
+      "path": "webpack.common.js",
+      "type": "file",
+      "sha": "dd98571658c99dff78132ae5a13d344bc90705a1"
+    },
+    {
+      "path": "webpack.dev.js",
+      "type": "file",
+      "sha": "9b832821b592f78851506f182c8a7e0bc07441d6"
+    },
+    {
+      "path": "webpack.prod.js",
+      "type": "file",
+      "sha": "10c368088b3d9e95b4fb1c1c95342a634b008ae4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

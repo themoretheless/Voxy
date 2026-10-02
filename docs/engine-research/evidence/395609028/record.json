@@ -1,0 +1,129 @@
+{
+  "repository": "GardensOfKadesh/Homeworld",
+  "repository_id": 395609028,
+  "commit": "348dbf30bae81389f9446f3c66031aad1ed8a234",
+  "source_url": "https://github.com/GardensOfKadesh/Homeworld/tree/348dbf30bae81389f9446f3c66031aad1ed8a234",
+  "readme_path": "README.md",
+  "readme_sha256": "3641d7677f0d6b4dad7390f5353f261e858ee5025593cb91e65b49c47f24c7f3",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "dc9b940b54176fc9aa074c3cc01df78feb1f3541"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "181921d12c79445d49990054a33a5df03752ee7f"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "2fafa0937791ac608ab67f348242431d94a04184"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "78b6e360ba5fb92bd7c2f355013a054a80c9938e"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "37ccd70ccd08fed33297467b175ef01282ba5060"
+    },
+    {
+      "path": ".kateconfig",
+      "type": "file",
+      "sha": "abff5f6938b3353e20082bd873fee1d5f0c0aaf9"
+    },
+    {
+      "path": ".kateproject",
+      "type": "file",
+      "sha": "448ca635d3cb56bb91f3f7a7f4dca90f999df563"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2969abfa9368ebfd2ec81db4e76e0bd91d6d5593"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0b029845fa4f93a58a6e421baf49883ee7f57e7f"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "38dcd1ff2263865b640fe561b8fca0e6c85ed507"
+    },
+    {
+      "path": "Linux",
+      "type": "dir",
+      "sha": "d885ccf45fc56223beafbc1337007b47d4484044"
+    },
+    {
+      "path": "Mac",
+      "type": "dir",
+      "sha": "702a688f0ed0d41c8bce8d4e4e920473970f0877"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8edbf3a2b815131032690a7b7e64b481a87f6b2f"
+    },
+    {
+      "path": "Windows",
+      "type": "dir",
+      "sha": "b02ad7610e36ea78de221d93f3b7f13c25266c1c"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "d968ee438278dc4c7fbe215ff3279d10e25ada9f"
+    },
+    {
+      "path": "meson.build",
+      "type": "file",
+      "sha": "7ce65bdfd1c29f93c2e7f6793ec9f092d7806c22"
+    },
+    {
+      "path": "meson_options.txt",
+      "type": "file",
+      "sha": "71b45748f1a38e914027c52a565db8fc779efbee"
+    },
+    {
+      "path": "mingw",
+      "type": "dir",
+      "sha": "9e3d831332dbc85b3c39271fde4b9dbd6cfdd205"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "152b9b21e28cb0eb5d065af3d2992b001a210699"
+    },
+    {
+      "path": "subprojects",
+      "type": "dir",
+      "sha": "283ea40b03e415056fd1d4fe3f97bee4dc8431eb"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "958f3bcffdb5e388165f79d6390aaed1dbe54612"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "d1daaba18b70dd2091ce31d42081dca096fba61a"
+    },
+    {
+      "path": "zarchive",
+      "type": "dir",
+      "sha": "dc287abd3223e06793c5f76cc9b6d82b7c96d61b"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Homeworld source mirror with README explicitly linking not-open-source license explanation; excluded pending license/source scope review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

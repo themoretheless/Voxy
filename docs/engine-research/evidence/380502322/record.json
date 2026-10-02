@@ -1,0 +1,64 @@
+{
+  "repository": "9D-Tony/UnitySmoothPixelFiltering",
+  "repository_id": 380502322,
+  "commit": "4b5de6c7af0188438ed4f1bacd4ed3b294ad0766",
+  "source_url": "https://github.com/9D-Tony/UnitySmoothPixelFiltering/tree/4b5de6c7af0188438ed4f1bacd4ed3b294ad0766",
+  "readme_path": "README.md",
+  "readme_sha256": "2ef8658bd2ac8fa36bf68e8a6a00cd7ac0cc302c0f90bd798b078a693bcc5bad",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b7dc3bffdf0c08311ac453eec7f89b9b41aa9d99"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4e0e034b57d5ff6d24c3f83eca457b7de2e22075"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "be5c4d4fcfd0509290ece488f298cb67f6f108db"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b9b79d9d92eb2dcf78c0a54376c4799eed40487"
+    },
+    {
+      "path": "Logs",
+      "type": "dir",
+      "sha": "15e58e0195aa15058ab77b76e60979420c3f32f6"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "9fa9cf28b529d6000193f2666dbba5c900633719"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "3a9fcfc0702d126c42643158efdc72725bb8be93"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "72b64cb15f8dfd774aa21651688496f41c458f83"
+    },
+    {
+      "path": "UserSettings",
+      "type": "dir",
+      "sha": "a90e98312e4e285229b51d6a6ab6df5105221262"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity shader and example scene for pixel filtering.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

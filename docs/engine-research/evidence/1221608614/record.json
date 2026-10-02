@@ -1,0 +1,162 @@
+{
+  "repository": "dylanebert/shallot",
+  "repository_id": 1221608614,
+  "commit": "1cac613fdb4da79c5dcd677f33f59d2ed1bb9f78",
+  "source_url": "https://github.com/dylanebert/shallot/tree/1cac613fdb4da79c5dcd677f33f59d2ed1bb9f78",
+  "readme_path": "README.md",
+  "readme_sha256": "1a6892ade6cc94392af04ae100cd55d686504063b311f238989225f39e31af62",
+  "entries": [
+    {
+      "path": ".attw.json",
+      "type": "file",
+      "sha": "a5e6b7f95331e32678f9337efcc87a13873a04a7"
+    },
+    {
+      "path": ".bun-version",
+      "type": "file",
+      "sha": "9df886c42a1e2082f1471383d986fea4d531f8ac"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "62be621655802cd76170db831e728f3767265041"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ffaa5deb1f19aa1f8aa195ad1b5c00fc5028771e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0e3de7b8df0ff5aa6f15c969328a8682fe73e6b8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "51665e629dd0cb6bf4d84667a1714b0c5ec280fc"
+    },
+    {
+      "path": ".node-version",
+      "type": "file",
+      "sha": "8a94b991271a7ecdee0e28e418eef0b92b472a33"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "adb2f903202f5889dadf6fc1a4f588ffb3e9c7b4"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "a9a557c163e604f4bb3b9a9a1f5e65e4e9d2035b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "72fd44da507b3f60d0c7086b9bf60b40fd41aa6f"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "6b78ed2769d14b36994cfd9f7bb6af01b2d2d045"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "bb38c881047e48d38d191ba49a02743a42af39aa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fe9a092f0415291f27835b0b0d6d4b4c60e1c869"
+    },
+    {
+      "path": "MIGRATION.md",
+      "type": "file",
+      "sha": "3130e00f75297895531a8de811cb0b0bbefd062d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b1f240985876ea7bfa1db957edbecf3beb51b2af"
+    },
+    {
+      "path": "assets.json",
+      "type": "file",
+      "sha": "fe51488c7066f6687ef680d6bfaa4f7768ef205c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3979712eea6b0a375df7b21a93be41b72282f5e0"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "e09d197ecf6b5e721f5f3af2ae2c4941bbb2cc78"
+    },
+    {
+      "path": "biome.json",
+      "type": "file",
+      "sha": "0915591f92cb8c9fc501738e47029d9626c6fe92"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "2f6d4cb506058ca0ee869b3b77e1e39a33216c31"
+    },
+    {
+      "path": "bunfig.toml",
+      "type": "file",
+      "sha": "76fadf95c4d27122c76bacfe7187dfe2161b60f4"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "5ab5d8d479d96568fde85f1d249e8b23f025438d"
+    },
+    {
+      "path": "diagnostics",
+      "type": "dir",
+      "sha": "60bcac98718aa948fb6802a4f4a0c15694c93050"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e2141bbd3481e2aa4a23e71981036a79141af0f6"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "498eb97a32761f8d8af2a953686c896d2d9d5e06"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "031c7fc386ce2f2d28dee213898f6b9a17975d67"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "bb4c2c30cbb59748130607885f766faa0807948f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "42c796d699641a0afe8b078b531a89bf7829b9e4"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "type": "file",
+      "sha": "108e1cbc2ab9186b6e6d818cbed4789250467eb9"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "c7aa7f619368e7e2077e298be15c7cdbb83e180f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

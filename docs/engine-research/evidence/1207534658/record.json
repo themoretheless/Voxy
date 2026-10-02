@@ -1,0 +1,149 @@
+{
+  "repository": "LudicDynamics/WorldLines",
+  "repository_id": 1207534658,
+  "commit": "111bfac75fa6aed46fb7b407bc544b872ca41e81",
+  "source_url": "https://github.com/LudicDynamics/WorldLines/tree/111bfac75fa6aed46fb7b407bc544b872ca41e81",
+  "readme_path": "README.md",
+  "readme_sha256": "9bfd27539c3843a5db530ff2969642b26c7f7ee8993a63f72fff61308069d939",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "ca2511bd21e32d9c098d97f1a9dd9faf4b5bcdb0"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "ca2511bd21e32d9c098d97f1a9dd9faf4b5bcdb0"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1daefebd2f14bef49dfb2bbced445385ec5224a2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d13a0c793bf8d21e62dac1c6897f7c61023d8eff"
+    },
+    {
+      "path": ".mcp.json",
+      "type": "file",
+      "sha": "602da3a34766015e15db7904c6ac657f906f9f9b"
+    },
+    {
+      "path": ".neonrp",
+      "type": "dir",
+      "sha": "e7fe0d42b7e0534e57809c86d1e4d99367c27295"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "e7f088f5ea47a6a1e5d21a6c65a1cf3778d22a4b"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "8963228fcedecba87569bc224f2e319be5be7040"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "1ae60dfd269473bfcdd800be3694e929190e817a"
+    },
+    {
+      "path": "CONTRIBUTING.ja.md",
+      "type": "file",
+      "sha": "8c66bb0d9afdbca59991c7c05787daaca6ecb490"
+    },
+    {
+      "path": "CONTRIBUTING.ko.md",
+      "type": "file",
+      "sha": "6f03a791c32d20015a760c5d582cb42a27150d80"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6a985159f363af8c9bb8c9a5f96f265ada79992d"
+    },
+    {
+      "path": "CONTRIBUTING.zh.md",
+      "type": "file",
+      "sha": "dc9c38dce3931f32143c4a6ffe30ffaf5aba7c31"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0cf0808e92647571b7e0dbc608ec116d8acae5dd"
+    },
+    {
+      "path": "README.ja.md",
+      "type": "file",
+      "sha": "509e238ab07d690c16e7c9431c2c2d2e850b0e8b"
+    },
+    {
+      "path": "README.ko.md",
+      "type": "file",
+      "sha": "d6ed769664e66d7cbd6a6971faa347acb6117329"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9ac73f03e58d983847b782c3b4987f2d03c225f0"
+    },
+    {
+      "path": "README.zh.md",
+      "type": "file",
+      "sha": "4c533ba6e99e81ccd2bb1e1630285a4febc9f02d"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "5486468dc3882048d792222ae2f558b70c90b054"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e28badf286e04ab10ca61082525e3b186ca38112"
+    },
+    {
+      "path": "desktop",
+      "type": "dir",
+      "sha": "dd48dc46917bd34476b2bba652e471f7c4b18e57"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "13ed89e879befd9ce1d1188c5b13d649e05d45d6"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c78fb8b4bc20bd804477c209c92121cdfb1426e3"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "db53ed320544e531a1aaeae4af8bf910258688c6"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "868e492452c05c21eeffd731547f079631e1dcab"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "304a079b3d8d6e2557056d017f633bafdaaeed76"
+    },
+    {
+      "path": "示例",
+      "type": "dir",
+      "sha": "f14237da086c208f73b824467ee73146d0321564"
+    }
+  ],
+  "classification": "excluded_closed_source_reference",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly says engine core neonrp is not open; repository contains example worlds and tools.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

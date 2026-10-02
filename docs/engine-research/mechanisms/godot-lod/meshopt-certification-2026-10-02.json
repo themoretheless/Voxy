@@ -1,0 +1,105 @@
+{
+  "repository": "godotengine/godot",
+  "commit": "084a2caa05119b625a99b6b51d44b459a26362de",
+  "binary_sha256": "7c45ef730a0d9ac8e55879566c98cbd99db36fc5ec467952619cf3a6c0fa09f0",
+  "generated_mesh_sha256": {
+    "base.obj": "5c3f123fc66f8bde141b640e1bbd6bcb9465689a06fc93fb091038bdfd2239e9",
+    "lod-1.obj": "a5354d5c93b178f60d2f335df5cdbf938b2ab89f29534a9933a69dc7cdf4c6cd",
+    "lod-2.obj": "28121efa5d619e3adc23ab89451030d6698fc7378f964a927aff97216b4d1f8c",
+    "lod-3.obj": "ed0fa06eff2e8fae5619e1c796774f9caca13a53ceae50408c7eb08c6e9dbcf3"
+  },
+  "results": [
+    {
+      "level": 1,
+      "depth": 1,
+      "base_triangles": 512,
+      "variant_triangles": 256,
+      "verified_bound": 0.047309662758212655,
+      "optimizer_metric": 0.00512914546,
+      "logical_index_bytes": 9216,
+      "search": {
+        "indexed_triangles": 768,
+        "output_cells": 3072,
+        "triangle_tests": 19936,
+        "node_visits": 49490
+      }
+    },
+    {
+      "level": 1,
+      "depth": 3,
+      "base_triangles": 512,
+      "variant_triangles": 256,
+      "verified_bound": 0.011827417662687037,
+      "optimizer_metric": 0.00512914546,
+      "logical_index_bytes": 9216,
+      "search": {
+        "indexed_triangles": 768,
+        "output_cells": 49152,
+        "triangle_tests": 310828,
+        "node_visits": 780204
+      }
+    },
+    {
+      "level": 2,
+      "depth": 1,
+      "base_triangles": 512,
+      "variant_triangles": 128,
+      "verified_bound": 0.07107694608035177,
+      "optimizer_metric": 0.0128934653,
+      "logical_index_bytes": 7680,
+      "search": {
+        "indexed_triangles": 640,
+        "output_cells": 2560,
+        "triangle_tests": 19640,
+        "node_visits": 37856
+      }
+    },
+    {
+      "level": 2,
+      "depth": 3,
+      "base_triangles": 512,
+      "variant_triangles": 128,
+      "verified_bound": 0.024069325320259214,
+      "optimizer_metric": 0.0128934653,
+      "logical_index_bytes": 7680,
+      "search": {
+        "indexed_triangles": 640,
+        "output_cells": 40960,
+        "triangle_tests": 309724,
+        "node_visits": 599510
+      }
+    },
+    {
+      "level": 3,
+      "depth": 1,
+      "base_triangles": 512,
+      "variant_triangles": 64,
+      "verified_bound": 0.22569487582418177,
+      "optimizer_metric": 0.288550735,
+      "logical_index_bytes": 6912,
+      "search": {
+        "indexed_triangles": 576,
+        "output_cells": 2304,
+        "triangle_tests": 25596,
+        "node_visits": 34382
+      }
+    },
+    {
+      "level": 3,
+      "depth": 3,
+      "base_triangles": 512,
+      "variant_triangles": 64,
+      "verified_bound": 0.12489521205556399,
+      "optimizer_metric": 0.288550735,
+      "logical_index_bytes": 6912,
+      "search": {
+        "indexed_triangles": 576,
+        "output_cells": 36864,
+        "triangle_tests": 414808,
+        "node_visits": 551052
+      }
+    }
+  ],
+  "overwrite_rejected_without_changes": true,
+  "scope": "pinned offline simplifier and actual OBJ certificate executable; no native presentation or universal metric equivalence"
+}

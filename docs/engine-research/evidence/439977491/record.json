@@ -1,0 +1,29 @@
+{
+  "repository": "mikeroyal/Unity-Guide",
+  "repository_id": 439977491,
+  "commit": "e9ab989ba6cc26163aa41f1c3e9aefaf227a5a55",
+  "source_url": "https://github.com/mikeroyal/Unity-Guide/tree/e9ab989ba6cc26163aa41f1c3e9aefaf227a5a55",
+  "readme_path": "README.md",
+  "readme_sha256": "1a2b668cff07f9bfa56b5f95383920c50419a13338d696459ed3ab4c4ccbaace",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8af868e8ed647aa55250b9632bb37c3996a86e9e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "211404d42b99548c860b1acd7fb207e4eaaa2784"
+    },
+    {
+      "path": "getting started with Unity.cs",
+      "type": "file",
+      "sha": "829b37261d8ab1857499a4d8bd349e0340430004"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity learning/tools guide, not engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

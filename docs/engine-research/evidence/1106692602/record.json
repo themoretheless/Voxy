@@ -1,0 +1,159 @@
+{
+  "repository": "vanyle/vectarine",
+  "repository_id": 1106692602,
+  "commit": "91ca101a0df72e350ea0c166b4a3dd8f2b640263",
+  "source_url": "https://github.com/vanyle/vectarine/tree/91ca101a0df72e350ea0c166b4a3dd8f2b640263",
+  "readme_path": "README.md",
+  "readme_sha256": "3ad18c2d565705658e8482063eddf6e8ebf0054214df049f937fa428768b19c0",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "da77d6f4a38fbd9a624de5e9c35c9ee534ae9662"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "35a60110b62de1ef84846e6e841df256f33ea960"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "65a5272a07388472d1a9cd255a1771e8159e1718"
+    },
+    {
+      "path": ".luaurc",
+      "type": "file",
+      "sha": "2741d026cf73c8bd53ef5968a294316a1b20c56f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "901682ce7751b28cfd6334a7203e39f8853ff399"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "962d7babb5b0b7fcbb629e0f896c3c4623be06d0"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "259eec429f211406658a9a7e8de3daa257576f00"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "6e881b85e031d4a66239ddbf10b8ec34e217c3a8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "69bf2361c8002b0e9f326a368a81de56738a936e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c971b7f5bd218d6683c9a88b8497e27a1416ff27"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "c8e09b9dee915715c79f5b86117c6a2e0f778c30"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e515df37232f9a3d8a36a3a41b0c05d2bc6385d0"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "756c7dc24eaf2480472764d7d34892f1f840a05f"
+    },
+    {
+      "path": "cross.toml",
+      "type": "file",
+      "sha": "f52aed31a7ae9472a85d0e0a04705ed78bda562a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "32f631370a99a7822df33e82436a8f1a89f66363"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "efc70c1e1104e8fbb2168328aad0670c00116208"
+    },
+    {
+      "path": "gallery",
+      "type": "dir",
+      "sha": "0c6fd13726798e88b2afeedb31186e294af5afa4"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "802306b71bc3e82628fa6ee2397106e8408e336c"
+    },
+    {
+      "path": "luau-api",
+      "type": "dir",
+      "sha": "6f8fe51785872ac0130c1835cbff4ed0c9e4e8ed"
+    },
+    {
+      "path": "mise.toml",
+      "type": "file",
+      "sha": "934416afebc3e9de73168c1c935ecd4b7cf08500"
+    },
+    {
+      "path": "pyrightconfig.json",
+      "type": "file",
+      "sha": "3efb129a2ecf07deb76ac704b0adca9e2bd350c8"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "32c0663ad7cf655b547af43ed2287a3fb0bafe2b"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "d31523e104d692b31b14bcc903860760e4f99727"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "546c81d38ad9fb89e04bc36615f8cd48efd5fcbf"
+    },
+    {
+      "path": "testdata",
+      "type": "dir",
+      "sha": "3f513f3538b54574f3b05b7bd8194fb184a89e79"
+    },
+    {
+      "path": "vectarine-cli",
+      "type": "dir",
+      "sha": "5cb65e802a451ca27dd5a21b2c890c43034e4d99"
+    },
+    {
+      "path": "vectarine-plugin-sdk",
+      "type": "dir",
+      "sha": "e580aa4f65639ce648a7dbda11a889f8be0ffe47"
+    },
+    {
+      "path": "vectarine-plugin-template",
+      "type": "dir",
+      "sha": "cbf3d1fa62817bb2aabf63da193ae1684b97c5ad"
+    },
+    {
+      "path": "vectarine.code-workspace",
+      "type": "file",
+      "sha": "4dc04feb7e2627303be0a36159bbca2f1addf8ee"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust/Luau prototyping engine with separate runtime, editor, CLI and plugin SDK sources.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

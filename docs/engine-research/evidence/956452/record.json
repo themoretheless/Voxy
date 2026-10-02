@@ -1,0 +1,177 @@
+{
+  "repository": "LambdaHack/LambdaHack",
+  "repository_id": 956452,
+  "commit": "b2849b049f14891f64af482b3ebf596341596aec",
+  "source_url": "https://github.com/LambdaHack/LambdaHack/tree/b2849b049f14891f64af482b3ebf596341596aec",
+  "readme_path": "README.md",
+  "readme_sha256": "df099d7e55b2e6b5b5f0e41b902c2e05d684c1b753e3fe332152576aa8c982f8",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "3f7aac6115993df93acd44ab8d032aded8460963"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8804370003ac0703804757a495c0be1c1662a204"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "671b8075f9181f15ef5dc48cc0059f39a626365f"
+    },
+    {
+      "path": ".hlint.yaml",
+      "type": "file",
+      "sha": "20a60cde340a2435c3415aa56779f3055f3ae3cd"
+    },
+    {
+      "path": ".stylish-haskell.yaml",
+      "type": "file",
+      "sha": "eb0057ab02ca19339951785dd80e5c64a99b4561"
+    },
+    {
+      "path": ".windows.installer.nsi",
+      "type": "file",
+      "sha": "0e75b46ab2a32d8a1ad0be3a039d84ac6c8a02da"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "810a4f167ad8f072bfab064233a8fc14e4c0d33f"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "aa49bb25b38b98743e7ce88b3753a4c5b26a5db5"
+    },
+    {
+      "path": "COPYLEFT",
+      "type": "file",
+      "sha": "b3b1f33021ea4c69aebf663ee65dadba1625254e"
+    },
+    {
+      "path": "CREDITS",
+      "type": "file",
+      "sha": "80f8ae01b936ad994865513455e7bb01b18a418f"
+    },
+    {
+      "path": "GameDefinition",
+      "type": "dir",
+      "sha": "3a61d15f2aa83f2ce038926513558aea188ae9bd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "41fac41b39979b0a756873cc92c4f9b620711abd"
+    },
+    {
+      "path": "LambdaHack.cabal",
+      "type": "file",
+      "sha": "8166ea48f9d318b1eba358260c3d9115e11d40fa"
+    },
+    {
+      "path": "LambdaHack.cabal.bkp",
+      "type": "file",
+      "sha": "a639f75798ef6ed80dc8333bc7dfbf90d00f37a4"
+    },
+    {
+      "path": "LambdaHack.cabal.flattened",
+      "type": "file",
+      "sha": "4db1eea74fe77368492d28f87ee388be47bb45d6"
+    },
+    {
+      "path": "MARGINALIA",
+      "type": "file",
+      "sha": "ca09e0b6fcdb22687bae34318d250552c9dd6156"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "935d48a02b533bd7ff935330b3198e68dc61106e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ff8c626f7fac4509ee884caaba575342aea06b98"
+    },
+    {
+      "path": "Setup.hs",
+      "type": "file",
+      "sha": "e8ef27dbba9992f80d9271a60892aadc63c9ef36"
+    },
+    {
+      "path": "cabal.haskell-ci",
+      "type": "file",
+      "sha": "8440ed2ef5e04068b9068062911a9a144c5fff77"
+    },
+    {
+      "path": "cabal.project",
+      "type": "file",
+      "sha": "fe872f1146ef1125bce7fbd7ef8ce77dd0ffee2e"
+    },
+    {
+      "path": "cabal.project.local.development",
+      "type": "file",
+      "sha": "c8bc3bc0cef07b879b286504e6667bc9f4c65db4"
+    },
+    {
+      "path": "cabal.project.local.js",
+      "type": "file",
+      "sha": "b153cef3b2fc7f4e12f645c7481243b2108417d6"
+    },
+    {
+      "path": "cabal.project.local.stacktrace",
+      "type": "file",
+      "sha": "26cd3e06701217213924de09745f937bff285126"
+    },
+    {
+      "path": "cabal.project.local.testing",
+      "type": "file",
+      "sha": "35f42a2a2ac4145fddf66f4e81eef528468597c0"
+    },
+    {
+      "path": "definition-src",
+      "type": "dir",
+      "sha": "ea2ef641c2718dd0f1d170aa1ade467cdafaa8ad"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "563e6f190f2e052541933267423eb9a69cfa090a"
+    },
+    {
+      "path": "engine-src",
+      "type": "dir",
+      "sha": "2aacf28de264dcd6e912ffc19af571aef36def50"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "7db3ea12fbae1f20d6c43a36b3a37e1a12e05b3c"
+    },
+    {
+      "path": "stack.yaml",
+      "type": "file",
+      "sha": "b6b2b9acbf4b75ab318f03224c86d3cef2eb3b11"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "09a279c6fc3bbeae9726defc9d06d332be519de9"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "2f59d424c808feda0d06142cb829294ba60e792e"
+    },
+    {
+      "path": "ts-src",
+      "type": "dir",
+      "sha": "fe13a3f35ba2630608084befff18d459808dd2a7"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

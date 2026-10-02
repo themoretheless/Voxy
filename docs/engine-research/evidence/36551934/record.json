@@ -1,0 +1,79 @@
+{
+  "repository": "BSVogler/WurfelEngineSDK",
+  "repository_id": 36551934,
+  "commit": "7150402df1df6dcff30d8fb57052ea41f50a1e0c",
+  "source_url": "https://github.com/BSVogler/WurfelEngineSDK/tree/7150402df1df6dcff30d8fb57052ea41f50a1e0c",
+  "readme_path": "README.md",
+  "readme_sha256": "d46374da6aa55df7dbe8ac4f7303d12ed162f7d27c66621b2124de71523ab1f6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "54ede52dfead3de47fd3353d335a2c8dfd154d31"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "e08575c1b6bfbf31879e7d743f41b936f4f36fce"
+    },
+    {
+      "path": "Logos",
+      "type": "dir",
+      "sha": "40825a48657c422536298253491eaf4973f1f539"
+    },
+    {
+      "path": "MinecraftToWurfelEngine",
+      "type": "dir",
+      "sha": "7eb2d3f2c56c11aa9129af91403b64f89452b9c2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e0334890a5b0fcbeb48defae72ac4ee0511d2e49"
+    },
+    {
+      "path": "UML Class Diagramm.pdf",
+      "type": "file",
+      "sha": "0df5951f188e2747001cc22a6a6e56b4e27f76bd"
+    },
+    {
+      "path": "WurfelEngineWithDependencies.jar",
+      "type": "file",
+      "sha": "52111d382bc62a49404477e2c76ede8773ee0178"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "cba90c526050000195c48d848d7cbfff16e29c1e"
+    },
+    {
+      "path": "demogame",
+      "type": "dir",
+      "sha": "0c0e8933a1f1bf8f33d97510ac19b7efd4bb91e8"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ddd55a8428a2449efc95078d6b144e4b03818dac"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "6ba2df7ffaf845007ce2bcb1afc66d1a3e1d0f9f"
+    },
+    {
+      "path": "sprites",
+      "type": "dir",
+      "sha": "bdab10965b365477eb6042ee2506ab4c4e6cf346"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "4c26aefaa05c15583694d98a04b4cb88ddd2e541"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java/libGDX isometric engine with world streaming/saving and in-game editor; core source and demo present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

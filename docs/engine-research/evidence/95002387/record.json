@@ -1,0 +1,104 @@
+{
+  "repository": "Rinnegatamante/vitaQuakeII",
+  "repository_id": 95002387,
+  "commit": "2cee9c30689514a5817bfd43f12d7933dd181979",
+  "source_url": "https://github.com/Rinnegatamante/vitaQuakeII/tree/2cee9c30689514a5817bfd43f12d7933dd181979",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "baf21dd06a0940826f85666beb1bcd82858aa236"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ecc5649f0d3ce9a01c8a8e96e836dc8baf1af6d1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23cb790338e191e29205d6f4123882c0583ef8eb"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "c2513ea9ed89469c36c81c16e5102aafbf4b8452"
+    },
+    {
+      "path": "audiodec",
+      "type": "dir",
+      "sha": "315238622f627dcb2bfe098127e9b0ef3ebe5d08"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "2ab1a0c49f41eacf9cd5fc03e9681b8cc4c9fa5a"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "f4fe66a1b2a2764bcd57ecf0d998f639513d64fc"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "aa86897368093760ad10610fa915dad9aef1409b"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "86f44e747e4c5178c206334f80b72c56a12bf5eb"
+    },
+    {
+      "path": "psp2",
+      "type": "dir",
+      "sha": "83670c9ebce66a03bd75d97c706ab7832dc6a924"
+    },
+    {
+      "path": "qcommon",
+      "type": "dir",
+      "sha": "93eede98b1d38e50a674441fab5f31c292125999"
+    },
+    {
+      "path": "ref_gl",
+      "type": "dir",
+      "sha": "71f3c32e8ec5fd658f97d36664fd5a2e7db7fba6"
+    },
+    {
+      "path": "rogue",
+      "type": "dir",
+      "sha": "6d1a4be1c06ece433ae9f76e3360295ccd884937"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "f1cbfb98d92e29ac9cb1730ee33d8531553dc882"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "19e9357efe2eb6685191b13e3c5e8995a23de46e"
+    },
+    {
+      "path": "xatrix",
+      "type": "dir",
+      "sha": "a544490746e44d5f73e502017b88958c9598e11c"
+    },
+    {
+      "path": "zaero",
+      "type": "dir",
+      "sha": "b0cba8852fde121ebda14be584fb38d52b3cb203"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Quake II Vita port with client/server/game/qcommon/render and expansion sources; no README/runtime verification available.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

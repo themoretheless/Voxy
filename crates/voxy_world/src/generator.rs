@@ -145,6 +145,8 @@ pub enum GenerationError {
     Cancelled,
     CoordinateOverflow,
     InvalidGeneratedChunk,
+    /// An explicitly selected generation backend failed; no fallback was applied.
+    BackendFailure,
 }
 
 impl fmt::Display for GenerationError {

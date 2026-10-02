@@ -1,0 +1,22 @@
+{
+  "scope": "Manufactured nonlinear elastic law with frozen reference-stress history; no tissue calibration or HGO equivalence",
+  "potential": "(1+beta*g)*Psi_el(C) + 0.5*(decay*Q_prev-beta*g*S_prev):C",
+  "g": "(1-exp(-dt/tau))/(dt/tau)",
+  "condition": "Symmetric second Piola tensors in a fixed reference measure; same elastic potential drives memory",
+  "derivative": "P = F*(S_el+Q_trial)",
+  "finite_difference_checks": [
+    {
+      "step": 0.0001,
+      "max_first_piola_error_pa": 1.4868183768612653e-06
+    },
+    {
+      "step": 1e-05,
+      "max_first_piola_error_pa": 1.6847536699060583e-08
+    },
+    {
+      "step": 1e-06,
+      "max_first_piola_error_pa": 2.4389919417444617e-08
+    }
+  ],
+  "outstanding": "HGO law, volumetric/isochoric separation, multi-branch coupling, dissipation and Body integration"
+}

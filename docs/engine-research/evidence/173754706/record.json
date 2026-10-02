@@ -1,0 +1,159 @@
+{
+  "repository": "BSoDium/The-PyOS-Project",
+  "repository_id": 173754706,
+  "commit": "fb38e1a57b7bfe638a6a74a951a91d4369747440",
+  "source_url": "https://github.com/BSoDium/The-PyOS-Project/tree/fb38e1a57b7bfe638a6a74a951a91d4369747440",
+  "readme_path": "README.md",
+  "readme_sha256": "e6088d8ccd57befefb72448786bae9123a9ad42e62f8b38d84dcba97946016aa",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0080f82d6a26bb4324af1300cebbb1ee467b6700"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "cadbe14eafd315fc3cccdb91029e283975082b32"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "b14972ad52e753b2db27d6e0198960ed309d384b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d2aea1eafb6f5aedd036bff2fc17ee76d65544b3"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "540c3f8e0975f5b72de771364f898810fa2f5611"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Orbital analysis.py",
+      "type": "file",
+      "sha": "1ce08e2c9c25c256f3c11f48cb11b7a74f0d049b"
+    },
+    {
+      "path": "PyOS_mod.py",
+      "type": "file",
+      "sha": "8b1909e32a88b5e496d54f2344f52f76e2a7b56c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ed7db26efe9417744b3ae863e3ded3a132ebbf1c"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "fde82d7b6d9cbfd69821cbfa2925bdafe12e388e"
+    },
+    {
+      "path": "Sound",
+      "type": "dir",
+      "sha": "1c6c4fd1a2ae76179b4d7e2da34b81fa407f86df"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "c4192631f25b34d77a7f159aa0da0e3ae99c4ef4"
+    },
+    {
+      "path": "alternate_pyos_banner.png",
+      "type": "file",
+      "sha": "391fb21a02e328e91d7a2833d85402bad3f15399"
+    },
+    {
+      "path": "bash.exe.stackdump",
+      "type": "file",
+      "sha": "5c0d1842dcf8ae32942f6413cdbad20591e34b14"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "9139f71d79cf16b435c54137a5373d5e01d02824"
+    },
+    {
+      "path": "disque.png",
+      "type": "file",
+      "sha": "f5ed9e3ec70c6f22345706c093b684dda16c0001"
+    },
+    {
+      "path": "downloads",
+      "type": "dir",
+      "sha": "6f809a5a4c746dc54f1920517569fdb2d4cf93da"
+    },
+    {
+      "path": "install.pyc",
+      "type": "file",
+      "sha": "1c89e57505cae2d512309780e8450f4a7cdedfa9"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "ff6725b1ee995121731c030778dfa5494d215173"
+    },
+    {
+      "path": "logo_with_bg.png",
+      "type": "file",
+      "sha": "b53c97e6f7cfdc03994cc6cec3af6731c90793e1"
+    },
+    {
+      "path": "main.py",
+      "type": "file",
+      "sha": "38be6dcf0ec72f248661cfe07f5888ad80a38d89"
+    },
+    {
+      "path": "main.spec",
+      "type": "file",
+      "sha": "436540f8eb2a856f14824f79e4f103049eba4b62"
+    },
+    {
+      "path": "main_alpha.py",
+      "type": "file",
+      "sha": "38be6dcf0ec72f248661cfe07f5888ad80a38d89"
+    },
+    {
+      "path": "newcomers_this_way.py",
+      "type": "file",
+      "sha": "8385b4ed0628c0320971cd86d464434082956cf7"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "d6b90e67366ad7a93153796d4eae44e66284f22c"
+    },
+    {
+      "path": "sandbox_testing.py",
+      "type": "file",
+      "sha": "a9eec7a9cd23b9a4a88c493a4775b94a4fda3aef"
+    },
+    {
+      "path": "scenegraph.txt",
+      "type": "file",
+      "sha": "258a6bec2936cff54dd2501c07487624af75069b"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "f6fb7d4455a5bee41a2d4be2ee281b2eb2278066"
+    },
+    {
+      "path": "star_project.png",
+      "type": "file",
+      "sha": "912b852782e00731d03ffb7c9c09417fc00f14cb"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python/Panda3D orbital simulator classroom project, explicitly abandoned.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

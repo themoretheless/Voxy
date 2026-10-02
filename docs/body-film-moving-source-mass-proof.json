@@ -1,0 +1,21 @@
+{
+  "test": "moving_body_film_conserves_source_adjusted_mass_over_two_seconds",
+  "session": 55965,
+  "exitCode": 0,
+  "passed": 1,
+  "frames": 120,
+  "simulationSeconds": 1.9999999999999978,
+  "maximumSourceAdjustedMassRelativeError": 1.829656511e-15,
+  "sourceAddedMassKg": 2e-06,
+  "grossContactTransferM3": 0.0,
+  "checks": [
+    "nonzero local tissue deformation",
+    "film geometry equals current deformed render substrate",
+    "source-adjusted mass checked every frame"
+  ],
+  "limitations": [
+    "No actual contact transfer in this body trajectory",
+    "Headless integration test, no rendered GPU image",
+    "Not whole-body contact or calibrated physiology"
+  ]
+}

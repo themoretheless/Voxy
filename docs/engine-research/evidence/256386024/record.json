@@ -1,0 +1,69 @@
+{
+  "repository": "JacksonHoggard/voodoo2d",
+  "repository_id": 256386024,
+  "commit": "4a7e2c84799f506486afbbfe1016a3cddc82e048",
+  "source_url": "https://github.com/JacksonHoggard/voodoo2d/tree/4a7e2c84799f506486afbbfe1016a3cddc82e048",
+  "readme_path": "README.md",
+  "readme_sha256": "8c0f034f456723d1d1af8d4b2be98b677cdeda8348488b6c4dbf694839c5df0c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "728c9861828e67298b36c364aaac9cb0b24e94bf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5834b416413b38b70787a33f73a76c89d5b46927"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "924cf931fa0e5754ea81b120a76e0a605cb56b70"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "0e0508938d0da4564e9af14443865556d33e524f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "13e48c8902b0546e2d1f6cf457afc840ac30a92e"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "2d3564fc0d66d9d89bacd1617a27aef8ad6e04d6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "14052be585a908330779d235e35bc180fe8ba200"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "92df82525372967c108dacec1f2bad24a7668a2f"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "e75999f45350baf98ead98abbe5bd64219594e16"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5bb6db30c50fac91509d329eac9148c71bf00b38"
+    },
+    {
+      "path": "textures",
+      "type": "dir",
+      "sha": "3e23311723337682dbf06db8cdce922c4e12339a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java 2D engine documenting game loop, rendering, audio, physics and tile maps; src and Maven manifest present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

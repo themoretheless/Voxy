@@ -1,0 +1,44 @@
+{
+  "scope": "Static floating-point classification; shared-vertex pairs excluded; no CCD or anatomy certification.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 32,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-urogenital-surface-32-optimized/urethra-rest.obj",
+      "sha256": "c750de3d8341458d71db5d81e0ec79b8d445d9599bbdb180659e83a8900bc2a0",
+      "vertices": 640,
+      "triangles": 896,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1248
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 32,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-urogenital-surface-32-optimized/urethra-barrier.obj",
+      "sha256": "95f40f38fb9662081fd8cd8900094870f4e1bf069eb755d2aa2131a44dd200f1",
+      "vertices": 640,
+      "triangles": 896,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 6089
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 32,
+      "stage": "released",
+      "source": "/private/tmp/voxy-urogenital-surface-32-optimized/urethra-released.obj",
+      "sha256": "9d7698b417467573a8b5b9a5be86cfbe7d1eb4b665062a49a3fd9ccb908c3576",
+      "vertices": 640,
+      "triangles": 896,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 398
+    }
+  ]
+}

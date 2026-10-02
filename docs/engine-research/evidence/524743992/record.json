@@ -1,0 +1,64 @@
+{
+  "repository": "HalfstarDev/matchanovel",
+  "repository_id": 524743992,
+  "commit": "b128c8490bae58db4feabe09f463d00f02199b98",
+  "source_url": "https://github.com/HalfstarDev/matchanovel/tree/b128c8490bae58db4feabe09f463d00f02199b98",
+  "readme_path": "README.md",
+  "readme_sha256": "69ac0d4dfeed4ac7845f85c47fb6ed28778af43638d3ca3b4973ea3c19cce2a7",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "187cdf4a5e85c78e351308fcfb0fd670db8261fc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c4163cfcebaac38611da23a06fa3a739376278b0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cd5f0958ca9c2a7445462ff1ba6b20b9e77f083a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c09c728f68a53d72aff162a75c4d83cd7d6f53de"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "cfaa55c29b6d406a8d51c7a0d5308ec3a03c4a6f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "91e5844531a4c5fc355510c76904b6c481736d47"
+    },
+    {
+      "path": "game.project",
+      "type": "file",
+      "sha": "ee9cd3b6ade03d53ca30135e844e161ff94674a9"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "2cd0fa22a32e4b0b0f8e8e8ffccab8886a999295"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "1cfe486279d70f81633171bb590bb2f5bf6d7e1c"
+    },
+    {
+      "path": "matchanovel",
+      "type": "dir",
+      "sha": "a5d15f928275d99eb17f0be394bd24cd8d617b0e"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Lua visual-novel scripting/backend and Defold GUI library; existing engine supplies graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

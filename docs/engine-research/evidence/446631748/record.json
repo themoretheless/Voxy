@@ -1,0 +1,54 @@
+{
+  "repository": "aoineko-fr/MSXgl",
+  "repository_id": 446631748,
+  "commit": "ab4b26feda36189e677aa23b56acfdc3218f7953",
+  "source_url": "https://github.com/aoineko-fr/MSXgl/tree/ab4b26feda36189e677aa23b56acfdc3218f7953",
+  "readme_path": "README.md",
+  "readme_sha256": "1dcb76dccebe84471fc6d75b3a3f4ae22d9dff3d77e9a2931ad07ac1d839c24d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6480110753368a83ce0afe54d34ea0ea94af8bf3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7bbd8e5115622397b034742dd574af34b56f92bf"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "e44a38e0803edbf4823dcabc9ee9623b03771e60"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "7d4f96c54aa155a17387e64501c50b6a0469932c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "10ac0c2293994c1f89dd7a2013222a8557ea28be"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "4c0579c04a55d1bc6567fe69d53154dccbecddd6"
+    },
+    {
+      "path": "projects",
+      "type": "dir",
+      "sha": "585c83920d1b487d7c103285a3788875da0f3dbb"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "75dfaaa10b1d456ee1b12f6e8b6bf9e33a4a65aa"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies MSX C game library; engine/projects/tools source, complete engine count separated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

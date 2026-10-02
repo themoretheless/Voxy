@@ -1,0 +1,41 @@
+{
+  "scope": "Fixed 24 axial segments, radial 3, 16 sectors, materials and supports. All three loaded protected equilibria converged and static audits found no intersections. Control isolates cap inclusion at fixed dead law and updating load law at fixed averaged caps; not physiological validation.",
+  "states": [
+    {
+      "anchor": "Dead / lateral",
+      "peak_pa": 919.2773449984,
+      "element": 2213,
+      "centroid_m": [
+        0.002598195405227,
+        -0.0004918711374914,
+        0.001420544258638
+      ],
+      "reference_z_m": 0.00125,
+      "sha256": "fae750682b38f6c2c05477e2a797140814794c270b5e37763d2a8fe05584b6cc"
+    },
+    {
+      "anchor": "Dead / closed",
+      "peak_pa": 920.8322976588,
+      "element": 2213,
+      "centroid_m": [
+        0.002615444370841,
+        -0.000496562719023,
+        0.001409983244938
+      ],
+      "reference_z_m": 0.00125,
+      "sha256": "5d1ab7251461b28483d7e9574d47ae18ce37bf6c0c2f9ac776328d2eca47a3e8"
+    },
+    {
+      "anchor": "Follower / closed",
+      "peak_pa": 101.5618369883,
+      "element": 27561,
+      "centroid_m": [
+        0.002578662645699,
+        0.0007939201381275,
+        0.01971388553876
+      ],
+      "reference_z_m": 0.01979166666667,
+      "sha256": "8ba46beaa2d66fdb65de18578d025efd8c673e4b246fdf6a74208f49cf2e38fb"
+    }
+  ]
+}

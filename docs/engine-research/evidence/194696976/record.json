@@ -1,0 +1,109 @@
+{
+  "repository": "hogsy/chronon",
+  "repository_id": 194696976,
+  "commit": "a54d3deae8768af702884ddd8be921a32e229a2d",
+  "source_url": "https://github.com/hogsy/chronon/tree/a54d3deae8768af702884ddd8be921a32e229a2d",
+  "readme_path": "readme.md",
+  "readme_sha256": "120bf11f3298358518dbd8cabd0deda333688d72288a4576082f837e648f0d12",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "f19dbee46e75a110cdec2034baac722f35db0082"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "147c213af87aa4db05d0403126693fd1a2e73256"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7a8f8237aa94432f877086bf5bddee9cf4eb4a83"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "4247980b087b771e296dab927b492ce799d91894"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "ed4a8a5a6f5ba28823d1e90b38c64dc8a3e3546b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "773c0810e9459fd3b15c59392de4ba45ce9363ef"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2f3289afb5656e59023a4e13e7fa45bf77a51fe9"
+    },
+    {
+      "path": "cmake_generate_vs2022-x64.bat",
+      "type": "file",
+      "sha": "73c15f97faea935bc4eac9f8c506f059211b8134"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "315db2d6eb318ee13ab5a308d3c9ad989b9001d0"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "ebe19c30187ea54b020fbf03323bededa2dc7241"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "68344baf010609d21c02510987c8cd00837a8150"
+    },
+    {
+      "path": "preview",
+      "type": "dir",
+      "sha": "ef4d3b20a4892175d3cdec42c736bf000349905b"
+    },
+    {
+      "path": "qcommon",
+      "type": "dir",
+      "sha": "bbe94aac9812800198a814edd2e4deaf72e8adf2"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "1a16bee0ee5b1099aab90b5dfad866480b9235b8"
+    },
+    {
+      "path": "release",
+      "type": "dir",
+      "sha": "e1bb97e63da24b229670d18c9803bd815a23c5e8"
+    },
+    {
+      "path": "tools",
+      "type": "file",
+      "sha": "6780f42f0cad3ed3b99bc26b99b7c468cf8b36ff"
+    },
+    {
+      "path": "vcpkg_setup_apple.sh",
+      "type": "file",
+      "sha": "c987311a1115e40fd3a2bb3fe4a4df4a349d0bb3"
+    },
+    {
+      "path": "vcpkg_setup_linux.sh",
+      "type": "file",
+      "sha": "260711895f27542a6eba2af86c16cd1854963ecd"
+    },
+    {
+      "path": "vcpkg_setup_msvc.bat",
+      "type": "file",
+      "sha": "993ff57d4485c2f09ecc5f929bb2616679931910"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Anachronox runtime recreation built on Quake 2 with engine/game source; original game compatibility unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

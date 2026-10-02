@@ -1,0 +1,147 @@
+{
+  "scope": "Full-field temporal sensitivity of a synthetic HGO law on atlas geometry; no anatomical calibration or formal order claim",
+  "coarse_csv_sha256": "095dd2b1cd6f2e02a061ea386ff56bdb6fc88740a4e6caeeb609174ef49f1977",
+  "fine_csv_sha256": "baf2bbb972054218235ffd4ac16267a8c218be33b0a316f077a5cdaced018338",
+  "profile_hashes": {
+    "material-profile.txt": "89fee35521d063f12b64a0cb5fdca90633f99d40bdfe570b76bc0b75e6a06709",
+    "force-targets.txt": "bebf68b9c3ad032d993d11a6eb5699a6803e62f7d95b2392be522da4d7e424f3"
+  },
+  "coarse_steps": 12,
+  "fine_steps": 24,
+  "duration_s": 0.6,
+  "comparisons": [
+    {
+      "time_s": 0.05,
+      "force_n": 0.001,
+      "stage": "loaded-sub-1",
+      "fine_stage": "loaded-sub-2",
+      "max_node_difference_m": 1.2170097484940294e-06,
+      "rms_node_difference_m": 6.597530196082319e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "46af2122b624d7bf43c0600fc92a592d2749d2535c5b9fe38dfa47a068381b49",
+      "fine_mesh_sha256": "7b6a052c943047b8b144d926c2e2c45fd46f87b277a8fbb4a9cff57b9bba9336"
+    },
+    {
+      "time_s": 0.1,
+      "force_n": 0.001,
+      "stage": "loaded",
+      "fine_stage": "loaded",
+      "max_node_difference_m": 1.2466571166220112e-06,
+      "rms_node_difference_m": 6.723340268366507e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "e883951aa6eb01171122af8401d6c32a81edbb882f69937d9255a17068c3aa44",
+      "fine_mesh_sha256": "f8a5bbe8897e2b4c317dc7ac9a68ab9bff9ed030b1bbb73bdf2070e5018946ff"
+    },
+    {
+      "time_s": 0.15,
+      "force_n": 0.001,
+      "stage": "hold-1-sub-1",
+      "fine_stage": "hold-1-sub-2",
+      "max_node_difference_m": 6.976367214018985e-07,
+      "rms_node_difference_m": 3.745223969811743e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "e18ba937ed383fe2b8fae53b8c6c7c532073c35460236c35a837e97945d9b2b3",
+      "fine_mesh_sha256": "3e161bb2850c3d0a8080c8af26e0d26fcfef0bfed2beb0a3c5f0824a90dd2452"
+    },
+    {
+      "time_s": 0.2,
+      "force_n": 0.001,
+      "stage": "hold-1",
+      "fine_stage": "hold-1",
+      "max_node_difference_m": 6.509474616610336e-07,
+      "rms_node_difference_m": 3.5762200457180956e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "251676e203ff0b9b4b6404fe6aed6e8433b876ad57294e4dfcac85731de9cef6",
+      "fine_mesh_sha256": "add84a4f6f79b01b7743b143c0f9b3c0339c30d08c4bd84c5af1e8b1de3d00af"
+    },
+    {
+      "time_s": 0.25,
+      "force_n": 0.001,
+      "stage": "hold-2-sub-1",
+      "fine_stage": "hold-2-sub-2",
+      "max_node_difference_m": 8.162748619011114e-07,
+      "rms_node_difference_m": 4.4574169209509836e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "786b1c4c7ab2e4f10bcafe51cbb0b2e2218d14e96820fcb5864baf99fbe8b882",
+      "fine_mesh_sha256": "11f0f1ed7c15be36dcff608707da4baeb02b887481088aff9a616d21739d2665"
+    },
+    {
+      "time_s": 0.3,
+      "force_n": 0.001,
+      "stage": "hold-2",
+      "fine_stage": "hold-2",
+      "max_node_difference_m": 4.6837340917975446e-07,
+      "rms_node_difference_m": 2.528125930684329e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "a71b5bb5406310d0d74f6adda56c69be8a84896755faa416be3dd885ef89cbb1",
+      "fine_mesh_sha256": "09bd94cf20dd5eeecf120d24a1d34c7c19d61842013a594efca959e82d35d7ae"
+    },
+    {
+      "time_s": 0.35,
+      "force_n": 0.0,
+      "stage": "released-sub-1",
+      "fine_stage": "released-sub-2",
+      "max_node_difference_m": 1.0584365134638345e-06,
+      "rms_node_difference_m": 5.564991356608275e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "85afa2dd1dafce6e964120eed5516c0b15b447d1be237b587bcede6e2c9ccd9c",
+      "fine_mesh_sha256": "a7f9193bd1f7044f76fb6579eeca7924fdbb3f7f30b3b198b6cc395bbf4a782a"
+    },
+    {
+      "time_s": 0.4,
+      "force_n": 0.0,
+      "stage": "released",
+      "fine_stage": "released",
+      "max_node_difference_m": 6.432776673934641e-07,
+      "rms_node_difference_m": 3.453424143153057e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "f052f53d01c1915e3386df88e3fdbab54c462c10ab37150bd3445ecf64b1fde6",
+      "fine_mesh_sha256": "9809111dcb9da37c344aa2841cdace06648218b49c4cc6c04cc2be595cf9f3ff"
+    },
+    {
+      "time_s": 0.45,
+      "force_n": 0.0,
+      "stage": "recover-1-sub-1",
+      "fine_stage": "recover-1-sub-2",
+      "max_node_difference_m": 1.0285745707676036e-06,
+      "rms_node_difference_m": 5.487181881109397e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "116f59cc95459ff476e9868fa97673bfcf6f4392ba04965d0ce47f1c2159e515",
+      "fine_mesh_sha256": "b72b75ee039a333994a4eb50f3bdf8a93d2705933c98a82d4a362735f3ee27be"
+    },
+    {
+      "time_s": 0.5,
+      "force_n": 0.0,
+      "stage": "recover-1",
+      "fine_stage": "recover-1",
+      "max_node_difference_m": 6.897409666630997e-07,
+      "rms_node_difference_m": 3.583732042573017e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "1e4fa7441213385aeb0ac919da807cea098635e962432d8f653f0ed96373cbab",
+      "fine_mesh_sha256": "85470a1c9ec8b6b69ee408bd53a2dcb474fa1c2553e532aff2b4608fd4130849"
+    },
+    {
+      "time_s": 0.55,
+      "force_n": 0.0,
+      "stage": "recover-2-sub-1",
+      "fine_stage": "recover-2-sub-2",
+      "max_node_difference_m": 4.819721999890877e-07,
+      "rms_node_difference_m": 2.4693056941023807e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "0869f9e698916fda617fe977bd76bc615eeb2a0ced90b7469553ed2c43e4ae7d",
+      "fine_mesh_sha256": "514f7061a4af4f7d69ee0e7bbdcc01b8d5dcffdc58003b328444ee037eabef4b"
+    },
+    {
+      "time_s": 0.6,
+      "force_n": 0.0,
+      "stage": "recover-2",
+      "fine_stage": "recover-2",
+      "max_node_difference_m": 4.965644194980856e-07,
+      "rms_node_difference_m": 2.755982328715711e-07,
+      "maximum_difference_node": 5,
+      "coarse_mesh_sha256": "bc29c9481fd25418b2911309b5cc59f19740cf11c0e280304164218b92c29260",
+      "fine_mesh_sha256": "429e241ad27cde4b130fbbc03a898642a94e99d2acf846cc42f9c84bc699e660"
+    }
+  ],
+  "max_node_difference_m": 1.2466571166220112e-06
+}

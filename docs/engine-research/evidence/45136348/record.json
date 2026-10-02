@@ -1,0 +1,79 @@
+{
+  "repository": "yglukhov/rod",
+  "repository_id": 45136348,
+  "commit": "3362ca3a6af0480e7af864b8db6e7fb079203f68",
+  "source_url": "https://github.com/yglukhov/rod/tree/3362ca3a6af0480e7af864b8db6e7fb079203f68",
+  "readme_path": "README.md",
+  "readme_sha256": "dcdede31136a250aa827016d20e5fd6b10a26ecf06208472fe57c766073c4807",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ad475c6cdb29c68704564cdb877406962615d51d"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "814de1613cf3df4299a5e221296b1b082c19e0dd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "49f711a09f8883d18c12f3528a9a46af02c90c80"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cbe6646f845d4a05c8301c7f9c0d33f215b79b10"
+    },
+    {
+      "path": "after_effects_export",
+      "type": "dir",
+      "sha": "caf60779de49fd59b1cda10eefe1e1ef9605d6da"
+    },
+    {
+      "path": "deployGHPages.sh",
+      "type": "file",
+      "sha": "4c88867d9916ffe33d9fe92357335525afc572dd"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "e000f9562e892cfa2dd17854a83a2b07ca758d98"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "2415ffb1b07ee5a557a8d33b69d3db70810f911f"
+    },
+    {
+      "path": "nakefile.nim",
+      "type": "file",
+      "sha": "20091fd226e7bbf533a8a02f19672f0dfce241ce"
+    },
+    {
+      "path": "rod.nimble",
+      "type": "file",
+      "sha": "b2fd20ac03cbc27636ef2962d646c67aa65c07a3"
+    },
+    {
+      "path": "rod.nims",
+      "type": "file",
+      "sha": "264ddd673fc90acff81a83045724a2654bb19bca"
+    },
+    {
+      "path": "rod",
+      "type": "dir",
+      "sha": "a32a289fc5387232e718624ca572892d381e0c45"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "240db4888b8e3b1afc23c7ebebb8888438e46768"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nim 2D/3D engine with rod source, editor and project template; listed platform support unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

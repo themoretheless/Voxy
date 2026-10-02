@@ -1,0 +1,159 @@
+{
+  "repository": "TheXTech/TheXTech",
+  "repository_id": 240103545,
+  "commit": "5c6ef4d5338e2e06a4d10fd46e2780bc22e10fca",
+  "source_url": "https://github.com/TheXTech/TheXTech/tree/5c6ef4d5338e2e06a4d10fd46e2780bc22e10fca",
+  "readme_path": "README.md",
+  "readme_sha256": "1fb7f56e5769d4e57ceb849e6485f376dc23fc29a5e1e309585629f3e2c82847",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7555c122f5fef60122c805d64ba1640523d8bce5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "73bca297b64bc5567a2873bd0042c274b0d41470"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "aa42420fde32a7300762428cff97edaa52d1d751"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c43e4a497fdc70f48f7f43aa4642d80f7dc21b4e"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "cac65bd67e768b5011abba37485c59d5d626f75a"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "04c57680b1f69352c0ed41e337c7d26dd136c6f5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d9146234e07707b2d181ada22ef9e6efda71f791"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "be125454221a1ffeba27cde489044c7105d86d1c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ef7e7efc09c9d471c391f05b9567966928085840"
+    },
+    {
+      "path": "PORTING.md",
+      "type": "file",
+      "sha": "5fb75db27300e7ee4092497ac758c251d22dbdb9"
+    },
+    {
+      "path": "README.ESP.md",
+      "type": "file",
+      "sha": "f3c144c62cea59848c65da74ea7554b99bc136c8"
+    },
+    {
+      "path": "README.RUS.md",
+      "type": "file",
+      "sha": "fd8d0a41998f645beb1cb7203566f729ffd9a1a0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4834cf70fc09e8afad9b6e1e2f7ad40c7830bf80"
+    },
+    {
+      "path": "android-project",
+      "type": "dir",
+      "sha": "e1b3a82fa8be725f8577a8e5b4a6f10081ec116b"
+    },
+    {
+      "path": "changelog.txt",
+      "type": "file",
+      "sha": "71b7339bcd8010363f5f344bdcab941174301bcd"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "243af57116b32f9617cadad9d5d61c8b9c8c0c5d"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "90f4a289cc2773c5ef52ded8cd44bedadfbf8a6b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "fde5688dedb8780c652d89a99682464936a076be"
+    },
+    {
+      "path": "fastlane",
+      "type": "dir",
+      "sha": "06fb86fff426b7c5f081717f06311063072f80a9"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "3f54431da533f1e5e36944fda5400ea7c0cc7394"
+    },
+    {
+      "path": "pge_version.h",
+      "type": "file",
+      "sha": "725045cb3b0bbe31b82b7d03546d3d0d2d94ae76"
+    },
+    {
+      "path": "repo.sh",
+      "type": "file",
+      "sha": "17ee4d57c5af50a182ec5fc7656f0ad555ed4ed8"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "f10fab761c04b802db15100b911d2dd3a34fd042"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "8192b8ccb64776c062cef3b4f720937d7b8aa22e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "037a6f58130939b93211409911ee84501ea4b389"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "dc64fc9f9fdcb9663fe2d34bbe245f37bb3b4f98"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "4fc6f5bb4cdd9853e65d8fdb75d72f1e59f76e6b"
+    },
+    {
+      "path": "version.cmake",
+      "type": "file",
+      "sha": "8ed3d8bbf9810b77085e8460a8bf7ae284514e61"
+    },
+    {
+      "path": "version.h",
+      "type": "file",
+      "sha": "cbdd8ba082290b5a2f8e8c73ef41ddce3fa585b0"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C++ rewrite/continuation of SMBX runtime; owned source and CMake/platform build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

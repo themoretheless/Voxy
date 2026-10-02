@@ -1,0 +1,124 @@
+{
+  "repository": "wheybags/freeablo",
+  "repository_id": 11261721,
+  "commit": "7e0844e0887634cb7f0d61eed8a9a573e8806f2d",
+  "source_url": "https://github.com/wheybags/freeablo/tree/7e0844e0887634cb7f0d61eed8a9a573e8806f2d",
+  "readme_path": "readme.md",
+  "readme_sha256": "63efc6da0d6b3a8793e49925c69aecf3619a872a8d1824e09b4b83041eba5088",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "69b889bf19f0445068b3b4179dc3131c1d227042"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9031d2fde2a7f644703959cad40f1ec9261b23ba"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2068b996059d2804f92a0e5bcbe71ce465b10bb7"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "fd6953ff5daf0a3da70341fefb871b35d6f9f347"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "68d317983b46eb158557a75feb9b17c7c0ea8c98"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "b4c34851a50b647da3a714ae513163c3a419e6a9"
+    },
+    {
+      "path": "FreeMonoBold.ttf",
+      "type": "file",
+      "sha": "9802f687c8cf470399b21dd5d7cd468ad5c84631"
+    },
+    {
+      "path": "LICENSE.TXT",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "2ead04fb337d16edb2a4936d9ac6dff989e1f4f6"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "f2ef8a3297d5db1fb2a2d8c2e3252d49c54dbab6"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "69b4b66f04687b770da60409bb3f7962c7c3ee11"
+    },
+    {
+      "path": "clang_format_script.sh",
+      "type": "file",
+      "sha": "f51ab463450f540bc94fa266c9049a9ccb059170"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "47d7a526b7a2302304cb030b6a27058b4888a91b"
+    },
+    {
+      "path": "decisions.md",
+      "type": "file",
+      "sha": "32931a1938ca91f2126acb606ff8572803f712ad"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "49f9d5127126d5a73ad59cd33a57654d4cff18a7"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "4078c5b6da38292b30e4bc4bda5982accbe2b303"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "bf2639930a7141e6fe9cefe9a9e25e590345622a"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "4d9099f48798d2fe46df13d8fad9cbbf57851ac8"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "21db480cacabe443b3ef4e0715765134c20af34c"
+    },
+    {
+      "path": "travis.sh",
+      "type": "file",
+      "sha": "6263a465deb0b2de073e00ae093cff889d591201"
+    },
+    {
+      "path": "update-gh-pages.sh",
+      "type": "file",
+      "sha": "f7b74fdc4aa556eb84aa4c6201962324a01a0d03"
+    },
+    {
+      "path": "valgrind.supp",
+      "type": "file",
+      "sha": "864208cacbe054f496115169928ef2228447033d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Archived Diablo1 replacement runtime with original-data loading, animation/combat/items/world and source/tests; incomplete gameplay scope retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

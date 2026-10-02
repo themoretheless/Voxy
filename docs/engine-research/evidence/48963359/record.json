@@ -1,0 +1,74 @@
+{
+  "repository": "Armour/Multiplayer-FPS",
+  "repository_id": 48963359,
+  "commit": "bdfe77a4bef2956d39c8de67fe987b91ba6f3f06",
+  "source_url": "https://github.com/Armour/Multiplayer-FPS/tree/bdfe77a4bef2956d39c8de67fe987b91ba6f3f06",
+  "readme_path": "README.md",
+  "readme_sha256": "ad8a154ce6ed3a5a2bf8bafe38471d0229026189cd9427a2d3f39a954542db3a",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "db45a868fd40945a2bec284246e8d34e9e176dba"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "66d44251119a73f719cec4e88456f1e73601792d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3180dceb7f00e0edf2d72f06c00fa3fcbb5e4d5a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3f4911af9f40577719b32899b06277412b5ad51f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "28d34bc8079f0291c2f387c4ce7ec8152e6af254"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "1e7b5c874f4523988556de3d974ac01a7af174e6"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "ab3fc3e240b52fd70fe398c3b7b656435c8b3b16"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e2c36cb320415aae348b44cebd1d6da3c0b26617"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "d484e01c23858a232abd5aae7641c1963e2eb349"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "2b93ff0b8acb9b886923c72c6305673219740ed0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ed12ea1dc4b6f60bcfe2cc57e0f95b754fbf5ccf"
+    },
+    {
+      "path": "UserSettings",
+      "type": "dir",
+      "sha": "4d6197137b4abe5eaeeeec3222502d7cd68d542d"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity multiplayer FPS game project, not engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

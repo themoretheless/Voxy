@@ -1,0 +1,43 @@
+{
+  "tests": {
+    "nipple_refinement_tests": {
+      "passed": 3,
+      "features": [
+        "glam/serde"
+      ]
+    }
+  },
+  "build": {
+    "female_motion": "passed with --features glam/serde",
+    "ordinary_build": "failed on concurrently edited voxy_editor camera serde Vec3 requirement"
+  },
+  "visual_morph_only": true,
+  "tissue_solver_coupled": false,
+  "live_window_capture": false,
+  "runtime_launch": "Native Metal viewer ran and exited successfully; session 26569 terminal exit 0",
+  "sources": {
+    "crates/voxy_app/src/female_demo.rs": "9c6175ec4c824e9d9179d57bb30f428924c8d7dc6f1da067bb191801d9653502",
+    "crates/voxy_app/src/scene_app.rs": "c3751ad18757767b4ad3c310cd8e1ec93b3c9cdee1e0adc65132aba933c92310",
+    "crates/voxy_app/examples/female_motion.rs": "e39ff4b1c5f70aa253ffb263da2c55f7048d1f262eb0593669391fa04a84de4f"
+  },
+  "behavior": [
+    "Response advances using consumed solver time or animation time",
+    "Changing target preserves current response",
+    "Dynamic rendering transports normals using effective response",
+    "Physics shell is not rebased per visual response frame",
+    "Presentation measurement separates target and current response"
+  ],
+  "live_receipt": {
+    "frame": 168,
+    "simulationTime": 8.411258292011903,
+    "viewerPid": 28799,
+    "coldResponse": {
+      "current": 0.985088586807251,
+      "enabled": true,
+      "solverCoupled": false,
+      "target": 1.0
+    }
+  },
+  "live_recovery_verified": false,
+  "receipt_scope": "Renderer frame submission; no desktop screenshot or recovery frame after watcher edit"
+}

@@ -1,0 +1,44 @@
+{
+  "repository": "JohnMega/3DConsoleGame",
+  "repository_id": 843310977,
+  "commit": "bcc97e56964a198a91b1c71bf9083df5aaba369d",
+  "source_url": "https://github.com/JohnMega/3DConsoleGame/tree/bcc97e56964a198a91b1c71bf9083df5aaba369d",
+  "readme_path": "README.md",
+  "readme_sha256": "18619550ff0f5819d8ae64dd976132d4d12699c27400696f8d0484cfe3f6c8a6",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9491a2fda28342ab358eaf234e1afe0c07a53d62"
+    },
+    {
+      "path": "3dFullGameClean.sln",
+      "type": "file",
+      "sha": "5e57ada07bf87211ce6e09f6a6a735f18c63ea1e"
+    },
+    {
+      "path": "3dFullGameClean",
+      "type": "dir",
+      "sha": "e7f3c23e82f6f2610acb21aa695f5ea04b45ddbc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "710f72535dc086ae98a0f8ef7621d28d5625d0e5"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "CPU-rendered console 3D game engine with map-editor workflow and solution/source project; functionality unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

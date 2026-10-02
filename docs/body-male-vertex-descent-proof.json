@@ -1,0 +1,227 @@
+{
+  "before": 70,
+  "after": 21,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertex": 5614,
+      "before": 70,
+      "after": 68
+    },
+    {
+      "pass_index": 0,
+      "vertex": 6353,
+      "before": 68,
+      "after": 66
+    },
+    {
+      "pass_index": 0,
+      "vertex": 11838,
+      "before": 66,
+      "after": 65
+    },
+    {
+      "pass_index": 0,
+      "vertex": 15381,
+      "before": 65,
+      "after": 63
+    },
+    {
+      "pass_index": 0,
+      "vertex": 16304,
+      "before": 63,
+      "after": 62
+    },
+    {
+      "pass_index": 0,
+      "vertex": 16807,
+      "before": 62,
+      "after": 61
+    },
+    {
+      "pass_index": 0,
+      "vertex": 17552,
+      "before": 61,
+      "after": 60
+    },
+    {
+      "pass_index": 0,
+      "vertex": 18340,
+      "before": 60,
+      "after": 54
+    },
+    {
+      "pass_index": 0,
+      "vertex": 18451,
+      "before": 54,
+      "after": 52
+    },
+    {
+      "pass_index": 0,
+      "vertex": 18557,
+      "before": 52,
+      "after": 48
+    },
+    {
+      "pass_index": 0,
+      "vertex": 22833,
+      "before": 48,
+      "after": 46
+    },
+    {
+      "pass_index": 0,
+      "vertex": 28369,
+      "before": 46,
+      "after": 43
+    },
+    {
+      "pass_index": 0,
+      "vertex": 37273,
+      "before": 43,
+      "after": 41
+    },
+    {
+      "pass_index": 0,
+      "vertex": 37283,
+      "before": 41,
+      "after": 35
+    },
+    {
+      "pass_index": 1,
+      "vertex": 5591,
+      "before": 35,
+      "after": 32
+    },
+    {
+      "pass_index": 1,
+      "vertex": 11705,
+      "before": 32,
+      "after": 30
+    },
+    {
+      "pass_index": 1,
+      "vertex": 15380,
+      "before": 30,
+      "after": 28
+    },
+    {
+      "pass_index": 1,
+      "vertex": 15381,
+      "before": 28,
+      "after": 25
+    },
+    {
+      "pass_index": 1,
+      "vertex": 18445,
+      "before": 25,
+      "after": 21
+    }
+  ],
+  "remaining": {
+    "intersection_pairs": [
+      [
+        2439,
+        2516
+      ],
+      [
+        2439,
+        2526
+      ],
+      [
+        2439,
+        2521
+      ],
+      [
+        2432,
+        3966
+      ],
+      [
+        2432,
+        3960
+      ],
+      [
+        2432,
+        3956
+      ],
+      [
+        2432,
+        3965
+      ],
+      [
+        2516,
+        6201
+      ],
+      [
+        2447,
+        3960
+      ],
+      [
+        2513,
+        6201
+      ],
+      [
+        2437,
+        2513
+      ],
+      [
+        2517,
+        6201
+      ],
+      [
+        2447,
+        2513
+      ],
+      [
+        2447,
+        2506
+      ],
+      [
+        2428,
+        2521
+      ],
+      [
+        2433,
+        3955
+      ],
+      [
+        2433,
+        3956
+      ],
+      [
+        2428,
+        2523
+      ],
+      [
+        2428,
+        3952
+      ],
+      [
+        2426,
+        3952
+      ],
+      [
+        2433,
+        3952
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 31838,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded"
+  },
+  "maximum_cumulative_displacement_m": 0.001995744176798107,
+  "audit": {
+    "vertices": 44880,
+    "triangles": 89756,
+    "area_m2": 1.683118563636993,
+    "max_edge_m": 0.03577672886317052,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "bbff1b818498f0c0d680acd5578dae0fe37785597b172144c6e656231953a127",
+  "candidate_sha256": "6f055addf016104130768d3784eccd7887b0ad28dcffb25be73cbc1a3c066876",
+  "adopted": false,
+  "export_reload_verified": true
+}

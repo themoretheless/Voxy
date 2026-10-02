@@ -1,0 +1,74 @@
+{
+  "repository": "cdev-tux/q3lite",
+  "repository_id": 112285248,
+  "commit": "46eb020bb9707d47abeffd2807bd77a3309a9cf5",
+  "source_url": "https://github.com/cdev-tux/q3lite/tree/46eb020bb9707d47abeffd2807bd77a3309a9cf5",
+  "readme_path": "README.md",
+  "readme_sha256": "631384d5a0bbc8b0ff1bee7a8f1b3d799e261b0255bba13e1ce0a52932b91ce3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4e5fede807f18736038921262cada93360f6bebc"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "274b7bf447a6859aae4bc9b35fcf7fa9b40f4474"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "35313f787d9cbc4eaa320bfa400d2862f05ab08a"
+    },
+    {
+      "path": "Makefile.q3lite",
+      "type": "file",
+      "sha": "d8521dec259684c96250a113edb492e78977d138"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4233be91d7b63f97f87a78981a1a3fa1d63e197e"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "d9300fc1d3cd86bfafcedc3dc7da8d4e0d245f4d"
+    },
+    {
+      "path": "id-readme.txt",
+      "type": "file",
+      "sha": "55b00f33d7123bc2b3f107c2e5a6cfb5b9de8288"
+    },
+    {
+      "path": "make-raspberrypi.sh",
+      "type": "file",
+      "sha": "387f1709b3b0658bf7dc5379a8270d91655f3eeb"
+    },
+    {
+      "path": "md4-readme.txt",
+      "type": "file",
+      "sha": "fc0e556940dc91910ff06db6fe322b353d2037b6"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "461ec01469da8ee02b727bf659ec77a4a0560c51"
+    },
+    {
+      "path": "opengl2-readme.md",
+      "type": "file",
+      "sha": "7e572611e8b1993db1585df41df941f548f37f34"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "4ec4395a242ca790af477cfd48d7ed68ab274406"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ioquake3 fork porting id Tech 3 runtime to embedded OpenGL ES Linux; code and build files present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

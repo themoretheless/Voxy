@@ -1,0 +1,49 @@
+{
+  "repository": "NoelFB/blah",
+  "repository_id": 290421800,
+  "commit": "da6ef79aa2220e23b8d40b86eb5cfc2c6f7b0218",
+  "source_url": "https://github.com/NoelFB/blah/tree/da6ef79aa2220e23b8d40b86eb5cfc2c6f7b0218",
+  "readme_path": "README.md",
+  "readme_sha256": "4a102e4d976cee0631a1ebf177553ab69c7d0fe00dde6f1bb33c423826f2b3e9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "80d9f477a5e8cd43836e7b9ba59158c09a8e9fb5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8d82d2027ec3b3c31adcdf4c337dcd72bd261407"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "26876b044bd8ec91029b6383267121b53e9d4caa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b7daad0ebb71dfc0354507c5f6c9e104cd9f2d6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a4bdc7c4783d20fcf449a87dd1ab28a268244ed1"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "3324b422793e5d1168af7c3e21bb4758be8474e6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5c0d68f55c88c638136cf0ddc80449018167543a"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies small native 2D framework; src/include and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

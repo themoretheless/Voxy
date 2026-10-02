@@ -1,0 +1,99 @@
+{
+  "repository": "NBlood/NBlood",
+  "repository_id": 170327194,
+  "commit": "497385d64b97f4fd13b6efb3929df0f2ab3adc87",
+  "source_url": "https://github.com/NBlood/NBlood/tree/497385d64b97f4fd13b6efb3929df0f2ab3adc87",
+  "readme_path": "README.md",
+  "readme_sha256": "2cc5a04d0ea8e78f9b77133fe4ca1fca31231bf09d69b24bc52f5cb4fd7037e5",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "9794e752bdb5fb65b777a631926765baf90998cb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "65c7f87c9fd16cc46e9d0d578131d320827e1d82"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7e2a7cf50a6168bfa10779b93b0813c464c83e16"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "591598d3415c4c7b41406f1269ed7fcf6f8aadb6"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "bd89b9acec5b833340e290736fc187ab806613d7"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "75706c6e685deb4d8b5f65be19180596d0a4b8b1"
+    },
+    {
+      "path": "Common.mak",
+      "type": "file",
+      "sha": "e9ab24ef4f2b0d1815ee468c9cffb1fe954a9810"
+    },
+    {
+      "path": "GNUmakefile",
+      "type": "file",
+      "sha": "39c632a0f339a41e08da1d527318100b26d1edb8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e080142cf969a2bd9e148bcfb6dc1f0843285e5b"
+    },
+    {
+      "path": "_clang-format",
+      "type": "file",
+      "sha": "734578dbe89b75decd7592fcc45d44da96ae93b4"
+    },
+    {
+      "path": "dn64widescreen.pk3",
+      "type": "file",
+      "sha": "4bc14dae46413af25b7bbeb75f76d080a0cf32a7"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "8f38dac7abb0ad45e60c2859d2f465c359985bf0"
+    },
+    {
+      "path": "nblood.pk3",
+      "type": "file",
+      "sha": "d72f8fa663bf8435af71b9102d209753d5ce0196"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "a466d016a4f6133a1b289ebb2552d474cfbc5f02"
+    },
+    {
+      "path": "pcexhumed.pk3",
+      "type": "file",
+      "sha": "9ca0a0e277ddf1c16b5e71bb61f0f6b494e005b3"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "83a1b026b474054a94359fcef23634329173eac2"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "4bd507888492a44d84271748149fc884a809f221"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Build/EDuke32-derived runtime ports; owned source/platform with GNU make build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

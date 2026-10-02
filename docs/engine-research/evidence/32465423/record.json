@@ -1,0 +1,89 @@
+{
+  "repository": "cadaver/turso3d",
+  "repository_id": 32465423,
+  "commit": "43ffd562e23d2207012cd69f1bcbe370cfd967aa",
+  "source_url": "https://github.com/cadaver/turso3d/tree/43ffd562e23d2207012cd69f1bcbe370cfd967aa",
+  "readme_path": "README.md",
+  "readme_sha256": "1c35f8277a25671e8d33789a9293ccc624931bd2aa8e6ea989c56e81ab9266d9",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7708344c9b7a170d117e2a5e34283c905d8fa74b"
+    },
+    {
+      "path": "Bin",
+      "type": "dir",
+      "sha": "0dec740b63a0103f06627288b3d4913f95000d7d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "cffd70ac4faba28227c89fbff8feef635b77cec0"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "edc5a994f173c8f6a0d649f13f35d7110d3559c2"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "92efa507ff90225d7666006f95017785929a2c79"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b0e17a87c9937fcea8dd7eb36a2c1b0356563c5b"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "ba58f34231c5255a282461e7454dcb696637fd84"
+    },
+    {
+      "path": "Turso3D",
+      "type": "dir",
+      "sha": "794c50f371c23a599f92daea67bc808345cb1da2"
+    },
+    {
+      "path": "Turso3DTest",
+      "type": "dir",
+      "sha": "f93d3dd1e886d3f18f7fe7054d1484e6112e20c0"
+    },
+    {
+      "path": "cmake_emscripten.bat",
+      "type": "file",
+      "sha": "a6f757514f86d5783d23802511273f7322aeb5b6"
+    },
+    {
+      "path": "cmake_mingw.bat",
+      "type": "file",
+      "sha": "37bc152a4ccd7610d7ce23fa4ffdb965ff92931a"
+    },
+    {
+      "path": "cmake_unix.sh",
+      "type": "file",
+      "sha": "29b524e1121e35c54a180201519e30c6e84e79f5"
+    },
+    {
+      "path": "cmake_vs2017.bat",
+      "type": "file",
+      "sha": "10a09f31a73b10d0c175aac536426a2d32ebdf79"
+    },
+    {
+      "path": "cmake_vs2019.bat",
+      "type": "file",
+      "sha": "36f2487b246fbaf79337e7d8ed7e3ccc7bd3f64c"
+    },
+    {
+      "path": "cmake_vs2022.bat",
+      "type": "file",
+      "sha": "be1f6b5a389d4e59b4606521adda2bd80365fc33"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies experimental Urho-derived game engine; owned Turso3D/Test and CMake build, toy status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

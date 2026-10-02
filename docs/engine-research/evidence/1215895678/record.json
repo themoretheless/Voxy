@@ -1,0 +1,127 @@
+{
+  "repository": "KyosukeIshizu1008/berryscode",
+  "repository_id": 1215895678,
+  "commit": "91ec5c98772bc50d291e820ea92caa86dc2db183",
+  "source_url": "https://github.com/KyosukeIshizu1008/berryscode/tree/91ec5c98772bc50d291e820ea92caa86dc2db183",
+  "readme_path": "README.md",
+  "readme_sha256": "ebbd7a70a7c366e0b9554a255ed30d21daaffe155862b8c579606c19beb5a5f7",
+  "entries": [
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "65e3c1db49d8774e28515f2e9b5ffdee538ca4fd"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bc1751de467d78741e6f465f62d43b485057efc7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c90560461cf0f0e51c82a447366351787b1f344d"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "5ef0bdc4524035251a6727737f45bb0f9dbda6fb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "69f39ec48046b7f382181339c5fedfececb23f5b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e35a16dbb54a747e84e789b31074e358f4ba2321"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "628dfcd000e71f7dfe30540fb586d11f74a98625"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "83ea77be080753b8d1287bfef0f623590713cbc0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7cbcdc627d4807ddcc2b67b19b979e2b9fd8448c"
+    },
+    {
+      "path": "MIGRATION.md",
+      "type": "file",
+      "sha": "5ba10ec229f839f2e70bbff96f50a576a0b85267"
+    },
+    {
+      "path": "MOBILE.md",
+      "type": "file",
+      "sha": "dcbfccc92489b08cbcfb40a261ab06c53ea0668f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "16517c388b4c14119e756c81f27a5393a099adac"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "8554ed105d327b563f5a3fd5cab894a61e9cf566"
+    },
+    {
+      "path": "berrycode",
+      "type": "dir",
+      "sha": "a1f009bf872711edb02dc3a45f1e9e263de5962e"
+    },
+    {
+      "path": "coverage",
+      "type": "dir",
+      "sha": "ff0a71750598e65e475fb65567b7af4665eb5953"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "82713c62d0855123d1830f9880c15582fed13386"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6a13f8d5732a5c15384a01335de706824a889c65"
+    },
+    {
+      "path": "flatpak",
+      "type": "dir",
+      "sha": "79deec3624707e0a4cb4271b81ccab52247304c5"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "db908d496ceb522316c6e443df4286edbe503a2c"
+    },
+    {
+      "path": "scenes",
+      "type": "dir",
+      "sha": "425ca6cc6b8c8f4c4792fb4bb07f066d95e1cb96"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "42c115ead276503169ce9de570614ce8bf279d62"
+    },
+    {
+      "path": "snap",
+      "type": "dir",
+      "sha": "450f1f2a855e7b32e798a6627df92547b2049554"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "0e27aad97e55c7d6a46a2b8bbb07e205ec0094af"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

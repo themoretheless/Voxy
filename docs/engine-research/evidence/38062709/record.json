@@ -1,0 +1,79 @@
+{
+  "repository": "xPaw/MonsterMinigame",
+  "repository_id": 38062709,
+  "commit": "15446e73a70c2c15c063b7ba4f50bd54108a03c5",
+  "source_url": "https://github.com/xPaw/MonsterMinigame/tree/15446e73a70c2c15c063b7ba4f50bd54108a03c5",
+  "readme_path": "README.md",
+  "readme_sha256": "38e9a1a8c4033c026d20c826d2df45d1ddd915f392c88a9e9072114257af13b7",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6860c45c287fcb1881bc4811379fc74e5ccd6d3d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "adba5378acd38834ccc8b00040ae8923b59b48dd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2ab325bbcbd5d81e97eda0d1f8f8535d72507c57"
+    },
+    {
+      "path": "analysis",
+      "type": "dir",
+      "sha": "d9edddc983e5cfaef3924b3998def1e9472c8a4b"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "86f77531df4e9a0b187f5d7e6ce07b206f0d274a"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "16669c3d286deb936c520288db94c9c4fbc48f91"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "e05ccdaf9fb907d51f33aeb2ba1295dea1c3e463"
+    },
+    {
+      "path": "index.php",
+      "type": "file",
+      "sha": "0a4328c916dea0d1a2219c50389692f7ab8cc359"
+    },
+    {
+      "path": "join.html",
+      "type": "file",
+      "sha": "77db60f07360aff5b882257037e91d42a807f33e"
+    },
+    {
+      "path": "login.php",
+      "type": "file",
+      "sha": "31d1ed71e12c403b6f7cfac54a52cc1d6cb92096"
+    },
+    {
+      "path": "php",
+      "type": "dir",
+      "sha": "4cd5434cd38c77a5b068d2321f1156089606e956"
+    },
+    {
+      "path": "play",
+      "type": "dir",
+      "sha": "e2e10d2868f32afe5dbbf8b89682e4aa0b217376"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Steam Summer Sale minigame server clone with modified game client, not reusable engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

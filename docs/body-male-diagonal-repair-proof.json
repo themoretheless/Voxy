@@ -1,0 +1,883 @@
+{
+  "initialCrossings": 156,
+  "finalCrossings": 70,
+  "steps": [
+    {
+      "pass": 0,
+      "edge": [
+        351,
+        28137
+      ],
+      "faces": [
+        2095,
+        6128
+      ],
+      "before": 156,
+      "after": 155
+    },
+    {
+      "pass": 0,
+      "edge": [
+        353,
+        32013
+      ],
+      "faces": [
+        2092,
+        2093
+      ],
+      "before": 155,
+      "after": 154
+    },
+    {
+      "pass": 0,
+      "edge": [
+        370,
+        32023
+      ],
+      "faces": [
+        2168,
+        2169
+      ],
+      "before": 154,
+      "after": 153
+    },
+    {
+      "pass": 0,
+      "edge": [
+        372,
+        11838
+      ],
+      "faces": [
+        2170,
+        4247
+      ],
+      "before": 153,
+      "after": 152
+    },
+    {
+      "pass": 0,
+      "edge": [
+        436,
+        18414
+      ],
+      "faces": [
+        2426,
+        2433
+      ],
+      "before": 152,
+      "after": 150
+    },
+    {
+      "pass": 0,
+      "edge": [
+        439,
+        22456
+      ],
+      "faces": [
+        2436,
+        2447
+      ],
+      "before": 150,
+      "after": 149
+    },
+    {
+      "pass": 0,
+      "edge": [
+        456,
+        29054
+      ],
+      "faces": [
+        2506,
+        3975
+      ],
+      "before": 149,
+      "after": 148
+    },
+    {
+      "pass": 0,
+      "edge": [
+        458,
+        32067
+      ],
+      "faces": [
+        2520,
+        2521
+      ],
+      "before": 148,
+      "after": 147
+    },
+    {
+      "pass": 0,
+      "edge": [
+        460,
+        15289
+      ],
+      "faces": [
+        2522,
+        3952
+      ],
+      "before": 147,
+      "after": 146
+    },
+    {
+      "pass": 0,
+      "edge": [
+        481,
+        28626
+      ],
+      "faces": [
+        2604,
+        2615
+      ],
+      "before": 146,
+      "after": 138
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5484,
+        22833
+      ],
+      "faces": [
+        46198,
+        50237
+      ],
+      "before": 138,
+      "after": 137
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5486,
+        37230
+      ],
+      "faces": [
+        46200,
+        46201
+      ],
+      "before": 137,
+      "after": 136
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5503,
+        37240
+      ],
+      "faces": [
+        46276,
+        46277
+      ],
+      "before": 136,
+      "after": 135
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5505,
+        28369
+      ],
+      "faces": [
+        46283,
+        48350
+      ],
+      "before": 135,
+      "after": 134
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5537,
+        11749
+      ],
+      "faces": [
+        46411,
+        46419
+      ],
+      "before": 134,
+      "after": 132
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5537,
+        37256
+      ],
+      "faces": [
+        46410,
+        46411
+      ],
+      "before": 132,
+      "after": 131
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5571,
+        15381
+      ],
+      "faces": [
+        46547,
+        46555
+      ],
+      "before": 131,
+      "after": 130
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5572,
+        37273
+      ],
+      "faces": [
+        46544,
+        46545
+      ],
+      "before": 130,
+      "after": 129
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5572,
+        37274
+      ],
+      "faces": [
+        46548,
+        46549
+      ],
+      "before": 129,
+      "after": 128
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5587,
+        20125
+      ],
+      "faces": [
+        46613,
+        48076
+      ],
+      "before": 128,
+      "after": 127
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5589,
+        18451
+      ],
+      "faces": [
+        46619,
+        46620
+      ],
+      "before": 127,
+      "after": 126
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5591,
+        37284
+      ],
+      "faces": [
+        46628,
+        46629
+      ],
+      "before": 126,
+      "after": 125
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5591,
+        37463
+      ],
+      "faces": [
+        48060,
+        48061
+      ],
+      "before": 125,
+      "after": 124
+    },
+    {
+      "pass": 0,
+      "edge": [
+        6323,
+        28433
+      ],
+      "faces": [
+        48067,
+        48072
+      ],
+      "before": 124,
+      "after": 123
+    },
+    {
+      "pass": 0,
+      "edge": [
+        6351,
+        31405
+      ],
+      "faces": [
+        53669,
+        53908
+      ],
+      "before": 123,
+      "after": 122
+    },
+    {
+      "pass": 0,
+      "edge": [
+        6417,
+        15438
+      ],
+      "faces": [
+        53905,
+        53912
+      ],
+      "before": 122,
+      "after": 121
+    },
+    {
+      "pass": 0,
+      "edge": [
+        6985,
+        39103
+      ],
+      "faces": [
+        61174,
+        61175
+      ],
+      "before": 121,
+      "after": 120
+    },
+    {
+      "pass": 0,
+      "edge": [
+        7213,
+        28623
+      ],
+      "faces": [
+        61173,
+        61794
+      ],
+      "before": 120,
+      "after": 117
+    },
+    {
+      "pass": 0,
+      "edge": [
+        7395,
+        39103
+      ],
+      "faces": [
+        61178,
+        61179
+      ],
+      "before": 117,
+      "after": 114
+    },
+    {
+      "pass": 0,
+      "edge": [
+        10963,
+        37283
+      ],
+      "faces": [
+        46623,
+        46624
+      ],
+      "before": 114,
+      "after": 113
+    },
+    {
+      "pass": 0,
+      "edge": [
+        11705,
+        27479
+      ],
+      "faces": [
+        46630,
+        46631
+      ],
+      "before": 113,
+      "after": 112
+    },
+    {
+      "pass": 0,
+      "edge": [
+        11798,
+        28069
+      ],
+      "faces": [
+        46634,
+        46635
+      ],
+      "before": 112,
+      "after": 111
+    },
+    {
+      "pass": 0,
+      "edge": [
+        11838,
+        15461
+      ],
+      "faces": [
+        4246,
+        4247
+      ],
+      "before": 111,
+      "after": 110
+    },
+    {
+      "pass": 0,
+      "edge": [
+        11838,
+        32023
+      ],
+      "faces": [
+        2169,
+        2171
+      ],
+      "before": 110,
+      "after": 109
+    },
+    {
+      "pass": 0,
+      "edge": [
+        12677,
+        28069
+      ],
+      "faces": [
+        48062,
+        48063
+      ],
+      "before": 109,
+      "after": 108
+    },
+    {
+      "pass": 0,
+      "edge": [
+        13502,
+        32247
+      ],
+      "faces": [
+        3961,
+        3966
+      ],
+      "before": 108,
+      "after": 107
+    },
+    {
+      "pass": 0,
+      "edge": [
+        14681,
+        17552
+      ],
+      "faces": [
+        2162,
+        2163
+      ],
+      "before": 107,
+      "after": 105
+    },
+    {
+      "pass": 0,
+      "edge": [
+        15380,
+        28453
+      ],
+      "faces": [
+        50314,
+        50315
+      ],
+      "before": 105,
+      "after": 104
+    },
+    {
+      "pass": 0,
+      "edge": [
+        15381,
+        19201
+      ],
+      "faces": [
+        46554,
+        46555
+      ],
+      "before": 104,
+      "after": 103
+    },
+    {
+      "pass": 0,
+      "edge": [
+        15585,
+        22833
+      ],
+      "faces": [
+        50242,
+        50243
+      ],
+      "before": 103,
+      "after": 102
+    },
+    {
+      "pass": 0,
+      "edge": [
+        15819,
+        23212
+      ],
+      "faces": [
+        2526,
+        2527
+      ],
+      "before": 102,
+      "after": 101
+    },
+    {
+      "pass": 0,
+      "edge": [
+        16304,
+        27787
+      ],
+      "faces": [
+        46538,
+        46539
+      ],
+      "before": 101,
+      "after": 100
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18032,
+        27296
+      ],
+      "faces": [
+        61176,
+        61177
+      ],
+      "before": 100,
+      "after": 98
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18340,
+        37295
+      ],
+      "faces": [
+        46717,
+        46722
+      ],
+      "before": 98,
+      "after": 97
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18414,
+        32055
+      ],
+      "faces": [
+        2427,
+        2428
+      ],
+      "before": 97,
+      "after": 96
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18415,
+        25160
+      ],
+      "faces": [
+        6206,
+        6207
+      ],
+      "before": 96,
+      "after": 95
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18415,
+        32527
+      ],
+      "faces": [
+        6201,
+        6206
+      ],
+      "before": 95,
+      "after": 94
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18445,
+        37464
+      ],
+      "faces": [
+        48068,
+        48071
+      ],
+      "before": 94,
+      "after": 93
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18621,
+        28368
+      ],
+      "faces": [
+        46274,
+        46275
+      ],
+      "before": 93,
+      "after": 91
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18984,
+        32066
+      ],
+      "faces": [
+        2517,
+        2518
+      ],
+      "before": 91,
+      "after": 90
+    },
+    {
+      "pass": 0,
+      "edge": [
+        20894,
+        28433
+      ],
+      "faces": [
+        48066,
+        48067
+      ],
+      "before": 90,
+      "after": 89
+    },
+    {
+      "pass": 0,
+      "edge": [
+        21441,
+        28137
+      ],
+      "faces": [
+        6130,
+        6131
+      ],
+      "before": 89,
+      "after": 88
+    },
+    {
+      "pass": 0,
+      "edge": [
+        21892,
+        27347
+      ],
+      "faces": [
+        61180,
+        61181
+      ],
+      "before": 88,
+      "after": 87
+    },
+    {
+      "pass": 0,
+      "edge": [
+        22695,
+        28369
+      ],
+      "faces": [
+        46283,
+        48351
+      ],
+      "before": 87,
+      "after": 86
+    },
+    {
+      "pass": 0,
+      "edge": [
+        28369,
+        37240
+      ],
+      "faces": [
+        46277,
+        46282
+      ],
+      "before": 86,
+      "after": 85
+    },
+    {
+      "pass": 0,
+      "edge": [
+        31018,
+        32056
+      ],
+      "faces": [
+        2432,
+        2435
+      ],
+      "before": 85,
+      "after": 84
+    },
+    {
+      "pass": 0,
+      "edge": [
+        31405,
+        38164
+      ],
+      "faces": [
+        53674,
+        53908
+      ],
+      "before": 84,
+      "after": 83
+    },
+    {
+      "pass": 1,
+      "edge": [
+        353,
+        28137
+      ],
+      "faces": [
+        2093,
+        6130
+      ],
+      "before": 83,
+      "after": 80
+    },
+    {
+      "pass": 1,
+      "edge": [
+        370,
+        11838
+      ],
+      "faces": [
+        2168,
+        4241
+      ],
+      "before": 80,
+      "after": 79
+    },
+    {
+      "pass": 1,
+      "edge": [
+        5486,
+        22833
+      ],
+      "faces": [
+        46201,
+        50242
+      ],
+      "before": 79,
+      "after": 76
+    },
+    {
+      "pass": 1,
+      "edge": [
+        5503,
+        28369
+      ],
+      "faces": [
+        46276,
+        48348
+      ],
+      "before": 76,
+      "after": 75
+    },
+    {
+      "pass": 1,
+      "edge": [
+        15438,
+        22984
+      ],
+      "faces": [
+        53906,
+        53907
+      ],
+      "before": 75,
+      "after": 74
+    },
+    {
+      "pass": 1,
+      "edge": [
+        18667,
+        22833
+      ],
+      "faces": [
+        46200,
+        50242
+      ],
+      "before": 74,
+      "after": 73
+    },
+    {
+      "pass": 1,
+      "edge": [
+        21399,
+        28137
+      ],
+      "faces": [
+        2092,
+        2093
+      ],
+      "before": 73,
+      "after": 72
+    },
+    {
+      "pass": 1,
+      "edge": [
+        27983,
+        32056
+      ],
+      "faces": [
+        2436,
+        2447
+      ],
+      "before": 72,
+      "after": 71
+    },
+    {
+      "pass": 2,
+      "edge": [
+        6353,
+        22984
+      ],
+      "faces": [
+        53683,
+        53906
+      ],
+      "before": 71,
+      "after": 70
+    }
+  ],
+  "audit": {
+    "vertices": 44880,
+    "triangles": 89756,
+    "area_m2": 1.6831173111787014,
+    "max_edge_m": 0.03577672886317052,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "verticesMoved": false,
+  "scope": "Static nonadjacent-face audit; new triangulation requires anatomical review and is not runtime geometry.",
+  "elapsedSeconds": 13.136556624998775,
+  "source": "assets/characters/blender-male/body-repair-candidate.obj",
+  "sourceSha256": "2cef245f68c2149d8ae3bf82176a283c17407a9fd91f94695f26a4979ec6d785",
+  "candidateSha256": "bbff1b818498f0c0d680acd5578dae0fe37785597b172144c6e656231953a127",
+  "exportReloadVerified": true,
+  "adopted": false
+}

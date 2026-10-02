@@ -1,0 +1,134 @@
+{
+  "repository": "Ward727a/RPGCreator",
+  "repository_id": 850435567,
+  "commit": "2b8fd0264ec815751b558085a7644543b7ab06f2",
+  "source_url": "https://github.com/Ward727a/RPGCreator/tree/2b8fd0264ec815751b558085a7644543b7ab06f2",
+  "readme_path": "README.md",
+  "readme_sha256": "3a07b3d2146a5716c0e6573765bf7f32d74d9652ebff0c822fdb9cd65ebb4d0c",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f629819c2a7ce538c3530cfe742c90d6d9760d1e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c25df0b412683bcc29b36b6271db528109e6ad80"
+    },
+    {
+      "path": "@description.json",
+      "type": "file",
+      "sha": "87a3588963e89109d5029a61137698163b5c23df"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f517e2b27a02c95a0c9acbf0d7073d166a20c803"
+    },
+    {
+      "path": "Docs - FOR WEBSITE",
+      "type": "dir",
+      "sha": "7a46ac91c80428f922561639b30e509f6ae861ae"
+    },
+    {
+      "path": "EngineClassGenerator",
+      "type": "dir",
+      "sha": "84e365e2d717002d7c6671186e1e7965c44123d8"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "4ca2c7e465ed8fb6f3d4327babc574c865619514"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "83e820c5496d2fda49cd40d5232d9ca33e06a0b9"
+    },
+    {
+      "path": "NOTICE.md",
+      "type": "file",
+      "sha": "4316088d1ad60e263c7c6ed03292f833c0b78852"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "83380d2cd90cbc99f3a2ed099acf761f6583230c"
+    },
+    {
+      "path": "RPGCreator.Core",
+      "type": "dir",
+      "sha": "9731d46264e01ceb876f1b0ed348e8baf91fdec8"
+    },
+    {
+      "path": "RPGCreator.Desktop",
+      "type": "dir",
+      "sha": "1813a4bd22f29170d6572d85e2a639ea14ebc591"
+    },
+    {
+      "path": "RPGCreator.Player",
+      "type": "dir",
+      "sha": "9b24fa8b30ff3a8204b5ae35baefc09750231541"
+    },
+    {
+      "path": "RPGCreator.PluginGenerators",
+      "type": "dir",
+      "sha": "43bb5f220b658d72d5b79d9f3a2d0dd964e437b9"
+    },
+    {
+      "path": "RPGCreator.RTP",
+      "type": "dir",
+      "sha": "246f99efd5e96caddfb5d5fc32e576b8aa6b53b2"
+    },
+    {
+      "path": "RPGCreator.SDK",
+      "type": "dir",
+      "sha": "20b824c9bb209f7c2a861c23dab0a2e3f0cba196"
+    },
+    {
+      "path": "RPGCreator.Tests",
+      "type": "dir",
+      "sha": "8f80af0e1b7c8196d65f5f708308c873e290c43f"
+    },
+    {
+      "path": "RPGCreator.UI",
+      "type": "dir",
+      "sha": "c5dbfd1b314adfe96004c25a89bab9a8e2689634"
+    },
+    {
+      "path": "RPGCreator.sln",
+      "type": "file",
+      "sha": "3b4319a71a8bdc822b91f2d9f97e0790c879c36d"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "bc5b2503bc0f0c1623fd6d893c0d4fa97c94ced5"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "b1a2f051a63214bbe2842eae62ad86302762495e"
+    },
+    {
+      "path": "UiPropertiesGenerators",
+      "type": "dir",
+      "sha": "c31f38546e1424b2824317c110e5696068274d72"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "c13a72117a8c704a2845344c07e1f7f9e5e2a18d"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "MonoGame RPG engine/editor/player projects; README explicitly says many listed features are unimplemented or unfinished.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

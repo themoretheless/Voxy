@@ -1,0 +1,72 @@
+{
+  "repository": "elringus/unity-google-drive",
+  "repository_id": 108878781,
+  "commit": "ac3f7da2013c99d95104fff272708d26c0cce4ac",
+  "source_url": "https://github.com/elringus/unity-google-drive/tree/ac3f7da2013c99d95104fff272708d26c0cce4ac",
+  "readme_path": "README.md",
+  "readme_sha256": "02e868e6c7f9d360f1e7cc049561045699ccf9e9f63717c44c1046b84cec8a08",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "abcdbd7e646258ce4a98c39ee05451f05423f756"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "858fb8b21c714f045e4918a56bc112119312afd5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3f1f627b6c41dee943bfcb5ee35fdc61ace754b7"
+    },
+    {
+      "path": "Android",
+      "type": "dir",
+      "sha": "79bcc9bd57f4f75d365224979e536f3475ec3fa2"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "57bf1c0367576d5e265f85d62baf5fb26c8c99e4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "761b9f5ee8752723fcac9cb0c00f176660c1a422"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "a8f47c7c8f6b235d67afa3c966b306fdb271defe"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "45fbf89c058a3e462b6f011dd349370c2a7f5bac"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5edb7aabcb4184c62d33130d08d04d2549515b90"
+    },
+    {
+      "path": "UnityGoogleDrive.unitypackage",
+      "type": "file",
+      "sha": "f6cb634d41093b5713824e36c260aabc59886fe4"
+    },
+    {
+      "path": "publish.sh",
+      "type": "file",
+      "sha": "2e4cd265355e759db335d170d60bfefe593c7f86"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,59 @@
+{
+  "repository": "xiaoqisz/kotlinGameEngine",
+  "repository_id": 101141772,
+  "commit": "0d0d65b0c068089dc61e88236f7121e5e14e7b01",
+  "source_url": "https://github.com/xiaoqisz/kotlinGameEngine/tree/0d0d65b0c068089dc61e88236f7121e5e14e7b01",
+  "readme_path": "README.md",
+  "readme_sha256": "a58f8fbc234db061da4ac1e27b76c45aec4bb391f025f31f3bdee101a17ad224",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3e2f81e811e9350958523d1dd8ded0f7dee48fe0"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "582013069d105641a1b4420a358c0fb5a26f5f8d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5529a8d5d7f8456ec1f27144bbd28a52518818cc"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "30cc9d872e72a4a4a0c56929f2603303a9f9864e"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "d533b34ca84fe381b2bb0a9324c6bd7e74115faf"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4453ccea33d960069d9137ee65f6b21fc65e7e92"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f9553162f122c71b34635112e717c3e733b5b212"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "bcd7b74246c92ed638b2070e5591aced3dbb591a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3610f15c2bc88040848f8f3633859a4936a9c8ac"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Kotlin JavaFX window lifecycle/input abstraction with src and Gradle build; broader runtime scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

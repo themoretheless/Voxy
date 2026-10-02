@@ -1,0 +1,119 @@
+{
+  "repository": "stride3d/stride",
+  "repository_id": 136570231,
+  "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+  "source_url": "https://github.com/stride3d/stride/tree/a7fa31ced680c7d4a919f1fe233051cf508f6060",
+  "readme_path": "README.md",
+  "readme_sha256": "dc65ec029b7e21d2a7dd9426f811b6cd035dd55c917d229801702664a1737bd4",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "e76e82d3f4fafac5c8672e66761cf642f4f98c6a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8caed7b4b290be56811c4d46c5cd124c5ac1eb1e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "203b45e173dd4a432f38d4fcadb972686327f60a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8419d464e7b5e86aafa42db5d8bbbb2e15c087c2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c2eaebf4051b0d1bb03e2a85ebd1d3b8087bd70b"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a2fc8adf3c79ef8896653d31fd647ecd03001ed3"
+    },
+    {
+      "path": "BACKERS.md",
+      "type": "file",
+      "sha": "3d961cc9ea5d604883815faf772fe8e9320e68fe"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "0f7f6bb833abac24d3aca0c2ec43026f9c14e97d"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "b97dd9ffdd9f52563770ebc3e216407a91486cb4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a325e6c40776473f5a611eab3ebb1cd2b3e423f3"
+    },
+    {
+      "path": "THIRD PARTY.md",
+      "type": "file",
+      "sha": "2448a758aac845302782190269d87f29f7b2f915"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "da00aa09c8e07ed34028dd1304479c49afa89964"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "daf394a63b6d9b9f3d2ef6520332eab4d5723c6b"
+    },
+    {
+      "path": "crowdin.yml",
+      "type": "file",
+      "sha": "2e8162a55a627d4c8d4ef63dc406e7e243a0523e"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "2738ee068e5b2bf904785532060af0b2473063bb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4e5221df17f315e5ba4b1357fa339b7c5917ce59"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "adead24a0572cf56ad229d6325867f3d152208de"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "948d4cd94aef4bfa880abf955718ce7955ceee8b"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "572ac2a1353f90cd1311b57417d25ff98ac26f18"
+    },
+    {
+      "path": "sources",
+      "type": "dir",
+      "sha": "6667fd2b0bf9ebc1afb25c0b06b7118534dccd8a"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "42d0843a7f46fe74ecf0572d6d44e437fdbf56b3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C# engine and Game Studio; sources/build/samples/tests and .NET build metadata.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

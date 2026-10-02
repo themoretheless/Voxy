@@ -1,0 +1,119 @@
+{
+  "repository": "Galaco/kero",
+  "repository_id": 210062512,
+  "commit": "1953d82b47fe6528a144b4fb4f57979e8e72e6e8",
+  "source_url": "https://github.com/Galaco/kero/tree/1953d82b47fe6528a144b4fb4f57979e8e72e6e8",
+  "readme_path": "README.md",
+  "readme_sha256": "d1db6bfbabdf9c3c957e69d9928f498324fe31243302d33b0dcea3fa86b90bb8",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fe59d9fc221f369f3869ad76b5c9cf1e7efded9e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "83ccd5d469dd26f12b2c43e9f5678a5c4ce64f08"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cf1ab25da0349f84a3fdd40032f0ce99db813b8b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d433c29b12fc1a9f8e90e270906d484f79338654"
+    },
+    {
+      "path": "browser",
+      "type": "dir",
+      "sha": "8a581699ea348016cdfdf1cb0f352fa06d6c597f"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "71e8a0c3b941a6463c4af0e4f8fc4e7b7d9f9b74"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "dbadbd3ba9c8e9b67de0135cf7bd3b7db45fb86e"
+    },
+    {
+      "path": "framework",
+      "type": "dir",
+      "sha": "0dc5505c8bb3c7929c1d8e72d95ffd948efc678f"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "0ee18046485e12cab3a22e380b73cb53893fed38"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "f097c01c78c6780958b3f088cbd88e27318594d2"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "c98c65b68c4c1fe80ff7d241f6fce018f0abb28b"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "4240a19364fde02b3f8ee0a79b9d6a41de2463b0"
+    },
+    {
+      "path": "kero.go",
+      "type": "file",
+      "sha": "74b077692c744a848bdfa50e3b6ce0f9ce5a176d"
+    },
+    {
+      "path": "messages",
+      "type": "dir",
+      "sha": "06a6c841c72c8af3b672c357f52ddd80ddf95554"
+    },
+    {
+      "path": "middleware",
+      "type": "dir",
+      "sha": "4b9451f5b3e5767ad62c4f8639844aa3f01e2e7d"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "ce13283926e4cb12c59e8412e346f72d076c9c7a"
+    },
+    {
+      "path": "physics",
+      "type": "dir",
+      "sha": "8a9bd9280dbe0127df9bb0a5afe37b62210d5023"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "96a7e3a07706d76b1f36416da25aa2779073630a"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "f45d8f110c3034162a1091dafe4b03d2e56b323e"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "c7754f25081dc3a93b7f8f5c3649b11150d31876"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "d03dfadcb299e9ab02a0891d7b72ccd55be3f831"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Go implementation of Source game client with scene, physics, networking and BSP rendering; documented incomplete entities/models and required original installation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

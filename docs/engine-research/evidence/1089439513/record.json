@@ -1,0 +1,64 @@
+{
+  "repository": "fkerimk/Scythe",
+  "repository_id": 1089439513,
+  "commit": "192320d9ebe402e857ad83194f9c3a7c2b8cc085",
+  "source_url": "https://github.com/fkerimk/Scythe/tree/192320d9ebe402e857ad83194f9c3a7c2b8cc085",
+  "readme_path": "README.md",
+  "readme_sha256": "7774676b9909c108d3c3a79669bf3f95c3b29199b1ef5c04078d4147b338e98a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ba706f1e0317d2586e87a7675ea27f88a63dfeea"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "80d70f1a61cf2b225e43f48f2d820a709fa18844"
+    },
+    {
+      "path": "Collection",
+      "type": "dir",
+      "sha": "4fed933df1e1572a547590e6e0d6a3a4da7a77c6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a24e46e5574ff3419ac48475c8ad30e6572fb2a5"
+    },
+    {
+      "path": "Layouts",
+      "type": "dir",
+      "sha": "ee399b9713edf3384a6c1c5e570588e393491da6"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "84dd6c230007803fe377ef43170299b660a4c487"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0fd61c1c0fce7e5a917f46813668a8ce1b65b4a6"
+    },
+    {
+      "path": "Scythe.csproj",
+      "type": "file",
+      "sha": "33cbbab019ed98c931b4d605dc95945a7d0ca3e9"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "b0357f96514e7cc0b915ae9601a896c12108924c"
+    },
+    {
+      "path": "Template",
+      "type": "dir",
+      "sha": "d9c629b933d4a116f860f74f16d67496f5d18c4b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# runtime/editor with component objects, assets/reload, scripts, animation, physics and history; early instability explicitly documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

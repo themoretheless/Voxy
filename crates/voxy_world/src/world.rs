@@ -125,6 +125,7 @@ pub struct World {
     registry: Arc<BlockRegistry>,
     chunks: BTreeMap<ChunkPos, ChunkSlot>,
     unavailable: BTreeMap<ChunkPos, UnavailableReason>,
+    unloaded_revisions: BTreeMap<ChunkPos, ChunkRevision>,
     tick: TickId,
     next_commit: u64,
     limits: WorldLimits,
@@ -138,6 +139,7 @@ impl World {
             registry,
             chunks: BTreeMap::new(),
             unavailable: BTreeMap::new(),
+            unloaded_revisions: BTreeMap::new(),
             tick: TickId::new(0),
             next_commit: 0,
             limits,
@@ -184,6 +186,9 @@ impl World {
         if self.chunks.contains_key(&generated.pos) {
             return Err(CommitError::ChunkAlreadyLoaded(generated.pos));
         }
+        if self.unloaded_revisions.contains_key(&generated.pos) {
+            return Err(CommitError::ChunkRequiresRestore(generated.pos));
+        }
         self.validate_chunk(&generated.data)?;
         self.unavailable.remove(&generated.pos);
         self.chunks.insert(
@@ -193,6 +198,67 @@ impl World {
                 data: Arc::new(generated.data),
             },
         );
+        Ok(())
+    }
+
+    /// Removes residency while returning the exact edited data for caller retention.
+    /// The caller must retain or persist the snapshot before discarding it.
+    /// # Errors
+    /// Rejects missing chunks and revisions that cannot advance on restoration.
+    pub fn unload_chunk(&mut self, pos: ChunkPos) -> Result<ChunkSnapshot, CommitError> {
+        let slot = self
+            .chunks
+            .get(&pos)
+            .ok_or(CommitError::ChunkNotLoaded(pos))?;
+        slot.revision
+            .checked_next()
+            .ok_or(CommitError::RevisionOverflow(pos))?;
+        let slot = self
+            .chunks
+            .remove(&pos)
+            .ok_or(CommitError::ChunkNotLoaded(pos))?;
+        self.unloaded_revisions.insert(pos, slot.revision);
+        Ok(ChunkSnapshot {
+            pos,
+            revision: slot.revision,
+            data: slot.data,
+        })
+    }
+
+    /// Restores retained data with a fresh revision, invalidating pre-unload plans.
+    /// # Errors
+    /// Rejects loaded/unavailable chunks, stale snapshots, unknown blocks and overflow.
+    pub fn restore_chunk(&mut self, snapshot: &ChunkSnapshot) -> Result<(), CommitError> {
+        if self.chunks.contains_key(&snapshot.pos) {
+            return Err(CommitError::ChunkAlreadyLoaded(snapshot.pos));
+        }
+        if self.unavailable.contains_key(&snapshot.pos) {
+            return Err(CommitError::InvalidChunk(snapshot.pos));
+        }
+        let actual = self
+            .unloaded_revisions
+            .get(&snapshot.pos)
+            .copied()
+            .ok_or(CommitError::ChunkNotLoaded(snapshot.pos))?;
+        if snapshot.revision != actual {
+            return Err(CommitError::RevisionConflict {
+                pos: snapshot.pos,
+                expected: snapshot.revision,
+                actual,
+            });
+        }
+        let revision = actual
+            .checked_next()
+            .ok_or(CommitError::RevisionOverflow(snapshot.pos))?;
+        self.validate_chunk(&snapshot.data)?;
+        self.chunks.insert(
+            snapshot.pos,
+            ChunkSlot {
+                revision,
+                data: Arc::clone(&snapshot.data),
+            },
+        );
+        self.unloaded_revisions.remove(&snapshot.pos);
         Ok(())
     }
 
@@ -436,6 +502,7 @@ pub enum CommitError {
     DuplicateExpectation(ChunkPos),
     ChunkNotLoaded(ChunkPos),
     ChunkAlreadyLoaded(ChunkPos),
+    ChunkRequiresRestore(ChunkPos),
     UnknownBlock(BlockStateId),
     RevisionConflict {
         pos: ChunkPos,
@@ -482,6 +549,90 @@ mod tests {
             })
             .unwrap();
         (world, stone, pos)
+    }
+
+    #[test]
+    fn unload_preserves_edits_and_invalidates_old_plans_after_restore() {
+        let (mut world, stone, chunk) = setup();
+        let pos = VoxelPos { x: 4, y: 5, z: 6 };
+        world
+            .commit(EditTxn {
+                source: EditSource::Editor,
+                expected: vec![],
+                writes: vec![VoxelWrite { pos, block: stone }],
+            })
+            .unwrap();
+        let snapshot = world.unload_chunk(chunk).unwrap();
+        let old = snapshot.clone();
+        assert_eq!(world.sample(pos), Sample::Unloaded { chunk });
+        assert_eq!(
+            world.insert_generated(GeneratedChunk {
+                pos: chunk,
+                data: ChunkData::uniform(BlockStateId::AIR)
+            }),
+            Err(CommitError::ChunkRequiresRestore(chunk))
+        );
+        world.restore_chunk(&snapshot).unwrap();
+        assert_eq!(world.sample(pos), Sample::Loaded(stone));
+        assert_eq!(
+            world.chunk(chunk).unwrap().revision.get(),
+            old.revision.get() + 1
+        );
+        assert!(matches!(
+            world.commit(EditTxn {
+                source: EditSource::Simulation,
+                expected: vec![(chunk, old.revision)],
+                writes: vec![VoxelWrite {
+                    pos,
+                    block: BlockStateId::AIR
+                }]
+            }),
+            Err(CommitError::RevisionConflict { .. })
+        ));
+        let current = world.unload_chunk(chunk).unwrap();
+        assert!(matches!(
+            world.restore_chunk(&old),
+            Err(CommitError::RevisionConflict { .. })
+        ));
+        world.restore_chunk(&current).unwrap();
+        assert_eq!(world.sample(pos), Sample::Loaded(stone));
+    }
+
+    #[test]
+    fn failed_restore_keeps_retained_data_and_unloaded_state() {
+        let (mut world, _, chunk) = setup();
+        let retained = world.unload_chunk(chunk).unwrap();
+        let mut corrupt = retained.clone();
+        corrupt.data = Arc::new(ChunkData::uniform(BlockStateId::from_test(u32::MAX)));
+        assert!(matches!(
+            world.restore_chunk(&corrupt),
+            Err(CommitError::UnknownBlock(_))
+        ));
+        assert!(world.chunk(chunk).is_none());
+        assert_eq!(
+            world.unloaded_revisions.get(&chunk),
+            Some(&retained.revision)
+        );
+        world.restore_chunk(&retained).unwrap();
+        assert!(Arc::ptr_eq(
+            &world.chunk(chunk).unwrap().data,
+            &retained.data
+        ));
+        assert_eq!(
+            world.restore_chunk(&retained),
+            Err(CommitError::ChunkAlreadyLoaded(chunk))
+        );
+    }
+
+    #[test]
+    fn unload_revision_overflow_does_not_remove_resident_data() {
+        let (mut world, _, chunk) = setup();
+        world.chunks.get_mut(&chunk).unwrap().revision = ChunkRevision::from_raw(u64::MAX);
+        assert!(
+            matches!(world.unload_chunk(chunk), Err(CommitError::RevisionOverflow(pos)) if pos == chunk)
+        );
+        assert!(world.chunk(chunk).is_some());
+        assert!(!world.unloaded_revisions.contains_key(&chunk));
     }
 
     #[test]

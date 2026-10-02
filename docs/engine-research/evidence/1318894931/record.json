@@ -1,0 +1,152 @@
+{
+  "repository": "GenshinmasterJinHang/Miku-Material-Converter-Blender-to-Unity-",
+  "repository_id": 1318894931,
+  "commit": "7f5803e92cbf2391d5717c9f52fb459ce6735126",
+  "source_url": "https://github.com/GenshinmasterJinHang/Miku-Material-Converter-Blender-to-Unity-/tree/7f5803e92cbf2391d5717c9f52fb459ce6735126",
+  "readme_path": "README.md",
+  "readme_sha256": "d7d0753fe62380dc0637cde2215708c88d2db39cab297b2054f14e16cd165ac0",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6c1340c9e21b59e24f1a08aa8b52ae7cc7146b94"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "189caaf442c511d9e078cc43315d2415fdd39bdc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fd007e98a1e63983f23c19597b60007a1d7be3c5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "26901595617063e243a64def573985cc0b58269c"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "b1319c44bf773d4e1f0e29827692b31f98d6af89"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7f6bde6e35a2ca58cc5e40c95fc44fc01f06aa42"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "07773c4b0b67156881c350aedd1ad1b220f4d609"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "aea28b27ce07e2b80060c96813c6aa44b8305e72"
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "type": "file",
+      "sha": "730357a8b056e11515d548b65e1ed92b1a181e7c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "314a12c80dbbf34ee0846ecc0e09c790dbd0877d"
+    },
+    {
+      "path": "LICENSES",
+      "type": "dir",
+      "sha": "63d91f4e59cf73a5cec698861e29e9aef0d10bea"
+    },
+    {
+      "path": "PLANS.md",
+      "type": "file",
+      "sha": "2af15dcb76e3744d16a729eba43eceaf1d48c4ff"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7761c1d2e492c255e2eda8f2dc9defd02fe5ec66"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "293243cd4d573268c62bec6308d39c2dafafc990"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "8c96bb4286de96cc5c89a6f59e2ae673c85efde2"
+    },
+    {
+      "path": "SUPPORT.md",
+      "type": "file",
+      "sha": "b0ad254a77cb35420791744adbe71368278ba287"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "type": "file",
+      "sha": "bc4a9cc6b77f2971e5e6a6eb6032560062cc4161"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c15fba76946636cf4b42218020985c18916d1670"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "ae3d6f64829136adbecc47f90e0ddc0ac64efba0"
+    },
+    {
+      "path": "miku",
+      "type": "dir",
+      "sha": "2c860ddc75d53aece8539ad013f3766cc58c0a7f"
+    },
+    {
+      "path": "miku_blender",
+      "type": "dir",
+      "sha": "f86ab32cc2aceffc6795db2bef3e4e5f38992562"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "98606a5e00fdb33f965146873a9bcaed8eb3753d"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "type": "file",
+      "sha": "eb4c203dddf3aa618250435d74370ca956c42752"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "ba1311f9f4ff2227160662c39002f542e8667940"
+    },
+    {
+      "path": "schema",
+      "type": "dir",
+      "sha": "4c1dca9717f80116e89bac24679d45d6a1a978e4"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e71e9914db5365f0a08bc2f250d1c96bb0f75de0"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "3a00fa11f66691c688b98a06f72ab5947febce89"
+    },
+    {
+      "path": "unity",
+      "type": "dir",
+      "sha": "5d00b4f781f778854742d4e233b56fb479bc641c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

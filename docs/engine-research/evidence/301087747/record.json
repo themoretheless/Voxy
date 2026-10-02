@@ -1,0 +1,89 @@
+{
+  "repository": "Golle/Titan",
+  "repository_id": 301087747,
+  "commit": "e1e29fa054d0cbd66b208b5ff1ec1946736216af",
+  "source_url": "https://github.com/Golle/Titan/tree/e1e29fa054d0cbd66b208b5ff1ec1946736216af",
+  "readme_path": "README.md",
+  "readme_sha256": "7019fa254c41f86f28a9017b6d91feb0473966bb1f254c8d6469861dd04cfa61",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6cdb135fb4d9f6f966e7636ee63e89099f3e2908"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "833d3b986cfb7c8e9b4a19a38e87687baa67bbc8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "adad8fe2f3e2e077bcb7d5278ee5c30f5786bc82"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a3eab47faf14a580046df628e2ff280db25b5f58"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "27abdca3d94586e328169d77fba5b5ba8e9cdedd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9b6d0aeba0525e12cf415dc7f913cdc6e12e6ebc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3ead1a5d4f08a1da58d1f02b453678774d577c37"
+    },
+    {
+      "path": "Titan.sln",
+      "type": "file",
+      "sha": "db140043bf9bda6f42109171bdccc5c86410c8b4"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "937c045ba6dfc9669bf96b826dbce3d5fda97a14"
+    },
+    {
+      "path": "publish_sandbox.ps1",
+      "type": "file",
+      "sha": "96daad16ccea4e28127a9fba3fcc41bd6e62a8da"
+    },
+    {
+      "path": "publish_tools.ps1",
+      "type": "file",
+      "sha": "abbdbb61f574b5a13f40e66301f482a314f0e183"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "f8cb612478075631762f56e9f295548c38db499e"
+    },
+    {
+      "path": "setup.ps1",
+      "type": "file",
+      "sha": "e1caf25715ae07608e165f2f3c9a20d2a5984f63"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "930a6738fb673e14044160523850f3796b85bc1b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ec3d3dac10d5c281bba7d594c4e0058a02d40c4e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# DX12 engine with input, asset cooking and samples; README notes paused iteration and incomplete platform/audio implementations.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

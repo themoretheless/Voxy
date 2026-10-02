@@ -1,0 +1,59 @@
+{
+  "repository": "jschomay/elm-narrative-engine",
+  "repository_id": 61602719,
+  "commit": "cc613b8b002a3eed794505f0cc37d080d75d6c8d",
+  "source_url": "https://github.com/jschomay/elm-narrative-engine/tree/cc613b8b002a3eed794505f0cc37d080d75d6c8d",
+  "readme_path": "README.md",
+  "readme_sha256": "a13746d059fbd4b023c70d6729643f5e6aa417154612601ef4d61e60a843f23a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f181587a4568715e09f4321bd53337c0adebdee8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0c3f49ade0c27b7a6916fdb0e50a4fbe521354bc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a445932290804f3d335dd994c2389af89af7b853"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "620580ca24335e73ac594e19f2f672c24bc02037"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "9118bcfc4302ae53b15f704d2723d451945713f3"
+    },
+    {
+      "path": "documentation.json",
+      "type": "file",
+      "sha": "8161d35e3c2eb9e0a20377e19e7efd4c88efbebf"
+    },
+    {
+      "path": "elm.json",
+      "type": "file",
+      "sha": "40cc7d95fa0ebcb06bbf2eba19cb865f08ef6996"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c16bcc811c52ba004a0be2721fb5ecc2103e5011"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e5abf977d58417d848108e26095b8116e8a49729"
+    }
+  ],
+  "classification": "specialized_rules_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Elm nonlinear narrative world/rule evaluation library; README does not establish graphical runtime integration.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,109 @@
+{
+  "repository": "Pixelfield-ru/SungearEngine",
+  "repository_id": 632073195,
+  "commit": "3e481a3c0a469ec1eaca5b22779ad2f40607c7d9",
+  "source_url": "https://github.com/Pixelfield-ru/SungearEngine/tree/3e481a3c0a469ec1eaca5b22779ad2f40607c7d9",
+  "readme_path": "README.md",
+  "readme_sha256": "34058a84a264938cb073ae0da88b45b4ea8e28dfe334424c41e37e59f27fc7a1",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fcc32d13ad289a908d16cb8bd60d0daef123de5d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3890357838bce39e544de1459271ae562629720e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3302c5674d7bc0aa980d11154d4f6ef921f2544b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c71654328a808970fb7ab8e00a1be439be7a936d"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "0473edf9f93cf98811f1a26fd733bf002dbb64cd"
+    },
+    {
+      "path": "CodingConvention.md",
+      "type": "file",
+      "sha": "cf7652f64711fe70397b30ae40a1bb033901ad6c"
+    },
+    {
+      "path": "Externals",
+      "type": "dir",
+      "sha": "285e30ccaf00b8f873c8cb202a35b3028335df7b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f794ea3c77acd579208d9c52a1fc707b8684638d"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "87442c585494118de527e00165a7a4b58657af66"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "101cb0d2b7d6c5745b5fbf5413da2912589f3206"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "d158707ea021ad22c3306d0bffeb887a683b34ae"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "9c96075ca88f30fc07ebfebe24a982a01f978993"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "81a870f4392e2d02c66a9ab2ff0954a7d02cacce"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "0570604c2e2cfe7a7d87fdcb1ce4a0e428f545dd"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "10b674c96b4ac496018c4d1df33dd6872d772d17"
+    },
+    {
+      "path": "doxyfile-en",
+      "type": "file",
+      "sha": "2a33c4213cf5dc282650b8860c90ba6c596df640"
+    },
+    {
+      "path": "vcpkg",
+      "type": "file",
+      "sha": "3895230f38e498525f2560a281223d12066fa74a"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "1c7d1a5eea740c3ef1ad58aa0f188f68abf8371d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ECS/physics/audio/input/UI/animation runtime with assets/scene serialization and editor plugins; incomplete platform input noted.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

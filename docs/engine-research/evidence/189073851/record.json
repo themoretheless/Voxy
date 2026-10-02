@@ -1,0 +1,134 @@
+{
+  "repository": "nCine/nCine",
+  "repository_id": 189073851,
+  "commit": "e9a2342262e193d2343e69989b6f73cb8ba2cf10",
+  "source_url": "https://github.com/nCine/nCine/tree/e9a2342262e193d2343e69989b6f73cb8ba2cf10",
+  "readme_path": "README.md",
+  "readme_sha256": "33430151278fdb696eb147df057f1ee759b6b7dd265ab31375ef827048bd9eb9",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "c046941900a5168ba522b01377a6522a4e8c93b9"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c59c447bf1e54c63e8ff756aaa88587e039a0a2d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "11fa4acea4b7040e06a80b0883816313bcbf7fa0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9a1beedbdce2cc558572d6ef2b91780857542634"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "87ade54f0cd2f53beb3d176c6664b36a55408f20"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "492d1085a4ad4c5a3703d840d41e6cab64414f44"
+    },
+    {
+      "path": "Doxyfile.in",
+      "type": "file",
+      "sha": "cce9404fcf2afde06ee1183be251a9961af48624"
+    },
+    {
+      "path": "Info.plist.in",
+      "type": "file",
+      "sha": "5f7190ba8e20e548972d05324e376598caacbd41"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e684de341cab28dbc110c3f9182cadd1e9f10ef3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5f7b5862bd03e80dff10b5af3b00c0d5a6f2eb47"
+    },
+    {
+      "path": "WindowsHiDPI.manifest",
+      "type": "file",
+      "sha": "f7c3c050d0ededd613441c5505b3c95df2d9c455"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "0725b50817d0144e87a51734e96e09f03613864f"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "5a7ef13b5b5899b45d78f32b9268fa99ed9f29b6"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "cc2a571068cb52bfde569b9648396115477b0ad8"
+    },
+    {
+      "path": "config.h.in",
+      "type": "file",
+      "sha": "c05f291e35f97667828626d50162439063e10add"
+    },
+    {
+      "path": "emscripten_shell.html.in",
+      "type": "file",
+      "sha": "ebc2118707526175069c3bbdf96b1bae6d148739"
+    },
+    {
+      "path": "imconfig.h",
+      "type": "file",
+      "sha": "5026c35e2df9f05a39261d9a7a340af7fbdd69a6"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "8226690842c930d109be66697cea74cf155be87c"
+    },
+    {
+      "path": "io.github.ncine.desktop.in",
+      "type": "file",
+      "sha": "a52282db7e72c889b6ad82a6d8009379536c2ee7"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "303cc32108944e0697fa63ded9fb31374712cd30"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "209980553b68b2979af9fb86c37a1e0bcf3322ba"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ec8fdf4493a244197e03fc9f672f2e62be5ba6f5"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e6214a2e5c002f1a5461cae2b687cdb304fe6f4a"
+    },
+    {
+      "path": "unit_tests",
+      "type": "dir",
+      "sha": "be16a8e158bd5ccda89995795e49addb152e0b96"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 2D engine; owned runtime with CMake/platform and benchmark infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

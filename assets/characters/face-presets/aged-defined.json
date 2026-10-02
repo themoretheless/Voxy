@@ -1,0 +1,17 @@
+{
+  "wrinkles_forehead": 0.8,
+  "wrinkles_glabella": 0.65,
+  "wrinkles_crow_feet": 0.6,
+  "wrinkles_under_eyes": 0.6,
+  "wrinkles_upper_lip": 0.5,
+  "folds_nasolabial": 1.5,
+  "folds_marionette": 1.2,
+  "age_cheek_volume": -2.4,
+  "age_cheek_descent": 3.5,
+  "age_jowl_descent": 4.0,
+  "under_eye_bags": 1.5,
+  "skin_laxity": 2.5,
+  "temple_hollowing": 1.5,
+  "skin_roughness_scale": 1.3,
+  "skin_oil_scale": 0.65
+}

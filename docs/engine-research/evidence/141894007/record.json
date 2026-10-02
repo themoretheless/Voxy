@@ -1,0 +1,104 @@
+{
+  "repository": "TombEngine/TombEngine",
+  "repository_id": 141894007,
+  "commit": "cd29462dbde01c15a1797e3029ad362747d22fc4",
+  "source_url": "https://github.com/TombEngine/TombEngine/tree/cd29462dbde01c15a1797e3029ad362747d22fc4",
+  "readme_path": "README.md",
+  "readme_sha256": "f30c4a8b676387806de8ea2d66e4ca3dedff489b80955f800fd69a591422652b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "36e610e6a0914519a027491903274ac1c4490b9e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "998baee0b534365561ac289a31f5697ea50dc17f"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "b53e12ee75f872bbc90f25f97fc5aab7808aff04"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "4f2f6e569fce300cb708b61b44ed73f414d228c9"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "6c91fca80bace409cb3882a272168e229cefb44a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e378ab5bd49c21027dc5e4672cdc376a5a577189"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "aef49f5688f629fcdc281b6345afd804127987b8"
+    },
+    {
+      "path": "IMPORTANT_LINKS.md",
+      "type": "file",
+      "sha": "4a1615b4a3e42173231d89de93dd5cf7834defee"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8d97e427ba835c9a8bde356ff35bc44c7fa5f975"
+    },
+    {
+      "path": "Libs",
+      "type": "dir",
+      "sha": "f58c2f2f4d83d9830d79ef4abc20cee6c263da7e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b0aba8c031d77050fdc2ab0b24f50bc357c4239c"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "21a9b17ee4f84fd2107a23ddf2c84ad05915402d"
+    },
+    {
+      "path": "TEN logo.png",
+      "type": "file",
+      "sha": "97b7b13fa0b475016bb54e7f1cd7c0779c802b5e"
+    },
+    {
+      "path": "Title Image.psd",
+      "type": "file",
+      "sha": "a2b55aff56d54bedddfbe3200ffe3d4015f6b43d"
+    },
+    {
+      "path": "TombEngine.sln",
+      "type": "file",
+      "sha": "be146976c189760a4f72e71810ef779fea0866c2"
+    },
+    {
+      "path": "TombEngine",
+      "type": "dir",
+      "sha": "7ea7220b05dc0c5708fd3dfaeb847bef3bc08835"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "5acf31ea80cdbb3b0f44ce5e08739f4cf71cd0de"
+    },
+    {
+      "path": "pull_request_template.md",
+      "type": "file",
+      "sha": "4ce2e10122dd7d13ba77065f46557119b91fd9ed"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies custom Tomb Raider-compatible level runtime; owned native source/libs/scripts and build documentation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

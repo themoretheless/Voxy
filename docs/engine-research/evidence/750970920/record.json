@@ -1,0 +1,67 @@
+{
+  "repository": "insideout-andrew/simple-card-pile-ui",
+  "repository_id": 750970920,
+  "commit": "e9f52b0b3485fb83dd8072fe8098e820d5b90236",
+  "source_url": "https://github.com/insideout-andrew/simple-card-pile-ui/tree/e9f52b0b3485fb83dd8072fe8098e820d5b90236",
+  "readme_path": "README.md",
+  "readme_sha256": "0664b4cc65dba78e3f10bae533c7b4ca4608d68a68696ea5ceb1467779a3ea4f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6b1c2905eaa967a320055dafc551498aa964b172"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4629ec80f5af9cacd7a618f8e059da037d68c6e5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "92a0526be22052feb40842be9cbf54ff044052d8"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "7e5096d0bf449760fdcbbee44b8632487007295d"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3e9ac459b0aee3251e8449a85618c2a01634f0ea"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "3ec6117eee06bd18e6dad6dc179ae7f0411f12cb"
+    },
+    {
+      "path": "example_2",
+      "type": "dir",
+      "sha": "600e9ae073eb5cf20b7d2bad5bd64ddda68bf017"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "b370ceb72740b9a759fe11b364f0d4de27df42f8"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "c5184a2635667ed812f290af17c28c153a7af62f"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "c5b24d7aa87acdd2c50661ab05a8e0bb75468f4f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

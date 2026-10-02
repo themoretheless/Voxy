@@ -1,0 +1,37 @@
+{
+  "repository": "Ailrid/Bevy-Engine-Guide",
+  "repository_id": 1068902793,
+  "commit": "05eea6669d949f74213d2ba2e4f786f90b306455",
+  "source_url": "https://github.com/Ailrid/Bevy-Engine-Guide/tree/05eea6669d949f74213d2ba2e4f786f90b306455",
+  "readme_path": "README.md",
+  "readme_sha256": "55bb35c41d1e392156750e3c4ee6443598d3dce1715c64215e59e821d481e3d3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e9c072897d554179f3ae02256be55c7c165b1f77"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "049c24c8c577b02435e594ad7ee7d330480ca785"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3173125c17449aa0365e7be2718e3bb93065af00"
+    },
+    {
+      "path": "book.toml",
+      "type": "file",
+      "sha": "e8be430360ceacb9ecd1b8fa9d33ec87e9c81188"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a59a9f52a319f76cd9874bf46c016e8ad5059016"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

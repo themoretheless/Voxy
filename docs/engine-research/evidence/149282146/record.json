@@ -1,0 +1,94 @@
+{
+  "repository": "0xcafed00d/tac08",
+  "repository_id": 149282146,
+  "commit": "38c1f3bb2ae81c06983dc5132d45f0c8747dff95",
+  "source_url": "https://github.com/0xcafed00d/tac08/tree/38c1f3bb2ae81c06983dc5132d45f0c8747dff95",
+  "readme_path": "README.md",
+  "readme_sha256": "a579997379477db6138f5614360b407acc6c286c737f5e5d49bf2422137f86d9",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1d0d8295df6a15a3496ea22f562fabce0e2fb645"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ac0ee6c99713b3fc91fd952a6a2a769557053112"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "86f83089624e199474a8b141c308337a08c8e5f1"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "8cb14f435bf0b8d36f0c83b3dbcdfe5b395066c3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ea5e15634480bcbbd8304918c4e978988f95a612"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "deb31acdbdea437f0ec34945418686d0282c20b2"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "febd85ed650faa381217a3c4c89516dd6fb0de77"
+    },
+    {
+      "path": "cart.p8",
+      "type": "file",
+      "sha": "9fd8e43ae34f3abf9817afedace7820fa56be8ec"
+    },
+    {
+      "path": "export_audio.txt",
+      "type": "file",
+      "sha": "353707e6692541e8cbcd0213afa62a84a408085b"
+    },
+    {
+      "path": "extended_api.md",
+      "type": "file",
+      "sha": "e6e10e01222a94d696ad3b1bc483cd8d61dc6ca6"
+    },
+    {
+      "path": "makefile",
+      "type": "file",
+      "sha": "14eba7a1f714f38ecccec97f9af15bef7f07d808"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5943950a8f374a6db3f810004ff94936454afade"
+    },
+    {
+      "path": "switch_dev.sh",
+      "type": "file",
+      "sha": "8309a865eb192bc2c529ce9bca653f0fe38354c5"
+    },
+    {
+      "path": "switch_rel.sh",
+      "type": "file",
+      "sha": "16e417168a005064dfe40f06652257cb53a21e70"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "0404eeccd973cedc6e1bbfb4db4089ec26e44c1e"
+    },
+    {
+      "path": "win-tac08",
+      "type": "dir",
+      "sha": "b9779b85dde25bd0cb0172b7b3688c81ff0c2c08"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify independent Pico-8-compatible runtime; owned src/VM/cart support and make/platform build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

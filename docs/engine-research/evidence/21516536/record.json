@@ -1,0 +1,52 @@
+{
+  "repository": "lronaldo/cpctelera",
+  "repository_id": 21516536,
+  "commit": "b3f48a1b49dc9d99b73c75f98cefaf9c1e60dc31",
+  "source_url": "https://github.com/lronaldo/cpctelera/tree/b3f48a1b49dc9d99b73c75f98cefaf9c1e60dc31",
+  "readme_path": "README.md",
+  "readme_sha256": "39b1a79a3a39eaa86e1927c71568b7be863a5a395c219aa3abe4dd14cc23fa88",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2591b71dae1a7616e6f205b1f8599b17ae2ac799"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "37722ccbfb19300475a7b34ee3fb25ea7c96a017"
+    },
+    {
+      "path": "GPL-LICENSE",
+      "type": "file",
+      "sha": "70566f2d0e526993b58e746bb8a2747c81668f3f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "02bbb60bc49afc2d6a1bedf96288eab236d80fbd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "def31f43fc22cafe66c423a6ceebe17278a78085"
+    },
+    {
+      "path": "cpctelera",
+      "type": "dir",
+      "sha": "aba3bdbcd105196841e3ca52f5f597498f8e7908"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "15751fc58419fe6e09c36a03782b38b2c425dbeb"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "69ccf68228ceed91754e11bd39f9ef620d84998a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

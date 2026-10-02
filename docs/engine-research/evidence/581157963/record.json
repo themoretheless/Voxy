@@ -1,0 +1,79 @@
+{
+  "repository": "saemideluxe/semicongine",
+  "repository_id": 581157963,
+  "commit": "9e3166c327936656358f02bd259537b36663de4b",
+  "source_url": "https://github.com/saemideluxe/semicongine/tree/9e3166c327936656358f02bd259537b36663de4b",
+  "readme_path": "README.md",
+  "readme_sha256": "84d6baefc72cfc116ded474065f0ea20c1c9401c59664022bd4dd15ab5c5deed",
+  "entries": [
+    {
+      "path": ".hgignore",
+      "type": "file",
+      "sha": "0481ddcce49a0913686b3520dfc92f973c5268ed"
+    },
+    {
+      "path": ".hgtags",
+      "type": "file",
+      "sha": "11f5cb27174c1d1cc5fc1c5eb30900dabc89bfef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b72e8fa9bba771b51922baa67da7f1b47fb6ec82"
+    },
+    {
+      "path": "config.nims",
+      "type": "file",
+      "sha": "c917c6c1f3b9f5983890b1940185e1cc56e5dbab"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "28854eb9d5d298b5b2cec93d2828142e9f9a3383"
+    },
+    {
+      "path": "old_tests",
+      "type": "dir",
+      "sha": "4ea35a1c44b7ce0feef83c4e0fea941dd94d3303"
+    },
+    {
+      "path": "semicongine.nim",
+      "type": "file",
+      "sha": "59a88804c388d615054b1183a331a7a727b53ffe"
+    },
+    {
+      "path": "semicongine.nimble",
+      "type": "file",
+      "sha": "2eb885155b3fcc5071932909a8aa40fbad5cfe04"
+    },
+    {
+      "path": "semicongine",
+      "type": "dir",
+      "sha": "c2a321cfe902581b9743141fc2f355c6a8c5da40"
+    },
+    {
+      "path": "svk.nim",
+      "type": "file",
+      "sha": "906c2e9cf92b53495a82b1f9dca3e2de006d3a50"
+    },
+    {
+      "path": "svk",
+      "type": "dir",
+      "sha": "f74bd4733f62a9f5e19b361fe7f6f4630f3e5601"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c37b7d4b686d592d30ad1bfb087b88a85345a6f0"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "f118764465d3cc8c609b7ae91300faecd1c9f45d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nim game runtime with Vulkan/window/input/audio, resource packaging, text and collision utilities; GitHub mirror and incomplete feature scope recorded.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

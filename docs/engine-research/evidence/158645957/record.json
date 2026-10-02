@@ -1,0 +1,159 @@
+{
+  "repository": "OpenDiablo2/OpenDiablo2",
+  "repository_id": 158645957,
+  "commit": "7f92c571bf04057a7fbdfb5d25a486f7d775e3c3",
+  "source_url": "https://github.com/OpenDiablo2/OpenDiablo2/tree/7f92c571bf04057a7fbdfb5d25a486f7d775e3c3",
+  "readme_path": "README.md",
+  "readme_sha256": "1d58cbfad6e2d9685e032910286fe61082af2b87b8b5ce938802ffe682375468",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "2974c857059eebfa0f9726aabd9ac81096caade5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "1af1449fde63af1a3a8374ab24586f3edc9b6a4e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f1f89041dd68b1488ce9b476899009af516029e4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1dc4c47e1934d26251e3369561a2edd567c11505"
+    },
+    {
+      "path": ".golangci.yml",
+      "type": "file",
+      "sha": "95f96c3a511a45645e637d61e4df35b83d28309b"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "295b9cc64feacbdd4f410fe8756bc20bb34a4d72"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "baf1cd3e7308ffe10d114c6de18dc7d13cc30aa8"
+    },
+    {
+      "path": "CONTRIBUTORS",
+      "type": "file",
+      "sha": "399041a3db1af623eab6f341ac71c0cae39c0db9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f8b0ae4cda861abd627c1eb2095e9f76a20989be"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "548319c713a923b13b415e33e8e8ccbf204652f1"
+    },
+    {
+      "path": "d2app",
+      "type": "dir",
+      "sha": "88d4ecb2f2a7a251b1d09ea543ef1f81dea24df3"
+    },
+    {
+      "path": "d2common",
+      "type": "dir",
+      "sha": "a8b7edca6eab74b928e05df905b516a7c01042e3"
+    },
+    {
+      "path": "d2core",
+      "type": "dir",
+      "sha": "f20ba90d3ce696cefbe5894d54676ced5d3c4c5e"
+    },
+    {
+      "path": "d2discord.png",
+      "type": "file",
+      "sha": "1bdcc0e82fd74c86c186f89ad073c42137883722"
+    },
+    {
+      "path": "d2game",
+      "type": "dir",
+      "sha": "07e1e57fc40a50da1493e766f21d4b6deb355860"
+    },
+    {
+      "path": "d2logo.ico",
+      "type": "file",
+      "sha": "90fe1fa848015cadf41682e97b2d44dbd6efe185"
+    },
+    {
+      "path": "d2logo.png",
+      "type": "file",
+      "sha": "f4eafb8ba4c3366c3df863bbfebaab6e0a4cae14"
+    },
+    {
+      "path": "d2networking",
+      "type": "dir",
+      "sha": "ceec09992c93ff32d6a757f381d41c66fef10b9a"
+    },
+    {
+      "path": "d2script",
+      "type": "dir",
+      "sha": "023ff7cd69260f76ada47f01a3aac6d99b00b8b5"
+    },
+    {
+      "path": "d2thread",
+      "type": "dir",
+      "sha": "37bc257c7996dcc44e180ce6174971c4e057c784"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "91902f01e0447d88cf6d395c1bd5da58fcc67a3f"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "6b71240582a40445672b62addef1184ceb6112ea"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "3498efb382d50cfee257b238fbb5a5bee9e7d07b"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "02224fbb518e2b5839bac332488a9c04d2a0ccee"
+    },
+    {
+      "path": "rh.exe",
+      "type": "file",
+      "sha": "c3ea5c47bf49f83112c12183f68141f5cbbb81e9"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "efd2c7359d3c3a223b0f642575ed2edbf3ce8618"
+    },
+    {
+      "path": "tagdev.bat",
+      "type": "file",
+      "sha": "903c53bfbcc0822d89870ce11e11b4b32d6aae5c"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "87ad74d8ad24cb4a10ddb230cc4182b71be38d93"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies historical ARPG engine and planned engine/toolset split; d2core/d2networking/d2script plus Go build. Not generic-engine proof.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

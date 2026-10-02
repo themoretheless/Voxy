@@ -1,0 +1,44 @@
+{
+  "repository": "zacharycarter/zengine",
+  "repository_id": 96626076,
+  "commit": "a67f53ce667e493d09c200aa513fe4699900533d",
+  "source_url": "https://github.com/zacharycarter/zengine/tree/a67f53ce667e493d09c200aa513fe4699900533d",
+  "readme_path": "README.md",
+  "readme_sha256": "239acec5c1dc33f57a2542c9f7f8a7217486c98fb922bdf3f837de9039085064",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b6afdb1ecba1b41e17c6d36d9e0710a6239fcc4b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f8506861df837940e25fa4379550aedfea67082c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "954eff03dbe30d69e5ac72fc296562144cf3616e"
+    },
+    {
+      "path": "specs",
+      "type": "dir",
+      "sha": "dc3e13a52a3c9601baf06a45eee0c5b43b1153aa"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "09aa81eb3aa36131bf93ed283c323696cd2a5aba"
+    },
+    {
+      "path": "zengine.nimble",
+      "type": "file",
+      "sha": "137c1df43915f1b49d9fd421971bc10ee812694c"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nim 2D/3D development library with graphics examples; README does not establish a broader engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

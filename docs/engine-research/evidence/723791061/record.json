@@ -1,0 +1,62 @@
+{
+  "repository": "doonv/bevy_dev_console",
+  "repository_id": 723791061,
+  "commit": "98355f16b7d83ad0db983f2204426079780aa2ae",
+  "source_url": "https://github.com/doonv/bevy_dev_console/tree/98355f16b7d83ad0db983f2204426079780aa2ae",
+  "readme_path": "README.md",
+  "readme_sha256": "b000af79836255e3ad23be56ba5133293a35f871a3c621d7ac22d0a25a738f8b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "911c53291967f49791b5ba534e6c8b497de5aa35"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "66627ad3ba2bc2ff705bfa9363f38cd8eaf6f14b"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "88f3db6de19b31dddf99ac92551eaa787ba3c879"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "2bb9ad240fa04c8cf706a4901c4807878e90c2dc"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "6802bc4b80c0f8df1413d55b16267c0969e352c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "13596ec0114c4b463bd6d9a147972ff03c601310"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "e9c2ab3f5d082b2653e928a3bd6f3ae0cea9cb6b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "f1d4a14f9576be9677e9c13023aa895c75422389"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "c1578aafbcf29f99a94e5afda9efef04c9bb3618"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b7f3065d2f2ddc08cc42a554090bf3671cde79ab"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

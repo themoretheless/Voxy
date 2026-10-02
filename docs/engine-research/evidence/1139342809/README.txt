@@ -1,0 +1,313 @@
+Resonite SDK for the Unity Editor. This will allow sending content from Unity Editor to Resonite easily. Built on top of ResoniteLink: https://github.com/Yellow-Dog-Man/ResoniteLink
+
+> [!CAUTION]
+> # Beta warning
+> The Resonite SDK for Unity Editor is currently in beta state! This means it's not 100 % ready for full use - if you're looking to just convert your content hassle-free, please give it a little bit more time.
+> 
+> However if you want to start playing with it and don't mind messing with the jank, you're now free to do so!
+>
+> We'd also love your help if you want to help us to polish it, whether it's by reporting issues or contributing improvements.
+>
+> We are now accepting issues & PR's to help improve it!
+> 
+> ## What to expect in beta state
+> - SDK can break often and spew out errors
+> - A lot of common content will not convert yet
+>     - Please report & upvote things that don't convert so we know what to prioritize!
+>     - If you're willing, you can also contribute improvements for conversions (see below for info)
+> - UI is clunky and doesn't look pretty
+>     - If you're interested, we're also looking for help with this!
+>     - The focus was getting the core working and expanding from there
+> - Some processes and workflows are not fully fleshed out yet
+
+# What is this?
+Resonite is a free social VR sandbox platform, which allows for socialization and collaborative in-game building. While game content can be fully built in-game (either in desktop or VR modes), not every user prefers this workflow. Unity SDK opens a new way to build content for Resonite, by using the Unity Editor and more traditional workflow or existing tooling. 
+
+You can get Resonite free on Steam: https://store.steampowered.com/app/2519830/Resonite/
+
+You can:
+- Use this to build brand new content for Resonite
+- Bring over existing content you've already built to Resonite (e.g. content build for other platforms such as VRC)
+    - Worlds
+    - Avatars
+    - Props 
+- Expand the conversion system to handle more of your existing content or custom tailor conversion for your projects
+- Use Resonite to visualize and prototype your Unity projects in VR and take advantage of Resonite's realtime collaboration
+- Expand the SDK or use it as reference implementation for your own custom tooling for other engines
+
+## Getting started
+> [!TIP]
+> Are you new to Resonite and looking to bring your content over? Register an account with the `UNITYSDK` promo code and you'll get extra storage for first 3 months! 
+
+Video tutorial:
+
+[![Resonite SDK for Unity Editor](https://img.youtube.com/vi/lRGDnu9OeSs/0.jpg)](https://www.youtube.com/watch?v=lRGDnu9OeSs)
+
+> [!IMPORTANT]
+> If you are installing a new version of the Unity SDK to a project containing older version **delete the older version first!** Otherwise some old files can cause conflicts and errors.
+> 
+> In order words: **Delete old ResoniteSDK in your project before importing a new one**
+
+1) Go to [Releases](https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/releases)
+2) Download ResoniteSDK.unitypackage for the latest release
+    - Note: We'll likely switch to Unity Package Manager soon(ish)
+3) Import the package into your Unity project
+4) Go to Resonite SDK in Unity Editor -> Open Resonite SDK Manager to open Resonite SDK window
+6) Run Resonite (make sure you got latest version)
+7) Create a new world (Blank template is recommended for converting worlds)
+8) Go to Session on dash and click "Enable Resonite Link"
+9) Go back to Unity Editor and the Resonite SDK window
+10) The session should appear under "AutoDiscovery" mode - click the connect button
+    - If it does not appear, you can switch to Manual mode and enter the port manually
+11) If you're converting an avatar, uncheck "Convert Skybox"
+12) Click either "Send Current Scene" or "Start Realtime Mode"
+    - Realtime mode will translate the changes in Editor right as you make them
+   
+### How to convert an avatar
+Converting avatar generally follows the same process.
+
+1) You will need to attach a special component: "BipedAvatarDescriptor" to the root of your rig
+2) Assign Biped reference to Animator with the humanoid "Avatar" reference that you want to convert
+3) Assign Head, Left Hand & Right Hand References and align them
+    - Feet and hips are optional
+    - Gizmos will render when assigned
+    - Blue line if forwards, green upwards and red right direction
+12) Click either "Send Current Scene" or "Start Realtime Mode"
+    - Realtime mode will translate the changes in Editor right as you make them - you can wear the avatar and attach more objects to it while testing them live in Resonite
+
+## What if something doesn't convert properly?
+If you run into content that doesn't convert at all or has conversion problems, best way is to make sure it's reported!
+
+1) First, determine what exactly failed to convert:
+    - [Individual Material / Shader](https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Material%2FShader%20Conversion%22)
+    - [Individual Component](https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Component%20Conversion%22) (e.g. colliders, properties, behaviors and so on)
+    - [Individual Asset](https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Asset%20Conversion%22) (e.g. garbled/missing meshes, textures not transferring on even supported materials...)
+    - [Complex/Core Conversion](https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/issues?q=is%3Aissue%20state%3Aopen%20label%3Abug) (entire scene, data primitive, avatar setup)
+    - [Something else broke](https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/issues?q=is%3Aissue%20state%3Aopen%20label%3Abug) (general bugs, UI, editor tools...)
+2) Search if there's an existing issue first
+    - You can click the types of conversion problems above to search by type!
+    - It's better to collate conversion problems in one place than making multiple issues for the same one
+    - However even if you do end up making a duplicate, don't fret - we'll handle it
+3) Create new issue / Add information to the existing issue
+    - Give us as much info as you can on what didn't convert properly
+    - Describe what were you trying to convert
+    - Describe what you were expecting in the conversion
+    - Describe what happened instead (e.g. did nothing convert at all, or did something convert incorrectly)
+    - Screenshots / Videos help
+    - If you can share an item (e.g. UnityPackage) of the problematic content - **THIS HELPS TREMENDOUSLY**
+        - You can swap out any assets you don't want to share that are not important. E.g. if shader doesn't convert, provide it with a basic sphere mesh and some public textures
+4) If you're technical user and you have the will to look into the issue yourself and help improve conversion, feel free!
+    - If you manage to improve the conversions or add missing conversion systems, feel free to open a PR to merge your fixes
+    - Please read the "Contributing" section below for more info on how to contribute!
+
+# Contributing
+Contributions to this SDK are welcome! Converting content is a complex task and a big part of this tool is giving more power to you - the community, to create new workflows and bring more content to Resonite. 
+
+We'll also give shoutouts to contributors in the Update notes for Resonite itself!
+
+## Contributing component converters
+- Improving existing converters
+    - E.g. handling configurations / edge cases that aren't currently handled (or not handled well)
+- Adding new converters
+    - If there are components/behaviors that aren't converted at all - feel free to implement converters for them!
+    - This should avoid adding 3rd party SDK's / dependencies to this though - if you want to do that, please consult us first by creating an Issue
+    - At some point, we might suggest separating converters for 3rd party libraries into their own repos and just linking them here
+ 
+### How to PR component converter
+If you want to contribute a new or improved component converter, please ensure following:
+- Adds sample content to the TestScene to test conversion with
+- Make sure you test all other conversions in the TestScene that would be affected by your converter
+- Ideally create issue for the converter first (if it does not exist)
+    - You should be assigned to it first if your changes will be extensive to avoid clashes with other contributors 
+- Make PR with the converter changes, TestScene changes
+
+## Contributing material converters
+- Improving existing converters
+- Adding converters for new shaders
+   - These are a bit easier to contribute, as they don't technically require new C# code for the shader
+   - If possible, include the shader for testing in your PR
+ 
+### How to PR material converter
+- Ideally create issue for the shader, especially if it's a complex one
+    - This will allow coordination with other contributors
+- If possible, include the shader in the TestScene with various configurations (you can also add separate scene for it if it's extensive)
+- If you're modifying existing converter, please test existing content with it to ensure your conversion doesn't break any of it
+   - If needed, add more testing content for that shader please, so we can avoid regressions 
+- Make PR with the material converter
+
+## Other contributions
+You can also contribute in a number of other areas! Check the Issues page for those. In short there are:
+
+- UI / Workflow improvements
+- General conversion bugfixes
+- Quality of life improvements
+- Help review & test PR's from other contributors 
+
+For any larger reworks **please make sure there's an issue created first and include high level proposal for your implementation**. This will help prevent conflicts with changes from other contributors and make any necessary design changes before spending time implementing them.
+
+If you're not sure what to contribute, check the "help wanted" issues: https://github.com/Yellow-Dog-Man/Resonite.UnitySDK/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22
+
+## Contributions that need changes to Resonite / ResoniteLink
+If you want to contribute features, fixes or other changes that require some changes to be done in Resonite itself (e.g. adding support for new asset type, exposing certain sync methods), please make an issue at: https://github.com/Yellow-Dog-Man/Resonite-Issues/issues
+
+In the additional context, include information that it's for particular Unity SDK contribution - ideally link an issue on this repo as well for context.
+
+## When to fork instead
+If you need to make changes to the SDK that would negatively affect general conversion, you should create a customized fork instead. This is for cases where you need to make some structural changes to help certain types of projects and content better, but that would break compatibility with other type of content.
+
+Forking this SDK is perfectly fine! If there are popular forks with altered functionality, we can add links to those as well for people to explore.
+
+You can also create private forks - e.g. if you want to use the SDK for your internal/private projects and use Resonite for prototyping/visualization. We have licensed this under MIT so you can use it for these use cases as well.
+
+# How it works
+There are several parts of the Unity SDK that work together to provide its functionality. In this section you can learn how the SDK is structured on high level to better understand its systems and design philosophy if you'd like to help us expanding them.
+
+## ResoniteLink
+The Unity SDK communicates with Resonite through ResoniteLink - a websocket & JSON library that allows interacting with Resonite's data model from external applications. This library allows reading/writing Resonite data model - scene hierarchy, components and their fields. It also has functionality for importing various types of assets.
+
+You can find the library here: https://github.com/Yellow-Dog-Man/ResoniteLink
+
+Unless you need to modify or implement some lower level behaviors, you will likely not require to interact with this library and the protocol directly - it is abstracted away by the converter system.
+
+## Bindings
+Since Resonite has its own system of components and other types, the ResoniteLink library is used to create bindings for those. This is done by the "BindingsGenerator" project. This project walks all available component types in the Resonite instance it's connected to and creates binding "shells" for those - classes representing those components and their data model members.
+
+This replicates the "data structure" of Resonite types without the actual behaviors. This is mostly 1:1 mapping. Some of the datatypes will be mapped to available Unity equivalents to make interacting with Unity's own API's, editor and other systems easier - e.g. float3 is mapped to Vector3 or float4x4 is mapped to Matrix4x4.
+
+Apart from Components & SyncObjects which contain members, the bindings generation also replicates any other data types that are valid in data model - classes, interfaces, structs and enums. 
+
+Generic constraints and implemented interfaces are replicated as well. This allows the bindings to use C#'s own type system to resolve majority of type constraints - e.g. components that have references that need to be specific interface, can reference the binding proxies naturally.
+
+This way Resonite's C# type structure is replicated, without needing to reference FrooxEngine itself and its behaviors.
+
+### Conversions
+As part of the binding generation, code to collect values from those data proxies is also generated. This is what interfaces between the bindings and ResoniteLink, allowing to update Resonite's component data from the values in the generated binding.
+
+### Primitives
+The binding library contains explicitly implemented proxies for Resonite's primitives - vector, matrix, quaternion, color types and so on. Where possible, those are mapped to Unity's own datatypes to make conversions and interfacing with Unity's API easier. 
+
+ResoniteLink doesn't provide a way to query those primitives - those need to be implemented and managed manually. However since primitives are very rarely added to data model, this approach should work fine.
+
+**NOTE:** There are likely a few less commonly used primitives that aren't currently implemented. If you run into any, please make an issue!
+
+### Enums
+Enum types specifically are replicated with their values mapped. ResoniteLink provides API for this, to allow the values to be assigned from Unity easily, without having to guess which numeric values correspond to what.
+
+### Component wrappers
+For each Resonite component, the bindings generation creates a Unity Component wrapper. This allows attaching "Resonite Components" directly in the Unity game editor hierarchy and editing their values from the inspector UI.
+
+**NOTE:** Since Unity doesn't support attaching generic components from the Editor UI, those can only be attached through code.
+
+## Component Converters
+While it's possible to fully construct a Resonite scene by attaching component wrappers to the hierarchy, this has a few issues:
+- For existing Unity content, you'd need to manually map everything to appropriate Resonite components and essentially recreate it
+- Those bindings don't provide any actual behaviors, so you'd have no visuals for what you're building
+
+To solve this problem, the SDK has a feature called "Converters". Their responsibility is to take Unity Components that can be found in the scene and mapping them to Resonite's bindings. This system is also extensible - meaning you can add conversions for additional Unity components easily and define a custom logic to map them.
+
+There are a few important points:
+- The converter needs to specify which specific Unity component it converts
+    - You can only specify one type - even if you need mix of components (e.g. MeshRenderer + MeshFilter) - this is the "entry point" for your converter
+    - The scene conversion automatically attaches and updates converters - you don't need to worry about this process or attaching them manually
+    - You can fetch other dependent components in your converter code (e.g. MeshRenderer converter will dynamically get MeshFilter)
+- Converters can indirectly suppress other converters
+    - In some cases, certain Unity components are reused. For example TextMesh uses the MeshRenderer, which is also used with MeshFilter
+    - The converter for TextMesh will suppress the MeshRenderer converter, because it takes precedence
+    - Each converter can define a function, which will be called with list of all components on given GameObject to be converted
+    - If you don't want other converters handling any of the components in that list - remove them from the list
+- The conversion should be written so it can handle both freshly attached components & updating existing conversion
+    - Whenever the conversion function on the converter is called, you should do following:
+        - Instantiate any Resonite bindings that are needed
+        - Cleanup any Resonite bindings that are not needed
+        - Update the state of the bindings to match the Unity component equivalents as close as possible
+    - Think of each function call as "update Resonite Bindings from whatever current state is to whatever is needed to represent the current state of the Unity component that I'm responsible for converting"
+        - It's perfectly OK to instantiate more than one Resonite Binding
+        - Handle unsupported states and conversions gracefully - either try to convert it to closest possible equivalent
+        - If not possible to convert at all - you can just delete bindings for that state
+     
+The Unity SDK will dynamically scan any available converters in your project before converting the scene - you don't need to do anything special to register them, other than deriving from the base class and specifying which type they convert.
+
+## Material Converters
+A similar system to component converters, the Unity SDK has material converter system. Its responsibility is to convert various materials into closest matches in Resonite. 
+
+Since Resonite currently does not support custom shaders, it's not possible to convert those shaders directly. Instead, code needs to be written to handle those shaders and materials and map them to Resonite equivalents to match their look and behavior as closely as possible.
+
+The mechanism is similar to component converters:
+- You don't need to explicitly register them, the SDK will find them automatically - you do need to specify which shaders they convert though
+- The conversion function needs to update the material representation to match the current state of the Unity material as closely as possible
+- You can attach other components as well - e.g. driving behaviors or ProtoFlux to animate certain material properties
+    - This lets you recreate some of shader effects programmatically
+    - Look at the "TestPanningShader" for example on how this might be done
+
+ There are two ways to specify which shaders your converter supports. You can support both or either of them:
+
+### Exact matching
+Provide exact name of the shader (including the path) that you can convert in the attribute. You can:
+
+- Include multiple shaders
+   - This allows code re-use for similar shaders
+   - Check within the conversion code for specific shader to branch off
+ 
+This is best method to target specific shaders and make sure they're converted as best as they can be.
+
+### Heuristics matching
+This method is intended to provide fallback conversion for any shaders that do not have an exact converter for them. If you specify that your converter supports this, you'll need to provide a method that takes the Unity material as input and outputs a "confidence" score for the conversion.
+
+In this code, you can for example look at how many properties your converter recognizes and add point for each. Remove point for ones it doesn't support. 
+
+If you detect anything you would not support at all, return null to indicate you can't convert this material at all.
+
+When converting material the system will first look for an exact match. If none is found, it'll check all converters that support heuristics and then use one that gave it the highest score.
+
+If none gives any score, material will fail to convert.
+
+## Asset Converters
+The SDK also has system for converting other types of assets. Those are relatively fixed and don't have a system to dynamically expand those. This is because there's only handful of known asset types that need/can be converted. That is:
+
+- Texture2D's
+- Meshes
+- AudioClips
+- Animations
+- Video clips
+
+We accept contributions to those converters - but they must be general and improve the overall conversion.
+
+## Converting the scene
+The conversion works by recursively walking the Unity game scene and recreating equivalents on Resonite. There are multiple passes and systems involved in this:
+
+### Phase 1 - scan & update converters
+- The scene hierarchy is scanned recursively
+- For each Unity component, the SDK will try to find matching converter
+- If matching converter is found, it's instantiated. Everything else is ignored.
+- Both new & existing converters are updated
+  - This will make them add/update/remove Resonite binding components as needed
+  - The conversions can also request asset providers for Unity assets (Meshes, Textures, Materials, Audio Clips...)
+      - Providers are shared between the same assets - you don't need to worry about caching them
+      - Any new conversions are scheduled to happen later to make this pass faster
+      - Material converters are invoked & updated in this phase as needed
+          - Existing material converters will be updated the first time they're encountered within the conversion task, but not after
+          - This is because there's assumption that Unity materials do not change within the conversion pass
+          - This is important in this phase, as any newly added binding components will be collected in the next phase
+- Converter components & Binding components are ignored
+    - Converters will remove the binding components that they attached as part of the conversion
+    - Manually attached binding components are left as-is - you can attach them manually if you want them to be there! 
+
+The goal of this phase is to create/update/remove Resonite component bindings to match the Unity components as closely as possible - essentially recreate matching Resonite scene programmatically.
+
+### Phase 2 - collect bindings & send
+- The scene hierarchy is scanned recursively again
+- For each Resonite binding component, update data is collected
+    - The SDK automatically handles newly added bindings vs updated
+    - Removed binding components are also tracked & removal message collected
+- During update collection, ID's for bindings & members can be allocated if they weren't before
+- Any removed GameObjects will collect Slot removal messages
+- Collected update data is sent as batch update over ResoniteLink
+
+### Phase 3 - asset conversion & update
+If the previous phases scheduled any conversions those are processed in the last phase. 
+
+- Conversions for meshes/textures/audio clips and other "big" assets are done in this phase
+- After each individual conversion, a message is sent over ResoniteLink to update the asset provider with the URL of the converted asset
+    - This is done so Resonite can do its own processing of this asset as soon as possible, while Unity converts others
+    - It's also done for effect - it allows user to watch the scene pop in piece by piece, rather than taking longer to pop all at once
+- The system tracks if the assets changed since the last conversion and will re-invoke the conversion in such cases

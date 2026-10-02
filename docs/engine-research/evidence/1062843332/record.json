@@ -1,0 +1,99 @@
+{
+  "repository": "HailToDodongo/pyrite64",
+  "repository_id": 1062843332,
+  "commit": "20da99b9bf95078fcaca51e1dd5a71749065926d",
+  "source_url": "https://github.com/HailToDodongo/pyrite64/tree/20da99b9bf95078fcaca51e1dd5a71749065926d",
+  "readme_path": "Readme.md",
+  "readme_sha256": "1125f25071d7fca0421b74fde0107413f91e5f72b5a9c49266c85ec212f613f9",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "944c3764983f50ea7c412e56a48c8555de861c5c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3e012f69e74d3a230de6b30bd6a67aeb091ea971"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4290b4c0f86a793c71ad50386c3c4867e7ddc8ec"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "17430d5f3213c9e74c581a7aae3b82821aa17dd1"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "23b8e6274bbcde2b1f5cea95b500788a020586ce"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b6094d5b6aa67d7464a04e4624e39030a9fb97b1"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "3a989ae901a1e58d9088ecff4d75abc037bb821a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5da32cb2c7de29935cdabdcd821efab019b5ea77"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "15f1363988429ddf2c0a88b678bd2dda139e339d"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "806810f21117dd1784affaa6d879e109d30e92f0"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "558b7312f885a45f7950e1173839cdc88f53c91b"
+    },
+    {
+      "path": "n64",
+      "type": "dir",
+      "sha": "578507cc3550feb02a6b89587b5c8e675d4ae88d"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "07f8fb0ca7f6b6e3a2c4f2d546d69080fdf8a623"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "6194b73fcb697887741ba95e9d1a8933de8d41c4"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4363c4f7940606fa9360d5abf376ebc18a121afa"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a67e4f848575124915d04645dd3d5f1a6e33ff0e"
+    },
+    {
+      "path": "vendored",
+      "type": "dir",
+      "sha": "deb999961a7a854525565215384aad832bbdb80c"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "N64 visual editor/runtime with scene management/collision/audio/assets and control-flow graph scripting; libdragon/tiny3d integration, hardware not locally tested.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

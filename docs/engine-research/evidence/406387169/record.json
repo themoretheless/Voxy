@@ -1,0 +1,114 @@
+{
+  "repository": "pyved-solution/pyved-engine",
+  "repository_id": 406387169,
+  "commit": "73383cfed6a370ec91da141e699c2d7a5c6bd0bd",
+  "source_url": "https://github.com/pyved-solution/pyved-engine/tree/73383cfed6a370ec91da141e699c2d7a5c6bd0bd",
+  "readme_path": "README.md",
+  "readme_sha256": "a5e15aece7addfb66802443d7b718f4239703880957a58f23de32fadd288d0f0",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c775dbb631ae281c5b7528d3dff64d9f95e87e9c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "82e8171a523ff1eb238f5cf90fa4c8c8bed90908"
+    },
+    {
+      "path": "History.md",
+      "type": "file",
+      "sha": "5dbad0e9869e11c5a09d69da7478707e8496df15"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0a041280bd00a9d068f503b8ee7ce35214bd24a1"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "4c5b6acea30e0d6a49c621a05351b768c1df862d"
+    },
+    {
+      "path": "Pipfile",
+      "type": "file",
+      "sha": "93b76fc13cfa711972009144ac45eb5db4673e99"
+    },
+    {
+      "path": "Pipfile.lock",
+      "type": "file",
+      "sha": "56dd19c16bc141250410a3cbdc194556f37af950"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "602a1ca7aee7252d7d9e756a3cf790058e8cce26"
+    },
+    {
+      "path": "create_man",
+      "type": "dir",
+      "sha": "7f7918f43a2b2d806fe2051cc57defb646824f4d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f13478fc6f95051078ee4f8d0df72fa97152afdf"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6be08d3509cefd480fb0444ce14e6172e489bf6e"
+    },
+    {
+      "path": "examples_basic",
+      "type": "dir",
+      "sha": "c7710251b0ad708ea88dfcf30544e0cba4b6c1c4"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "cf35b417e46cf401a814f1d9ef6c02dde100d187"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "256c7d94e59a49eb6b48a1d4e2db01ba0383199d"
+    },
+    {
+      "path": "run_tests.bat",
+      "type": "file",
+      "sha": "c21d4684fd1e221cba90e19b02ad39273c477d4e"
+    },
+    {
+      "path": "runtime-req.txt",
+      "type": "file",
+      "sha": "423e64a91832982ce7397b9bc61b9d6ccd04d2e5"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "7d96583553c0f74a6215254721372dc4c03b4eb2"
+    },
+    {
+      "path": "shared.game.png",
+      "type": "file",
+      "sha": "8510e3afe45b5d08a95dd6b9f3d5db42eabc55d2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1932f07c5978abb40fd9492b3937d0492d93a052"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "865c16caaa05acfb0ab96231102dbffe833fa583"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python/Pygame game-bundle framework with reusable pathfinding/sprite tools; README explicitly calls underlying product framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

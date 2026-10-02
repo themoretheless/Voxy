@@ -1,0 +1,79 @@
+{
+  "repository": "drgomesp/midgarts",
+  "repository_id": 309860310,
+  "commit": "62a3098d296522b5758c244daead59a8a866c463",
+  "source_url": "https://github.com/drgomesp/midgarts/tree/62a3098d296522b5758c244daead59a8a866c463",
+  "readme_path": "README.md",
+  "readme_sha256": "5f21cfe81ecae115164b7de2cb3c49f34864f828aa48909a753e597f99ed3dcc",
+  "entries": [
+    {
+      "path": ".env.dist",
+      "type": "file",
+      "sha": "8f72fdf99919e34a3fd47fdca52de822c8671d29"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cc7cece9fb5b21559039881747cbc44ae7e18397"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "62a86ce7b5d54c696769a48ecec3189f26b819f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4b2ee01e3e05cd0fa7dada01ea2273b4c1d7b4a5"
+    },
+    {
+      "path": "air.toml",
+      "type": "file",
+      "sha": "c2ac912319c65d51d81e2947e2544e1534c6bd16"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3704b4f00957c2b5b8103dc29437189171206b4f"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "addbe5130141e192f4c5c2dce700916a7e800afe"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a0fa398114f9ca8f8666fe2a5af20de13074f9c6"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "87d67d2ada6acd334291c298717c921e09235745"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "5cc56245becb371d1c3dc5977b3984d624d917b6"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "24a7a30c9b9334493793b45ebff817dc7ff3e3d9"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "cf6c041385c0d73a05b10dfc8b26189873ab8b98"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Ragnarok Online client built with Engo ECS; not documented as a reusable game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

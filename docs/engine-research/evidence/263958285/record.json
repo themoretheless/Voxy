@@ -1,0 +1,59 @@
+{
+  "repository": "Ethosa/nodesnim",
+  "repository_id": 263958285,
+  "commit": "7abb307658d459159c001cba1b15fc1b61a1ad0d",
+  "source_url": "https://github.com/Ethosa/nodesnim/tree/7abb307658d459159c001cba1b15fc1b61a1ad0d",
+  "readme_path": "README.md",
+  "readme_sha256": "cd198008a4ffd46d3cc492c9cdd6bf80fc1c9219069189bf7a2e9a908ea700f9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "99aa8bd8e3247372a097242d0412e02ab8503dd1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4d2c65508d631be582688c9506b57bb59ca8c59b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1c85d715ee921c702a39dee52ebc4a884b7699ea"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "46d878b6a2448e6ff9519a148049a72f05892bea"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6139b7cbf713f1b4b6b64114c1ef33c221918273"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "e0b423054d90230e8c7e389c54199300f51554d7"
+    },
+    {
+      "path": "nodesnim.nimble",
+      "type": "file",
+      "sha": "f1931832c844542be87c5cf047516e7297cdef66"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "60a1da111761799051af11857fb2ef7b35cf6cc2"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c1b34b3cc6c07f33bb2bee40cf6c987780ebb163"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Nim GUI/2D framework with node scenes, audio and animation facilities; primary product described as a framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,64 @@
+{
+  "repository": "nivanov/cosplay",
+  "repository_id": 394428620,
+  "commit": "f8462c28f249363e2b7bc432dbf755a93e01f943",
+  "source_url": "https://github.com/nivanov/cosplay/tree/f8462c28f249363e2b7bc432dbf755a93e01f943",
+  "readme_path": "README.md",
+  "readme_sha256": "1810efc1a8978542b3e91dc7560960b6dae28481f130daaa4930b7745dd28b5f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "817224f7796c8130ecf383a7f0ed87e9e060d8e5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8a319b84020a81bb1c3e08714264a471029de4cf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cf2e22dfc9b9282678ae8c7ebff4d2448e49daab"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e6bb6fe09863632e72db8146f2eec7813bd1b615"
+    },
+    {
+      "path": "build.sbt",
+      "type": "file",
+      "sha": "cdfa3915b7c6a285134c0aba9ac586ed214844cd"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "570ec984058b969ffe60bf5ad138f2051bbe89f9"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "43d9b67a73af2b24ec707ff60e40f3ce03c83c6e"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "d7aed4c2d2396aa5172c49742909cb96808bd6dc"
+    },
+    {
+      "path": "release.txt",
+      "type": "file",
+      "sha": "0b1e5c3e5fa20f85367ed5fdc9d2b83e076baff6"
+    },
+    {
+      "path": "scaladoc",
+      "type": "dir",
+      "sha": "82e6df3a9594c037555ab3e207b6f9aa86274ff2"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Scala ASCII game engine; owned modules with SBT/Maven build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

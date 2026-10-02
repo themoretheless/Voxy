@@ -1,0 +1,59 @@
+{
+  "repository": "Ubpa/UECS",
+  "repository_id": 243896362,
+  "commit": "98feb3939e66be7e817ac57d9f97bf058c104189",
+  "source_url": "https://github.com/Ubpa/UECS/tree/98feb3939e66be7e817ac57d9f97bf058c104189",
+  "readme_path": "README.md",
+  "readme_sha256": "df7d15841c45da66893706ad6c130a878a99c922a906c10fbe6a5f5ed6a63794",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "58002ed06d57eb58a1ab5c4b6b6e20237e1bd5d0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4d915c22da6e432c395f6d0c28dc821b6cf2edb9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7dd3cb1793888220b8f18e774db149006622f026"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f97d26c1d354398e0a13104e343c966ef3ee171d"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "6478b4289aff892128bc56b92a5519006b97b0cf"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "4b68f2fb6cd0da5387176a82ccb4871c75b5cf04"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "6a3b9c93ad9113bfd56a49342a4700375ae66dda"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "ceb422d1a06c08f950420ee0627181c029d5cfb9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d3870c3d4ed2d1ec5b0452f9fa4bad0368f12004"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies entity-component subsystem; include/src and CMake build rather than full game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

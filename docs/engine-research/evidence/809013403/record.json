@@ -1,0 +1,137 @@
+{
+  "repository": "NoisyChain/Sakuga-Engine",
+  "repository_id": 809013403,
+  "commit": "d54581b131ef2a1f6b8511a79c74ea37168c31b1",
+  "source_url": "https://github.com/NoisyChain/Sakuga-Engine/tree/d54581b131ef2a1f6b8511a79c74ea37168c31b1",
+  "readme_path": "README.md",
+  "readme_sha256": "1da84aadedbdf4aa14ce46e2b2d106499a1bffb647927a977a76341ce8197225",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a6f0c6d718d6586bb7de396b102f9e2a7102206a"
+    },
+    {
+      "path": "Bus_Master.tres",
+      "type": "file",
+      "sha": "0b4fef1f5ddc27fc64c2e61085b23c469c701c65"
+    },
+    {
+      "path": "Fighters",
+      "type": "dir",
+      "sha": "86a1adb0e5b77669dabe4230d7f7e42f430057b5"
+    },
+    {
+      "path": "GameModes",
+      "type": "dir",
+      "sha": "981639b3e14af99ef9844ad1d5b13ab8fdd9fa1f"
+    },
+    {
+      "path": "HitNotifs.tres",
+      "type": "file",
+      "sha": "d6791f514f638f75100bc338bfd2bdfd57e777e2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ad907d26802142505fd11dfa1c62a1985075e0da"
+    },
+    {
+      "path": "MatchSettings.tres",
+      "type": "file",
+      "sha": "8ea906072505f89c8bcb32c41d872732638123fb"
+    },
+    {
+      "path": "Prototyping",
+      "type": "dir",
+      "sha": "0b7eec1fc961ced9867ead8b44bf58ced4fe1d63"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6a0edf31327fb61f8bb5d3c1f29d89b74ffdbfcd"
+    },
+    {
+      "path": "RepoAssets",
+      "type": "dir",
+      "sha": "2c152f8d7065642adb7188b2b9e1a5eb12cdf92d"
+    },
+    {
+      "path": "Roster.tres",
+      "type": "file",
+      "sha": "57b74426260342a42921fd06cadb1e3a881b1fb1"
+    },
+    {
+      "path": "Sakuga Engine.csproj",
+      "type": "file",
+      "sha": "9b29e0d7ecc7e9b1741d7fd0f317e26d7c96cfe5"
+    },
+    {
+      "path": "Sakuga Engine.sln",
+      "type": "file",
+      "sha": "ad9ce0501b690ca03ed4bf782b0e2175a5557b36"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "87059039eed4fda9048343e3a225c9a2cacc35ce"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "9b1d814c15aec7a2b32238d9913e88c186d0514d"
+    },
+    {
+      "path": "Shaders",
+      "type": "dir",
+      "sha": "78ec28e5dda6a3505e42dee51fae6e90fe5731ea"
+    },
+    {
+      "path": "Songs",
+      "type": "dir",
+      "sha": "929a595f755193285dca0ad4ca546dfea7751a61"
+    },
+    {
+      "path": "Soundtrack.tres",
+      "type": "file",
+      "sha": "1b17c0ff36d1d56a486af3d7b582dee4558f3a5a"
+    },
+    {
+      "path": "Sprites",
+      "type": "dir",
+      "sha": "72208555804b2ec13108ace47160eb2669254cf8"
+    },
+    {
+      "path": "StageSelect.tres",
+      "type": "file",
+      "sha": "1d30c0d2e66b58b609478382f0be805914eaf921"
+    },
+    {
+      "path": "Stages",
+      "type": "dir",
+      "sha": "64228ce681057dfb41037a43e6401b567c4d8d17"
+    },
+    {
+      "path": "autoloads",
+      "type": "dir",
+      "sha": "68bf903f2f27877e641f365a19f24714da31d8ce"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "b370ceb72740b9a759fe11b364f0d4de27df42f8"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "3ce9cb30db0d19469a2e8ab27e28fd061ce3bede"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "b0c3e4517431f35728e203d30d442eb293235c9d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,54 @@
+{
+  "repository": "ayushk7/CodeWire",
+  "repository_id": 357819523,
+  "commit": "7d087e806a23b74f258238d5be3e4963c041df4b",
+  "source_url": "https://github.com/ayushk7/CodeWire/tree/7d087e806a23b74f258238d5be3e4963c041df4b",
+  "readme_path": "README.md",
+  "readme_sha256": "092d43f041701ec803d39b8e2dc46dab6801d7b11f8991923502adee43b08501",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68c04837732acc0c26784029cdfa3bfb6010fdf0"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d2e37866c3a51e9ae3aa25eca111e2a2b01ba139"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7cd601638df56c5e435d389933a2e51d51c90cdb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4afaf6bab3cbedd8c46cba448f7d704b0f11c7f2"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "32823c694171c9bb4c5f94da98f0ba48929f8bbb"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "70181bdd75ac1ea6330999d8fd8b5fdd604941ef"
+    },
+    {
+      "path": "javascript",
+      "type": "dir",
+      "sha": "4724a48c5d24ab0b93a076ca05c8ebadb62e6e56"
+    },
+    {
+      "path": "style.css",
+      "type": "file",
+      "sha": "677691a292ceaf0c9da0d8c02fd0b0e12abfc364"
+    }
+  ],
+  "classification": "excluded_authoring_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify flow-to-JavaScript node editor; no owned game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

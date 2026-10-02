@@ -1,0 +1,159 @@
+{
+  "repository": "hyperfy-xyz/hyperfy",
+  "repository_id": 906930450,
+  "commit": "5d20037435a1d86cda088382bb12737e9f18d5f6",
+  "source_url": "https://github.com/hyperfy-xyz/hyperfy/tree/5d20037435a1d86cda088382bb12737e9f18d5f6",
+  "readme_path": "README.md",
+  "readme_sha256": "e5121243c56983e7ad2980eb69b2ff5d3a3d8b54e476603c299d9fb8a83f5d32",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "feb93e45753aba1f555810e8587798c9685facd5"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "ac6ae2c19407c8b6bccda6bfae9773237d65691c"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "68a37cecd9b150382a45bba910bd0001fd8cf319"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "4ba9ea159fc2e2dea6cd2ef4bd9645d4dbbf1b5d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f3d71ad6797a777408ff7121c0ea6e15a8154ea2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "12b93f6ac25937e199c0ce036ecd0e81eacfdc99"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "2eb100af46bd9a8d2f6f40bc5b7530523503cbeb"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "fdb2eaaff0ca5ce177784fe3d106933ec5e1c0ff"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "3d9b1f4c54afc797c681d5ea06f3558656113f9c"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "250364408f0751cbbf749a4fa0afc2075a9055e8"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b82ab9e17de923a5013d527c741c9201bf0a1880"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "698fd4599baf3f37420849aa61e07e20dbc5a77c"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "f03b0ace6e6eae32a64684a5c1c66797202d06c4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0b9a97cc1c79310754176f07fbf0836d3edf282f"
+    },
+    {
+      "path": "DOCKER.md",
+      "type": "file",
+      "sha": "1b62fb93bf1db9ad950d4a123107d58cf2fd1cf9"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "1e0bcfe9b33e669e4c3603b837da2269bcfa09d2"
+    },
+    {
+      "path": "ISSUE_TEMPLATE.md",
+      "type": "file",
+      "sha": "340e4b71ebb66e4fb5a50541c82309864248eb77"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "MIGRATIONS.md",
+      "type": "file",
+      "sha": "46b349883b3355122dbf61b36f559112532e145c"
+    },
+    {
+      "path": "PULL_REQUEST_TEMPLATE.md",
+      "type": "file",
+      "sha": "be256135509787aba109008f85a26dd8cf46a7ab"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e0805d071319ed97d18c10ce1cb78463a8fc2dd4"
+    },
+    {
+      "path": "agent.mjs",
+      "type": "file",
+      "sha": "81f02e1b102f77618d32e397fc4c0b2264eb9f3c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8aa14446f052b557c89d315c1f82bd1f301dc756"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "96180f94881751bbda2ba464f3d0e1c7e82ee9bd"
+    },
+    {
+      "path": "overview.png",
+      "type": "file",
+      "sha": "72cfe200b2694f2579fc6793ed0c2444b977a7df"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "9f8a41cd426b5d61ad3b2d9d790b0bf08e9b981d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "3b311363bd55a368e8a694e12ed38380f0632d9c"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ae2fb1444288da6e772b6185b42904b65779b422"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "70aac2ca5f62cfe13a2a7cba0e10e53737f7c0cb"
+    }
+  ],
+  "classification": "virtual_world_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies collaborative 3D-world framework over graphics/physics backends; source/build present, kept separate from complete game-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,77 @@
+{
+  "repository": "Dechode/Godot-Advanced-Vehicle",
+  "repository_id": 430130646,
+  "commit": "e055cc37f374add4bcec4d8395888fa2f8ecc5a4",
+  "source_url": "https://github.com/Dechode/Godot-Advanced-Vehicle/tree/e055cc37f374add4bcec4d8395888fa2f8ecc5a4",
+  "readme_path": "README.md",
+  "readme_sha256": "3a8ef19af282e33200eca512246c2cf77547c77692706fab1bfba68eca6075ea",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "214cf0f96cfdcb81c27ed5ff52ea98618f4fec38"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e93609259a8a36369724220bdaa28c30ca6180fc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bce1d878ca4d640a32f0b79e2ba42cc66b578add"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "3fdac09520678358d4d49a663098959eceae6a27"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "d11170785d133ae7f707ad22ee39fc3450e77d54"
+    },
+    {
+      "path": "levels",
+      "type": "dir",
+      "sha": "b8ae148efdc8437b0c865f2f271bd43e78f8a57b"
+    },
+    {
+      "path": "materials",
+      "type": "dir",
+      "sha": "8a74edd2239b06f13f5683b0c72ad8774cddbd79"
+    },
+    {
+      "path": "models",
+      "type": "dir",
+      "sha": "46e62b1fb298460b3729b108dfef3a9fec34f203"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "967305f047ba90da44f55cbf1c68a78ba28369ae"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "31e891092f28861cca8950df5b5913d948d2e016"
+    },
+    {
+      "path": "scenes",
+      "type": "dir",
+      "sha": "5518a426d63ecdd96a5fea50cbafd1b32f40d6e8"
+    },
+    {
+      "path": "sounds",
+      "type": "dir",
+      "sha": "84a4e36518cb6ddfe46cf338c64f42b4abd5355c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

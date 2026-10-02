@@ -1,0 +1,97 @@
+{
+  "repository": "streetartist/scrawl",
+  "repository_id": 384289643,
+  "commit": "d613d9341ce37df8a0d76ef6786ae9ad0236eb9c",
+  "source_url": "https://github.com/streetartist/scrawl/tree/d613d9341ce37df8a0d76ef6786ae9ad0236eb9c",
+  "readme_path": "README.md",
+  "readme_sha256": "8810200374d6701cfcd9d50b059a8fdf8abe6ca0b1ad16d22fb8a109f06c928d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b128fef9f3bea979c8069259bc4bd71881af9f9d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "38fb50b1b76912ffa276897cb048c72b2a6fe49b"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "6f0b07dc0ae1526d4012957afffd31326393dc85"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "9243ca864360aa69e5d3b1cee7b99b62ff5161a7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6aa99ad16f4c4cd479ad65ad3aad68761fddfb59"
+    },
+    {
+      "path": "README_en.md",
+      "type": "file",
+      "sha": "b2398889a5696b4e6a3044fc6f19cebced6d8843"
+    },
+    {
+      "path": "README_zh.md",
+      "type": "file",
+      "sha": "ed5d88f7b9b87e6728a92f89ab0ad65fd3cd7792"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "e82628c9f5e33e38312b4de1bf6c866c258db1ef"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "17d05a646bf49ddb74a23f61c1053b7261adafd7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "1ae85358726b08a14120001a1e8876d571952850"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "1bffc2f85f643a91077e232cb64066de1a9ad56d"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "32b33a79b3012370c760abba306bf0fea2455a2f"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "type": "file",
+      "sha": "62fc9ff5f42cba61b60446a960aa7e42e71d018a"
+    },
+    {
+      "path": "scrawl_ide",
+      "type": "dir",
+      "sha": "0bebac6503dd523f602199dd179e7e9bdc511bbd"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c057674e2270e3ddeb1c7797d90dad36dab481eb"
+    },
+    {
+      "path": "uv.lock",
+      "type": "file",
+      "sha": "034af3eb07a34559e37d51c4b92825fe4cf84cdb"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

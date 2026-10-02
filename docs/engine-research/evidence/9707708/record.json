@@ -1,0 +1,62 @@
+{
+  "repository": "kivy/kivent",
+  "repository_id": 9707708,
+  "commit": "0bf6b15f5f726e2807127b02c16974338f7c3308",
+  "source_url": "https://github.com/kivy/kivent/tree/0bf6b15f5f726e2807127b02c16974338f7c3308",
+  "readme_path": "README.md",
+  "readme_sha256": "e048310bcfb5cd129e6205560783f39ea56c8950691cfbdb6f2a5557ebd8d679",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c891fed1117951a991268fee832284c0917a884c"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f80155430962c9db9fed70736241a4d80763b0fd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "900c9de860d302c7d94a58d857480f161b1b93a7"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "483b46005d84cfe1612ba755796f16f1be3d36d9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e0d8ba3c197f1a4d125e2fc7d39fb11720e332b0"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "2a988b3107a85eac06459622871da521a79121ed"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "896317ca30afa8b24f4acce3e6201f17143a8a7d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "076ff43a4629672655758665870d40068385ae5e"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "ecfd1053d3f79d73dbb2dfa50805f976e39c314c"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "0fae042ccbd4e36070cbe9e253280cabb8b8eb86"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

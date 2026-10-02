@@ -1,0 +1,69 @@
+{
+  "repository": "cocoatoucher/Glide",
+  "repository_id": 185016938,
+  "commit": "4679a5b4a04f007bfc2122f459ef821c07223178",
+  "source_url": "https://github.com/cocoatoucher/Glide/tree/4679a5b4a04f007bfc2122f459ef821c07223178",
+  "readme_path": "README.md",
+  "readme_sha256": "ffd12bb4fa6da4b21223ea49a2b06f763bdedfb8d6b7b5ca04f323ca43d72b1b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f26e525acfbebdae5cb2b6c91c432728ba152c8a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "aeb2866070a16977bde493336c3b9a6826a2fe3c"
+    },
+    {
+      "path": ".jazzy.yaml",
+      "type": "file",
+      "sha": "179ac8526458c95c4deedf3ba780d55051b8d56f"
+    },
+    {
+      "path": ".swiftlint.yml",
+      "type": "file",
+      "sha": "d7308131afa4c663f758794a3b0a728d5535542c"
+    },
+    {
+      "path": "Demo",
+      "type": "dir",
+      "sha": "45d0049d3831db3da0fa78a4f641acc991f48e2d"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "ca81e36447449caede9dfe33bd3183558b1b1a06"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8b23445f4a55ae5f9e38055dec94b27ef2b14150"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "3c71a52c10b67cf207094d8710961ed884085712"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d5ef6c36a3b12c5a707337205e89c961d35ea16f"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "9fe958f4ec1278723f1b933e21446022a1e79637"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "93554b9d2cf29139071f06d7bb67c0e26d02ac57"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies game layer over SpriteKit/GameplayKit; owned Sources and Swift package/tests, complete underlying engine scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

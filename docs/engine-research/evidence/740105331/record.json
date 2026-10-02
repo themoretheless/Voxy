@@ -1,0 +1,44 @@
+{
+  "repository": "taublast/SpaceShooter",
+  "repository_id": 740105331,
+  "commit": "dbc314a74f62f5f7a7b17a7e7776c94a3fb55b3c",
+  "source_url": "https://github.com/taublast/SpaceShooter/tree/dbc314a74f62f5f7a7b17a7e7776c94a3fb55b3c",
+  "readme_path": "README.md",
+  "readme_sha256": "c191fe75be50b03449b38d739c89a53785a72fd24e0886b3bae09abe858eaa11",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fa0f4a199712eeb5aca4a1a82ca53096e3c757ca"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "18228703bcbb72ccb700d5f2c60deb2ac0eb8d06"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cd4be45e1db339764869dd4f5475c9c5e600db10"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b5b9d523f2c698e781d01bea1f399b3074a2224"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "dbdb1ca53d853c2fe4da54c8d29fd08c7cdef7c1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9197f83185bb6307bdb324ff24d2233c293faaf2"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "DrawnUI/.NET MAUI arcade game demonstration with external UI framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

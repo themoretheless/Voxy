@@ -1,0 +1,282 @@
+{
+  "repository": "VilleKrumlinde/zgameeditor",
+  "repository_id": 40349509,
+  "commit": "eb6784975c5a1e5c04a52d731aa0f7fd068a1656",
+  "source_url": "https://github.com/VilleKrumlinde/zgameeditor/tree/eb6784975c5a1e5c04a52d731aa0f7fd068a1656",
+  "readme_path": "README.md",
+  "readme_sha256": "f887ec609d92e06c20006aaf6d7a7463d519156505c06b5447ac17103d3e40ca",
+  "entries": [
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "2a5d98523d3bdc3d2cfc14c52f824e11f4624b2b"
+    },
+    {
+      "path": "Animators.pas",
+      "type": "file",
+      "sha": "72466171e2480cda61f542f013649fb3cb1a88f4"
+    },
+    {
+      "path": "AudioComponents.pas",
+      "type": "file",
+      "sha": "a0524bd40e39d24f9f329b6d84022019f4ef576d"
+    },
+    {
+      "path": "AudioPlayer.pas",
+      "type": "file",
+      "sha": "3d9880ce4834742a44563ae8987d49fcc313094e"
+    },
+    {
+      "path": "BeRoAudioOGGVorbisTremor.pas",
+      "type": "file",
+      "sha": "676ed0c79416ab9760ae713126b8276c7205f46f"
+    },
+    {
+      "path": "BitmapProducers.pas",
+      "type": "file",
+      "sha": "7807d138078af70811b28549233aa4fab220a344"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "4007afa2d5ec321fd75981b372a2d17ab8456006"
+    },
+    {
+      "path": "Collision.pas",
+      "type": "file",
+      "sha": "0e81c3a806c6908085c04306c81aa9d96b09fa18"
+    },
+    {
+      "path": "Commands.pas",
+      "type": "file",
+      "sha": "e665431d263d680e53644001893bd459e5a7147c"
+    },
+    {
+      "path": "DLLFuncs.pas",
+      "type": "file",
+      "sha": "fe6bdf8878b5c607eff3717a9577bc2edf06d5df"
+    },
+    {
+      "path": "Data.RES",
+      "type": "file",
+      "sha": "74153242cb4ba8a4a32c1cd8a8ceb335618ef843"
+    },
+    {
+      "path": "Data.rc",
+      "type": "file",
+      "sha": "f1cfeb734d333212df97d909c607030eec84238e"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "607d63e36fd38f1e768ac9bacb6551beb01458a7"
+    },
+    {
+      "path": "GLDrivers.pas",
+      "type": "file",
+      "sha": "0b66a17d5bed38908b9f7d40bca15867dacbbdfc"
+    },
+    {
+      "path": "ImplicitMeshes.pas",
+      "type": "file",
+      "sha": "d046fb481c0810bc95089f94be5c755e1f0ac222"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f1c04b67758e93a25aafcfae34ede501af4643ea"
+    },
+    {
+      "path": "Meshes.pas",
+      "type": "file",
+      "sha": "32499ab0af384886db501fb8e51b3af90e04ccd9"
+    },
+    {
+      "path": "NanoJpeg.pas",
+      "type": "file",
+      "sha": "e37b639121567a0ff8b7cdf279dee7b64b69383f"
+    },
+    {
+      "path": "OptionsDialog.RES",
+      "type": "file",
+      "sha": "818b222a3379728398b79b46afa55feed1a69c15"
+    },
+    {
+      "path": "OptionsDialog.rc",
+      "type": "file",
+      "sha": "7b3bd75915f4abbd5fa54daffd7bec2fec824fd4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7af785a8bdfa56b2894c6913bc2039d1aa2dba2b"
+    },
+    {
+      "path": "Renderer.pas",
+      "type": "file",
+      "sha": "007c8ca803114fd863d544f7b5f6cd6cba548be3"
+    },
+    {
+      "path": "Steering.pas",
+      "type": "file",
+      "sha": "f0d591244568a43ced828dc696b4682bd6eb8700"
+    },
+    {
+      "path": "ZApplication.pas",
+      "type": "file",
+      "sha": "6e241d37d12e4e08e52b79d41e8d793cfa00888d"
+    },
+    {
+      "path": "ZBitmap.pas",
+      "type": "file",
+      "sha": "833b34e8b9922b26536e47f5662a82037e9f58e0"
+    },
+    {
+      "path": "ZClasses.pas",
+      "type": "file",
+      "sha": "b07c4017b998757d56b40cc99fd489c74d3e635e"
+    },
+    {
+      "path": "ZExpressions.pas",
+      "type": "file",
+      "sha": "106625bbd2cb3375896257f347da2219673e0f10"
+    },
+    {
+      "path": "ZFile.pas",
+      "type": "file",
+      "sha": "be41191b146aef34150c241ed780d0c7bea3aeb0"
+    },
+    {
+      "path": "ZLog.pas",
+      "type": "file",
+      "sha": "698cec4e15dd668675d3374948faa1b08f2f3f12"
+    },
+    {
+      "path": "ZMath.pas",
+      "type": "file",
+      "sha": "4169ea4722863f6bec2b6dff241384211145cb42"
+    },
+    {
+      "path": "ZOpenGL.pas",
+      "type": "file",
+      "sha": "47de3e81e0e4761e2ebd453334626581eb6bb6cd"
+    },
+    {
+      "path": "ZPlatform.pas",
+      "type": "file",
+      "sha": "c94aba154585ea1b417f3a809e660b07d2cbbdf6"
+    },
+    {
+      "path": "ZPlatform_Android.inc",
+      "type": "file",
+      "sha": "051e4cae0c4e71f3440a84ad5c81f4aa65c97e21"
+    },
+    {
+      "path": "ZPlatform_MacZgeViz.inc",
+      "type": "file",
+      "sha": "9b3da6d354fb6e073a529c5b646ff9b34f60e26b"
+    },
+    {
+      "path": "ZPlatform_SDL.inc",
+      "type": "file",
+      "sha": "0056fc78352fb52d76d0a80969adfa33ac543063"
+    },
+    {
+      "path": "ZPlatform_Win32.inc",
+      "type": "file",
+      "sha": "8dae31c925b5b0c663bcec067e5c2d0d180f4cf9"
+    },
+    {
+      "path": "ZzDC.bdsgroup",
+      "type": "file",
+      "sha": "295020403c916f6f18c69c59e4921da930f91ca5"
+    },
+    {
+      "path": "ZzDC.bdsgroup.local",
+      "type": "file",
+      "sha": "43373452e98b76bf61ce86e7b2e2c4f9d6d3a7ae"
+    },
+    {
+      "path": "ZzDC.bdsproj",
+      "type": "file",
+      "sha": "cff596381d7b69e91193096f523355eeda4fc930"
+    },
+    {
+      "path": "ZzDC.bdsproj.local",
+      "type": "file",
+      "sha": "d6f771b7749a585407ea9cf1a5e524d4e9089d89"
+    },
+    {
+      "path": "ZzDC.bpg",
+      "type": "file",
+      "sha": "0e22d6d3ddd3bc351026c96d2e99438b441e39ca"
+    },
+    {
+      "path": "ZzDC.cfg",
+      "type": "file",
+      "sha": "7ba8ce27a7c784985bb138ba9f74d99ae213c284"
+    },
+    {
+      "path": "ZzDC.dof",
+      "type": "file",
+      "sha": "9a6933a08d42895f4f14180b400454bfc10537e5"
+    },
+    {
+      "path": "ZzDC.dpr",
+      "type": "file",
+      "sha": "1c33fd734d9849a62dd72f78880ee9d24889eefa"
+    },
+    {
+      "path": "ZzDC.dproj",
+      "type": "file",
+      "sha": "0d42fa80b6a6a212805eb7b4bca14e49c30f8264"
+    },
+    {
+      "path": "ZzDC.groupproj",
+      "type": "file",
+      "sha": "2799d0f558b0ae18fb9a00c54b6e77576325a07a"
+    },
+    {
+      "path": "ZzDC.groupproj.local",
+      "type": "file",
+      "sha": "9009431403379087b2a573fb02447bcd34bbdbe4"
+    },
+    {
+      "path": "buildOsx",
+      "type": "file",
+      "sha": "b6b6ac623c114e751bf318ecd4159df95412b60d"
+    },
+    {
+      "path": "dummy.dat",
+      "type": "file",
+      "sha": "991aa1a51e709a741db02d3819de96ab40a2da66"
+    },
+    {
+      "path": "jedi-sdl.inc",
+      "type": "file",
+      "sha": "42f5650f1b001cb5a680cf90b85f375823fc5d33"
+    },
+    {
+      "path": "rtl",
+      "type": "dir",
+      "sha": "99ae1f0df869c6b056c6cee4a67ff0d7d69c94f3"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "47abbea160df523a04fec6a1d54b4d5c0056f6b0"
+    },
+    {
+      "path": "uSymTab.pas",
+      "type": "file",
+      "sha": "cee606877ba362ed3cf5f99b538d4fc5f9356798"
+    },
+    {
+      "path": "zzdc_globalopt.inc",
+      "type": "file",
+      "sha": "90e4b69fc4dd6cfcfac5e54548c01e73207d9b9e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

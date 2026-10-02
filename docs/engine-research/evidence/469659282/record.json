@@ -1,0 +1,74 @@
+{
+  "repository": "ocornut/imgui_test_engine",
+  "repository_id": 469659282,
+  "commit": "9d6b7f812d5a4c00c6ee4d2f237153d40667a800",
+  "source_url": "https://github.com/ocornut/imgui_test_engine/tree/9d6b7f812d5a4c00c6ee4d2f237153d40667a800",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "b072efa9725da516032767aa8cdad9576cf464c9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d48470eeff11532332505d3e73aab440bb0f170b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8189dac0be95395d3e12cbc01fa1c728875dac35"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b104c2a04ca7ae03dc49147cf5808f89cef4cce7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e7d78a4e66ff71fcb48cfa78870dbd6a83c00d5c"
+    },
+    {
+      "path": "app_minimal",
+      "type": "dir",
+      "sha": "e490f92e767b102618cfdc9e3ee8d62b40ffc788"
+    },
+    {
+      "path": "build_scripts",
+      "type": "dir",
+      "sha": "37df1ce76ca7b8a6c4f24689238bc1958fb20433"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "cb68c8079ae3c59504d06c052d79df1dab209b00"
+    },
+    {
+      "path": "imgui_test_engine.sln",
+      "type": "file",
+      "sha": "f3d0bc1fbe6606345a45f98cc8d5737e92272e02"
+    },
+    {
+      "path": "imgui_test_engine",
+      "type": "dir",
+      "sha": "932b4b6a2eb31c071e9e61ee87e23da3922a3ea0"
+    },
+    {
+      "path": "imgui_test_suite",
+      "type": "dir",
+      "sha": "7eafd21f41e2918eeafef7ca582cbfb212204139"
+    },
+    {
+      "path": "shared",
+      "type": "dir",
+      "sha": "416235d828651b80216290687f6a8d2f2e853acc"
+    }
+  ],
+  "classification": "excluded_test_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify ImGui automation/test runner; not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

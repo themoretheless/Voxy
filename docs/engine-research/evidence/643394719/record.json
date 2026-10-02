@@ -1,0 +1,54 @@
+{
+  "repository": "Selene-Amanita/bevy_basic_portals",
+  "repository_id": 643394719,
+  "commit": "1197e210e3d33556de4888238a9e1df206cf424d",
+  "source_url": "https://github.com/Selene-Amanita/bevy_basic_portals/tree/1197e210e3d33556de4888238a9e1df206cf424d",
+  "readme_path": "README.md",
+  "readme_sha256": "2b7905599e2714b3d215d7c0133ea514ccf7897f1a38b595e14a72ff2b57e136",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f54bb5e749829b9f5a1e81e0e2de7f7680870869"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "ef62350b788a3703c7eb3b85070789cfd6b3a13e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d9b86766fb3aa774f38cd5648a5e73c0c9106a4c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a4357ac6c6b8f2f902ff939e475928b8aa73411d"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "430c17c08248f6b084d368848ba7f6cff19362df"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "8a72bb43b5cd16a1408ea9d5450bad2f7f6a0505"
+    },
+    {
+      "path": "helpers",
+      "type": "dir",
+      "sha": "b1d2cd24cc581e31c81c81237edfc41e9878843b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0f42854a86a91b601638790a877098aca5e008e9"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy plugin implementing purely visual portals/mirrors; depends on existing engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

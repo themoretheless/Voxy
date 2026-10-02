@@ -1,0 +1,64 @@
+{
+  "repository": "Smashcat/UNO_Manic_Miner",
+  "repository_id": 769748483,
+  "commit": "c2fbe3abffb8c18a6ca346f83184b8a7817f05c9",
+  "source_url": "https://github.com/Smashcat/UNO_Manic_Miner/tree/c2fbe3abffb8c18a6ca346f83184b8a7817f05c9",
+  "readme_path": "README.md",
+  "readme_sha256": "b26d024e0e66e52807195cc288429674f077d37087a6d1bee1c4d7799aa98be4",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0080f82d6a26bb4324af1300cebbb1ee467b6700"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "05edf450372428a620076c7ecb216438d310bcb7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "bf35c6e198daeae3acfb719782c2a87a57b32559"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "PCB",
+      "type": "dir",
+      "sha": "b9f8c64a10313c4f0373ee64aa54af147b7b2b22"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "14ed8913a6bb831a7977949ab0671690996fb78d"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "5bb3406f715e499acd353301b800928d10c4b73b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "034a1f583c8d8eb49794ce07b63e21083b9bd906"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "45be979d6d51c645ac4abe517a0245c9dee1362a"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "e551ab33a3d0bb191ba1e97fd908f7d506a255dc"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ATMega328P game runtime shared by multiple arcade demos with tilemaps/sprites/collisions and beam-timed output; hardware/content rights remain separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

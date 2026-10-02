@@ -1,0 +1,94 @@
+{
+  "repository": "Hork-Engine/Hork-Source",
+  "repository_id": 133911958,
+  "commit": "7aafa023cb19ab63ef528c888a3e59bea6982da9",
+  "source_url": "https://github.com/Hork-Engine/Hork-Source/tree/7aafa023cb19ab63ef528c888a3e59bea6982da9",
+  "readme_path": "README.md",
+  "readme_sha256": "8f9664ab4b06d3a7a0d2851c4640d9f011d9001967a8740944148feddc041f5f",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "df9116e71a1149cf10f43c32b6d9e9a0807fbcb1"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "14f7e4c4503b3d20bb1b63821f4284de7fef3605"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "398c12fe2ba31ca0a5dd8dc46c3f90e9b6e4c9b4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6d529780e19c9bc1edd528d7bd2e2fe6a10d219c"
+    },
+    {
+      "path": "BuildTools",
+      "type": "dir",
+      "sha": "39701c813f949ac105a800ee1858168052db4eba"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7e690c682f4290e233e4cee16d3a9b3ff41c1615"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "f0b63c75df5fdf1a327bae78067f96362358e4cb"
+    },
+    {
+      "path": "Hork",
+      "type": "dir",
+      "sha": "f7a5bbb59e5947dc593ab733e0637fdf52bb08d0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e178e8c8fbdcff8f4d3edb7838c57d6fe16bbb0d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "32bc6af372b45bb314d7756e3c32e4116e4beaee"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "43eed1914cd1dd1c4a6d6b1fee3609a09f0cdb83"
+    },
+    {
+      "path": "ThirdParty.md",
+      "type": "file",
+      "sha": "1bd3b12a304e3f5d4f8c1d4e86ba92c4b605b436"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "68aebd6375499a74a7fbad54cf59d1fbdeb315e1"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "e6cee1f0aa0cb02f96cce9bec0ef1fd19773c0b7"
+    },
+    {
+      "path": "hork_config.cmake",
+      "type": "file",
+      "sha": "36a531e2402fc944e04b9f0cdb773c1e5da5c288"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native game engine; owned Hork runtime/Tools/Samples and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,147 @@
+{
+  "repository": "minigdx/tiny",
+  "repository_id": 609999724,
+  "commit": "876365cfc867ea64f89e6df5d809aadc8913f370",
+  "source_url": "https://github.com/minigdx/tiny/tree/876365cfc867ea64f89e6df5d809aadc8913f370",
+  "readme_path": "README.md",
+  "readme_sha256": "3665b39d960c61f4dc94554a1c28d2f11661ab7b99ed1b5151b27666d0a3df64",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "f7604746a2b6813fc43017fe66d90a268479b5c2"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "28a51131420dbb6a65d75eecfd64be752f9e8bac"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6d6f0c7a3087bca2f3d1d11d475c46481e9da79d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7b65dd81131b400d9638a5a6cdea1090ba435f76"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "1e4d1d6bcaa88c41d0029f03dcd32de89f7fa9f4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e82825b21fe5e15d524f8c686f1cfd5eec406c8e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0daf915aa2c6de9e2204dc764c715b3df551d6e0"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "c53d9c23a5ea4d86859628aadd1bf73a60dbc566"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dc39333334b5a2e1a307d89cad026550eb423b0c"
+    },
+    {
+      "path": "boot-resources.json",
+      "type": "file",
+      "sha": "883b41a3578f421a4cbb211ed5b8a494ef1512d0"
+    },
+    {
+      "path": "boot-resources.png",
+      "type": "file",
+      "sha": "df2a310b34a7e1b5218d2a7f4b2b8f778ade6916"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "b8dbf7e4d01e09c4db7edf771d072d2c7c2276f7"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "4089c0fe84c0ee7779834c1878adaaa9eec09bb9"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "ba0481ae48c24e7dcd56c280024529574ab3056b"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "1b6c787337ffb79f0e3cf8b1e9f00f680a959de1"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "400513e96c2c5303eb86abfc3344d12ee1f4dabe"
+    },
+    {
+      "path": "kotlin-js-store",
+      "type": "dir",
+      "sha": "35e8cc5c1cc392f8c17af81473b9c99b6cacba4a"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "115b92109f521100b6a711fc34f9918e58b469e9"
+    },
+    {
+      "path": "tiny-annotation-processors",
+      "type": "dir",
+      "sha": "e8b77a5ef2676ebeaff545cd1e97182c94aeec63"
+    },
+    {
+      "path": "tiny-cli",
+      "type": "dir",
+      "sha": "932499e5aa3f7d45998f693e46ee32a62ba3a6dc"
+    },
+    {
+      "path": "tiny-debugger",
+      "type": "dir",
+      "sha": "85348485272ecfbff1c029f11500e6364318dee5"
+    },
+    {
+      "path": "tiny-doc-annotations",
+      "type": "dir",
+      "sha": "86c9b3c1ef0e06169ca4bc5c7957f93aa3be87f6"
+    },
+    {
+      "path": "tiny-doc",
+      "type": "dir",
+      "sha": "3e0d4af64b5bfe18f5e000c88414bc9ab3100b81"
+    },
+    {
+      "path": "tiny-engine",
+      "type": "dir",
+      "sha": "89ea37d2f2af242c143600957658ce4df87cd559"
+    },
+    {
+      "path": "tiny-samples",
+      "type": "dir",
+      "sha": "092a3316b2219cc5148ba02fa5a212751e16595a"
+    },
+    {
+      "path": "tiny-web-editor",
+      "type": "dir",
+      "sha": "d007a1bbb1b9ee364335abd4d82e0526c9f9d2f0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

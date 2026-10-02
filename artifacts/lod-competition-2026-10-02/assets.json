@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "asset": "a",
+      "source": "a.vmodel"
+    },
+    {
+      "asset": "b",
+      "source": "b.vmodel"
+    }
+  ]
+}

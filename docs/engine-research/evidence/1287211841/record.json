@@ -1,0 +1,209 @@
+{
+  "repository": "Virtastic/openmw-web",
+  "repository_id": 1287211841,
+  "commit": "82eb875096581a8651d7b04a3d69e9750f659e77",
+  "source_url": "https://github.com/Virtastic/openmw-web/tree/82eb875096581a8651d7b04a3d69e9750f659e77",
+  "readme_path": "README.md",
+  "readme_sha256": "05db76b7a495f9e8be12f8f0fb53a439d177e5742da763a7e79cac59104a3a9b",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "642a92d9a8c598497a6e9883a6cb0ba7e517fd6e"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "3680a651a25a964573cb18d529ae292394f24a60"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e238cc0e51995687db211218d6090d92644c679a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "26e1f36675ac2fe8dea1034e61bae96c08b81a72"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "806f2f9a1a6580490e743e2e030c6e0af64657d2"
+    },
+    {
+      "path": ".openmw-base-commit.txt",
+      "type": "file",
+      "sha": "07dd93c6700874ec772499d6ac4f230ca20db789"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "55ba5c710fc26079360e2b35b1d613ba245d30a8"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "ea2a4add7a3b2edea0ced696df996dffef819b92"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "16b99543829aa0cb82dbbeccd929cce56d80f192"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "1487e6fe13f4bb8e099612be3611492c0eacefdd"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "9ca5853d4a48e9942d4249b2dfd55b9c79bf7612"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2f8dd64c58e9262d4cb5225e7aa079e7dcf494c3"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "51ec52d2e497fef18e80b25a299fb56a83262dcc"
+    },
+    {
+      "path": "Dockerfile.builder",
+      "type": "file",
+      "sha": "edbbb835654b7f70263de00658cf55431040a195"
+    },
+    {
+      "path": "Dockerfile.builder.dockerignore",
+      "type": "file",
+      "sha": "e10355344afef38739e50e863cf554329d369a7a"
+    },
+    {
+      "path": "Dockerfile.builder64",
+      "type": "file",
+      "sha": "0a58972e04b8a1428fd6bd65a263494f6f9ce9bf"
+    },
+    {
+      "path": "Dockerfile.builder64.dockerignore",
+      "type": "file",
+      "sha": "1464e4b346f6360125d601bc058b88005b55f6d0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9d742475fed99e0263fcf25849f0133137c06355"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "f5d41516e31d715e6072a97e18b024fecfac292e"
+    },
+    {
+      "path": "PLAYTEST.md",
+      "type": "file",
+      "sha": "e4c07be232629e9777b19a1578d7e2bfbefaa42e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fd376fefe60f5e6827d9b3c4444339f518cee59f"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "a733a4957a1e60ad96addc02f365f78f9f912d6f"
+    },
+    {
+      "path": "SELF_HOSTING.md",
+      "type": "file",
+      "sha": "a7101674691a348d5a094a21f63d92992c4a4a11"
+    },
+    {
+      "path": "THIRD-PARTY-LICENSES.md",
+      "type": "file",
+      "sha": "592489c4dc2b70553fe8b1eb47de7dba30f37d93"
+    },
+    {
+      "path": "WASM_ADAPTATIONS.md",
+      "type": "file",
+      "sha": "37d00de76e50f490c9f25bf366fff63c6fa8649c"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "2be173a63d2d5bc613d40076e6ed989f838f4373"
+    },
+    {
+      "path": "configure-openmw.sh",
+      "type": "file",
+      "sha": "5ec188fa26089e238e7ede94a1ba8f6c582c29ba"
+    },
+    {
+      "path": "deploy",
+      "type": "dir",
+      "sha": "5a1b757e6c16eddd8631c6981b72d427bd3d5fe4"
+    },
+    {
+      "path": "docker-compose.prod.yml",
+      "type": "file",
+      "sha": "05aae9e494aace67fb10393b41e4cebca67320b1"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "b8f8d5e0171d1f21dea035d2a091e953243b1015"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2eecae05bbd52812867751ffb21daf7329af4c13"
+    },
+    {
+      "path": "fsroot",
+      "type": "dir",
+      "sha": "8234aace5339393bd765c694c7a10d201113c72a"
+    },
+    {
+      "path": "infra",
+      "type": "dir",
+      "sha": "b4a5857777a0a9432335c23305e01738bc2c3426"
+    },
+    {
+      "path": "openmw",
+      "type": "dir",
+      "sha": "354548cada36b6e8bf5e6d02fd1c461e84e9014e"
+    },
+    {
+      "path": "play",
+      "type": "dir",
+      "sha": "7be511a3ac01d76cfd72ab04ef182fb252444ad2"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "b9519744485d7392c8179dea3e7a28b9a4e37412"
+    },
+    {
+      "path": "setup.ps1",
+      "type": "file",
+      "sha": "07803f063f1479011f75773bbe62a79a63ea6f04"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "68015ed7ba7d40332ee0062f881ae1edcdb1b224"
+    },
+    {
+      "path": "wasm-build",
+      "type": "dir",
+      "sha": "b8d3c5958e7843b64518bce556c2b6b15faae9cf"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "OpenMW runtime adapted to WebAssembly with build configuration and source adaptation documentation; browser multiplayer claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

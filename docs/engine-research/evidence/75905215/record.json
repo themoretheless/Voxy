@@ -1,0 +1,107 @@
+{
+  "repository": "IppClub/Dora-SSR",
+  "repository_id": 75905215,
+  "commit": "f8b16fe674753cf5a60701e066615960a0fbfff7",
+  "source_url": "https://github.com/IppClub/Dora-SSR/tree/f8b16fe674753cf5a60701e066615960a0fbfff7",
+  "readme_path": "README.md",
+  "readme_sha256": "b73f96108e0eb44d16b708cbad49619b0e1a2ab16e95efa7eedc35664235aaf0",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6d3cd2e0d8e9cc9aa4ba7a59bafe35a17962b1bb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "481266d29e20e16bd1d988f08dd1d06aa78eff6f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3fee042a10773ff2167a6048bc15ba1633f95873"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "f13dbc7b39f9def2648a1403f2c29241493c9b29"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b588eee83dfa6b0bf3834b504b8fe1637cac31b0"
+    },
+    {
+      "path": "CONTRIBUTING.zh-CN.md",
+      "type": "file",
+      "sha": "9d519859cd11ed669af80c7af2cdf86b0a8c7a8a"
+    },
+    {
+      "path": "DCO.txt",
+      "type": "file",
+      "sha": "99c71dcb9f35150c9b289393b375c5ba00714738"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "f861ccc451f6b6a83954a2b1d5fbc859f838cd3f"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "8dbdbc266f035359dbd2a4b0ecaf7b9c17f1beeb"
+    },
+    {
+      "path": "LICENSES.3rdparty.md",
+      "type": "file",
+      "sha": "f47d5eb22e8c8e21c19347043b72928f85d087da"
+    },
+    {
+      "path": "NOTICE.txt",
+      "type": "file",
+      "sha": "dfa0c6b497e93584c5361a21e6fd770ba938cbac"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "f91e7741990c5be53ef8d48843deaae4f58aee31"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6181a5097ab03aef8ad017610b5c3acb53633d44"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "type": "file",
+      "sha": "35b61788c995c3fa583583413e55db420e0becdc"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "117716305f5ffdcd3012b3ec03dbe297444e7d2c"
+    },
+    {
+      "path": "Studio",
+      "type": "dir",
+      "sha": "8350790e2e960ebe51084349015f382091d199ee"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "d4eb1bc035eabdb690054a51ffd03834284f4df5"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "d886a2857d3b0d9cab5ee4c75496746d8f373b64"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "5bed62812f9827ccead2e0a8b9488c3fe2bb99c0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

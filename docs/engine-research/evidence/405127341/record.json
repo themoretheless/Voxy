@@ -1,0 +1,67 @@
+{
+  "repository": "abisxir/alasgar",
+  "repository_id": 405127341,
+  "commit": "766858a8160fa75d57a48730e101639885ba5096",
+  "source_url": "https://github.com/abisxir/alasgar/tree/766858a8160fa75d57a48730e101639885ba5096",
+  "readme_path": "README.md",
+  "readme_sha256": "3ef5152d4274597bef539e5e5fa25c52bcbe3afb4f5b5e5eafce84aa0324ed95",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4cc2bacca7ef9d7e158fb351ada2d9ba7ee55e91"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "8d66259a11cfdbaf7a55f1be1d5464ddf843f03b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "577e897210bb566d20d63f5aecc1a46d85f356bc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c7f0e515d7bb3f64933ea75cda12fb647a3cb920"
+    },
+    {
+      "path": "alasgar.keystore",
+      "type": "file",
+      "sha": "d96b2ea59ca94d11bb077fed9c7f73b4bd74bc54"
+    },
+    {
+      "path": "alasgar.nim",
+      "type": "file",
+      "sha": "1a15640fec92bdbc40be9761513702e45453ac6d"
+    },
+    {
+      "path": "alasgar.nimble",
+      "type": "file",
+      "sha": "45aa773471fb715c240709a281ba0d7fcec5e707"
+    },
+    {
+      "path": "alasgar",
+      "type": "dir",
+      "sha": "dd271bdde2315d96eea95f0500ddf9179fa16650"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "31ffeec39defad3eaa3d4dbe0f358d27607aeb50"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7085e0b9f1f44b4cfe6909d5408d74ee4b71b096"
+    },
+    {
+      "path": "main.nim",
+      "type": "file",
+      "sha": "c6ac8b63c7e4ed9f0fa34c5373c49a6d3a77acdb"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

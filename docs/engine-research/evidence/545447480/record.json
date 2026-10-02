@@ -1,0 +1,104 @@
+{
+  "repository": "amerkoleci/JoltPhysicsSharp",
+  "repository_id": 545447480,
+  "commit": "3ab66bf9e970b10c2b22b8f5b88dfdc2c765a7fb",
+  "source_url": "https://github.com/amerkoleci/JoltPhysicsSharp/tree/3ab66bf9e970b10c2b22b8f5b88dfdc2c765a7fb",
+  "readme_path": "README.md",
+  "readme_sha256": "0131b8000fe863d145fd130b30f3beb3f9523b5c345325dc7a0454069332590e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "e3845288a2aece185aa94e88e303e0134efde368"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "0b5ee6bc6bea55899a80c3dea4dd685f6d2730c3"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d0ed94ed2ab4a56fe75d77fdb637d1568ac4cee7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "14c0cc720a53314c11f9cc71134a2f7ae9ff3f58"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b2ebb578a75b16b8175d1eea67e1a5fe77bacec4"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "fed6a92e5b5b0f8db40e5851aac5cddd244a04ef"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "9fa75f371985b99d465367b7be9df5f443111f46"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "type": "file",
+      "sha": "fe51ab28ae7fcaac5a12915c39030b2a691cab77"
+    },
+    {
+      "path": "JoltPhysicsSharp.Native.targets",
+      "type": "file",
+      "sha": "a19f644433ef5e434bbc03799caa4ed0b961f048"
+    },
+    {
+      "path": "JoltPhysicsSharp.slnx",
+      "type": "file",
+      "sha": "f2273cdf91d11393f94bd2c2789533e07a01b759"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b679a324927ad827ca4a36d545f7db3e51c2280f"
+    },
+    {
+      "path": "NuGet.config",
+      "type": "file",
+      "sha": "804d4684dbddaaedd24e11704293fbed4d430c59"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "796d000c92da863de5e66b71df1cd2c5d383bf53"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "dcebee794d28470f2312a792fdde0996fdb2be0a"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "dc3721749c4b58c42f895517e24e934ed0f83e26"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "1353f0d6457aa297b27d124bf5750509b40229f4"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "789439018ec595a1399ab48e1977eaa1afb67df8"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "f4372ea8774844f0996288cb32359551ecda5213"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify managed Jolt physics wrappers; .NET/native bindings/build, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

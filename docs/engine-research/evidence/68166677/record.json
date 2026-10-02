@@ -1,0 +1,139 @@
+{
+  "repository": "tickbh/VisualUIEditor",
+  "repository_id": 68166677,
+  "commit": "13e38a95be4d37aaa6f7faac3c57ff0e5190a0f9",
+  "source_url": "https://github.com/tickbh/VisualUIEditor/tree/13e38a95be4d37aaa6f7faac3c57ff0e5190a0f9",
+  "readme_path": "README.md",
+  "readme_sha256": "1e03a1624d4acbd93034176f32426fbb8063e68b2919c837c54048078f22fc16",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "246e4d189508fa59ad2327f5538dca7b6ae83c37"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "543da6568606b50c4e68b9c30d480734f0db5344"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4af2c7005bee02cb8a39ccb6b82fe17061cf32d0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "15b16157a6fd891672935c329fb54109642348f5"
+    },
+    {
+      "path": "app.js",
+      "type": "file",
+      "sha": "7171483734a31062c786d29b6586c6823212f643"
+    },
+    {
+      "path": "bower.json",
+      "type": "file",
+      "sha": "ca906ecf0bd7cca0b168795e877e9f1c6146f62c"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "0df951b5d1189a85ca3e54dd73c3da99255c0ee7"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "1f3a31e207f6e4cbabab4e3cc78880c4a31080fe"
+    },
+    {
+      "path": "html",
+      "type": "dir",
+      "sha": "0b3f76d67c3147624f24ce73dfd37103a460b86b"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "12e0ede31d9395bdce66785d58bcfb7a31a581b4"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "c3ce8cf061ce37bf11bff70e8ae6b7de6bd5436b"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "c5031bc409f442abef2fdc614a92d2756a4e2a71"
+    },
+    {
+      "path": "jsconfig.json",
+      "type": "file",
+      "sha": "bb004a945c03e78ecde2786b7cabbcf5c2450a1f"
+    },
+    {
+      "path": "layout.js",
+      "type": "file",
+      "sha": "4f622af825937078ca3003b952269ed5c48f0a57"
+    },
+    {
+      "path": "layout.json",
+      "type": "file",
+      "sha": "678f4c079275c5e2bee6e9f424257f1beacb1f77"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "b9420ed4ce9c3a895ed79bf277bb97b4c49cfd5e"
+    },
+    {
+      "path": "package-zip",
+      "type": "dir",
+      "sha": "3961f07b635c800311db492d57dc7e1b4bca72fa"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "25a5c3492f80f55a26a323fa8a532273f8a6a2fb"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "04816dd783f946549d456beb6e9ab4d98a98c2b9"
+    },
+    {
+      "path": "project-test",
+      "type": "dir",
+      "sha": "a87eb9594bdbe04ab21032d60d70e20045cb77b5"
+    },
+    {
+      "path": "prop",
+      "type": "dir",
+      "sha": "944addd742808f02e9f677f026bf5ad9bfd623c6"
+    },
+    {
+      "path": "render",
+      "type": "dir",
+      "sha": "b25182d3e3a84fc0eed3006a1ab8dc313ff7138d"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "a2baeba2ba3eb9b3a13ee8219adca04301e0f55c"
+    },
+    {
+      "path": "screenshot",
+      "type": "dir",
+      "sha": "aeaf3a4ab52378f14665f0413fd230ba8983347e"
+    },
+    {
+      "path": "third",
+      "type": "dir",
+      "sha": "5720cab7e8c33152c1e1599fcd9fefd43707931f"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Electron UI authoring tool using cocos renderer and separately supplied cocos2dx runtime; editing/undo capabilities are tooling.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

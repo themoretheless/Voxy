@@ -1,0 +1,122 @@
+{
+  "repository": "nival/Prime-World",
+  "repository_id": 860560770,
+  "commit": "8de5df31fa122b6f51cd099883de74bf4a21228d",
+  "source_url": "https://github.com/nival/Prime-World/tree/8de5df31fa122b6f51cd099883de74bf4a21228d",
+  "readme_path": "README.md",
+  "readme_sha256": "8224857e7e11ba259224b859db4e191e554e1052a41363cb7a42d4705b0ab837",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "03667f7a19f5f23019f8c37e3ab777954d163fca"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2243036ab676db8477dd43c7f1ecfbe1eab162c8"
+    },
+    {
+      "path": "FlashUI",
+      "type": "dir",
+      "sha": "6bc52143021e23605bf241ce1e9611310150108a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1935f951a4881e43a7e4071f09b3ccf7b793bd64"
+    },
+    {
+      "path": "LICENSING AGREEMENT 05.05.2025.pdf",
+      "type": "file",
+      "sha": "ce84a5472a560e98cf7bffa73d983f0b1af7c8b8"
+    },
+    {
+      "path": "LICENSING AGREEMENT offer Prime World.pdf",
+      "type": "file",
+      "sha": "14d1ccef53241eefb09e2915c222051cf0694b47"
+    },
+    {
+      "path": "PW_trailer.png",
+      "type": "file",
+      "sha": "8d5b4a42f9fd701788dfed0fe44e40a6a79fcdfc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "090dff88c2ff576321a96650e54180a01209d2b7"
+    },
+    {
+      "path": "README_Chinese.md",
+      "type": "file",
+      "sha": "c6698a71d36745cc545680280dbb0f08f0935e5c"
+    },
+    {
+      "path": "README_English.md",
+      "type": "file",
+      "sha": "3a903984ce310f231dab70bba99b1fe6b02666ca"
+    },
+    {
+      "path": "README_French.md",
+      "type": "file",
+      "sha": "2cc681ae3c15e131cdd25c448e5fb58fd3d8ffe9"
+    },
+    {
+      "path": "README_German.md",
+      "type": "file",
+      "sha": "06818f5d46c16f76b5062fc2cabd20c237e0ba91"
+    },
+    {
+      "path": "README_Hindi.md",
+      "type": "file",
+      "sha": "ddcefb9b9e8df69471487a111c68018c57bd61d3"
+    },
+    {
+      "path": "README_Indonesian.md",
+      "type": "file",
+      "sha": "5c48bd1f0a423afdadb97245c74492d3a103a795"
+    },
+    {
+      "path": "README_Japanese.md",
+      "type": "file",
+      "sha": "27b5cb86a7011dc2b4f36d28669bd338500f8477"
+    },
+    {
+      "path": "README_Portuguese.md",
+      "type": "file",
+      "sha": "ca3657a28ea75cd43e409f0058342d4d748e3f1e"
+    },
+    {
+      "path": "README_Russian.md",
+      "type": "file",
+      "sha": "eb9d28d7c1d198d50a35493aebfd745504e5a026"
+    },
+    {
+      "path": "README_Spanish.md",
+      "type": "file",
+      "sha": "cb09c9ab87ee277c0ec51e6297c7322aad627eba"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c703601499bb54a26cc796de2481115216135fb8"
+    },
+    {
+      "path": "pw",
+      "type": "dir",
+      "sha": "2dfa4b75bdf263447af5eeeaed1145ccee0c86a3"
+    },
+    {
+      "path": "pw_art",
+      "type": "dir",
+      "sha": "3396cd43dfaaf50364aa3de83b27bf2704357b13"
+    },
+    {
+      "path": "pw_publish",
+      "type": "dir",
+      "sha": "af02967453196198cd2fb615855052e005a03dad"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

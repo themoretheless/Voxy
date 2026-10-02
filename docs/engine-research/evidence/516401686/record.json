@@ -1,0 +1,44 @@
+{
+  "repository": "silvematt/TomentRaycaster",
+  "repository_id": 516401686,
+  "commit": "0abd23ff25a2111a7900fa9c4b4e91545a5b6d7d",
+  "source_url": "https://github.com/silvematt/TomentRaycaster/tree/0abd23ff25a2111a7900fa9c4b4e91545a5b6d7d",
+  "readme_path": "README.md",
+  "readme_sha256": "945b2b35c8fbb92622f5689a112dbe1d958fbd0d3ee66bef34ea9c22df510581",
+  "entries": [
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "dfdbd4061f72abd3c8028868a986aff44303fd62"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "309147644498957bf72cff0df57f5334ffb7d17f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "172ca1a1993450c8140413e004c8848f601f4f0d"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "c3f5254db3926755fa61a2dcb407bf01dfc75e5e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cad667a852b041f850bf916fe9eef24f8610da9a"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "SDL software raycaster with player controls and doors; README primarily establishes rendering engine scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

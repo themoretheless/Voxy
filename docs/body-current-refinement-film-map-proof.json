@@ -1,0 +1,51 @@
+{
+  "source_cells": 121728,
+  "target_cells": 123022,
+  "maximum_parent_chart_area_error": 2.0777823905859805e-13,
+  "mapping": "unchanged parent surface area fractions; extensive liquid volume distribution",
+  "sourceSha256": "80ef6d76c4a9f26455d19cc9c22bafbbb6924759834db4d1815e14b7378dd16f",
+  "targetSha256": "3e4c3c66723807aaa2421ef18e97b3bdce3d0bc1e5acbd02d58881fb8e520171",
+  "manifestSha256": "c5f2029edc121b164ac6de84017fefd99cba4cdbca5cde65a2da8d06dc28be85",
+  "adopted": false,
+  "numericalRoundtrip": {
+    "sourceCells": 121728,
+    "targetCells": 123022,
+    "sourceVolumeM3": 1.608492532160643e-05,
+    "forwardMassRelativeError": 0.0,
+    "roundtripMassRelativeError": 0.0,
+    "maximumCellRelativeError": 3.2774823044277636e-16,
+    "nonnegative": true,
+    "scope": "Synthetic extensive volumes on render-triangle map; native film checkpoint mapping not integrated"
+  },
+  "nativeCanonicalCellRegression": {
+    "session": 16529,
+    "passed": 1,
+    "failed": 0,
+    "validated": [
+      "one parent cell to two refined canonical cells",
+      "duplicated OBJ midpoint welded to four solver points",
+      "mass and source history survive forward and reverse remapping",
+      "original state unchanged"
+    ],
+    "scope": "Small native FilmPreview fixture, not full refined-body checkpoint application"
+  },
+  "nativeRemapCompatibilitySuite": {
+    "session": 68254,
+    "passed": 4,
+    "failed": 0,
+    "maximumObservedMassRelativeError": 1.1770588590089983e-14,
+    "scope": "Existing fixture/reference body maps plus small seam/refinement case; not full newly refined anatomy"
+  },
+  "fullCandidateNativeTransfer": {
+    "session": 53468,
+    "passed": 1,
+    "failed": 0,
+    "sourceCanonicalCells": 121728,
+    "targetCanonicalCells": 123022,
+    "massRelativeError": 9.48676881951278e-16,
+    "runningSourcePreserved": true,
+    "subsequentSolverStepPassed": true,
+    "donorUnchanged": true,
+    "scope": "Raw current post-ring/refined OBJ film surfaces, wet foot patch, stationary rest geometry; no posed viewer checkpoint installation"
+  }
+}

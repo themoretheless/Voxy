@@ -1,0 +1,134 @@
+{
+  "repository": "pdevine/go-asciisprite",
+  "repository_id": 128996788,
+  "commit": "74bfb825e66523111581f3697e6053c36a542d2f",
+  "source_url": "https://github.com/pdevine/go-asciisprite/tree/74bfb825e66523111581f3697e6053c36a542d2f",
+  "readme_path": "README.md",
+  "readme_sha256": "1a0ceefaf31c2d68a3dfc96a153d5955cfe8341df9c162658afe57c099f9c9a5",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dc8e6d0eff0567fe3a4885db613636967b30fcfb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9a530a9ae466050839c4d7d404499fc5482ed297"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dd788bc3fb56a236353ed1fe8b767266efd01bef"
+    },
+    {
+      "path": "background.go",
+      "type": "file",
+      "sha": "a53b758c72811d093ffbb698ecdc863ab8500192"
+    },
+    {
+      "path": "block.go",
+      "type": "file",
+      "sha": "0d6a064c5e9543452fd768b94260478d0437fbb2"
+    },
+    {
+      "path": "costume.go",
+      "type": "file",
+      "sha": "28affa559b8670eb2ffa875aff35b897f1df6629"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8425533dae22c76bdfc6604704666acdf73348c5"
+    },
+    {
+      "path": "font.go",
+      "type": "file",
+      "sha": "5d838eef859bcb8ffd107393a55e37c18f636dd1"
+    },
+    {
+      "path": "font_jr.go",
+      "type": "file",
+      "sha": "0f6c7e72aee0eef5028895de8720ee9349a1657a"
+    },
+    {
+      "path": "font_jr_sm.go",
+      "type": "file",
+      "sha": "491e9850b783644117eda61028c37a85e4836554"
+    },
+    {
+      "path": "font_nineties.go",
+      "type": "file",
+      "sha": "8297d0124aaef719efb68dca9ee3692d608ff709"
+    },
+    {
+      "path": "font_paku.go",
+      "type": "file",
+      "sha": "cd07072105162d668a75f61ac74f0253e5fcd9a4"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "dc915b3b6abadc1b5f02bd01c66f83dd370bfd77"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "8584a09a8ce7d30d3546bc3954e28fdc616a6dfb"
+    },
+    {
+      "path": "palette",
+      "type": "dir",
+      "sha": "f4170c23a99a6f73fed5bc99a0ac18e4d769eaa4"
+    },
+    {
+      "path": "picocad.go",
+      "type": "file",
+      "sha": "980b9eba606387d4a50ece50c6283f9b55c49fc5"
+    },
+    {
+      "path": "picocad2_scene_test.go",
+      "type": "file",
+      "sha": "bafad598fea2037a2c42d9f604e967777b63a1b5"
+    },
+    {
+      "path": "picocad_test.go",
+      "type": "file",
+      "sha": "06a9bc4fd4629c55098be4dbea3f8dadd3b02587"
+    },
+    {
+      "path": "sprite.go",
+      "type": "file",
+      "sha": "d7c938c98e7b69a4743a1c58c9f3bdef202d76d5"
+    },
+    {
+      "path": "termbox",
+      "type": "dir",
+      "sha": "7bd049bf44466ab39d509c9509c621546735e285"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "c5f87da7be2baded7527ca5ead7825be9d543089"
+    },
+    {
+      "path": "title.go",
+      "type": "file",
+      "sha": "ff8ff148368b1a061e8c1a1a3c286fc9f3ce716d"
+    },
+    {
+      "path": "util.go",
+      "type": "file",
+      "sha": "6fd566700673a5ef5a4626f417cb174b42c53925"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "2198c845c7b57848c66a7b174e7ebbf88be3b4ec"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Go ASCII/Unicode sprite animation and terminal display library.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

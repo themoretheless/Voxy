@@ -1,0 +1,62 @@
+{
+  "repository": "WU-HAOTIAN34/2dimg2motion",
+  "repository_id": 1277933603,
+  "commit": "d4d73e243b6ff64b7cbb3879e45e951f972a7e62",
+  "source_url": "https://github.com/WU-HAOTIAN34/2dimg2motion/tree/d4d73e243b6ff64b7cbb3879e45e951f972a7e62",
+  "readme_path": "README.md",
+  "readme_sha256": "2de7dfa13ca6681764284fab8a4ce392d4482cfeda344582df11548cd2efb11e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ef995093197a9c75d93fe7cf9818248135a3ac82"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0227f4e17464a5e81882e922c79571d5d3c7d6d0"
+    },
+    {
+      "path": "README-CN.md",
+      "type": "file",
+      "sha": "640e1419601cfcefa88b95847f6b363095052fbe"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "def33efbd6a85a963ac66b51313c291058464099"
+    },
+    {
+      "path": "SKILL.md",
+      "type": "file",
+      "sha": "b0b5ec2a7168b3fc8a216e08e6c914bc51cac343"
+    },
+    {
+      "path": "agents",
+      "type": "dir",
+      "sha": "80b84438d747a3c85c40637cf377bfe784c5241a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a86d1a10f7786737f714dab39d8c2a3d137410df"
+    },
+    {
+      "path": "references",
+      "type": "dir",
+      "sha": "0a3d86f34cb38ef319615b583a84ec7bf9ac2826"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "34700b625d72b7ed19f99501f8a4efc24e46e509"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "d023fc2e67d6eb91503f154a790a85b1b727f1a3"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

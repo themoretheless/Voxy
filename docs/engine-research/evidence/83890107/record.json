@@ -1,0 +1,59 @@
+{
+  "repository": "scottcgi/Mojoc",
+  "repository_id": 83890107,
+  "commit": "bb69b9465c18b17b261ea5fab8b972aa8ed0fb45",
+  "source_url": "https://github.com/scottcgi/Mojoc/tree/bb69b9465c18b17b261ea5fab8b972aa8ed0fb45",
+  "readme_path": "README.md",
+  "readme_sha256": "8a9ac8ebcfff4567f10ceb682c54ccf62049b48082c7c7b4e9e90a3f6995539f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b9e2c92185e80d228e7e7e1780c7ed68ee25a488"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0b48f467255cebc71b278bbac792a767fcdc0270"
+    },
+    {
+      "path": "ChangeLog.md",
+      "type": "file",
+      "sha": "00ff52947d5d0230419fc8d5d1fa3783f678298b"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "dc74f9baf2b574133fd07b74f4d254aade3e6132"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "def91d22256b4033debe5138f5429057945b664e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2123835e2cb2786c28736de83eb31f12163d3e26"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3aa3c2747d72259c9681f04f9e6fe20d4cc237c6"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "c19ab8e1b6d76d10523e9fee0649ad0058e50ab2"
+    },
+    {
+      "path": "ThirdPartyBuild",
+      "type": "dir",
+      "sha": "50a1300ad901204d31061db8314566ec9e0a33a2"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native mobile engine; Engine/Samples/ThirdPartyBuild with owned runtime implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,104 @@
+{
+  "repository": "ramenengine/RamenEngine",
+  "repository_id": 120035858,
+  "commit": "6259e7f85ef260c2d2357838cd22b55c50796798",
+  "source_url": "https://github.com/ramenengine/RamenEngine/tree/6259e7f85ef260c2d2357838cd22b55c50796798",
+  "readme_path": "README.md",
+  "readme_sha256": "38f11f22d377dd344f38c1d67809797ce4fd7488c245b5fe381db5ae12ac172e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e48f8b6ae4e9905b8c18271135de649353913ebb"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".komodotools",
+      "type": "dir",
+      "sha": "2122c51fc9b4fdc412104441264448ee2ef18ddb"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1f95d26c5ac2d755547b708616926f8d041a4c1a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "558435ee1b71353af4c91ae2662447734486a5d0"
+    },
+    {
+      "path": "RamenEngine.komodoproject",
+      "type": "file",
+      "sha": "9889b1627000c0bb536561dea87d03f8d67c30c9"
+    },
+    {
+      "path": "afkit",
+      "type": "dir",
+      "sha": "d32edc1cbd491e477fc70423f07afd06f7d3f853"
+    },
+    {
+      "path": "allegro5.cfg",
+      "type": "file",
+      "sha": "e9b377b8bf6ffdb364c3c28602eeda03869ba8d5"
+    },
+    {
+      "path": "common-ui.f",
+      "type": "file",
+      "sha": "ab6740748140108ceb5fced323ee62f54a3fb9d5"
+    },
+    {
+      "path": "ex",
+      "type": "dir",
+      "sha": "bd39be7d500b68298530db6d1dc72bd38f06e2dd"
+    },
+    {
+      "path": "kitconfig.f",
+      "type": "file",
+      "sha": "1a67aea810c8d84448e8e25e07e5029a0774919b"
+    },
+    {
+      "path": "loader.f",
+      "type": "file",
+      "sha": "4a15e775b837402ad901ce6bc0e378679dc5a94e"
+    },
+    {
+      "path": "make_platformer.bat",
+      "type": "file",
+      "sha": "bf2cda3ff2a6cd8507bda0df147f0661b01a7ba8"
+    },
+    {
+      "path": "prg",
+      "type": "dir",
+      "sha": "726c1d5f0155771348ea2daee6239791f1cd7731"
+    },
+    {
+      "path": "ramen.bat",
+      "type": "file",
+      "sha": "d18f1d645833309a93d52d4d36eeec11d408e761"
+    },
+    {
+      "path": "ramen",
+      "type": "dir",
+      "sha": "34c8a253c628264f1b6efa45b37b3199e68e3432"
+    },
+    {
+      "path": "sample",
+      "type": "dir",
+      "sha": "700d4529b00e4eaf0f6cca009dfaf0742c179838"
+    },
+    {
+      "path": "venery",
+      "type": "dir",
+      "sha": "4d3a471e182f15c3c9b69f86b8286a8165286ea8"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Forth 2D development framework and optional engine over Allegro with animation/collision/audio; README primarily identifies framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

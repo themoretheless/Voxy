@@ -1,0 +1,154 @@
+{
+  "repository": "FlaxEngine/FlaxEngine",
+  "repository_id": 319991441,
+  "commit": "6c5321d2257c8dbc92b2000ae8fe556cf5dbee21",
+  "source_url": "https://github.com/FlaxEngine/FlaxEngine/tree/6c5321d2257c8dbc92b2000ae8fe556cf5dbee21",
+  "readme_path": "README.md",
+  "readme_sha256": "1b7ac5e03b0557df0b0404908141b4c0c001d31c22b3dd77255fcf4bf42f2774",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "df7d893429aa7c3f39a00cf2ba6bf2b4bc1d0066"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1d97bb29c6744bfce9caa78895d76e051a5eeb14"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "30c2caeb273218cd176b32aeaae5da242d148559"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".lfsconfig",
+      "type": "file",
+      "sha": "8e27b7387e631516203e0d50bcf3f78b6498b7be"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "8cb8700371a54295e24e610751444ae162791e16"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "ba3d5a458aea3d127452c8f51cb1a81fec9d7b81"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "7f91b6ddcba1115af6eb54f7c5e9c7f11b82f91f"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "ecb20dcd09ee6042d35c351dab8cd4b948cc48cb"
+    },
+    {
+      "path": "Development",
+      "type": "dir",
+      "sha": "59db154bcf376f06b20df9c844cd14d14ce6ee33"
+    },
+    {
+      "path": "Flax.flaxproj",
+      "type": "file",
+      "sha": "e6d7badcc27154291efaa05d0d5c6312c0bffbcf"
+    },
+    {
+      "path": "Flax.sln.DotSettings",
+      "type": "file",
+      "sha": "b5594c3f2d5eceb9aa816ef82f1b684e57c13241"
+    },
+    {
+      "path": "GenerateProjectFiles.bat",
+      "type": "file",
+      "sha": "10a06ab944ffe501c7b40619315afe62c58b4681"
+    },
+    {
+      "path": "GenerateProjectFiles.command",
+      "type": "file",
+      "sha": "b6a9c7c8921b20a0afc668422746d928dd993d27"
+    },
+    {
+      "path": "GenerateProjectFiles.sh",
+      "type": "file",
+      "sha": "9b85f965bb93ae88f46f9e8b3273bf8f3d4b57aa"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "5efaeb6f46e331d9fec587ea9c64ab0b7c3d9941"
+    },
+    {
+      "path": "PackageAll.bat",
+      "type": "file",
+      "sha": "d08d61a5ad97bf0fc1c29eedcbc393eca8c6fae7"
+    },
+    {
+      "path": "PackageEditor.bat",
+      "type": "file",
+      "sha": "af1d6799d12241d4eb7b77e24769687421cf4f96"
+    },
+    {
+      "path": "PackageEditor.command",
+      "type": "file",
+      "sha": "a0e20ba8e6abac5a2de2b86fe1b7de443f1fae1a"
+    },
+    {
+      "path": "PackageEditor.sh",
+      "type": "file",
+      "sha": "6d500eb0d4f59dddc982ec24a1a3a6ffe0e791c2"
+    },
+    {
+      "path": "PackagePlatforms.bat",
+      "type": "file",
+      "sha": "417f6c6a4250634e1b4676a902089335ad57c110"
+    },
+    {
+      "path": "PackagePlatforms.command",
+      "type": "file",
+      "sha": "120779f0abb5c2632851b89c1357f83a8230d694"
+    },
+    {
+      "path": "PackagePlatforms.sh",
+      "type": "file",
+      "sha": "65436d15807be414c340eceb5a5d664e66706d95"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b2786f4d65e7be18551b16658075a1539cb0c78d"
+    },
+    {
+      "path": "RegisterEngineLocation.bat",
+      "type": "file",
+      "sha": "8ceebf6d8becb46266b5c578c5cbfcd9cdc5d4ce"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "b86c4a64106000db7c7346d6745dd96eb68385d6"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "587dda9710cdf3826f89a0597473df2729df5813"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "d07970ac26fb93b59827959787371127647cf6fa"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C++/C# engine; Source, engine project, platform packaging/build scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

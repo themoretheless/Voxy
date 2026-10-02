@@ -1,0 +1,104 @@
+{
+  "repository": "ObEngine/ObEngine",
+  "repository_id": 55010544,
+  "commit": "932ad92df724caf202c0cf89d1f6dd393c1ff192",
+  "source_url": "https://github.com/ObEngine/ObEngine/tree/932ad92df724caf202c0cf89d1f6dd393c1ff192",
+  "readme_path": "README.md",
+  "readme_sha256": "fa5b45dfc2e08ed6bca65f4c667f084d322c622f99a98465353b3619ab1255fa",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "c67378ecb9eb56c363d81118db38c004ceeae096"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "026aafa152e69e5e9fca3b94aba1c1c5b26a322d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0cdc2f1e39de6b98dae0de62b654ac227701f3cc"
+    },
+    {
+      "path": ".lua-format",
+      "type": "file",
+      "sha": "bff28e1d8ad0e0931e1d5578e01b7a0ca849aa2d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "14aeba3f117a321c2d015350d100393058beffa6"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "df075543140df9a00503d869453b683260c1bc13"
+    },
+    {
+      "path": "CODESTYLE.md",
+      "type": "file",
+      "sha": "c4ae7bce169081c833697c893c32a656038fbdc7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "84c498a4782974d5a370da4391d82e3e6782d091"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "435ee54de94de22f278cf37e464ea51c0448c040"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c4fd7301fa2d21404c96fc33648bb190db1a52b0"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "a56f09283745c46116fc90ec7c7023699488df09"
+    },
+    {
+      "path": "extlibs",
+      "type": "dir",
+      "sha": "3b5231e355bbc570c9391a9a22067268fac65a64"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "9819153b7ece4e1eeb9b0396f0ea3429c97a17a2"
+    },
+    {
+      "path": "license",
+      "type": "file",
+      "sha": "a50e551b26e8764ab7a81229f22eb04c3804629e"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "06f0bfed59f4db38604849ffc7a76c8b343ea774"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "551f79c82b4ed8604e2e33a1873d9c04586f916a"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "00923fb62447330c4aab124ec517ecb84094c621"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "9f205fe278fd2b33921897405ab44f8410685918"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies paused Lua-scripted 2D engine over SFML; owned engine/src/include and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

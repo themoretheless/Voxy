@@ -1,0 +1,67 @@
+{
+  "repository": "KoboldKit/KoboldKit",
+  "repository_id": 12592611,
+  "commit": "ae78265b05bb85b484ce9ce36ee8cb890b05ae60",
+  "source_url": "https://github.com/KoboldKit/KoboldKit/tree/ae78265b05bb85b484ce9ce36ee8cb890b05ae60",
+  "readme_path": "README.md",
+  "readme_sha256": "55a35f4241ff8f3e07ef0831de4e05c16af4f6ef7475a016c7cfea10211ca47c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3e2b257381dbe852cc81896f92be4bd398d16e08"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "KKNewProject.app",
+      "type": "dir",
+      "sha": "f34538f3015d90c55a1daee5db88af26f0de8ed9"
+    },
+    {
+      "path": "Kobold Kit Documentation.html",
+      "type": "file",
+      "sha": "0fe58d741436a4c04a4225f82b29d7ef49643417"
+    },
+    {
+      "path": "KoboldAid",
+      "type": "dir",
+      "sha": "fb83f197fcabbf46ed44d0fa98414d3931767b35"
+    },
+    {
+      "path": "KoboldKit",
+      "type": "dir",
+      "sha": "b1958e302b85db1126c3049130e1adaaead05b07"
+    },
+    {
+      "path": "KoboldKit_Game.xcodeproj",
+      "type": "dir",
+      "sha": "fc3fd1e6e14724222fa107b8857aa4013cf3e012"
+    },
+    {
+      "path": "KoboldKit_Game",
+      "type": "dir",
+      "sha": "90dc13da1685dc3ec6a5109d881573a7f0463f94"
+    },
+    {
+      "path": "LICENSE-EXTERNAL.html",
+      "type": "file",
+      "sha": "3c28461f68105998ac27d05fa98bd982b838911a"
+    },
+    {
+      "path": "LICENSE.html",
+      "type": "file",
+      "sha": "d3fae76f9f9407621734c4f397abd171047ffb7d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1dcddd252e208f1b3b8d471d69c3f948ac16690c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

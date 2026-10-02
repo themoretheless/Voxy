@@ -1,0 +1,79 @@
+{
+  "repository": "opdsh/unity-plugin",
+  "repository_id": 1349900532,
+  "commit": "1cfcc6c33962152c8db22ada853179957d69c43b",
+  "source_url": "https://github.com/opdsh/unity-plugin/tree/1cfcc6c33962152c8db22ada853179957d69c43b",
+  "readme_path": "README.md",
+  "readme_sha256": "826a25dfd4e2d9dae78f575db29fe62bc133a3a4d4882b85aef85451f750e202",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "99d245a922fe73e6ed68204c26566ed43bb372d3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "bf3779c9d31877168d68b3c1f07a1d88a39538e1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "62019c6f6ed6d148f138befd85414cf8bf337c0d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd279d0eea5258714f8d3e9630f43536eced8973"
+    },
+    {
+      "path": "README.zh.md",
+      "type": "file",
+      "sha": "6a0172fb85f5f071bd394431f26680005b8ee09a"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "1c415b3e4280a91115ad53af8b69857ff08c6ed2"
+    },
+    {
+      "path": "cordis.patch.yml",
+      "type": "file",
+      "sha": "8d7977139308a6e86f2e2431a99e4dd101ddd94c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "781841dc9d79b352d52a3ab00d56f3c5ca0889fc"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "1ffbdccd152562b0b4671ca052a9c177423d895f"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "973e14f6c9e530afb43a3a475c966df0a6d525ec"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "367739b6c7952eb92ca7817b856e87137c1b27a1"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "4db5e9deefbd696cd971de6af460e16fd5ff0cb8"
+    },
+    {
+      "path": "tsdown.config.ts",
+      "type": "file",
+      "sha": "67cd196824452b1bf43bf7a5b058d9588781d643"
+    }
+  ],
+  "classification": "excluded_automation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Agent plugin controlling existing Unity Editor via CLI; not an engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

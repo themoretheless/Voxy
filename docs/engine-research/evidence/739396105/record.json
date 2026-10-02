@@ -1,0 +1,52 @@
+{
+  "repository": "meredoth/Stat-System",
+  "repository_id": 739396105,
+  "commit": "d16e17ca6308e881ef90cbc7641a2a09b58f24ca",
+  "source_url": "https://github.com/meredoth/Stat-System/tree/d16e17ca6308e881ef90cbc7641a2a09b58f24ca",
+  "readme_path": "README.md",
+  "readme_sha256": "0aaa0afb5aec5e037abb3588de8936823002e054a6495525f2ff5cf82ecb2494",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bd33322222abe8fa62113782266c9aae0c67a164"
+    },
+    {
+      "path": "Assembly-CSharp.csproj.DotSettings",
+      "type": "file",
+      "sha": "9d2c5bf10be7d718efd022da4cccd664aab9e8f5"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "e3ae5a6eb1be008645572bf39181aa8554faa5c6"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "fbe39456cb568de75be39629a5cdc137e8ff192d"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "12ce2c85eaff3c5a1bca690561033930ebb2600c"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "ddaaac7fb819faccf04320c8b1885418988ab4ee"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "eef5383d9ed651800cbde051dacfc77d5e03afb1"
+    },
+    {
+      "path": "StatSystem.csproj.DotSettings",
+      "type": "file",
+      "sha": "9d2c5bf10be7d718efd022da4cccd664aab9e8f5"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "denyskryvytskyi/ElvenEngine",
+  "repository_id": 218837456,
+  "commit": "4ac0f83fcb7248bb19f6bae50d77e60d65e93171",
+  "source_url": "https://github.com/denyskryvytskyi/ElvenEngine/tree/4ac0f83fcb7248bb19f6bae50d77e60d65e93171",
+  "readme_path": "README.md",
+  "readme_sha256": "19274175eabba2f46fe364acc69ae9e01f21a5e5eb103c9fed3c2d5d63408eec",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "422005074b0c3454b74c402ce49797fc3dadb9db"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "122e4324121a511d21b3a041fc764b14e0be83da"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "82ce88eb2801e8bd45d9067552f3a6aa4cf9a90f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "764c30385d7e1be8ef067a3e853af2626b81c8db"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "18d090aec865fcc4ae4c6ea60d95a21f4bd847e9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9d73dad816d3805cde02d08efe02dc1bdcaefbe5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "34a2d0cbff3c34106fb36a8cf9e649472235f22c"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "37f6b1f2c857ca587cf1fce58872c555f43951f1"
+    },
+    {
+      "path": "Games",
+      "type": "dir",
+      "sha": "6025e36912b6246fc5999c459043c45fdf3c34b4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cbb46655351f940f0fa1854aba48f7df75811a87"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3fe63da01ee34c8488f777b4392a4ac6229e75bc"
+    },
+    {
+      "path": "Sandbox2D",
+      "type": "dir",
+      "sha": "bf8a75871d437d50bd92c8c705cba22d7086735c"
+    },
+    {
+      "path": "Sandbox3D",
+      "type": "dir",
+      "sha": "965c02c7bcc9c1ebcf9efdb64e61edfb38eac230"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d11a4fec731d36a96b490b6b999c6348942859c5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ 2D/3D engine with scene graph, Engine source and sandbox/game projects; editor remains WIP.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,249 @@
+{
+  "repository": "TacticalMetaphysics/Lisien",
+  "repository_id": 9240835,
+  "commit": "fdadc1f9393d2f31752ec8896858678fff82020b",
+  "source_url": "https://github.com/TacticalMetaphysics/Lisien/tree/fdadc1f9393d2f31752ec8896858678fff82020b",
+  "readme_path": "README.rst",
+  "readme_sha256": "4d67f17fc03f2170e9278980995f3d4db9a0dedc515de14a2212aa9e98c9cd2a",
+  "entries": [
+    {
+      "path": ".coveragerc",
+      "type": "file",
+      "sha": "4ce7e69ff20bf4fd031882c4cab146f381f8cfd8"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "06accc41fa42efd205b8a0ca3a6c8c7f9cd578a5"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1177240f654beb65145b02aafee6e28f10a6586a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8d57e8dbc1155903642e44fca02ba957847497c2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "5c5f04bce0b53dee50e969385926310c456a882b"
+    },
+    {
+      "path": ".woodpecker",
+      "type": "dir",
+      "sha": "3f605ee12d6907066fc86505837bfaf89725f8be"
+    },
+    {
+      "path": "CHANGES.rst",
+      "type": "file",
+      "sha": "d265cd61d683930731b27672dc27ce2b937427ad"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "08a0f1dd4a9cf01e96e9f97e5fe73f055963668b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "bc3899b456d2e84b5848f2608ac82a877ef5fb5e"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "13099658b3dd581609a0271d5a3f0194603f309e"
+    },
+    {
+      "path": "Dockerfile.foot",
+      "type": "file",
+      "sha": "2848189244357eef1cc3beeaf39314217c0b23d3"
+    },
+    {
+      "path": "Dockerfile.head",
+      "type": "file",
+      "sha": "78ca2bd686f4ee6d3973f2a5d967fef88855b1a5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52"
+    },
+    {
+      "path": "README.rst",
+      "type": "file",
+      "sha": "8973784b866037be3472f9e16aaa7c8c8f2461aa"
+    },
+    {
+      "path": "_static",
+      "type": "dir",
+      "sha": "305b6549b05ca11946cc7dd474fd3e4adf45f111"
+    },
+    {
+      "path": "attrs.patch",
+      "type": "file",
+      "sha": "73fe3f65f11c5edc1e2c84e8666be20cb6f07f45"
+    },
+    {
+      "path": "buildozer.spec",
+      "type": "file",
+      "sha": "465090832fc35ad2ce5ffc0a7bba292d41e8f6bf"
+    },
+    {
+      "path": "butler.py",
+      "type": "file",
+      "sha": "dcbc43578d939116522abd18b682a6ac45eed3b4"
+    },
+    {
+      "path": "changelog.d",
+      "type": "dir",
+      "sha": "8942a53e4ee8fdad6f1eeaa7a24619ed43214f21"
+    },
+    {
+      "path": "check_version.py",
+      "type": "file",
+      "sha": "a8ab0073bf02892aeaaf723896542941302ac6f7"
+    },
+    {
+      "path": "conf.py",
+      "type": "file",
+      "sha": "07ba28112352db89317c0408dc7d2e004fa9373b"
+    },
+    {
+      "path": "convert_changes_to_rst.py",
+      "type": "file",
+      "sha": "7571f78c67564ef1baf9aad4c36b44e5e4df5269"
+    },
+    {
+      "path": "elide",
+      "type": "dir",
+      "sha": "b8ba271ab1ad4d2bfafe048676222311edb54c83"
+    },
+    {
+      "path": "elide_icon",
+      "type": "dir",
+      "sha": "c9fa4eea5c3df49913e34f7f439d7d976b47883f"
+    },
+    {
+      "path": "fdl-1.3.rst",
+      "type": "file",
+      "sha": "d71c2a257aef5a57870c113af73fcc4d656e006e"
+    },
+    {
+      "path": "filter_kivy_logs.py",
+      "type": "file",
+      "sha": "b043e5792d49f38080e1b4652db092c3d4a1afc6"
+    },
+    {
+      "path": "find_ramdisk.py",
+      "type": "file",
+      "sha": "af199574bf947256eccdc3e2d322cd5e958a7fc3"
+    },
+    {
+      "path": "gen_dockerfile.py",
+      "type": "file",
+      "sha": "dea241ced07410d6f5c7cc840aaf366370f6a66d"
+    },
+    {
+      "path": "index.rst",
+      "type": "file",
+      "sha": "c854dc9002db619c13eca3b496736c7e8c8d4ccf"
+    },
+    {
+      "path": "kivy.patch",
+      "type": "file",
+      "sha": "c38444647447782e09f18fa1b3a8cf3ee4cfa3c1"
+    },
+    {
+      "path": "lisien-windows.tar.xz",
+      "type": "file",
+      "sha": "05c551c40d90344c7824c1aa33ab61dbc1880f1c"
+    },
+    {
+      "path": "lisien",
+      "type": "dir",
+      "sha": "5c24f2c5d76c047a2d51a77c03c3991b20e604c7"
+    },
+    {
+      "path": "main.py",
+      "type": "file",
+      "sha": "6c6c4da66ff6268fc54165ef7559ca44cbf6296a"
+    },
+    {
+      "path": "manual.rst",
+      "type": "file",
+      "sha": "2c79804a98f2ed2f3b06a5fd04a16279de8cd0b6"
+    },
+    {
+      "path": "pages",
+      "type": "file",
+      "sha": "127100d0cf3578e779581f1294e92d42184b9726"
+    },
+    {
+      "path": "pull_kivy_logs.py",
+      "type": "file",
+      "sha": "0f56eb93b6f62ff6563eeed3de7fefeba2e0cd6a"
+    },
+    {
+      "path": "pycharm_tox.ini",
+      "type": "file",
+      "sha": "95ddd93033db24cfbe72caf0ca4422660bfda31d"
+    },
+    {
+      "path": "pytest.ini",
+      "type": "file",
+      "sha": "7738ac6162e5104b0d6148c9791884dd1589f499"
+    },
+    {
+      "path": "recipes",
+      "type": "dir",
+      "sha": "e1a74c4685f10dd9f30e3c4a3cf26b62fac845e0"
+    },
+    {
+      "path": "regen.sh",
+      "type": "file",
+      "sha": "8a1716d2ec008b2c8c1669e8c9a6a0bc5fcb41e8"
+    },
+    {
+      "path": "release.sh",
+      "type": "file",
+      "sha": "c2ea24ef48dd6f975ac9a64a14000530b2694f95"
+    },
+    {
+      "path": "required_env.sh",
+      "type": "file",
+      "sha": "c52f45e21935a1fde873e94293b9bf55b2c18df2"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "9511a3b4e7feec0a94ded442ec882cd950650dad"
+    },
+    {
+      "path": "ruff.toml",
+      "type": "file",
+      "sha": "8e72ed9666ac3e37e98b7a198bf2a50be6c98509"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "46fcc79bc4c8a4655604a02182168533a4174d68"
+    },
+    {
+      "path": "towncrier.toml",
+      "type": "file",
+      "sha": "f9b6f76666920f447f827c66e3f126e37a26f0dd"
+    },
+    {
+      "path": "updbuildozer.py",
+      "type": "file",
+      "sha": "171164a19ccb5fa6a71eba4a236fbb14891e150e"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Life simulation runtime with persistent branching history, rule execution and graphical Elide frontend; not a general 3D engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,129 @@
+{
+  "repository": "sschmid/Entitas",
+  "repository_id": 17873382,
+  "commit": "37547d1bd280f3f1c1ef7edb44f2a206660fbfb4",
+  "source_url": "https://github.com/sschmid/Entitas/tree/37547d1bd280f3f1c1ef7edb44f2a206660fbfb4",
+  "readme_path": "README.md",
+  "readme_sha256": "fd36a7c119fc307e2d3749b81b90badd6b5450bdd69af7349d856a956e4d9ebf",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8c459542dc2071c9fb2c180df51525580b1437e7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f592e9975ca98dd74b0a65fcd6702b8c7f45b16"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f884de0766d5531edaf2562239721fce2aa7d285"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e07d9aae5abde5aebe8efcc10956e59efe373269"
+    },
+    {
+      "path": ".sln.dotsettings",
+      "type": "dir",
+      "sha": "f5c096df9a861ed2627f7eb5ce0d9743fee96ece"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "b540480b20bd9fdf90f08a1c173fc992287172f3"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6a8191820eeac445cdb7fcf5f8d4cb75c0a28b8b"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "09566c0798c31df413415bdfdd515e89da746819"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "e7f9e9a0811c6472f228de9189bd38b320f0e197"
+    },
+    {
+      "path": "Entitas.sln",
+      "type": "file",
+      "sha": "c09c3a1f42eff2d9a17ba101f871385125864e52"
+    },
+    {
+      "path": "Entitas.sln.DotSettings",
+      "type": "file",
+      "sha": "1d715fcd403797de757646faca7ddd2aa22b9f08"
+    },
+    {
+      "path": "EntitasUpgradeGuide.md",
+      "type": "file",
+      "sha": "f6f0c7ffe8196aeb053b2ea17ed491606d389fe0"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "54a326ee7cda4aeea92009dc7788a022ff8e9916"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2c97769328d49ff701ce6b583d69877c0b6c11a4"
+    },
+    {
+      "path": "Unity3D.props",
+      "type": "file",
+      "sha": "c39aaaefa8bccb04b15aaa995c8c2c7fa097f7b3"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "5a2e84afb1f9d909695145414adb0f12f0353b58"
+    },
+    {
+      "path": "gen",
+      "type": "dir",
+      "sha": "351f8ba82e704772ec749acd3a1e9bd632c2094f"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "f5df41e05d7c0b17be7384e5643b47329834efe7"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "d0427451ddec96ca92266088e3722b25707e9b4e"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "c83c9202bb705f9a593f842f1f2af74a7f3f7f8b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e9d73c6de4e11e964b24f8abd618042f1fdcdba8"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "40c4fb772e35ad3550063b6ae93ab6f8c6966edd"
+    },
+    {
+      "path": "unity",
+      "type": "dir",
+      "sha": "b6fb250bf336795bf053c4810170f1dcffa07603"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies ECS framework; src/tests/unity and .NET solution, no complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

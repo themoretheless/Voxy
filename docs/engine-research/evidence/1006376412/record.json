@@ -1,0 +1,199 @@
+{
+  "repository": "ChenlizheMe/Infernux",
+  "repository_id": 1006376412,
+  "commit": "7a94c6da0277a9e03b8c69ca3339db9912d36b0b",
+  "source_url": "https://github.com/ChenlizheMe/Infernux/tree/7a94c6da0277a9e03b8c69ca3339db9912d36b0b",
+  "readme_path": "README.md",
+  "readme_sha256": "64e56dc99de1f2cf2a18a3d3adcea1220e2eae0a46042d0e8ff3d1564689b547",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "03c9ed7ef46610954929ae9771c25cc9938f885f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfdb8b771ce07609491fa2e83698969fd917a135"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "2d2e6329fed35579e29b620936003ba1f0b1d7f0"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c1456814d8960eed3122fb0dd776f8a3b810c402"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bc773246c9a1e68db94d805c347690faef775491"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d6ffbcb7737698c5c6160aa2cd54e92c7f7ff6bd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8e5d501952208332b90470c8ea38b88396a6faf4"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "e0168ecbff2315415e68db77d5c78b3c4222316b"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "d1a8e2ab16838d135e6f57e8c5c31f1e27ae107b"
+    },
+    {
+      "path": "CODE_SIGNING_POLICY-zh.md",
+      "type": "file",
+      "sha": "f6523769375f6e27bbc17105bb715e63fc94350c"
+    },
+    {
+      "path": "CODE_SIGNING_POLICY.md",
+      "type": "file",
+      "sha": "a47fdba65fb4042487fe04f73362887e3a01b485"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5ebbe8539b1b3d012fbccc9a265c7c78f27c1f38"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e1981ee5415d3608d8bcfeb97ed350e878639a18"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "7c00d081d3738949a1a3928e64cad94ee818cc96"
+    },
+    {
+      "path": "README-zh.md",
+      "type": "file",
+      "sha": "6d820c17dce9cc98decfa3f0b48ca860c33a6576"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5512f2a03d8a6ea5a0c5ac850406d1af86bedfc4"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "55c7ee01ff7b510f4710a86c1d4be7374fdb474a"
+    },
+    {
+      "path": "SUPPORT.md",
+      "type": "file",
+      "sha": "4d81d62b5a81fcc35c638d08609ee218de1fd9ba"
+    },
+    {
+      "path": "TESTING.md",
+      "type": "file",
+      "sha": "cf6c489e3040b63458cf666aafd1dab9144bb343"
+    },
+    {
+      "path": "UpdateLog-zh.md",
+      "type": "file",
+      "sha": "9526ee2f7fc91ddfe8f8c005a5451c16f860befb"
+    },
+    {
+      "path": "UpdateLog.md",
+      "type": "file",
+      "sha": "273709f64cb8d6d93e141f621fcff985562fb3b7"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "08aac6917e5355d0f318edaa76adab082c07c0a4"
+    },
+    {
+      "path": "copy_dependencies.cmake.in",
+      "type": "file",
+      "sha": "70d35ff958e96d9d507461409f8aae515e95bc99"
+    },
+    {
+      "path": "cpp",
+      "type": "dir",
+      "sha": "f4f976ca77787e6fc58de6168290f2d921f2e8a1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "67ece702755c9a9477a88f998acf1e7046ed7f22"
+    },
+    {
+      "path": "environment.yml",
+      "type": "file",
+      "sha": "03506f24e5130755796ab5cc768704bbe118531f"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "391dbed4b409137911e8d2e1161f4ae67e50ba49"
+    },
+    {
+      "path": "install_wheel.cmake",
+      "type": "file",
+      "sha": "522e07e9c208fbef7bb4ea7ce556ff6a7dac4403"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "e89105fff31794646b6a17e9432448db38f8ff68"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "ac6f902dbb9cc49db8d9d8ea31093ab4a42a7e4d"
+    },
+    {
+      "path": "pytest.ini",
+      "type": "file",
+      "sha": "3e81367799de36aa214e0b809ea10e8d4411b28d"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "83e4e9ae24a46c58515354a199fc14a8ab8a3c2f"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "90f878bfa8b4a658c1b664232c32fbdda10f8098"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a7fc4f42700667c5c60446f6424990a2e839c4ca"
+    },
+    {
+      "path": "setup.cfg",
+      "type": "file",
+      "sha": "b63d7f47fb5145fa7cc908d1db80cba48c66efb5"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "d1a833f844e1936f82772a13e7ecb13ab93a0c55"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "fbea4cb6c913b266cd0b17d4907d8950a2d78b2e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Python-authored native engine; CMake and native/Python build metadata. Neural-engine and platform claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

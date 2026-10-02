@@ -1,0 +1,22 @@
+{
+  "repository": "raysan5/custom_game_engines",
+  "repository_id": 932061045,
+  "commit": "6a87f9e8c94a4d0e56d916ec1505b9bc00bd550e",
+  "source_url": "https://github.com/raysan5/custom_game_engines/tree/6a87f9e8c94a4d0e56d916ec1505b9bc00bd550e",
+  "readme_path": "README.md",
+  "readme_sha256": "b4ad01b5a088ab56f7bccd1fd2b90816a352c2529ff66fdd2f61d3ae1b9d5310",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0e259d42c996742e9e3cba14c677129b2c1b6311"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "93debea5bcc48c2c38ec125ae9f2b59355a06878"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

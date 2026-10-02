@@ -1,0 +1,94 @@
+{
+  "repository": "aryanbaburajan/ducktape",
+  "repository_id": 401676200,
+  "commit": "821fad208430975f2fcceebcc5da4514e72e68db",
+  "source_url": "https://github.com/aryanbaburajan/ducktape/tree/821fad208430975f2fcceebcc5da4514e72e68db",
+  "readme_path": "README.md",
+  "readme_sha256": "fc128ad49eaaf1adbc64f553b4c29c962a5c64bcdcafa1d8e7d2ac78f55fc812",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d9272b72824a8f4b7709441686964e18e41c0e8c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "45dd558d8bd3139e4c3e1a317252e4caa46b32bd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "64fb93f0f34dd0621af8a3dc6f8565fa67608a3d"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "17f0001b9e1d5b0dc76f01d10af4903ddc60fb67"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "25b345d8f00ad171a9ec7c12092b7ab6ce40f877"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a32ad9e04a2581e33135b58e5864b879140f907d"
+    },
+    {
+      "path": "branding",
+      "type": "dir",
+      "sha": "57198eadb6dc9f1f6b5b76a88be20a8330f67587"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "aff8d043c52935cc5ee280c392b4d247d185539e"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "cbd9d688816eaaa67c3a318515e183e2e812f3c5"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "c8f11f7cc7118350c8fe1c80287ae1853d5c030d"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "5bec1321a13b487b6ec0934f3d2ca194e8d6c159"
+    },
+    {
+      "path": "install-deps-arch.sh",
+      "type": "file",
+      "sha": "0bd5836b2845fb69b4ece2d3be40970259b417b4"
+    },
+    {
+      "path": "install-deps-debian.sh",
+      "type": "file",
+      "sha": "8ccea5df204be1598cc84f4c3047c2c6899bfba0"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "71de588efe512e10976932f10e2732c99434feee"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "a21d9d9cc6ae2be5737644a2c318dda300be8a78"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "e21be8cdf46898b4fc5e4ecef5a7855e9e1c3750"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ engine with engine/runtime/editor, ECS and native DLL scripting described in README; performance unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "ZeroElectric/Raylib-CSharp-Vinculum",
+  "repository_id": 575087234,
+  "commit": "e2439137f2b100b564348ea25335dd133eac35ab",
+  "source_url": "https://github.com/ZeroElectric/Raylib-CSharp-Vinculum/tree/e2439137f2b100b564348ea25335dd133eac35ab",
+  "readme_path": "README.md",
+  "readme_sha256": "2d64e99fcb71a2828fe1c9eb82e4689f98ff6f9ee314a006339a347ce0ea09d4",
+  "entries": [
+    {
+      "path": ".assets",
+      "type": "dir",
+      "sha": "0c95304eb380bdb6d1fa52a9f66a4928f421676a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d4d54316eb71f6715763c0d8bb325a2a7ba0290f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5ec9335030a4c234c6d4925a5f4c3970165d3a11"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4b8b77bc2cddf4d93f4ad01dea4c5d34e8bfef7f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "28f6dc96b1060fcaa2909186d488adba8c126d2d"
+    },
+    {
+      "path": "AssetAttributions.md",
+      "type": "file",
+      "sha": "c9923fd98a099e7e1283928ad28e049de64f93cc"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "bc7d481a8caf2f659677631ae81fd80328a2839f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "25c13539b1ea5829fa608b12d574da0cc992d7cc"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "7cc5926f68a724a9e7ce1823829b338b95b23820"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5f7a7c495cfdcb43f47e82372739c1abf8f21811"
+    },
+    {
+      "path": "Libs",
+      "type": "dir",
+      "sha": "8df93fbe3d1f03699eae71c1f070fcf6fd345d40"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "eb4d69dfaa7e9067873c363d39d910ba5679245d"
+    },
+    {
+      "path": "Raylib CSharp Vinculum.sln",
+      "type": "file",
+      "sha": "50a4f1fe4f1d7f9ddb61e7cdde6cc7c4f2089d73"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "fd9af54a30caaab17e4502c79fa47cb85e6b0116"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "3c34a93eaf00733ff3ebe45705d28e80cda7f6d8"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "160b1fd1f9b3d656a6ffbb66863aa74539617147"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Generated C# raylib bindings and convenience wrappers including extras; not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

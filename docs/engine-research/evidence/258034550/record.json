@@ -1,0 +1,114 @@
+{
+  "repository": "josefjadrny/js-chess-engine",
+  "repository_id": 258034550,
+  "commit": "25c8a1f077b81999faa78d504c74ec42639903b1",
+  "source_url": "https://github.com/josefjadrny/js-chess-engine/tree/25c8a1f077b81999faa78d504c74ec42639903b1",
+  "readme_path": "README.md",
+  "readme_sha256": "5237724533dd6b6319145f594066a572f3a37e4d1b50cfd53de61109f7c424fa",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f3127592dcfa1d819d253ab7fa78fcd7bbfe631"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2adb43e18a3d121c7fa0d0fe18ca7e79e51728b0"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "a45fd52cc5891570d6299fab38643103c3955474"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "db4e733bf052233aa94eef426c3b4f6904d9926c"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ba0049ef078787aa26d1ebd8ecb84d3969785d8d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fbb2392a7ab5a1c6255008f60e50e8847d60b757"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "121263edc650b798047f18672772db6b50bd44c2"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "262018231d3cc7330f1966ce1501605c923123d3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "35c286a080435df31746e02f356c7577a81f8305"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "d4620c74073bbcb16f00b15914361eb02479e018"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "6b4d71e5ee0f94c954f89a76e72972be1ce73747"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "b15568ef3540bb063f211373e2952f8ad4668a4c"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "da9c86c591c95c15f1551329894dbebf510cef7c"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "f820f704463f9c56c7bdf6344c66ed7b7163c8bf"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "47bff9f91ce19267d9eb02f9525a48306d84d0af"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "aebad1ee8b86843804e29f24411fcc689516ad58"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ae9c280a4eefe32ac838c0f1d077040e2608299d"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "44e069bd3cd705ca63319ea154fdcb798e075959"
+    },
+    {
+      "path": "tsconfig.eslint.json",
+      "type": "file",
+      "sha": "4b9020d7cbf3b71ddf70463b01d5aed1ad5a7807"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "d762a8559a85775e9233cf6aa4114860eaf3bbb7"
+    }
+  ],
+  "classification": "specialized_rules_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Chess rules and AI library; does not provide a graphical game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,69 @@
+{
+  "repository": "JuanDiegoMontoya/Gengine",
+  "repository_id": 286137951,
+  "commit": "69b8355143df53defa8c201df58e813916c92a3b",
+  "source_url": "https://github.com/JuanDiegoMontoya/Gengine/tree/69b8355143df53defa8c201df58e813916c92a3b",
+  "readme_path": "README.md",
+  "readme_sha256": "17325756602a395f53b36889fdb60367085dcff05ee8f0be60289ddcbbcd0b98",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "4dc261d4a0e52b58dabdc2f0ff21971464a53f8e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d1355e984ac2ef2ba20965810f8f139eb4cc211e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "Gengine.sln",
+      "type": "file",
+      "sha": "39fc156bfd68d9009f44165c0e224ffc8899c6a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "be20d03cd34a03c8699db0e069397d2cb2418c46"
+    },
+    {
+      "path": "VoxelEngine.vcxproj",
+      "type": "file",
+      "sha": "7d2500165ba95e9956779369edfd7578bfc2340c"
+    },
+    {
+      "path": "VoxelEngine.vcxproj.filters",
+      "type": "file",
+      "sha": "f7f6e089494162a6e4c78bd8ae0582e2a626dc58"
+    },
+    {
+      "path": "VoxelEngine.vcxproj.user",
+      "type": "file",
+      "sha": "f76aa5e49364b8cdda685c0bf7039c0f54389cb1"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "2d1bdd24a4a6d275a1beb7803bf61e9594f833f2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ce2d73b88ead1cb9614873d46047574720fcbf6d"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "48f2ccefc3748b6f2d25ec53f52a21d01b34d4de"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ voxel engine integrates ECS, hierarchy, scripting and PhysX API with graphics and assets; src and solution present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

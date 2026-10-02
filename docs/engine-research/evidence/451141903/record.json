@@ -1,0 +1,94 @@
+{
+  "repository": "HyperionGameTech/HyperionEngine",
+  "repository_id": 451141903,
+  "commit": "d24442eccf87d0380868628e5a8fe4b0dcf02b04",
+  "source_url": "https://github.com/HyperionGameTech/HyperionEngine/tree/d24442eccf87d0380868628e5a8fe4b0dcf02b04",
+  "readme_path": "README.md",
+  "readme_sha256": "1c51a1ff2b1c2b57dde8bfb9f841e3653ae054e7452ef71a19c9a758fcb1608a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "9ed4e05d59c8b2407e7ff6f9c5a8c2e186b069c5"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "f4ab1e9be32926da7ed6a6cba57696cc491ba1b5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3deae1ede3173a902d49cae9eb817f613891e274"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "568f25db8b5f7703d11de06ee8cf4adb0bf05a64"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "4276d5b4c5f0ecca78447f9fe4d726726970b7ae"
+    },
+    {
+      "path": ".zed",
+      "type": "dir",
+      "sha": "07c1d2c06b63149477332c150e711e58a5f3bb41"
+    },
+    {
+      "path": "Config",
+      "type": "dir",
+      "sha": "9b1661224994fadb51d733bf68e22e0cd56b265b"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "440728b4e98e051dca139f904169955553418f5a"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "900156ab02bcc8e8d83205683cd71b652153af35"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "52cba961fb612b4428d833d70341aea10d4e37de"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8a539f7c0c2b450c22b551d8a7d89a6a22438aa4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a716e1b7a0688226380004763e4177d260dad21f"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "b44cc61f684665cb77415e4cece091b3d33fbe4b"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "d85d023f3015de2e360a77939346a1bd2df36616"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "7493e7ef02ff0ee50214ce4fb7b04fca4ad7907a"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "3a717cbf607a42a311e5040772b797708fef98b4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify native managed game engine; Source/Tools/Content and build scripts. Platform/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

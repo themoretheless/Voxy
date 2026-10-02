@@ -1,0 +1,87 @@
+{
+  "repository": "MrDrElliot/LuminaEngine",
+  "repository_id": 888666476,
+  "commit": "c932e7a9c324271a5d40ad0bf05e2ad2d16861e6",
+  "source_url": "https://github.com/MrDrElliot/LuminaEngine/tree/c932e7a9c324271a5d40ad0bf05e2ad2d16861e6",
+  "readme_path": "README.md",
+  "readme_sha256": "830d99286701830db5d9670536b10babf0aab7e34a9fe1402e5617ebbadbedd9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "aaa7720da38ae53b98b1d59eafef9b5889de46c2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b634a1b36d968027ac7231369bc2c39739aa2ccc"
+    },
+    {
+      "path": "BuildScripts",
+      "type": "dir",
+      "sha": "33cb489d43dcda03faedf0be8391f7b17cb6f153"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5751253c6aaf7703caff7af0a76e2075476ae647"
+    },
+    {
+      "path": "DEPENDENCIES.md",
+      "type": "file",
+      "sha": "38693625954c42430c5383c2104d90c6c9ed9694"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "f4e539906027c4e2670ec3f4e04c17578440d7dc"
+    },
+    {
+      "path": "GenerateProjectFiles.bat",
+      "type": "file",
+      "sha": "28fd5ba572ce34755a2614dd09bb5003c92f2242"
+    },
+    {
+      "path": "GenerateProjectFiles.sh",
+      "type": "file",
+      "sha": "21fb71c1ae11f5293f7c32fe210720540b97a0e3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "LuminaBuild.bat",
+      "type": "file",
+      "sha": "1fb70ac368665b0227c4502fb80438916f708867"
+    },
+    {
+      "path": "LuminaBuild.sh",
+      "type": "file",
+      "sha": "1867a6c3584f5e6de39cd523d4d636ce75fe73ac"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "da97c8385983f12422e56e658f2d66f97a2944b8"
+    },
+    {
+      "path": "Setup.bat",
+      "type": "file",
+      "sha": "69e7ac96e2066488c49f97314d7e0ba3146fab47"
+    },
+    {
+      "path": "Setup.sh",
+      "type": "file",
+      "sha": "f146a390d7b36c4e993d082d98f939f11406f9c7"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "0973dbf541861880c93beafb8a74df7690c9b6b4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

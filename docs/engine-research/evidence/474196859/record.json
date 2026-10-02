@@ -1,0 +1,52 @@
+{
+  "repository": "natecurtiss/mirage",
+  "repository_id": 474196859,
+  "commit": "06539a7c8495bd0f748aaf430e07257febed241d",
+  "source_url": "https://github.com/natecurtiss/mirage/tree/06539a7c8495bd0f748aaf430e07257febed241d",
+  "readme_path": "README.md",
+  "readme_sha256": "6b8877fbf4e1ef98c79d59b87bc34c9d0b47ae9d2f99b7fcd89bd935f3e7437e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "27ff783becb7ab59eb9353de6de478ec76b1d214"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d98d87f6be51fba198555d8d66b90235ad87c1c5"
+    },
+    {
+      "path": "Mirage.sln",
+      "type": "file",
+      "sha": "40aca75922d5157751da375e172bc3c77ed2d49c"
+    },
+    {
+      "path": "Mirage.sln.DotSettings",
+      "type": "file",
+      "sha": "53acbc1245074cf6006875122715c032c3c181b8"
+    },
+    {
+      "path": "Mirage",
+      "type": "dir",
+      "sha": "1bdafe0e70152a8fff3d8bc1c5392c053ac21d5c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bf8791216a808328462a79974d4e2ada5bee17a3"
+    },
+    {
+      "path": "Samples.FlappyBird",
+      "type": "dir",
+      "sha": "26d82aaea2e948adc18f996851f759056bd65f3d"
+    },
+    {
+      "path": "Samples.Pong",
+      "type": "dir",
+      "sha": "141463fdc23226c98c40ab1b9aff896068a96c53"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

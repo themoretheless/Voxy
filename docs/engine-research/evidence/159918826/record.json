@@ -1,0 +1,74 @@
+{
+  "repository": "jslee02/awesome-entity-component-system",
+  "repository_id": 159918826,
+  "commit": "3837816e2b1d96a92da95b50405cd68cf451c6db",
+  "source_url": "https://github.com/jslee02/awesome-entity-component-system/tree/3837816e2b1d96a92da95b50405cd68cf451c6db",
+  "readme_path": "README.md",
+  "readme_sha256": "ac506848799c44b4a2c738bd005029c1505f6ac55af42d37043cccefc419d1ab",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c0529570223690e57551b1429ccc2023f0ef5b6c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b6c5805fb4fe7638e0b2f8a5a3f0bcafb8bf6cd1"
+    },
+    {
+      "path": ".lychee.toml",
+      "type": "file",
+      "sha": "2272ea485f1e0ccda283e5b2971e79b86eda5b31"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "31e1a44445401f5c28455cd30d0f71d56e57158f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cf1ab25da0349f84a3fdd40032f0ce99db813b8b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "da0f98082e7c15b01abefc7e2ba3162444abd6f3"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "f6b39308825656015939b92c69e9345aec7e8852"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "3a6e1542548f5382051e8c7bf1611c4c12f3e359"
+    },
+    {
+      "path": "pixi.lock",
+      "type": "file",
+      "sha": "539cc5597df5480fb2159940d014265fefb85f8f"
+    },
+    {
+      "path": "pixi.toml",
+      "type": "file",
+      "sha": "c1aa17bce15fe4f883263caa3473a7de32584680"
+    },
+    {
+      "path": "schema",
+      "type": "dir",
+      "sha": "5248e3852782a719658440a325b6c70742c20aab"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3aa2b727ce020fe3c18e4dcbe590ab62ed1b727a"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README curates ECS libraries; documentation/data/scripts rather than owned game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

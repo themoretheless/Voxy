@@ -1,0 +1,79 @@
+{
+  "repository": "ddiakopoulos/polymer",
+  "repository_id": 127165004,
+  "commit": "02100384fe10f31e37699c33ed3bb34170a1cd34",
+  "source_url": "https://github.com/ddiakopoulos/polymer/tree/02100384fe10f31e37699c33ed3bb34170a1cd34",
+  "readme_path": "readme.md",
+  "readme_sha256": "c3f48023ce53f8b2596d8add1f1c27f544473d1a045ea97b62cd61f5e91b2357",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "dce888aa5e035c275429ee0b7aef754ed231bbcd"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e4de36f7c627e3e247b38dd23b7f73f6fa410ab7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1ce11d51360c86a2bd1298e56cec54022ec0e2a8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "35445e48a52c1398cf28744432ee63cc55ef2d31"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "5850fdcbfaaef0c86f3c9c1ba8d2f336572d2ff2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fa3ccc8cf0fe48cc2a84ebeb722e38de63adb99c"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "b9c0cdeee8a41a39b756eca946ff306e5c8cec21"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "48f02c0fb5621ffbd6480ee9337e65773da3941d"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "4eb6b58e3745091431d7a8baa6814dd57ec3e29b"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "e255fabbc3e7871668ab09c041bdbd5fe509a51c"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "21f33e55303ea72897aeaa6460adc62e6dc40d5c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2f3a3e709f48cf4cb0dd1574f39894436a07a9b7"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "4ab6c7cdc1ac770c9e5a79f21e0cb379009739aa"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies reusable native experimentation/sandbox component library; libraries/apps/CMake rather than complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

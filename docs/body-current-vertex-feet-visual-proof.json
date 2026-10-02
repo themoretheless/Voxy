@@ -1,0 +1,21 @@
+{
+  "renderer": "Metal offscreen, frozen pre-cage-normalization executable",
+  "inspected": true,
+  "changedPixels": 22878,
+  "differenceBounds": [
+    0,
+    169,
+    575,
+    669
+  ],
+  "images": {
+    "docs/body-current-feet-original.png": "d0112bafa28a0eb34cb9c632a83e0490ce2d0bda28002dd26ab2390b49577058",
+    "docs/body-current-feet-vertex.png": "5f68291d76058e44962320c5a4ea043ad66b6d7bd088c0babf2116ba79c32def"
+  },
+  "limitations": [
+    "Right forefoot closeup only",
+    "Interdigital gaps and angular surfaces remain",
+    "Not current tissue dynamics validation",
+    "Candidate unadopted, 284 forbidden pairs remain"
+  ]
+}

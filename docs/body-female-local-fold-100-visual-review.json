@@ -1,0 +1,14 @@
+{
+  "adopted": false,
+  "image": "docs/body-female-local-fold-100-foot-detail.png",
+  "image_sha256": "980140e74ff53a9e13993f39349dbb3be8ce874d0ea0d286a84f93e7f68fde17",
+  "renderer": "native Metal offscreen",
+  "live_capture": false,
+  "visual_review": "Triangular protrusions remain in toe webbing; candidate does not meet visual geometry gate.",
+  "forbidden_intersections": 23,
+  "normals_opposed_to_current_geometry": 15,
+  "maximum_selected_adjacent_face_angle_degrees": 140.06186805356313,
+  "bindings": 45266,
+  "reprojected_vertices": 218,
+  "binding_maximum_distance_m": 0.005035487104822435
+}

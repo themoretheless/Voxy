@@ -1,0 +1,33 @@
+{
+  "scope": "Static classification excludes shared vertices; no CCD certification",
+  "states": [
+    {
+      "stage": "rest",
+      "sha256": "3d9052288563e12741b605f1dfeabdfac56fda6f64ac0276a40147f1f2085a3a",
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/rest.obj",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-1",
+      "sha256": "4e15e986bc9f230f54e3c3847b88963c1c53b5704fa8c4ada55c5935e09e5ef0",
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/load-1.obj",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-2",
+      "sha256": "150f7da2d4ba9e39f9b68b7bd9d8c86e90d88c79723fad54efafc4a5b99aa672",
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/load-2.obj",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-3",
+      "sha256": "41721cc29265e81011b3013a6153ee720b872c88b673d37fd84998abf7972051",
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/load-3.obj",
+      "classification_counts": {},
+      "limit_reached": false
+    }
+  ]
+}

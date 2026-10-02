@@ -1,0 +1,164 @@
+{
+  "repository": "demoth/jake2",
+  "repository_id": 207659746,
+  "commit": "3899c91326199febbbca511c069fbc8f168b94aa",
+  "source_url": "https://github.com/demoth/jake2/tree/3899c91326199febbbca511c069fbc8f168b94aa",
+  "readme_path": "README.md",
+  "readme_sha256": "52ec2d6e9f76424d8f6b6d23912612150c6bdcb8fc806268c60681f3973edf3b",
+  "entries": [
+    {
+      "path": ".codex",
+      "type": "dir",
+      "sha": "d493f41665a5f083b6945f0027c26865489a30cd"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3afcf4b9aed63f8510ad8d71d4423045d10e10dc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5c1c33b192e443197a7f290eb8e2fbab4f861255"
+    },
+    {
+      "path": ".run",
+      "type": "dir",
+      "sha": "837002b99e13e893f792c9e4831299845d9cb05a"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "4b5f23a4837588a85a6341fb0e6694c748f5450a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "42b6a1491ad4028252e8c6d0f9b907dcf9c3d2eb"
+    },
+    {
+      "path": "ChangeLog",
+      "type": "file",
+      "sha": "c694b8d117a6a473932696da03d931dd5292271b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b6e7c66c276e7610d4a73c70ec1a1f7c1003259"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1650ed9a6a60e69a3dd8198ef4cee151ab36f21d"
+    },
+    {
+      "path": "README_DE",
+      "type": "file",
+      "sha": "6f7106682920633b754c63fa13f29c85dd41cd94"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "25f39f8f5c541630ad066b9c4a7b057494067793"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "babbef855497581f3ee7a19f78caf723efc9f190"
+    },
+    {
+      "path": "cake",
+      "type": "dir",
+      "sha": "faa3955844e8fdc7deb1f4b99a3a09b67078e7a8"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "7d93f44d7c068af02eb1974341ebfad37e0f2ce5"
+    },
+    {
+      "path": "dedicated",
+      "type": "dir",
+      "sha": "51e9ce9b2e10d8af6f9a1d7f26471cab71eb739a"
+    },
+    {
+      "path": "fullgame",
+      "type": "dir",
+      "sha": "f3e701ac84c42d2ee080e6587ed0b3ca22a597cb"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "5fc11c510061831e2b21fc813bfd4a9454eaf5b5"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "c2f7d8e84b84fa5186c24295039942c52416c44f"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "9d9b279658acdfcdf266950979ca021d39b3459d"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "23d15a9367071145e9c79bb4ddf879d1fbe78b5d"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "db3a6ac207e507b0bc1635a9f2c18d3b174e682e"
+    },
+    {
+      "path": "info",
+      "type": "dir",
+      "sha": "e2d1757462f2d5ccbf884a1c8b48b3ca374e5997"
+    },
+    {
+      "path": "maptools",
+      "type": "dir",
+      "sha": "e725c191ddc2fbe98b0ea4bc6cc8b30173ce5c5a"
+    },
+    {
+      "path": "md2-animation.md",
+      "type": "file",
+      "sha": "c4d01861fde4d4129a1521bf29e04bf05c7f80cd"
+    },
+    {
+      "path": "qcommon",
+      "type": "dir",
+      "sha": "cad31d875bfb044e7824de249d7b5f1a1f0757fe"
+    },
+    {
+      "path": "readme.id",
+      "type": "file",
+      "sha": "42a0c17746c21470ae8361487e21e2ec63cfaf03"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "1d2ba044d18b43bc4f2d2051b5aa98052f8a0006"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "7e826ef910913f22bc538f7acc4d903e4fd6c623"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "285815e719420a0c9266faac6a52e3314d9fcd5d"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "af8020fad92ddf0a2ce691d788fba9ca82e86a54"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java/Kotlin port of Quake 2 runtime with client/server/game/audio source projects; GPL lineage explicitly documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

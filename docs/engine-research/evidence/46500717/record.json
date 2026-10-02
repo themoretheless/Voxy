@@ -1,0 +1,147 @@
+{
+  "repository": "Wargus/stratagus",
+  "repository_id": 46500717,
+  "commit": "3d87c93f7fd8c0b62ee1be5df0a6d9efc72ca6cc",
+  "source_url": "https://github.com/Wargus/stratagus/tree/3d87c93f7fd8c0b62ee1be5df0a6d9efc72ca6cc",
+  "readme_path": "README.md",
+  "readme_sha256": "a8b455179dad3464806c30a329fe254dc3d13b090da4174ae4da8c13d9c31121",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "8400d09dda60a8430fe4a6466d1c18d181e6a402"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "66c9d4a9e1a268c2a0fd9c9bff0b9b8838bbecbb"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "de578722b86023890cf3136a415a25e37d138b04"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "111bc10e293a1c156e03d1412550c2dd40d2ece5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4285550d86cf783e94917333a83403470ec8260f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7f7756efe107e574215e63632fff9c284148cc44"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f0fa7b70372a241d871e51e8167327e4127af5fb"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "4d63baca29c2728ec87de282797192761ae5539b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9ba6081547cf9afb8acb0d90b3acc195be457139"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "23cb790338e191e29205d6f4123882c0583ef8eb"
+    },
+    {
+      "path": "HOWTO-NEW-RELEASE",
+      "type": "file",
+      "sha": "8e93282a78c92f6a1274868fd3a7c6a8e22e24e4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6237d4a546772098d6e6a3d2ceb70f9e0e02a22e"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "e62a9683179072bd4cd8a4e5cfc25de93a436a11"
+    },
+    {
+      "path": "cmake-variants.yaml",
+      "type": "file",
+      "sha": "9c6b71c3c0d9b7c59b149e550c2f39c8a70283ea"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "663c37370c6ef1c3e55d12a0ba2056a5b5b83896"
+    },
+    {
+      "path": "cmake_uninstall.cmake.in",
+      "type": "file",
+      "sha": "4c07dc7bd46202e6d1f329d6d4d059b38ccf57ad"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "8e1b7a27d2da3696b199d37b2dc5e2f257ae5980"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "ad776c71c27351f5cf2bb4ef1acfd29030c1ad63"
+    },
+    {
+      "path": "external_ai_example.py",
+      "type": "file",
+      "sha": "81a6919bef6fc5d16359242b6747493ab39c85f6"
+    },
+    {
+      "path": "gameheaders",
+      "type": "dir",
+      "sha": "be90311c27ba72c9df191be0c511b521bceb7c93"
+    },
+    {
+      "path": "po",
+      "type": "dir",
+      "sha": "17658ff833f555d62543b516c12884e1641d4e28"
+    },
+    {
+      "path": "pytest.ini",
+      "type": "file",
+      "sha": "c935994b7c33d7186ab93a634971d075ee55599a"
+    },
+    {
+      "path": "pytests",
+      "type": "dir",
+      "sha": "ad97d36d7c834b03717d9b888126ce60a2c04090"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "435f9c7e54f7de1bb960c313e3244d762c088b82"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e7444b3030dc98fbe4a8e7cb7d9654627ac76fff"
+    },
+    {
+      "path": "third-party",
+      "type": "file",
+      "sha": "58de69c9ef44d1bc915fce9924333d395c7a40d2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "12434723913aa5461cc4211c5a3901eeae13d359"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

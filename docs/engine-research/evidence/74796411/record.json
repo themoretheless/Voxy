@@ -1,0 +1,209 @@
+{
+  "repository": "scallyw4g/bonsai",
+  "repository_id": 74796411,
+  "commit": "620f802273777ff2ebae43eabeb9094445048c83",
+  "source_url": "https://github.com/scallyw4g/bonsai/tree/620f802273777ff2ebae43eabeb9094445048c83",
+  "readme_path": "readme.md",
+  "readme_sha256": "91a3d78ac2c57e62eab4faf1e0a379e6357339685dff484fc037f3bae6cc0f0a",
+  "entries": [
+    {
+      "path": ".gdbinit",
+      "type": "file",
+      "sha": "70c7cce2d4847af9c945ac11557ca7b50e58dba2"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0af92fd8b7cbb7773754e462c395542c51ec4b5e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a8daedfd2d8dd24662265cbdc588c7adda75d177"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5fed10274392eeddc503de99c60e35e22c80e208"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "948ec184bbc15ed44c66972872321b2c33dacaf0"
+    },
+    {
+      "path": ".root_marker",
+      "type": "file",
+      "sha": "8f6bc02a2cce2ac21ca46eeedc22a1e92cee91df"
+    },
+    {
+      "path": "CHANGELOG.txt",
+      "type": "file",
+      "sha": "d4aadb48b8c83ae6c62e6c4801f5e7ebbf0e1802"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6d3fe19e5ae6878dfdb45696d003778b2b343387"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "ceb420c24fd472b08328e0898d93edaec69cc887"
+    },
+    {
+      "path": "bonsai.natvis",
+      "type": "file",
+      "sha": "b9ad34fcc9a5e423cda8de07ecd82fad28ef32f1"
+    },
+    {
+      "path": "brushes",
+      "type": "dir",
+      "sha": "32c0abacf893325a39652004ccfcfefc5e2633dd"
+    },
+    {
+      "path": "bugs.md",
+      "type": "file",
+      "sha": "2da64d7cfc203697c3e78527645eb646a3c69882"
+    },
+    {
+      "path": "ctags.sh",
+      "type": "file",
+      "sha": "55389060e4a8fd3e0db9446150d7938478e338a5"
+    },
+    {
+      "path": "default.nix",
+      "type": "file",
+      "sha": "6cd2b915e5a4c724fb6910617023cded541611fa"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "04ff27be5b2175b1545afe544fb4ad09e329ab0c"
+    },
+    {
+      "path": "dottedboxguy.make.sh",
+      "type": "file",
+      "sha": "e7d2c6db942b05ac1540847a608daf71a8bc1472"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6c9496c6c5dcb8cfa571cbaad3d9de8122f7a987"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "75b2583159b2b501c31aa75a89686bf5a45ac721"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "9c0ad359f6f7548cd7519d4674aa082afe647ce5"
+    },
+    {
+      "path": "generated",
+      "type": "dir",
+      "sha": "c811e39983961741045226c5cfce6aa1a6c28ed9"
+    },
+    {
+      "path": "hotkeys.init",
+      "type": "file",
+      "sha": "3098fbd5d2437c176161be3d71b0c783178950f7"
+    },
+    {
+      "path": "jesse.bonsai.rdbg",
+      "type": "file",
+      "sha": "1d047d18d2502dacb60a03be6577536d31129404"
+    },
+    {
+      "path": "jesse.make.sh",
+      "type": "file",
+      "sha": "9e14c7656eeb3fa1a681d3b4ce381ddb65a6e884"
+    },
+    {
+      "path": "jesse.tests.rdbg",
+      "type": "file",
+      "sha": "3f1bd0f006175555336c852ddf6905b8c8c47659"
+    },
+    {
+      "path": "make.sh",
+      "type": "file",
+      "sha": "f7ea3f8d9e3bb6ca0bfee05f60226c091e8812af"
+    },
+    {
+      "path": "make_transcendental_tables.py",
+      "type": "file",
+      "sha": "839b794dc7efe3afbf453157b6d2da88eb354dbf"
+    },
+    {
+      "path": "models",
+      "type": "dir",
+      "sha": "4ee315ba76d1256c20a97d5449c7ae0d852108a8"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "b1886ea2e77c67130fee1002c15464aaecb15e14"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "a0198bf6a51102d169d3a50becd2aaeb1741c563"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "863f47a429decbc93113b15b7021d885c514cd4d"
+    },
+    {
+      "path": "settings.init",
+      "type": "file",
+      "sha": "858a2327d103080bd3bfe1601862e279d18ec3a8"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "e1435344ba2b6f2eddf15c5c578e90d55962d97b"
+    },
+    {
+      "path": "sloc.sh",
+      "type": "file",
+      "sha": "41eb444a6b9f4090a57d283b2310710c45462dba"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a479bfe957cbe0483fbfeda5e2716d54844bda91"
+    },
+    {
+      "path": "test.bmp",
+      "type": "file",
+      "sha": "8f322620fc8d695f10b329895948b7d3ff3fcad1"
+    },
+    {
+      "path": "texture_atlas_0.bmp",
+      "type": "file",
+      "sha": "2493097f738a202587d4c6986f9e3e9e8d503200"
+    },
+    {
+      "path": "texture_atlas_1.bmp",
+      "type": "file",
+      "sha": "5da80a11d38fdf88f387b1f99f66a225e1bec174"
+    },
+    {
+      "path": "todos.md",
+      "type": "file",
+      "sha": "19fe9ccb48a36f6de95f928ef3609f79dd6c53e7"
+    },
+    {
+      "path": "white.bmp",
+      "type": "file",
+      "sha": "763be1f7e9ecbb0bd980b9ddb31c9a58fe661ea8"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies voxel engine; owned source/docs/brushes and platform build configuration.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,119 @@
+{
+  "repository": "nadavbh12/Retro-Learning-Environment",
+  "repository_id": 45974977,
+  "commit": "054a630fca3325243f7a51ed1217b8098fe59efe",
+  "source_url": "https://github.com/nadavbh12/Retro-Learning-Environment/tree/054a630fca3325243f7a51ed1217b8098fe59efe",
+  "readme_path": "README.md",
+  "readme_sha256": "c8d04bde7802d226e772ae9d481244858fb7f41821ee6e8b38f8afe724a9143e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e7b07217395d975b436105d03cfb4ea6b7df081f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "f277369498c5c77b63f95fe7a0e6a9755fc4bb7b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fa4e319c6bf0e2a0e80e0078a983e121cc3a047c"
+    },
+    {
+      "path": "ChangeLog",
+      "type": "file",
+      "sha": "40dbdda141a956761835245b40de87e5c63989b9"
+    },
+    {
+      "path": "Copyright.txt",
+      "type": "file",
+      "sha": "b3099142246b6ae2bccf2314a96d520e04b6e1e3"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "4189933be9f243b1d99dc4f10ff544a35bc7b9ec"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "657fd3e03b553906f9006e8c125b0ff7becb1784"
+    },
+    {
+      "path": "README-SDL.txt",
+      "type": "file",
+      "sha": "664cd4ed53820b460187eab0c3deca4ae38b846b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ee33e1f9be4b69b7ea6ae94c2f525ce8e6ccb7b3"
+    },
+    {
+      "path": "Readme.txt",
+      "type": "file",
+      "sha": "25fa691f9b5dfdb6bc3a47c401ba40bf590b5883"
+    },
+    {
+      "path": "common.rules",
+      "type": "file",
+      "sha": "285cd64af5945a2b272c44b9795828dd3412e302"
+    },
+    {
+      "path": "copy_cores.sh",
+      "type": "file",
+      "sha": "84d66d27d25cd14fdbc34ef03b3fdecf295c6f66"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "687c095006ab135b2fab43480b02c0f83d37b838"
+    },
+    {
+      "path": "rle-1-0.rockspec",
+      "type": "file",
+      "sha": "04335f4648e04497a4b466e15361651431b9ac37"
+    },
+    {
+      "path": "rle.cfg",
+      "type": "file",
+      "sha": "e1f95eb21e419cc0990f1062490ca1420edc1e80"
+    },
+    {
+      "path": "rle_python_interface",
+      "type": "dir",
+      "sha": "0b02cd0eb31e152eb81768bc8d5eb2730a6a5025"
+    },
+    {
+      "path": "roms",
+      "type": "dir",
+      "sha": "4711f0818576d51a42b4664a785b6b859e1b7e24"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "6f791c447e0448d7b4bc26adb01331149a850cd9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b8fca34e4830aeba777c539f4baefb622fe31f2a"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "c1dce3a8f3dce822ae4fc767d5e40f0583544d26"
+    }
+  ],
+  "classification": "excluded_ml_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies AI learning stack using emulator cores; not independent game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

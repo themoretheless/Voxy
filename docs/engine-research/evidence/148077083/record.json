@@ -1,0 +1,164 @@
+{
+  "repository": "KobaltBlu/KotOR.js",
+  "repository_id": 148077083,
+  "commit": "002dfe03b9a59ad2adda6404d9632fc78d5bedff",
+  "source_url": "https://github.com/KobaltBlu/KotOR.js/tree/002dfe03b9a59ad2adda6404d9632fc78d5bedff",
+  "readme_path": "README.md",
+  "readme_sha256": "158b51862dcad18794f654283f0e86fb9a1553c2dc7a51c566bbcbc5022d09a8",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "ded8510939b7c2636ad4c2b492253dffdbbd817b"
+    },
+    {
+      "path": ".eslintrc.yml",
+      "type": "file",
+      "sha": "c46cae141132e7539d9ac8eb7f4c63751f74edd8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "491531e8503b333a1e36ffae902c56f46b28b0cc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6b8a8e988d011ceccddeb19329e330ddcdd3acba"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d640230f175941e6839f790ca59466b5433ad2a2"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "623c7da442d5b337d188826b1370c33badb250bb"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "66aa9c6f79fd53966fbbdeddcef3c10f809b001b"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "9fee671cceb391e8c601cc122b6c1f1780cd731c"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "3b09f2dbb8e670f045a3595f5a1df8fce6589892"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7e9ad9138193bf8d5712c6be42cd5791b6b30dd5"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "2677e85800c72b6116edb2676ab97e90833fed11"
+    },
+    {
+      "path": "electron-builder.json",
+      "type": "file",
+      "sha": "843fe013c6563cabe384c8509a906ebfd9961a83"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "0bd4c11362159c32537fc8ff7c7a6417022273cd"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "e6a99cf8650d2ab128b1c52794269eef52ca7d41"
+    },
+    {
+      "path": "main.js",
+      "type": "file",
+      "sha": "19bc8d1997bc02caee3502b58038dcf3b9590b66"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "f79d6ace85c0854153ab4d891f65319a38603238"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "3751e7645b98988c517074963cd4e49d39da640b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "0d2391038eefee9278324155ff05c4cac3751213"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e4f7258518e2d5bc2af24dade3d562d9d0042505"
+    },
+    {
+      "path": "tsconfig.debugger.json",
+      "type": "file",
+      "sha": "2ceb306f8c786db0ae34e725e122c9ca628ed311"
+    },
+    {
+      "path": "tsconfig.electron.json",
+      "type": "file",
+      "sha": "598c2ac4f8963eb9fbe46bc70117e73daeaba1d2"
+    },
+    {
+      "path": "tsconfig.forge.json",
+      "type": "file",
+      "sha": "65e8e7d6f88ff108eedfd28cd26eae8eb9729d48"
+    },
+    {
+      "path": "tsconfig.game.json",
+      "type": "file",
+      "sha": "59390585275eebfbb8dd909934d8a3b704b59ae5"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "4a313ecea49d458bc4a77f41fc14e3c8cce158b5"
+    },
+    {
+      "path": "tsconfig.kotorjs.json",
+      "type": "file",
+      "sha": "b1f3bdcd42d308b363ca2f828da3bc28379eedde"
+    },
+    {
+      "path": "tsconfig.launcher.json",
+      "type": "file",
+      "sha": "b6f179005d8f8c45d678f9be09e3e08840d9cef0"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "275c6a7e930fae8e3e34833cb31aee4b0737ff03"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "b93159761049ba139ba2f7915a4fb03f2a4e51ac"
+    },
+    {
+      "path": "webpack",
+      "type": "dir",
+      "sha": "281283c1e3fdf505861adec0b41c617c2a489548"
+    },
+    {
+      "path": "wiki",
+      "type": "file",
+      "sha": "8b52608d7dec5a1fb2c6cd6dc92f3254695cdf88"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "TypeScript Odyssey runtime recreation with source and modding tools; original-engine feature parity is explicitly still a goal.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

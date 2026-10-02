@@ -5,7 +5,7 @@ use physics::{
     astrophysics_gas::{Boundary, Cell},
     astrophysics_nuclear::{Network, Nucleus},
     astrophysics_opacity::FreeFree,
-    astrophysics_reaclib::{parse, MEV_JOULES},
+    astrophysics_reaclib::{MEV_JOULES, parse},
     astrophysics_spherical::Sphere,
     astrophysics_spherical_radiation::FreeFreeSpectrum,
 };
@@ -191,7 +191,9 @@ fn main() -> Result<(), String> {
             },
         )
         .map_err(|e| format!("{e:?}"))?;
-    println!("shells,radius_m,mass_kg,luminosity_W,hydrostatic_residual,thermal_residual,absolute_power_tolerance_W,maximum_net_power_W,iterations,evaluations");
+    println!(
+        "shells,radius_m,mass_kg,luminosity_W,hydrostatic_residual,thermal_residual,absolute_power_tolerance_W,maximum_net_power_W,iterations,evaluations"
+    );
     println!(
         "{n},{radius},{},{},{},{},{},{},{},{}",
         sphere.totals().unwrap()[0],

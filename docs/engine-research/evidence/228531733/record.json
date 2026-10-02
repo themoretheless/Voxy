@@ -1,0 +1,134 @@
+{
+  "repository": "MrcSnm/HipremeEngine",
+  "repository_id": 228531733,
+  "commit": "c092eebef8ed1a0e75e636306a725a4caacc8118",
+  "source_url": "https://github.com/MrcSnm/HipremeEngine/tree/c092eebef8ed1a0e75e636306a725a4caacc8118",
+  "readme_path": "README.md",
+  "readme_sha256": "cc9c72f579b4b50534d0a27fd1889b635352b9c1d58d3011dc91c6d6974745fe",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "742c4faad15dff36d58bc869fbe7c2078048cbc9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1aba69f47a6acab33504ee320189f3ee318dea79"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6c3feb079d0cb02fc9d0256a2109b5ca72664a40"
+    },
+    {
+      "path": "Announcement.md",
+      "type": "file",
+      "sha": "803b390f81e95a1c4934f15baef767c46b9398ca"
+    },
+    {
+      "path": "HipremeEngine.code-workspace",
+      "type": "file",
+      "sha": "8e948a1f13a54b5852a4ed7930edb7a1ca122db1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5b4e53a48f6347513222ba5b793ee7c65470a177"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3107392883c727fd680acff7271e6c6a1c5ce000"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "39bc6940c5ce1b3bb12b9d63009a6a5c08b0820c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "5cbd8f5944e85c5e75996e92fc04a37c1f563477"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "0cf7ca7cc1f2ce4c9a4330b5f896eaad627d9228"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "e70e2733cd0ac9e927e7b44a719d3c889e86783b"
+    },
+    {
+      "path": "building",
+      "type": "dir",
+      "sha": "7c1ade22e5a1e040f1e350bfc8226c6bfa2171bc"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "a173c7364bed5fa7e2a4546126ec59e3af9b6af2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c5ac6de46d100690a851dac0a5c4ff4e7acc1ec0"
+    },
+    {
+      "path": "dub.json",
+      "type": "file",
+      "sha": "bd9d441689409e420549ca26d01be0583c91db4c"
+    },
+    {
+      "path": "dub.selections.json",
+      "type": "file",
+      "sha": "d7b51322d3a9901f03ed6ac440cc60d7ec20f5cb"
+    },
+    {
+      "path": "hbuild_showcase.png",
+      "type": "file",
+      "sha": "688fa0cee229386bb2c572ef1ebbe6012adb30f9"
+    },
+    {
+      "path": "hipreme_engine.sln",
+      "type": "file",
+      "sha": "af5a8b43e5fe7ea9a5c3ed2e448eab6d4f8ce4b7"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "fb5f1d7998a85fbc0b0cba4004edb3d50ba2d766"
+    },
+    {
+      "path": "profilegc.log",
+      "type": "file",
+      "sha": "a481aa6b6d77d329445d49065e68a71409fff1cc"
+    },
+    {
+      "path": "projects",
+      "type": "dir",
+      "sha": "a487c424f725ef4ed3205775c17beb2faf7c2d78"
+    },
+    {
+      "path": "renderer.conf",
+      "type": "file",
+      "sha": "2c0036dd3d58c13cf252607ea4a4c19efaac8b96"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "3ae20e19cfd7c40963ff6a57806170d1828f839b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "9030630bdc2a3de629cbb7e6694b89ea7c2f4a5e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "D game engine with source/modules and runtime D code loading; platform and scripting readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

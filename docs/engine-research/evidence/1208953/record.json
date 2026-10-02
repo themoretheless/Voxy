@@ -1,0 +1,32 @@
+{
+  "repository": "jorgegarcia/UnityOSC",
+  "repository_id": 1208953,
+  "commit": "8ccbef2da7f5951a61536018fc6f945a06480dba",
+  "source_url": "https://github.com/jorgegarcia/UnityOSC/tree/8ccbef2da7f5951a61536018fc6f945a06480dba",
+  "readme_path": "README.md",
+  "readme_sha256": "f488a1688c4294edc0b107468196611d9f890ab1b35f8f9ddfa9669fa43d958a",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a22844a6ef099f5a5e1715801d4456434187db0d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "429c335b629f66324ea51b7c10426244f0ac7737"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ca27b4e5da689db2f3591b67293aefe3a9ba98a1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "218c6ddfde0087dd563ba4a2cb7488d7e2d24450"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

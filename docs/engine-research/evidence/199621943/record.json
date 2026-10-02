@@ -1,0 +1,49 @@
+{
+  "repository": "gdquest-demos/godot-3d-mannequin",
+  "repository_id": 199621943,
+  "commit": "d48a4fdb49a3930f38cdbeb854cf5be3ae4b6b2a",
+  "source_url": "https://github.com/gdquest-demos/godot-3d-mannequin/tree/d48a4fdb49a3930f38cdbeb854cf5be3ae4b6b2a",
+  "readme_path": "README.md",
+  "readme_sha256": "c5905d4bbb3343da60df58d89ac06c4c0f2a2352c42f19d5be69820c86b73caa",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "56594a26dba113d5b89eb3dc54ef18409a588da5"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e3242490724b52ef7dc0b2f7c980d50c007bce50"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a9934954a93725d4da46306b451ccdc7dbcced35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bde7711b6f817b028ed11f2a2610c0ef0b466891"
+    },
+    {
+      "path": "godot-csharp",
+      "type": "dir",
+      "sha": "5385a22382d62de6fbd18fb53f143bd410fb0658"
+    },
+    {
+      "path": "godot",
+      "type": "dir",
+      "sha": "f09d4c64851683274f2693b324724de1e3c6660b"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "000c666591e30b46ead8ece121a880ac5731aa2e"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot character/controller/camera asset package, not engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

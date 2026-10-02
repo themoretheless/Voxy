@@ -1,0 +1,49 @@
+{
+  "repository": "ProjectDreamland/area51",
+  "repository_id": 400681155,
+  "commit": "dfaa140222e8918c47b844af15dd10150b05a9a9",
+  "source_url": "https://github.com/ProjectDreamland/area51/tree/dfaa140222e8918c47b844af15dd10150b05a9a9",
+  "readme_path": "README.md",
+  "readme_sha256": "6c726ab61625b251ca19cdacd0ba08c809550283f4823ae2c5de3292790dc008",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "92a205c6f21fe23851f54338e21c23fc78bb6e22"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "465f7c1e47c8e32fba504fd6a2ca7adba48f275a"
+    },
+    {
+      "path": "Apps",
+      "type": "dir",
+      "sha": "d69629329809b3ff51b7168fd7d8d68b827fd153"
+    },
+    {
+      "path": "MiscUtils",
+      "type": "dir",
+      "sha": "642d29b6c5189d35a4dcda99cbf04a0d319d06e6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1df53fdd523eba9db288a6662f60055b158820e8"
+    },
+    {
+      "path": "Support",
+      "type": "dir",
+      "sha": "cfa590efe53fcac0d5bdf852dbea7c3b6706998c"
+    },
+    {
+      "path": "xCore",
+      "type": "dir",
+      "sha": "ef506d17cba1b9ddc92bc1965c14428cd1d89023"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify Area 51 source including engine; owned xCore/Support/Apps and native build, current model compatibility limitation retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

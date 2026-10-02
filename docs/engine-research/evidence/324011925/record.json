@@ -1,0 +1,82 @@
+{
+  "repository": "irisengine/iris",
+  "repository_id": 324011925,
+  "commit": "209d5530900a819858f3b9269b578686430b2b44",
+  "source_url": "https://github.com/irisengine/iris/tree/209d5530900a819858f3b9269b578686430b2b44",
+  "readme_path": "README.md",
+  "readme_sha256": "aa5728223bdfbe01a614ba14d63131048a795e3e15adbfc94d89831c4baa85dc",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "c24ad7d923ef50e91c68988840690bf0b9d886d8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d07cd5a35d0ba7c8b8d958c46ee7c194b5534d13"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dfba95255bc077d97ef499bfadaab1942eabe9f0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "17bfc9e2073fe61153a4fb6296f2301434201589"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "36b7cd93cdfbac762f5be4c6ce276df2ea6305c2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "784cfbe0629ce2a19704407cd062f3bd2e842b2d"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "97b7aca5a5b008b084365011b23af29b23ab794d"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "d030bc3f683acbfc3786e944619644afcd4fc6e9"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "4aab110452678c14ed685e31c4e4f1bc6abba43b"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "fc636d6eaf3bffb04db11b5901c8c784a853b695"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "b378c19f75a7d71b63427397f17703d4989674c9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dcfdd491b6152630397974e6fd582c5609ab2168"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "14af21b60d023e26e639bc8a6abb7a36b96d33c3"
+    },
+    {
+      "path": "toolchains",
+      "type": "dir",
+      "sha": "9b7691fb9dc1bfad5dbc1862493475a8becc747c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

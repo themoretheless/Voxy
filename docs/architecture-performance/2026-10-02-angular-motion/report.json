@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-02",
+  "cpu": "Apple M4 Max",
+  "compiler": "rustc 1.98.0-nightly (d1fc603d1 2026-05-26)",
+  "command": "cargo bench -p voxy_gameplay --bench angular_motion",
+  "profile": "optimized",
+  "warmup_rounds": 3,
+  "samples": 21,
+  "order": "alternating legacy/batch first each round",
+  "scene": "balanced hierarchy, all owners active and rotating; copied descriptors",
+  "rows": [
+    {
+      "objects": "1000",
+      "path": "behavior",
+      "median_ns": "177750",
+      "sample20_ns": "196416",
+      "max_ns": "197083"
+    },
+    {
+      "objects": "1000",
+      "path": "batch",
+      "median_ns": "34375",
+      "sample20_ns": "37500",
+      "max_ns": "39792"
+    },
+    {
+      "objects": "10000",
+      "path": "behavior",
+      "median_ns": "2246958",
+      "sample20_ns": "2368167",
+      "max_ns": "2456041"
+    },
+    {
+      "objects": "10000",
+      "path": "batch",
+      "median_ns": "360792",
+      "sample20_ns": "433417",
+      "max_ns": "445834"
+    },
+    {
+      "objects": "100000",
+      "path": "behavior",
+      "median_ns": "29694458",
+      "sample20_ns": "31507917",
+      "max_ns": "31665791"
+    },
+    {
+      "objects": "100000",
+      "path": "batch",
+      "median_ns": "5306000",
+      "sample20_ns": "5832250",
+      "max_ns": "6166542"
+    }
+  ],
+  "benchmark_sha256": "48160b5f2e1a9bcc77912ed741ffb051027856750d09f6dc9e35a741d3948e32",
+  "implementation_sha256": "1d9483888aea9c7dd43d9476bf3dce0eb4f83d6a54b3b463c5be001ce767e92e",
+  "binary_sha256": "a3cbc160660722a7ac2c0dc28f5ed44d5dae701d653d194bb1c57b352d570395",
+  "validation": {
+    "gameplay_lib_passed": 19,
+    "editor_lib_passed": 57,
+    "editor_lib_ignored": 1,
+    "scheduled_tests_passed": 3
+  },
+  "limits": [
+    "single shared-host run; no whole-frame or production-tail claim",
+    "world matrices compared for root/middle/last each round; broader correctness tested separately",
+    "runtime memory/allocation counters not measured",
+    "editor motion admission remains 128 descriptors; 100k is isolated domain capacity benchmark"
+  ]
+}

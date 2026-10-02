@@ -1,0 +1,174 @@
+{
+  "repository": "MovingBlocks/Terasology",
+  "repository_id": 1438007,
+  "commit": "e93629b4e71f77c78f35d82c4c9dd9e975ca062c",
+  "source_url": "https://github.com/MovingBlocks/Terasology/tree/e93629b4e71f77c78f35d82c4c9dd9e975ca062c",
+  "readme_path": "README.md",
+  "readme_sha256": "471dbe9136605e1f6d01292b5d7a34624ad0cfe649f3c5b1a003cf2a0d40bc06",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a2478a91678c45a2aed6f72ec8b02b5395c6c5c7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0a03688eebffd923afeca59fcffebff6700aec30"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2071a28b99bf55f6cc842c567fbfd267c582bf62"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "6942c001b8df05be16bc58c552cef269910ba773"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "ff2c47f48ce6aee8734fcb0a089a5b5b6de05e26"
+    },
+    {
+      "path": "Jenkinsfile",
+      "type": "file",
+      "sha": "6c5a8f47fc922868a8fd1ed4918e8b8967e73e90"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6395a6704b944107a4f4b4eee88fc413d5a4a5ed"
+    },
+    {
+      "path": "LICENSE_ARTWORK",
+      "type": "file",
+      "sha": "49ce653bfc366fab544037dd1db759c9bb4c502b"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "f63e8e1ee9866c31c65a2eda60a2192b46cebb5b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5451e9f4a4217895f8bcd53171e21400c77a327e"
+    },
+    {
+      "path": "build-logic",
+      "type": "dir",
+      "sha": "0408fd03e82c6aaf22a71fb137d88dbd18480977"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "19ca8b3f1ed2479bfb01f9f4f44d7b9358555679"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "c9c40f57507f772637d2eee903d248db81f900e1"
+    },
+    {
+      "path": "docs-pre-merge",
+      "type": "dir",
+      "sha": "f84d3de3fc1cb5c20041f01829517030c2560ffd"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "49585dc439d1e711cf609ea4ada643113f67b121"
+    },
+    {
+      "path": "engine-tests",
+      "type": "dir",
+      "sha": "16af201dbd29d3bdcb710b145327ba4606f6ac7e"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "5d0987f151ccfe011334b86a0de0290be2699ea7"
+    },
+    {
+      "path": "facades",
+      "type": "dir",
+      "sha": "7b5ce65797b320d9ffce0505456a3374d5f48800"
+    },
+    {
+      "path": "fileTemplates",
+      "type": "dir",
+      "sha": "88faf6ae5ffe7643fd391e3f8846a46677e60d86"
+    },
+    {
+      "path": "gitpod.dockerfile",
+      "type": "file",
+      "sha": "8dfcaf3796a0c2c755c4a91ca8bdd217b720948f"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "4dfddc826a95a88e01a5c299c3e5d85120a11e69"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "fcb6fca147c0cd248611f3d67b8d74b470402795"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "93e3f59f135dd2dd498de4beb5c64338cc33beeb"
+    },
+    {
+      "path": "groovyw",
+      "type": "file",
+      "sha": "616174cef8c17490350a424b5f6d3f0a4035cb49"
+    },
+    {
+      "path": "groovyw.bat",
+      "type": "file",
+      "sha": "3cd68e56e1afa7c0fcd1d2143ee4593a74572355"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "d50f6d1040a1a94ddbe3eea0519f030412c1068a"
+    },
+    {
+      "path": "metas",
+      "type": "dir",
+      "sha": "3d47f9f6f4ea0af426f6481a6b90d1b28494ce67"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "cd79485fa40965f2c222e210c44b6502e76f4495"
+    },
+    {
+      "path": "openvr_natives",
+      "type": "dir",
+      "sha": "4bd7db383850e70a2cc4c4338c9357c1454fe129"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "0380cda36b54d3ed11c8ae647abc8ac37986d7ad"
+    },
+    {
+      "path": "subsystems",
+      "type": "dir",
+      "sha": "9553bf5fee9ad47668d32b19a8ad6aa87beca76f"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "6c3fdd546bae86c6e3944827874090eb33cb4926"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README references owned Terasology engine; engine/facades/engine-tests and Gradle workspace present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

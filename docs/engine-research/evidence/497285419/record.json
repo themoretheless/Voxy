@@ -1,0 +1,82 @@
+{
+  "repository": "mattiasgustavsson/yarnspin",
+  "repository_id": 497285419,
+  "commit": "c3b10dcac8f1f5eb1a4b543b7fea26fdf7e7e1ee",
+  "source_url": "https://github.com/mattiasgustavsson/yarnspin/tree/c3b10dcac8f1f5eb1a4b543b7fea26fdf7e7e1ee",
+  "readme_path": "README.md",
+  "readme_sha256": "6c2fa24413db28dce7a8a53d862e3605585ec8ae52a0243f6e31d332a428214a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e8e05f384f674a6dc85a47effb5e835c48a0227e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2eb4c7a5cbcad5c9780e4ce04d7f6d035b32520a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d324d9977098db02b0475d70a5d43175861f3a10"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "09a1e920a300aeba772850c190b01e36ccdb5c1c"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "af036dc579a6c6d7cdeff97211d04634fd33e414"
+    },
+    {
+      "path": "display",
+      "type": "dir",
+      "sha": "95bbdc28ff89bb12c93a56fa35bf3be0a92808b4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e0d4d8314022ae09121acb4f1c101d440561d4f6"
+    },
+    {
+      "path": "faces",
+      "type": "dir",
+      "sha": "f9f1c49e2f9c4de1fb32b0a484c3641b1d00a8fb"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "3df8a9b23179328cee102efc214c0e7501fe6070"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "a3dcf644f673e5bbcbc2bfedd632df692e4063d6"
+    },
+    {
+      "path": "palettes",
+      "type": "dir",
+      "sha": "281ff4d695dd0669151c21591b69aed567dbeccb"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "59c6d32e4b513c53180a9600c214ef77170865c5"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "bd2eb31217522fbb3fc5e6a1f6308b74a4e8b9ea"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "5ea1db86821b222e7c86545949c3544347643569"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

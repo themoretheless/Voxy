@@ -1,0 +1,52 @@
+{
+  "repository": "twohyjr/Metal-Game-Engine-Tutorial",
+  "repository_id": 127324965,
+  "commit": "39d7dd48567fb2245c29a68817e1a70c59f1cdd2",
+  "source_url": "https://github.com/twohyjr/Metal-Game-Engine-Tutorial/tree/39d7dd48567fb2245c29a68817e1a70c59f1cdd2",
+  "readme_path": "README.md",
+  "readme_sha256": "0408d306440e3f2ea858d06adaeafc6fac77457977b0f715ac591ed72ad086ab",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "79bb1706c10efd92a23c6483131513d99a7b3966"
+    },
+    {
+      "path": "Build Along",
+      "type": "dir",
+      "sha": "929b40cde2c08f068d304452571060eff4cad2be"
+    },
+    {
+      "path": "Community",
+      "type": "dir",
+      "sha": "9fd012e039902d202674565116b88baf44441612"
+    },
+    {
+      "path": "Helpful Files",
+      "type": "dir",
+      "sha": "4febb023c00862fc919b7ec0a68bcf4ea281e4dc"
+    },
+    {
+      "path": "MetalCode",
+      "type": "dir",
+      "sha": "c7c23af8909e7dd9aaaf469cab33bad50f8364bb"
+    },
+    {
+      "path": "PlayCode",
+      "type": "dir",
+      "sha": "404e9eff51d6edab8dbe35cac37c20ffd7b4dbeb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d137fc4dedd54e12c9422259440087a64c6b88fa"
+    },
+    {
+      "path": "Swift Game Engine (Full)",
+      "type": "dir",
+      "sha": "d383bf56e26cfcbdc26bcf563b66500e230026c1"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

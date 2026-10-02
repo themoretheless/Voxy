@@ -1,0 +1,94 @@
+{
+  "repository": "VedantRGosavi/UE5-MCP",
+  "repository_id": 949099090,
+  "commit": "c284cecd5fbba58778a07c26e417df15f112ad50",
+  "source_url": "https://github.com/VedantRGosavi/UE5-MCP/tree/c284cecd5fbba58778a07c26e417df15f112ad50",
+  "readme_path": "README.md",
+  "readme_sha256": "ca2fcfe8230047fef7ee9d0026cdee45264f34e9da2315b12321e864e0b67414",
+  "entries": [
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3a510d142efb0af8ede49a2d31ddaf71f3411ccc"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "48053cfb34abcb51dc7ab7312988994fd0460eb8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c2375f92539a1743cb5377338b90ff0d755f9eb7"
+    },
+    {
+      "path": "ai_integration.md",
+      "type": "file",
+      "sha": "9098b66d5df1104fcbc4cb988ac42ae471921fb0"
+    },
+    {
+      "path": "api_reference.md",
+      "type": "file",
+      "sha": "e9c53ced0627f56ad3eefc25dbca6ba383a14c36"
+    },
+    {
+      "path": "architecture.md",
+      "type": "file",
+      "sha": "01463c918e302ccca2e56844762460ee33164d26"
+    },
+    {
+      "path": "automation.md",
+      "type": "file",
+      "sha": "1b73a760076f8ee4090c55f82214828dba98cc89"
+    },
+    {
+      "path": "blender_mcp.md",
+      "type": "file",
+      "sha": "daaae2fb20841989c8d8f8a0c2fdd6089f37d08b"
+    },
+    {
+      "path": "commands.md",
+      "type": "file",
+      "sha": "26cbae03ae8b754fb941c6fb6e77498a104d39fc"
+    },
+    {
+      "path": "configurations.md",
+      "type": "file",
+      "sha": "37c83e825467566f58e2bd78e9ffdb85db3a1a6b"
+    },
+    {
+      "path": "dependencies.md",
+      "type": "file",
+      "sha": "a2a5de2f9bbef1ff53c1f43fdb75aae90c971ae5"
+    },
+    {
+      "path": "monorepo_structure.md",
+      "type": "file",
+      "sha": "d9ed5550d89b51f72f9560c655e21ba6f7af53f6"
+    },
+    {
+      "path": "research.md",
+      "type": "file",
+      "sha": "0fe00a4d02be45ebbef18d6f2b265a49891a294f"
+    },
+    {
+      "path": "troubleshooting.md",
+      "type": "file",
+      "sha": "bac9eb7da35e220f8e13284f407aec66464310f1"
+    },
+    {
+      "path": "ue5_mcp.md",
+      "type": "file",
+      "sha": "5cb32a0ccb3a06bd5b3e5b10506a5c567feab93d"
+    },
+    {
+      "path": "workflow.md",
+      "type": "file",
+      "sha": "9cbe8e8f23e76ac7f7a4a9651a2c159324e96f4a"
+    }
+  ],
+  "classification": "excluded_automation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Blender/Unreal automation integration; no owned underlying game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

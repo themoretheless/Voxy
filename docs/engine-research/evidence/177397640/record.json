@@ -1,0 +1,304 @@
+{
+  "repository": "Robosturm/Commander_Wars",
+  "repository_id": 177397640,
+  "commit": "c436bd623c999eea26832e1c7cb350f9d0a3953a",
+  "source_url": "https://github.com/Robosturm/Commander_Wars/tree/c436bd623c999eea26832e1c7cb350f9d0a3953a",
+  "readme_path": "README.md",
+  "readme_sha256": "48674db5ac7a95f1ab14a6287941b0ae6cf33c9fb36c7f74afb1690df3b2ab55",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d8c42b88a2eda70383aed2f69701464bb1beff57"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e48af106cc9c8e6ba552d5df4df782f8565fb80c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c78d6a1487cb96f786e08b816aeaedbd629a2412"
+    },
+    {
+      "path": ".qtcreator",
+      "type": "dir",
+      "sha": "0dff73027ae21840eea30133378f9d4b04f32903"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "e99a0700c26ac44a8d89aa075626f4ce05745dae"
+    },
+    {
+      "path": "3rd_party",
+      "type": "dir",
+      "sha": "9d3222dfa2a976ace234108a887e6a82dd852564"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b99cb7da1e45a879dc71ee2990b665d0030c56aa"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "4ba2d53e186e916a8fde94f1967ec7420a1d1b74"
+    },
+    {
+      "path": "CoW-Campaign-Ideas.txt",
+      "type": "file",
+      "sha": "991ffda2d4999b9e00959b1638e58b1a04877b28"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "7014d3508bb8eb93e40d5edf83cbd50d601fa9eb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0a041280bd00a9d068f503b8ee7ce35214bd24a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8a2bf7b1ce4623201a956dae363635b13c983497"
+    },
+    {
+      "path": "_test",
+      "type": "dir",
+      "sha": "e6c2c2a9a1942e867ad6148a7cde340ce896ab78"
+    },
+    {
+      "path": "ai",
+      "type": "dir",
+      "sha": "ad0b1781a863fc5f8bc28ac053795fb2ff328675"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "02d6ac1ec49397404664bb77619e867f18a99ae2"
+    },
+    {
+      "path": "android_openssl",
+      "type": "file",
+      "sha": "57056d6dd94c235a67b1bc0e4befdba8f9e11c8d"
+    },
+    {
+      "path": "awbwReplayReader",
+      "type": "dir",
+      "sha": "ac2dcfd9ea9a02ae541b41290ea01ee432300fc4"
+    },
+    {
+      "path": "coGenerator",
+      "type": "dir",
+      "sha": "0a0bc1a3d85cb7ed9cee087abaee398b9c91f941"
+    },
+    {
+      "path": "core.qrc",
+      "type": "file",
+      "sha": "dab6b5ecdc5a3a457572e1dbef5bc127feaf8b20"
+    },
+    {
+      "path": "coreengine",
+      "type": "dir",
+      "sha": "d81c9a45daf909278fbcaeacd0cecb72b08af664"
+    },
+    {
+      "path": "customTerrainImages",
+      "type": "dir",
+      "sha": "baa5d867a65c84ba442c55daa8a13f0d78f68673"
+    },
+    {
+      "path": "cv2pdb",
+      "type": "dir",
+      "sha": "794219813525a48c93aea1fe3f71fb78467dd172"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "7f6803073418420c5751a0a9fdd4d42980ff4d11"
+    },
+    {
+      "path": "distribution",
+      "type": "dir",
+      "sha": "b2c1ce26979d1eabe959e34ceb794d3afcfcff61"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "dc434a13ee9e17fe55874308707d460db471b61e"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "d4d4748deb7decfb5a866455a261893243cdc86b"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "a3a31f180e465250d17fd77bb172746e4db4eaf1"
+    },
+    {
+      "path": "gameinput",
+      "type": "dir",
+      "sha": "943f7179abe5812a502b63cf12247b5212d0b2b3"
+    },
+    {
+      "path": "general.qrc",
+      "type": "file",
+      "sha": "5020f23682e2bb1060918968a833401c4a7a50fb"
+    },
+    {
+      "path": "ingamescriptsupport",
+      "type": "dir",
+      "sha": "73f7732b7816797e38abba9c3604d5a8b986ea76"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "f42369b901ba14b78d4176c5ced1ef7dcbb5c9df"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "7957b31aab4cb962ea9958865ad98eb31005ec5d"
+    },
+    {
+      "path": "mapsupport",
+      "type": "dir",
+      "sha": "3c7961fc93faf624434757a8bc5304460a8b1736"
+    },
+    {
+      "path": "menue",
+      "type": "dir",
+      "sha": "4ed6e4749e41a4ad682ee3b080ca4de520a8ef41"
+    },
+    {
+      "path": "modding",
+      "type": "dir",
+      "sha": "f9f343bad7a5cee0e6096f9d19a366a50217dbda"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "158c99b8613ca670669f051473e2261bcd80239c"
+    },
+    {
+      "path": "multiplayer",
+      "type": "dir",
+      "sha": "f95b52d58e7abca7e458009b1886e5766fdf1506"
+    },
+    {
+      "path": "music.qrc",
+      "type": "file",
+      "sha": "e3bd953c3ed4ce2abd83b8be7a5fcaec7e316c29"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "6472178c1b3b0df4d9a4316151140f62dafea098"
+    },
+    {
+      "path": "news.json",
+      "type": "file",
+      "sha": "14fd5519b748b442cadbfdab930ca6824598e504"
+    },
+    {
+      "path": "objects",
+      "type": "dir",
+      "sha": "479e5905385a87c7bb06c290805c536368ae3b1d"
+    },
+    {
+      "path": "resource_management",
+      "type": "dir",
+      "sha": "4ca761acedd8456487e394573f8c3d9cbd2f641d"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "b0bf3591c01d26f435745710a01cf439540fb47e"
+    },
+    {
+      "path": "resources_src",
+      "type": "dir",
+      "sha": "becdf4921a014a97a963c3cfdeae9035297ca034"
+    },
+    {
+      "path": "savegames",
+      "type": "dir",
+      "sha": "8f801877e440606cf6965dda7e3fbb77fcb5f12a"
+    },
+    {
+      "path": "sound.qrc",
+      "type": "file",
+      "sha": "b11533d4523d8e7c4a7dceff3ec71f66cad3e3fb"
+    },
+    {
+      "path": "sprites.qrc",
+      "type": "file",
+      "sha": "906d207bfacad0790b75cc26ae797e144a8f1e6b"
+    },
+    {
+      "path": "spritingsupport",
+      "type": "dir",
+      "sha": "a333d0fb15051edee54b758de3094e656486abe6"
+    },
+    {
+      "path": "system",
+      "type": "dir",
+      "sha": "361f9cffa0a55003489a646294f565669ef20908"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "983403fab8c239ae8260066f19e12b34930db258"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "679313ed4d9b0ecefe360d1bf6cec39f7aab593a"
+    },
+    {
+      "path": "todo-list.xt",
+      "type": "file",
+      "sha": "8511b393c1b6dddad9ca87a24a58fab9aaed6858"
+    },
+    {
+      "path": "translation",
+      "type": "dir",
+      "sha": "b4f0c77ace36d95b559953c501fe075b43c7897c"
+    },
+    {
+      "path": "ui_reader",
+      "type": "dir",
+      "sha": "1ca1337894395a1838f49246af4e7d436a1fb384"
+    },
+    {
+      "path": "updater",
+      "type": "dir",
+      "sha": "a9a42afdb26479c0a1219d7c2d4f2f5511501c03"
+    },
+    {
+      "path": "wiki",
+      "type": "dir",
+      "sha": "990efb1da3c42e9a3aebaa482ed723046a70aa37"
+    },
+    {
+      "path": "xinput1_3.dll",
+      "type": "file",
+      "sha": "bfb89d0c5bff2bf6aee8f6a6c3cd717e68aa25f1"
+    },
+    {
+      "path": "zipSupport",
+      "type": "dir",
+      "sha": "ed84263cf20ee1e0e284282bfad46e94baee5d28"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly separates native core engine and mods; owned runtime/AI and CMake build over graphics/UI backend libraries.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

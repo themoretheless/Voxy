@@ -70,6 +70,52 @@ pub fn step_character(
     dt: f64,
     config: CharacterConfig,
 ) -> Result<CharacterStep, CharacterError> {
+    step_character_acceleration(
+        view,
+        registry,
+        state,
+        input,
+        dt,
+        config,
+        [0.0, config.gravity, 0.0],
+    )
+}
+
+/// Samples anchored Newtonian or uniform gravity at the character center.
+/// Locomotion and ground detection remain Y-up.
+/// # Errors
+/// Field, validation and voxel-query errors leave the character unchanged.
+pub fn step_character_in_field(
+    view: &impl VoxelView,
+    registry: &BlockRegistry,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    field: &impl physics::gravity_field::GravityField,
+) -> Result<CharacterStep, CharacterError> {
+    let anchor = physics::Origin {
+        x: state.body.anchor.x,
+        y: state.body.anchor.y,
+        z: state.body.anchor.z,
+    };
+    let center = std::array::from_fn(|k| state.body.min[k] * 0.5 + state.body.max[k] * 0.5);
+    let acceleration = field
+        .acceleration(anchor, center)
+        .map_err(physics::CharacterError::Gravity)?;
+    step_character_acceleration(view, registry, state, input, dt, config, acceleration)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn step_character_acceleration(
+    view: &impl VoxelView,
+    registry: &BlockRegistry,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    acceleration: [f64; 3],
+) -> Result<CharacterStep, CharacterError> {
     let mut general = physics::CharacterState {
         body: physics::AnchoredAabb {
             anchor: physics::Origin {
@@ -83,12 +129,57 @@ pub fn step_character(
         velocity: state.velocity,
         grounded: state.grounded,
     };
-    let report = physics::step_character(
+    let report = physics::step_character_with_acceleration(
         &VoxelCollisionWorld { view, registry },
         &mut general,
         input,
         dt,
         config,
+        acceleration,
+    )?;
+    *state = CharacterState {
+        body: from_body(general.body),
+        velocity: general.velocity,
+        grounded: general.grounded,
+    };
+    Ok(report)
+}
+
+/// Applies device-integrated motion with the authoritative voxel sweep controller.
+/// # Errors
+/// Invalid state/motion or world query errors preserve the original character.
+#[allow(clippy::too_many_arguments)]
+pub fn step_character_with_motion(
+    view: &impl VoxelView,
+    registry: &BlockRegistry,
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+    velocity: [f64; 3],
+    displacement: [f64; 3],
+) -> Result<CharacterStep, CharacterError> {
+    let mut general = physics::CharacterState {
+        body: physics::AnchoredAabb {
+            anchor: physics::Origin {
+                x: state.body.anchor.x,
+                y: state.body.anchor.y,
+                z: state.body.anchor.z,
+            },
+            min: state.body.min,
+            max: state.body.max,
+        },
+        velocity: state.velocity,
+        grounded: state.grounded,
+    };
+    let report = physics::step_character_with_motion(
+        &VoxelCollisionWorld { view, registry },
+        &mut general,
+        input,
+        dt,
+        config,
+        velocity,
+        displacement,
     )?;
     *state = CharacterState {
         body: from_body(general.body),
@@ -172,6 +263,78 @@ mod tests {
             velocity: [0.0; 3],
             grounded: false,
         }
+    }
+
+    #[test]
+    fn external_motion_matches_controller_through_floor_wall_and_jump() {
+        let mut solid: BTreeSet<_> = (-6..=20)
+            .flat_map(|x| (-2..=2).map(move |z| VoxelPos { x, y: 0, z }))
+            .collect();
+        solid.insert(VoxelPos { x: 4, y: 1, z: 0 });
+        solid.insert(VoxelPos { x: 4, y: 2, z: 0 });
+        let world = geometry(solid);
+        let registry = registry();
+        let mut cpu = state();
+        let mut external = cpu;
+        let config = CharacterConfig::default();
+        let dt = 1.0 / 60.0;
+        let mut grounded_ticks = 0;
+        let mut wall_contacts = 0;
+        for tick in 0..240 {
+            let input = CharacterInput {
+                planar_velocity: [2.0, 0.0],
+                jump_pressed: tick == 20 || tick == 140,
+            };
+            let mut velocity = external.velocity;
+            velocity[0] = input.planar_velocity[0];
+            velocity[2] = input.planar_velocity[1];
+            if input.jump_pressed && external.grounded {
+                velocity[1] = config.jump_speed;
+            }
+            velocity[1] = (velocity[1] + config.gravity * dt).max(-config.terminal_fall_speed);
+            let motion = velocity.map(|v| v * dt);
+            let expected = step_character(&world, &registry, &mut cpu, input, dt, config).unwrap();
+            let actual = step_character_with_motion(
+                &world,
+                &registry,
+                &mut external,
+                input,
+                dt,
+                config,
+                velocity,
+                motion,
+            )
+            .unwrap();
+            assert_eq!(actual, expected);
+            assert_eq!(external, cpu);
+            grounded_ticks += usize::from(actual.grounded);
+            wall_contacts += actual
+                .contacts
+                .iter()
+                .filter(|contact| contact.normal[0] != 0)
+                .count();
+        }
+        assert!(grounded_ticks > 20);
+        assert!(wall_contacts > 0);
+        let before = external;
+        let input = CharacterInput {
+            planar_velocity: [0.0; 2],
+            jump_pressed: false,
+        };
+        assert!(
+            step_character_with_motion(
+                &world,
+                &registry,
+                &mut external,
+                input,
+                dt,
+                config,
+                [f64::INFINITY; 3],
+                [0.0; 3]
+            )
+            .is_err()
+        );
+        assert_eq!(external, before);
     }
 
     #[test]
@@ -334,4 +497,50 @@ mod tests {
         assert!(state.body.anchor.x > 9_000_000_000_000);
         assert!((0.0..1.0).contains(&state.body.min[0]));
     }
+}
+
+/// Shared sweep-and-slide controller using partially worn voxel surfaces.
+/// # Errors
+/// Invalid inputs or stale/unavailable geometry leave character state unchanged.
+#[allow(clippy::too_many_arguments)]
+pub fn step_character_with_wear(
+    view: &impl VoxelView,
+    registry: &BlockRegistry,
+    wear: &[crate::VoxelWear],
+    state: &mut CharacterState,
+    input: CharacterInput,
+    dt: f64,
+    config: CharacterConfig,
+) -> Result<CharacterStep, CharacterError> {
+    crate::wear::validate_wear_bindings(view, wear).map_err(physics::CharacterError::Sweep)?;
+    let mut general = physics::CharacterState {
+        body: physics::AnchoredAabb {
+            anchor: physics::Origin {
+                x: state.body.anchor.x,
+                y: state.body.anchor.y,
+                z: state.body.anchor.z,
+            },
+            min: state.body.min,
+            max: state.body.max,
+        },
+        velocity: state.velocity,
+        grounded: state.grounded,
+    };
+    let report = physics::step_character(
+        &crate::WornVoxelCollisionWorld {
+            view,
+            registry,
+            wear,
+        },
+        &mut general,
+        input,
+        dt,
+        config,
+    )?;
+    *state = CharacterState {
+        body: from_body(general.body),
+        velocity: general.velocity,
+        grounded: general.grounded,
+    };
+    Ok(report)
 }

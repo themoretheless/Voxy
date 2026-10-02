@@ -1,0 +1,189 @@
+{
+  "repository": "faiface/pixel",
+  "repository_id": 74203833,
+  "commit": "0a251bc08bfcfd68720fc237ee6a6268fa3a12e6",
+  "source_url": "https://github.com/faiface/pixel/tree/0a251bc08bfcfd68720fc237ee6a6268fa3a12e6",
+  "readme_path": "README.md",
+  "readme_sha256": "f5f28a9fe89db749b346f88b388c3735c8b4f8947ab20362857c9bf7f43bc61a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eedaa3ce11f0e0f1e578ed544ca55452f413def4"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ca39e27888a9efa770f099f7155bd5eea2695fd9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c96f255d27396ad9a3d84664a5201635cc7ea434"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "22c308f01ba91cb0f8c6eea8bdca28168f5a081b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "683f9ea230e80b557e6cd32ef37217ee118d92e5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d958768b49ec3753382c9ee03b229275a6810f51"
+    },
+    {
+      "path": "batch.go",
+      "type": "file",
+      "sha": "9cf21c42f3b89e7c42b3a802dfdf6681b69fc4f9"
+    },
+    {
+      "path": "circle.go",
+      "type": "file",
+      "sha": "8e2920797e3bb7ed64a606c06a2a0e3ed6772df5"
+    },
+    {
+      "path": "circle_test.go",
+      "type": "file",
+      "sha": "482e3e596bc7f7123f30337f6f774c36f36149a5"
+    },
+    {
+      "path": "color.go",
+      "type": "file",
+      "sha": "4b41af3a6634deea1f99eb9a9b3ae15145e85c8f"
+    },
+    {
+      "path": "color_test.go",
+      "type": "file",
+      "sha": "31514d7e98a46f1623998aa01c23d8857d54b5d1"
+    },
+    {
+      "path": "compose.go",
+      "type": "file",
+      "sha": "a4a8783798bb5434a48503cf56825fd7f69a8d4a"
+    },
+    {
+      "path": "data.go",
+      "type": "file",
+      "sha": "c18516d0c10e7f1b2207fdd1c9e5c246b200b510"
+    },
+    {
+      "path": "data_test.go",
+      "type": "file",
+      "sha": "42084c8b2cff1cd59031b2119c1848f5ad2c2397"
+    },
+    {
+      "path": "doc.go",
+      "type": "file",
+      "sha": "fe85605bab29deeacb1002b3bb9b1dee59c4d54c"
+    },
+    {
+      "path": "drawer.go",
+      "type": "file",
+      "sha": "117e8e31d10e9ab57bd755964b2e8f2fb3030801"
+    },
+    {
+      "path": "drawer_test.go",
+      "type": "file",
+      "sha": "233f510eddd5c48b73b9dfaf8c60bcef6ddddfab"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "e200d2522cb5d59b1e5119a14ce0290aae0796c5"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "99b17693c4c53879f5b2056a8e9395d612a18246"
+    },
+    {
+      "path": "imdraw",
+      "type": "dir",
+      "sha": "62f92838e297f58d0c381ba7b2cf9b715959615e"
+    },
+    {
+      "path": "interface.go",
+      "type": "file",
+      "sha": "47272b91d73b50f1b6754353df52288082877afe"
+    },
+    {
+      "path": "line_test.go",
+      "type": "file",
+      "sha": "3955ce3fbb3c9a4cd444fdedf36aa64c8ef1889d"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "0107509736a1820ecd7a78936558c91ff16ffb7c"
+    },
+    {
+      "path": "math.go",
+      "type": "file",
+      "sha": "69784f3aef68382c404708e511f447dfdfdb7964"
+    },
+    {
+      "path": "math_test.go",
+      "type": "file",
+      "sha": "035878fed6f5517c36c7d0cdf1fb0d3b680ddd6c"
+    },
+    {
+      "path": "matrix.go",
+      "type": "file",
+      "sha": "3f02fea417977634d088ff669e54347f1951543a"
+    },
+    {
+      "path": "matrix_test.go",
+      "type": "file",
+      "sha": "22b6f60a249cc68823f39f9181d16f5a6c729eae"
+    },
+    {
+      "path": "pixel_test.go",
+      "type": "file",
+      "sha": "3717f26f5e303735d72ec043de6080421c374d79"
+    },
+    {
+      "path": "pixelgl",
+      "type": "dir",
+      "sha": "755fab15aaf99a5c35798bee7ed7faade0734ae1"
+    },
+    {
+      "path": "rectangle.go",
+      "type": "file",
+      "sha": "5881da2f0018b03f8096a2e6f825a9455887ad53"
+    },
+    {
+      "path": "rectangle_test.go",
+      "type": "file",
+      "sha": "e87ef676e7bd98d2774370f98cee0ed6f2099f45"
+    },
+    {
+      "path": "sprite.go",
+      "type": "file",
+      "sha": "7042c40a1eb656afb6e9bed7b75cec4da54848f5"
+    },
+    {
+      "path": "text",
+      "type": "dir",
+      "sha": "a29bae369db6f8ebfd5534dc47beb28fc53b02ec"
+    },
+    {
+      "path": "vector.go",
+      "type": "file",
+      "sha": "42318b07c2fce76028c92735b4ec68853391a2b0"
+    },
+    {
+      "path": "vector_test.go",
+      "type": "file",
+      "sha": "ddec5517538d68f0061cb3b4e99ca515531690fd"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies archived Go game library; pixelgl/math/batching source and Go tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

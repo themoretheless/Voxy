@@ -1,0 +1,15 @@
+{
+  "adopted": false,
+  "image": "docs/body-female-local-fold-100-continued-foot-detail.png",
+  "image_sha256": "56576e58abb7effec90b2feeeb006b819d111fbe634ebfc6a418e0f0a0a5dc5a",
+  "renderer": "Metal offscreen",
+  "live_capture": false,
+  "review": "Toe webbing triangular protrusions remain. Candidate fails appearance adoption gate.",
+  "static_forbidden_pairs": 23,
+  "involved_triangles": 23,
+  "residual_locations": "Two small clusters in positive-x toe webbing, from verified static pair plot",
+  "normals_opposed_to_current_geometry": 15,
+  "bindings": 45266,
+  "maximum_binding_distance_m": 0.005035487104822435,
+  "quality_scope": "Selected foot region maximum adjacent face angle 126.6317 degrees; no triangles below quality .05"
+}

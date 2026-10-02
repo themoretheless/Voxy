@@ -1,0 +1,13 @@
+{
+  "status": "native_verification_incomplete",
+  "editor_sha256": "60018e4400d9d997ff6cded703d9283baf857787c94967230e126d4c9d2a58b3",
+  "unit_tests": {
+    "passed": 24,
+    "failed": 0
+  },
+  "strict_clippy": "passed",
+  "native_presented_frames": 0,
+  "native_last_surface": "SkippedOccluded",
+  "native_error": "native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)",
+  "scope": "Creation/registration/reinstantiation, scene/history retention and save/load are covered by editor library tests. Native hit-test/create acceptance has not executed because no frame was presented. Foreground focus attempt did not resolve occlusion. No completion or visual verification claim."
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "tek256/astera",
+  "repository_id": 183664545,
+  "commit": "e53e2f25047a986ecf9ea7b1c2273f42628c3d89",
+  "source_url": "https://github.com/tek256/astera/tree/e53e2f25047a986ecf9ea7b1c2273f42628c3d89",
+  "readme_path": "README.md",
+  "readme_sha256": "5f7ecc9b39971a3948a1ddea8a9e010485261a9b9ffd2c2d6fa7199e532f957b",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2e5c723e2261160db26d33327810a1f5d59d5591"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a007837546c8cf240a26e0fd93825985f9a2ea38"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6f13f37e4dfb4c6d1d3278e7adf1c1fb9a555c09"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c6bd569bc2543f1b31fe1d7caf8e12b105b97624"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "851d22d0e955b224b0667375f1967ba00e219145"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d5446ed9aebb71e40f26bcd65937b043923ebb09"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5cf1ac3f56aa2e7bed1015c852794bd637b9a4bc"
+    },
+    {
+      "path": "dep",
+      "type": "dir",
+      "sha": "6480aa8341c820c9f6268aa686aa2c2a7ab8a0d4"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "d32bd8018bce21952e338ce95ede933ecda42d50"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "5c0f1ff4417d3d38e131e628bafbc49b5fff7379"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d7bf6032a8173965848cb2aab2c4f4730b0836a2"
+    },
+    {
+      "path": "test.txt",
+      "type": "file",
+      "sha": "10f147e46f9d49953acc0b3367bd1ce090e4486c"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "d7f10bc452e64515011925f756088bafbe9f7af3"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C99 2D library; src/include and CMake/examples, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

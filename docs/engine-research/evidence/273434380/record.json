@@ -1,0 +1,132 @@
+{
+  "repository": "GodotVR/godot_openxr_for_godot_3.x",
+  "repository_id": 273434380,
+  "commit": "e983d79365cf5a59052e6242dba083a467020dee",
+  "source_url": "https://github.com/GodotVR/godot_openxr_for_godot_3.x/tree/e983d79365cf5a59052e6242dba083a467020dee",
+  "readme_path": "README.md",
+  "readme_sha256": "370273e089902b02add755df4e68ea9dd5a73dddca44323de5d4a5a897ddd0c6",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1e529ac149b230a12be1435ca01f1a7a1bf49e04"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "677850082cefe067b8d2eaf27470e2b58e5327b5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f87980509c0bc99fa064779e2c9e9096ce03ffd2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b51ca780eb140370342c0202ba5ba2182ea87973"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9bb7ed9aef5fefcf929a9124e532926eca091c6a"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "318f1d9db0b72621d0b9fbbcfcc77a6443d4b1fb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4b10fccc87a0ea906be3f472e04373034d951d43"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7826fa9e0ab204056b9628a7a9dcf76dc328486c"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "2c8192ba7fe39d985066a3ecab79cfa34c3182ad"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "5ea027285e75217031d9e313ce3bc41b5fed43a2"
+    },
+    {
+      "path": "android_samples",
+      "type": "dir",
+      "sha": "8a3b6b6081cbd35e4c16ae380ccf729631cbb0ad"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "f2885b90042415ad49e8f3c9a02bdad8944dbcd2"
+    },
+    {
+      "path": "config.gradle",
+      "type": "file",
+      "sha": "acea45c4edf19475856bd3427025bf918f13b1cc"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "c533a394b33e364fc85642e5c1517a53f3799d8f"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "2dc069ad2fb7b8faab87e453c39b1e460006a3ce"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "094c855fcdf56168e4a49235c5698258c22c2755"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "fbd7c515832dab7b01092e80db76e5e03fe32d29"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "5093609d512a96947851d39fa2dc05df2af2248e"
+    },
+    {
+      "path": "hooks",
+      "type": "dir",
+      "sha": "0c871b8099efd2206bc00a180a7cac72e9364c6f"
+    },
+    {
+      "path": "openxr_screenshot.jpg",
+      "type": "file",
+      "sha": "12843c5e221d302c16cd0f60f88ba7f2bf934626"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d5cf01672abe3dedd828f38809537a292b352c79"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "0a3d7877b63293b01aa5ae91e00799faa443af74"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "53cee7f1a840ead979db4f5114abfab28edd3a3d"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "62a055d602e5ebc7964795554314d4f11e33347e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,134 @@
+{
+  "repository": "OpenWebGAL/WebGAL_Terre",
+  "repository_id": 448725523,
+  "commit": "cf73dd58535d3ef15bddf0852adee153fa92d7da",
+  "source_url": "https://github.com/OpenWebGAL/WebGAL_Terre/tree/cf73dd58535d3ef15bddf0852adee153fa92d7da",
+  "readme_path": "README.md",
+  "readme_sha256": "d73ad7043728ad17fd327cbe3f3288d868e60f0cd88c1a20629c28c0d4b3668d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5a0d5e480b5f395024be26a530d1f72811b1ac99"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f0546a622f1431312c2951f5472a0ce554c74b4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ce82c85422f93db28d2138d434147b9fdf91629a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "cb23e2b88756767a1a77d963c9f964e83d9b8bf9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "011cd15a76d1772c7d73d4f2383fdd7f57c3b082"
+    },
+    {
+      "path": "README_EN.md",
+      "type": "file",
+      "sha": "7330653d5986dccb93f5b09a1196cb3e8f545130"
+    },
+    {
+      "path": "README_JP.md",
+      "type": "file",
+      "sha": "160ad7c708ed4163ce2ff28fc67683cb94122815"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f3fd19e385c3539148a6582725927ae52aee85b7"
+    },
+    {
+      "path": "build-android-assets.sh",
+      "type": "file",
+      "sha": "77d3f646a0285cf40377720de3c20b5acb53ce60"
+    },
+    {
+      "path": "build-electron.sh",
+      "type": "file",
+      "sha": "7fad3c9766c0fe406c8879c9629b6e030b47d4d4"
+    },
+    {
+      "path": "installer.nsi",
+      "type": "file",
+      "sha": "aef6f55cc4a7cbe0b4182d10c043c792a51c60aa"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d39676f47c509f1c0822fbbb9709f8d3b70b2604"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "8e24747bf260a409c811f15535a7c063d12412a5"
+    },
+    {
+      "path": "pr-check-linux.yml",
+      "type": "file",
+      "sha": "9ab2a7c8ba52145918ba7d02880a16638de7c02e"
+    },
+    {
+      "path": "release-android.sh",
+      "type": "file",
+      "sha": "ee0fe16248fc92ea3dfb4738c34665d3fa4d6d5f"
+    },
+    {
+      "path": "release-linux-arm64.sh",
+      "type": "file",
+      "sha": "c053df234773fa53d2bca13ddbd84d8cff55f062"
+    },
+    {
+      "path": "release-linux.sh",
+      "type": "file",
+      "sha": "0271643767b8a016064df47319fde8f5a741aac5"
+    },
+    {
+      "path": "release-mac-x64.sh",
+      "type": "file",
+      "sha": "6d0bb3c73784a4d430d4a20de54f681f11f32885"
+    },
+    {
+      "path": "release-mac.sh",
+      "type": "file",
+      "sha": "877be73dcbe4a6e26c60471ec7215cbd7888f3ea"
+    },
+    {
+      "path": "release-terre-electron.sh",
+      "type": "file",
+      "sha": "90a001808212685ccc6a4139f3441def756c90b9"
+    },
+    {
+      "path": "release.sh",
+      "type": "file",
+      "sha": "c97ff75ef29a677aa474e38423e987889f3d1eab"
+    },
+    {
+      "path": "releasenote.md",
+      "type": "file",
+      "sha": "a06af5ad05eaa31a59b21e9dfc0a8e184a1c0470"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "2af02ccb2988167ff26c65c500465816b8c0e726"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify visual-novel editor/export application; not separate underlying WebGAL runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

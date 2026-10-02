@@ -1,0 +1,169 @@
+{
+  "repository": "o3de/o3de",
+  "repository_id": 354743391,
+  "commit": "28872cbb42b4a140f92bf42d75850065135267ff",
+  "source_url": "https://github.com/o3de/o3de/tree/28872cbb42b4a140f92bf42d75850065135267ff",
+  "readme_path": "README.md",
+  "readme_sha256": "e428218fad4b3d7b4219fe026c5ffd1eca643b08f86a4ee6f6ec9a643f321969",
+  "entries": [
+    {
+      "path": ".automatedtesting.json",
+      "type": "file",
+      "sha": "3cfb06b2898dcd4fd33d5ff1a3decb9db43d824b"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "cfddf5fa62d62cf58636d6ed1adbb0b25abdcdd1"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7cc79b0e14f203bd549d914a9adc1fa785558b63"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "302923398c6b19d437ea0e4c70e11ef274cdb299"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "14e204fe4e3a64ba6f49320ca5f3211c184ae6f7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68cc0d64262f451871910ae140440b6ade5eafbd"
+    },
+    {
+      "path": ".lfsconfig",
+      "type": "file",
+      "sha": "fbd1bdb9ba00cba22e0231c35807aa34643bc543"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "e44509a7e239725ca0fb6c377fefddaac0d83c9a"
+    },
+    {
+      "path": "AutomatedTesting",
+      "type": "dir",
+      "sha": "cc8706bab213c7cf11830a6fd04b44d92a4dfec4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b04c7699b7970691baecd8530eab575370ac166b"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "1b812d74b73941beb256ba562b581c10df859567"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "d7ede549bc66a00855069eddf5204e7136d11f0a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0bb1c7cad6dc477720a7293d90e0e70eb2396e26"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "0b80140c5f3d7d38306f25d27e219e0c0a9dca5b"
+    },
+    {
+      "path": "Docker",
+      "type": "dir",
+      "sha": "5bed7e01f306f6e3ff29418f757e7d76e0b9c1e5"
+    },
+    {
+      "path": "Doxyfile_ScriptBinds",
+      "type": "file",
+      "sha": "78b9e616eecbaf29f508ba8aeb87c70f63afce5e"
+    },
+    {
+      "path": "Gems",
+      "type": "dir",
+      "sha": "64265507b400e5fd0f79ea46ac09678439eba9cb"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d96e24130beb684113d77221d6048f0e0331df87"
+    },
+    {
+      "path": "LICENSE_APACHE2.TXT",
+      "type": "file",
+      "sha": "b7a7d6c0e55c437adc4f260d4dbff372c830acce"
+    },
+    {
+      "path": "LICENSE_MIT.TXT",
+      "type": "file",
+      "sha": "1b16d6d320ac523ee5da1750a9b37524a4f3cb6c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8950cc837f81b19b5a7c15f3ec86e761dbfd5f4b"
+    },
+    {
+      "path": "RETIRED_CODE.md",
+      "type": "file",
+      "sha": "371174200cb65c49b7b0c9a7d476b893d94e68dc"
+    },
+    {
+      "path": "Registry",
+      "type": "dir",
+      "sha": "43292e0881f860251c121a672e59fbd1cf101cdc"
+    },
+    {
+      "path": "SECURITY.MD",
+      "type": "file",
+      "sha": "30c0880ac59221611af01b9a6d7ecd3737846b7a"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "d5cd7f8643773c550b4144347d564a5627673c9e"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "049de958399d5c8885f31d4bb91dff00dc93da72"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "fb80a0d48a980802d9b16c493996e9b15183643f"
+    },
+    {
+      "path": "engine.json",
+      "type": "file",
+      "sha": "744736830b49a8888e4030f1cd0abbdf572501db"
+    },
+    {
+      "path": "pytest.ini",
+      "type": "file",
+      "sha": "a0039ed65030a8ca86091314665ad7f83ca99c40"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "89ebc33e0dbbcb744514c800d75119837a584db7"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "62f4ace0246222f0b67ee27d76cc444f31e0b4c2"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 3D engine; Code/Gems/Tools/engine.json and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

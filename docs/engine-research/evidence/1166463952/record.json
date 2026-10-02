@@ -1,0 +1,69 @@
+{
+  "repository": "4RH1T3CT0R7/balatro-port-tui",
+  "repository_id": 1166463952,
+  "commit": "be8930d3c9fd70ab210918218f7cbffd2df1a30a",
+  "source_url": "https://github.com/4RH1T3CT0R7/balatro-port-tui/tree/be8930d3c9fd70ab210918218f7cbffd2df1a30a",
+  "readme_path": "README.md",
+  "readme_sha256": "2d46a37aebc030c75a0f986334b3cddcdb6652c6f1ded8fa42cf6db133ef2dea",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7fa02910bb236f1b065d96a740c2304290316e36"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "772f7567cc53b209ce49bb3fda639e08ca369862"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "8fafb0056771fd113effc663fed523e63e59b57a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "1dc739540bf917f35810b929d987580de7b62db0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4fc122d1143501e1bdc0c215781a037cd830c82e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3b2e1368bed1662f5b67c31974df255a841c6939"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b9eb5c4ac20f4bfe7e9fd55f37fbecd3f2722ea2"
+    },
+    {
+      "path": "love-api",
+      "type": "dir",
+      "sha": "2ea49cfcf9359e39799dd1cc1de5c5e36bc98f29"
+    },
+    {
+      "path": "love-terminal",
+      "type": "dir",
+      "sha": "ea7632e69f8e50b977eb70d7b2f761ef40488c08"
+    },
+    {
+      "path": "sprite-to-text",
+      "type": "dir",
+      "sha": "8521d300cb37460966415929ee6f4692aaa46c72"
+    },
+    {
+      "path": "test_game",
+      "type": "dir",
+      "sha": "beaebf64bec86da3c3d0b4c358c0c867676c20d1"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Independent Rust LOVE API runtime and terminal runner support unmodified Lua game code; README explicitly lists audio/thread/input stubs and partial API scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

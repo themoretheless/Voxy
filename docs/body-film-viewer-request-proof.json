@@ -1,0 +1,129 @@
+{
+  "tests": {
+    "presentation": 2,
+    "viewer_callback_with_actual_film": 1,
+    "mcp": 5
+  },
+  "features": [
+    "glam/serde"
+  ],
+  "builds": [
+    "model_mcp",
+    "surface_film"
+  ],
+  "capture": "numericalFilmState",
+  "request_tools": [
+    "film_state_request",
+    "film_state_get"
+  ],
+  "viewerImageCaptured": false,
+  "wholeBodyCheckpoint": false,
+  "actual_native_protocol_run": "passed: request through actual stdio MCP, capture from Metal viewer frame, get through actual stdio MCP",
+  "source_hashes": {
+    "crates/voxy_app/src/model_presentation.rs": "abdd8af3c7e8281a437a33404016466ee76dfc4074802c470778ca59727f3e80",
+    "crates/voxy_app/src/female_demo.rs": "9638a936b58f24bbda8daad24fff403b153ecf1a0f2ef247ffe33add7460f83f",
+    "crates/voxy_app/src/bin/model_mcp.rs": "628ea0bdd0cb46c4e150894f4c5649e2a175da6aa03555e0112773dcaeccf7cf"
+  },
+  "nativeCapture": {
+    "requestId": "51853-1790880263090081000",
+    "frame": 0,
+    "simulationTime": 0.00947004184126854,
+    "viewerPid": 51860,
+    "cells": 90175,
+    "massKg": 4.999999999999998e-05,
+    "summedMassKg": 4.9999999999999996e-05,
+    "fileBytes": 22890580,
+    "snapshot_sha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+    "snapshotPath": "/tmp/voxy-live-film-check/body.film-state-51853-1790880263090081000.json",
+    "savedSnapshotPath": "/Users/themoretheless/Documents/ChatGPT/Voxy/docs/body-film-native-state.json"
+  },
+  "getResponses": [
+    {
+      "id": 1,
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": {}
+        },
+        "protocolVersion": "2025-06-18",
+        "serverInfo": {
+          "name": "voxy-models",
+          "version": "0.1.0"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "jsonrpc": "2.0",
+      "result": {
+        "content": [
+          {
+            "text": "{\"capture\":\"numericalFilmState\",\"capturedAtUnixSeconds\":1790880265.803085,\"filmEnabled\":true,\"frame\":0,\"parameters\":{\"areola_pigmentation\":1.0,\"areola_radius_mm\":18.5,\"arm_length\":1.0,\"body_model\":\"female\",\"breast_size\":1.0,\"buttock_size\":1.0,\"calf_width\":1.0,\"foot_size\":1.0,\"forearm_length\":1.0,\"forearm_width\":1.0,\"hand_size\":1.0,\"head_size\":1.0,\"height_cm\":164.0,\"hip_width\":1.0,\"left_areola_size\":1.0,\"left_breast_size\":1.0,\"left_buttock_size\":1.0,\"left_nipple_projection_scale\":1.0,\"left_nipple_radius_scale\":1.0,\"leg_length\":1.0,\"navel_depth_mm\":4.0,\"navel_height_mm\":20.0,\"navel_shape\":\"reference\",\"navel_width_mm\":16.0,\"neck_length\":1.0,\"nipple_cold_response\":0.0,\"nipple_projection_mm\":3.0,\"nipple_radius_mm\":8.0,\"nipple_type\":\"reference\",\"right_areola_size\":1.0,\"right_breast_size\":1.0,\"right_buttock_size\":1.0,\"right_nipple_projection_scale\":1.0,\"right_nipple_radius_scale\":1.0,\"shin_length\":1.0,\"shoulder_width\":1.0,\"thigh_length\":1.0,\"thigh_width\":1.0,\"torso_depth\":1.0,\"torso_length\":1.0,\"upper_arm_length\":1.0,\"upper_arm_width\":1.0,\"waist_width\":1.0,\"weight_kg\":60.0},\"path\":\"/tmp/voxy-live-film-check/body.film-state-51853-1790880263090081000.json\",\"requestId\":\"51853-1790880263090081000\",\"simulationTime\":0.00947004184126854,\"status\":\"ready\",\"viewerImageCaptured\":false,\"viewerPid\":51860,\"wholeBodyCheckpoint\":false}",
+            "type": "text"
+          }
+        ],
+        "isError": false,
+        "structuredContent": {
+          "capture": "numericalFilmState",
+          "capturedAtUnixSeconds": 1790880265.803085,
+          "filmEnabled": true,
+          "frame": 0,
+          "parameters": {
+            "areola_pigmentation": 1.0,
+            "areola_radius_mm": 18.5,
+            "arm_length": 1.0,
+            "body_model": "female",
+            "breast_size": 1.0,
+            "buttock_size": 1.0,
+            "calf_width": 1.0,
+            "foot_size": 1.0,
+            "forearm_length": 1.0,
+            "forearm_width": 1.0,
+            "hand_size": 1.0,
+            "head_size": 1.0,
+            "height_cm": 164.0,
+            "hip_width": 1.0,
+            "left_areola_size": 1.0,
+            "left_breast_size": 1.0,
+            "left_buttock_size": 1.0,
+            "left_nipple_projection_scale": 1.0,
+            "left_nipple_radius_scale": 1.0,
+            "leg_length": 1.0,
+            "navel_depth_mm": 4.0,
+            "navel_height_mm": 20.0,
+            "navel_shape": "reference",
+            "navel_width_mm": 16.0,
+            "neck_length": 1.0,
+            "nipple_cold_response": 0.0,
+            "nipple_projection_mm": 3.0,
+            "nipple_radius_mm": 8.0,
+            "nipple_type": "reference",
+            "right_areola_size": 1.0,
+            "right_breast_size": 1.0,
+            "right_buttock_size": 1.0,
+            "right_nipple_projection_scale": 1.0,
+            "right_nipple_radius_scale": 1.0,
+            "shin_length": 1.0,
+            "shoulder_width": 1.0,
+            "thigh_length": 1.0,
+            "thigh_width": 1.0,
+            "torso_depth": 1.0,
+            "torso_length": 1.0,
+            "upper_arm_length": 1.0,
+            "upper_arm_width": 1.0,
+            "waist_width": 1.0,
+            "weight_kg": 60.0
+          },
+          "path": "/tmp/voxy-live-film-check/body.film-state-51853-1790880263090081000.json",
+          "requestId": "51853-1790880263090081000",
+          "simulationTime": 0.00947004184126854,
+          "status": "ready",
+          "viewerImageCaptured": false,
+          "viewerPid": 51860,
+          "wholeBodyCheckpoint": false
+        }
+      }
+    }
+  ],
+  "viewerProcess": "session 22500 completed exit 0"
+}

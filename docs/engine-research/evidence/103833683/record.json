@@ -1,0 +1,72 @@
+{
+  "repository": "ymgaq/AQ",
+  "repository_id": 103833683,
+  "commit": "d0e07e9822e1aec0ab8289f11193c741d9223fb0",
+  "source_url": "https://github.com/ymgaq/AQ/tree/d0e07e9822e1aec0ab8289f11193c741d9223fb0",
+  "readme_path": "README.md",
+  "readme_sha256": "7fae35d8385974b655a2f89637ba133e92c994aa0bb6cd5febbd0ea0da4f82f2",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a093a244de73f9dbeba3487ef1b9ea8622bd0e11"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "9e419e042146a2ce2e354202d4f7d8e4a3d66f31"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "c987954e31e6dae7fc8dc757d0903d76bb2ad16b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b5ffc5409c35634ef70ab023c8329856afea1338"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "725f08023eb890cdef0ecaf20c9c61574494a8e9"
+    },
+    {
+      "path": "README_JP.md",
+      "type": "file",
+      "sha": "912792fe219d4c7aed8033e65e211c2650dc536e"
+    },
+    {
+      "path": "config.txt",
+      "type": "file",
+      "sha": "7f74c74921f74db740c82d9b2a99102438556e6b"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "obj",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "prob",
+      "type": "dir",
+      "sha": "4830eb642fbc1f7594439e715c789245d5535807"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "80b762ea32c98d3563785c75a34b29f18598e8dd"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

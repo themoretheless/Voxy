@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "asset": "square",
+      "source": "square.obj"
+    },
+    {
+      "asset": "triangle",
+      "source": "triangle.obj"
+    }
+  ]
+}

@@ -1,0 +1,244 @@
+{
+  "scope": "Two-level spatial sensitivity with exact parent prolongation; synthetic material, no formal convergence or anatomical calibration claim",
+  "coarse_refinement": 1,
+  "fine_refinement": 2,
+  "coarse_nodes": 2768,
+  "fine_nodes": 19499,
+  "coarse_pins": 63,
+  "fine_pins": 265,
+  "coarse_csv_sha256": "43dcc71a3c8150cc0a7e24bf5319e4a8ce70ece441d53663271bd5f13290684f",
+  "fine_csv_sha256": "55e880bd00392ceb61781e335052e3f13dddab49f62dc6aa9b9107be7eff76e5",
+  "load_area_and_first_moment": [
+    [
+      1.3236670749083329e-05,
+      -9.631293706637689e-07,
+      9.593237740298064e-07,
+      -6.440913703854584e-07
+    ],
+    [
+      1.3236670749083327e-05,
+      -9.631293706637686e-07,
+      9.593237740298064e-07,
+      -6.440913703854583e-07
+    ]
+  ],
+  "comparisons": [
+    {
+      "time_s": 0.025,
+      "stage": "loaded-sub-1",
+      "max_difference_m": 0.0001917232052836254,
+      "rms_node_difference_m": 0.00010793476619805363,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "a0847f914640af019af2a892a11e6cf24bd4365f828a062304d77337c5a29e61",
+      "fine_mesh_sha256": "6583879a7efbd814429732be5f0241ba68dd8bd27a8144fb99b58ec29b9f7072"
+    },
+    {
+      "time_s": 0.05,
+      "stage": "loaded-sub-2",
+      "max_difference_m": 0.000192561374305829,
+      "rms_node_difference_m": 0.0001084290435047345,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "c518307f2186e8deb8c43e1adddb4824d449c3cf9f5db1ba79edf1ffbd7555ae",
+      "fine_mesh_sha256": "e490bc7da992e02a49debc67139f6d3be19fc1c7b135b04f7db2366dd6699465"
+    },
+    {
+      "time_s": 0.075,
+      "stage": "loaded-sub-3",
+      "max_difference_m": 0.00018982372272909634,
+      "rms_node_difference_m": 0.0001069391065078127,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "11c5450b36f1f5cd1e1bb7d38f9caabb685fab631fe0df8f173d03e824bca2b4",
+      "fine_mesh_sha256": "133504e743a5753ebe7ace422df1abb5d2e9881437f3fb5e89d25b45d17c32c7"
+    },
+    {
+      "time_s": 0.1,
+      "stage": "loaded",
+      "max_difference_m": 0.00019266705292438164,
+      "rms_node_difference_m": 0.00010850524824002915,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "c28ba1a567d2db1f4f539e195426e4370a0ca49c22077833169a79e835cc2c09",
+      "fine_mesh_sha256": "703871379b54a851e95999d4bd7a0ac49edd1b09aff29fff67d33d8d9a5f900f"
+    },
+    {
+      "time_s": 0.125,
+      "stage": "hold-1-sub-1",
+      "max_difference_m": 0.00019272516072352234,
+      "rms_node_difference_m": 0.00010858262928837732,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "501dcd9a36fa6d5be4e755b1ae2a2bc56e90d99ef101fba00cdf4e0f5add90fd",
+      "fine_mesh_sha256": "d0530b5690075de38e023d576fa45d64a8ec0c227d2be16f01e5e3bd7bc35dda"
+    },
+    {
+      "time_s": 0.15,
+      "stage": "hold-1-sub-2",
+      "max_difference_m": 0.00019097360542413396,
+      "rms_node_difference_m": 0.00010759612711437383,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "f5f8aaa91c2aa19d07d878c47de616ce80063470e855f89df370a7984ffff71a",
+      "fine_mesh_sha256": "d2a712f6694e7da3e6acec9363f48db7bef3443cff2c441ded903d1d38ee5e2d"
+    },
+    {
+      "time_s": 0.175,
+      "stage": "hold-1-sub-3",
+      "max_difference_m": 0.00019343668606845846,
+      "rms_node_difference_m": 0.00010898988706634605,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "dada2eee4547b6f7c5555f33afd500fe4dace8cd405aea0029072b8645d07337",
+      "fine_mesh_sha256": "950fb49fe6a501152d0ea6bee6c178b219070cc42013b4bd7d07dd4a0af98035"
+    },
+    {
+      "time_s": 0.2,
+      "stage": "hold-1",
+      "max_difference_m": 0.00019137552689643878,
+      "rms_node_difference_m": 0.00010785422373250529,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "743e7872c74c8e903f4b8e5f0f8d616c0427308d66b4cae83d310934ee370967",
+      "fine_mesh_sha256": "aa62a335a46281677912de84c813fd2ad2e63eb2278d1c0d673f8fa9a223fb90"
+    },
+    {
+      "time_s": 0.225,
+      "stage": "hold-2-sub-1",
+      "max_difference_m": 0.0001932057426825944,
+      "rms_node_difference_m": 0.00010886458079896888,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "30af5b794ff34965c42cc8fa2d7dd0dacdeb32472de24b0eb3b812ed2689ac29",
+      "fine_mesh_sha256": "f7fdab8ad4ec15828907ef5930abada2606ebf33abf3211621633442eb4e5107"
+    },
+    {
+      "time_s": 0.25,
+      "stage": "hold-2-sub-2",
+      "max_difference_m": 0.0001917716781925607,
+      "rms_node_difference_m": 0.00010807928661490071,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "a37de0ba33ca1c85e06637e556a899ddd458de7c6024e98f2a1340a86388caf0",
+      "fine_mesh_sha256": "dcde13baa71eee02bb490facd86b6242550e0dc9dddb05669978b87ad0efb1c6"
+    },
+    {
+      "time_s": 0.275,
+      "stage": "hold-2-sub-3",
+      "max_difference_m": 0.00019039100538418993,
+      "rms_node_difference_m": 0.00010732383613371203,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "84fc32fe5052120ff0b0c05b5a665862b7f21a02cb94714a368354bd8a29cef6",
+      "fine_mesh_sha256": "2d4341118d1bc8cac3a53c97dbbeed05236af1dc82a7c795a2aae7b7b7e62883"
+    },
+    {
+      "time_s": 0.3,
+      "stage": "hold-2",
+      "max_difference_m": 0.00019391358116571019,
+      "rms_node_difference_m": 0.00010929678264639593,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "d9660c7911d113b77cff04dbf5f52dd14f9596375de15bcb25312285ec46193f",
+      "fine_mesh_sha256": "3571cfa7481ea08625a8b093f1b2e1849d03a8e98dc3efb0f4a03027e24f32be"
+    },
+    {
+      "time_s": 0.325,
+      "stage": "released-sub-1",
+      "max_difference_m": 4.294617242964819e-06,
+      "rms_node_difference_m": 2.608544890470404e-06,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "7a4b22f37a993951cd1125e8c36c6fa301c553fc0d1a4f9817b50cf5d6bb05f6",
+      "fine_mesh_sha256": "13bd8d098fac88b975cb722c27631a582db870b855f61082a8a07bc3640503f2"
+    },
+    {
+      "time_s": 0.35,
+      "stage": "released-sub-2",
+      "max_difference_m": 2.461970082010052e-06,
+      "rms_node_difference_m": 1.5575007474552438e-06,
+      "maximum_node": 16895,
+      "coarse_mesh_sha256": "9ff9bbc999ed890354860d99816bf154336130268efa7a002aa1d4a8c336662f",
+      "fine_mesh_sha256": "d473156656cab0040446da8c44977f52396d5b4f684c9d99bcf6c9c3558dc72a"
+    },
+    {
+      "time_s": 0.375,
+      "stage": "released-sub-3",
+      "max_difference_m": 4.58090270896203e-06,
+      "rms_node_difference_m": 2.6839437926798298e-06,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "b96225c394f2310917a1a261fdac9aff55e2dd69e8627ff82943563cfaa73f33",
+      "fine_mesh_sha256": "d493648c08cf254b0ee37fc2f1562fbb6e23fc73dd9b7fb60f73cf1ba2727ae3"
+    },
+    {
+      "time_s": 0.4,
+      "stage": "released",
+      "max_difference_m": 2.9566933629405414e-06,
+      "rms_node_difference_m": 1.7908922607679715e-06,
+      "maximum_node": 5,
+      "coarse_mesh_sha256": "d267c6547f10baefe7fc55e5b4b4992347d4d75fa3f447f654d5066be4cf344c",
+      "fine_mesh_sha256": "ccb5f442de6b1abaeab1008e2bea83790f0954302d6b3cf837de32fddcce7396"
+    },
+    {
+      "time_s": 0.425,
+      "stage": "recover-1-sub-1",
+      "max_difference_m": 4.4957348264286824e-06,
+      "rms_node_difference_m": 2.6243628870793407e-06,
+      "maximum_node": 5,
+      "coarse_mesh_sha256": "fecf4bfad74f8053056c9d040fda8f1150281e21bbae0137d81afd5352d49ea0",
+      "fine_mesh_sha256": "8a591659a6d81122b59ccb1e774a9b7f26b6a5c046f169c98b09105f205e21de"
+    },
+    {
+      "time_s": 0.45,
+      "stage": "recover-1-sub-2",
+      "max_difference_m": 1.969260904311142e-06,
+      "rms_node_difference_m": 1.2246517327844081e-06,
+      "maximum_node": 5,
+      "coarse_mesh_sha256": "359b4db6093ec4ffc2d3dc1037668ed85b4cbb6b5d58378908405ee7726e49d2",
+      "fine_mesh_sha256": "c911d0bfff1273becf5108967c0833250644ffc8e6ddfaa50d6af98de128afbf"
+    },
+    {
+      "time_s": 0.475,
+      "stage": "recover-1-sub-3",
+      "max_difference_m": 3.7418641355174517e-06,
+      "rms_node_difference_m": 2.193757111856966e-06,
+      "maximum_node": 5,
+      "coarse_mesh_sha256": "ac777d5390f9d02be05951da0a0b86dc63b182ed1ac0bacdcb211d9a56dad533",
+      "fine_mesh_sha256": "4f7618b6a458ee4961808dd672f599f283bf5fe1c5095501ea904ae8841de8d4"
+    },
+    {
+      "time_s": 0.5,
+      "stage": "recover-1",
+      "max_difference_m": 1.6637395402933437e-06,
+      "rms_node_difference_m": 1.0082656096183385e-06,
+      "maximum_node": 5,
+      "coarse_mesh_sha256": "ed5c5884bccc360a64f7d3a7d371e74ed5b9ef0e1d860c8ee388a970684f87f2",
+      "fine_mesh_sha256": "d9ff5fe9a993675d29d1314662abca6124605cfe2e40ab0352153e73eb622bf3"
+    },
+    {
+      "time_s": 0.525,
+      "stage": "recover-2-sub-1",
+      "max_difference_m": 1.651222652419737e-06,
+      "rms_node_difference_m": 1.0142069254853005e-06,
+      "maximum_node": 5,
+      "coarse_mesh_sha256": "8b9a72eb204b4c5c77bb8f073a80ec741a7cff29bce82c626e1342d7b7d5a1f1",
+      "fine_mesh_sha256": "b078cf1179dae1926d8f1c8acb97fecd92a4cad1816c908a2105fe21982b9dd9"
+    },
+    {
+      "time_s": 0.55,
+      "stage": "recover-2-sub-2",
+      "max_difference_m": 4.01526954381435e-06,
+      "rms_node_difference_m": 2.304727057946889e-06,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "0f1603e3b89e65cdb1adc82743561d555f4feaf8a04c040080780b9f5636a26f",
+      "fine_mesh_sha256": "b2c79189d74913bf84eb3fa372a4b679b761943490ffc43e10829885082967ae"
+    },
+    {
+      "time_s": 0.575,
+      "stage": "recover-2-sub-3",
+      "max_difference_m": 7.11383649013345e-07,
+      "rms_node_difference_m": 5.14360050141034e-07,
+      "maximum_node": 16896,
+      "coarse_mesh_sha256": "b028f4bd66ed07bb2758992dbdbbe689d1b7b6815a7bc4fa4eaae5a5182a4158",
+      "fine_mesh_sha256": "30409f77eb565092260004e79a99263a6eba59c80b6a126ec0e97d0e276ad677"
+    },
+    {
+      "time_s": 0.6,
+      "stage": "recover-2",
+      "max_difference_m": 2.250497987820258e-06,
+      "rms_node_difference_m": 1.3582588135029158e-06,
+      "maximum_node": 199,
+      "coarse_mesh_sha256": "2511671156da0be670f0a2714d8207da33cdcc92f4cda894ce3cbd6cd476cc91",
+      "fine_mesh_sha256": "f3173541dbda14e3886df699075178a2a55f1d2175353a72f9f492aa2c975468"
+    }
+  ],
+  "max_difference_m": 0.00019391358116571019
+}

@@ -1,0 +1,51 @@
+{
+  "captureSource": "docs/body-film-native-state.json",
+  "capturedFrame": 0,
+  "capturedTime": 0.00947004184126854,
+  "cells": 90175,
+  "initialMassKg": 4.999999999999997e-05,
+  "normalizedVolumeL1VsFinest": [
+    2.260796485627777e-09,
+    9.689052719131705e-10,
+    3.229671169562421e-10
+  ],
+  "runs": [
+    {
+      "dtSeconds": 0.001,
+      "maximumThicknessM": 2.933415433891628e-05,
+      "normalizedVolumeL1Change": 0.00028149678072234826,
+      "relativeMassError": 1.3552527156068813e-16,
+      "steps": 100,
+      "wallSeconds": 0.281519542
+    },
+    {
+      "dtSeconds": 0.0005,
+      "maximumThicknessM": 2.933415437958302e-05,
+      "normalizedVolumeL1Change": 0.0002814956921378844,
+      "relativeMassError": 2.7105054312137626e-16,
+      "steps": 200,
+      "wallSeconds": 0.5724925
+    },
+    {
+      "dtSeconds": 0.00025,
+      "maximumThicknessM": 2.9334154399916162e-05,
+      "normalizedVolumeL1Change": 0.0002814951478510748,
+      "relativeMassError": 1.3552527156068813e-16,
+      "steps": 400,
+      "wallSeconds": 1.196484166
+    },
+    {
+      "dtSeconds": 0.000125,
+      "maximumThicknessM": 2.933415441008267e-05,
+      "normalizedVolumeL1Change": 0.00028149487570926755,
+      "relativeMassError": 1.3552527156068813e-16,
+      "steps": 800,
+      "wallSeconds": 2.613990042
+    }
+  ],
+  "scope": "Actual captured initial film; fixed substrate; original material/wetting; gravity/capillarity/wetting only. Sources, self-contact exchange and body motion are not replayed. Finest step is a numerical reference, not exact physiology.",
+  "simulationSeconds": 0.1,
+  "timeRefinementTrend": true,
+  "source_sha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "executable_sha256": "85fa63bc087b8cd08aa5576a3de96f3c31d89acbe2b4b326d2ca54ae850dabec"
+}

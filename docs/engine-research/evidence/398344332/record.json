@@ -1,0 +1,97 @@
+{
+  "repository": "kettle11/koi",
+  "repository_id": 398344332,
+  "commit": "7e28d09b45dca63a65112376a2eaf80f8d6ad326",
+  "source_url": "https://github.com/kettle11/koi/tree/7e28d09b45dca63a65112376a2eaf80f8d6ad326",
+  "readme_path": "README.md",
+  "readme_sha256": "98401d0d14055ce6f503ccbd32b0d8d035bf7fcacc4569eeb76da59d2a32bde1",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "41c2bba3086e72b3c47d9b4f06cbac2fa13a5375"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "79081e8fc7d775b300781f0925e8439868d383a0"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5efa644055fbfdc1875861f6f61eb361de862c36"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "d028b6cd780a1d37c4135e6f22475a146039a099"
+    },
+    {
+      "path": "Inter-Regular.otf",
+      "type": "file",
+      "sha": "84e6a61c3c0f11fc8c88c9e7a8f6ed7f7bbc43b3"
+    },
+    {
+      "path": "LICENSE-APACHE.md",
+      "type": "file",
+      "sha": "c96d10c4e1851b0cf5363ebd41b231a7d332714f"
+    },
+    {
+      "path": "LICENSE-MIT.md",
+      "type": "file",
+      "sha": "3bc432a7053ee1cc68079165002da9f97ab0ee6a"
+    },
+    {
+      "path": "LICENSE-ZLIB.md",
+      "type": "file",
+      "sha": "007bd70dd431e5b9755808a9d06600abe69ab5de"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5ed3f9cd692f369f0f8f1cd381dd326a71efd521"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "f6b721d77149ecc08255d7b526ad26d8420813e7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fd076392c4d28ed713a9d1161b5ec301512025ad"
+    },
+    {
+      "path": "run.sh",
+      "type": "file",
+      "sha": "0e39555a45d73934275a8109379a231ae81cb012"
+    },
+    {
+      "path": "run_single_thread.sh",
+      "type": "file",
+      "sha": "e2f999911f3323adede250a30b5451c34bf50b63"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b3450aecbea364b26e6c31606d7c7585cf177afc"
+    },
+    {
+      "path": "web_build.sh",
+      "type": "file",
+      "sha": "e08260982b3874aa838b9f5bb43831be2506a685"
+    },
+    {
+      "path": "web_build",
+      "type": "dir",
+      "sha": "5f9c19bafc29ef388af9bec439962d4dfbcd1e99"
+    },
+    {
+      "path": "web_build_single_thread.sh",
+      "type": "file",
+      "sha": "3a0267bf6b9151c99cfddbf0f7c66f9d343307dc"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

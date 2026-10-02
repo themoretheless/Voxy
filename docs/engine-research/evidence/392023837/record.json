@@ -1,0 +1,74 @@
+{
+  "repository": "TNtube/Cardia",
+  "repository_id": 392023837,
+  "commit": "6fbde85b58bac3921ed7d12624e896750686b2db",
+  "source_url": "https://github.com/TNtube/Cardia/tree/6fbde85b58bac3921ed7d12624e896750686b2db",
+  "readme_path": "README.md",
+  "readme_sha256": "1055c41dcf77a7ee32beb457ecbc94c2102c9681c39e3ca54138ef208fda5d8e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "483eead4add3278d0700da751661f0fdaae387bb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "382b4fbcf686af49add5029510be131f62e6a4a6"
+    },
+    {
+      "path": "Cardia",
+      "type": "dir",
+      "sha": "bfa179d83fcf40f5dbae705cae6327ebe9a7583a"
+    },
+    {
+      "path": "CardiaTor",
+      "type": "dir",
+      "sha": "9127b9e4dfb8ff75f7d53c78dd3f1fae5398d7cc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a8be4e5b882956f08088ec8432300454f1056b6f"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "9f15f041a15d9662e8e95bbc9e4ae744116b7fb7"
+    },
+    {
+      "path": "SandBox",
+      "type": "dir",
+      "sha": "16f7e565d5b48f2835b32ee2b17cafbdb7acb64d"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "6ff00a2b6cc9ee00aaac981f85f849bbe71f7381"
+    },
+    {
+      "path": "cardia.py",
+      "type": "dir",
+      "sha": "34e47b204f86250351cac0286f8322209e427b31"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "321cc3fb719d0c70493b5c4621c3f2c0ae870a75"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "e41258a033a7c36bb97a5b8c0cf786d1b1821e62"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++20 engine with Python entity scripting/reflection and CardiaTor editor; sources, samples and tests present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

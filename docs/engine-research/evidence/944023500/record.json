@@ -1,0 +1,54 @@
+{
+  "repository": "EmilDimov93/Rapid-Engine",
+  "repository_id": 944023500,
+  "commit": "e56b8c08801d9d11649cdfcafb0456f56f69dddc",
+  "source_url": "https://github.com/EmilDimov93/Rapid-Engine/tree/e56b8c08801d9d11649cdfcafb0456f56f69dddc",
+  "readme_path": "README.md",
+  "readme_sha256": "6be58877f5ceef8e30c5919ebcbea4723b4279a0940321d551f047bab8514eeb",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6f9fb11475594b5b9f357cf4c8dd822351501048"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "4365910a839544ecfe7dd44d3415d5ef55d4582a"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1f96fae00dcb53e57d138a54cb9626d811e12375"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "e10ee62d29010cbb8830847cb2adab25eeba5846"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "772ed7dd230aa99ee0c1e7352e8d9d7c4f79e380"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "4ec6e075801cfb47833c7c6e7d4f0a3890c3dee5"
+    },
+    {
+      "path": "RAYLIB_LICENSE",
+      "type": "file",
+      "sha": "e96f876a23c2084d3932783ef3b20f9b03ef4206"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5d347070a12b739b619839433ecf1aca0953cd27"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify native game engine with visual scripting over raylib backend; owned Engine/Projects and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

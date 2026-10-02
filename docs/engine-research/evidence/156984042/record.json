@@ -1,0 +1,74 @@
+{
+  "repository": "VladimirBalun/RacingWorld",
+  "repository_id": 156984042,
+  "commit": "c7e600c5899e3ea78f50bd2f8cd915437bad7789",
+  "source_url": "https://github.com/VladimirBalun/RacingWorld/tree/c7e600c5899e3ea78f50bd2f8cd915437bad7789",
+  "readme_path": "README.md",
+  "readme_sha256": "aade5987b3549ac0cdfd8ff6fbfb98f255b6fb0c401aa8dd6c468c579fe1ba52",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "dafb12910b661c70433aadd0ef3ea7140e64c202"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f0c2b51abebfa8e3f06ab8d8c5d62090277253b6"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "628075e42f35d617e1a768eedc7becee2017775e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6088d5b9ab28fc94d6b65ce31bf7219283cc533b"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "3b8dee8596921cdfcffde4224f055137c3036f8e"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "f58f1beb977e9de66d9cee3305e78e2934131bc0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a688dc88a83bcfb3ec02f6ab48de6c3c7fe060de"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "906f5dd1e5c5d2e3adf0fe519a3461b9f29d2696"
+    },
+    {
+      "path": "RacingWorld.png",
+      "type": "file",
+      "sha": "38a10c2e66ecf4a3d3fe7e3f38a5f5009da92af8"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "5c2074a17e26d7b4a5332d5b17cb07e83af1d795"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "4c9a4c12d90f3ff42a56eff3e18fc1830a923192"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "7b9ec7f4384a358df5908d33ffce1c151a89ba8d"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Multiplayer racing game, not separately identified engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

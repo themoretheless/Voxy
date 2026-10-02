@@ -1,0 +1,109 @@
+{
+  "scope": "Actual reference-atlas mesh with synthetic HGO, numerical pins/load; static surface audit and element orientation, no body registration or physiological calibration",
+  "source_sha256": "0de4533694eb4dce142449c2fdb1400087457e2ac99cff608080a2ff01181a19",
+  "points": 433,
+  "cells": 1588,
+  "boundary_faces": 630,
+  "states": [
+    {
+      "stage": "rest",
+      "min_j": 1.0,
+      "max_j": 1.0,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "a83287eb1da63270ce0b7649f9d565cc37826854109f6814f0fbf47f7ee0f103"
+    },
+    {
+      "stage": "loaded",
+      "min_j": 0.986314382338963,
+      "max_j": 1.0220187383737158,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "8edbb90cf66d5c40942faf41bfa4d29df7b9973cc3367e65054dd500e9d35683"
+    },
+    {
+      "stage": "hold-1",
+      "min_j": 0.9862976758360446,
+      "max_j": 1.022365248811053,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "0102674fc00ee83cab064f4896829855f98aa672a39de81b6d6d0ebd4c6d24dc"
+    },
+    {
+      "stage": "hold-2",
+      "min_j": 0.9862942134888708,
+      "max_j": 1.0226056971806057,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "5247b699d20b12386770319d543c4f354e26ff55e83bfedc5cfa28c20a5b6f6d"
+    },
+    {
+      "stage": "released",
+      "min_j": 0.9997126338194007,
+      "max_j": 1.0007920807029058,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "f09ea4476be33f1b0b5094d5c887971b310300c4e391f30500ebffb9e320d7f3"
+    },
+    {
+      "stage": "recover-1",
+      "min_j": 0.9997911239690741,
+      "max_j": 1.0005733061257074,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "b701391dd3da6bf8e34bae1a1122e78fab9de2e9f3dac62aec78ec2c05e2e31e"
+    },
+    {
+      "stage": "recover-2",
+      "min_j": 0.9998416702780267,
+      "max_j": 1.000434673688122,
+      "classification_counts": {},
+      "limit_reached": false,
+      "mesh_sha256": "905479445a5561b20084062051b0ceb8579d760407c628cfc4c5b9efbdfa24a8"
+    }
+  ],
+  "measurements": [
+    {
+      "stage": "loaded",
+      "physical_time_s": "0.10000000",
+      "force_n": "1.000000000000e-3",
+      "max_displacement_m": "7.471109754401e-4",
+      "residual_n": "9.809567898307e-8"
+    },
+    {
+      "stage": "hold-1",
+      "physical_time_s": "0.20000000",
+      "force_n": "1.000000000000e-3",
+      "max_displacement_m": "7.555083867225e-4",
+      "residual_n": "9.087073131568e-8"
+    },
+    {
+      "stage": "hold-2",
+      "physical_time_s": "0.30000000",
+      "force_n": "1.000000000000e-3",
+      "max_displacement_m": "7.614730616498e-4",
+      "residual_n": "8.739467242212e-8"
+    },
+    {
+      "stage": "released",
+      "physical_time_s": "0.40000000",
+      "force_n": "0.000000000000e0",
+      "max_displacement_m": "2.460080601289e-5",
+      "residual_n": "9.888647239359e-8"
+    },
+    {
+      "stage": "recover-1",
+      "physical_time_s": "0.50000000",
+      "force_n": "0.000000000000e0",
+      "max_displacement_m": "1.811875890405e-5",
+      "residual_n": "9.246359454419e-8"
+    },
+    {
+      "stage": "recover-2",
+      "physical_time_s": "0.60000000",
+      "force_n": "0.000000000000e0",
+      "max_displacement_m": "1.407137944519e-5",
+      "residual_n": "9.034788397014e-8"
+    }
+  ]
+}

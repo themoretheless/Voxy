@@ -1,0 +1,192 @@
+{
+  "repository": "Qsgs-Fans/FreeKill",
+  "repository_id": 459085805,
+  "commit": "671b0ad698c36b703808d8b29f3483ce54b36631",
+  "source_url": "https://github.com/Qsgs-Fans/FreeKill/tree/671b0ad698c36b703808d8b29f3483ce54b36631",
+  "readme_path": "README.md",
+  "readme_sha256": "cd0082e64b860df37e1acfebef68fe85a410cd859bd5e4352efc26c435fe2590",
+  "entries": [
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "255fb81148ce9d94e2a2d02fe2c35495f207cf3b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b060ae203f41dbcffca60010939ef4b166617b7f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb540b7ad821c984cf7519bd39a10506a105e382"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3fe494d7a24d007dc28d4f47f268ee4647e2de58"
+    },
+    {
+      "path": ".luarc.json",
+      "type": "file",
+      "sha": "ad4bda9e60f8637b072a42bf00f15a9d3ac6a1c9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "886106d9ebc6cbd2f5f1f4bdf3700d3f66879b47"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e7d218dedbfef41a3ba53ac19069a1b8d3051578"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "4df0ebcd6c79b0f27f467587ee23e2890c716c86"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2d3b2f9f58d7b849b0efa19469a28792d941300d"
+    },
+    {
+      "path": "Fk",
+      "type": "dir",
+      "sha": "3e338c9245a397cded3e3c7446b896371d525b03"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "LunarLtk",
+      "type": "dir",
+      "sha": "03d7139bacae2e1c76871ea09bf9e922ad2c544c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7a79bf8265f595bd04590e0ce49326c795bee5f1"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "635b73d62697332426b9a8b51a9e52ac7657dd61"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "178f98ee5d85d1946e6c4b2a16aef299860d4b91"
+    },
+    {
+      "path": "build.ps1",
+      "type": "file",
+      "sha": "22a6948d71a5412b930926cbe985c15001d93147"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "dc16c4ff8c42d6030ccad9ce944d0fb6674400fc"
+    },
+    {
+      "path": "deploycore.sh",
+      "type": "file",
+      "sha": "f0ce363b4987177b1cf67ba71ff72b63ebf27db5"
+    },
+    {
+      "path": "distro",
+      "type": "dir",
+      "sha": "0b83d727c8e0924ddd6bbb4a371d34c21cd8f6b3"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "00f98d0112f16b262a82a4bccdd6ce224756515d"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "39999ecfe006330852e597b89835d213cc8dff5f"
+    },
+    {
+      "path": "freekill.desktop",
+      "type": "file",
+      "sha": "62248ecc1929e821303524e34bea51cc86e67d31"
+    },
+    {
+      "path": "freekill.server.config.json.example",
+      "type": "file",
+      "sha": "d9df4825fd5de69d6c7a5c6665dd69ac54e4c312"
+    },
+    {
+      "path": "genfkver.sh",
+      "type": "file",
+      "sha": "eefe929f5f893ec370648451aaaffc67e9c4b065"
+    },
+    {
+      "path": "image",
+      "type": "dir",
+      "sha": "6b68ec5aef31ce4b7367f1baf7b80e28928e3ca5"
+    },
+    {
+      "path": "include",
+      "type": "file",
+      "sha": "4fd2070d099d1f967d1070d72beb0fae2cb6e4be"
+    },
+    {
+      "path": "lang",
+      "type": "dir",
+      "sha": "7814ce88e04f1674917b3ff0cbb7e51d87e2b580"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "699bc18327444729a763ce11c2c4affec9f9f770"
+    },
+    {
+      "path": "ltk",
+      "type": "dir",
+      "sha": "a0632e57de14c9a51129f99e16d7716fc27573d6"
+    },
+    {
+      "path": "lua",
+      "type": "dir",
+      "sha": "7df01832aeea9d66d48ee5a096dc2bb478c5c728"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "f2b3da7cb5520467d3a41504d8db13a32cfac38f"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "81a605103c64b945905fb9a19cf92ad9aa640ed8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "97651996987bb9f3151104bcbcdf458d9b757fc7"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "8f165a5b4aa5c020827b8806321ef44eaf19c5ee"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "78fcb80d19686a64eeacacef93e987c83a2a61eb"
+    },
+    {
+      "path": "waiting_tips.txt",
+      "type": "file",
+      "sha": "c8ed62e933e6f02480670a319fad1aaf25dbc6dc"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

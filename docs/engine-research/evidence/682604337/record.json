@@ -1,0 +1,44 @@
+{
+  "repository": "renpenguin/gemini-engine",
+  "repository_id": 682604337,
+  "commit": "5188dfac7241d4e2fe14a1c0c2f0ec8e819addcb",
+  "source_url": "https://github.com/renpenguin/gemini-engine/tree/5188dfac7241d4e2fe14a1c0c2f0ec8e819addcb",
+  "readme_path": "README.md",
+  "readme_sha256": "10a38731e051fee68f7e18645e1cc9ad9e549b7326360e8bb4f17bb273d950fa",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "35516812647614e13b009335449019ed2e5e4b2f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "d1d1a4c424ad8546c89d8f23ff47cc98528b2adf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f87ff37e22860dc2bcf186b3e1d99e54d4a50a5c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "f77a382f6b6cc62a38d078befa1c04f62cc826c1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f64ff18c34e168882c5dc84af07cfca2bcd92562"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust terminal ASCII 2D/3D renderer port; input explicitly supplied separately, not full game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,59 @@
+{
+  "repository": "TheWisp/signals",
+  "repository_id": 234390208,
+  "commit": "7ff59d1bc6387337ef34856a450be34cfa2c9e51",
+  "source_url": "https://github.com/TheWisp/signals/tree/7ff59d1bc6387337ef34856a450be34cfa2c9e51",
+  "readme_path": "README.md",
+  "readme_sha256": "d7fc45ddbfd09103551446fd652673e379f880a34847a0366444a421e1452fcb",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6f03216723307a12bae22ee3c99930b013037251"
+    },
+    {
+      "path": "Bench.h",
+      "type": "file",
+      "sha": "a758027b628b9dd50425f7fa57ff6d07d9949d4d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "32e2bbbe8d51e5203d81df96f93d0de4ce05af34"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6220b865c0488ace474b3a07d677a3f2b4d5b76a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7970cb0fce2a960bfbc68efeb0fbf9ff77a94e71"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "8d0d9d6ff490a03737e5bc8969765947e21c9bd8"
+    },
+    {
+      "path": "signal-slot-benchmarks",
+      "type": "dir",
+      "sha": "7b0aa4b4c585a5579adb4fbc2e57996c9e9e9959"
+    },
+    {
+      "path": "signals.hpp",
+      "type": "file",
+      "sha": "0be99eecdcf8d797dc5205bf1e6b5dd39ebb7a3c"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies signal-slot library; header/benchmarks and CMake, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

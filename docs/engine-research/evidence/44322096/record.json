@@ -1,0 +1,37 @@
+{
+  "repository": "NikolayIT/TexasHoldemGameEngine",
+  "repository_id": 44322096,
+  "commit": "dd1f7ec6dbf2db21388cd9205f9a86dc5ed5129c",
+  "source_url": "https://github.com/NikolayIT/TexasHoldemGameEngine/tree/dd1f7ec6dbf2db21388cd9205f9a86dc5ed5129c",
+  "readme_path": "README.md",
+  "readme_sha256": "020b6f5a97cc80b71f9d21df42768ce5c5d984aa5fcab9da388208a99a637ecb",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fd09deb0ac696edf25cb1be7e8c3e502b906ee85"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1ee53850b84cd478da00264a919c8180a746056e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f072611f04df7ed0ebca49ba6420e617cba4c092"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c932570f188ae18d5c922b140f381a790e6b17b9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "466ed840f8433e8bddfbb26c931cfc1d4062206a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,19 @@
+{
+  "repository": "raizam/gamedev_libraries",
+  "repository_id": 147021312,
+  "commit": "b7174a763012dc6f2dd16b1dbf0c15520b27d052",
+  "source_url": "https://github.com/raizam/gamedev_libraries/tree/b7174a763012dc6f2dd16b1dbf0c15520b27d052",
+  "readme_path": "README.md",
+  "readme_sha256": "6f41fff8b68ce2605e07973be18f718e96c51a3c56cbf14052afc4f14cef1c1c",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "46f744768839b8d27f591053d50fba02e4126883"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Root contains only resource-list README; no owned engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

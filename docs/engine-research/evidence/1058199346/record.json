@@ -1,0 +1,254 @@
+{
+  "repository": "ForgottenHistory/Archon-Engine",
+  "repository_id": 1058199346,
+  "commit": "27d3ec2f46ad8362f59719850cf549f74a583c82",
+  "source_url": "https://github.com/ForgottenHistory/Archon-Engine/tree/27d3ec2f46ad8362f59719850cf549f74a583c82",
+  "readme_path": "README.md",
+  "readme_sha256": "efaa54d8f699a18d4f4193118e4875ec5eb3f8ccbec2052c881376fac9e6d6d7",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "dcc5d34bafac3d8bd94a79e2baf943b886329c2f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4aa55f783803ad7583fcaed81c5f03e0b0d308b9"
+    },
+    {
+      "path": "Docs.meta",
+      "type": "file",
+      "sha": "2770117539aac2a377abb1f87e77f4417719802a"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "00b23f8d5a154d1b3c2d7436358d176b68200402"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c71bd20c360a5136a6f75c64f718c17e30fb6f6e"
+    },
+    {
+      "path": "LICENSE.meta",
+      "type": "file",
+      "sha": "65959419b6cb62ef52d343b11554d3bb40828f19"
+    },
+    {
+      "path": "Materials.meta",
+      "type": "file",
+      "sha": "e73fcc6c7b45894f606e2f6013e54a61d6bec920"
+    },
+    {
+      "path": "Materials",
+      "type": "dir",
+      "sha": "c2e8fd452e07e66e5f0611c521a7543c3af534e9"
+    },
+    {
+      "path": "Meshes.meta",
+      "type": "file",
+      "sha": "f28f913c38007a5bbc45fb64cafb8f28d27da8ae"
+    },
+    {
+      "path": "Meshes",
+      "type": "dir",
+      "sha": "fb97f95edfcf32da4144d93c034ddf10f208ef23"
+    },
+    {
+      "path": "Prefabs.meta",
+      "type": "file",
+      "sha": "0ab65c754b585916e4bf42fa6cf90eb65f6df3df"
+    },
+    {
+      "path": "Prefabs",
+      "type": "dir",
+      "sha": "9efcad662b128042f8a79dca27ba8492df43071a"
+    },
+    {
+      "path": "Promotion-Assets.meta",
+      "type": "file",
+      "sha": "b1cda322130ef85c347c495d54172afe7cbb51d2"
+    },
+    {
+      "path": "Promotion-Assets",
+      "type": "dir",
+      "sha": "149c0f6db80f13a1451eae8b4fd68fa75bbd4d2a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "28bbd58af133829e851a504e9f843f80a2df09be"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "00187fff1281d9db87f897dd57d639b081852421"
+    },
+    {
+      "path": "Resources.meta",
+      "type": "file",
+      "sha": "6e60ae64328d65a2425cfb2b21075d3d70cf4eaa"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "c3ace2ea89286bd5bcaa2fabcbc4bd7702474931"
+    },
+    {
+      "path": "Scenes.meta",
+      "type": "file",
+      "sha": "e5fd1145b4ce2694721a2683244daf67eb64fac6"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "10c20ffa5d4f04feee9c6a542a2d4dbafbf44e88"
+    },
+    {
+      "path": "Scripts.meta",
+      "type": "file",
+      "sha": "73877cfa8f5ca1d17c7fc01e20d48bce8d0a66ea"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "f05cbc8ab27074b3fe3cd8f00611d88ab8c5bea8"
+    },
+    {
+      "path": "Settings.meta",
+      "type": "file",
+      "sha": "6ac827f30f1cdd608b4352eb427d59d61997b699"
+    },
+    {
+      "path": "Settings",
+      "type": "dir",
+      "sha": "ba553cdf7e4c3f5674d0aaea17312c30191b66cf"
+    },
+    {
+      "path": "Shaders.meta",
+      "type": "file",
+      "sha": "305d9e876d915bc824bd7fd4dd7abbe3c8484a94"
+    },
+    {
+      "path": "Shaders",
+      "type": "dir",
+      "sha": "9d25190e7ede1cf58f0dccca8c48aa48750738a8"
+    },
+    {
+      "path": "Template-Data.meta",
+      "type": "file",
+      "sha": "3a7354a15608e39e5187909e471c3803e9a76d3f"
+    },
+    {
+      "path": "Template-Data",
+      "type": "dir",
+      "sha": "dbce4cefc0aea67799db65a26aaa82cd7daec1d7"
+    },
+    {
+      "path": "UI Toolkit.meta",
+      "type": "file",
+      "sha": "57acc37127e5d68b4579091a96db077d006fa0ca"
+    },
+    {
+      "path": "UI Toolkit",
+      "type": "dir",
+      "sha": "f9f01096542462fe5e0e712d3f65c071205465f4"
+    },
+    {
+      "path": "VisualStyles.meta",
+      "type": "file",
+      "sha": "aa8a684621b6bdb5bbf92a05d25c277dd283a546"
+    },
+    {
+      "path": "VisualStyles",
+      "type": "dir",
+      "sha": "c2aa35a7d9aede7e71e200f8081ea9edb4e5fa81"
+    },
+    {
+      "path": "_site.meta",
+      "type": "file",
+      "sha": "74150a480cc8a0801d8e32007a6b6546893ac6b1"
+    },
+    {
+      "path": "api.meta",
+      "type": "file",
+      "sha": "1f122cbd959941f0ff89e66ab2fb480f1ce5e9d3"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "15b4a0ea0f4ac56cd79e86704fbbaf5d1c7a0839"
+    },
+    {
+      "path": "build-docs.bat",
+      "type": "file",
+      "sha": "c2ff06765e40dff0f6681b2bb658adc53de04723"
+    },
+    {
+      "path": "build-docs.bat.meta",
+      "type": "file",
+      "sha": "fe48cc3f1f15bea98e7c8849e59f865104f20ca3"
+    },
+    {
+      "path": "docfx.json",
+      "type": "file",
+      "sha": "b0982923e2427ab790225f4f59824a810a1493d0"
+    },
+    {
+      "path": "docfx.json.meta",
+      "type": "file",
+      "sha": "bbccd7d85111c815e835a810b75aa3e1e4fe36e9"
+    },
+    {
+      "path": "filterConfig.yml",
+      "type": "file",
+      "sha": "e9fe3e64f199d5a78345c46802f32a1c58093109"
+    },
+    {
+      "path": "filterConfig.yml.meta",
+      "type": "file",
+      "sha": "8aca45542e821f09fed36449dd373d0afdd6c944"
+    },
+    {
+      "path": "index.md",
+      "type": "file",
+      "sha": "6e7f34c40fb4f77332d9824f2c56693b25a04000"
+    },
+    {
+      "path": "index.md.meta",
+      "type": "file",
+      "sha": "86f58e8cea6fc59b9b17c3d2e373fe457582ade5"
+    },
+    {
+      "path": "toc.yml",
+      "type": "file",
+      "sha": "6b1a0c3f8dc8112bd70c9312863fa0d528e590f2"
+    },
+    {
+      "path": "toc.yml.meta",
+      "type": "file",
+      "sha": "a2f11dfaea67d2bb8b948ad394a0ac58002de0bc"
+    },
+    {
+      "path": "update-api-metadata.bat",
+      "type": "file",
+      "sha": "1ae8606990188e998174812e8c4bd71dfc3a4743"
+    },
+    {
+      "path": "update-api-metadata.bat.meta",
+      "type": "file",
+      "sha": "3a27965f7e4dd4621b29a20cfaa2a00195c73e59"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity-hosted grand-strategy simulation/presentation package; requires Unity runtime, not separate engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

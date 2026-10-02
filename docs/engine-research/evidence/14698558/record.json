@@ -1,0 +1,74 @@
+{
+  "repository": "MegaGlest/megaglest-source",
+  "repository_id": 14698558,
+  "commit": "4ab09c64cb24b9ba00743b2d8e5ff7fb9a2d7b8d",
+  "source_url": "https://github.com/MegaGlest/megaglest-source/tree/4ab09c64cb24b9ba00743b2d8e5ff7fb9a2d7b8d",
+  "readme_path": "README.md",
+  "readme_sha256": "69c791f482ec34a35af35fa72da57ae24a65a8f58ef871cf29f3ea8935cf1827",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "863373360ff2a33d132bb699af6b9cc8215cccbf"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e09b704fea34ab691cac0b615c264c717c9a0975"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4e3d940a94ec523bf665b8737ca7b0af57410ad6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0a4e799f0be66ee9768475ded44e561167996449"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "23979cd76b9d45f2d44babc9b7261f884623278b"
+    },
+    {
+      "path": "BUILD.md",
+      "type": "file",
+      "sha": "e89e183daa594c0955aaa5999d22b992ea00bb85"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "28497a22c984bc770921a5912efd3d823fdd12d2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0052effd82c127d21c1aa83fd5a0eb7aaf610fd2"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "85b9c99e2addbef6f6ba00e30c690551e49a6793"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "af51ab16ea3c28f051b7b65a9c653cdc7d133757"
+    },
+    {
+      "path": "mk",
+      "type": "dir",
+      "sha": "b5088845310cc68d7b3a922342bb32d8b50cc773"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "99b4de9f624e99cbffd1e7cb8544df9dc5b38e37"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies game-engine source; owned source/data and CMake/native build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

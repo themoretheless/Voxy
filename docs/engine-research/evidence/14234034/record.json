@@ -1,0 +1,119 @@
+{
+  "repository": "letoram/arcan",
+  "repository_id": 14234034,
+  "commit": "6b8d9e0a3ebd2f243dc23514e5fbcf633148f525",
+  "source_url": "https://github.com/letoram/arcan/tree/6b8d9e0a3ebd2f243dc23514e5fbcf633148f525",
+  "readme_path": "README.md",
+  "readme_sha256": "fd95e06a735f4a62fb6296409cc58aa9dd8cc11b82d747753c98ce7cdbc4f4cb",
+  "entries": [
+    {
+      "path": ".fossil-settings",
+      "type": "dir",
+      "sha": "7e6609b07ab288eddbf6faab6995dc2d3b77974a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "991ddaaf16209c750d701daaa51f10f8e64573bb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e3fe027fff6e9e2b8fb61e971f8c1f79bc0d81a7"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "6876ff50442cdf77f8d027a66d8a93fd5c64599b"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "800a0d07d0aacaec53ca142f62044acf58be76c4"
+    },
+    {
+      "path": "CROSS_BUILD_PLAN.md",
+      "type": "file",
+      "sha": "a0ab087393605af810f85da1e98f4cc406685f72"
+    },
+    {
+      "path": "HACKING.md",
+      "type": "file",
+      "sha": "168fad3a57c67ea74797ef48230a9e577f17a054"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "50952b018f2160cbd78078551f33f5342ca0708f"
+    },
+    {
+      "path": "VERSION",
+      "type": "file",
+      "sha": "b6e63167d210f9b1b27e262efde4a8f45d010b53"
+    },
+    {
+      "path": "build.zig",
+      "type": "file",
+      "sha": "67c4706ac059371ee39880fb34486158779d6257"
+    },
+    {
+      "path": "build.zig.zon",
+      "type": "file",
+      "sha": "3def01105fbc480020f6ecc38234ccb29ecdb889"
+    },
+    {
+      "path": "build_external.zig",
+      "type": "file",
+      "sha": "bb32721f8050e78dec36bfc455d39d63d43fb3fd"
+    },
+    {
+      "path": "build_helpers.zig",
+      "type": "file",
+      "sha": "73a3dfe0a28aaf3a9218eca288a773d98a7a7da5"
+    },
+    {
+      "path": "build_xarcan.zig",
+      "type": "file",
+      "sha": "7533233acbff8a5175c299756a9bbe105ac6a63e"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "1775d6ce1877c438632d4e079ac3e613a361df7a"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "faae79c57db972a8dc7f8e4fdd76369854ee9234"
+    },
+    {
+      "path": "nix",
+      "type": "dir",
+      "sha": "93142ad42b68f555dfdc0adf0ef3668822167895"
+    },
+    {
+      "path": "reference",
+      "type": "dir",
+      "sha": "b963802fedd8ce158a16ee39d55faeab1e00e7c3"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "1da5b1d9ef28ba4c981c9cbd52f71dfde0d649ca"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "143ca0e3ad585b27587e3fc54b7f2863f64a589f"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "13a4212d328815b43c63169f2d047ca6f11e36d8"
+    }
+  ],
+  "classification": "multimedia_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies multimedia development framework; native data/build roots. Broader multimedia runtime kept separate from game-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,127 @@
+{
+  "repository": "eumario/godot-manager",
+  "repository_id": 434821926,
+  "commit": "ac9f632998fc6fee463618f7a61b3ae405af65b7",
+  "source_url": "https://github.com/eumario/godot-manager/tree/ac9f632998fc6fee463618f7a61b3ae405af65b7",
+  "readme_path": "README.md",
+  "readme_sha256": "b380049fbe73ac78630adda292ad43c1ce696ce3051a81e4080e4bde946acad9",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "76642cec18580923d49aa9bb84e4a6f2e63c5189"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a9bbb0fc6fab18ddb955b66ee93a991d4a48e95f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f6551b0ec714dc8c8584cc7ff0476e1d4106cbb"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "102fbbcbe99f7d2fe5eb9616a06178423dc26d2e"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "09f0bdc3c10b70983888788ab524e63666ea8ae3"
+    },
+    {
+      "path": "Godot-Manager.csproj",
+      "type": "file",
+      "sha": "69bba64658792c563b6aa90ef3e3b53ceab4b578"
+    },
+    {
+      "path": "Godot-Manager.sln",
+      "type": "file",
+      "sha": "61d452e2a0c49ef8d28815425b93c622c0facd06"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "af78c9bbc7d289246debbcae7ac77c4ec75fbc4b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f8baebc7021ea667cb51bc62584ea0ba57a643a1"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "53d8fd0b1e0320d7fd5500412d831b987797bfb9"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "023823c277add240fad76c598ed16f1f77fe7bcf"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "fd977c1f9d0d808ae3fddc2662298e3c1d0a744b"
+    },
+    {
+      "path": "Shaders",
+      "type": "dir",
+      "sha": "0d873cb8cb86eddd316ae4dc4e8550c4798b409b"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "c0b1dfc9772e4517e98683f4df61b0da10a5e05b"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "deploy",
+      "type": "dir",
+      "sha": "5f23da478e82b925e69ba87f92ce055a733f7e25"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "dfdf8ffb0e4faee37bb80f6115fe8a8675bfecf1"
+    },
+    {
+      "path": "godot-manager.dat",
+      "type": "file",
+      "sha": "cb08b9ee17311e6c9457e4862376ebba99c1ae75"
+    },
+    {
+      "path": "godot-manager.png",
+      "type": "file",
+      "sha": "ffaee3cca05ccea9d7416e2bc27368d43c2ce0ce"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "1fb39d2d01477bf793e2f23c3d8c6016087e83ac"
+    },
+    {
+      "path": "locale",
+      "type": "dir",
+      "sha": "cd937e632b7f4a8f1f74609c9c497b9f4bfd5b38"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "6ab98693f72e5d8c39f20b0a3fbbdbd0261d4c92"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "eb44c76362e06bdce2f04c46ec1ef0c90de26a8c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

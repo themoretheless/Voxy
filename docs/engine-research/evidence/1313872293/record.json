@@ -1,0 +1,72 @@
+{
+  "repository": "Adel-Ayoub/rabbet",
+  "repository_id": 1313872293,
+  "commit": "8c167ef3aa175edbd3db32b34d697673c8174068",
+  "source_url": "https://github.com/Adel-Ayoub/rabbet/tree/8c167ef3aa175edbd3db32b34d697673c8174068",
+  "readme_path": "README.md",
+  "readme_sha256": "8a38fb4142a88eb6dd1d1031117e6e6e21c16fd84b85c5fc87afacc85b2b4a5f",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d9143cd72c83dfde72332ee83ff2d701658cdbf4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "564657fa26d49246c8d268a0bc91469eae143a25"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "21b6f3b8e32a416eb23f4fc6081a3e69ed1acdb0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "aa33e2fde56a54ddfa60523eaa57178845da6ec2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d9728365bfa6ec19e62ca92d76272b1597678895"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e393e7b34ed69eb3c3b6e4ff2237d5c5a5c70121"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a8f35bbf903b0dc58b17653093097059da9c61ca"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "46ce36e4b98bd3afd18f59a6e293d013b2e60723"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "89dc476453c8678beceaffd36bf87d4957fad550"
+    },
+    {
+      "path": "rabbet",
+      "type": "dir",
+      "sha": "37d81b55ce39136c63fa49cd125f7e45eb2f0485"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "97a21b0de55d4b47d3f549f18c392c94c9759972"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "2b1d5440b063d7dba4a3b8536d7e00232c2e1604"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

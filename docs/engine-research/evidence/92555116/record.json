@@ -1,0 +1,99 @@
+{
+  "repository": "onqtam/game",
+  "repository_id": 92555116,
+  "commit": "08d9f2871bfd5c757d541064b77d38474123592a",
+  "source_url": "https://github.com/onqtam/game/tree/08d9f2871bfd5c757d541064b77d38474123592a",
+  "readme_path": "README.md",
+  "readme_sha256": "bee86f8244d014491c48c1e4cf7d1f26971dc38de749bdf8db38d08694d827c7",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "8d0c9b2dd9a5ba0aa463edefa444d78078616736"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d5a8c65e4950cfe3f34a9014fb207aa3c4730020"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "43385f78bbbfb2f8f7dda63aa76f51f167fcfc6c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c47f72c19bd892a82fdd59dd29bf278bf6c499d1"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "368f0f3c9633eebd9a930805ed088b552b03188b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0f0b12397d4aae14d677230b4b08c047cffc0c92"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "4a4d2d6998ad9c03fa23754a805b61b0e85b5ffe"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "25d582d5406fc772ee1add7632d2e2ed7adf2d8a"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "50fc8ceaf48f3d4ee0f9e5167b9de0be2949ccdb"
+    },
+    {
+      "path": "data",
+      "type": "file",
+      "sha": "268784359ea379c68423b81c94b7b9d999db79e3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ea399ba7f2506462f8780a30b1c1fa149d524d23"
+    },
+    {
+      "path": "ha",
+      "type": "file",
+      "sha": "0abba70077de9ab710443186a2ee82a394cffa9b"
+    },
+    {
+      "path": "ha.bat",
+      "type": "file",
+      "sha": "b8acaaa3165716e4b31b62e2060658e01d61b494"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8bdf8d3bf3c9e5340947eb83f8f3284f14af28ec"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "82f106117696311a6d49b10e21f550bea3a046b6"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "36e67d88e36a7a454945f4540d7f59cda6d5f944"
+    },
+    {
+      "path": "vs-chromium-project.txt",
+      "type": "file",
+      "sha": "b7a2e527eb5ed9f72b6ffaaac6d9abf10b9e0e7e"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "R&D engine with reflection/serialization/GUI and reload composition mechanisms; complete game runtime coverage not established from README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

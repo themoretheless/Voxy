@@ -1,0 +1,129 @@
+{
+  "repository": "hiloteam/Sein.js",
+  "repository_id": 166799435,
+  "commit": "1b17aca3ca7fda59f876e6bc29925eb035d4600a",
+  "source_url": "https://github.com/hiloteam/Sein.js/tree/1b17aca3ca7fda59f876e6bc29925eb035d4600a",
+  "readme_path": "README.md",
+  "readme_sha256": "c0f448e75c9f48c8dc84f889485b06a719cc0f73177bb9a9bf8a2b1d7e9dd9fc",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a2799598f2690b3acee59102ee3a78df4f95dce7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "46e56ea21f44b4fcf15f276009a21a9e7ef6b92f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "433bf191787b89a876f3a7657a4ba5bf6330c1a6"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "8f06c1844a49f1b24d8773f831a3c327eb190454"
+    },
+    {
+      "path": "Hilo3d",
+      "type": "file",
+      "sha": "8b90314db9af84e8973a72a9fd5d38b5fb0bfcd5"
+    },
+    {
+      "path": "LEGAL.md",
+      "type": "file",
+      "sha": "f96892081dd58b22ee2199adffd7b188b79e7e7f"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "21f9062bb717a4511088c2b4facffe155b7fccd6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b566c19754b66afb38f2f3c20da33076d04413cc"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "20c0e3615c5eb64af7f9581f0a35d00f5277bda4"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "568f6c0cbcaf328d9012de7ff2070e19f64adcd0"
+    },
+    {
+      "path": "dts-bundle.js",
+      "type": "file",
+      "sha": "0435221099799f72d3814e0c03137ddef9ce50c2"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "01841cb2b54645253091eff34c88d8076f228733"
+    },
+    {
+      "path": "gen-doc.js",
+      "type": "file",
+      "sha": "83fd30c0841032186943dd311c3c525cd6ccc1a3"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "68c4372981b7301e9d5ea3d035e15f940e6df023"
+    },
+    {
+      "path": "materials",
+      "type": "file",
+      "sha": "9ca25a2064f7009d8bf4cfd399bedb6a09a37c55"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "657bcb0ec1f09f0841951f147e12637d48b01a75"
+    },
+    {
+      "path": "postcss.config.js",
+      "type": "file",
+      "sha": "dcf1da7930108c0542092b60c4398a33c8bc7a42"
+    },
+    {
+      "path": "prepublish.sh",
+      "type": "file",
+      "sha": "1f902ed69ab958e4ae83d913931814249be2be23"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "f84d8f3adb1dd8f435628bc8ddd2e0bf6b5f7324"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dcf315e4496b23669f2dc8d21982565f506278b0"
+    },
+    {
+      "path": "tslint.json",
+      "type": "file",
+      "sha": "f156519f35540823e57f1ae6565479aa90cd6867"
+    },
+    {
+      "path": "tslintConfig.js",
+      "type": "file",
+      "sha": "29e0cad6904780d0e93b629c04dec3c285bdb2ce"
+    },
+    {
+      "path": "workflow.gif",
+      "type": "file",
+      "sha": "fdab0406df6eebfb45aae16a9f9eff2da689ded1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies progressive browser 3D engine; owned runtime/extensions/materials with npm build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

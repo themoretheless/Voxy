@@ -1,0 +1,54 @@
+{
+  "repository": "XenonLab-Studio/TerraCraft",
+  "repository_id": 127403374,
+  "commit": "b86038301bcf743e230989dea732fe190220741b",
+  "source_url": "https://github.com/XenonLab-Studio/TerraCraft/tree/b86038301bcf743e230989dea732fe190220741b",
+  "readme_path": "README.md",
+  "readme_sha256": "8d65b8a4c979b02f2fde372ecdfbfebdf0aa36f2a144d751b79d8a142387d816",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "231c38ab0f53f927ed299dc5ff86e95d3a4a8085"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3d8c6c685fe753d3a4433657d8d6ebc9d1459359"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "bc98afd25a0894f3dadb56a5c79bed831a7b42e0"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "05c18b92c4019613234064ee5d711bc03df5db30"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "69f03bb90a277eef207c488b67dc6ed91042ee29"
+    },
+    {
+      "path": "main.py",
+      "type": "file",
+      "sha": "4d3f2486a3bfc79f4fb52dc495912e33d7e2f204"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "fa0d206b7459bb40081ab463d7a2d51e086ed4f7"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python/Pyglet creative-mode voxel sandbox; stated objective is a small complete game rather than reusable engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

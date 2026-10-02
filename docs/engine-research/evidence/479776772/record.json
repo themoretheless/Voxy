@@ -1,0 +1,69 @@
+{
+  "repository": "vircon32/ComputerSoftware",
+  "repository_id": 479776772,
+  "commit": "5219741ce473ab686931db0933131c317bd50343",
+  "source_url": "https://github.com/vircon32/ComputerSoftware/tree/5219741ce473ab686931db0933131c317bd50343",
+  "readme_path": "Readme.md",
+  "readme_sha256": "d117eebaabd58356826a4410f569be5a65d1180e1868b3ac9cb361a53ec7f7d8",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7159e6fb4a64f878cd8c399322d9b55b3a541d06"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8777cc19833fb74f15948f058e66af6c8ea84ba3"
+    },
+    {
+      "path": "DesktopEmulator",
+      "type": "dir",
+      "sha": "28243bbdd73c0ec23255bf260ce9ac53a4586424"
+    },
+    {
+      "path": "DevelopmentTools",
+      "type": "dir",
+      "sha": "8cda7b29605cfd81dc2ad680dc91b213608bda3d"
+    },
+    {
+      "path": "Image-EmulationStation.jpg",
+      "type": "file",
+      "sha": "78ab255fb3eb41c012e1022762e40cc824832a58"
+    },
+    {
+      "path": "Image-GameScreenshots.jpg",
+      "type": "file",
+      "sha": "e6ada349b1c8d39b443aa055c91af8dbfe1678cd"
+    },
+    {
+      "path": "License.md",
+      "type": "file",
+      "sha": "b468522acfb689e273f382d40fc7aee15a4e725e"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "adb8c76250ed58b82bc861517123fd0a65c1f3fc"
+    },
+    {
+      "path": "SimplifiedEmulator",
+      "type": "dir",
+      "sha": "aab0455728beea18f4cc446a05b83542c2e27183"
+    },
+    {
+      "path": "TextureRegionEditor",
+      "type": "dir",
+      "sha": "97b70aa58245ec0322548178e224789c6b271423"
+    },
+    {
+      "path": "VirconDefinitions",
+      "type": "dir",
+      "sha": "0fc441f381ae975d45390f680b82e5e9dce2bde5"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Virtual console emulator/development tooling implementing machine graphics/audio/input ISA; not a game-engine abstraction.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

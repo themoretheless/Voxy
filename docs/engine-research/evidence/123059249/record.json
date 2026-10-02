@@ -1,0 +1,104 @@
+{
+  "repository": "Golangltd/LollipopGo",
+  "repository_id": 123059249,
+  "commit": "5047265f740ca12fafe15d35e46727e78b8947d8",
+  "source_url": "https://github.com/Golangltd/LollipopGo/tree/5047265f740ca12fafe15d35e46727e78b8947d8",
+  "readme_path": "README.md",
+  "readme_sha256": "229e75c41d6f7df697f9b17c863ecf530ce54e803f8117e02e53fcdbc7594f74",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0d309f9b590abb9b659f728f5bc404ef426f0605"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f11b755a17d8192c60f61cb17b8902dffbd9f23"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "2c3b9446643e47e86fe67c8c27c6f5cf30a5f961"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7ca08cb93f3c00a99184cc4dbca7ecbd74219f54"
+    },
+    {
+      "path": "Proxy_Server",
+      "type": "dir",
+      "sha": "22ac74cb8a92e7b31d0c94a29a35295972f3ec92"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c6463c0a68f01a88854e7a6eca46a19966608286"
+    },
+    {
+      "path": "global_Interface",
+      "type": "dir",
+      "sha": "2c9a54eaedf42080d6d223894d0424a6129e86bf"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "d587904a97dcf61ce8ce9f21d9baaf2d41478ec1"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "3a415c83a165766a97c98da75f1555f4f308f34b"
+    },
+    {
+      "path": "leaf",
+      "type": "dir",
+      "sha": "52cd849a6cce8069f15cf541b45057720d940c42"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "a697df70c79482a875c5c3e9c9655dcb70db87ee"
+    },
+    {
+      "path": "lollipopGo.go",
+      "type": "file",
+      "sha": "f7268b3387b11b877ee0a650b26900d14c270c76"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "cda5338b3ea5ecea6f187dc5ec8a5ca4bff9563c"
+    },
+    {
+      "path": "timer",
+      "type": "dir",
+      "sha": "9cd339192d91ef54474638cf5a6af1960d21c1dc"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c942a055e85eab4ed54eddb59b4ad2724d3e6c5a"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "2e39d90c11405efbe162bbb4a0fbd033084ff980"
+    },
+    {
+      "path": "version.go",
+      "type": "file",
+      "sha": "a175628d920f2b43aa4eb59a9370d5227910ff2f"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies multiplayer server framework; network/proxy/timer runtime and Go manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

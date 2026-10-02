@@ -1,0 +1,99 @@
+{
+  "repository": "Siv3D/OpenSiv3D",
+  "repository_id": 54250200,
+  "commit": "8458f3d8d5b974eeabbc6c3824d4648b48bf0cfa",
+  "source_url": "https://github.com/Siv3D/OpenSiv3D/tree/8458f3d8d5b974eeabbc6c3824d4648b48bf0cfa",
+  "readme_path": "README.md",
+  "readme_sha256": "671be0a0c7b94eb4d68afe70f096a1f62a467aea6977c0446a341de5af400a29",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b75dd7d0d15c3579468e7ddaf2e54544f5b688ea"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "17ed863a7d8ae88fee43395c3921e25939a95ceb"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "e3fcc92d187f392ad9bbadff20d30dee2a711513"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "d194da593762cc4c18df348c54b6cc8d6ef12fb4"
+    },
+    {
+      "path": "CITATION.cff",
+      "type": "file",
+      "sha": "eefb5c580abb440567e2e3df6d32a88b7063e0fc"
+    },
+    {
+      "path": "CONTRIBUTING.ja.md",
+      "type": "file",
+      "sha": "9e9e9e26a287292a5c8eaaf516350f1d25c9ee3e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a243e39e06ee4a7a5bdaf8cbc26bcaad4197fff4"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "cc92540659b941a7ce91cc552781f5e3bc358039"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a7fe70d798fb5374db5493d2d9cdd152ed5f6417"
+    },
+    {
+      "path": "Linux",
+      "type": "dir",
+      "sha": "ede8a68cdec28bff840d15b075e838be913a328e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d2bab5160f3baf398752e18a73b8c70410689a08"
+    },
+    {
+      "path": "Siv3D",
+      "type": "dir",
+      "sha": "69ec5668873c76c199b1294eb0209ad658c7023d"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "c13acbffad867a8c8b36aac445e959ee51d3c710"
+    },
+    {
+      "path": "ThirdParty.md",
+      "type": "file",
+      "sha": "ea8b72f07167b5cdeacd9ca5f66738d9bce4961c"
+    },
+    {
+      "path": "Web",
+      "type": "dir",
+      "sha": "de952e97064d66921809f72cf2d3df55104b0f82"
+    },
+    {
+      "path": "WindowsDesktop",
+      "type": "dir",
+      "sha": "73b0a4ad43b5a3dd27d048f1a63736775fefe524"
+    },
+    {
+      "path": "macOS",
+      "type": "dir",
+      "sha": "e987f8d1544fbb452551f36930669faed1952d5e"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies creative-coding framework; owned Siv3D source and platform builds, distinct from complete-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

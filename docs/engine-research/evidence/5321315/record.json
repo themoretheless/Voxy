@@ -1,0 +1,94 @@
+{
+  "repository": "crownengine/crown",
+  "repository_id": 5321315,
+  "commit": "a7768d2ca338a92cff026128e74f05a7c869f889",
+  "source_url": "https://github.com/crownengine/crown/tree/a7768d2ca338a92cff026128e74f05a7c869f889",
+  "readme_path": "README.md",
+  "readme_sha256": "964247bc54bdff2680f4212348520fcce4af6f803bc5134f4d94bf527781cdd4",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8d29476d307c1f2134c91017ed5aa551873ba4f9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "670cccf9e7e38778b876b418ad0fae6e0856530a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8cc1c84673d6334c6c792b2243ae9ad824a94df1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb03e895bacc12153644a7c5a409e007295014c8"
+    },
+    {
+      "path": ".well-known",
+      "type": "dir",
+      "sha": "5c3a4f14fe2f023f1a377533fa5f8670dec2767b"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "d56544d1d79bfb7e174743d415beb2c4e2e40d81"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3f711b568ecc33f59f659973679d7b5213064982"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e57576f7c76233211027a25a63457f5381a5b0d0"
+    },
+    {
+      "path": "crowdin.yml",
+      "type": "file",
+      "sha": "cc93082b18ca052751eee2c6e56755dc9fde8be9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c7355e411515690a9b397820b2a7cbafeebfccc9"
+    },
+    {
+      "path": "exporters",
+      "type": "dir",
+      "sha": "631733005283169212c4305597fcef41d6dff322"
+    },
+    {
+      "path": "makefile",
+      "type": "file",
+      "sha": "8fb80c258a53374285f2b203485e9a513c8d93ea"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "5baf88e5267ef9e2b4a664168114dfbec5ee7f71"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "dfa442534eb3e8ce37dd3d2e1295009758d64b05"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f8e0eb1593320a00b96277fa8f376eb385fc2ca0"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "d9cea167f3f5ea590e80d44bec4f2e23ee0f72e1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies complete cross-platform engine; owned src/tools/exporters with make/build scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

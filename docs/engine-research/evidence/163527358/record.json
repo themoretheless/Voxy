@@ -1,0 +1,124 @@
+{
+  "repository": "coronalabs/corona",
+  "repository_id": 163527358,
+  "commit": "848e5dd46887d57dab0a2ad3190eb4949c9c6a77",
+  "source_url": "https://github.com/coronalabs/corona/tree/848e5dd46887d57dab0a2ad3190eb4949c9c6a77",
+  "readme_path": "README.md",
+  "readme_sha256": "dd629594f5db6ed0c17199df58f92c2b99d6a5715ce49b86ffd02cde67772ea4",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b596fccb441d91af3f3b5ca8aa7343847cc99265"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e017616bb3b13d7605ed3a5066c0d27413726e86"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "51fbfb881f4e1771702f98a4258b484374f19b74"
+    },
+    {
+      "path": "CLA.md",
+      "type": "file",
+      "sha": "57a7537c562c3bf85c7773cbbd8a2f3da8bc9641"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6499383e4bc684944bf0dffa5b6bdb284adb1279"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "c1a4f7e6168483f5e4b4bc80313a2896e7ab2e8b"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "90b25bc9e43cbb8e573c26ce7e8b76d87eb2b16b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6011f33008919eae40f9a0cdb7fcc30eed6d943e"
+    },
+    {
+      "path": "FILE_HEADER.md",
+      "type": "file",
+      "sha": "2d8c156f633b86ff97627e8906e44bf42452eccc"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "8de3c95796c6b72870b475bf2aef112da996be2a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "928f706f7a630f94055115c5305eb359722ebf9c"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "edb527dd7d1dc88e3fc0826aba76e76a515e9b50"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "b7aaac7c5728f77593913579c78fcdba8a230033"
+    },
+    {
+      "path": "librtt",
+      "type": "dir",
+      "sha": "d1f7d1c67104dd22be2806b699937d21cbe92d8d"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "a275e1452cf602bb9797621ccf2bd8f8d97f331f"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "7aefdd6e4ec0762d118903e149ef3240281cdac2"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "bcde9733bf56c43e61a3bd770f87c4e4f66a3b73"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "4bace4a0f0a28df73bfd461e4e8a48e9761b4820"
+    },
+    {
+      "path": "sdk",
+      "type": "dir",
+      "sha": "96cf96594bed1df11308e396e2e223d60853fba5"
+    },
+    {
+      "path": "simulator-extensions",
+      "type": "dir",
+      "sha": "df7a8aa4995aa8e325d38084e5c81cd7dde49736"
+    },
+    {
+      "path": "subrepos",
+      "type": "dir",
+      "sha": "a928de64037ff3d8bec74490f02e5b16215e7385"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "fda6a89963175ebf12edccf2c839d4c9d52a0b62"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Solar2D engine; librtt/platform/modules/sdk and CMake native build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

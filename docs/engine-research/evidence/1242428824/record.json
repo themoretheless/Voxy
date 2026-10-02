@@ -1,0 +1,74 @@
+{
+  "repository": "ArcadeMakerSources/ArcadeMaker",
+  "repository_id": 1242428824,
+  "commit": "2500e4904762d2e8071452fb9b6d45b35c45cc66",
+  "source_url": "https://github.com/ArcadeMakerSources/ArcadeMaker/tree/2500e4904762d2e8071452fb9b6d45b35c45cc66",
+  "readme_path": "README.md",
+  "readme_sha256": "be8d2c3ddfc31ee69dcbc8aee3de98a1ba86d2538518c80ffa466dbbab98a817",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "bddcb96666ead9abb6f60fa35aa107e4a53f771d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9491a2fda28342ab358eaf234e1afe0c07a53d62"
+    },
+    {
+      "path": "ArcadeMaker.slnx",
+      "type": "file",
+      "sha": "5fc8fde3735b7906f189d9603ac4c3d06d58cbf6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "395ce41aa6f3ab7a63ba107c96367029eaa90f5a"
+    },
+    {
+      "path": "Exp Language Overview.md",
+      "type": "file",
+      "sha": "c5367abd39bb295c7569e3a89364cce39c5cf2a5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b77bf2ab726c6e7cb5a81a9d3b7dc38266ebfd3d"
+    },
+    {
+      "path": "Make Your First Game",
+      "type": "dir",
+      "sha": "f1af5bede755cc96ad4c18c3efc8a19fef64f84e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d05bb8550104200221704ad70c3ffd360dc5f0e0"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "aa6cb243b0a6de8f1db98c4ebb50668e430db0fb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "77c82fd7cb0c190de4dc6e5b57833295ec2f3e4c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "8fa1ae07714a9c7ff9b73b435c3e642a0eb43f46"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# 2D engine and custom language IDE on MonoGame; README distinguishes implemented backend from missing IDE feature support. GameMaker-inspired workflow is not evidence of a source fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

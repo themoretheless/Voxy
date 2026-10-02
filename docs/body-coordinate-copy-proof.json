@@ -1,0 +1,15 @@
+{
+  "hashes": {
+    "/tmp/voxy-coordinates-before.png": "92b29e22a8cf5523eacbec700996ff6b2d28074663d2a2b78f2591bfda5f4b63",
+    "/tmp/voxy-coordinates-after.png": "92b29e22a8cf5523eacbec700996ff6b2d28074663d2a2b78f2591bfda5f4b63"
+  },
+  "identicalRender": true,
+  "vertices": 505989,
+  "triangles": 935916,
+  "sampleCountPerCase": 24,
+  "scope": "SceneGeometry update CPU excluding mesh construction and GPU completion; single paired run under shared machine load",
+  "unchangedBeforeMedianMs": 4.3594,
+  "unchangedAfterMedianMs": 3.9606,
+  "deformedAfterMedianMs": 24.6967,
+  "deformedBeforeNotComparable": "old benchmark alternated canonical material coordinates with world-space fallback; corrected benchmark holds material coordinates fixed"
+}

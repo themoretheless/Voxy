@@ -1,0 +1,69 @@
+{
+  "repository": "iceshard-engine/engine",
+  "repository_id": 191127270,
+  "commit": "d601165ca0e81e8b71081eab92514d18bd539bc3",
+  "source_url": "https://github.com/iceshard-engine/engine/tree/d601165ca0e81e8b71081eab92514d18bd539bc3",
+  "readme_path": "README.md",
+  "readme_sha256": "2614c863fcaeb4b11bbd0f91e2fa02dada6ddbe54d3f5f8007af9644b7f1a6bb",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "87d8c9a3176f28f62fc9d35da29d29f03d306531"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2daae77691fce3ebe50e1174b21a0f4c3a558662"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3a0eac6b59164a2123963048c4e1f53da9372e68"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "32f9f4d415dd66d817dcb55a9fdbd3ae1aa295c4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "950e89a045b1cec10d824e2491f136567fde7b23"
+    },
+    {
+      "path": "ice.bat",
+      "type": "file",
+      "sha": "b7bbf9e165560a6e3967c9fb0f37d79c7df0d3d3"
+    },
+    {
+      "path": "ice.sh",
+      "type": "file",
+      "sha": "91c09d8ca4e7e412377eb16026cc55dd2143566c"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "1ea8dea8360801acce7368967fed91537699f0a1"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "fa222dc569fd5708e525f838a7d237e615f2ebcd"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "071767e96e784a228526e0569098022f0b6cc6f2"
+    },
+    {
+      "path": "workspace.moon",
+      "type": "file",
+      "sha": "6e3be055499a7cf561b3bd639da8720f3fb063d7"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ ECS/assets/input/render runtime with engine source and tools; README explicitly warns advertised features may be outdated and current builds unstable.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

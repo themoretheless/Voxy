@@ -1,0 +1,144 @@
+{
+  "repository": "balaurengine/balaur",
+  "repository_id": 1347743045,
+  "commit": "00b343486d19ed6845f6019391b6f6853cbb03ed",
+  "source_url": "https://github.com/balaurengine/balaur/tree/00b343486d19ed6845f6019391b6f6853cbb03ed",
+  "readme_path": "README.md",
+  "readme_sha256": "1e7a7ff5ee23db1af581569750a8d48a60d4c252bc8462759edfa0c7f6a140f2",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "9a1ee492147fa31db30636b9bd3c1cc5c576b068"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "a784174fe97d5ec3e4e38f75c85dfdc3c872101f"
+    },
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "a5fc944088eca0038c60c6d4bcbc9c9015ba27c2"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "170869d058c28e4db8cd0e325c70ce989276a79b"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "3c1d11fcfa9a78a8e3ef3117d2a131a4fe97150e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0bc6f221ac41be57c99c83dcf518ac482560b772"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "54bb5e1ec7ca745624cd975fe9b561b52f06a10e"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "850542541498d883dfb510b54ad8e905e7b675c0"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "c4e78772893eaa234cd7f5a941568914e1690436"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "43c994c2d3617f947bcb5adf1933e21dabe46bb5"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e19683e865c07491fea1d25fd31a2ad29d730526"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "570d999d635a8551dffafd6812d6e7ff0fc66c6c"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "e6d7b1d41f4391044699bb2a49e8603f9af62061"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "acdaadf1a73ea4602644cde887540038667f25a5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4603ff68a9cb8f813a253040cf605c824ddb805f"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "type": "file",
+      "sha": "aedd5dc3878e55e47000f64ffb7869d699c88eb9"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "e261bd37a1aaebe49abd590bd7b1660e4171a8d1"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "33c09ad3f66234d4a01841015153761715425007"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "15491e9bad526bad568c4327fa899b58a44c29a1"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "3cb4dec13f738f0b84fdbee387631aa475ac5698"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b4aaab80f06715914e7a91785fd52e444fa7e289"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "2ac2813e483432431f65b336da4ec74b1299af7e"
+    },
+    {
+      "path": "editors",
+      "type": "dir",
+      "sha": "e654840afa0b7e3f215ef25b1c421b199e5da8c2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7c02824f2af47d09105726d2093b8f3b00681f19"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "a974710fc2c58cdd41b9f09376d2bf1966d0743b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "690c4c1af50798ff924e7301e3274aaf9b2a7173"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust node-based 2D/3D engine with crates, editors and examples; determinism, reload latency and binary export claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

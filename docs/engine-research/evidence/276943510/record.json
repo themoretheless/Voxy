@@ -1,0 +1,84 @@
+{
+  "repository": "storm-devs/storm-engine",
+  "repository_id": 276943510,
+  "commit": "a68f43df197a50c5177f40209abc109f01f4b114",
+  "source_url": "https://github.com/storm-devs/storm-engine/tree/a68f43df197a50c5177f40209abc109f01f4b114",
+  "readme_path": "README.md",
+  "readme_sha256": "3bf8b17251638d05b5c8fb08612761491d8f38ede8c3343cb9defe36894e75a3",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a5c2da300fe40a29793d52442500d5672ecc9336"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "95d2c0d2450cc1ec258c136aba830458614521fc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8043d59a18ec5336a6c46d637d22c50fa9ca14f8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6914c390d17cd5120c0af19dfc9c9629ffea6401"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1b562645a96da649cb17cdd1eb4301e32517f775"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "0b1622da35b76dd4d5de341db17ca105b72139cb"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a6bfac5273f88b4cc7a19d992c4f1dd131378bc9"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a51bd4a3d68e7ce2f52f03d8dfdb8b2580a24011"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "722b400f41cb4b6ab0e6d90e0d73ccb6e9544211"
+    },
+    {
+      "path": "conanfile.py",
+      "type": "file",
+      "sha": "adefc52aac71a5b76d621df6251b18740e5433ee"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "74bdbda115eb0950dea29604c82542f1cd069d14"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f6b33ca0228b1fa1608f0cf52cc18ffcb028e1c1"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "ce26985b111c0d25e8c63a5ef670400a741c0cf2"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Sea Dogs engine runtime; src/tools and CMake/conan build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

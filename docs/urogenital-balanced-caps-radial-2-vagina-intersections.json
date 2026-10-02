@@ -1,0 +1,44 @@
+{
+  "scope": "Static floating-point classification; shared-vertex pairs excluded; no CCD or anatomy certification.",
+  "states": [
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-balanced-caps-radial-2/vagina-rest.obj",
+      "sha256": "b14b9ccc5011b3fc38bcfe374c5c2e38b200d60e13412d43c1c3351f0d48025b",
+      "vertices": 3600,
+      "triangles": 2048,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 6632
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-balanced-caps-radial-2/vagina-barrier.obj",
+      "sha256": "24cd6f9b93a179e7e9b925f8db3065b09323e2494aeca82805c07555879c5951",
+      "vertices": 3600,
+      "triangles": 2048,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 2594
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-balanced-caps-radial-2/vagina-released.obj",
+      "sha256": "c516a1b2047394dd4bc49dacc3458bbe82df9ec45ea898c5044ef7d64600865a",
+      "vertices": 3600,
+      "triangles": 2048,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 2788
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+//! Durable behavior configuration binds to the existing simulation lifecycle.
+use crate::{BoxCollider, CharacterBody};
+use glam::{Quat, Vec3};
+use serde::{Deserialize, Serialize};
+use voxy_scene::{Behavior, NodeId, SceneGraph, SceneSimulation};
+
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AngularMotion {
+    pub axis: [f32; 3],
+    /// Radians per second; bounded to keep configured fixed-step motion finite.
+    pub radians_per_second: f64,
+}
+impl AngularMotion {
+    #[must_use]
+    pub fn valid(self) -> bool {
+        let axis = Vec3::from_array(self.axis);
+        axis.is_finite()
+            && axis.length_squared().is_finite()
+            && axis.length_squared() > 1e-12
+            && self.radians_per_second.is_finite()
+            && self.radians_per_second.abs() <= 1_000_000.0
+    }
+}
+impl Behavior for AngularMotion {
+    #[allow(clippy::cast_possible_truncation)]
+    fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
+        if let Ok(mut local) = scene.local(owner) {
+            let mut angle = (self.radians_per_second * delta).rem_euclid(std::f64::consts::TAU);
+            if angle > std::f64::consts::PI {
+                angle -= std::f64::consts::TAU;
+            }
+            let angle = angle as f32;
+            local.rotation =
+                (Quat::from_axis_angle(Vec3::from_array(self.axis).normalize(), angle)
+                    * local.rotation)
+                    .normalize();
+            scene
+                .set_local(owner, local)
+                .expect("validated authored angular motion");
+        }
+    }
+}
+/// Typed domain failures from the editor's composed fixed phase plan.
+#[derive(Debug)]
+pub enum GameplayFixedError {
+    Motion(String),
+    Physics(crate::PhysicsError),
+}
+impl std::fmt::Display for GameplayFixedError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Motion(error) => f.write_str(error),
+            Self::Physics(error) => error.fmt(f),
+        }
+    }
+}
+impl std::error::Error for GameplayFixedError {}
+/// Live play-scene descriptors, with bounded reusable reconciliation and staging.
+#[derive(Debug)]
+pub struct AngularMotionBatch {
+    scene: voxy_scene::SceneId,
+    motions: Vec<(NodeId, AngularMotion)>,
+    staging: Vec<(NodeId, AngularMotion)>,
+    capacity: usize,
+    edits: Vec<(NodeId, voxy_scene::Transform)>,
+}
+impl AngularMotionBatch {
+    /// # Errors
+    /// Rejects invalid/physics-owned motion and capture capacity overflow.
+    pub fn new(scene: &SceneGraph, capacity: usize) -> Result<Self, String> {
+        validate_behavior_descriptors(scene)?;
+        let mut motions = Vec::new();
+        for (owner, motion) in scene.components::<AngularMotion>() {
+            if motions.len() >= capacity {
+                return Err("angular motion capacity exceeded".into());
+            }
+            motions.push((owner, *motion));
+        }
+        let edits = Vec::with_capacity(motions.len());
+        Ok(Self {
+            scene: scene.identity(),
+            staging: Vec::with_capacity(motions.len()),
+            capacity,
+            motions,
+            edits,
+        })
+    }
+    /// Reconciles runtime component changes before a fixed step.
+    /// # Errors
+    /// Invalid descriptors, foreign scenes and capacity overflow retain prior admission.
+    pub fn reconcile(&mut self, scene: &SceneGraph) -> Result<(), String> {
+        if scene.identity() != self.scene {
+            return Err("foreign angular motion scene".into());
+        }
+        validate_behavior_descriptors(scene)?;
+        self.staging.clear();
+        for (owner, motion) in scene.components::<AngularMotion>() {
+            if self.staging.len() >= self.capacity {
+                return Err("angular motion capacity exceeded".into());
+            }
+            self.staging.push((owner, *motion));
+        }
+        std::mem::swap(&mut self.motions, &mut self.staging);
+        Ok(())
+    }
+    /// # Errors
+    /// Rejects foreign scenes, invalid ticks or invalid transform publication.
+    /// Deleted owners are skipped; inactive owners retain their captured motion.
+    #[allow(clippy::cast_possible_truncation)]
+    pub fn fixed_step(&mut self, scene: &mut SceneGraph, delta: f64) -> Result<(), String> {
+        if scene.identity() != self.scene || !delta.is_finite() || delta <= 0.0 || delta > 0.1 {
+            return Err("invalid angular motion scene/tick".into());
+        }
+        self.reconcile(scene)?;
+        self.edits.clear();
+        for (owner, motion) in &self.motions {
+            if !scene.active_in_hierarchy(*owner).unwrap_or(false) {
+                continue;
+            }
+            let mut local = scene.local(*owner).map_err(|e| e.to_string())?;
+            let mut angle = (motion.radians_per_second * delta).rem_euclid(std::f64::consts::TAU);
+            if angle > std::f64::consts::PI {
+                angle -= std::f64::consts::TAU;
+            }
+            local.rotation =
+                (Quat::from_axis_angle(Vec3::from_array(motion.axis).normalize(), angle as f32)
+                    * local.rotation)
+                    .normalize();
+            self.edits.push((*owner, local));
+        }
+        scene.set_locals(&self.edits).map_err(|e| e.to_string())
+    }
+    /// # Errors
+    /// Rejects missing scene/domain writes before preparing any edits.
+    pub fn fixed_scoped(
+        &mut self,
+        mut access: voxy_scene::SceneSystemAccess<'_>,
+        delta: f64,
+    ) -> Result<(), String> {
+        access
+            .require_write("angular.motion")
+            .map_err(|e| e.to_string())?;
+        self.fixed_step(access.write().map_err(|e| e.to_string())?, delta)
+    }
+}
+/// # Errors
+/// Returns validation failures for the fixed gameplay phase plan.
+pub fn gameplay_schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_scene::ScheduleError> {
+    static PLAN: std::sync::OnceLock<Result<voxy_scene::SchedulePlan, voxy_scene::ScheduleError>> =
+        std::sync::OnceLock::new();
+    PLAN.get_or_init(|| {
+        use voxy_scene::{SchedulePlan, SystemAccess, SystemSpec};
+        let motion = SchedulePlan::build(
+            &[SystemSpec {
+                name: "angular.step".into(),
+                phase: 0,
+                after: vec![],
+                access: vec![
+                    SystemAccess {
+                        resource: "scene".into(),
+                        write: true,
+                    },
+                    SystemAccess {
+                        resource: "angular.motion".into(),
+                        write: true,
+                    },
+                ],
+            }],
+            1,
+        )?;
+        SchedulePlan::compose(&[&motion, crate::character_schedule()?], 3)
+    })
+    .as_ref()
+    .map_err(Clone::clone)
+}
+/// # Errors
+/// Rejects malformed configurations and rotation of physics-owned hierarchies.
+pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), String> {
+    for (_, motion) in scene.components::<AngularMotion>() {
+        if !motion.valid() {
+            return Err("invalid game.angular-motion.v1 axis/rate".into());
+        }
+    }
+    for node in scene
+        .components::<CharacterBody>()
+        .map(|(node, _)| node)
+        .chain(scene.components::<BoxCollider>().map(|(node, _)| node))
+    {
+        let mut current = Some(node);
+        while let Some(owner) = current {
+            if scene
+                .component::<AngularMotion>(owner)
+                .map_err(|error| error.to_string())?
+                .is_some()
+            {
+                return Err(format!(
+                    "game.angular-motion.v1 rotates physics-owned hierarchy at {owner:?}"
+                ));
+            }
+            current = scene.parent(owner).map_err(|error| error.to_string())?;
+        }
+    }
+    Ok(())
+}
+/// Runtime copies are separate from descriptors saved in authoring history.
+/// # Errors
+/// Rejects invalid descriptors, foreign scenes or simulation attachment limits.
+pub fn bind_authored_behaviors(
+    scene: &mut SceneGraph,
+    simulation: &mut SceneSimulation,
+) -> Result<(), String> {
+    validate_behavior_descriptors(scene)?;
+    let motions: Vec<_> = scene
+        .components::<AngularMotion>()
+        .map(|(node, motion)| (node, *motion))
+        .collect();
+    for (node, motion) in motions {
+        simulation
+            .attach(scene, node, motion)
+            .map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+

@@ -1,0 +1,84 @@
+{
+  "repository": "luis605/Lit-Engine-OLD",
+  "repository_id": 590182778,
+  "commit": "eea544c59a40d1d77d27f584aaa374b1d204bcfc",
+  "source_url": "https://github.com/luis605/Lit-Engine-OLD/tree/eea544c59a40d1d77d27f584aaa374b1d204bcfc",
+  "readme_path": "README.md",
+  "readme_sha256": "55d929c1f5b0a1c562ba976d0550fdbc300856c9c79db0cf2847cb7a5ec560fc",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "247aa85736aeb4e38cc4dc3aedbdfe58fe6a4d31"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6c5918bbeddb7f221a424f7d4c81c248d1653533"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "cf0b1b5a6bcc9301d4a85040ae4d6c706d773c90"
+    },
+    {
+      "path": ".profile",
+      "type": "dir",
+      "sha": "f5821d1da3bd72cfec0dc976de5362845760f5a9"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "e7a0b476e23c6eae16f4409e23e5c9c33cfc1cbd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8c3f34f2073bc4abb7d1c2d7832f42a77d188481"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1968553c700a7271296b2e40257e966e432f7978"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "c9d71c3a7b49296fd208f2b8a095c1f3f40f7fff"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c7c730207498d7739bb1a20a9cfe18f1c6efab63"
+    },
+    {
+      "path": "GameBuilder",
+      "type": "dir",
+      "sha": "59760fd987d91433bf517d6bda22b7d8d9c9fd0b"
+    },
+    {
+      "path": "Include",
+      "type": "dir",
+      "sha": "45315edfbaab95a672c4eb1abd265e36a57168fd"
+    },
+    {
+      "path": "Install",
+      "type": "dir",
+      "sha": "65c7a8085c48c7ee3de94fe956ff3e54e24e509e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6e111d2426bd289de7313845d981f72a97b7b3bb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ceafd436e95764bf14d074e1743cd4cab0bcdb40"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Historical raylib high-level engine with Engine/GameBuilder source and build workflow; README does not establish subsystem/lifecycle scope, successor separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

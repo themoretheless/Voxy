@@ -1,0 +1,234 @@
+{
+  "repository": "defold/defold",
+  "repository_id": 4315538,
+  "commit": "f46f0c5d4d57959e8f1f9cbc51907598909a494a",
+  "source_url": "https://github.com/defold/defold/tree/f46f0c5d4d57959e8f1f9cbc51907598909a494a",
+  "readme_path": "README.md",
+  "readme_sha256": "fe69cea51ff35680f178c6537d1ef931c2ecc22638beb40025ce11b567995994",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "a97fc7d1265f810992593a05281d763696e177ed"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "6fa4f4a65eccbb8afdc9a3cb8050cb82f3c87139"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9ad4ffe8cb13bab948a65ad5218aa757b47fda67"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5beab4e337f8cd01b86a9397de1b5a2c53b49ded"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b6c54e9b7a6c6cb1c803ed9de85b59421ce7abb1"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "83244323cc83d8097b14f9578a8f69e5b21a5328"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "897712a8c558b38d0c60d90c170d50332b3bf0d9"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a742dd7165debf296822a8596cfa1c344080f8e9"
+    },
+    {
+      "path": "COMPLYING_WITH_LICENSES.md",
+      "type": "file",
+      "sha": "8676dab249e16a555276686cca1e525be7e9a75a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6287e2708dfce7f2d92b1df4709c226f7d7f3b01"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "16962057f4d773c5a840f81387f08f263e29658e"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "4c8351dee988eecef767c5f40d70f84f11176fa8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1f1344e80c75856e8bfb281851966481ac63821e"
+    },
+    {
+      "path": "README_ANDROID.md",
+      "type": "file",
+      "sha": "a8324699368cb41a4711c61d3b86a6b19d700a25"
+    },
+    {
+      "path": "README_BUILD.md",
+      "type": "file",
+      "sha": "052f5594332e69d67f303bb4687c29988befe2ff"
+    },
+    {
+      "path": "README_CI.md",
+      "type": "file",
+      "sha": "c818073b6277e9b4265ba7dfb032f4fb70a75249"
+    },
+    {
+      "path": "README_DEBUGGING.md",
+      "type": "file",
+      "sha": "2c2efe71b913a446868442600cb7d1e4cd8b107a"
+    },
+    {
+      "path": "README_DOCS.md",
+      "type": "file",
+      "sha": "8c438ffd6edbf0744df2d0c37a338680ac806453"
+    },
+    {
+      "path": "README_EMSCRIPTEN.md",
+      "type": "file",
+      "sha": "cf23b4d4029579921b7059a662bb2eb438df05fa"
+    },
+    {
+      "path": "README_IOS.md",
+      "type": "file",
+      "sha": "9ddb4d0aec7358ed2505fc30cbe5f656b3f1405f"
+    },
+    {
+      "path": "README_SETUP.md",
+      "type": "file",
+      "sha": "71dfe6cd62edbbbfed304aadb5a8b4f168cfe009"
+    },
+    {
+      "path": "RELEASE.md",
+      "type": "file",
+      "sha": "b747698cd389f6178030562c8e840166103d2684"
+    },
+    {
+      "path": "RELEASE_EGS.md",
+      "type": "file",
+      "sha": "a8c9d655546e8412e21e843cab876e50366ec9c6"
+    },
+    {
+      "path": "RELEASE_STEAM.md",
+      "type": "file",
+      "sha": "733bdefb2a3bfa0f74166baea2112cb403938709"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "feeafd8bfa611bee27b3831d37ff1334c8eb1f6a"
+    },
+    {
+      "path": "TOOLS_LICENSES.md",
+      "type": "file",
+      "sha": "edee1a2114c46807de3b3d4d0c14209dbfbf5c7c"
+    },
+    {
+      "path": "VERSION",
+      "type": "file",
+      "sha": "30f101cbefadb75ade04c769621f8d3a36495d64"
+    },
+    {
+      "path": "apply_license.py",
+      "type": "file",
+      "sha": "06a4223c9ebe18e93df6c24bbd75f2f19b4b552d"
+    },
+    {
+      "path": "build_tools",
+      "type": "dir",
+      "sha": "0265ff899b0743b2ae36813d85a63c5e899a8e0f"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "d5f32203d1a8da768f28ddf780c51979b80bec3a"
+    },
+    {
+      "path": "com.dynamo.cr",
+      "type": "dir",
+      "sha": "e956f0d3611e9f2d66d98e48eee6e63e63fc1015"
+    },
+    {
+      "path": "crowdin.yml",
+      "type": "file",
+      "sha": "0a7ef3bbf0aad251694c435759269f5554f5553d"
+    },
+    {
+      "path": "default.gamepads",
+      "type": "file",
+      "sha": "730e56db879ff15b395f9c856348173fc04da591"
+    },
+    {
+      "path": "defold-robot",
+      "type": "dir",
+      "sha": "4a222ec610561d6c302f8b4ff65e826a36ecc5e8"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "f0fedffb3bb9726dafcddaf96f43d999729214d0"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "e34f192765250cffb5afe0e583ff8991c3b7b746"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "3e8a49581c08ea63c7c9d3e52af8ac0355de45db"
+    },
+    {
+      "path": "license_data.py",
+      "type": "file",
+      "sha": "87220d8cb314c5b4b06a24d01310dd6c9ea8cc66"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "a9ad2a8667055972520e228056b8618fc395f661"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "43e9f84ccef39fd0fc6e27aba1e380fcd3119786"
+    },
+    {
+      "path": "releasenotes",
+      "type": "dir",
+      "sha": "2ed03a6c1068583d7af31b15ea5820de4e64fd36"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "cee7eaaa43d1fbeb99d3d04dc2218016b9d76a96"
+    },
+    {
+      "path": "share",
+      "type": "dir",
+      "sha": "81e6f1943fb2a561642eeb363c5c382bdc80c07d"
+    },
+    {
+      "path": "trigger",
+      "type": "file",
+      "sha": "3d7f96600908f91ef966a97af5886a5a46516dde"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly maps engine/editor/tools; owned engine source, editor and build tooling.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

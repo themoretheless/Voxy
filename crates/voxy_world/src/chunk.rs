@@ -141,6 +141,20 @@ pub struct ChunkData {
 }
 
 impl ChunkData {
+    /// Bytes of block storage and attached block-data payloads.
+    ///
+    /// This is a logical payload charge, excluding allocator, map-node and `Arc`
+    /// overhead. Shared payloads are charged per entry, so summing snapshots does
+    /// not deduplicate shared allocations. Returns `None` on size overflow.
+    #[must_use]
+    pub fn payload_bytes(&self) -> Option<usize> {
+        self.block_data
+            .values()
+            .try_fold(self.blocks.encoded_bytes(), |bytes, value| {
+                bytes.checked_add(value.len())
+            })
+    }
+
     #[must_use]
     pub fn uniform(block: BlockStateId) -> Self {
         Self {
@@ -228,5 +242,30 @@ mod tests {
             .with_updates(&[(LocalIndex::new(31).unwrap(), id(1))])
             .unwrap();
         assert_eq!(restored, PalettedBlocks::Uniform(id(1)));
+    }
+
+    #[test]
+    fn payload_charge_includes_metadata_for_each_representation() {
+        for unique in [1, 3, 257] {
+            let dense = (0..CHUNK_VOLUME)
+                .map(|index| id(u32::try_from(index % unique).unwrap()))
+                .collect();
+            let blocks = PalettedBlocks::from_dense(dense).unwrap();
+            let block_bytes = match unique {
+                1 => 4,
+                3 => 3 * 4 + CHUNK_VOLUME * 2 / 8,
+                _ => CHUNK_VOLUME * 4,
+            };
+            let shared: Arc<[u8]> = Arc::from([1_u8, 2, 3, 4, 5]);
+            let chunk = ChunkData {
+                blocks,
+                block_data: BTreeMap::from([
+                    (LocalIndex::new(0).unwrap(), Arc::clone(&shared)),
+                    (LocalIndex::new(1).unwrap(), shared),
+                    (LocalIndex::new(2).unwrap(), Arc::from([])),
+                ]),
+            };
+            assert_eq!(chunk.payload_bytes(), Some(block_bytes + 10));
+        }
     }
 }

@@ -1,0 +1,252 @@
+    Checking voxy_input v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_input)
+    Checking voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Checking voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+error: strict comparison of `f32` or `f64` arrays
+   --> crates/voxy_gameplay/tests/integration.rs:583:9
+    |
+583 |         assert_eq!(after.velocity, before_state.velocity);
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+    = note: `-D clippy::float-cmp` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::float_cmp)]`
+
+error: could not compile `voxy_gameplay` (test "integration") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...
+error: method `focus_ring` is never used
+  --> crates/voxy_editor/src/game_ui_input.rs:45:19
+   |
+12 | impl GameUiInput {
+   | ---------------- method in this implementation
+...
+45 |     pub(super) fn focus_ring(
+   |                   ^^^^^^^^^^
+   |
+   = note: `-D dead-code` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: struct `FocusRing` is never constructed
+  --> crates/voxy_editor/src/ui_draw.rs:18:19
+   |
+18 | pub(super) struct FocusRing {
+   |                   ^^^^^^^^^
+
+error: method `mesh` is never used
+  --> crates/voxy_editor/src/ui_draw.rs:24:19
+   |
+23 | impl FocusRing {
+   | -------------- method in this implementation
+24 |     pub(super) fn mesh(&self) -> Result<UiDrawMesh, String> {
+   |                   ^^^^
+
+error: method `focus_snapshot` is never used
+  --> crates/voxy_editor/src/ui_live.rs:34:19
+   |
+24 | impl UiLive {
+   | ----------- method in this implementation
+...
+34 |     pub(super) fn focus_snapshot(&self) -> Option<&SceneUiSnapshot> {
+   |                   ^^^^^^^^^^^^^^
+
+error: this argument is passed by value, but not consumed in the function body
+   --> crates/voxy_editor/src/audio_play.rs:327:17
+    |
+327 |         access: voxy_scene::SceneSystemAccess<'_>,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_pass_by_value
+    = note: `-D clippy::needless-pass-by-value` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::needless_pass_by_value)]`
+help: consider taking a reference instead
+    |
+327 |         access: &voxy_scene::SceneSystemAccess<'_>,
+    |                 +
+
+error: this function has too many lines (117/100)
+ --> crates/voxy_editor/src/lod_smoke.rs:7:5
+  |
+7 |     pub(super) fn lod_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+  = note: `-D clippy::too-many-lines` implied by `-D warnings`
+  = help: to override `-D warnings` add `#[allow(clippy::too_many_lines)]`
+
+error: unnecessary boolean `not` operation
+    --> crates/voxy_editor/src/lib.rs:1131:36
+     |
+1131 |                       let geometry = if !styles.parts.contains_key(&instance.owner) {
+     |  ____________________________________^
+1132 | |                         let history = graphics.lod_history.entry(instance.owner).or_default();
+1133 | |                         let previous = history.previous();
+1134 | |                         let geometry =
+...    |
+1150 | |                         geometry
+1151 | |                     };
+     | |_____________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#if_not_else
+     = note: `-D clippy::if-not-else` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::if_not_else)]`
+help: try
+     |
+1131 ~                     let geometry = if styles.parts.contains_key(&instance.owner) {
+1132 +                         geometry
+1133 +                     } else {
+1134 +                         let history = graphics.lod_history.entry(instance.owner).or_default();
+1135 +                         let previous = history.previous();
+1136 +                         let geometry =
+1137 +                             model
+1138 +                                 .geometry
+1139 +                                 .for_view(lod_camera, instance.world, viewport, history);
+1140 +                         if previous != history.previous()
+1141 +                             && std::env::var_os("VOXY_LOD_TRACE").is_some()
+1142 +                         {
+1143 +                             eprintln!(
+1144 +                                 "LOD DRAW asset={} level={:?} triangles={} viewport={viewport:?}",
+1145 +                                 instance.component.asset.0,
+1146 +                                 history.previous(),
+1147 +                                 geometry.index_count() / 3
+1148 +                             );
+1149 +                         }
+1150 +                         geometry
+1151 ~                     };
+     |
+
+error: this `if` statement can be collapsed
+    --> crates/voxy_editor/src/lib.rs:1353:9
+     |
+1353 | /         if let Some(actions) = &mut self.ui_actions {
+1354 | |             if let Err(error) = actions.enqueue(&self.scene, event) {
+1355 | |                 eprintln!("GAME UI ACTION REJECTED: {error}");
+1356 | |             }
+1357 | |         }
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#collapsible_if
+     = note: `-D clippy::collapsible-if` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+     |
+1353 ~         if let Some(actions) = &mut self.ui_actions
+1354 ~             && let Err(error) = actions.enqueue(&self.scene, event) {
+1355 |                 eprintln!("GAME UI ACTION REJECTED: {error}");
+1356 ~             }
+     |
+
+error: casting `u32` to `f32` may cause a loss of precision (`u32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+    --> crates/voxy_editor/src/lib.rs:1410:14
+     |
+1410 |             [size.width as f32, size.height as f32]
+     |              ^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+     = note: `-D clippy::cast-precision-loss` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::cast_precision_loss)]`
+
+error: casting `u32` to `f32` may cause a loss of precision (`u32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+    --> crates/voxy_editor/src/lib.rs:1410:33
+     |
+1410 |             [size.width as f32, size.height as f32]
+     |                                 ^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+error: this function's return value is unnecessary
+    --> crates/voxy_editor/src/lib.rs:1435:5
+     |
+1435 | /     fn game_ui_pointer(
+1436 | |         &mut self,
+1437 | |         cursor: Vec2,
+1438 | |         viewport: Vec2,
+1439 | |         pressed: bool,
+1440 | |     ) -> Result<(), Box<dyn std::error::Error>> {
+     | |_______________________________________________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unnecessary_wraps
+     = note: `-D clippy::unnecessary-wraps` implied by `-D warnings`
+     = help: to override `-D warnings` add `#[allow(clippy::unnecessary_wraps)]`
+help: remove the return type...
+     |
+1440 -     ) -> Result<(), Box<dyn std::error::Error>> {
+1440 +     ) -> () {
+     |
+help: ...and then remove returned values
+     |
+1442 ~             return ;
+1443 |         }
+1444 |         if !self.game_ui_display_ready(viewport.to_array()) {
+1445 ~             return ;
+1446 |         }
+ ...
+1460 |         }
+1461 ~         
+     |
+
+error: this function has too many lines (109/100)
+    --> crates/voxy_editor/src/lib.rs:2856:5
+     |
+2856 |     fn toggle_play(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+error: strict comparison of `f32` or `f64`
+   --> crates/voxy_editor/src/audio_play.rs:430:13
+    |
+430 |             assert_eq!(audio.peak, 0.);
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+    = note: `-D clippy::float-cmp` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::float_cmp)]`
+
+error: strict comparison of `f32` or `f64`
+   --> crates/voxy_editor/src/frame_styles.rs:172:9
+    |
+172 |         assert_eq!(first.camera.distance, old_distance);
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+error: strict comparison of `f32` or `f64` arrays
+   --> crates/voxy_editor/src/frame_styles.rs:173:9
+    |
+173 |         assert_eq!(first.materials[&model].tint, [0.2, 0.3, 0.4, 1.]);
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+error: strict comparison of `f32` or `f64`
+   --> crates/voxy_editor/src/frame_styles.rs:181:17
+    |
+181 |                 assert_eq!(next.camera.distance, 10.);
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+error: strict comparison of `f32` or `f64` arrays
+   --> crates/voxy_editor/src/frame_styles.rs:203:9
+    |
+203 |         assert_eq!(first.materials[&model].tint, [0.2, 0.3, 0.4, 1.]);
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+error: could not compile `voxy_editor` (lib) due to 12 previous errors
+error: field assignment outside of initializer for an instance created with Default::default()
+   --> crates/voxy_editor/src/ui_live.rs:235:9
+    |
+235 |         ui.published = Some(first.clone());
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+note: consider initializing the variable with `ui_live::UiLive { published: Some(first.clone()), ..Default::default() }` and removing relevant reassignments
+   --> crates/voxy_editor/src/ui_live.rs:234:9
+    |
+234 |         let mut ui = UiLive::default();
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#field_reassign_with_default
+    = note: `-D clippy::field-reassign-with-default` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::field_reassign_with_default)]`
+
+error: could not compile `voxy_editor` (lib test) due to 18 previous errors

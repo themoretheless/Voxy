@@ -1,0 +1,119 @@
+{
+  "repository": "lethal-guitar/RigelEngine",
+  "repository_id": 69728109,
+  "commit": "30afeff8f0b105eac77ee0a2fbd54b06e1a49b60",
+  "source_url": "https://github.com/lethal-guitar/RigelEngine/tree/30afeff8f0b105eac77ee0a2fbd54b06e1a49b60",
+  "readme_path": "README.md",
+  "readme_sha256": "2b6b6c6abd42b0554530bca012d9ed4cac6233f5010b970a8d3cec21f7954741",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "6f10d9570667fb8ccb9eceb340994c3097be6a3a"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "abf9927e223deec5b6d70d84b685c99b865b44e8"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "96c11cc37886968ac28f9c86b599bebb0b440f60"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "d181edd1e3058a71f1f1806b546fe9603645e61a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "826d1e49647498ffe33d622170f0c26f6e1bd584"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "172d7dc2fcbbd027dab601f52e12c68db58100f6"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "02b4712f8614db03c49f2287ca6a8193b30da4d9"
+    },
+    {
+      "path": "3rd_party",
+      "type": "dir",
+      "sha": "869b7eac3e63f7b9996654d964ac69b675770adf"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "88c36c7f34d19196a64625ae8ea399ce9c9b472b"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "acacd20022314b8f3c0deae46ffba5e682bace63"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4e04c2e230b42fc3424df0c972dd8e0ed7945355"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4197c1409d8a03d57b8d9fc10ba166e37460857c"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0daa0415013a5a1d51c593534bdc95d88a849b06"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ae8aca82e9bbd11da5a2630d469c3e8a6891988c"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "568f104ab18652c78edb011bcc0b6755b3e8aaf2"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "c8594882184b1e53bdf7e126d3726c857aac6667"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "6e1ceadadd896ec3ec83644117ce5f306f5096ea"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "092e3f94ac1762016bff02a4bdf7143c799f1991"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a77f0c49764407e51c389c86ad47283f1343142d"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "91213d8467fd046b7bdb74ac382618bcdb373dd9"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "093e0fbb594e8f13bce2bcbd81f9e2988ae66fdb"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/description identify independent Duke Nukem II runtime recreation; src, CMake, tests/benchmarks.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "manual-native-review",
+  "binary_sha256": "ecc886bebcd13f75bbf318f7e58e893c6e26722d9a09ca4bbcdf0acdd90f2eca",
+  "fixture_sha256": "535ca77091b1cf30b4b02c4c165825f33b4ccab87d2d975f4d7b38b8dbdcc5d6",
+  "input_tool": "cua_repl native App actions",
+  "observations": [
+    "Play displays blue hide button and green named-input button",
+    "Tab focuses blue button with inward yellow ring",
+    "Window focus loss clears ring",
+    "Two Tab events after window raise focus green button",
+    "Shift+Tab and Return hide blue button",
+    "Stop removes game UI and restores authoring gizmo",
+    "Repeated Play restores both buttons",
+    "Pointer click at blue button hides it"
+  ],
+  "limits": [
+    "Two plain-color controls without text",
+    "Manual screenshots inspected in tool output; image files not archived",
+    "No pixel-equivalence or timing assertion",
+    "No standalone packaged-game demonstration",
+    "No asynchronous font reload or GPU-budget failure visual demonstration"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "repository": "TheDudeFromCI/WraithEngine",
+  "repository_id": 28585264,
+  "commit": "accdb0a45c0381fbcf3c8e7ca30c5490e036a8d1",
+  "source_url": "https://github.com/TheDudeFromCI/WraithEngine/tree/accdb0a45c0381fbcf3c8e7ca30c5490e036a8d1",
+  "readme_path": "README.md",
+  "readme_sha256": "b37bee783b135a66c958c4fc1a8e264ab5b793f57ce3f1976c41827a98c8911e",
+  "entries": [
+    {
+      "path": ".bettercodehub.yml",
+      "type": "file",
+      "sha": "96daaef9ddb70f9a2da32e444198ec145655352f"
+    },
+    {
+      "path": ".classpath",
+      "type": "file",
+      "sha": "b2b940620da857954ddf1f5551f852ef73bb5697"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ce424d32f0718b5e66981e1c52e82bcc1fb70b09"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "45bc1ecfea127a61647c891c4f800145b41862c5"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "020befd216ef3de15f342551cc07cdd628c5e418"
+    },
+    {
+      "path": ".settings",
+      "type": "dir",
+      "sha": "6038a67a11aa71a799b4a91b238424f41c3bba80"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "850c9d93c4946fb523afaca9e055dea69a665043"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "c4e2f38c401e014a221a1c8271676857fbdd471e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "802ccd64e4feed1cc389a53c6da5b5da585e93dd"
+    },
+    {
+      "path": "Demos",
+      "type": "dir",
+      "sha": "7959134dfa302d8189a3c0d5aeca22dcd6e5fe12"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e06d2081865a766a8668acc12878f98b27fc9ea0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "066b22986dc9336eb3e2960e062f3baca6e97235"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "cc52c3086ef9bb5d97fcc5f10f8948dabe47e427"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "9b37e62c43379eb97c2923041a2688c5ab2e7770"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "f45d8f110c3034162a1091dafe4b03d2e56b323e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6f7491963c8808ebb77ef0074e2990a0a45e59e0"
+    },
+    {
+      "path": "wiki",
+      "type": "dir",
+      "sha": "0dccab60652f5e26a0fd1bd4cad65af75917dc81"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Modular Java/LWJGL engine library with standalone engine use, sources and demos; documented Maven builds. Runtime functionality not verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,52 @@
+{
+  "repository": "teebarjunk/godot-text_effects",
+  "repository_id": 263751345,
+  "commit": "1349b82eaae2734f3d9e4942acb3b2f282e3bceb",
+  "source_url": "https://github.com/teebarjunk/godot-text_effects/tree/1349b82eaae2734f3d9e4942acb3b2f282e3bceb",
+  "readme_path": "README.md",
+  "readme_sha256": "0e8b0d8b5c3f44ddd922bd9dcbabaeb1a9f31a3576218ecbbea49736133a9db5",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8ab57f0d81f75c8508fab46f34cd270ecc31076f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d693534896dba1cba24d597c58194cc087edfa7b"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "4f0b64f4735f686d00d727dafcecf397a5c9b9ae"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "96cbf4629a557eb7339eef87ad61b7e7d8c8f0e7"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "1d850b762b8487f4ca2e637ca13643a302118579"
+    },
+    {
+      "path": "readme",
+      "type": "dir",
+      "sha": "8197aa56b7dabdc4b0e93b4bb3f31a0a4a3a1d00"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,72 @@
+{
+  "repository": "onaluf/gameQuery",
+  "repository_id": 703011,
+  "commit": "ff2efd76e8a9e378db7f28dcc5bb6e53fa2e145b",
+  "source_url": "https://github.com/onaluf/gameQuery/tree/ff2efd76e8a9e378db7f28dcc5bb6e53fa2e145b",
+  "readme_path": "readme.textile",
+  "readme_sha256": "e23aa7537579df19a0a973725729a61e501e224fb3f6111f57012eaca73cf187",
+  "entries": [
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "4297caa83b1349519bf148f8f31960a39c917176"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "0b3b3f6b441e367070d1f6257c29ff379c28978a"
+    },
+    {
+      "path": "gameQuery.jquery.json",
+      "type": "file",
+      "sha": "c5b3d48f937fac8e06d275409ee45d9e693e623f"
+    },
+    {
+      "path": "jquery.gamequery.ext.js",
+      "type": "file",
+      "sha": "b2d774267f66bdc9235c76dd004519080ed436a3"
+    },
+    {
+      "path": "jquery.gamequery.js",
+      "type": "file",
+      "sha": "a506c5b1f634fcf00292acebe8e2d63efc467298"
+    },
+    {
+      "path": "jquery.gamequery.soundwrapper.bogus.js",
+      "type": "file",
+      "sha": "736843099e795bcea043a48363a07045f0d835b9"
+    },
+    {
+      "path": "jquery.gamequery.soundwrapper.html5.js",
+      "type": "file",
+      "sha": "3ef3034e26dd07484966a98631dbaaee5ba167bd"
+    },
+    {
+      "path": "jquery.gamequery.soundwrapper.jPlayer.js",
+      "type": "file",
+      "sha": "b62824c92741153aea140f98c4afb40a5afb2f3b"
+    },
+    {
+      "path": "jquery.gamequery.soundwrapper.soundmanager2.js",
+      "type": "file",
+      "sha": "acf6af07b1a7995aa4bf1d2005c565a7e763bbe0"
+    },
+    {
+      "path": "readme.textile",
+      "type": "file",
+      "sha": "71069d2cbef8421a6d2d936b9f1db720b0773b17"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "6d0ca2e751f973eed6688546e1ef54d1d8bf6c88"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "062e238d9d434795f9e13b186e2630b5478c4f24"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

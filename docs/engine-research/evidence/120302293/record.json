@@ -1,0 +1,149 @@
+{
+  "repository": "Syncaidius/MoltenEngine",
+  "repository_id": 120302293,
+  "commit": "b81decc013b3bbed27afaa674c3fc32aa38d664e",
+  "source_url": "https://github.com/Syncaidius/MoltenEngine/tree/b81decc013b3bbed27afaa674c3fc32aa38d664e",
+  "readme_path": "README.md",
+  "readme_sha256": "9b152adfa2c7485307a79c835b38fbed1605410f708dfb5b0fd5d98825ee31ef",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "3b392291eb001d7965573f77da9320c88d11ec11"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "828c6160778011c38c2a7a1fa32358214d65924c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "76180be5f9a6df1e6aa4a5a7a318deedc8deddef"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "18c91471812cb6f4c4e8d0fc407f70c4612e1648"
+    },
+    {
+      "path": "Generate git changelog.txt",
+      "type": "file",
+      "sha": "4f9d0e719fa0d9882f6cb2b427c018e16675d05a"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "b851e84a392bf58867d19b0fba18fa8bff1ab34e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6e29b3915934fdcc53bb2d0b11e945487f75a5c8"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "cfc18c751582de224c23a2ebc2f930ee449b7ae5"
+    },
+    {
+      "path": "Molten.Audio.OpenAL",
+      "type": "dir",
+      "sha": "549ee0a514f7260ba1cd4d30c4d21bb052947599"
+    },
+    {
+      "path": "Molten.Benchmarks",
+      "type": "dir",
+      "sha": "fe1ac004b4e9c86838a7461356ffe0b288c3cad1"
+    },
+    {
+      "path": "Molten.Engine.Android",
+      "type": "dir",
+      "sha": "5e99b782576916d56a1735af07a592e09c0cfe74"
+    },
+    {
+      "path": "Molten.Engine.Windows",
+      "type": "dir",
+      "sha": "4f4571d2333da5b8ab962d683aedcd64768a8831"
+    },
+    {
+      "path": "Molten.Engine.sln",
+      "type": "file",
+      "sha": "9ff0870bcc3930f9d3f947ddcc4a68bc9e268513"
+    },
+    {
+      "path": "Molten.Engine",
+      "type": "dir",
+      "sha": "aba1dfce88069a2c9b05de78ccbb51bee012fa42"
+    },
+    {
+      "path": "Molten.Examples.Common",
+      "type": "dir",
+      "sha": "97e963faf6fc1450a19a954910ff1f0673d9ab64"
+    },
+    {
+      "path": "Molten.Examples.Desktop.Windows",
+      "type": "dir",
+      "sha": "85b0b3e1b818c68afc0bff514592117e6d2ffb29"
+    },
+    {
+      "path": "Molten.Graphics.DX12",
+      "type": "dir",
+      "sha": "c9bce82813b45d5cf46fb8e3b2e0ed0374dd439a"
+    },
+    {
+      "path": "Molten.Graphics.DXC",
+      "type": "dir",
+      "sha": "a920dae40d8b0e073092e367b8a391614f512c9c"
+    },
+    {
+      "path": "Molten.Graphics.DXGI",
+      "type": "dir",
+      "sha": "e97681690018635fa012cc3b97845d30e8cd1c42"
+    },
+    {
+      "path": "Molten.Graphics.Vulkan",
+      "type": "dir",
+      "sha": "d20779c64b62419830ddd42d07e54ab956bedbeb"
+    },
+    {
+      "path": "Molten.Math",
+      "type": "dir",
+      "sha": "eeca95bb2e09b8979eedb8aafedee5c28d46845b"
+    },
+    {
+      "path": "Molten.Utility",
+      "type": "dir",
+      "sha": "0df1302ec7004f04f63b991bfaac43c108b13c6a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "54b7e421eaf87593e233a0cbbc277822ec41affb"
+    },
+    {
+      "path": "SRC",
+      "type": "dir",
+      "sha": "051aa666cc41beb2b440611510d7cc6101f085d7"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "1c5d6541ead42155fe4a2b3e48fc5c017f5c863a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2ee6ed0b9405a1a499962e9cb72ebabb803adc39"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "35b831a1c83e9cf8e589a555b78862bdc88a4e26"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies spare-time managed game engine; owned audio/engine/platform modules and .NET build source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

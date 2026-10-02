@@ -1,0 +1,107 @@
+{
+  "repository": "gameknife/gkEngine",
+  "repository_id": 11399412,
+  "commit": "13f209d643aae034a79c8e9c38c49e00775371bf",
+  "source_url": "https://github.com/gameknife/gkEngine/tree/13f209d643aae034a79c8e9c38c49e00775371bf",
+  "readme_path": "README.md",
+  "readme_sha256": "ca01a5b6442632018d5e46316d969c7cc047d9d07e2b150faba11deddefc69f9",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a3f9c0dae84601998ec28321d9855e24a3d40b1b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a75596c75353c91a22e14e657e63cf2739ac2d66"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "3e2af726914eee6f5c895333e53c989c52cfb863"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "f09f76fcb303418a6b97513e00b404a3e71b4afe"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fbfe9dc368b2f7ef6b9db09370ef147d07fccc55"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6b2065f3a7b70f6c7b5fcf1fab6dab76f99afee5"
+    },
+    {
+      "path": "auto_buildrun.bat",
+      "type": "file",
+      "sha": "2769244c889c97d2928e142d68f004527d5653f5"
+    },
+    {
+      "path": "auto_cmake.bat",
+      "type": "file",
+      "sha": "926a648d6300e9b080a3f00d26272e30e8eb27b6"
+    },
+    {
+      "path": "auto_cmake.sh",
+      "type": "file",
+      "sha": "caaa0485bea131e6b2131eba71df16d821173d8d"
+    },
+    {
+      "path": "auto_make_env.bat",
+      "type": "file",
+      "sha": "dd6559f8b144ee75dacd12f4ebddaad36d2f45d0"
+    },
+    {
+      "path": "auto_make_env.sh",
+      "type": "file",
+      "sha": "5b446d98f4d0033cf63362f5e4c47cf6bb83ce23"
+    },
+    {
+      "path": "buildrun.sh",
+      "type": "file",
+      "sha": "0dc4ec953b53910b2d1a8681d2890d2ddde8ece7"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "a5ce70c0ddb028c96e9c049936366cff2d756d42"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "ff601e338d34858aba9d49f7287129e510e3fc38"
+    },
+    {
+      "path": "deploy_macos_assets.sh",
+      "type": "file",
+      "sha": "764a9e318908d5b0132e248c4be0948fc3b4a24f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2c465eff6c92cc737326a5177c66d4fe9fcb2451"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "338e8137689a4b309374984e2d8cdaff653d3ca5"
+    },
+    {
+      "path": "exec",
+      "type": "dir",
+      "sha": "be766213628aecac872b8d1fd9d8789e2fa79725"
+    },
+    {
+      "path": "mediapack",
+      "type": "dir",
+      "sha": "7accb2648e0a7437a5e08cb54e319c106310e158"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

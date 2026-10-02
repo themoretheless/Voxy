@@ -1,0 +1,104 @@
+{
+  "repository": "gongminmin/KlayGE",
+  "repository_id": 32620049,
+  "commit": "8a17214dba735ab1a9a2e8f2d28b71bd04465429",
+  "source_url": "https://github.com/gongminmin/KlayGE/tree/8a17214dba735ab1a9a2e8f2d28b71bd04465429",
+  "readme_path": "README.md",
+  "readme_sha256": "8dbccfe0e9dbc996903404ad2ed66134ec1b426abf7c15de90453bc9ea7e487d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "aa969129f919ec3bca498349390bd494ea9ad584"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0d436613607365488c50967df8aa3b6246b46e71"
+    },
+    {
+      "path": "Build.py",
+      "type": "file",
+      "sha": "b88c5f1a179b511a833b067079fdb4116cf52030"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "95b8a434dbcb9fcfeea38c9b2fb87caaf5c2d3db"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b70f4d1fe4ca62e749c5ce0de201d8a301ba69b6"
+    },
+    {
+      "path": "CfgBuildDefault.py",
+      "type": "file",
+      "sha": "503ad36db3a786ea0080feef3e70770aa58a2a23"
+    },
+    {
+      "path": "DXBC2GLSL",
+      "type": "dir",
+      "sha": "f0169f415530ce430de59b3a84b13e0720d018a0"
+    },
+    {
+      "path": "DeployKlayGE.py",
+      "type": "file",
+      "sha": "d9b01061fe515d25ef9d05498c6ac32d2fed2c3a"
+    },
+    {
+      "path": "Externals",
+      "type": "dir",
+      "sha": "a0d41a3262eb6933df6658f29497f83201bf8ce9"
+    },
+    {
+      "path": "KFL",
+      "type": "dir",
+      "sha": "5820dddd11e021c0c7ef004dbcfcb53ce8625da6"
+    },
+    {
+      "path": "KlayGE",
+      "type": "dir",
+      "sha": "f5ee719650e986dbd6e88f017a531d7c15352f3a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3912109b5cd65a68039d473c11c9f7ac2303e06d"
+    },
+    {
+      "path": "LICENSE-External.md",
+      "type": "file",
+      "sha": "ffd9f7640347d47a459b3eac26b9368fee3a9dae"
+    },
+    {
+      "path": "Package.py",
+      "type": "file",
+      "sha": "649c6828524e5905d1b88c733f17789bf6bf7cd2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f95761866d62ef434fe2d30e74443c92ea37ef47"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "ed8a41f155619b38d708d51de3b56343d4914ca5"
+    },
+    {
+      "path": "glloader",
+      "type": "dir",
+      "sha": "74dca47591d4ddd9793a0d506ab7a61922589861"
+    },
+    {
+      "path": "kfont",
+      "type": "dir",
+      "sha": "b69ccbdc282486b54d91f12a858d67b5d725d668"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies plugin-based game engine; KlayGE/KFL sources, CMake and native build tooling.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

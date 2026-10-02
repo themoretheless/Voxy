@@ -1,0 +1,152 @@
+{
+  "repository": "hebohang/HEngine",
+  "repository_id": 586203218,
+  "commit": "52bb922bc7ed60ec2286cf81a6de8c3e34fa2653",
+  "source_url": "https://github.com/hebohang/HEngine/tree/52bb922bc7ed60ec2286cf81a6de8c3e34fa2653",
+  "readme_path": "README.md",
+  "readme_sha256": "bf6fa47df7ff38474179ed4b8dfb38740a14cd243dd9177a6f0cf298f576bc1f",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "c4abf4948f8abb12bda0d6a5dfed3eb2499e1cd3"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "0b4b706cd67b9d61d17822289f9a9d2a872632ab"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "0fe6415aafab46b9d15201b1080e7610e030951e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9945f3307601615ba28721a146e8d1440908b70a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "db665ec5be2b1146c04468db7caf9990bec37e60"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "14ed48894f82af6ebb4dae046bed57a225dcc578"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "e4aa6b8ef77c66ec7fff809540950476e5675706"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "e4aa6b8ef77c66ec7fff809540950476e5675706"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "58ddd461d255d09e63f9a32e97dabfd38cab0344"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "83ca0b65ca41c18f675d465d412fe4597fc0af0d"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "3bf8d05b99991fd9affae90ccde731032c59db38"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "5775cff503adfab08276a89bd85a0a3487d11eea"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "f8c4787a0f181026a7c03e8350405bd0c7f8c9b7"
+    },
+    {
+      "path": "Installer.nsi",
+      "type": "file",
+      "sha": "f8119b27de3da9d8ca3f4f606a510cfc9a291da3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6a1d6cc7bd5d897c11b63ab4a9ecff50fbb7b990"
+    },
+    {
+      "path": "Project",
+      "type": "dir",
+      "sha": "166535d7af3d6690bce720994955717bca0c268f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aafe3a34cddb0c8e462c9de7bd470b045c7db27d"
+    },
+    {
+      "path": "README_EN.md",
+      "type": "file",
+      "sha": "acd871411facc00fae83d1c3c1b5b87a5ea8194e"
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "type": "file",
+      "sha": "2811d43724183a85430d705ec6bb1588850c8f3f"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "61aba9c15770b384173020d2f947ad8636d40170"
+    },
+    {
+      "path": "Win-CppCodeGen.bat",
+      "type": "file",
+      "sha": "dc25e5f9ba5f4ad382ce7be94a80547bc95c5419"
+    },
+    {
+      "path": "Win-GenProjects-Tracy.bat",
+      "type": "file",
+      "sha": "f8e031099d93c765647918a96e059dfdd6a25b95"
+    },
+    {
+      "path": "Win-GenProjects.bat",
+      "type": "file",
+      "sha": "41db3a02ca5b46fa8f87fa253ff4d54ec5b0205c"
+    },
+    {
+      "path": "Win-PackGame.bat",
+      "type": "file",
+      "sha": "38eca6e9d46e9f41ac3d7f4dec1db08c7f8fa21c"
+    },
+    {
+      "path": "Win-RunEditor.bat",
+      "type": "file",
+      "sha": "3fa32cc6a18c6b7931c2a9118b59070abf80f6f7"
+    },
+    {
+      "path": "Win-RunGame.bat",
+      "type": "file",
+      "sha": "f38afc20193c414f3f95206bce064206884d13eb"
+    },
+    {
+      "path": "hectl.bat",
+      "type": "file",
+      "sha": "d24a9e79023c04adbca3bbbc401b76dc13ca8dbc"
+    },
+    {
+      "path": "launch.vs.json",
+      "type": "file",
+      "sha": "e4d8386b8003a7c22a5048f7adfbeb46b510a465"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,54 @@
+{
+  "repository": "max-mapper/voxel-engine",
+  "repository_id": 7433588,
+  "commit": "8ee64cd438641f70fb05621f03a688445d495107",
+  "source_url": "https://github.com/max-mapper/voxel-engine/tree/8ee64cd438641f70fb05621f03a688445d495107",
+  "readme_path": "README.md",
+  "readme_sha256": "c6aa77bb9764f557c89907cd8e7052a7055d8ebf867283e5b7e84b2c3dbe805e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "76add878f8dd778c3381fb3da45c8140db7db510"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e9f46c9a50545b2acda9a6343377fe3c7ecb1428"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "06a4d70e0e817a165254380b75017adda9987aa0"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "e0366595ccd6cc156849219dc3caa9cb178299ab"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "ae286fb386a71d216fcbade0d326bb8d88d62495"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "576d0e4fac006b8e001a5eb4b7d225d7a4156ea4"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "9550f55d9f72692b2d56da85261c096728c0457a"
+    },
+    {
+      "path": "test.js",
+      "type": "file",
+      "sha": "066a61b876447706e22f31e810d2c6acf2571ba1"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaScript voxel game runtime with createGame app API, runtime library/source/tests on three.js; full API quality unreviewed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

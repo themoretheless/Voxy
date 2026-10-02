@@ -1,0 +1,114 @@
+{
+  "repository": "gavinyork/zephyr3d",
+  "repository_id": 751700221,
+  "commit": "9fc5706db14336464a11e9f58c0229fb755a9803",
+  "source_url": "https://github.com/gavinyork/zephyr3d/tree/9fc5706db14336464a11e9f58c0229fb755a9803",
+  "readme_path": "README.md",
+  "readme_sha256": "094e0b030076c9d0b7c48c0233cecb58e2da4897054a80204a91f3d866fd6f5c",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a790c8a8ebc7d7b932e85ca19f84d8d10f9474c7"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "79a85db5c23d69453b8c819392b080c9e644a64b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "81a56788386b94aaead5be9d67409fca35ac7e84"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e117d34aa07a671ed138c445f1d593da6b9aa9e4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c8a2eb65933be50122f1d0849c0fb26c4840e73d"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "67c6ec944ef41cbbf1a97c4be44856c47d8f1f20"
+    },
+    {
+      "path": ".prettierrc.js",
+      "type": "file",
+      "sha": "34efa4a13f3e1a7908220edd1e8b8947b5dcaa3e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "420b500e2807286453a83c371e8aec3bfbd80329"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "86273b70ba8798e2dbc30b930336e8eedeab0648"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8e704c5db09c5b163eefcb9c275cc553c60fddbc"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "1757c746b20f75fbc90f07cfa703876a53c3b211"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "8b64e7f41d02dd57d34ec309f5fcdd189e1e82a9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "8b11f86bcb10b98bac62ac9bd123de9dde5c6c02"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "d3dc195eb77e4714240bcdf534a2bee074618945"
+    },
+    {
+      "path": "rush.json",
+      "type": "file",
+      "sha": "ea62f9da9865c9e3fef653167a63a04ac89f916a"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0de79c46f1b33178e05e04ff41da7c100d58a61b"
+    },
+    {
+      "path": "tsconfig.common.json",
+      "type": "file",
+      "sha": "700145db674c7ed4a5ab7183b1ebbb7037d7a20b"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "1d40514d3e507f418b0f03a3ad16e8eb6b50005a"
+    },
+    {
+      "path": "utility",
+      "type": "dir",
+      "sha": "8bd2c49e9e7fe647c517239c66ee926922e594d4"
+    },
+    {
+      "path": "visual-test",
+      "type": "dir",
+      "sha": "9d2b383dc31f26426bfcbfba83aa66acacab4096"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly presents a browser rendering engine with backend abstraction and visual tools.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

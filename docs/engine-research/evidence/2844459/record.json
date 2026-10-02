@@ -1,0 +1,67 @@
+{
+  "repository": "bonesoul/voxeliq",
+  "repository_id": 2844459,
+  "commit": "249b1d0aa5cd19ce3e569578b62453efb5d83c08",
+  "source_url": "https://github.com/bonesoul/voxeliq/tree/249b1d0aa5cd19ce3e569578b62453efb5d83c08",
+  "readme_path": "README.md",
+  "readme_sha256": "3f6e60dc13d42bd7f7666b3946f0fc96c41e10da27f09d77374485ae0b0529b3",
+  "entries": [
+    {
+      "path": " .gitattributes",
+      "type": "file",
+      "sha": "b7d5d60002a1db1583d25dad2cf104a352ce751b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8ec39a1dc85b24a614d36636c539bb72f43336d2"
+    },
+    {
+      "path": "CHANGELOG",
+      "type": "file",
+      "sha": "36ccd2602dcb6c1c7cb5dbc920d77df53723b31f"
+    },
+    {
+      "path": "CREDITS",
+      "type": "file",
+      "sha": "90f4de769789d3a9f486dc2487942916c0bd1908"
+    },
+    {
+      "path": "Compatibility",
+      "type": "file",
+      "sha": "0c88bed3790f7c3c937bdee8a1e022acfffb8122"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "02029965975b099ab91ee27ab8ddff823dfba2dd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6ad387e30333a07d7a6a647f603f0d10e53a1757"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "3e3cb9f62f7df4eeca90cd093948bf0aa5e7d318"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "29a93839638ec66ceace0a6143cb070f2a3bcbc8"
+    },
+    {
+      "path": "dep",
+      "type": "dir",
+      "sha": "4913698ecbd346ff7ffecf7a32665a6d198cd765"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e8ec08712ef8dbc0d0f7cec04c80f230a1090b61"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

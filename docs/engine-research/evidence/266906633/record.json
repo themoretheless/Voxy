@@ -1,0 +1,24 @@
+{
+  "repository": "mikeroyal/Game-Development-Guide",
+  "repository_id": 266906633,
+  "commit": "00646a17a8af70fcdeefefa5915ef6b7f0a3fa87",
+  "source_url": "https://github.com/mikeroyal/Game-Development-Guide/tree/00646a17a8af70fcdeefefa5915ef6b7f0a3fa87",
+  "readme_path": "README.md",
+  "readme_sha256": "dac5b01376eac27ce26782d7ccc3a2fb8bbe98af8485185ef45431f176a510aa",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d792202bbaee003d49edddab8ec6bf80611f0c85"
+    },
+    {
+      "path": "getting Started with Game Dev.cpp",
+      "type": "file",
+      "sha": "3c703be1620745c064946e5cd533eadc63838381"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Guide listing engines, libraries and tools rather than runtime implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,44 @@
+{
+  "repository": "zhanjinzhao/TotoroEngine",
+  "repository_id": 420156700,
+  "commit": "ae8846968126a6cb4198d83ac019afc2dfaa6336",
+  "source_url": "https://github.com/zhanjinzhao/TotoroEngine/tree/ae8846968126a6cb4198d83ac019afc2dfaa6336",
+  "readme_path": "README.md",
+  "readme_sha256": "2955719e92112cd01db351bedca6e0f0cccb5cc8cc0adab0600f64095ce5d814",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0af53999caa726a50aea154425ead497a2c44467"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c7686620b2af6c0772d6c08de2a92b0648c730f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dacb86a6ce52180e256b7316524e9e39b24326b9"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "f59fb960380f91801b9bf058774301b349056292"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "f931a29d482c65c71e4a9c257a9c321af1dd7695"
+    },
+    {
+      "path": "TotoroEngine.sln",
+      "type": "file",
+      "sha": "e6992bcaaa326bc51d4543052620d47018982e0c"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "DX12 toy engine with graphics samples and descriptor/rendering features; broader game runtime not established by README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

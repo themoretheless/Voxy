@@ -1,0 +1,101 @@
+{
+  "frame": 168,
+  "measurements": {
+    "anatomicalVolumeMeasurement": false,
+    "coldResponse": {
+      "current": 0.985088586807251,
+      "enabled": true,
+      "solverCoupled": false,
+      "target": 1.0
+    },
+    "fluid": null,
+    "skinShell": {
+      "areaRatioRange": [
+        0.999999999999958,
+        1.000000000000055
+      ],
+      "calibratedPhysiology": false,
+      "energyError": null,
+      "physicalTriangles": 1268,
+      "principalStretchRange": [
+        0.9999999999999534,
+        1.0000000000000577
+      ],
+      "reference": "currentStressFreeShell",
+      "scope": "skinShellOnly",
+      "shellMassKg": 2.837177975343373,
+      "solverActive": false,
+      "storedEnergyJ": 1.9437577533334414e-28,
+      "thicknessRangeM": [
+        0.0016499999999999091,
+        0.0016500000000000692
+      ],
+      "valid": true
+    },
+    "tissueCageOrder": [
+      "leftBreast",
+      "rightBreast",
+      "leftButtock",
+      "rightButtock"
+    ],
+    "tissueCageVolumesM3": [
+      0.00615075145397518,
+      0.006150751453975181,
+      0.006150750730513153,
+      0.006150750730513156
+    ],
+    "view": {
+      "mode": "material"
+    }
+  },
+  "parameters": {
+    "areola_pigmentation": 1.0,
+    "areola_radius_mm": 18.5,
+    "arm_length": 1.0,
+    "body_model": "female",
+    "breast_size": 1.0,
+    "buttock_size": 1.0,
+    "calf_width": 1.0,
+    "foot_size": 1.0,
+    "forearm_length": 1.0,
+    "forearm_width": 1.0,
+    "hand_size": 1.0,
+    "head_size": 1.0,
+    "height_cm": 164.0,
+    "hip_width": 1.0,
+    "left_areola_size": 1.0,
+    "left_breast_size": 1.0,
+    "left_buttock_size": 1.0,
+    "leg_length": 1.0,
+    "navel_depth_mm": 4.0,
+    "navel_height_mm": 20.0,
+    "navel_shape": "reference",
+    "navel_width_mm": 16.0,
+    "neck_length": 1.0,
+    "nipple_cold_response": 1.0,
+    "nipple_projection_mm": 3.0,
+    "nipple_radius_mm": 8.0,
+    "nipple_type": "projecting",
+    "right_areola_size": 1.0,
+    "right_breast_size": 1.0,
+    "right_buttock_size": 1.0,
+    "shin_length": 1.0,
+    "shoulder_width": 1.0,
+    "thigh_length": 1.0,
+    "thigh_width": 1.0,
+    "torso_depth": 1.0,
+    "torso_length": 1.0,
+    "upper_arm_length": 1.0,
+    "upper_arm_width": 1.0,
+    "waist_width": 1.0,
+    "weight_kg": 60.0
+  },
+  "presentedAtUnixSeconds": 1790878567.210623,
+  "rendererOutcome": "Presented",
+  "simulationTime": 8.411258292011903,
+  "size": [
+    1800,
+    1300
+  ],
+  "viewerPid": 28799
+}

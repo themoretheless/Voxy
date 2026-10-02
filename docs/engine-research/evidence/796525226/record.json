@@ -1,0 +1,122 @@
+{
+  "repository": "Far-Beyond-Dev/Horizon",
+  "repository_id": 796525226,
+  "commit": "b11774f548d50e183b9a452369cda6877fc0abe4",
+  "source_url": "https://github.com/Far-Beyond-Dev/Horizon/tree/b11774f548d50e183b9a452369cda6877fc0abe4",
+  "readme_path": "README.md",
+  "readme_sha256": "84063e8e03f7e55c191898e9773f88444efb5ce0f63d73d36de12c596dd13a9e",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "bed330b8f921fd54519ff2dfb76be034ac5cee52"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "ea4c75f1f332c18037c52b6f53777a531aa8df45"
+    },
+    {
+      "path": ".env",
+      "type": "file",
+      "sha": "ca9b74171131059732db473f97d5d79fff26eeca"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "69c296bc06a8febc1987b1aab1c138650be8acad"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "27f5c2a50e1ff892bbf0548da4cc80323775921a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a3aa9cad08aeec7d0c01524d803cac1a4ea0e0d2"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0937905e48771432138d6c214cdd3e68c22aea4d"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "db15bd0f4b34975aad69330b90b184f3d9d1c5f3"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "eee82f66b02e065798cf335eb6d0d8d855cfe5d9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.Docker.md",
+      "type": "file",
+      "sha": "f1366ff7e4a1f80f0101bf2bbd979829818e6b67"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f78e4b339fa8bf73b9aedbcf44923d77b0cd1fed"
+    },
+    {
+      "path": "branding",
+      "type": "dir",
+      "sha": "52b9a57aab8b9cf8e27d4b5d5b37f3d65f74c6f3"
+    },
+    {
+      "path": "compose.yaml",
+      "type": "file",
+      "sha": "9e34fe3fe9ea14c6ba962488070ebab204089fcf"
+    },
+    {
+      "path": "config.toml",
+      "type": "file",
+      "sha": "80e43e100be247e6b717576a2b361984434de129"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "d8e5181f5e505f650d9b4580fb4b8e48c05d1c0f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e11d778961c6138ab20a8f4fc4a93144a3f1419b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "9e0b977d624e152489672ab5defc77f5f4e952c3"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "f0d2ccfdaf60c675aec941700f6eeff40ad11c10"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "0645588f8609400485f94542a6b284c0458abdd8"
+    },
+    {
+      "path": "production_config.toml",
+      "type": "file",
+      "sha": "917c3faf287366540a48df87823566192e3a95dd"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "0986892114462660433054700ad5a1313e3cf904"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,64 @@
+{
+  "repository": "ba-st/Winter",
+  "repository_id": 100826605,
+  "commit": "6b5f48f5ef49ed98553daa72ca902a2794100c5b",
+  "source_url": "https://github.com/ba-st/Winter/tree/6b5f48f5ef49ed98553daa72ca902a2794100c5b",
+  "readme_path": "README.md",
+  "readme_sha256": "7e2611540c334643b69457135e6f830ddbfdc3e3f1df5edf925b8c769f93bc70",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "da0f990d74fc8cebe3116646bd945a20e0ddb451"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c21512a8066fc5661c43731a5fe1142e9cf9d621"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "d7c7acd91e4786d73e63387d72f978c360fe6c15"
+    },
+    {
+      "path": ".smalltalk.ston",
+      "type": "file",
+      "sha": "7650290ae6671e8727f3156f066f726d795c00c2"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "0fed624ac78d4782cede7d5dc38a973cba8c30c3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f01fb357aae16eecbcb668ac70101d62ba3f8645"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c8965332c01c21fdee1243649b182b781cd113ee"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "46c09d061ac22f9887ff0d0af2bfafbd6a940ae3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ea9f22a339e42b258f7a7af04bf1f9b4c15c98f3"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "f90ccf29e17204072ab7a24bf2b2b800f2b621e4"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pharo 2D conceptual game framework on Storm; deeper runtime evidence required before engine acceptance.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

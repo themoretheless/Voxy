@@ -1,0 +1,27 @@
+{
+  "command": "/tmp/voxy-mass-optics-review --smoke --motion",
+  "session": 72193,
+  "exitCode": 0,
+  "backend": "Metal Apple M4 Max",
+  "binarySha256": "9e37b11acefe01cce9e20e8e6467d9d08dc9d3580657301ad2c0644988c7ef8a",
+  "observedOutput": [
+    "FILM MASS SMOKE PASS: 120 checks, max source-adjusted relative error=1.084202172e-15",
+    "FILM OPTICAL SMOKE PASS: 120 presented layers, temporal=true, resize_stages=3",
+    "FEMALE SKIN SMOKE PASS: 122 nonlinear steps with rendered surface deformation",
+    "SCENE SMOKE PASS: 120 presented frames"
+  ],
+  "checks": {
+    "presentedFrames": 120,
+    "filmLayerPresentedFrames": 120,
+    "massChecks": 120,
+    "maximumSourceAdjustedMassRelativeError": 1.084202172e-15,
+    "tissueSteps": 122,
+    "resizeStagesBitmask": 3,
+    "temporalEnabled": true
+  },
+  "limitations": [
+    "No screenshot or GPU temporal-color readback comparison",
+    "Does not prove calibrated physiology, zero surface intersections or whole-body collision correctness",
+    "Source files may change concurrently; frozen executable identifies this actual run"
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "repository": "UnknownDomainGames/PanguEngine",
+  "repository_id": 128403104,
+  "commit": "dafa5a098ffdc089d6f42157a96edf58e66a57e9",
+  "source_url": "https://github.com/UnknownDomainGames/PanguEngine/tree/dafa5a098ffdc089d6f42157a96edf58e66a57e9",
+  "readme_path": "README.md",
+  "readme_sha256": "e8287309a35040603502b546e8749bafafaf728558663a2ce1584254fee68c9e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e9ec0497cbaba798899e7792d2d0e8d8d4e1bc0e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2028f854503e116828c9235c1a6243b659948d4b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "fdc867169de9bce49b8968e9811b72469de262f5"
+    },
+    {
+      "path": "CONTRIBUTING_EN.md",
+      "type": "file",
+      "sha": "0a1bfcc9df6ab1d1fa432aae0794122d2845e894"
+    },
+    {
+      "path": "IntillJ IDEA CodeStyle.xml",
+      "type": "file",
+      "sha": "e94f32a8c528ea144c4fa1214dc75ee997b2382e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "51aa59c655feef33c5f17cfc29bee51e27fefcc9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f2e7b768dbd941f863fd9ed7e51e6c9d3b9fe88a"
+    },
+    {
+      "path": "base",
+      "type": "dir",
+      "sha": "bf5b0b6031de7ca0e60d88f6a79a3ed6379a443d"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "caf24c2633dde093608ba8079a77e31e53efc3f6"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "5df928c94002bbd5e3bf3889fe2da20bf5adcc7e"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "6794da47e6ada8fa2cae188b03da51dd7e1b3608"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "119f8997ba97371d33b1683c93805e9ede283f61"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "874818b1ee8b2dc0fe310f6d53058bdc2cfc8cbd"
+    },
+    {
+      "path": "game-engine",
+      "type": "dir",
+      "sha": "49aab4cc3b71fe21629323f3760ae9c3ecaedd10"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "765675ce1fd54b9d4ba7e2e155f90ecd16c3313f"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "40e6745d450b807af5aee1579b9baa8f1580d6b2"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "a69d9cb6c20655813e44515156e7253a2a239138"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "53a6b238d414d91c30c5644c82393d27416fbbe6"
+    },
+    {
+      "path": "graphics",
+      "type": "dir",
+      "sha": "993fb32a7e679b91db171688cf4f81cb9d89440d"
+    },
+    {
+      "path": "graphics3d",
+      "type": "dir",
+      "sha": "d1f49284649a74c608be12130a651f2e35e882ae"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "afe5a2d9cdefe2d57237d1d666c25a9cc5f89271"
+    },
+    {
+      "path": "jitpack.yml",
+      "type": "file",
+      "sha": "ebec7d178b1de66d6d0a649002a29270a311efbf"
+    },
+    {
+      "path": "mod-annotation-processor",
+      "type": "dir",
+      "sha": "f8ad4c707060f9dd66d8c7dda19b070d726ab7fb"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "b7738d58cbccc65344c154d7e4dfbdf16e73480c"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "4f3403ac07b972631c10f051fae4c9eba74cd15d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/description identify moddable game engine; owned game-engine/client/common and Gradle build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

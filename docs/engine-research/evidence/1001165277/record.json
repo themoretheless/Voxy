@@ -1,0 +1,64 @@
+{
+  "repository": "nuclearrt/nuclearrt",
+  "repository_id": 1001165277,
+  "commit": "5075f73565cb451ef26360b028afc81ec3ec319e",
+  "source_url": "https://github.com/nuclearrt/nuclearrt/tree/5075f73565cb451ef26360b028afc81ec3ec319e",
+  "readme_path": "README.md",
+  "readme_sha256": "bec4134c7757eaaac6460f7f8f58c62151fc66461c216370375d837f44bfe09e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8a2aa3a58ee59f4817ad27d9b368d004f4d9275f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e7d9259bb540d47c1f91222700e7bc90f55109e5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "be3f7b28e564e7dd05eaf59d64adba1a4065ac0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9b42a98471c4c5e005bc8b2dbcbc8ae10e19c2d8"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "6b0e0ca39f8f08422a43df656c66ad13ac0a66cb"
+    },
+    {
+      "path": "exporter",
+      "type": "dir",
+      "sha": "eceb3a1173285ea8f198128912dcdc4a2745f7ef"
+    },
+    {
+      "path": "plugin",
+      "type": "dir",
+      "sha": "285ffe16cc2c48db2e34ea89c8178ce6b1d85c60"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "0cf91154201091619d7f240b5b206cd7d57ca501"
+    },
+    {
+      "path": "setup",
+      "type": "dir",
+      "sha": "8cf71ba5b364f7914634580e1a86c8e4e994e91f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Independent C++ Clickteam Fusion project runtime/exporter with SDL backends; missing extensions/sub-applications and not-ready status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

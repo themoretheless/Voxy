@@ -1,0 +1,214 @@
+{
+  "repository": "travisvroman/kohi",
+  "repository_id": 343187820,
+  "commit": "34e51506f8083b382ed857a4ccb69f75e89fea6b",
+  "source_url": "https://github.com/travisvroman/kohi/tree/34e51506f8083b382ed857a4ccb69f75e89fea6b",
+  "readme_path": "readme.md",
+  "readme_sha256": "9f8f812abc5fbec15ffed3d18cb60155523ce7d1d9980508ac601d744d3025d5",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "09329fa7d7c810ef80ae8dd4e715ecef42fc1c07"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "2c4505edb3e59c667b1ffb5f26ced3b3ad9dc4d5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a2530874e19a738acc614f069ce3a8f5d54cf8b2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3d70b5e593c4fefc395612a44eea8b15516fa5a9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d0895d0bf164e9151cfe6d7eaca4cac31c593bcb"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7f91014b357031846d8c521ff1f9521a7492bd50"
+    },
+    {
+      "path": "ATTRIBUTION.md",
+      "type": "file",
+      "sha": "d1804f015a30117954d938be13f6f16eabae0f35"
+    },
+    {
+      "path": "CHANGELOG",
+      "type": "file",
+      "sha": "1ccd1b0be547f9be90ee74ab2a01ab7e4bc40dcb"
+    },
+    {
+      "path": "CREDIT.md",
+      "type": "file",
+      "sha": "3e8e5647ebc106d891bf01d630d0922877676ec1"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "fa82d2df0dcb16268030c0d4cadc3e223aa71f68"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "d9b442f64e67f297f8515ea617914f643b352eca"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "a6fa56ecaa4a6a2bc9f73edcac44b065b4734393"
+    },
+    {
+      "path": "build-app-lib.bat",
+      "type": "file",
+      "sha": "ae9bf3537f49e3ab90380e29cb7bba655572fddb"
+    },
+    {
+      "path": "build-app-lib.sh",
+      "type": "file",
+      "sha": "df7999988f21cbc59d008ec0268b0cc9fcdf61ef"
+    },
+    {
+      "path": "build-debug.bat",
+      "type": "file",
+      "sha": "d3188efae0bf28eb34a03f78d3bc1c3b4c12e992"
+    },
+    {
+      "path": "build-debug.sh",
+      "type": "file",
+      "sha": "ceb3dfa1f37c530431b441fb7f88d5b2a7a38896"
+    },
+    {
+      "path": "build-release.bat",
+      "type": "file",
+      "sha": "f780234cb32e5e7a39d674249f63ddd7aadca3b3"
+    },
+    {
+      "path": "build-release.sh",
+      "type": "file",
+      "sha": "c6e6e059fb6454d6f680bc97e7906ca9fd5ac334"
+    },
+    {
+      "path": "clean.bat",
+      "type": "file",
+      "sha": "0ecec59eb2089f60d099a6a5d44094e50fce0b18"
+    },
+    {
+      "path": "clean.sh",
+      "type": "file",
+      "sha": "147cac3d726c30417def12782770457ea2119988"
+    },
+    {
+      "path": "doxygen-style.css",
+      "type": "file",
+      "sha": "7d327445e9a60441b30d75842bd5d408e6c23c3d"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "f9e878f6945eebc72dcaf93b63eced71f654db85"
+    },
+    {
+      "path": "import-updated-assets.bat",
+      "type": "file",
+      "sha": "613becdd4ce58c309ef2c3bb384be246bd3da3e7"
+    },
+    {
+      "path": "import-updated-assets.sh",
+      "type": "file",
+      "sha": "59b2649bfc2bfb84cefeb62b4884838d5b007a7d"
+    },
+    {
+      "path": "k3d_format.html",
+      "type": "file",
+      "sha": "1d97985cf0cc3e9054ebaeeee14e5032be185102"
+    },
+    {
+      "path": "kohi retrospective notes.md",
+      "type": "file",
+      "sha": "2ad97a297fb41bdbe0220c865004f6233cbd4729"
+    },
+    {
+      "path": "kohi.core.tests",
+      "type": "dir",
+      "sha": "cd62837eb4b8151391a76e62a1143cec586c21d2"
+    },
+    {
+      "path": "kohi.core",
+      "type": "dir",
+      "sha": "3fc9ed3025e6e7dca1dc5347d965aa3d7c110d55"
+    },
+    {
+      "path": "kohi.plugin.audio.openal",
+      "type": "dir",
+      "sha": "e6228e6de665a81264a66db27feab8a5cf4024ae"
+    },
+    {
+      "path": "kohi.plugin.renderer.vulkan",
+      "type": "dir",
+      "sha": "177b73c08ad08b028926cc050660fddbf182222f"
+    },
+    {
+      "path": "kohi.plugin.ui.kui",
+      "type": "dir",
+      "sha": "0b33de850861c02deaf47c244ef1d3fe24fce885"
+    },
+    {
+      "path": "kohi.plugin.utils",
+      "type": "dir",
+      "sha": "636b435335a0164a5c37b0e65f177aa72675685d"
+    },
+    {
+      "path": "kohi.runtime.tests",
+      "type": "dir",
+      "sha": "259beb73a5c115cd3f98c087419e1e59183c13b0"
+    },
+    {
+      "path": "kohi.runtime",
+      "type": "dir",
+      "sha": "cdb9704f46ab0cfe3470da8948445c82847ba355"
+    },
+    {
+      "path": "kohi.tools",
+      "type": "dir",
+      "sha": "47b51b1d9d472dde6fb2d6e9687081805eaefe10"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "777aedcc169378af891c4590c339a14ab2c98e33"
+    },
+    {
+      "path": "testbed.kapp",
+      "type": "dir",
+      "sha": "e97ed0923cda0640c1f9bbf67ea2fe17cc249a0f"
+    },
+    {
+      "path": "testbed.klib",
+      "type": "dir",
+      "sha": "d251a9efbc9dc740bc25b842a1fee2d4d1a76a02"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "e2525cf73de3aec1008169c633b86b527ace2450"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies educational C/Vulkan engine; native source/build scripts and Makefile. Educational scope retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

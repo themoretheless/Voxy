@@ -1,0 +1,39 @@
+{
+  "repository": "Hugo-Dz/rust-sandbox",
+  "repository_id": 686620276,
+  "commit": "78ba5fb4f01727c171b1a2d524d1a0e8458fd902",
+  "source_url": "https://github.com/Hugo-Dz/rust-sandbox/tree/78ba5fb4f01727c171b1a2d524d1a0e8458fd902",
+  "readme_path": "README.MD",
+  "readme_sha256": "acbbef228b8d98aeede4c3ee1470d4f7500bd94159e50d58a4d9d4dfc4699791",
+  "entries": [
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "808813331c9f9edf7c78a504bb1ba0ab996b353c"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "4e6b27617e0d914ee2f7a1a8f2cad2960fcba608"
+    },
+    {
+      "path": "rust",
+      "type": "dir",
+      "sha": "994da0dda3e1fb75d2db3de5ab2a95bab78fa15c"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "dc63a335bf908856a43eeb42c378e4cee69d0371"
+    },
+    {
+      "path": "svelte-demo",
+      "type": "dir",
+      "sha": "63e65d8e6f8ac5d2a6bb24b66deab5cea591dfaa"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy sandbox simulation for learning Rust, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

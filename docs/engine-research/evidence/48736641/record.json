@@ -1,0 +1,57 @@
+{
+  "repository": "nikoladimitroff/Game-Engine-Architecture",
+  "repository_id": 48736641,
+  "commit": "3101cfb3e37f410ad8d472094069f46421a99d8c",
+  "source_url": "https://github.com/nikoladimitroff/Game-Engine-Architecture/tree/3101cfb3e37f410ad8d472094069f46421a99d8c",
+  "readme_path": "README.md",
+  "readme_sha256": "e98dae9d69f5a1e3afd3869a6c684bd83fe1bc11a03cfe088d63bf419a7054c5",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "982886fcd1584d8bcab78415ca737825726417ef"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0de32591871444dcd66d0da87ebef92e91945585"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "3a6996f45e1d4fbe4dd8d3367a196c61bda00200"
+    },
+    {
+      "path": "homeworks",
+      "type": "dir",
+      "sha": "ef9d86b150798d8b2e0ed325f77f40ca0e93926d"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "0db22b43416cc4ec878e64e791ca0fbb1952452f"
+    },
+    {
+      "path": "lectures",
+      "type": "dir",
+      "sha": "a9c46fe930432403ef92cfba9fd30531ae65f5bb"
+    },
+    {
+      "path": "revealjs",
+      "type": "dir",
+      "sha": "2b425ac624adff856ff516ce80bc4624e07e92d0"
+    },
+    {
+      "path": "styles.css",
+      "type": "file",
+      "sha": "d498b9fc35329a83d5a7dba26a22ab70bf1ca29a"
+    },
+    {
+      "path": "update_commit_resources.bat",
+      "type": "file",
+      "sha": "d5fa3a102b4a755cda1fbfa84f96730e88911834"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

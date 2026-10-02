@@ -1,0 +1,87 @@
+{
+  "repository": "cj-dimaggio/godot-slicer",
+  "repository_id": 266674501,
+  "commit": "fe5cb08c330f41304045f4d73b10b9af51eadd65",
+  "source_url": "https://github.com/cj-dimaggio/godot-slicer/tree/fe5cb08c330f41304045f4d73b10b9af51eadd65",
+  "readme_path": "README.md",
+  "readme_sha256": "fc688d7a6dfc1e9148f90db898baa700831e8d5b1bf5c3759df4e48d376f859e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "25a36c8e5f0fe2b90baf5b9fcdea20d2609aeedb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a05e3502c6065418aff1c641c077439ce1e543e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "78ca49c2c0eb75a2e3bfe4655b1490df87f98522"
+    },
+    {
+      "path": "SCsub",
+      "type": "file",
+      "sha": "a1e9d382d24c6492f9e0ac55824248b63b871408"
+    },
+    {
+      "path": "config.py",
+      "type": "file",
+      "sha": "be0ae0367deeee559215d581143583e7a6f0c1c1"
+    },
+    {
+      "path": "doc_classes",
+      "type": "dir",
+      "sha": "1daa7219575750d137005a5ea7be4f3ee067881c"
+    },
+    {
+      "path": "imgs",
+      "type": "dir",
+      "sha": "3cf886cc1777d9dee7f6ec21d2cd5060b20b891c"
+    },
+    {
+      "path": "register_types.cpp",
+      "type": "file",
+      "sha": "365b0c7674881b1e85170258ffa33e3ea98abe81"
+    },
+    {
+      "path": "register_types.h",
+      "type": "file",
+      "sha": "755b4765086452d214b623bf477b4038950624a0"
+    },
+    {
+      "path": "sliced_mesh.cpp",
+      "type": "file",
+      "sha": "f9fdb2328d0bc890de658e4b497fa84c1270518d"
+    },
+    {
+      "path": "sliced_mesh.h",
+      "type": "file",
+      "sha": "4669366751fe0781a12ab3fd3a6612e792735a21"
+    },
+    {
+      "path": "slicer.cpp",
+      "type": "file",
+      "sha": "0a37712d41b5cfc29145757299f72d1103516e1d"
+    },
+    {
+      "path": "slicer.h",
+      "type": "file",
+      "sha": "adb41c1e7988abd90571fbe7fe8ece675b652c3e"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "965e2826f874f7002d3c20a468e8ba882a7b22b4"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "63abd9504a92297b1b3005ae21e7b7fc3c4d1e21"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

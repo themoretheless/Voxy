@@ -1,0 +1,64 @@
+{
+  "repository": "SasLuca/rayfork",
+  "repository_id": 228938024,
+  "commit": "0db32b2c80384e89555aa8f64d5be390bbb28573",
+  "source_url": "https://github.com/SasLuca/rayfork/tree/0db32b2c80384e89555aa8f64d5be390bbb28573",
+  "readme_path": "README.md",
+  "readme_sha256": "8191412aede4c54073dced79da937f2b6aaf51a4c85d845c9126ec5110cb9a97",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d7aa72cf5d76db9fcaf3f23b48310318dd40aac2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "103030a4d2319e6c156834da4a10fc40a7c544e4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6416d7e31d1c97a52c52d708f9aa79ad7282f86b"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "9b06a6a653623287fc196fb4db3336b6fa5daebb"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7c5004c780c8893caad470ce58340d92ac74517a"
+    },
+    {
+      "path": "devutils",
+      "type": "dir",
+      "sha": "e5bdab83da6c726cf10b114c0dd2f898937aed58"
+    },
+    {
+      "path": "graphics",
+      "type": "dir",
+      "sha": "3f8e447e5fba5405bcd87a32ed4e69062c5feb60"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "c15bc1e10b95f6244e2bf39d8eb24dfec587094a"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "115be443ca2cfdb8ae1a501fba76f4a32c8b354a"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies C99 game library forked from raylib; source/graphics and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

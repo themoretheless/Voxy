@@ -1,0 +1,124 @@
+{
+  "repository": "craftyjs/Crafty",
+  "repository_id": 1052675,
+  "commit": "f3982baa51af24d4e8a14a3194fd3f0e92a2dcba",
+  "source_url": "https://github.com/craftyjs/Crafty/tree/f3982baa51af24d4e8a14a3194fd3f0e92a2dcba",
+  "readme_path": "README.md",
+  "readme_sha256": "45be0d5eb4948a1bca3e3feab092aa575f931602b488d3d83fe56feeefd91b70",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "638b6ff9734cd4e3f3f2e8b8cc2289ada1bd432d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "33cc3123aba51e5b1193fd6653576d230af44595"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d6b10f5d827f2db04faf06977d70e807c7e9cfa7"
+    },
+    {
+      "path": ".jshintignore",
+      "type": "file",
+      "sha": "1be6aa495580a1ca49e8203b5633f642fcf1fd4a"
+    },
+    {
+      "path": ".jshintrc",
+      "type": "file",
+      "sha": "a358f72251f612d4f7e987799bdbf073af77992a"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "fe2e73d1141805536a59144b74312ec47af0113f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2e203b1060a63734982bc369c7c3902b1e81ec8c"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9e72c33df5c9d331a8572d5a2ab03898a53a4baa"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6ee021dd5527225bedfb1212695a9ec6b4b38773"
+    },
+    {
+      "path": "Gruntfile.js",
+      "type": "file",
+      "sha": "c93a1279994f727ac21a4b587e4814c54ac137c3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "422aaa7c62b12a7346b579acdda1dc4b5a47d741"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b37dc6df3cb54daa5561ab689013ae6f8ae39d5"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "83ef307d7f021117bff4e4fb906a17a13c65b070"
+    },
+    {
+      "path": "bower.json",
+      "type": "file",
+      "sha": "81a1c2d0f0388885090a95e4527221a3ed9e4b50"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "f01b14e27eb4611f7ba2639fde359d1a5a7c8639"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "6a0d395470634ec1e61e3730b17adee21d4e100b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "b49c92270efb34e1a4920bb398c97dff62e1046e"
+    },
+    {
+      "path": "playgrounds",
+      "type": "dir",
+      "sha": "da965d181cbebff510dde7dee3471c4832eacead"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a09d451550aeb7bc8365d1327b4a97eaab23842c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "150f2f366bf07f00d2a408c06538b8f315b782fe"
+    },
+    {
+      "path": "travis-nightly.sh",
+      "type": "file",
+      "sha": "dc71f8b13b9cf8ce1a6a540293b731af5af5ac54"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "c65d5f172c75de16cc1b735004b1d44da52df706"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaScript entity/component/event runtime with integrated drawing/input/collision illustrated by complete Pong setup, source/playgrounds/tests present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

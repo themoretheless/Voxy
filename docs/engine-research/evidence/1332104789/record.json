@@ -1,0 +1,69 @@
+{
+  "repository": "tettethu/VibeGame",
+  "repository_id": 1332104789,
+  "commit": "0fcb8ca1e496bc5eb434d34bec1cc80c0a97daae",
+  "source_url": "https://github.com/tettethu/VibeGame/tree/0fcb8ca1e496bc5eb434d34bec1cc80c0a97daae",
+  "readme_path": "README.md",
+  "readme_sha256": "fb18630e54d7b32bc61a2698b69871a22fb59f6d5b07e8f053df1ca5a0894e39",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "895b322eca2689ef00f4e5a7139c7c4a964c0a3d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f2f050d06a5e9692a3262d6ac00f6145452080e1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b65d473975371d79fbb1dc716ebc38a38ac3433"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d606af127d3c5ba5d8d38fa3a4a549c250cf4f66"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "5dd1af75f4f415789e368cedc0f03b86c01d2be3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e5a0e1f8139055579e4183874806b6210e4ec51a"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "0fc7e67f455114a5bff07f57fdcfb228d42260ef"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "4b2b0b084d670e5e702f4ad8639e0d52c1d5c63e"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "3eb2211efa770cb81eb5eb6f71869cdc176863c5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fcbc5eed73c5d973e3a1b354552107e7298865d7"
+    },
+    {
+      "path": "technical_report.pdf",
+      "type": "file",
+      "sha": "bc2fb06629861853c95340d01cd9d4b23c6dd3cf"
+    }
+  ],
+  "classification": "excluded_automation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies AI authoring stack over Phaser runtime; Python agent/tool source does not establish independent underlying game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

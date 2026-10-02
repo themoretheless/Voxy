@@ -1,0 +1,129 @@
+{
+  "repository": "Black-Tek/BlackTek-Server",
+  "repository_id": 780611424,
+  "commit": "828b89395f28852fe2476655d30f1b90507c6066",
+  "source_url": "https://github.com/Black-Tek/BlackTek-Server/tree/828b89395f28852fe2476655d30f1b90507c6066",
+  "readme_path": "README.md",
+  "readme_sha256": "fb4eced99824f32a1373809829e11aa5053acda825490bc77dde8cde3ae7a22e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "109adf08d555c18cbca49565c92d9306d5dadae7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e46ad8db21fb0227432d5c96acb6e9bb34d7fe7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "010d7676d62741655672edaef00b1b3d674ef42a"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "639ddb515a3561ddc3e9344fe0f88bfa73ea101f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "57636c6227d89cf71f9c69ae6fdcdedd3480893e"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "5e6166cd176cd5ddddf6ca1dfa737db7abc85d04"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90773fe2c076c605247aaf9f858c1f4214778536"
+    },
+    {
+      "path": "blackteklogo.ico",
+      "type": "file",
+      "sha": "91ad8913d7b104db371411a7f1bd6419ec8f9a27"
+    },
+    {
+      "path": "bootstrap.bat",
+      "type": "file",
+      "sha": "3121e88b09a874e78cc9b61f80e0abde52acec0d"
+    },
+    {
+      "path": "bootstrap.sh",
+      "type": "file",
+      "sha": "72dd6d93d5a684d12e922623c120b8075226a843"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "568248f5a00cd109d808ac0c1a10b7482dfbacb3"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "ee685893b889df71cd593805b72f7eaf7785d644"
+    },
+    {
+      "path": "docker-compose.yaml",
+      "type": "file",
+      "sha": "cdd34f284b073c6203035b7b8001c815e78c2f9a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7b370a6ec4284acee5703af1ba6fead9c89647ff"
+    },
+    {
+      "path": "key.pem",
+      "type": "file",
+      "sha": "ec19bb4c2e4a35b717adf45120394347607f284c"
+    },
+    {
+      "path": "licensing",
+      "type": "dir",
+      "sha": "e9b2f6ca17ca590ff12dfb88d2709373237a6008"
+    },
+    {
+      "path": "logs",
+      "type": "dir",
+      "sha": "f3aa77a08ec6a50bb796b6454c28b7b3638a8afe"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "76a48bbdd404314c61df88a7eabeebaf0c9d20bf"
+    },
+    {
+      "path": "resources.rc",
+      "type": "file",
+      "sha": "f140ef92cee4893f821e49e18dd388ab1f3b20c7"
+    },
+    {
+      "path": "schema.sql",
+      "type": "file",
+      "sha": "a7ed78e8d3f8a211fb2a2cd178537f0125bcb608"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6350d0520cf767efd26dc961373968bef176bbce"
+    },
+    {
+      "path": "triplets",
+      "type": "dir",
+      "sha": "044b17f2d3fd4ac7d0d3766963790417a72fd1ef"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "5d52e629ae67df87722fbe13437fc2c5c3784961"
+    }
+  ],
+  "classification": "specialized_server",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ top-down MMORPG server; evolution into rapid development engine is a future goal.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

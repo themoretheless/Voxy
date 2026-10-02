@@ -71,9 +71,11 @@ fn spectral_transfer_refines_to_optically_thin_planck_power() {
     }
     assert!(previous < 3e-4, "{previous}");
     let saved = sphere.clone();
-    assert!(sphere
-        .free_free_radiation_rates(&rows, &network, spectrum, 1024, 100)
-        .is_err());
+    assert!(
+        sphere
+            .free_free_radiation_rates(&rows, &network, spectrum, 1024, 100)
+            .is_err()
+    );
     assert_eq!(sphere, saved);
     let powers = sphere
         .thermal_rates_free_free(&rows, &network, spectrum, 8, 20000, 0)
@@ -103,9 +105,11 @@ fn spectral_blackbody_irradiation_keeps_lte_balance_and_checks_domain() {
         },
         ..settings
     };
-    assert!(sphere
-        .free_free_radiation_rates(&rows, &network, invalid, 4, 1216)
-        .is_err());
+    assert!(
+        sphere
+            .free_free_radiation_rates(&rows, &network, invalid, 4, 1216)
+            .is_err()
+    );
 }
 
 #[test]
@@ -213,9 +217,19 @@ fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
         .unwrap();
     assert!(fresh.relative_imbalance().unwrap() < 2e-7);
     let mut failed = initial.clone();
-    assert!(failed
-        .equilibrate_stellar_free_free(&rows, &network, surface, spectrum, 8, 64 * 6 * 8, search)
-        .is_err());
+    assert!(
+        failed
+            .equilibrate_stellar_free_free(
+                &rows,
+                &network,
+                surface,
+                spectrum,
+                8,
+                64 * 6 * 8,
+                search
+            )
+            .is_err()
+    );
     assert_eq!(failed, initial);
 }
 
@@ -223,7 +237,7 @@ fn joint_solver_uses_spectral_absorption_and_cumulative_budgets() {
 fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
     use physics::{
         astrophysics_nuclear::Budget,
-        astrophysics_reaclib::{parse, MEV_JOULES},
+        astrophysics_reaclib::{MEV_JOULES, parse},
         astrophysics_spherical_radiation::{Heating, ReactiveSettings},
     };
     let rate = parse(
@@ -349,17 +363,19 @@ fn spectral_radiative_evolution_and_real_reaction_close_energy_atomically() {
         },
         ..settings
     };
-    assert!(failed
-        .step_reactive_free_free(
-            &mut failed_rows,
-            &network,
-            1e-3,
-            limits,
-            spectrum,
-            Some(&reference),
-            None
-        )
-        .is_err());
+    assert!(
+        failed
+            .step_reactive_free_free(
+                &mut failed_rows,
+                &network,
+                1e-3,
+                limits,
+                spectrum,
+                Some(&reference),
+                None
+            )
+            .is_err()
+    );
     assert_eq!(failed, initial);
     assert_eq!(failed_rows, initial_rows);
     // Refine the explicit thermal timestep against an independently finer run.
@@ -424,18 +440,20 @@ fn zero_duration_spectral_evolution_validates_inputs_without_ray_work() {
     assert_eq!(result.steps, 0);
     assert_eq!(result.segments, 0);
     assert_eq!(sphere, saved);
-    assert!(sphere
-        .radiate_free_free(
-            0.0,
-            settings,
-            &rows,
-            &network,
-            FreeFreeSpectrum {
-                bins: 0,
-                ..spectrum
-            }
-        )
-        .is_err());
+    assert!(
+        sphere
+            .radiate_free_free(
+                0.0,
+                settings,
+                &rows,
+                &network,
+                FreeFreeSpectrum {
+                    bins: 0,
+                    ..spectrum
+                }
+            )
+            .is_err()
+    );
     assert_eq!(sphere, saved);
 }
 
@@ -529,7 +547,7 @@ fn eddington_surface_has_opaque_flux_scaling_and_preserves_irradiated_lte() {
 fn physical_stellar_profile_satisfies_explicit_absolute_and_relative_balance() {
     use physics::{
         astrophysics_equilibrium::Search,
-        astrophysics_reaclib::{parse, MEV_JOULES},
+        astrophysics_reaclib::{MEV_JOULES, parse},
         astrophysics_spherical_radiation::SpectralSurface,
     };
     let rate = parse(include_str!("data/triple_alpha_fy05.reaclib"), 1e6, 1e9, 3).unwrap();

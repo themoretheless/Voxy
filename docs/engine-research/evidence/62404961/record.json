@@ -1,0 +1,32 @@
+{
+  "repository": "netpyoung/awesome-unity-free",
+  "repository_id": 62404961,
+  "commit": "d18e87f60b207c380477273c844ba13c427204d6",
+  "source_url": "https://github.com/netpyoung/awesome-unity-free/tree/d18e87f60b207c380477273c844ba13c427204d6",
+  "readme_path": "README.md",
+  "readme_sha256": "f55a3b73ccd9b7980117bf21c61b8b66a8a95a9f3cc29a78ce6e9cdfa213b5b8",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2dfd3ba72c529cd00598281d0a8eaabe49d084ef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c4d09bd1824e628c5285838ff1e96fcd9edae65b"
+    },
+    {
+      "path": "deprecated_visualstudio_2015 - Copy.md",
+      "type": "file",
+      "sha": "f1193b4b1707f2c7822ee8f33dd621c9d80007f1"
+    },
+    {
+      "path": "visualstudio_2017.md",
+      "type": "file",
+      "sha": "9d4ddcf9c5faaa8533ba87dce2a47a32c53b6ded"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

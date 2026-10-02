@@ -1,0 +1,129 @@
+{
+  "repository": "CSharpGodotTools/GodotModulesCSharp-Old",
+  "repository_id": 476870193,
+  "commit": "a62cf76c467b8dc76b1ff861ded1a70b8494c7fb",
+  "source_url": "https://github.com/CSharpGodotTools/GodotModulesCSharp-Old/tree/a62cf76c467b8dc76b1ff861ded1a70b8494c7fb",
+  "readme_path": "README.md",
+  "readme_sha256": "264c43354944b26d0a2be8d421c0b38fe7bb2b1d3e28116c4c9b1b1ceac180d9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b05f38b4e99db50fc54107bf55a0bca1c7db04cb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "222047a80dbcc235a6dfed2a3075cd65ecf8cf2c"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "6d87a82291c882f1a17efa8d258571e663fa79cf"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7cbaecca67bed52f375548a04d71ade5ece2f7da"
+    },
+    {
+      "path": "Audio",
+      "type": "dir",
+      "sha": "6c3dae8123db22f39182b72ceb54533c4e367932"
+    },
+    {
+      "path": "ENet-CSharp.dll",
+      "type": "file",
+      "sha": "377329e1795c366b349413eb7b77e48fec33270a"
+    },
+    {
+      "path": "Fonts",
+      "type": "dir",
+      "sha": "441c486d994e2953cec602521a5739494ba1bed6"
+    },
+    {
+      "path": "GodotModules.csproj",
+      "type": "file",
+      "sha": "e960884beb0b4295946d6036e34d97e3953b61ec"
+    },
+    {
+      "path": "GodotModules.sln",
+      "type": "file",
+      "sha": "c20eaa3b4c186980b698cd72332422303b67e15a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f522253cc9fffa040536b35d6b6b721f16578bd1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "46eec933cac47feb2b32a6c77bdd5862cb048dad"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "995d66582008fffacf71dc381dce1854cdcd118b"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "020da1706ea2b115c53f606c6d9f60a11b6ae642"
+    },
+    {
+      "path": "Sprites",
+      "type": "dir",
+      "sha": "e79f5c901485bc095841412f150b923a6a2c1605"
+    },
+    {
+      "path": "Themes",
+      "type": "dir",
+      "sha": "4245ad7774ba9dee02ed74af0621f07206440e0d"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "enet.dll",
+      "type": "file",
+      "sha": "8ec72d150f20203a2c9174398ab53da9427ef037"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "a4c02e6e27173699ab89f60c32661726fadfdbcd"
+    },
+    {
+      "path": "libenet.dylib",
+      "type": "file",
+      "sha": "d10078b7da106d28e80fdc90fce5f28ac4aee36b"
+    },
+    {
+      "path": "libenet.so",
+      "type": "file",
+      "sha": "b2b0a58008648726ff62a109f0e93e6a7110e720"
+    },
+    {
+      "path": "options.json",
+      "type": "file",
+      "sha": "32c622d4884e027a851d7e7c0f38df10ebb92b01"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "9b34533993ccf8f315f1332abb7d7f2eb194ccbf"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot 3 C# scripts/modules and project resources, not new runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

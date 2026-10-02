@@ -1,0 +1,49 @@
+{
+  "repository": "jwpttcg66/redis-game-transaction",
+  "repository_id": 74747903,
+  "commit": "9d6f01f260523dc8c01194c8c793d13c7c8cbdc1",
+  "source_url": "https://github.com/jwpttcg66/redis-game-transaction/tree/9d6f01f260523dc8c01194c8c793d13c7c8cbdc1",
+  "readme_path": "README.md",
+  "readme_sha256": "a00eb7a4c36ff411696efaa267e21645a060e92c2478761c7824cc6a42736367",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "42be0e5d84ccd85ee63b54dd4e86668e4d375cf7"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "7a4a3ea2424c09fbe48d455aed1eaa94d9124835"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "03e4bc35c567c2ba8304849976923fcaeee050e6"
+    },
+    {
+      "path": "build.xml",
+      "type": "file",
+      "sha": "fd438710f0e8be68bed824ab4d819107d08f794b"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "29d051db45a5620cb0f1232b700c218a4184aa0c"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "b867922a67d3a03098ff27fcf10dfe0c713489d7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "346adb8c59dd9473577d7b2e2de0db2b605cd134"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Redis distributed lock and transaction framework for game servers, not a graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

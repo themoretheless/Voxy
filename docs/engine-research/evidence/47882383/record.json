@@ -1,0 +1,174 @@
+{
+  "repository": "godotengine/godot-docs",
+  "repository_id": 47882383,
+  "commit": "a52125d6d0e9eee1fe5e83fea4e496fec313ddf9",
+  "source_url": "https://github.com/godotengine/godot-docs/tree/a52125d6d0e9eee1fe5e83fea4e496fec313ddf9",
+  "readme_path": "README.md",
+  "readme_sha256": "5b054f1637fb46a71898d015f6e517d2abb576e73799c8595e40aff44a9c02dd",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7614d1b1b9b3fb9d9f6abe4dbd85aefab40eff8e"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "cb95d5fd76385d8effaebf9ace8742b35694ce7e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bd70af630ce99932e5a62068a20b3ccdd5dbe43b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "92ea3f49a91ce823113aa4f2ce21ba10890746c3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1697aa045df4c8a63abb48c268c9766166813b02"
+    },
+    {
+      "path": ".lycheeignore",
+      "type": "file",
+      "sha": "4c49adedf3c3aa687364b3f0e334a049eaf0207f"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "5f4dd94676e810854563187faea9543e05876171"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "5f53061fae8c390d3cf40b031e7bf2d37925e665"
+    },
+    {
+      "path": ".readthedocs.yml",
+      "type": "file",
+      "sha": "1a544429c1b4cd7b245ba6cd7a53a94bea124cca"
+    },
+    {
+      "path": "404.rst",
+      "type": "file",
+      "sha": "bcb137db9b46ec03979479f817dff20ea3fb6341"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "6743ea6a9a012fa607612f84d993a5ba7f5155a0"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "1a16e05564d2aaa880bbe9e506a0a0226d8742cc"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "200ce1c84e1d17c92b32f73df4a3a4d4eb41f14c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4fa22c41bd12ea335b4471e8c245bac9ade2ef0d"
+    },
+    {
+      "path": "_extensions",
+      "type": "dir",
+      "sha": "b1f37f0c84e23931a245fdf30cac85aff1477468"
+    },
+    {
+      "path": "_static",
+      "type": "dir",
+      "sha": "738ac3c372087b0e224c88289d854dc580da3ad7"
+    },
+    {
+      "path": "_styleguides",
+      "type": "dir",
+      "sha": "7e419a1cae49f5ed0edb8636a9b163943418cf69"
+    },
+    {
+      "path": "_templates",
+      "type": "dir",
+      "sha": "8406bd080c40d45aa045b0c2ad3448d20411eb6d"
+    },
+    {
+      "path": "_tools",
+      "type": "dir",
+      "sha": "5f63a5f1cd2c05807953df541931c38c65529d06"
+    },
+    {
+      "path": "about",
+      "type": "dir",
+      "sha": "f37ba195334106bded7be72853ffb7d186b019fe"
+    },
+    {
+      "path": "classes",
+      "type": "dir",
+      "sha": "f70ede13e7d333c5de81c4e7b5e12c90a97153aa"
+    },
+    {
+      "path": "community",
+      "type": "dir",
+      "sha": "d3cd25b58ef0bde08904aceb0da4251df059f770"
+    },
+    {
+      "path": "conf.py",
+      "type": "file",
+      "sha": "aec6abba37b7127e8a868419d5b2c8b58d3c2bd6"
+    },
+    {
+      "path": "engine_details",
+      "type": "dir",
+      "sha": "e7fc35385460d268a260680f2237264c11fba59b"
+    },
+    {
+      "path": "getting_started",
+      "type": "dir",
+      "sha": "2f09fa854846f9039440db42ed5e3b157936df31"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "f96d46324991ca8b211b40e9be23407d7edc56ef"
+    },
+    {
+      "path": "index.rst",
+      "type": "file",
+      "sha": "634c78d658d13a829d90c334be50016a50c435fa"
+    },
+    {
+      "path": "make.bat",
+      "type": "file",
+      "sha": "90a24541cfdbaf3299253b89488fd47bfee8c7b5"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "67afbd9fbca43b7985add11f96668f40c44dccc5"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "97078631f5f12d6cbc251e65ccaa8423b80bbc3e"
+    },
+    {
+      "path": "robots.txt",
+      "type": "file",
+      "sha": "06d70556da4ff0d69b617a72be306d1974edec68"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "799e992ee897761396798fb5a39183c5c100080c"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README says documentation source; Sphinx/reST files rather than engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

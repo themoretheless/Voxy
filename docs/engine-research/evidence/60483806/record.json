@@ -1,0 +1,67 @@
+{
+  "repository": "hxdefold/hxdefold",
+  "repository_id": 60483806,
+  "commit": "473011c0f0a6b5357c90b7a2151b8d5a0a8e5925",
+  "source_url": "https://github.com/hxdefold/hxdefold/tree/473011c0f0a6b5357c90b7a2151b8d5a0a8e5925",
+  "readme_path": "README.md",
+  "readme_sha256": "0693e96ff1b4907e5d63288f8a90ad48945494796384fd6edd9c5bf9e8ba3def",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c1fa5d05dd55d7a38b8ca391cc3059ced3e04734"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1188cfcf7855eddc879acfcf599d96c526f81193"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "95bb05bfc8080c447c012824f683e1be2931fcb0"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "b42710cbad075ad9342817a41958dbf13aa160a9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5aa934bb79a192eb5aacecc9d2f2dfaa8a3abbc0"
+    },
+    {
+      "path": "Release.hx",
+      "type": "file",
+      "sha": "29e87f5e79dca14e2bb7c53e667c677bef6ff047"
+    },
+    {
+      "path": "build.hxml",
+      "type": "file",
+      "sha": "222697c15f67dbf5751cca624cc4714b609c2742"
+    },
+    {
+      "path": "doc.hxml",
+      "type": "file",
+      "sha": "99279bcc53734661acd236f26e8c9457cf618520"
+    },
+    {
+      "path": "extraParams.hxml",
+      "type": "file",
+      "sha": "038d7af9d5d545504cbf6cc6cff994db1b47719b"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "845f70c6f176dc5c1c4478951f33f06d89c3f84c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ef95f666c43543d9b0ae960cda8bb83016298564"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

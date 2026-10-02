@@ -1,0 +1,29 @@
+{
+  "scope": "Only outer pressure cap fan anchor changed; material, wall mesh, pressure and supports fixed. Full cycle and scoped static surface audit completed.",
+  "states": [
+    {
+      "anchor": 0,
+      "peak_pa": 819.6521627303,
+      "element": 27646,
+      "centroid_m": [
+        0.01165686642656,
+        -0.00170119515079,
+        0.02885817418732
+      ],
+      "reference_z_m": 0.0296875,
+      "sha256": "9fffee787280dde2cbf6638ca5d7d154d1ed26e61500a3699a31593118194f9c"
+    },
+    {
+      "anchor": 8,
+      "peak_pa": 819.6536352513,
+      "element": 27598,
+      "centroid_m": [
+        -0.01165738612575,
+        0.001703067614005,
+        0.02885785897187
+      ],
+      "reference_z_m": 0.0296875,
+      "sha256": "5ce5bcbeba987828e69a106c8717f968f1d81a61c80f8644e5b990d7aafef324"
+    }
+  ]
+}

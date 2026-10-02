@@ -1,0 +1,149 @@
+{
+  "repository": "playcanvas/engine",
+  "repository_id": 19696006,
+  "commit": "987c70bda03465ea079e3448cf8bca45ec41c068",
+  "source_url": "https://github.com/playcanvas/engine/tree/987c70bda03465ea079e3448cf8bca45ec41c068",
+  "readme_path": "README.md",
+  "readme_sha256": "263f5ff13ec7c7d53397bb2e1f150203ce1b7bebbc710757826b3d9b10e0c461",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3920bcd31274183445a36a6ebb391c537d9dc981"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "67d976f4e9a2966517fda4352fc645b42a088406"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7f53c9e0503bcc2049a3ba1888780631922cbef7"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "3c032078a4a21c5c51d3c93d91717c1dabbb8cd0"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "9e6b6b47e5f20e554ade50530e154f0273aa8e36"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7f478db6d47a259cd70f74b1e69d8ce407fd0912"
+    },
+    {
+      "path": "README-ja.md",
+      "type": "file",
+      "sha": "43cf36fbc413123ceccc48fa2da9da6bdc295249"
+    },
+    {
+      "path": "README-kr.md",
+      "type": "file",
+      "sha": "1608483fd153216dff8e6a81989f918e1bcd6d7f"
+    },
+    {
+      "path": "README-zh.md",
+      "type": "file",
+      "sha": "8d723106415b9ff3e16259aaf67191571a36eafc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0f27cba3f65d3fc669b4c7bf2dda680e5fd47591"
+    },
+    {
+      "path": "build.mjs",
+      "type": "file",
+      "sha": "da5150edfeee4c7ad630213bedda56e739678761"
+    },
+    {
+      "path": "context7.json",
+      "type": "file",
+      "sha": "1a4baadc5ead45b0f5600be2eff1a9c450bb888c"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "db30dea15f58a0406e3b4070d26d415579ca330d"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "803b29265e44e79b03cd3aa2509e2fac56b22da8"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "7d755faeb864c13ff08c0dc18adc6eaed2ae73a1"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "31005f5927bbe75709dd3255346c9659fcfbfc62"
+    },
+    {
+      "path": "playcanvas.d.ts",
+      "type": "file",
+      "sha": "f3c80e03ce0f062c27089f38952f0e2c7ac97f65"
+    },
+    {
+      "path": "release.sh",
+      "type": "file",
+      "sha": "2f58dfe6a42f9587d804b9848f4c30433135aab2"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "095c9b6f9c61c8b7ddbe8d7587d0f314a41ccf6b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2d88acd5fc5fff1793c7f7111e336810811089f8"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "988b6e319c561dcc607447d3a3340b0830d139d2"
+    },
+    {
+      "path": "tsconfig.build.json",
+      "type": "file",
+      "sha": "fae47bf5591534f22f3f0301676bd852319a6762"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "f8f4f550b5d75ca3c5883202279d0a40ef86c432"
+    },
+    {
+      "path": "turbo.json",
+      "type": "file",
+      "sha": "0b441c4e1cfde504aefcaea7ddf9dca2cbad0116"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "161942897666b7d359395b3c285793dcdaadf329"
+    },
+    {
+      "path": "typedoc.scripts.config.mjs",
+      "type": "file",
+      "sha": "f7c7f3ac6c37d70f51c45b835c6100124be6baaf"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "9fe72c4000cf4ce2e5a2d2256e8c420b14dc5587"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies PlayCanvas Engine; src, type declarations, build script, examples and tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

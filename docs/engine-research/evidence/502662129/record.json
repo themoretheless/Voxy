@@ -1,0 +1,87 @@
+{
+  "repository": "peter-kish/gloot",
+  "repository_id": 502662129,
+  "commit": "6b09b87ac07a8536779ef1ab0fafc7e99830f948",
+  "source_url": "https://github.com/peter-kish/gloot/tree/6b09b87ac07a8536779ef1ab0fafc7e99830f948",
+  "readme_path": "README.md",
+  "readme_sha256": "fdfa80498f656156d9c8105ab6205fdeab5f5d00b0d4c1b0f3246ec015738e6d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2ddefddf23c63196d76dbd5d330b8da4286a714e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6c6a4e3368623632f067c6388a3826de080fd142"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e9b4efd556b2146efe104d467c130ef5abe1a9d8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6828b85345b3db82511f44eb99873254afbfd7bd"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "19731f1717ddd6a7d3e1ec4d66a039188ba249da"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "1a5570b873f0a38e1b92b3f68c01489f759b599f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "68c3c6000ec869acf6665e20cd4073389542bbd9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "15e7aca60b9bbad4eaebaf78d0a60cf00540f0e3"
+    },
+    {
+      "path": "generate_docs.py",
+      "type": "file",
+      "sha": "609240b3764362e1e4546f38b75fb5d2d02ec194"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "c41fb7c5a79d8348ca40811f955779d97ee7e797"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "e6e7fe174bf750bce76ae9e133e6d34ad5dd9784"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "69ddf0451d6d89eb133c89afcdfc46c0071c31b0"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "27f8ad5be9105cc19244fcb887142c9c0ffdec5c"
+    },
+    {
+      "path": "xml_to_md.py",
+      "type": "file",
+      "sha": "4a7030f41eb8f6659beef2c458ab594946148c13"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

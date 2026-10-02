@@ -1,0 +1,99 @@
+{
+  "repository": "wonkey-coders/wonkey",
+  "repository_id": 327374788,
+  "commit": "bf735454c677326a5899476319a572d6f7d21b3a",
+  "source_url": "https://github.com/wonkey-coders/wonkey/tree/bf735454c677326a5899476319a572d6f7d21b3a",
+  "readme_path": "README.md",
+  "readme_sha256": "e2ed85d401a613be94ad2f095ab0a65723a5f96382a7593977518837d9bd3f53",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9530048312f296cd3860df5b40ed838a07ae4b93"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f0f492473ceff536ff9a0a54e1e1c0dcdc76a18"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5c2a8160bfdcc57a898662dade58b3912c617f49"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "045bf2e482d027aebfa57ecf536664906bce7999"
+    },
+    {
+      "path": "ABOUT.HTML",
+      "type": "file",
+      "sha": "59855d46fc5c1822961b0c1b5cfa1226443f996e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "eb11a54dd8fba44a1f220ae805152e0674aa1c69"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "8b67d1db98603c245f3e17aed04df441ad91ece1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a9de03b6ca99161a87ce62489f105e213bf98958"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "e972dd4f6c304f2433382ed9669e58f777e5420e"
+    },
+    {
+      "path": "config.xw",
+      "type": "file",
+      "sha": "9a856087d79741548c6e333faac10b311396b61c"
+    },
+    {
+      "path": "devtools",
+      "type": "dir",
+      "sha": "9cb054c621b3b7be036f091b14d4a06dbfeb45c8"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "962f55a8c93d38694ccbb1e0d7fa5f3fe84d12d5"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ee58b50a937d545812279f6aec164175dc30061b"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "e24d95e8affdac8b3696fcba9b8a68048013a5c9"
+    },
+    {
+      "path": "products",
+      "type": "dir",
+      "sha": "febd5713708a9cf9c557960c1f05eba73fce1374"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "706d23d57c9f1871d397c4747cf1a49ce3ea3eab"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "16b85a43ec3da74a3879237f3436bb5c75005a2b"
+    }
+  ],
+  "classification": "language_runtime_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Game-oriented programming language and cross-platform modules, rather than a separately identified game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

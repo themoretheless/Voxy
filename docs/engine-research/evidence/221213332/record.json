@@ -1,0 +1,217 @@
+{
+  "repository": "BMEAutomatedDrive/SUMO-Unity3D-connection",
+  "repository_id": 221213332,
+  "commit": "10bc616d8b6f0399ae30404e3101ce895c9f08d8",
+  "source_url": "https://github.com/BMEAutomatedDrive/SUMO-Unity3D-connection/tree/10bc616d8b6f0399ae30404e3101ce895c9f08d8",
+  "readme_path": "README.md",
+  "readme_sha256": "d4e483999192eab39f6b66686085fdbc20bc3ec79e22d509d06952070bbf57f5",
+  "entries": [
+    {
+      "path": "Executables.7z.001",
+      "type": "file",
+      "sha": "d7c197fee935228915e16d2c81bfab0beb207aa7"
+    },
+    {
+      "path": "Executables.7z.002",
+      "type": "file",
+      "sha": "ade857be86658bb88767f2b284c61a1e3a7cdc5f"
+    },
+    {
+      "path": "Executables.7z.003",
+      "type": "file",
+      "sha": "b04cf4f250277632a0be98a235b245f6598e05b5"
+    },
+    {
+      "path": "Executables.7z.004",
+      "type": "file",
+      "sha": "db8f30a15c36de221fb685528af7845c21bbb55d"
+    },
+    {
+      "path": "Executables.7z.005",
+      "type": "file",
+      "sha": "afab4eb6adbd9ac3ddbb18e372db38253b602262"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d6464963fd6d5985e80337764364569fed07cf68"
+    },
+    {
+      "path": "Python_source",
+      "type": "dir",
+      "sha": "8d76b3050f70e9fd0e276389962ef6c3de5c8e81"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b2601685e9835f65d0adf8eb330a4aa7a7833f68"
+    },
+    {
+      "path": "SUMO_Networks",
+      "type": "dir",
+      "sha": "c5f8abffbf09723ee6661f00935718c40f91f32d"
+    },
+    {
+      "path": "UnityProject.7z.001",
+      "type": "file",
+      "sha": "375d16aa1b29ae0c73aa5dc0e73e5e8bc6a7440a"
+    },
+    {
+      "path": "UnityProject.7z.002",
+      "type": "file",
+      "sha": "1df12e33dc80ee288554baafa0e93a9f1dcfccb5"
+    },
+    {
+      "path": "UnityProject.7z.003",
+      "type": "file",
+      "sha": "2bdc719e5bb34ba1d065de47a50477192675d0de"
+    },
+    {
+      "path": "UnityProject.7z.004",
+      "type": "file",
+      "sha": "2905e9f0c13c0374e601db932f3f8d8d821a6aa8"
+    },
+    {
+      "path": "UnityProject.7z.005",
+      "type": "file",
+      "sha": "fff5398d0e121d7d478d030af37984968fbdb02d"
+    },
+    {
+      "path": "UnityProject.7z.006",
+      "type": "file",
+      "sha": "37ba24f67b28ff726e92d9212cfa120a824a7f5c"
+    },
+    {
+      "path": "UnityProject.7z.007",
+      "type": "file",
+      "sha": "04f2411f982fcebc5b535c5c5e35820ea14f39b3"
+    },
+    {
+      "path": "UnityProject.7z.008",
+      "type": "file",
+      "sha": "95f1d7dae739ebafc2e6c4e1827938c6e339eafb"
+    },
+    {
+      "path": "UnityProject.7z.009",
+      "type": "file",
+      "sha": "06f0a4a30f5890e0c5e6d4e75a23c2718728b991"
+    },
+    {
+      "path": "UnityProject.7z.010",
+      "type": "file",
+      "sha": "fc5b237db3c7c43b31458a8db746bbe110f4533e"
+    },
+    {
+      "path": "UnityProject.7z.011",
+      "type": "file",
+      "sha": "65212aaa2e4cfe13aee2079887a3d9b62c2453be"
+    },
+    {
+      "path": "UnityProject.7z.012",
+      "type": "file",
+      "sha": "7e4b95a16883b775979fd48fc02b60c935179443"
+    },
+    {
+      "path": "UnityProject.7z.013",
+      "type": "file",
+      "sha": "9b9b02c675da38ef627b46fb8d6ca43a667e3c11"
+    },
+    {
+      "path": "UnityProject.7z.014",
+      "type": "file",
+      "sha": "b369b896934c4273e44cde1d0d0d7aff91e6dbbe"
+    },
+    {
+      "path": "UnityProject.7z.015",
+      "type": "file",
+      "sha": "90e7bf73a2be3592d665a5f4f0f1bc9bc31ca68f"
+    },
+    {
+      "path": "UnityProject.7z.016",
+      "type": "file",
+      "sha": "2274b3cb3906e0a8a5dcb9fe78573cd8b089b980"
+    },
+    {
+      "path": "UnityProject.7z.017",
+      "type": "file",
+      "sha": "dccd09809da14aaab387e543e5fcfcf27bcc17ef"
+    },
+    {
+      "path": "UnityProject.7z.018",
+      "type": "file",
+      "sha": "7b5fb16a56ec149f4d0e51683fe8179c777a890a"
+    },
+    {
+      "path": "UnityProject.7z.019",
+      "type": "file",
+      "sha": "91c6770b679f7f1b2835066227bf7a908a0de7ec"
+    },
+    {
+      "path": "UnityProject.7z.020",
+      "type": "file",
+      "sha": "95ae3a615a49917a9975b407b88ab6587626e5bf"
+    },
+    {
+      "path": "UnityProject.7z.021",
+      "type": "file",
+      "sha": "da888744575604aa6e61b755d9265960bfc1f4a1"
+    },
+    {
+      "path": "UnityProject.7z.022",
+      "type": "file",
+      "sha": "15325806ee0cf871cd1282b5d386e3d2120ae279"
+    },
+    {
+      "path": "UnityProject.7z.023",
+      "type": "file",
+      "sha": "70832be89c837841419ae5e869070a376edd66cd"
+    },
+    {
+      "path": "UnityProject.7z.024",
+      "type": "file",
+      "sha": "046c249690cbb56637d43f38e8e503f14f2b8137"
+    },
+    {
+      "path": "UnityProject.7z.025",
+      "type": "file",
+      "sha": "69ff9c18bcdd73178d614eb02f7e53ea8aa036d0"
+    },
+    {
+      "path": "UnityProject.7z.026",
+      "type": "file",
+      "sha": "50180434d33e5bb42c53f07f27b210e1780644f3"
+    },
+    {
+      "path": "UnityProject.7z.027",
+      "type": "file",
+      "sha": "483bf2e16ead6e4d16de3b0f9d63ceadaa9b9227"
+    },
+    {
+      "path": "UnityProject.7z.028",
+      "type": "file",
+      "sha": "2f8143db1349ff17efa743b452b9ad21b16fd33f"
+    },
+    {
+      "path": "UnityProject.7z.029",
+      "type": "file",
+      "sha": "cafd20c6a7d3a8fedecb88e0f82b3197f925cc04"
+    },
+    {
+      "path": "UnityProject.7z.030",
+      "type": "file",
+      "sha": "76b0ade04bf2854500b1eae289b705bd8d44c9c2"
+    },
+    {
+      "path": "UnityProject.7z.031",
+      "type": "file",
+      "sha": "0999b8263973b72ce642cdceae2968f999d2e4f1"
+    },
+    {
+      "path": "UnityProject.7z.032",
+      "type": "file",
+      "sha": "7dff9ad0ffefdd4e0fcd4f676d4dd10fa8df9c9f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

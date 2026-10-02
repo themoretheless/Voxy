@@ -1,0 +1,17 @@
+{
+  "browserMode": "strain",
+  "browserConfirmationFrame": 71,
+  "nativeReceipt": "body-view-panel-live-proof.json",
+  "scope": "Saved through browser and confirmed by fresh Presented receipt; separate static render fixtures",
+  "displacementLegendMillimetres": [
+    0,
+    5,
+    10
+  ],
+  "strainLegendPercent": [
+    0,
+    5,
+    10
+  ],
+  "viewerStoppedAfterVerification": true
+}

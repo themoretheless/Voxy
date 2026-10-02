@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "asset": "player",
+      "source": "player.obj"
+    },
+    {
+      "asset": "floor",
+      "source": "floor.obj"
+    },
+    {
+      "asset": "step",
+      "source": "step.obj"
+    }
+  ]
+}

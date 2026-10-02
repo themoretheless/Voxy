@@ -1,0 +1,154 @@
+{
+  "repository": "untoldengine/UntoldEngine",
+  "repository_id": 115294492,
+  "commit": "3c006f50aa05aa80283f23b7d2fa056a48aff072",
+  "source_url": "https://github.com/untoldengine/UntoldEngine/tree/3c006f50aa05aa80283f23b7d2fa056a48aff072",
+  "readme_path": "README.md",
+  "readme_sha256": "7fa5a3edacceb6aebf3a36288456738d5e2b3c6dd8a0eaf939f5b87950e301b6",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8c324b0d98645e43eab2d4803328d3de108ae84e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b5d090184b6a944bfb2de9dcf3101b8a979ccc0c"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "ecd1e809d08b178d384d0271573abcc22dc9f811"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "a804acfd18199229bd2a586be28310a279f7952c"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7195f5458621c15fbfc08863601d4188abd5b831"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "3de4993fa169cad4d724b0d8f9556112781472de"
+    },
+    {
+      "path": "COMMERCIAL.md",
+      "type": "file",
+      "sha": "ebd1b55044c44b49914e9264eac2057dddf23ba9"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a3e76894bdcf081e173afec91bbe152fd3f289c1"
+    },
+    {
+      "path": "CONTRIBUTOR_LICENSE_AGREEMENT.md",
+      "type": "file",
+      "sha": "8cda854b960b6aca911536dd4bede88a1eec4c0a"
+    },
+    {
+      "path": "ENGINEERING_PRINCIPLES.md",
+      "type": "file",
+      "sha": "ed558c7f80e2f7f9a26aaf72090ce3d844679faa"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "3b0a6542bc50bfa3fb37e91135ebc9a43a0ca30e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d7e38a800baeb4509501d793c5d28c33a9e7ffc8"
+    },
+    {
+      "path": "LICENSE-COMMERCIAL",
+      "type": "file",
+      "sha": "3a8d452c46f3512d67bb66abe2a1e605f82db095"
+    },
+    {
+      "path": "LICENSE-COMMERCIAL-SUPPORT",
+      "type": "file",
+      "sha": "2325e6dc4a5dec48e1cbdfe3d5882fc67c15f4d1"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "e2673358ecad17b164f2577be5e535df33fc8f96"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "f84f8b19c0c18708ec399a4e4b9cb669e3b93a22"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "983824a51faf86fcf8afb03017c5f20603ce11cc"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "04d9cf368987a481246b91c1711925d3e78b5101"
+    },
+    {
+      "path": "TRADEMARKS.md",
+      "type": "file",
+      "sha": "6d66c3e1b091f3ece94e8e86419cf2d53b1bf0ed"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "da9139bd7a095abd40018c389f1e4207f86fe08c"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "e7aa799fe2df5376429baadf397709ed2665b9e8"
+    },
+    {
+      "path": "buildkernels-hotreload.sh",
+      "type": "file",
+      "sha": "d6c6342c8d1809eeade1d39b5184f22f2e4f7932"
+    },
+    {
+      "path": "buildkernels.sh",
+      "type": "file",
+      "sha": "0c2209bee909fc56b2f800e56043a45e5a14fdc0"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "cacbaa0d26860ff927185df9a10e3c44cbfa1349"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a258f3f927b1364f1c8f5fb4bc3252e552a90c4f"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "f2943803bab2ae4590aacfbd44e707f0c4377417"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "7b241a01d032dc1598f874546b03c44a0579e5fc"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "872d8723c0badc8449fa8745e061f3c9626628aa"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Swift/Metal spatial engine with gameplay, physics, input and scene facilities plus source/tests; XR and platform claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}
