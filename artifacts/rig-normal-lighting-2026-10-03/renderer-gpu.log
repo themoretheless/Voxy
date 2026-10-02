@@ -1,0 +1,13 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-09b59d6c85f7f9fb)
+
+running 4 tests
+test scene::skinning::tests::gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ok
+test scene::skinning::tests::gpu_scene_skinning_independent_instances_and_last_good_pose ... ok
+LIT_NORMAL_COMPARISON colored_pixels=2317 max_cpu_gpu_channel_delta=0 old_formula_difference_pixels=2317
+test scene::skinning::tests::gpu_skin_normals_follow_inverse_transpose_and_keep_last_good ... ok
+REFERENCE_RIG_PROFILE adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000021699616 motion=0.33529755 cpu_pose_skin_us=(375.167, 408.41700000000003) preflight_us=(744.083, 782.791) prepared_encode_us=(56.708, 94.25) submit_readback_us=(376.041, 1183.5839999999998) logical_bytes=50408
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 131 filtered out; finished in 35.41s
+

@@ -2416,7 +2416,8 @@ impl NormalCache {
         cache
     }
     // UV/colour updates do not change normals. Compare exact current geometry;
-    // any deformation or topology change rebuilds the weld map and normals.
+    // Geometry or authored normal changes refresh the stream; generated normals
+    // rebuild the weld map only when no authored stream is supplied.
     #[allow(clippy::float_cmp)] // Exact geometry equality is the cache invalidation contract.
     fn refresh(&mut self, mesh: &SceneMesh) -> bool {
         if self.authored == mesh.authored_normals
