@@ -1,5 +1,5 @@
 //! Native acceptance uses presented frames and the ordinary editor Play/Stop path.
-use crate::{App, ModelAnimation};
+use crate::App;
 use winit::keyboard::KeyCode;
 
 #[derive(Debug, Default)]
@@ -7,8 +7,29 @@ pub(super) struct Smoke {
     phase: u8,
     since: u64,
     authoring: Option<voxy_scene::SceneDocument>,
+    lod_bytes: u64,
+    base_indices: u32,
 }
 impl App {
+    fn animation_inspector_input(
+        &mut self,
+        path: &str,
+        text: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        let document = self.authoring_document()?;
+        let object = document
+            .objects
+            .get(self.selected)
+            .ok_or("missing inspector owner")?;
+        let index = crate::component_fields::fields(object)?
+            .iter()
+            .position(|field| field.schema == "editor.model-animation.v1" && field.path == path)
+            .ok_or("missing animation inspector field")?;
+        self.inspector = crate::InspectorMode::Components(index / 6);
+        self.panel_action(crate::panels::Action::Field(index))?;
+        self.field_key(KeyCode::Digit0, Some(text))?;
+        self.field_key(KeyCode::Enter, None)
+    }
     pub(super) fn animation_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let Some(smoke) = &self.animation_smoke else {
             return Ok(false);
@@ -36,20 +57,45 @@ impl App {
                 {
                     return Ok(false);
                 }
+                if asset.value().skinned_lod.is_some() {
+                    self.camera.legacy = false;
+                    self.camera.perspective = false;
+                    self.camera.distance = 2000.;
+                }
                 self.edit_key(KeyCode::KeyD)?;
                 if self.instances.len() != 2 {
                     return Err("native animation setup did not duplicate the model".into());
                 }
-                self.scene
-                    .insert_component(self.instances[0], ModelAnimation::default())?;
-                self.scene.insert_component(
-                    self.instances[1],
-                    ModelAnimation {
-                        speed: 0.,
-                        ..ModelAnimation::default()
-                    },
-                )?;
-                self.commit_authoring()?;
+                self.panel_action(crate::panels::Action::Select(0))?;
+                self.panel_action(crate::panels::Action::Animation)?;
+                let before = self.authoring_document()?;
+                self.animation_inspector_input("/clip", "null")?;
+                let bind = self.authoring_document()?;
+                if bind == before {
+                    return Err("native inspector did not switch to bind pose".into());
+                }
+                self.edit_key(KeyCode::KeyZ)?;
+                if self.authoring_document()? != before {
+                    return Err("native animation inspector undo failed".into());
+                }
+                self.edit_key(KeyCode::KeyY)?;
+                if self.authoring_document()? != bind {
+                    return Err("native animation inspector redo failed".into());
+                }
+                self.animation_inspector_input("/clip", "0")?;
+                self.panel_action(crate::panels::Action::Select(1))?;
+                self.panel_action(crate::panels::Action::Animation)?;
+                self.animation_inspector_input("/speed", "0")?;
+                let paused = self
+                    .scene
+                    .component::<crate::ModelAnimation>(self.instances[1])?
+                    .ok_or("native inspector failed to author animation")?;
+                if paused.speed != 0.0 || paused.clip != Some(0) {
+                    return Err("native inspector failed to pause selected owner".into());
+                }
+                println!(
+                    "ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true"
+                );
                 let authoring = self.authoring_document()?;
                 self.toggle_play()?;
                 let smoke = self.animation_smoke.as_mut().unwrap();
@@ -88,6 +134,74 @@ impl App {
                     self.frames,
                     self.play.simulation_ticks,
                     graphics.animated_models.allocation_bytes()
+                );
+                if self
+                    .catalog
+                    .snapshot(&self.id)
+                    .is_some_and(|asset| asset.value().skinned_lod.is_some())
+                {
+                    let imported = self
+                        .catalog
+                        .snapshot(&self.id)
+                        .ok_or("missing native LOD source")?;
+                    let lod = imported
+                        .value()
+                        .skinned_lod
+                        .as_ref()
+                        .ok_or("missing native LOD source")?;
+                    let reduced_indices =
+                        lod.indices(1).ok_or("missing native reduced level")?.len() as u32;
+                    let base_indices =
+                        lod.indices(0).ok_or("missing native base level")?.len() as u32;
+                    if graphics.animated_models.lod_selection(first, 0)
+                        != Some((1, reduced_indices))
+                        || graphics.animated_models.lod_selection(second, 0)
+                            != Some((1, reduced_indices))
+                    {
+                        return Err("native skeletal LOD did not select reduced indices".into());
+                    }
+                    let world = self.scene.world_matrix(first)?;
+                    let (min, max) = graphics
+                        .animated_models
+                        .lod_world_bounds(first, world)?
+                        .ok_or("missing native LOD bounds")?;
+                    self.camera.perspective = true;
+                    self.camera.distance = 0.01;
+                    self.camera.target = (min + max) * 0.5;
+                    self.camera.target.z =
+                        max.z + self.camera.distance * 0.0005 - self.camera.distance;
+                    let smoke = self.animation_smoke.as_mut().unwrap();
+                    smoke.lod_bytes = graphics.animated_models.allocation_bytes();
+                    smoke.base_indices = base_indices;
+                    smoke.phase = 3;
+                    smoke.since = self.frames;
+                    println!(
+                        "ANIMATION NATIVE LOD FAR PASS owners=2 level=1 indices={reduced_indices}"
+                    );
+                    return Ok(false);
+                }
+                self.toggle_play()?;
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.phase = 2;
+                smoke.since = self.frames;
+            }
+            3 => {
+                let graphics = self
+                    .graphics
+                    .as_ref()
+                    .ok_or("missing native LOD graphics")?;
+                let first = self.instances[0];
+                let base_indices = self.animation_smoke.as_ref().unwrap().base_indices;
+                if graphics.animated_models.lod_selection(first, 0) != Some((0, base_indices)) {
+                    return Err("native near-plane camera did not restore base indices".into());
+                }
+                let before = self.animation_smoke.as_ref().unwrap().lod_bytes;
+                let after = graphics.animated_models.allocation_bytes();
+                if after >= before {
+                    return Err("native near-plane camera did not evict unused LOD indices".into());
+                }
+                println!(
+                    "ANIMATION NATIVE LOD NEAR PASS level=0 indices={base_indices} before={before} after={after}"
                 );
                 self.toggle_play()?;
                 let smoke = self.animation_smoke.as_mut().unwrap();

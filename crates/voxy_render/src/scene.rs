@@ -102,6 +102,7 @@ pub struct SceneMesh {
     // Private immutable buffers preserve the constructor's validation.
     validated: bool,
     material_coordinates: Option<Vec<[f32; 3]>>,
+    authored_normals: Option<Vec<[f32; 3]>>,
     material_parameters: [f32; 4],
 }
 
@@ -186,8 +187,17 @@ impl SceneMesh {
             indices,
             validated: true,
             material_coordinates: None,
+            authored_normals: None,
             material_parameters: [1.333, 0.2, 0.08, 0.04],
         })
+    }
+    /// Preserve authored/deformed normals instead of regenerating welded
+    /// geometry normals. Rejects mismatched counts and nonfinite values.
+    pub fn with_normals(mut self, normals: Vec<[f32; 3]>) -> Result<Self, SceneError> {
+        if normals.len() != self.vertices.len() { return Err(SceneError::InvalidGeometry); }
+        if normals.iter().flatten().any(|value| !value.is_finite()) { return Err(SceneError::NonFiniteVertex); }
+        self.authored_normals = Some(normals);
+        Ok(self)
     }
     /// Four per-draw shader values supplied at vertex location 4. Existing
     /// shaders may ignore this stream. Rejects nonfinite values before mutation.
@@ -305,6 +315,7 @@ impl SceneMesh {
         Self {
             validated: color.iter().all(|component| component.is_finite()),
             material_coordinates: None,
+            authored_normals: None,
             material_parameters: [1.333, 0.2, 0.08, 0.04],
             vertices: vec![
                 SceneVertex {
@@ -2393,6 +2404,7 @@ fn validate_view_regions(size: [u32; 2], views: &[SceneView<'_>]) -> Result<(), 
 
 #[derive(Debug, Default)]
 struct NormalCache {
+    authored: Option<Vec<[f32; 3]>>,
     positions: Vec<[f32; 3]>,
     indices: Vec<u32>,
     normals: Vec<[f32; 3]>,
@@ -2407,7 +2419,8 @@ impl NormalCache {
     // any deformation or topology change rebuilds the weld map and normals.
     #[allow(clippy::float_cmp)] // Exact geometry equality is the cache invalidation contract.
     fn refresh(&mut self, mesh: &SceneMesh) -> bool {
-        if self.indices == mesh.indices
+        if self.authored == mesh.authored_normals
+            && self.indices == mesh.indices
             && self.positions.len() == mesh.vertices.len()
             && self
                 .positions
@@ -2417,7 +2430,8 @@ impl NormalCache {
         {
             return false;
         }
-        self.normals = smooth_normals(mesh);
+        self.normals = mesh.authored_normals.clone().unwrap_or_else(|| smooth_normals(mesh));
+        self.authored.clone_from(&mesh.authored_normals);
         self.positions.clear();
         self.positions
             .extend(mesh.vertices.iter().map(|v| v.position));
@@ -2893,4 +2907,4 @@ mod tests {
 mod lod_geometry;
 pub use lod_geometry::{SceneLodGeometry, SceneLodHistory};
 mod skinning;
-pub use skinning::{SceneSkinError, SceneSkinInstance, SceneSkinSource, SceneSkinner};
+pub use skinning::{SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner};

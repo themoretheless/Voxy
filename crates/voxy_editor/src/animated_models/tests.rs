@@ -14,6 +14,7 @@ fn request(owner: NodeId, model: &Arc<ModelAsset>, speed: f32) -> Request {
     Request {
         owner,
         model: model.clone(),
+        lod: None,
         settings: ModelAnimation {
             speed,
             ..ModelAnimation::default()
@@ -281,6 +282,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
                 first,
                 revised,
                 ModelAnimation::default(),
+                None,
                 9,
                 0,
                 initial_bytes
@@ -382,5 +384,283 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
             .is_empty()
     );
     assert_eq!(runtime.allocation_bytes(), 0);
+    assert!(pollster::block_on(scope.pop()).is_none());
+}
+
+#[test]
+#[ignore = "requires GPU; animated editor LOD camera and budget publication"]
+fn animated_lod_views_budget_and_cpu_fallback() {
+    let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+    let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let mut model = (*fixture()).clone();
+    let ModelGeometry::Skinned(original) = &model.primitives[0].geometry else {
+        panic!("skin required");
+    };
+    let indices = original.indices().to_vec();
+    let mesh = voxy_render::SkinnedMesh::new(
+        original.vertices().to_vec(),
+        [indices.clone(), indices.clone()].concat(),
+        original.joint_count(),
+    )
+    .unwrap();
+    let d = voxy_render::LOD_BARYCENTRIC_DENOMINATOR;
+    let witness = voxy_render::LodTriangleWitness {
+        target_triangle: 0,
+        weights: [[d, 0, 0], [0, d, 0], [0, 0, d]],
+    };
+    let lod = Arc::new(
+        voxy_render::SkinnedLodMesh::new(
+            Arc::new(mesh.clone()),
+            vec![voxy_render::CertifiedLodVariant {
+                indices,
+                source_to_variant: vec![witness.clone(), witness.clone()],
+                variant_to_source: vec![witness],
+            }],
+        )
+        .unwrap(),
+    );
+    model.primitives[0].geometry = ModelGeometry::Skinned(mesh);
+    let model = Arc::new(model);
+    let mut graph = voxy_scene::SceneGraph::new(8);
+    let owner = graph.spawn(None, voxy_scene::Transform::default()).unwrap();
+    let far = voxy_render::SceneCamera {
+        eye: glam::Vec3::new(0., 0., 10.),
+        target: glam::Vec3::ZERO,
+        up: glam::Vec3::Y,
+        projection: voxy_render::SceneProjection::Orthographic {
+            left: -100.,
+            right: 100.,
+            bottom: -100.,
+            top: 100.,
+            near: 0.1,
+            far: 100.,
+        },
+    };
+    let near = voxy_render::SceneCamera {
+        eye: glam::Vec3::new(0., 0., 0.05),
+        projection: voxy_render::SceneProjection::Perspective {
+            vertical_fov: 1.,
+            aspect: 1.,
+            near: 0.1,
+            far: 100.,
+        },
+        ..far
+    };
+    for cpu in [false, true] {
+        let mut owners = AnimatedModels::new(&renderer).unwrap();
+        if cpu {
+            owners.skinner = None;
+        }
+        let make_request = || Request {
+            owner,
+            model: model.clone(),
+            settings: ModelAnimation::default(),
+            lod: Some(lod.clone()),
+        };
+        assert!(
+            owners
+                .synchronize(&renderer, &device, &queue, vec![make_request()], 0, 0, 8192)
+                .is_empty()
+        );
+        let base_bytes = owners.allocation_bytes();
+        assert!(
+            owners
+                .select_lod(
+                    &renderer,
+                    &device,
+                    owner,
+                    0,
+                    Some(far),
+                    glam::Mat4::IDENTITY,
+                    [100, 100],
+                    0,
+                    base_bytes
+                )
+                .is_err()
+        );
+        assert!(!owners.owners[&owner].lod_history.contains_key(&0));
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                0,
+                Some(far),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                1,
+                Some(near),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        assert_eq!(owners.owners[&owner].lod_history[&0], 1);
+        assert_eq!(owners.owners[&owner].lod_history[&1], 0);
+        assert_eq!(
+            owners
+                .geometries_for_view(owner, 0)
+                .unwrap()
+                .next()
+                .unwrap()
+                .index_count(),
+            3
+        );
+        assert_eq!(
+            owners
+                .geometries_for_view(owner, 1)
+                .unwrap()
+                .next()
+                .unwrap()
+                .index_count(),
+            6
+        );
+        if !cpu {
+            assert_eq!(owners.allocation_bytes(), base_bytes + 12);
+        }
+        let accepted_bytes = owners.allocation_bytes();
+        assert!(
+            owners
+                .select_lod(
+                    &renderer,
+                    &device,
+                    owner,
+                    0,
+                    Some(far),
+                    glam::Mat4::IDENTITY,
+                    [0, 100],
+                    0,
+                    8192
+                )
+                .is_err()
+        );
+        assert_eq!(owners.allocation_bytes(), accepted_bytes);
+        assert_eq!(owners.owners[&owner].lod_history[&0], 1);
+        // One camera returning to base must not evict a level another camera uses.
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                1,
+                Some(far),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                0,
+                Some(near),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        assert_eq!(owners.evict_unused_lod(), 0);
+        assert_eq!(owners.allocation_bytes(), accepted_bytes);
+        // Closing the remaining reduced-detail view makes its level disposable.
+        owners.retain_lod_views(&[0]);
+        assert_eq!(owners.allocation_bytes(), base_bytes);
+        assert!(!owners.owners[&owner].lod_history.contains_key(&1));
+        assert_eq!(
+            owners
+                .geometries_for_view(owner, 0)
+                .unwrap()
+                .next()
+                .unwrap()
+                .index_count(),
+            6
+        );
+        // Re-admission at the exact prior peak succeeds after unused residency retires.
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                0,
+                Some(far),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                accepted_bytes,
+            )
+            .unwrap();
+        assert_eq!(owners.allocation_bytes(), accepted_bytes);
+        assert!(
+            owners
+                .synchronize(&renderer, &device, &queue, vec![make_request()], 8, 0, 8192)
+                .is_empty()
+        );
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                0,
+                Some(far),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        let frame = owners
+            .owners
+            .get_mut(&owner)
+            .unwrap()
+            .playback
+            .advance_with(0., |_, frame| Ok(frame.clone()))
+            .unwrap();
+        let baked = lod
+            .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
+            .unwrap()
+            .posed_scene_mesh(1, model.primitives[0].color)
+            .unwrap();
+        let mut min = glam::Vec3::splat(f32::INFINITY);
+        let mut max = glam::Vec3::splat(f32::NEG_INFINITY);
+        for vertex in baked.vertices() {
+            let p = glam::Vec3::from_array(vertex.position);
+            min = min.min(p);
+            max = max.max(p);
+        }
+        let matrix = glam::Mat4::from_translation(glam::Vec3::new(0., 0., 0.5))
+            * glam::Mat4::from_scale(glam::Vec3::splat(1.5 / (max - min).max_element()))
+            * glam::Mat4::from_translation(-(min + max) * 0.5);
+        let actual = pixels(
+            &renderer,
+            &device,
+            &queue,
+            owners.geometries_for_view(owner, 0).unwrap().collect(),
+            matrix,
+        );
+        assert!(actual.chunks_exact(4).filter(|pixel| pixel[0] > 0).count() > 50);
+        let reference = renderer.upload_mesh(&device, &baked).unwrap();
+        assert_eq!(
+            actual,
+            pixels(&renderer, &device, &queue, vec![&reference], matrix)
+        );
+        owners.clear();
+        assert_eq!(owners.allocation_bytes(), 0);
+    }
     assert!(pollster::block_on(scope.pop()).is_none());
 }

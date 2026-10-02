@@ -41,6 +41,7 @@ pub(crate) enum Action {
     Physics,
     Behavior,
     Motion,
+    Animation,
     AudioSource,
     AudioListener,
     AudioBus,
@@ -859,6 +860,12 @@ impl Panels {
                         InspectorMode::Audio | InspectorMode::ImportSettings
                     ) {
                         "Open/reload import settings"
+                    } else if matches!(inspector, InspectorMode::Components(_)) {
+                        if object.components.contains_key("editor.model-animation.v1") {
+                            "Remove model animation"
+                        } else {
+                            "Add model animation"
+                        }
                     } else if object.components.contains_key("game.angular-motion.v1") {
                         "Remove angular motion"
                     } else {
@@ -869,6 +876,8 @@ impl Panels {
                         InspectorMode::Audio | InspectorMode::ImportSettings
                     ) {
                         Action::AudioSettingsLoad
+                    } else if matches!(inspector, InspectorMode::Components(_)) {
+                        Action::Animation
                     } else {
                         Action::Motion
                     },

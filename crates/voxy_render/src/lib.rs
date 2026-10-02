@@ -112,7 +112,7 @@ pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotion
 pub use scene::{
     DEFAULT_SCENE_SHADER, SceneDepthMode, SceneDraw, SceneError, SceneGeometry, SceneLodGeometry,
     SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneTexture, SceneTransform,
-    SceneSkinError, SceneSkinInstance, SceneSkinSource, SceneSkinner,
+    SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner,
     SceneVertex, SceneView, SceneViewTargets,
 };
 

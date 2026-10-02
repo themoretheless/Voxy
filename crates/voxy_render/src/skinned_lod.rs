@@ -647,6 +647,11 @@ impl PreparedSkinnedLod {
                 color,
             })
             .collect();
-        SceneMesh::new(vertices, indices.to_vec())
+        SceneMesh::new(vertices, indices.to_vec())?.with_normals(
+            self.source
+                .mesh()
+                .posed_normals(&self.joints, self.model)
+                .map_err(|_| SceneError::InvalidGeometry)?,
+        )
     }
 }

@@ -19,6 +19,18 @@ impl Default for ModelAnimation {
     }
 }
 
+impl ModelAnimation {
+    pub(crate) fn validate(&self, clip_count: Option<usize>) -> Result<(), &'static str> {
+        if !self.speed.is_finite() || !(0.0..=8.0).contains(&self.speed) {
+            return Err("invalid model animation speed");
+        }
+        if self.clip.zip(clip_count).is_some_and(|(index, count)| index >= count) {
+            return Err("invalid model animation clip");
+        }
+        Ok(())
+    }
+}
+
 #[derive(Clone, Debug)]
 pub(crate) struct ModelPlayback {
     model: Arc<ModelAsset>,
@@ -26,9 +38,7 @@ pub(crate) struct ModelPlayback {
 }
 impl ModelPlayback {
     pub(crate) fn new(model: Arc<ModelAsset>, settings: ModelAnimation) -> Result<Self, String> {
-        if !settings.speed.is_finite() || !(0.0..=8.0).contains(&settings.speed) {
-            return Err("invalid model animation speed".into());
-        }
+        settings.validate(Some(model.animations.len()))?;
         let animator = match settings.clip {
             Some(index) => {
                 let clip = model

@@ -371,6 +371,47 @@ mod tests {
     }
 
     #[test]
+    fn animation_inspector_rejects_invalid_values_and_round_trips_bind_pose_history() {
+        let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../voxy_render/examples/assets/animated-triangle.glb");
+        let mut app = App::new(&fixture, false).unwrap();
+        // Authored settings must load before the model import completes.
+        let mut pending = app.authoring_document().unwrap();
+        pending.objects[0].components.insert("editor.model-animation.v1".into(),
+            serde_json::json!({"clip": 0, "speed": 1.0}));
+        app.validate_authoring_document(&pending).unwrap();
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while app.catalog.snapshot(&app.id).is_none() {
+            app.tick().unwrap();
+            assert!(std::time::Instant::now() < deadline);
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+        app.panel_action(panels::Action::Animation).unwrap();
+        let before = app.authoring_document().unwrap();
+        let members = fields(&before.objects[0]).unwrap();
+        let clip = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/clip").unwrap();
+        let speed = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/speed").unwrap();
+        assert!(app.edit_component_field(clip, "9999").is_err());
+        assert!(app.edit_component_field(speed, "-1").is_err());
+        assert!(app.edit_component_field(speed, "9").is_err());
+        assert_eq!(app.authoring_document().unwrap(), before);
+        app.edit_component_field(clip, "null").unwrap();
+        app.edit_component_field(speed, "0").unwrap();
+        let paused = app.authoring_document().unwrap();
+        app.edit_component_field(clip, "0").unwrap();
+        let resumed = app.authoring_document().unwrap();
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), paused);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), resumed);
+        let encoded = serde_json::to_string(&resumed).unwrap();
+        let decoded = voxy_scene::SceneDocument::from_json(&encoded).unwrap();
+        app.validate_authoring_document(&decoded).unwrap();
+        assert_eq!(decoded, resumed);
+        app.stop_workers().unwrap();
+    }
+
+    #[test]
     fn identified_member_reset_uses_escaped_ids_and_keeps_inner_arrays_atomic() {
         let mut registry = voxy_scene::ComponentRegistry::default();
         registry.register::<Value>("custom").unwrap();
@@ -597,7 +638,14 @@ impl ComponentField {
             Value::String(_) => Value::String(text.into()),
             _ => serde_json::from_str(text)?,
         };
-        if std::mem::discriminant(&replacement) != std::mem::discriminant(&self.value) {
+        // This registered field is an optional clip index. Other component
+        // fields retain their existing strict type boundary.
+        let optional_clip = self.schema == "editor.model-animation.v1"
+            && self.path == "/clip"
+            && (replacement.is_null() || replacement.as_u64().is_some())
+            && (self.value.is_null() || self.value.as_u64().is_some());
+        if !optional_clip
+            && std::mem::discriminant(&replacement) != std::mem::discriminant(&self.value) {
             return Err("component field type cannot change".into());
         }
         let current = object

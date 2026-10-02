@@ -15,9 +15,23 @@ fn deform(@builtin(global_invocation_id) id: vec3<u32>) {
         skin += joints[u32(source[s + 8u + k])] * source[s + 12u + k];
     }
     let p = skin * vec4<f32>(source[s], source[s+1u], source[s+2u], 1.);
-    let transformed = (skin * vec4<f32>(source[s+3u], source[s+4u], source[s+5u], 0.)).xyz;
+    // Scale before cofactors to avoid overflow. Preflight rejects numerically
+    // singular blended matrices; inverse transpose preserves tangent orthogonality.
+    var a = skin[0].xyz; var b = skin[1].xyz; var c = skin[2].xyz;
+    let scale = max(max(max(abs(a.x), abs(a.y)), abs(a.z)),
+        max(max(max(abs(b.x), abs(b.y)), abs(b.z)), max(max(abs(c.x), abs(c.y)), abs(c.z))));
+    a /= scale; b /= scale; c /= scale;
+    let determinant = dot(a, cross(b, c));
+    let cofactor = mat3x3<f32>(cross(b, c), cross(c, a), cross(a, b));
+    var original = vec3<f32>(source[s+3u], source[s+4u], source[s+5u]);
+    let normal_scale = max(max(abs(original.x), abs(original.y)), abs(original.z));
     var n = vec3<f32>(0., 0., 1.);
-    if dot(transformed, transformed) > 0. { n = normalize(transformed); }
+    if normal_scale > 0. {
+        original /= normal_scale;
+        let transformed = (cofactor * original) * sign(determinant);
+        let result_scale = max(max(abs(transformed.x), abs(transformed.y)), abs(transformed.z));
+        if result_scale > 0. { n = normalize(transformed / result_scale); }
+    }
     let v = i * 9u;
     vertices[v] = p.x; vertices[v+1u] = p.y; vertices[v+2u] = p.z;
     vertices[v+3u] = source[s+6u]; vertices[v+4u] = source[s+7u];
