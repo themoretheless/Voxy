@@ -259,7 +259,8 @@ impl Pose {
     ///
     /// # Errors
     ///
-    /// Rejects a pose created for a different skeleton or invalid blend data.
+    /// Rejects a pose created for a different skeleton, invalid blend data,
+    /// or overflowing global/palette matrices.
     pub fn skin_matrices(&self, skeleton: &Skeleton) -> Result<Vec<Mat4>, AnimationError> {
         if self.local.len() != skeleton.joints.len() {
             return Err(AnimationError::PoseCountMismatch);
@@ -274,8 +275,12 @@ impl Pose {
                 || local.matrix(),
                 |parent| global[usize::from(parent)] * local.matrix(),
             );
+            let palette = matrix * joint.inverse_bind;
+            if !matrix.is_finite() || !palette.is_finite() {
+                return Err(AnimationError::InvalidPose(index));
+            }
             global.push(matrix);
-            skin.push(matrix * joint.inverse_bind);
+            skin.push(palette);
         }
         Ok(skin)
     }
@@ -390,8 +395,22 @@ impl Animator {
     ///
     /// # Errors
     ///
-    /// Rejects invalid timestep or a clip/skeleton mismatch discovered during palette creation.
+    /// Rejects invalid timestep, clip/skeleton mismatch or numerical overflow.
+    /// Every error preserves the prior clock and transition state.
     pub fn advance(
+        &mut self,
+        skeleton: &Skeleton,
+        dt: f32,
+    ) -> Result<AnimatorFrame, AnimationError> {
+        // Clip references are shared; only the small clock/transition state is
+        // staged. Failed pose or root-motion evaluation never publishes it.
+        let mut candidate = self.clone();
+        let frame = candidate.advance_candidate(skeleton, dt)?;
+        *self = candidate;
+        Ok(frame)
+    }
+
+    fn advance_candidate(
         &mut self,
         skeleton: &Skeleton,
         dt: f32,
@@ -414,6 +433,9 @@ impl Animator {
         self.time += delta;
         let root_motion = self.current.root_at_unwrapped(skeleton, self.time)
             - self.current.root_at_unwrapped(skeleton, old_time);
+        if !self.time.is_finite() || !root_motion.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
         let target = self.current.sample(skeleton, self.time);
         let (pose, weight, transition_complete) = if let Some(transition) = &mut self.transition {
             transition.source_time += delta;
@@ -557,6 +579,7 @@ pub enum AnimationError {
     InvalidPlaybackSpeed,
     InvalidTransitionDuration,
     InvalidAnimationTimeStep,
+    NumericalOverflow,
 }
 
 impl fmt::Display for AnimationError {
@@ -773,5 +796,69 @@ mod tests {
         ));
         assert_eq!(animator.time.to_bits(), 0.0f32.to_bits());
         assert!((animator.advance(&skeleton, 0.5).unwrap().root_motion.x - 1.0).abs() < 1e-6);
+    }
+
+    #[test]
+    fn palette_overflow_preserves_clock_and_unfinished_transition() {
+        let good = skeleton();
+        let mut joints = good.joints().to_vec();
+        joints[0].bind_local.scale = Vec3::splat(2.0);
+        joints[0].inverse_bind = Mat4::from_scale(Vec3::splat(f32::MAX));
+        let bad = Skeleton::new(joints).unwrap();
+        let mut animator = Animator::new(root_clip(&good, 0.0));
+        animator.transition_to(root_clip(&good, 2.0), 0.5).unwrap();
+        animator.advance(&good, 0.25).unwrap();
+        let before = animator.clone();
+        assert!(matches!(
+            animator.advance(&bad, 0.25),
+            Err(AnimationError::InvalidPose(_))
+        ));
+        assert_eq!(animator.time.to_bits(), before.time.to_bits());
+        let transition = animator.transition.as_ref().unwrap();
+        let prior = before.transition.as_ref().unwrap();
+        assert_eq!(
+            transition.source_time.to_bits(),
+            prior.source_time.to_bits()
+        );
+        assert_eq!(transition.elapsed.to_bits(), prior.elapsed.to_bits());
+        let mut control = before;
+        let actual = animator.advance(&good, 0.25).unwrap();
+        let expected = control.advance(&good, 0.25).unwrap();
+        assert_eq!(actual.pose, expected.pose);
+        assert_eq!(actual.root_motion, expected.root_motion);
+        assert!(animator.transition.is_none());
+    }
+
+    #[test]
+    fn root_motion_overflow_rejects_without_advancing() {
+        let skeleton = skeleton();
+        let mut animator = Animator::new(root_clip(&skeleton, f32::MAX));
+        animator.set_speed(8.0).unwrap();
+        assert!(matches!(
+            animator.advance(&skeleton, 1.0),
+            Err(AnimationError::NumericalOverflow)
+        ));
+        assert_eq!(animator.time.to_bits(), 0.0f32.to_bits());
+        animator.set_speed(0.0).unwrap();
+        assert!(
+            animator
+                .advance(&skeleton, 1.0)
+                .unwrap()
+                .root_motion
+                .is_finite()
+        );
+    }
+
+    #[test]
+    fn finite_local_scales_cannot_publish_overflowing_global_matrices() {
+        let mut joints = skeleton().joints().to_vec();
+        for joint in &mut joints {
+            joint.bind_local.scale = Vec3::splat(1e20);
+        }
+        let skeleton = Skeleton::new(joints).unwrap();
+        assert!(matches!(
+            skeleton.bind_pose().skin_matrices(&skeleton),
+            Err(AnimationError::InvalidPose(1))
+        ));
     }
 }
