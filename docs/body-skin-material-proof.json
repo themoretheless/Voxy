@@ -1,0 +1,9 @@
+{
+  "hashes": {
+    "docs/body-skin-material-before.png": "1a10d530e9e74445a3c5e7cbac2a247708035e19881fad51294921f052695dd0",
+    "docs/body-skin-material-after.png": "d040ab3e52c393ebe0192d83abbfaf6186fb0374f18fac07b431de1922e5628c"
+  },
+  "backend": "Metal",
+  "sameFraming": true,
+  "calibratedSkin": false
+}

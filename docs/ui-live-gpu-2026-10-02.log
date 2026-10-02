@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-3dcdb8b03d36775c)
+
+running 1 test
+UI GPU PIXELS covered=105 partial=54 transparent=407
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 55 filtered out; finished in 31.13s
+

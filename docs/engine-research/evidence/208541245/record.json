@@ -1,0 +1,99 @@
+{
+  "repository": "DomWilliams0/name-needed",
+  "repository_id": 208541245,
+  "commit": "43a0efec2742ff1b86cd6e432a287ab2de405ee9",
+  "source_url": "https://github.com/DomWilliams0/name-needed/tree/43a0efec2742ff1b86cd6e432a287ab2de405ee9",
+  "readme_path": "README.md",
+  "readme_sha256": "9c5776dc8f86bb7ab3f136b142a6decc47d8e5fe90831b8c9984e47c96fdd960",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "9401cc0c3d128a1b398033288846fdc3ee3dc652"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "161b1701f49db7c45120554771c7db82cf8744ab"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0dae26697835b05d218b7a2c998ab1c9bee96cdc"
+    },
+    {
+      "path": ".planning",
+      "type": "dir",
+      "sha": "e31110f70976dfc642c011f367a4ffb58a281296"
+    },
+    {
+      "path": ".screenshots",
+      "type": "dir",
+      "sha": "0ea1a5c27a138f66b2f7d123a4b7baea8752fcc6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c7ef07d6674f2491c2cabd9a3c6f56d9ca9819e7"
+    },
+    {
+      "path": "PROGRESS.md",
+      "type": "file",
+      "sha": "bc3cc1c39dee0cb54f20b07e9a6f345f4c5e4927"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9c776b75abdd71d1e206763046890e7305b27155"
+    },
+    {
+      "path": "ai",
+      "type": "dir",
+      "sha": "c8f4c347e514bc8bead59088878307e049b1d832"
+    },
+    {
+      "path": "color",
+      "type": "dir",
+      "sha": "ab3fc6bc4c7ce86d7d92222573f29997948e37cc"
+    },
+    {
+      "path": "context_steering",
+      "type": "dir",
+      "sha": "28ab1952e45b9e001a5c5a3c9c0c022774dc9abc"
+    },
+    {
+      "path": "grid",
+      "type": "dir",
+      "sha": "b86bf92b6b4a1f63a5aa7779598fc5d3bac026fa"
+    },
+    {
+      "path": "logging",
+      "type": "dir",
+      "sha": "439c5b319b6ce45a179b8626f41eeeb36840a9ef"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "759635614902483825850ce5cae5b56451cdab13"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "7715e569a1805cc28476345ce1725b7e638ae281"
+    },
+    {
+      "path": "unit",
+      "type": "dir",
+      "sha": "822129f96cb178cc151be923210307cb1e84608e"
+    },
+    {
+      "path": "world",
+      "type": "dir",
+      "sha": "0e6f21805fd5e87eebbf5f2ba157ff9954175eb6"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Utility crates extracted from a game; README says actual game moved to closed source/archive.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

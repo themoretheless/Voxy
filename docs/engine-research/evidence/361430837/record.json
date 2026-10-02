@@ -1,0 +1,119 @@
+{
+  "repository": "MihailRis/voxelcore",
+  "repository_id": 361430837,
+  "commit": "f90750c066fa3e78c316331edf7ee5dd34229843",
+  "source_url": "https://github.com/MihailRis/voxelcore/tree/f90750c066fa3e78c316331edf7ee5dd34229843",
+  "readme_path": "README.md",
+  "readme_sha256": "806fff673bb580bebf1f505eba5c108f6fd27035aa4142def795b96b4fb80f7a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d113efe31243366ebab771a212158637a3a3e84b"
+    },
+    {
+      "path": ".cmake-format.py",
+      "type": "file",
+      "sha": "2a46b909745024e6b2f72e75555c555fd08f37dc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "42c5019b37ba344e21f903c2d9952a3a61820da6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4d01558329214a7d9f74b6c36f7d7c7cd6e2cb94"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "281924189c673377054a760f562c084575d21ab5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "27a9d507b2b9e48d504ae8f05e822dba20e70b0a"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "86a6fd07566e48151acfbcd9c74aa0eff00e878d"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "3a06d1afc11f15aeac86b3393b86e54afdf82de9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d0a1fa1482eea82e19510e7920cbe3a03e41f691"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "362ef22a694687778af386e208219723d7eca037"
+    },
+    {
+      "path": "compile_flags.txt",
+      "type": "file",
+      "sha": "4564e418a7ad118dfa9c992a5c4660d353f7c945"
+    },
+    {
+      "path": "dev",
+      "type": "dir",
+      "sha": "6b5593f57fd16bfd1b40ae4ddffee8d3ad3f99be"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "d65ea493ce0cef00748d876772c45948d54d65dd"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "55f50fc42413f3246edcf10ef4f6dd6ccb3418fb"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "ead09d092821adc5af9667c9b9ccd6afbc723ae6"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "dfe3fa5d71b3cb6dea466157f330cf671dcff5a9"
+    },
+    {
+      "path": "run.sh",
+      "type": "file",
+      "sha": "612f0693562af6712e74a13e5e1307bbb8923954"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4e132f1a241258a95ffcfc331e6ddb7dace2fae8"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "ba4cc4ba8704ff5cc600c5377e6f984eab4a8b48"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "79f2acebe8d10666e764ed0f6e4b6c7f42145869"
+    },
+    {
+      "path": "vctest",
+      "type": "dir",
+      "sha": "a8982275cf7b0be7d062da54a0e2daa72e67f2be"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README and description identify native voxel engine; owned dev/resources and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

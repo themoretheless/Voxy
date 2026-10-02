@@ -1,0 +1,564 @@
+{
+  "repository": "OpenKH/OpenKh",
+  "repository_id": 141183500,
+  "commit": "7a3b945c538d32c6a285128c98aefba093f52ceb",
+  "source_url": "https://github.com/OpenKH/OpenKh/tree/7a3b945c538d32c6a285128c98aefba093f52ceb",
+  "readme_path": "README.md",
+  "readme_sha256": "04c41945358ddbb03a4a69c02c826cccd52d34b343ca25fa7f294be04aa9eba7",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "bb3f97c217546957e707e4232270311a0d061cae"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "427f1923ddf89b35018da17553bb5413b7263d4f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "35e4e24e4fb003400b5f6ef854cb98a3e064b4a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1b7b4c9fed03e975742fecc5d5b326be5fd0fe9b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b4f387ed3ab7f936e396b3d33f7a67d8972e5dba"
+    },
+    {
+      "path": "Binarysharp.MSharp",
+      "type": "dir",
+      "sha": "176161f50f41a0c095dbdf1d1d1ed3d8c9b1fc78"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "483b92ee235f1b8af2dbe67616b636f0e2453968"
+    },
+    {
+      "path": "CODE_GUIDELINE.md",
+      "type": "file",
+      "sha": "4e7a79218a4927472841230f3f928bbda995724c"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "8b7bb684abbf4ab9a5b96cb87bd0f7373522ce65"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d1b74d37e64c98f27bea38c859bfc0c5e62f9531"
+    },
+    {
+      "path": "DOCS_GUIDELINE.md",
+      "type": "file",
+      "sha": "5c6c0b51521ef0a4496893d47e9a7795e79110d8"
+    },
+    {
+      "path": "Hypervisor",
+      "type": "dir",
+      "sha": "8fb22aee79f24a81f2f6138655afe48726676e09"
+    },
+    {
+      "path": "IteEditor",
+      "type": "dir",
+      "sha": "c261fc146c2343c1e32e95a2f8ae020486736b33"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f433b1a53f5b830a205fd2df78e2b34974656c7b"
+    },
+    {
+      "path": "ModelingToolkit",
+      "type": "file",
+      "sha": "4028e7efc0efa3ed3998dec6b9a51b8341062640"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "6d8d1f53482cf3b955a7c4124866680f3ba7603e"
+    },
+    {
+      "path": "OpenKh.AssimpUtils",
+      "type": "dir",
+      "sha": "32c7032d75586777c8a6fdfc9b3ba46a87c0fc57"
+    },
+    {
+      "path": "OpenKh.Bbs",
+      "type": "dir",
+      "sha": "0623a21458f0ebe7c5f80ec7857f4af156eae75b"
+    },
+    {
+      "path": "OpenKh.Command.AnbMaker",
+      "type": "dir",
+      "sha": "6d97ea42931976051d2a643369e4797f7534b2a2"
+    },
+    {
+      "path": "OpenKh.Command.Arc",
+      "type": "dir",
+      "sha": "19e8afe2120b35ef2e80cb5f6efbb3f531c28301"
+    },
+    {
+      "path": "OpenKh.Command.Bar",
+      "type": "dir",
+      "sha": "9dfa5e31a544dccf493340811ad1dc3c9c88648c"
+    },
+    {
+      "path": "OpenKh.Command.Bbsa",
+      "type": "dir",
+      "sha": "ce2124bd1d11f27ddd28d1583f35497a3d1f9fec"
+    },
+    {
+      "path": "OpenKh.Command.Bdxio",
+      "type": "dir",
+      "sha": "1d6e634065fb69d68d734c6d041abe834dc7e9af"
+    },
+    {
+      "path": "OpenKh.Command.CoctChanger",
+      "type": "dir",
+      "sha": "23f564fdb5df72a97d31fac72e624d61df5e33ad"
+    },
+    {
+      "path": "OpenKh.Command.DoctChanger",
+      "type": "dir",
+      "sha": "08e0b1bd3c27c41c27314b0c4d0aa8023c5afb25"
+    },
+    {
+      "path": "OpenKh.Command.HdAssets",
+      "type": "dir",
+      "sha": "f779f78feea97b0e04f90084a31d1364ed5123df"
+    },
+    {
+      "path": "OpenKh.Command.IdxImg",
+      "type": "dir",
+      "sha": "e45829002232615e433013419f992b2123f773a7"
+    },
+    {
+      "path": "OpenKh.Command.ImgTool",
+      "type": "dir",
+      "sha": "99b7c38ad48843efbabb789ebcaf5eae5615967c"
+    },
+    {
+      "path": "OpenKh.Command.KHAnimationConverter",
+      "type": "dir",
+      "sha": "62c7c474e73894a092e4543dbb3a1ad70eb336c5"
+    },
+    {
+      "path": "OpenKh.Command.Layout",
+      "type": "dir",
+      "sha": "dd12d670c08dba24a565a7edf10aebe82e3974f8"
+    },
+    {
+      "path": "OpenKh.Command.MapGen",
+      "type": "dir",
+      "sha": "e7e64fa031d4010eea6191d77b0afbe35cced195"
+    },
+    {
+      "path": "OpenKh.Command.MapGenUtils",
+      "type": "dir",
+      "sha": "eb92c7e2e2d763dd18293aa935e6206a26d0d447"
+    },
+    {
+      "path": "OpenKh.Command.MsgTool",
+      "type": "dir",
+      "sha": "4b64bd20bd8202851cde48d4006ffd5fa4161b1d"
+    },
+    {
+      "path": "OpenKh.Command.PAMtoFBXConverter",
+      "type": "dir",
+      "sha": "f29cbcace81332715f404da17eccf5a69393cdd6"
+    },
+    {
+      "path": "OpenKh.Command.PmoConverter",
+      "type": "dir",
+      "sha": "7058f68542173424f5984c92f1934d6f6e6a14f6"
+    },
+    {
+      "path": "OpenKh.Command.PmpConverter",
+      "type": "dir",
+      "sha": "11982440b1ed38d23157b77bf65e1881195da195"
+    },
+    {
+      "path": "OpenKh.Command.Rbin",
+      "type": "dir",
+      "sha": "dfef4d24e6828e331edeae5e178c85f939dd4229"
+    },
+    {
+      "path": "OpenKh.Command.SpawnScript",
+      "type": "dir",
+      "sha": "40195b9930fb4d474b329a0ef9ea63d98ae7ae4f"
+    },
+    {
+      "path": "OpenKh.Command.TexFooter",
+      "type": "dir",
+      "sha": "5383587dfc228b88ea36a72ba2904ca1222b368f"
+    },
+    {
+      "path": "OpenKh.Command.Txa",
+      "type": "dir",
+      "sha": "903ef4a3b360c8189da07db02984436a4f07ebe2"
+    },
+    {
+      "path": "OpenKh.Common",
+      "type": "dir",
+      "sha": "5249a221094b94b1d02d90e4e82f0dcd6892e12b"
+    },
+    {
+      "path": "OpenKh.Ddd",
+      "type": "dir",
+      "sha": "0dc3afd45f186ba323552ceedb63badfd1cc6ac5"
+    },
+    {
+      "path": "OpenKh.DeeperTree",
+      "type": "dir",
+      "sha": "5ba60a38a83dfd2a8ac4dc15c5cd13f33b961ecc"
+    },
+    {
+      "path": "OpenKh.Egs",
+      "type": "dir",
+      "sha": "b056be7cebea7f5d5ef97a2bdb01adef0590f7d2"
+    },
+    {
+      "path": "OpenKh.Engine.MonoGame",
+      "type": "dir",
+      "sha": "d4114ed6fce37d88441a4d52f6149a09fd0fa0fa"
+    },
+    {
+      "path": "OpenKh.Engine",
+      "type": "dir",
+      "sha": "455ac811470581edd516c02f248ce3215d0cf26f"
+    },
+    {
+      "path": "OpenKh.Game",
+      "type": "dir",
+      "sha": "c84b249e3d5b355ee579759804f4cd9bb42adbd8"
+    },
+    {
+      "path": "OpenKh.Imaging",
+      "type": "dir",
+      "sha": "39c2226c0bfa1bb5f8da1c91ac61e64e379b8367"
+    },
+    {
+      "path": "OpenKh.Kh1",
+      "type": "dir",
+      "sha": "9c069290e22be3c0d184854b062a39a6d1ab514e"
+    },
+    {
+      "path": "OpenKh.Kh2",
+      "type": "dir",
+      "sha": "c9c1e6c0cc2c04047a036a8d374a104d6f2cfc1a"
+    },
+    {
+      "path": "OpenKh.Kh2AnimEmu",
+      "type": "dir",
+      "sha": "ffcd14ebbc37adf63e2d90a4d0929a689f1a88bc"
+    },
+    {
+      "path": "OpenKh.Patcher",
+      "type": "dir",
+      "sha": "e078b8cd389f49536d8f963b6238fd5cbef09b51"
+    },
+    {
+      "path": "OpenKh.Ps2",
+      "type": "dir",
+      "sha": "c98e7d434e2eae29b1347f13674a667ae42a88be"
+    },
+    {
+      "path": "OpenKh.Recom",
+      "type": "dir",
+      "sha": "7beb09e64afcf07b3cfad848a957c52b595a1f6e"
+    },
+    {
+      "path": "OpenKh.Research.Kh2Anim",
+      "type": "dir",
+      "sha": "f8b1fed942df2df9578d56a674df1023b17f0381"
+    },
+    {
+      "path": "OpenKh.Research.Panacea",
+      "type": "dir",
+      "sha": "0af8c10f179c2c67257ee04162c148600e26ba4f"
+    },
+    {
+      "path": "OpenKh.Tests.Commands",
+      "type": "dir",
+      "sha": "9f1fb7d5b8eab8a9339121cac69077feeb6b7d95"
+    },
+    {
+      "path": "OpenKh.Tests.Engine",
+      "type": "dir",
+      "sha": "4498a3172f9b0fa84830f37f15122658e58912d7"
+    },
+    {
+      "path": "OpenKh.Tests.ModsManager",
+      "type": "dir",
+      "sha": "15704f87bb2aacce1407a5e3f205207f1a3183e3"
+    },
+    {
+      "path": "OpenKh.Tests",
+      "type": "dir",
+      "sha": "215f3fd40190ae6bdd6a6f245e6d17a18b60b418"
+    },
+    {
+      "path": "OpenKh.Tools.BarEditor",
+      "type": "dir",
+      "sha": "70fdc9f1f40c86e62068c6e7e0b09110dc99b7b8"
+    },
+    {
+      "path": "OpenKh.Tools.BbsEventTableEditor",
+      "type": "dir",
+      "sha": "9a9166364bdaf5244f1624384832217c6fda4039"
+    },
+    {
+      "path": "OpenKh.Tools.BbsMapStudio",
+      "type": "dir",
+      "sha": "7d1266ec0633f3acd9552900957608152d2e4ceb"
+    },
+    {
+      "path": "OpenKh.Tools.BepEditor",
+      "type": "dir",
+      "sha": "06fe45c088d4c400daf88f03c66b213bff303e9b"
+    },
+    {
+      "path": "OpenKh.Tools.Common.CustomImGui",
+      "type": "dir",
+      "sha": "0c6bfed4eff0ec2120429b9e6b9e3cb318364267"
+    },
+    {
+      "path": "OpenKh.Tools.Common.Wpf",
+      "type": "dir",
+      "sha": "d54105f14bfaa0a7c7c1493038fb8fa4b26f0f00"
+    },
+    {
+      "path": "OpenKh.Tools.Common",
+      "type": "dir",
+      "sha": "f9971ddb75cdac8c762673efa73f881b4c7d76cc"
+    },
+    {
+      "path": "OpenKh.Tools.CtdEditor",
+      "type": "dir",
+      "sha": "87a46ec86737640d847135e02a962143f752a8ba"
+    },
+    {
+      "path": "OpenKh.Tools.DpdViewer",
+      "type": "dir",
+      "sha": "0dcbcf9f9e4cf392702ea9c02a38d32293c989aa"
+    },
+    {
+      "path": "OpenKh.Tools.EpdEditor",
+      "type": "dir",
+      "sha": "cc3ac6e8d43316c77f06046366368beee15b49ef"
+    },
+    {
+      "path": "OpenKh.Tools.IdxImg",
+      "type": "dir",
+      "sha": "898badf311f26d5cb59f5eb187301b35376c27e4"
+    },
+    {
+      "path": "OpenKh.Tools.ImageViewer",
+      "type": "dir",
+      "sha": "cf57abfe1d780e52edbbc528de3c05e2c9668c50"
+    },
+    {
+      "path": "OpenKh.Tools.ItbEditor",
+      "type": "dir",
+      "sha": "b6fc43f35d91ece08b4cb53777a244a569a10eda"
+    },
+    {
+      "path": "OpenKh.Tools.ItcEditor",
+      "type": "dir",
+      "sha": "20491f1ebd660c812adb13580ea3a44d21e8bfc7"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2BattleEditor",
+      "type": "dir",
+      "sha": "220613b754a4aa30ed97eaf6fe179d7be82f230a"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2MapStudio",
+      "type": "dir",
+      "sha": "8408e6c904c1116861264e87b6ee913e49b0e7c6"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2MdlxEditor",
+      "type": "dir",
+      "sha": "98fe6614ef63ede9b82d5e496304cb65bd14a773"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2MsetEditor",
+      "type": "dir",
+      "sha": "e7da0db5585c93b456d372c647cef32b866e1f03"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2MsetMotionEditor",
+      "type": "dir",
+      "sha": "ddb82c808e5cb002c533b31f9f23d59e54538ccf"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2ObjectEditor",
+      "type": "dir",
+      "sha": "4d0f1b6641a959283a264fb681a1e0cffbc8772e"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2PlaceEditor",
+      "type": "dir",
+      "sha": "60e8f03e3ecd77c161156bf2f10b4825fabb5bcc"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2SystemEditor",
+      "type": "dir",
+      "sha": "2448071774bfdfbdf38f7e5923b7c3310cb85b24"
+    },
+    {
+      "path": "OpenKh.Tools.Kh2TextEditor",
+      "type": "dir",
+      "sha": "2a0e579dda1474312c05b6ce208fe0be4043a35d"
+    },
+    {
+      "path": "OpenKh.Tools.KhBonViewer",
+      "type": "dir",
+      "sha": "81ce9b55b9a563a40be08ea9ea41377a465d956f"
+    },
+    {
+      "path": "OpenKh.Tools.KhModels",
+      "type": "dir",
+      "sha": "b1baf215633a4e37409981a3e6beef86576323f7"
+    },
+    {
+      "path": "OpenKh.Tools.Launcher",
+      "type": "dir",
+      "sha": "d0b5e174fe763bbd3293b8010584c49719c26639"
+    },
+    {
+      "path": "OpenKh.Tools.LayoutEditor",
+      "type": "dir",
+      "sha": "c69ce36da04f679288bddcb85e99ad2632f820ae"
+    },
+    {
+      "path": "OpenKh.Tools.MissionEditor",
+      "type": "dir",
+      "sha": "b986cac53905fbb207baed22fb38d70d8d19aeb4"
+    },
+    {
+      "path": "OpenKh.Tools.ModsManager",
+      "type": "dir",
+      "sha": "636d293cd1e187b230e741c89e935dff456ec07d"
+    },
+    {
+      "path": "OpenKh.Tools.ObjentryEditor",
+      "type": "dir",
+      "sha": "04814ac00e58434ccb6cdf31efb48bbb688f58ca"
+    },
+    {
+      "path": "OpenKh.Tools.OloEditor",
+      "type": "dir",
+      "sha": "b8ea3e510d2923491975dc729e31321f72b08a30"
+    },
+    {
+      "path": "OpenKh.Tools.PAtkEditor",
+      "type": "dir",
+      "sha": "ade23ca2d1ba15eefd4dc29fb28bc351fed85391"
+    },
+    {
+      "path": "OpenKh.WinShell.IMDUtilities",
+      "type": "dir",
+      "sha": "b580bf56a2f77de6289c56b3929261d9bb803442"
+    },
+    {
+      "path": "OpenKh.WinShell.IMZUtilities",
+      "type": "dir",
+      "sha": "264f627c8816fda83e60876e5842703672593be5"
+    },
+    {
+      "path": "OpenKh.sln",
+      "type": "file",
+      "sha": "65f4f320944f9daec3dba47c9319f9af72a5c34d"
+    },
+    {
+      "path": "Openkh.Tools.Kh2LocalSetEditor",
+      "type": "dir",
+      "sha": "0b54a1cbc90febca7149bf36d40fc16fe0120a16"
+    },
+    {
+      "path": "Playground",
+      "type": "dir",
+      "sha": "d99fb2b103cd8031a70448c8ac41f494ed156d90"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "97ec1798e67b2fe46118f8496793ea5260ab3051"
+    },
+    {
+      "path": "Simple3DViewport",
+      "type": "file",
+      "sha": "254157cf0825166f75e613f9b49f3393f01bd879"
+    },
+    {
+      "path": "XeEngine.Tools.Public",
+      "type": "file",
+      "sha": "f55d4bd1fe4a9389ae9b01184e37f4ad30abca2e"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "59773b592b4a4c24e5ec11a36fcb369d7b9406f4"
+    },
+    {
+      "path": "build.ps1",
+      "type": "file",
+      "sha": "c58e114f3ad3f13a66b632d4c14d3048ed0bb74c"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "c06a5c4f8018d37f87165b03ee461ebe8fbfc477"
+    },
+    {
+      "path": "distribution",
+      "type": "dir",
+      "sha": "a14cc71b4470ac4e9aa3ae0603f950bd03a98bee"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d58753c9393b8138ecc9c44338731a613a685c37"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "285b9d3725c63be7b5af591afc7762cbd738d31a"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "caeb6e4b1d7503ee0d75ecb4ea5bec604515f2bc"
+    },
+    {
+      "path": "nQuant",
+      "type": "file",
+      "sha": "dda3b264a6a45bc66695425de52d47560f2fc11d"
+    },
+    {
+      "path": "openkh_alias",
+      "type": "file",
+      "sha": "bfabbba2477e84b2838fa79aab3bf799745d8e45"
+    },
+    {
+      "path": "pre-build.ps1",
+      "type": "file",
+      "sha": "2a2d24153213e737c5bb2db84cb2fce57c48a88b"
+    }
+  ],
+  "classification": "engine_toolkit_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes libraries/tools and goal of custom compatible engine; existing complete runtime not established by root evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

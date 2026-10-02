@@ -1,0 +1,64 @@
+{
+  "repository": "Illation/ETEngine",
+  "repository_id": 88983249,
+  "commit": "8a51e77a59cdeef216d4b6c41e4b882677db9596",
+  "source_url": "https://github.com/Illation/ETEngine/tree/8a51e77a59cdeef216d4b6c41e4b882677db9596",
+  "readme_path": "README.md",
+  "readme_sha256": "f2a4197f82ef33d1ffbaae1353ae0f1997a366f180d59e3ec9d087012e01f0fd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb2eaeac8f30b4dd4bbb857d10ea67c9890abda4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "f2dc808563362d745bc2aa18751761550d9103fb"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "ff6e186fac02b86a673beafd698901cd93df0a79"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "88315169d75643ce0b3015e926d3901acc33f24f"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "4994077c9c8c93f0e8e82209deb87e80d68e5382"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "772283a9841b75ca38cf83c697fc6393049db575"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "18854876c67fdee2dbd3d0448dc69a530d5f30a7"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "dd9bcc430cfaba0e1e61dea74408b074b8775293"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "05f8e9500ca9441da033bf6f982c0d2b5c3bef15"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "07d371aae4a0f349a8852e3ccb7d4640d55d7cbe"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native graphics/simulation/game engine split into libraries; owned Engine/Projects and build docs.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

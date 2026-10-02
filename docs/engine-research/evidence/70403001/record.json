@@ -1,0 +1,149 @@
+{
+  "repository": "gecko0307/dagon",
+  "repository_id": 70403001,
+  "commit": "fba0d72fc5d6586221aed7520c280db48398db28",
+  "source_url": "https://github.com/gecko0307/dagon/tree/fba0d72fc5d6586221aed7520c280db48398db28",
+  "readme_path": "README.md",
+  "readme_sha256": "359f5632578519da5113e66a6173719bb2b1c437ad02195fcf29f51741c56bc8",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a2ea3c952ca01c11ae9ab11d45eccfd20dbe867e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e44ae7921880402038c62e4a5b7cc0e451bf29da"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "16de3f98b0eb4425535b9396c294729b0893c997"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2c8123a2dae04a10235f150193854a72ac43b091"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "424e5528d8edbbc645b7bd1c9a182a325c3e9c39"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1413882d599adb57729be4c67ba6052300cd1537"
+    },
+    {
+      "path": "COPYING.md",
+      "type": "file",
+      "sha": "315e33f910652a7d0c9db6741ac9fd77bc981511"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "8a43ccdab2fbd54422b1dc0373b97b84d4aad0a9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c3d7d19bd5ff8739d7186a89a3c226ed4ab2770d"
+    },
+    {
+      "path": "audio.conf",
+      "type": "file",
+      "sha": "d09fd7e2f208475e1602efe44bc0d737a963ad1f"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "6de2a43c82ea8f7f055a5a61121d8f688d20619d"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "9711cb739f4d0090396db979c54b33fa859c69ff"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "3305a3dc7ff0aefd9576f8eef550755d63441c76"
+    },
+    {
+      "path": "dub.json",
+      "type": "file",
+      "sha": "766665d3d81271a398ba2e5e73911ee59273ea9c"
+    },
+    {
+      "path": "dub.selections.json",
+      "type": "file",
+      "sha": "7e37f4495f852e1ecc2efd18669dd060f1886e53"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "bba6a439abac2054f1fc41ae166ec4b9c48a989d"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "61edea375a4b48d9efb22edcb0024cf9d39d14a4"
+    },
+    {
+      "path": "gamecontrollerdb.txt",
+      "type": "file",
+      "sha": "ce829bf225e5af7e328a9a96917a0f2e8b2e8d1b"
+    },
+    {
+      "path": "init-exec",
+      "type": "dir",
+      "sha": "0d4b760b9cdfd0d9656aaa6fcbe35efdf13f5679"
+    },
+    {
+      "path": "input.conf",
+      "type": "file",
+      "sha": "7367b80eef5054e0bd5247eca2d4b92a395275a6"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "d0cddefde557256d27ac5ce87f3326d059bd0d4c"
+    },
+    {
+      "path": "license",
+      "type": "dir",
+      "sha": "8704264ca6f04eae661b4abbada9b36638dfab9c"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "f34e200b1a5e916978887d79591a71c8856c3289"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "51442f7dede331fe75cd6b49e578686ed76970db"
+    },
+    {
+      "path": "render.conf",
+      "type": "file",
+      "sha": "6fabda3a3a291d8b5f6d394e908bcc8a8d969310"
+    },
+    {
+      "path": "settings.conf",
+      "type": "file",
+      "sha": "d78af8e7ace97fa68d72e0618405b731b7c55cdd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8aa71a89afd3332775bd6d1acdde2aebfa32d158"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies D development framework; runtime/editor/extensions and Dub build over graphics/input backends.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

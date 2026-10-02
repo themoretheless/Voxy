@@ -1,0 +1,139 @@
+{
+  "repository": "amzeratul/halley",
+  "repository_id": 43295328,
+  "commit": "053cb8c725b29ed2daa4a72aa2e953f2b1e98d2a",
+  "source_url": "https://github.com/amzeratul/halley/tree/053cb8c725b29ed2daa4a72aa2e953f2b1e98d2a",
+  "readme_path": "README.md",
+  "readme_sha256": "22c90092623b10095d8a97b7d9872c30808d3c038d79ce316871a337c03b4e9e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8f80dcfc54f1941ec549bface6084a49477eadf6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "325ef1f97422b2c9a7f7fd562f11c413166ed673"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d547582872d55668ee8ccd604b0c369619076463"
+    },
+    {
+      "path": ".vimrc",
+      "type": "file",
+      "sha": "4fadc81fde4b77eaa56555b4e31021f3800ab699"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a80ff5f7069dac5e2c01b0ace8a63bb55efb7197"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9c8f3ea0871e0bfe81da0fa6e7c1d7d156dc380e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7f7532ec3f26ea03880d9adde83d4e73409754ba"
+    },
+    {
+      "path": "assets_src",
+      "type": "dir",
+      "sha": "950e58f3cda430ab0d6e4ab6e254e7c6918ca90b"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "9594556fa8e4ba22c6c52f95c03c5baee28262bb"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "4056bcd56564f5795d15f050472a1ce7264c8f5c"
+    },
+    {
+      "path": "deps",
+      "type": "file",
+      "sha": "a4343f6c220dad45775acb47edf48dbb9d4848fd"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "f52e4b22a3cd1beaeb135051fab88410edb84070"
+    },
+    {
+      "path": "gen",
+      "type": "dir",
+      "sha": "8fdde8ca4835494c5a74a6a7ee196a12593fa43b"
+    },
+    {
+      "path": "halley_project",
+      "type": "dir",
+      "sha": "75577ad538e5abfd4840fe5ee17489e2c4d69d08"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "3385c2c3c55ede362bdef44283f8dde2ea3e5489"
+    },
+    {
+      "path": "licences",
+      "type": "dir",
+      "sha": "ad0921fa39f81c045eeaa52178fdddad55ea2243"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "f4206b91e45e375a140d3b7fd527d8f20d2999d8"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "406f15e3c5485c14e16ae6284a4ca5f1c70dbdef"
+    },
+    {
+      "path": "shared_assets",
+      "type": "dir",
+      "sha": "b666b6b21c145bdaa797be2b753e423ee8678f5e"
+    },
+    {
+      "path": "shared_gen",
+      "type": "dir",
+      "sha": "9088621c85440d383d7e91c5d259b1c575b698a0"
+    },
+    {
+      "path": "shared_gen_src",
+      "type": "dir",
+      "sha": "3978783daffbdb0ebf5590c0b342c9f88ce90505"
+    },
+    {
+      "path": "source_list.txt",
+      "type": "file",
+      "sha": "abadfeb8c32ea9b8a7b1f86ce9a3354cc8567252"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6b5c9967f11332333f5e5e61842a54a89d18718b"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "c036b136e9359060d24f534c4d503242412ad691"
+    },
+    {
+      "path": "todo.txt",
+      "type": "file",
+      "sha": "df45bfdefcbd9d833c0cbddbc6158188134035de"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ runtime looper/resources/ECS/audio/network/UI, backend plugins and editor/import tools; shipped-game claim not independently verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

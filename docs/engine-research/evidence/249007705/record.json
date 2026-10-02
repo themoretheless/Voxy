@@ -1,0 +1,59 @@
+{
+  "repository": "jsoysouvanh/Refureku",
+  "repository_id": 249007705,
+  "commit": "1f01107c94cd81998068ce3fde02bb21c180166b",
+  "source_url": "https://github.com/jsoysouvanh/Refureku/tree/1f01107c94cd81998068ce3fde02bb21c180166b",
+  "readme_path": "README.md",
+  "readme_sha256": "17e16ca0bf2e3e97be9b23a76901f54cbe6069e90d216daca51c14b3f52e2039",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9c7488a625cf21b01e062449ff3bbc1c22fa2186"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6966d7fa83acc394d9ea9629807ef92939e9f2dc"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "98b5ed774297a9c415cd15745c8b1fda151c56a3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "ed23fa9cc89f29360a0ecbd8d6e58bedf3f51e5b"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "41b9866a355e23617a98fad5880c6be5f3f7469c"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d9d92df9acf5cd9f9231dcd4824942e99b610608"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5be30bc7476e7f32d657235df34cbec961e07140"
+    },
+    {
+      "path": "Refureku",
+      "type": "dir",
+      "sha": "e49090882ea14168f2cb36abc92335253152609c"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "fef7ef223be50d8d1a3d0992a7bb391481bc9577"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native reflection library; owned Refureku/CMake/docs, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

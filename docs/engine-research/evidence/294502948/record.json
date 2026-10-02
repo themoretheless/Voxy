@@ -1,0 +1,84 @@
+{
+  "repository": "MeKaLu/Kiragine",
+  "repository_id": 294502948,
+  "commit": "86f39e4b6506d68032d6af2c007732ae049acb11",
+  "source_url": "https://github.com/MeKaLu/Kiragine/tree/86f39e4b6506d68032d6af2c007732ae049acb11",
+  "readme_path": "README.md",
+  "readme_sha256": "20b745063ee7c4825e16674248e56cede20f2e106c862484344c613d6894f244",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f72bee2d2f9ecd4256350f2cb7a07bd8fdc141e4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f4b8ce35a5a922c5a8a2591764e7ebbeee34832a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e148c9d84676d08f7d7eb8d7ffad40e73b620bf5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b7e8e0ae3482ae11a7a652a60c92afcaf81a070b"
+    },
+    {
+      "path": "build.zig",
+      "type": "file",
+      "sha": "75bdda0beca8cc8ed6b69412d5b29437a861d92a"
+    },
+    {
+      "path": "compile.bat",
+      "type": "file",
+      "sha": "e6051b6326b55312d5ea354bce4a20edce7192cc"
+    },
+    {
+      "path": "compile.sh",
+      "type": "file",
+      "sha": "0f9d3d973073ff703c687438cdf62616a5842a03"
+    },
+    {
+      "path": "docs.md",
+      "type": "file",
+      "sha": "ee280c1e191ebac7710d6ba818cbf9802e45b87c"
+    },
+    {
+      "path": "example-code.md",
+      "type": "file",
+      "sha": "5c12c2d47b913ea73c7294514a423f697d63bdda"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ec756715d505f4969244ebb2b65edd544b60d943"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "8c0efac1b86bef5af2db77827557ce348f77f1c9"
+    },
+    {
+      "path": "libbuild.zig",
+      "type": "file",
+      "sha": "febfd91cb2ac6d1ce605e910fd614ebefe7f87fd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "58bcad81184adb3970d3731606853268d6e2bbe5"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "f57c6678dd8fa9131db4265abe8b20b3aefc79e5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Discontinued Zig runtime with implemented window/input/ECS/camera/shape/texture/flipbook features; asset manager/audio/text/UI explicitly incomplete.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

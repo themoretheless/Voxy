@@ -1,0 +1,64 @@
+{
+  "repository": "ronbrogan/OpenH2",
+  "repository_id": 141939949,
+  "commit": "d09a123b3dd16821295f380f01fb5639c697899a",
+  "source_url": "https://github.com/ronbrogan/OpenH2/tree/d09a123b3dd16821295f380f01fb5639c697899a",
+  "readme_path": "README.md",
+  "readme_sha256": "543e133112f91802d9a2e5137d6bdf71276efd9e01e03e9243f7a62b0116a8ec",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6bd2624a6377b5f4c1b69d09168af81e0ccaa993"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d6e18474c9ba8c61ada9981767243770d3bc8019"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "14821774537b32edcae410b5faeea30483efb059"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c1a7d4007acd3835b5930bf895f21aa7466b0c0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e02857b8a2bb80ce8f15bb5032a7330052d989e9"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "8521969bedd93176ab789f83d6ce884531dd7835"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "f5b5f7f3f24a1e1fe71fd4629e35ea2c7a935404"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "892a009abf0626c3daeed8070c09fb463b1c624c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6285e3ae30a0eda610bfd5b1e5c0746811d508ff"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Halo 2 file-format reverse engineering, tools and intended engine; broader gameplay runtime completeness unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

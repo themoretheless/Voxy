@@ -1,0 +1,39 @@
+{
+  "repository": "EllanJiang/GameFramework",
+  "repository_id": 83187656,
+  "commit": "d0c010b05167c58e92350449d04864a91ca13fd2",
+  "source_url": "https://github.com/EllanJiang/GameFramework/tree/d0c010b05167c58e92350449d04864a91ca13fd2",
+  "readme_path": "README.md",
+  "readme_sha256": "6a8c0a087c6e8706077da8d10e49b04d9428ff56e1dff3e7cb30928c6f178ec2",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b06e864a31d9a809c20147bd0a5b22e90b5e7e4c"
+    },
+    {
+      "path": "GameFramework.sln",
+      "type": "file",
+      "sha": "1f452470125809d5c031c69b86a6773c11cac8d5"
+    },
+    {
+      "path": "GameFramework",
+      "type": "dir",
+      "sha": "d23c0729475c6e85c51c8cc8902718ff920dd1fd"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "384b88260bdfde55fdd39d87520cb027294da893"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dd3d1f3cc2baa6d35233540b2e9048bcda9c8a5e"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity-hosted common game modules; existing Unity runtime required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

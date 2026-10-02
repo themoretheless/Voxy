@@ -1,0 +1,49 @@
+{
+  "repository": "salt-die/terminal_dungeon",
+  "repository_id": 202372131,
+  "commit": "c479ee684a172c66f7d1da9b6d19cc283939a789",
+  "source_url": "https://github.com/salt-die/terminal_dungeon/tree/c479ee684a172c66f7d1da9b6d19cc283939a789",
+  "readme_path": "README.md",
+  "readme_sha256": "4bbe74755ee0500428d59596aa7e6a3d9a8ce0365941007d7528c62d447d7960",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4b2fbb822856747edf89d30bbf4b430798c78cef"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7e99e367f8443d86e5e8825b9fda39dfbb39630d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2ca3721b1f2714f8630ca4e9d93cb66a8c4c0b6d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "11f8da3e9a1331e4bf3e201864c45dab864fdf88"
+    },
+    {
+      "path": "preview.gif",
+      "type": "file",
+      "sha": "58cddd402bece2510a6df6ab12c554b3b6568690"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "cd763bb2dabab26fccd05ae61cba9025d63a5b11"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "df78611faaa3ea6d0af925eb7ed670042c905fda"
+    }
+  ],
+  "classification": "rendering_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies terminal raycasting library; Python source/build, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

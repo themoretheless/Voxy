@@ -1,0 +1,102 @@
+{
+  "repository": "andstatus/game2048",
+  "repository_id": 299049641,
+  "commit": "834abcb72fe989f038c9ff9bd29e5fa6ba4ba9e8",
+  "source_url": "https://github.com/andstatus/game2048/tree/834abcb72fe989f038c9ff9bd29e5fa6ba4ba9e8",
+  "readme_path": "README.md",
+  "readme_sha256": "76f0592a794412e809e592f258bdd5d2163e9ba3100a7af559a50a93f4953a61",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "27f3eb2c412b394836d2e07f0c628ada41ffc481"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e88798235c8786914d028fbb7d71abd9d5e84749"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7a4a3ea2424c09fbe48d455aed1eaa94d9124835"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2594d0e5e9191e471034c53bb6dde6a207350920"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "4985982c3cb852bc9249d19bdfb5351d4052e876"
+    },
+    {
+      "path": "deps.kproject.yml",
+      "type": "file",
+      "sha": "eb88d3d3700d1d0216c415699cced80e14775ebd"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "b66d233a90106cd08db08f29b665fec48d41a7b7"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "bb96fc874f911fbf0962cd5bc794c8f395958500"
+    },
+    {
+      "path": "game2048-android",
+      "type": "dir",
+      "sha": "503638f294a644219e47b11aad151a89e178e646"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "6e4d0148937ef75e8807fde035a71e450689820b"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "ea690169acaa536a1f595e45fcdd8bc623fd8f54"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "23d15a9367071145e9c79bb4ddf879d1fbe78b5d"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "db3a6ac207e507b0bc1635a9f2c18d3b174e682e"
+    },
+    {
+      "path": "gradlew_linux",
+      "type": "file",
+      "sha": "6b58cf9673d1f92ae4236d0d8eb3a819ceb9f14d"
+    },
+    {
+      "path": "gradlew_win",
+      "type": "file",
+      "sha": "88a2c0cb48e508c17305d80c8c589d5b99ec585a"
+    },
+    {
+      "path": "gradlew_wine",
+      "type": "file",
+      "sha": "3e7b0b96be0537a91af7329d06656016de08f609"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "f6da25b74aa41becf0a6ec20dc292af9456bc1d5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a1040a33abe8b745b07f1aa1f174e49d2ee284ec"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

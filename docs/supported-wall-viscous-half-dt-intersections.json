@@ -1,0 +1,334 @@
+{
+  "scope": "Static nonadjacent-face classification, no CCD/anatomical certification",
+  "states": [
+    {
+      "stage": "rest",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/rest.obj",
+      "sha256": "3d9052288563e12741b605f1dfeabdfac56fda6f64ac0276a40147f1f2085a3a",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-1-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/load-1-sub-1.obj",
+      "sha256": "b58eadd094c2d814b74f081ad32b28e04ae472c9de70284fa5bae648864a6f7b",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/load-1.obj",
+      "sha256": "f90b9ec621aa02744f5c7b2d8f55844ceb6e6f2805b28cf854394ec0d06c6176",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-2-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/load-2-sub-1.obj",
+      "sha256": "9ecf26c303b96905d1cbfdc83d00d829c20273baf4d85b136294812e2580b121",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-2",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/load-2.obj",
+      "sha256": "1045abcd87e88098abeb85205d2428ac083283084f868ff2fdd051f6634cce12",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-3-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/load-3-sub-1.obj",
+      "sha256": "6954b86f4ea9f92dffb8b7192b9e60ab13e256c21accb72d0ebb3e6d548e58e9",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "load-3",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/load-3.obj",
+      "sha256": "90485b4602e0e768f0a3762eb183c711bf5ecaf5dbe95fef03aed494f3d807f9",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "loaded-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/loaded-sub-1.obj",
+      "sha256": "e5dacd467f048cec19439d3b2fd61b68d4c2f08140e03689e0c78c919fb18f48",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "loaded",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/loaded.obj",
+      "sha256": "2a29ca6c3a166614eb14450d26b99fa5895e923060d4b81f13bf39fd12c1d747",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-1-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-1-sub-1.obj",
+      "sha256": "49c5e429874b328b3a0954d4c3108c70b985524b80987e751084ad094ae52874",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-1.obj",
+      "sha256": "6cadd7e25816d916384863ce2467e7888a2cb36a2a74b06497f9b11258c9c03f",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-2-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-2-sub-1.obj",
+      "sha256": "06bfdb218e6f52246760591545dd91f03b87efbfb2719c64916809ff9973b189",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-2",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-2.obj",
+      "sha256": "976b9ece27b84dce19fb5dcf02abaf885243f285edece505d664a6ea369f7353",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-3-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-3-sub-1.obj",
+      "sha256": "8cf8db35a6258310b996cbeab427823bb985e112e5bdb524ab6f425e2d3f58cb",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-3",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-3.obj",
+      "sha256": "e21dc57cff3109774fb9aefc83947e0000d00a012a8158603fef85c1a953d645",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-4-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-4-sub-1.obj",
+      "sha256": "3e91a7e1305a5b295080ef7fb956d793d87b2e68a4bc845e2bbbb4ebdcb3764d",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-4",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-4.obj",
+      "sha256": "b3c774fed4e8b1d58e5def2c33ac07e8b11f955aa8893a4a8e9c5a61b8f16615",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-5-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-5-sub-1.obj",
+      "sha256": "cc0b7441360c93342c2655169d1dda6df9ac69c32a8b15311db680c4575ae1a0",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "hold-5",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/hold-5.obj",
+      "sha256": "0a57ff18e3795c8f6c0fdafb507af6b33d41a0246eaba279b21e1ccf45ab1633",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "unload-1-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/unload-1-sub-1.obj",
+      "sha256": "5b99ec1b591712fa34c096a4ae5a7a053d3191a94670c153b7e6c428c64f43cc",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "unload-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/unload-1.obj",
+      "sha256": "d80dbc51f64d97948f36df95aefb9cb19cb13fb770fb6dd4c16741331965f861",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "unload-2-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/unload-2-sub-1.obj",
+      "sha256": "e4210839a0866af29a117e45cd1f995f5e5804d46549fb81f37ed5a42a3a4189",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "unload-2",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/unload-2.obj",
+      "sha256": "ef5b5c13d774ac2b25c2db50f80bb4a5d98614023a8f3ed61d7768862db2e341",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "unload-3-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/unload-3-sub-1.obj",
+      "sha256": "b2ad83998f97ff72f33e04f4a69497d3354ff85736e937785b053655e9a9c456",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "unload-3",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/unload-3.obj",
+      "sha256": "67e6697ba10a6fd5b7a913b4abe927d7ca3c33da61c2126a55c3971039f0bb3a",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "released-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/released-sub-1.obj",
+      "sha256": "93f816606fea6c7147c858a39dafb0e7b3ddec34d1a91edea1b5e59c57440733",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "released",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/released.obj",
+      "sha256": "fb24733f95be47d2d26edb91f876feff1ab9bded811f252141d8e93baafa2aac",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-1-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-1-sub-1.obj",
+      "sha256": "04cab7cc0b5eb91ac5d50e9dd9e3ad975c40d7717cb68b3c2a86f18a13d71973",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-1.obj",
+      "sha256": "e3e528d68a97a31ee69f06cb3777982404433e2c50aa1dc77e3bdbbb2ef2fb25",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-2-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-2-sub-1.obj",
+      "sha256": "f25aa73ca8de1cf4a0d5b78fc2c12c8c147873c3746f3e4d0455a16919b126ca",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-2",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-2.obj",
+      "sha256": "67cff762d4eb519ca108dd68c4450da247189e309867bb85cafc1595424ff3eb",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-3-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-3-sub-1.obj",
+      "sha256": "ab932b5e7edf8e5c23ca225c52e2a13d017a71a8ef872abf7b927b43f2416b9f",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-3",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-3.obj",
+      "sha256": "a43c896866dd4dad8ec931d64b6028066cf68c3ccd606d1b562e97a4b108966e",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-4-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-4-sub-1.obj",
+      "sha256": "215c49956d7e6eaf0da2489351cc1761af8fb5c0a12b8a1786e5f5d2f1eceae6",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-4",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-4.obj",
+      "sha256": "4e4a6f2c73362f91568a4d3829e99822109314884cef5d63332f6de5a59bc5ba",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-5-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-5-sub-1.obj",
+      "sha256": "5f17730c642ac657c1d351d717fd2c866c61d76c7e2e529a3c2629265ff62ef6",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-5",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-5.obj",
+      "sha256": "e5f64d02a6c6db0d64c86bc984cdc36edd7c51e3a7e51e514a89840ddf6be40b",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-6-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-6-sub-1.obj",
+      "sha256": "90b3aef8685f6e0af765c4cfccecbc4d2e7b8dadd88dd41eae20fa51293dedea",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-6",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-6.obj",
+      "sha256": "f3730b35bc690b3ba245a952fe36911e9e0986350a7f9252ebf6bf4ce7ba1650",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-7-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-7-sub-1.obj",
+      "sha256": "6f6280daf084418f0cff658cd2ac35dccf11518fea75b3fbca385deb71cde2cf",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-7",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-7.obj",
+      "sha256": "5edcd6d831075265e010a4453896d79a9957411893ddbadcd3847f050749c7ea",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-8-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-8-sub-1.obj",
+      "sha256": "95959fc525fe18c4dfc3cbccbd8fc86221a5c5eccf421fd4d41a9cf7e9849540",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-8",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-8.obj",
+      "sha256": "86e9b685c4c64b08b0e69b183d8c9c8c28d662f4f8b339caf6ce9b2755452703",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-9-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-9-sub-1.obj",
+      "sha256": "fab233395475068531c6dcc036b43d58f4c640e9e625fb77043994c56ce51463",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-9",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-9.obj",
+      "sha256": "042cf216fb603194ae60d24c1dcb9451767d208e0ad390a5bafc58fa2d681577",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-10-sub-1",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-10-sub-1.obj",
+      "sha256": "bdb088706afd94c9cd3bf2798dc6eb0f5058822b20978be429fef0fb0bcbbcd4",
+      "classification_counts": {},
+      "limit_reached": false
+    },
+    {
+      "stage": "recover-10",
+      "source": "/tmp/voxy-supported-wall-viscous-200-half-dt/recover-10.obj",
+      "sha256": "14397723fcfb039aad86cd6c9c4d57ad6c977b15fe4e09eb674074484fbf240b",
+      "classification_counts": {},
+      "limit_reached": false
+    }
+  ]
+}

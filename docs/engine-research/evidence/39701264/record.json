@@ -1,0 +1,167 @@
+{
+  "repository": "Aleph-One-Marathon/alephone",
+  "repository_id": 39701264,
+  "commit": "6497ea3b6906ee7e2d7b7206b5c760a4039877db",
+  "source_url": "https://github.com/Aleph-One-Marathon/alephone/tree/6497ea3b6906ee7e2d7b7206b5c760a4039877db",
+  "readme_path": "README.md",
+  "readme_sha256": "8e4c6a87d03cd954a6e763f10a69a8ffcf666b5980183e379b290d60636240bb",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "251bf6804fa921b6fb951dde1bada6e118b7a468"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dc4f7cfbf6da4a3112f58d3a2b58964a12036101"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b5712d5fcd3351a8f60f6f318c763fab32a4b88e"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "fc4bb4af3bba91ecdc00bdd36bd50452b5c04a5b"
+    },
+    {
+      "path": "AlephOne.spec.in",
+      "type": "file",
+      "sha": "4c7a4b91f5e968ce627dc6672ea09ae8dda0eac8"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1a278f341edac6072bc2e78410c00301e4ca8f3b"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "20d40b6bceca3a6c0237d7455ebf1820aeff3680"
+    },
+    {
+      "path": "Cheats",
+      "type": "dir",
+      "sha": "6b64f1bbbfa18fbaf72a79dc00d3732aefbfd7c7"
+    },
+    {
+      "path": "Dockerfile.hub",
+      "type": "file",
+      "sha": "1468bd141dcc5757fdb057e9d119c9a284d30ec9"
+    },
+    {
+      "path": "Extras",
+      "type": "dir",
+      "sha": "2849abbd05c8bdad1e10887e1950bab26f3174e4"
+    },
+    {
+      "path": "MML Scripts",
+      "type": "dir",
+      "sha": "f04854e686e20683994135402e9cc3e6cd30983a"
+    },
+    {
+      "path": "Makefile.am",
+      "type": "file",
+      "sha": "c4c8160093af129c3b5ba9a98797388258f1e2e0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "463ab19a781bebb421faa60cb5cb2cc77a2ef093"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "24cf8b9b8cfbd91cefb44bfe55fbe20aee1c44d7"
+    },
+    {
+      "path": "Source_Files",
+      "type": "dir",
+      "sha": "f621778eb341f29b22394a53f525bcb5ff0d4d35"
+    },
+    {
+      "path": "Steam",
+      "type": "dir",
+      "sha": "d1923255d4c94e2c1a4756c0554deca92878ccda"
+    },
+    {
+      "path": "THANKS",
+      "type": "file",
+      "sha": "cd10c924d72df530fce8cb6f9b8785f36fada09e"
+    },
+    {
+      "path": "VisualStudio",
+      "type": "dir",
+      "sha": "7438e0d1b9b960a47f63c7e1291a06bbdf36550e"
+    },
+    {
+      "path": "Xcode",
+      "type": "dir",
+      "sha": "0d80209ed9ac6c58997fee253b8705007a0b746c"
+    },
+    {
+      "path": "changelogs",
+      "type": "dir",
+      "sha": "c416b2fc1c02aa7e70e04732514b5790046877dd"
+    },
+    {
+      "path": "configure.ac",
+      "type": "file",
+      "sha": "f3dfff2cfcf62f708a781c5bc164e9fb1a19c27b"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "774d4b62227ef1c4c95967d9cb463fd00fc237cb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "62b17a6c1c581980b9d5d41f2413ebdb2b76dde9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fcfbec3cdb7b432c2fb71d91b672a3dfa5804311"
+    },
+    {
+      "path": "flatpak",
+      "type": "dir",
+      "sha": "37105f647cf3ebd01deed106a4be29cf2276379f"
+    },
+    {
+      "path": "marathon.dtd",
+      "type": "file",
+      "sha": "8d2e06c4f4b4d29a71378c26cff0ac03be5b33dd"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "0e8cbcb64d6099354a5dd98975fea0aad20ed785"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "81df0bd520d62039404f8ca51b8bd3425bf98db2"
+    },
+    {
+      "path": "vcpkg-configuration.json",
+      "type": "file",
+      "sha": "785999095c81cf23f29eb08fab477b140a227e17"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "ee77e6a40df9e63af2e9055d422ce655f55b873d"
+    },
+    {
+      "path": "vcpkg",
+      "type": "dir",
+      "sha": "bd5eedb7355f63054691d7ea0292af5248107c97"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,204 @@
+{
+  "repository": "pinguin999/ALPACA",
+  "repository_id": 585666581,
+  "commit": "be13fd2e6900e3fd97a64d82c7b6f808f8ac0b4d",
+  "source_url": "https://github.com/pinguin999/ALPACA/tree/be13fd2e6900e3fd97a64d82c7b6f808f8ac0b4d",
+  "readme_path": "README.md",
+  "readme_sha256": "1bafcbd470d665bd1b64ea4c19368b79047c06f4ed116f9586658d735c95cc08",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2e6f60947fce11a7f21e5b5698b7e9cb8b27c779"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "b4ec19b3150058aa0f60eeaf6403a373a0c46fff"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "d7baf79db45408a71815eb847e4d7a4e39447674"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "0426a8a3195ca0d64a7796e493ca91edab50024e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "72f22b8588663ff35dfe9eae18e711b0fb937eac"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4a199d7770c0f30c9c8b3ec9fa5336e31ba03d38"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "479fa2e604beed7f53d6a5e29b4954a6f85694a9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3421f56c74ab833af4c8a50ff8c1edb4b16f6ab8"
+    },
+    {
+      "path": ".gitpod.Dockerfile",
+      "type": "file",
+      "sha": "63bda6326984987aed18698607548e4bd509c7f6"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "3e045554f434504744320f9c85c338f1f6fa432a"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "15c04f2f307ca21ecd63f765923d6867dc9e3030"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "28bf68d826820097272745a9f12ca420a96a5a1e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4081dc81ace65af28e80f9ae1846f11e0813c311"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "e422488492d7949c4873cd446872e77fc1c2526d"
+    },
+    {
+      "path": "DockerfileAndroid",
+      "type": "file",
+      "sha": "afd770a575b1f887501145222e1cfd66a41ffd7a"
+    },
+    {
+      "path": "DockerfileEmscripten",
+      "type": "file",
+      "sha": "25c54239fd5f6d67565d9b15c08335fdb03f1b11"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "7a118b49be750543e59f7b9c55123e11322b00c6"
+    },
+    {
+      "path": "Gemfile.lock",
+      "type": "file",
+      "sha": "da2baaebde27c7e56a8ca8ae4dfa03b310598c18"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "50be0e2dce228dac1aaa703de10fe164b872f1a7"
+    },
+    {
+      "path": "Pipfile",
+      "type": "file",
+      "sha": "27681bc6b6387a04bde10a89a46e8c23b1ad0985"
+    },
+    {
+      "path": "Pipfile.lock",
+      "type": "file",
+      "sha": "b4136c4ba27ec07a218dee466162f0000f578454"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ca6f50fe8366f421e9e39fd871a0f8666847d3de"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "5e452301613e26e873f1feb874eadf23787e5c35"
+    },
+    {
+      "path": "data-src",
+      "type": "dir",
+      "sha": "aa3d4618b00969339c3b5df6e519fd9c3e7f939d"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "286ef4f7502a4e51afcf4bf909d717268a683442"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "034939c1c9307c75108e3fe876bebb10b239b1df"
+    },
+    {
+      "path": "lua-docs",
+      "type": "dir",
+      "sha": "d48fe7fe4a0aaac69fbbecfc69d016cc8bab081d"
+    },
+    {
+      "path": "pre.js",
+      "type": "file",
+      "sha": "014322c67399207c95a19be649c6f0ed73f3c7be"
+    },
+    {
+      "path": "prepare_assets.exe",
+      "type": "file",
+      "sha": "e8e4a23fcf1d07f4c3d07b7dcb99190af019264a"
+    },
+    {
+      "path": "prepare_assets.py",
+      "type": "file",
+      "sha": "c3a75dd19c8eb369e38ddc785141b63a114a7eda"
+    },
+    {
+      "path": "prepare_assets.spec",
+      "type": "file",
+      "sha": "cab5e085740b8d15e7a8dfa3c997cbd275a1f818"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c27a0c52f09dc819fbbfbfedfa6f5e4498478c7e"
+    },
+    {
+      "path": "subprojects",
+      "type": "dir",
+      "sha": "cb8b289c99a89b70426fa1e225d9166919e34876"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "b3a0e133b7edeffb2fe05281576a3d8502904021"
+    },
+    {
+      "path": "test_chamber_one.gif",
+      "type": "file",
+      "sha": "1acef416138bdfd8690806002a971376fa3b3bb6"
+    },
+    {
+      "path": "tts.py",
+      "type": "file",
+      "sha": "fc3f1c96abc87e7f61beb30903382c5ef18fdaa9"
+    },
+    {
+      "path": "windows",
+      "type": "dir",
+      "sha": "ba636ceb2dafca8f2486ac87c15cac51ddbcd446"
+    },
+    {
+      "path": "windows_bin",
+      "type": "dir",
+      "sha": "39b0838589a87bffb28c206a5aa4200a45b08079"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++/Lua adventure and interactive-comic runtime with dialog, animation, input, navigation and saves documented; src/test present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

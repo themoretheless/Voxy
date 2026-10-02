@@ -1,0 +1,109 @@
+{
+  "repository": "soonfx-engine/core",
+  "repository_id": 1091606325,
+  "commit": "8f18facaa929658244957b5076c3ffa4185b7c15",
+  "source_url": "https://github.com/soonfx-engine/core/tree/8f18facaa929658244957b5076c3ffa4185b7c15",
+  "readme_path": "README.md",
+  "readme_sha256": "0584b03f55618b902dbeb2c85d171d2a1a2a420fb8ed2702370f3a6b8d9eadb6",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0c74b926f66c91f1f2358507bbd422d48eda3516"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dc163b4e1fb4fea70189bb2d8dc6b3a1e188c55a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "739363bb1bee58db7db78a2403edc9d45fc813f8"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "00f24cb6aecd08bca4b072b971136afe91620296"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4abd128ed460b49f6e72cae6629007c4c55e1eeb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "43052d384c7f82806827e11f83778ec024dd222d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ebbb48d7c5b04901988d2c493343f94835fd4716"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "type": "file",
+      "sha": "2c4bae2d9eab5b547249bff031cac79e9c66172c"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "9b9a351464b857da583229cbc95eda2047e1613a"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "1f12cac6ef35b098b931a2e6ff3ee0d370dc8e18"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "dac4da59f2406bb298a0ac7a2e369b662cec9c31"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d476cf853caa251332361a5fb7a46201868c7b60"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e567492cb920cc9ad142dab067aa237a339ae870"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c72fa0e29f4eaea613ef0a5fa36f28f27a68efc6"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "c91ca375fceeacef2e5b31df87466950a8512816"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "21ff2445ae474f043b673817c4aadb1c8b12f92c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "23a26932af0a77ba7ca4cd18e95b9f8173abb6a6"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "ac1fa0db4a6ee213f061853e390a035f6b9a4810"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "5340ee00a902ae1fa7df8609a568926c84537850"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies numeric/formula/battle simulation engine; TypeScript library subsystem, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

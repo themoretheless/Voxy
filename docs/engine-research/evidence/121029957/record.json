@@ -1,0 +1,59 @@
+{
+  "repository": "simco50/FluxEngine",
+  "repository_id": 121029957,
+  "commit": "9c276016f38869ddb5e8879f1414e508930d3633",
+  "source_url": "https://github.com/simco50/FluxEngine/tree/9c276016f38869ddb5e8879f1414e508930d3633",
+  "readme_path": "README.md",
+  "readme_sha256": "a0cf08f7afe39935ebbadd1fb93835a53f2faa1fa02974e3912aec20d46afd99",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d16bd068dd90de1eb30ae1ee08f32127b8e88d2c"
+    },
+    {
+      "path": "FluxEngine",
+      "type": "dir",
+      "sha": "da47f6d60c53a6785a459a5174a4ff228a74d6c0"
+    },
+    {
+      "path": "FluxGame",
+      "type": "dir",
+      "sha": "e8e51a3b38c3458982f4a0525e565ad17b39981a"
+    },
+    {
+      "path": "FluxPak",
+      "type": "dir",
+      "sha": "bfa3ef351274175979517d9da4b0814f2fed48e7"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "9f25e9555c73cf196f9e29301bddc8b103ca8cfe"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "200786daa8744473724b568d6f7d9fcbff1eeda0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1a803ad79f23c025d6e6b62fcd1ed75c1064b26d"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "f08c9b1c979f24075e7507986f41271550020d0b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9367e577b0f004e81a6fe3ea419271458b1baab5"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate FluxEngine/game/resource packer sources and physics/audio dependencies; short README does not establish runtime subsystem implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

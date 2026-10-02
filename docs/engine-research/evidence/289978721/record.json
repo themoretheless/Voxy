@@ -1,0 +1,24 @@
+{
+  "repository": "dimforge/bevy_rapier",
+  "repository_id": 289978721,
+  "commit": "8e330d9df6c7d85fad1c42c90c13effc7cbb8415",
+  "source_url": "https://github.com/dimforge/bevy_rapier/tree/8e330d9df6c7d85fad1c42c90c13effc7cbb8415",
+  "readme_path": "README.md",
+  "readme_sha256": "1e834655995744c8b3a5d4964151a2baef108baa5fff25ef013017644f169e79",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "307a8f8128fb58dd43ee464f202d476af15a5686"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7681290e7164672f0b573c9241556840a00c924e"
+    }
+  ],
+  "classification": "excluded_redirect",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned root contains only move notice to Rapier bindings; no engine source in pinned snapshot.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

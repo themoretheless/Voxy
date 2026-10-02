@@ -1,0 +1,32 @@
+RAY GPU: AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+SHADOW VISIBILITY PASS: blocked, unobstructed and finite light segment
+SHADOW IMAGE PASS: ray visibility + point-light diffuse/ambient; /tmp/voxy-ray-shadow.ppm
+Wide HDR reflection RGBA32: weight 2, radiance 131008 passed
+GGX GPU ray sample: nonzero rough deflection, analytic distance/BRDF weight, null radiance and zero distance passed
+Specular R32 closest-hit, miss, range and surface-origin bias distances and BSDF-weighted HDR emissive radiance passed
+GPU primary GGX sampling: roughness=0.2, seed=0: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.2, seed=17: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.2, seed=31: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.5, seed=0: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.5, seed=17: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.5, seed=31: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=1, seed=0: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=1, seed=17: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=1, seed=31: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+Primary depth -> world position/normal: all 16 GPU samples match
+Primary static camera RG16 UV motion: camera/object translation and history reset match all pixels
+GPU primary reflection -> HDR composition / material MRT: all 16 world-space distances and material-weighted HDR colors and composed ray-shadowed point light match; occluded=false
+GPU primary GGX sampling: roughness=0.2, seed=0: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.2, seed=17: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.2, seed=31: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.5, seed=0: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.5, seed=17: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=0.5, seed=31: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=1, seed=0: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=1, seed=17: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+GPU primary GGX sampling: roughness=1, seed=31: 16 pixels and eight-sample means match CPU GGX, direct lighting/opaque shadows and analytic triangle distance
+Primary depth -> world position/normal: all 16 GPU samples match
+Primary static camera RG16 UV motion: camera/object translation and history reset match all pixels
+GPU primary reflection -> HDR composition / material MRT: all 16 world-space distances and material-weighted HDR colors and composed ray-shadowed point light match; occluded=true
+PRIMARY BACKGROUND PASS: reserved IDs, invalid surfaces, camera/object motion and reset with zero background motion
+RAY SMOKE PASS: TLAS transforms, two shared-BLAS instances, masks/removal, invalid update retention

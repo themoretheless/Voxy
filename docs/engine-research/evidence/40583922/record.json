@@ -1,0 +1,119 @@
+{
+  "repository": "cyberegoorg/cetech",
+  "repository_id": 40583922,
+  "commit": "09857e278ba1596fc1b0e790164bd4dbf843bc5d",
+  "source_url": "https://github.com/cyberegoorg/cetech/tree/09857e278ba1596fc1b0e790164bd4dbf843bc5d",
+  "readme_path": "README.md",
+  "readme_sha256": "164364972a13f31f44dd48db0cfbf61112e943df98683fd6af42de6b2d700e27",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b5eca1dfced4174b9c04551b7abbd870f1357f4f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e10ba6b97b2c97841457ed27d0f70ca381aa98b4"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "5c42a6b2550f1aa0acb273e014f3ea3037e19575"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a28c0d604d39221a462067d0d18195b578e968ef"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "81bd96b5c865a25954e7b139ae4b1fc5c7ee343d"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "e8303d5d0b958895915c7762e114f3f6311be8db"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1aef0a7f0d595021b36438c41de0e54740dfa06d"
+    },
+    {
+      "path": "HISTORY.md",
+      "type": "file",
+      "sha": "5baa804d7bcc0043e8c434a4ca17e8073fa32333"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "3a5a94eb39ad801f82ec433ba38fa2ae39fce9fb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3281f8094ffb9a4b95ae34f3d60571cbffd47560"
+    },
+    {
+      "path": "build.py",
+      "type": "file",
+      "sha": "8a837d2dbf132020047047bde5af7f821d1945ee"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "c4c65c03f476580b37cef794d42008bb314771d8"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "f9f8c672f312e2e6ad04eb7b170edbc323ded861"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b6558507acdc884da164ebdae92720b3214b309c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7b1ad714cac259f933b6b026c11e7e54e4d5de1d"
+    },
+    {
+      "path": "externals",
+      "type": "file",
+      "sha": "fb8ceea71e26b720cd592c4037b40eb853c0577f"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "9f1e79622e5f7b92fdc4806119425dd039a9f283"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "6696bfe1a5550388cc8d9aec1a8c2c2d89c74e76"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2ae145334b10e17a039644dfe17e4aa8848af5ba"
+    },
+    {
+      "path": "toolchain",
+      "type": "dir",
+      "sha": "4fbfc395500553fa3d3275a42a87127ed334bee3"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "89a9e3f6b57e268a67d833b38b20521de4d3d0e1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies CyberEgorg internal game engine; core, external dependencies and examples accompany CMake builds.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

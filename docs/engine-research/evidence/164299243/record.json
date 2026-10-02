@@ -1,0 +1,69 @@
+{
+  "repository": "gabdube/panic-panda",
+  "repository_id": 164299243,
+  "commit": "ecbda506eeafe3dbdf932cdb20b938646502f892",
+  "source_url": "https://github.com/gabdube/panic-panda/tree/ecbda506eeafe3dbdf932cdb20b938646502f892",
+  "readme_path": "readme.md",
+  "readme_sha256": "428ea739e41c03487fc36a6a0dcd50a1e1193103bce6486d57b8f0f3ec5192fa",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1c51cb2da75a7ee05476facdc33cce2cef04723c"
+    },
+    {
+      "path": ".python-version",
+      "type": "file",
+      "sha": "a76ccff2a6e0d561f35467c9321be8c26885fe12"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f945d3df25039ca94ee0618b65add9c62d529d4d"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d58d96030c9719492ff02a0888aef87212a6a98e"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "4ff8a494d459cda7b7e09fa58c5138a97a719c4b"
+    },
+    {
+      "path": "debug.cap",
+      "type": "file",
+      "sha": "37632879f80d9673bc788f88653112c822547fd8"
+    },
+    {
+      "path": "debug_win32.cap",
+      "type": "file",
+      "sha": "dde2d18bdaa1fe4a3e1ae17bd14b3153e337c5e8"
+    },
+    {
+      "path": "demo.png",
+      "type": "file",
+      "sha": "461abc58f89307eeff4c7ebc55e3d17b673c9d6c"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "a855baf9d449b27f0f4a1aae98a8ee1e66dc6d03"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "73906d13e05a2d0214fa203433ebe174df8992d0"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "32464570083046c2f29bbde2c37ac5cda9881672"
+    }
+  ],
+  "classification": "rendering_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python/Vulkan rendering technology demo, explicitly described as framework embryo.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,114 @@
+{
+  "repository": "nfrechette/acl",
+  "repository_id": 91615309,
+  "commit": "3ee568542eca4428e1041908b4a644b98e7885bd",
+  "source_url": "https://github.com/nfrechette/acl/tree/3ee568542eca4428e1041908b4a644b98e7885bd",
+  "readme_path": "README.md",
+  "readme_sha256": "4583b9abd3d98e98d33d7b01dd0e0dab9b1949bacd0aeb1bdaba78cc5c662837",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "98249a8028e429fe478251fb6cc2b20eab888b46"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8f871aa570f6c0f47eea8cab04740983dc02b482"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "923ced5ea624935d54f7f1237d970b9827713ff3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7e69a05a973d9161c11efb5472819d40aa2fccd9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "dde15019c7b59096f182409126059bf0586f4abe"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "262df821e7494366ab6dc3ac6501079faed9aeea"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e1a595b10faa7800e60715a894dd0774dcc16c87"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "48fcffad2f62af1908ecbd3e4ce1ba50ff2bf560"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4cd10b544cbe6e41d168d5c756354c6ace65bc67"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4767cb746dd76ac401e38c7621d2efa5d5d8e99e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "02e89efa23e50476fef0c1eb7dacea20616fbd6a"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "8df95dea0d4b8af3e74dba646a188d9666941809"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5223f4e029e4f9a64214ce1caab2dd30c7aae7cb"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "cdd3c950d0150233ad648d1c3f7120a8f16243d4"
+    },
+    {
+      "path": "includes",
+      "type": "dir",
+      "sha": "f160a5ec74fce7ebc3d472b2023dcb8c22804f86"
+    },
+    {
+      "path": "make.py",
+      "type": "file",
+      "sha": "6806466ef579e8586ff6872b519203b97975cc62"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "46bfaee4a4337b72cebaacaa7cb11f91eb4d64d8"
+    },
+    {
+      "path": "test_data",
+      "type": "dir",
+      "sha": "e5a49d677948713418f1f22f4050bacc215587c2"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2a0dc920ad34be1c513a786650e5cb429930bca4"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "07001acc257ed90b13b2759bc0bbff5e8cdaf698"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies animation compression library; includes/CMake/tests, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

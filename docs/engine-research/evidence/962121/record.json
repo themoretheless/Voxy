@@ -1,0 +1,152 @@
+{
+  "repository": "HeliumProject/Engine",
+  "repository_id": 962121,
+  "commit": "32497019f57d5cf7fc231200fac310756ae6cea9",
+  "source_url": "https://github.com/HeliumProject/Engine/tree/32497019f57d5cf7fc231200fac310756ae6cea9",
+  "readme_path": "README.md",
+  "readme_sha256": "896d9141bc51ef0908cc9fe75eb2aba84a38691581b9f01cdbca180cb0d06c43",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4540acf76980ce53de2661bd9d27faef03c99dd2"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ad02938c78a3811b6d7beac2683d93d6b3f63146"
+    },
+    {
+      "path": ".travis.before_install.linux.sh",
+      "type": "file",
+      "sha": "371c6edab058735d330a7bac4afc4de1ddfeec7a"
+    },
+    {
+      "path": ".travis.before_install.osx.sh",
+      "type": "file",
+      "sha": "e69770081d6344e1005fe6c2324f5605eeb250a2"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "2aee8e8bcb250f40f1f4ad34c97a2df889cf6e44"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "6643c8e39a84b194dbebca9abc75364c0dba804e"
+    },
+    {
+      "path": "CODING.md",
+      "type": "file",
+      "sha": "92b7ec1251e1d345ef1a71ec3fcd6854a0e7cd7c"
+    },
+    {
+      "path": "Core",
+      "type": "file",
+      "sha": "65b0b25837ee4b604cf67179f0b7fc03e97fd71a"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "d97ef9c81c894fd2a4b500bbf170e748ddc4f73c"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "80725a98c8671f4930b5d1c01e6a608350bc46d7"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "b2beaae79562e2f66be81efa016a729443fcf115"
+    },
+    {
+      "path": "Engine.code-workspace",
+      "type": "file",
+      "sha": "362d7c25bb405a5cc76d0c7518cc240999a574f4"
+    },
+    {
+      "path": "Info.plist",
+      "type": "file",
+      "sha": "598126e66adf96d3bf6b755c086939864c46b76b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "54081fe5f4d78c318e8ca6d18c8511badcdf687a"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "89733ef8781dd3f94daadb3cab79edd92f16fc34"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f56a1bd404facd98d457e4f81cfaedbb4b532578"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "d0f44f9bf79248798a30d2f5b0de9a45ef886b15"
+    },
+    {
+      "path": "autoexp.dat",
+      "type": "file",
+      "sha": "ec863b17d3564007daa4f54e12e3cdd0ceb1650d"
+    },
+    {
+      "path": "make-all.sh",
+      "type": "file",
+      "sha": "b53a92e3c4ee8f8ac96ac1b7dbff278058afe80e"
+    },
+    {
+      "path": "make.sh",
+      "type": "file",
+      "sha": "0bce7b295f3f2e0b55d56ae2ccbcfc0f163a9b8a"
+    },
+    {
+      "path": "premake-core.lua",
+      "type": "file",
+      "sha": "2143926e93c4f7d9896fd01ce6e90a851695f200"
+    },
+    {
+      "path": "premake-runtime.lua",
+      "type": "file",
+      "sha": "7e8cb73373bde82f846e0de066984c370c36df2a"
+    },
+    {
+      "path": "premake-shared.lua",
+      "type": "file",
+      "sha": "cc0a568084a6be17f18ac061de8f742fbdbad6b4"
+    },
+    {
+      "path": "premake-tools.lua",
+      "type": "file",
+      "sha": "a985c1135538cd984197873303818c742548911d"
+    },
+    {
+      "path": "premake.bat",
+      "type": "file",
+      "sha": "d1995e6926f15738ec271e2b0ac188ac61628ba2"
+    },
+    {
+      "path": "premake.lua",
+      "type": "file",
+      "sha": "2d2646f88f17414a771ed6f2b9893a6b97c062af"
+    },
+    {
+      "path": "premake.sh",
+      "type": "file",
+      "sha": "d168c236abc9d4c7141afc483709395a4a7fd60f"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "1201457ff1b2a5d21c741308d7ab20a481f189de"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

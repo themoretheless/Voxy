@@ -1,0 +1,109 @@
+{
+  "repository": "Monogatari/Monogatari",
+  "repository_id": 37935886,
+  "commit": "86659baf065178071f0956092f754e1d76be0072",
+  "source_url": "https://github.com/Monogatari/Monogatari/tree/86659baf065178071f0956092f754e1d76be0072",
+  "readme_path": "README.md",
+  "readme_sha256": "d5ba7a8ea39ea7174b1bd212436d63f9d8361b1b4fd1943c3289f3be6756041b",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "41c205072e8edade0f1e0f8f8bd7caa2a6ce374a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5991453ee0348d89d87f07a73880f0a166fc6d9b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c94106cab5a546117a8df4590c2cc83425118f21"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "01cee7001a865154cc5ef38feb209ecda826b3a6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "75ad4383ee098c797972fb7a48806c16acf3ebfa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4f93e06aacf882c82be6f99d325df8803dce12b2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fd0966731805a59c479a421b1a2f4a593f5a72a6"
+    },
+    {
+      "path": "build.ts",
+      "type": "file",
+      "sha": "915536811a75c8693b8bf5fa03028a26f7554d71"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "d4f62b2dc1daa244d8e14b49618eb040d9ccac7e"
+    },
+    {
+      "path": "cypress.config.js",
+      "type": "file",
+      "sha": "47f7dd9afd63a2158e2ac83a20286509a671595a"
+    },
+    {
+      "path": "cypress",
+      "type": "dir",
+      "sha": "738a3d811490f7d6cbad66106b60b98f840f655c"
+    },
+    {
+      "path": "debug",
+      "type": "dir",
+      "sha": "37c015526d3338c09f3e2777b4e3369a0ba0e628"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "3edb416ef6bacedfd6bd37a522352781bf17d7ca"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "907358a417273f021f9156553927ca52c46843a8"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "ad64251be46b4a25df33737ad0cbd153624ac0fd"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "15255da1f0ed878106855f6a35a96c55da9fbe1c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d466b311d7133b3c2ab038b88750dbf5003f5ec4"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ff6ee7ee281520e8a2d6231934804defcd69b2db"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "0a159b273cc9f8cf4d8df7c54f878d2bd6423146"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies visual-novel runtime/actions/components; owned TypeScript src and build/npm/test infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

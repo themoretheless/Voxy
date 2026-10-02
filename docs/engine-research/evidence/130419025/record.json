@@ -1,0 +1,104 @@
+{
+  "repository": "burnoutjs/burnoutjs",
+  "repository_id": 130419025,
+  "commit": "6bc7ef2b2e4cc9c2c784b45d7ba4050ae059746c",
+  "source_url": "https://github.com/burnoutjs/burnoutjs/tree/6bc7ef2b2e4cc9c2c784b45d7ba4050ae059746c",
+  "readme_path": "README.md",
+  "readme_sha256": "075cadbdd68ed336bb9c8aec133812c48daf615b6acb5538489a076bd636a690",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "c9c5eb6fbc42a728470772bb6de775aba87c5bd0"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "d9219122c9a37d3daf8da22c3336a2c2f552a69c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d552047f05d13dce1759753e5f5cba2ebc0dfb13"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "810630b7fb2cc5a37a4bc27e85e57f309e726b7d"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "dc3ad9e3da054a1861e54b6f5fcab60cbbd170b7"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "7dcd60faa5104c7c3bca723c0a740faadcce2da4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c590d9441fd0202ca3e72c0876e6d5aba9cece1f"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "c2d8b340633336b5f116f2778d51eb543c852302"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "077eb04fbd96e9ca0f23aaf426aad68249108d70"
+    },
+    {
+      "path": "commitlint.config.js",
+      "type": "file",
+      "sha": "28fe5c5bf9299c98bf7eda81f658984e9d6a1129"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "bc30e61fe2f1ba30ce8b3d88d44b77e0fd0d7f08"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "db83c0ff56e7af07ad1d81321fb16a45172ac26f"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a579cc2274aa688bb7fcc62529ad05152106a9b1"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "461fbd2d1b1efe2e87f58bb0aa2987fb39950ef6"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "fd1bf8dbd64ed2a2192dfabbf7b2d971209d4f94"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8a7aafccaa6ee98f32b2c83c77ab8d0602ccd04c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "3cdf77d21bb08d1d8ad7b4a73162a961d784fe23"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "bd6d6992ce08aaca1b3bc9df1c79a9d25e49ccf3"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "DOM/CSS-grid game runtime with configurable maps/avatars/blocks, collision callbacks and control plugins, source/tests present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

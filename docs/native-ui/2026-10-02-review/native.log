@@ -1,0 +1,6 @@
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+MODEL PUBLISHED frames=22 first_x=-0.5 asset=quad.obj
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=1
+GAME UI GPU PUBLISHED draws=2
+GAME UI GPU PUBLISHED draws=1

@@ -1,0 +1,59 @@
+{
+  "repository": "skywind3000/mini3d",
+  "repository_id": 40443465,
+  "commit": "4b3e3af226691db920ece1dc58425c4a85c68997",
+  "source_url": "https://github.com/skywind3000/mini3d/tree/4b3e3af226691db920ece1dc58425c4a85c68997",
+  "readme_path": "README.md",
+  "readme_sha256": "cf367b846e7cf9bcc6efaa0d962311b687772cb2c0f7cfbd8887a00079a9de78",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3b444e5ea459f452b6bb0483fb3e5492aa4d6634"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c449da6aa8acfcf8a35da37d348136f97f271bdc"
+    },
+    {
+      "path": "Mini3D.sln",
+      "type": "file",
+      "sha": "5834a9cee97a3d4f87854f46f87c1305f260212f"
+    },
+    {
+      "path": "Mini3D.vcxproj",
+      "type": "file",
+      "sha": "b096981fbb535b37cada27c3dd5980fdf10f38d2"
+    },
+    {
+      "path": "Mini3D.vcxproj.filters",
+      "type": "file",
+      "sha": "37612d9e0c75161cfdf42500bffc8d9bca62e7a9"
+    },
+    {
+      "path": "README.en.md",
+      "type": "file",
+      "sha": "40c6c1c83c4aa6692d8bb1117aa8f770b3702dcc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0df007b125f2b7db00ddffe9ac29e2d2911a2cea"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "e203aad4be96ff20fe423c2bd22b27672c60b3d6"
+    },
+    {
+      "path": "mini3d.c",
+      "type": "file",
+      "sha": "736d1fd862484fbf185be1c54fd0c710262e4d22"
+    }
+  ],
+  "classification": "rendering_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Root single mini3d.c with native project implements educational software renderer, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

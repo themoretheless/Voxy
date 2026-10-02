@@ -1,0 +1,94 @@
+{
+  "repository": "micutio/innit",
+  "repository_id": 191930493,
+  "commit": "29c35a6f87972de67a2af4ca327504822cb11baa",
+  "source_url": "https://github.com/micutio/innit/tree/29c35a6f87972de67a2af4ca327504822cb11baa",
+  "readme_path": "README.md",
+  "readme_sha256": "72dcbb099bfa005837aea613d92febd462ada82f78de97b918b57bb3e4789d16",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9775b2e29b8bf8a8f735e94e8cef4ac4a2396881"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bcbb842552fade5a8570de46d90076b641f9c0e5"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "8f22f5da406ffa2fb05990ea213ceeb1240481ab"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "c684827e932b8e68e268ca4c8acdc3578287aa4e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ca82a07e6fd2cbaf1a968063ded856f1864524b5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b9b0784eb7b78dd16d0063b4b5341a74da9e99f"
+    },
+    {
+      "path": "bacon.toml",
+      "type": "file",
+      "sha": "dc716e69511650f4e7b9a1a412f62f841c9c1d84"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "5eed6dcbe0d4059d41af62bf6ec4a609b1ab871b"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "e68c483d1775a568aa025d6cc3ccb8b47f2fbe9f"
+    },
+    {
+      "path": "raws",
+      "type": "dir",
+      "sha": "53210e1f4779d28175079b02a7497042e6cb1030"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "00686b697dead93c343d2f0e55fcbffe159e9022"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "7251bd881e8ea43ca1efc50d9c10efebc06c4260"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "b93ac00377899e3735465ce14c4101b7944faa9e"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9b9b8a49c086dbff28f8f84955819f21dbb62f39"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "00e8c8786c3fac10709f7b78165382ec8c109b24"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "a8d5998605e270ff4c51218de651744c802b50a6"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Microorganism roguelike game project with game-specific content/goals, not reusable engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

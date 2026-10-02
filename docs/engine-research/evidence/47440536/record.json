@@ -1,0 +1,214 @@
+{
+  "repository": "cocos/cocos-engine",
+  "repository_id": 47440536,
+  "commit": "4bbfb6f521936e87284cf5b3e59e6b8139411d7e",
+  "source_url": "https://github.com/cocos/cocos-engine/tree/4bbfb6f521936e87284cf5b3e59e6b8139411d7e",
+  "readme_path": "README.md",
+  "readme_sha256": "6679519fa50ac77d7cdc59bca5fae4c5336dc90ecedb9164096921efdb107bb7",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "295235e33f6e44f205a126e66a49e6432be1fc6d"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "40dbc3fe0d68c359727aad06b0ec2d581ee64d4b"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "1abee526a9cd78c79212dc1ff2caed3a69479fe7"
+    },
+    {
+      "path": ".eslintrc.yaml",
+      "type": "file",
+      "sha": "749b7a2bf3f0364bbbe6fd73d5a2523fa7863cad"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "382d40648a68f57541631ce693d0ac079c961b58"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ac43f7e2699c2db623c4192bcf529b79bf3fc951"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "88143666f99d115e1fda14d77abb08c1b2ee8043"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "4fd021952d5a1d74ce03afc79643268a0480adfb"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "603606bc91118a632ac8f66f05b3cf15bd2704e0"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "486c59d639f0554003de2c507c3449ac0e5c8efd"
+    },
+    {
+      "path": "@types",
+      "type": "dir",
+      "sha": "3a15c8a9e7b6e55e28454cd32b0da7b4c7394bda"
+    },
+    {
+      "path": "AUTHORS.txt",
+      "type": "file",
+      "sha": "c8b4a31f377c0ad57ac61af4c27764d4d238edea"
+    },
+    {
+      "path": "DebugInfos.d.ts",
+      "type": "file",
+      "sha": "abd3cfcb1836fec9360e7eb5e68ed4faa9455b25"
+    },
+    {
+      "path": "EngineErrorMap.md",
+      "type": "file",
+      "sha": "0caf803b34dce8fe3316e01bb46b2cbeb36f6b43"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "bc24fb9700aa43adf14d65a2ed53cafe6cd90f10"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dab5ea8af335ee85456b00ae77fa8981ab865715"
+    },
+    {
+      "path": "README.zh-CN.md",
+      "type": "file",
+      "sha": "488902e7ba217788096053c9d1eac2c5a12434a6"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "49129b5c5adaca1ee8bacebba7279df3f89ef8c9"
+    },
+    {
+      "path": "cc.config.json",
+      "type": "file",
+      "sha": "7fdadb3c52c68b1a42e94315462cd8c792d6712d"
+    },
+    {
+      "path": "cc.config.schema.json",
+      "type": "file",
+      "sha": "45b2f5f1d4fa211d3d048b0073f120c00b621959"
+    },
+    {
+      "path": "cocos",
+      "type": "dir",
+      "sha": "933a849b0568e6024c89833d492ec15ffcadcf5c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8aeb7a7f684684bebb1ebf3c17aa64047bbef618"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "abec54428f8c5bc73d9a53761997e29ee4f21ddf"
+    },
+    {
+      "path": "exports",
+      "type": "dir",
+      "sha": "28d8b48c63ddc1f626b4c98c8bfdc0c20ee2d582"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "bb30b2e4b4475b24ab84b367d0cfcb9852565cf9"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "aaacd75a4fdcfab1dcbc7cbd887f9a7faf250d12"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "1eb9d794173b1fe0e21699dbe4b15c262eb5d0bc"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "f0d85c9f97fa3ec1c88ebed9024f62c722871c30"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "39705d2b8c4912720daa7928eec8cb85645589c5"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "903fa5e3c029208e2b6026e1f6ee1a2eff4df229"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "fd6892e4acf68db1cb688515d807e09a6d88a17b"
+    },
+    {
+      "path": "predefine.ts",
+      "type": "file",
+      "sha": "7a1607065f8e98e3152ecbbbedafbc48c1817407"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "86b9621e3e79b47e46c35049d8b8fe1c16715676"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "b7f32837d20aa049de286d2da4dcbc0a7fc6fb26"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "78e53b4ee798733d4d216eb8f371b10fad9d8427"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "12cd52d262b9ba8c182b1c6feb9069054449bc0e"
+    },
+    {
+      "path": "typedoc-index.ts",
+      "type": "file",
+      "sha": "8ab88b31ba2fc2045b8eab06b538d77ec603bb04"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "d8c39aa0c0136c8013a8458f58b018300e233599"
+    },
+    {
+      "path": "ui.png",
+      "type": "file",
+      "sha": "d23953141dcfc66cc7df565f46fd0eb96ecc9eef"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "2713581e12603de8ad6db5d4addc3d58c4ead2a9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Owned cocos/native/editor sources and build/tests implement Cocos runtime; separate from cocos2d-x framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

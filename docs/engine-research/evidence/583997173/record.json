@@ -1,0 +1,54 @@
+{
+  "repository": "flwmxd/LuxGI",
+  "repository_id": 583997173,
+  "commit": "f87902c05f8f1e21ff2d732405747ed1367afed7",
+  "source_url": "https://github.com/flwmxd/LuxGI/tree/f87902c05f8f1e21ff2d732405747ed1367afed7",
+  "readme_path": "README.md",
+  "readme_sha256": "0613d57a52a388bb86fb39aaab04a38fdecd3ceec01ec3a4f43cbca327b2254d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "42afabfd2abebf31384ca7797186a27a4b7dbee8"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "26d8b9549bab2eb392e0cc4486fe1f07bc3748e0"
+    },
+    {
+      "path": "Chinese.md",
+      "type": "file",
+      "sha": "c4ea84fd2f760be14bd817e5228a63010301817e"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "460a5dc7fe06f071cb08111111e75c00721e8d8b"
+    },
+    {
+      "path": "English.md",
+      "type": "file",
+      "sha": "7ab45b643072914e536d01cf60a96eb1b960915a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3beef29137cd2864584b2f4b1e230b59515de99a"
+    },
+    {
+      "path": "gen_build_win.bat",
+      "type": "file",
+      "sha": "6e88c7d5cbc914e3805aed39d9d52247630a13a6"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "90b64d059438d97e4583ba26556c327e1eeca8ef"
+    }
+  ],
+  "classification": "rendering_subsystem",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify GI rendering research; Code/Assets and native build, complete gameplay engine not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

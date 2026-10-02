@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "player",
+      "parent": null,
+      "name": "Player",
+      "active": true,
+      "translation": [
+        -0.2,
+        -0.475,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "player",
+        "game.character.v1": {
+          "half_extents": [
+            0.04,
+            0.04,
+            0.04
+          ],
+          "speed": 0.6,
+          "gravity": -2.4,
+          "jump_speed": 0.9
+        }
+      }
+    },
+    {
+      "id": "floor",
+      "parent": null,
+      "name": "Floor",
+      "active": true,
+      "translation": [
+        0,
+        -0.55,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "floor",
+        "game.box.v1": {
+          "half_extents": [
+            0.7,
+            0.025,
+            0.2
+          ]
+        }
+      }
+    },
+    {
+      "id": "step",
+      "parent": null,
+      "name": "Step",
+      "active": true,
+      "translation": [
+        -0.02,
+        -0.485,
+        0.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "step",
+        "game.box.v1": {
+          "half_extents": [
+            0.025,
+            0.04,
+            0.1
+          ]
+        }
+      }
+    }
+  ]
+}

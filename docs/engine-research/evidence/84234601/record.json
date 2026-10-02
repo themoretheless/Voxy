@@ -1,0 +1,69 @@
+{
+  "repository": "g3n/g3nd",
+  "repository_id": 84234601,
+  "commit": "f4cd16e1d17690621957098e6f14f26fdd24ce2f",
+  "source_url": "https://github.com/g3n/g3nd/tree/f4cd16e1d17690621957098e6f14f26fdd24ce2f",
+  "readme_path": "README.md",
+  "readme_sha256": "da5917836f52cdfa25227d8a79c961ee59b4f08d3e3c34637d62a83a8b83ed1d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e13675e810195d3ba36db3123cd17b632ba9f33e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3e226f42d7f27402ba93b71df65d8fca9336ec32"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f2908ff6c8629f471380df23e9ef090b1344c6c1"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "b64b548fb9593a804aaa0d29f316997a401c5364"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "09d5a22bc8b87e2e705f861ac9086aad217eef45"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "e227c54ba069edb2be65acff1d046feafea209e4"
+    },
+    {
+      "path": "genprof.sh",
+      "type": "file",
+      "sha": "f3c9b7d8a6edca4f24e67f23db606a8e1342a47d"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "e3bc75c745c412a859942d871f2999e05be297f1"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "4e79d8e1041f319660e4f358180857d8608aa6bc"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "5d3944b539ea5018f2e1103a2bab964ba0fb8e23"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "234107c44eb71359d491f2a1cf590425c5d61fbd"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies demo of G3N engine; app/demos depend on separate runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

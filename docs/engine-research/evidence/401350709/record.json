@@ -1,0 +1,79 @@
+{
+  "repository": "Kyjor/JulGame.jl",
+  "repository_id": 401350709,
+  "commit": "18fa791f413138848011e2104f2855caa1c25c9d",
+  "source_url": "https://github.com/Kyjor/JulGame.jl/tree/18fa791f413138848011e2104f2855caa1c25c9d",
+  "readme_path": "README.md",
+  "readme_sha256": "9c888906774ffa6fced03ee611261da0632991b366f6513f3d78210548b9e5ca",
+  "entries": [
+    {
+      "path": ".codecov.yml",
+      "type": "file",
+      "sha": "959972a69cb370d37fe84bf16a23f2fd230e3962"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2b741255be6366306e05101c1fd9918ab74c2bdb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d86981b85383aa0d25a96e9dbafd9df1cb360452"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "e757811b4878a29bc48cf7a53c6cd1c487159490"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "03643a03fcb01f902af6e5077545e5101855dec7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2d29aeb1521e72b77c3d9bafc7f6efe3b85793f4"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "702f813320f91d149319c679552e12a8125652af"
+    },
+    {
+      "path": "Project.toml",
+      "type": "file",
+      "sha": "22883bc10fe60ea578a129a63aede79e5a41670e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "eac40a7670b32f3d554ecb02398c22da4d99b22d"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "a31fa70cf139513964cd33d2b745285b7ea1af95"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6949d6f5015503160097f07237bc94d771627ba8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a9b23058e4bb1c666a8bac16c4d3b8b0dc8e75ab"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "7a0cdf83e2ab4ca53f92e6d4dc70f049f007d422"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Julia 2D engine using SDL2 with CImGui editor; src, tests and Julia package manifest are present. Planned 3D is not treated as shipped.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

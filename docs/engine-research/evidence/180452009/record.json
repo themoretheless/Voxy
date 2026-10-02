@@ -1,0 +1,67 @@
+{
+  "repository": "kidscancode/godot_recipes",
+  "repository_id": 180452009,
+  "commit": "bde64069dac2a8a8d6505f6e19469aa2f6c53ccc",
+  "source_url": "https://github.com/kidscancode/godot_recipes/tree/bde64069dac2a8a8d6505f6e19469aa2f6c53ccc",
+  "readme_path": "README.md",
+  "readme_sha256": "3c15f39f01e161b7792d7cb9687841fd6754e8f0acf4ebd61400370fa0c22e1f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "80d05aafd22ff2e3099c8e6dac8475f15aec3a89"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4f6f966de2cd108a55228ec71c240bed1ee21592"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "e1fbdf3d91889c7e2c39ee4e276dfa6219c09044"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "75750ce596f6d2231ed0db0bd81dcb7dde0bcdb5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "25f45d1e53bab61a849bfd28a356618c5cdbb428"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "18854876c67fdee2dbd3d0448dc69a530d5f30a7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c881453b43ad1c6852efa57658926135063429d7"
+    },
+    {
+      "path": "src-3",
+      "type": "dir",
+      "sha": "6fd95694f4ebee47eebe341dfaf310f1b5615aca"
+    },
+    {
+      "path": "src-4",
+      "type": "dir",
+      "sha": "458434e504a692813c29bd8a8169a3df80f21f3c"
+    },
+    {
+      "path": "static_shared",
+      "type": "dir",
+      "sha": "4b1ff00027416e6c52153e1f650500a4cd0deb19"
+    },
+    {
+      "path": "themes_shared",
+      "type": "dir",
+      "sha": "8077e65cd84960bb3220d93c34d04ea8ffaa0721"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

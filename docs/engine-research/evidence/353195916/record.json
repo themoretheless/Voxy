@@ -1,0 +1,64 @@
+{
+  "repository": "asc-community/VulkanAbstractionLayer",
+  "repository_id": 353195916,
+  "commit": "fb067e636150386c57ba6b60629964fbbd9da1c0",
+  "source_url": "https://github.com/asc-community/VulkanAbstractionLayer/tree/fb067e636150386c57ba6b60629964fbbd9da1c0",
+  "readme_path": "README.md",
+  "readme_sha256": "31d72215e9ea4229bacf84ef94bbfef87f56aa1253d33ebfc034b64b51a4504c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "024d35a3866b7a891783891d8d61d2ddc20b91eb"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "05704b99abfec0952d8647afcc81204707b41eae"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "de70f770406e3262461b69ab261a5e852b83a2e8"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "f9ef80780a4881a2fd3dab93b35a347bba1deb25"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a939674a74e0d6f4b41874e1a7633ddfc300335a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bc5226ecb66932e6ccf81ee160dea5733c1b7636"
+    },
+    {
+      "path": "VulkanAbstractionLayer",
+      "type": "dir",
+      "sha": "1ded48cd41664bff6683899cb822a7de295a27ce"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ef95a1bcebfc9ef8cb58c9e05e6f7b9c254227a6"
+    },
+    {
+      "path": "preview",
+      "type": "dir",
+      "sha": "f3235f2903d80c42c8cea1e51d0c17a1080ed107"
+    },
+    {
+      "path": "submodules",
+      "type": "dir",
+      "sha": "5307aabf0e0599316348f1674efb03c369aac22f"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Vulkan abstraction/render graph library intended for other engine projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

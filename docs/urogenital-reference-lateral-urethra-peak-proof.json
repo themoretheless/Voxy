@@ -1,0 +1,29 @@
+{
+  "scope": "24 versus 48 axial segments; protected urethral lateral-reference-traction states converged and static audits found no intersections. Full cycles remain running; synthetic materials, prescribed dead load and fixed base are idealized.",
+  "states": [
+    {
+      "anchor": 24,
+      "peak_pa": 919.2773449984,
+      "element": 2213,
+      "centroid_m": [
+        0.002598195405227,
+        -0.0004918711374914,
+        0.001420544258638
+      ],
+      "reference_z_m": 0.00125,
+      "sha256": "fae750682b38f6c2c05477e2a797140814794c270b5e37763d2a8fe05584b6cc"
+    },
+    {
+      "anchor": 48,
+      "peak_pa": 904.7383054113,
+      "element": 2213,
+      "centroid_m": [
+        0.002693252036047,
+        -5.020341591788e-06,
+        0.0007430256604222
+      ],
+      "reference_z_m": 0.000625,
+      "sha256": "dd566483cebc105b37212af047ea78e6c224d80b9f2aaa3e86a75100ee650efb"
+    }
+  ]
+}

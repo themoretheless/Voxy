@@ -1,0 +1,49 @@
+{
+  "repository": "vectozavr/3dzavr",
+  "repository_id": 329608254,
+  "commit": "04cb1e438afb27c092b99262c99779fc3042e447",
+  "source_url": "https://github.com/vectozavr/3dzavr/tree/04cb1e438afb27c092b99262c99779fc3042e447",
+  "readme_path": "README.md",
+  "readme_sha256": "f8d91ea81f3855b5b19e305fbd61773cbddeb9d6d88d3b1d505c36458bed8464",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5f26cba3823a8c84ead5bad19077305cebc98dfd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f6b5dcf17568a014907f336dc6805e913dfd36fb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9b401c557a3141b7499b1d126682e4937fdce7c5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "248675f66f1cbc95dec44c3c3e27bc020ad58d29"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "1a9f73cf13c1c3609d678756de452c9bccf27fcd"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "afeceec66b76917a40f2414135b174571fde805a"
+    },
+    {
+      "path": "test_scenes",
+      "type": "dir",
+      "sha": "a4145f4f892f66f00b2655ebeaa08d8fcb963df2"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ SDL-based game engine evolved from CPU rendering proof of concept; engine source and test scenes present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

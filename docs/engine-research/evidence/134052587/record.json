@@ -1,0 +1,99 @@
+{
+  "repository": "dogballs/cattle-bity",
+  "repository_id": 134052587,
+  "commit": "803f80207be9ed62149e2334636e6d0ff30ad777",
+  "source_url": "https://github.com/dogballs/cattle-bity/tree/803f80207be9ed62149e2334636e6d0ff30ad777",
+  "readme_path": "README.md",
+  "readme_sha256": "a6962c4a74807b4be7d8044fa4bbeaa775f0c5e46a470aac4c9ecf52e98ce4df",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "09e8ffcd5a89c5d1d7eb01ae2194d32dcb9142c2"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "c01d9b6042d59c7f88ee097f0ba36334db9c8af3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1eae0cf6700cebfee743504d0bdeaf642a11f012"
+    },
+    {
+      "path": ".prettierrc.js",
+      "type": "file",
+      "sha": "76c028b0274474f61a25e0ad098c1e650797c649"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ddb0413df488f6ca8b1270010954dd916b45aa70"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "12caeed3c994aa7981a7f93fa1c2c46733e20006"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9dcb64643a3ed757ccb2146ea5a2c4214f10780b"
+    },
+    {
+      "path": "ava.config.js",
+      "type": "file",
+      "sha": "15b187e336fa16ee14576b7cff3a606f22bb4d36"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "4b374559a5a322d56d23cb57a44e126118193827"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7c310cb7cd50382bbc913fa6235877db450a0ba4"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "00039d82fdb5082d0404dbdecdedeb183d455167"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "401bce6573da4703aa5d1f2b74c1265c42d08410"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "5cc9ec2a8614501fde75e20a676c9825395cc153"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "19ae6a51945806e3a8442da7fd72488d23f3183d"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "8d0282570e5535ba40e5c0b173bcd8ff361c88c6"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "59e51322a92eb930731db624823829ca46180ae1"
+    },
+    {
+      "path": "webpack",
+      "type": "dir",
+      "sha": "2be3a372ca1914593651af0535bdfc702d6651f5"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Battle City clone with maps/editor and input settings; README establishes a game application, not reusable engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

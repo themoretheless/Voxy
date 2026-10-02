@@ -1,0 +1,124 @@
+{
+  "repository": "fynv/Three.V8",
+  "repository_id": 476939336,
+  "commit": "5b962e9624be08f8ab65257f32aa270d1a59cec4",
+  "source_url": "https://github.com/fynv/Three.V8/tree/5b962e9624be08f8ab65257f32aa270d1a59cec4",
+  "readme_path": "README.md",
+  "readme_sha256": "63c6c4df093f25612702407ef9036fec69aca4609e14b00003bf80962371b4e6",
+  "entries": [
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "92d96ca3c9b99738c9bbeb03ed66375195726f15"
+    },
+    {
+      "path": "AVChat",
+      "type": "dir",
+      "sha": "86feebf490483a60c3e673c8a525504f8f50555c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "34215ed3b3c4cf37ce7384b7aa86e1550efb1460"
+    },
+    {
+      "path": "LightmapCompressor",
+      "type": "dir",
+      "sha": "d1825ad599cb011e924e5a711343014d982f218f"
+    },
+    {
+      "path": "Lightmapper",
+      "type": "dir",
+      "sha": "8074265f9d085eb89d11c8a6f85fbba8ee4407e3"
+    },
+    {
+      "path": "QBin",
+      "type": "dir",
+      "sha": "6080e7114f928f4fc8943b3e0e39c646699de331"
+    },
+    {
+      "path": "QGameDev",
+      "type": "dir",
+      "sha": "902db3c555e347bf33e35ca5ffe5e6b5ff9fe1b3"
+    },
+    {
+      "path": "QGameDevBuild",
+      "type": "dir",
+      "sha": "7f75b68ba6a8d787956b9912f53e03cfccbc8cd0"
+    },
+    {
+      "path": "QGamePlayer",
+      "type": "dir",
+      "sha": "343386bfa985b0b8bd9871c84db11f03463713eb"
+    },
+    {
+      "path": "QGamePlayerBuild",
+      "type": "dir",
+      "sha": "7f75b68ba6a8d787956b9912f53e03cfccbc8cd0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "08a72b60bef6621029fb3f37d7d3770fe24de05e"
+    },
+    {
+      "path": "Test.Cpp",
+      "type": "dir",
+      "sha": "ada04f07feee2b7aff4006a79928a155c52d2803"
+    },
+    {
+      "path": "Test.V8",
+      "type": "dir",
+      "sha": "9ab2f4741602ca4e8c7b353350daedd236f7dcbf"
+    },
+    {
+      "path": "Three.V8.sln",
+      "type": "file",
+      "sha": "e39be3ec8fb5888a5b307f6d14c692a13c01a83b"
+    },
+    {
+      "path": "Three.V8",
+      "type": "dir",
+      "sha": "2a17ee27f3d8db31e4ace85452cc4073bb5f71f6"
+    },
+    {
+      "path": "ThreeEngine",
+      "type": "dir",
+      "sha": "64270b7bc159e8386d19f8fb1cd0ef49010a65be"
+    },
+    {
+      "path": "ThreeMM",
+      "type": "dir",
+      "sha": "caf82849b40fa0543666b6f2ec025f0b9a591f87"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "fc24e7a62dc288c776f8448cd073a01e7721ed32"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "07602f0d697d57332aa88c1e5aa30b66450555e2"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "c8d2fa93125af250455f594beb7ffa9adc7ef8d7"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "d4f1ad8125468dcb95223b4c1bc9bba92600bc68"
+    },
+    {
+      "path": "webgpu",
+      "type": "dir",
+      "sha": "8585df3c96c4d02ba21abbd2f1483bf5d7b1cb8c"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Embeddable C++ 3D rendering engine and V8 bindings; README explicitly presents rendering proof of concept/application framework.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

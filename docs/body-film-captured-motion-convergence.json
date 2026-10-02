@@ -1,0 +1,68 @@
+{
+  "captureSource": "docs/body-film-native-state.json",
+  "cells": 90175,
+  "expectedFinalMassKg": 5.001999999999997e-05,
+  "normalizedVolumeL1VsFinest": [
+    8.36495724827482e-09,
+    3.576747198119869e-09,
+    1.2006859044855693e-09
+  ],
+  "runs": [
+    {
+      "dtSeconds": 0.001,
+      "finalMassKg": 5.0019999999999985e-05,
+      "maxRelativeMassError": 8.131353666567956e-16,
+      "returnedGeometryMaxErrorM": 2.7755575615628914e-17,
+      "steps": 20,
+      "suppliedVolumeM3": 2e-11,
+      "wallSeconds": 0.58478975
+    },
+    {
+      "dtSeconds": 0.0005,
+      "finalMassKg": 5.001999999999996e-05,
+      "maxRelativeMassError": 1.0838986808548658e-15,
+      "returnedGeometryMaxErrorM": 2.7755575615628914e-17,
+      "steps": 40,
+      "suppliedVolumeM3": 2.0000000000000015e-11,
+      "wallSeconds": 1.182637833
+    },
+    {
+      "dtSeconds": 0.00025,
+      "finalMassKg": 5.001999999999998e-05,
+      "maxRelativeMassError": 1.2196542647903058e-15,
+      "returnedGeometryMaxErrorM": 2.7755575615628914e-17,
+      "steps": 80,
+      "suppliedVolumeM3": 2.0000000000000002e-11,
+      "wallSeconds": 2.398351125
+    },
+    {
+      "dtSeconds": 0.000125,
+      "finalMassKg": 5.002e-05,
+      "maxRelativeMassError": 1.3548496478366501e-15,
+      "returnedGeometryMaxErrorM": 2.7755575615628914e-17,
+      "steps": 160,
+      "suppliedVolumeM3": 1.9999999999999966e-11,
+      "wallSeconds": 4.473610875
+    }
+  ],
+  "scope": "Captured full-body substrate, prescribed smooth invertible rotation/stretch cycle, original material/wetting, gravity and metered source. No skeletal animation, self-contact exchange, inertial coupling or physiological calibration.",
+  "simulationSeconds": 0.02,
+  "sourceCell": 75113,
+  "sourceRateM3S": 1e-09,
+  "timeRefinementTrend": true,
+  "captureSha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "sourceSha256": "5dd07cfcb003cff4dcf9f9c0da7c16b936faf0c5ce6b1fbb75b7ff0c9d62efa4",
+  "executableSha256": "8f25fb2dc0d60348bac67a36dbb35d994852161a4915c0d90e02f89884cf6c99",
+  "motion": {
+    "rotationAmplitudeRadians": 0.08,
+    "xStretchAmplitude": 0.03,
+    "cycleSeconds": 0.02,
+    "physicalBodyMotion": false,
+    "description": "Prescribed affine numerical stress cycle; no acceleration force coupling."
+  },
+  "verification": {
+    "releaseBuildPassed": true,
+    "orientationReturnTestPassed": true,
+    "massAndPositivityReplayGatePassed": true
+  }
+}

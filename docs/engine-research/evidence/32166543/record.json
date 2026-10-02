@@ -1,0 +1,254 @@
+{
+  "repository": "mamontov-cpp/saddy-graphics-engine-2d",
+  "repository_id": 32166543,
+  "commit": "5ff798cef291cd4c9d64a0952017b0a4ba5d4282",
+  "source_url": "https://github.com/mamontov-cpp/saddy-graphics-engine-2d/tree/5ff798cef291cd4c9d64a0952017b0a4ba5d4282",
+  "readme_path": "README.md",
+  "readme_sha256": "6792600d3f59c18a4d01d2cd0a7829a4a9d1df3b71bef6c736c9ed35585801c5",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a899b2480e5f1d66df71712670603fea6608b7c5"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "4ddc89921c265e6f2d81f4f557d48e22a6a730b3"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "a84dbab79bd51a137a86fc165c1e153c9b96ae66"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "58a8f4c26a4a4db3b2107235fc02d3f48fd26652"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "3b0b30880d6d744bbb5028ca075dda594e50cba0"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "ad867b17073f942e2133c7458e6c18244756d4e1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a2ee673493e5f469ade0c9803eb283effb60ef77"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "66c193e66fb6b70259d3731482287975ffc40f7f"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "823384293e9516d6d112b259af94a80aae50dbd2"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "0adb6cfb6a2d26eb5eec4b75bb191819ba380fb5"
+    },
+    {
+      "path": "build-all-linux-gcc.sh",
+      "type": "file",
+      "sha": "d7fada5ce3acf69bc4fa23979ceea41e76a557ac"
+    },
+    {
+      "path": "build-all-linux-gcc.sh.template",
+      "type": "file",
+      "sha": "d7fada5ce3acf69bc4fa23979ceea41e76a557ac"
+    },
+    {
+      "path": "build-all-mingw.bat",
+      "type": "file",
+      "sha": "11c95ab9a1977861c2d77351b5103c703da18d72"
+    },
+    {
+      "path": "build-all-mingw.bat.template",
+      "type": "file",
+      "sha": "5b19e7eda055ccbe42a18ac0456d947b0fc7f793"
+    },
+    {
+      "path": "build-all-msvc.bat",
+      "type": "file",
+      "sha": "9d55e7d88e6e10923eceeeea320e08b6027fc040"
+    },
+    {
+      "path": "build-all-msvc.bat.template",
+      "type": "file",
+      "sha": "75d6d56c8899323582f5418a3e9e37cfdecfe59b"
+    },
+    {
+      "path": "build-ifaceed-mingw.bat",
+      "type": "file",
+      "sha": "f9ea1f67aaa3e8278b949786df8d9a3ac56a80ee"
+    },
+    {
+      "path": "build-ifaceed-msvc.bat",
+      "type": "file",
+      "sha": "28f3074e451a9ae52a0df7ff9ae9ac7c4faa9e76"
+    },
+    {
+      "path": "build-travis-ifaceed.sh",
+      "type": "file",
+      "sha": "ace454ffd0b835e2d5efb2553a58845042158f4a"
+    },
+    {
+      "path": "build-travis.sh",
+      "type": "file",
+      "sha": "a2d68ca3c5102988a64e88c489c7f331a0df0fb7"
+    },
+    {
+      "path": "builddocs.bat",
+      "type": "file",
+      "sha": "4c36645a4fe2380009fb5cc00a22c673c0a442d3"
+    },
+    {
+      "path": "builddocs.sh",
+      "type": "file",
+      "sha": "4c36645a4fe2380009fb5cc00a22c673c0a442d3"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "87189be6f828747eaf7cf8079511182e14e12852"
+    },
+    {
+      "path": "configure_builds.rb",
+      "type": "file",
+      "sha": "1f7ae7031015a22bdb8b7d68b117a5a3dcdb3b7e"
+    },
+    {
+      "path": "debug.bat",
+      "type": "file",
+      "sha": "91fe524420f505e937e817585b87cda80b5d2088"
+    },
+    {
+      "path": "debug.sh",
+      "type": "file",
+      "sha": "5a4bad7fe1e8f42158a7be96a1336572c0d6fc69"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6ea6a14efa44f1554c65ddbea9e676197243dcb7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "112e1a8fd0cb79885f0b5408b7c1cf9c8ad7d3dc"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "3e1ec98264db92c1004e3eb3b9e65642518d0062"
+    },
+    {
+      "path": "libsaddy.sln",
+      "type": "file",
+      "sha": "2250aadc8c92b95610c1b5ae91fdab75129ad02f"
+    },
+    {
+      "path": "libsaddy.vcxproj",
+      "type": "file",
+      "sha": "053c96fd9f35cb9baf9d04e13549a054b4143c0c"
+    },
+    {
+      "path": "libsaddy.vcxproj.filters",
+      "type": "file",
+      "sha": "f0e94d9f7ac97ce3ecf594f380e4f138ecaeaeff"
+    },
+    {
+      "path": "libsaddy.vcxproj.user",
+      "type": "file",
+      "sha": "9fcb30cc483812f2422b71de22ea49600a0331c8"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "2db50b0d31b507c3f1bab9c881c32d22f8d7d019"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "1743ff7a5f054af8507364d6eb9255ec819d0968"
+    },
+    {
+      "path": "logo_no_bg.png",
+      "type": "file",
+      "sha": "b6a91b62ad9edb8e14e7437ca9c04aa7a647996b"
+    },
+    {
+      "path": "mascot.png",
+      "type": "file",
+      "sha": "7a2e95dfdd8724abe9560a9c3d6fb8d01c37de8d"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "ee8eb0cf6468e85870d1ad1a2478c41950cb4a98"
+    },
+    {
+      "path": "prepare_build.rb",
+      "type": "file",
+      "sha": "fe535e4cdc900f308ab1a79385ce5d8a30a2b924"
+    },
+    {
+      "path": "profiler_preprocess.py",
+      "type": "file",
+      "sha": "beb70473f4eea02e7360f3e1d114c1c84fd5ec1b"
+    },
+    {
+      "path": "release.bat",
+      "type": "file",
+      "sha": "00ed3f73a773fedc8cfc28d52325931878d790f6"
+    },
+    {
+      "path": "release.sh",
+      "type": "file",
+      "sha": "649781eb9e94e87158c9c7fb329452ce9a10cfdb"
+    },
+    {
+      "path": "run-expand.bat",
+      "type": "file",
+      "sha": "67b00fc6300f0bd7e749b37c1c02477ac7897f33"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "293c2050df32d50e97bd959c223796aa4a6363d0"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "72719dde49dda3acd10f1ce6f86cf4fba96aebee"
+    },
+    {
+      "path": "tests_prepare.bat",
+      "type": "file",
+      "sha": "3719ecd33a3369631cd65010c3f9db898ace8423"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "156f965a14e66613cfdca77bc020f3b4fec28b45"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned README establishes graphics engine with game/physics examples and toolchain goals; deeper source review needed to establish runtime subsystems beyond rendering.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

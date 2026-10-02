@@ -1,0 +1,92 @@
+{
+  "repository": "CommandLineHeroes/hero-engine",
+  "repository_id": 145926863,
+  "commit": "64b3f3f1a093b949d61dab4cc5374f3261b0eae3",
+  "source_url": "https://github.com/CommandLineHeroes/hero-engine/tree/64b3f3f1a093b949d61dab4cc5374f3261b0eae3",
+  "readme_path": "README.md",
+  "readme_sha256": "f630259298d31eec09f354d94fcbc1c48eafa3250085e053e87b88aeec869bdd",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "110099a983a3d3f0516a3c96d166b51cfbdbbd66"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "d838da986569354d0b57beed275cfb4ab7d029f0"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "3039433352915aae87d5f2944031d9b846ead54e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "51b0c57805512aac09dd6057992f693b3e02e095"
+    },
+    {
+      "path": ".lvimrc",
+      "type": "file",
+      "sha": "ef23d4f636256bbdfe613ca6b5847abb60145fb0"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "e3310fa4e60fe38edec52b992df262ccc4b53557"
+    },
+    {
+      "path": ".prettierrc.js",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5e5407ea7a3a3e5e84aa9b81f12065c60519f177"
+    },
+    {
+      "path": "DockerFile",
+      "type": "file",
+      "sha": "dec7993b6f600f2190d8100a7de3f4fd8370e515"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d16bd6265e9a053a077da9d73a10215007365a4b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "84c34439a35a1c98f27039abebe2fb3db7c1c23f"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "01dbfb77c504de9c34261137b93e33473e6f4eb4"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "03404bbd79e9ff4d94a29cf0d5a370b6cce17106"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b62e728ccadb304fcfe3bb24a6fcd166e8626837"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "602470846bc4c33f15e8f7565a4fa5d26bc8eb9c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "be45f72cd70658592bf52dd55b90719f6d852a1b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

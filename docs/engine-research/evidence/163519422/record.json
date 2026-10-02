@@ -1,0 +1,109 @@
+{
+  "repository": "Is-Daouda/is-Engine",
+  "repository_id": 163519422,
+  "commit": "224cc5aa88b4ba2ddc77e2b31fb9b02de8c68199",
+  "source_url": "https://github.com/Is-Daouda/is-Engine/tree/224cc5aa88b4ba2ddc77e2b31fb9b02de8c68199",
+  "readme_path": "README.md",
+  "readme_sha256": "f0885a7a99b22d32d80c8538d9aaa98c5c4bc22abd7ce95739a174c2c1584a74",
+  "entries": [
+    {
+      "path": ".gradle",
+      "type": "dir",
+      "sha": "71f74418908dba73f9b7474283ee17cb64e6885c"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "5e195a1f98bd3faca834f71e8101c1264d841600"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0884cbfa373c51e4ee9dec22eddce65c410dd0ea"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "06d1eb5eef21c5e8fdfa0c91602e9d01e986fc35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "346e03b3d69a207d2cc3c1c51075a1c7f58a97cb"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "e58c307bbf882833609491e6daf58cbf0c849ac4"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "0097656584118f3d97e522cae3b69febf117072a"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "0870e21223b86d6892c03c854d9593a26836bf4b"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "ce29f58b0cbc29cde188a46ec0920c94c5840f1f"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "cccdd3d517fc5249beaefa600691cf150f2fa3e6"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f9553162f122c71b34635112e717c3e733b5b212"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "3659d522c811f89a1182018ab66f4e523ef7f4d5"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "f7b3983062fda5326acf2dc637619451fde4d3cd"
+    },
+    {
+      "path": "local.properties",
+      "type": "file",
+      "sha": "cf7c2a44aa88050ce12cb62f9b204c89dda93875"
+    },
+    {
+      "path": "open_codeblocks.bat",
+      "type": "file",
+      "sha": "07b47f7a2c80fd671c95c51cc28d764624987532"
+    },
+    {
+      "path": "open_codeblocks_sdl.bat",
+      "type": "file",
+      "sha": "00e5fd1f004bd9c48ece5e0072439cef1582d81f"
+    },
+    {
+      "path": "open_qt_creator.bat",
+      "type": "file",
+      "sha": "d591a2eb7a002fd2539ce9f5086a49d47ce68793"
+    },
+    {
+      "path": "open_vscode.bat",
+      "type": "file",
+      "sha": "817a8da777dc99748577541ac62a9f2139972d3e"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "e7b4def49cb53d9aa04228dd3edb14c9e635e003"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies native cross-platform framework over graphics/input backends; app/libs/platform builds, complete engine count separated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

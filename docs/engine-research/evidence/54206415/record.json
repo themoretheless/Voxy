@@ -1,0 +1,74 @@
+{
+  "repository": "avgjs/avg-core",
+  "repository_id": 54206415,
+  "commit": "2d5f5dd6d7b679e31ef79833eac79217a15c4ac2",
+  "source_url": "https://github.com/avgjs/avg-core/tree/2d5f5dd6d7b679e31ef79833eac79217a15c4ac2",
+  "readme_path": "Readme.md",
+  "readme_sha256": "cd888352b822ba991f062c6ae1d3f773be30dd3afb1b2d95eeeeb8ae5bf97839",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "4416bce8388bfa3f7da6db47c8c8e1474e707dc3"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "3239e75f4b29f3eb3d9179ebc9eb859264a388f8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9b90aed7df25fe13dc44d1b8c46ffab41459a760"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "72615c58a18377d7116eddcd926beaa70530873d"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "48d49423d5f4d3d0a5513541b470130c4a44ea82"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "90de1d03bc4f3f6922c3548b7f374d9facc9d4d4"
+    },
+    {
+      "path": "esdoc.json",
+      "type": "file",
+      "sha": "8826b4a49b9de8de95a85c1d809b81a36926f93a"
+    },
+    {
+      "path": "markdown",
+      "type": "dir",
+      "sha": "8bb65ca8a05f46cdbd498011bd671c0d4bc17e02"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "848cf8b8e0d61dbd58b8cab6002bb7436a0610a5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0403d19f9f7dcc0d92a56cc81843f01b6ecb2466"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "c122c556c5b20e94444cb1f1da7d74dedb72730d"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "262eedce7e4d83f0e56cae19489c39f71c1a821f"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies adventure development framework on React/Pixi; src and npm/webpack build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

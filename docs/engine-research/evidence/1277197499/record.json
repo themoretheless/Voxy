@@ -1,0 +1,112 @@
+{
+  "repository": "carbonengine/trinity",
+  "repository_id": 1277197499,
+  "commit": "35392b84fbb13bcfb36052f5e5341759679ec270",
+  "source_url": "https://github.com/carbonengine/trinity/tree/35392b84fbb13bcfb36052f5e5341759679ec270",
+  "readme_path": "README.md",
+  "readme_sha256": "32ea146ecf2dc5152c25941d03eb9a827101f775db2e9ad39bbba2d747814a2d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "db9ae9ed3a96b730d4eea7188d858a128595afaf"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "ea9f4e7eff337268b42264d1dfd14c40b3eedc83"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "aee182e308c78cfcd7473530e3a25004549e107b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ed02eaa46eabdd0371dc455e12563b1f6dc4e4c1"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "37da9272e4a0d56c62e3b76835af284aa69bfc65"
+    },
+    {
+      "path": ".teamcity",
+      "type": "dir",
+      "sha": "29b9c86936adb95376122ecde52bfc22c4a4b9de"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fa0d1fc0b40517c17ae99d324b369391900c5b1b"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "e69aa287c402016cc632ed646506c1f72a3a41eb"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0686e2d0b88dbbc3d5805015da4c8f2a360f2ba0"
+    },
+    {
+      "path": "NOTICE.md",
+      "type": "file",
+      "sha": "3d4b1fcd874b37993c85f240899e709c3b6edd82"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "09af3c32a29e0db700de713af8e93ad072db2f32"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d45088f265e362123993104acb0ac5e74093eeb4"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "05877c7317a42fd8418877b23e6a6d39e7592211"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "c6ec5cd6fd309c144d9319eec9e632d6cfcefd81"
+    },
+    {
+      "path": "shadercompiler",
+      "type": "dir",
+      "sha": "0eb4bdfa12e8c3f6180810c5682cf9dd7519569b"
+    },
+    {
+      "path": "trinity",
+      "type": "dir",
+      "sha": "30b6ccf5532d31f79899f0ac9da9aca9de03b87d"
+    },
+    {
+      "path": "trinityal",
+      "type": "dir",
+      "sha": "60aa13d9c4da3eba244bb09325d85003fe421f1d"
+    },
+    {
+      "path": "vcpkg-configuration.json",
+      "type": "file",
+      "sha": "99f324bb1c7a3b0df60f93b5e5bfdebd572d3527"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "55756cde4227c8e8f99a64e01cc9c123b9ab8ec7"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "a87dd3b8e6a582d02617e1270dcce4868ddb0983"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

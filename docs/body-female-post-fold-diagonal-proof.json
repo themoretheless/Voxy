@@ -1,0 +1,141 @@
+{
+  "initialCrossings": 23,
+  "finalCrossings": 23,
+  "includesAdjacent": true,
+  "reduceMeasure": true,
+  "qualityAudit": {
+    "floor": 0.05,
+    "initialMinimum": 0.050132027920765036,
+    "finalMinimum": 0.050132027920765036,
+    "initialBelowFloor": 0,
+    "finalBelowFloor": 0,
+    "verified": true
+  },
+  "initialMeasureM": 0.0052527123375693974,
+  "finalMeasureM": 0.0052527123375693974,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48801,
+        48848
+      ],
+      [
+        48801,
+        48843
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33067,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554579,
+      "forbidden_pairs": [
+        [
+          47084,
+          49012
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "steps": [],
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5671236016471968,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "verticesMoved": false,
+  "scope": "Static candidate audit; new triangulation requires anatomical review and is not runtime geometry.",
+  "elapsedSeconds": 29.07389400000102,
+  "source": "assets/characters/blender-female/prepared/body-local-fold-100-continued-candidate.obj",
+  "sourceSha256": "7147e37be3d2f2c1829df4858dfc93d253adf9134585b0d478bd8d684e4fa843",
+  "candidateSha256": "7147e37be3d2f2c1829df4858dfc93d253adf9134585b0d478bd8d684e4fa843",
+  "exportReloadVerified": true,
+  "adopted": false
+}

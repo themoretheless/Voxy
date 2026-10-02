@@ -1,0 +1,122 @@
+{
+  "repository": "xajik/thedeck",
+  "repository_id": 926863501,
+  "commit": "06d6f302dca2c65d5075fda709009e44ed278432",
+  "source_url": "https://github.com/xajik/thedeck/tree/06d6f302dca2c65d5075fda709009e44ed278432",
+  "readme_path": "README.md",
+  "readme_sha256": "f7b609463d19efc0b82e283ac847c3b13ac31bd0cb986cc81a3aa4c7074a4ba5",
+  "entries": [
+    {
+      "path": ".fvmrc",
+      "type": "file",
+      "sha": "df27a83aa17cd5d4d6bb303e819e3a6f9080d0ea"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "63bcf18bbe9ab2f3e690898a58f49130c4931252"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "4d6b63f5ed16221874914dcd19d83233a9e18b2d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "72f6f4918c1e45d19540f4bcd13c673980195fc9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b505529f601d52989fed38b74d2b8ae8588353f"
+    },
+    {
+      "path": "analysis_options.yaml",
+      "type": "file",
+      "sha": "61b6c4de17c96863d24279f06b85e01b6ebbdb34"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "45bf8c0f5b4842300face21f2f1e53fbd6251545"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "a09e0027b324a96d6b4d0ac77f346b43dcdcb838"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "cacbc63e85539cd2c14a3f86ce60ccc2a5f972c1"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "8db4619b8778d51ddb1fe9b6bede582e41590700"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "2ad021a3c0716a486c39f66d075a02325e9e19a4"
+    },
+    {
+      "path": "l10n.yaml",
+      "type": "file",
+      "sha": "4e6692e551617c40eb85069b2d9104b94daded6f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "fcce0886f01a2cafa6e6105f236d7d96f8034016"
+    },
+    {
+      "path": "privacy.html",
+      "type": "file",
+      "sha": "d67fef4c751dc15e1b99b31e000494e04d6254af"
+    },
+    {
+      "path": "pubspec.lock",
+      "type": "file",
+      "sha": "10208c6a5e58165507abc185d90d1ed1ade84e5e"
+    },
+    {
+      "path": "pubspec.yaml",
+      "type": "file",
+      "sha": "9a2ef9e279ac386ca80eca2fedb30d303f05f491"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "97429dafb95c5ca74fe69f8de0202651a4bf0c29"
+    },
+    {
+      "path": "thedeck_client",
+      "type": "dir",
+      "sha": "b3f58dd198ed87f413c425663f281de4a4827130"
+    },
+    {
+      "path": "thedeck_client_mock",
+      "type": "dir",
+      "sha": "a8d0305876d279f2b746d8896a55a55ccd8b77d8"
+    },
+    {
+      "path": "thedeck_common",
+      "type": "dir",
+      "sha": "5cad238a70d1480e00e61afc02da9bec41300252"
+    },
+    {
+      "path": "thedeck_server",
+      "type": "dir",
+      "sha": "41273b601eb501b6c602b109f54828568ee5e86c"
+    },
+    {
+      "path": "thedeck_server_app",
+      "type": "dir",
+      "sha": "d446ec3fcb1136b776b076ca0dec7ad3e4c55e9c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

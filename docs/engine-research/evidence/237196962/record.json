@@ -1,0 +1,79 @@
+{
+  "repository": "Alairion/captal-engine",
+  "repository_id": 237196962,
+  "commit": "fda2d42fca9940d3abb716cfefa9787217d053de",
+  "source_url": "https://github.com/Alairion/captal-engine/tree/fda2d42fca9940d3abb716cfefa9787217d053de",
+  "readme_path": "README.md",
+  "readme_sha256": "625ff62604136a14bf9117760348b3d7567323b05814b5c274f23e905eeaac11",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bf720fed90c5534ee3f937302d0bd91ccd20fd17"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a95f7e9025609d132f8ed961caab345c676f904b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "60edbc6f9868de5bba8c9397162e132eadaee823"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3af1cba8587174f81a8f6d947928c48cd123e025"
+    },
+    {
+      "path": "apyre",
+      "type": "dir",
+      "sha": "2de512e1b0c2fdceceeb1b60f0b731e8c8d13421"
+    },
+    {
+      "path": "captal",
+      "type": "dir",
+      "sha": "255bc665b270f67936847f407b1c8dae8d2a78e7"
+    },
+    {
+      "path": "captal_foundation",
+      "type": "dir",
+      "sha": "58f059e23729bfbe657446bb4030c3196c9fc4b8"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "64555bc0aad1f4f56e0cefd69bed17023e55b41b"
+    },
+    {
+      "path": "doc.txt",
+      "type": "file",
+      "sha": "f37abcb12baadb56e5d7309d61ffcabafd0659ac"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "4a493bbb93805b555c4232ccf85b447ebf15fd31"
+    },
+    {
+      "path": "swell",
+      "type": "dir",
+      "sha": "48b0d4c19f7206ba83e32dffa7face5fba85c7f9"
+    },
+    {
+      "path": "tephra",
+      "type": "dir",
+      "sha": "927504a7cfa78b2e37259053ca476fda2ed660af"
+    },
+    {
+      "path": "todo.txt",
+      "type": "file",
+      "sha": "b39c0051b813d44d0fc6f2ddbcf9461bb8e12834"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ 2D runtime module integrates separate SDL input, PortAudio audio and Vulkan GPU modules; source/build directories present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

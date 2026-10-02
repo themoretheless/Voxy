@@ -1,0 +1,54 @@
+{
+  "repository": "ScrappyCocco/ScrapEngine",
+  "repository_id": 143517977,
+  "commit": "719c7f53795bdc9225669936dae552d1a38cc5b7",
+  "source_url": "https://github.com/ScrappyCocco/ScrapEngine/tree/719c7f53795bdc9225669936dae552d1a38cc5b7",
+  "readme_path": "README.md",
+  "readme_sha256": "a945574d52621abd716d681f51904698dc33356f078c4b223bc3afed9e7575c9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "81feae61b1f6f82c41c736e437b34617926cf075"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8152cb8f2bd5aa37176e92836749acd2f4f74a10"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "699af3c03d9a434d7f047a3c2323e0dd38058d5f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "670a8e21e2e0e1054af2824c90755bd40038084c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "31d956920f245093a17af733d435d04e9bbca462"
+    },
+    {
+      "path": "ScrapEngine",
+      "type": "dir",
+      "sha": "03c6c7a5813f3493cdd4f17dc3527e32f973d54a"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "34b7d044e0317b02104b68c7ea8d82f91ebb5bbe"
+    },
+    {
+      "path": "readme_images",
+      "type": "dir",
+      "sha": "d31f9831b0c8ebaf5db6663e3fc32e94f0b63f95"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Educational Vulkan engine integrates input, rendering, audio and physics; README explicitly documents transform/component bugs and non-production status.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

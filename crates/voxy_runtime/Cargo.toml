@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+voxy_time = { path = "../voxy_time" }
 physics_voxel = { path = "../physics_voxel" }
 voxy_core = { path = "../voxy_core" }
 voxy_lighting = { path = "../voxy_lighting" }

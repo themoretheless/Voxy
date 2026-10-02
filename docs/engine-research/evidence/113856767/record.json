@@ -1,0 +1,159 @@
+{
+  "repository": "halfrost/threes-ai",
+  "repository_id": 113856767,
+  "commit": "e049f3fd4c4402d8d6fe48979098d7685e6b34a8",
+  "source_url": "https://github.com/halfrost/threes-ai/tree/e049f3fd4c4402d8d6fe48979098d7685e6b34a8",
+  "readme_path": "README.md",
+  "readme_sha256": "f57dcea5cdfef18ed08f904b0f0e27377468f3ac5e3c9995614949eea47295ee",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8641b22f4ff5423e14748ea3916e1463dc05da3d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b79794e19dc78f92b4ba6fa33663805d4a46c8ca"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a3e7b0d7d8079eb58048c51e90200e55216efc85"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "e3f76f3405703b451e5ad7f1f881f35d33638d4b"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f363a9e40d63738a4f5089fe92182642f995ab81"
+    },
+    {
+      "path": "Dockerfile_go",
+      "type": "file",
+      "sha": "8692cf2c89e663f647efd9fb026806efbb0a447a"
+    },
+    {
+      "path": "Dockerfile_web",
+      "type": "file",
+      "sha": "74b02d2d33c6c20b5ae89bdf73455e952b955a33"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5f66e55814461d975fa2c0a44ee1d66265699e68"
+    },
+    {
+      "path": "agent",
+      "type": "dir",
+      "sha": "5876ccab42f3fb39813d0f3ea9cb37448e84d22e"
+    },
+    {
+      "path": "ai",
+      "type": "dir",
+      "sha": "e057138884bc8ebb221a84bd83bcc79408a0cbe6"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "c0429692469725e22d0069fafa26f6f50096c8b5"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "460d0639dbe156c91c2ef7815d9fadd47806e481"
+    },
+    {
+      "path": "deploy",
+      "type": "dir",
+      "sha": "ada2d4fb1b8757b501fb5155c757ddfb4cee5df6"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "612bda6b71bfdc9c684c450e976f521d005af52a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f75ec343a8d985d78bf66e0a0bd70eb29e1db569"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "87aa04a5eeae3acef2df4d939f05ffbd0f0acd06"
+    },
+    {
+      "path": "gameboard",
+      "type": "dir",
+      "sha": "b6a0bf8f89c064c37e9e5e1d4383ff2b2fd76021"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "48419601de8210828c4fba1e4a3e9f20c4d3f3af"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "1f9b923e903f772ee2b5add0f6d7f639e9a4e59e"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "e1f2d74e39e4916025328704bf1266a13622e0bd"
+    },
+    {
+      "path": "ntuple",
+      "type": "dir",
+      "sha": "b023627b7f8608a9b0b8fdff052575e56ffb9c55"
+    },
+    {
+      "path": "rl",
+      "type": "dir",
+      "sha": "ecdea80b2b05fd560aaf017a827a249b52981163"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d97835c0f487e43ef3ee89bd5f13ca132d9ede37"
+    },
+    {
+      "path": "threes!",
+      "type": "dir",
+      "sha": "13bef15a4278a45fc99696105293589239831af4"
+    },
+    {
+      "path": "threes.h",
+      "type": "file",
+      "sha": "4a8fce1ec7f1e5d01a9aa4127053148f522f3c4b"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "e8e38e8d58aeb5f78ef3ef57ee95cb6e7b547ec0"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "168233dd9695babc1755ffdc48dbaa8b5b12d17a"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "834e02f98926912c1fa90d08a52715681b471a3e"
+    }
+  ],
+  "classification": "excluded_ml_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "AI agents, automation and a Threes game reproduction; not a reusable graphical game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

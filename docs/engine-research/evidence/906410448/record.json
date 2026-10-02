@@ -1,0 +1,59 @@
+{
+  "repository": "aztecs-hs/aztecs",
+  "repository_id": 906410448,
+  "commit": "2c1e6eeb29ed77e8c0f5cf080cc7a90ffb6a9993",
+  "source_url": "https://github.com/aztecs-hs/aztecs/tree/2c1e6eeb29ed77e8c0f5cf080cc7a90ffb6a9993",
+  "readme_path": "README.md",
+  "readme_sha256": "38a35a5c616832e1f41096eadc4b83852c4f8e931c6dfb73f618deb0e7dc893a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ebcfb8dbcc1e0a0b2b400085c144faed4346e298"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c33954f53a0680596faaeec873991cfed63c7c9d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c976b9b70fb86837a6ec1c36a31aeceac6ca821a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "81d9692e0983dd2d2f0de526e1ba0371bef89561"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fec72ebd1fceeb433d8fa4774c6bba5c4e9f5683"
+    },
+    {
+      "path": "aztecs.cabal",
+      "type": "file",
+      "sha": "a54b2246d7b75c95ebc612d3efcbe166387376de"
+    },
+    {
+      "path": "bench",
+      "type": "dir",
+      "sha": "016fc56e67996e6cf60986568d543efd53cc703a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ad1e3fa5245f1b4a9397aafcc2c6bfdadc13cf41"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "8ee73556e9b90e16f14c68933eaa04e2dde6568a"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "This repository is the core ECS; README places graphics, window and transform support in separate packages.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

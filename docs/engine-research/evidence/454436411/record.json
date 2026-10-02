@@ -1,0 +1,149 @@
+{
+  "repository": "CableDorado2/Ikemen-Plus-Ultra",
+  "repository_id": 454436411,
+  "commit": "d3213b6528169f5b8944c7fb06f5f3b64349d78e",
+  "source_url": "https://github.com/CableDorado2/Ikemen-Plus-Ultra/tree/d3213b6528169f5b8944c7fb06f5f3b64349d78e",
+  "readme_path": "README.md",
+  "readme_sha256": "89f8a2c466231ff458f699d9d09d8d7932a68fc45695d46b86bcfaacda040c5c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "966ace43119b501dc0c0f3d0e80224a7b2415c4e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0badb6beda388b828d3d4305a1c78badce9adc56"
+    },
+    {
+      "path": "Ikemen Plus Ultra.exe",
+      "type": "file",
+      "sha": "663389e91b30ae3bffd7e9f580c631ecac762089"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "10978a125e6c605c5c7ccfc19f1afe2baa1b0381"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f6f915d31254a2aa098f9047516834d4a60a93b7"
+    },
+    {
+      "path": "autorun.cmd",
+      "type": "file",
+      "sha": "f94b97de55b72505335e0ac2fc32e65a99cf365c"
+    },
+    {
+      "path": "chars",
+      "type": "dir",
+      "sha": "db456004a8692a4f824caca895f06ca5716396b0"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "645dfa2fe1e7bcb175b3d6bb1491ef7b39cc39b8"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9654d5440b83384f068eafcb67a96f3a94ab24c6"
+    },
+    {
+      "path": "font",
+      "type": "dir",
+      "sha": "4a29ea763796324919c605386b6d219839794b24"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "0b49d3d615c296cce4a7f729629d1092227a6e1d"
+    },
+    {
+      "path": "main.ssz",
+      "type": "file",
+      "sha": "766f29bbe5db061779cf929901fa944a360cb7be"
+    },
+    {
+      "path": "msvcp100.dll",
+      "type": "file",
+      "sha": "e9eae444e163479b930c01cfbfb0e47b57680f69"
+    },
+    {
+      "path": "msvcp120.dll",
+      "type": "file",
+      "sha": "a237d2d77812d406c54d1c7f573045e1b2a4742f"
+    },
+    {
+      "path": "msvcr100.dll",
+      "type": "file",
+      "sha": "fd91c89d8bfb2cdd91b16735d0d31fa000df989b"
+    },
+    {
+      "path": "msvcr120.dll",
+      "type": "file",
+      "sha": "8c36149a65c4f5d633107a2bc613d33d23e89edb"
+    },
+    {
+      "path": "replays",
+      "type": "dir",
+      "sha": "a6f1cbff9e484c108215ea9f65ea3918bbc4dee3"
+    },
+    {
+      "path": "save",
+      "type": "dir",
+      "sha": "2fa3bfd2a577933d1c2f39ab87eb3d1f706c6430"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "38115e8c93e25c51f8067135fab5ad21c895077e"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "eca5ec1a7f563dd2401fb3af0f2aa593770c6955"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "e18ad74c8d19e37cda8985d12f35ca272c4391ee"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5a88a3b7f11148c68768f2204defcb42c5bd8a01"
+    },
+    {
+      "path": "ssz",
+      "type": "dir",
+      "sha": "90e12a9c59da3247fe1b85ade315256fed34a3d5"
+    },
+    {
+      "path": "stages",
+      "type": "dir",
+      "sha": "1ef9c8cb281a38025ed205b5073986f56f4d9e25"
+    },
+    {
+      "path": "storyboards",
+      "type": "dir",
+      "sha": "f03c22de2fc863114eddddc58dd26e934ae32799"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "3465457083f58635e3575b852cbd96d9a58f8af3"
+    },
+    {
+      "path": "videos",
+      "type": "dir",
+      "sha": "c11e8b6f7e046836609c46de408d474f1e00bf2b"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Updated classic Ikemen Plus fighting runtime with src and scripting; README explicitly identifies derivation and MUGEN resource support.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,64 @@
+{
+  "repository": "17cupsofcoffee/tetra",
+  "repository_id": 150993369,
+  "commit": "b3ce706f8275609be4f91ddedfa484b657e2ae43",
+  "source_url": "https://github.com/17cupsofcoffee/tetra/tree/b3ce706f8275609be4f91ddedfa484b657e2ae43",
+  "readme_path": "README.md",
+  "readme_sha256": "2c574f3e26e04889218df911f12a94080b1c15454b66914260f0a291179e5ac4",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "80743757fbcc44f3a520890f9c712ffe066c9701"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bdf52f69dc59afc2180cdd89cf731d15ed04a07d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1c62805cd7325701fec64f484cea73f9ca1e0105"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "3fc6b2be819b71dacb132d04ea998e8b8d0e411b"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "c393711676376024ff3902522ac5865b0917e696"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6414de7f4222a11f08b769bcf13ebe65041748af"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7fa09ec128888ab5fea94379f184ad0e0ee1564f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "867197f0c5a15230565ccc5a117b1efaa642c9f6"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fc361e46367c2de72551be16d1c3cabeebf2d71e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "addff75f16f768f3b2a9651db2136ed803e12e89"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Rust 2D framework; src/Cargo build, SDL/OpenGL backend.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

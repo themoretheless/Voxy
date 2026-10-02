@@ -1,0 +1,20 @@
+MODEL PUBLISHED frames=0 first_x=0 asset=base
+MODEL PUBLISHED frames=0 first_x=0 asset=lod
+LOD DRAW asset=lod level=Some(0) triangles=512 viewport=[1280, 960]
+MODEL PUBLISHED frames=0 first_x=0 asset=base
+MODEL PUBLISHED frames=0 first_x=0 asset=lod
+LOD DRAW asset=lod level=Some(0) triangles=512 viewport=[1280, 960]
+EDITOR PRESENT frames=0 draws=5 outcome=SkippedOccluded positions=[Ok(Vec4(-1.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]
+EDITOR KEY frames=0 key=Escape
+EDITOR PRESENT frames=0 draws=5 outcome=SkippedOccluded positions=[Ok(Vec4(-1.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]
+EDITOR PRESENT frames=0 draws=5 outcome=Presented positions=[Ok(Vec4(-1.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]
+EDITOR KEY frames=5736 key=F9
+LOD DRAW asset=lod level=Some(1) triangles=256 viewport=[1280, 960]
+EDITOR PRESENT frames=5736 draws=5 outcome=SkippedOccluded positions=[Ok(Vec4(-1.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]
+EDITOR KEY frames=5736 key=F9
+LOD DRAW asset=lod level=Some(1) triangles=256 viewport=[1280, 960]
+EDITOR PRESENT frames=5736 draws=5 outcome=SkippedOccluded positions=[Ok(Vec4(-1.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]
+EDITOR PRESENT frames=5736 draws=5 outcome=Presented positions=[Ok(Vec4(-1.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.2, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]
+MODEL FAILED frames=12384 last_good=true
+MODEL PUBLISHED frames=32605 first_x=0 asset=lod
+LOD DRAW asset=lod level=Some(1) triangles=256 viewport=[4112, 2516]

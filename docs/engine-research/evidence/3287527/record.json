@@ -1,0 +1,109 @@
+{
+  "repository": "IceCreamYou/HTML5-Canvas-Game-Boilerplate",
+  "repository_id": 3287527,
+  "commit": "dd457104178e8e21a8154d4d6152aaacd9aa6684",
+  "source_url": "https://github.com/IceCreamYou/HTML5-Canvas-Game-Boilerplate/tree/dd457104178e8e21a8154d4d6152aaacd9aa6684",
+  "readme_path": "README.md",
+  "readme_sha256": "f2d58b3aa8cb5dccd979bc34f699d703764e3a630ec0a5b04629d3132849543e",
+  "entries": [
+    {
+      "path": ".caching.htaccess",
+      "type": "file",
+      "sha": "7bb94e812d6feb953810731f9bff927e178de436"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b512c09d476623ff4bf8d0d63c29b784925dbdf8"
+    },
+    {
+      "path": ".htaccess",
+      "type": "file",
+      "sha": "b525b0c98a5b698a9e8b2320673e90c7d37a9208"
+    },
+    {
+      "path": ".jscs.json",
+      "type": "file",
+      "sha": "931f70b0b0d905ac7fe2d79b100aed4629582baf"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f2625901c66730cc9fc147355ca90e9608772204"
+    },
+    {
+      "path": "Gruntfile.js",
+      "type": "file",
+      "sha": "f80f2efd91bc4fb3e5a47cef611a729317ea6b8d"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "85b28c0f015f0878792b3283d0a2409134d588fd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e0cc6db1a46f9a0015c4a88fb84e4688b21af0a2"
+    },
+    {
+      "path": "apple-touch-icon.png",
+      "type": "file",
+      "sha": "25c8647740207a6e30367e0432226b7300261b79"
+    },
+    {
+      "path": "css",
+      "type": "dir",
+      "sha": "3df439db887f3e8657730384bf09e8b68e28b645"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4d5a17b0f662463103ec458348568fc5144e3605"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "92bf2f183139a6f388a46d9c85b07697f55aade6"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "a10bebee13d1335e7ef679b615af3ba91f548b69"
+    },
+    {
+      "path": "guides",
+      "type": "dir",
+      "sha": "580e38dc253876d267b9f84ad1388dd8d6cde308"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "8df9b0ca0c463139e26ca7afb4e9ce584fa418d4"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "fc6a223fa3c92baa0748bdbd882605184fce0aa9"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "17c50c10525be7f432f0f1d6a81c95dac64b35d0"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "e448c1c1e97e689e36922ebbd021f5453f1e01c4"
+    },
+    {
+      "path": "robots.txt",
+      "type": "file",
+      "sha": "9e9af339a19a69a35cdf3a152a89833ddf3ba9f9"
+    }
+  ],
+  "classification": "excluded_game_template",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly says not a game engine; HTML/JS boilerplate and examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,22 @@
+// !$*UTF8*$!
+{
+ archiveVersion = 1; classes = {}; objectVersion = 56;
+ objects = {
+ A00000000000000000000001 = { isa = PBXProject; buildConfigurationList = A00000000000000000000010; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; knownRegions = (en, Base); mainGroup = A00000000000000000000002; productRefGroup = A00000000000000000000003; projectDirPath = ""; projectRoot = ""; targets = (A00000000000000000000004); };
+ A00000000000000000000002 = { isa = PBXGroup; children = (A00000000000000000000005, A00000000000000000000016, A00000000000000000000003); sourceTree = "<group>"; };
+ A00000000000000000000003 = { isa = PBXGroup; children = (A00000000000000000000006); name = Products; sourceTree = "<group>"; };
+ A00000000000000000000004 = { isa = PBXNativeTarget; buildConfigurationList = A00000000000000000000011; buildPhases = (A00000000000000000000007, A00000000000000000000008); buildRules = (); dependencies = (); name = Voxy; productName = Voxy; productReference = A00000000000000000000006; productType = "com.apple.product-type.application"; };
+ A00000000000000000000005 = { isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+ A00000000000000000000006 = { isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Voxy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ A00000000000000000000007 = { isa = PBXShellScriptBuildPhase; alwaysOutOfDate = 1; buildActionMask = 2147483647; files = (); inputPaths = (); outputPaths = ("$(BUILT_PRODUCTS_DIR)/libvoxy_mobile.a"); runOnlyForDeploymentPostprocessing = 0; shellPath = /bin/sh; shellScript = "sh \"$PROJECT_DIR/build-rust.sh\"\n"; name = "Build Rust engine"; };
+ A00000000000000000000008 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A00000000000000000000009); runOnlyForDeploymentPostprocessing = 0; };
+ A00000000000000000000009 = { isa = PBXBuildFile; fileRef = A00000000000000000000005; };
+ A00000000000000000000010 = { isa = XCConfigurationList; buildConfigurations = (A00000000000000000000012, A00000000000000000000013); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+ A00000000000000000000011 = { isa = XCConfigurationList; buildConfigurations = (A00000000000000000000014, A00000000000000000000015); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+ A00000000000000000000012 = { isa = XCBuildConfiguration; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 15.0; }; name = Debug; };
+ A00000000000000000000013 = { isa = XCBuildConfiguration; buildSettings = { SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 15.0; }; name = Release; };
+ A00000000000000000000014 = { isa = XCBuildConfiguration; baseConfigurationReference = A00000000000000000000016; buildSettings = { GCC_OPTIMIZATION_LEVEL = 0; }; name = Debug; };
+ A00000000000000000000015 = { isa = XCBuildConfiguration; baseConfigurationReference = A00000000000000000000016; buildSettings = {}; name = Release; };
+ A00000000000000000000016 = { isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Voxy.xcconfig; sourceTree = "<group>"; };
+ }; rootObject = A00000000000000000000001;
+}

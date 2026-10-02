@@ -87,16 +87,39 @@ pub fn step_projectile(
     dt: f64,
     config: ProjectileConfig,
 ) -> Result<ProjectileOutcome, ProjectileError> {
+    let velocity = std::array::from_fn(|axis| state.velocity[axis] + config.gravity[axis] * dt);
+    let displacement = velocity.map(|value| value * dt);
+    step_projectile_with_motion(view, state, dt, config, velocity, displacement)
+}
+
+/// Sweeps externally integrated motion through the authoritative voxel view.
+/// The caller supplies semi-implicit Euler motion in f64; anchored coordinates
+/// remain on the CPU. Hits and unavailable/budget outcomes preserve state.
+/// # Errors
+/// Rejects invalid state or nonfinite motion before querying the world.
+pub fn step_projectile_with_motion(
+    view: &impl VoxelView,
+    state: &mut ProjectileState,
+    dt: f64,
+    config: ProjectileConfig,
+    next_velocity: [f64; 3],
+    displacement: [f64; 3],
+) -> Result<ProjectileOutcome, ProjectileError> {
     validate(state, dt, config)?;
     let next_age = state.age + dt;
     if next_age > config.max_lifetime {
         state.age = next_age;
         return Ok(ProjectileOutcome::Expired);
     }
-    let next_velocity =
-        std::array::from_fn(|axis| state.velocity[axis] + config.gravity[axis] * dt);
-    let displacement = next_velocity.map(|velocity| velocity * dt);
     let distance = squared_length(displacement).sqrt();
+    if next_velocity
+        .iter()
+        .chain(&displacement)
+        .any(|value| !value.is_finite())
+        || !distance.is_finite()
+    {
+        return Err(ProjectileError::InvalidState);
+    }
     if distance <= f64::EPSILON {
         state.velocity = next_velocity;
         state.age = next_age;
@@ -125,6 +148,30 @@ pub fn step_projectile(
         }
         RaycastResult::StepBudgetExhausted => Ok(ProjectileOutcome::StepBudgetExhausted),
     }
+}
+
+/// Samples gravity at the projectile's anchored position, then performs its bounded sweep.
+/// `config.gravity` is replaced by the sampled field acceleration.
+/// # Errors
+/// Field errors and the original projectile validation/raycast errors do not advance state.
+pub fn step_projectile_in_field(
+    view: &impl VoxelView,
+    state: &mut ProjectileState,
+    dt: f64,
+    mut config: ProjectileConfig,
+    field: &impl physics::gravity_field::GravityField,
+) -> Result<ProjectileOutcome, ProjectileError> {
+    config.gravity = field
+        .acceleration(
+            physics::Origin {
+                x: state.position.voxel.x,
+                y: state.position.voxel.y,
+                z: state.position.voxel.z,
+            },
+            state.position.offset,
+        )
+        .map_err(ProjectileError::Gravity)?;
+    step_projectile(view, state, dt, config)
 }
 
 /// Converts a projectile impact into the same revision-checked atomic transaction used by other
@@ -207,6 +254,7 @@ fn squared_length(vector: [f64; 3]) -> f64 {
 
 #[derive(Debug)]
 pub enum ProjectileError {
+    Gravity(physics::gravity::Error),
     InvalidOrigin,
     InvalidLaunch,
     InvalidState,
@@ -260,6 +308,45 @@ mod tests {
         }
     }
 
+    #[test]
+    fn sampled_uniform_field_matches_legacy_and_radial_source_curves_flight() {
+        use physics::gravity_field::{NewtonianField, Source};
+        let view = TestView::default();
+        let mut legacy = spawn_projectile(origin(), [1.0, 0.0, 0.0], 1.0).unwrap();
+        let mut sampled = legacy;
+        let config = ProjectileConfig::default();
+        for _ in 0..10 {
+            assert_eq!(
+                step_projectile(&view, &mut legacy, 0.01, config).unwrap(),
+                step_projectile_in_field(&view, &mut sampled, 0.01, config, &config.gravity)
+                    .unwrap()
+            );
+            assert_eq!(legacy, sampled);
+        }
+        let sources = [Source {
+            anchor: physics::Origin { x: 0, y: 3, z: 0 },
+            position: [0.5; 3],
+            mass: 9.0,
+            radius: 1.0,
+        }];
+        let field = NewtonianField {
+            gravity: physics::gravity::Gravity {
+                constant: 1.0,
+                ..Default::default()
+            },
+            sources: &sources,
+        };
+        let mut radial = spawn_projectile(origin(), [1.0, 0.0, 0.0], 1.0).unwrap();
+        step_projectile_in_field(&view, &mut radial, 0.1, config, &field).unwrap();
+        assert!(radial.velocity[1] > 0.0);
+        let before = radial;
+        assert!(
+            step_projectile_in_field(&view, &mut radial, 0.1, config, &[f64::NAN, 0.0, 0.0])
+                .is_err()
+        );
+        assert_eq!(radial, before);
+    }
+
     fn solid() -> BlockStateId {
         let definition = |name: &str, render, occlusion, collision| BlockDef {
             key: ResourceKey::parse(format!("voxy:{name}")).unwrap(),
@@ -306,6 +393,75 @@ mod tests {
         assert!((projectile.position.offset[0] - 0.5).abs() < 1.0e-12);
         assert_eq!(projectile.position.voxel.x, 1);
         assert!((projectile.velocity[1] + 2.4).abs() < 1.0e-12);
+    }
+
+    #[test]
+    fn external_motion_preserves_far_world_anchor_and_sweep_atomicity() {
+        let anchor = VoxelPos {
+            x: 9_007_199_254_740_993,
+            y: 0,
+            z: 0,
+        };
+        let mut state = spawn_projectile(
+            RayOrigin {
+                voxel: anchor,
+                offset: [0.5; 3],
+            },
+            [1.0, 0.0, 0.0],
+            40.0,
+        )
+        .unwrap();
+        let before = state;
+        let config = ProjectileConfig {
+            gravity: [0.0; 3],
+            ..ProjectileConfig::default()
+        };
+        let mut view = TestView::default();
+        view.0.insert(
+            VoxelPos {
+                x: anchor.x + 3,
+                ..anchor
+            },
+            solid(),
+        );
+        let outcome = step_projectile_with_motion(
+            &view,
+            &mut state,
+            0.1,
+            config,
+            [40.0, 0.0, 0.0],
+            [4.0, 0.0, 0.0],
+        )
+        .unwrap();
+        assert!(matches!(outcome, ProjectileOutcome::Impact(hit) if hit.pos.x == anchor.x + 3));
+        assert_eq!(state, before);
+        assert!(
+            step_projectile_with_motion(
+                &view,
+                &mut state,
+                0.1,
+                config,
+                [f64::INFINITY; 3],
+                [0.0; 3]
+            )
+            .is_err()
+        );
+        assert_eq!(state, before);
+        view.0.clear();
+        assert_eq!(
+            step_projectile_with_motion(
+                &view,
+                &mut state,
+                0.1,
+                config,
+                [40.0, 0.0, 0.0],
+                [4.0, 0.0, 0.0]
+            )
+            .unwrap(),
+            ProjectileOutcome::Flying
+        );
+        assert_eq!(state.position.voxel.x, anchor.x + 4);
+        assert_eq!(state.position.offset, [0.5; 3]);
     }
 
     #[test]

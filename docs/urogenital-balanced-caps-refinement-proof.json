@@ -1,0 +1,59 @@
+{
+  "scope": "Synthetic specimens; fixed 16 sectors, 24 axial segments, 20 Pa, averaged virtual caps, surface-only contact. All cycles completed. Static audits of rest/loaded/released had no findings. Local peak convergence not established.",
+  "results": [
+    {
+      "specimen": "urethra",
+      "radial": 1,
+      "mean_von_mises_pa": 20.275733093780055,
+      "peak_von_mises_pa": 75.12581403773,
+      "lumen_change_pct": -6.501694525513823,
+      "min_j": 0.977052551549,
+      "stress_sha256": "404e6c1a577f8dfdc7b67c948ce748e85410fca6ee9d9a906609d942b55a41c2"
+    },
+    {
+      "specimen": "vagina",
+      "radial": 1,
+      "mean_von_mises_pa": 50.42481906295664,
+      "peak_von_mises_pa": 199.5962406716,
+      "lumen_change_pct": -23.37355686899446,
+      "min_j": 0.930522573133,
+      "stress_sha256": "458107da284e16ea70bf7bdd178d6f28926d338e83e596de6400c56bccceac23"
+    },
+    {
+      "specimen": "urethra",
+      "radial": 2,
+      "mean_von_mises_pa": 21.085568979385403,
+      "peak_von_mises_pa": 88.2493043378,
+      "lumen_change_pct": -6.874899493392017,
+      "min_j": 0.9740394130758,
+      "stress_sha256": "2498a0e44661ba93783f3914126789e96841eef3e492fc7ea4f50a05484a52c0"
+    },
+    {
+      "specimen": "vagina",
+      "radial": 2,
+      "mean_von_mises_pa": 50.71796576394135,
+      "peak_von_mises_pa": 253.2806454769,
+      "lumen_change_pct": -23.115603132288122,
+      "min_j": 0.9277870969822,
+      "stress_sha256": "825bc7468e6c56a5ad1603ddddf7b1798f52a94ec2a749a320a6732c702d573b"
+    },
+    {
+      "specimen": "urethra",
+      "radial": 3,
+      "mean_von_mises_pa": 21.267249716435217,
+      "peak_von_mises_pa": 101.5618369883,
+      "lumen_change_pct": -6.9491826420525316,
+      "min_j": 0.9729722369569,
+      "stress_sha256": "8ba46beaa2d66fdb65de18578d025efd8c673e4b246fdf6a74208f49cf2e38fb"
+    },
+    {
+      "specimen": "vagina",
+      "radial": 3,
+      "mean_von_mises_pa": 50.748216524682206,
+      "peak_von_mises_pa": 274.705789609,
+      "lumen_change_pct": -23.05435587655277,
+      "min_j": 0.926842414645,
+      "stress_sha256": "2d7be8496fe8a1c254c0583b0aa70dc706ed73b8d5cd83de4da63d2cc8a81106"
+    }
+  ]
+}

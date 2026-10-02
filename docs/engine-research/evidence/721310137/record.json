@@ -1,0 +1,94 @@
+{
+  "repository": "EldarMuradau/EraEngine",
+  "repository_id": 721310137,
+  "commit": "f0677afbcdfeac38b055fe6ad16fe89edec19d16",
+  "source_url": "https://github.com/EldarMuradau/EraEngine/tree/f0677afbcdfeac38b055fe6ad16fe89edec19d16",
+  "readme_path": "README.md",
+  "readme_sha256": "1113042115bfe38c2230469b7a3805680e8a7820f7a5a0d7e19f525c54be5ea9",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7214cf2724e55c1f0e577c8af00a4017a0615018"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d066ee19d616b69486af8a27891da7b033bb31a4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9d38a7e51729318e281fc6cea16de64380285e76"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4573b06a54ee60d1d3311ec7241968fe5e8a71d9"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7b70eaf4425832362f190caec6cf710d48c0e9d6"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "5a1cfae86d423e6efbdb48cefeaf5eaa0a5a1531"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "416b0166b8cde450bb0f361f778af05ce04a0d04"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "41a68300ff5945b97dd6bd35487e825777aeff90"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "89409d9459d6feb21cae7bdf23a581078e1e9ee0"
+    },
+    {
+      "path": "generate_project_vs2022.bat",
+      "type": "file",
+      "sha": "04d55f51c3a835ca5c6bfdfe219f2770b9d73dd5"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "241ee0ee80cc7559e50397c7ed72e8f9732ac473"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "766f74877064744f736bdbc014538d16b502c5ae"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "dc3e50f8e2bf459564aa7d38b0b4b9f4a8fc3bcf"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "4cb1379379a8bf60f93a515d8cd73afd8ef19038"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies modular native 3D engine; owned modules/apps/tools and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,16 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 03s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-4fa6146194d1cb03)
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+MODEL PUBLISHED frames=0 first_x=-0.5 asset=quad.obj
+audio reload tone.wav: audio error: InvalidFormat
+audio reload tone.wav: expected value at line 1 column 1
+audio reload tone.wav: Read("No such file or directory (os error 2)")
+EDITOR AUDIO WATCH PASS: invalid WAV/settings and deletion retained publication/PCM; repairs replaced revision
+EDITOR PLAY AUDIO DEVICE PASS supplied=800 errors=0
+test tests::play_imports_scene_audio_advances_pcm_and_stop_releases_session ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 38 filtered out; finished in 59.89s
+

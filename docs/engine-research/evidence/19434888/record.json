@@ -1,0 +1,64 @@
+{
+  "repository": "mortennobel/kick",
+  "repository_id": 19434888,
+  "commit": "d32aa66ee81131464f0c09f6badb082dbe5ef92d",
+  "source_url": "https://github.com/mortennobel/kick/tree/d32aa66ee81131464f0c09f6badb082dbe5ef92d",
+  "readme_path": "README.md",
+  "readme_sha256": "2565b374967d9bd2e9d452aac32a536622a758ddf5bc3dcaa8026fb8bb57b851",
+  "entries": [
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8145cb2046c40c4c91a0969a351abedfb52605a2"
+    },
+    {
+      "path": "Makefile.js",
+      "type": "file",
+      "sha": "9ae653e3f3fc3fa334c9cd78682e794276dfbd54"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e1b64747a1e0a7f3c78834cc2a901186b02851bf"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "108af986735017baf74641b301f848137f17ee30"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "03587a5a9af74856bfde5d2eb88e8bfbfa01029e"
+    },
+    {
+      "path": "emmake.js",
+      "type": "file",
+      "sha": "db26d0af5d0983b57be944f1fb19b97c1a15a27d"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "69d62946b2bd13ef2fb4c9d5ba3b6f6031f5cf99"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "3815d9a94586354e1ba974caa2cfeb20b2be4bb0"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "47d09c9dd630f41c5fcf1fb013206829e8033134"
+    },
+    {
+      "path": "unittest",
+      "type": "dir",
+      "sha": "8b0019d04f34687768221fe847099feae9a92a82"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ Engine/main-loop API with scene/game objects/transforms/cameras and platform sources/tests; unmaintained, successor is separate renderer.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

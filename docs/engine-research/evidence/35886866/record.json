@@ -1,0 +1,124 @@
+{
+  "repository": "LuminoEngine/Lumino",
+  "repository_id": 35886866,
+  "commit": "905c7a14798d04107dd33c2fbc1bb20f77a9d808",
+  "source_url": "https://github.com/LuminoEngine/Lumino/tree/905c7a14798d04107dd33c2fbc1bb20f77a9d808",
+  "readme_path": "README.md",
+  "readme_sha256": "5ae6fb9dca9090f93c171395937bfdb7a34c20f4bcbb977afa1e34e471205211",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "f76cebcfee063f496b075eb6cf88f165d66e2341"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6dec7a9c9150a0c6926315f5bdcbb3a3eb30ba6a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "70af06d43f24f2829ee65e2200ffa386d1757713"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a0a57f3d70f8caa1ca2ab709323e2ca755240fbe"
+    },
+    {
+      "path": ".textlintrc",
+      "type": "file",
+      "sha": "528879be4ca18094294bcddc7075844f6ae1e087"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "df5f2e6fee777181b02a9fb8cc1331403f4d0617"
+    },
+    {
+      "path": "ImportLumino.cmake",
+      "type": "file",
+      "sha": "70f52135a5ba84450b98357f23fe0f9a1de883ce"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "24101f232c503a52bce68e2eba95bd3be2f4471e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d105329dd3104a5b3f14df4c35f097940be44032"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f8d42cfedc21d47f61092406fb1d99ec940ee973"
+    },
+    {
+      "path": "bootstrap.bat",
+      "type": "file",
+      "sha": "67d208deb8e5d2d1420050676f51a75b32de62f3"
+    },
+    {
+      "path": "build.csproj",
+      "type": "file",
+      "sha": "d72b28791c2a0764b7dd5424c1fb363150e3b8d5"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "fc06537ebc9f93c7b34276a2fcd52afeff83e4eb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5b2ab8e9ee1a6ee59f7b6a951417ea56321b52a4"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fe383ba65ce323fb8285cd5776b8261786b621f5"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "267f10efa74158138bfb133302809d07e78aa428"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "a8e9a39f9a843b6d8677ab2c6948b07d561cf908"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "lumino",
+      "type": "dir",
+      "sha": "81127db8223c6b29fae26fc1e5c8091e53eb6928"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6f94f31a93dc0ff487d9a39807ae790e98bc8ebd"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "1f85b5f294a4933546bfbf57a043b8208214cc12"
+    },
+    {
+      "path": "vcpkg",
+      "type": "file",
+      "sha": "f14984af3738e69f197bf0e647a8dca12de92996"
+    }
+  ],
+  "classification": "application_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies graphics/interactive application library; src/include/tools and CMake build, complete gameplay engine scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

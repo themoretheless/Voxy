@@ -1,0 +1,139 @@
+{
+  "repository": "markusmoenig/Eldiron",
+  "repository_id": 450394616,
+  "commit": "c63225781dbd23c41707dea207e9ee6f021492ec",
+  "source_url": "https://github.com/markusmoenig/Eldiron/tree/c63225781dbd23c41707dea207e9ee6f021492ec",
+  "readme_path": "Readme.md",
+  "readme_sha256": "e0745f38d230b69e404a6919ba496569f5688175197cd8f521825a9f3c347341",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "bd0213a314be9cc5ba3e2238dd71fa0ef99ecb14"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "076911ee275ff95ba99615fe0145aad8984836d8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "87e15453a656f1342f8dccc1ab573776c0598a22"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "1582c1e581f0012b617b81a830d5c563c0fa9d1a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "8559bf9a6bc6f7744e7ef7ba2669ad13dd49fbdb"
+    },
+    {
+      "path": "Changelog.md",
+      "type": "file",
+      "sha": "00e78c145487c9c8d1ba4109db7bea339ea4a405"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "6c1288df195944c451e2f40b11d79a48d884e33a"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "407f471c1c94ab1380166d6b43b36b349ab35b6e"
+    },
+    {
+      "path": "Xcode",
+      "type": "dir",
+      "sha": "1f971a17a80dd9c3ab16241738a482806b00e95f"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "5e435a0f731811e920ee14c002fdf99ec256445a"
+    },
+    {
+      "path": "clients",
+      "type": "dir",
+      "sha": "5b3e96e9660d9c31ee3665e3aabf9f08b5685ff8"
+    },
+    {
+      "path": "concepts",
+      "type": "dir",
+      "sha": "8e140d2f16f6cde3f06db3a4af3f2ce5f51aa132"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "7079bd101a242472ad8b6a5b23b47b80adf196ef"
+    },
+    {
+      "path": "creator",
+      "type": "dir",
+      "sha": "199bc2b63e3ef7e21515d1b0bb2cd626b019373d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "715c4e88762d09bb621830de8004403d6fb1f9a3"
+    },
+    {
+      "path": "editors",
+      "type": "dir",
+      "sha": "31c42fac98c3d9924ba492ae81e31c06e6eaa901"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "f221bb402c33325c1a83c71a931cccbb107712f7"
+    },
+    {
+      "path": "notes",
+      "type": "dir",
+      "sha": "6c46f50feab6e31621dc515a4f11a9c8331260bd"
+    },
+    {
+      "path": "procedural_recipes_concept.md",
+      "type": "file",
+      "sha": "88623429b2be9d68a2fdf19db87de4e547521d1d"
+    },
+    {
+      "path": "run-wasm",
+      "type": "dir",
+      "sha": "7f9177aadb2bf7943d91af774e3eccbee8dbe8d3"
+    },
+    {
+      "path": "scepter.md",
+      "type": "file",
+      "sha": "42707278cddb13008c0306d734e5100d5e2561e2"
+    },
+    {
+      "path": "sponsors",
+      "type": "dir",
+      "sha": "ef205bce105e7a61029d025d356ed5b85f996bd8"
+    },
+    {
+      "path": "starters",
+      "type": "dir",
+      "sha": "b7a61f8457dbb671a25f66368dce4e40ebee2a0b"
+    },
+    {
+      "path": "test_projects",
+      "type": "dir",
+      "sha": "5f0927f265618f0b5f511424156b2a66e323c69a"
+    },
+    {
+      "path": "xtask",
+      "type": "dir",
+      "sha": "3cadf94b8b5828bc610f9f5003b455a082cbd8b6"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies owned rendering/runtime crates and RPG editor; clients/creator/crates with Cargo build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

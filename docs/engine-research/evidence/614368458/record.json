@@ -1,0 +1,109 @@
+{
+  "repository": "GDevelopApp/GDevelop-documentation",
+  "repository_id": 614368458,
+  "commit": "2aa743f3a4d7290396967bd96fb4d33b4d1b5936",
+  "source_url": "https://github.com/GDevelopApp/GDevelop-documentation/tree/2aa743f3a4d7290396967bd96fb4d33b4d1b5936",
+  "readme_path": "README.md",
+  "readme_sha256": "6a8cdd8c7fcdb527fb8a89d14c2b13f2692d0611f64d1511ec5b1f5aea6849d7",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "7ec2e54b904199835fcd2618b6886be847b4b05b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "24ee0c7445846d30c738d68c8ae235068ecbc5d5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "61473a0642ee66545744d444da598464585e6c14"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "30b53ead348efea26aa2519f0d26bf649a5c4106"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "681311eb9cf453d0faddf3aacaec7357e97ba8e9"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "986b900995ef122385cc7260dc0d490d497a61c0"
+    },
+    {
+      "path": "CONTRIBUTE.md",
+      "type": "file",
+      "sha": "5b1c9d83707417bb0c4769cc8e07b6af1ea48b7b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0f1d1906bdee2331d1a01ab6598b5e10b6bdc1d8"
+    },
+    {
+      "path": "SYNTAX.md",
+      "type": "file",
+      "sha": "aa1b7d27e774aeaa12faf4bff2c012178544e3f7"
+    },
+    {
+      "path": "automated_updates_data.json",
+      "type": "file",
+      "sha": "ff7334d68f1a50fcb0b299a668e47f6e6d5a5bed"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "03ab03a4895f1400d48bbddcb18d0b8d888f84d7"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "a3ada2730214165c954d8d18ed4c4a055f3cc139"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "43b340811366475209aaca2c5fbc26eee6745f0d"
+    },
+    {
+      "path": "overrides",
+      "type": "dir",
+      "sha": "cada1e6981825cafb19233680e1602afe225246d"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "f35afa4e0f04f5a4baea17af1e871d47a1fbe92e"
+    },
+    {
+      "path": "reference-docs-template",
+      "type": "dir",
+      "sha": "0598f1c839ba5d771efdf37c332e5e7df70751ba"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "77193fc914ee3be0006677c8856b6b34c4f7c836"
+    },
+    {
+      "path": "uv.lock",
+      "type": "file",
+      "sha": "f9d011870ba56ba2ede70ad39688d0a8da2dd51a"
+    },
+    {
+      "path": "vercel.json",
+      "type": "file",
+      "sha": "1e9c7bc3982bfcf3486b1c13b43c846cdcea5530"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify engine documentation; docs/MkDocs/Python tooling, no engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,179 @@
+{
+  "repository": "jalbam/CrossBrowdy",
+  "repository_id": 186859353,
+  "commit": "39d68cf237d0172f64c19b1f3597ae770de58440",
+  "source_url": "https://github.com/jalbam/CrossBrowdy/tree/39d68cf237d0172f64c19b1f3597ae770de58440",
+  "readme_path": "README.md",
+  "readme_sha256": "7e85d824c614ab7f83ed1d3ac2b74a97266d28573a9cf09a91539f5353b27f86",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7a095c1f6d07829eae66eb017579597a090fc00c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5f1e5f2c792971a07f8eef4ed2e50c2ce8afe683"
+    },
+    {
+      "path": "1_crossbrowdy_copy_to_crossbrowdy.com.bat",
+      "type": "file",
+      "sha": "d3b107a7a69a0ce66bd0c322fa5e4d1eb3029dad"
+    },
+    {
+      "path": "2_crossbrowdy_documentation_generate_and_README.bat",
+      "type": "file",
+      "sha": "23d4cf00f704fb9442e35191f52b9c2b5cc3cecd"
+    },
+    {
+      "path": "3_crossbrowdy_create_zip.bat",
+      "type": "file",
+      "sha": "83379b1a2bc41513c9e8a2ef9e5cb4818b96b22e"
+    },
+    {
+      "path": "4_crossbrowdy_create_zip_dist.bat",
+      "type": "file",
+      "sha": "eac7fe03889eaed22cc2bc54cce5b79eb653039d"
+    },
+    {
+      "path": "5_crossbrowdy_examples_zip.bat",
+      "type": "file",
+      "sha": "a853c990129d101bab87413de8ba3a63fe9f0e9f"
+    },
+    {
+      "path": "6_crossbrowdy_create_web_snaphots_for_sharing.bat",
+      "type": "file",
+      "sha": "862f8d2f1abfd3b5c641596cf2a7c42b724f817c"
+    },
+    {
+      "path": "6_crossbrowdy_make_changes_according_to_current_version.bat",
+      "type": "file",
+      "sha": "fab8a0e50b6204903ad49f721ce80caeec0241f3"
+    },
+    {
+      "path": "7_crossbrowdy_create_web_snaphots_for_sharing.bat",
+      "type": "file",
+      "sha": "862f8d2f1abfd3b5c641596cf2a7c42b724f817c"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "fe4d5d354bef07e26bb412d63cbbfe31cdf5b526"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "756c3b84f783ed6f548edc3dd4257b49ff047152"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8f2ae574dbd33059b4334bc1f2dfefe2fd059fd2"
+    },
+    {
+      "path": "COPYRIGHT",
+      "type": "file",
+      "sha": "fa387e8e6cae2be05d66bb9055055ee6d836a219"
+    },
+    {
+      "path": "CrossBrowdy.zip",
+      "type": "file",
+      "sha": "2c2f13ba4c9c37051eae1fed901cbc40c699b2f4"
+    },
+    {
+      "path": "CrossBrowdy",
+      "type": "dir",
+      "sha": "5367b752589fec57ac09c879359a02bf0720a574"
+    },
+    {
+      "path": "ISSUES.txt",
+      "type": "file",
+      "sha": "aecc42ef5efa358c4aa1bcc9767f8d900949826f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f450f6097b41a1e095dc9da821b8b804f9891b4b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e0e05e9415dd90af2d16044fb518697493db8b1d"
+    },
+    {
+      "path": "README_website",
+      "type": "dir",
+      "sha": "455b0f3e6e487ff7147a65d76f8fa5c6af43135c"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "da5d721378d008cfb280f8bb5197332b1e4ca88f"
+    },
+    {
+      "path": "_scripts",
+      "type": "dir",
+      "sha": "979cc1a5fd19401e7e9bee998879c2c09a325527"
+    },
+    {
+      "path": "bower.json",
+      "type": "file",
+      "sha": "d49c7ec0e57ce5b1321eb12aca053a5e3b3028b3"
+    },
+    {
+      "path": "config.xml",
+      "type": "file",
+      "sha": "f513ddfcda34a789da8ca45af4ce83d8489f00c4"
+    },
+    {
+      "path": "crossbrowdy.com",
+      "type": "dir",
+      "sha": "5e22357aa02567211ca726afaf4bc20cbfe42de9"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "4794204080f79b9e7428cda2792c8544e34e3cf9"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "5b89e81a0e71b778763c7cd854e713a8ff486b7b"
+    },
+    {
+      "path": "documentation_jsdoc_conf.json",
+      "type": "file",
+      "sha": "f9d52bcecf787437c1d1b1796be22f9eb06668d1"
+    },
+    {
+      "path": "documentation_jsdoc_conf_printable.json",
+      "type": "file",
+      "sha": "a30857dee8f13694d39434f4aca664b584c74036"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "63e0a2c26364b7a0559a3fe6e403d07a8a958214"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "5cc13011e9b563422b2b6b0658ec00c7f149093b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "7d55039d308d12bd4382052a9cb4aab02247e147"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "6bce74a1cc48d2171e7ede1153018a86d9eda79c"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Multimedia JavaScript framework for creating engines/games/apps; not itself established as a complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

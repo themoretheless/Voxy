@@ -1,0 +1,87 @@
+{
+  "repository": "joshuajbouw/bevy_tilemap",
+  "repository_id": 309298480,
+  "commit": "474bd2f012075f7eec10579462135c1f0085a0bf",
+  "source_url": "https://github.com/joshuajbouw/bevy_tilemap/tree/474bd2f012075f7eec10579462135c1f0085a0bf",
+  "readme_path": "README.md",
+  "readme_sha256": "820c73aba057be301ca939b90e8eabf10d7ed10e0dc58d8c2aee323546679a39",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b2747b5a925353bc07550b1f22eddcf534f0743b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a4e27a4faf9590ca2d2d62c95713aea377b731de"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "dd4342e0291c540c5bd1f47c6443e8175df59ad2"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "780470afbe9a55fffbce5477105d405366ab551c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "83ae190e6374c12bca17e78d662e4722b5243f12"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "4426f10511fb97ce90ed5926ea63fd2d4035ad58"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "62f17836f2f608c79d2b5172e1e8eb505eefb4ee"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "be179147f5494b4b357930ce83ac786bd63d47b6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1148090db0c8a645d275a99c4f0d5f5e3f0015de"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "dd8fe94e113925c5f033b6933aa79e3d9d775030"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "37584c4a091c59bb7be6d2945618ccb22122e174"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c3a982db075f0bbf3a62e5c452805769d3d1a552"
+    },
+    {
+      "path": "library",
+      "type": "dir",
+      "sha": "5e0d81466359a3de871b01381f02a9cf7ea5e486"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "9e368f947d56fc403a2b425dfa42f113caee8b60"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b3be72a2cdec4223354f35ff80dec1990eb03c67"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

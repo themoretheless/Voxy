@@ -1,0 +1,109 @@
+{
+  "repository": "Pikachuxxxx/Razix",
+  "repository_id": 276377205,
+  "commit": "fd1bb27b0be58ee5e4369a584d3b84f70818a404",
+  "source_url": "https://github.com/Pikachuxxxx/Razix/tree/fd1bb27b0be58ee5e4369a584d3b84f70818a404",
+  "readme_path": "README.md",
+  "readme_sha256": "e95811b84b12f6d547675edfd96444188b1add682ff6bc5242fc1c9a32595e1d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "f450d3d55742e821a481267427ff490b326f1f4e"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "4fc9487f518dd0874d9ff4e53893bea62033d79a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "45abfb37565cdbd6ec89592944bac743dea7ffc5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ed45c5c31a4e0f000f7ca5b4c7e87284fb150028"
+    },
+    {
+      "path": "Branding",
+      "type": "dir",
+      "sha": "37f6862a29ceccd64150fe3a4d34aa5ad385d391"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "840ef947f34ac949efdafadd2992b68d8ec4e612"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "d88016ebbf3bf85019ed7840d95621f18d4b2ad6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Misc",
+      "type": "dir",
+      "sha": "326aebca9f32bedb6b3c003ba35a096c27028c47"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1d2d6f8843c4cc9d6faf2d3b8fece2d168751a99"
+    },
+    {
+      "path": "RZVERSION",
+      "type": "file",
+      "sha": "a8bd9543a64be982b065d50df880bc057e82e012"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "d09e2b0ccd9ae9e659fcf7f9f402fb944ab2a531"
+    },
+    {
+      "path": "Tanu",
+      "type": "dir",
+      "sha": "5cf60fa2b6fb255e88d360d9a4755e06c587a0e5"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "c21611bf0320f440ab3e552eb1685132bb845718"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "ee2c93f68c884f13fb4feac424eed78bd50ad5b0"
+    },
+    {
+      "path": "_codeql_detected_source_root",
+      "type": "symlink",
+      "sha": "945c9b46d684f08ec84cb316e1dc0061e361f794"
+    },
+    {
+      "path": "imgui.ini",
+      "type": "file",
+      "sha": "c0fb8fab7884c29f32ff9631184a840b2fd8d599"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "8a6111b2c40a72bdd5cf372be9fceb55eb06ed1a"
+    },
+    {
+      "path": "rdc_cap_settings_phani.cap",
+      "type": "file",
+      "sha": "5df61dd877680fbf286c87c0c8c34563c4ae1e1d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine built for named game Tanu, explicitly not generic; owned Engine/Tools/Tests and premake build. Performance/platform claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

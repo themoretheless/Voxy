@@ -1,0 +1,77 @@
+{
+  "repository": "googlesamples/google-signin-unity",
+  "repository_id": 106719334,
+  "commit": "588c0637310623d86c55d06f0adc72972b0bac22",
+  "source_url": "https://github.com/googlesamples/google-signin-unity/tree/588c0637310623d86c55d06f0adc72972b0bac22",
+  "readme_path": "README.md",
+  "readme_sha256": "86a48038b7f9c0943d52bf046ff7bbaf8fe0a105fe49294143e8b20fcdaee44b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "20168e73df84198130962d21a8c09e0a336ea000"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "792e013173f8e4b6e4181b42878769e6411f3a77"
+    },
+    {
+      "path": "GoogleSignInPlugin",
+      "type": "dir",
+      "sha": "1cb013450d46dc070b43526fd4384932e72e3ccf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "25e2946183be0694e9b1401e92fa0c29fc11cabc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f8dcabc664470a9d13687ef3b73a20355b2a160a"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "50f8d7ec65d6e236d6d34bcaa4fbdb069c9a4735"
+    },
+    {
+      "path": "build_all.sh",
+      "type": "file",
+      "sha": "b1035eb2bee9459b9eeb5ee0b821b8d4b7a483eb"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "1474af569a8b0023bb75a98259c1f12732029958"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "9d82f78915133e1c35a6ea51252590fb38efac2f"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "aec99730b4e8fcd90b57a0e8e01544fea7c31a89"
+    },
+    {
+      "path": "native-googlesignin",
+      "type": "dir",
+      "sha": "6231d45046a77aaff7e66e7d02bdf2915a336467"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "e47e0e32f593c724224357cf647b6e864f64e01d"
+    },
+    {
+      "path": "staging",
+      "type": "dir",
+      "sha": "389bd0db64105fb19a27d97f0d782c333c2189ea"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

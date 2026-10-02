@@ -1,0 +1,117 @@
+{
+  "repository": "gamekit-developers/gamekit",
+  "repository_id": 22812058,
+  "commit": "74c896af5826ebe8fb72f2911015738f38ab7bb2",
+  "source_url": "https://github.com/gamekit-developers/gamekit/tree/74c896af5826ebe8fb72f2911015738f38ab7bb2",
+  "readme_path": "README.md",
+  "readme_sha256": "c84880b5a44d11e6349d6196c47f72ef17d09320c70d1b82eee77e76ace11749",
+  "entries": [
+    {
+      "path": "BlenderAddon",
+      "type": "dir",
+      "sha": "39e70d10e5137ff3bf7fb8ac5295132e59e5437c"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "c16a21443979393d4999733d3f2bdb154454da55"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "de74c2bb7ad5bf41248d4e764a16cbd9fa7423af"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "dd47722af7d3e6aa5d00af529c091a2dfa11c62c"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "22f26e2bc258fd0c2fb14e2c2875a5cec8fa8977"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "add77c14c177af30af41c73090a640aefd8ca546"
+    },
+    {
+      "path": "Ogre-1.9a",
+      "type": "dir",
+      "sha": "d4214dfa40ae81a10ad62f2e37138753a13fd1e0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2e2ef8109ea4ea43e41183a69fb289f93ab84625"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "d21bd002958761ad56c7e5a3c8de7b82d8567869"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "689dc87af91cde3276e60c668771ad874f17fa70"
+    },
+    {
+      "path": "UnitTests",
+      "type": "dir",
+      "sha": "afdc4f48943530f6f692e7570c2a752272897b19"
+    },
+    {
+      "path": "bullet",
+      "type": "dir",
+      "sha": "b0081e41c0ffea4cf6f535db726c4a2f5e56e997"
+    },
+    {
+      "path": "configure-android",
+      "type": "file",
+      "sha": "ee5e1fdd7c9047a49bb16fbc62cbdd1ccfd3caf3"
+    },
+    {
+      "path": "configure-android.bat",
+      "type": "file",
+      "sha": "beebd07caf450c88ef68761ad7611e275d77d994"
+    },
+    {
+      "path": "configure-nacl.bat",
+      "type": "file",
+      "sha": "ca328c053be3caad70dad6ca6592d9802a4caa1b"
+    },
+    {
+      "path": "exp-configures.tar.gz",
+      "type": "file",
+      "sha": "46424d37f0ecd6fe6452f13fbdd59a16459753b0"
+    },
+    {
+      "path": "findexecutables.sh",
+      "type": "file",
+      "sha": "7194ae6f490c2e8ac87ff0dbdf1de535cbe32002"
+    },
+    {
+      "path": "findinfiles.sh",
+      "type": "file",
+      "sha": "d13a2207a1e56fe039f323314540230ad97d36ee"
+    },
+    {
+      "path": "readme.Ogre.mercurial.experimental.txt",
+      "type": "file",
+      "sha": "d2a72d6eaa60551b33b0b9f4975a176a97c90561"
+    },
+    {
+      "path": "readme.install",
+      "type": "file",
+      "sha": "22872e582109a127e180374621fe0e8d6e458324"
+    },
+    {
+      "path": "wxWidgets-2.9.1",
+      "type": "dir",
+      "sha": "5b74af6edda338a2ccc670ef876caecaa57b512c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

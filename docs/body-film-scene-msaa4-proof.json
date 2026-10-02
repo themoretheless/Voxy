@@ -1,0 +1,22 @@
+{
+  "renderer": "Apple M4 Max / Metal, MSAA x4 for opaque and film passes",
+  "releaseBuildPassed": true,
+  "nativeGpuRenderRunsPassed": 3,
+  "identityPixelsEqualDry": true,
+  "modelVertices": 60866,
+  "filmCells": 121388,
+  "massKg": 5e-05,
+  "executableSha256": "a939564dbcd4f06f41a44d8ac2fc6a2fc1d0f6aef77d6017a98a16bc6422cbd0",
+  "hashes": {
+    "body-film-scene-msaa4.png": "c3bc610336d01cd785cddf5b319e27a57b7c2ea3b884ce3b770ab9d2b0d1e8e7",
+    "body-film-scene-msaa4-dry.png": "64d17f9539247aec5385ccb7f12468e548b4a3a900c2a186848403cae1a70b62",
+    "body-film-scene-msaa4-identity.png": "64d17f9539247aec5385ccb7f12468e548b4a3a900c2a186848403cae1a70b62",
+    "body-film-scene-msaa4-state.json": "8b1257d2008ca9f73c9cf6c03165726477d73da5f1eac0fc62e125179ed67da5"
+  },
+  "scope": "Prepared four-sample depth-tested film composition without clearing loaded colour/depth. Live SceneApp integration, resize and temporal hooks remain outstanding.",
+  "visualInspected": true,
+  "sources": {
+    "crates/voxy_render/src/scene.rs": "cba0ddd5fd6aea2857689d45729d8a09fd94bedee9355442ae7b8bb507190278",
+    "crates/voxy_app/examples/female_render.rs": "bd1bd80abb8fa48583f67442c91f7d1c13920205c1ef943c0b95abc30bc27235"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "not-fl3/macroquad",
+  "repository_id": 232636908,
+  "commit": "8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6",
+  "source_url": "https://github.com/not-fl3/macroquad/tree/8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6",
+  "readme_path": "README.md",
+  "readme_sha256": "f6148fa1b8574041e7893b9dacc82a4046e1b852b386353779360de6a98fdb92",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a4d5d2fcd3a804baabe62734a078cee0e98d7f03"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "693699042b1a8ccf697636d3cd34b200f3a8278b"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "1c98f730df079ed73f6c436a83684e459c43099f"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9bde9bbef322a7ccf5102b38e7d3ccfb54ad4d63"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "513760960e07624cb5574d3a1ed85b63f2dc3e29"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "3d0081d21a11437316c6c28e685aa744fda95c2e"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "1faea021ab6a9d671e861528dd490cde05b1fc78"
+    },
+    {
+      "path": "macroquad_macro",
+      "type": "dir",
+      "sha": "93522c740e44319de32b9eb624a8fb7f611be5f9"
+    },
+    {
+      "path": "particles",
+      "type": "dir",
+      "sha": "36122b633f23cc02b67802d54572e7fe10f27fba"
+    },
+    {
+      "path": "physics-platformer",
+      "type": "dir",
+      "sha": "79a29380983f3fd5971e9027b9a4f35283c612c6"
+    },
+    {
+      "path": "profiler",
+      "type": "dir",
+      "sha": "5f5cb838e0f3824ee080a22957985a1f90ff10ea"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e8b4b309478c82acc0835ed34a65f49953f65f6b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "8f96e0d965c2967545c90c6c47510935bbb91755"
+    },
+    {
+      "path": "tiled",
+      "type": "dir",
+      "sha": "cce1c8c77bac498cdfd137d8ce4b9257ec8d977e"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies simple Rust game library inspired by raylib; src, particles/UI and Cargo manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,127 @@
+{
+  "repository": "luckyyyyy/miu2d",
+  "repository_id": 1141825226,
+  "commit": "7965af9985988972da262947f150a414c49c324c",
+  "source_url": "https://github.com/luckyyyyy/miu2d/tree/7965af9985988972da262947f150a414c49c324c",
+  "readme_path": "README.md",
+  "readme_sha256": "e10db2a21797b670baade613225e760393459e4a63820a383e442bea39622e3a",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "1eac04630ca828294922d82324ab4c1f245590c3"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "b11bc77fa5018a32b079b0a8798abcfa8e0edc25"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "11da40b450dee3fd29364f847f1eed4f96140695"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9ad875c05e1fb22e46dbb95a4f39eafa290e127f"
+    },
+    {
+      "path": ".python-version",
+      "type": "file",
+      "sha": "e4fba2183587225f216eeada4c78dfab6b2e65f5"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "16f1131da06b62a3b4ad61e046122f1aa528d2c5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "47c55d536f2408b033b2a19a17e1b33862d84794"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "4e505bbfc2526ae01abf9d177609d4c847074479"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9a6231c25581dde674f3422fc73278bf7cb814ba"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "0e3db34d4bfc9d72b05e87dd32c2ba6556d5d260"
+    },
+    {
+      "path": "biome.json",
+      "type": "file",
+      "sha": "9ae0c82742f5c029ca62ec6116a027aaa870da37"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "ec49a2d46e26cfc13c570ed1e07ab9faff01bb98"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "37071b1145ef646bd5b78819af1b2896badf8573"
+    },
+    {
+      "path": "logo-dark.svg",
+      "type": "file",
+      "sha": "1039ddb69e0af2ac39483a42e31495fab6b686ec"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "63c4e9a51f50669ba5620fa16494e896d770100e"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "4a70e52bc09c6d91589c594dc93efd1009a5f196"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "b16f924249dad1a61eddcb52e5f9812027a4940f"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "41a853627455dfbeab9a9c55400c69ddbcf710ec"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "43c03608de87f886d2ab8fc85c72dffa7c1d1b5c"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "a19156e03cd22828ff3df2e521928f928b1fee78"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3063dacdbbbe974d795ef3606f35181db347ca73"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "type": "file",
+      "sha": "73828603ac47b5aa72531e8a9bfc037520b2a3e2"
+    },
+    {
+      "path": "turbo.json",
+      "type": "file",
+      "sha": "b75e143cb0417ca8956217a9713c89ebbd432599"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

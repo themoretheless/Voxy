@@ -1,0 +1,94 @@
+{
+  "repository": "meta4d-me/CatDogEngine",
+  "repository_id": 531233832,
+  "commit": "370d5a6a9399924e9ddb64704aabf96a38ddc20c",
+  "source_url": "https://github.com/meta4d-me/CatDogEngine/tree/370d5a6a9399924e9ddb64704aabf96a38ddc20c",
+  "readme_path": "README.md",
+  "readme_sha256": "faef33d7a1fc05cb454e528bd6886e5e2ecd25959bb58977bc0749ac08221615",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ed8e520a03659ebbe0ebb4ae21209c4fd50a3b5f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "88fcad05e52adcea2308b86d289377e025829d38"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "00e0e46352ad1d459a6c95398fb2ca895d8d1b4e"
+    },
+    {
+      "path": "CleanAllBuild.bat",
+      "type": "file",
+      "sha": "401b46f2169f52c25c830968360c3a3282139fd0"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "25d0404b9cbfe82e18ac3d6c5780ad2f0de6448d"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "2140c414fde81ea27010a8b976e6126c0e684be4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "MakeEngine_vs2022-clang.bat",
+      "type": "file",
+      "sha": "2b32e1e98e3c0af76fdad7a315dbab4b40f5e096"
+    },
+    {
+      "path": "MakeEngine_vs2022.bat",
+      "type": "file",
+      "sha": "96e9ea87aaf38e22de9f8fd92118516f03d8c1e4"
+    },
+    {
+      "path": "MakeThirdParty_vs2022-clang.bat",
+      "type": "file",
+      "sha": "c7601af8813a2b0be51ed8bc58066c7d8947659a"
+    },
+    {
+      "path": "MakeThirdParty_vs2022.bat",
+      "type": "file",
+      "sha": "075ae904485b36a05ae57268950678806d19adc8"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "a5945be8063cf46c24688faeafcc0a7ba12c3e1e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6821ce9ce97f80ae4d2e04fdedd6cb445bc6a4f4"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "095c2359722da94ac1934c9e87b2384b69840478"
+    },
+    {
+      "path": "UpdateSubmodules.bat",
+      "type": "file",
+      "sha": "7302dd9401cf4bbb45cdcbda722920385eb6dc47"
+    },
+    {
+      "path": "UpdateSubmodulesRemote.bat",
+      "type": "file",
+      "sha": "e5ed14337d7942be31cfe2a345e3b3d1ca45759d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Work-in-progress C++ engine and editor with Engine source and platform build files; README lists ECS and physics facilities.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "croquet/worldcore",
+  "repository_id": 315424550,
+  "commit": "64f29a4d06c42939fd192d593ca796a3a05b56de",
+  "source_url": "https://github.com/croquet/worldcore/tree/64f29a4d06c42939fd192d593ca796a3a05b56de",
+  "readme_path": "README.md",
+  "readme_sha256": "beca8bc561db4f0e2b4f9159337d7f39cb6fa2ca6904946315c21eee2d37d3d6",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "32fa728e7aa3a428498a55772408e0c5fcd2c00c"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "ba2bba440a5f1e2dc3a0453650d4571dff823124"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5241d598c2057cbb71f96db91087590bb46482b5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ee473d713d8a927f454b5236418068f286f0a60f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "0274a81f8ee9ca3669295dc40f510bd2021d0043"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "b23d5b77cb145ac606fbd4b14234cf1e56ec9571"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "74946ef154d8b87fc3d52252f0cf78e597eeb1fd"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "2bd867e945fab56ad13536069de056ad6038fb1a"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "6d2a86fb4b107772f97f12153fa18d0393c5c15b"
+    },
+    {
+      "path": "obsolete",
+      "type": "dir",
+      "sha": "e63142f0b5e78686bca51a778db12851ec41e9a2"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "d60379e7ce2ee0669524555e88ff47af0dcb72fa"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "cff298ef402a9a1f4e0fa732d4e0e0ce4abb5ade"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "1ba680556bdc0c0fedbd14e1c37fa447239792ac"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "24a4c3eebe43ff3384d6b6cea652cd4d137e1827"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "181f80464deeb559d9da734f77043014e2f8735b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Modular web multiplayer 3D engine built on Croquet, with kernel/optional runtime packages, apps and tutorials; external Croquet service/runtime dependency retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

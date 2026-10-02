@@ -1,0 +1,119 @@
+{
+  "repository": "rbfx/rbfx",
+  "repository_id": 54325713,
+  "commit": "2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3",
+  "source_url": "https://github.com/rbfx/rbfx/tree/2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3",
+  "readme_path": "README.md",
+  "readme_sha256": "cb9b1fbb2f124fc94ac8cb3f501f2302cc572cf151014d444d8d005d6ab96a11",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "73f405a55a54bb8061330b73a088c4c284c8dd35"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "a6edba5f841d9cd80b28552e29455b3d31c03963"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "740c2cd75ce8d04371cac9a929629a428710eb1f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "641f0197d4e94296d0b6a3318976e677bbcb2980"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6e7ce05021379a6069fb0e8c90524ba1fad492c4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d605117b2bc5320ae2a4b08a539465b6ffdfd7f1"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "33ff7fd049896d20a15c24096265217685fb71b2"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8ef914efa4eee9c811295dd297717aac8c235c89"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "0179ab6567d9d99231b848bef5c297c4796767c7"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "ada31450d6736ac922361b3d3f2f529dd6b69d08"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "24a19fe7c2fe5366f8d75fc4980585c602d97200"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "9326e9e58cc4a93e47a2a98a4c649cd759594cbc"
+    },
+    {
+      "path": "Makefile.cmd",
+      "type": "file",
+      "sha": "ebd5af9f9e6a6c45f536c3bebc06866e8f9f84e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "689916d5a3a196714d68f3b807815100b84d455b"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "338038ba124ed5d0b5c7b8b39d3ee95d7f2168b7"
+    },
+    {
+      "path": "SourceAssets",
+      "type": "dir",
+      "sha": "8d11cac84262bfe9af19be498e98a37de01cb7ac"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "3004eab2bcd1087ef1a015ef62f3f577ca0ff924"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "eb92ff9fa915f71a3337a33a09a4c6296de24c4c"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "6ce97590acdd896ee70aefadfe2badc406a8cf20"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "d608534138fae9024b1b1b061ebcdeee7cab9c5b"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "1084e8ffffbf6b0bf993d754ee37e5f068700080"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Urho3D-derived runtime/editor; Source and CMake build, lineage retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

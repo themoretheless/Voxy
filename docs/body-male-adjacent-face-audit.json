@@ -1,0 +1,6 @@
+{
+  "tested_pairs": 546913,
+  "forbidden_pairs": [],
+  "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected",
+  "source_sha256": "6decd722e5303ba22d2702ef0899011bb174e35a234f31b6ffcac55983b95425"
+}

@@ -1,0 +1,179 @@
+{
+  "repository": "EndoHizumi/webTaleKit",
+  "repository_id": 643844032,
+  "commit": "c5936ac3924231a44c6c9791d37f099666ce8f67",
+  "source_url": "https://github.com/EndoHizumi/webTaleKit/tree/c5936ac3924231a44c6c9791d37f099666ce8f67",
+  "readme_path": "README.md",
+  "readme_sha256": "c8c8d1442df777f3c552f80dc1692dfcfd8398481b16e8b1f0a7330bf72b3ea1",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "b0af1af97866fc99082b563630c11e82386e5be0"
+    },
+    {
+      "path": ".clinerules",
+      "type": "file",
+      "sha": "079a2ba04de45b8cabc5911c8c732aad4eee9121"
+    },
+    {
+      "path": ".esdoc.json",
+      "type": "file",
+      "sha": "6cb2cc2b972d391433357caa4e41c36e703c36d3"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "8abbc32f72b843443f700bcea4ff30080c2ff7b0"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "ba1fd424a77585d4a703bd58c2bf6275349cba2e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "055c26bff55d00df6ee7fcf8a743a8c3430c86a9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2216e8afafd89918791ac3031affcfacd2e1f8bf"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "c0324c17c5f39ef3d08c049df8e95eecc559b299"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "05c3b38a08149c4d02b9ce63de34acc0a35b46e8"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ab7dafaa721cda803f7b79d0ce15291f2bd5c7b8"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "04d1821a487fad32fa67b50a133c8bdac74ea0a0"
+    },
+    {
+      "path": "DockerFile",
+      "type": "file",
+      "sha": "9efe75b78e8668f90d0e053c6e328d714ac78076"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fb6042f0c953a40bfdd83af836aa3b41dce399b9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7f287477430a836537119b66d0a73208ea133101"
+    },
+    {
+      "path": "README_EN.md",
+      "type": "file",
+      "sha": "a47f360cfda5c8285bf3e5b079b9e872d5cb14ae"
+    },
+    {
+      "path": "copilot-instructions.md",
+      "type": "file",
+      "sha": "bb8c1cd07cb79c9e89380283fcdb1735ca8c6851"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3737b2faaceaec97d596955f327ca78827c56b9f"
+    },
+    {
+      "path": "documents",
+      "type": "dir",
+      "sha": "4a499351880132645f9b771047ae3b96f772c72c"
+    },
+    {
+      "path": "engineConfig.json",
+      "type": "file",
+      "sha": "a35443c55b40b1a702a651f6dc980d7a4be39f81"
+    },
+    {
+      "path": "example-vue",
+      "type": "dir",
+      "sha": "28ecff28ecda21fdcb1c37d5667fc2239b26b3c0"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "65f79533fc570586d71e1f46198eca3d9890d189"
+    },
+    {
+      "path": "image.png",
+      "type": "file",
+      "sha": "b6276d0a47752c9255e8308fa7b77620b71e2673"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "baca67e8de306fac80d7e6e9b54b0cfdc7b87ee7"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "cbcfc9732a0519fa9f9471ed302ffec9854f46a7"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "43bc3bd7c855381a2b6b728741e47ee38925fe41"
+    },
+    {
+      "path": "parser",
+      "type": "dir",
+      "sha": "8db46a5e01f5bad5b9e0a5336fb5f5dad00d3bac"
+    },
+    {
+      "path": "s-plan1-5Light-s-1.jpg",
+      "type": "file",
+      "sha": "0fb38769aef1dae77dab0e97fa7ba2e9d716cce6"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a5b63f1ca1fcf6dd840fb23a8a5d5e020f19ee06"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "ffbcb132abd1f8426934996910a05aaa94a58f80"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "903dd26d0cb4bc2c0369c99dca8cf79b46c0a5fd"
+    },
+    {
+      "path": "task.todo",
+      "type": "file",
+      "sha": "de271dec749ca184555b024ea82000e878ddab32"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c2cb6c635fffca7360970acff4c76c176d3dc86a"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "75b73ef40413eb28a9d3eba64f89cefda217cffd"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "TypeScript visual novel runtime with markup/JavaScript scenario control, adaptive UI, image effects and audio; parser, engine sources and tests present. Planned editor/AI features excluded from evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

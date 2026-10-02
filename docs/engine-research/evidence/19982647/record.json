@@ -1,0 +1,47 @@
+{
+  "repository": "defold/doc",
+  "repository_id": 19982647,
+  "commit": "c35671ab656337090249d3613f5a7f77fe156177",
+  "source_url": "https://github.com/defold/doc/tree/c35671ab656337090249d3613f5a7f77fe156177",
+  "readme_path": "README.md",
+  "readme_sha256": "f8664c224ba2802688804f80ac17c2bb7130ca16676c7d6ca60cecff65cae24f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "32fbab7d23af135ddfc9ffd318ba7f8d73cf8661"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e20ae7f924395aeea2c6a5d3396a160a1aae5351"
+    },
+    {
+      "path": ".spellcheck.yml",
+      "type": "file",
+      "sha": "6ac4775fefd97bcab36806a7a3cab385f4cb726a"
+    },
+    {
+      "path": ".wordlist.txt",
+      "type": "file",
+      "sha": "986a6341ac41fa8343bc4793cbf9d9f0ab8aa1b5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "321345e2736dfcb9c6de7a26e08dc85d6d4df98c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "512255f01611d5fdb7f07c9b7219be43ec7a4051"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "1471edb54f23f76dec66082529ff2c56378e4045"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

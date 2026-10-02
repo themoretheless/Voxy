@@ -1,0 +1,234 @@
+{
+  "repository": "Finding-Fortune/Minecraft-OpenGL-Open-Fork",
+  "repository_id": 676224549,
+  "commit": "788af66ee3d15384f772e5d8c04de1c8b4906756",
+  "source_url": "https://github.com/Finding-Fortune/Minecraft-OpenGL-Open-Fork/tree/788af66ee3d15384f772e5d8c04de1c8b4906756",
+  "readme_path": "README.md",
+  "readme_sha256": "77ff4dc6c7d6af660c9dc606a3e56351114d9130d55f5ec903ad6bcab8b227f1",
+  "entries": [
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3bcad0a3c58122cef9dab87f97427272d71a3241"
+    },
+    {
+      "path": "Biomes.hpp",
+      "type": "file",
+      "sha": "23c0fd440c5a41e586746c610fe878624ce06d92"
+    },
+    {
+      "path": "Block.hpp",
+      "type": "file",
+      "sha": "92dd7f0371f9bf8edb2c0ee8365b500513deaf13"
+    },
+    {
+      "path": "BufferManager.cpp",
+      "type": "file",
+      "sha": "2f4e08f4c9e86e8caa56387854417e54c918a4bc"
+    },
+    {
+      "path": "BufferManager.hpp",
+      "type": "file",
+      "sha": "8f4825e5cc78aa748306464c7e6c966f30af37c8"
+    },
+    {
+      "path": "Camera.cpp",
+      "type": "file",
+      "sha": "77401bc56e304082c5e6a02ea33813fc1f8e3408"
+    },
+    {
+      "path": "Camera.hpp",
+      "type": "file",
+      "sha": "a57be01e7bf1ea5dd40177504948f5fc86c760df"
+    },
+    {
+      "path": "Chunk.cpp",
+      "type": "file",
+      "sha": "281b80e7a53065c8e2aeccd94adcb5e23abc16c1"
+    },
+    {
+      "path": "Chunk.hpp",
+      "type": "file",
+      "sha": "f9261875c4d12282a435b48e1564d8f9afdb2879"
+    },
+    {
+      "path": "ChunkManager.cpp",
+      "type": "file",
+      "sha": "18a8e115178ade77cc058d9da593f0e0a04a1ae4"
+    },
+    {
+      "path": "ChunkManager.hpp",
+      "type": "file",
+      "sha": "c84d690ae4c3c086033a4f57e53d92ce49b4b733"
+    },
+    {
+      "path": "EBO.cpp",
+      "type": "file",
+      "sha": "3cd3dcfba88d163d162b43468527a38262eb4074"
+    },
+    {
+      "path": "EBO.hpp",
+      "type": "file",
+      "sha": "3582561d1660a52127de443b75d8ab58d5fec34a"
+    },
+    {
+      "path": "FastNoise.dll",
+      "type": "file",
+      "sha": "3b04c0ef7b92c87595eaf86388a66332ca7e701f"
+    },
+    {
+      "path": "GUI.cpp",
+      "type": "file",
+      "sha": "6a9e03898afaf8966ded4803ca151a686117cbaa"
+    },
+    {
+      "path": "GUI.hpp",
+      "type": "file",
+      "sha": "d18bd5cb98fe0c7d30d88afce14d52b9119dff67"
+    },
+    {
+      "path": "License",
+      "type": "file",
+      "sha": "06e896d6f13e6c519cb3ff9bfca711b31c261c6a"
+    },
+    {
+      "path": "Player.cpp",
+      "type": "file",
+      "sha": "067dae6f3c3ff1efcb4a50e099545da5d43e38ab"
+    },
+    {
+      "path": "Player.hpp",
+      "type": "file",
+      "sha": "da912cd67ea938e4aebe85108b6d6487e28e7907"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6bc279da245d3d313c479e84dabe1fb61b5f0a85"
+    },
+    {
+      "path": "ShaderManager.cpp",
+      "type": "file",
+      "sha": "f1f25e2922a4cec9de4600922d4e76797278abba"
+    },
+    {
+      "path": "ShaderManager.hpp",
+      "type": "file",
+      "sha": "5917d44b812c0bd13aae76c00f0a44de3e69594b"
+    },
+    {
+      "path": "Sky.cpp",
+      "type": "file",
+      "sha": "d6452248547461ffe0df2d63d8128257f713eed3"
+    },
+    {
+      "path": "Sky.hpp",
+      "type": "file",
+      "sha": "b102349355d4a21e18d04b9e30e2756b583357e1"
+    },
+    {
+      "path": "TextureArray.cpp",
+      "type": "file",
+      "sha": "46c758b6376c6f9df0d3275200a0e8a28ba3c428"
+    },
+    {
+      "path": "TextureArray.hpp",
+      "type": "file",
+      "sha": "1fc55ab6a1a0f333f8ee5d2a4a042fd7dd009028"
+    },
+    {
+      "path": "VAO.cpp",
+      "type": "file",
+      "sha": "d6eabccc6734ac1b7ce18c9ba77480656ab9c725"
+    },
+    {
+      "path": "VAO.hpp",
+      "type": "file",
+      "sha": "fd8751218406227de5fa1246257fe341296a0e7c"
+    },
+    {
+      "path": "VBO.cpp",
+      "type": "file",
+      "sha": "c7d779c6d8a269cff09e2f0fcddfba507fbf37ad"
+    },
+    {
+      "path": "VBO.hpp",
+      "type": "file",
+      "sha": "8bbd4eb881edda15b502a743fafd5f629c37267a"
+    },
+    {
+      "path": "WindowManager.cpp",
+      "type": "file",
+      "sha": "376ba905b0b0b9d58e654a2fdd4604c916754704"
+    },
+    {
+      "path": "WindowManager.hpp",
+      "type": "file",
+      "sha": "55d733972973a5cfe141d7b659354b895bc46800"
+    },
+    {
+      "path": "WorldConstants.hpp",
+      "type": "file",
+      "sha": "867d71548a504b3246eacd0350aba398cfca32ac"
+    },
+    {
+      "path": "app",
+      "type": "file",
+      "sha": "d94702b980610c4edb96ae8b7f0733258dc70f82"
+    },
+    {
+      "path": "app.exe",
+      "type": "file",
+      "sha": "48e628f662989cf20a50a006597bdc41d9eaa04e"
+    },
+    {
+      "path": "app.ilk",
+      "type": "file",
+      "sha": "4bc84ab2633843486c434b04a9869aec8c878fbe"
+    },
+    {
+      "path": "app.pdb",
+      "type": "file",
+      "sha": "7f5da47967af2772fa0862d671aa65287611cb41"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "8e353800592fdbcc177ad616da1d3534e435698d"
+    },
+    {
+      "path": "glad.c",
+      "type": "file",
+      "sha": "a9384d355e9e05c7c6562f1357ce5d657029f0a5"
+    },
+    {
+      "path": "glfw3.dll",
+      "type": "file",
+      "sha": "1cc07be2a5ae6ad489d11c948f4f664244704955"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "9efaf78d83b57c1474f46c0f4eef39a288d69e7d"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "43f2d94b4cb63ccf619d1b38d6ce620f2b50dd26"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "ff188422d6e4bdf3dcfdeaea5c8c2f2d4ae450c1"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "e1fd7e000d1c8492b38a06e1893f709122479715"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies a Minecraft clone fork with block/chunk/player implementation; reusable engine boundary is not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "sezero/quakespasm",
+  "repository_id": 204171610,
+  "commit": "f5fe17864918239d443fe4c0d6bfb980e44d19e6",
+  "source_url": "https://github.com/sezero/quakespasm/tree/f5fe17864918239d443fe4c0d6bfb980e44d19e6",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3e5893d925d0956c47645599f106cff9676857a6"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "9efa6fbc962836e243e20f7f23db062e2c077d28"
+    },
+    {
+      "path": "Linux",
+      "type": "dir",
+      "sha": "20e06085b7cd24df254f7060129030fabed9dc97"
+    },
+    {
+      "path": "MacOSX",
+      "type": "dir",
+      "sha": "91e7a8c7e1fbe7dcfb55ffd5b16561792b42c83d"
+    },
+    {
+      "path": "Misc",
+      "type": "dir",
+      "sha": "b35545f1e56634bb139e9a19d34de1c364e2cc21"
+    },
+    {
+      "path": "Quake",
+      "type": "dir",
+      "sha": "8717bdf0bbdf526227490dd843dc09d035018184"
+    },
+    {
+      "path": "Quakespasm-Music.txt",
+      "type": "file",
+      "sha": "e188d8dec504a0f314f52e889e95fecc8b96e159"
+    },
+    {
+      "path": "Quakespasm.html",
+      "type": "file",
+      "sha": "bc8bf52b358f23c251536a9135f41465570a8e3c"
+    },
+    {
+      "path": "Quakespasm.txt",
+      "type": "file",
+      "sha": "b9ab2ffa222f55fe1f2786874a0eac0a4385ca61"
+    },
+    {
+      "path": "Windows",
+      "type": "dir",
+      "sha": "cc02b9ea7aea7a8d9bb469c33f44b9a8754b5e63"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

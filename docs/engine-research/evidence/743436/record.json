@@ -1,0 +1,114 @@
+{
+  "repository": "egametang/ET",
+  "repository_id": 743436,
+  "commit": "743c635dd5b0f6f6bab549c0093382c85f3f8307",
+  "source_url": "https://github.com/egametang/ET/tree/743c635dd5b0f6f6bab549c0093382c85f3f8307",
+  "readme_path": "README.md",
+  "readme_sha256": "06a13cf6bbe94e7618b06e4ed1d3c81f080f9ec35104b9886183af953e7211a2",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "3ceeaf66ea69c2bd3d3a6d03c1feea1202e7884f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6f3fcbddb337c774bd943a8b8ebb101241f19b03"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "18f3a3de1aa53e14f30492729a6704dffb6d503e"
+    },
+    {
+      "path": ".kilo",
+      "type": "dir",
+      "sha": "5d76fd60ecd5a1035c75dcb220a2c3c8ef15519c"
+    },
+    {
+      "path": ".mcp.json",
+      "type": "file",
+      "sha": "53f188a24465e2100ae42e08cede13905891b1fe"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "1bba6349d04c3a05c75c9d54713d7c9a998089b1"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "5b3b2cb7e4200f3b5562a11553e5b65a3a4cb190"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "1ae1f0921f34057b91e9174607a8c5dae4396091"
+    },
+    {
+      "path": "Book",
+      "type": "dir",
+      "sha": "f5db96f2ee1bd57057046987679d921ca3bd1435"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "5dd0407fd17f42cb0eed6f834aff4edb9dfbab4e"
+    },
+    {
+      "path": "ChangeLog.md",
+      "type": "file",
+      "sha": "e536f6365c2c88e286e5cb98c8ab841cef26d53d"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "a20d2a2661878c6797ae5826b71ffe55ba510a6d"
+    },
+    {
+      "path": "ET.sln.DotSettings",
+      "type": "file",
+      "sha": "c70efe852668b5a0cdeb19030a825daf98f1b4f9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3db12fa8602fed713069eef7790baeb2013fa6bb"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "a435995bb9431feaf7e4e6cf51e63396b685d001"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "43842976d0952408d644fce47a6fd6eedd021ec0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "04b55ee0f0090b683d6328207765446a1288a8db"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "5abdaef3dd88cafcba53f77c67076a681e34d2ee"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ee40351292af736b181a616d35adbd6d741bc2d0"
+    },
+    {
+      "path": "课程大纲.md",
+      "type": "file",
+      "sha": "b6a0c1473284c8bc16ee325686e352043bf38609"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies development framework; Unity Assets/Packages/ProjectSettings and server scripts. Does not replace underlying Unity engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

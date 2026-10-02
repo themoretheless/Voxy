@@ -1,0 +1,34 @@
+{
+  "changed_cells": 110,
+  "patches": 22,
+  "patch_sizes": [
+    2,
+    4,
+    15,
+    6,
+    2,
+    3,
+    6,
+    3,
+    10,
+    2,
+    9,
+    2,
+    2,
+    8,
+    2,
+    9,
+    5,
+    3,
+    9,
+    2,
+    2,
+    4
+  ],
+  "maximum_raw_row_sum_error": 4.218847493575595e-15,
+  "mapping": "harmonic disk charts on unchanged patch boundaries; material-space remap, not physical projection",
+  "mesh_sha256": {
+    "assets/characters/blender-male/body-refined.obj": "b3a61fc99c037bc8c95c7f82a4f0de00473b9ae8d19e7d20978ede6239445c14",
+    "assets/characters/blender-male/body-repaired-render-candidate.obj": "89ec43edc505f6eeb8677ce56cee951bcd9b97efb3356003418bb1af7085ec1e"
+  }
+}

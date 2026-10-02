@@ -1,0 +1,59 @@
+{
+  "repository": "gen2brain/raylib-go",
+  "repository_id": 80191982,
+  "commit": "80156a59a4829027bb56e57441e2bdded3b84e7f",
+  "source_url": "https://github.com/gen2brain/raylib-go/tree/80156a59a4829027bb56e57441e2bdded3b84e7f",
+  "readme_path": "README.md",
+  "readme_sha256": "4cfdfe46937c93a479ca216a483817101c3959ef8bf4490d5f6280f7219bbd3b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7d2518e47141b2a09aabbfb452e072499606e9a2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c6074b22815eb59767bc0a69c20676d366cf3599"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "232906007ef06842c7a0d5b139a3a0a300a6cc5c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "730ec868e7de37c3343bdf555bea6b614cd1c8e5"
+    },
+    {
+      "path": "easings",
+      "type": "dir",
+      "sha": "f2fcef832e61ede42ebd2846960aa21b8314e9d7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "36c417ad989f1179616f384b0a68cc4291d93250"
+    },
+    {
+      "path": "physics",
+      "type": "dir",
+      "sha": "10be7b650d26628928feee8dfa2b7f4d2a575741"
+    },
+    {
+      "path": "raygui",
+      "type": "dir",
+      "sha": "aaeca5b66337bc0e673a909df1edea0dea213adb"
+    },
+    {
+      "path": "raylib",
+      "type": "dir",
+      "sha": "5829f0e619e77e99df7f8fb6e38efc788d4ebfb2"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Go bindings to raylib; not separate engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

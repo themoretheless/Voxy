@@ -1,0 +1,59 @@
+{
+  "repository": "eldinor/yuka-babylonjs-examples",
+  "repository_id": 451963728,
+  "commit": "f8d9f36fe181dc5f3ef4c2746dbe39ea8d884e37",
+  "source_url": "https://github.com/eldinor/yuka-babylonjs-examples/tree/f8d9f36fe181dc5f3ef4c2746dbe39ea8d884e37",
+  "readme_path": "README.md",
+  "readme_sha256": "ff6e6ecbdf27bfa6900a58d4ea53f44b10482769fbe226d2d4b91d90937141e0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3c3629e647f5ddf82548912e337bea9826b434af"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "49cc8ef0e116cef009fe0bd72473a964bbd07f9b"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "e65c538d088579503ed4442cec6248afe5249235"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "eb3b9caffcbdc0a115477ea02b2371b350829dc7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "677381caca2b901f6be6a7144a5a9f8b2a40bff3"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "685abb4013930caaac6f26fef6d909e97a3efb92"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "bf06e91ac74c9fa9e18b313efd261d1080177c13"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "c43c080114c4386e970925b8a73d7d05af36d22a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "39ce77397a7d10968ba37c37a9760d3f31d27def"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Examples integrating external Yuka AI and Babylon rendering; no engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

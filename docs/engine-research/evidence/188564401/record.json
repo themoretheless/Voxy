@@ -1,0 +1,34 @@
+{
+  "repository": "yottaawesome/intro-to-dx12",
+  "repository_id": 188564401,
+  "commit": "138b73f1f359b501c33f1b0127e086bdf0b8221c",
+  "source_url": "https://github.com/yottaawesome/intro-to-dx12/tree/138b73f1f359b501c33f1b0127e086bdf0b8221c",
+  "readme_path": "README.md",
+  "readme_sha256": "7139204580ae5958883843714d70d10d02bd6ccb156d605626493ab14f543607",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eff2c3f3f1e6ca5baeaf31e2fc0d3fe11ec715f9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cdb3ce46cf2f1047036285add43b6f7d68bdbc13"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "15a526bdd38a4348a207bfcf33316d00d50bd683"
+    }
+  ],
+  "classification": "excluded_rendering_tutorial",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies book graphics samples; src teaching material, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

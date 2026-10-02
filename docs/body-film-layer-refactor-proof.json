@@ -1,0 +1,27 @@
+{
+  "stage": "Reusable optical layer split",
+  "checks": {
+    "material_layer_split_tests": {
+      "passed": 2,
+      "failed": 0
+    },
+    "release_example_build": "passed",
+    "metal_msaa4_smoke": "passed",
+    "git_diff_check": "passed"
+  },
+  "mesh": {
+    "vertices": 60866,
+    "triangles": 121728
+  },
+  "command": "target/release/examples/female_render --film --film-scene-optics --msaa4 --snapshot /tmp/voxy-film-layer-refactor.png",
+  "sha256": {
+    "crates/voxy_render/src/scene.rs": "dd4380a5a5fd271bfbe99688b0b3e2ced28838e55f070658bad2e61a64d023a5",
+    "crates/voxy_app/examples/female_render.rs": "c1398a73165e9d8a34f7bcbf22da85e1415b778c9c5db22f0c01eb7a143b7c42",
+    "docs/body-film-layer-refactor.png": "f93326f3d115764f80f6178cffaac494cff2f5c1639a288a95c0210479dbaab9"
+  },
+  "limitations": [
+    "Offscreen validation only; live viewer integration pending",
+    "Whole-body view does not validate close-up refraction quality",
+    "No calibrated physiology or real-time performance claim"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "repository": "DigitalDesignDude/DS-Game-Maker-5-Setup",
+  "repository_id": 500566018,
+  "commit": "a01d526d34595f9fddff9cb4ed5e61d98809489f",
+  "source_url": "https://github.com/DigitalDesignDude/DS-Game-Maker-5-Setup/tree/a01d526d34595f9fddff9cb4ed5e61d98809489f",
+  "readme_path": "README.md",
+  "readme_sha256": "1d7860fcbdea19f3c9b375002e20dcfd60208416aad09cebb5452b3fa2faaa68",
+  "entries": [
+    {
+      "path": "DS Game Maker",
+      "type": "dir",
+      "sha": "19019944922f9b35b7ce35f6ff56051f9d2be47e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "52cebd032f4b2d036a3eaefb610d7ae012595b46"
+    },
+    {
+      "path": "devkitPro",
+      "type": "dir",
+      "sha": "f117914bd976f99afb392c945a469f55bab82900"
+    }
+  ],
+  "classification": "excluded_binary_distribution",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Setup tutorial and bundled DS Game Maker/devkitPro distribution rather than engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

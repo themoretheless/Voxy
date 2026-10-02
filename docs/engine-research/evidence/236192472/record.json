@@ -1,0 +1,117 @@
+{
+  "repository": "massung/r-cade",
+  "repository_id": 236192472,
+  "commit": "0cce22885aad28234d3f6e1d88568cdc16daf3e6",
+  "source_url": "https://github.com/massung/r-cade/tree/0cce22885aad28234d3f6e1d88568cdc16daf3e6",
+  "readme_path": "README.md",
+  "readme_sha256": "b0895e10d2c5132bbda08e6fe43b6657d384899b52c5085d58643f6af5993eeb",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9d4d8ed193fbe8f12ba792f753a6f4119e325d15"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f2f79a8549c7683beeb1de8e6f6bb207ad2609a2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "525c935303782ee99887d98bd151bbe106256475"
+    },
+    {
+      "path": "anim.rkt",
+      "type": "file",
+      "sha": "ca7d4c44eb5933091aff9c18c4a27d9954e07916"
+    },
+    {
+      "path": "audio.rkt",
+      "type": "file",
+      "sha": "f6a7c38f5ebb582de576b43a746983b45bf8e81e"
+    },
+    {
+      "path": "draw.rkt",
+      "type": "file",
+      "sha": "c5ea6f8601d073f18f773e10e5d1719289833354"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b0171092fa45e0ba911005a39a4dcbd72cc3696c"
+    },
+    {
+      "path": "font.rkt",
+      "type": "file",
+      "sha": "160d7d8c35c26dfceb0682cde6effa201b1e4f04"
+    },
+    {
+      "path": "game.rkt",
+      "type": "file",
+      "sha": "54450cb3fe8c870b8786cad6689dbbf52062d058"
+    },
+    {
+      "path": "info.rkt",
+      "type": "file",
+      "sha": "8d92469a0d7a5ebe856ac2730b320e068da61c01"
+    },
+    {
+      "path": "input.rkt",
+      "type": "file",
+      "sha": "9e8c3ee24eaa67eff8e78ba38b2337c82a74bd88"
+    },
+    {
+      "path": "main.rkt",
+      "type": "file",
+      "sha": "5b441f50673bc5a34ecfb36d67f5d0cd0916d8aa"
+    },
+    {
+      "path": "music.rkt",
+      "type": "file",
+      "sha": "127df977c3d9cc11b4e3bb76e0bdf3f21f2caf26"
+    },
+    {
+      "path": "palette.rkt",
+      "type": "file",
+      "sha": "ef5e8436ff4fd651b1ff7cbdb6f90537e5833f06"
+    },
+    {
+      "path": "riff.rkt",
+      "type": "file",
+      "sha": "b3bbe7319dbded3c3026a5972c672685496989c6"
+    },
+    {
+      "path": "scribblings",
+      "type": "dir",
+      "sha": "463fb0ee39dceffffd241affa557d0212e6614f6"
+    },
+    {
+      "path": "shader.rkt",
+      "type": "file",
+      "sha": "62b33c08ac93a9aee0c52c205d2a9379fd7ee4df"
+    },
+    {
+      "path": "sound.rkt",
+      "type": "file",
+      "sha": "4f244dbe95aa083202220cf36a5aa015c32fad63"
+    },
+    {
+      "path": "time.rkt",
+      "type": "file",
+      "sha": "ce71863fda6d7f6e1a7a6a9160e8d7de543adff4"
+    },
+    {
+      "path": "video.rkt",
+      "type": "file",
+      "sha": "99b87625b115a5d619074d359f72d438bae5d7b8"
+    },
+    {
+      "path": "voice.rkt",
+      "type": "file",
+      "sha": "6a0c55f256abebea4c46c713ced98d38978f7064"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

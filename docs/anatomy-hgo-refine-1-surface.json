@@ -1,0 +1,184 @@
+{
+  "scope": "Static floating-point nonadjacent boundary audit; shared-vertex pairs excluded; no welding, CCD, contact solver or anatomical certification",
+  "nodes": 2768,
+  "boundary_faces": 2520,
+  "csv_sha256": "43dcc71a3c8150cc0a7e24bf5319e4a8ce70ece441d53663271bd5f13290684f",
+  "states": [
+    {
+      "stage": "rest",
+      "sha256": "157374fe040d0b22cbe8bf24f76142092580d24a6098f87cb3050f2db69bfaed",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 400
+    },
+    {
+      "stage": "loaded-sub-1",
+      "sha256": "a0847f914640af019af2a892a11e6cf24bd4365f828a062304d77337c5a29e61",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "loaded-sub-2",
+      "sha256": "c518307f2186e8deb8c43e1adddb4824d449c3cf9f5db1ba79edf1ffbd7555ae",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "loaded-sub-3",
+      "sha256": "11c5450b36f1f5cd1e1bb7d38f9caabb685fab631fe0df8f173d03e824bca2b4",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "loaded",
+      "sha256": "c28ba1a567d2db1f4f539e195426e4370a0ca49c22077833169a79e835cc2c09",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-1-sub-1",
+      "sha256": "501dcd9a36fa6d5be4e755b1ae2a2bc56e90d99ef101fba00cdf4e0f5add90fd",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-1-sub-2",
+      "sha256": "f5f8aaa91c2aa19d07d878c47de616ce80063470e855f89df370a7984ffff71a",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-1-sub-3",
+      "sha256": "dada2eee4547b6f7c5555f33afd500fe4dace8cd405aea0029072b8645d07337",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-1",
+      "sha256": "743e7872c74c8e903f4b8e5f0f8d616c0427308d66b4cae83d310934ee370967",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-2-sub-1",
+      "sha256": "30af5b794ff34965c42cc8fa2d7dd0dacdeb32472de24b0eb3b812ed2689ac29",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-2-sub-2",
+      "sha256": "a37de0ba33ca1c85e06637e556a899ddd458de7c6024e98f2a1340a86388caf0",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-2-sub-3",
+      "sha256": "84fc32fe5052120ff0b0c05b5a665862b7f21a02cb94714a368354bd8a29cef6",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "hold-2",
+      "sha256": "d9660c7911d113b77cff04dbf5f52dd14f9596375de15bcb25312285ec46193f",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 468
+    },
+    {
+      "stage": "released-sub-1",
+      "sha256": "7a4b22f37a993951cd1125e8c36c6fa301c553fc0d1a4f9817b50cf5d6bb05f6",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 404
+    },
+    {
+      "stage": "released-sub-2",
+      "sha256": "9ff9bbc999ed890354860d99816bf154336130268efa7a002aa1d4a8c336662f",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 404
+    },
+    {
+      "stage": "released-sub-3",
+      "sha256": "b96225c394f2310917a1a261fdac9aff55e2dd69e8627ff82943563cfaa73f33",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 404
+    },
+    {
+      "stage": "released",
+      "sha256": "d267c6547f10baefe7fc55e5b4b4992347d4d75fa3f447f654d5066be4cf344c",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 404
+    },
+    {
+      "stage": "recover-1-sub-1",
+      "sha256": "fecf4bfad74f8053056c9d040fda8f1150281e21bbae0137d81afd5352d49ea0",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 404
+    },
+    {
+      "stage": "recover-1-sub-2",
+      "sha256": "359b4db6093ec4ffc2d3dc1037668ed85b4cbb6b5d58378908405ee7726e49d2",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 404
+    },
+    {
+      "stage": "recover-1-sub-3",
+      "sha256": "ac777d5390f9d02be05951da0a0b86dc63b182ed1ac0bacdcb211d9a56dad533",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 402
+    },
+    {
+      "stage": "recover-1",
+      "sha256": "ed5c5884bccc360a64f7d3a7d371e74ed5b9ef0e1d860c8ee388a970684f87f2",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 402
+    },
+    {
+      "stage": "recover-2-sub-1",
+      "sha256": "8b9a72eb204b4c5c77bb8f073a80ec741a7cff29bce82c626e1342d7b7d5a1f1",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 402
+    },
+    {
+      "stage": "recover-2-sub-2",
+      "sha256": "0f1603e3b89e65cdb1adc82743561d555f4feaf8a04c040080780b9f5636a26f",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 401
+    },
+    {
+      "stage": "recover-2-sub-3",
+      "sha256": "b028f4bd66ed07bb2758992dbdbbe689d1b7b6815a7bc4fa4eaae5a5182a4158",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 401
+    },
+    {
+      "stage": "recover-2",
+      "sha256": "2511671156da0be670f0a2714d8207da33cdcc92f4cda894ce3cbd6cd476cc91",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 401
+    }
+  ],
+  "total_candidate_pairs": 0
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "zinc-framework/Zinc",
+  "repository_id": 804528665,
+  "commit": "1e87919a51719b9124325e384df364d27d2616de",
+  "source_url": "https://github.com/zinc-framework/Zinc/tree/1e87919a51719b9124325e384df364d27d2616de",
+  "readme_path": "README.md",
+  "readme_sha256": "31391ba6de6ef55acec554cf4d4c07c6c8c17686a8d5a18926e7180930d50cb1",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "145a26b5acc94f2f779bfe1d663d33cb38b0486e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "34273d8e65c7cc8a4ea547120fd63076ef0d56dd"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "57fc3d8308baeee17ba44ea25eb0145089c67997"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4a08378e3107ce6e19d5c39ad56163793bc026e9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4ed562185a30ba5d4ec86e07e5eb86fc1d0c06a4"
+    },
+    {
+      "path": "Zinc.Publish.targets",
+      "type": "file",
+      "sha": "b5cc84fc6e629b4d6f67c1b84a00907fb9e3a3c3"
+    },
+    {
+      "path": "Zinc.Shaders.targets",
+      "type": "file",
+      "sha": "66bfabb85c726dd7e3f218147618eecd70e70e32"
+    },
+    {
+      "path": "Zinc.csproj",
+      "type": "file",
+      "sha": "586e152cfca6262fc6a35d107311cb80b26dd550"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "d1b34b4b71e01949043c0299c020f9e2d4da4594"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0ebcd1177216a582d09d8e35365138dd25136a1e"
+    },
+    {
+      "path": "libs",
+      "type": "file",
+      "sha": "25c13bc85503eae4528ac4d36e95856b34abe5a5"
+    },
+    {
+      "path": "logos",
+      "type": "dir",
+      "sha": "7e7003e8232dcf7e486ff544941c8c049bc1b15f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "169fb7f1970d273a7e71ef0438e70dd1562a7700"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned README contains only branding/title; source and project files exist but description alone does not establish runtime subsystem scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

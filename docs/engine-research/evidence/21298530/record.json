@@ -1,0 +1,57 @@
+{
+  "repository": "PistonDevelopers/piston-examples",
+  "repository_id": 21298530,
+  "commit": "a2d6c7a84700ee6ba43c83ea7cff1a6e3af6f11f",
+  "source_url": "https://github.com/PistonDevelopers/piston-examples/tree/a2d6c7a84700ee6ba43c83ea7cff1a6e3af6f11f",
+  "readme_path": "README.md",
+  "readme_sha256": "f139821900899457e38383e4dc75ac87e5684407ca243c589a46fa3f50449e46",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b45a976a710a1dbd2d584d1cb1a84f8a7f2aa8e3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "74d5d89db315cc17d88724afe4d77ff64b8e341c"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "19ee5ff9e57f91856f0a597e98acd1a87d6f5bac"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "bf9b24fb65364ec1e8da1a3c3fd5ad1c3c62c48d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "25bfe60dfe69a91e97eb539c631113822014d1f7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b3b8cc7d5cc121c946b1aaafd444c2c4b81c67c8"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "dc3c004402bce3f76425cdca3c8197e29b393cc1"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "bdd974e381b73d7eb54a0f41f601cd291ffe0665"
+    },
+    {
+      "path": "texture_swap.ods",
+      "type": "file",
+      "sha": "42055abc4f2d4adb15296030c536ae1158fa279d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

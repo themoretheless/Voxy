@@ -1,0 +1,110 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Параметры тела</title>
+<style>[hidden]{display:none!important}body{margin:0;background:#111821;color:#e5edf6;font:16px system-ui}main{max-width:980px;margin:auto;padding:32px}h1{font-size:28px}p{color:#aebdd0}#fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}.field{background:#1b2633;padding:16px;border-radius:12px}label{display:block;margin-bottom:12px}input[type=range]{width:100%;accent-color:#77c8e5}input[type=number],input[type=text],select{background:#101821;color:white;border:1px solid #506478;border-radius:5px;padding:7px;width:110px}select{width:230px;max-width:100%}button{padding:10px 18px;background:#77c8e5;border:0;border-radius:7px;margin:12px 8px 12px 0}output{float:right;font-size:13px;color:#9bd7ee}#status{min-height:24px}#film-sources fieldset{border:1px solid #506478;border-radius:12px;margin:16px 0;padding:16px}#film-sources label input{display:block;margin-top:8px}#film-sources .source-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}pre{white-space:pre-wrap;background:#1b2633;padding:16px;border-radius:12px}</style>
+<main><h1>Параметры тела</h1><p>Изменения сохраняются через MCP. Открытая модель перечитывает тот же JSON при продвижении симуляции. Сохранение ещё не подтверждает показ кадра.</p><div id="status" role="status">Загрузка…</div><p id="presentation" role="status">Подтверждение кадра отсутствует</p><label for="view-mode">Отображение тела</label><select id="view-mode"><option value="material">Материал кожи</option><option value="displacement">Смещение тканей</option><option value="strain">Деформация тканей</option></select><p id="view-legend"></p><p id="view-status" role="status">Загрузка режима…</p><p id="view-presentation" role="status"></p><button id="reset">Исходная модель</button><button id="export">Скачать JSON</button><div id="fields"></div><details><summary>Текущие значения</summary><pre id="json"></pre></details><h2>Жидкая плёнка</h2><p>Настройки применяются в модели с включённой плёнкой. Значения материала служат инженерной настройкой и требуют физиологической калибровки.</p><form id="film-form"><label><input id="film-precursor_wetting_enabled" type="checkbox"> Контактный угол и предшествующая плёнка</label><p>Включение меняет модель смачивания; дополнительная жидкость автоматически не добавляется.</p><label for="film-display_mode">Отображение плёнки</label><select id="film-display_mode"><option value="material">Материал</option><option value="thickness">Толщина плёнки</option></select><label id="film-self-contact-control" hidden><input id="film-self_contact_enabled" type="checkbox"> Перенос при контакте участков тела</label><p id="film-self-contact-note" hidden>Статический контакт плёнок; скорость обмена — инженерный параметр. Пересечения тканей этот режим не устраняет.</p><div id="film-contact-fields" hidden style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px"></div><div id="film-fields" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px"></div><h3>Дополнительные источники</h3><p>До 16 источников. Расход задаётся отдельно для каждого; изменения применяются после сохранения.</p><div id="film-sources"></div><button type="button" id="film-source-add">Добавить источник</button><button type="submit">Сохранить настройки жидкости</button><button type="button" id="film-export">Скачать настройки жидкости</button></form><label for="film-import">Загрузить пресет жидкости</label><input id="film-import" type="file" accept=".json,application/json"><p id="film-status" role="status">Загрузка жидкости…</p><p id="film-presentation" role="status"></p><p id="film-measures"></p></main>
+<script>
+const labels={left_nipple_radius_scale:"Радиус левого соска (множитель)",right_nipple_radius_scale:"Радиус правого соска (множитель)",left_nipple_projection_scale:"Выступ левого соска (множитель)",right_nipple_projection_scale:"Выступ правого соска (множитель)",body_model:"Модель тела",left_breast_size:"Левая грудь",right_breast_size:"Правая грудь",left_buttock_size:"Левая ягодица",right_buttock_size:"Правая ягодица",height_cm:'Рост',weight_kg:'Вес',breast_size:'Размер груди',buttock_size:'Размер ягодиц',leg_length:'Длина ног',arm_length:'Длина рук',torso_length:'Длина туловища',shoulder_width:'Ширина плеч',hip_width:'Ширина бёдер',waist_width:'Ширина талии',head_size:'Размер головы',hand_size:'Размер кистей',foot_size:'Размер стоп',thigh_length:'Длина бедра',shin_length:'Длина голени',upper_arm_length:'Длина плеча',forearm_length:'Длина предплечья',thigh_width:'Толщина бедра',calf_width:'Толщина голени',upper_arm_width:'Толщина плеча',forearm_width:'Толщина предплечья',torso_depth:'Глубина туловища',neck_length:'Длина шеи',navel_shape:'Форма пупка',navel_depth_mm:'Глубина пупка',navel_width_mm:'Ширина пупка',navel_height_mm:'Высота пупка',left_areola_size:'Размер левой ареолы',right_areola_size:'Размер правой ареолы',areola_radius_mm:'Радиус ареол',areola_pigmentation:'Пигментация ареол',nipple_cold_response:'Реакция сосков на холод (0–1)',nipple_type:'Тип сосков',nipple_radius_mm:'Радиус сосков',nipple_projection_mm:'Выступ / втяжение сосков'};
+let current={},schema={},pending={},busy=false,timer;
+const status=document.getElementById('status');
+setInterval(async()=>{try{const body=await api('/body');const el=document.getElementById('presentation');el.textContent=body.liveApplied===true?'Текущие параметры подтверждены представленным кадром':body.liveApplied===false?'В представленном кадре ещё другие параметры':'Свежего подтверждения кадра нет';}catch(e){document.getElementById('presentation').textContent='Подтверждение недоступно';}},1000);
+async function api(path,body){const r=await fetch(path,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const v=await r.json();if(!r.ok)throw Error(v.error);return v;}
+function show(){document.getElementById('json').textContent=JSON.stringify(current,null,2);for(const [key,v]of Object.entries(current)){for(const el of document.querySelectorAll('[data-key="'+key+'"]'))el.value=v;}}
+async function flush(){if(busy)return;const patch=pending;if(!Object.keys(patch).length)return;pending={};busy=true;status.textContent='Сохранение…';try{const result=await api('/body',patch);current=result.parameters;status.textContent='Сохранено. Показ кадра не подтверждён.';}catch(e){status.textContent=e.message;}finally{busy=false;show();if(Object.keys(pending).length)flush();}}
+function change(key,value){current[key]=value;pending[key]=value;show();clearTimeout(timer);timer=setTimeout(flush,180);}
+async function init(){try{schema=(await api('/schema')).properties;current=(await api('/body')).parameters;const fields=document.getElementById('fields');for(const [key,s]of Object.entries(schema)){const box=document.createElement('div');box.className='field';const label=document.createElement('label');label.textContent=labels[key]||key;const unit=document.createElement('output');unit.textContent=s.description==='reference ratio'?'коэффициент':s.description||'';label.append(unit);box.append(label);if(s.enum){const select=document.createElement('select');select.dataset.key=key;for(const v of s.enum){const option=document.createElement('option');option.value=v;option.textContent=v;select.append(option);}select.onchange=()=>change(key,select.value);box.append(select);}else{for(const type of ['range','number']){const input=document.createElement('input');input.type=type;input.min=s.minimum;input.max=s.maximum;input.step=key.endsWith('_mm')?0.5:key==='height_cm'||key==='weight_kg'?1:0.01;input.dataset.key=key;input.setAttribute('aria-label',labels[key]||key);input.oninput=()=>{if(input.value!==''&&input.checkValidity())change(key,Number(input.value));};box.append(input);}}fields.append(box);}show();status.textContent='Готово';}catch(e){status.textContent=e.message;}}
+let viewCurrent={mode:'material'},viewSaving=false;
+function showViewLegend(){document.getElementById('view-legend').textContent=viewCurrent.mode==='strain'?'Синий: 0% · зелёный: 5% · красный: ≥10%. Максимальное по модулю относительное растяжение или сжатие оболочки.':viewCurrent.mode==='displacement'?'Синий: 0 мм · зелёный: 5 мм · красный: ≥10 мм. Смещение оболочки относительно текущих целей.':'';}
+async function initView(){try{viewCurrent=await api('/view');document.getElementById('view-mode').value=viewCurrent.mode;showViewLegend();document.getElementById('view-status').textContent='Режим загружен';}catch(e){document.getElementById('view-status').textContent=e.message;}}
+document.getElementById('view-mode').onchange=async event=>{
+ if(viewSaving)return;viewSaving=true;event.target.disabled=true;
+ try{viewCurrent=(await api('/view',{mode:event.target.value})).settings;showViewLegend();document.getElementById('view-status').textContent='Режим сохранён';}
+ catch(e){event.target.value=viewCurrent.mode;document.getElementById('view-status').textContent=e.message;}
+ finally{viewSaving=false;event.target.disabled=false;}
+};
+initView();
+let filmCurrent={},filmSaving=false;
+const filmFields=[
+ ['density','Плотность','кг/м³',100,20000,1,1],
+ ['viscosity','Вязкость','Па·с',0.0001,100,0.0001,1],
+ ['surface_tension','Поверхностное натяжение','Н/м',0,1,0.001,1],
+ ['wetting','Коэффициент смачивания','м²/с',0,0.001,0.00000001,1],
+ ['contact_angle_rad','Контактный угол','°',0,0.5*180/Math.PI,'any',180/Math.PI],
+ ['precursor_thickness_m','Толщина предшествующей плёнки','мкм',0.001,10,'any',1e6],
+ ['refractive_index','Показатель преломления','',1,2.5,0.001,1],
+ ['absorption_r_per_m','Поглощение красного','1/м',0,10000,0.01,1],
+ ['absorption_g_per_m','Поглощение зелёного','1/м',0,10000,0.01,1],
+ ['absorption_b_per_m','Поглощение синего','1/м',0,10000,0.01,1],
+ ['source_rate_m3_s','Расход основного источника','мл/с',0,1,0.0001,1e6],
+ ['source_radius_m','Радиус источника','мм',1,500,0.1,1000],
+ ...['x','y','z'].map(axis=>['source_'+axis+'_m','Положение источника '+axis,'мм',-2000,2000,1,1000])
+];
+const sourceFields=[['x_m','Положение x','мм',-2000,2000,1000],['y_m','Положение y','мм',-2000,2000,1000],['z_m','Положение z','мм',-2000,2000,1000],['radius_m','Радиус','мм',1,500,1000],['rate_m3_s','Расход','мл/с',0,1,1e6]];
+function sourceDirty(){document.getElementById('film-status').textContent='Есть несохранённые изменения источников';}
+function appendSource(source){
+ const box=document.createElement('fieldset');box.className='source-card';
+ const legend=document.createElement('legend');legend.textContent='Источник '+source.id;box.append(legend);
+ const fields=document.createElement('div');fields.className='source-fields';box.append(fields);
+ const idLabel=document.createElement('label');idLabel.textContent='Идентификатор';const id=document.createElement('input');id.type='text';id.required=true;id.maxLength=64;id.pattern='[A-Za-z0-9_-]+';id.dataset.sourceKey='id';id.value=source.id;id.setAttribute('aria-label','Идентификатор источника');id.oninput=()=>{legend.textContent='Источник '+id.value;sourceDirty();};idLabel.append(id);fields.append(idLabel);
+ for(const [key,title,unit,min,max,scale]of sourceFields){const label=document.createElement('label');label.textContent=title+' '+unit;const input=document.createElement('input');input.type='number';input.min=min;input.max=max;input.step='any';input.required=true;input.dataset.sourceKey=key;input.value=Number((source[key]*scale).toPrecision(12));input.setAttribute('aria-label',title+' источника, '+unit);input.oninput=sourceDirty;label.append(input);fields.append(label);}
+ const remove=document.createElement('button');remove.type='button';remove.textContent='Удалить источник';remove.onclick=()=>{if(filmSaving)return;box.remove();sourceDirty();};box.append(remove);document.getElementById('film-sources').append(box);
+}
+function readSources(){return [...document.querySelectorAll('.source-card')].map(box=>{const source={id:box.querySelector('[data-source-key="id"]').value};for(const [key,,,,,scale]of sourceFields)source[key]=Number(box.querySelector('[data-source-key="'+key+'"]').value)/scale;return source;});}
+document.getElementById('film-source-add').onclick=()=>{
+ if(filmSaving)return;const sources=readSources();if(sources.length>=16){document.getElementById('film-status').textContent='Допускается до 16 дополнительных источников';return;}
+ let number=1;while(sources.some(s=>s.id==='source_'+number))number++;
+ appendSource({id:'source_'+number,x_m:0,y_m:0.2,z_m:0.13,radius_m:0.04,rate_m3_s:0});sourceDirty();
+};
+async function initFilm(){try{
+ filmCurrent=await api('/film');
+ const hasContact='self_contact_enabled' in filmCurrent;document.getElementById('film-self-contact-control').hidden=!hasContact;document.getElementById('film-self-contact-note').hidden=!hasContact;document.getElementById('film-contact-fields').hidden=!hasContact;
+ if(hasContact)filmFields.push(['self_contact_max_gap_m','Максимальный зазор контакта','мм',0.001,10,'any',1000],['self_contact_transfer_speed_m_s','Скорость контактного переноса','мм/с',0,100,'any',1000]);
+ for(const [key,labelText,unit,min,max,step,scale]of filmFields){
+  const box=document.createElement('div');box.className='field';
+  const label=document.createElement('label');label.htmlFor='film-'+key;label.textContent=labelText+' '+unit;
+  const input=document.createElement('input');input.id='film-'+key;input.type='number';input.min=min;input.max=max;input.step=step;input.required=true;input.value=Number((filmCurrent[key]*scale).toPrecision(12));
+  box.append(label,input);document.getElementById(key.startsWith('self_contact_')?'film-contact-fields':'film-fields').append(box);
+ }
+ showFilmSettings();
+ document.getElementById('film-status').textContent='Настройки загружены';
+}catch(e){document.getElementById('film-status').textContent=e.message;}}
+document.getElementById('film-form').onsubmit=async event=>{
+ event.preventDefault();const button=event.submitter||document.querySelector('#film-form button[type=submit]');if(filmSaving)return;filmSaving=true;button.disabled=true;
+ try{const patch={};for(const [key,,,,,,scale]of filmFields)patch[key]=Number(document.getElementById('film-'+key).value)/scale;
+ patch.precursor_wetting_enabled=document.getElementById('film-precursor_wetting_enabled').checked;
+ if('self_contact_enabled' in filmCurrent)patch.self_contact_enabled=document.getElementById('film-self_contact_enabled').checked;
+ patch.sources=readSources();
+ patch.display_mode=document.getElementById('film-display_mode').value;
+ filmCurrent=(await api('/film',patch)).settings;showFilmSettings();document.getElementById('film-status').textContent='Сохранено; ожидается подтверждение кадра';
+ }catch(e){document.getElementById('film-status').textContent=e.message;}finally{filmSaving=false;button.disabled=false;}
+};
+function sameSettings(a,b){return a&&b&&Object.keys(a).every(k=>JSON.stringify(a[k])===JSON.stringify(b[k]));}
+setInterval(async()=>{try{
+ const result=await api('/measurements'),fluid=result.measurements?.fluid;
+ const viewStatus=document.getElementById('view-presentation');
+ viewStatus.textContent=!result.fresh?'Свежего подтверждения режима нет':result.measurements?.view?.mode===viewCurrent.mode?'Режим подтверждён кадром '+result.frame:'Кадр содержит другой режим';
+ const status=document.getElementById('film-presentation');
+ document.getElementById('film-measures').textContent='';
+ if(!result.fresh){status.textContent='Свежего подтверждения жидкости нет';return;}
+ if(!fluid){status.textContent='В представленном кадре плёнка выключена';return;}
+ status.textContent=sameSettings(filmCurrent,fluid.settings)?'Настройки жидкости подтверждены кадром '+result.frame:'Кадр содержит другие настройки жидкости';
+ document.getElementById('film-measures').textContent='Объём: '+(fluid.volumeM3*1e6).toPrecision(5)+' мл · Масса: '+(fluid.massKg*1000).toPrecision(5)+' г · Максимальная толщина: '+(fluid.maximumCellThicknessM*1e6).toPrecision(5)+' мкм'+(fluid.selfContact?.enabled?' · Контактный перенос: '+(fluid.selfContact.grossTransferredVolumeM3*1e6).toPrecision(4)+' мл'+(fluid.selfContact.error?' · Ошибка: '+fluid.selfContact.error:''):'');
+}catch(e){document.getElementById('film-presentation').textContent='Измерения недоступны';document.getElementById('view-presentation').textContent='Подтверждение режима недоступно';}},1500);
+function showFilmSettings(){document.getElementById('film-self_contact_enabled').checked=filmCurrent.self_contact_enabled===true;document.getElementById('film-sources').replaceChildren();for(const source of filmCurrent.sources||[])appendSource(source);document.getElementById('film-precursor_wetting_enabled').checked=filmCurrent.precursor_wetting_enabled;document.getElementById('film-display_mode').value=filmCurrent.display_mode;for(const [key,,,,,,scale]of filmFields)document.getElementById('film-'+key).value=Number((filmCurrent[key]*scale).toPrecision(12));}
+document.getElementById('film-import').onchange=async event=>{
+ const file=event.target.files[0];if(!file)return;
+ if(filmSaving){document.getElementById('film-status').textContent='Дождитесь сохранения настроек';event.target.value='';return;}
+ filmSaving=true;
+ try{
+  if(file.size>65536)throw Error('Пресет превышает 64 КБ');
+  const preset=JSON.parse(await file.text());
+  if(!preset||Array.isArray(preset)||typeof preset!=='object')throw Error('Ожидается объект настроек жидкости');
+  for(const key of Object.keys(filmCurrent))if(!(key in preset)&&!['self_contact_enabled','self_contact_max_gap_m','self_contact_transfer_speed_m_s'].includes(key))throw Error('В пресете отсутствует '+key);
+  filmCurrent=(await api('/film',preset)).settings;showFilmSettings();
+  document.getElementById('film-status').textContent='Пресет сохранён; ожидается подтверждение кадра';
+ }catch(e){document.getElementById('film-status').textContent='Пресет не применён: '+e.message;}
+ finally{filmSaving=false;event.target.value='';}
+};
+document.getElementById('film-export').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(filmCurrent,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='body.film.json';a.click();URL.revokeObjectURL(url);};
+initFilm();
+document.getElementById('reset').onclick=async()=>{if(busy||Object.keys(pending).length){status.textContent='Дождитесь сохранения изменений';return;}try{current=(await api('/reset',{})).parameters;show();status.textContent='Исходные значения сохранены';}catch(e){status.textContent=e.message;}};
+document.getElementById('export').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(current,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='body.json';a.click();URL.revokeObjectURL(url);};init();
+</script></html>

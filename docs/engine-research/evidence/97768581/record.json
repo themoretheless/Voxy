@@ -1,0 +1,79 @@
+{
+  "repository": "pokepetter/ursina",
+  "repository_id": 97768581,
+  "commit": "574e59f6a59a528996b1a988b84a405b8cab2c17",
+  "source_url": "https://github.com/pokepetter/ursina/tree/574e59f6a59a528996b1a988b84a405b8cab2c17",
+  "readme_path": "README.md",
+  "readme_sha256": "4a8529af7689ef8a1c4235dc2b638112ad045c2de88a6064c27390f32579ef1e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0feb928635a545a867144387593c6c965dbaa13f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a37ed6dc8fafa7a05b279e933e72645d08365fab"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "9591de481ceebc97775c05e6997c9fae94ec369b"
+    },
+    {
+      "path": "FUNDING.yml",
+      "type": "file",
+      "sha": "01018e7856c641969395cf1495d1ada18218e8f8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5450721634f6d929d00ed92fe585c158195044e5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9f89f04fc7782d56800b377e7d5c323a889ad7b2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c236dbff5c6d11572c406fbb866067fa9dfa8793"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "c5b4ed8ecf9037396f1c3a41e272198205cb3c08"
+    },
+    {
+      "path": "project_structure.txt",
+      "type": "file",
+      "sha": "870122208994e8e1c130db55b29a723773447010"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "516ba09fbb76790316faaf76b3b8a3a26581cca6"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "534acd098fd04717392e56acaae70efc96dd39be"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "aae0d39f05d6afb4cf2fe71fe7b976b769d7a81c"
+    },
+    {
+      "path": "ursina",
+      "type": "dir",
+      "sha": "d9e2ef69b5b2e6583458daf218496ff1db9b9987"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine/framework for Python; ursina package and pyproject build. Dependency architecture needs deeper review before independent-engine classification.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

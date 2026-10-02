@@ -1,0 +1,102 @@
+{
+  "repository": "jeuxdemains/DOOM-like-game-engine-part-I",
+  "repository_id": 823866146,
+  "commit": "c4e9b8ff10dd3390259d3b2c051c85400a35925e",
+  "source_url": "https://github.com/jeuxdemains/DOOM-like-game-engine-part-I/tree/c4e9b8ff10dd3390259d3b2c051c85400a35925e",
+  "readme_path": "README.md",
+  "readme_sha256": "c5d532f74a97f7e1c7dee5d4b894e5c80778e7daf5cc4316ff87d400b964f999",
+  "entries": [
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "fbdc10485310a921ef5b715441515001632de60d"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "6ad1d24669da455486ae292eb484355911817b0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f78677fbc1f46c354b19a66780d7fae214795e4d"
+    },
+    {
+      "path": "g_game_state.c",
+      "type": "file",
+      "sha": "a44cc685217434ca2d542e405f15734fa91a46c1"
+    },
+    {
+      "path": "g_game_state.h",
+      "type": "file",
+      "sha": "429461d081acc92108c456bfef5ef44654667197"
+    },
+    {
+      "path": "k_keyboard.c",
+      "type": "file",
+      "sha": "7dbbd4607f05cd7e700037f44a0c8edff12f0751"
+    },
+    {
+      "path": "k_keyboard.h",
+      "type": "file",
+      "sha": "2a7bae7f4071937ea271c80d28807de212dead8a"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "430ee0433c790fb0449b40e6f546d514656cd40b"
+    },
+    {
+      "path": "main.c",
+      "type": "file",
+      "sha": "6e23b64316e36e17e004a7347b232fe89eccd31e"
+    },
+    {
+      "path": "p_player.c",
+      "type": "file",
+      "sha": "4e68ced3b3e604d9b7cc8484452db8b25dfee64d"
+    },
+    {
+      "path": "p_player.h",
+      "type": "file",
+      "sha": "8ed677b24c4cc816007946712d47305cc0b7d81e"
+    },
+    {
+      "path": "r_renderer.c",
+      "type": "file",
+      "sha": "47d9e5afec567700599e82abf86b70db75b4cacb"
+    },
+    {
+      "path": "r_renderer.h",
+      "type": "file",
+      "sha": "57e0244648fc280d9091eff4006050a74a4f7990"
+    },
+    {
+      "path": "typedefs.h",
+      "type": "file",
+      "sha": "2b710fcb27e54e7da39ea59ef1eb8dcfcdd1d7dd"
+    },
+    {
+      "path": "u_utils.c",
+      "type": "file",
+      "sha": "bf64c541b7bf3c433e9231ebd5fa094fa079d5ac"
+    },
+    {
+      "path": "u_utils.h",
+      "type": "file",
+      "sha": "845cd594a3c90e08e24debe9a7305b2766771d04"
+    },
+    {
+      "path": "w_window.c",
+      "type": "file",
+      "sha": "74d76d678f2efdc25248b186cdea12d4d01f4d5c"
+    },
+    {
+      "path": "w_window.h",
+      "type": "file",
+      "sha": "6fbff8657cb02f391596f6e05fb3e1a4c3c19590"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

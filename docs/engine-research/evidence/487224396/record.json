@@ -1,0 +1,104 @@
+{
+  "repository": "nils-soderman/vscode-unreal-python",
+  "repository_id": 487224396,
+  "commit": "f61b3ce7a57b54ac956ba7d036f0df13ecf13d7f",
+  "source_url": "https://github.com/nils-soderman/vscode-unreal-python/tree/f61b3ce7a57b54ac956ba7d036f0df13ecf13d7f",
+  "readme_path": "README.md",
+  "readme_sha256": "2bbc2ba41bb7f91d787ac9712563e47ed5665fb2af664831a46cadb94a39e122",
+  "entries": [
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "4586e796f6021ca2ef74e161e94d29e49686f3e2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5677182c9664a0b09b753aeb0f32ff6c37b3bf52"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "316ce500ae5c3b48f77a21f0d60aaa5919966372"
+    },
+    {
+      "path": ".vscode-test.mjs",
+      "type": "file",
+      "sha": "611f538ece57ee2324b59fa66e6c4245f89fd598"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "16d8e3662fc30b2ebd593c6b92eefd0af83094d3"
+    },
+    {
+      "path": ".vscodeignore",
+      "type": "file",
+      "sha": "bbadc3725531d2730929eec1b296467ef88adb4d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "27e90fd3ac877efd33922a330a9f732af051889a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b4318081dfeb7a84c865b4b8aa7db2b6b82affb5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e2439661b7216b39a1ebca15a757dff0a8325b44"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "dd6ae9e7c0087084c8bc62d8b84cc6aeae056b7e"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "635ef165ec887d2118a8f11b2d4d498dc3684065"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "40b723c6f08ac40679b4914184e4506b80cbeff1"
+    },
+    {
+      "path": "site-packages",
+      "type": "dir",
+      "sha": "58860820920db7752710d2d7d0084d80b241c264"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1e24bd2be44bde03d6272b69971d229ed942a44a"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "e853e9467ad575a66658e0a35e21f110f02f55c6"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "2ce0e421b6f173247852f6db5f4b8a053489449c"
+    },
+    {
+      "path": "vscode-unreal-python.code-workspace",
+      "type": "file",
+      "sha": "50fed39fab6ca555c9349dbdd616b69e34e71ea9"
+    },
+    {
+      "path": "webview-ui",
+      "type": "dir",
+      "sha": "3b77070eb0bed147ffc8988163ae01a2e78ca978"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "VS Code extension supporting Unreal Python debugging and documentation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

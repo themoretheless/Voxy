@@ -1,0 +1,35 @@
+{
+  "change": "Default and morphed cages use the same volume-lumped mass model",
+  "illustrativeDensityKgM3": 1000.0,
+  "focusedTests": {
+    "session": 57011,
+    "passed": 4,
+    "failed": 0
+  },
+  "validated": [
+    "default/morphed cage mass equals rest volume times density",
+    "actual solver inverse masses match lumped masses and pinned particles remain fixed",
+    "volume recovery after loading",
+    "collider placement across height changes",
+    "tiny-height edit keeps actual cage inertia continuous after consistent reference normalization"
+  ],
+  "pending": [],
+  "sha256AfterChecks": {
+    "crates/voxy_app/src/volume_regions.rs": "068d72e6dbdea4a3bbfca8db154431c87da3ac4347403680447d330c1920af4d",
+    "crates/physics/src/tissue.rs": "9f1e0118f9aa1f3ee76ced59abae93674fcadf959f8fe3a4a942f420661d3bea",
+    "crates/voxy_app/src/female_demo.rs": "e2bbc6843dc72522b4c3380699c6c06abc93026d2d6b2dc592c7bce32be0c831"
+  },
+  "limitations": [
+    "Coarse proxy cages and illustrative density, not measured anatomical masses",
+    "Current visual appearance and all motion presets not revalidated after mass change"
+  ],
+  "movingFilmReplay": {
+    "session": 82527,
+    "passed": 1,
+    "frames": 120,
+    "simulationSeconds": 1.9999999999999978,
+    "maximumSourceAdjustedMassRelativeError": 1.829656511e-15,
+    "grossContactTransferM3": 0.0,
+    "afterConsistentReferenceNormalization": true
+  }
+}

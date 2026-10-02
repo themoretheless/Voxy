@@ -1,0 +1,39 @@
+{
+  "repository": "MeLikeyCode/QtGameEngine",
+  "repository_id": 114507663,
+  "commit": "4f386f0f40b620d4351baf9b124371991fc6af94",
+  "source_url": "https://github.com/MeLikeyCode/QtGameEngine/tree/4f386f0f40b620d4351baf9b124371991fc6af94",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "74f2958bd6c10ec26c88d652905e2017d849f77e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7cae042eae384df24d111ce9c1e9a8a719253dbc"
+    },
+    {
+      "path": "example projects",
+      "type": "dir",
+      "sha": "8d001c3c58623591b4d7df1cf1d35677adf2310e"
+    },
+    {
+      "path": "qge",
+      "type": "dir",
+      "sha": "d6f9da839ef5d9a4adbc56dd80ccc85b60fdfc20"
+    },
+    {
+      "path": "testProject",
+      "type": "dir",
+      "sha": "818ea4ca6ff4f3bb570de8623e8146c82aadd381"
+    }
+  ],
+  "classification": "engine_toolkit_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "No pinned README; Qt engine source directory and example projects alone do not establish runtime scope or completeness.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "leafo/aroma",
+  "repository_id": 333999,
+  "commit": "511d6892e239e45163b2a7743fa8da290e726b38",
+  "source_url": "https://github.com/leafo/aroma/tree/511d6892e239e45163b2a7743fa8da290e726b38",
+  "readme_path": "README.md",
+  "readme_sha256": "76444ed56e2e556cad9c75425c23a81512d801959ed4c6f96dade4f6441203a2",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "528894f2c4ea2735430ce2b18cb438f56e810d21"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "a1b3bc171de0d0bdb6066ec25ec4cb6bc611ee93"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "130b8e85b2c7b170b8643e845cd457459739241d"
+    },
+    {
+      "path": "Tuprules.tup",
+      "type": "file",
+      "sha": "6b73d499dde5eeff0cc1a9ef3289cd07457a3e11"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e3b1a4a0275345875f335f85ed1e45802dcc72b6"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "3e3428d85f6ba5a7eb5a3a1a207b92220ffcb4ec"
+    },
+    {
+      "path": "nacl",
+      "type": "dir",
+      "sha": "1b59e26f0af0e541311c1edee595338f3f9edb6a"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "eff2b689e91a5b034b10ec0144009dfb927016b7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e4afdabf66e202d905a05e38820678b383f1bf3b"
+    },
+    {
+      "path": "tup.config",
+      "type": "file",
+      "sha": "4e04f07edb16c1882106475ca5a45cbcfbfd592f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

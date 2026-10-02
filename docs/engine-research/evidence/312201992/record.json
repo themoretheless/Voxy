@@ -1,0 +1,62 @@
+{
+  "repository": "zachbarth/minimalist-game-framework",
+  "repository_id": 312201992,
+  "commit": "c9a7c1ee2392d92a1886d9c012c11389b60f4e96",
+  "source_url": "https://github.com/zachbarth/minimalist-game-framework/tree/c9a7c1ee2392d92a1886d9c012c11389b60f4e96",
+  "readme_path": "README.md",
+  "readme_sha256": "0411685f8897b97ef93eee309eaeee55313c58dfef320c51d3c6dfe1b2c728f5",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8aa2354ecb6788a0c214d446cb3ac7ceda513e82"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "4cf50d1698393ede6b2bba7d01d534bf1c02d782"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "35a0cd39491e1c4cc404375881bac6a71e6fc793"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "a58f0ef09954261cded11a1771e9e1eecb844a4b"
+    },
+    {
+      "path": "Game.csproj",
+      "type": "file",
+      "sha": "f782f13304951c8738dfe9a4c5d161b1d2bb909f"
+    },
+    {
+      "path": "Game.sln",
+      "type": "file",
+      "sha": "923db53d57285de5479ebf0f404a378223bf6b0b"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "271314075fc1fdf34790f14d97d39d7001c15cf4"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "6fc8c30e6e0a564281359265ef9e6141e1cfc801"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "a249eea76b6495de981ca0ae469913e8a13ee78c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "60e7b68fb88d464d8b100eed73de8561ed58ee50"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,144 @@
+{
+  "repository": "JACoders/OpenJK",
+  "repository_id": 9214660,
+  "commit": "260c59c2907187af555a676fe0cc798893bf7757",
+  "source_url": "https://github.com/JACoders/OpenJK/tree/260c59c2907187af555a676fe0cc798893bf7757",
+  "readme_path": "README.md",
+  "readme_sha256": "617c291db3e826a630ee986c02320fd5041dc6bdba635aa204c7898005182451",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9f3d602049a4007974e94ae096267f0aa9244806"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e9b301bd8513f6f9285a6132ec99d1211c342d14"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0cb9a153bc20f21f4f776f83acca1c46990bc940"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "87aa203888219d406b9145e13a918e30d70a7c86"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f59bfc88c97e1746dbf4ed71620ae22ebfdbe57f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "149e82d75293ca3386e1ca26c5a106458d979bbe"
+    },
+    {
+      "path": "CreateVisualStudio2013Projects.bat",
+      "type": "file",
+      "sha": "e0a83becd107c0ff2dfe50624a6a52ececdde5ae"
+    },
+    {
+      "path": "CreateVisualStudio2015Projects.bat",
+      "type": "file",
+      "sha": "f5a302ab2c14d70d45867c0cd24a07209c1e601c"
+    },
+    {
+      "path": "CreateVisualStudio2017Projects.bat",
+      "type": "file",
+      "sha": "a7a924379bfb3940af772a4d016b0f7e40c8ee2a"
+    },
+    {
+      "path": "CreateVisualStudio2019Projects.bat",
+      "type": "file",
+      "sha": "14b253ddb546ab2663d681fbbc572813ef6c48f6"
+    },
+    {
+      "path": "CreateVisualStudio2022Projects.bat",
+      "type": "file",
+      "sha": "d71a888c79ccef8cf1a4c249d56ddeea2b3a6775"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "37614696e69dbbdd3426c5bacafad3201b055e69"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "23cb790338e191e29205d6f4123882c0583ef8eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e100e95c8c3de8bafb2acea1d4e2888568c4d7fd"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "dbfb49c8be597f76133aa110a43c5f5c5e71a969"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "078b6dff0f3585d1dc7fc0f66f659ac463cab4f6"
+    },
+    {
+      "path": "codeJK2",
+      "type": "dir",
+      "sha": "0ba9c9a2b1cc68915e6bbf8e81c15cb3a8033988"
+    },
+    {
+      "path": "codemp",
+      "type": "dir",
+      "sha": "fd21ccfc68e534d7b0a0da42e42cac43e6527e6f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "34de1ba5e60202490ee50e23ebe779cff329a2aa"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "729d5303bed2025d8e95e03468dcc3f4bb6809e4"
+    },
+    {
+      "path": "rv-readme.txt",
+      "type": "file",
+      "sha": "8c5bfb39168e9b37e64519bcf94f3065987e1b84"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "69f0c2bd7fca5fa5a79df619eb715181a0180e93"
+    },
+    {
+      "path": "shared",
+      "type": "dir",
+      "sha": "99f241871178d6a297a503296006857a302bc35f"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "9843f0d56d85b6710e8193acacd092bd7973ead6"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "80d94e26eb45202dc4af09c0bd7211639614e593"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "7e3041307e0c68071c04181bec4c77fc9e2719d8"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies maintenance of Jedi engine/game; code/codeJK2/codemp/shared with CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

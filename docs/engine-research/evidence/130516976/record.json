@@ -1,0 +1,94 @@
+{
+  "repository": "vitei/Usagi",
+  "repository_id": 130516976,
+  "commit": "d13bcf212d2ea03259179d4dbd30ac3addf11218",
+  "source_url": "https://github.com/vitei/Usagi/tree/d13bcf212d2ea03259179d4dbd30ac3addf11218",
+  "readme_path": "README.md",
+  "readme_sha256": "a27f43c4603abc8272091296d3ba795cd7b160c4663ab2abf96cebea9505d868",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c545cf3eb79eacc6d6f151b2855cc6dc5a004e8a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bc31d329a4e2ec74c05683e53cf49025736f5d99"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2a8200713994504572603dc5a1eec95debfa2928"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "f11135ea09465aeafbcc606d8f19cf9d9eb16dee"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "444398119f6cd596069dd9332bc8b54a30944917"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c0659506066126a21671bf3d37cfed5e98481907"
+    },
+    {
+      "path": "EnvironmentSetup.exe",
+      "type": "file",
+      "sha": "64915b39aa651a6048de8432b0a469016c21cd8f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9d088fa6a8aa28d2482a5df092a03922b36d7911"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a83efacf110dd78abc2de7f974f9d51d2e346094"
+    },
+    {
+      "path": "Setup.bat",
+      "type": "file",
+      "sha": "057fb1d07b02621713cdb449cc711b7eda7807c3"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "9b44e8908f0bf34dbeb3f8353db5f4f0bc2b8197"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "dbe44916a9bfbd3c730ab3a8efc6f06f639b420c"
+    },
+    {
+      "path": "Vendor",
+      "type": "dir",
+      "sha": "bd1020e5e410dcf634508ca872c53f50ba4e94fa"
+    },
+    {
+      "path": "engine_exclude.txt",
+      "type": "file",
+      "sha": "4719a1c48bfc9af13904eddd833eb6ae7b90c8d8"
+    },
+    {
+      "path": "python_excludes.txt",
+      "type": "file",
+      "sha": "bf80a96fc1eea5e595d04dec2e29a7a097d7bf28"
+    },
+    {
+      "path": "rakefile",
+      "type": "file",
+      "sha": "b146db6e8b0ae88328e4277d754d46812cb7421c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Hierarchical ECS runtime with explicit component input/output system contracts, engine sources, tools and project templates.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

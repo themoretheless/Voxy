@@ -1,0 +1,132 @@
+{
+  "repository": "gamedevserj/Godot-Shaders",
+  "repository_id": 272007525,
+  "commit": "2ff00d21b0d8cd7d6cabb1a2be98d827565f1f6c",
+  "source_url": "https://github.com/gamedevserj/Godot-Shaders/tree/2ff00d21b0d8cd7d6cabb1a2be98d827565f1f6c",
+  "readme_path": "README.md",
+  "readme_sha256": "22c2cd9e1d23948e28370fd10b6a5bb213ee4a0f360eba8afa2b02500974bb92",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "64ad9101732cf50789db8883c13833451f58ba16"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "973b59a311e26e57a335cc89395d29c903b25ea9"
+    },
+    {
+      "path": "Checkerboard.png",
+      "type": "file",
+      "sha": "7182ea23e41fe6f3178ca5e0384e07bcbf20af39"
+    },
+    {
+      "path": "Checkerboard.png.import",
+      "type": "file",
+      "sha": "08e6bed3723804deb651a06d8afe14faa754920f"
+    },
+    {
+      "path": "CircularFadeOutShader",
+      "type": "dir",
+      "sha": "b0bd2b7c0a3298fcef78426d7373722c1616d684"
+    },
+    {
+      "path": "Dissolve",
+      "type": "dir",
+      "sha": "da3f073d42f302884fdc4998fa6c6b5508b7a379"
+    },
+    {
+      "path": "FakePerspective",
+      "type": "dir",
+      "sha": "6e3ebd5c5c31a465382cc43db1004ffe8d1b7502"
+    },
+    {
+      "path": "GithubImages",
+      "type": "dir",
+      "sha": "766cb5ac6e954144efeac46a40b95a5c289eb7d9"
+    },
+    {
+      "path": "GrassSway",
+      "type": "dir",
+      "sha": "91e558416cb9e6552d6420533da29fc2e0a6bee5"
+    },
+    {
+      "path": "ImpactEffectShader",
+      "type": "dir",
+      "sha": "96674ad86f573767a4ee7b83e31752ccbeaf2b2f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0842beee44e6c85a2a5f9eec26df9f47ba4690fc"
+    },
+    {
+      "path": "MagnifyingGlass",
+      "type": "dir",
+      "sha": "08162186fb644a6bafc9f29279261f62b952421f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d86c77a1c43310262982b81e0991c108193e6d1f"
+    },
+    {
+      "path": "RingShader",
+      "type": "dir",
+      "sha": "2e71a42e2210bd72a1107256e1a84f17b621f2fe"
+    },
+    {
+      "path": "StealthCloakEffect",
+      "type": "dir",
+      "sha": "309bc9f0d9920cb5848a31c56ad0ec37f26a36d4"
+    },
+    {
+      "path": "WaterShader",
+      "type": "dir",
+      "sha": "e0542e5a600de59185eefadfa8aa94a59b97c06c"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "7506e29bf18740de28869c10a61e959114f0f1ad"
+    },
+    {
+      "path": "ground.tscn",
+      "type": "file",
+      "sha": "7853c151f97c87edb12b4c35ed4b0d97ffc1b92f"
+    },
+    {
+      "path": "ground_tileset.tres",
+      "type": "file",
+      "sha": "fca1b3156bf47f5f851417c0ddfffc2352ada25e"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "25f099101a9c85ba6c6ccb3abb41a6fab6994f2f"
+    },
+    {
+      "path": "pixel.png",
+      "type": "file",
+      "sha": "b2bcb26158273b07a1101c414121589309246e76"
+    },
+    {
+      "path": "pixel.png.import",
+      "type": "file",
+      "sha": "0fa02e974cbbfd9a339dc5884d7e3c928a5f4f62"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "bcffbdb3e4ddcaa7f7deec2967d97594104df41b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

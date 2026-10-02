@@ -1,0 +1,84 @@
+{
+  "repository": "bernhardstrobl/Pico3D",
+  "repository_id": 565219943,
+  "commit": "32e06dd4dc3af11f91b5ac27f83eee0990bf811e",
+  "source_url": "https://github.com/bernhardstrobl/Pico3D/tree/32e06dd4dc3af11f91b5ac27f83eee0990bf811e",
+  "readme_path": "README.md",
+  "readme_sha256": "3dbe3f32bf0f82e9acf2309be84f32630198839b31a025e5ca940f3cf34d775b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4f1d0e6047282f11f90bfb4a25ec822322ce56e3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c838118b205914c051c552699ea82c331cf22f46"
+    },
+    {
+      "path": "Blender",
+      "type": "dir",
+      "sha": "61ce3973c16dbfa808a2a3863c6d0f7c5f9f8b69"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "28dd33bb470fc4b5adc9d350652c4ca722947dbc"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "465aa9a0fb94167be93f581957e5d4b14b1d5adc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e1365b9c557925434475c233554d6f3ef7d76c80"
+    },
+    {
+      "path": "chunk_data.cpp",
+      "type": "file",
+      "sha": "b3d87f3f0d22c07786945ac44f9e166cbe436498"
+    },
+    {
+      "path": "chunk_data.h",
+      "type": "file",
+      "sha": "45c968b3712cc8d7756d01043d92c72a8a230c4a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4595ac8c4f132741131aa0b7dd989973e6537da8"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "91be0416358f3c5ad6cbc637df7a7cfd16acd9bb"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "975c226f4e0f640b7fc1ef52a889f0d96151c52e"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "c1748ca86aa9262fe057893bcbfa776d981ccb6a"
+    },
+    {
+      "path": "pico_sdk_import.cmake",
+      "type": "file",
+      "sha": "298b65e458785efebf462fff633119e97b190ae9"
+    },
+    {
+      "path": "test_models",
+      "type": "dir",
+      "sha": "8195d709d1823f2b32ea3c6f85e6fbe88f7797cb"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies RP2040/Pico 3D game engine; owned engine/game/chunk source and SDK/CMake build. Dual-core performance unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

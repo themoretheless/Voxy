@@ -1,0 +1,184 @@
+{
+  "repository": "SummerEngine/summer",
+  "repository_id": 1167534789,
+  "commit": "555419e5afe1f21ea30a1205e3d3b0447e5defbc",
+  "source_url": "https://github.com/SummerEngine/summer/tree/555419e5afe1f21ea30a1205e3d3b0447e5defbc",
+  "readme_path": "README.md",
+  "readme_sha256": "c6f89094e6f980a58ef54fc6973e851e604dec7e750e36fe0a0f6cf51c8131a8",
+  "entries": [
+    {
+      "path": ".claude-plugin",
+      "type": "dir",
+      "sha": "d80c272f56b59fe0ac4433e2fd9741bbfb0d72a8"
+    },
+    {
+      "path": ".codex-plugin",
+      "type": "dir",
+      "sha": "2c1810c811c180d3c1d00aee0885ab62f576fe60"
+    },
+    {
+      "path": ".cursor-plugin",
+      "type": "dir",
+      "sha": "d8a9743b4483847af53033818586b1be04b5d07d"
+    },
+    {
+      "path": ".factory-plugin",
+      "type": "dir",
+      "sha": "98ce6e2d6753480cd6c5574bc2abec3839e1456d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8c068cf081b38e55f1a3cd6a8a9467ee87bbfa98"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e9b165b6eedd2ca7ea7790c714ebdbee983e9613"
+    },
+    {
+      "path": ".mcp.json",
+      "type": "file",
+      "sha": "880c777de8447abd311e84d63c8767923d474b63"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "2bd5a0a98a36cc08ada88b804d3be047e6aa5b8a"
+    },
+    {
+      "path": ".opencode",
+      "type": "dir",
+      "sha": "e2358ba8d232316236881082f28c53e10e307f14"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "368692e680d6bde56631431dea39f4046a050635"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "af691913dfb8ab9f8e96f17735901fed702657bb"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "628b159718b641ace804d3c874ab2111450f44aa"
+    },
+    {
+      "path": "GEMINI.md",
+      "type": "file",
+      "sha": "4067c8cdc7d02315de49519ea7cf6bf1aab6c48e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b226b631271b96977911914bb6b73494c432f1f3"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "d9ee57d71638862c6a80f82ff8d202b926acef80"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b27b75e78d77225e55be3b635152407c13fffa9"
+    },
+    {
+      "path": "TOOLING-TODO.md",
+      "type": "file",
+      "sha": "76040a3b5921450594b08e8549413cd3ab8048bb"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "046e1e37166fe7e14b71fcdf59beb18112ba4613"
+    },
+    {
+      "path": "commands",
+      "type": "dir",
+      "sha": "99464912fc822cb65fab2cf11aa8114236854f85"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "885b46f669cf419e9405efed8f04b7649c0b8aa4"
+    },
+    {
+      "path": "evals",
+      "type": "dir",
+      "sha": "49aec632813f360cf89d5a166dc2f447f3b6c2b4"
+    },
+    {
+      "path": "gemini-extension.json",
+      "type": "file",
+      "sha": "d6f68dcbf64196022c9ffab3bc55689c09d36f81"
+    },
+    {
+      "path": "hooks",
+      "type": "dir",
+      "sha": "7239c0839aa364a50cb86770850c10b748cfa222"
+    },
+    {
+      "path": "integrations",
+      "type": "dir",
+      "sha": "875357f2a82ff1b3e0f2e12f3b736ffb0104822d"
+    },
+    {
+      "path": "library",
+      "type": "dir",
+      "sha": "35a70db1c88167385e519a2e6a3e3218d481bfa1"
+    },
+    {
+      "path": "migration",
+      "type": "dir",
+      "sha": "4a34285431c363fb1ea59e38219b553729a79d68"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "ee61aac583f60124d081dbdb2fb937b6c902626f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "df11d6231105d93c4e7c2ccc1c235dac4a75de5e"
+    },
+    {
+      "path": "registry",
+      "type": "dir",
+      "sha": "59cfb81a59aea673a8571e231f57c1fa95e09f58"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "40bde8c3f713fb2654be79caa01aa26086b5d7df"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e120a817dd745b229b1476e241fe0cb0539cc455"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "543becb1bbf0560c646bf97eab217ec0188c2ecc"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "206e8215733bd8ed37cdb7d6e561437007200de9"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "e47197eb1b3cd62160acd28328949ea4e5be6a5f"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "AI game-development tools/library and engine-app setup front door; README does not establish this repository as underlying engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "hexops/mach",
+  "repository_id": 382912430,
+  "commit": "4be8e50fc89a532878887dba002f590cc50d8e89",
+  "source_url": "https://github.com/hexops/mach/tree/4be8e50fc89a532878887dba002f590cc50d8e89",
+  "readme_path": "README.md",
+  "readme_sha256": "6d25a81e936b5030431b4e6260bfc33df382858d77fe28d981a7e0a4643814ca",
+  "entries": [
+    {
+      "path": ".forgejo",
+      "type": "dir",
+      "sha": "eb410dd4618a716de7ec540759e4c79859a553d4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ba1273bd9fcd8c61a97c32e67d591a95f13267ef"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4e72b4414e7fbc6620ba812c4472f2803432fa5a"
+    },
+    {
+      "path": ".zigversion",
+      "type": "file",
+      "sha": "af173492cf2975026a60012fdafea33730ccca84"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ba6099da0259c5902fc4408cd8eeffed35d27393"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "14cd797326ef26ca50f052e2ca48d1fcdd8757fd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bee7f65db9b37d12c24b99969363d222560b7555"
+    },
+    {
+      "path": "build.zig",
+      "type": "file",
+      "sha": "d45486e2a2ec0854d822e2cd138b1b34435a4077"
+    },
+    {
+      "path": "build.zig.zon",
+      "type": "file",
+      "sha": "d78f22bfcd0036e73ec55a52da8743dcb150b4da"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "ed7fedecdd9c2729b96af0d318520670395e0751"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b0cb3cfcc90b45810dc334ffad1f36e51638f3a9"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "a386cc2b61de56ac5eb6c6633756f2ba399705cf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f06565d66a62fa9f2cffedf5c831786363e4e043"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Zig engine/toolkit; src/editor and build.zig. Mirror identity noted; no quality/runtime claim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

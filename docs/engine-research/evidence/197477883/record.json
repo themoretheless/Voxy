@@ -1,0 +1,79 @@
+{
+  "repository": "maiple/opengml",
+  "repository_id": 197477883,
+  "commit": "8c128dcccb03beadfa0e5a11230adb2fd301594b",
+  "source_url": "https://github.com/maiple/opengml/tree/8c128dcccb03beadfa0e5a11230adb2fd301594b",
+  "readme_path": "README.md",
+  "readme_sha256": "853a3bb9eca8ad7443b9ec63b4ef6a01e51ad4adb66611ffc5f1eafd73116381",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "e9dd15ab602cb905c5b277e6d187377d8c68fada"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7e3496c02c66dc09dbeeab4675294482595b26e4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ec16efa4883173b8a8d930ceee57d02482eee5c0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "31719a31b76ab7329a6562922c6edffee652b84a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b66a64f089758958d27da88dd33d957888fad524"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "864ddfe0ad52ada2b998970d34f694177b50b2e2"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "2a220a33cd71d94712a67ac8a8cb310151b55431"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "e3d87c918deeffd3b901c61bce16ee94aacc681e"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "3be09fe7e0d1477f32aa1d8ffc3447cf68f8f6a3"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "d4c393051d649045e0846a314537462f271893c9"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "9109def53dfb0fb6cefea45fa9ac467d67b9fa7f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2a59792906d5c066c47cad6593990044ba0f6047"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "69c43d76f24e1cef54b008afac705beb6ba8d98d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "GML project runtime launches GMX games; compiler/interpreter sources, examples and tests are present. No runtime compatibility verification.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

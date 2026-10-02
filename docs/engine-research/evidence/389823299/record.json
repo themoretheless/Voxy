@@ -1,0 +1,129 @@
+{
+  "repository": "KinsonDigital/Velaptor",
+  "repository_id": 389823299,
+  "commit": "e85f8989b73978d23b6c95f0a8704b8af03cae92",
+  "source_url": "https://github.com/KinsonDigital/Velaptor/tree/e85f8989b73978d23b6c95f0a8704b8af03cae92",
+  "readme_path": "README.md",
+  "readme_sha256": "d61ba6c0343c7a57540352b4ac60b46a0bb0acae50a77dc33f01a9e464f1be96",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "313604c7972f68610558b6411dc6f3d1e2ed7051"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "dfe17a021e0ae24d383643273cf9a4952f560039"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fb6efc3da3cbdc563a9d0750fb6d36edac70e90b"
+    },
+    {
+      "path": ".omp",
+      "type": "dir",
+      "sha": "17d3d0a27b81f990b4ceb9143f58146287a4cbb9"
+    },
+    {
+      "path": ".run",
+      "type": "dir",
+      "sha": "3550cc1ced7e38c6eac3a0d35290820da28405d9"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "bbfde4974e3776de1a753cfdd595b8d55b1775a5"
+    },
+    {
+      "path": "BACKERS.md",
+      "type": "file",
+      "sha": "efd17bbc91263441bcd02e86809e24374e8d2e11"
+    },
+    {
+      "path": "DevTools",
+      "type": "dir",
+      "sha": "7b3f48ed236c083f95d06f214ed8c4b0db61e854"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "fa2c252997058cd089a71bc122f1751472d0da02"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1a175cdd6822e3eb31996be9958377da393f07cc"
+    },
+    {
+      "path": "Performance",
+      "type": "dir",
+      "sha": "990261eb51e73dba52f9d3853482005ca91480d6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b74e1a5c2bcd4ed4bedaee5d3608d53cae38cd46"
+    },
+    {
+      "path": "ReleaseNotes",
+      "type": "dir",
+      "sha": "f9734167aa085524a400d50d4814815c9fc9b2ef"
+    },
+    {
+      "path": "Testing",
+      "type": "dir",
+      "sha": "780b4927ca15aebde72295cc70b02df88bba1104"
+    },
+    {
+      "path": "Velaptor.sln.DotSettings",
+      "type": "file",
+      "sha": "ef980d502b205b6230e4c41da6170ed6b6079c99"
+    },
+    {
+      "path": "Velaptor.slnx",
+      "type": "file",
+      "sha": "b68e9001fac26f4a6a193c619d5f3e76bc141bd9"
+    },
+    {
+      "path": "Velaptor",
+      "type": "dir",
+      "sha": "cf015598e41ec0e64f1abeb55a80f30a59ed74a9"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "6c264c56eb80747040b9b8f2074b2f5ab617b23c"
+    },
+    {
+      "path": "deno.json",
+      "type": "file",
+      "sha": "31b356f57f3ef5dead39c25454e6b1553a2b89e3"
+    },
+    {
+      "path": "deno.lock",
+      "type": "file",
+      "sha": "62c559ca9eb739b1bd7050b728329224ef5d7251"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "3feef1bd7b08473cd24e1e0d28398d41fc343957"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "dfa5fade51eb00a9ef5c4fb08c2b89d6bb357ac9"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# 2D development framework; README explicitly identifies low-level framework scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

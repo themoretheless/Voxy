@@ -1,0 +1,89 @@
+{
+  "repository": "BigJk/ramen",
+  "repository_id": 149114282,
+  "commit": "074af7d570060df368643d34bc321759901f4a94",
+  "source_url": "https://github.com/BigJk/ramen/tree/074af7d570060df368643d34bc321759901f4a94",
+  "readme_path": "README.md",
+  "readme_sha256": "625528d6887c425cb45de0aeb3ea7705b6c477fcedc346846827e4753879781e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f5ff076c6b8c2925e1ee23254aaccf7116f7f74a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1f3274ec5b9ad7b7458c66012de27160aefedf6c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4f2a3e24688ae7b0b4e3c25640a1ec66ea8cd51f"
+    },
+    {
+      "path": "cell.go",
+      "type": "file",
+      "sha": "9522b0ecb6face070083f21e77915b182d857cd4"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "ffa3d65a060369be7f23b90aab838f3e7ad6cf0a"
+    },
+    {
+      "path": "concolor",
+      "type": "dir",
+      "sha": "bcf05e128c1a79c02af3919800f620269698a3ea"
+    },
+    {
+      "path": "console",
+      "type": "dir",
+      "sha": "2842e02e073484e5140bb025dee13dfdb9ee43b6"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e2a92eac52a577575f3f28e4cc634ac63ad2705a"
+    },
+    {
+      "path": "font",
+      "type": "dir",
+      "sha": "b2200f06fbd8673cea3c2176dd797813bfe06b74"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "056dcbb3145ceebce371250c8f1714e54623013c"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "5ce8d89f540b3760f92e7bc76aee249599e074f1"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "ad2a54ca896328c9b1d8ee1fd178ec7ac74389db"
+    },
+    {
+      "path": "t",
+      "type": "dir",
+      "sha": "e4b3b74ba487c8f948bd80cf3b0c4a9b8f4ba352"
+    },
+    {
+      "path": "xp",
+      "type": "dir",
+      "sha": "4e8afb1ed0a783a155e91471cedb20704ca5f2c2"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ASCII console emulator/display library over Ebitengine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

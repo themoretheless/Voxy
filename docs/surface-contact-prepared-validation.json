@@ -1,0 +1,17 @@
+{
+  "integration_tests": {
+    "surface_contact": 4,
+    "finite_inertia": 4,
+    "lbfgs": 4,
+    "tissue_assembly_history": 4,
+    "tissue_gaps": 5,
+    "urogenital": 9
+  },
+  "all_passed": true,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/surface_contact.rs": "5893af60e1906e37accc5b4b9831d0aff1758850a3b865b93b98010b5ee756f2",
+    "crates/physics/src/biomechanics/surface_distance.rs": "222bfa44d8079ecec365b7c89fddebf8d36321d3939b2fc68f720083fe974e6f",
+    "crates/physics/src/biomechanics/lbfgs.rs": "fe42ac35e760601352f6d788b5bf98fc275b463d72ec9544980f2f08eaf795cf"
+  },
+  "scope": "focused numerical regression after prepared geometry cache; not anatomical or full-goal validation"
+}

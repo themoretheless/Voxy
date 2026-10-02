@@ -1,0 +1,99 @@
+{
+  "repository": "headcrab-junkyard/OGS",
+  "repository_id": 156235115,
+  "commit": "b24f686d963a322735392fc7d57a459352ce0d1b",
+  "source_url": "https://github.com/headcrab-junkyard/OGS/tree/b24f686d963a322735392fc7d57a459352ce0d1b",
+  "readme_path": "README.md",
+  "readme_sha256": "77f8fa9ec2eb8496549344191062d5809cb080cafcead16e4bb20c4f2ade1092",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "76b6a19cea94091331ad1dc680f1f0040766e9d8"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8d26e5f43c4ac9512b293daa26f65e1f24091024"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d3d3e7d2c1bab7af0784ba35b9a9ebc94740b59f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb4b7f5f142b9f321c370fe5fd8767c110685ead"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f4498075cdcdf0c2c07af37c569418e2727b203f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "LICENSE-GameNetworkingSockets",
+      "type": "file",
+      "sha": "9aa7a768643f22128fc12ba8062634fadf8d889e"
+    },
+    {
+      "path": "QW",
+      "type": "dir",
+      "sha": "f783999485a866ee61379e889d2d7b2bf348835c"
+    },
+    {
+      "path": "Quake-2-master",
+      "type": "dir",
+      "sha": "09731be769784b6cd04099c9acff595f7087a956"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d114f28968b4b3dbbd7b2f0c22d1861bc5fd9ae7"
+    },
+    {
+      "path": "README_old.md",
+      "type": "file",
+      "sha": "132bc4d14293a6730d3792ca144b4bd419c92368"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "7978c996abc0eeaa96a4e215dfadc0bd40c15a74"
+    },
+    {
+      "path": "clang-format.sh",
+      "type": "file",
+      "sha": "ba790741c6261f983503e9a86a0605bcc2b696a0"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "6e560e5c63ea73f7b9bb63518fe1a0a1e6682d93"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7ab9c18abb522e125b3eb74d8bfb0b53190860a3"
+    },
+    {
+      "path": "goldsrc",
+      "type": "dir",
+      "sha": "466945c83d0fcc4de06a69b5ee0598b144e91e3a"
+    },
+    {
+      "path": "legacy",
+      "type": "dir",
+      "sha": "fab80c2da9b3767c74958ac8404b6da6dfd24706"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README calls it a GoldSource clone prototype based on Quake sources; runtime completeness is unresolved, excluded from accepted engine target.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

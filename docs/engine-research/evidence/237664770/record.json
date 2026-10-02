@@ -1,0 +1,52 @@
+{
+  "repository": "SaeruHikari/SakuraEngine-Old",
+  "repository_id": 237664770,
+  "commit": "dd5ae9b38dacecee50b5982cccf63bfd7cf51f93",
+  "source_url": "https://github.com/SaeruHikari/SakuraEngine-Old/tree/dd5ae9b38dacecee50b5982cccf63bfd7cf51f93",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ad5e2e65b61b1c9e7ba937a088d934dc0e417784"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "4e0416e00ea7c3082355c8055717658f7154ef6a"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d3ced424b34cece820e4e5e9c4dcb6160a9c8ae0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e0f021d5f85e8fe1fa2b15b811a5c9e0c444332e"
+    },
+    {
+      "path": "SakuraEngine",
+      "type": "dir",
+      "sha": "ba3abf50b25c9d907978cfc6b36482b49ce84879"
+    },
+    {
+      "path": "SakuraEngineConfig.cmake.in",
+      "type": "file",
+      "sha": "d69e01ce7a461a0a0c2f267f9fbf02640e84908f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "c86a8bf29b7354d7dbabb76e82c28e4f40c4bec0"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d219a9b695e255ffdedc705e70c2fff583132128"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

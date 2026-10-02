@@ -1,0 +1,47 @@
+{
+  "repository": "SubjectNerd-Unity/ReorderableInspector",
+  "repository_id": 85203064,
+  "commit": "152a050fd26acdff6b9ff3e28271027d660b2370",
+  "source_url": "https://github.com/SubjectNerd-Unity/ReorderableInspector/tree/152a050fd26acdff6b9ff3e28271027d660b2370",
+  "readme_path": "README.md",
+  "readme_sha256": "affc19c407ea17b4b6ea8366976f37d6ab6b15afed6a354843b978450b3e2b5e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7cf750cb1a2ebd44a44c1b16898793acada112cb"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "f42c8ab03a589152f861d3a4f2f4e7e55dc86a06"
+    },
+    {
+      "path": "EditScriptableAttribute.cs",
+      "type": "file",
+      "sha": "6db4237310e43ae54bf8f1b757ed0b8dcaf15fb1"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "7cf5d6ab876e430dbf5afe31aeaa8c0478d39d60"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "754b7dfeba83d157c8d31138476fad425f39e979"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b99539b7d4014688033ec8531ab713840b24b0b8"
+    },
+    {
+      "path": "ReorderableAttribute.cs",
+      "type": "file",
+      "sha": "f54eae182ddcce61909d9f14a073ed9ef3a38c9b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

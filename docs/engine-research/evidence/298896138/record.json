@@ -1,0 +1,44 @@
+{
+  "repository": "r-lyeh/v1",
+  "repository_id": 298896138,
+  "commit": "722b555a77d506caa9f77bb8fa704a5f2ff2dc04",
+  "source_url": "https://github.com/r-lyeh/v1/tree/722b555a77d506caa9f77bb8fa704a5f2ff2dc04",
+  "readme_path": "README.md",
+  "readme_sha256": "b8c229bbd01daf02ea1355b9010d543d129fd44dd4db7cdcba3cf59110a1a937",
+  "entries": [
+    {
+      "path": "2020",
+      "type": "dir",
+      "sha": "3996cdff13aa4158eb729e2a5a3bf3eafb2129ff"
+    },
+    {
+      "path": "2021",
+      "type": "dir",
+      "sha": "18d02718324e3bc279280d5b5afaca6322341505"
+    },
+    {
+      "path": "2022",
+      "type": "dir",
+      "sha": "65e1bb536f829a4678b5de8f92e17c999bdc78c4"
+    },
+    {
+      "path": "2023",
+      "type": "dir",
+      "sha": "f1d5f8b5d456644b1cec24a99afec7b745bfbb72"
+    },
+    {
+      "path": "2024",
+      "type": "dir",
+      "sha": "90ffde4d044f4d5a1748e82939bb38c1a5fe9864"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "691089e1d41f61e802f6c3f5624cdde2ee797baa"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native engine/framework archives and embedded runtime; annual source distributions. Separate from complete-engine count pending deeper inspection.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

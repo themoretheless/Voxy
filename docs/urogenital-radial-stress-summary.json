@@ -1,0 +1,59 @@
+{
+  "scope": "Synthetic constitutive stresses on actual loaded meshes; reference-volume-weighted means; no clinical or anatomical validation.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "radial": 1,
+      "elements": 9216,
+      "min_j": 0.9186720115158,
+      "max_von_mises_pa": 238.2507353161,
+      "mean_von_mises_pa": 21.353070524332402,
+      "stress_csv_sha256": "96ddecf1b4e047597f479edf0dbd99a5a96bb4298201a35098927939214ab2a4"
+    },
+    {
+      "specimen": "vagina",
+      "radial": 1,
+      "elements": 9216,
+      "min_j": 0.8578092452378,
+      "max_von_mises_pa": 375.8742941568,
+      "mean_von_mises_pa": 53.518382640927406,
+      "stress_csv_sha256": "cd7b43cf61bd7160faa9e3b0d728b531885d31b5df24913a6ef8102a5995ec77"
+    },
+    {
+      "specimen": "urethra",
+      "radial": 2,
+      "elements": 18432,
+      "min_j": 0.8920296575638,
+      "max_von_mises_pa": 387.5604795807,
+      "mean_von_mises_pa": 22.242196318293743,
+      "stress_csv_sha256": "cb365e1e56c7bb96682bda4f6971f5a39e9b35fb1b70d011113ba66d8da6c14e"
+    },
+    {
+      "specimen": "vagina",
+      "radial": 2,
+      "elements": 18432,
+      "min_j": 0.7773340322577,
+      "max_von_mises_pa": 606.5353330998,
+      "mean_von_mises_pa": 54.016389693563234,
+      "stress_csv_sha256": "becb7013fa1c27b9b6421f7fa2e2b31c1ece9c6df43fa4c5773820cffdae025a"
+    },
+    {
+      "specimen": "urethra",
+      "radial": 3,
+      "elements": 27648,
+      "min_j": 0.878716029073,
+      "max_von_mises_pa": 477.5727894585,
+      "mean_von_mises_pa": 22.447009524790637,
+      "stress_csv_sha256": "a2db9a17a6f3bba48b21e7e7eaa6f350a1e41f393364cd24f3a3ae5be198f3b3"
+    },
+    {
+      "specimen": "vagina",
+      "radial": 3,
+      "elements": 27648,
+      "min_j": 0.7345866048974,
+      "max_von_mises_pa": 819.6521627303,
+      "mean_von_mises_pa": 54.11269727977683,
+      "stress_csv_sha256": "ef56354435495a180df6e11ea07bd1ea05950bc9f5a7928686584b8ca2e158ee"
+    }
+  ]
+}

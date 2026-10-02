@@ -1,0 +1,84 @@
+{
+  "repository": "GDevelopApp/GDevelop-examples",
+  "repository_id": 370474112,
+  "commit": "b4031112255dd710db4c176e3bc607e275c1e586",
+  "source_url": "https://github.com/GDevelopApp/GDevelop-examples/tree/b4031112255dd710db4c176e3bc607e275c1e586",
+  "readme_path": "README.md",
+  "readme_sha256": "4c00f56723e4826628a8832304ca7a3950d22eb1e24c5a77fd4e320affe9543c",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "0ded96228dce17ab24f09e18a0d24dc007729bed"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9eda8393b998e1bc2f2d0dbf6b40d99bd5554ab8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "60fca05820b0594edfc77d3c61ac13550996d4b1"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "86199dfd6e039cdea680710e9694b2ac8928207d"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "c1a6f66713166020e90a73182ca967212bd18ea3"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "f1a5f4051e5e6cde65238b4210ef478b86714686"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8255ba5c1f8829fe520fd22eb3d07f7afece1ed9"
+    },
+    {
+      "path": "__tests__",
+      "type": "dir",
+      "sha": "ee1136a652a49764837bbc53a70eb41376e94eba"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b73eef36f613d7cf2f8768251ec6b6c8fbbcf581"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "414afd6aa951acce2b4b5edddb349403a78d2cac"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "27e6fff5fe08ceecbdd9bf9050a5ddf7c3a420a4"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "17b35a7eb25a5cdbcd414bba1a5b99541b431bf9"
+    },
+    {
+      "path": "theme-slots.json",
+      "type": "file",
+      "sha": "cf70338d53bf2ddb4a7aa994d0acfbfc086fc2f2"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "e251d58d90e7ff624b2e68fe0adfca0ab509a8f7"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Examples and templates for GDevelop, not its engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,164 @@
+{
+  "repository": "alexyakunin/BoardGames",
+  "repository_id": 336114881,
+  "commit": "42607f738461aa93a4c83d0f7d168500acf75881",
+  "source_url": "https://github.com/alexyakunin/BoardGames/tree/42607f738461aa93a4c83d0f7d168500acf75881",
+  "readme_path": "README.md",
+  "readme_sha256": "aad2938aa1a4d178e33ca04df708e541693ff6a99fff5d7338cdef46bfd826e2",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "d41b9973bf9eae58c23db0093fcebb13ca06d52e"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "3b9b636caa5c9b0da87194f55ba22401e814450e"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "3f3285930192b4bb8cb28dd0930e78572a0421c0"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "189e51e78f3484f7697f723d9f5b872489d86304"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e594f7b8d256beb622cdbdad3db9d8cae92f4f87"
+    },
+    {
+      "path": "AGENTS-Source.md",
+      "type": "file",
+      "sha": "b909bce377f111a4d1f9917368f938ced857710f"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "de2a23abe79a076fb4c3a4fc505bac7a230707f6"
+    },
+    {
+      "path": "BoardGames.sln",
+      "type": "file",
+      "sha": "dc32f8cd2106bd55d06132dd47eb1a73cc9c0d9e"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "de2a23abe79a076fb4c3a4fc505bac7a230707f6"
+    },
+    {
+      "path": "CODING_STYLE.md",
+      "type": "file",
+      "sha": "272533918b8e8160ad4c580c7b0a01202e5f7122"
+    },
+    {
+      "path": "Docker-Build.cmd",
+      "type": "file",
+      "sha": "33daf01d7b89e12c78872a80bd55e0be4a0ef820"
+    },
+    {
+      "path": "Docker-Run-App-Debug.cmd",
+      "type": "file",
+      "sha": "71d6a7b0fc7bd395782f7452c53a909e2ce615e5"
+    },
+    {
+      "path": "Docker-Run-App-Release.cmd",
+      "type": "file",
+      "sha": "60dcca0501c6ee2f779cdf3e3e5838cd78e5e676"
+    },
+    {
+      "path": "Docker-Start-Db.cmd",
+      "type": "file",
+      "sha": "21c51dc6954e55a8eaafa0d93168faddd42406ec"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "e4a6ad20fe6c74d62d7c74be02d18239478d13e9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5fd69ae11391250f57b66a6637ba8e325303c3ab"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "845f3eececce85238ecf63377bffcce1e0be51b2"
+    },
+    {
+      "path": "Run-MultiHost.cmd",
+      "type": "file",
+      "sha": "31a5a6cf2539a0556ed23fbdad608a41f27ee934"
+    },
+    {
+      "path": "Run.cmd",
+      "type": "file",
+      "sha": "809ace5cef2b1f89c6c876b3a7e02d91706fb58d"
+    },
+    {
+      "path": "deploy",
+      "type": "dir",
+      "sha": "c177e0e90bc449526ff78c84b06e9c8a28ac0783"
+    },
+    {
+      "path": "deployment.yml",
+      "type": "file",
+      "sha": "7a6cdab7981238e9996c8dd6f12c4aba0bf54868"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "1f01540f572e569a1ab53c7ca277f1aea8e6d3f1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5fcc52d88d92ea4846410133c3c7dd72cd12f248"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "087882583dca156aa482e7248fb50bc9da8c35ec"
+    },
+    {
+      "path": "ingress.yml",
+      "type": "file",
+      "sha": "1a264529f70b7cce799fb5536458d173cc8b03f0"
+    },
+    {
+      "path": "kustomization.yml",
+      "type": "file",
+      "sha": "de5c90cd81e947b78be3a4114534f04a01889d74"
+    },
+    {
+      "path": "server-loop.cmd",
+      "type": "file",
+      "sha": "7b4107d34bf94717f9e9409c3a4817fd1052daaa"
+    },
+    {
+      "path": "server-loop.ps1",
+      "type": "file",
+      "sha": "09517a4e80a7f46a4039045dcbbd20fe6876a485"
+    },
+    {
+      "path": "service.yml",
+      "type": "file",
+      "sha": "d6cf3ee01dafc20fe69c1f305d59165882ee5fb2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "651e26f8a15f593e53baf87e286231b13b4d3ef8"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Fusion multiplayer board-games sample application, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

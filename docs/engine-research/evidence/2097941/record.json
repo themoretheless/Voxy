@@ -1,0 +1,59 @@
+{
+  "repository": "Gamua/Starling-Framework",
+  "repository_id": 2097941,
+  "commit": "9d68d61b9c672fbe64aae6ec22d0bcb30dda2a86",
+  "source_url": "https://github.com/Gamua/Starling-Framework/tree/9d68d61b9c672fbe64aae6ec22d0bcb30dda2a86",
+  "readme_path": "README.md",
+  "readme_sha256": "61de5725c0617e69bc495d6b99911370f569d2b623661be6dec094a42ee84dbd",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "94f6bdffae8db9ef7f063f301047d6b94e9470ca"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9431874c67fd6fb4fefa3e6d7e3b699b091fe538"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "2a2c81f3f9f823c438d8271edca34a71945bf3d0"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "c72d77eb9b4be342f5b9f3f8bc9b374c11fcf97a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a4604109e75c1baad4d47abc427e79a4f9d453c8"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "c797767319e5a47f278cbd27d18eceda2062bce0"
+    },
+    {
+      "path": "starling",
+      "type": "dir",
+      "sha": "4963191c5f492fa386a9925b3e85cbc5c71fee6d"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "a6a2cc1824af369092a0e509ab0961f708d9cb02"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "7ebc4b073e6481d8004b67834fbb2d69d0beb049"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ActionScript GPU display-tree framework hosted by AIR/Stage3D; pinned evidence focuses on graphical apps rather than complete game simulation runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

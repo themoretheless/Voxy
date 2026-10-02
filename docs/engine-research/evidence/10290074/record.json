@@ -1,0 +1,89 @@
+{
+  "repository": "jdmclark/gorc",
+  "repository_id": 10290074,
+  "commit": "a03d6a38ab7684860c418dd3d2e77cbe6a6d9fc8",
+  "source_url": "https://github.com/jdmclark/gorc/tree/a03d6a38ab7684860c418dd3d2e77cbe6a6d9fc8",
+  "readme_path": "README.md",
+  "readme_sha256": "e166420422b394ae468edc2b44f0bb16680184153022e070233267f0d3fdd8e4",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "5eac312034e383b636ac97f1075c79994d89c8ee"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "555499956ff05e63921724977bb5d87bc2025e3d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7d3b7d25b98a483184d67dd8adf4d2934dabb5ce"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "1e12ceab8135dbe56f79ae3bca4b52740ad0ed4c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4c4a307f242c0dfaa4968b8fddd69811c2ed3ae8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5cdf4124d55473a7ae8e8b120a729aeb2dc564ac"
+    },
+    {
+      "path": "activate.sh",
+      "type": "file",
+      "sha": "86416900d1e7ba93eb5e48250512078b146c0c42"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "96f565c12c85d422478f62bd64473d9348d62dda"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "6248f34a4e4599b6dc33a560f0356c077f2d4991"
+    },
+    {
+      "path": "project.json",
+      "type": "file",
+      "sha": "591ae56ced8f7a2eb24337b0d6787881832f5b9e"
+    },
+    {
+      "path": "rules",
+      "type": "dir",
+      "sha": "554dbc8230716565cb5bbea840fc0dc2a65d077f"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "e3106e9ec4a9d5cc2306f5b4ed719c8cc549c502"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "510b2185a509f1664d7f35fae851228a7d40dcb4"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "393af0b3bafc6b346ded1dd5790d15ed9ea25c4a"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Early Dark Forces II runtime recreation with source and tests; intended original-level compatibility remains unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

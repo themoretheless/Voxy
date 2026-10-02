@@ -1,0 +1,72 @@
+{
+  "repository": "9chu/LuaSTGPlus",
+  "repository_id": 40437160,
+  "commit": "43bd3e33074384472e17e260745e4f0a1f170493",
+  "source_url": "https://github.com/9chu/LuaSTGPlus/tree/43bd3e33074384472e17e260745e4f0a1f170493",
+  "readme_path": "README.md",
+  "readme_sha256": "9c8db6423e963dc1447dd50790ecd3f977f8e138a9151892f5e566e652322fdb",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a7ef8b95c7936d7920f09b19548d687ad99f062c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "480b38bda98e34cfe784dbd9c35e3e7bf3f2925e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "25b71ebf3ccc3590ffff3881cb43a125f77f0401"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "3f4315ce11fc113d30e2fcd876a5ec8356d8807b"
+    },
+    {
+      "path": "COPYRIGHT.txt",
+      "type": "file",
+      "sha": "1fa8a9a2c7afc5ec53904e49bd5eedce4feb619c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d040fbd66aafdbc14d8c3957e8d4d8ab962110f0"
+    },
+    {
+      "path": "artwork",
+      "type": "dir",
+      "sha": "0fccf7655041ece51681764e494051b08cdf76de"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "0f3c32fba6aa7b7dbf9abe345969921d95a3c6ee"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "008b7f67b9d4dc54b191ac8ca013eab4968b127f"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "c62d8fd5e4d7dc902d78c01de7256936e8df872b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "27214ff6208a994bdb3567248250bab121e6ad38"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "a2e26f1944c7d4ce94845bd8cc209b090dfe262c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

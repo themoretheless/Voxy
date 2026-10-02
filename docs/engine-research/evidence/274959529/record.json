@@ -1,0 +1,134 @@
+{
+  "repository": "OpenDiablo2/HellSpawner",
+  "repository_id": 274959529,
+  "commit": "667d129f7922bc8666f2267050ac631f1cae6739",
+  "source_url": "https://github.com/OpenDiablo2/HellSpawner/tree/667d129f7922bc8666f2267050ac631f1cae6739",
+  "readme_path": "README.md",
+  "readme_sha256": "2f8a958b732dde0f140626442e7a75740bb8c9336f869aa392fc1843314e53b8",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "9b48d9b447ef0ddf48a648142bbc8b96a642f19b"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "be0d7136d1f30e3c775ae9fbbb19c5a418f1b5ab"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d207b1802b2045fcb33fd5566b1fc0afc6020177"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "31c6c92b26cdbe7869f0c54e7640795ec4644be7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f14f993b548ac711e33bee803bb2abed72564aeb"
+    },
+    {
+      "path": ".golangci.yml",
+      "type": "file",
+      "sha": "5fc2979e0a92963c1f652f9223bd4ae0b8f7c7cc"
+    },
+    {
+      "path": "CONTRIBUTORS",
+      "type": "file",
+      "sha": "4a645f02afa52482edd4a4243e4c6cca328cb5c3"
+    },
+    {
+      "path": "Info.plist",
+      "type": "file",
+      "sha": "7c0910509f2f63a32db0478d66190e035601aaad"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "ae31a0c82b70da3b1011df45839bd922d1a24640"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "050024a923af69771c66d20a6b4882196a3e57fc"
+    },
+    {
+      "path": "abysswrapper",
+      "type": "dir",
+      "sha": "f909e75328649fae8067386140a585a2c488df34"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "fa5cfe276f649dd0f12edb5d7b26700f32c8e2b6"
+    },
+    {
+      "path": "config.json",
+      "type": "file",
+      "sha": "db89e22fe0b2f45d4a096d8d5a0a4a2bd2891a78"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "901cd007bab38f5b9b537ef09a2fb04537cd609c"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "62fcb8f98603ba8d5859dbd999b335dd941d3e3f"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "595c75b9953e87ce3f4d41af7ef750d6dec8adab"
+    },
+    {
+      "path": "hsapp",
+      "type": "dir",
+      "sha": "5fbbec6dfe9e7872782444f3777298bebdbfaa95"
+    },
+    {
+      "path": "hsassets",
+      "type": "dir",
+      "sha": "b85aab8de47683e6861c62a97fbbe4da857ccde6"
+    },
+    {
+      "path": "hscommon",
+      "type": "dir",
+      "sha": "06d965d88c7890a39490c9b2f5e6865758eb3726"
+    },
+    {
+      "path": "hsconfig",
+      "type": "dir",
+      "sha": "e99dbb032a504ccccd96b8fa9e16585b2d31b9d2"
+    },
+    {
+      "path": "hswidget",
+      "type": "dir",
+      "sha": "2b30786d8546ebda7a7ff094c0545f372aa798c9"
+    },
+    {
+      "path": "hswindow",
+      "type": "dir",
+      "sha": "b51348997b5c3e7f9e31b0c13d03f74670719493"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "535aa15fcddd8f749324b0d74430b8d5cb934828"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Development toolset for OpenDiablo2 rather than a separate runtime implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

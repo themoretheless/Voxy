@@ -1,0 +1,11 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.26s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-3dcdb8b03d36775c)
+
+running 3 tests
+test ui_text::tests::font_count_budget_rejects_before_any_file_reads ... ok
+test ui_text::tests::observed_logical_font_unicode_runs_share_atlas_and_invalid_font_retains_prior ... ok
+test ui_text::budget_tests::repeated_font_content_still_counts_each_retained_input ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 48 filtered out; finished in 0.87s
+

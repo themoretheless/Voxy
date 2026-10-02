@@ -1,0 +1,64 @@
+{
+  "repository": "Kirilllive/Fifteen_puzzle_maker",
+  "repository_id": 387269543,
+  "commit": "3690769d5d6e1607cbfb6b16302155394cfb019e",
+  "source_url": "https://github.com/Kirilllive/Fifteen_puzzle_maker/tree/3690769d5d6e1607cbfb6b16302155394cfb019e",
+  "readme_path": "README.md",
+  "readme_sha256": "a736f45494a5ce4d649a5ff56253ef44b02642bd453335010b9cf726b7314bbe",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "be6370986e3414b7a9c92d1c8088be94790d21ad"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f8e3cb95b44f880c36e928818f64cc398a3175cd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a62067c768323f7516b8866b5d0bf8f3d72c2404"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "85b8c1ba1eb5790f2d660a0b1449d1774329795c"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "c4192631f25b34d77a7f159aa0da0e3ae99c4ef4"
+    },
+    {
+      "path": "art.jpg",
+      "type": "file",
+      "sha": "34bc11acdfe4ece1df07bc434060c81db28b0368"
+    },
+    {
+      "path": "example.html",
+      "type": "file",
+      "sha": "d027871c400d0fb9c1b6c081f4856a703a4a8fb4"
+    },
+    {
+      "path": "fifteen_puzzle.js",
+      "type": "file",
+      "sha": "8e77c1be012ea7219aa4624f2d18c3544b0476f9"
+    },
+    {
+      "path": "icon.jpg",
+      "type": "file",
+      "sha": "58d9404bb2ed19e2c4de3b616f999843fefab313"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "85f987231e55678fd6ad7ee26a41d4d2dc9ab3df"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Configurable browser sliding-puzzle game and editor, not reusable general game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,112 @@
+{
+  "repository": "oculus-samples/Unity-SharedSpatialAnchors",
+  "repository_id": 578385629,
+  "commit": "71b653caac743b29942a2b4f942320b7b8847972",
+  "source_url": "https://github.com/oculus-samples/Unity-SharedSpatialAnchors/tree/71b653caac743b29942a2b4f942320b7b8847972",
+  "readme_path": "README.md",
+  "readme_sha256": "daf8fa01689fdedb7a63e7677426bee6d7fbdd026024161d684b35b404264373",
+  "entries": [
+    {
+      "path": ".aider.conf.yml",
+      "type": "file",
+      "sha": "aa2f4f1fca16faa2dbc4e28f6ff126be785c0720"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "ab383d717b94467f0b87d3e5739d196e262ceb32"
+    },
+    {
+      "path": ".clinerules",
+      "type": "dir",
+      "sha": "6812292274f33606deb26ad30c4b7da367a7a8c6"
+    },
+    {
+      "path": ".cursor",
+      "type": "dir",
+      "sha": "f12cf1d6d7103c5b0e7eff217c87ddf5afcaea40"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a5715085a1d03f801b0f413d7795f6cbdb7fe9d5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fa07dee0c9a35e77e31664aeab4a313437d2ba71"
+    },
+    {
+      "path": ".mcp.json",
+      "type": "file",
+      "sha": "28b8f13472db5014b907f66952cf3cc7f8186f0a"
+    },
+    {
+      "path": ".roo",
+      "type": "dir",
+      "sha": "a1aa61dc2d95f2b2fccb789b52d1ad5ffab3cd77"
+    },
+    {
+      "path": ".windsurfrules",
+      "type": "file",
+      "sha": "e179127e92edfa93712a39ff2696a3692d6d636c"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "30af1cf44cc557a7e1dc2a28748758b3447daeab"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "9af525260e717fb13df670c1c0a4ab216d1250cb"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "83f431e8feeb7e80d571f39c9f6c1b96857b5f85"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4962765439c840b57b15210538e235d2bb0808c4"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "d2f18c0fb6b74719b8954819f1c677a7f8338aa1"
+    },
+    {
+      "path": "GEMINI.md",
+      "type": "file",
+      "sha": "00df734fda8e15a7b7c9fabbb3d542e74aba058f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b93be90515ccd0b9daedaa589e42bf5929693f1f"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "c3b4c9545f5ec28b452de20a816d43fb0a7930ae"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "3826fefd1ea9626c5f37b6781df6508e8f3fd246"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "abd1c603e986f095765c1814dffba2cf698056c5"
+    },
+    {
+      "path": "opencode.jsonc",
+      "type": "file",
+      "sha": "6a7392cc152b3c9b667d0b4c7ca9f729e7588c0a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

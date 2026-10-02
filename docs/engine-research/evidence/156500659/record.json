@@ -1,0 +1,107 @@
+{
+  "repository": "IainWinter/IwEngine",
+  "repository_id": 156500659,
+  "commit": "3e2052855fea85718b7a499a7b1a3befd49d812b",
+  "source_url": "https://github.com/IainWinter/IwEngine/tree/3e2052855fea85718b7a499a7b1a3befd49d812b",
+  "readme_path": "README.md",
+  "readme_sha256": "db1ea5ad1215c6de1cb3d64bbadb0a5a8693a9c8991d9faeb9d1bec0dd9d0164",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e5bd5b474ce08d824a7a74762d0dffa381271c2c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "124ed45d881e1517b58b643a94262f0bb8add45b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "abadcb150731085b5d20b3fa48ed13ec8ccd9121"
+    },
+    {
+      "path": "Bootstrap.bat",
+      "type": "file",
+      "sha": "85ca1105f0edf186c77615243b7bc5d14a8ed8ff"
+    },
+    {
+      "path": "CreateProjects.bat",
+      "type": "file",
+      "sha": "48ec7e8bbc96b78649df0d5d01518a34241c7bb3"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "58e6592598437bbd9411fdc13fdb78ea358f2cfc"
+    },
+    {
+      "path": "Export.bat",
+      "type": "file",
+      "sha": "b8ff8ba7291db8e7819310edbbfbaf2620b87e52"
+    },
+    {
+      "path": "Games",
+      "type": "dir",
+      "sha": "9bb78af059e5f87b68a8287eae0ebf152306780c"
+    },
+    {
+      "path": "IwEngine",
+      "type": "dir",
+      "sha": "6eb878de7d8ebe6d930a3d066d248c6e287dc1af"
+    },
+    {
+      "path": "IwTooling",
+      "type": "dir",
+      "sha": "e6d75f2bcf8b2de3bfc6c4948698b2e99d7cfe82"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "4269099513635529de809774986ec6701ed7619b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "50f0c66dfce3920e76894e607b6e83a15717bc20"
+    },
+    {
+      "path": "Remote.bat",
+      "type": "file",
+      "sha": "e7daa57e546b7dbd7f3bb18950b50a845ba64621"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "cf315be675bcd2055773b652c1792c1e9cc032af"
+    },
+    {
+      "path": "WinterFramework",
+      "type": "dir",
+      "sha": "ad743ecce551d0f05bb7f640335760e2e5ebad10"
+    },
+    {
+      "path": "_assets",
+      "type": "dir",
+      "sha": "fea6f12508c4c63bb48eb98e766b6f196ebe1f9e"
+    },
+    {
+      "path": "_docs",
+      "type": "dir",
+      "sha": "9b1734881a362154609eaff9918652e3dc9a321f"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "a02229c2b8e659f8b438676ba70c6093611f1106"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,52 @@
+{
+  "repository": "jasonmzx/cppkart",
+  "repository_id": 684762139,
+  "commit": "154a42035ef338ca38c2f179d5b5686297f96ce7",
+  "source_url": "https://github.com/jasonmzx/cppkart/tree/154a42035ef338ca38c2f179d5b5686297f96ce7",
+  "readme_path": "readme.md",
+  "readme_sha256": "2480d5dc0e00787d5e803f7c090f192e913a58d4b4df75b6fc155c0a017751a5",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c64e9864f7de4155a21d29581d8fed78e124865e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "29eac2849977a13c7494a6566df68e73f7a1a0da"
+    },
+    {
+      "path": "DC_full_rebuild.sh",
+      "type": "file",
+      "sha": "cba539d05be95580e227d46573872f08b876d5a0"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4f2944a6124fb91fa0a640b409f3c3d6203fb0bb"
+    },
+    {
+      "path": "build_and_run.sh",
+      "type": "file",
+      "sha": "c1807bd038c1e77b3ed16b13d44ecc838fad684d"
+    },
+    {
+      "path": "full_rebuild.sh",
+      "type": "file",
+      "sha": "50dcb982ec463e1869a14c7b97adac5bebc90125"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "49375c69cd3dac5159e877655b3cd406cb78c503"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e6b0b524875500e78adccf57c9e20bc74dec322a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

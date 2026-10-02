@@ -1,0 +1,34 @@
+{
+  "repository": "mikeroyal/Unreal-Engine-Guide",
+  "repository_id": 439977823,
+  "commit": "048895b8747f79a8a7e3f480ce797847044e2d92",
+  "source_url": "https://github.com/mikeroyal/Unreal-Engine-Guide/tree/048895b8747f79a8a7e3f480ce797847044e2d92",
+  "readme_path": "README.md",
+  "readme_sha256": "028e1df7ab78053097ce9adbc79cc865b7bd3c245d23baa1159f989842e27a73",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fc7a5f9de38c3d5a831faf77670697c3e60dca21"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b0664b42ed02d1487d8245717e3f18bb518fcbab"
+    },
+    {
+      "path": "Getting started with Unreal Engine.cpp",
+      "type": "file",
+      "sha": "cfff8a90ef6337f0b25442120de830eea03c2e65"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aea8783ecb5e8ee29f443ccbcb6e56a0197dfc7a"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies guide; root documentation and sample snippet rather than engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

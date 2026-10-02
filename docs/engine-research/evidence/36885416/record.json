@@ -1,0 +1,159 @@
+{
+  "repository": "xamarin/urho",
+  "repository_id": 36885416,
+  "commit": "cfeff3d45eaaee536e978f857c453dde3ec1c7ed",
+  "source_url": "https://github.com/xamarin/urho/tree/cfeff3d45eaaee536e978f857c453dde3ec1c7ed",
+  "readme_path": "README.md",
+  "readme_sha256": "e9917605e615e8c9a0f8af69922b2b7015c3962c1b80f62a44d7e7d175104145",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eb723a1141e3c81ee7acf222081e3cdfe7b8e552"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3aa191fb0ffbb1eb17c546d2c6d6e4d0598cef51"
+    },
+    {
+      "path": "Bindings",
+      "type": "dir",
+      "sha": "edb488d0b4b43a47be641f7a9d35eabfaef83fef"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "16cbc1f5a83f87dec83d80079144a0302783d00e"
+    },
+    {
+      "path": "Extensions",
+      "type": "dir",
+      "sha": "a7bce872b149b98933950ad665f99a37c445fe1c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "62b0f77a74fd303898cf6fecd82a4913691eb4dd"
+    },
+    {
+      "path": "MakeAndroid",
+      "type": "file",
+      "sha": "ffdf766d109f33af2dfd20a39fbc88d1ab165d3e"
+    },
+    {
+      "path": "MakeLinux",
+      "type": "file",
+      "sha": "1d05589dd655ec6596298ccdb6f01dbc42255f7d"
+    },
+    {
+      "path": "MakeMac",
+      "type": "file",
+      "sha": "7e3143316a4bb12bd800a351a9bf49e237955091"
+    },
+    {
+      "path": "MakeSharpReality",
+      "type": "file",
+      "sha": "51922f4c3a49dcb7c3d2f03bed16e080f170575b"
+    },
+    {
+      "path": "MakeSharpReality.bat",
+      "type": "file",
+      "sha": "df02b6020014c60d121b206bc1083157506d737e"
+    },
+    {
+      "path": "MakeUWP",
+      "type": "file",
+      "sha": "6592e1f32b2d4fdb82a9d405460263a0de83791a"
+    },
+    {
+      "path": "MakeUWP.bat",
+      "type": "file",
+      "sha": "f187f670d62b608dfe34a80c86378b3bffb76acc"
+    },
+    {
+      "path": "MakeWindows",
+      "type": "file",
+      "sha": "a49e80a70967c0e71ec2cb933b838cd17c2f71d1"
+    },
+    {
+      "path": "MakeWindows.bat",
+      "type": "file",
+      "sha": "8305ed5a6f0ac1530d6309e209b56cde3b1ab2d1"
+    },
+    {
+      "path": "MakeWindowsAll.bat",
+      "type": "file",
+      "sha": "d651fb2abff52f2335674270f622ba60140dee29"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "13590db4f25e6397a83027febece3215274a3930"
+    },
+    {
+      "path": "MakeiOS",
+      "type": "file",
+      "sha": "0b03e76c37213c284f1e8605142f91461d546958"
+    },
+    {
+      "path": "Nuget",
+      "type": "dir",
+      "sha": "059264dae7cf7fbf585dda857cdb3df76f93e4db"
+    },
+    {
+      "path": "ProjectTemplates",
+      "type": "dir",
+      "sha": "a08520061397b004f584eb0f2f4a2c833b470059"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b95b49416061339fbf30530221370e205f23c08"
+    },
+    {
+      "path": "Samples",
+      "type": "file",
+      "sha": "f1bcec78cf8b08c19f5bf29ddfd44181c9e47295"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "061d7634165424528f213c7ab32780b4b76f65a7"
+    },
+    {
+      "path": "SharpieBinder",
+      "type": "dir",
+      "sha": "c66e201917bad7da784f951cd1ca65280a0090fb"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "1254445148659966b3504279c6f16c1d0da7a315"
+    },
+    {
+      "path": "Urho.sln",
+      "type": "file",
+      "sha": "7605b4e782b3ff11a9e0b7cf7f34ca51fe02bed2"
+    },
+    {
+      "path": "Urho3D",
+      "type": "dir",
+      "sha": "ec72f54d42ed69862ff9aee3de2f5173fc3d4436"
+    },
+    {
+      "path": "UrhoSharp.png",
+      "type": "file",
+      "sha": "267eedfb053b17ff3450611541b858d6941369cb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c30547782c0d50f05e4e2c9602b34542e17d6baf"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Urho3D managed integration; Bindings/Extensions/platform build wrappers, not independent engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

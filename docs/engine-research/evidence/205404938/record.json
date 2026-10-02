@@ -1,0 +1,154 @@
+{
+  "repository": "ihhub/fheroes2",
+  "repository_id": 205404938,
+  "commit": "5affbfbba6bcc38eedbfa91cc0e4494cda2c3eb3",
+  "source_url": "https://github.com/ihhub/fheroes2/tree/5affbfbba6bcc38eedbfa91cc0e4494cda2c3eb3",
+  "readme_path": "README.md",
+  "readme_sha256": "8a51fb925b8ed68e9ff16867dee404cf562b0e84e864386da7e75b4d6a013ef9",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "70f111241e0c4450a3bec198741c2f382575721a"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "91407f44190d31cdadac69b4f2dd14da2459c364"
+    },
+    {
+      "path": ".codechecker-review-status-config",
+      "type": "file",
+      "sha": "0cbce320ffe900afbb0a1614e5730ba03df1798b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cc70bb7ed7df068629d652d480b28a0bafbaab89"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e9693000533a346448408376e3e4ddd2b0959571"
+    },
+    {
+      "path": ".markdownlint-cli2.jsonc",
+      "type": "file",
+      "sha": "5e63082dc0b12dc85ccf4734613e48a1f7f32968"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6fdfceca5488105c154c9ba9d995b8bb0ab0c3ca"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1547805f27a92fa580c3688c188c3ec420c3001a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "4129e92dc271d1cbd8039cc50595d6b0436367ab"
+    },
+    {
+      "path": "Makefile.emscripten",
+      "type": "file",
+      "sha": "c0bd6b5d2a631b841cb9893bad7a8d0ff09ee6b9"
+    },
+    {
+      "path": "Makefile.switch",
+      "type": "file",
+      "sha": "f51159e7f4b64c4693bf48d5b534984aa487228a"
+    },
+    {
+      "path": "Makefile.vita",
+      "type": "file",
+      "sha": "ded38dc3fd73df822dfdb5ba3eecf6c67b84e95c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "800f6e3371ce6626e3ba40a0de75462b8a62ea93"
+    },
+    {
+      "path": "VisualStudio",
+      "type": "dir",
+      "sha": "97badb84771a7156d6be2feedfd1935036a062c0"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "d480fc33fbb0e8517e66ec44859ceea78a2a7207"
+    },
+    {
+      "path": "changelog.txt",
+      "type": "file",
+      "sha": "841922750d707745ed674d08180a8e7b44135873"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "723728e0ffa235780fbed0ddf81cc943f7522a7e"
+    },
+    {
+      "path": "fheroes2-vs2019.vcxproj",
+      "type": "file",
+      "sha": "c5b35a0ad7c184d901db8bef8c1a901937cce4cb"
+    },
+    {
+      "path": "files",
+      "type": "dir",
+      "sha": "30f0cb863ea4fe7ba366f4352ae2dba5e1ac7ecb"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "4fbdba63036452ffe96e176d804e6c07a969737e"
+    },
+    {
+      "path": "iwyu.map",
+      "type": "file",
+      "sha": "1a5e8d3f565e9d29a2477e78640ce8afabbf24b8"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "ddb7ab9a5eab514f90ee15213ddeb74089e347a2"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "261707c3bbd0ec63a9366106205f8d51b8405f2d"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "81af8fe4d1aad3fbb046cbf8bf4cd679a1703057"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4f184d8534bd22c117b98a4ed4a89d57434d52fc"
+    },
+    {
+      "path": "version.txt",
+      "type": "file",
+      "sha": "cbb8cbae4016fb49aed0e99930cd1e2285668c01"
+    },
+    {
+      "path": "version_code.txt",
+      "type": "file",
+      "sha": "a7873645902455c63d166fdcaa4b2fe565f6de7d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Heroes II engine recreation; native source/build and platform manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

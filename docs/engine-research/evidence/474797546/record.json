@@ -1,0 +1,97 @@
+{
+  "repository": "mholtkamp/octave",
+  "repository_id": 474797546,
+  "commit": "3a9b562e74ff4a8704cae9184cd0ecc443f07cc3",
+  "source_url": "https://github.com/mholtkamp/octave/tree/3a9b562e74ff4a8704cae9184cd0ecc443f07cc3",
+  "readme_path": "README.md",
+  "readme_sha256": "c606b3612acbcce381e97af39f365a222ea87c8c492fe66cc707cc6736f966d7",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "0082c4aae12bbb622400cf307b613f04610255df"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b33bc9e1323c2e4f1f7c3b8e4af3a84c59018b52"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "998a0c3e6875d82e5f5ded585ace12e255a10bf1"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3d6ff4f344a9f742265828142767cbb4355c43c7"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "07356fc5474145f1e2a356f8574e031f3b6b09b1"
+    },
+    {
+      "path": "Docker",
+      "type": "dir",
+      "sha": "d91d6ce0f22a788d8ad68c9f8c0ceb2d6c6a5e02"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "3793bea77bf1786cce436f73ac081a4f9aa45ffb"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "6ab5d2352e2b3f3117f369cefde4623f6d07ab73"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "9e4c20aac90a2c7d2a3b97c516aa180e1058e6c9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7b7e3f48a0c724c05208ecd35047042ee5b2dc91"
+    },
+    {
+      "path": "Octave.sln",
+      "type": "file",
+      "sha": "ed449ba0092d5a1d672f0b92414574cf347a7465"
+    },
+    {
+      "path": "OctaveLogo_128.png",
+      "type": "file",
+      "sha": "2e8b8cf86f43068104ce216ed77fd6759bec2a89"
+    },
+    {
+      "path": "OctaveLogo_256.png",
+      "type": "file",
+      "sha": "769a3cbdef25bfede2680a7efe074a6c3a1f8230"
+    },
+    {
+      "path": "OctaveLogo_64.png",
+      "type": "file",
+      "sha": "0545f4a3da4bf2831204191a1617f5bd003bfe15"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f814c2c425410ccf4f4157e0a44793a903761408"
+    },
+    {
+      "path": "Standalone",
+      "type": "dir",
+      "sha": "0b48a6a1cb6bd70425d501e12a6177eb160381cf"
+    },
+    {
+      "path": "Template",
+      "type": "dir",
+      "sha": "3ddad57b0525c15d0738bec9901d07326af9150c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

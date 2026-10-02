@@ -1,0 +1,9 @@
+{
+  "binary_sha256": "e4ed632e0e55fbd7770210be0734ca4129e867a8a2a4ec4e3e3cecda25d92ed0",
+  "miss_hit_equal": true,
+  "hit_skips_search": true,
+  "option_invalidation": true,
+  "source_invalidation": true,
+  "corruption_rejected_without_replacement": true,
+  "entries_retained": 3
+}

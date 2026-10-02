@@ -1,0 +1,114 @@
+{
+  "repository": "RedpointArchive/Protogame",
+  "repository_id": 5695369,
+  "commit": "289e6f70a8f941756ef3d6dce588f13e83c16ca3",
+  "source_url": "https://github.com/RedpointArchive/Protogame/tree/289e6f70a8f941756ef3d6dce588f13e83c16ca3",
+  "readme_path": "README.md",
+  "readme_sha256": "0dcba6a4b4f3c3d1e71e13929d0cbe3ce73e06d7b80e36e9b39f7eca5cc3a468",
+  "entries": [
+    {
+      "path": ".arcconfig",
+      "type": "file",
+      "sha": "76e5d9483d3495dde9761a32a6f3fd399673787b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f441f82304b16f94ca04579e2061cb3016a2f15d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "941a55343af0d0b53104f06d1bd24c2d5c87c319"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "7b97fc73c4d6c9171bbf00a49cc30268b4f38fb1"
+    },
+    {
+      "path": "DirectShowLib",
+      "type": "dir",
+      "sha": "1c168bc3d303026f44dac3a57bde5aa56c7a6f8b"
+    },
+    {
+      "path": "Jenkinsfile.old",
+      "type": "file",
+      "sha": "56aed9439636eb3e4c33a214bf7f27241541632b"
+    },
+    {
+      "path": "Protobuild.exe",
+      "type": "file",
+      "sha": "a3e92bdf241e1025934c7233038976a153337a8e"
+    },
+    {
+      "path": "Protogame.Docs",
+      "type": "dir",
+      "sha": "700e35a0b04ab80260435a39a57bc95d6483b0a1"
+    },
+    {
+      "path": "Protogame.EntryPoint",
+      "type": "dir",
+      "sha": "5fd7edd3be8fdc90d4b243e0aa5fe74aaf9ad503"
+    },
+    {
+      "path": "Protogame.Resources",
+      "type": "dir",
+      "sha": "875434dfee031fccab8b2e48be04d12905b38682"
+    },
+    {
+      "path": "Protogame.Tests",
+      "type": "dir",
+      "sha": "004f7053a31fc3a68957553602a8aa3195a0943b"
+    },
+    {
+      "path": "Protogame",
+      "type": "dir",
+      "sha": "49ed6655aa5d87d2ee229bf93a5211e9bfb711e3"
+    },
+    {
+      "path": "ProtogameAssetTool",
+      "type": "dir",
+      "sha": "7a554eedccb2ae7cd258c48ea4b63a71e41ccaa0"
+    },
+    {
+      "path": "ProtogameDocsTool",
+      "type": "dir",
+      "sha": "1017e1109baa5d98e3ffa5792019cfd2cfffdd5c"
+    },
+    {
+      "path": "ProtogamePostGameBuild",
+      "type": "dir",
+      "sha": "cb92f28d5fba1d6fab24648bdcccce7ab1855721"
+    },
+    {
+      "path": "ProtogamePostLibBuild",
+      "type": "dir",
+      "sha": "21b4679b1b1a4500b398a16f41fd8d2af78a5525"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd29774b8d533fa444515409b20dad5e438ee055"
+    },
+    {
+      "path": "Settings.StyleCop",
+      "type": "file",
+      "sha": "55a7cde6f1db735ee519687c2b9a842cf30c836a"
+    },
+    {
+      "path": "automated.build",
+      "type": "file",
+      "sha": "002498cecb7bddc1cfb72486430c96ce1613ef44"
+    },
+    {
+      "path": "unified.build",
+      "type": "file",
+      "sha": "f4bbc8aa54edc29f95145ec2f2222a1fa8bfbc10"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies discontinued modular C# engine over MonoGame; owned Protogame runtime/resources/tests and native build tooling.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,8 @@
+{
+  "before_sha256": "905d9a5eef21345ae3fa34896600e07254ce0e038b5fa4209f2f64fe7804f074",
+  "after_sha256": "905d9a5eef21345ae3fa34896600e07254ce0e038b5fa4209f2f64fe7804f074",
+  "png_bitwise_equal": true,
+  "cached_frame_mesh_cpu_ms": 29.31,
+  "frame_measurement_samples": 1,
+  "whole_frame_speedup_claim": false
+}

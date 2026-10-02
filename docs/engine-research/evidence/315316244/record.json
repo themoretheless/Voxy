@@ -1,0 +1,89 @@
+{
+  "repository": "GloriousPtr/ArcGameEngine",
+  "repository_id": 315316244,
+  "commit": "4a091e21ce17c0a147cf365fc20db344cc2233e3",
+  "source_url": "https://github.com/GloriousPtr/ArcGameEngine/tree/4a091e21ce17c0a147cf365fc20db344cc2233e3",
+  "readme_path": "README.md",
+  "readme_sha256": "fb4ea462d0d6d4d211cad12f5197abbcad3a7b1cdc006e082b1810b6495828ad",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7ce66192ef033034eb44871dd8ec023b3a86b9f3"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7e109a3f23356124a3718afb30cf8be9c209bc13"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cf4999a42bbeea289c1e1fe05aaddac9779269ae"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a7ba90ff789eac5b8e4431293e7640c4b681d0f1"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3ef811578d50369299f4b9a65da80a5ff2971a39"
+    },
+    {
+      "path": "Arc-Editor",
+      "type": "dir",
+      "sha": "3ee3651162e77a0916489cbe7a66011d787e96d4"
+    },
+    {
+      "path": "Arc-ScriptCore",
+      "type": "dir",
+      "sha": "55237787c454c3e8013acf557d69013726c11c1a"
+    },
+    {
+      "path": "Arc",
+      "type": "dir",
+      "sha": "129fdc0dee915c100c6c6cad84f3bd844758e6cc"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "304fee86f5849b9bd7adb570a14431fde40ea04d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f21d7984ab73b12e46e6702d622468c492deaa5e"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "f26604ac9ed4bdb9ae8c75814ae199672ee66e0b"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "52f26b51ee668047f931acb563e120a71f670fbc"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f6f578eb5e0f758d3be63ff46035badb20e066f7"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "4d17a79d4a66e107dbd295b676cb2edfc242235e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies in-development native engine; owned Arc/Editor/ScriptCore and premake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

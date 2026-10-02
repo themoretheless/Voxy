@@ -1,0 +1,124 @@
+{
+  "repository": "rune/rune",
+  "repository_id": 409447446,
+  "commit": "d55ae1b9e4d614f698ed4074b63890a423bcc9d0",
+  "source_url": "https://github.com/rune/rune/tree/d55ae1b9e4d614f698ed4074b63890a423bcc9d0",
+  "readme_path": "README.md",
+  "readme_sha256": "9ebf47846147459ee34cc8595e625de1d6124df0ac03aaa9c5ea80b1baee0e97",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d396f779af6547bc721f1aaff6897e39e292e6e3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bb8b70ebadd0b1b74eb2546f66c5795ca3e91d23"
+    },
+    {
+      "path": ".lintstagedrc",
+      "type": "file",
+      "sha": "26b181f0c2e66508f128257fb18233ddb254f3a1"
+    },
+    {
+      "path": ".node-version",
+      "type": "file",
+      "sha": "9a2a0e219c9b280eea2627cdcaa1bb40bc8351b3"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "57282a0ac6e73b54ef1fc68ece1589aed15af46e"
+    },
+    {
+      "path": ".prettierrc.js",
+      "type": "file",
+      "sha": "5747f4b59246ca8ee541bdd2ea5b16cae44a2f4c"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "25b0516b1c6419d17634def6d9a6aedc22010422"
+    },
+    {
+      "path": ".yarn",
+      "type": "dir",
+      "sha": "f16329934a192bf1f18552e603b048e6a87daaa7"
+    },
+    {
+      "path": ".yarnrc.yml",
+      "type": "file",
+      "sha": "1f509260792f27b3863c5ddcd02db756e798bcb0"
+    },
+    {
+      "path": "CLA.md",
+      "type": "file",
+      "sha": "19e50df57388d50c3f40a6fe6b56b387686affb6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5f0848a257f5e2a4c886c551f9d70b15d49e7efc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c2b0f047e7d7392ef1b90b9a28029be51fc8a2ed"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2314805e546f1ec93b3f04d0d1c230dd18057537"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "7ddbfb2e300818469a1f1a073bd052b3d196090f"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c573ced964697075b2053eed4b06d96560a2c0c2"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "93026058ca5738a944f8c999eb3ad4f3e4159955"
+    },
+    {
+      "path": "open-source-grant",
+      "type": "dir",
+      "sha": "2a1f56c281c0bd0a9d6b0a4316ee7813f4e58259"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8532243ec570b4399e6c1344f524908311474512"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "29b4bd579ee4078d6af64fd5c6d6d64269a6af7c"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "fd6dc853e2b04474e9f8c9be0c0f529293f2d32b"
+    },
+    {
+      "path": "tech-demos",
+      "type": "dir",
+      "sha": "4006b85c64f3fec572011e64103ee251a928ce68"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "446721067c07595df7b9c295025b5de9f624a28e"
+    }
+  ],
+  "classification": "multiplayer_sdk",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies networking/social host SDK for games using arbitrary frontend frameworks; packages/examples, not owned complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

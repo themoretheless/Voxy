@@ -1,0 +1,94 @@
+{
+  "repository": "Cysharp/LogicLooper",
+  "repository_id": 240490642,
+  "commit": "3ee108da15de2ce73039f0ece28924db4a7b899d",
+  "source_url": "https://github.com/Cysharp/LogicLooper/tree/3ee108da15de2ce73039f0ece28924db4a7b899d",
+  "readme_path": "README.md",
+  "readme_sha256": "c583d8cddfa6126a4c2849d2ad7ac0bd80f102e2b8ec890baf5a1de4f8aa4b28",
+  "entries": [
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "2422a48877b3b093c5465afcdae113b61e0f9eb7"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "460eb9df0fcd058158e0d68e3e860b8442c50c3d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8ee6ef314b147aec029450ad109bdcc834cfae42"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3ab1780f4c57c7dc48c516d64b49a70b572428c6"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "c225483965b9ff5fa5b724d42fcc74c9497ca0e9"
+    },
+    {
+      "path": "Icon.png",
+      "type": "file",
+      "sha": "68d64b1e0e5c10200e85a15ab96a0b43ff989f79"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e847bcde0c6fa2b536c826a97a4419e844dc64c4"
+    },
+    {
+      "path": "LogicLooper.sln",
+      "type": "file",
+      "sha": "8899c1a96e4cd85c45316561af4423d4e0904cbb"
+    },
+    {
+      "path": "LogicLooper.sln.DotSettings",
+      "type": "file",
+      "sha": "36df7af15eb48dba2addb5fe40391983487fa5e8"
+    },
+    {
+      "path": "README.ja.md",
+      "type": "file",
+      "sha": "111d519bf87e6d371ead4a079f5240643055ec00"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cc23b711b811c05b9951d7efa464004cb85c2002"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7fca75e174ed671bc254b25076d1e526327bfb8f"
+    },
+    {
+      "path": "opensource.snk",
+      "type": "file",
+      "sha": "1ff58f7dbb2f5899b6856883bbcbc185185fb0b5"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "cef745f6c5074fcff2f0bf60d01bab838fcc5350"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2e35739b47ab8a241a91fac97215c5268cae1b13"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "00b1aec3592412414df206ef3bd24fa48246f4da"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies server loop programming library; src/tests/.NET build, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

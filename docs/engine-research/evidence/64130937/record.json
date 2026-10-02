@@ -1,0 +1,64 @@
+{
+  "repository": "s1ddok/Fiber2D",
+  "repository_id": 64130937,
+  "commit": "fcd5e96a716553c78302359dcbe5ef83106b7673",
+  "source_url": "https://github.com/s1ddok/Fiber2D/tree/fcd5e96a716553c78302359dcbe5ef83106b7673",
+  "readme_path": "README.md",
+  "readme_sha256": "1d554bb1a826c9f80904e9fffc858ed0f3d82f3eb74125ec7285deb50b1bfef6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "528d8a87244054322ea31df9fccafc7b1e3fe98e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6a3e72cfd26ff8006f27a96953fea7620f27703b"
+    },
+    {
+      "path": "Fiber2D",
+      "type": "dir",
+      "sha": "357986cea14ad920d23227d8daf5c57123847342"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "129278a877a55dc045768cec6d3caa6166375703"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "914eeb55150beb995db1fda0dd80d727e925b118"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd33229072203902644ce6a3966bd7323be024c3"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "65f7076dcf6e8eb90cc4b89d0069f85d9bd3b2c5"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "5813c264d41959a18d8e25a375ab66f635f83b6d"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "7251840d0609c697522e2d09ceb0bacd944e5551"
+    },
+    {
+      "path": "xcode",
+      "type": "dir",
+      "sha": "c6377cc7b3caa6b9d9d2bd2eae183e92423ab0ef"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies Swift 2D engine; owned Fiber2D/shaders plus Swift package/native builds.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

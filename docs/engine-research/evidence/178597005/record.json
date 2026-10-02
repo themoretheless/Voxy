@@ -1,0 +1,214 @@
+{
+  "repository": "FyroxEngine/Fyrox",
+  "repository_id": 178597005,
+  "commit": "a445c62352682747be85f17e2cda8331a544ad44",
+  "source_url": "https://github.com/FyroxEngine/Fyrox/tree/a445c62352682747be85f17e2cda8331a544ad44",
+  "readme_path": "README.md",
+  "readme_sha256": "ffdc07a3c3049071c48fe50938f88d26a3da7edfe88f5ec4ad5a270e8e91abae",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c77edf37bf2589f76485fbcd4e230160b1ec9bae"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cde0c9019ee18703ffd806b7afbf49df13fb2501"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a36b33dd439b0cd381da7585965efbe388c63352"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "9231425dd43131e00b8b3d8aa650f953b629b901"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "4c86f18dd1474967dae49f1113d04ba8ac3b3a05"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "c4a65dde1b0eda0c9cc55f5c7d8aac64a44c1cdc"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "b80dad7e6e7681e76a63e638ce6e2ac2011312ea"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2b86be2f05dca588f267011af5c38f5487296725"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "7036a8797115b5a4d6152a8ae777406baf5d0a7b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f87244357eac78f40dee78e958874506dc75d7fc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "055e549794d21640e8e4292122a73a0a1768028a"
+    },
+    {
+      "path": "editor-standalone",
+      "type": "dir",
+      "sha": "ed214f371fec2a9b8d1bdea333dbd8cc22ccd432"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "db1ec90d15fd88b46024f80205e1530580ed51b7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b4690dfaabb3050f82c1d47d98382e6bd45c0f53"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "03a329dd509ead50aa6553981386564434fba44b"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "269b0c091b84a38cfe2ecb82d59154a0dafc32c9"
+    },
+    {
+      "path": "fyrox-animation",
+      "type": "dir",
+      "sha": "eb8c14fb33c46e4db1045b2bf54614855a16ae23"
+    },
+    {
+      "path": "fyrox-autotile",
+      "type": "dir",
+      "sha": "74bb2b00eed0d6e6d2487628ab291f925166b92d"
+    },
+    {
+      "path": "fyrox-build-tools",
+      "type": "dir",
+      "sha": "cb9d0b29b007ab10626a93259cf8fb9be52821ae"
+    },
+    {
+      "path": "fyrox-core-derive",
+      "type": "dir",
+      "sha": "22aa12c735bf856b38e58e3110df49744658fedd"
+    },
+    {
+      "path": "fyrox-core",
+      "type": "dir",
+      "sha": "5dabcc7cacae02006b88350f6c2b498a2f0bcd8a"
+    },
+    {
+      "path": "fyrox-dylib",
+      "type": "dir",
+      "sha": "29a0ba40109f82187d153b63657412232d43ecda"
+    },
+    {
+      "path": "fyrox-graph",
+      "type": "dir",
+      "sha": "9f43a847772912158bbd68c76495e9792e85f506"
+    },
+    {
+      "path": "fyrox-graphics-gl",
+      "type": "dir",
+      "sha": "48c8d3c88a5f632d5083a63676489548811a26b5"
+    },
+    {
+      "path": "fyrox-graphics-wgpu",
+      "type": "dir",
+      "sha": "786902d9ef7168e6623516f5798c516b4ffefd1b"
+    },
+    {
+      "path": "fyrox-graphics",
+      "type": "dir",
+      "sha": "ac0fea455761ca54e95bdbbd77532534756579cc"
+    },
+    {
+      "path": "fyrox-impl",
+      "type": "dir",
+      "sha": "b4261b49c4b44bc8aad8459a26c7e4e31a048476"
+    },
+    {
+      "path": "fyrox-material",
+      "type": "dir",
+      "sha": "f06c2b7820e276ed9aed4ba51bfa103279491ab1"
+    },
+    {
+      "path": "fyrox-math",
+      "type": "dir",
+      "sha": "32649680274335cee9a45f15bd4e1fccc81be407"
+    },
+    {
+      "path": "fyrox-resource",
+      "type": "dir",
+      "sha": "9d5b51a8ebb88d92f2c0373f9f3d052f430165d0"
+    },
+    {
+      "path": "fyrox-scripts",
+      "type": "dir",
+      "sha": "d141743b3b779c0fbd922de28e46820e258d7d4b"
+    },
+    {
+      "path": "fyrox-sound",
+      "type": "dir",
+      "sha": "b1cfdc6d907939d9521b45ed4d7611f2219f632a"
+    },
+    {
+      "path": "fyrox-texture",
+      "type": "dir",
+      "sha": "c203408d4d616b4d5716b6c0fbb88c77fff9c5d6"
+    },
+    {
+      "path": "fyrox-ui",
+      "type": "dir",
+      "sha": "4bc674e8ee4cf18d69cd1771e13125447800bab5"
+    },
+    {
+      "path": "fyrox",
+      "type": "dir",
+      "sha": "54d2eadb2ef38000bba1458c32084bf300e9542b"
+    },
+    {
+      "path": "pics",
+      "type": "dir",
+      "sha": "94cb7c7fa8cc0254c2050f2dd21b4c9a63b10340"
+    },
+    {
+      "path": "project-manager",
+      "type": "dir",
+      "sha": "2a6a15dd33e5e108fc92a0aa78588eda4216eea5"
+    },
+    {
+      "path": "template-core",
+      "type": "dir",
+      "sha": "6c155a2ab2e1f1a41e945be199da09a5af47fe8f"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "a1cb5207f2d26c1c1a443fe02f87c8ea4fda45b6"
+    },
+    {
+      "path": "test_output",
+      "type": "dir",
+      "sha": "1b6aba99f2e59082593a416904ea5ab9bd244cbb"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Rust engine; fyrox-impl/graphics/resource/graph/ui plus editor and Cargo manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

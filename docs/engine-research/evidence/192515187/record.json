@@ -1,0 +1,117 @@
+{
+  "repository": "tanis2000/binocle-c",
+  "repository_id": 192515187,
+  "commit": "885cd1d40a6300baf47471202eece7ee7f8b14c3",
+  "source_url": "https://github.com/tanis2000/binocle-c/tree/885cd1d40a6300baf47471202eece7ee7f8b14c3",
+  "readme_path": "README.md",
+  "readme_sha256": "8b206ccdbb15387b29032776ced3c874e6b9258b37ad5052323abbcca6fdfdad",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "13565e9c3a24016931b1b92356c69a3d44549067"
+    },
+    {
+      "path": ".dir-locals.el",
+      "type": "file",
+      "sha": "89fd3ff4e8d6f5bac2dee6d5fc84f0e883785a77"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "62e779bb913e9ae34b4c96ce9950fa90e2f73ce8"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "881899f80a21ebfa4c701b9e675f238f09154909"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "408a1c1907753361337cd92f59b7940aa2a5d1dd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b9e89764c88186fb2a3fe41cadecf7badde0b403"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "72f3e29d847cd73c09c711dda41a46fa1db5dabc"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "ba957bf85be5332460a59ef4982aec6108a0676b"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "a35a3c9503bd8fef7975b998c79195905b1efe46"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f15731b685719cbcaba33304ed16ed9ef50e5d84"
+    },
+    {
+      "path": "CMakeOptions.txt",
+      "type": "file",
+      "sha": "1225181d16f71a90bcda0074751c0edc379cd0ca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "102d8fdec0e74b7bf6914deacf22011e91767f94"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "43800ecc424c391f48bb233cc4afe277ce07e907"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "701001bf96c7806b46b98a17d2a1705e732ae74e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "0d31673287153aa172a0f2a5b7921309abeb787e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b7bad8879eb4a2e5a9bd07a483c68d9f38ef6e3d"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "f62545c3285b07853350229e6528a3287e3baeb1"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "aaed19d6988cf987b428ea274e1217df069f74cd"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "08c0a72a75800f2943f4d822ce504d227bbf79f8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "07a30f2c82f965bf230cc0bfe439322ed5f5e272"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "da0cc8b1e610c72ac66fceb192917adb2bc2a0d9"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "mariofv/LittleOrionEngine",
+  "repository_id": 216619680,
+  "commit": "38ecfdf6041a24f304c679ee3b6b589ba2040e48",
+  "source_url": "https://github.com/mariofv/LittleOrionEngine/tree/38ecfdf6041a24f304c679ee3b6b589ba2040e48",
+  "readme_path": "README.md",
+  "readme_sha256": "139e436433328896138639022dfc6bb477f114827a3662c2e0b1c72439ea4086",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b0a5a1c8b4e975a25b0c5c8cea3af7c531e42493"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "52cf8d9e47c83750b56b785da5129139aa727b13"
+    },
+    {
+      "path": ".leu",
+      "type": "file",
+      "sha": "007a8cb2128369796028a26eb071209bbaa855c1"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8c73f537a826ecda389219697ddcc3e80c574ea5"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c1f6b65e59cfc04301915ea6717b330e3d598712"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "e953e1004bf2a157f5fc2ff9f8dff86cf6c530aa"
+    },
+    {
+      "path": "ImportedResourcesCleaner.ps1",
+      "type": "file",
+      "sha": "569c6d7a779bb731a75af8b26b3fe4862ec700b9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1d4f90dd906326b2e32c7a6e68e5e56cba9e75e4"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "2a9fe204ed1ec59c57db24d8036aa41918e1b651"
+    },
+    {
+      "path": "LittleOrionEngine.sln",
+      "type": "file",
+      "sha": "8cfab7261212ed2c87fae3f80460f145cde2d308"
+    },
+    {
+      "path": "LittleOrionEngine.vcxproj",
+      "type": "file",
+      "sha": "8dda8373170e4209b9bdc227a5a40e28f80b7447"
+    },
+    {
+      "path": "LittleOrionEngine.vcxproj.filters",
+      "type": "file",
+      "sha": "ce68ef8bbeb91560bbf4fd476cea18321adaeea4"
+    },
+    {
+      "path": "LittleOrionEngine.vcxproj.user",
+      "type": "file",
+      "sha": "c126e497efbdcf0e22957e5d24c7e5fe6dd3cd02"
+    },
+    {
+      "path": "Media",
+      "type": "dir",
+      "sha": "e30dacee68871e22817f623f99beedca2fcd6341"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "36bac10c3d4cea1d480381c7c153b06ff6e3ea39"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Academic C++ 3D engine with separate Engine/Game source and solution; runtime readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

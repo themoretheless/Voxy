@@ -1,0 +1,32 @@
+{
+  "repository": "UnitySuperEditor/SuperEditor",
+  "repository_id": 300001062,
+  "commit": "7be3a20a2bc14fd8d9e55818ce975f2c089e59a9",
+  "source_url": "https://github.com/UnitySuperEditor/SuperEditor/tree/7be3a20a2bc14fd8d9e55818ce975f2c089e59a9",
+  "readme_path": "README.md",
+  "readme_sha256": "00f4193f38105d65319b206ee849b46ee390c17be53d85387e00aebafc3bf50c",
+  "entries": [
+    {
+      "path": "Gif Tutorials",
+      "type": "dir",
+      "sha": "0d9e8e94c2ac7bdb5b9eecb01b587761e7279ef6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "21e783a892c06796c569596f1dc5064ce43ef1d8"
+    },
+    {
+      "path": "SuperEditorLogo.jpg",
+      "type": "file",
+      "sha": "a96b727695706403d2d3bfeed15f0bb70efde25e"
+    },
+    {
+      "path": "Updates.txt",
+      "type": "file",
+      "sha": "38cc21a20e7e3eef6f0e3c368ae2e095575168ef"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

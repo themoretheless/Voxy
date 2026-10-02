@@ -1,0 +1,134 @@
+{
+  "repository": "TombEngine/Tomb-Editor",
+  "repository_id": 98153822,
+  "commit": "7a9613fa19e873fa0398c0331ae541f94a5cc280",
+  "source_url": "https://github.com/TombEngine/Tomb-Editor/tree/7a9613fa19e873fa0398c0331ae541f94a5cc280",
+  "readme_path": "README.md",
+  "readme_sha256": "85c8eadb770ca55ceb8baa85e888dbd692dc6b72d237ebdfc672c06a1f258a66",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "4778098ceb3b6b7d52fe1d8838c3ad604e9ff4d5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4083967e35bbc7e631a65a58e84e622f91a6dfac"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d7151310fbad868be7b937c2b2d130c44c046956"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "8284c7fe6a30bf7d2a7b2f27dbcf4a5fe621fb9d"
+    },
+    {
+      "path": "DarkUI",
+      "type": "dir",
+      "sha": "b7807030c494bf06f6f2c7ddf969598a370afc6b"
+    },
+    {
+      "path": "ExternalResources.md",
+      "type": "file",
+      "sha": "c3625bdab6982c239a9b2d5ba58557faa6ffb901"
+    },
+    {
+      "path": "FileAssociation",
+      "type": "dir",
+      "sha": "6b7380f852d0dcad3cfa147bb11d41260a526c68"
+    },
+    {
+      "path": "GlobalAssemblyInfo.cs",
+      "type": "file",
+      "sha": "d11b181b51b5238ecd6823e7bb3f1b4005c44bfe"
+    },
+    {
+      "path": "GlobalPaths.cs",
+      "type": "file",
+      "sha": "bd1ed59fd669e259bbbadd493ef0130893563db1"
+    },
+    {
+      "path": "Icons",
+      "type": "dir",
+      "sha": "082d83e61fbae609552e492f46627400d18c23c9"
+    },
+    {
+      "path": "Installer",
+      "type": "dir",
+      "sha": "83b24c24f4b84a89f76378a6a7845953ac93c0e6"
+    },
+    {
+      "path": "Libs",
+      "type": "dir",
+      "sha": "f044a6f9a026c8972bb76db0e0cdada7dad39561"
+    },
+    {
+      "path": "LuaApiBuilder",
+      "type": "dir",
+      "sha": "3944927d35b725cd1fbe9b28955d54880ef75d8b"
+    },
+    {
+      "path": "NgXmlBuilder",
+      "type": "dir",
+      "sha": "4490b16a81dede4e6af1112ede11f620f66e2a0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e4f249ffaa2ca19c5d9a1d7e23f8b8af7518b2cf"
+    },
+    {
+      "path": "SoundTool",
+      "type": "dir",
+      "sha": "5551bbf9e7cd0343af304f8f391d9926491500fd"
+    },
+    {
+      "path": "Subtrees.md",
+      "type": "file",
+      "sha": "213a0ce764c2f5627f39b254c1565864847c646f"
+    },
+    {
+      "path": "Tomb Editor.sln",
+      "type": "file",
+      "sha": "9119f3373590d6c61e7332a69dc8feea2dcd8eb6"
+    },
+    {
+      "path": "Tomb Editor.sln.DotSettings",
+      "type": "file",
+      "sha": "daeb7f8ad75011c9c25f4d2da6da401dd3f644ff"
+    },
+    {
+      "path": "TombEditor",
+      "type": "dir",
+      "sha": "c892aec14e775dca8b7f5c1498fe4225e77a4920"
+    },
+    {
+      "path": "TombIDE",
+      "type": "dir",
+      "sha": "e8cf668630eb92a0123c0af0814658eb3720f656"
+    },
+    {
+      "path": "TombLib",
+      "type": "dir",
+      "sha": "cbac837622251dca3747fb441e4ac29f066e43b7"
+    },
+    {
+      "path": "WadTool",
+      "type": "dir",
+      "sha": "276d7b5124a8db410724f5792c21e4ea71b2e2c7"
+    },
+    {
+      "path": "~CLEAN_SOLUTION.bat",
+      "type": "file",
+      "sha": "16c89f24208e12862c0c254a89c60ee8eb549534"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Level editor and asset/scripting toolchain for external Tomb Raider runtimes.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

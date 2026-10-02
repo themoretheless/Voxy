@@ -1,0 +1,94 @@
+{
+  "repository": "paladin-t/bitty",
+  "repository_id": 306275527,
+  "commit": "fa387b9adec7bc008224fd3fae0e031d9394bd2d",
+  "source_url": "https://github.com/paladin-t/bitty/tree/fa387b9adec7bc008224fd3fae0e031d9394bd2d",
+  "readme_path": "README.md",
+  "readme_sha256": "65a81cf4c77c602df7fe735342c53ae576428df6c0eeebd027245199f4918ea3",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f8f28b93e32e80f39ec055b6bca1c8b16f28b903"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1c4e700afe6df55a8cb85d492e1452962c2700e2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9dd2d1fba7a878d8ae5e175abefc42e86cd0f0ee"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b44199849e3877e813cfc6af1a2eb9c26a493c48"
+    },
+    {
+      "path": "bitty.linux",
+      "type": "dir",
+      "sha": "7248e95e08264251624d28d4ade2e4f9f9a4bbe8"
+    },
+    {
+      "path": "bitty.sln",
+      "type": "file",
+      "sha": "e534c7b64b74ef83aebd468801c736104db345f9"
+    },
+    {
+      "path": "bitty.vcxproj",
+      "type": "file",
+      "sha": "f10994026d951f574ce11a7ed8f27009174cef32"
+    },
+    {
+      "path": "bitty.vcxproj.filters",
+      "type": "file",
+      "sha": "b3dfe576263c36a55add1ce370f3091c0d45b5a0"
+    },
+    {
+      "path": "bitty.vcxproj.user",
+      "type": "file",
+      "sha": "c52fda06e963c08b8cba9c48d9acd160436ca9e6"
+    },
+    {
+      "path": "bitty.xcodeproj",
+      "type": "dir",
+      "sha": "41e0b3cc528e7ee74bf502330b4bc52f6643377d"
+    },
+    {
+      "path": "bitty",
+      "type": "dir",
+      "sha": "97d9c08c4c91c3efee2ce0b6e3574af46722bb32"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5c351e6269633cd538c8fe23043464aa3df21ae7"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "ff7bd2c54d2a0603eb209b1ba4f1fea4efe23ca9"
+    },
+    {
+      "path": "output",
+      "type": "dir",
+      "sha": "88378b34cb36a1ad4b83ade9935d2176ccf055ec"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fe60fea42186be4fe93179a648a313e719e8bcb0"
+    },
+    {
+      "path": "studio",
+      "type": "dir",
+      "sha": "a44f939611e3cae236053f00fa859d3c46dec032"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Lua 2D engine with authoring tools; owned src/bitty and native platform projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

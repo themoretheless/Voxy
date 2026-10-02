@@ -1,0 +1,194 @@
+{
+  "repository": "mateo-m/empo-app",
+  "repository_id": 1206201146,
+  "commit": "11103c64c0cb49aaca97d5dbaed9ed903eb9b3ec",
+  "source_url": "https://github.com/mateo-m/empo-app/tree/11103c64c0cb49aaca97d5dbaed9ed903eb9b3ec",
+  "readme_path": "README.md",
+  "readme_sha256": "947950a0b5d6e4498004692882d6b96e83b5219420462d7d767203f8ba26c73b",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "8faa36613c48cd949b32aff76423fbf113aba036"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cbf13a96860e25e3091752ef9c857c4aa53031d6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cde0b2f90f69690b68c9d0bd515cfd0ae18cc5c8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e60becce41a5ff9ab2d4a1f8ba06920cb6c45d8f"
+    },
+    {
+      "path": ".markdownlint.json",
+      "type": "file",
+      "sha": "145c1f34af856417d5496d1984e05925f61cf9ea"
+    },
+    {
+      "path": ".markdownlintignore",
+      "type": "file",
+      "sha": "5e14f29ec684223fd6734e89a32bec459c37e31c"
+    },
+    {
+      "path": ".oxfmtrc.json",
+      "type": "file",
+      "sha": "4ea1662be6f98e28ca35bbf51831a1d687fc7f34"
+    },
+    {
+      "path": ".swift-format",
+      "type": "file",
+      "sha": "5936a69852763657a46cac1154149b9f37b57fdb"
+    },
+    {
+      "path": ".swiftlint.yml",
+      "type": "file",
+      "sha": "d9c126da8489bb6deeb313bba8310fa95888f97f"
+    },
+    {
+      "path": ".yamllint.yml",
+      "type": "file",
+      "sha": "6f8cc783d66b7b2af015a45ccf378d787685643f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ab2adfee42ea51a0f3a6d0aba5e6d3c32fe46e63"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "aa782d08cac9d61319aa3a7924715c4414fd69cb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "PRIVACY.md",
+      "type": "file",
+      "sha": "2460f331f1667c83d94869e240e3aac07f4b1371"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6e8333c866382c2d2b2f0492b3dbde09cd8db463"
+    },
+    {
+      "path": "SUPPORT.md",
+      "type": "file",
+      "sha": "4cdd86a4a34f7ed6cb2c507b0563ebad62649f5f"
+    },
+    {
+      "path": "TERMS.md",
+      "type": "file",
+      "sha": "0d00516d35cac728c4daf9b7f6f72e410c9b9303"
+    },
+    {
+      "path": "altstore-source.json",
+      "type": "file",
+      "sha": "df22e4c3a05aff74ec75a3f7f0f5145f28ba7d93"
+    },
+    {
+      "path": "blume.config.ts",
+      "type": "file",
+      "sha": "b2c87a6f9bc21be9291bab1c2d60b5b9ac0cf8d8"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "34116ae48f609636f2867963965a8b47a1ba5caf"
+    },
+    {
+      "path": "bunfig.toml",
+      "type": "file",
+      "sha": "de249f953ed8db60b7d8a3f4518369448b736b87"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "b08f42acb89e687b2958feedc972215bceb8d50c"
+    },
+    {
+      "path": "cores",
+      "type": "dir",
+      "sha": "999c6040fad6045204622ccb15df8a0982d27856"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4d72ebcf5c3448403b390262e19f8df5ab8b53f4"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "f093701bbfe5fd84f72abe06284f579555b60e06"
+    },
+    {
+      "path": "landing",
+      "type": "dir",
+      "sha": "5a9074625d8ed4796fed78af2cfb572fcef6faba"
+    },
+    {
+      "path": "lefthook.yml",
+      "type": "file",
+      "sha": "39669a14f0ce20e7fccad497f13437de01a6e7c1"
+    },
+    {
+      "path": "metadata",
+      "type": "dir",
+      "sha": "cd8781a0fe8f7b1b38a86c8804ea3464e9d25f91"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ce3c403f260d01b864f9ce1f9d47d615668dba95"
+    },
+    {
+      "path": "pages",
+      "type": "dir",
+      "sha": "03a1bead28179d2c836f83083fe621db5ca28f09"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "9e6db492f22e86b23a6cce370a5b1a10ea50acf6"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "6e269b3527c432678e93a7ea8833a0796c6aaf46"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "8c07cc17d3578f2f2aac050be5b2e292cd9a1b75"
+    },
+    {
+      "path": "theme.css",
+      "type": "file",
+      "sha": "a05b24d770fd53a27daf2d5514eb806cd13631e9"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "f46aca9ceba6a661055960209d59671251de707e"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "95cb7181c89902a6bd3f7fd925bd8f3874bbfd04"
+    }
+  ],
+  "classification": "excluded_launcher_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "iOS game launcher consuming separately hosted mkxp and PSDK engine ports.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

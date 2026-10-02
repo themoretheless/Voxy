@@ -1,0 +1,44 @@
+{
+  "repository": "migueldeicaza/GodotSwift",
+  "repository_id": 266187993,
+  "commit": "ff0a0e031abaccfa76f5e764391bdcc56645c19e",
+  "source_url": "https://github.com/migueldeicaza/GodotSwift/tree/ff0a0e031abaccfa76f5e764391bdcc56645c19e",
+  "readme_path": "README.md",
+  "readme_sha256": "f8740b7de8f949f96baca0f4ae482a0037a4522ef6db4b479d290e45a2a86559",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "95c4320919abf636ebafde1ea59f0ba428b4bc56"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "Binding",
+      "type": "dir",
+      "sha": "afbcb252b4e2ef73da4a0236d76909c6e02f853d"
+    },
+    {
+      "path": "Generator",
+      "type": "dir",
+      "sha": "19053a0e0a9ee3cc330ce3ca37fb12ccf401878c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "159763fb7ea040518b71c3e374b0aadbf7fb0450"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5cbfe7031e0b639eeb1816f6c80fee24fc7c7ec5"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Deprecated Swift binding generator/manual support for old Godot extension API, not a separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,114 @@
+{
+  "repository": "zenith391/didot",
+  "repository_id": 294902144,
+  "commit": "a096869f934bb1005c1122c40029eafa51e76e58",
+  "source_url": "https://github.com/zenith391/didot/tree/a096869f934bb1005c1122c40029eafa51e76e58",
+  "readme_path": "README.md",
+  "readme_sha256": "26bb211628fb89a3b35353bc00cfcf6dd8aa4359d7989f538f0d3a99c1e2041b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8c7e603290ff603106a90800f7aaaa483ed4dc8a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "71bef7ef59144abb219c50d0d896b4a32a8b110b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9c93d26b3edc5ae3c0d88f8d37fbd579ad9c6b53"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "518dbeeb55f6831e328bf760af190cc0ae7c597f"
+    },
+    {
+      "path": "build.zig",
+      "type": "file",
+      "sha": "6ac6719f366421e6ce2cca19c067073824e5bee2"
+    },
+    {
+      "path": "didot-app",
+      "type": "dir",
+      "sha": "ea614d5d1433dbd6b10a61fd528455e41806fa89"
+    },
+    {
+      "path": "didot-glfw",
+      "type": "dir",
+      "sha": "ae807a2989d40ff32f5786f13db1eb4cdb5cd580"
+    },
+    {
+      "path": "didot-image",
+      "type": "dir",
+      "sha": "b07039b43103b7b7bad31bfb2c0e257c9f067d7c"
+    },
+    {
+      "path": "didot-models",
+      "type": "dir",
+      "sha": "d9a8331fd890562e3b6c4ce9bca0dce32170a94a"
+    },
+    {
+      "path": "didot-objects",
+      "type": "dir",
+      "sha": "f19ab844aeb89f1673fd7dc46e7d8a24a4d75a14"
+    },
+    {
+      "path": "didot-ode",
+      "type": "dir",
+      "sha": "0d563d3bed9a0d84efe0519399eb2ce0952cbd79"
+    },
+    {
+      "path": "didot-opengl",
+      "type": "dir",
+      "sha": "3efed3f1f0d5bb28cb56afc843da57a2114a29d4"
+    },
+    {
+      "path": "didot-webgl",
+      "type": "dir",
+      "sha": "2844153bb2aff278e76a762a3d5b42e424cd0d3d"
+    },
+    {
+      "path": "didot-x11",
+      "type": "dir",
+      "sha": "7503a8df0235341b8084ff3e078fa8f420bfe4f0"
+    },
+    {
+      "path": "didot-zwl",
+      "type": "dir",
+      "sha": "6b1d2df03c30d4d4c0651c0681a975f1419d15e1"
+    },
+    {
+      "path": "didot.zig",
+      "type": "file",
+      "sha": "bb8ea8427a5b12f6c4f9714a81bef954a0b11646"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "52589708cc441fd9224e172b21af3eabf1aa88be"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "518d336bc147fa7b21dcf1d32f4726454f0a0d14"
+    },
+    {
+      "path": "zalgebra",
+      "type": "dir",
+      "sha": "17425abaf4529d07a6c71c228f7331b6debe77bd"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Zig modular game-object runtime with rendering, platform and ODE modules plus examples; multithreading correctness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

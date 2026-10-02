@@ -1,0 +1,29 @@
+{
+  "scope": "Single fan versus averaged fans; material, wall mesh, pressure and supports fixed. Both full cycles completed; static audits found no intersections. Synthetic materials and virtual caps remain idealized.",
+  "states": [
+    {
+      "anchor": 0,
+      "peak_pa": 819.6521627303,
+      "element": 27646,
+      "centroid_m": [
+        0.01165686642656,
+        -0.00170119515079,
+        0.02885817418732
+      ],
+      "reference_z_m": 0.0296875,
+      "sha256": "9fffee787280dde2cbf6638ca5d7d154d1ed26e61500a3699a31593118194f9c"
+    },
+    {
+      "anchor": "averaged",
+      "peak_pa": 274.705789609,
+      "element": 23134,
+      "centroid_m": [
+        0.007756033401738,
+        -0.0008149471490335,
+        0.02585855937682
+      ],
+      "reference_z_m": 0.0259375,
+      "sha256": "2d7be8496fe8a1c254c0583b0aa70dc706ed73b8d5cd83de4da63d2cc8a81106"
+    }
+  ]
+}

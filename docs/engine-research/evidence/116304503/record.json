@@ -1,0 +1,109 @@
+{
+  "repository": "fireblade-engine/ecs",
+  "repository_id": 116304503,
+  "commit": "89607a55eb70007a9f68012b7600c839a8702ee0",
+  "source_url": "https://github.com/fireblade-engine/ecs/tree/89607a55eb70007a9f68012b7600c839a8702ee0",
+  "readme_path": "README.md",
+  "readme_sha256": "0d2f2df3b7f369dd44f8073c646a390dacdaacef58496792f34ca40fab8a1313",
+  "entries": [
+    {
+      "path": ".codecov.yml",
+      "type": "file",
+      "sha": "1db9c061daf151acf2eb1795bbea4a5a885de8f7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7e14b6c17330c3fb1227877216a07176150c5a52"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "56e3f8859f99d6495b6415b486ee6727dd5dbc7d"
+    },
+    {
+      "path": ".spi.yml",
+      "type": "file",
+      "sha": "295fcbda3d261a11b601c4a88963d030836aa83a"
+    },
+    {
+      "path": ".swift-version",
+      "type": "file",
+      "sha": "a435f5a56faa6e29186dab89b1fa66313aebbe87"
+    },
+    {
+      "path": ".swiftformat",
+      "type": "file",
+      "sha": "884cbf3f03fe8bfa4a2736ebe90c0a12c46093d6"
+    },
+    {
+      "path": ".swiftlint.yml",
+      "type": "file",
+      "sha": "e21602b6a7efd3cf19966936d3b068e036ef1bec"
+    },
+    {
+      "path": "Benchmarks",
+      "type": "dir",
+      "sha": "77f4592ce91724200b5b517b2f42a3887fda4ea1"
+    },
+    {
+      "path": "CODEOWNERS",
+      "type": "file",
+      "sha": "5ac9aba01bd2fbbeee5b3adef0336e259420edee"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "52ce96e0ac1b8a947b154ded8c88c8b0a8e8389a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "fd18a7cafa7651b189ccae9080a3b346eefe2085"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8e12fd4965eadd8e71dd7cc147c9f0a1677f611f"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "46449da2a9053dd17128d7f244b1d86d9d17fe12"
+    },
+    {
+      "path": "Mintfile",
+      "type": "file",
+      "sha": "89c404404e97d387b0ae54b60d44b8e58f4446b9"
+    },
+    {
+      "path": "Package.resolved",
+      "type": "file",
+      "sha": "ad319e2df46dbe6ccb68f3fdfc4853a66be239cc"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "afd2f6307c75d90541fca0fb5c2a918acfd58609"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c98602d0599a3d0f03d72f83ce0c5f6a945e32e5"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "73bc55f99e2045a81eaa17c4484715e620a208d0"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "c72243b205a660ba45f95fefc0b9a3716c2fcd94"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Swift entity-component-system implementation with source and tests; not a full game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

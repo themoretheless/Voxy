@@ -1,0 +1,27 @@
+{
+  "repository": "walcht/neovim-unity",
+  "repository_id": 610465603,
+  "commit": "e2de308201e7a5dcd51e47888e582beed05d8dcd",
+  "source_url": "https://github.com/walcht/neovim-unity/tree/e2de308201e7a5dcd51e47888e582beed05d8dcd",
+  "readme_path": "README.md",
+  "readme_sha256": "d10b42d27e7f0350a68d0c47ebc4d3f2280569f641f54ddb6a35f0696b2eb099",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2c0e2bbe486fdeb1e4fa2869ac8adbcf70d36a6e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "7d0de633e068aced201f54dd16aae36815209c52"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cbdce0baf48eb5506e81683a723f3258bef14d45"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

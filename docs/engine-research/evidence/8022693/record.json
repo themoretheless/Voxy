@@ -1,0 +1,79 @@
+{
+  "repository": "GarageGames/Torque2D",
+  "repository_id": 8022693,
+  "commit": "72c8891f192b44d58a8bd5ec2b293a3b48a818f4",
+  "source_url": "https://github.com/GarageGames/Torque2D/tree/72c8891f192b44d58a8bd5ec2b293a3b48a818f4",
+  "readme_path": "README.md",
+  "readme_sha256": "f8f366729dabf56f7f95f88b6fd56354569d41c0fc12b95fa06433d0932819b6",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d7ddf2ca0daf919f45f0665ba9e377042fd96b8b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "76cfc29df3c50fb59c48751ec6538801930e4e9c"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "63362bcbc87c92c6ef04cc60af818708366752fd"
+    },
+    {
+      "path": "OpenAL32.dll",
+      "type": "file",
+      "sha": "5ce625849aa04caf75acbd20a5d5040418f39ab5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d0839351f7ac068a773a8493c0f25dc671161128"
+    },
+    {
+      "path": "cleandso.bat",
+      "type": "file",
+      "sha": "fdaec0f0d49795f56330f6729b2bd4894dc4a297"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "e5ef2d8afbd1c64717a5b9e160fd8c7594e5cf2c"
+    },
+    {
+      "path": "main.cs",
+      "type": "file",
+      "sha": "960254792dff656d5171d733a69d9fa768ed2091"
+    },
+    {
+      "path": "main.runAllUnitTests.cs",
+      "type": "file",
+      "sha": "a39caaa14487fff6fdd40d7811b92d693d6dee07"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "ae3606ef4e5dcc9fb607230c52a3e69692d6076e"
+    },
+    {
+      "path": "sandbox.torsion",
+      "type": "file",
+      "sha": "861ed13a95ab688f9f3331385b2c59644082ad1b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "b094a685abf883a5c835b1a1ff27be723b0c805d"
+    },
+    {
+      "path": "tutorials",
+      "type": "dir",
+      "sha": "6e406ac0e4db30ef2997b55db21856645e6def3b"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Historical Torque2D engine source retained before move to TorqueGameEngines; same lineage already represented, not independent architecture family.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

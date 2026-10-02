@@ -1,0 +1,102 @@
+{
+  "repository": "gladiusjs/gladius",
+  "repository_id": 4449420,
+  "commit": "87feb35f06be3e94964ac14a4b1dfe31234dc635",
+  "source_url": "https://github.com/gladiusjs/gladius/tree/87feb35f06be3e94964ac14a4b1dfe31234dc635",
+  "readme_path": "README.md",
+  "readme_sha256": "8eb7880ea4c4f1b022f647c9ebb0cd851637e4bb099b3b233dcc17ad1a69d47c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bf47dcc7b5877295e9bf524f7ff349e445e98074"
+    },
+    {
+      "path": "Jakefile",
+      "type": "file",
+      "sha": "5927fa1c342b404c9b47dba635fadd2cef6f51af"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "41f2e02a460cc0a42945b9c1de0423a790131c30"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8004f988f72f78cfd0d56eaf8ebcdffb7d2f2e9b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "db8b3274646aea68d645dae8b3f96667826675fa"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "272cdadbd9651b62880effe1dd537d145eca8be4"
+    },
+    {
+      "path": "gladius-box2d.js",
+      "type": "file",
+      "sha": "cfa9b4301581f0144359c9e74e60a0a9d81d9314"
+    },
+    {
+      "path": "gladius-box2d.min.js",
+      "type": "file",
+      "sha": "39b5da08c2f0ce346761fadc43d214a617ea9425"
+    },
+    {
+      "path": "gladius-core.js",
+      "type": "file",
+      "sha": "1754244df9f6633ff40e01e3104e37854aef36d4"
+    },
+    {
+      "path": "gladius-core.min.js",
+      "type": "file",
+      "sha": "421235802e20396ee7857140bdc7a140ba6b0df2"
+    },
+    {
+      "path": "gladius-cubicvr.js",
+      "type": "file",
+      "sha": "2dff40b40e601f87745350593da0bf9662f5eaca"
+    },
+    {
+      "path": "gladius-cubicvr.min.js",
+      "type": "file",
+      "sha": "1c42b3fa27878087339bea5256511827c762e791"
+    },
+    {
+      "path": "gladius-input.js",
+      "type": "file",
+      "sha": "14ccef2cdc0f55b1f6d9212007800ef7db03f51f"
+    },
+    {
+      "path": "gladius-input.min.js",
+      "type": "file",
+      "sha": "25a682d9f6552107a15f43cbd632a7ffa69f40c4"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "856542c75244c5c47b6b3ff933cb2c43e2eedd06"
+    },
+    {
+      "path": "node_modules",
+      "type": "dir",
+      "sha": "664a7222e379423bcadfa1b7e4246c479e2fd3e1"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0a80c57ef9ecc2b32ac1085c14ddb3d38ceceb07"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "b5816b0303d573014456df6960b1f4df877ef9e9"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

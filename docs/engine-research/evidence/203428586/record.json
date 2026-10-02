@@ -1,0 +1,89 @@
+{
+  "repository": "NSSTC/sim-ecs",
+  "repository_id": 203428586,
+  "commit": "58fc95f6647ebd63071e6284de98d9a9048d8ef0",
+  "source_url": "https://github.com/NSSTC/sim-ecs/tree/58fc95f6647ebd63071e6284de98d9a9048d8ef0",
+  "readme_path": "README.md",
+  "readme_sha256": "1341a3492d4422b00882530a5b275228470803a59c9b186398f5a798d1e719bd",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2ef274abbffa747208e4333c85caca4cfc0d6f17"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ebe9969b203b195c06ddeced1a8513dead2aad8b"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "34495b08cf45fc74df400416d30fa31aeeb74f5a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7bb19cf640896f2568b591bbe57220998516bc12"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b925efec6f4a7d80c066bcbe657c90a17351b0ac"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a8eba61b280d5e2f92cc3c353f267d22cdd7845b"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "d5ad71c5d26f749cdff14c0c8724a18ea372794d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "098c58b6829b5e2a3db36d05c4555728ffc949e8"
+    },
+    {
+      "path": "qodana.sarif.json",
+      "type": "file",
+      "sha": "d5898cb6d19143e8bb0c1aa4f1501ef5b4c06eb7"
+    },
+    {
+      "path": "qodana.yaml",
+      "type": "file",
+      "sha": "a1d1c2168a60f89807433e80e13d268e373a076e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a98eac810c074964a19db2c74e6506ae12b2a642"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "74a6a790bb0ff18ab1afb952333826afed2fd812"
+    },
+    {
+      "path": "tsconfig-tsc.json",
+      "type": "file",
+      "sha": "af69945f999a073f58a8ebe172ada27455c3f746"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "581a22e1f448e4910d83628f0aeede0843c9d27d"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Async TypeScript simulation ECS with examples; rendering/game runtime is outside core scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

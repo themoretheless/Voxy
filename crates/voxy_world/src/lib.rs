@@ -3,7 +3,9 @@
 mod block;
 mod chunk;
 mod generator;
+mod terrain;
 mod world;
+pub use terrain::{Biome, ProceduralTerrainGenerator, TerrainColumn};
 
 pub use block::{
     BlockDef, BlockRegistry, BlockStateId, CollisionShape, InterfaceGroupId, MaterialId, Occlusion,

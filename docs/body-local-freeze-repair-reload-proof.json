@@ -1,0 +1,21 @@
+{
+  "file": "assets/characters/blender-female/prepared/body-local-freeze-repair-v4.obj",
+  "sha256": "8ecb405475d74a737b6c38397e8be1c91ce18f35fca688e39536cb2ed2ddfc8b",
+  "reloadedAudit": {
+    "vertices": 76052,
+    "triangles": 152100,
+    "area_m2": 1.567089647635577,
+    "max_edge_m": 0.011999540395577154,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "reloadedCrossingPairs": 308,
+  "searchCapped": false,
+  "sameTopology": true,
+  "faceNormalReversals": 0,
+  "sourceUntouched": true,
+  "scope": "Prepared candidate only; still contains intersections and is not adopted by runtime."
+}

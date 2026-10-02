@@ -1,2 +1,13 @@
 /target
 *.profraw
+
+/web/pkg
+/mobile/android/__pycache__
+
+.research/face-source-study-500/
+
+__pycache__/
+
+*.pyc
+
+.DS_Store

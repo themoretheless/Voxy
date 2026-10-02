@@ -1,0 +1,2513 @@
+{
+  "expected": 500,
+  "persisted": 500,
+  "missing": [],
+  "extra": [],
+  "hash_mismatches": [],
+  "wing": "voxy",
+  "room": "face-source-study-500",
+  "scope_cleanup_removed": 24,
+  "date": "2026-10-02",
+  "source_records": [
+    {
+      "id": "08f6bbb2-6c1e-41ec-85e8-fe010e83a168",
+      "file": "xubaixinxbx__3dheads.md",
+      "blake3": "d9711b05f2ce6d8a01bf84c79ddc9016ff2c89846758a07d657b095174f9dc25"
+    },
+    {
+      "id": "0394a6cd-bbc1-4506-a00d-fa908ce017d7",
+      "file": "woroko__Kinect2Blendshapes.md",
+      "blake3": "02b3f8b944806b9a256ec6cb8ef05978e2b0aaa45c31e81cec1c9843587802a5"
+    },
+    {
+      "id": "48587fd4-4e39-42ef-b466-1a7c47ac20a0",
+      "file": "shivangi-aneja__ClipFace.md",
+      "blake3": "cc4c63362bdc8b3f741f91f272322292635983ca274b75f8d10515bba0b66855"
+    },
+    {
+      "id": "3a0742c3-cbd8-4a07-b984-faf3a58e4b84",
+      "file": "patipocz__SSS_ShaderProject.md",
+      "blake3": "1fb2f0faef32ffdb6ddd0e0ca5bb85adb4e0fa37969f85030276c680fc04002c"
+    },
+    {
+      "id": "4ac3547c-c8f1-4adc-b242-269ecba602eb",
+      "file": "mhammoud__iOS-FaceTrack-for-Maya.md",
+      "blake3": "6a97a7bc90fa3a21c98318104883dd9a4ea89d4c9b5c47ea88fe8961651a77a1"
+    },
+    {
+      "id": "c5d3e3df-bfd2-4614-b8a3-32b0513d8e7b",
+      "file": "melihcolpan__MuscleMap.md",
+      "blake3": "d3df06feb8c769eb827f9d05a4a1c1250cc5aed5bb808fc58e73342d810893ff"
+    },
+    {
+      "id": "93144d47-ef55-4ffe-bdda-19983bd1849f",
+      "file": "luoxz-ai__ARFaceDemo.md",
+      "blake3": "e2e136ee91b06225214f3885a2af6b04f89df91e3e1a57a731bc504a633ca365"
+    },
+    {
+      "id": "8890a4e1-b9e5-4edc-843b-d79f2a2b36c4",
+      "file": "longde123__BlendShapeCombiner.md",
+      "blake3": "6347976d1ab4ddcc5fc4f4acde73d76ba9642d4f2d83902b797b2f1d231a1cb2"
+    },
+    {
+      "id": "67e9edbb-53cc-4ff0-a1c3-ae6cf52ce545",
+      "file": "lisitskyaa__ComfyUI-DLSS5-NR.md",
+      "blake3": "0e216a4e746ce75c029066333625a3e56f5e377316d5d9d77bc94e2c721e3940"
+    },
+    {
+      "id": "5aad12f3-6592-4288-9206-85574a6b8988",
+      "file": "lauris47__SkinShader.md",
+      "blake3": "13fae6d52d85ca7f3e83250febf71ec4c738229de9818b953388fe4662cc6566"
+    },
+    {
+      "id": "1f47d558-289a-4bb8-802d-92abb6a91196",
+      "file": "jiaxiangshang__MGCNet.md",
+      "blake3": "884740c33bef44f66528641e0e4ecd1093267b0b2c738a1a93a411512dd90057"
+    },
+    {
+      "id": "e0cd30c8-fe8a-4b62-8199-ef4f738acdad",
+      "file": "huybery__GDPnet.md",
+      "blake3": "9e735172378af9b3538c666fe90dba19d118d3906b2569d2cb7c63d257cc09d5"
+    },
+    {
+      "id": "1633004c-78fe-4c16-9766-b082de41313c",
+      "file": "host2india__Lip2Sync-3D-Talker.md",
+      "blake3": "1161042c23fe925d3caa27207fe9cdc2ac2952f5739db14e4f3c374207e1d390"
+    },
+    {
+      "id": "e72e3989-73db-44f9-9faf-5e40c188fb64",
+      "file": "faisalkindi__DLSS5oneclick.md",
+      "blake3": "59b06150417d260efc0cb1b2bb465f7259191d1d069f061f1f2370ab08a3a9fe"
+    },
+    {
+      "id": "50ed8a05-466b-4092-8c32-9d52ab860b9e",
+      "file": "emoto-yasushi__iFacialMocap_Facemotion3d_udp-tcp_v3.md",
+      "blake3": "4acb9f27bac2cf82883a880f3c8760a377209a24fa63bd3a2af41b3324cf3c0b"
+    },
+    {
+      "id": "1a71d37f-34fa-4158-a0cc-602af8b71bd1",
+      "file": "dopomoc__ICCV_2011_4D_Face_Tracking.md",
+      "blake3": "c521c3b15ddc7a2f2dbf4cb9b39658716a2ce2a04aeb1df53bb5d2ab02110d90"
+    },
+    {
+      "id": "c4f998a9-2886-4661-b940-5b0e444e8097",
+      "file": "confSmiPaper4__FacialRetargetingFrUnPC.md",
+      "blake3": "3093944f4e1f2f084676005638dc779839b8b651efcb9fa1c1a86281b178636f"
+    },
+    {
+      "id": "3983b6d2-f930-4900-afba-ad92a7c1c0ba",
+      "file": "cnawale__3D-Face-Reconstruction.md",
+      "blake3": "fc51e1c43cfaeed1966f69a6449c8030bc63fb0a480355720b8bf5828a90c3b5"
+    },
+    {
+      "id": "da15c53a-08ba-4f0a-b584-da493f28e4f1",
+      "file": "alisaboorigemeni-blip__LipSync-Pro.md",
+      "blake3": "71bedd22859578903f4fa8120e318b265e81a467e2e6ffea8945c4c3d2452cca"
+    },
+    {
+      "id": "135b36b7-bb37-4241-bd39-5b39924b9c10",
+      "file": "alexandergmzx__mouth_animator.md",
+      "blake3": "4c82d32c40bb14686be273bc3a68348a6ae4abb18e354c3ab128d227cc23d2e8"
+    },
+    {
+      "id": "fe33eb47-0460-472a-aea9-e6d4e656b367",
+      "file": "SakhawatAkib__-character-skin-transition-shader-unity.md",
+      "blake3": "03b581eb9efc910340442450fd70630b76e9e86c7c657cb1a8509265cbeca81b"
+    },
+    {
+      "id": "b1741e5b-6342-4f1b-848f-16889fbb6357",
+      "file": "RtjShreyD__Playing-with-Makehuman-scripts.md",
+      "blake3": "7f2f6cc8f320f39ec1c41b2abd2ff6e84990357898ee1af44773e46507235d56"
+    },
+    {
+      "id": "11244b66-c127-45af-b325-99658053075f",
+      "file": "RogTV__facial_anim_fix.md",
+      "blake3": "157cfbaccbaea64caa4285787ab576ac56ce9efb8f60ab8552899cc278354ddc"
+    },
+    {
+      "id": "841dab32-0efd-4c63-821f-c4fff2447a6f",
+      "file": "LeonKang130__SSSSS.md",
+      "blake3": "ce6c5b70cb3a9d11f71e897ea01caab58904fc978bc9c78a2eea2432faa7fd38"
+    },
+    {
+      "id": "6bb35eba-262f-4539-a14d-af0f64609793",
+      "file": "Apiwit22__3D_TeethSegment.md",
+      "blake3": "3d17896f80011b5da9db3793d1c4ef42d8ce4be161fb4cd6177d444da6da54d6"
+    },
+    {
+      "id": "3d56e453-0009-4eeb-9e0d-614e1abf5418",
+      "file": "AndreySibiryakov__tools.md",
+      "blake3": "e8687aa75bd9762dfd5690c027602a0ff62070790a4f8dc8e9da25f0a0625c2c"
+    },
+    {
+      "id": "c20f7cb5-83cb-421f-8571-a7cc243a808d",
+      "file": "zulubo__EyeShader.md",
+      "blake3": "d2dc49e4851c9615de12f105c5b290e564715bf2c88f4344ca2bf6aa8da7c6b7"
+    },
+    {
+      "id": "ae25127e-52f0-46a3-88f7-baa9527fc62d",
+      "file": "zjumsj__GaussianBlendshapes.md",
+      "blake3": "62644bafbbaf86bec2c560efbb0faeea2926719fb0a9e7e68170e2c279ab31fc"
+    },
+    {
+      "id": "605e3c4b-74b4-4416-9b58-09ef55648009",
+      "file": "zjumsj__FaceViewer.md",
+      "blake3": "a8d4db2d94bbcfaca2b88126dd69b85c0e9dab9026a5e5d7273249b3c49ec592"
+    },
+    {
+      "id": "37ff11af-7f8b-4609-b0f2-d14aef318536",
+      "file": "zju3dv__StreamingTalker.md",
+      "blake3": "f242d7f1bf0d4957a1a6f2944faae479fc6eb7beb0c9502457bec8c6120c393c"
+    },
+    {
+      "id": "6f9382de-4c8f-4f9a-aaf2-1741840b54b3",
+      "file": "ziyeshanwai__BlendShapeMaker.md",
+      "blake3": "53a830a57e41f96af599b85605f0008f0b34b25a1bdeaebf918747724c4e4e7a"
+    },
+    {
+      "id": "ddcc96ce-ecb0-4fc4-a458-d4e127b1c8db",
+      "file": "zhoppock__Attack-Frog.md",
+      "blake3": "6daa52777911210fb9b4352382b39f81d3a726b2c4fe348f799945fbb088e044"
+    },
+    {
+      "id": "7ee53b78-9bca-47c8-96b9-80841a7e6e74",
+      "file": "zhaofuq__Instant-NSR.md",
+      "blake3": "67a8eea9580b1cf58034dfc337ba6f30b2c55e892e5a033ea7b2d1ec4df5dd67"
+    },
+    {
+      "id": "63d33c20-df9a-4f37-af98-170100f95c60",
+      "file": "yunik1004__SAiD.md",
+      "blake3": "463c8ae784c435c1fb86358bc79388d930d97d943803180489c9ebbcd56641d0"
+    },
+    {
+      "id": "a6ee652e-a37c-44e1-8d78-1b025a75acb0",
+      "file": "ymao1993__Facial-Animation-with-Blend-Shapes.md",
+      "blake3": "c0a012dd93d7f9696a059a97bddfb2d1b75b1c1c1e1b96343b9a384f8909dfee"
+    },
+    {
+      "id": "f7df809f-7ba1-4a7c-864b-018ed2cf3751",
+      "file": "yfeng95__PRNet.md",
+      "blake3": "801361260ca319cf2acc1cc951ad858eda10ae979aa9498169e62e6855d79689"
+    },
+    {
+      "id": "eb7eaf02-8a02-43bc-9844-26bc3a820cf5",
+      "file": "yfeng95__PIXIE.md",
+      "blake3": "82a75d3ab472b0132206b289eb2fd8487c420e5dd234b896034bd03ea722db26"
+    },
+    {
+      "id": "38e66a6b-cfd5-4fe2-94e0-4afc7e79e3b6",
+      "file": "yeemachine__kalidokit.md",
+      "blake3": "a7dda1ddee68976faa26b3b6eb9a6a0cb0a9c0b7c59fb41995c2a5bd25cef047"
+    },
+    {
+      "id": "bdbf90d2-7686-46e2-9de8-e75be800cf54",
+      "file": "yeemachine__kalidoface-3d.md",
+      "blake3": "3442d5cf2451aa7f3116737c4d76767961a431dd3ffa1e892e4daeb297e80b02"
+    },
+    {
+      "id": "b14915ee-7472-4099-922f-f67d0c162751",
+      "file": "xiaoyiT__Course-Project---Speech-Driven-Facial-Animation.md",
+      "blake3": "8d30d1804949dd8667f134ba5c716c5b49cc96d4611d5ca5cb01eb92bf16ab4d"
+    },
+    {
+      "id": "914f69b1-24a5-4aa3-96e0-584a6dd5ee26",
+      "file": "xg-chu__ARTalk.md",
+      "blake3": "4c5c6e112444427cbeae998d1bb3914c20cec40c3b5bc45b59c34490e02cb810"
+    },
+    {
+      "id": "31000b94-31a0-45f6-ad90-e80ce53ff604",
+      "file": "xanguera__aicompanion.md",
+      "blake3": "b3c56ffdfe91895610d693d74ee72fc7532d2be76d6bf4176c4a625fef4118c5"
+    },
+    {
+      "id": "f9e61c41-8f1c-4c9d-a571-1096cf2b8c45",
+      "file": "wuminye__NHR.md",
+      "blake3": "8b140ac0cebeacc3e29b51f9c1e21b6878c3db842986c6ccc368b03d170cf10f"
+    },
+    {
+      "id": "73608812-2af6-4c63-b3c4-bbd5bd397c26",
+      "file": "wsj-sjtu__MMHead.md",
+      "blake3": "7657b6a007f02e2bd3a96991b9465b1ec7415a91a286a55f5c9c2a82c51916ce"
+    },
+    {
+      "id": "049aa47c-a920-4586-8765-79dba7e664b2",
+      "file": "wjw12__Fast-Approximate-SSS.md",
+      "blake3": "ff224c6648023eaec27f73c64d9ea017bbaaaee369bb6adef254b8cc4d85a558"
+    },
+    {
+      "id": "6783f513-faaf-4c21-a85d-b41fc37474ba",
+      "file": "wingstone__PreintegratedSubsurfaceScattering.md",
+      "blake3": "fa5d20276a082111e57af606b36c35c5696c1120a170259a479d3a2c2ae65f45"
+    },
+    {
+      "id": "4e645dcb-94bb-4204-99f0-2d7b785ade19",
+      "file": "wilsjo2__OptiScaler-DLSSNR-PreSR-Multipass.md",
+      "blake3": "3e3f1e6f2d713d93b6528ad2a4541ef8844bb2a94300d991f631a81f9feef1e7"
+    },
+    {
+      "id": "d52cb2b8-b6b4-452f-90a1-21e350d79316",
+      "file": "williamclot__character_creator.md",
+      "blake3": "1263493132970944e7371a93f409913f506a59442f36f43ead817f2a55986b0b"
+    },
+    {
+      "id": "ebbf76c1-cb8a-4196-8700-f7f1c2a689ff",
+      "file": "weijielyu__FaceLift.md",
+      "blake3": "bda5ac737b1f0130b6214706067c997d9e32fd309af2bced86fbf76428b9b083"
+    },
+    {
+      "id": "4f43ee70-a986-4baa-92e2-91b51487241e",
+      "file": "webaverse-studios__CharacterCreator.md",
+      "blake3": "42e1dc68ce7499f5b6d3c12cc583445b3563cc1f4b93d8afd4da0c31c56d5b52"
+    },
+    {
+      "id": "efc6d6e6-e0ef-44a1-8696-e80dc8c3f5cf",
+      "file": "wayneyip__polyme.md",
+      "blake3": "c4186c3e8b14222b6a7d734d743ff645910cdf3ba821773a5dc021131ada3989"
+    },
+    {
+      "id": "398b99ce-44d0-4c6d-a5d6-2931734888f6",
+      "file": "waveact__NFS_Facial_Mocap.md",
+      "blake3": "35fa6874754990d873818606fc07129e50adc8d38f45086b714766ab989e790b"
+    },
+    {
+      "id": "2da6f936-3c05-4281-a8f7-ec21dae7575f",
+      "file": "wangxuanx__TalkingStyle.md",
+      "blake3": "b2d80ac7c26a8aa7f86c681aa6e045b6dea694245d9c9813630a8dadac60e830"
+    },
+    {
+      "id": "9a005e39-cc14-4979-a432-97f34db4b060",
+      "file": "waleedsworld__ai-model-scultpor.md",
+      "blake3": "d63b6413a50114638cba50ef0079d441663e1b7c6e7545470132c3f4e7601fa3"
+    },
+    {
+      "id": "9076a078-23a3-4d7e-822b-70f6fddf5373",
+      "file": "w0lfv__iFacialMocapTester.md",
+      "blake3": "4618cf2f79e552c455087ce83d4509782071da0c0e6140ddb39a807b0310d3a3"
+    },
+    {
+      "id": "31ba72a2-52ce-4079-a379-05b9695e4bf2",
+      "file": "volodya-renderberg__b3d-facial-rig.md",
+      "blake3": "4453f844161d909dd4ddb33131cafeadc7b195bb6aee80ed9bdd2367a80b1772"
+    },
+    {
+      "id": "2cc1b0f4-68ee-4aef-9c4d-3b47473b4bd8",
+      "file": "virtualritz__jupiterskin.md",
+      "blake3": "5b59b31a9a42b0a81298950fc900fbac4871188aa66a572d4f7f7f46731a5ead"
+    },
+    {
+      "id": "ff2ad152-6a58-435e-a698-2dc9e30603f4",
+      "file": "victor369basu__facial-emotion-recognition.md",
+      "blake3": "07ef48c15d8bcfa68757d8bc2ca29f1f268a729ea978bf76618c6f5621797a5c"
+    },
+    {
+      "id": "d69c2475-3ed2-4717-a2ad-e28d18ed0aa1",
+      "file": "vcrom__SubsurfaceScattering.md",
+      "blake3": "e68e40d0c7eb1ca19e2fa05eab5d85f8e76e7ad2403217bf8f2cd27b0e0e7440"
+    },
+    {
+      "id": "d4116913-aeb8-480f-9ee1-b2817a44d74f",
+      "file": "vchoutas__smplx.md",
+      "blake3": "c5d6930a78d3ad1d3def6dfffd316edc4be66e28cab55909ad0fbc35f274bfe9"
+    },
+    {
+      "id": "56dcfea6-5342-4c3f-960a-1fbe69fa7d60",
+      "file": "vasiliskatr__example_based_facial_rigging_ARkit_blendshapes.md",
+      "blake3": "4a43a8bebc4c692f0b3da55b4246196ae8e00c466a6f8450ae8571c3a0f8b536"
+    },
+    {
+      "id": "0eccf534-b39c-4e1c-9394-49480f192e64",
+      "file": "vasiliskatr__deformation_transfer_ARkit_blendshapes.md",
+      "blake3": "1c180bfbd80804108b57375c824122c5f24c6b28028df5143a7cdc406b1bd6b6"
+    },
+    {
+      "id": "8caa6684-16db-4956-8f05-2a9613bbe0d7",
+      "file": "unity3d-jp__BlendShapeBuilder.md",
+      "blake3": "caf3a7472be032edcee12596cff91e9ae3c93c19bbba63c79b658982a3e46b93"
+    },
+    {
+      "id": "32591d82-6d7c-4058-85cc-8c33473a1d7d",
+      "file": "ubisoft__ubisoft-laforge-multirex.md",
+      "blake3": "20d1e89f2e1f51ffd31dfbca68a1e7055a116074a79ffc15b1a68d1b79c589d8"
+    },
+    {
+      "id": "412b640d-c427-4973-af2a-6cc7a9e712b0",
+      "file": "ubisoft__ubisoft-laforge-msmd.md",
+      "blake3": "84010402bd31f8f6d65bd297fd90695bcbc0e68652b68ff37066f660f2daac1e"
+    },
+    {
+      "id": "0650dc3d-8024-4262-a8bb-2ca78a123287",
+      "file": "tzax__FastFakeSkin.md",
+      "blake3": "acb04d6709ec59fe9a6c6d7fa33040eafa51ccb71a155ff84e430c51ba44144b"
+    },
+    {
+      "id": "9aa46c4d-0f6a-4ee6-9fee-b231cd2c018d",
+      "file": "tsikerdekis__ARKit-Creator-Blender-Addon.md",
+      "blake3": "6804c5062f55f2d79d3889c1a0195be178759c401f225c2215c250e38df9897b"
+    },
+    {
+      "id": "f1f868ce-4bd5-4f29-99a7-76c92aa24d5a",
+      "file": "tsgcpp__StereoEyeShaderSample-Unity.md",
+      "blake3": "f66512f3b6edbf92e5e49f040617e44b02d9672a5cb6c0129a74547164aa2aef"
+    },
+    {
+      "id": "7daa4623-ccb8-4043-bab9-75ed1c50b8bf",
+      "file": "tranluan__Nonlinear_Face_3DMM.md",
+      "blake3": "8c45e584b47b93eb57f8d288808f9f1f7f2cbd4b7ad8585da3c1865a12196762"
+    },
+    {
+      "id": "c43bcdc5-4d98-4b18-bb6f-964e503c83e7",
+      "file": "tracer755__VRC_VRM_BlendShape_Avatar_Setup.md",
+      "blake3": "64835228a8b4cd3b77feb927b16b1207147e789968fa9a38d2da4e73a0e0e957"
+    },
+    {
+      "id": "4eed8145-8983-4f1a-a1e8-eb9cb629507e",
+      "file": "tony-wolff__AU_BS_model.md",
+      "blake3": "856d0bcadcb05aba90b495782469919108de1140f7eb4eac4237c7d8dc6a9ad0"
+    },
+    {
+      "id": "a05eee1d-2a40-4c3c-8dcd-56ea480f1b7c",
+      "file": "tokoik__imsss.md",
+      "blake3": "107b409672c7973baeb00258e5a0a021691533d2179952adf17a73aa4f7fce28"
+    },
+    {
+      "id": "d4b76537-a5d2-4c87-a4e9-2512297cc683",
+      "file": "tobeatraceur__Face-Deformation.md",
+      "blake3": "62dbb9150aac2503e72b15caf63ca6eb4b510f03abac1dfe9e42ac36ad6b24a2"
+    },
+    {
+      "id": "b3282847-8dac-4542-bd81-25d75021a85c",
+      "file": "toashby__PhonemeTongueAnim.md",
+      "blake3": "fb3ee3bc62a32a303e22a745ef1c069d6726e4949fc5b2ef3d616a7bc8ca6350"
+    },
+    {
+      "id": "f2718fdd-42b4-4869-a769-f59bfea3703f",
+      "file": "tiborkubik__Robust-Teeth-Detection-in-3D-Dental-Scans.md",
+      "blake3": "03b75921cb997e2159859000601c79c798754c155470cd84e4d246a1388a476c"
+    },
+    {
+      "id": "bf09b6d3-bbf2-4b63-bd6e-cdf9f305ce19",
+      "file": "tiangexiang__OccFusion.md",
+      "blake3": "566e93ec4155ec26da25771c1d06c75fce0f10169a862c574e737a623e3919ef"
+    },
+    {
+      "id": "7c8f52eb-adf0-4a5d-9b18-f5b13725fa33",
+      "file": "thuhcsi__Crystal.TTVS.md",
+      "blake3": "76e420a7e6bd26a1f121d435ef3879ea7e38e74b8394001a36e93c8ab8aa5d7d"
+    },
+    {
+      "id": "7a30269d-9b99-43ba-8be2-1dac9e6ec6f9",
+      "file": "thmoa__smpl_viewer.md",
+      "blake3": "bfd21670276c9181ea32597cb8972f6d5552f2fa70600ed3d64d8525ca581b49"
+    },
+    {
+      "id": "910eb8ca-6718-4b15-98fe-547ff54b0359",
+      "file": "thinhvd__Facial-Animation-Retargeting-to-Virtual-Characters.md",
+      "blake3": "8ce04eca9f8592da8700edae07d6950a56cd3eeb54cb14174ba52378eb98a40b"
+    },
+    {
+      "id": "65dff00c-ba65-46ce-8c93-d964cdb6ca9b",
+      "file": "theEricMa__DiffSpeaker.md",
+      "blake3": "571a8b7d39cf04ce3c5a10e3489f99fc0b0354d95aba40324524204072a783c9"
+    },
+    {
+      "id": "c5ba233c-bdb6-4e9b-a795-3fe1a0b7bf40",
+      "file": "thakshak__textToLipSync.md",
+      "blake3": "75c0a4282c874588dae7e36cd76df841ac241c061e88933d17facff594244af8"
+    },
+    {
+      "id": "f9f860af-bbb5-4185-9e77-ee5d67dd2ae1",
+      "file": "tfwu__FaceDetection-ConvNet-3D.md",
+      "blake3": "8f43fa950de70d53187b87f94fd5518cae65c52a18634aaa8c9e5a4f18b2665b"
+    },
+    {
+      "id": "271a65a1-7c68-47a1-b962-bb57c20bed5d",
+      "file": "tanveesrivastava__Audio-Guided-3D-Interaction.md",
+      "blake3": "e58ab6d7cc31e209c231f9254b97cada4b446e198c463e70a703251bf2acf2f9"
+    },
+    {
+      "id": "351ecf53-9370-4388-a872-7713cdf88a49",
+      "file": "taniajasmin__Ghost-Animation-Canvas.md",
+      "blake3": "530d8768b8dc6be4e4a7139907ebbc8186066ca804ec5f39e87ac688dcdd4546"
+    },
+    {
+      "id": "9d4c6094-10ee-4a9d-bed6-0b76dd39d883",
+      "file": "tajindervirk__FacePulse.md",
+      "blake3": "3e7d428b8461d9c2906da5d4bc00305ca67070048a9df35ff9001de7800d505d"
+    },
+    {
+      "id": "1da5f99c-3d8c-4f35-927f-81ecc61f51b1",
+      "file": "taconite__arah-release.md",
+      "blake3": "b86dfb5828fd1c369053cdcb3471cd745888f78af9133ef5639dc577115d7fbe"
+    },
+    {
+      "id": "5f541aea-3ffa-4f65-b98f-998715bf1ee9",
+      "file": "taconite__IntrinsicAvatar.md",
+      "blake3": "acae75b9cbf738d38e5593610d30d4cbc73d2e5453eb6511f9882f3230ebcbeb"
+    },
+    {
+      "id": "74f8d14e-8a8a-467e-8e20-67771218d75f",
+      "file": "tHeBeStXu__FacialRigTool.md",
+      "blake3": "7b1daa883d1cf352b32b85775bbf8baedc6e168589b03ab30c1188a443f6c71c"
+    },
+    {
+      "id": "97881017-c1a6-4250-847f-aa5b3197a82f",
+      "file": "supratikbanerjee__FaceAR.md",
+      "blake3": "b209edbcacbf14dea1fbe266ce21dbf6d388c8615da9c40f8f87a2f3dbea919d"
+    },
+    {
+      "id": "0ac5efdb-1241-47f8-a447-817a79b7dded",
+      "file": "sugi-cho__Unity-InternalSkinningTest.md",
+      "blake3": "9bca97cc8f1c2ea16cad900a215027b3bbfbb1764354dd3dd2857a0ef44618d4"
+    },
+    {
+      "id": "8086a3a4-6713-4410-bc47-00548550f09f",
+      "file": "suchipi__arkit-face-blendshapes.md",
+      "blake3": "8998b0be9fcc737f51cf256cbdee91ad6cdc523712837b1db74c58194a8a2102"
+    },
+    {
+      "id": "99aea2d3-c4b8-4f4f-8fe3-ac94a345342f",
+      "file": "str818__BlendShapeDrive.md",
+      "blake3": "c1c23c2d2fc847d87c84d56169e4ca2a59ee435ee4afeca7953080686aaae6b7"
+    },
+    {
+      "id": "4a7f3605-a75b-4264-824e-e566da01398f",
+      "file": "stevorackovic__FacialAnimation.md",
+      "blake3": "c816ae4af06797b14e9ef6a513fc006036de313ed6934b1446e8952da79e6431"
+    },
+    {
+      "id": "77e619d8-e890-4f82-a580-982c4b9ed180",
+      "file": "stephen-w-bailey__fast-n-deep-faces.md",
+      "blake3": "d2adbf4eb50ff3d36c2e23dca00b1fc7a0abc0737924c708eedecfa1d30fdeb4"
+    },
+    {
+      "id": "7eaf302d-7987-46a9-b746-14c89621b679",
+      "file": "steaklive__CgFX-Shader-Compilation.md",
+      "blake3": "b0b8fb055dd74857252864727d8df6c7f08ccb8ac4a695b8c98bbaee5ac1a57b"
+    },
+    {
+      "id": "9e625cc2-7b65-416a-93a4-4a75fcbec3b8",
+      "file": "sp4cerat__Skinned-Skeletal-Animation-in-OpenGL.md",
+      "blake3": "dc7328417d930202f382857976774472635db46ed9b68501cbbeeaae967ab928"
+    },
+    {
+      "id": "600208ef-9f89-4624-9c97-55d41847f7c5",
+      "file": "soupday__cc_unity_tools_3D.md",
+      "blake3": "9da6c03efb86a08b95846221d1096a6abc33a0aebcf73031233a1d7dd2cfc435"
+    },
+    {
+      "id": "022369fb-fff3-4a58-9c60-5e3f56667b56",
+      "file": "sonilyan__Unity-Animation-Instancing.md",
+      "blake3": "762a73db0bdbc7d4518be79780dd2b98d5db433d3f23658c9e09caa65650577f"
+    },
+    {
+      "id": "cc8c1fca-ed6e-414e-9060-67a57e26105a",
+      "file": "songjaewon__CFR.md",
+      "blake3": "619ca1623e5ebe98b3fbe97cbfaec260c73835a69e416c182b797a085da213e9"
+    },
+    {
+      "id": "955fe1c2-7343-4aab-81e0-c2ca9807a3c3",
+      "file": "son-gladyso__FaceExpressionVFX.md",
+      "blake3": "a6a1e9b8be8ce7fbdfce4edcde679264b7def87c53b4d8c0486ac9887e6dc6a4"
+    },
+    {
+      "id": "ee9fd95e-d648-42ac-a023-7988a7ad94dc",
+      "file": "smogelmose__MLMP.md",
+      "blake3": "e989b6586ef4c5c23847da044465a65f343ccca1f8e6c18f1dce4b566e54ba85"
+    },
+    {
+      "id": "4d0ec776-c9c4-483b-a25e-263261264487",
+      "file": "skyliness1__URP-SubsurfaceScattering.md",
+      "blake3": "70f8d4518d9362362e97750deb160c9d00f31e5a0c5a7c5caeefe49e7e927869"
+    },
+    {
+      "id": "45a53fd1-89ed-4c21-9a0f-e00254b135c0",
+      "file": "skore11__GPU_voxelSkinning_MassSpringtest.md",
+      "blake3": "3e93e937ac8d703f6a7ce0c30abb4a030e5ae096a1892365dda9e63b32d8afe3"
+    },
+    {
+      "id": "a3403cf6-cb71-447d-af07-b41c0adb1ecd",
+      "file": "sjefvanleeuwen__sprite-sheet-creator.md",
+      "blake3": "c88c829dbb18a4ee4a4ddad2d81179bcb03cb21768225ceadf5d2bfe345ce380"
+    },
+    {
+      "id": "e617d0af-b175-4f64-899d-4b742ceb7a22",
+      "file": "sicxu__Deep3DFaceRecon_pytorch.md",
+      "blake3": "c10ce4e4d5072a6ce3b73a866b51c5ac984c3d168317c8a64dd04b3fded8df87"
+    },
+    {
+      "id": "6ab16cca-b5ce-4035-941e-1486695b2232",
+      "file": "showkeyjar__AutoMakeHuman.md",
+      "blake3": "3971931e60fb209c471e7b9297f378b6dd43d412066d4813ec4632e243683454"
+    },
+    {
+      "id": "f6454f71-381d-4c91-8eed-d990e077e60f",
+      "file": "sh-akira__VirtualMotionCaptureProtocol.md",
+      "blake3": "ba32180c23d6961752e3dc59260caf562a9b128389bd1466c2b3d16f32c058a0"
+    },
+    {
+      "id": "edc4b856-798e-436a-83c2-e184f67cfc62",
+      "file": "seyedmoeinsaadati__Eyeball_Shader.md",
+      "blake3": "d90a0e35b89843c0b80bb9ad168cf56a16f071d544ebd22089962b58a2727540"
+    },
+    {
+      "id": "bc1618e1-9da0-4c78-bd1d-123e5ffb6902",
+      "file": "sean-reid__tongue-simulator.md",
+      "blake3": "49b3c680f3662320b277ea1cb0c5486ab7cdb9913632101ad78a4fd7441fbcd5"
+    },
+    {
+      "id": "0286d4fe-3fba-4ce7-b11c-2726c85b47f1",
+      "file": "sato942__game-asset-mcp.md",
+      "blake3": "ca2d1ee53aa9027e6038ed7842499b4f01779b4010d49d3bf76356cb00ed506a"
+    },
+    {
+      "id": "8999c1dc-def5-4eed-854f-6064399fdccb",
+      "file": "santiagoballadares__ScreenSpaceSubsurfaceScattering.md",
+      "blake3": "c25224841db87b6a3e168d2def46364e169c9d500a1ccd01ed1f3977451d7938"
+    },
+    {
+      "id": "53c8f0c4-4025-4662-a209-9dada7c2726c",
+      "file": "salmedina__SpeechDrivenTongueAnimation.md",
+      "blake3": "36915f645ea00497fc720c3af68d9cfef8e9b3e989434e33f53f1c77ea5f14ff"
+    },
+    {
+      "id": "94bc8d40-8c80-4af0-93ec-f5946c064eed",
+      "file": "s-soltys__LipSync.md",
+      "blake3": "c59ea231b5f667b48a4f65cc88c19e94551edecedc86945c468e902c69ffc565"
+    },
+    {
+      "id": "28c8d23c-8b99-4db5-a8ca-9980039f9073",
+      "file": "ruduba__FaceMeshDeformation.md",
+      "blake3": "2b6b71e1c3cd9b0c1c7eadca8f84c64b18d7dfe0d83ae27ee4ab3207ab0d277f"
+    },
+    {
+      "id": "3fe109ac-0734-4f54-b209-56845883e76e",
+      "file": "rubelchowdhury20__Neural-Re-Rendering-of-Humans-from-a-Single-Image.md",
+      "blake3": "c761240ef05f46b26d32d1e9bbc8f6da52e750dda625604a77a46f31e3f6fc62"
+    },
+    {
+      "id": "9eeabb1b-723c-49bb-9f4d-05c33f20d247",
+      "file": "robert-leitl__toy-bricks.md",
+      "blake3": "77f9ac60ff1961f5fcb01c992b62b03522e8bc6a11170231d615c2741757cbae"
+    },
+    {
+      "id": "5c4af16e-8798-46d5-b81c-6d0fb6314bd4",
+      "file": "ridvanaltun__react-native-deepar.md",
+      "blake3": "e4be130788ee036eb102380355333e061ad313ba24cd3431b24b3914c6e549d3"
+    },
+    {
+      "id": "20eefeff-530c-4ef0-bfbb-1fba1d0aba12",
+      "file": "rickie95__3DMMRegistration.md",
+      "blake3": "636cc3c3431b973e3c37917034d10fd388af25312bec573fa25bf87db2536a85"
+    },
+    {
+      "id": "3fd66a3f-0f51-4fc2-ae8b-11493a15920f",
+      "file": "rgl-epfl__learned-subsurface-scattering.md",
+      "blake3": "f8df9ad5413cff195231b94e7c567724c0e78ab923738524da5c935914342ebc"
+    },
+    {
+      "id": "88725023-1ba8-4e8b-8038-6b491ac32861",
+      "file": "revzin__HWMToolkit.md",
+      "blake3": "bc54e3cda648fa3e78a564e7727e541af36b24113ff960cac5a7dcbea5f66997"
+    },
+    {
+      "id": "3800ebc8-ca5e-4241-93b2-809feed00cbd",
+      "file": "rena1024__FacialAnimation_OpenFace.md",
+      "blake3": "07b591033a029371883b8979e10c669e4374f23cbc35a8ce5834b53552b78c0b"
+    },
+    {
+      "id": "fcad43bc-eb6b-452a-97be-8cd8960db555",
+      "file": "reiluisii__1-Click-DLSS5.md",
+      "blake3": "5364a64b26766bd089594c62942e148e163668b2ca9971ef63ba244906bd5e10"
+    },
+    {
+      "id": "90573f3a-8063-4916-a354-84b0ad8712c1",
+      "file": "rakanki911__DLSS5-Swapper.md",
+      "blake3": "be6b8a50c5a0ee592605e78ce65092552d8871aa1eb93f6479c6801df0b76486"
+    },
+    {
+      "id": "f2a3122a-2983-47cf-9dd1-02e5685f8994",
+      "file": "punkhooren__FaceReconstruction.md",
+      "blake3": "11b9260383121d75c54e8d564b5f5c98dad3948b29b85e15015f9bd74f1b290b"
+    },
+    {
+      "id": "dcef62f8-51dc-4406-bb28-52ccd7f0d3e5",
+      "file": "profesorshader__shader-anime-style-eyes-aka-procedural-anime-eye.md",
+      "blake3": "68df64089c83f8d023c2cd0dbaed8b20634b6585290cfe0c3d4d8aa801c7eaa8"
+    },
+    {
+      "id": "57c9ee8b-3330-443c-8fc9-a3ea6bba87b3",
+      "file": "prodzpod__SnekStudio-iFacialMocap.md",
+      "blake3": "e7c569f734c465750e42abf2e1b785c88029ca751e3b40d92b3f36489125f3b8"
+    },
+    {
+      "id": "7b395a6b-07a3-48cf-a784-55a1335fa1db",
+      "file": "polyworks-art__FaceBridge.md",
+      "blake3": "046976f60c32ae828406fa18e318118f9cddc22c5963ed93e5e8e60e67cce19b"
+    },
+    {
+      "id": "a63116bd-d08f-4652-a3c7-389cd6ac7193",
+      "file": "phuselab__openFACS.md",
+      "blake3": "a77c1b3ccecab94fd59a3e01e307015608429df1913560769c9a604ab53c3f06"
+    },
+    {
+      "id": "f20a65bf-7375-4b6d-8176-ebdaed1dd9b3",
+      "file": "philgras__video-head-tracker.md",
+      "blake3": "1f906772fe884d971bc223a4de918276c9b4b25f92de062daf399ad66f10bd83"
+    },
+    {
+      "id": "abe6b724-9c55-4610-80c0-a9a64cb1c49a",
+      "file": "phg1024__BlendshapeGenerationCPP.md",
+      "blake3": "63c93d3b6431800c1717b1b3dc412c4f71b851963db5e8fcccf22a1eb8af810f"
+    },
+    {
+      "id": "2139dbc9-f32e-4498-bf24-ac172eaf6f75",
+      "file": "pgii__FacialMocapUE4.md",
+      "blake3": "10610d902cd45b26e36d03a044af716a1d0824ef4a5b62845c25a55d987947b1"
+    },
+    {
+      "id": "d808ee02-b146-4693-9c8c-43ee68c88389",
+      "file": "patrikhuber__eos.md",
+      "blake3": "d6bd635a24dc956c848ecf4c8658d88ef3d19cbe2aec06341bf0fc4178b64c1e"
+    },
+    {
+      "id": "7f33cac5-1948-49bf-928a-bc445a249a4a",
+      "file": "parthubhe__Agentic_MetaHumans.md",
+      "blake3": "f4b9d52ee25145b455241678b6cfc0730574a6b855cdd4e2eb1105445efe82d0"
+    },
+    {
+      "id": "b92dd769-b845-4a78-a703-7d105eb5bcab",
+      "file": "pansanity666__TransHuman.md",
+      "blake3": "c13bf8bdf922d5f812c08744632300095c13b0c37af63e5be7454c8220bc9fdd"
+    },
+    {
+      "id": "bf9a7845-5d82-4cc8-a1e6-ba4df1109b32",
+      "file": "openVRlab__Headbox.md",
+      "blake3": "9098d7df35f8e31915896d3738c87b5d677f905a2c353c0115e5e1e7efc5417a"
+    },
+    {
+      "id": "744ccabe-38fb-4761-90f0-e58fa3a53cb6",
+      "file": "on1262__facialanimation.md",
+      "blake3": "85ad8e4f546e9b5640d00ba6ba6a7b2847bad2f15bc7383203bfd06f1a5f8a18"
+    },
+    {
+      "id": "e1fd7899-7cc7-4ad4-96a2-5e6155a680fe",
+      "file": "nwWag__All2Blendshapes.md",
+      "blake3": "30bc5fc0128edd38b35450933d165aa8fa3aa02527d3be15c6138d4f3529e5f2"
+    },
+    {
+      "id": "a6be6a1d-ee57-41bf-a310-8197a79a0a29",
+      "file": "nowickam__facial-animation.md",
+      "blake3": "339b1420e1833e19a69e83ec40b1a4a9641befc4b8bbcc0f6862700665c24e07"
+    },
+    {
+      "id": "71401f49-c893-400c-817e-ec90fc12bb59",
+      "file": "nkeeline__OpenPose-to-Blender-Facial-Capture-Transfer.md",
+      "blake3": "a4700cfe1201f36ab822c12aa34327a190aa6824c70799ecdaa2b20b9f101dfc"
+    },
+    {
+      "id": "1b50fc1a-f19e-4168-834c-9cd719b935f8",
+      "file": "needle-mirror__com.unity.xr.arkit-face-tracking.md",
+      "blake3": "18bf3375c7ddd61f7228fe4fc83f2873c3d6e5931b89fd0639947701b8403995"
+    },
+    {
+      "id": "4aca6a60-ec14-4faa-b860-40a9dacbfab2",
+      "file": "naveed-gung__jenny.md",
+      "blake3": "b83e0f772960de10f372950ba7c1f01fdc529336b9eee0db79d7f716ae61a686"
+    },
+    {
+      "id": "3027acfd-c9ee-4a9d-bd8f-e191992ee402",
+      "file": "nadeem-parokkot__React-Avatar-LipSync.md",
+      "blake3": "51d0c23c35d76738aed6e2e1ea3a238fcbf7c557eae486a3ce5e7d5f82ff8ddf"
+    },
+    {
+      "id": "8bfea880-4f0e-4bd6-8aad-eb4ce12b14ff",
+      "file": "muskan70__Speech-driven-facial-animation.md",
+      "blake3": "5d42220c27d611ef7a1abc2b67155d62841d6c7daa1b0bb3cde1ebb18b6208a4"
+    },
+    {
+      "id": "4ac7901a-4f6f-446d-9923-dfd97d18704d",
+      "file": "mrdoob__three.js.md",
+      "blake3": "2c7186f9428953f455eb09c1c467585f452530a0dfe0e6a4c024b16edb00ce9a"
+    },
+    {
+      "id": "344afc6f-3f97-497c-b0fc-0f9037bab755",
+      "file": "morevnaproject-org__papagayo-ng.md",
+      "blake3": "ee5fc2d1b1888ddb850a893a4612d95cabb34223c89a9410ecd0d01597a45a9a"
+    },
+    {
+      "id": "b3aa51ec-32b1-4341-8bac-8283fbbd04a3",
+      "file": "mor-giangln__face-deformation-demo.md",
+      "blake3": "55b52864b274250f4154a2ce8e594fc5f57883f21589531efca1a79f5b6af7bd"
+    },
+    {
+      "id": "be742b4d-1c69-4028-9189-1b95afd5d7cf",
+      "file": "montybot__FACSHuman.md",
+      "blake3": "5385698086253802da860124777f64be38841a73f120c1bf7b91aac129df211a"
+    },
+    {
+      "id": "c8452aa1-0b8d-4bd1-98b4-1fabee6e9275",
+      "file": "mohd-faizy__facs-facial-expression-analyzer.md",
+      "blake3": "53e4a9d17c7a1ab85c177365a7c371dee924f623a102e224acd908c89e13cf83"
+    },
+    {
+      "id": "c2abc380-de58-4bc0-b05d-fca14b6bfe7c",
+      "file": "mmp__pbrt-v4.md",
+      "blake3": "18675cde1088299191353f008745a5c39baa82d156dc0f468a868c481c955959"
+    },
+    {
+      "id": "a1b74b1f-8f36-4c72-ac8f-f65292002a0b",
+      "file": "mmanoharahere__GeneralizedSpeechAnimation.md",
+      "blake3": "77a32769422647aa4b578b32468be6e54e6c3df6b87e132a4329bad5bc298f28"
+    },
+    {
+      "id": "68b80579-8e38-47af-b073-c75ec7ae729c",
+      "file": "mkorunoski__3D-Face-Reconstruction.md",
+      "blake3": "95da19f700a33dfabb48e913f57f21fa5dda3ab1094fa19fda64d1b3f5c50958"
+    },
+    {
+      "id": "1dfaefc1-7c1c-4687-a229-47a4248af068",
+      "file": "mitsuba-renderer__mitsuba3.md",
+      "blake3": "9d20b646835e37648c74d3a44abebe668251509cdbc606ec9115ca631dc130b4"
+    },
+    {
+      "id": "68ed8ac7-4f6a-453a-b0a6-5f996b52d102",
+      "file": "miqianmimi__Deformation-On-Human-Face.md",
+      "blake3": "6957329d76fb54e799c6033800c7f63aec18823223121e6f543267468de1d372"
+    },
+    {
+      "id": "e199abe3-febf-423d-b679-3645d676d48d",
+      "file": "mileshilado__HungryFrog.md",
+      "blake3": "cd9d0b3ecd499788fb7b530e4bfad3bcecd8fdef9d8a86d2a5d18ccee6acd06a"
+    },
+    {
+      "id": "551bb27d-6592-455e-bf4a-6bb6e70e9f79",
+      "file": "microsoft__Deep3DFaceReconstruction.md",
+      "blake3": "cc9474ce58b9457d0b8795af17ccb2a5ba4dd42976b30dcd668f32fbe9277760"
+    },
+    {
+      "id": "6446d913-6480-4e95-ac4c-8f551fe1d7db",
+      "file": "michead__vk_renderer.md",
+      "blake3": "ac9308895123cc994e842ad47af2747592eb0b716c9a56d7d3e02603da183ea2"
+    },
+    {
+      "id": "b0e7b5ad-b1b0-4579-9ae4-b8ed3b7de82e",
+      "file": "michaelStettler__FacialRetargeting.md",
+      "blake3": "84c8ac08c5ecf63c98ed68b793830ca02139fcf8bd9e26a39357eb9b07e1c4c8"
+    },
+    {
+      "id": "b480be25-025f-4340-899e-f818b704de5f",
+      "file": "met4citizen__TalkingHead.md",
+      "blake3": "12071d68377ed812b3f547fc4c1e8447d9c2c0ab42b69becdca5e246cd8cfb92"
+    },
+    {
+      "id": "281fb800-716b-4b56-8c64-e2c91bab56d9",
+      "file": "meinkush__eye_shader.md",
+      "blake3": "a76b8cb48d1de6c40d5c3112faaea78b7f8d64b9caf3bedb2b54e7d4352e2e91"
+    },
+    {
+      "id": "5ee2fc6f-16d1-4ecf-981f-35c631d9b4ad",
+      "file": "meareghm__Blender-API-to-Evolve-Facial-Expressions-Animations.md",
+      "blake3": "89f7e74c21c244aacd35f3486c8af1bf7356b234d2b130ee76bdf5d16889dbd4"
+    },
+    {
+      "id": "a3d2c260-4a74-4e50-9407-2821619542b9",
+      "file": "mazelines__FrontalEyeLighting_SubstancePainterShader.md",
+      "blake3": "4c044e5f058042b5d40f0a8b832a94fd55a94bd88b5eada4e700e848db5173b2"
+    },
+    {
+      "id": "ef29b0cd-65ef-482d-90d4-880b92f283f0",
+      "file": "matmadness__HumanShaders.md",
+      "blake3": "c9074ca4681075ec288d80f9133fbd1da917a2210933952f20ed2e683ca2a9d3"
+    },
+    {
+      "id": "d4fb896f-ea27-485d-b88b-11fa8d66826d",
+      "file": "matbeedotcom__affect-avatar-toolchain.md",
+      "blake3": "ddd22e8ad5a36291c14d1542e82a6b586a68115ee3c6b40e6b4757812d9f3307"
+    },
+    {
+      "id": "4a104850-a867-46f6-8292-2fa489f1f0f8",
+      "file": "markleybros__yer-face.md",
+      "blake3": "e75c557232a1d33dc6ec668fdd5ca300fd052111f182a46aa0d2c607b438fb0e"
+    },
+    {
+      "id": "591525b0-eab7-4200-bc32-d14381a8875e",
+      "file": "makehumancommunity__mhx2-makehuman-exchange.md",
+      "blake3": "a99e70aac0626ed277e018bd2e1701a29ed32f972301df6b1e61ae6616372467"
+    },
+    {
+      "id": "d5ee6055-8883-49f1-8f5e-02ccac534a69",
+      "file": "makehumancommunity__makehuman2.md",
+      "blake3": "ebe70526f8dc5c6cc75f4ee169c9c0b122949039939ccc10752b540a2848b83f"
+    },
+    {
+      "id": "9199f0f0-8985-43eb-939c-989b01f4c7e7",
+      "file": "makehumancommunity__makehuman.md",
+      "blake3": "8c3efe3a038a7ac2ab71c94a4493d927eb5b573a3dc3b35f8ef75a34e9793306"
+    },
+    {
+      "id": "9d80d226-aff8-41a3-bae4-e62207e439ff",
+      "file": "makehumancommunity__makehuman-utils.md",
+      "blake3": "c1d5404080ad005713af60247f4d9860517da9f84753b64d577b6698dc7102c3"
+    },
+    {
+      "id": "421ddf09-5b07-41ed-a9a3-607c41e32895",
+      "file": "makehumancommunity__makehuman-static-website.md",
+      "blake3": "cc9913d15e5ec8733c9be976a487e981053e86af59f0238643ce5b08a27545b6"
+    },
+    {
+      "id": "b503e718-275c-40f5-81be-f1c450a1030b",
+      "file": "makehumancommunity__makehuman-plugin-for-blender.md",
+      "blake3": "260be159bd01e29da2153bde5d57bdadcce6a7903c9685f67518b4c5abda39f5"
+    },
+    {
+      "id": "6698d94d-fe40-4b02-a38c-e52d39e22d88",
+      "file": "makehumancommunity__community-plugins-socket.md",
+      "blake3": "d5ad13b0f7eec2d4d664d8571f7e7b02a1dab538c7cf44d13f99ed73d17094b6"
+    },
+    {
+      "id": "f3dbd7f6-7fa3-43f7-9228-f84e2fba6c94",
+      "file": "makehuman-js__makehuman-js.md",
+      "blake3": "8bab3759764905e87e353056e09ebbead30602bcc16b3ec8a58364354e6a46d0"
+    },
+    {
+      "id": "26da96c3-7f74-478b-a965-e3844c34786e",
+      "file": "makehuman-js__makehuman-js-example.md",
+      "blake3": "44a1f7fdeded2d343f9ad1bb813696953de0afaa212be7663db0732ba344e40a"
+    },
+    {
+      "id": "9b2c6d0b-934c-4351-8b34-b4efcc6d50a0",
+      "file": "makehuman-js__makehuman-data.md",
+      "blake3": "c34ebc2aa12dec8fa553de91f68d5902e1e15898886e2983506ce6d2475bee5e"
+    },
+    {
+      "id": "1427d85d-c369-4f5c-a7ad-f07ae6ed3b6c",
+      "file": "maddiehuang__webgl-subsurface-scattering.md",
+      "blake3": "e95aff7032bedc596c3808743959a8b552ac31fb0cbbed2e98cbf6159abb7a98"
+    },
+    {
+      "id": "376e3eda-e29c-4c0c-a31d-5dbf6b90bb10",
+      "file": "maanHimself__OpenDLSS-NR.md",
+      "blake3": "1a762b67f0c11e5c12142c6b21298e9f5d38e40f4f8b8a31b66bfd93c2a28a9c"
+    },
+    {
+      "id": "50584a2b-d439-48a9-ac66-286f781fe23a",
+      "file": "lyingtiger88__BDFR_CharacterBridge.md",
+      "blake3": "8e51ab652607cabdf323203f4de6b9e38b4bf47799d0d8a961417d4a89eded1a"
+    },
+    {
+      "id": "777988fb-03c5-48c6-b916-bf7e5754c1aa",
+      "file": "luxuia__separable-sss-unity.md",
+      "blake3": "04abadd52739ab9360d7d533c84a591b25aacbd68d8b001ad89aba84901672e8"
+    },
+    {
+      "id": "ed4014fa-5efb-48f7-a131-905a08cc4287",
+      "file": "lukerbs__pytoon.md",
+      "blake3": "f354147b6db159897ae730c0d3c56896f228c3f47856da63b6370e30f8977ab2"
+    },
+    {
+      "id": "c9ec866f-4194-413e-b3f5-4a559b4469ff",
+      "file": "lucasposito__FacialRig.md",
+      "blake3": "80e81faa21534124ff803b0cc764d2ad005e535c2316ed287692d1878240aa72"
+    },
+    {
+      "id": "fcf0cdf0-2d37-48d6-9b97-b6b18408e786",
+      "file": "lucabindini__bidimensional-face-morph.md",
+      "blake3": "a96767909f3c8cb3d114a117676de39e21ec2e722789a2a6bbdecf06b6d0c9fa"
+    },
+    {
+      "id": "d949d18a-b345-4930-a45b-f22c86c220ae",
+      "file": "lixinpei__Unity-Human-Skin-Shader.md",
+      "blake3": "bd01fc166f2d9bfff58173d39db0f4337c608abc8305ff4be150583b9ed71e9c"
+    },
+    {
+      "id": "f3ab3666-dc6d-4378-924a-d29cc04e11df",
+      "file": "liuxq__SkinShader.md",
+      "blake3": "0ca6ace811b69d39942095863133e44620fa8ae1aaff4a590ff14815a733c609"
+    },
+    {
+      "id": "7a83a82d-96e8-4354-afcb-9b355f906751",
+      "file": "limit7412__VRCARKitBlendShapeGenerator.md",
+      "blake3": "4e44692e5ebea759b03823887f05ec10f9226cd5cf1b8fc61e0f3865f42506e2"
+    },
+    {
+      "id": "7afcc23b-8599-4657-93c7-b02a476e06fc",
+      "file": "lighttransport__procedural-eyeball-shader.md",
+      "blake3": "c62615f76cdd6b741c57f7506562ea5321c50222d6019b85e537b8228787a142"
+    },
+    {
+      "id": "e1c7e562-194c-4fff-b075-2027a3bd6e60",
+      "file": "lightnarcissus__FaceCap.md",
+      "blake3": "08d19fe235dc596bc59fe647cad26ce83946d3d17bf6de7afe38259fbbd607b3"
+    },
+    {
+      "id": "59d748a6-45e0-4303-bc33-66ac093c481e",
+      "file": "leventt__surat.md",
+      "blake3": "5cc57b2675d0637568ae146e58071d02d42020322e04bae9ad2e8f6ebc0d1bd2"
+    },
+    {
+      "id": "92a9f7c4-ffd9-4ee2-bedd-bf31887830fe",
+      "file": "leonardo-domingues__skin-shader-unity.md",
+      "blake3": "40228f2f971f6e9e9e890fb769a0b56aeb8bb2508b7f99442be1aef7e214bc7a"
+    },
+    {
+      "id": "504b5fde-0db4-4290-8ac0-d3efe9972e7b",
+      "file": "leinlin__Unity-Subsurface-Scattering-Skin.md",
+      "blake3": "0a318440a61d488919f96f46f2a9d87564d7f5576b26be499bd914f303330c04"
+    },
+    {
+      "id": "2be8b239-d0e8-40bc-9b11-5c07286dbf50",
+      "file": "laurentiuvieriu__facecept3d_facs.md",
+      "blake3": "e0c8d6ebbab28b9378a742a9d839d70fbdc11649470f657a3953c9f9aef7b4ec"
+    },
+    {
+      "id": "8559b4d1-622d-4e5d-9ce5-df2f92b47a11",
+      "file": "lab-x__Facial-MoCap.md",
+      "blake3": "64588f6d927b657d311c19c35df4baaebc90c4f285ac9dc5b46075575f041faf"
+    },
+    {
+      "id": "1cd910bb-f8b4-476d-9470-b574c5a3c3aa",
+      "file": "kv2000__ASH.md",
+      "blake3": "037c1124c26038c556648d997362ac0a49269ffb3b8da579c42790ba87e745e5"
+    },
+    {
+      "id": "38b94731-b47f-41e9-9f70-1f9981208d53",
+      "file": "krishnaveniammi__GenAI-Youth-Mental-Wellness.md",
+      "blake3": "819b7096af7cda3472d3cc8ac4b8fd382e537cba71123ccec8d117ed3c92c6bf"
+    },
+    {
+      "id": "588bbc9a-6042-4c1d-88e6-ec7e7f5be498",
+      "file": "kokokino__meshborn.md",
+      "blake3": "6a83f4539c21ac413f63698691327a07ee356eb5d5f401967841204bf1de870c"
+    },
+    {
+      "id": "3c87228b-bd8b-4506-bfe7-14e7426bed62",
+      "file": "kodai100__Unity_ARKitFacialCapture.md",
+      "blake3": "d35bcdabd9f4df2a57d137c7e8e54aa87bef0bc29f4932914d646f820103c33b"
+    },
+    {
+      "id": "feedac66-e0b3-4a9b-832a-be081396c8a0",
+      "file": "kitasenjudesign__UnityARFaceDeformation.md",
+      "blake3": "c777b1233c325875a9eba6901e82622b661d01516c016e5fe2b954ddcda07ba2"
+    },
+    {
+      "id": "85446c9f-7986-41e1-8f2c-36b2692b6f52",
+      "file": "kiranbaby14__TalkMateAI.md",
+      "blake3": "852bba0f0a265e1bc3136ac5ada8597a70d266c8680cb4cb328806da9f8ac12e"
+    },
+    {
+      "id": "ddf52104-b361-4381-9b2f-c16b3ac13c59",
+      "file": "kimoktm__Face2face.md",
+      "blake3": "850cdfd525df55dc1b7c1622abed2e300df7cdc7162d21b409018383f9bb7f8b"
+    },
+    {
+      "id": "df86b0aa-266b-46f2-b03d-e0cb75a50e6c",
+      "file": "kenken64__remotion-3d-AI-avatar.md",
+      "blake3": "e2804ac7f8559c8baec64c82b2885eb652aad0d61cb35d2f1a7ffbc245cedee3"
+    },
+    {
+      "id": "2791cd7f-3d5e-4e46-af5f-9c75f90498fe",
+      "file": "keijiro__Eyeball.md",
+      "blake3": "6f1420f22808608a79aba504e6c07aa3fec34c195f03b222d712ce3c02b1d104"
+    },
+    {
+      "id": "5f1373a5-11d3-40bb-a289-fe68b5ff07a5",
+      "file": "katyjustiss__3d-teeth-rendering-threejs.md",
+      "blake3": "27a7a6f1f848f25565fc5f52bfdb340698cf0013b20c95ee2209ce1823e58112"
+    },
+    {
+      "id": "31c604fc-3cf7-4590-b852-d5f134181e43",
+      "file": "kaiwenzha__3D-Teeth-Reconstruction-from-CT-Scans.md",
+      "blake3": "6d99a3d91f93a49949caffb5f9217c27decf37ed27e3ffd2f204964f721d3536"
+    },
+    {
+      "id": "a22f0f1f-e058-4300-a828-b64927128346",
+      "file": "juan-mal__character-studio.md",
+      "blake3": "857eea1f4d8a597e5f1744dc92f64f48f1218dfda99c3604fb695ab09ebaee80"
+    },
+    {
+      "id": "052407d0-a090-4f4d-89ba-c1259f6cd707",
+      "file": "jpl917__BlendshapeGeneration.md",
+      "blake3": "04dcc87c0080feda31a9617ab47c5827cf8d99f8437509eda8039b845371d937"
+    },
+    {
+      "id": "4878204f-5837-438c-9f44-11ca06a8c8fc",
+      "file": "jperez01__scattering-demo.md",
+      "blake3": "18abd4c332e9398df31c1a61c63a114a69ab58114fe97244b99273bd29e00b43"
+    },
+    {
+      "id": "1aafcff9-676b-4d2b-8b15-289839a7b99c",
+      "file": "joscanper__unity_facesync.md",
+      "blake3": "d83d5a8f1b064c6a6f45005cd3c6891559542a249149115d26af373903f82e85"
+    },
+    {
+      "id": "94af86e7-c918-4c79-9dd7-0247058eb6cf",
+      "file": "jongmoochoi__irisfaceRGBD.md",
+      "blake3": "7a3d96a9e8202548457af36c8268c36df805226521c982a5e798fa86236d1be2"
+    },
+    {
+      "id": "3d182a58-8d6f-4b6d-849c-6a0ea1fda6a4",
+      "file": "joenewbry__blendshapes.md",
+      "blake3": "b3a3e0075c5a7f49ebcc8e9c8513f7601a94b0dbb2e3370049c7e27eb1ea1ba2"
+    },
+    {
+      "id": "8d180278-027a-43f6-b15d-62d00a7f272e",
+      "file": "joeedh__FacialAutoRigger.md",
+      "blake3": "ca0cdc268b7facb5ef94d51578b927bba1345108e464495151df54adc9e9865c"
+    },
+    {
+      "id": "ad90a39e-1e53-47a8-83e7-12802694ef2f",
+      "file": "jlrouzies-fr__DLSS5-Feeder.md",
+      "blake3": "3bc89f9c0243ea219a005e70520caef7acc73aa6fa68c523068f993596babcf9"
+    },
+    {
+      "id": "52b6fdac-c78b-48a6-9f0f-9ab7ecd02fbe",
+      "file": "jjzhang166__3D-Face-Reconstruction.md",
+      "blake3": "bec7d124f39ece19a0f2b4fd6ad8737a7653763c980fbd6edbbb7b857f0a36df"
+    },
+    {
+      "id": "7cd23eda-1688-460d-9e06-be7e2d32a871",
+      "file": "jign__facial_rigging.md",
+      "blake3": "3c5626277f660fc2f01fc6667e49d401e17d0abe3254c3a7dfe7635d0e0c6110"
+    },
+    {
+      "id": "87500ce4-0f2b-4c30-8b2f-8de53c3689f5",
+      "file": "jhng83__Motion-Retargeting-HeadPose-.md",
+      "blake3": "ad1de9d5139baac65b7dcb8b05334d444d1d7489946992ac2c5904a251a503cc"
+    },
+    {
+      "id": "e6da8efe-2876-49f8-9512-1bb646250916",
+      "file": "jhaberstro__subsurface-scattering.md",
+      "blake3": "27097be7c540ef06638b27c0ef264d3b8cabbca65c0c0194f854df7fac03da2b"
+    },
+    {
+      "id": "e3c54a2a-f200-4583-89a8-2b01fcab8ca4",
+      "file": "jgravelle__MouthPark.md",
+      "blake3": "3fb0bfdbcfa1db7798afa5ca1cd49e191eb4d6579104731f4a03b362757b722e"
+    },
+    {
+      "id": "60897b54-1dd6-4748-a2d8-1164bd66331b",
+      "file": "jerenchen__deformxfer.md",
+      "blake3": "31c90cf9e3d68d873e38b6652dbba2002825fd9481a4ea186db54470106673ce"
+    },
+    {
+      "id": "565a3d4e-00ba-4e37-9a64-57efc149b937",
+      "file": "jadewu__3D-Human-Face-Reconstruction-with-3DMM-face-model-from-RGB-image.md",
+      "blake3": "b2e0665eb961ecdc9e38d0527cb6b00b7d426688f78eb9bda23dc3bfe523f9a1"
+    },
+    {
+      "id": "f6ea9b35-889e-42da-879e-419dbebc3425",
+      "file": "iryoku__separable-sss.md",
+      "blake3": "639d7de741dadd00c888c4b59afec5bcce7c16038ed01441176e2ab1ee3c9ddd"
+    },
+    {
+      "id": "ec0550f9-1889-4ab2-a2f9-e9f0b07ff3de",
+      "file": "intoro__MakeHumanForBlender.md",
+      "blake3": "f908ea7c7bd75bb55a12ac3ced7a8d9eeb2f5e9e579c97a6117056eb5bd34d2a"
+    },
+    {
+      "id": "d66bb333-ccc3-4d50-b8d4-e1b1bbd7cc26",
+      "file": "intercambioneuronal__mouth-animation.md",
+      "blake3": "a1fee7a27dc918931b14440c6bbbeef28957a0b7d7dfe89832c121c27886491b"
+    },
+    {
+      "id": "90eac3d1-e20a-4db6-8330-6a9bc5b97051",
+      "file": "inisis__machine-learning-facial-deformer.md",
+      "blake3": "fbec9a4cb0f899366c62df647b0ef95e1948e9da15f0733d198c8662f56c8ec8"
+    },
+    {
+      "id": "5317b819-7303-48bf-8c64-4c3cd975b61c",
+      "file": "ibrews__VitruvianGodot.md",
+      "blake3": "af8494cb7a6c4bcc3876379c1f97f3a2f5629df75b36e8dafc15578c4bdc8e28"
+    },
+    {
+      "id": "eba14d29-df0f-4602-b481-df5bde367656",
+      "file": "huifu99__Mimic.md",
+      "blake3": "cc448909bda94f12d2fd112b968af96c2d661c8a86ab065e23bf33d3ca1c20b6"
+    },
+    {
+      "id": "7200f33c-5d5e-4f7f-8fd6-dfe5cff0b87e",
+      "file": "hpretorius__makehuman.md",
+      "blake3": "9e104885fb783792e236c443ab08b24ad255222f019415db5dc4ddb55a3b42e3"
+    },
+    {
+      "id": "dcdd993d-39a0-49a1-80f8-dfff5ab8c316",
+      "file": "hiroki-o__VoxBlend.md",
+      "blake3": "b62147c91bdaf36e5f0a6a743654346ae2d17c11a26370e3f4b5a6b4abcb3b6d"
+    },
+    {
+      "id": "f8da6e8f-02ab-4592-9dde-6e6d15ea77e7",
+      "file": "hippolytemayard__teeth-3d-mesh-segmentation.md",
+      "blake3": "90e24e7a77ec15275ec4cf9be484b36cdea6e08e557aca24dd0c071dcf16d344"
+    },
+    {
+      "id": "a736fc1e-bdb1-46e8-ad35-100c88aedcb2",
+      "file": "hawkwood304__ARKit.md",
+      "blake3": "895f137ccb49e59d8c9ef4e2e0d74d78c122620c0a35658e6844bc6c1f836d11"
+    },
+    {
+      "id": "52837787-8a50-45a7-8aad-32a29a804703",
+      "file": "hamin7__Marker_based_Facial_Mocap.md",
+      "blake3": "ba4e4057178e0d689ae5b146efdc7baeb4b3250fb757d09e58d631bdd29ac37c"
+    },
+    {
+      "id": "2ae46d70-a0ad-4c5c-9a7d-455f9873c4bd",
+      "file": "haixpham__end2end_AU_speech.md",
+      "blake3": "2a85c85a11b530eab7c1ba1736676444724a5de1f55811d5dfa2e9940c61b2dc"
+    },
+    {
+      "id": "6b73a3d1-9b5f-4c00-9c8a-68b2d707f2fe",
+      "file": "hai-vr__blendshape-viewer--legacy.md",
+      "blake3": "0ee8725078d379b3d39c6a6e7d4ca056b1f675cca790b59d0b40d224109bb37f"
+    },
+    {
+      "id": "f3a4ca1d-00c1-4615-9e0d-acbfda5edb44",
+      "file": "guilhermicas__godot-3d-character-creator.md",
+      "blake3": "7d93aca447b85684a4f94349f7d86d189245d1aee100d461e7b0a08be4ca5c17"
+    },
+    {
+      "id": "c887d0d2-661e-438d-b98b-065423c0b26b",
+      "file": "grigala__3DMMDepthFitting.md",
+      "blake3": "7b62b5556f1a1d56686f8579d3d5034eb013d51d46b378be0422b1eaf4e385c3"
+    },
+    {
+      "id": "062ba6de-b7b9-40ef-b452-239916b10ac4",
+      "file": "google__filament.md",
+      "blake3": "23bb9c49a40bca34c5c22a8aba0abf77aecf06b8b01e9dde29bd759117d07dcc"
+    },
+    {
+      "id": "cf171027-0f14-46e2-98fc-0039d25d4c3e",
+      "file": "ghif__FLAME_mlx.md",
+      "blake3": "ea1c13388588892655a9c0fa47bef59e48a1a55944ae396758bdd9b45760600c"
+    },
+    {
+      "id": "01144943-48d8-4d2b-8c33-b677c20ddca2",
+      "file": "gddickinson__FaceForge.md",
+      "blake3": "f1c10bf787cd373a12f7dfc716d0b9610007e851b8d073741768c11578ff2c16"
+    },
+    {
+      "id": "224ba80a-9142-4490-a40e-e6416067064c",
+      "file": "gbmap__lip_synch_generator.md",
+      "blake3": "a57a4827cc3adf31a825995d51743e766b6dda91072b286fbd83eb8ffc2b892e"
+    },
+    {
+      "id": "c53ce054-eaf7-44b3-9e12-87911c81d6a7",
+      "file": "gapszju__RGBAvatar.md",
+      "blake3": "9f16e72ac31101e9046cc6feeac6823dc41194b32885223a9352aa5cadcc62d9"
+    },
+    {
+      "id": "78d30b1c-1fcf-4712-addf-3dfbb539b1e5",
+      "file": "gaoxiangjun__MPS-NeRF.md",
+      "blake3": "8d546ac5419d2d3c3b97aa8b77824fc65fcd28e8bb1d819752d141e29ce8fcc1"
+    },
+    {
+      "id": "b4ef6ef9-fa23-4549-8cfe-708f2a937a41",
+      "file": "gabrielguarisa__facialMocap.md",
+      "blake3": "57f670ed5febc90f1bd201f4cbe67222156d8c2dff70590187f72d11e0c3ec61"
+    },
+    {
+      "id": "68e09b91-f94b-435a-860c-9730dce2c25d",
+      "file": "fwzhuangCg__Face3Dv3.md",
+      "blake3": "8c16f40595432fa27d530a5436687bb9c8e0a61638fec7064cd100466e50f7ff"
+    },
+    {
+      "id": "94d13845-84b4-4ac2-bb17-d2af78485fc7",
+      "file": "foivospar__Arc2Face.md",
+      "blake3": "c104029cee97c8c2f96559a8971d690ee5d266b2fc6dd5003eb16f7654b94154"
+    },
+    {
+      "id": "187e8745-70a6-41cb-a457-2ada6bbddbb1",
+      "file": "fffaruk__maya_arkit52_bake.md",
+      "blake3": "73649e57cc97182f658c45da45589eb90cd533292132a045b3d5c89e2441c1d4"
+    },
+    {
+      "id": "a671ee22-822c-4fc9-9ad1-18c4b2ed8a8c",
+      "file": "fatihyaylacimk__Realistic-Serpent-Mouse-Follow-Simulation.md",
+      "blake3": "027e0e2364f2feac705f630457f16831c1d51d0c09b27c19fc1bd86490daa995"
+    },
+    {
+      "id": "cd1b0cd2-f46f-4010-bdc0-f19474622c3d",
+      "file": "fanegg__UV-Volumes.md",
+      "blake3": "71ec1042668ef6cd09c503ff6fc343c18aff48d165f044d36ab8c3362baf103f"
+    },
+    {
+      "id": "a97e4aac-dc71-4a30-971c-7f69550d08d6",
+      "file": "faiguago__PI_SS.md",
+      "blake3": "4ae3a5fedeabc698c7bc6946ae93ba9aebe3509c9b72bed3d01815fbd027aa3c"
+    },
+    {
+      "id": "6b5e109b-9e80-483a-ac61-319afe122e0a",
+      "file": "facebookresearch__compskin.md",
+      "blake3": "de4164b37f51e4afbd1a032bc7df8b8671b3a29df359e7aa6f747baf3126b733"
+    },
+    {
+      "id": "828d42d9-2d1c-494b-85a9-34bb14eaeb3e",
+      "file": "facebookresearch__MHR.md",
+      "blake3": "894c0c38850fe009a50a2310c249a919c50f35475ec97631101378a92af31254"
+    },
+    {
+      "id": "24218d6d-34ad-493e-b5f2-3760a8dfee68",
+      "file": "facebookincubator__FBX2glTF.md",
+      "blake3": "8499396884eaa29f88903431ce86b5c3962f344bdf70239654ad3f51f932b849"
+    },
+    {
+      "id": "3a8f1d42-c109-4307-b0a0-98f756029fb2",
+      "file": "face-calibration__face-calibration.md",
+      "blake3": "0064f8e6ea3177c8439d62e4ca174d1cd074ec7a715188d56de349caa3b53e71"
+    },
+    {
+      "id": "37e6a269-dfd7-4ba6-a153-9bbc090a9a40",
+      "file": "emrecaglar__teeth.md",
+      "blake3": "e69552d041a01ab31ee11ad0a7a535452a8713fe2513110b4a2cee5701d17f8b"
+    },
+    {
+      "id": "bc11f3ab-d5cd-4b70-a109-e1bdde25801e",
+      "file": "emoto-yasushi__iFacialMocap_Facemotion3d_Bluetooth.md",
+      "blake3": "f22ef750511b99b2b4dac73e6362cad6580cfde543348fd76ecf4ca22e65491b"
+    },
+    {
+      "id": "cf004800-d7c8-4779-b54f-244b50b8150f",
+      "file": "emoto-yasushi__NVIDIA_ARSDK_iFacialMocap.md",
+      "blake3": "a6baaa2b8c2cb9d4b7633b9d2d58b500081a441b04b4fc7c31432507c4a3c460"
+    },
+    {
+      "id": "7bad1eb7-6212-41ef-b555-3efdb9a68787",
+      "file": "emoose__DLSSTweaks.md",
+      "blake3": "bccd13bf0de7d0eafec4c554dda96c9a5e3162012f7df0e634fedd927225338e"
+    },
+    {
+      "id": "50ca2857-852c-45c3-9099-e4119c61de7f",
+      "file": "emberlightstudios__Humentity.md",
+      "blake3": "05c4e594b8b5c8e13cd8e8617c588e4345146b79bf1fbfdf0b16c8bab5f983bc"
+    },
+    {
+      "id": "3507da04-200a-427b-aa00-65a3f2b18ec5",
+      "file": "elijah-atkins__ARKitBlendshapeHelper.md",
+      "blake3": "b08427ba49822d5fa9947e7fd2202ff37667c5e3eea5c766ff02e85eb154f0cf"
+    },
+    {
+      "id": "7003133d-d93b-490a-a127-da67e0bce622",
+      "file": "effacestudios__UnityFaceMapper.md",
+      "blake3": "bef9d94480c8380b2127c310e5bea81e70d0ae34b9149551d4cb8335d9e8a5fa"
+    },
+    {
+      "id": "995c7ca3-c108-4b5e-9a33-a8ff88ab3a5d",
+      "file": "duststorm__makehuman.md",
+      "blake3": "ee95221228a45ff21a5d368ae02183b24ef63b6cc7a6a28a86ae4a0dacc7d0e9"
+    },
+    {
+      "id": "823e794e-21be-4e34-856f-c62d714a7893",
+      "file": "dukeren__lip_sync_3D_digital_human_for_Blender.md",
+      "blake3": "86b13319855fafe3446986fb42441c392ad77f39ea5673599e9c70d538d1679f"
+    },
+    {
+      "id": "7b9a7508-a051-4978-89d6-9f09519c023a",
+      "file": "douduck08__Unity-SkinShader.md",
+      "blake3": "6db759f465b8603ad0a53bd8ba88e07f6fbf8489aeceb980034244949d264f36"
+    },
+    {
+      "id": "ee3337d1-9adc-48c0-9ef9-ff30e4fdf845",
+      "file": "dmitryshurov__FaceBaker.md",
+      "blake3": "08c8bdd4661fe263e103c05aef780effbcb6e4f550c3360b74eacb884e607b71"
+    },
+    {
+      "id": "7caa5bc4-01a6-4afd-a57d-6805b2fe521f",
+      "file": "dinkinsstudio__sd-studio-ntoolive.md",
+      "blake3": "31f017a05977754f8d5e53e34cd617d40dc06d22bec205170cede33d393620d1"
+    },
+    {
+      "id": "000866ba-0193-4fcd-b19a-9e794a9d736f",
+      "file": "dilmerv__UnityARBlendShapes.md",
+      "blake3": "dd0897e219f37e04dea24c221713903ae9747b827bae4552da353170103f2d45"
+    },
+    {
+      "id": "9b9d6169-1f4e-4e73-bae4-1614306f9f15",
+      "file": "digitalp__arkit-blendshape-tool.md",
+      "blake3": "5d824cf9e90dd405d9c7be4c6443b7a750206a33d20452e14f5dfbba85284270"
+    },
+    {
+      "id": "fc01d1dc-ad8e-4f19-b00e-7ae0788f0240",
+      "file": "dexvdev__svelte-vrm-live.md",
+      "blake3": "3f48cda05c04ed5ffa5cd9e6d9af94f6af6dcacd9be2bf6b9e6340fb8de644c0"
+    },
+    {
+      "id": "92771c52-8d9a-4540-8d77-139794e802e5",
+      "file": "deepmo24__CPEM.md",
+      "blake3": "0cd52b45b7fc8df0c0a23ba3de463c9ead1297aab06e05c7b11f0f64fecf4e9f"
+    },
+    {
+      "id": "02275e37-e59b-4cc8-977c-79c59a56994a",
+      "file": "debskipawel__Translucent-Skin.md",
+      "blake3": "58d97cc6d7c1847f5792415fa16b63e14d1c9196b67a412370f8e0761097c8d5"
+    },
+    {
+      "id": "8b2b1a80-cfac-4c73-a678-10923a427242",
+      "file": "dccsillag__unity-facs-facial-expression-animation.md",
+      "blake3": "6be7e628595d972bcf5c5e336527f28cddafe11284de700d313fb40bdc59d7fa"
+    },
+    {
+      "id": "567915c7-86e8-4540-a9e1-b44ddfaf2e1a",
+      "file": "danukim__Miko.md",
+      "blake3": "1ed0c487c2e261cdfc67b5fd4a85182c6f6de5c8f3315256de594fa2d2495b26"
+    },
+    {
+      "id": "041da969-6bcc-4bf3-8772-ece72dc6475a",
+      "file": "daniyalha33__inbracket_ai.md",
+      "blake3": "7efeb01fd179fdb5459be4fb7c92161d7c3047007dee600699abd1cc12f0921a"
+    },
+    {
+      "id": "15549b43-a503-49c1-9f07-8aa915f8066e",
+      "file": "danish614__snake-game.md",
+      "blake3": "79c351eeb5b24a3d50839cb53abb8cfceefebf17f1268049de2d6b97a37f40ea"
+    },
+    {
+      "id": "f58f0678-9b19-4485-8d3d-b716683eaa39",
+      "file": "danielzeller__Robot-eye-shader-Unity-.md",
+      "blake3": "0bd7e9406d9b4f4604218a033857982ca236faaf839bdd84ae05d705297bd451"
+    },
+    {
+      "id": "a1994b94-337f-4837-a0dc-48c2f12b11af",
+      "file": "danieloquelis__rhubarb-lip-sync-wasm.md",
+      "blake3": "c285900563f2ac52611e7e7299d5f1c394ec8489af0bb046c805e31fc2e792a3"
+    },
+    {
+      "id": "ab61ed1c-7611-4127-8212-149db3f99a91",
+      "file": "damianmqr__BingBongBoomBox.md",
+      "blake3": "af719061d22a016e74073c7cbbaff2d0811dfaeb141f8d71a84eb6b0eaef3b67"
+    },
+    {
+      "id": "36b6e581-cff5-48e6-9ac7-8daf81f9adc7",
+      "file": "dafei-qin__NFR_pytorch.md",
+      "blake3": "4d79e9ca885c66a1069b8b1281bd3336e99afbcb79d2c8c4a6c4df6eb4b8f278"
+    },
+    {
+      "id": "d489dcae-5fec-4461-a760-9c765a6a1ebe",
+      "file": "czh-98__REALY.md",
+      "blake3": "ff7e01c88d269b34e068042cd5ea401a18fbba9dab4130dbf85d1e5f93d07bd2"
+    },
+    {
+      "id": "bda4833f-7b20-467d-b947-72a19ef73642",
+      "file": "cvpr22sub7201__SpeechDrivenTongueAnimation.md",
+      "blake3": "5fe1c117af78cb17c1e2988a8e7badaa83bf0aa883fbbd638161ad7c23bf501a"
+    },
+    {
+      "id": "350f5f99-f7d0-4670-b1a1-c3a8a89ba5fe",
+      "file": "ctralie__FaceDeformation.md",
+      "blake3": "5980542d39e07285355c2ac9c123fc7825b67e2f25db4a0056ca6c3abd11b032"
+    },
+    {
+      "id": "bb7915e7-57c9-4aa0-98d5-16e373cc6959",
+      "file": "cornpip__mediapipe_face_mesh.md",
+      "blake3": "2dca4631297cbb8d6b93f8fe13b79a3ed85a4f6e48879b6c03731ab4ebca327c"
+    },
+    {
+      "id": "e3db997a-2f56-4338-8a50-8b6685df114b",
+      "file": "cmu-ci-lab__inverseTransportNetworks.md",
+      "blake3": "5562da3c40787172ba3009fa711e5b16a57eeca586104f0084e6b909773a9297"
+    },
+    {
+      "id": "7b8fe2ca-cdfc-4251-bbc0-2827a681c64c",
+      "file": "chrismbirmingham__hci-face.md",
+      "blake3": "7d31e1c83061da64a404f05161050ed97ef4e49e2122e6fa92df8ecc64ccce8f"
+    },
+    {
+      "id": "2dcdf1f9-89e8-458a-83cd-38fc8c422324",
+      "file": "chr33z__unity-blendshape-mapper.md",
+      "blake3": "578e407106e1834ef1a8c5d43ab904b785721636edfbfac32b8ade0a4cc0db54"
+    },
+    {
+      "id": "0e0ea051-ef1e-41dc-881e-85fa7848f250",
+      "file": "chimakes__cute-monster-eye-shader.md",
+      "blake3": "3f3b5f91433a7db77d2106526d01059a30a520d7324273796f1896f526cd5cd9"
+    },
+    {
+      "id": "e2179520-4881-4e50-b136-08e50552678f",
+      "file": "cgtuebingen__SSS-GS.md",
+      "blake3": "d32bd8ebbb69bdd6b3ab5bfa1f07a6c6d312c540e621d8f9cce41037872e25fa"
+    },
+    {
+      "id": "bc5927dd-9c1c-48fc-be2d-24d99e31f176",
+      "file": "cedricfoucault__facial_animation.md",
+      "blake3": "fd197b115d777066875f2339597706ad1a47ff850594cbb975191e731299df95"
+    },
+    {
+      "id": "604a9e59-22fa-44e1-adf5-9326ba3f4871",
+      "file": "cedarconnor__ComfyUI-GaussianAvatar.md",
+      "blake3": "f91946d3b76bbb86c9839be3d8670b6c6bf77786c302353b6a540dd7476b7b2a"
+    },
+    {
+      "id": "889016ba-7a4d-4b94-83e4-65e1114055c9",
+      "file": "cchuang6__Teeth_3D_Project.md",
+      "blake3": "cabb8bb87ca716cd7d8b9e8b67b7af2a71cebbf6950ff32aafecc0e7e2be488d"
+    },
+    {
+      "id": "34265cf8-47dc-4de5-b50a-d66bd5424cbe",
+      "file": "catpea__skedaddle.md",
+      "blake3": "c7734fe43ae6d9ad5bb764afcbb88a1b4883f3d2f124bb529a5d3f5f5910909f"
+    },
+    {
+      "id": "c974d26b-b3f2-4a25-bc5f-515c867f3cdf",
+      "file": "bmitch87__DLSS5VKLayer.md",
+      "blake3": "dc18b99d946b15c9286f9a38abaa8ff5b69b9b5b63c549c34806440c87eeacfd"
+    },
+    {
+      "id": "f1ab86ca-ff1a-4690-989f-40785365a544",
+      "file": "blurstudio__Simplex.md",
+      "blake3": "7caccc4aac7bfd3cc02e8abc074d8881c09b32771ff8bdbcc83b2cf78d789e9a"
+    },
+    {
+      "id": "2d58d6da-d6ea-4044-a858-2b5c09c25a41",
+      "file": "blendmaster__rigid-faces.md",
+      "blake3": "151e48ad5a2761cf085fd62ac4d97d6bdd669ab482050cb4c77a233f8b4d0b10"
+    },
+    {
+      "id": "64193eb3-9e21-4373-93db-f627865fc632",
+      "file": "blender__blender.md",
+      "blake3": "e41fa96eff7a45e30cd4402638ed6eef74df6fbb644af414928b3ac3308fbb51"
+    },
+    {
+      "id": "457ac5cc-d6f4-452d-aa3c-e39cae2cb722",
+      "file": "blackears__godot_eyeball_shader.md",
+      "blake3": "50b22c006a84df4eb3fcf60d244f5ae0653cb5fa89a8ce98d5e876e53f89b281"
+    },
+    {
+      "id": "1e5dc42c-2638-4cc0-b66b-9bf342ea71c9",
+      "file": "blackbird2003__TeethSplineSeg.md",
+      "blake3": "482f8360f5a413abdbc1de86182a6c60d5acc82af974757319da8eaaa44de5f6"
+    },
+    {
+      "id": "f3e389b6-c258-41cd-a48c-d42e3fed9d32",
+      "file": "black-punkduck__MakeHuman-Helpers.md",
+      "blake3": "7ef5bf131e84c8ac67438f949c9b88b27cb38e892372a7c9c66269e37d5851ba"
+    },
+    {
+      "id": "6223508f-0b41-4743-8cf9-26c0f54ee60b",
+      "file": "bjporter__subsurface-scattering-and-light-experimentation.md",
+      "blake3": "876256dd7896171a2fcdc4144eb1ccf621604a6f2925a3d4cc2632b7968431bc"
+    },
+    {
+      "id": "2dec542f-8433-4caf-867b-566c6701919a",
+      "file": "bindita__ExprGen.md",
+      "blake3": "82e97e5377f50af52e877b7431b9e6998f9943a2b317fea6e8d3710cbd349d84"
+    },
+    {
+      "id": "86b42ed0-60f9-4724-bd24-e07ca3370a9d",
+      "file": "bentoBAUX__Separable-Subsurface-Scattering-in-Unity-6.md",
+      "blake3": "d7f8a9354e61e4a997206d9a0d63aae8c85de97e06e3a8afa70b73dfe9c13b51"
+    },
+    {
+      "id": "cf94edfb-4183-4f1c-be66-cee93d26cb4c",
+      "file": "benject__mirror.md",
+      "blake3": "78487fa399e1f6a22bcac009223e8ba69570ead57b85e7697d5e6728f186ed79"
+    },
+    {
+      "id": "b0a3fa9d-d87b-4f3f-bfe1-1717e01fe03a",
+      "file": "beeradmoore__dlss-swapper.md",
+      "blake3": "72663cfa58726f06be5094309b168cb2fe2bffab9122d1ff33bf7e2c338b8586"
+    },
+    {
+      "id": "501ccd84-1579-4e11-a6c9-26c3551869b2",
+      "file": "bedroomvampire__BRYOCCS.md",
+      "blake3": "19223c925c0a71c53870ea8d162ff288490411fac3ce45ecc5e3ecd72615bf16"
+    },
+    {
+      "id": "34ce357a-6027-4139-a5e5-f1b4293f8c56",
+      "file": "bearworks__URPSeparableSSS.md",
+      "blake3": "13fb67e2686da076718c0d9b9d0b095627947bc45d9ab53dc8927fa8341a7ddb"
+    },
+    {
+      "id": "2e8a2788-dc57-49cd-82f7-78560ed0040d",
+      "file": "barisgecer__facegan.md",
+      "blake3": "0ec70c428bde140ee2f7b99507c472c2fd3cc98f9bd69c9cb667e6c53dea7a31"
+    },
+    {
+      "id": "f31d1f0b-2ee9-44bd-86f8-a11bdc52e711",
+      "file": "barisgecer__GANFit.md",
+      "blake3": "0af0b51737f43433d36c84a2d1c766a23ab12171fe1bf22add3284c1e089347f"
+    },
+    {
+      "id": "c8cec847-6774-46fb-96d1-bade9d74067b",
+      "file": "badhope__ChatVRM-Agent.md",
+      "blake3": "b51c441ab27389b42fa4762342a9fcceef936c7a77f99e88a96a4ff6e30b5321"
+    },
+    {
+      "id": "5cd13f73-851d-493c-bdde-04a34ca2eb09",
+      "file": "azaleostu__sss.md",
+      "blake3": "790c5692f6828178cb0e08716c16cd60ba5dc4b2093bdc5f5613b8b6daa2cfc0"
+    },
+    {
+      "id": "bf9d6142-fcf8-46fd-94ed-713593dae5c5",
+      "file": "arturwyroslak__mediapipe-arkit-automesh.md",
+      "blake3": "21e0f12507986d24822cc604f011081b9be7de8943e9912db92d0f7895bd3aa6"
+    },
+    {
+      "id": "95eb9de9-98e6-4e9c-8e18-f1c8da396d1b",
+      "file": "apras__Unity-OverrideEye_For_UnityChan.md",
+      "blake3": "dcda530ff9a727a0394c3bfcf73429071e7b6e4e3b9d4f50d78129ecc57090d6"
+    },
+    {
+      "id": "2d4b3e2e-c2e9-4325-9a59-48ae85e7a019",
+      "file": "apilola__tension-tools.md",
+      "blake3": "330636d584d1905e8fbe821cc05a88222b22e2466e775319dcede88dcf2f0442"
+    },
+    {
+      "id": "123c03c5-cf95-4384-b871-7fcd59589de4",
+      "file": "antonibigata__keyface_cvpr.md",
+      "blake3": "88593b6a39ae665e2b7cd827578d6579b26b64e43ef0aa27424164c309b813d6"
+    },
+    {
+      "id": "80483c64-015a-4b44-b017-4a0370112ea2",
+      "file": "anhttran__extreme_3d_faces.md",
+      "blake3": "92b437daf528d382603bd86cf920a9683ec93d0631a39b758c1296db715a1d3e"
+    },
+    {
+      "id": "a8c21cd9-935b-45bb-8dbd-018cd055773d",
+      "file": "alighasemi78__Facial-Animation-Retargeting.md",
+      "blake3": "3f6068d1a3239bd09d392efc319dbc8bf29173377fd7c8c371fb95f516fb99bd"
+    },
+    {
+      "id": "ab4c091a-466b-479e-837b-c2f85a4d7110",
+      "file": "alexismorin__OpenFace-FACS-Unity-Facial-Animator.md",
+      "blake3": "ea71d30a530ad8cd370a6efa6b5c8bf25be8cc088c931092d120b3a5fc4606bb"
+    },
+    {
+      "id": "a8a3b138-4124-4ebb-a0ef-18120ac5587b",
+      "file": "alexisgroshenry__Face--deformation.md",
+      "blake3": "fc2a103c573c67c4b704bfbee1b6705d9f8183fffc53c66c4570f8131fdcad69"
+    },
+    {
+      "id": "8c89a965-24cd-4742-83d2-ed26fe85bca5",
+      "file": "alexandru-dinu__3D-face-reconstruction.md",
+      "blake3": "4495716bd22cb147a4a4d876c0c4cd595998cfcd9bbf243d7c9ab5eef1340ace"
+    },
+    {
+      "id": "255e3d4b-da0a-4632-85cf-364dd984a7f6",
+      "file": "albertpumarola__GANimation.md",
+      "blake3": "8545dfbc07b9a50f3e62f16d36603143ec2ca5ca30e60666d887eed28c314477"
+    },
+    {
+      "id": "9bdebd6a-ed5c-4ce8-8422-695887a2cba9",
+      "file": "ajbtech__EQ-3D-Model-Creator.md",
+      "blake3": "341e707f90dd4060677c8a74c68cb9cca4bd0ddbf9a9ac6e8bbcb1c6aaee2a9d"
+    },
+    {
+      "id": "8ec21298-7dc5-4c24-aced-f5032c3f8e58",
+      "file": "aelzeiny__Animoji.md",
+      "blake3": "2b0d3459e4ff5476cec9affe112c5c1f416c489626ec5a4bc035e97f1235b95d"
+    },
+    {
+      "id": "fc81f710-d10d-4a8f-9044-1ddd9284d829",
+      "file": "adorablemussel__3D-character-creator.md",
+      "blake3": "c052f7e4678b11923bde8c178a4d2ad0d4103e6364aea39ed40b7155b1de9e3e"
+    },
+    {
+      "id": "a2865bfe-fdd1-4d3f-8bcd-08696f963804",
+      "file": "adgx__FaceMocap.md",
+      "blake3": "8d37a25049e12cfe88339be0a5175c45aaca9c5f554a087f27e2639d3edee82b"
+    },
+    {
+      "id": "2bf16aff-ee77-4bb6-8a7d-01ec75f1dd84",
+      "file": "abubokkor-cse__EduMind-AI-Virtual-Teacher.md",
+      "blake3": "9501df6d486e0a62ad7a87fff6b2635b7f509fea8876979cabc28dcf522349ec"
+    },
+    {
+      "id": "ca45ad9d-65cc-4319-bf60-f15e1e9428e6",
+      "file": "abdullahshaikh-0078__Snake-Game.md",
+      "blake3": "cf3466ddc89671909e6540bd6777355d4a519fb249d453f3d3ebde10e222569a"
+    },
+    {
+      "id": "64718369-a990-4246-9850-e79d7324271b",
+      "file": "abdallahdib__NextFace.md",
+      "blake3": "622d15880c411b489792e60640f0cfd455534e4e38b0fddac258d21f6a760170"
+    },
+    {
+      "id": "f8fc241f-8636-42f1-a0be-3fffb611f815",
+      "file": "aawee0__RBF_face_deformation.md",
+      "blake3": "f2b248d5b8a53669c6b4fd8265bc8203daff9708be62500f21df373659fb013e"
+    },
+    {
+      "id": "89d898f3-39d7-4cb3-960e-8e70125a96fb",
+      "file": "aashishrai3799__Towards-Realistic-Generative-3D-Face-Models.md",
+      "blake3": "264acb5f3ff1295b0fb30474968f96f648901d72529b834e68138a7f774d2963"
+    },
+    {
+      "id": "92b5ba14-6840-42e1-84b1-cc6fd3dedb12",
+      "file": "aashishrai3799__3DFaceCAM.md",
+      "blake3": "17323464ba50b6d5925f7b7ccf74978f9947f8c45ca153d140a034773079ca4d"
+    },
+    {
+      "id": "d07d10da-54b3-4eaa-be8c-f2ffc2bf2a04",
+      "file": "aaryansachdeva__unreal-text2face.md",
+      "blake3": "02fd0faf2a88642465fabf97fe5719565b845c23d998290aed10d67bbc7958f1"
+    },
+    {
+      "id": "f8657919-aeda-4559-aedf-e2345227826c",
+      "file": "aaryanp2904__SpeechToMouthAnimation.md",
+      "blake3": "ca6647f45ea869cbbeb6bddb9b85bb947050e9a855a1f74bd8ae7d4c42761154"
+    },
+    {
+      "id": "d3fcbdf2-f195-4827-a67b-1cf0360da377",
+      "file": "aaa123blender__FacialLandmarkDetection_for_MoCap.md",
+      "blake3": "8d401282adfd960261e7e7b3339215b20743d0fd05b9dba67096936ef1443871"
+    },
+    {
+      "id": "12760769-3307-4875-bbfe-9275c54166a4",
+      "file": "aaAarJimedes__BlendCap-Motion-Bridge.md",
+      "blake3": "ff979785ae48dd951aa1227d932fd0e166e40aa7859e2f457355e28916ceb7f1"
+    },
+    {
+      "id": "9377579b-3627-4fc5-9edc-58fe98549baa",
+      "file": "ZOUKaifeng__FacialExpressionGeneration.md",
+      "blake3": "2618c5b33cb03c43235bbbd589c25834c1dde6bf2c618d923a97d19785ed9469"
+    },
+    {
+      "id": "45ce865a-ea67-448c-b235-d9023da99acd",
+      "file": "YoungSeng__Speech-driven-expressions.md",
+      "blake3": "396dce30af24dcf2206a04924a94e0417285d7301c250a07163f33f4e80fb90f"
+    },
+    {
+      "id": "93b66600-3fde-4970-b053-11a84ec1ffba",
+      "file": "Yoosseph__dental-scope.md",
+      "blake3": "a31a554a2398230dffefe66ca9d11f51b7a9ff5465209cf1e74b3b5cae3481bb"
+    },
+    {
+      "id": "eed08ceb-4ee5-4959-aee1-76f888538e83",
+      "file": "Yhisken__Unity_SGSSS.md",
+      "blake3": "9e6295658d07ba4548ee2adeb7e769c831de6cbf597f7be55a5ad3eaa4285b38"
+    },
+    {
+      "id": "460e979b-de94-4072-bd20-da53a2ea1204",
+      "file": "YaourtB__GPS_plus.md",
+      "blake3": "2418ca6f06536c09e64bec1f5ed812acba5ebbfa0f0e3bb3647031ecd774555f"
+    },
+    {
+      "id": "6bb402b5-ad84-49f9-b30a-0a3cb369e6fa",
+      "file": "YadiraF__DECA.md",
+      "blake3": "bda9dd9035728202cb581830f988ed523748fe31c375ecb339c04a11b487f44e"
+    },
+    {
+      "id": "ffc61020-85bb-46f1-a2f0-617b3343e927",
+      "file": "YABX-Brusk__EyeSystem.md",
+      "blake3": "97d7d4cd09d35eced7cf3140fdbd2e692891213f9eee3e967a98077b37d095e5"
+    },
+    {
+      "id": "ac2a1899-b8e7-4126-ab27-dfd14472ac12",
+      "file": "Xerxes1138__ScreenSpaceSubsurfaceScattering.md",
+      "blake3": "1bdd80a4399045679b1c7b53bc978c38680c75b5fce15b059c37ebbab9e8c4c4"
+    },
+    {
+      "id": "d42f408a-7e8a-4c9c-b58f-35d174e3f96b",
+      "file": "WishUAlwaysGoodTrip__3D-Annotation-Tool.md",
+      "blake3": "e5a48b7900a7523b28d4f9fde1344a8814ed72252da0bcaa6c46b9757dacd19b"
+    },
+    {
+      "id": "20d4de6c-b3e5-4843-8d58-571daecebd8a",
+      "file": "Vulpinii__skin-texture.md",
+      "blake3": "75b5b526801906fc3bc8dd735d91b8cd526459d6fa4024c332f87784b1e6fa0d"
+    },
+    {
+      "id": "e0af3ae9-3a9d-4023-9afe-b6ad30fe00a5",
+      "file": "VisionSystemsInc__pix2face.md",
+      "blake3": "351718255b4b743df0468fd3fdb20f22194b2ebeb4f6efb4ea0dcda80417fa7a"
+    },
+    {
+      "id": "26c4b336-c689-46da-8347-3e737d17f933",
+      "file": "Unity-Technologies__facial-ar-remote.md",
+      "blake3": "a3738f4e4d745305f86b2cba0cd8c05dc3c027f2cf03c93e0ec459fb57912be6"
+    },
+    {
+      "id": "abe124c0-8f74-4194-97c9-5eaf742597a2",
+      "file": "Unity-Technologies__Graphics.md",
+      "blake3": "daf37f058e679c6dbfc1740f9a590e49af14c1a27c4043160b6f05442e67a1ae"
+    },
+    {
+      "id": "75667c68-31fb-48db-b84c-1b8a77c980d1",
+      "file": "TimoBolkart__TF_FLAME.md",
+      "blake3": "ee49af754b0d93266bae01c4d6cb09c7468690d4a00c00bd0d9986c1bd8602d8"
+    },
+    {
+      "id": "cd5af60c-7097-4ab1-88de-47257a149a52",
+      "file": "TeoTwawki__makehuman.md",
+      "blake3": "da282de6b503e3e899dd1b0660906fc5f79adfad32675afb118424097d5d9818"
+    },
+    {
+      "id": "c11f34cf-b9d2-46d3-bbcb-d6f932475db9",
+      "file": "TencentYoutuResearch__3DFaceReconstruction-LAP.md",
+      "blake3": "9ee4e7a34674a0b98341e620e3abaaaaafee18470ac175d52346455e1100bdcf"
+    },
+    {
+      "id": "fd0788b8-218f-4285-bf79-0efc3187ddda",
+      "file": "Team-Figoose__Configura.md",
+      "blake3": "f57ea1ad63e76543721aac5a3e3cbf07a72caa17d32c62a5967e9f5d662c354e"
+    },
+    {
+      "id": "0fe165aa-eb29-435b-bd39-8e8252d8ea90",
+      "file": "Takymu__face-mesh-detection.md",
+      "blake3": "484a1d877a330e134da3b92826050babd7043424262f6f293593d82e075eb672"
+    },
+    {
+      "id": "78b2a349-ebf7-4e06-a31d-3378182a5501",
+      "file": "TaatiTeam__TopoRig.md",
+      "blake3": "187894b217399fe9a4a99fd18a3d5f087c7f1ed4bdd752234c3bdafcc2bc414c"
+    },
+    {
+      "id": "615a8e59-dc12-43ca-a5d6-b91a234b92d7",
+      "file": "Sushiy__AGT_SSS.md",
+      "blake3": "aa787f14d9949fe1685244173f224d841850611d23148878c33cc707b842d5ea"
+    },
+    {
+      "id": "c647b34f-8b9a-4ba8-9130-56fd48e5e583",
+      "file": "SpookyCorgi__phiz.md",
+      "blake3": "68dcd02e8c5f47a9d87dbd8374268124b66d4842f060ed5f4794d4282a016a3e"
+    },
+    {
+      "id": "34cde0d9-d2cf-4507-80c1-6e8ddb16be7d",
+      "file": "Spencereese__phaser-idle-quest.md",
+      "blake3": "96f0e9f37296eb2a73a7428c9f80b44d2f5721973b70ff6b2fdf75d16854be10"
+    },
+    {
+      "id": "3912b5b0-66f4-4b93-9597-1faa1aad1aff",
+      "file": "Songluchuan__TDMM-LM_data.md",
+      "blake3": "a9a37d55cc87deb07ed09ab45eda5aa68a13952ce3a3fa789057b04adf245656"
+    },
+    {
+      "id": "aa34f0e8-b30b-48b2-b6e8-2e40a7310df0",
+      "file": "Sonaly03__Joint-Face-Detection-and-Facial-Motion-Retargeting-for-Multiple-Faces.md",
+      "blake3": "6cbd236619cc203c7e8011f7e2b6ddd31d24d7cfa7fdd8825d9e971d03fb2d58"
+    },
+    {
+      "id": "e77a6a55-df2b-4d97-859a-e4fab77978cf",
+      "file": "SoheeLeeanim__lprr_project.md",
+      "blake3": "cde43122cd75ee2786ffd2d0bce2c54ada2e866900e67c519af6a7120c038091"
+    },
+    {
+      "id": "be5dd8be-651b-4e5c-ac9e-d639c3578597",
+      "file": "SkyeShark__claudes-body.md",
+      "blake3": "c4f51752db6e34da41d3bfabdddefa697760ea83b16e1505b7222b187478f16b"
+    },
+    {
+      "id": "c25905de-73b0-4cd2-9ba3-08c36b2b7f49",
+      "file": "SimonGiebenhain__pixel3dmm.md",
+      "blake3": "530d7dfea89b1451d3b46e09a14c6379303ded581e94dc177d4b677d9c63b108"
+    },
+    {
+      "id": "ad3294ad-ab1f-4c54-8079-89aa491b86f6",
+      "file": "Shuller03__facialMocap.md",
+      "blake3": "d157f63a9401f7ab4f1ccb03c22204a9100c9aa06acef06447ea5a2ad71900d8"
+    },
+    {
+      "id": "c14a58a1-3afb-430f-b95b-00256eeffd31",
+      "file": "Shuisho10__VRC_iFacialMocap.md",
+      "blake3": "931e987d7c9f52f1e7b204dbb88153a1fbaa113c54a31797e7568324a5a4b3b7"
+    },
+    {
+      "id": "2fda1c99-391c-4f88-9e00-5f699c920a75",
+      "file": "ShanghaiTech-IMPACT__TeethDreamer.md",
+      "blake3": "d56973a91460ac4c59ebe1f4a033c01398913e560b8f06ae7d197924164911e4"
+    },
+    {
+      "id": "041e6c38-fa95-498d-ae25-17ee68d26a7d",
+      "file": "ShalltyB__BlendshapeCreator.md",
+      "blake3": "2a216e98f534955d234e6d2e86c5bede938e105b75b9a7c41210d326b5a5de72"
+    },
+    {
+      "id": "280fc958-9b9b-4131-9b81-d4c5c4908284",
+      "file": "Shade5__FaceFitting.md",
+      "blake3": "bb646eb479868708c8eec9ca1b038d22bb246ac62520b94bcaade5e821137da0"
+    },
+    {
+      "id": "5dc47b8d-0fc7-4bfb-b3ee-e81642db2d94",
+      "file": "Scthe__ai-iris-avatar.md",
+      "blake3": "ad2ec112dca2cc101e8ba716b659f27d0e52a8bb163e1bd99baffc39b53052b2"
+    },
+    {
+      "id": "2f2fd98d-4c43-4b27-a2fc-ab2d8f2fd7fb",
+      "file": "Sanja3DArt__Angelus_ARKit_Helper.md",
+      "blake3": "a3ceebe7aed1b5669125866bb3bec1f168a28fb9bcb2ecd99dc8aa03329a2be6"
+    },
+    {
+      "id": "81a29ca2-2114-4adb-92f8-39f1ba7aac52",
+      "file": "Safemilk__SkinShader.md",
+      "blake3": "e0e474d00eed8bd62e6b0e4dc53e85f38d178342c67ac192054de5db967350b5"
+    },
+    {
+      "id": "70f7b9ea-5f06-404e-b640-f0704cff5e79",
+      "file": "SPEEPSHighway__SADX-ActiveMouths.md",
+      "blake3": "124cc6ab173292ef657673c9c7cfcf1c550327da10aad568587be3f6e21222cb"
+    },
+    {
+      "id": "b1835053-24e9-449c-8944-5e70650d43d1",
+      "file": "SJTUzhou__3D-Teeth-Reconstruction-from-Five-Intra-oral-Images.md",
+      "blake3": "5bda0e9308a287b5852427939cf44c9a505b2600360a3aa1ac52f59e935cfebe"
+    },
+    {
+      "id": "4d45de77-591c-4d40-8ca9-8756b4280ce9",
+      "file": "SCRN-VRC__3D-Face-Landmark-in-UnityCG-HLSL.md",
+      "blake3": "bbbe0915b5bb0ca7bceca7a521c74949cb673dafcf9818cb006d67d3b28dda1f"
+    },
+    {
+      "id": "98a78eb7-2fb7-4e52-8b10-05953d68c762",
+      "file": "Rubikplayer__flame-fitting.md",
+      "blake3": "f66e451e6c78474c4e456799ad18450ef744a0780082400411e2910d10898cfe"
+    },
+    {
+      "id": "65c4d248-ba75-4c0f-9327-0e5580b03dca",
+      "file": "Rodousse__SSSGems.md",
+      "blake3": "bdda7b1bab4896fe647c2fcf679f9fc4d50d15cb5722eb99f36133b2b6162b20"
+    },
+    {
+      "id": "5c9e52c9-5831-4942-8a91-214424a564d2",
+      "file": "RoboPoets__digital_human.md",
+      "blake3": "8afd057a6eca5b01946d5c3344d750ffa561220a13528672a22b5cd7293d57e8"
+    },
+    {
+      "id": "53d072b0-75c2-4305-acf4-950d71a1a7ee",
+      "file": "RobertSmithers__TeethSegmentation.md",
+      "blake3": "700d98fdc30f623c23f9f4e3385e41f006b479ad812760ac903095bed2c955a8"
+    },
+    {
+      "id": "dc907653-091c-49ed-acd0-621cd7cda234",
+      "file": "Recol__DLSS-Updater.md",
+      "blake3": "90566efa932364793f3e877f92470a40ff3275f398f0d807a5ab1c06ad4b382e"
+    },
+    {
+      "id": "a6c88d66-f04f-4aa1-a7a8-f0f68bf8db26",
+      "file": "ReForge-Mode__Unity_VRoid_Expression_Maker.md",
+      "blake3": "da3dfedea3afcf5ab2d150f510cf37ef82e88dc3e343437a011bdbbb251f6ae4"
+    },
+    {
+      "id": "da794ad5-ac1d-4e99-9a82-f7e6e0c6d9e6",
+      "file": "QuinnMcGill__MocapExperiments.md",
+      "blake3": "ba5581f96f4e7380f3d641d0528f46374ad7a22d603165239d92dd4bfd6f8212"
+    },
+    {
+      "id": "39bbd9c1-9030-46de-8e35-eed6dcc337a2",
+      "file": "Qingxuan-Wu__DICE.md",
+      "blake3": "457ee1edb232a5b014257a0eb47ae73538dbe6ffcb1696f18af03405ddb6cf6d"
+    },
+    {
+      "id": "85139019-f4fe-41e5-bd0c-1572c0ceec09",
+      "file": "Qaanaaq__Face_Landmark_Link.md",
+      "blake3": "e8e4eb12784d2961d98f0cd84d9280575c2b75d561ae409ae280c6c6d8ef3a15"
+    },
+    {
+      "id": "75eeafb3-dcec-436c-a7c0-367564231aad",
+      "file": "Prohell__vtbfacap.md",
+      "blake3": "c7d7a57448ef5c32f7f53d54513b78124f46a76182f2ac8dc81cba73f6bb7519"
+    },
+    {
+      "id": "88fab36b-d42d-494e-a4da-9063f6b6035c",
+      "file": "PrashanthaTP__wav2mov.md",
+      "blake3": "90d750ecdec4d178f9274485fdd5cb9b900f77840a517c1e9a7eaedc4ffad906"
+    },
+    {
+      "id": "2803e12a-ca61-4db8-9306-888d128311fd",
+      "file": "PixelWizards__BlendShapeController.md",
+      "blake3": "0c3791a60964df23850f916f026475555109d3701f0404be9f65bcefe0b565bb"
+    },
+    {
+      "id": "fceb8946-674d-4391-af62-233543f07358",
+      "file": "Philipp-Seifried__MultipassTranslucency.md",
+      "blake3": "c59a2f337c09a67d17bee3ea81219c3d6967a9aa5fe2a572f3130cd80bb836bb"
+    },
+    {
+      "id": "4409997d-19c6-485d-9edb-535836c6bca3",
+      "file": "PeizhiYan__mediapipe-blendshapes-to-flame.md",
+      "blake3": "a5a01c2101db1bcd88de2d35ea7ab9e67f9116787a961dd2f62c151f7da283a5"
+    },
+    {
+      "id": "23d1b24f-656e-4967-b13d-e59918232817",
+      "file": "ParthaEth__GIF.md",
+      "blake3": "e194474545f9ac9e29ea69df475e6dc22bb46c443562edbfe5abe71dee91f58d"
+    },
+    {
+      "id": "94319a2f-5bc6-4e46-b9d0-03f2a67faf9d",
+      "file": "PaoloESAN__gacha-setup.md",
+      "blake3": "e9b6d914a9af8971b9d3a842442e5785f4f339a1e39865c75537502699b83f13"
+    },
+    {
+      "id": "733f2691-0c49-49ee-a37e-1febaef544a6",
+      "file": "P1nkL1on__SkinShader.md",
+      "blake3": "fcd081f693baf45383c51261a19e1fe10b4b9f8a0f1b73f0504ee9642fa9f75c"
+    },
+    {
+      "id": "a9702c26-380c-4b94-9dde-b35d48894987",
+      "file": "Olypolyu__MouthStitcher-Remix.md",
+      "blake3": "e60d7256419c0ada7362000f27c348c63b9493a1707a3d8baae187862d8dcea6"
+    },
+    {
+      "id": "b972f2ba-c1c5-4fd5-96dd-aafd17587cfe",
+      "file": "NumesSanguis__FACSvatar.md",
+      "blake3": "593161ee12637e38d03e81c806e4868f55624ba20a7a6c28ab50fada9cce2235"
+    },
+    {
+      "id": "a1be8b90-1be6-4576-b5dc-655b7225128e",
+      "file": "Nukem9__dlssg-to-fsr3.md",
+      "blake3": "e8e8f491b51b9374fe449ced675c01f63f452ac90d47edf8c00c41f1ef0706e9"
+    },
+    {
+      "id": "a45a012f-f226-49e5-8bb5-272938e268e0",
+      "file": "NitroxNova__humanizer.md",
+      "blake3": "1b34875c89bd1b07085bba14c32639a489697e5abf3f6c87ed096839ded3b4d7"
+    },
+    {
+      "id": "28ef1cec-aeb9-4f0b-b617-0dc28c7b7172",
+      "file": "NicWickman__deepSync.md",
+      "blake3": "b363c9534e046df83cd8d2b5beeaf831c02362d7aa3c5bc47c5efd5d4ebe58b4"
+    },
+    {
+      "id": "75abb87f-b816-4f49-91aa-82be1347430f",
+      "file": "NavodPeiris__agentic-avatars.md",
+      "blake3": "885fe609b2e2f1784ca71a3b8e69c96fcb49f79a2d24c5069851b1acbe092621"
+    },
+    {
+      "id": "f1190855-f556-437b-8e02-e67b467a9adc",
+      "file": "Namkwangwoon__Rotation-Invariant-Tooth-Seg.md",
+      "blake3": "ca71fd9a039d558a576657c495c06ff188b187f8458f53074e5e5b5da6eedeef"
+    },
+    {
+      "id": "cd7ee7fe-4454-4da1-8866-97145635fd03",
+      "file": "NVIDIA__DLSS.md",
+      "blake3": "28b6023a53ad7dd9086b20e1a35c8d587fea0d79dd0baed939cacd0e919e5c1e"
+    },
+    {
+      "id": "b138bb56-ddbb-4c4c-9bd5-6e6dbe24e151",
+      "file": "NVIDIA__Audio2Face-3D-Training-Framework.md",
+      "blake3": "36a777c08f18c4bec970a51a412fbef6cb13ad19e3c9a4c11ceb4e776b0baf4f"
+    },
+    {
+      "id": "91321988-f2fd-49c6-9787-9f43c12fca99",
+      "file": "NVIDIA__Audio2Face-3D-Samples.md",
+      "blake3": "451c9127cef96665d1caeea3cc501fddeb8cecbc9a93a62c0e38c1cd62e09ccd"
+    },
+    {
+      "id": "8e759714-316a-485a-a013-a036a2af95a7",
+      "file": "NVIDIAGameWorks__FaceWorks.md",
+      "blake3": "298c242122050d53820b6decd35f4cceb847802c1bc3ae39e07cf917de752c00"
+    },
+    {
+      "id": "42f38c02-2d1d-4d35-a15d-1e43987176ec",
+      "file": "NVIDIA-RTX__Streamline.md",
+      "blake3": "37bb4389834783db976dfb7a9270aa39ac100778d3ae7c10ede50543ea5317ce"
+    },
+    {
+      "id": "05866b87-f49e-4d0e-9fe5-959caa6aeaea",
+      "file": "NODIX-TECH__DLSS-5-MANAGER.md",
+      "blake3": "c3e9c9e344e7f97963aa3e04858f6b5acc9bf24795f1577ddbfefee635ee36b9"
+    },
+    {
+      "id": "6a6166ac-8e78-4948-a36d-ce6301a5c7fc",
+      "file": "NIGos__dlss5-bridge.md",
+      "blake3": "f07961b3cd1168ecb65dacbc8fe991d0a1fc3a2402d3b442f2523440d5dbbdc2"
+    },
+    {
+      "id": "0eb73b34-efcf-414a-963c-70cd1d7eb0d1",
+      "file": "NCCA__FacialAnimation.md",
+      "blake3": "240fbbd6fe9e6631936d93ca5b41a6ee16436c36ed986636e29d02f64f9a9ef9"
+    },
+    {
+      "id": "265d5328-e769-4ff0-b2bc-c12700dd3288",
+      "file": "N8python__subsurfaceScatteringMat.md",
+      "blake3": "41d7663fcfc507e9c52906747584296587ea435799122b5ea9c3442a6794cf46"
+    },
+    {
+      "id": "c53b2d90-314e-40d8-b99b-428f5f4cb7bb",
+      "file": "MolochDaGod__grudge-character-creator.md",
+      "blake3": "3d7118ad1de47bbdcfa2daffc54aa4bdf66da0831a4342b534ce919bf9bf76fd"
+    },
+    {
+      "id": "90546d93-fa15-419b-acab-3263876bc685",
+      "file": "MircoWerner__ReSTIR-SSS.md",
+      "blake3": "8b15837772b09581a661e137e166b4f4bd3b3a2a594903e077a58438748eb012"
+    },
+    {
+      "id": "9a2131dc-b29a-4bbd-bc46-934a7b18c81a",
+      "file": "MiguelCPereira__SuperMario64Remake.md",
+      "blake3": "8136086f93d28570876e15343770bdf811c72923b93822d1c553f60b56a8abd3"
+    },
+    {
+      "id": "75992d51-10a2-454e-9e92-42cc3cca4452",
+      "file": "Meshcapade__SMPL_blender_addon.md",
+      "blake3": "34bf71d1140a453aa7b183bb0240d645aa79da60335f228e543ace504de124c8"
+    },
+    {
+      "id": "8930af16-7382-40d7-84c8-a7aefae8e355",
+      "file": "Merserk__dlss5-visual-enhancer.md",
+      "blake3": "7272efd6dd6840e1ee1d30b8d3195a9bea2e01ded92e0254cbfaa79e80110d81"
+    },
+    {
+      "id": "d0190db2-6c6b-449f-9efc-1189a503de0f",
+      "file": "MediaEyeEngineers__ShaderEye.md",
+      "blake3": "7a3776ef73488161502ce815545aa1a58930ae142f2a2b5e997372fcf2d86a2e"
+    },
+    {
+      "id": "5b81cde3-fafd-45ec-95cf-640e25be05ef",
+      "file": "MaxBittker__chromatophore.md",
+      "blake3": "02389fb670b062d406c63c78189c6527a889a5a6cb58836a433eb65913a38f32"
+    },
+    {
+      "id": "199b5013-b7a7-4ac3-99ce-f1bbd9ab9389",
+      "file": "MRzzm__DINet.md",
+      "blake3": "4df67e5012d4f5c7040d5e189b230319f008718ff912355196f7243999898724"
+    },
+    {
+      "id": "b534628f-72ab-4424-a28a-8314c43a9771",
+      "file": "LynnSpyre__cc3-blendshape-renamer.md",
+      "blake3": "704e0dc6fda984a9764552e369fd42b65d9f66e78e2402ee20b311c1549b5348"
+    },
+    {
+      "id": "f6a1e850-be80-4640-898e-be633098eded",
+      "file": "Lunazera__VNyan-ARKitMonitor.md",
+      "blake3": "24f617c07fbdda94a7d10c72d0f8436789d9353e221ae1b73ffd377ac920ed8e"
+    },
+    {
+      "id": "788a209a-1ce6-412f-a8d1-ec0f64353177",
+      "file": "LumKitty__VRCFTnyan.md",
+      "blake3": "9b51f1677c16c6d56369088f79b9f887f8c30427b58b81eac565a93b5a77ede4"
+    },
+    {
+      "id": "35b38617-861a-474c-9d97-306290720c31",
+      "file": "Lofionic__MonoGameAnimatedModel.md",
+      "blake3": "ab7affe006c869c107e99d0aa8962e932b35222fe155afaef8f19c2a71778135"
+    },
+    {
+      "id": "74eec7a1-07ff-4567-be9b-70be0ff3890c",
+      "file": "LizhenWangT__FaceVerse.md",
+      "blake3": "0a966bac5749af93d7d97c7ffe811c0f0694371a355ec336bee5b57283f2f894"
+    },
+    {
+      "id": "d7fcdd5c-2050-4a89-9f66-e9917a5af773",
+      "file": "LiyCg__DFL.md",
+      "blake3": "74017fdce47de66388abfa1e5b3556e7dc4e6f8e73dd3599250987c645419824"
+    },
+    {
+      "id": "ae9d5d66-b356-4782-be8e-0c65e554fe5c",
+      "file": "Lexpartizan__Go_MakeHuman_dot.md",
+      "blake3": "5f01bca42c91328146ed6fa5c366fe3c1ac57736d599dfa6d623cabb3f2f27e0"
+    },
+    {
+      "id": "5de3a293-4103-4152-afa6-3697c0f5293d",
+      "file": "LeonKang130__DiscretizedDiffusion.md",
+      "blake3": "59918a041e1e65c839ac7305285d1ccbb37c9c716f62072ebfcdf8ac3148fd25"
+    },
+    {
+      "id": "3851259b-0b28-4662-8552-8ba3244ff1f3",
+      "file": "Lemon-XQ__human_model_viewer.md",
+      "blake3": "f367ea17be1e61dc8fbb8d1e29b11517426cccbcf8a4b6ff4b0a4603602608d0"
+    },
+    {
+      "id": "04eaeab3-0a30-4b5c-b51b-4d2212367a99",
+      "file": "LanderK__RealtimeFacialAnimation.md",
+      "blake3": "ea7d118c81e5887588a35c23e204f2be20f311eadd90b313f64574ee6229bff6"
+    },
+    {
+      "id": "4d76ad78-004c-4144-859d-a8be2724fb82",
+      "file": "KoenBuys__makehuman_datagen.md",
+      "blake3": "7c3800cd45b36542832e3b0436bc4f6ab561cf62ce6d4519a61bd3c103a52cef"
+    },
+    {
+      "id": "39ec3385-0daa-4314-98c6-86d38947b0b5",
+      "file": "Kizzuwatnaa__DLSS5-Autopilot.md",
+      "blake3": "260b639eb7b74817ee160d12f3d66d140ec125272f990289b1d129c9b12e8d8f"
+    },
+    {
+      "id": "2c23a212-9c81-46ab-bb74-facd98c9ba57",
+      "file": "KimGoddardJr__CAVE_FacialMocap.md",
+      "blake3": "cdf8c1aa257b89af43be10a439d0dd130fdc365c7d1d9ae8940d54e2446b5e9a"
+    },
+    {
+      "id": "df72ba7a-a8a6-4289-b7ff-9c52ba4ec846",
+      "file": "KaiaKim__autoRigger.md",
+      "blake3": "bf9659ef293c64a52ab6ced5f08297d119d868062c79b10e98afdb6715ce17aa"
+    },
+    {
+      "id": "8dd441bb-e09e-4320-b815-4983631bd91d",
+      "file": "KMcCand__Tarzan-Ball.md",
+      "blake3": "46e39468e986985dd06443a1745e7d02c62a03f5f2a7424af50ab863ae29de59"
+    },
+    {
+      "id": "7736ed19-af63-4467-bd88-16002ea220cc",
+      "file": "Juyong__CaricatureFace.md",
+      "blake3": "e7561d53361202a4887cca0fbc3cb43518103617dbb172951bad34543d3cd20c"
+    },
+    {
+      "id": "1d5bfdde-b09a-4ad6-b650-e24e4132fd28",
+      "file": "Juntendo11__DualFacialMocap.md",
+      "blake3": "ebd5779057158199cc51794a2d3d1d0f574b636d3c52be97c04e5467456df114"
+    },
+    {
+      "id": "87988531-cc26-4c07-acd0-d8ef0054a895",
+      "file": "JitengMu__ActorsNeRF.md",
+      "blake3": "c2fba3c3e2dc2486fb29e3f35a73e4eb466237bcdae6b96e5467ad66e6678905"
+    },
+    {
+      "id": "5e405200-3018-4ca8-9fdd-547aa37004f1",
+      "file": "JerryWu96__3D_Face_Reconstrction.md",
+      "blake3": "e8fa4230535faa5e9ef172019f4551a72e5a95b203196b747763d3f0147e314b"
+    },
+    {
+      "id": "b9d0eabc-2082-4707-a984-c019c00a19be",
+      "file": "JaewonSongJ1__DirectFacialRetargeting.md",
+      "blake3": "c17b675c3773e61b55ac505b80eed0650b338cea5f6b83c856ed315b8db2b03c"
+    },
+    {
+      "id": "22ded6fd-fdda-4cbb-8463-985a0eb62e53",
+      "file": "JaeDukSeo__face_deformation.md",
+      "blake3": "01414ecc7a6ecac52ee760baf5c05b81ad5420f37abfe14cd2b4ea72eed45867"
+    },
+    {
+      "id": "53fb6482-addd-40d6-899a-28d0ce4559ab",
+      "file": "J-Peres__Tarzan-Ball-master.md",
+      "blake3": "cc954278cbbfd53f61507a7a6c5a9b63a08de016d003edac2d70e2acd42156a9"
+    },
+    {
+      "id": "c452b65d-4853-449a-982a-0e8ca82864e9",
+      "file": "IonImpulse__SubsurfaceScattering.md",
+      "blake3": "6a73ab44f444bed0275308acef6e6fc5ff276a28e72b4a2eb38d4621fed400d6"
+    },
+    {
+      "id": "36aa708c-5dd1-4272-a137-de3b1a8c1329",
+      "file": "Hyiker__HDSSS.md",
+      "blake3": "3eb80624aac17ee1640f40e762d9fa9cff9b7585bd975e80ba55b036418a9adf"
+    },
+    {
+      "id": "4d00e197-ef3c-4281-a5d3-5c4fc2c13ca8",
+      "file": "HuayuanSong__TeethSegModelling.md",
+      "blake3": "206ab939c3d5e82f2b61d2e029a8d7c3cd5568f6522a4028aaedd421ccf06fc7"
+    },
+    {
+      "id": "37fc80a9-8f6e-402d-bbce-ab7cb4ebbf35",
+      "file": "HuayuanSong__TeethSegFront.md",
+      "blake3": "5a3d3ecf8e5b36e359e620af030695614195ba208ac37bebb8759b868d7f2be3"
+    },
+    {
+      "id": "bf391c02-97a0-44c3-8511-62255209cba4",
+      "file": "HiFi-Human__DynGsplat-unity.md",
+      "blake3": "74b892645ef4852692ca27c075666d0300568d38a11f71297d782ffd23d306d4"
+    },
+    {
+      "id": "82523797-9f7a-430d-82fe-f40b0e053a64",
+      "file": "HanetakaChou__Subsurface-Scattering.md",
+      "blake3": "e1398f12f6776a6feac848f5bbefc091dd9634af59e5c698e093bcf2abe0af61"
+    },
+    {
+      "id": "5845913a-efd6-44d2-bdda-697d845445bd",
+      "file": "HRLTY__DenseFace3D.md",
+      "blake3": "8d29afcfad2f39e0fb6ca492bab03cc44c65a246d4875c864cd721c8c61f980b"
+    },
+    {
+      "id": "d2823d8a-286c-4038-8eb4-2784fdcbd6e4",
+      "file": "HBehrens__obj2opengl.md",
+      "blake3": "409622860b4ba40ac75e3d9bfc37a675f4f9f727d2412988cfdedc8593d92cdc"
+    },
+    {
+      "id": "d07e3667-a991-4d6c-b9b1-818e03161c1c",
+      "file": "GustavoSilvera__gl-fovrender.md",
+      "blake3": "6320ed8d6d511f3d4480d3dfd415d09522a221e5868d6e47e820c9dcd3d7bf5b"
+    },
+    {
+      "id": "ffed76f8-6240-4450-bc64-c1b10dc5b866",
+      "file": "GrinningHermit__Vector-Face-Animation.md",
+      "blake3": "82f4a7af0a1d573e89120734cfcc5b0f5691776766c1ac279e176a0c5372603a"
+    },
+    {
+      "id": "fc0179a1-8b12-4536-bb8f-fc12122315e3",
+      "file": "Glauz__Unity3D-CharacterCustomizationTutorial.md",
+      "blake3": "7e70affb53c0b33c5b6574bee1ce93b962933245e2a184b1a5fbaa9c855fee11"
+    },
+    {
+      "id": "77ad4a31-43ab-4976-b062-7ab224c333ba",
+      "file": "Gitbybybyby__mouth-animation.github.io.md",
+      "blake3": "400446514e8de768da07795e9f18417d5e9a8686e4ae6dd8a4470474de098ef5"
+    },
+    {
+      "id": "b506a264-0892-4f8d-b172-e023d31c5a66",
+      "file": "GeorgeCzy__SophiaLearningRepo.md",
+      "blake3": "8b0794848900a78273ba18eb0cd9f28d205821f2e13b49971a06ca168694181b"
+    },
+    {
+      "id": "c88789e7-0e2a-4869-8907-4f9c851ca726",
+      "file": "GameTechDev__FaceMapping.md",
+      "blake3": "26cf1474578f24c051f3d7e189bc2e1b623c265809f9493add2639069c7da4be"
+    },
+    {
+      "id": "eade8596-27bc-4d9d-b442-a3335b487d12",
+      "file": "FuxiCV__3D-Face-GCNs.md",
+      "blake3": "5a30f1defd27eda138626edeeebbcd92b2a90ee5d4532c4fc111a1e9a91f2a2b"
+    },
+    {
+      "id": "57bf23bc-05ba-48e6-95f1-ee8aff0b9196",
+      "file": "Fredrickmureti__3D_Character_Creator.md",
+      "blake3": "df9c4c29f3d4487e6e0279e79f060594c0d80157304e52ea1b6e6280751b53ea"
+    },
+    {
+      "id": "7833860d-afa4-4a3c-b641-71e0e9ccef18",
+      "file": "Francesco149__AnimuEyes.md",
+      "blake3": "857a053b0562d2c5ac7fd3004296f667ffe83fe352a6c2a49f366b4240b295ae"
+    },
+    {
+      "id": "a11e06e4-1a44-4a23-a5c1-6caff5dbf062",
+      "file": "ForeverZack__Unity-Gpu-Skinning-Tool.md",
+      "blake3": "e4f0c40cbb85f323e3158781370b766c61516a5562580af1f69cfb1d1304e69b"
+    },
+    {
+      "id": "09118ebb-fc91-43d4-9f7d-b38ad5b5d94b",
+      "file": "FlaxEngine__DLSS.md",
+      "blake3": "46d90f17404c230e3ddf1689924376cb508f9817e20893a9ef597ec136216cd9"
+    },
+    {
+      "id": "626298fc-6563-40d5-a7b6-83e314824a62",
+      "file": "Flafla2__Translucency-Shader.md",
+      "blake3": "775fb211b6f2ba489fd0b8d7d2ae85bb98126962238f2ea47a8ccef7ff723455"
+    },
+    {
+      "id": "5f7b3f11-f8c7-4fbb-a28c-9420a3f91615",
+      "file": "FeliMe__AudioStyleNet.md",
+      "blake3": "e1a4065256de39bae901ca9bf29515dfe0fab4c3082beb4633112447d610a60e"
+    },
+    {
+      "id": "2c8bb156-1a3d-44f1-beb0-5e639e6b2856",
+      "file": "Fastbrasecret8__DLSS5-Manager.md",
+      "blake3": "305a4109a00577fa3dce942df2a764ff7110a5e7c8f935dfe5c18cf3bfeb2547"
+    },
+    {
+      "id": "62e43199-630b-472f-8c45-9cd193d4b87d",
+      "file": "Fanziapril__mvfnet.md",
+      "blake3": "32a1ec9e2aa8354a4602d3b38ae0e6bf51b28df94b4f59eb74edc6940c3111e1"
+    },
+    {
+      "id": "1771a27f-14f2-4d72-9455-3b84d50ee7e5",
+      "file": "EvelynFan__FaceFormer.md",
+      "blake3": "67865e1275b0f25e13c2b7d6428ddbe04923f1d0ef1206d167bb9c5f1751217a"
+    },
+    {
+      "id": "cf958bb5-6c37-471a-8571-0f1726fb5f37",
+      "file": "Efreeto__FaceMorph.md",
+      "blake3": "aa8fbe508c8740e0bbd93d5c7c868c0360b5662ac2c1684682b27e4dfa19146c"
+    },
+    {
+      "id": "12d525cb-076e-463a-9d07-3bdefcc0eb48",
+      "file": "DreamSpoon__AMH2B.md",
+      "blake3": "09171babdb98eeeeccd88ac64b41bf98d02bf0ecf8b94185b12fcca01a79a8d8"
+    },
+    {
+      "id": "a4240b02-1377-482f-801c-2ec69f0321ef",
+      "file": "Doubiiu__CodeTalker.md",
+      "blake3": "2a3201c20c9c3a12d4b4ac6f5d138437bb992e08c0e2de9ab13301c067dbd1e0"
+    },
+    {
+      "id": "9c996317-e068-4f52-8bc4-a305135ee171",
+      "file": "Dogter521__LSF-Animation.md",
+      "blake3": "16821a46060441bec5c4c47a2dedbeaf5e09486f826336dab25f0acf23bb3a5f"
+    },
+    {
+      "id": "24a3e41d-bfd7-4c84-8f63-86f7a69927cd",
+      "file": "DoerriesT__Separable-Subsurface-Scattering-Demo.md",
+      "blake3": "9ffad1c4fed9518b19b55a8948553f968df6da6ff03bcf350f31a20bef17ec4c"
+    },
+    {
+      "id": "c31f357a-1131-4f67-838f-206dd19b59d6",
+      "file": "DocDamage__3dCharacterCreator.md",
+      "blake3": "7a26123a97e96968b66d82ed3bd8a6e0f47e5298b724d76a2be4c2ffc19c42e2"
+    },
+    {
+      "id": "fb73035e-b924-45ca-842d-be544a220f8d",
+      "file": "DiffPoseTalk__DiffPoseTalk.md",
+      "blake3": "732c7f49436e3e7e770e1d26a58e2c188185c5573bc11105447d68faf1c5664e"
+    },
+    {
+      "id": "734653d9-60fe-4e71-8adc-a16cff8cdd85",
+      "file": "DeepakWorld__CharacterCreator.md",
+      "blake3": "263718499e3897bc54588fb00d58cf7df733894d4447deeed321e84523939f90"
+    },
+    {
+      "id": "57d9de10-1c03-411e-9ef9-c37ba95b0445",
+      "file": "DarkBlade909__DarkBladeSkinShader.md",
+      "blake3": "737ab8bfa5ec61b029cdf1404f9eb445b66fb4addc7ca9739dc70319acf3fc2e"
+    },
+    {
+      "id": "ccde29ee-f67f-4546-8952-4ad7226bf3e1",
+      "file": "DanielSWolf__rhubarb-lip-sync.md",
+      "blake3": "124ab5ab2eb69411afa89cd4f68570446b9a8e9bc8ad80cc868ac2140e6e7d0c"
+    },
+    {
+      "id": "973f10c6-bbf9-44d2-bc47-27a13722cd03",
+      "file": "Danial-Kord__DigiHuman.md",
+      "blake3": "d7c6a448950c048084719d031afb75416211b1feb335de8bd48651d8ef9e814b"
+    },
+    {
+      "id": "67dfed5d-cc36-4ff9-bbae-ebe7790660d7",
+      "file": "DNA-Rendering__DNA-Rendering.md",
+      "blake3": "5d9b29656963d84162fbb8822c310af6e36ac8958052662469460c4fb8064db9"
+    },
+    {
+      "id": "bf6b0a61-06f5-463d-86b6-0202c71f4b07",
+      "file": "DENO1017__PSSSLutInUnity.md",
+      "blake3": "a63ca01e6b2ca55b25d47a2c19681a04832a52c5054986b95150f41147a24f40"
+    },
+    {
+      "id": "e25921ce-245a-441e-a3bf-8f943ba64297",
+      "file": "CustomPhase__CP_SSSSS.md",
+      "blake3": "88cfa40a3106dd08d5b4ce76e0b42c521dc242579a61fd4b731c06fa4b5fa9f6"
+    },
+    {
+      "id": "680af2e0-0de2-4909-a19f-29fa04a522f5",
+      "file": "Crisitofy__3DTeethSAM.md",
+      "blake3": "e4cc7190f8bbf4aa07b8f83c41d43fe30cad58f4b3f276e382b15193f72a171c"
+    },
+    {
+      "id": "2bfeb958-b3a2-4558-9a4e-f0132d9b616b",
+      "file": "Chryfi__LectorLips.md",
+      "blake3": "3061c6e2bef24f88f64bc2df1771ae6740dde7288133ae8382b31bc520af5fc0"
+    },
+    {
+      "id": "983abbfd-22eb-460e-98f9-405637538527",
+      "file": "Christoferis__RhubarbBarbara.md",
+      "blake3": "9fac7d34498e0cdeae6b34b807fc2cb222429febf8b6d25ba8395c97dabaddf7"
+    },
+    {
+      "id": "9f60c7a2-4680-4ef8-9bf8-a55e687c8c18",
+      "file": "CRazorback__LDDMM-Face.md",
+      "blake3": "f383c2f21894ccbbd6d2a06f213d6a9a5626577c1431726fbf42cb3c09e65cba"
+    },
+    {
+      "id": "bfb148b1-e031-4fc3-b9f3-dd5db2a7ee44",
+      "file": "CChapman03__Godot_Foliage_SSS_Shader.md",
+      "blake3": "26497f0a8f13e3eb892338beb18b2146594fb316543f1b15651df3761ba2b5ba"
+    },
+    {
+      "id": "1ff47760-fe32-4259-af15-d11107ad2d02",
+      "file": "Boese0601__MagicDance.md",
+      "blake3": "fd23ce002643c0fd1047ade53daf226111633929b23d45943f77575fd7ac871f"
+    },
+    {
+      "id": "c76a773f-0221-4f27-a777-1f9f2f432e12",
+      "file": "Blueforcer__ComfyUI-DLSS5-Enhancer.md",
+      "blake3": "df0d71f6fe0926af3c6c151b5177efc95f912c4bb51d6f30e1d0f6ede68f4094"
+    },
+    {
+      "id": "0669ee51-466a-4ca7-886f-781dbb38b91a",
+      "file": "BlenderDefender__MoCapkiteFA.md",
+      "blake3": "16445587a122726fcb07ff04ccb6479b57e583a2ae1d5e293619efb4649ad9fc"
+    },
+    {
+      "id": "b6facabc-117b-49a6-976d-321e548c473c",
+      "file": "BjoernTroldahl__Translucent-Skin-Shader.md",
+      "blake3": "939aefabe9a14cd73cd3d956ca5878103c98eff39228909024b294ec094971b3"
+    },
+    {
+      "id": "bee22f72-b31f-4738-af73-361243df2475",
+      "file": "BigJohnn__FaceDeform.md",
+      "blake3": "e004dad23e4a9fdd0926c19f5f95fec2ee2ab70f74bef6856f0c64b6d49a9a71"
+    },
+    {
+      "id": "bca94cf9-73ab-42fe-859b-dec8b5a6e79c",
+      "file": "Bazmundi__mouth_shape_animator.md",
+      "blake3": "f8c34a875805d116e5bee4c84410dbe503da65c9b30bef80412736bae229260f"
+    },
+    {
+      "id": "c5bf3f75-1574-45a1-a42c-04180b15a9ee",
+      "file": "BarbUnicorn__uniVRM-ARKit.md",
+      "blake3": "ab202e3a954f6d6bfad7bb739300eaa8e2d99a903c13dc34a5943947224f611a"
+    },
+    {
+      "id": "66334188-23f1-4cd8-a923-d42172bf0778",
+      "file": "BabylonJS__Babylon.js.md",
+      "blake3": "f21267e4de2def92f4a937ffb27d2011839979d908591e5d82d82ce3c8f475e2"
+    },
+    {
+      "id": "f4e0d4b5-9ae4-4d63-99cd-1dadbce77817",
+      "file": "AtlasFoundation__IC-Avatar-Creator.md",
+      "blake3": "25e6c7f2674686b60cb4d54587299ced224757a7b7636973f1b4505f2ac4fb00"
+    },
+    {
+      "id": "7c4e5077-55ea-4444-b92c-c69e4a47124c",
+      "file": "ArtMeirelles__Auto-Facial-Rigging.md",
+      "blake3": "7bf789c14adc8e8c8d13fca1304fd9392c86728182195f07d6356a43d36790bb"
+    },
+    {
+      "id": "512b13d3-df78-4e12-8a14-5b0942b3905f",
+      "file": "Apurba-pal__3d_lipSync.md",
+      "blake3": "83a0ba30115c1660e74fda1622ef7ba89cac13a844420beb7dce94158eeca1dd"
+    },
+    {
+      "id": "80a3693b-cdac-4f53-9a53-dd7cbaeb0930",
+      "file": "AmaniHAlmalki__DentalMAE.md",
+      "blake3": "4041e43a54d5f68fbd45de844eb6280a4ca522cd7cc88fced3a0c3b646762f15"
+    },
+    {
+      "id": "24c3a5a4-f743-40b5-ad75-c809f3ca8883",
+      "file": "AlessandraSalanitri__Animation-Mouth-Synch.md",
+      "blake3": "d8b6f3b6ea850363e9ee6d86dd3366d64de9e3a05aac1f890e8567bb87204f77"
+    },
+    {
+      "id": "7eb00fd1-2007-43f9-ad86-8628859f0684",
+      "file": "AlerianEmperor__LuxRenderer.md",
+      "blake3": "97806021a94ce331fbbe26524a46e3225cbdaad45741aab5aba17993d7c5463a"
+    },
+    {
+      "id": "0fc52cb0-9ac2-44a3-993e-c0fc8381f4fa",
+      "file": "AlanChatham__SFMKinectFacialAnimation.md",
+      "blake3": "4d4bfa278edd13eb083a064dc39dbd5ae076b58a9c7f9b1195ebc03679c78fc6"
+    },
+    {
+      "id": "7b0af82d-c279-4214-bb43-abf75b00f6cd",
+      "file": "Akashkandari7__LipSync-3d-Videos.md",
+      "blake3": "cad96c17cfe4d268e1787ee27a83c4ceaaee773bc4241ce3f6d454a2cbf6c1e5"
+    },
+    {
+      "id": "7bd6a078-4671-4f81-8893-07a0ffa5a2a1",
+      "file": "AgriciDaniel__claude-avatar.md",
+      "blake3": "690bb0699a5ea0b20883065dcd3994e288042c941b4db5ea403b710d779368c4"
+    },
+    {
+      "id": "a29ccde5-50c5-4e38-bbbe-2e8359361bf6",
+      "file": "AgoraIO-Community__RPM-agora-agent.md",
+      "blake3": "74255cce80fe9d807c754135a609b97eba4a77c36403c872e22abc4ed0aafe8c"
+    },
+    {
+      "id": "9ec46c62-2f29-437d-bfbf-532a1d794f78",
+      "file": "Adjerry91__VRCFaceTracking-blender-plugin.md",
+      "blake3": "1f23eefcd3f86583da300763f6d72ab47b85eaef2c7f7d70071ccf7cd32f9ed0"
+    },
+    {
+      "id": "daa0b1bf-4f8e-4722-9113-432b34a899c7",
+      "file": "AaronJackson__vrn.md",
+      "blake3": "21eca3235ee50578ac04db5767227a4ba27fc063a91e99ae64a322ea9ec77412"
+    },
+    {
+      "id": "58f9d943-1d95-4d8a-8353-4558aedbc32a",
+      "file": "AaronJackson__vrn-docker.md",
+      "blake3": "02401fddce71e8c95df9bb6d8f98035c73983956f045f86711a44146b8c583af"
+    },
+    {
+      "id": "e51164c3-61cb-401c-930d-d694e50591eb",
+      "file": "AWACC2020__Blendshape-Transfer-for-Maya.md",
+      "blake3": "a5de7b07b19acc74307ffc0028d1a1215c1aac160c922ba4524b771510f20c5b"
+    },
+    {
+      "id": "c86e45f4-5b47-4598-a411-6c02e7864736",
+      "file": "ACskyline__vksssss.md",
+      "blake3": "9522ab4def185c2031a4f99c897bff982146149c9be2d32581572d8a18d51db1"
+    },
+    {
+      "id": "264bfdba-d6d4-4df8-96ff-77f005db6747",
+      "file": "ABaldrati__facestretch.md",
+      "blake3": "253a3dcbc9545f809c252189e180c2c1464390fecae4385c9a2a2ef1c903d201"
+    },
+    {
+      "id": "1c6475ba-863b-48e8-a886-770d591204fd",
+      "file": "4hiziri__Unity-BlendShapeCopyExtension.md",
+      "blake3": "4574dc05a0d8039a4c309c5617ca2414d6dea93f209c96e85ca2d41f0603a9f9"
+    },
+    {
+      "id": "94b50fbc-83ab-445d-864a-25d5dca13432",
+      "file": "2600th__dlss5-video-player.md",
+      "blake3": "35ae8d200ad1eb512c3a2bd0d0cfa8def6e1d222088d7176dea38e790dd020a8"
+    },
+    {
+      "id": "9612d9e8-500e-4714-a6a3-82fdee86ced4",
+      "file": "1-moon__EyeShader.md",
+      "blake3": "81145851fa75809380307df5e49a12f9efd4cc1350a68e6ce1c5be72e3e71da6"
+    }
+  ]
+}

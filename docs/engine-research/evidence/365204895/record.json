@@ -1,0 +1,49 @@
+{
+  "repository": "xiaoxianrouzhiyou/BBearEditor-2.0",
+  "repository_id": 365204895,
+  "commit": "c17c74e5e0b759d89be764487aec9f7bed502262",
+  "source_url": "https://github.com/xiaoxianrouzhiyou/BBearEditor-2.0/tree/c17c74e5e0b759d89be764487aec9f7bed502262",
+  "readme_path": "README.md",
+  "readme_sha256": "2bfe40ae6eb6a068120a5d463da3510dee16d7c75191106818fc1b7a97e497c7",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b87fd79ba81fe9cf51d49951ad82c66d0dd3e0d3"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "0ac4274263a476f7588bbf740d64e4ffd1045cea"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "965cdcdc06a6470097abce9b78d4def673de3bb7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6088b2e0f8462f23aeb1be7dfbf0cb1207369466"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "17ca49376c53d01cd672a09145b5051ab03a8157"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "575085b1009c14b5f59bd207d16d64aecc4584b1"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "93269e2d449d6934a9b2fa2a1a3706cf06a2f740"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Learning-oriented engine/editor with scene hierarchy, serialized assets/scenes, Python VM and physics/rendering; README explicitly documents leaks/crashes and incomplete interfaces.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

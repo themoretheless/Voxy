@@ -1,0 +1,52 @@
+{
+  "repository": "Norodix/GodotMirror",
+  "repository_id": 509172176,
+  "commit": "0ed0f1533fdc2eecdb8912f220a63d60cb8a5b89",
+  "source_url": "https://github.com/Norodix/GodotMirror/tree/0ed0f1533fdc2eecdb8912f220a63d60cb8a5b89",
+  "readme_path": "README.md",
+  "readme_sha256": "ef77806b90ab2ecdad33e6932466956f729075361963492b269545068297c767",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3f224afa70733d4b53a552d599cbadb7566e1b37"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3e7065af75bb71be6620911e185f66514a99a6ae"
+    },
+    {
+      "path": "Demo",
+      "type": "dir",
+      "sha": "9ee04ae4ad4ebf5eb5cd3b37c654945671aa0711"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "eb5f981f0f6e50cca523ff605e8e6e900c362f51"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1fe9c00efbf2b56e050841f899fa8c1d411e2422"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "dfa3687e60d552b3a7e841df99d4cb54278b1f52"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "be4a4790f035661cf94e4a54eaf2e48238bbba73"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "9d1b8dfc2bbc501b7f05c703e4e376ccbceee536"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

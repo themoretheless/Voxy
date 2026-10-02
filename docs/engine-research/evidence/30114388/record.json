@@ -1,0 +1,119 @@
+{
+  "repository": "castle-engine/castle-engine",
+  "repository_id": 30114388,
+  "commit": "1951635a292c0248c702f17ab10b2f7c3a3fa800",
+  "source_url": "https://github.com/castle-engine/castle-engine/tree/1951635a292c0248c702f17ab10b2f7c3a3fa800",
+  "readme_path": "README.md",
+  "readme_sha256": "5e092e49dded1e9aa707b14e7335bcfa095c5b81ead83a7cce62840061298e73",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "53cc005a708b6747ec2c4dacb18cf477beaf6111"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "157edfb40398801b3e1e6f2d43a0de4e904e19a3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5429a6161f6eb703c6486479f7b589e404ccd982"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "9ff87e47dc916f5b69f5f27083d1e786dc2dc482"
+    },
+    {
+      "path": ".woodpecker",
+      "type": "dir",
+      "sha": "7e583f0157821f470283a1ad7f69b2ce142c395d"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "41771322601754fc8cd6de7ff4e556f4f926b762"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "08b6f4e1cf8710a56f58f4a5f9b62b162bc2198c"
+    },
+    {
+      "path": "COPYING.md",
+      "type": "file",
+      "sha": "1bbbc1798e2e5cadd00827fcc464c29bae70a3ec"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "8d78c861e59121a8ef302473f646dd19041afdc5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d9172c3cbcd18e37d17b81dff642228098a64993"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "2eb5c510ea70545b07f26ffa13ece5b15bcdbdff"
+    },
+    {
+      "path": "castle-fpc-messages.cfg",
+      "type": "file",
+      "sha": "15b148e7719b3090535050ee0c4d442aeea8bbb5"
+    },
+    {
+      "path": "castle-fpc.cfg",
+      "type": "file",
+      "sha": "587965a359780046c6dffdd4045b142495e83712"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "9fff3993f10fa84ef7e0355a5a6fd41d77f12c56"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a4c691f9dcee7f42c92fbdcde9f10a4c4e00df91"
+    },
+    {
+      "path": "fpmake.pp",
+      "type": "file",
+      "sha": "f0d1ea1ccb6dc01b0546fcb99b6e01eace3a9110"
+    },
+    {
+      "path": "most_important_lazarus_packages_and_tools.lpg",
+      "type": "file",
+      "sha": "95520cb47f43910adc270b90cb017f76d3d35552"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "4904253fd93247835bdb869a483660fd34f6414e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b68915498482cb6c220049e0423b69851d4b0b53"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "6fe47b22eb482a7771185880caeb2faaf0d2249c"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a81763ac4ab7ca895a7e17b3f377ef04d1a7de03"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Pascal 2D/3D game engine; owned runtime/editor source and make/fpmake manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

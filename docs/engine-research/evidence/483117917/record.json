@@ -1,0 +1,109 @@
+{
+  "repository": "GothicKit/ZenKit",
+  "repository_id": 483117917,
+  "commit": "ddf27decd5eeb48ec715e6e66e5f5072c51d88ee",
+  "source_url": "https://github.com/GothicKit/ZenKit/tree/ddf27decd5eeb48ec715e6e66e5f5072c51d88ee",
+  "readme_path": "readme.md",
+  "readme_sha256": "044ea9c97e308deab64480d62340e2b6d24f7e57e98b09e91a0a3cf3d1de0f2e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "492aa4446aa7ef8e3ffda9c676da139a4f9e2c4d"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "9ce9b01e89f16dc10b7b903df65a4cc5e3e35e64"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "608d6716c5b92ff863697f01e59a0708176ed049"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7d3c1b1c73a28ffb20dcca4654b92ca6bc9e1615"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "25ac7e7c3f86b0bf0c135b0a2eca8eb6f7cca028"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c2dee15c35f7b48bc08eaff511ffe8dc17018849"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "57c9c9bb6a3857b094c7b40946dc0cdf061bb28d"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "e691c47365ea8e33b4ce8a85deb79cada79ca2dd"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "b5e00f0de676e6b1d67f67d03e05f9f8512521cd"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "36d5bad158d0b87517841bfbfa93e0e78989127a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "16d078519f47636fcba8fdbc27839fbb2675b901"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "4dd6b941dee2ba80ee6413ad8c0905e145a11d3e"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "d046154691a3795ef26542859b185a19bf830981"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "2894591e21b9734215c89ea1632ee3c4d14013e0"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "7a4da615b6ad8887c87a1e9829da1f040d957534"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "07245477bb57e325ad2803d9e4bf15df72f08da9"
+    },
+    {
+      "path": "support",
+      "type": "dir",
+      "sha": "d4970d855294e2c508c33e0f62d8f67b6618f21b"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "002212c3c0f6c66df27c6468cced4afef9c133ff"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "214f27a246280edb56d43bf523730e7995a49fbe"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ZenGin file-format implementation library, not Gothic runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,92 @@
+{
+  "repository": "srcnalt/OpenAI-Unity",
+  "repository_id": 586360591,
+  "commit": "054467e2a2daccf7f23ff8f7165f1d832815dc70",
+  "source_url": "https://github.com/srcnalt/OpenAI-Unity/tree/054467e2a2daccf7f23ff8f7165f1d832815dc70",
+  "readme_path": "README.md",
+  "readme_sha256": "e5703350c85ed378bc3a49311de8d6569a73263252db3d4616bdf5dd798db46f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "412c76a163f5f7ac20d5331b0ca997b957224cf2"
+    },
+    {
+      "path": "Editor.meta",
+      "type": "file",
+      "sha": "ff7f6df17f3ae26029d4c852b8f1151aaa627991"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "b3d3b5b3e4208d0934e2b69f114bb6e412d23154"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f3cdc5aa97bfc9bab45030921cc25855e247454d"
+    },
+    {
+      "path": "LICENSE.md.meta",
+      "type": "file",
+      "sha": "2ddb4028e0a8652c60ce3da069777b4f74abb33c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "310ce9460a9f8bb0fe10a414f394b5fbf09c4189"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "1c9813eba3d83aa087f16630ea829d9bc31291e8"
+    },
+    {
+      "path": "Resources.meta",
+      "type": "file",
+      "sha": "7115bc5975f0b20c9a4f1390a359dae05afecb68"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "62febf323b07eddfc52757c29357b964c9f93e29"
+    },
+    {
+      "path": "Runtime.meta",
+      "type": "file",
+      "sha": "1ffa3d3d688868b2daa5a909f1d6c6baa0746799"
+    },
+    {
+      "path": "Runtime",
+      "type": "dir",
+      "sha": "0561ae413e2fe77a97a6f1fc5da514d815b66a0a"
+    },
+    {
+      "path": "Samples~",
+      "type": "dir",
+      "sha": "e4c11530412670d009aa04fc7cdc56e8b6aac478"
+    },
+    {
+      "path": "Tests.meta",
+      "type": "file",
+      "sha": "9b4604ccacd864515a4bf982eb6bb9186434af6a"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "9d66ee17fd0cb5e30819c13ea25393585fbbc495"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "703fec97263556ddd4e024d9ad8cf653de94da4e"
+    },
+    {
+      "path": "package.json.meta",
+      "type": "file",
+      "sha": "c1325134d15284f17042fd80707fb63070f88bb1"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

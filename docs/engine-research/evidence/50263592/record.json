@@ -1,0 +1,59 @@
+{
+  "repository": "Mikescher/GridDominance",
+  "repository_id": 50263592,
+  "commit": "1611e0038a95c516426331fc2d4b13a9f6a4c446",
+  "source_url": "https://github.com/Mikescher/GridDominance/tree/1611e0038a95c516426331fc2d4b13a9f6a4c446",
+  "readme_path": "README.md",
+  "readme_sha256": "bfe3d88fdcef6b3b0815c5eec03041920d973ecaf7058a5b1b85b872109cac74",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bd19b05f363eb9a5119b926a880360f2477d33b6"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "4949bb43d90c5a29036c103725e5b1680bb49fe0"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5bf5deef00472d782e9d932f981a36763dc01d18"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "4678373bc3330fd0e71c146166deadebeba5bf94"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "62fabc600d5edc5d4b368c619b8a2ecbc8707b37"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d1871374b155d8d18824fd58b30a175aff6e7cd5"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "a5c62e2ecded78027dc6bc817a0d19eba9dfdf4d"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "a6af3f67f180903dfc8ab6d7c3555bd163ebc898"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Xamarin tactical puzzle game source, not separately identified engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

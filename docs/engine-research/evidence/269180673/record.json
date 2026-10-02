@@ -1,0 +1,94 @@
+{
+  "repository": "TheAssemblyArmada/Vanilla-Conquer",
+  "repository_id": 269180673,
+  "commit": "ce83b59edd99cccac6cebaae054ca04962c744b7",
+  "source_url": "https://github.com/TheAssemblyArmada/Vanilla-Conquer/tree/ce83b59edd99cccac6cebaae054ca04962c744b7",
+  "readme_path": "README.md",
+  "readme_sha256": "4372a12400c8491901283e7462c1faa7ce7de4cb2e63cff360b64663e8789235",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "ab5b676ad566f3553f6889c23291eae9dbc30893"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8a23b5e81da786e700dee8dd6244a518db76cf7d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8e99b2a2e5d52ccafc8a6117776a07cafae4a292"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fe80d21579b78bc56da696408a70b183df4185c3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8d094fa091a4bc78936d2c66af706e988d5d984e"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "398a7326548fe8697bf85caa1927469f0716420a"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "24d30012992b1014c724a9eac31c7a6e228f2edd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d55b6dce938801791d6871fa9b93d6f6446dd4ca"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "30d17569dab03a27a5bb1ff5d0712cc8af8cacbf"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "5f1df2344729c7f1efe300a0b0922a57f2182dbb"
+    },
+    {
+      "path": "redalert",
+      "type": "dir",
+      "sha": "dd5ba5b82d13eb3eb851a1e4a62aed0af66fe81b"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "77c5da0bc886b3c1c9396521b26641c7cfc3e5af"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3c17844fdd2f13b2f61d9e213fbf4c65907e8ee4"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "72c31bda27c23cc2abaf2b3f3bb4937643610f04"
+    },
+    {
+      "path": "tiberiandawn",
+      "type": "dir",
+      "sha": "9fec6c2bc98dbea64f26288dcdecd113683e62e2"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "162a610555c29f335b5e8448697524517b41abda"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies portable C&C engine; common/redalert/tiberiandawn source and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

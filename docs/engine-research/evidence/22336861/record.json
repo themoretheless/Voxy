@@ -1,0 +1,47 @@
+{
+  "repository": "phoboslab/TwoPointFive",
+  "repository_id": 22336861,
+  "commit": "6b8edc826dd5be3dc61eb7b9a350a256fb532579",
+  "source_url": "https://github.com/phoboslab/TwoPointFive/tree/6b8edc826dd5be3dc61eb7b9a350a256fb532579",
+  "readme_path": "readme.md",
+  "readme_sha256": "8e6160d7fa552bb0641e642d57e959c02e71e3aa3554c62a85fcb9ca73411a88",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23d380ec44920672b4e2cacbe0b172f7ec5447a2"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "087bf2076ded5dbe88c39a3c24088d0255bc03b1"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "7399a8b4dd1931dfa92c9987737ab5fc6b80c475"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "aee26cb868ebcfe6e7e9d04b5d10c7febfa4e9ec"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "d53a9440ae5b5e233220bde84ea987085939eb86"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "bff18a4e201a7a553d69dda6208dada15af0264e"
+    },
+    {
+      "path": "styles.css",
+      "type": "file",
+      "sha": "4c252e8587904808426f90d88676419a9f356a04"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

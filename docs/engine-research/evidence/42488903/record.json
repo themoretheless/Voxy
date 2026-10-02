@@ -1,0 +1,174 @@
+{
+  "repository": "aframevr/aframe",
+  "repository_id": 42488903,
+  "commit": "022bcc5f6eef09ff60d3f2110604c78cae0cd5b1",
+  "source_url": "https://github.com/aframevr/aframe/tree/022bcc5f6eef09ff60d3f2110604c78cae0cd5b1",
+  "readme_path": "README.md",
+  "readme_sha256": "64e3f3605d2ee9177ad3935e260b510149608464f85815bd39d1c98ef137f701",
+  "entries": [
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "c1883714fe471f9cbcdfa8c9f96e57e57cd27b5a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0866700b4e557e328528f6a9ae52973ffc5e1d34"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0de76229264bfb90f98a4de83efc075e51bec8e8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3afecd756b832ef218c381f93d717ab5d6f4f5a1"
+    },
+    {
+      "path": ".jshintrc",
+      "type": "file",
+      "sha": "66a51c350879a64d0e7f05f0de54adad9c9824d9"
+    },
+    {
+      "path": ".nojekyll",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "9273c1c323ff9eec46d0c778ab1f4f27e669689b"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "21eb88f813ac637d291d423ede5b8458640cf1a6"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "9bc15f803c5b73c5846d72078466c222b4a07f24"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e9bb12b93c9f7fbee8ec131f4a32a5b41d5dc86d"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "838c21e13c504aacebce698bf7b9add1db4bf281"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b2a33c6928474e6021c5235f875c58a09503132c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b5f22499e0e05a415a1307950b2130f1fc7c7a37"
+    },
+    {
+      "path": "ORGANIZATION.md",
+      "type": "file",
+      "sha": "0b3d36d487dd7899122b4dffd291a10bbd065159"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "22f56f7b498c3025fd9cb0a100ac34d49a62a516"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "ab7b2f4ca24c04d66b594628f4ad2523a3df6672"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "6e816b76ff561cb59b2956d1383bc768b198ccef"
+    },
+    {
+      "path": "codeql-config.yml",
+      "type": "file",
+      "sha": "afa5b80129268c21f663b596261fb30482ad1098"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "2d23398af49dcdc69b80eb452792c217bbce8bfe"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0b06946f4e30b884c1c4a8597deb3c161afd3e86"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ddece7346952c923f3b5c31a45c824acbc50a6de"
+    },
+    {
+      "path": "funding.json",
+      "type": "file",
+      "sha": "c698614d997ed69b72806dee2f4e850ae7e8cf51"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "427b6f929c7cca1ae817fcec0df517731b9934a8"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6d59e1fea4fb93cb83524dc350a09666b771573d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9a85842426b8026302e33fe2ebdeee10f21c5ad5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5d6ee84366ba16b85e875dce7bd643a9acf5657f"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "3e55ea31a7fe7b100c48f3f12dd11d571b89fb3e"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "2bee86f42a2e211c57cd3fbc15189895177f335a"
+    },
+    {
+      "path": "webpack.common.cjs",
+      "type": "file",
+      "sha": "b009934b42e0089a39ef75768f04955ec6981473"
+    },
+    {
+      "path": "webpack.config.cjs",
+      "type": "file",
+      "sha": "40dced0f50f9107323eeb16641534d622cef22fe"
+    },
+    {
+      "path": "webpack.module.config.cjs",
+      "type": "file",
+      "sha": "eeb68809a5cec2607b012ff11fc5df35af3abbfe"
+    },
+    {
+      "path": "webpack.prod.config.cjs",
+      "type": "file",
+      "sha": "329113bc5e144df0957a5bd5a3d22a083d279639"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes a declarative web/VR framework on three.js; src, npm build and tests present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

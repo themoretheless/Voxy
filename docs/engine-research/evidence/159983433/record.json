@@ -1,0 +1,74 @@
+{
+  "repository": "lettier/lambda-lantern",
+  "repository_id": 159983433,
+  "commit": "fd1606227f880d8b90d54d13d3fe7c6a2fe29127",
+  "source_url": "https://github.com/lettier/lambda-lantern/tree/fd1606227f880d8b90d54d13d3fe7c6a2fe29127",
+  "readme_path": "README.md",
+  "readme_sha256": "70e4dd5c65f17567666c3c7dcd9d04fa720adc0771cc4e81dad502a94bc5420c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2e3d165293aea4735ec60a06871ef20675982cd5"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "5e0613fa0796a27dbffea0a38d42a0fee329a50e"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "71a5fd3bb8c19525af0a2c3ef208fd1236ebb8bb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bbd33471d61975d0158ee533f44966a4cb0e40ff"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "755014113f37574f6a750fa6b67b8450b2e237d4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f606c70b20111c1db94ac48df104405a00636db2"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f8b91f09a3f2c844c0dac7581077e00a9c397d52"
+    },
+    {
+      "path": "ffi",
+      "type": "dir",
+      "sha": "f6c69fca3077a3e1c4b9052037e199cf633fdf26"
+    },
+    {
+      "path": "icon",
+      "type": "dir",
+      "sha": "76f45be01c6cae471882f5cb954213c5ba348ab1"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "a5aa2983be1f9d899b2726ca72674ba8c8b10770"
+    },
+    {
+      "path": "psc-package.json",
+      "type": "file",
+      "sha": "2b55b9fa0b0070ce399542e89a1df19667042fe3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c74091e6e74f9b66129ab126cb8c222dd7a206d4"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "A functional-programming game using Panda3D, rather than a separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

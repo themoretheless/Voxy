@@ -1,0 +1,29 @@
+{
+  "repository": "UnterrainerInformatik/GameDevelopmentLinks",
+  "repository_id": 68141494,
+  "commit": "f9133224a06b3ffd00c4a5e05fe03ee107e3e8d4",
+  "source_url": "https://github.com/UnterrainerInformatik/GameDevelopmentLinks/tree/f9133224a06b3ffd00c4a5e05fe03ee107e3e8d4",
+  "readme_path": "README.md",
+  "readme_sha256": "636ed51e599206d18418ff470450f5b9c9de1c3fd3ecbbe232425bb6a1542058",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8b1815e201289d12d44da87a895cd86af7e7b6fc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cf1ab25da0349f84a3fdd40032f0ce99db813b8b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9c43412c2754ffb7b07de38aaf5561cd9f90b7a2"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README lists development references; root only documentation/license.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

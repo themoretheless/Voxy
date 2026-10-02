@@ -1,0 +1,92 @@
+{
+  "repository": "umineko-project/onscripter-ru",
+  "repository_id": 193159220,
+  "commit": "360b733cfb3674557bf3465133779429a8ae67a9",
+  "source_url": "https://github.com/umineko-project/onscripter-ru/tree/360b733cfb3674557bf3465133779429a8ae67a9",
+  "readme_path": "README.md",
+  "readme_sha256": "8ba77721a0b2235dfebf202da2a3147cb46b6d0ba4b9247480d5849fdbe512d4",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6450fa552c249bff9aebac9e74bdddff16506517"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f5025f0cdfd4459c3222e661a9af19c7ceb331c3"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "b9ab48e0853d4b7f8170807b3e10378bdf13cb45"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "1866dca432c70469b1b5a3341eb0498341725b2a"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "8ad06fb083ec2748da80081f5b053248c4333074"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "25b2aaf9d78b2feb9519b3b1d3f8ab4b42fc4ef3"
+    },
+    {
+      "path": "LICENSE-BSD",
+      "type": "file",
+      "sha": "bafc18271eb520b8eee53b01c6a9d60c1b6ec998"
+    },
+    {
+      "path": "LICENSE-GPLv2",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "ONScripter.xcodeproj",
+      "type": "dir",
+      "sha": "33ee2f97ff783f8e589c2dadb0f925f0f7ffd509"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "38183c93c008e3cdc1b108f5d942e33e7c77ac5c"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "d878af6b2a6746926fd5b74867809545f2eaa6a4"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "4a7bc82ddb81e6cf2c03dfd6b60867cd213a9ccb"
+    },
+    {
+      "path": "Support",
+      "type": "dir",
+      "sha": "2c4b740f36ecaddf6e077e47bf639a6a069d2a0c"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "6993eb5e14755f1c06b82da3fec7d459b8348305"
+    },
+    {
+      "path": "_clang-format",
+      "type": "file",
+      "sha": "ba6ab1f9fd0a76344d8ea2cad77875a60d0f8fc0"
+    },
+    {
+      "path": "configure",
+      "type": "file",
+      "sha": "d3f86d5cbc50e2dadf5c9da0e206d4309a38fb8f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

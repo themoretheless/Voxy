@@ -1,0 +1,34 @@
+{
+  "repository": "kripken/BananaBread",
+  "repository_id": 3677506,
+  "commit": "455191d2e289f6d67f22c9ec44477ff0814d9aa3",
+  "source_url": "https://github.com/kripken/BananaBread/tree/455191d2e289f6d67f22c9ec44477ff0814d9aa3",
+  "readme_path": "README.md",
+  "readme_sha256": "b79e94479d40e5e48bd3c44bf9acc44f75cb8983779a352c25c89f618fb0df04",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8b375dd39ff7ce896bd348c0dda5c586315ece05"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "3257e3c524cfd263db9ba8e5191f2ba657c8c0e9"
+    },
+    {
+      "path": "cube2",
+      "type": "dir",
+      "sha": "cc23ebce0c418a3cc5d405119d8123b288cf7a79"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c6d1c56ffb4dd08f8dda26f35dcd3e7a1112a129"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit Cube2/Sauerbraten web port with engine source, physics/AI/rendering and Emscripten tooling; inactive, successor separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

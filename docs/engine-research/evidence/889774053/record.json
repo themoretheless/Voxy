@@ -1,0 +1,207 @@
+{
+  "repository": "ct-js/ct-js",
+  "repository_id": 889774053,
+  "commit": "63791a05b7ecb6ced3c14de72b0649e4eb54574b",
+  "source_url": "https://github.com/ct-js/ct-js/tree/63791a05b7ecb6ced3c14de72b0649e4eb54574b",
+  "readme_path": "README.md",
+  "readme_sha256": "2ade66533e698868dd4e290f32de8139c446cf3e7b39352d664e68e42fa061a0",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "f692a31612180b7c297683f4b5cf588afe08e35d"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "1999263d53118765648faf2aedfc711c9fc61e07"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "4cebde81ab72407b5f21d195da941ef57900f56d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "66eedfdf73a6cf609282545e85343f71d2ebdabc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "61c7f9a247b34eff114e24ab0750325c6bfb0c50"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5a4019a727350a1e5e0e348d9ff6c149e3dfc0e4"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "9e4a5d8d85c0e50b0be425b9653fd4eca74061bb"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8dd135fae4d762c8cf8aca62d8cfbed17044c622"
+    },
+    {
+      "path": ".stylelintrc",
+      "type": "file",
+      "sha": "fecf97b51f40e48756a830f91cdc39eaa2f31ab4"
+    },
+    {
+      "path": ".stylintrc",
+      "type": "file",
+      "sha": "a067635f6345771b2b5ab5b63349e2a495841e62"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ac70bcd53d29fdfc823550a93be83af178a8dde3"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "cd77771069914f9376ddd9d5df254861cdf99dbc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8aeb1fa597b60893fc388ab69ddd6fff4dbe3bf8"
+    },
+    {
+      "path": "OurRiotDocFormat.md",
+      "type": "file",
+      "sha": "72a6fdc5b79c9a36eef310ce8596b8c996b8b3b7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cf1589d11ef06d41f8f329a16ccd1a5c77609159"
+    },
+    {
+      "path": "SSCD.js",
+      "type": "file",
+      "sha": "3c63e32ef3bbf6c18e89832e7bb43d489ba77bfb"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "e9d74482baae418f4ee9d5cb43de52d903d328f4"
+    },
+    {
+      "path": "branding",
+      "type": "dir",
+      "sha": "d81032084ee58152f211712bbfe9d7727ce4f1cf"
+    },
+    {
+      "path": "buildAssets",
+      "type": "dir",
+      "sha": "2fb69ad83c3e07da3bdfa836f8ac823ac2647e56"
+    },
+    {
+      "path": "builtinModules.json",
+      "type": "file",
+      "sha": "a3c5a27b42f84410f651b7fa996b7ea2ec2858f2"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "9a8c63b394f846aa7e8b9561d5461c2c3ee6e0f9"
+    },
+    {
+      "path": "bundledAssets",
+      "type": "file",
+      "sha": "9aedca8ad8903e2df4e99f4b7b40a5c7df6c3d9e"
+    },
+    {
+      "path": "cat.png",
+      "type": "file",
+      "sha": "dad0b3001e31b5382ebc92426ab77b6bf2a5f18e"
+    },
+    {
+      "path": "customNwManifest.json",
+      "type": "file",
+      "sha": "66e1f06a97ecf69941ad841d37a572bd2bce8e32"
+    },
+    {
+      "path": "data",
+      "type": "symlink",
+      "sha": "b7dccf6bdb525c1fbc52370da375f467a0fcf05e"
+    },
+    {
+      "path": "devSetup.gulpfile.js",
+      "type": "file",
+      "sha": "9a9d7be2351baa6802c34465a2775a24c47697ec"
+    },
+    {
+      "path": "docs",
+      "type": "file",
+      "sha": "c3a5f2b77dc77af8fbe38f25df997a215f2bfef8"
+    },
+    {
+      "path": "error.png",
+      "type": "file",
+      "sha": "d1b19ee103ad5e9f00ed5e444130ac60bff7d4f7"
+    },
+    {
+      "path": "gulpfile.mjs",
+      "type": "file",
+      "sha": "8402274678b54925231370dee9a8d9b34d8eb336"
+    },
+    {
+      "path": "itchPage.css",
+      "type": "file",
+      "sha": "6dd11193bfb911c15fa38f19e9fc004d1c3c67f9"
+    },
+    {
+      "path": "itchPage.html",
+      "type": "file",
+      "sha": "918edc96c859d744608cdad0e56c5ac8b18ce5d3"
+    },
+    {
+      "path": "node_requires",
+      "type": "dir",
+      "sha": "d7f51ba1b1abd02a98a1263dd9b66cc456acea59"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "f30b389fbf2e132e507b9fe3f3fc2e6aab95c290"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8f5097f456acf54a592d9359071138d5f7270611"
+    },
+    {
+      "path": "pull_request_template.md",
+      "type": "file",
+      "sha": "afd3c97c91e32ca924920d31bfed36211faa0c92"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ffda35781f1931bd2b9e78bef1fcc20c9c0f0291"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "c4e81251e5769e19ca9565c88197060d1b22eacb"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "2a1e65b6452806dac2c5f71dc7d9d77e5391094a"
+    },
+    {
+      "path": "versions.js",
+      "type": "file",
+      "sha": "a685d763ec0d9e588dcff67ee6e71d248a33aaea"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

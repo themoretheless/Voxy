@@ -1,0 +1,99 @@
+{
+  "repository": "ExplosionEngine/Explosion",
+  "repository_id": 266468025,
+  "commit": "2bf06f252dde656becc9d2a492bae45f1bdc9a82",
+  "source_url": "https://github.com/ExplosionEngine/Explosion/tree/2bf06f252dde656becc9d2a492bae45f1bdc9a82",
+  "readme_path": "README.md",
+  "readme_sha256": "28090a04fe637d9a20bde8c5dffeb41b743511121a7cac6ff1fe5c30849e206a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "9f55b242ef318c5fa9ce3a205e08c7b708b5f186"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "146fa4f118bf41dc4bc3b86fb0da21fd7ca617fa"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bebc3791b3904e694d71472802850b790b1816ee"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d628642d7925057b94836976bf5f4c44acf64dd2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "30a1b6063d8a907dfb6e2286796c6dccf0dc22a0"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "042c99c77da3923b3c02f3bf36fdc849a495349b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "429c257588cb30dfaf573d5fbdc945422b2d56d9"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "bc65222002cb64146ccda3f212e6dc39c909fffc"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "bd98508c46ab16e8766146fe394592eeff3b16e9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "14da42b00358564dc770eab35a8d2b7bca567f5a"
+    },
+    {
+      "path": "Program",
+      "type": "dir",
+      "sha": "60355ea38c59743d666b3d9ebc262212ec5c1e92"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2c4c4672760f6e2b0ece684f7f38f60a3d15ee76"
+    },
+    {
+      "path": "Sample",
+      "type": "dir",
+      "sha": "b5ef1c238045b4d7d542e3162dd64b41041fb3ba"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "7f2dba97603e585162019a8087bce09c816d3ecd"
+    },
+    {
+      "path": "Tool",
+      "type": "dir",
+      "sha": "d72582c85d97c7ab1dd1d57a170be327f8358605"
+    },
+    {
+      "path": "conan_provider.cmake",
+      "type": "file",
+      "sha": "f2007215ff97accf21283ca489446e728c52ae50"
+    },
+    {
+      "path": "conanfile.py",
+      "type": "file",
+      "sha": "54317be48c0b7f36e1a8cdbe1bee80cec44c551e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies work-in-progress native ECS engine; owned Engine/Editor/Tool and CMake build. Backend availability unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

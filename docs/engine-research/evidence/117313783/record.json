@@ -1,0 +1,122 @@
+{
+  "repository": "EvilPudding/candle",
+  "repository_id": 117313783,
+  "commit": "a58afb0403776b1e52c90345baf9985f6931244e",
+  "source_url": "https://github.com/EvilPudding/candle/tree/a58afb0403776b1e52c90345baf9985f6931244e",
+  "readme_path": "README.md",
+  "readme_sha256": "314b27a2ebb24a20010a1e04f93828dab67f270f7733c879ab00a0eb7610aa1f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7e239c872d14291ceef4601b4e489511fb39c48e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "378eac25d311703f3f2cd456d8036da525cd0366"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "99cbc8c3aea853c7d39863f1839418d8bb05e1b3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "206d829812e3a43b790f123e36078090aa134972"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "4822239236e8a63758a7632f7ef9979582d33041"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8190cfd246539ea73ef0dc022118cfae881ae013"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "2b8e866f54ff992363803d5c5ecd6167c3e8d6a3"
+    },
+    {
+      "path": "buildtools",
+      "type": "dir",
+      "sha": "82e6f48a94c8ab8fe048fd93f72084f2ec45b62e"
+    },
+    {
+      "path": "candle-config",
+      "type": "file",
+      "sha": "d2b750c5654fd9f8118ac532b3b3aad363352a12"
+    },
+    {
+      "path": "candle.c",
+      "type": "file",
+      "sha": "f2daa9ba9ce4ef43e75157469c76f3a138e6237b"
+    },
+    {
+      "path": "candle.h",
+      "type": "file",
+      "sha": "bfed1532f6b8fe881c6e32312e52f34703f8ec5a"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "178f3b349f6c37910a5586c033c636f739a23927"
+    },
+    {
+      "path": "ecs",
+      "type": "dir",
+      "sha": "da1400807c8016d477df9a06565ec99aece37391"
+    },
+    {
+      "path": "events.h",
+      "type": "file",
+      "sha": "4c22e5012431f9a4f9c0dfc2c0fce56795736057"
+    },
+    {
+      "path": "formats",
+      "type": "dir",
+      "sha": "e7a2754160dbf561ffcce38f6d4debb1adc45712"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "b028ffec3aae94b90237fdf0e1614c24e8533d7c"
+    },
+    {
+      "path": "selfextract.sh",
+      "type": "file",
+      "sha": "53010ad4f1dc50b0a9f317a3ec6e2dcb32bde4d8"
+    },
+    {
+      "path": "systems",
+      "type": "dir",
+      "sha": "8ec03d03b347dd0d9c8533430238757a04ce1202"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "ab25d21023c41a01c6ff3a212df2b09a633fbc10"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "a8e5c6b6e95510a6240c46b4e6181bf085d5cc3d"
+    },
+    {
+      "path": "vcenv.bat",
+      "type": "file",
+      "sha": "33e2e049e65f766606ea0c509730bafdc7f5080c"
+    },
+    {
+      "path": "vil",
+      "type": "dir",
+      "sha": "0799e7f9d41a62fce67a884ad556d91254269fc3"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

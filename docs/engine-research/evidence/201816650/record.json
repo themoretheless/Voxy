@@ -1,0 +1,219 @@
+{
+  "repository": "ct-js/ct-js-old",
+  "repository_id": 201816650,
+  "commit": "bf5fc8c89aebbbbb15ddd156a438bb303ec2942f",
+  "source_url": "https://github.com/ct-js/ct-js-old/tree/bf5fc8c89aebbbbb15ddd156a438bb303ec2942f",
+  "readme_path": "README.md",
+  "readme_sha256": "b8e3e647adddb292140ba90e9a81b7dc5d5067001ec51eecdc7c5b83ceedc38f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "1fd1a5a7f74be75ed9ddbbc1a8e1882ed57dad21"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "1999263d53118765648faf2aedfc711c9fc61e07"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "4cebde81ab72407b5f21d195da941ef57900f56d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "66eedfdf73a6cf609282545e85343f71d2ebdabc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b3678b5ea7e66d02044dfa5c9552a5c2cdc45104"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5a4019a727350a1e5e0e348d9ff6c149e3dfc0e4"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "9e4a5d8d85c0e50b0be425b9653fd4eca74061bb"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8dd135fae4d762c8cf8aca62d8cfbed17044c622"
+    },
+    {
+      "path": ".stylelintrc",
+      "type": "file",
+      "sha": "fecf97b51f40e48756a830f91cdc39eaa2f31ab4"
+    },
+    {
+      "path": ".stylintrc",
+      "type": "file",
+      "sha": "a599ced3a93ea38b6c47cfa35a740ee0e8a6b931"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ac70bcd53d29fdfc823550a93be83af178a8dde3"
+    },
+    {
+      "path": "7z.so",
+      "type": "file",
+      "sha": "b4debe219e14cf7782af2f3692bb3898d52fe4e1"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "cd77771069914f9376ddd9d5df254861cdf99dbc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8aeb1fa597b60893fc388ab69ddd6fff4dbe3bf8"
+    },
+    {
+      "path": "OurRiotDocFormat.md",
+      "type": "file",
+      "sha": "72a6fdc5b79c9a36eef310ce8596b8c996b8b3b7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7562565d885d588d7f0594e7dec66056f143a968"
+    },
+    {
+      "path": "SSCD.js",
+      "type": "file",
+      "sha": "3c63e32ef3bbf6c18e89832e7bb43d489ba77bfb"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "5102d863f5d91f3ff44e72dfa4a14453dd6cc969"
+    },
+    {
+      "path": "branding",
+      "type": "dir",
+      "sha": "d81032084ee58152f211712bbfe9d7727ce4f1cf"
+    },
+    {
+      "path": "buildAssets",
+      "type": "dir",
+      "sha": "2fb69ad83c3e07da3bdfa836f8ac823ac2647e56"
+    },
+    {
+      "path": "builtinModules.json",
+      "type": "file",
+      "sha": "a3c5a27b42f84410f651b7fa996b7ea2ec2858f2"
+    },
+    {
+      "path": "bundledAssets",
+      "type": "file",
+      "sha": "9aedca8ad8903e2df4e99f4b7b40a5c7df6c3d9e"
+    },
+    {
+      "path": "butler",
+      "type": "file",
+      "sha": "5b69507347786697ae911a56d0492b14af472b42"
+    },
+    {
+      "path": "cat.png",
+      "type": "file",
+      "sha": "dad0b3001e31b5382ebc92426ab77b6bf2a5f18e"
+    },
+    {
+      "path": "comigojiChangelog.js",
+      "type": "file",
+      "sha": "dcddb167524111602cd4427af721ef8c152a4632"
+    },
+    {
+      "path": "customNwManifest.json",
+      "type": "file",
+      "sha": "66e1f06a97ecf69941ad841d37a572bd2bce8e32"
+    },
+    {
+      "path": "data",
+      "type": "symlink",
+      "sha": "b7dccf6bdb525c1fbc52370da375f467a0fcf05e"
+    },
+    {
+      "path": "devSetup.gulpfile.js",
+      "type": "file",
+      "sha": "9a9d7be2351baa6802c34465a2775a24c47697ec"
+    },
+    {
+      "path": "docs",
+      "type": "file",
+      "sha": "fdab0a3d7fd8654b50ebdc3abf921b90cb9af0f4"
+    },
+    {
+      "path": "error.png",
+      "type": "file",
+      "sha": "d1b19ee103ad5e9f00ed5e444130ac60bff7d4f7"
+    },
+    {
+      "path": "gulpfile.mjs",
+      "type": "file",
+      "sha": "d991c26281d62a83346db4c31781e413c66ae61d"
+    },
+    {
+      "path": "itchPage.css",
+      "type": "file",
+      "sha": "6dd11193bfb911c15fa38f19e9fc004d1c3c67f9"
+    },
+    {
+      "path": "itchPage.html",
+      "type": "file",
+      "sha": "918edc96c859d744608cdad0e56c5ac8b18ce5d3"
+    },
+    {
+      "path": "libc7zip.so",
+      "type": "file",
+      "sha": "7104ca45356004958ebf2ea2052e95cfab6139e7"
+    },
+    {
+      "path": "node_requires",
+      "type": "dir",
+      "sha": "b5f37926f5c451debc8dedb4387e6de7447233d8"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "d18f7e09b3107fb5621c93661db83ff8bb1fa183"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "4ed63fb52bcaf8e6fe0dc733b48a8b1c543f7a4e"
+    },
+    {
+      "path": "pull_request_template.md",
+      "type": "file",
+      "sha": "afd3c97c91e32ca924920d31bfed36211faa0c92"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2ee7f2a79e655422ea51655a5fbaa3a8cf2013c8"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "c4e81251e5769e19ca9565c88197060d1b22eacb"
+    },
+    {
+      "path": "versions.js",
+      "type": "file",
+      "sha": "a685d763ec0d9e588dcff67ee6e71d248a33aaea"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies historical 2D engine/IDE; owned app/built-in modules and build assets. Superseded repo status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

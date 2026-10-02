@@ -1,0 +1,204 @@
+{
+  "repository": "community-shaders/skyrim-community-shaders",
+  "repository_id": 606527043,
+  "commit": "5b5361f532b3c10520c749c0f4168bd46d0d82a7",
+  "source_url": "https://github.com/community-shaders/skyrim-community-shaders/tree/5b5361f532b3c10520c749c0f4168bd46d0d82a7",
+  "readme_path": "README.md",
+  "readme_sha256": "52a713c71e38dc827318f304746376e0957d078b8e1e1e5269a96c301d900eff",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "9ffe5f7002ad70d841d798bde5df305326d78eb1"
+    },
+    {
+      "path": ".clang-format-ignore",
+      "type": "file",
+      "sha": "1ddcdadce0f86346ba625358d4a6cab36ce3edf5"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "6d9c05fc3ef60aa7c3bf5e7f5c57d1be6d512719"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "70a709225b7e422d45b3d3983f26896b92b497ea"
+    },
+    {
+      "path": ".coderabbit.yaml",
+      "type": "file",
+      "sha": "841d8e1adb4ec36041288bd96ce104d14d523caf"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "72467a3279cfa0cf051176f36675b9c56cf08fa6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f882be2861441ebe8867d7c3237b1018791f5989"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "541168033ade9fe187d73a288835b8e12c9f2978"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "db0fe8c6f7774c0f9afa2d0d7946fd9545e7d52a"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "7b91f9f38cc96e6bd09efa698d689accb8341ab5"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "ab82005a8ee15e05b1f34949671254d2fa987c77"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "f4a05e671f74769983da2dfb0344f84056edbf6f"
+    },
+    {
+      "path": ".releaserc.js",
+      "type": "file",
+      "sha": "abfa05b1e482d10dbf72035eec37684685cc6d21"
+    },
+    {
+      "path": "AI-INSTRUCTIONS.md",
+      "type": "file",
+      "sha": "f2ffd0e55cdb5c6866cb3b9c3da527b07350ff49"
+    },
+    {
+      "path": "BuildDebug.bat",
+      "type": "file",
+      "sha": "74499c996c982d8620c1e283d002373086c88ea1"
+    },
+    {
+      "path": "BuildDev.bat",
+      "type": "file",
+      "sha": "0ab970284030f95af55a73a38db05552ed3099ed"
+    },
+    {
+      "path": "BuildDevFast.bat",
+      "type": "file",
+      "sha": "21b1aa165af175cf6639ca86b35ee19d2dd37899"
+    },
+    {
+      "path": "BuildPR.bat",
+      "type": "file",
+      "sha": "56314fdde9d9912d01bcb8860257b0cf69de4b35"
+    },
+    {
+      "path": "BuildRelease.bat",
+      "type": "file",
+      "sha": "ab4d9359d868339dd68614e226a565853edf7df8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d776b774c6b68c05858bb272903a79cc530f9c0d"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "c03da4c42057ad490359274375c5b49573f3c4f2"
+    },
+    {
+      "path": "CMakeUserPresets.json.template",
+      "type": "file",
+      "sha": "86524109e29fb66001406f29adb63802a3bcc571"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "9ca01db98e483139bfd812c58abfd62849494a52"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "15b2d994155fd2ed3df50b6a1d96c59bb311387e"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "af2eac944d4d0917eaa1a41c026428c35abc09c9"
+    },
+    {
+      "path": "EXCEPTIONS.md",
+      "type": "file",
+      "sha": "9ee587567d8e18007b7735cec6d7bb980bf5ed58"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6998ed5a3aebc7e501965f2cea78e559f3c87e67"
+    },
+    {
+      "path": "TRANSLATING.md",
+      "type": "file",
+      "sha": "83e2c2203ce5776d7f9b8ae3523e67667d77ccbd"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d657e65af3f3c0719720effa59c1c7c510a78dbf"
+    },
+    {
+      "path": "containerbuild.ps1",
+      "type": "file",
+      "sha": "463e9aeaa6b01850c81a0395ed5cc9bbb46fde37"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "76c2ae19352d1019fb9b3a5b2595ec810557545a"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "3e81239849bf1003dba340b3b1c2797d3442d085"
+    },
+    {
+      "path": "features",
+      "type": "dir",
+      "sha": "28f69fc7b81e6a6fda30bb3983c02eb49f4fba45"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "dbb4f011ee2b726ba61d75bb05e05fb6c4d9c6f4"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "f7719ab39fc391592235ec37d7effc78b491de8b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "25096143d1addf80c422c76cedc793e058222946"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "748046ecf4acaf4408597bbcbae61fe8830bae81"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "7d9486ce4ff7d0128a24ada40a25d37c409009c9"
+    }
+  ],
+  "classification": "excluded_game_mod",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README depends on Skyrim/SKSE and existing engine fixes; CMake builds graphical game extension, not owned engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

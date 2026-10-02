@@ -85,7 +85,29 @@ pub fn step_vehicle(
     dt: f64,
     config: VehicleConfig,
 ) -> Result<VehicleStep, VehicleError> {
-    validate(state, input, dt, config)?;
+    step_vehicle_with_chassis_step(state, input, dt, config, |chassis, input, dt, config| {
+        step_character(view, registry, chassis, input, dt, config).map_err(VehicleError::from)
+    })
+}
+
+/// Runs the bicycle model with a caller-selected chassis controller.
+/// The controller operates on a private candidate; any failure preserves the
+/// original vehicle, including heading and longitudinal speed.
+/// # Errors
+/// Reports vehicle validation/overflow or the caller's controller failure.
+pub fn step_vehicle_with_chassis_step<E: From<VehicleError>>(
+    state: &mut VehicleState,
+    input: VehicleInput,
+    dt: f64,
+    config: VehicleConfig,
+    mut chassis_step: impl FnMut(
+        &mut CharacterState,
+        CharacterInput,
+        f64,
+        CharacterConfig,
+    ) -> Result<CharacterStep, E>,
+) -> Result<VehicleStep, E> {
+    validate(state, input, dt, config).map_err(E::from)?;
     let mut next = *state;
     let previous_center = center(next.chassis.body);
     let forward = [next.heading.sin(), next.heading.cos()];
@@ -93,6 +115,9 @@ pub fn step_vehicle(
     let planar = [next.chassis.velocity[0], next.chassis.velocity[2]];
     let mut longitudinal = dot(planar, forward);
     let lateral = dot(planar, right);
+    if !longitudinal.is_finite() || !lateral.is_finite() {
+        return Err(E::from(VehicleError::NumericalOverflow));
+    }
     let drive_force = if input.throttle >= 0.0 {
         input.throttle * config.engine_force
     } else {
@@ -110,6 +135,10 @@ pub fn step_vehicle(
         0.0
     };
     longitudinal += (drive_force - drag - rolling - brake) / config.mass * dt;
+    // Reject before braking/clamping can hide an infinite intermediate.
+    if !longitudinal.is_finite() {
+        return Err(E::from(VehicleError::NumericalOverflow));
+    }
     if input.brake && longitudinal.signum() != state.longitudinal_speed.signum() {
         longitudinal = 0.0;
     }
@@ -117,6 +146,9 @@ pub fn step_vehicle(
     let lateral = lateral * (-config.lateral_grip * dt).exp();
     let steering_angle = input.steering * config.max_steering_angle;
     next.heading += longitudinal / config.wheelbase * steering_angle.tan() * dt;
+    if !next.heading.is_finite() {
+        return Err(E::from(VehicleError::NumericalOverflow));
+    }
     next.heading = wrap_angle(next.heading);
     let forward = [next.heading.sin(), next.heading.cos()];
     let right = [forward[1], -forward[0]];
@@ -124,9 +156,10 @@ pub fn step_vehicle(
         forward[0] * longitudinal + right[0] * lateral,
         forward[1] * longitudinal + right[1] * lateral,
     ];
-    let collision = step_character(
-        view,
-        registry,
+    if desired.iter().any(|value| !value.is_finite()) {
+        return Err(E::from(VehicleError::NumericalOverflow));
+    }
+    let collision = chassis_step(
         &mut next.chassis,
         CharacterInput {
             planar_velocity: desired,
@@ -329,6 +362,7 @@ fn validate(
 #[derive(Debug)]
 pub enum VehicleError {
     InvalidState,
+    NumericalOverflow,
     Collision(CharacterError),
 }
 
@@ -363,6 +397,114 @@ impl std::error::Error for RaceError {}
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    struct QueryForbidden;
+    impl VoxelView for QueryForbidden {
+        fn sample(&self, _: voxy_world::VoxelPos) -> voxy_world::Sample<voxy_world::BlockStateId> {
+            panic!("overflow must reject before voxel collision queries")
+        }
+        fn chunk(&self, _: voxy_world::ChunkPos) -> Option<voxy_world::ChunkSnapshot> {
+            panic!("overflow must reject before chunk queries")
+        }
+    }
+
+    #[test]
+    fn finite_parameters_cannot_hide_overflow_with_braking_or_speed_clamping() {
+        let registry = crate::test_support::test_registry();
+        let state = VehicleState {
+            chassis: CharacterState {
+                body: AnchoredAabb {
+                    anchor: voxy_world::VoxelPos { x: 0, y: 0, z: 0 },
+                    min: [0.1, 1.0, 0.1],
+                    max: [0.9, 2.0, 0.9],
+                },
+                velocity: [0.0, 0.0, 1.0],
+                grounded: true,
+            },
+            heading: 0.0,
+            longitudinal_speed: 1.0,
+        };
+        for brake in [false, true] {
+            let mut actual = state;
+            let config = VehicleConfig {
+                mass: f64::MIN_POSITIVE,
+                engine_force: f64::MAX,
+                brake_force: f64::MAX,
+                ..VehicleConfig::default()
+            };
+            let input = VehicleInput {
+                throttle: if brake { 0.0 } else { 1.0 },
+                steering: 0.0,
+                brake,
+            };
+            assert!(matches!(
+                step_vehicle(
+                    &QueryForbidden,
+                    &registry,
+                    &mut actual,
+                    input,
+                    1.0 / 60.0,
+                    config
+                ),
+                Err(VehicleError::NumericalOverflow)
+            ));
+            assert_eq!(actual, state);
+        }
+        let mut actual = state;
+        actual.chassis.velocity[2] = 55.0;
+        actual.longitudinal_speed = 55.0;
+        let before = actual;
+        let config = VehicleConfig {
+            wheelbase: f64::MIN_POSITIVE,
+            ..VehicleConfig::default()
+        };
+        let input = VehicleInput {
+            throttle: 1.0,
+            steering: 1.0,
+            brake: false,
+        };
+        assert!(matches!(
+            step_vehicle(&QueryForbidden, &registry, &mut actual, input, 0.25, config),
+            Err(VehicleError::NumericalOverflow)
+        ));
+        assert_eq!(actual, before);
+    }
+
+    #[test]
+    fn failed_external_chassis_step_preserves_the_complete_vehicle() {
+        let mut state = VehicleState {
+            chassis: CharacterState {
+                body: AnchoredAabb {
+                    anchor: voxy_world::VoxelPos { x: 0, y: 0, z: 0 },
+                    min: [0.0; 3],
+                    max: [1.0; 3],
+                },
+                velocity: [0.0, 0.0, 2.0],
+                grounded: true,
+            },
+            heading: 0.0,
+            longitudinal_speed: 2.0,
+        };
+        let before = state;
+        let input = VehicleInput {
+            throttle: 1.0,
+            steering: 0.5,
+            brake: false,
+        };
+        let result = step_vehicle_with_chassis_step(
+            &mut state,
+            input,
+            1.0 / 60.0,
+            VehicleConfig::default(),
+            |chassis, _, _, _| {
+                chassis.body.anchor.x = 12;
+                chassis.velocity = [99.0; 3];
+                Err::<CharacterStep, _>(VehicleError::InvalidState)
+            },
+        );
+        assert!(result.is_err());
+        assert_eq!(state, before);
+    }
 
     #[test]
     fn ordered_swept_checkpoints_complete_laps_without_tunneling() {

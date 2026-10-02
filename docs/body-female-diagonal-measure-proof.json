@@ -1,0 +1,357 @@
+{
+  "initialCrossings": 35,
+  "finalCrossings": 30,
+  "includesAdjacent": true,
+  "reduceMeasure": true,
+  "initialMeasureM": 0.010017000642306595,
+  "finalMeasureM": 0.00973005987320895,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48801,
+        48843
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48858
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        48818,
+        48829
+      ],
+      [
+        48818,
+        48856
+      ],
+      [
+        48818,
+        48857
+      ],
+      [
+        47087,
+        49012
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        47084,
+        49012
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33143,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554557,
+      "forbidden_pairs": [
+        [
+          47087,
+          49016
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "steps": [
+    {
+      "pass": 0,
+      "edge": [
+        5535,
+        45234
+      ],
+      "faces": [
+        47084,
+        47085
+      ],
+      "before": 35,
+      "after": 35,
+      "local_measure_before_m": 0.0012402150098283513,
+      "local_measure_after_m": 0.0012401962304021798
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5535,
+        45261
+      ],
+      "faces": [
+        47085,
+        49049
+      ],
+      "before": 35,
+      "after": 34,
+      "local_measure_before_m": 0.0012056582713196634,
+      "local_measure_after_m": 0.0012056378337308412
+    },
+    {
+      "pass": 0,
+      "edge": [
+        5579,
+        45212
+      ],
+      "faces": [
+        47271,
+        48832
+      ],
+      "before": 34,
+      "after": 34,
+      "local_measure_before_m": 0.000454963527562503,
+      "local_measure_after_m": 0.00039100425976975895
+    },
+    {
+      "pass": 0,
+      "edge": [
+        37468,
+        45229
+      ],
+      "faces": [
+        48829,
+        48858
+      ],
+      "before": 34,
+      "after": 34,
+      "local_measure_before_m": 0.0003718097850239489,
+      "local_measure_after_m": 0.00037100340018460026
+    },
+    {
+      "pass": 0,
+      "edge": [
+        37469,
+        45230
+      ],
+      "faces": [
+        48846,
+        48855
+      ],
+      "before": 34,
+      "after": 34,
+      "local_measure_before_m": 0.0004528468355977837,
+      "local_measure_after_m": 0.0003183914593665846
+    },
+    {
+      "pass": 0,
+      "edge": [
+        37469,
+        45249
+      ],
+      "faces": [
+        48846,
+        48847
+      ],
+      "before": 34,
+      "after": 33,
+      "local_measure_before_m": 0.000402545999605498,
+      "local_measure_after_m": 0.0004015757560902507
+    },
+    {
+      "pass": 0,
+      "edge": [
+        37487,
+        45259
+      ],
+      "faces": [
+        49027,
+        49035
+      ],
+      "before": 33,
+      "after": 33,
+      "local_measure_before_m": 0.00021585897194207238,
+      "local_measure_after_m": 0.00021561277381870915
+    },
+    {
+      "pass": 0,
+      "edge": [
+        37488,
+        45264
+      ],
+      "faces": [
+        49062,
+        49063
+      ],
+      "before": 33,
+      "after": 33,
+      "local_measure_before_m": 0.0007368049045977151,
+      "local_measure_after_m": 0.0007346357318835118
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45203,
+        45234
+      ],
+      "faces": [
+        47084,
+        47086
+      ],
+      "before": 33,
+      "after": 33,
+      "local_measure_before_m": 0.0007954464909684329,
+      "local_measure_after_m": 0.0007954244228622261
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45212,
+        45239
+      ],
+      "faces": [
+        47271,
+        47272
+      ],
+      "before": 33,
+      "after": 32,
+      "local_measure_before_m": 8.78288665574183e-08,
+      "local_measure_after_m": 3.883086996793548e-08
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45216,
+        45259
+      ],
+      "faces": [
+        49034,
+        49035
+      ],
+      "before": 32,
+      "after": 31,
+      "local_measure_before_m": 5.4319988714076526e-05,
+      "local_measure_after_m": 5.4296582899414293e-05
+    },
+    {
+      "pass": 1,
+      "edge": [
+        37488,
+        45231
+      ],
+      "faces": [
+        49047,
+        49063
+      ],
+      "before": 31,
+      "after": 31,
+      "local_measure_before_m": 0.001458792838518515,
+      "local_measure_after_m": 0.0013745978790561729
+    },
+    {
+      "pass": 1,
+      "edge": [
+        45203,
+        45261
+      ],
+      "faces": [
+        47086,
+        49049
+      ],
+      "before": 31,
+      "after": 30,
+      "local_measure_before_m": 0.0019757196036519487,
+      "local_measure_after_m": 0.001975714126165205
+    }
+  ],
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.567075493462588,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "verticesMoved": false,
+  "scope": "Static candidate audit; new triangulation requires anatomical review and is not runtime geometry.",
+  "elapsedSeconds": 32.136108917002275,
+  "source": "assets/characters/blender-female/prepared/body-refined-post-direction-diagonal-candidate.obj",
+  "sourceSha256": "59f4fc82cd4a35b235b2637ab3a29ac3001263e35db48506aa286cbfd1e2fb52",
+  "candidateSha256": "95393cd5dc09775a4f691ae3f69727e18b1fe80eae6298f0ace5d00b56698c65",
+  "exportReloadVerified": true,
+  "adopted": false
+}

@@ -1,0 +1,102 @@
+{
+  "repository": "ja-brouil/TBS_GoDot",
+  "repository_id": 199937516,
+  "commit": "15b9bf7df43bbfcbf9d93e53cba4e8f8fbcc0a96",
+  "source_url": "https://github.com/ja-brouil/TBS_GoDot/tree/15b9bf7df43bbfcbf9d93e53cba4e8f8fbcc0a96",
+  "readme_path": "README.md",
+  "readme_sha256": "08a0bb0dc37c8ad8051a877ae86ac98e24b295532f4b00ae37412ca00ec68ac6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9fdc42e0a4ebf391e488b97f53a217e27b1edcbc"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "83bf3e0d4beb3223e5694e9aae922305612f7c30"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "d57a36eb591d0a24067df3414d8d4d1fd5a11dd4"
+    },
+    {
+      "path": "FE Icon.jpg",
+      "type": "file",
+      "sha": "3261fa431e69edd9e6a44304e29362463440e28c"
+    },
+    {
+      "path": "FE Icon.jpg.import",
+      "type": "file",
+      "sha": "ef10abbc26cfd1738140fab7be6f21e4b4be6ded"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "866e3903cb69020a2f56d2efcac9f66e1f861373"
+    },
+    {
+      "path": "Notes.txt",
+      "type": "file",
+      "sha": "a27ae085ff42f178d0c3949e3d4e12f24170963a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "673290870fb84f4757557a6258226f8db15e72f2"
+    },
+    {
+      "path": "Save",
+      "type": "dir",
+      "sha": "6af0a0d0ce6625b2d99499b6fc377241ca702207"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "d263739295d21f20551ae0456a2f673a69be5367"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "11fd4f620ca9e058b16339a7be6f6258723c8baa"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "4d5e5bc6811186d9842e22776d5decf61bd29520"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "87f3bfea6b373358d1941a340feb542aff777604"
+    },
+    {
+      "path": "default_bus_layout.tres",
+      "type": "file",
+      "sha": "b746d7482c17ddf0a6c22019705884305e58aec2"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "2b658158b6a2211b656d83fee35e3941e5ad376a"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "96cbf4629a557eb7339eef87ad61b7e7d8c8f0e7"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "c821d9efa3eb0e3d280a98dafd95d9acad3f72f6"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

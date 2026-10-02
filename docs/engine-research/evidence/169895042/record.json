@@ -1,0 +1,27 @@
+{
+  "repository": "Zylann/unity_to_godot_converter",
+  "repository_id": 169895042,
+  "commit": "a417ee135be6a5ed99011cab60b8ef780e11bf0c",
+  "source_url": "https://github.com/Zylann/unity_to_godot_converter/tree/a417ee135be6a5ed99011cab60b8ef780e11bf0c",
+  "readme_path": "README.md",
+  "readme_sha256": "34d53e57059888b763e3d04edd626c98ee5b1a310f4ae283037b1cae1930396f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "70aa86c76d22e35f8bb9d9427c74bf9b132c366f"
+    },
+    {
+      "path": "Exporter",
+      "type": "dir",
+      "sha": "8f707f580e21a3bfc3c38d6822c44297a9d976be"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d2d0fbd9f2a366f95db7752755b0a60c552aff71"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

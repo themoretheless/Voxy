@@ -1,0 +1,64 @@
+{
+  "repository": "badlogic/r96",
+  "repository_id": 572251681,
+  "commit": "13a3dc3ab5c0b17fb6ed32275dee67e87e907ebd",
+  "source_url": "https://github.com/badlogic/r96/tree/13a3dc3ab5c0b17fb6ed32275dee67e87e907ebd",
+  "readme_path": "README.md",
+  "readme_sha256": "dd1b6e4cbcc9dff595878da9afd4e55e86a752a3f380f08d1bce18dc49ba4049",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "40900c339725f65a893c4678176aeb265e6af52c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e6c522d5c1c1bfaa14c5fd4849d1ed584ba77a9b"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "324950b89f1342d0858c9ff7b7c33b27647937de"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "85ca8134ab55dddb204f36bcf91dd1b890152962"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "1cbf83bf1637c334dac0236a654936135e6b7851"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "673c002841e65b861ac20b6b43cc0cd89714c756"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "536e46e88dc82de5551c08b4afaa946e222e55e7"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f205daec365939613670d0a234ac45aebbb18379"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d3f961be36ee89c1600735c0384b85e33e5fd353"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "154b38794fd1524a760dc033ef5978aad8b42df6"
+    }
+  ],
+  "classification": "excluded_rendering_tutorial",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies software rasterization tutorials and demos for Rendering like it is 1996.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

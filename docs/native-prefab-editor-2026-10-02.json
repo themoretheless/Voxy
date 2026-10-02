@@ -1,0 +1,36 @@
+{
+  "editor_sha256": "5a38dd70ca9d808ca05f938e18ce1885ff3beee8440219f9729bc530811616cf",
+  "saved_authoring": {
+    "version": 1,
+    "objects": [],
+    "instances": [
+      {
+        "id": "first",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {
+          "5:child4:root": {
+            "name": null,
+            "active": null,
+            "translation": [
+              0.05,
+              0.0,
+              0.5
+            ],
+            "rotation": null,
+            "scale": null,
+            "components": {}
+          }
+        }
+      },
+      {
+        "id": "second",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {}
+      }
+    ]
+  },
+  "native_log": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nPREFAB NATIVE SAVE UNDO AND LAST GOOD PASS frames=3\nMODEL PUBLISHED frames=3 first_x=-0.5 asset=mesh\nPREFAB NATIVE PRESENTED AFTER FAILURE PASS frames=6\nPREFAB NATIVE PLAY STOP PASS frames=13 ticks=1",
+  "scope": "presented native editor frames, nested prefab edit/save/load/undo/redo, last-good scene after damaged dependency, restored dependency and isolated Play/Stop; no image-equivalence claim"
+}

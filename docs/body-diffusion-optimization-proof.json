@@ -1,0 +1,36 @@
+{
+  "profiles": {
+    "before": {
+      "assemblyMedianMs": 14.771875,
+      "solveMedianMs": 73.580417,
+      "iterations": [
+        86,
+        60,
+        42
+      ]
+    },
+    "experimental": {
+      "assemblyMedianMs": 18.322958,
+      "solveMedianMs": 93.365792,
+      "iterations": [
+        86,
+        60,
+        42
+      ]
+    },
+    "experimentalRepeat": {
+      "assemblyMedianMs": 14.944958,
+      "solveMedianMs": 74.45629199999999,
+      "iterations": [
+        86,
+        60,
+        42
+      ]
+    }
+  },
+  "bitwiseEqual": true,
+  "resultSha256": "87fb113ef41875ec16630283c3b25c046ad5ffbae12da5f8c85e576604ed2b4c",
+  "experimentalChangesRetained": false,
+  "sourceBodySha256": "7ba47f9a806d5dd98e7d87e462bda9df4ae33b0c8f70deab2d724efd46aff526",
+  "scope": "Static imported-body kernel; shared host timing varied. No demonstrated speedup; full renderer/GPU performance and accelerated solver remain unfinished."
+}

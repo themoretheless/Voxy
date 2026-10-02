@@ -1,0 +1,119 @@
+{
+  "repository": "katharostech/arsenal",
+  "repository_id": 190098115,
+  "commit": "85e03f230f3dff7120162381b46354d9fe7ad81f",
+  "source_url": "https://github.com/katharostech/arsenal/tree/85e03f230f3dff7120162381b46354d9fe7ad81f",
+  "readme_path": "README.md",
+  "readme_sha256": "705b5c61fc0cd0de45a4a15cf842959aa61e1aa580fef54e210e9475542a7be7",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "dcff3bdd2faf91180f95487b3f424ee166f757f2"
+    },
+    {
+      "path": ".drone.yml",
+      "type": "file",
+      "sha": "aba40a5a65e2c365cc64d03d43d0cce0cb785df6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "755580965b069f535110064295e0270f49249c20"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f3e1bdd72cd3154d12ec91bafeb0523d0ce8f15a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7c34d8a058911076224a965036d7159f5e3682a5"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "b97fa4bca5ad285ddd38ff5110acb09bb7b8dbbf"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3c825a1476768c7a50fa710c455ee6874c11a384"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "06480c1d8027bc38081046e98efc4cdf9b97749a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "13b96bff7db20239b65a52d599dd6c74fcd72b2e"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "bce8971d993920c9d1074f8ae31b3823a470c8c5"
+    },
+    {
+      "path": "NOTICES.hbs",
+      "type": "file",
+      "sha": "3b647864a9a32f9a8f0c207690f76bcd46f65ca3"
+    },
+    {
+      "path": "NOTICES.md",
+      "type": "file",
+      "sha": "381c99a98e6b121906831422e765d18170ce2263"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "51dc0b889bece9ea1bf7e3dbb140f9fefdd94e36"
+    },
+    {
+      "path": "about.toml",
+      "type": "file",
+      "sha": "5a529f1ecc0cc5957f984d783fb8aad2524a2636"
+    },
+    {
+      "path": "arsenal_blender",
+      "type": "dir",
+      "sha": "f9b60fa0c02d05bf7de45f322847b0a066b45fe5"
+    },
+    {
+      "path": "arsenal_blender_core",
+      "type": "dir",
+      "sha": "ae3d433a594110d500388543fe1d6ac89745b4cb"
+    },
+    {
+      "path": "arsenal_runtime",
+      "type": "dir",
+      "sha": "75bee180c95435fe43c684a8b12569944a4db7f1"
+    },
+    {
+      "path": "bors.toml",
+      "type": "file",
+      "sha": "9094cf5eb2066f58892465923b9137aa082badbf"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "22ab5c88ef9fdfdb943af84c724dd16a27b5ca54"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4764f9db0a5b0f0a94e9fdb82a8f68828b3d7139"
+    },
+    {
+      "path": "xtask",
+      "type": "dir",
+      "sha": "f9a623f88748fabc395a5e668891cdc867222d72"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify paused Blender engine prototype; source/adapters/Cargo, complete owned runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

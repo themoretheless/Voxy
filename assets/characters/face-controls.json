@@ -1,0 +1,2432 @@
+[
+  {
+    "key": "face_width",
+    "group": "Лицо",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "face_height",
+    "group": "Лицо",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "face_depth",
+    "group": "Лицо",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "face_vertical",
+    "group": "Лицо",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "face_projection",
+    "group": "Лицо",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "forehead_width",
+    "group": "Лоб",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "forehead_height",
+    "group": "Лоб",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "forehead_depth",
+    "group": "Лоб",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "forehead_vertical",
+    "group": "Лоб",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "forehead_projection",
+    "group": "Лоб",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_width",
+    "group": "Скулы и щёки",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_height",
+    "group": "Скулы и щёки",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_depth",
+    "group": "Скулы и щёки",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_vertical",
+    "group": "Скулы и щёки",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_projection",
+    "group": "Скулы и щёки",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_spacing",
+    "group": "Скулы и щёки",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_width",
+    "group": "Челюсть",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_height",
+    "group": "Челюсть",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_depth",
+    "group": "Челюсть",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_vertical",
+    "group": "Челюсть",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_projection",
+    "group": "Челюсть",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_spacing",
+    "group": "Челюсть",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "chin_width",
+    "group": "Подбородок",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "chin_height",
+    "group": "Подбородок",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "chin_depth",
+    "group": "Подбородок",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "chin_vertical",
+    "group": "Подбородок",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "chin_projection",
+    "group": "Подбородок",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nose_width",
+    "group": "Нос",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_height",
+    "group": "Нос",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_depth",
+    "group": "Нос",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_vertical",
+    "group": "Нос",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nose_projection",
+    "group": "Нос",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nose_bridge_width",
+    "group": "Переносица",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_bridge_height",
+    "group": "Переносица",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_bridge_depth",
+    "group": "Переносица",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_bridge_vertical",
+    "group": "Переносица",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nose_bridge_projection",
+    "group": "Переносица",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nose_tip_width",
+    "group": "Кончик носа",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_tip_height",
+    "group": "Кончик носа",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_tip_depth",
+    "group": "Кончик носа",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nose_tip_vertical",
+    "group": "Кончик носа",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nose_tip_projection",
+    "group": "Кончик носа",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_width",
+    "group": "Крылья носа",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_height",
+    "group": "Крылья носа",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_depth",
+    "group": "Крылья носа",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_vertical",
+    "group": "Крылья носа",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_projection",
+    "group": "Крылья носа",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_spacing",
+    "group": "Крылья носа",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_width",
+    "group": "Уши",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_height",
+    "group": "Уши",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_depth",
+    "group": "Уши",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_vertical",
+    "group": "Уши",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_projection",
+    "group": "Уши",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_spacing",
+    "group": "Уши",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_width",
+    "group": "Мочки ушей",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_height",
+    "group": "Мочки ушей",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_depth",
+    "group": "Мочки ушей",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_vertical",
+    "group": "Мочки ушей",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_projection",
+    "group": "Мочки ушей",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_spacing",
+    "group": "Мочки ушей",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_width",
+    "group": "Глаза",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_height",
+    "group": "Глаза",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_depth",
+    "group": "Глаза",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_vertical",
+    "group": "Глаза",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_projection",
+    "group": "Глаза",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_spacing",
+    "group": "Глаза",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_width",
+    "group": "Верхние веки",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_height",
+    "group": "Верхние веки",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_depth",
+    "group": "Верхние веки",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_vertical",
+    "group": "Верхние веки",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_projection",
+    "group": "Верхние веки",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_spacing",
+    "group": "Верхние веки",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_width",
+    "group": "Нижние веки",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_height",
+    "group": "Нижние веки",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_depth",
+    "group": "Нижние веки",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_vertical",
+    "group": "Нижние веки",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_projection",
+    "group": "Нижние веки",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_spacing",
+    "group": "Нижние веки",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lips_width",
+    "group": "Губы",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lips_height",
+    "group": "Губы",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lips_depth",
+    "group": "Губы",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lips_vertical",
+    "group": "Губы",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lips_projection",
+    "group": "Губы",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lip_width",
+    "group": "Верхняя губа",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lip_height",
+    "group": "Верхняя губа",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lip_depth",
+    "group": "Верхняя губа",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lip_vertical",
+    "group": "Верхняя губа",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lip_projection",
+    "group": "Верхняя губа",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lip_width",
+    "group": "Нижняя губа",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lip_height",
+    "group": "Нижняя губа",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lip_depth",
+    "group": "Нижняя губа",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lip_vertical",
+    "group": "Нижняя губа",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lip_projection",
+    "group": "Нижняя губа",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "mouth_width",
+    "group": "Рот",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "mouth_height",
+    "group": "Рот",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "mouth_depth",
+    "group": "Рот",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "mouth_vertical",
+    "group": "Рот",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "mouth_projection",
+    "group": "Рот",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_width",
+    "group": "Брови",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_height",
+    "group": "Брови",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_depth",
+    "group": "Брови",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_vertical",
+    "group": "Брови",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_projection",
+    "group": "Брови",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_spacing",
+    "group": "Брови",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lashes_length",
+    "group": "Ресницы",
+    "label": "Длина",
+    "default": 1.0,
+    "min": 0.3,
+    "max": 2.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lashes_thickness",
+    "group": "Ресницы",
+    "label": "Толщина",
+    "default": 1.0,
+    "min": 0.3,
+    "max": 2.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lashes_density",
+    "group": "Ресницы",
+    "label": "Густота",
+    "default": 1.0,
+    "min": 0.0,
+    "max": 1.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brow_hair_length",
+    "group": "Волоски бровей",
+    "label": "Длина",
+    "default": 1.0,
+    "min": 0.3,
+    "max": 2.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brow_hair_thickness",
+    "group": "Волоски бровей",
+    "label": "Толщина",
+    "default": 1.0,
+    "min": 0.3,
+    "max": 2.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brow_hair_density",
+    "group": "Волоски бровей",
+    "label": "Густота",
+    "default": 1.0,
+    "min": 0.0,
+    "max": 1.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_width_left",
+    "group": "Скулы и щёки · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_width_right",
+    "group": "Скулы и щёки · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_height_left",
+    "group": "Скулы и щёки · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_height_right",
+    "group": "Скулы и щёки · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_depth_left",
+    "group": "Скулы и щёки · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_depth_right",
+    "group": "Скулы и щёки · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "cheeks_vertical_left",
+    "group": "Скулы и щёки · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_vertical_right",
+    "group": "Скулы и щёки · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_projection_left",
+    "group": "Скулы и щёки · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_projection_right",
+    "group": "Скулы и щёки · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_spacing_left",
+    "group": "Скулы и щёки · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "cheeks_spacing_right",
+    "group": "Скулы и щёки · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_width_left",
+    "group": "Челюсть · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_width_right",
+    "group": "Челюсть · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_height_left",
+    "group": "Челюсть · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_height_right",
+    "group": "Челюсть · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_depth_left",
+    "group": "Челюсть · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_depth_right",
+    "group": "Челюсть · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "jaw_vertical_left",
+    "group": "Челюсть · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_vertical_right",
+    "group": "Челюсть · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_projection_left",
+    "group": "Челюсть · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_projection_right",
+    "group": "Челюсть · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_spacing_left",
+    "group": "Челюсть · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "jaw_spacing_right",
+    "group": "Челюсть · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_width_left",
+    "group": "Крылья носа · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_width_right",
+    "group": "Крылья носа · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_height_left",
+    "group": "Крылья носа · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_height_right",
+    "group": "Крылья носа · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_depth_left",
+    "group": "Крылья носа · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_depth_right",
+    "group": "Крылья носа · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "nostrils_vertical_left",
+    "group": "Крылья носа · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_vertical_right",
+    "group": "Крылья носа · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_projection_left",
+    "group": "Крылья носа · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_projection_right",
+    "group": "Крылья носа · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_spacing_left",
+    "group": "Крылья носа · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "nostrils_spacing_right",
+    "group": "Крылья носа · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_width_left",
+    "group": "Уши · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_width_right",
+    "group": "Уши · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_height_left",
+    "group": "Уши · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_height_right",
+    "group": "Уши · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_depth_left",
+    "group": "Уши · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_depth_right",
+    "group": "Уши · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "ears_vertical_left",
+    "group": "Уши · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_vertical_right",
+    "group": "Уши · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_projection_left",
+    "group": "Уши · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_projection_right",
+    "group": "Уши · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_spacing_left",
+    "group": "Уши · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "ears_spacing_right",
+    "group": "Уши · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_width_left",
+    "group": "Мочки ушей · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_width_right",
+    "group": "Мочки ушей · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_height_left",
+    "group": "Мочки ушей · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_height_right",
+    "group": "Мочки ушей · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_depth_left",
+    "group": "Мочки ушей · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_depth_right",
+    "group": "Мочки ушей · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "earlobes_vertical_left",
+    "group": "Мочки ушей · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_vertical_right",
+    "group": "Мочки ушей · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_projection_left",
+    "group": "Мочки ушей · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_projection_right",
+    "group": "Мочки ушей · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_spacing_left",
+    "group": "Мочки ушей · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "earlobes_spacing_right",
+    "group": "Мочки ушей · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_width_left",
+    "group": "Глаза · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_width_right",
+    "group": "Глаза · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_height_left",
+    "group": "Глаза · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_height_right",
+    "group": "Глаза · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_depth_left",
+    "group": "Глаза · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_depth_right",
+    "group": "Глаза · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "eyes_vertical_left",
+    "group": "Глаза · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_vertical_right",
+    "group": "Глаза · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_projection_left",
+    "group": "Глаза · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_projection_right",
+    "group": "Глаза · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_spacing_left",
+    "group": "Глаза · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "eyes_spacing_right",
+    "group": "Глаза · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_width_left",
+    "group": "Верхние веки · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_width_right",
+    "group": "Верхние веки · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_height_left",
+    "group": "Верхние веки · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_height_right",
+    "group": "Верхние веки · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_depth_left",
+    "group": "Верхние веки · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_depth_right",
+    "group": "Верхние веки · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "upper_lids_vertical_left",
+    "group": "Верхние веки · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_vertical_right",
+    "group": "Верхние веки · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_projection_left",
+    "group": "Верхние веки · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_projection_right",
+    "group": "Верхние веки · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_spacing_left",
+    "group": "Верхние веки · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "upper_lids_spacing_right",
+    "group": "Верхние веки · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_width_left",
+    "group": "Нижние веки · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_width_right",
+    "group": "Нижние веки · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_height_left",
+    "group": "Нижние веки · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_height_right",
+    "group": "Нижние веки · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_depth_left",
+    "group": "Нижние веки · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_depth_right",
+    "group": "Нижние веки · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lower_lids_vertical_left",
+    "group": "Нижние веки · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_vertical_right",
+    "group": "Нижние веки · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_projection_left",
+    "group": "Нижние веки · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_projection_right",
+    "group": "Нижние веки · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_spacing_left",
+    "group": "Нижние веки · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "lower_lids_spacing_right",
+    "group": "Нижние веки · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_width_left",
+    "group": "Брови · левая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_width_right",
+    "group": "Брови · правая сторона",
+    "label": "Ширина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_height_left",
+    "group": "Брови · левая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_height_right",
+    "group": "Брови · правая сторона",
+    "label": "Высота",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_depth_left",
+    "group": "Брови · левая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_depth_right",
+    "group": "Брови · правая сторона",
+    "label": "Глубина",
+    "default": 1.0,
+    "min": 0.7,
+    "max": 1.3,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "brows_vertical_left",
+    "group": "Брови · левая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_vertical_right",
+    "group": "Брови · правая сторона",
+    "label": "Смещение по высоте",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_projection_left",
+    "group": "Брови · левая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_projection_right",
+    "group": "Брови · правая сторона",
+    "label": "Выдвижение",
+    "default": 0.0,
+    "min": -5,
+    "max": 5,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_spacing_left",
+    "group": "Брови · левая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "brows_spacing_right",
+    "group": "Брови · правая сторона",
+    "label": "Расстояние между сторонами",
+    "default": 0.0,
+    "min": -4,
+    "max": 4,
+    "step": 0.1,
+    "unit": "мм"
+  },
+  {
+    "key": "wrinkles_forehead",
+    "group": "Возрастные особенности",
+    "label": "Морщины лба",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 0.8,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "wrinkles_glabella",
+    "group": "Возрастные особенности",
+    "label": "Межбровные морщины",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 0.8,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "wrinkles_crow_feet",
+    "group": "Возрастные особенности",
+    "label": "Гусиные лапки",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 0.6,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "wrinkles_under_eyes",
+    "group": "Возрастные особенности",
+    "label": "Морщины под глазами",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 0.6,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "folds_nasolabial",
+    "group": "Возрастные особенности",
+    "label": "Носогубные складки",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 1.5,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "folds_marionette",
+    "group": "Возрастные особенности",
+    "label": "Складки у уголков рта",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 1.2,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "wrinkles_upper_lip",
+    "group": "Возрастные особенности",
+    "label": "Морщины над верхней губой",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 0.6,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "age_cheek_volume",
+    "group": "Возрастные особенности",
+    "label": "Объём щёк",
+    "default": 0.0,
+    "min": -3.0,
+    "max": 3,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "age_cheek_descent",
+    "group": "Возрастные особенности",
+    "label": "Опущение щёк",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 4,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "age_jowl_descent",
+    "group": "Возрастные особенности",
+    "label": "Опущение у линии челюсти",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 4,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "under_eye_bags",
+    "group": "Возрастные особенности",
+    "label": "Мешки под глазами",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 2,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "skin_laxity",
+    "group": "Возрастные особенности",
+    "label": "Опущение мягких тканей",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 4,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "temple_hollowing",
+    "group": "Возрастные особенности",
+    "label": "Западение висков",
+    "default": 0.0,
+    "min": 0.0,
+    "max": 3,
+    "step": 0.01,
+    "unit": "мм"
+  },
+  {
+    "key": "skin_roughness_scale",
+    "group": "Материал кожи",
+    "label": "Шероховатость",
+    "default": 1.0,
+    "min": 0.25,
+    "max": 2.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "skin_oil_scale",
+    "group": "Материал кожи",
+    "label": "Жирность",
+    "default": 1.0,
+    "min": 0.0,
+    "max": 2.0,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "skin_surface_light",
+    "group": "Материал кожи",
+    "label": "Доля поверхностного света",
+    "default": 0.35,
+    "min": 0.0,
+    "max": 1.0,
+    "step": 0.01,
+    "unit": "доля"
+  },
+  {
+    "key": "skin_pores",
+    "group": "Материал кожи",
+    "label": "Выраженность пор",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "skin_makeup",
+    "group": "Материал кожи",
+    "label": "Интенсивность макияжа",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "makeup_lipstick",
+    "group": "Макияж",
+    "label": "Помада",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "makeup_blush",
+    "group": "Макияж",
+    "label": "Румяна",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "makeup_eyeshadow",
+    "group": "Макияж",
+    "label": "Тени для век",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": "×"
+  },
+  {
+    "key": "lipstick_red",
+    "group": "Макияж",
+    "label": "Помада: красный",
+    "default": 0.92,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": ""
+  },
+  {
+    "key": "lipstick_green",
+    "group": "Макияж",
+    "label": "Помада: зелёный",
+    "default": 0.43,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": ""
+  },
+  {
+    "key": "lipstick_blue",
+    "group": "Макияж",
+    "label": "Помада: синий",
+    "default": 0.53,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "unit": ""
+  },
+  {
+    "key": "pupil_diameter_mm",
+    "group": "Глаза",
+    "label": "Диаметр зрачка",
+    "default": 4.05,
+    "min": 2.0,
+    "max": 8.0,
+    "step": 0.05,
+    "unit": "мм"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "binary_sha256": "44bb66782bae9f72d2e5e758b4f52a6956b1eefc27bb9b3aa8786c51453c2c30",
+  "standalone_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2",
+  "corrupt_prefab_error": "Error: Json(Error(\"expected value\", line: 1, column: 1))",
+  "corrupt_model_error": "Error: \"game asset mesh failed: OBJ line 1: unsupported OBJ directive\"",
+  "scope": "actual standalone executable, nested composition, model import, 120 fixed steps and failure diagnostics; game-check alone makes no window/GPU presentation claim",
+  "native": {
+    "passed": false,
+    "returncode": 1,
+    "log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nEDITOR PRESENT frames=0 draws=2 outcome=SkippedOccluded positions=[Ok(Vec4(0.0, 0.0, 0.0, 1.0)), Ok(Vec4(0.0, 0.0, 0.0, 1.0))]\nMODEL PUBLISHED frames=0 first_x=0 asset=mesh\nError: \"native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)\""
+  }
+}

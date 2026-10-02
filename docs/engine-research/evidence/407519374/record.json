@@ -1,0 +1,89 @@
+{
+  "repository": "PardCode/OpenGL-3D-Game-Tutorial-Series",
+  "repository_id": 407519374,
+  "commit": "56c132db5fa3fcdd43b1b8ca055398054b23aaff",
+  "source_url": "https://github.com/PardCode/OpenGL-3D-Game-Tutorial-Series/tree/56c132db5fa3fcdd43b1b8ca055398054b23aaff",
+  "readme_path": "README.md",
+  "readme_sha256": "2d12fe99c5939d7fe2815e20f317481358eb4762d1b20253799915df1ce77562",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0d251f5b70d7f62756f1593a9581910da40e723c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8331400744d7b11c6e4990f648b8b8f91a996b8c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0292b00b91352ada95cc55b19b92c846df5eda0e"
+    },
+    {
+      "path": "Media",
+      "type": "dir",
+      "sha": "f12a5c1b576d4992322e12ac80b94d79e09b1463"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c1a2373692dc201d22c08935634b8bcb1a857d25"
+    },
+    {
+      "path": "Tutorial1_Window",
+      "type": "dir",
+      "sha": "d79e009170f03a452b9492b234355fdc0c925acd"
+    },
+    {
+      "path": "Tutorial2_0_CrossPlatformEngine_Windows",
+      "type": "dir",
+      "sha": "52f868c5b362cc3a97d2ed96e9dfcc0e62b18ee4"
+    },
+    {
+      "path": "Tutorial2_1_CrossPlatformEngine_macOS",
+      "type": "dir",
+      "sha": "d728da432115f2c547afc605a00c4f974b720715"
+    },
+    {
+      "path": "Tutorial2_2_CrossPlatformEngine_Linux",
+      "type": "dir",
+      "sha": "1ae696efc234e5c08a8a56c2f298513ecdfbae18"
+    },
+    {
+      "path": "Tutorial3_DrawingTriangle",
+      "type": "dir",
+      "sha": "e5c6a15ac0d616af166eaff89cbc956868fedb70"
+    },
+    {
+      "path": "Tutorial4_Shaders",
+      "type": "dir",
+      "sha": "90366c9989e6898c8af0daabc23908943d7c84b1"
+    },
+    {
+      "path": "Tutorial5_Animations",
+      "type": "dir",
+      "sha": "765bff11d23e9e27ad78f3b8a55b27ee6cff788b"
+    },
+    {
+      "path": "Tutorial6_Matrix",
+      "type": "dir",
+      "sha": "56aa39210abedc85213db13565c24debfd9aea0b"
+    },
+    {
+      "path": "Tutorial7_Cube",
+      "type": "dir",
+      "sha": "c61f00889f858763c7709914c03e8f8bf6f82ff6"
+    },
+    {
+      "path": "Tutorial8_EntitySystem_Basics",
+      "type": "dir",
+      "sha": "b4b19c1fb4d6174337a8cd6e14db787583c90869"
+    }
+  ],
+  "classification": "rendering_tutorial_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies graphics engine tutorial stages; owned native tutorial source, complete gameplay runtime unproven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,254 @@
+{
+  "repository": "WeDot-Engine/WeDot",
+  "repository_id": 865129395,
+  "commit": "a4b35970934e8129971a8f67a4f1fb02f8deb681",
+  "source_url": "https://github.com/WeDot-Engine/WeDot/tree/a4b35970934e8129971a8f67a4f1fb02f8deb681",
+  "readme_path": "README.md",
+  "readme_sha256": "6884185413cf79b643b13248fd02a32fca27b3a7c56d80653985b81566300542",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "338ce6b7f392c0ee8e4a5fcae79faacaf8e80740"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "1eb974f3f86c4777ae64356f88256cb1a0d44cc7"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "523ff713072c2adc50ea2883a08178cfab2e7661"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "f149078d5d5c3ea82b51a237b96eb843b0823f59"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "30d1acb49737c27ba466f49d0a80285c37a692cf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0d6112440746b233bb4bca4e00bae16672249c34"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "32a43b8c63724740ff062077260c79d4003d5287"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "825e72bfd08fa21bb7a321e4b39035a032c102c3"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "d81c1043a7c78967187c750db55dcb4fde974b4a"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "b21270b3f700196e28863def8b835382260b9ac9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9bc91738137b209813157e2c65865a36764e5197"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "072ae660d954b820ab6c85565f5ef013789bc762"
+    },
+    {
+      "path": "COPYRIGHT.txt",
+      "type": "file",
+      "sha": "2ece06eebbfb8e1fb0530ab49b403d97776f223f"
+    },
+    {
+      "path": "DONORS.md",
+      "type": "file",
+      "sha": "314a0f649637b9f54535bfcb7af639b696efa240"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "797478137516cf14cec47867aeba052e70d67a36"
+    },
+    {
+      "path": "LOGO_LICENSE.txt",
+      "type": "file",
+      "sha": "9d7c7f00c58bd0f6b7adc6a0d491016c4ca69e9d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6c43d6da080ed3204922d489f281407ad53eca2f"
+    },
+    {
+      "path": "README_EN.md",
+      "type": "file",
+      "sha": "efd1457f79de84c10dd1209125aac883ad97bbaa"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "49278070ae4d97cea21b123356a8079d73774445"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "dc72d1d36c66a8db05567cc48cbcea7c9a70e29d"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "4d8f3dafcd03ab663da2fb124ee221f2fc3fbe3b"
+    },
+    {
+      "path": "drivers",
+      "type": "dir",
+      "sha": "fa1d72e1d00e1bd8b6526a3a2df2bba3dabf62c9"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "e5090c5b53353751062146bedaefc43df43995f4"
+    },
+    {
+      "path": "gles3_builders.py",
+      "type": "file",
+      "sha": "a81d42b42e23af406a7d968ce9fdb078b8355e87"
+    },
+    {
+      "path": "glsl_builders.py",
+      "type": "file",
+      "sha": "82c15fc93bee21cae5f1ecd0dc23eba0a9ec238c"
+    },
+    {
+      "path": "godot.manifest",
+      "type": "file",
+      "sha": "17b588cafd43bbdc4a18773f50df885e6fb87a75"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "53b56277995541b76bac303d68659c277ffdf4b4"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "5870d489a4cc6270f2794b6e13ad680304c8d7e9"
+    },
+    {
+      "path": "icon_outlined.png",
+      "type": "file",
+      "sha": "390893c623dd27c442ab40e7143324c19c92019a"
+    },
+    {
+      "path": "icon_outlined.svg",
+      "type": "file",
+      "sha": "87cd9566abe0ad32231bfd3fa41d4a431ae8ef45"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "b58e7acdaca4d3f38d699f4af745cc3f5bde9f80"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "1c50f168283b0ba3781025002d555d9c11010ffd"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "cd49442c8ff35a67ff81f9b466e22be2a4003938"
+    },
+    {
+      "path": "logo_outlined.png",
+      "type": "file",
+      "sha": "8ae36a61c34e0b80b2d88dbd91ae10b8477784c6"
+    },
+    {
+      "path": "logo_outlined.svg",
+      "type": "file",
+      "sha": "35a84c16ed9ba11bc38df883392c52b7576e8fb6"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "5c09069c306f6c1ca677bda43784e212979548b4"
+    },
+    {
+      "path": "methods.py",
+      "type": "file",
+      "sha": "afaf5b80e583660fead1dfd6f04cc8e0049f1bae"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "482fbf179c010ddbf1991866eb19ce89181a86ee"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "71603351ec7d06f54e0f91b253d79e21efd0e0e6"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "0134093a12d82f80da9037cb9adf2069877a0d2f"
+    },
+    {
+      "path": "platform_methods.py",
+      "type": "file",
+      "sha": "2c4eb0d1dd3e1d87d18bfa3d16636b6262bff225"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "a4bfd278161cd4a04682cf0f53086cc8c481a8b8"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "bcbc8bf40cf23dd7ec281abbb421ee82d8bd6c1b"
+    },
+    {
+      "path": "scu_builders.py",
+      "type": "file",
+      "sha": "6bf87b91636ef83e5bd89c17bc808074414024e1"
+    },
+    {
+      "path": "servers",
+      "type": "dir",
+      "sha": "361bf315d98a1a36586257f03d648c892c771500"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "52eaccb4548f5c7e559fd19091696d05f2dc004b"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "3af9b4d2f181df5f28fb7cd2cc376b94986f8692"
+    },
+    {
+      "path": "version.py",
+      "type": "file",
+      "sha": "22704a08cb7e2a8ab35a5c38b3f5ceb1868d3012"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Godot-style native 2D/3D runtime; core/scene/server/platform and SConstruct with upstream-compatible layout. Family lineage needs deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

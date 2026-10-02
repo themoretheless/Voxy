@@ -1,0 +1,94 @@
+{
+  "repository": "m11m/houseki",
+  "repository_id": 635597799,
+  "commit": "38cfd1204500b492b93723ee7570ced06e1e898d",
+  "source_url": "https://github.com/m11m/houseki/tree/38cfd1204500b492b93723ee7570ced06e1e898d",
+  "readme_path": "README.md",
+  "readme_sha256": "d570c5c073a3e55e309617fc1f29ebb0e8fab283fb6a6f1e5626dfeb15fecd88",
+  "entries": [
+    {
+      "path": ".changeset",
+      "type": "dir",
+      "sha": "fd3edc16f4d027b142572c0dbad5bd74d1e198dd"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "d8d4ccca49e7bd1954e9d5ac61c98ccd04e03b51"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6aea9fd55a1566a4c3f83b8461c31339af9ba931"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5ea359a908fbcfcd62e225e4cfbc2cc4b93bf0d7"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "9b32278673b848b2d00657378d0f87cafee48616"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "535a205c5fc79783ede82f5e1e03770706e32b27"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e0260e787144e233e408a603dcbf6395abfae7a3"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6e6f7524db09e09242c638e1a7178c27d2738bc6"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "b6112610bf680ea0f8fdad96f92ed8539832731a"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "f6c61cdb77c67e8a65ab666673bed65a65756e64"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "fc0029f9cd7dcf1cde0dd7e7709f8e67bdbf799f"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "0afea4e5b7753a90c555b9c9c1c0ca01bc108340"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9c6f4758d54261e42704ca6e93a6f7464bc720b2"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "9edd5e9eeb40aa83dd11dad9df54966e668e9d10"
+    },
+    {
+      "path": "turbo.json",
+      "type": "file",
+      "sha": "23c7ab9cdfb6e3ab22e1a5b4c54aa4d0fe5fe7a4"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Web 3D ECS integration framework combining existing libraries; README explicitly identifies framework goal, performance unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

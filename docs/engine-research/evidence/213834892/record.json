@@ -1,0 +1,62 @@
+{
+  "repository": "Usnul/meep",
+  "repository_id": 213834892,
+  "commit": "fe637fea2ea0abdc9301510377c675151bcaf5b5",
+  "source_url": "https://github.com/Usnul/meep/tree/fe637fea2ea0abdc9301510377c675151bcaf5b5",
+  "readme_path": "README.md",
+  "readme_sha256": "e6418d2513c5cdc284913849614dc9126a9976b008db28b34b60ea58a8a450b6",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "265b746b3703303baa426b897973443d255ba06b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a56c35de3fc8ddb74a55fd5bb2fccbddb459a1a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "19c6755dbaae0a318721d9f35bf087c1350660e3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "828a6245763f3e7225c2a1251d54acfa0afb6b53"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9461551d1dfcd4e97b558923c724354e03715692"
+    },
+    {
+      "path": "jest.conf.json",
+      "type": "file",
+      "sha": "40c4d16518502c0924d0993735ee234c21322b7f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "1b7937a23cbba7f9820c136e66a9d173a39663f2"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "59113ec3ba3064a3e05795e5fbb703a6bf5a9933"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "732b1a8e991e31e72db955f48b3504739ecb9abd"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "8b9967ba10425958d5cdab5a402021db6ced6f06"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

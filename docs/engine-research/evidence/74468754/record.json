@@ -1,0 +1,79 @@
+{
+  "repository": "shawnscode/crayon",
+  "repository_id": 74468754,
+  "commit": "48d4e879996e2502e0faaf36e4dbcebfca9961b0",
+  "source_url": "https://github.com/shawnscode/crayon/tree/48d4e879996e2502e0faaf36e4dbcebfca9961b0",
+  "readme_path": "README.md",
+  "readme_sha256": "3b58dc9fb1b0c18375ddc455e8ee7313eebcaad829bb8f6ba6d9b54d41243000",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "e3ee333ed9a5c381880cb21860fdafabc433d211"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bad88cd481c735d29894c682e9700c775268a8d2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "850a1c0f593ff8d74f50b9da424e729ab2178caf"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "91881326ccd7f68e6361c21982ff679f2a4eae61"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1217219bea3300fa2afa4d89742f9af68614c4c0"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "1c1d91abb66249e2bcde2d5685b62bbadbb142c1"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "f8e5e5ea03400291957779488f5e542e6964c39d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b873f24dd586fbc9aaee285950c0dd0ca73bc92"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "20076f8ba21fe37ef28eb0cfb0587d09696e8627"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "a32bb24f99724e2a3de3877dee8256a627b1bf8a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "015eb97853dd5731101ab56a3d46376c7f8da378"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "a443b11ab88d42f9a000c3fe522816a66124cd84"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "e6fa7b91531ecc10688b216d5dedef0f152cc904"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Rust game framework; owned src/modules/Cargo/tests, complete engine count separated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

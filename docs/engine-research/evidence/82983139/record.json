@@ -1,0 +1,32 @@
+{
+  "repository": "electronicarts/RenderWare3Docs",
+  "repository_id": 82983139,
+  "commit": "47682dd8ef5f947dbbbf7691020741739cc206b3",
+  "source_url": "https://github.com/electronicarts/RenderWare3Docs/tree/47682dd8ef5f947dbbbf7691020741739cc206b3",
+  "readme_path": "README.md",
+  "readme_sha256": "158e16b42ecd64b482b0b879c544be3e8210e1c6fb233ac5177d701f3928a226",
+  "entries": [
+    {
+      "path": "LICENCE.md",
+      "type": "file",
+      "sha": "4a449da0ebe2ea6a064720b9961be1724e7d42ef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "252a7da657c7851d4f85e6b0a6a7f4ae6d3762ce"
+    },
+    {
+      "path": "userguide",
+      "type": "dir",
+      "sha": "49797c764861f3dda6b8370f29943dd1b61b620d"
+    },
+    {
+      "path": "whitepapers",
+      "type": "dir",
+      "sha": "0bc2a582755f8060ff4e713d8015c08b2a7500e8"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

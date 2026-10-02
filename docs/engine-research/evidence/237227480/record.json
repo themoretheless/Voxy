@@ -1,0 +1,149 @@
+{
+  "repository": "playcanvas/editor",
+  "repository_id": 237227480,
+  "commit": "4845408b40080050a5036680ffe72b1b21c3acc7",
+  "source_url": "https://github.com/playcanvas/editor/tree/4845408b40080050a5036680ffe72b1b21c3acc7",
+  "readme_path": "README.md",
+  "readme_sha256": "3488583a0b6c0afde26c1d685bd77ac8bd1b09e60f2c37813f0929fdcf8c3c69",
+  "entries": [
+    {
+      "path": ".env.template",
+      "type": "file",
+      "sha": "27bcd7ad149584f07bde378dcbc3014392e2642f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "96c1182fd6e51b755a4f8357da31db0ca22c9576"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "338a0baee24b555ff6cfdca4ac2731bbf958f066"
+    },
+    {
+      "path": ".mocharc.json",
+      "type": "file",
+      "sha": "5b443b7ba3b260690ee8cb8ba1fde60bd5d5f579"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "22a0c16f7546c8634b47e6966f8fc0d11d5f0cf6"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "4427b8adc882b66ce7c3571c7b3ba59db4ad9142"
+    },
+    {
+      "path": ".stylelintrc.json",
+      "type": "file",
+      "sha": "27bebabf67a08cbe31b2983e1c887a2d03538445"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "426b917ece326f0bafbca230b675ffe3dd0ef69a"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "47dc3e3d863cfb5727b87d785d09abf9743c0a72"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "6622ac6b8db5ee3e0ba22ece5ba238c443ed59fc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7f478db6d47a259cd70f74b1e69d8ce407fd0912"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b288389ec1fb40f7cad7afda1bf148d1f6adff59"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "44d35ad4269c96fc3ce9bfa65a2010598f135416"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "14aa02f876def3c8a731b663947e6ba7984ce2f2"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "f8a68f4c7f8a2b28eb09190f8973b975fb56da51"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "9cc2c9542edd5090ed88246ef5d6dece780ff200"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "a50eb7f090c6f4a67a0628c1734ef5e6968e2adf"
+    },
+    {
+      "path": "prettier.config.mjs",
+      "type": "file",
+      "sha": "1f5ea4f339908498454bf741259b4a2745186181"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "180538d98f0dcf7a17ed58171253e27b312c5343"
+    },
+    {
+      "path": "sass",
+      "type": "dir",
+      "sha": "b42964536860697cd38988d5d8e0bc4db558ea51"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "95c1f2ee29056bc147b11b5fd803d1887a73db8c"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "93cab2254958d176dd80163985ea1d3e8b6c828f"
+    },
+    {
+      "path": "test-suite",
+      "type": "dir",
+      "sha": "1b08e44f410ba9d0760624827c55ee78edf1321f"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "1c21df429e7e8e76ba5086f3d6b87eda1095be7f"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "a0537208e47b16010a06829e8be756d1191f9f4e"
+    },
+    {
+      "path": "types.d.ts",
+      "type": "file",
+      "sha": "1846415ec6c77aedb78d1b5d6bce0d28e6deb3ad"
+    },
+    {
+      "path": "vite.config.mjs",
+      "type": "file",
+      "sha": "2212032e2395fbfb0b35007fe9632c96cccb703c"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify browser editor and engine integration tests; separate authoring tool, not second engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

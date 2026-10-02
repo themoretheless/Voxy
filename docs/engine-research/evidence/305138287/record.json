@@ -1,0 +1,54 @@
+{
+  "repository": "AJ2O/pbs-unity",
+  "repository_id": 305138287,
+  "commit": "b26d5c1b187f4de48c5c158aa4ad603443c8c3a5",
+  "source_url": "https://github.com/AJ2O/pbs-unity/tree/b26d5c1b187f4de48c5c158aa4ad603443c8c3a5",
+  "readme_path": "README.md",
+  "readme_sha256": "66ba572e035abd0b5b0e1da933672b94a754d8023b7d8b3179ef212ad15537cc",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d2ba0510bae19a3389df7384ef980b8dd4ca5e9e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "07da59365a991ad6b5d0aeed126776e1214b19c2"
+    },
+    {
+      "path": "Assembly-CSharp.csproj",
+      "type": "file",
+      "sha": "3841303d45ba21d19b2c9277a0b89f992c910bf3"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "94b73f9eaad63b1b116df54a1d48bb8f6ba2ec60"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "8b30982d176ad2cefe7da040cd7737a5e25f2261"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "2edd11656021ebb4c3ea0f35b481c06200c9e0cd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c44afd7ab89c67796ae2fcf773cdbf14dbe8feb2"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "61afa0f954e1657910d93eed3634caaca3155857"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity Pokemon battle simulation project, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

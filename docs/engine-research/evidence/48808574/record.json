@@ -1,0 +1,159 @@
+{
+  "repository": "darkf/darkfo",
+  "repository_id": 48808574,
+  "commit": "9e9d9349e13b343bddefe3b8eed70797821cf0ba",
+  "source_url": "https://github.com/darkf/darkfo/tree/9e9d9349e13b343bddefe3b8eed70797821cf0ba",
+  "readme_path": "README.md",
+  "readme_sha256": "418c99034d39b3ea1ab3835acbe222410efd69f6fd002a8191b0e2b7ba74d883",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "716f95bc4c3beb639449d4da52a368f1a6d3d2f3"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "490b5c70e94bec59c1400a1bd385a04b184ac7f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b36b7eb874c1821ded3a0f143b35324e3aa2d425"
+    },
+    {
+      "path": "colortest.html",
+      "type": "file",
+      "sha": "a87bdc324d8ae38901dd1b06bc02644036998030"
+    },
+    {
+      "path": "convertAudio.py",
+      "type": "file",
+      "sha": "11a4c6a6eca7b80bf343153bba451fb1a78e2006"
+    },
+    {
+      "path": "convertMaps.py",
+      "type": "file",
+      "sha": "f5009d06601181f396d5671b48788a64246df8ae"
+    },
+    {
+      "path": "dat2.py",
+      "type": "file",
+      "sha": "2de876fcdd57c959923b7f3f9fc66e69729c16cc"
+    },
+    {
+      "path": "exportImages.py",
+      "type": "file",
+      "sha": "03857da81f81149fed285d5fee15df6e0ea42581"
+    },
+    {
+      "path": "exportImagesPar.py",
+      "type": "file",
+      "sha": "0bfc267306cfba7beb65bc98ab37c8f60a8a65f8"
+    },
+    {
+      "path": "exportPRO.py",
+      "type": "file",
+      "sha": "e49594ed4d4811ee1811a7a0b97f797be8bda798"
+    },
+    {
+      "path": "fomap.py",
+      "type": "file",
+      "sha": "fe2b78e56e4000a2e586ff1df90ddbd13aa08c54"
+    },
+    {
+      "path": "frmpixels.py",
+      "type": "file",
+      "sha": "34b8620364b73b0c6f0b38fa96d5f5c75a47104b"
+    },
+    {
+      "path": "hex_outline.png",
+      "type": "file",
+      "sha": "c0f0d3e506709f6cb18cbb38fde29f1e5ac95184"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "c688989ca546b00e83be3ba076cbbac58ac134c9"
+    },
+    {
+      "path": "lut",
+      "type": "dir",
+      "sha": "11301a07d7fa1b7ee53b1dd2fc8a84389f0c1122"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "05e9afe402d4289220fab1b50e8f85912c6ffcf3"
+    },
+    {
+      "path": "mpserv.py",
+      "type": "file",
+      "sha": "7fea1ccb0203bd1b1b97dc0904be67666c349366"
+    },
+    {
+      "path": "pal.py",
+      "type": "file",
+      "sha": "35eaf4d50f4f97fb5244a12a501a62cb736560ab"
+    },
+    {
+      "path": "parseCritTable.py",
+      "type": "file",
+      "sha": "74bd0db188a1cafdc2dab535ec4cd88dff42fd8b"
+    },
+    {
+      "path": "parseElevatorTable.py",
+      "type": "file",
+      "sha": "5123f229dc63a27f0c596ea04b4e49d8b7e822aa"
+    },
+    {
+      "path": "play.html",
+      "type": "file",
+      "sha": "6150cb601d52320a83c52bd53a7f3d601044c1cd"
+    },
+    {
+      "path": "proto.py",
+      "type": "file",
+      "sha": "36fa7b744642d6a5bae45e44a4ae1234f8790fae"
+    },
+    {
+      "path": "screenshot.png",
+      "type": "file",
+      "sha": "f30a6914c7031bf1bcabf593325be22621f4641b"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "e226f1ab8f8c14af79a6b0f8e85fc2285f0dc516"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ae0d5ba9614d1aa327ca1705bc0cc2628e57699d"
+    },
+    {
+      "path": "stitchWorldmap.py",
+      "type": "file",
+      "sha": "c53a33e4ede36de0a7b41a1f6e2e19def5420f79"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "6a85edd0516c647f06084e9960c476693e1f78f2"
+    },
+    {
+      "path": "ui.css",
+      "type": "file",
+      "sha": "1ba39fddb80ab85b006b3e3eecbfdd88df96cc63"
+    },
+    {
+      "path": "wrappers",
+      "type": "dir",
+      "sha": "3a47b36c2d8d63fb3b56ac836e2b92d5b14c4d32"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "TypeScript/Python Fallout 2 runtime recreation with maps, scripting and audio; README explicitly lists missing and experimental gameplay systems.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,159 @@
+{
+  "repository": "art-emini/DuckEngine",
+  "repository_id": 374862340,
+  "commit": "ecb7b0620eb15189ee279f37c2fc28eb5b0d1b19",
+  "source_url": "https://github.com/art-emini/DuckEngine/tree/ecb7b0620eb15189ee279f37c2fc28eb5b0d1b19",
+  "readme_path": "README.md",
+  "readme_sha256": "866ca28d7b86fc8e5bf45583d8de7dc4ffb9b1f633ea9ff85a0d20bd9179ec00",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "857d5df111988b2b28db572f056dff07345e9a30"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "a838d5b46397cde9770d507e537acdc2bd077711"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1b70a22b9d3433821ebf883542f44d52dc97f9c3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6e9a4e4dc53c3076c73f28da4a3d682104007382"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "2e1fa2d52e12f690ce40ac89f77912faba0f993d"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "f47b3cf8cec0649eedafa96b52b90f6067090726"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "452654651de7c17e3f04894a63e41411e8114c60"
+    },
+    {
+      "path": "CHANGELOG.1.2.0.md",
+      "type": "file",
+      "sha": "1da09f954671dc0d8e144815ca1c3793c0ba16de"
+    },
+    {
+      "path": "CHANGELOG.2.0.0.md",
+      "type": "file",
+      "sha": "d1e25f9b30f494df98d92a79209738d98b18e2b2"
+    },
+    {
+      "path": "CHANGELOG.2.1.0.md",
+      "type": "file",
+      "sha": "2d340a597ec2f718541ebc24b09a9158a43db440"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d4c89ee28c6a3c7b2f8b72120418283f99aa47bb"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "3c200c244f100222694e801e4b9501ff1609a82d"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "06be0dde752151ec342e5623675676fa0cbe8a0a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "396ccbe0f1f3e9c684a58977c7f935051d8e9945"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9c462ac26922fcf58f7a2a46f5ff67f1d2e49e31"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "75389aacf3c373fa7ada8f732447901a3a75a6cc"
+    },
+    {
+      "path": "branch_guidelines.md",
+      "type": "file",
+      "sha": "69915c0c3b72d61c50690056d0c9c6b66c18dbdf"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "96347ba8bd8f4dd97820c453f8a117ff1caf4112"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "f2957200a2b3cd79a98d9d3d4333ce3d3d3789b6"
+    },
+    {
+      "path": "global",
+      "type": "dir",
+      "sha": "cb0a3e9325d259317c15371229c6c5dd5f2cc2fa"
+    },
+    {
+      "path": "itch.io-description.md",
+      "type": "file",
+      "sha": "f08288a39a0162746c2c7af0bbc4ce206d845f9a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d5a54b42b9acb6563cd8d641974278eda2ade66d"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "81b861315de4a6ea9ec8b98de0357e5efede5474"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1832f1424fb6aa723cc845bc8ef8dd54f6e5bf4f"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "178473ee9ab5826097c794f9a538960cc51e41eb"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "369d0bcd2f0d987712dcf174233607d11a01edb1"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "c29b6a8eef5e7cfaf1c5160ed68e8d37210d1fad"
+    },
+    {
+      "path": "wiki-pages",
+      "type": "dir",
+      "sha": "9bfe01f5d2e98f181fee43a404ed65406968ba6e"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "84b6788daeeaacabae45e9dc28251ae0c0e56475"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "TypeScript web 2D engine with scenes, gameobjects, tilemaps and particle examples plus src/tests; runtime readiness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,124 @@
+{
+  "repository": "enginmanap/limonEngine",
+  "repository_id": 51472606,
+  "commit": "e1fd2482f1f3c12f364e8fcc84555c5e55235e73",
+  "source_url": "https://github.com/enginmanap/limonEngine/tree/e1fd2482f1f3c12f364e8fcc84555c5e55235e73",
+  "readme_path": "README.md",
+  "readme_sha256": "0d5a0a4d29527d29486aee61815e4015abc93b86f97abc3b832e28ebaada7c4e",
+  "entries": [
+    {
+      "path": ".bettercodehub.yml",
+      "type": "file",
+      "sha": "860a9769c3b4534ce666dda16f5f91fe21fa2ea2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "945fb521aa2bd25ecc414a3e88f711d67e0f3840"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f04372d75f64189d6f1adbda1194456f474e28e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7e6fe1eef66c4f4f28b2ac0b326f15b49120c722"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "1356c29b558eaf6b51757b6a1e867e244443b157"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fef3f5a971cc7f2ee571d2b8df09249b949bd488"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "70f4cc1a67981397e42ce475057874c601fd45ad"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "026da5fecb83ffc57d21d8943e9615ed55cf4368"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "0e8073ff7d4745aafa6afd7847e95c64cad6fa57"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "72818ffe1963782fa38adf5c7f7907942819eacc"
+    },
+    {
+      "path": "Dockerfile.base",
+      "type": "file",
+      "sha": "19b2e82c92143700f87d25f7703e843a85387fc2"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "1db94c6285b68541b897a92db4bd45bd842be80d"
+    },
+    {
+      "path": "GraphicBackends",
+      "type": "dir",
+      "sha": "37fe97d66b05ade78c01a7ee9ff5316e18705f0f"
+    },
+    {
+      "path": "INSTALLATION",
+      "type": "file",
+      "sha": "355286fe0b7e32a41fa54cbafbbcafc97c214d0e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "38c5ddfcebf22a1ce06e20a82f96d45c8bf82ea2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2cf7fa2610f2ea176fed2fe458006068ee9e5e4d"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "da6264100764c178678f1c2ba9c23ca4cc492c6c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "709217826ef27e69039f8c0f9f77af4bd89d9269"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "7bcd10bd638482d34d4012075b84f1fbd2c45c00"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "dba5cc26b4bac67523255d7c01dd219365fcf5ef"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "e0d4673fd6a879b683ca3674247683779e3bc800"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "808f66bb399f7cafe0eaa6757626eeb9ff6213f9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native first-person game engine; owned Engine/GraphicBackends and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

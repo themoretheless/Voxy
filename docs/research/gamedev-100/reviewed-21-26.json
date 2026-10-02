@@ -1,0 +1,74 @@
+[
+  {
+    "index": 21,
+    "name": "holtsetio/softbodies",
+    "commit": "5d304d36006fcf2201061df0d1a27ce79bba2183",
+    "path": "src/FEMPhysics/FEMPhysics.js",
+    "line_start": 259,
+    "line_end": 315,
+    "source_sha256": "da6b4375fd5206b50b9dfe226735d049244da061a1e72a5b8fee694121c53b23",
+    "source_url": "https://github.com/holtsetio/softbodies/blob/5d304d36006fcf2201061df0d1a27ce79bba2183/src/FEMPhysics/FEMPhysics.js#L259",
+    "reading_scope": "Bounded code reading; not full repository audit or execution",
+    "finding": "Centers tetrahedron/current reference and estimates rotational offset via covariance; selected fragment alone does not prove constitutive FEM response."
+  },
+  {
+    "index": 22,
+    "name": "nitronoid/csb",
+    "commit": "c3d67051410c67e784003db0df4f7c81a702d248",
+    "path": "csb/src/Solver.cpp",
+    "line_start": 351,
+    "line_end": 386,
+    "source_sha256": "37ff1502dc1e0c5e4ccef8e028e9c12384beffc6c86376173a050b88dc9ce11b",
+    "source_url": "https://github.com/nitronoid/csb/blob/c3d67051410c67e784003db0df4f7c81a702d248/csb/src/Solver.cpp#L351",
+    "reading_scope": "Bounded code reading; not full repository audit or execution",
+    "finding": "Projects constraints, updates spatial hash, resolves static/continuous collision hooks, then Verlet-like positional advance; hook names alone do not prove CCD guarantee."
+  },
+  {
+    "index": 23,
+    "name": "GregTJ/softbody-dynamics",
+    "commit": "3b728e858f1bde1e4ff42067ca0b8abb4ccfa517",
+    "path": "softbody.js",
+    "line_start": 214,
+    "line_end": 266,
+    "source_sha256": "72931dbc5b6a598c13fde6562bb3e46e3ea1c4576cc3b6aaf421d7fd4ad14c69",
+    "source_url": "https://github.com/GregTJ/softbody-dynamics/blob/3b728e858f1bde1e4ff42067ca0b8abb4ccfa517/softbody.js#L214",
+    "reading_scope": "Bounded code reading; not full repository audit or execution",
+    "finding": "Spring goal displacement divided by mass added to momentum; timestep not explicit in selected spring function, requires caller cadence audit."
+  },
+  {
+    "index": 24,
+    "name": "TheSandwichCoder/SoftBodySimulation-Rust",
+    "commit": "8c143e4cec4545c80203d7a98191501e0fc32f2b",
+    "path": "src/soft_body.rs",
+    "line_start": 809,
+    "line_end": 842,
+    "source_sha256": "3363bab023348e741f4341b77244800b87f431aa21bf7dafabb10b32405592f0",
+    "source_url": "https://github.com/TheSandwichCoder/SoftBodySimulation-Rust/blob/8c143e4cec4545c80203d7a98191501e0fc32f2b/src/soft_body.rs#L809",
+    "reading_scope": "Bounded code reading; not full repository audit or execution",
+    "finding": "Spring/damping force clamped to +/-1000 and dt*ITERATION_DELTA velocity correction; force cap changes constitutive behavior."
+  },
+  {
+    "index": 25,
+    "name": "Himbiss/softbody",
+    "commit": "b0e943ceb83d306c66e32f564558fa19899e92cd",
+    "path": "SoftBody.py",
+    "line_start": 126,
+    "line_end": 188,
+    "source_sha256": "e5cfa78bed77c779a02dd02917530313ae7d96ebfe812ffc45a408dc63def441",
+    "source_url": "https://github.com/Himbiss/softbody/blob/b0e943ceb83d306c66e32f564558fa19899e92cd/SoftBody.py#L126",
+    "reading_scope": "Bounded code reading; not full repository audit or execution",
+    "finding": "Mass-spring pressure and velocity-first Euler; r12d divisions remain outside nonzero guard, pressure divides by computed area; degenerate states require explicit validation."
+  },
+  {
+    "index": 26,
+    "name": "FZzzz/JellySimulation",
+    "commit": "432ebb06bcfc1e17424898f7cacb1d2369214fe8",
+    "path": "JellySimulation/ConstraintSolver.cpp",
+    "line_start": 1,
+    "line_end": 72,
+    "source_sha256": "81e9f33c35d0b2a657fe7aa9d53cefc9a910b155eeee3226484802d386d93435",
+    "source_url": "https://github.com/FZzzz/JellySimulation/blob/432ebb06bcfc1e17424898f7cacb1d2369214fe8/JellySimulation/ConstraintSolver.cpp#L1",
+    "reading_scope": "Bounded code reading; not full repository audit or execution",
+    "finding": "XPBD lambda reset and compliance setup before iterations; public wrapper returns true regardless of helper result; collision constraint parameter unused in viewed helpers."
+  }
+]

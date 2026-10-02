@@ -1,0 +1,224 @@
+{
+  "repository": "rednblackgames/HyperLap2D",
+  "repository_id": 280444703,
+  "commit": "450a4d65a1e383b227ae476ffd17be18a4834447",
+  "source_url": "https://github.com/rednblackgames/HyperLap2D/tree/450a4d65a1e383b227ae476ffd17be18a4834447",
+  "readme_path": "README.md",
+  "readme_sha256": "b9381b4e788e913f4d14bb96cd5d85d10f22536750b054111ee26889d7e5906c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "aebd9221a34eb810d4b5b4c7548d0580e3cacef3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0f09418302a604e50c087e725843985dea80c259"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "516792ecb3f8e985d83940f8d644893456ac366b"
+    },
+    {
+      "path": "ARTEMIS-ODB-CONTRIBUTORS",
+      "type": "file",
+      "sha": "28f8d2ad82bb319b99d3dd46dec6a87eb277af19"
+    },
+    {
+      "path": "ARTEMIS-ODB-LICENSE",
+      "type": "file",
+      "sha": "b57c988408a95c651d0f83c91da574bad54e0b83"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "842d79f47669e6016eab6dfaf977be05fc565d0a"
+    },
+    {
+      "path": "CHANGES",
+      "type": "file",
+      "sha": "efd59d8100fcc363847ba85870a49bd9068d0cd8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "0446215b4e57825ad5fee863ce7dd2134da09bc8"
+    },
+    {
+      "path": "OVERLAP2D-AUTHORS",
+      "type": "file",
+      "sha": "b82334298dd28670f70ae3ef667add290124e608"
+    },
+    {
+      "path": "OVERLAP2D-CONTRIBUTORS",
+      "type": "file",
+      "sha": "b1cc5b8d37fba24d6b3d701400ccfcd63d87ceb4"
+    },
+    {
+      "path": "OVERLAP2D-LICENSE",
+      "type": "file",
+      "sha": "53bb60ced8f8f89c2276a89368877e82678ec00c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f6f8379b1f3cd5794e2026f095d89e0c07622dcd"
+    },
+    {
+      "path": "SKILL.md",
+      "type": "file",
+      "sha": "2ca2356421eb43ea0909dee3757c1498cc69edc4"
+    },
+    {
+      "path": "art",
+      "type": "dir",
+      "sha": "8c67746fbdfc8d0516d5cd6fa9b948e2e7cfcb8c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "a059cf037e5e30e5a346aa7833b63eb602571a4e"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "b6799b10169920d20d5252442f5d811cbda4175f"
+    },
+    {
+      "path": "flatpak",
+      "type": "dir",
+      "sha": "3a5df930049d6c245df69377ee3f2d209aa19762"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "01ba0329a82e9471cf98a676f83b28e5adf5a75a"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "311d2317bcae79d9d382126cfe3e74f6a3048116"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "2fe81a7d95e4f9ad2c9b2a046707d36ceb3980b3"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "9618d8d9607cd91a0efb866bcac4810064ba6fac"
+    },
+    {
+      "path": "h2d-libgdx-bvb-extension",
+      "type": "file",
+      "sha": "9f8bf406ad47e3bdfbc8a04297b0f22f7981506d"
+    },
+    {
+      "path": "h2d-libgdx-spine-extension",
+      "type": "file",
+      "sha": "c7ed8b750577e4f74955beacc619218c10f8d69b"
+    },
+    {
+      "path": "h2d-libgdx-talos-extension",
+      "type": "file",
+      "sha": "55660e7270f469b87e8320c2cb818bb8efa34db2"
+    },
+    {
+      "path": "h2d-libgdx-tinyvg-extension",
+      "type": "file",
+      "sha": "86c983e11b5f62fbed578e2ca46774634d392172"
+    },
+    {
+      "path": "h2d-libgdx-typinglabel-extension",
+      "type": "file",
+      "sha": "3cf6aa66d5f618cb77deb518287fd771747b8207"
+    },
+    {
+      "path": "hyperlap2d-common-api",
+      "type": "file",
+      "sha": "c16eafb54b0cfa7e7455e3a9d8f51eb0dad37a8f"
+    },
+    {
+      "path": "hyperlap2d-runtime-libgdx",
+      "type": "file",
+      "sha": "3d69c6b1f217ae64535379f4855f6201cb90c316"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "bdd27354b5e1fde950128429bb96d56165d9abfb"
+    },
+    {
+      "path": "plugin-9patch",
+      "type": "dir",
+      "sha": "8bc8bb745b828a3ea3f3a35dd9cfd8a997d7076f"
+    },
+    {
+      "path": "plugin-mcp",
+      "type": "dir",
+      "sha": "b59b0d15f46941798dc0910db2df237ce8a526bd"
+    },
+    {
+      "path": "plugin-performance",
+      "type": "dir",
+      "sha": "dd3535079f1b4c96182dbeb49ef46d8b6f499dc9"
+    },
+    {
+      "path": "plugin-skin-composer",
+      "type": "dir",
+      "sha": "d1a47827105aa2ab57c7f82c7ce101e6212e253e"
+    },
+    {
+      "path": "plugin-tiled",
+      "type": "dir",
+      "sha": "079525144bffc3f0a3db0664b4d647b90f97a0bd"
+    },
+    {
+      "path": "project.schema.json",
+      "type": "file",
+      "sha": "7b016801ef597719f9ed2a19fd83e1a90f0467bd"
+    },
+    {
+      "path": "resources-linux",
+      "type": "dir",
+      "sha": "9f603498ef1556c1606e36e0d68cb5c60b216dbc"
+    },
+    {
+      "path": "resources-macos",
+      "type": "dir",
+      "sha": "405ad3096021b9afae7acafe5963cb656bf62c5b"
+    },
+    {
+      "path": "resources-windows",
+      "type": "dir",
+      "sha": "ddf6f05b2ddcde5d59c8b48e60541c7a1d9cccc1"
+    },
+    {
+      "path": "scene.schema.json",
+      "type": "file",
+      "sha": "333875a0128e9f2680b768c1c7cafc6393a89322"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "0b44ae91bcc72f9042c78039f7c91f5312278892"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9f89722b5e674c3f3b3187815a06c2d185ea61e5"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify visual scene/world authoring editor; separate runtime engine ownership not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

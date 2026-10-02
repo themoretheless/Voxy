@@ -1,0 +1,104 @@
+{
+  "repository": "MageStudio/Mage",
+  "repository_id": 23678719,
+  "commit": "b26b0facd478ef271e9b3d7ccd5ecef5e8550dff",
+  "source_url": "https://github.com/MageStudio/Mage/tree/b26b0facd478ef271e9b3d7ccd5ecef5e8550dff",
+  "readme_path": "README.md",
+  "readme_sha256": "e557a3715ad409b49abbfd778e5779544e5063218dcb43966f5c384ddf219b87",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ea8bf271c84ee992fbf954a9da34ce8139528196"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea4f3280f64e28bd95211912090ce2678b263d6e"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "c19f04b3446b9aa7c6cfc068340b4ec7761c2139"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "f87d6e835870aa424d2ed75b067394189cc7dd2b"
+    },
+    {
+      "path": ".prettierrc.js",
+      "type": "file",
+      "sha": "44c34a0897b0872074b710d74ce3077f99d39c85"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a73055bc98bda0c93b4333dde12cf75fac2e6c14"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b960f932245419feee4479be869ddc265e91948"
+    },
+    {
+      "path": "__mocks__",
+      "type": "dir",
+      "sha": "e7447a8349eefa040dab86c7d022baacabbf5045"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "c5f4ab1999c0af9adb35ea01741f01c25dabbbdb"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "9d482d7bec01f22bcdc7801143007394e8ff547d"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "c0bfb9c014cb21dfbcd53218db19b2880bcec63c"
+    },
+    {
+      "path": "eslint.config.js",
+      "type": "file",
+      "sha": "9ca21b9cdee3aa01821fba88493beedf90be7046"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fb76c92d370422c8853e03183c05cc772dde8a6b"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "d799d7fe2d45bda90fd79c1f7d6523ad6c2043a1"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "af101c3d5f24130eaf68e09aa76c224b19cb62ad"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "f643a920e9ac8743866bf386812625c0d6c2a557"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "0f6de9eafa224635d696ec90debe90a76f03f872"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2991e3eb9d1584fb491c471752e16c6363caa9a4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Three.js-based 3D game engine with scripting/physics/UI described in discovery metadata and src/examples; backend integration does not imply fork.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

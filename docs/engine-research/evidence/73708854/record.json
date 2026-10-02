@@ -1,0 +1,89 @@
+{
+  "repository": "MTASZTAKI/ApertusVR",
+  "repository_id": 73708854,
+  "commit": "e1aa5f18a289405e9906bea3b50b057557aa7732",
+  "source_url": "https://github.com/MTASZTAKI/ApertusVR/tree/e1aa5f18a289405e9906bea3b50b057557aa7732",
+  "readme_path": "README.md",
+  "readme_sha256": "6c43c190ba5b3e038424fa6bee462b8acbbc037b71e7675ead7a7c4283508617",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e46a1448872831dda4e46902322eddb811fc13b7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a42ad5bd0f16448d34016afb676ca7ba03c0544f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d8515131b09c2f5e197c7d186d55ff550f7c3bdd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9eeb179aa3df9cb8f2158bc28c1a71f1fa0d8c31"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "dcb4b8227d7b8336c652e0423e66319aa7b056d1"
+    },
+    {
+      "path": "functions.cmake",
+      "type": "file",
+      "sha": "58e512dbded224d59ef3c73d565fafa14dcf8ad6"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "1cebb8a577569e8c9f99f9f86b1fa2bd59dc72f6"
+    },
+    {
+      "path": "macros",
+      "type": "dir",
+      "sha": "f22bdb29d3f4dee5656224a3913a5168b5c6e5d6"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "3295744090a2728789dcd3d67d95e101ac8714f7"
+    },
+    {
+      "path": "prepare_android.cmake",
+      "type": "file",
+      "sha": "15590a2b37a47fe9232a274dbf7b12376645933d"
+    },
+    {
+      "path": "prepare_ape.cmake",
+      "type": "file",
+      "sha": "db173f47757a172e674319338116741fb41b15ec"
+    },
+    {
+      "path": "prepare_cmake.cmake",
+      "type": "file",
+      "sha": "8ddc0106d77142520fcea1a4bc2575ecf2542152"
+    },
+    {
+      "path": "prepare_cxx.cmake",
+      "type": "file",
+      "sha": "41934a050df2c3107f6ffa4259d3626bb6fd343f"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "7365ef7777685037978cd662b35ac3f5527a7884"
+    }
+  ],
+  "classification": "virtual_world_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies VR/AR library engine; core/plugins/include/CMake, complete game engine scope unproven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

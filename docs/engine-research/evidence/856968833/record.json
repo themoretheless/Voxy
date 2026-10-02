@@ -1,0 +1,187 @@
+{
+  "repository": "getsentry/sentry-godot",
+  "repository_id": 856968833,
+  "commit": "9e4f71e6fefe67ce5325c5986883c387210f4da1",
+  "source_url": "https://github.com/getsentry/sentry-godot/tree/9e4f71e6fefe67ce5325c5986883c387210f4da1",
+  "readme_path": "README.md",
+  "readme_sha256": "ede2d58b099a7ed54543707c7a1e6598769756dd9402120ba9fabd98171ae1fb",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "fe8f6cfefca4d55a998f23c39a187a64a86c000c"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "766a4dfdd49744d21005b755c19681202d0bce97"
+    },
+    {
+      "path": ".craft.yml",
+      "type": "file",
+      "sha": "07448f95acb95782de653c09ce509a96c089d896"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "70b0b7b60c458d0e0ec116a1371a20ad19b01838"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dd86e75721d8a829f385a308b4c1306d145042de"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "f6e1358ddbae291d20b692535243a060d1279483"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "fb5834e0cc5720a2192a31ad53aa710f686a6b36"
+    },
+    {
+      "path": ".ruby-version",
+      "type": "file",
+      "sha": "2aa513199211985f85c887809621de0d68e05ba1"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d137933c28f0b08c248dc01b094860bc07da3fac"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d03fdc35d471d09a945c8912b66fa399a46d95ae"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "24238e9a01fafd88d4690dc4d36b7d0c1d0102c4"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "241f4184c161f22ca87366a4eafc3e40a798213d"
+    },
+    {
+      "path": "Gemfile.lock",
+      "type": "file",
+      "sha": "ee34f9938e68de1bf7421c6ae4d5bd636ffad7ec"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "908c02ece459878ecb67d9693d8058e953c2432a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fcec18a241988b10a285b4cb61c39f108177f9b1"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "36849ef34748b3ce5fcbe0a491dfcfc977106366"
+    },
+    {
+      "path": "Sentry.Godot.slnx",
+      "type": "file",
+      "sha": "b8bb36eb9246e9f17752981c592f3c4b53cb1441"
+    },
+    {
+      "path": "android_lib",
+      "type": "dir",
+      "sha": "c4e043be3324a7efa892f73cc2e4699127589c01"
+    },
+    {
+      "path": "assetlib",
+      "type": "dir",
+      "sha": "aaae2effb9c25a1ab50fcfba9deefe2440241363"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "dc5ff5d3e6e5485318612e3bd5082b10e1cca18d"
+    },
+    {
+      "path": "doc_classes",
+      "type": "dir",
+      "sha": "78ab6952a7e334e5896547834571009f543d1e41"
+    },
+    {
+      "path": "exports",
+      "type": "dir",
+      "sha": "8692c346c8735b516bf59d9b1d419ccc647fe85f"
+    },
+    {
+      "path": "fastlane",
+      "type": "dir",
+      "sha": "6974ae537c5daf58a8039534a62b7f26c6d99665"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "20e2a01520742aff4ec9ce578ed4fe5f3a76fe77"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "cb04e322f5711e711e171c7be3706838264b18f1"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4f906e0c811fc9e230eb44819f509cd0627f2600"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "0a7a00cc117d5744c522a09738ef3722f3999dc2"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "752f0cf79cde9fedb90bd9a422f4c9c4800442a7"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8b1d5131222c814215dc8a2224f469b3dddba494"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "5b2363da14f62b09ed0aa5f649d90b4bc793ca4b"
+    },
+    {
+      "path": "site_scons",
+      "type": "dir",
+      "sha": "12ee1623bcf71c91cc80b1711a150e67c9ae2839"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ade1991046d9cff4e2560e9ca7c0f57582772ef7"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "5f55485f831e37c078de2c9797e92a626510bfb0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,124 @@
+{
+  "repository": "cherry-game/cherry",
+  "repository_id": 314552270,
+  "commit": "4a6c56e0d90fd65f616cb7fdc09c14260b2a26fe",
+  "source_url": "https://github.com/cherry-game/cherry/tree/4a6c56e0d90fd65f616cb7fdc09c14260b2a26fe",
+  "readme_path": "README.md",
+  "readme_sha256": "dc339b02f1013c8a2a9ff5ecee40966305b9e4d0dab2300ac9fc20fd32287329",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c91b5999ea7154db26c3ca5aeeda2ad4b79e765d"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "82e0faa7d8e67d895c40a2e727bb1b52c56c8540"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "70769b99c8a89dc9661db0a9e455705f37f98c81"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "dd28e447fc1c6ce927f5ecaf339250810902da8a"
+    },
+    {
+      "path": "README.en.md",
+      "type": "file",
+      "sha": "a577320d17cb5060c135fa48cde86d046ba4029a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5bc73ed89f6cfbfdeec38cfa10e49cb12fd211bc"
+    },
+    {
+      "path": "_docs",
+      "type": "dir",
+      "sha": "c1ebda21019b3372ce23d8130b5e9c7e44d19bc8"
+    },
+    {
+      "path": "application.go",
+      "type": "file",
+      "sha": "e83c8115a0dfc096a0acfc4b2b92b6bec53d4896"
+    },
+    {
+      "path": "cherry.go",
+      "type": "file",
+      "sha": "1b471127911dee8dd1750b74a0f583eedbe79b1d"
+    },
+    {
+      "path": "cherry_test.go",
+      "type": "file",
+      "sha": "cc551bd67458bc0f2ddd79ca42ab3673766525ed"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "403599194c4a3ab538968b92ebe084a2cd8ca474"
+    },
+    {
+      "path": "const",
+      "type": "dir",
+      "sha": "0ddf59d100b8c8e6d3288ef16314e53789e167a4"
+    },
+    {
+      "path": "error",
+      "type": "dir",
+      "sha": "6e556548c77a2193b83304bd1f2eae7c52e8b254"
+    },
+    {
+      "path": "extend",
+      "type": "dir",
+      "sha": "1dc4dd62fd7b1686b3a4b55d2167a7ad94833b93"
+    },
+    {
+      "path": "facade",
+      "type": "dir",
+      "sha": "8659e46b33b1e78b5fd085956c9dc75ca840c5a9"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "0f1b6f1cfa6aa14b12e42fb9e460dca87bd6bc86"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "a99b79879cc5a854d04941a0fc309fb29fcf7671"
+    },
+    {
+      "path": "logger",
+      "type": "dir",
+      "sha": "fef06034dd7de27bc30ba6bee79a5d7a01782df8"
+    },
+    {
+      "path": "net",
+      "type": "dir",
+      "sha": "fcdea3e9cd9c6dc596828200e0f70bfadf1bc405"
+    },
+    {
+      "path": "profile",
+      "type": "dir",
+      "sha": "8fedcb2d8f604b08988bdb1000dee3bb36f292d3"
+    },
+    {
+      "path": "tag.sh",
+      "type": "file",
+      "sha": "a1c969103bde3fed0635276587c3c09438db6236"
+    },
+    {
+      "path": "ver.sh",
+      "type": "file",
+      "sha": "b9a782fcccf683efd65ce5f1aa1ab35edafed0d6"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies actor-based Go game server; connector/facade/application runtime and Go build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

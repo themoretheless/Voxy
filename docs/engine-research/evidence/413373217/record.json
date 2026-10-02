@@ -1,0 +1,124 @@
+{
+  "repository": "harfang3d/harfang3d",
+  "repository_id": 413373217,
+  "commit": "abc8fc5de961bb2e33cb26d96ad571d177fef0d6",
+  "source_url": "https://github.com/harfang3d/harfang3d/tree/abc8fc5de961bb2e33cb26d96ad571d177fef0d6",
+  "readme_path": "readme.md",
+  "readme_sha256": "e7d680462abbca3ae36b21d71e1917995025198a724d368f0f59d6a368cc2f18",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0080f82d6a26bb4324af1300cebbb1ee467b6700"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ece2a5011243485bfaae5e8ac7a1030e0a51d904"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7036a23fb393d2e94deee4fd2e4e6cf5363a50a4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "748df8886ef9b09a716a17e3ce5f8c2da2397ba7"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "9770b712fe5c94b06bee8e9aba14e06f24871788"
+    },
+    {
+      "path": "CODE_RULES.md",
+      "type": "file",
+      "sha": "906575fb8ae29d9e8b377d454499d9bf3b6367c5"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "55f5840426cf28c56783c86e2a460eb90d2a1d57"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "74080e3984703af33c4abd6cf1e2ca3dda53729f"
+    },
+    {
+      "path": "LICENSE-3RD-PARTIES",
+      "type": "file",
+      "sha": "790a219573c18fb1741f4ddbef6c65b4fbc7cf10"
+    },
+    {
+      "path": "LICENSE-HARFANG-COMMERCIAL",
+      "type": "file",
+      "sha": "f3fd77a21fe918ba1c9f4592928e1b74bbb7f84c"
+    },
+    {
+      "path": "LICENSE.GPL3",
+      "type": "file",
+      "sha": "a28fa47ea19a19d600f2d44d097cb520390f6166"
+    },
+    {
+      "path": "_clang-format",
+      "type": "file",
+      "sha": "6a47dca321e6e759133a6ec8de3f7a7f78404997"
+    },
+    {
+      "path": "binding",
+      "type": "dir",
+      "sha": "a676be51b34342d444715488731f22f0f3e64be3"
+    },
+    {
+      "path": "contributors.md",
+      "type": "file",
+      "sha": "9c77d0fe234a5e248bdef36d8158d33221edb387"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "56ea8f6155c9517199fe31df4db0f738fc95de32"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "241c4567ca0522d25a3c08c8149021366b23f37b"
+    },
+    {
+      "path": "harfang",
+      "type": "dir",
+      "sha": "f3a4677f55c6d5499b3f555cee0f25327496c897"
+    },
+    {
+      "path": "languages",
+      "type": "dir",
+      "sha": "0b0123970d9048e2111dd0af278331d5a1b50c4e"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "2357a29186a4e4c7f57b54c51549b4aca1f46446"
+    },
+    {
+      "path": "release-notes.md",
+      "type": "file",
+      "sha": "7221ef9ded27d7aac227002f53d95946cd7382bf"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "5e782bac7d82bfe433249047a1ec16a943b95302"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "5be96326956fc4cbc03ef5e7ff1350f7fca61940"
+    }
+  ],
+  "classification": "graphics_middleware",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies all-in-one visualization library; native source and CMake build. Game-engine scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,54 @@
+{
+  "dtSeconds": 0.001,
+  "expectedSourceAddedMassKg": 1.8e-6,
+  "finalMeasurements": {
+    "calibratedPhysiology": false,
+    "drivingPotentialError": null,
+    "drivingPotentialIncludesGravity": true,
+    "drivingPotentialRangePa": [
+      -16086.289571274752,
+      16075.309808771772
+    ],
+    "initialMassKg": 0.00005,
+    "massKg": 0.000051799999999999985,
+    "maximumCellThicknessM": 0.000014832759025781178,
+    "settings": {
+      "absorption_b_per_m": 0.04,
+      "absorption_g_per_m": 0.08,
+      "absorption_r_per_m": 0.2,
+      "contact_angle_rad": 0.1,
+      "density": 2000.0,
+      "display_mode": "material",
+      "precursor_thickness_m": 1e-7,
+      "precursor_wetting_enabled": false,
+      "refractive_index": 1.333,
+      "source_radius_m": 0.04,
+      "source_rate_m3_s": 1e-8,
+      "source_x_m": 0.0,
+      "source_y_m": 0.2,
+      "source_z_m": 0.13,
+      "sources": [
+        {
+          "id": "second",
+          "radius_m": 0.05,
+          "rate_m3_s": 2e-8,
+          "x_m": 0.03,
+          "y_m": 0.24,
+          "z_m": 0.13
+        }
+      ],
+      "surface_tension": 0.04,
+      "viscosity": 0.05,
+      "wetting": 1e-7
+    },
+    "sourceAddedMassKg": 1.8000000000000006e-6,
+    "volumeM3": 2.5899999999999994e-8
+  },
+  "maximumDisplacementM": 0.20064686238765717,
+  "maximumRelativeMassError": 1.4473572690947267e-15,
+  "scope": "prescribed morph deformation, no inertial entrainment or two-way tissue force; uncalibrated engineering fixture",
+  "sourceAddedMassKg": 1.8000000000000006e-6,
+  "steps": 40,
+  "triangles": 84680,
+  "wallSeconds": 20.481247708
+}

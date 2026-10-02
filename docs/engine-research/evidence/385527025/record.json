@@ -1,0 +1,64 @@
+{
+  "repository": "pmgl/microstudio",
+  "repository_id": 385527025,
+  "commit": "b59d904b56a8cdbdde1b08a1b107c90bab59b31f",
+  "source_url": "https://github.com/pmgl/microstudio/tree/b59d904b56a8cdbdde1b08a1b107c90bab59b31f",
+  "readme_path": "README.md",
+  "readme_sha256": "a1ddbdcf571e6bddddd200b1386904aaa6e25c221eb00c591c1cb3b82ec0dc86",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2125666142eb661091cc5f32af2ed2f3fc65571d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5935e40cf68d94da08152c9392318b728f8124d1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fc6d513af135d04cfbaf6fce4c3727d7550ff6e5"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "bf5e3ff5a6fee58e70dd0f8680e554323bca6e23"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ae3b5b98e86c879016a4527f7284306b6def8123"
+    },
+    {
+      "path": "config_local.json",
+      "type": "file",
+      "sha": "ca1c40bf554238982726d67f181240b94c4802c9"
+    },
+    {
+      "path": "config_prod.json",
+      "type": "file",
+      "sha": "d35226a0e508e6f813261e2058db83804e07685f"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "255328f115eda79be1bac7c93ecb675b054b1961"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "57d5a363f01c9f15c64ea94782f6b2b11311f8ce"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "5e1296343229e496743edfb7d84bd481c8aae065"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies online game engine; server/static/templates contain browser runtime/editor distribution.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

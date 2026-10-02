@@ -1,0 +1,129 @@
+{
+  "repository": "tx00100xt/SeriousSamClassic-VK",
+  "repository_id": 494448514,
+  "commit": "510d36f901cbe883c56b155b53717e4efdeb6522",
+  "source_url": "https://github.com/tx00100xt/SeriousSamClassic-VK/tree/510d36f901cbe883c56b155b53717e4efdeb6522",
+  "readme_path": "README.md",
+  "readme_sha256": "2ac904a3722aaf6c54eaa93202ab92124b48f738bdafdc93a0afbf9134aeeaf2",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "4cd037f0e90b503b36fb4c8d9f0092ab9bdab890"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8a83445d02d7d4aa4c020717b02556b3598a349d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ef38106d9360caeb424594df4290da7b2d7e5374"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0355623a84a0ee24b03f369e90ee253182f28b91"
+    },
+    {
+      "path": "CHANGELOG.old",
+      "type": "file",
+      "sha": "e7e472a5633215218fd87869ab5d1ab6c718ff08"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "23521a317e81f46e98bdf985cb0171b91f6a7e74"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "99d56c8ee38a3b24357701310f49186c1e3aa380"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23cb790338e191e29205d6f4123882c0583ef8eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5df7b18d550b79e54f0bf2712e485e486f3363d1"
+    },
+    {
+      "path": "SamTFE",
+      "type": "dir",
+      "sha": "095ed333c0d5d059c9868485443832443035c9c2"
+    },
+    {
+      "path": "SamTSE",
+      "type": "dir",
+      "sha": "7a0a59fde8ca78b0c5938325c70a681aafde5160"
+    },
+    {
+      "path": "appimage",
+      "type": "dir",
+      "sha": "1062cc5cf67bded6e53d6cbefdee01a66e6147c4"
+    },
+    {
+      "path": "build-appimage.sh",
+      "type": "file",
+      "sha": "af6f664f5768c2c4cefff2b075c60e70851e18a9"
+    },
+    {
+      "path": "build-linux32demo.sh",
+      "type": "file",
+      "sha": "e7caaad460fbaca3dca0b1ae399fae89de3d0486"
+    },
+    {
+      "path": "build-linux64demo.sh",
+      "type": "file",
+      "sha": "05e14805fea4d35470e08b9dde6f030e7a363400"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "aea8468374411b2eb2ab59287efd8ea9eed0be73"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "80da8348d5c004c0ec9231d64d8fdbae48eb4b0a"
+    },
+    {
+      "path": "flatpak",
+      "type": "dir",
+      "sha": "1ec7411d15837ee76c46fa631908c92b4f79242e"
+    },
+    {
+      "path": "man",
+      "type": "dir",
+      "sha": "04ea6af94e76a91b0e33cb9680605a03bd58df17"
+    },
+    {
+      "path": "run_game.sh",
+      "type": "file",
+      "sha": "68c01b2995a7ad47464ebbde93fd722498cede10"
+    },
+    {
+      "path": "run_game_hud.sh",
+      "type": "file",
+      "sha": "fc1ab85ae4e7d43fb25fb1cd626053fbe703ae1b"
+    },
+    {
+      "path": "run_server.sh",
+      "type": "file",
+      "sha": "93b211ce7d6602ac3af56c2941fe565120b6dcae"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "a481c036db163937d7d96814882853fb14fa7cc6"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Vulkan port derived from Serious Engine sources; runtime and game tool projects are documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

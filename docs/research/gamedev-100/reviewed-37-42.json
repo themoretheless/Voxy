@@ -1,0 +1,74 @@
+[
+  {
+    "index": 37,
+    "name": "InteractiveComputerGraphics/SPlisHSPlasH",
+    "commit": "f3f677140761db7637b5443beb54f19f1f835ed4",
+    "path": "SPlisHSPlasH/Elasticity/Elasticity_Kee2023.cpp",
+    "line_start": 3295,
+    "line_end": 3345,
+    "source_sha256": "a94edcaacf43a8e17ed2669080c1eb17d00466dc5eb57a3aa6b51e83dec9e6c6",
+    "source_url": "https://github.com/InteractiveComputerGraphics/SPlisHSPlasH/blob/f3f677140761db7637b5443beb54f19f1f835ed4/SPlisHSPlasH/Elasticity/Elasticity_Kee2023.cpp#L3295",
+    "reading_scope": "Bounded code reading, not full audit/build/benchmark",
+    "finding": "Read scalar elasticity iteration path: clears L-BFGS window per object step, selects Newton or L-BFGS, checks infinity norm of search displacement before optional line search. A displacement stopping criterion is not independently a force-residual guarantee. Not executed or benchmarked."
+  },
+  {
+    "index": 38,
+    "name": "SebLague/Fluid-Sim",
+    "commit": "4717b7259718d349b0001c82836f24ce5fec81d7",
+    "path": "Assets/Scripts/Simulation/FluidSim.cs",
+    "line_start": 284,
+    "line_end": 350,
+    "source_sha256": "df82715916686ca7a7a17204b07687756a91c2f1d68e8fb5f56878a0a5b22305",
+    "source_url": "https://github.com/SebLague/Fluid-Sim/blob/4717b7259718d349b0001c82836f24ce5fec81d7/Assets/Scripts/Simulation/FluidSim.cs#L284",
+    "reading_scope": "Bounded code reading, not full audit/build/benchmark",
+    "finding": "Frame time is divided into substeps; GPU workflow dispatches external forces, spatial hash/reorder, density, pressure, optional viscosity and position update. Read orchestration only; compute kernels and density residual remain unverified."
+  },
+  {
+    "index": 39,
+    "name": "ProjectPhysX/FluidX3D",
+    "commit": "4fb540e9ddadaaee2bef8264c57c7f3f5a7fc571",
+    "path": "src/lbm.cpp",
+    "line_start": 924,
+    "line_end": 955,
+    "source_sha256": "ca415aff4dfe1e3331cf9a40bd2dd08f3277960771b5b17adf107dadaa73e305",
+    "source_url": "https://github.com/ProjectPhysX/FluidX3D/blob/4fb540e9ddadaaee2bef8264c57c7f3f5a7fc571/src/lbm.cpp#L924",
+    "reading_scope": "Bounded code reading, not full audit/build/benchmark",
+    "finding": "LBM step schedules domain stream/collide, optional free-surface stages with halo communication, distribution communication, particle coupling and time counters. This is domain orchestration, not inspected LBM collision kernel or non-Newtonian blood model."
+  },
+  {
+    "index": 40,
+    "name": "moostrik/ofxFlowTools",
+    "commit": "17cabe2aed9d47b982449c53ec7ada8a23289d3e",
+    "path": "src/core/fluid/ftFluidFlow.cpp",
+    "line_start": 159,
+    "line_end": 181,
+    "source_sha256": "74d1503aa0c44b642d588f8b26b8c439b00dbe0421201acdc6ac3d5679b8ab58",
+    "source_url": "https://github.com/moostrik/ofxFlowTools/blob/17cabe2aed9d47b982449c53ec7ada8a23289d3e/src/core/fluid/ftFluidFlow.cpp#L159",
+    "reading_scope": "Bounded code reading, not full audit/build/benchmark",
+    "finding": "2D texture fluid pressure stage computes divergence, runs fixed-count ping-pong Jacobi then subtracts pressure gradient with obstacle textures. Fixed iteration count alone does not certify small divergence."
+  },
+  {
+    "index": 41,
+    "name": "google/FluidNet",
+    "commit": "b834bb53f950f376358445a15ba93d68b5f62b28",
+    "path": "torch/tfluids/generic/tfluids.cu",
+    "line_start": 1605,
+    "line_end": 1650,
+    "source_sha256": "b74558bedab9059dfae3c0fa9eb26aaee870a010da84bf62cefaccd5f0773057",
+    "source_url": "https://github.com/google/FluidNet/blob/b834bb53f950f376358445a15ba93d68b5f62b28/torch/tfluids/generic/tfluids.cu#L1605",
+    "reading_scope": "Bounded code reading, not full audit/build/benchmark",
+    "finding": "Read PCG search-direction update with preconditioned triangular solves and epsilon-clamped scalar denominators; separately read pressure-copy kernel 1165-1189 that subtracts component mean. Numerical regularization/gauge handling must be distinguished from physical boundary pressure; convergence still requires residual checks."
+  },
+  {
+    "index": 42,
+    "name": "GarrettGunnell/Water",
+    "commit": "1673a12e796c5745aea6fa26eda53261da8efa80",
+    "path": "Assets/Scripts/Water.cs",
+    "line_start": 500,
+    "line_end": 553,
+    "source_sha256": "2d285caa18743c83d08c350a1c45d5c09b921fd6e7fb79a03099d3b023beb152",
+    "source_url": "https://github.com/GarrettGunnell/Water/blob/1673a12e796c5745aea6fa26eda53261da8efa80/Assets/Scripts/Water.cs#L500",
+    "reading_scope": "Bounded code reading, not full audit/build/benchmark",
+    "finding": "Read visual-water update: material optical parameters, inverse view-projection, wave/displacement settings. This module is rendering configuration, not a volume-flow solver. Counted as a gamedev visual source reading, explicitly unsuitable as evidence of blood/lymph physics."
+  }
+]

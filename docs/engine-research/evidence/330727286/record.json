@@ -1,0 +1,42 @@
+{
+  "repository": "kagenash1/godot-behavior-tree",
+  "repository_id": 330727286,
+  "commit": "035d4b563a80bab29a8b6cf3a781ebd1116ddb33",
+  "source_url": "https://github.com/kagenash1/godot-behavior-tree/tree/035d4b563a80bab29a8b6cf3a781ebd1116ddb33",
+  "readme_path": "README.md",
+  "readme_sha256": "5f958a1e28edf558c65c9d690f130bc2ad523665a1ba2a5c5f02f27c4966b50d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0e9404ce542fa6852a0a5061abbca6c8a1662488"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7b5b57884701a55b27d6dec26659c35f8e639b13"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "5b25891c41212eb9e50d17492a417ff0d21c5475"
+    },
+    {
+      "path": "api-docs.md",
+      "type": "file",
+      "sha": "455c42fc047a064612d1d8290226a9155ef450a9"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "b765313c552f224ea5bfffbf9f79dc364d9ebcdd"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "199607a9820282f7d76e96f48f71ea2c7eaaa2ef"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

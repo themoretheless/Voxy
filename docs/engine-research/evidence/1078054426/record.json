@@ -1,0 +1,82 @@
+{
+  "repository": "willibrandon/pixel-plugin",
+  "repository_id": 1078054426,
+  "commit": "dee350645b705916655c013f208bf5580ecb9317",
+  "source_url": "https://github.com/willibrandon/pixel-plugin/tree/dee350645b705916655c013f208bf5580ecb9317",
+  "readme_path": "README.md",
+  "readme_sha256": "4d00ecad246fc58cc292832f5771d8493a58763cc9447edc03e4aa26245c7300",
+  "entries": [
+    {
+      "path": ".claude-plugin",
+      "type": "dir",
+      "sha": "ae2edcae2944795038dd1c9858ed2348946de244"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d9914ed835488740d38fdf8c595d154454a016fb"
+    },
+    {
+      "path": ".mcp.json",
+      "type": "file",
+      "sha": "7c3b5e6f4c8e8074ef78f87aef6a5d6445dd2598"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0a9fc6c1f7555f35e592eca02ac1a007f4a295f3"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "3ab815f8cbdc0ace9afba206bce3189dd43bbd66"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "7a5d33fd4c2b859f102eab55746ec25f385c238f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0807f68af42bb8d751d117ffd6d8d796834c54a0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b13cd98139f93df0f5931368923860676ff90986"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "0c5ba39aa0d85db4fb30a8d5ee5e0f0ab0259cf6"
+    },
+    {
+      "path": "commands",
+      "type": "dir",
+      "sha": "f742f4b04333d7f734c4500ad0c1be1d98365871"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "dbc348407c3f167d253ee85b490757e7c916d9fb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d5231beb6467361b0f93b4f32aa6ffe06de9fbd8"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "5500de4e21d99a16fb17a9b8444bbcdf6216eff9"
+    },
+    {
+      "path": "test-outputs",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

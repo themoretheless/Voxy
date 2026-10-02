@@ -1,0 +1,89 @@
+{
+  "gradient-probe": {
+    "sha256": "dfcec5d3f4fb37bdd3a3ed461dca5fa5bba3e9a7fe5b4bae3db6bc46fb0bfd20",
+    "metrics": [
+      {
+        "term": "total",
+        "step_m": 1e-08,
+        "max_gradient_error_n": 0.00024494301836000196,
+        "max_split_n": 0.005153606035850002
+      },
+      {
+        "term": "total",
+        "step_m": 1e-09,
+        "max_gradient_error_n": 2.419753440001393e-06,
+        "max_split_n": 0.0005101676459699986
+      },
+      {
+        "term": "total",
+        "step_m": 1e-10,
+        "max_gradient_error_n": 2.420874000222395e-08,
+        "max_split_n": 5.101171220999942e-05
+      }
+    ]
+  },
+  "mesh-primitive-probe": {
+    "sha256": "d66db958d097d38c0fe3df34471e1d84c9ef2804dc864e559b16cf984508b044",
+    "metrics": [
+      {
+        "term": "total",
+        "step_m": 1e-08,
+        "max_gradient_error_n": 0.00024494303737999934,
+        "max_split_n": 0.005148612499030002
+      },
+      {
+        "term": "total",
+        "step_m": 1e-09,
+        "max_gradient_error_n": 2.4197375700016344e-06,
+        "max_split_n": 0.0005096684682800029
+      },
+      {
+        "term": "total",
+        "step_m": 1e-10,
+        "max_gradient_error_n": 2.464582000288873e-08,
+        "max_split_n": 5.096235772000107e-05
+      }
+    ]
+  },
+  "gradient-terms": {
+    "sha256": "8ddad873a1254f818fea7b2aab796cd74c46d8c4c646dff2e34828c2a1cc4690",
+    "metrics": [
+      {
+        "term": "surface_contact",
+        "step_m": 1e-08,
+        "max_gradient_error_n": 0.0002449430374800027,
+        "max_split_n": 0.005148612504220003
+      },
+      {
+        "term": "surface_contact",
+        "step_m": 1e-09,
+        "max_gradient_error_n": 2.4197074999995904e-06,
+        "max_split_n": 0.0005096686961399977
+      },
+      {
+        "term": "surface_contact",
+        "step_m": 1e-10,
+        "max_gradient_error_n": 2.448806000338033e-08,
+        "max_split_n": 5.096400731999934e-05
+      },
+      {
+        "term": "without_surface_contact",
+        "step_m": 1e-08,
+        "max_gradient_error_n": 1.9110000040734043e-11,
+        "max_split_n": 4.99353163000045e-06
+      },
+      {
+        "term": "without_surface_contact",
+        "step_m": 1e-09,
+        "max_gradient_error_n": 1.7948000030632016e-10,
+        "max_split_n": 4.989498399998737e-07
+      },
+      {
+        "term": "without_surface_contact",
+        "step_m": 1e-10,
+        "max_gradient_error_n": 1.6343829995976722e-09,
+        "max_split_n": 4.770489499955621e-08
+      }
+    ]
+  }
+}

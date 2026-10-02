@@ -1,0 +1,52 @@
+{
+  "adopted_code": true,
+  "renderer": "native Metal offscreen",
+  "live_viewer_capture": false,
+  "change": "Projecting profile adds relief to imported surface without subtracting an unmeasured nominal source bump",
+  "temperature_dynamics": false,
+  "physiological_calibration": false,
+  "tests": {
+    "body_parameters": {
+      "passed": 12
+    },
+    "nipple_refinement": {
+      "passed": 1
+    }
+  },
+  "images": {
+    "docs/body-female-nipple-relief-neutral.png": "1f5ba46406b5f848b595026f37e0e8e47f150e4f7ba0aeb9d7beea6f9a850dfc",
+    "docs/body-female-nipple-relief-cold.png": "a25630ae6cbf9afeff37c558bdc444156bfb027f4d492c03c148ac2a147b31cc",
+    "docs/body-male-nipple-relief-neutral.png": "6d898bfc9557ee22644a21b204aabba31d25590d4bd3e7e28ff27785dba21202",
+    "docs/body-male-nipple-relief-cold.png": "dd490a11e41de95559b28d0dddd9a9e1ead5bf62780e18bd9251431a71671c76"
+  },
+  "presets": {
+    "female-neutral": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 7,
+      "nipple_projection_mm": 3,
+      "areola_radius_mm": 18.5,
+      "nipple_cold_response": 0
+    },
+    "female-cold": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 7,
+      "nipple_projection_mm": 3,
+      "areola_radius_mm": 18.5,
+      "nipple_cold_response": 1
+    },
+    "male-neutral": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 4,
+      "nipple_projection_mm": 2,
+      "areola_radius_mm": 10,
+      "nipple_cold_response": 0
+    },
+    "male-cold": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 4,
+      "nipple_projection_mm": 2,
+      "areola_radius_mm": 10,
+      "nipple_cold_response": 1
+    }
+  }
+}

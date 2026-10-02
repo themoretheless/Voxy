@@ -1,0 +1,94 @@
+{
+  "repository": "matrixcascade/PainterEngine",
+  "repository_id": 190119926,
+  "commit": "c9b1cc1cb9bcf04022b3cbe17357eaad3f96f5d2",
+  "source_url": "https://github.com/matrixcascade/PainterEngine/tree/c9b1cc1cb9bcf04022b3cbe17357eaad3f96f5d2",
+  "readme_path": "README.md",
+  "readme_sha256": "0c9b54525025d658e74011d7d08822e1180502a5c40eb4dac9b6562391cc74b4",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "620d9acdc85f1df193c8a0e814aadcf787ab95c8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6a4cf95a14ae94981718e8b12cbf0e41d62318d8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "49ce10943b32ec37a41b25fa3a0aba1266810db9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8b8b941dc13b1b466f87200511c9841e1de43370"
+    },
+    {
+      "path": "PainterEngine.h",
+      "type": "file",
+      "sha": "4277584da4f21cef3968b8cc2e0a19d748f20efb"
+    },
+    {
+      "path": "README(ENGLISH).md",
+      "type": "file",
+      "sha": "5a7f6e9af0922cdb039b8bd8d083e96899d6a8ef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f1edcc641d8972873d56ee4b4fcbeb563f0e6b53"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "6ce2383d889071e710ff1c744b82fe1cd25205ed"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "248fd2402cdd6b693672a6847a3ad62e8e055a72"
+    },
+    {
+      "path": "depend",
+      "type": "dir",
+      "sha": "162ac2667f46e141dba7503b4d489ce721fe5bb6"
+    },
+    {
+      "path": "documents",
+      "type": "dir",
+      "sha": "3a46bfbe257c7ce0584f49589c3552c6d6159cd5"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "f749ba57000a796d33c40988a951e9d75820e289"
+    },
+    {
+      "path": "kernel",
+      "type": "dir",
+      "sha": "d56b2c9b1258c358b36cd93da255560a2a9e192c"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "f86502194e000d90c94609b3afa14cd05bc4d181"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "865ecf90aa02c2f15486a6d84867ea502bcc626c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C component-based application/game runtime with kernel/platform/runtime sources, VM/audio/interaction and software graphics; platform breadth unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

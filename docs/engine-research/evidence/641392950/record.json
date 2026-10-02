@@ -1,0 +1,67 @@
+{
+  "repository": "gdquest-demos/godot-4-stylized-sky",
+  "repository_id": 641392950,
+  "commit": "a52b0874b57507474f1b8bbf2db40dc8223f07bf",
+  "source_url": "https://github.com/gdquest-demos/godot-4-stylized-sky/tree/a52b0874b57507474f1b8bbf2db40dc8223f07bf",
+  "readme_path": "readme.md",
+  "readme_sha256": "9705c3f8a455a690bcc33406877dc83d6c27e3ab76c7b6108158eb86e6081445",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4709183670ac629a32ff7df40816c79c7c932daa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23fbf141fd5d465996c44bb4a44a81c3cac36f06"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "961ca7a6c5e8831198791fb8e4ea9a1e3aae8e4a"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "8353500836a274e910f90edbf11d208c72f4580e"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "adc26df6c2cd666478b85216d4a6d93f61680cb7"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "307b04df44da70398cd7c45891dbaa5ba7225f17"
+    },
+    {
+      "path": "preview",
+      "type": "dir",
+      "sha": "a3a32099ddb8fcc72677abfbd6e07d75cbe556dd"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "5cca76e8b3d36153221973f0bd4e636c1337b3d3"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "1abe38917eb7eb7e57142633b7567760d54bcd78"
+    },
+    {
+      "path": "sky",
+      "type": "dir",
+      "sha": "08e7aed81941d61fe7e22ff24e30e462de04dc17"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

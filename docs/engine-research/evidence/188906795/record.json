@@ -1,0 +1,134 @@
+{
+  "repository": "Kaetram/Kaetram-Open",
+  "repository_id": 188906795,
+  "commit": "f5b6665ef035ba79816458b92cbe77204042a318",
+  "source_url": "https://github.com/Kaetram/Kaetram-Open/tree/f5b6665ef035ba79816458b92cbe77204042a318",
+  "readme_path": "README.md",
+  "readme_sha256": "87840123f30b62d7766fdbdb079a54b14d0b5b560a9e08d2a963b11e6332b89b",
+  "entries": [
+    {
+      "path": ".commitlintrc",
+      "type": "file",
+      "sha": "3f4edaa08d877d986306fb131dc9bc1b1f5c8fd2"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "2225fd9a6aec645d49c9175ad1565a2b1128aadd"
+    },
+    {
+      "path": ".env.defaults",
+      "type": "file",
+      "sha": "2a07c1f2ab1aef1d5de872ac53b32c06676eaf2d"
+    },
+    {
+      "path": ".env.e2e",
+      "type": "file",
+      "sha": "4985de4fa06a79f44efe2f3165a9d3328776ce37"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "5a35955d2bec2607ef573e673b63fe4cc4d361e9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "73a010f1eafdefe47ead00f22beaeaeae25e26c0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "87b1445a8ddc3066717a499c0551c70974ba603a"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d0b0072b623d69dc3511dee0668e4e74ec11c485"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "eceb948d11795a82841f0b1854370b9aa91f359e"
+    },
+    {
+      "path": ".postcssrc",
+      "type": "file",
+      "sha": "334bb3b1362b5fb296c0f2694c2ceadbeef03d0e"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "f7eefd4555c3bf5ac0777c12b7f53af7bb03d55c"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "804be90bb82d49365beb1755f1fcff5f5dcca6b0"
+    },
+    {
+      "path": ".stylelintrc",
+      "type": "file",
+      "sha": "4429c8cdc1af8f3869522bdbc123a2d4e6e96093"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "045ee88ab7a47d017484847f3d81130695c02d2e"
+    },
+    {
+      "path": ".yarn",
+      "type": "dir",
+      "sha": "c7d4b98eace27f18808bb2911ea8f79d511d1fcc"
+    },
+    {
+      "path": ".yarnrc.yml",
+      "type": "file",
+      "sha": "850f3e3b454a46a6cb4b3e514c1ff676068fac78"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "LICENSE_OPL",
+      "type": "file",
+      "sha": "d42d9d2a2fadeacf3fbce324f4b317972e18df61"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3113737376eecfbab0732e205f0fdf5e40b303f6"
+    },
+    {
+      "path": "item_planning_file.md",
+      "type": "file",
+      "sha": "d9d5afbc418f311335daf76d9bbabb2112cba6eb"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "5fcea4b237f385436eb9857d34561069e3997ea9"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "1788bc0a80e1cdc0de2e31b557ef0b16cac55631"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "2fe68272f5e630d54b0702b78ee92f370cec0852"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "6a594e4f2077d4b688bd07e4e9f5a83555dc0907"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes MMORPG application aspiring to reusable engine; browser-game packages/build do not establish separately owned engine scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "steaklive/EveryRay-Rendering-Engine",
+  "repository_id": 141280094,
+  "commit": "6b18366c57b370aeaf21774233c91095ebb1d309",
+  "source_url": "https://github.com/steaklive/EveryRay-Rendering-Engine/tree/6b18366c57b370aeaf21774233c91095ebb1d309",
+  "readme_path": "README.md",
+  "readme_sha256": "9f1de35ffb51dd86d84b421413861aeeb682e8b80cc40d40aef87665b02a5925",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "11210082ff2b8206920c116e3e45388ef8e73b3a"
+    },
+    {
+      "path": "CHANGE_LOG.md",
+      "type": "file",
+      "sha": "b352fa38eb25100b06cc068d55d2d6081ebc9987"
+    },
+    {
+      "path": "EveryRay_RenderingEngine_Win64_DX11.sln",
+      "type": "file",
+      "sha": "df83d82d6ea8f22ac75ac67325ea2b0340d2a5c2"
+    },
+    {
+      "path": "EveryRay_RenderingEngine_Win64_DX12.sln",
+      "type": "file",
+      "sha": "8795fcb590932aff6f7e96e447a1b91bed8f6b74"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "2cd4678fb27740fd88f449f5bbd32a48b96e3630"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a73cf118de0877870967bdae6b8fa1f97445ee64"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "1f17455bf29ece96bb43e9d9b6758692e7254222"
+    },
+    {
+      "path": "content",
+      "type": "dir",
+      "sha": "d68f8ea15148d9d12f63f962cf3aae2df9efaf52"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "d37d38798aa8e6641a0f3822b676a91d35993fb3"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "b2861b95b99e8b42b8d6993c60a6872392c0c66e"
+    },
+    {
+      "path": "graphics_config.json",
+      "type": "file",
+      "sha": "e3f41e47072e863c327da452b54f16e0f46c8891"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "913058bb861cd797273c1bb04e61de4306e00542"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "a4a34bea31c36eb0e807f8993d353b2d43915185"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "5be2f1f1856ee676ae4c7b64c4f4f6da6d1d4b8b"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/description identify DX rendering engine; native rendering solutions/content. Gameplay engine scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,244 @@
+{
+  "repository": "LordOfDragons/dragengine",
+  "repository_id": 257054969,
+  "commit": "efcdaecb5754736652b41fec9ea5fce9d7493823",
+  "source_url": "https://github.com/LordOfDragons/dragengine/tree/efcdaecb5754736652b41fec9ea5fce9d7493823",
+  "readme_path": "README.md",
+  "readme_sha256": "df7ff5150a0119d05176d0195bee4ef0423786e9292414909b8084bf2bb03ed8",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "55247463dfa552a44e36ab55019db41d797ef397"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "04a2de7bea873fbc997b79347384e21b2562db3a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "61006c0aaadca267ef10de384dffef3a4dd2f75a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "643e87517666acc1ba97ab36ea687a35c61eec7d"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "31250126361e900c5337afc9a29da0510261a9dc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "295c1d0940b1cdf12cb506366123f9f38f2d30b0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0bbb1451f316dec6943ba2ff2e56af59a0ee4a27"
+    },
+    {
+      "path": "SConsCommon.py",
+      "type": "file",
+      "sha": "005e7855579c27a303f605a18bda1913d2af9ae8"
+    },
+    {
+      "path": "SConsExternCommon.py",
+      "type": "file",
+      "sha": "03db6b17247adbb621079f8d6e074cd725f3524c"
+    },
+    {
+      "path": "SConsPlatformAndroid.py",
+      "type": "file",
+      "sha": "82d491ed2e2ab851977bd5a741a2cdf6b3b4207f"
+    },
+    {
+      "path": "SConsPlatformWebWasm.py",
+      "type": "file",
+      "sha": "4654d9b33dd8a77935e394efb94d2f1ad52bb4dc"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "9f0d4d68125ac0b1ea755ff85920314ca1e33a7e"
+    },
+    {
+      "path": "_temp_wasm",
+      "type": "dir",
+      "sha": "e2abf82fff1db3fd6933952289ad00c132ff0896"
+    },
+    {
+      "path": "archive",
+      "type": "dir",
+      "sha": "a40e5adfaf8a6c1c05ecbff0e3e1f7363555124c"
+    },
+    {
+      "path": "autofix_with_clang.sh",
+      "type": "file",
+      "sha": "f528fb0c26b33343f21ef8d477328e5c283c8130"
+    },
+    {
+      "path": "build_windows.sh",
+      "type": "file",
+      "sha": "485bb04f8e69fa690912dae562613e6d843b4ea4"
+    },
+    {
+      "path": "clear_cppcheck_ainfo.sh",
+      "type": "file",
+      "sha": "91696dd5dd0ce14a9ae46018e9176ffa8c7abe6b"
+    },
+    {
+      "path": "detesting",
+      "type": "dir",
+      "sha": "c1d02069aaecb5aa0bb9588ea9a06edc517137a5"
+    },
+    {
+      "path": "dist.android.custom.py",
+      "type": "file",
+      "sha": "2493a1314c397a4893c079a1f65a96efaa284819"
+    },
+    {
+      "path": "dist.beos.custom.py",
+      "type": "file",
+      "sha": "73159a1ec86472526c37ab4dce53b1f1191b8bb1"
+    },
+    {
+      "path": "dist.custom.py",
+      "type": "file",
+      "sha": "24d831113aed9622dbc8df8780b8b3797a0d1b80"
+    },
+    {
+      "path": "dist.macos.custom.py",
+      "type": "file",
+      "sha": "a1d2548cecfd4deb4909e305d5ea4838557b802d"
+    },
+    {
+      "path": "dist.posix.custom.py",
+      "type": "file",
+      "sha": "c0de1b3b241775f192c7a1de9dc89b6cdf9ea7e1"
+    },
+    {
+      "path": "dist.windows.custom.py",
+      "type": "file",
+      "sha": "3c7b08062b32770eaf2003611bfdb229d7372d87"
+    },
+    {
+      "path": "dockerBuildWindows.sh",
+      "type": "file",
+      "sha": "5cf70c76dead4dc76d7b03396dcb4986bf891a16"
+    },
+    {
+      "path": "dockerBuildWindowsClang.sh",
+      "type": "file",
+      "sha": "29fff43c98164a9c171d12c28580b83a01da9234"
+    },
+    {
+      "path": "dragengine.code-workspace",
+      "type": "file",
+      "sha": "6d96bcb2835413d4275896124a664c5ce06a8117"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "676a95fda247a932a7a04200d76306c9e6fbae35"
+    },
+    {
+      "path": "find_missing_translations_igde.py",
+      "type": "file",
+      "sha": "d462b8f335162173120bfc666f3ed9fb4e2d0fe5"
+    },
+    {
+      "path": "find_missing_using_ref.py",
+      "type": "file",
+      "sha": "f0b39a6078d8ef63fc5b707c73b7463953e424ed"
+    },
+    {
+      "path": "find_prohibited_new.py",
+      "type": "file",
+      "sha": "f15234dd03f624f9734be9f2b4fc73cda458349d"
+    },
+    {
+      "path": "find_refcount_public_destructor.py",
+      "type": "file",
+      "sha": "74043787d13978596593e321b86d108dfede6da0"
+    },
+    {
+      "path": "ghdocs",
+      "type": "dir",
+      "sha": "2d1c4a936e358f4cf681a07e61198ab361f4ed35"
+    },
+    {
+      "path": "installer",
+      "type": "dir",
+      "sha": "76508e0ea71f760e7324a72c38eaf1b8e185b925"
+    },
+    {
+      "path": "prepare_local_dir_mode.source",
+      "type": "file",
+      "sha": "7488f5bd69e42c1d94ad96cbeed3e072a1fe9bae"
+    },
+    {
+      "path": "remove_unused_translation_entries.py",
+      "type": "file",
+      "sha": "a36d0753828cbcc2c1842c8da8bf5aa223aaccd1"
+    },
+    {
+      "path": "run_flawfinder.sh",
+      "type": "file",
+      "sha": "8472085fa94a35d4aac80a1e391cc6feedc3e30b"
+    },
+    {
+      "path": "separateDebugSymbols.sh",
+      "type": "file",
+      "sha": "15bd79ff4bdee0a4815df66fe93c9f900fe74b77"
+    },
+    {
+      "path": "site_scons",
+      "type": "dir",
+      "sha": "7a81c7be08aa7a2596586d870f1d0afe6449475e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e9916c0a9b64d2bd8ca99abd4cbcf1b87c4a2a5f"
+    },
+    {
+      "path": "updateManifestChecksums.py",
+      "type": "file",
+      "sha": "f65a442522cd47c5eea10767f5061852bedc581b"
+    },
+    {
+      "path": "uwp",
+      "type": "dir",
+      "sha": "445a4c0b3f5eb740c73465c1e5cb1e353a084f63"
+    },
+    {
+      "path": "vs",
+      "type": "dir",
+      "sha": "184bdf6ef9621179ff10e0c0990d2c9641f5c8a1"
+    },
+    {
+      "path": "wasmRebuildModules.sh",
+      "type": "file",
+      "sha": "a6a9ac947186507daa5e21baa63b4508a1c41763"
+    },
+    {
+      "path": "wasm_notes",
+      "type": "file",
+      "sha": "767f0f5c13c7b0a7c17f8ad186a5a3f869043b06"
+    },
+    {
+      "path": "windowsSetupCompiler.dockerfile",
+      "type": "file",
+      "sha": "5d7df5b8d70a271cb59543fc2b3abfda41b0d1b1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Dragengine game runtime source and build system with documented game developer entrypoints and separate example repository.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

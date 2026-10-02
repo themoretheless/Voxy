@@ -1,0 +1,13 @@
+[package]
+name = "voxy_audio"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[lints]
+workspace = true
+
+[dev-dependencies]
+voxy_assets = { path = "../voxy_assets" }
+voxy_scene = { path = "../voxy_scene" }
+glam = "0.33.6"

@@ -1,0 +1,83 @@
+{
+  "scope": "Static floating-point audit; shared-vertex pairs excluded.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-pressure-surface-only-16-6/urethra-rest.obj",
+      "sha256": "0dbf2dc260240177d6478b057a98934a733a069c8e7b13a9a470a3919504700f",
+      "vertices": 560,
+      "triangles": 640,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1320
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-pressure-surface-only-16-6/urethra-barrier.obj",
+      "sha256": "04f8b0a69b0c6b2e39cb2ce12a74f84d15f5e4045af56e6e059b3500d19f6ed6",
+      "vertices": 560,
+      "triangles": 640,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 460
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-pressure-surface-only-16-6/urethra-released.obj",
+      "sha256": "6131b0580d8c882a1df183265c549151585743d6b61ee9708bd0e13c9b355ea1",
+      "vertices": 560,
+      "triangles": 640,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 505
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-pressure-surface-only-16-6/vagina-rest.obj",
+      "sha256": "90b7b01ab53597d768a145274bb71342b984eb2ff8ae8505df8b131f6689c08b",
+      "vertices": 560,
+      "triangles": 640,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1544
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-pressure-surface-only-16-6/vagina-barrier.obj",
+      "sha256": "2285981120d5d3091bb55d2c6e50565d7e677e52a4f9fe9c3fc0665665637e72",
+      "vertices": 560,
+      "triangles": 640,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 640
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-pressure-surface-only-16-6/vagina-released.obj",
+      "sha256": "d4873fbb8e1a60c6cb8dfda8b5a9aafe5cc7ed776ba58e83b9b6f3aa7a6bb35e",
+      "vertices": 560,
+      "triangles": 640,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 729
+    }
+  ]
+}

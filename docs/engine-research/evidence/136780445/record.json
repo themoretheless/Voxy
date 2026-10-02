@@ -1,0 +1,94 @@
+{
+  "repository": "kitao/pyxel",
+  "repository_id": 136780445,
+  "commit": "50f9bd77780c993aca62b5b221766bde5791081d",
+  "source_url": "https://github.com/kitao/pyxel/tree/50f9bd77780c993aca62b5b221766bde5791081d",
+  "readme_path": "README.md",
+  "readme_sha256": "ca33f91464669bf57973195ea7b141b9440028e9b64bd3bcc396f7cdadea2cc6",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bea2d711d23f4beb99c7e02b8763fcfccf7dc491"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b30616ca4607fbd3099f63e9b347db6d6756a546"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d51d7b84a1f38a2044e9b11f16c58da7a6178a80"
+    },
+    {
+      "path": ".nojekyll",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3f9c3e240569ba2de048c7d39484c676a477f9da"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "b5cc6f40238b2058b1452fd35b6b6d805af47cbb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5101a5772d3620ca85b8f230e18d2946f4710954"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "2fdfa47f54b51274f7156bddc7c0c543d9e06928"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9f9ca83b2af39fe5107607b4a5e58478cbdeb2cb"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "c410f3f5f259bce9f3fb57b53f146fbe439279d7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9f2c89c24b2e44a9798ec5ddf9fe556852ad25b4"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "e64ada527d994e680c5afdd04e3fc6ff9e206f93"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "505bfe1debf2ab6da944f1ac85617db898d5a700"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ed244e84be3838c9353da8f18270706ce76fbcc0"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "8c9cf7c04db6c48460c441d5155255dd476de76c"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "533ae2b5724f6a3a8fe4e845834b2f4b82bef423"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies a retro engine; Rust crates, Python bindings, wasm and build tooling.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,72 @@
+{
+  "repository": "EnclaveGames/Enclave-Phaser-Template",
+  "repository_id": 48431764,
+  "commit": "fa74291d0404d192ad62c646cbae0221f3eadca5",
+  "source_url": "https://github.com/EnclaveGames/Enclave-Phaser-Template/tree/fa74291d0404d192ad62c646cbae0221f3eadca5",
+  "readme_path": "README.md",
+  "readme_sha256": "610589b531dc37f087b98bffa41bf0e5c9772c84550f082c35ee478220150578",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "496ee2ca6a2f08396a4076fe43dedf3dc0da8b6d"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d296930745c966c57cd5f9488c64081a0d5d320b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4c0723de1805bf04a9048c98fbaadf47da4a9917"
+    },
+    {
+      "path": "ept.code-workspace",
+      "type": "file",
+      "sha": "876a1499c09dc083612f43c53c0ae71b9c30c5b1"
+    },
+    {
+      "path": "ept.webmanifest",
+      "type": "file",
+      "sha": "b7e39468bff227a342e1d19f5df25fdcdd400605"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "abe46de5146bcc811481b6f365cbde29a7aca730"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "d30cd0a4c7ab2da7912cf416b20e87a941ffe826"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "3eb953881e27bdb0e9f91931cef7909aeb4aa6c4"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "88a49a6f81e011729d829267d91a053d9c4a66f7"
+    },
+    {
+      "path": "screens",
+      "type": "dir",
+      "sha": "e0a5f32eb64d5a17cfeeb4a9eaab50a12b3f5bba"
+    },
+    {
+      "path": "sfx",
+      "type": "dir",
+      "sha": "57178dfe4cca8be67ae150a6b941ab3bc006526e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "90307f0b04c0e4860893656341313eb8157a2413"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -233,6 +233,28 @@ impl Pose {
         &self.local
     }
 
+    /// Updates one local rotation, preserving its translation and scale.
+    /// # Errors
+    /// Rejects an unknown joint or a nonfinite/nonunit quaternion without changing the pose.
+    pub fn set_joint_rotation(
+        &mut self,
+        index: usize,
+        rotation: Quat,
+    ) -> Result<(), AnimationError> {
+        let Some(current) = self.local.get(index).copied() else {
+            return Err(AnimationError::InvalidPose(index));
+        };
+        let replacement = Transform {
+            rotation,
+            ..current
+        };
+        if !replacement.is_valid() {
+            return Err(AnimationError::InvalidPose(index));
+        }
+        self.local[index] = replacement;
+        Ok(())
+    }
+
     /// Produces `global_joint * inverse_bind` matrices in skeleton order.
     ///
     /// # Errors
@@ -376,6 +398,16 @@ impl Animator {
     ) -> Result<AnimatorFrame, AnimationError> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        for clip in std::iter::once(&self.current)
+            .chain(self.transition.iter().map(|transition| &transition.source))
+        {
+            if clip.tracks.len() != skeleton.joints.len() {
+                return Err(AnimationError::TrackCountMismatch {
+                    expected: skeleton.joints.len(),
+                    actual: clip.tracks.len(),
+                });
+            }
         }
         let delta = dt * self.speed;
         let old_time = self.time;
@@ -606,6 +638,25 @@ mod tests {
     }
 
     #[test]
+    fn joint_override_rejects_invalid_rotation_without_mutation() {
+        let mut pose = Pose {
+            local: vec![Transform::IDENTITY],
+        };
+        for invalid in [
+            Quat::from_xyzw(0., 0., 0., 0.),
+            Quat::from_xyzw(f32::NAN, 0., 0., 1.),
+        ] {
+            assert!(pose.set_joint_rotation(0, invalid).is_err());
+            assert_eq!(pose.local[0], Transform::IDENTITY);
+        }
+        assert!(pose.set_joint_rotation(1, Quat::IDENTITY).is_err());
+        let rotation = Quat::from_rotation_x(0.7);
+        pose.set_joint_rotation(0, rotation).unwrap();
+        assert_eq!(pose.local[0].rotation, rotation);
+        assert_eq!(pose.local[0].translation, Vec3::ZERO);
+        assert_eq!(pose.local[0].scale, Vec3::ONE);
+    }
+    #[test]
     fn pose_blend_uses_shortest_rotation_path() {
         let a = Pose {
             local: vec![Transform::IDENTITY],
@@ -709,5 +760,18 @@ mod tests {
         let complete = animator.advance(&skeleton, 0.25).unwrap();
         assert!((complete.transition_weight - 1.0).abs() < f32::EPSILON);
         assert!(animator.transition.is_none());
+    }
+
+    #[test]
+    fn incompatible_clip_rejects_without_advancing() {
+        let skeleton = skeleton();
+        let mut animator = Animator::new(root_clip(&skeleton, 2.0));
+        let other = Skeleton::new(vec![skeleton.joints()[0].clone()]).unwrap();
+        assert!(matches!(
+            animator.advance(&other, 0.5),
+            Err(AnimationError::TrackCountMismatch { .. })
+        ));
+        assert_eq!(animator.time.to_bits(), 0.0f32.to_bits());
+        assert!((animator.advance(&skeleton, 0.5).unwrap().root_motion.x - 1.0).abs() < 1e-6);
     }
 }

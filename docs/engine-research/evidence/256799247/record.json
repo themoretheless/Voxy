@@ -1,0 +1,84 @@
+{
+  "repository": "KogeLabs/Ockero",
+  "repository_id": 256799247,
+  "commit": "9cb4dd91a34b27cc7872df0835eaf0b8c3a0fb46",
+  "source_url": "https://github.com/KogeLabs/Ockero/tree/9cb4dd91a34b27cc7872df0835eaf0b8c3a0fb46",
+  "readme_path": "README.md",
+  "readme_sha256": "466da951fe22bcef0db56fc7f91ce026c5437f0ed8daf66268be62a4fe36222f",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c7cdcb5eb7689f57b949926fbba32f41308323db"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bb30d51440dd41906e4059a54057ee9ed8ba4f17"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "5df25bb6669edb29fdaf83136cc81fff0fe69e4e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "be38127c4b5982e3be36a11f77a8e254f5ae8ec0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "23d137fd22a30324135040e56b916d28bb4cbafe"
+    },
+    {
+      "path": "Mario-Ockero.png",
+      "type": "file",
+      "sha": "85c4d583986fbed7bf4b022562a0fb7f1089413d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ff857c936147a523a368444472519b7679c77885"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "8df5e5cdb0347510268c60c17e35ca23195f8be1"
+    },
+    {
+      "path": "game_graph.png",
+      "type": "file",
+      "sha": "5c2434576ba2ea2a8869d33bed2a20c895c79bfc"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "af6708ff229fda75da4f7cc4da4747217bac4d53"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "6d57edc706c93465988754383a2d7ff353d4e79f"
+    },
+    {
+      "path": "ockero_logo.png",
+      "type": "file",
+      "sha": "f96ad8145dcc05e55e2db974d383522a05133344"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "12bad4fa182ff65e6d15166abd0d277d23d28e0f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fb27239d93a9512a8d77f0944bb67c1fe29f488a"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Kotlin 2D OpenGL game framework, explicitly identified as framework in README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

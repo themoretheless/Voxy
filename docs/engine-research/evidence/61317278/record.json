@@ -1,0 +1,84 @@
+{
+  "repository": "lance-gg/spaaace",
+  "repository_id": 61317278,
+  "commit": "7a14e3ee7d1b90e31a8dbf3d3842ddc16bb437db",
+  "source_url": "https://github.com/lance-gg/spaaace/tree/7a14e3ee7d1b90e31a8dbf3d3842ddc16bb437db",
+  "readme_path": "README.md",
+  "readme_sha256": "29ad419fc36cd966d62c249a1017b5925dee7838f38f63b1e819d97c7ebfd2b6",
+  "entries": [
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "7a9e21276629ffc658b5543142c32fc1b6c095b8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68314aeb60a77579a89dd728dd4e949ceda9fe5e"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "391cde549b482c6dcbedec9a92330642fd718f34"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8dada3edaf50dbc082c9a125058f25def75e625a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "190f24c12cc29495f19a883661af53df5484151c"
+    },
+    {
+      "path": "appspec.yml",
+      "type": "file",
+      "sha": "64d44e7b3bf0d703e056c5a4917e63603281ed19"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "4872bebc3afeef9774df6dc3a98d5873b39f3185"
+    },
+    {
+      "path": "dist-server",
+      "type": "dir",
+      "sha": "c0c0f2edfba0983cbe51b196639c1f716382feff"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "4726c39e7ebd9a556431f8e7ee11e1b1adf6d61e"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "5708319265b4e6c8dae04fdbe4978b7bac4a23c8"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c87f5b38aa3e459569865ef31f007ce48cb775db"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "673e08928746510dafd55ad8b7390dcb058adae2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cb974271abcf988c6371033ac019d155e0d8e5f5"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "f985021a3937b40bfad5dd9cbf9e03a379157998"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Space shooter built with Lance game server, not Lance engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

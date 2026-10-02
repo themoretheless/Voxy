@@ -1,0 +1,92 @@
+{
+  "repository": "ManlyMarco/RuntimeUnityEditor",
+  "repository_id": 160832625,
+  "commit": "ebce2dd09efbf8177f1bb74670c2e8a6e87e94dd",
+  "source_url": "https://github.com/ManlyMarco/RuntimeUnityEditor/tree/ebce2dd09efbf8177f1bb74670c2e8a6e87e94dd",
+  "readme_path": "README.md",
+  "readme_sha256": "90af8bb46a1c02e2e21c85c12ad3bb89adac08d7e5f33fa0cb50e7339c7f0ddd",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6c56ddeb06c15f60f2514d6db92ad3bd74539237"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d9835a521fa9270649db62808f01912cab00ce3a"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "dbd5fb15ee50561dd8fd50a5e4c927eed9409bb7"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "7ddf3b48ba40ce68ac22be76cba395b283b2c52a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6c95350e38ac164d90185d9f692ed4c43c5e40a3"
+    },
+    {
+      "path": "RuntimeUnityEditor.Bepin5",
+      "type": "dir",
+      "sha": "6c1b59443f26a18dc5528daf3daf9b3f3af1bff9"
+    },
+    {
+      "path": "RuntimeUnityEditor.Bepin6.IL2CPP",
+      "type": "dir",
+      "sha": "7cf0e27ee11b27930ae39ef58a417ceda44dcf45"
+    },
+    {
+      "path": "RuntimeUnityEditor.Core.IL2CPP",
+      "type": "dir",
+      "sha": "690f37af72f7bb78780ecf50d6957deed61b1ef7"
+    },
+    {
+      "path": "RuntimeUnityEditor.Core.Mono",
+      "type": "dir",
+      "sha": "bd0c2c6695818a706af854643c29fcf25fc536a0"
+    },
+    {
+      "path": "RuntimeUnityEditor.Core",
+      "type": "dir",
+      "sha": "7d6c7c5d2e3f0bf302cebf4f7a589934cc7e95e5"
+    },
+    {
+      "path": "RuntimeUnityEditor.UMM",
+      "type": "dir",
+      "sha": "76d2127adb8938990d925bfa89c4dbfd7a9fa623"
+    },
+    {
+      "path": "RuntimeUnityEditor.sln",
+      "type": "file",
+      "sha": "6f79fa283ac4ecb001d26dd9e9a99cf52ac23aaa"
+    },
+    {
+      "path": "install.ps1",
+      "type": "file",
+      "sha": "5c1ab8097141f52a3abcb28cc74096602073009d"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "5870d28f820b35b6c27a484118ef281ad1d43a30"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "8b9fbdb802247d0a443ee6cab08ceaa40fc0ff5c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

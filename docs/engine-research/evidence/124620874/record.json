@@ -1,0 +1,67 @@
+{
+  "repository": "timi-liuliang/echo",
+  "repository_id": 124620874,
+  "commit": "ad6a6bcd5ad28d2dacdd8f421525799cd2575b64",
+  "source_url": "https://github.com/timi-liuliang/echo/tree/ad6a6bcd5ad28d2dacdd8f421525799cd2575b64",
+  "readme_path": "README.md",
+  "readme_sha256": "ff9765dccc00894c359e477ae2581a540ddadf72f29519614203048fe9981d96",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "247bbd71a51d2298d7d06ef60d57814c3654c72c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "939e81f1b9702e699ec2a8d791a689ea660b36b7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fe849b7fde032e0e852740fbbddb26bd514040c7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8333140e0affb16d2380cf1eb5f411a3a15bf4c9"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "f0c346cbbae2180e11dceae6d7293170d18235f4"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "7557fbde6d2c89cc2dbac11457123758c68dc523"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "9fd85188ae28655f9e7dbda765a4a0eabeef0f72"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "224a56729e74bf347616b56922d2c8677521a5c8"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ced079b448ef94d5c4b5069cc7dd9a5e355a68a8"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "cbdcf616bb6df751d1fea58153eff32e1731e36b"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "937afd340da9574d0abd8f2bc8cc28a96c821635"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

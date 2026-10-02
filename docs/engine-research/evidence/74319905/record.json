@@ -1,0 +1,52 @@
+{
+  "repository": "fabiensanglard/gebbdoom",
+  "repository_id": 74319905,
+  "commit": "5c06a6b926f62c049159d29df688ff7985d9bcf0",
+  "source_url": "https://github.com/fabiensanglard/gebbdoom/tree/5c06a6b926f62c049159d29df688ff7985d9bcf0",
+  "readme_path": "README.md",
+  "readme_sha256": "899fb8cc06e33d69c6826336fb8602651e5e0837903e7f8aeb1a4cb71b575573",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68fc209f9cd39ed8b4e8b2879cf2a99aac46cbb7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "66210193e1e0611d16ed011a00640cd0ffd29979"
+    },
+    {
+      "path": "build.go",
+      "type": "file",
+      "sha": "dc6ef981e07e3e0d9e8af8299c205b63039ba625"
+    },
+    {
+      "path": "cover",
+      "type": "dir",
+      "sha": "241378fd4f27637fab90da3d0d5ffc81f897743a"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "c03313f0e1464a9f0acf259be9e861f4d7e7c56c"
+    },
+    {
+      "path": "make.sh",
+      "type": "file",
+      "sha": "d202d89e00169ac2f0beecdabafa5113f9f5a3e3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6c6066bb393a2a29677bbe3df3e1d62f0f212774"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "d00bde5ead68acd3f340fab75d2703dbb0c02ec0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

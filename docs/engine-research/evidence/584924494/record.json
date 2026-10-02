@@ -1,0 +1,79 @@
+{
+  "repository": "roman01la/minimax",
+  "repository_id": 584924494,
+  "commit": "0abccec97e6c756f7bb4d89ff9de05da44d70328",
+  "source_url": "https://github.com/roman01la/minimax/tree/0abccec97e6c756f7bb4d89ff9de05da44d70328",
+  "readme_path": "README.md",
+  "readme_sha256": "174599fb246be70ddc40b308fa29f510cfddfe32767630b6b847529bfae874a6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6a4977bc35f383f04bec091c0f8d3ff9319fc105"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "98b1ee426ff5b19802f2833a8b980b61a73ef00e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e48e0963459bf4c4e175956b657a8f4a91967880"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4f778cd8554652cf27dcb4b5b87cbb5d689cc51b"
+    },
+    {
+      "path": "cljfmt.edn",
+      "type": "file",
+      "sha": "87a6956ae4cad141fc6eb6cf524352e3ee628d18"
+    },
+    {
+      "path": "deps.edn",
+      "type": "file",
+      "sha": "4114f5459ab9057be769fc0361d0428a2a820f48"
+    },
+    {
+      "path": "dev",
+      "type": "dir",
+      "sha": "b4f3975c70e020849ac09527d3b94ecb4cb528a1"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "356861c22e0cecb6a9bdd334afb5dbb5b1ff0c3a"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "194e151d9d671ea829bfee5eb92b5eac505150c0"
+    },
+    {
+      "path": "screenshot.jpg",
+      "type": "file",
+      "sha": "46487aad466987745f064ca1071bbe5f7270c51b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8e869e130e3556bfa5bfd513ad8f6835e853a750"
+    },
+    {
+      "path": "shaderc",
+      "type": "file",
+      "sha": "81d48428d4afcc1b018f28a7c8d380fe6bd8e06c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e30d3482c5f10f0466fb165c44e81b9aa543ad00"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Minimal Clojure 3D engine listing window/input and model rendering; broader game runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,574 @@
+{
+  "repository": "increpare/flickgame",
+  "repository_id": 34676954,
+  "commit": "0497258069fd93b94fc7e5bcff169f1e5cfa94cb",
+  "source_url": "https://github.com/increpare/flickgame/tree/0497258069fd93b94fc7e5bcff169f1e5cfa94cb",
+  "readme_path": "README.md",
+  "readme_sha256": "5f155584ddd0981e3b11dc1ea8b30a20acdea33f182a151a0f02295a7be7edf9",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "cfb1001fc08bd8c1b9ccf294aadc6af19ab4ec78"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "93812ee38d1a68f4603d82b04c42863e0d819b58"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9498dc680396321fd47382971781cb7670ce027b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d9511192a51a10a728a9bd425f198d6760bc6c7e"
+    },
+    {
+      "path": ".htaccess",
+      "type": "file",
+      "sha": "099870f0814ab36fd332e2e2156b12bab9cf405a"
+    },
+    {
+      "path": ".superpowers",
+      "type": "dir",
+      "sha": "18998a3c277e828503daf23f3160cde29353aaf6"
+    },
+    {
+      "path": "1.png",
+      "type": "file",
+      "sha": "fa9d902bc78cdd340080060b98411f35fcb2ae14"
+    },
+    {
+      "path": "10.png",
+      "type": "file",
+      "sha": "322bf5b992921f1e36486a4783201a7263b03c3c"
+    },
+    {
+      "path": "11.png",
+      "type": "file",
+      "sha": "8b3cff93bed23092adf3f0e2c855f652cb1c6277"
+    },
+    {
+      "path": "12.png",
+      "type": "file",
+      "sha": "49a32d33d47ad079b5c724c738dcb4ced8ad132c"
+    },
+    {
+      "path": "13.png",
+      "type": "file",
+      "sha": "4c34a6aecfa6659c200efbc9889669dc588d111e"
+    },
+    {
+      "path": "14.png",
+      "type": "file",
+      "sha": "a586464bbdc132695701f60c8e81f5cd803ab4c8"
+    },
+    {
+      "path": "15.png",
+      "type": "file",
+      "sha": "b0125abe8ba1d91058e265d21ddfae4a3c3fc5de"
+    },
+    {
+      "path": "16.png",
+      "type": "file",
+      "sha": "e80908e84c1b2546e77460114fa5ad8d5d2b62fd"
+    },
+    {
+      "path": "2.png",
+      "type": "file",
+      "sha": "ec79bf9961ecdac2277e4b357d555586354c441c"
+    },
+    {
+      "path": "3.png",
+      "type": "file",
+      "sha": "a23883b886f5de2bfb6f2d787c28607b4c22b5fd"
+    },
+    {
+      "path": "4.png",
+      "type": "file",
+      "sha": "67e3fd549daf5f41e380bc206abe889b6894d33a"
+    },
+    {
+      "path": "5.png",
+      "type": "file",
+      "sha": "451da38e5d0b39627f51a33f343385b461570716"
+    },
+    {
+      "path": "6.png",
+      "type": "file",
+      "sha": "9050a7258f7a0a5febce1148f2380909b6c5492f"
+    },
+    {
+      "path": "7.png",
+      "type": "file",
+      "sha": "b1b8a9982af47cc404e97b6dedcf0df871ced6b4"
+    },
+    {
+      "path": "8.png",
+      "type": "file",
+      "sha": "18687dcdccd4fa6309ea7bb280d96c83a6b5606e"
+    },
+    {
+      "path": "9.png",
+      "type": "file",
+      "sha": "ad5ad83f4bf45403bbd30f99bea26923ca2becb2"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "27795c3a855548f73936bf191712641997dac9fd"
+    },
+    {
+      "path": "FileSaver.js",
+      "type": "file",
+      "sha": "0e22ad61d90bbf67a33217e89dad17ee20b951a4"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "e7deaef0abe86dbb7d99bf40e380caaa2c2325f4"
+    },
+    {
+      "path": "OrientationKnowledge.md",
+      "type": "file",
+      "sha": "2c19e3a80fc483cdb13e805689035f1fb2c7a879"
+    },
+    {
+      "path": "Plan.MD",
+      "type": "file",
+      "sha": "e633192df19adad14556a08e1ad0ede4e29d1c50"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "96c4600daf7d5ddc04e76afcc2643a9ea86a86bc"
+    },
+    {
+      "path": "SVG",
+      "type": "dir",
+      "sha": "8234621bae624215f6c6c5012e66b650165bc060"
+    },
+    {
+      "path": "addon",
+      "type": "dir",
+      "sha": "27c8b09bca6f4b56e5af1827d4f2631a374d4679"
+    },
+    {
+      "path": "auth.html",
+      "type": "file",
+      "sha": "81672a84cb459457724c563e9432f6d83bfcf75d"
+    },
+    {
+      "path": "bgcolor.png",
+      "type": "file",
+      "sha": "d516ac0b61f0025848c6fd0a0467ebe00dcdd970"
+    },
+    {
+      "path": "bucket.png",
+      "type": "file",
+      "sha": "8e6ea6cf80c4a5137025a9bb4165e6f71beea8ab"
+    },
+    {
+      "path": "bucket.svg",
+      "type": "file",
+      "sha": "0f12edde090b5a548148cbcdc551b8649a9db8d5"
+    },
+    {
+      "path": "clear.png",
+      "type": "file",
+      "sha": "661e4f99e56c72ef305dd5801f4a663c36132c23"
+    },
+    {
+      "path": "clear_opt.png",
+      "type": "file",
+      "sha": "70476351d2c442ce96d29417b9cdaf87b7008f95"
+    },
+    {
+      "path": "clipboard_copy.png",
+      "type": "file",
+      "sha": "c70ccdf1cd4c06619926ff6ac24f489fce23099b"
+    },
+    {
+      "path": "clipboard_copy.svg",
+      "type": "file",
+      "sha": "2ec3e50671d19f412a44ec9fde5f1b4eb892f196"
+    },
+    {
+      "path": "clipboard_paste.png",
+      "type": "file",
+      "sha": "cd49af446d3ea190ee6fd15c05ffc04e8dbc69a7"
+    },
+    {
+      "path": "clipboard_paste.svg",
+      "type": "file",
+      "sha": "5fc4b5cd4145975ca8e5a85d5c0c834bc7cfad54"
+    },
+    {
+      "path": "clipboard_paste2.svg",
+      "type": "file",
+      "sha": "428eff57005f188c07c176817be61a6fd9a9f3af"
+    },
+    {
+      "path": "colorNames.js",
+      "type": "file",
+      "sha": "66b7bc44c105d5b7c2baaae739c34c74da12cb59"
+    },
+    {
+      "path": "compress",
+      "type": "file",
+      "sha": "fa37c366ae1ffa67ce82c8ac11d640394e2c3682"
+    },
+    {
+      "path": "considerations.txt",
+      "type": "file",
+      "sha": "880f4682ff5600d2d9be1814537b53aaf181394b"
+    },
+    {
+      "path": "cursor.svg",
+      "type": "file",
+      "sha": "e276df7577f0050baf6f7c7583c279faf27eb20a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "73ce672b27e448e33db05598c30240b5cc0e898e"
+    },
+    {
+      "path": "download.svg",
+      "type": "file",
+      "sha": "67035dbb4149a18ebec1f637f981cf7a2c469676"
+    },
+    {
+      "path": "eye.png",
+      "type": "file",
+      "sha": "5003618dcecbfb86d14d44674db39b263160ff21"
+    },
+    {
+      "path": "eye2.png",
+      "type": "file",
+      "sha": "be08dda46ee65795b1b479be3e052f5b934e6aca"
+    },
+    {
+      "path": "eyedropper.png",
+      "type": "file",
+      "sha": "99a2201575b6fdb1e3d4bfa06921b37027b344db"
+    },
+    {
+      "path": "favicon.png",
+      "type": "file",
+      "sha": "242153437133146974f43cc7813bc954fb9384b7"
+    },
+    {
+      "path": "flickgame_base.js",
+      "type": "file",
+      "sha": "88272f59ea5af68a2ad8ad7084599b40ea363369"
+    },
+    {
+      "path": "flickgame_share.js",
+      "type": "file",
+      "sha": "9d61698f8a0b92024763abaf58ace082154b3d50"
+    },
+    {
+      "path": "flickgame_vanilla.js",
+      "type": "file",
+      "sha": "08f983ff8b4033abd1eefbba8d96c09f5f193a0e"
+    },
+    {
+      "path": "flickscript.html",
+      "type": "file",
+      "sha": "d75fbd73d1ba3b0f939c652fda9cf4dc6e6791e3"
+    },
+    {
+      "path": "flickscript_help.html",
+      "type": "file",
+      "sha": "97bdc01611c789b272106b6f09fecfddaf98ca5a"
+    },
+    {
+      "path": "flickscript_play.html",
+      "type": "file",
+      "sha": "24a847c2da691112e4e24afabbb34226ae694b22"
+    },
+    {
+      "path": "flickscript_shot1.png",
+      "type": "file",
+      "sha": "8136482ce0af4b6533d7d8565040f8476571f13b"
+    },
+    {
+      "path": "flickuboy.html",
+      "type": "file",
+      "sha": "8e881765eda6a2a2c1a66080d604e10033dac48d"
+    },
+    {
+      "path": "flickuboy_helpimage.png",
+      "type": "file",
+      "sha": "8f1a6be6359e796121958497abf706ed6ce3f4b9"
+    },
+    {
+      "path": "flickuboy_howto.html",
+      "type": "file",
+      "sha": "a0399f2527737f35d80de5e71565c3677192dfaf"
+    },
+    {
+      "path": "flickuplay.html",
+      "type": "file",
+      "sha": "16d6a50fd58885e7305ef770ff0640a2c3973efe"
+    },
+    {
+      "path": "gallery.html",
+      "type": "file",
+      "sha": "1ef49235a4d276e79ad72fa5124439efc96b2200"
+    },
+    {
+      "path": "gallery_page.js",
+      "type": "file",
+      "sha": "8ba641f7ce82e3ba8780032a7035a1853281d1f7"
+    },
+    {
+      "path": "gallery_store.js",
+      "type": "file",
+      "sha": "6d3010d54b1347cc8dabde269068b5abda9bb59f"
+    },
+    {
+      "path": "gallery_ui.js",
+      "type": "file",
+      "sha": "978c87eedcf1956467a7fc0950210e273f1e25f1"
+    },
+    {
+      "path": "generate_color_names.js",
+      "type": "file",
+      "sha": "3bd925d294330dea8e028eeab91eeb682cd2c6f4"
+    },
+    {
+      "path": "gridicon.svg",
+      "type": "file",
+      "sha": "0b1813d116606107eaa9baa4fb1a68ec27bf8176"
+    },
+    {
+      "path": "gzipper",
+      "type": "file",
+      "sha": "874bdb14713053f6f2291c3465329989aeb947c1"
+    },
+    {
+      "path": "hand-index.svg",
+      "type": "file",
+      "sha": "a20c92f763cac117d5c073bd784c45d2bfc34d70"
+    },
+    {
+      "path": "hand.png",
+      "type": "file",
+      "sha": "a161265bb92102b23f5b855bd7f72de9f8598420"
+    },
+    {
+      "path": "hand.svg",
+      "type": "file",
+      "sha": "f1bf6d5bd354d1bd732f36f177e5a8bb6460cd57"
+    },
+    {
+      "path": "help.css",
+      "type": "file",
+      "sha": "00c10805bb1fbbc167ee08ee91c131865badc8da"
+    },
+    {
+      "path": "help.html",
+      "type": "file",
+      "sha": "08cb909bb8d323d9cd90ff83fdeaaf567d4ce8eb"
+    },
+    {
+      "path": "help2.html",
+      "type": "file",
+      "sha": "d871701170997a48b52b440759664e02c40c9956"
+    },
+    {
+      "path": "helpimage.png",
+      "type": "file",
+      "sha": "89ec753dee4bbce76e8a4f79c24b398abd1cafcb"
+    },
+    {
+      "path": "helpimage2.png",
+      "type": "file",
+      "sha": "a9d38929eb100324f2867e0513140c081a2b739f"
+    },
+    {
+      "path": "icon_grid.png",
+      "type": "file",
+      "sha": "12b068ee4e3e4f63063024cae210e517210c74f6"
+    },
+    {
+      "path": "icon_menu.png",
+      "type": "file",
+      "sha": "b88d3777c941973ba4f168488799d5af1f2abba2"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "23c4f2eef4620bea7a763d2743dba6298ff77c0d"
+    },
+    {
+      "path": "index2.html",
+      "type": "file",
+      "sha": "aa89428b9d1123975cbe59abc8ad23ce19ed6d52"
+    },
+    {
+      "path": "index3.html",
+      "type": "file",
+      "sha": "e98f9daad81a6e582431b3c07971ef64c9dc4896"
+    },
+    {
+      "path": "index_big.html",
+      "type": "file",
+      "sha": "4d0e187f98cef50df5a9692c7c09ec61598da49a"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "7b580aa483e87787b4deb4f6d8462b191c294b08"
+    },
+    {
+      "path": "ios_editor_menu.js",
+      "type": "file",
+      "sha": "9c5aaf4d1daf3f1d30f2acc1b4718083cb9ca662"
+    },
+    {
+      "path": "ios_icon Kopie.png",
+      "type": "file",
+      "sha": "aaec9827f64343042934a2e2d183ae305197303f"
+    },
+    {
+      "path": "ios_icon.png",
+      "type": "file",
+      "sha": "13266a15d85d0509cee11c6a13ab1144d139c80d"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "0a5545eb7ea8c68ec3f39680fab5956449066abd"
+    },
+    {
+      "path": "link.svg",
+      "type": "file",
+      "sha": "abdc8cb8845aca6a7f09224198347b1f9c130682"
+    },
+    {
+      "path": "list.svg",
+      "type": "file",
+      "sha": "edee3c00fb59cb135490a58acb339c72f6ed7636"
+    },
+    {
+      "path": "loadpalettes.js",
+      "type": "file",
+      "sha": "ee367adadf01a0e4391525ee3797e3cf810a54b0"
+    },
+    {
+      "path": "new_file.svg",
+      "type": "file",
+      "sha": "fe83472f108dbbcb813a97d2975eeefd34a4b661"
+    },
+    {
+      "path": "new_flickgame.png",
+      "type": "file",
+      "sha": "9f9f62df2703bbd441cb72f6f9d74ecc77979630"
+    },
+    {
+      "path": "newdoc.png",
+      "type": "file",
+      "sha": "981a2935ea23a901738551ce9d4267a8dec60f53"
+    },
+    {
+      "path": "palette.png",
+      "type": "file",
+      "sha": "6802271b02a0a8ea1089074a2b8e7339643ff36d"
+    },
+    {
+      "path": "palettes",
+      "type": "dir",
+      "sha": "f440b147e30cdec6225b621a8a72505dd4ddd15e"
+    },
+    {
+      "path": "play.html",
+      "type": "file",
+      "sha": "e9435db641c36f859222456de4cdd932536d780b"
+    },
+    {
+      "path": "play.svg",
+      "type": "file",
+      "sha": "6330addb15446ea78bfcaf8801fa205d1828de85"
+    },
+    {
+      "path": "play2.html",
+      "type": "file",
+      "sha": "bc1b767d1ec52d98bf121bb3ec1af418d9047d85"
+    },
+    {
+      "path": "play3e.html",
+      "type": "file",
+      "sha": "31b063e31a933f6814f26dfd4956bd464dba2434"
+    },
+    {
+      "path": "play_big.html",
+      "type": "file",
+      "sha": "fb0c800b3d718e99e338bab9ef4a5b5a13d74ffe"
+    },
+    {
+      "path": "pointer.png",
+      "type": "file",
+      "sha": "bf1ceb8ef17fb154d193bda43a7a0ffbec360b9a"
+    },
+    {
+      "path": "pointer_hand.png",
+      "type": "file",
+      "sha": "c8f73eca183bfa2e327fa165686824484d1015a3"
+    },
+    {
+      "path": "rewind.png",
+      "type": "file",
+      "sha": "2674a3330be10eb0edae94860432166c284d9902"
+    },
+    {
+      "path": "test.html",
+      "type": "file",
+      "sha": "0ea5350f6ad15fc44c52bbb318e9bffd72143517"
+    },
+    {
+      "path": "testgame.txt",
+      "type": "file",
+      "sha": "5204e8e12742477aac8b90fa003665902f35a8b4"
+    },
+    {
+      "path": "testicons.ai",
+      "type": "file",
+      "sha": "3a181a5df08c000b9abe11a9f01f5ce58237d7a5"
+    },
+    {
+      "path": "theme",
+      "type": "dir",
+      "sha": "4ee4dff0e582c144400f41af2f9cad4cd5758bfd"
+    },
+    {
+      "path": "undo.svg",
+      "type": "file",
+      "sha": "836a04c917b34f51bedcd6e3a4d0335752d81eb2"
+    },
+    {
+      "path": "undo2.svg",
+      "type": "file",
+      "sha": "39f42a12baf24f5f9aabf146f03f484d74ce6228"
+    },
+    {
+      "path": "upload",
+      "type": "file",
+      "sha": "1f55bea27d18373d034370a7399c3044f2fb3bd2"
+    },
+    {
+      "path": "x.svg",
+      "type": "file",
+      "sha": "6bf2f0ab9b3284023326e046daa56447472ae954"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Tiny browser game authoring/runtime with standalone export; root includes editor and play pages plus runtime JS.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

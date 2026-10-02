@@ -1,0 +1,59 @@
+{
+  "repository": "Wase-Engine/wase-engine",
+  "repository_id": 351016799,
+  "commit": "3487c9217646da9503b7637d64e9b939b66c36b0",
+  "source_url": "https://github.com/Wase-Engine/wase-engine/tree/3487c9217646da9503b7637d64e9b939b66c36b0",
+  "readme_path": "README.md",
+  "readme_sha256": "211cd732778bf91105f077e4452f1d356ae7858362186e5d286bc0f5e6fa7f2a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b0adc35eef9dd4cc0a5b7dc95088762222536baf"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "483de85b8b9488393ba3c4dc88919ff00c56f235"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8840a75f12880cbca41f221c6d6fcb29e4c066a2"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e1068b9d9cfc77055b60bf41ec51b468e13a08d8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "470a9c535a59ebfed985171bbe7f027c6b25da78"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "31c66b032d6ea4d65fd4381185a5936b100233d3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f669db9a25129255713d89be2141164d4b5bca79"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "454afefca8a5721974485c6222774cee101fc456"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "8220cbe087459b498d93848f45e2e72073b74ed1"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ 2D game library with GL/GLFW and tests; pinned README establishes library facilities rather than broader engine lifecycle/scene systems.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

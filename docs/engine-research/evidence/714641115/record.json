@@ -1,0 +1,87 @@
+{
+  "repository": "FrostyToolsuite/FrostyToolsuite",
+  "repository_id": 714641115,
+  "commit": "ee2a587af394fc784b309bb7990dab051065330f",
+  "source_url": "https://github.com/FrostyToolsuite/FrostyToolsuite/tree/ee2a587af394fc784b309bb7990dab051065330f",
+  "readme_path": "README.md",
+  "readme_sha256": "e8e2fc48d200f2937dbd33cb737bc6958a9e1bcc7dfcf7b11091432210cae8e8",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5ca883ab5b42069edd33916f63e90ff5ba6597d8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "256073944ec664fabf7b9bb2e057a36e4d9b0aca"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "408a1b043d25026e6b2112ca9db0d363131cbef8"
+    },
+    {
+      "path": "CodingStandards.cs",
+      "type": "file",
+      "sha": "5f24a4332b380ded9a6b5370ea22e23ee013ae55"
+    },
+    {
+      "path": "FrostyCli",
+      "type": "dir",
+      "sha": "ca47f4a123789008e17dbe760ac3217b3dbcdca3"
+    },
+    {
+      "path": "FrostyEditor",
+      "type": "dir",
+      "sha": "6ebf68c79806b12b68d1af903e3dd26da5abe70e"
+    },
+    {
+      "path": "FrostyModSupport",
+      "type": "dir",
+      "sha": "dfef17ee2ad3202e35cc69071a852278a5f8d1db"
+    },
+    {
+      "path": "FrostySdk",
+      "type": "dir",
+      "sha": "3ca723f400ce46dc443f5bc65ceb797779a275b7"
+    },
+    {
+      "path": "FrostySdkTest",
+      "type": "dir",
+      "sha": "1ef0a5ab58faeb94951976d0b07500625c73ec64"
+    },
+    {
+      "path": "FrostyToolsuite.sln",
+      "type": "file",
+      "sha": "070e2e9e77f43db25d88f13341179a9c12807ad5"
+    },
+    {
+      "path": "FrostyTypeSdkGenerator",
+      "type": "dir",
+      "sha": "093a89a662a5f76ab4cc965c342d5eb04290ccc8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "NOTICE.md",
+      "type": "file",
+      "sha": "9755440dca9b5fc6103f3806da0b5a94f894f29e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7952a74f3bdf85f1ed7a0821537f4d87d4a49c32"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "2e5a77e872c232e13d5c3e91e54c820f32bd7c18"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

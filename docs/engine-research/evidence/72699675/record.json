@@ -1,0 +1,47 @@
+{
+  "repository": "burrsutter/vertx-game-server",
+  "repository_id": 72699675,
+  "commit": "cad801dc1982e981dce892b29d64eba63079bbe9",
+  "source_url": "https://github.com/burrsutter/vertx-game-server/tree/cad801dc1982e981dce892b29d64eba63079bbe9",
+  "readme_path": "README.md",
+  "readme_sha256": "6f3dc73f073fbdb8ef841ba5ade116ef983a3ffffb4523b8849792bf86414a0b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eaddcddd75840f7ea6be5ac1400f8f08e574032a"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "505c7183df620703e490aec92fb177d77e3e0a92"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c03313767c510cbe774fe743c24b86c135a817b0"
+    },
+    {
+      "path": "drools-score-summary.json",
+      "type": "file",
+      "sha": "391532f0b47e663c19bc020f16c94f103df43193"
+    },
+    {
+      "path": "drools-score.json",
+      "type": "file",
+      "sha": "4b3e2a0881784be3f7334331fef385c71894b731"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "97b36e1c7840007065a505fa382149eacc79a250"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3407129ec255522445532f10f512fef08e8c94d3"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

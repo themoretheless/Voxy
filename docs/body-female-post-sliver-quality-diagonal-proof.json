@@ -1,0 +1,187 @@
+{
+  "initialCrossings": 25,
+  "finalCrossings": 23,
+  "includesAdjacent": true,
+  "reduceMeasure": true,
+  "qualityAudit": {
+    "floor": 0.05,
+    "initialMinimum": 0.050132027920765036,
+    "finalMinimum": 0.050132027920765036,
+    "initialBelowFloor": 0,
+    "finalBelowFloor": 0,
+    "verified": true
+  },
+  "initialMeasureM": 0.004602250404427137,
+  "finalMeasureM": 0.004439296489244925,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48801,
+        48843
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33131,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554579,
+      "forbidden_pairs": [
+        [
+          47084,
+          49012
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "steps": [
+    {
+      "pass": 0,
+      "edge": [
+        5539,
+        45208
+      ],
+      "faces": [
+        49012,
+        49019
+      ],
+      "before": 25,
+      "after": 24,
+      "local_measure_before_m": 0.0022437998829837893,
+      "local_measure_after_m": 0.0023435331774621566
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45211,
+        45230
+      ],
+      "faces": [
+        48846,
+        48855
+      ],
+      "before": 24,
+      "after": 24,
+      "local_measure_before_m": 0.00018738005791021006,
+      "local_measure_after_m": 0.0001865527815070418
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45230,
+        45251
+      ],
+      "faces": [
+        48846,
+        48856
+      ],
+      "before": 24,
+      "after": 23,
+      "local_measure_before_m": 0.0002985422431294239,
+      "local_measure_after_m": 3.668230987201315e-05
+    }
+  ],
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5671232317304442,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "verticesMoved": false,
+  "scope": "Static candidate audit; new triangulation requires anatomical review and is not runtime geometry.",
+  "elapsedSeconds": 29.103538082999876,
+  "source": "assets/characters/blender-female/prepared/body-sliver-repair-candidate.obj",
+  "sourceSha256": "7c2d576bc126880b10272442af600bf60c401e925803f685b6fbc359ad276604",
+  "candidateSha256": "9cdcaca0271553c84ea38384d373602f2e9bf0f9e283b3c3db2c698e928d6f2e",
+  "exportReloadVerified": true,
+  "adopted": false
+}

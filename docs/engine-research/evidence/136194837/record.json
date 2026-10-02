@@ -1,0 +1,149 @@
+{
+  "repository": "alemart/opensurge",
+  "repository_id": 136194837,
+  "commit": "bcb3466e10913f2d5f34dec848e0c2f3ee944883",
+  "source_url": "https://github.com/alemart/opensurge/tree/bcb3466e10913f2d5f34dec848e0c2f3ee944883",
+  "readme_path": "README.md",
+  "readme_sha256": "46603d7981c9317ac8cf21c60c30c753ea97b14782068773aae8c6aa25d935ca",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "801b91e698e27054f589c253af5bc9765a288f11"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eea47d1c48ed82c45123230360f8c60e620d220d"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "ae37ece67092d1800f72d8002aeeac56bb4847b3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d682f9de95d51c5a88af8618fe6290f5ee50164b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "264c9ece0b44719bb4a62b3ca127f5ebc313f0c6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "092e346fcb7fd3a3490c05be58e87056e4ebad62"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "70248680e0016cc50c02d8a6e7991853784430d4"
+    },
+    {
+      "path": "characters",
+      "type": "dir",
+      "sha": "719e39c557f8dc01699d1f34598a43719cb20b99"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "f561de1c2373c512d87f8820fe44631787183e77"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "1fe5b3139ef7fd2d72ebaff3ae43d52b78bdfc17"
+    },
+    {
+      "path": "inputs",
+      "type": "dir",
+      "sha": "0e69a352c9ee1b7d29e858d143642b154465be60"
+    },
+    {
+      "path": "languages",
+      "type": "dir",
+      "sha": "eedc6f49f875dee7b9ca9191f94d8ba64428af99"
+    },
+    {
+      "path": "levels",
+      "type": "dir",
+      "sha": "229a94a7b55a7db7bd7007be366c51f045ecb4c4"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "d65f24a7cd0afd0ffb6e19f6770041e9b57f13fa"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "478611d027f3a498a6cc9fab3d64a405b16ad525"
+    },
+    {
+      "path": "musics",
+      "type": "dir",
+      "sha": "4668c3d305f0bb9a070660f08c6c99bb948a68e6"
+    },
+    {
+      "path": "quests",
+      "type": "dir",
+      "sha": "1d8a1bbe27992ab91fc00427f0302f556af10e81"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "ede0ff89ec75be50095ffd173515874f9e6f0051"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "07ea5f7a29aa30f968bbf584cfb862bff090bf25"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "82b0f2fd5ce468b89281547b4a38403c9a5cf99a"
+    },
+    {
+      "path": "sprites",
+      "type": "dir",
+      "sha": "66163d5b38b6e7ae46910e8c5408528d2a4942eb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5c11380352f5d3c271bf73b1cc188d1d40a13364"
+    },
+    {
+      "path": "surge.cfg",
+      "type": "file",
+      "sha": "bd3e776955fb0f99f52b893e25f658d3740215a5"
+    },
+    {
+      "path": "surge.png",
+      "type": "file",
+      "sha": "1c4b5b1a513768a81f741df8bd8b324440441905"
+    },
+    {
+      "path": "surge.rocks",
+      "type": "file",
+      "sha": "963987b2ba46eaa3bb540a0ea9b53a9c9cbebb34"
+    },
+    {
+      "path": "themes",
+      "type": "dir",
+      "sha": "763963e372c609036a9dd8f6e755c2e96d89802d"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies retro 2D engine with authoring/game content support; owned source/resources and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

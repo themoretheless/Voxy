@@ -1,0 +1,44 @@
+{
+  "repository": "furkansarihan/enigine",
+  "repository_id": 442599421,
+  "commit": "692d41c5625af587b12c29113ab01edafafb1381",
+  "source_url": "https://github.com/furkansarihan/enigine/tree/692d41c5625af587b12c29113ab01edafafb1381",
+  "readme_path": "README.md",
+  "readme_sha256": "0249c677ac4d421b89a83f395f1b06803e4a2979d1f672ab47226e13029a6582",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "70ee7f8ffe8c28399b1463b188dbf3e0329808a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "59aaca18ac7f4ec64d93fa2c55a942276084014b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6df19b1d3ece4bdc23b8838dfaee441fa881fc42"
+    },
+    {
+      "path": "dev",
+      "type": "dir",
+      "sha": "8ae68bdb88011d5f760038487703b4b356a05e36"
+    },
+    {
+      "path": "showcase",
+      "type": "dir",
+      "sha": "fb8e9f3369369f21e86265b4631caa7b293aa084"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "aa49099618c9f619b8d9eeab144670027a34e6c3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 3D engine playground; owned src/dev source and showcase. Runtime quality/build status unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

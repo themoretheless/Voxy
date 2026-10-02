@@ -1,0 +1,37 @@
+{
+  "repository": "DavidArayan/ezyslice-example-scenes",
+  "repository_id": 114189140,
+  "commit": "5ec5674da5bd992aec4544035b8f229a4f38cf8a",
+  "source_url": "https://github.com/DavidArayan/ezyslice-example-scenes/tree/5ec5674da5bd992aec4544035b8f229a4f38cf8a",
+  "readme_path": "README.md",
+  "readme_sha256": "3c7114ccda108bbe0e9a2dc58d38769a1eed5c27bc88d7386c1ee4908e90e621",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb852c17512d41b5622c88b410e875dd47668871"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a2d66525e5ebfe3acd3c25fa6bd338042aa31fa6"
+    },
+    {
+      "path": "EzySlice-Examples",
+      "type": "dir",
+      "sha": "a808593c624c5cf6f6718b01ac2c463fb676feca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "08dbbb63ca194e3cc00c49c6ff94882cda1fd94b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d31fbee6a9039825c6994abdc70aef58be2793e6"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

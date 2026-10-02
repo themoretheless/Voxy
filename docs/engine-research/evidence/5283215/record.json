@@ -1,0 +1,104 @@
+{
+  "repository": "MosheBerman/MBTileParser",
+  "repository_id": 5283215,
+  "commit": "56cb2b7ebe3d9563b305e7c73e0e9b2d47cf9399",
+  "source_url": "https://github.com/MosheBerman/MBTileParser/tree/56cb2b7ebe3d9563b305e7c73e0e9b2d47cf9399",
+  "readme_path": "README.md",
+  "readme_sha256": "bd971e3a520109742b6cc81ec319f6700d9d313f1132d0474ef3e44072922fa3",
+  "entries": [
+    {
+      "path": ".DS_Store",
+      "type": "file",
+      "sha": "2b4407a5e3ad46aac5516c7f47fad89bd3779c51"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ef21a908059cbfee828ee4997f2552cb828be33b"
+    },
+    {
+      "path": "App Icon [Squared]",
+      "type": "dir",
+      "sha": "da81fe9f2119f333e93f8b207e3acccfa905e2d4"
+    },
+    {
+      "path": "Default-568h@2x.png",
+      "type": "file",
+      "sha": "a04344c2e3a0400af8cc617e7400a42736eb12e1"
+    },
+    {
+      "path": "Default.png",
+      "type": "file",
+      "sha": "40c00cfcf3babc1dbfcebb06ec9fb481445c33e4"
+    },
+    {
+      "path": "Default@2x.png",
+      "type": "file",
+      "sha": "1d4b888fb29826d61dc5bfbe7e53d1e1e559dd96"
+    },
+    {
+      "path": "Icons.psd",
+      "type": "file",
+      "sha": "38589ba4fab882a4b2db163e08b147a4275d60b8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8399f90579f1410904ad5c063d00bc5815e8d3bb"
+    },
+    {
+      "path": "MBTileParser.podspec",
+      "type": "file",
+      "sha": "30238a6f0f7ced538787d117814217c0794994ab"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "445e871da9ff00e17f0f7853b818820b25826b14"
+    },
+    {
+      "path": "TileKit",
+      "type": "dir",
+      "sha": "82275b71d90c9424d875493522a7525e4f4ac8ad"
+    },
+    {
+      "path": "TileKitTests",
+      "type": "dir",
+      "sha": "a9a7153fced4214947e2c70443866028457140d3"
+    },
+    {
+      "path": "TileParser.xcodeproj",
+      "type": "dir",
+      "sha": "dd1dd991a9e6c28f4bfb8fa902beb1173cd9c6f7"
+    },
+    {
+      "path": "TileParser",
+      "type": "dir",
+      "sha": "cc31d578a00ed2989762b69fdcbc1115582bae7c"
+    },
+    {
+      "path": "TileTV",
+      "type": "dir",
+      "sha": "8607a5a61a5c474d18c7d93b2db4d66777e2ff0c"
+    },
+    {
+      "path": "TileTVTests",
+      "type": "dir",
+      "sha": "9c84e67d6be9491eeaead3d0faed52c727eaa484"
+    },
+    {
+      "path": "TileTVUITests",
+      "type": "dir",
+      "sha": "1f6225a6b32c92b5e9916908d461d4d17bb58bc9"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "8e503bc91a2984092801eda46ef52b1610443741"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies UIKit tile game engine; owned TileKit runtime/tests and native pod/project build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

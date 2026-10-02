@@ -1,0 +1,62 @@
+{
+  "repository": "hlavacs/ViennaGameJobSystem",
+  "repository_id": 195938404,
+  "commit": "d1c6ce31d59d620c4c62045f8fa3e1a9cff6aaad",
+  "source_url": "https://github.com/hlavacs/ViennaGameJobSystem/tree/d1c6ce31d59d620c4c62045f8fa3e1a9cff6aaad",
+  "readme_path": "README.md",
+  "readme_sha256": "300ebe9b84b7f4965b2ab5befad5059bf7e66f2ce379069690059c572ad6c676",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1cb7643198a3f533862c9576d32ef6ca97322d8d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b351d41f27fd29f9682985e95a2ab850a344445e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d7d1fc7b0949d45925dfcba497dab443e02486b1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90acc50786d5fc21a7a25d405816bbce264f6cce"
+    },
+    {
+      "path": "build.cmd",
+      "type": "file",
+      "sha": "91429867aa1aeeb9165ba471536098af455f23d1"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "21245f3cbf4b8093a92d0175a11441cf0e54b9ec"
+    },
+    {
+      "path": "documentation.html",
+      "type": "file",
+      "sha": "30fab247f514e9ed3a5bf6423d4d0150f0f7a055"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "2b2d840cec31b0957046c59ad6b7b5837a974994"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "9b078690d0edf3133c56b352226bcb59b7a6dcad"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "0576c8c224a269fa3fe0d5763888d3e20a77e73a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

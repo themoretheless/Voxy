@@ -1,0 +1,62 @@
+{
+  "repository": "ukanwat/selfstarter",
+  "repository_id": 1318833449,
+  "commit": "a2e31a0830bff056b1c344a18944892d1a298619",
+  "source_url": "https://github.com/ukanwat/selfstarter/tree/a2e31a0830bff056b1c344a18944892d1a298619",
+  "readme_path": "README.md",
+  "readme_sha256": "17b48b65163988e7289378c8c47684b032a7b5e32757344b853e6ae0a56e2d2b",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "aea1e0ba18e743d01098377f60a53aa47653ca95"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e062a807a3b4fbefff7e026a2d3b9f0f136f0da4"
+    },
+    {
+      "path": "HARNESS-RULES.md",
+      "type": "file",
+      "sha": "bf776b44e1e1f7d17f6b43ac1c8504df725c577b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8c324fff1c3904eef7262417a4ffebba0a93f04f"
+    },
+    {
+      "path": "PROMPT.md",
+      "type": "file",
+      "sha": "4c0c4a938f653c06879a73e5fa5746ee3533ff7d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6aa1ea996e08406e28e905fec050ea87b2d7729d"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "f80622ed16b8b9d7583bb746b486cd615d1fb083"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8204121b451ceb224137aaf1070bf419aa1cda65"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "aa45dd088d7606477006899e82caaf6155f8898a"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "027315f7bf0fc8738ebe309df2195add8b8994d2"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,59 @@
+{
+  "repository": "BuggerBag/Game-Driven-Development-",
+  "repository_id": 424918531,
+  "commit": "1c0310f860c5d25fcb86adb42cb72cd59f9b043b",
+  "source_url": "https://github.com/BuggerBag/Game-Driven-Development-/tree/1c0310f860c5d25fcb86adb42cb72cd59f9b043b",
+  "readme_path": "README.md",
+  "readme_sha256": "08849f1af01da937835b83f1f6f269a8c4a40ac874f4826a77349fd85378292e",
+  "entries": [
+    {
+      "path": "AWS Lumberyard",
+      "type": "dir",
+      "sha": "676aef5ddd52767fee75ab9c601d777c25bdf35b"
+    },
+    {
+      "path": "Blender",
+      "type": "dir",
+      "sha": "497a5bbf2b6cf06cc9524eb74cd4a66d9997e772"
+    },
+    {
+      "path": "Game Engine Development",
+      "type": "dir",
+      "sha": "3a7c8ebc619a0841e2a5367335078dbb5045e031"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4fc6b5ef6594aeebc88cf00d907d78df247a97f6"
+    },
+    {
+      "path": "Lua programming",
+      "type": "dir",
+      "sha": "8c5c39e940bce8d58a84a10d00598143d5484ec7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "020a161a3df0f16644c594ee75e8f25c7663b8e2"
+    },
+    {
+      "path": "Roblox Game Development",
+      "type": "dir",
+      "sha": "4e27bdcd7c1f47cc60d7e46c25e4a61a6af498c6"
+    },
+    {
+      "path": "Unity",
+      "type": "dir",
+      "sha": "56cead50a89926ccb4f838e76614d29bc3cf2e66"
+    },
+    {
+      "path": "Unreal",
+      "type": "dir",
+      "sha": "c616271ba178319afd1c68124fdebf5d433802e7"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Game development book collection rather than engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

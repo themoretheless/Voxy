@@ -1,0 +1,23 @@
+{
+  "validation": {
+    "editor": "68 passed; 2 ignored in default run",
+    "glyph_pixels": "explicit ignored test passed: 105 covered, 54 partial, 407 transparent",
+    "font_reload": "explicit ignored test passed through production poll_gpu, import worker, source watcher and GPU upload"
+  },
+  "scope": [
+    "Corrupt font retains original GPU atlas and presented layout",
+    "Valid second font replaces GPU atlas",
+    "Restoring original font reuses original resident GPU atlas",
+    "GPU validation error scope empty"
+  ],
+  "limits": [
+    "Offscreen GPU resources; no native surface presentation in reload test",
+    "Pixel test covers glyph alpha and clip, not a full-frame reload pixel comparison",
+    "Local macOS Arial/Courier font prerequisite",
+    "Native visual reload demonstration remains incomplete"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/ui_live.rs": "666bb423da6f021f4a1f0fcc9fd1faf50b37652606ab5c2a0e484991d2367c45",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "4326dcf4d8ed968150bba36cc3b8f524a882b908874a3c68d91c97c4ce9e610b"
+  }
+}

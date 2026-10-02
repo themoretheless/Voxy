@@ -1,0 +1,107 @@
+{
+  "repository": "stubma/WiEngine",
+  "repository_id": 6005211,
+  "commit": "7e80641fe15a77a2fc43db90f15dad6aa2c2860a",
+  "source_url": "https://github.com/stubma/WiEngine/tree/7e80641fe15a77a2fc43db90f15dad6aa2c2860a",
+  "readme_path": "README.md",
+  "readme_sha256": "5fb892fd35c4eccdf4eadbae92faabfad01a53e0164e93e4d0b9d4155d8f0ea9",
+  "entries": [
+    {
+      "path": ".classpath",
+      "type": "file",
+      "sha": "dec02b33c665ca86371b7c1fa241a1d1afe39e2b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8337c019204276d24a9cbc61060994bd2f6b0273"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "c9f17f0e260eec279a876fb1cac42ec70102ba61"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "44f18d016a272728422a03c5a5ef0a96a4476e75"
+    },
+    {
+      "path": "AndroidManifest.xml",
+      "type": "file",
+      "sha": "865a7f704106aaab0ff55f897318de482aae9aea"
+    },
+    {
+      "path": "CHANGELOG",
+      "type": "file",
+      "sha": "4002a4fed85797a22bdaacd9b737cd683552fbba"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0bcb36c92c20ed35f76b798985722e3c1f0bb0ba"
+    },
+    {
+      "path": "MacOSX",
+      "type": "dir",
+      "sha": "cdedb8ee4991e98f12b3e10a65fbde7a37313415"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2fdeed99ab531fa6e4fc9e1574fae1f908d35c92"
+    },
+    {
+      "path": "Windows",
+      "type": "dir",
+      "sha": "1beef50e32e0f4d8ca3d0b2b7f6c850d103d2790"
+    },
+    {
+      "path": "build.xml",
+      "type": "file",
+      "sha": "67dde84ddd1a81f4d741b44a87648d458e896307"
+    },
+    {
+      "path": "doxygen",
+      "type": "dir",
+      "sha": "8d12ecc5a912f2ed771e7cf171d4414fc7df1d80"
+    },
+    {
+      "path": "iOS",
+      "type": "dir",
+      "sha": "def11f01ee23063cc2aca9709802680db735e7cb"
+    },
+    {
+      "path": "jni",
+      "type": "dir",
+      "sha": "3b6c93bac21b3f612ae3b80d2ffe8cf478d971e0"
+    },
+    {
+      "path": "project.properties",
+      "type": "file",
+      "sha": "c57400d008a4ddb4c4091cc05b532469f720813f"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "d81a201965f50bc2ac9b6dca571047a0aa0ebe3e"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "a83bd932823614e2ea4c6abea8dd454e765416cd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b7b0e50487b07a99e1d0350545fd546d65b8d432"
+    },
+    {
+      "path": "system_libs",
+      "type": "dir",
+      "sha": "a739c1bf5ffc8b22a02c740580a5178ac98d250c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

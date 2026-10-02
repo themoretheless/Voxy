@@ -1,0 +1,139 @@
+{
+  "repository": "Felid-Force-Studios/StaticEcs",
+  "repository_id": 893936032,
+  "commit": "5f89bb6485c952ac702c89f4ac5a891971fb8cb6",
+  "source_url": "https://github.com/Felid-Force-Studios/StaticEcs/tree/5f89bb6485c952ac702c89f4ac5a891971fb8cb6",
+  "readme_path": "README.md",
+  "readme_sha256": "bbb3db9181779f9c1a126d60841ce86c7590acab82d594e42871d7783b753854",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cde09c21f726c171562ffe51a79918410d1cb802"
+    },
+    {
+      "path": "CHANGELOG_2_0_0.md",
+      "type": "file",
+      "sha": "fc6a78c4fc13efaa65d8ac2338195ff74b8f5298"
+    },
+    {
+      "path": "CHANGELOG_2_0_0.md.meta",
+      "type": "file",
+      "sha": "401a99c36f2f662d31f5fbe9ab4e7d01d092bb52"
+    },
+    {
+      "path": "CHANGELOG_2_0_0_EN.md",
+      "type": "file",
+      "sha": "8676c0f064fb975d7141839352f4607484ffbfd0"
+    },
+    {
+      "path": "CHANGELOG_2_0_0_EN.md.meta",
+      "type": "file",
+      "sha": "796d358ca86be60fc7503f44d2c191c458341643"
+    },
+    {
+      "path": "CHANGELOG_2_0_0_ZH.md",
+      "type": "file",
+      "sha": "624075868958de94f75ce189bc2128c12ce694ee"
+    },
+    {
+      "path": "CHANGELOG_2_0_0_ZH.md.meta",
+      "type": "file",
+      "sha": "7e31c3f5780f02da3a62822a07a9fe10d91784c0"
+    },
+    {
+      "path": "FFS.StaticEcs.asmdef",
+      "type": "file",
+      "sha": "bc46811775f0e2a7b73ee5a1771d71a68b3374b0"
+    },
+    {
+      "path": "FFS.StaticEcs.asmdef.meta",
+      "type": "file",
+      "sha": "c95f1fda5cd72bd5d29424c0f6b23d169982ca51"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "cb16b36ba8ad412dd65b514d8aa79a8ef96a0902"
+    },
+    {
+      "path": "LICENSE.md.meta",
+      "type": "file",
+      "sha": "00cbc7a55bcad68716afe8bf4d517e6d1ad1b297"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "72eb22f79a603e33cdd17592adead7d3a9e1234e"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "7ed4b039484104c57facd42d9f8c27770d1b1c09"
+    },
+    {
+      "path": "README_RU.md",
+      "type": "file",
+      "sha": "991d8dcdf090f3f3505d1c07425925a02ed314b5"
+    },
+    {
+      "path": "README_RU.md.meta",
+      "type": "file",
+      "sha": "7c27fc15f5e908ecbcec1c8cd85492575af6ede9"
+    },
+    {
+      "path": "README_ZH.md",
+      "type": "file",
+      "sha": "c207110e8006ff9144868bb22d6037f9c9a87769"
+    },
+    {
+      "path": "README_ZH.md.meta",
+      "type": "file",
+      "sha": "1c9d80cf845b48589ecab65a418b63de0153e472"
+    },
+    {
+      "path": "Src.meta",
+      "type": "file",
+      "sha": "5cfafd0c2335f92fc43c22c69b8caf109dbc11dc"
+    },
+    {
+      "path": "Src",
+      "type": "dir",
+      "sha": "6b4120afc059171981251d9933f28cc3a307bba9"
+    },
+    {
+      "path": "StaticEcs.csproj",
+      "type": "file",
+      "sha": "532f7327b4ebd5ebdbe6ef43f55242343629cbe7"
+    },
+    {
+      "path": "StaticEcs.csproj.meta",
+      "type": "file",
+      "sha": "f7a934b9997693551bdae80c64dfac8e6acb7888"
+    },
+    {
+      "path": "docs.meta",
+      "type": "file",
+      "sha": "ac3aecbbff6a3ee1cf8cce9f973937713a5a5fa9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "97796aebbacf9d0b56a4331b6bfd6cda0eade5b1"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "3426a8bfb3c80e91339369b3aee22f20c40b3bd5"
+    },
+    {
+      "path": "package.json.meta",
+      "type": "file",
+      "sha": "aa80d221a15237a44406aacbba80fd6d9ab6bb57"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C# ECS/query framework; runtime/package source, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

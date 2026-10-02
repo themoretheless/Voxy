@@ -1,0 +1,124 @@
+{
+  "repository": "racenis/tram-sdk",
+  "repository_id": 519239878,
+  "commit": "c0e4f904d5e148de24eb756e6e6acf2cb03e6e94",
+  "source_url": "https://github.com/racenis/tram-sdk/tree/c0e4f904d5e148de24eb756e6e6acf2cb03e6e94",
+  "readme_path": "README.md",
+  "readme_sha256": "c114fbc512fd0ed767103f83da89694124a6fa98673639456ab78aaab90f3934",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4523686824e9195b7ac7cac70f6a43d85e79127d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "536db62ec106a5e6e6767669ec94c301852db641"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4be3704a078eb5945494f4fa5d0e43aef7cc063e"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "7233f54c4ae58f070ae285215dc1d00bdbffad0a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dbd0a51f1b6373f0f2cc16f339a847fbcc2af0e9"
+    },
+    {
+      "path": "SDL2.dll",
+      "type": "file",
+      "sha": "9caceb8e193e6551cd34e40386d873adfed80503"
+    },
+    {
+      "path": "asset.db",
+      "type": "file",
+      "sha": "02105175611d6a1b2dbeffe73bd5d4c17e1ce325"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "a09a081120877520c48c1708c3af522d9a8379de"
+    },
+    {
+      "path": "devtools",
+      "type": "dir",
+      "sha": "d55d6caffe3607ff88c158d5a78f587cdd0e2e42"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5a434e02b8e9fb4107bb89cb61ce302c32fb49a3"
+    },
+    {
+      "path": "entities.entdef",
+      "type": "file",
+      "sha": "dad683291b49058e7fe2f176bfe710a61ecd2d5c"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "34e21c360581842e99767f5b093bead1ebb58f97"
+    },
+    {
+      "path": "libtramsdk.a",
+      "type": "file",
+      "sha": "88e9bea46515e7042c39bd26fe5785baa2c22309"
+    },
+    {
+      "path": "maketool.ini",
+      "type": "file",
+      "sha": "c4b15226eadf44f050adfa692f5e39bc1fd42ef0"
+    },
+    {
+      "path": "project.cfg",
+      "type": "file",
+      "sha": "a10ed9f7673134998be7121a7ea90a62f0071f41"
+    },
+    {
+      "path": "project.jpg",
+      "type": "file",
+      "sha": "a274ea5770844c06e1d26c0e14374391b5201305"
+    },
+    {
+      "path": "saves",
+      "type": "dir",
+      "sha": "411b9ea0f4f3cc717ecf29512f3c75b9a350b9fa"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "fc954f49a48aa32afdc0691f477b7a7d64285e67"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "21cfd318ed35204a4b280f9828fa417312c97a15"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ff20deecd498ac56e9d777b06c8b91f98246b02c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "b4f277dc8a4328e95af0f59f4e81a438c01491b4"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies software library/tools for related simulations; native SDK runtime and make/CMake build, separate from complete-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

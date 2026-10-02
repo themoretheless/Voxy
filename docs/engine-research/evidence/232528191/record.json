@@ -1,0 +1,99 @@
+{
+  "repository": "tofuengine/tofu",
+  "repository_id": 232528191,
+  "commit": "9d50a863e6853837a6714933b0401b9d9d080c36",
+  "source_url": "https://github.com/tofuengine/tofu/tree/9d50a863e6853837a6714933b0401b9d9d080c36",
+  "readme_path": "README.md",
+  "readme_sha256": "290243747cefbe568416c1f64842fab8a4b958b5b8a042fcdf484fd6b524d88f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "15a5c58091afb6a94589d8366c623c129a78fe40"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eed4b5ced06e6ecafad8805cd3136282a2e93d83"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "544af419ee7b896f9abf3486c5030c9299656382"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "7a7327656c3abe74a837caa7f2d44eaeca125fe9"
+    },
+    {
+      "path": "CODING_STYLE.md",
+      "type": "file",
+      "sha": "5ddb0203ee2e84c8674f58cdc116326568aab524"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5bb7a0ccd80f0dfc912f5dbebeec5c53ae0439de"
+    },
+    {
+      "path": "LEGAL.md",
+      "type": "file",
+      "sha": "a17f6c42fd6f48f2aa1ac0fa13e979fb40aef982"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "51ce40941b9a5d6258c6d4a88aebabd2bf58f128"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "cf3cd9ff84e67943755e8712ff425bb937981b1a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "93486a4451cb94fc7976a87cd7d34a905b5002cd"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "2018af2898b5861c19bfbb6a1f960b4a9d12adc1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b1b3a3e3d0e2099bae56ad76da4cf0b62f73608a"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "17d95b9531d1dffbc9d61be9ff7b17df6f264f48"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "df6ee7d62e740ab6d3f53c6fd60f6a486964f56d"
+    },
+    {
+      "path": "license",
+      "type": "dir",
+      "sha": "60ef220c0bac556fa33799a2558d91e5c795c9a0"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "428076909c35ae797aa832cd614b66b7d8d22589"
+    },
+    {
+      "path": "stats.txt",
+      "type": "file",
+      "sha": "299bd5315a49fdab4c4b0cdb052e02904a7a8d65"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Lua-scripted retro 2D engine with native src, demos and Makefile; dependency and platform claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,39 @@
+{
+  "repository": "DavidArayan/ezy-slice",
+  "repository_id": 46333812,
+  "commit": "073efdcaf595a25f1086bdc5b7a23335a80a6755",
+  "source_url": "https://github.com/DavidArayan/ezy-slice/tree/073efdcaf595a25f1086bdc5b7a23335a80a6755",
+  "readme_path": "README.md",
+  "readme_sha256": "bcf97b2daff8b158c68bd8fa201b6a175118ecb733cfbec26fb4d01fbc34e459",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "08cf00ede98fd409e41492e4d41305897c7868b4"
+    },
+    {
+      "path": "EzySlice",
+      "type": "dir",
+      "sha": "65ba78472ee818c66ecf961c443f0b9c9c13e035"
+    },
+    {
+      "path": "Graphics",
+      "type": "dir",
+      "sha": "6f380324eed90f266a4fb995320fe7d00d368b8e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7e8f0b6c60229ba68c6ff02b44f183dfe767b2e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ea540fc5d51a6c7759a1973d6dfc3a174456d848"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity mesh-plane slicing geometry subsystem, not engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

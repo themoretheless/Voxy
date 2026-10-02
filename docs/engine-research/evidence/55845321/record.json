@@ -1,0 +1,24 @@
+{
+  "repository": "Ibuprogames/gamedev-resources",
+  "repository_id": 55845321,
+  "commit": "245019e786b4698c3f702b429b4ac2888f5815d0",
+  "source_url": "https://github.com/Ibuprogames/gamedev-resources/tree/245019e786b4698c3f702b429b4ac2888f5815d0",
+  "readme_path": "README.md",
+  "readme_sha256": "989af4e65f799955934026657431ac773fe2101122b470490c3e428d68288feb",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9a240a27826229a9d685f78e39673e054ef454f7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "68c6aac9f7e3879692e1af8e18c6bd4a35c72c53"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify resources collection; only README/license.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

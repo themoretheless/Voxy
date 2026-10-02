@@ -1,0 +1,114 @@
+{
+  "repository": "lordmauve/wasabi2d",
+  "repository_id": 200483841,
+  "commit": "78116b41ea33c37b994f7ca7e568523cf023450b",
+  "source_url": "https://github.com/lordmauve/wasabi2d/tree/78116b41ea33c37b994f7ca7e568523cf023450b",
+  "readme_path": "README.md",
+  "readme_sha256": "f08b7675bb308abda3bd13902694d4ee4a3e45a718aada135a715c0837b7f4ba",
+  "entries": [
+    {
+      "path": ".flake8",
+      "type": "file",
+      "sha": "2edf152371a30e8eaef4efa7902bd9382a947bdf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "337d069ce2a4552c9f63caf58479d60f0a435600"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06c3d24a4f8fcd975d9b0f8bd8667cef4d982b2b"
+    },
+    {
+      "path": ".readthedocs.yml",
+      "type": "file",
+      "sha": "dbd07f06e87083d463c978f81f636d764d71590c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "65c5ca88a67c30becee01c5a8816d964b03862f9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3d651a39ef84557009594c419e0af7ddc6c970a8"
+    },
+    {
+      "path": "circle_demo.py",
+      "type": "file",
+      "sha": "eea55c6b364cb6bf240a9b8bf4e650472136817f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3c0e07f931b29f129b88f6f6d605eba9fdcf7fac"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "433164d72f907175273fadfdfcdcacabd44ad115"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "5e3d523af84b8a6e4dcb30b44bd1c0f5202833ef"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "de2d7f3b648497da530f7efd12286b6e42e9265f"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "dc676524eb9e87464581ec9288afe4efb8a53cf5"
+    },
+    {
+      "path": "requirements-dev.txt",
+      "type": "file",
+      "sha": "934015e447a98bae895028bb872115ad0044bf4a"
+    },
+    {
+      "path": "requirements-docs.txt",
+      "type": "file",
+      "sha": "49724dbbc22323930e9367866c3cc519a0d264b2"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "c9829eae941348f26ab034929708daafaea1b6bf"
+    },
+    {
+      "path": "sounds",
+      "type": "dir",
+      "sha": "b02626c0cf48f5994f49dbd6bba1008c5f8e1396"
+    },
+    {
+      "path": "sprites.py",
+      "type": "file",
+      "sha": "ae1002d473ebf2464461ee4a9da20bc89a00b394"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "35806cac789d5f7bca80f85bdd23c5e0b6466a02"
+    },
+    {
+      "path": "tox.ini",
+      "type": "file",
+      "sha": "be8b78ee876bd0f6e3a170d7b6ec4c1d1464c380"
+    },
+    {
+      "path": "wasabi2d",
+      "type": "dir",
+      "sha": "43ad0e26e9ba21f096908ff2b8685734d9a1d781"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Python 2D engine with Scene/layers, rendering effects, animation, input and audio APIs; moderngl and pygame provide backends.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

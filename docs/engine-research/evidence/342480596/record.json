@@ -1,0 +1,644 @@
+{
+  "repository": "SheerSt/pokewilds",
+  "repository_id": 342480596,
+  "commit": "83133ed40be8b7c7dff5f9058eef16dd8916be6a",
+  "source_url": "https://github.com/SheerSt/pokewilds/tree/83133ed40be8b7c7dff5f9058eef16dd8916be6a",
+  "readme_path": "README.md",
+  "readme_sha256": "aa15c891624ed1b14fe9ce6f148cdb81e217233fdc449f46990e7b02fb727438",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1e6449c3d21f62aa2f235ed9e889d3371a7efe2f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2eb91f06c82f007180cefd98a640696e35031350"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b34509cc7e93983d312ec3dde30d7baac02941b1"
+    },
+    {
+      "path": "amount_bg1.png",
+      "type": "file",
+      "sha": "3ffefb1c9ae989d00910e47fe00ece65640c5895"
+    },
+    {
+      "path": "arrow_down.png",
+      "type": "file",
+      "sha": "242ceec15ad70ea3d779bc706cb5e1264ddd7ef3"
+    },
+    {
+      "path": "arrow_down_white.png",
+      "type": "file",
+      "sha": "5d9db21735a39bfaf399381d013bd37fe2115d7a"
+    },
+    {
+      "path": "arrow_right_white2.png",
+      "type": "file",
+      "sha": "146c01e034762c5bb8971438d4942adb684c6f14"
+    },
+    {
+      "path": "attacks",
+      "type": "dir",
+      "sha": "da1ebc7b9ca56bf73bed4e205c5b99fac8c90ff1"
+    },
+    {
+      "path": "bait_small1.png",
+      "type": "file",
+      "sha": "fde8b1c1aab1fb4cbd94040ea21575ae24c6117f"
+    },
+    {
+      "path": "battle",
+      "type": "dir",
+      "sha": "6feaa44412767e82a7a29e714e9c5deec3df9e1e"
+    },
+    {
+      "path": "block1.png",
+      "type": "file",
+      "sha": "9929ce0ca7989d77b1707c4ba1c0623ea5d805d3"
+    },
+    {
+      "path": "braille_sheet1.png",
+      "type": "file",
+      "sha": "5ec483e6f52343d41497becd4a694ba9e05cc8b5"
+    },
+    {
+      "path": "cloud4.png",
+      "type": "file",
+      "sha": "0ad1cc80aa9b5b3411eb4344a0776ec5bc88cbe2"
+    },
+    {
+      "path": "cloud5.png",
+      "type": "file",
+      "sha": "9c559d7f90c5dad11efdb6234375cde04b6611a3"
+    },
+    {
+      "path": "cloud6.png",
+      "type": "file",
+      "sha": "d550fb18f51ec8476f8bfc5c59a306e4df58c922"
+    },
+    {
+      "path": "cursor.png",
+      "type": "file",
+      "sha": "ca3141f01aa482024fd190af99370289e286b105"
+    },
+    {
+      "path": "emotes.png",
+      "type": "file",
+      "sha": "8020e2454016e070fb432f0f16d1bba1af8cc86b"
+    },
+    {
+      "path": "female_symbol1.png",
+      "type": "file",
+      "sha": "2beff36ad104c15d024e474ee9950a0892021916"
+    },
+    {
+      "path": "female_symbol1_inverse.png",
+      "type": "file",
+      "sha": "c26fd0dfae4155ed4edcff98b13df16de68de379"
+    },
+    {
+      "path": "fire_mask1.png",
+      "type": "file",
+      "sha": "6af5caddfa7ee1d3102a542e62183db5d7165972"
+    },
+    {
+      "path": "fire_mask2.png",
+      "type": "file",
+      "sha": "05a7d8cdba82b98bc658e495acdce4ed3b43ea5a"
+    },
+    {
+      "path": "fire_mask3.png",
+      "type": "file",
+      "sha": "148dc479c4ca03e640dd2203642b21dd48a09a30"
+    },
+    {
+      "path": "fire_mask4.png",
+      "type": "file",
+      "sha": "57d2418297a7329b7106d8a9ca0774b500362b80"
+    },
+    {
+      "path": "fire_sheet1.png",
+      "type": "file",
+      "sha": "9b0e12b826435e555786f86a4747f1d3c701d770"
+    },
+    {
+      "path": "fire_sheet2.png",
+      "type": "file",
+      "sha": "8f5ce635c23fb8d7c0727f03ef84f4fffdad7f64"
+    },
+    {
+      "path": "fog1.png",
+      "type": "file",
+      "sha": "860f0f775fa6ecb6e6a9d79f12558774d9502534"
+    },
+    {
+      "path": "fog1_alpha.png",
+      "type": "file",
+      "sha": "e561d76482d15831c7fa4b75a3a1de03f5ab4bea"
+    },
+    {
+      "path": "fog2.png",
+      "type": "file",
+      "sha": "b1f11e47b04a1b2b9492cccaec7763622945223e"
+    },
+    {
+      "path": "fog2_alpha.png",
+      "type": "file",
+      "sha": "5c995002282b045e2700b36d0d5a412a99e717f7"
+    },
+    {
+      "path": "fonts.ttf",
+      "type": "file",
+      "sha": "41ccfe63b60c40a351f58de908ff0f2a72ff0e61"
+    },
+    {
+      "path": "footprints1.png",
+      "type": "file",
+      "sha": "67ece66d95b195a338dbe2a3b4b34575982b6033"
+    },
+    {
+      "path": "gb_arrow2.png",
+      "type": "file",
+      "sha": "95049fb1e48d91aafdd3d3358413331774823b29"
+    },
+    {
+      "path": "ghost_sheet1.png",
+      "type": "file",
+      "sha": "57fcca4283725c2aa906fc3f4f474f436c14b14e"
+    },
+    {
+      "path": "ghost_spawn1.png",
+      "type": "file",
+      "sha": "71d5219cac011abaa1c6d1f673c4ec2e1565cead"
+    },
+    {
+      "path": "gigas_ground4.png",
+      "type": "file",
+      "sha": "76a4bf103f1fa37c4bd0d9c2cf891e087a2c940c"
+    },
+    {
+      "path": "github1.png",
+      "type": "file",
+      "sha": "13c07cc3ab0e27df3c794ffee5145410f5e5548c"
+    },
+    {
+      "path": "grass1.png",
+      "type": "file",
+      "sha": "e73625131aafcb5b2e94b24df6af184e8b4a3c66"
+    },
+    {
+      "path": "grass_over_sheet2.png",
+      "type": "file",
+      "sha": "f92990b5faecd33d5ef953f87d22cab4dcff2561"
+    },
+    {
+      "path": "grass_over_sheet3.png",
+      "type": "file",
+      "sha": "8ee9bb3d1b4242316216a94384925d7c89e196ad"
+    },
+    {
+      "path": "grass_over_sheet4.png",
+      "type": "file",
+      "sha": "2f7e4882d688d4d222838c609528e4d3444be74a"
+    },
+    {
+      "path": "grass_over_sheet5.png",
+      "type": "file",
+      "sha": "c5265e62f6d685c3bbf00091719597034a9fbb21"
+    },
+    {
+      "path": "ground1.png",
+      "type": "file",
+      "sha": "17223f0ce75c378955def1d2cf95061270b058cb"
+    },
+    {
+      "path": "ground2.png",
+      "type": "file",
+      "sha": "1a2b90fdf3a40f59585010e1e3378ad905ed5283"
+    },
+    {
+      "path": "ground2_top.png",
+      "type": "file",
+      "sha": "6326b61884d65f42d5017fa0bbb923f640d6bb29"
+    },
+    {
+      "path": "hit1.png",
+      "type": "file",
+      "sha": "7684e02ffaa15dc76a1771e1b38ed0c15317cabc"
+    },
+    {
+      "path": "hyperbeam_sheet2.png",
+      "type": "file",
+      "sha": "672c8991e2eabc468cda496ae5297a61d6081b80"
+    },
+    {
+      "path": "i18n",
+      "type": "dir",
+      "sha": "67e0cf3cfe7d76041ac3eab384e1551447d88887"
+    },
+    {
+      "path": "icon-256.png",
+      "type": "file",
+      "sha": "9bd616c1183b05c0e243b9756ece9b98d726281d"
+    },
+    {
+      "path": "icon-32.png",
+      "type": "file",
+      "sha": "9a26fe0427412431525dc03296b9b1c41ce6812f"
+    },
+    {
+      "path": "icon-64.png",
+      "type": "file",
+      "sha": "fd00a6f89781fb090aeb6ffdd41dcad8a4ad8250"
+    },
+    {
+      "path": "island1.png",
+      "type": "file",
+      "sha": "a50f1166decc6b118a37fcbd63566b4ccd19f37f"
+    },
+    {
+      "path": "ledge1_corner_bl.png",
+      "type": "file",
+      "sha": "483254e1819ae490b80c31d7c548a15bf79dfba6"
+    },
+    {
+      "path": "ledge1_corner_bl_color.png",
+      "type": "file",
+      "sha": "df2488d06a0be625b44b0d1d7ce6c74004aa3c24"
+    },
+    {
+      "path": "ledge1_corner_br.png",
+      "type": "file",
+      "sha": "ec8897cf261f9f860979fb35f013216950e08e59"
+    },
+    {
+      "path": "ledge1_corner_br_color.png",
+      "type": "file",
+      "sha": "48bb29e0a1947be5388af83b7e1c153c00273aef"
+    },
+    {
+      "path": "ledge1_down.png",
+      "type": "file",
+      "sha": "aed55ef79183945894f8ed26cef3ef70917f6b67"
+    },
+    {
+      "path": "ledge1_left.png",
+      "type": "file",
+      "sha": "ca62bda2ebd4f5c318322b239fd0436dcf37b2ba"
+    },
+    {
+      "path": "ledge1_left_color.png",
+      "type": "file",
+      "sha": "0d4ee427726b14ad9f24f9c23e04ed68c938eaab"
+    },
+    {
+      "path": "ledge1_right.png",
+      "type": "file",
+      "sha": "53eedc8ae3c0b039e7be7fd47ddd3de929c26bd5"
+    },
+    {
+      "path": "ledge1_right_color.png",
+      "type": "file",
+      "sha": "d627cb085f1d95b2ba6866d9416ff03cdbdcb9e4"
+    },
+    {
+      "path": "ledge2_corner_tl.png",
+      "type": "file",
+      "sha": "d8884c4b32c1989054e32c7eaf0613dd4620ef17"
+    },
+    {
+      "path": "ledge2_corner_tr.png",
+      "type": "file",
+      "sha": "b94519357495f3466397aac677b862754390ef07"
+    },
+    {
+      "path": "lightning-cloud.png",
+      "type": "file",
+      "sha": "7e7444cd9cecc69b1d4d4810006d5ad94ee1c97c"
+    },
+    {
+      "path": "lightning1.png",
+      "type": "file",
+      "sha": "fa34d35538e546cfdfe323b86e334fd940b01e08"
+    },
+    {
+      "path": "male_symbol1.png",
+      "type": "file",
+      "sha": "53e4ef7343bd4ca5ef3841b528d7c52903d9a955"
+    },
+    {
+      "path": "male_symbol1_inverse.png",
+      "type": "file",
+      "sha": "472c8ba04c84653463f5c06824b3dba0c724537d"
+    },
+    {
+      "path": "menu",
+      "type": "dir",
+      "sha": "29243cde57db74af09794a8a55c0213ff7c1aad9"
+    },
+    {
+      "path": "mountain1_br_inner1.png",
+      "type": "file",
+      "sha": "70be98b948f506c58cf1ff66d026a4570619afe1"
+    },
+    {
+      "path": "music",
+      "type": "dir",
+      "sha": "07f350709825954cdb5c14e63619ad9567122c2c"
+    },
+    {
+      "path": "npc1.png",
+      "type": "file",
+      "sha": "810c8e4a41847fb25f8845fed9efb5fc64d86d7e"
+    },
+    {
+      "path": "npcs-sheet.png",
+      "type": "file",
+      "sha": "bfb5994ea58bfcfd38688be7b4aa9d2e4bcf76dd"
+    },
+    {
+      "path": "phione-egg.png",
+      "type": "file",
+      "sha": "38f090cdf67ae5a3e1271f4c53a22578b637507e"
+    },
+    {
+      "path": "player",
+      "type": "dir",
+      "sha": "8b3e7780a8247422e18e96ac03c370f83d9c7e42"
+    },
+    {
+      "path": "player1_sheet1.png",
+      "type": "file",
+      "sha": "ba554da7e10411127a135ea9b7dcf1d69122bfb3"
+    },
+    {
+      "path": "player1_sheet2.png",
+      "type": "file",
+      "sha": "d569f844867cd8d536d05e0f884030e23442d4f4"
+    },
+    {
+      "path": "pokeball1.png",
+      "type": "file",
+      "sha": "3fc787237bfaf0125b2d40354419a1c3be1841c1"
+    },
+    {
+      "path": "pokeball1_color.png",
+      "type": "file",
+      "sha": "886698e53c9aa43c967d01489faada0411f391a7"
+    },
+    {
+      "path": "pokeball_wiggleSheet1.png",
+      "type": "file",
+      "sha": "c63350167e752c30fe7dc9f03393b60c282957ff"
+    },
+    {
+      "path": "pokeball_wiggleSheet1_color.png",
+      "type": "file",
+      "sha": "c28c305278b6fb7235c49b2a5f00e592aa0c796b"
+    },
+    {
+      "path": "pokemon",
+      "type": "dir",
+      "sha": "9045584ada8a1b09086d2bcac494ab6212889ac9"
+    },
+    {
+      "path": "poof_sheet1.png",
+      "type": "file",
+      "sha": "a8581d5bf1a72097cae508d87df0a6a737e9f8ec"
+    },
+    {
+      "path": "poof_sheet2.png",
+      "type": "file",
+      "sha": "e82cefc0a66b73ac670641594fdaa32cb216e3cf"
+    },
+    {
+      "path": "puddle3.png",
+      "type": "file",
+      "sha": "c1f20d3548d81c37ec25679a7487474eb5ec6f43"
+    },
+    {
+      "path": "rock_small1.png",
+      "type": "file",
+      "sha": "5d224afff954fc64a5e4b5e30bb67cc32e2c2443"
+    },
+    {
+      "path": "select_color1.png",
+      "type": "file",
+      "sha": "8d5e9374d4f7d57e9ab45e340cc39556486bca61"
+    },
+    {
+      "path": "shade1.png",
+      "type": "file",
+      "sha": "e3a0a70ced56cd82c8e1228bfa2a4f53fe9cb190"
+    },
+    {
+      "path": "shade2.png",
+      "type": "file",
+      "sha": "f3f435dde848a38932f117436a2913371d909081"
+    },
+    {
+      "path": "shade3.png",
+      "type": "file",
+      "sha": "6712bdea20d246e8f6593233c72e690731e156f3"
+    },
+    {
+      "path": "shade3_alpha.png",
+      "type": "file",
+      "sha": "85767cddc9b0246e26bd433ea140ff7bc4b84348"
+    },
+    {
+      "path": "shade3_dithered.png",
+      "type": "file",
+      "sha": "8d51d685d981d2cf6c71818740c34f908b8b8fd0"
+    },
+    {
+      "path": "shade4.png",
+      "type": "file",
+      "sha": "1caa1b6a3770b0d3f9b5a68896bc595b165451ce"
+    },
+    {
+      "path": "shade4_alpha.png",
+      "type": "file",
+      "sha": "ad10de6f4458e837d0bfa11dd0fe25180ac6358f"
+    },
+    {
+      "path": "shade4_dithered.png",
+      "type": "file",
+      "sha": "d4aad4259368d84a9ba5ed982c4e25cc29c1d83e"
+    },
+    {
+      "path": "shade5.png",
+      "type": "file",
+      "sha": "f9e92dea263be9c879a9ac4d826abd66c73bc0b2"
+    },
+    {
+      "path": "shade6.png",
+      "type": "file",
+      "sha": "5fcb750d05701fefc39841ea7dfb9f275cba9202"
+    },
+    {
+      "path": "shadow1.png",
+      "type": "file",
+      "sha": "309479eb171eace191b57a23fd04ba2534a6480b"
+    },
+    {
+      "path": "shadow2.png",
+      "type": "file",
+      "sha": "551b40c9fef27323ec5058f762f6bf8d6f6c60c8"
+    },
+    {
+      "path": "shiny.png",
+      "type": "file",
+      "sha": "4218b2dc1432bfac8ccbff9cbdfed1c253845b0b"
+    },
+    {
+      "path": "shiny_inverse.png",
+      "type": "file",
+      "sha": "64f6d2169200ea9ade494ebc6e659896f390c8d5"
+    },
+    {
+      "path": "sounds",
+      "type": "dir",
+      "sha": "d07fb75652db82fb0f27d6f47248b7aaf38cee0a"
+    },
+    {
+      "path": "splash_anim4-lava.png",
+      "type": "file",
+      "sha": "fa68f7d31d1787db0e8e8c51bb4e4bc6b3d8feeb"
+    },
+    {
+      "path": "splash_anim4.png",
+      "type": "file",
+      "sha": "3b42aa087153eed85c456078a6d4b5c22cb518ac"
+    },
+    {
+      "path": "sprout_sheet2.png",
+      "type": "file",
+      "sha": "4372190b2efae04cf684edf64ff45e3154d3a4ef"
+    },
+    {
+      "path": "stars1.png",
+      "type": "file",
+      "sha": "98c77687ae66d656b5f5e9f53178e49925770a91"
+    },
+    {
+      "path": "text2.png",
+      "type": "file",
+      "sha": "b7ee87b4010147ae664102f0b0cc3c75b9ea04f5"
+    },
+    {
+      "path": "text_sheet1_transparent.png",
+      "type": "file",
+      "sha": "009c4c6f6ed9d9f60d9b70cb8424cfd64175cbd7"
+    },
+    {
+      "path": "text_sheet1_transparent_inverse.png",
+      "type": "file",
+      "sha": "38daa0b5e2952a82df6ea36b5ac68d474c542345"
+    },
+    {
+      "path": "textbox_bg1.png",
+      "type": "file",
+      "sha": "87eebe6d19e630d5690e3a7ac358e143f168a710"
+    },
+    {
+      "path": "textbox_bg2.png",
+      "type": "file",
+      "sha": "70ad303717b2269e34b1c0726620143e8380699d"
+    },
+    {
+      "path": "tile_selector.png",
+      "type": "file",
+      "sha": "bdf773f307913912ad1821676d0552e9b828cf5b"
+    },
+    {
+      "path": "tiles",
+      "type": "dir",
+      "sha": "42939f96b913e37f2bb367dcadd54283752426cd"
+    },
+    {
+      "path": "title_bg1.png",
+      "type": "file",
+      "sha": "c8de2a38664d2db5eec548084086cf2a795d80af"
+    },
+    {
+      "path": "torch_mask1.png",
+      "type": "file",
+      "sha": "26f745121d0088b5f90f04c5a0633663e0c8d445"
+    },
+    {
+      "path": "torch_mask2.png",
+      "type": "file",
+      "sha": "f20644388f7dd9971e745bed56b73e7232bec1a2"
+    },
+    {
+      "path": "tornado_sheet1.png",
+      "type": "file",
+      "sha": "b9561b5e056b1cf2b93c804438cf6692fd3c8f6c"
+    },
+    {
+      "path": "trapinch_ow1.png",
+      "type": "file",
+      "sha": "16a1d16efd319004feca4aba0937b21ecde183d8"
+    },
+    {
+      "path": "unownTiles1.png",
+      "type": "file",
+      "sha": "8913b9aaea2f975477bc5da63ccbc1fb9e9a4354"
+    },
+    {
+      "path": "unownTiles2.png",
+      "type": "file",
+      "sha": "29b40095482053ad5acce2c7d63df612faa5cb9b"
+    },
+    {
+      "path": "unown_font.png",
+      "type": "file",
+      "sha": "969b84e2a1550334673575b256df0813f30d42b0"
+    },
+    {
+      "path": "wake1.png",
+      "type": "file",
+      "sha": "44fb310f3dd00549fd40fa3cf4810644532167c5"
+    },
+    {
+      "path": "wake2.png",
+      "type": "file",
+      "sha": "8764c60945efaf201d4dda8cf195898c2e659c86"
+    },
+    {
+      "path": "whirlpool_desert1.png",
+      "type": "file",
+      "sha": "e4434c6d746d2c5c5b6dadd6387cb6491cd18f03"
+    },
+    {
+      "path": "whirlpool_desert2.png",
+      "type": "file",
+      "sha": "b5be04e34a4bc1cdec828a4e60dd965076c5b3f2"
+    },
+    {
+      "path": "white_bg.png",
+      "type": "file",
+      "sha": "d71fc22153928757e746d7a5b7724e211b90345c"
+    },
+    {
+      "path": "wind1.png",
+      "type": "file",
+      "sha": "52d391006f23409e7071fdda21ef02980122828f"
+    },
+    {
+      "path": "wind1_rotate.png",
+      "type": "file",
+      "sha": "fd5f3e57e2131181996249355a76a2ec277830aa"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Alpha libGDX Pokémon-style game distribution; reusable engine boundary not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,124 @@
+{
+  "repository": "OpenXRay/xray-16",
+  "repository_id": 23690226,
+  "commit": "d4979c2bc496be471ee3ff2b399df18827d2078e",
+  "source_url": "https://github.com/OpenXRay/xray-16/tree/d4979c2bc496be471ee3ff2b399df18827d2078e",
+  "readme_path": "README.md",
+  "readme_sha256": "30ae4c236d943753f46c9af00eedb0f33b16418ecef6523bd23e6cced2651bcc",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "24f5ed1ee90765de0745fe9c10f84554d0f75de3"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "1b29634fd446389aa53738786115a00dfdf83cfd"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6c1efffb4a596586ce3923f0b07d59666d70598b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f9606402f901d1b3cfbf37506584d648c100cb89"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7430bb873cab1d71ad1bd03afde0ab40d4aaaa08"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "8344bfeff28dd9e57821786adb6f2e4f560bf789"
+    },
+    {
+      "path": "ArchLinux",
+      "type": "dir",
+      "sha": "a7f3b66e9c7bd5256e5596b78413447c4328d147"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "ebc424911010a3b40a59748dccffc9d03d6f51cb"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5fb45f2463ff507d2ec1e5bbef0430a59857fbf5"
+    },
+    {
+      "path": "Externals",
+      "type": "dir",
+      "sha": "65f56cc49c34615381c20f770b90a640d7190c42"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "651d813866af13bc6ab458815986be3b0a884080"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d6ee5064be61516b003e55382fbf5ccd8b46edc0"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "cec11aa322d3dcba1535b5d33508a1dd92a61202"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "00019dab09a89c993cc89d5781d97fc38203774e"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "abf2346453f4db5539a8f03f73b209c099edf90f"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "0f2ab8a93264af6610288de8ffeaea89a2b5ffbe"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "e17cafd93802b34328bb7fbf7bd3e12a1fc26a00"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "97ebe86734ba3f6c62afd7d6e42f232f36367230"
+    },
+    {
+      "path": "sdk",
+      "type": "dir",
+      "sha": "b7bd7c4a2f473efbeca1607815bbbb28dfd9430e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "714e8c6e15ae3a1919c9049e19a0846a1a701ea2"
+    },
+    {
+      "path": "vs-chromium-project.txt",
+      "type": "file",
+      "sha": "7289bf87fdfbcf9fca4ed4d6e31f5566a5b8a32f"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies improved X-Ray engine; src/sdk and CMake build. Counted as engine repository, not independent architecture family.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

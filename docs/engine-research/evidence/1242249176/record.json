@@ -1,0 +1,339 @@
+{
+  "repository": "witchesofthehill/manabrew",
+  "repository_id": 1242249176,
+  "commit": "f1a741427969c624b2c708cfb3a97d7e96c74482",
+  "source_url": "https://github.com/witchesofthehill/manabrew/tree/f1a741427969c624b2c708cfb3a97d7e96c74482",
+  "readme_path": "README.md",
+  "readme_sha256": "021fc4b53b6d01ce4c03466c79e41e1da86f441128645437dc680c86c31b5257",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "22c2c4ab54a1f0bde6947e9d643f18c50daea83d"
+    },
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "386342328865a620022403ac8b4a707be4ca7b61"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "8e0b23cec45f0ece46a621f98d17ff67fcaa20d3"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "1fa1ecc37ff3580e386fd7d4cf36873c99ed87a5"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "36eda1abb232c0a3a3f7cc62a3dc338556aa311b"
+    },
+    {
+      "path": ".envrc",
+      "type": "file",
+      "sha": "f660a82bd25958d8be204440ff0f797dfac8e498"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f8311fb0050906cc1bf4229dfb06b306d79057dd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2cdbe3e06edae7ed8de4d75b77deb5859060b5eb"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9f2156f0ca7ce5e9a7512bec63da1c2152e61211"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "39153b8e7fc595e67a34629248e1701e84efc3bd"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "a45fd52cc5891570d6299fab38643103c3955474"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "6da8c331094417734484509a96b8f1716d1de01a"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "90abee2393e79dff7ec36856c94f662a263f0107"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "ebad870866420ac1908aa6dbfa3fe40860e668b1"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "cbf200bcbb7f81327a654be8f357a3490cf8bf53"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "285e0f5b36b49281317758e0d5b7c48b034eeb66"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "dc322a9e4bcb4c33e38ee3832978c1fce7c4f997"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4b1405e96b07d335bca2f8460ba837324b1bd0fb"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "90c1a970d9af3db7afbf5222cd9deebe276c5c81"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "90d4c5ed289da75392e082acd0402a0f729714d2"
+    },
+    {
+      "path": "Dockerfile.web",
+      "type": "file",
+      "sha": "67531607e03c6a83a0ace83849cd8a34cad470e2"
+    },
+    {
+      "path": "LICENSE-AGPL-3.0-or-later",
+      "type": "file",
+      "sha": "be3f7b28e564e7dd05eaf59d64adba1a4065ac0e"
+    },
+    {
+      "path": "LICENSE-GPL-3.0-or-later",
+      "type": "file",
+      "sha": "e72bfddabc15be5718a7cc061ac10e47741d8219"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d37485c56ae7a4564e321d4aac35e9b99e1b7d9e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "38cc936014437162bab3f591b3ccf35e8fed63d2"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "42da90246a0220a52243a9b841cb1199bac34990"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "type": "file",
+      "sha": "12735c77e70fe18ca53f59167a97a24b201427f9"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "b1e38521739f67593948d7d77617787860c3ed37"
+    },
+    {
+      "path": "commitlint.config.cjs",
+      "type": "file",
+      "sha": "69b4242cc7a7b02059336ca791d502ca20aec308"
+    },
+    {
+      "path": "components.json",
+      "type": "file",
+      "sha": "6d3998d15a8dfb963e2c254639c5cf330a743c35"
+    },
+    {
+      "path": "compose.dev.yaml",
+      "type": "file",
+      "sha": "7f325ecf69953eb12aa973eb74b80633f96df276"
+    },
+    {
+      "path": "compose.local.yml",
+      "type": "file",
+      "sha": "423b485165241c1c98f4035a810d5e81d72f67a5"
+    },
+    {
+      "path": "compose.production.yml",
+      "type": "file",
+      "sha": "5a46a27b1ca3aa4913e7d87e63fb76e88167c677"
+    },
+    {
+      "path": "compose.selfhost.yml",
+      "type": "file",
+      "sha": "09093a42d2b477b90593b7c9293e24807407071d"
+    },
+    {
+      "path": "compose.staging.yml",
+      "type": "file",
+      "sha": "c4b1599d75071bccf8fd459c56af1b645e3e715c"
+    },
+    {
+      "path": "dev",
+      "type": "file",
+      "sha": "1ae1e2509ffc405587368a797bc14de271bf5221"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "8f554393011572c3dbc7b6fce706672a208e03af"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7d2fdab22166d716372f6b092d652aa8567dfce5"
+    },
+    {
+      "path": "eslint.config.js",
+      "type": "file",
+      "sha": "f4a3a5fe51a31417d1f52dcec59f4d32997855c7"
+    },
+    {
+      "path": "forge",
+      "type": "file",
+      "sha": "e7d2b93ba9f800a1f5f3a5de91db1aad3ed46831"
+    },
+    {
+      "path": "forge-harness",
+      "type": "dir",
+      "sha": "7241252dce8d264829b92928e222d92509ff031a"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "ef33bf012e71f63a05104e2c43d46fb827cba21d"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "5270fabb9b96006c465d9bf4c1c740794e6c88c3"
+    },
+    {
+      "path": "lingui.config.ts",
+      "type": "file",
+      "sha": "6926f65fd1b6e3192a4bae9fd93207f5f2a1e680"
+    },
+    {
+      "path": "manabrew-rs",
+      "type": "dir",
+      "sha": "ae8763b08a97767cd6dc102400e1d65309ca5b9a"
+    },
+    {
+      "path": "ops",
+      "type": "dir",
+      "sha": "2432ac04f01c1d6f831dd48e80b333a34ad898a4"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "468ac7cf6d7cbd1b27434a447327fb75a72f0423"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "71d8bbe62675b3bca7765962de204f16a56c6a2b"
+    },
+    {
+      "path": "parity_decks",
+      "type": "dir",
+      "sha": "b084de8b13a075bcb094ba6421673d6b365c4654"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "a5346a22b3e90e23b7bb00a0994f6bd1ff8d3feb"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "fc90292c0eca4f0f5463b9e1cb3a9f8ceba51fe5"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "61a559d1f381af4001a1d2d5d1eaef4797f5a62d"
+    },
+    {
+      "path": "skills-lock.json",
+      "type": "file",
+      "sha": "3236cdf862c2d85a0c9d49b56506158ab3970d09"
+    },
+    {
+      "path": "src-tauri",
+      "type": "dir",
+      "sha": "c678499710391bb9c3f4711e3fbc216314479b67"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1e69ea03686382684468d0018b5c5e8cc7fe33a8"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "41e3c928d8fafa701eea234dffca33c19af39c49"
+    },
+    {
+      "path": "tree-sitter-forge-card-script",
+      "type": "dir",
+      "sha": "bf8785c4a7717797f835ed721f63787ac28fc247"
+    },
+    {
+      "path": "tsconfig.app.json",
+      "type": "file",
+      "sha": "dd7df7db6dce924994e776b75783cdb84251b26a"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "7036885f148e5af36aefe897ac6f89f4fbf79f49"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "type": "file",
+      "sha": "8a67f62f4ceebff3424e6e8cd4b3c25b17347546"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "e8c70cb34b3b15ced06be2a5ba73cb4547497c27"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "e3146a1c91349a3d4e13fb13b43db23ada3a7fed"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "48410d5717f5e3a08c46b3bb56ad5bb2083dbcbf"
+    },
+    {
+      "path": "xtask",
+      "type": "dir",
+      "sha": "7afcf0c959e0c14f5e34bc6f7d4773b558b3bff2"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "88fe9efeab1bdec546d3a56d2449356c86d6d3fd"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "MTG client built around Forge compatibility and in-browser Forge runtime; not counted as independent general game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

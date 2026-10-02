@@ -1,0 +1,102 @@
+{
+  "repository": "nival/Blitzkrieg",
+  "repository_id": 959451754,
+  "commit": "793501a063eccf6ca522e19705f0af2a16cae0be",
+  "source_url": "https://github.com/nival/Blitzkrieg/tree/793501a063eccf6ca522e19705f0af2a16cae0be",
+  "readme_path": "README.md",
+  "readme_sha256": "53443902b9fc72de0e872248fc868f47aa82079e1f661497d4af4c7b0cc9f24d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "07487907e7b85bb5b01869c86a66a95f368a387a"
+    },
+    {
+      "path": "Blitzkrieg.png",
+      "type": "file",
+      "sha": "7d904366f98cd5993e1f14dbbed898c258da5e39"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "32e6677360be3315a812f07a8ca0f2ab77edd03d"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "60e398a353514aa9dd73bd85aa5395b85672791c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "edc77d792614f2f1d5a4e1e0b936f987cf1bbadb"
+    },
+    {
+      "path": "README_Chinese.md",
+      "type": "file",
+      "sha": "88d78c210642c045a7db8208cac3a1158a5dbe88"
+    },
+    {
+      "path": "README_English.md",
+      "type": "file",
+      "sha": "7edbee3acb04c892d730b42c16cdfffff3854a3c"
+    },
+    {
+      "path": "README_French.md",
+      "type": "file",
+      "sha": "c05212de28456390eface627a7752ad2eb2c98d4"
+    },
+    {
+      "path": "README_German.md",
+      "type": "file",
+      "sha": "e4e85c9ff12151d553e9fbb74df3097bfce0c4dc"
+    },
+    {
+      "path": "README_Hindi.md",
+      "type": "file",
+      "sha": "b8a9211062d809df887e80e18b099e9bbc64aaf5"
+    },
+    {
+      "path": "README_Indonesian.md",
+      "type": "file",
+      "sha": "f46d04bff06db79c1a20e7f29565c12d62c62ede"
+    },
+    {
+      "path": "README_Japanese.md",
+      "type": "file",
+      "sha": "1938a11cfa9eff3c6e3c4fd5a08ed322c90ddbdf"
+    },
+    {
+      "path": "README_Portuguese.md",
+      "type": "file",
+      "sha": "25bc0fe517012ff182d130d81d594bfa4b17f774"
+    },
+    {
+      "path": "README_Russian.md",
+      "type": "file",
+      "sha": "a35e41f73d39d7873cdadf6b505d709291b8697e"
+    },
+    {
+      "path": "README_Spanish.md",
+      "type": "file",
+      "sha": "abf6749b0f3fd05f8eae249c3bf1e26e13e51973"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "c4232d5b3f362d48760c1ca2f133d3475ce95b35"
+    },
+    {
+      "path": "Versions",
+      "type": "dir",
+      "sha": "8dd4124826208abe0011a42d83f49992b78149d6"
+    },
+    {
+      "path": "steam_icon.png",
+      "type": "file",
+      "sha": "b8781e0bea60e46827ef612d71975bec7db650cb"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

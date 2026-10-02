@@ -1,0 +1,107 @@
+{
+  "repository": "dodorare/crossbow",
+  "repository_id": 291822639,
+  "commit": "f59e1a0a8f9b9aea49c8027acfad1f881b8ddbec",
+  "source_url": "https://github.com/dodorare/crossbow/tree/f59e1a0a8f9b9aea49c8027acfad1f881b8ddbec",
+  "readme_path": "README.md",
+  "readme_sha256": "cce5010e951c58ca1b856ec08b5351afd6207404d8460db6a30969228133f562",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "ef3705fb9fe23aa85d24202cf232e4e5ab7ca7fd"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2e7cbcd02d9f1cc3ebe8e4039c172fa619fb8798"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "82631efc38e4e62527ccfa049561112ba2c1e4b2"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "d374f365734e568a96a72dcbebd352d43a0420f0"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "a20094931606f519daa7fe078a100484abbfe92c"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a7cbd7a7b1d39ad99c1520bab909afcd2ba284c6"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "6850226206b15046e06d91dce67248a5e7b26be9"
+    },
+    {
+      "path": "crossbundle",
+      "type": "dir",
+      "sha": "d76cbede3b4fc901da46174e183a8cab1fc3635e"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "229f1d80ad000497f38dab92487dba22a9bfe38e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "29c75cf5ac49d40895dc48d07c1b141fac0caa5b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0db010a8d4496fced5520ac74af7f1cb1f88d584"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "42f170f3ff2aac6eed47555801d437c8935447c6"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "0334c265b428c0adebdd8f00046fff4cf627bcbb"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "3caff2a7c8054117b0c69401d38fbb47ba2241a2"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "11fa61c073310f8e6f3986aa71f7b2537b32c1a2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d82fb6ee3f88e55100edfcab6c65538470feae4a"
+    },
+    {
+      "path": "xtask",
+      "type": "dir",
+      "sha": "0cb328614225e7447b0e3fbc33f3085a3584fee5"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

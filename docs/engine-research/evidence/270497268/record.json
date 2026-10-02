@@ -1,0 +1,164 @@
+{
+  "repository": "esengine/esengine",
+  "repository_id": 270497268,
+  "commit": "2886284e8015c57ad8a0ef89596a058890cfa679",
+  "source_url": "https://github.com/esengine/esengine/tree/2886284e8015c57ad8a0ef89596a058890cfa679",
+  "readme_path": "README.md",
+  "readme_sha256": "a57e2833a65f204107d16dff18922446f505d7f8b45a987cf3f75958b6611329",
+  "entries": [
+    {
+      "path": ".changeset",
+      "type": "dir",
+      "sha": "a7d3539097197752cd1f8ab435c29c9476d2da11"
+    },
+    {
+      "path": ".commitlintrc.json",
+      "type": "file",
+      "sha": "39cbde1b08778d70e57b78cebce3592853242f85"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cd3ec091e8ca977629cd48fb6b321150a77cafe4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "59446a631dab4696b9d8027a0641e5b2bea88200"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "30030d679a649d50281a2bf33de19ab8c443b480"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "85d8d1a25503bf3221ee23daa1e5d0af1698e252"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "07701740eafd91b446b41bf9eecfd9abe43ec89a"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "6c2b9be4c4fae71cfeeab1fa4ebd19781810f8a6"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "208688bef6a6beeff604a598bdb5d62e14073e03"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "10a385bea19640b8a82b977650a9ceb4080e96dd"
+    },
+    {
+      "path": ".size-limit.json",
+      "type": "file",
+      "sha": "f9ccf1b0ff67743258a3755988982283099909fa"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "62383d991defcf3f77970ee76eee957183025b88"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7a1d6f0349628ec25c17eb5c6c604754cacfbef8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5285d31554cdde95d5983a78a096bb51e842af16"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "54eb525e9c9cda12356a755cdf7182dbf868902c"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "60df052271afab814aab8253e8f4b0d21f9c3122"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "90f47d9c738fe501b9eda1d688172a0b4a648609"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2ceb6c74a6437a27412b4d65a36a852ef6ada0ae"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "6cc50922e3725c990cae54c93772d0629f1ad7e1"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e246e89ebb57bca3a7819f979d79498399a5612b"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "99eabe108cf5458c2ccd668fcbf3d715dfb9d06a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "930b11d2e59d286cab00ab64835b969404193bf1"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "55a8d380d2481db3f448c6c1c57b40b801c5cd12"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "183e7246843e0f4e80753b5bcee155998ae4f4b9"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "c918f3071cd9b155835c4c4b1cff9c8c8e177862"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "6460de5d3684028e1a5e86bf9a621b5c97ef4025"
+    },
+    {
+      "path": "tsconfig.base.json",
+      "type": "file",
+      "sha": "12fa8f108054f25fc10cc3df8e126a57c0953d68"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "308c0eedb198c06070240ec5d4bd75735396b8d4"
+    },
+    {
+      "path": "turbo.json",
+      "type": "file",
+      "sha": "d572e8f288da7d9100104889a04802bb6f0834f8"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "8f2f9719c9218a11198141a711ab25a5aa6df8fc"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies modular TypeScript/ECS framework; packages and npm build. Complete-engine ownership not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

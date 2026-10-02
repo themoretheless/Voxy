@@ -1,0 +1,49 @@
+{
+  "repository": "phoboslab/Impact",
+  "repository_id": 131972774,
+  "commit": "7768fd29c70ca924a78673d93081baab5a72fbe6",
+  "source_url": "https://github.com/phoboslab/Impact/tree/7768fd29c70ca924a78673d93081baab5a72fbe6",
+  "readme_path": "README.md",
+  "readme_sha256": "c27b41a79242d7549176a67d23f3db7331802b1b55f17a7bff8c912aa9708499",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8d3f956a8998bc80b1ebc4fef1324ba1f2601426"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c7906caaaca857bf98922ff4bd0374fe57d8da09"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "4d8b69bf21b1245b0ba94b9357c50600c0798607"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "17117b9b411f2cc62339fbe4ac61994a048f3a38"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "2aa35ad3785b8567fdd9969d668d93d686fcca6f"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "2fddc411966b07f42a9991cf57e4dac018e7da67"
+    },
+    {
+      "path": "weltmeister.html",
+      "type": "file",
+      "sha": "7955f935ec6937da3d5796f62379fb89ca932baa"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "HTML5 engine runtime library with separate Weltmeister level editor/tool source and examples workflow; local execution not verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

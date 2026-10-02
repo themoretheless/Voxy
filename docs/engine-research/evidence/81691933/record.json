@@ -1,0 +1,49 @@
+{
+  "repository": "kidscancode/godot_tutorials",
+  "repository_id": 81691933,
+  "commit": "a775e1f642b03b04d5c412af684ca0fe1306d14f",
+  "source_url": "https://github.com/kidscancode/godot_tutorials/tree/a775e1f642b03b04d5c412af684ca0fe1306d14f",
+  "readme_path": "README.md",
+  "readme_sha256": "91988e4f517e3c1d58f58910f6f841e7fbda07c67307f30209448b767d2c4e5b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1c3dbb9ece61ec9b24453c14f4a306b5b86db802"
+    },
+    {
+      "path": "Godot101",
+      "type": "dir",
+      "sha": "d50272eec6945a7e95faee13c05e96be6a66f389"
+    },
+    {
+      "path": "Know_Your_Nodes",
+      "type": "dir",
+      "sha": "da0e8ffe8700cec3efd8c061c6cabde49923a760"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "446fb2decba85d4c6d53db9bdac3c5ce30388450"
+    },
+    {
+      "path": "One_Shots",
+      "type": "dir",
+      "sha": "49a38558d7c316164e99bf9626c228c80eb7a3a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4143e1d3ff27e3fd832c17075fc12844607d64dd"
+    },
+    {
+      "path": "Space_Rocks_tutorial",
+      "type": "dir",
+      "sha": "88c384112eb6aedce615fb829c6fcaf38b6f3557"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Godot tutorials/examples; dependent projects rather than engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

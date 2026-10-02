@@ -1,0 +1,129 @@
+{
+  "repository": "untrustedmodders/plugify",
+  "repository_id": 684190318,
+  "commit": "5f14c62d8699c71f4581ce49bf0f0f704e9da881",
+  "source_url": "https://github.com/untrustedmodders/plugify/tree/5f14c62d8699c71f4581ce49bf0f0f704e9da881",
+  "readme_path": "README.md",
+  "readme_sha256": "ce52fffb17065c135234e89f53d71f78b9ff7254e0c0b5eef97723273ff5b33d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "627277a0519722ea6dfc3e3d3f1892877d8f747d"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "3f11962a8f1f73ea3158b2618fd9aad46ebcc4a9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9c5fd9a69efc58b5ff4ca8044654119310dab4f0"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e28e3f7a939a257b411bb9f4ea49ff0f526b6460"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6d77be56ad97900fa2ee447013efbd26e06c2d14"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "43ba84812ad35a7e1174305d09f6bac9bd7a2efd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "12bdbcb667ed89d760ba735f82eb81a798308dca"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "a33754ee71c19392dd56918ea4957d5d73030158"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1339c7987358fd4c4cabbeb0849918d9b5a8f0f0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "76a6106870d69ebbbf982f865ccfcc3e889d06c6"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d459d4a1f427fb1ba0db7571e545e16a4a2cd2a4"
+    },
+    {
+      "path": "debug",
+      "type": "dir",
+      "sha": "a4341a282ebea25fdecb335599c21fcaca07060d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5be8ed2a836184e682a30e331bf32d3cb1c25260"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "af918a2935abdaf587569d6a1155f88937189393"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "da21546b86d5582d177bb14b63481c6631942f70"
+    },
+    {
+      "path": "patches",
+      "type": "dir",
+      "sha": "dcdf551fcc43bfcd8f0616d6e6c859c3af570bfc"
+    },
+    {
+      "path": "plugify.pconfig",
+      "type": "file",
+      "sha": "b2436a747b53d1feb9eec9c23eedc3957e3a2776"
+    },
+    {
+      "path": "schemas",
+      "type": "dir",
+      "sha": "cc411a2a76c9344762b7747fae30f64d4588b7d6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c40819d4b11ef1b39afe6c50c6013433176ef00e"
+    },
+    {
+      "path": "sym",
+      "type": "dir",
+      "sha": "3baab519a860a90eb0c3693620bde2ee3df1c6b6"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "02e47be5f0264a80c08377441c013812be43265f"
+    },
+    {
+      "path": "version.txt",
+      "type": "file",
+      "sha": "fd2a01863fdd3035fac5918c59666363544bfe23"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Multi-language plugin manager with source/tests, not a game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

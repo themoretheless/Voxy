@@ -1,0 +1,27 @@
+{
+  "repository": "alabd14313/awesome-BGE",
+  "repository_id": 65077403,
+  "commit": "1233b8ac9035146ffb87345a5cc6f7841a187a29",
+  "source_url": "https://github.com/alabd14313/awesome-BGE/tree/1233b8ac9035146ffb87345a5cc6f7841a187a29",
+  "readme_path": "README.md",
+  "readme_sha256": "9a6d351cf6bf66f44061291af91d33234b4d72ab3878b8a1c3925408480a2a1b",
+  "entries": [
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "54b063f4e9f263cb5ffbaa5f575d12ba2ee35337"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "e655c6889fb244caa0284723bfe4f667b0701e5d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bdc0faf1afef76e6c94b9ae02b7e0e15fdd367c2"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

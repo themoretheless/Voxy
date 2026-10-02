@@ -1,0 +1,94 @@
+{
+  "repository": "JoelOtter/termloop",
+  "repository_id": 36133658,
+  "commit": "5f7c38744afb0c614d544fe5bc72f7259d03c1e1",
+  "source_url": "https://github.com/JoelOtter/termloop/tree/5f7c38744afb0c614d544fe5bc72f7259d03c1e1",
+  "readme_path": "README.md",
+  "readme_sha256": "18a7c213f888510176a8b49e67e47d66c27ba84df468388f3ef3eb6a4e14f69f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f11b755a17d8192c60f61cb17b8902dffbd9f23"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f376c8c3ca6ed3fa0623b307290361edb683626d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d71efff1ebeb07a998c15443549e16c23cd7e4da"
+    },
+    {
+      "path": "_examples",
+      "type": "dir",
+      "sha": "2cd5c1a40bef762a94a6e10be0e1b3c7bfe40c8a"
+    },
+    {
+      "path": "entity.go",
+      "type": "file",
+      "sha": "f553c8ac380be126199d550575ed23e81e27b88a"
+    },
+    {
+      "path": "extra",
+      "type": "dir",
+      "sha": "19c594a283d82a187e7722158d91171a5be9b5bd"
+    },
+    {
+      "path": "game.go",
+      "type": "file",
+      "sha": "8945feca71da83846fb665f1d2766ae87d912955"
+    },
+    {
+      "path": "image.go",
+      "type": "file",
+      "sha": "4090f90a6a65bc0c57b80eb197f8badd804de187"
+    },
+    {
+      "path": "input.go",
+      "type": "file",
+      "sha": "3000d3aeab533649f483349fd17cfb67a9bb4ff1"
+    },
+    {
+      "path": "level.go",
+      "type": "file",
+      "sha": "b455e8fba73ff20b44cb9b328260bd4475a13540"
+    },
+    {
+      "path": "map.go",
+      "type": "file",
+      "sha": "c31a4a74a2cd125db7614662c2dfb46bdce0140b"
+    },
+    {
+      "path": "rectangle.go",
+      "type": "file",
+      "sha": "cf6a61164735385932ef62ae7787dda5b4cf278b"
+    },
+    {
+      "path": "screen.go",
+      "type": "file",
+      "sha": "4018d1a826832cf483059de7ac9dfe7b38e3abe5"
+    },
+    {
+      "path": "termloop.go",
+      "type": "file",
+      "sha": "fcced98a8df76312e0465cdfc58099c1fbffed2a"
+    },
+    {
+      "path": "text.go",
+      "type": "file",
+      "sha": "b7b7d07a9bef255ce3b8d3a0a09903e29947b9ca"
+    },
+    {
+      "path": "util.go",
+      "type": "file",
+      "sha": "2b96a9ed95ef6e7f06b0e1c58906bf4e66e0af93"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Go terminal engine; owned game/entity/input/map/screen code and examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

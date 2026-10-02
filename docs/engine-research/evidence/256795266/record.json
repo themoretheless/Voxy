@@ -1,0 +1,94 @@
+{
+  "repository": "jamesroutley/24a2",
+  "repository_id": 256795266,
+  "commit": "f8bfe0e43939e27bbfec0f830919659bfd14fdc2",
+  "source_url": "https://github.com/jamesroutley/24a2/tree/f8bfe0e43939e27bbfec0f830919659bfd14fdc2",
+  "readme_path": "README.md",
+  "readme_sha256": "5129fba6bcba8872b98326e5417625d342fabd151295fa370156e3129197d3a7",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e189a1c2e7dfbf10564494efef9bfdd5347152d4"
+    },
+    {
+      "path": ".nojekyll",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".prettierrc.json",
+      "type": "file",
+      "sha": "5b5bd9933e329bb03f9d1e4a0d16124502603873"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4df0f6798f6b79037ea489c42876e3ccb0f65ba0"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "6d2857a287ca50f6c58270a69188dc31ee021990"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2ad0d5a95e2b6e6d95b4986b7211cae826964aef"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "aafb3fd578daa88a170c254cbec6693a863cee5b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "868fa4cc093e96e3a90ddebc22cd78b080cf461d"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6dc39152e2b19c588a2bc23594ac32f70f13f0dc"
+    },
+    {
+      "path": "notes",
+      "type": "dir",
+      "sha": "f1f5466a5a0cd3bfc8e634816837b03f6f5d5874"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "04d782d3874b838ad8fd1bf4f6edbe0d8eea04ad"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6c8bf91225d97478e2bf4790dd530222982c049e"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "8669127fbe0441528f6c27ce80fa8bfa4b7ab585"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "4f7f5a38169b7b08d0424d03fa7fba318fd86762"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "803f95db66bdfddd155972e32ff2b049d3f561e4"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "807ec6914748aa49e97fd2d706bd189c1e864767"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies deliberately minimal game engine; owned src/examples and TypeScript/npm build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

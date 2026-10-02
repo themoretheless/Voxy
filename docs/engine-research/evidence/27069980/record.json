@@ -1,0 +1,172 @@
+{
+  "repository": "tangziwen/CubeMiniGame",
+  "repository_id": 27069980,
+  "commit": "33b364c94ed6d62568e30fefd6020a715b69c9c7",
+  "source_url": "https://github.com/tangziwen/CubeMiniGame/tree/33b364c94ed6d62568e30fefd6020a715b69c9c7",
+  "readme_path": "README.md",
+  "readme_sha256": "9d754ea9d99273b4a0a9c3dbf2d761bad0d4af56ff7aa66f3b18a5954fe0e327",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "433332b67bb179d450d0189e0bcb9bc6329be0c6"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "cdd382f77496aa4fe0aef1cd7806080e5b341763"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "93576445ceeaabd63f599af7fe28d8db26887dcf"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "bd6af549824226fb32ec571be02681fb056bf971"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "90f07f58cc13a040ac5ab6a2f8eb1441c6b93b9c"
+    },
+    {
+      "path": "Asset",
+      "type": "dir",
+      "sha": "91db311f5599406515d94e90d3d8a4eabc9dd374"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "875a2fdf0b864b577e05eb90b788de5d8d1045a8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a9985de623ab83a9d4b32830a6b524a462909bb2"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "d3764a4e0e6b8890d95400c6d27128a6b27b8164"
+    },
+    {
+      "path": "CubeEngine",
+      "type": "dir",
+      "sha": "b8bc12f09e72099256d09a2e8e6146c292375b71"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "50dbd7fd10ab7de09f58fe477db2c7da44dcfb21"
+    },
+    {
+      "path": "DoShipping.py",
+      "type": "file",
+      "sha": "4fc3326b96990b95f16c1ea3b4a9d41a59c92316"
+    },
+    {
+      "path": "Doc",
+      "type": "dir",
+      "sha": "4e81ff13afceecdf08e56bcd905edcb49bde6c05"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3c8778500780c9df87e97b888f0e216836521523"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4c0dd7004aed2d6337d7a878f4aa162e0f193548"
+    },
+    {
+      "path": "Res",
+      "type": "dir",
+      "sha": "6d571073bb2a3ce0a7da3794285c4654d7f228dd"
+    },
+    {
+      "path": "ScreenShot1.png",
+      "type": "file",
+      "sha": "c61a88d73944312a65f47804c1fd4a5b02611769"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "637e61220b91be00213f9deb4b12a34dbf25eb4d"
+    },
+    {
+      "path": "TinaTest",
+      "type": "dir",
+      "sha": "9af35ade1a54ee78179780555ec2a2c2e4f5df4d"
+    },
+    {
+      "path": "Tool",
+      "type": "dir",
+      "sha": "47d1ba82a857f44984eac68e7829ece5061d6636"
+    },
+    {
+      "path": "Translation_English.json",
+      "type": "file",
+      "sha": "ea9e34feb47379260a8bb5bd457f0557d53c1c2e"
+    },
+    {
+      "path": "VulkanShaders",
+      "type": "dir",
+      "sha": "ceb37e4bf446ef0554800c9b5159b8691c6f4fcf"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "a5c1cdf2b9021f9536fae6fdf14df7c46c11316e"
+    },
+    {
+      "path": "config.json",
+      "type": "file",
+      "sha": "d25074a2a93e6445cf5f09e05c217f929aaeac51"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "8732176c22e30fa9af8dfd92965049a5a6d63766"
+    },
+    {
+      "path": "format.astylerc",
+      "type": "file",
+      "sha": "f189a338283ff753f82a56d47e51c27e9aab4236"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "9000e7addfb7b0fb0ce904f81624873a121515dc"
+    },
+    {
+      "path": "logo_small.png",
+      "type": "file",
+      "sha": "8c24412e1eb5ea7359ba3fc60a94cccaf43f7452"
+    },
+    {
+      "path": "screen.png",
+      "type": "file",
+      "sha": "49f8cc80a63a7fce21905eeafcbc0ece6e5e6cbf"
+    },
+    {
+      "path": "tempPlan",
+      "type": "dir",
+      "sha": "e70a48452496f30e7ad8fbb09cbe17b7acd86e5d"
+    },
+    {
+      "path": "test_island.txt",
+      "type": "file",
+      "sha": "58f3a76313d827c5bb452c2e99e2d0dcb4c258fb"
+    },
+    {
+      "path": "todo.txt",
+      "type": "file",
+      "sha": "5cf3a6d6d3d4a95d6fb71ea985edfce1d0cce22d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

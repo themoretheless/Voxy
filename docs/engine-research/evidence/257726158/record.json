@@ -1,0 +1,22 @@
+{
+  "repository": "7StarsGames/3D-Tilemap-System",
+  "repository_id": 257726158,
+  "commit": "2abeb86464655ba4046bdf23edde553fd18d1172",
+  "source_url": "https://github.com/7StarsGames/3D-Tilemap-System/tree/2abeb86464655ba4046bdf23edde553fd18d1172",
+  "readme_path": "README.md",
+  "readme_sha256": "6003be86a5d8b8aeb7962304e8185d9dc820c72192ddce9978cbf5a2c8b81a15",
+  "entries": [
+    {
+      "path": "3D Tilemap System",
+      "type": "dir",
+      "sha": "061aa1820e75c43853c2c9b3d292788a6a5dfea7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c92e9064144121e7aeea34a1f532064127e3e384"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,74 @@
+{
+  "repository": "cykod/Quintus",
+  "repository_id": 3896632,
+  "commit": "b6da4d0fcd786b162144ace7d7844541b4993808",
+  "source_url": "https://github.com/cykod/Quintus/tree/b6da4d0fcd786b162144ace7d7844541b4993808",
+  "readme_path": "README.md",
+  "readme_sha256": "cfd50cb98ce14ec5564869fbaed2f63536caa66db76712e854a66580ab7436bd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "82768dc9824d3922e336e33507a0ef09065aa3a1"
+    },
+    {
+      "path": "GPL-LICENSE.txt",
+      "type": "file",
+      "sha": "11dddd00ef0e91a0bce53b034d6b5b318a84e690"
+    },
+    {
+      "path": "Gruntfile.js",
+      "type": "file",
+      "sha": "da85ee122bdfec11679ae2e512b3336174807d8a"
+    },
+    {
+      "path": "MIT-LICENSE.txt",
+      "type": "file",
+      "sha": "72997a4e18f077564c521d1e6829f8724321d377"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b72316e2dddf4a49789fdffe4b8b6e2a02b54254"
+    },
+    {
+      "path": "SpecRunner.html",
+      "type": "file",
+      "sha": "a393099d34ffaacd973a97d5f258c25089e4e6dc"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ed544663ac6a46f48e9b64d2ca9c711163b7dea2"
+    },
+    {
+      "path": "extra",
+      "type": "dir",
+      "sha": "22e27d84462f8542ca03261157474f248f62112f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "fccd174b31f55fd093a57e80961e4269776a81a5"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ab4482ee7cd62a8421aeda30183b746f2e94612d"
+    },
+    {
+      "path": "specs",
+      "type": "dir",
+      "sha": "f97a00ab846edc9e889a8aa4fc27c14e5e07f1ea"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "1eb1ddbfcda2728a17afa67b58aa5d52f1a15913"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Modular HTML5 entity/component/event game runtime with platformer examples and source/specs; obsolete early-development engine, successor separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

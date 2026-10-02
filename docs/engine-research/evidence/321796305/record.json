@@ -1,0 +1,42 @@
+{
+  "repository": "gdquest-demos/godot-4-2d-visual-novel",
+  "repository_id": 321796305,
+  "commit": "94dafe946c81d583ccf2a6fd80eccdfdc11f89e5",
+  "source_url": "https://github.com/gdquest-demos/godot-4-2d-visual-novel/tree/94dafe946c81d583ccf2a6fd80eccdfdc11f89e5",
+  "readme_path": "README.md",
+  "readme_sha256": "fab2637db72c5bf680061e02f276d528db41d10977eaec0f91073e7d19951f6d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a6daf870f719de7560b5e6f83226fbaa094b10b9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bbefd16541827ec41d8c27455c32e57a7f951f38"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e4e312c873243aa5dc64f56242f7aac7eb57a02c"
+    },
+    {
+      "path": "godot",
+      "type": "dir",
+      "sha": "788cf6834eaf76133f04c391243cfe7dcc5a7dde"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "6d69dffe0d41f0d7efb4cc8cac138e16941ee1bc"
+    },
+    {
+      "path": "start-project",
+      "type": "dir",
+      "sha": "8315f22042ddf32e4e573993acbcecac7853399a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,124 @@
+{
+  "repository": "enjiushi/VulkanLearn",
+  "repository_id": 88986190,
+  "commit": "29fb429a3fb526f8de7406404a983685a7e87117",
+  "source_url": "https://github.com/enjiushi/VulkanLearn/tree/29fb429a3fb526f8de7406404a983685a7e87117",
+  "readme_path": "README.md",
+  "readme_sha256": "e51b4dd4c18c5f089d70ead361bf32190e7f059a579e11a4d28d7d10491cc1d2",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e1bc7b16b39a468c5a57c54b1355c6fe2d465762"
+    },
+    {
+      "path": "Base",
+      "type": "dir",
+      "sha": "648ceb5eff190ffd9f8226106c3472be3ab56c6b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "fc897c3bc10d849a06a6ede14ffab19544cd18ef"
+    },
+    {
+      "path": "DualQuaternion.md",
+      "type": "file",
+      "sha": "98e91d6131e3372b5414b128835486270c39f807"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0b04309fbf26dfbc0c5d874df51d8c9531681e4a"
+    },
+    {
+      "path": "Maths",
+      "type": "dir",
+      "sha": "b57823ad0acd0aec9e92bc4087102eccc6f2320e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3f4aa01cce6a9bbd86d11ace6090b6ae67e47902"
+    },
+    {
+      "path": "VulkanLearn",
+      "type": "dir",
+      "sha": "1a71da82e9be24450100fa77b310161a12cd5b01"
+    },
+    {
+      "path": "Win32Entry.cpp",
+      "type": "file",
+      "sha": "3769c172e49b7cfedbd9a8a27aba27da09725f71"
+    },
+    {
+      "path": "appEntry",
+      "type": "dir",
+      "sha": "e12e1b36227e89ba4a712a7d7c106f09aff631a4"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "6b4d23fa821b321ebb30a157c468ebb5a90fdd0d"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "ad60c8cc2658615f8ccf3a28b3bb1c266d2b1e04"
+    },
+    {
+      "path": "class",
+      "type": "dir",
+      "sha": "931a0a3f9759bdd5e0d608dfa89db4fa518eb7e6"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "678bdf9ca25a41877c88bf86a47b7fa80bec4825"
+    },
+    {
+      "path": "component",
+      "type": "dir",
+      "sha": "060fbeafdfd323ec558451a42e20cd1684a0452e"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "ac0a6be9b86505ec2a68a945e8f8295405ff9d11"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "1d2f1a828d1db55848ea13b57689c5412a2275bd"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "12e4bfc2a46dabaf4a9c6d9e50e4742c0ab14f7e"
+    },
+    {
+      "path": "planet",
+      "type": "dir",
+      "sha": "dc6235921b5245afb9996b412aedb823113b7f86"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "caa6540987855ddf422c457b2027958d3e75e910"
+    },
+    {
+      "path": "thread",
+      "type": "dir",
+      "sha": "1e18e163f0a1c11d08f609540cb63121eb4f5cb8"
+    },
+    {
+      "path": "vulkan",
+      "type": "dir",
+      "sha": "c4e13aeeefcc1dee6dd8259e96ca5ef6e4bc9c23"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Vulkan research renderer with limited scene management; native runtime/CMake, complete gameplay scope unproven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

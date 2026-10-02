@@ -1,0 +1,139 @@
+{
+  "repository": "qnighy/tapir",
+  "repository_id": 103390887,
+  "commit": "a56b1946b69a408db2ff5f79b48a6682cd7dd957",
+  "source_url": "https://github.com/qnighy/tapir/tree/a56b1946b69a408db2ff5f79b48a6682cd7dd957",
+  "readme_path": "README.md",
+  "readme_sha256": "3599d29f434011ec56fb2e9ca71d80a668f95553e28fd2f4aa6f70ec2d6956a6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1e51a0639ac30e994c27fea289cd7f6b648637a5"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "1ac7f0f629289e4fff20f0cfcc64a1afafeadb33"
+    },
+    {
+      "path": "COPYRIGHT",
+      "type": "file",
+      "sha": "ebff45ba3ac28d1815908f87706e26cc33510ad6"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "31aa79387f27e730e33d871925e152e35e428031"
+    },
+    {
+      "path": "Makefile.am",
+      "type": "file",
+      "sha": "ab149b49634ad98d8b95ff55d55e67722c924be6"
+    },
+    {
+      "path": "README.ja.md",
+      "type": "file",
+      "sha": "03289e9fad291a531fa64613e650dd3d493c51a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3d1706cf22443072a59c0b49f176a0c826af0343"
+    },
+    {
+      "path": "accordion",
+      "type": "dir",
+      "sha": "f1e5a5eff3f62d6fb7fcccf9c8eb571739bd8fe9"
+    },
+    {
+      "path": "autogen.sh",
+      "type": "file",
+      "sha": "0332c9a759a39ce0d2df0e78420564b45f805bdb"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "df6b540cc51355fcfc7287ee7c9686ca16191f0e"
+    },
+    {
+      "path": "build-ruby181.sh",
+      "type": "file",
+      "sha": "f1ab745b786b88fb4d444afbc3be226365945ecf"
+    },
+    {
+      "path": "build-ruby192.sh",
+      "type": "file",
+      "sha": "62971b17776ac664fca391e4994dee9c9e3dc5be"
+    },
+    {
+      "path": "configure.ac",
+      "type": "file",
+      "sha": "3091c0c7405086d836e2699c999d78191c91f3db"
+    },
+    {
+      "path": "debian",
+      "type": "dir",
+      "sha": "25d319ef1f8e19f160d40f647b69bf06c0dc048b"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "e0bc505e7803fa038cb27e4e1a9c9dbbc94d3dcf"
+    },
+    {
+      "path": "imgs",
+      "type": "dir",
+      "sha": "fdf72a3471fc6f85957b754cd34b1568ba9215ec"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "59ec06a646bad65ca92d03aaafcb5846b598356b"
+    },
+    {
+      "path": "rgsstest",
+      "type": "dir",
+      "sha": "f286e37b2de97a943e2ca5f806cdde239666892f"
+    },
+    {
+      "path": "rtp",
+      "type": "dir",
+      "sha": "8372b41a101b03091dfad11399d69957f07da8ad"
+    },
+    {
+      "path": "ruby181",
+      "type": "file",
+      "sha": "053f7858939d6a19428b8080e7e73b8273d78ba0"
+    },
+    {
+      "path": "ruby192",
+      "type": "file",
+      "sha": "572cbb9a16a7caa9e0cb504799fe32838e1aa590"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "40739c1074d6b2ac66e8dd2fa160a1779546a9f4"
+    },
+    {
+      "path": "violin",
+      "type": "dir",
+      "sha": "e5947a847bc0250a91b5ed1a093e297d3a697a39"
+    },
+    {
+      "path": "xylophone",
+      "type": "dir",
+      "sha": "a37b78bb190a89be6223c65922066c360ffb0ed1"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "RGSS/RGSS2/RGSS3 runtime reimplementation for RPG Maker games with source, Ruby runtimes and launcher; compatibility unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

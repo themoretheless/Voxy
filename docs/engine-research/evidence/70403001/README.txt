@@ -1,0 +1,211 @@
+# Dagon Engine
+
+<img align="left" alt="dagon logo" src="https://github.com/gecko0307/dagon/raw/master/logo/dagon-logo-320.png" width="100" style="vertical-align:top" />
+
+Feature-rich, easy to use, extensible desktop game development framework for [D language](https://dlang.org/) based on OpenGL 4.3 core profile and SDL2. Works on Windows and Linux.
+
+If you like Dagon, support it on [Patreon](https://www.patreon.com/gecko0307) or [Liberapay](https://liberapay.com/gecko0307). You can also make a one-time donation via [NOWPayments](https://nowpayments.io/donation/gecko0307). I appreciate any support. Thanks in advance!
+
+> Note: this project is not connected to Dagon engine by Senscape.
+
+[![GitHub Actions CI Status](https://github.com/gecko0307/dagon/workflows/CI/badge.svg)](https://github.com/gecko0307/dagon/actions?query=workflow%3ACI)
+[![DUB Package](https://img.shields.io/dub/v/dagon.svg)](https://code.dlang.org/packages/dagon)
+[![DUB Downloads](https://img.shields.io/dub/dt/dagon.svg)](https://code.dlang.org/packages/dagon)
+[![License](http://img.shields.io/badge/license-boost-blue.svg)](http://www.boost.org/LICENSE_1_0.txt)
+
+## Maintenance Mode
+
+Core part of Dagon 1.x is considered stable; no major new features are planned. Further development continues in [Dagon 2](https://github.com/gecko0307/dagon2) branch, SDL3 port of the engine with Vulkan-based rendering.
+
+Some extensions and the editor are still in development.
+
+## Screenshots
+
+[![Ruins of Hell](https://blog.pixperfect.online/wp-content/uploads/2026/04/ruins_of_hell3.jpg)](https://blog.pixperfect.online/wp-content/uploads/2026/04/ruins_of_hell3.jpg)
+
+[![Sponza](https://blog.pixperfect.online/wp-content/uploads/2026/02/sponza_updated1.jpg)](https://blog.pixperfect.online/wp-content/uploads/2026/02/sponza_updated1.jpg)
+
+[![Sponza](https://blog.pixperfect.online/wp-content/uploads/2026/02/sponza_updated3.jpg)](https://blog.pixperfect.online/wp-content/uploads/2026/02/sponza_updated3.jpg)
+
+[![Chillwave Drive](https://blog.pixperfect.online/wp-content/uploads/2026/07/chillwave-drive-hq-1.jpg)](https://blog.pixperfect.online/wp-content/uploads/2026/07/chillwave-drive-hq-1.jpg)
+
+## Features
+
+* Scene graph
+* Virtual file system
+* Static and animated meshes
+* Built-in primitive shapes: plane, box, sphere, disk, cylinder, cone, capsule, torus
+* Native [glTF 2.0](https://www.khronos.org/gltf/), [OBJ](https://en.wikipedia.org/wiki/Wavefront_.obj_file) and [IQM](https://github.com/lsalzman/iqm) formats support. [FBX](https://en.wikipedia.org/wiki/FBX) and many other model formats support via [Assimp](https://github.com/assimp/assimp) library
+* GPU skinning
+* Textures in PNG, JPEG, WebP, AVIF, DDS, KTX, KTX2, HDR, SVG and many other formats
+* Texture compression support: S3TC (DXTn), RGTC, BPTC, [Basis Universal](https://github.com/BinomialLLC/basis_universal). Built-in DXT1, DXT5, RGTC (BC4, BC5) and BPTC compressors. DDS exporter
+* GPU-based texture resizing
+* Video support using [libVLC](https://www.videolan.org/vlc/libvlc.html). Screen-aligned 2D video playback and video textures on 3D meshes. Equirectangular 360° video support
+* Runs in windowed, fullscreen and borderless fullscreen modes
+* HiDPI support
+* Hybrid rendering pipeline: deferred for opaque materials, forward for transparent materials and materials with custom shaders
+* Physically based rendering (PBR) with GGX microfacet BRDF. Metallic-roughness workflow
+* HDR rendering with all industry-standard tonemapping operators, including Reinhard, Hable/Uncharted, Unreal, ACES, Uchimura, AgX and Khronos PBR Neutral. Automatic exposure support
+* HDRI environment maps. Equirectangular HDRI to cubemap conversion. GPU-based cubemap prefiltering with importance sampling. Loading prebaked cubemaps from DDS or KTX files
+* Directional lights with cascaded shadow mapping
+* Spherical and tube area lights with dual paraboloid shadow mapping
+* Spot lights with perspective shadow mapping
+* Volumetric light scattering support for all light types. Henyey-Greenstein scattering anisotropy for directional lights
+* Local environment probes with box-projected cube mapping for approximated interior GI
+* Normal mapping, parallax mapping, parallax occlusion mapping
+* Deferred decals with normal mapping and PBR material properties
+* Built-in Rayleight sky shader
+* Particle system with force fields. Blended particles, soft particles, shaded particles with normal map support, particle shadows
+* Terrain rendering. Procedural terrain using OpenSimplex noise or any custom height field. Deferred texturing for terrains
+* Water rendering. Realistic ocean shader with Gerstner waves
+* Cinematic post-processing (depth of field, lens distortion, motion blur, glow, vignetting, film grain, color correction, LUT, contrast adaptive sharpening). Custom post-processing filters support
+* Simplified render pipeline for casual-style graphics. Retro rendering support: pixelization and vertex snapping
+* Tween engine for simple animation. Delayed function calls
+* Input from keyboard, mouse and up to 4 gamepads. Input manager with abstract bindings and file-based configuration
+* Unicode text input
+* Graphics tablet input (Windows-only)
+* Ownership memory model
+* Entity-component model
+* Fast arena allocator
+* Compute shaders
+* Built-in camera logics for easy navigation: freeview and first person views
+* Collision detection using MPR algorithm, raycasting, simple kinematic collision response system
+* Chunk-based culling for managing large game worlds. Optional "floating origin" system to maintain high coordinate precision
+* Rigid body physics using [Newton Dynamics](http://newtondynamics.com). Built-in character controller
+* [Jolt Physics](https://github.com/jrouwe/JoltPhysics) integration
+* Orthographic projection support, screen-aligned rendering, spritesheets and billboards, 2D collision detection. Create 2D/2.5D/isometric games with ease!
+* UTF-8 text rendering using TTF fonts via [FreeType](https://freetype.org/)
+* Internationalization support
+* GUI extension based on [Dear ImGui](https://github.com/ocornut/imgui)
+* Native file open/save dialogs (for Windows, GTK, and Qt)
+* 2D/3D sound. Various audio formats support including WAV, MP3, OGG/Vorbis, FLAC. Stereo, 5.1, 7.1 support
+* Microservices and worker threads for running tasks in background, so that they don't block the main game loop
+* Asynchronous thread-safe messaging. Use the message broker built into the event system to communicate between threads and the main loop
+* UDP networking based on [ENet](http://enet.bespin.org/). UDP server and asynchronous client that works via the message broker. Optional secure transport layer with elliptic curve encryption and X25519 key exchange.
+
+Features that are not production-ready yet:
+* Built-in UI toolkit (very basic, can be used only for simple debugging purposes)
+* OpenVR integration (partial, no deferred pipeline support).
+
+## System Requirements
+
+The recommended system requirements (for Full HD rendering at 60 fps):
+- CPU: Intel Core i3-10100 / AMD Ryzen 3 3100
+- RAM: application-dependent, usually 8 Gb minimum
+- GPU: OpenGL 4.3 capable, tested on GeForce RTX 30
+- VRAM: 8 Gb
+- OS: 64-bit Windows 10 or higher / Linux.
+
+## Usage
+
+Dagon works with [DUB](https://dub.pm/), the official package manager and build system for D.
+
+The recommended way to start using the engine is to generate a game template with `dub init`. Create an empty directory for the project, cd to it and run the following:
+
+```
+dub init --type=dagon
+dub build
+```
+
+Do not delete `data/__internal` folder! It is used to store engine's internal data such as shaders and textures.
+
+We strongly recommend using [LDC](https://github.com/ldc-developers/ldc) and compiling in release mode to achieve maximum CPU performance:
+
+```
+dub build --compiler=ldc2 --build=release-nobounds
+```
+
+To use Dagon repository directly instead of a release (for example, to modify the engine), you can clone it with Git and specify the local path to the `dagon` dependency in your `dub.json` or `dub.selections.json`:
+
+```
+"dagon": { "path": "path/to/your/dagon/copy" }
+```
+
+## Runtime Dependencies
+
+* [SDL](https://www.libsdl.org) 2.32.4.0 (required)
+* [SDL_Image](https://github.com/libsdl-org/SDL_image) 2.8.8.0 (required)
+* [FreeType](https://www.freetype.org) 2.8.1 for text rendering (required)
+* [libwebp](https://chromium.googlesource.com/webm/libwebp) for WebP support (optional)
+* [libtiff](https://libtiff.gitlab.io/libtiff/) for TIFF support (optional)
+* [libavif](https://github.com/AOMediaCodec/libavif) for AVIF support (optional)
+* [Assimp](https://github.com/assimp/assimp) for additional 3D formats support (optional)
+* [Newton Dynamics](https://github.com/MADEAPPS/newton-dynamics) 3.14 for rigid body simulation (optional)
+* [Jolt Physics](https://github.com/jrouwe/JoltPhysics) via [joltc](https://github.com/amerkoleci/joltc) wrapper (optional)
+* [cimgui](https://github.com/cimgui/cimgui) (optional)
+* [libktx](https://github.com/KhronosGroup/KTX-Software) (optional)
+* [PhysFS](https://github.com/icculus/physfs) (optional)
+* [SoLoud](https://github.com/jarikomppa/soloud) (optional)
+* [libVLC](https://www.videolan.org/vlc/libvlc.html) (optional)
+* [Nuklear](https://github.com/Immediate-Mode-UI/Nuklear) (optional, deprecated)
+
+Most of them are automatically deployed on 64-bit Windows and Linux. Read more [here](https://github.com/gecko0307/dagon/blob/master/doc/Runtime%20Dependencies.md).
+
+Under Linux, if you want to use local libraries in Windows way (from application's working directory rather than from the system), add the following to your `dub.json`:
+
+```
+"lflags-linux": ["-rpath=$$ORIGIN"]
+```
+
+On Windows, some dependencies require Visual C++ v14 Redistributable. You can download an official installer [here](https://aka.ms/vc14/vc_redist.x64.exe). It is recommended to bundle vc_redist.x64.exe with your application's installer for end users.
+
+## Known Bugs and Limitations
+
+* The engine doesn't support macOS
+* dagon:nuklear extension has [problems](https://github.com/gecko0307/dagon/issues/89) under Linux
+* dagon:newton crashes under Linux when loading Newton plugins (`NewtonPhysicsWorld.loadPlugins`)
+
+## Documentation
+
+* [API documentation (WIP)](https://gecko0307.github.io/dagon/doc/dagon.html)
+* [Specifications](https://github.com/gecko0307/dagon/blob/master/doc/)
+* [Tutorials](https://github.com/gecko0307/dagon/blob/master/doc/tutorials) and corresponding [examples](https://github.com/gecko0307/dagon-tutorials)
+* [Wiki](https://github.com/gecko0307/dagon/wiki)
+* [FAQ](https://github.com/gecko0307/dagon/wiki/FAQ).
+
+HTML documentation can be generated from source code using ddox (`dub build -b ddox`). Be aware that documentation is currently incomplete.
+
+Documentation status:
+* ✔️ [dagon.core](https://gecko0307.github.io/dagon/doc/dagon/core.html)
+* ✔️ [dagon.graphics](https://gecko0307.github.io/dagon/doc/dagon/graphics.html)
+* ✔️ [dagon.resource](https://gecko0307.github.io/dagon/doc/dagon/resource.html)
+* ⏳ [dagon.render](https://gecko0307.github.io/dagon/doc/dagon/render.html)
+* ✔️ [dagon.game](https://gecko0307.github.io/dagon/doc/dagon/game.html)
+* ⏳ [dagon.ui](https://gecko0307.github.io/dagon/doc/dagon/ui.html)
+* ❌ `dagon.collision`
+* ❌ `dagon.openworld`
+* ✔️ [dagon.compute](https://gecko0307.github.io/dagon/doc/dagon/compute.html)
+* ❌ `dagon.extra`
+* ❌ `dagon.ext.assimp`
+* ❌ `dagon.ext.audio`
+* ❌ `dagon.ext.imgui`
+* ❌ `dagon.ext.iqm`
+* ❌ `dagon.ext.ktx`
+* ❌ `dagon.ext.network`
+* ❌ `dagon.ext.newton`
+* ❌ `dagon.ext.jolt`
+* ❌ `dagon.ext.nuclear`
+* ❌ `dagon.ext.openvr`
+* ❌ `dagon.ext.physfs`
+* ❌ `dagon.ext.video`
+
+## License
+
+Copyright (c) 2016-2026 Timur Gafarov, Rafał Ziemniewski, Mateusz Muszyński, Denis Feklushkin, dayllenger, Konstantin Menshikov, Björn Roberg et al. Distributed under the Boost Software License, Version 1.0 (see accompanying file COPYING or at http://www.boost.org/LICENSE_1_0.txt).
+
+## Sponsors
+
+Jan Jurzitza (WebFreak), Daniel Laburthe, Rafał Ziemniewski, Kumar Sookram, Aleksandr Kovalev, Robert Georges, Rais Safiullin (SARFEX), Benas Cernevicius, Koichi Takio, Konstantin Menshikov.
+
+## Made with Dagon
+
+Games:
+* [Chillwave Drive](https://github.com/gecko0307/chillwavedrive) - in-development racing game
+* [Dagoban](https://github.com/Timu5/dagoban) - a Sokoban clone
+* [2048x2](https://github.com/gecko0307/2048x2) - a 2048 clone
+* [sacengine](https://github.com/tg-2/sacengine) - [Sacrifice](https://en.wikipedia.org/wiki/Sacrifice_(video_game)) engine reimplementation
+* [dagon-shooter](https://github.com/aferust/dagon-shooter) - a shooter game (unfinished)
+
+Tech demos:
+* [Ruins of Hell](https://github.com/gecko0307/ruins-of-hell) - first-person shooter demo
+* [Sponza Demo](https://github.com/gecko0307/dagon-sponza) - Crytek Sponza Atrium scene implemented using Dagon

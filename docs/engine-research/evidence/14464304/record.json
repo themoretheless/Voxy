@@ -1,0 +1,77 @@
+{
+  "repository": "09th/YABEE",
+  "repository_id": 14464304,
+  "commit": "37c06df1ce552152e125ef6390c3e89de3582185",
+  "source_url": "https://github.com/09th/YABEE/tree/37c06df1ce552152e125ef6390c3e89de3582185",
+  "readme_path": "README.md",
+  "readme_sha256": "b783bb2d76ad6de6319137676fc403d7d6250920d1b926ab46ec786b97b22aff",
+  "entries": [
+    {
+      "path": "EmptyNormal.png",
+      "type": "file",
+      "sha": "863dc2ec0c36aded0b58f37a1055a0349d8dc94a"
+    },
+    {
+      "path": "EmptyRoughness.png",
+      "type": "file",
+      "sha": "437c244474b2adcc27acf03125a28d2114bc40e0"
+    },
+    {
+      "path": "EmptySpecular.png",
+      "type": "file",
+      "sha": "26ee2247b52e89daa7ef2374a7970f75a7b2ebc5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "44a06b6e8beb846dfeda191b03eab53da41f8066"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2e73b3e474f0a4a4dea11fa29cc247c79409a58e"
+    },
+    {
+      "path": "YABEE_HowTo.odt",
+      "type": "file",
+      "sha": "9aa5fdb500479c30940167f4462650175d087f77"
+    },
+    {
+      "path": "YABEE_HowTo.pdf",
+      "type": "file",
+      "sha": "420534911be2efe590c590227181a191e056e6da"
+    },
+    {
+      "path": "__init__.py",
+      "type": "file",
+      "sha": "9b7aa8981af0ca3a066205d0d16c0fa5d0acd995"
+    },
+    {
+      "path": "empty.png",
+      "type": "file",
+      "sha": "437c244474b2adcc27acf03125a28d2114bc40e0"
+    },
+    {
+      "path": "release.txt",
+      "type": "file",
+      "sha": "fdd0775c1d5ee7756633e518a1a5da5697e5516e"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "c27d07c68c0f30239f1b672344ea24c241890cd6"
+    },
+    {
+      "path": "yabee.py",
+      "type": "file",
+      "sha": "4a696f0a34c72e152c30c220bb986f47c40a5f86"
+    },
+    {
+      "path": "yabee_libs",
+      "type": "dir",
+      "sha": "23c7fe3aca96a5bed344e3c7c62940c8ecf16960"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

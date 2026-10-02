@@ -1,0 +1,79 @@
+{
+  "repository": "GlistEngine/GlistEngine",
+  "repository_id": 320067779,
+  "commit": "dc4d56163bd57570d21f6b031e5d4e66780d550f",
+  "source_url": "https://github.com/GlistEngine/GlistEngine/tree/dc4d56163bd57570d21f6b031e5d4e66780d550f",
+  "readme_path": "README.md",
+  "readme_sha256": "6da44737f015db940c2fc3209fd6e76040c54e7dacd19053f108adc78433d3b8",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b4235a1840b6393501666b87d2a4daf382105e2d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c6b045221729e6e82cff3609429660f95a2ff52d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0ccdb8e10c17bb79b8e721a1bdc1ed4ddbae968c"
+    },
+    {
+      "path": "GETTING-STARTED.md",
+      "type": "file",
+      "sha": "8341a702366261d095c1faa4c3ec90ed645d64b3"
+    },
+    {
+      "path": "INSTALLATION-LINUX.md",
+      "type": "file",
+      "sha": "2baedd4b4c76850bd3c8f99ddaed9b334bd464c7"
+    },
+    {
+      "path": "INSTALLATION-MACOS.md",
+      "type": "file",
+      "sha": "1baf72d42fd044ad5eccae959da38948c5857f2d"
+    },
+    {
+      "path": "INSTALLATION-WIN.md",
+      "type": "file",
+      "sha": "6a2ba29653f993c9865799a6a8e372588de54860"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "69e9fe47914bba9c3c167bc59c57e97b7f534b75"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0d1ed7b4d0fead2d0d992fa1e8d84d7cb5cb462d"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "f08fdb12baf1c84d18d30272722f0368d4d6e9e8"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "1b968f02c08438680691c8855111ec6c464a2e4b"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "af44b7a254e745e48336b33cde644eac7511402d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native game/app engine; owned engine/plugins/sample roots and platform build docs.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

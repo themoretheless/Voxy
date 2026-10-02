@@ -1,0 +1,159 @@
+{
+  "repository": "JeanPhilippeKernel/RendererEngine",
+  "repository_id": 284080437,
+  "commit": "4fcbee0a7a92156e906b4a37f11f88ca6d27b7d0",
+  "source_url": "https://github.com/JeanPhilippeKernel/RendererEngine/tree/4fcbee0a7a92156e906b4a37f11f88ca6d27b7d0",
+  "readme_path": "README.md",
+  "readme_sha256": "7320d795cdfda1016b34fa1afa9e00570269bbd48d9dfbfc9f2fa72be0fb1657",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "ec20f6551f93473a7fa6ca5cbd2a8e344e383865"
+    },
+    {
+      "path": ".commitlintrc.json",
+      "type": "file",
+      "sha": "b4478499c315bd65bf9383a3559e19fef0bf1386"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "753fd9a126b89538ae96d452429697d046f9c100"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2a8298261db8c14d6b77af4d2bf9fe05b5c1658f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "52b80b2c9cb336f586a6d5eaf6ec7b80036269ca"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".release-please-manifest-prerelease.json",
+      "type": "file",
+      "sha": "dc88e85dc0191c0f9fa6d694b919f38b15a190ac"
+    },
+    {
+      "path": ".release-please-manifest.json",
+      "type": "file",
+      "sha": "8d7a673f49b1487e9873c30350b4a1c9e18b49aa"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "b5b8351f6fee628e58d06b25d4835ffc5dd9fcd4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b3b619d967f38d5fa15d622b9b8ab231b40a7743"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "72954721d96056a128ecb1a15afe04200928675f"
+    },
+    {
+      "path": "Code-of-Conduct.md",
+      "type": "file",
+      "sha": "b3d6aca94f28594b9ab1ce8e52f9caf514a9076c"
+    },
+    {
+      "path": "Contributing.md",
+      "type": "file",
+      "sha": "4d7bd1e30f26687d3859e18d4c58375dbb0bd5c7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b082555a62567f0dbf73d12925bd89d63bc2bdbb"
+    },
+    {
+      "path": "Obelisk",
+      "type": "dir",
+      "sha": "ad2f67d3c6f45e7a3477397665f290aec71c5531"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "25043015ee490930249f9afc11e06d90f158259c"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "31ecd14cc5f7f8187b45cfc47675745b36a0b22e"
+    },
+    {
+      "path": "Roadmap.md",
+      "type": "file",
+      "sha": "979a177a893b363303e388e7adf86c90e7557fae"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "8fe07d8f091f528d54449b90a0b0a768b9f87e19"
+    },
+    {
+      "path": "Tetragrama",
+      "type": "dir",
+      "sha": "23df7cbae881dcc1a4dabc99d3ffba599841725e"
+    },
+    {
+      "path": "VERSION.txt",
+      "type": "file",
+      "sha": "0d91a54c7d439e84e3dd17d3594f1b2b6737f430"
+    },
+    {
+      "path": "ZEngine",
+      "type": "dir",
+      "sha": "60de74e1bfac303d4183a887f5c6d616056225cf"
+    },
+    {
+      "path": "dependencies.cmake",
+      "type": "file",
+      "sha": "1f25e5a59675c28f1a272320d564d89363808ff5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "db278ddcb0301f66d200dd9521682eff5b9426e0"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "5ec9c3d474973e3e5fd4e82c0809562610a4013e"
+    },
+    {
+      "path": "release-please-config-prerelease.json",
+      "type": "file",
+      "sha": "535a166a3551d4bc6b209b748d7cce64455a6f86"
+    },
+    {
+      "path": "release-please-config.json",
+      "type": "file",
+      "sha": "1eb854a71f8963044f04febf8ac3367a702d2174"
+    },
+    {
+      "path": "repoConfiguration.json",
+      "type": "file",
+      "sha": "1becc8d8413d3fdc8dde7ed62b55a60acf93bded"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Vulkan 3D rendering engine; owned source/resources and CMake build. Complete gameplay scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

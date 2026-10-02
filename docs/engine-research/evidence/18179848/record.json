@@ -1,0 +1,164 @@
+{
+  "repository": "ezEngine/ezEngine",
+  "repository_id": 18179848,
+  "commit": "bfdd3563ad08ef4b2dd7cf48405c52f058f68c24",
+  "source_url": "https://github.com/ezEngine/ezEngine/tree/bfdd3563ad08ef4b2dd7cf48405c52f058f68c24",
+  "readme_path": "README.md",
+  "readme_sha256": "e91cb14665de16b9a29c3152b25a82dbb629cf8736daf99c5afb06e138d366cf",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1eb458b9854b1ca4e8575f6e3d823a1a941e951f"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "9ae59aae89c4de68439ae525982a0219fed7f6f5"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "f2a9c7dafc8e5a8790233245d5cafa437e1a4b9e"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5b1798c0bc8384855be79d01abd0304a9065d616"
+    },
+    {
+      "path": ".gdbinit",
+      "type": "file",
+      "sha": "dd93cdf5924296df1abe3bf19aca550da7c11e1a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "072df70ed5f86c031fc1a3fb5f56a3b3ee8da36f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b24a1a2a2252b34531b4e782baccbfbe1ae87455"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7aeaa1d997acf8fc68382e28f56949e04e6a6483"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8948479182073919dbe99a1ecd71cf9419f26038"
+    },
+    {
+      "path": ".lldbinit",
+      "type": "file",
+      "sha": "e850df0842531e5573dcd30ad5cc6f2399025e92"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "63f845e74600cb9cdcd72abc4cb1f16c9f1eeca9"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e701eb8e154b3ed5516b1b35c5aabf237c80ba52"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "90c3da657a81c7252c21ec1b9db966e6f5bcc9f3"
+    },
+    {
+      "path": "CMakeUserPresets.json.template",
+      "type": "file",
+      "sha": "7b8ede1bcf5c5e7422697d62be82f632b23708a6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e7ca699e3d40ac713decf4082e57ba88d252423b"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "a83630243a1d4cec9b48601aae228a79c62baa6b"
+    },
+    {
+      "path": "CodingGuidelines.md",
+      "type": "file",
+      "sha": "0fdf6c47c1b7d48e503a9f8af5262ca3311744a0"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "4ad82da12d901743bcf01b621e6e9010af6e27da"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "bff1b907c5bddbb31c2c3ac4355809720acb98a9"
+    },
+    {
+      "path": "GenerateWin64vs2022.bat",
+      "type": "file",
+      "sha": "a5248336f5d998d9d525f5f691e4cd9b22ab9020"
+    },
+    {
+      "path": "GenerateWin64vs2026.bat",
+      "type": "file",
+      "sha": "cf9d3e17f786a99fdc62adbcf6363575845afb7a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d61ba6297f05cb0ab130ef27dcfa7c008c7c4be0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2db0aeec5031d7fc114584421a0a5a7b35b6bbeb"
+    },
+    {
+      "path": "RunCMake.ps1",
+      "type": "file",
+      "sha": "2d331c0a6638b8659500686b169528ef1e8b3d60"
+    },
+    {
+      "path": "RunCMake.sh",
+      "type": "file",
+      "sha": "e16050106ddfa098fc5f385719246b504c2ea827"
+    },
+    {
+      "path": "Utilities",
+      "type": "dir",
+      "sha": "0e04aacef74447d161917e621ab5338c49cf24f8"
+    },
+    {
+      "path": "cgmanifest.json",
+      "type": "file",
+      "sha": "ce264e6c2c19a0508d1acd7cff74f6a104525500"
+    },
+    {
+      "path": "ezCMakeConfig.cmake",
+      "type": "file",
+      "sha": "96dbacc772e87386f5bc4a018855f20dc28c6f17"
+    },
+    {
+      "path": "gitClean.txt",
+      "type": "file",
+      "sha": "2efcad1e3e69f45d942fcb8c8626db2ecfc8383f"
+    },
+    {
+      "path": "version.txt",
+      "type": "file",
+      "sha": "47221ec8ce0754a02e045f35acee4319eaf8ab8a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native game engine; Code and CMake build/test infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

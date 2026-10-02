@@ -1,0 +1,84 @@
+{
+  "repository": "GValiente/butano",
+  "repository_id": 231556327,
+  "commit": "1966e2fa3f1e965f1423d2d1975ca8e525c9994e",
+  "source_url": "https://github.com/GValiente/butano/tree/1966e2fa3f1e965f1423d2d1975ca8e525c9994e",
+  "readme_path": "README.md",
+  "readme_sha256": "f18ec377f5a61265a285d52b96ee67bd31a10b365cbbc472b74db6bfe0a13902",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f52a44fe4e59aee8e01cb4f5fffb2abe96f1b00f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "01b100ef65dda7b1a318f6233bdd37cc58674e5a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0bc6434302dcd1f2a76a900ba13217531314fb49"
+    },
+    {
+      "path": "butano",
+      "type": "dir",
+      "sha": "382aea942dd92adc3a635db47fd2415afd2aa771"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "76a9a98113d7083f40a1edbff9ef57118040ae11"
+    },
+    {
+      "path": "credits",
+      "type": "dir",
+      "sha": "f72b9381b2af7bb6d3d4dc15c2cf51be6324b94e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "eaaba6fe4cb6a7b71ea5eea46fe748ce966311f2"
+    },
+    {
+      "path": "docs_tools",
+      "type": "dir",
+      "sha": "0a6288138c71bbc56c2251df2476314ce812df52"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6a453ae5b1c2fb6d343e48a063fbf872555e047f"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "6a6cef8ad9b54876f235a9bd44a0ab956430d9ef"
+    },
+    {
+      "path": "issues",
+      "type": "dir",
+      "sha": "2e382a9c5201524fe63ce26bae8fd566ca6b1fe9"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "fc6d13580e9b76afb236971556698bf2e595378a"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "b46d27aedc967ba9a6ec461e6e4f148f7da64cab"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e6b4c8818dfa5c1e241c99793a99b80c7d06f69f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies GBA engine; owned butano runtime, platform build, tests/examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

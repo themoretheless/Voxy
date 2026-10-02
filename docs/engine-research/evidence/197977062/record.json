@@ -1,0 +1,97 @@
+{
+  "repository": "kromenak/gengine",
+  "repository_id": 197977062,
+  "commit": "524b5449d20d9ede9fc863cf36d10c671203cf17",
+  "source_url": "https://github.com/kromenak/gengine/tree/524b5449d20d9ede9fc863cf36d10c671203cf17",
+  "readme_path": "README.md",
+  "readme_sha256": "8d46d488887533379d52f46ad976bd258e070568c36b62b0209d9291a20a316d",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "b887a3b436078a2117ad6f4004296fcc2f2ca96b"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cef4f5d13720f653e108b9cf5dbe07665981c572"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "700eb16045e54aef13e97500ed333e50076cd5fd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9579dc6063c682f5e92f7a8d3004700f86bdcb3f"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "f8dc30f3472bf4062cb8ba79d0628c34f647a900"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "d917c270f3960738ab39c4b7dad7917247d6b616"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0be2ca2c256b66f5b24f949a7bb88db8ec5f8104"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "7df09262be7f253e87fec0507158122a8d2493f7"
+    },
+    {
+      "path": "GK3.ini",
+      "type": "file",
+      "sha": "94080ccdc7e51cf7a8e92086317e2fdcd4929427"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "92a79d63a6eb02921406378649543e917ea325ba"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "f920d7ae20525f9470eae896ffbecd939331631c"
+    },
+    {
+      "path": "Media",
+      "type": "dir",
+      "sha": "f32702b7ad8b87efe56c3061a6f2e3085acf65a6"
+    },
+    {
+      "path": "Publish",
+      "type": "dir",
+      "sha": "ccf95a3badb8985988bac1ba9fcdba8aa3ca4a79"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4bd432d49c75c53da6ff7490faba863e049b4a95"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "7da7642468765c72ecd16f4e75f79ad16a65e9bc"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "7e8e446529ccb7135ebb48099925419de2d8bfdd"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "4834a37a0d5f4124e34633ceea3d2d0651b293e4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

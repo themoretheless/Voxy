@@ -1,0 +1,59 @@
+{
+  "repository": "BillyWM/FlixelJS",
+  "repository_id": 1183858,
+  "commit": "e895a12d4b93602b4ee029edc6b2e103d255eace",
+  "source_url": "https://github.com/BillyWM/FlixelJS/tree/e895a12d4b93602b4ee029edc6b2e103d255eace",
+  "readme_path": "README",
+  "readme_sha256": "65b561efa6411a92785d89cbfb4bc478c7e9e166b4e95e1cd9d33102e3aa6ed8",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5dec26c9bacff2ac6f4ee7b9df2d53bbdfaf88eb"
+    },
+    {
+      "path": "README",
+      "type": "file",
+      "sha": "f44771efbc111b1db146b3f0870bf4a4cb3149f1"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "2047beeb83baee9e8eb5a8f0323fd9dc4f09201c"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "df618ff41604b310f521f526bc8794062f4163af"
+    },
+    {
+      "path": "build_list.txt",
+      "type": "file",
+      "sha": "521bebaaa7c3b5bc3c4743b4612c1879dbf2a165"
+    },
+    {
+      "path": "converter",
+      "type": "dir",
+      "sha": "9ebfd58c0e297d8c130cbd265ec2f770f819ac36"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e86cd6476a5100d4482e7f6f5a18e86f69ea9790"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "a1d6fe54fb1b00d19bccf5a833d378979c9ca286"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ed7556655608ae5bf83c7f128db94b3f61a20e10"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Direct incomplete AS3 Flixel port to JavaScript; README records missing asset loading and rendering/collision issues.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

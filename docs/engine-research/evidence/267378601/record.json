@@ -1,0 +1,62 @@
+{
+  "repository": "libriscv/rvscript",
+  "repository_id": 267378601,
+  "commit": "af453d69aeb02900742d545b34fd7cf9303bfd91",
+  "source_url": "https://github.com/libriscv/rvscript/tree/af453d69aeb02900742d545b34fd7cf9303bfd91",
+  "readme_path": "README.md",
+  "readme_sha256": "0c689b213182cb4aa6e8ec02627a27adcd1811b030f0e6870611cc2689a89c05",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "ff201396d6d5f77d3aa6cbfa794ddd95a37395fc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c90bf26a4628cd28c7c0a1216433d9e4dab5f542"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7f5e3c71f123555313f57c480b1e8e2e7e9a2e0d"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "377a4e342d80ae927d47dd03619d16a2f9bd0715"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e4a2e446e6411e2bcd9c99e5073a691a1c16225e"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "cab563087b658a3848af04b0643ad8540218792f"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "2c8d72cfe1aa1b8e5edbb7cc3a5b82f523cdd073"
+    },
+    {
+      "path": "programs",
+      "type": "dir",
+      "sha": "252ce684fa3e8898be2f11bbc565e077e2b4b6e4"
+    },
+    {
+      "path": "setup.sh",
+      "type": "file",
+      "sha": "701ec1bd2e7c41a6b9862405b1b17bde5e920f88"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e44585227413756106efea90a6cd890f55aacdea"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

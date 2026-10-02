@@ -1,0 +1,69 @@
+{
+  "repository": "AniCator/shatter-engine",
+  "repository_id": 119185578,
+  "commit": "61c5ca4a64327b85f31bb52685a01b5c980a05e4",
+  "source_url": "https://github.com/AniCator/shatter-engine/tree/61c5ca4a64327b85f31bb52685a01b5c980a05e4",
+  "readme_path": "Readme.md",
+  "readme_sha256": "0a453b59f693f329d2f95108ec4556b31a0d90353bfadc192ba0b3e224dae40b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d3eedc905d01e34408916df9ee81eccb53517cdc"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "b36c3804b9715d6c689c6f341b46bc7a84829b16"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "1d3c3a827db68ee4285440e254e17c76190b84f1"
+    },
+    {
+      "path": "License.md",
+      "type": "file",
+      "sha": "c4c8bb550a382ead32ca45dc639c54e6f117df3b"
+    },
+    {
+      "path": "Output",
+      "type": "dir",
+      "sha": "4cf181910424aa5b1da783e3df19d0cb532517a8"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "a25743953a1234df1877edf080aef9bf23d8ccfe"
+    },
+    {
+      "path": "ShatterEngine.sln",
+      "type": "file",
+      "sha": "e1dd421855700cf0b8cd6ec9bb71de68f81f7008"
+    },
+    {
+      "path": "ShatterEngine.vcxproj",
+      "type": "file",
+      "sha": "54b2c676832ecc310ef50dfd96318374bc5b15ce"
+    },
+    {
+      "path": "ShatterEngine.vcxproj.filters",
+      "type": "file",
+      "sha": "81eb2f770e34f83320953471985c1cba89d71255"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "7741fafb117ba07544da054e7313030bf1652df2"
+    },
+    {
+      "path": "banner.png",
+      "type": "file",
+      "sha": "de521e554c0af2dbe0b5c087c167ed3ba7941fb1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate engine/game/test with assets, scripted levels/sublevels, entity messaging and render passes; license text must be inspected before any import.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

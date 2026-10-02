@@ -1,0 +1,69 @@
+{
+  "repository": "jwpttcg66/NettyGameServer",
+  "repository_id": 81277424,
+  "commit": "168442421918f69b4cd7b380cb959ecb65c630b5",
+  "source_url": "https://github.com/jwpttcg66/NettyGameServer/tree/168442421918f69b4cd7b380cb959ecb65c630b5",
+  "readme_path": "README.md",
+  "readme_sha256": "044c9d1b77ffce279dddbca4c452ea4689c6a215dc4d5e6d52a78c58e23fb091",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6af555133938b024c46804327f414ab0595fc0c2"
+    },
+    {
+      "path": ".mvn",
+      "type": "dir",
+      "sha": "b8af22f412df7a361827caee1d66884feeae0a57"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c23394e5833bc811100d7b337abdb7c1ddd68735"
+    },
+    {
+      "path": "game-code-generate",
+      "type": "dir",
+      "sha": "820070f19aaa5d98f9884c5b09d94df58c08ce06"
+    },
+    {
+      "path": "game-common",
+      "type": "dir",
+      "sha": "86c461699fd956cac1f019d6dbfd34e295f2ee03"
+    },
+    {
+      "path": "game-core",
+      "type": "dir",
+      "sha": "157602daf919235f2f24d4184d6228c3ca53c980"
+    },
+    {
+      "path": "game-db",
+      "type": "dir",
+      "sha": "a184ce79154db1c8e5a2f25a8fe4ca32081a40c2"
+    },
+    {
+      "path": "game-executor",
+      "type": "dir",
+      "sha": "68fcfd855a44afb4d07632168f6108e6c256db08"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "45eee068553d02466de653dc8b76425216b98a3f"
+    },
+    {
+      "path": "qrcode.png",
+      "type": "file",
+      "sha": "a17b1a3ce499ab9bdec0171ea741129d246a41a4"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root describe distributed Netty server, executor, database and code generator; Maven build, not full game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

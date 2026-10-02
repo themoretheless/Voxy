@@ -1,0 +1,89 @@
+{
+  "repository": "alt-romes/ghengin",
+  "repository_id": 561701115,
+  "commit": "71061c590f881899fd06e0b477dc0550fd69a53e",
+  "source_url": "https://github.com/alt-romes/ghengin/tree/71061c590f881899fd06e0b477dc0550fd69a53e",
+  "readme_path": "README.md",
+  "readme_sha256": "386dbf521e964d14ae7f68a01a86e2dbfd3857538ec5b50e800887feea84e03d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6798fb862bcb0fd27f8ea414918f69008ddbaca0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "88a865350d478d3eb5fda65f7f4abedb19cd8cb7"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "5c233dd2318f3a28c833db978739ea125d5bcb3b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d65c78bbe29ebb8aa90f8137db2314702ed3e291"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "10c1b71c612890a107c928f5f71ef7c647291fc9"
+    },
+    {
+      "path": "TODO",
+      "type": "file",
+      "sha": "4181121490d46ec408391b0e35fa0bcb5758f409"
+    },
+    {
+      "path": "cabal.project",
+      "type": "file",
+      "sha": "a12db7ffbba8477d3fe8d40e9f8355fd044dfecf"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "798bc78dc02f7ab8252c4618f1fabc4720ec5755"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "019085ae6b330df637e0e2077fc78e784cdd3599"
+    },
+    {
+      "path": "ghengin-core",
+      "type": "dir",
+      "sha": "781be44c83a2928ff38bdff23202aea67b24d694"
+    },
+    {
+      "path": "ghengin",
+      "type": "dir",
+      "sha": "aa84ba0f046cc754b142630c9a273c5dfba9e022"
+    },
+    {
+      "path": "linear-utils",
+      "type": "dir",
+      "sha": "4692a3c52ffa88cc221f6c291d2244f38721bb4d"
+    },
+    {
+      "path": "packaging-macos",
+      "type": "dir",
+      "sha": "4bbfef3c126638054b24d55451a26a647c0c44de"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "40a3bf688b085e1d7e542e62344fa3ebf67fb9ec"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "990ee70188143d9831c24d221bf9cf66e1e2b7b9"
+    }
+  ],
+  "classification": "engine_toolkit_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Haskell shader-centric engine core and layered demos; broader game runtime integration unresolved by README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

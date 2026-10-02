@@ -1,0 +1,117 @@
+{
+  "repository": "MrFrenik/Enjon",
+  "repository_id": 49305263,
+  "commit": "405733f1b8d05c65bc6b4f4c779d3c6845a8c12b",
+  "source_url": "https://github.com/MrFrenik/Enjon/tree/405733f1b8d05c65bc6b4f4c779d3c6845a8c12b",
+  "readme_path": "README.md",
+  "readme_sha256": "0eec5405f0245a7e3a7dfe7bd38bdcadf00b01fc019ef896f04b4a8dc95a6bf7",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ab0f1667fdeabd3a60d06bbfa52239c27992313d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "e2fbee844890640d5a247f357a5a01aa21c1ffbd"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "3fe924a17513991cc46305d30b2e45c0592d5133"
+    },
+    {
+      "path": "BuildAndRun_VS2015.bat",
+      "type": "file",
+      "sha": "615fc4ad127dc552da685efea79fdc8cd4b1dd9a"
+    },
+    {
+      "path": "BuildAndRun_VS2019.bat",
+      "type": "file",
+      "sha": "8a6eecfbd205f8c77e2d4e4b0a627fca04bcb87c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7b9125488eaa3bd59e0df68c2af056e8054ec410"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "520ec0c6498b5a04b38359b7ac3cf7444ca8ba74"
+    },
+    {
+      "path": "Generator",
+      "type": "dir",
+      "sha": "6ea3c1e66c76ed7d011fe17425d51940fef95a6d"
+    },
+    {
+      "path": "Include",
+      "type": "dir",
+      "sha": "53d86dfec5210e0f6601990627475718e5da2925"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "e9730b9478f40cd559e0132fbb9c694beeb36c43"
+    },
+    {
+      "path": "Proc",
+      "type": "dir",
+      "sha": "14803ceaeee255284c4c066809dfb6ffdd02c5ca"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "91b042d255242e1105375a4d79dde55480fdd8bf"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "95882c7f16b2c952d07a39bd763a5550cfb17773"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "e20ae51ebfde73d87adb556b6706645b0d25696e"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "4ab4a6bebd370a905f0010b4c9fd97ec2a92f3a9"
+    },
+    {
+      "path": "TestSuite",
+      "type": "dir",
+      "sha": "7b414483e3d482896bfb93c7e8d5e1df4ff74059"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "22bd89c5a8b917b0ce3df5b43599dfd1e1990d4c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "1c7777dc63cce249bf7976f89c4f08668ef989b1"
+    },
+    {
+      "path": "generator",
+      "type": "dir",
+      "sha": "236061e788c1b7ba612ef564bcfb37479e12ed14"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "778c1c6f62b3fe7128612d57b64dbc3b9ba49f63"
+    },
+    {
+      "path": "proc",
+      "type": "dir",
+      "sha": "14efb5433cd2cfc9e0b45c9c911e33d30852306a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

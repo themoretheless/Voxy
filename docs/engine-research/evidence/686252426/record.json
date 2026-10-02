@@ -1,0 +1,129 @@
+{
+  "repository": "ferrumc-rs/ferrumc",
+  "repository_id": 686252426,
+  "commit": "51830e99675deae1f6cdbb62bf5d32b3d25c1c76",
+  "source_url": "https://github.com/ferrumc-rs/ferrumc/tree/51830e99675deae1f6cdbb62bf5d32b3d25c1c76",
+  "readme_path": "README.md",
+  "readme_sha256": "bd92eb6de8c2aee47b3ef5254c0fdf1ad1358bd707729182bf891313118bcd76",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "1672b9f10dc64e4c7b38e1f42c848b211d343880"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "c721652730c78e842afcc2c85905e6de4017d00f"
+    },
+    {
+      "path": ".envrc",
+      "type": "file",
+      "sha": "722e94e51567db433cee93023df31b175d49e44e"
+    },
+    {
+      "path": ".etc",
+      "type": "dir",
+      "sha": "43c23852f0b6410ce94d75634523b5b25c601fc6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7217e5541d1e52bfee78c40d31b7f58168ea55c7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "07e89f7f4e8a0eb4f96c98e708de851f82bb82e4"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "220ddaeab972b3b54d96f8bb1be00e225683ecac"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "b71e335a6e073a48f8267e9dc89b1796a98359d6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1e1d711e582ecf4dff3cf174e21ff31a682912e3"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "599a19290e7902e5bc955bbdbad730340f1530ad"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "906a4a7779a35921b4058385617cb703d2492c76"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3dbfa02e3a7c9d51289f5d3ede2ab71dbc694919"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7efd8171563d1e5edf998b81d0a6389e37036ab8"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "73866eaca135309e722de6173148046ba81dcc5c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e4952e417d6ad76d2df573f05df39b9725c2abdb"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "22360de8787ca921f56f59210ef9afac2f999c8c"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "ed97f329b2ea62141e621a940fd3f9c27391188e"
+    },
+    {
+      "path": "fluid_benchmark_TODO.md",
+      "type": "file",
+      "sha": "319108cd032be2e08cc70d87f953a214119b115c"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "8e275b740f263828ba030f107ed07556a8d6bec7"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "671036ce27ba732829b6b375d3e75e2a320753e6"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "459e1526e79c0e22ff56931bd1610ec9fda36eac"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c666e296715a7f20d789e80a42f29483ee51e474"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "601b257d19f9aa782e079f5558ef091aee824612"
+    }
+  ],
+  "classification": "specialized_server",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies replacement Minecraft server; Rust src/build present, excluded from game-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

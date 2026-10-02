@@ -1,0 +1,94 @@
+{
+  "repository": "hakolao/sandbox",
+  "repository_id": 447245811,
+  "commit": "dbf9d596c291a48ff2b9d5ad330b306882c4a8a6",
+  "source_url": "https://github.com/hakolao/sandbox/tree/dbf9d596c291a48ff2b9d5ad330b306882c4a8a6",
+  "readme_path": "README.md",
+  "readme_sha256": "c2b9c2a217c0226485c5ffc9123b3b9cbce4c50d9c7f42368379f66814c4ed85",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5381b55764889d633a782612381baad0be3c70ee"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06fac4eb28c9a66d4a3482304522bc53a499d013"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "d52ce8ba157c61dce4ad07f20a24112744ae19c7"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "d21eaee6697a96554b83d891052c5d07fc3f5af8"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "1c466d99e0435209e4e7cb31aa5df83549d985a5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1b22bef9c78ad96ebe90dcd3e565c097acdd2cce"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b9e7ce53edba2f5b4ab96a379ca0323a981ca92f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "695e30f955c91a71c7f0b4ba8ee465fcb8bcce9c"
+    },
+    {
+      "path": "corrode",
+      "type": "dir",
+      "sha": "593f98694dca2ee7c667caed50cff6a018bd1c4d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "dcbb957613015f126fa478e0f8171098febc4020"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "9aced75d9c44c7921c58c715379f0e83eb1bc6bb"
+    },
+    {
+      "path": "osxcross_setup.sh",
+      "type": "file",
+      "sha": "8a472831f87f6d0e41bfca83f563fe47c390444d"
+    },
+    {
+      "path": "run_build_dist.sh",
+      "type": "file",
+      "sha": "830c2f8a37c129e3f21cf06928f6568b6d172bb8"
+    },
+    {
+      "path": "run_checks.sh",
+      "type": "file",
+      "sha": "ca8ddb2b40d61e1767eb78ac45ca58ba348cfb2f"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "204f7ce96594339e303e4e26ea17db187c4ee4a4"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "43f3aa087886a21a5106589102a3842439b7cbf0"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pixel physics simulator and precursor to a game, rather than a reusable engine product.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

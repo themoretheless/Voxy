@@ -1,0 +1,249 @@
+{
+  "repository": "elgopher/pi",
+  "repository_id": 515452970,
+  "commit": "00f550e54ed6d4784f4016c132762dd425e2cb93",
+  "source_url": "https://github.com/elgopher/pi/tree/00f550e54ed6d4784f4016c132762dd425e2cb93",
+  "readme_path": "README.md",
+  "readme_sha256": "313336c2ffaf65577116b1c42953842f21990ce775e8776de32f9f26fbc44b31",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f03ccc57e87276ca090dbcab83a7a42d044ee875"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "100bc302f7206fc6ecaaf102ebd2db37839283e0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "354b8d6f1fae87c917d1a7be171e7d92a4c66f72"
+    },
+    {
+      "path": ".golangci.yaml",
+      "type": "file",
+      "sha": "0f6cdeeff78ce19a0f38b1d1a57c0806f7c74426"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "354540473881bddc18a7756f8b038e28083d8688"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d9ec70802ff035c18e36c412f756f2f297a699ea"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "282fe8fe415e66b422ffaf0d9ed6cece4445f8fa"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e50bf35819d033790b39c05f743c8d2749b59505"
+    },
+    {
+      "path": "_examples",
+      "type": "dir",
+      "sha": "d4fae80d6587594a016e39c7471462a3e65f5d4e"
+    },
+    {
+      "path": "area.go",
+      "type": "file",
+      "sha": "d49fabaf38a007e896bf273e1f2aa27e650f0c52"
+    },
+    {
+      "path": "colortable.go",
+      "type": "file",
+      "sha": "b8886e38ee3668e0fa4886a1b09c5c882a4235cc"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7ddca8bd59e60228d9ce67a46fb68747a3a36cf9"
+    },
+    {
+      "path": "gameloop.go",
+      "type": "file",
+      "sha": "ab69823ece6d3bb99a3f98ae6ea0aed540353bf1"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "4016a24e2613fded4a8e59a27ca53842a06363e5"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "d4ea104d702698f3556a0ea00d81e5a89d5baa03"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "7244187269f67fa830a08ea6b97f48194329bc35"
+    },
+    {
+      "path": "masks.go",
+      "type": "file",
+      "sha": "e376ad4db01b1042e8099c9d15fa0eaea6848e79"
+    },
+    {
+      "path": "palette.go",
+      "type": "file",
+      "sha": "39b6c4dab5f0e75939b530b757ff9a12c342f3fe"
+    },
+    {
+      "path": "palette_test.go",
+      "type": "file",
+      "sha": "dbe9411a62e6976b52b99978c4f968d4398a765b"
+    },
+    {
+      "path": "palettemap.go",
+      "type": "file",
+      "sha": "9c4b65d9186aefc445525c34b710bc82b0580228"
+    },
+    {
+      "path": "pi.go",
+      "type": "file",
+      "sha": "1cf11da14e8ec150af54bda67b9ea67dc677db7c"
+    },
+    {
+      "path": "piaudio",
+      "type": "dir",
+      "sha": "b102e7bb18548f52e5e1d150f031f7e41088fb7c"
+    },
+    {
+      "path": "picofont",
+      "type": "dir",
+      "sha": "9cf31971e1ff998134fececc6cd9af2ca580d308"
+    },
+    {
+      "path": "pidebug",
+      "type": "dir",
+      "sha": "6de17462e3b18095a26f90d30fbe30eb71182d4f"
+    },
+    {
+      "path": "piebiten",
+      "type": "dir",
+      "sha": "f0beb3bb6ac8a7bcde5f9e3e62b8af179ad5446e"
+    },
+    {
+      "path": "pievent",
+      "type": "dir",
+      "sha": "62251d979a440e6b4b674b1d16f8db2cbfe8fbad"
+    },
+    {
+      "path": "pifont",
+      "type": "dir",
+      "sha": "8c7116a3055c527d23330dfc493298c2f70a88b2"
+    },
+    {
+      "path": "pigui",
+      "type": "dir",
+      "sha": "c727308b45ae3974c7365b249ebebe9eaf7e56ab"
+    },
+    {
+      "path": "pikey",
+      "type": "dir",
+      "sha": "723a761315fe6cb337594263938ba60b0364cc0c"
+    },
+    {
+      "path": "piloop",
+      "type": "dir",
+      "sha": "1088659d1f04d9a061874ae16523cd26377d968a"
+    },
+    {
+      "path": "pimath",
+      "type": "dir",
+      "sha": "724401930cccb0111c168ad3105670a97564d479"
+    },
+    {
+      "path": "pimouse",
+      "type": "dir",
+      "sha": "d3028c5cbe4f46f8fe914cb8eec55d343142985d"
+    },
+    {
+      "path": "pipad",
+      "type": "dir",
+      "sha": "da80fc6d44d608fd96eedbdfa4e88e8a865505d7"
+    },
+    {
+      "path": "pipool",
+      "type": "dir",
+      "sha": "ab4ba8e507f3b44b7cbe07fc35e9d160ea10f700"
+    },
+    {
+      "path": "piroutine",
+      "type": "dir",
+      "sha": "ed07e7c434c0850b1b56aa04383cb7cca9544b3e"
+    },
+    {
+      "path": "piscope",
+      "type": "dir",
+      "sha": "3899dc2609e76eb22ac944a2589d48449604bac8"
+    },
+    {
+      "path": "pisnap",
+      "type": "dir",
+      "sha": "ff98c485fe4dcbd85e8f57e72e68a493dc323306"
+    },
+    {
+      "path": "pistat",
+      "type": "dir",
+      "sha": "fe4e78e1e5e4d6a3f35ec40fdb9662d4dfd3b0d8"
+    },
+    {
+      "path": "pitest",
+      "type": "dir",
+      "sha": "46b293ad1da462d0544f1de3fc1f26cf5f97a367"
+    },
+    {
+      "path": "position.go",
+      "type": "file",
+      "sha": "9892752f56e6bc16873c34026185d510b5d19102"
+    },
+    {
+      "path": "screen.go",
+      "type": "file",
+      "sha": "151fb41201dda1f353d9b14a45fa3f151d630794"
+    },
+    {
+      "path": "shape.go",
+      "type": "file",
+      "sha": "4725f77701c4005f33733ce9ef05b003611d10ed"
+    },
+    {
+      "path": "shape_test.go",
+      "type": "file",
+      "sha": "dbee386abbd76caaad770270b38f91108b966e95"
+    },
+    {
+      "path": "sprite.go",
+      "type": "file",
+      "sha": "477379991abfc4d6afd5e8de14c83b8c4a0673ff"
+    },
+    {
+      "path": "sprite_test.go",
+      "type": "file",
+      "sha": "e34acd358ee9b69e98ad82ca7eeec6eaee56c487"
+    },
+    {
+      "path": "surface.go",
+      "type": "file",
+      "sha": "16859eb5893b39808ae517b7727a4282850a1b93"
+    },
+    {
+      "path": "surface_test.go",
+      "type": "file",
+      "sha": "97734daea201c5245742d6542951f5c30257558f"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Retro game framework built on Ebitengine with audio/input/UI extensions; underlying Ebitengine provides runtime backend.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

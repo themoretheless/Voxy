@@ -1,0 +1,129 @@
+{
+  "repository": "Snapchat/SnapRHI",
+  "repository_id": 1162153064,
+  "commit": "2cac46aaa7d19e6d4822d5247fe56bc43dc21c23",
+  "source_url": "https://github.com/Snapchat/SnapRHI/tree/2cac46aaa7d19e6d4822d5247fe56bc43dc21c23",
+  "readme_path": "README.md",
+  "readme_sha256": "cdcc029c75849561584526f4972d4eb77143c465719196360ae643e08d36e638",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "5feb4faf8c402195c00f9dad2f67164bb0851eec"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d3fa0ae7358e1f6d15b70fdfbbbc98bea9ece785"
+    },
+    {
+      "path": ".fossa.yml",
+      "type": "file",
+      "sha": "6716d46bb2c2571f29fe9a9fd7ff29d432cca263"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6f27b95ff3eedf52c74d37b835400ad9575dbd57"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ce9ae1ef3904d59a234b9e700f2f919f23edfab4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "77d4f7cdb36a300b7f4c0d690fce50824881e841"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "b4e9689fd0e44763f6cbe868aa6bc19bf1977259"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "76e5090c4dcba1ff6652d221a9bbfd1d4f22a0e3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "efe385263009aba0aa96cb6d3f70e7ffa4d8a134"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "a4106e66f57dba65d8e6ebe98bf7b344575c511e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "582527ce743f8a108b2ba44518ccbdef8e11c41e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "4e9c3a98f6faac36a24027086a509f3162f8af0a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "95aa848013bee18302b663bb63aa78c6f44a668c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6cd292446bd0666df43b1e4b53fb107fce074de8"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "51dd65f303298659bc3a9faad4b3686a2143c5e3"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "362294a89540f6c5fcd29e6eab5dcf9075865e0f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "a8c744e99eda995df40662d2593db928526bee2f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "cc709798bdae29323d6c4157ef5b108e265848bc"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "cfd8f5e6ae741e48c4cb80214c2a2e9f79c007dd"
+    },
+    {
+      "path": "fossa-deps.yml",
+      "type": "file",
+      "sha": "0be6e39c1a4514de59fd11d0df6a0243599a408c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "53abdda994fb6dfa01afca7c1a15f46ec0cc1036"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "7efec41d5c86c9edc118f2ebf04ae9e1e0d1e52c"
+    },
+    {
+      "path": "third-party",
+      "type": "dir",
+      "sha": "29fcb95d8b745390cb2aaae03453896b1a6cbfac"
+    }
+  ],
+  "classification": "rendering_subsystem",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Backend-neutral graphics API abstraction exposing synchronization/resource/memory control; not game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

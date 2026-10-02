@@ -1,0 +1,39 @@
+{
+  "repository": "Eamonnzhang/learning-pixi",
+  "repository_id": 88833434,
+  "commit": "959d50089d474b14016915c2c79b5f0764a29d83",
+  "source_url": "https://github.com/Eamonnzhang/learning-pixi/tree/959d50089d474b14016915c2c79b5f0764a29d83",
+  "readme_path": "README.md",
+  "readme_sha256": "a056641e3a23a38bf74dc3bbeb44064716733a2a22e50ee4154df003dc0cf633",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f7189041157530835cbfa5cfc196e09b7b50ce44"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6fbc1fd25b906a48616aa3c3b7ae84c2d60ac47a"
+    },
+    {
+      "path": "README_EN.md",
+      "type": "file",
+      "sha": "da161b121fd7ebb0f311e6c038c7fedd2348e268"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b7ae0ed7c9740f18a3f2c7cba8c2030b4c67e8d1"
+    },
+    {
+      "path": "pixi.js",
+      "type": "dir",
+      "sha": "be4a88b244fe5d74cd340ea36b8907256f11132e"
+    }
+  ],
+  "classification": "excluded_rendering_tutorial",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Translated Pixi rendering tutorial and examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -31,27 +31,33 @@ fn domain_and_invalid_tables_are_explicit() {
     assert_eq!(table.at(0.5, 150.0), Err(Error::OutsideDomain));
     assert_eq!(table.at(1.5, 201.0), Err(Error::OutsideDomain));
     assert_eq!(table.at(f64::NAN, 150.0), Err(Error::InvalidInput));
-    assert!(Table::new(
-        Kind::GreyAbsorption,
-        vec![2.0, 1.0],
-        vec![100.0, 200.0],
-        vec![0.1; 4]
-    )
-    .is_err());
-    assert!(Table::new(
-        Kind::GreyAbsorption,
-        vec![1.0, 2.0],
-        vec![100.0, 200.0],
-        vec![0.0; 4]
-    )
-    .is_err());
-    assert!(Table::new(
-        Kind::GreyAbsorption,
-        vec![1.0, 2.0],
-        vec![100.0, 200.0],
-        vec![0.1; 3]
-    )
-    .is_err());
+    assert!(
+        Table::new(
+            Kind::GreyAbsorption,
+            vec![2.0, 1.0],
+            vec![100.0, 200.0],
+            vec![0.1; 4]
+        )
+        .is_err()
+    );
+    assert!(
+        Table::new(
+            Kind::GreyAbsorption,
+            vec![1.0, 2.0],
+            vec![100.0, 200.0],
+            vec![0.0; 4]
+        )
+        .is_err()
+    );
+    assert!(
+        Table::new(
+            Kind::GreyAbsorption,
+            vec![1.0, 2.0],
+            vec![100.0, 200.0],
+            vec![0.1; 3]
+        )
+        .is_err()
+    );
 }
 
 #[test]
@@ -85,18 +91,20 @@ fn csv_unordered_grid_and_invalid_nodes() {
     );
     assert!(Table::from_csv(Kind::GreyAbsorption, &csv.replace("1,200,4", "2,200,4"), 4).is_err());
     assert!(Table::from_csv(Kind::GreyAbsorption, &csv.replace("1,200,4\n", ""), 4).is_err());
-    assert!(Table::from_csv(
-        Kind::GreyAbsorption,
-        &csv.replace("opacity_m2_kg", "opacity_cm2_g"),
-        4
-    )
-    .is_err());
+    assert!(
+        Table::from_csv(
+            Kind::GreyAbsorption,
+            &csv.replace("opacity_m2_kg", "opacity_cm2_g"),
+            4
+        )
+        .is_err()
+    );
 }
 
 #[test]
 fn free_free_planck_mean_matches_independent_frequency_integral() {
     use physics::{
-        astrophysics_eos::{Species, BOLTZMANN},
+        astrophysics_eos::{BOLTZMANN, Species},
         astrophysics_opacity::FreeFree,
     };
     let model = FreeFree {

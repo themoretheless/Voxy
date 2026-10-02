@@ -1,0 +1,104 @@
+{
+  "repository": "flipcoder/qor",
+  "repository_id": 15292870,
+  "commit": "7a2ebf667be4c913fbc7daf5e0b07a4c1723389d",
+  "source_url": "https://github.com/flipcoder/qor/tree/7a2ebf667be4c913fbc7daf5e0b07a4c1723389d",
+  "readme_path": "README.md",
+  "readme_sha256": "f6fb618e4efd7eafaf98114290e9f1812fdb44d361e81ffe5840a8b80d62bb63",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1f9971b2428771cd89d9962d71f93e3f6b1a5a26"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e436e1b49187f4c11cd395e9bab120b1d0b5ba45"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "04eb1190f2b89882073a53bcdb953eaa3b0fa9bc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ded515ee2592abc0bbceaf1443e57c60f8cb30bc"
+    },
+    {
+      "path": "Qor",
+      "type": "dir",
+      "sha": "50b6c290ae6b33064bf29fbccd285f5136145ac2"
+    },
+    {
+      "path": "QorBook.md",
+      "type": "file",
+      "sha": "e7bea11640f9bbef659b8399c5b41f09af70255f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7496a878652b97eb0730db2b527e9d2fea4218bc"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "5f0de8f3c96c686712af37dc254b6971fcb46eb0"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "9b18ebe0f74851c4fb3013e0a35f448e72eae717"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "740087a3ca53473279d166ca3721de05878c118d"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "f89ca93c84527ab594198ab7731d0d449de214eb"
+    },
+    {
+      "path": "qor.png",
+      "type": "file",
+      "sha": "6802bbc324eb70cc36352319fe83d1e04391b638"
+    },
+    {
+      "path": "qor.tasks",
+      "type": "file",
+      "sha": "88977e58860231cb93aabff947abe2b402d25c49"
+    },
+    {
+      "path": "sg.json",
+      "type": "file",
+      "sha": "60b4ff6abfd8c7da96501ba3cb76ad3b6e627713"
+    },
+    {
+      "path": "swig",
+      "type": "dir",
+      "sha": "64f9dc27f47c5639181bab2061018cbe6b2436fd"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "459d750d290553f0f7217363afa8cde3cc007683"
+    },
+    {
+      "path": "test",
+      "type": "file",
+      "sha": "b075e4ea42dd4bd403160497b1c8db148f991484"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "e017a5ebaca5b1e1fb8a99a36f5ce8df8322ac1e"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ OpenGL 2D/3D game engine with Python scripting, source, templates and documented dependent games.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

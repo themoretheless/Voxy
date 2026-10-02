@@ -1,0 +1,69 @@
+{
+  "repository": "LaKraven/ADAPT",
+  "repository_id": 51543656,
+  "commit": "42d658ed3d772e6a59fa1e65f36564ee6bd4f14d",
+  "source_url": "https://github.com/LaKraven/ADAPT/tree/42d658ed3d772e6a59fa1e65f36564ee6bd4f14d",
+  "readme_path": "README.md",
+  "readme_sha256": "135f1fae36950da6dc87afe4dbd4849a2f29a8bd73e4ba65fe99fcf62b305509",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a9332a577c8ae6c744af7e0fecb0582351569783"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "782904e9ce09ae9add63ffc6d51fb47e169dbb83"
+    },
+    {
+      "path": "Delphi_10_1_Berlin.groupproj",
+      "type": "file",
+      "sha": "3b5890735790ac8d6f66f92538745e8cd33efeb9"
+    },
+    {
+      "path": "Delphi_10_2_Tokyo.groupproj",
+      "type": "file",
+      "sha": "3b5890735790ac8d6f66f92538745e8cd33efeb9"
+    },
+    {
+      "path": "Demos",
+      "type": "dir",
+      "sha": "e3070ac4cd64e36c8784e15215b300cd223eb62a"
+    },
+    {
+      "path": "INSTALL.bat",
+      "type": "file",
+      "sha": "223427542c0b56b1b73bd3b969dda5b006757064"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1447adc8fb64bbe404e0fa04dae14b697b48c0e9"
+    },
+    {
+      "path": "LibrarySupport",
+      "type": "dir",
+      "sha": "3c26a72d56b9959bd419bdf5cdb311383f7b78de"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ad981122f56a9b3249f4fc02a7253ea6169e6cf9"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "7c6608477f9be47d2ed215a010d9845e20c417cb"
+    },
+    {
+      "path": "Unit Tests",
+      "type": "dir",
+      "sha": "400eb21f1817c5b53acca02087217afd6e3fd289"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Delphi asynchronous/event/threading foundation extracted from engine work, explicitly general-purpose toolkit.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

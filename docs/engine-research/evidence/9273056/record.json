@@ -1,0 +1,77 @@
+{
+  "repository": "ShikemokuMK/tyranoscript",
+  "repository_id": 9273056,
+  "commit": "c8dbfd492afd3d79b0954fcf4477236f5c6c4830",
+  "source_url": "https://github.com/ShikemokuMK/tyranoscript/tree/c8dbfd492afd3d79b0954fcf4477236f5c6c4830",
+  "readme_path": "readme.txt",
+  "readme_sha256": "b3a7570d53e4934cccd5930dba726d27e167a24946b7bb87a9472a4b858a3c4e",
+  "entries": [
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "b1ebae3f8f4048b2f8c6652589e0f7c1b327d264"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "62ea4aedcf44ca3c26facb92f740ae160c33cf7a"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "1157582ccfe36bf72c01c3defc2aaa1a1a7345c0"
+    },
+    {
+      "path": ".prettierrc.js",
+      "type": "file",
+      "sha": "f3ea5048c4964e9837263faf78d9a179672d12f2"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3bda06fa4954799e55778526a6458085fbc62b2f"
+    },
+    {
+      "path": "LICENCE.txt",
+      "type": "file",
+      "sha": "fa93973bad129b32b672cca9f7c772a272a75df5"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "2b4f683a9c9c5b2c122ffbbd1375d1044c281b62"
+    },
+    {
+      "path": "doc.html",
+      "type": "file",
+      "sha": "7cb288386d37ee2d91b9aa300305423710e20fe5"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "8b591ac15639d1027c465b8cf9b1390a33c90ee5"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "819902a28a24eade4b1f412fb60ebe0e2cdabccb"
+    },
+    {
+      "path": "readme.txt",
+      "type": "file",
+      "sha": "55318ea34c975185f5d3657b49a7b16224bb06f3"
+    },
+    {
+      "path": "release",
+      "type": "dir",
+      "sha": "87c94442eaa354b34126bd7683c2beac65291dbe"
+    },
+    {
+      "path": "tyrano",
+      "type": "dir",
+      "sha": "957a342dc78fb0a078e574768636e5f1d58b0c68"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,72 @@
+{
+  "repository": "eliasdaler/edbr",
+  "repository_id": 757388153,
+  "commit": "517f76c1ee6f12ab3fccd3ad3ea6c8039ece233a",
+  "source_url": "https://github.com/eliasdaler/edbr/tree/517f76c1ee6f12ab3fccd3ad3ea6c8039ece233a",
+  "readme_path": "README.md",
+  "readme_sha256": "aa1ab75cb4841748e7bf61d1dbd7989b33dbe5de9582e363a3ba434cf827cd5a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "228625d929e9260a9da61ab5d6ea3855786c331c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ac054c447d534b043d0a92406e7c4df9d30171a9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ef7624a52f48618e1bcc27d43ba41bc4838768d9"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b780b1220de9a22f1898eef6526d719db92ba182"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "724a62574a0ac0a6d491c3162678ffd81628e884"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "32d7763d4b153e70ae956c8ea33fdf9cc557ff77"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "02f4e59540d2fd65a0fc3782114f83ebcd1b155c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e8afd942543532da18f6c6505b9f7342004089d9"
+    },
+    {
+      "path": "edbr",
+      "type": "dir",
+      "sha": "4bf2f253b31fd1f152ff903e2baab3ef66c3bbab"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "80a9ab6f934f6a3e229dc395dcfa8f67c574c6ef"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "28a7fcfe8c169a4f3e296300aa0d78429ff50239"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "80c0562ba0a7171f75d358b901969e98c059aa72"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

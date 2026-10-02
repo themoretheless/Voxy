@@ -1,0 +1,64 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.91s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-3dcdb8b03d36775c)
+
+running 56 tests
+test audio_play::tests::aggregate_input_and_pcm_admission_preserve_counters_on_rejection ... ok
+test gizmo::tests::axis_hits_use_physical_viewport_coordinates ... ok
+test camera::tests::both_projections_round_trip_after_orbit_pan_zoom ... ok
+test panel_focus::tests::surviving_identity_updates_action_and_context_changes_cancel ... ok
+test panel_focus::tests::held_activation_cannot_jump_to_reindexed_object ... ok
+test picking::tests::empty_triangle_bounds_do_not_hide_a_real_hit_behind ... ok
+test panel_focus::tests::repeats_after_focus_loss_cannot_reactivate_a_target ... ok
+test panel_focus::tests::invalid_reconciliation_preserves_live_focus_and_target ... ok
+test prefab_authoring::tests::subtree_export_keeps_nested_links_overrides_and_authored_parent ... ok
+test packaged_game::tests::launch_rejects_traversal_and_nested_bootstrap_before_running ... ok
+test panel_focus::ui_scene_integration::ui_scene_validation_undo_and_play_restore_use_common_registry ... ok
+test tests::audio_settings_reference_inspector_supports_default_and_history ... ok
+test tests::audio_inspector_edits_asset_and_parameters_with_validated_history ... ok
+test gpu_model::tests::residency_drops_with_last_owner_and_dead_entries_are_pruned ... ok
+test gpu_model::tests::deferral_wakes_on_source_budget_or_residency_change ... ok
+test scene3d_tests::gpu_residency_requires_active_renderable_descendants ... ok
+test tests::authored_motion_runs_in_fixed_loop_and_stop_restores_descriptor ... ok
+test scene3d_tests::static_gltf_hierarchy_material_camera_edit_and_persistence_share_resources ... ok
+test tests::audio_component_crud_discovers_assets_and_rejects_competing_listener ... ok
+test tests::drag_is_one_undo_step_and_cancel_preserves_redo ... ok
+test tests::deletion_restores_empty_scene_and_preserves_object_identity ... ok
+test tests::behavior_inspector_edits_undoes_and_rejects_conflicting_writers ... ok
+test tests::duplication_preserves_registered_behavior_and_activity_with_new_identity ... ok
+test tests::gizmo_pointer_gestures_constrain_axes_and_undo_without_changing_resource ... ok
+test tests::hierarchy_inspector_and_play_preserve_authoring_history ... ok
+test tests::mouse_selection_uses_transforms_depth_activity_and_restored_handles ... ok
+test tests::pending_play_cancel_keeps_authoring_history_and_simulation_stopped ... ok
+test tests::native_play_simulation_ticks_and_stop_preserve_authoring ... ok
+test tests::mixer_inspector_round_trip_history_and_duplicate_bus_rollback ... ok
+test tests::physics_component_inspector_crud_history_and_play_use_authored_descriptors ... ok
+test scene3d_tests::camera_and_light_without_model_round_trip_and_unknown_assets_reject ... ok
+test tests::shutdown_joins_workers_even_if_simulation_rejects_scene ... ok
+test tests::shutdown_joins_workers_after_behavior_destroy_panics ... ok
+test tests::reload_preserves_scene_instance_and_edited_transform ... ok
+test tests::transform_inspector_rejects_invalid_physics_pose_without_history_change ... ok
+test tests::playable_fixture_persists_physics_and_rejects_invalid_parenting_or_scale ... ok
+test tests::standalone_uses_fixed_loop_without_preview_spin_or_authoring_controls ... ok
+test audio_reload::tests::replacement_budget_rejects_candidate_and_retains_old_publication ... ok
+test scene3d_tests::textured_static_import_rejects_truncation_and_observes_external_dependencies ... ok
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ignored, requires a real GPU adapter and local TrueType font
+test ui_draw::tests::backgrounds_follow_scene_painter_order ... ok
+test ui_live::tests::finished_panic_does_not_lose_unfinished_worker_ownership ... ok
+test ui_text::tests::font_count_budget_rejects_before_any_file_reads ... ok
+test audio_settings::tests::manifest_relocation_rejects_stale_settings_save_until_explicit_reload ... ok
+test tests::authoring_file_round_trip_preserves_ids_transforms_and_resource_references ... ok
+test scene3d_tests::multi_material_nodes_preserve_parent_transforms_and_all_six_min_filters ... ok
+test panel_focus::integration_tests::real_panels_and_native_key_adapter_share_focus_and_authoring_actions ... ok
+test ui_draw::tests::glyph_geometry_clips_uvs_and_rejects_stale_owner_publications ... ok
+test ui_text::worker_tests::worker_publication_failure_retains_old_text_and_source_observations ... ok
+test prefab_authoring::tests::editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene ... ok
+test ui_text::tests::observed_logical_font_unicode_runs_share_atlas_and_invalid_font_retains_prior ... ok
+test scene3d_tests::incompatible_gltf_hierarchy_reload_retains_resource_and_edited_owners ... ok
+test import::lod_model_tests::model_certificate_identity_and_dependency_publication ... ok
+test ui_text::budget_tests::repeated_font_content_still_counts_each_retained_input ... ok
+test tests::multiple_resources_reload_independently_and_round_trip ... ok
+test tests::play_imports_scene_audio_advances_pcm_and_stop_releases_session ... ok
+
+test result: ok. 55 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.74s
+

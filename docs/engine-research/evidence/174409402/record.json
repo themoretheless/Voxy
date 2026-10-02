@@ -1,0 +1,99 @@
+{
+  "repository": "amerkoleci/Vortice.Windows",
+  "repository_id": 174409402,
+  "commit": "3814e091b2206bd84957a4512a44d51220fa4923",
+  "source_url": "https://github.com/amerkoleci/Vortice.Windows/tree/3814e091b2206bd84957a4512a44d51220fa4923",
+  "readme_path": "README.md",
+  "readme_sha256": "b1915a0531e8bbad5fb77136b985c926c6ce85b5fcac87cc5a736f389f75072a",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c24a7a1ee68ea8b5263fa2492363df34c5aa041d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d0ed94ed2ab4a56fe75d77fdb637d1568ac4cee7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "06db3607220e28c5ff5d93a2813cc0eda554945d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0eae453b0b67aa58c6c487d5acbdff9e4ef4b4fc"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "08d89e10a11afde69edf4b1cabfd12982f0b52e3"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "cf273ae5ebf9322b35786e85ad7016cd7b7dcc3c"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "f1344baf67dc232c64c450fd7ea16ed8b0095f3e"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "type": "file",
+      "sha": "c5910c2e2bade1ebf0c8d3c53fa35c169da3a724"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "15fd3b8dd0e0f4474555ad0d248ecb68a278b7d1"
+    },
+    {
+      "path": "NuGet.config",
+      "type": "file",
+      "sha": "4a80d4d091f9f8ab95ac2afffb85e98963197a41"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bf9cbc9d62356b77877d6ab1532df87f2a635930"
+    },
+    {
+      "path": "Vortice.Windows.slnx",
+      "type": "file",
+      "sha": "563b669a9c096fbb114d0bbcf2e2fd3695b3829c"
+    },
+    {
+      "path": "Vortice.snk",
+      "type": "file",
+      "sha": "1425fb0d69d677ee28915d39598fe494f711e213"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "dcebee794d28470f2312a792fdde0996fdb2be0a"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "c7989f2cfcacf619948ff7c4743651fbd8800f3e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e7215f080548abd0031d7577dbb732739ad30c62"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "93ad505fab8a74f7e75c2130572e6b787d8de087"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/root identify .NET graphics/audio/input API bindings, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

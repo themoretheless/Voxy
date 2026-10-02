@@ -1,0 +1,44 @@
+{
+  "repository": "OpenXRay/xray-15",
+  "repository_id": 23224089,
+  "commit": "ad7b68b700d73abf6487675ab5905c06617a714a",
+  "source_url": "https://github.com/OpenXRay/xray-15/tree/ad7b68b700d73abf6487675ab5905c06617a714a",
+  "readme_path": "README.md",
+  "readme_sha256": "dac89a131209ac654ac5b275ae6465c38cff629553210a7a8deae365ccdb2a04",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "297b63598b3225b0457c6bdf0a0219fd34ab6fbf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c447b072f85846cca56cc493b43e69d8c47d8c93"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "01ea9024f8c3de54a0a00a1f559a39f4ea8d4c8d"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "825753ffa11d74e3682fce31f267ff0055c8c156"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6e8a9e6d64fee303954743e32c1cfbc6a4be26e8"
+    },
+    {
+      "path": "cs",
+      "type": "dir",
+      "sha": "e958e06a8caf597ffc4474471caa42a02b26bda5"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify native X-Ray runtime/backend expansion; owned cs engine source, historical lineage retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

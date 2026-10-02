@@ -1,0 +1,54 @@
+{
+  "repository": "Panopticon-AI-team/panopticon",
+  "repository_id": 684388144,
+  "commit": "b4cc6590670f8a7333715b6f3884ed725d506d05",
+  "source_url": "https://github.com/Panopticon-AI-team/panopticon/tree/b4cc6590670f8a7333715b6f3884ed725d506d05",
+  "readme_path": "README.md",
+  "readme_sha256": "d7ead3ed50ec35f212705e2f85226740a7cccea2501731c5db72157297f5e314",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a56994c046f605cb21c10909d11371c6e029808a"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "c4b4ce242df09150497e02e7304bd30964001ca4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6f924822f8ac88681478bd3ff9fa8778646b44e8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bfabc626106ebc37552bd7484480bacfa41f50a7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6dcc3c6caf8378b855533230e60cce16aca96d06"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "b7b51f2b4a989c8b3cbb11be4026a58c42cf3c85"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8307d5c7df8e8760a06b11421fa7ba2900adef27"
+    },
+    {
+      "path": "gym",
+      "type": "dir",
+      "sha": "a3c20cb01aabe7406803171c84d54a7094749b30"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Web military simulation platform and Gym interface, rather than a separately identified reusable game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

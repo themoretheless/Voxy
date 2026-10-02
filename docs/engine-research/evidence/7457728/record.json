@@ -1,0 +1,199 @@
+{
+  "repository": "excaliburjs/Excalibur",
+  "repository_id": 7457728,
+  "commit": "fdf38a91e244a235eab5e6aa252616e2eb9a19f6",
+  "source_url": "https://github.com/excaliburjs/Excalibur/tree/fdf38a91e244a235eab5e6aa252616e2eb9a19f6",
+  "readme_path": "README.md",
+  "readme_sha256": "5c01916c079b75918296551b634519f0d974236ec4de0d99b6c612a45f36a512",
+  "entries": [
+    {
+      "path": ".babelrc.json",
+      "type": "file",
+      "sha": "0823833d21df888e494425a65c214a3d47c8720a"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "54bbc1455c0aeb8eab67a9773e8a934d61a1e4bf"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "a23865ddb1134e93970a9e42237f933264577531"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ca226fff0b04f38b7d59c1a0c2057851bd869ca"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "aa5add3473c1730ca234d9b1790cb36f6d4d3b92"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "16116b32bac87049fa5736d7e164dd531d1e86b4"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d78e84ac868b8d6a1aa8ffaaa224e086f35df296"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "0ebd40652be4585810e310f9870e6c349b79cf42"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "02a0ca2551c76f29e378e75b4ae199052cc2cdca"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "f3437ccc98d4b6cac67e3820d592a060bf56d99d"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "b832e4001dbc9fb44e7055debe656e04b254f47c"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "c5bdfc89c06b9ecef799e51ef26b9504a96d6f55"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "10b248878e7e4734ce0e6a9f7a932073a62afbfb"
+    },
+    {
+      "path": ".storybook",
+      "type": "dir",
+      "sha": "30077096d983f71a43961798b25ae4e055d1d8c8"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "95ed02ea547eff106ad2c6c318a642a0fc1d269d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0913176f4890e2525717d775636fdf47f7fd4f0f"
+    },
+    {
+      "path": "Excalibur.nuspec",
+      "type": "file",
+      "sha": "05d599a26a45d46ed4b20ac6f693de2d8ddee188"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "92b7a14f5d2ad64f0c131abc02f349c2db20d3fb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e1117756f5fcfce48cb5c6a91592b50634520f3c"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "3427dda8f67f7b15b7458046f63c6ea0b3b2c78c"
+    },
+    {
+      "path": "STYLEGUIDE.md",
+      "type": "file",
+      "sha": "212fa32a810bbdb8d7f7b0ac7638a312ab9425c4"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "36dc23c3a13bd0cee716097a588e443f16c92d8a"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "4d050537ff2ed300b6c846a040417a7ec4210eea"
+    },
+    {
+      "path": "karma.conf.browsers.js",
+      "type": "file",
+      "sha": "59fed7ab25721ff9ce897c27dfc3a080d1964a68"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "93ea82c18c8f07d8359ad58ea55c79c0de761d1d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "7e3ee5de37c68ab9082b4306934cd82ff7a159a9"
+    },
+    {
+      "path": "playground",
+      "type": "dir",
+      "sha": "ad0e1b6adce4b9b8bde5a5f7fa1b8628865c6744"
+    },
+    {
+      "path": "renovate.json",
+      "type": "file",
+      "sha": "e29aa384b295c13f13b5fba8ad56b8d97f7b6ed4"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "4af9aef12b741b903b22c89b6d90d8239f2229dd"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "db610378f8344a61857cb558831d5342361d6a63"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "f132fc9d9d72bda78343d12e66f072b02ad900f7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "54c03bdcc1ed992d4d0301b5d0928243780dcff1"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "0967ef424bce6791893e9a57bb952f80fd536e93"
+    },
+    {
+      "path": "version.js",
+      "type": "file",
+      "sha": "642ff223bda9fb35db56dc336e061e4599a163a1"
+    },
+    {
+      "path": "vite.config.common.js",
+      "type": "file",
+      "sha": "42c21617f78dbadf9cb01611789eab9bd5a4a688"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "31cc5629ac02c923eeb74c20616ae05cca64b495"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "4bb6c4b694dddb2afbdcc182df5af82165c19132"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies TypeScript 2D engine; src, npm build and engine-test commands.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

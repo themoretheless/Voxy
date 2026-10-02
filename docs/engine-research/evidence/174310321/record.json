@@ -1,0 +1,67 @@
+{
+  "repository": "bberak/react-game-engine",
+  "repository_id": 174310321,
+  "commit": "488c5093fff6808d76701a5b05c2e88505631535",
+  "source_url": "https://github.com/bberak/react-game-engine/tree/488c5093fff6808d76701a5b05c2e88505631535",
+  "readme_path": "README.md",
+  "readme_sha256": "030079afc3091d3f4fede3d379c8e3cd6cc33c523b5db5743feabb8062edc68c",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "167ddd999b9f4f133ecebf8632a5bcdc095de9e1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ad46b30886fa350c1f59761b100e5e4b01f9a7ec"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "0cd45850a326ef6ceab36b53b193f8e34c92f100"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "559b87e6ad2991021495e07516fc3acd7015da22"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a566d481e723d0cf5f9ddcf90d326ce1a24715ab"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "6f39293c79a621f8cbf9f9ba5b35a852104087d7"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "acf5b659ebb21a979f6eaf0235533f0dc41fd835"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "3e48d0e0fdb8190000f06c5938c4031184b04c6a"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "36bbf2ead3f6e7899ed357d51fa4af1fe4be7bbd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "18d1393cbaf8959be478fd92049095a20db53852"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "d2ca9c7fecb4c470662456eae0f40d9847a8bd0d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

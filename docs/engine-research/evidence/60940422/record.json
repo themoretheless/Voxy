@@ -1,0 +1,69 @@
+{
+  "repository": "NoelFB/foster-ts",
+  "repository_id": 60940422,
+  "commit": "2e17055e1bc7ac0c41161742248e361c3f228bac",
+  "source_url": "https://github.com/NoelFB/foster-ts/tree/2e17055e1bc7ac0c41161742248e361c3f228bac",
+  "readme_path": "README.md",
+  "readme_sha256": "a9b66099cedb390e8b176682d8bcfc6d5018375f02fc21f7674c2d42f7fcaea2",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c664202b0925bb733ade0223f2f7b5fc85e10348"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "43577d1d2d5db189c9bd679f80ef72e2dfbac2ae"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "a433122c92f39d3b69a5683e9bb851e0e748f8ba"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b3be1f7c6139344dce86a7e910178ceade73a51f"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "fc84f581cb36840cd53f5ad17cf60b2f7a51a0e2"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "1a348e3e2bca1f8618ea25e08665fb016ccb02a8"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0cbcda55ba9712402e3eb19e5d8e47ab19a8d939"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "379d3e5680cea7ab947396d2a2e00080876b4e76"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "62268db84f3d3dab098d6ecb0df62df191598d06"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "9739b0d22b44cf3cb875227eecf996eb585ab87d"
+    },
+    {
+      "path": "tslint.json",
+      "type": "file",
+      "sha": "3f241c9d5a10f993066349faceff9960916c9ee6"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WebGL TypeScript 2D framework with scene/entity/component model; README explicitly describes framework and ongoing goals.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

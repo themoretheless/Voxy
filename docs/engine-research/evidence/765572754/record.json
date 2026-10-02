@@ -1,0 +1,147 @@
+{
+  "repository": "hyperion-mc/hyperion",
+  "repository_id": 765572754,
+  "commit": "85abe336514e507b72a38e351b5df5a641a4bf30",
+  "source_url": "https://github.com/hyperion-mc/hyperion/tree/85abe336514e507b72a38e351b5df5a641a4bf30",
+  "readme_path": "README.md",
+  "readme_sha256": "38b123005153ef2e4fe6ddac537265725c222ac95b4e36c756b1b1ea68485723",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "13a4c607beedd9155aebcf1dc88156f3315b3fe8"
+    },
+    {
+      "path": ".devcontainer.json",
+      "type": "file",
+      "sha": "1b58ce07bede8f6b0067b1a0ae3134bb175dba2e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3fab27cb51abff713679a900fe5fc942dbf6c36a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "93a80f38b73495ffdce29f4038f0c2375965f0c2"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "bf6da8713414c2d3a5cda24ffb8b1800d19e08cb"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "51212a5648486e1a96d2408dd4a1c11b6325d17c"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "324ccf0b85a5b268d62edeee255a1bb895040543"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "102e90731fb63e65c2a2eb83a02d4ce104cdb4d2"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "91b755d53f8bcdc98d2fda515ab83dd2d849d59b"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "ec7a0e306a4e1b6ef18a7602eaa2820b8e0f56cb"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f983e45fab4535148842dd753eb29d08d3b26db5"
+    },
+    {
+      "path": "GOVERNANCE.md",
+      "type": "file",
+      "sha": "14842005e7b9db600833a1a9f9f8432d748e5b41"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3babdebeff99d36cc17cbefc2fcb1461ce3044b4"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "f6814e087f9396acabfb90f50b30d84af2b7a6e4"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "84ab6262b71055073b62f5cda0127773087e11e7"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "bac718038870c922ab54151a9c009f4bc33d47c2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5a501b51e92316a12c60ddf1673d3ac7b26ff37d"
+    },
+    {
+      "path": "events",
+      "type": "dir",
+      "sha": "7e08bdf2415c2f743c15dd1ee1715ac94286303b"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "386698a58efa335304991f01b2bb5a17e85570b2"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "c90459289934ae55ffdc21a3d81a422aea2ff319"
+    },
+    {
+      "path": "nix",
+      "type": "dir",
+      "sha": "01ea76024cd5d7b2bda01d61d56a2d539c7bac46"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c53cbadb60b212e99a9907413e3b638a0d26a3a8"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "7b8738f375b8fb8b8a183748179daf8f71affb58"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "3d065b62a4e5efcc1c850b08e0313367aa556d81"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "01e4d0f28b11d35b1b6bbb9950b3ad8e21c5b3f1"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c8f11bdc15a202f50d0eeee4e0dcf57f4b5a2b00"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

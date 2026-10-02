@@ -1,0 +1,44 @@
+{
+  "repository": "JoebRogers/PICO-Tween",
+  "repository_id": 127534323,
+  "commit": "e61fe70881f375613b923f2994d79b31a4d2a369",
+  "source_url": "https://github.com/JoebRogers/PICO-Tween/tree/e61fe70881f375613b923f2994d79b31a4d2a369",
+  "readme_path": "README.md",
+  "readme_sha256": "72f978068fe34d235efd820dc1918a45825302f1b8b61334ebfdad094a2b96f4",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1e29a8b7bf771cf8264c5d61771e19985db87312"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "e1c3eab71f84ce7105c1ec32587f9d19fe8a7761"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "65368341f60e1c3a93d4bf44d13518a83fc6aff0"
+    },
+    {
+      "path": "cart",
+      "type": "dir",
+      "sha": "910ca3dbe394eb6fa56a9a6ab1cf81d258f9f06e"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "b85c6a939ce88f5d85b5c6a13c143816546a7d60"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "be9e2a979e42e5dd24b4ced0100e90570c174009"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Tween/easing function library for PICO-8, not another runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

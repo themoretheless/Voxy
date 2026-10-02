@@ -1,0 +1,124 @@
+{
+  "repository": "lambdacube3d/lambdacube-quake3",
+  "repository_id": 26997035,
+  "commit": "68cd365accced525620a55dcacacda00794a46dc",
+  "source_url": "https://github.com/lambdacube3d/lambdacube-quake3/tree/68cd365accced525620a55dcacacda00794a46dc",
+  "readme_path": "README.md",
+  "readme_sha256": "b1fb1937d9ac9dbbaa9bb869eb93b989986cca179b563f0afea1c933bfbd7b46",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "698c5abce8671da8b03c0e31d7e68020bd1140b5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c931fcdd30819b120c370a7b266e918534f755aa"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "1ce8f1d06a3865abbc1c7495d60c3ae695a86372"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4f809ad1b7a4276ab2673186933ab57824734d7b"
+    },
+    {
+      "path": "Quake3-Internals.md",
+      "type": "file",
+      "sha": "94a53550345533a03c5cdab7b784a7b4c9d4e5c2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9139807bd22bc91a5d931d9ced512f0cc3272007"
+    },
+    {
+      "path": "TODO",
+      "type": "file",
+      "sha": "e45006949d827aa2485db1304f1ff54c5a54b545"
+    },
+    {
+      "path": "client-server",
+      "type": "file",
+      "sha": "22656bd633a5ca7429089227a84b9a8006e91d7f"
+    },
+    {
+      "path": "current-task",
+      "type": "file",
+      "sha": "355cfe1514c7a2925e4df654f57322d25da703f5"
+    },
+    {
+      "path": "dev.sh",
+      "type": "file",
+      "sha": "f57b8e3a8c4ed9a4e06273cd542ed65608f57d0c"
+    },
+    {
+      "path": "engine-api-design.md",
+      "type": "file",
+      "sha": "eb5c3d97c6dc7bbd314d00fce68bf0955ffdcc0f"
+    },
+    {
+      "path": "game-effects",
+      "type": "file",
+      "sha": "71389d60360ab7973272b04763ce5e6d2771a664"
+    },
+    {
+      "path": "game-engine",
+      "type": "dir",
+      "sha": "2d4e04640420e13e9d0c183862294fcef4455822"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "989f5c0d65bf45ee2fc86052f7269ab76e5ac350"
+    },
+    {
+      "path": "lambdacube-dsl-quake3.jpg",
+      "type": "file",
+      "sha": "65f1c300d5d3970a8ceb3b723c2845422a52f067"
+    },
+    {
+      "path": "lc-q3-overview.md",
+      "type": "file",
+      "sha": "4b99eb26f5df22210371c581c567de0f90ac0ad6"
+    },
+    {
+      "path": "mapviewer",
+      "type": "dir",
+      "sha": "bde4000b4b17bc0b80e5c6972d0eca6c58507589"
+    },
+    {
+      "path": "q3_renderer_api",
+      "type": "file",
+      "sha": "ba96b2d86003a1da45cf11af284b26c8a17db866"
+    },
+    {
+      "path": "stack.yaml",
+      "type": "file",
+      "sha": "dadff7f3d4f1ceae4e40b8e4866a3a884dec08b6"
+    },
+    {
+      "path": "status-bar",
+      "type": "file",
+      "sha": "3e780fb7395fe4b7c2f8266854d5eb8007fa0d3d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "cb1d0902accdff8063e8ade82f55fb9ebab77724"
+    }
+  ],
+  "classification": "rendering_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly says current implementation is only a Quake 3 map viewer despite intended FPS scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,52 @@
+{
+  "repository": "LikeUSummer/GamePainter",
+  "repository_id": 63910654,
+  "commit": "399d1820f499231dcd3715e8cf8cab03e89a9471",
+  "source_url": "https://github.com/LikeUSummer/GamePainter/tree/399d1820f499231dcd3715e8cf8cab03e89a9471",
+  "readme_path": "readme.md",
+  "readme_sha256": "0e8b3b0f460b9102dda8d96a6dd7668d976b542207926defb779d55e32779455",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "466e24805a90b649c3cecf85f68be30227c1121a"
+    },
+    {
+      "path": ".gn",
+      "type": "file",
+      "sha": "e5b6d4a3db79e0b7d8a48d990ba0d419e7eb041f"
+    },
+    {
+      "path": "BUILD.gn",
+      "type": "file",
+      "sha": "2fed41f0190b98401e3f555d4f1bd2b91792735d"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "2db608f69fa7cf59955ea6878674e7b79b4d96cf"
+    },
+    {
+      "path": "config.gni",
+      "type": "file",
+      "sha": "eed333828a099092afce193d95170905f8449115"
+    },
+    {
+      "path": "noumenon",
+      "type": "dir",
+      "sha": "1d9410f8c9756dc44dba854d1adc2d782394f254"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "a2f83c2d95564ecca6841d617f996518f1e550ee"
+    },
+    {
+      "path": "usage",
+      "type": "dir",
+      "sha": "db678d07564017bbe38d9185f29505d6945d70b1"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

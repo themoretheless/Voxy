@@ -1,0 +1,104 @@
+{
+  "repository": "armory3d/armory",
+  "repository_id": 45202654,
+  "commit": "f9642c643c8ebf8ec3e98081d1e433d306c50b77",
+  "source_url": "https://github.com/armory3d/armory/tree/f9642c643c8ebf8ec3e98081d1e433d306c50b77",
+  "readme_path": "README.md",
+  "readme_sha256": "fd1488043d9c5602e63760eb48130931bf40a5b55ef87cd7100b31232cc192b3",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9c9dbaeff21f9cfea494d76eb5a635e0b06d13b6"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dc5d64d3a35134e7390fe31d167414e2354810ac"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c09d4135ecc0525a80c7968f28e80e82c56e0a4f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "784978471ee703ed47795cc619d4a800cb19226f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "25caf7aec1b701695cfd068e2624fbf47ceb5a97"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ad7e1fd66db1a766bd42831f7368dcebe1d413f9"
+    },
+    {
+      "path": "Kha",
+      "type": "file",
+      "sha": "c6f055689f6a4e9ce3de15e1a6e72e405d6e578e"
+    },
+    {
+      "path": "Krom",
+      "type": "dir",
+      "sha": "b340eaaa2cadf31022ca2bf3c7f49cd8d5a23589"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4b308e96777acb9afc5cd0f1f4854a5572740aca"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8ae7f1563a7dad1020f696953d9d8f2d84ae0429"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "6764db3cf142f8c73277ca7bb89bb24204693dd3"
+    },
+    {
+      "path": "armorcore",
+      "type": "dir",
+      "sha": "a20399cae8ff35a368da757999f508cfe1466bc0"
+    },
+    {
+      "path": "armory.py",
+      "type": "file",
+      "sha": "efd27378341438216f0f1e60f72c21bec938184e"
+    },
+    {
+      "path": "armory",
+      "type": "dir",
+      "sha": "7a39eb73478da486e2a094dfee05c612d02a1245"
+    },
+    {
+      "path": "changes.md",
+      "type": "file",
+      "sha": "5a5ca1c81b6196125ed3366d96d243c500e86de8"
+    },
+    {
+      "path": "checkstyle.json",
+      "type": "file",
+      "sha": "d3e91df2fb3692351867d31690429b527fc7ee72"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "8c8c45cb37ee9db6aeaab8be9b82e0009f4998fb"
+    },
+    {
+      "path": "nodejs",
+      "type": "dir",
+      "sha": "990f8247e28c828529e22683757d8a0718321844"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies portable 3D engine; owned armory runtime/API, Blender authoring adapter and native backend roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

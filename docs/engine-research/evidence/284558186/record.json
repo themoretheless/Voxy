@@ -1,0 +1,82 @@
+{
+  "repository": "Ubpa/Utopia",
+  "repository_id": 284558186,
+  "commit": "4fc32d4011ce21ab5ab2a8149e398d9baa3cbdc0",
+  "source_url": "https://github.com/Ubpa/Utopia/tree/4fc32d4011ce21ab5ab2a8149e398d9baa3cbdc0",
+  "readme_path": "README.md",
+  "readme_sha256": "7411b480cffa37e56c106114e406737908f29e7d4953dc3746bba69a2e98ffec",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5ff7ce5fa3a289a285c073321bd5c53c98aff5a6"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d704945e39beec84917a4ca63e5d134af1119226"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7dd3cb1793888220b8f18e774db149006622f026"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bde22ee74babb747bb6f047043277c268331b8b2"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9baeca55f2f4224c9227712fea048a0057ca3bd0"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "55fa2957fdb6abdda47fea879dbd00960dc35f3b"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "6478b4289aff892128bc56b92a5519006b97b0cf"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "cd65f557b09609051a40b6dbfeef935d51ca933b"
+    },
+    {
+      "path": "designs",
+      "type": "dir",
+      "sha": "c8665ab1cb2662ccb71727dcddc4af6e0c47be8b"
+    },
+    {
+      "path": "doc_zhCN.md",
+      "type": "file",
+      "sha": "968341dd14c1d06354bb0d70523469e46fa15c93"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "46c7a1ee79c8874f5b90c59b835b32219c19889e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d745cb8c00655407dc4ac6489887a4e39ce3c3c5"
+    },
+    {
+      "path": "todo.md",
+      "type": "file",
+      "sha": "36b83d4ad3f6ca6f6b2758e8e9c2c340916f6c54"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "812c6b2f892299ea6fbe5a35b39d14a6c7860bfe"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

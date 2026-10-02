@@ -1,0 +1,54 @@
+{
+  "repository": "quinton-ashley/p5play",
+  "repository_id": 37993872,
+  "commit": "f904d169af3d086bbf75cd3c420aec3c976cbc2b",
+  "source_url": "https://github.com/quinton-ashley/p5play/tree/f904d169af3d086bbf75cd3c420aec3c976cbc2b",
+  "readme_path": "README.md",
+  "readme_sha256": "0942d984b1994bf1eabac9ae76ce13ba92aa54c1c24c9b46c2b9fb5f75b5a62a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "895104b212da38b4efaaf443fa3065e4beaed23f"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "ddbcd346f0886f592d3e0d201968b39ecf48fcfc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "655926d835c6e69bcbaa19cc6cd4807b5c103b21"
+    },
+    {
+      "path": "p5play.d.ts",
+      "type": "file",
+      "sha": "f16879de69cde17f3309fdc020d72d3435b2f219"
+    },
+    {
+      "path": "p5play.js",
+      "type": "file",
+      "sha": "30f8b449e61fdb72e93c447f4fbc52dd71189f23"
+    },
+    {
+      "path": "p5play.min.js",
+      "type": "file",
+      "sha": "a476a743b758f0ed96cef0bb589d91bd59ce7b38"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "bb4900f46ba8d37556b81af69d8e94a83c0ce905"
+    },
+    {
+      "path": "planck.min.js",
+      "type": "file",
+      "sha": "4f8e48169cf37b6dc46bea596e5e7d0ec92eb3df"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies game layer over q5/p5 and Box2D; owned p5play implementation and npm/types. Full engine ownership needs deeper inspection.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

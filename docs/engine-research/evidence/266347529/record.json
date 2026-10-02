@@ -1,0 +1,79 @@
+{
+  "repository": "danielesteban/blocks",
+  "repository_id": 266347529,
+  "commit": "3bda59180fc6fe29012fdd14fcf491dcece70884",
+  "source_url": "https://github.com/danielesteban/blocks/tree/3bda59180fc6fe29012fdd14fcf491dcece70884",
+  "readme_path": "README.md",
+  "readme_sha256": "7e1fe86814f4b252c8b968122fdb80bf085d953a3e94851b3ce4b952553c795e",
+  "entries": [
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "8bce093fb3fbd606a76ea1e3653dd05ae01514ee"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e75a8b2d0d631999da49a71df10b1691bd704ab2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "648745af80d9e5a401e25f7090046c656a0baa62"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2b553d2d1445778b2efa2877a32263b0f62efc01"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "ebb0a1944ad3d64569f62d592324806b649cf134"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "16ebeae89e6a31391d24971bc344ad041e2ec0b7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7c76f2accecdcbbedd0686ccc0add655b77f42a3"
+    },
+    {
+      "path": "auth",
+      "type": "dir",
+      "sha": "9306562760e8c8411f1abaadce23b5ed112f05af"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "6efb1ad02c5828c1c21a981502f52296be92e885"
+    },
+    {
+      "path": "destinations",
+      "type": "dir",
+      "sha": "c21640598d549298ce6d8643aaf9292ccffc25c7"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "9e57eece0e482272528d0118b5836e52de73955d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "5f22fed698e9dd1210ea3be19eba788cd8dc3908"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "cb3854f72575702a293dcf3bad737e0f1fec7169"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WebXR multiplayer voxel sandbox with world-generation customization; README does not establish separate reusable engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

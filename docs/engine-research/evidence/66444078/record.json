@@ -1,0 +1,42 @@
+{
+  "repository": "GongFaxin/protobuf_for_unity",
+  "repository_id": 66444078,
+  "commit": "85f9afb0e38b941df9854e40a620dcf4c754f29d",
+  "source_url": "https://github.com/GongFaxin/protobuf_for_unity/tree/85f9afb0e38b941df9854e40a620dcf4c754f29d",
+  "readme_path": "README.md",
+  "readme_sha256": "15b290f835ec1eae09ddd1ab0d3645495256e648e5ce9291a7677dc95c3cde11",
+  "entries": [
+    {
+      "path": "Google.Protobuf",
+      "type": "dir",
+      "sha": "a84e89fddab64f083c85615700f6c6a6dbd0ca44"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7219b403594ba9cec87c857c06e873a61b0a27a6"
+    },
+    {
+      "path": "Test.cs",
+      "type": "file",
+      "sha": "dd9638096c8ab6f8d29aa0358347108707cba4a3"
+    },
+    {
+      "path": "TestMsg.cs",
+      "type": "file",
+      "sha": "a6fc2a155a23d5f20312e5da9b214fa80ce2ee74"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "42854529ed7b6df31279051d7359c241ad2c3c3e"
+    },
+    {
+      "path": "test_msg.proto",
+      "type": "file",
+      "sha": "0fdf33ec69429b1232afb897337e90ba41777da5"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

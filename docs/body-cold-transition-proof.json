@@ -1,0 +1,53 @@
+{
+  "tests_passed": 14,
+  "renderer_build": "passed",
+  "renderer": "native Metal offscreen",
+  "live_viewer_time_integration": false,
+  "temperature_calibration": false,
+  "onset_seconds": 2,
+  "recovery_seconds": 8,
+  "onset_samples": [
+    {
+      "seconds": 0,
+      "response": 0.0
+    },
+    {
+      "seconds": 2,
+      "response": 0.6321205588285577
+    },
+    {
+      "seconds": 6,
+      "response": 0.950212931632136
+    }
+  ],
+  "recovery_sample": {
+    "initial_response": 1,
+    "target": 0,
+    "seconds": 8,
+    "response": 0.36787944117144233
+  },
+  "invalid_elapsed_rejected": 1,
+  "images": {
+    "docs/body-cold-transition-0s.png": "1f5ba46406b5f848b595026f37e0e8e47f150e4f7ba0aeb9d7beea6f9a850dfc",
+    "docs/body-cold-transition-2s.png": "5d5a1fc01c35e3d7d60b21aa9a592d2629447e626c857443f13a7371f95d2ebf",
+    "docs/body-cold-transition-6s.png": "cfbe56e18d471818fa6ef878859b495588a7d8b56b3eaea02cf0bcc66bab2d80",
+    "docs/body-male-cold-recovery-8s.png": "d1d9e4747d815ab85c872d5587b905948eba479507db27b80e74ea1d7fd52879"
+  },
+  "presets": {
+    "female": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 7,
+      "nipple_projection_mm": 3,
+      "areola_radius_mm": 18.5,
+      "nipple_cold_response": 1
+    },
+    "male": {
+      "nipple_type": "projecting",
+      "nipple_radius_mm": 4,
+      "nipple_projection_mm": 2,
+      "areola_radius_mm": 10,
+      "nipple_cold_response": 0
+    }
+  },
+  "executable_sha256": "4ac13cf3e1694f07e71e528d44016c4d18d7c9856f55101b89b99b332a9f899a"
+}

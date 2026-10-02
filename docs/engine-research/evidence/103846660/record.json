@@ -1,0 +1,42 @@
+{
+  "repository": "aosoft/Xamarin.Forms.Unity",
+  "repository_id": 103846660,
+  "commit": "738e0f86e6d8c936cea478e7ea5ddd465b4e9f3d",
+  "source_url": "https://github.com/aosoft/Xamarin.Forms.Unity/tree/738e0f86e6d8c936cea478e7ea5ddd465b4e9f3d",
+  "readme_path": "README.md",
+  "readme_sha256": "65cbd3fd3a831fc67e823ae3d24f9f702d3fe56d1e2d7efe41efb0256d89d3a9",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "826cc70e757b46b7b92ed41aed9201e7d8355481"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "eb8108e300646e48ac8bd594fc408deab3143019"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bd3b6beb4ddc00083f5949c13ea48f7e02037391"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "a84767a2993987c24590c799c1a103920d51a3c3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "36d277ae20eb0aee4c32fa114fa3960ed200539c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,89 @@
+[
+  {
+    "parameters": {},
+    "quality": {
+      "intersectionCheckPerformed": false,
+      "maximumAreaRatio": 1.0,
+      "minimumAreaM2": 4.628905742626056e-10,
+      "minimumAreaRatio": 1.0,
+      "normalRotationOver90DegreesCount": 0,
+      "triangles": 84680
+    }
+  },
+  {
+    "parameters": {
+      "height_cm": 130,
+      "weight_kg": 35
+    },
+    "quality": {
+      "intersectionCheckPerformed": false,
+      "maximumAreaRatio": 0.6834006473784923,
+      "minimumAreaM2": 3.135732439780325e-10,
+      "minimumAreaRatio": 0.6474828276601218,
+      "normalRotationOver90DegreesCount": 0,
+      "triangles": 84680
+    }
+  },
+  {
+    "parameters": {
+      "height_cm": 210,
+      "weight_kg": 180
+    },
+    "quality": {
+      "intersectionCheckPerformed": false,
+      "maximumAreaRatio": 1.961464553941168,
+      "minimumAreaM2": 8.970613863508957e-10,
+      "minimumAreaRatio": 1.7833142993486815,
+      "normalRotationOver90DegreesCount": 0,
+      "triangles": 84680
+    }
+  },
+  {
+    "parameters": {
+      "breast_size": 1.6,
+      "buttock_size": 1.6,
+      "torso_depth": 0.6,
+      "waist_width": 0.6
+    },
+    "quality": {
+      "intersectionCheckPerformed": false,
+      "maximumAreaRatio": 1.6842144506118517,
+      "minimumAreaM2": 4.635787405565387e-10,
+      "minimumAreaRatio": 0.518237553464009,
+      "normalRotationOver90DegreesCount": 0,
+      "triangles": 84680
+    }
+  },
+  {
+    "parameters": {
+      "breast_size": 0.6,
+      "buttock_size": 0.6,
+      "torso_depth": 1.6,
+      "waist_width": 1.6
+    },
+    "quality": {
+      "intersectionCheckPerformed": false,
+      "maximumAreaRatio": 2.345173336454732,
+      "minimumAreaM2": 4.635787405565387e-10,
+      "minimumAreaRatio": 0.5571859362032872,
+      "normalRotationOver90DegreesCount": 0,
+      "triangles": 84680
+    }
+  },
+  {
+    "parameters": {
+      "left_breast_size": 0.6,
+      "left_buttock_size": 1.6,
+      "right_breast_size": 1.6,
+      "right_buttock_size": 0.6
+    },
+    "quality": {
+      "intersectionCheckPerformed": false,
+      "maximumAreaRatio": 2.0238366893774513,
+      "minimumAreaM2": 4.635787405565387e-10,
+      "minimumAreaRatio": 0.6094056527778461,
+      "normalRotationOver90DegreesCount": 0,
+      "triangles": 84680
+    }
+  }
+]

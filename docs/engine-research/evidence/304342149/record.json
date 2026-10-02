@@ -1,0 +1,119 @@
+{
+  "repository": "lunafromthemoon/RenJS-V2",
+  "repository_id": 304342149,
+  "commit": "14a936f8dfec901d7554a0a07b9b34cc2eed3f11",
+  "source_url": "https://github.com/lunafromthemoon/RenJS-V2/tree/14a936f8dfec901d7554a0a07b9b34cc2eed3f11",
+  "readme_path": "README.md",
+  "readme_sha256": "be6e6636d8a35c01035637bfc45e4ab9a3b0bdac2f967474c3f62cd1875c5746",
+  "entries": [
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "31ba847da7bb567c9c08b3b68bce758377f196b6"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "00f6a7bb3ee66d8b11aef44826dfbe401da7c3a7"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2ed870db6d2761e3dce7f4ace448370dde3f6792"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4e04c707755fe0b52f8c3572179fcf23d24aa5a0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f3842e760b297670afef31a0265ca64565b2bde8"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "29252fed1f76adae5041a962ff0bee4a5c3ce1e0"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "5be286c13eeb8b3173b3e885dafa6b29d920d2a3"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0f40703c5c4ba27738c49c92fde5a8201ee9caaa"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "755329caa81090f84ede27fbee60ea0524117054"
+    },
+    {
+      "path": "RenJSQuickstart",
+      "type": "dir",
+      "sha": "7b39fc4d138b201cc5ced0a9b18e2a397c3054d0"
+    },
+    {
+      "path": "dev-only",
+      "type": "dir",
+      "sha": "48d89ed0c9e3dcb2098098cc45235cc9640775f7"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "171838d7a61d9eae384768af075dca7c05765356"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "30b058f7c2364db4de28be12b90bebe62231460c"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "32af1e6101821931343a80c3d48d4eaecd227606"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "7586d52173e1ded037593eeb6ecfe06b07a185cb"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d6677274cafba3b2a325efbbd4d236e553adfb63"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "bb74357548e2d0815414243d7a34ab7e324c059a"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "ef7844a56a9bde99a171bec017c1b056c105a7cf"
+    },
+    {
+      "path": "webpack.common.js",
+      "type": "file",
+      "sha": "de7f8dcefce7cfd874a6bd5871a193949cf69861"
+    },
+    {
+      "path": "webpack.dev.js",
+      "type": "file",
+      "sha": "e8e00efeb9e870cc40084d69c8548794d22a4eea"
+    },
+    {
+      "path": "webpack.prod.js",
+      "type": "file",
+      "sha": "36c86d8998238ef8e9851cec71c010e69ff3be56"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "TypeScript visual novel runtime with narrative scripts, choices, audio and save/load hooks over Phaser; src and quickstart present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

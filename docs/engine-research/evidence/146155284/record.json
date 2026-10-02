@@ -1,0 +1,149 @@
+{
+  "repository": "SanderMertens/flecs",
+  "repository_id": 146155284,
+  "commit": "9e874bca2c05b60612cf5b671988adefc0785820",
+  "source_url": "https://github.com/SanderMertens/flecs/tree/9e874bca2c05b60612cf5b671988adefc0785820",
+  "readme_path": "README.md",
+  "readme_sha256": "dc8fd3b9fbecba271b8be31aaf64b5e590dbdcf3ab4983f911e45d2c71b37e1e",
+  "entries": [
+    {
+      "path": ".bazelignore",
+      "type": "file",
+      "sha": "2c6ec0a0570e1f277542910f27b93fcada4fd39d"
+    },
+    {
+      "path": ".bazelrc",
+      "type": "file",
+      "sha": "1e9e559888db3c8e98c956523a1a0c9c73a9df63"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d6be9e311f7ae4d988f9934ba613621865e279a0"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5a0d5e480b5f395024be26a530d1f72811b1ac99"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "89566b1e6226f7f03325c99724da021cc02f68fc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0376771a059847e3e6780698112dd675297bfd11"
+    },
+    {
+      "path": "BUILD",
+      "type": "file",
+      "sha": "ef7f6c553cfab8fe8a54664df0c52dce29dbc9fd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8b773fbc27ba6ec314232ba4608b1f473f38b435"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "c2bff9f8e08d5217d9e85b0b60b851935f38aa77"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "84c701ef1436dee2c8a9344693fe877eee2a2b3c"
+    },
+    {
+      "path": "MODULE.bazel",
+      "type": "file",
+      "sha": "35fa5fe281a528178addbe15a1d96dd0d2d5c5d7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd4e10fb41e7ffdf0e51beea677543785ac9c478"
+    },
+    {
+      "path": "WORKSPACE",
+      "type": "file",
+      "sha": "4bf4dad7a5b63c0e748da5a758150d3b5b2b6830"
+    },
+    {
+      "path": "WORKSPACE.bzlmod",
+      "type": "file",
+      "sha": "00614f5b05c6fbdabbc17c764aad3d5f4fcaefb8"
+    },
+    {
+      "path": "_typos.toml",
+      "type": "file",
+      "sha": "48d0a6f7afa970e06eabab15ae35574336e21c1e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "0e253808e8bd28c1970643c72675a473352d0d1f"
+    },
+    {
+      "path": "codecov.yaml",
+      "type": "file",
+      "sha": "fc77636a69392ab58e69ab88d54cd3730bd3fee6"
+    },
+    {
+      "path": "distr",
+      "type": "dir",
+      "sha": "5e4f56d4abc54c08f492c1a41810f0125221c5a5"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "86b8aee36a5831510175bd6b3fa5d8bdae4d79a3"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ef36f7ece5621ddfc71a780c70e9399d011b256c"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "7f933908f180ad64a6ce875ebf002d09c45876df"
+    },
+    {
+      "path": "meson.build",
+      "type": "file",
+      "sha": "8b0591099fab176a061f6406749347b67a713929"
+    },
+    {
+      "path": "meson_options.txt",
+      "type": "file",
+      "sha": "c5acae8fec1f7c3311eb7bd267313cb19e410dbd"
+    },
+    {
+      "path": "project.json",
+      "type": "file",
+      "sha": "808b2af8ed560abaf109140711584d906b707dbe"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "73118637e8c9fd922317c20b1bccae1750d35a1c"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "9947f633b0267fd47273cbf94b5fac7aeacced25"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "971ca8a885cc414179c17a49f3e1b8079d2430cf"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ECS with reflection; include/src/tests implement a subsystem rather than a complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

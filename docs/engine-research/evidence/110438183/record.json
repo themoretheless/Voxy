@@ -1,0 +1,39 @@
+{
+  "repository": "GDQuest/godot-power-pitch",
+  "repository_id": 110438183,
+  "commit": "79d6d359081960d811e988cf95716ba19fad9dac",
+  "source_url": "https://github.com/GDQuest/godot-power-pitch/tree/79d6d359081960d811e988cf95716ba19fad9dac",
+  "readme_path": "README.md",
+  "readme_sha256": "76165be328ad2b9f2f9a04ee436c0b6fc1d618b30c030fdc977b19a5b0ae0c14",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "891e02ebd04a263bf260f3ece91bee1d8f5404ca"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0b528f7cd46109096cd3c0202418376887a9fd21"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "558dae5e64d95aad28421b26c70bdbfedc219f8a"
+    },
+    {
+      "path": "godot-3-presentation",
+      "type": "dir",
+      "sha": "a36f23263c0eddeaac14d1b52fa62066ecd307fc"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "ee985629b2e7ee1854b02f72403d3329e5c91538"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies presentation running inside Godot; dependent project/content, not engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

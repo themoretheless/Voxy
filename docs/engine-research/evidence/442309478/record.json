@@ -1,0 +1,114 @@
+{
+  "repository": "littlektframework/littlekt",
+  "repository_id": 442309478,
+  "commit": "169ae1bbbbbeba2e544b38bf4448380274ef48c0",
+  "source_url": "https://github.com/littlektframework/littlekt/tree/169ae1bbbbbeba2e544b38bf4448380274ef48c0",
+  "readme_path": "README.md",
+  "readme_sha256": "4eafb2a143e44072d5048d49f0e9750e006dbff880c6d6f76cc5461cb1ee84e5",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7a45e37a0d7b21a45474fe21f454996610527eb7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4ed57bfe558e0259b6f4667afa4bcfdbf613d3c8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c4d181d89d9666d72cc1912dea3d36789982dae7"
+    },
+    {
+      "path": ".run",
+      "type": "dir",
+      "sha": "84cdc6728efcd7ff7e338ed35115c0b60f4bd529"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1c9c799a3599f77ce750bd84b034f3f8964b777a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a495a499860ae0e46b9f28302cc64990f71dd6e1"
+    },
+    {
+      "path": "LOGO_LICENSE",
+      "type": "file",
+      "sha": "e14984ccd4b14e90a11e3db329d9937ea782a3b0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bfc77b80f9a6ec403c3d59d766c69b8e264e3dec"
+    },
+    {
+      "path": "art",
+      "type": "dir",
+      "sha": "170d695507936c6621522ea468f0dca7f3a685cb"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "df49cb0833e9b876aa7642d17f1b3c7fe87cff57"
+    },
+    {
+      "path": "convention-plugins",
+      "type": "dir",
+      "sha": "3af2b7b9c676691ac76bbbe349988db8d20ada3e"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "f7995d83f90c92ff1c639e6227bab183a153c529"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "75d23c75f8e54c377b381f34ca4edfc1098db192"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "91dbc11adbe57b5b6ca3dff708363d630d40ccb6"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "0df80d81c545537fb46ff31962c745578ce439f8"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "8e642922d2dd5370a9e06020a3f1081058759ce4"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "65dcd68d65c82f2a5338fded4af852f9caf93b93"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "93e3f59f135dd2dd498de4beb5c64338cc33beeb"
+    },
+    {
+      "path": "scene-graph",
+      "type": "dir",
+      "sha": "cd7baf553501b0042398e68a12efb5617d68440d"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "4dcabef7f1a6947f35df6a9e5fa1d68df12885b2"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Kotlin 2D framework to build engine on; owned core with Gradle/platform examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

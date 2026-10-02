@@ -1,0 +1,92 @@
+{
+  "repository": "cgisca/PGSGP",
+  "repository_id": 223044917,
+  "commit": "7cc60029b4dba5780056ba4079d1ef9c246df575",
+  "source_url": "https://github.com/cgisca/PGSGP/tree/7cc60029b4dba5780056ba4079d1ef9c246df575",
+  "readme_path": "README.md",
+  "readme_sha256": "b3b489e2f64bac0bc8ffaee9f7390628286b12ab42f2e784d5295a9efaa63c47",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "56bb51f26014ee42ec50ed00d429794b5e80ab45"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "85f27591dc0973cf237253f669afc988187de05f"
+    },
+    {
+      "path": "Changelog.md",
+      "type": "file",
+      "sha": "e385c89e937cee196003d6d45d1974ed7e2550ac"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "132df3ae6286776a75243119658ab0a958e3f8d1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f4685518c489f72d24370d768e2688f0c95a8fc6"
+    },
+    {
+      "path": "README_OLD.md",
+      "type": "file",
+      "sha": "ca45418b13e5f7193f1ecf3a8ac615fd46d3b912"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "c4192631f25b34d77a7f159aa0da0e3ae99c4ef4"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "393976b9d098e308146d9c505194f69f72b78f0e"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "0cbe343da39e6dd2546e2ad1dbac7307115c66f0"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "4f5351d274eaa303549fcb069050948daeff9469"
+    },
+    {
+      "path": "godot-lib.release",
+      "type": "dir",
+      "sha": "8729048c17c58f078d20134e94ec1384d1430acc"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "cffe1b9e4b0cfbd979d1ed21129ed3751d648c05"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "10f21cd1b8790ffd008a35237b9b6453f1409540"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "cccdd3d517fc5249beaefa600691cf150f2fa3e6"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "e95643d6a2ca62258464e83c72f5156dc941c609"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "b0c4374df1e86635cbd2252f2c26c67440872d9c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

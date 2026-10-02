@@ -1,0 +1,109 @@
+{
+  "repository": "lancebord/QuakePrism",
+  "repository_id": 798968626,
+  "commit": "96b5a5b84545c1d4a5fd7368eadf2026feacd2c4",
+  "source_url": "https://github.com/lancebord/QuakePrism/tree/96b5a5b84545c1d4a5fd7368eadf2026feacd2c4",
+  "readme_path": "README.md",
+  "readme_sha256": "fde300102fd2dd4732048381ff9f7910e1f013333213f2f2930ae718cc890fa5",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2ca16999c85604e0d140cdb266c9067d410e4d90"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "49e73a3ac0b8b7fa4f0439374e0ac9b6f8335006"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4a701af1a0ed8c54bc05ac1d0798830e5fca1bde"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "18768ab10e90f9db35cb3a1877a5667983f341b3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "797c86a84624b876794bd766bf3a3ad8b5d99676"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "368a5cd5a5618ac11cb7d2ba2461151702196a28"
+    },
+    {
+      "path": "banner-black.png",
+      "type": "file",
+      "sha": "669745d7ef80e2c424ec586139347091fcbd7df7"
+    },
+    {
+      "path": "banner-white.png",
+      "type": "file",
+      "sha": "6b86d0bf07eb435822e982d04eba766088924c5e"
+    },
+    {
+      "path": "build-windows",
+      "type": "dir",
+      "sha": "62448ba23350004f85b9f7903484be85625f1245"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "8ce292304df6941f2787ca29cba5602b1e94c77a"
+    },
+    {
+      "path": "build_windows.sh",
+      "type": "file",
+      "sha": "36c7144230083110b5d6f104dbef99c0e609b444"
+    },
+    {
+      "path": "compile_commands.json",
+      "type": "file",
+      "sha": "7a7ba8e8034ef1c113fd8ebe396ffaeb5cc093f4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4a2f9a1cd5a38354b8f18c63f280e5cdd04befaf"
+    },
+    {
+      "path": "imgui.ini",
+      "type": "file",
+      "sha": "f762c0a28d0090826d61ffbae00f5b94b7c79248"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "69461eb3a2d8ca9268591c7c879763a22071ca71"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "6a2ab8e4c168100bef1bd71c44780f7e68d28388"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cb84c9cf2d25091ec1b3132f49b04013ad9164e5"
+    },
+    {
+      "path": "toolchain-mingw64.cmake",
+      "type": "file",
+      "sha": "132fd3cc9bf245f3f99bec8aeb283532270c795f"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Quake asset/QuakeC editor and project templates launching packaged Quakespasm/fteqcc; no separate engine implementation established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

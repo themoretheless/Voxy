@@ -1,0 +1,72 @@
+{
+  "repository": "jonkwl/nuro",
+  "repository_id": 862635611,
+  "commit": "60039f25f36d71950eeb53e230cc72495f037d9d",
+  "source_url": "https://github.com/jonkwl/nuro/tree/60039f25f36d71950eeb53e230cc72495f037d9d",
+  "readme_path": "README.md",
+  "readme_sha256": "1a2243b982699316c77c37b5c122d0ba22cf1692f3587f32bfa4517246dd7540",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a73460fce49cbb63a64cafcd8273ae4c92d38b36"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f151a2e8b872df96a1e4ba35225897b78d7957d4"
+    },
+    {
+      "path": ".gthub-media",
+      "type": "dir",
+      "sha": "0e518e03e99695de75459011c9c56a2a566d9439"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "165d984feec865650b98513253a01f3bcc348d63"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "986942985b7f1aa419ee28a464c5f5fa6337863b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f42e8079fef6745ed3525601036d86e3f9ef1617"
+    },
+    {
+      "path": "nuro-core",
+      "type": "dir",
+      "sha": "b9917592b5a5f727cbbe7649d13680c6ee8baaff"
+    },
+    {
+      "path": "nuro-editor",
+      "type": "dir",
+      "sha": "9a167c091e8dfb04fcc7eef1a1f8adf53fb15e45"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "9c65636b8ab3e2113b9df8c54b0f3f45274a71ba"
+    },
+    {
+      "path": "vcpkg-configuration.json",
+      "type": "file",
+      "sha": "07ccbe13166b380a45f87eadb2ba2a47e68a200e"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "4776eec1bc7040f786b26d6c009f31b87cf8f649"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

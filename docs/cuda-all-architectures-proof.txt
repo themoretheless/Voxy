@@ -1,0 +1,21 @@
+PASS: compilation matrix covers every CUDA/PTX source
+Compiler-supported architecture matrix: 50 52 53 60 61 62 70 72 75 80 86 87 89 90
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_50; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_52; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_53; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_60; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_61; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_62; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_70; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_72; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_75; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_80; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_86; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_87; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_89; no GPU execution
+PTXAS PASS: gravity/terrain/projectile/voxel-regions/box-sweep/water/affine for sm_90; no GPU execution
+PASS: unsupported compiler architecture rejected before compilation
+PASS: missing kernel entrypoint rejected without publishing PTX
+NVRTC source compilations passed: 84
+PTXAS source/architecture assemblies passed: 98
+No physical GPU execution was performed.

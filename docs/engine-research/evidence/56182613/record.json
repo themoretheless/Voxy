@@ -1,0 +1,99 @@
+{
+  "repository": "Razakhel/RaZ",
+  "repository_id": 56182613,
+  "commit": "a7b66134f32a089fabce62f3234132914e4cc264",
+  "source_url": "https://github.com/Razakhel/RaZ/tree/a7b66134f32a089fabce62f3234132914e4cc264",
+  "readme_path": "README.md",
+  "readme_sha256": "84d9af7ef4bed9489f2fdf411aa8e0662960da5e59cb6e3812a54412c39450e7",
+  "entries": [
+    {
+      "path": ".gdbinit",
+      "type": "file",
+      "sha": "500ce274579861aa45f5854f45c882b3c368bf65"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0dbe3ec89e31c5c255a0ccf12d0c0e27164db0dd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f2fdb610b57b526621c093830f39429bbc69a37f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d78f64512e4a9a3ac68b08e1d7bdbf4d016b864c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "67ad1e8291567cae39f977a3ae37adc785fe0a43"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0439d6d6ff529a2ea4fcb7285099f37ee4d605e3"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "932c4ebce366d305c7e21ea9eed84ccd5c74e3da"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d4868ccdb17e57098f3550659991cdbc039fd796"
+    },
+    {
+      "path": "debug",
+      "type": "dir",
+      "sha": "3edcde65046f1c77aa495400a04ac319b1b53626"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "1b82781bbf073bee82a4f725359bc58a061d0558"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "9e0bf63446d4200301d15810c0f2647149321ded"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "fe516039d12800c04e49a8886e03a957f0a201d6"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "891948d76ebd5001d2695aec3e808e12d2095da5"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "202c206162f02f00b242afb1db1991b549e11a85"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "42633e3fbb4a542aa9ca491fc5f8b5916e4da7c3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4bd8856ed3c33f42a0e1b85f0661f12032f1f4c1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "4da33d289f6b535a4517b55761cdd2b61add78d1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D game engine; owned src/include/shaders and CMake/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

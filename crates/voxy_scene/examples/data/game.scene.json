@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "player",
+      "parent": "level",
+      "name": "Player",
+      "active": true,
+      "translation": [2, 0, 0],
+      "rotation": [0, 0, 0, 1],
+      "scale": [1, 1, 1],
+      "components": { "game.health.v1": 100, "game.target.v1": "level" }
+    },
+    {
+      "id": "level",
+      "parent": null,
+      "name": "Level",
+      "active": true,
+      "translation": [10, 0, 0],
+      "rotation": [0, 0, 0, 1],
+      "scale": [1, 1, 1],
+      "components": {}
+    }
+  ]
+}

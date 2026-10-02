@@ -1,0 +1,97 @@
+{
+  "repository": "djeedai/bevy_tweening",
+  "repository_id": 452808982,
+  "commit": "f12f7e8f462d8f33085f29340dcd12d6447288ee",
+  "source_url": "https://github.com/djeedai/bevy_tweening/tree/f12f7e8f462d8f33085f29340dcd12d6447288ee",
+  "readme_path": "README.md",
+  "readme_sha256": "15fa97767f542679c816fb4268e7e8903fae458960f4ee5a7fd724c2ee03fde3",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2c93f480d1a55cd852c78ca19809941774c42694"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "676e74baec06fadec734bebacc8885bcf057f5d3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f0b70a0c39439427563e60da0e7a0ad4adbc464d"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "e13d74656e3b0bc5054dcd38dcc10e9ca94bfedb"
+    },
+    {
+      "path": "LICENSE-APACHE2",
+      "type": "file",
+      "sha": "298cc272630aa9960fd87f9c2ee643681401bef4"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "61398b13cc998061af46ceed0e7ffed6b6465ff8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d8fa4ef32d10e8ca1a88cad14a9d052259879bda"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "2f832f5dad1619bc1f4877802001d804981e7458"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "f2547e7777aefacec55c808bc6b20cb0e98a6e74"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "26f75344cb5c3ea52e8f82509e2283a2afa87397"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "35048b421a80761973b0a884127722ca7f1a0bb4"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "974fedefdae407a9e7c4666a0bb4369d8879efba"
+    },
+    {
+      "path": "release.md",
+      "type": "file",
+      "sha": "8ef8fb2d6c094ed362c808c6f5746377f49f87a9"
+    },
+    {
+      "path": "run_examples.bat",
+      "type": "file",
+      "sha": "6696e0bcf51fdceeae2fd1c178469b0b07ec3511"
+    },
+    {
+      "path": "run_examples.sh",
+      "type": "file",
+      "sha": "aa7addb7174be7d919014be7ceef564eeb29ae8d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "be772e10f25a583dd0810503e8654426f18bfc52"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "27f60ab06495f124e3ab9705fa62cf577488af65"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

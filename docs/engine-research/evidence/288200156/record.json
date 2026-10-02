@@ -1,0 +1,119 @@
+{
+  "repository": "pyunity/pyunity",
+  "repository_id": 288200156,
+  "commit": "de7b2cd8ab5ba448c76778e7d6a7d35b61229759",
+  "source_url": "https://github.com/pyunity/pyunity/tree/de7b2cd8ab5ba448c76778e7d6a7d35b61229759",
+  "readme_path": "README.md",
+  "readme_sha256": "9d43a4e6b62d9f390238eaf2b8714cee17c0667557eda6667e062f140cf6fc7a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9d5f396ba7fc48137991e9ba74219f65b765fc8b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0ac125cf962c0b10fe8584271e4aa8f7fdc5c2aa"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c2137e5d44c8417c0e358c719cee2e8170a36ef2"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "d9424bc2a780a52c026b7c3678eb37bc0e49a390"
+    },
+    {
+      "path": ".isort.cfg",
+      "type": "file",
+      "sha": "ae50d3a94548576e369518be8110965caeecc4da"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "32a84393531a8c12c15b463bf45372a4ecfeee3e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "104d7323cd2d1c15b259a65ab29a9dbf8676de23"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "04e658130dd7a27665eaf109c780593770afc2fc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9c11c3df2b5927ad090b68bcac44a9d4499740a8"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "a7c6ed4a077e4e6b20940cb635397af32311305a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fe9d1217a723f72c1592b254d7c0f014323538a1"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "a6848f17ac6ec470d2ed1762a6d700020e59d496"
+    },
+    {
+      "path": "dist",
+      "type": "file",
+      "sha": "0133ca5fec5967be7271083cfcaf0d73a00ae077"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e7cdcb15a56fa86955d7c97bffb96c952d88dd2d"
+    },
+    {
+      "path": "prepare.py",
+      "type": "file",
+      "sha": "494292821980966414e20d9bd2f0ec5ce096987d"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "91e3f9332684b7cd63056ea27a930641a1d3180b"
+    },
+    {
+      "path": "pyunity",
+      "type": "dir",
+      "sha": "a51bf41100dc8204d7da033fb1da671672fb59e5"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "dcbe0942332577280653504f2eccef7136cab465"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "6404d3aedf00fa83eff73f3ddf84d1b17c0caceb"
+    },
+    {
+      "path": "stubs",
+      "type": "dir",
+      "sha": "af843925fc4e39b72edc1fc21df62dce3557c2f5"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ed9705856fadc66c0dc590a5d99c0559a94a4c68"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent Python 3D engine inspired by Unity API; owned pyunity runtime with Python build/docs. API resemblance does not imply architectural recommendation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,102 @@
+{
+  "repository": "diplomacy/diplomacy",
+  "repository_id": 182318051,
+  "commit": "df1d0892ce27501386d8dbf2e9948055ea960445",
+  "source_url": "https://github.com/diplomacy/diplomacy/tree/df1d0892ce27501386d8dbf2e9948055ea960445",
+  "readme_path": "README.md",
+  "readme_sha256": "c58d1ab2644ebd6d1718fe6f97f6705c4b85ab347db4966846f8dd6e2dc4940c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "266081a45a9f432bcb08cbcc9708752c607fe2b8"
+    },
+    {
+      "path": ".pylintrc",
+      "type": "file",
+      "sha": "2f34a10847213097446d0c636108299b7731831d"
+    },
+    {
+      "path": ".readthedocs.yml",
+      "type": "file",
+      "sha": "22d6d3c1c905e74a96bf7cbe1331d286c309ab71"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "2f298dc1dea79205d20494dbeeedb54bae238b6a"
+    },
+    {
+      "path": "ACKNOWLEDGEMENTS",
+      "type": "file",
+      "sha": "26450e1262d737965fb26fdbedd9743de0847289"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "d45904d93afcd8ff49abcf5cfb5e868e162567ef"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b571e2f9d8671482053009b722b16a38e6f991f8"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "5bc3de8f6f0cf2c70239dbcc36d1d077cad5f534"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "86c15e3a577d8b5545b8ba72f404a1a2d76e21ad"
+    },
+    {
+      "path": "diplomacy",
+      "type": "dir",
+      "sha": "e40195c1f783678d2f8796a6355280d85e50ac14"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0c18e0edc06a1d87adfbe9035ee02fbe78ff8244"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "cb563e504b57c74d6ecb0805032b6249b34e2f9c"
+    },
+    {
+      "path": "requirements_dev.txt",
+      "type": "file",
+      "sha": "3cbcdd3e8f6a8b513e03c49a90c95dea16acf54b"
+    },
+    {
+      "path": "rules.pdf",
+      "type": "file",
+      "sha": "41c2a8cdacf5a168c6ced770dcc34670bcf57d7c"
+    },
+    {
+      "path": "run_install_nvm.sh",
+      "type": "file",
+      "sha": "e2405c1917829b51b5fd58b9c32fa8bd016a320d"
+    },
+    {
+      "path": "run_tests.sh",
+      "type": "file",
+      "sha": "dde540fcbf5c11b8004c0ca96622f7a14417670a"
+    },
+    {
+      "path": "setup.cfg",
+      "type": "file",
+      "sha": "b88034e414bc7b80d686e3c94d516305348053ea"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "29997ad63a11fddfb7b6eaefe0e07f3cae7f6e2a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

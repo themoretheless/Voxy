@@ -1,0 +1,89 @@
+{
+  "repository": "EBonura/bonnie-32",
+  "repository_id": 1110037899,
+  "commit": "2f1607beed2464f21ff63eb98e9512589ff6f00c",
+  "source_url": "https://github.com/EBonura/bonnie-32/tree/2f1607beed2464f21ff63eb98e9512589ff6f00c",
+  "readme_path": "README.md",
+  "readme_sha256": "7bc766d7fb581f4ac2ab763b770f1a4b81bebcede16cfa649732e2d557eb469f",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "0c4075fefb8e5cf974a5fdd2614125de1331ee58"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0b927722a54cf8ba417ea6752b4975a7f1daf7a8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ee611347b772ecef31076e3985c01b9505768ad0"
+    },
+    {
+      "path": "BACKLOG.md",
+      "type": "file",
+      "sha": "90c92e70112f36e6c3842b2496adb8bd990b5da9"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1408d5905548b79f740def30d2d4169c3e6e24ca"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "b5211b6a56c64d184a9d06f6b3a851ad8216f384"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "8a8873a0ef7889b9b8ab2cb3bfb0c4ef93382ef1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e2ff3fb94f47b7816318143569154eed7130f1b1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4319e1c4d9e832d0387a7cc6a99cb542c166c0a7"
+    },
+    {
+      "path": "THIRD_PARTY.md",
+      "type": "file",
+      "sha": "d3dca255ca339b5658f1b03a2a5e593325935a72"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "88d00f7120512f19328192480af9017c42cd45ed"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "04497b665790a80de5afd25dd2402e74dc3c95ac"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5a1c2c25c5707e9c73fc4f0efa1cc8306c9fa62f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b8a37f5ae5dc089b328e853cf9cf441bc170dcbf"
+    },
+    {
+      "path": "xtask",
+      "type": "dir",
+      "sha": "c642762b71fdfcdbf120e7d70ce337873cd78ac5"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Discontinued fantasy console with software rasterizer, integrated modeler/world editor/music tracker and Rust runtime source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,42 @@
+{
+  "repository": "gdquest-demos/godot-4-3D-Characters",
+  "repository_id": 588095955,
+  "commit": "43e578402131fd4a5624bbfdc9e9b86a7b081bbf",
+  "source_url": "https://github.com/gdquest-demos/godot-4-3D-Characters/tree/43e578402131fd4a5624bbfdc9e9b86a7b081bbf",
+  "readme_path": "readme.md",
+  "readme_sha256": "7670f139657d929e7b0c7db9b16514600f5273cd172a0c8a2be2e2cfbac5b0bf",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8ad74f78d9c9b9b8f3d68772c6d5aa0cb3fe47e9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4a501ffb99604694b37b7a4ddf7d5ebaa1ff2624"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "58dd0f4da2b237cbe2ab8d8a7f14f75cf9f88d0c"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "305d5d1a6bcc2f2cef44b65bf3a966e14dd67cb4"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "4e73bdc4cef8261b87787cc7affec1b819ce7412"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b837138aedca95449baa8dfc8358c02568eccc64"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

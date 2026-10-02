@@ -1,0 +1,159 @@
+{
+  "repository": "Strrationalism/Snowing",
+  "repository_id": 170968278,
+  "commit": "95f47667af09b11026a681231c03985cb7ddbf8d",
+  "source_url": "https://github.com/Strrationalism/Snowing/tree/95f47667af09b11026a681231c03985cb7ddbf8d",
+  "readme_path": "Readme.md",
+  "readme_sha256": "07bb2bc421d69c702597ca557501e64bad0328db2522e66d80b2bd39763661a8",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "58d2a058bdee69816d32c198c61c2de5c69c17ee"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bf71143c7f9a1ae8c31249f1beee3925e5452bd0"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "45cab4ecfe36e3769080cb49925233b3cbf29e01"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "24f375a78bf04531dfd6f42dd2d6b76648ac77ad"
+    },
+    {
+      "path": "Bake.Snowing",
+      "type": "dir",
+      "sha": "dda4377152613574c11039583fcbfef28c3c2bc5"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "9c04cd9a42b60cdc75a5235ad92644b4ce7f5638"
+    },
+    {
+      "path": "FX11",
+      "type": "file",
+      "sha": "8e483449aa9478462d82f86335c333ada180f05c"
+    },
+    {
+      "path": "Fyee",
+      "type": "dir",
+      "sha": "a79a6963318aa8361052b89bf3acfc8cf675219e"
+    },
+    {
+      "path": "FyeeDemo",
+      "type": "dir",
+      "sha": "abcb022ded12abe06a2f402b7b34b4caa4f117c0"
+    },
+    {
+      "path": "HelloWorld",
+      "type": "dir",
+      "sha": "04c71f2308f23ae23669cbc700eba55bc18be77e"
+    },
+    {
+      "path": "License.md",
+      "type": "file",
+      "sha": "1f1562e9269c3b03cecc99152c4f8a0b7581d76f"
+    },
+    {
+      "path": "Particle",
+      "type": "dir",
+      "sha": "cc803ced2a130f7511dbe7f1fb642a31e2a1aa24"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "ff82faa637c74e81391aaef2a545464fae58a358"
+    },
+    {
+      "path": "Snowing.sln",
+      "type": "file",
+      "sha": "314464e28410c1f8154fd7c309dd9ac646743fc3"
+    },
+    {
+      "path": "Snowing_VS2017_Install_Config.vsconfig",
+      "type": "file",
+      "sha": "4cab91df68e78676b53d8374d79ba37a4d9fe72d"
+    },
+    {
+      "path": "SpriteRendering",
+      "type": "dir",
+      "sha": "dc2d308a53c4bb2818d9135e9a57b9ee5bd53048"
+    },
+    {
+      "path": "TestWindows",
+      "type": "dir",
+      "sha": "f17b197401b5218ed42f7f0bd1049cbef7ec0117"
+    },
+    {
+      "path": "TestWindowsDInput",
+      "type": "dir",
+      "sha": "14f3e1e00a72d923ffa0aea994da19493a0519c1"
+    },
+    {
+      "path": "TestWindowsInput",
+      "type": "dir",
+      "sha": "989fd82486b0bf341385b912f5c88eb17e95170a"
+    },
+    {
+      "path": "TestWindowsLive2D",
+      "type": "dir",
+      "sha": "5bf7b0aae13076d75a7197d1ef11612440f55382"
+    },
+    {
+      "path": "TestWindowsXInput",
+      "type": "dir",
+      "sha": "c80a29ffbc9bb17f172b1f6b41e9dc949188fbad"
+    },
+    {
+      "path": "TestYukimi",
+      "type": "dir",
+      "sha": "bc74a9f56a2a461f9542d5dbb25e4091b542f391"
+    },
+    {
+      "path": "TextRendering",
+      "type": "dir",
+      "sha": "bda95cea63c2c9f7318ed157b50b4e315fbbe633"
+    },
+    {
+      "path": "WindowsDInput",
+      "type": "dir",
+      "sha": "b5f3b8184aacfd84885ba35b2f41af4b46b1ed14"
+    },
+    {
+      "path": "WindowsImpl",
+      "type": "dir",
+      "sha": "3c2c6af2b4bf6bc0e4873aab9844a0d807533731"
+    },
+    {
+      "path": "WindowsLive2D",
+      "type": "dir",
+      "sha": "c645de369381ee719bb31a581e3dc05e34dbc57b"
+    },
+    {
+      "path": "WindowsXInput",
+      "type": "dir",
+      "sha": "23549207a183cb8489d3ff4bcc426b336e1aef7c"
+    },
+    {
+      "path": "XInputControllerVibration",
+      "type": "dir",
+      "sha": "57b2f4034bdfa69489c44bda88a433f7e5b2ca8e"
+    },
+    {
+      "path": "Yukimi",
+      "type": "dir",
+      "sha": "b3ae4c7d3280825ec5f45c1b3192b46c3ab40827"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Engine core, platform/input implementations, asset pipeline and AVG/audio plugins with example/test projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

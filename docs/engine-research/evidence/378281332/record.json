@@ -1,0 +1,54 @@
+{
+  "repository": "natecurtiss/n8engine",
+  "repository_id": 378281332,
+  "commit": "4148c2b2328acb846f8a6c063776662bd21e0ecd",
+  "source_url": "https://github.com/natecurtiss/n8engine/tree/4148c2b2328acb846f8a6c063776662bd21e0ecd",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "39c9242eb40e21a67593d81d4887d49121dee624"
+    },
+    {
+      "path": "Examples.SampleGame",
+      "type": "dir",
+      "sha": "d7cf25f1bfe9ef57dd1ec660089aba5b6e918fe7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "196fb7747c3be4617a60a8796f9b55f32a13039f"
+    },
+    {
+      "path": "N8Engine.Core",
+      "type": "dir",
+      "sha": "8a9572cc1ca3c2e3594f9030da56b35cad58f64e"
+    },
+    {
+      "path": "N8Engine.Tests",
+      "type": "dir",
+      "sha": "7008a0532a86f652f0fe1f7ae1c933ee8ab9b6e3"
+    },
+    {
+      "path": "N8Engine.sln",
+      "type": "file",
+      "sha": "b46ff35ab34867effcccd96a538fef0bc3ea8afa"
+    },
+    {
+      "path": "N8Engine.sln.DotSettings",
+      "type": "file",
+      "sha": "f4443dceecee27b763afcbea625baafe48d3c88a"
+    },
+    {
+      "path": "N8Engine.sln.DotSettings.user",
+      "type": "file",
+      "sha": "c7d1377015c51d9be395a3852aff31316e34bca9"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Core/test/sample game projects but no pinned README; claimed engine description alone insufficient for runtime scope.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,49 @@
+{
+  "repository": "ellisonleao/magictools",
+  "repository_id": 21958186,
+  "commit": "0bbc965f96a78d737765b3a5d58dd97054f9638d",
+  "source_url": "https://github.com/ellisonleao/magictools/tree/0bbc965f96a78d737765b3a5d58dd97054f9638d",
+  "readme_path": "README.md",
+  "readme_sha256": "e5edaa7768c02e05fe36acdd8980914a23153f0dfec9b2d9bf41287aa0614f13",
+  "entries": [
+    {
+      "path": ".coderabbit.yml",
+      "type": "file",
+      "sha": "cbd2481a92f2d2dee5b744d0b243620835b240b7"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a158744534ea2cb560296f647509a63e8028f033"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fc7c8638d14af1bc9473adcc76212787439be398"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e78d97ffedbe8746eb5d0dfc2e469b51aaaf240c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a4cc16240b94db0026b11d30d4221f79f9e78dea"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "322eca3155f740555f2af9312a990d719d4ea90c"
+    },
+    {
+      "path": "magicbg.jpg",
+      "type": "file",
+      "sha": "d4516a48d92dd38ca43ea097d0439945b81599e1"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README declares a curated resources list; root lacks engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,154 @@
+{
+  "repository": "AtomicGameEngine/AtomicGameEngine",
+  "repository_id": 29790707,
+  "commit": "ff59324b7e198f4179eca0f6535b1e72484d8c4c",
+  "source_url": "https://github.com/AtomicGameEngine/AtomicGameEngine/tree/ff59324b7e198f4179eca0f6535b1e72484d8c4c",
+  "readme_path": "README.md",
+  "readme_sha256": "21bc2fda8931fdf1d8b9019715a3a490cf37051354d2d730cf5035b4e7e4bab0",
+  "entries": [
+    {
+      "path": ".crosscompile.sh",
+      "type": "file",
+      "sha": "2f0cbf77f73536cadfa8c009c195bf3318e6cdf2"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5f8b88c7bf58689348a7b615ebe9dd7335080cfd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b125df44da94d1370452a5c96421d6af1707e31b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "21bcc6930cc4575eab4dd7b8c03297b3d67e7737"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "4b5b3188b55452f7a0fd64420162cdcf8db03229"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "2400cb176321c0ab08157335d7fc2ad36d1eaebe"
+    },
+    {
+      "path": "Artifacts",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "BACKERS.md",
+      "type": "file",
+      "sha": "c317ae012678afb37666933f42079547f05a7c59"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "09ab46e5cbdb3e3b7ee5350b48bd972d72a9a0f3"
+    },
+    {
+      "path": "Build_AtomicEditor.bat",
+      "type": "file",
+      "sha": "e0ecd687bbd096292c249f98169e2e221ba82e42"
+    },
+    {
+      "path": "Build_AtomicEditor.sh",
+      "type": "file",
+      "sha": "edca5ae51e15e13e7c854649bdbe4df7aa169269"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "005f8dd8cc575cf860e6f17a7614aff2ce763f21"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7ed893c8c1338147313e971fed04e74059a529fa"
+    },
+    {
+      "path": "CMake_Makefile.sh",
+      "type": "file",
+      "sha": "2bee7548027f7b1e57830e50644ba1ec043dbf1d"
+    },
+    {
+      "path": "CMake_VS2015.bat",
+      "type": "file",
+      "sha": "73f702cada2d2842d23fb6b64ddac4fdfada9837"
+    },
+    {
+      "path": "CMake_VS2017.bat",
+      "type": "file",
+      "sha": "d0fdcb59251c886c750c69985e794b506f49879b"
+    },
+    {
+      "path": "CMake_XCode.sh",
+      "type": "file",
+      "sha": "53ff071a803d09b5f8a1e5147db5083da06cdfd6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2dce86b80c7945730021ce83806f3588df7b3b81"
+    },
+    {
+      "path": "CONTRIBUTION_LICENSE.md",
+      "type": "file",
+      "sha": "2fa8e82e8af4d9264901cde9ea8b202defad6f4c"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "8d21018728be0a95970efff0cfbf8fa0d7cb712b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "29ff24469f8a898b18fb14cf53fc48064e2596d6"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "f8b5919cd43eb9a8eefc577aacc50c80e654825f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "61477b60e2423a1f6fcec0466dd9ab3a509ba73b"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "b36c7174e65a7381ea7ad3fbc8b98eca21ea2ef3"
+    },
+    {
+      "path": "Script",
+      "type": "dir",
+      "sha": "058786e2be5bc22b9a1013c136d3609afadc3869"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "734db0d2b93f92cd324c6cd46ad32ffcf1fb328a"
+    },
+    {
+      "path": "Submodules",
+      "type": "dir",
+      "sha": "8d9efd6664592682a99f9a32ed53f1b89753de46"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "560840a40832a129501a5a3e7e58c500cb426fe4"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native engine/editor; Source/CMake/build tooling present; derived lineage requires separate review before independent count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

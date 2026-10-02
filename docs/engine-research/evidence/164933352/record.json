@@ -1,0 +1,99 @@
+{
+  "repository": "jmorton06/Lumos",
+  "repository_id": 164933352,
+  "commit": "908458b5c360c3421400b7db8fe028310b34dd78",
+  "source_url": "https://github.com/jmorton06/Lumos/tree/908458b5c360c3421400b7db8fe028310b34dd78",
+  "readme_path": "README.md",
+  "readme_sha256": "3fd7adec1bc6c6bfbf5b4fb7f8071e1f45cfc60fc7b8d752afca71cd41433ee7",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "053d3544709830ce9a4de6efbdea73468fc3601f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "713caef61fa4c554ef48d049b3d52654d2abbcc5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "af312951f79498734d44645bf8f24b8e501a0dec"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "7792d4d213c4b6b8619bb1cdbf6e9f1301592c55"
+    },
+    {
+      "path": "ExampleProject",
+      "type": "dir",
+      "sha": "d3ce4b5627717be3cde76af17b33c974470cb456"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ab8278d2be3fd9b5c5f7d69215305097d9ae9f3f"
+    },
+    {
+      "path": "Lumos",
+      "type": "dir",
+      "sha": "6958831aed3c7142562a414a3994e8a4c9040f3f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3f330bbf3bcf70db3d498a62d024e937f2328cfc"
+    },
+    {
+      "path": "RELEASING.md",
+      "type": "file",
+      "sha": "31da0bda7f2792e792aade00f988566acd66f0d6"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "b8739faddae09fe52e3ece1c449874543c5bec57"
+    },
+    {
+      "path": "Runtime",
+      "type": "dir",
+      "sha": "c945e792f91e1294902a4b6bb134f66353abb5a7"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "2a12d9509a613cb72345788f2522ad377c37f3b9"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "c1111787fe309d93b3a7d00ca174d7621b072a96"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "941017a850f399c8343ac2bf5ef2354f5994f348"
+    },
+    {
+      "path": "premake-dependencies.lua",
+      "type": "file",
+      "sha": "921a130ad8cb006a8e244895cf72ef376cac7040"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "88d357161c5f3043613dedf40cbdc9f81af0218b"
+    },
+    {
+      "path": "project.4coder",
+      "type": "file",
+      "sha": "3b6edd7c6c157663c43e6c00536b00f13fab63c0"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 2D/3D engine; Lumos/Runtime/Editor plus premake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,121 @@
+# BoardGames
+
+"Board Games" is a [Fusion] sample and a fully functional 
+web app allowing you to play real-time multiplayer board games.
+It runs on .NET 10, ASP.NET Core (Blazor Server + WebAssembly),
+[ActualLab.Fusion](https://github.com/ActualLab/Fusion), EF Core,
+and [Blazorise](https://blazorise.com/).
+
+
+<img src="https://img.shields.io/badge/-Live%20demo:-green" valign="middle"> https://boardgames.actuallab.net/
+
+This app is generated and kept up to date with [Claude Code](https://www.anthropic.com/claude-code).
+The full interaction log — every prompt, with Claude's responses summarized to
+a bare minimum — is kept in [docs/ai-sessions/](docs/ai-sessions/).
+
+A short video explaining what's unique there:
+
+[<img src="docs/img/BoardGames.jpg">](https://www.youtube.com/watch?v=R1XB8UKJ1dk)
+
+The sample implements a number of features that are 
+hard to implement without Fusion. In particular, you might notice
+that real-time state sync works literally everywhere in it. 
+Try opening the sample in two different browsers, sign in using 
+different user accounts, and:
+- Create and play a game in both windows
+- Check out what happens with game lists when you're
+  creating a game, making moves, or posting a chat message
+- Try renaming your user & see its name changes everywhere - 
+  even in chat mentions!
+  
+### What's implemented in Board Games
+
+- Five games: Gomoku, Tic-Tac-Toe, Connect Four, Reversi,
+  and Rock-Paper-Scissors - there is a common base API allowing
+  to add new games pretty quickly
+- Game lobby, where you can track the state of games you
+  participate in, browse open games created by other users 
+  and join them
+- Game chat, which supports mentions. In reality, there is
+  an extendable message parser and modular renderer that 
+  supports user and game mentions.
+- User online/offline status tracking. Notice that every 
+  user badge displays it.
+- User profile page, where you can edit your user name, add 
+  MS/GitHub accounts, see all browser sessions, "kick" some
+  of them or sign out from all of them.
+- Full state persistence to any DB supported by EF Core
+- Fusion RPC over WebSockets - it's used when the sample works
+  in Blazor WASM mode, so whatever UI can do is available there too.
+
+Finally, the sample supports *both* Blazor Server and 
+Blazor WebAssembly modes.
+
+The [live version] of this app runs on a single **free-tier Arm VM in
+Oracle Cloud** (the "Always Free" A1 tier), sharing that one host with the
+other Fusion samples ([TownHall](https://townhall.actuallab.net/),
+[TodoApp](https://todoapp.actuallab.net/), and the
+[Blazor samples](https://blazor-samples.actuallab.net/)):
+- A single [Caddy](https://caddyserver.com/) container is the shared edge
+  for the whole VM: it terminates TLS and reverse-proxies each subdomain to
+  its app container. [Cloudflare](https://www.cloudflare.com/) sits in front
+  (proxied, Full-strict TLS with a Cloudflare Origin certificate).
+- **PostgreSQL** runs in Docker on the same VM; its data is persisted to a
+  host folder (`/var/lib/boardgames/postgres`), so it survives redeploys.
+  The app applies EF Core migrations (`src/Migrations`) on startup.
+- The whole stack is plain Docker Compose, auto-redeployed by a systemd
+  timer that polls `main` and rebuilds when it moves - no CI/CD service or
+  inbound webhooks required.
+- Try opening https://boardgames.actuallab.net/api/hostInfo/getHostName to
+  see which host served the request.
+- Check out [deploy/](deploy/) - [docker-compose.prod.yml](deploy/docker-compose.prod.yml),
+  [Caddyfile](deploy/Caddyfile), and [deploy/README.md](deploy/README.md) -
+  if you're interested how it's configured.
+                   
+### Ok, real-time. But seriously, what's so new there?
+
+The implementation cost of real-time updates. Everything you 
+see there required me to write [just ~50 extra lines of code](https://github.com/alexyakunin/BoardGames/search?q=Invalidation.IsActive)!
+
+- First 3 `if` blocks have ~ 15 lines of code inside
+- The last one (in `GameService.cs`, the invalidation logic is outside of 
+  an `if` clause there) has ~ 20 more.
+  
+And if you look at everything else, it's absolutely usual code you'd 
+have otherwise too.
+
+> More precisely, you'd need at least this "everything else" to implement 
+a *non-real-time* version of the same sample that supports just 
+Blazor Server.
+>
+> WASM version would require way more - the approach used in this sample,
+where server-side services are replaced by their client-side caching
+replicas (so-called 
+["Replica Services"](https://github.com/ActualLab/Fusion.Samples/blob/master/docs/tutorial/Part04.md)
+in Fusion terms) simply won't work without Fusion-style distributed
+version of "computed observable" that eliminates every RPC call known 
+to return the same result as the locally cached one. 
+>
+> In other words, if you use Fusion, Blazor WASM mode has virtually 
+zero implementation cost as well. 
+
+**And this is what allowed me build Board Games single-handedly
+in 9 days.** Proof: 
+[the very first commit](https://github.com/ActualLab/Fusion.Samples/commit/546ae7597bc7fa3a0b3c7f3b84e3a463bc3fd28f)
+cloning Fusion's Blazorise template was made on Feb 1, 
+and [I wrote this README describing what's already done](https://github.com/alexyakunin/BoardGames/commit/b1042a74209050cb79fb4e248f84a03c2b600fbf)
+on Feb 10 (though at that point there was just one game). 
+
+### Looks interesting, how do I learn more about Fusion?
+
+Check out [Fusion] and its 
+[other samples](https://github.com/ActualLab/Fusion.Samples);
+join our [Discord Server] to ask questions.
+
+P.S. I am sure there are some bugs - if you'll find one, 
+please 
+[report an issue](https://github.com/alexyakunin/BoardGames/issues)!
+
+[Fusion]: https://github.com/ActualLab/Fusion
+[Live version]: https://boardgames.actuallab.net/
+[Discord Server]: https://discord.gg/EKEwv6d

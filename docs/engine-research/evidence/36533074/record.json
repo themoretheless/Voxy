@@ -1,0 +1,169 @@
+{
+  "repository": "Blecki/dwarfcorp",
+  "repository_id": 36533074,
+  "commit": "45a1c39663fce226ea4b4b868f0a43a0570c877a",
+  "source_url": "https://github.com/Blecki/dwarfcorp/tree/45a1c39663fce226ea4b4b868f0a43a0570c877a",
+  "readme_path": "README.md",
+  "readme_sha256": "323947c0f0a60cb50b8bdfc7f3c24fe7d5ce85132a9d2cbc2b8e1f873972f4ed",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "17df3c01428986e35e87d09104359ffae39101d1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "830fcb413637b8b72fbda6e438301f4ff3058043"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "90d8474dd3f176fab88d6a2aafe174248b0d3761"
+    },
+    {
+      "path": "ArialFonts.rar",
+      "type": "file",
+      "sha": "5ca9e2d9d3a6b78bf080af0c920b8773f0cd8cc8"
+    },
+    {
+      "path": "Build_Metadata",
+      "type": "dir",
+      "sha": "4de9335540216ba2910045b7eb247f71d4562f27"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "59dc98d395633c33a9ce4b1b0a33b0b24f01c3a3"
+    },
+    {
+      "path": "DwarfCorp.sln",
+      "type": "file",
+      "sha": "e0a9683b8ab17144b15b3d41669a82942b64b19e"
+    },
+    {
+      "path": "DwarfCorp",
+      "type": "dir",
+      "sha": "68cbd34103e768e39294069de3339b51d2ecffb4"
+    },
+    {
+      "path": "DwarfCorpContent",
+      "type": "dir",
+      "sha": "74ed2d1658a867c4f7583c574b761c7cb040a260"
+    },
+    {
+      "path": "FNA",
+      "type": "file",
+      "sha": "30a68bb397d185f4dfe91f09b6fb2cd72e385f11"
+    },
+    {
+      "path": "FNA_libs",
+      "type": "dir",
+      "sha": "046542b6c0bdf7a06a4836ded03b53efbf1b4e47"
+    },
+    {
+      "path": "FontBuilder",
+      "type": "dir",
+      "sha": "940afea6323ed68b52b5c35306eaa5ad5f2483bf"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "ae9c773f78298e418cc75b7319ba4f879c40a9f3"
+    },
+    {
+      "path": "LibNoise",
+      "type": "dir",
+      "sha": "aa5740b356b474bfc6271f692b27cadaacc41bde"
+    },
+    {
+      "path": "MXA",
+      "type": "dir",
+      "sha": "3f52ed0c2bad73a7712c0e0ae912ac11d66b6e59"
+    },
+    {
+      "path": "ManaLampMod",
+      "type": "dir",
+      "sha": "d2ff7726c3b148fe6778edb173aa1b5c616f7e8c"
+    },
+    {
+      "path": "MaybeNullSpeedTest",
+      "type": "dir",
+      "sha": "00f083b1d4cac0a792bb9b9d5a44ece9e7beef6a"
+    },
+    {
+      "path": "New Assets",
+      "type": "dir",
+      "sha": "b2bde97e64810aff596e002681f8f1b63ed13cc1"
+    },
+    {
+      "path": "Newtonsoft.Json.dll",
+      "type": "file",
+      "sha": "4395f61011c9a01e09520319ccba468292335656"
+    },
+    {
+      "path": "PSD",
+      "type": "dir",
+      "sha": "2b74e378de907ccdf7f4c6d61cb486a44aebd9b5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "05b19a68c876e34ef6384575a3510542c8784abe"
+    },
+    {
+      "path": "SteamSDK",
+      "type": "dir",
+      "sha": "6417e8a0928c88ffc21d944f24823bfd74dc5a5c"
+    },
+    {
+      "path": "SteamWorks",
+      "type": "dir",
+      "sha": "10337d60b2763f066e2a47f989d500aec1985e39"
+    },
+    {
+      "path": "Todo.exe",
+      "type": "file",
+      "sha": "3b22e9170fa1e0d5a91d370693a42567c3086196"
+    },
+    {
+      "path": "Todo",
+      "type": "dir",
+      "sha": "8f32ab410dfd23786013a4f15898b77d03fbb412"
+    },
+    {
+      "path": "TodoViewer.exe",
+      "type": "file",
+      "sha": "21586b5b3c0aecbdf2417e253096e1219e33a425"
+    },
+    {
+      "path": "TodoViewer",
+      "type": "dir",
+      "sha": "c9bd0e4c47e3e28bb8d61eca86c1a0098a9f1414"
+    },
+    {
+      "path": "YarnSpinner",
+      "type": "dir",
+      "sha": "584987e65358e473b6f477fdfea3b0e761da4958"
+    },
+    {
+      "path": "deploy_itch.bat",
+      "type": "file",
+      "sha": "f4b106dde4a3aa0460522d165be2c65b83d5c7a5"
+    },
+    {
+      "path": "prepare-builds.bat",
+      "type": "file",
+      "sha": "053b5d32235ed78043e25026a40e384fcd65f246"
+    },
+    {
+      "path": "todo.txt",
+      "type": "file",
+      "sha": "e08fee52b64be78bdc3a88987ff37db805fccdd0"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify colony-management game over XNA/FNA backend; game/content source does not establish independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

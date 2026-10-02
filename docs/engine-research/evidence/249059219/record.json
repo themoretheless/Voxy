@@ -1,0 +1,24 @@
+{
+  "repository": "nonunknown/godot-powerful",
+  "repository_id": 249059219,
+  "commit": "56a09b6254a967e12a868dda900da1e23a9920d7",
+  "source_url": "https://github.com/nonunknown/godot-powerful/tree/56a09b6254a967e12a868dda900da1e23a9920d7",
+  "readme_path": "README.md",
+  "readme_sha256": "63eb9a85f0a0bd4afc1bd1b294b5ca198884b1e2564dcaed6e16f3aa9d7894da",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7eb2f79af220de910afe8e632e25578de7b53a64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "697633b1d022154eb44785180b5d2a2a9f71ea24"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly lists Godot plugins; root only documentation/license.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

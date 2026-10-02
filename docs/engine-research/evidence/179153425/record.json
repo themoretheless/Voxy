@@ -1,0 +1,144 @@
+{
+  "repository": "ImanolFotia/Epsilon-Engine",
+  "repository_id": 179153425,
+  "commit": "a41fbe8f27e5e92d6708c2bd7f9301719b95f4e7",
+  "source_url": "https://github.com/ImanolFotia/Epsilon-Engine/tree/a41fbe8f27e5e92d6708c2bd7f9301719b95f4e7",
+  "readme_path": "README.md",
+  "readme_sha256": "9c08dbcb9161850c5372020fb0ac35707ba8773117b4a378c8eeee5852a343c4",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitconfig",
+      "type": "file",
+      "sha": "c5819653f3bd3b3bd1181962a196d8f675329276"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "95bfc29f399db667a5ba4aa1618d2f6f915dc330"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea295ad1f703b8c3bef7e5bdb0984477aeafc8eb"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "db87c0f7bb20bf60d2cfcfcbbe43fe880cc690c1"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "85eac3876a9f1df8a01550be87789b36232200b5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "bbf939a2bfc108fe172876f2fa24f482d21efdd7"
+    },
+    {
+      "path": "Epsilon.cpp",
+      "type": "file",
+      "sha": "b015740105430ff6636e5286126c28eec6e66020"
+    },
+    {
+      "path": "Epsilon.hpp",
+      "type": "file",
+      "sha": "ad750c2828e6f3c9fc88bbcf10405fbf1287f725"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "952785a83efe808d3c24b4956d5199f1b9deb77b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4f89d4e204cb5ed4a53ba036d2974b43f7e5db0f"
+    },
+    {
+      "path": "Roboto.hpp",
+      "type": "file",
+      "sha": "aaf222aebc7f5c17c82516103e78c9218e0a2b39"
+    },
+    {
+      "path": "apis",
+      "type": "dir",
+      "sha": "1101098bd37fbcd26a44015bafcff1a7ca119a09"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9e23ebb11731517202b6eb7a05dbe5c247a866f4"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "8ed2bf7473832d03241a3b5e60fe97512a25751c"
+    },
+    {
+      "path": "dotnet_test.deps.json",
+      "type": "file",
+      "sha": "6f6137013f09881ce80ea9cb14f1f956f89306c9"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "0e4d7b69297ccbb11dd2bee0d813de36e82dbbd2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "5b94b2c975cc9e9e30325f6c91bbadaa8a8779d2"
+    },
+    {
+      "path": "main_lib.cpp",
+      "type": "file",
+      "sha": "bd700a9120699f22f746f2aa091ebdc58289cda2"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "d2c46260797241b1136729f536ecd1945bfff2c9"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "52e92a5e47381ad1058c405e7e3adc06728c5365"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "2fe3fa65b56a528eac01a7302426040d65a2da3e"
+    },
+    {
+      "path": "projects",
+      "type": "dir",
+      "sha": "0380de5c40e1abb1d9e86c14ff6367016272770f"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "0ae4c246ce140cb0e63a691d360059f054c3835f"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "9cdc67c208eeb4382262e92bedd9f75a8dc3423d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "84552c3e5af75fd029bf8e5dfed181cd399af7ea"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Source-visible Vulkan game engine marked EULA; selection deferred until license scope reviewed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

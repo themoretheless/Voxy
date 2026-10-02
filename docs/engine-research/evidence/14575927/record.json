@@ -1,0 +1,32 @@
+{
+  "repository": "dissimulate/Clarity",
+  "repository_id": 14575927,
+  "commit": "a1cfbd95990e119c2bec641a22c0e79624b431f7",
+  "source_url": "https://github.com/dissimulate/Clarity/tree/a1cfbd95990e119c2bec641a22c0e79624b431f7",
+  "readme_path": "README.md",
+  "readme_sha256": "688d765c41bae9cba3b7fcfc9d38cc50ee0dbedaa1c2e81d30850d3f6dbe0dc4",
+  "entries": [
+    {
+      "path": "Clarity.js",
+      "type": "file",
+      "sha": "da7f301fbe21499e36895777825962e997dd1e1f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "65815eec496c619ff3f57e1efc9d22809b41caec"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "64410b5f6d16d8af128076a77285fb30cbd8ba90"
+    },
+    {
+      "path": "style.css",
+      "type": "file",
+      "sha": "dff4f58f88ffed80b9fa60cf81159742a3fdddaa"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

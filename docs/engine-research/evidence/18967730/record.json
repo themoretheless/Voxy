@@ -1,0 +1,47 @@
+{
+  "repository": "StarEngine/engine",
+  "repository_id": 18967730,
+  "commit": "c8ede28ac6a56640f54cb94f8af9c2cb44fb6cf3",
+  "source_url": "https://github.com/StarEngine/engine/tree/c8ede28ac6a56640f54cb94f8af9c2cb44fb6cf3",
+  "readme_path": "README.md",
+  "readme_sha256": "b30f050cfcb5518a9e072d7b0dcf009d3b6b4034b4f580911cf7e2121266f596",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "12be364943fc8d7e6d5e4e03f23729490a7446ae"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6151e2abbbc3fccf3b0af2799e8f95c8272b16d6"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "53f15cc9f0e3ba7d7321801842c75d62f42ab761"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0aa0c0a2894625ec3418b61079d920808d6ae0e5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ca26c7d582bb20178ab4f088ddb5927d30bf7a71"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "0c15b637175f0fe6dfa60d4cfc49641dc3b00299"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "dc9178439f77a7ba9af416838d6b2cdbd2a64f1a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

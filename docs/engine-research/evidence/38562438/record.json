@@ -1,0 +1,89 @@
+{
+  "repository": "lofcz/SimplexRpgEngine",
+  "repository_id": 38562438,
+  "commit": "f6105047a90f4999e3fc902d46cae5538d175179",
+  "source_url": "https://github.com/lofcz/SimplexRpgEngine/tree/f6105047a90f4999e3fc902d46cae5538d175179",
+  "readme_path": "README.md",
+  "readme_sha256": "eaa58b46f3e9c37ec5a2cf37836a1fe6bc5073917a484c83246c0e90c2b122d7",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8a4f178a3010a5b1f6ff553d1e00e6f8e570d8e8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3b413bf463fa3ba00b0d94acdd88e31270cb6920"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "25288e488efdf44e5a47d2395b1f1a73f467c41f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "aa0f6444fe987a5e0898518ac4e471ac1f610840"
+    },
+    {
+      "path": "ISSUE_TEMPLATE.md",
+      "type": "file",
+      "sha": "2414fc6f2fe0719273003cdfbad15f671c761ef1"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "6b9d625400a6b2b77605f2815277174436097141"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "40e1d7fbf535f5685e2a6f819b1d34ffeaed4b22"
+    },
+    {
+      "path": "SimplexCore",
+      "type": "dir",
+      "sha": "2c2946f652a978e13f91e1656507c31a1d9bf7cb"
+    },
+    {
+      "path": "SimplexIde",
+      "type": "dir",
+      "sha": "357cf64654e587be021f2b60df05c554195975a8"
+    },
+    {
+      "path": "SimplexResources",
+      "type": "dir",
+      "sha": "d264318698bfee666bc3cf353be68cdfd66bfe6d"
+    },
+    {
+      "path": "SimplexRpgEngine3.sln",
+      "type": "file",
+      "sha": "e5bb9f9ccfc9b50a2fea091f8e3636dc7fb249b2"
+    },
+    {
+      "path": "SimplexRpgEngine3",
+      "type": "dir",
+      "sha": "3322bc75ae3d8486a6574851d9b544b1fb0caeda"
+    },
+    {
+      "path": "TestExtension1",
+      "type": "dir",
+      "sha": "a56f9601a259e8c9c9561bcabfc7017b3f73142f"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "b8d66ffe6a7c5ce68708b89ebae52bcdb1cdcec5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "MonoGame-based engine with a room/resource IDE and separate core, IDE and resource projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,57 @@
+{
+  "repository": "ChilliWorks/ChilliSource",
+  "repository_id": 24335898,
+  "commit": "1f482f1e84c1402b7ded7130d9ff9d114b4a458d",
+  "source_url": "https://github.com/ChilliWorks/ChilliSource/tree/1f482f1e84c1402b7ded7130d9ff9d114b4a458d",
+  "readme_path": "readme.md",
+  "readme_sha256": "a036f6d8f9ff06091aafbf6dece6931523c1d07e495ee8fbc9653037a58e1708",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2d67448327c1e34882043a91e6a99077d300ba1b"
+    },
+    {
+      "path": "CSResources",
+      "type": "dir",
+      "sha": "a514973563ce0c525ff6d961144cf8338fa91f33"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "f3df94e3dc58db683c93a8e6e84709df7c3a3218"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e1eb903efed617c3f2696cccb8c2999ac183f70c"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "9a730a308b2a85514c6f3f79796ab8ff0cec577c"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "6ba8f77a98211c7b2bb7b02c6e16ec02df58a62e"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "ebefceabade2f8c23ef439227dd72934321cf69a"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "02b2eccb3755027373b547c6e847af72aa0c7950"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "afe0489212a51e63a18086ea7d2799a391192cd7"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

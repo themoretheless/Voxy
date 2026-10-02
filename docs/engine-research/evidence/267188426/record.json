@@ -1,0 +1,39 @@
+{
+  "repository": "gdquest-demos/godot-shaders",
+  "repository_id": 267188426,
+  "commit": "05a3931acc85513b67b80b6e88671a596a3f9693",
+  "source_url": "https://github.com/gdquest-demos/godot-shaders/tree/05a3931acc85513b67b80b6e88671a596a3f9693",
+  "readme_path": "README.md",
+  "readme_sha256": "6fa356938ae3eb44e14f3d6b89c947b8d7b971cac9ec632e788a9ab94f4c0bff",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b44244575dcb065282462cccf10d1edde459885b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bbefd16541827ec41d8c27455c32e57a7f951f38"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4a5d3e360044ab697f949537cfbbcc70ccd87268"
+    },
+    {
+      "path": "godot",
+      "type": "dir",
+      "sha": "130cfe637b0e14d7645de41593322e5f02d6d602"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "9d3882f8df00a1d5c676c6898be63496044446f0"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot shader library and playable demos, external engine required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

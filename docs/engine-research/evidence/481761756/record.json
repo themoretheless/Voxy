@@ -1,0 +1,149 @@
+{
+  "repository": "Staple-Engine/StapleEngine",
+  "repository_id": 481761756,
+  "commit": "2687222f02eb8a16798b6d34476df5ea9c02fb7d",
+  "source_url": "https://github.com/Staple-Engine/StapleEngine/tree/2687222f02eb8a16798b6d34476df5ea9c02fb7d",
+  "readme_path": "README.md",
+  "readme_sha256": "08e72291df267cfa3774da7d469641180da0a9bbb964150d5037598a829b878a",
+  "entries": [
+    {
+      "path": ".github.bak",
+      "type": "dir",
+      "sha": "0f233e2cdfabafc01ca4a82281275ea25a8fe08c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e33390632203a0f02582badd41a5cc6292984082"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5d328e770a338a55e50209378bc860e191c24ffa"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ee087a7eb74dde613240903ec9a902fe7bcbed0a"
+    },
+    {
+      "path": ".noai",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "4d2fbcba3d6f4d3504e4fd2b8a79f888ae1b6133"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "eb3d6b64562e46b1cde3e4995c347dead1a3da5d"
+    },
+    {
+      "path": "ArtSources",
+      "type": "dir",
+      "sha": "d9b94674d43bdc5c9c1800fb8900dad724f11b9c"
+    },
+    {
+      "path": "BuiltinResources",
+      "type": "dir",
+      "sha": "552cc807820b9bd974ddcf8d6cdf98ee04730431"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "4d2fbcba3d6f4d3504e4fd2b8a79f888ae1b6133"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "d975fb346028a416d27334bbfb8a1daa8b6b1b04"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "1f8ad9da32d978229b75b05e0cc88fa16cac6444"
+    },
+    {
+      "path": "IDEExtensions",
+      "type": "dir",
+      "sha": "bf4b7f4af0c79089cde7c79068763c01f6f89946"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "894762f638aced88be2b97fbe1f21d157c14cd9a"
+    },
+    {
+      "path": "LOGO_LICENSE.md",
+      "type": "file",
+      "sha": "6f23744333fe1f72dbea150d9b5d94739c5be920"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "60e66c437317fbf8cd07942bb87f10df0fba21b3"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "ccfbbd3914c1d7870c8161450944437f16a77e94"
+    },
+    {
+      "path": "Staging",
+      "type": "dir",
+      "sha": "1c6c2dfd3f2de5a04862b71ed0a616b28407cb78"
+    },
+    {
+      "path": "TestProject",
+      "type": "dir",
+      "sha": "881d1d66747f03f6e5db0722f5962fc5b2cd8869"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "7c66d42e47fbfa6f802f88560a8a35fdf6c3fb77"
+    },
+    {
+      "path": "builddefaultresources.cmd",
+      "type": "file",
+      "sha": "ea1ead7193b4fbc633ed2ab1541f582dbd56a687"
+    },
+    {
+      "path": "builddefaultresources.sh",
+      "type": "file",
+      "sha": "cd432302daac4939fccf0a84dc71b06fde04a6b9"
+    },
+    {
+      "path": "distribute.cmd",
+      "type": "file",
+      "sha": "fa9b837a8dc101083cdfea5495183543a813edc9"
+    },
+    {
+      "path": "distribute.sh",
+      "type": "file",
+      "sha": "77fff95029c30723097f64a0d1ea038a846a4681"
+    },
+    {
+      "path": "icon_black.png",
+      "type": "file",
+      "sha": "d885227244213002cf4d960b7f0eb8fbc51892b0"
+    },
+    {
+      "path": "icon_gradient.png",
+      "type": "file",
+      "sha": "799fa07e0474c2dc25bf2726d301170c78d63139"
+    },
+    {
+      "path": "icon_white.png",
+      "type": "file",
+      "sha": "3ccd1ac0c6cfc64e69c50a232827c5cd797ce7cf"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate .NET engine, editor/build/import tools and test project; entity systems and asset baker documented, early small-demo status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

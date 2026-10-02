@@ -1,0 +1,334 @@
+{
+  "repository": "fegennari/3DWorld",
+  "repository_id": 128689753,
+  "commit": "ae81a2e5fab155d59ff2ff68912a3c42cb7efaec",
+  "source_url": "https://github.com/fegennari/3DWorld/tree/ae81a2e5fab155d59ff2ff68912a3c42cb7efaec",
+  "readme_path": "README.md",
+  "readme_sha256": "23328332e13b5bf5312eaf31f7394e734c31bc00339ffdfeff36517fd9572b80",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c253da7d1d40e0a7fd05b1e12098b730aacb45b2"
+    },
+    {
+      "path": "3DWorld.sln",
+      "type": "file",
+      "sha": "023e07657336a74ffd6ef59773642f4bf3be83f6"
+    },
+    {
+      "path": "3DWorld.vcxproj",
+      "type": "file",
+      "sha": "6bfe491c044588366af9185c9b577af89a63157d"
+    },
+    {
+      "path": "3DWorld.vcxproj.filters",
+      "type": "file",
+      "sha": "f4354dcb5bd9c6c2dfdf7110582d119021fcc5e5"
+    },
+    {
+      "path": "3DWorld_debug.bat",
+      "type": "file",
+      "sha": "e266765a9ef8449d78f1318aa9999d9cd3f6d263"
+    },
+    {
+      "path": "3DWorld_debug.exe.lnk",
+      "type": "file",
+      "sha": "83518d35beadb514b3a59fb83d2c92d0cfa4d44f"
+    },
+    {
+      "path": "3DWorld_release.bat",
+      "type": "file",
+      "sha": "d2d5da7b59f068b043ea2725f33b830d533d3045"
+    },
+    {
+      "path": "3DWorld_release.exe.lnk",
+      "type": "file",
+      "sha": "6ae6f4b5c541889f25d184db26de02de37a03121"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "OpenAL32.dll",
+      "type": "file",
+      "sha": "6b53473afe1356f9e83f96e4dc59a52a938da868"
+    },
+    {
+      "path": "README.defaults",
+      "type": "file",
+      "sha": "438cb75b93e39f47b5cd7737cdafe49b7774fa39"
+    },
+    {
+      "path": "README.linux",
+      "type": "file",
+      "sha": "1ccbb423f0061abbacab37608234924b07382a6a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c2952d2af9f8073e30fe2c5e1905c4320bf25b8b"
+    },
+    {
+      "path": "Script1.aps",
+      "type": "file",
+      "sha": "6d15f4743f9cfa24c512beefa3ee75c5ddf7289c"
+    },
+    {
+      "path": "Script1.rc",
+      "type": "file",
+      "sha": "8950a63cc4be2d6c64b4e8cb589a02a3bb0d6b27"
+    },
+    {
+      "path": "Targa",
+      "type": "dir",
+      "sha": "e615b935013892084a7bdcc4c630aa46a6017c71"
+    },
+    {
+      "path": "Universe_class_hierarchy.txt",
+      "type": "file",
+      "sha": "fe7f30fad824fef53b149742f66049966c3679f7"
+    },
+    {
+      "path": "alut.dll",
+      "type": "file",
+      "sha": "5ee1bb33dd0e0ef662076af2b658c4f8c7f53f6a"
+    },
+    {
+      "path": "assimp-vc143-mt.dll",
+      "type": "file",
+      "sha": "22bc25df8485c993c7752b789548daa8f5bf4f53"
+    },
+    {
+      "path": "buildings_walkthrough.txt",
+      "type": "file",
+      "sha": "4eea6d4fdf92baef22ebc5792a392bdc47c3ca2f"
+    },
+    {
+      "path": "coll_objs",
+      "type": "dir",
+      "sha": "6b0952965d49ecfc885546e89fc76f25d66b7dfc"
+    },
+    {
+      "path": "cornell_box",
+      "type": "dir",
+      "sha": "94cf3945842fd0952ee045343d469ca21dda9279"
+    },
+    {
+      "path": "defaults.txt",
+      "type": "file",
+      "sha": "e36306a16712f1352b95680a9a3440268306ce8d"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "4c83fad1b8645f22c594e5f52a1d41e4b55c0409"
+    },
+    {
+      "path": "freeglut.dll",
+      "type": "file",
+      "sha": "4f2143c08605ef091d6aedfd58cda2f0cb113ddc"
+    },
+    {
+      "path": "glew32.dll",
+      "type": "file",
+      "sha": "7c65f56c98bc89b5bcb02fea8934f1ecbb903600"
+    },
+    {
+      "path": "heightmap_flood.bmp",
+      "type": "file",
+      "sha": "19c27cb75b79f13081f1badfab2bee95123eaac3"
+    },
+    {
+      "path": "heightmap_river.bmp",
+      "type": "file",
+      "sha": "9362f54fdebe8215e77513f6537eb6a427766439"
+    },
+    {
+      "path": "heightmaps",
+      "type": "dir",
+      "sha": "004579660bd0223f1654c2652f2814fbd32edcbf"
+    },
+    {
+      "path": "hmv.mesh",
+      "type": "file",
+      "sha": "4c4adb798c76c110b34ff1320dda48be4ae28f78"
+    },
+    {
+      "path": "house",
+      "type": "dir",
+      "sha": "403ae28beeac376eb67fc5748bf390efa492fb6d"
+    },
+    {
+      "path": "icon1.ico",
+      "type": "file",
+      "sha": "44ece889806a5f08b51b47407ad118b411d92bb3"
+    },
+    {
+      "path": "image_and_model_credits.txt",
+      "type": "file",
+      "sha": "362ae69c25e71791c1ead2621cfced05718b1fca"
+    },
+    {
+      "path": "lib32",
+      "type": "dir",
+      "sha": "8ee41c6292b84c23efba4b7c1bada48ea709e616"
+    },
+    {
+      "path": "lib64",
+      "type": "dir",
+      "sha": "7f647d6c45d13ec7ae3369d5fd5710be574010d2"
+    },
+    {
+      "path": "makefile",
+      "type": "file",
+      "sha": "7cf2b0c96e0971fc68b656ba303b101a1cbe4431"
+    },
+    {
+      "path": "makefile.msys2",
+      "type": "file",
+      "sha": "e56bc48a81d71d19e3801f3231fb15df30a78048"
+    },
+    {
+      "path": "makefile.old",
+      "type": "file",
+      "sha": "47ec89619d1c13f2edef0c4cfcb6ecbd7e6631c1"
+    },
+    {
+      "path": "mapx",
+      "type": "dir",
+      "sha": "0a3d00cf5dc307d6e895735e451405abbb8d33a7"
+    },
+    {
+      "path": "mesh.txt",
+      "type": "file",
+      "sha": "e9da9ccc38e41fee8b9072567457f8afc6ca961e"
+    },
+    {
+      "path": "minizip.dll",
+      "type": "file",
+      "sha": "090cbbd6470a400224ee4cda421edfd02a52474a"
+    },
+    {
+      "path": "model_data",
+      "type": "dir",
+      "sha": "91d9ddf7208f1dfaf2c04014465bdfdd4d4083b2"
+    },
+    {
+      "path": "obj_list",
+      "type": "file",
+      "sha": "5f27068ce72367cc66bc7a5e4b90c9281ecf0581"
+    },
+    {
+      "path": "output.modmap",
+      "type": "file",
+      "sha": "bf5fa99ed86bd839daea0e0be0a8da9200190fc9"
+    },
+    {
+      "path": "plf_colony",
+      "type": "dir",
+      "sha": "ba405dabff9d413e79d8e3f8a002f81482440e6d"
+    },
+    {
+      "path": "poly2tri.dll",
+      "type": "file",
+      "sha": "c851a3db2bffc106ff2799bd8438acef4f60a440"
+    },
+    {
+      "path": "pugixml.dll",
+      "type": "file",
+      "sha": "39bfcf3502a25619f17636b4cb991b400728a2b3"
+    },
+    {
+      "path": "readme-keys.txt",
+      "type": "file",
+      "sha": "79e70ca2dbcff8c4a5d20f925d46de08c2b3b761"
+    },
+    {
+      "path": "scene_config",
+      "type": "dir",
+      "sha": "35318eaa7bb353601348eab1fce51b5775906f6b"
+    },
+    {
+      "path": "scene_stats.xlsx",
+      "type": "file",
+      "sha": "9f2be7c792d1da073e3f76dd3bd3b829e43247fd"
+    },
+    {
+      "path": "shader_info.txt",
+      "type": "file",
+      "sha": "073184b642525b5181a0882b30fb454f8abd2467"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "924c3826b9c558cb6050da78d41aebfb63874af5"
+    },
+    {
+      "path": "snow.voxels.map",
+      "type": "file",
+      "sha": "483f0a31361b8a06075cf1e51045c73c040841eb"
+    },
+    {
+      "path": "sounds",
+      "type": "dir",
+      "sha": "bc7fa6b9d734a1b2463db253e6f55120c51b1990"
+    },
+    {
+      "path": "sphere_materials.txt",
+      "type": "file",
+      "sha": "d67c3d8fe0f65ddb560c521c7fc142032f0db769"
+    },
+    {
+      "path": "sponza",
+      "type": "dir",
+      "sha": "2ae407294e1cbdd4eafb1a361c98d680c305271d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e2d5036d8535b784c8efdddbd43a240560af785b"
+    },
+    {
+      "path": "text_data",
+      "type": "dir",
+      "sha": "71e59d2ddd26025ba543c31bae4067efe8d7f6ac"
+    },
+    {
+      "path": "textures",
+      "type": "dir",
+      "sha": "c7763341dde1d1e741d17a64141bbaf2b9618226"
+    },
+    {
+      "path": "tiff.dll",
+      "type": "file",
+      "sha": "89933cb0bf281b18a204e71b50fdc432bd935954"
+    },
+    {
+      "path": "todo.txt",
+      "type": "file",
+      "sha": "f7cda1f1102b95d4503bfb3e30073b9333f0bcd9"
+    },
+    {
+      "path": "universe.modmap",
+      "type": "file",
+      "sha": "85347673c19fae38eb63451ba21bd7ead832441a"
+    },
+    {
+      "path": "universe",
+      "type": "dir",
+      "sha": "1b17888542b6b911dad57004029730f9f454f220"
+    },
+    {
+      "path": "universe_todo.txt",
+      "type": "file",
+      "sha": "34c668fcc1c928914972cf36a91ac9732444a42d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies procedural OpenGL native game engine; source project and platform build roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

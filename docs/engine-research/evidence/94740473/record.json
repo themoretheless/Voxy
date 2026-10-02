@@ -1,0 +1,59 @@
+{
+  "repository": "bberak/react-native-game-engine",
+  "repository_id": 94740473,
+  "commit": "60896f242e9ac72530b26424354d13bcee6f12ec",
+  "source_url": "https://github.com/bberak/react-native-game-engine/tree/60896f242e9ac72530b26424354d13bcee6f12ec",
+  "readme_path": "README.md",
+  "readme_sha256": "2fe85a0bdaa353ed98b0e3ed87b551dd4d8a161f807d0d897fdda8e7e010176a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "10be19751febde9c1707b56b038b4bd85f5597b9"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "e7b51705f80cb9201e4812e150a5057029679b1f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9e40e9b2c7dfec3512928bfba268b8e6db78cf94"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5bb1a4bc8314c2318ed975d969030f761b89c633"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "61681d750aa46c85b691e4abe49d9c16b874ab06"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "862bed76a666d6690d986ec48bff39f78d0ed7a0"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "4685c3ebfdffef98d81ab03cde53b3fb18c28c59"
+    },
+    {
+      "path": "react-native-game-engine.d.ts",
+      "type": "file",
+      "sha": "08d5047abf87b32a578453d2724719365a62107e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c778720c0091d77b941b4e573754c0d31f33b222"
+    }
+  ],
+  "classification": "engine_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes React Native library; src/npm/types present. Complete engine scope needs deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

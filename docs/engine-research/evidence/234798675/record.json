@@ -1,0 +1,164 @@
+{
+  "repository": "bevyengine/bevy",
+  "repository_id": 234798675,
+  "commit": "52c3ec0d5ecec0cdf6f4d2fdfd0895267d64740f",
+  "source_url": "https://github.com/bevyengine/bevy/tree/52c3ec0d5ecec0cdf6f4d2fdfd0895267d64740f",
+  "readme_path": "README.md",
+  "readme_sha256": "dd2327c348fe01e66f585fd00f8cf06b07396afaf9194c228a6291b87a314c2f",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "6e0583264a962239fbafa86411d24e4beefbd659"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bacb9fef6f70cffaf9461fed029bbdbb64a8d7f9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d7ff6771dd1ce411c2cb042cf255571ed5f54872"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "966f33eaef98d52e745ac1babfb14e312db9a5af"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "5774b6aad45a9645d4ab3147ddea2c9fbe854719"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c23b604f979140638031aaa2be9d76ed65d9bad4"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "c0375bd38edacdc0cb5566a5ca07776ed6945df8"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "2dc5d4f432e38bb0058e9afbca165b10a5e967dd"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f7642983953bc5028424231fb75f182637bcd4ee"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "4e01dab7c9a24de8a4469fcb1c1518602d6d7cb7"
+    },
+    {
+      "path": "_release-content",
+      "type": "dir",
+      "sha": "936e8c38856c30863723e1e0bff8a88096b3dae7"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "26d99c88b7eb2795ba9d5610f5affe0515f4b773"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "3980fc28d3dc87a31945a2c772ccdaa304c56b7a"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "50b4a46fe3b82f1a02d4a0ed304d003b66e20363"
+    },
+    {
+      "path": "constants",
+      "type": "dir",
+      "sha": "75509c724194386bbf09756e94663b6de3857803"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "26575de4e7f3153abb2b6a9d8f43dfbcc375b8b3"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "ad446fa893d6f5940889b7d524cc9c9775424fe6"
+    },
+    {
+      "path": "docs-rs",
+      "type": "dir",
+      "sha": "b76162cf5672b2bc9662d64af5b8233614d5e4bb"
+    },
+    {
+      "path": "docs-template",
+      "type": "dir",
+      "sha": "a0bc5ff325b448a15d9561ee14cb1859e996447b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9efe9c124e993f4a163f3eed89c539ed851a89f6"
+    },
+    {
+      "path": "errors",
+      "type": "dir",
+      "sha": "0e1017d4f76736841de70fc78c2e268666749c70"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "02005de1196a6c89410a9597970d4c27e3bbff50"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "8769775ec91b5be9d4b4c7396aab78d8cf5fb1b3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "334a1f62cf69f804f1fb1ef9503fb96d38c47be1"
+    },
+    {
+      "path": "tests-integration",
+      "type": "dir",
+      "sha": "8911b08c68b6f0462492826959dcf4b143d4d25a"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "86594ad3680c771bd09ecc63ca33b0ebf47a43fb"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "4ef5a8a8b1d7a143ec738f689839bac3260855db"
+    },
+    {
+      "path": "typos.toml",
+      "type": "file",
+      "sha": "1ac143829c0d4b674aef51ad0ef3d5e5ddd98919"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies a data-driven Rust engine; Cargo workspace, crates, integration tests and runnable examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

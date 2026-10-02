@@ -1,0 +1,72 @@
+{
+  "repository": "mortennobel/KickJS",
+  "repository_id": 2373919,
+  "commit": "9bbfc8d814ae10280d2a7a1fb57562d06b4f0a51",
+  "source_url": "https://github.com/mortennobel/KickJS/tree/9bbfc8d814ae10280d2a7a1fb57562d06b4f0a51",
+  "readme_path": "README.md",
+  "readme_sha256": "83e790e81e28584ad852684b699171cf66db9e3fccab5b8c14adde1515936ee7",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ac71e71206c56063c08bb50465a79c14a68175d9"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "55b14f6bdc43975a097a4a8924feec737be64571"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "489f8986c23b34c46616bf739084baaa3857a2f0"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "8c227e35ecbe6a9a2f5b5e6cdd2aa029d5ab87eb"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "8e68e072889ac17daf975310996dd459ca3f6c16"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "769224c6bcea7f6fef6cb63d5c4a4c6c9dd5a1fb"
+    },
+    {
+      "path": "release-notes.txt",
+      "type": "file",
+      "sha": "3cfe7bbcaa74e0ff43ad4cf91ff9fcd8193effaa"
+    },
+    {
+      "path": "setupnode.sh",
+      "type": "file",
+      "sha": "94ec3ea9b8ef275ace1a1aad140b93e4f706c90f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e51e9649ac683164a1212ee9aafdae2785b5ce62"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "460ce3e2f7afecf02decc86dfd2b4303e5697cac"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "917a45edceb6b9750aad751282b2d911d76d63d3"
+    },
+    {
+      "path": "yuidoc.json",
+      "type": "file",
+      "sha": "cf2f59627c82931af378961f2fdc904209620e28"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

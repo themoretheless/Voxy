@@ -1,0 +1,164 @@
+{
+  "repository": "Polyphase-Labs/Polyphase-Engine",
+  "repository_id": 1197723714,
+  "commit": "68f3baa57bb41310f96b465bd7a92f6c93d6c840",
+  "source_url": "https://github.com/Polyphase-Labs/Polyphase-Engine/tree/68f3baa57bb41310f96b465bd7a92f6c93d6c840",
+  "readme_path": "README.md",
+  "readme_sha256": "cb80df769170f664fe1455de5bd20562e4bf65d46dab36695f26c6460c33e5e8",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "c0f9e02d9f3bf17d4aad376ce49805894edbf7ce"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "dbda63b75b191a187c0397b16f9b5d14846bf3f6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5f495b8ad7e60eb265c81d13d605ad3f9c466c54"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a92eed4dfb0e9cdb54f306737694b540715c4d6d"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2a0f419fa05c7bfb0f6acb735f49286ce9c47490"
+    },
+    {
+      "path": ".llm",
+      "type": "dir",
+      "sha": "6ea102cebcda73d7ace4792510c6d7feccc1830e"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7609c3396ed3c331b32bfa2c06b7133447b3f512"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "60b01c2e45221cbfa64b998478fc435d261c19b5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "ff2571360283a8b718e95ec9306315ab5669a55c"
+    },
+    {
+      "path": "Docker",
+      "type": "dir",
+      "sha": "1ff8883d66123f8612ad20557fc29436fc67899f"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "24f9dd7bbeef7a6b77e5f8880be948e1b6297fa0"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "cd7ea65b8c8607f409043d1eca32e67ceb721191"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "2bce6ebccb6b87ceed93d4a293d0e3422698bb3c"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "7c7d1794c85febd19eb7b95b221cd5662a72c5ac"
+    },
+    {
+      "path": "HTTPClientLog.txt",
+      "type": "file",
+      "sha": "8a0e1ce274fcef12168747e6e604ec65ea780c34"
+    },
+    {
+      "path": "Installers",
+      "type": "dir",
+      "sha": "535134ed8c9460dbeeac649fda09ba18c1fc4893"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "89b27c8c63cdb812d8521040f94eaab098247527"
+    },
+    {
+      "path": "PROOF_OF_USAGE.md",
+      "type": "file",
+      "sha": "d6925c9d2352ed648143ee54d20d5735878b7997"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "c7154f11422dd7a6258d4f554ae3d9504c37e444"
+    },
+    {
+      "path": "Polyphase.sln",
+      "type": "file",
+      "sha": "cc7f952f3033dec173cb3bd20d1a7ebbdba6c2ec"
+    },
+    {
+      "path": "PolyphaseLogo_128.png",
+      "type": "file",
+      "sha": "dffcb5a59b7cbc8d0b6c609469a4ce1905dd82d1"
+    },
+    {
+      "path": "PolyphaseLogo_256.png",
+      "type": "file",
+      "sha": "7bf77d6623459ea269b96c0e836747662db89e74"
+    },
+    {
+      "path": "PolyphaseLogo_64.png",
+      "type": "file",
+      "sha": "ec11e92be52f23d7bc3e77d99290f456bf00f021"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f5ef8be35948c0ce1a5648bb2811ffb67919531b"
+    },
+    {
+      "path": "Standalone",
+      "type": "dir",
+      "sha": "6b951ab82c9e82b8125cad6893a79cc632204816"
+    },
+    {
+      "path": "Template",
+      "type": "dir",
+      "sha": "8eb75f67af58104a7132e403edff13846e6deb28"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "ba8a22aceb06eee983a8b3d0227057646f799540"
+    },
+    {
+      "path": "doxybook.json",
+      "type": "file",
+      "sha": "1387678f1e927bf8de4a396444bb9b12a110b0f4"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "843e9339c532eeb6251f7f56ee40c8f7991a3347"
+    },
+    {
+      "path": "proof-of-usage.json",
+      "type": "file",
+      "sha": "7a6ab86419390f89efefea436603171bf56e9ca1"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Octave-derived source-visible engine with custom MIT-PoU condition; excluded pending actual license scope review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

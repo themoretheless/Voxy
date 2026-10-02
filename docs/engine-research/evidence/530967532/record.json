@@ -1,0 +1,24 @@
+{
+  "repository": "MissingDeadlines/iolite",
+  "repository_id": 530967532,
+  "commit": "01e50f7cf588c8af4527119ae6ee327a607859ec",
+  "source_url": "https://github.com/MissingDeadlines/iolite/tree/01e50f7cf588c8af4527119ae6ee327a607859ec",
+  "readme_path": "README.md",
+  "readme_sha256": "b1290747b71e17d18ee13ccf3a0cf243cefcd3bb84dd0a1abaaea1bb20144ebe",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "88538d350e5e3e164ea26567d00d09844ab9f52c"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "6f6aab38366e001f398286bc519b5b62331fce30"
+    }
+  ],
+  "classification": "excluded_closed_source_reference",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine product, but pinned repository contains only README/media; engine implementation absent, not accepted source corpus.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

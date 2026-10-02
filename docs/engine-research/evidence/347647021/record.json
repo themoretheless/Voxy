@@ -1,0 +1,72 @@
+{
+  "repository": "Arminando/GameRig",
+  "repository_id": 347647021,
+  "commit": "f5529583aae75c304f70cc258a341fa1e51cea6b",
+  "source_url": "https://github.com/Arminando/GameRig/tree/f5529583aae75c304f70cc258a341fa1e51cea6b",
+  "readme_path": "README.md",
+  "readme_sha256": "3a11490ba31fc3f9cf08415d6fb7d63eca233a2f74c37946f46bef8e183cb092",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f168db672820a5fd3256330d786a5b5049c3caa0"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3439edba0bd1af623b31f4794b6cf57500d5484b"
+    },
+    {
+      "path": "__init__.py",
+      "type": "file",
+      "sha": "2c016ab169a8f74c4a7a14b9cefabdcd8b35ba42"
+    },
+    {
+      "path": "base_rig.py",
+      "type": "file",
+      "sha": "16788180cf4be28b368edd5a9f638f4ae0ce6a6b"
+    },
+    {
+      "path": "gamerig_generate.py",
+      "type": "file",
+      "sha": "5f0c096ab272f1814323150421e455b5f79ac75b"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "20c79c407bb1a1b5c10b29c03e1642c30f8e3348"
+    },
+    {
+      "path": "metarigs",
+      "type": "dir",
+      "sha": "9d1dcfdaf1a6857c5f83dc27019c7600e1ffaff8"
+    },
+    {
+      "path": "operators",
+      "type": "dir",
+      "sha": "3a13e9f49dc4b065b581c7cb3c540f16e9153621"
+    },
+    {
+      "path": "rigs",
+      "type": "dir",
+      "sha": "673185e8a9c4a54176e97bd5b587c27d6e83ad12"
+    },
+    {
+      "path": "ui.py",
+      "type": "file",
+      "sha": "ba7bfdd493e01c286e2fc1ef827ee0974481bd82"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "85b91080e4b2669e63ae0df38312422495a5dcb4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

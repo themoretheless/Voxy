@@ -1,0 +1,79 @@
+{
+  "repository": "snowkit/old-haxe-alpha",
+  "repository_id": 10870200,
+  "commit": "fb2ac20a1f509dd8f0e5099d8f11e54ea3c4c61b",
+  "source_url": "https://github.com/snowkit/old-haxe-alpha/tree/fb2ac20a1f509dd8f0e5099d8f11e54ea3c4c61b",
+  "readme_path": "README.md",
+  "readme_sha256": "f9c94cc73e0d6d14cbe655feba20c26b7e547be9e9569c105360298dd868cd25",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "445450625acd2dbaf1aeaee89d376a10640bb145"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1af464a14c04c313f1f41858882065cd751211ea"
+    },
+    {
+      "path": "Luxe.hx",
+      "type": "file",
+      "sha": "6182b38f97e0e7db51c6174e1d288df496f3e0ab"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0331a0ee3998487f8497afc358f311d52525ed6e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "76c02b475d46080bfc616cf735d322fc00309c7b"
+    },
+    {
+      "path": "flow",
+      "type": "dir",
+      "sha": "73fc11cccc9c878a19946ccabb1c832b3ef4b78e"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "4990ec95542830eedc2e50dee8159e1b7000e6da"
+    },
+    {
+      "path": "luxe.flow",
+      "type": "file",
+      "sha": "8cdc59fff30f30866e8fb63571e17a5f5e87cc4e"
+    },
+    {
+      "path": "luxe",
+      "type": "dir",
+      "sha": "6527299c0303c1c95d6f1f8c49a8502c6dd45bae"
+    },
+    {
+      "path": "phoenix",
+      "type": "dir",
+      "sha": "b1571771988ddc5abe9c7b6d9ecaa4e6e5ee4572"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "e8c296e4947f1e0d4fe4e68869ac5fd57c2087b5"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "cdb0bd94f789cae8dcddb786a578f6530b4d5ea8"
+    },
+    {
+      "path": "version",
+      "type": "file",
+      "sha": "0a542cf72b36c206cf6eed932de2994f5be94c05"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies deprecated historical luxe engine distinct from future successor; owned luxe/phoenix and Haxe build/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

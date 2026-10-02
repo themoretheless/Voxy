@@ -1,0 +1,42 @@
+{
+  "repository": "BayatGames/VoxelFramework",
+  "repository_id": 131014753,
+  "commit": "c976c134c2df670b665e344565752180b76f3109",
+  "source_url": "https://github.com/BayatGames/VoxelFramework/tree/c976c134c2df670b665e344565752180b76f3109",
+  "readme_path": "README.md",
+  "readme_sha256": "afc6e9917f4339bb85a6085c50cb628b14cc282b5020b164e34241fe4202de0a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eb83a8f122de4f411b0db9eeefdccf0b73c34c7c"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "6d2600901ed00b5bf055173bb8f39bf0bc510867"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7c4be02428e7211871f2f0fa065dcf38fd488d3e"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "63325abdaaaefdf52ffe21d38132b4b22cd49b7b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fc52b264fb8bf456248bdddf782b341471324766"
+    },
+    {
+      "path": "UnityPackageManager",
+      "type": "dir",
+      "sha": "d67ffc618adfc5e0d8beec5b3c982d58b61ec0ea"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

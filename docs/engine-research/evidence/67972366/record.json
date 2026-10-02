@@ -1,0 +1,44 @@
+{
+  "repository": "gregcman/sucle",
+  "repository_id": 67972366,
+  "commit": "258be4ac4daaceea06a55f893227584d3772bb47",
+  "source_url": "https://github.com/gregcman/sucle/tree/258be4ac4daaceea06a55f893227584d3772bb47",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f2e6d62d70f7793007aafd93d87b5ac92eed16d9"
+    },
+    {
+      "path": "INSTALL.md",
+      "type": "file",
+      "sha": "3705317a35f3aa083d4b12a277ca58aec318f34a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c038595ee5fe72ac5b5966ba83833aeb50d1b8bd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "01f0d4fefce2d3fbb180665db03805171a1e2217"
+    },
+    {
+      "path": "temp",
+      "type": "dir",
+      "sha": "528263216a487975970f587866a3acf8f02bb93a"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "70fc6216ba94c9383c6a4a375e001865c227e529"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies Lisp voxel engine; owned src/test and installation documentation. README absent, runtime build status unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,77 @@
+{
+  "repository": "Henauxg/bevy_quinnet",
+  "repository_id": 553170356,
+  "commit": "32c2bd995c75d8f214ae7ffdc737a35b9fd0e7e7",
+  "source_url": "https://github.com/Henauxg/bevy_quinnet/tree/32c2bd995c75d8f214ae7ffdc737a35b9fd0e7e7",
+  "readme_path": "README.md",
+  "readme_sha256": "b698f3c4083cdd6c3f45fbb0c6b9f0d092793793f4c443370eeb6dcca7252246",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "7b407e71b7b9a07c35e271ea28e1a76ec65270b9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ca790a18d04355fc6a77c09cf5006b9a76029eff"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "4b4d9a978509b7a7640e2c94515f9ad40ce12c97"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "a63519dd02927a19097b36954102c0e8aa39412b"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "9831f3ea9e04f4bb9c4762e39007ceb66587a0c6"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "6802bc4b80c0f8df1413d55b16267c0969e352c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "44a556b74457671f7363a59947dea89223a6f2ff"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b91f814eb613a6baa3716afc67642ec182a503ba"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b50c5a050d7d0b45458d1a02a12d08d54617e8c8"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "bb561f664ed4bc2ee9146501de7c05f40a3312bb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1dd4ce852f313322e7a6bded8837ebb1e978e090"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "efc72e05638b9805e4dabe4219d1c39d17612444"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

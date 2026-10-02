@@ -1,0 +1,22 @@
+{
+  "source_sha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "cells": 90175,
+  "mass_kg": 4.9999999999999996e-05,
+  "volume_m3": 5e-08,
+  "maximum_thickness_m": 2.934551787352223e-05,
+  "display_cutoff_um": 0.01,
+  "displayed_cells": 58,
+  "displayed_cell_area_range_m2": [
+    7.056639640324176e-05,
+    0.00015026791838857405
+  ],
+  "displayed_max_edge_m": 0.026221715309327678,
+  "displayed_volume_fraction": 0.9999566931417309,
+  "frame": 0,
+  "simulation_time_s": 0.00947004184126854,
+  "output": "docs/body-film-native-thickness.png",
+  "scope": "3D cell area thickness; front projection may overlap. Mass agreement is not flow/physiology calibration.",
+  "tests_passed": 4,
+  "image_sha256": "6d892e7f91df868d765120efb4bdce96039a0e72ec3ba9a6697aba4f32b11ab5",
+  "image_inspected": true
+}

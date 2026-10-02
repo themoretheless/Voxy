@@ -1,0 +1,47 @@
+{
+  "tested_pairs": 553389,
+  "forbidden_pairs": [
+    [
+      2304,
+      4145
+    ],
+    [
+      3997,
+      4003
+    ],
+    [
+      3999,
+      4002
+    ],
+    [
+      4145,
+      4154
+    ],
+    [
+      42885,
+      43909
+    ],
+    [
+      42886,
+      43909
+    ],
+    [
+      47082,
+      48932
+    ],
+    [
+      48778,
+      48780
+    ],
+    [
+      48782,
+      48788
+    ],
+    [
+      48936,
+      48941
+    ]
+  ],
+  "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected",
+  "source_sha256": "4529fa33db56af0949f62ad88f1711fd83392ce77592df10b4896baf9499fba5"
+}

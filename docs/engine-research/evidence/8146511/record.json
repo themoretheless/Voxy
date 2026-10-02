@@ -1,0 +1,149 @@
+{
+  "repository": "Unarelith/OpenMiner",
+  "repository_id": 8146511,
+  "commit": "19a63c4691bb0bc235f60508861a72119094c72d",
+  "source_url": "https://github.com/Unarelith/OpenMiner/tree/19a63c4691bb0bc235f60508861a72119094c72d",
+  "readme_path": "README.md",
+  "readme_sha256": "dd2cfb758de0ddc2fdb4c5f784553896d12d72eb575a1bcff60dc9d032e273d0",
+  "entries": [
+    {
+      "path": ".codedocs",
+      "type": "file",
+      "sha": "89ba6d1d9ffd7742320116811b4067bc6a2e73bd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8bf65de9d4fd3cd2edc275d955c5dc86c6180c61"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3aac42216f8f9ba921093dfdb8bb44a59ad348c1"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "02ae22d254d7c2a6f7e9ed4c1ea706669a486bac"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a49ab70ada672d34f7dbd814da1fc090141fa705"
+    },
+    {
+      "path": ".zappr.yaml",
+      "type": "file",
+      "sha": "bc7ed4377df2f49b52ca65c626853c135a8d2c96"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4833cbd5b0d89cd49c15d1300e27b7b7761a0145"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "34323dcbc414856cfb3789b49c08026f6f6ad7ad"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "1b3c11dcb457a78f40a68fe552b6bc0ed699e07e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8000a6faacf471c537530805ab29523c7732e11a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ed1297d9c67b58db91df2763fd572f45922fdf9a"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "3c1d705b599c1bccd68b378adedfecc511e6913d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5304cda4fbfa1a2e6a9eb35c42e0ca38b362415d"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "a57cdeefa772828d181f7bb5c1db14672c6447d5"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "7642c5849f2fad058c29aa402fd1a0eea5f6b868"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "bf99bebf3c7b9e49576b247ba8c78c7359cf0708"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "67d27db637419cecc16178964d6d406dc6b71bfc"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "881c1b80931e3163aca9abd5c00e49058d04da89"
+    },
+    {
+      "path": "screenshot1.png",
+      "type": "file",
+      "sha": "95338d417ef8e5cdd17c5a799de704b6abc73ec3"
+    },
+    {
+      "path": "screenshot2.png",
+      "type": "file",
+      "sha": "477f8d883f1e20b34e5ca8f3a1482c0ed1be9680"
+    },
+    {
+      "path": "screenshot3.png",
+      "type": "file",
+      "sha": "32bb4d2fa6520f7e97f237c20514b0f4a494cdee"
+    },
+    {
+      "path": "screenshot4.png",
+      "type": "file",
+      "sha": "2249d7b9da6b21367d3cca37fd688f669f319a6a"
+    },
+    {
+      "path": "screenshot5.png",
+      "type": "file",
+      "sha": "95847217bec4037517d68d59e765ea03264b09e3"
+    },
+    {
+      "path": "screenshot6.png",
+      "type": "file",
+      "sha": "3f50e061c54aeecb3d76ef871ff57f9feeed9583"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "a445552b32e57553460851c9fca4e8710949cf80"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "97bc1cb4e4f0d6793dae3e8e939dc340f719af90"
+    },
+    {
+      "path": "texturepacks",
+      "type": "dir",
+      "sha": "92e2e13ee032f75b65ca0c80e2f966ad943af602"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify moddable voxel server/client engine; owned runtime/mods with CMake/build/docs.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

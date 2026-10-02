@@ -1,0 +1,64 @@
+{
+  "repository": "aw4yout/3Dev",
+  "repository_id": 281760799,
+  "commit": "57cbcbdfdde23a1d5832c2e5c3b867b88f156044",
+  "source_url": "https://github.com/aw4yout/3Dev/tree/57cbcbdfdde23a1d5832c2e5c3b867b88f156044",
+  "readme_path": "README.md",
+  "readme_sha256": "3735446545715f379f851b09381fa3970d130ab04d029863112a4c7687edb492",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f4269f5cc43db4f9412f5350798b0aadf8570ec"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0c905ec3e46d92ae053aaf81bd0e1d29376a5e5b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "6b5d3697ac5558b25b0c1f2a8235e29eaf869987"
+    },
+    {
+      "path": "3Dev-Editor",
+      "type": "dir",
+      "sha": "521c86a3c8113de75d541bdac3a9cf02b7c018f9"
+    },
+    {
+      "path": "3Dev-Render",
+      "type": "dir",
+      "sha": "59f7df64453dcfa186f4c8003970eaf477efa103"
+    },
+    {
+      "path": "3Dev",
+      "type": "dir",
+      "sha": "b62794e095d02787a093f12252b6e42d719bcebd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "671f1c7267c70e417dbe1afa109353fb7bda9582"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "9182e9db6eac8fd1bebbe9002d98c3fde86276e9"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "48c3ae8eccb7ffc2986b2808e9925b559c084d2c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ game engine/editor source; author explicitly documents abandonment and poor architecture/optimization, no quality endorsement.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

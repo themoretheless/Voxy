@@ -1,0 +1,24 @@
+{
+  "physics_checkpoint_tests_passed": 2,
+  "preview_snapshot_tests_passed": 1,
+  "preview_build_features": [
+    "glam/serde"
+  ],
+  "verified": [
+    "Current referenced substrate geometry and topology",
+    "Exact per-cell volumes and mass after restore",
+    "Exact thickness and driving pressure after restore",
+    "Exact volume distribution after five subsequent integration steps",
+    "Invalid volumes/count/geometry/indices/wetting reject",
+    "Preview JSON captures actual current distribution, mapping and source-added mass"
+  ],
+  "live_viewer_request_integrated": false,
+  "mcp_snapshot_integrated": false,
+  "whole_body_checkpoint": false,
+  "unused_vertex_coordinates_preserved": false,
+  "sources": {
+    "crates/physics/src/surface_film.rs": "a899dc71b803a2e3b7bed6590945a6e2ad58edd04572bac0255ab8da6d6c6b54",
+    "crates/physics/tests/surface_film_checkpoint.rs": "52a96d44ebef12b1e9b049dea251694b87034056b2e9fbb569dfc3522d004e52",
+    "crates/voxy_app/src/surface_film_preview.rs": "287f6ec8f91c3ce6b43dfd35235190728a776ac3152aaaa708c546d9b875ff13"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "repository": "JudsonSS/Jogos",
+  "repository_id": 250452750,
+  "commit": "590abb19df60830d723dc526ad3931a568cab92f",
+  "source_url": "https://github.com/JudsonSS/Jogos/tree/590abb19df60830d723dc526ad3931a568cab92f",
+  "readme_path": "README.md",
+  "readme_sha256": "24ac6f50e2ef3496d80c8b1d0d03afba0f7e48781d27f35f667bfc9488953ef6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4ce6fddec962ff3b86038d9939b6be5dfc1e6351"
+    },
+    {
+      "path": "Extras",
+      "type": "dir",
+      "sha": "52dc29683951f78e976bec6668c93f529c2cbe8e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a395d2dd1eea536079f6472b8bb7169e6fc22ca0"
+    },
+    {
+      "path": "Labs",
+      "type": "dir",
+      "sha": "ccd7e1954959f83aae01cb7f4a70d41d3d6b8b5a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b3b1c79fbce9df8026276c4ee75b6ac83369bd1"
+    },
+    {
+      "path": "Slides",
+      "type": "dir",
+      "sha": "8fae6ebde8d8473cd761844c93f94f86745ef090"
+    }
+  ],
+  "classification": "excluded_rendering_tutorial",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Course labs incrementally constructing a Win32/DirectX 2D engine; repository primary product is teaching material and lab stages.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

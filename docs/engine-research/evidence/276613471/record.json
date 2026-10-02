@@ -1,0 +1,149 @@
+{
+  "repository": "sharivan/XSharp",
+  "repository_id": 276613471,
+  "commit": "b9c977f6c64abac0f1e214da588add86383b9da7",
+  "source_url": "https://github.com/sharivan/XSharp/tree/b9c977f6c64abac0f1e214da588add86383b9da7",
+  "readme_path": "README.md",
+  "readme_sha256": "40cb6150364979957385e8f9f2c0ed20da2e6bb73bda1b27765f5425216665ca",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d8388e00d90379512b666dc9356ad2099ed4e5fd"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "48c5c55eaf579f40cd731ae6eca41ecf019b71c4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "33fc95afb5b5b40c82d6c23a6bd527008b9d458a"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "74bc2678f9b9be684d38cd8ca678c558406e8507"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2aa6a1d306fa8cffe35135c192bba4a8bc9b2f82"
+    },
+    {
+      "path": "MegaEDXCore",
+      "type": "dir",
+      "sha": "e49cfbaa3525d428f6e9ad90ce7be7e490906474"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3635fd73d7a6aa2825518e0454c363556ee3ec29"
+    },
+    {
+      "path": "ROMExporter",
+      "type": "dir",
+      "sha": "19559157ac49a60f9af74936505aba907cd5b309"
+    },
+    {
+      "path": "XSharp.pdn",
+      "type": "file",
+      "sha": "46563811e14e3ba2d43dea747f616cf541445895"
+    },
+    {
+      "path": "XSharp.png",
+      "type": "file",
+      "sha": "aea22455003c61f1e45d6bb42206c72c2d6137c7"
+    },
+    {
+      "path": "XSharp.sln",
+      "type": "file",
+      "sha": "0e723d7274fda4faca17d24c72ec912cf8a9985b"
+    },
+    {
+      "path": "XSharp",
+      "type": "dir",
+      "sha": "58720cdfe1e773cee2a7cdd7c34cbc9ae34ece81"
+    },
+    {
+      "path": "XSharpDX11",
+      "type": "dir",
+      "sha": "15367023bae82c7d5be0f998ffc9b47fc25a3e87"
+    },
+    {
+      "path": "XSharpDX9",
+      "type": "dir",
+      "sha": "ec42fe9907c17b4d96e3bb7846ac1fdafc0b53ca"
+    },
+    {
+      "path": "XSharpDemo",
+      "type": "dir",
+      "sha": "92385f31432943263d9a915bf6992a629f6f0ed7"
+    },
+    {
+      "path": "XSharpLevelEditor",
+      "type": "dir",
+      "sha": "7904e8bf23f4f3afbcd2554862654376a5aa94c0"
+    },
+    {
+      "path": "XSharpOpenGL",
+      "type": "dir",
+      "sha": "2bfcbbd53e1d427dadf3b5ca6227242e169c13c6"
+    },
+    {
+      "path": "XSharpShared",
+      "type": "dir",
+      "sha": "eba9aa9ff7b42a11c5fea79aef6a45c021e34fb8"
+    },
+    {
+      "path": "XSharpWeb",
+      "type": "dir",
+      "sha": "a073b509da89ffe87a5ae716ab0a59084c6115d1"
+    },
+    {
+      "path": "XSharpWebDemo",
+      "type": "dir",
+      "sha": "a3cfd339094ece9d009a965c59243039b0353caf"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "7cd6a1f4fda5a3e815a474375a11cff880082cbf"
+    },
+    {
+      "path": "sharp.png",
+      "type": "file",
+      "sha": "0fed98c4d979389ed3e1e875b9569263dec6b005"
+    },
+    {
+      "path": "xsharp-logo.ico",
+      "type": "file",
+      "sha": "d304fd95240302c635957de0e1ea99751d5a85a3"
+    },
+    {
+      "path": "xsharp-logo.pdn",
+      "type": "file",
+      "sha": "ebdff2ba4d9adee53d970abc45047513b308a117"
+    },
+    {
+      "path": "xsharp-logo.png",
+      "type": "file",
+      "sha": "764c3e1f7ef6adf67a83d61f6407ec9466242426"
+    },
+    {
+      "path": "xsharp-logo[256x256].png",
+      "type": "file",
+      "sha": "b7ed2f70d88c9cdec3e2498feb98656a440b0fcd"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Mega Man X-style C# runtime with demos/level editor/render backends/export tools and save/load/frame advancement; content provenance separate.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

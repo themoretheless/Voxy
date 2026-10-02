@@ -1,0 +1,84 @@
+{
+  "repository": "litecanvas/game-engine",
+  "repository_id": 763195774,
+  "commit": "8250da733357e7cff6d3c0e45042b257d6b59121",
+  "source_url": "https://github.com/litecanvas/game-engine/tree/8250da733357e7cff6d3c0e45042b257d6b59121",
+  "readme_path": "README.md",
+  "readme_sha256": "3f4da011e526687a6c3427790931640dfea4f146ce4565363152e307fb463703",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "1cc476352ad4c7e03453c9962a10ca3ec09fe538"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bea596766b73ce53dd3043a169f5ff9bf375f370"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c216ca6757fd18a9498832efc41c9452b0bf6c45"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "efaba894edd9fae5b62992c0321910ec7cd67c39"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e293843d5e31a71ae74d6fee038ead20ce645927"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6dc213f5fcd7660b78cae0b64ae0ebf974d613e7"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "e5d8397be3ec86e7e5495ab3a6774c15b5ad0a77"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "bd7095b422217ba39a7f5f2689f552b9f9d12a83"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "6bab51e03b6e8c9e9e6031b986d7b12a9cbd7c9e"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "e310118b4375393e2dd9e4de114db7c5c5063652"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9e56721f22154fb3c3f0fd756cf1c131c9798ca2"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "f170276e7c5c7be3cd022675b2bfdfea5f922b0f"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "be4f2782a4d2fd8750d8de6c83d228e92faee02e"
+    },
+    {
+      "path": "types",
+      "type": "dir",
+      "sha": "e6eb04863b31e3c1aaed8fd6de510b6cd8bb204d"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Lightweight canvas game/prototype framework with source/samples/tests; minimal runtime rather than broad engine systems.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

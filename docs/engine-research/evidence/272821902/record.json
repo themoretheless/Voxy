@@ -1,0 +1,109 @@
+{
+  "repository": "attackgoat/vk-graph",
+  "repository_id": 272821902,
+  "commit": "e56d111c9bc801844d39263c2c20a05210e73d47",
+  "source_url": "https://github.com/attackgoat/vk-graph/tree/e56d111c9bc801844d39263c2c20a05210e73d47",
+  "readme_path": "README.md",
+  "readme_sha256": "d57907fa611a22d48477d82c4f21743ff0f4dc64351909304cba0c2aa25c37d5",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0906ab908ce45a5f8754ecabff5b65a9f1c0d1a6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b8234b03d1e4acb7748a9b45a3e798f318015015"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2a43266e33547c69598c2079f1adeb8aa49d8823"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "d1ed3263b5a7b46b6be84b0700af755d60e4fe60"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "8afe2d2ec4ab77e5a8e5c74a89d4f1976aad3d2d"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d973d53c411195e35083cf3157044d54c90f086a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "44a1af4a984ee17fe9039238eb8f2d975ee8001b"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "f569dcad4866b98e3c838d1a7be362fdeecd2d7c"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "3bc44ad46933fcda0aa5e90d9ea8d68763fec032"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aeeaf3c15efe1fff5de6211c847f2b016e1bf971"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "05b166635296bcbd7d003c4dfec43278b53fe32b"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "74d5846d04f919f4bcb69b5bc56b010e7688ad1d"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "90024db28e4f7bbadcb8f84229d98e4298af2fc0"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a9500ff0403370593ff5e027b447bab859a04ed1"
+    },
+    {
+      "path": "fuzz",
+      "type": "dir",
+      "sha": "54d53979111821ad83f64fded4dbcda99375f74a"
+    },
+    {
+      "path": "guide",
+      "type": "dir",
+      "sha": "25a938457c1c4749d4e9173f9f36b65e736aeb14"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "213351fb87bfc46a862fefc9f5df4fb42556474d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "05d704cf29e64962e8f068092763154f67eec438"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "af9941361f6a98d0bba3d20d0639baaba550995d"
+    }
+  ],
+  "classification": "graphics_middleware",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Vulkan driver/resource graph; Rust crates/build/tests, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

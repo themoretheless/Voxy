@@ -1,0 +1,84 @@
+{
+  "repository": "lut0pia/L",
+  "repository_id": 30928991,
+  "commit": "b4d70e9ee095d9f28b5ee96cbfda5e01adc796cb",
+  "source_url": "https://github.com/lut0pia/L/tree/b4d70e9ee095d9f28b5ee96cbfda5e01adc796cb",
+  "readme_path": "README.md",
+  "readme_sha256": "1f98b182755d43b743f0a2018ce0e99cf8882f6e0bc9c2d8ef68bac1702a2934",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "ea0fc620fd403dd49229101a4ed15cd7712fba16"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bd03cd688b0850ed34cce2654ecf6df38a0d387e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6f77df24e7e80ce9ca1c6894e3cb66cc79ffac45"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "84455c45d40500452e9e2a316f9f23e742eedac8"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a49911132d5f60bb2ff7662aa6469ab487a7ea04"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9bca4aeeb4cd396e01af9533cd49e4b9cdf7f15b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cf1ab25da0349f84a3fdd40032f0ce99db813b8b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "644d43a8a85d00b307e1766b96287bb147b66a69"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a47d28a235f522d02ff9059d23fa4910be1dc1ff"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "44cb6e0b360ffa3d9dbcd9c99acda712a44e1c16"
+    },
+    {
+      "path": "mod",
+      "type": "dir",
+      "sha": "ff03d3b4ee67a07a3b84b54f8151ed3c9502e489"
+    },
+    {
+      "path": "run.sh",
+      "type": "file",
+      "sha": "af958ba087326ca406ebadbc1dd281521cd3f690"
+    },
+    {
+      "path": "smp",
+      "type": "dir",
+      "sha": "7f63d66f326ee70d6ede15498b76207624f2eeaa"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "17751f192bfb23e2abe95076712b43f0f244e961"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Modular engine source and sample build present, but short README does not establish subsystem/lifecycle implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

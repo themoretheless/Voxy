@@ -1,0 +1,556 @@
+{
+  "before": 205,
+  "after": 20,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertex": 703,
+      "before": 205,
+      "after": 204
+    },
+    {
+      "pass_index": 0,
+      "vertex": 1214,
+      "before": 204,
+      "after": 202
+    },
+    {
+      "pass_index": 0,
+      "vertex": 1216,
+      "before": 202,
+      "after": 201
+    },
+    {
+      "pass_index": 0,
+      "vertex": 5535,
+      "before": 201,
+      "after": 200
+    },
+    {
+      "pass_index": 0,
+      "vertex": 5537,
+      "before": 200,
+      "after": 199
+    },
+    {
+      "pass_index": 0,
+      "vertex": 5539,
+      "before": 199,
+      "after": 198
+    },
+    {
+      "pass_index": 0,
+      "vertex": 6347,
+      "before": 198,
+      "after": 196
+    },
+    {
+      "pass_index": 0,
+      "vertex": 6518,
+      "before": 196,
+      "after": 185
+    },
+    {
+      "pass_index": 0,
+      "vertex": 7015,
+      "before": 185,
+      "after": 184
+    },
+    {
+      "pass_index": 0,
+      "vertex": 7064,
+      "before": 184,
+      "after": 183
+    },
+    {
+      "pass_index": 0,
+      "vertex": 7194,
+      "before": 183,
+      "after": 181
+    },
+    {
+      "pass_index": 0,
+      "vertex": 7577,
+      "before": 181,
+      "after": 178
+    },
+    {
+      "pass_index": 0,
+      "vertex": 10914,
+      "before": 178,
+      "after": 177
+    },
+    {
+      "pass_index": 0,
+      "vertex": 11405,
+      "before": 177,
+      "after": 176
+    },
+    {
+      "pass_index": 0,
+      "vertex": 11749,
+      "before": 176,
+      "after": 175
+    },
+    {
+      "pass_index": 0,
+      "vertex": 12412,
+      "before": 175,
+      "after": 172
+    },
+    {
+      "pass_index": 0,
+      "vertex": 14459,
+      "before": 172,
+      "after": 170
+    },
+    {
+      "pass_index": 0,
+      "vertex": 15682,
+      "before": 170,
+      "after": 169
+    },
+    {
+      "pass_index": 0,
+      "vertex": 17736,
+      "before": 169,
+      "after": 165
+    },
+    {
+      "pass_index": 0,
+      "vertex": 19592,
+      "before": 165,
+      "after": 163
+    },
+    {
+      "pass_index": 0,
+      "vertex": 20105,
+      "before": 163,
+      "after": 160
+    },
+    {
+      "pass_index": 0,
+      "vertex": 20345,
+      "before": 160,
+      "after": 158
+    },
+    {
+      "pass_index": 0,
+      "vertex": 20429,
+      "before": 158,
+      "after": 157
+    },
+    {
+      "pass_index": 0,
+      "vertex": 20536,
+      "before": 157,
+      "after": 141
+    },
+    {
+      "pass_index": 0,
+      "vertex": 22472,
+      "before": 141,
+      "after": 138
+    },
+    {
+      "pass_index": 0,
+      "vertex": 25694,
+      "before": 138,
+      "after": 136
+    },
+    {
+      "pass_index": 0,
+      "vertex": 27258,
+      "before": 136,
+      "after": 135
+    },
+    {
+      "pass_index": 0,
+      "vertex": 28626,
+      "before": 135,
+      "after": 133
+    },
+    {
+      "pass_index": 0,
+      "vertex": 29082,
+      "before": 133,
+      "after": 129
+    },
+    {
+      "pass_index": 0,
+      "vertex": 30515,
+      "before": 129,
+      "after": 127
+    },
+    {
+      "pass_index": 0,
+      "vertex": 31010,
+      "before": 127,
+      "after": 123
+    },
+    {
+      "pass_index": 0,
+      "vertex": 32078,
+      "before": 123,
+      "after": 121
+    },
+    {
+      "pass_index": 0,
+      "vertex": 32252,
+      "before": 121,
+      "after": 120
+    },
+    {
+      "pass_index": 0,
+      "vertex": 32271,
+      "before": 120,
+      "after": 119
+    },
+    {
+      "pass_index": 0,
+      "vertex": 32979,
+      "before": 119,
+      "after": 115
+    },
+    {
+      "pass_index": 0,
+      "vertex": 33226,
+      "before": 115,
+      "after": 113
+    },
+    {
+      "pass_index": 0,
+      "vertex": 33453,
+      "before": 113,
+      "after": 108
+    },
+    {
+      "pass_index": 0,
+      "vertex": 34043,
+      "before": 108,
+      "after": 106
+    },
+    {
+      "pass_index": 0,
+      "vertex": 38196,
+      "before": 106,
+      "after": 105
+    },
+    {
+      "pass_index": 0,
+      "vertex": 38670,
+      "before": 105,
+      "after": 101
+    },
+    {
+      "pass_index": 1,
+      "vertex": 703,
+      "before": 101,
+      "after": 99
+    },
+    {
+      "pass_index": 1,
+      "vertex": 1496,
+      "before": 99,
+      "after": 94
+    },
+    {
+      "pass_index": 1,
+      "vertex": 1931,
+      "before": 94,
+      "after": 93
+    },
+    {
+      "pass_index": 1,
+      "vertex": 5535,
+      "before": 93,
+      "after": 92
+    },
+    {
+      "pass_index": 1,
+      "vertex": 5539,
+      "before": 92,
+      "after": 90
+    },
+    {
+      "pass_index": 1,
+      "vertex": 6347,
+      "before": 90,
+      "after": 88
+    },
+    {
+      "pass_index": 1,
+      "vertex": 6629,
+      "before": 88,
+      "after": 85
+    },
+    {
+      "pass_index": 1,
+      "vertex": 18003,
+      "before": 85,
+      "after": 84
+    },
+    {
+      "pass_index": 1,
+      "vertex": 18333,
+      "before": 84,
+      "after": 83
+    },
+    {
+      "pass_index": 1,
+      "vertex": 20271,
+      "before": 83,
+      "after": 81
+    },
+    {
+      "pass_index": 1,
+      "vertex": 20429,
+      "before": 81,
+      "after": 80
+    },
+    {
+      "pass_index": 1,
+      "vertex": 22981,
+      "before": 80,
+      "after": 78
+    },
+    {
+      "pass_index": 1,
+      "vertex": 29939,
+      "before": 78,
+      "after": 76
+    },
+    {
+      "pass_index": 1,
+      "vertex": 30253,
+      "before": 76,
+      "after": 75
+    },
+    {
+      "pass_index": 1,
+      "vertex": 31545,
+      "before": 75,
+      "after": 73
+    },
+    {
+      "pass_index": 1,
+      "vertex": 33479,
+      "before": 73,
+      "after": 71
+    },
+    {
+      "pass_index": 1,
+      "vertex": 33482,
+      "before": 71,
+      "after": 69
+    },
+    {
+      "pass_index": 1,
+      "vertex": 33767,
+      "before": 69,
+      "after": 68
+    },
+    {
+      "pass_index": 2,
+      "vertex": 1881,
+      "before": 68,
+      "after": 66
+    },
+    {
+      "pass_index": 2,
+      "vertex": 1882,
+      "before": 66,
+      "after": 64
+    },
+    {
+      "pass_index": 2,
+      "vertex": 2442,
+      "before": 64,
+      "after": 61
+    },
+    {
+      "pass_index": 2,
+      "vertex": 5614,
+      "before": 61,
+      "after": 58
+    },
+    {
+      "pass_index": 2,
+      "vertex": 6349,
+      "before": 58,
+      "after": 56
+    },
+    {
+      "pass_index": 2,
+      "vertex": 18003,
+      "before": 56,
+      "after": 54
+    },
+    {
+      "pass_index": 2,
+      "vertex": 18274,
+      "before": 54,
+      "after": 52
+    },
+    {
+      "pass_index": 2,
+      "vertex": 18340,
+      "before": 52,
+      "after": 46
+    },
+    {
+      "pass_index": 2,
+      "vertex": 18601,
+      "before": 46,
+      "after": 44
+    },
+    {
+      "pass_index": 2,
+      "vertex": 22898,
+      "before": 44,
+      "after": 42
+    },
+    {
+      "pass_index": 2,
+      "vertex": 24978,
+      "before": 42,
+      "after": 33
+    },
+    {
+      "pass_index": 2,
+      "vertex": 29717,
+      "before": 33,
+      "after": 31
+    },
+    {
+      "pass_index": 2,
+      "vertex": 33570,
+      "before": 31,
+      "after": 27
+    },
+    {
+      "pass_index": 3,
+      "vertex": 2443,
+      "before": 27,
+      "after": 24
+    },
+    {
+      "pass_index": 3,
+      "vertex": 33570,
+      "before": 24,
+      "after": 20
+    }
+  ],
+  "remaining": {
+    "intersection_pairs": [
+      [
+        3989,
+        4002
+      ],
+      [
+        3988,
+        4002
+      ],
+      [
+        2466,
+        3988
+      ],
+      [
+        2466,
+        3987
+      ],
+      [
+        3991,
+        4003
+      ],
+      [
+        2466,
+        3991
+      ],
+      [
+        47250,
+        48773
+      ],
+      [
+        48773,
+        48786
+      ],
+      [
+        48771,
+        48786
+      ],
+      [
+        48776,
+        48786
+      ],
+      [
+        48770,
+        48778
+      ],
+      [
+        48773,
+        48778
+      ],
+      [
+        47081,
+        48932
+      ],
+      [
+        48932,
+        48939
+      ],
+      [
+        48933,
+        48939
+      ],
+      [
+        48934,
+        48939
+      ],
+      [
+        48934,
+        48941
+      ],
+      [
+        48934,
+        48938
+      ],
+      [
+        48777,
+        48786
+      ],
+      [
+        48777,
+        48788
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 32551,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded"
+  },
+  "maximum_cumulative_displacement_m": 0.0013781250886314564,
+  "audit": {
+    "vertices": 45203,
+    "triangles": 90402,
+    "area_m2": 1.5670624727982385,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "65ecad71a9eae14a81c9276e9695b85b7ac2ab61e5d471c63edcc474b86b9973",
+  "reference_sha256": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+  "candidate_sha256": "4529fa33db56af0949f62ad88f1711fd83392ce77592df10b4896baf9499fba5",
+  "proposal_distances_m": [
+    0.0002,
+    -0.0002,
+    0.0005,
+    -0.0005,
+    0.001,
+    -0.001
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

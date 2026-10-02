@@ -1,0 +1,124 @@
+{
+  "repository": "tentone/nunuStudio",
+  "repository_id": 52688262,
+  "commit": "a56faaff359fae9e3a949e05f4158f2e334a2f91",
+  "source_url": "https://github.com/tentone/nunuStudio/tree/a56faaff359fae9e3a949e05f4158f2e334a2f91",
+  "readme_path": "README.md",
+  "readme_sha256": "6c1c8dab0f15dbea88a599272f5ef9246001689979c88eba4a0e9d48ce04883b",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "db8cc2cb6ddc599f5a580ddad890c4759a5b9f87"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "31185402acb7a5d626866a78833b4308cadf000c"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "9c988b7711fee300924f1d90dd36c37840622c19"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "9429a27b56aee1d8ac4ebb79f480d4f3c36402ce"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5552db8db66ce0a712a66ab8d4d687e1c970b6f5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "77cd4bf7d7f35d97dc0a1bcc00792e1fc7c805d8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cc2768847fcc1f6333329245bda6b4ec182ee618"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "b4ff5dadb552d4810499387bb1e5ee90f3ba85d6"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "e9ee3cb4d04a562d5bf82c635e11ec2569f108aa"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "34bf6356ecf85671a2c5f7bc6cf86009b8524c1a"
+    },
+    {
+      "path": "CODESTYLE.md",
+      "type": "file",
+      "sha": "f7283da1f8922f22407f29841ba31fac3563565a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "403b892d25a354386df76f7de01841c96438c91d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7ccf2afc2e7ce6fd6ec17ded847bff967357585a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f25738e66ac9d88952e1c95eee424d9a80031137"
+    },
+    {
+      "path": "dockerfile",
+      "type": "file",
+      "sha": "5a4988f2748788e110fcbfd50b626b5201ca65fc"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "38e572e5cf4c2d0d6171f089eabcbbc1e6942e96"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "5e5a857b080ddf792cbf9b70ff906681209583c0"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "252ade00c54c7aa7d6b98d577ab59741083d6488"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "0d39b3deb0d51379e8e986191b30f9b3ae1c26c6"
+    },
+    {
+      "path": "webpack.dev.js",
+      "type": "file",
+      "sha": "5b817514234f0b9eb97095feecb1837945c549e7"
+    },
+    {
+      "path": "webpack.prod.js",
+      "type": "file",
+      "sha": "0d04b1ee0194ca32b085c0e8790f4b2757ef818c"
+    },
+    {
+      "path": "webpack.runtime.js",
+      "type": "file",
+      "sha": "53621766ffed6e98deac5bc8436f356963d00c9f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies web engine with authoring and physics on backend libraries; source and separate runtime webpack build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

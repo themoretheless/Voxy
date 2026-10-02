@@ -1,0 +1,104 @@
+{
+  "repository": "Argus-Labs/world-engine",
+  "repository_id": 569066775,
+  "commit": "bc27041e63e27e16b60a276b99bd8d1c427a67ed",
+  "source_url": "https://github.com/Argus-Labs/world-engine/tree/bc27041e63e27e16b60a276b99bd8d1c427a67ed",
+  "readme_path": "README.md",
+  "readme_sha256": "32bc64d62ed57c5e70dbf5d57902061a008357c5495493691ebe2d9d3561ec63",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "8944149c0be89d1fda6bb0a9436bfb6d16d7f57c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4bcee2a31a1842733e1aa9cb635a75c6902e063a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9a57a5bfdf60fae3d9521e4a1e96738f560c24db"
+    },
+    {
+      "path": ".golangci.yaml",
+      "type": "file",
+      "sha": "926fcc6cee60dfba7dd451ae0d3282fbfed5bc81"
+    },
+    {
+      "path": ".moon",
+      "type": "dir",
+      "sha": "fc147c67930c260e57e75b1ade9e41f4e9ca0157"
+    },
+    {
+      "path": ".prototools",
+      "type": "file",
+      "sha": "c7b9ca821cb146899f4cf907a87e9a010a32204e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "65c5ca88a67c30becee01c5a8816d964b03862f9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a48846db40b22ab81790e6989ac4256db62f90ab"
+    },
+    {
+      "path": "buf.gen.yaml",
+      "type": "file",
+      "sha": "b3f9ec3f080fd42910564fa31714457cfa8cfca6"
+    },
+    {
+      "path": "buf.lock",
+      "type": "file",
+      "sha": "7823a0466c2453f4245cf07b9e9b3c0d570da0f1"
+    },
+    {
+      "path": "buf.yaml",
+      "type": "file",
+      "sha": "752a601a78e28803203ff4f1904a6945f6c3390f"
+    },
+    {
+      "path": "cli",
+      "type": "dir",
+      "sha": "5f715db62c4f62bbecec448d1d5f21b51b40bc14"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "eeea207559d4ad43c02fecb8e3379daa29c06094"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "c565ea7125534251961f094f57280daecad84e1e"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "100218b42da2d618f0cd754aba848ec0391e9775"
+    },
+    {
+      "path": "moon.yml",
+      "type": "file",
+      "sha": "2da108707d437fe19b498d90a9c90fc75be5c004"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "1dc3cc86e6ec9e213eb7f485d40b4cf418a777e7"
+    },
+    {
+      "path": "proto",
+      "type": "dir",
+      "sha": "22f7c8e291e9a474067176f0d4858bf51bbfcd1d"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Gamechain SDK and rollup-oriented backend rewrite; graphical game runtime not established by pinned README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

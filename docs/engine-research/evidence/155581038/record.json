@@ -1,0 +1,134 @@
+{
+  "repository": "Aminator/DirectX12GameEngine",
+  "repository_id": 155581038,
+  "commit": "efb7d4c0852c645fcc9e73edab098d20ef683d57",
+  "source_url": "https://github.com/Aminator/DirectX12GameEngine/tree/efb7d4c0852c645fcc9e73edab098d20ef683d57",
+  "readme_path": "README.md",
+  "readme_sha256": "dba6c56bc0938506299dff4e0c3749fa7e946d68661d4da35dff226df7ab317d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "af39116f1987b4449456ae0663a3d09735fdf330"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c69647d0c9712306d87fbb730cf8abfd1d7cbbb8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "37209f304e0289f60722175059db89efcb6a207e"
+    },
+    {
+      "path": "DirectX12GameEngine.Assets",
+      "type": "dir",
+      "sha": "82448858997ce72d19c2525532c3ebef81ff74ee"
+    },
+    {
+      "path": "DirectX12GameEngine.Core",
+      "type": "dir",
+      "sha": "2a3308391411f4696979b433ff6c94a827fe76ec"
+    },
+    {
+      "path": "DirectX12GameEngine.Editor.ViewModels",
+      "type": "dir",
+      "sha": "8be1c89e25c66571303bcce2443b757b13e432c6"
+    },
+    {
+      "path": "DirectX12GameEngine.Editor.png",
+      "type": "file",
+      "sha": "8ad141e5637863745be3b82e8982fce65601a534"
+    },
+    {
+      "path": "DirectX12GameEngine.Editor",
+      "type": "dir",
+      "sha": "6ec23aa4b5d84d6c6cd489d4535a620bd0421199"
+    },
+    {
+      "path": "DirectX12GameEngine.Engine",
+      "type": "dir",
+      "sha": "6fc348d43db8b23c59006a9dc031cfbefb5bf366"
+    },
+    {
+      "path": "DirectX12GameEngine.Games",
+      "type": "dir",
+      "sha": "dc6cd6e8357f6e76db4ded14d22ca83e7f783074"
+    },
+    {
+      "path": "DirectX12GameEngine.Graphics",
+      "type": "dir",
+      "sha": "e01c385c2826264197716bac7fda4c9f31a82fe2"
+    },
+    {
+      "path": "DirectX12GameEngine.Input",
+      "type": "dir",
+      "sha": "2ef9008bcf951ddc9894a71d647b32275910bbb7"
+    },
+    {
+      "path": "DirectX12GameEngine.Mvvm",
+      "type": "dir",
+      "sha": "61b73869228d214f3a0ce5cae7fd02bc82087581"
+    },
+    {
+      "path": "DirectX12GameEngine.Physics",
+      "type": "dir",
+      "sha": "5e191ccfdacffadbde3a37f200cffebc62eb9326"
+    },
+    {
+      "path": "DirectX12GameEngine.Rendering",
+      "type": "dir",
+      "sha": "a44e97f4717c315788d1602b752e69c1c735ede3"
+    },
+    {
+      "path": "DirectX12GameEngine.Serialization",
+      "type": "dir",
+      "sha": "f3df1c9016149253df92e8875395a1e6f42952b4"
+    },
+    {
+      "path": "DirectX12GameEngine.Shaders.Tasks",
+      "type": "dir",
+      "sha": "599d8f34b83c193ccfe0fe98e40ba17616d91f66"
+    },
+    {
+      "path": "DirectX12GameEngine.Shaders",
+      "type": "dir",
+      "sha": "d0c4a61a2b653602902f650158fbdb7f99c84563"
+    },
+    {
+      "path": "DirectX12GameEngine.sln",
+      "type": "file",
+      "sha": "3fb5ec3a5a9e6a2df0e8a7c41807b7a0ba1be3d4"
+    },
+    {
+      "path": "Gltf",
+      "type": "dir",
+      "sha": "5dd384db4c1632394111e6fe20a346f2efb010f2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "942d4626aedbf4384780ee12463ee5228b083be1"
+    },
+    {
+      "path": "Libs",
+      "type": "dir",
+      "sha": "21159f32323ae19ca0cb7e08be2a88c492f27f57"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8bd08cedfb28ea6a4db33b41b2ef635b8d024b27"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "f29661c503211f6f1c50f8843119427da4d7fb7a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies managed Direct3D game engine; owned core/assets/editor and .NET source/build roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

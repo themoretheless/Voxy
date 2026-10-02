@@ -1,0 +1,162 @@
+{
+  "repository": "heroiclabs/fishgame-godot",
+  "repository_id": 318580997,
+  "commit": "252413491a2298127ac350059a5cfb84173b41be",
+  "source_url": "https://github.com/heroiclabs/fishgame-godot/tree/252413491a2298127ac350059a5cfb84173b41be",
+  "readme_path": "README.md",
+  "readme_sha256": "b263ba54e23e01238b2695aae6499b2601cfc60203d2252072b136afee36c191",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ac6e987843ce3ed9052644d914f0acfcdd26fcef"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ec7b3461513f529e054e0a59e63924f9fff90115"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "cb89e750f37cecd4c8c4ade81c9eb228a154cfbd"
+    },
+    {
+      "path": "CREDITS-CC0.txt",
+      "type": "file",
+      "sha": "77f0ba16cd3ed6a1fb14897234fd95961e02d206"
+    },
+    {
+      "path": "Camera.gd",
+      "type": "file",
+      "sha": "3348f1424f7b96ca5e7ccd93c6c2fda78bf9d19a"
+    },
+    {
+      "path": "Game.gd",
+      "type": "file",
+      "sha": "99d91966901c2fe3f606365ebe15bf941dd1dc27"
+    },
+    {
+      "path": "Game.tscn",
+      "type": "file",
+      "sha": "f3e6eca4509a1a2d3536ff38dc028c81a12f8e57"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "6b0b1270ff0ca8f03867efcd09ba6ddb6392b1e1"
+    },
+    {
+      "path": "Main.gd",
+      "type": "file",
+      "sha": "6fc8a47ca4aa726ba4db6e4adda2586c31c03511"
+    },
+    {
+      "path": "Main.tscn",
+      "type": "file",
+      "sha": "272b56b01ec3cc9381066847131476c8e8d0a90a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cc271ea66ec778c6ff889c1acdc39b46403513cd"
+    },
+    {
+      "path": "actors",
+      "type": "dir",
+      "sha": "15746777b5f8e0509f2585472a4f34212f53ab02"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "4dd1fdef4a833475ef94a316f80cd0cadcf7bcc3"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e07e260283b6b8371426deddebac0d224b9b016a"
+    },
+    {
+      "path": "autoload",
+      "type": "dir",
+      "sha": "555f319eb5f379a268f05fc4b85a1012b7ad1ca1"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "41e63549af4db2377e03c21e25ccf04ae8cf98a6"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "aa9c70f1e0dfe96793ec02932647a264651d03e6"
+    },
+    {
+      "path": "default_bus_layout.tres",
+      "type": "file",
+      "sha": "9922cb3d73e43472847dbd3d8a106099f07dc5bf"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "5527b5fde43a8c304fb25d88a161c43e0022851d"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "3fa7eba96d42372422d73fd0c057c2cc7e9f2d0c"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "96cbf4629a557eb7339eef87ad61b7e7d8c8f0e7"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "aa49752c2e21aa364f789e4620328055cc35d788"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "46f333c6f67968c814ebaf6ecf4397de894bddc3"
+    },
+    {
+      "path": "nakama",
+      "type": "dir",
+      "sha": "6fa785061ade63681bbdf3e36017d46315165d2f"
+    },
+    {
+      "path": "objects",
+      "type": "dir",
+      "sha": "d7e280d69ab7a7c2bc267ef5ed2a9866bf3f620b"
+    },
+    {
+      "path": "pickups",
+      "type": "dir",
+      "sha": "0746b1a9794536ef25252ee3da9e10b9f0c1d198"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "f7d02cb067515460fb40f0bac6fd5f535e01a108"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "8875f97cee3a8dbc895e546059485ed8db1891a5"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

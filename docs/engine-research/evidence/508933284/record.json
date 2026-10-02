@@ -1,0 +1,117 @@
+{
+  "repository": "neilmewada/CrystalEngine",
+  "repository_id": 508933284,
+  "commit": "5744440c8a33d68258090d8c2cac55ad6e721ff5",
+  "source_url": "https://github.com/neilmewada/CrystalEngine/tree/5744440c8a33d68258090d8c2cac55ad6e721ff5",
+  "readme_path": "README.md",
+  "readme_sha256": "364528eac1d120c2240cd0a27e1c45fcfd2c7cc5c4e09072a8b01091fbd6117c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "313ea8ad1b1b826e4f6c7ba7d48f11709c25339c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3528a14dced078ca9e2a9510040b0b96eb6afe2a"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "138065741a40869a4aa7b6f5454cc7ee31a3081d"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "53bd8e7b244ef9c141b20cb9fdb0ecec37d2374f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "58104f9548b3808d6ab7c41a4955d8647d0c574d"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e10eeefc03472510b39c4b760bc49c936605cdf4"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "cc34b9f4550c0197fa36a5db0d434e431c9e579d"
+    },
+    {
+      "path": "Config",
+      "type": "dir",
+      "sha": "a9d5ea492a20a84d8f81da3814b2cc666c43f1ce"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "e3ca6687fd881dca69977cc160174fdcffcc1567"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "b1b125356d48ff7ab0f8e4ef07e708fca895b6d8"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "2927fb3c6917fb8177846490aad27d1c0f4dc264"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "ce44493312d15f1f2e4219754509e5f0c76a9b91"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "505b397e8f3c95701bafc4b908af853920e844ac"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "b40c39e56ae859ae536228616f0ff9f06d13b612"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "0e77ba9b14f8bc3ab92806bac9751230e6f13bd9"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "d401dba2c09d8d6d81eea4694f68e7796a981991"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "ed497ee027acfde4f15449918e8ddd1ad0875627"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "24b8d0ca55dff3be31f0b0fbfa985516bea5db9e"
+    },
+    {
+      "path": "doxygen.txt",
+      "type": "file",
+      "sha": "cb2f54f014b11c4a25dfae9ca6d53801b9c896ea"
+    },
+    {
+      "path": "shadertoolsconfig.json",
+      "type": "file",
+      "sha": "9a7d0171a5d595cb7885376b606705e0c920ce01"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

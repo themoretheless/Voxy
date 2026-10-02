@@ -1,0 +1,49 @@
+{
+  "repository": "harvard-edge/airlearning-ue4",
+  "repository_id": 190814453,
+  "commit": "ffb63b98e1e5e7f9ad1096e3e51b70823c024a6d",
+  "source_url": "https://github.com/harvard-edge/airlearning-ue4/tree/ffb63b98e1e5e7f9ad1096e3e51b70823c024a6d",
+  "readme_path": "README.md",
+  "readme_sha256": "836aed3373df0943287342d4903727738b35ac44a8f490db33f49ef3bccb3f11",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6d8af2136d9f08a9ea8e6b4fb1244fe33f0002ec"
+    },
+    {
+      "path": "AirLearning.uproject",
+      "type": "file",
+      "sha": "c38b2e4ee7317ca586613c6314c14cac6a352f92"
+    },
+    {
+      "path": "Config",
+      "type": "dir",
+      "sha": "97bcefb290bfc70c68dcaff6a1a9a45751032617"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "0e8b2a34da0eb2fb7b46a3d53e5eda613a24a90d"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "773bae62e7b9d3f1f60db526bf6e243449bb0804"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8aec2451d13ebc704dc6dc31d0fb0e735683d7d2"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "e428ba1519a386eaf4ce139e2d66d1f83db1117c"
+    }
+  ],
+  "classification": "excluded_evaluation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "UE4-hosted environment generator for reinforcement-learning research; external Unreal runtime, not engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

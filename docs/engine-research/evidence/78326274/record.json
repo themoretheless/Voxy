@@ -1,0 +1,69 @@
+{
+  "repository": "okaybenji/text-engine",
+  "repository_id": 78326274,
+  "commit": "99b13f5c95ddbacd630daf741e1ff9407db29fb6",
+  "source_url": "https://github.com/okaybenji/text-engine/tree/99b13f5c95ddbacd630daf741e1ff9407db29fb6",
+  "readme_path": "readme.md",
+  "readme_sha256": "c8c2d23be674dab8ceb17dc8dc2ae48e56ab61947861ec37e8be824765bbd7bc",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f2282ec24e995d0e4e24ffd785e9930a1436771b"
+    },
+    {
+      "path": ".jshintrc",
+      "type": "file",
+      "sha": "4e0863f48586d131ee974197a5904b1e601aded3"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "768bd84b34da77c054849c5ae094e87a5151b80e"
+    },
+    {
+      "path": "game-disks",
+      "type": "dir",
+      "sha": "cb66f6de889908f20ca7486835f03fe51f610ff9"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "0830cb4ab2ba65ca6298dc2329a39dd78db37fb7"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "29f2c061a6d22f9d65db6b277811d992f2ce7d3f"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "e5dd740b9bf27e107b21ebc672ae8d58f7d960e0"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "01b38489de29db53384a81a6aae2375b795bb57f"
+    },
+    {
+      "path": "screenshot.gif",
+      "type": "file",
+      "sha": "0157a39544cc6eeb8d293c321948410fb129709e"
+    },
+    {
+      "path": "styles",
+      "type": "dir",
+      "sha": "757e006d2c5b1b8c39cc2058edf6078b4794a284"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent browser adventure runtime; index.js/game-disks and npm/browser distribution.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,69 @@
+{
+  "repository": "orangeduck/Corange",
+  "repository_id": 1697403,
+  "commit": "b9ce1b8e7128f9113163c5eb3501c02deadc50a9",
+  "source_url": "https://github.com/orangeduck/Corange/tree/b9ce1b8e7128f9113163c5eb3501c02deadc50a9",
+  "readme_path": "README.md",
+  "readme_sha256": "452917106b6ff2d2040b428c3caea4c92c8218f259f47059dd559250710935d8",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "52af82911b4a512b5de679735b56f5dc389c801a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6850452f04791911ad41f8e760a967eb495687f8"
+    },
+    {
+      "path": "LICENCE.md",
+      "type": "file",
+      "sha": "fb1425033633d2d1273c24391244d2b493891e65"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "8f40e04cab411ccabe1c79c4920b97d85915f092"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fb4227cedcde870e4107662f4861f8967925fc87"
+    },
+    {
+      "path": "assets_core",
+      "type": "dir",
+      "sha": "8717ff5bec7eb6c43b3a5f9ed4c15227f57adada"
+    },
+    {
+      "path": "corange.ico",
+      "type": "file",
+      "sha": "db0f0e19e47e9074a22f6fc0e28c37830c015688"
+    },
+    {
+      "path": "corange.rc",
+      "type": "file",
+      "sha": "dd116c568d7152e00c2c57238f752c998b3b76e2"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "7aedd900d664b4d85bbb4b8a661b9baae7aadf55"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "67585b6051a24f99842ce8a11aec1c3acd620697"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a8145c74ce92bc9969dce55d46e30fb217e5053a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C SDL/OpenGL runtime library with asset/UI/entity management and platformer consumer; graphics-heavy demo focus retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

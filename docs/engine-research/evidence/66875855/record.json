@@ -1,0 +1,54 @@
+{
+  "repository": "TomaszRewak/ML-games",
+  "repository_id": 66875855,
+  "commit": "93c903dd80f76319a5935ec95db623ad74837d9a",
+  "source_url": "https://github.com/TomaszRewak/ML-games/tree/93c903dd80f76319a5935ec95db623ad74837d9a",
+  "readme_path": "README.md",
+  "readme_sha256": "982965291aa92ffb610ca7d6e0fe2639a97228e5be958f5c7e03b0f911779c1c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c2658d7d1b31848c3b71960543cb0368e56cd4c7"
+    },
+    {
+      "path": "About",
+      "type": "dir",
+      "sha": "131d6c28cb21d7736f3f0d4e012b97c22426743e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2b800c21a56d1d5492811d9330cc70e88abbf25c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f2a77c352c4de1f5837d7fd94d79b8b87e9d290e"
+    },
+    {
+      "path": "Site",
+      "type": "dir",
+      "sha": "9266096d9148216fd7d4751a3081553f985c741a"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "46e095f1b10e87d26722e1dc62f0774c126bda79"
+    },
+    {
+      "path": "gulpfile.js",
+      "type": "file",
+      "sha": "61032ca82c7be879aed4d65772feaad0576dec59"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "f47703f0cc269fac41537a853375bdc3ab3d931e"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies owned game runtime/ML algorithms; Source/Site with npm/gulp build. Educational scope retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

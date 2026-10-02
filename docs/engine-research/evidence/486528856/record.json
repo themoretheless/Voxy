@@ -1,0 +1,99 @@
+{
+  "repository": "1oom-fork/1oom",
+  "repository_id": 486528856,
+  "commit": "42e9c0b316963dd891f3a8e031bacb36f8c5994e",
+  "source_url": "https://github.com/1oom-fork/1oom/tree/42e9c0b316963dd891f3a8e031bacb36f8c5994e",
+  "readme_path": "README.md",
+  "readme_sha256": "52ddd73ca6a484f73333fa197ccb399e32a519df75e227876e2fcf51a874dbbe",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "208350eb2781c789c98d8d389b511e57ebc10c67"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "adbcc4dbdefcdd611a3b332b5577af9f900656a8"
+    },
+    {
+      "path": "CHANGES",
+      "type": "file",
+      "sha": "7228fa0948550e7af1128fc01c2bd96c1bedd402"
+    },
+    {
+      "path": "COMPILING",
+      "type": "file",
+      "sha": "629caa905a269bd9ed1d18bef6d44dd22ae64797"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "10516934ad55cc624b7b1d5710b5a51590872767"
+    },
+    {
+      "path": "HACKING",
+      "type": "file",
+      "sha": "cceb8af34b35bd622e3461a6481ffc04a9862da2"
+    },
+    {
+      "path": "MIRRORS.md",
+      "type": "file",
+      "sha": "996eb3afa9f0f2059672fb91151020f3593b21f2"
+    },
+    {
+      "path": "Makefile.am",
+      "type": "file",
+      "sha": "d9e009d759dc0ca4134025bc0113b6d660624d06"
+    },
+    {
+      "path": "NEWS",
+      "type": "file",
+      "sha": "19913d1394fcf08ba920d0040b5a0fec7229d64c"
+    },
+    {
+      "path": "PHILOSOPHY",
+      "type": "file",
+      "sha": "bbe5c8660d82198aa7ae7ac426ebe193ff07f595"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cc27459226dc7622321db2559a9b2af34148f50a"
+    },
+    {
+      "path": "configure.ac",
+      "type": "file",
+      "sha": "0a6faf4e9f9eb6e7bedf7fcfbd36a73273ac0ca6"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "5f7640dbdabcecefa827e4a2f995ed4bc30dd2fd"
+    },
+    {
+      "path": "make-bindist_install.sh",
+      "type": "file",
+      "sha": "392d61e2a2009d90641bde8eb2f5eb6275da7493"
+    },
+    {
+      "path": "make-bindist_msdos.sh",
+      "type": "file",
+      "sha": "de7dc168eaca4258df91e1ba79d19b25042ab319"
+    },
+    {
+      "path": "make-bindist_win32.sh",
+      "type": "file",
+      "sha": "ca0d7c50f7e90195bb8b653d1e3a99b344717c22"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b2f53aec4ca7103cfa6ded3bb27c40fb92671b55"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Master of Orion runtime recreation loading original LBX assets with source/build files; exact compatibility unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

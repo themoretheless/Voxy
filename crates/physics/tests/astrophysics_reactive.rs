@@ -77,20 +77,22 @@ fn burning_sphere_closed_and_open_energy_and_atomicity() {
         }
         let saved = sphere.clone();
         let saved_rows = rows.clone();
-        assert!(sphere
-            .step_reactive(
-                &mut rows,
-                &network,
-                0.001,
-                1e-4,
-                100,
-                Budget {
-                    steps: 12,
-                    fit_evaluations: 12,
-                    ..budget
-                }
-            )
-            .is_err());
+        assert!(
+            sphere
+                .step_reactive(
+                    &mut rows,
+                    &network,
+                    0.001,
+                    1e-4,
+                    100,
+                    Budget {
+                        steps: 12,
+                        fit_evaluations: 12,
+                        ..budget
+                    }
+                )
+                .is_err()
+        );
         assert_eq!(sphere, saved);
         assert_eq!(rows, saved_rows);
     }
@@ -155,20 +157,22 @@ fn radiating_burning_sphere_energy_and_late_ray_failure() {
     let saved = sphere.clone();
     let saved_rows = rows.clone();
     // One transfer consumes 8*9*2 segments: the second radiation half must fail.
-    assert!(sphere
-        .step_reactive_radiating(
-            &mut rows,
-            &network,
-            1e-5,
-            ReactiveSettings {
-                radiation: Heating {
-                    max_segments: 144,
-                    ..settings.radiation
-                },
-                ..settings
-            }
-        )
-        .is_err());
+    assert!(
+        sphere
+            .step_reactive_radiating(
+                &mut rows,
+                &network,
+                1e-5,
+                ReactiveSettings {
+                    radiation: Heating {
+                        max_segments: 144,
+                        ..settings.radiation
+                    },
+                    ..settings
+                }
+            )
+            .is_err()
+    );
     assert_eq!(sphere, saved);
     assert_eq!(rows, saved_rows);
 }
@@ -273,7 +277,7 @@ fn reactive_table_matches_constant_and_post_burn_domain_failure_is_atomic() {
 fn imported_reaction_with_tabulated_radiation_has_a_cumulative_energy_ledger() {
     use physics::{
         astrophysics_opacity::{Kind, Table},
-        astrophysics_reaclib::{parse, MEV_JOULES},
+        astrophysics_reaclib::{MEV_JOULES, parse},
         astrophysics_spherical_radiation::{Heating, ReactiveSettings},
     };
     // The narrow bounds below are numerical test bounds, not a fit calibration.
@@ -439,8 +443,8 @@ fn reactive_exterior_inflow_closes_nuclear_and_gas_energy_ledgers() {
     assert!((final_energy - initial).abs() / initial.abs() < 1e-12);
     let saved = s.clone();
     let saved_rows = rows.clone();
-    assert!(s
-        .step_reactive_exterior(
+    assert!(
+        s.step_reactive_exterior(
             &mut rows,
             &network,
             1e-6,
@@ -454,7 +458,8 @@ fn reactive_exterior_inflow_closes_nuclear_and_gas_energy_ledgers() {
             },
             &exterior
         )
-        .is_err());
+        .is_err()
+    );
     assert_eq!(s, saved);
     assert_eq!(rows, saved_rows);
 }
@@ -592,8 +597,8 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
     assert_eq!(rejected_rows, original_rows);
     let saved = s.clone();
     let saved_rows = rows.clone();
-    assert!(s
-        .step_reactive_radiating_exterior(
+    assert!(
+        s.step_reactive_radiating_exterior(
             &mut rows,
             &network,
             1e-6,
@@ -607,7 +612,8 @@ fn radiating_exterior_inflow_conserves_energy_and_rolls_back_late_ray_failure() 
             &exterior,
             None
         )
-        .is_err());
+        .is_err()
+    );
     assert_eq!(s, saved);
     assert_eq!(rows, saved_rows);
 }
@@ -618,7 +624,7 @@ fn polytrope_exterior_burning_and_tabulated_radiation_share_one_energy_ledger() 
         astrophysics_opacity::{Kind, Table},
         astrophysics_spherical::CompositionExterior,
         astrophysics_spherical_radiation::{Heating, ReactiveSettings},
-        astrophysics_star::{lane_emden, Scaling},
+        astrophysics_star::{Scaling, lane_emden},
     };
     let network = network();
     let profile = lane_emden(1.5, 0.001, 5.0, 6000).unwrap();
@@ -725,22 +731,24 @@ fn polytrope_exterior_burning_and_tabulated_radiation_share_one_energy_ledger() 
     assert!(rows.iter().all(|row| row[1] > 0.0));
     let saved = sphere.clone();
     let saved_rows = rows.clone();
-    assert!(sphere
-        .step_reactive_radiating_exterior(
-            &mut rows,
-            &network,
-            1e-6,
-            ReactiveSettings {
-                radiation: Heating {
-                    max_segments: 544,
-                    ..settings.radiation
+    assert!(
+        sphere
+            .step_reactive_radiating_exterior(
+                &mut rows,
+                &network,
+                1e-6,
+                ReactiveSettings {
+                    radiation: Heating {
+                        max_segments: 544,
+                        ..settings.radiation
+                    },
+                    ..settings
                 },
-                ..settings
-            },
-            &exterior,
-            Some(&table)
-        )
-        .is_err());
+                &exterior,
+                Some(&table)
+            )
+            .is_err()
+    );
     assert_eq!(sphere, saved);
     assert_eq!(rows, saved_rows);
 }
@@ -1142,9 +1150,11 @@ fn thermal_search_balances_burning_shells_and_rolls_back_failed_searches() {
         ),
     ] {
         let mut failed = initial.clone();
-        assert!(failed
-            .equilibrate_thermal(settings, &rows, &network, None, limits)
-            .is_err());
+        assert!(
+            failed
+                .equilibrate_thermal(settings, &rows, &network, None, limits)
+                .is_err()
+        );
         assert_eq!(failed, initial);
     }
     let mut failed = initial.clone();
@@ -1253,33 +1263,37 @@ fn joint_stellar_search_satisfies_hydrostatic_and_thermal_equations() {
     assert_eq!(transported, rows);
 
     let mut failed = initial.clone();
-    assert!(failed
-        .equilibrate_stellar(
-            &rows,
-            &network,
-            surface,
-            heating,
-            None,
-            Search {
-                evaluations: 2,
-                ..search
-            }
-        )
-        .is_err());
+    assert!(
+        failed
+            .equilibrate_stellar(
+                &rows,
+                &network,
+                surface,
+                heating,
+                None,
+                Search {
+                    evaluations: 2,
+                    ..search
+                }
+            )
+            .is_err()
+    );
     assert_eq!(failed, initial);
     let mut failed = initial.clone();
-    assert!(failed
-        .equilibrate_stellar(
-            &rows,
-            &network,
-            surface,
-            heating,
-            None,
-            Search {
-                iterations: 1,
-                ..search
-            }
-        )
-        .is_err());
+    assert!(
+        failed
+            .equilibrate_stellar(
+                &rows,
+                &network,
+                surface,
+                heating,
+                None,
+                Search {
+                    iterations: 1,
+                    ..search
+                }
+            )
+            .is_err()
+    );
     assert_eq!(failed, initial);
 }

@@ -1,0 +1,64 @@
+{
+  "repository": "Coding-Solo/godot-mcp",
+  "repository_id": 939648665,
+  "commit": "1209744fad78f3998f98c7394fd0f6ef50da5281",
+  "source_url": "https://github.com/Coding-Solo/godot-mcp/tree/1209744fad78f3998f98c7394fd0f6ef50da5281",
+  "readme_path": "README.md",
+  "readme_sha256": "0a1462ae17b5a11c004539575ee8e5dcd66b99613020dceb05bf7505b8a75014",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3976a9983f14bcff3b04d1d05b145bdc68c2cfa2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bd7fd82c143394dda69c4cf6a1a07242d04be436"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "00aba52c023ce7a7fd68114e9ae7d32bacda533c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "86552a8d59e62d4fc48ab50dcb821ea2b9f7ef14"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "88f5a15671b2b0c3bdc727814060f6da5ed9bf13"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "3334689b4559f9103a9ba922bfcca5ed3154edf9"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "fe431bef8b11b63df351a6d012ee8d57f4eef29a"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "2bc68ce23966076f38479bffc273731a0f11c0c3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e1efc583d8b30ab61b5679db71992c2e7e3521b7"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "7d7f81c5edf8a745d6b65732ad4c4b8e01a8be2e"
+    }
+  ],
+  "classification": "excluded_automation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "MCP integration launching/debugging existing Godot editor/projects, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

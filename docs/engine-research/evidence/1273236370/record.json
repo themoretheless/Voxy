@@ -1,0 +1,169 @@
+{
+  "repository": "Sisyphe42/ReignsAgent",
+  "repository_id": 1273236370,
+  "commit": "13852d151ae777a509334188d9d86f97bf3f6abf",
+  "source_url": "https://github.com/Sisyphe42/ReignsAgent/tree/13852d151ae777a509334188d9d86f97bf3f6abf",
+  "readme_path": "README.md",
+  "readme_sha256": "94030453ce715cb4cf8293fa8b4f9abae224c18cc8b9bcdb7232bb4178bc8456",
+  "entries": [
+    {
+      "path": ".agent",
+      "type": "dir",
+      "sha": "6d50b2813e047c4eb7fe1ca50b12fb17071074a4"
+    },
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "1d0661e24d7db4d1e112df632e6ebc193987b425"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "503bffb97e87a560915cea67833a984b406bc2c7"
+    },
+    {
+      "path": ".codex",
+      "type": "dir",
+      "sha": "57caa686a8d2196cc60f1b1a875da91dadda0804"
+    },
+    {
+      "path": ".cursor",
+      "type": "dir",
+      "sha": "730bead9b1f1f6d0613ae1356778a0121908b480"
+    },
+    {
+      "path": ".gemini",
+      "type": "dir",
+      "sha": "c7067d572a49f57f9ce8cfe3b1fb37aca3aa772a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "12c03acc84a1d594b42147ae9cdd193490e396c9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9531e67adcc694fdfe42dbb83746afbf6a2bc1a5"
+    },
+    {
+      "path": ".learnings",
+      "type": "dir",
+      "sha": "40ecfb4c8a0b3b7a78d4eb3816683869d644013e"
+    },
+    {
+      "path": ".opencode",
+      "type": "dir",
+      "sha": "ab593b1981f52127958079e5ab8d21544a9f9d36"
+    },
+    {
+      "path": ".trellis",
+      "type": "dir",
+      "sha": "38f7601b8e74e4c61aa883b24e223f74601459a6"
+    },
+    {
+      "path": ".zcode",
+      "type": "dir",
+      "sha": "0e0f6ea2a289583b00d2142308b59304158fcf31"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "b8deea0b9dd65cd915025273e8f84c217110725c"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7e08437c4cc26690c794a8b32c4b6b031dec7f85"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6457cf6f5146b75666d0397abde11d03f4a4c668"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8a6521cea944b3e6699745ebe52b0e5e7a6a3b56"
+    },
+    {
+      "path": "README_zh-CN.md",
+      "type": "file",
+      "sha": "bd1764504e1b29fbfdb2e8e2308a0039f92ca1b9"
+    },
+    {
+      "path": "RELEASE_NOTES.md",
+      "type": "file",
+      "sha": "2f0c6bb79d51ce3c15f74921aa0332096e4b54f3"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "db647d242ab8ae2ecf6adadd725d5aa12e239c5f"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "8c729db6635ae58cf11ffd0feb3a7b4c7e946e3d"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "type": "file",
+      "sha": "3c1636dde080b2bb31291547af4b828767ed5c99"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "5f9185d6412ff307ed2e31860759a22793a96fbe"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "39b20fc2c8cb0a36fcd44fb10e7d36669001031c"
+    },
+    {
+      "path": "fixtures",
+      "type": "dir",
+      "sha": "06c3a3dcd5a80e4e3ad0b327e93d3935b1765f4b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "5f06aa8ab5bbe83e4bc2c4f0c18f72bf08198e6f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "44b6a5a40af104671539fe1849cbe48e1e4a80ba"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "8f6850f9849d59f7b71aa7879f42610486b3acfe"
+    },
+    {
+      "path": "playwright.hosted.config.js",
+      "type": "file",
+      "sha": "493894f12bfaff7f988e34c14e6f9554119e7eaa"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "c30b71b9b73a81ca252bc540c3a7e0caabc7007c"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "f3d27363f2d9f81511ccecb35a354b56889b4879"
+    },
+    {
+      "path": "vercel.json",
+      "type": "file",
+      "sha": "e0c1033961c5450ff390d73cf9abb380a6b1d2a8"
+    }
+  ],
+  "classification": "narrative_toolkit_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify narrative author/reviewer/player tools; standalone complete engine ownership requires deeper runtime review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

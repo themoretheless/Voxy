@@ -1,0 +1,67 @@
+{
+  "repository": "levigilbert/godot-LDtk-import",
+  "repository_id": 312306077,
+  "commit": "e1090f0daa261738331521450f319395134e4366",
+  "source_url": "https://github.com/levigilbert/godot-LDtk-import/tree/e1090f0daa261738331521450f319395134e4366",
+  "readme_path": "README.md",
+  "readme_sha256": "320f9e56ce952f12ad7cdefa751596fb1f2b2e28a67ef48aebb6ec0e16725a00",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c20d4c2aafc5be13fbc4b3fd46b1e2a6bd867781"
+    },
+    {
+      "path": ".gut_editor_config.json",
+      "type": "file",
+      "sha": "c3a5ccbba37648cacbec6ceb8a5cc711536906cc"
+    },
+    {
+      "path": "Cavernas_by_Adam_Saltsman.png",
+      "type": "file",
+      "sha": "1ba81589ffc5ca55348673542927d14bf6daee4a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "665027ee88fd3698a9f9bfe98c4353a7b1ba3d66"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f9891ebd6fc739c04741c06b65390cc2545800cf"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "5c6986c724250ad0cee97b6dc9500c673b31ab67"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "20207a4aa2cfbae0c95636531b00d91502940d12"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "34cb56c9bd558029315d9791e4d27e874ba901b0"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "16aea7ecd69860b1f26810be12c8890ff4834b02"
+    },
+    {
+      "path": "testmap.ldtk",
+      "type": "file",
+      "sha": "30be0551d168604199dc1c502363ce7009838fbf"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

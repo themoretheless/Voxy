@@ -1,0 +1,64 @@
+{
+  "repository": "space2pacman/elpy",
+  "repository_id": 505380371,
+  "commit": "232d9072fb61a1886995763ce74fefd9b0c2ba5c",
+  "source_url": "https://github.com/space2pacman/elpy/tree/232d9072fb61a1886995763ce74fefd9b0c2ba5c",
+  "readme_path": "README.md",
+  "readme_sha256": "129c86a1c487a5a7d13e27a16cd93fc1949a6cb55e4ced2702ea637a87e9fce0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "76add878f8dd778c3381fb3da45c8140db7db510"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "f84c843dd1606d762ed782b8b2205b580cf4e901"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f3ab84b836f8999040c4456f3484204e51eba47f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2ef3b8c31d59674038b4a4a9b5f9e4ba38555107"
+    },
+    {
+      "path": "background.png",
+      "type": "file",
+      "sha": "0b4781c54729e7374c7f9c6b4e02093ac079425e"
+    },
+    {
+      "path": "games-background.png",
+      "type": "file",
+      "sha": "5fb3bc3f044d02f7e2b62d6b28405037803e2459"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "86a85f923e6b0ab894ae86ebcaf65f0c67026e5b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "adbfaf5cf6029a09e757f6f82854183d82663f61"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7e36f18bcfdf247905587d5d0b338679b692153d"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "f29de5c0c7a0aaaf1ce63eabaa0e482c3143c4e9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaScript 2D engine with object animation, collision and scene callbacks; src and package manifest present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

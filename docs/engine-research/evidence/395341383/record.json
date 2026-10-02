@@ -1,0 +1,124 @@
+{
+  "repository": "jrouwe/JoltPhysics",
+  "repository_id": 395341383,
+  "commit": "5830c342b90fa087f118aa0f086d541a4950b1d9",
+  "source_url": "https://github.com/jrouwe/JoltPhysics/tree/5830c342b90fa087f118aa0f086d541a4950b1d9",
+  "readme_path": "README.md",
+  "readme_sha256": "4344c3c7217941319df70a7a17eed098b7c666a2cf7b952c2892577e1cb3b7d1",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "e3845288a2aece185aa94e88e303e0134efde368"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "49f8ef26b7c78faf07e94325b35e6a4a2da6979c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c5482ed7cdb3b17a367f1674a8914aaeec1e9921"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0ff42652405a0c7cee32317decebef3cb40bed0d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "32847058cc3d4c4a974bf7254d5843c1080c53ee"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "036a066258af34e50d469ea295811bb26da45369"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "20f0acd3249b6d0568abc847ff9a5c3c7a644192"
+    },
+    {
+      "path": "ContributorAgreement.md",
+      "type": "file",
+      "sha": "37065f490b2680ecd82aa62f0f82c56956376817"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "a7e4a545114f60da247b5b9af4bd89050642142c"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "8ad9203434a60228911c59810addeaca1261b314"
+    },
+    {
+      "path": "HelloWorld",
+      "type": "dir",
+      "sha": "d5ecfd9c424d805cdcd4fcd01e7421e7be63c35e"
+    },
+    {
+      "path": "Jolt",
+      "type": "dir",
+      "sha": "ba3982f83d79266a76528d6cf377e068ab95bcf0"
+    },
+    {
+      "path": "JoltViewer",
+      "type": "dir",
+      "sha": "c9d204e56074ba8c144f0782b40f0eb05ac8013b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4f0976848529e8243687918193e0742032aef7dc"
+    },
+    {
+      "path": "PerformanceTest",
+      "type": "dir",
+      "sha": "4a9ac4e24668c140a72db9cd213166116f1aea63"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9ba86f8e61589604d0f03c1cc41f31c163fe3748"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "ffd0e4925b7297b50d7a58c17a02e204e39df509"
+    },
+    {
+      "path": "TestFramework",
+      "type": "dir",
+      "sha": "aa22b09a484378a63b261bc03e6447d3ba751fb2"
+    },
+    {
+      "path": "UnitTests",
+      "type": "dir",
+      "sha": "dc748af9804fe2a8a543b7dbc0cf1798b589ddb4"
+    },
+    {
+      "path": "doxygen-awesome.css",
+      "type": "file",
+      "sha": "8093894ce9b2cae58490f796ede767f4c54032e9"
+    },
+    {
+      "path": "run_doxygen.bat",
+      "type": "file",
+      "sha": "8f8b85d3243fcb44fdd1638341d2e5e5516faa18"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "fe4c2359844d8b267655e4eaa4d7561aa93c6583"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Jolt source, physics samples/tests and build roots identify physics implementation, not a game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

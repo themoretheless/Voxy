@@ -1,0 +1,89 @@
+{
+  "repository": "BoomingTech/Piccolo",
+  "repository_id": 471960338,
+  "commit": "f5053707fed4d3f94d270a436fb0d3a8ae54e3e5",
+  "source_url": "https://github.com/BoomingTech/Piccolo/tree/f5053707fed4d3f94d270a436fb0d3a8ae54e3e5",
+  "readme_path": "README.md",
+  "readme_sha256": "f9e1f345df98b808a2bf4a3b1c1d144717d6e973c93d5908063a9e9790b25caf",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "6a1b89ff05bb80154e13e5997d1024c1157ca55c"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "b613423c2f092f292ffd0415c8027e1a70256cbf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6eb5ace2df09cc3887469f2cd63eb45d1094da4b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "920e92335d4f1695587935ef3025c70206bdf87f"
+    },
+    {
+      "path": ".gitlab",
+      "type": "dir",
+      "sha": "f99509c969e87111e0322ad5d45c0448fa6f352b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "97474124ffc85bb224790f0f0d15b9348e3df90c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "06dcc24b115950e4dff129fbe889c3ad9af65d70"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3e6450f4bbf846568c26440289a124d216c72b5c"
+    },
+    {
+      "path": "ReleaseNotes.md",
+      "type": "file",
+      "sha": "6f00bb161139d5e070ab92e77b6776f91bda9a50"
+    },
+    {
+      "path": "build_linux.sh",
+      "type": "file",
+      "sha": "d5e27c376ecb936f8aa41df74a0942c02c0cd7d3"
+    },
+    {
+      "path": "build_macos.sh",
+      "type": "file",
+      "sha": "457748fb58f6f17bc635824ce793ee0e6243ee35"
+    },
+    {
+      "path": "build_windows.bat",
+      "type": "file",
+      "sha": "637402508afe02a24b9422b9957e6fbed9a24e0f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "eaefab19ba86ec52a5ce71b76ff345fdcb24cd55"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "080baf3ee333bea07f7fad0b28ae80a677375b01"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "4436d00e2e329d6776c87b5767645018a8fe1645"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies educational engine; engine source and CMake/platform build scripts. Educational status is retained, not a production-quality claim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

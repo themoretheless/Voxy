@@ -1,0 +1,104 @@
+{
+  "repository": "KilledByAPixel/LittleJS-AI",
+  "repository_id": 1134614009,
+  "commit": "7ef0d8f49f994c973ee88f46b0b5cf0b16961946",
+  "source_url": "https://github.com/KilledByAPixel/LittleJS-AI/tree/7ef0d8f49f994c973ee88f46b0b5cf0b16961946",
+  "readme_path": "README.md",
+  "readme_sha256": "50d6c5cd78780985496875e317c0b1e8366b74310ebb55b463c2d730a03ff852",
+  "entries": [
+    {
+      "path": ".claude-plugin",
+      "type": "dir",
+      "sha": "768fe45f2084861f7a8a6b8f2fe4f5a8a45645ae"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "38c397b15653b2e72dd1e8189f375403ab9b8721"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0cf5e9015ad577d1317dd91b1a7a160edb2bfabd"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "f1b43197006b88ec9cc29b7e76ec8bbcdab01b7d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ca39f4d5e4f3cff50dda16c17791986b975ecabc"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "eef4bd20cf972fc2f3c7405fdae3fdcff80e59d4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8b15b00811ed1e35df03f22c09a019e033b64bf1"
+    },
+    {
+      "path": "PRIVACY.md",
+      "type": "file",
+      "sha": "3d247b6894c905726f0933f07352bffd2813ed9a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ab59f766556f529d190c834dfc750e2afa384893"
+    },
+    {
+      "path": "build.mjs",
+      "type": "file",
+      "sha": "333677b4fa2e27fd9a55b4e6b648962b79b22b9a"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "8a351541cb126320cb21e393fe7d52b1b9e5ec63"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b4562e42db8570023ce922116d57bfa6c3a8a2b7"
+    },
+    {
+      "path": "jsconfig.json",
+      "type": "file",
+      "sha": "f08070d183696a08425f43ce6607f5db60e1e7dc"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "b672ebd763c4458cc6cc95e3ac7d71d067896b4d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d3e6510da6ac224d3fde847059a0c1851bd57c8c"
+    },
+    {
+      "path": "reference.md",
+      "type": "file",
+      "sha": "418ebc146826e97a98acf8738931c7d6bb22b652"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "aad108baaf751fa6bf134b0cd7a9fa9aefc45dfe"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "b2eeea27ec7c8d2170049e33cb94ffb7b675ff0c"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "LittleJS templates, helpers and AI instructions; primary product is toolkit for existing engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

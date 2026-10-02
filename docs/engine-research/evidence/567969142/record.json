@@ -1,0 +1,19 @@
+{
+  "repository": "aaron9000/c-game-resources",
+  "repository_id": 567969142,
+  "commit": "c97644d48abf498b47b7e7752b529f252abf122a",
+  "source_url": "https://github.com/aaron9000/c-game-resources/tree/c97644d48abf498b47b7e7752b529f252abf122a",
+  "readme_path": "README.md",
+  "readme_sha256": "2499221b5e7077165b979720387116806d890c6d88b6f167139a83a364ae9857",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "745e9493635c83d880464727bdcc15d21684c29b"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README lists native graphics/game libraries; root only documentation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

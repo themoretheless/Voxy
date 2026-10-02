@@ -1,0 +1,39 @@
+{
+  "repository": "huangx916/HXEngine",
+  "repository_id": 96393490,
+  "commit": "b7ec36572c4444113a35c9a6c65b127279c7360f",
+  "source_url": "https://github.com/huangx916/HXEngine/tree/b7ec36572c4444113a35c9a6c65b127279c7360f",
+  "readme_path": "README.md",
+  "readme_sha256": "29785346b31660908985970c23919758c53dff9e9bb0e62e46e8c3e99ab84a42",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e8ab80268f9694595c1efa651075b7ba4cbcc153"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8c68c55ac9a7237725da9ee52048d5e27d163298"
+    },
+    {
+      "path": "HXEngine",
+      "type": "dir",
+      "sha": "0568c508fdd70ee49dd7c117f407817de3115f43"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b2df31493fe1b384d2ec7e52fa79489e3e9131f3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fd2150d388f1b56be9b89df1a25eed31907c8519"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Plugin-based core/editor/game with scene/prefab serialization, assets, skeletal animation and rendering; planned backends not counted implemented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

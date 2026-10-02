@@ -1,0 +1,176 @@
+<p align="center">
+<img src="https://github.com/appsinacup/godot-rapier-physics/blob/main/logo.jpg?raw=true"/>
+</p>
+<p align="center">Works on: Desktop, Mobile and Web</p>
+<p align="center">
+        <img src="https://github.com/appsinacup/godot-rapier-physics/actions/workflows/runner.yml/badge.svg?branch=main"
+            alt="Godot Rapier Build"></a>
+        <img src="https://img.shields.io/badge/Godot-4.7-%23478cbf?logo=godot-engine&logoColor=white" />
+</p>
+
+
+<p align = "center">
+    <strong>
+        <a href="https://godot.rapier.rs">Documentation</a> | <a href="https://github.com/appsinacup/godot-rapier-physics/blob/main/CHANGELOG.md">Changelog</a> | <a href="https://discord.gg/v649emcpAu">Discord</a> | <a href="https://github.com/appsinacup/godot-rapier-physics/blob/main/CONTRIBUTING.md">Contributing</a> | <a href="https://github.com/appsinacup/godot-rapier-physics/blob/main/ARCHITECTURE.md">Architecture</a>
+    </strong>
+</p>
+
+
+-----
+
+<p align = "center">
+<b>2D and 3D physics engine</b>
+<i>for the Godot game engine.</i>
+with better <b>stability</b>, <b>performance</b>, <b>liquids</b>, <b>determinism</b>, <b>state serialization</b> and <b>no ghost collisions</b>.
+</p>
+
+-----
+
+Godot Rapier Physics is a **2D and 3D** physics drop-in replacement for the [Godot game engine](https://github.com/godotengine/godot) through [rapier](https://github.com/dimforge/rapier) physics engine [salva](https://github.com/dimforge/salva) fluids simulation library.
+
+
+# Features
+
+Stability|No Vibrations
+-|-
+![](docs/rapier-vid.gif)|![](docs/stability-comparison.gif)
+
+Fluids 2D| Fluids 3D
+-|-
+![](docs/fluid_shader.gif)|![](docs/water_3d.gif)
+
+Body Skin| Inverse Kinematics
+-|-
+![](docs/body_skin.gif)|![](docs/ik2.gif)
+
+No Ghost Collisions|Improved Stacking
+-|-
+![](docs/ghost_collisions.gif)|![](docs/stacking.png)
+
+**Serialization**|**Deserialization**
+-|-
+Save Physics State|Load Physics State
+
+**Locally Deterministic**|**Cross Platform Deterministic**
+-|-
+Exact simulation every time (on same platform)|Exact simulation on multiple platforms
+
+# Installation
+
+- Automatic (Recommended): Download the plugin from the official [Godot Asset Store](https://store.godotengine.org) using the `Asset Store` tab in Godot:
+    - [Rapier Physics 2D](https://store.godotengine.org/asset/appsinacup/rapier-physics-2d-fast-version-with-parallel-simd-solver/)
+    - [Rapier Physics 3D](https://store.godotengine.org/asset/appsinacup/rapier-physics-3d-fast-version-with-parallel-simd-solver/)
+
+    Note: There is a single build per dimension. It runs the parallel SIMD solver and is cross platform deterministic.
+
+- Manual: Download the [latest github release](https://github.com/appsinacup/godot-rapier-physics/releases/latest) and move only the `addons` folder into your project `addons` folder.
+
+After installing, go to `Advanced Settings` -> `Physics` -> `2D` or `3D`. Change `Physics Engine` to `Rapier2D` or `Rapier3D`.
+
+# Rust dependency
+
+See [godot-rust/ExtensionLibrary](https://godot-rust.github.io/docs/gdext/master/godot/init/trait.ExtensionLibrary.html#using-other-gdextension-libraries-as-dependencies).
+
+```toml
+[dependencies]
+godot-rapier = { git = "https://github.com/appsinacup/godot-rapier-physics.git", tag = "v0.36.0", features = ["single-dim2"] }
+```
+
+Feature sets matching the shipped addon builds:
+
+| Build | Features |
+| - | - |
+| 2D | `single-dim2`, `serde-serialize`, `parallel`, `experimental-threads`, `register-docs`, `api-4-7` |
+| 3D | `single-dim3`, `serde-serialize`, `parallel`, `experimental-threads`, `register-docs`, `api-4-7` |
+
+Use exactly one Godot API feature: `api-4-4`, `api-4-5`, `api-4-6`, or `api-4-7`.
+
+SIMD and cross-platform determinism are not features you opt into: SIMD is always compiled (with a scalar fallback on targets that lack it) and `enhanced-determinism` is enabled on the Rapier dependencies for every build. `parallel` stays optional since web builds cannot use it.
+
+For web/Emscripten builds, add one web feature: `experimental-wasm` for threaded web builds, or `experimental-wasm-nothreads` for no-thread web builds. `experimental-wasm-nothreads` includes `experimental-wasm`. CI builds web with `wasm32-unknown-emscripten`, `release-wasm`, and `-Zbuild-std`.
+
+When depending on another GDExtension crate, set `GDRUST_MAIN_EXTENSION` to your extension's `ExtensionLibrary` type and explicitly forward Godot Rapier's init stages from your extension. Godot only runs one main `ExtensionLibrary`, so the user's extension must register the Rapier server and classes too:
+
+```rust
+use godot::prelude::*;
+use godot_rapier::RapierPhysics3DExtensionLibrary;
+
+struct MyExtension;
+
+#[gdextension]
+unsafe impl ExtensionLibrary for MyExtension {
+    fn min_level() -> InitLevel {
+        InitLevel::Servers
+    }
+
+    fn on_stage_init(level: InitStage) {
+        RapierPhysics3DExtensionLibrary::on_stage_init(level);
+    }
+
+    fn on_stage_deinit(level: InitStage) {
+        RapierPhysics3DExtensionLibrary::on_stage_deinit(level);
+    }
+}
+```
+
+For 2D projects, use `RapierPhysics2DExtensionLibrary`.
+
+Do not load the standalone Godot Rapier addon in the same Godot project when bundling it through another Rust GDExtension, because Godot classes can be registered twice.
+
+# Youtube Videos
+
+GamesFromScratch:
+
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/rJ91iNMtF1Q/0.jpg)](https://www.youtube.com/watch?v=rJ91iNMtF1Q)
+
+# Showcase
+
+Got a game or app you built with this addon? We showcase them on [godot.rapier.rs/showcase](https://godot.rapier.rs/showcase). Submit your entry [here](https://github.com/appsinacup/godot-rapier-physics-docs/issues/new).
+
+# Implementation Progress
+
+The 2D part is pretty stable, though there are some issues, the 3D part is still missing some things. See the [Implementation Progress](https://godot.rapier.rs/docs/progress/) to get an idea of what status it is in and what features it has.
+
+# Limitations
+
+- Double builds need to be manually built.
+- No support for asymmetric collisions (eg. object 1 hitting object 2 but object 2 not hitting object 1). This is the exact check rapier does: `(A.layer & B.mask) != 0 || (B.layer & A.mask) != 0`
+- 2D `intersect_point` skips objects with `input_pickable` off, and physics bodies have it off by default. Godot doesn't tell a GDExtension whether a point query comes from mouse picking or from a script, so Rapier honors `input_pickable` for both to keep mouse picking correct. To get Godot's behavior for script queries, either turn on `input_pickable` on the bodies or disable the `physics/rapier/queries/point_query_honors_pickable` project setting. With the setting off, mouse picking also reaches non-pickable objects.
+
+# Module build
+
+In order to build it as a module, go to:
+- [Godot Rapier Physics Module 2D](https://github.com/appsinacup/godot-rapier-physics-module-2d)
+- [Godot Rapier Physics Module 3D](https://github.com/appsinacup/godot-rapier-physics-module-3d)
+
+# Balaur Engine
+
+The authors of this addon are also building [**Balaur**](https://balaurengine.org): a node-based 2D and 3D game engine written in Rust, together with Sébastien Crozet, the author of [Rapier](https://rapier.rs).
+
+Rapier is its physics too, stepped on a fixed 60 Hz tick, but the determinism covers the whole engine rather than just the physics server: same inputs, same bits on every platform, with a digest per tick, record and replay, and rollback. Scripts are written in [Rune](https://rune-rs.github.io) and hot reload in milliseconds with the state intact.
+
+It is at `0.1` and builds from source for now. Godot Rapier Physics is a separate project and is still maintained.
+
+## AI Usage
+
+This project uses AI to aid in software development (and accepts AI contributions). In order for the code quality to remain high, and to not have a ton of bugs, crashes, etc. We use a set of best practices, that are used all throughout the industry, such as: manual testing, automated testing, architecting it, creating spec docs, linting, benchmarking, etc. More can be found out here: [CONTRIBUTING.md](CONTRIBUTING.md)
+
+Every bit of code is tested against this pipeline / process. There is also an automated CI that runs automated tests to ensure that features still work/
+
+There is also a lot of observability and documentation which we use, as the codebase is large and it will keep growing, so having a high level understanding of it is very important, as well as a low level one. For that we have both references from code for nodes/properties, but also documentation and blogposts per features:
+
+- [ARCHITECTURE.md](ARCHITECTURE.md)
+- [CHANGELOG.md](CHANGELOG.md)
+- [Feature List](https://godot.rapier.rs/docs/progress)
+
+## Star History
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=appsinacup%2Fgodot-rapier-physics&type=timeline&logscale=&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=appsinacup/godot-rapier-physics&type=timeline&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=appsinacup/godot-rapier-physics&type=timeline&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=appsinacup/godot-rapier-physics&type=timeline&legend=bottom-right" />
+ </picture>
+</a>

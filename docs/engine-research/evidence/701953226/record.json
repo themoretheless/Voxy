@@ -1,0 +1,102 @@
+{
+  "repository": "WesUnwin/three-game-engine",
+  "repository_id": 701953226,
+  "commit": "5ec860bebacc6da9f888df5169ff1ee17d93d781",
+  "source_url": "https://github.com/WesUnwin/three-game-engine/tree/5ec860bebacc6da9f888df5169ff1ee17d93d781",
+  "readme_path": "README.md",
+  "readme_sha256": "b1a477b8249194fcdea6747254b75149cb333ba8592d7060ee5d25be772f0b44",
+  "entries": [
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "bee4612c0f74f6b7cb8be582f0269ce3d08a627a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "af1ee1b8e992ce6949b86c8c65bba89e50020be6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ff439bda5030a75659fd6fccd4c23cdcbfff4f28"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "85ffb7bc939f88ab45fd27fcb77f7069e7632f29"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "f6e82f50b1a2dd61aa89aa579ee2e7b23baaf0bc"
+    },
+    {
+      "path": "__mocks__",
+      "type": "dir",
+      "sha": "4d555f0d148340bbc4cd7de33a9d246f2aecd886"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "e1e3c89ffcff264abffdf9f78e8f77eca7f9d330"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "64da722e229f196305ac19982a24f98e77f88f4d"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "63ce858a0508c0f5daf3742f9c142b0cfef1bf99"
+    },
+    {
+      "path": "jest.config.js",
+      "type": "file",
+      "sha": "e9447f7a29c8a0a441253e7f0cbe52f0437a8986"
+    },
+    {
+      "path": "jestGlobalSetup.js",
+      "type": "file",
+      "sha": "23a818ea64f0e4c86e537a23aedc31399639d224"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "fbc770fe6070243c869659cdb55bcd4c9ce6ca55"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ab223f791c7c5119aa132830071d36c4bc4010cb"
+    },
+    {
+      "path": "scene_editor",
+      "type": "dir",
+      "sha": "4d895ea231bcb08ba15fe1474c5198eb44d61fa2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f98123411e8f5ad29fd6b1d15d93ae9d66a2ac26"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c80d259b76b8c58695b2255e2509223e5a221f57"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "c511613cb0ee27c32f437fc72fd4b21dc52798aa"
+    },
+    {
+      "path": "web_site",
+      "type": "dir",
+      "sha": "2722c4e7e98580b34939aef28854d10d34a1a42d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

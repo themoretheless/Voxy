@@ -1,0 +1,114 @@
+{
+  "repository": "Sunset-Studios/Sundown",
+  "repository_id": 818779648,
+  "commit": "137a3514199688776001b7228294e7b428edb8a9",
+  "source_url": "https://github.com/Sunset-Studios/Sundown/tree/137a3514199688776001b7228294e7b428edb8a9",
+  "readme_path": "README.md",
+  "readme_sha256": "9ba55489cf2a24daab97c3180b7c13772d299730e26671022d922e5bfac2d88c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2b9feef27e71e9b267e577c260dd4b83131a6911"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "0fe7e5c4365e0e0a5116f1dd7e01a37bc621b0ea"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a3a3f71be638b0fddb3428fe0293d621a204b4aa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0c42c96584ede91b826096414ba563c5f6156b49"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "102017d49edfea6c1c095ea7eaf5cafac0b6b300"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "f91d0e39ec0064d6ab88fd06c534e16e76c694f1"
+    },
+    {
+      "path": "electron.vite.config.mjs",
+      "type": "file",
+      "sha": "1bd50357dcf7e8988b6726415cb9876b113ee3fe"
+    },
+    {
+      "path": "electron",
+      "type": "dir",
+      "sha": "903a98876c33a4255b076510eb55dbd2bdfd4fd9"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "ddafc98ac63de8a0b32cf145a92905657518fbe9"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "ee3e20710b168f0fb6e335127b4ae9c5eca286fa"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "25b0547964e31a13e97877458c7fcab50195afbd"
+    },
+    {
+      "path": "forge.config.js",
+      "type": "file",
+      "sha": "6cbe7bd8e84a4b089026e40562addbd249984c3b"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "faf8820060439baa35888876377eccce086a81ea"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "e4f9d3ec6d169c45c8e23f4b24ff7c65157b617d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d7eb873b144a416f4e32f83f61f9295d3f1c7836"
+    },
+    {
+      "path": "styles.css",
+      "type": "file",
+      "sha": "9f24495abf6c2b9739e14b329f793b228b31a672"
+    },
+    {
+      "path": "sundown.code-workspace",
+      "type": "file",
+      "sha": "876a1499c09dc083612f43c53c0ae71b9c30c5b1"
+    },
+    {
+      "path": "sundown_demo.gif",
+      "type": "file",
+      "sha": "18179823acb2a42a5cdf7b18bb894d3fd018cc38"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "9847314aa05042dba4a2b2d5e479f73c253118e3"
+    },
+    {
+      "path": "vite.config.mjs",
+      "type": "file",
+      "sha": "1ec767de10ae9959faee82a460a0c4f712e55bdf"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WebGPU game/simulation engine with gameplay layers, ECS, input, asset helpers and UI; engine source and example present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

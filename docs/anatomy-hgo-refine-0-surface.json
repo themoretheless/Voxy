@@ -1,0 +1,184 @@
+{
+  "scope": "Static floating-point nonadjacent boundary audit; shared-vertex pairs excluded; no welding, CCD, contact solver or anatomical certification",
+  "nodes": 433,
+  "boundary_faces": 630,
+  "csv_sha256": "073d1ea076e7a1e07ea472986df8434f73cac75dfce2955e5f6d1366bbfb1ae8",
+  "states": [
+    {
+      "stage": "rest",
+      "sha256": "a83287eb1da63270ce0b7649f9d565cc37826854109f6814f0fbf47f7ee0f103",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "loaded-sub-1",
+      "sha256": "9ff1d166589fcde31934de470d9d5d54bc7886c6d604a368b15dea97a05d9310",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "loaded-sub-2",
+      "sha256": "f0ed9a5f2ba893d3147bbf68186e26afae1ce4d24a4ee1e379c3b45a29e09be9",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "loaded-sub-3",
+      "sha256": "3ceb3f9982252fa5537e9933115e497b62f3d7b09cc25cce5d60e2e5e01495c4",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "loaded",
+      "sha256": "e2cc82293355823b2c5e807b6c7c9f679a3767f7fc91ea9779681616ef64e121",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-1-sub-1",
+      "sha256": "b3172301594827a2f5c8c8f01ac1f2db1ba44eb6b8ffdbdf06708e5d0d0e2fde",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-1-sub-2",
+      "sha256": "7bb2b0d640fcd5079092f0b02f88c9d2c7cce1761f843253f642dd2b6c833501",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-1-sub-3",
+      "sha256": "57ae821fb10a77fbb43ab3c3f2c72827bd6f58382416aeb262aba7ef8f09a35a",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-1",
+      "sha256": "c693cd0ab3d892f491c82e96a2960846d7e2164e19fdc67d15fb02df9efe7a3c",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-2-sub-1",
+      "sha256": "794f4a413716f115eb0f864bc25e92dc2ef0188049eda268d6177fc8d5c62baf",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-2-sub-2",
+      "sha256": "20d1304c9790f417b39f0cf6fa8c07309248171c350bbf1c8575da3e76162d41",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 69
+    },
+    {
+      "stage": "hold-2-sub-3",
+      "sha256": "0acc7ebe26c7a0d9636e1aa53d7e0f1d5518b60edda097061f0556aa27e4dd1e",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 70
+    },
+    {
+      "stage": "hold-2",
+      "sha256": "37fd95b84da895675df17526fec0c249b9987c174131a68055c1e593ef0bff45",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 70
+    },
+    {
+      "stage": "released-sub-1",
+      "sha256": "be334f818beba6f6eccaca42debb0924d63563e0d4efbc77df27200fa16e42ab",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 64
+    },
+    {
+      "stage": "released-sub-2",
+      "sha256": "27c90dcea5849fd29c2e1b140b2f5ad97bc3f1871740f4649796273a8b6a9965",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 64
+    },
+    {
+      "stage": "released-sub-3",
+      "sha256": "f6982102478dadd8b1e1cbadb9adfd1a6fffb8f84ca3315e3dfddf941a3d2964",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "released",
+      "sha256": "cf4748fddc89158406f4102981c16561a6b9e36fc928088a215e5e0c91b44701",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-1-sub-1",
+      "sha256": "88c42eb6684dd2438b6961ce439bd1fb063add665c27b48ec65a60da12215383",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-1-sub-2",
+      "sha256": "423007adc3bc3a064d70c87feb21909197cdabdf6329dec6c3131091d223d1a2",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-1-sub-3",
+      "sha256": "51e98b2200f9add82be7f7116ed1c2e29f1a9b206b1f8561396fc45a3e7f384d",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-1",
+      "sha256": "c1180efc1786549db78e8a33659e88acf2dcf8ec777fa8ac7a7be85f55301253",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-2-sub-1",
+      "sha256": "46c6cf86717d3bbc67e0b2dfd056fd7b60db8502cd5ec1d59c00373d7a13f632",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-2-sub-2",
+      "sha256": "112036d8e88a2e8b264aaf279606ad6a924dff8baaf4e0e515093663581fbbb5",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-2-sub-3",
+      "sha256": "f2be9b7233a5476c82b88bcbcd517dd6ca6524cc99edb3ac8a2ceece5073dc72",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    },
+    {
+      "stage": "recover-2",
+      "sha256": "e1eafb3e53810b88115508eb9f67f573706b60ace478e468bac71ab5a53c78c7",
+      "candidate_pairs": [],
+      "classification_counts": {},
+      "narrowphase_pairs": 63
+    }
+  ],
+  "total_candidate_pairs": 0
+}

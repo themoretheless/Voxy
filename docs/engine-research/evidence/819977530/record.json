@@ -1,0 +1,104 @@
+{
+  "repository": "gly-engine/gly-engine",
+  "repository_id": 819977530,
+  "commit": "31d2f1dc60c3514edfb73812db73e3918dee351a",
+  "source_url": "https://github.com/gly-engine/gly-engine/tree/31d2f1dc60c3514edfb73812db73e3918dee351a",
+  "readme_path": "README.md",
+  "readme_sha256": "688fa57f6819089ed5ceb9bed05e6a2988aec8cbfd33783dceaa3bbce23d77a4",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "707aa84e38fb8ffdd6daf1bb2630a4e9cf948951"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2b2382aa98e40c51a8996dce7c2951d0dea487a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b685562cacb53f56c15987b85c128a4013b58de4"
+    },
+    {
+      "path": ".luaurc",
+      "type": "file",
+      "sha": "5c7a37572a966dcd4a685ca1cb1880589495c50c"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "61c0fd7780a3e6de6230dd771f581e54750004db"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "44e6d7e0439b7d1cfe396748482b3d6c2fdfe02a"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "7ff23bf7a8674c30545b5521c0f405fd3ab91e01"
+    },
+    {
+      "path": "cli.js",
+      "type": "file",
+      "sha": "41c819838f1c5df0d7307fd943fb1e460f1d6cd2"
+    },
+    {
+      "path": "cli.sh",
+      "type": "file",
+      "sha": "621ff8d0a3f305d89480864950e908bcf8f7df2b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "21e712904949fb6a25d14ab5f966abf9104d0f66"
+    },
+    {
+      "path": "ee",
+      "type": "dir",
+      "sha": "0563994571599909b603327958dbd5137cc48fbe"
+    },
+    {
+      "path": "npm",
+      "type": "dir",
+      "sha": "552e23a798c14918f982370b4db9a56e015f747e"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ec15274b72ac463338a9ce4a7dd75b88a309ce7e"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "894c433d8601955b9d8f93eb0e0a8df3abfd35f7"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "62c57a89b7c17fc61f73a93c624a6cb2eae82953"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "1567cb5223a90c1a5d0beb4fd7607d3cfacbf614"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "51716cbfb296fb2f9e7b0c5fe965ec18f7335c57"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Lua cross-platform game/app engine with source, CLI, samples and tests; platform and embedding claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

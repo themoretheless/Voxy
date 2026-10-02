@@ -1,0 +1,224 @@
+{
+  "repository": "BabylonJS/Babylon.js",
+  "repository_id": 11007313,
+  "commit": "cbe5bb36998fdde6bd93d76e67813ff571a535db",
+  "source_url": "https://github.com/BabylonJS/Babylon.js/tree/cbe5bb36998fdde6bd93d76e67813ff571a535db",
+  "readme_path": "readme.md",
+  "readme_sha256": "31ef4aebd91d232177eef6e3d970f7182048b7219439edfb6f3dce785242a927",
+  "entries": [
+    {
+      "path": ".azure-pipelines",
+      "type": "dir",
+      "sha": "e90958d9e70e940d2f6306af003ab00dc568648b"
+    },
+    {
+      "path": ".build",
+      "type": "dir",
+      "sha": "0f9237b5d71693792b3912ccf8ff72367996b2a1"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e91665e14facacd34caf1b41d4b5114eaabf8cdb"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f28fc5ec40e6557b94b1d82a8f1d2c03ef1dfa45"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "e85796f9a757966b6c595ea6d82db621b196a7a4"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3ae89a418075520daf2897ce72793f4caa635327"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a430e454facdf644e57bc2f4e829f73cac8a32e6"
+    },
+    {
+      "path": ".hintrc",
+      "type": "file",
+      "sha": "25e96b41abd0a41d1aabd27381871db9a49065c9"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "7b057b346b1aaf1a302f26dbc29d55c09bec00c3"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "b22ce4d61e14c3752ad23928421daf06cba2a5d8"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "55ba35b29f862a68d1e16c601495eb69d4bc92a1"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "84e1cf181ed446c507725cd06c1b79c7f982acd3"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e49bb3d384129cdf39a4f596062350d23e3a262b"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "676e8140fba0cfb0f813e46b4af1b0f5594e1593"
+    },
+    {
+      "path": "CNAME.txt",
+      "type": "file",
+      "sha": "676e8140fba0cfb0f813e46b4af1b0f5594e1593"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "1ed5b029053dfa4ea6dfa6fb57525b70e3822d28"
+    },
+    {
+      "path": "NOTICE.md",
+      "type": "file",
+      "sha": "f40fe7235f3474290fea132c4c04041c079f2504"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "6ca7f8b213f5f011f8d2b6564c17f4c16e69cfd5"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "64e108e562c59b28f426e19cbf6947b008c778c8"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "d4c0ac1a5c0a91462fb422918ddb32c87a4cd929"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "7853ac1b7b32819fb9b2182d65649e3f7d488566"
+    },
+    {
+      "path": "lint-staged.config.mjs",
+      "type": "file",
+      "sha": "3264b4b96d4d94ce4c445291162dc4eb768b5ca1"
+    },
+    {
+      "path": "nx.json",
+      "type": "file",
+      "sha": "1d764162f2f291a3119d4d3970b06ba4120d7ae5"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "6fffa8265dc493074d266ca860cbfe3996687f55"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "1797e11059427509740ff0eb35117205159db8c0"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "e0b57861e819dbcb9296b2b105f3157b68ef0aa6"
+    },
+    {
+      "path": "playwright.browserstack.config.ts",
+      "type": "file",
+      "sha": "5d8a4cd06563348b4a98520af7e2da0a8778ba3a"
+    },
+    {
+      "path": "playwright.config.ts",
+      "type": "file",
+      "sha": "a69794ddc35ed2c5d349f65395f3e7c04819b7ac"
+    },
+    {
+      "path": "playwright.es6vis.config.ts",
+      "type": "file",
+      "sha": "d94da8080edde401d608b27d7ca1fff5bca2dec8"
+    },
+    {
+      "path": "playwright.khr-interactivity.config.ts",
+      "type": "file",
+      "sha": "b2bdc3e625bbe01e57510605093b68fdb850fab9"
+    },
+    {
+      "path": "readme-es6.md",
+      "type": "file",
+      "sha": "b22b1d481d2d73d1db119eb61678db72e466fab8"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "e806b719a5d30bf43e8c000389c4e2ad7d4331e4"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "f4571e579fb41e58e570cefd3a7e6d8dc9f244bf"
+    },
+    {
+      "path": "specs",
+      "type": "dir",
+      "sha": "a9e43f7a50e295fc9c07375598d4a1ad687e4464"
+    },
+    {
+      "path": "tsconfig.build.json",
+      "type": "file",
+      "sha": "d0813f8602b3db5171b3a4d71f023576c2b764e6"
+    },
+    {
+      "path": "tsconfig.devpackages.json",
+      "type": "file",
+      "sha": "274cd8a71d696e252ed79ecfc36478d755e09896"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "44c24e24b02ab9ee6d800fbcf41a1550ea640ab7"
+    },
+    {
+      "path": "tsconfig.smartFilters.json",
+      "type": "file",
+      "sha": "a8a1f1583e7d434a85d774249702a8fe92c1a663"
+    },
+    {
+      "path": "tsconfig.test.json",
+      "type": "file",
+      "sha": "c566b9d3235b87615760d3a4654b8a07c5e7ecdd"
+    },
+    {
+      "path": "tsdoc.json",
+      "type": "file",
+      "sha": "015852f19fd9a0e827039009a2397f11a3990c97"
+    },
+    {
+      "path": "vitest.config.mts",
+      "type": "file",
+      "sha": "0fa36375951409e0349d93b17cb16cab62c60c85"
+    },
+    {
+      "path": "vitest.setup.ts",
+      "type": "file",
+      "sha": "b1a7b63e2bc0261caef9b9e49fd4313c301abc68"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README constructs Engine/Scene; packages, npm build manifests and rendering tests. Not evidence of a full editor/runtime engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

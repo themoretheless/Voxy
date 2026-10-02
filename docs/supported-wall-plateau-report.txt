@@ -1,0 +1,5 @@
+converged=false
+iterations=2000
+residual_n=9.102958362217e-4
+min_j=9.304945133792e-1
+minimum_surface_distance_m=1.649575664291e-5

@@ -1,0 +1,99 @@
+{
+  "repository": "W4RH4WK/Raygun",
+  "repository_id": 233653943,
+  "commit": "ede2e6f445c23a44fa768b014bb35dc573eba6dc",
+  "source_url": "https://github.com/W4RH4WK/Raygun/tree/ede2e6f445c23a44fa768b014bb35dc573eba6dc",
+  "readme_path": "README.md",
+  "readme_sha256": "a510c3327127c978e700604d363d41f802c3548f0bbb526376a7d78a1e609299",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "b31f4d870e1bc2305b4ff6448927a315ecf0167f"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d7f365ecd4e4073aef5a8e7626fe9715fad044f1"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3b6b95778579588e0cd92ff2d853dd8f7202ef31"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "03dcc7ff14df4f88734141a606a2f6c730de173d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "63440b69faafc5b59c8bcb1f167f529e4361fe09"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "8f881b5f2b35889e9ce94c723874b76adaff0689"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9ebfac9eaaa780850aed89e8cc41f5e28769a5f4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "906131420877a9328c90af067f60d2af46c0d84f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3ff836321dce7cb3c44cf8d9a636bcad80552bf8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b05d86aabd2bf70ea0b4cb3f206d18309afe9164"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "b72e992d0726bf065fdde912b74cbd60cb2305cb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "86e17cbd00705855c239873192a8f95c10bbe311"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "89c56bbd1259d06e928009e5a9e157e86b156b80"
+    },
+    {
+      "path": "raygun",
+      "type": "dir",
+      "sha": "5ee562e06b6b3ee87522d93350d3b7189b9b8328"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "6bbe2a9845b79d4cebbb5d8bfdb35be1cda682aa"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a76c0e6a56341819e56646b82f7dcec5464b026a"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "c5b8d40b70ca3b539508b08fc8135261b3500c2c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Vulkan ray-tracing engine with PhysX callbacks, GLFW input/window, OpenAL audio, materials and example; hardware ray tracing prerequisite.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

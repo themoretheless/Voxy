@@ -1,0 +1,77 @@
+{
+  "repository": "edbentley/replay",
+  "repository_id": 260674431,
+  "commit": "d10084041f8ae3c79614dad8661799e920f35108",
+  "source_url": "https://github.com/edbentley/replay/tree/d10084041f8ae3c79614dad8661799e920f35108",
+  "readme_path": "README.md",
+  "readme_sha256": "8e9a0a80fadacbb6395419199ca81cb3d5852c332b0915cb1ea98f3039141509",
+  "entries": [
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "7948351c83edcfcc23a766a889dc39ab9971ec52"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "5922f9216e98a32c00c477e61b58ff8e92c46926"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ab929472a8b243ef84b82b1764d7e3488002386c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6d0f22fe8ed8bb5d320c54972b4bb653895373c6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b30f3dd9cf20cf4b20ca74fe8269379808cbcc99"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "51de50efd7c2a9f137ed827d2693238cd38f0e33"
+    },
+    {
+      "path": "dev-game",
+      "type": "dir",
+      "sha": "8bce569b13686f72b9e7942f03ce9af848899334"
+    },
+    {
+      "path": "lerna.json",
+      "type": "file",
+      "sha": "ef365c583e3121163cf2fe23cd75702c28cd605c"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "2bccd20057c0bfe6033a4d83282df58c4c998ded"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "560bf367effc12108c9ae48a68a58dc876ba16a6"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "c8d72021969d8ef0a55c6188955f45918bf002a4"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "5f741a528b0d4b0b23fd29cadd84517947aac292"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "2fbad1fd9373fe92dcf8490f5585145a1037516b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

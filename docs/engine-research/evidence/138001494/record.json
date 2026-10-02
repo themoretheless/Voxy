@@ -1,0 +1,124 @@
+{
+  "repository": "ArnisLielturks/Urho3D-Project-Template",
+  "repository_id": 138001494,
+  "commit": "998d12e2470ec8a43ec552a1c2182eecfed63ca1",
+  "source_url": "https://github.com/ArnisLielturks/Urho3D-Project-Template/tree/998d12e2470ec8a43ec552a1c2182eecfed63ca1",
+  "readme_path": "README.md",
+  "readme_sha256": "2420e6cf1ccf1c22219b321077abee09d61e938723d5a6049db1277e3805b1d1",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "aae2b186f202bf38973257d1fa5265f136ca7ed7"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "2db77faab86f03bd771b5090f9d14d2877d98e0d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2f6d4947249ebc5904cd270d4594b804603142a5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6cb1e0bb2a5f255d2e32a7e167b8194c9790053c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "01b994167156b3e7f491811b84149ba9b55c9517"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6f875b8b3e4e2e052e5826396df13178f6d8e4a4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4d82b08805228e4b0b83dffc2eaf17d6d78156a3"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "5784dbfef444daf8caf6fbbdb7a4578ae5156608"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5b6a4451ec865af6692cca7b33c2dc486ea84c86"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "55a5f187e42601d58edc0174b2aacbdf27696b15"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "a36b51140a77fa948b8d597cbdf8071ab1c05936"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "9a3d2ad3df26aa45b78d4aaf148432f16637de58"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "ec61d00be8e6357ff6c9abfdaef06477e780aedd"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "c3eeeb1ad391951d4f3156f19f4b961f8760ec90"
+    },
+    {
+      "path": "cmake_install.cmake",
+      "type": "file",
+      "sha": "d1f7c199daa045458f960784c28d059643895092"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "04ccacbaef86ccb4220e8c4c9606132f147d01c9"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "556ce3cd32b93db6518197b0fdceff9ab0e663db"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4f906e0c811fc9e230eb44819f509cd0627f2600"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec"
+    },
+    {
+      "path": "rakefile",
+      "type": "file",
+      "sha": "deec7e2e6a5140459c47ea0ccb420252abb864c8"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "2d81ddce9dc6a9a0624195a02a411d2164fb5361"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "03865832a59a83ecb6c334931004283a1dfa1932"
+    }
+  ],
+  "classification": "excluded_game_template",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Urho3D application template redirected to successor repository; not engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

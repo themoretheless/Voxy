@@ -1,0 +1,52 @@
+{
+  "repository": "dinodeck/dinodeck",
+  "repository_id": 57168857,
+  "commit": "091f0e31ba9e921eab7fa6dd219f5c40ea3ed78c",
+  "source_url": "https://github.com/dinodeck/dinodeck/tree/091f0e31ba9e921eab7fa6dd219f5c40ea3ed78c",
+  "readme_path": "README.md",
+  "readme_sha256": "3fe4e1351ff0ee7ea4249c0e4bd37cd02b327fe6a80964207d1cf5f13af76479",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "261e0eef88dab6fc835cba80cc7fd22e1b5f9da7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "883cd55395e76c7b6cd6e60cecafe2bbd2d9fcec"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "853b46db127831eb9f8e8a7a8576e41c98619be4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "82ceb4757c11406324d400807dbb311a4f312abc"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "dc8e7fd21ac1b6791f8e10969740071ddd20d479"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "201a9e89c19fa336069e5c7130fba0526de08cb1"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "2487dafa337da76f36e348efdb77e112f9c64603"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ca0b4c7ee83138bfd14faf192cfc973a27360448"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

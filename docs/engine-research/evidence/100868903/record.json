@@ -1,0 +1,142 @@
+{
+  "repository": "MHeasell/rwe",
+  "repository_id": 100868903,
+  "commit": "b2d8a314b14142d8873400160768777532b1dcab",
+  "source_url": "https://github.com/MHeasell/rwe/tree/b2d8a314b14142d8873400160768777532b1dcab",
+  "readme_path": "README.md",
+  "readme_sha256": "aa41a456c68a0ceb75c77bf8a2825af5c19c7314348a6192b56fd0a023bd0a82",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "0654839e3fd6c8f1fa961c3c58c9518ba34b15d6"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "e95990a8fb56dcd71542aea141fb06b75f1de93b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "731805a5700fd59bcfff22f98bdc5090a29a4e44"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "728b9efe165c0b5262c5dfe59569adcd5d6f2e65"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c38ba696598ccf9c4966bfd22ac3a2d8775ef03a"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "eeb19591534a0d92d896e04ec1a2b804af18c44e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4a6a91b720d982693c0df97eb1e19d2d9f31d107"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c6fe1cd620f1f346f143dc1540c08701c0f37c61"
+    },
+    {
+      "path": "appveyor.bash",
+      "type": "file",
+      "sha": "636859942310556c6af88e30b24d481bbf77923b"
+    },
+    {
+      "path": "appveyor.bat",
+      "type": "file",
+      "sha": "93c5a13ed0425d099af8add8f38c4345f3da5d97"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "f020e9f27e74bc061e5bcd06604af0995b7e2e9a"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e68270a2276f78c09c04d00ac7c097ed69082c3c"
+    },
+    {
+      "path": "devbox.json",
+      "type": "file",
+      "sha": "62bec6bfe36b45e8d1433c6bca5c1c64824b3219"
+    },
+    {
+      "path": "devbox.lock",
+      "type": "file",
+      "sha": "3481a66b723952c35f34295db23947abec686178"
+    },
+    {
+      "path": "fetch-msvc-libs.py",
+      "type": "file",
+      "sha": "62726dc30c19985e77525776f5740cd0d4715902"
+    },
+    {
+      "path": "fix-cmakelists.pl",
+      "type": "file",
+      "sha": "10dae5d2a378b796be2ac131fd530b274ef5c810"
+    },
+    {
+      "path": "fix-includes.pl",
+      "type": "file",
+      "sha": "4373affe3cfbf920541bc1b0e329c586951174ce"
+    },
+    {
+      "path": "format-changed.sh",
+      "type": "file",
+      "sha": "5fe392c1c49492cf87dd1ea00919105f832aa575"
+    },
+    {
+      "path": "format.sh",
+      "type": "file",
+      "sha": "c9b2d054076fab19b658436c60396fb6554ddc6e"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "cb0e0c6202304448fbb82d3f7416bc4638332678"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "f7e60e5ed164f3685356ee4980a84f2f34bfeb82"
+    },
+    {
+      "path": "proto",
+      "type": "dir",
+      "sha": "a780678b3776daf0e411dc2a35ea3ee400b5fa49"
+    },
+    {
+      "path": "remove-empty-cpp-files.pl",
+      "type": "file",
+      "sha": "cc1271b93530827dec93317a2b21ce6956241abe"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "d676d686ecdabef45f3984d7276bcef2a1dc7cd8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "df9ead34e01384ade29bd91c0c9000e0b1581c03"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

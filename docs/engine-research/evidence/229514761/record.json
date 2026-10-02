@@ -1,0 +1,119 @@
+{
+  "repository": "suchipi/hex-engine",
+  "repository_id": 229514761,
+  "commit": "17f41d6902c03e66e255cda5916a644e753e9ce1",
+  "source_url": "https://github.com/suchipi/hex-engine/tree/17f41d6902c03e66e255cda5916a644e753e9ce1",
+  "readme_path": "README.md",
+  "readme_sha256": "48cf9285289afdf1cb5991717832f4a9f984ad69c7122f14ff651a831109958f",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "b50b167e0e98c2d0e167526f3446f9f3dd448398"
+    },
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "a3b9bc227b0197282b53112c742930b879446303"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7faa6bb889678aaf1f4f1b4cf7e2a19c02b6a42a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2d1534ad6e68a09ff15557f3778af1ca24f7e709"
+    },
+    {
+      "path": ".node-version",
+      "type": "file",
+      "sha": "f10de389aef3079192d808bb69efdeca61761aea"
+    },
+    {
+      "path": ".npm-version",
+      "type": "file",
+      "sha": "3644f46970f93f4cb92bf9cede264e2ca684bcf0"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "f10de389aef3079192d808bb69efdeca61761aea"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "fad35d304b8620bc563d63f1112076da3762402a"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "cfead8a9ff893c701aaef5099ea499d6704f06d0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "260c768e2dbb1d6b0006f24917998b9fa2b55ee1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4d67cda72e76f0f2b6c27ca5eb6afbc39a8cb10d"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "94ac7abe7202c7bdf1a142be460984db2a1cd208"
+    },
+    {
+      "path": "dev-scripts",
+      "type": "dir",
+      "sha": "875fc6edde5c7be5b90b41f32a81803ae36ac0f7"
+    },
+    {
+      "path": "in-docker.sh",
+      "type": "file",
+      "sha": "d6e83d4fddb26cd9cb1e227519afe3ed33ff0f38"
+    },
+    {
+      "path": "logo-image.aseprite",
+      "type": "file",
+      "sha": "b82c2b8a4b0adaa02f1f81fddadb73959e3b77a1"
+    },
+    {
+      "path": "logo-image.png",
+      "type": "file",
+      "sha": "9cf96785d17d7d548cf9909b5d948a4956593712"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "0e992b6f4647cea089e69ef025be7d4c5306a7b8"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6d3d5b8ce8491fb1af629f629636bda757e72fdf"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "3a5d0dc3766943d72bad664716b34fffe12125eb"
+    },
+    {
+      "path": "ts-webpack.ts",
+      "type": "file",
+      "sha": "98f971c8556b7c5d10ae7190cd631f2181f45d0e"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "67fc216c278b661bf5e2ace495e65fa21b9b486f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies browser 2D engine; owned runtime/package source with Babel/npm build evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

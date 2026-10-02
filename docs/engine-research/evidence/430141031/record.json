@@ -1,0 +1,47 @@
+{
+  "repository": "bkaradzic/metal-cpp",
+  "repository_id": 430141031,
+  "commit": "c9727bc9468a90d7ea8fc89d5ee03b8d8992a570",
+  "source_url": "https://github.com/bkaradzic/metal-cpp/tree/c9727bc9468a90d7ea8fc89d5ee03b8d8992a570",
+  "readme_path": "README.md",
+  "readme_sha256": "b02d6852fb42392caaa2b40827835cc451531ab5d471a7f4a87d076c4d56ed2a",
+  "entries": [
+    {
+      "path": "Foundation",
+      "type": "dir",
+      "sha": "7f67f8f94c98f4d6ff6340924a7d57a05c1458aa"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d07f885e7a86db8234f7e20f5ebb2adb921a92cb"
+    },
+    {
+      "path": "Metal",
+      "type": "dir",
+      "sha": "195ffbf4ca94a2f37d76bb23d00e1a2a5e5efd2f"
+    },
+    {
+      "path": "MetalFX",
+      "type": "dir",
+      "sha": "57909764c89bcb1a861ecd1811b8dc77e3d26ca9"
+    },
+    {
+      "path": "QuartzCore",
+      "type": "dir",
+      "sha": "863e4cae72982f76bdaf8abccfd2bc841d4bbc0c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2a34a08cc75bc45489bbb7451a9164b4382bf7f5"
+    },
+    {
+      "path": "SingleHeader",
+      "type": "dir",
+      "sha": "f43a169fb10c2fe173910dd4a4be8adf9737ea9b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

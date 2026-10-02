@@ -1,0 +1,154 @@
+{
+  "repository": "RodZill4/material-maker",
+  "repository_id": 141905920,
+  "commit": "04a932dbc0063f7067a514f4219d283e1b3363b2",
+  "source_url": "https://github.com/RodZill4/material-maker/tree/04a932dbc0063f7067a514f4219d283e1b3363b2",
+  "readme_path": "README.md",
+  "readme_sha256": "fe4f9eff499f55f1d21fe692921ab2a2d40e6616c249a8734318e10fbbbfad68",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "db2e4ffe11f8f357559fd5763ae14e77317e8e14"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "860b71b9f984ef594a2c5b776b7476faab570a85"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fbcfb2bad7507890f08e8b05c4e02178c67d8200"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "d8cc9eba53082e8288930f1697c75355b0c5a624"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "70e708e178761c3930fd9766741ade2bf5ebee13"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "3289238279b7a2ad3b1e53ed223b424f54c650a2"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "947df20ed9f2c9769c822e88b176c6a27902a31b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "253332f02700092287ed8a0d15bc5c6e4edc163c"
+    },
+    {
+      "path": "MaterialMakerLG.icon",
+      "type": "dir",
+      "sha": "c7314d760413812313cc8fb319f19289f8400c60"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a444cbc0b605c87956b7c28b20a64a8b65da2d9c"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "235df435903d489e63511ba3315a3e548dc83c5b"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "37b33837688e2697be141293f1173ec77400dd90"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "d2d212152230f9098fbeb85be163a98ebedcb238"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "ba877bee0bfc0db9cab6535a66df1bd00456b0e0"
+    },
+    {
+      "path": "icon.ico",
+      "type": "file",
+      "sha": "0a18a423166bb8658b883dd7584cd996da7e2f85"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "62d6c59ea86ebc576d2090a5e317ab7e8289864d"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "9704ca88899e1c7bb038ee97283e297a51cba8c8"
+    },
+    {
+      "path": "material_maker",
+      "type": "dir",
+      "sha": "7ffe1878878c3d3abb04657ea3aa1a8161770093"
+    },
+    {
+      "path": "parse_args.gd",
+      "type": "file",
+      "sha": "c618bc273bd2ea7ad30f4a7c326fc8ebf566eda6"
+    },
+    {
+      "path": "parse_args.gd.uid",
+      "type": "file",
+      "sha": "e480e7f867b5b278c03eb5d15090ac26885b3e8d"
+    },
+    {
+      "path": "parse_args.tscn",
+      "type": "file",
+      "sha": "5233c760ab00ec9fb007e1a08eb41394b05fe7e1"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "cb67c4a4e7935d388496af3e33178a454fdfaa00"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "e3e3a6ca15802d33f4a82de2dedabc22f7a96fed"
+    },
+    {
+      "path": "splash_screen",
+      "type": "dir",
+      "sha": "55b1fde235f3f4c772705be7a27c780d14f9248e"
+    },
+    {
+      "path": "start.gd",
+      "type": "file",
+      "sha": "e9ecec6791c6dc7cded9099fe8069627c3a03af0"
+    },
+    {
+      "path": "start.gd.uid",
+      "type": "file",
+      "sha": "884f65a95b3fd08c9b0a767f90a0daf3c5b3bc3d"
+    },
+    {
+      "path": "start.tscn",
+      "type": "file",
+      "sha": "7fc5b829f646f2ca5ed562b6fed0bccc1a23d9a1"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "6604d29742c8f72b6b44d25fda042416e7fa3ccc"
+    }
+  ],
+  "classification": "excluded_authoring_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot-based procedural texture/model painting authoring application, not engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

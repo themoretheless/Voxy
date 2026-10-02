@@ -1,0 +1,64 @@
+{
+  "repository": "itsjavi/newbark-unity",
+  "repository_id": 76705615,
+  "commit": "79624d142811ec9dcbbb7ce125586199285e6d34",
+  "source_url": "https://github.com/itsjavi/newbark-unity/tree/79624d142811ec9dcbbb7ce125586199285e6d34",
+  "readme_path": "README.md",
+  "readme_sha256": "40a07d1ef6c5a9b77e3ad2097160e95a21ba6473bcbceae9f3dc436dfe51739d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "993ae08af75445358a03cf184a99d899224070c4"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "775347ffac7b41c203dfe355adc2a5608acd9ba3"
+    },
+    {
+      "path": "Builders",
+      "type": "dir",
+      "sha": "72ae4b965918d40c817002c59e6d5df305d967ed"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "20757c5e416107fb65e35a0254295af2db5c88a3"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "1d1731e4a48f1b5a4fc498351c27106f8cfcc51f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f931d3bbcf65b8558b656e319ccc599980080759"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "9408828178ab569b3e892173d73639b9199e56c9"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "f713e6f2a13ad8891050c61b76e8fbac6fa4dc0c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa67642e17ada1e49427e9aab5711bb82915c751"
+    },
+    {
+      "path": "UserSettings",
+      "type": "dir",
+      "sha": "d415e0319f598e68eb1229d96ec7a4105e6c8121"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify RPG framework for Unity; Assets/ProjectSettings depend on underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

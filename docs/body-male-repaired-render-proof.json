@@ -1,0 +1,17 @@
+{
+  "renderer": "Metal / Apple M4 Max",
+  "candidate_adopted": false,
+  "surface_diffusion": false,
+  "views": [
+    "hands",
+    "feet"
+  ],
+  "inspected": true,
+  "frames": "offscreen static snapshots; not live native capture",
+  "sha256": {
+    "assets/characters/blender-male/body-repaired-render-candidate.obj": "89ec43edc505f6eeb8677ce56cee951bcd9b97efb3356003418bb1af7085ec1e",
+    "assets/characters/blender-male/body-repaired-skin-candidate.json": "64f85c42b78aa56c8fb0979b4e60b6d19a998fa722ae88bab2829f6a3a412f25",
+    "docs/body-male-repaired-hand.png": "ded92d6d0205a60599702589bda92d0b329e9e0e4dbb12a74a3bf41324eaeba3",
+    "docs/body-male-repaired-feet.png": "539f2872310ed29dbd3085fa1d4024de48c7a526ef82aa45f66e1bb34afd632a"
+  }
+}

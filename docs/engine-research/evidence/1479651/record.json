@@ -1,0 +1,77 @@
+{
+  "repository": "zaphire/Monocle-Engine",
+  "repository_id": 1479651,
+  "commit": "a4558b5436681ab0ec95aec388cbb791b26f0b81",
+  "source_url": "https://github.com/zaphire/Monocle-Engine/tree/a4558b5436681ab0ec95aec388cbb791b26f0b81",
+  "readme_path": "README",
+  "readme_sha256": "aea5ba34ed225ad4217da702291ef664482c373972ffd6a5a0c7818e16c0baaa",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2b2314324db017efb9cb664a47bda043e1df643a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d85cb181aca2a4154f14b712867e4c35188d6cf4"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "29a422c19251aeaeb907175e9b3219a9bed6c616"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "0e2657f6acdd3dcb6e93536b1db8baa291fc94da"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "f9cef72ee560fc56ca999f63dde60f9bbc1e59a0"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "817ccfaf0bedf44102a2e34a43c442c04e0e71bf"
+    },
+    {
+      "path": "Project",
+      "type": "dir",
+      "sha": "97da518341a3a2b8f529e5a9fb8013b38c0a2839"
+    },
+    {
+      "path": "README",
+      "type": "file",
+      "sha": "737848dc4fadd03474d7ec0f8a74c49fae270c59"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "afb627bd4099e1e566a3d2ff1ee070b59e970dee"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "db1e157ddc0ff2f05f351628cd16d00382c38549"
+    },
+    {
+      "path": "linux-build-basic.sh",
+      "type": "file",
+      "sha": "d7b53e3dc64c6514c071f49638567ace5edecdfc"
+    },
+    {
+      "path": "premake4-helper.lua",
+      "type": "file",
+      "sha": "83645400557d76f8290fd8a0e9f725add12501c8"
+    },
+    {
+      "path": "premake4.lua",
+      "type": "file",
+      "sha": "3eff6468c051d4017038b7faf66bd33fd94ad0ee"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

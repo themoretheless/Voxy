@@ -1,0 +1,194 @@
+{
+  "repository": "cping/LGame",
+  "repository_id": 6753822,
+  "commit": "5a660be0ddf8bbd9cb44246bb463971912e770e2",
+  "source_url": "https://github.com/cping/LGame/tree/5a660be0ddf8bbd9cb44246bb463971912e770e2",
+  "readme_path": "README.md",
+  "readme_sha256": "54dae4b166c64e9a1c7e2ec7e6510a4656908f1b0a733ac17e6ed765431751df",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3a1a05cc762fbcf791ca57c97457f08112e8b865"
+    },
+    {
+      "path": "C#",
+      "type": "dir",
+      "sha": "f8d7eb6660dfd8d2ecd905bef74d1cebee766def"
+    },
+    {
+      "path": "CITATION.cff",
+      "type": "file",
+      "sha": "cd577b585d90c6097c42545253785f2ec8e2dd85"
+    },
+    {
+      "path": "CPort",
+      "type": "dir",
+      "sha": "2ac07136b44df4f90e3d94aec1c41ac2417ff2bd"
+    },
+    {
+      "path": "DEV_MANUAL.md",
+      "type": "file",
+      "sha": "d9de90515f7870a8bd4880fac17010577b3477b3"
+    },
+    {
+      "path": "Java",
+      "type": "dir",
+      "sha": "ac9d743ff644aef14678eab216b05fc621ed8549"
+    },
+    {
+      "path": "JavaScript",
+      "type": "dir",
+      "sha": "10a08f71b59896fe7b987b7b21cc3428f7bad30d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ad410e11302107da9aa47ce3d46bd5ad011c4c43"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "967b998b385626472f6b401b9d90b1cd9e579f15"
+    },
+    {
+      "path": "Loon-Build",
+      "type": "dir",
+      "sha": "0ded4ea2d77bf2d52ed20eab104f76c657873c59"
+    },
+    {
+      "path": "README.kr.md",
+      "type": "file",
+      "sha": "39409a7a525af641d18ef674d5e12e8c0e3e23c7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e1442b9f1dfc4071103d77c2831820e9790e2654"
+    },
+    {
+      "path": "androidstudio-template.7z",
+      "type": "file",
+      "sha": "dac1c260d19236327a8ce7fedfece16c5c1eb8fe"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "51c0e780c0d07693ce4b606836deef2c7390a3bb"
+    },
+    {
+      "path": "dev-res",
+      "type": "dir",
+      "sha": "de59f9eb94706ef68da668c26a7096a654f5a176"
+    },
+    {
+      "path": "e0x.png",
+      "type": "file",
+      "sha": "36e0c04f023126f6128fac1fe818399957df1f20"
+    },
+    {
+      "path": "e1x.png",
+      "type": "file",
+      "sha": "5ebf32e472aa3bb9d9d1fa4ce7c6436ec89a7ae5"
+    },
+    {
+      "path": "e2x.jpg",
+      "type": "file",
+      "sha": "132bb125e68aa5514b618a61ca46f77a98f9d886"
+    },
+    {
+      "path": "engine_logo.png",
+      "type": "file",
+      "sha": "fa0e71b4987771164d74aa8394ee5f5c5285d16f"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "f57cbce2e9d934956ff64e117912e1740e1ce99e"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "6a48312debf5b14b25cddd58d806c3a7ebf71e74"
+    },
+    {
+      "path": "gradle_test.png",
+      "type": "file",
+      "sha": "bbe17340033b52e189c165e1ca3438a347959de0"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "9aa616c273d8c0be67cb25eaac11e07209f5c034"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f9553162f122c71b34635112e717c3e733b5b212"
+    },
+    {
+      "path": "html5demo(web-server).7z",
+      "type": "file",
+      "sha": "23e441fea025edb80b135331e772b7504a82759e"
+    },
+    {
+      "path": "html5demo2(no-cross-domain).7z",
+      "type": "file",
+      "sha": "53f380f1cb754aec68dc067f660a2c912de73357"
+    },
+    {
+      "path": "install.png",
+      "type": "file",
+      "sha": "ef1b6f7dab1604be51d82de56ff40d420f549b02"
+    },
+    {
+      "path": "loon-gradle-template.7z",
+      "type": "file",
+      "sha": "527213258032dc4baa89cda0deb3016d9dfe631e"
+    },
+    {
+      "path": "loon_framework.png",
+      "type": "file",
+      "sha": "47043513b9173444d2806b83c13f3912cb326337"
+    },
+    {
+      "path": "loon_logo.svg",
+      "type": "file",
+      "sha": "5eb9397a1da56ab59e4e0c440a81e2dfe88f9537"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "277df23c7c44eaa33e0e6e532090fe5229c5c1bd"
+    },
+    {
+      "path": "readme.kr.md",
+      "type": "file",
+      "sha": "39409a7a525af641d18ef674d5e12e8c0e3e23c7"
+    },
+    {
+      "path": "sample.jpg",
+      "type": "file",
+      "sha": "7c03be94b616d36b865ea0f9c68d9965acebec18"
+    },
+    {
+      "path": "sample.png",
+      "type": "file",
+      "sha": "6447fb538c53b95efd2a46450c5268e580bbc421"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "474b09991b8f8b4c2e63f5bd353c8965f50f2db0"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies cross-platform Java engine/framework foundations; Java/ports and build manifests, kept separate from complete engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,299 @@
+{
+  "repository": "Redot-Engine/redot-engine",
+  "repository_id": 106836261,
+  "commit": "80d31f765b0ead5551c277704e52bb51c515db1f",
+  "source_url": "https://github.com/Redot-Engine/redot-engine/tree/80d31f765b0ead5551c277704e52bb51c515db1f",
+  "readme_path": "README.md",
+  "readme_sha256": "922722b32d4f1c39e122d6c0a0abe798845a8f0a62155ef2b6b9790a88ece18c",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "87731d9eb833522886855f83d048c5edadbded3f"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "05b2f61a7a0a938f9ab384c573f5a54b0a7405f9"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "3c9792eafbb24bc4b9edcebc37821624240bef66"
+    },
+    {
+      "path": ".coderabbit.yaml",
+      "type": "file",
+      "sha": "1ee17fc261baebcf68999d1e0402b7c831abfe02"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c79c816e35cbc89d3daa88d04c402d176f7c5967"
+    },
+    {
+      "path": ".envrc",
+      "type": "file",
+      "sha": "3550a30f2de389e537ee40ca5e64a77dc185c79b"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "c017c9ab20a3cf97be6d6a4c699f99ce716e9368"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "943d6b5d7cec34e3a76838c40425b00ce5a49738"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "839e59c33eae1055bf3eb669175919f6b2b43dcb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "309b3a2a18765c99a3b8f517a4b7f72dc9969a65"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "6915895e8b7972c2256e5dbf421fe46bf0929a11"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "9323896bbcba633a9567a24885927fd5701d97be"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "6cb6527292175a8c7f8954d562f1cdbeec57895f"
+    },
+    {
+      "path": "AI_POLICY.md",
+      "type": "file",
+      "sha": "656fdc5da859a8b41ee38db9f7a0ad4d56a9eef9"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "ff9ae5feef6bc210af0f6f7e8fc4f2554d82e56f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "11e66812019e97b446631a3e742df8c7aac916b0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5fdbdff94e1e3b0f465d7da8affecff97f61a02e"
+    },
+    {
+      "path": "COPYRIGHT.txt",
+      "type": "file",
+      "sha": "98eeead2896006d89e64aa04622493c693a67620"
+    },
+    {
+      "path": "DONORS.md",
+      "type": "file",
+      "sha": "7b71aefe3fdb91888a83c21b6269b0475a89b63e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "fc5e93cf53e1baccf90c02e436c15077a881ae71"
+    },
+    {
+      "path": "LOGO_LICENSE.txt",
+      "type": "file",
+      "sha": "286e7723cf337b60d2a2be3c791c64035b3fabf4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c24ca56c1aa0eeaaaa2fa8bf28baabdc8fd96fb1"
+    },
+    {
+      "path": "REDOT_AUTHORS.md",
+      "type": "file",
+      "sha": "8ad8d60b183e8daa17b2ce92197ace6f4f71492c"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "804ae597b7c8b8e88c6307e962ef45ffc530f52a"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "a8d7663f3e02bda050ad4f4110f764db0d373ee0"
+    },
+    {
+      "path": "custom_dict.txt",
+      "type": "file",
+      "sha": "e9c20206489e9037f29ac46cbd09c2d52889f482"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "b664c702b93b9e6b6eec6de5a68c9a5a0bd35e7b"
+    },
+    {
+      "path": "drivers",
+      "type": "dir",
+      "sha": "ce58459ad0b51cce945f40cd17dd83efa3c44dc2"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "86219242fd5adcac8874f97db76dd4d49a7042e9"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "644277dbb3fea8d57987b2ed4d9e6281f10c61a4"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "45292a8126343df80b72471df52135bbd6d9ad23"
+    },
+    {
+      "path": "gles3_builders.py",
+      "type": "file",
+      "sha": "24f7320af2cd64999e1d3b845dd7ef900d8e111c"
+    },
+    {
+      "path": "glsl_builders.py",
+      "type": "file",
+      "sha": "dbe9d5adf1fd96421efde137bfbe6a871af0c674"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "b7c90d05245257aecfb631a855620de14570dced"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "6b61eac931c6b5e2af7903433a418f8faa8c8270"
+    },
+    {
+      "path": "icon_outlined.png",
+      "type": "file",
+      "sha": "d0398bfad4a98e6339b35b2be8da8c7647382da9"
+    },
+    {
+      "path": "icon_outlined.svg",
+      "type": "file",
+      "sha": "57362ac94d96bedc15ccba273e6dc50374b19f04"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "69b64c523f3a281430bbec30d1f95291bb600882"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "d7f01eacca373a2287a36023d4cdfe971cb3b60b"
+    },
+    {
+      "path": "logo_outlined.png",
+      "type": "file",
+      "sha": "1fddb831909c5e0149fe6d0a3a14613b9dc7dab7"
+    },
+    {
+      "path": "logo_outlined.svg",
+      "type": "file",
+      "sha": "4b8919a7ace6f6e17d7e2f0520a98445235e8a80"
+    },
+    {
+      "path": "main",
+      "type": "dir",
+      "sha": "fa83c4d2c0605ce5905ae039a95dcc7093cdf067"
+    },
+    {
+      "path": "methods.py",
+      "type": "file",
+      "sha": "755613297d0ea0e328851cda8e345e74aa16c29d"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "b43933eb4f5eb199ea5e319fe4d4738a54b3d146"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "a364da532dcfd01595f5c4aa81bea2b5ffed5ccb"
+    },
+    {
+      "path": "mono_build_scripts_linux.sh",
+      "type": "file",
+      "sha": "e7ba166607d72efee6639fa7170183931464c3e3"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "eb89803e1963a8c4303e52931b17a76a72e38a2b"
+    },
+    {
+      "path": "platform_methods.py",
+      "type": "file",
+      "sha": "6a50fb6dc165ffce07e3634bd1852f0bfd6d34b8"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "f3286e83b38b2d58831eb3af4916efc01667f4c1"
+    },
+    {
+      "path": "redot-mcp.sh",
+      "type": "file",
+      "sha": "bbb5776dd9ccbe2d555ee4752f6a0b0dc683c817"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "e8053e5ee987c9d58f70ebc4e62511448239d4e9"
+    },
+    {
+      "path": "screenshot.jpg",
+      "type": "file",
+      "sha": "be1b06f9729a7e448ea3ea7c7d104c0297225c91"
+    },
+    {
+      "path": "scu_builders.py",
+      "type": "file",
+      "sha": "86c0e2fdf6031a5798c32c4f2a9524266427bbcd"
+    },
+    {
+      "path": "servers",
+      "type": "dir",
+      "sha": "68a7fab091fc17ea87c6c5048145ea20aa30a9b1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "25626cea0e32af516fca0c026d7c2bfde371d0cd"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "9e3b56d2133c73e2a199c0f34669be22bdfe30f8"
+    },
+    {
+      "path": "version.py",
+      "type": "file",
+      "sha": "0e446794b24b868fbb7edd88d1b3be96e5b61eec"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 2D/3D engine; Godot-derived scene/server/core source and SConstruct. Retained as derived, excluded from independent count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

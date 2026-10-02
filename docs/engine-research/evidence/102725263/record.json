@@ -1,0 +1,84 @@
+{
+  "repository": "bberak/react-native-game-engine-handbook",
+  "repository_id": 102725263,
+  "commit": "915a48eb216d2beda3c6633a0e2797c6be9a7d4f",
+  "source_url": "https://github.com/bberak/react-native-game-engine-handbook/tree/915a48eb216d2beda3c6633a0e2797c6be9a7d4f",
+  "readme_path": "README.md",
+  "readme_sha256": "e6577aa27fefbd5f8e986827383fce263f3cac4df4ff2b5aa66faaecec8d4dfb",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d42ff18354df611a7cd2c52f852e9afc579bb194"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a62752dcf537e97919fc589559ba0b22c6183f72"
+    },
+    {
+      "path": ".watchmanconfig",
+      "type": "file",
+      "sha": "0967ef424bce6791893e9a57bb952f80fd536e93"
+    },
+    {
+      "path": "App.android.js",
+      "type": "file",
+      "sha": "b3aa112df7df99a2fff59c4c999119063fae2ab3"
+    },
+    {
+      "path": "App.js",
+      "type": "file",
+      "sha": "18bd8733a754d810af7ec496d47be213e1593116"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "196d02f01de3cc1012cd239473432c083001aa76"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f73550f2adbe1e661237162ff5ec73bf1e70869f"
+    },
+    {
+      "path": "__tests__",
+      "type": "dir",
+      "sha": "fb5022c5b3c072286dfe02ef750b89d016f91598"
+    },
+    {
+      "path": "app.json",
+      "type": "file",
+      "sha": "84b79c8e24557ff0ef909bc2b3362f5070729471"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "4ab76bd53686fc624ef6d9d1a00d8670d37a2705"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e98c58d5695ef5652524759b24bf5d1fda4b3bbf"
+    },
+    {
+      "path": "babel.config.js",
+      "type": "file",
+      "sha": "9496d67d1a6c99648b90d8ee4acc04d39de5b854"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "b7e2a3568be4f8ffc848c5263716f4e001eb6175"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "ed1ebea78ed205ecb9ebe25eb8665417e0dfd0bd"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies example showcase application using another runtime; no new engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

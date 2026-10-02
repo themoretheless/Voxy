@@ -1,0 +1,109 @@
+{
+  "repository": "trentpolack/CALVINBALL",
+  "repository_id": 85134784,
+  "commit": "1c051b3546517d68b40697a8cb7d78510d6b2e79",
+  "source_url": "https://github.com/trentpolack/CALVINBALL/tree/1c051b3546517d68b40697a8cb7d78510d6b2e79",
+  "readme_path": "README.md",
+  "readme_sha256": "1336efcae56448613b9febd264e4a04f7509e127e9167a6b1097591514f4eae0",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "619ed554c1cffd7df2e05c8e573e7c9c8c71adcc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a1f73944fd605c275160c56aabb21828d98f7724"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a5c9b1b5e8f868140c3d187a32f6384c5be119ac"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "2ac136ea0b0e442209051d7b7ce93e7632699204"
+    },
+    {
+      "path": "AWESOME_SOFTWARE.md",
+      "type": "file",
+      "sha": "6abd88304d7b7c46d02353032800c93fdc1261f6"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9948dcce50187af3f2903b38c26fb0249da7b7a2"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "7b56fdba18e12fb72e00caf5dbe6120a39df0cfa"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5c9561930c788a304f7412f2959af129e0529b9e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bca0d11513334db7d99deb3503eee3855f3d0012"
+    },
+    {
+      "path": "PULL_REQUEST_TEMPLATE.md",
+      "type": "file",
+      "sha": "b5c695693d41ebd09b03fc8116570c3026fef46e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "46ec2a1878bd0091b7b4f61556a623f1cadbf36c"
+    },
+    {
+      "path": "RESEARCH_PAPERS.md",
+      "type": "file",
+      "sha": "9d1e8ccedb7b51af8878d90e656ed3e623df3157"
+    },
+    {
+      "path": "RESOURCES.md",
+      "type": "file",
+      "sha": "d8e7e197301278067c89c5bcf354d54cdef9ae62"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "25ce0ff6aec1371268b24164069f6a827835806b"
+    },
+    {
+      "path": "cl-template.toml",
+      "type": "file",
+      "sha": "f8f01cf4a66f7b4ec15f1f733408b528750359a9"
+    },
+    {
+      "path": "git",
+      "type": "dir",
+      "sha": "2c92d4df87b3b7f4df887b36360445b97cfdcc5b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "51d8e76cb46f0c93b9ead287e865d8dc8f3dd534"
+    },
+    {
+      "path": "unity",
+      "type": "dir",
+      "sha": "1ae9734d03a344ad2a0512118bf29898ad4fd918"
+    },
+    {
+      "path": "unrealengine",
+      "type": "dir",
+      "sha": "7138298cb8c9869fed72ee17d4b0c8dd2b2f213d"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies development information/assets/snippets; no owned complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

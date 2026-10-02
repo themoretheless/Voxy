@@ -1,0 +1,79 @@
+{
+  "repository": "zestylife/EuNet",
+  "repository_id": 307567651,
+  "commit": "8fa3faa87f46fad5fc2e9b6f5270c3ec1774b6a6",
+  "source_url": "https://github.com/zestylife/EuNet/tree/8fa3faa87f46fad5fc2e9b6f5270c3ec1774b6a6",
+  "readme_path": "README.md",
+  "readme_sha256": "5913e8b305aa8f80012a541aa4d79d05d9c38c47b9bbc1b645dfc32e0346d0a9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3aa8100c775f345fceb58f001a54ff45eb90d673"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c90be7159aa283d96b12fa7800a10ec3670e32dd"
+    },
+    {
+      "path": "EuNet.sln",
+      "type": "file",
+      "sha": "7907c5f6288f4011725453e98c17babfc114c62c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "191f89de1ccac081319e8f0efa3d45a0bf6da684"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8de3b21e58edc4bf3a4c0606f65932d40279075b"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "c25ca8f73ef3aeda6a868dde2c5fb2af63a78073"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f4004fc1c6d4002d0fde3e8d9ea542e7fd96f7e7"
+    },
+    {
+      "path": "pack.bat",
+      "type": "file",
+      "sha": "3c4c804ac450f0a58f3a74be0337f52d8640f105"
+    },
+    {
+      "path": "sandbox",
+      "type": "dir",
+      "sha": "03bd9b87ce2327e2448bf4c68a78effca35955d8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1b8d8983153ae578b007806f2ec140a9bf546e75"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2fb1501cf9b0b7ae989a46b87c6e8f39c004645b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "388408df37b7769523e73bb5df304643577f0590"
+    },
+    {
+      "path": "version.ps1",
+      "type": "file",
+      "sha": "a25b3eae12a172498b8f7b70f36826da225c89b8"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Peer-to-peer networking solution with src and tests, not a complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

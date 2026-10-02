@@ -1,0 +1,49 @@
+{
+  "repository": "Zal0/ZGB",
+  "repository_id": 61985180,
+  "commit": "40c8b6f186e5ca48c8f588f9d504cda97aff678c",
+  "source_url": "https://github.com/Zal0/ZGB/tree/40c8b6f186e5ca48c8f588f9d504cda97aff678c",
+  "readme_path": "README.md",
+  "readme_sha256": "f4a74254a4bc27fee73ad6d515145d1150c9401ce7693de778f04d233eaaec96",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "45ab7647f3b89d8266994be78cdbf3edafaa84de"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "97a257bdda8fb991fa71158c150e19aa997d25cd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "700184206aaac4d5ed4e97c1d971b2d9792ab374"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "1ff8d807cdeaab3f5060a0267921392d67d4b9bd"
+    },
+    {
+      "path": "doc files",
+      "type": "dir",
+      "sha": "71ee51a54d7cfc8dc4a7786338f8305de572b2cd"
+    },
+    {
+      "path": "install.bat",
+      "type": "file",
+      "sha": "5a1a417c9fa24db50b6e580f9a9c910fa602a027"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0c3db56590e65bd1470e12c93050499d0775363e"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Game Boy engine; owned common runtime/tools and platform build instructions.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

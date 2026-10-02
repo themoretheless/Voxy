@@ -1,0 +1,52 @@
+{
+  "repository": "raymondlu/super-animation-samples",
+  "repository_id": 5959878,
+  "commit": "04234269112ff0dc32447f27a761dbbb00b8ba17",
+  "source_url": "https://github.com/raymondlu/super-animation-samples/tree/04234269112ff0dc32447f27a761dbbb00b8ba17",
+  "readme_path": "README.md",
+  "readme_sha256": "bd8d0e961da8d5d1cb1535ca63ee2102f9e01427914b524eba56c4dd91c9663d",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ab1739e6bd8e6be2d286f26eb049edc167bfd85d"
+    },
+    {
+      "path": "auto_sync_resource",
+      "type": "dir",
+      "sha": "357df18c4932aa4f6e6375f35e74574f4e9d279f"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "c998a94fa36d36cab48bcb1f9d7d284b10169d30"
+    },
+    {
+      "path": "flashs",
+      "type": "dir",
+      "sha": "b333fb11357de93bcd67e566724e704ee16404f6"
+    },
+    {
+      "path": "intro.png",
+      "type": "file",
+      "sha": "d2b8b8e5e710abc56fcfc70ff9e124726000a56a"
+    },
+    {
+      "path": "issues",
+      "type": "dir",
+      "sha": "e7582066ef019dea57234bf01c26b3f93465b7b1"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "90ffe1dcb037ccd1343a73a516d956b9ced4d2cd"
+    },
+    {
+      "path": "super_anim_help_english_version.pdf",
+      "type": "file",
+      "sha": "91ab6e041b4c3ac3d6bf165e2300906f2e1b8fb0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

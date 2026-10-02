@@ -1,0 +1,52 @@
+{
+  "repository": "tbillington/bevy_best_practices",
+  "repository_id": 677272911,
+  "commit": "dc6beae1eb5f164e4de7f207170d7e9198842fda",
+  "source_url": "https://github.com/tbillington/bevy_best_practices/tree/dc6beae1eb5f164e4de7f207170d7e9198842fda",
+  "readme_path": "README.md",
+  "readme_sha256": "e799d2a03531bff843a49aea20a6e37cd2515423f9ed093dd0b07056579d4c2d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "435eff5eeb632c6e6f46a69e9f2aee95ec0c4188"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "2c5d5565e8d231e1d846cdc76780f0eabe53ae6b"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "3f02b55a67db12b166291a7afbb005cfdee799f2"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c5e4e409acc49a27a206ec62a6a0a0e1db2f29c1"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "305157a396c6858705a9cb625bab219053264ee4"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

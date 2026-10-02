@@ -1,0 +1,94 @@
+{
+  "repository": "cookgreen/OpenMB",
+  "repository_id": 68778508,
+  "commit": "ac15790320019443f32758372ec0f7ac70647332",
+  "source_url": "https://github.com/cookgreen/OpenMB/tree/ac15790320019443f32758372ec0f7ac70647332",
+  "readme_path": "README.md",
+  "readme_sha256": "62ec7f3c8ffa7bb9d7792ebaef6ab0bd1d296f944002b8daac71b853122ee83c",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "905d4caf56a53b6f75c321d95f64739a4a62a109"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "c63ed48f82966deff1eda1512718e8a39cc36b67"
+    },
+    {
+      "path": "ArtSrc",
+      "type": "dir",
+      "sha": "209d2a4f3a0cd01d2778f3c970a9b3daf25b74be"
+    },
+    {
+      "path": "Bin",
+      "type": "dir",
+      "sha": "49a17ecaae649e68c2acda548e2790d0cc881168"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "ad41cab6b6afcd61b8763bf937d410d1b6ed8cc0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "Licenses",
+      "type": "dir",
+      "sha": "52841d2ab26869f8b5fcad2808eeedd8a56c69f5"
+    },
+    {
+      "path": "Modio.Net",
+      "type": "dir",
+      "sha": "653dc60a7d92931b5e872a4c70021e6f9d503ad9"
+    },
+    {
+      "path": "MyGUI.OgrePlatform",
+      "type": "dir",
+      "sha": "a78ec0b364dc849b87b574befdb76630819c21e0"
+    },
+    {
+      "path": "OpenMB.DedicatedServer",
+      "type": "dir",
+      "sha": "e85e6b181baf8028d53e2513f698468091fb7512"
+    },
+    {
+      "path": "OpenMB.Mods.Common",
+      "type": "dir",
+      "sha": "ea0a4e7a627daf0644c1b604a377cf89886cd57f"
+    },
+    {
+      "path": "OpenMB.sln",
+      "type": "file",
+      "sha": "398bef6b97f346a6a0a087d1558e0d54258bd2d6"
+    },
+    {
+      "path": "OpenMB",
+      "type": "dir",
+      "sha": "b26e699c29ed7a69a94c848d44139f7dfe5520fa"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "15f880f5c84bf8d413a20c50f470804c306ebe37"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "ea7052a85bca0803f13afebadf8ac9967fd64f30"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# Mount and Blade-style RPG engine using Mogre, with scripting, mods and dedicated server projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

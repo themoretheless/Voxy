@@ -1,0 +1,44 @@
+{
+  "repository": "huailiang/face-nn",
+  "repository_id": 208277139,
+  "commit": "b931494cec7d9d36023aaace7c95a5549db9c49e",
+  "source_url": "https://github.com/huailiang/face-nn/tree/b931494cec7d9d36023aaace7c95a5549db9c49e",
+  "readme_path": "readme.md",
+  "readme_sha256": "6d3115c82594b5c735d3bdabe9913726426a98372da050015f0150588e0366ec",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9bca0eb3f053f6cd10e8812640c41f4f5c46e204"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d8e2fb9e33df728d432ade77276e9014e36a4f3f"
+    },
+    {
+      "path": "image",
+      "type": "dir",
+      "sha": "83ba54dd01a25de1087df1e19819523d58d093bc"
+    },
+    {
+      "path": "neural",
+      "type": "dir",
+      "sha": "6952b2ab8e09b5f5059b7a9e366b941b16336dca"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "53a98095e4e9f6285524d4d055456027378b4da5"
+    },
+    {
+      "path": "unity",
+      "type": "dir",
+      "sha": "0e84da4061ae68f02f2ec781e7e8ba3a298f7e31"
+    }
+  ],
+  "classification": "excluded_ml_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify neural face-generation workflow and Unity integration, not owned game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

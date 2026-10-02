@@ -1,0 +1,89 @@
+{
+  "repository": "Esri/arcgis-maps-sdk-unity-samples",
+  "repository_id": 448076059,
+  "commit": "5463e118425061c9bbcbfa1d81713cda6a953146",
+  "source_url": "https://github.com/Esri/arcgis-maps-sdk-unity-samples/tree/5463e118425061c9bbcbfa1d81713cda6a953146",
+  "readme_path": "README.md",
+  "readme_sha256": "11caaee60d94c1884d110932475334f410e1fb7dbe4466da08ad7012a5454043",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "23283b41a5b71f934723b4c171b678d761fdd109"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e0b7a002ff8f06bc931900c5741309155ac7176d"
+    },
+    {
+      "path": "CODEOWNERS",
+      "type": "file",
+      "sha": "0407ca9add61efa3d55f5bb1cc9c299bc22cd8b9"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b509765696e3f30f485ecb4c63a01e796830c5ad"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0f308f8d8be47a3509e7437849c805a41ea9fe9a"
+    },
+    {
+      "path": "arcgis-maps-sdk-unity-samples.png",
+      "type": "file",
+      "sha": "f24623591f2c9c8b6786270bbddf3c307328d95c"
+    },
+    {
+      "path": "git_hooks",
+      "type": "dir",
+      "sha": "586c9b88bafc0edb3e7622ab346b7c911e5db41e"
+    },
+    {
+      "path": "import-samples.png",
+      "type": "file",
+      "sha": "bde1bfe7eb5183a881c9378d1008180ef4bf5bb9"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "863d15091ebca6473a211f9d99a0051502f63d8b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "ae3b1fbbc7689667df9cb55de36f3ba359e88afd"
+    },
+    {
+      "path": "package-manager.png",
+      "type": "file",
+      "sha": "816b7b41aa6c0f028ed41f481458c16c0beb1c64"
+    },
+    {
+      "path": "sample_project",
+      "type": "dir",
+      "sha": "5f62f2a466655631055b2a3ce06c4f926ecfc909"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "3c98d901727bd8037caf99b889ef0e324cbf96fe"
+    },
+    {
+      "path": "unity6asset.png",
+      "type": "file",
+      "sha": "c785b8e8e26de04804f836ed76d75aa7ab96d760"
+    },
+    {
+      "path": "xr_sample_project",
+      "type": "dir",
+      "sha": "c2af59000fc2779a2dd03322496b3c0643291d5e"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity and ArcGIS sample projects rather than engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

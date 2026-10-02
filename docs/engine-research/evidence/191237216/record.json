@@ -1,0 +1,59 @@
+{
+  "repository": "SevenDucks/WauzCore",
+  "repository_id": 191237216,
+  "commit": "ce15efeccbcd67d0a13086100d82a66cd5964a1c",
+  "source_url": "https://github.com/SevenDucks/WauzCore/tree/ce15efeccbcd67d0a13086100d82a66cd5964a1c",
+  "readme_path": "README.md",
+  "readme_sha256": "4037537c97c738499abe1afa1c6ca4de75358a66240d6c0a311b9fab6d0297db",
+  "entries": [
+    {
+      "path": ".codebeatignore",
+      "type": "file",
+      "sha": "cc47e802e90eb6380cfcdee2255faec361de1f85"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0eb371d19629dbbeb4213774e7701d52299d0644"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7d9930a8846f064d3b43898865fcee2dcb88308f"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0eab99d1e40c7acb4f1970be8957347d6441852c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5aaf6d60376d4465389556cf3d12453f76a5a73b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "eff8e8e103dc8c53d428022b8cf3be95faf6657d"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "a9236bcb599999a92e7a3f1fe12ff9ba47018150"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "00cdd8d354b835274273a9cb2a076a5aab193bc4"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Minecraft/Paper MMORPG gameplay layer, not independent Minecraft runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -5,13 +5,27 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 
+[features]
+default = []
+cuda = ["voxy_gpu/cuda", "voxy_cuda/cuda"]
+
 [dependencies]
+voxy_core = { path = "../voxy_core" }
+voxy_editor = { path = "../voxy_editor" }
+voxy_assets = { path = "../voxy_assets" }
+voxy_input = { path = "../voxy_input" }
+serde_json = { version = "1.0", features = ["float_roundtrip"] }
 physics = { path = "../physics" }
 physics_voxel = { path = "../physics_voxel" }
 pollster = "1.0.1"
 glam = "0.33.6"
 voxy_animation = { path = "../voxy_animation" }
+voxy_text = { path = "../voxy_text" }
+voxy_rush = { path = "../voxy_rush", features = ["physics-events"] }
+voxy_scene = { path = "../voxy_scene" }
 voxy_render = { path = "../voxy_render" }
+voxy_gpu = { path = "../voxy_gpu" }
+voxy_cuda = { path = "../voxy_cuda" }
 voxy_runtime = { path = "../voxy_runtime" }
 voxy_world = { path = "../voxy_world" }
 winit = "0.30.13"
@@ -23,3 +37,7 @@ workspace = true
 name = "pinball"
 path = "examples/pinball/main.rs"
 test = true
+
+[dev-dependencies]
+wgpu = { version = "30.0.1", features = ["noop"] }
+image = { version = "0.25.10", default-features = false, features = ["png"] }

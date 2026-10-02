@@ -1,0 +1,70 @@
+[
+  {
+    "source": "/tmp/voxy-balanced-caps-radial-3-stress/urethra-barrier-stress.csv",
+    "sha256": "8ba46beaa2d66fdb65de18578d025efd8c673e4b246fdf6a74208f49cf2e38fb",
+    "elements": 27648,
+    "reference_volume_m3": 2.479788641725711e-07,
+    "mean_von_mises_pa": 21.267249716435217,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 46.58182502479,
+      "0.99": 68.55534609104,
+      "0.999": 88.0265269041
+    },
+    "peak_von_mises_pa": 101.5618369883,
+    "peak_element": 27561,
+    "peak_region": 95,
+    "peak_reference_z_m": 0.01979166666667,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-balanced-caps-axial-48-protected-stress/urethra-barrier-stress.csv",
+    "sha256": "c9475e410687dd32db75412a6b95b7fa3a25b4f3a824d922776a11a7cbcb2b1c",
+    "elements": 55296,
+    "reference_volume_m3": 2.479788641725816e-07,
+    "mean_von_mises_pa": 21.84627209007515,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 47.21513379949,
+      "0.99": 72.3608399061,
+      "0.999": 105.3969301648
+    },
+    "peak_von_mises_pa": 150.4236089499,
+    "peak_element": 55209,
+    "peak_region": 191,
+    "peak_reference_z_m": 0.01989583333333,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-balanced-caps-radial-3-stress/vagina-barrier-stress.csv",
+    "sha256": "2d7be8496fe8a1c254c0583b0aa70dc706ed73b8d5cd83de4da63d2cc8a81106",
+    "elements": 27648,
+    "reference_volume_m3": 2.204256570422927e-06,
+    "mean_von_mises_pa": 50.748216524682206,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 110.4838897959,
+      "0.99": 185.2876676504,
+      "0.999": 254.6381940581
+    },
+    "peak_von_mises_pa": 274.705789609,
+    "peak_element": 23134,
+    "peak_region": 80,
+    "peak_reference_z_m": 0.0259375,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-balanced-caps-axial-48-protected-stress/vagina-barrier-stress.csv",
+    "sha256": "b19f85d680b17070c735daa34bb984473cdda2ee6c2a04a7adbad68388c0f63d",
+    "elements": 55296,
+    "reference_volume_m3": 2.204256570422907e-06,
+    "mean_von_mises_pa": 51.330765983476276,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 113.4273783322,
+      "0.99": 187.0288325578,
+      "0.999": 255.4190339052
+    },
+    "peak_von_mises_pa": 321.9610257405,
+    "peak_element": 55257,
+    "peak_region": 191,
+    "peak_reference_z_m": 0.02984375,
+    "peak_base_nodes": 0
+  }
+]

@@ -1,0 +1,92 @@
+{
+  "repository": "unrust/unrust",
+  "repository_id": 119426591,
+  "commit": "b8b062aa0e009f5d0e42215ca6d5347a595da387",
+  "source_url": "https://github.com/unrust/unrust/tree/b8b062aa0e009f5d0e42215ca6d5347a595da387",
+  "readme_path": "README.md",
+  "readme_sha256": "a2b51bdf7f995508f5dcc9a1660165372e47e673b181096a5658b4171600a6cd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f31cab43c0f728a5431dc32c8ce7346514a677e0"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "513de60c80c76689aee343cb5064d5dfe6dbe70f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f40d35e47bbaf7d753165f9bf6c6cb628c71b599"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "5f8c558eef513563f3ccd68888f8577f9fadc357"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "3bd0b4c484b12cc10cbc3e07277e4bf1011bee10"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2eaba13f7cdf6437373d5108db63e409a81447bb"
+    },
+    {
+      "path": "Web.toml",
+      "type": "file",
+      "sha": "1e4e1509a53a10a6646d13556c4acb5bcbc99387"
+    },
+    {
+      "path": "benches",
+      "type": "dir",
+      "sha": "d6570eaef47f942bbddc841a681f9d8552f94178"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "5739e739d02f3b04ece7474e350641353903d0dc"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e1e3dc7dae4c2febe3dcfb7767dd30bdd7066af7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "22787b917adb3da5c0df3218430aab747dde41c5"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "9d63ab6b147cfe8cb63fab25ff21d7d1e934c74f"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c52de10503432956bb0846bffd0a94b2ed3cf405"
+    },
+    {
+      "path": "uni-pad",
+      "type": "dir",
+      "sha": "7cae4aaf308cb164e6a4b6a9ccb2dac52278d70e"
+    },
+    {
+      "path": "unrust-derive",
+      "type": "dir",
+      "sha": "2fa4a6e93e296731878dd08b141ab5210df2d97f"
+    },
+    {
+      "path": "unrust.code-workspace",
+      "type": "file",
+      "sha": "77be910372adb894da46734a0d071a1dc8c0d8a0"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

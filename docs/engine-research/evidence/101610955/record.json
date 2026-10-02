@@ -1,0 +1,174 @@
+{
+  "repository": "perbone/luascript",
+  "repository_id": 101610955,
+  "commit": "e21da4b2feec375620a883fb8127ef6ef6652ff9",
+  "source_url": "https://github.com/perbone/luascript/tree/e21da4b2feec375620a883fb8127ef6ef6652ff9",
+  "readme_path": "README.md",
+  "readme_sha256": "c12bf505a84c70cb28dcc3a58a6d918ae822938f1465b88d145038fb4cd01789",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "9d436388d1a31cadee724fb39e822be308a7a6a4"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "caabeb97a3b229c4402dfc679c3a8000c334777a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "92ee947a82b156ad4253faa80c66963ead1dfd3d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "804cec381955598639c65a35b96c348a6b2c7938"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2ac6100f49a28182d793f6a14ff5636d5cec4e79"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6d6f95f1bb5f1f2eda556f2c4c156a727b235228"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "3a72a62c16bd355754c14afab8dc899691d1dd61"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "Lua.g4",
+      "type": "file",
+      "sha": "87af2c9a8883b443c9737f46a7bdd9d002095160"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b9b5e856dd25c1a61d05239c438f526cb8b7fe6"
+    },
+    {
+      "path": "SCsub",
+      "type": "file",
+      "sha": "fab32fcb78d233517c0eca96fd4c3e29b1cf3393"
+    },
+    {
+      "path": "config.py",
+      "type": "file",
+      "sha": "c9ab546587940d4417904553d6f480148cf12147"
+    },
+    {
+      "path": "constants.h",
+      "type": "file",
+      "sha": "6c7db510a7f3b6c4823a3fc62d7424d8abbdb67b"
+    },
+    {
+      "path": "debug.cpp",
+      "type": "file",
+      "sha": "3b1ca04b2287fbea0feb1a91472ca413a2abe091"
+    },
+    {
+      "path": "debug.h",
+      "type": "file",
+      "sha": "c45e73b718a641a840105e208a1e74c3eac2ab1f"
+    },
+    {
+      "path": "doc_classes",
+      "type": "dir",
+      "sha": "5b8e81cec8e1c6b0818f8f49da96c098b9be7853"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "7395b7cef69ff209aa32c076432ae83e7fe06d6b"
+    },
+    {
+      "path": "icons",
+      "type": "dir",
+      "sha": "5134f6b7d043a150e830583860e3f76def11407c"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "f5f7f5732309d025af9c6bf9f6edc0d918627bcf"
+    },
+    {
+      "path": "lua_script.cpp",
+      "type": "file",
+      "sha": "44c981477488eb7aaadfba07bfe39ade3b1b7831"
+    },
+    {
+      "path": "lua_script.h",
+      "type": "file",
+      "sha": "af7c76da2f1e9236ad7c90987c2f2ca9cbd25d24"
+    },
+    {
+      "path": "lua_script_instance.cpp",
+      "type": "file",
+      "sha": "44ca383fd578bbc1b8dab7d6db7bf837dc884920"
+    },
+    {
+      "path": "lua_script_instance.h",
+      "type": "file",
+      "sha": "456ce732dbc7489eff1098534d57402ee44ee5d8"
+    },
+    {
+      "path": "lua_script_language.cpp",
+      "type": "file",
+      "sha": "37b3090869c6371353febc8463c6faaf6519987b"
+    },
+    {
+      "path": "lua_script_language.h",
+      "type": "file",
+      "sha": "93bc351285cdcb44e04abf3ca6185b5be1303d4b"
+    },
+    {
+      "path": "lua_script_resource_formate_loader.cpp",
+      "type": "file",
+      "sha": "f0e28197bce3009617584a8ce9cea055258a67c8"
+    },
+    {
+      "path": "lua_script_resource_formate_loader.h",
+      "type": "file",
+      "sha": "26208fb661c9e9a829befd9444998084b84b73ce"
+    },
+    {
+      "path": "lua_script_resource_formate_saver.cpp",
+      "type": "file",
+      "sha": "c52d6a1ba9f901a2ae0445fc9c23cbf8db9ca020"
+    },
+    {
+      "path": "lua_script_resource_formate_saver.h",
+      "type": "file",
+      "sha": "2e3685a58eb57bd0f77c438bfd739e73d82d4e57"
+    },
+    {
+      "path": "parser",
+      "type": "dir",
+      "sha": "1ba847ab753f7ebedcc0f7f73e1fd3194b6a1c2c"
+    },
+    {
+      "path": "register_types.cpp",
+      "type": "file",
+      "sha": "8d2b44bc9686ec06f867bf8604fe925fe2c6b2ef"
+    },
+    {
+      "path": "register_types.h",
+      "type": "file",
+      "sha": "9e6c594ca62e3158e6eaf5149523a4f24b54305f"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Godot Lua language adapter; SCsub/editor/script interfaces, not separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

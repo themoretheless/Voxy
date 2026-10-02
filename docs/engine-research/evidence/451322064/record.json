@@ -1,0 +1,74 @@
+{
+  "repository": "Hongtae/SwiftVVD",
+  "repository_id": 451322064,
+  "commit": "b951e341e672301b49c1d152502a8fdb8d35baec",
+  "source_url": "https://github.com/Hongtae/SwiftVVD/tree/b951e341e672301b49c1d152502a8fdb8d35baec",
+  "readme_path": "README.md",
+  "readme_sha256": "35ba0886d79b4450dd4471c2433b674db39e4ecb108e8f23dd47d3ed0e40c606",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "baabae93d21007e41243dc3cc76b84c6ab4761af"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "151d811d2d0770dd20fafb806a2a2738804f0859"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e74f0a678102738fdc2d172ab7b0a3755153e562"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Package.resolved",
+      "type": "file",
+      "sha": "57269c2d321db23db20e0cef7491cf0475fe1aea"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "b60f0c3af11725fa925d06152d8195593b49fa4a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c6470d604ae72ab8a7d05e2991af37cb46946727"
+    },
+    {
+      "path": "SharedLibraries",
+      "type": "dir",
+      "sha": "a8856f6e7dcbb490ca5820a292468ee48b7e5edf"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "b5804bfb469121c41763a5f533facf623ba11866"
+    },
+    {
+      "path": "SupportPackages",
+      "type": "dir",
+      "sha": "e741b91562ebc0b559ed001b155ee7f37424c4a2"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "type": "file",
+      "sha": "c9b736986b0397b6bd903630f354b9df43c93c0c"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "e36e866ba108ff7741ab124857581901996fb583"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Swift cross-platform engine with VGame, graphics and UI library products and editor; Sources and Package.swift present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

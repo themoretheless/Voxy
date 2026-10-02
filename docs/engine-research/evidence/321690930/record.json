@@ -1,0 +1,89 @@
+{
+  "repository": "ertugrulcetin/jme-clj",
+  "repository_id": 321690930,
+  "commit": "b146f14863e554e532c15f50e41693aaad410c93",
+  "source_url": "https://github.com/ertugrulcetin/jme-clj/tree/b146f14863e554e532c15f50e41693aaad410c93",
+  "readme_path": "README.md",
+  "readme_sha256": "438ec467adc4891a394386c657a55c92309eb358b0a35120281cd24d9cb4dc71",
+  "entries": [
+    {
+      "path": ".carve_ignore",
+      "type": "file",
+      "sha": "af69fed5e00ea2154ed3a59c0d690bfa046a2265"
+    },
+    {
+      "path": ".clj-kondo",
+      "type": "dir",
+      "sha": "82395d4176281e7025cb50c503e4a5520c9492eb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7a5d9f337ee7d7199a7b7001fc7783412c8d6a35"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ca07e155c22e1ac120aa0a0919360bdf952fe4ab"
+    },
+    {
+      "path": ".kibit",
+      "type": "dir",
+      "sha": "5542086e8247b78b63ee78e380e2995d15bc2bbb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "b2ccbbf4413e569e0e0ac36521210bed2fbfb009"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "feca6520e53aeee65bdc9e133644573c4f5f8f35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a7d4f89c450eb23ea52d0c2ad36e6ffd7ec93111"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "71b42846fce33b4164ce8bcbbc0d0ed0da67cf8c"
+    },
+    {
+      "path": "java",
+      "type": "dir",
+      "sha": "72deabc4788f08ba1b1bd395c06a576944d7fa67"
+    },
+    {
+      "path": "project.clj",
+      "type": "file",
+      "sha": "f1c955927c219c1e73565ab71325d8cb6d5c7759"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "a1ff4d0f7b8741858cb82127465a0cc3cf4cb689"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0cb81a3225e9f18899f766b2700d0d6e23fdbe77"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "2df5c17f551aaf5bda573b8af6ecf0438e10211d"
+    },
+    {
+      "path": "town.zip",
+      "type": "file",
+      "sha": "72da404e73cf93b1cae93f67c9c0ff7a4c551e93"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Clojure wrapper around jMonkeyEngine; source/Java adapter build, not independent runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

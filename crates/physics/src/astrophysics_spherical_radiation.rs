@@ -1,6 +1,6 @@
 //! Grey LTE spherical transfer using straight chords and projected annulus
 //! quadrature. Static absorption/emission; isotropic ambient intensity, no scattering.
-use crate::astrophysics_radiation::{trace_linear_sources, LinearSourceLayer};
+use crate::astrophysics_radiation::{LinearSourceLayer, trace_linear_sources};
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Shell {
     pub outer_radius: f64,

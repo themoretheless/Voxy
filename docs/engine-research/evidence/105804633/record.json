@@ -1,0 +1,79 @@
+{
+  "repository": "overbound/SonicTimeTwisted",
+  "repository_id": 105804633,
+  "commit": "501e029e247ad8f33032e0fe2891540c39ca4bf3",
+  "source_url": "https://github.com/overbound/SonicTimeTwisted/tree/501e029e247ad8f33032e0fe2891540c39ca4bf3",
+  "readme_path": "README.md",
+  "readme_sha256": "9cd73d39eced44289653009e3e84982c78257470fc26777b2155efb54917fb3d",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ee4b3652ad162e21ba7996b2a180ab324d7ee1a0"
+    },
+    {
+      "path": "SonicTimeTwisted.gmx",
+      "type": "dir",
+      "sha": "737baa9e31901896ba10fc2222260d0bac2f27fd"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "c68ad6d59bb59e529405ffa843e56ef730c37816"
+    },
+    {
+      "path": "runner_icon.ico",
+      "type": "file",
+      "sha": "16b18779eb3b522c43eaab29950aa7e45156196d"
+    },
+    {
+      "path": "runner_icon.png",
+      "type": "file",
+      "sha": "26e25b49c651ccf33cedbd21b4462c083e489052"
+    },
+    {
+      "path": "runner_icon144.png",
+      "type": "file",
+      "sha": "9448d959b1b354d7c5be390f00e09977ad986645"
+    },
+    {
+      "path": "runner_icon192.png",
+      "type": "file",
+      "sha": "619892577e17b095dbd6328b0f3249e15b894486"
+    },
+    {
+      "path": "runner_icon36.png",
+      "type": "file",
+      "sha": "98a1ac02866fad52b3d505b9e324e7b46350fe92"
+    },
+    {
+      "path": "runner_icon48.png",
+      "type": "file",
+      "sha": "0c46205f6edd477c259a516f3363c3028780cb8c"
+    },
+    {
+      "path": "runner_icon72.png",
+      "type": "file",
+      "sha": "77079ce0418148f627ae9c2a7fbc56e2876fa408"
+    },
+    {
+      "path": "runner_icon96.png",
+      "type": "file",
+      "sha": "d5ef83edfaf2cdfb5fe7df9cb7677939392fea62"
+    },
+    {
+      "path": "splash.png",
+      "type": "file",
+      "sha": "b388e058fcfd6eff27173db5a5be88d95f93c567"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Sonic fan game source for GameMaker Studio.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

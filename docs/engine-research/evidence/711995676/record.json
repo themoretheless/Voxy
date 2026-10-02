@@ -1,0 +1,94 @@
+{
+  "repository": "yantra-core/Mantra.js",
+  "repository_id": 711995676,
+  "commit": "e178acc1c3c79cf171e3c65f314f8efbb0597b0d",
+  "source_url": "https://github.com/yantra-core/Mantra.js/tree/e178acc1c3c79cf171e3c65f314f8efbb0597b0d",
+  "readme_path": "ReadMe.md",
+  "readme_sha256": "91998794c9f0da8d1cf32982e149cd8adf028ef6a78bc24225dd2224442302c0",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "052010bffa229158e94e06dcc703e8f88d040abf"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "aa8a0da677250676126daad2cf1364f6e257d23b"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "829e1e446f8effe2059ecd31c3aba9ab81bea503"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3625f232478612558d211f729706d1ea63f8f83b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ce589b5529be8a2f76925846c917397daf1b1d20"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "b1854722d05ff8d50543e31da04fc32cdd20b54a"
+    },
+    {
+      "path": "ReadMe.md",
+      "type": "file",
+      "sha": "a2192c7e1a2c424bff5f4a404186a52ac3ab2d87"
+    },
+    {
+      "path": "babel.config.json",
+      "type": "file",
+      "sha": "579b59b829ff255ebbd3cd77472e046824ab66b1"
+    },
+    {
+      "path": "mantra-client",
+      "type": "dir",
+      "sha": "79b6ae01e8574c413defbbf5889da66b29af9abd"
+    },
+    {
+      "path": "mantra-edge",
+      "type": "dir",
+      "sha": "13a3c292447fe1fe9bfcf9fe239c16df69682d91"
+    },
+    {
+      "path": "mantra-examples",
+      "type": "dir",
+      "sha": "bce1c32794b8e17bdcff818c840e587ecca77413"
+    },
+    {
+      "path": "mantra-game",
+      "type": "dir",
+      "sha": "f438847633572571062507c8bfba4db4159f90c9"
+    },
+    {
+      "path": "mantra-server",
+      "type": "dir",
+      "sha": "9b907d1b9564f3c4a80729a2cc9a7acad45da721"
+    },
+    {
+      "path": "mantra-sutras",
+      "type": "dir",
+      "sha": "a4ef0b7ef36c4c8b203d01fc94677df9933fca1a"
+    },
+    {
+      "path": "mantra-tiled-server",
+      "type": "dir",
+      "sha": "0a03d1866139337db065cdc0f6e5e6a377a023fa"
+    },
+    {
+      "path": "mantra-worlds",
+      "type": "dir",
+      "sha": "693f7a8cb8eb9cfc513aedee86cbe2817e7cdbbb"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit game-dev orchestration framework using external libraries, client/server packages and examples; deeper runtime scope unreviewed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,514 @@
+[
+  {
+    "id": 1,
+    "jsonrpc": "2.0",
+    "result": {
+      "capabilities": {
+        "tools": {}
+      },
+      "protocolVersion": "2025-06-18",
+      "serverInfo": {
+        "name": "voxy-models",
+        "version": "0.1.0"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "jsonrpc": "2.0",
+    "result": {
+      "content": [
+        {
+          "text": "{\"additionalProperties\":false,\"properties\":{\"areola_pigmentation\":{\"default\":1.0,\"description\":\"illustrative pigmentation strength\",\"maximum\":1.0,\"minimum\":0.0,\"type\":\"number\"},\"areola_radius_mm\":{\"default\":18.5,\"description\":\"mm in reference space\",\"maximum\":40.0,\"minimum\":8.0,\"type\":\"number\"},\"arm_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"body_model\":{\"default\":\"female\",\"enum\":[\"female\",\"male\"],\"type\":\"string\"},\"breast_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"buttock_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"calf_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"foot_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"forearm_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"forearm_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"hand_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"head_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"height_cm\":{\"default\":164.0,\"description\":\"cm\",\"maximum\":210.0,\"minimum\":130.0,\"type\":\"number\"},\"hip_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"left_areola_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"left_breast_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"left_buttock_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"leg_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"navel_depth_mm\":{\"default\":4.0,\"description\":\"mm; positive recess, negative protrusion\",\"maximum\":12.0,\"minimum\":-8.0,\"type\":\"number\"},\"navel_height_mm\":{\"default\":20.0,\"description\":\"mm\",\"maximum\":40.0,\"minimum\":8.0,\"type\":\"number\"},\"navel_shape\":{\"default\":\"reference\",\"enum\":[\"reference\",\"round\",\"vertical\",\"horizontal\"],\"type\":\"string\"},\"navel_width_mm\":{\"default\":16.0,\"description\":\"mm\",\"maximum\":40.0,\"minimum\":8.0,\"type\":\"number\"},\"neck_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"nipple_cold_response\":{\"default\":0.0,\"description\":\"normalized visual cold stimulus; uncalibrated\",\"maximum\":1.0,\"minimum\":0.0,\"type\":\"number\"},\"nipple_projection_mm\":{\"default\":3.0,\"description\":\"mm\",\"maximum\":12.0,\"minimum\":0.0,\"type\":\"number\"},\"nipple_radius_mm\":{\"default\":8.0,\"description\":\"mm\",\"maximum\":25.0,\"minimum\":3.0,\"type\":\"number\"},\"nipple_type\":{\"default\":\"reference\",\"enum\":[\"reference\",\"projecting\",\"flat\",\"inverted\"],\"type\":\"string\"},\"right_areola_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"right_breast_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"right_buttock_size\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"shin_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"shoulder_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"thigh_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"thigh_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"torso_depth\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"torso_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"upper_arm_length\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"upper_arm_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"waist_width\":{\"default\":1.0,\"description\":\"reference ratio\",\"maximum\":1.6,\"minimum\":0.6,\"type\":\"number\"},\"weight_kg\":{\"default\":60.0,\"description\":\"kg\",\"maximum\":180.0,\"minimum\":35.0,\"type\":\"number\"}},\"type\":\"object\"}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": {
+        "additionalProperties": false,
+        "properties": {
+          "areola_pigmentation": {
+            "default": 1.0,
+            "description": "illustrative pigmentation strength",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "areola_radius_mm": {
+            "default": 18.5,
+            "description": "mm in reference space",
+            "maximum": 40.0,
+            "minimum": 8.0,
+            "type": "number"
+          },
+          "arm_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "body_model": {
+            "default": "female",
+            "enum": [
+              "female",
+              "male"
+            ],
+            "type": "string"
+          },
+          "breast_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "buttock_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "calf_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "foot_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "forearm_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "forearm_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "hand_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "head_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "height_cm": {
+            "default": 164.0,
+            "description": "cm",
+            "maximum": 210.0,
+            "minimum": 130.0,
+            "type": "number"
+          },
+          "hip_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "left_areola_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "left_breast_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "left_buttock_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "leg_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "navel_depth_mm": {
+            "default": 4.0,
+            "description": "mm; positive recess, negative protrusion",
+            "maximum": 12.0,
+            "minimum": -8.0,
+            "type": "number"
+          },
+          "navel_height_mm": {
+            "default": 20.0,
+            "description": "mm",
+            "maximum": 40.0,
+            "minimum": 8.0,
+            "type": "number"
+          },
+          "navel_shape": {
+            "default": "reference",
+            "enum": [
+              "reference",
+              "round",
+              "vertical",
+              "horizontal"
+            ],
+            "type": "string"
+          },
+          "navel_width_mm": {
+            "default": 16.0,
+            "description": "mm",
+            "maximum": 40.0,
+            "minimum": 8.0,
+            "type": "number"
+          },
+          "neck_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "nipple_cold_response": {
+            "default": 0.0,
+            "description": "normalized visual cold stimulus; uncalibrated",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "nipple_projection_mm": {
+            "default": 3.0,
+            "description": "mm",
+            "maximum": 12.0,
+            "minimum": 0.0,
+            "type": "number"
+          },
+          "nipple_radius_mm": {
+            "default": 8.0,
+            "description": "mm",
+            "maximum": 25.0,
+            "minimum": 3.0,
+            "type": "number"
+          },
+          "nipple_type": {
+            "default": "reference",
+            "enum": [
+              "reference",
+              "projecting",
+              "flat",
+              "inverted"
+            ],
+            "type": "string"
+          },
+          "right_areola_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "right_breast_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "right_buttock_size": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "shin_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "shoulder_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "thigh_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "thigh_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "torso_depth": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "torso_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "upper_arm_length": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "upper_arm_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "waist_width": {
+            "default": 1.0,
+            "description": "reference ratio",
+            "maximum": 1.6,
+            "minimum": 0.6,
+            "type": "number"
+          },
+          "weight_kg": {
+            "default": 60.0,
+            "description": "kg",
+            "maximum": 180.0,
+            "minimum": 35.0,
+            "type": "number"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  {
+    "id": 3,
+    "jsonrpc": "2.0",
+    "result": {
+      "content": [
+        {
+          "text": "{\"areola_pigmentation\":1.0,\"areola_radius_mm\":18.5,\"arm_length\":1.0,\"body_model\":\"male\",\"breast_size\":1.0,\"buttock_size\":1.0,\"calf_width\":1.0,\"foot_size\":1.0,\"forearm_length\":1.0,\"forearm_width\":1.0,\"hand_size\":1.0,\"head_size\":1.0,\"height_cm\":164.0,\"hip_width\":1.0,\"left_areola_size\":1.0,\"left_breast_size\":1.0,\"left_buttock_size\":1.0,\"leg_length\":1.0,\"navel_depth_mm\":4.0,\"navel_height_mm\":20.0,\"navel_shape\":\"reference\",\"navel_width_mm\":16.0,\"neck_length\":1.0,\"nipple_cold_response\":0.0,\"nipple_projection_mm\":3.0,\"nipple_radius_mm\":8.0,\"nipple_type\":\"reference\",\"right_areola_size\":1.0,\"right_breast_size\":1.0,\"right_buttock_size\":1.0,\"shin_length\":1.0,\"shoulder_width\":1.0,\"thigh_length\":1.0,\"thigh_width\":1.0,\"torso_depth\":1.0,\"torso_length\":1.0,\"upper_arm_length\":1.0,\"upper_arm_width\":1.0,\"waist_width\":1.0,\"weight_kg\":60.0}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": {
+        "areola_pigmentation": 1.0,
+        "areola_radius_mm": 18.5,
+        "arm_length": 1.0,
+        "body_model": "male",
+        "breast_size": 1.0,
+        "buttock_size": 1.0,
+        "calf_width": 1.0,
+        "foot_size": 1.0,
+        "forearm_length": 1.0,
+        "forearm_width": 1.0,
+        "hand_size": 1.0,
+        "head_size": 1.0,
+        "height_cm": 164.0,
+        "hip_width": 1.0,
+        "left_areola_size": 1.0,
+        "left_breast_size": 1.0,
+        "left_buttock_size": 1.0,
+        "leg_length": 1.0,
+        "navel_depth_mm": 4.0,
+        "navel_height_mm": 20.0,
+        "navel_shape": "reference",
+        "navel_width_mm": 16.0,
+        "neck_length": 1.0,
+        "nipple_cold_response": 0.0,
+        "nipple_projection_mm": 3.0,
+        "nipple_radius_mm": 8.0,
+        "nipple_type": "reference",
+        "right_areola_size": 1.0,
+        "right_breast_size": 1.0,
+        "right_buttock_size": 1.0,
+        "shin_length": 1.0,
+        "shoulder_width": 1.0,
+        "thigh_length": 1.0,
+        "thigh_width": 1.0,
+        "torso_depth": 1.0,
+        "torso_length": 1.0,
+        "upper_arm_length": 1.0,
+        "upper_arm_width": 1.0,
+        "waist_width": 1.0,
+        "weight_kg": 60.0
+      }
+    }
+  },
+  {
+    "id": 4,
+    "jsonrpc": "2.0",
+    "result": {
+      "content": [
+        {
+          "text": "{\"liveApplied\":null,\"model\":\"blender-male\",\"parameterFile\":\"/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-model-select-jatomhh6/body.json\",\"parameters\":{\"areola_pigmentation\":1.0,\"areola_radius_mm\":18.5,\"arm_length\":1.0,\"body_model\":\"male\",\"breast_size\":1.0,\"buttock_size\":1.0,\"calf_width\":1.0,\"foot_size\":1.0,\"forearm_length\":1.0,\"forearm_width\":1.0,\"hand_size\":1.0,\"head_size\":1.0,\"height_cm\":164.0,\"hip_width\":1.0,\"left_areola_size\":1.0,\"left_breast_size\":1.0,\"left_buttock_size\":1.0,\"leg_length\":1.0,\"navel_depth_mm\":4.0,\"navel_height_mm\":20.0,\"navel_shape\":\"reference\",\"navel_width_mm\":16.0,\"neck_length\":1.0,\"nipple_cold_response\":0.0,\"nipple_projection_mm\":3.0,\"nipple_radius_mm\":8.0,\"nipple_type\":\"reference\",\"right_areola_size\":1.0,\"right_breast_size\":1.0,\"right_buttock_size\":1.0,\"shin_length\":1.0,\"shoulder_width\":1.0,\"thigh_length\":1.0,\"thigh_width\":1.0,\"torso_depth\":1.0,\"torso_length\":1.0,\"upper_arm_length\":1.0,\"upper_arm_width\":1.0,\"waist_width\":1.0,\"weight_kg\":60.0},\"presentation\":{\"liveApplied\":null,\"reason\":\"No presentation receipt\"}}",
+          "type": "text"
+        }
+      ],
+      "isError": false,
+      "structuredContent": {
+        "liveApplied": null,
+        "model": "blender-male",
+        "parameterFile": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-model-select-jatomhh6/body.json",
+        "parameters": {
+          "areola_pigmentation": 1.0,
+          "areola_radius_mm": 18.5,
+          "arm_length": 1.0,
+          "body_model": "male",
+          "breast_size": 1.0,
+          "buttock_size": 1.0,
+          "calf_width": 1.0,
+          "foot_size": 1.0,
+          "forearm_length": 1.0,
+          "forearm_width": 1.0,
+          "hand_size": 1.0,
+          "head_size": 1.0,
+          "height_cm": 164.0,
+          "hip_width": 1.0,
+          "left_areola_size": 1.0,
+          "left_breast_size": 1.0,
+          "left_buttock_size": 1.0,
+          "leg_length": 1.0,
+          "navel_depth_mm": 4.0,
+          "navel_height_mm": 20.0,
+          "navel_shape": "reference",
+          "navel_width_mm": 16.0,
+          "neck_length": 1.0,
+          "nipple_cold_response": 0.0,
+          "nipple_projection_mm": 3.0,
+          "nipple_radius_mm": 8.0,
+          "nipple_type": "reference",
+          "right_areola_size": 1.0,
+          "right_breast_size": 1.0,
+          "right_buttock_size": 1.0,
+          "shin_length": 1.0,
+          "shoulder_width": 1.0,
+          "thigh_length": 1.0,
+          "thigh_width": 1.0,
+          "torso_depth": 1.0,
+          "torso_length": 1.0,
+          "upper_arm_length": 1.0,
+          "upper_arm_width": 1.0,
+          "waist_width": 1.0,
+          "weight_kg": 60.0
+        },
+        "presentation": {
+          "liveApplied": null,
+          "reason": "No presentation receipt"
+        }
+      }
+    }
+  },
+  {
+    "id": 5,
+    "jsonrpc": "2.0",
+    "result": {
+      "content": [
+        {
+          "text": "{\"capture\":\"offscreen\",\"film\":null,\"height\":768,\"liveViewerCapture\":false,\"parameters\":{\"areola_pigmentation\":1.0,\"areola_radius_mm\":18.5,\"arm_length\":1.0,\"body_model\":\"male\",\"breast_size\":1.0,\"buttock_size\":1.0,\"calf_width\":1.0,\"foot_size\":1.0,\"forearm_length\":1.0,\"forearm_width\":1.0,\"hand_size\":1.0,\"head_size\":1.0,\"height_cm\":164.0,\"hip_width\":1.0,\"left_areola_size\":1.0,\"left_breast_size\":1.0,\"left_buttock_size\":1.0,\"leg_length\":1.0,\"navel_depth_mm\":4.0,\"navel_height_mm\":20.0,\"navel_shape\":\"reference\",\"navel_width_mm\":16.0,\"neck_length\":1.0,\"nipple_cold_response\":0.0,\"nipple_projection_mm\":3.0,\"nipple_radius_mm\":8.0,\"nipple_type\":\"reference\",\"right_areola_size\":1.0,\"right_breast_size\":1.0,\"right_buttock_size\":1.0,\"shin_length\":1.0,\"shoulder_width\":1.0,\"thigh_length\":1.0,\"thigh_width\":1.0,\"torso_depth\":1.0,\"torso_length\":1.0,\"upper_arm_length\":1.0,\"upper_arm_width\":1.0,\"waist_width\":1.0,\"weight_kg\":60.0},\"path\":\"/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-model-snapshot-80802-1790864895517049000/snapshot.png\",\"poseTimeSeconds\":0,\"view\":{\"mode\":\"material\"},\"width\":576}",
+          "type": "text"
+        },
+        {
+          "mimeType": "image/png",
+          "name": "snapshot.png",
+          "type": "resource_link",
+          "uri": "file:///var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-model-snapshot-80802-1790864895517049000/snapshot.png"
+        }
+      ],
+      "isError": false,
+      "structuredContent": {
+        "capture": "offscreen",
+        "film": null,
+        "height": 768,
+        "liveViewerCapture": false,
+        "parameters": {
+          "areola_pigmentation": 1.0,
+          "areola_radius_mm": 18.5,
+          "arm_length": 1.0,
+          "body_model": "male",
+          "breast_size": 1.0,
+          "buttock_size": 1.0,
+          "calf_width": 1.0,
+          "foot_size": 1.0,
+          "forearm_length": 1.0,
+          "forearm_width": 1.0,
+          "hand_size": 1.0,
+          "head_size": 1.0,
+          "height_cm": 164.0,
+          "hip_width": 1.0,
+          "left_areola_size": 1.0,
+          "left_breast_size": 1.0,
+          "left_buttock_size": 1.0,
+          "leg_length": 1.0,
+          "navel_depth_mm": 4.0,
+          "navel_height_mm": 20.0,
+          "navel_shape": "reference",
+          "navel_width_mm": 16.0,
+          "neck_length": 1.0,
+          "nipple_cold_response": 0.0,
+          "nipple_projection_mm": 3.0,
+          "nipple_radius_mm": 8.0,
+          "nipple_type": "reference",
+          "right_areola_size": 1.0,
+          "right_breast_size": 1.0,
+          "right_buttock_size": 1.0,
+          "shin_length": 1.0,
+          "shoulder_width": 1.0,
+          "thigh_length": 1.0,
+          "thigh_width": 1.0,
+          "torso_depth": 1.0,
+          "torso_length": 1.0,
+          "upper_arm_length": 1.0,
+          "upper_arm_width": 1.0,
+          "waist_width": 1.0,
+          "weight_kg": 60.0
+        },
+        "path": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-model-snapshot-80802-1790864895517049000/snapshot.png",
+        "poseTimeSeconds": 0,
+        "view": {
+          "mode": "material"
+        },
+        "width": 576
+      }
+    }
+  }
+]

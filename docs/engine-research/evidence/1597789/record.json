@@ -1,0 +1,139 @@
+{
+  "repository": "melonjs/melonJS",
+  "repository_id": 1597789,
+  "commit": "1b1c5bdc3342cb71c1d68fbdeffcf601a6fdce72",
+  "source_url": "https://github.com/melonjs/melonJS/tree/1b1c5bdc3342cb71c1d68fbdeffcf601a6fdce72",
+  "readme_path": "README.md",
+  "readme_sha256": "8429bc7c536faaeb3f900088a8ee6d0c5adaf98939bf5b82605771ae984e0d93",
+  "entries": [
+    {
+      "path": ".claude-plugin",
+      "type": "dir",
+      "sha": "8bbd7430af27a542a633998b2b7e4c5dbdcbd938"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5f02159cec9a65a0fa28f7e6d74df495b62084cb"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5a0d5e480b5f395024be26a530d1f72811b1ac99"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1a2a604210aac5d0570beebb296e2a9473199533"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7b4003bdede758439aa99783e9c63ae7854a9c49"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "a45fd52cc5891570d6299fab38643103c3955474"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "68f2932b0b0d15dfe239b9c04223666eef6cf092"
+    },
+    {
+      "path": "BACKERS.md",
+      "type": "file",
+      "sha": "3a8f3b8289a5f748f71788cd635dfdcbf1a471c0"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "c9e298719bfb3e51b7153b2a5920c2481a2cd587"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "91ea4134d9fb3bbcf75d28e322f627024d0cb59a"
+    },
+    {
+      "path": "DOC_README.md",
+      "type": "file",
+      "sha": "b73d54c67a5c9a41d84a5df64f6d21f5c5015022"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d3803662347669ba91a762dee8bca380d3765265"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "88fd611db8321dd00e2bfb32fd69fa266b5864a9"
+    },
+    {
+      "path": "biome.json",
+      "type": "file",
+      "sha": "74d764ec2260150700cf9192d5a9b2a658d6c332"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "4e9b4fb9e6ded33429b4a77d0adadf5b6a513029"
+    },
+    {
+      "path": "lefthook.yml",
+      "type": "file",
+      "sha": "f347f525aff43c52c08eff53cd062690063ade63"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "19de1447fc1647b41bf4078cbf581976aad66419"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "72a9be829e268e8d2635ec9e5064933d98ad8b63"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "28f27fdbd834a78e889447d8f21564bf9f7c6c94"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "type": "file",
+      "sha": "47663e636e4f513d7e93cc12232bff21166a98c1"
+    },
+    {
+      "path": "pnpm-workspace.yaml",
+      "type": "file",
+      "sha": "18ec407efca710b5d0d1e19dd3e34a27ac6716a1"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "374544676b3e6e54dd79cf3b142798d1191d8c0f"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "ad914f1f0bab61b68ef36674cae5a63278efbd4f"
+    },
+    {
+      "path": "turbo.json",
+      "type": "file",
+      "sha": "b9db02d520931dd8892040d02c3543eb52451b15"
+    },
+    {
+      "path": "vitest.workspace.ts",
+      "type": "file",
+      "sha": "c1efc9a8b80933758ff6a9961f5ddd36c44ee1c9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies web game engine with runtime subsystems; packages, workspace/build/test manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

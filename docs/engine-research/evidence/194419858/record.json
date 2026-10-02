@@ -1,0 +1,179 @@
+{
+  "repository": "ixray-team/ixray-1.6-stcop",
+  "repository_id": 194419858,
+  "commit": "612b165c97d5e6a50ac0a6d1384ac8c95a63dda5",
+  "source_url": "https://github.com/ixray-team/ixray-1.6-stcop/tree/612b165c97d5e6a50ac0a6d1384ac8c95a63dda5",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ea975ddc7536e2672a567fd73db929606fdd2f87"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f6c823969eddf104ba1b929eb93bc8c22c53c8d0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b8eaebb42afababf612dcfa27be22405afde926a"
+    },
+    {
+      "path": ".markdownlint-cli2.yaml",
+      "type": "file",
+      "sha": "6384b03925ae016d12b2355ad371a3398192683f"
+    },
+    {
+      "path": ".markdownlint.json",
+      "type": "file",
+      "sha": "6a81f39ed8fd122deb041ea3b364a7aa66aac1ab"
+    },
+    {
+      "path": ".tgitconfig",
+      "type": "file",
+      "sha": "1eb5e239df59cbfc5163606e5031c7b05c25049d"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d29dc3563c4206c31c75c1700e6e198e489888bb"
+    },
+    {
+      "path": ".vsconfig",
+      "type": "file",
+      "sha": "23cd380a537d91d2b05701ddb09ba7f04abbd296"
+    },
+    {
+      "path": ".xrignore",
+      "type": "file",
+      "sha": "770fd56f95b81a613eab92bff893859370840091"
+    },
+    {
+      "path": "ActorEditorLevel.cform",
+      "type": "file",
+      "sha": "998c5b7820b0890f4b1c1a4064043466706a52ea"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b8f5d7310b4c97729f0eb3accdc349c94766077b"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "6aa7fbe20cc2f09798480ba3cbca4996c9b662ac"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "6654c6e62aa85721d6bb649132f5fd867da27449"
+    },
+    {
+      "path": "IXRay.code-workspace",
+      "type": "file",
+      "sha": "20a409610f5e48765032f97c2b781d4ffb6b447b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "e2115c37e57a0978cbd02fe460f94075471fdc94"
+    },
+    {
+      "path": "NuGet.config",
+      "type": "file",
+      "sha": "eb9a91185dc71101616afb586395cdf5c5f37c99"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "9163fedcd3493b52439a359e2e6f0ea5eb84c662"
+    },
+    {
+      "path": "datapack.ltx",
+      "type": "file",
+      "sha": "ef5aa00b8385c87d0927ee08a9e85a25817809f0"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "8300b275d9d7317779856e4b6ca073d36eff5c5a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "19568470c6c953fd7d83bd8fbef65c965cd31714"
+    },
+    {
+      "path": "fs.ltx",
+      "type": "file",
+      "sha": "a9b26b2264f1219815301270f45e27472988f445"
+    },
+    {
+      "path": "fsfactory.ltx",
+      "type": "file",
+      "sha": "f7ccb33924be161cc4ab8b784645f8a4d29c415c"
+    },
+    {
+      "path": "fsgame.ltx",
+      "type": "file",
+      "sha": "eb0744babc7e590c7deebdc7d2572084eaae8733"
+    },
+    {
+      "path": "fsgame_coc.ltx",
+      "type": "file",
+      "sha": "cf48910ee5500fa1617c7390aa22dfc3e7c7dcec"
+    },
+    {
+      "path": "gamedata",
+      "type": "dir",
+      "sha": "df1d89f36edf4679cc4abd78174517462734b91e"
+    },
+    {
+      "path": "gamedata_coc",
+      "type": "dir",
+      "sha": "ab98a2d806a4007f2c59f4dccd1a1e0d1c67460e"
+    },
+    {
+      "path": "gamedata_cs",
+      "type": "dir",
+      "sha": "182d80b34e93e172bdc7d0ffe69e2f4099fc3088"
+    },
+    {
+      "path": "gamedata_soc",
+      "type": "dir",
+      "sha": "c4d1ac8a1005df8de7c8de1eb147991c3b956fec"
+    },
+    {
+      "path": "publish-release.bat",
+      "type": "file",
+      "sha": "8f0ada4e8b041a055c54e1c5688167d9b0a13407"
+    },
+    {
+      "path": "rawdata",
+      "type": "dir",
+      "sha": "97b365e63f8736995a041a60abe1dac8183b8981"
+    },
+    {
+      "path": "sdk",
+      "type": "dir",
+      "sha": "8520ff14c4b58bdb2e03da909989c5aec33b40cd"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a9498f9fa7fee17f6f9f8a45077d14b98c772c93"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "a2ac38a0d00e5d25b66b7b5b7e9d6ba77aa84285"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies modernized X-Ray runtime; owned native engine/editor source and CMake build. Current stability unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

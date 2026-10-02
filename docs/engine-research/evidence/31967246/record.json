@@ -1,0 +1,47 @@
+{
+  "repository": "bioglaze/aether3d",
+  "repository_id": 31967246,
+  "commit": "4ec28afc5eaa9c7cea8f7173a80474423a268216",
+  "source_url": "https://github.com/bioglaze/aether3d/tree/4ec28afc5eaa9c7cea8f7173a80474423a268216",
+  "readme_path": "README.md",
+  "readme_sha256": "6460696b98eda52348c31ce50f53494a0260de1f94c10899420d5b1e5c8d4967",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6e222f861f89eafdb0300d1405e150ffe4457299"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5a28ee5237cef2272c0362698bfa86a3e4695776"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "42c12145e8adb1157bf57ec5b4433e8d73624c8e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "14386e48a416ec7bd0c1b0b304918e34da93138d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a98a7308e60ecb89482e9eecf5b02b7b99df8724"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "32edbc7dbe7c4d7abb1d5aa3ef049e4d5702f9f9"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "9593abf96a198ee8a88e4dd24e295457446ebd5e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

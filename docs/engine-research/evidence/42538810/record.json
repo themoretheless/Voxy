@@ -1,0 +1,114 @@
+{
+  "repository": "synodic/soul-engine",
+  "repository_id": 42538810,
+  "commit": "d9478af36e33a72a84ead3e7dc8e0297298707f3",
+  "source_url": "https://github.com/synodic/soul-engine/tree/d9478af36e33a72a84ead3e7dc8e0297298707f3",
+  "readme_path": "README.md",
+  "readme_sha256": "e475e4fc0b786a22031e260ab7392c1ac4ce9383b8aa66f99f8d7531747e4db0",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "db8f56f63d139c61b2ab9abfcc5c0ae833a8c500"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8eb6482d84f805b3c6c68451dc12df147e2bd29b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "96b59ccdb027079d0364629e43b03c08bc099ba1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a250569e2a41260139eff6e24ce4aa487fe4e582"
+    },
+    {
+      "path": ".pdm-python",
+      "type": "file",
+      "sha": "d822dbc75ac2d884510528d61f43978150bd1b36"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "59444fb11c26d17584e5231eeace5b6f851df7d3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "0de645876feccabf97c36c4138da7aaff84a1dac"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "ea4c73a7d340b27f03ba04aa39ccb09105983b0d"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "5c9904e698d021f92156349002f331392a5d0c07"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "39755a038da6d6e9c62fd3cbe387cfbfb651e188"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "3bf7e7a67de655fe521c0ea0779625b39e2cfdb9"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "6ddb0457c91bbfe6041b1ca73c5769c3fa520154"
+    },
+    {
+      "path": "conanfile.py",
+      "type": "file",
+      "sha": "9df87dab868ca2f64a5cee4be88f766814f32b8d"
+    },
+    {
+      "path": "conanfile_base.py",
+      "type": "file",
+      "sha": "926faa414f88327eb88e3cb4e8f0671f2e7eb4d2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0556cf0564d4c64eaa5601f6ac49fae7b5925d96"
+    },
+    {
+      "path": "pdm.lock",
+      "type": "file",
+      "sha": "cac6f4b016cf0bb87670c65c5a8bcb07264a89fc"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "b893faafeb55fb4fb2dbd8541b243f4dab783f16"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6443dbc82719f2517e25d519e3b907fc42ee860f"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "a61c7308462a009d1c68bdda50d2e59ed11c291c"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "CUDA/Vulkan visualization and finite-element simulation engine, not established general game runtime; public refactor instability noted.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

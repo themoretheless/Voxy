@@ -1,0 +1,79 @@
+{
+  "repository": "ael-bekk/Cub3d-Advanced-Raycasting",
+  "repository_id": 525934603,
+  "commit": "53371ce9c1ba187c9a60958ae134ca1feefbc535",
+  "source_url": "https://github.com/ael-bekk/Cub3d-Advanced-Raycasting/tree/53371ce9c1ba187c9a60958ae134ca1feefbc535",
+  "readme_path": "README.md",
+  "readme_sha256": "09cdede896c2627fd5de982668138e0ab30adc0b33ce1bf9b3e0edc84001543c",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8e1d60c5747395b5fe367f09177aece4ff91c3a8"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "2df8acdfbee6cdb0adfe72028881e3da27fca78e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3412a61ced51f9e4df7b1a7c6c5b98b4f3d6cc7d"
+    },
+    {
+      "path": "cub3d.c",
+      "type": "file",
+      "sha": "822b48cb4b44f6169befc3ecca5682277c89e074"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "1a1a79b64519bd20eb7d99c14be5fd8222c70c8e"
+    },
+    {
+      "path": "img_srces",
+      "type": "dir",
+      "sha": "2af54b56fc95edbb97dca3b510e0542090c7bf75"
+    },
+    {
+      "path": "inc",
+      "type": "dir",
+      "sha": "b707b6d23da5c06817722212df173f46afb679e7"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "3137c4206ed71df865a85fe7a80f6b95f4ecebc3"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "c0ca6ae243f004948fdacfc52b28ce0276272083"
+    },
+    {
+      "path": "note.md",
+      "type": "file",
+      "sha": "ed49b6c9a3bdb5633ca72f32b5c060d46b067568"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "d82be1027632b8ea90c1fa7a2e7dcc7e812f5743"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "fa4c1705c305b38c7831b30a80abfda137d0f32a"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "67ddad712be96969a74589ed1243c0bbe7ed3394"
+    }
+  ],
+  "classification": "excluded_rendering_tutorial",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README/description identify educational raycast game over mini-libx; source/Makefile, complete reusable engine not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

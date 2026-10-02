@@ -1,0 +1,54 @@
+{
+  "repository": "AdaDoom3/AdaDoom3",
+  "repository_id": 7952676,
+  "commit": "6b979248c03cfae9af705257b116179f7d250267",
+  "source_url": "https://github.com/AdaDoom3/AdaDoom3/tree/6b979248c03cfae9af705257b116179f7d250267",
+  "readme_path": "readme.md",
+  "readme_sha256": "cf9106a70359dbdcf0d3cc767ec786af04050a0f6d2a904d8957b99870b07367",
+  "entries": [
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "5c26df46a62dbb77704a1e95c48e279f6bf53845"
+    },
+    {
+      "path": "Games",
+      "type": "dir",
+      "sha": "556159a8bf9e04c3d81613365f8b021ad09278dd"
+    },
+    {
+      "path": "Libraries",
+      "type": "dir",
+      "sha": "268e18396fd462bd7eadb8a4cf710e7eb1a2b5b6"
+    },
+    {
+      "path": "Object",
+      "type": "dir",
+      "sha": "e27c834c9ddeb174ee870745ae9056e238e52d75"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "31c382fefdcdfde220fb599e365856cde7641d33"
+    },
+    {
+      "path": "neo.gpr",
+      "type": "file",
+      "sha": "5d3baf11503995e2f796b4186a759baebbef5025"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "ed2649f4ea602e804947c27d191827dc5cfd535a"
+    },
+    {
+      "path": "runsdk.hta",
+      "type": "file",
+      "sha": "2f376b6775c9d4671ce02ab90994232c347a447b"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Ada reengineering of id Tech 4; owned Engine/Games/Libraries and GPR build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,99 @@
+{
+  "repository": "Milerius/shiva",
+  "repository_id": 131817435,
+  "commit": "d25b54147f2f9a4710e3015c4eed7d076e3de04b",
+  "source_url": "https://github.com/Milerius/shiva/tree/d25b54147f2f9a4710e3015c4eed7d076e3de04b",
+  "readme_path": "README.md",
+  "readme_sha256": "eb9672dece51e915c4f00e847c6125a468d0ce50150f85193ea35ec7fe18cdcd",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "5b69bd296b4ecad063e9dd849b053e65853871c7"
+    },
+    {
+      "path": ".coveralls.yml",
+      "type": "file",
+      "sha": "f485fcc08d152f111533dcd6bc92e6c11e5270e3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b4f3e8b9824e257919e34f89961516aff336de22"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "880afab0bc2bcfb7109df3e9d94b8d627400fc14"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "2e2ee904d8329e1301f0d7b739c1054b7ec938ed"
+    },
+    {
+      "path": "Jenkinsfile",
+      "type": "file",
+      "sha": "b585951ff7177cffa54f63bda11ba7995ac0a63d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6f3c0a5977e0ad2b29ee100ace93ff7809fd204d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "928d889c6805ed91fe095e3def370d329907557f"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "c76dde18b1169ead372bc248ca852f11ce2e5788"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e993667722988d482bcac175ae41a4126cd4dfcb"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "8f22f216a82c4f0d29d120705467704efb1cc71d"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "cb8d8fb75aded6900db8e5eca6fb47aee7a4d3a4"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "9dbdd798d9daedc83d85756a8faecb92ebbfb305"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3fe0df7a9da8725c21a22dd1be69997b676833d2"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "4cc2d747bd01ca0ec4eea199b3dd82076220c647"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "81e1479a3efc2b944beb54870ccb02c173048f8f"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "872e464da58882ff0b4b163a6cd9cff64091a394"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++17 modular engine with editor, examples, modules and CMake builds; maintenance moved elsewhere but source remains.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

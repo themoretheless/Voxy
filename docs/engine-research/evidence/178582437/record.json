@@ -1,0 +1,119 @@
+{
+  "repository": "septag/rizz",
+  "repository_id": 178582437,
+  "commit": "b52a7f8e1ccc4371a641ab67d5ca69df9d18fce7",
+  "source_url": "https://github.com/septag/rizz/tree/b52a7f8e1ccc4371a641ab67d5ca69df9d18fce7",
+  "readme_path": "README.md",
+  "readme_sha256": "44b40feea1dc9e57e525debb68b60a4a7fbf83c24e60572c89793a5bf54d463a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "11b03fa156c0f947d0640a53c577037931594970"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3516ff94b6ce4f579a4b5745af3378f08a2731c9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f25d29a5f3dc7d44857874d7b45facaa8fd00485"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "56a2c29b16b261b6798aab98772db9ae2ebf6504"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c2fa817faf1a1ce8de32636e598a107d4f6def17"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "589c731e9f76a70b2c2f37f53da5d60c965f07b7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9d240ab069b1e60050fb7b83534f376854cb3f4f"
+    },
+    {
+      "path": "VERSION",
+      "type": "file",
+      "sha": "b87323870387ffd04b6cca8217e5d0ee41fd7f2b"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "334d71bd6a300a017e55540a8e38ec070253df25"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f9d5c4a7dffaae8755564493a9dc4aaaf8e15c06"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6335c7a3699d6fa547d76df091060628ab6d11df"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "2462ebad0b83630f39b0a856be67a0d7dbcbab4d"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "1a266b98597c834e1d9f94fa8e2e8b6f1bb270bd"
+    },
+    {
+      "path": "plugin.sh",
+      "type": "file",
+      "sha": "4034ad94095752a11ca58868640eb64c2fc70a2f"
+    },
+    {
+      "path": "profiler.bat",
+      "type": "file",
+      "sha": "5dab7ab436efa50b92a56a1edd9682529ee5cfb1"
+    },
+    {
+      "path": "rizz.sublime-project",
+      "type": "file",
+      "sha": "6f50e6838b6a4c1ceb6adabc0979e1d09e675bba"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "792fee2d5242aa9d91a7618c04013d88d4988813"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "02f4d5fc2eb4cfea9549badea077754b48bdb636"
+    },
+    {
+      "path": "stamp-version.sh",
+      "type": "file",
+      "sha": "755d28fde7b98a14f663ffd446fb0f9350105402"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "7932b61e4e390da05958fc75211bcfe0dddac56e"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies tiny native game/app framework; src/include/plugins/CMake and examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

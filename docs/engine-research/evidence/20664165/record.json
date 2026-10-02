@@ -1,0 +1,82 @@
+{
+  "repository": "dannagle/HTML5GameEngines",
+  "repository_id": 20664165,
+  "commit": "a51bb7032d3ba3e7fa01e461d6dc0bfa74e15c7b",
+  "source_url": "https://github.com/dannagle/HTML5GameEngines/tree/a51bb7032d3ba3e7fa01e461d6dc0bfa74e15c7b",
+  "readme_path": "README.md",
+  "readme_sha256": "0d79480276dbd46763e5f75277307f7990f0a992209db8e6058f4efcfadacbcf",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b3b5657b1851aa9c9d82956d2c2c3b790313dc30"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e71fb17f21f4c6c1265860a7bd8e89388057e477"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "6c057ba4a496d76c8fb26af0a112f5a5c47a0b11"
+    },
+    {
+      "path": "chromestore",
+      "type": "dir",
+      "sha": "2d1d5490e62ec17d1922b7aaec1c33c175ba1703"
+    },
+    {
+      "path": "craftyjs",
+      "type": "dir",
+      "sha": "497db01e3c0daa925747fd6f9b3b64b335641aec"
+    },
+    {
+      "path": "easeljs",
+      "type": "dir",
+      "sha": "c90be2d43686143fda1f0c1160e8084421588930"
+    },
+    {
+      "path": "facebook",
+      "type": "dir",
+      "sha": "64e75dd29156870b0ba934060b0e6f6276e578c6"
+    },
+    {
+      "path": "html5audiotest",
+      "type": "dir",
+      "sha": "0861d28a6d036d19261f8e196623fad3f3bb7a0a"
+    },
+    {
+      "path": "html5pong",
+      "type": "dir",
+      "sha": "ff2cc10037f11be2555f0092ab8b7df8135d0700"
+    },
+    {
+      "path": "impactjs",
+      "type": "dir",
+      "sha": "d8429504b1ad714b0202d747f64d3a84b551f906"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "ef659456ce52c59d3a2b521f0cde997220c5d38c"
+    },
+    {
+      "path": "macosx",
+      "type": "dir",
+      "sha": "291f28789f2430bd226d2b52cdd32fef13c2ea04"
+    },
+    {
+      "path": "turbulenz",
+      "type": "dir",
+      "sha": "325d77e632bc62d3988cf24ef13bead49c167d01"
+    },
+    {
+      "path": "windows",
+      "type": "dir",
+      "sha": "57e3be4e9c5e7f3fb4c67c7ab7a2b3ce58bfe755"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

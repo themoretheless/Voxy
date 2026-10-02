@@ -1,0 +1,57 @@
+{
+  "repository": "deadcast2/UltraEd",
+  "repository_id": 167413768,
+  "commit": "32ab9b345927e5cc4c751f2a677f84aeebfe4552",
+  "source_url": "https://github.com/deadcast2/UltraEd/tree/32ab9b345927e5cc4c751f2a677f84aeebfe4552",
+  "readme_path": "README.md",
+  "readme_sha256": "7a29034392912058113bed7e1180fe7020ed1cb26fcd76f7907aecc9036dc259",
+  "entries": [
+    {
+      "path": ".codacy.yaml",
+      "type": "file",
+      "sha": "46f5699b13e4eaca7123c1ee38f32136888b72f6"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "aa32070b188e834d3dfcd8c5732d6450dc490320"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9818798f81b8e080760ed202237de4052a4d4a63"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "76232ebc13ef671b67c2d6d50b03a556b45919c2"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "a88a187bcf6b8f9264bb6c1fdb961eb8ea1f6436"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "15c75363bc9b8e342550fc2e808caaf7e1410629"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6f9b122b0255d59a0b098dc385672cab0c9a0231"
+    },
+    {
+      "path": "Player",
+      "type": "dir",
+      "sha": "be935dfc3f13f12e4b418e712cb568671bd4db6c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2827448971233df4608e2bf7382942f158c82e7f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

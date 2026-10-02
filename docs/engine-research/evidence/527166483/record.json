@@ -1,0 +1,124 @@
+{
+  "repository": "quaadgras/graphics.gd",
+  "repository_id": 527166483,
+  "commit": "d4151294047b5ccf7a9f3a6fdaa72434e283e4ca",
+  "source_url": "https://github.com/quaadgras/graphics.gd/tree/d4151294047b5ccf7a9f3a6fdaa72434e283e4ca",
+  "readme_path": "Readme.md",
+  "readme_sha256": "03797f9cea9e129e8c03376c2632bc9fa07314ef77d29f3b7119f7208bf80971",
+  "entries": [
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "8f7929ac1ffb17d354649c412cbc752d8379f18b"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "1981fe7d3c97e19bf015b36dc7de00ea3f553def"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "acedc80880ef6605e8b9bdec17b872bbdd2d611b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "649773f6055d38057013ea601933f185d1cf3873"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "430bca27287389b9c0dd773f4eef2935a2f05a9c"
+    },
+    {
+      "path": "License",
+      "type": "file",
+      "sha": "2e1377463f4836fadcadc38238dd1dcc2f92d7a8"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "0c090d69bd1cc258b4348690844f7510f8467d07"
+    },
+    {
+      "path": "api.go",
+      "type": "file",
+      "sha": "45ef659394a398cffa50a8015935072bdd0b8849"
+    },
+    {
+      "path": "classdb",
+      "type": "dir",
+      "sha": "364f7da6d822aee8ed78d42847313c10981a0106"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "f8fa1dc1f4134fde79eb024a998e97c907b64c87"
+    },
+    {
+      "path": "gd.c",
+      "type": "file",
+      "sha": "eeb29556254406901ff423c8d8990d905d60fa44"
+    },
+    {
+      "path": "gd.h",
+      "type": "file",
+      "sha": "a2f3474ee2008a9046c41a35912daee2792fe41f"
+    },
+    {
+      "path": "gd_web_callbacks.h",
+      "type": "file",
+      "sha": "4e01ce321a1c4bd541a98e105dc4b22a6ea47b4f"
+    },
+    {
+      "path": "gd_web_exports.h",
+      "type": "file",
+      "sha": "c768331ff04a501320a94d8695a1de508d30e793"
+    },
+    {
+      "path": "gdextension_interface.h",
+      "type": "file",
+      "sha": "d82273e17faf5e1161e1f2e30554e038c617e63c"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "87b20552204738949c542aa5d9d2deaae26a8315"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "ae027cbff6d8fe6cc44253fab96c14bc493c3311"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "6d55e077dfa9b795526310944ed30509cbc2db2e"
+    },
+    {
+      "path": "notifications_root.go",
+      "type": "file",
+      "sha": "64bed3f673b05914c113777a1a473c8c8b4067b0"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "719be1a2a327dd935efb48f0a24d24b9c51b2957"
+    },
+    {
+      "path": "startup",
+      "type": "dir",
+      "sha": "f02b820a7ab35c2936330879645f1282b5ef0f0d"
+    },
+    {
+      "path": "variant",
+      "type": "dir",
+      "sha": "306026011c7369518580462474d7ba8eef1aa93b"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Go runtime integration into Godot; GDExtension interface/classdb/Go build, not separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

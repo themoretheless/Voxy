@@ -1,0 +1,83 @@
+{
+  "scope": "Static floating-point audit; shared-vertex pairs excluded; no anatomy or CCD certification.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 8,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-urogenital-trace-8/urethra-rest.obj",
+      "sha256": "f200ecdd937fe45b40c1c9afbee292f9fb8c14854415711937d5c3501f750304",
+      "vertices": 160,
+      "triangles": 224,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 896
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 8,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-urogenital-trace-8/urethra-barrier.obj",
+      "sha256": "ce8d38d4410f3beda9953286af46780e4a83cb2ad5b2c77f0be7b5f63603b19e",
+      "vertices": 160,
+      "triangles": 224,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1464
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 8,
+      "stage": "released",
+      "source": "/private/tmp/voxy-urogenital-trace-8/urethra-released.obj",
+      "sha256": "44ff14dd8700194946d156ae9bea38dbd45667b68ed8331d76408217e056fd02",
+      "vertices": 160,
+      "triangles": 224,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 568
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 8,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-urogenital-trace-8/vagina-rest.obj",
+      "sha256": "b6fedf8c4c85159791191d9cb4416e65b9379a26d8a8116af5f37b5b5069afdb",
+      "vertices": 160,
+      "triangles": 224,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1504
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 8,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-urogenital-trace-8/vagina-barrier.obj",
+      "sha256": "169a5b6dbf5f58b24efda0a324c3da577e99b800223953f97bc374802d99fcec",
+      "vertices": 160,
+      "triangles": 224,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1806
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 8,
+      "stage": "released",
+      "source": "/private/tmp/voxy-urogenital-trace-8/vagina-released.obj",
+      "sha256": "54764706c18ae5c759d7f655735c90220ee3836196cd5c9260c9525fbfa13c06",
+      "vertices": 160,
+      "triangles": 224,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1050
+    }
+  ]
+}

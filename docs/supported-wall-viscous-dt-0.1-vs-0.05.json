@@ -1,0 +1,518 @@
+{
+  "scope": "Temporal refinement at identical reference/materials and common committed times; no interpolation, anatomy or convergence-order certification",
+  "coarse_csv_sha256": "338004de0fe26fd4eaf6b257f522c7871a566c82d2c14d40af5ce3cb0632502a",
+  "fine_csv_sha256": "268be9ba8c6ecfa235ae2672eb22dffe5b6ba478ff38ff271b172be6140ba20c",
+  "material_sha256": "2c96745e2b0eb9f415e87600aaf56425b70ea3b18406644ba460b64451d99663",
+  "coarse_steps": 23,
+  "fine_steps": 46,
+  "final_time_s": 2.3,
+  "comparisons": [
+    {
+      "time_s": 0.1,
+      "stage": "load-1",
+      "fine_stage": "load-1",
+      "support_pressure_pa": 50.0,
+      "max_node_difference_m": 9.631570301551238e-07,
+      "maximum_difference_node": 428,
+      "coarse_position_at_maximum_m": [
+        -2.7333162158531903e-05,
+        -0.002160010053743086,
+        0.02501292537640558
+      ],
+      "fine_position_at_maximum_m": [
+        -2.7398465762727917e-05,
+        -0.002159055160438054,
+        0.02501303301320236
+      ],
+      "rms_node_difference_m": 3.830778791082555e-07,
+      "relative_to_coarse_peak_displacement": 0.001423314571841093,
+      "coarse_mesh_sha256": "8eebcfd4910f139659c52463f2e68ee99c738c28d1ce31f9e9ba9941b1fd0125",
+      "fine_mesh_sha256": "f90b9ec621aa02744f5c7b2d8f55844ceb6e6f2805b28cf854394ec0d06c6176"
+    },
+    {
+      "time_s": 0.2,
+      "stage": "load-2",
+      "fine_stage": "load-2",
+      "support_pressure_pa": 100.0,
+      "max_node_difference_m": 2.202271915916268e-06,
+      "maximum_difference_node": 516,
+      "coarse_position_at_maximum_m": [
+        7.045145779024109e-05,
+        0.0020693162739349753,
+        0.02995862129710484
+      ],
+      "fine_position_at_maximum_m": [
+        7.06497553145751e-05,
+        0.002067133365282743,
+        0.029958834814081882
+      ],
+      "rms_node_difference_m": 8.657784549635901e-07,
+      "relative_to_coarse_peak_displacement": 0.0019641753315133067,
+      "coarse_mesh_sha256": "4a5e2c55b1c32a40a732fc548b91fd6048fe86f96d61e67b32f40d5f27537a6f",
+      "fine_mesh_sha256": "1045abcd87e88098abeb85205d2428ac083283084f868ff2fdd051f6634cce12"
+    },
+    {
+      "time_s": 0.3,
+      "stage": "load-3",
+      "fine_stage": "load-3",
+      "support_pressure_pa": 150.0,
+      "max_node_difference_m": 3.4564010169341862e-06,
+      "maximum_difference_node": 516,
+      "coarse_position_at_maximum_m": [
+        0.00011545834600617181,
+        0.0016543362044850367,
+        0.02991401470028285
+      ],
+      "fine_position_at_maximum_m": [
+        0.00011581378207099391,
+        0.0016509160046218666,
+        0.029914364851806707
+      ],
+      "rms_node_difference_m": 1.3608201999020334e-06,
+      "relative_to_coarse_peak_displacement": 0.002218603991714298,
+      "coarse_mesh_sha256": "917ff34211976401d2d5abf89f88c928d4015f5771cb6ab50004134651086e24",
+      "fine_mesh_sha256": "90485b4602e0e768f0a3762eb183c711bf5ecaf5dbe95fef03aed494f3d807f9"
+    },
+    {
+      "time_s": 0.4,
+      "stage": "loaded",
+      "fine_stage": "loaded",
+      "support_pressure_pa": 200.0,
+      "max_node_difference_m": 4.644742063494371e-06,
+      "maximum_difference_node": 516,
+      "coarse_position_at_maximum_m": [
+        0.00016272698003483099,
+        0.001236676101236425,
+        0.029873489360878247
+      ],
+      "fine_position_at_maximum_m": [
+        0.00016320224418900882,
+        0.0012320840766073965,
+        0.02987400030375817
+      ],
+      "rms_node_difference_m": 1.8513885674420554e-06,
+      "relative_to_coarse_peak_displacement": 0.002328448510396482,
+      "coarse_mesh_sha256": "56043743ae751967e553e023ed72ebfc22de1288247b4bf3c94cab5cb2b56d36",
+      "fine_mesh_sha256": "2a29ca6c3a166614eb14450d26b99fa5895e923060d4b81f13bf39fd12c1d747"
+    },
+    {
+      "time_s": 0.5,
+      "stage": "hold-1",
+      "fine_stage": "hold-1",
+      "support_pressure_pa": 200.0,
+      "max_node_difference_m": 5.259774129516021e-06,
+      "maximum_difference_node": 516,
+      "coarse_position_at_maximum_m": [
+        0.0001680871382627864,
+        0.0011906030128804722,
+        0.0298800220053527
+      ],
+      "fine_position_at_maximum_m": [
+        0.0001686302603128821,
+        0.0011854050738629974,
+        0.029880615025000636
+      ],
+      "rms_node_difference_m": 2.1016145534030124e-06,
+      "relative_to_coarse_peak_displacement": 0.002580386595705096,
+      "coarse_mesh_sha256": "2ef9feb615dbfc708e6141416ad26f0382e6e1f0b704f162c935147cfd7be8df",
+      "fine_mesh_sha256": "6cadd7e25816d916384863ce2467e7888a2cb36a2a74b06497f9b11258c9c03f"
+    },
+    {
+      "time_s": 0.6,
+      "stage": "hold-2",
+      "fine_stage": "hold-2",
+      "support_pressure_pa": 200.0,
+      "max_node_difference_m": 5.458157288442344e-06,
+      "maximum_difference_node": 540,
+      "coarse_position_at_maximum_m": [
+        -0.00015225805176031926,
+        -0.0014493068685142857,
+        0.029880607247713444
+      ],
+      "fine_position_at_maximum_m": [
+        -0.00015280404245927238,
+        -0.0014439138142412543,
+        0.029881246263167224
+      ],
+      "rms_node_difference_m": 2.18923039363732e-06,
+      "relative_to_coarse_peak_displacement": 0.002629889717418065,
+      "coarse_mesh_sha256": "6e7cedbad2980002be553d7b1030cb11e0642ad82eb5bc3f491f70e731bcabf3",
+      "fine_mesh_sha256": "976b9ece27b84dce19fb5dcf02abaf885243f285edece505d664a6ea369f7353"
+    },
+    {
+      "time_s": 0.7,
+      "stage": "hold-3",
+      "fine_stage": "hold-3",
+      "support_pressure_pa": 200.0,
+      "max_node_difference_m": 5.422132768626781e-06,
+      "maximum_difference_node": 540,
+      "coarse_position_at_maximum_m": [
+        -0.00015607971662273386,
+        -0.0014154255176444797,
+        0.02988556201584803
+      ],
+      "fine_position_at_maximum_m": [
+        -0.00015662168321936513,
+        -0.0014100687958054875,
+        0.02988620336373211
+      ],
+      "rms_node_difference_m": 2.185180576925315e-06,
+      "relative_to_coarse_peak_displacement": 0.002572979918714193,
+      "coarse_mesh_sha256": "a6b1408f57022c8d0421273ee41fbfad485a79ad710a7f51b2a9f8de08b5048f",
+      "fine_mesh_sha256": "e21dc57cff3109774fb9aefc83947e0000d00a012a8158603fef85c1a953d645"
+    },
+    {
+      "time_s": 0.8,
+      "stage": "hold-4",
+      "fine_stage": "hold-4",
+      "support_pressure_pa": 200.0,
+      "max_node_difference_m": 5.252490138841639e-06,
+      "maximum_difference_node": 540,
+      "coarse_position_at_maximum_m": [
+        -0.00015938030834799377,
+        -0.001385905202888077,
+        0.029889882510846268
+      ],
+      "fine_position_at_maximum_m": [
+        -0.00015990354004434974,
+        -0.0013807166940722618,
+        0.029890510410136573
+      ],
+      "rms_node_difference_m": 2.1279060247813297e-06,
+      "relative_to_coarse_peak_displacement": 0.0024600733914238635,
+      "coarse_mesh_sha256": "38575c518d5426fadd339585ba8b55ca6bb8bd9b57cc59b6da6303ebf19aed93",
+      "fine_mesh_sha256": "b3c774fed4e8b1d58e5def2c33ac07e8b11f955aa8893a4a8e9c5a61b8f16615"
+    },
+    {
+      "time_s": 0.9,
+      "stage": "hold-5",
+      "fine_stage": "hold-5",
+      "support_pressure_pa": 200.0,
+      "max_node_difference_m": 5.010988782424708e-06,
+      "maximum_difference_node": 540,
+      "coarse_position_at_maximum_m": [
+        -0.00016226332533682278,
+        -0.001359925819003455,
+        0.029893690128197082
+      ],
+      "fine_position_at_maximum_m": [
+        -0.00016276081215226332,
+        -0.001354976273505785,
+        0.029894293878818236
+      ],
+      "rms_node_difference_m": 2.044449244057691e-06,
+      "relative_to_coarse_peak_displacement": 0.0023204450899601517,
+      "coarse_mesh_sha256": "852a1f9d7c86ff6435eb33f68f9883ef899329ed656a577ac0d2d0c5377008c6",
+      "fine_mesh_sha256": "0a57ff18e3795c8f6c0fdafb507af6b33d41a0246eaba279b21e1ccf45ab1633"
+    },
+    {
+      "time_s": 1.0,
+      "stage": "unload-1",
+      "fine_stage": "unload-1",
+      "support_pressure_pa": 150.0,
+      "max_node_difference_m": 4.184373612755638e-06,
+      "maximum_difference_node": 532,
+      "coarse_position_at_maximum_m": [
+        0.00012860655226017284,
+        0.0017122288265974022,
+        0.02994429743489176
+      ],
+      "fine_position_at_maximum_m": [
+        0.0001290484308337892,
+        0.0017080993136234135,
+        0.02994480816814402
+      ],
+      "rms_node_difference_m": 1.7051088754721587e-06,
+      "relative_to_coarse_peak_displacement": 0.0023434248824982904,
+      "coarse_mesh_sha256": "31bf98c6d1dd9f36d1d104a8ab0f7031b2f7a2802fed2ab29edd09472f28cb1c",
+      "fine_mesh_sha256": "d80dbc51f64d97948f36df95aefb9cb19cb13fb770fb6dd4c16741331965f861"
+    },
+    {
+      "time_s": 1.1,
+      "stage": "unload-2",
+      "fine_stage": "unload-2",
+      "support_pressure_pa": 100.0,
+      "max_node_difference_m": 2.2253143128067773e-05,
+      "maximum_difference_node": 708,
+      "coarse_position_at_maximum_m": [
+        3.3165828948830326e-05,
+        0.002549110224730481,
+        0.014835153204699879
+      ],
+      "fine_position_at_maximum_m": [
+        5.501304729115991e-05,
+        0.002544895304781605,
+        0.014834784586190556
+      ],
+      "rms_node_difference_m": 2.7094734817207576e-06,
+      "relative_to_coarse_peak_displacement": 0.016016832551188964,
+      "coarse_mesh_sha256": "e1167774ad58c1576f50721c8510d842f59e44edf31b3baa7465c3c4af9c36f3",
+      "fine_mesh_sha256": "ef5b5c13d774ac2b25c2db50f80bb4a5d98614023a8f3ed61d7768862db2e341"
+    },
+    {
+      "time_s": 1.2,
+      "stage": "unload-3",
+      "fine_stage": "unload-3",
+      "support_pressure_pa": 50.0,
+      "max_node_difference_m": 2.5442797643308767e-06,
+      "maximum_difference_node": 880,
+      "coarse_position_at_maximum_m": [
+        0.016023499497027898,
+        -0.0003281304117719853,
+        0.029413596445140317
+      ],
+      "fine_position_at_maximum_m": [
+        0.016023283193282528,
+        -0.0003298281322990002,
+        0.02941171380942912
+      ],
+      "rms_node_difference_m": 7.130013439585382e-07,
+      "relative_to_coarse_peak_displacement": 0.0026550190277104873,
+      "coarse_mesh_sha256": "86f472dee4ead07161f395b657750069878bf7e0099ba0f11f245d9994feded2",
+      "fine_mesh_sha256": "67e6697ba10a6fd5b7a913b4abe927d7ca3c33da61c2126a55c3971039f0bb3a"
+    },
+    {
+      "time_s": 1.3,
+      "stage": "released",
+      "fine_stage": "released",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 1.9440942033228466e-06,
+      "maximum_difference_node": 880,
+      "coarse_position_at_maximum_m": [
+        0.016073618572242706,
+        -0.00013916826387701936,
+        0.02978914022111586
+      ],
+      "fine_position_at_maximum_m": [
+        0.01607305004721181,
+        -0.00014003795211832057,
+        0.029787497076592825
+      ],
+      "rms_node_difference_m": 7.234102745934625e-07,
+      "relative_to_coarse_peak_displacement": 0.006114560929934023,
+      "coarse_mesh_sha256": "65cc67fab2b355ddc47530a09ce207598f8a9df5fee25f49388d767b64c52929",
+      "fine_mesh_sha256": "fb24733f95be47d2d26edb91f876feff1ab9bded811f252141d8e93baafa2aac"
+    },
+    {
+      "time_s": 1.4,
+      "stage": "recover-1",
+      "fine_stage": "recover-1",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.31303683095834e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -3.546254861389977e-05,
+        -0.0027344992555988876,
+        0.025062939233694008
+      ],
+      "fine_position_at_maximum_m": [
+        -3.5387772220683176e-05,
+        -0.002736765014741812,
+        0.02506339845409713
+      ],
+      "rms_node_difference_m": 9.953129699703361e-07,
+      "relative_to_coarse_peak_displacement": 0.008270260794774392,
+      "coarse_mesh_sha256": "b73736b1257c9c2d46181e31d5e0797c7d60d7ff1591480c900a073ae11f870b",
+      "fine_mesh_sha256": "e3e528d68a97a31ee69f06cb3777982404433e2c50aa1dc77e3bdbbb2ef2fb25"
+    },
+    {
+      "time_s": 1.5,
+      "stage": "recover-2",
+      "fine_stage": "recover-2",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.8857693496009987e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -3.136064636187467e-05,
+        -0.0027654496062316227,
+        0.025058296908939473
+      ],
+      "fine_position_at_maximum_m": [
+        -3.1166750685211414e-05,
+        -0.0027683093244438243,
+        0.025058631693874126
+      ],
+      "rms_node_difference_m": 1.1775840597731666e-06,
+      "relative_to_coarse_peak_displacement": 0.01163801543266635,
+      "coarse_mesh_sha256": "732c9c78cd2ca36f971126013ee7d250c6a2759a55518bc1db60c83bc2e1e608",
+      "fine_mesh_sha256": "67cff762d4eb519ca108dd68c4450da247189e309867bb85cafc1595424ff3eb"
+    },
+    {
+      "time_s": 1.6,
+      "stage": "recover-3",
+      "fine_stage": "recover-3",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 3.088143735749206e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -2.7835830547305803e-05,
+        -0.002790910968491761,
+        0.025053846867882888
+      ],
+      "fine_position_at_maximum_m": [
+        -2.7607180677254477e-05,
+        -0.0027939850100772877,
+        0.02505403293050682
+      ],
+      "rms_node_difference_m": 1.2384158165979767e-06,
+      "relative_to_coarse_peak_displacement": 0.013944203231520872,
+      "coarse_mesh_sha256": "10c28eb3a0157a995731eecdd86e71d395c00af38c991c852d82d0ae3f33c3ed",
+      "fine_mesh_sha256": "a43c896866dd4dad8ec931d64b6028066cf68c3ccd606d1b562e97a4b108966e"
+    },
+    {
+      "time_s": 1.7,
+      "stage": "recover-4",
+      "fine_stage": "recover-4",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 3.0874881920131985e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -2.483868448642895e-05,
+        -0.002812063870749314,
+        0.025049649150120642
+      ],
+      "fine_position_at_maximum_m": [
+        -2.4585078127148003e-05,
+        -0.0028151403329968205,
+        0.02504970954209047
+      ],
+      "rms_node_difference_m": 1.2303272575563465e-06,
+      "relative_to_coarse_peak_displacement": 0.015469607614954238,
+      "coarse_mesh_sha256": "fdfc5ac0ad47901133990eee330a7426dcea90fd2a61f5e74ab3f72dfdf1dc9b",
+      "fine_mesh_sha256": "4e4a6f2c73362f91568a4d3829e99822109314884cef5d63332f6de5a59bc5ba"
+    },
+    {
+      "time_s": 1.8,
+      "stage": "recover-5",
+      "fine_stage": "recover-5",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.9759258952096713e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -2.231680160155418e-05,
+        -0.0028297956937270064,
+        0.02504575455984656
+      ],
+      "fine_position_at_maximum_m": [
+        -2.2038267004950364e-05,
+        -0.002832758285479326,
+        0.025045714515853718
+      ],
+      "rms_node_difference_m": 1.1881254961599362e-06,
+      "relative_to_coarse_peak_displacement": 0.016296785762229322,
+      "coarse_mesh_sha256": "ce2fbcff41e41a76c783f6327f0c932303ab93263c13c81f575f101c19af43ff",
+      "fine_mesh_sha256": "e5f64d02a6c6db0d64c86bc984cdc36edd7c51e3a7e51e514a89840ddf6be40b"
+    },
+    {
+      "time_s": 1.9,
+      "stage": "recover-6",
+      "fine_stage": "recover-6",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.7879607848161254e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -2.016526880609874e-05,
+        -0.002844800320620213,
+        0.025042196637069275
+      ],
+      "fine_position_at_maximum_m": [
+        -1.9896672551681912e-05,
+        -0.0028475725132761026,
+        0.025042072020583943
+      ],
+      "rms_node_difference_m": 1.114135716220379e-06,
+      "relative_to_coarse_peak_displacement": 0.01637043485730989,
+      "coarse_mesh_sha256": "0f9fca1dc59a682dd75f99c651edab4dd4350395add5727bafb5b05d001c2ebf",
+      "fine_mesh_sha256": "f3730b35bc690b3ba245a952fe36911e9e0986350a7f9252ebf6bf4ce7ba1650"
+    },
+    {
+      "time_s": 2.0,
+      "stage": "recover-7",
+      "fine_stage": "recover-7",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.599340335514201e-06,
+      "maximum_difference_node": 444,
+      "coarse_position_at_maximum_m": [
+        -1.8341034866032763e-05,
+        -0.0028575904267929093,
+        0.02503898048696247
+      ],
+      "fine_position_at_maximum_m": [
+        -1.8069380019032883e-05,
+        -0.0028601676906130882,
+        0.0250387792780533
+      ],
+      "rms_node_difference_m": 1.0447007477684687e-06,
+      "relative_to_coarse_peak_displacement": 0.016339838048812196,
+      "coarse_mesh_sha256": "04dc46fcd0861b7441e17dfd0577b49117b9ed205fb07a3bbb8c28236c37e5ae",
+      "fine_mesh_sha256": "5edcd6d831075265e010a4453896d79a9957411893ddbadcd3847f050749c7ea"
+    },
+    {
+      "time_s": 2.1,
+      "stage": "recover-8",
+      "fine_stage": "recover-8",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.3999273880179956e-06,
+      "maximum_difference_node": 460,
+      "coarse_position_at_maximum_m": [
+        -1.7780307361692266e-05,
+        -0.003168518041244576,
+        0.02503642229175948
+      ],
+      "fine_position_at_maximum_m": [
+        -1.749374457409682e-05,
+        -0.003170887886495374,
+        0.02503617456868063
+      ],
+      "rms_node_difference_m": 9.73564402415745e-07,
+      "relative_to_coarse_peak_displacement": 0.01612036915465334,
+      "coarse_mesh_sha256": "72811576a25e144f119ff568c737bd7b2a5ea6ee8f260fbdf5caddba65c1f5a8",
+      "fine_mesh_sha256": "86e9b685c4c64b08b0e69b183d8c9c8c28d662f4f8b339caf6ce9b2755452703"
+    },
+    {
+      "time_s": 2.2,
+      "stage": "recover-9",
+      "fine_stage": "recover-9",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.2032922667977706e-06,
+      "maximum_difference_node": 460,
+      "coarse_position_at_maximum_m": [
+        -1.6351140465623314e-05,
+        -0.0031780408974856436,
+        0.025033816907400756
+      ],
+      "fine_position_at_maximum_m": [
+        -1.608228906974853e-05,
+        -0.00318020981138556,
+        0.025033537572056383
+      ],
+      "rms_node_difference_m": 8.976921588614045e-07,
+      "relative_to_coarse_peak_displacement": 0.015784581286336842,
+      "coarse_mesh_sha256": "cf4e53abc76511eb69a2c634a1bc8c8c8242a61795bc245433f34ce9795f0462",
+      "fine_mesh_sha256": "042cf216fb603194ae60d24c1dcb9451767d208e0ad390a5bafc58fa2d681577"
+    },
+    {
+      "time_s": 2.3,
+      "stage": "recover-10",
+      "fine_stage": "recover-10",
+      "support_pressure_pa": 0.0,
+      "max_node_difference_m": 2.0135775301063955e-06,
+      "maximum_difference_node": 460,
+      "coarse_position_at_maximum_m": [
+        -1.5117495155786158e-05,
+        -0.003186342286548561,
+        0.02503148922425933
+      ],
+      "fine_position_at_maximum_m": [
+        -1.486928571198823e-05,
+        -0.003188319209568991,
+        0.02503119825705662
+      ],
+      "rms_node_difference_m": 8.238235097727981e-07,
+      "relative_to_coarse_peak_displacement": 0.015355333134967753,
+      "coarse_mesh_sha256": "875659e784b9969799f8f3e3a712c0b7e9ad55ab18fb0d1cd2d6c4bd5ccccc07",
+      "fine_mesh_sha256": "14397723fcfb039aad86cd6c9c4d57ad6c977b15fe4e09eb674074484fbf240b"
+    }
+  ],
+  "max_node_difference_m": 2.2253143128067773e-05
+}

@@ -1,0 +1,69 @@
+{
+  "repository": "Shervanator/Engine",
+  "repository_id": 18516055,
+  "commit": "3f9fa86ba7718e8a6ceb7d64e4b18dd610028b99",
+  "source_url": "https://github.com/Shervanator/Engine/tree/3f9fa86ba7718e8a6ceb7d64e4b18dd610028b99",
+  "readme_path": "README.md",
+  "readme_sha256": "b141b43fe1cffa981ab605802105816110654a343d3ce3a913d4d8c1dd08a3e4",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bffc99dabb89c5942c522b9b19d81c7e627de8c8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "5eaf7be5afbd2f497b2d512da6b60be6c2b6ffa8"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "2ca341ece007060a86123558f120439919519424"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "52a508da8a887aa80d66597bf34ad1c8387be7b4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "11ecc01eb63642d79dc36a8f217b85330d7a9ee4"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "b743e04edb76e46bc907203fc9df6ccc85e60591"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c2620457a70a4f6acdaf3f3b1bd97421b9145c8c"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "ae0d2ee7d7b7c6c44e73789d8de16c1644f778fe"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "4ad398a8405e63892f482f5abe0ed5cf7a55dc9b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "afd4af5b3d7a4921ea0d37d36a51e49fb97c94e0"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9e190f0d723fc0880b98c9ffba411d98e2553302"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D game engine; owned src/dependencies and CMake/build scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

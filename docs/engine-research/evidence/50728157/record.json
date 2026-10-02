@@ -1,0 +1,94 @@
+{
+  "repository": "ggez/ggez",
+  "repository_id": 50728157,
+  "commit": "9c865474504084b60204874bc028ba91c5f013b9",
+  "source_url": "https://github.com/ggez/ggez/tree/9c865474504084b60204874bc028ba91c5f013b9",
+  "readme_path": "README.md",
+  "readme_sha256": "33989f429e79386cfdb615e57c745436466a3eb2b61a68d40d6f75e09f625073",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6d275e6875b53e7ad2054899dc679cac24d84fea"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "edc5cf75fee3e67893a6884ed03dfb750619c167"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "246793a0d8cac50b1232ca3829e7f884c9a9e45b"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "02f0b7316cc08445cb74030b75d80e4e16f1ac0e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e30d5c627b42214f9b39b2b612f2ad6c249e0abf"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "14d091aacfef796409d0dccef82469d34ce624be"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "2ad290aec512f9c5025641825678761ba7331b00"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "675aab93ee17ade0d6e28957dd37266a02adede1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fe0d9118aeccb16f5ee64de9ee3713bad32198a3"
+    },
+    {
+      "path": "RELEASE_PROCEDURES.md",
+      "type": "file",
+      "sha": "8f663f08ab7759d9287424c1c1b4c4d080095ad1"
+    },
+    {
+      "path": "doc_tests",
+      "type": "dir",
+      "sha": "740fce639f4cfe35db9189201f5940dd51cca11f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "63d1097b70a32392d9b0b110c71c3be6432abfd0"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6df503423ee44dfd4ddee0979d5f0dc42091a07a"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "c695a7601119c05c6e04b811c3fc3dc17f111b02"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "924062570458dcbd5c179fb32e67f94ae86514a0"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly calls it lightweight game framework; Rust src and Cargo build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

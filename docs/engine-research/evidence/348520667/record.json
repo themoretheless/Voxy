@@ -1,0 +1,67 @@
+{
+  "repository": "tayloraswift/godot-swift",
+  "repository_id": 348520667,
+  "commit": "8ed90d1956ccb8a4104a802683bb15bba63a0a7b",
+  "source_url": "https://github.com/tayloraswift/godot-swift/tree/8ed90d1956ccb8a4104a802683bb15bba63a0a7b",
+  "readme_path": "README.md",
+  "readme_sha256": "6d9a68a93f59b55d73d219790638244e525fe40b77a40b8991cd7767edcc9331",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2c10f65f1ac9726523cb83231a41a97cb3560c84"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "37ede6691b4301a64a4f0c99c82fae5f89f2be3a"
+    },
+    {
+      "path": ".swift-version",
+      "type": "file",
+      "sha": "97827688594ffc08a5d9d9a4c66544d2b1b6cfda"
+    },
+    {
+      "path": "Package.resolved",
+      "type": "file",
+      "sha": "5c2a2220a234ead8e425933a7571bfd6dd321112"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "ac8b7933b3b2024e4e8ded9a985587575c42ef6f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "03ceaa4c1046c1b0a886a955ee9d9c4ecca200b4"
+    },
+    {
+      "path": "build",
+      "type": "file",
+      "sha": "0c0c440dac4e66ea2ca008c81f16200113ba86d4"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6830d2d27b5f192035e655f578be00b02894ae14"
+    },
+    {
+      "path": "infrastructure",
+      "type": "dir",
+      "sha": "0124d06b3692338132ab18d37f6575af9c584331"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "1e1ed9496afc1c77f8aebad0bf8687d73c75bc7d"
+    },
+    {
+      "path": "sources",
+      "type": "dir",
+      "sha": "8f67feb2b504ab9fb1d7f595537761a4ef2f7a8f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

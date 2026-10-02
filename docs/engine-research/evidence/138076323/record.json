@@ -1,0 +1,89 @@
+{
+  "repository": "InvadingOctopus/octopuskit",
+  "repository_id": 138076323,
+  "commit": "b0ca086fae4dcf574cdb99147c5a02c553d74b7a",
+  "source_url": "https://github.com/InvadingOctopus/octopuskit/tree/b0ca086fae4dcf574cdb99147c5a02c553d74b7a",
+  "readme_path": "README.md",
+  "readme_sha256": "e75950f5ba78304e2b62680ea70aad42ea552e385c779ad4a54e8ac27b81ebb8",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "27d89ced00841a08657a21208f9d23f623ae6375"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "58474c03ad01c7d615919f5cc5dc931be027892f"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "6c625e03f6bd454d6a8ada1884ba4fd6fac1f0af"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "4770312d5b64cc1e037a039daf4eb6ab8c8a2136"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "47867437d73c531f22517844d2fb410a023a8cb9"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "42073276301b89adac225beb7613ade71b18dac1"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "532280ee1f43502835dfa1f53a04c21c5aff4ac9"
+    },
+    {
+      "path": "QuickStart",
+      "type": "dir",
+      "sha": "fdc5bc7764fedd28b6e59fb27f4897c91a67fa52"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f7b37cc3a9c61d65c3dd4bee6277dcf55bb0834c"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "dd994101baec875746a73a24f8cdee5dd56b2def"
+    },
+    {
+      "path": "THANKS.md",
+      "type": "file",
+      "sha": "11641dbbe80127260996462def6b6b68c643ac3a"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "3b28b95b85d7ac3edba4ae87e747e0cd82737b29"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "1509ffe462b34bd4f0f7bd86d021260052938a4e"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "4b3a3c594c570beb9ebdc630cf8c1e2edb81d412"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ECS Swift engine with discontinued development; owned Sources/Templates and Swift package/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

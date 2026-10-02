@@ -1,0 +1,99 @@
+{
+  "repository": "RanvierMUD/ranviermud",
+  "repository_id": 3138633,
+  "commit": "b638d0cf7d19eaa8f4310041a75ed263d3135446",
+  "source_url": "https://github.com/RanvierMUD/ranviermud/tree/b638d0cf7d19eaa8f4310041a75ed263d3135446",
+  "readme_path": "README.mkd",
+  "readme_sha256": "bf904da214039b8837831467d9f5956bc2907812381239f700f102d143fbf3c1",
+  "entries": [
+    {
+      "path": ".eslintrc",
+      "type": "file",
+      "sha": "cd03fc0270f49fbe684998ede0f8a1066e8d67c7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ec61e30a1c4e8c28299aef151702598ae2e1b26e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "86d46828fd3675d99b8378539f0590f7525d4028"
+    },
+    {
+      "path": ".jshintrc",
+      "type": "file",
+      "sha": "e81b57348a172a8a7c0230a07f7d08a33795f1c5"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "c4d592e1661a5586b2e11200d258905b00d602fc"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5e0ec7363c9aa756ba59360f36a0fb57eb7e2c7e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3a543a8c89d24d9bc45408100beb08e77ec49518"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "6a7b762c3aebff7509f5054c8943c49ac1b2ca8a"
+    },
+    {
+      "path": "README.mkd",
+      "type": "file",
+      "sha": "1cfa1e50aac010a394be69f0f88831a3cf8d80f1"
+    },
+    {
+      "path": "bundles",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "ea5e70c4b039cf58ae2a16d645ace397dccaa858"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a0ca8678de9d84a74f7790c217ab39d9376c1800"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "0157077aa5fac66cc24f2b85cc58c6aadb3f66f4"
+    },
+    {
+      "path": "ranvier",
+      "type": "file",
+      "sha": "c6cac9efa1d366bac7964d27b3b4baccaf3ae3b5"
+    },
+    {
+      "path": "ranvier.json",
+      "type": "file",
+      "sha": "52ce9ae30e28ee20b10c8ae3d108a69a842ca6a3"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "59bbb956dbd1c29bcfc96a738967e48f3e41f4aa"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies extensible Node MUD engine; owned ranvier/bundles runtime and npm build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

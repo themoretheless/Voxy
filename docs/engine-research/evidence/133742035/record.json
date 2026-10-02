@@ -1,0 +1,79 @@
+{
+  "repository": "nfrechette/acl-ue4-plugin",
+  "repository_id": 133742035,
+  "commit": "81534aa11b885eb3087bd421e950d52a3ad0c67f",
+  "source_url": "https://github.com/nfrechette/acl-ue4-plugin/tree/81534aa11b885eb3087bd421e950d52a3ad0c67f",
+  "readme_path": "README.md",
+  "readme_sha256": "72d95e5dc3689a5d75263bae06ccc6c9414fc1b6707aa5f8b08e785c88a07058",
+  "entries": [
+    {
+      "path": ".all-contributorsrc",
+      "type": "file",
+      "sha": "b6b603d1fe4755cfa927371a0fb48e5c0d7eec66"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "153e002aead2aefb2d0008cb6f7eb53d06f04d1c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "71a46fb2eb03ee71e94637c0d7293ba7fc7d1426"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "665a08e2d69560d2149b1b8d9af0502a05229861"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "aa37d819d609101d756c5bbdc43a8e86c0271a2c"
+    },
+    {
+      "path": "ACLPlugin",
+      "type": "dir",
+      "sha": "a010150e7ef26b88ee28a9e4456c40c2a162f15d"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7f0bbcdc7561d9003e3185b85d71c5e66334aa8a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "48fcffad2f62af1908ecbd3e4ce1ba50ff2bf560"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "1f5025a75b86e2103c79734e4e1478c9b78d6fb8"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "cdefb6ef962858c35f618cfe318930ca69b5a020"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "56c93514db8532f83ea62a6cc1d916c051980c2c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "173b7369a9bdf574d08cd3abfcd76c224b081ee3"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "a3f47f6aaab5a6d24c9b297ac8c9357d8421f59d"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Unreal animation-compression integration plugin; ACLPlugin/Tools, not separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

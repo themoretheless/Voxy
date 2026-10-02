@@ -1,0 +1,144 @@
+{
+  "repository": "gosu/gosu",
+  "repository_id": 193464,
+  "commit": "92e2cad652ca207e09f706d08eea2392a8f9452d",
+  "source_url": "https://github.com/gosu/gosu/tree/92e2cad652ca207e09f706d08eea2392a8f9452d",
+  "readme_path": "README.md",
+  "readme_sha256": "80967329f84ca085fc61c0156425aa145156428bf82795e2f8d1935190036ef8",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "660590c9239e5c998188690566267b851e2bdd7a"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "f7d3b3f37babdb5aa04c8c80cc94a6f1500a776a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c9d3bfe1dec0e97cbc28e3abbcfe797ad35fe3da"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "da53791ab23180deaf2ec2b816366a0f68d7c8dc"
+    },
+    {
+      "path": ".yardopts",
+      "type": "file",
+      "sha": "916dfd901d9e5f18c015017b19b44d937c9cc2d4"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "12807318897b87a5248181f8878db1957256d326"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "610cc8d0b1b3f24d2b314334960b88f50806c844"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "87b1891456da1a2865e437ce57fc147facb2dbfd"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "0497aa63327bebaedce8e01032f6c48893aad685"
+    },
+    {
+      "path": "Gemfile",
+      "type": "file",
+      "sha": "9819be7bcb3cff76fc3f1344e24564b8708225f6"
+    },
+    {
+      "path": "Gemfile.lock",
+      "type": "file",
+      "sha": "f7be52f74791c6090979ad9af583af707c2d85bb"
+    },
+    {
+      "path": "Gosu.podspec",
+      "type": "file",
+      "sha": "2a76b8a0fa699b1b604fee0444282dd34f355347"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "456944795dd255c721ba97e7ab76b580075e2bef"
+    },
+    {
+      "path": "Rakefile",
+      "type": "file",
+      "sha": "f64091054e6d2c137eba4a6523166a845677829d"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "23d4ab059e684e508c7a85e0eeaafa5b3636febe"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "71e05ea2bb7cd76b503b3d37adfd7b4a7a7a1d1b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "65f5fc36b8346aeeaea664ada19f0823cf83aac8"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "41822a29f73536fced4e480d5572ab8dfcb11f3f"
+    },
+    {
+      "path": "ffi",
+      "type": "dir",
+      "sha": "20b3d48755c83d80ce386a41ec7e9f4e10ee0029"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "bb03e3fd6212facbe488a1c920770a85163ed1e0"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "c8ab4813365bb559e005ebb2467c215595cc4cac"
+    },
+    {
+      "path": "lib64",
+      "type": "dir",
+      "sha": "9b4a264f07dbd29707dc12479a977092b1cf94df"
+    },
+    {
+      "path": "rake",
+      "type": "dir",
+      "sha": "8b3988d3739631eb4b169a4c34c225eef62e24b9"
+    },
+    {
+      "path": "rdoc",
+      "type": "dir",
+      "sha": "611f9030c70ddb61bc7e7e3416237bff29f85a51"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ffed62c5a8559dad8c73da186fb58869f9b93a9d"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "c852f8e63cc620ecd47b350ff15ef6c40c480c00"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Ruby/C++ 2D game library; include/ext and CMake/Rake builds.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

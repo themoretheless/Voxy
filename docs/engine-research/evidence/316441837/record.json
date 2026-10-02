@@ -1,0 +1,324 @@
+{
+  "repository": "chermenin/REminiscence",
+  "repository_id": 316441837,
+  "commit": "2200e18c6e5eb710b05c5095a751882591c21cf8",
+  "source_url": "https://github.com/chermenin/REminiscence/tree/2200e18c6e5eb710b05c5095a751882591c21cf8",
+  "readme_path": "README.md",
+  "readme_sha256": "257301bbfeeb26655ef15256140e97e7d29c82c196db330827665d6ca2507ada",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f4362ce80c1c64d516ae78d0eb432ab02fdbd10"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "fbaf3b50d2e067183208cf6543637ea78b44e13c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "8311e621453e8c3609352618cce1d59f9f230249"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e389dd7db6cf09adb248d18b9965f4215f2042ea"
+    },
+    {
+      "path": "collision.cpp",
+      "type": "file",
+      "sha": "617bc175c3814f37c812d69b223d660dfd0e9f44"
+    },
+    {
+      "path": "cpc_player.cpp",
+      "type": "file",
+      "sha": "17a5d5e05bc17ed7460c4c0779cd0bb8fce1e914"
+    },
+    {
+      "path": "cpc_player.h",
+      "type": "file",
+      "sha": "3938ca0d19331bf185cd85218b32fbf3b127c02f"
+    },
+    {
+      "path": "cutscene.cpp",
+      "type": "file",
+      "sha": "6217cbbd476a04099b3e12d7ba24458490960c76"
+    },
+    {
+      "path": "cutscene.h",
+      "type": "file",
+      "sha": "8a66bceb332efb7aa785be7256f816851021b07b"
+    },
+    {
+      "path": "decode_mac.cpp",
+      "type": "file",
+      "sha": "8c3106d2c42d1713d44bc2ab8d4915a3553a676d"
+    },
+    {
+      "path": "decode_mac.h",
+      "type": "file",
+      "sha": "4fa900fdb0b8fe0550dd8f77472c1b9811bf9c85"
+    },
+    {
+      "path": "fb.cfg",
+      "type": "file",
+      "sha": "d67315e5bd6a594d5756474db4c7a3972d50e30e"
+    },
+    {
+      "path": "file.cpp",
+      "type": "file",
+      "sha": "bf958be52891ec9e8a894d485b16359a6d887d03"
+    },
+    {
+      "path": "file.h",
+      "type": "file",
+      "sha": "3e26646cd88c87bd3adf1c94f66fd27868e0b3a8"
+    },
+    {
+      "path": "fs.cpp",
+      "type": "file",
+      "sha": "bdbf5b3ae1951f71ee0fde367477f9867e85f1fb"
+    },
+    {
+      "path": "fs.h",
+      "type": "file",
+      "sha": "a987b34e6771f37a70dc56ed4e7dacadce5184b2"
+    },
+    {
+      "path": "game.cpp",
+      "type": "file",
+      "sha": "1a85d23c3e266beb413c084594e4e3ef78412f41"
+    },
+    {
+      "path": "game.h",
+      "type": "file",
+      "sha": "c5bb2a191573ff0bc0026f11cda87d73def19c93"
+    },
+    {
+      "path": "graphics.cpp",
+      "type": "file",
+      "sha": "23ec31a973a672002ce20ff289538b3428a0ea27"
+    },
+    {
+      "path": "graphics.h",
+      "type": "file",
+      "sha": "a836138f48a2d011c5dffb2e218b935e955e447e"
+    },
+    {
+      "path": "intern.h",
+      "type": "file",
+      "sha": "2375af78da033f1b59f578eaa96dcfa8421892d5"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "d8ec49aebaf319cf8d3a5d60060618cb1ec8fbf3"
+    },
+    {
+      "path": "menu.cpp",
+      "type": "file",
+      "sha": "4743455a3dbf2a94384c0d3bd69d1ed8960d53b8"
+    },
+    {
+      "path": "menu.h",
+      "type": "file",
+      "sha": "cd3f37a106043e0571682a1468b1ef0864c4314d"
+    },
+    {
+      "path": "mixer.cpp",
+      "type": "file",
+      "sha": "5ad03ea78f03d5f2e0228c905dd18dadc8ac4d8a"
+    },
+    {
+      "path": "mixer.h",
+      "type": "file",
+      "sha": "61ea246b27a61e5c89970e69ee289000226fe284"
+    },
+    {
+      "path": "mod_player.cpp",
+      "type": "file",
+      "sha": "24be982950415e9d46ead609817907f6845ef309"
+    },
+    {
+      "path": "mod_player.h",
+      "type": "file",
+      "sha": "a24f254dae3afb703a37950c340662de1315633d"
+    },
+    {
+      "path": "ogg_player.cpp",
+      "type": "file",
+      "sha": "8b2f4b734b1b03e75f5e6a47f7e5a5176f445ac6"
+    },
+    {
+      "path": "ogg_player.h",
+      "type": "file",
+      "sha": "5d38bcb637e30fabff00d01403a702276e7efb04"
+    },
+    {
+      "path": "piege.cpp",
+      "type": "file",
+      "sha": "2ecdfe760b07ddd705d9dc4ddaa084df97443716"
+    },
+    {
+      "path": "protection.cpp",
+      "type": "file",
+      "sha": "6a9aa6fffa0e3ca50d058b9e61534fd2f257a2a4"
+    },
+    {
+      "path": "resource.cpp",
+      "type": "file",
+      "sha": "c98227e093aac8711fd3c9398d1d60db5f4f713c"
+    },
+    {
+      "path": "resource.h",
+      "type": "file",
+      "sha": "42bdbc89e58cd9a854d354021d6ac3d84d2b9d8a"
+    },
+    {
+      "path": "resource_aba.cpp",
+      "type": "file",
+      "sha": "a930a95576765bbf51831bcd16da9f0f8abfb4fe"
+    },
+    {
+      "path": "resource_aba.h",
+      "type": "file",
+      "sha": "8a4c36ead52fd8f4fa7449ece8be8c14c8b7dc74"
+    },
+    {
+      "path": "resource_mac.cpp",
+      "type": "file",
+      "sha": "cdca14de43deb08015864ad7575018df92431f44"
+    },
+    {
+      "path": "resource_mac.h",
+      "type": "file",
+      "sha": "eabcef1265b1e47f885849655130c99faa8bd022"
+    },
+    {
+      "path": "resource_paq.cpp",
+      "type": "file",
+      "sha": "114f78fa7c63f9f7a3ac7684ffa448cc6c755a8a"
+    },
+    {
+      "path": "resource_paq.h",
+      "type": "file",
+      "sha": "fac1b90d3eea285c99c3f8e94560750bddc095f7"
+    },
+    {
+      "path": "scaler.cpp",
+      "type": "file",
+      "sha": "850943e0eb3ea07db6c5bcf8b751608754266a05"
+    },
+    {
+      "path": "scaler.h",
+      "type": "file",
+      "sha": "1a92b3834d0c136dce23ec15d17ba13624e5a3fe"
+    },
+    {
+      "path": "scalers",
+      "type": "dir",
+      "sha": "b188b5be21822dfd8b0356392f09b4e1c90fbe97"
+    },
+    {
+      "path": "screenshot.cpp",
+      "type": "file",
+      "sha": "4feb5b011204a3f1b3237ee0ee105f66dfc10be5"
+    },
+    {
+      "path": "screenshot.h",
+      "type": "file",
+      "sha": "3474681e870f7126840248ad1cbfe44928077511"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5724da86b48c931f1fd46a715730e2d9d856c5fe"
+    },
+    {
+      "path": "seq_player.cpp",
+      "type": "file",
+      "sha": "9a00da81f31bd1492e277a54d64e9e1b40a798c6"
+    },
+    {
+      "path": "seq_player.h",
+      "type": "file",
+      "sha": "797da238073b4e7c8dde683f95a7fe934c0f9dff"
+    },
+    {
+      "path": "sfx_player.cpp",
+      "type": "file",
+      "sha": "b351dd05c8499876a008dce3d44f8076f70e87e4"
+    },
+    {
+      "path": "sfx_player.h",
+      "type": "file",
+      "sha": "1bc8bced44069c7f448d7af850b0b459fa817bc7"
+    },
+    {
+      "path": "staticres.cpp",
+      "type": "file",
+      "sha": "1265ec2022fc53d78a6d5a4a1911730fc62c7f23"
+    },
+    {
+      "path": "staticres_controllers.cpp",
+      "type": "file",
+      "sha": "4a074aa01be4b6275c82c450d26201fb295c412a"
+    },
+    {
+      "path": "stb_vorbis.c",
+      "type": "file",
+      "sha": "3e5c2504c08f76b9d04e4adfbce80818631e835e"
+    },
+    {
+      "path": "systemstub.h",
+      "type": "file",
+      "sha": "07608b8aed7fe02cfc602040c93bb4e4cb30ea9f"
+    },
+    {
+      "path": "systemstub_sdl.cpp",
+      "type": "file",
+      "sha": "4a4ad587891a318bdfa0d0abfcc6c285582bed7d"
+    },
+    {
+      "path": "unpack.cpp",
+      "type": "file",
+      "sha": "d7e22fb65770d145085cf71ba4350ef2d7311a08"
+    },
+    {
+      "path": "unpack.h",
+      "type": "file",
+      "sha": "5f83bf95e16fc89bdd805905b0d2b04e347ee4b7"
+    },
+    {
+      "path": "util.cpp",
+      "type": "file",
+      "sha": "66455a126f57780d2e111792628d636f9c2a7d73"
+    },
+    {
+      "path": "util.h",
+      "type": "file",
+      "sha": "90563d93086b31f90a0f1a8cfd2b6ac15f90e4f5"
+    },
+    {
+      "path": "video.cpp",
+      "type": "file",
+      "sha": "c49a33b6270d29c1b9fa9270c3958a918822984b"
+    },
+    {
+      "path": "video.h",
+      "type": "file",
+      "sha": "a802cb8cbf3270080c552a631b9b6cf9b70875de"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "REinforced explicitly enhances REminiscence 0.4.6; Flashback runtime with collision, cutscene, audio and original-data loading sources.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,154 @@
+{
+  "repository": "Silverlan/pragma",
+  "repository_id": 170496679,
+  "commit": "5f6ba22452dae3c03bea7c21316d8bcfe910b3bc",
+  "source_url": "https://github.com/Silverlan/pragma/tree/5f6ba22452dae3c03bea7c21316d8bcfe910b3bc",
+  "readme_path": "README.md",
+  "readme_sha256": "036485c4fec49b093f5f2cfa09778479b83988d5de047f20dee84aa9f9886d4b",
+  "entries": [
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "91ab61cf1c322b4079ea0addd50d8f24f12be1b0"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c8ae8e79054a1411fb0d6e503ff609ff0e8cd42b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dc684080c7be6f733e0495a608695e655bcfccb9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "8a0dd1be6f171a7a9e01a0a2e3cf7564df515b3b"
+    },
+    {
+      "path": "Addons.cmake",
+      "type": "file",
+      "sha": "eefcd2b59da6b76c4ef311f67b7943edccc377b4"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c34ea8a394e226f7cb524c9e1080c17065d15b66"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "b90f97e2413efe274fa14913eb84bf7b39ffff57"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "64bca3cf5c7cf68bb32be8e78db8bc3dd3648e59"
+    },
+    {
+      "path": "Install.cmake",
+      "type": "file",
+      "sha": "b0bfb408e28aeb92e54522e0ad089cb5bde029ce"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d9d9942ce1016e253d199ac52c4e19fd16835dfc"
+    },
+    {
+      "path": "PrecompiledHeader.cmake",
+      "type": "file",
+      "sha": "158b7c7ec8a8ab0275f1e41801a5d34ef742515a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "042b805df95047e22869b31a98ed88d7be9bd240"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "bdaa52ef3585b35ba6e654d090f335088f653ce2"
+    },
+    {
+      "path": "build.bat",
+      "type": "file",
+      "sha": "ee8e58ecea592d6627de7fd5935907df24adc376"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "970ab5e03d99e5ec0b0eebb74fbdd3c572e0e053"
+    },
+    {
+      "path": "build_full.bat",
+      "type": "file",
+      "sha": "8a7a90421cdf114e3bae001324a55cf6b904b14a"
+    },
+    {
+      "path": "build_full.sh",
+      "type": "file",
+      "sha": "9b06927cf0f683ab0307feb8118db8d9ffe0ec81"
+    },
+    {
+      "path": "build_scripts",
+      "type": "dir",
+      "sha": "fb7086a71da2f4b7d86b4fbb75e085f87dc972d1"
+    },
+    {
+      "path": "build_tools",
+      "type": "dir",
+      "sha": "14956bb826c3291a8a0494876a12fb673ebde16b"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "83731be57b1b5b4c3913ba347e04bcf7f35f359e"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "5027e19fc4bf00377c48cec6dcc1f451a042853b"
+    },
+    {
+      "path": "external_libs",
+      "type": "dir",
+      "sha": "56f3d706ac2861ae5d9abf1e3dbd96cba42c44a2"
+    },
+    {
+      "path": "github_actions",
+      "type": "dir",
+      "sha": "b1e5d483d422144025405196d83bb9a2d4f27e42"
+    },
+    {
+      "path": "io.github.silverlan.pfm.yml.in",
+      "type": "file",
+      "sha": "0b0653f3c7e35fd5eff71e9724a4720f3157a8ba"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "6d2c75d43a7ac22c50fef83a833b7f3707689f7b"
+    },
+    {
+      "path": "third_party_libs",
+      "type": "dir",
+      "sha": "db717f60cdd32a950cca4cc630cbd3419fbbc8c4"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "806f7944e8b4b8a3b2ba608f4fcff92fe8d8ec90"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine core plus filmmaker tooling; owned runtime/assets and CMake/platform build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

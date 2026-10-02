@@ -1,0 +1,102 @@
+{
+  "repository": "fztcjjl/metoo",
+  "repository_id": 36173956,
+  "commit": "d17e014d748bdf93035e73132758eae4b374aeed",
+  "source_url": "https://github.com/fztcjjl/metoo/tree/d17e014d748bdf93035e73132758eae4b374aeed",
+  "readme_path": "README.md",
+  "readme_sha256": "14ddb6814208b07c4d2f81574b12b2735cc9b9378cdd0161421d5a6d9f42c90b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9967818d828c361ac21c663f9881c69227ecc0c0"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0cb5d3a94390b4bd06a171fb52bc6ae84813a5ad"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "c5345bcf88b32c7993a4ecf42dd2ac456c39bea8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c69d2527aae6046d0fe4b8dd97f6168c9e94dfab"
+    },
+    {
+      "path": "client.lua",
+      "type": "file",
+      "sha": "f199d2d869a28da0e23dedcf2c722414fbe2f399"
+    },
+    {
+      "path": "cluster",
+      "type": "dir",
+      "sha": "f629f29eac8a2e87f5f81ca8685e78e28a659c18"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "9b4b6fdc73ff03d43cba8ab88a88362c06fd840b"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "71f9c4e4c677f8c7940f8fd0e62dcabb7a25e7a7"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "8df7ec7b9352e8b157e9f93003e005ed63b2085c"
+    },
+    {
+      "path": "global",
+      "type": "dir",
+      "sha": "c10daaa026ae33fc52f4384aa08fd94361abfa8a"
+    },
+    {
+      "path": "login",
+      "type": "dir",
+      "sha": "4d7839b472a8a6d749215b3d995e5de02d5b35a2"
+    },
+    {
+      "path": "lualib-src",
+      "type": "dir",
+      "sha": "ff350e057a63bfd912a51002da154019fd6e209c"
+    },
+    {
+      "path": "lualib",
+      "type": "dir",
+      "sha": "47124043e7a67e7ebe9f7b148991c00ee85b3082"
+    },
+    {
+      "path": "protocol",
+      "type": "dir",
+      "sha": "05188879251182a3e43aff4824d71de6e1b79ebd"
+    },
+    {
+      "path": "redis",
+      "type": "dir",
+      "sha": "43c6539d979b0272e520594b325ffbc582028406"
+    },
+    {
+      "path": "skynet",
+      "type": "file",
+      "sha": "26cbebfcfd0051bdb17757a96df7509f96fefeab"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "246d5e316e2896e9b86f2a2807ab73839fbd51a8"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "498f788cc36644effb00f375dc4bd1c29029d133"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

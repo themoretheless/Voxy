@@ -1,0 +1,24 @@
+{
+  "initialCrossings": 70,
+  "finalCrossings": 70,
+  "steps": [],
+  "audit": {
+    "vertices": 44880,
+    "triangles": 89756,
+    "area_m2": 1.6831173111787014,
+    "max_edge_m": 0.03577672886317052,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "verticesMoved": false,
+  "scope": "Static nonadjacent-face audit; new triangulation requires anatomical review and is not runtime geometry.",
+  "elapsedSeconds": 7.410409750002145,
+  "source": "assets/characters/blender-male/body-combined-repair-candidate.obj",
+  "sourceSha256": "bbff1b818498f0c0d680acd5578dae0fe37785597b172144c6e656231953a127",
+  "candidateSha256": "bbff1b818498f0c0d680acd5578dae0fe37785597b172144c6e656231953a127",
+  "exportReloadVerified": true,
+  "adopted": false
+}

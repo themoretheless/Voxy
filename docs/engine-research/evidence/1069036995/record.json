@@ -1,0 +1,97 @@
+{
+  "repository": "SalarAlo/origo",
+  "repository_id": 1069036995,
+  "commit": "d976ea0aa92c64fdf4954aa157c0eda8a26694a3",
+  "source_url": "https://github.com/SalarAlo/origo/tree/d976ea0aa92c64fdf4954aa157c0eda8a26694a3",
+  "readme_path": "README.md",
+  "readme_sha256": "75d8cca60b003d1a89e0e5fcc7d809894a4b6bf32be162dbbe2808db2647a09f",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "7e263d1b359772a71cbbc082e1f4e4679acdfc8d"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "64d5516d5f37effab96673eb70e95638da95e9f5"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "bf80967ae14d2e2ad051e5a55883f4ad88cd4510"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "51540c355210352f51a40e3f5bf6bd8297376ffe"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "133cfc23061e78a78bf011a257d32644f1117bef"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "abf16a63b1c5437d242ef393b884c45da11cefd7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6f828106bc7af5414a220e6ae33bb69e06416cc3"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "b1588477bbbaedbdf63fb82162dac0cf910a8d78"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "68dc8c7926733feef0037083ed1007116eda7972"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "c1a321614feb8dfe7ebcdff258820baf8e081a4b"
+    },
+    {
+      "path": "origo",
+      "type": "dir",
+      "sha": "05bcd24681ba5b63c87fe8361d1c1334ce172058"
+    },
+    {
+      "path": "pch.cpp",
+      "type": "file",
+      "sha": "1d9f38c57d63f197d552a5283424f75f885bb1c2"
+    },
+    {
+      "path": "pch.h",
+      "type": "file",
+      "sha": "a896451ea067f0f12824b947eba4eedfa31205eb"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "f573ddd790b497beb3f374e2ccf861e6cd9b671e"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "b4fbea9fa970930fb17af5e493946ff2aae93178"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "cd40f45007a549caea204cb9cd4c7d39bafb8c06"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "7a4dc1da3a16d3c6f35e9ffe54b93691ac5d4b64"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

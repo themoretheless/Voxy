@@ -1,0 +1,72 @@
+{
+  "repository": "AmelieHeinrich/Termina",
+  "repository_id": 1178726111,
+  "commit": "c3b9efec9481fd2c76e5c5d0a477859de6279ad0",
+  "source_url": "https://github.com/AmelieHeinrich/Termina/tree/c3b9efec9481fd2c76e5c5d0a477859de6279ad0",
+  "readme_path": "README.md",
+  "readme_sha256": "c55d4d3038f6608f1f4ae34b9d1b3e809d283b8e6262d1daba94973e3a83d02d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "328881b86888cef7a5e97e28ecd65f92702aca18"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fe05aea2d042d067825f24f6151425a0a551e5cc"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "d8bc5d20cb11b9c85cb61beafdd6e1a2d3657e9b"
+    },
+    {
+      "path": "Binaries",
+      "type": "dir",
+      "sha": "bf50a53e5ccc01de2e9d09d9d3cb19cec142d359"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "636067414960af2116c94c11a53a6ad9a9fd86d2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2e24959f85098d5661b24d5940b4f9162494aa62"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7de0017b4795ace89b36fb396f50aad107d8d42d"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "963ad69888004d2578be01e5be0bc3c9a38aec87"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "6c3a1369213e6d1a1b3734a6ae16d605ccbd1b67"
+    },
+    {
+      "path": "__TERMINA__",
+      "type": "dir",
+      "sha": "9d8ada4d8253bb41d145f25906122d21e3b87448"
+    },
+    {
+      "path": "imgui.ini",
+      "type": "file",
+      "sha": "7cb5aaf2819222375b10726567ebba2ed4c0e66c"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "4661e3a5ce10eb3e04b089e8c11cf0533e11aab8"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

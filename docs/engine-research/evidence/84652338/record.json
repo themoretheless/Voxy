@@ -1,0 +1,94 @@
+{
+  "repository": "polymonster/pmtech",
+  "repository_id": 84652338,
+  "commit": "1c4d6810836f6da2b8d9f4955aead7b9048e0b83",
+  "source_url": "https://github.com/polymonster/pmtech/tree/1c4d6810836f6da2b8d9f4955aead7b9048e0b83",
+  "readme_path": "readme.md",
+  "readme_sha256": "684f24b56effc3f4fe413b09ef12efe7e47cc0ac3c9640f258fc8f03c251b56e",
+  "entries": [
+    {
+      "path": ".ci",
+      "type": "dir",
+      "sha": "c561ef49b58d90961e7576995cb50208c684c8a5"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "50262a4a5b8f39090f435abfd2047c15c9574f08"
+    },
+    {
+      "path": ".format-all.sh",
+      "type": "file",
+      "sha": "4f167c23f5c7101b5fc8d92440d3b3955637bd7e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ca7b3c5f992c18adf75b299a4282c11b74a3a449"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "813215213e0223e4eb486a5c426560a1ea295f1f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f13d6cb09d9295d942dbad8ebcd453a943ad098"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d9be836bf859fa9b2fc38fc6629efec0bd2acf2f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "0da3d8cc5e6d13ba378fef7f560854027f81c051"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "4571743562563bffe58c3870c981607e4ce704c9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a993791d3817d1d31f5a09a0f140a842f95c80ec"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "ce305ca6d165e90dfa9b7efb6af42448648a8a0e"
+    },
+    {
+      "path": "pmbuild",
+      "type": "file",
+      "sha": "912bf0760509e9277da84172ccaf869764ad3688"
+    },
+    {
+      "path": "pmbuild.cmd",
+      "type": "file",
+      "sha": "506fda819f57e7021387c87ef6769c083c0f44f9"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "9fc89d30ca279dabd22c66543b4f3ab347a4c23f"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "ee4f2769f20a6cec8a77e0bc445daab849b68eca"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "363545f31c92d9c3e6a89d665e1248c758b964ab"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies data-oriented engine; owned core plus tools/examples and pmbuild infrastructure. Runtime/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

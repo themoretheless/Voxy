@@ -1,0 +1,23 @@
+{
+  "scope": "Static nonadjacent-face classification only, no equilibrium or CCD certification",
+  "states": [
+    {
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/loaded-unconverged.obj",
+      "sha256": "d271913b47c555de006cb4d7e34d283ad120022c55cc380653db7a05f3c087bf",
+      "classification_counts": {},
+      "limit_reached": false,
+      "narrowphase_pairs": 4328,
+      "vertices": 896,
+      "triangles": 1152
+    },
+    {
+      "source": "/tmp/voxy-supported-wall-primitive-200-resume/loaded-unconverged.obj",
+      "sha256": "8b78b2aca5b338f2852229c71ea5039020319ecd73256f36018cfd04b4b52f5d",
+      "classification_counts": {},
+      "limit_reached": false,
+      "narrowphase_pairs": 6333,
+      "vertices": 896,
+      "triangles": 1152
+    }
+  ]
+}

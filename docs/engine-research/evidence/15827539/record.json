@@ -1,0 +1,67 @@
+{
+  "repository": "Circular-Studios/Dash",
+  "repository_id": 15827539,
+  "commit": "b7d589ad4ca8993445c136b6a4ae170932bb7962",
+  "source_url": "https://github.com/Circular-Studios/Dash/tree/b7d589ad4ca8993445c136b6a4ae170932bb7962",
+  "readme_path": "README.md",
+  "readme_sha256": "4a335bed13a3653dc97d2f50f93aa21c02bc329ac3eabd2ce576c22456d34cdb",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "49c6f86fe655e0303e8b8a783f757c18fe3c6d30"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "0e7f0465ab1a5e8431bd08b4d2af3ffbcdebf485"
+    },
+    {
+      "path": ".travis",
+      "type": "dir",
+      "sha": "4bf7bd7c729fd93c0cfe185fb684ecfd9029f3ee"
+    },
+    {
+      "path": "COMMITTERS.md",
+      "type": "file",
+      "sha": "a8ec6fcba24086fb10db774ebaf8a8e5d6ec8898"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f8040c799b509ff1cdf3717544873216b2961ee3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "42a198347e3af20fc6ef8a718e504f6c2123becb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3c91c0527022852c2885c9740dd24c4166426a0a"
+    },
+    {
+      "path": "dub.json",
+      "type": "file",
+      "sha": "c18c336277f62a639500f76331868e9327f66d61"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "549a347b72e68865b570f1922e076393cab529b0"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "b4e8a6ed1e68174acf224c6a3510763976cecb31"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "d338607798201ef31ae02aed6748d53c3d4a2b2e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

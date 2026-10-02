@@ -1,0 +1,124 @@
+{
+  "repository": "urho3d/urho3d",
+  "repository_id": 13266601,
+  "commit": "e0ce107356b255bf2e24d94a41d00b512b9ce633",
+  "source_url": "https://github.com/urho3d/urho3d/tree/e0ce107356b255bf2e24d94a41d00b512b9ce633",
+  "readme_path": "README.md",
+  "readme_sha256": "3cd731dd8a2e232e32f5df38a2cc1e6561d67cbcb0110f546ba454c09b93a015",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "7731e6db60df520ee354eaa2dd40eac54da99046"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "b87baa24b02907a7c431be4d4e0597142d1dcf42"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ccecff54ef2891ccadfee23568dc0b3357283570"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ed80f68c3438d936939dbbd8d66c50dc486f91f7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d0dc6d7d240f4f9541d7d2c58b3431d900aee675"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c1b57dd30fb4b833d2cf51f52ac5a7546bb8300c"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "f43bd91343692df6d5f98299c30ebb1cbb96e5d2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e34ac705bfecb58f87fd6c360a20a0d367911d47"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "aa399bf4fca9434caae5c4a14a498b58561717e6"
+    },
+    {
+      "path": "SourceAssets",
+      "type": "dir",
+      "sha": "e9c62066aa11793a1393f97eb686bbb8b29c6d7e"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "36ab70d296be7fbcea5f753276437d7f7ec149df"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "b30d7a297caa1754d4aec3a71d44b51c45bf09ea"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "59dfcf7ad96fa9e3569508a34febbc760783fc11"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "28fa71fd898293f542414c42b23425e4f10dc77c"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "aa53e5b6a841fc5f9c5099ad358d871ec592d100"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "8027c9814ba764c8065aade6d7456909ffecd54f"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "a69d9cb6c20655813e44515156e7253a2a239138"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f127cfd49d4024c3e1e0d08ba56399221b4fb25d"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "3fadef45a4baf280ba130102065319e45d618a8a"
+    },
+    {
+      "path": "rakefile",
+      "type": "file",
+      "sha": "26ce4fec2a17d5897c3be4194fc1b7260f7cc600"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "1c0a187c3a051ea010f364c49ff9ab753f9805b3"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "6f4767fe92b52963351e80f1724452f28b39a71a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 2D/3D engine; Source, CMake and Android Gradle build roots.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

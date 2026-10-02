@@ -1,0 +1,92 @@
+<h3 align="center">Saturn</h3>
+
+<p align=center>
+<img src="./Saturn-Editor/content/Icons/SaturnLogov1.png" alt="Saturn Logo" width="auto" height="256">
+</p>
+
+<p align=center>
+    <a href="https://github.com/BEASTSM96/Saturn-Engine/blob/vulkan/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green.svg"></a>
+    <a href="https://img.shields.io/github/repo-size/BEASTSM96/Saturn-Engine"><img alt="Repo Size" src="https://img.shields.io/github/repo-size/BEASTSM96/Saturn-Engine"></a>
+    <a href="https://trello.com/b/baqP3fvB/saturn-engine"><img alt="Trello" src="https://img.shields.io/badge/Trello-saturn--engine-blue"></a>
+    <a href="https://app.codacy.com/gh/BEASTSM96/Saturn-Engine"><img alt="Codacy" src="https://app.codacy.com/project/badge/Grade/e794ca79348e47b195785a39efcc6261"></a>
+</p>
+
+<p align=center>
+    Saturn is primarily an early-stage 3D game engine.
+    <br>
+</p>
+
+## Platforms
+
+| Platform | Supported | Architecture | Build Status | Stability |
+| -------- | --------- | ------------ | ------------ | --------- |
+| Windows 10+ | ✅ | x86_64 & AArch64 |     <a href="https://github.com/BEASTSM96/Saturn-Engine/actions/workflows/Windows.yml"><img alt="Repo Size" src="https://github.com/BEASTSM96/Saturn-Engine/actions/workflows/Windows.yml/badge.svg"></a> | Very stable
+| Linux | 🕗 *[Progress](https://trello.com/c/o43wueQO/9-preliminary-linux-support)* | x86_64 | No CI yet. | N/A
+| macOS 15+ (Sequoia) | ✅ | AArch64 (Apple M-Series) | <a href="https://github.com/BEASTSM96/Saturn-Engine/actions/workflows/MacOS-Arm.yml"><img alt="macOS CI" src="https://github.com/BEASTSM96/Saturn-Engine/actions/workflows/MacOS-Arm.yml/badge.svg"></a> | Unstable
+
+*Windows ARM builds are only available on Windows 11*
+
+## Features
+
+- Renderer
+  - PBR Rendering
+  - SSAO
+  - GTAO
+  - SMAA
+  - Bloom *[(done the proper way)](https://www.iryoku.com/next-generation-post-processing-in-call-of-duty-advanced-warfare/)*
+  - Shadow Mapping
+  - Forward+
+  - Skeletal Animation
+  - Font rendering, Screenspace/Worldspace
+  - Normal Mapping
+  - Instanced Rendering
+
+- Editor
+  - Node Editors for Materials, Sounds, Animation Graphs and Behaviour Trees.
+  - Undo/Redo tracking
+  - Asset Browser
+  - World outliner panel
+  - Many built-in Asset Viewers
+  - Autosaves
+  - Project Browser
+  - Hot code reloading
+
+- Engine
+  - AI Pathfinding and Navmesh generation using [Recast](https://github.com/recastnavigation/recastnavigation/tree/main)
+  - Behaviour Trees (Node Editor and Custom Tasks via C++)
+  - C++ Scripting, using an Unreal-like `UClass` and `UObject` reflection system with a Custom Build Tool, with support for SProperties. 
+  - Physics System via [JoltPhysics](https://github.com/jrouwe/JoltPhysics)
+  - Distribution i.e. shipping the game as a standalone executable via our Asset Bundle system
+  - Audio System via [MiniAudio](https://miniaud.io/)
+  - Game UI system (called Alura)
+  - Job system
+  - ECS via [EnTT](https://github.com/skypjack/entt)
+  - Keybindings
+  - Online subsystem (Steamworks API)
+  - Texture streaming
+
+## Roadmap
+
+For upcoming features and a general status of Saturn it is best to view the [Trello](https://trello.com/b/baqP3fvB/saturn-engine)
+
+## Getting Started & Prerequisites
+
+Before anything please make sure you have the [Vulkan SDK](https://vulkan.lunarg.com/sdk/home) installed.
+If you do not have the Vulkan SDK the project will **not** build.
+Saturn uses vulkan version 1.2, however any newer version should "just work". When installing if there's an option about debug binaries make sure to tick that.
+
+If you are on macOS or Linux you should check if your system has the .NET SDK installed, if you do not, you can download it from [here](https://dotnet.microsoft.com/en-us/download/dotnet/10.0).
+
+Now, start by cloning the repository with `git clone --recursive https://github.com/0xsmft/Saturn-Engine`.
+
+If the repository was previously cloned non-recursively then use `git submodule update --init` to clone the necessary submodules.
+
+Make sure to check that you are on the branch `vulkan`. If not you can run `git checkout vulkan`.
+
+## Building
+
+See [BUILDING.md](/BUILDING.md)
+
+## License
+
+This project is licensed under the MIT License, for more information check the [LICENSE](https://github.com/BEASTSM96/Saturn-Engine/blob/vulkan/LICENSE) file.

@@ -1,0 +1,8 @@
+{
+  "nipple_type": "projecting",
+  "nipple_radius_mm": 4,
+  "nipple_projection_mm": 2,
+  "nipple_cold_response": 1,
+  "areola_radius_mm": 10,
+  "body_model": "male"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "BlindMindStudios/StarRuler2-Source",
+  "repository_id": 141283339,
+  "commit": "beec9bff697ffbebafaeb66d0cba1856a02cb6db",
+  "source_url": "https://github.com/BlindMindStudios/StarRuler2-Source/tree/beec9bff697ffbebafaeb66d0cba1856a02cb6db",
+  "readme_path": "README.md",
+  "readme_sha256": "4e8c6fc6bc9faeac3143a7176e84ed705835aad9b166737b9dede18800cdace3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8674ac84500e2f7e1e87d2ade83338bffe52b76b"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "5b94326763b5774fd3464c6950953bda8588eb0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fbf3c35eaf9a4b464b77f3f995b41883f9ac238e"
+    },
+    {
+      "path": "Star Ruler 2.exe",
+      "type": "file",
+      "sha": "c1ef6498389ede1a62389eebb3d308bb940bf12d"
+    },
+    {
+      "path": "StarRuler2.sh",
+      "type": "file",
+      "sha": "a94968bc4b64d049cd522d5f0dbae02c9a19d5dc"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "bdc8695b60a4565fc8063291053d880045c1d59e"
+    },
+    {
+      "path": "credits.txt",
+      "type": "file",
+      "sha": "21b29fb8edf9509954ecdc577bad56be72e2a0e6"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "efd9110ea7455502e88760d13d32f0004b9e573d"
+    },
+    {
+      "path": "locales",
+      "type": "dir",
+      "sha": "f595883e1ed4abc2cf5351c056f5b55b1ec24add"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "f4644b5ae302cf7d9687db3fcdfc9f92a9bbb882"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "380074d352bd94c5048126570c808c45ce92ef32"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5747763e0ee69bf17a2d7ac3bd333fc9182539f8"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "2e1697fa0a9b5e1bb3a232aadd82e9eacb39189f"
+    },
+    {
+      "path": "sr2.icns",
+      "type": "file",
+      "sha": "dce3269e3c0509384a3f1c796142e91623a49188"
+    },
+    {
+      "path": "sr2.ico",
+      "type": "file",
+      "sha": "ec378087bd8a426928470e22565eafb8c0f26781"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes released game including engine implementation; source/scripts/data and native launch/build distribution.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

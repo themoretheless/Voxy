@@ -1,0 +1,54 @@
+{
+  "repository": "bijington/orbit",
+  "repository_id": 378910495,
+  "commit": "7de8f9ba83d9f5a35fd2c985b3a72feaa8905926",
+  "source_url": "https://github.com/bijington/orbit/tree/7de8f9ba83d9f5a35fd2c985b3a72feaa8905926",
+  "readme_path": "readme.md",
+  "readme_sha256": "7a599dadd437cfcc6e34477a51496ff0c1454410747508d2ccf347c8bd818c5a",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "bdda97707e90b2bc7ee37e05f508365dfcead834"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "741689c8b228556875433d2a0ba261a68a9aca0b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a72f3ddc51b9d2431412fae820a6c7a9610a8c8f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "da0be6e91c407810ca98439027a446d612be39b2"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "c76ceaef19a4fa46c5d44670eb9f590e6b2feb7b"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "4060a848091d918f62623a60f998836a9a9866dc"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "d245c4a83d880a5feb014673fc6c4b6c4dbf6925"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "80e6f1c9eeb9520e40c0ee2aac7f4c896167eaf9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies game engine over MAUI graphics backend; owned engine/games and .NET build tooling.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

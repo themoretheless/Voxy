@@ -1,0 +1,99 @@
+{
+  "repository": "Hykudoru/Pescado-3D-Engine",
+  "repository_id": 644541844,
+  "commit": "6bf2e8ef759922fcf841b7b097798f41aa45dd93",
+  "source_url": "https://github.com/Hykudoru/Pescado-3D-Engine/tree/6bf2e8ef759922fcf841b7b097798f41aa45dd93",
+  "readme_path": "README.md",
+  "readme_sha256": "c1824d2abaae8fd42fa02f7de503e558ecb5b7929c88a614e40150558da5ee3b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8cd5ebb54191b21b12b5f024712d121a125c6d7f"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "f33a90947508c1a44ce4d2597b8ab70de49eb97c"
+    },
+    {
+      "path": "3D Engine.sln",
+      "type": "file",
+      "sha": "d7236f277be257711e4ca6d52cb2f910a3b6b5cc"
+    },
+    {
+      "path": "3D Engine",
+      "type": "dir",
+      "sha": "481961ac2fb6718a1ce18785cd352cd06a149e60"
+    },
+    {
+      "path": "3D Models",
+      "type": "dir",
+      "sha": "69475a2e3d97c4204d13d5411233da9000cc0fdc"
+    },
+    {
+      "path": "4x4DotProduct-optimization.png",
+      "type": "file",
+      "sha": "6899daa7a4d91fbe2bcb7aaa1577de7b75d1eae5"
+    },
+    {
+      "path": "Debug",
+      "type": "dir",
+      "sha": "e25fd4d264af537eb3408a5fbd9241cffa71e32b"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "76aea77524319db7444993fbabe3a180f7d9c538"
+    },
+    {
+      "path": "GUI_Preview_1.0.gif",
+      "type": "file",
+      "sha": "9df4742b6fb5ebf073c6294a2a08af0a1f995530"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "08141b57d3f85e9ae397b0514c2abd404fca2e4d"
+    },
+    {
+      "path": "Release",
+      "type": "dir",
+      "sha": "e6e501af5dd6acf9a0affc3abbc5425da6d55bcf"
+    },
+    {
+      "path": "TRS-optimization.png",
+      "type": "file",
+      "sha": "c53bc2fd3d89f539b11991b815b8ef6e91fa66b7"
+    },
+    {
+      "path": "UpgradeLog.htm",
+      "type": "file",
+      "sha": "42961dc380b92e74d694471711cfe7c2a24520b1"
+    },
+    {
+      "path": "imgui",
+      "type": "dir",
+      "sha": "5bbc010c277183857d90f07e54a558a5765ec144"
+    },
+    {
+      "path": "x64",
+      "type": "dir",
+      "sha": "b4298a8790cf2485683d8227ff36acb32a26796d"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Graphics/physics educational implementation focused on meshes/cameras/projection; reusable game runtime lifecycle/assets not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,124 @@
+{
+  "repository": "mirkosertic/GameComposer",
+  "repository_id": 13907695,
+  "commit": "95985edbf15f477e1e2fe2a3e29fe77d24c4893f",
+  "source_url": "https://github.com/mirkosertic/GameComposer/tree/95985edbf15f477e1e2fe2a3e29fe77d24c4893f",
+  "readme_path": "README.md",
+  "readme_sha256": "6ba2b5b2a5c8bb0b0b90f2f1833c757a6114e67dc2e7da4689ba71d0821464d1",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1c4992192d40f8485c325114642a28ab7e15fac4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "015faac6399a08cd1545d1aaf423b83bce2994d9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "88222c6be7c3293a0335ea57eee39871b0c9c58f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0b22b3ed48d85115424177a843f7e078b49221a2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "308ea0f946c76f6bf9dce3f02c5ba26a2dc2a2bf"
+    },
+    {
+      "path": "gamecomposer",
+      "type": "dir",
+      "sha": "b3beba8cb87006b76383c6f06ca05c67e342dad2"
+    },
+    {
+      "path": "gameengine-androidrenderer",
+      "type": "dir",
+      "sha": "f0c3f3b0407bb7b9d1d601ed17b809809e5c6e61"
+    },
+    {
+      "path": "gameengine-apt",
+      "type": "dir",
+      "sha": "c5ad3caacbf374e693476b55c46db9a5a027c0c1"
+    },
+    {
+      "path": "gameengine-bytecoderrenderer",
+      "type": "dir",
+      "sha": "74f9cc7437f021d8d57b51e5c6a6dd6393a057bc"
+    },
+    {
+      "path": "gameengine-cordovarenderer",
+      "type": "dir",
+      "sha": "d7736e3675e14ddfa745c5ff798617aae85e6d94"
+    },
+    {
+      "path": "gameengine-dragomerenderer",
+      "type": "dir",
+      "sha": "849f9ee431126a95fff4667b1c7c463755d0bdc1"
+    },
+    {
+      "path": "gameengine-editor",
+      "type": "dir",
+      "sha": "3788c905eb542002cefd29e4276fcb48a2418005"
+    },
+    {
+      "path": "gameengine-fxrenderer",
+      "type": "dir",
+      "sha": "8fa09874a429d4f8722f70b5f8d42b4aa1ec7912"
+    },
+    {
+      "path": "gameengine-gwtrenderer",
+      "type": "dir",
+      "sha": "fca82a616fc79713f8ba077cbdcf91877946774d"
+    },
+    {
+      "path": "gameengine-jbox2d",
+      "type": "dir",
+      "sha": "7331dfa3781ee03cba219e73e3d6df9c155efcf0"
+    },
+    {
+      "path": "gameengine-lua",
+      "type": "dir",
+      "sha": "61cf05e263aa046ac40b0837ab14588bb0cd8dd7"
+    },
+    {
+      "path": "gameengine-teavmcommon",
+      "type": "dir",
+      "sha": "cc87594c1fbf000614fb8784ad6432921fb2dea3"
+    },
+    {
+      "path": "gameengine-teavmrenderer",
+      "type": "dir",
+      "sha": "5bafb2353115b2e4c81750ce99aec985e1a6e5b9"
+    },
+    {
+      "path": "gameengine-tools",
+      "type": "dir",
+      "sha": "a2fafc12012073075c0d08c30464eac91424e1a4"
+    },
+    {
+      "path": "gameengine",
+      "type": "dir",
+      "sha": "304033cafde3af5868f02458a73b938cfbcb0cfb"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "0840743787f104c6f0a3a49cad7079e9b8cf6a36"
+    },
+    {
+      "path": "repository",
+      "type": "dir",
+      "sha": "50ec96ac34bf22f2d31da3bcd0080e6f3d604a8f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java game authoring and runtime environment with separate presentation backends, physics and scripting modules; architecture merits unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

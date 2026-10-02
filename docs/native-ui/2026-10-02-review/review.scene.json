@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "model",
+      "parent": null,
+      "name": "model",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "editor.model.v1": "quad.obj"
+      }
+    },
+    {
+      "id": "button0",
+      "parent": null,
+      "name": "button0",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "game.ui-element.v1": {
+          "origin": [
+            0.3,
+            0.25
+          ],
+          "size": [
+            0.4,
+            0.12
+          ],
+          "color": [
+            0.15,
+            0.45,
+            0.75,
+            1
+          ],
+          "layer": 0,
+          "enabled": true,
+          "action": "voxy.ui.hide"
+        }
+      }
+    },
+    {
+      "id": "button1",
+      "parent": null,
+      "name": "button1",
+      "active": true,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "components": {
+        "game.ui-element.v1": {
+          "origin": [
+            0.3,
+            0.45
+          ],
+          "size": [
+            0.4,
+            0.12
+          ],
+          "color": [
+            0.2,
+            0.65,
+            0.3,
+            1
+          ],
+          "layer": 1,
+          "enabled": true,
+          "action": "menu"
+        }
+      }
+    }
+  ]
+}

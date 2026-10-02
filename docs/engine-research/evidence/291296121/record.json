@@ -1,0 +1,79 @@
+{
+  "repository": "wmcnamara/crynn",
+  "repository_id": 291296121,
+  "commit": "37fc9d505c77d5c367783ca6f04717b7122d3b82",
+  "source_url": "https://github.com/wmcnamara/crynn/tree/37fc9d505c77d5c367783ca6f04717b7122d3b82",
+  "readme_path": "README.md",
+  "readme_sha256": "2cca925518dc225835487a48570b4642858af677828464ca87f3cd6365f86e7e",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "2383a3f2883f028570c8dc03dafd600b0d141924"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f2835d02607a2b076f9f4c925f0094e2a0c37d60"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "3b8cfcec465eefd5d2b45093694b7da3951d395c"
+    },
+    {
+      "path": "Crynn.sln",
+      "type": "file",
+      "sha": "ae2c4c1dfc2a6005ba115f28ced62f8404d7add7"
+    },
+    {
+      "path": "Crynn.vcxproj",
+      "type": "file",
+      "sha": "31468c225cc158bd452c620e4089ecbbdd3b41f4"
+    },
+    {
+      "path": "Crynn.vcxproj.filters",
+      "type": "file",
+      "sha": "e8bfd771d9d10031fd0c687f7b81e9a8fc7147ac"
+    },
+    {
+      "path": "Crynn.vcxproj.user",
+      "type": "file",
+      "sha": "c7384c826c8d5a2e4255199faf665a6e55e4ea82"
+    },
+    {
+      "path": "CrynnSmall.png",
+      "type": "file",
+      "sha": "8a5d18f1ec270cb74fbb0be45a68257679bd621e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e7cdbb2ed45017417b1de920ade0a0e544788405"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ffb2a25792f83e11973ec6fe7ba43212a8f24510"
+    },
+    {
+      "path": "crynn_showcase.PNG",
+      "type": "file",
+      "sha": "9e93e6de797685da99fab7a7d70fc9bff6d6d257"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "6f87fa1a5f42f365e761341a6926bf2af9238453"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d36e7e598322d0f68c7c142ea3ae62ac48ffd097"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ transformation hierarchy, assets, rigidbody, audio, events/input and renderer engine sources; Windows build limitation retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "SpaRcle-Studio/SREngine",
+  "repository_id": 320532487,
+  "commit": "dd643727a3456c863ad2d6b9d1fdfbaebb586a93",
+  "source_url": "https://github.com/SpaRcle-Studio/SREngine/tree/dd643727a3456c863ad2d6b9d1fdfbaebb586a93",
+  "readme_path": "README.md",
+  "readme_sha256": "868c5cae74b05129a43c4647cdfd4ea94d424a9ffc1815a83150fd6be7a7f7a2",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2440f28d2c90d451641b7b6d54d89a4e03b3ccce"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d6725f919fb4c61da31d1fd9801a505fbe6cfece"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "926cd4e51163029d0dfdb2e6773c865abd86de53"
+    },
+    {
+      "path": "CI",
+      "type": "dir",
+      "sha": "33d8619b899b6c169494ed25aaa8018a08514f28"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "268ed008995e3970ec98d12c6d9fb8e64b8d7980"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f99f86fb30e4e922a6a13609bcd9f068464aca93"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "dd77adf0b626bfc3ae272aadd64a37388ffcc6ca"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "13e967804dc50e890590510ae0efc5ee71cfb955"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "c5227f7901f1c3cde6aacbb06a96c14e6f03b0c3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "aba0970c14b0d143f2d7a1342f70cb330c579d9c"
+    },
+    {
+      "path": "Platform",
+      "type": "dir",
+      "sha": "02de276966c2c718dbcdd81b35250432456a26c3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "791842e8beff077cc1e1636122ada6a522e3b9dc"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "51a945a8159b35d89dedde1fcfbce3c7540fe49c"
+    },
+    {
+      "path": "dev.sparcles.SREngine.desktop",
+      "type": "file",
+      "sha": "12178ca112d953178f61736e3c2ac778b28ec55a"
+    },
+    {
+      "path": "dev.sparcles.SREngine.metainfo.xml",
+      "type": "file",
+      "sha": "0f0d114ebfdbf77d341207e913544255bd57b7ea"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "479e995f0c6c2301e23f644dd03a0d5115957322"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ game engine with hot-reload scripting, physics integrations and Engine/Platform source; state preservation and performance unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

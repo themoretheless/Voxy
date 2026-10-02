@@ -1,0 +1,57 @@
+{
+  "repository": "Plonq/bevy_panorbit_camera",
+  "repository_id": 622520192,
+  "commit": "8f134ade509d6fb32a7bc57c85fbe427c686a954",
+  "source_url": "https://github.com/Plonq/bevy_panorbit_camera/tree/8f134ade509d6fb32a7bc57c85fbe427c686a954",
+  "readme_path": "README.md",
+  "readme_sha256": "0996ef4e3b39fbc786c1da0c5a81bfb50661c361b7762d9f2653f4dca3e1cf80",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "48fb9be30e931174cc2e2752b0270614d132123b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4fffb2f89cbd8f2169ce9914bd16bd43785bb368"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9683a38cb8bf31bf9adcfbc45c69e2a8fac9a055"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "ccd5b926ff33c825a3d37ebd985b71370bfa35e5"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "9cf106272ac3b56b0c4c80218e8fc10a664ca5f4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "44de9abd27aea3f0490aca7b1fe9bfe8c1aa87f0"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a8d633e51fd2700cf4df8c9428f6cdcefc2e1232"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c81972952089d7276e230f4b2d4545eeb9e0f888"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

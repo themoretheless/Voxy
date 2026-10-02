@@ -1,0 +1,87 @@
+{
+  "repository": "bladecoder/bladecoder-adventure-engine",
+  "repository_id": 18995295,
+  "commit": "553c96e21e139caba64e3d8dfa6efb28e7384234",
+  "source_url": "https://github.com/bladecoder/bladecoder-adventure-engine/tree/553c96e21e139caba64e3d8dfa6efb28e7384234",
+  "readme_path": "README.md",
+  "readme_sha256": "4eeefaadeca291de3b7a0c22ebba2dcb10ecf6719fd6657d72a3cc8eb5d23a99",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e5897135b2242042494e95e0bb7b13692c64a1a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "17def29b35fb33cad776cdc7250e2be8d97dd9b0"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "e298a9c2bb471a42735fd42e82f33355d20d3d28"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e0ac3f4057f324ab0deddf86a0eae8ba5ef2f80a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f433b1a53f5b830a205fd2df78e2b34974656c7b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "833b09ccef1aecd2f47ccc267912c6ed6e355f18"
+    },
+    {
+      "path": "adventure-editor",
+      "type": "dir",
+      "sha": "cffc50e69e21d0ac399b798fdf66c4a331ab3574"
+    },
+    {
+      "path": "blade-engine-spine-plugin",
+      "type": "dir",
+      "sha": "6bdbb4d6065f723882c42930430273407f95f94e"
+    },
+    {
+      "path": "blade-engine",
+      "type": "dir",
+      "sha": "80c9a1055013f0d0155d3888a9fd96b39981cc05"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "64eb18f3e7cc66a882382eacec2fec27d4e5d19d"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "4969e2384b6eca222bb4fce47932fb2fb5ed7ac0"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "f89ce8285e2c8fdd9455b0cae186d8a4b235353c"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "adff685a0348c64b2b64f0b302f1f82b28eeaaea"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "e509b2dd8fe5579a5954a2c28633ad914cd1c225"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "18e82ab6248adea9c029c33e98ddcd968c59ae39"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

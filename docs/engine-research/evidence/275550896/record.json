@@ -1,0 +1,94 @@
+{
+  "repository": "zeganstyl/thelema-engine",
+  "repository_id": 275550896,
+  "commit": "8e2943b6d2de3376ce338025b58ff31c14097caf",
+  "source_url": "https://github.com/zeganstyl/thelema-engine/tree/8e2943b6d2de3376ce338025b58ff31c14097caf",
+  "readme_path": "README.md",
+  "readme_sha256": "e7fff64665e83cfc25d5537bec36783a423ae97f4ad77b64868db6100e07f5e8",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06f8fc7089a9770115bc27c6bf1b4713327c734a"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "4bb7fcd6b78302908d34c69d8cacdfb1f52f06e5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8d0d2260a3100a95a525f47eab92e69ba38cd63a"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "a72427763477550150ed1cbec2d533004e9c657d"
+    },
+    {
+      "path": "buildSrc",
+      "type": "dir",
+      "sha": "aa74b8d63e09e00e77bd52e5a7ad46a766fcf972"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "8bcf135e315a783daac52f71bf31dd06f019957e"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "94d085aef7126b3cbc098bc4c41f0bd5f1876b59"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4f906e0c811fc9e230eb44819f509cd0627f2600"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "a91315029ef05a7da8a94ce21a7af29f51b6d751"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "f97b8b82fa4d98b19341f6de923bd39e3930427c"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "acb53b56960bf3d9bcd63237b4cc4b9e30713a9a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "82e72d2660fc83e45b53038b26da9e976bbb8433"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2d8c869ab011656346da93808e1a3fc3b796bbf7"
+    },
+    {
+      "path": "thelema-studio",
+      "type": "dir",
+      "sha": "f341124e53eb58be616b4143a5196178c0b8bdf5"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Kotlin graphics engine redesigned from libGDX sources; scene components do not alone establish a complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

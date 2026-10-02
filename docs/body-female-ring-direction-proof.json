@@ -1,0 +1,970 @@
+{
+  "before": 25,
+  "after": 25,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        5539,
+        10914,
+        11749,
+        15271,
+        18333,
+        18789,
+        23018,
+        37257,
+        45205,
+        45207,
+        45208,
+        45220,
+        45227,
+        45228,
+        45234,
+        45235,
+        45236,
+        45237,
+        45238,
+        45254,
+        45255
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0032050696514745415,
+      "local_measure_after_m": 0.00320343239040599
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5537,
+        5854,
+        10914,
+        20665,
+        23018,
+        45214,
+        45215,
+        45216,
+        45217,
+        45254,
+        45257,
+        45259,
+        45260,
+        45263,
+        45264,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0034126856715088402,
+      "local_measure_after_m": 0.0034019578249867045
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5583,
+        5700,
+        14974,
+        18409,
+        27991,
+        28061,
+        37279,
+        37341,
+        45223,
+        45232,
+        45241,
+        45242,
+        45243
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0016772089112521184,
+      "local_measure_after_m": 0.0016705239717113261
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        10989,
+        11862,
+        26695,
+        37277,
+        45209,
+        45210,
+        45211,
+        45239,
+        45240,
+        45249,
+        45250
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0009310994596370341,
+      "local_measure_after_m": 0.0007631388048874471
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5539,
+        18789,
+        19592,
+        23018,
+        37486,
+        45206,
+        45207,
+        45208,
+        45237,
+        45253,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0040720401137468104,
+      "local_measure_after_m": 0.004064812051822594
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914,
+        12891,
+        20886,
+        37487,
+        45216,
+        45218,
+        45219,
+        45225,
+        45256,
+        45257,
+        45259
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0021925368483467563,
+      "local_measure_after_m": 0.002180383316946782
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535,
+        18333,
+        23018,
+        37488,
+        45203,
+        45205,
+        45234,
+        45261,
+        45262
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.003988440184946296,
+      "local_measure_after_m": 0.003968325222178834
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579,
+        24758,
+        45210,
+        45212,
+        45229,
+        45230,
+        45239,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0014843104558418146,
+      "local_measure_after_m": 0.0014823103341101583
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        18333,
+        20665,
+        27913,
+        37488,
+        45205,
+        45217,
+        45261,
+        45262,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00423456918440539,
+      "local_measure_after_m": 0.004229145689400476
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        20469,
+        22611,
+        37467,
+        45222,
+        45224,
+        45226,
+        45241,
+        45245
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0015005631952300829,
+      "local_measure_after_m": 0.0014817100024347558
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        24758,
+        45210,
+        45212,
+        45239,
+        45247,
+        45249
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0014745501456437113,
+      "local_measure_after_m": 0.001468495528426666
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914,
+        37488,
+        45217,
+        45231,
+        45261,
+        45264,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0022138868613738815,
+      "local_measure_after_m": 0.0022001401327267182
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577,
+        5579,
+        45209,
+        45210,
+        45239,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001355023096084923,
+      "local_measure_after_m": 0.0013178311067385863
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914,
+        37487,
+        45216,
+        45254,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0021303767945935405,
+      "local_measure_after_m": 0.002106873061092475
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        28061,
+        37467,
+        45232,
+        45241,
+        45243
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0014384633958713737,
+      "local_measure_after_m": 0.0014179805586652476
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        5539,
+        10914,
+        11749,
+        15271,
+        18333,
+        18789,
+        23018,
+        37257,
+        45205,
+        45207,
+        45208,
+        45220,
+        45227,
+        45228,
+        45234,
+        45235,
+        45236,
+        45237,
+        45238,
+        45254,
+        45255
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0031180894078656133,
+      "local_measure_after_m": 0.003116888334719811
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5537,
+        5854,
+        10914,
+        20665,
+        23018,
+        45214,
+        45215,
+        45216,
+        45217,
+        45254,
+        45257,
+        45259,
+        45260,
+        45263,
+        45264,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0033034259545024047,
+      "local_measure_after_m": 0.00328025216155518
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5583,
+        5700,
+        14974,
+        18409,
+        27991,
+        28061,
+        37279,
+        37341,
+        45223,
+        45232,
+        45241,
+        45242,
+        45243
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0014179805586652476,
+      "local_measure_after_m": 0.0014155059587459729
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        10914,
+        12891,
+        20886,
+        37487,
+        45216,
+        45218,
+        45219,
+        45225,
+        45256,
+        45257,
+        45259
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002117630409311443,
+      "local_measure_after_m": 0.0021143619438408674
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5539,
+        12891,
+        37487,
+        45206,
+        45208,
+        45219,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004164251895688644,
+      "local_measure_after_m": 0.004160440005323688
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        20469,
+        22611,
+        37467,
+        45222,
+        45224,
+        45226,
+        45241,
+        45245
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0014155059587459729,
+      "local_measure_after_m": 0.0014107346053744336
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        10914,
+        37488,
+        45217,
+        45231,
+        45261,
+        45264,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0021400196980891797,
+      "local_measure_after_m": 0.002127737395488574
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577,
+        5579,
+        45209,
+        45210,
+        45239,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0012924113264646004,
+      "local_measure_after_m": 0.0011918084997320742
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        10914,
+        37487,
+        45216,
+        45254,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020339225827783556,
+      "local_measure_after_m": 0.002027954035326721
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        27874,
+        45217,
+        45231,
+        45261,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0021217688480369393,
+      "local_measure_after_m": 0.002117122123249148
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5537,
+        5539,
+        10914,
+        11749,
+        15271,
+        18333,
+        18789,
+        23018,
+        37257,
+        45205,
+        45207,
+        45208,
+        45220,
+        45227,
+        45228,
+        45234,
+        45235,
+        45236,
+        45237,
+        45238,
+        45254,
+        45255
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0031100287045412976,
+      "local_measure_after_m": 0.0030836297142746226
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        10914,
+        12891,
+        20886,
+        37487,
+        45216,
+        45218,
+        45219,
+        45225,
+        45256,
+        45257,
+        45259
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020536109423172945,
+      "local_measure_after_m": 0.002050192297470268
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5579,
+        24758,
+        45210,
+        45212,
+        45229,
+        45230,
+        45239,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001295894561170047,
+      "local_measure_after_m": 0.0012953568076866327
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5539,
+        12891,
+        37487,
+        45206,
+        45208,
+        45219,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004107724795369954,
+      "local_measure_after_m": 0.004106252505938072
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37487,
+        45208,
+        45216,
+        45228,
+        45254,
+        45255,
+        45256,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.004106252505938072,
+      "local_measure_after_m": 0.0041026436773099915
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        10914,
+        37488,
+        45217,
+        45231,
+        45261,
+        45264,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020774477384827633,
+      "local_measure_after_m": 0.002072108436709729
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5577,
+        5579,
+        45209,
+        45210,
+        45239,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00115450272563688,
+      "local_measure_after_m": 0.0010763200796014988
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        10914,
+        27874,
+        45215,
+        45217,
+        45231,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0011133401669863661,
+      "local_measure_after_m": 0.0011105093419005445
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        27874,
+        45217,
+        45231,
+        45261,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020692776116239073,
+      "local_measure_after_m": 0.002068816682581293
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5537,
+        5539,
+        10914,
+        11749,
+        15271,
+        18333,
+        18789,
+        23018,
+        37257,
+        45205,
+        45207,
+        45208,
+        45220,
+        45227,
+        45228,
+        45234,
+        45235,
+        45236,
+        45237,
+        45238,
+        45254,
+        45255
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0030706770549324405,
+      "local_measure_after_m": 0.0030619475343602524
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5583,
+        5700,
+        14974,
+        18409,
+        27991,
+        28061,
+        37279,
+        37341,
+        45223,
+        45232,
+        45241,
+        45242,
+        45243
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001231411379123112,
+      "local_measure_after_m": 0.0012253895357948
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5539,
+        18789,
+        19592,
+        23018,
+        37486,
+        45206,
+        45207,
+        45208,
+        45237,
+        45253,
+        45256
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.003983057993304398,
+      "local_measure_after_m": 0.003975146844132382
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        10914,
+        12891,
+        20886,
+        37487,
+        45216,
+        45218,
+        45219,
+        45225,
+        45256,
+        45257,
+        45259
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0020373092076669346,
+      "local_measure_after_m": 0.0020305103059749374
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5579,
+        24758,
+        45210,
+        45212,
+        45229,
+        45230,
+        45239,
+        45247,
+        45251
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.001211240208254557,
+      "local_measure_after_m": 0.0012104537397224818
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        18333,
+        20665,
+        27913,
+        37488,
+        45205,
+        45217,
+        45261,
+        45262,
+        45265
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00407057304997232,
+      "local_measure_after_m": 0.004063962446975085
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5577,
+        5579,
+        45209,
+        45210,
+        45239,
+        45247
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.00108853935833299,
+      "local_measure_after_m": 0.0010498949892770355
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        10914,
+        37487,
+        45216,
+        45254,
+        45257
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.0019863726033514896,
+      "local_measure_after_m": 0.001978373935138188
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        27874,
+        45217,
+        45231,
+        45261,
+        45264
+      ],
+      "before": 25,
+      "after": 25,
+      "local_measure_before_m": 0.002066925156405368,
+      "local_measure_after_m": 0.0020658350435469987
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": false,
+  "edge_groups": false,
+  "ring_groups": true,
+  "project_bound": true,
+  "reduce_measure": true,
+  "diagonal_directions": true,
+  "initial_measure_m": 0.0059636397593398486,
+  "final_measure_m": 0.0052408323641101855,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48801,
+        48843
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48856
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33120,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554554,
+      "forbidden_pairs": [
+        [
+          47084,
+          49012
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.0029999999999970333,
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5670799380385878,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "f1f94c4417797a1329fedd558d90ebb9b5a3937fbf1acfc60bf51fde107c1de1",
+  "reference_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa",
+  "candidate_sha256": "fbd890165c4cf5eef3246b4103f08c2894c97218fb7b6bbbd10a8df0435a156e",
+  "proposal_distances_m": [
+    0.002,
+    -0.002,
+    0.0015,
+    -0.0015,
+    0.0003,
+    -0.0003,
+    0.0001,
+    -0.0001,
+    5e-05,
+    -5e-05,
+    2.5e-05,
+    -2.5e-05
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

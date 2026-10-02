@@ -1,0 +1,62 @@
+[
+  {
+    "index": 43,
+    "name": "andywiecko/PBD2D",
+    "commit": "aa36cc3e57de6593125185273c60e515f5ed642e",
+    "path": "Runtime/Systems/Constraints/EdgeLengthConstraintsSystem.cs",
+    "line_start": 1,
+    "line_end": 83,
+    "source_sha256": "cdf7224850d0e618d3ba607e795418a5ec2c1d1f0b51986d38e1b602fa942a80",
+    "source_url": "https://github.com/andywiecko/PBD2D/blob/aa36cc3e57de6593125185273c60e515f5ed642e/Runtime/Systems/Constraints/EdgeLengthConstraintsSystem.cs#L1",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Sequential IJob distance projection uses compliance/dt\u00b2 and extra stiffness factor, guards small weight sum/edge length, no accumulated lambda in viewed job. Component jobs chain dependencies; this particular job is not a parallel edge kernel."
+  },
+  {
+    "index": 44,
+    "name": "RefinedCode/SoftbodySimulation",
+    "commit": "21b32dfb7a72be1f2fe54de8d2863bbf6a100288",
+    "path": "SoftbodyPhysics/src/Constraint/ShapeConstraint.cpp",
+    "line_start": 30,
+    "line_end": 140,
+    "source_sha256": "093f838287b134087b7d7c2c781601163028e5eaa57203e0844557f242a576f0",
+    "source_url": "https://github.com/RefinedCode/SoftbodySimulation/blob/21b32dfb7a72be1f2fe54de8d2863bbf6a100288/SoftbodyPhysics/src/Constraint/ShapeConstraint.cpp#L30",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Read random radius-based cluster construction, mass-weighted center and inverse rest covariance. Hardcoded cluster radius=0.7 and unchecked covariance inverse need scale/degeneracy validation; shape-matching setup is not a calibrated constitutive FEM law."
+  },
+  {
+    "index": 45,
+    "name": "dmitrykurash/holocloth",
+    "commit": "a6078ba698a53cbf18be870cea555c1971f84103",
+    "path": "src/cloth.ts",
+    "line_start": 270,
+    "line_end": 352,
+    "source_sha256": "85590c88bd3a19268734f0501acf7f7b9b93ef0d3fb7d7f80344b343eaacaf23",
+    "source_url": "https://github.com/dmitrykurash/holocloth/blob/a6078ba698a53cbf18be870cea555c1971f84103/src/cloth.ts#L270",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Fixed substep accumulator clamps incoming dt and discards backlog at MAX_SUBSTEPS; per-substep exponential damping, in-place Laplacian smoothing and distance relaxation, grab corrections. Visual smoothing and lost time should not drive physiological state clocks."
+  },
+  {
+    "index": 46,
+    "name": "learn-computer-graphics/physics",
+    "commit": "bde130bcd85400cfdc0057309194f82c3e4482b1",
+    "path": "project01/shader/cloth_cs.glsl",
+    "line_start": 31,
+    "line_end": 105,
+    "source_sha256": "da51dfcb0a736b18aa6dd6da31572061846664beb307be002c2d7faa755c6e28",
+    "source_url": "https://github.com/learn-computer-graphics/physics/blob/bde130bcd85400cfdc0057309194f82c3e4482b1/project01/shader/cloth_cs.glsl#L31",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "GLSL reads old position/velocity buffers, accumulates neighbor springs, global velocity damping and wind, writes p+v*dt+0.5*a*dt\u00b2 and v+a*dt, pins top vertices. Requires zero-length normalization and buffer/dispatch coverage checks; shader comment alone does not establish an integrator guarantee."
+  },
+  {
+    "index": 47,
+    "name": "steampower33/XPBD-Cloth",
+    "commit": "c7019d35414e75c77ede2c3500a762837bcab6a6",
+    "path": "src/simulation/cloth_sim_pass.cpp",
+    "line_start": 344,
+    "line_end": 385,
+    "source_sha256": "02c8d8579ee4061b64f191d8501b48d4470aacdce33c8515c1a57ee9048f356a",
+    "source_url": "https://github.com/steampower33/XPBD-Cloth/blob/c7019d35414e75c77ede2c3500a762837bcab6a6/src/simulation/cloth_sim_pass.cpp#L344",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Vulkan host stage iterates color ranges, dispatches stretch constraints and inserts SSBO write-to-read/write barrier between colors; supplies compliance/beta/stiffness through push constants. Disjoint vertex coloring and actual kernel must still be verified; host barriers alone are insufficient."
+  }
+]

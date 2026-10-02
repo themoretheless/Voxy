@@ -1,0 +1,79 @@
+{
+  "repository": "The-Lyricis/HybridEngine",
+  "repository_id": 1142444905,
+  "commit": "b312f5b1f5020d55d901f50221ab641b1ce23f04",
+  "source_url": "https://github.com/The-Lyricis/HybridEngine/tree/b312f5b1f5020d55d901f50221ab641b1ce23f04",
+  "readme_path": "Readme.md",
+  "readme_sha256": "7f014038266ab6c4694f0faf19e9f4f16846b124d09f7923a1ff96df64a0b3d4",
+  "entries": [
+    {
+      "path": ".cursor",
+      "type": "dir",
+      "sha": "c74d9bc237a86b8e00b81f1fa23d799f65decbcb"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "48b5ca0e157d2bde03a66594250231b9f8adc5cc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "541657af0cdbef7880cc84b4125f5f91b1377cf5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8614262e43f1d75fb5c0b46c54b4be16aaa45051"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a8b5b0888da27e7a2274af0ecc1751640184aa97"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "44b7cc447b24c8fe9c42b9f5bbe23453df0604b2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e95028c0e75cb78712c43ece537ec7d96be6f97c"
+    },
+    {
+      "path": "README_zh-CN.md",
+      "type": "file",
+      "sha": "9a5ef205f6239b7a1e302a894c21bde7f06ff15e"
+    },
+    {
+      "path": "Readme.md",
+      "type": "file",
+      "sha": "880f96d3c6fc867d6f7bb625eec8e2ee2aaa1641"
+    },
+    {
+      "path": "build_macos.sh",
+      "type": "file",
+      "sha": "1af76ded73207f0e48aebb97473754de41d14b35"
+    },
+    {
+      "path": "build_windows.bat",
+      "type": "file",
+      "sha": "749b549963104075b76223f5e699ca109d5efb87"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ec586873c6a02e48033d52c4e1f825273494208c"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "d97d63c5a54f812b846e54d5e4f66b3551c7dd0d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ runtime/editor project documents main loop, input, entities, scene serialization and assets; physics explicitly unstable and early.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

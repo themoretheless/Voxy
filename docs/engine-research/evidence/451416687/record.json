@@ -1,0 +1,199 @@
+{
+  "repository": "bliporg/blip",
+  "repository_id": 451416687,
+  "commit": "905aacdb0344d535dfb9a35a1bdbc66e0d0a4159",
+  "source_url": "https://github.com/bliporg/blip/tree/905aacdb0344d535dfb9a35a1bdbc66e0d0a4159",
+  "readme_path": "README.md",
+  "readme_sha256": "59c982ddd78f6e1cf69bc8b4c11f90b479900e34d2c7f8ddd23ff24001f9b476",
+  "entries": [
+    {
+      "path": ".bazelrc",
+      "type": "file",
+      "sha": "ebf1eb1eaf18d21b8be6bec525300d25366d7da3"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "74a8106df09797407670fb5d84b1106caa615a66"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "e5e04a9be884b6d10b7be2360078621064289057"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "d5028e271cccb8c99c4441875d7aca4d260eb603"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1d41b66bcb04be89eeb7fefa10f4188f2ded9dec"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a116a4c606176516dcc6d2b1e07307a864c0d879"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "30bd7e952c7c1d685f6c0b1503a2813751a8806c"
+    },
+    {
+      "path": "BUILD.bazel",
+      "type": "file",
+      "sha": "7477413943deb1a95c73aa7d5ca1685e1a7fb0fc"
+    },
+    {
+      "path": "BUILD.md",
+      "type": "file",
+      "sha": "d0663862f87a73fa19a767a2b601ecc25eae794b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "565803ee5b54ad3b19ae097a83426159a35ed325"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "MODULE.bazel",
+      "type": "file",
+      "sha": "556002236460d975c91e49954b68c5a9b4ad6cd9"
+    },
+    {
+      "path": "MODULE.bazel.lock",
+      "type": "file",
+      "sha": "8720e1386f47d836f8382f7bb1d86a3babec03e5"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "b13f8582fac270a7de4b36e3b1f0cecb8ffd467c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ef499c8df3defe87c25d212322ae01ff3d0b9bbd"
+    },
+    {
+      "path": "android-fix-plan.md",
+      "type": "file",
+      "sha": "8185c55b015951ceab48dac670a56cad6a01b9f1"
+    },
+    {
+      "path": "bundle",
+      "type": "dir",
+      "sha": "b7d02e58a7724a6e04f9552913e44199e4d27d15"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "632e40a77ea274c287b4bff2a4cd22de99236bcb"
+    },
+    {
+      "path": "cli",
+      "type": "dir",
+      "sha": "fb3e800ab89442240b8e7d97702aa86d74d0a774"
+    },
+    {
+      "path": "clients",
+      "type": "dir",
+      "sha": "39c8a1b17e7d397a5aa81d62f5a90613a9187514"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "62b7872adb5defa76a9344b8aa945d33826ba30d"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "7b2e39794b584238ba6d7b1954173014a68e3d0b"
+    },
+    {
+      "path": "cubzh-file-format-3zh.txt",
+      "type": "file",
+      "sha": "c26c0aee4863a4926de4c6f4e56493bdf74a2d39"
+    },
+    {
+      "path": "dagger.json",
+      "type": "file",
+      "sha": "d1e3cfd94166beaf5b68f37ca4a86d235d34772f"
+    },
+    {
+      "path": "dagger",
+      "type": "dir",
+      "sha": "cd1bdbbf20390337390b5c72e0d30786811c43c4"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "5e6f4ac0f3508945c27a18fcc99aa3ad32e34713"
+    },
+    {
+      "path": "distribution",
+      "type": "dir",
+      "sha": "b0c219de959ef8b79e2b218e60fcd456c00080b3"
+    },
+    {
+      "path": "dockerfiles",
+      "type": "dir",
+      "sha": "c17d31c92a18cb73cf580c30235d1f74694d8db6"
+    },
+    {
+      "path": "go",
+      "type": "dir",
+      "sha": "257c33f6f05b82b325928515970b8189d2f4316a"
+    },
+    {
+      "path": "i18n",
+      "type": "dir",
+      "sha": "5981b9fcda1e70fd503981c212f1b13d9a2d03a2"
+    },
+    {
+      "path": "lua",
+      "type": "dir",
+      "sha": "3350475a62bf601bdfb3edef190e64f62060c9a9"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "a91d50fcf55a82b7054aa02d9f04c46007cdb758"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "a7909f51af0d8bfe13424e71255c4a272b5d0b98"
+    },
+    {
+      "path": "plans",
+      "type": "dir",
+      "sha": "c10668d5a052a16b19d04217fa0838cbea3d8b11"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "13c8fa2623a5486d0203aa0db8435b062106a0a5"
+    },
+    {
+      "path": "servers",
+      "type": "dir",
+      "sha": "b8e4db0bf8d848ecc7e691f864096aa4e679b214"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "83728a7d449440bd8bb7a412a3d94e1906c103d5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies scriptable native engine over BGFX backend; owned runtime/clients/CLI and Bazel build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

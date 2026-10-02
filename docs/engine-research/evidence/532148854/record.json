@@ -1,0 +1,94 @@
+{
+  "repository": "felixtrz/elixr",
+  "repository_id": 532148854,
+  "commit": "b34021437f63ca15b6fce72f27349f453e51c5b8",
+  "source_url": "https://github.com/felixtrz/elixr/tree/b34021437f63ca15b6fce72f27349f453e51c5b8",
+  "readme_path": "README.md",
+  "readme_sha256": "4a27b2692492244f5ee35a55f876f764a69620843e4376b188d0490256913ccf",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d33b387f68c6880e5bb71f770b7e9b579282d971"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "f6a4c5510c2f74e39c1a527f5ba4b9257b6f4854"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d3df9606c31fd5143c5e4c388893b49d4fca8393"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "792e9e277222991960397597310214e373c592d2"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "1d6f8806d015b9bbd3ac74465a80602a6a29a1b0"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "567cd0da51e6dc8efd8070f577b9f5561cf586d7"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a1d68be510eec18fd728778834d448ff5e48e5c6"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "cfe9775c663a56ed70c4746499b415509c940bda"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "4139588a2ef8e6284a42e59779fa89408782f3ff"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "e6b318676e300a895abad97f7f1eeb544e689619"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6c1431f3aab2260af4a69191bf2ff313105cd236"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "91e39bb86e3128728d1fc1760b0a1a679b61e01f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "46ba9be6ebc26a7b7e17d6106310124f6b504c2d"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "2fec58ebbf0c22181e833d46e9fadae08687ba24"
+    },
+    {
+      "path": "typedoc.json",
+      "type": "file",
+      "sha": "ce71dcbfa928ce6173425608f611940d8c39ebe8"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WebXR ECS/interaction framework integrating three.js and Rapier; runtime breadth beyond XR framework requires deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

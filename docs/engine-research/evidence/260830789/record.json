@@ -1,0 +1,64 @@
+{
+  "repository": "AshenvaleZX/ZXEngine",
+  "repository_id": 260830789,
+  "commit": "a9adb6f2fd581f0b0ea661d6aac10e5d88c73b7e",
+  "source_url": "https://github.com/AshenvaleZX/ZXEngine/tree/a9adb6f2fd581f0b0ea661d6aac10e5d88c73b7e",
+  "readme_path": "README.md",
+  "readme_sha256": "58ec55bb9a36eeedeae6b30eb3f429f7548467e1b63a0d5adfdae3b7efb8290a",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "824ffc80795dd2990c85096ea9575d4cb9b4b4f8"
+    },
+    {
+      "path": "BuildSolution",
+      "type": "dir",
+      "sha": "4171cc9a3ca8bc244834076a2eef6baa1a10af38"
+    },
+    {
+      "path": "BuiltInAssets",
+      "type": "dir",
+      "sha": "5c530fb7fe844fe9e8af6b9395b2ebbdbe01d4a3"
+    },
+    {
+      "path": "CPPScripts",
+      "type": "dir",
+      "sha": "b4537cbb0ad641992e12706b513d621a7c118762"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "25218737c7106e99505954f7771e873b52640ebe"
+    },
+    {
+      "path": "ExampleProject",
+      "type": "dir",
+      "sha": "3def13ae90f954f6e0ddc74c001cad889a0d795d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c615b01bf8adcd446f3095aebcb0baa7a5fa3d42"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "925052589a962209c737d212245d64cfcf85bb80"
+    },
+    {
+      "path": "Vendor",
+      "type": "dir",
+      "sha": "7840afebd28b147629a8069ebc57c6915466acde"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies educational game engine; owned runtime/build/tools/script and example roots. Production status unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

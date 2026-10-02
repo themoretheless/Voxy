@@ -1,0 +1,119 @@
+{
+  "repository": "mortennobel/SimpleRenderEngine",
+  "repository_id": 64931694,
+  "commit": "fb00a04cb38e2227adf4bdb17e1b38ec160632c2",
+  "source_url": "https://github.com/mortennobel/SimpleRenderEngine/tree/fb00a04cb38e2227adf4bdb17e1b38ec160632c2",
+  "readme_path": "README.md",
+  "readme_sha256": "4f8f4c67e908e60aad5af586bae197fd1e53d1886341efb6f63f637d03dbffdf",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c003afafeda2745c8c73974802a8b9d68f2c777a"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "a43a47246bec4ba22b2fe07a633b5549c3e8964c"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "3b24247929ba3eb1414b4a7081f035642f2db2bd"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "dce63ef3b3b0af4d3836a12a6cab8103f94bb316"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1e07a5f5f05ae5316dd110d54082386fdceb352b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d0c5929b94f4b5e10aaba06a096b44ec484c20eb"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "89d908e1c4733a82b2778afbeb7246545f9716e7"
+    },
+    {
+      "path": "cpp-style.md",
+      "type": "file",
+      "sha": "1fb6fb867e45d996b5fc21d7540b8509311b2148"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7768d7e5d9186ec0ed6224cc10a758c6e08da2c5"
+    },
+    {
+      "path": "em-build-release.sh",
+      "type": "file",
+      "sha": "8861b9e34bfc1023c46ee58a08fa1e284f1e54c2"
+    },
+    {
+      "path": "em-build.sh",
+      "type": "file",
+      "sha": "abfb84807f3b736578a70624dca966e4b857822c"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "120b05c0b69fd6699e6cec74f1729fbfe222a8bf"
+    },
+    {
+      "path": "examples_data",
+      "type": "dir",
+      "sha": "627252daf61e20394ab8c70a6f3969429640c25f"
+    },
+    {
+      "path": "glsl-style.md",
+      "type": "file",
+      "sha": "eb4f89d616f8056453af60ef3b997fdf9af221ee"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "ee6228d865aebe81848b233e0d31cda85a4ca3bf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ba7de6f2b92bee2c6fd19a32eca51b17edfb93e1"
+    },
+    {
+      "path": "submodules",
+      "type": "dir",
+      "sha": "fdcef8cb36d84552cf086e43cc579fcf767b7c90"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "6d8472bcbbb818ee30539439c504f7eb8fa3bf51"
+    },
+    {
+      "path": "test_data",
+      "type": "dir",
+      "sha": "3e6cbcd44b2797e0bb730dba3e6b3c4d7535b15a"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "9733eb407cc762fe9a8403f2c5c61c1ed7debef1"
+    },
+    {
+      "path": "version-history.md",
+      "type": "file",
+      "sha": "0ac8f067e1b60c9beb3a5c220aaa08e7840728c5"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify small native render library; include/src and CMake examples, not complete gameplay engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,129 @@
+{
+  "repository": "stride3d/stride-community-toolkit",
+  "repository_id": 456571273,
+  "commit": "c15afdeb85c4c3a7b660055c37dc9bd590306636",
+  "source_url": "https://github.com/stride3d/stride-community-toolkit/tree/c15afdeb85c4c3a7b660055c37dc9bd590306636",
+  "readme_path": "README.md",
+  "readme_sha256": "fc5c3811e63320f1a0bd9f770dded92cb249c9946ae0e6ee9f32cc88331ff72f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d2f746b719d76000af3b622bc04aadb7a711ad63"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c1965c2162ac1bd298260f1379c76c7f0bf97eff"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "44ff384ed20d87989a33787c61f8ed3697b06f28"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2dd2514bb2fc42cd118077157b09e73885c9f381"
+    },
+    {
+      "path": ".sarif",
+      "type": "dir",
+      "sha": "74cd79e9835d42013b8e8d68c3a78a4c6b71c72b"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "f521a286e0476aa3c58cb9b8d0fa60cd628969cc"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "0f7f6bb833abac24d3aca0c2ec43026f9c14e97d"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "3639c7c925dbf93d87cf38f63bb68d254f436e09"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2e38ff40c8d6ebd69366bd169f62e6bbce470ca7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c6029593ec3f580a5b0bcae76ae6a5c851198e64"
+    },
+    {
+      "path": "Stride.CommunityToolkit.Core.slnf",
+      "type": "file",
+      "sha": "b69ca9d8a5432cc46131a41e79fff9a96d9ccc72"
+    },
+    {
+      "path": "Stride.CommunityToolkit.ndproj",
+      "type": "file",
+      "sha": "29d31f17848ed81ebf43b7de0ebda2daf3faa935"
+    },
+    {
+      "path": "Stride.CommunityToolkit.slnx",
+      "type": "file",
+      "sha": "9abca803032f78895655ce1284f19670f6da421d"
+    },
+    {
+      "path": "benchmarks",
+      "type": "dir",
+      "sha": "eac38e4598c7dc98418482b754a36c126f852c3c"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "e3ec1399710651af87d79e7b6fc8028998fa36d4"
+    },
+    {
+      "path": "delete-bin-examples.bat",
+      "type": "file",
+      "sha": "eeda218d9d41820bca44cd07552a3527a88aec20"
+    },
+    {
+      "path": "delete-bin.bat",
+      "type": "file",
+      "sha": "2a8bc681a69073f5f1ecbb2982aa55f97d95f1f2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "1b1dd2321ea9ad2f60fcdb14d038f9457130ab68"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a41716e66e8373cd8b069688d52aaa1bee243d4b"
+    },
+    {
+      "path": "nuget-icon.png",
+      "type": "file",
+      "sha": "624c557c435dcd24107ad102e2d1649def7db70b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9dd1d70fe4916b04dd961d2979be335764c10780"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "79a94335d8532d153478cf4c74beb8554a491ffa"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a0ba55b2a2bf59ea2ed384da2cf4e212594e6c35"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Helpers and extensions for the existing Stride engine rather than another runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

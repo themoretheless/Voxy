@@ -1,0 +1,63 @@
+{
+  "maximum_local_edge_m": 0.001992583824036618,
+  "source_sha256": "7ba47f9a806d5dd98e7d87e462bda9df4ae33b0c8f70deab2d724efd46aff526",
+  "output_sha256": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+  "before": {
+    "vertices": 42342,
+    "triangles": 84680,
+    "area_m2": 1.5670760857445913,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "after": {
+    "vertices": 45203,
+    "triangles": 90402,
+    "area_m2": 1.567076085744554,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "stages": [
+    {
+      "split_edges": 105,
+      "vertices": 42447,
+      "triangles": 84890
+    },
+    {
+      "split_edges": 374,
+      "vertices": 42821,
+      "triangles": 85638
+    },
+    {
+      "split_edges": 1417,
+      "vertices": 44238,
+      "triangles": 88472
+    },
+    {
+      "split_edges": 953,
+      "vertices": 45191,
+      "triangles": 90378
+    },
+    {
+      "split_edges": 11,
+      "vertices": 45202,
+      "triangles": 90400
+    },
+    {
+      "split_edges": 1,
+      "vertices": 45203,
+      "triangles": 90402
+    }
+  ],
+  "runtime_adopted": true,
+  "internal_anatomy": false,
+  "includes_normals": true,
+  "normal_generation": "authored source normals interpolated on source triangles"
+}

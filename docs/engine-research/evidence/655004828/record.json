@@ -1,0 +1,89 @@
+{
+  "repository": "Johnnyg63/OLCPGEMobileVisualStudio",
+  "repository_id": 655004828,
+  "commit": "422d150880d591f730cfc7ad1b2baf1eaf8715ce",
+  "source_url": "https://github.com/Johnnyg63/OLCPGEMobileVisualStudio/tree/422d150880d591f730cfc7ad1b2baf1eaf8715ce",
+  "readme_path": "README.md",
+  "readme_sha256": "aa0a4c7cfb26698a8eb7b92568485f762d77e607a8e64a6f76d41d89dcae6b04",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9491a2fda28342ab358eaf234e1afe0c07a53d62"
+    },
+    {
+      "path": "Demos",
+      "type": "dir",
+      "sha": "db61d8b11e787a4b0048982180dd81e17b3d0ca1"
+    },
+    {
+      "path": "Extensions",
+      "type": "dir",
+      "sha": "7348234e2742d617584e0fbde44ef8d2aa0df1a8"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "OLCPGEMobileAllInOne.vstemplate",
+      "type": "file",
+      "sha": "cb6286009c450d73a53c0e04ee965a31ac0acd06"
+    },
+    {
+      "path": "OLCPGEMobileAllInOne229.zip",
+      "type": "file",
+      "sha": "e200a538e9336ae03010e96c13413c8837c3b361"
+    },
+    {
+      "path": "OLCPGEMobileAndroidGradle",
+      "type": "dir",
+      "sha": "babd1cc27348cf3e061825da388318a890c0f069"
+    },
+    {
+      "path": "OLCPGEMobileAndroidNative",
+      "type": "dir",
+      "sha": "9421755621955a5f86f3886887adbced78b0bc05"
+    },
+    {
+      "path": "OLCPGEMobileShared",
+      "type": "dir",
+      "sha": "d17f416c0a93052590d41bd1379aa97f9ad185ae"
+    },
+    {
+      "path": "OLCPGEMobileiOSApplication",
+      "type": "dir",
+      "sha": "5f28d3741df72c01c46ce9add9f426f9e30b1953"
+    },
+    {
+      "path": "OLCPGEMobileiOSNative",
+      "type": "dir",
+      "sha": "fed13e42802d008da01d6ff59b521ff1c63a8a38"
+    },
+    {
+      "path": "OpenGLESApplication.ico",
+      "type": "file",
+      "sha": "c579ec84c29f87b238a69c524cc93dee10d162ce"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0dd4217de18b32aa2ae25d3dea4441e64f1a4f08"
+    },
+    {
+      "path": "utilities",
+      "type": "dir",
+      "sha": "e0420239e733118cf0fb88aa79ae97c2cd920810"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit OLC Pixel Game Engine mobile fork with shared engine source, Android/iOS native integrations, extensions and demos; platform claims not executed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "FreedomIntelligence/gamecraft-bench",
+  "repository_id": 1271267166,
+  "commit": "a43347534374df9a0c1a6c001aa9380862783f6d",
+  "source_url": "https://github.com/FreedomIntelligence/gamecraft-bench/tree/a43347534374df9a0c1a6c001aa9380862783f6d",
+  "readme_path": "README.md",
+  "readme_sha256": "501a27059df53cb837c8ed5ea432edeb2321bedbe2f9fe47e7c484dbfb34170c",
+  "entries": [
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "5365a6c742b647b02f547cf25ef23fd3d95d0bde"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b766a5f68b858605d0521c690e54b31cb8f9064c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ca8df8355641decf50466e7e975ce2acbb117172"
+    },
+    {
+      "path": "gamecraft_bench",
+      "type": "dir",
+      "sha": "cfa74bd360efcfcb99b1f0d08cfe7ced804c1c46"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "5f9d9c1c422e62b3b99b44cd03760d21fe1d5174"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "7b980624e9d043aedb10945c72cd3609be95cb6f"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "65ece5d2d1d1ca13f9e6c02b79cbb904d2c453dc"
+    },
+    {
+      "path": "tasks",
+      "type": "dir",
+      "sha": "6673e31c7a6a9a7b2c8f4370d2773a6229290416"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "144d3600cb50daa3d8ac965086642e0b6e8f11e9"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

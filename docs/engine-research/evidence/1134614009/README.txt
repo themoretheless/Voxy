@@ -1,0 +1,110 @@
+# 🚂🤖 LittleJS AI
+
+*An AI-assisted toolkit for making HTML5 games with [LittleJS](https://github.com/KilledByAPixel/LittleJS) — starter templates, helper modules, agent instructions for any coding AI, and a Claude Code plugin. The games built with it live in the [LittleJS Arcade](https://killedbyapixel.github.io/LittleJSArcade/).*
+
+# 🎮 [▶ Play in the LittleJS Arcade](https://killedbyapixel.github.io/LittleJSArcade/)
+
+[LittleJS](https://github.com/KilledByAPixel/LittleJS) is a fast, lightweight, and fully open source HTML5 game engine designed for simplicity and performance.
+
+This repo is the **AI-assisted LittleJS toolkit** — everything you need to build games, but not the games themselves:
+- starter templates you can fork and remix
+- helper modules for menus, sound/FX, sprites, and live tweaking
+- docs and prompts to improve LittleJS + AI workflows
+
+The 50+ finished games built with these tools live in their own repo: the **[LittleJS Arcade](https://killedbyapixel.github.io/LittleJSArcade/)** ([source](https://github.com/KilledByAPixel/LittleJSArcade)).
+
+### Want to make a game without writing code? Try the [LittleJS GPT!](https://chatgpt.com/g/g-67c7c080b5bc81919736bc8815836be6-littlejs-game-maker)
+
+## 🤖 Claude Code Plugin
+
+Make games with LittleJS, a fast open-source HTML5 engine that's simple to build on, straight from [Claude Code](https://claude.com/claude-code). Ask for a game and get a complete, playable project that opens from a file. Because the engine already handles rendering, input, physics, collision and audio, nothing gets rebuilt from scratch: the tokens go into *your game*, not the plumbing. Templates for menus, sound, sprite art and board games already work. Install once, **no clone required**:
+
+```
+/plugin marketplace add KilledByAPixel/LittleJS-AI
+/plugin install littlejs@littlejs-ai
+```
+
+Then in any empty folder, ask for a game ("make me a breakout game"). Claude scaffolds a complete project — engine included — that opens straight from `file://` with no server and no npm install.
+
+The plugin ships four skills:
+
+- `littlejs-conventions` — engine rules and pitfalls, applied automatically to any LittleJS code
+- `new-littlejs-game` — scaffolds a complete playable game project
+- `littlejs-api` — exact API signature lookup from the bundled reference
+- `atlas-shape-art` — fast recolorable shape sprites from the built-in atlas
+
+Cloning this repo is only needed for browsing the templates by hand — the plugin bundles everything else.
+
+**Developing the plugin itself?** Load it from your working tree with `claude --plugin-dir .` (use forward slashes in the path — backslashes get mangled and silently load nothing), then `/reload-plugins` after edits. Don't `/plugin install` your local copy — that installs a frozen snapshot.
+
+Every user-visible change needs two things in the same commit: a bumped `version` in `.claude-plugin/plugin.json` and an entry in [CHANGELOG.md](CHANGELOG.md). The plugin cache is keyed by version, so without a bump, people who already installed the plugin receive nothing. When bumping the engine in `dist/`, also refresh `reference.md` by hand.
+
+For other tools, LittleJS also works great with GitHub Copilot, Codex, and Cursor.
+
+LittleJS and everything in this repository is **MIT licensed!** See [LICENSE](LICENSE) for details.
+
+## 📚 Resources
+
+- [LittleJS Engine](https://github.com/KilledByAPixel/LittleJS) — the main LittleJS repository
+- [LittleJS Arcade](https://killedbyapixel.github.io/LittleJSArcade/) — 50+ finished games built with these tools, in their own repo ([source](https://github.com/KilledByAPixel/LittleJSArcade))
+- [Templates Folder](templates/) — starting templates and reusable components
+- [LittleJS GPT AI](https://chatgpt.com/g/g-67c7c080b5bc81919736bc8815836be6-littlejs-game-maker) — use ChatGPT to make games without writing any code ([source](https://github.com/KilledByAPixel/LittleJS-GPT))
+
+## 🛠️ Make Your Own
+
+Clone the repo and you have everything you need to build games — from quick prototypes to large, multi-file projects. No external assets and no dependencies to play; the only npm packages are optional build tools.
+
+### Start a new game
+
+1. Copy the starter folder [examples/emptyGame/](examples/emptyGame/) to `examples/<yourGame>/`.
+2. Edit `game.js` — and add more files (`player.js`, `ui.js`, `constants.js`, …) as the game grows.
+3. Open `index.html` in a web browser. That's it — it runs straight from `file://`, no server needed.
+
+Games use the **global LittleJS API**: load `dist/littlejs.js` with a plain `<script>` tag and call globals like `engineInit`, `drawText`, and `vec2` directly. Keep gameplay modular across several `.js` files for medium and large games.
+
+### Ship a single-file build (optional)
+
+A single root `build.mjs` concatenates the engine + your source, minifies it, and produces one self-contained `index.html` plus a `.zip` (great for game jams).
+
+```sh
+npm install               # once, in the repo root — installs terser + bestzip
+node build.mjs yourGame   # builds examples/yourGame/build/ and yourGame.zip
+node build.mjs --all      # builds every game that has a build.json
+```
+
+### 📝 Feature templates
+
+Single-file references to copy patterns from when adding a feature — not full game scaffolds:
+
+- [game.html](templates/game.html) — minimal scaffold (shapes, text, camera)
+- [boardGame.html](templates/boardGame.html) — grid-based games (chess, sokoban, match-3)
+- [menuGame.html](templates/menuGame.html) — title, pause, options, medals, HUD toolbar
+- [box2dGame.html](templates/box2dGame.html) — Box2D physics (pool, plinko, pinball)
+- [textureGame.html](templates/textureGame.html) — procedural sprite atlases from canvas draw ops
+- [tweakableGame.html](templates/tweakableGame.html) — live-tweak globals via an HTML slider overlay
+- [uiGame.html](templates/uiGame.html) — canvas-drawn UI (menus, sliders, dialogs)
+- [threejsGame.html](templates/threejsGame.html) — three.js 3D scene behind the LittleJS canvas
+
+Mix in helper scripts to add features: `menus.js` (DOM menus + best score + game-over dialog + setPlaying/quitToTitle), `gameFx.js` (procedural SFX + screen shake), `textureGenerator.js` (sprite painter), `tweakables.js` (live value tweaking).
+
+### 🧊 Three.js 3D games
+
+The engine includes a [three.js](https://threejs.org/) plugin (`ThreeJSPlugin` + `ThreeJSObject`) that renders a 3D scene behind the LittleJS canvas — LittleJS keeps handling the input, physics, and HUD while three.js draws the world. See [examples/threejsGame/](examples/threejsGame/) for a mini 3D platformer demo (three.js loads from a CDN at startup, everything else works the same as any other game).
+
+## 🕹️ Built With These Tools
+
+A few favorites from the **[LittleJS Arcade](https://killedbyapixel.github.io/LittleJSArcade/)** — every one made with the templates and helpers in this repo. Fork any of them from the [Arcade repo](https://github.com/KilledByAPixel/LittleJSArcade) as a starting point for your own.
+
+- 🤖 [Robo Rescue](https://killedbyapixel.github.io/LittleJSArcade/games/roboRescue.html)
+- 🐸 [Froggit](https://killedbyapixel.github.io/LittleJSArcade/games/froggit.html)
+- 🧩 [Tetrix](https://killedbyapixel.github.io/LittleJSArcade/games/tetrix.html)
+- 🏓 [Pong](https://killedbyapixel.github.io/LittleJSArcade/games/pong.html)
+- 🧛 [Emoji Survivors](https://killedbyapixel.github.io/LittleJSArcade/games/emojiSurvivors.html)
+- 🏙️ [Missile Defense](https://killedbyapixel.github.io/LittleJSArcade/games/missileDefense.html)
+- ⛳ [Mini Golf](https://killedbyapixel.github.io/LittleJSArcade/games/miniGolf.html)
+- 🎱 [Pool](https://killedbyapixel.github.io/LittleJSArcade/games/pool.html)
+- 🃏 [Freecell](https://killedbyapixel.github.io/LittleJSArcade/games/freecell.html)
+- 👾 [Space Intruders](https://killedbyapixel.github.io/LittleJSArcade/games/spaceIntruders.html)
+- 👻 [Maze Munch](https://killedbyapixel.github.io/LittleJSArcade/games/pucMan.html)
+- 🌑 [Astroblast](https://killedbyapixel.github.io/LittleJSArcade/games/asterblast.html)
+- 🔴 [Checkers](https://killedbyapixel.github.io/LittleJSArcade/games/checkers.html)

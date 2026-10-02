@@ -1,0 +1,34 @@
+{
+  "repository": "Zilize/GDC-Index",
+  "repository_id": 762637429,
+  "commit": "5fcb679fe1e92e89d59b6cb5c5c7b2bbc56085e1",
+  "source_url": "https://github.com/Zilize/GDC-Index/tree/5fcb679fe1e92e89d59b6cb5c5c7b2bbc56085e1",
+  "readme_path": "README.md",
+  "readme_sha256": "0b68bacf7cca8fb70779019de13ad09ed76c0d438fe05e3a45536c48e67afd6c",
+  "entries": [
+    {
+      "path": "2024",
+      "type": "dir",
+      "sha": "1d553bc87af3ce0ba00b17ba78d91d989bdc6bb4"
+    },
+    {
+      "path": "2025",
+      "type": "dir",
+      "sha": "4f9fe4d24bfda06830e30e099c0e48f4468d9aae"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5963dc229a42b55f809a2089db3687e0a5ea8267"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "5379d22a4ff3cef9f9b6f3c334e9cd6ecb194483"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Conference summary index rather than engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

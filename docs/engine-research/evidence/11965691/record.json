@@ -1,0 +1,89 @@
+{
+  "repository": "bryanedds/Nu",
+  "repository_id": 11965691,
+  "commit": "5374cc290ef0faf80cfa19ac7d70c7a87a19089e",
+  "source_url": "https://github.com/bryanedds/Nu/tree/5374cc290ef0faf80cfa19ac7d70c7a87a19089e",
+  "readme_path": "ReadMe.md",
+  "readme_sha256": "f90cb8add3166ef570233034ccd8ed3c86515ea21dfa717bc678886858ac28ce",
+  "entries": [
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "045fd2235bab8394199f00efc28827cdf0782073"
+    },
+    {
+      "path": ".devin",
+      "type": "dir",
+      "sha": "e68573a0688232d3cda0626062152e72a6a4ff69"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "565c53a7936f3b77cd329c95d37bf1a2db20c6e0"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f5143f0c8e94df99e20964ac1ff2a7461db76ce2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a1b61e79d292eb6af962be13024747c4323a132d"
+    },
+    {
+      "path": "Configure.Linux.Application.sh",
+      "type": "file",
+      "sha": "531b53a6b0923001118748d85be16b86d31e850c"
+    },
+    {
+      "path": "Configure.Linux.Development.sh",
+      "type": "file",
+      "sha": "81b54e72f0ea15ef8b55e548659b6422a29fcf82"
+    },
+    {
+      "path": "License.md",
+      "type": "file",
+      "sha": "03048cc34d04ba45a6ced48c63eaf42fc4e20a32"
+    },
+    {
+      "path": "Nu.slnx",
+      "type": "file",
+      "sha": "0483bb9aa0704a80616abd59a46a751cffed3b19"
+    },
+    {
+      "path": "Nu",
+      "type": "dir",
+      "sha": "369d93d37f47c79921be9e47663e38590dbfc7f2"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "86ce8b4b3398a8cf7b8925fa5ebf2cfef70b754a"
+    },
+    {
+      "path": "PropagateDefaultAssets.Linux.sh",
+      "type": "file",
+      "sha": "82df3f2e8a6fff961304016001a7483fac5ca2b1"
+    },
+    {
+      "path": "PropagateDefaultAssets.Windows.bat",
+      "type": "file",
+      "sha": "c0dba6b40ab7cba3fd73620d67da7dbac762752d"
+    },
+    {
+      "path": "ReadMe.md",
+      "type": "file",
+      "sha": "a9acc303ed57726cadda3567b54b148703332b98"
+    },
+    {
+      "path": "Standard.md",
+      "type": "file",
+      "sha": "5c94ca823564342cd94633191eaecc3b726769d9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "F# 2D/3D runtime with declarative/immediate APIs, SDL/Vulkan/Box2D/Jolt integration and game projects; practical/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "zkat/big-brain",
+  "repository_id": 278763279,
+  "commit": "12ffd46498f4703dd80b0121c9b964b413f887ee",
+  "source_url": "https://github.com/zkat/big-brain/tree/12ffd46498f4703dd80b0121c9b964b413f887ee",
+  "readme_path": "README.md",
+  "readme_sha256": "b054a7a5176f2a9fefc2d4eaaa6a40fe96145128c02ecab3f5b1aaa92b54f708",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "468347d3dfe4d9177a19a401b199f6629ae74fb4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "96ef6c0b944e24fc22f51f18136cd62ffd5b0b8f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "6b5a16019ac11e6aac1af443495d3dff593fefe3"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "a0c4a7a435afcf9e4e3a781d6cf4243fea9400e1"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "ac593c2a90d0989723723abc31ba8232a3a2505d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "67ded537359f072bb9470518b56a24bf1e8ae1ac"
+    },
+    {
+      "path": "README.tpl",
+      "type": "file",
+      "sha": "56c38d5f088e602a0f967a0c628f8bbde4c68a16"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "8f1f071dc4a7389e3510711dd2d24c540cc8ef3d"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "bfd826c9ff12bb63f3bcc167694a36460dcab839"
+    },
+    {
+      "path": "derive",
+      "type": "dir",
+      "sha": "85b1c1d909f3d579abda4e88a4e225d45c92cc0a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "990cb4d51e67f7f82e0d2c5c72a4d40be12803b3"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "1dcd273da054f66c5ba6b6c4f06d212163969505"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "84bd654acf0dabe6d3f47ba3df8e41e112228dcf"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "66e52e4a65a26eaa6f4e6eb3fbc6f50f3dbbb597"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy utility AI scorers/actions and cancellation library, not game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "aminere/powerplay-threejs",
+  "repository_id": 717597976,
+  "commit": "c1fc71697229798e12153386b2858110fd17c117",
+  "source_url": "https://github.com/aminere/powerplay-threejs/tree/c1fc71697229798e12153386b2858110fd17c117",
+  "readme_path": "README.md",
+  "readme_sha256": "a90a70956bacba7fb7933ddb06d1ad9299e9c8ac8694f26d972d8b4f944984e1",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a9081dd01f182b8470e506c2a76ae65cc573cd5d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b48a9caf1d8b12b9224aa5d0cf3b03e35d2d04c8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa181d67b6aa676735a6f3f587eb9579fffdd664"
+    },
+    {
+      "path": "build-watch.bat",
+      "type": "file",
+      "sha": "7665a76f3710c7e25a8e78f91766c0a424282a39"
+    },
+    {
+      "path": "commits.csv",
+      "type": "file",
+      "sha": "9169833bcae9e241b581ec74055aef4038242aa6"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "1fb08f9e308ffe963dc48119bed46cdbcfd7bc83"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "23535d0d040f2dcafc298386d0a85c2037ee69dd"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "1e943ea2ccd1d3e4ddb7dfd390525c62c0c233c9"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "f133430c91ef426701acc481d61b3a5c35b62b22"
+    },
+    {
+      "path": "powerplay-threejs.webp",
+      "type": "file",
+      "sha": "2420d979a11bf4eab78a60a26ad4d8bb0b40b6ec"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d24091d472dbaf8ec6d336b2a1f4ef667019d768"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "41d751879acd1d40c716594aca19db5570a67187"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "22d3018e9a6f8309d91926fe888e6b3f74de1f25"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "type": "file",
+      "sha": "42872c59f5b01c9155864572bc2fbd5833a7406c"
+    },
+    {
+      "path": "vite.config.ts",
+      "type": "file",
+      "sha": "0a91246a397d3545f1e475fd67735abf12387ba9"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "RTS prototype includes game/engine/editor folders and editor play workflow, but game launch remains coming soon and runtime boundary needs source review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

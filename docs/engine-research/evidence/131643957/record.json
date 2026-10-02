@@ -1,0 +1,62 @@
+{
+  "repository": "morriswmz/phd-game",
+  "repository_id": 131643957,
+  "commit": "fb92b5555a3e5bceac0f1852cf83c89352d29203",
+  "source_url": "https://github.com/morriswmz/phd-game/tree/fb92b5555a3e5bceac0f1852cf83c89352d29203",
+  "readme_path": "README.md",
+  "readme_sha256": "b7e1ad5644e38984a63b55e26a6cea3c99e12ae8fcdf71c4c64e7f8aa304d270",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4253672f12d9a989426198654e76f06ba25bf848"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cd4fb0bf939343f50909cff60ccaf0504a04cad6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ba73026deba72b1660a3c72804f1e78daccf68f8"
+    },
+    {
+      "path": "app.js",
+      "type": "file",
+      "sha": "826b7008d02fe760e7c1cea4483676285c78562b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "b7988a6a6d73cf2c254a1b1cfbcbbe07ec9d43d1"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "e0c4c7c3d07eb4d548b0b4c1dd870e14aa067377"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "15f6a2828b8cd334e9ed635c2547b438605ffcb4"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "75bd99170ec82c9d98142019d06650ba7f0c86ee"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "6b9c166453b1d01f8e54616ff020e6cfbac82139"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "3302257b9fb7befce1565796e20d2f4ec7725e1d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

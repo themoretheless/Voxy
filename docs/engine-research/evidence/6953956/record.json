@@ -1,0 +1,74 @@
+{
+  "repository": "CapsAdmin/goluwa",
+  "repository_id": 6953956,
+  "commit": "5b170c9fe7513089322253ceb6e2ffb9b4194455",
+  "source_url": "https://github.com/CapsAdmin/goluwa/tree/5b170c9fe7513089322253ceb6e2ffb9b4194455",
+  "readme_path": "README.md",
+  "readme_sha256": "3d8dab4bf26bd4868042b2eca027e9cb3aa9e68e3e7068d10db6f756b96fae5b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c36f0f5a8561d86d5a11a442155550f401a07803"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d44c283cd70a38b972d886384da8cec9f18d1467"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "6fcab5cdfc97fee91e759a406441842139ff6488"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "773b1235de81cbb93d217f42f615cc125e832cfb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6ff7168fa00410e9c944d243bf3807f6fb35401c"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "956b879a28fd2e54a1f5e138f543cfda98ccb27b"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "1abb1ec0e7542f60f64613c82286b30dea034cdb"
+    },
+    {
+      "path": "framework",
+      "type": "dir",
+      "sha": "9396e09cc79adf0dae1666af4ba6ee9478f1da7d"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "dc391e5a84751908f76ccefa9e3f13f291a57cfa"
+    },
+    {
+      "path": "goluwa",
+      "type": "file",
+      "sha": "9bb0a0a94470f27b973a0682d7afa7a74ccfcab9"
+    },
+    {
+      "path": "goluwa.cmd",
+      "type": "file",
+      "sha": "ef5752b34cac61eb89544aba019ffdcc4bb8c4eb"
+    },
+    {
+      "path": "nlconfig.lua",
+      "type": "file",
+      "sha": "726ef9ee6369fd3df1441f5567f6c9778284b436"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies LuaJIT engine/runtime/framework; owned core/engine/game source and platform launch entry points.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

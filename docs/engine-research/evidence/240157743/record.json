@@ -1,0 +1,104 @@
+{
+  "repository": "kudoochui/kudos",
+  "repository_id": 240157743,
+  "commit": "2f1c6d5672da4d23423eb9e6134ea5214c35d504",
+  "source_url": "https://github.com/kudoochui/kudos/tree/2f1c6d5672da4d23423eb9e6134ea5214c35d504",
+  "readme_path": "README.md",
+  "readme_sha256": "2ffa8409a275347e8c8971dbda62ff646781a53ecfea64787009937e350d489b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "66fd13c903cac02eb9657cd53fb227823484401d"
+    },
+    {
+      "path": "Chinese.md",
+      "type": "file",
+      "sha": "0efa19a7b64f7e659fc4719d2a45abb3752700d9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f8679915cedf9e0370483cc76686a1fba9a9b4e9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "658a23b62c0792a70f6623c6c372575cacc4a038"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "73f3b2d22da41ce259093f27b942b22ddfc2552c"
+    },
+    {
+      "path": "component",
+      "type": "dir",
+      "sha": "296d86678d56a8c3bb892eb51cd76a7cae17d3e7"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "152a9776b8da4c88faf021fbadd9741555b57b5b"
+    },
+    {
+      "path": "doc.go",
+      "type": "file",
+      "sha": "7fb767f64405e1ae405e71b33e6060ad979dc373"
+    },
+    {
+      "path": "filter",
+      "type": "dir",
+      "sha": "e732f90024ebbf413d50c0605f1e1d5794810ec3"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "187d3c24d9d6302d5c43ab0e55b77976d4685c31"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "473a94e0343a0852fd6081806b753ebc05e00be1"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "ab09c2d8570e15d5fab8705d412361ba474924cb"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "a6414d290ea3c0386f4d8d55c098dc0d83f879e4"
+    },
+    {
+      "path": "protocol",
+      "type": "dir",
+      "sha": "d3c55b9b6e2b5dcafcbf69f7bb1173a1ebcde31e"
+    },
+    {
+      "path": "rpc",
+      "type": "dir",
+      "sha": "8b0e81b19a14a912d03c69bcc4046becc569337b"
+    },
+    {
+      "path": "rpcx",
+      "type": "dir",
+      "sha": "279545e298999ac4a3a621f40fa28095b6d01bfa"
+    },
+    {
+      "path": "service",
+      "type": "dir",
+      "sha": "29653afe2d622ece2e6cc17c37e87eec1fcace21"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "7fcd3b953e0bd3a7cab2277dc0cf565142b75337"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies distributed RPC game-service framework; network/service/protocol and Go build, not complete engine. Performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,18 @@
+{
+  "comparedTo": "docs/body-current-face-original.png",
+  "changedPixels": 230,
+  "differenceBounds": [
+    210,
+    502,
+    344,
+    529
+  ],
+  "imageSha256": "30a9ef750bd23041370c74802e07846c4f06b75b41e70b25cd70b63375f925bf",
+  "rendererSha256": "491c98065820478c54686a3b90e0072e60adede4e071cf0d9bc10576a0127125",
+  "inspected": true,
+  "limitations": [
+    "Offscreen frontal closeup only",
+    "Not proof of anatomical validity or zero intersections",
+    "Feet and dynamic poses not reviewed"
+  ]
+}

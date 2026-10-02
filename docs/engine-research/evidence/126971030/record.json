@@ -1,0 +1,79 @@
+{
+  "repository": "Megabyteceer/thing-editor",
+  "repository_id": 126971030,
+  "commit": "695d0bd8246f4999e16d4ca9e5399f2de5f044de",
+  "source_url": "https://github.com/Megabyteceer/thing-editor/tree/695d0bd8246f4999e16d4ca9e5399f2de5f044de",
+  "readme_path": "README.md",
+  "readme_sha256": "24fa8afeefd9c9e9bdf63c494309afede5df80b5d7cc034392c4abc1b1677128",
+  "entries": [
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "20bef74ac85e4d183c8b051efd3dc00c505a3c94"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2d5d8f75552096536ef0422264c57272f01f2ea5"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "ae68978f936191f6a2f5df17ec490ef071aa305c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "67bfba28ce6ec0816e6d9fac7be2c5724471af5a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "80772382c45dadcccedb65fb5da99d0c32c6ec06"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "7cf8ec840fee771989f633e5145c6c3fdae2c07c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "f03c289b90f36a2ae8a9241e415a8fc4640e06bf"
+    },
+    {
+      "path": "run-ubuntu.sh",
+      "type": "file",
+      "sha": "ac95a470627d0e9d869e6dc780dab2eda43c41a1"
+    },
+    {
+      "path": "run-win10.bat",
+      "type": "file",
+      "sha": "cec8a80aa6cf04dd2a1d84ddad0c23882d8985b0"
+    },
+    {
+      "path": "thing-editor.code-workspace.template",
+      "type": "file",
+      "sha": "d42c96bd5ba6cc4c33a2661d021b27ec44ad46fc"
+    },
+    {
+      "path": "thing-editor",
+      "type": "dir",
+      "sha": "12dc4cf7e942feaef7f1040a8eb3d7d09d45b04d"
+    },
+    {
+      "path": "tsconfig.json.template",
+      "type": "file",
+      "sha": "444175aab96cf70335a14efb53e4f64cf622f433"
+    },
+    {
+      "path": "vite.config.js",
+      "type": "file",
+      "sha": "daf2946ca457cce9622b742fbbfb8e1e2be18cbc"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Pixi-based visual editor; owned editor source but independent runtime engine not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "sean-codes/cs-engine",
+  "repository_id": 69186435,
+  "commit": "070e9e6c6eefec1c74ab27c0845ffcb8683283e7",
+  "source_url": "https://github.com/sean-codes/cs-engine/tree/070e9e6c6eefec1c74ab27c0845ffcb8683283e7",
+  "readme_path": "README.md",
+  "readme_sha256": "bcb231c237ccb52b46b9c1d7328aeb47dbd4b6ce00dd8858954aae441bab90e5",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7a2f36f819675cdb0639bc0bd9c5b5cbf93a4566"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "713e8116a281995601fa5193fbf2753f8ea00fa7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "997798444d8a787d9bb8d390cc3545dc12b79af8"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "43c97e719a5a824700932f72e6e7e6748ce45d01"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5abe1aea4c18f352cd6dae28fc047d60c85f2ca5"
+    },
+    {
+      "path": "example.gif",
+      "type": "file",
+      "sha": "46d5918e3b22ac8a41dec8a76d0f97bab6529b77"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "82867eb9e9f8a77010f2f8d6f8d24748fc798441"
+    },
+    {
+      "path": "main.headless.js",
+      "type": "file",
+      "sha": "29de8688e3219199e28b2242acda9beaab847bc1"
+    },
+    {
+      "path": "main.require.js",
+      "type": "file",
+      "sha": "88189a47634869e0673a4ff217409c1bf1b49ca4"
+    },
+    {
+      "path": "main.web.js",
+      "type": "file",
+      "sha": "7c3ae4a19a77ecb2be0316572d907fc1e1428812"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d0c048af1615437dbb584a07a5b275fbef994992"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "894d0b892134040ef537b5b3560fe3964f85c2e2"
+    },
+    {
+      "path": "styles",
+      "type": "dir",
+      "sha": "fb7b16dc1364db5ec1befff21593ec7bc49e7712"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "b496e9e3699fb05d26862887b8ccbc3071090c21"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaScript 2D runtime with asset initialization, configured objects/lifecycle, web/headless entrypoints and audio/input/network/physics examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

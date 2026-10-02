@@ -1,0 +1,84 @@
+{
+  "repository": "TamasPetii/SynapseEngine",
+  "repository_id": 935475422,
+  "commit": "9af77c529f88fc6430040ae526afebdd51d39702",
+  "source_url": "https://github.com/TamasPetii/SynapseEngine/tree/9af77c529f88fc6430040ae526afebdd51d39702",
+  "readme_path": "README.md",
+  "readme_sha256": "52615821d17148685e30f03cc2f649d1c48d3e73728447054e2ee490f2f8093d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "728e619ec8611f5d2d70c566f2d9bcb582664abb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a79bd5d95d06c2bac6b1c7041dd85e916bdfbcc4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06cf19727957ea74ad5aebc027744ec7ae451912"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2f6e2e623a2e3e8c6d0a3a21e20f3ed20c36e81d"
+    },
+    {
+      "path": "COMMERCIAL_LICENSE.md",
+      "type": "file",
+      "sha": "12fb1a9f1d2b1159d964ddcee907adf8db5d4638"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e985d8f2868ce8b6ef75466196c4c377e3b8bac9"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "4c2f33246f613dd356d81b75392849daf2b2c83c"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "35489a3d048ec1719f8329dd7e68c0657c05bc35"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f69e73af9786b1ce19be6b7774de4e93fd4d1913"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "d006015be9c7abcf64dac1a413e20dda0076e29c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9d3c71dc4dc88302108726eedc0ebc7f6fab3165"
+    },
+    {
+      "path": "SynapseEngine",
+      "type": "dir",
+      "sha": "1edba50d1194309aa7fac08a4a9337e7b901dda8"
+    },
+    {
+      "path": "TRADEMARKS.md",
+      "type": "file",
+      "sha": "326bd0bb75846ef01f3831aa1433ce7d02b3977e"
+    },
+    {
+      "path": "add_license.py",
+      "type": "file",
+      "sha": "c881685ed09cdec4f9202b51193d9f8283fa86df"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies a research-oriented GPU-driven rendering engine; editor and ECS do not establish complete gameplay runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

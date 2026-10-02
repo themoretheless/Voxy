@@ -1,0 +1,129 @@
+{
+  "repository": "GameDevTecnico/cubos",
+  "repository_id": 405144767,
+  "commit": "e1e59f08261d946215a03b87443c33efda5d8825",
+  "source_url": "https://github.com/GameDevTecnico/cubos/tree/e1e59f08261d946215a03b87443c33efda5d8825",
+  "readme_path": "README.md",
+  "readme_sha256": "7f7ec57e7b21981dfaa2abf1575f300902ab5168f9e4c16cc05245f7b22de089",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "049ec7af95b422fd433f1c818f3d1a0d18c00f85"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "f6c613713a4dacc34ba729562d071419fe93bf5a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "1da608d63c466c982226c9aa17988571037c676b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5a73ab45bd1b76d25e6ccdc323c9edbe019e2b02"
+    },
+    {
+      "path": ".gitconfig",
+      "type": "file",
+      "sha": "1c8d4a7e35f7b97fbd1caf966e3f9363e58fbd3b"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "a9986dc762ccaabd62b5592c8dfb2aabc9172012"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2790ae2b4a1acfe7cc6f8d6e7723ff2a29f0bdf6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6606927243aaef08e2677f663c5b9736db3fd365"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "8e1da65f96dbcdee08baec634ba6d87e56a2aa66"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6967630e0180d8f289fa26ac0fc2afb2545e8dad"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2ba9efc78d32ce2a5369ac8d2017282b60df751b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f2703471143857d7f761478edd1c90c5d9daa974"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "5ee6ee5f86c3feafa591339c370e7d8f8fa41cd5"
+    },
+    {
+      "path": "bindings",
+      "type": "dir",
+      "sha": "fb5f76b5d0b90b1fb9e0b5eccb2874f2f633b21e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "7791c0d8a6ed97dca72b0f6dc083e94bbcd7f681"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "bfdc9877d9acc165c0342befa33f2e8f769538cf"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "8ec34eaa54b3f26244dd3af93322cb3715cd3639"
+    },
+    {
+      "path": "default.nix",
+      "type": "file",
+      "sha": "160d7f51cfd1364697bb7dea47680a83cb887e9a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2ba515d341a2b3810daefa221f079a8263c77da9"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "db7840754ff20ce675cb34ff3d5eaee84e7d84d7"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "b8cbf4c7904ba561e6f521320777ff25852612c0"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "85a70ae3464d8bb80ca509df78b8a4856ca59d0d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "6b2cd05145fdfe5e5665c781e945e7a6ad3313af"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Historical C++ voxel game engine with separate core/engine sources and tools; README explicitly states sunset/archived status.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

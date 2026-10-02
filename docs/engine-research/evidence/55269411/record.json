@@ -1,0 +1,37 @@
+{
+  "repository": "bansheeGz/BGCurve",
+  "repository_id": 55269411,
+  "commit": "3be279753c115d688472044a213f993b14fa27dd",
+  "source_url": "https://github.com/bansheeGz/BGCurve/tree/3be279753c115d688472044a213f993b14fa27dd",
+  "readme_path": "README.md",
+  "readme_sha256": "1c50011c115dbd84c537087da2d6ce8a71aa83cd75258be9638f352c592ad390",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d2c70a85aeb516963160fd290d7f0e3b66e4b40f"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "670a521ed43430c4b9ee4dc754a7e29668d24d00"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e683b1fc291d5e3628ae66def7dd2b2171299869"
+    },
+    {
+      "path": "Package",
+      "type": "dir",
+      "sha": "d2b69330f610ef1289d1f93e45faeab06acb42f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa95c9dcc18aa7adf280f395018d878fe20d7588"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

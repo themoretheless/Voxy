@@ -1,0 +1,164 @@
+{
+  "repository": "brettchalupa/usagi",
+  "repository_id": 1220224312,
+  "commit": "a0a91abe5659b9bb2bb73eee0f899eec723205bc",
+  "source_url": "https://github.com/brettchalupa/usagi/tree/a0a91abe5659b9bb2bb73eee0f899eec723205bc",
+  "readme_path": "README.md",
+  "readme_sha256": "926ec40a8c27b926e1143a89f54fef3f4fffe6a7499646242d452cb118c7d44c",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "1d8395d93563e6b7a598d9491addd10877a73660"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "15695df59aa8f7167731f1200bd3e93b10ce6764"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "e53e9703627210bb8141e939fd961ef87fa54ff6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "40b69cb7051ed162aaf7b66785856d9ea64bcd1d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6ba252f144bb2ced573b40dd92721536f421b2e5"
+    },
+    {
+      "path": ".luarc.json",
+      "type": "file",
+      "sha": "f9dc1996db70a15495ad2dc32ab13ade1006edff"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "a910eb136f5cef9b007304f3124da02e456d5bcb"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "284344e72dd002621d3864f429bf90ea6a2d121a"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "4520cc7f18eaaa123203ebdfed7d747ca4864eb0"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "ca5938b12a4be74b777fc470737df3916469e814"
+    },
+    {
+      "path": "DEVELOPING.md",
+      "type": "file",
+      "sha": "de35b63b63440ccd363dd48c101d41b487c03852"
+    },
+    {
+      "path": "Formula",
+      "type": "dir",
+      "sha": "24b2d79a409057a23d9179c7a7c6060286705f22"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8696147326aae0685f2e3263425a8ea0791b5b7d"
+    },
+    {
+      "path": "README_DEV.md",
+      "type": "file",
+      "sha": "8696147326aae0685f2e3263425a8ea0791b5b7d"
+    },
+    {
+      "path": "THIRD_PARTY_LICENSES.md",
+      "type": "file",
+      "sha": "e0d51956040ac3a51c45238baa432d694c1a063a"
+    },
+    {
+      "path": "UNLICENSE",
+      "type": "file",
+      "sha": "efb98088164f5786b17e83ed384971fc3c74f93c"
+    },
+    {
+      "path": "about.md.hbs",
+      "type": "file",
+      "sha": "02208ddd69fd5316c886e236fc2c267af32e3605"
+    },
+    {
+      "path": "about.toml",
+      "type": "file",
+      "sha": "d4443fe16e21ee1e41fa55f01b080f2e3ab67fea"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "6e82c01bd975abf884dc8107204bec4172c96656"
+    },
+    {
+      "path": "book",
+      "type": "dir",
+      "sha": "ac4baaa851dd900430f0382667ce8a3d1a9995d8"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a8002f66a12d38d9bcef633182785a7b61b3e179"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "e64d14da1977144695dbea6c5b9c4f22336dffb7"
+    },
+    {
+      "path": "meta",
+      "type": "dir",
+      "sha": "a4d4e36184a9481d9944bf234b9f48f6718abf68"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "be2189ff981208ada0bcb025365140236cfe8125"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5b03e5e57b49a6ec3acbaf7bb2f060edae8f5cd8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ec6b4b44c7003be9d604f0e20f2630aded9d5a7c"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "4e946238f8a0a839acadbe1ab638cb354b4499dc"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "6b7f11d8a2f89981021985596427d8e5946d995a"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "8c2ac941b0ed06e6a5a4f61566b1d93b136103ba"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Lua 2D engine; owned runtime/Cargo build and deployment docs. GitHub mirror tracked as repository, not independent second family.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

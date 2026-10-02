@@ -1,0 +1,77 @@
+{
+  "repository": "Kadoba/Advanced-Tiled-Loader",
+  "repository_id": 2229838,
+  "commit": "9c599f3c87cd563ca8c601f44f13b7d9037a06a0",
+  "source_url": "https://github.com/Kadoba/Advanced-Tiled-Loader/tree/9c599f3c87cd563ca8c601f44f13b7d9037a06a0",
+  "readme_path": "README.md",
+  "readme_sha256": "5ad1f7f0c4939686e4194cc818499d88d5a6908a2bda4c7b6988400ec39aa10c",
+  "entries": [
+    {
+      "path": "Base64.lua",
+      "type": "file",
+      "sha": "f66cf0a8b2d3ce7c62d156ec9916a6ea19b978a3"
+    },
+    {
+      "path": "Grid.lua",
+      "type": "file",
+      "sha": "59bd01e72dd9e66df85a2b17b0c4dbe89031c438"
+    },
+    {
+      "path": "Loader.lua",
+      "type": "file",
+      "sha": "6fce6f206609809808f910516b8a692ca43f50ea"
+    },
+    {
+      "path": "Map.lua",
+      "type": "file",
+      "sha": "d4e62bed35bbeaca2e47dcf65608b7af3634784c"
+    },
+    {
+      "path": "Object.lua",
+      "type": "file",
+      "sha": "d69dcc5eddfe968f6281c0fc149b1ac7e31070e7"
+    },
+    {
+      "path": "ObjectLayer.lua",
+      "type": "file",
+      "sha": "4fe3c1271e34c510b7e6249e53ae5958fdb42253"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9a749140bfb6919bb9cd45bc736c2b2fd9b1d39b"
+    },
+    {
+      "path": "Tile.lua",
+      "type": "file",
+      "sha": "dcadaba5eda1c09becb3773c2b3adf4c4d432482"
+    },
+    {
+      "path": "TileLayer.lua",
+      "type": "file",
+      "sha": "0b464eeff07a97b10b46fbf30ff5a374b4f16f04"
+    },
+    {
+      "path": "TileSet.lua",
+      "type": "file",
+      "sha": "6d817bd8774d9abc870c12f6c8e3a13cafd0f7ce"
+    },
+    {
+      "path": "VERSION.txt",
+      "type": "file",
+      "sha": "7e87066ec2764cb02ece7206d16230ea74118b02"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "b3c6568fac1eae69264db88a04e79749be22fedb"
+    },
+    {
+      "path": "init.lua",
+      "type": "file",
+      "sha": "60b90465d875fc46cd7b9384a152ed9b18d1fb67"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

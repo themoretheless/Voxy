@@ -1,0 +1,124 @@
+{
+  "repository": "PixelRoot32-Game-Engine/PixelRoot32-Game-Engine",
+  "repository_id": 1133160222,
+  "commit": "dbd940e3721b5668308011234a0ae7f960b5160e",
+  "source_url": "https://github.com/PixelRoot32-Game-Engine/PixelRoot32-Game-Engine/tree/dbd940e3721b5668308011234a0ae7f960b5160e",
+  "readme_path": "README.md",
+  "readme_sha256": "6ea0c0ee432bbd3b9057450ef519be16e1c068f3ab1dbb69aab9cfb76b1035b5",
+  "entries": [
+    {
+      "path": ".codegraph",
+      "type": "dir",
+      "sha": "f5e8f9f162f2683809e7fd784926bc6c1422710f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0d9b91cc0bd7edf609f9f3df82d764d098717c26"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5f33c2e7cdf28d26546e09a489a64cc4b5f65329"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "6ecd641c6e5fe5ee17c05af743a6c8b2a3970c95"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "56d98dab9df5c1e2837762ef4c9e1c60a5fe5134"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d2ae11f6b025acccbec5475e5710ac71f9cbda10"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "dfc2fcd20b5820ee8db7903d2419f59d4c714cb3"
+    },
+    {
+      "path": "LICENSES",
+      "type": "dir",
+      "sha": "1a00499ac5637fca8a3d17190ac3c20f7cb827a7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0fc08ac44115961e30209e24ce8865afe8ac4546"
+    },
+    {
+      "path": "TRADEMARK.md",
+      "type": "file",
+      "sha": "7dbba8e563d6838e8fb432760a671854beb394a3"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "34138f24c083499e093ae44b2e3bc6cb62280d8e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d560930fc8ef78c682ff14f062c57b2918f6ca11"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "8f0df450a85fe8084f6a5a08c5f703cb986ded1d"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "663122cda63c0ae865ea9887046f5ac733da0c10"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "51c25a9cb10566ea72ccc7b8ab187a45828e05e1"
+    },
+    {
+      "path": "library.json",
+      "type": "file",
+      "sha": "c3674899caefa8935be4735f9aee03cd7aada859"
+    },
+    {
+      "path": "platformio.ini",
+      "type": "file",
+      "sha": "aced47d612797408a24cb2143b53d4167360fe24"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "7c715125fcec93be8f189df0a07bef419bfd3291"
+    },
+    {
+      "path": "run_tests.py",
+      "type": "file",
+      "sha": "c934bd5784d2e9f6e17f1e1faf111e02bbe22202"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "c21a06dd72498ba12d8e9390a0c2f207ace7790d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "982c70dad18ac2c53785ba5e0a6da026d725922d"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "7d82eb262e11823131b76efb144e43f3b87ebf28"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ESP32/SDL C++ scene/entity runtime with tilemaps, controllers/physics, fixed-voice audio, UI, transitions and optional gameplay modules; determinism/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

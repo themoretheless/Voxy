@@ -1,0 +1,62 @@
+{
+  "repository": "SpyrexDE/SmoothScroll",
+  "repository_id": 361437244,
+  "commit": "3f19001acdf1ca2c2d56566a63b8665a7eb615be",
+  "source_url": "https://github.com/SpyrexDE/SmoothScroll/tree/3f19001acdf1ca2c2d56566a63b8665a7eb615be",
+  "readme_path": "README.md",
+  "readme_sha256": "ecf7416e355f157985c4650f7f72612993f5ec329b821e81ab4abea5ad744f08",
+  "entries": [
+    {
+      "path": ".asset-template.json.hb",
+      "type": "file",
+      "sha": "7a7111b709c9118798a04b728d67bc9db96a0873"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "8c71697698952e32091088dffc720e0c71de9701"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b7b5b3ff519dd47d5f23548a954b01b50eda4f49"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4709183670ac629a32ff7df40816c79c7c932daa"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "89d0b10aae4cbc2abf8814fabc853a2b9db4f4bf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "96d4021be7ec9e11cb820f41b53d7d5ee6028fdd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "19f6ec2d56f91bbd2ab351eef663fa9a98a26af8"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "2471ec12e5684a25b9aac2d39c3fa3e83b449866"
+    },
+    {
+      "path": "example.tscn",
+      "type": "file",
+      "sha": "3407768e25168a515ef7d354bf37dca4eb3d1cc4"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "c4d8317ef4398b873d5cf29aaf7159d692282f6e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

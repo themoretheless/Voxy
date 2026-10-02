@@ -1,0 +1,134 @@
+{
+  "repository": "NazaraEngine/NazaraEngine",
+  "repository_id": 4192801,
+  "commit": "b5e1300d3b5178a85be1298de54d45104ce3e0c8",
+  "source_url": "https://github.com/NazaraEngine/NazaraEngine/tree/b5e1300d3b5178a85be1298de54d45104ce3e0c8",
+  "readme_path": "README.md",
+  "readme_sha256": "845b7c0768cf81a7f538b5e96eb68427576edadd647118cb096ad331525765af",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "378d2bc3af555d794f1474224d717e96db0ddcba"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "16ebad29ff6b6561f8598a1b3c2705ad93fb41f6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c4711173692da0a2a10d7ede2bfc24e85719e657"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7c8f9f4b36d465fb161ab7f283e1d9368234b82e"
+    },
+    {
+      "path": ".ruleset",
+      "type": "file",
+      "sha": "2a368c9cc5af366e2785311415f4a6698f70e4d8"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "52b8986a6b12f934f1ee571636eadd4d0b01b5ce"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "8ee51aab4dadb152e8cd001274624253eacefbcf"
+    },
+    {
+      "path": "INSTALL.md",
+      "type": "file",
+      "sha": "6d7a23392bdb8de1c076adf25e38cabbaefcb3bc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "aa1920df5a6f6b1a32dc99585d6a8bddc9895d58"
+    },
+    {
+      "path": "LICENSE-FFmpeg",
+      "type": "file",
+      "sha": "0a041280bd00a9d068f503b8ee7ce35214bd24a1"
+    },
+    {
+      "path": "LICENSE-Kiwi",
+      "type": "file",
+      "sha": "c34aff71cb8d18e1324e87c416224b3c4c0aa557"
+    },
+    {
+      "path": "License-OpenSans.txt",
+      "type": "file",
+      "sha": "989e2c59e973a05cfbfe9de678b7f2af777b0713"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "806885af1e9662c1cebd23e13d7e826f53a5a335"
+    },
+    {
+      "path": "THANKS.md",
+      "type": "file",
+      "sha": "e0d6c8dca126cc4634a8a20af0b9c6bd35d5ba22"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "8667c5e628c2f7f58c97fa26f3de43b2939e8aee"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "7a372b379217825da9b12cbc380fb5c79fdf7271"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "c3bcdcedae21498584fce4ebb31bc884899f65bf"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "97ca521a731ab50c90e47ea84b4de6ff7d70e3c1"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "1e2f47a91d1670f43b449b22912989a7325beb9a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "246b47b14e03b25602236f200437b2d36b1549bb"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e63415cba776e4241b12276d59fba406534dce54"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "bd132b2c94aaff2fb0f96463cb41e0b7c7720f95"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "2c2bd7b4575e734a8bc7083a8a783717a9dc57cf"
+    },
+    {
+      "path": "xmake",
+      "type": "dir",
+      "sha": "7b2fb0c9e43e872537dd3a73c54fdb99e7426785"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies real-time development framework; native source/documentation/build evidence. Separate from complete-engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

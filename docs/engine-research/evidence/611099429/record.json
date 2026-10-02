@@ -1,0 +1,52 @@
+{
+  "repository": "Zeenobit/moonshine_save",
+  "repository_id": 611099429,
+  "commit": "6e788b96d1eef6ae75987951c945de11789e8ede",
+  "source_url": "https://github.com/Zeenobit/moonshine_save/tree/6e788b96d1eef6ae75987951c945de11789e8ede",
+  "readme_path": "README.md",
+  "readme_sha256": "fa2a12b21e29e79f68a8b92db9b1b18d7690c8e46b7ed3efd1c4b660c8564075",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d05c624745fb94eab56addf1f3ed53765d9932a1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "869df07dae8bac23301b7f3e7869d29d88975fef"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "55be76187f1d2d4a867a56e56d3f5778a3cb67e1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "564be94cac2586dcab0cadbc9f9d620b51ad4f95"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "83089d0bb6b6cc354bfec93cb1b8ec1e404e3df9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "f27efaa4627e3115e043c75e35f1300ad8b92e87"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "75be3a1f6947349c1bf3fa7c4fd4dc82bfd35470"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "9b2e8cfc70fa12076538113ae08c8ff7470c11ed"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

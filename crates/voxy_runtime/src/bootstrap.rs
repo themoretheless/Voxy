@@ -8,10 +8,10 @@ use voxy_lighting::{
 };
 use voxy_mesher::{ChunkMesh, HALO_OFFSETS, MeshError, MeshStamp, MeshingInput, build_mesh};
 use voxy_world::{
-    BlockDef, BlockRegistry, ChunkData, ChunkGenerator, ChunkRevision, ChunkSnapshot,
+    BlockDef, BlockRegistry, BlockStateId, ChunkData, ChunkGenerator, ChunkRevision, ChunkSnapshot,
     CollisionShape, GeneratedChunk, GenerationError, InterfaceGroupId, MaterialId, Occlusion,
-    RegistryError, RenderKind, ResourceKey, SimpleTerrainGenerator, TerrainPalette, VoxelView,
-    World, WorldLimits, WorldSeed,
+    ProceduralTerrainGenerator, RegistryError, RenderKind, ResourceKey, SimpleTerrainGenerator,
+    TerrainPalette, VoxelView, World, WorldLimits, WorldSeed,
 };
 
 #[derive(Debug)]
@@ -35,32 +35,76 @@ pub struct BootstrapChunk {
 /// Returns registry, generation, or meshing failures without mutating global state.
 #[allow(clippy::too_many_lines)]
 pub fn build_bootstrap_scene(seed: u64, radius: i32) -> Result<BootstrapScene, BootstrapError> {
+    build_scene(seed, radius, false)
+}
+
+/// Builds natural terrain with seeded biomes and water-filled lowlands.
+///
+/// # Errors
+/// Returns registry, generation, lighting, or meshing failures.
+pub fn build_procedural_scene(seed: u64, radius: i32) -> Result<BootstrapScene, BootstrapError> {
+    build_scene(seed, radius, true)
+}
+
+/// Builds the existing halo-correct scene with a caller-selected generator.
+/// The factory receives IDs from the actual scene registry; accelerator crates
+/// stay outside the renderer-neutral runtime dependency graph.
+/// # Errors
+/// Reports factory, generation, meshing and lighting errors without fallback.
+pub fn build_generated_scene(
+    seed: u64,
+    radius: i32,
+    factory: impl FnOnce(
+        TerrainPalette,
+        BlockStateId,
+    ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
+) -> Result<BootstrapScene, BootstrapError> {
+    build_scene_using_generator(seed, radius, true, factory)
+}
+
+fn build_scene(seed: u64, radius: i32, procedural: bool) -> Result<BootstrapScene, BootstrapError> {
+    build_scene_using_generator(seed, radius, procedural, |palette, water| {
+        Ok(if procedural {
+            Box::new(ProceduralTerrainGenerator::new(palette, water)) as Box<dyn ChunkGenerator>
+        } else {
+            Box::new(SimpleTerrainGenerator::new(palette, 7, 8)) as Box<dyn ChunkGenerator>
+        })
+    })
+}
+
+#[allow(clippy::too_many_lines)]
+fn build_scene_using_generator(
+    seed: u64,
+    radius: i32,
+    procedural: bool,
+    factory: impl FnOnce(
+        TerrainPalette,
+        BlockStateId,
+    ) -> Result<Box<dyn ChunkGenerator>, GenerationError>,
+) -> Result<BootstrapScene, BootstrapError> {
     if !(0..=8).contains(&radius) {
         return Err(BootstrapError::InvalidRadius(radius));
     }
     let registry = Arc::new(default_registry()?);
-    let generator = SimpleTerrainGenerator::new(
-        TerrainPalette {
-            air: registry
-                .find(&ResourceKey::parse("voxy:air")?)
-                .ok_or(BootstrapError::MissingBuiltin)?,
-            surface: registry
-                .find(&ResourceKey::parse("voxy:grass")?)
-                .ok_or(BootstrapError::MissingBuiltin)?,
-            soil: registry
-                .find(&ResourceKey::parse("voxy:dirt")?)
-                .ok_or(BootstrapError::MissingBuiltin)?,
-            stone: registry
-                .find(&ResourceKey::parse("voxy:stone")?)
-                .ok_or(BootstrapError::MissingBuiltin)?,
-        },
-        7,
-        8,
-    );
+    let palette = TerrainPalette {
+        air: registry
+            .find(&ResourceKey::parse("voxy:air")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+        surface: registry
+            .find(&ResourceKey::parse("voxy:grass")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+        soil: registry
+            .find(&ResourceKey::parse("voxy:dirt")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+        stone: registry
+            .find(&ResourceKey::parse("voxy:stone")?)
+            .ok_or(BootstrapError::MissingBuiltin)?,
+    };
     let token = CancelToken::new();
     let water = registry
         .find(&ResourceKey::parse("voxy:water_8")?)
         .ok_or(BootstrapError::MissingBuiltin)?;
+    let generator = factory(palette, water)?;
     let grass = registry
         .find(&ResourceKey::parse("voxy:grass")?)
         .ok_or(BootstrapError::MissingBuiltin)?;
@@ -74,7 +118,7 @@ pub fn build_bootstrap_scene(seed: u64, radius: i32) -> Result<BootstrapScene, B
             for x in -(radius + 1)..=(radius + 1) {
                 let pos = ChunkPos { x, y, z };
                 let mut generated = generator.generate(pos, WorldSeed(seed), &token)?;
-                if pos == ChunkPos::default() {
+                if !procedural && pos == ChunkPos::default() {
                     let mut updates = Vec::new();
                     for x in 12..=20 {
                         for z in 12..=20 {
@@ -501,6 +545,26 @@ mod tests {
                 .chunks
                 .iter()
                 .all(|chunk| chunk.light.bytes().len() == voxy_core::CHUNK_VOLUME)
+        );
+    }
+
+    #[test]
+    fn procedural_scene_is_deterministic_and_meshes_natural_water() {
+        let first = build_procedural_scene(0x56_4f_58_59, 1).unwrap();
+        let second = build_procedural_scene(0x56_4f_58_59, 1).unwrap();
+        assert_eq!(first.chunks, second.chunks);
+        assert_eq!(first.chunks.len(), 9);
+        assert!(
+            first
+                .chunks
+                .iter()
+                .any(|chunk| !chunk.mesh.translucent.is_empty())
+        );
+        assert!(
+            first
+                .chunks
+                .iter()
+                .all(|chunk| !chunk.mesh.opaque.is_empty())
         );
     }
 

@@ -1,0 +1,84 @@
+{
+  "repository": "STREGAsGate/GateEngine",
+  "repository_id": 591829037,
+  "commit": "8ac4b58b5465c165f408b240b92c67a1948797da",
+  "source_url": "https://github.com/STREGAsGate/GateEngine/tree/8ac4b58b5465c165f408b240b92c67a1948797da",
+  "readme_path": "README.md",
+  "readme_sha256": "1f24f6b44f240eff3281fc9cdbab401d8a444cdf10ae424a7611dfcc85428f42",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0905556ad1241976fcdde702e5d273b232d3232e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "173e7b7b7b058757bf98f1cc7aed388ca97fead4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "73dbda96f0385a3f13b34880c031f315024c0db2"
+    },
+    {
+      "path": ".swift-format",
+      "type": "file",
+      "sha": "3e6e1f16f5a17b98adfe42de202a8c190967b37c"
+    },
+    {
+      "path": ".swiftpm",
+      "type": "dir",
+      "sha": "95b62b3ee3f7b179dcee5a3e9c2865d0e5991144"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "e880188d0496b3d83c3d07d1ec4effbabb0d13be"
+    },
+    {
+      "path": "Extras",
+      "type": "dir",
+      "sha": "98a3957e88eead817d686c8c8e76f40f3c5c0cad"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "81972bac3e6d70731b99cd3c97905933e57b89e2"
+    },
+    {
+      "path": "Macros",
+      "type": "dir",
+      "sha": "552f460c522c692edca39f312d50af8ff22c17ac"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "5cd939f5d7a5f2656b05e34f73e8a31957f2a723"
+    },
+    {
+      "path": "Package.swift",
+      "type": "file",
+      "sha": "6034e33041157573d8d79ff1f82492c490f51a2e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f589869755f056f623726145d5d40d3010cc2f66"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "4de9c16f8d9d99b842ee3a4800375b6e9285602d"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "69919b9cebf787b219f6a6ad1fdfb7ae47ea83df"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies cross-platform Swift game engine; owned Sources/Macros and Swift package/tests. Platform completion unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,67 @@
+{
+  "repository": "elringus/unity-console",
+  "repository_id": 143755141,
+  "commit": "80ea0455f20bfe7a8e1547f0a7bba78ebb572f38",
+  "source_url": "https://github.com/elringus/unity-console/tree/80ea0455f20bfe7a8e1547f0a7bba78ebb572f38",
+  "readme_path": "README.md",
+  "readme_sha256": "d34b33eb6873a93e926ed50816f071eb90a6d1d22a1baeb9a0e874693d6c178e",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cd4d33cb5362b3c834b877ddda0eb4ea9125651b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fa45f193480ca46b4149ef2f0c8636da890e9160"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "276e7e6192b5b5ceb0f31d41c53ccdff5d3ca0c1"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "2777af57b9efd61a54d36a840375c9f551d36e53"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "df0d94fbe1976c0363d7bd1eb740ac7e4906527a"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "df1b2137dec2055dbdfc596b413d34238274211f"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "cd2a7f08619ecaa5d5874ef534c97f60da893ff9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c909ce842689da320d3013a1dfbb6cabec496588"
+    },
+    {
+      "path": "preview.gif",
+      "type": "file",
+      "sha": "734edd3b4201a061877c7ae38389b43b79036243"
+    },
+    {
+      "path": "publish.sh",
+      "type": "file",
+      "sha": "a5473f56b8346bb3aeed422af251d3ea904e9f2b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

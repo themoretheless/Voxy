@@ -2,6 +2,17 @@
 resolver = "3"
 members = [
     "crates/voxy_core",
+    "crates/voxy_assets",
+    "crates/voxy_audio",
+    "crates/voxy_audio_device",
+    "crates/voxy_input",
+    "crates/voxy_ui",
+    "crates/voxy_text",
+    "crates/voxy_ui_winit",
+    "crates/voxy_navigation",
+    "crates/voxy_scene",
+    "crates/voxy_gameplay",
+    "crates/voxy_rush",
     "crates/voxy_world",
     "crates/voxy_storage",
     "crates/voxy_mesher",
@@ -10,8 +21,18 @@ members = [
     "crates/physics",
     "crates/physics_voxel",
     "crates/voxy_runtime",
+    "crates/voxy_time",
     "crates/voxy_render",
+    "crates/voxy_web",
+    "crates/voxy_ray_probe",
     "crates/voxy_app",
+    "crates/voxy_editor",
+    "crates/voxy_mobile",
+    "crates/voxy_cuda",
+    "crates/voxy_vulkan",
+    "crates/voxy_gpu",
+    "crates/voxy_xr",
+    "crates/voxy_streamline",
 ]
 
 [workspace.package]
@@ -27,3 +48,7 @@ missing_debug_implementations = "warn"
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
+
+[patch.crates-io]
+wgpu = { path = "vendor/wgpu" }
+wgpu-hal = { path = "vendor/wgpu-hal" }

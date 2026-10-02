@@ -1,0 +1,39 @@
+{
+  "repository": "Yuan-ManX/ai-game-devtools",
+  "repository_id": 616764080,
+  "commit": "1200b26f1548e8a80adbcbb8ae567b902146c17d",
+  "source_url": "https://github.com/Yuan-ManX/ai-game-devtools/tree/1200b26f1548e8a80adbcbb8ae567b902146c17d",
+  "readme_path": "README.md",
+  "readme_sha256": "cb2a6dce989c7abc2db6efd8ca9c41fc149b1bef03acdf2a410d61cc19d1b4f3",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b88d92d94e24b87f793ff1435622c4e642b1c166"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8ed3d431303ddb0c7e5e604b6ce72ba4aa4aed2b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a4aa4aa600353bd62da2913cd8f99882815246f0"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "074335006d1eafbe614de3563c302a18ccb58c6d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d5efe6d57e781083c718de17f2144678996eff80"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README tables and description identify AI development tool resource hub, not owned engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

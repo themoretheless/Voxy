@@ -1,0 +1,49 @@
+{
+  "repository": "JuDelCo/Entitas-Cpp",
+  "repository_id": 53688054,
+  "commit": "4dd4093fd2759839f6a83a85db3562a83e363c53",
+  "source_url": "https://github.com/JuDelCo/Entitas-Cpp/tree/4dd4093fd2759839f6a83a85db3562a83e363c53",
+  "readme_path": "README.md",
+  "readme_sha256": "a1c67a24cc59bcb29ff48af8a233404e5e096aae9da9dd6f38691a6987942f1c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f6c3271151486b3ce70b84c49cb3c46b03f5f50f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4b7f3157bb13d7c87c4134a6540861ab25474c8e"
+    },
+    {
+      "path": "EntitasPP",
+      "type": "dir",
+      "sha": "36560dff7140319c895626d5d4699cec0bebe6d3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d3c7402cef0f32cbd303818caa055d4a26209fc8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cc7bcbcc94de1ab9529a7fb9569350ca5037673e"
+    },
+    {
+      "path": "clang_build.sh",
+      "type": "file",
+      "sha": "8e078b93f155a635985caaa61f51c2cec5f4a30b"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "2b49abbf3ec51c16454361244a78f0481dad0942"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native ECS port; EntitasPP/CMake source, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,169 @@
+{
+  "repository": "OpenFarCry1/Far-Cry-1-CryEngine1",
+  "repository_id": 664018061,
+  "commit": "38da5286bc420aa716662763cbde398473abe893",
+  "source_url": "https://github.com/OpenFarCry1/Far-Cry-1-CryEngine1/tree/38da5286bc420aa716662763cbde398473abe893",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06f581ab5df3d2b2b7f0258700b930411562b1e5"
+    },
+    {
+      "path": "AMD64_ProjectFiles_VS2005",
+      "type": "dir",
+      "sha": "0fdea98e3878d46e5af5dfc1484b53b5f14d0fd1"
+    },
+    {
+      "path": "BuildAMD64.txt",
+      "type": "file",
+      "sha": "8f9f24a0feda5895c804ba930904eaf45d3a07f6"
+    },
+    {
+      "path": "Cry3DEngine",
+      "type": "dir",
+      "sha": "414538b84d4cc3a57df9fb77b4099c5df3131cb1"
+    },
+    {
+      "path": "CryAISystem",
+      "type": "dir",
+      "sha": "1c6a5c3a3b6912d3473417917b7b63c84e13c462"
+    },
+    {
+      "path": "CryAnimation",
+      "type": "dir",
+      "sha": "8551fc68e8380c8c372ca85be03ef910eb7ae54f"
+    },
+    {
+      "path": "CryCommon",
+      "type": "dir",
+      "sha": "ef3af0cb319155e3e01ae8e1b8a75773dc8ec7ea"
+    },
+    {
+      "path": "CryEntitySystem",
+      "type": "dir",
+      "sha": "e48235cf522b9fda8d54b0689d26997ebd8bddbb"
+    },
+    {
+      "path": "CryFont",
+      "type": "dir",
+      "sha": "ec1bd2b82e446f976943733d6dcda26e36a2c980"
+    },
+    {
+      "path": "CryGame",
+      "type": "dir",
+      "sha": "23809d705c87c6c6de6cedab8870bcd6ecafa52e"
+    },
+    {
+      "path": "CryInput",
+      "type": "dir",
+      "sha": "132b85847f025c8ff258e3e8e0093e0723d87f85"
+    },
+    {
+      "path": "CryMovie",
+      "type": "dir",
+      "sha": "2020bab804c6dbbdb76f22d7b8bb8342c6a4563a"
+    },
+    {
+      "path": "CryNetwork",
+      "type": "dir",
+      "sha": "3417f148c77eb056d22f026b46c3979f47b9fc73"
+    },
+    {
+      "path": "CryPhysics",
+      "type": "dir",
+      "sha": "2373286d75fe2e23bd11b4b63adf45da2cfaf11c"
+    },
+    {
+      "path": "CryScriptSystem",
+      "type": "dir",
+      "sha": "1517c3253d9403b71a2ef4eabc49e2f23f9e3cf5"
+    },
+    {
+      "path": "CrySoundSystem",
+      "type": "dir",
+      "sha": "940c47c00aac6d57b8b6648703b9a5ebd96a7b3d"
+    },
+    {
+      "path": "CrySystem",
+      "type": "dir",
+      "sha": "6b479a49dc7846f34667d92c4614f2afcfea8f0f"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "aca2b6bfcb67a1999cb2355d57c95583c7ef19b6"
+    },
+    {
+      "path": "FARCRY",
+      "type": "dir",
+      "sha": "eb31a151f261dbff070e9a3add99832287d99880"
+    },
+    {
+      "path": "FarCry_WinSV",
+      "type": "dir",
+      "sha": "1e6db3fd84596819efcd121bfd447d5eba560d74"
+    },
+    {
+      "path": "Game01.sln",
+      "type": "file",
+      "sha": "b42e0250695e876ab3e4bdd0bd20b2506be400d4"
+    },
+    {
+      "path": "Game01.vssscc",
+      "type": "file",
+      "sha": "6cb031bcf51274d6619700bbc2052bc3df5c03ba"
+    },
+    {
+      "path": "Game01_XBox.sln",
+      "type": "file",
+      "sha": "9d26af06a9040ee573671a7339dba3719405a5dc"
+    },
+    {
+      "path": "MSSCCPRJ.SCC",
+      "type": "file",
+      "sha": "9b1be53fdb526961ef45ab036c8203a86e610e39"
+    },
+    {
+      "path": "PunkBuster",
+      "type": "dir",
+      "sha": "6fc19bb907d8cf921c8ec4b69e849834e9bb2478"
+    },
+    {
+      "path": "RenderDll",
+      "type": "dir",
+      "sha": "413942b23c8fd1a69cc48944d1abb432e416e0b4"
+    },
+    {
+      "path": "ResourceCompiler",
+      "type": "dir",
+      "sha": "89df725b2bd62ac15a315b764593dafa08a5ea8e"
+    },
+    {
+      "path": "ResourceCompilerImage",
+      "type": "dir",
+      "sha": "7240f9bd72b9716b783449f55a768c09422d9040"
+    },
+    {
+      "path": "ResourceCompilerPC",
+      "type": "dir",
+      "sha": "5c3a42a71055ce3982ba7baee78333d3f1f96926"
+    },
+    {
+      "path": "STLPORT",
+      "type": "dir",
+      "sha": "86cda35fc88b262abd3e16fdeb007c152473fa9f"
+    },
+    {
+      "path": "Win32APIWrapper",
+      "type": "dir",
+      "sha": "ff14a83718ac8c972dd8dd826a99237fd2f78b90"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Commercial CryEngine/Far Cry source distribution with noncommercial description and no pinned root license/README provenance evidence; defer rights review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

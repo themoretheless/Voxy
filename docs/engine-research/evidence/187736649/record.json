@@ -1,0 +1,147 @@
+{
+  "repository": "flingengine/FlingEngine",
+  "repository_id": 187736649,
+  "commit": "acd6cf9d4f77518c8bb3ad49e3a11d51fc1e8232",
+  "source_url": "https://github.com/flingengine/FlingEngine/tree/acd6cf9d4f77518c8bb3ad49e3a11d51fc1e8232",
+  "readme_path": "README.md",
+  "readme_sha256": "7e03738d8a86ade4543f419f72e80b004fcdc43c15b8de655373f1b8790c7bae",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1f2859f6a7549f420fa2951ade09885daf22cbbf"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "6635a87c03f29565ba6e96c8e7b70a8df4481ac1"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e4acc5a6ba3c3bc8edc76594727f621e96b767da"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68a306ac81db3e4ac69665411fe54327cdd56bb7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b015fea32dc38aa6b17e678ccdbc607d04008398"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "56c4a237b2a80872fc6c3d3e042a2c1271f1cd95"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "0f51c574f8d71a1bf3e5264d77503c1e581a0106"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "3dac4e7da3eb1ed9f14e348bf1b71b2b3f90205a"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "51b0448c332169b5b6cfeee6f868a39c26302f95"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "d992fb6354ec39c2fdbfc31e7241632d935e0f0e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9721b745b0f745803e20f50bf7dc1b81637aabfc"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "710bbe31653728499cff3226a8ae4a9bcbb35a9e"
+    },
+    {
+      "path": "Config",
+      "type": "dir",
+      "sha": "7d4b13cf3334812788ffb477a4e5bddfc565b003"
+    },
+    {
+      "path": "Fling-Engine-logo",
+      "type": "dir",
+      "sha": "ca560d7dba1719aff6f806579cef5d94bbcfe76e"
+    },
+    {
+      "path": "FlingEngine.code-workspace",
+      "type": "file",
+      "sha": "db0fd4e0ec8a39975138e33beb20f09b1ed81c25"
+    },
+    {
+      "path": "FlingEngine",
+      "type": "dir",
+      "sha": "7c23d0e80ebd4eae9784b8deeccc72cda7136f3a"
+    },
+    {
+      "path": "FlingEngineLogo.png",
+      "type": "file",
+      "sha": "77f38f2557496999870ad07f374768796f3387d3"
+    },
+    {
+      "path": "FlingTests",
+      "type": "dir",
+      "sha": "fae72487c3cccad432ebae14ba7d19fdbb4d35f1"
+    },
+    {
+      "path": "Init.bat",
+      "type": "file",
+      "sha": "ce24162567345f62b082a0719cb9931116fead84"
+    },
+    {
+      "path": "Init.sh",
+      "type": "file",
+      "sha": "f1159e8ecce5ee5ddf980fa9ab7b1a843d12a2d8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b0d14110e523d166fb31f05ff4d5118e4479ef14"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "64841b2ae99f5e9457011ec50f727038a2e81a9d"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "b20a8690cd4ce58ecaf5252118639d25ee1735ff"
+    },
+    {
+      "path": "Skills",
+      "type": "dir",
+      "sha": "a2f8386ac52773da17a418f14ab3621d5192486e"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "7304d506bbe93ff0ba3cf43007682e1ad8119a49"
+    },
+    {
+      "path": "imgui.ini",
+      "type": "file",
+      "sha": "0201ba0377dd4eb451ee84557c5ade0ab5c24a8b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ea783a9f2a19fceda00ca18c84b70868b28dd874"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

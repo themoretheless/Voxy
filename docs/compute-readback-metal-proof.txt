@@ -1,0 +1,10 @@
+    Blocking waiting for file lock on build directory
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 41s
+     Running `target/debug/examples/compute_smoke`
+Compute on AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+RESIDENT COMPUTE PASS: four submissions, independent snapshots, job continued during mapping
+DISPATCH LIMIT PASS: zero and over-limit X/Y/Z rejected; valid submissions remain clean
+COMPUTE RELOAD PASS: old jobs retained, new shader active, invalid replacement rejected
+READBACK POOL PASS: shared 8192-byte admission, cancellation completion, exact reuse, unsubmitted quarantine and explicit cleanup
+PASS: WGSL compute, 1042 exact results, partial workgroups, independent jobs, readback, cancellation and validation failures

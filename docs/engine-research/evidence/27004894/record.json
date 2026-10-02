@@ -1,0 +1,99 @@
+{
+  "repository": "sriharshachilakapati/SilenceEngine",
+  "repository_id": 27004894,
+  "commit": "745657540d4554117cf648da26ceb8166f37cb75",
+  "source_url": "https://github.com/sriharshachilakapati/SilenceEngine/tree/745657540d4554117cf648da26ceb8166f37cb75",
+  "readme_path": "README.md",
+  "readme_sha256": "a955359c13a375ee4a3eeccaba4cdf55838cc3c4268a2623129c7581a73f21ce",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "421e9247734bbf089b0a1c84413186bfabfc7a8c"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "d2c18da31312676685c299ecdd1d4d51efec3f64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "42436d870203db48058ca41d3d55fc97eb766e55"
+    },
+    {
+      "path": "backend-android",
+      "type": "dir",
+      "sha": "99ad4fd66b16968c0b914251c38efa2d97f6ecc4"
+    },
+    {
+      "path": "backend-gwt",
+      "type": "dir",
+      "sha": "173ba86c5f3025c68b178d891829e6fb44837e48"
+    },
+    {
+      "path": "backend-lwjgl",
+      "type": "dir",
+      "sha": "5f3ac45dc5c66724496e0d286af3de795153fb4b"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "6097c942ae7d08fa862b8de02dc117e32ada0ce8"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "427ad7cba7a213bfacd6f8b3837880a7fef7d1ef"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4453ccea33d960069d9137ee65f6b21fc65e7e92"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f9553162f122c71b34635112e717c3e733b5b212"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "faddc0983fed7e28ae75b85c1e87e90ccb0b9024"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "1fa394186736f5ba0f27f1e4883d87f15a74914b"
+    },
+    {
+      "path": "silenceengine",
+      "type": "dir",
+      "sha": "6a0e06ae6b57cc67b29cedbdeb40c2d293ce829a"
+    },
+    {
+      "path": "tests-android",
+      "type": "dir",
+      "sha": "45fb92afc8a6b359f1eac7ff19556b4050f5e3cd"
+    },
+    {
+      "path": "tests-gwt",
+      "type": "dir",
+      "sha": "d942203767943b0d935e8444bef720cc11aa83d7"
+    },
+    {
+      "path": "tests-lwjgl",
+      "type": "dir",
+      "sha": "eca0ac4ce724596f670602856b78d96f789df0c3"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "c1c882ad75437ba43dfc454b11d1895a4a4ccac6"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java 2D/3D runtime providing graphics/input/assets/collision with platform backend projects and tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,69 @@
+{
+  "repository": "stalomeow/MarchEngine",
+  "repository_id": 830005117,
+  "commit": "14ca276a94c5d10f05a3a59aeebad2aa3fcf7da9",
+  "source_url": "https://github.com/stalomeow/MarchEngine/tree/14ca276a94c5d10f05a3a59aeebad2aa3fcf7da9",
+  "readme_path": "README.md",
+  "readme_sha256": "412362f316351d46eb7e65e74b8e00355d0faed36caa981b9aa1848c6c312fdf",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d942a1e958fd9062dc8c71e7529891fd474b7fb5"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "43af6303627c5bb1593c002fa41ccc330a01d1f0"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ade84e17c12e87d23a86e62ce0c6ab81f0dd4411"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "14fd2c3effd8f61b4de1dd72fae3495b2c5ee344"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "04699dfbd0748a7adfd21746c014570116a6d87b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d610959babf8673c153897bee8606af1d5928b2f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b5c6fec097169687ea3077f969cfc18d76fc4dc"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "939a9f2aa4202e6eb189494f347b8662f2fb440c"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "ddead6c01f821b27772345d08177d5e2c02574c9"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "66eb5968188a06f4be3b2fdc7bef6b2e4af3e0cd"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "4db73f2e062bacaa361e66654ae85928c80d0d37"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Educational C++/CoreCLR game engine with scripting bindings, asset pipeline and editor source; Windows-only claim unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

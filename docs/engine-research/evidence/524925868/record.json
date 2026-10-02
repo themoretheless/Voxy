@@ -1,0 +1,134 @@
+{
+  "repository": "InfiniteC0re/OpenBarnyard",
+  "repository_id": 524925868,
+  "commit": "ad46a02734a26ea77825825767a33debc3b54c14",
+  "source_url": "https://github.com/InfiniteC0re/OpenBarnyard/tree/ad46a02734a26ea77825825767a33debc3b54c14",
+  "readme_path": "README.md",
+  "readme_sha256": "c9ed1a3636e76c7ac6af1c59888a6deca0c700806729f8a56b3211f0f8053301",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "4bc4e35600b490c4a81c9badb50be9197446e63c"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "77cc00a7a16040099560c09d8668c7db90c6e358"
+    },
+    {
+      "path": ".decomp-progress",
+      "type": "file",
+      "sha": "4a08523e96db8610ec333d61c22fb17d5169eb96"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "164dfcee5c9e1c6c89f1943df930a4c315db84c5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d40c4b04f21ef19aef857cc8c48f4f66bbe9d756"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "34b9cd5ed6f7ca6bba810dc67125537afed8b07f"
+    },
+    {
+      "path": "Dependencies.lua",
+      "type": "file",
+      "sha": "ebfc1b438be5b905e5a2ab40b13b8f5bddfcd824"
+    },
+    {
+      "path": "DevTools",
+      "type": "dir",
+      "sha": "61a7f4671134d7e1425394da77d759bf80a9f094"
+    },
+    {
+      "path": "Format Code.bat",
+      "type": "file",
+      "sha": "12aaa9a1b4444c1c2408581070e4ca64497a0fb4"
+    },
+    {
+      "path": "GenerateProjects-WIN-DX8-PROFILER-VS2026.bat",
+      "type": "file",
+      "sha": "be748d2e87d34131ec3088d3639c8ceda7dfb3d6"
+    },
+    {
+      "path": "GenerateProjects-WIN-DX8-VS2026.bat",
+      "type": "file",
+      "sha": "584aa79d6f716e1385d5175abd6c681b1278975d"
+    },
+    {
+      "path": "GenerateProjects-WIN-GL-VS2026.bat",
+      "type": "file",
+      "sha": "c11ebc7d209e70e41b0bdef7742344b43271fee9"
+    },
+    {
+      "path": "License.md",
+      "type": "file",
+      "sha": "461f10e7997a25f12e2cc5924b6239c180d247fb"
+    },
+    {
+      "path": "OpenBarnyard",
+      "type": "dir",
+      "sha": "0712d3b00b398a5e8797596582140bf3c73b094e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a167f0e620beb866ecd099b1c6347bd5e5fb6c94"
+    },
+    {
+      "path": "SDK",
+      "type": "dir",
+      "sha": "4b9a11c1a49e1a38f216bdc525e753927678cb94"
+    },
+    {
+      "path": "Settings.lua",
+      "type": "file",
+      "sha": "56616ac0a62d524b51ec8608f72a212f7706ea07"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "fee5491cf379de65e3909b9fc86ad298622abc9e"
+    },
+    {
+      "path": "Toshi",
+      "type": "dir",
+      "sha": "0cd2e53c13c1acc019008ad1a0343fe30189fd9d"
+    },
+    {
+      "path": "Utils",
+      "type": "dir",
+      "sha": "3611046785ec2e9708e6542fd538c903972533d0"
+    },
+    {
+      "path": "Vendor",
+      "type": "dir",
+      "sha": "8ca2a18d102740cbb07b826f9387fa3e700f040a"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "71521c15c39955a7bdbdb700f2db74e8c2391bed"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WIP game/TOSHI decompilation whose progress markers are explicitly inaccurate; completeness and standalone runtime unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

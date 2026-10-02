@@ -1,0 +1,89 @@
+{
+  "repository": "ZieIony/Ghurund",
+  "repository_id": 124959579,
+  "commit": "0c631f486bc68b4c79769c33816fe0e81c4be472",
+  "source_url": "https://github.com/ZieIony/Ghurund/tree/0c631f486bc68b4c79769c33816fe0e81c4be472",
+  "readme_path": "README.md",
+  "readme_sha256": "216d96202ab35fcd17ea058b2a67e5419687f85ee65cb8cee9eb0ca9367e83af",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "75ceba6927a18c80f470c33b2ad7598d52a3ad30"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "816cfd4bbf4070969b44d7dd22f303ef999adf9c"
+    },
+    {
+      "path": "Ghurund.sln",
+      "type": "file",
+      "sha": "dad869bd1a56643268d0b57189ad057eb71927e7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ab602974d200aa6849e6ad8220951ef9a78d9f08"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "081c1e672c47e23d3feba2dbf6236077c59d2bc2"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "0501b37670b5b30a6d9f43d703049f113cf474e5"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "5e0c013aad002be0bef3c2751ecbf8c04bbdd98a"
+    },
+    {
+      "path": "generate project.cmd",
+      "type": "file",
+      "sha": "6cbde3a4eb4ed6cd5a69912799e13dede4f60f11"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "0863aad4d24b7c10be04b0e5624fc2902df2cca1"
+    },
+    {
+      "path": "libs.props",
+      "type": "file",
+      "sha": "165c7c320234b8b000e4972d58ad552b9293cdc0"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "881e64cd454a66a1784beffe6e75fa444e827b08"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "0e4ece36af2454bb9f7e77d6e28433692be25cf1"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "1a5b3e362021f43ad77379a3aa895227ef216df3"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2e4afbc1d64e7f7ed2b67252d16260c6c2ded33b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0a13fa4f1c9856c477bc6f2ce70bc6e35f5700d1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ DX12/PhysX engine with networking, tools, sample games and tests; README explicitly Windows/MSVC-only.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

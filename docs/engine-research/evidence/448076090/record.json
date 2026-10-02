@@ -1,0 +1,69 @@
+{
+  "repository": "Esri/arcgis-maps-sdk-unreal-engine-samples",
+  "repository_id": 448076090,
+  "commit": "26798c7fc8920feec6fbdd699feb9c3d4c193e7e",
+  "source_url": "https://github.com/Esri/arcgis-maps-sdk-unreal-engine-samples/tree/26798c7fc8920feec6fbdd699feb9c3d4c193e7e",
+  "readme_path": "README.md",
+  "readme_sha256": "214ee7e16850b48a1357273b6f7720ce430096e11524d6973733b98a99503e29",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "95debdf2e93cc40c3f1cd14a01141b27bd9f7d3c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "67d9528ef9faf4cd26bdd6ab1c739860db81af5d"
+    },
+    {
+      "path": "CODEOWNERS",
+      "type": "file",
+      "sha": "0f6b7a42f4c2133baa91388023b8b2c82484bfa0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b509765696e3f30f485ecb4c63a01e796830c5ad"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f27ed485a48f5a82604d5305432cacd369cc356a"
+    },
+    {
+      "path": "arcgis-maps-sdk-unreal-engine-samples.png",
+      "type": "file",
+      "sha": "922d19c443be12dba303488fd5f10a1c1baa0d2b"
+    },
+    {
+      "path": "git_hooks",
+      "type": "dir",
+      "sha": "18048f60be35643dbea8ead52944aa08c0fd82b4"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "863d15091ebca6473a211f9d99a0051502f63d8b"
+    },
+    {
+      "path": "sample_project",
+      "type": "dir",
+      "sha": "9cb372c5030ff6f6fcb52fa677c8347c9e590919"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "36d497885a85dced6ed981305bfc91c092a84f0e"
+    },
+    {
+      "path": "xr_sample_project",
+      "type": "dir",
+      "sha": "431194fbcf82b9cf3671eaaf3ccfb13933bb4686"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unreal and ArcGIS sample projects rather than underlying engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,74 @@
+{
+  "repository": "NoelFB/FosterOld",
+  "repository_id": 207208446,
+  "commit": "edafa56767aec5572565c328fed5f80328173a5b",
+  "source_url": "https://github.com/NoelFB/FosterOld/tree/edafa56767aec5572565c328fed5f80328173a5b",
+  "readme_path": "README.md",
+  "readme_sha256": "741d4ab65f65b3f2fe627f3bc629f8ed8dda8b1782669fd11bb29e95f9cd3bdb",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "92842c4e9673e51824e51223a690b9a9846892f1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3ff6da022df674723b216cacd188a95b894d0544"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "ccfb62c30ad4533cb44896958aa68174202ba30a"
+    },
+    {
+      "path": "Directory.Build.targets",
+      "type": "file",
+      "sha": "ee4a57d592e34ddc859d315992db24f0856fb205"
+    },
+    {
+      "path": "Foster.sln",
+      "type": "file",
+      "sha": "40381d8da3e5f6efcd2c2c49e5e18221ca5da150"
+    },
+    {
+      "path": "Framework",
+      "type": "dir",
+      "sha": "0eb4208e0b3fb0aabc8e213d6ae04fa387f2b46b"
+    },
+    {
+      "path": "Json",
+      "type": "dir",
+      "sha": "c721571738b27d3c5b0e0bf9397121e926ad9fac"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "5e71d4dd0b4f16cc259c008b5d6ebd93198681e6"
+    },
+    {
+      "path": "Platforms",
+      "type": "dir",
+      "sha": "c453a4cdf48f04ee97f903b628131b37a9dcfaeb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b9f2e99bbf4c8e3ba2095f8568e3eca56e8c66d9"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "9c44ac6dc49993e7f6c42406b611f30cc2aa8a62"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "857e6681f3e86db73153b59199d6e4ff4079a037"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies historical managed framework; Framework/Platforms and .NET solution/build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

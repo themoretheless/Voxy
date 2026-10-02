@@ -1,0 +1,89 @@
+{
+  "repository": "mosra/magnum-plugins",
+  "repository_id": 2982886,
+  "commit": "2cabc97e7824d486e79b5cb324bf5c0338883081",
+  "source_url": "https://github.com/mosra/magnum-plugins/tree/2cabc97e7824d486e79b5cb324bf5c0338883081",
+  "readme_path": "README.md",
+  "readme_sha256": "2c007a1bd6edfbed0e668b81ce6f557f1624623821c655fc5fe8c716717b9990",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "60157ee391c4014dc0a274c41ae074fb79e8f563"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0bbbcc413ea2bf6aa9ab10e92fba090c525ff08b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "01eebc7a3df1953cd367db8341ee014e60860354"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0bd99777a93c17e1b4a19e8368ed5d993aea2793"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "2182169ef6df468c3b8e36dfea83ae6efb2ae0a6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "5de3c8ba615a7061199abf7e338bdfb3481c6664"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "6409b7e3f18ce08e7630ce335b1dc2e13ff74244"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "83ade8b1c876144e701494ceef9cc176d1f2b575"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0174cd37d5e8a0e9497085af074e4ff56e831bbb"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "b81e69d9562ef8a13cba95102a8e11aa4c329ad7"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "1f0b3c2880c3559a5f9db16f8e678f420a3761ad"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "bb2dd25c6e622e4159ad1eb7bd8f4fd0b5d39630"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cc19baa84147d6ea9736ad23a9e1151234b43590"
+    },
+    {
+      "path": "toolchains",
+      "type": "file",
+      "sha": "fa282e82b5ef058e361f64672e09be5bfc5e6e76"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Import, conversion and text plugins for Magnum rather than another engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

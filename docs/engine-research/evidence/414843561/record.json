@@ -1,0 +1,149 @@
+{
+  "repository": "bloeys/nmage",
+  "repository_id": 414843561,
+  "commit": "fd59705ddac9b6638f889863e326cb7f2d2d7667",
+  "source_url": "https://github.com/bloeys/nmage/tree/fd59705ddac9b6638f889863e326cb7f2d2d7667",
+  "readme_path": "README.md",
+  "readme_sha256": "ba79c90a6f5a471e15c2be0e9d0bb2ec1d512eb52b38036d25ee284be54113d6",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b143d70129fa039ad89b5fe9d334d75ec2242527"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bc64fd3901df5aa1548cc04cc67cb272a4d4d0fb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e579984b0a8ec6707e37337fbde1f919ad7ef8e1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "168e633858ab53d92ac93a897b5d446b8dcac3ab"
+    },
+    {
+      "path": "assert",
+      "type": "dir",
+      "sha": "dcb656b6290764ee9e223d20f628bf476861cebe"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d776d31dffd82396baadcdb7bfd5ff1ecdc8c60e"
+    },
+    {
+      "path": "buffers",
+      "type": "dir",
+      "sha": "f0c410b72c806e799e024c17ead7c1883fdf418f"
+    },
+    {
+      "path": "camera",
+      "type": "dir",
+      "sha": "f611dcc1c7e6061f2455fd055a50889f1ff98982"
+    },
+    {
+      "path": "consts",
+      "type": "dir",
+      "sha": "f4656a8ab003e72965ebb58a8912c7bf50168b02"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "d0ead947cf3a7b5217bcb179a1bbb5ed64330a9f"
+    },
+    {
+      "path": "entity",
+      "type": "dir",
+      "sha": "7f564d73ea8a3bf0dd595e887012158c7464da4c"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "62d5d5f82d629d09ff40fd95ffa185361ede9c0f"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "1471d2764f705defda86a2866f7d5924e2b59564"
+    },
+    {
+      "path": "input",
+      "type": "dir",
+      "sha": "ca040a21caf515db19fc17215d7891d75337d704"
+    },
+    {
+      "path": "level",
+      "type": "dir",
+      "sha": "82965d56f31858baff4df5814a66cffb68336a4b"
+    },
+    {
+      "path": "logging",
+      "type": "dir",
+      "sha": "e84eb0928eab028edfa8a568b47133df23ff22ec"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "d5099956bd5a3d20a553263ea9f4d822f26deb8a"
+    },
+    {
+      "path": "materials",
+      "type": "dir",
+      "sha": "3e850d05464c61ab4abc9444220b51b99355ae29"
+    },
+    {
+      "path": "meshes",
+      "type": "dir",
+      "sha": "453b0941de126dbdc5ea216e41d85bedc394f32b"
+    },
+    {
+      "path": "registry",
+      "type": "dir",
+      "sha": "ece0a672c8bae5b11f06c66b8a9cc657ab57757f"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "5448db0baa48751c6cc8392bf73fe1a21962b8de"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "c09ea4df34b10332f76f9c6bdabe580610d584ac"
+    },
+    {
+      "path": "rsrc_windows_386.syso",
+      "type": "file",
+      "sha": "c54ec02b16ecd2ca56afb247bbb7ebba2a20ac83"
+    },
+    {
+      "path": "rsrc_windows_amd64.syso",
+      "type": "file",
+      "sha": "355670a59d2f05f9269b8c9e12214b06c45af28d"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "741c96d21b58017df07b34f9690b60ea5b5270fb"
+    },
+    {
+      "path": "timing",
+      "type": "dir",
+      "sha": "d037febb12062964731dad93e48cea68c6de46ee"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "d6db394f6b20ecdb472a25fcd1fc84b7dca9d41d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Go 3D game engine with entity, input, level, assets, renderer and UI source; performance/completeness are goals, unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

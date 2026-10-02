@@ -1,0 +1,54 @@
+{
+  "repository": "borodust/trivial-gamekit",
+  "repository_id": 88064662,
+  "commit": "541ad83af7e8456bcdf595daa0e051e4794080e7",
+  "source_url": "https://github.com/borodust/trivial-gamekit/tree/541ad83af7e8456bcdf595daa0e051e4794080e7",
+  "readme_path": "README.md",
+  "readme_sha256": "ab8649028f3eed768eb70ec67c06ea0d7a78777d659d4f46270f3593ad770c94",
+  "entries": [
+    {
+      "path": ".distignore",
+      "type": "file",
+      "sha": "36f69a0f8a644f9753e8d90c4abdf672e128f446"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "39df71097856a0217ea7a109e2f42e01c52a074a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "77d6bdce84b4f08475572e53de313326ee4e0aa2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "31d5cd64af0d9012eda92bb2b65ef197a665c2e3"
+    },
+    {
+      "path": "distrib",
+      "type": "dir",
+      "sha": "e3fcdeb266104e5aa7223031e4b6e28f278d8e33"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "453f62c91f06ca588dbc91b1d6e60d6275abc6f2"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "22bafe9f0e5ba68a0a131b36ab4019cc82ec0838"
+    },
+    {
+      "path": "trivial-gamekit.asd",
+      "type": "file",
+      "sha": "cba43fe8974cddeafed40452f3d6a2ae0836bfa3"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies simple Lisp graphics/audio/input library; src/ASDF build, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

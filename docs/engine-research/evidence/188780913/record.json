@@ -1,0 +1,104 @@
+{
+  "repository": "lume/glas",
+  "repository_id": 188780913,
+  "commit": "716d9311d575bba5d2561c4a1e4b629b20aea73f",
+  "source_url": "https://github.com/lume/glas/tree/716d9311d575bba5d2561c4a1e4b629b20aea73f",
+  "readme_path": "README.md",
+  "readme_sha256": "8c8491419ad95252b9fc2d38c483d84490e2960b6f9bddd1883273a53fdada1f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "b73f5ea5466172dcd36e842b0e765c2a93f74b5e"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6313b56c57848efce05faa7aa7e901ccfc2886ea"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4a27c806402dbe5556066718c93abc48eb3cafbc"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f602e6b7a729e95870816ab82e8568e4334f2bdf"
+    },
+    {
+      "path": ".prettierignore",
+      "type": "file",
+      "sha": "4143cef7c11fb5db93c896bc42ae4e96213a5e2b"
+    },
+    {
+      "path": ".prettierrc.cjs",
+      "type": "file",
+      "sha": "3fc5653e7bd6fa1875df44f216981e233f192275"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1c53bf00753131c93ef209c1a3d4cc1c25e2d707"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b40821a94d7a12aaf5c00bec5ca82119293988a"
+    },
+    {
+      "path": "as-pect.asconfig.json",
+      "type": "file",
+      "sha": "44be19258e915965112f1b749146a14c12fd93f9"
+    },
+    {
+      "path": "as-pect.config.js",
+      "type": "file",
+      "sha": "5ff873e3e376dd105c21eec8fbf771e4ee2f8495"
+    },
+    {
+      "path": "asconfig.json",
+      "type": "file",
+      "sha": "0f92a80815adae8786539d22ca423f38db0f0e08"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "97a8ab0195f11d82927b63fcad2a65f3c0d976e8"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "f544ba3e84630d30811e7a15b70bc07372a9d764"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "c3dbb2a9117aa3f5cc91b192e29575eae3d78241"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "9815bf6b215435a6afa03b1de4d3ae9275eb2f05"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6ddda2ed5267380b7dcd7f21183aef2f054d7e44"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "458530d4ecb5bf074644e7740be98b748530e779"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "93f0e33db585ed08e512fd0eab337f93806613e5"
+    }
+  ],
+  "classification": "graphics_middleware",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies work-in-progress Three.js port to AssemblyScript; src and wasm/npm build, not complete gameplay engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

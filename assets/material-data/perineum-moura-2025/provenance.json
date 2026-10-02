@@ -1,0 +1,16 @@
+{
+  "article_doi": "10.1038/s41598-025-26576-y",
+  "dataset_doi": "10.5281/zenodo.15407814",
+  "retrieved_date": "2026-10-02",
+  "record_sha256": "29af27483bd642b8196121a00a645b37d47c73341defe4cd9162c716896d67e9",
+  "dataset_title": "Experimental Data on the Hyperelastic and Viscoelastic Properties of Human Female Perineal Tissue",
+  "access_right": "restricted",
+  "license_metadata": {
+    "id": "cc-by-4.0"
+  },
+  "listed_file_count": 0,
+  "calibrated": false,
+  "model_coefficients_installed": false,
+  "reason": "Public record API reports restricted access and lists no downloadable raw files. Metadata is not an experimental curve.",
+  "tissue_scope": "Post-mortem human female perineal body; do not substitute for vagina, skin or all pelvic tissues."
+}

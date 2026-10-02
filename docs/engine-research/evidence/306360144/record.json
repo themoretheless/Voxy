@@ -1,0 +1,57 @@
+{
+  "repository": "lxgr-linux/scrap_engine",
+  "repository_id": 306360144,
+  "commit": "f1aa967b169874aff3226800be3d3f52ea91b9ba",
+  "source_url": "https://github.com/lxgr-linux/scrap_engine/tree/f1aa967b169874aff3226800be3d3f52ea91b9ba",
+  "readme_path": "README.md",
+  "readme_sha256": "1968802204ae3076e187f569ff126e48bd56dbc8da064e8a0b55b92bc74b9622",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6666c350ffbfe6f576eef573ef35fce224fb3ddd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a3f8d0c0aaa9176a5f6e397901e523356ed1f6b8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "19f8264488ff99a095103a84458d2734c21bd272"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b3ab3a579f4e6925be7215a8d98064cdb4b2cb6a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6898caaec08a5b6f443166893c166000e95a478a"
+    },
+    {
+      "path": "pics",
+      "type": "dir",
+      "sha": "6efe6f6097857b8c8a0890405fcf56fbcf57a272"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "c671c6b3c5c4169c52a697e13c12feabb36ebc0a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2443d730d696ee5b8e4d63eec243fa30a5d1a71a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,119 @@
+{
+  "repository": "quicklyslow/cocos2d-bgfx",
+  "repository_id": 159110168,
+  "commit": "8d4a5cfd525e94b941f333170f747222745713b9",
+  "source_url": "https://github.com/quicklyslow/cocos2d-bgfx/tree/8d4a5cfd525e94b941f333170f747222745713b9",
+  "readme_path": "README.md",
+  "readme_sha256": "71b6f77461ea57b6cb156291616868ff877b0553bcd7f0265cd702f00082d205",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "21683b8cbe50ef032593f3644e2f9ade1b93ca4b"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "35f2662cd5808166ddd4f9541e7ba791ea7a3554"
+    },
+    {
+      "path": "BGFX",
+      "type": "dir",
+      "sha": "55afa0ef5ccf00f686536da03bf34a81fccb38c7"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "41db82f465d1bbf7e1add4021251ce569f67bb57"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "12c80ba36eef05db3576b6cc2a6b7ed716135f97"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5902d7f2054aab0fbf405966a683af8f147689e5"
+    },
+    {
+      "path": "Shader",
+      "type": "dir",
+      "sha": "c7277ab19167c551c7b8be4c2120db20a60e4292"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "3ee0dbabca56b4009d15b745faf926edad7f0029"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "08143cb6d40fa31c452afacd38b106acb5547358"
+    },
+    {
+      "path": "cocos",
+      "type": "dir",
+      "sha": "28acb71f2aa1f853ffa3d10768175c2620288454"
+    },
+    {
+      "path": "copyres.bat",
+      "type": "file",
+      "sha": "a3b02545bdfdff98abb2eda9c3ece843b5ea9e63"
+    },
+    {
+      "path": "download-deps.py",
+      "type": "file",
+      "sha": "c8aa6b1e6ba943cb0c1abc1b63d1f6e1449be0bb"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "ca2f8689928a00691481411973ff1c552ffb19b3"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "eec04b93d54c15eeed6321c4e5b69422bc31d540"
+    },
+    {
+      "path": "iOSProjects",
+      "type": "dir",
+      "sha": "b4fad93ccf0dffafc88e245cbdc30fd478253fae"
+    },
+    {
+      "path": "jsb-link",
+      "type": "dir",
+      "sha": "31f87a94ffc8ca1df56364ec24e187e37f5c805b"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "8968761bc4cc2e1d479bf96ad32ad4a65ae1c8f3"
+    },
+    {
+      "path": "simulator",
+      "type": "dir",
+      "sha": "cb529dcf95df57df49dcb45622784c1466397c0c"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "33f8448db19c74532d3ea4ee25c7e62596dd71f8"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "fe6d9ec43f28e95aaea5b8a9971415cf85589d55"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit cocos2d-x-lite bgfx backend adaptation; existing cocos runtime source and simulator/tools, documented incomplete nodes and Android support.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,39 @@
+{
+  "repository": "r-lyeh/v3",
+  "repository_id": 1026621096,
+  "commit": "719e85980bd94b83cbb6633b89b21c665c09676a",
+  "source_url": "https://github.com/r-lyeh/v3/tree/719e85980bd94b83cbb6633b89b21c665c09676a",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f6bafb4815732f722dc82b48e860884568b0f146"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "150ea251a5e5b814cd0dedab84cf88d35a2d874b"
+    },
+    {
+      "path": "v3.c",
+      "type": "file",
+      "sha": "5c25491a7db025c7fdfff03e61cde830f1beb5a3"
+    },
+    {
+      "path": "v3.h",
+      "type": "file",
+      "sha": "c059e2db7f1b042d966f3cabd069238980a58fd8"
+    },
+    {
+      "path": "v3.sh",
+      "type": "file",
+      "sha": "a6799cb3dc394ac9b21b58a4196a120af99ba231"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C 3D game framework with source/header and no pinned README; deeper lifecycle evidence needed for acceptance.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

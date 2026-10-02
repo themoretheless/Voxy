@@ -1,0 +1,134 @@
+{
+  "repository": "CyberHazeGames/Nuclear-Engine",
+  "repository_id": 108473651,
+  "commit": "464633530fea4404119ac18931927cd2c8fed851",
+  "source_url": "https://github.com/CyberHazeGames/Nuclear-Engine/tree/464633530fea4404119ac18931927cd2c8fed851",
+  "readme_path": "README.md",
+  "readme_sha256": "273843eb6d38e6069830bc3af6cbb3d98d29aa8f0217f3be9a030b4cef05233b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f478ebe7bad9089232b56584f1869e02ba60875a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0ef1e691d7e5c4ef89c9640055ac28c814b3c1cc"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b25091463e3dc7fee106ac774f67bbb58d34009a"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "6310bd01dc0de287199faf445025643f1400333a"
+    },
+    {
+      "path": "AIGuides",
+      "type": "dir",
+      "sha": "ad369834d419bbf6c7ac6d11de313fee5a56edce"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "572fe60d349b558a21466ac69eec1b307b294d26"
+    },
+    {
+      "path": "BuildSupport",
+      "type": "dir",
+      "sha": "c837af1a8e22b5269e5f9f133d3edccc1d51be27"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c7aab1d181189fd671f63c5dd0f8d554692cbdf8"
+    },
+    {
+      "path": "CopyDependenciesBinaries.bat",
+      "type": "file",
+      "sha": "0d134af9e1afd866d9e53b896364aafbd14709b1"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "dad3dd016c2764cd5eb87dd70b4d10597a185912"
+    },
+    {
+      "path": "External",
+      "type": "dir",
+      "sha": "605ab5261cb6bb5f431483afee923ca78fafba62"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "5210391cf6839a90ca84f3447b0d63878afda66e"
+    },
+    {
+      "path": "Nuclear Engine.sln",
+      "type": "file",
+      "sha": "97e67348d5ccb5c795bd7fce4ebbe99da21c0ae3"
+    },
+    {
+      "path": "Nuclear.Editor",
+      "type": "dir",
+      "sha": "ef3cdbeb44bef3bd520070b0dd5f7416ef69828c"
+    },
+    {
+      "path": "Nuclear.Engine",
+      "type": "dir",
+      "sha": "6d626e07939e602ae3558d9dd1cbf170593c8f8c"
+    },
+    {
+      "path": "Nuclear.Managed.Native",
+      "type": "dir",
+      "sha": "7f6954a659224bd5b8aa8af940555fd4d15976fd"
+    },
+    {
+      "path": "Nuclear.Managed",
+      "type": "dir",
+      "sha": "a66b14144df27dbca5433af8092ed643adaa4b7f"
+    },
+    {
+      "path": "Nuclear.ScriptCore",
+      "type": "dir",
+      "sha": "4a30be7be1e4fe6aa79e2ae6083a8547c787586e"
+    },
+    {
+      "path": "Plugins",
+      "type": "dir",
+      "sha": "867e4457c40ea7e5c341fb239b7436aa12877d1d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e95cb7cd0f7a7a11d3a9b96acca32e5774c0233f"
+    },
+    {
+      "path": "RunCmakeForDependencies.bat",
+      "type": "file",
+      "sha": "370d88338328d103a548d41fcf4f3e69e36f8fe1"
+    },
+    {
+      "path": "Sample2.gif",
+      "type": "file",
+      "sha": "19687d334cf0321dccc11810f9f93c51441f4057"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "352587e50195c2722bed04946bde4e5b37fe0366"
+    },
+    {
+      "path": "SamplesScripts",
+      "type": "dir",
+      "sha": "d678f4a0fbdcce3059f3a2e7da50ccebc03c286f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++20 ECS runtime with editor and C# scripting projects and samples; included Coral fork is a scripting dependency.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

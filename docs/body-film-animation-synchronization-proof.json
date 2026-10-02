@@ -1,0 +1,20 @@
+{
+  "change": "Animation-only film transport now uses end-of-step skeleton and cold-response geometry instead of the previous pose. Oversized film steps reject and restore animation clocks/cold state.",
+  "tests": {
+    "film_state_capture_tests": {
+      "passed": 2,
+      "scope": "Current referenced substrate coordinates equal actual animated mesh; source-adjusted mass; rejected-time rollback; request-correlated capture."
+    },
+    "nipple_refinement_tests": {
+      "passed": 3,
+      "scope": "Cold visual response, target/recovery, binding preservation and consumed physical solver time."
+    }
+  },
+  "sourceSha256": "8b7ed84ba467ecc43a58ddae169ffa0bec6e9ea855add22f9ec51ab90065fbb1",
+  "limitations": [
+    "Physical solver modes still require ordering and consumed-time audit.",
+    "No convergence proof for skeletal animation, self-contact or inertial coupling.",
+    "No new desktop screenshot captured."
+  ],
+  "concurrentBuildRepair": "Derived Debug for SurfaceLightInput so FemaleDemo Debug compiles."
+}

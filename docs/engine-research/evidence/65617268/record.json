@@ -1,0 +1,94 @@
+{
+  "repository": "icela/FriceEngine",
+  "repository_id": 65617268,
+  "commit": "8374f87a286d7323348d7aea8213eaebd64dfe6c",
+  "source_url": "https://github.com/icela/FriceEngine/tree/8374f87a286d7323348d7aea8213eaebd64dfe6c",
+  "readme_path": "README.md",
+  "readme_sha256": "7c219130ce4c0ec7dd58032782bbe51e651d850a9ab5d715f0c58d06db1578da",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "468b79b9bd56c01eb92f9e036a8c870593dc8531"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "02c0090616abab912f3184d7e61e59a85af85e7e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8fcd28ec453dc23d05f0b39bb67893298788a334"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f014bb19a382368975dc30e230e8152b21f797f5"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "dbbe3558157f5861bff35dcb37b328b679b0ccfd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e24e1b5c8f142dd22382794d4729cc50ca9b0758"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "9c57e1020c69e4afbf8fcb4e3b17d13215c50914"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "bcc1345654e7374e5a6b3aac3d982b9f139e769b"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "73c62bc6c04e84720d7a2b40e3cfb7cfec9fcf87"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "27309d92314c57d6e442529f1362bafc8376feae"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "832fdb6079b4b86ecdc08c2ccf68e6fcbb820852"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "70d84b1a37edfe51f928d06c1ecc5a75b93c26e0"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "2940a68ba825bce43a487775c15305597e386246"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "0d01375fb98cd930aa5d717311e945b79c4c968e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cf62b2259a94baef4a1d57fe497d7c21ecbab308"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "f77ec15682ec0869b97aee2ef5818e40c5fd521f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies JVM game engine; owned src/lib and Gradle/tests over UI backends.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

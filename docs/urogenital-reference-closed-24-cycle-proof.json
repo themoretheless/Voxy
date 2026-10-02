@@ -1,0 +1,21 @@
+{
+  "load_mode": "reference_dead_traction",
+  "pressure_pa": 20,
+  "reference_caps": "averaged",
+  "csv_sha256": "9abcd5b65140bd3ebf2ac00cd7541680b6c0548c9da66b5fc8f31bee55e4f7db",
+  "scope": "Synthetic specimens; full cycles completed; static rest/barrier/released audits have no eligible-face intersections. No physiological calibration or continuous-path audit implied.",
+  "results": [
+    {
+      "specimen": "urethra",
+      "loaded_lumen_change_pct": -8.024754811620094,
+      "recovery_error_pct": -0.0003398201870230544,
+      "released_residual_n": 9.821813937304e-08
+    },
+    {
+      "specimen": "vagina",
+      "loaded_lumen_change_pct": -41.72706467757985,
+      "recovery_error_pct": -9.442537352022384e-05,
+      "released_residual_n": 9.811597130596e-08
+    }
+  ]
+}

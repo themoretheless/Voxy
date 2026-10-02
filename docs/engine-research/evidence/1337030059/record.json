@@ -1,0 +1,234 @@
+{
+  "repository": "iamlukethedev/Hermes3D",
+  "repository_id": 1337030059,
+  "commit": "beb76292747b816ef317aa6f9a3992e0014f81d9",
+  "source_url": "https://github.com/iamlukethedev/Hermes3D/tree/beb76292747b816ef317aa6f9a3992e0014f81d9",
+  "readme_path": "README.md",
+  "readme_sha256": "7aa8a7be579a049d2776373a9dd46fd13f5b0bbdffc504485bff6e5c52fbe042",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "376a771406f4cd1fd56cb4561709b351273464bb"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "1e58bba2e90dcfff34dfab4c7aa177db66ef8276"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5d6bed6247003d663515fab5e7c0779faff408a8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ab5a7725dce4cb4c44e8ef02c6342a7c4e001f13"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "f757d52e7d7732ead69791e34c04fb178ae8be90"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "c7e3d7e293ab169ad6c20a5b2480b1b74a10929b"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "362f43faf8b9cda6d8192be1171d633918d64541"
+    },
+    {
+      "path": "CODE_DOCUMENTATION.md",
+      "type": "file",
+      "sha": "22c81d8a269e33c48de741a5970636ab0d6335d9"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.MD",
+      "type": "file",
+      "sha": "a6f0a64890ddc102edee81ef81b0243faa6d267a"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8da87f455e818fa15e9096b8e371cbed1d7bdf07"
+    },
+    {
+      "path": "CREATING_SKILLS.md",
+      "type": "file",
+      "sha": "0488c2f9f0d9aad2e47d3fd4fa7fc485011cded4"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "0ce654e4918f803a20d1efd089561d08309529b5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "aa960c1c9fff563358bfd49aecee4d4d1001b781"
+    },
+    {
+      "path": "MULTI_AGENT_BETA.md",
+      "type": "file",
+      "sha": "87198dcf5fc1f08423a5c4924a4c11916207f80f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b87d28e3b987af4466e6160efef589d5bb6a916a"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "bf9de8e82c68cebd65a6d47e074f78fa33e68572"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "4aaaf84dda95421a18d1cf4a1926442365958ba5"
+    },
+    {
+      "path": "SECURITY_HARDENING.md",
+      "type": "file",
+      "sha": "226aedc798d210f57206c8dd9c331cd4403af508"
+    },
+    {
+      "path": "SUPPORT.md",
+      "type": "file",
+      "sha": "91451fad8b76b5a8f38fde6e6d36b7864c491a79"
+    },
+    {
+      "path": "TUTORIAL.md",
+      "type": "file",
+      "sha": "a7da83df1fb975b8b442fe7fd7df4c6b32b5fef3"
+    },
+    {
+      "path": "VISION.md",
+      "type": "file",
+      "sha": "fa413d0a6d857b9416a127884b171cc74a1f650d"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "dd93991a403ca2475a2a0b9d1cb4bb3c45e7d273"
+    },
+    {
+      "path": "components.json",
+      "type": "file",
+      "sha": "761072a51dc5752276ffb26ab231c7394f07ec48"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e1428a90365ee2d470137a80e531db935477dd5c"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "2c83d62c143b7359f25ad502b3d50fb4bb102657"
+    },
+    {
+      "path": "next.config.ts",
+      "type": "file",
+      "sha": "d6f58b44294dd2f817cb721428b72987081487fa"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "f1449fa6b88df0ee1e44b8d643cce237e91c9085"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "be0d81d94d90490f5c45c741906bb38e2ac7cf32"
+    },
+    {
+      "path": "playwright.config.ts",
+      "type": "file",
+      "sha": "948814049181f73a65c1ff3d6a63221ea0e1f4c1"
+    },
+    {
+      "path": "playwright.kanban.config.ts",
+      "type": "file",
+      "sha": "48ef2c272b652e57e32770bcfd29a11d3f7b9423"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "dcc8c2cc823b40516c7a403636b793343526378d"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "type": "file",
+      "sha": "61e36849cf7cfa9f1f71b4a3964a4953e3e243d3"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "966998cfc58e25570bb8cf29d7f0dbca49bc0efd"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "6be19accff3c3b08b09f39be283ac09908900409"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "966b13fc3cabae67ef552a4dc8ce6934a5a69991"
+    },
+    {
+      "path": "skills-overview.md",
+      "type": "file",
+      "sha": "cccaaf81fc1a8420c08d3b63a53988a06c84d2c6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2b4ef062414c36809f8e6f410b1f998db66f121e"
+    },
+    {
+      "path": "test-textures.js",
+      "type": "file",
+      "sha": "34c82c99571c27efd85fad1e0f04f9b8950abd53"
+    },
+    {
+      "path": "test_coords.js",
+      "type": "file",
+      "sha": "f8c8df5748188925eb50b636684e627edbd413bb"
+    },
+    {
+      "path": "test_patches.js",
+      "type": "file",
+      "sha": "cbfce9b049e9180dc1b6162d84da92babc30cf31"
+    },
+    {
+      "path": "test_patches2.js",
+      "type": "file",
+      "sha": "8f2bb44f191ae3be2a4e1ba537b1a0fbc7bed494"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "1a601dc850c4fa05a16f55cc2ff6f492ae6b3d97"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "e697227836f8952c72971d44386aaf6105da7708"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "516d68025c55dbf17720d6bfc57f969e2cf94a02"
+    }
+  ],
+  "classification": "excluded_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README integration profiles describe agent-office application similar to Claw3D; general engine ownership not established at pinned revision.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

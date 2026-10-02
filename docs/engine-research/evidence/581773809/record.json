@@ -1,0 +1,24 @@
+{
+  "repository": "NightsWatchGames/awesome-rust-gamedev",
+  "repository_id": 581773809,
+  "commit": "5893e88d2a7b33a4661b8d1901feec8bee676c2d",
+  "source_url": "https://github.com/NightsWatchGames/awesome-rust-gamedev/tree/5893e88d2a7b33a4661b8d1901feec8bee676c2d",
+  "readme_path": "README.md",
+  "readme_sha256": "23c1c30e7e4e8725646282ef3cd5e85017ee98e71c32630dd55a78798300779f",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "00e2c51a5bbb8d4d2e4b724e3ebecfc661c6af86"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "46910339dc9f611eceb79e9c49f3c0b676362f59"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Collection of Rust game development resources.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

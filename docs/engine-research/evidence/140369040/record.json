@@ -1,0 +1,99 @@
+{
+  "repository": "NicolasPCouts/FlappyBirdClone-UnityGame",
+  "repository_id": 140369040,
+  "commit": "fe976b74b785b66e934d77a82a54ad3ee91b6839",
+  "source_url": "https://github.com/NicolasPCouts/FlappyBirdClone-UnityGame/tree/fe976b74b785b66e934d77a82a54ad3ee91b6839",
+  "readme_path": "README.md",
+  "readme_sha256": "8770aa75decd4c81dd8291525448c2f76864d2fce6a52284ee50367354d1cae4",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".vs",
+      "type": "dir",
+      "sha": "5323158d2ad59ba88950d24c79662f5aaa221315"
+    },
+    {
+      "path": "Assembly-CSharp.csproj",
+      "type": "file",
+      "sha": "3dd10b52d17a8aabb95af4a82f8339be63848a70"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "26426691cccc30006b10ae246ce9d267a7b46d20"
+    },
+    {
+      "path": "Builds",
+      "type": "dir",
+      "sha": "e4dc67e0a82dc200b0f7b764bca0ae8954933d8d"
+    },
+    {
+      "path": "Flappy Bird.csproj",
+      "type": "file",
+      "sha": "96269223619472f05b278a76b4b55f38633372ec"
+    },
+    {
+      "path": "Flappy Bird.sln",
+      "type": "file",
+      "sha": "0dd77037c31a6e3428072e9cd48b9fc60f6e519c"
+    },
+    {
+      "path": "Flappy Bird.userprefs",
+      "type": "file",
+      "sha": "0f2f0cdbd022ed677564e9f7b02de37c0c060168"
+    },
+    {
+      "path": "FlappyBird-Unity2017.sln",
+      "type": "file",
+      "sha": "8411493239211e3e5fe1caceb43a379fea4ca19d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9da2f2884f2e1327639cd30e30eafbd16a3dd7b2"
+    },
+    {
+      "path": "Library",
+      "type": "dir",
+      "sha": "d663dbc89f2048b02bad457f2a9c10604f06ab85"
+    },
+    {
+      "path": "Logs",
+      "type": "dir",
+      "sha": "9397dfd14c5ad5ceac049e717bb2eb7422252e7a"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "28f36f80bb1d64333b7d622f7d85378759a9f13c"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "5b0d7b211b5a927f13daf53066b4f9c1126bf7bf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c85c94a3781540a7d5aef0d37a30a9211b09d9ff"
+    },
+    {
+      "path": "obj",
+      "type": "dir",
+      "sha": "b0355520f4d50cf4cfbe08150f1d883a3042bfe2"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "4f04554ff534764446a0da02e07b7e381f981388"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unity Flappy Bird game project, not engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,39 @@
+{
+  "repository": "thany-noroozpour/vulkust",
+  "repository_id": 70401273,
+  "commit": "08bd49b2a65179dad0588806e41bdf8822294127",
+  "source_url": "https://github.com/thany-noroozpour/vulkust/tree/08bd49b2a65179dad0588806e41bdf8822294127",
+  "readme_path": "README.md",
+  "readme_sha256": "fdaa4d95ab8970d34fc2ef928ed3c15c33b69ebead61e7564ab45f669974f4f6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "38955d22f28447f67cd575dd41277eefeee4301b"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "90236c2e5009798ade13469c9926b386afc7b6c2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0f27c07d22170fdca4302a3f799066ea43eef379"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "71dfef0dc0d3465bfc3d65e1710af086099e492f"
+    },
+    {
+      "path": "vulkust",
+      "type": "dir",
+      "sha": "5b05cc5733a4fa005506e605592861a8d835234b"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Implemented features focus on Vulkan renderer, memory, shaders and early UI; broader simulation/game lifecycle evidence is not established. Custom README license requires separate review before reuse.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

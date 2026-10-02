@@ -1,0 +1,47 @@
+{
+  "repository": "DouglasDwyer/octo-release",
+  "repository_id": 529634765,
+  "commit": "050945a57faa1c8ac9b767b78ebc33d008a2f204",
+  "source_url": "https://github.com/DouglasDwyer/octo-release/tree/050945a57faa1c8ac9b767b78ebc33d008a2f204",
+  "readme_path": "README.md",
+  "readme_sha256": "4ca8f6e0a3224bf59c7e05226685b7283a8f02db071610263a1333243da2d8df",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e781738914e4a44c6431332d162fb9e7094c5be8"
+    },
+    {
+      "path": "coi-serviceworker.min-3ab9f3ea9501efd5.js",
+      "type": "file",
+      "sha": "57a80c0e80a00338cd45322bc067777cf1559c32"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "0ce19f0bf5384c3b7dd17d397eea40a6e8ec0968"
+    },
+    {
+      "path": "octo.exe",
+      "type": "file",
+      "sha": "f39987f1be1327d7ef80c432aedff079168b7718"
+    },
+    {
+      "path": "snippets",
+      "type": "dir",
+      "sha": "3f1f446e43c6f53caf1361eeac4132f761bff531"
+    },
+    {
+      "path": "web-36409e0eedf7bbdd.js",
+      "type": "file",
+      "sha": "9aa80711e515c33e7716f692bc69a98da2580da2"
+    },
+    {
+      "path": "web-36409e0eedf7bbdd_bg.wasm",
+      "type": "file",
+      "sha": "e78ff591a64a58abcd372b228833f5541a25bb4d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

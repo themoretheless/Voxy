@@ -1,0 +1,12 @@
+{
+  "command": "cargo bench -p voxy_scene --bench processor_requirements",
+  "samples": 21,
+  "warmups": 3,
+  "scope": "After direct-row query change; concurrent host work; no isolated before/after proof",
+  "source_sha256": {
+    "crates/voxy_scene/benches/processor_requirements.rs": "a773fb83f55ced94ee4fec204eaec3b724848daa4828c48700c563465b5fa252",
+    "crates/voxy_scene/src/associated.rs": "ac8bce31d92e9e6fc742dc7002c23b476598c7ec2953145b728f67d34213b0f8",
+    "crates/voxy_scene/src/table.rs": "52ceb4de25c5fa7a2966a1fbb5289e263aa7e1eaa12c696e6c4cf42fc136e5f6",
+    "crates/voxy_scene/src/lib.rs": "706be6736d85585af9835b3f0ef55987c099aa40e0a2362ec5b1154167cd2e1c"
+  }
+}

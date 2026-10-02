@@ -1,0 +1,25 @@
+{
+  "sources": [
+    {
+      "id": "source_1",
+      "radius_m": 0.04,
+      "rate_m3_s": 1e-09,
+      "x_m": 0.0,
+      "y_m": 0.2,
+      "z_m": 0.13
+    },
+    {
+      "id": "source_2",
+      "radius_m": 0.04,
+      "rate_m3_s": 2e-09,
+      "x_m": 0.03,
+      "y_m": 0.2,
+      "z_m": 0.13
+    }
+  ],
+  "browserSaveVerified": true,
+  "browserReloadVerified": true,
+  "draftCardRemovalVerified": true,
+  "duplicateRejectedWithoutChangingSavedBytes": true,
+  "liveFrameVerifiedThisRun": false
+}

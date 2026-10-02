@@ -1,0 +1,119 @@
+{
+  "repository": "PerroEngine/Perro",
+  "repository_id": 1040362454,
+  "commit": "b9c44f0e2f1daf18909196dae8f324445991ed0f",
+  "source_url": "https://github.com/PerroEngine/Perro/tree/b9c44f0e2f1daf18909196dae8f324445991ed0f",
+  "readme_path": "README.md",
+  "readme_sha256": "25f38645aafaa8041c3946cd92fe1489f81f4e188754284231ac07858c0bf0dd",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "654642e1794a44efba3ec4d264db7612b6b5013d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b6fcba01c373c1be0eb7f84e711d4d81d7929686"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "4a859d4a0d997c165021f3b9e710dd653400584e"
+    },
+    {
+      "path": "BUG_AUDIT.md",
+      "type": "file",
+      "sha": "34a5cd9a659c82dadc2f54d7f72e0e0f9e7b6c15"
+    },
+    {
+      "path": "BUG_FIXES.md",
+      "type": "file",
+      "sha": "26668ef2cb51270898146ba9543dacae4c9a6d11"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "f063fbe6f972d2484dd92468323efaceaafe7232"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "68175077856617a0480b9d895a40daa8883fe6b4"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "97297ccf0d79fbbeac1ac9df223b570dbc2738e6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "29f81d812f3e768fa89638d1f72920dbfd1413a8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "469a18636b95980b9e3df28ab0db67337f4e521d"
+    },
+    {
+      "path": "VISUAL_PARITY_AUDIT.md",
+      "type": "file",
+      "sha": "257cc20d9e67786d13169be5b756db5f56704235"
+    },
+    {
+      "path": "agents.md",
+      "type": "file",
+      "sha": "f063fbe6f972d2484dd92468323efaceaafe7232"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "b4a42a81f9d3d44ed134f0f515927943bdd070ed"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4a486c621e6b3db3dd06ab4f2421d7be20ca3f6f"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "6d7490f5ae75487daa5615512a3bdee9c83f45b8"
+    },
+    {
+      "path": "perro.svg",
+      "type": "file",
+      "sha": "a12b09b725aae3fc6d2568608b7221cd0d9f7358"
+    },
+    {
+      "path": "perro_book",
+      "type": "dir",
+      "sha": "67a583bd7cc26935d6fb29f0edbab56a5872cee5"
+    },
+    {
+      "path": "perro_editor",
+      "type": "dir",
+      "sha": "b881a3fbf1ea4f66544beb5038a8d182a3159558"
+    },
+    {
+      "path": "perro_source",
+      "type": "dir",
+      "sha": "7944ebef05f03ef6bab533716dd04b50a43debcd"
+    },
+    {
+      "path": "perro_website",
+      "type": "dir",
+      "sha": "9b997a3305aa35ce4da42b16e74866c90d3e7609"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0d271d1107b1b703c3325ee15433815b1d259fa3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust scene/node/script-state runtime with authored scenes, generated glue, engine/editor sources and demos; claimed safety/hot-reload speed not verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

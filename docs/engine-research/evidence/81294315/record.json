@@ -1,0 +1,102 @@
+{
+  "repository": "vk2gpu/Engine",
+  "repository_id": 81294315,
+  "commit": "58fe0eed517b894e67dd646f0f5adfe328e129fb",
+  "source_url": "https://github.com/vk2gpu/Engine/tree/58fe0eed517b894e67dd646f0f5adfe328e129fb",
+  "readme_path": "README.md",
+  "readme_sha256": "fba6cdb397b41abb097de888fe2cd2dcf1389662e064408a572a69c0b3ffea7e",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "2e732d154a74a17b917a23c95c2736ce1b8e912c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3fb90c17fcddf2564e669913d4ecc4d9fb6dac30"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "27b5c40aaaebf1dc26a28f870fce96b6daf25fb2"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "a2813fdef28cccd10bd9ba9b5eea6f677a925c68"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e412396977d995c3f091d647f8f449b8ac9256ee"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "868fa899f76804f570d050e8e7110e1c466a1048"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0cad7ecb036bf6f39ef63a72c21f89208324e730"
+    },
+    {
+      "path": "apps",
+      "type": "dir",
+      "sha": "cf913b5fa5ceff6a4c7a78b6451426785d1495fd"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "5ffaec755b65ce1e00b5eda421f1b66f802a3986"
+    },
+    {
+      "path": "engine.bat",
+      "type": "file",
+      "sha": "416b3aee28ade65b78bff9075a2145f0b02abbbd"
+    },
+    {
+      "path": "engine.py",
+      "type": "file",
+      "sha": "2e57c7797d7ee7ac96b9bc920d9cc893b19690c9"
+    },
+    {
+      "path": "engine.sh",
+      "type": "file",
+      "sha": "36b30d7c9ec6410c84cd9b04d91207ad3118b3b0"
+    },
+    {
+      "path": "make_vs2015_win64.bat",
+      "type": "file",
+      "sha": "492d011af205b3681ad8b2e5aff9ff300a457091"
+    },
+    {
+      "path": "make_vs2017_win64.bat",
+      "type": "file",
+      "sha": "ddad03c9dd5f66dd11f878eea762099328a79fc1"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "798312cbb95282adb2a56aebb82fede61ebd3a6b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "319ba467f105e23b07674d4d023bc23257bfb12d"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "180031ad2da134727d7dc3a7d70239b12cbe857d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2eaae7133091e7206cb9e8ee67f7e5ee8079c751"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

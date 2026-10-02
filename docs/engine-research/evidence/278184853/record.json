@@ -1,0 +1,134 @@
+{
+  "repository": "Rythe-Interactive/Rythe-Engine",
+  "repository_id": 278184853,
+  "commit": "fa406a5c7000fb0440120f927efca6403770096a",
+  "source_url": "https://github.com/Rythe-Interactive/Rythe-Engine/tree/fa406a5c7000fb0440120f927efca6403770096a",
+  "readme_path": "README.md",
+  "readme_sha256": "f4dfdd97a7eb1f58b945e8240561a1af06abd376946cd1e59be20faa82b6ef76",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d0114b09ae39739d8da5e02381bd235a1de54e9f"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "1b302f00917fbd93776973c18968da458cab12cc"
+    },
+    {
+      "path": ".clang_complete",
+      "type": "file",
+      "sha": "5ce419814dbaafbe39b5d409db0e947c6cfec130"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "484ee9ec7ce9e756776f98fb7c5c9f1ac442d2a9"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "fb61b119ccc52aa95bb2bb86c315573eeabd3981"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3d8fcc621da03eb0515c6927333af33b0b042c9c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "450707296384beb4ce17abc9f664b96d4c7a9fc8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7d6c3ecea01f20f66e7d8e0aa28d2aed6473684a"
+    },
+    {
+      "path": ".nojekyll",
+      "type": "file",
+      "sha": "8b137891791fe96927ad78e64b0aad7bded08bdc"
+    },
+    {
+      "path": ".runsettings",
+      "type": "file",
+      "sha": "70a060ed80c3e5526a2a9c08f196b8d4b35bd807"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "617aa329d1a10fd7092aca002caf720728a4d48e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "286e1a4d339aae139c840cbfb135ec6aa41d5820"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "3a9752e3e3401e3b84de7148432e0c591054a0a3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e019cba44d5ee8d86dea5317537b4cf27b3d6ebf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0fc7dbd9a97c94f20f3e91e494798f6d1b6d1e11"
+    },
+    {
+      "path": "VisualStudio22-All.bat",
+      "type": "file",
+      "sha": "ffc8299113943c64f9e29a24ea250d40015d45b7"
+    },
+    {
+      "path": "applications",
+      "type": "dir",
+      "sha": "da02c426e2e6a4876c94c39bdbcc41d452462dfd"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "514757435ab77266daf860347a1ea6b4f62a733a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "30f7adcabf65db1168f087ff87ad393c74d808ea"
+    },
+    {
+      "path": "libraries",
+      "type": "dir",
+      "sha": "402835c0d58455665c9ef0b947e81e106c871288"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "b2ccf17e7fe95fb907e6093fe6135fb37c8d702f"
+    },
+    {
+      "path": "rythe-build-system",
+      "type": "file",
+      "sha": "5bee4f4654ae4c24ef89ee5464f8a8149476e2c1"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "f77e6d25f5082950af2fe8c7dbfd0d933332558f"
+    },
+    {
+      "path": "xcopyexclude",
+      "type": "file",
+      "sha": "5e0eb3e54f90f6836c2270616ad3a1f8985d834a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies data-oriented native engine; modules/libraries/applications and build infrastructure. Performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

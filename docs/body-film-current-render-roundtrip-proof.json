@@ -1,0 +1,20 @@
+{
+  "renderer": "Apple M4 Max / Metal, native offscreen",
+  "stateEqual": true,
+  "pngBytesEqual": true,
+  "cells": 90062,
+  "massKg": 5e-05,
+  "hashes": {
+    "docs/body-film-current-render-state.json": "8657d7077c30e91b757de72d29e2016f8ded5ffb5cafb2a2cb8194950682d3c7",
+    "docs/body-film-current-restored-state.json": "8657d7077c30e91b757de72d29e2016f8ded5ffb5cafb2a2cb8194950682d3c7",
+    "docs/body-film-current-save.png": "8c50209bb722f791dc5e54209e2267cae6de21fa097c34eb0761392c4f6b6684",
+    "docs/body-film-current-restored.png": "8c50209bb722f791dc5e54209e2267cae6de21fa097c34eb0761392c4f6b6684"
+  },
+  "visualReview": "Visible polygonal, flat film patch on abdomen; material realism remains incomplete. Surface diffusion was disabled in both controlled renders.",
+  "wholeBodyCheckpoint": false,
+  "nativeViewerScreenshot": false,
+  "releaseRendererBuildPassed": true,
+  "rendererExecutableSha256": "8362f7315e410badd6968997093e29f4f077b7aad1de4175341d521859d4817b",
+  "sourceSha256": "1a1d8ae601e50697f8c6c942dc84bcfdbbb3476cd78ce4830d1f8fbd88e25bfa",
+  "bothImagesInspected": true
+}

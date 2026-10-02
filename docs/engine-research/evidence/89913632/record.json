@@ -1,0 +1,109 @@
+{
+  "repository": "NeroGames/Nero-Game-Engine",
+  "repository_id": 89913632,
+  "commit": "8379f7f680ccb9860aff7836b7842025977ee27e",
+  "source_url": "https://github.com/NeroGames/Nero-Game-Engine/tree/8379f7f680ccb9860aff7836b7842025977ee27e",
+  "readme_path": "README.md",
+  "readme_sha256": "94769f38c5b98cf4d08be208aac459dd7259e0aaede33451eb591ad55bcda36a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "af02817144f5332ca106dfb5754c4732a09eb481"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "20c8d9314e2f1daba086aa2aae85a5e0c1ebae03"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "80e34c909e275cc2921519fac1c520c83e5de17d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6469f21667a01048ba35221f6324723e654320ba"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c48bc4572319fb9f23ced3f80cc06ce849a97d6f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b069a51dc32dadf3629b99328c7749c132b515bf"
+    },
+    {
+      "path": "copyright.txt",
+      "type": "file",
+      "sha": "c74560753e84420b98650fe0103a42018a29f649"
+    },
+    {
+      "path": "designdoc",
+      "type": "dir",
+      "sha": "4c710bae63b11cb04160a3bf7a0cc59cd2db5a0a"
+    },
+    {
+      "path": "doxygen",
+      "type": "dir",
+      "sha": "5c7a17fb10e63bd5bc0ff6f5b05b2063b2006545"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "cac66fc06feb75d07b394a72f25952bc6194d969"
+    },
+    {
+      "path": "icon.ico",
+      "type": "file",
+      "sha": "30a9b1b3672cbe436fd3024c2d4f4c2cc2dd2a57"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "2eec9010f626dd4dae4ba5adc0d1c30381678181"
+    },
+    {
+      "path": "library",
+      "type": "dir",
+      "sha": "5d72fee3aaf3e2bb38049beca013739f19d69b67"
+    },
+    {
+      "path": "resource",
+      "type": "dir",
+      "sha": "859d2cfcf1ceef5de9efa8ff65b11917de5794ae"
+    },
+    {
+      "path": "resources.rc",
+      "type": "file",
+      "sha": "a1ec3289d4d89da293bd1b4c50d11a27f39eafeb"
+    },
+    {
+      "path": "setting",
+      "type": "dir",
+      "sha": "67dce62506f0fad93b34f2caeb4f2d1c19267f48"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4df27c90cc2c6d3c19924ff92c4337b81219df00"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "af61568d60ab17a6887e582704b50b9a288cb311"
+    },
+    {
+      "path": "testlab",
+      "type": "dir",
+      "sha": "6f03c051452dec9e04491ea78b2c00c19c2e87eb"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "SFML/Box2D 2D engine distribution with engine source, templates, settings, resources and example projects.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

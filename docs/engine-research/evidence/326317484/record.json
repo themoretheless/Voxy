@@ -1,0 +1,52 @@
+{
+  "repository": "sburris0/bevy_flycam",
+  "repository_id": 326317484,
+  "commit": "c8a573879011fb5cfdfcbf169d90c39fa7896533",
+  "source_url": "https://github.com/sburris0/bevy_flycam/tree/c8a573879011fb5cfdfcbf169d90c39fa7896533",
+  "readme_path": "README.md",
+  "readme_sha256": "81e15aadbed0ea82b77888c3b184a10e3e27dd25083881c6c77372eb70aa1deb",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7e8707e87e0cc5a09cdd19990112967906878971"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "40cb88fae00c49a10a006bc713d6ad7b52f5852e"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "6db6976fff43eed98a54be51d5e5df0d2820f8c3"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "15486171030a894947a0f06ae62d1b0d2f68b2ed"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2a52f37dac3d8991356271078065d62912c8526e"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "87d24c27f17e31237a5a7d09ee9a0edc05a02fd1"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "943656cedb17f92829fe03fea034f6fdbb68d779"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7f3fbee5bf436e5ffad1aeb9564c0a0bef75743f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,62 @@
+{
+  "repository": "Rubonnek/quest-manager",
+  "repository_id": 876690984,
+  "commit": "8fe88bc8a415d0b57e32a11b6114518e6d62ff6d",
+  "source_url": "https://github.com/Rubonnek/quest-manager/tree/8fe88bc8a415d0b57e32a11b6114518e6d62ff6d",
+  "readme_path": "README.md",
+  "readme_sha256": "934c3adabcc8fab71b662c35d10ae5d33fc7abe79e77cc5c6ced2f95e1e93151",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c49627a910a012d6456d19d642e6e085f90a5080"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "44a38d6c5ca9a97c9048c2e988ac3c2305191730"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "49d099c75c0e9d7f42f7ae48c036f5d3e46cc3fb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ce5812c85a4b5091ce6ced185a92de3f0189f32e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b63d8841d8acf580a34dc3489d99176443f0761"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "ab81541fe68d9b26918d88262ed25fd8344e3c05"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "d6d437c0caaca3da0357f205cfd56bc7ca138aa9"
+    },
+    {
+      "path": "icon.svg",
+      "type": "file",
+      "sha": "7ee1a6e9c6c2f1a7a67f37383e96a4fb4139c4bc"
+    },
+    {
+      "path": "icon.svg.import",
+      "type": "file",
+      "sha": "73a5cd918ae5b36b63a6edf76caf7ee61b60b15e"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "626fe49560e1234514925a165d35e502c2742110"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

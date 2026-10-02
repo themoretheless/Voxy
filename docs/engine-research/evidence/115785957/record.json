@@ -1,0 +1,69 @@
+{
+  "repository": "RimoChan/Librian",
+  "repository_id": 115785957,
+  "commit": "4c8fd41687936c9bc80ed6a00aa57239e243c1ab",
+  "source_url": "https://github.com/RimoChan/Librian/tree/4c8fd41687936c9bc80ed6a00aa57239e243c1ab",
+  "readme_path": "readme.md",
+  "readme_sha256": "9fcb47e1b4da4b403b92882d8b0d5216fed826d86a51d4574ec3b601bc52c324",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f16f3702c95ccf53c9a54e84cd14f6ca56671139"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "635049639b447420000aaa5e9fe67a6a888e8762"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "10a60b3e489e7f091f943ab0943a1f66d4c95a70"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "librian",
+      "type": "dir",
+      "sha": "34e4d3682eb395e45df23edc762922bf0627e250"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "3c7aec5348c1413f745ba501dafce6e6eeeb7b4a"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "0311160e2d0c66bc2c3d8c98fc6a9b13a57f6166"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "a8a3b640ca33e02cc573f56615d8af2cc54f6d81"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "4a660a3aa06b8b24fe9cef1b58fdb8c98806170e"
+    },
+    {
+      "path": "文檔",
+      "type": "dir",
+      "sha": "9266a2f836188c9d8b5d43ab753805f0b87cc812"
+    },
+    {
+      "path": "測試.py",
+      "type": "file",
+      "sha": "85686f571aaef870a9b0806a1921b2b08732950e"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies visual-novel engine; owned librian runtime plus setup/requirements/tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

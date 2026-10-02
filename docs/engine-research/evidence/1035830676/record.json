@@ -1,0 +1,224 @@
+{
+  "repository": "marchc1/Source.NET",
+  "repository_id": 1035830676,
+  "commit": "f20a3f9b0fcb64a8f01a6200798221bef0d8cf7a",
+  "source_url": "https://github.com/marchc1/Source.NET/tree/f20a3f9b0fcb64a8f01a6200798221bef0d8cf7a",
+  "readme_path": "README.md",
+  "readme_sha256": "20d2db61245cb63e1f940920efb54e698e02727a5738180bae87f0d422d2cd4f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "040ec00e6b1847068dbf6f6bfc2a44125282353c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "58582f07162fe0945b3afdf9c468c382e8fc3b63"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "dff0359d766f1ecc248057db4cc611f59a12df93"
+    },
+    {
+      "path": "DATATABLES_COMPLETED.md",
+      "type": "file",
+      "sha": "65849661db5f37828032d514b51a52f02a5ac251"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "4cb638c3e90c987b0465bc77bede0ee4fac7d49e"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "b9cfce4c9ae01b73d796d97daa352bdfac0eef73"
+    },
+    {
+      "path": "Game.Assets",
+      "type": "dir",
+      "sha": "24e7b5579f90c234d6c6c34cc2e1926e6d24391f"
+    },
+    {
+      "path": "Game.Client",
+      "type": "dir",
+      "sha": "db89c4bfa38f8dee8364e46aeec3243026a16f1c"
+    },
+    {
+      "path": "Game.Server",
+      "type": "dir",
+      "sha": "9b05f57832ff0c9cacde5a1250d135a00c7fbb79"
+    },
+    {
+      "path": "Game.ServerBrowser",
+      "type": "dir",
+      "sha": "068bf13e95f1930e8daeeda5eca90a39438a6f6f"
+    },
+    {
+      "path": "Game.Shared",
+      "type": "dir",
+      "sha": "f4969ec598ea906bbbaf1807db53d1afac1052a3"
+    },
+    {
+      "path": "Game.UI",
+      "type": "dir",
+      "sha": "a70bed49f55d739288bfc3968ea8ccf3151c746f"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "18f0c6550de0aa6092f6af2d65dda7c837567dab"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ada71b97a5e2a87ed72cc81b37b9e0f599ed54b4"
+    },
+    {
+      "path": "Source.AudioSystem",
+      "type": "dir",
+      "sha": "18c647a361bbe5cd54ec48395ce8c3009acf4274"
+    },
+    {
+      "path": "Source.Bitmap",
+      "type": "dir",
+      "sha": "cca4e86d7f43d5fe4b6c1153d4e218629c0f0ca5"
+    },
+    {
+      "path": "Source.CodeAnalysis.NetworkVars",
+      "type": "dir",
+      "sha": "010c7e8e4473bb35e2acf84d6cb9d757fa19af40"
+    },
+    {
+      "path": "Source.CodeAnalysis",
+      "type": "dir",
+      "sha": "33be12187ac861299742df303b31b5285aeae264"
+    },
+    {
+      "path": "Source.Common",
+      "type": "dir",
+      "sha": "136812e449bf1cf6216381ee4163d90d9b7f6d4e"
+    },
+    {
+      "path": "Source.DataCache",
+      "type": "dir",
+      "sha": "5e5d596502d4bc7055a839807574fa3b428227ff"
+    },
+    {
+      "path": "Source.DatatableToClassDef",
+      "type": "dir",
+      "sha": "3e1567f1a2cd8a058d3700d1973a04779d5b360b"
+    },
+    {
+      "path": "Source.Dedicated",
+      "type": "dir",
+      "sha": "704af606512b44259bc100a2fe7b240c15eb7389"
+    },
+    {
+      "path": "Source.Engine",
+      "type": "dir",
+      "sha": "6b88434f9928de5dad0d96ac4e2ed956c07c2e84"
+    },
+    {
+      "path": "Source.Filesystem",
+      "type": "dir",
+      "sha": "7483ed21aa303e75d1481808016acc21dd88f360"
+    },
+    {
+      "path": "Source.GUI.Controls",
+      "type": "dir",
+      "sha": "23b28f912b5a79e1d686be9a9642587ed07a6450"
+    },
+    {
+      "path": "Source.GUI",
+      "type": "dir",
+      "sha": "b960c5f2d46a402ac34b3565ad8b28ef8cbf7909"
+    },
+    {
+      "path": "Source.Launcher",
+      "type": "dir",
+      "sha": "353060fa1aa3ce2495b8bbf11df35c8f856ae0ec"
+    },
+    {
+      "path": "Source.MaterialSystem",
+      "type": "dir",
+      "sha": "3f006ba88a831962a8227914a0f3f4e095596549"
+    },
+    {
+      "path": "Source.NET.slnx",
+      "type": "file",
+      "sha": "c6d69f672c3ca281ee0198fa98a1ba580e90aefa"
+    },
+    {
+      "path": "Source.Physics",
+      "type": "dir",
+      "sha": "e49fb6e4a95d275de5f254c083f69a4bfacea7b1"
+    },
+    {
+      "path": "Source.SDLInputSystem",
+      "type": "dir",
+      "sha": "df573b44d1dd6b73dbb4b40d7588b74f2fe344a2"
+    },
+    {
+      "path": "Source.SDLManager",
+      "type": "dir",
+      "sha": "8d58a196a10e075e6bcffd621e733690713c961e"
+    },
+    {
+      "path": "Source.SDLSystem",
+      "type": "dir",
+      "sha": "20a5c0be79a001ea3aff59fa781ae00f7c1252ae"
+    },
+    {
+      "path": "Source.ShaderAPI.Gl46",
+      "type": "dir",
+      "sha": "8f2167fe0738078f482d1a4dd53b6303c9b528c4"
+    },
+    {
+      "path": "Source.SoundEmitterSystem",
+      "type": "dir",
+      "sha": "20612c1bf7db845f11cda7afc7031828e00543eb"
+    },
+    {
+      "path": "Source.StdShader.Gl46",
+      "type": "dir",
+      "sha": "d21663d5b849f0c6c26a2d6a2de56adfcde7bf68"
+    },
+    {
+      "path": "Source.StudioRender",
+      "type": "dir",
+      "sha": "5d4f9d09980a75498b80437017badb1080765142"
+    },
+    {
+      "path": "Source.VPK",
+      "type": "dir",
+      "sha": "caafce9411a01a3841c9daee8101ad21d5c4130a"
+    },
+    {
+      "path": "Source.VTF",
+      "type": "dir",
+      "sha": "8e5d1abfb182c708534a7a819e56b2c557085a74"
+    },
+    {
+      "path": "Usings",
+      "type": "dir",
+      "sha": "b5da04d34d962c327f37905446d5c115d4076be9"
+    },
+    {
+      "path": "usings_readme.txt",
+      "type": "file",
+      "sha": "5da7c2df33a219b50224450399c8e1478ea682c2"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# Source-engine replica explicitly based on an existing Source branch; engine/audio/client/server projects present, compatibility is alpha and unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

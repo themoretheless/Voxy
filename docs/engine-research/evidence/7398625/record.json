@@ -1,0 +1,94 @@
+{
+  "repository": "dxx-rebirth/dxx-rebirth",
+  "repository_id": 7398625,
+  "commit": "db1996a7fd18c7bf11c9b18b881aa4f11a84f017",
+  "source_url": "https://github.com/dxx-rebirth/dxx-rebirth/tree/db1996a7fd18c7bf11c9b18b881aa4f11a84f017",
+  "readme_path": "README.md",
+  "readme_sha256": "dc7445b40ecb6c3ef036e24e54859967ad171d9bb5e9eea81b183bc7d6f2029e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "af2efe0e3349383260d5006efbaa5275367131a9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "11647e325fb91703dfc17ce020cb30baccaa663e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f557e4c8e81a926797d70034d1e22c6cd7bfef50"
+    },
+    {
+      "path": "Brewfile",
+      "type": "file",
+      "sha": "3f0bd7d3a91eaa0e9f2e0e12426f13b032e9e5fe"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "69e2e7dd43963af91444e61adec27ce0687f2157"
+    },
+    {
+      "path": "Documentation",
+      "type": "dir",
+      "sha": "c710dd0054032305ea4e71d8a64ba6cddcac45b9"
+    },
+    {
+      "path": "GPL-3.txt",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "INSTALL.markdown",
+      "type": "file",
+      "sha": "05d28cad7c7c79cd3f80516195cf6e7a1cc9a747"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e8cf35c9fd7b6d542af5d00cf681dda0847a23db"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "8ab7da6ba3b22eb7e44c9aa7da232bfb0dbf6221"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "7146ede2bcb6d3cf246d488f54a0348deebab6f5"
+    },
+    {
+      "path": "contrib",
+      "type": "dir",
+      "sha": "9f0297140a53a7b41b2a049b4a95b213dd07fae4"
+    },
+    {
+      "path": "d1x-rebirth",
+      "type": "dir",
+      "sha": "0e5f21097fe2500b7f039768044be501a8daed59"
+    },
+    {
+      "path": "d2x-rebirth",
+      "type": "dir",
+      "sha": "8c3a5c7e08b8f1e8f4559490a4e5b2abcab3cb8c"
+    },
+    {
+      "path": "mk-ebuild-snapshot.bash",
+      "type": "file",
+      "sha": "29301ba39318a7de6ff4761f527767029dc9a581"
+    },
+    {
+      "path": "similar",
+      "type": "dir",
+      "sha": "e21fee1049d1dde994077d62bc65bc5b51b833c4"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description and source roots identify Descent engine ports; common/d1x/d2x runtime with SConstruct build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

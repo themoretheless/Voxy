@@ -1,0 +1,54 @@
+{
+  "repository": "turborium/TurboRaylib",
+  "repository_id": 580238030,
+  "commit": "60cc047a5b30636343a1756f8a44796fc7e57a32",
+  "source_url": "https://github.com/turborium/TurboRaylib/tree/60cc047a5b30636343a1756f8a44796fc7e57a32",
+  "readme_path": "README.md",
+  "readme_sha256": "0315edac92122e37c029b02f2d3abc1169ae80737e0d99f1697f5961628d8d45",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9532800ba2240f67aff2d6cfa51cf5a9d97d1e26"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "54916b1dfdeb6eecdd5f92bfb05f1f5c3e8b7918"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ef33b4e9b0d73f5035ff05c36e06f2868ac25515"
+    },
+    {
+      "path": "binaries",
+      "type": "dir",
+      "sha": "fd01b625c59846eabd258f40e08f1bc860392124"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b8ed2a71fd52bfd443f77bd876c972441495f222"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "54d70d1b42c1e0e774247fd7fc06acaa24a21a98"
+    },
+    {
+      "path": "raylib",
+      "type": "dir",
+      "sha": "f73a8a7134a6a0be46ba2d43ead847c418702f40"
+    },
+    {
+      "path": "turbogen",
+      "type": "dir",
+      "sha": "acae213cc094aff4779cdc2c5c52364873aac86a"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Object Pascal raylib bindings with binaries and examples; ABI stability claims not verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

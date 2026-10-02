@@ -1,0 +1,69 @@
+{
+  "repository": "EvanBacon/Expo-Voxel",
+  "repository_id": 88187557,
+  "commit": "0127582871fa3ceeba6e9a51af59eae3a881ce04",
+  "source_url": "https://github.com/EvanBacon/Expo-Voxel/tree/0127582871fa3ceeba6e9a51af59eae3a881ce04",
+  "readme_path": "README.md",
+  "readme_sha256": "08aa0610acbad29e9c640dae5237190cc453eff899afcfd2fcb852a3054577b7",
+  "entries": [
+    {
+      "path": ".babelrc",
+      "type": "file",
+      "sha": "2bcd546dbfd25715106ba5167762e7d172924b35"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3e63936f8ae65d71bd2f331a2d2b5c5ff9264888"
+    },
+    {
+      "path": ".watchmanconfig",
+      "type": "file",
+      "sha": "0967ef424bce6791893e9a57bb952f80fd536e93"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7039e6a4845e5af5c7105c138e48774abd3f9ce8"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "ee765e1ffb6de1c1e9ac1faa8f43533dc064b37e"
+    },
+    {
+      "path": "components",
+      "type": "dir",
+      "sha": "86eb541f67ee98531c127ff16ae74bcc6822a3a3"
+    },
+    {
+      "path": "demo.gif",
+      "type": "file",
+      "sha": "17f92bb1766a403f21428a41af84292a18084d89"
+    },
+    {
+      "path": "exp.json",
+      "type": "file",
+      "sha": "5b5678f0d309c28c54c47aa8976c24ca4cb262cd"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "1753b2ea8166491a6d6f4f1f6ceed56ff48949fd"
+    },
+    {
+      "path": "main.js",
+      "type": "file",
+      "sha": "5415599eba1e0dd4089b2542aefe748a94da3fab"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "f5ca785f9a0ef9e96851e6f1d4031cf07182c95b"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify React Native voxel terrain demonstration; components/assets and npm app build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

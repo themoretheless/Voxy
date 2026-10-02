@@ -1,0 +1,69 @@
+{
+  "repository": "maxdeviant/peacock",
+  "repository_id": 169908041,
+  "commit": "be967bede9f1d73b32bac6e6f9aa3b5023e90743",
+  "source_url": "https://github.com/maxdeviant/peacock/tree/be967bede9f1d73b32bac6e6f9aa3b5023e90743",
+  "readme_path": "README.md",
+  "readme_sha256": "7bef69c131fcf79e0719e95fdf0b08d6320b6659547b5b6cb8ea9a9b14ab2d19",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "693699042b1a8ccf697636d3cd34b200f3a8278b"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "e59bc2233e31e37687ff4fac8e23ad1c06675a44"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a5c539662eb3003b704361fc1050328f6c853bdb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ef1e0f850dd7a9846744a25169fbe747538ad0ca"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "9083d46f1b07fe5f22d2f0f83035a82f3a3850c9"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "7ab875f7a57f9bc2a94872aa8dfc55c0df691942"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "512c512b6b135cffae3698ddaec40bd527e0fe6c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "246ef466cdb6858ebc7b63306126e0b1eea07715"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "a58f2289690394f56986a891dc886463767e8bb1"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "af760a20509eedd9198538f6fe2fe3b77d070878"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e845e8d63b964ff13bc15ab146326ed1322170ba"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "SDL2 Context/State update and draw API with examples; batteries-included systems are goals rather than established engine evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

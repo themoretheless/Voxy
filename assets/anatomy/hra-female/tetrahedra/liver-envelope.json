@@ -1,0 +1,73 @@
+{
+  "format": "VXTM/1",
+  "units": "metres",
+  "source_file": "assets/anatomy/hra-female/liver.glb",
+  "source_sha256": "8c6b636352f9d4d21b560c40a31bd16a81f83e6fe6fd86aac2c91eb9abb693d1",
+  "source_node": 533,
+  "source_nodes": [
+    533,
+    534
+  ],
+  "source_anatomy": [
+    {
+      "source_node": 533,
+      "name": "VH_F_capsule_of_the_liver",
+      "currentUVSet": "map1",
+      "anatomical_structure_of": "#VHFLiver",
+      "source_spatial_entity": "#VHFemaleOrgans",
+      "label": "capsule of the liver",
+      "ontologyid": "UBERON:0016479",
+      "representation_of": "http://purl.obolibrary.org/obo/UBERON_0016479",
+      "glb_file_of_single_organs": "VH_F_Liver&lf;",
+      "node_type": "surface"
+    },
+    {
+      "source_node": 534,
+      "name": "VH_F_bare_area_of_liver",
+      "currentUVSet": "map1",
+      "anatomical_structure_of": "#VHFLiver",
+      "source_spatial_entity": "#VHFemaleOrgans",
+      "label": "bare area of liver",
+      "ontologyid": "UBERON:0001149",
+      "representation_of": "http://purl.obolibrary.org/obo/UBERON_0001149",
+      "glb_file_of_single_organs": "VH_F_Liver&lf;",
+      "node_type": "surface"
+    }
+  ],
+  "source_surface_audit": {
+    "welded_vertices": 17951,
+    "triangles": 35898,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0,
+    "closed_oriented_edge_manifold": true
+  },
+  "atlas_source": "https://cdn.humanatlas.io/digital-objects/ref-organ/united-female/v1.10/assets/3d-vh-f-united.glb",
+  "atlas_source_sha256": "95f0c3d2f918582608692ca1139e8bdb18c147a16470e9ee9af8b276bd77c422",
+  "atlas_metadata": "https://cdn.humanatlas.io/digital-objects/ref-organ/united-female/v1.10/metadata.json",
+  "license": "CC BY 4.0",
+  "attribution": "Kristen Browne and Heidi Schlehlein, HuBMAP / Human Reference Atlas. CC BY 4.0.",
+  "original_volume_m3": 0.0021381984638402943,
+  "tetrahedral_volume_m3": 0.0021381984638402943,
+  "minimum_tet_volume_m3": 3.1468489967440774e-14,
+  "maximum_tet_volume_m3": 2.380439603870253e-06,
+  "source_surface_flipped": false,
+  "points": 37098,
+  "tetrahedra": 162807,
+  "boundary_faces": 41416,
+  "max_boundary_vertex_distance_m": 5.098999036424514e-17,
+  "relative_volume_error": 0.0,
+  "relative_surface_area_error": 0.0,
+  "sha256": "ae47b4b3ad306968dcb3066967c3275c3fdc0c8d7dc951edd073215e62a3aa8b",
+  "generator": {
+    "name": "tetgen",
+    "version": "0.8.3",
+    "numpy": "2.5.3",
+    "minratio": 1.4,
+    "mindihedral": 10,
+    "plc": true,
+    "docheck": true,
+    "nomergefacet": true,
+    "nomergevertex": true
+  }
+}

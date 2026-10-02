@@ -1,0 +1,19 @@
+{
+  "repository": "SiliconStudio/xenko",
+  "repository_id": 23534015,
+  "commit": "b5559e5e3540b5541b9ee435856b5f7f31b69296",
+  "source_url": "https://github.com/SiliconStudio/xenko/tree/b5559e5e3540b5541b9ee435856b5f7f31b69296",
+  "readme_path": "README.md",
+  "readme_sha256": "50ce5ae814c2a2605065a58c3d3fe5831da7d7ac805d75ae96a747328c19c23a",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e2bd1d74917166991f69f5162973088d90245163"
+    }
+  ],
+  "classification": "excluded_redirect",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned root contains only README directing to successor repository; engine implementation absent at this commit.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

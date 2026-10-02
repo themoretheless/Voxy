@@ -1,0 +1,79 @@
+{
+  "repository": "pojol/braid",
+  "repository_id": 839183272,
+  "commit": "e738cf25f99c58d131a07c171fcba07c2609ba70",
+  "source_url": "https://github.com/pojol/braid/tree/e738cf25f99c58d131a07c171fcba07c2609ba70",
+  "readme_path": "README.md",
+  "readme_sha256": "065b2a84a4336d745b25a5bb1f523b8e5dfee4f81c480cd2d43390c547d288ee",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bbc4521daf3d2280e3e02ea5ed5157619029bf7f"
+    },
+    {
+      "path": "3rd",
+      "type": "dir",
+      "sha": "2cdcb7ccc30f67e3f8b1b857c694cfde32e66a54"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "879c2b58784a77932470aad7f4b4196cade18256"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3360ae7859c6d462fcbc74d1cb84aeeb54ec8956"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "4b34b75faf31bd6175013fd12c5b9687753efbe4"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "db3776e912ce9dc6055512213f2458e2ad576817"
+    },
+    {
+      "path": "def",
+      "type": "dir",
+      "sha": "f5d1e06527137ed17d834c9277c0772543eaf5c6"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "aba452e2335a290c5586dab4c196e309e7fcac1c"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "d86e262a7cd13cf8be0f16319551f5d043545542"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "dda155b68f2219e8842085a4b0ec044bdef2ba8b"
+    },
+    {
+      "path": "router",
+      "type": "dir",
+      "sha": "af74ee8992815abc9e609a2fb1c204aac4d0847a"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "bdd89ac4da8395e058e7bbd18941fe249b5348d8"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "ad6ecfc35dacf53b091d0e10506c687655d93dec"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Actor-based distributed microservice framework; does not establish a graphical game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,3201 @@
+{
+  "date": "2026-10-02",
+  "repositories": [
+    {
+      "repository": "ash-rs/ash",
+      "commit": "f4c2ca3e4f6b998d5254ad101a32f024d87cdec2",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "ash/src/extensions/nv/device_generated_commands_compute.rs",
+      "source_url": "https://github.com/ash-rs/ash/blob/f4c2ca3e4f6b998d5254ad101a32f024d87cdec2/ash/src/extensions/nv/device_generated_commands_compute.rs",
+      "finding": "Обёртки NV device-generated compute вызывают функции расширения через таблицу указателей. Наличие Rust-метода не проверяет поддержку расширения устройством.",
+      "files": [
+        {
+          "path": "ash/src/extensions/nv/device_generated_commands_compute.rs",
+          "sha256": "3dbed776e628f5a62118f161bab47e9d6ab353ad48c721e5a774284b2d78fb08",
+          "local": "0.rs",
+          "url": "https://github.com/ash-rs/ash/blob/f4c2ca3e4f6b998d5254ad101a32f024d87cdec2/ash/src/extensions/nv/device_generated_commands_compute.rs",
+          "lines": 43
+        },
+        {
+          "path": "ash/src/extensions/khr/dynamic_rendering.rs",
+          "sha256": "ff04ddf3d628dcc8c57a032a60adf131b842731885816d3767323118446e5c73",
+          "local": "1.rs",
+          "url": "https://github.com/ash-rs/ash/blob/f4c2ca3e4f6b998d5254ad101a32f024d87cdec2/ash/src/extensions/khr/dynamic_rendering.rs",
+          "lines": 21
+        },
+        {
+          "path": "ash/src/extensions/nv/cuda_kernel_launch.rs",
+          "sha256": "bd26319ea5ddfb368eb1828cce9a02ac01fd134d3bb1d7ad3eee71585d869e85",
+          "local": "2.rs",
+          "url": "https://github.com/ash-rs/ash/blob/f4c2ca3e4f6b998d5254ad101a32f024d87cdec2/ash/src/extensions/nv/cuda_kernel_launch.rs",
+          "lines": 83
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/ash-rs__ash",
+      "tree_truncated": false
+    },
+    {
+      "repository": "BabylonJS/Babylon.js",
+      "commit": "02b5a5e79b0140f79dc75f703e82cb79d8b5fa4c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "packages/dev/core/src/Engines/WebGPU/webgpuSnapshotRendering.ts",
+      "source_url": "https://github.com/BabylonJS/Babylon.js/blob/02b5a5e79b0140f79dc75f703e82cb79d8b5fa4c/packages/dev/core/src/Engines/WebGPU/webgpuSnapshotRendering.ts",
+      "finding": "Snapshot rendering разделяет запись и воспроизведение render bundles и сбрасывает запись при invalidation. Повторное использование команд требует явной актуальности ресурсов.",
+      "files": [
+        {
+          "path": "packages/dev/core/src/Engines/WebGPU/webgpuSnapshotRendering.ts",
+          "sha256": "bb057d917dd3e46d31fff95562c1a1b28dd344f0744d01e671f366444f1f611f",
+          "local": "0.ts",
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/02b5a5e79b0140f79dc75f703e82cb79d8b5fa4c/packages/dev/core/src/Engines/WebGPU/webgpuSnapshotRendering.ts",
+          "lines": 163
+        },
+        {
+          "path": "packages/dev/core/src/Engines/WebGPU/webgpuCacheRenderPipeline.ts",
+          "sha256": "3dd77b5fdb2536a0cf4ea1cd470d7a18983178f542d0c0f692ef08983591bd82",
+          "local": "1.ts",
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/02b5a5e79b0140f79dc75f703e82cb79d8b5fa4c/packages/dev/core/src/Engines/WebGPU/webgpuCacheRenderPipeline.ts",
+          "lines": 1255
+        },
+        {
+          "path": "packages/dev/core/src/Engines/WebGPU/webgpuRenderTargetWrapper.ts",
+          "sha256": "c4da47efc017c5379ec97ed2d13a5bda9ca554d3499b52abadd043b25d90f278",
+          "local": "2.ts",
+          "url": "https://github.com/BabylonJS/Babylon.js/blob/02b5a5e79b0140f79dc75f703e82cb79d8b5fa4c/packages/dev/core/src/Engines/WebGPU/webgpuRenderTargetWrapper.ts",
+          "lines": 45
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/BabylonJS__Babylon.js",
+      "tree_truncated": false
+    },
+    {
+      "repository": "baldurk/renderdoc",
+      "commit": "42e52b48a3888bb5713c5fa91bf10bf0eec96908",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "renderdoc/driver/metal/metal_device.cpp",
+      "source_url": "https://github.com/baldurk/renderdoc/blob/42e52b48a3888bb5713c5fa91bf10bf0eec96908/renderdoc/driver/metal/metal_device.cpp",
+      "finding": "Metal replay создаёт библиотеку из сохранённых байтов; отдельные ray tracing capability-методы возвращают false. Возможности инструмента захвата нельзя приравнивать возможностям GPU.",
+      "files": [
+        {
+          "path": "renderdoc/driver/metal/metal_device.cpp",
+          "sha256": "109424573718275a4b26069e9e77df506926b01a6816c270505f1260d2a5aff0",
+          "local": "0.cpp",
+          "url": "https://github.com/baldurk/renderdoc/blob/42e52b48a3888bb5713c5fa91bf10bf0eec96908/renderdoc/driver/metal/metal_device.cpp",
+          "lines": 765
+        },
+        {
+          "path": "renderdoc/driver/d3d12/d3d12_device_wrap.cpp",
+          "sha256": "e427b6855ddb5d0ac03aa817eb9394faaf1f1b7eeb09ace281024de9cfdac841",
+          "local": "1.cpp",
+          "url": "https://github.com/baldurk/renderdoc/blob/42e52b48a3888bb5713c5fa91bf10bf0eec96908/renderdoc/driver/d3d12/d3d12_device_wrap.cpp",
+          "lines": 2733
+        },
+        {
+          "path": "renderdoc/driver/d3d12/d3d12_device_wrap1.cpp",
+          "sha256": "9e5257f61cf3f88f07d3d54e843b30ce552e26e5fa8b07c79be3382a5f06d18a",
+          "local": "2.cpp",
+          "url": "https://github.com/baldurk/renderdoc/blob/42e52b48a3888bb5713c5fa91bf10bf0eec96908/renderdoc/driver/d3d12/d3d12_device_wrap1.cpp",
+          "lines": 98
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/baldurk__renderdoc",
+      "tree_truncated": false
+    },
+    {
+      "repository": "bevyengine/bevy",
+      "commit": "5f7f4ce67bd063efdbadf9acacd4bf711f51f0c0",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "crates/bevy_render/src/gpu_readback.rs",
+      "source_url": "https://github.com/bevyengine/bevy/blob/5f7f4ce67bd063efdbadf9acacd4bf711f51f0c0/crates/bevy_render/src/gpu_readback.rs",
+      "finding": "Readback разделён на requested/mapped; результат приходит через канал, после unmap буфер возвращается в пул. Полезный образец для пула чтения статусов Voxy.",
+      "files": [
+        {
+          "path": "crates/bevy_render/src/gpu_readback.rs",
+          "sha256": "1455a8bca35fde26f8596420b76b865f1700fd82ec0639115a94e51292c9af4f",
+          "local": "0.rs",
+          "url": "https://github.com/bevyengine/bevy/blob/5f7f4ce67bd063efdbadf9acacd4bf711f51f0c0/crates/bevy_render/src/gpu_readback.rs",
+          "lines": 463
+        },
+        {
+          "path": "crates/bevy_render/src/texture/gpu_image.rs",
+          "sha256": "93ce4dd53c7e855b2ebc057fc23e71c191f1fd74c0f9ae224b49de260d556708",
+          "local": "1.rs",
+          "url": "https://github.com/bevyengine/bevy/blob/5f7f4ce67bd063efdbadf9acacd4bf711f51f0c0/crates/bevy_render/src/texture/gpu_image.rs",
+          "lines": 214
+        },
+        {
+          "path": "crates/bevy_render/src/diagnostic/tracy_gpu.rs",
+          "sha256": "4240fe42b009eeb6e339b1a90c8e60799ab6a381466261bb76f736a3066bc88a",
+          "local": "2.rs",
+          "url": "https://github.com/bevyengine/bevy/blob/5f7f4ce67bd063efdbadf9acacd4bf711f51f0c0/crates/bevy_render/src/diagnostic/tracy_gpu.rs",
+          "lines": 79
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/bevyengine__bevy",
+      "tree_truncated": false
+    },
+    {
+      "repository": "bkaradzic/bgfx",
+      "commit": "8d4af17207542afa0551cb105141f89621089114",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/37-gpudrivenrendering/gpudrivenrendering.cpp",
+      "source_url": "https://github.com/bkaradzic/bgfx/blob/8d4af17207542afa0551cb105141f89621089114/examples/37-gpudrivenrendering/gpudrivenrendering.cpp",
+      "finding": "GPU-driven пример выполняет occlusion, stream compaction и indirect rendering; сохраняет обычный instancing-путь. Для Voxy полезна ступенчатая поддержка indirect draw.",
+      "files": [
+        {
+          "path": "examples/37-gpudrivenrendering/gpudrivenrendering.cpp",
+          "sha256": "eceb068b49f0a9854896e3656bebd660da8ee4901ea8dc1303adf03e123948af",
+          "local": "0.cpp",
+          "url": "https://github.com/bkaradzic/bgfx/blob/8d4af17207542afa0551cb105141f89621089114/examples/37-gpudrivenrendering/gpudrivenrendering.cpp",
+          "lines": 1157
+        },
+        {
+          "path": "src/renderer_d3d12.h",
+          "sha256": "a96a8dc2b16007f0c9980703eeffe4bc8d1128a2286254d52875bf232a59aaf9",
+          "local": "1.h",
+          "url": "https://github.com/bkaradzic/bgfx/blob/8d4af17207542afa0551cb105141f89621089114/src/renderer_d3d12.h",
+          "lines": 824
+        },
+        {
+          "path": "src/renderer_webgpu.h",
+          "sha256": "6def6c6958cfe1706de5213348b5e31af336fe80c92d65ae468cff433f0da56b",
+          "local": "2.h",
+          "url": "https://github.com/bkaradzic/bgfx/blob/8d4af17207542afa0551cb105141f89621089114/src/renderer_webgpu.h",
+          "lines": 908
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/bkaradzic__bgfx",
+      "tree_truncated": false
+    },
+    {
+      "repository": "blender/blender",
+      "commit": "64d181010e0dbc49d2faaaa057357aef8d9a809c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "source/blender/gpu/vulkan/render_graph/vk_scheduler.cc",
+      "source_url": "https://github.com/blender/blender/blob/64d181010e0dbc49d2faaaa057357aef8d9a809c/source/blender/gpu/vulkan/render_graph/vk_scheduler.cc",
+      "finding": "Vulkan scheduler перемещает buffer updates за границы rendering scope лишь с учётом уже используемых ресурсов. Перестановка проходов должна учитывать зависимости.",
+      "files": [
+        {
+          "path": "source/blender/gpu/vulkan/render_graph/vk_scheduler.cc",
+          "sha256": "aa59befe8a49b36f35a7a10fd7f32c3eac20ef030b42c8937bf8428ffab44177",
+          "local": "0.cc",
+          "url": "https://github.com/blender/blender/blob/64d181010e0dbc49d2faaaa057357aef8d9a809c/source/blender/gpu/vulkan/render_graph/vk_scheduler.cc",
+          "lines": 243
+        },
+        {
+          "path": "source/blender/gpu/vulkan/render_graph/vk_render_graph.cc",
+          "sha256": "3f0e26218649d01e46d7c75cd6c441187e83914c164c85eda4df5e67684e17a9",
+          "local": "1.cc",
+          "url": "https://github.com/blender/blender/blob/64d181010e0dbc49d2faaaa057357aef8d9a809c/source/blender/gpu/vulkan/render_graph/vk_render_graph.cc",
+          "lines": 117
+        },
+        {
+          "path": "source/blender/gpu/vulkan/render_graph/vk_command_builder.cc",
+          "sha256": "e7ba7102cfe816549b89670a2ab9d653f29e5549102eff46390588d35ef0730b",
+          "local": "2.cc",
+          "url": "https://github.com/blender/blender/blob/64d181010e0dbc49d2faaaa057357aef8d9a809c/source/blender/gpu/vulkan/render_graph/vk_command_builder.cc",
+          "lines": 1186
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/blender__blender",
+      "tree_truncated": false
+    },
+    {
+      "repository": "bulletphysics/bullet3",
+      "commit": "63c4d67e337017f9d8b298c900e9aabdb69296e7",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/OpenGLWindow/GLRenderToTexture.cpp",
+      "source_url": "https://github.com/bulletphysics/bullet3/blob/63c4d67e337017f9d8b298c900e9aabdb69296e7/examples/OpenGLWindow/GLRenderToTexture.cpp",
+      "finding": "OpenGL render-to-texture пример освобождает FBO и renderbuffer в деструкторе. Это пример владения графикой, а не доказательство GPU-физики Bullet.",
+      "files": [
+        {
+          "path": "examples/OpenGLWindow/GLRenderToTexture.cpp",
+          "sha256": "38d7b8c4922522d3e0d835a35af48db01eaabd0544ba9a0325b296ea2f4e8dc3",
+          "local": "0.cpp",
+          "url": "https://github.com/bulletphysics/bullet3/blob/63c4d67e337017f9d8b298c900e9aabdb69296e7/examples/OpenGLWindow/GLRenderToTexture.cpp",
+          "lines": 125
+        },
+        {
+          "path": "examples/OpenGLWindow/GLPrimitiveRenderer.cpp",
+          "sha256": "b245ed3678fcdb699cbc08897a5525a9521d696a89b51c1b7548dffe22aab9e7",
+          "local": "1.cpp",
+          "url": "https://github.com/bulletphysics/bullet3/blob/63c4d67e337017f9d8b298c900e9aabdb69296e7/examples/OpenGLWindow/GLPrimitiveRenderer.cpp",
+          "lines": 487
+        },
+        {
+          "path": "examples/OpenGLWindow/GLInstancingRenderer.cpp",
+          "sha256": "38eda0ec5d91b16be7769f6b3d092078d711dab759d61d3682122425f5f5abe2",
+          "local": "2.cpp",
+          "url": "https://github.com/bulletphysics/bullet3/blob/63c4d67e337017f9d8b298c900e9aabdb69296e7/examples/OpenGLWindow/GLInstancingRenderer.cpp",
+          "lines": 2849
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/bulletphysics__bullet3",
+      "tree_truncated": false
+    },
+    {
+      "repository": "cocos/cocos-engine",
+      "commit": "4bbfb6f521936e87284cf5b3e59e6b8139411d7e",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "native/cocos/renderer/gfx-vulkan/VKGPUContext.cpp",
+      "source_url": "https://github.com/cocos/cocos-engine/blob/4bbfb6f521936e87284cf5b3e59e6b8139411d7e/native/cocos/renderer/gfx-vulkan/VKGPUContext.cpp",
+      "finding": "Vulkan-контекст отдельно запрашивает properties, feature chains, память и queue families. Выбор backend должен сопровождаться проверкой конкретных возможностей.",
+      "files": [
+        {
+          "path": "native/cocos/renderer/gfx-vulkan/VKGPUContext.cpp",
+          "sha256": "e395256910645aa37fd3e4567715f59e2561141261026e99d1f5657777a9b381",
+          "local": "0.cpp",
+          "url": "https://github.com/cocos/cocos-engine/blob/4bbfb6f521936e87284cf5b3e59e6b8139411d7e/native/cocos/renderer/gfx-vulkan/VKGPUContext.cpp",
+          "lines": 365
+        },
+        {
+          "path": "native/cocos/renderer/gfx-vulkan/VKGPURecycleBin.cpp",
+          "sha256": "e7dc27269f6a01dc1395e9b94d4cbf3c3819884e82382d22aba12655428d3643",
+          "local": "1.cpp",
+          "url": "https://github.com/cocos/cocos-engine/blob/4bbfb6f521936e87284cf5b3e59e6b8139411d7e/native/cocos/renderer/gfx-vulkan/VKGPURecycleBin.cpp",
+          "lines": 151
+        },
+        {
+          "path": "native/cocos/renderer/gfx-vulkan/VKDevice.cpp",
+          "sha256": "cd72369fecfc4e082dc7a49c8e62cd7d24252b2527d3576f64e0a81eb82b7f06",
+          "local": "2.cpp",
+          "url": "https://github.com/cocos/cocos-engine/blob/4bbfb6f521936e87284cf5b3e59e6b8139411d7e/native/cocos/renderer/gfx-vulkan/VKDevice.cpp",
+          "lines": 1123
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/cocos__cocos-engine",
+      "tree_truncated": false
+    },
+    {
+      "repository": "cocos2d/cocos2d-x",
+      "commit": "7a5282a301a13e467bdcc3466d3cd3883862aadf",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "cocos/renderer/backend/opengl/DeviceGL.cpp",
+      "source_url": "https://github.com/cocos2d/cocos2d-x/blob/7a5282a301a13e467bdcc3466d3cd3883862aadf/cocos/renderer/backend/opengl/DeviceGL.cpp",
+      "finding": "DeviceGL создаёт конкретные GL shader/pipeline объекты за общей фабрикой. Общее имя Device не означает наличие compute или CUDA.",
+      "files": [
+        {
+          "path": "cocos/renderer/backend/opengl/DeviceGL.cpp",
+          "sha256": "ea7f324bfff6bbd11af8818db53763062f1283788c7c94aadd5daa62bafc444f",
+          "local": "0.cpp",
+          "url": "https://github.com/cocos2d/cocos2d-x/blob/7a5282a301a13e467bdcc3466d3cd3883862aadf/cocos/renderer/backend/opengl/DeviceGL.cpp",
+          "lines": 109
+        },
+        {
+          "path": "cocos/renderer/backend/opengl/DeviceInfoGL.cpp",
+          "sha256": "b962ef53ff26091278adae9f64b0000fcae1dbbf4551b2ea10fbdd55ffd38b9c",
+          "local": "1.cpp",
+          "url": "https://github.com/cocos2d/cocos2d-x/blob/7a5282a301a13e467bdcc3466d3cd3883862aadf/cocos/renderer/backend/opengl/DeviceInfoGL.cpp",
+          "lines": 112
+        },
+        {
+          "path": "cocos/renderer/backend/metal/DeviceMTL.h",
+          "sha256": "8be03e439dc47ef15ee09544350555f26479dcb035e1791b082fdad93be320cc",
+          "local": "2.h",
+          "url": "https://github.com/cocos2d/cocos2d-x/blob/7a5282a301a13e467bdcc3466d3cd3883862aadf/cocos/renderer/backend/metal/DeviceMTL.h",
+          "lines": 161
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/cocos2d__cocos2d-x",
+      "tree_truncated": false
+    },
+    {
+      "repository": "ConfettiFX/The-Forge",
+      "commit": "cd5046893faba2dc7869243873bf01f02a6f0df9",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Common_3/Renderer/ParticleSystem/ParticleSystem.cpp",
+      "source_url": "https://github.com/ConfettiFX/The-Forge/blob/cd5046893faba2dc7869243873bf01f02a6f0df9/Common_3/Renderer/ParticleSystem/ParticleSystem.cpp",
+      "finding": "ParticleSystem переводит UAV-буферы в состояния indirect argument/shader resource и обратно. Compute и rendering используют общие данные с явными переходами.",
+      "files": [
+        {
+          "path": "Common_3/Graphics/Metal/MetalMemoryAllocatorImpl.h",
+          "sha256": "4ebf03a5f5190e72570fde718fa5c489580b341f660cfd6b793a0623ba035327",
+          "local": "0.h",
+          "url": "https://github.com/ConfettiFX/The-Forge/blob/cd5046893faba2dc7869243873bf01f02a6f0df9/Common_3/Graphics/Metal/MetalMemoryAllocatorImpl.h",
+          "lines": 621
+        },
+        {
+          "path": "Common_3/Renderer/ParticleSystem/ParticleSystem.cpp",
+          "sha256": "0a59db4e03fff9262cf01177b4bb52480fb754b8e71bdfd1c0f9016c68665d01",
+          "local": "1.cpp",
+          "url": "https://github.com/ConfettiFX/The-Forge/blob/cd5046893faba2dc7869243873bf01f02a6f0df9/Common_3/Renderer/ParticleSystem/ParticleSystem.cpp",
+          "lines": 275
+        },
+        {
+          "path": "Common_3/Renderer/VisibilityBuffer/VisibilityBuffer.cpp",
+          "sha256": "b5c159e2fc82cc29abddf2ae0107e742c495a27fc8db25da0629a6fb53ccace2",
+          "local": "2.cpp",
+          "url": "https://github.com/ConfettiFX/The-Forge/blob/cd5046893faba2dc7869243873bf01f02a6f0df9/Common_3/Renderer/VisibilityBuffer/VisibilityBuffer.cpp",
+          "lines": 652
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/ConfettiFX__The-Forge",
+      "tree_truncated": false
+    },
+    {
+      "repository": "coreylowman/cudarc",
+      "commit": "ec1cac71dab29498240704a9e4a264fbbec19495",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/01-allocate.rs",
+      "source_url": "https://github.com/coreylowman/cudarc/blob/ec1cac71dab29498240704a9e4a264fbbec19495/examples/01-allocate.rs",
+      "finding": "Пример различает неинициализированную allocation, alloc_zeros и host-to-device загрузку. Инициализация является частью контракта буфера.",
+      "files": [
+        {
+          "path": "examples/01-allocate.rs",
+          "sha256": "9eeeca49e66becdf0fabb651b4a0abfea30aa3558e82e6949562e02de6294f01",
+          "local": "0.rs",
+          "url": "https://github.com/coreylowman/cudarc/blob/ec1cac71dab29498240704a9e4a264fbbec19495/examples/01-allocate.rs",
+          "lines": 18
+        },
+        {
+          "path": "examples/05-device-repr.rs",
+          "sha256": "7051d21d44a8108613127eac146a82dec0cbf19803f69bfe53d78e2650fb5391",
+          "local": "1.rs",
+          "url": "https://github.com/coreylowman/cudarc/blob/ec1cac71dab29498240704a9e4a264fbbec19495/examples/05-device-repr.rs",
+          "lines": 54
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/coreylowman__cudarc",
+      "tree_truncated": false
+    },
+    {
+      "repository": "defold/defold",
+      "commit": "9614cb812c53d149ac84eac8c98e7b670b68f4bd",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "engine/graphics/src/vulkan/graphics_vulkan_device.cpp",
+      "source_url": "https://github.com/defold/defold/blob/9614cb812c53d149ac84eac8c98e7b670b68f4bd/engine/graphics/src/vulkan/graphics_vulkan_device.cpp",
+      "finding": "Vulkan submit возвращает fence отдельно от записи команд; логический device получает отдельные graphics/present queues и resettable command pool.",
+      "files": [
+        {
+          "path": "engine/graphics/src/vulkan/graphics_vulkan_device.cpp",
+          "sha256": "5cc1ef41d1993bbfb2595602518cf46be0d2a9c29b97df2bbef14397959cb744",
+          "local": "0.cpp",
+          "url": "https://github.com/defold/defold/blob/9614cb812c53d149ac84eac8c98e7b670b68f4bd/engine/graphics/src/vulkan/graphics_vulkan_device.cpp",
+          "lines": 1814
+        },
+        {
+          "path": "engine/render/src/render/compute.cpp",
+          "sha256": "bfb97f1f702c5893bee59af665f121dbe9c7bf228686a07d797e9a726a845a99",
+          "local": "1.cpp",
+          "url": "https://github.com/defold/defold/blob/9614cb812c53d149ac84eac8c98e7b670b68f4bd/engine/render/src/render/compute.cpp",
+          "lines": 157
+        },
+        {
+          "path": "engine/render/src/render/light.cpp",
+          "sha256": "9b440b7fa85e1cbd1f18388dbba9c1894bf5fc4f85d8655fab93d01f60c47e70",
+          "local": "2.cpp",
+          "url": "https://github.com/defold/defold/blob/9614cb812c53d149ac84eac8c98e7b670b68f4bd/engine/render/src/render/light.cpp",
+          "lines": 701
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/defold__defold",
+      "tree_truncated": false
+    },
+    {
+      "repository": "DiligentGraphics/DiligentCore",
+      "commit": "bcb8b11eecd0899962c330b798ebe3e786b02bbb",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Graphics/GraphicsEngineVulkan/src/RenderDeviceVkImpl.cpp",
+      "source_url": "https://github.com/DiligentGraphics/DiligentCore/blob/bcb8b11eecd0899962c330b798ebe3e786b02bbb/Graphics/GraphicsEngineVulkan/src/RenderDeviceVkImpl.cpp",
+      "finding": "Vulkan-device имеет очереди отложенного освобождения и ReleaseStaleResources; WaitIdle выделен отдельно. Освобождение ресурсов связывается с исполнением очередей.",
+      "files": [
+        {
+          "path": "Graphics/GraphicsEngineOpenGL/src/RenderDeviceGLImpl.cpp",
+          "sha256": "f5f2ef7c39a2021008497172fb5d3e76a87204dd47eec02899028291d583dc07",
+          "local": "0.cpp",
+          "url": "https://github.com/DiligentGraphics/DiligentCore/blob/bcb8b11eecd0899962c330b798ebe3e786b02bbb/Graphics/GraphicsEngineOpenGL/src/RenderDeviceGLImpl.cpp",
+          "lines": 1808
+        },
+        {
+          "path": "Graphics/GraphicsEngineVulkan/src/RenderDeviceVkImpl.cpp",
+          "sha256": "931ee33ae3f4d146a210d5c49d0b814d5da4debbda1b3f3ccfafb4c0c9fbb071",
+          "local": "1.cpp",
+          "url": "https://github.com/DiligentGraphics/DiligentCore/blob/bcb8b11eecd0899962c330b798ebe3e786b02bbb/Graphics/GraphicsEngineVulkan/src/RenderDeviceVkImpl.cpp",
+          "lines": 842
+        },
+        {
+          "path": "Graphics/GraphicsEngineD3D12/src/RenderDeviceD3D12Impl.cpp",
+          "sha256": "9928e4845f4dbb5417c2252ea3f85f949f87aba7d1112dd5469e09f1fd1e5b1d",
+          "local": "2.cpp",
+          "url": "https://github.com/DiligentGraphics/DiligentCore/blob/bcb8b11eecd0899962c330b798ebe3e786b02bbb/Graphics/GraphicsEngineD3D12/src/RenderDeviceD3D12Impl.cpp",
+          "lines": 760
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/DiligentGraphics__DiligentCore",
+      "tree_truncated": false
+    },
+    {
+      "repository": "DiligentGraphics/DiligentSamples",
+      "commit": "7c96699bdd8392d1fbe5174a6c02e08f5109dd22",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "UnityPlugin/GhostCubePlugin/PluginSource/src/RenderAPI_D3D12.cpp",
+      "source_url": "https://github.com/DiligentGraphics/DiligentSamples/blob/7c96699bdd8392d1fbe5174a6c02e08f5109dd22/UnityPlugin/GhostCubePlugin/PluginSource/src/RenderAPI_D3D12.cpp",
+      "finding": "Unity D3D12 plugin оборачивает native render target с исходным resource state. При interop нужно передавать состояние и владение, а не только handle.",
+      "files": [
+        {
+          "path": "UnityPlugin/GhostCubePlugin/PluginSource/src/RenderAPI_D3D12.cpp",
+          "sha256": "caea8dd1c19bf902525ab2c561868cec622bcc0cda3bfd821666b3c6b878cd91",
+          "local": "0.cpp",
+          "url": "https://github.com/DiligentGraphics/DiligentSamples/blob/7c96699bdd8392d1fbe5174a6c02e08f5109dd22/UnityPlugin/GhostCubePlugin/PluginSource/src/RenderAPI_D3D12.cpp",
+          "lines": 227
+        },
+        {
+          "path": "UnityPlugin/GhostCubePlugin/PluginSource/src/RenderAPI_OpenGLCoreES.cpp",
+          "sha256": "9ae8008a33fd3bfbcc8a7f305df67a5f80377c1a15f8d2e711f874faf24ebf56",
+          "local": "1.cpp",
+          "url": "https://github.com/DiligentGraphics/DiligentSamples/blob/7c96699bdd8392d1fbe5174a6c02e08f5109dd22/UnityPlugin/GhostCubePlugin/PluginSource/src/RenderAPI_OpenGLCoreES.cpp",
+          "lines": 134
+        },
+        {
+          "path": "Android/HelloAR/src/main/cpp/PlaneRenderer.cc",
+          "sha256": "fba78cc5f06f524c1f00d5631720c43926b9a0becb26d32feb9fb83a853e95cf",
+          "local": "2.cc",
+          "url": "https://github.com/DiligentGraphics/DiligentSamples/blob/7c96699bdd8392d1fbe5174a6c02e08f5109dd22/Android/HelloAR/src/main/cpp/PlaneRenderer.cc",
+          "lines": 334
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/DiligentGraphics__DiligentSamples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "EmbarkStudios/rust-gpu",
+      "commit": "39c25f02410375a0e67690f822f422431bab0dfb",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/runners/wgpu/src/compute.rs",
+      "source_url": "https://github.com/EmbarkStudios/rust-gpu/blob/39c25f02410375a0e67690f822f422431bab0dfb/examples/runners/wgpu/src/compute.rs",
+      "finding": "Compute-пример использует storage плюс отдельные readback/timestamp buffers, map_async и блокирующий poll. Это учебный readback-путь, не модель каждого кадра.",
+      "files": [
+        {
+          "path": "examples/runners/wgpu/src/compute.rs",
+          "sha256": "e93da202cbd6bbc89ec63e45816c96e23c644dd004311f82de692e40e4442005",
+          "local": "0.rs",
+          "url": "https://github.com/EmbarkStudios/rust-gpu/blob/39c25f02410375a0e67690f822f422431bab0dfb/examples/runners/wgpu/src/compute.rs",
+          "lines": 213
+        },
+        {
+          "path": "crates/spirv-std/src/arch/barrier.rs",
+          "sha256": "71e04f8ff123ecbf7d24e7380e859c0099bf003fa642af115175ae2b937aa570",
+          "local": "1.rs",
+          "url": "https://github.com/EmbarkStudios/rust-gpu/blob/39c25f02410375a0e67690f822f422431bab0dfb/crates/spirv-std/src/arch/barrier.rs",
+          "lines": 194
+        },
+        {
+          "path": "examples/shaders/compute-shader/src/lib.rs",
+          "sha256": "c5ebbc27efd16152f2c4b374fe5b3693d55ee80c70636895d8142e993d929794",
+          "local": "2.rs",
+          "url": "https://github.com/EmbarkStudios/rust-gpu/blob/39c25f02410375a0e67690f822f422431bab0dfb/examples/shaders/compute-shader/src/lib.rs",
+          "lines": 39
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/EmbarkStudios__rust-gpu",
+      "tree_truncated": false
+    },
+    {
+      "repository": "FlaxEngine/FlaxEngine",
+      "commit": "19ecbef585a50e162a790747fe08174c4d114e44",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Source/Engine/GraphicsDevice/Vulkan/GPUBufferVulkan.cpp",
+      "source_url": "https://github.com/FlaxEngine/FlaxEngine/blob/19ecbef585a50e162a790747fe08174c4d114e44/Source/Engine/GraphicsDevice/Vulkan/GPUBufferVulkan.cpp",
+      "finding": "GPUBufferVulkan помещает buffer/allocation в DeferredDeletionQueue; загрузка может выполняться сразу или через GPUUploadBufferTask. Полезно отделять удаление и завершение GPU.",
+      "files": [
+        {
+          "path": "Source/Engine/GraphicsDevice/Vulkan/GPUBufferVulkan.cpp",
+          "sha256": "53c308b4f5b19a25595c867f1e14f456b9d4d23a9d235c9376347570e0b92d79",
+          "local": "0.cpp",
+          "url": "https://github.com/FlaxEngine/FlaxEngine/blob/19ecbef585a50e162a790747fe08174c4d114e44/Source/Engine/GraphicsDevice/Vulkan/GPUBufferVulkan.cpp",
+          "lines": 211
+        },
+        {
+          "path": "Source/Engine/GraphicsDevice/Vulkan/GPUDeviceVulkan.cpp",
+          "sha256": "fe271a2a26e09bb0a75b66158b23d9fca7c637c3ccbae4c132a3987402265f98",
+          "local": "1.cpp",
+          "url": "https://github.com/FlaxEngine/FlaxEngine/blob/19ecbef585a50e162a790747fe08174c4d114e44/Source/Engine/GraphicsDevice/Vulkan/GPUDeviceVulkan.cpp",
+          "lines": 2316
+        },
+        {
+          "path": "Source/Engine/GraphicsDevice/Vulkan/GPUShaderVulkan.cpp",
+          "sha256": "5d4f9c4f6adf20cc4adee89de9f331c6d359925daffbb038897221605cc5c5aa",
+          "local": "2.cpp",
+          "url": "https://github.com/FlaxEngine/FlaxEngine/blob/19ecbef585a50e162a790747fe08174c4d114e44/Source/Engine/GraphicsDevice/Vulkan/GPUShaderVulkan.cpp",
+          "lines": 211
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/FlaxEngine__FlaxEngine",
+      "tree_truncated": false
+    },
+    {
+      "repository": "FyroxEngine/Fyrox",
+      "commit": "85cf468a2abf178472cc856613d1664678850d52",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "fyrox-graphics-wgpu/src/shaders/shared.wgsl",
+      "source_url": "https://github.com/FyroxEngine/Fyrox/blob/85cf468a2abf178472cc856613d1664678850d52/fyrox-graphics-wgpu/src/shaders/shared.wgsl",
+      "finding": "WGSL parallax-функция ограничивает число слоёв и итераций. Стоимость shader-алгоритма ограничивается явно, независимо от корректной компиляции.",
+      "files": [
+        {
+          "path": "fyrox-graphics-wgpu/src/shaders/shared.wgsl",
+          "sha256": "b7af882fc569b3dd0a5d2c47d31ada68f46ab60d0e1255bd9afd13a13fc25d39",
+          "local": "0.wgsl",
+          "url": "https://github.com/FyroxEngine/Fyrox/blob/85cf468a2abf178472cc856613d1664678850d52/fyrox-graphics-wgpu/src/shaders/shared.wgsl",
+          "lines": 454
+        },
+        {
+          "path": "fyrox-impl/src/renderer/fxaa.rs",
+          "sha256": "b80167f47b5ea2c3e3892a6659833289e1d33cc32f3d340f446cb66e28998da6",
+          "local": "1.rs",
+          "url": "https://github.com/FyroxEngine/Fyrox/blob/85cf468a2abf178472cc856613d1664678850d52/fyrox-impl/src/renderer/fxaa.rs",
+          "lines": 82
+        },
+        {
+          "path": "fyrox-impl/src/renderer/light.rs",
+          "sha256": "6ffcbc08cc5a1ac8e59dc805ad4be81d2209a4ab50568e3bf526fe1963952d66",
+          "local": "2.rs",
+          "url": "https://github.com/FyroxEngine/Fyrox/blob/85cf468a2abf178472cc856613d1664678850d52/fyrox-impl/src/renderer/light.rs",
+          "lines": 1079
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/FyroxEngine__Fyrox",
+      "tree_truncated": false
+    },
+    {
+      "repository": "gfx-rs/gfx",
+      "commit": "bc77309afdb0829605982370a3e17382c5968071",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/backend/webgpu/src/device.rs",
+      "source_url": "https://github.com/gfx-rs/gfx/blob/bc77309afdb0829605982370a3e17382c5968071/src/backend/webgpu/src/device.rs",
+      "finding": "В просмотренном WebGPU backend есть todo!/unimplemented! для fence/external-buffer операций. Декларации API нельзя учитывать как работающую поддержку.",
+      "files": [
+        {
+          "path": "src/backend/webgpu/src/device.rs",
+          "sha256": "50d70b778de153c04adfaf82ae0f43104280a812ef6ff1f70273794126453459",
+          "local": "0.rs",
+          "url": "https://github.com/gfx-rs/gfx/blob/bc77309afdb0829605982370a3e17382c5968071/src/backend/webgpu/src/device.rs",
+          "lines": 591
+        },
+        {
+          "path": "src/backend/vulkan/src/physical_device.rs",
+          "sha256": "8b02edf8ba2472f082b94b40b1f6790f4f0957e3efce36e14aaadd3dd8bc119d",
+          "local": "1.rs",
+          "url": "https://github.com/gfx-rs/gfx/blob/bc77309afdb0829605982370a3e17382c5968071/src/backend/vulkan/src/physical_device.rs",
+          "lines": 2174
+        },
+        {
+          "path": "src/auxil/renderdoc/src/lib.rs",
+          "sha256": "5d602332d6ea72922bf461b0aa6793ebad2f4c6259d579e2dcc28993c87404d8",
+          "local": "2.rs",
+          "url": "https://github.com/gfx-rs/gfx/blob/bc77309afdb0829605982370a3e17382c5968071/src/auxil/renderdoc/src/lib.rs",
+          "lines": 127
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/gfx-rs__gfx",
+      "tree_truncated": false
+    },
+    {
+      "repository": "gfx-rs/wgpu",
+      "commit": "dd033bfb7fb3690eb2e80a971877a1ef8ecabe59",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "wgpu-core/src/device/life.rs",
+      "source_url": "https://github.com/gfx-rs/wgpu/blob/dd033bfb7fb3690eb2e80a971877a1ef8ecabe59/wgpu-core/src/device/life.rs",
+      "finding": "LifetimeTracker хранит active submissions, pending mapping и готовые к mapping буферы; map ищет последнюю submission, использующую ресурс.",
+      "files": [
+        {
+          "path": "wgpu-core/src/device/life.rs",
+          "local": "supplement-3.rs",
+          "sha256": "a62e891dd3d162c06d2cdab58cc37407c3acce205940762f6d9a828e624297d1",
+          "url": "https://github.com/gfx-rs/wgpu/blob/dd033bfb7fb3690eb2e80a971877a1ef8ecabe59/wgpu-core/src/device/life.rs",
+          "lines": 435
+        },
+        {
+          "path": "wgpu-hal/src/dx12/device.rs",
+          "sha256": "e622a90ce8dc8164294454aa701310344c5cefa62f7f7c6ec37245ff233c89a7",
+          "local": "0.rs",
+          "url": "https://github.com/gfx-rs/wgpu/blob/dd033bfb7fb3690eb2e80a971877a1ef8ecabe59/wgpu-hal/src/dx12/device.rs",
+          "lines": 2787
+        },
+        {
+          "path": "wgpu-hal/src/metal/device.rs",
+          "sha256": "d866d5c03b8a3c7102e7efee354109d105432acc5e5105441f81ba0ca2190936",
+          "local": "1.rs",
+          "url": "https://github.com/gfx-rs/wgpu/blob/dd033bfb7fb3690eb2e80a971877a1ef8ecabe59/wgpu-hal/src/metal/device.rs",
+          "lines": 2266
+        },
+        {
+          "path": "wgpu-hal/src/dx12/suballocation.rs",
+          "sha256": "f6bd48db63ddf0a474e63e27a66be17ce9bff2317a4cd4d6296770b4399a635c",
+          "local": "2.rs",
+          "url": "https://github.com/gfx-rs/wgpu/blob/dd033bfb7fb3690eb2e80a971877a1ef8ecabe59/wgpu-hal/src/dx12/suballocation.rs",
+          "lines": 603
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/gfx-rs__wgpu",
+      "tree_truncated": false
+    },
+    {
+      "repository": "ggez/ggez",
+      "commit": "9c865474504084b60204874bc028ba91c5f013b9",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/graphics/shader.rs",
+      "source_url": "https://github.com/ggez/ggez/blob/9c865474504084b60204874bc028ba91c5f013b9/src/graphics/shader.rs",
+      "finding": "Uniforms выделяются из arena и записываются queue.write_buffer; текущий tick участвует в сбросе состояния. Подход применим к небольшим динамическим параметрам.",
+      "files": [
+        {
+          "path": "src/graphics/shader.rs",
+          "sha256": "34809bb719efb7f7151e6b14717b4e04675e50951a6966fd338711cf6675b759",
+          "local": "0.rs",
+          "url": "https://github.com/ggez/ggez/blob/9c865474504084b60204874bc028ba91c5f013b9/src/graphics/shader.rs",
+          "lines": 533
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/ggez__ggez",
+      "tree_truncated": false
+    },
+    {
+      "repository": "godotengine/godot",
+      "commit": "12c17c187e88efa23e6bbd6689630e256eca6523",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "servers/rendering/rendering_device_graph.cpp",
+      "source_url": "https://github.com/godotengine/godot/blob/12c17c187e88efa23e6bbd6689630e256eca6523/servers/rendering/rendering_device_graph.cpp",
+      "finding": "RenderingDeviceGraph выводит transitions и memory access dependencies из смены использования и записей ресурса, включая acceleration structures.",
+      "files": [
+        {
+          "path": "servers/rendering/rendering_device_graph.cpp",
+          "local": "supplement-3.cpp",
+          "sha256": "5cf875bcde2b6abb2bc49017feb200a67d3e8a8997330256e3999f7ab2f78783",
+          "url": "https://github.com/godotengine/godot/blob/12c17c187e88efa23e6bbd6689630e256eca6523/servers/rendering/rendering_device_graph.cpp",
+          "lines": 2885
+        },
+        {
+          "path": "drivers/metal/rendering_device_driver_metal3.cpp",
+          "sha256": "7194d7b61912a3d964c50d826975990599cb685677994d44091749f6b62083f3",
+          "local": "0.cpp",
+          "url": "https://github.com/godotengine/godot/blob/12c17c187e88efa23e6bbd6689630e256eca6523/drivers/metal/rendering_device_driver_metal3.cpp",
+          "lines": 330
+        },
+        {
+          "path": "drivers/d3d12/rendering_device_driver_d3d12.h",
+          "sha256": "8d09c4e2fea441a3dafb9ac3403448bcd6476ab15587eacac11491a5d7b23df9",
+          "local": "1.h",
+          "url": "https://github.com/godotengine/godot/blob/12c17c187e88efa23e6bbd6689630e256eca6523/drivers/d3d12/rendering_device_driver_d3d12.h",
+          "lines": 986
+        },
+        {
+          "path": "drivers/metal/rendering_device_driver_metal.h",
+          "sha256": "288f8b6ccd834836f90bd2b86a0134b6c6e34f01e0fcc74be5d29ecdf865ada4",
+          "local": "2.h",
+          "url": "https://github.com/godotengine/godot/blob/12c17c187e88efa23e6bbd6689630e256eca6523/drivers/metal/rendering_device_driver_metal.h",
+          "lines": 609
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/godotengine__godot",
+      "tree_truncated": false
+    },
+    {
+      "repository": "google/angle",
+      "commit": "0855dd00f9c0e449207bb141fb03067469e69d56",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/libANGLE/renderer/vulkan/DeviceVk.cpp",
+      "source_url": "https://github.com/google/angle/blob/0855dd00f9c0e449207bb141fb03067469e69d56/src/libANGLE/renderer/vulkan/DeviceVk.cpp",
+      "finding": "DeviceVk экспортирует сведения о включённых device/instance extensions через EGL. Запрошенные и реально включённые возможности нужно различать.",
+      "files": [
+        {
+          "path": "src/libANGLE/renderer/vulkan/DeviceVk.cpp",
+          "sha256": "cfb4009b03c602ece409b34f4738fea155627be2f3131a23dbfc4b5bf94a60f5",
+          "local": "0.cpp",
+          "url": "https://github.com/google/angle/blob/0855dd00f9c0e449207bb141fb03067469e69d56/src/libANGLE/renderer/vulkan/DeviceVk.cpp",
+          "lines": 218
+        },
+        {
+          "path": "src/libANGLE/renderer/wgpu/DeviceWgpu.cpp",
+          "sha256": "846513359899c71a9956a330381e3e1d9aedf3fb673111389bcca3ad8ecd9f77",
+          "local": "1.cpp",
+          "url": "https://github.com/google/angle/blob/0855dd00f9c0e449207bb141fb03067469e69d56/src/libANGLE/renderer/wgpu/DeviceWgpu.cpp",
+          "lines": 61
+        },
+        {
+          "path": "src/libANGLE/renderer/vulkan/CLDeviceVk.cpp",
+          "sha256": "4b97ee8f12a13e078dac6977264b879a06f49cfebbefdd6ce501ce4a382f4ac1",
+          "local": "2.cpp",
+          "url": "https://github.com/google/angle/blob/0855dd00f9c0e449207bb141fb03067469e69d56/src/libANGLE/renderer/vulkan/CLDeviceVk.cpp",
+          "lines": 861
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/google__angle",
+      "tree_truncated": false
+    },
+    {
+      "repository": "google/clspv",
+      "commit": "8cffac9f97795ce7cc4e3447baa9284bfb9a824f",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "lib/ComputeStructuredOrder.cpp",
+      "source_url": "https://github.com/google/clspv/blob/8cffac9f97795ce7cc4e3447baa9284bfb9a824f/lib/ComputeStructuredOrder.cpp",
+      "finding": "ComputeStructuredOrder упорядочивает control-flow merge/continue blocks. Это этап компилятора, а не меж-workgroup синхронизация исполнения.",
+      "files": [
+        {
+          "path": "lib/ComputeStructuredOrder.cpp",
+          "sha256": "71e1e9fabf2cda2f71f221ee2ff80b9df1b10c490f233867ac7a1ad9a6536b24",
+          "local": "0.cpp",
+          "url": "https://github.com/google/clspv/blob/8cffac9f97795ce7cc4e3447baa9284bfb9a824f/lib/ComputeStructuredOrder.cpp",
+          "lines": 91
+        },
+        {
+          "path": "lib/AllocateDescriptorsPass.cpp",
+          "sha256": "4df81f182906f78ecbc710e974f07b76bb6e7b48a19d83de518e49358d1e04b3",
+          "local": "1.cpp",
+          "url": "https://github.com/google/clspv/blob/8cffac9f97795ce7cc4e3447baa9284bfb9a824f/lib/AllocateDescriptorsPass.cpp",
+          "lines": 1085
+        },
+        {
+          "path": "lib/ComputeStructuredOrder.h",
+          "sha256": "4a328adf9c41e59c8a8abce2b754b48150050895730b4d9ba93711d690c48929",
+          "local": "2.h",
+          "url": "https://github.com/google/clspv/blob/8cffac9f97795ce7cc4e3447baa9284bfb9a824f/lib/ComputeStructuredOrder.h",
+          "lines": 40
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/google__clspv",
+      "tree_truncated": false
+    },
+    {
+      "repository": "google/dawn",
+      "commit": "55d8e74564c189193c900125b32c8f2996b2bfa3",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/dawn/native/d3d12/GPUDescriptorHeapAllocationD3D12.cpp",
+      "source_url": "https://github.com/google/dawn/blob/55d8e74564c189193c900125b32c8f2996b2bfa3/src/dawn/native/d3d12/GPUDescriptorHeapAllocationD3D12.cpp",
+      "finding": "GPUDescriptorHeapAllocation содержит lastUsageSerial и heap version. Даже descriptor allocation должна быть связана с поколением и последним использованием.",
+      "files": [
+        {
+          "path": "src/dawn/native/d3d12/GPUDescriptorHeapAllocationD3D12.cpp",
+          "sha256": "1df4624e61af82f2cd8b8775fb06dfd61499884e802dc3353d6702a06d5ed4c0",
+          "local": "0.cpp",
+          "url": "https://github.com/google/dawn/blob/55d8e74564c189193c900125b32c8f2996b2bfa3/src/dawn/native/d3d12/GPUDescriptorHeapAllocationD3D12.cpp",
+          "lines": 48
+        },
+        {
+          "path": "src/dawn/native/d3d12/GPUDescriptorHeapAllocationD3D12.h",
+          "sha256": "d748c3df2dc52f1f4cf056b142135c013aabba8cace3029bf85639344635c8c8",
+          "local": "1.h",
+          "url": "https://github.com/google/dawn/blob/55d8e74564c189193c900125b32c8f2996b2bfa3/src/dawn/native/d3d12/GPUDescriptorHeapAllocationD3D12.h",
+          "lines": 57
+        },
+        {
+          "path": "src/dawn/node/binding/GPURenderBundle.cpp",
+          "sha256": "e20d1a057590692512fa1b444bb7727c30d4ec5ec1365992aa1d9799baff882e",
+          "local": "2.cpp",
+          "url": "https://github.com/google/dawn/blob/55d8e74564c189193c900125b32c8f2996b2bfa3/src/dawn/node/binding/GPURenderBundle.cpp",
+          "lines": 54
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/google__dawn",
+      "tree_truncated": true
+    },
+    {
+      "repository": "google/filament",
+      "commit": "3630bd4e7348fdc270545acc7dc4bb66d9e43aa8",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "filament/backend/src/vulkan/VulkanCommands.cpp",
+      "source_url": "https://github.com/google/filament/blob/3630bd4e7348fdc270545acc7dc4bb66d9e43aa8/filament/backend/src/vulkan/VulkanCommands.cpp",
+      "finding": "VulkanCommands связывает queue submit с fence status и обновляет pools через completion. Освобождение команд отделено от отправки.",
+      "files": [
+        {
+          "path": "filament/backend/src/vulkan/VulkanCommands.cpp",
+          "local": "supplement-3.cpp",
+          "sha256": "7dd8d0b6e335e6af947b77b5b51a781822367101e61112e6afe4a08519ca631e",
+          "url": "https://github.com/google/filament/blob/3630bd4e7348fdc270545acc7dc4bb66d9e43aa8/filament/backend/src/vulkan/VulkanCommands.cpp",
+          "lines": 554
+        },
+        {
+          "path": "filament/backend/src/webgpu/WebGPURenderTarget.cpp",
+          "sha256": "7e5b51cae0f175ec78f91d513f87ec5cade8322626f7e3c1e65235f4e284e101",
+          "local": "0.cpp",
+          "url": "https://github.com/google/filament/blob/3630bd4e7348fdc270545acc7dc4bb66d9e43aa8/filament/backend/src/webgpu/WebGPURenderTarget.cpp",
+          "lines": 321
+        },
+        {
+          "path": "filament/backend/src/webgpu/WebGPURenderPassMipmapGenerator.cpp",
+          "sha256": "24284d05226b4fb54504923bfa0306b7579182430ddf27ca5254312883269de5",
+          "local": "1.cpp",
+          "url": "https://github.com/google/filament/blob/3630bd4e7348fdc270545acc7dc4bb66d9e43aa8/filament/backend/src/webgpu/WebGPURenderPassMipmapGenerator.cpp",
+          "lines": 536
+        },
+        {
+          "path": "filament/backend/src/webgpu/WebGPURenderTarget.h",
+          "sha256": "69b2f7e522beb9701af110328bfa4662db04e707e5b7fbc0a807699800e49b33",
+          "local": "2.h",
+          "url": "https://github.com/google/filament/blob/3630bd4e7348fdc270545acc7dc4bb66d9e43aa8/filament/backend/src/webgpu/WebGPURenderTarget.h",
+          "lines": 95
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/google__filament",
+      "tree_truncated": true
+    },
+    {
+      "repository": "google/graphicsfuzz",
+      "commit": "aa32d4cb556647ddaaf2048815bd6bca07d1bdab",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "server-static-public/src/main/files/server-static/render.js",
+      "source_url": "https://github.com/google/graphicsfuzz/blob/aa32d4cb556647ddaaf2048815bd6bca07d1bdab/server-static-public/src/main/files/server-static/render.js",
+      "finding": "WebGL runner проверяет COMPILE_STATUS и получает shader info log до link. Полезен как образец воспроизводимого harness для ошибок шейдера.",
+      "files": [
+        {
+          "path": "server-static-public/src/main/files/server-static/render.js",
+          "sha256": "c7340acffc49e6cfc704bdfc6c5c465c72369614a7131f6f8d0d519a63db495e",
+          "local": "0.js",
+          "url": "https://github.com/google/graphicsfuzz/blob/aa32d4cb556647ddaaf2048815bd6bca07d1bdab/server-static-public/src/main/files/server-static/render.js",
+          "lines": 295
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/google__graphicsfuzz",
+      "tree_truncated": false
+    },
+    {
+      "repository": "google/shaderc",
+      "commit": "f6949aa1ddaac54a10268ed55ad71a0d2e441b5c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "glslc/src/shader_stage.cc",
+      "source_url": "https://github.com/google/shaderc/blob/f6949aa1ddaac54a10268ed55ad71a0d2e441b5c/glslc/src/shader_stage.cc",
+      "finding": "Shader stage выводится из имени файла либо явной опции. Стадия должна входить в описание shader artifact и ключ компиляции.",
+      "files": [
+        {
+          "path": "glslc/src/shader_stage.cc",
+          "sha256": "b2a7b1c719c336b4d8aa8a8a4870aba0e9ca833e65e3f4bc4b3c617c90092343",
+          "local": "0.cc",
+          "url": "https://github.com/google/shaderc/blob/f6949aa1ddaac54a10268ed55ad71a0d2e441b5c/glslc/src/shader_stage.cc",
+          "lines": 106
+        },
+        {
+          "path": "libshaderc/src/shaderc.cc",
+          "sha256": "0b5344ada4ba53ea53f020f004950d480e8b2b5a12ad972df22c9755672c7865",
+          "local": "1.cc",
+          "url": "https://github.com/google/shaderc/blob/f6949aa1ddaac54a10268ed55ad71a0d2e441b5c/libshaderc/src/shaderc.cc",
+          "lines": 835
+        },
+        {
+          "path": "libshaderc_util/src/args.cc",
+          "sha256": "4c1986127c5f292ebd123a0f6a1ef33eb3467d007663d15854c9e8cd0e7b30ab",
+          "local": "2.cc",
+          "url": "https://github.com/google/shaderc/blob/f6949aa1ddaac54a10268ed55ad71a0d2e441b5c/libshaderc_util/src/args.cc",
+          "lines": 62
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/google__shaderc",
+      "tree_truncated": false
+    },
+    {
+      "repository": "GPUOpen-Effects/FidelityFX-CAS",
+      "commit": "9fabcc9a2c45f958aff55ddfda337e74ef894b7f",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "sample/src/DX12/CAS_Renderer.cpp",
+      "source_url": "https://github.com/GPUOpen-Effects/FidelityFX-CAS/blob/9fabcc9a2c45f958aff55ddfda337e74ef894b7f/sample/src/DX12/CAS_Renderer.cpp",
+      "finding": "DX12-пример явно переводит shadow/output ресурсы между depth, sampling, render target и present; снимает GPU timestamps.",
+      "files": [
+        {
+          "path": "sample/src/DX12/CAS_Renderer.cpp",
+          "sha256": "b93d826e53cd5b7d46863e728d6a4afcec3803d5f2d26ef9a976f33b464594c1",
+          "local": "0.cpp",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-CAS/blob/9fabcc9a2c45f958aff55ddfda337e74ef894b7f/sample/src/DX12/CAS_Renderer.cpp",
+          "lines": 650
+        },
+        {
+          "path": "sample/src/DX12/CAS_Renderer.h",
+          "sha256": "fea42c4afb2b3b84ffec51cdd07a91dc9f00be5eb29df2dcfae3607b09b49e15",
+          "local": "1.h",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-CAS/blob/9fabcc9a2c45f958aff55ddfda337e74ef894b7f/sample/src/DX12/CAS_Renderer.h",
+          "lines": 150
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/GPUOpen-Effects__FidelityFX-CAS",
+      "tree_truncated": false
+    },
+    {
+      "repository": "GPUOpen-Effects/FidelityFX-FSR",
+      "commit": "a21ffb8f6c13233ba336352bdff293894c706575",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "sample/src/DX12/SampleRenderer.cpp",
+      "source_url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR/blob/a21ffb8f6c13233ba336352bdff293894c706575/sample/src/DX12/SampleRenderer.cpp",
+      "finding": "DX12 sample переводит результат upscale из UAV в shader resource перед следующим проходом. Постобработка не требует промежуточного CPU readback.",
+      "files": [
+        {
+          "path": "sample/src/DX12/SampleRenderer.cpp",
+          "sha256": "926ee24c04d395e2e4f4d11ba0a4a2f5deb4d34e426e8b13a9e2ae149c0a20a6",
+          "local": "0.cpp",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR/blob/a21ffb8f6c13233ba336352bdff293894c706575/sample/src/DX12/SampleRenderer.cpp",
+          "lines": 789
+        },
+        {
+          "path": "sample/src/DX12/SampleRenderer.h",
+          "sha256": "cd944eb78d6c442005827530965e7ff4c9ee4efded27fb844b854ad9cbfcb168",
+          "local": "1.h",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR/blob/a21ffb8f6c13233ba336352bdff293894c706575/sample/src/DX12/SampleRenderer.h",
+          "lines": 175
+        },
+        {
+          "path": "sample/src/VK/SampleRenderer.cpp",
+          "sha256": "1a1dccd9430610821737fab3f3f8d4d2f4e70351ddc6ff9bdb3fd11922ab1fc9",
+          "local": "2.cpp",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR/blob/a21ffb8f6c13233ba336352bdff293894c706575/sample/src/VK/SampleRenderer.cpp",
+          "lines": 1086
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/GPUOpen-Effects__FidelityFX-FSR",
+      "tree_truncated": false
+    },
+    {
+      "repository": "GPUOpen-Effects/FidelityFX-FSR2",
+      "commit": "1680d1edd5c034f88ebbbb793d8b88f8842cf804",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/DX12/Renderer.cpp",
+      "source_url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR2/blob/1680d1edd5c034f88ebbbb793d8b88f8842cf804/src/DX12/Renderer.cpp",
+      "finding": "Renderer отдельно подготавливает depth, motion vectors и reactive/transparency inputs; комментарий отделяет timing wait примера от поведения игры.",
+      "files": [
+        {
+          "path": "src/DX12/Renderer.cpp",
+          "sha256": "727f8ecb578191f39c946eccdb55dd4c295330c388aae77ba5188e0a43a3d0b2",
+          "local": "0.cpp",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR2/blob/1680d1edd5c034f88ebbbb793d8b88f8842cf804/src/DX12/Renderer.cpp",
+          "lines": 1153
+        },
+        {
+          "path": "src/DX12/Renderer.h",
+          "sha256": "8722dbd111087937b1cd009c54bebeffde81fa89db6aaaffd82e9a09a36e4c09",
+          "local": "1.h",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR2/blob/1680d1edd5c034f88ebbbb793d8b88f8842cf804/src/DX12/Renderer.h",
+          "lines": 186
+        },
+        {
+          "path": "src/GpuParticleShaders/RenderScene.hlsl",
+          "sha256": "22104c77a7ac08e97fa0f2ccb3fca65464c4fa423e7c24f16e74ffc667382502",
+          "local": "2.hlsl",
+          "url": "https://github.com/GPUOpen-Effects/FidelityFX-FSR2/blob/1680d1edd5c034f88ebbbb793d8b88f8842cf804/src/GpuParticleShaders/RenderScene.hlsl",
+          "lines": 109
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/GPUOpen-Effects__FidelityFX-FSR2",
+      "tree_truncated": false
+    },
+    {
+      "repository": "GPUOpen-LibrariesAndSDKs/Cauldron",
+      "commit": "b92d559bd083f44df9f8f42a6ad149c1584ae94c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/DX12/base/Device.cpp",
+      "source_url": "https://github.com/GPUOpen-LibrariesAndSDKs/Cauldron/blob/b92d559bd083f44df9f8f42a6ad149c1584ae94c/src/DX12/base/Device.cpp",
+      "finding": "GPUFlush выбирает compute/graphics queue, сигналит fence и ждёт event. Это явная блокирующая операция, которую нельзя скрывать в горячем пути.",
+      "files": [
+        {
+          "path": "src/DX12/base/Device.cpp",
+          "sha256": "87f48a44f75244aaf11cba2859f1552d9fcd5c6ff49d28c110b6966a258a0bf5",
+          "local": "0.cpp",
+          "url": "https://github.com/GPUOpen-LibrariesAndSDKs/Cauldron/blob/b92d559bd083f44df9f8f42a6ad149c1584ae94c/src/DX12/base/Device.cpp",
+          "lines": 245
+        },
+        {
+          "path": "libs/DX12AgilitySDK/1.600.10/include/d3d12shader.h",
+          "sha256": "bcb0558fff2a4fdbfbf0c3b12072f1d459889892d176ae6125350c30bd494279",
+          "local": "1.h",
+          "url": "https://github.com/GPUOpen-LibrariesAndSDKs/Cauldron/blob/b92d559bd083f44df9f8f42a6ad149c1584ae94c/libs/DX12AgilitySDK/1.600.10/include/d3d12shader.h",
+          "lines": 487
+        },
+        {
+          "path": "src/DX12/base/Device.h",
+          "sha256": "78af3fd98f07182d3ed24cb5e89190aed930bc5e10dd8a2f0d42d47b30d36e7d",
+          "local": "2.h",
+          "url": "https://github.com/GPUOpen-LibrariesAndSDKs/Cauldron/blob/b92d559bd083f44df9f8f42a6ad149c1584ae94c/src/DX12/base/Device.h",
+          "lines": 75
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/GPUOpen-LibrariesAndSDKs__Cauldron",
+      "tree_truncated": false
+    },
+    {
+      "repository": "GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator",
+      "commit": "1d86c1130f61453634b1df85782e1fecfd59a525",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/D3D12MemAlloc.cpp",
+      "source_url": "https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator/blob/1d86c1130f61453634b1df85782e1fecfd59a525/src/D3D12MemAlloc.cpp",
+      "finding": "Бюджет собирается через QueryVideoMemoryInfo; NewAllocationWithinBudget сравнивает usage плюс размер с budget. Логические байты отличаются от доступного OS-бюджета.",
+      "files": [
+        {
+          "path": "src/D3D12MemAlloc.cpp",
+          "local": "deep-0.cpp",
+          "sha256": "cb81d9184e4a69407f7b9f204bd7b56247a014c82cd698cc7002c03aeb41bdd8",
+          "url": "https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator/blob/1d86c1130f61453634b1df85782e1fecfd59a525/src/D3D12MemAlloc.cpp",
+          "lines": 10401
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/GPUOpen-LibrariesAndSDKs__D3D12MemoryAllocator",
+      "tree_truncated": false
+    },
+    {
+      "repository": "GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator",
+      "commit": "3aa921224c154a0d2c43912bc88e1c42ce1f7607",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "include/vk_mem_alloc.h",
+      "source_url": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/blob/3aa921224c154a0d2c43912bc88e1c42ce1f7607/include/vk_mem_alloc.h",
+      "finding": "VMA имеет heap usage/budget и WITHIN_BUDGET admission; аллокатор отдельно учитывает allocations и blocks. Он не заменяет граф исполнения или политику стриминга.",
+      "files": [
+        {
+          "path": "include/vk_mem_alloc.h",
+          "local": "deep-0.h",
+          "sha256": "8487b7995ad3b263eb73bc5b9a77d71aa69b6bef5d58a715c02d2663afd81f1a",
+          "url": "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/blob/3aa921224c154a0d2c43912bc88e1c42ce1f7607/include/vk_mem_alloc.h",
+          "lines": 19975
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/GPUOpen-LibrariesAndSDKs__VulkanMemoryAllocator",
+      "tree_truncated": false
+    },
+    {
+      "repository": "hecrj/iced",
+      "commit": "84f785b06ac02a49901e4113451fedd31c9c3326",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "wgpu/src/image/atlas/allocator.rs",
+      "source_url": "https://github.com/hecrj/iced/blob/84f785b06ac02a49901e4113451fedd31c9c3326/wgpu/src/image/atlas/allocator.rs",
+      "finding": "Atlas allocator освобождает region по allocation id и отдельно считает занятость. Для UI полезен повторно используемый texture atlas, не GPU solver.",
+      "files": [
+        {
+          "path": "wgpu/src/image/atlas/allocator.rs",
+          "sha256": "fbcf74eed8d716c7d920e5b9a12f3e8c33e9a2508129d38a7db15bcef2d33220",
+          "local": "0.rs",
+          "url": "https://github.com/hecrj/iced/blob/84f785b06ac02a49901e4113451fedd31c9c3326/wgpu/src/image/atlas/allocator.rs",
+          "lines": 108
+        },
+        {
+          "path": "wgpu/src/image/atlas/allocation.rs",
+          "sha256": "89c5b4fc10e7caadc7307a7758c9020b77892004947c96e024a64fc7230be704",
+          "local": "1.rs",
+          "url": "https://github.com/hecrj/iced/blob/84f785b06ac02a49901e4113451fedd31c9c3326/wgpu/src/image/atlas/allocation.rs",
+          "lines": 52
+        },
+        {
+          "path": "renderer/src/lib.rs",
+          "sha256": "09f4ee35efc3ada1c4050a02d3b937466e579bfe474c4633afc79a8910de2cd6",
+          "local": "2.rs",
+          "url": "https://github.com/hecrj/iced/blob/84f785b06ac02a49901e4113451fedd31c9c3326/renderer/src/lib.rs",
+          "lines": 58
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/hecrj__iced",
+      "tree_truncated": false
+    },
+    {
+      "repository": "IntelRealSense/librealsense",
+      "commit": "e15c5d6bb1563e778d116f682aeefffbae2daedc",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/cuda/cuda-rggb.cu",
+      "source_url": "https://github.com/IntelRealSense/librealsense/blob/e15c5d6bb1563e778d116f682aeefffbae2daedc/src/cuda/cuda-rggb.cu",
+      "finding": "CUDA conversion принимает готовые device pointers, иначе выделяет память и копирует host input. Внешний device buffer позволяет избежать повторного upload.",
+      "files": [
+        {
+          "path": "src/cuda/cuda-rggb.cu",
+          "sha256": "3e16f5674d32325759325a18a99a65384e79c65ae8c5572ba5c1aa261fc42153",
+          "local": "0.cu",
+          "url": "https://github.com/IntelRealSense/librealsense/blob/e15c5d6bb1563e778d116f682aeefffbae2daedc/src/cuda/cuda-rggb.cu",
+          "lines": 324
+        },
+        {
+          "path": "src/cuda/cuda-conversion.cu",
+          "sha256": "ad49904228c0e6e3b8cb5645b34f6203ffe86f91712f6a1cff9dd372c9ae5e7a",
+          "local": "1.cu",
+          "url": "https://github.com/IntelRealSense/librealsense/blob/e15c5d6bb1563e778d116f682aeefffbae2daedc/src/cuda/cuda-conversion.cu",
+          "lines": 555
+        },
+        {
+          "path": "src/cuda/cuda-pointcloud.cu",
+          "sha256": "e20509137f8d0bedb48bd25a4a7f437e1b6b97187a6fdc005f2278ee5a46c26b",
+          "local": "2.cu",
+          "url": "https://github.com/IntelRealSense/librealsense/blob/e15c5d6bb1563e778d116f682aeefffbae2daedc/src/cuda/cuda-pointcloud.cu",
+          "lines": 149
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/IntelRealSense__librealsense",
+      "tree_truncated": false
+    },
+    {
+      "repository": "jagenjo/litescene.js",
+      "commit": "2f72d0d2296158a049de34c4ff6d104c4191d8d6",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/render/draw.js",
+      "source_url": "https://github.com/jagenjo/litescene.js/blob/2f72d0d2296158a049de34c4ff6d104c4191d8d6/src/render/draw.js",
+      "finding": "Draw строит и повторно использует mesh для примитивов и поддерживает shader defines. Это пример renderer batching, не compute backend.",
+      "files": [
+        {
+          "path": "src/render/draw.js",
+          "sha256": "d412eac96b192879d1e4cbc2e7ea7a96a05ce0f00f8e7dd8c320f5254e2c4a88",
+          "local": "0.js",
+          "url": "https://github.com/jagenjo/litescene.js/blob/2f72d0d2296158a049de34c4ff6d104c4191d8d6/src/render/draw.js",
+          "lines": 1585
+        },
+        {
+          "path": "src/render/debug.js",
+          "sha256": "6c213c7feb9b0f45a62afb854bccd8b5f587990ff567599410a1387913a74a48",
+          "local": "1.js",
+          "url": "https://github.com/jagenjo/litescene.js/blob/2f72d0d2296158a049de34c4ff6d104c4191d8d6/src/render/debug.js",
+          "lines": 509
+        },
+        {
+          "path": "src/render/shadows.js",
+          "sha256": "6197cd2e84f32f0ad5b7708ec4a7af0d126f1c3a9163d40707885171bfdb8020",
+          "local": "2.js",
+          "url": "https://github.com/jagenjo/litescene.js/blob/2f72d0d2296158a049de34c4ff6d104c4191d8d6/src/render/shadows.js",
+          "lines": 383
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/jagenjo__litescene.js",
+      "tree_truncated": false
+    },
+    {
+      "repository": "jrouwe/JoltPhysics",
+      "commit": "5830c342b90fa087f118aa0f086d541a4950b1d9",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "TestFramework/Renderer/DX12/TextureDX12.cpp",
+      "source_url": "https://github.com/jrouwe/JoltPhysics/blob/5830c342b90fa087f118aa0f086d541a4950b1d9/TestFramework/Renderer/DX12/TextureDX12.cpp",
+      "finding": "DX12 texture пример создаёт DSV/SRV и меняет depth-write на sampling. Это графика тестового приложения, не доказательство GPU solver Jolt.",
+      "files": [
+        {
+          "path": "TestFramework/Renderer/DX12/TextureDX12.cpp",
+          "sha256": "d014495ac6541af09257900e8d563364deb90fe56c2ada723bc485395593158f",
+          "local": "0.cpp",
+          "url": "https://github.com/jrouwe/JoltPhysics/blob/5830c342b90fa087f118aa0f086d541a4950b1d9/TestFramework/Renderer/DX12/TextureDX12.cpp",
+          "lines": 236
+        },
+        {
+          "path": "TestFramework/Renderer/DX12/RendererDX12.cpp",
+          "sha256": "1b2b35afbc2d9968014f830a2c6edea23ee8c516b1293ede318dd3467390fe60",
+          "local": "1.cpp",
+          "url": "https://github.com/jrouwe/JoltPhysics/blob/5830c342b90fa087f118aa0f086d541a4950b1d9/TestFramework/Renderer/DX12/RendererDX12.cpp",
+          "lines": 631
+        },
+        {
+          "path": "TestFramework/Renderer/DX12/PipelineStateDX12.cpp",
+          "sha256": "1fb179c0f9960d2ca7486ec39eac5892c4995c3f5e843339255206b1db15b2b3",
+          "local": "2.cpp",
+          "url": "https://github.com/jrouwe/JoltPhysics/blob/5830c342b90fa087f118aa0f086d541a4950b1d9/TestFramework/Renderer/DX12/PipelineStateDX12.cpp",
+          "lines": 135
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/jrouwe__JoltPhysics",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/glslang",
+      "commit": "c8095022ee39c7482071bc3177f93f4bca42a6d9",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "glslang/HLSL/hlslTokenStream.cpp",
+      "source_url": "https://github.com/KhronosGroup/glslang/blob/c8095022ee39c7482071bc3177f93f4bca42a6d9/glslang/HLSL/hlslTokenStream.cpp",
+      "finding": "HLSL token stream сохраняет и восстанавливает состояние вложенных потоков. Компиляторный frontend следует отделять от runtime device validation.",
+      "files": [
+        {
+          "path": "glslang/HLSL/hlslTokenStream.cpp",
+          "sha256": "27f1a79111db236537738a7deea15d87ad3b6dec4548c70f8dacda641b2c1cad",
+          "local": "0.cpp",
+          "url": "https://github.com/KhronosGroup/glslang/blob/c8095022ee39c7482071bc3177f93f4bca42a6d9/glslang/HLSL/hlslTokenStream.cpp",
+          "lines": 150
+        },
+        {
+          "path": "glslang/MachineIndependent/ShaderLang.cpp",
+          "sha256": "318f5757d6156dd67a221df4642bbc9c2d3ab5f2376c75575133c06f03f59063",
+          "local": "1.cpp",
+          "url": "https://github.com/KhronosGroup/glslang/blob/c8095022ee39c7482071bc3177f93f4bca42a6d9/glslang/MachineIndependent/ShaderLang.cpp",
+          "lines": 2285
+        },
+        {
+          "path": "glslang/Public/ShaderLang.h",
+          "sha256": "91d38df5c270c8f4cb241218deab24c7e5cd0d765f664e53ed2e4922361adf45",
+          "local": "2.h",
+          "url": "https://github.com/KhronosGroup/glslang/blob/c8095022ee39c7482071bc3177f93f4bca42a6d9/glslang/Public/ShaderLang.h",
+          "lines": 1061
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__glslang",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/MoltenVK",
+      "commit": "52aa21f54d7a84c5c441fc26359692b0980b384c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "MoltenVK/MoltenVK/GPUObjects/MVKRenderPass.h",
+      "source_url": "https://github.com/KhronosGroup/MoltenVK/blob/52aa21f54d7a84c5c441fc26359692b0980b384c/MoltenVK/MoltenVK/GPUObjects/MVKRenderPass.h",
+      "finding": "Render-pass интерфейс отображает Vulkan attachments на Metal load/store actions с учётом resolves и stencil. Переносимость требует перевода семантики прохода.",
+      "files": [
+        {
+          "path": "MoltenVK/MoltenVK/GPUObjects/MVKRenderPass.h",
+          "sha256": "64f9cfb62dd152243f522c0728c10bf42483cd9da55b145be859701f85ba1925",
+          "local": "0.h",
+          "url": "https://github.com/KhronosGroup/MoltenVK/blob/52aa21f54d7a84c5c441fc26359692b0980b384c/MoltenVK/MoltenVK/GPUObjects/MVKRenderPass.h",
+          "lines": 437
+        },
+        {
+          "path": "MoltenVK/MoltenVK/GPUObjects/MVKDevice.h",
+          "sha256": "826deb7e9d223d2bdabb68b347dcffbce969586c804335bd2b5e293bdd0571c8",
+          "local": "1.h",
+          "url": "https://github.com/KhronosGroup/MoltenVK/blob/52aa21f54d7a84c5c441fc26359692b0980b384c/MoltenVK/MoltenVK/GPUObjects/MVKDevice.h",
+          "lines": 1320
+        },
+        {
+          "path": "MoltenVK/MoltenVK/GPUObjects/MVKDeviceMemory.h",
+          "sha256": "be892d423c00e16b95b969e9ea99329cfe053f466cf0cddf2898c8dd83966777",
+          "local": "2.h",
+          "url": "https://github.com/KhronosGroup/MoltenVK/blob/52aa21f54d7a84c5c441fc26359692b0980b384c/MoltenVK/MoltenVK/GPUObjects/MVKDeviceMemory.h",
+          "lines": 190
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__MoltenVK",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/OpenCL-ICD-Loader",
+      "commit": "5192c84f8059e5f703e5452929b613f9487f6e4c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "loader/icd_dispatch.c",
+      "source_url": "https://github.com/KhronosGroup/OpenCL-ICD-Loader/blob/5192c84f8059e5f703e5452929b613f9487f6e4c/loader/icd_dispatch.c",
+      "finding": "Loader маршрутизирует extension lookup через платформенный dispatch и исключает специальные loader functions. Разрешение символа не заменяет feature negotiation.",
+      "files": [
+        {
+          "path": "loader/icd_dispatch.c",
+          "sha256": "6903cb3703aad3cdda8074a7e76bba548258815498810b48c1b1259b28ed09c7",
+          "local": "0.c",
+          "url": "https://github.com/KhronosGroup/OpenCL-ICD-Loader/blob/5192c84f8059e5f703e5452929b613f9487f6e4c/loader/icd_dispatch.c",
+          "lines": 355
+        },
+        {
+          "path": "loader/icd_dispatch.h",
+          "sha256": "646d6b74e6d738ebc8eaa8088594dfe2f0e86b143f928675033457d084ac4012",
+          "local": "1.h",
+          "url": "https://github.com/KhronosGroup/OpenCL-ICD-Loader/blob/5192c84f8059e5f703e5452929b613f9487f6e4c/loader/icd_dispatch.h",
+          "lines": 142
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__OpenCL-ICD-Loader",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/OpenCL-SDK",
+      "commit": "6090378a113db8dab20ae278c8fa57ab10b92300",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "lib/src/Utils/Device.cpp",
+      "source_url": "https://github.com/KhronosGroup/OpenCL-SDK/blob/6090378a113db8dab20ae278c8fa57ab10b92300/lib/src/Utils/Device.cpp",
+      "finding": "supports_extension и supports_feature читают device info. Поддержка вычислений должна определяться возможностями конкретного устройства.",
+      "files": [
+        {
+          "path": "lib/src/Utils/Device.cpp",
+          "sha256": "fc82eb5868d2fed8ee860f2085484f914f87c8b9077ca04a02af3496eecaeb9a",
+          "local": "0.cpp",
+          "url": "https://github.com/KhronosGroup/OpenCL-SDK/blob/6090378a113db8dab20ae278c8fa57ab10b92300/lib/src/Utils/Device.cpp",
+          "lines": 31
+        },
+        {
+          "path": "samples/core/multi-device/main.c",
+          "sha256": "e8a5a553105c39eabccf113f81077a2ac4b065c1a7293db501a16bd3be8a7462",
+          "local": "1.c",
+          "url": "https://github.com/KhronosGroup/OpenCL-SDK/blob/6090378a113db8dab20ae278c8fa57ab10b92300/samples/core/multi-device/main.c",
+          "lines": 733
+        },
+        {
+          "path": "samples/core/multi-device/main.cpp",
+          "sha256": "ed33701ec230d75a32380488fd22ac05a84ebe1b90a282c99f16b25d34581215",
+          "local": "2.cpp",
+          "url": "https://github.com/KhronosGroup/OpenCL-SDK/blob/6090378a113db8dab20ae278c8fa57ab10b92300/samples/core/multi-device/main.cpp",
+          "lines": 539
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__OpenCL-SDK",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/SPIRV-Cross",
+      "commit": "aa217aeb6c9f0ace7a0ab233b28807edf45eb165",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "spirv_glsl.cpp",
+      "source_url": "https://github.com/KhronosGroup/SPIRV-Cross/blob/aa217aeb6c9f0ace7a0ab233b28807edf45eb165/spirv_glsl.cpp",
+      "finding": "GLSL backend компилятора переводит SPIR-V в целевой язык. После трансляции всё равно нужны проверки целевого shader/compiler/device.",
+      "files": [
+        {
+          "path": "spirv_glsl.cpp",
+          "local": "deep-2.cpp",
+          "sha256": "8309b385bbdae437f424465000b02866f2921255ff71af7aee21c0604682af26",
+          "url": "https://github.com/KhronosGroup/SPIRV-Cross/blob/aa217aeb6c9f0ace7a0ab233b28807edf45eb165/spirv_glsl.cpp",
+          "lines": 21303
+        },
+        {
+          "path": "include/spirv_cross/barrier.hpp",
+          "sha256": "414b81898092b8cd3d04b738a7f5247b70842eb44040436d7c731250e6917526",
+          "local": "0.hpp",
+          "url": "https://github.com/KhronosGroup/SPIRV-Cross/blob/aa217aeb6c9f0ace7a0ab233b28807edf45eb165/include/spirv_cross/barrier.hpp",
+          "lines": 80
+        },
+        {
+          "path": "NonSemanticShaderDebugInfo100.h",
+          "sha256": "f22e8ce116c326c81ad4d0cc99b8da7b95f8fb800de77c11f7129bd04d251299",
+          "local": "1.h",
+          "url": "https://github.com/KhronosGroup/SPIRV-Cross/blob/aa217aeb6c9f0ace7a0ab233b28807edf45eb165/NonSemanticShaderDebugInfo100.h",
+          "lines": 171
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__SPIRV-Cross",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/SPIRV-Tools",
+      "commit": "4f3a92dfbd5b49593e43b3c245b6688da2ad933a",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "source/fuzz/force_render_red.cpp",
+      "source_url": "https://github.com/KhronosGroup/SPIRV-Tools/blob/4f3a92dfbd5b49593e43b3c245b6688da2ad933a/source/fuzz/force_render_red.cpp",
+      "finding": "ForceRenderRed находит fragment entrypoint и output variable перед преобразованием. Shader testing требует явной проверки стадии и интерфейса.",
+      "files": [
+        {
+          "path": "source/fuzz/force_render_red.cpp",
+          "sha256": "d044178e2a4e460f100a5e804be6cefe29d20f0a0cbe4a5e43860a4bebc59300",
+          "local": "0.cpp",
+          "url": "https://github.com/KhronosGroup/SPIRV-Tools/blob/4f3a92dfbd5b49593e43b3c245b6688da2ad933a/source/fuzz/force_render_red.cpp",
+          "lines": 378
+        },
+        {
+          "path": "source/val/validate_barriers.cpp",
+          "sha256": "2fb7f8b76ba8137061d6ecf2820b94ed19bb2038b1c47786a79c2ce279c5af0f",
+          "local": "1.cpp",
+          "url": "https://github.com/KhronosGroup/SPIRV-Tools/blob/4f3a92dfbd5b49593e43b3c245b6688da2ad933a/source/val/validate_barriers.cpp",
+          "lines": 158
+        },
+        {
+          "path": "source/fuzz/transformation_compute_data_synonym_fact_closure.cpp",
+          "sha256": "c58546f8eec6df5a5e373f008b609947f40eec3dbbb7c0345657274e73f087b8",
+          "local": "2.cpp",
+          "url": "https://github.com/KhronosGroup/SPIRV-Tools/blob/4f3a92dfbd5b49593e43b3c245b6688da2ad933a/source/fuzz/transformation_compute_data_synonym_fact_closure.cpp",
+          "lines": 56
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__SPIRV-Tools",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/Vulkan-Hpp",
+      "commit": "280a182789277676a870d8afaa30ab9810be076a",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "samples/10_InitRenderPass/10_InitRenderPass.cpp",
+      "source_url": "https://github.com/KhronosGroup/Vulkan-Hpp/blob/280a182789277676a870d8afaa30ab9810be076a/samples/10_InitRenderPass/10_InitRenderPass.cpp",
+      "finding": "Render-pass пример задаёт layouts color/depth attachments и явно уничтожает объекты. RAII или binding library не устраняет требования resource lifetime.",
+      "files": [
+        {
+          "path": "samples/10_InitRenderPass/10_InitRenderPass.cpp",
+          "sha256": "3d88b7ac43dbad9bc3fff5347b81422af553bc513c069d19909b7750e2fde520",
+          "local": "0.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-Hpp/blob/280a182789277676a870d8afaa30ab9810be076a/samples/10_InitRenderPass/10_InitRenderPass.cpp",
+          "lines": 100
+        },
+        {
+          "path": "RAII_Samples/10_InitRenderPass/10_InitRenderPass.cpp",
+          "sha256": "692bcdc664f1a4af8f1931dad544286a916e306735f3166c21af2b65d8ffe4ba",
+          "local": "1.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-Hpp/blob/280a182789277676a870d8afaa30ab9810be076a/RAII_Samples/10_InitRenderPass/10_InitRenderPass.cpp",
+          "lines": 93
+        },
+        {
+          "path": "samples/03_InitDevice/03_InitDevice.cpp",
+          "sha256": "4acb3a8df55cca16f67ef6686f9b876ca18255a229e140488512592294c2e7dc",
+          "local": "2.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-Hpp/blob/280a182789277676a870d8afaa30ab9810be076a/samples/03_InitDevice/03_InitDevice.cpp",
+          "lines": 67
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__Vulkan-Hpp",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/Vulkan-Samples",
+      "commit": "177edebf0cd7d4f669667e49f052cfb56b17e004",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "framework/rendering/postprocessing_computepass.cpp",
+      "source_url": "https://github.com/KhronosGroup/Vulkan-Samples/blob/177edebf0cd7d4f669667e49f052cfb56b17e004/framework/rendering/postprocessing_computepass.cpp",
+      "finding": "PostProcessingComputePass выводит read/write storage-image access из reflection и задаёт compute-stage barrier info. Полезный переход compute → sampling.",
+      "files": [
+        {
+          "path": "framework/rendering/postprocessing_computepass.cpp",
+          "sha256": "02ad76af2f0953ff0be7d87c970c2dca872befb00f80ce2bfc68ef231ca5c767",
+          "local": "0.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-Samples/blob/177edebf0cd7d4f669667e49f052cfb56b17e004/framework/rendering/postprocessing_computepass.cpp",
+          "lines": 278
+        },
+        {
+          "path": "framework/rendering/postprocessing_computepass.h",
+          "sha256": "b306860d76b98f1559e91ab68b7f993f47b98095a10aff03ee0f3dbeacbf14a5",
+          "local": "1.h",
+          "url": "https://github.com/KhronosGroup/Vulkan-Samples/blob/177edebf0cd7d4f669667e49f052cfb56b17e004/framework/rendering/postprocessing_computepass.h",
+          "lines": 172
+        },
+        {
+          "path": "framework/core/render_pass.cpp",
+          "sha256": "67142f506e72112765c395d0196d3b60f80b678ac972753e2f45c3c29e940df0",
+          "local": "2.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-Samples/blob/177edebf0cd7d4f669667e49f052cfb56b17e004/framework/core/render_pass.cpp",
+          "lines": 559
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__Vulkan-Samples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "KhronosGroup/Vulkan-ValidationLayers",
+      "commit": "394ccee0f6d2d202d0755a85b8a111c6a97511ef",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "layers/gpu_dump/gpu_dump_copy_memory_indirect.cpp",
+      "source_url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/394ccee0f6d2d202d0755a85b8a111c6a97511ef/layers/gpu_dump/gpu_dump_copy_memory_indirect.cpp",
+      "finding": "GPU dump читает indirect argument memory с учётом copy count, stride и address ranges. Нужна наблюдаемость содержимого indirect buffers при отладке.",
+      "files": [
+        {
+          "path": "layers/gpu_dump/gpu_dump_copy_memory_indirect.cpp",
+          "sha256": "13aa197fd65cd6bdd9daac3157fe920260e28b2e549c6d2c9a5d75575c30c65d",
+          "local": "0.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/394ccee0f6d2d202d0755a85b8a111c6a97511ef/layers/gpu_dump/gpu_dump_copy_memory_indirect.cpp",
+          "lines": 111
+        },
+        {
+          "path": "layers/gpuav/spirv/buffer_device_address_pass.cpp",
+          "sha256": "51b829b8b15bfa36c8398238d8a18eba42108186f1761e20f385fcc5f806c1e1",
+          "local": "1.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/394ccee0f6d2d202d0755a85b8a111c6a97511ef/layers/gpuav/spirv/buffer_device_address_pass.cpp",
+          "lines": 261
+        },
+        {
+          "path": "layers/gpu_dump/gpu_dump_device_generated_commands.cpp",
+          "sha256": "fa9efd1b9440e071faa32fac4902a5eaf5e13cacdd26dfd67069841f62de71e0",
+          "local": "2.cpp",
+          "url": "https://github.com/KhronosGroup/Vulkan-ValidationLayers/blob/394ccee0f6d2d202d0755a85b8a111c6a97511ef/layers/gpu_dump/gpu_dump_device_generated_commands.cpp",
+          "lines": 156
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/KhronosGroup__Vulkan-ValidationLayers",
+      "tree_truncated": false
+    },
+    {
+      "repository": "luanti-org/luanti",
+      "commit": "6c4c384dad062a44a31a6d67a498731d4bf8207c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "irr/src/OpenGL/Renderer2D.cpp",
+      "source_url": "https://github.com/luanti-org/luanti/blob/6c4c384dad062a44a31a6d67a498731d4bf8207c/irr/src/OpenGL/Renderer2D.cpp",
+      "finding": "GL 2D renderer кэширует uniforms texture unit/usage и применяет их при смене material. Аппаратная поддержка 2D имеет отдельный простой путь.",
+      "files": [
+        {
+          "path": "irr/src/OpenGL/Renderer2D.cpp",
+          "sha256": "3209aaa98f6e2e9e8f65a0450075adc0b5a3719710bcde85164393e18007e7ab",
+          "local": "0.cpp",
+          "url": "https://github.com/luanti-org/luanti/blob/6c4c384dad062a44a31a6d67a498731d4bf8207c/irr/src/OpenGL/Renderer2D.cpp",
+          "lines": 86
+        },
+        {
+          "path": "irr/src/OpenGL/MaterialRenderer.cpp",
+          "sha256": "b49a2f0f85818206689a7ee07b78f58aa86ba1002fd8f5068ff63b3a7a37a1ad",
+          "local": "1.cpp",
+          "url": "https://github.com/luanti-org/luanti/blob/6c4c384dad062a44a31a6d67a498731d4bf8207c/irr/src/OpenGL/MaterialRenderer.cpp",
+          "lines": 428
+        },
+        {
+          "path": "irr/src/COpenGLSLMaterialRenderer.cpp",
+          "sha256": "35cdd36dc68a35274658b106885c2978e01c59f854a233ebf76d055f87516016",
+          "local": "2.cpp",
+          "url": "https://github.com/luanti-org/luanti/blob/6c4c384dad062a44a31a6d67a498731d4bf8207c/irr/src/COpenGLSLMaterialRenderer.cpp",
+          "lines": 518
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/luanti-org__luanti",
+      "tree_truncated": false
+    },
+    {
+      "repository": "melonjs/melonJS",
+      "commit": "16df0bf10b374cdd216354df2964174812f2bc93",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "packages/melonjs/src/video/rendertarget/webgpurendertarget.js",
+      "source_url": "https://github.com/melonjs/melonJS/blob/16df0bf10b374cdd216354df2964174812f2bc93/packages/melonjs/src/video/rendertarget/webgpurendertarget.js",
+      "finding": "WebGPU readback выравнивает bytesPerRow до 256 и flush-ит draw перед copy; уничтожение texture передаёт renderer.retireTexture.",
+      "files": [
+        {
+          "path": "packages/melonjs/src/video/rendertarget/webgpurendertarget.js",
+          "sha256": "cb374776126ee0ede26a2ec4099b03afe5c1f2114c46ade2e8237fa3ade1433d",
+          "local": "0.js",
+          "url": "https://github.com/melonjs/melonJS/blob/16df0bf10b374cdd216354df2964174812f2bc93/packages/melonjs/src/video/rendertarget/webgpurendertarget.js",
+          "lines": 347
+        },
+        {
+          "path": "packages/melonjs/src/video/webgpu/renderers/tmxlayer/orthogonal.js",
+          "sha256": "a6d55fff183b0eabf47d69e004b117a0749d25284eadb5c3b875bd9c9bc5accb",
+          "local": "1.js",
+          "url": "https://github.com/melonjs/melonJS/blob/16df0bf10b374cdd216354df2964174812f2bc93/packages/melonjs/src/video/webgpu/renderers/tmxlayer/orthogonal.js",
+          "lines": 427
+        },
+        {
+          "path": "packages/melonjs/src/video/renderer.js",
+          "sha256": "6d3db78f3fe168babe71cc2e8ffbf995e5d3a42cd33d89bf134b0deec1edb514",
+          "local": "2.js",
+          "url": "https://github.com/melonjs/melonJS/blob/16df0bf10b374cdd216354df2964174812f2bc93/packages/melonjs/src/video/renderer.js",
+          "lines": 2146
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/melonjs__melonJS",
+      "tree_truncated": false
+    },
+    {
+      "repository": "microsoft/DirectX-Graphics-Samples",
+      "commit": "e5975f9b0744fc5096dd593ed72bf8f5c004164f",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityDevice.cpp",
+      "source_url": "https://github.com/microsoft/DirectX-Graphics-Samples/blob/e5975f9b0744fc5096dd593ed72bf8f5c004164f/Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityDevice.cpp",
+      "finding": "Linked-GPU sample запрашивает реальные resource allocation footprints и проверяет device removal. Логический размер и физическое размещение различаются.",
+      "files": [
+        {
+          "path": "Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityDevice.cpp",
+          "sha256": "74688539b77832831e02a0eb3b69eec5190509fbea2afb7a22bd2c73a02c1bfa",
+          "local": "0.cpp",
+          "url": "https://github.com/microsoft/DirectX-Graphics-Samples/blob/e5975f9b0744fc5096dd593ed72bf8f5c004164f/Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityDevice.cpp",
+          "lines": 1581
+        },
+        {
+          "path": "Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityDeviceChild.cpp",
+          "sha256": "e91c740df0b414888ac37c10ce7c590273eddeffe77da16bfe66272aa70fec9e",
+          "local": "1.cpp",
+          "url": "https://github.com/microsoft/DirectX-Graphics-Samples/blob/e5975f9b0744fc5096dd593ed72bf8f5c004164f/Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityDeviceChild.cpp",
+          "lines": 44
+        },
+        {
+          "path": "Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityCommandAllocator.cpp",
+          "sha256": "000456faa595bd53ec47b0d4a5f0ec73245829b19d4aef3efd5ed0e5b076dabd",
+          "local": "2.cpp",
+          "url": "https://github.com/microsoft/DirectX-Graphics-Samples/blob/e5975f9b0744fc5096dd593ed72bf8f5c004164f/Samples/Desktop/D3D12LinkedGpus/src/D3DX12AffinityLayer/CD3DX12AffinityCommandAllocator.cpp",
+          "lines": 70
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/microsoft__DirectX-Graphics-Samples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "microsoft/DirectXShaderCompiler",
+      "commit": "4781bc2115d6e64f8f344664de0f0b6ec1d93015",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "tools/clang/lib/Sema/SemaCUDA.cpp",
+      "source_url": "https://github.com/microsoft/DirectXShaderCompiler/blob/4781bc2115d6e64f8f344664de0f0b6ec1d93015/tools/clang/lib/Sema/SemaCUDA.cpp",
+      "finding": "Просмотрен CUDA Sema из встроенного Clang: он разрешает конфликты host/device targets. Этот файл не доказывает наличие CUDA backend в DXC.",
+      "files": [
+        {
+          "path": "tools/clang/lib/Sema/SemaCUDA.cpp",
+          "sha256": "caa049e9401deb3fa5535de8e8fc584706b9b31bd9273e5b5d5a4dfd19695da1",
+          "local": "0.cpp",
+          "url": "https://github.com/microsoft/DirectXShaderCompiler/blob/4781bc2115d6e64f8f344664de0f0b6ec1d93015/tools/clang/lib/Sema/SemaCUDA.cpp",
+          "lines": 280
+        },
+        {
+          "path": "tools/clang/lib/CodeGen/CGCUDANV.cpp",
+          "sha256": "e57d96fa984bb9b48384471fd660b5742e021fc024a243309bb4d370cbfa5cd9",
+          "local": "1.cpp",
+          "url": "https://github.com/microsoft/DirectXShaderCompiler/blob/4781bc2115d6e64f8f344664de0f0b6ec1d93015/tools/clang/lib/CodeGen/CGCUDANV.cpp",
+          "lines": 317
+        },
+        {
+          "path": "tools/clang/lib/CodeGen/CGCUDARuntime.cpp",
+          "sha256": "36b57c7c684aabe0fa40a94a9be4863b20d6d2def984c6e6c639e7e437755ef8",
+          "local": "2.cpp",
+          "url": "https://github.com/microsoft/DirectXShaderCompiler/blob/4781bc2115d6e64f8f344664de0f0b6ec1d93015/tools/clang/lib/CodeGen/CGCUDARuntime.cpp",
+          "lines": 55
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/microsoft__DirectXShaderCompiler",
+      "tree_truncated": false
+    },
+    {
+      "repository": "microsoft/DirectXTex",
+      "commit": "20f7316f1b55dcab3479636015e643c9559fa193",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "DirectXTex/BCDirectCompute.cpp",
+      "source_url": "https://github.com/microsoft/DirectXTex/blob/20f7316f1b55dcab3479636015e643c9559fa193/DirectXTex/BCDirectCompute.cpp",
+      "finding": "BC compression запускает несколько compute stages с рабочими error/output buffers и проверкой ошибок allocation. Вспомогательная GPU память входит в стоимость операции.",
+      "files": [
+        {
+          "path": "DirectXTex/BCDirectCompute.cpp",
+          "sha256": "bfbfca94bce36544611897ad2d76499ea5eda0c861eeca42363a6342bd090045",
+          "local": "0.cpp",
+          "url": "https://github.com/microsoft/DirectXTex/blob/20f7316f1b55dcab3479636015e643c9559fa193/DirectXTex/BCDirectCompute.cpp",
+          "lines": 660
+        },
+        {
+          "path": "DirectXTex/BCDirectCompute.h",
+          "sha256": "0e88d6e48f4e798f725d9030bb495c5300a5db40fc39de8ecc0c60c42ff60be2",
+          "local": "1.h",
+          "url": "https://github.com/microsoft/DirectXTex/blob/20f7316f1b55dcab3479636015e643c9559fa193/DirectXTex/BCDirectCompute.h",
+          "lines": 70
+        },
+        {
+          "path": "DirectXTex/Shaders/BC7Encode.hlsl",
+          "sha256": "8eaff54f8afd5442fa7dcb8973599ffc1f7f60255aed1970763de38657d3852b",
+          "local": "2.hlsl",
+          "url": "https://github.com/microsoft/DirectXTex/blob/20f7316f1b55dcab3479636015e643c9559fa193/DirectXTex/Shaders/BC7Encode.hlsl",
+          "lines": 1944
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/microsoft__DirectXTex",
+      "tree_truncated": false
+    },
+    {
+      "repository": "microsoft/DirectXTK12",
+      "commit": "6fc18afe6dc4875fef662d8d7f27241afa51f4f4",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Src/LinearAllocator.cpp",
+      "source_url": "https://github.com/microsoft/DirectXTK12/blob/6fc18afe6dc4875fef662d8d7f27241afa51f4f4/Src/LinearAllocator.cpp",
+      "finding": "LinearAllocator возвращает pending pages в повторное использование после completed fence. Это прямой образец безопасного ring/arena reclamation.",
+      "files": [
+        {
+          "path": "Src/LinearAllocator.cpp",
+          "sha256": "2049ebc769ce2e231489ab4ba81c323b8d10089ee79d485eec09b27cbfcaa1b3",
+          "local": "0.cpp",
+          "url": "https://github.com/microsoft/DirectXTK12/blob/6fc18afe6dc4875fef662d8d7f27241afa51f4f4/Src/LinearAllocator.cpp",
+          "lines": 488
+        },
+        {
+          "path": "Inc/RenderTargetState.h",
+          "sha256": "b3ea4b9743422d9a29775fb784b73e3260274af3514a5b10fa9d6fdf1a612678",
+          "local": "1.h",
+          "url": "https://github.com/microsoft/DirectXTK12/blob/6fc18afe6dc4875fef662d8d7f27241afa51f4f4/Inc/RenderTargetState.h",
+          "lines": 131
+        },
+        {
+          "path": "Src/LinearAllocator.h",
+          "sha256": "df7954090635cf56b21157823d69bd8b6ff26850e25aba492284762f5227237f",
+          "local": "2.h",
+          "url": "https://github.com/microsoft/DirectXTK12/blob/6fc18afe6dc4875fef662d8d7f27241afa51f4f4/Src/LinearAllocator.h",
+          "lines": 164
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/microsoft__DirectXTK12",
+      "tree_truncated": false
+    },
+    {
+      "repository": "mrdoob/three.js",
+      "commit": "f0f145592e96cf13280b5bea8d8454b29eb94fb1",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/renderers/webgpu/WebGPUBackend.js",
+      "source_url": "https://github.com/mrdoob/three.js/blob/f0f145592e96cf13280b5bea8d8454b29eb94fb1/src/renderers/webgpu/WebGPUBackend.js",
+      "finding": "WebGPUBackend поддерживает прямой dispatch и dispatchWorkgroupsIndirect из GPU buffer, с кэшированием текущего pipeline в compute group.",
+      "files": [
+        {
+          "path": "src/renderers/webgpu/descriptors/GPUComputePassDescriptor.js",
+          "sha256": "57e15d0cc81ca2110697827a3a7226a65fcdc55628387a31d1e340489519ac0e",
+          "local": "0.js",
+          "url": "https://github.com/mrdoob/three.js/blob/f0f145592e96cf13280b5bea8d8454b29eb94fb1/src/renderers/webgpu/descriptors/GPUComputePassDescriptor.js",
+          "lines": 38
+        },
+        {
+          "path": "src/renderers/webgpu/descriptors/GPUComputePipelineDescriptor.js",
+          "sha256": "b00de4261a4a9db78cf68d4388ca6a29fd117babf4fad2cd4ef3ce46eaaa8843",
+          "local": "1.js",
+          "url": "https://github.com/mrdoob/three.js/blob/f0f145592e96cf13280b5bea8d8454b29eb94fb1/src/renderers/webgpu/descriptors/GPUComputePipelineDescriptor.js",
+          "lines": 48
+        },
+        {
+          "path": "src/renderers/webgpu/WebGPUBackend.js",
+          "sha256": "1195ba9aa18371ff52c42882f96fe3ec67916fc7cec88014ebc5753c50193b5f",
+          "local": "2.js",
+          "url": "https://github.com/mrdoob/three.js/blob/f0f145592e96cf13280b5bea8d8454b29eb94fb1/src/renderers/webgpu/WebGPUBackend.js",
+          "lines": 3287
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/mrdoob__three.js",
+      "tree_truncated": false
+    },
+    {
+      "repository": "needle-mirror/com.unity.render-pipelines.core",
+      "commit": "3d17782646d86c6bbe963b693d1748e5931fe4ab",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Runtime/RenderGraph/RenderGraph.cs",
+      "source_url": "https://github.com/needle-mirror/com.unity.render-pipelines.core/blob/3d17782646d86c6bbe963b693d1748e5931fe4ab/Runtime/RenderGraph/RenderGraph.cs",
+      "finding": "RenderGraph compile определяет lifetime ресурсов, async compute synchronization и culling unused passes. Mirror перекрывается с Unity Graphics, не отдельная независимая архитектура.",
+      "files": [
+        {
+          "path": "Runtime/RenderGraph/RenderGraph.cs",
+          "sha256": "86f109347905163a7623fca2850b2b37104e2126cf912fddfac2d8b29d731153",
+          "local": "0.cs",
+          "url": "https://github.com/needle-mirror/com.unity.render-pipelines.core/blob/3d17782646d86c6bbe963b693d1748e5931fe4ab/Runtime/RenderGraph/RenderGraph.cs",
+          "lines": 1456
+        },
+        {
+          "path": "Runtime/RenderGraph/RenderGraphPass.cs",
+          "sha256": "437338b7ae083c8ae29faf1daff125ec710bff0f6b7a87236dc8c6e1f431da8e",
+          "local": "1.cs",
+          "url": "https://github.com/needle-mirror/com.unity.render-pipelines.core/blob/3d17782646d86c6bbe963b693d1748e5931fe4ab/Runtime/RenderGraph/RenderGraphPass.cs",
+          "lines": 163
+        },
+        {
+          "path": "Editor/RenderGraph/RenderGraphViewer.cs",
+          "sha256": "9f26429811d648aa17e75059bec4c7381c2a9d98114ea1fd28e63034cb4b961d",
+          "local": "2.cs",
+          "url": "https://github.com/needle-mirror/com.unity.render-pipelines.core/blob/3d17782646d86c6bbe963b693d1748e5931fe4ab/Editor/RenderGraph/RenderGraphViewer.cs",
+          "lines": 609
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/needle-mirror__com.unity.render-pipelines.core",
+      "tree_truncated": false
+    },
+    {
+      "repository": "needle-mirror/com.unity.render-pipelines.universal",
+      "commit": "8de5d7f7c63a433f5134fc8ce941072a08371ddc",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Runtime/2D/Renderer2D.cs",
+      "source_url": "https://github.com/needle-mirror/com.unity.render-pipelines.universal/blob/8de5d7f7c63a433f5134fc8ce941072a08371ddc/Runtime/2D/Renderer2D.cs",
+      "finding": "2D renderer создаёт промежуточные targets и освобождает temporary RT в FinishRendering. Это исторический mirror, не источник актуальной версии Unity.",
+      "files": [
+        {
+          "path": "Runtime/2D/Renderer2D.cs",
+          "sha256": "327c0d526f2d6d1ed78a5fbacd52e52d86d41c83a53912da6c5154b0dcbce6d3",
+          "local": "0.cs",
+          "url": "https://github.com/needle-mirror/com.unity.render-pipelines.universal/blob/8de5d7f7c63a433f5134fc8ce941072a08371ddc/Runtime/2D/Renderer2D.cs",
+          "lines": 282
+        },
+        {
+          "path": "Runtime/RenderingUtils.cs",
+          "sha256": "f81395f1541e16c7a5b17e3b4cbedf0abc953c389e484f775af79415e58d26b0",
+          "local": "1.cs",
+          "url": "https://github.com/needle-mirror/com.unity.render-pipelines.universal/blob/8de5d7f7c63a433f5134fc8ce941072a08371ddc/Runtime/RenderingUtils.cs",
+          "lines": 455
+        },
+        {
+          "path": "Runtime/NativeRenderPass.cs",
+          "sha256": "6d0d28a88f836f74d8b693d5496743cf417ee5ec3e90f4f0f2affd23f6f19653",
+          "local": "2.cs",
+          "url": "https://github.com/needle-mirror/com.unity.render-pipelines.universal/blob/8de5d7f7c63a433f5134fc8ce941072a08371ddc/Runtime/NativeRenderPass.cs",
+          "lines": 687
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/needle-mirror__com.unity.render-pipelines.universal",
+      "tree_truncated": false
+    },
+    {
+      "repository": "nem0/LumixEngine",
+      "commit": "e72a9d26c48b6823b55118f5921e46cb2ae01a4e",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/renderer/gpu/gpu_dx12.cpp",
+      "source_url": "https://github.com/nem0/LumixEngine/blob/e72a9d26c48b6823b55118f5921e46cb2ae01a4e/src/renderer/gpu/gpu_dx12.cpp",
+      "finding": "DX12 frame собирает texture read callbacks, unmap и release staging; shader compilation выделена в отдельный compiler. Важны границы frame и readback completion.",
+      "files": [
+        {
+          "path": "src/renderer/gpu/gpu_dx12.cpp",
+          "sha256": "ccdeb7e810f797bca1bb8145e9916bb316074a887538620a193b1755c8ef5031",
+          "local": "0.cpp",
+          "url": "https://github.com/nem0/LumixEngine/blob/e72a9d26c48b6823b55118f5921e46cb2ae01a4e/src/renderer/gpu/gpu_dx12.cpp",
+          "lines": 3275
+        },
+        {
+          "path": "src/renderer/gpu/gpu_vulkan.cpp",
+          "sha256": "efc8f2d3c86db3f54421e27d2bf7bb8716535f0c05cb4884dad310be46cd2d65",
+          "local": "1.cpp",
+          "url": "https://github.com/nem0/LumixEngine/blob/e72a9d26c48b6823b55118f5921e46cb2ae01a4e/src/renderer/gpu/gpu_vulkan.cpp",
+          "lines": 321
+        },
+        {
+          "path": "src/renderer/gpu/gpu.cpp",
+          "sha256": "85238c17a0d8cc55259561f99a7c6bfd8fadf0576fba45de282d80bd5b9311c0",
+          "local": "2.cpp",
+          "url": "https://github.com/nem0/LumixEngine/blob/e72a9d26c48b6823b55118f5921e46cb2ae01a4e/src/renderer/gpu/gpu.cpp",
+          "lines": 131
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/nem0__LumixEngine",
+      "tree_truncated": false
+    },
+    {
+      "repository": "not-fl3/macroquad",
+      "commit": "8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/ui/render/painter.rs",
+      "source_url": "https://github.com/not-fl3/macroquad/blob/8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6/src/ui/render/painter.rs",
+      "finding": "UI painter строит quad/texture drawing по геометрии элемента. Этот участок относится к 2D batching и не задаёт GPU compute поддержку.",
+      "files": [
+        {
+          "path": "src/ui/render/painter.rs",
+          "sha256": "9daeb7fbd17b09bec022adbd8e7008d406598d4ba6bd90f5e60a1859ca55500b",
+          "local": "0.rs",
+          "url": "https://github.com/not-fl3/macroquad/blob/8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6/src/ui/render/painter.rs",
+          "lines": 592
+        },
+        {
+          "path": "src/ui/render/mesh_rasterizer.rs",
+          "sha256": "10237014edbac12a65189b5ac34182f514a36a1dcbfb70431e9e2a723cb8e92f",
+          "local": "1.rs",
+          "url": "https://github.com/not-fl3/macroquad/blob/8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6/src/ui/render/mesh_rasterizer.rs",
+          "lines": 327
+        },
+        {
+          "path": "examples/shadertoy.rs",
+          "sha256": "26449a975c7ce1402c4f94883e35c4d387ad5529b26b3c37953d6f333540953d",
+          "local": "2.rs",
+          "url": "https://github.com/not-fl3/macroquad/blob/8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6/examples/shadertoy.rs",
+          "lines": 395
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/not-fl3__macroquad",
+      "tree_truncated": false
+    },
+    {
+      "repository": "not-fl3/miniquad",
+      "commit": "39c928fb7e09fd44e45f37fe9a98503968bca412",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/msaa_render_texture.rs",
+      "source_url": "https://github.com/not-fl3/miniquad/blob/39c928fb7e09fd44e45f37fe9a98503968bca412/examples/msaa_render_texture.rs",
+      "finding": "MSAA example выбирает GLSL или MSL source по backend и создаёт offscreen pipeline. Варианты shaders и render targets должны проверяться совместно.",
+      "files": [
+        {
+          "path": "examples/msaa_render_texture.rs",
+          "sha256": "ca088159da65d95361d9ae724910ddabdaa65d6494c85ff266be35041e7968aa",
+          "local": "0.rs",
+          "url": "https://github.com/not-fl3/miniquad/blob/39c928fb7e09fd44e45f37fe9a98503968bca412/examples/msaa_render_texture.rs",
+          "lines": 417
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/not-fl3__miniquad",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA-RTX/NRD",
+      "commit": "fddfb7c922681fb0011c1d84d25834e7507a878c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Source/InstanceImpl.cpp",
+      "source_url": "https://github.com/NVIDIA-RTX/NRD/blob/fddfb7c922681fb0011c1d84d25834e7507a878c/Source/InstanceImpl.cpp",
+      "finding": "InstanceImpl строит dispatch descriptors, проверяет встроенные shader permutations и вычисляет dispatch размеры с downsample factor. Denoiser представляет последовательность GPU-проходов.",
+      "files": [
+        {
+          "path": "Source/InstanceImpl.cpp",
+          "local": "deep-3.cpp",
+          "sha256": "c0be4bc874eb7dedfcedb8a8688fb6c81c6b10534e747ceaef075b8938959867",
+          "url": "https://github.com/NVIDIA-RTX/NRD/blob/fddfb7c922681fb0011c1d84d25834e7507a878c/Source/InstanceImpl.cpp",
+          "lines": 848
+        },
+        {
+          "path": "Source/StdAllocator.h",
+          "sha256": "dcb42d4b5d010689faee7db688af6ddfcc011a4c1fb302578aff475c5a008f76",
+          "local": "0.h",
+          "url": "https://github.com/NVIDIA-RTX/NRD/blob/fddfb7c922681fb0011c1d84d25834e7507a878c/Source/StdAllocator.h",
+          "lines": 116
+        },
+        {
+          "path": "Shaders/Clear.cs.hlsl",
+          "sha256": "013816963b6957da374416884233e336d42fa126ea5fd0d7a2bb65a5dbc1a856",
+          "local": "1.hlsl",
+          "url": "https://github.com/NVIDIA-RTX/NRD/blob/fddfb7c922681fb0011c1d84d25834e7507a878c/Shaders/Clear.cs.hlsl",
+          "lines": 27
+        },
+        {
+          "path": "Shaders/RELAX_Copy.cs.hlsl",
+          "sha256": "41a568686b12d5edf7aae2fdac118676911893667b74c8ceb66c1bc8ea57bea5",
+          "local": "2.hlsl",
+          "url": "https://github.com/NVIDIA-RTX/NRD/blob/fddfb7c922681fb0011c1d84d25834e7507a878c/Shaders/RELAX_Copy.cs.hlsl",
+          "lines": 37
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA-RTX__NRD",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA-RTX/RTXDI",
+      "commit": "a6efab966b7c3b272da0461578eb56ac61c7cbff",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Samples/FullSample/Source/RenderTargets.cpp",
+      "source_url": "https://github.com/NVIDIA-RTX/RTXDI/blob/a6efab966b7c3b272da0461578eb56ac61c7cbff/Samples/FullSample/Source/RenderTargets.cpp",
+      "finding": "Sample RenderTargets описывает размеры и initial resource state для NVRHI textures. Resize и history buffers являются частью контракта ray pipeline.",
+      "files": [
+        {
+          "path": "Samples/FullSample/Source/RenderTargets.cpp",
+          "sha256": "87914c918bd15a01175bc1a97541bf1fb2a4c1955900baf6f46637f6874925a9",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIA-RTX/RTXDI/blob/a6efab966b7c3b272da0461578eb56ac61c7cbff/Samples/FullSample/Source/RenderTargets.cpp",
+          "lines": 304
+        },
+        {
+          "path": "Samples/MinimalSample/Source/RenderPass.cpp",
+          "sha256": "95af538aa360b2d88d81bd84221a14afa50a057625e15a4f16fa3a4e4ba2a131",
+          "local": "1.cpp",
+          "url": "https://github.com/NVIDIA-RTX/RTXDI/blob/a6efab966b7c3b272da0461578eb56ac61c7cbff/Samples/MinimalSample/Source/RenderPass.cpp",
+          "lines": 213
+        },
+        {
+          "path": "Samples/MinimalSample/Source/RenderTargets.cpp",
+          "sha256": "68e7a4d363696898d30122e4607c0754627d1a8bd37acc7fb17f770c3d90ed4b",
+          "local": "2.cpp",
+          "url": "https://github.com/NVIDIA-RTX/RTXDI/blob/a6efab966b7c3b272da0461578eb56ac61c7cbff/Samples/MinimalSample/Source/RenderTargets.cpp",
+          "lines": 82
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA-RTX__RTXDI",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA-RTX/Streamline",
+      "commit": "2122257e0fce486f91b385aa63b9a09b0a34b363",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "source/core/sl.interposer/d3d12/d3d12Device.cpp",
+      "source_url": "https://github.com/NVIDIA-RTX/Streamline/blob/2122257e0fce486f91b385aa63b9a09b0a34b363/source/core/sl.interposer/d3d12/d3d12Device.cpp",
+      "finding": "DX12 interposer перенаправляет fence, eviction, shader-cache и device-removal calls. Интеграционный proxy не заменяет scheduler движка.",
+      "files": [
+        {
+          "path": "source/core/sl.interposer/d3d12/d3d12Device.cpp",
+          "sha256": "aff288c2d67d86ef2b7f0e86691baef316827a73c3d35ab1d9ef450c70e1eac7",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIA-RTX/Streamline/blob/2122257e0fce486f91b385aa63b9a09b0a34b363/source/core/sl.interposer/d3d12/d3d12Device.cpp",
+          "lines": 841
+        },
+        {
+          "path": "source/core/sl.interposer/d3d12/d3d12Device.h",
+          "sha256": "ea26e9551b78b1eb3973340f78614e7400ba69d16c419e034d85e01c203faff6",
+          "local": "1.h",
+          "url": "https://github.com/NVIDIA-RTX/Streamline/blob/2122257e0fce486f91b385aa63b9a09b0a34b363/source/core/sl.interposer/d3d12/d3d12Device.h",
+          "lines": 154
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA-RTX__Streamline",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA/cub",
+      "commit": "0fc3c3701632a4be906765b73be20a9ad0da603d",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/device/example_device_scan.cu",
+      "source_url": "https://github.com/NVIDIA/cub/blob/0fc3c3701632a4be906765b73be20a9ad0da603d/examples/device/example_device_scan.cu",
+      "finding": "DeviceScan сначала запрашивает объём временной памяти, затем выделяет и исполняет scan, сверяя CPU reference. Полезен алгоритмический образец compaction.",
+      "files": [
+        {
+          "path": "examples/device/example_device_scan.cu",
+          "sha256": "b4d12dc531937ee63a40b15ea31302995838665a53ce4d62f78b3cdb23ee44b1",
+          "local": "0.cu",
+          "url": "https://github.com/NVIDIA/cub/blob/0fc3c3701632a4be906765b73be20a9ad0da603d/examples/device/example_device_scan.cu",
+          "lines": 186
+        },
+        {
+          "path": "examples/device/example_device_reduce.cu",
+          "sha256": "ddb6173d18da94dca4ed51804ce0d25dc286f80175e70e1bd0d3d4366e7d4d34",
+          "local": "1.cu",
+          "url": "https://github.com/NVIDIA/cub/blob/0fc3c3701632a4be906765b73be20a9ad0da603d/examples/device/example_device_reduce.cu",
+          "lines": 180
+        },
+        {
+          "path": "examples/device/example_device_select_if.cu",
+          "sha256": "4789c985b7cd97f45d62cd41193d7c70331d4633aba0fb8b1805b9e4a5d25531",
+          "local": "2.cu",
+          "url": "https://github.com/NVIDIA/cub/blob/0fc3c3701632a4be906765b73be20a9ad0da603d/examples/device/example_device_select_if.cu",
+          "lines": 242
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA__cub",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA/cuda-samples",
+      "commit": "5443602d89ed99aede2e4b7bf329daddeadb320e",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "cpp/5_Domain_Specific/simpleVulkan/SineWaveSimulation.cu",
+      "source_url": "https://github.com/NVIDIA/cuda-samples/blob/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/simpleVulkan/SineWaveSimulation.cu",
+      "finding": "simpleVulkan сопоставляет UUID, экспортирует общий vertex buffer и использует двусторонние semaphore handoffs. Первый кадр отдельно обходит ещё не сигналённый wait.",
+      "files": [
+        {
+          "path": "cpp/5_Domain_Specific/simpleVulkan/SineWaveSimulation.cu",
+          "local": "supplement-4.cu",
+          "sha256": "beaf5ac9b525890f5f32163042cd7ae2c367082b8a606b8d9f5a8c12ab2b26ac",
+          "url": "https://github.com/NVIDIA/cuda-samples/blob/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/simpleVulkan/SineWaveSimulation.cu",
+          "lines": 140
+        },
+        {
+          "path": "cpp/5_Domain_Specific/simpleVulkan/main.cpp",
+          "local": "supplement-3.cpp",
+          "sha256": "d482313a41052aa0f5bdcffbdf39ffada41e177ca7d97de5de692bafb3ee2a6f",
+          "url": "https://github.com/NVIDIA/cuda-samples/blob/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/simpleVulkan/main.cpp",
+          "lines": 526
+        },
+        {
+          "path": "cpp/5_Domain_Specific/simpleD3D12/DX12CudaSample.cpp",
+          "sha256": "f8f91acc80ea62f3be860fc65d01f95fb9139fe9df11fe9652b04cdbe96de73e",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIA/cuda-samples/blob/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/simpleD3D12/DX12CudaSample.cpp",
+          "lines": 150
+        },
+        {
+          "path": "cpp/5_Domain_Specific/simpleD3D12/DX12CudaSample.h",
+          "sha256": "0fe59961bbcee8dac0e7dff94bdea2ef4939cbee718a6c533cbc4d7118a71478",
+          "local": "1.h",
+          "url": "https://github.com/NVIDIA/cuda-samples/blob/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/simpleD3D12/DX12CudaSample.h",
+          "lines": 102
+        },
+        {
+          "path": "cpp/5_Domain_Specific/simpleD3D12/sinewave_cuda.cu",
+          "sha256": "4132af17cc41ac877492a098dbbd861f495d533738666c38cf736e0bd4d58c79",
+          "local": "2.cu",
+          "url": "https://github.com/NVIDIA/cuda-samples/blob/5443602d89ed99aede2e4b7bf329daddeadb320e/cpp/5_Domain_Specific/simpleD3D12/sinewave_cuda.cu",
+          "lines": 71
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA__cuda-samples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA/cutlass",
+      "commit": "0b55a2f691d69981583568fd9eb69687b1f0de8a",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "tools/profiler/src/device_allocation.cu",
+      "source_url": "https://github.com/NVIDIA/cutlass/blob/0b55a2f691d69981583568fd9eb69687b1f0de8a/tools/profiler/src/device_allocation.cu",
+      "finding": "DeviceAllocation хранит owning device и переключает current CUDA device при освобождении. На нескольких GPU ordinal и lifetime allocation нужно связывать.",
+      "files": [
+        {
+          "path": "tools/profiler/src/device_allocation.cu",
+          "sha256": "65d6eb9a63facc660c60e336e0916590c68311b378dbc6e715bf2bc720f3b07c",
+          "local": "0.cu",
+          "url": "https://github.com/NVIDIA/cutlass/blob/0b55a2f691d69981583568fd9eb69687b1f0de8a/tools/profiler/src/device_allocation.cu",
+          "lines": 2880
+        },
+        {
+          "path": "tools/profiler/src/device_context.cu",
+          "sha256": "a14af3e7721a614022999e62a7b1f6c23f9e92bad7e61fecfbd720bcd3784c46",
+          "local": "1.cu",
+          "url": "https://github.com/NVIDIA/cutlass/blob/0b55a2f691d69981583568fd9eb69687b1f0de8a/tools/profiler/src/device_context.cu",
+          "lines": 298
+        },
+        {
+          "path": "tools/library/src/reduction/reduction_device.cu",
+          "sha256": "c1db506a79012aa5d354f959bde46e351dda33c9b52373ac3117b8701411a72f",
+          "local": "2.cu",
+          "url": "https://github.com/NVIDIA/cutlass/blob/0b55a2f691d69981583568fd9eb69687b1f0de8a/tools/library/src/reduction/reduction_device.cu",
+          "lines": 252
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA__cutlass",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA/thrust",
+      "commit": "756c5afc0750f1413da05bd2b6505180e84c53d4",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/cuda/global_device_vector.cu",
+      "source_url": "https://github.com/NVIDIA/thrust/blob/756c5afc0750f1413da05bd2b6505180e84c53d4/examples/cuda/global_device_vector.cu",
+      "finding": "Пример global vector специально обрабатывает deallocation после runtime shutdown. Это ограниченный shutdown workaround, не повод игнорировать обычные CUDA ошибки.",
+      "files": [
+        {
+          "path": "examples/cuda/global_device_vector.cu",
+          "sha256": "0c98d32f574d1dd4194d8bda6256b4fcac157698f8fef82fd2eed5f1275a3f99",
+          "local": "0.cu",
+          "url": "https://github.com/NVIDIA/thrust/blob/756c5afc0750f1413da05bd2b6505180e84c53d4/examples/cuda/global_device_vector.cu",
+          "lines": 46
+        },
+        {
+          "path": "examples/cuda/custom_temporary_allocation.cu",
+          "sha256": "a4807e728d5759dadf7a63c161eb80d149eb58d4f7c74d9b631311c9dd5b8230",
+          "local": "1.cu",
+          "url": "https://github.com/NVIDIA/thrust/blob/756c5afc0750f1413da05bd2b6505180e84c53d4/examples/cuda/custom_temporary_allocation.cu",
+          "lines": 184
+        },
+        {
+          "path": "testing/cuda/device_side_universal_vector.cu",
+          "sha256": "ef9e4613bbf48f329955f308b75fc08f46fadc30584a1f686e8cc31ff960f896",
+          "local": "2.cu",
+          "url": "https://github.com/NVIDIA/thrust/blob/756c5afc0750f1413da05bd2b6505180e84c53d4/testing/cuda/device_side_universal_vector.cu",
+          "lines": 84
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA__thrust",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIA/warp",
+      "commit": "fea3ebd1c823de2365ebe3bb1b55de98ffeb663d",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "warp/native/cuda_util.h",
+      "source_url": "https://github.com/NVIDIA/warp/blob/fea3ebd1c823de2365ebe3bb1b55de98ffeb663d/warp/native/cuda_util.h",
+      "finding": "CUDA timing macro создаёт и записывает events в указанном context/stream и исключает profiling во время stream capture. Измерения должны учитывать CUDA graph capture.",
+      "files": [
+        {
+          "path": "warp/native/cuda_util.h",
+          "local": "deep-3.h",
+          "sha256": "92b7421f4ef9ccb976af89dc15633d79cce4ef7fb317892fed7ce9fe10def11d",
+          "url": "https://github.com/NVIDIA/warp/blob/fea3ebd1c823de2365ebe3bb1b55de98ffeb663d/warp/native/cuda_util.h",
+          "lines": 438
+        },
+        {
+          "path": "warp/native/cuBQL/builder/cuda/gpu_builder.h",
+          "sha256": "fb7e799c022c6f57eef66e9c5783421454698bb51625051370a52ebf1aa4ea04",
+          "local": "0.h",
+          "url": "https://github.com/NVIDIA/warp/blob/fea3ebd1c823de2365ebe3bb1b55de98ffeb663d/warp/native/cuBQL/builder/cuda/gpu_builder.h",
+          "lines": 75
+        },
+        {
+          "path": "warp/native/cuBQL/builder/cuda/wide_gpu_builder.h",
+          "sha256": "b34f1a31a0583a65c1bae27b069b26c5854ca19bb98f14b87795cced8a445e2b",
+          "local": "1.h",
+          "url": "https://github.com/NVIDIA/warp/blob/fea3ebd1c823de2365ebe3bb1b55de98ffeb663d/warp/native/cuBQL/builder/cuda/wide_gpu_builder.h",
+          "lines": 220
+        },
+        {
+          "path": "warp/native/cuda_util.cpp",
+          "sha256": "79fd0bb5c16be3e3820d8258b28e144e23855216938c4c57f2b925f600dd62a4",
+          "local": "2.cpp",
+          "url": "https://github.com/NVIDIA/warp/blob/fea3ebd1c823de2365ebe3bb1b55de98ffeb663d/warp/native/cuda_util.cpp",
+          "lines": 1088
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIA__warp",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIAGameWorks/Blast",
+      "commit": "636e7eb43b8d41e44c40eb1b4799bfd027f17ba7",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "source/samples/SampleBase/renderer/Renderer.cpp",
+      "source_url": "https://github.com/NVIDIAGameWorks/Blast/blob/636e7eb43b8d41e44c40eb1b4799bfd027f17ba7/source/samples/SampleBase/renderer/Renderer.cpp",
+      "finding": "Sample renderer отдельно делает AO, debug draws и reload уникальных материалов. Просмотренная графика не подтверждает GPU fracture solver.",
+      "files": [
+        {
+          "path": "source/samples/SampleBase/renderer/Renderer.cpp",
+          "sha256": "6aa4ccb1c21d6a2d23c0e1a27366250e0188e9c6cd6db10af39a7a5a2d3b3930",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/Blast/blob/636e7eb43b8d41e44c40eb1b4799bfd027f17ba7/source/samples/SampleBase/renderer/Renderer.cpp",
+          "lines": 746
+        },
+        {
+          "path": "source/samples/SampleBase/renderer/Renderable.cpp",
+          "sha256": "9f823cbf373395e4ff5854c3de7fdd28623c914d8a03bf0bdc7f9c272385520e",
+          "local": "1.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/Blast/blob/636e7eb43b8d41e44c40eb1b4799bfd027f17ba7/source/samples/SampleBase/renderer/Renderable.cpp",
+          "lines": 66
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIAGameWorks__Blast",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIAGameWorks/donut",
+      "commit": "bd498ea39c35abbf764c10b6302ff3bbfee1ebb3",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/render/DLSS-DX12.cpp",
+      "source_url": "https://github.com/NVIDIAGameWorks/donut/blob/bd498ea39c35abbf764c10b6302ff3bbfee1ebb3/src/render/DLSS-DX12.cpp",
+      "finding": "DLSS DX12 integration задаёт texture states, commitBarriers и resetHistory/jitter inputs до исполнения. История и inputs требуют согласованного жизненного цикла.",
+      "files": [
+        {
+          "path": "src/render/DLSS-DX12.cpp",
+          "sha256": "bf6482f1b9ce452bb9c8e148149e52995a720dccc990b4a704238e13b6b885a6",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/donut/blob/bd498ea39c35abbf764c10b6302ff3bbfee1ebb3/src/render/DLSS-DX12.cpp",
+          "lines": 261
+        },
+        {
+          "path": "src/app/dx12/DeviceManager_DX12.cpp",
+          "sha256": "ff81ebca575b8508d9e36fba48cd2ff792a7a9ef1c595d3cbe80ac82d348663d",
+          "local": "1.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/donut/blob/bd498ea39c35abbf764c10b6302ff3bbfee1ebb3/src/app/dx12/DeviceManager_DX12.cpp",
+          "lines": 606
+        },
+        {
+          "path": "src/app/vulkan/DeviceManager_VK.cpp",
+          "sha256": "fbece707808945f30af77445516b45c0fad4a88ba2f63cdc8f1d5911dae83ae4",
+          "local": "2.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/donut/blob/bd498ea39c35abbf764c10b6302ff3bbfee1ebb3/src/app/vulkan/DeviceManager_VK.cpp",
+          "lines": 1413
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIAGameWorks__donut",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIAGameWorks/Falcor",
+      "commit": "759aad033ff610fb0d82c74f7e0a508d0096d5f2",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Source/Falcor/RenderGraph/RenderPass.cpp",
+      "source_url": "https://github.com/NVIDIAGameWorks/Falcor/blob/759aad033ff610fb0d82c74f7e0a508d0096d5f2/Source/Falcor/RenderGraph/RenderPass.cpp",
+      "finding": "RenderData связывает pass name, resource cache и defaults; исполнение скрыто в других модулях. Этот интерфейс полезен для контракта проходов, не доказательства scheduler.",
+      "files": [
+        {
+          "path": "Source/Falcor/RenderGraph/RenderPass.cpp",
+          "sha256": "bd4d6341601c9bb9ae87d94de2d0390067cfe4228e474ce1dc609e0a49110401",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/Falcor/blob/759aad033ff610fb0d82c74f7e0a508d0096d5f2/Source/Falcor/RenderGraph/RenderPass.cpp",
+          "lines": 61
+        },
+        {
+          "path": "Source/Falcor/RenderGraph/RenderGraph.cpp",
+          "sha256": "a941a2bd78e456da047437776aea29dc9b296c3ad400b7274d7a14f293a4fd72",
+          "local": "1.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/Falcor/blob/759aad033ff610fb0d82c74f7e0a508d0096d5f2/Source/Falcor/RenderGraph/RenderGraph.cpp",
+          "lines": 812
+        },
+        {
+          "path": "Source/Falcor/RenderGraph/RenderGraphIR.cpp",
+          "sha256": "85266e3767998eaf5029523c5ef7d44724290cecaa4a86d0ae970a632c4d3bfd",
+          "local": "2.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/Falcor/blob/759aad033ff610fb0d82c74f7e0a508d0096d5f2/Source/Falcor/RenderGraph/RenderGraphIR.cpp",
+          "lines": 102
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIAGameWorks__Falcor",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIAGameWorks/Flow",
+      "commit": "5f7db82d72bb7427ea09d14b50aaed276e553632",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "demo/DemoAppD3D12/computeContextD3D12.cpp",
+      "source_url": "https://github.com/NVIDIAGameWorks/Flow/blob/5f7db82d72bb7427ea09d14b50aaed276e553632/demo/DemoAppD3D12/computeContextD3D12.cpp",
+      "finding": "DX12 compute context создаёт/обновляет ресурсы и адаптирует NvFlow read/write views. Shared resource view требует согласованных native descriptors.",
+      "files": [
+        {
+          "path": "demo/DemoAppD3D12/computeContextD3D12.cpp",
+          "sha256": "a593982066cb044d3a72126edfa41675fc81bd6b2b7be7ec96fa81a4e13fa443",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/Flow/blob/5f7db82d72bb7427ea09d14b50aaed276e553632/demo/DemoAppD3D12/computeContextD3D12.cpp",
+          "lines": 858
+        },
+        {
+          "path": "demo/DemoAppD3D12/computeContextD3D12.h",
+          "sha256": "ac6323ea70a2538b9a0a25e36449f39ee0453b64fb22a5fdf54ceccf529919a6",
+          "local": "1.h",
+          "url": "https://github.com/NVIDIAGameWorks/Flow/blob/5f7db82d72bb7427ea09d14b50aaed276e553632/demo/DemoAppD3D12/computeContextD3D12.h",
+          "lines": 145
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIAGameWorks__Flow",
+      "tree_truncated": false
+    },
+    {
+      "repository": "NVIDIAGameWorks/nvrhi",
+      "commit": "de5defced491e9c6392098723a08f3fe135aaa3a",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/d3d12/d3d12-device.cpp",
+      "source_url": "https://github.com/NVIDIAGameWorks/nvrhi/blob/de5defced491e9c6392098723a08f3fe135aaa3a/src/d3d12/d3d12-device.cpp",
+      "finding": "DX12 device создаёт graphics/compute/copy queues и lifetime trackers, затем отдельно проверяет feature options. Queue topology и capability profile связаны.",
+      "files": [
+        {
+          "path": "src/d3d12/d3d12-device.cpp",
+          "sha256": "b7855c2a3a054af6df888d283f7c43b467858aa33d3c18a968a2bcf282cc4fa7",
+          "local": "0.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/nvrhi/blob/de5defced491e9c6392098723a08f3fe135aaa3a/src/d3d12/d3d12-device.cpp",
+          "lines": 1265
+        },
+        {
+          "path": "src/d3d12/d3d12-compute.cpp",
+          "sha256": "21c7b7251bd7652afbed035d60b3f44e1675624cb835c5a88d6282220f63b76e",
+          "local": "1.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/nvrhi/blob/de5defced491e9c6392098723a08f3fe135aaa3a/src/d3d12/d3d12-compute.cpp",
+          "lines": 183
+        },
+        {
+          "path": "src/vulkan/vulkan-device.cpp",
+          "sha256": "34340f97c327234a1dc6f02c0c1a7febb17243393640b26e8ffb2129a01c0ef7",
+          "local": "2.cpp",
+          "url": "https://github.com/NVIDIAGameWorks/nvrhi/blob/de5defced491e9c6392098723a08f3fe135aaa3a/src/vulkan/vulkan-device.cpp",
+          "lines": 873
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/NVIDIAGameWorks__nvrhi",
+      "tree_truncated": false
+    },
+    {
+      "repository": "nvpro-samples/nvpro_core",
+      "commit": "bc19d6ac3ef62938d0ea0e099735878457ce1b6e",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "nvvk/renderpasses_vk.cpp",
+      "source_url": "https://github.com/nvpro-samples/nvpro_core/blob/bc19d6ac3ef62938d0ea0e099735878457ce1b6e/nvvk/renderpasses_vk.cpp",
+      "finding": "Render-pass helper строит attachment formats, layouts и subpass dependencies. Pass description включает synchronization semantics.",
+      "files": [
+        {
+          "path": "nvvk/renderpasses_vk.cpp",
+          "sha256": "970ed2d771bd70e587396c2a6f8c4e6742a3fae387d77411c846118ad151f92c",
+          "local": "0.cpp",
+          "url": "https://github.com/nvpro-samples/nvpro_core/blob/bc19d6ac3ef62938d0ea0e099735878457ce1b6e/nvvk/renderpasses_vk.cpp",
+          "lines": 158
+        },
+        {
+          "path": "nvvk/dynamicrendering_vk.cpp",
+          "sha256": "393a97e4e006d90c824287c21c084fc5214bbe0528af8fdc363bf85306dfc204",
+          "local": "1.cpp",
+          "url": "https://github.com/nvpro-samples/nvpro_core/blob/bc19d6ac3ef62938d0ea0e099735878457ce1b6e/nvvk/dynamicrendering_vk.cpp",
+          "lines": 62
+        },
+        {
+          "path": "nvvk/memallocator_vk.cpp",
+          "sha256": "47831aea7959f02fa2764669ea4cd3974df7dab776cacec2ed0b570e9ff6f9c8",
+          "local": "2.cpp",
+          "url": "https://github.com/nvpro-samples/nvpro_core/blob/bc19d6ac3ef62938d0ea0e099735878457ce1b6e/nvvk/memallocator_vk.cpp",
+          "lines": 215
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/nvpro-samples__nvpro_core",
+      "tree_truncated": false
+    },
+    {
+      "repository": "nvpro-samples/vk_compute_mipmaps",
+      "commit": "6c248f554e91329875e9860f2258019a32b44ee9",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "include/make_compute_pipeline.hpp",
+      "source_url": "https://github.com/nvpro-samples/vk_compute_mipmaps/blob/6c248f554e91329875e9860f2258019a32b44ee9/include/make_compute_pipeline.hpp",
+      "finding": "Compute pipeline helper загружает SPIR-V, создаёт pipeline/layout и освобождает shader module после создания pipeline. Shader artifact и runtime object имеют разные lifetime.",
+      "files": [
+        {
+          "path": "include/make_compute_pipeline.hpp",
+          "sha256": "7f9c971b4ad86210d16845875bbe64cf6a976a3249fb5ce0c55afe9449ef672a",
+          "local": "0.hpp",
+          "url": "https://github.com/nvpro-samples/vk_compute_mipmaps/blob/6c248f554e91329875e9860f2258019a32b44ee9/include/make_compute_pipeline.hpp",
+          "lines": 118
+        },
+        {
+          "path": "demo_app/nvpro_pyramid_dispatch_alternative.cpp",
+          "sha256": "cf4ead2779a67d0ea59da950562d4d271c2f7278cd4b5ee3a8d078f7649fa604",
+          "local": "1.cpp",
+          "url": "https://github.com/nvpro-samples/vk_compute_mipmaps/blob/6c248f554e91329875e9860f2258019a32b44ee9/demo_app/nvpro_pyramid_dispatch_alternative.cpp",
+          "lines": 77
+        },
+        {
+          "path": "shaders/srgb.h",
+          "sha256": "8b7a00d1a51b9958a50417cf3b121dbf4765ecee88962eb378b6fb8de6442ddd",
+          "local": "2.h",
+          "url": "https://github.com/nvpro-samples/vk_compute_mipmaps/blob/6c248f554e91329875e9860f2258019a32b44ee9/shaders/srgb.h",
+          "lines": 73
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/nvpro-samples__vk_compute_mipmaps",
+      "tree_truncated": false
+    },
+    {
+      "repository": "nvpro-samples/vk_mini_samples",
+      "commit": "1ca74a9c2b459848fded141dc14392dcc9e88029",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "samples/compute_only/compute_only.cpp",
+      "source_url": "https://github.com/nvpro-samples/vk_mini_samples/blob/1ca74a9c2b459848fded141dc14392dcc9e88029/samples/compute_only/compute_only.cpp",
+      "finding": "Compute-only sample вычисляет group counts по render target size и dispatch-ит shader. Округление размеров и bounds checks нужно согласовывать.",
+      "files": [
+        {
+          "path": "samples/compute_only/compute_only.cpp",
+          "sha256": "6cc6a8c16ee85df4e420f12118f782714c3cd7b855720dc14b66cc3b8e866256",
+          "local": "0.cpp",
+          "url": "https://github.com/nvpro-samples/vk_mini_samples/blob/1ca74a9c2b459848fded141dc14392dcc9e88029/samples/compute_only/compute_only.cpp",
+          "lines": 261
+        },
+        {
+          "path": "samples/compute_multi_threaded/multi_threaded.cpp",
+          "sha256": "3e3ac288d8b74a069c84f0e630dc4a0d49280b9c396739fa74785b31bccf7a15",
+          "local": "1.cpp",
+          "url": "https://github.com/nvpro-samples/vk_mini_samples/blob/1ca74a9c2b459848fded141dc14392dcc9e88029/samples/compute_multi_threaded/multi_threaded.cpp",
+          "lines": 466
+        },
+        {
+          "path": "samples/compute_only/shaders/shaderio.h",
+          "sha256": "7f2f9aece9d31e515492d1cade8c534371b29e5ee040c6cce4aa8fc1140cba44",
+          "local": "2.h",
+          "url": "https://github.com/nvpro-samples/vk_mini_samples/blob/1ca74a9c2b459848fded141dc14392dcc9e88029/samples/compute_only/shaders/shaderio.h",
+          "lines": 41
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/nvpro-samples__vk_mini_samples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "nvpro-samples/vk_raytrace",
+      "commit": "1f5d00d5bbda01e65dac95202f59b2db9fb1bd2d",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/render_output.cpp",
+      "source_url": "https://github.com/nvpro-samples/vk_raytrace/blob/1f5d00d5bbda01e65dac95202f59b2db9fb1bd2d/src/render_output.cpp",
+      "finding": "RenderOutput выполняет fullscreen post pass, связывая tone-mapper constants и descriptors. Ray output можно использовать на GPU в последующем raster pass.",
+      "files": [
+        {
+          "path": "src/render_output.cpp",
+          "sha256": "357b5d5cbb2afe903f22569e397c99e8d374457e1ba6432736ec458b29c4fd9b",
+          "local": "0.cpp",
+          "url": "https://github.com/nvpro-samples/vk_raytrace/blob/1f5d00d5bbda01e65dac95202f59b2db9fb1bd2d/src/render_output.cpp",
+          "lines": 193
+        },
+        {
+          "path": "src/renderer.h",
+          "sha256": "db4793ccec89a94b3952d8699eceb55a3867dd52747521a64b200c157577b224",
+          "local": "1.h",
+          "url": "https://github.com/nvpro-samples/vk_raytrace/blob/1f5d00d5bbda01e65dac95202f59b2db9fb1bd2d/src/renderer.h",
+          "lines": 48
+        },
+        {
+          "path": "src/render_output.hpp",
+          "sha256": "42b5fac43809d4bd849d2687445760452c90690efcda4e2e680b83f5d19e3986",
+          "local": "2.hpp",
+          "url": "https://github.com/nvpro-samples/vk_raytrace/blob/1f5d00d5bbda01e65dac95202f59b2db9fb1bd2d/src/render_output.hpp",
+          "lines": 85
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/nvpro-samples__vk_raytrace",
+      "tree_truncated": false
+    },
+    {
+      "repository": "nvpro-samples/vk_raytracing_tutorial_KHR",
+      "commit": "952a1a8e8b85f25781db7014d4d2bda124435e79",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "raytrace_tutorial/13_callable_shader/13_callable_shader.cpp",
+      "source_url": "https://github.com/nvpro-samples/vk_raytracing_tutorial_KHR/blob/952a1a8e8b85f25781db7014d4d2bda124435e79/raytrace_tutorial/13_callable_shader/13_callable_shader.cpp",
+      "finding": "Callable-shader sample разделяет создание TLAS и update; helper прямо ожидает завершение build/update. Учебный blocking path не обещает async throughput.",
+      "files": [
+        {
+          "path": "raytrace_tutorial/13_callable_shader/13_callable_shader.cpp",
+          "sha256": "974a608e5ef6e08a474e95961ce3cd6ad3dc431c8a48bd3f9b1a38589a31a076",
+          "local": "0.cpp",
+          "url": "https://github.com/nvpro-samples/vk_raytracing_tutorial_KHR/blob/952a1a8e8b85f25781db7014d4d2bda124435e79/raytrace_tutorial/13_callable_shader/13_callable_shader.cpp",
+          "lines": 472
+        },
+        {
+          "path": "raytrace_tutorial/11_shader_execution_reorder/11_shader_execution_reorder.cpp",
+          "sha256": "77ede6dfa08075edf230077111cd05789212c29cd486c474676fc33f7fa15798",
+          "local": "1.cpp",
+          "url": "https://github.com/nvpro-samples/vk_raytracing_tutorial_KHR/blob/952a1a8e8b85f25781db7014d4d2bda124435e79/raytrace_tutorial/11_shader_execution_reorder/11_shader_execution_reorder.cpp",
+          "lines": 592
+        },
+        {
+          "path": "raytrace_tutorial/02_basic/shaders/shaderio.h",
+          "sha256": "3a589ff08a1edc52289be0b469e1249d349e22c8007ccacb9e475ee0e4f05f60",
+          "local": "2.h",
+          "url": "https://github.com/nvpro-samples/vk_raytracing_tutorial_KHR/blob/952a1a8e8b85f25781db7014d4d2bda124435e79/raytrace_tutorial/02_basic/shaders/shaderio.h",
+          "lines": 43
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/nvpro-samples__vk_raytracing_tutorial_KHR",
+      "tree_truncated": false
+    },
+    {
+      "repository": "OGRECave/ogre",
+      "commit": "4e06404ff4d4dafba52ac8b923fa5231de111136",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+      "source_url": "https://github.com/OGRECave/ogre/blob/4e06404ff4d4dafba52ac8b923fa5231de111136/RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+      "finding": "Vulkan texture path различает MSAA source и resolved target при copy/resolve. Нельзя считать MSAA texture обычным sampled image.",
+      "files": [
+        {
+          "path": "RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+          "sha256": "a6af9c4b780139516f33da7aba3f86a16eb63ad29a9ca395207e86547e7233db",
+          "local": "0.cpp",
+          "url": "https://github.com/OGRECave/ogre/blob/4e06404ff4d4dafba52ac8b923fa5231de111136/RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+          "lines": 743
+        },
+        {
+          "path": "RenderSystems/Vulkan/src/OgreVulkanTextureGpuWindow.cpp",
+          "sha256": "a3bd8225759c1720f32fd33066b68f792f0257951adb4ad6ea646f652bab7152",
+          "local": "1.cpp",
+          "url": "https://github.com/OGRECave/ogre/blob/4e06404ff4d4dafba52ac8b923fa5231de111136/RenderSystems/Vulkan/src/OgreVulkanTextureGpuWindow.cpp",
+          "lines": 88
+        },
+        {
+          "path": "RenderSystems/Vulkan/src/OgreVulkanTextureGpuManager.cpp",
+          "sha256": "2b57cf1039c6a48a919d6b65d9a16621c29ea571ad755c630aab6b454d4c7efd",
+          "local": "2.cpp",
+          "url": "https://github.com/OGRECave/ogre/blob/4e06404ff4d4dafba52ac8b923fa5231de111136/RenderSystems/Vulkan/src/OgreVulkanTextureGpuManager.cpp",
+          "lines": 205
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/OGRECave__ogre",
+      "tree_truncated": false
+    },
+    {
+      "repository": "OGRECave/ogre-next",
+      "commit": "475f783d76f21b530e718aab4a548cdd9a222e50",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+      "source_url": "https://github.com/OGRECave/ogre-next/blob/475f783d76f21b530e718aab4a548cdd9a222e50/RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+      "finding": "TextureGpu учитывает residency status; просмотренный copy path содержит TODO transitions. Полезна модель residency, но конкретный фрагмент не образец завершённой синхронизации.",
+      "files": [
+        {
+          "path": "RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+          "sha256": "8d053034b313dc938403dd5c84a8c7065498dfa8a1a35bc4159287d679349ae4",
+          "local": "0.cpp",
+          "url": "https://github.com/OGRECave/ogre-next/blob/475f783d76f21b530e718aab4a548cdd9a222e50/RenderSystems/Vulkan/src/OgreVulkanTextureGpu.cpp",
+          "lines": 1123
+        },
+        {
+          "path": "RenderSystems/Vulkan/src/OgreVulkanTextureGpuWindow.cpp",
+          "sha256": "ee53aa3c774720d1802f7bf31e4a00574e01641b1b1733b64d87a60eb244c374",
+          "local": "1.cpp",
+          "url": "https://github.com/OGRECave/ogre-next/blob/475f783d76f21b530e718aab4a548cdd9a222e50/RenderSystems/Vulkan/src/OgreVulkanTextureGpuWindow.cpp",
+          "lines": 148
+        },
+        {
+          "path": "RenderSystems/Vulkan/src/OgreVulkanGpuProgramManager.cpp",
+          "sha256": "30a6935a1ff33d47caec3f6917fa9ed2dc9ba9e40665353076d1c1b499f2539c",
+          "local": "2.cpp",
+          "url": "https://github.com/OGRECave/ogre-next/blob/475f783d76f21b530e718aab4a548cdd9a222e50/RenderSystems/Vulkan/src/OgreVulkanGpuProgramManager.cpp",
+          "lines": 276
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/OGRECave__ogre-next",
+      "tree_truncated": false
+    },
+    {
+      "repository": "OpenMW/openmw",
+      "commit": "75da08331a1d30db612529f4630bc757e427038f",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "apps/openmw/mwrender/sky.cpp",
+      "source_url": "https://github.com/OpenMW/openmw/blob/75da08331a1d30db612529f4630bc757e427038f/apps/openmw/mwrender/sky.cpp",
+      "finding": "Sky material получает shader по DefineMap, включая stereo properties; изменение particle state вызывает recreation shaders. Pass/material варианты связаны с кэшем.",
+      "files": [
+        {
+          "path": "apps/openmw/mwrender/sky.cpp",
+          "sha256": "387e560db099ee1c3f02b60be91fc7201f65a9dd55e529bf43a9e890e92881c0",
+          "local": "0.cpp",
+          "url": "https://github.com/OpenMW/openmw/blob/75da08331a1d30db612529f4630bc757e427038f/apps/openmw/mwrender/sky.cpp",
+          "lines": 962
+        },
+        {
+          "path": "apps/openmw/mwrender/util.cpp",
+          "sha256": "b8832957b3eaadba2849e2195240da25823ccf57245d44196b316ec8b5fd48b7",
+          "local": "1.cpp",
+          "url": "https://github.com/OpenMW/openmw/blob/75da08331a1d30db612529f4630bc757e427038f/apps/openmw/mwrender/util.cpp",
+          "lines": 79
+        },
+        {
+          "path": "apps/openmw/mwrender/water.cpp",
+          "sha256": "ab1abc6f0ff70b1ef6e2d3e3d001452c0482b27fe6e47f0f30f8d0ef6a6c9b28",
+          "local": "2.cpp",
+          "url": "https://github.com/OpenMW/openmw/blob/75da08331a1d30db612529f4630bc757e427038f/apps/openmw/mwrender/water.cpp",
+          "lines": 778
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/OpenMW__openmw",
+      "tree_truncated": false
+    },
+    {
+      "repository": "phaserjs/phaser",
+      "commit": "02d8931b626d9764c133cbb3fbf99966c03c757c",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/tilemaps/TilemapGPULayerWebGLRenderer.js",
+      "source_url": "https://github.com/phaserjs/phaser/blob/02d8931b626d9764c133cbb3fbf99966c03c757c/src/tilemaps/TilemapGPULayerWebGLRenderer.js",
+      "finding": "TilemapGPULayerWebGLRenderer выбирает custom/default submitter node и вызывает его run. Это простой WebGL render путь, не общий compute путь.",
+      "files": [
+        {
+          "path": "src/tilemaps/TilemapGPULayerRender.js",
+          "sha256": "d559c8bcfc40bc6386f71b6f2aa4b05b4b4fbe25e094488d54a699afbd0e8f9f",
+          "local": "0.js",
+          "url": "https://github.com/phaserjs/phaser/blob/02d8931b626d9764c133cbb3fbf99966c03c757c/src/tilemaps/TilemapGPULayerRender.js",
+          "lines": 21
+        },
+        {
+          "path": "src/gameobjects/graphics/GraphicsRender.js",
+          "sha256": "2e1ef258842646fb6cecfaa2a7708ede3ddbe5e0eccec09c90132955b855267f",
+          "local": "1.js",
+          "url": "https://github.com/phaserjs/phaser/blob/02d8931b626d9764c133cbb3fbf99966c03c757c/src/gameobjects/graphics/GraphicsRender.js",
+          "lines": 29
+        },
+        {
+          "path": "src/tilemaps/TilemapGPULayerWebGLRenderer.js",
+          "sha256": "d3a26545182b8893510087131cd43b1c5e691276ba8ed1ff0903ed49b2bba2ba",
+          "local": "2.js",
+          "url": "https://github.com/phaserjs/phaser/blob/02d8931b626d9764c133cbb3fbf99966c03c757c/src/tilemaps/TilemapGPULayerWebGLRenderer.js",
+          "lines": 32
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/phaserjs__phaser",
+      "tree_truncated": false
+    },
+    {
+      "repository": "pixijs/pixijs",
+      "commit": "5b41ee37fd36c61e089113345a8f12cf1c3323cf",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/rendering/renderers/gpu/GpuDeviceSystem.ts",
+      "source_url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/rendering/renderers/gpu/GpuDeviceSystem.ts",
+      "finding": "GpuDeviceSystem восстанавливает только собственный device, уведомляет contextChange и учитывает уничтожение renderer во время async recreation.",
+      "files": [
+        {
+          "path": "src/rendering/renderers/gpu/GpuDeviceSystem.ts",
+          "sha256": "cb4dacf9f2bdcbb1b15ccbc0b18be4264540cbc67652502c91d73817b9ae8876",
+          "local": "0.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/rendering/renderers/gpu/GpuDeviceSystem.ts",
+          "lines": 219
+        },
+        {
+          "path": "src/rendering/renderers/gpu/__tests__/GpuDeviceSystem.test.ts",
+          "sha256": "f508df7b28ac4b68d7535a732e49d3ea511741ff08707bde80bbee02bfb70694",
+          "local": "1.ts",
+          "url": "https://github.com/pixijs/pixijs/blob/5b41ee37fd36c61e089113345a8f12cf1c3323cf/src/rendering/renderers/gpu/__tests__/GpuDeviceSystem.test.ts",
+          "lines": 91
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/pixijs__pixijs",
+      "tree_truncated": false
+    },
+    {
+      "repository": "playcanvas/engine",
+      "commit": "b9cd8470860b09ff8bd020e0c360a1fb2706fa44",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/platform/graphics/webgpu/webgpu-render-target.js",
+      "source_url": "https://github.com/playcanvas/engine/blob/b9cd8470860b09ff8bd020e0c360a1fb2706fa44/src/platform/graphics/webgpu/webgpu-render-target.js",
+      "finding": "WebGPU render target проверяет clear values integer formats и собирает descriptor для прохода. Формат attachment влияет на корректность pipeline.",
+      "files": [
+        {
+          "path": "src/platform/graphics/webgpu/webgpu-render-target.js",
+          "sha256": "614444886662450fc46c2266cf7566cad4b649115f5737d5b104a7df88c6a69b",
+          "local": "0.js",
+          "url": "https://github.com/playcanvas/engine/blob/b9cd8470860b09ff8bd020e0c360a1fb2706fa44/src/platform/graphics/webgpu/webgpu-render-target.js",
+          "lines": 659
+        },
+        {
+          "path": "src/platform/graphics/webgpu/webgpu-clear-renderer.js",
+          "sha256": "3d51f91589b18383765076724759f8b7bbe13a316aee09c28cc11e7d692a7625",
+          "local": "1.js",
+          "url": "https://github.com/playcanvas/engine/blob/b9cd8470860b09ff8bd020e0c360a1fb2706fa44/src/platform/graphics/webgpu/webgpu-clear-renderer.js",
+          "lines": 132
+        },
+        {
+          "path": "src/platform/graphics/webgpu/webgpu-mipmap-renderer.js",
+          "sha256": "e926822a93e6fb984a8ceca02fb711e1e896587944f53044194ae357fd4f7d34",
+          "local": "2.js",
+          "url": "https://github.com/playcanvas/engine/blob/b9cd8470860b09ff8bd020e0c360a1fb2706fa44/src/platform/graphics/webgpu/webgpu-mipmap-renderer.js",
+          "lines": 167
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/playcanvas__engine",
+      "tree_truncated": false
+    },
+    {
+      "repository": "raysan5/raylib",
+      "commit": "987a0e54c7ab1bdab459989b319a9064bb088b69",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/core/core_render_texture.c",
+      "source_url": "https://github.com/raysan5/raylib/blob/987a0e54c7ab1bdab459989b319a9064bb088b69/examples/core/core_render_texture.c",
+      "finding": "Render-texture пример отделяет offscreen drawing, screen drawing и UnloadRenderTexture. Подходит как минимальная проверка render-to-texture.",
+      "files": [
+        {
+          "path": "examples/core/core_render_texture.c",
+          "sha256": "687e2bf058ecd770eac026bed850736b42cddc9f334548ad9b20970f477b2645",
+          "local": "0.c",
+          "url": "https://github.com/raysan5/raylib/blob/987a0e54c7ab1bdab459989b319a9064bb088b69/examples/core/core_render_texture.c",
+          "lines": 102
+        },
+        {
+          "path": "examples/models/models_point_rendering.c",
+          "sha256": "61f517c91f029d33406c11277f7904c5feccc5ab73b54e14566976da2346d0f9",
+          "local": "1.c",
+          "url": "https://github.com/raysan5/raylib/blob/987a0e54c7ab1bdab459989b319a9064bb088b69/examples/models/models_point_rendering.c",
+          "lines": 215
+        },
+        {
+          "path": "examples/shaders/shaders_fog_rendering.c",
+          "sha256": "2d70a3c172e8f532e95ad7406e5a39edd4c0f0968f48e3a75dcffba7203e702d",
+          "local": "2.c",
+          "url": "https://github.com/raysan5/raylib/blob/987a0e54c7ab1bdab459989b319a9064bb088b69/examples/shaders/shaders_fog_rendering.c",
+          "lines": 162
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/raysan5__raylib",
+      "tree_truncated": false
+    },
+    {
+      "repository": "rbfx/rbfx",
+      "commit": "2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Source/Urho3D/Graphics/Renderer.cpp",
+      "source_url": "https://github.com/rbfx/rbfx/blob/2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3/Source/Urho3D/Graphics/Renderer.cpp",
+      "finding": "Renderer ставит render surfaces/viewports в очередь и выполняет обновление через render event. Это организационный слой кадров, не отдельный GPU solver.",
+      "files": [
+        {
+          "path": "Source/Urho3D/Graphics/Renderer.cpp",
+          "sha256": "cb6533f73c39c556da4fe45e38f379c54aa5479af4471ab6313df296b1913c88",
+          "local": "0.cpp",
+          "url": "https://github.com/rbfx/rbfx/blob/2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3/Source/Urho3D/Graphics/Renderer.cpp",
+          "lines": 759
+        },
+        {
+          "path": "Source/Urho3D/Graphics/DebugRenderer.cpp",
+          "sha256": "6018a16bd482794100a63e4a3bb6312452819c6f501cf10ffe18c4547bdd29c3",
+          "local": "1.cpp",
+          "url": "https://github.com/rbfx/rbfx/blob/2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3/Source/Urho3D/Graphics/DebugRenderer.cpp",
+          "lines": 787
+        },
+        {
+          "path": "Source/Urho3D/Graphics/RenderSurface.cpp",
+          "sha256": "319aee779ef627085ecd2652d622fbb200b1fbb7fd6e6f2a985e967ff68458ae",
+          "local": "2.cpp",
+          "url": "https://github.com/rbfx/rbfx/blob/2d0f89a53d8a2fe6792a24e064b7ed6b0688c4c3/Source/Urho3D/Graphics/RenderSurface.cpp",
+          "lines": 156
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/rbfx__rbfx",
+      "tree_truncated": false
+    },
+    {
+      "repository": "SaschaWillems/Vulkan",
+      "commit": "41a4410243fca7640a2dd0115a5ff5cb9a29494b",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "base/VulkanDevice.cpp",
+      "source_url": "https://github.com/SaschaWillems/Vulkan/blob/41a4410243fca7640a2dd0115a5ff5cb9a29494b/base/VulkanDevice.cpp",
+      "finding": "VulkanDevice запрашивает memory requirements, memory type и device-address flags; depth format выбирается по format properties.",
+      "files": [
+        {
+          "path": "base/VulkanDevice.cpp",
+          "sha256": "aaa47a7fd311fb82b9645b2ca219f0c3d582f0bc13ac302157aff445d27af5b8",
+          "local": "0.cpp",
+          "url": "https://github.com/SaschaWillems/Vulkan/blob/41a4410243fca7640a2dd0115a5ff5cb9a29494b/base/VulkanDevice.cpp",
+          "lines": 597
+        },
+        {
+          "path": "base/VulkanDevice.h",
+          "sha256": "1dd054d5e9cbbd1aa02f249820c48a01d91024b56862b241b47f28e72ac141e4",
+          "local": "1.h",
+          "url": "https://github.com/SaschaWillems/Vulkan/blob/41a4410243fca7640a2dd0115a5ff5cb9a29494b/base/VulkanDevice.h",
+          "lines": 69
+        },
+        {
+          "path": "examples/renderheadless/renderheadless.cpp",
+          "sha256": "3353eaf467e223bbc34eb6a9d41d16a0d02cb7dac17d8d6909d6219f0e810d64",
+          "local": "2.cpp",
+          "url": "https://github.com/SaschaWillems/Vulkan/blob/41a4410243fca7640a2dd0115a5ff5cb9a29494b/examples/renderheadless/renderheadless.cpp",
+          "lines": 972
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/SaschaWillems__Vulkan",
+      "tree_truncated": false
+    },
+    {
+      "repository": "SaschaWillems/Vulkan-glTF-PBR",
+      "commit": "128db90d18c9a68294ee845f9d7e779fbba8dc74",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "base/VulkanDevice.hpp",
+      "source_url": "https://github.com/SaschaWillems/Vulkan-glTF-PBR/blob/128db90d18c9a68294ee845f9d7e779fbba8dc74/base/VulkanDevice.hpp",
+      "finding": "Device helper выбирает queue families и portability subset; upload helper ждёт fence до освобождения command buffer. Blocking upload нужно отделять от frame path.",
+      "files": [
+        {
+          "path": "base/VulkanDevice.hpp",
+          "sha256": "a23a0a84c832f5380639b00cf3b94c819c50956a83adc70993b4cdd55f16f111",
+          "local": "0.hpp",
+          "url": "https://github.com/SaschaWillems/Vulkan-glTF-PBR/blob/128db90d18c9a68294ee845f9d7e779fbba8dc74/base/VulkanDevice.hpp",
+          "lines": 404
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/SaschaWillems__Vulkan-glTF-PBR",
+      "tree_truncated": false
+    },
+    {
+      "repository": "shader-slang/slang",
+      "commit": "c43281adccb020c09a5ae4d2001c146e85278c65",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "tools/gfx/vulkan/vk-render-pass.cpp",
+      "source_url": "https://github.com/shader-slang/slang/blob/c43281adccb020c09a5ae4d2001c146e85278c65/tools/gfx/vulkan/vk-render-pass.cpp",
+      "finding": "Vulkan render-pass object создаётся по layout description с load/store и уничтожается владельцем. Это runtime layer компиляторного проекта.",
+      "files": [
+        {
+          "path": "tools/gfx/vulkan/vk-render-pass.cpp",
+          "sha256": "4aa93c813a14c812256aa7db275911651fe29697081bc3daa6beb89067461a51",
+          "local": "0.cpp",
+          "url": "https://github.com/shader-slang/slang/blob/c43281adccb020c09a5ae4d2001c146e85278c65/tools/gfx/vulkan/vk-render-pass.cpp",
+          "lines": 90
+        },
+        {
+          "path": "tools/gfx/d3d12/d3d12-render-pass.cpp",
+          "sha256": "61dcca9d6318a62e696390576c83a9e6e208e1d8b06f52dae8c66a54c64b413c",
+          "local": "1.cpp",
+          "url": "https://github.com/shader-slang/slang/blob/c43281adccb020c09a5ae4d2001c146e85278c65/tools/gfx/d3d12/d3d12-render-pass.cpp",
+          "lines": 19
+        },
+        {
+          "path": "tools/gfx/metal/metal-render-pass.cpp",
+          "sha256": "8e56b7f3529bc8c367716a8ba22b944b62664ed83d7505daf43087d04d73864f",
+          "local": "2.cpp",
+          "url": "https://github.com/shader-slang/slang/blob/c43281adccb020c09a5ae4d2001c146e85278c65/tools/gfx/metal/metal-render-pass.cpp",
+          "lines": 84
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/shader-slang__slang",
+      "tree_truncated": false
+    },
+    {
+      "repository": "shader-slang/slang-rhi",
+      "commit": "0bd799a7c04ea7dc5597ff811fb08fdb1b6fab43",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/cuda/cuda-device.cpp",
+      "source_url": "https://github.com/shader-slang/slang-rhi/blob/0bd799a7c04ea7dc5597ff811fb08fdb1b6fab43/src/cuda/cuda-device.cpp",
+      "finding": "CUDA device формирует capabilities из compute capability и явно push/pop CUDA context. Backend должен иметь точные device/context contracts.",
+      "files": [
+        {
+          "path": "src/cuda/cuda-device.cpp",
+          "sha256": "f650aa29845d015d0b5d02ff4e407fdae65d834b5d6fe8a1f51e1c4d19be1556",
+          "local": "0.cpp",
+          "url": "https://github.com/shader-slang/slang-rhi/blob/0bd799a7c04ea7dc5597ff811fb08fdb1b6fab43/src/cuda/cuda-device.cpp",
+          "lines": 754
+        },
+        {
+          "path": "src/vulkan/vk-device.cpp",
+          "sha256": "9d37a07cecac9077c826f76c9570cc763c23be11fad3f42b64f53011a00e58ac",
+          "local": "1.cpp",
+          "url": "https://github.com/shader-slang/slang-rhi/blob/0bd799a7c04ea7dc5597ff811fb08fdb1b6fab43/src/vulkan/vk-device.cpp",
+          "lines": 2709
+        },
+        {
+          "path": "src/wgpu/wgpu-device.cpp",
+          "sha256": "ea00c0cc5f94eed58dfd3e85a45feeb4251b80fa855ac7daf77fa1cfdfd0df13",
+          "local": "2.cpp",
+          "url": "https://github.com/shader-slang/slang-rhi/blob/0bd799a7c04ea7dc5597ff811fb08fdb1b6fab43/src/wgpu/wgpu-device.cpp",
+          "lines": 597
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/shader-slang__slang-rhi",
+      "tree_truncated": false
+    },
+    {
+      "repository": "stride3d/stride",
+      "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "sources/engine/Stride.Graphics/Vulkan/BarrierMapping.Vulkan.cs",
+      "source_url": "https://github.com/stride3d/stride/blob/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Graphics/Vulkan/BarrierMapping.Vulkan.cs",
+      "finding": "BarrierMapping сопоставляет общие barrier layouts с VkImageLayout в обе стороны. Полезна переносимая семантика доступа вместо API-specific чисел.",
+      "files": [
+        {
+          "path": "sources/engine/Stride.Graphics/Vulkan/BarrierMapping.Vulkan.cs",
+          "sha256": "cdb3f0e6153746550a8efced00f00e5885565e283ed30db8a530d555943e9a1b",
+          "local": "0.cs",
+          "url": "https://github.com/stride3d/stride/blob/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Graphics/Vulkan/BarrierMapping.Vulkan.cs",
+          "lines": 89
+        },
+        {
+          "path": "sources/engine/Stride.Graphics/Vulkan/GraphicsDevice.Vulkan.cs",
+          "sha256": "0ca87db7d927e8dee71f666c1d0b3bba0478f6657bcbea1997688d4f6ab24837",
+          "local": "1.cs",
+          "url": "https://github.com/stride3d/stride/blob/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Graphics/Vulkan/GraphicsDevice.Vulkan.cs",
+          "lines": 1391
+        },
+        {
+          "path": "sources/engine/Stride.Graphics/Vulkan/GraphicsDeviceFeatures.Vulkan.cs",
+          "sha256": "813add19d597eef33d8d2cf4c21f83d3e3c0db1943eb09d23147e4c09dbbfcce",
+          "local": "2.cs",
+          "url": "https://github.com/stride3d/stride/blob/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Graphics/Vulkan/GraphicsDeviceFeatures.Vulkan.cs",
+          "lines": 108
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/stride3d__stride",
+      "tree_truncated": false
+    },
+    {
+      "repository": "TheCherno/Hazel",
+      "commit": "1feb70572fa87fa1c4ba784a2cfeada5b4a500db",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Hazel/src/Hazel/Renderer/GraphicsContext.cpp",
+      "source_url": "https://github.com/TheCherno/Hazel/blob/1feb70572fa87fa1c4ba784a2cfeada5b4a500db/Hazel/src/Hazel/Renderer/GraphicsContext.cpp",
+      "finding": "GraphicsContext factory в просмотренной версии реализует OpenGL и отвергает неизвестные API. Наличие общего renderer interface не доказывает множество backend.",
+      "files": [
+        {
+          "path": "Hazel/src/Hazel/Renderer/GraphicsContext.cpp",
+          "sha256": "228e9bb82799a3dd49bc06ec265b8899a93262ad81b972170ac904b949d39bec",
+          "local": "0.cpp",
+          "url": "https://github.com/TheCherno/Hazel/blob/1feb70572fa87fa1c4ba784a2cfeada5b4a500db/Hazel/src/Hazel/Renderer/GraphicsContext.cpp",
+          "lines": 21
+        },
+        {
+          "path": "Hazel/src/Platform/OpenGL/OpenGLRendererAPI.cpp",
+          "sha256": "e90edc3e06e64b0f4d2fd1722ada6ff3fce8f0ec2323f79883469154ab49a45c",
+          "local": "1.cpp",
+          "url": "https://github.com/TheCherno/Hazel/blob/1feb70572fa87fa1c4ba784a2cfeada5b4a500db/Hazel/src/Platform/OpenGL/OpenGLRendererAPI.cpp",
+          "lines": 80
+        },
+        {
+          "path": "Hazel/src/Platform/OpenGL/OpenGLRendererAPI.h",
+          "sha256": "da9e529fab44365b54c244fa34698fc5a2e19b2b1323ee5c828f480069cff5d1",
+          "local": "2.h",
+          "url": "https://github.com/TheCherno/Hazel/blob/1feb70572fa87fa1c4ba784a2cfeada5b4a500db/Hazel/src/Platform/OpenGL/OpenGLRendererAPI.h",
+          "lines": 23
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/TheCherno__Hazel",
+      "tree_truncated": false
+    },
+    {
+      "repository": "Traverse-Research/gpu-allocator",
+      "commit": "5d8be6b0b68376d12c392a822fcee89ec22e995b",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/vulkan/mod.rs",
+      "source_url": "https://github.com/Traverse-Research/gpu-allocator/blob/5d8be6b0b68376d12c392a822fcee89ec22e995b/src/vulkan/mod.rs",
+      "finding": "Vulkan allocator запрашивает physical memory properties и отдельно суммирует capacity blocks и allocated bytes. Это разные метрики бюджета.",
+      "files": [
+        {
+          "path": "src/vulkan/mod.rs",
+          "local": "deep-3.rs",
+          "sha256": "bdbdc472492800597b4c00f95ccc57fe4cd3ba6ce18d9a12021511ce6f11ccb6",
+          "url": "https://github.com/Traverse-Research/gpu-allocator/blob/5d8be6b0b68376d12c392a822fcee89ec22e995b/src/vulkan/mod.rs",
+          "lines": 1004
+        },
+        {
+          "path": "src/visualizer/allocation_reports.rs",
+          "sha256": "4ff36ff39c17d31864061b12230724536393d7bffb8f1f359019bbf22ed6553f",
+          "local": "0.rs",
+          "url": "https://github.com/Traverse-Research/gpu-allocator/blob/5d8be6b0b68376d12c392a822fcee89ec22e995b/src/visualizer/allocation_reports.rs",
+          "lines": 141
+        },
+        {
+          "path": "src/allocator/free_list_allocator/visualizer.rs",
+          "sha256": "46214d07285d72a0a29c8d7e76322243853eba7d25d87ebfbb17c75e7815d07f",
+          "local": "1.rs",
+          "url": "https://github.com/Traverse-Research/gpu-allocator/blob/5d8be6b0b68376d12c392a822fcee89ec22e995b/src/allocator/free_list_allocator/visualizer.rs",
+          "lines": 25
+        },
+        {
+          "path": "src/allocator/mod.rs",
+          "sha256": "1ff11ec74868c2ce656de003dfe41278dab737d3eda86045bce9d13f9336ecbb",
+          "local": "2.rs",
+          "url": "https://github.com/Traverse-Research/gpu-allocator/blob/5d8be6b0b68376d12c392a822fcee89ec22e995b/src/allocator/mod.rs",
+          "lines": 169
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/Traverse-Research__gpu-allocator",
+      "tree_truncated": false
+    },
+    {
+      "repository": "Unity-Technologies/arfoundation-samples",
+      "commit": "16489599d11baf15548b1d8b632bc455c65e07ca",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Assets/Scripts/Runtime/ARHandsRenderer.cs",
+      "source_url": "https://github.com/Unity-Technologies/arfoundation-samples/blob/16489599d11baf15548b1d8b632bc455c65e07ca/Assets/Scripts/Runtime/ARHandsRenderer.cs",
+      "finding": "AR hand view factory выбирается по XR session descriptor и ограничивает поддерживаемые варианты. XR-capability должна проверяться при запуске session.",
+      "files": [
+        {
+          "path": "Assets/Scripts/Runtime/ARHandsRenderer.cs",
+          "sha256": "39b947724560ae18cea19a6126789d59c16f2efaeeb573ef02b84f63988ac1c9",
+          "local": "0.cs",
+          "url": "https://github.com/Unity-Technologies/arfoundation-samples/blob/16489599d11baf15548b1d8b632bc455c65e07ca/Assets/Scripts/Runtime/ARHandsRenderer.cs",
+          "lines": 116
+        },
+        {
+          "path": "Assets/Scripts/Runtime/UI/CheckRenderLine.cs",
+          "sha256": "f83ff821d1a439aa5ac5ff0ca6da7ae82154af25c33e118f6b9bcf24bbdfe7ed",
+          "local": "1.cs",
+          "url": "https://github.com/Unity-Technologies/arfoundation-samples/blob/16489599d11baf15548b1d8b632bc455c65e07ca/Assets/Scripts/Runtime/UI/CheckRenderLine.cs",
+          "lines": 70
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/Unity-Technologies__arfoundation-samples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "Unity-Technologies/EntityComponentSystemSamples",
+      "commit": "6786a741ee1f118ed14cecfa02beae8e926937b0",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "GraphicsSamples/URPSamples/Assets/SampleScenes/4. API Examples/RenderMeshUtilityExample/SceneAssets/AddComponentsExample.cs",
+      "source_url": "https://github.com/Unity-Technologies/EntityComponentSystemSamples/blob/6786a741ee1f118ed14cecfa02beae8e926937b0/GraphicsSamples/URPSamples/Assets/SampleScenes/4. API Examples/RenderMeshUtilityExample/SceneAssets/AddComponentsExample.cs",
+      "finding": "RenderMeshUtility prototype содержит общие mesh/material data, новые entities создаются cloning job. Инстансинг требует стабильного разделяемого render описания.",
+      "files": [
+        {
+          "path": "GraphicsSamples/URPSamples/Assets/SampleScenes/4. API Examples/RenderMeshUtilityExample/SceneAssets/AddComponentsExample.cs",
+          "sha256": "2396584c32e28d70670b63af9dd092191ec73e23c5d3cbc41ab4b2ead381cee8",
+          "local": "0.cs",
+          "url": "https://github.com/Unity-Technologies/EntityComponentSystemSamples/blob/6786a741ee1f118ed14cecfa02beae8e926937b0/GraphicsSamples/URPSamples/Assets/SampleScenes/4. API Examples/RenderMeshUtilityExample/SceneAssets/AddComponentsExample.cs",
+          "lines": 118
+        },
+        {
+          "path": "GraphicsSamples/HDRPSamples/Assets/SampleScenes/4. API Examples/RenderMeshUtilityExample/SceneAssets/AddComponentsExample.cs",
+          "sha256": "d4f381593b517675c4b857b8742efb2e92d9f900ee3ced3a81bc6891313b6b55",
+          "local": "1.cs",
+          "url": "https://github.com/Unity-Technologies/EntityComponentSystemSamples/blob/6786a741ee1f118ed14cecfa02beae8e926937b0/GraphicsSamples/HDRPSamples/Assets/SampleScenes/4. API Examples/RenderMeshUtilityExample/SceneAssets/AddComponentsExample.cs",
+          "lines": 121
+        },
+        {
+          "path": "NetcodeSamples/Assets/RenderGraphAutoAdoption.cs",
+          "sha256": "8551c24406537e9b4e706bb830234860f8670c5939c5fe00c3465beea7375d4e",
+          "local": "2.cs",
+          "url": "https://github.com/Unity-Technologies/EntityComponentSystemSamples/blob/6786a741ee1f118ed14cecfa02beae8e926937b0/NetcodeSamples/Assets/RenderGraphAutoAdoption.cs",
+          "lines": 51
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/Unity-Technologies__EntityComponentSystemSamples",
+      "tree_truncated": false
+    },
+    {
+      "repository": "Unity-Technologies/Graphics",
+      "commit": "a7e4c051d256a781ab362c64316b125a1e104694",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentDrawer.cs",
+      "source_url": "https://github.com/Unity-Technologies/Graphics/blob/a7e4c051d256a781ab362c64316b125a1e104694/Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentDrawer.cs",
+      "finding": "GPUResidentDrawer связывает culling/context/frame update; compile-time disabled ветка содержит пустые stubs. Имя GPUResident само по себе не подтверждает активный путь.",
+      "files": [
+        {
+          "path": "Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentDrawer.cs",
+          "sha256": "a03b771e6bc0fa608a5eb50951ca13812db6f5b0b9b4481f13adbbd4e1256d0b",
+          "local": "0.cs",
+          "url": "https://github.com/Unity-Technologies/Graphics/blob/a7e4c051d256a781ab362c64316b125a1e104694/Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentDrawer.cs",
+          "lines": 718
+        },
+        {
+          "path": "Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentContext.cs",
+          "sha256": "c077d3b5496581d23df988a4d5069bca440a1fd4226c6414dadfa8253cfedf21",
+          "local": "1.cs",
+          "url": "https://github.com/Unity-Technologies/Graphics/blob/a7e4c051d256a781ab362c64316b125a1e104694/Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentContext.cs",
+          "lines": 55
+        },
+        {
+          "path": "Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentDrawerTypes.cs",
+          "sha256": "49094a294305b8169399e554bbee2a3e88b498ba5607ce895381772d51202908",
+          "local": "2.cs",
+          "url": "https://github.com/Unity-Technologies/Graphics/blob/a7e4c051d256a781ab362c64316b125a1e104694/Packages/com.unity.render-pipelines.core/Runtime/GPUDriven/GPUResidentDrawerTypes.cs",
+          "lines": 146
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/Unity-Technologies__Graphics",
+      "tree_truncated": true
+    },
+    {
+      "repository": "urho3d/Urho3D",
+      "commit": "e0ce107356b255bf2e24d94a41d00b512b9ce633",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "Source/Urho3D/GraphicsAPI/OpenGL/OGLRenderSurface.cpp",
+      "source_url": "https://github.com/urho3d/Urho3D/blob/e0ce107356b255bf2e24d94a41d00b512b9ce633/Source/Urho3D/GraphicsAPI/OpenGL/OGLRenderSurface.cpp",
+      "finding": "OGL render surface обрабатывает device loss и убирает attachment из активных и кэшированных FBO. Recovery затрагивает зависимые объекты.",
+      "files": [
+        {
+          "path": "Source/Urho3D/GraphicsAPI/OpenGL/OGLRenderSurface.cpp",
+          "sha256": "5c7075d40bc38c646fc441cb44e51d2e5ab0640cef348cf44b3ebe5692a891ed",
+          "local": "0.cpp",
+          "url": "https://github.com/urho3d/Urho3D/blob/e0ce107356b255bf2e24d94a41d00b512b9ce633/Source/Urho3D/GraphicsAPI/OpenGL/OGLRenderSurface.cpp",
+          "lines": 121
+        },
+        {
+          "path": "Source/Urho3D/Graphics/Renderer.cpp",
+          "sha256": "00476b1f6c1eaec679691ac159724c89934edc99385b4eaf9329db79e54d689a",
+          "local": "1.cpp",
+          "url": "https://github.com/urho3d/Urho3D/blob/e0ce107356b255bf2e24d94a41d00b512b9ce633/Source/Urho3D/Graphics/Renderer.cpp",
+          "lines": 2007
+        },
+        {
+          "path": "Source/Urho3D/Graphics/RenderPath.cpp",
+          "sha256": "c81a007f42e0966db40612f348aff02ad79305207045bc86a4b9f0f9e17a5455",
+          "local": "2.cpp",
+          "url": "https://github.com/urho3d/Urho3D/blob/e0ce107356b255bf2e24d94a41d00b512b9ce633/Source/Urho3D/Graphics/RenderPath.cpp",
+          "lines": 507
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/urho3d__Urho3D",
+      "tree_truncated": false
+    },
+    {
+      "repository": "veloren/veloren",
+      "commit": "585a91b4a76fcf5df7a4851127cf5907a3ce34df",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "voxygen/src/render/error.rs",
+      "source_url": "https://github.com/veloren/veloren/blob/585a91b4a76fcf5df7a4851127cf5907a3ce34df/voxygen/src/render/error.rs",
+      "finding": "RenderError сохраняет shader name и читабельный shaderc diagnostic. Для Voxy полезны диагностические сообщения с конкретным shader artifact.",
+      "files": [
+        {
+          "path": "voxygen/src/render/error.rs",
+          "sha256": "1b3d6dd5bc6fb6fb05c4032c805ec81bde1f44e0ef5a8090da80b7f8bd30aa79",
+          "local": "0.rs",
+          "url": "https://github.com/veloren/veloren/blob/585a91b4a76fcf5df7a4851127cf5907a3ce34df/voxygen/src/render/error.rs",
+          "lines": 77
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/veloren__veloren",
+      "tree_truncated": false
+    },
+    {
+      "repository": "vulkano-rs/vulkano",
+      "commit": "9a80c29e7f8a90d7f39564b31769d6a9c85f6cc4",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "vulkano-util/src/renderer.rs",
+      "source_url": "https://github.com/vulkano-rs/vulkano/blob/9a80c29e7f8a90d7f39564b31769d6a9c85f6cc4/vulkano-util/src/renderer.rs",
+      "finding": "Renderer хранит previous_frame_end, обрабатывает flush failure и recreation swapchain/views. Завершение кадра — отдельное состояние, не только Present.",
+      "files": [
+        {
+          "path": "vulkano-util/src/renderer.rs",
+          "sha256": "bf617456e6ca156cf88068f26ad163a7d4548f79514b5e339fedc100a1a78260",
+          "local": "0.rs",
+          "url": "https://github.com/vulkano-rs/vulkano/blob/9a80c29e7f8a90d7f39564b31769d6a9c85f6cc4/vulkano-util/src/renderer.rs",
+          "lines": 372
+        },
+        {
+          "path": "vulkano/src/render_pass/macros.rs",
+          "sha256": "9a1ec166f121dc4f67cd4c4b5878aae7b68a205574dfa0d313d66dc6012965dd",
+          "local": "1.rs",
+          "url": "https://github.com/vulkano-rs/vulkano/blob/9a80c29e7f8a90d7f39564b31769d6a9c85f6cc4/vulkano/src/render_pass/macros.rs",
+          "lines": 274
+        },
+        {
+          "path": "vulkano/src/render_pass/framebuffer.rs",
+          "sha256": "3e23948f01b664d6ca6d32c892bc424395044427f04177b73e2b5fa25f1e7e86",
+          "local": "2.rs",
+          "url": "https://github.com/vulkano-rs/vulkano/blob/9a80c29e7f8a90d7f39564b31769d6a9c85f6cc4/vulkano/src/render_pass/framebuffer.rs",
+          "lines": 1174
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/vulkano-rs__vulkano",
+      "tree_truncated": false
+    },
+    {
+      "repository": "wolfpld/tracy",
+      "commit": "f55c69603f42daf05d15acce38ffc683bd07c5a3",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "examples/cuda/graph/cuda-graph-demo.cu",
+      "source_url": "https://github.com/wolfpld/tracy/blob/f55c69603f42daf05d15acce38ffc683bd07c5a3/examples/cuda/graph/cuda-graph-demo.cu",
+      "finding": "CUDA graph example захватывает sequence kernels один раз, создаёт reusable executable graph и освобождает template graph. Profiling может измерять повторные graph launches.",
+      "files": [
+        {
+          "path": "examples/cuda/graph/cuda-graph-demo.cu",
+          "sha256": "bc36d039bd8956392a0e673fa736c4e7870bdd58a1580fa2cf5c572301c8b14c",
+          "local": "0.cu",
+          "url": "https://github.com/wolfpld/tracy/blob/f55c69603f42daf05d15acce38ffc683bd07c5a3/examples/cuda/graph/cuda-graph-demo.cu",
+          "lines": 146
+        },
+        {
+          "path": "public/tracy/TracyCUDA.hpp",
+          "sha256": "3136494cd83f18283298c5acb62afeb38982a142bf6881ba74ae8477c74998b4",
+          "local": "1.hpp",
+          "url": "https://github.com/wolfpld/tracy/blob/f55c69603f42daf05d15acce38ffc683bd07c5a3/public/tracy/TracyCUDA.hpp",
+          "lines": 1502
+        },
+        {
+          "path": "examples/ToyPathTracer/Windows/ComputeShader.hlsl",
+          "sha256": "b6bc17598fa4889e2633494eaf379405d4eaaaddbf8589f8299fb002cfe9ba6c",
+          "local": "2.hlsl",
+          "url": "https://github.com/wolfpld/tracy/blob/f55c69603f42daf05d15acce38ffc683bd07c5a3/examples/ToyPathTracer/Windows/ComputeShader.hlsl",
+          "lines": 395
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/wolfpld__tracy",
+      "tree_truncated": false
+    },
+    {
+      "repository": "zeux/meshoptimizer",
+      "commit": "4c203430ca565cb59a468a91922c76c208169536",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/allocator.cpp",
+      "source_url": "https://github.com/zeux/meshoptimizer/blob/4c203430ca565cb59a468a91922c76c208169536/src/allocator.cpp",
+      "finding": "Библиотека позволяет подставить allocation/free callbacks. Это способ подключить CPU mesh scratch к учёту движка, не allocator VRAM.",
+      "files": [
+        {
+          "path": "src/allocator.cpp",
+          "sha256": "d2cc48691fe2f4c6d097bf7a766389cfb7f83ca14a5f747e3944332656d02254",
+          "local": "0.cpp",
+          "url": "https://github.com/zeux/meshoptimizer/blob/4c203430ca565cb59a468a91922c76c208169536/src/allocator.cpp",
+          "lines": 21
+        },
+        {
+          "path": "gltf/stream.cpp",
+          "sha256": "49d25f61088a5f9eab1ebca7c0eb99044da6e607e8aed3885bf4ebaa7dad8cef",
+          "local": "1.cpp",
+          "url": "https://github.com/zeux/meshoptimizer/blob/4c203430ca565cb59a468a91922c76c208169536/gltf/stream.cpp",
+          "lines": 913
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/zeux__meshoptimizer",
+      "tree_truncated": false
+    },
+    {
+      "repository": "zeux/niagara",
+      "commit": "fc3ff108503fbac78cc0cdee051b27a5c3839718",
+      "review_scope": "selected_source_sections",
+      "reviewed_file": "src/device.cpp",
+      "source_url": "https://github.com/zeux/niagara/blob/fc3ff108503fbac78cc0cdee051b27a5c3839718/src/device.cpp",
+      "finding": "Выбор Vulkan device исключает CPU adapters и проверяет graphics queue; logical device создаётся с feature/extension description. Hardware proof требует проверки actual adapter.",
+      "files": [
+        {
+          "path": "src/device.cpp",
+          "sha256": "c0b292fecebf678004b1ddbd15dd877b398a962b1212a77777b8615367fef129",
+          "local": "0.cpp",
+          "url": "https://github.com/zeux/niagara/blob/fc3ff108503fbac78cc0cdee051b27a5c3839718/src/device.cpp",
+          "lines": 420
+        },
+        {
+          "path": "src/device.h",
+          "sha256": "f77ddcc2fea89db0ffa6796bc69c0f1ca3226b144572d5f9e7ce252d5ff4ff52",
+          "local": "1.h",
+          "url": "https://github.com/zeux/niagara/blob/fc3ff108503fbac78cc0cdee051b27a5c3839718/src/device.h",
+          "lines": 11
+        },
+        {
+          "path": "src/shaders.cpp",
+          "sha256": "5804ab049446d3618b1f0378cb9e0a3c53618ce7afc91ea876a4b3bafd1f3883",
+          "local": "2.cpp",
+          "url": "https://github.com/zeux/niagara/blob/fc3ff108503fbac78cc0cdee051b27a5c3839718/src/shaders.cpp",
+          "lines": 931
+        }
+      ],
+      "cache_directory": "target/hardware-research/sources/zeux__niagara",
+      "tree_truncated": false
+    }
+  ],
+  "scope": "100 targeted source reviews; not whole-repository audits; foreign code not executed"
+}

@@ -1,0 +1,49 @@
+{
+  "repository": "toomuchvoltage/HighOmega-public",
+  "repository_id": 191113365,
+  "commit": "c3f62caa0671dfbae21372b30e52c7f46d30500c",
+  "source_url": "https://github.com/toomuchvoltage/HighOmega-public/tree/c3f62caa0671dfbae21372b30e52c7f46d30500c",
+  "readme_path": "README.md",
+  "readme_sha256": "8bf7a773866532c90cb7c79ba21f69f5c82c7439611c1904737ab4088e964e9f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5faf13d8db14a2c674e5a058bcc5adae4c3f662c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bfc3dc3e3e2c963fb596922eff9cb710faf8309f"
+    },
+    {
+      "path": "HighOmega.sln",
+      "type": "file",
+      "sha": "41ca0dbb0ffdd17e914da5a2790b9dc936b348b3"
+    },
+    {
+      "path": "HighOmega",
+      "type": "dir",
+      "sha": "a496571ed8ee1152ccef6da6c7bbb27c9da1c35e"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "0feefd66206189aa6ae69904835552896439e6eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bd470b25039dc26f7a740c4beac3d3fba24006fd"
+    },
+    {
+      "path": "marketing",
+      "type": "dir",
+      "sha": "fa2d55c8b33c8d72f3aaa4f2881d00d10dbc6308"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Engine source with documented physics, geometry, streaming, audio/UI and game consumers; thread/performance claims not verified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

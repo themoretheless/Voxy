@@ -1,0 +1,144 @@
+{
+  "repository": "ketoo/NoahGameFrame",
+  "repository_id": 19843809,
+  "commit": "857a0f8ebc9716b12a67e2dadc566bab7269d71b",
+  "source_url": "https://github.com/ketoo/NoahGameFrame/tree/857a0f8ebc9716b12a67e2dadc566bab7269d71b",
+  "readme_path": "README.md",
+  "readme_sha256": "601ffbb027c6a2f6188800665bc5440b1e2f9176973dfd7bd6e1945a42f837cf",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "21a8629297ea661e359e61b3f05ccdb67b7889e6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cffa975f55ed714ce7eae1a013a370c8be8af6ba"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "27b1ca6192b9c713d811ab5f7835be84571b2f28"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "ea4122112ded5cc21e0a79d50e8f787d9eff0390"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5f7d734da3f4c4b1a7189372ecc7bf07da3b7851"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "80605895ed48c8c3ec3658aca2b0758b2915e47d"
+    },
+    {
+      "path": "AStyle.bat",
+      "type": "file",
+      "sha": "d43faf40494ae6c9e33936a8adacc988b9ab69bf"
+    },
+    {
+      "path": "BuildScript",
+      "type": "dir",
+      "sha": "b6afdbd25f9e6c83c032f74cb28903badcef307d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "2345cdbc7da62c055a32e884ddc2b51bbc1ab9ab"
+    },
+    {
+      "path": "Cleaner.bat",
+      "type": "file",
+      "sha": "848e30c9b67473763ffe0606a56b673c8ab2045c"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "a6b1d0d57e568088c61a7394d40e0e7377808bdb"
+    },
+    {
+      "path": "GenerateConfigXML.bat",
+      "type": "file",
+      "sha": "e84e1c8edcd767adde282bb76151d04eca665532"
+    },
+    {
+      "path": "GenerateConfigXML.sh",
+      "type": "file",
+      "sha": "ef8093e42f7f28c9e157ebcaa059be97767a29b9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ad410e11302107da9aa47ce3d46bd5ad011c4c43"
+    },
+    {
+      "path": "NFComm",
+      "type": "dir",
+      "sha": "4a159513cb2a4dc1e022dabb1ad34b6d59499c3a"
+    },
+    {
+      "path": "NFExamples",
+      "type": "dir",
+      "sha": "e269c9107a969d13b1947349a67200c902c17e83"
+    },
+    {
+      "path": "NFServer",
+      "type": "dir",
+      "sha": "9c450d78b493d051226c78c436317f5b8175a8b7"
+    },
+    {
+      "path": "NFTools",
+      "type": "dir",
+      "sha": "3f28ef8639eb18697cbc8a42e178101bf18fd8d4"
+    },
+    {
+      "path": "NoahFrame.sln",
+      "type": "file",
+      "sha": "44983bf8b73a7a03dd8248a6eb8f7d70fcff4051"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "257fba86e41ea1110f66fd016256c409a212af89"
+    },
+    {
+      "path": "Tutorial",
+      "type": "dir",
+      "sha": "0b3bf505692d4462aff14442744d94b4bd675d1f"
+    },
+    {
+      "path": "_Out",
+      "type": "dir",
+      "sha": "d36394dd6beacda32d0ee7a8cd5ba91406a23cf7"
+    },
+    {
+      "path": "buildServer.sh",
+      "type": "file",
+      "sha": "e8f5d1d704b9e698e2cd8339a943998c79758247"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "b277840c441a854292fede64beaf1e766852f9ad"
+    },
+    {
+      "path": "install4cmake.sh",
+      "type": "file",
+      "sha": "e30fee9afb3c14b169d7f609ecd1c1618efa38b1"
+    },
+    {
+      "path": "墙内下载依赖库.bat",
+      "type": "file",
+      "sha": "8fca0c0eb692f0e93c4222c05cd922b61d4373ed"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies distributed plugin framework; NFComm/NFServer and CMake, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

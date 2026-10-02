@@ -1,0 +1,92 @@
+{
+  "repository": "ross-g/io_pdx_mesh",
+  "repository_id": 81004919,
+  "commit": "2249e35f80a1cc04ba4c2b8e4c650f36b18085db",
+  "source_url": "https://github.com/ross-g/io_pdx_mesh/tree/2249e35f80a1cc04ba4c2b8e4c650f36b18085db",
+  "readme_path": "readme.md",
+  "readme_sha256": "d73c258f0223e97c228c746da54a021767b6b9908cdb4d1b8cdd28fb8f5c67d3",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bdb0cabc87cf50106df6e15097dff816c8c3eb34"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c1f7c5b0db78767cbe767622242bb43a1009e9d1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "71f5d6fa1011179015e74999a9c0746b713b316d"
+    },
+    {
+      "path": "__init__.py",
+      "type": "file",
+      "sha": "53ad264762e49f61d82e116ec0d72de844975be7"
+    },
+    {
+      "path": "__main__.py",
+      "type": "file",
+      "sha": "9518d658ae58ecef8667c5b2fe37a5553f4c1bb4"
+    },
+    {
+      "path": "blender_manifest.toml",
+      "type": "file",
+      "sha": "408619badafeafcc0f64e7f2d51c03439f1dcff3"
+    },
+    {
+      "path": "clausewitz.json",
+      "type": "file",
+      "sha": "e8f65055ba68295c3ae0c62d42cbc41d253bf9f4"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "bbfaed9f69b32471e77858cdf9bf6e89475f0d86"
+    },
+    {
+      "path": "library.py",
+      "type": "file",
+      "sha": "54895d82551ab5b8935ea4f48714f803f08e89df"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "20d40b6bceca3a6c0237d7455ebf1820aeff3680"
+    },
+    {
+      "path": "pdx_blender",
+      "type": "dir",
+      "sha": "8d7656805f00574e9990a98e2f1b3093afe3000f"
+    },
+    {
+      "path": "pdx_data.py",
+      "type": "file",
+      "sha": "ebfea55ff9505d759698887bae90b709c97df962"
+    },
+    {
+      "path": "pdx_maya",
+      "type": "dir",
+      "sha": "790a15b89a0ed105beb91bad70f9a44a0d64ce40"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "8dcc91155da75a9408776444d6e904fd2da76e16"
+    },
+    {
+      "path": "settings.py",
+      "type": "file",
+      "sha": "9ad26a999c50d679d443a607a476ec9c09beea12"
+    },
+    {
+      "path": "updater.py",
+      "type": "file",
+      "sha": "ec01b2d8c3651ae295f6be24c6137f952b945021"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

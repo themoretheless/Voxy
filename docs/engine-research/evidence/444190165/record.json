@@ -1,0 +1,194 @@
+{
+  "repository": "hackclub/sprig",
+  "repository_id": 444190165,
+  "commit": "1450c00a43c5ec09d2c4a8971763226ab447829f",
+  "source_url": "https://github.com/hackclub/sprig/tree/1450c00a43c5ec09d2c4a8971763226ab447829f",
+  "readme_path": "README.md",
+  "readme_sha256": "b3ee8298f771e339cccbbf18d4ab92155a599e79c0658938326821b5ad8a515f",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "d17e62a0a27d6a1a5f34de2a49f2225875bf6cbe"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "633a125407fc30e0fa0a185dd2a14461b9d7a19a"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "f52383e452d6560e4ee7e935750502b8f0fd7429"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f074fcf38aeca3d2665addd495ca651573820daf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b89fad05fc445c46616f85d0348f85575c258ad6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5a40646be9b3116313dbeddfb7b25921887f73a6"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "dbfadf3da5bef0020c3554f830f25e36997043bb"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b89f8d91b8497f385005ee1e98f2cac08dddb4e8"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "d0312a7fae6bad2ee7bee7f3126c22d4497e6a79"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3f338ddaa98d2fc96c6f4d1c7ac722f7cb7ce48a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4e302948377c324a0c4c7f493234dcdd8e65582a"
+    },
+    {
+      "path": "RESPONSIBILITIES.md",
+      "type": "file",
+      "sha": "153951fd31ce9965f82cf4b8b7dac1a96a2cf6c0"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "4ab758d69bf60cd8e1c7dbd6eebfdf8b222f6c7f"
+    },
+    {
+      "path": "astro.config.mjs",
+      "type": "file",
+      "sha": "4db42eb5964b10ab9f294ef3fc0c42a7bda9b4db"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "eb72d163a4f48091c92a767ad1912afc09974906"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "f1235e45db88ddde488d7d05f3a9ce6f882b26f3"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "a851e0931fecfeeb34c686c56cfe6ef766cb7bd1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "264cccb6722ee050aa61cf1fe49a3e2c87699d27"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "ec18e2713117dfb3f945c169d2a30b9ebf278143"
+    },
+    {
+      "path": "firmware",
+      "type": "dir",
+      "sha": "0af193b9e44469c4b41e72d493d43ff83528d125"
+    },
+    {
+      "path": "font-things",
+      "type": "dir",
+      "sha": "839762c09352828a0548cb546daed1083e67e6b0"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "68120a3c4c0460e064223dda97661a17e1b988f1"
+    },
+    {
+      "path": "hardware",
+      "type": "dir",
+      "sha": "2b2e1e16ed6e5ec544290c586d40253cc720554f"
+    },
+    {
+      "path": "metrics.ts",
+      "type": "file",
+      "sha": "1f0fbb8d37a79bca2421ede11abfc9b1ad50d024"
+    },
+    {
+      "path": "migration-iframe.html",
+      "type": "file",
+      "sha": "220ab85fa1d74168947e7c8c03e2e69ebbd2c7ca"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "da3a64b4a08de20a754d12b81d9bcd2f26cc9e17"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "321d3242ddd82dd065cb8675fab48b39e6d69610"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "c6bb644e0ca0df822780127a41eace9a6a096576"
+    },
+    {
+      "path": "setup-project.mjs",
+      "type": "file",
+      "sha": "14a140c65bc80d42eb5dc5972795ae0b2428a0eb"
+    },
+    {
+      "path": "sprig-hax",
+      "type": "dir",
+      "sha": "7016499807dae77a2fd7307a4e5bd972fd7a32bf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e3b995c0aadfa4570f1827832582e872965c7892"
+    },
+    {
+      "path": "svelte.config.js",
+      "type": "file",
+      "sha": "cbaee33df654cfe71cf1d87dc09774e4fd760968"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "7d1f7c0661b6a3440da72f893900e70975e442d4"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "6ab0e1fe67dddaa9ec6979c20b59ce4bbe2f76d9"
+    },
+    {
+      "path": "yjs-client",
+      "type": "dir",
+      "sha": "1feea232dd1c294d8b8e03c1f1e0437e02862356"
+    },
+    {
+      "path": "yjs-signaling-server",
+      "type": "dir",
+      "sha": "3bc26fb96d608815e0a272f7333498c66d99d2ae"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README links owned engine and firmware; engine/firmware runtime plus browser editor build infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

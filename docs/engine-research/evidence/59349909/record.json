@@ -1,0 +1,64 @@
+{
+  "repository": "mr-kelly/KSFramework",
+  "repository_id": 59349909,
+  "commit": "edc8923c51e670428c79ab159de8cd8a0bd8f13c",
+  "source_url": "https://github.com/mr-kelly/KSFramework/tree/edc8923c51e670428c79ab159de8cd8a0bd8f13c",
+  "readme_path": "README.md",
+  "readme_sha256": "5b47f29926a4fe3dbdf190a2251d0496d759d63cbd2d6475c29c825f9da72a94",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f196bcc833344c3ac7326403dcf1bf20312acd46"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8ee7e57a88e2bb518288f84f2bfa595e3ea85611"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "2611c9eb0107867d7bcc599ee642a77479a29578"
+    },
+    {
+      "path": "KEngine",
+      "type": "file",
+      "sha": "1e4643d0d3a944f4ff4f951063b5d578c4471d74"
+    },
+    {
+      "path": "KSFramework",
+      "type": "dir",
+      "sha": "2302817753ec8b1dde59e7ad5f11b0e4075c6a1d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8dada3edaf50dbc082c9a125058f25def75e625a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90e0d920683bc3ac96a93ba65e6f37f17a1a73bc"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "aea3f7924725cbd1d7055b38f446d2813e16f6ec"
+    },
+    {
+      "path": "appveyor_version.bat",
+      "type": "file",
+      "sha": "ae082eee21e60079717f3731f2a0c67110f31446"
+    },
+    {
+      "path": "build_tools",
+      "type": "dir",
+      "sha": "1c431dcbaa8f42152f9d352ce44ed30fec2f422e"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Unity KEngine+Lua hot-reload framework; integration/toolsets rather than owned underlying Unity engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

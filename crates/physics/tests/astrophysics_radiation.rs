@@ -1,4 +1,4 @@
-use physics::astrophysics_radiation::{blackbody, trace, Layer};
+use physics::astrophysics_radiation::{Layer, blackbody, trace};
 #[test]
 fn beer_lambert_and_thin_limit() {
     let l = Layer {
@@ -71,22 +71,24 @@ fn invalid_layers_and_budget_fail_without_result() {
     };
     assert_eq!(trace(123.0, &[l], 1).unwrap().intensity, 123.0);
     assert!(trace(123.0, &[l], 0).is_err());
-    assert!(trace(
-        123.0,
-        &[Layer {
-            absorption: -1.0,
-            ..l
-        }],
-        1
-    )
-    .is_err());
+    assert!(
+        trace(
+            123.0,
+            &[Layer {
+                absorption: -1.0,
+                ..l
+            }],
+            1
+        )
+        .is_err()
+    );
     assert!(blackbody(f64::MAX).is_err());
     assert!(trace(f64::NAN, &[], 0).is_err());
 }
 
 #[test]
 fn linear_source_has_correct_thin_and_diffusion_limits() {
-    use physics::astrophysics_radiation::{trace_linear_sources, LinearSourceLayer};
+    use physics::astrophysics_radiation::{LinearSourceLayer, trace_linear_sources};
     for depth in [0.0, 1e-12, 1e-4, 1.0, 10.0, 100.0] {
         let layer = LinearSourceLayer {
             length: 1.0,
@@ -138,7 +140,7 @@ fn linear_source_has_correct_thin_and_diffusion_limits() {
 
 #[test]
 fn linear_source_preserves_sub_ulp_diffusion_offsets() {
-    use physics::astrophysics_radiation::{trace_linear_sources, LinearSourceLayer};
+    use physics::astrophysics_radiation::{LinearSourceLayer, trace_linear_sources};
     let result = trace_linear_sources(
         2.0,
         &[

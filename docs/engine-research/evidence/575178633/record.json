@@ -1,0 +1,117 @@
+{
+  "repository": "FoundryMC/Veil",
+  "repository_id": 575178633,
+  "commit": "a347a3c1becf1ca68960133bc0dc1569e93b2789",
+  "source_url": "https://github.com/FoundryMC/Veil/tree/a347a3c1becf1ca68960133bc0dc1569e93b2789",
+  "readme_path": "README.md",
+  "readme_sha256": "552ef84bfd303dba0640b5160c05f63383fb27fc2440a88456c0f1e62d465bd5",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e941bdcda592cec78f4ee99ff1da078f0eeb13db"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "05b31814dbcdb055d82cdf9e4210f49183e1135b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e2768e3fcb53de8637aa3425f243deb33605bda7"
+    },
+    {
+      "path": ".jenkins",
+      "type": "dir",
+      "sha": "c719a3705f6482fd82864678bc7ec53c5399792e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "85ba66dcf78c70a1a4f539c84b1146cca17b0665"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "78840f8cd020929f87d24eb9c06642e7306f24d3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "153d416dc8d2d60076698ec3cbfce34d91436a03"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ca6793bbc35cc5e4d7b05306568614bde63805f7"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "8bc575bef9844b4ed0140608cc2a8ceed1042a47"
+    },
+    {
+      "path": "buildSrc",
+      "type": "dir",
+      "sha": "953a84f754c62ce6909d794fac2a4e21d235f599"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "026381eecf41c073e3089b92fb5d25aff90bd0ba"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "2a028707f58beb00a35981681a51fb0a790f93a1"
+    },
+    {
+      "path": "fabric",
+      "type": "dir",
+      "sha": "49ac1ec405aaf6a22f57ebc17d08527bb769386a"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "9682b776ed39ed8607f1ac764e35a922baa58813"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "c39871509194018bed5a768ed89f398bbaa07477"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "b9bb139f790567973216cd313e69ae65789c3754"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "24c62d56f2d4a91975bd1aa72103d2ec628e449f"
+    },
+    {
+      "path": "neoforge",
+      "type": "dir",
+      "sha": "3045d38328c0a2814f231ae6da189bffe4bd9177"
+    },
+    {
+      "path": "runRenderdoc.sh",
+      "type": "file",
+      "sha": "3e4944e26eed0ef8baf2b6f3493083df4544d818"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "ca2bb51b5b812cf2683d4f19662cbbd2d0e43dda"
+    },
+    {
+      "path": "wiki",
+      "type": "dir",
+      "sha": "f38aad5f479a370bf645d71b6e26d8bbad96b44a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

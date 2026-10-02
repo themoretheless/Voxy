@@ -1,0 +1,99 @@
+{
+  "repository": "swift502/Sketchbook",
+  "repository_id": 124448542,
+  "commit": "62f4b7986fd1ce1e4f91daba89ef032c20a6ce55",
+  "source_url": "https://github.com/swift502/Sketchbook/tree/62f4b7986fd1ce1e4f91daba89ef032c20a6ce55",
+  "readme_path": "README.md",
+  "readme_sha256": "739f7fbf7557de2255c0056bee288d983032a2a29194df0bf668f5947cec4180",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "642db9149d3c52cf647c0a0398d77bdad2589b6d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7f32e4b89087b8f025d4b80ffca1a51e98825c61"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "7b3cd16fd4073fddd4eac8de57fcef662001d7a6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c7cd6c2d9e641672f69888d9b0bc6c50d6784479"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d03224f7adcc729461b2455a9a0c5b2313c9fba9"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "368b06b7cee8fdfd4607d7a70dc088c8601b8a49"
+    },
+    {
+      "path": "favicon.ico",
+      "type": "file",
+      "sha": "80d536d56a589561ab49f77757fea5aae5d9ea46"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "4bc1ec23be72dbb44c8406d851f1771f1a953c20"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "848d80eab6c006722a0c3714f336c7f8127c7880"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "90d4252a2294d0fb000fd5b489403cb08031ae42"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e077648d76724c54f84a4206c0d1e62455d9b752"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "3b330fdb796b3550d50da625631f4f9f213712eb"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "eb499b9838ff7a91b35354b32a2aa25b8d20083d"
+    },
+    {
+      "path": "tslint.json",
+      "type": "file",
+      "sha": "7a0afb34ca61210cd85991275287e287ed44dbab"
+    },
+    {
+      "path": "webpack.common.js",
+      "type": "file",
+      "sha": "abab1a7e42b5dfb583ab0c456a7c0845404817f8"
+    },
+    {
+      "path": "webpack.dev.js",
+      "type": "file",
+      "sha": "5b14607f246d58b7d10dbcf1f15cba4b28dd53bd"
+    },
+    {
+      "path": "webpack.prod.js",
+      "type": "file",
+      "sha": "eda8ea9467838811a43b118341d95b8bea135c3f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies web game engine focused on character-control mechanics; src with TypeScript/webpack build. Backend library dependencies retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

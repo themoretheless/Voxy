@@ -1,0 +1,79 @@
+{
+  "repository": "fredakilla/GPlayEngine",
+  "repository_id": 138297973,
+  "commit": "ae6b45f4c68f696fcd171ce6996a5a4e80aee09e",
+  "source_url": "https://github.com/fredakilla/GPlayEngine/tree/ae6b45f4c68f696fcd171ce6996a5a4e80aee09e",
+  "readme_path": "README.md",
+  "readme_sha256": "8fec898bd03e5962699566da23a25d81ea29ffce47d78b0627a912f52ed0e039",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4538149b4d864f1432e88e2c78fc00b9917c19b9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "85155c07ae5abdd406dcebc434a0ee7ef19c5705"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "53eb1f19d30a175b25600f67077403ddfecab144"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d38a132167675a0976b3cc5959146c856461f2da"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4e3e1a35eabe766795197114e2b3de18de26051c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "83da126fd807c5dc4fe3b9e1b0a11c170ba504b5"
+    },
+    {
+      "path": "global.cmake",
+      "type": "file",
+      "sha": "55eaef5f490ad0a1eb12fd87a267b2bc59d39699"
+    },
+    {
+      "path": "gplay-all.pro",
+      "type": "file",
+      "sha": "289f1535a41c4baf913055d88d1b64664c7959b3"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "3e16d821ad943844bca1dbb937bb646087400d63"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "25742cc454ee40aa112fd63a7cb9724ded511e00"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0cf2adfab2906c3fa9eb745d8093c7d82c9920b6"
+    },
+    {
+      "path": "thirdparty",
+      "type": "dir",
+      "sha": "729f1b384fc72644f0e941885997b161dad57095"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "e2faa1652b9a532b84e94d9e16b27e999eef7d61"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies GamePlay-derived runtime with backend replacement; owned src/tools and CMake/qmake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

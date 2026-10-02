@@ -1,0 +1,154 @@
+{
+  "repository": "skypjack/entt",
+  "repository_id": 86337343,
+  "commit": "e0f4c3763967db04f116863a0ec5e35110808a26",
+  "source_url": "https://github.com/skypjack/entt/tree/e0f4c3763967db04f116863a0ec5e35110808a26",
+  "readme_path": "README.md",
+  "readme_sha256": "31bb6dd3386fd9a0168ce1775a897333955bf67a3a43e5ace9a72513b4249328",
+  "entries": [
+    {
+      "path": ".bazelignore",
+      "type": "file",
+      "sha": "9daeafb9864cf43055ae93beb0afd6c7d144bfa4"
+    },
+    {
+      "path": ".bazeliskrc",
+      "type": "file",
+      "sha": "773a4f4c6b7602f9858ff31ce0ac25ec4197a22f"
+    },
+    {
+      "path": ".bazelrc",
+      "type": "file",
+      "sha": "c6aab4819537ffe5c8576aa511de67ea8b4e9cfb"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "0d22dc661c56ea56fd04cb1567783924137bd40e"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "bc7bd6846b87612457ffd6ac3a3ff2ff1c91bdbb"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5bf22a8b62efb32c3ee24c9d4d10fdc2a6b5c3a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ddcbd9898e60242e95e7ea9de056a8612a15b9f2"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "13b5fed31f7244abc768dafdf81db7b7b1dccd47"
+    },
+    {
+      "path": "BUILD.bazel",
+      "type": "file",
+      "sha": "aafff391ebb0c1c1c04c951267b51c41c0f25c7d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "916677432ea9cfdb9d0460e17641b1b7088ed817"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "117ede63fa1a39c59d29b0d3f75cf677d961dcb6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "615c47c5b34953d14de2c70c49c519db736894e3"
+    },
+    {
+      "path": "MODULE.bazel",
+      "type": "file",
+      "sha": "445754c48e4b383e78eabffb13122988ce80f4ce"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "78f45a601839ba137329a51f654102e69df92cb1"
+    },
+    {
+      "path": "TODO",
+      "type": "file",
+      "sha": "012599755e8e1f1322f219a105460a088517ccfc"
+    },
+    {
+      "path": "WORKSPACE.bazel",
+      "type": "file",
+      "sha": "600260da4138b427dee6f3c9b4be4bf63cf1b327"
+    },
+    {
+      "path": "bazel",
+      "type": "dir",
+      "sha": "1e1da9489c7835fa00902a96496e382620935822"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "96233b34ccba706a9f89dca87a9282a3cd836e0a"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "c7a89be63b3d85acef87cefa96eda107c11870af"
+    },
+    {
+      "path": "conan",
+      "type": "dir",
+      "sha": "e102154a46eb9d78099db9a502f53e3fa59ad69b"
+    },
+    {
+      "path": "conanfile.py",
+      "type": "file",
+      "sha": "c987d77652d0b140a78e103ab56b785b3a1e434d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "30b3eec69eaa27b8e952c0a580cfa6b82566bf7d"
+    },
+    {
+      "path": "entt.imp",
+      "type": "file",
+      "sha": "2b6ed919f9b9de128c30731c6d392932df097dd3"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "ba4dd76e72c75537c522f8567b6ca4dc04782281"
+    },
+    {
+      "path": "single_include",
+      "type": "dir",
+      "sha": "e8319566ffec622d9888d13e6998f59989c259cb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "b9f66b9fd5850390b82347114b411f2bdd70691c"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "87fd8dddddb88fec392d751078fb73def7eb356e"
+    },
+    {
+      "path": "testbed",
+      "type": "dir",
+      "sha": "8ebb1398e915e6575511fb6f10e01fcf99cc8aa4"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README calls EnTT a header-only game-programming library; ECS source does not by itself constitute an engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

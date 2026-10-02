@@ -1,0 +1,114 @@
+{
+  "repository": "YamanQD/AntWare",
+  "repository_id": 445158681,
+  "commit": "fe1700da80717cdddad2c9588ba41b862b11ef35",
+  "source_url": "https://github.com/YamanQD/AntWare/tree/fe1700da80717cdddad2c9588ba41b862b11ef35",
+  "readme_path": "README.md",
+  "readme_sha256": "5b2c8f7912f95cbb73872175ddfa5f155983f24893046e011c2b5f2f58852692",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f13f0d4978374409931e3ba95d4d9d17b75a10f9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "1e7a9909148311bdc9fe9b00fb1102909dd4fb42"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "964dae598b304c6960abac5627b099a875c7ba6b"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "42b539a884b015f5b22f2575551461beda7acdb6"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "2f3a21fe3b763e4ba073638edc33a18a0389de10"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d41c0bd98feb776ef7d81efbc1b5447e0284a187"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4030ba58112a91d998e4ac8043b733d5255d7329"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "b46c8a75505a6415138f0429992e32caaa922e57"
+    },
+    {
+      "path": "Shaders",
+      "type": "dir",
+      "sha": "d4730cb0b150878bdbe093069fc0c6cbf1c76a2a"
+    },
+    {
+      "path": "default_settings.json",
+      "type": "file",
+      "sha": "efc19bc669760c793b21e6640ca7692dbbe041e3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "3fe44258f562a77f0d7d8595a1632c3db8dbaa53"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "dc4fe9a82758accff2562419e6bf6c0fa7a28508"
+    },
+    {
+      "path": "io.github.yamanqd.antware.metainfo.xml",
+      "type": "file",
+      "sha": "b7a1030bba377f3e1e5318c4828c8ea0747dad66"
+    },
+    {
+      "path": "meson.build",
+      "type": "file",
+      "sha": "9ca2664d42b80c7121446f2eb1d3333f3eb7edee"
+    },
+    {
+      "path": "metadata",
+      "type": "dir",
+      "sha": "09a7593993a08311b49b8b4ee314a8b6b5df19d3"
+    },
+    {
+      "path": "scenes",
+      "type": "dir",
+      "sha": "ce42df614df6cfca6952a32846c9c98e96b16678"
+    },
+    {
+      "path": "shared-modules",
+      "type": "file",
+      "sha": "24f7c7d54fb3ec86b58a5f5a81de24e9f7b33ea8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9979cfe34646b233c1a6796fcadc28806f4f2122"
+    },
+    {
+      "path": "src_assembler.py",
+      "type": "file",
+      "sha": "bab1cc9ab074bec21f27db640a6b218d8157f197"
+    },
+    {
+      "path": "subprojects",
+      "type": "dir",
+      "sha": "5c54e369ea8e185e017a2ac3e52e7793da3c492f"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "University-project FPS game with OpenGL renderer rather than reusable engine product.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "dviglo/dviglo",
+  "repository_id": 578503742,
+  "commit": "876d0450579a3ce2ae45df194c70427f86fa56b3",
+  "source_url": "https://github.com/dviglo/dviglo/tree/876d0450579a3ce2ae45df194c70427f86fa56b3",
+  "readme_path": "README.md",
+  "readme_sha256": "4033f977ea7f0b67b7c9edda7f4c97d77b1aab70976b304c22ef5220a3ef284a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d4b5ed9d40207e8c2b2c87dc511f8b593e5a0227"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "c641e68b53d33f1f522022770f248de60322acb6"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "4f6de6919ca5684b96954464cdb251e87e5e3619"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e2e6d4a8924d3c17797177efd0390cdf0c141935"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "209ed2f6e4c560be30b605c1a436e3792644e179"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "69c7ebe6d5167f712159b18d9bddc67d298e224c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "5b3efe653d352d06f9cbc390d9b14be666b1d5d5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3ac03bb84d57ed6d93e67a9e585fda687f1e7446"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "a5f3329c474a6e4011ab3bb3d82e1c29c9f8fb7f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "d7a63ae8cb35c98e3ed3bdd54c38ef5edfe22895"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "927a11db90daea32624744cf02702f8c9632e0a7"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "ac69182fdab9a0983ed587f78cf61c3b35b0c076"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "3b81ef807a0e52391edd339197f10e7af7d78524"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "22b80f96354e7bcc8ddb880cc08c7c14d9e31ef5"
+    },
+    {
+      "path": "source_assets",
+      "type": "dir",
+      "sha": "01daea3444368f200f57996e5752d37cf33e4ade"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit Russian-community Urho3D fork with engine source, build, assets and license provenance.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

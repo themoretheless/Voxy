@@ -1,0 +1,59 @@
+{
+  "repository": "true-grue/Brus-16",
+  "repository_id": 1073007731,
+  "commit": "c644d52e16bc87efab1a996c2059f007db5c63e6",
+  "source_url": "https://github.com/true-grue/Brus-16/tree/c644d52e16bc87efab1a996c2059f007db5c63e6",
+  "readme_path": "README.md",
+  "readme_sha256": "bab34a0c596b1d56c44b81986137d61593e3f938d1324bc624c09392a281f1f9",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "85a601b7d36e125b62f6b84840adf44f93100976"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4f2db70e6ab1a64841e8e8fa2507d7be88382ffd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "25f4679f1ba8bb5b7aac0c9da61f89062a118ea9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "28acef5b3b439f8c8e3c6a0a5827b681df91e251"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "049be6f0535bdf4beb1d1c67f2e5d20b674a73dd"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "715d9c84ab64e4a306cb04705547b2305b6c6a27"
+    },
+    {
+      "path": "makefile",
+      "type": "file",
+      "sha": "7afaa95bb8142adfb5fe506a0568528157edf545"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "5a19ffbffccb3eda33ff1b738613344c125a0514"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "97acee9f7eced71eb7c55d85c06da4ace7bb6b1e"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Educational FPGA console ISA/compiler/assembler/software hardware emulator; not game-engine abstraction.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

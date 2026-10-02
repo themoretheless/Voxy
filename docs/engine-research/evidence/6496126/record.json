@@ -1,0 +1,79 @@
+{
+  "repository": "jkuhlmann/gainput",
+  "repository_id": 6496126,
+  "commit": "2be0a50089eafcc6fccb66142180082e48f27f4c",
+  "source_url": "https://github.com/jkuhlmann/gainput/tree/2be0a50089eafcc6fccb66142180082e48f27f4c",
+  "readme_path": "README.md",
+  "readme_sha256": "add45ea6e61e3a7e844bb6f18b3007485a863a4c8418a970ca63303ae34d9862",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "335c15fe49a2c31d5a319f9b701df11b7eb860a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "823ce37bbc84b5eeb7b0428abaf3e59760bfa50a"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "e2758a8062e742d23733803b493404129e124f75"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a443b66b11b8aaa8fc246f4ca6e5b67c4761fdcd"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "2921c39266e1e2ec864420acfa2cba6a047e555b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cabf9f971b2e9b5b96fb8976b70bd0f3c4813306"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e44921035ff06a2dc9c22be530a19ff994c7d0d3"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "1550fdd88b9d6666306d311442109aafb94bd5be"
+    },
+    {
+      "path": "extern",
+      "type": "dir",
+      "sha": "0e9793f6d7e87d518b68b0aec38c3cf0a149c4f1"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "5afac182a5d6f100670058b5e1454a5d43fc7785"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "ac44ea55d5f01bedf13f0cd03b7bfe88a8477fd8"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "20afeb93f64dc1d0c84eca48bd45ab197462784e"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "ef1cc84dad842c589183f842055c930cc494d982"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies cross-platform input library; lib/tests/CMake rather than full engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,69 @@
+{
+  "repository": "Hykudoru/Pescado-Engine-Embedded-ESP32S3",
+  "repository_id": 730053321,
+  "commit": "e6c0652eee294338b660d67d32ad99faeda96070",
+  "source_url": "https://github.com/Hykudoru/Pescado-Engine-Embedded-ESP32S3/tree/e6c0652eee294338b660d67d32ad99faeda96070",
+  "readme_path": "README.md",
+  "readme_sha256": "421efeb2bbbb18135ca8da345a135906907b17b2c3da18ea761193477a50d44a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "89cc49cbd652508924b868ea609fa8f6b758ec56"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "84745a76d1c38268535cd970eb6819d62104b021"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d88c457b5b7652c9896afebcffc9689bdd458f90"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "023a3e944bbb831d26355096f4bd78b1a6b6e36c"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "8867171330b2beb317411f47d0ccbd608ad8c81a"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "9f94c5c99bdc8b1b4653be7583132b4f54ec2b2f"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "a9896aef73990a546c475355efeaaed570ae679c"
+    },
+    {
+      "path": "platformio.ini",
+      "type": "file",
+      "sha": "c5247a858b6deb8dfcbe8cccd9b16edb322cf6bf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1b9456f7f8d1314b26e154dc2c256c9a3b5ff76e"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "db453df65b720cc24b5715d3d233758ae3112b67"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ESP32 3D graphics engine with OBJ rendering and joystick hardware; broader gameplay runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

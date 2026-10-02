@@ -1,0 +1,89 @@
+{
+  "repository": "jakubtomsu/dungeon-of-quake",
+  "repository_id": 453199199,
+  "commit": "75015d6b70aa3cdae0d4e31a56cf781b5bd7c284",
+  "source_url": "https://github.com/jakubtomsu/dungeon-of-quake/tree/75015d6b70aa3cdae0d4e31a56cf781b5bd7c284",
+  "readme_path": "README.md",
+  "readme_sha256": "8bd6ecc8059bd768fa41aef4fb399cf6d9cb9fe473af83c4cef29861399010ed",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d0033ae589ae165c3e434e8c73daa1a6334f10cb"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "e1a42fdc97cbee5d3d91234d5cc9a4e396cb126b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4b02179c885db13ca602540de03c010496e15392"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bfa5890bf877ed8ca2e0ccc6dcf806e060a7c795"
+    },
+    {
+      "path": "bingus.odin",
+      "type": "file",
+      "sha": "91a251e81c81123e6333c60ac056abd1f3bf9916"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "f115230dad10aa41e2a22caa66e0e7218888e209"
+    },
+    {
+      "path": "build_debug.cmd",
+      "type": "file",
+      "sha": "ef42a4d191f99ca3d97581368b170bb68a8ee36d"
+    },
+    {
+      "path": "build_release.cmd",
+      "type": "file",
+      "sha": "f92ded3b10fbdaf29e10fce5c6b8031b0068a7e9"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "b609ffe551ac9f8d59392ee626e8a3804e7b7c7c"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "58711c3cb587d0a5e4eb40bb7a66499e10407717"
+    },
+    {
+      "path": "iqm_export_bl293.py",
+      "type": "file",
+      "sha": "1bf8d98f7881c72e5eebdc36776451acb228256b"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "c1a782de3de19a62f5799f0709789f1feca9d8c9"
+    },
+    {
+      "path": "odinfmt.json",
+      "type": "file",
+      "sha": "903825da1a59b21e634032d656b93d711e5fcd67"
+    },
+    {
+      "path": "ols.json",
+      "type": "file",
+      "sha": "89b746dc0d8748bf3c6561e3aae821a563c65118"
+    },
+    {
+      "path": "source_assets",
+      "type": "dir",
+      "sha": "a4473bf42ce6edf6bd39889c1ae55e7c95c067b6"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Odin/raylib FPS game with editor, rather than a reusable engine product.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

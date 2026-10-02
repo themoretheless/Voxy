@@ -1,0 +1,22 @@
+{
+  "repository": "krockot/Unity-TaskManager",
+  "repository_id": 1943851,
+  "commit": "81c6e216ab0f99173b0ce298e79c6da677dd84a6",
+  "source_url": "https://github.com/krockot/Unity-TaskManager/tree/81c6e216ab0f99173b0ce298e79c6da677dd84a6",
+  "readme_path": "README",
+  "readme_sha256": "a4849bf21505e7d1543beb49922fb2fa65d74c68d1581ef95179a99f76b54640",
+  "entries": [
+    {
+      "path": "README",
+      "type": "file",
+      "sha": "8d9cc6149591acb10227b2c88c267d57db0a3bf8"
+    },
+    {
+      "path": "TaskManager.cs",
+      "type": "file",
+      "sha": "7822ca02d024976b4fa60dcda332cfb8f2dfa740"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "enduro2d/enduro2d",
+  "repository_id": 135315111,
+  "commit": "5de5583dc523be6fcf9aefc413d08bba3f69973a",
+  "source_url": "https://github.com/enduro2d/enduro2d/tree/5de5583dc523be6fcf9aefc413d08bba3f69973a",
+  "readme_path": "README.md",
+  "readme_sha256": "7b7a988afef5b73e486ab4ce609ac97c733c49773a41fda2983383d60b1f59df",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "de0795fd1b87f4e666dbc99c3b6e04294d205370"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f50546c5c76276ce3ee1d0ce6bcf47602d67ff65"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e8483462bf548ee9b8426ea719ab5bf562a73956"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "353644e85b4dca1844ab755b71d9d71ac4ad7804"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "2e5414103c336bebb419bccbec29cf9a95edd6d5"
+    },
+    {
+      "path": "BUILD_INSTRUCTIONS.md",
+      "type": "file",
+      "sha": "7f09a33f78855b870602a59f3502af0b3d4c3e29"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f366c61d9ca4799f6b1d29bda66181004ffbbab0"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "c0d48e407d46e2d0f39f16cb1fc0b97aea3c9398"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "782d80e05127c970bf88a7166bdf43c81925d4d4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "79fe432c49884fb8f41488e5fc4b306cb9469b84"
+    },
+    {
+      "path": "headers",
+      "type": "dir",
+      "sha": "ea5e06bf0ad39a152f1c1e1e6ecd7e93f36b44db"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "c8897f0d40a30d23dc0ea1910c8e56cf03d6a07d"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "3b417278721d096ae902f0928866d09b1b100394"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5400dfc4c61d2daf00e13f439e298655de733c85"
+    },
+    {
+      "path": "sources",
+      "type": "dir",
+      "sha": "7962a2a2c01772a44b260ffc871abc39162c5c3d"
+    },
+    {
+      "path": "untests",
+      "type": "dir",
+      "sha": "ccac3e73ac1af06a49fea0800190884758df24a5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ 2D engine with headers, modules, sources and samples; WIP status and no runtime verification.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

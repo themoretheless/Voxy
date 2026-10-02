@@ -1,0 +1,94 @@
+{
+  "repository": "secondlife/viewer",
+  "repository_id": 521778721,
+  "commit": "eab9f2bf2a0afea750b612151f78c80d9508aa2f",
+  "source_url": "https://github.com/secondlife/viewer/tree/eab9f2bf2a0afea750b612151f78c80d9508aa2f",
+  "readme_path": "README.md",
+  "readme_sha256": "4b49628ba6717c1c1bb0a8bd0e47dcd3eb948bfd3e7c5ff8b3d16cd8f935fc40",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "f5a49845d008aeda232c00255c4d452520a0ac2c"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9ac24be468540b38ab56843eff12f90e64ff5f56"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "ce934f1a21a79cafbafcc32f6d245958ad6eb5c4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e7c2f83897374ae86da2275dda3a17669dc8faae"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "03c449fcd948a267806bfb36a7edb065a27a7b93"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eb8001b23815ee22d7e576bc296ef77690dd9c73"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "d1dcc9397696c2fe887d7d6f4d95a4a235298faf"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "9f38432ff73d5bbdc8606140f7e751239638e8e6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4362b49151d7b34ef83b3067a8f9c9f877d72a0e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1e40c7f9f58ba5c1a9ee11818b005b64ab2cbfbb"
+    },
+    {
+      "path": "autobuild.xml",
+      "type": "file",
+      "sha": "b99203b9950f123c932a80df8e4db316eab79d08"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "72dc2b96e8bacaadc448dbedd81da72313652ad9"
+    },
+    {
+      "path": "buildscripts_support_functions",
+      "type": "file",
+      "sha": "557d2f80fbe12300d5f558e9ee889e84b0c32799"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "342a0214b6609d0800eb9ae26be7a8a3c3e1283b"
+    },
+    {
+      "path": "indra",
+      "type": "dir",
+      "sha": "b869568e6bd7808821f1a377d9912cb767d6f94b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "5b48bd13df0daa88c8b9d85a9356d7510e805530"
+    }
+  ],
+  "classification": "virtual_world_client",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Second Life client; owned indra/native build, not general game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

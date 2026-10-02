@@ -1,0 +1,62 @@
+{
+  "repository": "spoutdev/Spout",
+  "repository_id": 1688262,
+  "commit": "52f0992db0acca466e192d41e790a680a0f66b72",
+  "source_url": "https://github.com/spoutdev/Spout/tree/52f0992db0acca466e192d41e790a680a0f66b72",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5e90407f2893c2a48fc5468d4d2c0acf3cd3827a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2e4ff9988e5b66152b489aeb822034a0cdadcb5d"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "b821264ccfa9ff9e23269c2cbef80f5a2f736e21"
+    },
+    {
+      "path": "HEADER.txt",
+      "type": "file",
+      "sha": "1f1df5390bb1a0c6cf9d4a94e30929c2f0c8df3e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "3ef6e4389230577e835d81858ec991ff72663ba8"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "57204b0bc21e6ecf9842d415caa34683b83cc7f2"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "6778af888feebf17bd2a0ecd1f463d4c64f2961b"
+    },
+    {
+      "path": "logging",
+      "type": "dir",
+      "sha": "f96b74b0aa5cfb371f3cfa66c1c3ff791bd5d7a5"
+    },
+    {
+      "path": "math",
+      "type": "dir",
+      "sha": "f9dd973f9e61091e4d4dd57418e81714cd118f36"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "14ca07011befb626e4c2900e76497c3358514427"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

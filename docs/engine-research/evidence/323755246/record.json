@@ -1,0 +1,59 @@
+{
+  "repository": "Mormert/jle",
+  "repository_id": 323755246,
+  "commit": "d6b122163a5812d9229e48cfe220830b680a8d06",
+  "source_url": "https://github.com/Mormert/jle/tree/d6b122163a5812d9229e48cfe220830b680a8d06",
+  "readme_path": "README.md",
+  "readme_sha256": "2504e3e47cb5c89051ceec1ddb87c2d18b645599e2ab34f3d676d7ccd963ac0c",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d8d6a25997a7003e9e727e75e4b932aa73f2a890"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "07eb207e11fe8878d49c9e59804acbb674da9a48"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "74b18dc58ea334e9a20ada269b68c2c20c8a4356"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "15c9165aacae682fa21b7bb41e02b4ada7a122fc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "40b581ff4ca8ddaac10fe43313b99d04df481dbc"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "8b73accb0a3074e72df2c8bcaaf269e815d9f491"
+    },
+    {
+      "path": "gametemplate",
+      "type": "dir",
+      "sha": "7009483fd0ec6402aca04011debc88d808dba75d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies work-in-progress native game engine; owned engine/gametemplate and build source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

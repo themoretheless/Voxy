@@ -1,0 +1,102 @@
+{
+  "repository": "amethyst/distill",
+  "repository_id": 146508974,
+  "commit": "852e48272ab3dad76c7490fce8df52461f94ebc0",
+  "source_url": "https://github.com/amethyst/distill/tree/852e48272ab3dad76c7490fce8df52461f94ebc0",
+  "readme_path": "README.md",
+  "readme_sha256": "58406d40bd194d4881bec862af83cf225c42860b71910fc71583b9da2f8273aa",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a04bd9364ac94adea3f3ef8d93de9e0845f4138e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3aa3ec940eaf305f7c1ee74fb0c27291c1839ade"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "cdeae4e900269ee8933bc0c6bcdb9c13c88623aa"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "db7e83676a467b43a9771fe0d69497991411c29d"
+    },
+    {
+      "path": "Rustfmt.toml",
+      "type": "file",
+      "sha": "4e727a08bec5fc9d1b6af8ace779a39ad9e065c0"
+    },
+    {
+      "path": "cli",
+      "type": "dir",
+      "sha": "d8fcb0b07cd7fec5d04b1c35f37f7a194941506f"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "e4c1d5d7cba4664f7bdce4640e7aac88847990df"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "becb54e66f029916ea89779b4f50c8b05439bf17"
+    },
+    {
+      "path": "daemon",
+      "type": "dir",
+      "sha": "0da7b2fe3f7fa412dafeb7b1786139e537752fd8"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "4c14726bd7a89adfc6355994fc914a3b53860d3f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f5a636673c387380e650ea4e5054898ca417d39e"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "5d9cf5045b1f908cf5bc61a7fd56274321f8af65"
+    },
+    {
+      "path": "importer",
+      "type": "dir",
+      "sha": "6e4486dfef34748ed282b5b909ee24dc9630f578"
+    },
+    {
+      "path": "loader",
+      "type": "dir",
+      "sha": "5535d4dcaa222e0d12daf144ab5e692b0104608a"
+    },
+    {
+      "path": "processing",
+      "type": "dir",
+      "sha": "0590afe7cf29287f4243fb637de2294f2d3563b0"
+    },
+    {
+      "path": "schema",
+      "type": "dir",
+      "sha": "a7e2cf4d8eabfb324588b30197044a4acc9aa690"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "33dc2c9557a86474404e42d282a876b57cdbb987"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "da42543d44efdb76aed78eddfdf7183aa20724db"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

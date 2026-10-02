@@ -1,8 +1,10 @@
 //! Renderer-neutral authoritative runtime contracts.
 
 mod bootstrap;
+mod frame_loop;
+pub use frame_loop::{FrameLoop, FrameWork};
 mod time;
-pub use time::{SimulationClock, TimeFrame};
+pub use time::{SimulationClock, TimeDrop, TimeFrame};
 
 use std::collections::BTreeMap;
 
@@ -10,7 +12,7 @@ use voxy_core::{ChunkPos, TickId, WorldEpoch};
 
 pub use bootstrap::{
     BootstrapChunk, BootstrapError, BootstrapScene, build_bootstrap_mesh, build_bootstrap_scene,
-    rebuild_bootstrap_chunks,
+    build_generated_scene, build_procedural_scene, rebuild_bootstrap_chunks,
 };
 
 #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
@@ -50,13 +52,34 @@ impl<T> BarrierQueue<T> {
         }
     }
 
+    /// Epoch to attach to newly dispatched jobs.
+    #[must_use]
+    pub const fn world_epoch(&self) -> WorldEpoch {
+        self.world_epoch
+    }
+
+    /// Starts a new world generation and discards pending old-world results.
+    /// Late completions carrying the previous epoch will be rejected by `push`.
+    /// Returns `None` on epoch exhaustion, preserving both epoch and results.
+    pub fn advance_epoch(&mut self) -> Option<WorldEpoch> {
+        let next = self.world_epoch.checked_next()?;
+        self.pending.clear();
+        self.world_epoch = next;
+        Some(next)
+    }
+
     /// Returns false for stale epochs or duplicate keys.
     pub fn push(&mut self, completion: Completion<T>) -> bool {
-        completion.world_epoch == self.world_epoch
-            && self
-                .pending
-                .insert(completion.key, completion.value)
-                .is_none()
+        if completion.world_epoch != self.world_epoch {
+            return false;
+        }
+        match self.pending.entry(completion.key) {
+            std::collections::btree_map::Entry::Vacant(entry) => {
+                entry.insert(completion.value);
+                true
+            }
+            std::collections::btree_map::Entry::Occupied(_) => false,
+        }
     }
 
     pub fn drain_barrier(&mut self, max_count: usize) -> Vec<(CompletionKey, T)> {
@@ -140,6 +163,74 @@ mod tests {
             value: 6,
         }));
         assert_eq!(queue.len(), 1);
+    }
+
+    #[test]
+    fn rejected_results_preserve_the_first_accepted_value() {
+        let epoch = WorldEpoch::new(7).unwrap();
+        let mut queue = BarrierQueue::new(epoch);
+        let accepted_key = key(1, 0);
+        assert!(queue.push(Completion {
+            world_epoch: epoch,
+            key: accepted_key,
+            value: "accepted mesh",
+        }));
+        assert!(!queue.push(Completion {
+            world_epoch: epoch,
+            key: accepted_key,
+            value: "duplicate mesh",
+        }));
+        assert!(!queue.push(Completion {
+            world_epoch: WorldEpoch::new(6).unwrap(),
+            key: accepted_key,
+            value: "old scene mesh",
+        }));
+        assert_eq!(
+            queue.drain_barrier(usize::MAX),
+            vec![(accepted_key, "accepted mesh")]
+        );
+    }
+
+    #[test]
+    fn world_transition_discards_pending_and_rejects_late_jobs() {
+        let old = WorldEpoch::new(7).unwrap();
+        let mut queue = BarrierQueue::new(old);
+        let job_key = key(1, 0);
+        assert!(queue.push(Completion {
+            world_epoch: old,
+            key: job_key,
+            value: "old mesh",
+        }));
+        let current = queue.advance_epoch().unwrap();
+        assert_eq!(current.get(), 8);
+        assert_eq!(queue.world_epoch(), current);
+        assert!(queue.is_empty());
+        assert!(!queue.push(Completion {
+            world_epoch: old,
+            key: job_key,
+            value: "late mesh",
+        }));
+        assert!(queue.push(Completion {
+            world_epoch: current,
+            key: job_key,
+            value: "new mesh",
+        }));
+        assert_eq!(queue.drain_barrier(1), vec![(job_key, "new mesh")]);
+    }
+
+    #[test]
+    fn exhausted_epoch_preserves_pending_results() {
+        let epoch = WorldEpoch::new(u64::MAX).unwrap();
+        let mut queue = BarrierQueue::new(epoch);
+        let job_key = key(1, 0);
+        assert!(queue.push(Completion {
+            world_epoch: epoch,
+            key: job_key,
+            value: 42,
+        }));
+        assert_eq!(queue.advance_epoch(), None);
+        assert_eq!(queue.world_epoch(), epoch);
+        assert_eq!(queue.drain_barrier(1), vec![(job_key, 42)]);
     }
 
     #[test]

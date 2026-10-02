@@ -1,0 +1,49 @@
+{
+  "repository": "kreezii/jsgam",
+  "repository_id": 123819721,
+  "commit": "2b7566f0ee10711b66a8707a0e35d3383b8a5a7c",
+  "source_url": "https://github.com/kreezii/jsgam/tree/2b7566f0ee10711b66a8707a0e35d3383b8a5a7c",
+  "readme_path": "README.md",
+  "readme_sha256": "1e2e55530a9b6ec744bf32515521b6533296eacb73fdc24c18f955470a0d7980",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "daf2580f76fd68bc82eede804749e0c93f300a22"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "af85a307ac79058b04bb9188a82d8000a1eb7332"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e7247d35bea6f3492d407d888fabc763a8c1ad58"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "f73dddf81ae4651df80f7edc185bd0e9c73d7f3b"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "332ec752ea69495020a3484f2517ba9068568fa4"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "bec80d43c019ef160fde8d99b6ddf87645131c3b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "bb0117cd7d24ecb45f0c355c8e8d304a6ad4d008"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "JavaScript point-and-click adventure runtime with src and published package instructions.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

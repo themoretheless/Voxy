@@ -1,0 +1,42 @@
+{
+  "repository": "glouw/littlewolf",
+  "repository_id": 113915028,
+  "commit": "6e66e1e7f6adb39e321e4a51d1866c252b53673d",
+  "source_url": "https://github.com/glouw/littlewolf/tree/6e66e1e7f6adb39e321e4a51d1866c252b53673d",
+  "readme_path": "README.md",
+  "readme_sha256": "28fd6a09584011945bd25f19fbf888b5c2ec5be5653bc18555f594df695136fa",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0fdf2e08ca53c30b89b7b9c03a7d6f3d86162eb0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "28b321d3f321f80cc3edc66d790576584d2984fa"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "59d182369f24df888775331f6691ba30a3de2846"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "65e0d246077dfcecf9a243118a6616feaa14c5e9"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "3d0482934c19c5b9cf1fc72d2b5d5e241fc0d4c9"
+    },
+    {
+      "path": "main.c",
+      "type": "file",
+      "sha": "a4cc260379c7d00c7c8d79269cbb7327ae1b31e7"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

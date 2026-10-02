@@ -1,0 +1,67 @@
+{
+  "repository": "aidan-clyens/TerrainGenerator",
+  "repository_id": 302798278,
+  "commit": "5b00da7ee7d4d20bc2e27dcd6d27fc4a5f76e511",
+  "source_url": "https://github.com/aidan-clyens/TerrainGenerator/tree/5b00da7ee7d4d20bc2e27dcd6d27fc4a5f76e511",
+  "readme_path": "README.md",
+  "readme_sha256": "ee2686ebfe0d276b5eb5a63ef74d53df4686c2867765df44cf3e36e3794afc4e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ddf3d3ecdf90f347192b7a188cf46c2713838ad6"
+    },
+    {
+      "path": "Images.meta",
+      "type": "file",
+      "sha": "7bcd94c28792de83662cf2e3db1752579f9e85c8"
+    },
+    {
+      "path": "Images",
+      "type": "dir",
+      "sha": "77df2f2233e1d79438c337f1347f9025108fe9a5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "LICENSE.meta",
+      "type": "file",
+      "sha": "c4d64b15dd93b6c425ff40ae9d55330e887bf0d6"
+    },
+    {
+      "path": "MgeeGames.meta",
+      "type": "file",
+      "sha": "fc65a2f2436466360045cc80bfe353bb8f1f33ef"
+    },
+    {
+      "path": "MgeeGames",
+      "type": "dir",
+      "sha": "ebc9364b4e0dcb5eea8506a50c672ad10b9553a6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3e937f7546ebf15764e665b406cc30cde75bcd63"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "2daec8db62511cd40736b48a892e7402e7fe586a"
+    },
+    {
+      "path": "Settings.meta",
+      "type": "file",
+      "sha": "7b1802e21aa0123cc1f4e1ec762e7cb70e53d8c4"
+    },
+    {
+      "path": "Settings",
+      "type": "dir",
+      "sha": "d6e22fe4721385d051af89edb4e15462757582dd"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

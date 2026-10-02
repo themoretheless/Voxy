@@ -1,0 +1,1772 @@
+{
+  "before": 46,
+  "after": 46,
+  "steps": [
+    {
+      "pass_index": 0,
+      "vertices": [
+        5535
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001864602777447972,
+      "local_measure_after_m": 0.0018644763826434737
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5577
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012415492627600158,
+      "local_measure_after_m": 0.0012399545646542632
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        5579
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0011728616493488012,
+      "local_measure_after_m": 0.0011579957871482739
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        10914
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0002892377520438573,
+      "local_measure_after_m": 0.00028589180209145513
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        23018
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009713172080220888,
+      "local_measure_after_m": 0.000965458216431644
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        24758
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 1.8206728127908813e-06,
+      "local_measure_after_m": 1.8163074875251384e-06
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        28061
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009532522514744679,
+      "local_measure_after_m": 0.000951290031579344
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37468
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007590339200771016,
+      "local_measure_after_m": 0.0007583579833092533
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37469
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009390519035157477,
+      "local_measure_after_m": 0.0009024637440562628
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37487
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002691498163719507,
+      "local_measure_after_m": 0.0026893747283781
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        37488
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002044155555764153,
+      "local_measure_after_m": 0.0020439612020511817
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45203
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00025030366811290523,
+      "local_measure_after_m": 0.0002502974141377663
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45204
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009865306207447674,
+      "local_measure_after_m": 0.0009864869920122052
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45205
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0016569709736357272,
+      "local_measure_after_m": 0.0016569147183127667
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45207
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0021480071539992326,
+      "local_measure_after_m": 0.0021479686395148925
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45208
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0020530309380748066,
+      "local_measure_after_m": 0.0020530060252449372
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45210
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012129689365763304,
+      "local_measure_after_m": 0.0012025467587325291
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45211
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 9.746720471612866e-05,
+      "local_measure_after_m": 9.711872615805913e-05
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45212
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0005169345410813354,
+      "local_measure_after_m": 0.0004962757472441768
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45213
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009784208276102852,
+      "local_measure_after_m": 0.0009772013553144164
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45216
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00010001677457111954,
+      "local_measure_after_m": 9.77333815641496e-05
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45217
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.000690197805912449,
+      "local_measure_after_m": 0.0006901860955773736
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45220
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0021456901807345523,
+      "local_measure_after_m": 0.002145658970524917
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45221
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 2.373639975925809e-06,
+      "local_measure_after_m": 2.3721632758899434e-06
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45224
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0017192469913909277,
+      "local_measure_after_m": 0.0017165097583849466
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45225
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0002057017076251978,
+      "local_measure_after_m": 0.00020564417982304377
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45229
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0004083876858685892,
+      "local_measure_after_m": 0.00040180081560719475
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45230
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0008270818077818569,
+      "local_measure_after_m": 0.0008000934363849993
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45231
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007784451862582254,
+      "local_measure_after_m": 0.0007647763611059795
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45233
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 1.9045405322144315e-05,
+      "local_measure_after_m": 1.714223135283727e-05
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45234
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00046614274981768945,
+      "local_measure_after_m": 0.0004661206533271812
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45235
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002147101069592254,
+      "local_measure_after_m": 0.0021470926651462434
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45239
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00033593464091041765,
+      "local_measure_after_m": 0.0003227226976872396
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45241
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0026630706579453397,
+      "local_measure_after_m": 0.0026615129044316606
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45245
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001311478994423498,
+      "local_measure_after_m": 0.0012990422868596203
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45247
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001781416372419006,
+      "local_measure_after_m": 0.001778314325417908
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45249
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0016198426040410835,
+      "local_measure_after_m": 0.0016198036149593317
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45251
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00023693450966923813,
+      "local_measure_after_m": 0.00022841089457501152
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45256
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013713426822111578,
+      "local_measure_after_m": 0.0013713307686255235
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45257
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013580470861750786,
+      "local_measure_after_m": 0.0013579130474071074
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45259
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00011171318637957903,
+      "local_measure_after_m": 0.0001115534202315398
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45261
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0029722641327674534,
+      "local_measure_after_m": 0.00297205513056919
+    },
+    {
+      "pass_index": 0,
+      "vertices": [
+        45264
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009107964321346989,
+      "local_measure_after_m": 0.000910125911503604
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5535
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001856984840176192,
+      "local_measure_after_m": 0.0018569833029151688
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        5577
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012468484701323088,
+      "local_measure_after_m": 0.0012465530911844604
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        10914
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00020363983574695865,
+      "local_measure_after_m": 0.00020309060073112834
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        23018
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009934391593045093,
+      "local_measure_after_m": 0.0009928435707519463
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        24758
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 7.39306796752243e-07,
+      "local_measure_after_m": 6.948563107034074e-07
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        28061
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0008920880609597151,
+      "local_measure_after_m": 0.0008913488738251401
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37467
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0030564626497205922,
+      "local_measure_after_m": 0.003050353909912603
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37468
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0006795484445576672,
+      "local_measure_after_m": 0.0006789644714076705
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37469
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0008495416765567356,
+      "local_measure_after_m": 0.0007966801192631031
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37487
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002699316527461383,
+      "local_measure_after_m": 0.0026968768458513043
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        37488
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0020909931937773507,
+      "local_measure_after_m": 0.0020889783188585372
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45203
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0002659953764137275,
+      "local_measure_after_m": 0.0002659859906655246
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45205
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0016736800795512487,
+      "local_measure_after_m": 0.0016736467823920303
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45207
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002147380209508293,
+      "local_measure_after_m": 0.00214736230971867
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45210
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012080289816303756,
+      "local_measure_after_m": 0.0012041119159734385
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45211
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 9.800457203550399e-05,
+      "local_measure_after_m": 9.7957145371915e-05
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45212
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.000490869329481336,
+      "local_measure_after_m": 0.00047981339575086426
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45213
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.000941296289038994,
+      "local_measure_after_m": 0.0009409106439958308
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45216
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 7.928954811327224e-05,
+      "local_measure_after_m": 7.703495957558058e-05
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45217
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007178736419457751,
+      "local_measure_after_m": 0.0007178525934856351
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45219
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0019597158741594175,
+      "local_measure_after_m": 0.0019590070602128777
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45220
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002145134477029847,
+      "local_measure_after_m": 0.002145130224047914
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45221
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 2.590912963393877e-06,
+      "local_measure_after_m": 2.590614226340458e-06
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45224
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0015870946760267197,
+      "local_measure_after_m": 0.0015864723350810398
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45225
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00019681268905520126,
+      "local_measure_after_m": 0.00019663321472585338
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45229
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00041148625893513003,
+      "local_measure_after_m": 0.0004109321545960557
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45230
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007328678346470783,
+      "local_measure_after_m": 0.000723883142507172
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45231
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007248166755439905,
+      "local_measure_after_m": 0.0007130619059907676
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45233
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 5.863049645788831e-06,
+      "local_measure_after_m": 5.2670598732530455e-06
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45234
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00048196866745122373,
+      "local_measure_after_m": 0.000481956263465621
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45235
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002146467915256718,
+      "local_measure_after_m": 0.002146467785591755
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45245
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0011850660459278403,
+      "local_measure_after_m": 0.0011791807482466683
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45247
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0017492044554264612,
+      "local_measure_after_m": 0.0017450967409987552
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45251
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00022094596269953744,
+      "local_measure_after_m": 0.00021646885102101303
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45256
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013213723198923055,
+      "local_measure_after_m": 0.0013213472873615257
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45257
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013822585105852058,
+      "local_measure_after_m": 0.0013820187626178732
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45259
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 8.340703510713407e-05,
+      "local_measure_after_m": 8.335136714764151e-05
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45261
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00292345697356859,
+      "local_measure_after_m": 0.002922859024471144
+    },
+    {
+      "pass_index": 1,
+      "vertices": [
+        45264
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009225956092108001,
+      "local_measure_after_m": 0.0009214496395729949
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5535
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001848564306343843,
+      "local_measure_after_m": 0.001848497931385282
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        5577
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012421193317256306,
+      "local_measure_after_m": 0.0012421150656448394
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        10914
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00015821812711944118,
+      "local_measure_after_m": 0.00015557337581935952
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        23018
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009872210095971798,
+      "local_measure_after_m": 0.0009815222330684234
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        24758
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 2.3896959702887315e-08,
+      "local_measure_after_m": 2.209008326599177e-08
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37468
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007493806778796492,
+      "local_measure_after_m": 0.0007481680935079366
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37469
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007224086038708299,
+      "local_measure_after_m": 0.000720297040297164
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        37487
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0025021683460500106,
+      "local_measure_after_m": 0.0024989353992824247
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45204
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0011941511506715196,
+      "local_measure_after_m": 0.00119414260901776
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45207
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.002141658568563075,
+      "local_measure_after_m": 0.002141455990243865
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45208
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0020939980578707474,
+      "local_measure_after_m": 0.0020939696654443947
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45210
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012036794149211708,
+      "local_measure_after_m": 0.001203672204447915
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45211
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 9.752214681218259e-05,
+      "local_measure_after_m": 9.75198795765132e-05
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45212
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0004728717638274687,
+      "local_measure_after_m": 0.0004724050288589627
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45213
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009457160296017242,
+      "local_measure_after_m": 0.0009457115377592123
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45216
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 6.293646919720418e-05,
+      "local_measure_after_m": 6.0250799243882205e-05
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45217
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007313283730802233,
+      "local_measure_after_m": 0.0007300953186897998
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45221
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 2.6962276675747366e-06,
+      "local_measure_after_m": 2.696013687983055e-06
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45224
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001531828896211024,
+      "local_measure_after_m": 0.0015318004033713826
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45225
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00018989348345257727,
+      "local_measure_after_m": 0.0001897370197483136
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45229
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00045210232462396184,
+      "local_measure_after_m": 0.0004250562242325284
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45230
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0006526515042258258,
+      "local_measure_after_m": 0.0006326757054223092
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45231
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007195046647907773,
+      "local_measure_after_m": 0.0007170300808904444
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45233
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 1.9756911240705402e-05,
+      "local_measure_after_m": 1.7898290032073794e-05
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45235
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0021405638187982695,
+      "local_measure_after_m": 0.0021405637557134617
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45245
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001116438409551252,
+      "local_measure_after_m": 0.0011030807117197153
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45249
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0014744709052706005,
+      "local_measure_after_m": 0.001474441299072989
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45251
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00020870362356136094,
+      "local_measure_after_m": 0.0002015939110135
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45256
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012641780456180628,
+      "local_measure_after_m": 0.001264176702839241
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45257
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013873410713887589,
+      "local_measure_after_m": 0.0013873140129255623
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45259
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 6.94611998143931e-05,
+      "local_measure_after_m": 6.926851092538646e-05
+    },
+    {
+      "pass_index": 2,
+      "vertices": [
+        45264
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009287353131561316,
+      "local_measure_after_m": 0.0009276776726203425
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5535
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0018496607807707774,
+      "local_measure_after_m": 0.0018496565826910277
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        5579
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0011358821859158291,
+      "local_measure_after_m": 0.0011279176665154652
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        10914
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0002367851980613161,
+      "local_measure_after_m": 0.0002333651696663373
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        23018
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009794784762845391,
+      "local_measure_after_m": 0.0009788833644582876
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        24758
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 2.5337788356810568e-08,
+      "local_measure_after_m": 2.3932304354450416e-08
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37467
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0028998432554055505,
+      "local_measure_after_m": 0.002885617016228142
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37468
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00070232134954423,
+      "local_measure_after_m": 0.0007010553924368824
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37469
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0006518675836532831,
+      "local_measure_after_m": 0.0006402253359361154
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        37487
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0025826011854638334,
+      "local_measure_after_m": 0.002579711965667178
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45203
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0002171153059633883,
+      "local_measure_after_m": 0.0002171081473581638
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45204
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0011910493039610766,
+      "local_measure_after_m": 0.0011910461380052308
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45205
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0014570010892522322,
+      "local_measure_after_m": 0.0014569988158112215
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45207
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0021408609407463546,
+      "local_measure_after_m": 0.0021408457353236216
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45210
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0012232402369606456,
+      "local_measure_after_m": 0.0012232350344527905
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45211
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00011639256431181656,
+      "local_measure_after_m": 0.00011636503223568396
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45212
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00045801009396505434,
+      "local_measure_after_m": 0.00045604608263568035
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45213
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009392394898409173,
+      "local_measure_after_m": 0.0009391960518807963
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45216
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00012069862645170743,
+      "local_measure_after_m": 0.00011746323124114185
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45217
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0007333753989597348,
+      "local_measure_after_m": 0.0007330445259990656
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45219
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001958995309409959,
+      "local_measure_after_m": 0.001958888324511459
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45220
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0021385442582018766,
+      "local_measure_after_m": 0.002138544111933257
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45221
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 2.749666519839033e-06,
+      "local_measure_after_m": 2.6913544637253718e-06
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45224
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013687174528227745,
+      "local_measure_after_m": 0.0013682419297218844
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45225
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00012415066824376022,
+      "local_measure_after_m": 0.00012409365955275045
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45229
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0004254211163441995,
+      "local_measure_after_m": 0.00042169087659347897
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45230
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0005731898904615044,
+      "local_measure_after_m": 0.0004552970639696874
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45231
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.000752909264765541,
+      "local_measure_after_m": 0.0007508343577262362
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45233
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 3.898090267282373e-06,
+      "local_measure_after_m": 3.7329195572330907e-06
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45234
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0004528498528223987,
+      "local_measure_after_m": 0.0004528446959090531
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45235
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0021399605048102307,
+      "local_measure_after_m": 0.002139960470916008
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45245
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009411930398109963,
+      "local_measure_after_m": 0.0009391378368423021
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45247
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.001684679648934091,
+      "local_measure_after_m": 0.001684217778059751
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45249
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0013490117625099354,
+      "local_measure_after_m": 0.0013485825196579847
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45251
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0001522447050282625,
+      "local_measure_after_m": 0.0001414798303440416
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45255
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0037288317932664015,
+      "local_measure_after_m": 0.003728684192384398
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45256
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0011687548046995973,
+      "local_measure_after_m": 0.0011687203164614998
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45257
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0014202569346113449,
+      "local_measure_after_m": 0.001420235254059262
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45259
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.00012237285943550794,
+      "local_measure_after_m": 0.00012235508813753177
+    },
+    {
+      "pass_index": 3,
+      "vertices": [
+        45264
+      ],
+      "before": 46,
+      "after": 46,
+      "local_measure_before_m": 0.0009035158429698018,
+      "local_measure_after_m": 0.0009027062188364522
+    }
+  ],
+  "includes_adjacent": true,
+  "face_groups": false,
+  "edge_groups": false,
+  "project_bound": true,
+  "reduce_measure": true,
+  "diagonal_directions": true,
+  "initial_measure_m": 0.010638800345280908,
+  "final_measure_m": 0.010040476698689458,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        48802,
+        48848
+      ],
+      [
+        48802,
+        48847
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48801,
+        48843
+      ],
+      [
+        48818,
+        48847
+      ],
+      [
+        48802,
+        48827
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48802,
+        48828
+      ],
+      [
+        48818,
+        48828
+      ],
+      [
+        48818,
+        48829
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48818,
+        48858
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48853
+      ],
+      [
+        48818,
+        48854
+      ],
+      [
+        47274,
+        48800
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        47088,
+        49017
+      ],
+      [
+        47087,
+        49017
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        47092,
+        49017
+      ],
+      [
+        47085,
+        49012
+      ],
+      [
+        47084,
+        49012
+      ],
+      [
+        47086,
+        49012
+      ],
+      [
+        49012,
+        49044
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        47081,
+        49017
+      ],
+      [
+        47081,
+        49012
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        47272,
+        48800
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        47273,
+        48800
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49036,
+        49061
+      ],
+      [
+        49035,
+        49061
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49028,
+        49048
+      ],
+      [
+        49028,
+        49047
+      ],
+      [
+        49028,
+        49063
+      ],
+      [
+        49027,
+        49061
+      ],
+      [
+        49028,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33243,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554478,
+      "forbidden_pairs": [
+        [
+          47088,
+          49016
+        ],
+        [
+          49034,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "maximum_cumulative_displacement_m": 0.0029999999999970116,
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.5670775607502216,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "source_sha256": "ef8bfb8ff6124aed505afa93909061f1461662a54f616b2555de2de4a18b12e1",
+  "reference_sha256": "759a20146a086c94d9fc64979ee0c67635b66b2eb619d6a9bcc2050385cb66aa",
+  "candidate_sha256": "cde89159432c3a4a618fe0d14c6d521ab0bce7d21041cc5453ff93960be4cab6",
+  "proposal_distances_m": [
+    0.002,
+    -0.002,
+    0.0015,
+    -0.0015,
+    0.0003,
+    -0.0003,
+    0.0001,
+    -0.0001,
+    5e-05,
+    -5e-05,
+    2.5e-05,
+    -2.5e-05
+  ],
+  "adopted": false,
+  "export_reload_verified": true
+}

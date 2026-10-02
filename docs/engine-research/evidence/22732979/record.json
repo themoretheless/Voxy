@@ -1,0 +1,84 @@
+{
+  "repository": "nfprojects/nfengine",
+  "repository_id": 22732979,
+  "commit": "374f59e056fff59a6b467d3fadccd0fc257aed36",
+  "source_url": "https://github.com/nfprojects/nfengine/tree/374f59e056fff59a6b467d3fadccd0fc257aed36",
+  "readme_path": "README.md",
+  "readme_sha256": "e31aa9a4c3636cd4c5db159e6c0d22653ac91ec89c36442c32f309764a244f7a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "61ec7a9fa1b09b9e0a1450f8a467e2d47aeea80d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6fddf37592704a934817dd62e1e8e61a9b70cfa0"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "11dc98e312d6b348b9ad6d7635bb5728d1a1beb9"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1fd23d02adff4702a457da3203f22b6f38c0221c"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "4fc488fc5ab02c896b96b0a65cea0d6714912cdb"
+    },
+    {
+      "path": "Deps",
+      "type": "dir",
+      "sha": "d6dca74c4738937ea8354d175bdd124bd591a9ca"
+    },
+    {
+      "path": "Engine.sln",
+      "type": "file",
+      "sha": "7c268d5b4c8963a13ff16ce773416fe30a3dc130"
+    },
+    {
+      "path": "Gallery",
+      "type": "dir",
+      "sha": "152a5f9d6f89f47dd089ed02264d13b24a5d236d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e22f5ce470dad652e79f4724d892e3cc95c8c9f9"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "73d2ddc7cc2feb22a4d251f3260608fb6f048418"
+    },
+    {
+      "path": "Src",
+      "type": "dir",
+      "sha": "82ba0ff3205bccc7039ef47f98fe3eefc0e73892"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e9c0f87ffbba6e4d6c1c32e0cc23b5e0ebe56377"
+    },
+    {
+      "path": "engineConfig.cfg",
+      "type": "file",
+      "sha": "1e1c9bb8920dc832a93ca113ef456ba2334b9b8c"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Engine source and Windows/Linux builds are documented, but pinned README defers subsystem features to wiki; runtime scope needs deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

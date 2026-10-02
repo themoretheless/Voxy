@@ -1,0 +1,94 @@
+{
+  "repository": "PanosK92/SpartanEngine",
+  "repository_id": 61415047,
+  "commit": "2e11ed91e310dd2d029212b4edf48bf120456ee0",
+  "source_url": "https://github.com/PanosK92/SpartanEngine/tree/2e11ed91e310dd2d029212b4edf48bf120456ee0",
+  "readme_path": "readme.md",
+  "readme_sha256": "83bd7fa3749edd0fcbcf0ed9eb0d8d2f32a38863e90b45832bf3dc4eff5a8409",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "bb0f5d99d2a0e47a09c4ca76975a9fc55b616b11"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3f6ffc451688897817373a02bf24a8b64e97490a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1b22e8d7b499ff8d806efcc3e7b6278f79624f0a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7670513b16f9548fb7c317df8321c59569783d00"
+    },
+    {
+      "path": "code_of_conduct.md",
+      "type": "file",
+      "sha": "3525b957336ecb655450feae38658e0d2035e136"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "eb40bdf29ad86f8326f9d80f70376e4246ff21bf"
+    },
+    {
+      "path": "funding.yml",
+      "type": "file",
+      "sha": "ddcdd6f5096df93c07048bb0a2dee7de133aa95a"
+    },
+    {
+      "path": "generate_project_files.bat",
+      "type": "file",
+      "sha": "c0741d3e988e5cc3292ae1b25b468f18c203b96c"
+    },
+    {
+      "path": "generate_project_files.sh",
+      "type": "file",
+      "sha": "9c1fe82929aca86f1438dc241ed8d5fa373fa261"
+    },
+    {
+      "path": "license.md",
+      "type": "file",
+      "sha": "995657db3e9a5b105b042f495d69b5736eed7361"
+    },
+    {
+      "path": "plan.md",
+      "type": "file",
+      "sha": "d0db472a8c6aa60e83ad85d72bacb63d76eb1cd5"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "b2e1b057d3099f600d5c022290441193886c65c6"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "921c6e111f20923c772181e1d61f8a06b9459410"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "332118e7e7f0480cf15b335c8eada1d85650fe69"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "95a2a674fde2774c0f99d7cb091241c0d554200b"
+    },
+    {
+      "path": "worlds",
+      "type": "dir",
+      "sha": "e98c68a7dcb33ca5f68fde429efaca83ac31e99d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native engine; source, worlds and project-generation scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

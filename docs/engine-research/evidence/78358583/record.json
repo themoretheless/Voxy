@@ -1,0 +1,114 @@
+{
+  "repository": "hugoam/toy",
+  "repository_id": 78358583,
+  "commit": "e0d160a506b646b6679d72a328b1c0981e214ccf",
+  "source_url": "https://github.com/hugoam/toy/tree/e0d160a506b646b6679d72a328b1c0981e214ccf",
+  "readme_path": "README.md",
+  "readme_sha256": "813bf738378faa55970983ae33aa969e9d66687274db3c62c5da4b9ba2dcf813",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "31e4e26bed7b0558a77d485f383cc254f90deefc"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "debdf273a994c7a24eb1d77a4c3a9f211b654dff"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b0b8fa3a4ade302e982dea3879926c350f1ec652"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d888d98a2a3d3346f25a57189b6af7769444cddb"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "defc4ffdf1a36dc3cd649d12930af4973d963a8d"
+    },
+    {
+      "path": "3rdparty.txt",
+      "type": "file",
+      "sha": "7629f189d851c7c471edc6449a85dd494e12c4d4"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "d9f72208776a7edb92b8995ac568b6adeaf34a75"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Manual.md",
+      "type": "file",
+      "sha": "0f3aa0a7050920713f2ace06f3ddbfbee0772475"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4eb4a3d209d39ceb703c6e448dc1ef332f64209e"
+    },
+    {
+      "path": "Unused.md",
+      "type": "file",
+      "sha": "f8e905b73b29bdc9bf3512963d86c1e97a55552f"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "222269d7f29bacdbe509ac50ae5ade2367a1ba4d"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "7d280a5345b8849f47cfc6a616a7938f8cbb3505"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "dd831f80f8272bf612b43e2f00451335f8a12e7a"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "1e4eebc3fe3b366885197b2063f4932e6e2b1c8a"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "c1f071cb4979ff978e69a3ecf559d9b07af4d475"
+    },
+    {
+      "path": "jams",
+      "type": "dir",
+      "sha": "d58d7ca984579b9e0e7cbb2edbb8701810389bb1"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "acdeb559267f5ff88e95cda18b71494e0a2161e6"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "d4fb6e80e3879cb9b7385a33d050c80be464dd20"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "58a927cd3d1c8ad059f62b9e668725b3bf89220b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Modular C++ runtime with rendering/audio/UI/editor/scripting, engine source and game examples on underlying two library; performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

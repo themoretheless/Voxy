@@ -1,0 +1,74 @@
+{
+  "repository": "SakuraEngine/SakuraEngine",
+  "repository_id": 426159950,
+  "commit": "c0fdb2bb30074058cb98df98b8134559d13d67b0",
+  "source_url": "https://github.com/SakuraEngine/SakuraEngine/tree/c0fdb2bb30074058cb98df98b8134559d13d67b0",
+  "readme_path": "README.md",
+  "readme_sha256": "a6eb48ed7bc832e1ed4ad85895d062020e3844a93d16209f3ec52951b828054c",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "bdb19d8a30447ec7c730b5dc80d0d919a46ed4bb"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "9a3d6ba2cb3852e39f987fe0a37ae1fd223be6cd"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "34c44006c054a742fbdfc8e650e481d36d45907c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fc8a53d17111598fbebe5234a2a91a1449d87ff9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d7791ee694bf1034a55f62bf8966a61bd432beb7"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "0bbdb171aae682e2dbff710c9ecca2de1b2a3b61"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "26302c1bd584482a7d4daba1da601ab474820434"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "49ecbd54338572d658953d03d4fdcb54b1872407"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0771c315b2659ffcf66b9c66aa35838cbd7cb0d0"
+    },
+    {
+      "path": "SB.csproj",
+      "type": "file",
+      "sha": "fdba7939b6fa4bfa7e4ec050b16e31fa0e639fad"
+    },
+    {
+      "path": "agent_docs",
+      "type": "dir",
+      "sha": "0ede7a910746b2ac860758e8e2ad7962cbc00b79"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "98eda9de6054cb756418b465fe61891d47b55767"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies game runtime/toolbox; owned engine root with build configuration and native toolchain documented in README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

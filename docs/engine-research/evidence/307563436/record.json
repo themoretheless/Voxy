@@ -1,0 +1,64 @@
+{
+  "repository": "evanbowman/BPCore-Engine",
+  "repository_id": 307563436,
+  "commit": "87d734ad2ba99b607b48dcf442197dedcba8436a",
+  "source_url": "https://github.com/evanbowman/BPCore-Engine/tree/87d734ad2ba99b607b48dcf442197dedcba8436a",
+  "readme_path": "README.md",
+  "readme_sha256": "b1e10d7cb0259290bd83b66356f738694ecad07b690baedf7d8cc6d65c982e63",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "29a090a772db6bdfbcfd75e13af281420575db98"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c688af0b29aba083511695e822ea8905b49c75dc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "611853013b351ddf8aa08002ae4c3bedf723eb44"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "7b5c3837abc5d60406010925f9a400894514d57b"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "2bb94a38ab309f8eb3b4b1ccbcf39e1535bcbee1"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "8bc49f06f0ca415cef5759a8f22388a9d35c0325"
+    },
+    {
+      "path": "index_tile.png",
+      "type": "file",
+      "sha": "88b58dddc16852bb6239a17234272ae72d000a13"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "7e0b8300b1956ff25e8fe1fdd1b8fe8cffd6b0cc"
+    },
+    {
+      "path": "useful_documents",
+      "type": "dir",
+      "sha": "e48ae4a9f59f6302f8e0ac366f9326ff440d7c95"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify Lua GBA framework; source/device build and examples, complete engine scope needs deeper review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

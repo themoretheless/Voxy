@@ -1,0 +1,79 @@
+{
+  "repository": "nem0/LumixEngine",
+  "repository_id": 14590125,
+  "commit": "54b83b2f30230d7be9cc67b75122b13d0482f29f",
+  "source_url": "https://github.com/nem0/LumixEngine/tree/54b83b2f30230d7be9cc67b75122b13d0482f29f",
+  "readme_path": "README.md",
+  "readme_sha256": "9081568739dab9cb299e51d92557861bcaecc2cd96d520f3daeebd8c3a1d8f93",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "23fa50db6c9b70e600db6204bb850c18ce6ad97d"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "b39b7e54800d5f024b81e9ed11636fe7197b7aa4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d6a447f3375dcd82d451394cec94e139a7f1c551"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4e77dd8da11b64f869c3dbe6d180d4757d7ef9b2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7cb988101c6bd7ecab6a757bc1519c7b258d4b43"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9ba434f2c8e6562fd18c60a2d0598bdb26eb2b96"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "504ff8f3b6ae0c77395b755a12c80a786c8917af"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "393b4a87bdd091117cded78a15c28fc36b0a4ef4"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "363d209eff879dc8bbe2c04c939a24762b0a9b07"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "759490a15149661cdc715e2e5c445b399635d1b6"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "1b48bdc427bbb4da2b75476c1f76f29c94a0c5a5"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "08f47ed7d73f0cb9732c7f75675b436ebed9f68b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "d583f23ae16060cd7baad13f5cd065c8f60fc7ef"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 3D engine; src, external dependencies, demo and build scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,57 @@
+{
+  "repository": "mellinoe/ge",
+  "repository_id": 60570247,
+  "commit": "44fcbbbe0e75fb566db32f5a9cf5d69907b9b66c",
+  "source_url": "https://github.com/mellinoe/ge/tree/44fcbbbe0e75fb566db32f5a9cf5d69907b9b66c",
+  "readme_path": "README.md",
+  "readme_sha256": "411ac9c8347294e20b35d5c86fd635ed81b7ec0f399550a4ce27d2d5152f6e79",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1f7b1c7b50accf7588f915edaac83d62eef2eb47"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9b2348b356f11cc69e0ff92c9f4763a80564e35e"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "c8fc5b36e82b6f7aac7ba31066fc1b31ff4941bf"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "8a1dd3fa6a56ee0a628b57c9d6e7f7be2a08ec01"
+    },
+    {
+      "path": "NuGet.Config",
+      "type": "file",
+      "sha": "f5b57699680c3f374783856f27c28c4627924d17"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "767fc1b7f9e757e2e24b72ac0b731b1b5184d5b1"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "01d42c22ce66098a07b4386bb77b714ce19b2513"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "fc67cc733ed1f667f83537a8e9711f1542e99360"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "82d2dc0881a6a309040297a9749b0e79543843cc"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

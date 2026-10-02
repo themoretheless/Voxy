@@ -1,0 +1,21 @@
+{
+  "behavior": "Optional self-contact commits together with geometry, source and transport. Failure returns an error and preserves film state and source/contact receipts. Existing BVH is cloned/refitted for staged contact.",
+  "tests": {
+    "atomicContactInitialRunPassed": 2,
+    "previewErrorTestsPassed": 2,
+    "warmCacheContactPassed": 2,
+    "checkpointCompatibilityPassed": 2,
+    "session86508ExitCode": 0
+  },
+  "sourceHashes": {
+    "crates/physics/src/surface_film.rs": "cf368db81306bc8673feb945894aa1e03d844d6ded851a8937357ae4534c8ed0",
+    "crates/physics/src/surface_film_contact.rs": "a13a758bf1de59043a09f8df73a010a6d5c169426a73d1bf03242df3ade133d3",
+    "crates/voxy_app/src/surface_film_preview.rs": "8e1766400a1f52a36c41c7cde687a7bfd01fc6366bc8ff57363efca13ed51233",
+    "crates/physics/tests/surface_film_atomic_contact.rs": "077689574862ede5240aec17eb61da61a2e8de137c287d14adc8155f72b3d515"
+  },
+  "limits": [
+    "BVH cloning adds memory/work; full-body contact performance not measured here.",
+    "Tissue solver state is not rolled back if film fails after successful tissue integration.",
+    "No CCD or physiological transfer calibration."
+  ]
+}

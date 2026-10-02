@@ -1,0 +1,49 @@
+{
+  "repository": "MaddyThorson/StrawberryBF",
+  "repository_id": 261356521,
+  "commit": "bc7f17734db15acc0eca0f1a26652f3ff918b1ec",
+  "source_url": "https://github.com/MaddyThorson/StrawberryBF/tree/bc7f17734db15acc0eca0f1a26652f3ff918b1ec",
+  "readme_path": "README.md",
+  "readme_sha256": "84881e50ef5430c956fa174f7098adb536749b43593d8d607c77484736771e18",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "004697111e0a25a41bd12cba0b2a176bec04ec8d"
+    },
+    {
+      "path": "BeefProj.toml",
+      "type": "file",
+      "sha": "98f1e16e48eed94f36d731e0937dc72e55031e4f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b7fcb14ece4a0a75f69d6c1ddf4b18f11883789"
+    },
+    {
+      "path": "SampleGame",
+      "type": "dir",
+      "sha": "c7eadee3f46ca630353df6d57eaf2121c35e7925"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "b4cdede3b6406c6b168e15548f31222caef3b6b7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "89be1e7d3ab4fc6df33fe42e35b592dc634daefd"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Beef/SDL2 2D game engine with src and SampleGame workspace.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

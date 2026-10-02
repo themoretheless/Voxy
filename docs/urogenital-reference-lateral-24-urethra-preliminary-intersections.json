@@ -1,0 +1,31 @@
+{
+  "scope": "Static floating-point classification; shared-vertex pairs excluded; no CCD or anatomy certification.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-reference-lateral-24/urethra-rest.obj",
+      "sha256": "485ffb5997fff111a90b2b5bb58ffec8f1f21e2663fff61e8773a8af66fb66cd",
+      "vertices": 5200,
+      "triangles": 2304,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 7976
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "compressed",
+      "source": "/private/tmp/voxy-reference-lateral-24/urethra-compressed.obj",
+      "sha256": "77533b35fd9c934fb441c587f7288360d825e796ad53aa93d46a5ec83f789d1e",
+      "vertices": 5200,
+      "triangles": 2304,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 4184
+    }
+  ]
+}

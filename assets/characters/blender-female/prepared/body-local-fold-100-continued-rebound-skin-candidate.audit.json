@@ -1,0 +1,14 @@
+{
+  "vertices": 45266,
+  "reprojected_vertices": 218,
+  "added_vertices": 63,
+  "preserved_vertices": 45048,
+  "maximum_reprojected_distance_m": 0.005035487104822435,
+  "shell_unchanged": true,
+  "reference_sha256": "08427069cb95b061b5780d5f1db469784d5157336c79d2ae9ba20fdcc595df48",
+  "candidate_sha256": "b4fca76685b105c736b55e0ebf7ef0619e4cc8d8b0e8ca7543b85acb241066b5",
+  "source_skin_sha256": "b2afe74c925963212cfcf1efc42cc4065f542836a68fa8e984eec41a19e22f9b",
+  "output_sha256": "91e728434d869012085111f45314c11dd19e845865e621d62603c0943c77231c",
+  "adopted": false,
+  "vertex_sources_sha256": "781367d1e9b529c2c363c4afa43dcf76cf911aa8fb11c8e98977434b0e6ceeb6"
+}

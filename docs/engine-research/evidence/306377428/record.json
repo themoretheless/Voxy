@@ -1,0 +1,414 @@
+{
+  "repository": "nillerusr/source-engine",
+  "repository_id": 306377428,
+  "commit": "ed8209cc35c61fbd8ddff8480962a01c981eef2f",
+  "source_url": "https://github.com/nillerusr/source-engine/tree/ed8209cc35c61fbd8ddff8480962a01c981eef2f",
+  "readme_path": "README.md",
+  "readme_sha256": "4e5ae25ec55e5da72eede2a539b5cde59d22fdc658c45cc77e99637045a89b28",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e5a07a5f32f83569c0da5c66d2b908cf7ebd2320"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "717bd12d74fd12e2d4117b1a0cf1b6dc03a6a397"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9dfb40cb16eb41ae063fcbf7bf1b195e984ce032"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "34c5d4810e47be1d34f287df52b36bf425f68327"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3ade2f32074d2c5671e8299106d96cf930c955ce"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a29954bbaf29ff2b11ef66eaaffa737a087e083e"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "b2cf4e6eda74fc120db1eb1c7ab46534835ae034"
+    },
+    {
+      "path": "appframework",
+      "type": "dir",
+      "sha": "1f78a6a7e309a9519e8c243cf8e05957113b3c37"
+    },
+    {
+      "path": "bitmap",
+      "type": "dir",
+      "sha": "cd200723f4529ef6399e7316327031acc5095a11"
+    },
+    {
+      "path": "choreoobjects",
+      "type": "dir",
+      "sha": "3c9b2f301b606aba7adbbed81d121f326104203c"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "76ae0d39b22e4144bfe3fe9c6a596dab4e4e5f6f"
+    },
+    {
+      "path": "datacache",
+      "type": "dir",
+      "sha": "f52414e26e9169abf3fdcc8fe1008cd7fdf58f5e"
+    },
+    {
+      "path": "datamodel",
+      "type": "dir",
+      "sha": "dd6ab6e0fb1623b2c1b214643029dee0daf98a67"
+    },
+    {
+      "path": "dedicated",
+      "type": "dir",
+      "sha": "6a1e8b51f994e8369d19863ece1242293ad85abe"
+    },
+    {
+      "path": "dedicated_main",
+      "type": "dir",
+      "sha": "d4fa7fbfb0d1abc6ac60f7b578b5cb7fd15054aa"
+    },
+    {
+      "path": "devtools",
+      "type": "dir",
+      "sha": "93668c7fdb4b0f104b77ebd002cc445532198c6c"
+    },
+    {
+      "path": "dmserializers",
+      "type": "dir",
+      "sha": "f65897659366a2dcb2ee130d620d6ea99aab94ad"
+    },
+    {
+      "path": "dmxloader",
+      "type": "dir",
+      "sha": "e8555a765b853b685afc920204580f8e3e990078"
+    },
+    {
+      "path": "dx9sdk",
+      "type": "dir",
+      "sha": "a725fe746acafa00d8d7f51375690a23911eeb26"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "1beeaf0ab7f4de32ad2ad45a15dc362815a7063c"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "ae99f48d76ee718a8df5376ef394684f2f3ac1ad"
+    },
+    {
+      "path": "fgdlib",
+      "type": "dir",
+      "sha": "95e40e01991b20946600f3d82d149a82eda84971"
+    },
+    {
+      "path": "filesystem",
+      "type": "dir",
+      "sha": "c37cabf88a7786370a6fd4e96226fb18f4547e37"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "e5cc8171972d7ec9aa2d4f0ed7e27feccb7b9b79"
+    },
+    {
+      "path": "gameui",
+      "type": "dir",
+      "sha": "3319288b315d1c61419ce33fc0909de711005767"
+    },
+    {
+      "path": "gcsdk",
+      "type": "dir",
+      "sha": "8cfb13ced213d8b875dc8206fca2c39c1152973a"
+    },
+    {
+      "path": "hammer",
+      "type": "dir",
+      "sha": "92b6db3af4f02972c5bf3ff656cf165757bd6388"
+    },
+    {
+      "path": "hammer_launcher",
+      "type": "dir",
+      "sha": "f360b715e863ae2d5f82509223c1489e09b0ec7f"
+    },
+    {
+      "path": "inputsystem",
+      "type": "dir",
+      "sha": "b544b195b0aef95b3634dd1c09da9b6456f7d751"
+    },
+    {
+      "path": "ivp",
+      "type": "file",
+      "sha": "47533475e01cbff05fbc3bbe8b4edc485f292cea"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "08d10fef27edd40aa3b4a58bdf5d69fb7dfc8d89"
+    },
+    {
+      "path": "launcher_main",
+      "type": "dir",
+      "sha": "0aa5582a107d9a187815c8c6e5e28391483998b8"
+    },
+    {
+      "path": "lib",
+      "type": "file",
+      "sha": "86a66ee92d9fda0a09f54a435e850faa7ab5d0fa"
+    },
+    {
+      "path": "linux",
+      "type": "dir",
+      "sha": "bc079d7e78b794ad7e06dc77ed2bb406ec8d8ad3"
+    },
+    {
+      "path": "linux_sdk",
+      "type": "dir",
+      "sha": "d2a93a55353dbc727cf0829348939721cb202eb2"
+    },
+    {
+      "path": "materialsystem",
+      "type": "dir",
+      "sha": "b5bdeebabd538a91643a8520de416c093b838a2f"
+    },
+    {
+      "path": "mathlib",
+      "type": "dir",
+      "sha": "fe32c4a5358bde4896980480c2e3168bd88f3b3c"
+    },
+    {
+      "path": "mdllib",
+      "type": "dir",
+      "sha": "f94ee29606b38f14747df74626afe3511a2fc43a"
+    },
+    {
+      "path": "mdlobjects",
+      "type": "dir",
+      "sha": "4bbb174bdb6f054d9aed721fcc1bfac443885300"
+    },
+    {
+      "path": "movieobjects",
+      "type": "dir",
+      "sha": "c4aaa141bc9d9d530d6cead5b78ddbd82a19fd2b"
+    },
+    {
+      "path": "networksystem",
+      "type": "dir",
+      "sha": "b51e4105af0259e5576f5e49827c4b13bae25809"
+    },
+    {
+      "path": "particles",
+      "type": "dir",
+      "sha": "f7036890cf5d5734d31c415feeb7e9ceb313300e"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "ae1d9e6fec769a2fc459544102b31eea7d957c7d"
+    },
+    {
+      "path": "raytrace",
+      "type": "dir",
+      "sha": "520650c3e5dbe353ace167349a246c671ef1cebc"
+    },
+    {
+      "path": "replay",
+      "type": "dir",
+      "sha": "f1dadb5200597bf8dd299dc00dd074586218360c"
+    },
+    {
+      "path": "scenefilecache",
+      "type": "dir",
+      "sha": "b0af18953128565e39c5497507c75756690fbd61"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "0305ff6acc5ff4434d1837a7ef8a5dbec027f992"
+    },
+    {
+      "path": "sdklauncher",
+      "type": "dir",
+      "sha": "02ca65c9bea440f0dee4f9be31f668087c617e45"
+    },
+    {
+      "path": "serverbrowser",
+      "type": "dir",
+      "sha": "13ea56de32435198909edd072ea197eebf93f593"
+    },
+    {
+      "path": "sfmobjects",
+      "type": "dir",
+      "sha": "be531059f58c53648d44d63bb5645d2ba1d8f2a3"
+    },
+    {
+      "path": "soundemittersystem",
+      "type": "dir",
+      "sha": "47731bcc2d39c04eb90b76e1119b6f3cfa7068ac"
+    },
+    {
+      "path": "soundsystem",
+      "type": "dir",
+      "sha": "ee2cf5785436d8f73cc942d236a72b6bcedf3863"
+    },
+    {
+      "path": "sourcevr",
+      "type": "dir",
+      "sha": "73dc2a543bd41b02b5e25501afb57fea5142b802"
+    },
+    {
+      "path": "stub_steam",
+      "type": "dir",
+      "sha": "7032ad6864c0fe09c924e217320aa726bbc46ea1"
+    },
+    {
+      "path": "studiorender",
+      "type": "dir",
+      "sha": "175261b666928fc9ef58eadab3d417312532071d"
+    },
+    {
+      "path": "thirdparty",
+      "type": "file",
+      "sha": "c5b901ecef515ea068fa8b8a19ca5cd5353905cb"
+    },
+    {
+      "path": "thirdpartylegalnotices.txt",
+      "type": "file",
+      "sha": "126ea8cec08bcf7001446fc4eea6092b19bc03f4"
+    },
+    {
+      "path": "tier0",
+      "type": "dir",
+      "sha": "33c722938399178228f628c7396206ffed6f2a7c"
+    },
+    {
+      "path": "tier1",
+      "type": "dir",
+      "sha": "b58ff4505c8d8d999e8afb59372cec8ac26bcb6a"
+    },
+    {
+      "path": "tier2",
+      "type": "dir",
+      "sha": "9044419714650e5685ce796971770d384c2b5c60"
+    },
+    {
+      "path": "tier3",
+      "type": "dir",
+      "sha": "5ff2520b4701846d65e2a7cd4c0fdec01c28a0cb"
+    },
+    {
+      "path": "togl",
+      "type": "dir",
+      "sha": "9b7383d2999abfabc531c01835285956c553b1fa"
+    },
+    {
+      "path": "togles",
+      "type": "dir",
+      "sha": "f63f83b291e1bc1ce31ce8459ecb5a95fb6bd08d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "77bb2cedbf037ba19f9bf9467027cb6601e51394"
+    },
+    {
+      "path": "tracker",
+      "type": "dir",
+      "sha": "c11c237b602707cc4af1e61835bd264a91d67582"
+    },
+    {
+      "path": "unicode",
+      "type": "dir",
+      "sha": "1d0d82b8402b7a800b47506f641a9652e62613e0"
+    },
+    {
+      "path": "unitlib",
+      "type": "dir",
+      "sha": "fbbceea0aab3260eb94852d161329ddba47dc1b4"
+    },
+    {
+      "path": "unittests",
+      "type": "dir",
+      "sha": "d8f77ee1510cdf587108cd8e436fe96e9dfb9234"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "d76b9967bffc09b66fd87c9dd94b004968e42297"
+    },
+    {
+      "path": "vgui2",
+      "type": "dir",
+      "sha": "769d26a8b981e4254ae151ad564c1eaae016d806"
+    },
+    {
+      "path": "vguimatsurface",
+      "type": "dir",
+      "sha": "1fcee6c67884ee9458e7d8bef66d72ff46e6d5b4"
+    },
+    {
+      "path": "video",
+      "type": "dir",
+      "sha": "93a1a592bb163e4c281b552ae22c9f81062a9d6e"
+    },
+    {
+      "path": "vpc_scripts",
+      "type": "dir",
+      "sha": "7d166ad14efcd819ea5ffa0558083f4d3eb19dba"
+    },
+    {
+      "path": "vphysics",
+      "type": "dir",
+      "sha": "2d1290e4a328f4d6d363b3c9b45a39e97d60be19"
+    },
+    {
+      "path": "vpklib",
+      "type": "dir",
+      "sha": "0d661967c2ac6b7f28333f8ea68fb97b286e27fe"
+    },
+    {
+      "path": "vstdlib",
+      "type": "dir",
+      "sha": "8bbe97bcc9444299d306fd51ac7e7446aa3b16c0"
+    },
+    {
+      "path": "vtf",
+      "type": "dir",
+      "sha": "b63c0aeb3fbdc7a0b8a753e476e866bd7fd4c9e1"
+    },
+    {
+      "path": "waf",
+      "type": "file",
+      "sha": "1a25450dae4d5cbd9eadb5ecaff75b397346f7a2"
+    },
+    {
+      "path": "waf.bat",
+      "type": "file",
+      "sha": "dac6143c6b94bf991445d548b57955757c1eb4f4"
+    },
+    {
+      "path": "wscript",
+      "type": "file",
+      "sha": "16f2263bd2afbf2111f432e681c6f05a994fb96c"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies leaked Valve source; not adopted as reusable licensed engine evidence. No code imported.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

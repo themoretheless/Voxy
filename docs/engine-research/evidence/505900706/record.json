@@ -1,0 +1,79 @@
+{
+  "repository": "oxylusengine/Oxylus",
+  "repository_id": 505900706,
+  "commit": "9718ccab4fbfacf78e6c892b0d6b3c7b01815eab",
+  "source_url": "https://github.com/oxylusengine/Oxylus/tree/9718ccab4fbfacf78e6c892b0d6b3c7b01815eab",
+  "readme_path": "README.md",
+  "readme_sha256": "59579101729f05b300a58e2d98200d11954d96140eebb1929cd2de0de7c319fc",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "71eb9d8bc243cd9bb10ace3924236b31ad917a25"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "00b28f735d364f795f8154b3983c81c7bcc312c2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "793c216dd8683cd2a6d6fbcfe0d3c3511128c435"
+    },
+    {
+      "path": ".luarc.json",
+      "type": "file",
+      "sha": "9c8e55d474cc43c01a6bd7578a2a95aff8ff444e"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "9355bb1acb5d8abcf16e4f47438ffbef63e7b0de"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "e182924f6652fb663596aaedef7930efb464ab0b"
+    },
+    {
+      "path": "Oxylus",
+      "type": "dir",
+      "sha": "9b2d3d6dd449fc7e83ec59f66fd0c48d9d240e63"
+    },
+    {
+      "path": "OxylusEditor",
+      "type": "dir",
+      "sha": "3defbf31932a42215c8ea88a1ae8480a35ad39d3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "530b00ba8f90ce8359f8484051d57c25bd281167"
+    },
+    {
+      "path": "ResourceCompiler",
+      "type": "dir",
+      "sha": "c70d3301ca7aea3d1a657a24708cd3020bdec016"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "ea72e22f92777724def7d8cb214e8692b1532da1"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "f4992ca834720863ba69f529d194b7b8234b6731"
+    },
+    {
+      "path": "xmake",
+      "type": "dir",
+      "sha": "36b67dfce5621db85cfa82548a3af0367b6fd942"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native data-driven engine; owned Oxylus/Editor/resource compiler and xmake build. Performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

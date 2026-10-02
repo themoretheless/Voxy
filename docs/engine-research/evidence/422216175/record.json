@@ -1,0 +1,84 @@
+{
+  "repository": "MenacingMecha/godot-n64-shader-demo",
+  "repository_id": 422216175,
+  "commit": "f9ee31d2b98f6519d080e3dcbbaa129cdac8870c",
+  "source_url": "https://github.com/MenacingMecha/godot-n64-shader-demo/tree/f9ee31d2b98f6519d080e3dcbbaa129cdac8870c",
+  "readme_path": "README.md",
+  "readme_sha256": "57f3ce5aa3d34b5dceb19e637f14debab5b3230c74eef2e3144445e75545cbc5",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6bd6503e079027b7d80a82190397c06cc413246c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "53f7e953b54cfe199dad5b094a42ada8e11d6c77"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bd5ad4bac86abeecf891b3f6688c3fab68851ae5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "52955ffeb8e9a2dd49f04d4dd0bb921e39d84819"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "cb2dd92211800cf52a8a10b7e31ec35559539cb9"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "a1f513e6b3be51bb86351d0537a69206d319d959"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "c98fbb601c83c81ec8c22b1dba7d1d57c62b323c"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "4c113b3bf7c1d66d434381eb574d4c42065e4cd3"
+    },
+    {
+      "path": "main.tscn",
+      "type": "file",
+      "sha": "c1107493dfbd0c1d5b5b0432a181744ea1804613"
+    },
+    {
+      "path": "post-process",
+      "type": "dir",
+      "sha": "0b521012d0ae393ef45ed883ac84bba50137898d"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "44998c68f02a08407c559d1ccff883cc6be6128e"
+    },
+    {
+      "path": "readme-assets",
+      "type": "dir",
+      "sha": "01364c3caeb9524749a7824f711f0ec32769510b"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "acb91dffa5efdec0bdbaf189c5920c4ca1858835"
+    },
+    {
+      "path": "world",
+      "type": "dir",
+      "sha": "77ec9c4feea02f91c4176df12d258811707e6a59"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Godot material/shader showcase; project.godot/assets, not owned engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

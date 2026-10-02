@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Voxy browser 2D/3D</title>
+<style>html,body{margin:0;height:100%;background:#080c12;color:#dce5f2;font:15px system-ui}canvas{width:100%;height:100%;display:block}header{position:fixed;top:12px;left:12px;padding:10px;background:#151c28cc;border-radius:8px}a{color:#7dc7ff}</style>
+<canvas id="scene" width="900" height="650"></canvas>
+<header>Voxy 2D/3D · <span id="status">Loading…</span> <a id="recover" hidden>Reload GPU</a><br>
+<button id="lose-gpu" hidden>Lose GPU (diagnostic)</button>
+<span id="reflector-control" hidden>Reflector <select id="reflector-roughness" aria-label="Reflector roughness"><option value="0.1">0.1</option><option value="0.35" selected>0.35</option><option value="1">1</option></select> <select id="reflector-metallic" aria-label="Reflector metallic"><option value="0">0</option><option value="0.5" selected>0.5</option><option value="1">1</option></select></span>
+<label id="environment-intensity-control" hidden>Environment <select id="environment-intensity" aria-label="Environment intensity"><option value="0">Off</option><option value="0.5">0.5</option><option value="1" selected>1</option><option value="2">2</option></select></label>
+<a href="?backend=auto">Auto</a> · <a href="?backend=webgpu">WebGPU</a> · <a href="?backend=webgl">WebGL2</a> · <a href="?backend=webgpu&animated=1">Animated scene</a> · <a href="?backend=webgpu&gravity=1">GPU gravity</a> · <a href="?backend=webgpu&waterCheck=1">GPU water</a> · <a href="?backend=webgpu&voxel=1">Voxel world</a> · <button id="vehicle" hidden>Enter vehicle</button><span id="vehicle-controls" hidden> <select id="throttle" aria-label="Vehicle throttle"><option value="0">Coast</option><option value="1">Forward</option><option value="-1">Reverse</option></select> <select id="steering" aria-label="Vehicle steering"><option value="0">Straight</option><option value="-1">Left</option><option value="1">Right</option></select> <label><input id="brake" type="checkbox">Brake</label></span> · <button id="destroy" hidden>Destroy center</button> · <button id="pour" hidden>Pour water</button> · <label id="exposure-control" hidden>Exposure <select id="exposure"><option value="0.25">0.25</option><option value="1" selected>1</option><option value="4">4</option></select></label> · <label id="light-control" hidden>Light <select id="light"><option value="0">Off</option><option value="35" selected>35</option><option value="70">70</option></select></label> · <label id="shadow-control" hidden>Shadows <select id="shadows" aria-label="Shadows"><option value="1" selected>On</option><option value="0">Off</option></select> <select id="shadow-filter" aria-label="Shadow filter"><option value="0">Hard</option><option value="1" selected>3×3 PCF</option><option value="2">5×5 PCF</option></select></label> · <span id="material-control" hidden>Roughness <select id="roughness" aria-label="Roughness"><option value="0.1">0.1</option><option value="0.35" selected>0.35</option><option value="1">1</option></select> Metallic <select id="metallic" aria-label="Metallic"><option value="0">0</option><option value="0.5" selected>0.5</option><option value="1">1</option></select></span> · <label id="temporal-control" hidden>Temporal HDR <input id="temporal-hdr" type="checkbox" aria-label="Temporal HDR"></label> · <label id="hdr-file-control" hidden>HDR environment <input id="hdr-file" type="file" accept=".hdr" aria-label="HDR environment"></label> · WASD: move/drive · B: brake · J: jump · Space: pause</header>
+<script type="module">
+import init, {WebEngine} from './pkg/voxy_web.js?v=temporal-production-color-v2';
+import {createHdrLoader} from './hdr-environment.mjs';
+import {openHdrRecoveryStore} from './hdr-recovery-store.mjs';
+let environmentBusy=false;
+const status = document.querySelector('#status'), canvas = document.querySelector('#scene');
+window.voxyDemo = {frames:0, error:null, backend:null, terrainBlocks:null, terrainError:null};
+let paused=false, appliedPause=null, time=0, last=null, characterTime=0, jump=false, driving=false;
+let waterEnabled=false, waterAwake=false, waterPending=false, waterTime=0;
+let startupEngine=null;
+function failStartup(error) {
+  const failure=String(error);
+  window.voxyDemo.error=failure; canvas.dataset.startupError=failure;
+  status.textContent=failure;
+  for(const control of document.querySelectorAll('button, select, input')) control.disabled=true;
+  const owner=startupEngine; startupEngine=null;
+  if(owner) owner.free();
+}
+const keys=new Set();
+addEventListener('keydown', event => {keys.add(event.code); if(event.code==='KeyJ'&&!event.repeat) jump=true;});
+addEventListener('keyup', event => keys.delete(event.code));
+addEventListener('blur', () => keys.clear());
+addEventListener('keydown', event => {if(event.code==='Space'&&!event.repeat){paused=!paused;canvas.dataset.paused=String(paused);event.preventDefault();}});
+try {
+  await init({module_or_path: new URL('./pkg/voxy_web_bg.wasm?v=temporal-production-color-v2', location.href)});
+  const engine = await WebEngine.create(canvas, new URLSearchParams(location.search).get('backend') || 'auto');
+  startupEngine=engine;
+  window.voxyDemo.backend=engine.backend(); status.textContent=engine.backend();
+  if(new URLSearchParams(location.search).get('temporalCheck')==='1') {
+    canvas.dataset.temporalValidation=String(await engine.validate_temporal());
+  }
+  const animated=new URLSearchParams(location.search).get('animated')==='1';
+  if(animated) {
+    if(['voxel','gravity','waterCheck'].some(key=>new URLSearchParams(location.search).get(key)==='1')) throw new Error('animated scene requires a separate demo session');
+    await engine.start_animated_scene(); canvas.dataset.scene='animated-skeleton';
+    if(new URLSearchParams(location.search).get('temporalGuides')==='1') {
+      engine.set_animated_temporal_guides(true); canvas.dataset.temporalGuides='enabled'; canvas.dataset.temporalResolve='enabled';
+    }
+    canvas.dataset.hdr=String(engine.animated_hdr());
+    status.textContent=engine.backend()+' · animated skeleton · '+(engine.animated_hdr()?'GGX light + diffuse/specular IBL · shadows · rough Fresnel reflection · HDR':'raster');
+    if(engine.animated_hdr()) {
+      const temporalControl=document.querySelector('#temporal-hdr');
+      document.querySelector('#temporal-control').hidden=false;
+      temporalControl.checked=canvas.dataset.temporalGuides==='enabled';
+      temporalControl.addEventListener('change',()=>{
+        try {
+          engine.set_animated_temporal_guides(temporalControl.checked);
+          canvas.dataset.temporalGuides=temporalControl.checked?'enabled':'disabled';
+          canvas.dataset.temporalResolve=canvas.dataset.temporalGuides;
+        } catch(error) {status.textContent=String(error);}
+      });
+      document.querySelector('#exposure-control').hidden=false;
+      document.querySelector('#exposure').addEventListener('change',event=>{
+        try { engine.set_animated_exposure(Number(event.target.value)); canvas.dataset.exposure=event.target.value; }
+        catch(error) { status.textContent=String(error); }
+      });
+      canvas.dataset.exposure='1';
+      document.querySelector('#light-control').hidden=false;
+      document.querySelector('#light').addEventListener('change',event=>{
+        try { engine.set_animated_light(Number(event.target.value)); canvas.dataset.lightIntensity=event.target.value; }
+        catch(error) { status.textContent=String(error); }
+      });
+      canvas.dataset.lightIntensity='35';
+      document.querySelector('#environment-intensity-control').hidden=false;
+      document.querySelector('#environment-intensity').addEventListener('change',event=>{
+        try {engine.set_animated_environment_intensity(Number(event.target.value));canvas.dataset.environmentIntensity=event.target.value;}
+        catch(error) {status.textContent=String(error);}
+      });
+      canvas.dataset.environmentIntensity='1';
+      document.querySelector('#shadow-control').hidden=false;
+      document.querySelector('#shadows').addEventListener('change',event=>{
+        try { engine.set_animated_shadows(event.target.value==='1'); canvas.dataset.shadows=event.target.value; }
+        catch(error) { status.textContent=String(error); }
+      });
+      canvas.dataset.shadows='1';
+      document.querySelector('#shadow-filter').addEventListener('change',event=>{
+        try { engine.set_animated_shadow_filter(Number(event.target.value)); canvas.dataset.shadowFilter=event.target.value; }
+        catch(error) { status.textContent=String(error); }
+      });
+      canvas.dataset.shadowFilter='1';
+      document.querySelector('#material-control').hidden=false;
+      const updateMaterial=()=>{
+        const roughness=document.querySelector('#roughness').value;
+        const metallic=document.querySelector('#metallic').value;
+        try { engine.set_animated_material(Number(roughness),Number(metallic)); canvas.dataset.roughness=roughness; canvas.dataset.metallic=metallic; }
+        catch(error) { status.textContent=String(error); }
+      };
+      document.querySelector('#roughness').addEventListener('change',updateMaterial);
+      document.querySelector('#metallic').addEventListener('change',updateMaterial);
+      updateMaterial();
+      document.querySelector('#reflector-control').hidden=false;
+      const updateReflector=()=>{
+        const roughness=document.querySelector('#reflector-roughness').value;
+        const metallic=document.querySelector('#reflector-metallic').value;
+        try {engine.set_animated_reflector_material(Number(roughness),Number(metallic));canvas.dataset.reflectorRoughness=roughness;canvas.dataset.reflectorMetallic=metallic;}
+        catch(error) {status.textContent=String(error);}
+      };
+      document.querySelector('#reflector-roughness').addEventListener('change',updateReflector);
+      document.querySelector('#reflector-metallic').addEventListener('change',updateReflector);
+      updateReflector();
+      // Restore validated animated settings when recreating the GPU owner.
+      const savedSettings=new URLSearchParams(location.search);
+      for(const [id,key,apply] of [
+        ['exposure','exposure',value=>engine.set_animated_exposure(Number(value))],
+        ['light','lightIntensity',value=>engine.set_animated_light(Number(value))],
+        ['environment-intensity','environmentIntensity',value=>engine.set_animated_environment_intensity(Number(value))],
+        ['shadows','shadows',value=>engine.set_animated_shadows(value==='1')],
+        ['shadow-filter','shadowFilter',value=>engine.set_animated_shadow_filter(Number(value))],
+        ['roughness','roughness',()=>updateMaterial()],
+        ['metallic','metallic',()=>updateMaterial()],
+        ['reflector-roughness','reflectorRoughness',()=>updateReflector()],
+        ['reflector-metallic','reflectorMetallic',()=>updateReflector()],
+      ]) {
+        const value=savedSettings.get(key);
+        if(value===null) continue;
+        const control=document.querySelector('#'+id);
+        if(!Array.from(control.options).some(option=>option.value===value)) throw new Error('unsupported '+key+' setting');
+        control.value=value; apply(value); canvas.dataset[key]=value;
+      }
+      const savedTime=savedSettings.get('animationTime');
+      if(savedTime!==null) {
+        const value=Number(savedTime);
+        if(savedTime.trim()==='' || !Number.isFinite(value) || value<0 || !Number.isFinite(Math.fround(value))) throw new Error('invalid animation time');
+        time=value; canvas.dataset.time=String(time);
+      }
+      const savedPause=savedSettings.get('userPaused');
+      if(savedPause!==null) {
+        if(savedPause!=='0' && savedPause!=='1') throw new Error('invalid animation pause');
+        paused=savedPause==='1';
+      }
+      // End animated settings restoration.
+    }
+  }
+  if(new URLSearchParams(location.search).get('voxel')==='1') {
+    const quads=await engine.load_voxel_scene();
+    window.voxyDemo.voxelQuads=quads; canvas.dataset.voxelQuads=String(quads);
+    canvas.dataset.worldGeneration=engine.backend()==='BrowserWebGpu'?'gpu-27-chunks':'cpu';
+    status.textContent=engine.backend()+' · '+(canvas.dataset.worldGeneration==='cpu'?'CPU':'GPU')+' voxel world: '+quads+' quads';
+    if(new URLSearchParams(location.search).get('worldCheck')==='1') {
+      canvas.dataset.worldComparedBlocks=String(await engine.validate_voxel_world());
+      status.textContent+=' · '+canvas.dataset.worldComparedBlocks+' blocks verified';
+    }
+    if(engine.backend()==='BrowserWebGpu') {
+      await engine.start_voxel_water(); waterEnabled=true;
+      canvas.dataset.waterSimulation='gpu';
+      if(new URLSearchParams(location.search).get('waterBoundary')==='1') { engine.start_water_boundary_demo(); waterAwake=true; waterTime=0.1; canvas.dataset.waterBoundary='true'; }
+      const pour=document.querySelector('#pour'); pour.hidden=false;
+      pour.addEventListener('click', () => {
+        try {
+          engine.pour_voxel_water(); waterAwake=true; waterPending=false; waterTime=0.1;
+          canvas.dataset.waterPours=String((Number(canvas.dataset.waterPours)||0)+1);
+          status.textContent=engine.backend()+' · GPU water flowing';
+        } catch(error) { canvas.dataset.waterEditError=String(error); status.textContent=String(error); }
+      });
+    }
+    if(new URLSearchParams(location.search).get('streamingCheck')==='1') {
+      canvas.dataset.waterStreamingComparedBlocks=String(await engine.validate_water_streaming());
+      canvas.dataset.waterBatchQueueVerified='true';
+      canvas.dataset.waterGpuBatchesVerified='true';
+      canvas.dataset.waterDenseBatchVerified='true';
+      canvas.dataset.waterRetainedReloadVerified='true';
+      canvas.dataset.waterActorPinsVerified='true';
+      canvas.dataset.waterAutoRetirementVerified='true';
+      status.textContent=engine.backend()+' · GPU water streaming verified: '+canvas.dataset.waterStreamingComparedBlocks+' blocks';
+    }
+    const vehicle=document.querySelector('#vehicle'); vehicle.hidden=false;
+    vehicle.addEventListener('click', () => {
+      try { driving=engine.toggle_voxel_vehicle(); characterTime=0; jump=false; vehicle.textContent=driving?'Exit vehicle':'Enter vehicle'; canvas.dataset.driving=String(driving); document.querySelector('#vehicle-controls').hidden=!driving; document.querySelector('#throttle').value='0'; document.querySelector('#steering').value='0'; document.querySelector('#brake').checked=false; }
+      catch(error) { window.voxyDemo.error=String(error); status.textContent=String(error); }
+    });
+    const destroy = document.querySelector('#destroy'); destroy.hidden=false;
+    destroy.addEventListener('click', () => {
+      try {
+        const changed=engine.destroy_voxel_center();
+        if(waterEnabled) { waterAwake=true; waterPending=false; waterTime=0.1; }
+        window.voxyDemo.voxelEdits=(window.voxyDemo.voxelEdits || 0)+1;
+        canvas.dataset.voxelEdits=String(window.voxyDemo.voxelEdits);
+        canvas.dataset.destroyedBlocks=String(changed);
+        status.textContent=engine.backend()+' · destroyed '+changed+' blocks';
+      } catch(error) { status.textContent=String(error); window.voxyDemo.error=String(error); }
+    });
+  }
+  if(new URLSearchParams(location.search).get('terrain')==='1') {
+    try {
+      window.voxyDemo.terrainBlocks=await engine.validate_terrain();
+      canvas.dataset.terrainBlocks=String(window.voxyDemo.terrainBlocks);
+      status.textContent=engine.backend()+' · terrain verified';
+    } catch(error) {
+      window.voxyDemo.terrainError=String(error);
+      canvas.dataset.terrainError=String(error);
+      status.textContent=engine.backend()+' · '+String(error);
+    }
+  }
+  if(new URLSearchParams(location.search).get('waterCheck')==='1') {
+    try {
+      const commits=await engine.validate_water();
+      window.voxyDemo.waterCommits=commits;
+      canvas.dataset.waterCommits=String(commits);
+      status.textContent=engine.backend()+' · water verified: '+commits+' commits';
+    } catch(error) { throw error; }
+  }
+  if(new URLSearchParams(location.search).get('collisionCheck')==='1') {
+    try {
+      const checks=await engine.validate_collisions();
+      window.voxyDemo.collisionChecks=checks;
+      canvas.dataset.collisionChecks=String(checks);
+      status.textContent=engine.backend()+' · collisions verified: '+checks+' checks (4 sweeps + 240 character ticks + 240 vehicle ticks + stale recovery)';
+    } catch(error) { throw error; }
+  }
+  if(new URLSearchParams(location.search).get('gravityCheck')==='1') {
+    try {
+      const maximumError=await engine.validate_gravity();
+      canvas.dataset.gravityMaxError=String(maximumError);
+      status.textContent=engine.backend()+' · gravity verified: '+maximumError;
+    } catch(error) { throw error; }
+  }
+  if(new URLSearchParams(location.search).get('gravity')==='1') {
+    try { await engine.start_gravity(); } catch(error) { throw error; }
+    canvas.dataset.gravity='resident';
+    status.textContent=engine.backend()+' · GPU gravity';
+  }
+  // Install only after asynchronous startup has released its WASM borrow.
+  const lifecycle = new AbortController();
+  function syncPause() {
+    if(environmentBusy) return;
+    const effectivePause=paused || document.hidden;
+    if(appliedPause!==effectivePause) {
+      canvas.dataset.pausedGpuTasks=String(engine.set_voxel_paused(effectivePause));
+      appliedPause=effectivePause;
+    }
+    canvas.dataset.paused=String(effectivePause);
+    canvas.dataset.userPaused=String(paused);
+    canvas.dataset.visibilityPaused=String(document.hidden);
+  }
+  document.addEventListener('visibilitychange', () => {
+    keys.clear(); jump=false; last=null;
+    syncPause();
+  }, {signal:lifecycle.signal});
+  let hdrLoader=null;
+  let restoreEnvironment=async()=>{};
+  let stopped=false;
+  function stopEngine(deviceFailure) {
+    if(stopped) return;
+    stopped=true;
+      window.voxyDemo.error=deviceFailure; canvas.dataset.deviceError=deviceFailure;
+      status.textContent=deviceFailure; lifecycle.abort();
+      for(const control of document.querySelectorAll('button, select, input')) control.disabled=true;
+      const recoveryUrl=new URL(location.href); recoveryUrl.searchParams.delete('deviceLossCheck');
+      if(canvas.dataset.scene==='animated-skeleton' && canvas.dataset.hdr==='true') {
+        if(canvas.dataset.temporalGuides==='enabled') recoveryUrl.searchParams.set('temporalGuides','1');
+        else recoveryUrl.searchParams.delete('temporalGuides');
+        for(const key of ['exposure','lightIntensity','environmentIntensity','reflectorRoughness','reflectorMetallic','shadows','shadowFilter','roughness','metallic']) {
+          const value=canvas.dataset[key];
+          if(value!==undefined) recoveryUrl.searchParams.set(key,value);
+        }
+        if(canvas.dataset.time!==undefined) recoveryUrl.searchParams.set('animationTime',canvas.dataset.time);
+        if(canvas.dataset.userPaused!==undefined) recoveryUrl.searchParams.set('userPaused',canvas.dataset.userPaused==='true'?'1':'0');
+      }
+      const recovery=document.querySelector('#recover'); recovery.href=recoveryUrl.href; recovery.hidden=false;
+      if(hdrLoader?.hasEnvironment) recovery.addEventListener('click',async event=>{
+        event.preventDefault();
+        if(recovery.dataset.saving==='true') return;
+        recovery.dataset.saving='true';
+        let store;
+        try {
+          store=await openHdrRecoveryStore(indexedDB);
+          const id=crypto.randomUUID();
+          await store.save(id,hdrLoader.snapshot());
+          recoveryUrl.searchParams.set('hdrRecovery',id);
+          location.assign(recoveryUrl.href);
+        } catch(error) {
+          status.textContent='HDR recovery could not be saved. Retry Reload GPU: '+String(error);
+          recovery.dataset.saving='false';
+        } finally {store?.close();}
+      });
+    engine.free();
+  }
+  canvas.addEventListener('webglcontextlost', event => {
+    event.preventDefault();
+    stopEngine('WebGL context lost; reload to recreate GPU resources.');
+  }, {signal:lifecycle.signal});
+  if(animated && engine.animated_hdr()) {
+    document.querySelector('#hdr-file-control').hidden=false;
+    let savedControls=[];
+    hdrLoader=createHdrLoader({
+      load:bytes=>engine.load_hdr_environment(bytes),
+      busyChanged:busy=>{
+        environmentBusy=busy; last=null;
+        canvas.dataset.environmentLoading=String(busy);
+        if(busy) {
+          delete canvas.dataset.hdrProbe;
+          savedControls=Array.from(document.querySelectorAll('button, select, input'),control=>[control,control.disabled]);
+          for(const [control] of savedControls) control.disabled=true;
+          status.textContent='Loading HDR environment…';
+        } else if(!stopped) {for(const [control,disabled] of savedControls) control.disabled=disabled;}
+      },
+      result:(ok,message)=>{
+        if(stopped) return;
+        status.textContent=ok ? 'HDR environment: '+message : 'Could not load HDR. Choose a valid .hdr file up to 32 MiB.';
+        canvas.dataset.environmentError=ok?'':message;
+        if(ok) canvas.dataset.environment=message;
+      },
+    });
+    document.querySelector('#hdr-file').addEventListener('change',event=>{
+      void hdrLoader.run(event.target.files?.[0]);event.target.value='';
+    },{signal:lifecycle.signal});
+    const recoveryId=new URL(location.href).searchParams.get('hdrRecovery');
+    async function restoreSavedEnvironment() {
+      if(!recoveryId) return;
+      let store;
+      try {
+        store=await openHdrRecoveryStore(indexedDB);
+        const source=await store.read(recoveryId);
+        if(!source) throw new Error('Saved HDR environment is unavailable or expired');
+        const restored=await hdrLoader.run({name:source.name,size:source.bytes.length,arrayBuffer:async()=>source.bytes.buffer});
+        if(restored) {
+          await store.remove(recoveryId);
+          const cleanUrl=new URL(location.href);cleanUrl.searchParams.delete('hdrRecovery');
+          history.replaceState(null,'',cleanUrl);
+        }
+      } catch(error) {status.textContent='Could not restore HDR environment: '+String(error);}
+      finally {store?.close();}
+    }
+    restoreEnvironment=restoreSavedEnvironment;
+  }
+  function frame(now) {
+    if(stopped) return;
+    if(environmentBusy) {last=null;requestAnimationFrame(frame);return;}
+    const deviceFailure=engine.device_failure();
+    if(deviceFailure) { stopEngine(deviceFailure); return; }
+    syncPause();
+    if(document.hidden) { requestAnimationFrame(frame); return; }
+    const elapsed=last===null||paused ? 0 : Math.min((now-last)/1000,0.1);
+    time+=elapsed; last=now;
+    if(window.voxyDemo.voxelQuads && !paused) {
+      if(waterEnabled && waterAwake) {
+        waterTime=Math.min(waterTime+elapsed,0.25);
+        if(waterPending || waterTime>=0.1) {
+          try {
+            const result=engine.poll_voxel_water(); waterPending=result===-1;
+            if(waterPending && new URLSearchParams(location.search).get('waterPauseCheck')==='1' && !canvas.dataset.waterPauseCheck) {
+              paused=true; appliedPause=true; canvas.dataset.paused='true';
+              canvas.dataset.pausedGpuTasks=String(engine.set_voxel_paused(true));
+              canvas.dataset.waterPauseCheck='pending';
+            }
+            canvas.dataset.waterStreamedChunks=String(engine.water_streamed_chunks());
+            canvas.dataset.visibleVoxelChunks=String(engine.visible_voxel_chunks());
+            if(result>=0) {
+              waterTime=Math.max(0,waterTime-0.1);
+              waterAwake=result===1;
+              canvas.dataset.waterSettled=String(!waterAwake);
+              status.textContent=engine.backend()+' · GPU water '+(waterAwake?'flowing':'settled')+(Number(canvas.dataset.waterStreamedChunks)>0?' · streamed '+canvas.dataset.waterStreamedChunks+' chunks · visible '+canvas.dataset.visibleVoxelChunks+' chunks':'');
+              if(result===1) canvas.dataset.gameplayWaterCommits=String((Number(canvas.dataset.gameplayWaterCommits)||0)+1);
+            }
+          } catch(error) {
+            waterEnabled=false; waterAwake=false; waterPending=false;
+            canvas.dataset.waterError=String(error);
+            document.querySelector('#pour').disabled=true;
+            status.textContent=engine.backend()+' · water stopped: '+String(error);
+          }
+        }
+      }
+      characterTime=Math.min(characterTime+elapsed,0.25);
+      if(!paused && characterTime>=1/60) {
+        try {
+          const completed=driving
+            ? engine.step_voxel_vehicle(keys.has('KeyW')||keys.has('KeyS') ? Number(keys.has('KeyW'))-Number(keys.has('KeyS')) : Number(document.querySelector('#throttle').value),keys.has('KeyD')||keys.has('KeyA') ? Number(keys.has('KeyD'))-Number(keys.has('KeyA')) : Number(document.querySelector('#steering').value),keys.has('KeyB')||document.querySelector('#brake').checked)
+            : engine.step_voxel_character(Number(keys.has('KeyD'))-Number(keys.has('KeyA')),Number(keys.has('KeyS'))-Number(keys.has('KeyW')),jump);
+          if(!completed && driving && new URLSearchParams(location.search).get('vehiclePauseCheck')==='1' && !canvas.dataset.vehiclePauseCheck) {
+            paused=true; appliedPause=true; canvas.dataset.paused='true';
+            canvas.dataset.pausedGpuTasks=String(engine.set_voxel_paused(true));
+            canvas.dataset.vehiclePauseCheck='pending';
+          }
+          if(completed) {
+            if(driving) canvas.dataset.vehicleTicks=String((Number(canvas.dataset.vehicleTicks)||0)+1);
+            characterTime-=1/60; jump=false;
+            if(!driving) {
+              window.voxyDemo.characterTicks=(window.voxyDemo.characterTicks||0)+1;
+              canvas.dataset.characterTicks=String(window.voxyDemo.characterTicks);
+            }
+            canvas.dataset.characterPosition=Array.from(engine.voxel_character_position()).join(',');
+          }
+        } catch(error) { stopEngine(String(error)); return; }
+      }
+    }
+    const ratio=Math.min(devicePixelRatio||1,2);
+    const width=Math.max(1,Math.round(canvas.clientWidth*ratio));
+    const height=Math.max(1,Math.round(canvas.clientHeight*ratio));
+    try {if(engine.render(time,width,height)){window.voxyDemo.frames++;canvas.dataset.frames=String(window.voxyDemo.frames);canvas.dataset.time=String(time); if(animated) {canvas.dataset.animatedPresentations=String(engine.animated_presentations());canvas.dataset.temporalGuideChecks=String(engine.temporal_guide_checks());canvas.dataset.temporalMovingChecks=String(engine.temporal_moving_checks());const colorChecks=engine.temporal_color_checks();canvas.dataset.temporalColorChecks=String(colorChecks[0]);canvas.dataset.temporalDepthRejections=String(colorChecks[1]);canvas.dataset.temporalColorBlends=String(colorChecks[2]);const probe=engine.take_hdr_probe();if(probe.length) canvas.dataset.hdrProbe=Array.from(probe).join(",");const temporalProbe=engine.take_temporal_probe();if(temporalProbe.length) canvas.dataset.temporalProbe=Array.from(temporalProbe).join(",");}} if(new URLSearchParams(location.search).get('deviceLossCheck')==='1' && window.voxyDemo.frames>=30 && !canvas.dataset.deviceLossInjected) {
+      canvas.dataset.deviceLossInjected='true';
+      if(engine.backend()==='BrowserWebGpu') engine.destroy_device_for_validation();
+      else {
+        const extension=canvas.getContext('webgl2')?.getExtension('WEBGL_lose_context');
+        if(!extension) throw new Error('WEBGL_lose_context diagnostic unavailable');
+        extension.loseContext();
+      }
+    }
+    requestAnimationFrame(frame);}
+    catch(error){stopEngine(String(error));}
+  }
+  await restoreEnvironment();
+  if(new URL(location.href).searchParams.get('deviceLossManual')==='1' && engine.backend()==='BrowserWebGpu') {
+    const lose=document.querySelector('#lose-gpu');lose.hidden=false;
+    lose.addEventListener('click',()=>engine.destroy_device_for_validation(),{signal:lifecycle.signal});
+  }
+  requestAnimationFrame(frame);
+  startupEngine=null;
+} catch(error){failStartup(error);}
+</script></html>

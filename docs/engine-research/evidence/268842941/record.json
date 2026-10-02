@@ -1,0 +1,49 @@
+{
+  "repository": "gdquest-demos/godot-4-procedural-generation",
+  "repository_id": 268842941,
+  "commit": "19c98cee16ed18e642b3ce178f4c649d56b334b2",
+  "source_url": "https://github.com/gdquest-demos/godot-4-procedural-generation/tree/19c98cee16ed18e642b3ce178f4c649d56b334b2",
+  "readme_path": "README.md",
+  "readme_sha256": "94403a4b57e9011e538e2c07d0797b664355e8fcdd28780f39746c80ebc299f0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cf15f9af89d0a5d51f804815870bf21c9f42a6da"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a9934954a93725d4da46306b451ccdc7dbcced35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0c65eb613d3b38e593d52f662edb6c5f181d7852"
+    },
+    {
+      "path": "godot3",
+      "type": "dir",
+      "sha": "2396d60aa6467f74112744da43d499f837752757"
+    },
+    {
+      "path": "godot4",
+      "type": "dir",
+      "sha": "7ccd2b6cab6f0ba3f24762ad609f53de3b388d89"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "61fd566762097661e838249a4841a7d7e909464e"
+    },
+    {
+      "path": "start-project",
+      "type": "dir",
+      "sha": "9c175bf6e3f63a112cd7dc2d32c3bbe96bcde459"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Godot procedural-generation algorithms/demo projects, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

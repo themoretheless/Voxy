@@ -1,0 +1,139 @@
+{
+  "repository": "begla/Intrinsic",
+  "repository_id": 71087084,
+  "commit": "bbe988993d09cb282a6629db412d764d0daa2e06",
+  "source_url": "https://github.com/begla/Intrinsic/tree/bbe988993d09cb282a6629db412d764d0daa2e06",
+  "readme_path": "README.md",
+  "readme_sha256": "2775674d068e4541fed6f9f651e4ffcb2290c25c4c3fec63d826c3130503968d",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "4334ff05becd7957fd8e92bce1c5926b1792a7bb"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "fac0f25305a9d11685e26dca62be1ce724e69804"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "395f7164fed9d2166f67264ce2786dcfe878c5ba"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c45045b21bfa8f65f88d81fb7864284058cf93ef"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9dd5e65847627df09a5f9f5ae07b1cf0db9cb64e"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "dad505df09b28e1864280d20c8207e060086d118"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e968e0d8da0bec375b92d1a6ef239375b2c03e01"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "4d41eda49a3fbf9b990b64863f950c96726c4f1e"
+    },
+    {
+      "path": "GETTING_STARTED.md",
+      "type": "file",
+      "sha": "52957e3e3c6ec4ddceb14059d092a55ebe499e96"
+    },
+    {
+      "path": "Intrinsic",
+      "type": "dir",
+      "sha": "1de29b1e27802f2b200f41cdc6d1a9d916c571b6"
+    },
+    {
+      "path": "IntrinsicAssetManagement",
+      "type": "dir",
+      "sha": "c305f1aad0248d546d071bf19e857a1eff58a4c4"
+    },
+    {
+      "path": "IntrinsicCore",
+      "type": "dir",
+      "sha": "06a006646f2f68329f737a63b3d3ce6242d00782"
+    },
+    {
+      "path": "IntrinsicEd",
+      "type": "dir",
+      "sha": "d4e02b0adf92033ffd34bf958bd29a5cba7aea16"
+    },
+    {
+      "path": "IntrinsicRenderer",
+      "type": "dir",
+      "sha": "5c3404a678ef83c84b31ccf448dbb6cc7a7eab08"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0aee33e578e7543949d6b51115f16ec7364fa42b"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "ed187cd1f8697af5c723bb05125fd1b4ce16d221"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "3c7e1c4ba3687b0f5172cabf33cceb0fb0752ace"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "e2056a96964ffb01452ac535301bc58f76cb8449"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "f2a1257864d71599ebef35d0a58d18bc90e3e663"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "e0171233dc8deea76fc389dcdd7645ba1f38e3f7"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "17bd14891dadf8b5af0a6438fe6339f286a73be6"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3754902122084cc9c82eeff350886e4b85a2b72d"
+    },
+    {
+      "path": "scripts_linux",
+      "type": "dir",
+      "sha": "4a2a291d0de20794c459279ac722cac1975e4f33"
+    },
+    {
+      "path": "scripts_win32",
+      "type": "dir",
+      "sha": "83acdcc44eaea225c15aaa95acb33cad793f24c7"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies inactive Vulkan game/rendering engine; owned Core/Renderer/AssetManagement/Editor and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

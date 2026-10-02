@@ -1,0 +1,84 @@
+{
+  "repository": "Andrey1994/game_overlay_sdk",
+  "repository_id": 182053628,
+  "commit": "fa5b4f3a031229a92c8fe0b7cb33ef480d154ab7",
+  "source_url": "https://github.com/Andrey1994/game_overlay_sdk/tree/fa5b4f3a031229a92c8fe0b7cb33ef480d154ab7",
+  "readme_path": "README.md",
+  "readme_sha256": "d7a44e806238040f1f35b306d063596cac542592a5f7845f4574e683d28afa6d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "50100227a7a461a59b7e4eb03c727559b265640d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "44210e4cefb010520b426b1d4940abebfebad970"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "91554672159599cf61d1f55f725d3e50b7529ca2"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7e9d367a92ad1bfc3b751cba3b1f94a316f6da43"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "555575e213e3e64c3ba815c2b3fb2b1021861c07"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "da5dc278c67a22dc13527eaf72cab8a2ba2d3c51"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "10e1dff443f11aecd0ed5fc44d2a2473d32cbd14"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "c7418817439b2f071c93a4a6cee831e996123c0b"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "d9fc4923c514e92aa10ea32dede19dfad15949ed"
+    },
+    {
+      "path": "cmake_build.cmd",
+      "type": "file",
+      "sha": "99bba6548342b1a3be4dec727cd0ef5e7fc88097"
+    },
+    {
+      "path": "cmake_build32.cmd",
+      "type": "file",
+      "sha": "e3c20c5142f3ceb85b492f7bd0ed509b3d1ce521"
+    },
+    {
+      "path": "inc",
+      "type": "dir",
+      "sha": "8d57274a775439798f95aa4e9ce96c99ba680f20"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "83592d5732dc2f408babd2f69ff5dc11e65628b6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ce892024ec5ed81aff35ae3522b1ace660a6c022"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Injected game-window text overlay library, not game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

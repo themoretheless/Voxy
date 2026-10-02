@@ -1,0 +1,33 @@
+{
+  "dtSeconds": 0.00025,
+  "initialCoarseVsReference": 0.0005171245464897915,
+  "initialFineVsReference": 0.00009287318839056624,
+  "normalizedL1CoarseVsReference": 0.06964981608889906,
+  "normalizedL1FineVsReference": 0.021288815226736393,
+  "refinementTrendPassed": true,
+  "runs": [
+    {
+      "level": 0,
+      "normalizedL1ChangeFromInitial": 0.1501064303952991,
+      "relativeMassError": 4.3368086899420197e-16,
+      "triangles": 84680,
+      "wallSeconds": 3.66997575
+    },
+    {
+      "level": 1,
+      "normalizedL1ChangeFromInitial": 0.1559834014380646,
+      "relativeMassError": 0.0,
+      "triangles": 338720,
+      "wallSeconds": 16.73120575
+    },
+    {
+      "level": 2,
+      "normalizedL1ChangeFromInitial": 0.1598815079709544,
+      "relativeMassError": 8.673617379884015e-16,
+      "triangles": 1354880,
+      "wallSeconds": 64.540049375
+    }
+  ],
+  "scope": "fixed piecewise planar body; gravity only; no capillarity, precursor wetting or continuous source; restricted volume comparisons, not physiology",
+  "simulationSeconds": 0.02
+}

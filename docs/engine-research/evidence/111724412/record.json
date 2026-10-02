@@ -1,0 +1,92 @@
+{
+  "repository": "sttz/trimmer",
+  "repository_id": 111724412,
+  "commit": "caae078279474d8f3739b360e989b5ddf06e1ca7",
+  "source_url": "https://github.com/sttz/trimmer/tree/caae078279474d8f3739b360e989b5ddf06e1ca7",
+  "readme_path": "README.md",
+  "readme_sha256": "206ec060c7c51026736e138587001a7f33511c96a1562d901bb0623097148667",
+  "entries": [
+    {
+      "path": "Base.meta",
+      "type": "file",
+      "sha": "5604dd0cdfe4a8b57d3e50defc47bb615c28e362"
+    },
+    {
+      "path": "Base",
+      "type": "dir",
+      "sha": "498e6ea689f3c4c391167d3c08c6a81b24ddfdc4"
+    },
+    {
+      "path": "Changelog.md",
+      "type": "file",
+      "sha": "35c850cbeb555e779e7550f5833983e83b5d7c58"
+    },
+    {
+      "path": "Changelog.md.meta",
+      "type": "file",
+      "sha": "ecee04a61b803775cf10b848e2e6513900584b13"
+    },
+    {
+      "path": "Editor.meta",
+      "type": "file",
+      "sha": "13f7e690818623363d32caa02a61905f49aac833"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "d2b066621c00bf8bd003109fa98dc691c6fc09d5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bc67198976474ab03b52c41bb91b8982df4f5482"
+    },
+    {
+      "path": "LICENSE.meta",
+      "type": "file",
+      "sha": "ff84e82b14ef4376e50217fb55e786c0907d253c"
+    },
+    {
+      "path": "Options.meta",
+      "type": "file",
+      "sha": "6bf5ff887ff938c85ec4e42db08c44cfe63ab9cb"
+    },
+    {
+      "path": "Options",
+      "type": "dir",
+      "sha": "1d86b280b30cafe3581e404bc629fddeb259cba2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f48ece5c447aa36c5acdaaa28f522560aabf7370"
+    },
+    {
+      "path": "README.md.meta",
+      "type": "file",
+      "sha": "a7d6cf735cce0ef9872e938aed2c193826b3b5d5"
+    },
+    {
+      "path": "Trimmer.asmdef",
+      "type": "file",
+      "sha": "f93931e4526ab85073f5e45b8614c23b856179fe"
+    },
+    {
+      "path": "Trimmer.asmdef.meta",
+      "type": "file",
+      "sha": "648a62f37ab7c5256f06dfe9ee664f3e1fbe5e1f"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "50f3db38b37e011c78fd962d84e4ff2d982a7ed5"
+    },
+    {
+      "path": "package.json.meta",
+      "type": "file",
+      "sha": "b31142911fa13f05d7a0d2467627d750bf886d30"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

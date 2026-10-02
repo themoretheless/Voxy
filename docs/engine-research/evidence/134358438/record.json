@@ -1,0 +1,112 @@
+{
+  "repository": "sdslabs/Rubeus",
+  "repository_id": 134358438,
+  "commit": "03c39a1f1c0465ba16609f273e8a8bde85590ea3",
+  "source_url": "https://github.com/sdslabs/Rubeus/tree/03c39a1f1c0465ba16609f273e8a8bde85590ea3",
+  "readme_path": "README.md",
+  "readme_sha256": "882b5c290342ee79d378cd8b364e16e892bd232878e76bd9b828e482db8291ef",
+  "entries": [
+    {
+      "path": ".appveyor.yml",
+      "type": "file",
+      "sha": "c63e972ea72855fffddfa07938c1993ccada78f1"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "e84edca4d0143c6f9cc7025a7648f47c5a71668d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4b8bf389e7673d3cb3834a2a7e47e570e475ccd3"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b41691f786fdb2d378a0e53ad30b99cef9678f47"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "9690e94504b4c41a6f5a0942ab7cc5f870cd1b4f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "72ed018a85a2e2ab3711d9ccdc08e9b285ebefc8"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "429960cd69a370d56fa5e008aea5306c3ae16c9c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d880b8f3ee0b19d12cb8454448492dcdaf625d17"
+    },
+    {
+      "path": "ISSUE_TEMPLATE.md",
+      "type": "file",
+      "sha": "e84c044a0dacbb68ece05921aad1242d811a2c2b"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "8d476859a4e03594f85297ce6093f0021cec85f6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d862cdc54f6fefddff15475219de989d5e6c532e"
+    },
+    {
+      "path": "ReadmeAssets",
+      "type": "dir",
+      "sha": "599e3d4dceb1cb0ae9d00dac600c1a2345c56b1a"
+    },
+    {
+      "path": "RubeusCore",
+      "type": "dir",
+      "sha": "46c731404af9d9fb7078cd90f85bd2e4248f18c5"
+    },
+    {
+      "path": "SETUP.md",
+      "type": "file",
+      "sha": "5a1c95130f771051ad31c8626b75ac1178e74ff3"
+    },
+    {
+      "path": "SETUP_LINUX.md",
+      "type": "file",
+      "sha": "fd26ce7e26845c74d00f30eb7db3fc9178cb7f51"
+    },
+    {
+      "path": "SETUP_WINDOWS.md",
+      "type": "file",
+      "sha": "e4ca670955ce929f89928387b542ddeeb5558b10"
+    },
+    {
+      "path": "cmake_modules",
+      "type": "dir",
+      "sha": "7faeebddc1767a32230a3d7d777e1266244c5722"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "bf977af0ecd73c4a37730bcd0bc47db67b10e082"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "f07f0205dac933dc2164b426e5b30f491103aa0c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

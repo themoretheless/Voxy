@@ -1,0 +1,37 @@
+{
+  "repository": "JaccomoLorenz/Godot-Visual-Shader-Node-Library",
+  "repository_id": 255134905,
+  "commit": "43b530080aa5eb5224d37d94448f8208fb7d42ef",
+  "source_url": "https://github.com/JaccomoLorenz/Godot-Visual-Shader-Node-Library/tree/43b530080aa5eb5224d37d94448f8208fb7d42ef",
+  "readme_path": "README.md",
+  "readme_sha256": "0c3360d0ca0f97220e6c17054446a0764a3173c14559c68592ff514cd8a6dd1d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "36367f86c573f46f1afbd2ced8202f28c9baa800"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "133f5647f2fc227be999c30dff61a077cf9382a5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bc10fad1788225eeb7377070966ccc8bd5b1a91c"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "aaa62cf06f55b93c30b593499c00389dd25f4abb"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "81aa378420e77958a38613a37ac021ce265a4946"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

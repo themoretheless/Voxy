@@ -1,0 +1,94 @@
+{
+  "repository": "symphony-of-empires/symphony-of-empires",
+  "repository_id": 365013587,
+  "commit": "f0782d66d6b9fe6a82e66c99c510fd6e1a67825a",
+  "source_url": "https://github.com/symphony-of-empires/symphony-of-empires/tree/f0782d66d6b9fe6a82e66c99c510fd6e1a67825a",
+  "readme_path": "README.md",
+  "readme_sha256": "e19d0ed82ba3afa9b7a36f225f10ecc56fa44e3a549bf0e2880a5a5a6c09ac0d",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "8efdf4f979a4b98510aed207ccebb51e5970758f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "c089ecc5487a123fc5ea4d4cab4842819ce28101"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "490b3b8334e0940a3afd75d88b4bb70da76b5986"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fbc174dcb41ca0719fa8221e3689d393b061399b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "549aba2281f409b160712c74cb796491009cec23"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "3c1205b078c60293c04c91c3f54afc22b5ed8c42"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "af6899e803efcbe396451f49dcbca0cac03610ef"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9c230809c4392f27f6ee138fed127983ae91299d"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "40f0c67a0f05a564557ccf1f2d2b1809ce81dd7c"
+    },
+    {
+      "path": "doxygen-awesome-css",
+      "type": "dir",
+      "sha": "2a4ef3b2f701513d0608fd5368dbc626486c5d4f"
+    },
+    {
+      "path": "eng3d",
+      "type": "dir",
+      "sha": "aa121c520c8e2ab85781d4a82dbbd591c1fd9de6"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "35713d6736273282c401a3c5494f78968b6937ee"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "9c4a72aa95099e897037eb6d20e8e7796337585c"
+    },
+    {
+      "path": "quick_build.sh",
+      "type": "file",
+      "sha": "ddde7f7787a5d8d252d7fac7e57175ad22210359"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "58b3e118af54294fe4e4216e8f614c544f3d2a90"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "RTS game repository includes its custom eng3d runtime, mod and Lua scripting support; reuse and multithreading correctness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

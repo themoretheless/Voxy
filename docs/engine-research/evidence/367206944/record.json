@@ -1,0 +1,94 @@
+{
+  "repository": "antopilo/Nuake",
+  "repository_id": 367206944,
+  "commit": "499540b23d1654990d985c0300204387849aad54",
+  "source_url": "https://github.com/antopilo/Nuake/tree/499540b23d1654990d985c0300204387849aad54",
+  "readme_path": "README.md",
+  "readme_sha256": "46d7de06a9f929db424e8cbfc9de5cdae376874c584410dcafc07d297630adad",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "80852eedb4753e97eb06adf533094910044cfef2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ff996e7f769e9d32ef5dc24dc6e318e547256296"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2259e9ce3797750844764df791929883554e68ef"
+    },
+    {
+      "path": "BuildScripts",
+      "type": "dir",
+      "sha": "37b1297c010de5b8307f6c0ad7f37764d758a27b"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "7784a363dcb667e5b4726d8bd1b8af43b67a16d8"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "bccc79a4a42675cc546dc6217983c9a0ed87f95a"
+    },
+    {
+      "path": "EditorNet",
+      "type": "dir",
+      "sha": "251eeed76ad64fa26a5fc9653b160767ff237d22"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8fb058dc39964dd123049c5bd97f2fc1945267b0"
+    },
+    {
+      "path": "Nuake",
+      "type": "dir",
+      "sha": "48d4036485a3469c6de0b04c98759d074bdded1e"
+    },
+    {
+      "path": "NuakeNet",
+      "type": "dir",
+      "sha": "44ed022aae2394ef2132c4f5ccb9cdd90a5a0dd3"
+    },
+    {
+      "path": "NuakeNetGenerator",
+      "type": "dir",
+      "sha": "189868991e8c12890e9a96b838a532370b87ab44"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "027dd420bf43057e54616fd5f614f4339fb2870b"
+    },
+    {
+      "path": "Runtime",
+      "type": "dir",
+      "sha": "19f4d4d1d3b5b458021a61aa79365e42ec48b1af"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "f9bc581673794786e11cc73ffc8f3343bfd89f6b"
+    },
+    {
+      "path": "bindings.json",
+      "type": "file",
+      "sha": "9dd224b1c758fb75435704d4208aa19829cb8e11"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "e55f2d8228d963073140dc68336578819eb1b7ec"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies game engine with Trenchbroom authoring integration; owned Nuake/Runtime/Editor and premake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

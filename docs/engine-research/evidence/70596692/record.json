@@ -1,0 +1,94 @@
+{
+  "repository": "Cryru/Emotion",
+  "repository_id": 70596692,
+  "commit": "c34a3abe74f8845c76b579c0a3fec3a198543911",
+  "source_url": "https://github.com/Cryru/Emotion/tree/c34a3abe74f8845c76b579c0a3fec3a198543911",
+  "readme_path": "README.md",
+  "readme_sha256": "28a89d1c24d154e75b22eee6c532d6b6b93aadc2ffb75bb40f77bc33e21b478a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5bd9caa3b2cf02c13bb07a5c36fbfc5863eede6b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "24c54e4372fa93da8637197e844866c6e7e5f86c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f02c4278d46effe6f8a38d6c2119b9a997e3558c"
+    },
+    {
+      "path": "Emotion.Android.slnx",
+      "type": "file",
+      "sha": "0f12d9377a11373717ca6921bf259aeb715ba25a"
+    },
+    {
+      "path": "Emotion.ExecTest",
+      "type": "dir",
+      "sha": "6cda08029ccc980f1bd6e348cadcbd0dfbff24b3"
+    },
+    {
+      "path": "Emotion.SourceGeneration",
+      "type": "dir",
+      "sha": "6dedd413d582ab7f0c29334af69a6d45fc618bcf"
+    },
+    {
+      "path": "Emotion.Web.slnx",
+      "type": "file",
+      "sha": "1c7133092bc4b5abc43bca093a0631767fd36ed6"
+    },
+    {
+      "path": "Emotion.slnx",
+      "type": "file",
+      "sha": "0cf3f580f0d288204a6b316a7dd2597808e72abd"
+    },
+    {
+      "path": "Emotion",
+      "type": "dir",
+      "sha": "fedb9a43f7c2b1126a4aa68f83d5d5acb99d050f"
+    },
+    {
+      "path": "EmotionLogo.png",
+      "type": "file",
+      "sha": "21d99976e80a82373c16b557b221e7d833929f7a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "64db5afb08bb7ec3cd2026b395bd1bfd55726649"
+    },
+    {
+      "path": "LICENSE THIRD-PARTY",
+      "type": "file",
+      "sha": "bc3cbcd4e01791dd4d9aedc4beaa1643c8435bb6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "411fb9db19c786e880198d6b6cb2fece656d8560"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "85247045095eb8349168bb65c66d02fc432da850"
+    },
+    {
+      "path": "_AlternateSolutionFiles",
+      "type": "dir",
+      "sha": "7661683ab97aca6c2b806fc88c1fb745bcd0fd1f"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "3140116df397728023ec76c8db41310c2c87e18f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# cross-platform engine with game consumers, engine sources, platform solutions and tests; development currently paused per pinned README.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

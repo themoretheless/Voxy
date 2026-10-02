@@ -1,0 +1,109 @@
+{
+  "repository": "cocos/engine-native",
+  "repository_id": 53839527,
+  "commit": "30a29cc11d2dc96b1fca4823d9a7057778f9881c",
+  "source_url": "https://github.com/cocos/engine-native/tree/30a29cc11d2dc96b1fca4823d9a7057778f9881c",
+  "readme_path": "README.md",
+  "readme_sha256": "d2e295ce35239d58ef60252b938ab9d4845719511d5d4395be6401b6582f1b32",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fa3bc79557de6e9ea545affc78b79918dd87fd69"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "70823d9dd008060dd80fd9782a0d04648083632e"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "67f9d588e0c48b3f0303178a81c6ab9c4d96a566"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "04053b270682eb591eed1063d2fbb54bfeb4d215"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ad711c75983b06114e8513391567ee5d5d6d829e"
+    },
+    {
+      "path": "auto-build-src.bat",
+      "type": "file",
+      "sha": "1c793e3a3a99dfcef9b8c02978aff52c71eee77f"
+    },
+    {
+      "path": "auto-build.bat",
+      "type": "file",
+      "sha": "d89714197d1babb6a166dd05eb6a55d1b9b46531"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "4c919949463dc88e067f71a840724009d1c48f95"
+    },
+    {
+      "path": "cocos",
+      "type": "dir",
+      "sha": "4c0cebf94ed5eefb9bfe372e9eb254e0cf2e3d7e"
+    },
+    {
+      "path": "download-deps.py",
+      "type": "file",
+      "sha": "5eccd3dbe95303cdf54ed30203115b6eac61cc43"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "2876bcfce3e08660b78a742bf02661ba1a12bf3d"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "55545bc56a422d1fdcc1eee841a19b6a33d784be"
+    },
+    {
+      "path": "gulpfile.js",
+      "type": "file",
+      "sha": "6ece2ad9051a758e62194f4fda3b82c7ff3dce98"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "75bc9a16d8afad18f8f79a11c4d09a287ba3db78"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "b908f61424cd4bf9fc5fe266e03ce736f6d9e85f"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "d3fccc53216f26d89ab764a26405afbe1e56280f"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "e0c864d8e3d4172da16448fb69bb2728c2410db9"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "b10de6f70e61b2e700a4ff9f0628d3bf75d5c0bc"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "7ae3d5bcb9f412605afcfd52992131ec9fc1e988"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies Cocos Creator native runtime; owned cocos/extensions and CMake/npm build roots. Separate historical runtime repository, not independent architecture family.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

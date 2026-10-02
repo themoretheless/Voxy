@@ -1,0 +1,94 @@
+{
+  "repository": "doughsay/room.js",
+  "repository_id": 7281463,
+  "commit": "8b7461a6d648d164905b8999fb4a4a77d5e9e7e5",
+  "source_url": "https://github.com/doughsay/room.js/tree/8b7461a6d648d164905b8999fb4a4a77d5e9e7e5",
+  "readme_path": "README.md",
+  "readme_sha256": "bd12afcb1731eb4cfb536cc6be5b471ea73657e8b3be273c74f5e1f13b6d60e5",
+  "entries": [
+    {
+      "path": ".env.development",
+      "type": "file",
+      "sha": "c6d1cfb8ea2817ac4f8a50dcc5fc41e367575895"
+    },
+    {
+      "path": ".env.test",
+      "type": "file",
+      "sha": "d3518ac5e3b3d3996591a3c219089406150caa20"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2e35c441b2c5743de4f7a703e75b932a0f3c7c26"
+    },
+    {
+      "path": ".tool-versions",
+      "type": "file",
+      "sha": "93f075ef9588e3c71f27af2fb014289891ae3689"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "1673711b8abc110b3d10bd36d9523ea9ba642275"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "960ead08b5362a058a5c553f9b577dca77c33124"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7594540af5f2b1fd4e70b4334efdb5df725ce704"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "4f1b4f4b1dc6c6618f19001e1defe93ec325e63f"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "5015576164e47cdf0d50e1eb1f562e4151a04d89"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "014246c57c0a3db495d96acb5aeea6c744cd4f29"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3f936fbfedc4aeeec4f6ec01e9cecbaebab8c5e1"
+    },
+    {
+      "path": "test-state",
+      "type": "dir",
+      "sha": "cd33fc5efd84a40256c5832ca435d72a9e239a35"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "51dea1fee5ccfa0a189f3534a1b0056be52c2cdb"
+    },
+    {
+      "path": "yarn.lock",
+      "type": "file",
+      "sha": "9655d5348501591579816d6f84a5e14773fbe79b"
+    }
+  ],
+  "classification": "specialized_server",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Node MOO game server and browser-based editing; not a standalone graphical engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

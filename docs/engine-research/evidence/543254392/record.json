@@ -1,0 +1,59 @@
+{
+  "repository": "eduard-permyakov/peredvizhnikov-engine",
+  "repository_id": 543254392,
+  "commit": "19378a68c18879aa7ac0c193f382e02ac0c79f1e",
+  "source_url": "https://github.com/eduard-permyakov/peredvizhnikov-engine/tree/19378a68c18879aa7ac0c193f382e02ac0c79f1e",
+  "readme_path": "README.md",
+  "readme_sha256": "11e15890dee5f8f039e96d669d62add96bd46071564e08122c93515ac2387a62",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "85927f6836da119539f23fef5664a81f2aed4fe9"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "cfa6f054efe3bb8d89c9827140dbe759b92a5d43"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "16cf073cc38013a5e04810a81cd879ef257bf349"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "fedb01f601fa9d476a8f47234513c1999ebb432a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9351f6dfcecbb8c689c31af501131f06ebef4d8b"
+    },
+    {
+      "path": "module.modulemap",
+      "type": "file",
+      "sha": "ae6b082cb02f605d2b1e16522e4c97e480647eaf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4463b0b4dcf4f55cbb327ba4cc779f7ca9b3a73c"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "253ba1f2204d33a70c1783d6cd66e8e57955b202"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native actor/coroutine game engine; src/test and Makefile. Lock-free/performance claims not independently validated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

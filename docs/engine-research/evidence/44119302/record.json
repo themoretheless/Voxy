@@ -1,0 +1,39 @@
+{
+  "repository": "pico-8/awesome-PICO-8",
+  "repository_id": 44119302,
+  "commit": "b241be1389db79d3ae83c9dafb0c3f2628e4aa64",
+  "source_url": "https://github.com/pico-8/awesome-PICO-8/tree/b241be1389db79d3ae83c9dafb0c3f2628e4aa64",
+  "readme_path": "README.md",
+  "readme_sha256": "3d2221cf7361ffd90606ce6f37c6a7f61cfa2c9536aacd080e2d7f2c1ce48191",
+  "entries": [
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "ed16de8e5df2ee7bd793fd64c774d5e947aec5ac"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d0a73501bb948a72d902c0a39346aa521de2ae07"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2c4afabdb632b5d68e60c9fe9fe0b0819676a729"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5afe21b653b9b919c9c307ff0d89e9be44659424"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "fc24e7a62dc288c776f8448cd073a01e7721ed32"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README is curated resources; root lacks engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

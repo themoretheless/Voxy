@@ -1,0 +1,52 @@
+{
+  "repository": "j03m/trafficcone",
+  "repository_id": 3127980,
+  "commit": "a1231902ac4e8dd7b748c19e0733f37a77b03d78",
+  "source_url": "https://github.com/j03m/trafficcone/tree/a1231902ac4e8dd7b748c19e0733f37a77b03d78",
+  "readme_path": "README.md",
+  "readme_sha256": "5f135a784ab9528a83f0a354a479e12b077d45de334b8eb0159593ce6529e32e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c2658d7d1b31848c3b71960543cb0368e56cd4c7"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "55de4a6547612a70a4b7c34170ca2221cd1ae77a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e85f3ee3b79323f05eebebddd74a6d908e43d477"
+    },
+    {
+      "path": "newtest.xt",
+      "type": "file",
+      "sha": "32aad8c35387213772370ce678e403db1ed28243"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "ada04cffbb5ef34fb0493f61f90ab2cb820e0ab6"
+    },
+    {
+      "path": "tc.tmproj",
+      "type": "file",
+      "sha": "1c4dac9d9945d896c6a1fe0f8a3cfa05aae127af"
+    },
+    {
+      "path": "views",
+      "type": "dir",
+      "sha": "85ee1d74bdc3877ef1f5bb5be1ce6c23b3f71fad"
+    },
+    {
+      "path": "webserver.js",
+      "type": "file",
+      "sha": "3738503ff8e663e5d2c38bc636b3a470b3d87213"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

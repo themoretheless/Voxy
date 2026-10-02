@@ -1,0 +1,379 @@
+{
+  "repository": "quyse/flaw",
+  "repository_id": 24906879,
+  "commit": "06d7f9de5e7769e50a67d1a88e96345f8bc80990",
+  "source_url": "https://github.com/quyse/flaw/tree/06d7f9de5e7769e50a67d1a88e96345f8bc80990",
+  "readme_path": "README.md",
+  "readme_sha256": "ba5aca6ea03301e29703fc6d68d019473d610b2da8972b6e2b021eb401db1dfb",
+  "entries": [
+    {
+      "path": ".codeclimate.yml",
+      "type": "file",
+      "sha": "4b4dfbefbb8660ea2b0ba7fcab6559c9e3e08216"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "88f52b4d00c629b4d5092b0d145987f3e246fb58"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "6b5cf522dc9060b2dc82a8836afb9b0b63ab291f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "297adda0282627ea95d49b866e277cd5e16ffc58"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "bf48ec628f46e22f31aa5a9ecf4667e06b3e34fd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d5949cf2a95f6bbb1e38c01eb43c798e601dca67"
+    },
+    {
+      "path": "Setup.hs",
+      "type": "file",
+      "sha": "9a994af677b0dfd41b4e3b76b3e7e604003d64e1"
+    },
+    {
+      "path": "cabal.project",
+      "type": "file",
+      "sha": "ff043aa34954ccb04e9e8e592dbe5bfd60912ca8"
+    },
+    {
+      "path": "copy_licenses.sh",
+      "type": "file",
+      "sha": "e4003b78ed47e0bd64056a340f40e3daa309ce84"
+    },
+    {
+      "path": "default.nix",
+      "type": "file",
+      "sha": "e44b017d3a44f084ecabcad9da9fa9135f741a36"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a8b3877afd1d5f8065d49b383e9bc2ab547c3d3c"
+    },
+    {
+      "path": "flaw-al",
+      "type": "dir",
+      "sha": "a89ab7d725d6618bf41110ee339e1d6bbc128aa2"
+    },
+    {
+      "path": "flaw-app",
+      "type": "dir",
+      "sha": "5c85bfb0368ffcb32f041e46770121c70fd01401"
+    },
+    {
+      "path": "flaw-asset-dxt",
+      "type": "dir",
+      "sha": "6869c43b3d9964d61fadd79e6fd83edddedac345"
+    },
+    {
+      "path": "flaw-asset-wai",
+      "type": "dir",
+      "sha": "450ff6bb44baef28fd8c7b3a77e29cc3341378a3"
+    },
+    {
+      "path": "flaw-asset",
+      "type": "dir",
+      "sha": "15db1f90124bdfbb728591d4e55e3bfd80652d70"
+    },
+    {
+      "path": "flaw-audio",
+      "type": "dir",
+      "sha": "d317576dd3d729d039d738a58e988a9b579e0399"
+    },
+    {
+      "path": "flaw-base",
+      "type": "dir",
+      "sha": "4972b95c731b7693140345961a82a106fcf33243"
+    },
+    {
+      "path": "flaw-build",
+      "type": "dir",
+      "sha": "3a7e0c6a3194c16622b0d2de405274a02bdad5a5"
+    },
+    {
+      "path": "flaw-bullet",
+      "type": "dir",
+      "sha": "83fb9bd6df82b6c3fcd7510e39a8e4c8622ed817"
+    },
+    {
+      "path": "flaw-canvas",
+      "type": "dir",
+      "sha": "e607898b1df9957b8207b893f7772b07cd835f3c"
+    },
+    {
+      "path": "flaw-collada",
+      "type": "dir",
+      "sha": "c9c548814b593606d867745a40f09775d6c75df0"
+    },
+    {
+      "path": "flaw-db-strange",
+      "type": "dir",
+      "sha": "8e8ea99b1e81fdff88369cf25f818838f314869a"
+    },
+    {
+      "path": "flaw-dx11",
+      "type": "dir",
+      "sha": "fd0b0f74c74e72b79562a2051ceafcc26e407d7c"
+    },
+    {
+      "path": "flaw-editor",
+      "type": "dir",
+      "sha": "fc4a5cb8ee5da29f7b4a4c7e02d549fef5fd2230"
+    },
+    {
+      "path": "flaw-ffi",
+      "type": "dir",
+      "sha": "5f2dc409e11058172760ccf9ec4c21ea1f87bd6c"
+    },
+    {
+      "path": "flaw-ffmpeg",
+      "type": "dir",
+      "sha": "4fc9daafb0d3ebb876ad900e521c3d6eb09d82be"
+    },
+    {
+      "path": "flaw-font-fhi",
+      "type": "dir",
+      "sha": "da85633e6919377f9ca42c1ed1e985ee4ef38950"
+    },
+    {
+      "path": "flaw-font-icu",
+      "type": "dir",
+      "sha": "5c964f70c8d45820639e675c008cf6cee30f44e6"
+    },
+    {
+      "path": "flaw-font",
+      "type": "dir",
+      "sha": "3948ad18c94971cfa4fb9f67a2f76bac8e268418"
+    },
+    {
+      "path": "flaw-game",
+      "type": "dir",
+      "sha": "baefa25b13fa4b5a02c442cfcec85985073a5e10"
+    },
+    {
+      "path": "flaw-gamejolt-webapi",
+      "type": "dir",
+      "sha": "77425bbcc1305d4360f00f7398c3cb5fc6a53512"
+    },
+    {
+      "path": "flaw-gl-mesa",
+      "type": "dir",
+      "sha": "7577b698c335905b7e24195f5b385b8749029f22"
+    },
+    {
+      "path": "flaw-gl-sdl",
+      "type": "dir",
+      "sha": "dc4c52b22f40ef8f37df2339e563c65a206e96b2"
+    },
+    {
+      "path": "flaw-gl-win32",
+      "type": "dir",
+      "sha": "bc899c4cbac39b4c026dd2921b8dc7227305bf9f"
+    },
+    {
+      "path": "flaw-gl",
+      "type": "dir",
+      "sha": "8b2ce2190395dea21214794cb5053161e06dd2fe"
+    },
+    {
+      "path": "flaw-graphics",
+      "type": "dir",
+      "sha": "5df350e682eb08d19c39531bb9f41c55fd82ad02"
+    },
+    {
+      "path": "flaw-input",
+      "type": "dir",
+      "sha": "1cda4a795345a9fde8dba5ffcac2c6e63e673f29"
+    },
+    {
+      "path": "flaw-itch-webapi",
+      "type": "dir",
+      "sha": "6aa0a19adf4480750e28de84e4a992432fd86b48"
+    },
+    {
+      "path": "flaw-js",
+      "type": "dir",
+      "sha": "c358aba38b08fc0f1633cf5307a953466c8a2bf9"
+    },
+    {
+      "path": "flaw-lmdb",
+      "type": "dir",
+      "sha": "983f736fa6e6bc866b878c386eceb25cfa3e76d1"
+    },
+    {
+      "path": "flaw-lua-refimpl",
+      "type": "dir",
+      "sha": "270587e7cd17246be434d33b59c2570ee25326f0"
+    },
+    {
+      "path": "flaw-lua",
+      "type": "dir",
+      "sha": "51857d77c0a94304b19aa8c24bd184d48bcfed49"
+    },
+    {
+      "path": "flaw-math-determ",
+      "type": "dir",
+      "sha": "78d12ecdfbf3c4ae9bac480fa54429f1dcff9eb2"
+    },
+    {
+      "path": "flaw-math",
+      "type": "dir",
+      "sha": "0d70563e0afcfe91415d1d0c0fb5ff7841653894"
+    },
+    {
+      "path": "flaw-media",
+      "type": "dir",
+      "sha": "8e8ea99b1e81fdff88369cf25f818838f314869a"
+    },
+    {
+      "path": "flaw-mess",
+      "type": "dir",
+      "sha": "8e8ea99b1e81fdff88369cf25f818838f314869a"
+    },
+    {
+      "path": "flaw-network",
+      "type": "dir",
+      "sha": "597493d749811f4fb6a46f641b7b69094328ae9b"
+    },
+    {
+      "path": "flaw-oil-client",
+      "type": "dir",
+      "sha": "86b64d10c49614636424c6eba2f094c1cff52459"
+    },
+    {
+      "path": "flaw-oil-server",
+      "type": "dir",
+      "sha": "390cde1b6b60f07921b9c2c870e40ec6bda59da6"
+    },
+    {
+      "path": "flaw-oil",
+      "type": "dir",
+      "sha": "cf8487cf297f6d2248d0dff78ff4eb23cd3b7671"
+    },
+    {
+      "path": "flaw-physics",
+      "type": "dir",
+      "sha": "aaeb9c14f52454a8ce77542b26d0841dcc478ded"
+    },
+    {
+      "path": "flaw-pureui",
+      "type": "dir",
+      "sha": "8e8ea99b1e81fdff88369cf25f818838f314869a"
+    },
+    {
+      "path": "flaw-quark",
+      "type": "dir",
+      "sha": "8e8ea99b1e81fdff88369cf25f818838f314869a"
+    },
+    {
+      "path": "flaw-script",
+      "type": "dir",
+      "sha": "830896793a2ef24c1d8527154b16caf8fa08f812"
+    },
+    {
+      "path": "flaw-sdl",
+      "type": "dir",
+      "sha": "0c14472a4ad53d52a2cca3c9e213a70374c43fee"
+    },
+    {
+      "path": "flaw-sl",
+      "type": "dir",
+      "sha": "c2f075644ae018dd21a48f94f275309f0d0ffbe2"
+    },
+    {
+      "path": "flaw-social",
+      "type": "dir",
+      "sha": "9a492839eca1c9d61038553dec2f9865372a6833"
+    },
+    {
+      "path": "flaw-sqlite",
+      "type": "dir",
+      "sha": "3c57ff2dbc1a2034c78bdf474a3d34761933c500"
+    },
+    {
+      "path": "flaw-steam-encryptedticket",
+      "type": "dir",
+      "sha": "915bcfe1d076d819178d41fa3cb385fc6565e3a8"
+    },
+    {
+      "path": "flaw-steam-webapi",
+      "type": "dir",
+      "sha": "4c53d343d351604649932fb7135958aa0e7fe53b"
+    },
+    {
+      "path": "flaw-steam",
+      "type": "dir",
+      "sha": "cc42d1f6f0f700925c25490b072c009eb9e198b7"
+    },
+    {
+      "path": "flaw-ui-default-style-data",
+      "type": "dir",
+      "sha": "6e783b4d2b759288080d3a20adb35f5324cfbed0"
+    },
+    {
+      "path": "flaw-ui-default-style",
+      "type": "dir",
+      "sha": "57665f319cc25567b1a885b715bb738474d88343"
+    },
+    {
+      "path": "flaw-ui",
+      "type": "dir",
+      "sha": "413fa5416a8e88c2f978450604717d8667596f33"
+    },
+    {
+      "path": "flaw-visual",
+      "type": "dir",
+      "sha": "cc4857f5934c8184f2283b1718f9c36a06d575cc"
+    },
+    {
+      "path": "flaw-vulkan",
+      "type": "dir",
+      "sha": "a9d998516f9f1bac099933ec8682b12dbe9aec08"
+    },
+    {
+      "path": "flaw-websocket-client",
+      "type": "dir",
+      "sha": "a6d1bcd93c7dbb293d1a6c5c54b1e67e991238a7"
+    },
+    {
+      "path": "flaw-websocket-server",
+      "type": "dir",
+      "sha": "7daa1316a812464d4981d050f3286c911ecdbb7d"
+    },
+    {
+      "path": "flaw-window",
+      "type": "dir",
+      "sha": "073f4d8b9c170b3932c157eac8d613075c698a31"
+    },
+    {
+      "path": "pages",
+      "type": "dir",
+      "sha": "243ba834dfdf5c0f9f4d5d1ad0a723fcb8d655bf"
+    },
+    {
+      "path": "release.nix",
+      "type": "file",
+      "sha": "309e05919712e43c929c57515e73f9b8257f8ebc"
+    },
+    {
+      "path": "stack.yaml",
+      "type": "file",
+      "sha": "8f1abb71330f4d34adc36b402f8fd090be9d2966"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Experimental Haskell engine with separated app/assets/audio/physics/editor/render/font/build packages; maturity/runtime proof not claimed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

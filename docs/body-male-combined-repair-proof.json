@@ -1,0 +1,344 @@
+{
+  "repair_steps": [],
+  "repair_rejections": [
+    {
+      "fraction": 1.0,
+      "reason": "crossing count/segment score did not improve",
+      "crossings": 91,
+      "beforeSegmentLengthM": 0.050322178760579137,
+      "afterSegmentLengthM": 0.05271606918188966
+    },
+    {
+      "fraction": 0.5,
+      "reason": "crossing count/segment score did not improve",
+      "crossings": 87,
+      "beforeSegmentLengthM": 0.050322178760579137,
+      "afterSegmentLengthM": 0.050304709417001076
+    },
+    {
+      "fraction": 0.25,
+      "reason": "crossing count/segment score did not improve",
+      "crossings": 80,
+      "beforeSegmentLengthM": 0.050322178760579137,
+      "afterSegmentLengthM": 0.0501886148995701
+    },
+    {
+      "fraction": 0.125,
+      "reason": "crossing count/segment score did not improve",
+      "crossings": 78,
+      "beforeSegmentLengthM": 0.050322178760579137,
+      "afterSegmentLengthM": 0.050184163253272455
+    },
+    {
+      "fraction": 0.0625,
+      "reason": "crossing count/segment score did not improve",
+      "crossings": 73,
+      "beforeSegmentLengthM": 0.050322178760579137,
+      "afterSegmentLengthM": 0.05023125259906426
+    }
+  ],
+  "repair_smoothing_steps": 1,
+  "repair_max_displacement_m": 0.0008244938538438052,
+  "repair_complete": false,
+  "repair_remaining": {
+    "intersection_pairs": [
+      [
+        2439,
+        2516
+      ],
+      [
+        2439,
+        2526
+      ],
+      [
+        2439,
+        2521
+      ],
+      [
+        2432,
+        3966
+      ],
+      [
+        2432,
+        3960
+      ],
+      [
+        2432,
+        3956
+      ],
+      [
+        2432,
+        3965
+      ],
+      [
+        2516,
+        6201
+      ],
+      [
+        2447,
+        3960
+      ],
+      [
+        2513,
+        6201
+      ],
+      [
+        2437,
+        2513
+      ],
+      [
+        2517,
+        6201
+      ],
+      [
+        2447,
+        2513
+      ],
+      [
+        2447,
+        2506
+      ],
+      [
+        2428,
+        2521
+      ],
+      [
+        2433,
+        3955
+      ],
+      [
+        2433,
+        3956
+      ],
+      [
+        2428,
+        2523
+      ],
+      [
+        2428,
+        3952
+      ],
+      [
+        2426,
+        3952
+      ],
+      [
+        2433,
+        3952
+      ],
+      [
+        2092,
+        2171
+      ],
+      [
+        2092,
+        2168
+      ],
+      [
+        2171,
+        6128
+      ],
+      [
+        4246,
+        6128
+      ],
+      [
+        2094,
+        4246
+      ],
+      [
+        2094,
+        2168
+      ],
+      [
+        46277,
+        50242
+      ],
+      [
+        48348,
+        50242
+      ],
+      [
+        46198,
+        46277
+      ],
+      [
+        46198,
+        46283
+      ],
+      [
+        46199,
+        46283
+      ],
+      [
+        46199,
+        48348
+      ],
+      [
+        46623,
+        50309
+      ],
+      [
+        46623,
+        50314
+      ],
+      [
+        46545,
+        46618
+      ],
+      [
+        46618,
+        50314
+      ],
+      [
+        46620,
+        50314
+      ],
+      [
+        46548,
+        46618
+      ],
+      [
+        46549,
+        46618
+      ],
+      [
+        46549,
+        48076
+      ],
+      [
+        46554,
+        48076
+      ],
+      [
+        46554,
+        48078
+      ],
+      [
+        46554,
+        48079
+      ],
+      [
+        46554,
+        48069
+      ],
+      [
+        46625,
+        50309
+      ],
+      [
+        46546,
+        48069
+      ],
+      [
+        46546,
+        48068
+      ],
+      [
+        46712,
+        53675
+      ],
+      [
+        46717,
+        53911
+      ],
+      [
+        46717,
+        53908
+      ],
+      [
+        46717,
+        53910
+      ],
+      [
+        46713,
+        53908
+      ],
+      [
+        46713,
+        53675
+      ],
+      [
+        46542,
+        46630
+      ],
+      [
+        46542,
+        46625
+      ],
+      [
+        46542,
+        46629
+      ],
+      [
+        46540,
+        48061
+      ],
+      [
+        46540,
+        48066
+      ],
+      [
+        46546,
+        48066
+      ],
+      [
+        46541,
+        48066
+      ],
+      [
+        46712,
+        53683
+      ],
+      [
+        46717,
+        53907
+      ],
+      [
+        46713,
+        53683
+      ],
+      [
+        46713,
+        53907
+      ],
+      [
+        46537,
+        46629
+      ],
+      [
+        46540,
+        48062
+      ],
+      [
+        46537,
+        46634
+      ],
+      [
+        46537,
+        48062
+      ],
+      [
+        46539,
+        48062
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 31870,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded"
+  },
+  "vertices": 44880,
+  "triangles": 89756,
+  "area_m2": 1.6831173111787014,
+  "max_edge_m": 0.03577672886317052,
+  "degenerate_triangles": [],
+  "duplicate_triangles": 0,
+  "boundary_edges": 0,
+  "nonmanifold_edges": 0,
+  "inconsistent_winding_edges": 0,
+  "source_sha256": "bbff1b818498f0c0d680acd5578dae0fe37785597b172144c6e656231953a127",
+  "reference_sha256": "b3a61fc99c037bc8c95c7f82a4f0de00473b9ae8d19e7d20978ede6239445c14",
+  "candidate_sha256": "bbff1b818498f0c0d680acd5578dae0fe37785597b172144c6e656231953a127",
+  "export_reload_verified": true,
+  "adopted": false
+}

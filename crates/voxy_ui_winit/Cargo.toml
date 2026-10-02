@@ -1,0 +1,11 @@
+[package]
+name = "voxy_ui_winit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[dependencies]
+voxy_ui = { path = "../voxy_ui" }
+winit = "0.30.13"
+[lints]
+workspace = true

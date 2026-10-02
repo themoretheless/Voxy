@@ -1,0 +1,36 @@
+[
+  {
+    "source": "/tmp/voxy-reference-lateral-24-stress/urethra-compressed-stress.csv",
+    "sha256": "e14950f9cbdc006e01e3d2436315f3c3fa03989b690bac620dfed3f609d99e23",
+    "elements": 27648,
+    "reference_volume_m3": 2.479788641725711e-07,
+    "mean_von_mises_pa": 235.33400593816586,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 605.5184144424,
+      "0.99": 702.4580327661,
+      "0.999": 808.8758797946
+    },
+    "peak_von_mises_pa": 919.3070668178,
+    "peak_element": 2261,
+    "peak_region": 7,
+    "peak_reference_z_m": 0.00125,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-reference-lateral-48-stress/urethra-compressed-stress.csv",
+    "sha256": "f5c3acdbd813c4e5427ace85ba533d6d8e637a76e5c98532f46cdaf9ed347a68",
+    "elements": 55296,
+    "reference_volume_m3": 2.479788641725816e-07,
+    "mean_von_mises_pa": 232.0678065597572,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 619.5596167191,
+      "0.99": 730.6556417463,
+      "0.999": 827.6920526501
+    },
+    "peak_von_mises_pa": 904.6426893018,
+    "peak_element": 2261,
+    "peak_region": 7,
+    "peak_reference_z_m": 0.000625,
+    "peak_base_nodes": 0
+  }
+]

@@ -1,0 +1,117 @@
+{
+  "repository": "jonof/jfbuild",
+  "repository_id": 1178839,
+  "commit": "e06cbd005a8e6d5f38b5a7aa27ea597dd233c16e",
+  "source_url": "https://github.com/jonof/jfbuild/tree/e06cbd005a8e6d5f38b5a7aa27ea597dd233c16e",
+  "readme_path": "README.md",
+  "readme_sha256": "7f9510764c959627e3e2016683e59bd9128742c27b441303e3624b6b7daae5d0",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ee49ff94149b2477312ece079dc2f755e77465f7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "305142ce50614ed52d9352c3b2f74865ae5ce5aa"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "303726bcae527c1f7868246cff4afd721449145c"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "3a3985bb6d0e00bff80feeec15d1ad607301daf3"
+    },
+    {
+      "path": "ChangeLog",
+      "type": "file",
+      "sha": "f5e21c33160e1612c2e18224db58d747a2984ba8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "2df0eef4f5a0504bc18a047bab58d55112f9a22a"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "01e8ea278e1f238755a77b1efa7d27d567d23050"
+    },
+    {
+      "path": "Makefile.deps",
+      "type": "file",
+      "sha": "92402f4b0e9bd4d52a391f229c6bfa6a7204e43f"
+    },
+    {
+      "path": "Makefile.msvc",
+      "type": "file",
+      "sha": "f3b5d8476ea1278c04cdc674091b5faac8f52a31"
+    },
+    {
+      "path": "Makefile.msvcshared",
+      "type": "file",
+      "sha": "44bf2c5a9ff236368e4414b47d201deba5eec19d"
+    },
+    {
+      "path": "Makefile.shared",
+      "type": "file",
+      "sha": "118e8b0a3fe4ddb7b33ec7363dd9d4a836c5bfb7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "994bed23c5396081b66339449b7d954d1cc2c256"
+    },
+    {
+      "path": "buildlic.txt",
+      "type": "file",
+      "sha": "3a3985bb6d0e00bff80feeec15d1ad607301daf3"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "65e7d55266e989ea47154970af42a413d94999ec"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "37f0ee50401e77e125a4691f29a8de69ad78cd7f"
+    },
+    {
+      "path": "kenbuild",
+      "type": "dir",
+      "sha": "04c44f61d830dd073981079b07f2d35d024055c8"
+    },
+    {
+      "path": "libsquish",
+      "type": "dir",
+      "sha": "2092ed76e2f23eafddd2671bc57e985fa0b59fa9"
+    },
+    {
+      "path": "makemsc.bat",
+      "type": "file",
+      "sha": "19243ed20903cea5ef250478b545b5586569ea96"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "da3283e936b9ff3ca0c2232cc3131a9b44b308a8"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "12358e24aabca12be456293a07173e8c8e0d70c7"
+    },
+    {
+      "path": "xcode",
+      "type": "dir",
+      "sha": "4429f250a6ad5e7b14bd54288fdd49bfc3addb84"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

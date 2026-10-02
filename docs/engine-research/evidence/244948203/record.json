@@ -1,0 +1,424 @@
+{
+  "repository": "Cooler2/ApusGameEngine",
+  "repository_id": 244948203,
+  "commit": "be83b537201f53319f8f46bb1385005719a4a578",
+  "source_url": "https://github.com/Cooler2/ApusGameEngine/tree/be83b537201f53319f8f46bb1385005719a4a578",
+  "readme_path": "README.md",
+  "readme_sha256": "efb97268505936bc3f17a4ff925ddf83e8d7fdc87178675b3913e0c5b0ea668e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "38e28ed0806bdfd837557b7985993de90282e5ad"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1338e68c1b3a49a0f3729e339dae1f46f0104db9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d45cc22ead5dd1ec9a3ba3ce7f0b7be8b4a0eb54"
+    },
+    {
+      "path": "Apus.Engine.API.pas",
+      "type": "file",
+      "sha": "7be481fc54d641b65d472501cf1000cbd6ed8dcb"
+    },
+    {
+      "path": "Apus.Engine.CmdProc.pas",
+      "type": "file",
+      "sha": "a03800502c35bfe55f2a7f6d040326013470cdc5"
+    },
+    {
+      "path": "Apus.Engine.ConsoleScene.pas",
+      "type": "file",
+      "sha": "80e18919a54015e3db93204f2e9e1e4df40cf631"
+    },
+    {
+      "path": "Apus.Engine.Controller.pas",
+      "type": "file",
+      "sha": "4e62578169db0a8807583cecbc5b5322ff00a08e"
+    },
+    {
+      "path": "Apus.Engine.CustomStyle.pas",
+      "type": "file",
+      "sha": "318fd5d97396d1cdccfe38d6c3dedbcfd4266078"
+    },
+    {
+      "path": "Apus.Engine.DebugDraw.pas",
+      "type": "file",
+      "sha": "43dbec5de334e5e664ed255560b1722a52acd6b1"
+    },
+    {
+      "path": "Apus.Engine.DebugOverlays.pas",
+      "type": "file",
+      "sha": "1b700a0027a2eaf68155454e1e5eebcc6c2f9b34"
+    },
+    {
+      "path": "Apus.Engine.DefaultStyle.pas",
+      "type": "file",
+      "sha": "f9b1d15f5b6456339af86ac3735a2684eb9fd9b2"
+    },
+    {
+      "path": "Apus.Engine.Draw.pas",
+      "type": "file",
+      "sha": "59588b2c9d00d7434447e3f7e2899a57971d03a1"
+    },
+    {
+      "path": "Apus.Engine.Game.pas",
+      "type": "file",
+      "sha": "96a98fc30b74196d01dd6a2c879044c0a3b263e4"
+    },
+    {
+      "path": "Apus.Engine.GameApp.pas",
+      "type": "file",
+      "sha": "e372b7053e2e8c0465dd2c62f4aeb4ba19ff5808"
+    },
+    {
+      "path": "Apus.Engine.GpuLayout.pas",
+      "type": "file",
+      "sha": "94e0904acd53e9c1dc5e119b4ff8306c70bb73eb"
+    },
+    {
+      "path": "Apus.Engine.GpuMesh.pas",
+      "type": "file",
+      "sha": "ece21114b41ecd79cfb51456bd8e520128db055d"
+    },
+    {
+      "path": "Apus.Engine.Graphics.pas",
+      "type": "file",
+      "sha": "d57376a040caf263487acddfc3fbbbccdc107224"
+    },
+    {
+      "path": "Apus.Engine.HttpGameClient.pas",
+      "type": "file",
+      "sha": "1840d183a4c677a0cc55989edd9d2f956c4366f0"
+    },
+    {
+      "path": "Apus.Engine.HttpGameServer.pas",
+      "type": "file",
+      "sha": "3293e3bac354c63a0d1cb9dce96e419d06275304"
+    },
+    {
+      "path": "Apus.Engine.ImageTools.pas",
+      "type": "file",
+      "sha": "6175ae0b4a820b83c5b5b66e9df3b211f429d5d2"
+    },
+    {
+      "path": "Apus.Engine.ImgLoadQueue.pas",
+      "type": "file",
+      "sha": "11593490db51bab2dcfeac34ad7e9754a1424805"
+    },
+    {
+      "path": "Apus.Engine.Keys.pas",
+      "type": "file",
+      "sha": "28e047baf17784bf9a67b61e606ed80c6e26c853"
+    },
+    {
+      "path": "Apus.Engine.Mesh.pas",
+      "type": "file",
+      "sha": "d8734370f4bc05dada9d750a2a8e8ca80196398d"
+    },
+    {
+      "path": "Apus.Engine.MeshShapes.pas",
+      "type": "file",
+      "sha": "249a246e4c2432902f4321d9aea6fda7d6a43519"
+    },
+    {
+      "path": "Apus.Engine.MessageScene.pas",
+      "type": "file",
+      "sha": "1507f1072ec13e60bbe5eeb3fa8b4bebf6209e75"
+    },
+    {
+      "path": "Apus.Engine.NinePatch.pas",
+      "type": "file",
+      "sha": "7a31b2c39d4c6582f78f6c3bdd72e4c73899593f"
+    },
+    {
+      "path": "Apus.Engine.Notifications.pas",
+      "type": "file",
+      "sha": "a219037dda69f5ebacea381c69b7c60b4acb8dab"
+    },
+    {
+      "path": "Apus.Engine.OBJLoader.pas",
+      "type": "file",
+      "sha": "5b1361a898a10c74f54a9592dccf43656762cc20"
+    },
+    {
+      "path": "Apus.Engine.OpenGL.pas",
+      "type": "file",
+      "sha": "8da75c51a344d9e4374d805ce2e2ec90486421e8"
+    },
+    {
+      "path": "Apus.Engine.ResManGL.pas",
+      "type": "file",
+      "sha": "f567c5414fb5a8f9880d56c6f1a1b0009093dcff"
+    },
+    {
+      "path": "Apus.Engine.Resources.pas",
+      "type": "file",
+      "sha": "19dbcfd14067add850d8298e5526041ab6a282f0"
+    },
+    {
+      "path": "Apus.Engine.RobotAPI.pas",
+      "type": "file",
+      "sha": "431f341273cdd10787fb9fc3d18b63eb7fd16c45"
+    },
+    {
+      "path": "Apus.Engine.SDLplatform.pas",
+      "type": "file",
+      "sha": "2fab90a7d3519be8d6675d3cc17f8c5f70385416"
+    },
+    {
+      "path": "Apus.Engine.Scene.pas",
+      "type": "file",
+      "sha": "ac82791734d4ce750c10f8f5defb0eb6c140ce3c"
+    },
+    {
+      "path": "Apus.Engine.SceneEffects.pas",
+      "type": "file",
+      "sha": "8eed50515be8f14f5cf3066f3f60c504c65d867a"
+    },
+    {
+      "path": "Apus.Engine.ShadersGL.pas",
+      "type": "file",
+      "sha": "d6fd5630e53199e1c0dd9b88927f0f59d635daef"
+    },
+    {
+      "path": "Apus.Engine.Sound.pas",
+      "type": "file",
+      "sha": "a6abc85a5ff4576c2382f0db323ac4833f4e42a4"
+    },
+    {
+      "path": "Apus.Engine.SoundSDL.pas",
+      "type": "file",
+      "sha": "21364851c862061553fa1348cfbe8e53be7b5808"
+    },
+    {
+      "path": "Apus.Engine.Style.pas",
+      "type": "file",
+      "sha": "05e027ab1498a4f7843e5c2a48189726c09f046a"
+    },
+    {
+      "path": "Apus.Engine.TextDraw.pas",
+      "type": "file",
+      "sha": "1854b07b01084eaa1404e09af9ec134720d6c744"
+    },
+    {
+      "path": "Apus.Engine.TextEffects.pas",
+      "type": "file",
+      "sha": "3d96c4706e841ad8e7ae20a9d14f323b37ee329e"
+    },
+    {
+      "path": "Apus.Engine.Tools.pas",
+      "type": "file",
+      "sha": "44c869d8c016d463b6b811343f458168681c6260"
+    },
+    {
+      "path": "Apus.Engine.TweakScene.pas",
+      "type": "file",
+      "sha": "b993591258305c6900a41a18f56a4af6ad0a8df3"
+    },
+    {
+      "path": "Apus.Engine.Types.pas",
+      "type": "file",
+      "sha": "7a0fba65b9973140a11b8012be5a2dac1914e640"
+    },
+    {
+      "path": "Apus.Engine.UI.pas",
+      "type": "file",
+      "sha": "a41abb38e81d8e2e953cd83bc0c459284d3bd9c5"
+    },
+    {
+      "path": "Apus.Engine.UILayout.pas",
+      "type": "file",
+      "sha": "3dfef805c3d1c51ff2791b1a6f4e4fde8107dfcf"
+    },
+    {
+      "path": "Apus.Engine.UIRender.pas",
+      "type": "file",
+      "sha": "6dc3a6ccc0e779e6e80c34e93ed4b87e568837b5"
+    },
+    {
+      "path": "Apus.Engine.UIScene.pas",
+      "type": "file",
+      "sha": "c9105287e48693241d43c61a55c255bfe3c03114"
+    },
+    {
+      "path": "Apus.Engine.UIScript.pas",
+      "type": "file",
+      "sha": "73a0044e55b99374c5177535fd44947a780f36b9"
+    },
+    {
+      "path": "Apus.Engine.UIShapes.pas",
+      "type": "file",
+      "sha": "ea0b77bb4940a8b4738d0f66576bfec6c9b40dae"
+    },
+    {
+      "path": "Apus.Engine.UITypes.pas",
+      "type": "file",
+      "sha": "61d54d71c659608caf8e57cf1f280428e94eaa02"
+    },
+    {
+      "path": "Apus.Engine.UIWidgets.pas",
+      "type": "file",
+      "sha": "f9baff53f28e7608fa5d9c373e9aff6e8c5f8820"
+    },
+    {
+      "path": "Apus.Engine.UdpTransport.pas",
+      "type": "file",
+      "sha": "aa4a77ed58f25ebde8b61e5e54cf3f8fe181a5cd"
+    },
+    {
+      "path": "Apus.Engine.Window.pas",
+      "type": "file",
+      "sha": "75db41e007442e67ba96ab7cfca11c3ce6331551"
+    },
+    {
+      "path": "Apus.Engine.WindowsPlatform.pas",
+      "type": "file",
+      "sha": "0784dafe808a691fa6d0b79dd17d52e5f63480c9"
+    },
+    {
+      "path": "Base",
+      "type": "dir",
+      "sha": "256b7d27f63ee65b8edc6ef1857cb855d75081c4"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "efb1bae1ff1f46ec26b943c9c0ae1af5f6799aa1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7084197659e4753ed357ff86b4a569175ee7d4e4"
+    },
+    {
+      "path": "THIRD-PARTY.md",
+      "type": "file",
+      "sha": "65482b9efb18fce8a96c7aa6b723ead247ede810"
+    },
+    {
+      "path": "agents.md",
+      "type": "file",
+      "sha": "e3163b5070bb4f097065f1af555ddf226ef4c75a"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "1e6ad8bc1b2752df5c22bdacbfe0985b74ee2318"
+    },
+    {
+      "path": "bin64",
+      "type": "dir",
+      "sha": "29d3faa110505cc384d3ccf5ad4697209edd73cb"
+    },
+    {
+      "path": "build.cfg",
+      "type": "file",
+      "sha": "200ce0e29f7b64530cdddb86ff2275b192db3191"
+    },
+    {
+      "path": "build.cmd",
+      "type": "file",
+      "sha": "d44d2ce9da487b0836bfdeb3ca1ff6653b001157"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "d259a14b3d055d975f79c9f89f75903a21449b66"
+    },
+    {
+      "path": "cleanup.bat",
+      "type": "file",
+      "sha": "e8d093a6d4e4a27563f093b803e7a24c8de1ae2e"
+    },
+    {
+      "path": "defaultFont.inc",
+      "type": "file",
+      "sha": "dbfe01ab5e8c43a4b44592bf2eced88b41f9301b"
+    },
+    {
+      "path": "defaultFont10.inc",
+      "type": "file",
+      "sha": "a1a30d2c8fc9ec1a3ce29d25508a3d340d99e641"
+    },
+    {
+      "path": "defaultFont12.inc",
+      "type": "file",
+      "sha": "bdccff9e305c607879187fee9c190470cf8be4d9"
+    },
+    {
+      "path": "defaultFont8.inc",
+      "type": "file",
+      "sha": "7795a9df6e72ee73cb4596c46c315a21b0b2f8c5"
+    },
+    {
+      "path": "defines.inc",
+      "type": "file",
+      "sha": "fc59330e497ca7632f194518aab31182321b1d2e"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "c07f457e3ba6962487eca9d393eadb6c54a357e2"
+    },
+    {
+      "path": "engine5_feature_roadmap.md",
+      "type": "file",
+      "sha": "f52d9f245ba56a98dab859d81a6d1a5367580499"
+    },
+    {
+      "path": "extra",
+      "type": "dir",
+      "sha": "533fff091d4c0f0d96f7fa42aa49ce5f49025fd3"
+    },
+    {
+      "path": "legacy",
+      "type": "dir",
+      "sha": "98fd5ab85779afdcb3363ee2b743b95d8c5f589a"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "bc12f4ca31db4560c49a3f76dc2435f3be9e1ac1"
+    },
+    {
+      "path": "manual",
+      "type": "dir",
+      "sha": "d857fc700ae4088c8f36c4424023166581543200"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "e406f2d21da286c2d6503a88b1ac135f7c7ac908"
+    },
+    {
+      "path": "redist",
+      "type": "dir",
+      "sha": "1034a8851df1b9df6634738c6550f73e46fe7c44"
+    },
+    {
+      "path": "robot_api_protocol.md",
+      "type": "file",
+      "sha": "bbb035d81bfbff9f9c79c3bce7951f9a37434702"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "7422f8f9752ca51aef90810f65bb0d2f2ccb1b3b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "af64b211580208199e5817ca0577e759cc40acd3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Pascal game engine; owned Apus engine/scene/controller/runtime source and native build. Commercial use claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

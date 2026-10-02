@@ -1,0 +1,84 @@
+{
+  "repository": "tippesi/Atlas-Engine",
+  "repository_id": 154901305,
+  "commit": "76e4916e55706c0f6eac971d17d65bd8feacf70e",
+  "source_url": "https://github.com/tippesi/Atlas-Engine/tree/76e4916e55706c0f6eac971d17d65bd8feacf70e",
+  "readme_path": "README.md",
+  "readme_sha256": "541c98130dc26e3790f84f3a3879164dfc5543cb90f36d694a0ca13570c972b3",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "908558fcf3cb953f1626ec5583a8b395ae1e4a74"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1bfefbe884bb83ffbf6d1c38593f937e43f4ec7d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7efc9d3fdf9b1609b2f8252be720aba9d608ef6e"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "f099a065585987ae049fd3dc4eba608fd0b483bb"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "9acbbb3326b2ee5a1189991cf73761cd17338325"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c37594ff21f0cfd974387f9ada462da0e473b70c"
+    },
+    {
+      "path": "THIRDPARTY.md",
+      "type": "file",
+      "sha": "0964aa752c3b958f91618eabb917c9cfd9d8544e"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "e51156194797d23e22daf7ee030cc33b0c5039d6"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "2ab7591d435a9326f16f2a99b48b8d8a4456ec4e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cd08463773c7436d57979eccc130f98a463e1e10"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "e79971e898083e7903d69b957a72bf4460961c47"
+    },
+    {
+      "path": "vsbuild.bat",
+      "type": "file",
+      "sha": "275389919884e09b2b941bca1f6b63fb5546e3db"
+    },
+    {
+      "path": "wiki",
+      "type": "dir",
+      "sha": "f1bd5819835c09b9fb18106477bb4397dcc6e8f8"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies research render engine; src/libs and CMake build, complete gameplay scope not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

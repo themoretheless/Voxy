@@ -1,0 +1,627 @@
+{
+  "repository": "EXL/NXEngine",
+  "repository_id": 16231426,
+  "commit": "16bf776febef2a041cf07677f663c4cca2e810a1",
+  "source_url": "https://github.com/EXL/NXEngine/tree/16bf776febef2a041cf07677f663c4cca2e810a1",
+  "readme_path": "README.md",
+  "readme_sha256": "de023f31e46772f59b482490740ac826d00e36c27ee7a6a56e9a9a20c13f02bf",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4f1ccab5bb3f988138529d278a76113ba2a93b0a"
+    },
+    {
+      "path": "DroidSM_Font_License.txt",
+      "type": "file",
+      "sha": "989e2c59e973a05cfbfe9de678b7f2af777b0713"
+    },
+    {
+      "path": "DroidSansMono.ttf",
+      "type": "file",
+      "sha": "d604425b26f52cc6415ccaa028d4b420f8043447"
+    },
+    {
+      "path": "ICON_AUTHOR",
+      "type": "file",
+      "sha": "92e00773ff6f273f438bcc0fab9cbcc79d06a95b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2"
+    },
+    {
+      "path": "Makefile.dingux",
+      "type": "file",
+      "sha": "98f6c0972ca6ccc8f00fab70be4aa6883831936a"
+    },
+    {
+      "path": "Makefile.ezx",
+      "type": "file",
+      "sha": "36dd333206e1953b685328e1696c0e110d682909"
+    },
+    {
+      "path": "Makefile.haiku",
+      "type": "file",
+      "sha": "b02722be0f4a9b4ee70ec4e20d60b66f1da3d9fb"
+    },
+    {
+      "path": "Makefile.linux",
+      "type": "file",
+      "sha": "498caa887ed451065b49a61394610a41ba72d5b4"
+    },
+    {
+      "path": "Makefile.mingw32",
+      "type": "file",
+      "sha": "ed693c3dd02d192a2f72206471f809c4d6571a25"
+    },
+    {
+      "path": "Makefile.motomagx",
+      "type": "file",
+      "sha": "378cdda615a6de95cf82368beff969d9fd613b14"
+    },
+    {
+      "path": "NXEngine.pro",
+      "type": "file",
+      "sha": "cb8f381ef86dac1c80cf8e585eaeaafdde0aa5a9"
+    },
+    {
+      "path": "ObjManager.cpp",
+      "type": "file",
+      "sha": "6ad7c53bc9972437264a8481e29231f039648f4f"
+    },
+    {
+      "path": "ObjManager.fdh",
+      "type": "file",
+      "sha": "7b91337f4b32e181cd9becf7f60bb0e4b4ee9b58"
+    },
+    {
+      "path": "ObjManager.h",
+      "type": "file",
+      "sha": "dc556ae5523f5533c0c1fed260fb05b89bf9938c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1dcaba48d7535f4efa6944235848de1b195ffedf"
+    },
+    {
+      "path": "TextBox",
+      "type": "dir",
+      "sha": "c6282875684cf837b71d6d16dd2b59d65ede5cd6"
+    },
+    {
+      "path": "ai",
+      "type": "dir",
+      "sha": "fbd7732f6e9e38e781571d9e1a94e40921d8b870"
+    },
+    {
+      "path": "autogen",
+      "type": "dir",
+      "sha": "adad723bbfbc113e38c1a789c7d102590c8f384e"
+    },
+    {
+      "path": "caret.cpp",
+      "type": "file",
+      "sha": "6a68e82ab247b109e0105acbd86d4650f16b7220"
+    },
+    {
+      "path": "caret.fdh",
+      "type": "file",
+      "sha": "6f5bd802e0af163fb4900157f02700ceeffe115d"
+    },
+    {
+      "path": "caret.h",
+      "type": "file",
+      "sha": "da006ddddec172755e477783f781a88cedca8d5a"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "db42c5d3e901225e88feed80518e7551f9b4ac17"
+    },
+    {
+      "path": "config.h",
+      "type": "file",
+      "sha": "75a822a88b90847c82b3537591983970b6663466"
+    },
+    {
+      "path": "console.cpp",
+      "type": "file",
+      "sha": "aa7e85d30fe0f14582851bea9bdeb14bdeb573ad"
+    },
+    {
+      "path": "console.fdh",
+      "type": "file",
+      "sha": "53f8b009980cbc6388e1c6da8a8e0cd6d3b6a632"
+    },
+    {
+      "path": "console.h",
+      "type": "file",
+      "sha": "9990a83c2de9d07153d46da7ac545c516e760853"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "fd03986814ba86dace5eb2c942b619307832727d"
+    },
+    {
+      "path": "debug.cpp",
+      "type": "file",
+      "sha": "18baa19814cb5af28f8063efc813fdb13d7bec61"
+    },
+    {
+      "path": "debug.fdh",
+      "type": "file",
+      "sha": "65c726d79991239433c0f240475ed5cb08a06952"
+    },
+    {
+      "path": "debug.h",
+      "type": "file",
+      "sha": "e2fa5a64a1cd7b1a71f269ff90df8ad7e1119df8"
+    },
+    {
+      "path": "dirnames.h",
+      "type": "file",
+      "sha": "54a751ae4569a4978cd80cabdfb18d574ff523e9"
+    },
+    {
+      "path": "endgame",
+      "type": "dir",
+      "sha": "9272978e274e5b73e854f72d7ea932046ba3e8fa"
+    },
+    {
+      "path": "extract",
+      "type": "dir",
+      "sha": "3d8a33f051b0be579be1744e5c258bdc8e047341"
+    },
+    {
+      "path": "floattext.cpp",
+      "type": "file",
+      "sha": "ed67be5447cf2b0a0d78cfa3fae8954d568e8d2a"
+    },
+    {
+      "path": "floattext.fdh",
+      "type": "file",
+      "sha": "252885f324466f624606e8bbd7af0bf16af35cca"
+    },
+    {
+      "path": "floattext.h",
+      "type": "file",
+      "sha": "8a7b96e6b072e6720a991c5db22f60260ad306f2"
+    },
+    {
+      "path": "font.ttf",
+      "type": "file",
+      "sha": "a007071944f7c90020e798eea53b10065e2b45a5"
+    },
+    {
+      "path": "game.cpp",
+      "type": "file",
+      "sha": "030819a509972d72fe829f0e56c0637f617f13d1"
+    },
+    {
+      "path": "game.fdh",
+      "type": "file",
+      "sha": "b1b016e24a6922120d371cce4ff5f64d76bcef8f"
+    },
+    {
+      "path": "game.h",
+      "type": "file",
+      "sha": "7175d7d6f3e2e64cdfb1c977cd13f7e53cf107c8"
+    },
+    {
+      "path": "graphics",
+      "type": "dir",
+      "sha": "3e435cf2086927fc71958c660d184da6fc206b1e"
+    },
+    {
+      "path": "imgsrc",
+      "type": "dir",
+      "sha": "604b71540235c697b5fc04717b7448be2977d911"
+    },
+    {
+      "path": "input.cpp",
+      "type": "file",
+      "sha": "f5486aaf0bf24fabc407f49567cdca60716e8c53"
+    },
+    {
+      "path": "input.fdh",
+      "type": "file",
+      "sha": "d19e36828bf421d94246d507deddb5bc428207c6"
+    },
+    {
+      "path": "input.h",
+      "type": "file",
+      "sha": "1a36c8477c913831d0aeabb90d6938e6e443e6c8"
+    },
+    {
+      "path": "intro",
+      "type": "dir",
+      "sha": "08e889069b4dd85a8374e6de11534c8245b77b37"
+    },
+    {
+      "path": "inventory.cpp",
+      "type": "file",
+      "sha": "52c32345fe674d645e1b89ac98407d9a1afacc29"
+    },
+    {
+      "path": "inventory.fdh",
+      "type": "file",
+      "sha": "a3f4f55e76ebe5829a7f6b4aeca1b64a3edcdddb"
+    },
+    {
+      "path": "inventory.h",
+      "type": "file",
+      "sha": "4fde113ada2fd43bdbe73aa9b29f75708bb050a7"
+    },
+    {
+      "path": "l10n_strings.h",
+      "type": "file",
+      "sha": "069e9d1dbfbb55177a0e7e7b64c63619647b74fd"
+    },
+    {
+      "path": "main.cpp",
+      "type": "file",
+      "sha": "12ca26910587ea93453cc0bd3254bf3934ac95d7"
+    },
+    {
+      "path": "main.fdh",
+      "type": "file",
+      "sha": "7f636b4e1fe38f63157d12c090da15fb241bbb12"
+    },
+    {
+      "path": "map.cpp",
+      "type": "file",
+      "sha": "425eb6791c915ab6ae973f48a243f85f8ec2d393"
+    },
+    {
+      "path": "map.fdh",
+      "type": "file",
+      "sha": "e0c8a7df7e678118c9fe8d0d5f37785ef3f24892"
+    },
+    {
+      "path": "map.h",
+      "type": "file",
+      "sha": "c5a98746a7f424e5eadf56645be8ad175d2fb97f"
+    },
+    {
+      "path": "map_system.cpp",
+      "type": "file",
+      "sha": "47a19341b80b595e3642dc2d17732d57791633c1"
+    },
+    {
+      "path": "map_system.fdh",
+      "type": "file",
+      "sha": "9f985b19025d9df4076210fbce0a879b6feb4fd2"
+    },
+    {
+      "path": "map_system.h",
+      "type": "file",
+      "sha": "5dada6db25167f8116a6677b85bf550fec239728"
+    },
+    {
+      "path": "maprecord.h",
+      "type": "file",
+      "sha": "8b8145d4f4ab183970c971715f8b8c4809389aa4"
+    },
+    {
+      "path": "niku.cpp",
+      "type": "file",
+      "sha": "7f30a4574c8290167e773fa7421295762df13691"
+    },
+    {
+      "path": "niku.fdh",
+      "type": "file",
+      "sha": "c6f0a9a986baa247a90745ba93f8860eb01022d0"
+    },
+    {
+      "path": "nx.h",
+      "type": "file",
+      "sha": "d9177ed80bab6fc2ef974a617e7dd80f1ab6c156"
+    },
+    {
+      "path": "nx.ico",
+      "type": "file",
+      "sha": "5ec4327940fcf53a6f8305cc868a1a2af54afd35"
+    },
+    {
+      "path": "nx.rc",
+      "type": "file",
+      "sha": "117aa18037e1d15ef4d2755b5abd6dde351e9d3e"
+    },
+    {
+      "path": "nx_icon.h",
+      "type": "file",
+      "sha": "cd56183db302208ca45bf073f0fd1b62ed926633"
+    },
+    {
+      "path": "nx_icon_48.png",
+      "type": "file",
+      "sha": "14b6ec13445de815bd33f8d6670541223994f5fa"
+    },
+    {
+      "path": "object.cpp",
+      "type": "file",
+      "sha": "309dc9bd0a1c2e140b7707c0e205d629d7b98972"
+    },
+    {
+      "path": "object.fdh",
+      "type": "file",
+      "sha": "d4e86c731e7004f61065217b999485d62122597f"
+    },
+    {
+      "path": "object.h",
+      "type": "file",
+      "sha": "ae9fa0590300de22743d7cfafa78cc1d30c5bde4"
+    },
+    {
+      "path": "p_arms.cpp",
+      "type": "file",
+      "sha": "fa84f8c1caad2a3ca81b9e64240f67ff10335b12"
+    },
+    {
+      "path": "p_arms.fdh",
+      "type": "file",
+      "sha": "94afd2e81a7bd220e331ab81fc410657073bfbf9"
+    },
+    {
+      "path": "p_arms.h",
+      "type": "file",
+      "sha": "b5c548b69c561a6c0864c0470d7ebcc2c9f1eaed"
+    },
+    {
+      "path": "pause",
+      "type": "dir",
+      "sha": "b8a8eb1bbc01e299f704f5288a843471e0f8a11a"
+    },
+    {
+      "path": "platform.cpp",
+      "type": "file",
+      "sha": "e2761ddf8a2f32d549e814384e3a4cf2ea145a8d"
+    },
+    {
+      "path": "platform.fdh",
+      "type": "file",
+      "sha": "852689ba3950b7a947cc4ed482f8e2ec40db8ae1"
+    },
+    {
+      "path": "platform.h",
+      "type": "file",
+      "sha": "c7009c385720442058bf5e15c13dae627b3c6fd1"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "8342119e573ae550576674a77e019b6bcd6bd3bb"
+    },
+    {
+      "path": "player.cpp",
+      "type": "file",
+      "sha": "54ffda30ba35a4ec1e4e2c16e8a1ea1f19ed5f07"
+    },
+    {
+      "path": "player.fdh",
+      "type": "file",
+      "sha": "2ac7036821f7737c34cbf7079b32926ea432a1f8"
+    },
+    {
+      "path": "player.h",
+      "type": "file",
+      "sha": "e75e212d5f0ddd93efc7d4d35735b954eb573c7c"
+    },
+    {
+      "path": "playerstats.cpp",
+      "type": "file",
+      "sha": "ac221f9b9d6ac81a9e9ccbd2e2b80b0efbaf253a"
+    },
+    {
+      "path": "playerstats.fdh",
+      "type": "file",
+      "sha": "d3bee5adbe3d37ef3804510c509122950d92b708"
+    },
+    {
+      "path": "profile.cpp",
+      "type": "file",
+      "sha": "a44638ef4b40265365ecd3c8b767c97b38a4de06"
+    },
+    {
+      "path": "profile.fdh",
+      "type": "file",
+      "sha": "646599900a18a7c5e0c8ce894f011aa51d522751"
+    },
+    {
+      "path": "profile.h",
+      "type": "file",
+      "sha": "0e7904836cb81ecaf1fbb252d7cbaae57e04d4b3"
+    },
+    {
+      "path": "replay.cpp",
+      "type": "file",
+      "sha": "7ec7454fd147723a4e196708d2bbb04b6adcaa5d"
+    },
+    {
+      "path": "replay.fdh",
+      "type": "file",
+      "sha": "32a5619aa322c222238a3fc664d9911825c6e57d"
+    },
+    {
+      "path": "replay.h",
+      "type": "file",
+      "sha": "9ac44080bbec9c7467f0ef0b69f7bd83bb5dbe68"
+    },
+    {
+      "path": "screeneffect.cpp",
+      "type": "file",
+      "sha": "b117b316dfcddde04189a08f1bad362cc23571a9"
+    },
+    {
+      "path": "screeneffect.fdh",
+      "type": "file",
+      "sha": "c680576e0ca594f6e46b221cb0e117d10ca785bc"
+    },
+    {
+      "path": "screeneffect.h",
+      "type": "file",
+      "sha": "ace22f6eccc44b6426dc0168d383eaec14f3bcec"
+    },
+    {
+      "path": "screens",
+      "type": "dir",
+      "sha": "e48bbe977a6cd8fdf811fa17d984f76fba7fd5c4"
+    },
+    {
+      "path": "settings.cpp",
+      "type": "file",
+      "sha": "1378863e30dd2125b70ef90597f2bd734e54de1a"
+    },
+    {
+      "path": "settings.fdh",
+      "type": "file",
+      "sha": "09b9d98ecc523ff0cd23507a32caaca1fff1d120"
+    },
+    {
+      "path": "settings.h",
+      "type": "file",
+      "sha": "0f1db78c81e5913804b11bb53560748fe3d2fb2c"
+    },
+    {
+      "path": "siflib",
+      "type": "dir",
+      "sha": "a5e5e0453d4f71d3f21204881a8c51953f54603c"
+    },
+    {
+      "path": "slope.cpp",
+      "type": "file",
+      "sha": "b3d34d76ba3c4abbca7d61f96a8cd9bd225cff68"
+    },
+    {
+      "path": "slope.fdh",
+      "type": "file",
+      "sha": "56a0db26bfb9ed754ecd4261a1a7a88aa2cf0418"
+    },
+    {
+      "path": "slope.h",
+      "type": "file",
+      "sha": "2e624fa7babc880b67275e544e486f6fec4dadd3"
+    },
+    {
+      "path": "smalfont.bmp",
+      "type": "file",
+      "sha": "613d8fdad65dc5dace6045d1cc5732be052fad33"
+    },
+    {
+      "path": "sound",
+      "type": "dir",
+      "sha": "45d2fc646bf06eb3ee7bb56b4df802dee7aec8ae"
+    },
+    {
+      "path": "sprites.sif",
+      "type": "file",
+      "sha": "8aa8894dc39ccf95e48700453581cc8a13ee6d02"
+    },
+    {
+      "path": "stageboss.cpp",
+      "type": "file",
+      "sha": "3b03b5e2204650c3cbd00cc017e98d31fe4431b8"
+    },
+    {
+      "path": "stageboss.fdh",
+      "type": "file",
+      "sha": "5e8bbf51c0cc593b6a0d937a77d09a53ae00558c"
+    },
+    {
+      "path": "stageboss.h",
+      "type": "file",
+      "sha": "365a0193c10929f55526124a1fc9166c574d4c60"
+    },
+    {
+      "path": "stagedata.cpp",
+      "type": "file",
+      "sha": "98620534edd1af8c6b643cf0f0a83857678b22fe"
+    },
+    {
+      "path": "stagedata.fdh",
+      "type": "file",
+      "sha": "252885f324466f624606e8bbd7af0bf16af35cca"
+    },
+    {
+      "path": "stagedata.h",
+      "type": "file",
+      "sha": "1d629a786d5b3a00794f93a64302b2e18a723dee"
+    },
+    {
+      "path": "statusbar.cpp",
+      "type": "file",
+      "sha": "4fc7254f81e127d1c01ace53e3e28f4cf129dd50"
+    },
+    {
+      "path": "statusbar.fdh",
+      "type": "file",
+      "sha": "df266dd3da51258aecf1cc17acbc42891c01b009"
+    },
+    {
+      "path": "statusbar.h",
+      "type": "file",
+      "sha": "efdcdacd87bb65bea44321f230719ac9eaf68424"
+    },
+    {
+      "path": "tilekey.dat",
+      "type": "file",
+      "sha": "6381fc79e38d590ec308ae4fc3244eeeef3f1cba"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "fce70434d4be6d79c22b006a9ea5957e8ad7237d"
+    },
+    {
+      "path": "trig.cpp",
+      "type": "file",
+      "sha": "606900c9dfd7b4a6aafa2b869551800c5c06de43"
+    },
+    {
+      "path": "trig.fdh",
+      "type": "file",
+      "sha": "f781c6eba8e454ba97773d5fb9c4895b520dd219"
+    },
+    {
+      "path": "trig.h",
+      "type": "file",
+      "sha": "ff6141e839d0c53dc0e60e3be39c227e297a3e37"
+    },
+    {
+      "path": "tsc.cpp",
+      "type": "file",
+      "sha": "26ea31914eb532a5d870410f03599a42ae612856"
+    },
+    {
+      "path": "tsc.fdh",
+      "type": "file",
+      "sha": "99559966210e0b4dc4076f0768c666cadb19c20f"
+    },
+    {
+      "path": "tsc.h",
+      "type": "file",
+      "sha": "f465dc2d4df6500a09e62bb9152b6abaf59309f6"
+    },
+    {
+      "path": "tsc_cmdtbl.h",
+      "type": "file",
+      "sha": "aad749a6ff5c20ee14764c0cdc309fad98d367a0"
+    },
+    {
+      "path": "vararray.h",
+      "type": "file",
+      "sha": "e61060f97a6b84f002cd0a95ca3292287128642f"
+    },
+    {
+      "path": "xm",
+      "type": "dir",
+      "sha": "934605d4daa74065303bb144e17ff729b49b482a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

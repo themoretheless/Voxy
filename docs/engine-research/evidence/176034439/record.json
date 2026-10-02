@@ -1,0 +1,27 @@
+{
+  "repository": "marmitoTH/Godot-Sonic-Physics",
+  "repository_id": 176034439,
+  "commit": "553af35e6d6f51df7a169888c9367f89bf04424c",
+  "source_url": "https://github.com/marmitoTH/Godot-Sonic-Physics/tree/553af35e6d6f51df7a169888c9367f89bf04424c",
+  "readme_path": "README.md",
+  "readme_sha256": "b818fb62605eb539ed3974be645ffaf1de0ef5a0d797e87d4e77325ab4f49ac4",
+  "entries": [
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "a385c1dfd8bcbf06d3552ef3d22ab725cee6e6f9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0c9ab4c533bf2794f4a372ea5b2c2101afea03b3"
+    },
+    {
+      "path": "Source Code",
+      "type": "dir",
+      "sha": "e0436d8bb33af48907c6f3795edbf7b8cdd47970"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,13 @@
+{
+  "status": "native_verification_incomplete",
+  "editor_sha256": "31ac59f9eebf866fc4cf21e28a0d9a64d30c4c901663f49ae7b2489b8d98fd6b",
+  "editor_library_tests": {
+    "passed": 25,
+    "failed": 0
+  },
+  "strict_clippy": "passed",
+  "native_presented_frames": 0,
+  "last_surface": "SkippedOccluded",
+  "native_error_log": "Traceback (most recent call last):\n  File \"/Users/themoretheless/Documents/ChatGPT/Voxy/tools/test_native_prefab_editor.py\", line 49, in <module>\n    main()\n    ~~~~^^\n  File \"/Users/themoretheless/Documents/ChatGPT/Voxy/tools/test_native_prefab_editor.py\", line 33, in main\n    raise RuntimeError(log)\nRuntimeError: EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[Ok(Vec4(0.0, 0.0, 0.5, 1.0)), Ok(Vec4(0.0, 0.0, 0.5, 1.0))]\nMODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nMODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nError: \"native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)\"\n\n",
+  "scope": "Full selected linked instances, nested asset IDs and overrides, detachment and export comparison are unit verified. Native creation acceptance did not execute because surface acquisition presented no frames."
+}

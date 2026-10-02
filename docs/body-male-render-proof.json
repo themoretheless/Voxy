@@ -1,0 +1,11 @@
+{
+  "image_sha256": "cfd0a7110935d2f0cbc1d2445948420214dfa549e63f1dc50a1ec69b6d0d410f",
+  "renderer": "Metal Apple M4 Max",
+  "visually_inspected": true,
+  "vertices": 44880,
+  "triangles": 89756,
+  "bindings": 44880,
+  "source_object": "GEO-body_male_realistic",
+  "calibrated": false,
+  "interactive_mcp_selection": false
+}

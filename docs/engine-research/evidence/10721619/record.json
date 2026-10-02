@@ -1,0 +1,329 @@
+{
+  "repository": "hajimehoshi/ebiten",
+  "repository_id": 10721619,
+  "commit": "468a4170c560da4a11e9122355e4194f6d98edfb",
+  "source_url": "https://github.com/hajimehoshi/ebiten/tree/468a4170c560da4a11e9122355e4194f6d98edfb",
+  "readme_path": "README.md",
+  "readme_sha256": "aab59bb08591e0b9b9b515930ce98530f599c32cdf69684371d73fcf8f210fab",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "3da6bd35a65db2e73f1d2312213c3c1611263b28"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "91f774addbece9da1e5143e8fdb00c4a180a5def"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "981311b14e2f22b6de6ca9a7db079a0550133144"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "d63b0de76122277b55728f0fdcca4ea6b9550df7"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "e9d7e83102e09815a2fd06019f1846916baa074c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "8275f0b7d518dc531d7700ce4c8371ac14c739fe"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8dada3edaf50dbc082c9a125058f25def75e625a"
+    },
+    {
+      "path": "NOTICE.md",
+      "type": "file",
+      "sha": "a1a49ed067b493db053f86363ae3194afadbe02a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4f98c0c56635d5f9a1645d46d5105411fa72053d"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "c42ade6ec16ea24702a8b5f8efcb941bec260cc2"
+    },
+    {
+      "path": "blend.go",
+      "type": "file",
+      "sha": "3da65f3b2054cebd9fb1f6bab48a6ca50a2f6404"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "c1565908799405361aa7398784d90afb1184ffb7"
+    },
+    {
+      "path": "colorm.go",
+      "type": "file",
+      "sha": "9e71f13604a0e4a580b574040bddd1927124e231"
+    },
+    {
+      "path": "colorm",
+      "type": "dir",
+      "sha": "253db0e19a5e2af4948a0fbaf7e13e31d1b7d3bc"
+    },
+    {
+      "path": "colormode.go",
+      "type": "file",
+      "sha": "b9538819d3cd33ab69906b06061cbf3b6ab78a26"
+    },
+    {
+      "path": "colormode_test.go",
+      "type": "file",
+      "sha": "1f304c403beb06062bbf67f3f17d2b40ee2436b9"
+    },
+    {
+      "path": "colorscale.go",
+      "type": "file",
+      "sha": "378c7050794a9130e78b49434e511c69c6ed52ac"
+    },
+    {
+      "path": "compositemode.go",
+      "type": "file",
+      "sha": "80eb6b652c999b1b11d3b624b7ebd0bef01f18bb"
+    },
+    {
+      "path": "cursor.go",
+      "type": "file",
+      "sha": "051a301ae0e5b6e9f86ca7f7247d9833d4ebe8e1"
+    },
+    {
+      "path": "doc.go",
+      "type": "file",
+      "sha": "3e561037a5612941669dfbd0f6ed0fb56c9f819c"
+    },
+    {
+      "path": "duration.go",
+      "type": "file",
+      "sha": "12035309905a7db13f5a82a61d0108ca1cf6b81b"
+    },
+    {
+      "path": "duration_test.go",
+      "type": "file",
+      "sha": "1b3764154050857a966dd4661cfd3d1defd5ecf7"
+    },
+    {
+      "path": "ebiten_test.go",
+      "type": "file",
+      "sha": "7fa3368495ec509f92d501e0b68b69289affbade"
+    },
+    {
+      "path": "ebitenutil",
+      "type": "dir",
+      "sha": "4e48db5735f81f2085875140ec09cba39b0235ea"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "fed0cd6483ea7d3568a01a353b580bc7ee3a89a2"
+    },
+    {
+      "path": "exp",
+      "type": "dir",
+      "sha": "dd710051427fd2f4e8d8a78e0302a0dced3805a0"
+    },
+    {
+      "path": "export_test.go",
+      "type": "file",
+      "sha": "4251496af1ec4294d531677dc9b0006780198a10"
+    },
+    {
+      "path": "gameforui.go",
+      "type": "file",
+      "sha": "c2cdaa0675ae3bcc2ad2a61a3ec7b07f63344baa"
+    },
+    {
+      "path": "gamepad.go",
+      "type": "file",
+      "sha": "fc5d5ef2bfe71d198bad6e759ad0f727e6c73434"
+    },
+    {
+      "path": "generate.go",
+      "type": "file",
+      "sha": "8b5ab289c2595aabe6601c2810e46761ada97af8"
+    },
+    {
+      "path": "genkeys.go",
+      "type": "file",
+      "sha": "fd49c7874477e89d3c526b8318d21a77f74d856b"
+    },
+    {
+      "path": "geom.go",
+      "type": "file",
+      "sha": "2637bc4582e93092c5d4b165e733524002d1f1f7"
+    },
+    {
+      "path": "geom_test.go",
+      "type": "file",
+      "sha": "1a01b98f72c4d59ab8f7fb31de4fb2cc463fdf7e"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "e7e312d543095e72e3ec7eabcffc2dd5c7d0ff08"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "fb410fa4d3bc7f777238d40f3a694bde79d7959c"
+    },
+    {
+      "path": "graphics.go",
+      "type": "file",
+      "sha": "0dd6da5cf433201478eb6137163cae55fd53a32b"
+    },
+    {
+      "path": "image.go",
+      "type": "file",
+      "sha": "87cc02fc699e3deb2e7f3025b4efb11034d973dc"
+    },
+    {
+      "path": "image_test.go",
+      "type": "file",
+      "sha": "0618c4853a86166e2ce33eb3b47f07bf2e9cdd61"
+    },
+    {
+      "path": "imagedumper.go",
+      "type": "file",
+      "sha": "1257ef4b8d311c1e45629b36a591ad471bef994f"
+    },
+    {
+      "path": "imagetobytes.go",
+      "type": "file",
+      "sha": "3c032c391b19ec11ff4094f63193b5856a227508"
+    },
+    {
+      "path": "imagetobytes_test.go",
+      "type": "file",
+      "sha": "9fdc5cdddcbc4a72d48421b7c7d8429a1b6a8af1"
+    },
+    {
+      "path": "input.go",
+      "type": "file",
+      "sha": "51351f3784c260aaf850d485cb0a635779f46f32"
+    },
+    {
+      "path": "inpututil",
+      "type": "dir",
+      "sha": "22873675b08dcad5efd1ee2a83c432501b416dc2"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "648fbd54a7ff6e738e849c4600ed585475a84a34"
+    },
+    {
+      "path": "keys.go",
+      "type": "file",
+      "sha": "5f919e76e08c480d307601f5d92774e2da03ab11"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "266be8cdc844b65c6430c4f7474425acdaebf533"
+    },
+    {
+      "path": "mobile",
+      "type": "dir",
+      "sha": "ff0bf0ec028507a5e543a8d0b6c0ca683c740ca6"
+    },
+    {
+      "path": "monitor.go",
+      "type": "file",
+      "sha": "eb616dd41710d120c12713fcda20bf31f7446ed0"
+    },
+    {
+      "path": "mousebuttons.go",
+      "type": "file",
+      "sha": "c42f483442d7a8b051ab0eb4521ec6b53b36661c"
+    },
+    {
+      "path": "playstation5",
+      "type": "dir",
+      "sha": "db8654568a18a04e9207e55ce431027a61a79eb6"
+    },
+    {
+      "path": "run.go",
+      "type": "file",
+      "sha": "1c53053e7a965c959af950d2e1fbca33d0ce0c38"
+    },
+    {
+      "path": "run_mobile.go",
+      "type": "file",
+      "sha": "7f314f3150f1a76e23bba3eb66d4235641ba155b"
+    },
+    {
+      "path": "run_notjs_test.go",
+      "type": "file",
+      "sha": "33fc1777b347ea82e05ee5e316d2c01df9b35108"
+    },
+    {
+      "path": "shader.go",
+      "type": "file",
+      "sha": "cd7e61aa598edfd69abc13badfa32c5a3f1c1a48"
+    },
+    {
+      "path": "shader_test.go",
+      "type": "file",
+      "sha": "481758466c89f1e7d7a3d85cc00066598105a0e4"
+    },
+    {
+      "path": "skills",
+      "type": "dir",
+      "sha": "f4770ce8d96189d62a13780f5ef9748b11ea481a"
+    },
+    {
+      "path": "stencilbuffer.go",
+      "type": "file",
+      "sha": "b7e8528cae879e2f7d240f21e4576617bae1f150"
+    },
+    {
+      "path": "stencilbuffer_test.go",
+      "type": "file",
+      "sha": "5661828f4bf8e878a1de302331b78e790ebaa7a7"
+    },
+    {
+      "path": "text",
+      "type": "dir",
+      "sha": "53248ff4da193edfa87718a33c1954b25b413ae8"
+    },
+    {
+      "path": "vector",
+      "type": "dir",
+      "sha": "a98daebb57e70ef3c23a60fc1462988b1786e86b"
+    },
+    {
+      "path": "vibrate.go",
+      "type": "file",
+      "sha": "92f57aae339e40c03edbca1ad03e8328ff4c67b7"
+    },
+    {
+      "path": "window.go",
+      "type": "file",
+      "sha": "0e17d9eaff7374eb0edc162bbb806ed2e4c681c9"
+    },
+    {
+      "path": "window_notdesktop_test.go",
+      "type": "file",
+      "sha": "ccf806596e2e7c32007354cbd5a0ac66635196e1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 2D Go engine; owned rendering/input/audio implementation, go.mod and tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

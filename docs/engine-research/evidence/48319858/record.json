@@ -1,0 +1,119 @@
+{
+  "repository": "elnormous/ouzel",
+  "repository_id": 48319858,
+  "commit": "3ea8a4ccb1181b6992a299f837bef902e8197cc4",
+  "source_url": "https://github.com/elnormous/ouzel/tree/3ea8a4ccb1181b6992a299f837bef902e8197cc4",
+  "readme_path": "README.md",
+  "readme_sha256": "54370503ddb26c28cbc77e88334d815de5ccb25e70259cb3d9d1e31ea53c6386",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "dd79bddbdbd0213c4fc4465eb4f24c7d432efa18"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2498c3b2f6330a25015c76c0efe4bb04add85add"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "49c40a0d92312750d9dbbe9028cb0a7d3a55ce6f"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "519a060fea1bf4be5d7ab37097a2bf2fac1be41f"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "1c6a7bd74cf1f6c1b22e8f0680597ea89abc45e4"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "685938886614db968a9f8c2630ed2375a405922f"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "6e35d0a8ad5a97333e7aa6196000193336fd2ca8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d3b01e3b9853eb20d9469679183157cc7036e695"
+    },
+    {
+      "path": "UNLICENSE",
+      "type": "file",
+      "sha": "00d2e135a7ee7b81c27fed80ddf6ee341c8d6752"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "41d7dbc6153ac6900f21af86850a1a70d96824b8"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "6173b41a6fe2ee407bdfa95c0a4f72279501ab15"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "c7a85910d5a0d49633674572d816ad996e3acdc0"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "1828bce27b3f64a362d6e93d8769b55b2694263e"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "0e8ef1657da3ab868ef208d28330f7b969dd2351"
+    },
+    {
+      "path": "ouzel.sln",
+      "type": "file",
+      "sha": "4bc4ea3a0f907b29da57f66ee437107ba40bd9d0"
+    },
+    {
+      "path": "ouzel.xcworkspace",
+      "type": "dir",
+      "sha": "fb4e2a38a2bd13f4aa3f140f6271275602856672"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "d508d11d20041490054afb633a16732c63af31cc"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "31e434330b0a71f3fd92073656d67c2292f4f263"
+    },
+    {
+      "path": "sonar-project.properties",
+      "type": "file",
+      "sha": "a7e60f119c19c29e5697d63c51fdd87511989fdb"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "13fdb99f6be8e508b45ae1c55db19939d6131951"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "00ebfe5d5cd34b5deb1b280bb7c6a1d0f3aa4051"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 2D game engine; owned engine source plus make/native platform build and samples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,67 @@
+{
+  "repository": "vova616/GarageEngine",
+  "repository_id": 5326767,
+  "commit": "c7cdaa04123ff5d53814f5bbca4c55ac7f2eb487",
+  "source_url": "https://github.com/vova616/GarageEngine/tree/c7cdaa04123ff5d53814f5bbca4c55ac7f2eb487",
+  "readme_path": "README.md",
+  "readme_sha256": "bfe1288add7ae0858d63119c4b16ac5eef5b986d587f7ffc071d702f34394f6b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "412eeda78dc9de1186c2e0e1526764af82ab3431"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ae91ffb5f7946c9d0b07d9f7f88582cc5411b15e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7dde93e3e9e89bf5063e8b46a2a114df46aac5ea"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "595880cd3064a48ca1e04c2f7608bc157b8f5a99"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "dc0da1beceb2a60d70c6c374ce14f3045335810c"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "dc6e45320de4565da7eccd4913e629f2b9f3d041"
+    },
+    {
+      "path": "main.go",
+      "type": "file",
+      "sha": "e24c0c8ad563dfc301196e629dc7b5cd48f85bb9"
+    },
+    {
+      "path": "networkOnline",
+      "type": "dir",
+      "sha": "c23fac7d2ec919a65bac5e0c14da55446b1ca1cd"
+    },
+    {
+      "path": "project.sublime-project",
+      "type": "file",
+      "sha": "569a2b0a331d43772668fefafdf8df998df0ba98"
+    },
+    {
+      "path": "spaceCookies",
+      "type": "dir",
+      "sha": "e27d0dcad0c461046ab80ebf2eb1cc444f938c2e"
+    },
+    {
+      "path": "zumbies",
+      "type": "dir",
+      "sha": "e889eabe330c5351f1df06f32b3303e22e7dba03"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

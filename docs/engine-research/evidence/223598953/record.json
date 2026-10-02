@@ -1,0 +1,139 @@
+{
+  "repository": "axmolengine/axmol",
+  "repository_id": 223598953,
+  "commit": "3e9e947fbfb6e42fca8b05acef9aeffa34a3188f",
+  "source_url": "https://github.com/axmolengine/axmol/tree/3e9e947fbfb6e42fca8b05acef9aeffa34a3188f",
+  "readme_path": "README.md",
+  "readme_sha256": "d6049ec173b26d80b61bfcc0b9625d6991d4cf22afd590c307e1caa0fadf907a",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "fd035f5eea61f0351adc2c1110626af30933b197"
+    },
+    {
+      "path": ".clang-format-ignore",
+      "type": "file",
+      "sha": "e1a3a6256fe4e1e79acf0910deab40ad75b8723d"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "094a5aa99f86dd0ac00f5fe6cb3f0d5a3877497c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "506d6e21464e254fa78b2e740dfcc34319bb86dc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b5246721c000b27b15b2655828fb43242e478e51"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "344c8ab4973f995bff6fe85b8aad798351ef5694"
+    },
+    {
+      "path": "1k",
+      "type": "dir",
+      "sha": "3fc268e7258579cf882400d8808bea9a8bf0fd25"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "abecb157229430b80d61835f58682e3cf0d20105"
+    },
+    {
+      "path": "AUTHORS.md",
+      "type": "file",
+      "sha": "8a3933805371e0029ef442a98ce1c02adc628187"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e8837f75690764474d9ea5efd3bfbf4036757f60"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "359b5060ae336637d036d271cb11193460025ca1"
+    },
+    {
+      "path": "CMakeOptions.md",
+      "type": "file",
+      "sha": "3c39a31914251f1b9f9b921f9f149ebd2295c952"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "47c982890dd9d5a0d40c109b1e76d296d2e6988d"
+    },
+    {
+      "path": "INFRA.md",
+      "type": "file",
+      "sha": "202590dc1332da11a5915685bcbbea06d57397a6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "734ade606906b749583af10e547650c8d86a557b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ff84790396187f8b99e635dec3106ec53bc7c4f0"
+    },
+    {
+      "path": "README_CN.md",
+      "type": "file",
+      "sha": "ced9de86bf9fadc4a76b545bc91a9b165a8ee658"
+    },
+    {
+      "path": "axmol",
+      "type": "dir",
+      "sha": "542964bc0cae2edfe624bc58b6561fee8d848e3f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "2b581b972bffeac3b6fdb8d615a0037867e9a0a4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "939a74366474adb1ca7879c096a2a04ad1a3b60a"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "b357bc6416251ee042d104d79bacc2424c81de00"
+    },
+    {
+      "path": "setup.ps1",
+      "type": "file",
+      "sha": "d12462f7b7bd59f7cc2c6b25f398e46928bc0b91"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "a05fd2ed9d4c0b627b7368d9b1ff6118040c336c"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "3d7d48a9ea41b0189cb1401f375e98e8115b44b1"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a9f66dd51a051cc5d324e7a66b5d60ad84bd29d3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies 2D/3D game engine; owned axmol runtime and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

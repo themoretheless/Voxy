@@ -1,0 +1,54 @@
+{
+  "repository": "r-lyeh-archived/AVA",
+  "repository_id": 47322041,
+  "commit": "22e1a180b7db66988b7701361b4ff3ba5491ea2b",
+  "source_url": "https://github.com/r-lyeh-archived/AVA/tree/22e1a180b7db66988b7701361b4ff3ba5491ea2b",
+  "readme_path": "README.md",
+  "readme_sha256": "8b7e061d2f9cc48b0edb2f47e30557e1cb469826a3b964fc0fb612f7a17a2115",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "21c9daddbb40595002a507d3db058017da58138b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "ca681825fc1f62d637860d685388233181f37a7c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "bf860c1206ed61bddf9aa2aca9f6fc13ba5913e4"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "6ea55bf63a02486186b14ad598e781ce2233a884"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "8c37b9d8f2901551a0d678d34e1beb8e24fdaac4"
+    },
+    {
+      "path": "games",
+      "type": "dir",
+      "sha": "d0bb5261c1c4bdf86f2183855e8ecf0a562419dc"
+    },
+    {
+      "path": "make.sh.bat",
+      "type": "file",
+      "sha": "60c4e5dc36e010cbec1b42621c4ca39661a65c73"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "4a3088bb5c1e80fe7aad7911005182d1c7753fa7"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly maps portable engine runtime; owned engine/editor/games and build script. License text needs separate adoption check.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

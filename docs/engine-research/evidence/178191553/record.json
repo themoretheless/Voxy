@@ -1,0 +1,112 @@
+{
+  "repository": "utopia-rise/fmod-gdextension",
+  "repository_id": 178191553,
+  "commit": "b74dd111eeaa62fd583f37578af5cc02f61c8fbb",
+  "source_url": "https://github.com/utopia-rise/fmod-gdextension/tree/b74dd111eeaa62fd583f37578af5cc02f61c8fbb",
+  "readme_path": "README.md",
+  "readme_sha256": "e25e6e624cd4af892f549fd78184d2f91caafbb46ba61bd6300f3b4eb4831d81",
+  "entries": [
+    {
+      "path": ".README",
+      "type": "dir",
+      "sha": "6bea47c1af2a3f440073f30c4d00399fee1775e3"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "118891b7bea9da6f6479dda9ec6355024d5da8bf"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6bfd6782ab37033c2fc62920063f687361e5c396"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8e8aff49dc127de1f47d11e0e8d5d9e28f28fe8f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "78dea403f8ad466f75e248a2b36c8335300c889c"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "d6a8a29aee2e20065d8d52e51dd11298b61827fd"
+    },
+    {
+      "path": ".readthedocs.yml",
+      "type": "file",
+      "sha": "003abaf627e8321e0fe35db08314c7ad3e2971b2"
+    },
+    {
+      "path": "Android.mk",
+      "type": "file",
+      "sha": "1b06ade82c760cb194a8bb7c6ffd8ba51ad10454"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "cbfd494ec163cd5da284578b88c52e9c55fcb765"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0a2953a1863c40b1b4e63a16d6281863d1b380ba"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c3e6ce294cbed2925ff8cb8895978597251c6fd3"
+    },
+    {
+      "path": "SConstruct",
+      "type": "file",
+      "sha": "b1dc5298898df210b3989bf7785be1a45031a698"
+    },
+    {
+      "path": "android-plugin",
+      "type": "dir",
+      "sha": "6652ef6469ba7265b8bf9c93e5715ea6ea898250"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "1e657aeb36666b0ea2b66773179ae4a047021014"
+    },
+    {
+      "path": "doc_classes",
+      "type": "dir",
+      "sha": "b39d14e16f0284768a723f24ca7e09b5339d50fb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ac75e495d25f9a171f80c023594ad46d41815c52"
+    },
+    {
+      "path": "get_fmod.py",
+      "type": "file",
+      "sha": "ce3e4485e9f9583eb2e5eaa5d70c0ffa1210a33e"
+    },
+    {
+      "path": "godot-cpp",
+      "type": "file",
+      "sha": "e83fd0904c13356ed1d4c3d09f8bb9132bdc6b77"
+    },
+    {
+      "path": "jni",
+      "type": "dir",
+      "sha": "f13b4e46046de36682aef89955ee882ec9cece16"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a246b52db4908e0ccc9ee6010c92e04b0d074101"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

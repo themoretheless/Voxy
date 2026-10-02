@@ -1,0 +1,19 @@
+{
+  "repository": "m0lentum/starframe",
+  "repository_id": 144378449,
+  "commit": "feb4139d25a58dc6c77863b344574706bd807d5b",
+  "source_url": "https://github.com/m0lentum/starframe/tree/feb4139d25a58dc6c77863b344574706bd807d5b",
+  "readme_path": "README.md",
+  "readme_sha256": "bf82ac5e933e764eb3e03da0189641c59bf7806a4d9b73bb5edb38be72829ca8",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ddc6899fdd3dde4fba99b82de9801b912e1b8e73"
+    }
+  ],
+  "classification": "excluded_redirect",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned root only README redirecting to Codeberg, no source engine evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,109 @@
+{
+  "repository": "SpartanJ/eepp",
+  "repository_id": 125767856,
+  "commit": "af273c08a4e3083786ce0bbeec97e0ff9f484568",
+  "source_url": "https://github.com/SpartanJ/eepp/tree/af273c08a4e3083786ce0bbeec97e0ff9f484568",
+  "readme_path": "README.md",
+  "readme_sha256": "cf59066fb076b40b173c0fc5f29da46f74a50c2633064d750d3ea1a3320c3e36",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "9b0b953e100b6d63880de989bad8380a8838e561"
+    },
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "7a55b3db511227c157eb722f617a590af4eb36fd"
+    },
+    {
+      "path": ".ecode",
+      "type": "dir",
+      "sha": "30729f7e68d377b26f91fdc84ab4937852683dd8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f221c55b3dd15992778d53f05d50a3564d1f9a4c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4c1fb6ad126ea5e7571a31fcf78096fec149b119"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7f697448ad936f005d27ff2365f1ef890239ba2a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "581f340ba7c5a85cb391d586354f5bb6eda39f9b"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "aaf8cc95fde2288e61f7561dce7a4cbb86c04e40"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "b1758f087af1e01840c44e5b40e0a929fa4fb389"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3ac7e03275cc368faeeb0985208bd48a45d43a21"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "082df3d445579ba547aaf25d06b5839bee9da802"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "29d26ee09accb6f07bc9b90cfc7e55983e039554"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a598337306c1316b98864224020e2c7a9cb610b8"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "1f117368b33d103e171abd76ec92da51a744ae01"
+    },
+    {
+      "path": "premake",
+      "type": "dir",
+      "sha": "4103789ca5d619bb5c9fba5080e8c367ffb1f088"
+    },
+    {
+      "path": "premake4.lua",
+      "type": "file",
+      "sha": "64ff2e968e75c867ecae31aac793842d4c1d01ca"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "ac447ce5e5b417181cd69be502f9a9cd403316fd"
+    },
+    {
+      "path": "projects",
+      "type": "dir",
+      "sha": "784988329bc26da162d36913d44e377f8a69cc63"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3c4d0c9664ed28d976fb1e20132906bc14345bdf"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies game/application GUI framework; src/include with premake build, separate from complete engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

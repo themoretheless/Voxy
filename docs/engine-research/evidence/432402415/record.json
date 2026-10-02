@@ -1,0 +1,79 @@
+{
+  "repository": "dominion-dev/dominion-ecs-java",
+  "repository_id": 432402415,
+  "commit": "e3c99d10ffccec1e13ae3df373366fc1323757c4",
+  "source_url": "https://github.com/dominion-dev/dominion-ecs-java/tree/e3c99d10ffccec1e13ae3df373366fc1323757c4",
+  "readme_path": "README.md",
+  "readme_sha256": "fc2d3e3f2f8a0ca9685f6f885e7d4d370699764fd8b18ffbe2e0fd2a1e9ddf4d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "55b5560a18cabf30ad2845c5a9ada885867dd7d8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "53b39f6bf572f5dd2fb26b985e6d8fdb12c287c4"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "ae6d35dd1c85a85fe198ea308a8484e05f46df0a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6eebc95b6ff7211966366d6b32c8a0feb06e4208"
+    },
+    {
+      "path": "LIC_HEADER",
+      "type": "file",
+      "sha": "5573a33dd7002a14305042a0780101d872d9969f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a717a0457f69b16fe4f714ac08a7a334bcd3dffb"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "e1eaa2d5aef4256aa979857eded693e0ab8d9505"
+    },
+    {
+      "path": "dominion-ecs-api",
+      "type": "dir",
+      "sha": "caa11d964282c3814f05ce2f4b5e0fca14afbab2"
+    },
+    {
+      "path": "dominion-ecs-engine-benchmarks",
+      "type": "dir",
+      "sha": "aea4ae5cdb1a41421091dd0e3abfc2cf36e08e84"
+    },
+    {
+      "path": "dominion-ecs-engine",
+      "type": "dir",
+      "sha": "6b113a0a1b037ae832f0891653f9480135225748"
+    },
+    {
+      "path": "dominion-ecs-examples",
+      "type": "dir",
+      "sha": "e863982986963c9d703c01c560e9891dfd478a97"
+    },
+    {
+      "path": "dominion-logo-square.png",
+      "type": "file",
+      "sha": "4fa58114594b5d7e4f0af1d3a1aefb80ab768203"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "79ae6ab99454778daa60409cd913dca0a54b6db6"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Java ECS library; API/engine/benchmarks modules rather than complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

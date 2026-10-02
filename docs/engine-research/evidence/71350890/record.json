@@ -1,0 +1,72 @@
+{
+  "repository": "Apress/build-your-own-2d-game-engine",
+  "repository_id": 71350890,
+  "commit": "4df6613cd49a972993ae90b22206c86ab6f95279",
+  "source_url": "https://github.com/Apress/build-your-own-2d-game-engine/tree/4df6613cd49a972993ae90b22206c86ab6f95279",
+  "readme_path": "README.md",
+  "readme_sha256": "ffe8c3d26621f77476b18eb43bbb74d1b3ef88e71a3dcd61c15e522509660bd6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "57299c9dab62b21a83fa2338c2b1baf0eeea162c"
+    },
+    {
+      "path": "9781484209530.jpg",
+      "type": "file",
+      "sha": "10e19aef8b955cbc5bcd869e5775858b21849d4b"
+    },
+    {
+      "path": "AdditionalMaterials",
+      "type": "dir",
+      "sha": "570853f170a68b296192ed140c5a767d84178038"
+    },
+    {
+      "path": "BookCover.png",
+      "type": "file",
+      "sha": "573aa050e83592165f0cf02e4efeb4890ef420e4"
+    },
+    {
+      "path": "BookSourceCode",
+      "type": "dir",
+      "sha": "b6a31c95cb748f991568dcc82a0d4fe90acf44b5"
+    },
+    {
+      "path": "Errata.html",
+      "type": "file",
+      "sha": "f1886c3e42c2eaa74ab6470df0f98ca9a0c1aa3f"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "42273be284805880d0bf6b22de33467930cbd78f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8898fb9a900be033e51e5bfd107e856af464e572"
+    },
+    {
+      "path": "V2-EngineWithPhysics+Particles",
+      "type": "dir",
+      "sha": "408af71d2bf05f42f32ed70c30bc18021c9df4c3"
+    },
+    {
+      "path": "V3-UI+Particles",
+      "type": "dir",
+      "sha": "57e776082fe3d235fabe20adf6580afedd89a686"
+    },
+    {
+      "path": "contributing.md",
+      "type": "file",
+      "sha": "f6005adc29130ffd5393bfc7c1b60876f2483d3c"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "e0f4e117243b6c424da28575069b86583c3a149a"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

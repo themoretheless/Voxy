@@ -1,0 +1,29 @@
+{
+  "repository": "OpenXRay/xray",
+  "repository_id": 176944750,
+  "commit": "d7b23596a70374d8a7ffda0e98852f93ce985182",
+  "source_url": "https://github.com/OpenXRay/xray/tree/d7b23596a70374d8a7ffda0e98852f93ce985182",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "825753ffa11d74e3682fce31f267ff0055c8c156"
+    },
+    {
+      "path": "SDK",
+      "type": "dir",
+      "sha": "9cf45cbc918d96e733a5dbc5113844a627e4045e"
+    },
+    {
+      "path": "trunk",
+      "type": "dir",
+      "sha": "91e60334f5e949f9703986ce7836506cc13e0d73"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Discovery identifies X-Ray expansion but README is absent; SDK/trunk source requires deeper review before counting.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

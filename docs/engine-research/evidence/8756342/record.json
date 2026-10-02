@@ -1,0 +1,152 @@
+{
+  "repository": "fifengine/fifengine",
+  "repository_id": 8756342,
+  "commit": "26de7d30f9e545e5e0e28de0d7269cb87b075242",
+  "source_url": "https://github.com/fifengine/fifengine/tree/26de7d30f9e545e5e0e28de0d7269cb87b075242",
+  "readme_path": "README.md",
+  "readme_sha256": "94e60bce656ff48a92c74997bcc8192b6686337d5465d06991c8bbbe13e5c946",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "51ff9554a75e96b16d744ec1e8ebabdb48591394"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "68dabe34adc851e51c7f15f8ed1f961d25fa24f2"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "b6fcc99dd7bc8d6aaa1af83fb676c3b24bc128ad"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "990fa64a3bae3ef703c73f5ca4ea6672a92d1941"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3356b1264d649d76749eb97aa047a92f89c70dda"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2e4c0940e7eb8dde9210de172ce8d63414e74dda"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6c885ebb655a629071f687c110bf5dc48492ab31"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "ade23311aeb18991475e76491a6ebb945ca11b30"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "93c4a85c42ee11f0873f1c05a354bb662f6eab4c"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "83ea9a753590d62d520ecf9e5a52c2951551021a"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "75db34f0dd76ac14252dd401becf886d954d71e7"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "5c5779799d2deef914b7a177cccb73350283e2b2"
+    },
+    {
+      "path": "CPPLINT.cfg",
+      "type": "file",
+      "sha": "598863120bcb42c6c00cc02fa551afdd99be1c87"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4362b49151d7b34ef83b3067a8f9c9f877d72a0e"
+    },
+    {
+      "path": "NOTES.md",
+      "type": "file",
+      "sha": "bf8cf70c6d9382e6b6ac3c1e41aab3c73b234a69"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8404bdccfb25567d9e3228f39d39a437725cc717"
+    },
+    {
+      "path": "build-tools",
+      "type": "dir",
+      "sha": "aabd2d66b5eb3ddd14b18c418e37f6d5a70e7e40"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "625d9ab41378320ea1f4bea18428664338f31eda"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "82088555dfa767294a8ee363a46ae6c4d415fb92"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "97fe17a21b12079f33ead0ea70ad289261b4e275"
+    },
+    {
+      "path": "doxygen.conf",
+      "type": "file",
+      "sha": "7e923f930f5ca86dd38dad051c0c9c496becaeda"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "044b079ef82aeca3766d5da0405dea3abc7c32ab"
+    },
+    {
+      "path": "run_tests.py",
+      "type": "file",
+      "sha": "10642ed2ed9dc5eb2964de1ce142624042c6cfc8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "1308e1f28dbbf50582a773f972402cfc24a11515"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "26effbc94fd6aa627ae3bb1dceab8dae32e726b6"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c0461a20b62a3459e82b5609507325c1cd6b7a53"
+    },
+    {
+      "path": "uv.lock",
+      "type": "file",
+      "sha": "8a7ffacf58f15a630f5a51bb35daa29262464f08"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "6cff1d702003fa1f71de0428b0f66812d83e055f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

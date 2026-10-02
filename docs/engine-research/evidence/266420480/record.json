@@ -1,0 +1,84 @@
+{
+  "repository": "canoi12/tinycoffee",
+  "repository_id": 266420480,
+  "commit": "1711dac26586af4f873cc5fb45f213bfc1463ef5",
+  "source_url": "https://github.com/canoi12/tinycoffee/tree/1711dac26586af4f873cc5fb45f213bfc1463ef5",
+  "readme_path": "README.md",
+  "readme_sha256": "73c4065c8e7311055dd6942e2b93566acf89bdfad295f32ab9d5109608f7ad48",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6d42a786df6afc6763939863d526546ec48fc6ba"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "e491f64bd170391650cd762ee1d9cc24c59475a3"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "614efbff3c96f064c139f0873d5a4abf7792ccce"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "901217a3f0188b2bed8abd22131e861b2a335aeb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e184664ecc7705f250e6663b1ccd50b63d919934"
+    },
+    {
+      "path": "cembed.c",
+      "type": "file",
+      "sha": "d68a1d9638960f5e788afbf2cbfe107597198567"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b6d65240068f4e3642db076cff83731309f9b720"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "d53708e589101f6bbb2ab29b63aae5cc07a2b079"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "7301e48b53ef44e3d2c8a58feb158b3de4bf47e0"
+    },
+    {
+      "path": "extrude.ttf",
+      "type": "file",
+      "sha": "9438e6135bc175157823f72b975b65e1983f39a8"
+    },
+    {
+      "path": "glfw.c",
+      "type": "file",
+      "sha": "989927c8d3f81d6195c9cf83ae63f7e6f869d9e0"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "ac12d73dabbda01796c4fd1a3079001b00fbb0f5"
+    },
+    {
+      "path": "main.c",
+      "type": "file",
+      "sha": "29c49a2ba93f9f8e536ad82e4c86c55cf650deb4"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ca0f81759dccb52d918b1a234359dbde7adbd638"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "OpenGL 2D game framework explicitly described as incomplete.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

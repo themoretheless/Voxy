@@ -1,0 +1,89 @@
+{
+  "repository": "lgsvl/simulator",
+  "repository_id": 139499767,
+  "commit": "4c342fd39c5eca6ce6538a144f51d5929812e417",
+  "source_url": "https://github.com/lgsvl/simulator/tree/4c342fd39c5eca6ce6538a144f51d5929812e417",
+  "readme_path": "README.md",
+  "readme_sha256": "6316dfe139ce0584e6c73421655b8a8e7e57c7f3bdb9d0717a89c23bfaabc38e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "99f5f41d8e5dc75c986aa593b49a705de36044de"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "943bf18d60067eca3cabb34d485d8844f12e5851"
+    },
+    {
+      "path": ".gitlab",
+      "type": "dir",
+      "sha": "20670b37b0715a31dcd3945c2bb540743ba61989"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "35d4ade42e13e6ed80229b9bec4e73e426974a4b"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "a05cb98d2c2b805545fb39ac9502e7582318f0e1"
+    },
+    {
+      "path": "Docker",
+      "type": "dir",
+      "sha": "46f62dfe039eae4bb65af06a6416716d1cf3513c"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "98e862d5e0492cf013ad100914036cd4de7b47d3"
+    },
+    {
+      "path": "Jenkins",
+      "type": "dir",
+      "sha": "5cb4765c4c6519b94b82eadccf87883c19e08c7f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "592819781df16fa0c093fa5a8f347c2e48313fe8"
+    },
+    {
+      "path": "LICENSE-3RD-PARTY",
+      "type": "file",
+      "sha": "e428b583e6eca3713ba28c93c8771b377bd3564b"
+    },
+    {
+      "path": "PRIVACY",
+      "type": "file",
+      "sha": "71c4d60104f9dc5a7da8c906749b681fa5f43289"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "9806a24cdaa99ecdf377443a7e5a15e8423c598f"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "b8d865ac99d328bbc3fe906ec0a665e24930137a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cba2e047c75529a94c1c917895538f211e077185"
+    },
+    {
+      "path": "config.yml.template",
+      "type": "file",
+      "sha": "5015fe1ab23ae0d6fa605c559aaef4dd09f20e5f"
+    }
+  ],
+  "classification": "excluded_simulator_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Root Unity Assets/Packages/ProjectSettings implement vehicle simulator application, not underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

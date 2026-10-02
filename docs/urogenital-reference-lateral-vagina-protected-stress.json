@@ -1,0 +1,36 @@
+[
+  {
+    "source": "/tmp/voxy-reference-lateral-24-vagina-stress/vagina-barrier-stress.csv",
+    "sha256": "6cbedf32cb0b083643920d624dfc5b22580f9ed8032b681c8b7dccdd1bc714c8",
+    "elements": 27648,
+    "reference_volume_m3": 2.204256570422927e-06,
+    "mean_von_mises_pa": 289.295136950587,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 518.4778413605,
+      "0.99": 624.0969140263,
+      "0.999": 754.5298645487
+    },
+    "peak_von_mises_pa": 893.6600739345,
+    "peak_element": 1681,
+    "peak_region": 5,
+    "peak_reference_z_m": 0.0015625,
+    "peak_base_nodes": 0
+  },
+  {
+    "source": "/tmp/voxy-reference-lateral-48-vagina-stress/vagina-barrier-stress.csv",
+    "sha256": "2c3529f6fa3aface6b2cb4c436c3ff4ecba2bb6774f601bd33042d6a3c8855dd",
+    "elements": 55296,
+    "reference_volume_m3": 2.204256570422907e-06,
+    "mean_von_mises_pa": 308.3806536553318,
+    "volume_weighted_quantiles_pa": {
+      "0.95": 578.4265721193,
+      "0.99": 700.3687319902,
+      "0.999": 865.5902515135
+    },
+    "peak_von_mises_pa": 1109.112476286,
+    "peak_element": 2792,
+    "peak_region": 9,
+    "peak_reference_z_m": 0.0015625,
+    "peak_base_nodes": 0
+  }
+]

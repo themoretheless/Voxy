@@ -1,0 +1,89 @@
+{
+  "repository": "AdamsLair/duality",
+  "repository_id": 11561833,
+  "commit": "7cbbe6cc9b2ba6fe49ab2b6df3f9cda431ad0667",
+  "source_url": "https://github.com/AdamsLair/duality/tree/7cbbe6cc9b2ba6fe49ab2b6df3f9cda431ad0667",
+  "readme_path": "README.md",
+  "readme_sha256": "d3bbe0bdfb30fef6e7db7aef14da3fba00a7f8570a1eff491760aa27ee62434f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a0afeab7f22536aeb849aea886c6a128a8d6d905"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5c4b187dfc2b2b22931d826a88b8450c4e708e91"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "831e5c5b260285573a1b11a09789c12fe6335530"
+    },
+    {
+      "path": "ATTRIBUTION",
+      "type": "file",
+      "sha": "7f7bbfc5f2c0a6922d7e91222252d005d6281f9d"
+    },
+    {
+      "path": "Benchmarks",
+      "type": "dir",
+      "sha": "b45abc6c92c39f37ef072ace2ff6f3ec2c6a4414"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "6833799bd1b65267d2a04a176433591a203cce74"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "15114cfc199a5492395c85f30c0d571699cade45"
+    },
+    {
+      "path": "Duality.sln",
+      "type": "file",
+      "sha": "566c206cc7afbf2ec022e80849ac6aab2c51a8d6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e6f8011baff3ed8f628bf741df43d13a4e7f9429"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b87dac0d5e68930330c0464e7f7fa31ac35ea439"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "672ca3e52ae49471d98388690951325855b23734"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "418e3034cfc5993dedf89713b1a55bc6035e2600"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "b4f5bc69856734d1374788d4b2870eb6d3cfba17"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "14d8933794ada56399530a5e216727bf1deea240"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "b57876c52acc9dbb544486a46343324acc786ac8"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies plugin-based .NET 2D framework; Source/Test/Tools and build solution.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

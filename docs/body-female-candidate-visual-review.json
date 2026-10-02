@@ -1,0 +1,13 @@
+{
+  "renderer": "Metal Apple M4 Max",
+  "capture": "offscreen",
+  "candidateAdopted": false,
+  "knownForbiddenPairs": 25,
+  "visualReview": "Inspected reference and candidate foot-detail renders; triangular protrusions between toes visible in both, with some more pronounced in candidate. General feet framing does not resolve these defects.",
+  "files": {
+    "assets/characters/blender-female/prepared/body-four-mm-vertex-normal-candidate.obj": "79f07643efe239548b10933a8187520fd992b4c0799bfb021a7ba85c022d6472",
+    "assets/characters/blender-female/prepared/body-four-mm-rebound-skin-candidate.json": "499555a80d1eb86d05f442e3e7119444ae0c169a9934ae3d2f02bdf3c3cf68b3",
+    "docs/body-female-reference-foot-detail.png": "e46ac5a962b342d14e199a232123ed33924261495edc19f94e180e065e3c940b",
+    "docs/body-female-candidate-foot-detail.png": "4217db9a58c1514b4ca0c18d3fbcaf0f8741f6f5ea156047a5b642287b411278"
+  }
+}

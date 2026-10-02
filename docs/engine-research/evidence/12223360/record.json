@@ -1,0 +1,59 @@
+{
+  "repository": "mosra/magnum-bootstrap",
+  "repository_id": 12223360,
+  "commit": "5c0f3a9a4c0a345bc3ba63184accc212b4b1fb4d",
+  "source_url": "https://github.com/mosra/magnum-bootstrap/tree/5c0f3a9a4c0a345bc3ba63184accc212b4b1fb4d",
+  "readme_path": "README.md",
+  "readme_sha256": "199f85290e7dce2a18a4044263e434d28cba18a9ef25e1035f25de4b4a851ba2",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cad4061e96bf20826f722f1946352840c441cf5d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8a214cfdb2fa4b361d7c27c20db2ad7270234922"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "bcbff3669fe4a85bf6d6982a53ceb23b5adb48b8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "ea76fb4449962ed3bac4743072d8edd2f27c76a0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c761c4a274da8f3e2091a5ef3ce6657d4ea52bf9"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "58dd5fd6fe49b81b34429a272e1e2fde08537682"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d685430b78cf021c12e1d18497ee75fc747e98d0"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "7c4d11f0383f4aaf645d7a15ff3740ca1d14112d"
+    }
+  ],
+  "classification": "excluded_game_template",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bootstrap project structures for Magnum rather than its engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

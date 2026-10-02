@@ -1,0 +1,30 @@
+{
+  "repository": "stride3d/stride",
+  "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+  "sources": [
+    {
+      "path": "sources/core/Stride.Core.Serialization/Serialization/Contents/ContentManager.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/core/Stride.Core.Serialization/Serialization/Contents/ContentManager.cs",
+      "file": "sources__core__Stride.Core.Serialization__Serialization__Contents__ContentManager.cs",
+      "sha256": "a7a2c69995d6be23402e52fddea551195123454f01fb0f5593e3bf967264c8a6"
+    },
+    {
+      "path": "sources/core/Stride.Core.Serialization/Serialization/Contents/IContentManager.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/core/Stride.Core.Serialization/Serialization/Contents/IContentManager.cs",
+      "file": "sources__core__Stride.Core.Serialization__Serialization__Contents__IContentManager.cs",
+      "sha256": "78b7f3644b6ea0aa4cc9772002e32baa823ab35d4f944e7add29695d2226882c"
+    },
+    {
+      "path": "sources/core/Stride.Core.Tests/TestContentManager.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/core/Stride.Core.Tests/TestContentManager.cs",
+      "file": "sources__core__Stride.Core.Tests__TestContentManager.cs",
+      "sha256": "5e91f4a4728611f2a56ac917b45785df38a80aa2bdeecc094835b46e70d3cd74"
+    },
+    {
+      "path": "LICENSE.md",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/LICENSE.md",
+      "file": "LICENSE.md",
+      "sha256": "46d821d4ede6fab226ec02b0392f8c2633ad3d9d2cc2cbd709e54a7a8b0a79f1"
+    }
+  ]
+}

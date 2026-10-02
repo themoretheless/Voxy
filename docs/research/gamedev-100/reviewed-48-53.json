@@ -1,0 +1,74 @@
+[
+  {
+    "index": 48,
+    "name": "aclfe/inertia",
+    "commit": "80886289ed4165134e4c650aa69c22933b7b28b9",
+    "path": "src/cloth.rs",
+    "line_start": 65,
+    "line_end": 114,
+    "source_sha256": "50715b42ed3889021b0fa9fd8c00de20e729e9b0722a891ba80a4b2add77510d",
+    "source_url": "https://github.com/aclfe/inertia/blob/80886289ed4165134e4c650aa69c22933b7b28b9/src/cloth.rs#L65",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Particle-pair overlap projection splits correction by inverse mass and edits Verlet previous positions. Approaching normal displacement is removed; tangential relative displacement is scaled by friction without a normal-load Coulomb cap in this function. Coincident particles below squared distance 1e-12 are skipped."
+  },
+  {
+    "index": 49,
+    "name": "zalo/TetSim",
+    "commit": "dbc637225034f4871f563ca6b5d877d7801c52a5",
+    "path": "src/Softbody.js",
+    "line_start": 91,
+    "line_end": 194,
+    "source_sha256": "10d1955dce148a3c14c16d4321785bf782ab9897a79f5d6c0245bf7da2268c0c",
+    "source_url": "https://github.com/zalo/TetSim/blob/dbc637225034f4871f563ca6b5d877d7801c52a5/src/Softbody.js#L91",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Tetrahedral deformation gradient drives separate Frobenius-norm and determinant projections. Volumetric target includes volCompliance/devCompliance; compliance scales by inverse rest volume and dt^-2. applyToElem has no persistent lambda; degenerate F and zero devCompliance require validation."
+  },
+  {
+    "index": 50,
+    "name": "hanbollar/Position-Based-Dynamics",
+    "commit": "b3106a14d92f2202d71bb6ba7e822e93fddbff6d",
+    "path": "src/constraints.cpp",
+    "line_start": 326,
+    "line_end": 382,
+    "source_sha256": "4c36f53b7b3f0c6cdebab39247aba5078246011893aa2cc8220aa5d889dab8cb",
+    "source_url": "https://github.com/hanbollar/Position-Based-Dynamics/blob/b3106a14d92f2202d71bb6ba7e822e93fddbff6d/src/constraints.cpp#L326",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Ground constraints are generated for negative signed plane distance; sphere path is commented out. Velocity update computes a local reflected velo but only adds friction to v.row: the local normal reflection is not assigned back in the viewed function. Tangential damping has no Coulomb budget here."
+  },
+  {
+    "index": 51,
+    "name": "MelonWithGlasses/Melon3D",
+    "commit": "03e8198c42cbe52cf29951a8ceafc03d2a3a0f23",
+    "path": "src/xpbd.cpp",
+    "line_start": 272,
+    "line_end": 375,
+    "source_sha256": "5e182bb7ade7b5068bff9333ebe426e81b1c3385ee52b6bde10399961265246b",
+    "source_url": "https://github.com/MelonWithGlasses/Melon3D/blob/03e8198c42cbe52cf29951a8ceafc03d2a3a0f23/src/xpbd.cpp#L272",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Rigid-contact velocity pass computes effective tangent mass and Coulomb impulse budget mu*lambdaN/h. Low-speed incoherent slip deliberately uses full stopping impulse even beyond that budget. Restitution uses pre-substep normal speed and gravity-dependent threshold. These are explicit game heuristics, not validated tissue contact."
+  },
+  {
+    "index": 52,
+    "name": "geoelements/diffmpm",
+    "commit": "8bb0bb3fafed0088d24c516cd8abba8c0a788f11",
+    "path": "diffmpm/solver.py",
+    "line_start": 141,
+    "line_end": 220,
+    "source_sha256": "40cb1d04d852a0d8d5b2daea46e8f2d19f99d606bb8398e4eec8c4c55cbfddc2",
+    "source_url": "https://github.com/geoelements/diffmpm/blob/8bb0bb3fafed0088d24c516cd8abba8c0a788f11/diffmpm/solver.py#L141",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Read MPM orchestration: nodal kinematics, pre-stress, forces, particle update, post-stress; JAX fori_loop follows same call order. Non-JIT collects intermediate states, JIT returns final arrays and optional writer callbacks. This reading does not inspect constitutive or transfer kernels or prove differentiation accuracy."
+  },
+  {
+    "index": 53,
+    "name": "fabricix/MPM-Py",
+    "commit": "b9933488ee033bc9eea8fba4e7084c824a5087bc",
+    "path": "modules/solver.py",
+    "line_start": 42,
+    "line_end": 132,
+    "source_sha256": "d574aaeab1e34bd0e108958ed9c60834fc6f4a48b23d0cb902374c74b8c24226",
+    "source_url": "https://github.com/fabricix/MPM-Py/blob/b9933488ee033bc9eea8fba4e7084c824a5087bc/modules/solver.py#L42",
+    "reading_scope": "Bounded code reading; no full audit/build/benchmark",
+    "finding": "Explicit MPM orchestration distinguishes USF, USL and MUSL stress-update ordering; MUSL remaps momentum. First iteration updates nodal momentum and particle velocity with dt/2, positions with dt; boundary condition hardcodes first element first node. Inner constitutive/transfer kernels were not read."
+  }
+]

@@ -1,0 +1,54 @@
+{
+  "repository": "MaximLopez/HeartOfDarkness-SDL",
+  "repository_id": 219320387,
+  "commit": "77491589e50590d478bc746700e14a1e8d51a467",
+  "source_url": "https://github.com/MaximLopez/HeartOfDarkness-SDL/tree/77491589e50590d478bc746700e14a1e8d51a467",
+  "readme_path": "README.md",
+  "readme_sha256": "649341aefccb91ea9d5b9a8d963b71ba4e53da2d6f2abf42da22bbe5e9bf8044",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "486a23256c437b811b5647e40517a35964f60dc6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "28a9d967c9696f9e62f622dd8d83e5f6f93bb9be"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d992af34e50eb417cce45cf807ae207a8885970f"
+    },
+    {
+      "path": "Documents",
+      "type": "dir",
+      "sha": "a8af86ba1718ab1124e564c843fc8fbb70532982"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "776881c5c574cd6b505dfb9089edccf2a0cb8c41"
+    },
+    {
+      "path": "Releases",
+      "type": "dir",
+      "sha": "8d6d0056ec8b5c6d3cca38fc0a4f991bc0adecf5"
+    },
+    {
+      "path": "Softwares",
+      "type": "dir",
+      "sha": "8fc66023d431a8d7e50c61801c882e2b637830b0"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "5e6f945debe53e37182a299015c2893a9209b805"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit fork of hode reimplementation with engine source and platform releases; requires original data and documents missing menus/PSX audio/video support.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

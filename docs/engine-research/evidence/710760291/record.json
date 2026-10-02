@@ -1,0 +1,72 @@
+{
+  "repository": "willtobyte/carimbo",
+  "repository_id": 710760291,
+  "commit": "5200981fa4625e3b5a4edbb6ffdd3a4a758f1c02",
+  "source_url": "https://github.com/willtobyte/carimbo/tree/5200981fa4625e3b5a4edbb6ffdd3a4a758f1c02",
+  "readme_path": "README.md",
+  "readme_sha256": "3e463692cf89f17be0da000f5fb238c2dfd1644b1731085cd9b07c86ae8bdf7e",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4a48eff921d956eecd30427bf4481019b9a993c5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "19a5647b723bf7291adcd4723e98970dab6af5be"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "91152e292d1c6bd02b8e0d5f69de137a16a8fdd8"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "60476ff4678641a9f256e8c74be837d69740df5f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "c9d11e993f063b7e5d47a718ddd26def1781f69a"
+    },
+    {
+      "path": "DOCUMENTATION.md",
+      "type": "file",
+      "sha": "d579fc9eae08720b19c91c5424844848edcf6344"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e199a6e0e32f77ddcc2d0954dd6dd04f29cc1d3e"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "9c82b4701b0fd284aee037f7cb6491d192feaae1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "54163da0cebc4640a49ab12b091809973c2f6d59"
+    },
+    {
+      "path": "carimbo.jpg",
+      "type": "file",
+      "sha": "8a36620ca2e306d2b7684673c366b23e1a00200b"
+    },
+    {
+      "path": "conanfile.py",
+      "type": "file",
+      "sha": "80283cc35eff261f0075ea350cdffe767c62d9ea"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "47198f87db1047283152db8f0421768942e7ec8c"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

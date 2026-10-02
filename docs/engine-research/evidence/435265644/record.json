@@ -1,0 +1,54 @@
+{
+  "repository": "sedyh/mizu",
+  "repository_id": 435265644,
+  "commit": "f4fbe1877056ffe3ffdcb70b73143c7186dd508e",
+  "source_url": "https://github.com/sedyh/mizu/tree/f4fbe1877056ffe3ffdcb70b73143c7186dd508e",
+  "readme_path": "README.md",
+  "readme_sha256": "d44a9cc9d04f604d77f2b9152fad25084f1be8b5623b2b522df4b648f7a59c0f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9f11b755a17d8192c60f61cb17b8902dffbd9f23"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "911847a86476e90f9b25f343d1aa4f86d907565f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "68c4468c812928e5ff756d58555ae158116cf536"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "1e7285a18f086e45b75de29cf63912624a6253e4"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "1ba2252023de88005b8bce7fd5d52ad216a58f73"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "81b69f32e31da06a28eb4db0408d525f1cf1ca31"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "8b8ef32131b66e71cae18977cd7f5e889e04b923"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "b2490a0138570d4774a0608b1cc526711062fefa"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "ECS framework and scene management for Ebitengine; Ebitengine supplies game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

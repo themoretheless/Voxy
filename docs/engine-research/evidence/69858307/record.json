@@ -1,0 +1,59 @@
+{
+  "repository": "denisdefreyne/glove",
+  "repository_id": 69858307,
+  "commit": "12101858e5230540c2d0c9cf76aacacbdd767fcd",
+  "source_url": "https://github.com/denisdefreyne/glove/tree/12101858e5230540c2d0c9cf76aacacbdd767fcd",
+  "readme_path": "README.md",
+  "readme_sha256": "03a64eee55f3d62fe73135813894486c2f81bf85cb85d06d623ed51f49d2483e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7d6863af141bea7f15846dbea1d7a0ce3f62d5c7"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "a7a9282a7e82ef1401c7c6ffcd7b14f242f6579e"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a373ccf446733362db4c92f383eeb03e104477a8"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "6cb13ef75a4b73b90a8f294bd0bdd744e847a3b8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8985fd92f2baab790103285152600d9bd41cd39a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "5e1373466d241800d84db34ff0fbc3aa5d9287dd"
+    },
+    {
+      "path": "shard.yml",
+      "type": "file",
+      "sha": "158bd132f988bc69e0cc1c973a7a8aa2dff5152c"
+    },
+    {
+      "path": "spec",
+      "type": "dir",
+      "sha": "9eedbef49401b5fd0f617c400c6532dd937e2e03"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4ed70863f3b953c6f42cf255bfdcc45da9821164"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Experimental Crystal game framework explicitly warns sparse tests and breaking changes.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,174 @@
+{
+  "repository": "TalesMUD/talesmud",
+  "repository_id": 269451989,
+  "commit": "0d6f57c76230d07d425d26aa8492b1024831ef11",
+  "source_url": "https://github.com/TalesMUD/talesmud/tree/0d6f57c76230d07d425d26aa8492b1024831ef11",
+  "readme_path": "README.md",
+  "readme_sha256": "d8628efe810c16114dba4ee0116f43d2ff2ecfa555f7e5408ae204fe1bb0a392",
+  "entries": [
+    {
+      "path": ".director",
+      "type": "dir",
+      "sha": "e0ad6e0bcf74eafe9dadf057d0df52f9cc68c91e"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "d012af059ef1288dc2bca8138d8d5543fdc73ad7"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "64f6534057851089dbfcd9f8b83a64ba3d63aeb8"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1593d4aba33f757104cce5fd2b139785eb61588d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "28f65586006148a5a85fc0e1422269327563e644"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e82dc13e81f2f5e95edb2e18c427e8b62d98e400"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "bed173beb8b2d0d214d1280ad785b42d713b52f5"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "d5adec072c2550dd2d67b31a5f8ef6ecaf1084f1"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "ef77803e9af09a6ad677dbec4c18cf52ed8baed4"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "34eaf5b34e662b0fc68f2879540125330c4024a0"
+    },
+    {
+      "path": "FEATURES.md",
+      "type": "file",
+      "sha": "ac61b1f69ecd4a6c7f20e7ab005a1101f878cce3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fbadfa43591f7750ff752fa996429e79f82ed655"
+    },
+    {
+      "path": "MISSING_MVP_ITEMS.md",
+      "type": "file",
+      "sha": "64e04935a3677a92bf4b817e89e0d70123c13594"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "d7258d9021cb30a6de5fd5ff25c9d52605b805dd"
+    },
+    {
+      "path": "PROJECT.md",
+      "type": "file",
+      "sha": "bfae26fd6d28c4eb3e17ae5e51ed8451072d14a7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "40ea2f43c00f894f9230ee07ea1d218681e0256c"
+    },
+    {
+      "path": "api",
+      "type": "dir",
+      "sha": "8981b8148f8a99c1d3c420d21129ceb60a356f3e"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "6c7516c5ac3096e795274cdc79aeaf529cb040d6"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "b9f1639af0fd401474844aa1c29c7a9ca7ca3f1e"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "9b8cec35bf1e1c7ebc3b126b36204a02fac3e685"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "34e22f6dd960f636ee2bf9ba03f3dbd39814d654"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "fab0483a2853d1f2c3ff8d99f9daa868b80387ea"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "f9755c390f6a572593e7209455ddec851a00fc40"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "360db3a0435567ba458fef71050969bb3aca3c7f"
+    },
+    {
+      "path": "import",
+      "type": "dir",
+      "sha": "75a62f2318b2f26ec3971d0b40ea2668b65f3969"
+    },
+    {
+      "path": "interfaces",
+      "type": "dir",
+      "sha": "23be1e221586d09e41ec9ec58ee2bba9b970c8c2"
+    },
+    {
+      "path": "nginx",
+      "type": "dir",
+      "sha": "d5d8e2c43bfe4b408c06a3d92c8c7dd65711ef07"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "114175043b01a7fdcecbfe55b312f681e23d80e9"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "5fd62ba438b3739383e84304f3fd73aafecb785c"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "fda5f542c5ba0e0104aafc913974a05f58dcf147"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "2859cf560ad426e7c0804b6dacc968f024de8889"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "ca7be48c072cea1281b482074f1b536df476c1ce"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Go browser MUD development framework and persistence/server platform; production-ready claim unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

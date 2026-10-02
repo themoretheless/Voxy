@@ -1,0 +1,117 @@
+{
+  "repository": "vchelaru/FlatRedBall",
+  "repository_id": 49612213,
+  "commit": "2878bb6041373d26c37e9b78d321b2a8bb83dc1a",
+  "source_url": "https://github.com/vchelaru/FlatRedBall/tree/2878bb6041373d26c37e9b78d321b2a8bb83dc1a",
+  "readme_path": "README.md",
+  "readme_sha256": "e6763a6c4efca8e44e5a51ba75385b5d55a7ab8166d7b8cf11d31d12a027ae9c",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "bd50e1e8b5e46e25e00979e92447e5093796c9d6"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "a0ed37f64b984126f8ba6df348cc029c3409eba2"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b132c6f2ca7f8a6f38bb1faf39041d79b8a0d6b3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "48b6b07487ddd98bd535bd888cdd06dde07c6d69"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "7c761e596b73c93829e70600cd7756453553247e"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "0ac2ba215eff49537efc29477725ebadd0e17276"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a34523ff6bb2347364da3e39bc0de4529a898ff3"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "a23481f07c33d72ab7c591dafb81f4469bfda493"
+    },
+    {
+      "path": "Engines",
+      "type": "dir",
+      "sha": "539e611ab939d9afd63138c92c4218f906db3af5"
+    },
+    {
+      "path": "FRBDK",
+      "type": "dir",
+      "sha": "5011ba9e89153b880c9198d4237d3d19566bf583"
+    },
+    {
+      "path": "FlatRedBall",
+      "type": "dir",
+      "sha": "850efd7706843837b08aeec46321e31be66b394d"
+    },
+    {
+      "path": "FullClean.ps1",
+      "type": "file",
+      "sha": "91f4abbe3b8cd1c44f607808fa0ec8ffe2fa1dbf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b276da16e6240e9394455156f7e0ba46e111e0d8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "466c6c85e89f475491c36088d396fac17902f772"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "550e5aafe241280601de9d810267579f414411c6"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "5f4de764a5c4b3acb0c8753bc21f0595120200bb"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "fb69af345ee57f8a4d97a5718e925c17fcbc4efc"
+    },
+    {
+      "path": "Tiled",
+      "type": "dir",
+      "sha": "9c507ae02366eabcfc2c17ed631e5863ad2c7cad"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "92c909d740a337d214cb704da83556089cffd151"
+    },
+    {
+      "path": "temp",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

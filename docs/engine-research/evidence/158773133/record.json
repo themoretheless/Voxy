@@ -1,0 +1,99 @@
+{
+  "repository": "MissingBitStudios/igneous",
+  "repository_id": 158773133,
+  "commit": "0d4079530184219de4b75318963b4bde03a83b51",
+  "source_url": "https://github.com/MissingBitStudios/igneous/tree/0d4079530184219de4b75318963b4bde03a83b51",
+  "readme_path": "README.md",
+  "readme_sha256": "6c848d41111ca310fe2e7d5a027f4da1ad3e1c3c9bfe4ab4267b193686bede0d",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6115923edc43cc259a56aab428550652b9e26c16"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f96fae43539b55f60b297fd67841bd70c48e081e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "73ba532ea6869bd49cbae3e5527d3b3e109fc203"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "7bcbcb7ef2aa3d40c15324124c225ab0a40eac61"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "fea0c8df422e1ca3f480e7d8dbcd32123eeac009"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "5472d52f56e13864470203cc11538878d49202e0"
+    },
+    {
+      "path": "CODEOWNERS",
+      "type": "file",
+      "sha": "00569ac723c8d68202a4c16dab26404e5feb8114"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "2a7566e4912228ad02000037454575faf82d7691"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "d7244c0d623e30a760d098e4ed829f4fc37ac262"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3cb7f9801f65b253cebc35bcb04572b8a8d69d3e"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "5a8cf75a5b80dc0bd1e4cae7ca2621e8a63dc3cf"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8ddae8f4e9701f2add9a44178441d13a5d673a20"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "c8e1168e4b01b378627dc63ced355a4b5cedf517"
+    },
+    {
+      "path": "igneous",
+      "type": "dir",
+      "sha": "b635c0199066c083d4dc78024139c37a98925c2d"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "ab3816f78ea87cd96ea5de60567308c7b699c1ec"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "a5eea6eb921a93ad27ea0ae7c886f086fd152a50"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "cca6ea171e925aa68402341254926ddc479dfafb"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ engine with separate runtime/editor/tools/samples/test source directories and CMake/OpenAL build workflow; subsystem quality/runtime unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

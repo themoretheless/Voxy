@@ -1,0 +1,89 @@
+{
+  "repository": "quou/openmv",
+  "repository_id": 424487292,
+  "commit": "decdad7d403bacac4889cad88d11702010c8482b",
+  "source_url": "https://github.com/quou/openmv/tree/decdad7d403bacac4889cad88d11702010c8482b",
+  "readme_path": "README.md",
+  "readme_sha256": "9a3fed79598e7b5aa7751b67d929a4246e5d0d273edf6af196b063dd0eb8dc76",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ac90b18159ecc728147037e0ea85459a03628b42"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "e76f4259c7a04ff7cdb20e9011914be25b403c8a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "09c88c1a94fa8122c6e3fe41462fe8662c1d4910"
+    },
+    {
+      "path": "autoexec.lsp",
+      "type": "file",
+      "sha": "a003d721db90fc214958272187ecd26f0fb1a180"
+    },
+    {
+      "path": "bootstrapper",
+      "type": "dir",
+      "sha": "2c236e0d92f22344f266b0d79720d1d438c25ea8"
+    },
+    {
+      "path": "c.vim",
+      "type": "file",
+      "sha": "28d70daa94773c7f38f20d80a96eee0c6f014f39"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "c74d4c25cd64773d3c4327519e5c205441a50e4c"
+    },
+    {
+      "path": "keymap",
+      "type": "file",
+      "sha": "7017045fcbbd4f34a303ea6ebbcd06922537c6e7"
+    },
+    {
+      "path": "logic",
+      "type": "dir",
+      "sha": "e7048adfc6dde16f66602c3a06523636c921eaba"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "2b4d2808523133fba0cca6aaf597730a6fa04476"
+    },
+    {
+      "path": "packed.include",
+      "type": "file",
+      "sha": "442001a47c810c4dcf162d1862ed8556857bb6ee"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "c87b1a29f115eb8a25416455f5bb279a163ac355"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "d9caaaded6acfed198ecf5f0199bc4b808e2c3fb"
+    },
+    {
+      "path": "tiledext",
+      "type": "dir",
+      "sha": "d0be07320182baae802c1b8e3cdfa00ed0b2ac1c"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "cd238167d044ab565e5873a67d64269d41af25ca"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C99 Metroidvania runtime foundation with room/tilemap/dialog/saves, scripting, physics/audio; README lists actual game creation as pending.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

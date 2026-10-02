@@ -1,0 +1,89 @@
+{
+  "repository": "alexbatalov/tig",
+  "repository_id": 857400657,
+  "commit": "38ab511f3b0593eb1b5d896187443d4e086b508a",
+  "source_url": "https://github.com/alexbatalov/tig/tree/38ab511f3b0593eb1b5d896187443d4e086b508a",
+  "readme_path": "README.md",
+  "readme_sha256": "1c7b2a811249d9d3f6fa44e5e19ad28043c36adf347f8d7983adb633c9e8f05d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "fccbbe7363bd8079b51e6f883318f207259a3c9a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "febb7ae922ed8632923beb09c966a1e7719fdc91"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "af4491f6c839205686453272a0e9b12c295821c7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c3268445c44c5e9cec0fbc1fc5cc88a877ae48d9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a239a9a4465529005cf596d6c5f1499d0fe91665"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "459c0d62db095b3e02ca0315510dcc7641701f9d"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "b198ee20aa76b5d1c2e5b0e77e694bbe7682cbdd"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "2b66da9e6ee6b7f85abf2fcd1b2ea07a1a4da9bb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "190af46e413b0e3241bb333a738a04cd0ed13d33"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "ae3d495382117cb82f6185d605b3df43f9457517"
+    },
+    {
+      "path": "first_party",
+      "type": "dir",
+      "sha": "f4128c6116fe12074578b6b59c8e0980b2f0f00f"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "d95661181ba15eeac7f130c6c72556e53d1a92d5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "322376eb89ebbea0c6b5f78a186cae0d2d17e06b"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "ad4d8fa4f2887762cfdbd7c5d3de7e8c43575a0c"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "b29b351fb5f3264e211843ccd8f50e2a05f1982f"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "OS abstraction extracted from Arcanum then reintegrated; archived source library rather than separate engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

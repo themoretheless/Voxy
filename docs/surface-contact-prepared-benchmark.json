@@ -1,0 +1,10 @@
+{
+  "fixture_sha256": "571717a9ceefd0dbb732d1bbb0fc9204a22ebd0fd9d8511339f95e88a3b76e7c",
+  "evaluations": 100,
+  "unpruned_seconds": 0.094460583,
+  "prepared_pruning_seconds": 0.015929292,
+  "exact_energy_gradient_match": true,
+  "random_equivalence_cases": 10000,
+  "random_bound_match_cases": 10000,
+  "scope": "single frozen-pose microbenchmark; not whole simulation throughput; not matched measurement against previous pruned timing"
+}

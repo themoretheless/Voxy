@@ -1,0 +1,84 @@
+{
+  "repository": "PsichiX/Oxygengine",
+  "repository_id": 182180180,
+  "commit": "f241e27cad47ac16307334ab75a0401743fd1d52",
+  "source_url": "https://github.com/PsichiX/Oxygengine/tree/f241e27cad47ac16307334ab75a0401743fd1d52",
+  "readme_path": "README.md",
+  "readme_sha256": "280cbfb671f83c5f3b43afb098f4e8b79bc9a53787ff9f63d94f698ff5b291df",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "fda7cd1833399deb39ffafb5dbcf4065dfd2c3b2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b13be63736c1754627243fa717ae0bf66977e11d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f58cb464be5bdf5a1a1c18c422c9cc3693158958"
+    },
+    {
+      "path": ".pipelineignore",
+      "type": "file",
+      "sha": "da95d42e5ef5ab84f8225fd690f9f8ff03407950"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "8b3454809a055ae0387a0bea0898ec6dfde31b1a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "15ba9db88a5e5b7432664088a1a7c2fa92583bb8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "43cc3df10ab93c817aa04f869cec25c4eb5c9b3e"
+    },
+    {
+      "path": "book",
+      "type": "dir",
+      "sha": "a2beb2482a1d22a610ffa11805196545fa0d64df"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "621a228af0848adee5b868814e5a431f48a94207"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "a55167f69e56469bf54dc9948937ba5abce01abc"
+    },
+    {
+      "path": "justfile",
+      "type": "file",
+      "sha": "7ed2ad7a3ee34f4934231388caa327473773881e"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "7a8d43f6fcbefaf2d210c54f54c83881e87b8243"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "1b6cd3e02c0b30db78d202701f7800d09bebb4b1"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "e259deeeef5bcfae7c148516f6cd3f9433e581f0"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Rust browser/Wasm engine using ECS library; owned engine/tools/templates and Cargo build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

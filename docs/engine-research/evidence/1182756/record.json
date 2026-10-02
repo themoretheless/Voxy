@@ -1,0 +1,84 @@
+{
+  "repository": "mosra/magnum",
+  "repository_id": 1182756,
+  "commit": "f239823e9afd27ab0ecf28e1d567831e3c62a25e",
+  "source_url": "https://github.com/mosra/magnum/tree/f239823e9afd27ab0ecf28e1d567831e3c62a25e",
+  "readme_path": "README.md",
+  "readme_sha256": "7ddd3879018d121af44666126f3f9c5e4c42ebbb83f71d4cbdba34e4618aa1f0",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d0764f7688f21025d237aaff879af19b2dca0f6f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4c234fedaf7e41d630e53402d19a88aa5960d583"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0bd99777a93c17e1b4a19e8368ed5d993aea2793"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d8eabb8d91060fb4c01407f0ac6438e7b042238e"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "7f9b0607791340681b070b4d1427c6c54f4f4d88"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "6409b7e3f18ce08e7630ce335b1dc2e13ff74244"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "d81c964717ad1b1b9ee2ad0d64827634dffcc50b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1c886c89b814bd8af872cd15fb6ed709a680e879"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "1cd6c6d3bec7faaaadbefc941f7a8e624888e1ce"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "457123b0b07771d42c6b8414bfce72626c0dc5d0"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "a66407519210577b1e1c0e228361a750ba81d06a"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8e88d94a4c7795e810d9a1a57be8141c99936cf9"
+    },
+    {
+      "path": "toolchains",
+      "type": "file",
+      "sha": "fa282e82b5ef058e361f64672e09be5bfc5e6e76"
+    }
+  ],
+  "classification": "graphics_middleware",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes graphics abstraction/vector math library; src/modules and CMake, not a game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

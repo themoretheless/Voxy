@@ -1,0 +1,74 @@
+{
+  "repository": "azurite-engine/Azurite",
+  "repository_id": 340731975,
+  "commit": "980768bf9316a6493b7770d3e9699a240fe70723",
+  "source_url": "https://github.com/azurite-engine/Azurite/tree/980768bf9316a6493b7770d3e9699a240fe70723",
+  "readme_path": "README.md",
+  "readme_sha256": "c623bf7f9d8d5e91091816127d0e228193de7fdf4fe23c1b13169f56db61733d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "115921d361418cdc1888b9becb2c22bccab14f03"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "acc461c649b86281c92a5bd910b442e23440e63c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "94601b0442463dde030ed7bae0f3bdf0c1339e59"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "225815964f8da4a0d2982e4419720581e452eebf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "34d4f8df665de187df31e043636706d03184196f"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "79a1ebb13cecaefd432d648b8fb16378268696b7"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "bf40bba7d95bb932986d0e92be36470527a71b66"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "c53aefaa5fc898b78c7265ea99a3bdc09349a7d0"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "ac1b06f93825db68fb0c0b5150917f340eaa5d02"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "40fdec1cbaa490b4d69428989df656229c150214"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "f445d72a904b35c6e0b294226fbfd997bb77b002"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c47d691575442bff95e467241c5554d365ddd5f4"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java ECS runtime with scenes/awake/update lifecycle, game objects, sprites/transforms/input and engine initialization API.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,73 @@
+{
+  "captureSource": "docs/body-film-native-state.json",
+  "cells": 90175,
+  "dtSeconds": 0.001,
+  "frames": 22,
+  "grossContactTransferM3": 0.0,
+  "runs": [
+    {
+      "firstFrameMs": 38.388208,
+      "maxRelativeMassError": 9.48676900924817e-16,
+      "selfContactEnabled": false,
+      "steadySamplesMs": [
+        35.834916,
+        35.982666,
+        36.342916,
+        36.400583,
+        38.145292,
+        38.402458,
+        39.001666,
+        39.575416000000004,
+        39.677,
+        39.68875,
+        39.811458,
+        39.906875,
+        39.948791,
+        39.982834000000004,
+        40.13975,
+        95.603625,
+        109.38225,
+        110.30199999999999,
+        267.279042,
+        303.407542
+      ],
+      "steadyUpperMedianMs": 39.811458
+    },
+    {
+      "firstFrameMs": 298.82654199999996,
+      "maxRelativeMassError": 9.48676900924817e-16,
+      "selfContactEnabled": true,
+      "steadySamplesMs": [
+        40.338667,
+        41.003208,
+        41.228958000000006,
+        41.838665999999996,
+        42.980708,
+        43.319083,
+        43.934167,
+        44.080209,
+        44.176874999999995,
+        45.511207999999996,
+        46.184291,
+        47.175708,
+        61.843416999999995,
+        67.817083,
+        150.265958,
+        166.677042,
+        193.97508299999998,
+        200.72225,
+        239.17125000000001,
+        282.372833
+      ],
+      "steadyUpperMedianMs": 46.184291
+    }
+  ],
+  "scope": "Paired CPU geometry/transport/contact, alternating execution order, two warmup frames excluded from steady samples. Prescribed invertible stretch on captured surface. No rendering, tissue solve, source or CCD. Zero transfer cannot validate actual contact exchange.",
+  "vertices": 45203,
+  "steadyMedianContactOverheadMs": 6.372833,
+  "steadyMedianContactToBaseRatio": 1.160075348157307,
+  "measurementLimit": "Single paired run on concurrently busy shared host; large scheduling outliers. No stable FPS or total viewer performance claim.",
+  "captureSha256": "0fc46e9412a4395b0169f726e57fe899e603db2f51aa0fe931a873f8aba7eef6",
+  "sourceSha256": "e745e9c3a8ad3d52b6821a8b16ea56e95f9e658450242f71083750f574faef19",
+  "executableSha256": "d091915d612ba64a618b7a78ee3ba23772d2d06e2deada23e51c4b6601c1498e"
+}

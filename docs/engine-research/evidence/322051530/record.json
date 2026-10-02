@@ -1,0 +1,39 @@
+{
+  "repository": "BrokenGamesUG/delphi3d-engine",
+  "repository_id": 322051530,
+  "commit": "7f0ee0d6ed5b29958bed3b0fd3986434fc875652",
+  "source_url": "https://github.com/BrokenGamesUG/delphi3d-engine/tree/7f0ee0d6ed5b29958bed3b0fd3986434fc875652",
+  "readme_path": "README.md",
+  "readme_sha256": "abdff25cef67cbcf010adc7f8938d4558aab56f858b8eafa559195fe58086f03",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c754b70541b448cf59dbb6815e532d91724dd20b"
+    },
+    {
+      "path": "Editors",
+      "type": "dir",
+      "sha": "030d51270adfabe3c6b1e3b5f8c5a8b3755491d4"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "58b4c421c396a69ea181b3358adaff59fcd521a1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4bf08218535c98af52ae03f75649341386738c6a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Delphi DX11 game engine with Engine/Editors source, documented Rise of Legions usage; bugs/documentation limits acknowledged.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

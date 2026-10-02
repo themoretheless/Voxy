@@ -1,0 +1,18 @@
+{
+  "csv_sha256": "d57fef9cd39c3b3391da48987bd6d485a4ef43597b26f55d729c07a7d80632f5",
+  "scope": "Both complete synthetic wall cycles. Static audits cover rest/barrier/released; no intersections among eligible faces. No anatomical calibration or peak convergence claim.",
+  "results": [
+    {
+      "specimen": "urethra",
+      "recovery_lumen_error_pct": 0.00029946865935936984,
+      "loaded_min_j": 0.9609143803458,
+      "released_residual_n": 9.662032871e-08
+    },
+    {
+      "specimen": "vagina",
+      "recovery_lumen_error_pct": 9.383135239904306e-05,
+      "loaded_min_j": 0.9229910883919,
+      "released_residual_n": 9.394513975989e-08
+    }
+  ]
+}

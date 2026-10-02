@@ -1,0 +1,247 @@
+{
+  "initialCrossings": 30,
+  "finalCrossings": 25,
+  "includesAdjacent": true,
+  "reduceMeasure": true,
+  "initialMeasureM": 0.009030399097739675,
+  "finalMeasureM": 0.008515615411216336,
+  "remaining": {
+    "intersection_pairs": [
+      [
+        47274,
+        48800
+      ],
+      [
+        48801,
+        48848
+      ],
+      [
+        48800,
+        48843
+      ],
+      [
+        48801,
+        48843
+      ],
+      [
+        48818,
+        48848
+      ],
+      [
+        48818,
+        48855
+      ],
+      [
+        48818,
+        48846
+      ],
+      [
+        48800,
+        48832
+      ],
+      [
+        47271,
+        48800
+      ],
+      [
+        48800,
+        48827
+      ],
+      [
+        48801,
+        48827
+      ],
+      [
+        48818,
+        48827
+      ],
+      [
+        48818,
+        48856
+      ],
+      [
+        49012,
+        49049
+      ],
+      [
+        49019,
+        49049
+      ],
+      [
+        49018,
+        49049
+      ],
+      [
+        49018,
+        49048
+      ],
+      [
+        49023,
+        49048
+      ],
+      [
+        49023,
+        49063
+      ],
+      [
+        49023,
+        49047
+      ],
+      [
+        49023,
+        49062
+      ],
+      [
+        49027,
+        49062
+      ],
+      [
+        49027,
+        49061
+      ]
+    ],
+    "intersection_limit_reached": false,
+    "narrowphase_pairs": 33092,
+    "intersection_scope": "static nonadjacent faces; pairs sharing any vertex excluded",
+    "adjacent": {
+      "tested_pairs": 554562,
+      "forbidden_pairs": [
+        [
+          47084,
+          49012
+        ],
+        [
+          49035,
+          49061
+        ]
+      ],
+      "scope": "static adjacent positive length/area beyond shared vertex/edge; relative tolerance 1e-10; isolated extra point contacts not detected"
+    }
+  },
+  "steps": [
+    {
+      "pass": 0,
+      "edge": [
+        5539,
+        45255
+      ],
+      "faces": [
+        49012,
+        49016
+      ],
+      "before": 30,
+      "after": 29,
+      "local_measure_before_m": 0.0031514307370563268,
+      "local_measure_after_m": 0.0031514334340848197
+    },
+    {
+      "pass": 0,
+      "edge": [
+        18333,
+        45261
+      ],
+      "faces": [
+        47084,
+        49049
+      ],
+      "before": 29,
+      "after": 29,
+      "local_measure_before_m": 0.0017761042479519133,
+      "local_measure_after_m": 0.0017759697226251681
+    },
+    {
+      "pass": 0,
+      "edge": [
+        24758,
+        45251
+      ],
+      "faces": [
+        48856,
+        48857
+      ],
+      "before": 29,
+      "after": 28,
+      "local_measure_before_m": 6.397720041200318e-05,
+      "local_measure_after_m": 5.931477053395086e-05
+    },
+    {
+      "pass": 0,
+      "edge": [
+        37468,
+        45247
+      ],
+      "faces": [
+        48827,
+        48858
+      ],
+      "before": 28,
+      "after": 27,
+      "local_measure_before_m": 0.0010234152338807901,
+      "local_measure_after_m": 0.000994600335825428
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45229,
+        45251
+      ],
+      "faces": [
+        48829,
+        48856
+      ],
+      "before": 27,
+      "after": 26,
+      "local_measure_before_m": 0.00012683503719030037,
+      "local_measure_after_m": 1.5977804704478318e-05
+    },
+    {
+      "pass": 0,
+      "edge": [
+        45239,
+        45247
+      ],
+      "faces": [
+        47271,
+        48832
+      ],
+      "before": 26,
+      "after": 26,
+      "local_measure_before_m": 0.00041823980879983976,
+      "local_measure_after_m": 0.00041823731861734975
+    },
+    {
+      "pass": 1,
+      "edge": [
+        18333,
+        45234
+      ],
+      "faces": [
+        47084,
+        47087
+      ],
+      "before": 26,
+      "after": 25,
+      "local_measure_before_m": 0.0023644945880327514,
+      "local_measure_after_m": 0.001994179780409392
+    }
+  ],
+  "audit": {
+    "vertices": 45266,
+    "triangles": 90528,
+    "area_m2": 1.567085859328855,
+    "max_edge_m": 0.033090597170654996,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "verticesMoved": false,
+  "scope": "Static candidate audit; new triangulation requires anatomical review and is not runtime geometry.",
+  "elapsedSeconds": 29.506961915998545,
+  "source": "assets/characters/blender-female/prepared/body-post-diagonal-vertex-candidate.obj",
+  "sourceSha256": "3b25e9ee59206b4decb711fcc62c0ac4ed90c23558521f7a33ba5447e6de5d86",
+  "candidateSha256": "3040455d78022ba100e07cf87b06377270d3935dcd5781965c124df682c7fe98",
+  "exportReloadVerified": true,
+  "adopted": false
+}

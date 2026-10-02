@@ -1,0 +1,32 @@
+{
+  "repository": "ddsurvivor/CardGameTutorial",
+  "repository_id": 400165412,
+  "commit": "04561deb451ea79e31a2a474e8c81bfec96ab270",
+  "source_url": "https://github.com/ddsurvivor/CardGameTutorial/tree/04561deb451ea79e31a2a474e8c81bfec96ab270",
+  "readme_path": "README.md",
+  "readme_sha256": "b11fff6d9ab58a09af4db2b394bc49fd4d8a4f542ee17f5a3c9745e88bb3f36c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3fb2c4f05057c2c4b2f8c0a111bed5e0d4a17b75"
+    },
+    {
+      "path": "CardGameTutorial",
+      "type": "dir",
+      "sha": "019096d5cf563c4a90b6b9df9fffa7d88cca51dc"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "a5b28ac3977ba81bbf94a0f39a5bc15aa97793d8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f8a6aceeff56684faf61998fe5121dcb5b8375b3"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

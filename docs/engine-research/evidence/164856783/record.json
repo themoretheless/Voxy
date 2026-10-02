@@ -1,0 +1,149 @@
+{
+  "repository": "gscept/nebula",
+  "repository_id": 164856783,
+  "commit": "47f998b9bd70f0e255b671486cf06d5d8ec7be30",
+  "source_url": "https://github.com/gscept/nebula/tree/47f998b9bd70f0e255b671486cf06d5d8ec7be30",
+  "readme_path": "README.md",
+  "readme_sha256": "351159122810a6fdc6798c46a43fd9f2e0f3ee8a42c57c6b61712d8930445de1",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2c547e85e73ab88a5aa44bebf9604abca2aa75bb"
+    },
+    {
+      "path": ".cursor",
+      "type": "dir",
+      "sha": "bbae07810bf4d5665c85c580db7e3b708ed4c02c"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "559eecc65ecc60d0a493857e32903dc59ffd0682"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7e1d5ff238b83469e5381f5abf09be2fd7bc5aa7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "eb4f521690b03487195d3cb7c2d5ba08428449b3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "92e5770224498bcf7dc9e75b01516572641175ec"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "4d09c0a4dd5970ddf895d17593c2c7bb44f8140d"
+    },
+    {
+      "path": "Nebula.10x",
+      "type": "file",
+      "sha": "381f5bac32240464dcf4119d729f8499284e018f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ab0fbd2ba690e0ee58b39d1eca47b5fa6832f915"
+    },
+    {
+      "path": "authors.txt",
+      "type": "file",
+      "sha": "2cd3889d50919a9e7880f34929f0230f3084f094"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "382e0fcbdca6efdb4f68c937c3845d12d9c97d1e"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "1981181847cce3b55d9cc580f5bd092fd4ef9c77"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "87d4cdc8149998db5a1da869b8c5dfc54a0c6876"
+    },
+    {
+      "path": "extlibs",
+      "type": "dir",
+      "sha": "18cf32a2ea67803823bb8631f01663ac3e5dd68b"
+    },
+    {
+      "path": "fips",
+      "type": "file",
+      "sha": "109923868c536ea6e3837ad348c5523a22f4e16c"
+    },
+    {
+      "path": "fips-files",
+      "type": "dir",
+      "sha": "5d5e3743dcdac8e28a9a0a2e966013ac3548f74e"
+    },
+    {
+      "path": "fips.cmd",
+      "type": "file",
+      "sha": "2cbd7c363236e326a37ef7b1501f1e79494e1aa4"
+    },
+    {
+      "path": "fips.yml",
+      "type": "file",
+      "sha": "b0b73d93df0ee01d444e1fee1d366f097ab8f28e"
+    },
+    {
+      "path": "gpulang_config.json",
+      "type": "file",
+      "sha": "fc59d8e9d11ff04c96b6df256a45da522355f156"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "a7fa62506ac417be9502ed171e380b5574579e87"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "c3812abc024052de4e34b2d9075fa62c09ba9fb4"
+    },
+    {
+      "path": "license.txt",
+      "type": "file",
+      "sha": "46e6dfd34ab443395d20b7d4f22e5062dad33f26"
+    },
+    {
+      "path": "projectinfo.json",
+      "type": "file",
+      "sha": "78c44e27d797674071ffb991089e685d003508fb"
+    },
+    {
+      "path": "syswork",
+      "type": "dir",
+      "sha": "0d961a3c33c7a56e77e877f3a156d646ad52a695"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e8496591cd11a567578c41c35dbe1c5866095763"
+    },
+    {
+      "path": "toolkit",
+      "type": "dir",
+      "sha": "e03ba95733de998b887015adace9417682b6360e"
+    },
+    {
+      "path": "vssnippets.snippet",
+      "type": "file",
+      "sha": "f7689c9e1eb2994b151ac6dd52da0683f18ad792"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native engine; code, gpulang/build metadata and CMake/fips infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

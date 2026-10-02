@@ -1,0 +1,69 @@
+{
+  "repository": "yuv422/cosmo-engine",
+  "repository_id": 108319959,
+  "commit": "6fff1a31cf12e33d48b51c56e1880fc20b4e6ceb",
+  "source_url": "https://github.com/yuv422/cosmo-engine/tree/6fff1a31cf12e33d48b51c56e1880fc20b4e6ceb",
+  "readme_path": "README.md",
+  "readme_sha256": "51051183b4feb6337ee497f172d755721cdbdb8f3cad5c178f50ac1d1e7a6d65",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8e24b65996207c5b7a61b13696d7fb72a1b24c62"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "9cfc1edf8075d09010d776412897d442372f8041"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "be523af408e7e04425f2c71af7a820dce3f99ba5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "Makefile.emscripten",
+      "type": "file",
+      "sha": "4bb71d37838237b918821cd06c6484a3b0d654f3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "743fc8e2983dfd46b6cf36f81452563c861ab651"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "0d337af3ded95021e972932b766f87bc3b737fbf"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "4d91e00a708ed29ddf76d7f1c245ee9ab270a406"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "bc96eea300c9e22abfdccd76b9483ba8fae69416"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "90349615b86676b0d87e396696ecfdd2977064db"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "70e3ad376b8b1c1ec481afb2624458eac8887124"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Cosmo Cosmic Adventure runtime recreation with src and SDL build requiring original game assets.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

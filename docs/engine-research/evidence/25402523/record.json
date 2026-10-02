@@ -1,0 +1,114 @@
+{
+  "repository": "Planimeter/game-engine-2d",
+  "repository_id": 25402523,
+  "commit": "e8fc46be351dd75a7849d6e9e40fdca59f687c80",
+  "source_url": "https://github.com/Planimeter/game-engine-2d/tree/e8fc46be351dd75a7849d6e9e40fdca59f687c80",
+  "readme_path": "README.md",
+  "readme_sha256": "b05e4f6df2eed737514ab787a4791b0970902fd52318824f3cf6c63495c10499",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cbe59a09543c44ba243b922f72034fc7b0c1762f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "1f1c64bbdc2ad0958df54c7101c4c0f7f26aa58f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0f1df5e97a9d3516f5c2651e1efb325b41483cef"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3dae734580242b91eface8131defe619371b88f8"
+    },
+    {
+      "path": "cfg",
+      "type": "dir",
+      "sha": "a9696c9061bc361d4c2e1c3a8b8d5ebf60e0dce7"
+    },
+    {
+      "path": "class.lua",
+      "type": "file",
+      "sha": "f18160180f3633fb121a8a9ca2c2a4ae5e52feb2"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "09b37f6e31cb3a1cd8a8dc8c4dcbf0d24913e3cb"
+    },
+    {
+      "path": "conf.lua",
+      "type": "file",
+      "sha": "a8744c71ab88eee70b0978b8f2d9ff8d4fab0de5"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "8a00d15621c1935f32877936c462501ad528cc59"
+    },
+    {
+      "path": "fonts",
+      "type": "dir",
+      "sha": "25145479276bf3a74ff0b7e5b7551b926865ac89"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "169f07ed28c8933bd43597b1812050a5070d56cd"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "1d11fcd8ece1fcc30e96825539e94e8629b264be"
+    },
+    {
+      "path": "init.lua",
+      "type": "file",
+      "sha": "6fef772fe7feff0c56ead61a349b642960fbf39e"
+    },
+    {
+      "path": "main.lua",
+      "type": "file",
+      "sha": "f3131fe20f153b0ee7fea6695b82e15f03ace257"
+    },
+    {
+      "path": "maps",
+      "type": "dir",
+      "sha": "c3704e50f39b236f3896525e00578abccc37ce49"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "81df7690ec7dd5208b0fb0d710b7ddad35d12888"
+    },
+    {
+      "path": "schemes",
+      "type": "dir",
+      "sha": "d6d8ac84007035a623fd12016db812d578d3522a"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "4fb7cd3ba78e958740a614c531221f61d522615b"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "40238376016d4f5ab03ca1120000308d9b59d2e1"
+    },
+    {
+      "path": "sounds",
+      "type": "dir",
+      "sha": "9fd0c1910ab22f18b7afdfe1b278b91309e94b83"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Lua game engine over LÖVE backend; owned engine/common/maps and runtime entry points.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,94 @@
+{
+  "repository": "ostef/Vk-Engine",
+  "repository_id": 1024384628,
+  "commit": "cc91b617d93d13144c947fba925c6c64594ac1d7",
+  "source_url": "https://github.com/ostef/Vk-Engine/tree/cc91b617d93d13144c947fba925c6c64594ac1d7",
+  "readme_path": "README.md",
+  "readme_sha256": "bbec0355dceba34f218ec34d36dcd68c947ea9c4490574ea58aad6a6831c4051",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "008f132ffe69eb6065af12877973aac9e5b4ce08"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "90771fc38bc6e3a24207c1501473b4f4859b2192"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "bc42de544e4e766b6c464c2fbffa1e0b2fc894bb"
+    },
+    {
+      "path": ".tokeignore",
+      "type": "file",
+      "sha": "b21e3800ebd828433883f17b351831b32a24e00b"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "aca880f7cb0c4df5b1c3b9c886093e88be020d17"
+    },
+    {
+      "path": "Build.bat",
+      "type": "file",
+      "sha": "85c7f4f4fca4fe9ff4ae015fa7d66d849032ecb8"
+    },
+    {
+      "path": "Build.jai",
+      "type": "file",
+      "sha": "9bff16a8bc62a0087ac686bc269e05ae378793ac"
+    },
+    {
+      "path": "Build.sh",
+      "type": "file",
+      "sha": "b3e67f6c8eff62ff90d687b6c0de69aec7262ed4"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "74a8dfe1d144a5427cd90254c6f2c7261ddd82bd"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "235c38744ff89f2ca77dad9c83f9770549ed2edd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "1e76de345a25a63597d9c1618be8543553154abd"
+    },
+    {
+      "path": "Modules",
+      "type": "dir",
+      "sha": "55d6e5926eba465aafed43b905de4ad90fbb9dc9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b4e9557314da49b6adaab03a541f87097ea2400c"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "c852a8f74f8f6ed4b19727b5872c7a5ba57a5db5"
+    },
+    {
+      "path": "Shaders",
+      "type": "dir",
+      "sha": "68779c54936a428429d468a4f1af84b30b5bb487"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "c4629fc3cf4b5b238ec10e86955a64a9a3013d00"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WIP game engine with hot-reload modules, assets, editor viewports and serialization; Source and build files present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

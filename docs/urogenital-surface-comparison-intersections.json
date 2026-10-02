@@ -1,0 +1,130 @@
+{
+  "scope": "Static floating-point classification; shared-vertex pairs excluded; no CCD certification.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "rest",
+      "classification_counts": {},
+      "candidate_pairs": []
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "rest",
+      "classification_counts": {},
+      "candidate_pairs": []
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "pair_only",
+      "classification_counts": {},
+      "candidate_pairs": []
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "pair_only",
+      "classification_counts": {
+        "transverse_segment_crossing": 20
+      },
+      "candidate_pairs": [
+        [
+          21,
+          47
+        ],
+        [
+          21,
+          49
+        ],
+        [
+          15,
+          47
+        ],
+        [
+          17,
+          47
+        ],
+        [
+          17,
+          53
+        ],
+        [
+          47,
+          199
+        ],
+        [
+          49,
+          201
+        ],
+        [
+          49,
+          202
+        ],
+        [
+          49,
+          199
+        ],
+        [
+          53,
+          199
+        ],
+        [
+          199,
+          217
+        ],
+        [
+          200,
+          217
+        ],
+        [
+          202,
+          215
+        ],
+        [
+          199,
+          215
+        ],
+        [
+          199,
+          218
+        ],
+        [
+          200,
+          218
+        ],
+        [
+          215,
+          265
+        ],
+        [
+          215,
+          266
+        ],
+        [
+          218,
+          263
+        ],
+        [
+          218,
+          266
+        ]
+      ]
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "surface",
+      "classification_counts": {},
+      "candidate_pairs": []
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "surface",
+      "classification_counts": {},
+      "candidate_pairs": []
+    }
+  ]
+}

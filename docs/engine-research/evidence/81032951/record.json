@@ -1,0 +1,94 @@
+{
+  "repository": "fragworks/frag",
+  "repository_id": 81032951,
+  "commit": "de8f256dde787f2ebe2f97bbc9d11718cf8ae829",
+  "source_url": "https://github.com/fragworks/frag/tree/de8f256dde787f2ebe2f97bbc9d11718cf8ae829",
+  "readme_path": "README.md",
+  "readme_sha256": "16819c5e0ba899f002e3596bc8242cea221e1277a9aa21789c304d932e854323",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9dd2d10c02272e92e344a3e39dc4a05da1ae9743"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9817a4113ab5e557537db70ceb30c3e68fccdfee"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "e365992d0508cc8ba6102135fe017e9104f688b9"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "f85f591151347bade5fa75c3a722299ba3bae717"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "54f8f0ade171520c483970c1f8908b4415129527"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "103d3c0aabdad6914507c678b5dd2ce452b680cd"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "666fc2e4551e35c4f9f16d0f7a943c48cbc6be21"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "005de1efb3908a10a7d7cb8960f93bc390ea35be"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "48ac2da892f07a35f367da2896f49882194d17aa"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "cc1edb443a3765fd0a862295dd5febad8538ca4d"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ae23d957aee1d5646bef46cfd8c3f4466bd4990c"
+    },
+    {
+      "path": "frag.nimble",
+      "type": "file",
+      "sha": "39b9ad6a14b7d0569f1afde63b21013fe0c1f5c9"
+    },
+    {
+      "path": "platforms",
+      "type": "dir",
+      "sha": "ec82d1065d5c75d472df453282e2135ab7a5e624"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a5fc705eb8e68ff50119164eca381ec06043aab8"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "487bce87e45742d035ae8be2102edf4ecb1aa13e"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "9a654bebb05efb2befa0d5a25599e8fb0ef2e136"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies pre-alpha Nim game framework; src/platforms and Nimble/build scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

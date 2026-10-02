@@ -1,0 +1,122 @@
+{
+  "repository": "Hugobros3/chunkstories",
+  "repository_id": 121600594,
+  "commit": "4450708feca935997647877d0e41c900fc6cae3b",
+  "source_url": "https://github.com/Hugobros3/chunkstories/tree/4450708feca935997647877d0e41c900fc6cae3b",
+  "readme_path": "README.md",
+  "readme_sha256": "da7233c7549c4b60a7b1eb17f921f063b1f70c08e47a8d48290ffb82704a3a2c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "21751944d89855142acd56486058063dcb4b291f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "84906b5377f3d77d47584bce38559138fb90cd6c"
+    },
+    {
+      "path": "LICENSE.MD",
+      "type": "file",
+      "sha": "cb564dabeb29dd072fb252024a34d129c0fa3c44"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cbb90f0112a9cde2e421b5ea6243d5e89b82c161"
+    },
+    {
+      "path": "api",
+      "type": "file",
+      "sha": "e639fb0ab91686d69493962e369bfe4760da8787"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "28ef1da74214412395f8643272003a0bb260ba00"
+    },
+    {
+      "path": "build_local_deps.sh",
+      "type": "file",
+      "sha": "1a9609fbf09574e0dffa4cde43b1af950320803b"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "6e9037d2a6ffa2a2ebb975171dae41477673d621"
+    },
+    {
+      "path": "cloc.sh",
+      "type": "file",
+      "sha": "fc03b12da20641eaf3a851bb0c6fcbd9bc62812c"
+    },
+    {
+      "path": "codequality",
+      "type": "dir",
+      "sha": "8e6c7b830b9b57f318ed8ee3427143e7ad5e6d44"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "219df5b0826ccaf4fb04a4e212b9dc55f2ebca22"
+    },
+    {
+      "path": "converter",
+      "type": "dir",
+      "sha": "62aae20dafe5fa6ef9849ba85b82462e959763d2"
+    },
+    {
+      "path": "debug-client.sh",
+      "type": "file",
+      "sha": "b2f97abc279176672aa3e187ecf294c4dc230f40"
+    },
+    {
+      "path": "debug-server.sh",
+      "type": "file",
+      "sha": "3bfbb3dfebcf10a536438a477f19d628969aef5b"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "7c063399abc38345813c38f7f870308360925445"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "744e882ed57263a19bf3a504977da292d009345f"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec"
+    },
+    {
+      "path": "ingame.png",
+      "type": "file",
+      "sha": "7d23639b093d69a5cb19f3b4ac67d4c4340c1b97"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "c90020fe0af5d65959e1be60b3a5bec1fe9fb6bb"
+    },
+    {
+      "path": "menu.png",
+      "type": "file",
+      "sha": "6d0cb7aac5f085e49d8715c00f154bfb1b20c926"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "6b9e4ca2d463989af1c7ae51e3ac5310cc4b7363"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "480a034c02525c9fff8f63242ecb2aa2ff49b046"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

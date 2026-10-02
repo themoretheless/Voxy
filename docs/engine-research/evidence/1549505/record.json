@@ -1,0 +1,47 @@
+{
+  "repository": "jhuckaby/Effect-Games",
+  "repository_id": 1549505,
+  "commit": "163d20c8ee1482b260143109ff4bcaf737b4b33e",
+  "source_url": "https://github.com/jhuckaby/Effect-Games/tree/163d20c8ee1482b260143109ff4bcaf737b4b33e",
+  "readme_path": "README.md",
+  "readme_sha256": "6247073a065c702731f04d4cff249267249ba65e5d85a0618a773a27f89bc54a",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fd1063bd0ff72485c08c1abe860fd2d5581e1945"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "eb968d541b2f69cad5b0e44eef82b6e16ac1d986"
+    },
+    {
+      "path": "conf",
+      "type": "dir",
+      "sha": "23ba0315c94266593896792fbd6a14644ae62d57"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d0958ab2d01cd632a5f119d9b0f81467a2ffdb7d"
+    },
+    {
+      "path": "htdocs",
+      "type": "dir",
+      "sha": "4bec24bd51db32ea0ec79c7c6990b5e31208a69a"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "102bad3fdcd6e15843d6cea0a3e7671043fb1b86"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8439f88c9963fd80e053a005b4af83b316d54489"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

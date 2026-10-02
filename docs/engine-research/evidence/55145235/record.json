@@ -1,0 +1,89 @@
+{
+  "repository": "tickbh/tunm",
+  "repository_id": 55145235,
+  "commit": "62385b1e2f1b36e99c4ff8201c7aa86716f64709",
+  "source_url": "https://github.com/tickbh/tunm/tree/62385b1e2f1b36e99c4ff8201c7aa86716f64709",
+  "readme_path": "README.md",
+  "readme_sha256": "ff1913d3f2732e4791aa1496fe69670a408db964b27624cb39fe7231eb3d8dee",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "52fb766ce1e05495bb4a223b9e0403323a9fb86c"
+    },
+    {
+      "path": ".project",
+      "type": "file",
+      "sha": "03f710935c324385ea16e85304b4b861d0827b8d"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "160913c2d1e0d74316a8010bf97b4c8a31973cec"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "a111c9aacac6d66194acf508b92f4f8c08e0c13a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "a24a47bf13000398d99a5262ab03eaeed43a7f12"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "16fe87b06e802f094b3fbb0894b137bca2b16ef1"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "1da3a5f6d2e6ffae00d70225df780b5d2cd61468"
+    },
+    {
+      "path": "LuaPanda.lua",
+      "type": "file",
+      "sha": "22dbe723b3d4e63c04126e2badb9c4bd6933695e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "565138de8b3d7feb35df7c9e63b54355aa07e09d"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "ebdfaa2a4fdd2f522ad501a38887a5d4db326b06"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "6cebdef542572fb81d1cdf660b3e19132af63c92"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "d12b0ca190c81844b5f584691f950683c9423816"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "55bfd91209c7c3597cfc11e3a7fea2280e28609d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f9e6dc41aa42bd9b066375940687860e7ab957ec"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Rust/Lua network server engine; src/config/scripts/Cargo, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

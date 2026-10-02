@@ -1,0 +1,44 @@
+{
+  "repository": "eddoww/astonia3",
+  "repository_id": 121072037,
+  "commit": "0b4cd7bab69e8bfa83376a114fa6c95331b201f3",
+  "source_url": "https://github.com/eddoww/astonia3/tree/0b4cd7bab69e8bfa83376a114fa6c95331b201f3",
+  "readme_path": "README.md",
+  "readme_sha256": "679d4505e6f4e01584c65ec7a79dcba3d071cd76b7d1df0c63788d45aac48383",
+  "entries": [
+    {
+      "path": "Astonia_35_Client",
+      "type": "dir",
+      "sha": "995bb0b4979b0eccb13524f812b9b03c6458ae4d"
+    },
+    {
+      "path": "Astonia_35_Server",
+      "type": "dir",
+      "sha": "caff9d629527a5ef4142793622096990c638e016"
+    },
+    {
+      "path": "Astonia_3_Client",
+      "type": "dir",
+      "sha": "3fcd6bca0115ff18d72d2be924f11d73c35ef84f"
+    },
+    {
+      "path": "Astonia_3_Server",
+      "type": "dir",
+      "sha": "40c0ed48e58e7bbe45685af7c5251d7793e599f5"
+    },
+    {
+      "path": "Extra",
+      "type": "dir",
+      "sha": "0a394c1c5417de41eea0102e3bd7464e6f9ad444"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8f680a6ea3a5b5c637d0e89f8953407ef5f81a82"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Published Astonia 3/3.5 client/server source with patches; original attribution license terms and installation documented, no independent architecture claim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

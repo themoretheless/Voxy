@@ -1,0 +1,79 @@
+{
+  "repository": "flwmxd/MapleStory-Porting",
+  "repository_id": 264421774,
+  "commit": "bc6b678013c6309ef084f2f5a21156c8a7ffb9f7",
+  "source_url": "https://github.com/flwmxd/MapleStory-Porting/tree/bc6b678013c6309ef084f2f5a21156c8a7ffb9f7",
+  "readme_path": "README.md",
+  "readme_sha256": "e1486d710fdf8c4ce54d9fb46bfb6cbcf9ef7a2065324e2cfd7204395086b623",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6e446399479e55752ccbfdbf5b02fd40c3e34a23"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52"
+    },
+    {
+      "path": "MapleStory.exe",
+      "type": "file",
+      "sha": "f370050f06efc0476454691cdc188b65bfffb6d5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fb685058fc70cd03a1f23628e3d416390760c662"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "85be35661fb7b061c835495c4e5b01f2524f75e2"
+    },
+    {
+      "path": "controller",
+      "type": "dir",
+      "sha": "30892d9fe8ce0cc379136e94b36cc716762c7f53"
+    },
+    {
+      "path": "gameplay",
+      "type": "dir",
+      "sha": "6029c71e0bf76022647a7dd756c876c5da083347"
+    },
+    {
+      "path": "glew32.dll",
+      "type": "file",
+      "sha": "04f93819e9255d9f3ab0e504a836fb54032b8d5f"
+    },
+    {
+      "path": "glfw3.dll",
+      "type": "file",
+      "sha": "456be5c47ed4e5c3ac4a15772244b9a74b90aab7"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "ffb7df41c313fd393f99c15288939988b647e2ca"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "b4ea8c34f63df2d3183d3df94a589a93571a68df"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "605681cc3f03b6b5ea82a337547811a9a18a9964"
+    },
+    {
+      "path": "window.ini",
+      "type": "file",
+      "sha": "2e17b14f50483e19d646cd6735afb7381d14bf9e"
+    }
+  ],
+  "classification": "excluded_binary_distribution",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly says repository code is Lua scripts and C++ engine source will be supplied later; bundled executable does not establish source engine evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

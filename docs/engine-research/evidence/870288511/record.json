@@ -1,0 +1,24 @@
+{
+  "repository": "teamgravitydev/gamedev-free-resources",
+  "repository_id": 870288511,
+  "commit": "076b1cb70532ae4ca3cef8b5d0910069151d517e",
+  "source_url": "https://github.com/teamgravitydev/gamedev-free-resources/tree/076b1cb70532ae4ca3cef8b5d0910069151d517e",
+  "readme_path": "README.md",
+  "readme_sha256": "d0f30ccd3dd96da1455f6af544aed785eaa269c9b8f9cc92697201edd6c101dc",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c752c0415c442edac3a00500e84e41e4b0b1895a"
+    },
+    {
+      "path": "gamedev_free_resources.png",
+      "type": "file",
+      "sha": "47f4f85804c5e5f43bc40b79bbb31910e29912c2"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Collection of game development resources and assets.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

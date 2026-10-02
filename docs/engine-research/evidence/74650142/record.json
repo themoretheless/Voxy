@@ -1,0 +1,54 @@
+{
+  "repository": "JulianThijssen/Flux",
+  "repository_id": 74650142,
+  "commit": "0fecf6e60305c4fc857208dfb786bf4c2c10128b",
+  "source_url": "https://github.com/JulianThijssen/Flux/tree/0fecf6e60305c4fc857208dfb786bf4c2c10128b",
+  "readme_path": "README.md",
+  "readme_sha256": "080a44ab58716fd50ed943408f9ac240769e1615e6fa9db0d08020b803789619",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "02a2b0f570e38ae45a4a29686d8d5db2005ddd76"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "08407b7098ca23f13dd8fae8b29177fd6d009aec"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "ea62c507ac165da551107d423fd8481c8ebfeef0"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "0de26691a49e67f4a1483663dd2ccb55ee56ce54"
+    },
+    {
+      "path": "FluxConfig.h.in",
+      "type": "file",
+      "sha": "b8b80bc0b651721577f5d6e9cde2fde81edf2fdd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "133529a6fb6e9e0795ba7e62cd4af2f7db173c13"
+    },
+    {
+      "path": "TestProject",
+      "type": "dir",
+      "sha": "6db677e00a3d4ea8c21a3e60ad839fd580d313d0"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies experimental PBR rendering engine; owned Engine/Editor and CMake build, gameplay engine scope unproven.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

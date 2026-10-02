@@ -1,0 +1,44 @@
+{
+  "repository": "Pierre-Terdiman/PEEL_PhysX_Edition",
+  "repository_id": 396385699,
+  "commit": "f79649aff297641c43048d35c45c626c1c0c15b3",
+  "source_url": "https://github.com/Pierre-Terdiman/PEEL_PhysX_Edition/tree/f79649aff297641c43048d35c45c626c1c0c15b3",
+  "readme_path": "README.md",
+  "readme_sha256": "7cd002940bdc6cd963b4d926e39a0df97d47ac8cdd27425ea0d4e421fd11927d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "54c32cdceae182df03ad2198155bfa04130bec5b"
+    },
+    {
+      "path": "PEEL",
+      "type": "dir",
+      "sha": "a73241e80592eb185f7bb8caa2e4baef7ec986f9"
+    },
+    {
+      "path": "PEEL_Externals",
+      "type": "dir",
+      "sha": "7f3ad04ffa116e16d1cd6424ec096026765dbf12"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dc83eb6123cd85aca60349014ffd6de6b25637ff"
+    },
+    {
+      "path": "Screenshots",
+      "type": "dir",
+      "sha": "42c02317ca3f26cb8e5abf9eb2511653033a19d3"
+    },
+    {
+      "path": "peel.jpg",
+      "type": "file",
+      "sha": "ca4626bfb8451ca9900cec3e378a3589a8a7436c"
+    }
+  ],
+  "classification": "excluded_evaluation_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies physics evaluation lab; backend test/integration tools, not full game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

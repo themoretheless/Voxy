@@ -1,0 +1,119 @@
+{
+  "repository": "ad-si/Brillo",
+  "repository_id": 892579192,
+  "commit": "7553eb19628b5e9adff9847490f980cccb217a02",
+  "source_url": "https://github.com/ad-si/Brillo/tree/7553eb19628b5e9adff9847490f980cccb217a02",
+  "readme_path": "README.md",
+  "readme_sha256": "a8c8058d38c2fb22d954dd5459748185d986f64c75dc738683dfa6aa8418311a",
+  "entries": [
+    {
+      "path": ".envrc",
+      "type": "file",
+      "sha": "3550a30f2de389e537ee40ca5e64a77dc185c79b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5b0e7bd38b8d5cf84fb09a97902bc913a744f569"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0934f876156d03b37d5177472750278de2d52628"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "0bfa5220fdac3377fa9ba273222d07bc43e32530"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ebd5586e598bdf13e08778ea43f84d9894537278"
+    },
+    {
+      "path": "brillo-algorithms",
+      "type": "dir",
+      "sha": "9176f49abc0faca0e80c19a908587984abc8a02c"
+    },
+    {
+      "path": "brillo-examples",
+      "type": "dir",
+      "sha": "103ef5cdc8ed402f391549c391fbc7c19673fde8"
+    },
+    {
+      "path": "brillo-export",
+      "type": "dir",
+      "sha": "06538d3780c7cbce4ee781ed345848fe91365ae6"
+    },
+    {
+      "path": "brillo-juicy",
+      "type": "dir",
+      "sha": "0f121bbe20fbc575ae3f04bc8ffff0a2f7b16b08"
+    },
+    {
+      "path": "brillo-rendering",
+      "type": "dir",
+      "sha": "827d2bc91833d219e1c53b39e92f13a5bebcaaa7"
+    },
+    {
+      "path": "brillo",
+      "type": "dir",
+      "sha": "c3ce913c65d4f27b60898afd4fe8c85fba1010f5"
+    },
+    {
+      "path": "cabal.haskell-ci",
+      "type": "file",
+      "sha": "b568badd914874e259673a147e0849251045c1a4"
+    },
+    {
+      "path": "cabal.project",
+      "type": "file",
+      "sha": "2b421c05117961d6f3cf2dd13f01636e5be852c5"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "ffd0aa7599cddb2d298f60d65fe3e8ed703ecddc"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "fce38dcd19699ea20facc8de93512dc5b5fec26e"
+    },
+    {
+      "path": "fourmolu.yaml",
+      "type": "file",
+      "sha": "86025386974e5c2abdb27a0c802e8d90e35d567c"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "26626d7d1ef93c1b9f2594a4b63b6e6b3354eca1"
+    },
+    {
+      "path": "makefile",
+      "type": "file",
+      "sha": "f88562f2e5b1cdbb7b1087e9e14c0958b1a5f3b1"
+    },
+    {
+      "path": "stack.yaml",
+      "type": "file",
+      "sha": "9d29922bd68586f0384d8936ccad24988f02516f"
+    },
+    {
+      "path": "stack.yaml.lock",
+      "type": "file",
+      "sha": "f3c809f00b144a8fe14e65d6b8471a2a78529587"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "b9a1caea06a42c5b76656691bfc5a36092f63295"
+    }
+  ],
+  "classification": "rendering_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Haskell vector/raster drawing, animation and simulation library forked from gloss.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

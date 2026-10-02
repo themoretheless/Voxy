@@ -1,0 +1,122 @@
+{
+  "repository": "Bam4d/Griddly",
+  "repository_id": 228424661,
+  "commit": "8ccd178f5e2033f48575496b30c76fc7aff51a6a",
+  "source_url": "https://github.com/Bam4d/Griddly/tree/8ccd178f5e2033f48575496b30c76fc7aff51a6a",
+  "readme_path": "README.md",
+  "readme_sha256": "0a16c4d9a4179a2637b750f2e9b5398bf5f9c3298dcdb0e47cf77b39cfcdfb96",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "350fd097b2000fb266569d8d111c5648dc60aaad"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "0d5484af82f4e075e1514cc911c50e359e6b06e9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "743afa4fae89a6c3fb9977352a62462cddcdd896"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "43ae9e4fb7756eeec7e7f64d350fad5da5e03d9a"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "060ad8bd463882bac347124fd926d1293d809e8b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "9cf8de5e497ebce3962c5c1bfcda63ed5cb8de33"
+    },
+    {
+      "path": "CMakeUserPresets.json",
+      "type": "file",
+      "sha": "6baf625c03d0f0a2208a276bdd55aba62ba3a84c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4c561f17f4545871c248ae1faf5c7fd44941cb60"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1f8a721ac61004dace6cac0888026b4123d03f87"
+    },
+    {
+      "path": "bindings",
+      "type": "dir",
+      "sha": "e66ff88a41fd094e2a2b28dfed7daf4aa12e3783"
+    },
+    {
+      "path": "build_release.sh",
+      "type": "file",
+      "sha": "1e65ecafd7b9588aaa25170e50ad7fae195add75"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "553dcda16a47f2ee9706d866439601eab2866844"
+    },
+    {
+      "path": "compile_shaders.bat",
+      "type": "file",
+      "sha": "2f094ce0ee0c08f8fe48b00cc64c3e514ff893d1"
+    },
+    {
+      "path": "compile_shaders.sh",
+      "type": "file",
+      "sha": "0f0f9f46e24a11168d5317f61615d77054602fd1"
+    },
+    {
+      "path": "configure.sh",
+      "type": "file",
+      "sha": "ca8dbd0eb14954be4f14de6df9cddb5c8a877afa"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "4b048b4dbc270b3624d94046251640dc22894768"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c7d1345f7db4050eae787d2ba8d53adcc734706e"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "1d743b7333176c30e6a0d786edc1261b67bc005e"
+    },
+    {
+      "path": "python",
+      "type": "dir",
+      "sha": "8ca40aeabf58c9d646ab26226f24fa0247cfc503"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "a18eb896422aa7c7b225e27c24d73a30f4101a2f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "568e983922f469b0701fcaa4415ebf5a5bc68030"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "86821e10bc56f77ff9adc464d79dabffeb0af252"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

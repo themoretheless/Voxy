@@ -1,0 +1,34 @@
+{
+  "repository": "stride3d/stride",
+  "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+  "sources": [
+    {
+      "path": "sources/engine/Stride.Engine/Engine/Prefab.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Engine/Engine/Prefab.cs",
+      "file": "sources__engine__Stride.Engine__Engine__Prefab.cs",
+      "sha256": "ef9194c384d0cc95c8f3f1231c25f7480cd84255a5469e753cf80cf933eca4d6",
+      "bytes": 1291
+    },
+    {
+      "path": "sources/engine/Stride.Assets/Quantum/EntityHierarchyPropertyGraph.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/engine/Stride.Assets/Quantum/EntityHierarchyPropertyGraph.cs",
+      "file": "sources__engine__Stride.Assets__Quantum__EntityHierarchyPropertyGraph.cs",
+      "sha256": "d3f7c80584569a99be5eff8c58205b64e6d3c1651d40e6c4f9a9a2524fcc3a80",
+      "bytes": 7311
+    },
+    {
+      "path": "sources/assets/Stride.Core.Assets.Quantum/AssetCompositeHierarchyPropertyGraph.cs",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/sources/assets/Stride.Core.Assets.Quantum/AssetCompositeHierarchyPropertyGraph.cs",
+      "file": "sources__assets__Stride.Core.Assets.Quantum__AssetCompositeHierarchyPropertyGraph.cs",
+      "sha256": "8a574c5ea1b070bb8845a4adcbfeaf4e6417f912eb3c271c2cf421ef65eca0c8",
+      "bytes": 45517
+    },
+    {
+      "path": "LICENSE.md",
+      "url": "https://raw.githubusercontent.com/stride3d/stride/a7fa31ced680c7d4a919f1fe233051cf508f6060/LICENSE.md",
+      "file": "LICENSE.md",
+      "sha256": "46d821d4ede6fab226ec02b0392f8c2633ad3d9d2cc2cbd709e54a7a8b0a79f1",
+      "bytes": 1304
+    }
+  ]
+}

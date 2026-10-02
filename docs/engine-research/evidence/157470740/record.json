@@ -1,0 +1,152 @@
+{
+  "repository": "Interrupt/delverengine",
+  "repository_id": 157470740,
+  "commit": "7dfa890f82ef98be5fecd8af318bb8252097e4f0",
+  "source_url": "https://github.com/Interrupt/delverengine/tree/7dfa890f82ef98be5fecd8af318bb8252097e4f0",
+  "readme_path": "README.md",
+  "readme_sha256": "10201fc2da20e41b4d0bc52fdde94555ea28855e619f44839e5e4f718af270ff",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "6520bcc5f1b449c1af2997e7d834dfcde07988b1"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bef0e3d321ee0105f17f04015154bf603786891f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a332e89aa1b5e701c9d4c45afc0dae283e68cbb0"
+    },
+    {
+      "path": ".media",
+      "type": "dir",
+      "sha": "148506daafde237bedfea4b664c624a5c6ba3dd5"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "d3515b885c052a594b7d6d449068c013a7f7a161"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "09432975ccc4a769d027f6801ebb5c433a64201c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "32283218fe4652735946e84f5b975c5c82cd8ccb"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "d0046fbbf6d7dff89209abea65152183bff69424"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "946fa44e3154bebd66a8e55ee62c64165f2f55fa"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "558d6cebeeddb8e68bab786fc1608588002c925b"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "dcb78f34d0354991e8d63c3817593879a589d1ac"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "1211ed5cc2ca84789762528fd393ba850d18fcf0"
+    },
+    {
+      "path": "desktop",
+      "type": "dir",
+      "sha": "a37cdc022db886ac126adf63503a8076324e5fbc"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "7cfbfefb96fe806331182bf72054995c1e86a649"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "ec267fb764e64249357ff27157f6a557a2b10c67"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "9ee7e01d6aa17d9c74525e7f0c7cf1abaef8761f"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "cccdd3d517fc5249beaefa600691cf150f2fa3e6"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "e95643d6a2ca62258464e83c72f5156dc941c609"
+    },
+    {
+      "path": "icon-128.png",
+      "type": "file",
+      "sha": "6a35ccfd4b60720c047d422229697da490141b07"
+    },
+    {
+      "path": "icon-16.png",
+      "type": "file",
+      "sha": "db35c8e130c79981defc28a0f005aabe5786dbd2"
+    },
+    {
+      "path": "icon-32.png",
+      "type": "file",
+      "sha": "364a5a6dd5d35364632be86b8a2c27c21c45fa25"
+    },
+    {
+      "path": "ios",
+      "type": "dir",
+      "sha": "a7808c937126b6b311c52a0c655e552ac81da97d"
+    },
+    {
+      "path": "jsonschema",
+      "type": "dir",
+      "sha": "98d8f00691ddf61f90b8ba2177f6e436487fb4c7"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "2ea410c8118f9eddf840123425b670a997081887"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "245eba6eb02f2377394fcb304e389282a0b77e2e"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "49e1308167661696c6a85befc283f5ae57b25d27"
+    },
+    {
+      "path": "test_mods",
+      "type": "dir",
+      "sha": "632c5d4867e8741a3d4bce5127258a52ede76e34"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "36e7d276d5390c30e962808c4aa9cdef8c6cc16e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

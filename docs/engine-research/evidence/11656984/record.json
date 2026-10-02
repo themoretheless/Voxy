@@ -1,0 +1,84 @@
+{
+  "repository": "b3dgs/lionengine",
+  "repository_id": 11656984,
+  "commit": "e7a97c0e95002bc95deb8cd1191ed15cc877e2d6",
+  "source_url": "https://github.com/b3dgs/lionengine/tree/e7a97c0e95002bc95deb8cd1191ed15cc877e2d6",
+  "readme_path": "README.md",
+  "readme_sha256": "41c17ba14844bf4cb96b0c5d3039ce8959031d917ee060ede6ecb52de9eec5ba",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "d349839db023b9eaa2b1589c0ebfcd77df453e93"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c59eddf5dc4cf600515c7a3b1ce65eac87407109"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "a4c0c9b0fa26c14fd2b3add37548ffb7dc8a37c7"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "38be8c31fc1d54258dfce6ecae27f38e3a6bc187"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "65f73fd43e0771cae10f2e3a5da0fb2faa42148f"
+    },
+    {
+      "path": "PULL_REQUEST_TEMPLATE.md",
+      "type": "file",
+      "sha": "4030f6fe7d82d4a78fe30cfa9c959eedce2249ed"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "23729e96935ef6938586900084bc21d2444c9b8f"
+    },
+    {
+      "path": "coverage",
+      "type": "dir",
+      "sha": "ac54ac393c574b974f3fa6113c424f0309edf510"
+    },
+    {
+      "path": "java",
+      "type": "dir",
+      "sha": "c6ce72f6fe74474e805157a54479e111cd6469c3"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "e89f93aa1b47943fe4a184da59249913391f2d05"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "9dd76dd7603df0729ed3533e52f3bc92da67b5c2"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "da21dd47b20e7c404c61b2a9d91fd3f2abb9d6a6"
+    },
+    {
+      "path": "releng",
+      "type": "dir",
+      "sha": "347183093a09aad5cdc2e0aba9259de8eb434851"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "f536acf5c0eb3d84d031c938b74a5982fb44c76a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java 2D engine originating in Lionheart Remake with java source, plugins, tests and Maven build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

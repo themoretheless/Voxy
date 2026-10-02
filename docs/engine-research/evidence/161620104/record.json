@@ -1,0 +1,194 @@
+{
+  "repository": "novelrt/NovelRT",
+  "repository_id": 161620104,
+  "commit": "7b23d9d5f66d3d19003504d89d576169893dc44f",
+  "source_url": "https://github.com/novelrt/NovelRT/tree/7b23d9d5f66d3d19003504d89d576169893dc44f",
+  "readme_path": "README.md",
+  "readme_sha256": "7c810f395b3f9d198b4638f1f7d83ce70399bc1f5891adef69f01f58e1d13a7c",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "74092995be517a545ebfa3eaca3bdab140ffa544"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "bb4f782b40d2ba08fe644eac3f874a8a337e7e10"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "b7fdabfe7120b2bb44b818b87ad004e45b885d7a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "74fca98e1a481e1c5561b0cdf35fd1cc326eafac"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "98c9be93c8270193131731fa7710147460186742"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "b32f3a881ea561a6a4c081cb59f2b8363d409b63"
+    },
+    {
+      "path": "Audio",
+      "type": "dir",
+      "sha": "03bb985a8ab20e262fe6fc274a7157fcb8b2b8e2"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "2d33ed63d8f582d6ccb0852c06c14d5d33610278"
+    },
+    {
+      "path": "CODEOWNERS",
+      "type": "file",
+      "sha": "207656029b5f4314004c00eca52b20a475e318d7"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "63fa23da0f3bab018db0531dc34b07304eae7d55"
+    },
+    {
+      "path": "Contributing.md",
+      "type": "file",
+      "sha": "25c6c0f00f5bca2120dc43dd0a3a34d8dc12a2b1"
+    },
+    {
+      "path": "Doxygen",
+      "type": "dir",
+      "sha": "fb68317c4de2c38b54eedbea1a07a209be067ea2"
+    },
+    {
+      "path": "Ecs",
+      "type": "dir",
+      "sha": "63e6c50eccc0f70c59b7bd845866051473c10b4f"
+    },
+    {
+      "path": "Exceptions",
+      "type": "dir",
+      "sha": "338e95d44800092d5d2f9e826bef3f8e5cf962e7"
+    },
+    {
+      "path": "Graphics",
+      "type": "dir",
+      "sha": "97783c4980b45537378a9422a3a5eadac2313cf6"
+    },
+    {
+      "path": "Input",
+      "type": "dir",
+      "sha": "9c6b64f59d5b1ee27eef8b3ebf1212ff0ea9489f"
+    },
+    {
+      "path": "LICENCE-DIST.md",
+      "type": "file",
+      "sha": "feb263ea353aae4f06380b38f6fe2b0af7524497"
+    },
+    {
+      "path": "LICENCE.md",
+      "type": "file",
+      "sha": "08469797cd9b9f386ea2ccb78afc9c4316aa9e72"
+    },
+    {
+      "path": "LegacySrc",
+      "type": "dir",
+      "sha": "019ea97e8bc96537654a4ad770669d7c9f2df1db"
+    },
+    {
+      "path": "Logging",
+      "type": "dir",
+      "sha": "e689aefa2042de198eb52adc8c749922734a6546"
+    },
+    {
+      "path": "LuaOnlyTargets",
+      "type": "dir",
+      "sha": "64b82a4d7e7b6f26736ec45b1cd582d94e43bc06"
+    },
+    {
+      "path": "Maths",
+      "type": "dir",
+      "sha": "e934c6c83469798a6ba6f2b52c35335bd1dc1e14"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f597a0c2a708c855507b84d74a6d2ceba06c33cd"
+    },
+    {
+      "path": "ResourceManagement",
+      "type": "dir",
+      "sha": "97ec4cebfacbcb8d776bf1ed38fd8d98a4cc687a"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "ed67c088671e30acd59e4dd2752493ee28b6fc8e"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "900f408d94434c097729008d7fe36d40625c34a7"
+    },
+    {
+      "path": "Scripting",
+      "type": "dir",
+      "sha": "dba9354fb715764805eed1e9cf27c60c41ec3706"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "f38a786726cd70f48eb55d09a533a62a4e8f9138"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "a5774ffe80deaeb86f7f49fe29a68cf163f46a55"
+    },
+    {
+      "path": "Threading",
+      "type": "dir",
+      "sha": "666a12908b907481a17e0d706e62f93216bc9698"
+    },
+    {
+      "path": "Timing",
+      "type": "dir",
+      "sha": "406f0e2e2bd3b9281731fee06864d923d24afc90"
+    },
+    {
+      "path": "UI",
+      "type": "dir",
+      "sha": "13a75b80a7178d40a17e2885fa4ace9b833139cb"
+    },
+    {
+      "path": "Utilities",
+      "type": "dir",
+      "sha": "0ed3bfc8b4826a554ab12e9e2423cb6655f75ff5"
+    },
+    {
+      "path": "Windowing",
+      "type": "dir",
+      "sha": "439b66b43b89347841cf210fef2e7e412f856c82"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "0b8f51a4755a3f879c48a6cfebaefacb295d2264"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "2e7405a473c942cde02208cb401a99c7f1b4cf71"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies visual-novel/2D engine; owned audio/ECS/graphics/input and CMake runtime build. Roadmap tools explicitly incomplete.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

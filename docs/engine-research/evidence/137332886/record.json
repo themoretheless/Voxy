@@ -1,0 +1,49 @@
+{
+  "repository": "miswanting/erajs",
+  "repository_id": 137332886,
+  "commit": "029e756f07d6c1aa702deab7fa8e973b6fd48303",
+  "source_url": "https://github.com/miswanting/erajs/tree/029e756f07d6c1aa702deab7fa8e973b6fd48303",
+  "readme_path": "README.md",
+  "readme_sha256": "a4d0951bc8b33fa0ec76437a9c2b62a942a8fc5466dce1f476faa6b717a10029",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "00d2a8f401d98591dd0eb8e42d68534c0b8f38c7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "fc35da1064f9359d5d383ae3a333130fd4394898"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "65d4ed2a65adc578c7f48269d5c8366f61c9a84e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f9f6d6ab3a7265cba6de92f8f076877b51268280"
+    },
+    {
+      "path": "dependencies",
+      "type": "dir",
+      "sha": "805e20ee3de70011f973f275528d086bd83b9f8b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "32035aa7ab9b623ebeee8f2a24e9687057b5d246"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "0214e6514c60a423cdb055d868eafc33630a2bff"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Text-game TypeScript/Python engine README explicitly says content describes development target, so current runtime completeness unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

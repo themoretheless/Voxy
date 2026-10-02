@@ -1,0 +1,74 @@
+{
+  "repository": "JacobDomagala/Looper",
+  "repository_id": 59609539,
+  "commit": "b688696d359fc1d9fd9f28d1dee1f850de694dc9",
+  "source_url": "https://github.com/JacobDomagala/Looper/tree/b688696d359fc1d9fd9f28d1dee1f850de694dc9",
+  "readme_path": "README.md",
+  "readme_sha256": "760686a2c90d0e98b3080f4ab908f4fd9409a66581aaa50011196f6b42bdd3aa",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "d592ee3f646ef95ac0255a1b0e762d7461d307bc"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "d22152122ad572c208923dc05fb080c6c528fee5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "720ea314ad803932961338fc43ddc4f9d52acd57"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "63a2e0bfabb6ae4fb82827ff3ac67fdf32789268"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "651b4d3c06999701a8f7f472b07d0a1ea06a7e19"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f19e62cf1512d78322a14f3c7b0c4f262c2c8adf"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "94147247eb97c5a5e75b76f8dd4d689828bff44e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "567247175395e1dbb8919438c19baf5df391cb34"
+    },
+    {
+      "path": "conanfile.txt",
+      "type": "file",
+      "sha": "c87c1f66c80dca1d3060df0e1898b7ffcc22b7c6"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "9dc042049f4ce9552f377e61e60302e41fabb533"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "1d37ca70d0aa8d8166cd317eff3ed32dfab346b7"
+    },
+    {
+      "path": "looper",
+      "type": "dir",
+      "sha": "fab5f0cb9fffa8008fa42d8630021d5711e14ff9"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ Vulkan 2D game engine and editor with separate source directories and integrated sample game.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

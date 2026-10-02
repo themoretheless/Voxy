@@ -1,0 +1,149 @@
+{
+  "repository": "OpenDreamProject/OpenDream",
+  "repository_id": 291873770,
+  "commit": "1362abc5accbc2037df9b45efa1de13fb1bb677f",
+  "source_url": "https://github.com/OpenDreamProject/OpenDream/tree/1362abc5accbc2037df9b45efa1de13fb1bb677f",
+  "readme_path": "README.md",
+  "readme_sha256": "534209cde680cd3f1a8b3cca5bbae8518d9465d0c4a50ba2e5c7ef1bd14466c7",
+  "entries": [
+    {
+      "path": ".codecov.yml",
+      "type": "file",
+      "sha": "233e256a6081ee2e2c1880d51b8bee3cba534399"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "fb1022ae0eedcab6ccb51f71fc1e590b91072452"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "2125666142eb661091cc5f32af2ed2f3fc65571d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4f798171a6730d1d85b97c4895d92ecd825e0ab2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9886542fd764ede1949985daac9571602a97da34"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e8cfa8ce6f60e31c9da6fc2278b2048cd85fcd59"
+    },
+    {
+      "path": "Content.IntegrationTests",
+      "type": "dir",
+      "sha": "ca6cea6cd5c50b5f851f9a3048896f79fe82f5fb"
+    },
+    {
+      "path": "Content.Tests",
+      "type": "dir",
+      "sha": "a69436ea68463bf8b824311476319ddb4ccea140"
+    },
+    {
+      "path": "DMCompiler",
+      "type": "dir",
+      "sha": "fad7ce765957c15a3a0daeff47e204e9ddbb58ed"
+    },
+    {
+      "path": "DMDisassembler.Tests",
+      "type": "dir",
+      "sha": "8c01171db837f0d44715f2a61317ca2feeea3abc"
+    },
+    {
+      "path": "DMDisassembler",
+      "type": "dir",
+      "sha": "9a21e14a29326c50bd43aa6b1f361b91d10da0c8"
+    },
+    {
+      "path": "Directory.Packages.props",
+      "type": "file",
+      "sha": "e5c7e2057a458d3ab945d3efdc0f17fb02faa323"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "635c4239091601f3f030eb134c6c1562454491e0"
+    },
+    {
+      "path": "OpenDream.sln.DotSettings",
+      "type": "file",
+      "sha": "bc0e652724fa67afbd774282f5ff651250bd119a"
+    },
+    {
+      "path": "OpenDream.slnx",
+      "type": "file",
+      "sha": "b8aecea80a6c42da3fbb2977028e4247163288a3"
+    },
+    {
+      "path": "OpenDreamClient",
+      "type": "dir",
+      "sha": "15c5dc1d68e8a633a2c33abf407973785f762963"
+    },
+    {
+      "path": "OpenDreamPackageTool",
+      "type": "dir",
+      "sha": "78243527f2312af76c4e59dc1f6ece7ab270c3fb"
+    },
+    {
+      "path": "OpenDreamPackaging",
+      "type": "dir",
+      "sha": "e78ab52c02f865b1d20392740f9ed2140f6ee3a8"
+    },
+    {
+      "path": "OpenDreamRuntime",
+      "type": "dir",
+      "sha": "ffe44a25c8ca7be6b72c7ac7ed51e3564f249ee4"
+    },
+    {
+      "path": "OpenDreamServer",
+      "type": "dir",
+      "sha": "9867f4d3dda0b61863a9ff00d554d3c85951f713"
+    },
+    {
+      "path": "OpenDreamShared",
+      "type": "dir",
+      "sha": "9855a3926cfd211d448df55e9e9e279bb9899811"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5042172ef4f53071aa047aa87a120eb4f83713fb"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "97d9c95b056c8f8d56a2a76930c64be50c63299a"
+    },
+    {
+      "path": "RobustToolbox",
+      "type": "file",
+      "sha": "af2a7d0406b410c4d960f0f4b34513651c6dc742"
+    },
+    {
+      "path": "TestGame",
+      "type": "dir",
+      "sha": "fd2f8644a5ddc2a50ea0c531f4e295ed4bb14bbd"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "512142d2bea1add9d1cf54884a7fde22666bad51"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "0ad070f5c63adf9dacd678ff685c051317452117"
+    }
+  ],
+  "classification": "language_runtime_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly depends on RobustToolbox engine; owned DM compiler/runtime and .NET tests do not constitute separate underlying engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

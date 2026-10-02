@@ -1,0 +1,127 @@
+{
+  "repository": "appsinacup/godot-rapier-physics",
+  "repository_id": 710210060,
+  "commit": "461abdeb329e81a5eea95eff9ff4e308bf0dbe26",
+  "source_url": "https://github.com/appsinacup/godot-rapier-physics/tree/461abdeb329e81a5eea95eff9ff4e308bf0dbe26",
+  "readme_path": "README.md",
+  "readme_sha256": "66d7fdc2c8d59315f75be5032c9e901c1989c9a36bbce0777087f5a8bf1ae62b",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "c5259a0336162f0e1a2cb3726a34cca68124da12"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8aa77df3d194d237a3fad424425b7384eaef8be8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "357bcfd76a7dee7dab9ed5a738cae35a48010751"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3000efea844007a4d357a7a95ccf9b011424a31f"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "bb9c54eb18e6978426be7c02717fddfa6722a2f7"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "5ffd11c955a8bed6b908b076dc5503f3ca2692ff"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "d38fdba0f0240b6deb752eb744e4868672efe078"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "b888c4ae91b22ad69e5ef45a47fd7692cbe75223"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "93adbbd7a653b0a75f68de3870fe2e1953097800"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "556baa8c51b8ca4cfc2ba930418dd7ff7baff6e0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "359d5e2fd5b994e77afa5e677ac296ada0ac92e4"
+    },
+    {
+      "path": "THIRDPARTY.txt",
+      "type": "file",
+      "sha": "745bc0240255cd99bbef36d332e97f934b80e1fd"
+    },
+    {
+      "path": "bin2d",
+      "type": "dir",
+      "sha": "730d559588b6755e7dab0972f66f83ca32cd0524"
+    },
+    {
+      "path": "bin3d",
+      "type": "dir",
+      "sha": "ead77bdaa3f660a06fa8404aecf43d9410b0c382"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "284d61f1600550379a3ee70b724805ab8637a027"
+    },
+    {
+      "path": "logo.jpg",
+      "type": "file",
+      "sha": "dbed474b8c53ade2d7859e4e09f0b33bbf6333a3"
+    },
+    {
+      "path": "logo_square.jpg",
+      "type": "file",
+      "sha": "fffdbb361e35a77180223f59f12e46ee499f7c9c"
+    },
+    {
+      "path": "logo_square_2d.png",
+      "type": "file",
+      "sha": "3a0eb7f4547c6d6a1b28548876fbf79cab1224b0"
+    },
+    {
+      "path": "logo_square_3d.png",
+      "type": "file",
+      "sha": "6df9c9ebb2bedbcba855cffcd5af7b2a18448706"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "292fe499e3b25d42211661ba9c7fafe6120186ca"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "d290cbe54be45281cfe3282233e66c9a3656f8d7"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "4ea69abf54b2ac9b491adcdc9b8b23cf219ee23f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "21e6a2199569e0b64699bc49cdfbba7e5dcc3413"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,9 @@
+{
+  "pid": 93762,
+  "sampling_seconds": 2,
+  "main_thread_samples": 1685,
+  "contact_energy_samples": 715,
+  "path_guard_samples": 664,
+  "other_samples": 306,
+  "scope": "Short stack sampling of live loaded earlier binary; estimates time distribution, not convergence or completion."
+}

@@ -1,0 +1,52 @@
+{
+  "repository": "gdquest-demos/godot-2d-tactical-space-combat",
+  "repository_id": 289220812,
+  "commit": "1bb28381626a7c7ea8a16fc929a20a2aa1510d74",
+  "source_url": "https://github.com/gdquest-demos/godot-2d-tactical-space-combat/tree/1bb28381626a7c7ea8a16fc929a20a2aa1510d74",
+  "readme_path": "README.md",
+  "readme_sha256": "f5b3227695e72c5f1449f6e008f60d354bf1c042184fbec5230f65cd143e1402",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2bde9f951cc20d9b8d466ee249a94c1244383bb9"
+    },
+    {
+      "path": "Background.svg",
+      "type": "file",
+      "sha": "4ab88ded3abc4b1508579872a9c0f34efe15db7a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f3e861c4cf12381922fd1a657dff6e167bd6d910"
+    },
+    {
+      "path": "NOTES.md",
+      "type": "file",
+      "sha": "965bab4d77928d9725768a8c4943722f0153e44e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "670038cae569a94157b5b0488a1500f9910e0e1f"
+    },
+    {
+      "path": "godot",
+      "type": "dir",
+      "sha": "2021f33500115324a6e036659ca72dee8406c11c"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "2dc86e43f68fa0814efb535f65fdd676aec04904"
+    },
+    {
+      "path": "start-project",
+      "type": "dir",
+      "sha": "dbdb2d59e482170fb05d2557e04b4036fc4c6220"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

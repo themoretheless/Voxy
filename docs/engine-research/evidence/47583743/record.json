@@ -1,0 +1,179 @@
+{
+  "repository": "ryzom/ryzomcore",
+  "repository_id": 47583743,
+  "commit": "5fed1e3661ec01f94e52b194c12465f6be4ad8a2",
+  "source_url": "https://github.com/ryzom/ryzomcore/tree/5fed1e3661ec01f94e52b194c12465f6be4ad8a2",
+  "readme_path": "README.md",
+  "readme_sha256": "a826293251c3c3c3ad6bcdcb2aa4d3dd5081374d3427e747471fb1bc2f05e456",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "612552bcfdfddc0c528d13e6aa6fda854d2874d1"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "aa439c0a4b45e781ec77dc3e088493e920dc3393"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "057fdd7b4952fb654ad1dcbbce350ffe1c046535"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "2e9da850b90283033b9273abae634c3533780dce"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "fa162f9fb821282ba2ade447f73da749b25e8af7"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "aa02b4c45e41304ae83d085529f375f87d85a8cd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f783b0345e6d29bcc4c867ec8d44a7bfc602b659"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e625db272cfff705b3ae4e7dec14a3eedcbdc8e0"
+    },
+    {
+      "path": "CMakeModules",
+      "type": "dir",
+      "sha": "c513495ed1bde87b5476247ceb4e267fb9bcebe9"
+    },
+    {
+      "path": "CMakePackaging.txt",
+      "type": "file",
+      "sha": "0ad8a1d1d3c1df8aa9a2bef14e0f595c850eefad"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "1d02fcf294d6e4d4a15a562dd7c61415c675fcb0"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "dba13ed2ddf783ee8118c6a581dbf75305f816a3"
+    },
+    {
+      "path": "CTestConfig.cmake",
+      "type": "file",
+      "sha": "eb459f4a272ba580874ec8bfa5aa1d3aafd340b1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6ff4642d25b09da02e1e16ee7cf004d971c1b213"
+    },
+    {
+      "path": "azure-pipelines.yml",
+      "type": "file",
+      "sha": "979557e14a50ea17ad2e79a1ebc5573d40a88ee1"
+    },
+    {
+      "path": "chocolatey.config",
+      "type": "file",
+      "sha": "a83d96f82d3492fbcfd1151118c44244844b357e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "dfb18306d697390d15d4f0f3ab8e9d1ec982d508"
+    },
+    {
+      "path": "config.h.cmake",
+      "type": "file",
+      "sha": "7e22549b67a506d8e08323c85cfd6946c66fe63d"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "e34336e4d40d2abea21dea44245ca9ae95664ac1"
+    },
+    {
+      "path": "docker-compose.yaml",
+      "type": "file",
+      "sha": "c0d248b4b9c4072eb0f5bf7f715123b52308d5f5"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "c0fc71cf17462d3d16ab1c844446ebc5a0a96943"
+    },
+    {
+      "path": "nel",
+      "type": "dir",
+      "sha": "58961ef22ba7d522d101f66de5bd106cb94c1722"
+    },
+    {
+      "path": "nelns",
+      "type": "dir",
+      "sha": "1fe4d72133bce951c246731fb6d13790e86692c5"
+    },
+    {
+      "path": "personal",
+      "type": "dir",
+      "sha": "eafd5f10dcc66b83e7725b2de14d539611b32b55"
+    },
+    {
+      "path": "ryzom",
+      "type": "dir",
+      "sha": "fbfefd72bd628ca3a0d5f9531e65490e43b9e6b8"
+    },
+    {
+      "path": "snowballs2",
+      "type": "dir",
+      "sha": "72af6f1cd55df42e06ab69767e29373cafaf79d2"
+    },
+    {
+      "path": "studio",
+      "type": "dir",
+      "sha": "205e94bcbd886cc577cda8e65bb95a8a35adf347"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "c9b89f3f15a883d383d961d5407417ed690d7e80"
+    },
+    {
+      "path": "vcpkg-configuration.json",
+      "type": "file",
+      "sha": "718054520bdc01132368b79c937eec9efc938438"
+    },
+    {
+      "path": "vcpkg-ports",
+      "type": "dir",
+      "sha": "3d73e585351170317af4c9c15e21836fdc04d362"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "f5d128800fa30f20ad10962c01a059a29503ad92"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "9b4acbfb960f6a6252cd13aabdf48eb3b0c0751a"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies released MMORPG engine source; native runtime/build roots and CMake packaging. Repository mirror lineage retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,134 @@
+{
+  "repository": "H-uru/Plasma",
+  "repository_id": 1579856,
+  "commit": "dfce570e5c7021fb487e4398710b674417873ac2",
+  "source_url": "https://github.com/H-uru/Plasma/tree/dfce570e5c7021fb487e4398710b674417873ac2",
+  "readme_path": "README.md",
+  "readme_sha256": "e5a67efdb4231b09f08f75fb78354984780b11761c3a1dc15dfe65ad368fe4db",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "42447735f28d3e996115317994f22b4aec483c42"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "8bd5abdf46e1a99704af5d8924ed91ae62fe1233"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "eebe0e7aaa8a19b19ffdf5ab893083856e9166b5"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6f62c6ac2d56ac43b24b91ee6ab12235f8b1e041"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "81addd378a43300a668db0069edf271b3b154e49"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ab536ae1b7afa6e3dd4de0bb53cabd23def59d10"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "54f237920b475a76cddf3ab500ffb8869f891318"
+    },
+    {
+      "path": "Brewfile",
+      "type": "file",
+      "sha": "71e570d84984b281cfa7d15091614b4dfcdbbf01"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "47d702db898512bc76ea19bb6a8215bb8a88f8f1"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "b6e0e4ac1b700432f2b360f6493b6dd6390c392a"
+    },
+    {
+      "path": "COPYING.txt",
+      "type": "file",
+      "sha": "50c9ddc75a588939ff7bf1ac8ba87431c1498890"
+    },
+    {
+      "path": "CREDITS.txt",
+      "type": "file",
+      "sha": "1d6380a043f4d6eaf9e7410200500bdfb165d2d2"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "92e2248b30d4cdf44c56511de607e1e767e83ccb"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "5f4c4e2d6dade0d7ba2358a0e7eae0a1573f9cbb"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "e963df8294069543e782fd72aa71832dca1571ca"
+    },
+    {
+      "path": "NuGet.Config.in",
+      "type": "file",
+      "sha": "a25e06ffaeb1676c3b31434ccf1368a05dfaa7b8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "775c426590d04b3219a3cc9e99407e4148eb247a"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "a01a4502f7015780591f69ebbc742e98272efe91"
+    },
+    {
+      "path": "Sources",
+      "type": "dir",
+      "sha": "d174a45b4819038f2d0db38e22b593a18fa05887"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "780f743595eb66ea493e460e660bd7a2b0cfe2ad"
+    },
+    {
+      "path": "example_server.ini",
+      "type": "file",
+      "sha": "4c27efaf7990579162095c9ab97e834dcfc6e2c4"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "e7b7eeb6c21ce8a6c48099042be1f616bf9ac67f"
+    },
+    {
+      "path": "vcpkg",
+      "type": "file",
+      "sha": "9e593bb18ea69cc5095e012465dcd675a822ed0d"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "69dbcfc38c7c45f341172425baddbb2375644614"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Cyan engine fork; owned Sources and CMake/native build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

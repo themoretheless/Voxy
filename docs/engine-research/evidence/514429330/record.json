@@ -1,0 +1,69 @@
+{
+  "repository": "BobbyAnguelov/Esoterica",
+  "repository_id": 514429330,
+  "commit": "10f3f616291a46e189a7a34e2ee777c2650bd6a3",
+  "source_url": "https://github.com/BobbyAnguelov/Esoterica/tree/10f3f616291a46e189a7a34e2ee777c2650bd6a3",
+  "readme_path": "README.md",
+  "readme_sha256": "2562253257b06cb4e2addee749b85724b85062102d91f1abeefa53beaaa1a08b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "29f8e17bf5500ab8126daa4197bfec8f8961162f"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "7c118b7ba3b92822c98a05227083d1504087fef5"
+    },
+    {
+      "path": "CompileShaders.bat",
+      "type": "file",
+      "sha": "719397a1fe8fe14fa52f6d55a389cce393bf2db1"
+    },
+    {
+      "path": "Data",
+      "type": "dir",
+      "sha": "d151defbcbbdfddec75d9e470e91eea54af43b60"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "695f158d3fb5660558d20f22cec9a4b2a8376bf4"
+    },
+    {
+      "path": "DownloadDependencies.bat",
+      "type": "file",
+      "sha": "23151dad3844e2090ed305daea99e9bc90a384ed"
+    },
+    {
+      "path": "Esoterica.slnx",
+      "type": "file",
+      "sha": "c699078fc5b65759b935c0329677927de9686a6c"
+    },
+    {
+      "path": "KillEsotericaProcesses.bat",
+      "type": "file",
+      "sha": "ef286a31fa7d84d3a2f6c8b4b125568948811883"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "4b12388703d180cba13452207ef095a626d81e4e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f40a97280ce07d463d0e675983a4125b532b8a66"
+    },
+    {
+      "path": "RunReflection.bat",
+      "type": "file",
+      "sha": "3e96e40da7f96911e598907778ee70600911d813"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies prototype native engine; Code, shader/reflection tools and native build solution. Prototype status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

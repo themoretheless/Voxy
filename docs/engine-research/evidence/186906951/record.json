@@ -1,0 +1,104 @@
+{
+  "repository": "GDevelopApp/GDevelop-extensions",
+  "repository_id": 186906951,
+  "commit": "468db8be53e14bf5b9607f786d848303078f9227",
+  "source_url": "https://github.com/GDevelopApp/GDevelop-extensions/tree/468db8be53e14bf5b9607f786d848303078f9227",
+  "readme_path": "README.md",
+  "readme_sha256": "aedaa97e43964590fbed254fbbeb4a4621bc2c9bf63ba5749d050689a74085df",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "5d69a16ce5676a9984ccda6c3352005b6ed1b972"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a13e2771511db6b50f0d71495255b0364137d87f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "23305592b219c894fa5a53c0d2da66f7489bcfc3"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "9a09b2163fa8ad45a50ee2414b151730c6c470e8"
+    },
+    {
+      "path": ".linguirc",
+      "type": "file",
+      "sha": "c9b874b2f6ebe213276834a30e9bbed4e1291bd0"
+    },
+    {
+      "path": ".prettierrc",
+      "type": "file",
+      "sha": "c1a6f66713166020e90a73182ca967212bd18ea3"
+    },
+    {
+      "path": ".translations",
+      "type": "dir",
+      "sha": "91ef8f5b32018820404382b450ffef616b93fa0b"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "f1a5f4051e5e6cde65238b4210ef478b86714686"
+    },
+    {
+      "path": "CODEOWNERS",
+      "type": "file",
+      "sha": "beddda2ee8afdce295e268346d7d254d04f3ebf6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a7477c9fda5f2ced749cc4ab364bd3d81bb1fb36"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b8af04c47a6216f4f814875564487a7c872003fa"
+    },
+    {
+      "path": "__tests__",
+      "type": "dir",
+      "sha": "09cee924c888e1ac7d196805055b2e9b88f7fd5b"
+    },
+    {
+      "path": "crowdin.yml",
+      "type": "file",
+      "sha": "47be5e4f4948c0ae0df5cec2091df522d51663c0"
+    },
+    {
+      "path": "extensions",
+      "type": "dir",
+      "sha": "a8ed5d85dccf514b3034c7c13154046e2c09d003"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "767d131c17fd6403ebb1e00959c5e629f635ac1d"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "473a7551c6d9710c187f54a1854aa483440da2c8"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9a1bd0b3dfe9699ecfbda94d1091b1cc3b8aec8d"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "e20f3132d9ae7fab8c7faf4b11f2ffaf2ef9be12"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify GDevelop behaviors/actions/conditions extension library; no independent game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

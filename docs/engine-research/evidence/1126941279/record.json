@@ -1,0 +1,139 @@
+{
+  "repository": "jakubtomsu/ravn",
+  "repository_id": 1126941279,
+  "commit": "f8915a0698ebff490117837c7de9e95bf01f317c",
+  "source_url": "https://github.com/jakubtomsu/ravn/tree/f8915a0698ebff490117837c7de9e95bf01f317c",
+  "readme_path": "README.md",
+  "readme_sha256": "30f1d5291b55e7cb8f5d2cefa3b51eebc4dd92ae5958f52559057219ce45a374",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "e7972215c7f0c64ff5a12bbb7998fdd3652879cd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a6d8e416ffd5c9a3903483721b10d119636799d8"
+    },
+    {
+      "path": "CHEATSHEET.md",
+      "type": "file",
+      "sha": "33f6c9b18c1dac5aedd850ef167d5ef2c9aacbf0"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "9244595dfb59bf0bc051a72d3accfc1ae94238fd"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "671365fc9f5ea69e23388067a56fdf0b8c157285"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "24d6e128a52f4f5abd0bb17e7a0170c859add8e3"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "2deb6920d856dfdddbdcb328a2c797642e8b1ed0"
+    },
+    {
+      "path": "base",
+      "type": "dir",
+      "sha": "82c2fa5cda53b03b3f092683ffc588911e0d9d0b"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "82c90820e577592c1ef60385d06b4a53eb5057ba"
+    },
+    {
+      "path": "bvh",
+      "type": "dir",
+      "sha": "77d4b4fed6492ab06027a8b4fd265d69bba8aeb6"
+    },
+    {
+      "path": "collision",
+      "type": "dir",
+      "sha": "b5cc457aa9b27e8f9ca7d465b1b95191c19987b8"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "cd3ced42f77674bdffae3938f61b0efbd3ee4ff9"
+    },
+    {
+      "path": "entities",
+      "type": "dir",
+      "sha": "3ee97be9d6b80f2b6ddcdb382ee8331a29af8f53"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "f9263d24e4ab491308c8527dd2c763e81b391de7"
+    },
+    {
+      "path": "geometry",
+      "type": "dir",
+      "sha": "5c622f5d5b9038484c36798b34b256b4f90a501a"
+    },
+    {
+      "path": "gpu",
+      "type": "dir",
+      "sha": "3ce34e20299dcd7c50e90acb7476e9cb76930352"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "d81f06cd00b0824fb487f56616474cec47eb1864"
+    },
+    {
+      "path": "ravn.odin",
+      "type": "file",
+      "sha": "f87335db45ec4fe57e93e9d9b2eea20207b89ae1"
+    },
+    {
+      "path": "ravn_curve.odin",
+      "type": "file",
+      "sha": "4adcac582b7417f7c123c0f6c8a7e5ee0015e553"
+    },
+    {
+      "path": "ravn_graphics.odin",
+      "type": "file",
+      "sha": "cbb330f49adf208e9fbb4622ff511a2aa5819a8d"
+    },
+    {
+      "path": "ravn_input.odin",
+      "type": "file",
+      "sha": "8efa65ce72aaaa0b30e412e9f6d087bb6fbd6aaf"
+    },
+    {
+      "path": "ravn_test.odin",
+      "type": "file",
+      "sha": "ab01e6279a3bd75a1535cd6eb6e62189090fdf44"
+    },
+    {
+      "path": "ravn_util.odin",
+      "type": "file",
+      "sha": "d8fa63278b491f2960e0a78c044d1ade0f0894ac"
+    },
+    {
+      "path": "rscn",
+      "type": "dir",
+      "sha": "0aa49f6f6bd1b36270a390eb6629c7385597deae"
+    },
+    {
+      "path": "shader_compiler",
+      "type": "dir",
+      "sha": "477b3396941448dfdeba6b45b4590bea0d416ef2"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Odin 2D/3D engine with entities, collisions, audio, GPU and platform modules; README explicitly warns early alpha and incomplete features.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

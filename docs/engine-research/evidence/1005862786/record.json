@@ -1,0 +1,84 @@
+{
+  "repository": "wkwan/flo",
+  "repository_id": 1005862786,
+  "commit": "a9695befefb69ed33bc41b5aab970f2e6354540f",
+  "source_url": "https://github.com/wkwan/flo/tree/a9695befefb69ed33bc41b5aab970f2e6354540f",
+  "readme_path": "README.md",
+  "readme_sha256": "85a0271c0f647cf5f596454391d9c6dbd101e3356aebba6c5bbb2d710f68bb89",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "b54c6735f1a717f5effd2ccc157b81f6b58f175c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ea8c4bf7f35f6f77f75d92ad8ce8349f6e81ddba"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "6d46ee6afa812e7d04ba0bb6901b8f50aaae4d96"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "f25a7ac0e2904ecef67fc28cb4a7b9eb9be766e1"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f073897314664672be292cf4fc69ea9da936343c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7c996db514d43135dce5c93bdba0d573de073d81"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8e491bc3004d61b53f0d17f8bb21500e1a7c9639"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "386642bacc49b1e51bab7a1dd54679e2cf7ed05e"
+    },
+    {
+      "path": "compile_shaders.ps1",
+      "type": "file",
+      "sha": "2aa593c2a9bb0772f2eb09258eea1d4b42e38514"
+    },
+    {
+      "path": "compile_shaders.sh",
+      "type": "file",
+      "sha": "8d6835eee28b9f8d458768f25dd378eee8338314"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "618a5d882e58fe2b0a8be0e27b2ebf3614e85909"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "a25e7e060f1f104ad7c0e20a916a9bf1d451f913"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "584c2e7599a41c2f358ed0c66df252ae0fa5a72b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a2a591e0bddc45d155aa933cd41e35f8bb4b0319"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Vulkan renderer replacing Bevy rendering backend, rather than a separate complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

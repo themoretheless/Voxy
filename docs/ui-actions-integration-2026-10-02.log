@@ -1,0 +1,24 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-3dcdb8b03d36775c)
+
+running 17 tests
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ignored, requires a real GPU adapter and local TrueType font
+test ui_live::presentation_tests::upload_is_not_input_publication_until_native_frame_acknowledgement ... ok
+test ui_live::tests::finished_panic_does_not_lose_unfinished_worker_ownership ... ok
+test game_ui_input::tests::live_pointer_release_revalidates_removal_disable_and_failed_layout ... ok
+test game_ui_input::tests::input_waits_for_visible_snapshot_and_cancels_capture_across_publications ... ok
+test game_ui_input::tests::keyboard_combines_activation_edges_and_revalidates_live_targets ... ok
+test frame_styles::tests::ui_owner_snapshot_tracks_activity_removal_and_reused_generation ... ok
+test ui_text::tests::font_count_budget_rejects_before_any_file_reads ... ok
+test ui_draw::tests::backgrounds_follow_scene_painter_order ... ok
+test tests::ui_activation_reaches_fixed_input_once_and_stop_resets_custom_actions ... ok
+test tests::registered_ui_callback_uses_scene_barrier_without_creating_input_action ... ok
+test tests::play_pointer_path_activates_runtime_ui_and_stop_cancels_capture ... ok
+test panel_focus::ui_scene_integration::ui_scene_validation_undo_and_play_restore_use_common_registry ... ok
+test ui_draw::tests::glyph_geometry_clips_uvs_and_rejects_stale_owner_publications ... ok
+test ui_text::worker_tests::worker_publication_failure_retains_old_text_and_source_observations ... ok
+test ui_text::tests::observed_logical_font_unicode_runs_share_atlas_and_invalid_font_retains_prior ... ok
+test ui_text::budget_tests::repeated_font_content_still_counts_each_retained_input ... ok
+
+test result: ok. 16 passed; 0 failed; 1 ignored; 0 measured; 49 filtered out; finished in 0.63s
+

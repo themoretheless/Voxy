@@ -1,0 +1,82 @@
+{
+  "repository": "z0w0/helm",
+  "repository_id": 11231382,
+  "commit": "e2d8745d573c8b775aa390b70c597722ec102e48",
+  "source_url": "https://github.com/z0w0/helm/tree/e2d8745d573c8b775aa390b70c597722ec102e48",
+  "readme_path": "README.md",
+  "readme_sha256": "f4f2f0a9a15adf148339eec2af914755c4519c88f2fcb0452a568d1c99bf6758",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "923f11f42b91c6c58008fa74a05be80096e786bf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0f766b0123a6c2e0722967164c763aa79dca4cdf"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "f8492326558589189b3c329a635c5fd17fe9c2a9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c2d8bf517b3a901bde81bb73b06e46d9fa4048a2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2640dbf8060ef7b91886e91ce6b2b9f1ec3c38e0"
+    },
+    {
+      "path": "Setup.hs",
+      "type": "file",
+      "sha": "e8ef27dbba9992f80d9271a60892aadc63c9ef36"
+    },
+    {
+      "path": "circle.yml",
+      "type": "file",
+      "sha": "fa2a074bc75d81bd5946c65d3e36969015340918"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7c6b9ad364fecd2adfdb7264624cafb3776567d3"
+    },
+    {
+      "path": "helm.cabal",
+      "type": "file",
+      "sha": "fcc6801a466c1ec0415190702d619f6a993e0a60"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "0b592fcf98bb58e426f76582575a357db472f177"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f6f7590aa3535aaf44c67a4ddba06ec41a4b868b"
+    },
+    {
+      "path": "stack.yaml",
+      "type": "file",
+      "sha": "3548259dd211142a9d6f80b578cbe0f75f8a50f9"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "cd338b20d24be684f4d1e66a5bf47b9ec3aa6a02"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

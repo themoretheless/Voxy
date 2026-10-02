@@ -1,0 +1,69 @@
+{
+  "repository": "alemart/surgescript",
+  "repository_id": 76059025,
+  "commit": "6c72e6d4e157307a7fb835de68cb85616254bf6e",
+  "source_url": "https://github.com/alemart/surgescript/tree/6c72e6d4e157307a7fb835de68cb85616254bf6e",
+  "readme_path": "README.md",
+  "readme_sha256": "f8201dc8a0498418bf17646c29ff7a018cc66f7c17789e0d1a8aada9e0e1f334",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9ac400ea396ffd351550f5abed706257c8ff0248"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e97e3d295e411c08c49ff470610b553b461650e5"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "0f5adf3001d023daa887dc30727725e35601ac3b"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f69568961d1cd6ec3b66cc0f3b43595ca9d0d5bf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "546e0b6c5abcc2e451d41f83146b5756c2cee38e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e53abbd780fab6adef7edb5718cedea645d43eb2"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b2341ad311eb0b7810f76d7462b021e7317b62f1"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "ca156c84d2fb02c9dc19a9b069fc691340e6e29f"
+    },
+    {
+      "path": "mkdocs.yml",
+      "type": "file",
+      "sha": "f33b30d797580bea47dd90f0705bff07d40d6d22"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8d534c1c1dff70ccd013931878c8a601ebdb5749"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Embeddable game scripting language and VM, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

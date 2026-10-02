@@ -1,0 +1,20 @@
+[package]
+name = "voxy_rush"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[features]
+physics-events = ["dep:physics"]
+
+[dependencies]
+serde_json = "1"
+physics = { path = "../physics", optional = true }
+voxy_scene = { path = "../voxy_scene" }
+voxy_input = { path = "../voxy_input" }
+glam = "0.33.6"
+rush = { package = "themoretheless-tokenizer-rush", git = "https://github.com/themoretheless/tokenizer.git", branch = "release" }
+
+[lints]
+workspace = true

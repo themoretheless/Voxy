@@ -1,0 +1,117 @@
+{
+  "repository": "ppb/pursuedpybear",
+  "repository_id": 54496479,
+  "commit": "6896ea2f2ccc06d75c9e0353770a027cbd7c91ec",
+  "source_url": "https://github.com/ppb/pursuedpybear/tree/6896ea2f2ccc06d75c9e0353770a027cbd7c91ec",
+  "readme_path": "README.md",
+  "readme_sha256": "91c8081609cedf858977b100820dae7091cb4e0f6578516d170a84254adc7103",
+  "entries": [
+    {
+      "path": ".ci",
+      "type": "dir",
+      "sha": "f486383d6fb85c9369ea5dad09f6ee69df95b077"
+    },
+    {
+      "path": ".cirrus.yml",
+      "type": "file",
+      "sha": "9ee3d32f103109c386970e4d8b3431a8deb7d5e9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "80344493887e5234a4b4f96a58b503520dddca29"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "123e18e0d80c7bb2f5065c1e2e7418bb4823c7fe"
+    },
+    {
+      "path": ".readthedocs.yaml",
+      "type": "file",
+      "sha": "03001d9279732e569c307894690ef7692ad8355f"
+    },
+    {
+      "path": ".upload-scripts",
+      "type": "dir",
+      "sha": "e080f1b040beff71c22d231a2f1c55dedd978cac"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "a140119f6af4f494acb8087b83dac8a3013b6b02"
+    },
+    {
+      "path": "CONTRIBUTORS.md",
+      "type": "file",
+      "sha": "386ff61df9c6808c49f8231c26a984a6e07dbfd5"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "f93368d56ef695f20f97d5962840f4fa164b6ff1"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "4bf44835220d8d466be23757a194bdc92aaa5584"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d9cd492ca55c01079f881554461457e9e38a4378"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "bf8d94e0b6c4966456da285db13564762e02e1ea"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "638c0c0d38b58e59c7c501b99953cd1e1a5a228c"
+    },
+    {
+      "path": "pyproject.toml",
+      "type": "file",
+      "sha": "3f3dcee2ba5071a04366168093e7198f2a71f40f"
+    },
+    {
+      "path": "requirements-docs.txt",
+      "type": "file",
+      "sha": "72d9e063fcbad2f85e6d534bdef43abe2316a591"
+    },
+    {
+      "path": "requirements-tests.txt",
+      "type": "file",
+      "sha": "9b9e5f998b6a35c03fd77a5711a5724a9a1a5546"
+    },
+    {
+      "path": "requirements-upload.txt",
+      "type": "file",
+      "sha": "d9ca5ac22121be7ef840b0d22b68786f23862fdd"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "ac63ab9f66b91a70f131b390b49eb665efaf04a5"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "ed30d7901b7c8c57ce95ac95e569ec21cb5cd776"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "e18fd247facfc872f6f90d19c545153d7ad4117c"
+    },
+    {
+      "path": "viztests",
+      "type": "dir",
+      "sha": "54968aaacfc25e459ae13760a9090b2d52a55a93"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

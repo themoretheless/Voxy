@@ -1,0 +1,83 @@
+{
+  "scope": "Static floating-point audit; shared-vertex pairs excluded.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-urogenital-follower-pressure-16/urethra-rest.obj",
+      "sha256": "4d1c1851b4ded753167ab29fc83d4e55274c8de68db95d25bc668baba4d8db24",
+      "vertices": 320,
+      "triangles": 448,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 840
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-urogenital-follower-pressure-16/urethra-barrier.obj",
+      "sha256": "a87d50e800c0d15b64de883478f9e1e0ecf842561d9f1b5baf59a7440710c283",
+      "vertices": 320,
+      "triangles": 448,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 409
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-urogenital-follower-pressure-16/urethra-released.obj",
+      "sha256": "8ee59ee98a714b8cdcd303d4e30edff701807df3f2348eeab56cd4daa0050147",
+      "vertices": 320,
+      "triangles": 448,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 344
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-urogenital-follower-pressure-16/vagina-rest.obj",
+      "sha256": "24d088c3485ae507fdcd9a5d82c1e8bae60b4cb5d3fe1eea4f239f95ac51cf4e",
+      "vertices": 320,
+      "triangles": 448,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1064
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-urogenital-follower-pressure-16/vagina-barrier.obj",
+      "sha256": "2ea4d653b92ef3543c39646955da639c22f8817438ed5c4f85dcbea2a20178eb",
+      "vertices": 320,
+      "triangles": 448,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 658
+    },
+    {
+      "specimen": "vagina",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-urogenital-follower-pressure-16/vagina-released.obj",
+      "sha256": "fef3ca790d8d9683096e5f5216e595b9b36f449711fe9f9f1b720c3718c874bd",
+      "vertices": 320,
+      "triangles": 448,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 618
+    }
+  ]
+}

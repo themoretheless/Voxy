@@ -1,0 +1,49 @@
+{
+  "repository": "JoebRogers/PICO-EC",
+  "repository_id": 127318728,
+  "commit": "67fd65b924faae6de2f02cf39856c4946e56717c",
+  "source_url": "https://github.com/JoebRogers/PICO-EC/tree/67fd65b924faae6de2f02cf39856c4946e56717c",
+  "readme_path": "README.md",
+  "readme_sha256": "1220df40389fe0a8ac65474d182ecee0b48897a710f5f41121bba925c298b5a6",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "793774e0ffd702e1b839e96cd889038bf19364b2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0af34f01ce9d2a9c6b9061bbd18386b25199062f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ba0779605c2eab5fbb296835143a65b2932345e9"
+    },
+    {
+      "path": "cart",
+      "type": "dir",
+      "sha": "128bb5fd7a6f60ccb3459bd73650f700b5b03ee4"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "73ea7d3664c0fdd27d42d6528e3387cd20f302ee"
+    },
+    {
+      "path": "img",
+      "type": "dir",
+      "sha": "9f20c5a6daf7196dd5ea62ae2f8111f60709f567"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c636b43be922fac9e31f99820d3a0e8b2205bc41"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Scene/entity/component lifecycle helper hosted inside PICO-8; relies on external console runtime and ships no default behaviours.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

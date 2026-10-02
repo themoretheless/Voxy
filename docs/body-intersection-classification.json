@@ -1,0 +1,745 @@
+{
+  "source": "assets/characters/blender-female/prepared/body-foot-local-repair-v9.obj",
+  "candidateCount": 105,
+  "classificationCounts": {
+    "transverse_segment_crossing": 105
+  },
+  "pairs": [
+    {
+      "faces": [
+        2298,
+        4142
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        4142,
+        4155
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        4142,
+        4156
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77933,
+        85208
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77933,
+        85209
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77938,
+        85208
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77938,
+        85209
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77930,
+        85209
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77938,
+        85195
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        77930,
+        85195
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14714,
+        15776
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14714,
+        15768
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14715,
+        15768
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14718,
+        15768
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14716,
+        15768
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14718,
+        20010
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14688,
+        20010
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14688,
+        20005
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14688,
+        20007
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14691,
+        20007
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14691,
+        20006
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14318,
+        15776
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14691,
+        20018
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14318,
+        16375
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14318,
+        16378
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13900,
+        16378
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13903,
+        16378
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13903,
+        16377
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13904,
+        16377
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13904,
+        19986
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        18158,
+        19986
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        18159,
+        20014
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        18159,
+        19981
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        18158,
+        19981
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        15754,
+        18159
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13876,
+        20015
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13876,
+        15755
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        15754,
+        18156
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14695,
+        20018
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        14695,
+        20013
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13876,
+        20013
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13881,
+        15755
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13881,
+        15754
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        15753,
+        18156
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13880,
+        15753
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        13881,
+        15753
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        10335,
+        11555
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        10340,
+        11555
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11554,
+        11710
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        10340,
+        11554
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11851,
+        11865
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11652,
+        11851
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11647,
+        11851
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11650,
+        11851
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11651,
+        11851
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11492,
+        11650
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11492,
+        11929
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11493,
+        11929
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11493,
+        11930
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11493,
+        11931
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        10335,
+        11493
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        11487,
+        11713
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86230,
+        86606
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86230,
+        86605
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86230,
+        86684
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86231,
+        86684
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86076,
+        86689
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86076,
+        86687
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86231,
+        86681
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86388,
+        86686
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86390,
+        86686
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86390,
+        86687
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86079,
+        86687
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86076,
+        86773
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86077,
+        86773
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86078,
+        86773
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86232,
+        86681
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86233,
+        86681
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86233,
+        86679
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86388,
+        86679
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86390,
+        86772
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86079,
+        86773
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        87027,
+        87099
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86807,
+        87099
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86806,
+        87099
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86805,
+        87104
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86806,
+        87104
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86982,
+        87030
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86805,
+        87103
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86983,
+        87247
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86983,
+        87181
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86982,
+        87181
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86982,
+        87182
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86820,
+        87184
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86821,
+        87184
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86821,
+        87103
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86978,
+        87247
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86820,
+        87248
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86820,
+        87249
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86820,
+        87178
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86820,
+        87179
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        87043,
+        87242
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86978,
+        87242
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        87043,
+        87248
+      ],
+      "classification": "transverse_segment_crossing"
+    },
+    {
+      "faces": [
+        86978,
+        87248
+      ],
+      "classification": "transverse_segment_crossing"
+    }
+  ],
+  "scope": "Floating-point static classification; contacts remain audit findings; shared-vertex pairs excluded; no anatomy or CCD certification."
+}

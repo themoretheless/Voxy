@@ -1,0 +1,94 @@
+{
+  "repository": "flarelink-in/NullGraph",
+  "repository_id": 1184273138,
+  "commit": "a0587f5e5a2d7e000d6b0b64e7d79c68008fa856",
+  "source_url": "https://github.com/flarelink-in/NullGraph/tree/a0587f5e5a2d7e000d6b0b64e7d79c68008fa856",
+  "readme_path": "README.md",
+  "readme_sha256": "9963d3c1307469bb2882225b95a8690223ffeebdc308fec3b68091aacff36b33",
+  "entries": [
+    {
+      "path": "!x.includes('gl-matrix'))",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "185df58d244457d244bf0d1c1221ca1808bc9607"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "ed5e4145f8309883f42d75324f4b3d4a7c8d4feb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b2964f33a954120bdd5000f664937eb5511cf825"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "42dc943d372914f251eb7603f1f245277371451a"
+    },
+    {
+      "path": "build.js",
+      "type": "file",
+      "sha": "a670b352d8c2a975453d0cfc284e5f115664f056"
+    },
+    {
+      "path": "copy-assets.js",
+      "type": "file",
+      "sha": "df785661db587434f23f8ed34e7b4e2dbca5e418"
+    },
+    {
+      "path": "dev-server.js",
+      "type": "file",
+      "sha": "fb3fcbea01c51d50640645a267ab8cd3f3b7b5ea"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "4c47e0a7b810328fd9658fe2159a88662db90ac7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "02de58d1e0b363c6f771993d42fd2a797b9b8f90"
+    },
+    {
+      "path": "img.png",
+      "type": "file",
+      "sha": "68e792fef475751f712032856e76b93d1e5a75cd"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "40cba5ef2dce91f4bda6d6e820b66fe2dc2e09f5"
+    },
+    {
+      "path": "showcases-images",
+      "type": "dir",
+      "sha": "f7917242dd8fba03d33f04bfe783fe4504cdff99"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "77be651d8242e99cdd3272b2f8c81ad44f59bf4c"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "6e001add4acfbd5501c6a3d5d7d5f94c2f698a7e"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "53880fca02a1d94672d8ec02439f366568ee409e"
+    }
+  ],
+  "classification": "rendering_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Data-oriented WebGPU rendering framework; scale and allocation claims are unverified and broader game runtime not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

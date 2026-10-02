@@ -1,0 +1,14 @@
+{
+  "fixture": "flat-grid-base.obj and flat-grid-coarse.obj",
+  "depth": 1,
+  "base_triangles": 32,
+  "variant_triangles": 8,
+  "admitted_triangle_pairs": 2048,
+  "verified_bound": 5.622719070614828e-16,
+  "exact_surface_distance": 0,
+  "logical_index_bytes": 480,
+  "prior_whole_triangle_bound": 0.2500000000000001,
+  "budget_2047_rejected": true,
+  "depth_13_rejected": true,
+  "scope": "offline OBJ certification; no native GPU/frame or speedup claim"
+}

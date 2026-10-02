@@ -1,0 +1,79 @@
+{
+  "repository": "jerthz/scion",
+  "repository_id": 345194063,
+  "commit": "1828878d824b7b27f6911d78373f3cbe05172df4",
+  "source_url": "https://github.com/jerthz/scion/tree/1828878d824b7b27f6911d78373f3cbe05172df4",
+  "readme_path": "README.md",
+  "readme_sha256": "1e1c136d80516380eaa2420148eff2658d793feab8fed4402719a699ed8cfcbc",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "0449ad87de973798458d5c727fb7a5c83e936aac"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "017a50ec023291de06f1fd5be8bf77edce8febc5"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "131030abbea595ead6dc59dc9c9c165cbc7d7a66"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "823823d4cdc996d08da6aa3b121ff0f1507807dd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "7d6339d775792bec3ae48f90fa8c9520b1b03a34"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "dcdaca673ee17e7b79a9cdc8f7126c7bb895b3d8"
+    },
+    {
+      "path": "banner.png",
+      "type": "file",
+      "sha": "ca96aeac6b2cb01b8bb857a973629e659a13a3f5"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "6435376a8c134479b3c1548e59769ea75a94d3c8"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "ca16dcaab3673f78ca1f2bd7a37d4843d34f7798"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "02a66f52eb7eb6718f9135e88bff939c6ba24529"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "995f23dbbf20071b8e967689c9b31da61a9af969"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "97eeb869ce61959146ea99d9e1bd9a19c7f08285"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "05ce29ad26d8ddff2a2d6bf39f19009c8fc2fd03"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies small Rust game library over wgpu/winit; src/Cargo/examples, separate from engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,307 @@
+<p align="center">
+  <img src="docs/logo.svg" alt="nape-js logo" width="80" />
+</p>
+
+# @newkrok/nape-js
+
+[![npm version](https://img.shields.io/npm/v/@newkrok/nape-js.svg)](https://www.npmjs.com/package/@newkrok/nape-js)
+[![npm downloads](https://img.shields.io/npm/dm/@newkrok/nape-js.svg)](https://www.npmjs.com/package/@newkrok/nape-js)
+[![jsDelivr hits](https://img.shields.io/jsdelivr/npm/hm/@newkrok/nape-js.svg)](https://www.jsdelivr.com/package/npm/@newkrok/nape-js)
+[![CI](https://github.com/NewKrok/nape-js/actions/workflows/ci.yml/badge.svg)](https://github.com/NewKrok/nape-js/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/NewKrok/nape-js/graph/badge.svg?flag=nape-js)](https://codecov.io/gh/NewKrok/nape-js)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@newkrok/nape-js.svg?label=gzip)](https://bundlephobia.com/package/@newkrok/nape-js)
+[![license](https://img.shields.io/npm/l/@newkrok/nape-js.svg)](https://github.com/NewKrok/nape-js/blob/master/LICENSE)
+[![docs](https://img.shields.io/badge/docs-online-blue.svg)](https://napejs.org/)
+[![sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-db61a2.svg)](https://github.com/sponsors/NewKrok)
+
+Fully typed 2D physics engine — a modern TypeScript rewrite of the
+[Nape](https://github.com/deltaluca/nape) Haxe physics engine.
+
+This is the **actively maintained successor** to the original Nape. The Haxe
+engine saw its last release in 2016 and its last commit that same year (the
+community's Haxe 4 fork, `nape-haxe4`, last shipped in 2020); nape-js carries
+the same simulation model forward as pure TypeScript — no dependencies, no
+build step, works in Node.js and every browser.
+
+**[Homepage & Interactive Demos](https://napejs.org/)** | **[API Reference](https://napejs.org/api/)** | **[Examples](https://napejs.org/examples)** | **[Games built on nape-js](https://napejs.org/games/)** | **[Guides](https://napejs.org/guides/)** | **[Multiplayer Demo](https://napejs.org/multiplayer.html)**
+
+**[Cookbook](docs/guides/cookbook.md)** | **[Troubleshooting](docs/guides/troubleshooting.md)** | **[Anti-Patterns](docs/guides/anti-patterns.md)**
+
+- Originally created in Haxe by Luca Deltodesco
+- Ported to TypeScript by Istvan Krisztian Somoracz
+
+<!-- npm:strip -->
+
+## Demos, games & guides
+
+The docs site is organised as a ladder from engine technique to shipped product:
+
+| Tier | What | Where |
+|------|------|-------|
+| Physics demos | 44 technique demos — joints, fluids, fracture, raycasting, soft body, determinism, serialization | [napejs.org/examples](https://napejs.org/examples/?cat=physics) |
+| Gameplay slices | 20 playable demos that isolate one mechanic — character controller, pinball, slingshot, vehicles | [napejs.org/examples?cat=game](https://napejs.org/examples/?cat=game) |
+| Complete game demos | 21 multi-system games in one file each — AI, waves, cameras, 3D rigs (Blade Waltz, Shard Rush, Jungle Strike, Kickoff, …) | [napejs.org/games](https://napejs.org/games/) |
+| Shipped games | Released titles running nape-js in production | [napejs.org/showcase](https://napejs.org/showcase/) |
+
+Every demo has its own page (`napejs.org/examples/<id>/`) with a full-size canvas, 2D / Three.js / PixiJS renderers, the source, CodePen / StackBlitz export and links into the [guides](https://napejs.org/guides/) (cookbook, anti-patterns, troubleshooting, multiplayer, replay). The demo sources live in [`docs/demos/`](docs/demos/).
+
+## Packages
+
+This repo is an npm-workspaces monorepo:
+
+| Package                                    | What it is                                                                                                           |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| [`@newkrok/nape-js`](packages/nape-js)     | The physics engine itself — rigid bodies, constraints, collision, fluids, deterministic multiplayer.                 |
+| [`@newkrok/nape-pixi`](packages/nape-pixi) | PixiJS v8 integration — `BodySpriteBinding`, `FixedStepper` (render interpolation), `PixiDebugDraw`, `WorkerBridge`. |
+
+The [`templates/platformer/`](templates/platformer/) directory holds a
+runnable multi-renderer starter (Canvas2D / Three.js / PixiJS) — clone
+or download it as a starting point for new projects.
+
+<!-- /npm:strip -->
+
+## Installation
+
+```bash
+npm install @newkrok/nape-js
+# optional: PixiJS v8 integration
+npm install @newkrok/nape-pixi pixi.js
+```
+
+## Quick Start
+
+```typescript
+import { Space, Body, BodyType, Vec2, Circle, Polygon } from "@newkrok/nape-js";
+
+// Create a physics world with downward gravity
+const space = new Space(new Vec2(0, 600));
+
+// Static floor
+const floor = new Body(BodyType.STATIC, new Vec2(400, 550));
+floor.shapes.add(new Polygon(Polygon.box(800, 20)));
+floor.space = space;
+
+// Dynamic box
+const box = new Body(BodyType.DYNAMIC, new Vec2(400, 100));
+box.shapes.add(new Polygon(Polygon.box(40, 40)));
+box.space = space;
+
+// Dynamic circle
+const ball = new Body(BodyType.DYNAMIC, new Vec2(420, 50));
+ball.shapes.add(new Circle(20));
+ball.space = space;
+
+// Game loop
+function update() {
+  space.step(1 / 60);
+
+  for (const body of space.bodies) {
+    console.log(`x=${body.position.x.toFixed(1)} y=${body.position.y.toFixed(1)}`);
+  }
+}
+```
+
+## API Reference
+
+> Full API documentation: [TypeDoc Reference](https://napejs.org/api/)
+
+### Core Classes
+
+| Class   | Description                                                                               |
+| ------- | ----------------------------------------------------------------------------------------- |
+| `Space` | Physics world — add bodies, step simulation, `deterministic` mode for rollback/prediction |
+| `Body`  | Rigid body with position, velocity, mass                                                  |
+| `Vec2`  | 2D vector — pooling, `clone()`, `equals()`; statics `Vec2.get()`, `Vec2.weak()`, `Vec2.lerp()`, `Vec2.fromAngle()` |
+| `Vec3`  | 3D vector for constraint impulses — `clone()`, `equals()`                                 |
+| `AABB`  | Axis-aligned bounding box — `clone()`, `equals()`; static `AABB.fromPoints()`              |
+| `Mat23` | 2×3 affine matrix — `clone()`, `equals()`, transform, inverse                             |
+| `Ray`   | Raycasting — `clone()`, `at(distance)`; static `Ray.fromSegment()`                         |
+
+### Shapes
+
+| Class     | Description                                                                  |
+| --------- | ---------------------------------------------------------------------------- |
+| `Circle`  | Circular shape                                                               |
+| `Polygon` | Convex polygon (with `Polygon.box()`, `Polygon.rect()`, `Polygon.regular()`) |
+| `Capsule` | Capsule shape — `new Capsule(width, height)`, **total** dims tip-to-tip, `width >= height` |
+| `Shape`   | Base class with material, filter, sensor support                             |
+
+### Physics Properties
+
+| Class               | Description                               |
+| ------------------- | ----------------------------------------- |
+| `Material`          | Elasticity, friction, density             |
+| `BodyType`          | `STATIC`, `DYNAMIC`, `KINEMATIC`          |
+| `InteractionFilter` | Bit-mask collision/sensor/fluid filtering |
+| `FluidProperties`   | Density, viscosity for fluid shapes       |
+
+### Constraints
+
+| Class           | Description                        |
+| --------------- | ---------------------------------- |
+| `PivotJoint`    | Pin two bodies at a shared point   |
+| `DistanceJoint` | Constrain distance between anchors |
+| `WeldJoint`     | Fix relative position and angle    |
+| `AngleJoint`    | Constrain relative angle           |
+| `MotorJoint`    | Apply angular velocity             |
+| `LineJoint`     | Slide along a line                 |
+| `PulleyJoint`   | Constrain combined distances       |
+
+### Callbacks
+
+| Class                 | Description                                         |
+| --------------------- | --------------------------------------------------- |
+| `InteractionListener` | Collision/sensor/fluid events                       |
+| `BodyListener`        | Body wake/sleep events                              |
+| `ConstraintListener`  | Constraint events                                   |
+| `PreListener`         | Pre-collision filtering                             |
+| `CbType`              | Tag interactors for filtering                       |
+| `CbEvent`             | `BEGIN`, `ONGOING`, `END`, `WAKE`, `SLEEP`, `BREAK` |
+
+### Utilities
+
+| Class         | Description                                                            |
+| ------------- | ---------------------------------------------------------------------- |
+| `BodyList`, `ShapeList`, … | Typed engine lists — `for...of`, `at()`, `add()`, `remove()`, `push()`, `pop()` |
+| `MatMN`       | Variable-sized M×N matrix — `clone()`, `equals()`, multiply, transpose |
+| `VERSION`     | Engine version string; also queryable from the console as `__NAPE_JS__` after any import (three.js-style) |
+
+### Helpers
+
+Higher-level building blocks layered on top of the engine — opt-in modules.
+
+| Helper                                           | Description                                                                                                                                                                                                                                              |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CharacterController`                            | Velocity-based 2D platformer controller — ground / slope / wall raycasts, coyote-time, one-way platforms, moving-platform inheritance, runtime-mutable `down` for radial-gravity worlds, frictionless walls by default (`wallFriction`) so a held direction key never pins the character to a wall                                                                  |
+| `RadialGravityField` / `RadialGravityFieldGroup` | Point-source gravity well — `inverse-square` / `inverse` / `constant` / custom falloff, `maxRadius` / `softening`, body filter, mass scaling. Replaces hand-rolled `body.force = ...` loops                                                              |
+| `ParticleEmitter` / `ParticleEmitterGroup`       | Physics-aware particle emitter — pooled bodies, continuous / periodic / manual spawning, configurable spawn / velocity patterns, deterministic RNG, lifecycle hooks (`onSpawn` / `onUpdate` / `onDeath` / `onCollide`), self-excluding filter generation |
+| `buildTilemapBody` / `meshTilemap`               | Greedy-meshed collision body from a 2D tile grid. 5–50× fewer shapes than one-polygon-per-cell. Includes `tiledLayerToGrid` and `ldtkLayerToGrid` parsers                                                                                                |
+| `TriggerZone`                                    | Sensor zone with `onEnter` / `onStay` / `onExit` callbacks — wraps the BEGIN/ONGOING/END `InteractionListener` plumbing                                                                                                                                  |
+| `fractureBody`                                   | Voronoi-based polygon shatter — `fragmentCount`, `explosionImpulse`, deterministic via `random`                                                                                                                                                          |
+| `createConcaveBody`                              | Decompose a concave outline into convex polygons and pack them into a single body                                                                                                                                                                        |
+
+### Serialization
+
+Full physics state snapshot/restore — suitable for save/load, replay, and multiplayer
+server↔client synchronization.
+
+```typescript
+import "@newkrok/nape-js";
+import { spaceToJSON, spaceFromJSON } from "@newkrok/nape-js/serialization";
+
+// Serialize
+const snapshot = spaceToJSON(space);
+const json = JSON.stringify(snapshot);
+
+// Restore (e.g. on another machine / after network transfer)
+const restored = spaceFromJSON(JSON.parse(json));
+restored.step(1 / 60);
+```
+
+The `/serialization` entry point is a separate export, but it still loads the engine
+(measured ~145 KB gzip bundled on its own) — the snapshot format is defined in terms
+of engine types. The snapshot captures bodies, shapes, materials, interaction
+filters, fluid properties, all constraint types (except `UserConstraint`), and compounds.
+Arbiters and broadphase tree state are reconstructed automatically on the first step.
+
+### Replay (Recorder + Player)
+
+Record a deterministic simulation and play it back later — same machine, another
+machine, days later. Built on top of `/serialization` plus `space.deterministic = true`.
+
+```typescript
+import "@newkrok/nape-js";
+import { Recorder, Player, encodeReplay, decodeReplay } from "@newkrok/nape-js/replay";
+
+// Record — user supplies the input payload type and the apply function.
+space.deterministic = true;
+const recorder = new Recorder<MyInput>(space, { keyframeEvery: 60 });
+for (let f = 0; f < 600; f++) {
+  recorder.recordFrame(readUserInput()); // null = no input this frame
+  applyUserInput(space); // user's own logic
+  space.step(1 / 60);
+}
+const replay = recorder.finish();
+const blob = encodeReplay(replay); // Uint8Array — store, share, transfer
+
+// Replay — anywhere, including a different machine on the same platform.
+const replay2 = decodeReplay<MyInput>(blob);
+const player = new Player(replay2, (input, space, frame) => {
+  if (input.fire) somebody.applyImpulse(new Vec2(0, -200));
+});
+const sp = player.restore();
+while (!player.finished) player.step();
+// player.stepTo(150) — random-access scrub via keyframes
+```
+
+The `/replay` entry point is a separate export but still loads the engine
+(measured ~145 KB gzip bundled on its own). The library is intentionally a thin
+layer: it owns the snapshot + input-log plumbing, and the user owns the
+`applyInput` callback. This keeps the replay deterministic as long as the
+callback is a pure function of `(input, space, frame)`.
+
+### Web Worker
+
+Run physics off the main thread for smooth rendering even with hundreds of bodies.
+
+```typescript
+import "@newkrok/nape-js";
+import { PhysicsWorkerManager } from "@newkrok/nape-js/worker";
+
+const mgr = new PhysicsWorkerManager({ gravityY: 600, maxBodies: 256 });
+await mgr.init();
+
+const id = mgr.addBody("dynamic", 100, 50, [{ type: "circle", radius: 20 }]);
+mgr.start();
+
+// Read transforms on the main thread (zero-copy with SharedArrayBuffer)
+function render() {
+  const t = mgr.getTransform(id);
+  if (t) drawCircle(t.x, t.y, t.rotation);
+  requestAnimationFrame(render);
+}
+render();
+```
+
+Uses SharedArrayBuffer for zero-copy transform sharing when COOP/COEP headers are
+present, with automatic `postMessage` fallback otherwise.
+
+<!-- npm:strip -->
+
+## Development
+
+```bash
+npm install
+npm run build      # tsup → packages/*/dist/ (ESM + CJS + DTS)
+npm test           # vitest — 6527 engine tests + 79 pixi-adapter tests
+npm run benchmark  # Performance benchmarks
+```
+
+Releases are automated: see [`docs/guides/workflow.md`](docs/guides/workflow.md#cicd-pipelines)
+for the per-package auto-release pipeline. Run
+`node scripts/ci/release.mjs --dry-run` from the repo root to preview what
+would publish on the next master merge.
+
+<!-- /npm:strip -->
+
+## Contributing
+
+Pull requests are welcome! Every PR is reviewed collaboratively with
+[Claude Code](https://www.anthropic.com/claude-code) using the playbook in
+[`.claude/skills/pr-review/SKILL.md`](.claude/skills/pr-review/SKILL.md).
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full review process,
+pre-push checklist, and what gets flagged as a blocker vs. a nit.
+
+## Support
+
+nape-js is developed and maintained in my own time. If it saves you some of
+yours, you can support the work:
+
+- [GitHub Sponsors](https://github.com/sponsors/NewKrok) — recurring or one-off
+- [Ko-fi](https://ko-fi.com/newkrok) — one-off
+
+Starring the repo and reporting bugs help just as much.
+
+## License
+
+MIT

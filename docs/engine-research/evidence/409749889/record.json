@@ -1,0 +1,109 @@
+{
+  "repository": "KilledByAPixel/LittleJS",
+  "repository_id": 409749889,
+  "commit": "002d5f53a918ac637b2d134757de2ced991d6faf",
+  "source_url": "https://github.com/KilledByAPixel/LittleJS/tree/002d5f53a918ac637b2d134757de2ced991d6faf",
+  "readme_path": "README.md",
+  "readme_sha256": "e8785e2d0691a75f2d4f750e8bbea713830f41f4214b43ae2dd663d9f985b609",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5bbfe3418ca718107b45170207caff066353ad52"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "88d36b0eebcc21969d1204714561fa573171fd76"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "ddeb128646d3dd6cd845d23379f3b80522b527a2"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "eef4bd20cf972fc2f3c7405fdae3fdcff80e59d4"
+    },
+    {
+      "path": "COPYRIGHT.txt",
+      "type": "file",
+      "sha": "d97f075c53c0b57defcb015a828cd481ea197e37"
+    },
+    {
+      "path": "FAQ.md",
+      "type": "file",
+      "sha": "7de98fd29d437329aac8abbece8f65c24ff58d12"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4e83675ea797d4df437b6c85d243ed449746b1fd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0e7186f2a092a8127658c2ed876a1d55776d57fe"
+    },
+    {
+      "path": "REFERENCE.md",
+      "type": "file",
+      "sha": "6396b47cf252135e151e5928ca49a535d0a0edcb"
+    },
+    {
+      "path": "bench",
+      "type": "dir",
+      "sha": "c027ea8a4bc16221f3ec74567c86516b92458886"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "a429ef8931e92621eddf81fcfb93e2630589db73"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9db4a671234d4f33545bdfca0e173a769adb97a7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "5935a455f0df1838aca5260fc59042e1697a40b3"
+    },
+    {
+      "path": "jsconfig.json",
+      "type": "file",
+      "sha": "02e4593e4a3abe014a04ba009245d3c8174f7b66"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8c72dc7546aca93b461ac066548c429ac5c360c0"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "c620b5080f41db47f72eec6b956a5f7e08299232"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "87a472aa8b28a379175c3fe326cc37b4a142f40e"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "62de31284f7f1df642a8f0e8906e1c37a62fc31f"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "7e0414e9c1f7f7e70b7ae45a91588f6e1e5e1be0"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies HTML5 engine; owned src/plugins, examples, tests and npm manifest.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

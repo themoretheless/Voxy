@@ -1,0 +1,89 @@
+{
+  "repository": "elliegoldstein/quicksilver",
+  "repository_id": 105381565,
+  "commit": "1856a8c72bf95197cb81e458bf381f2317372ff9",
+  "source_url": "https://github.com/elliegoldstein/quicksilver/tree/1856a8c72bf95197cb81e458bf381f2317372ff9",
+  "readme_path": "README.md",
+  "readme_sha256": "8df75261253bc6ad68ad9177e9b85c08efe259496f93d7be5f4a68cebb48871d",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b47f75b9cb774e4516dc679f4da1257dfff4c830"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8566092c24246472bb64089717bca91c8a18baef"
+    },
+    {
+      "path": "CHANGES.md",
+      "type": "file",
+      "sha": "d5a77d0581f7c6c7224e1e22f5b287823ad14ef7"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "103cc7df4f8dd9199b63282e5c737881be92efa8"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "6621cb584f46458d654dc5295a4af7d66a2d35dd"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "941e977f660728d70ac9785caf296df0216972af"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f0ad27221f7aa56bc172a2cef64eb7e4cac6ff7d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "faefe878bc21e84ab3e5b7e6cd0291d9809b1105"
+    },
+    {
+      "path": "RELEASE_CHECKLIST.md",
+      "type": "file",
+      "sha": "f35ef5f584bfb340e9c72f2d6ef28981a7c49b69"
+    },
+    {
+      "path": "create-release.sh",
+      "type": "file",
+      "sha": "7547b1af78a917ee35c5c1647f745096381857f4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "ff6021cf120177eec61633029f414ccb57f4a8b3"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "32640c7c60e3089d146cbc205f7bd1f09f8ff1dd"
+    },
+    {
+      "path": "logo.svg",
+      "type": "file",
+      "sha": "a45df8645e023b096a205fae336cff559618f7cb"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4a1e1aaea378be715e4e2159de51f48b6842dfc7"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "8a2bcf1e8bb62b6c18203128dbcc1e98ed791dcf"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies desktop/web Rust 2D framework; src/examples/Cargo build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "SkillerRaptor/hyper_engine",
+  "repository_id": 289650041,
+  "commit": "2356f9a2eda92e55a66009f1c51669ec06647865",
+  "source_url": "https://github.com/SkillerRaptor/hyper_engine/tree/2356f9a2eda92e55a66009f1c51669ec06647865",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "db6751e00418b75f7135842cb3d61e4707556e20"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "09d30fa0b9bd8ab932c02abdb9e0baa70ed6c2c5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5c0469d3a095d6e80e7414b6ecbd8aca3cd8a785"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "26f4d94cc8fc5ac61b11eafac189d33e3d8c0f86"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "645f41b1a07a0bd01b5a0d99fb6ff50e5de1cac4"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b7a3023196308721b67b364b02b8478292050c87"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "b596cc4cf79f3532279f5b5c7f488518bdc4d73a"
+    },
+    {
+      "path": "hyper_core",
+      "type": "dir",
+      "sha": "13c19990008e34ad552d875bbbf24b9f0b12d1bc"
+    },
+    {
+      "path": "hyper_engine",
+      "type": "dir",
+      "sha": "42c0f137725747f8e309b3b690d79719c8a72c34"
+    },
+    {
+      "path": "hyper_platform",
+      "type": "dir",
+      "sha": "0a422d8eaad776da3151e9b6f339215ea66c1483"
+    },
+    {
+      "path": "hyper_rhi",
+      "type": "dir",
+      "sha": "413611767fd0db0e5424a9374571b376c48871a0"
+    },
+    {
+      "path": "hyper_script",
+      "type": "dir",
+      "sha": "de20f0739befb09d308cf83d45afa109d53d6abd"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "ce394362e083fb8b411f47009ef8b393c1311771"
+    },
+    {
+      "path": "third_party",
+      "type": "dir",
+      "sha": "5b52dd4324272b843a2411a909b234158891cd1c"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "No pinned README; core/platform/RHI/script/test modules and CMake exist, but description alone insufficient to establish functioning game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

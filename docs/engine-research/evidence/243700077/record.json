@@ -1,0 +1,99 @@
+{
+  "repository": "karnkaul/LittleEngineVk",
+  "repository_id": 243700077,
+  "commit": "518eab7d3f6d1be2590a698100e34e31de487ecb",
+  "source_url": "https://github.com/karnkaul/LittleEngineVk/tree/518eab7d3f6d1be2590a698100e34e31de487ecb",
+  "readme_path": "README.md",
+  "readme_sha256": "3577fda01d5cee5a3dd7e77824a598401d8a8fadb227211a7236508d100068e8",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "b1e961cdba887028d31e114aceb4f407a85aee2b"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "2e746a6efdf07a162554419a979736606c37a402"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "c8d67b85d0af22df0fc295727ea0166f79ebe9bc"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "ef994e98865c41b2b854f4b53cb3c3aa64520659"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5a6afa82103524b69fb104c1f74616e7833bc5ce"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "ad8f8d9b3d6ba74b7869c9cdec889dd86f59645d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "57ef123140b2a624fe9bf3ba31febe060aff7f34"
+    },
+    {
+      "path": "CMakePresets.json",
+      "type": "file",
+      "sha": "22ad3593460ed1ea44f3c0485981b56707351b8f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8a54915e3fb5e74973837ac0890163bc69488892"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4adcc3ac198186a90b2c38d59fdb3f6d0cdc476f"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "10334dd91eb5f15eaeb7690a348312320b42fb87"
+    },
+    {
+      "path": "example",
+      "type": "dir",
+      "sha": "a9ca1ddd783e3696684c5507cafdc42e289a3b42"
+    },
+    {
+      "path": "ext",
+      "type": "dir",
+      "sha": "fff5b75f2947b11bef6e3af4d68e09551c2dcee8"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "aa1375f4fdecd49973aa1c27c232256a0be06135"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "1a116123a1b9272791a959a500faab31c06aa571"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "6ea0ca9c95d4adb5b47a0ed86281bee812f79ae8"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "1dd28bd4e219a1e0006011a79faeaef6c13efae6"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ Vulkan engine with optional entity/component/scene/runtime wrapper, audio, UI and collisions; engine and scene source directories present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,119 @@
+{
+  "repository": "petiaccja/Inline-Engine",
+  "repository_id": 52611604,
+  "commit": "8b28ad90132644bc051084b13169e68fd71e1a53",
+  "source_url": "https://github.com/petiaccja/Inline-Engine/tree/8b28ad90132644bc051084b13169e68fd71e1a53",
+  "readme_path": "README.md",
+  "readme_sha256": "6c4c15759bfdba823a4c3207938836d1f44cfccbae2e83743ad53db517954fe8",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "e6453b1c1ce843af49fdd8babe814de3edf22272"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f027e705983800d248d326a2c90931fc17d1f089"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0ead8852948f975e21d5a784f05c1b59c7a7c940"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "b35036f7fc8b45c8b95f522f91ebc05fc8129075"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "72d03701468a0c0d1a6e9a68a8b46d4154d7211e"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "0eef93e0a15acbc18a2c3255e7a51d43247d77bd"
+    },
+    {
+      "path": "CopyRuntime.cmake",
+      "type": "file",
+      "sha": "57ddf14311bdee2dea670a21036dfe259c2fe51e"
+    },
+    {
+      "path": "Doc",
+      "type": "dir",
+      "sha": "564f12aea8bca40979ebf04657e5eb870a8315ea"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "448ea3d56206a45c0ae98fda447096ca06423bf7"
+    },
+    {
+      "path": "Executables",
+      "type": "dir",
+      "sha": "20024ce6b884f621a2e858c3a0242b0e63a17bde"
+    },
+    {
+      "path": "Externals",
+      "type": "dir",
+      "sha": "c881dd4cf70379b5e1cebcc3d1400c3dad2c7135"
+    },
+    {
+      "path": "GameData",
+      "type": "dir",
+      "sha": "6cb19c0f9306d59976e712dd92d76edad36ac277"
+    },
+    {
+      "path": "GetPlatform.cmake",
+      "type": "file",
+      "sha": "2fd2c98049b155f8d8c6edfb9091977d9142261b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "3f81a8188367c040a2b47df64a482ef59e5896ef"
+    },
+    {
+      "path": "Paths.cmake",
+      "type": "file",
+      "sha": "052cb3ead25d5f93021875ddcc3656af89e6c3eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3969f34295caab130fadd2ee11b913fee71427b8"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "0f280e5bfb083a6e7dd7ad1e43be35163404c591"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "5819ef14b3f7585a73994f54263fe8b8940fdae2"
+    },
+    {
+      "path": "Utils.cmake",
+      "type": "file",
+      "sha": "d8650a8bdddaebe534a0b66406328e3fe6b583cb"
+    },
+    {
+      "path": "WholeArchive.cmake",
+      "type": "file",
+      "sha": "a238de5205ca3a79b79609e41dd1a8b85b4e2947"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "253f57e5cc926e2897170e201d231d22483b781a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native game engine; owned Engine/Executables and CMake build. Parallel computing claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

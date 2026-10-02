@@ -1,0 +1,97 @@
+{
+  "repository": "KorokEngine/Korok",
+  "repository_id": 94527217,
+  "commit": "e1c21c90d25720b3d8c8ff6250e6b52e39f97dde",
+  "source_url": "https://github.com/KorokEngine/Korok/tree/e1c21c90d25720b3d8c8ff6250e6b52e39f97dde",
+  "readme_path": "README.md",
+  "readme_sha256": "370ceffdab58fd621f51fccb3fe09e3c53919c9d672c9cb7aafa3e5d7d51f6ec",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "68729d6bfca686f3d9d83e2626273c2414854055"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0924c3a4ef3a1a413ce77fbb9cf183add7ca2675"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "47a3261692a669c79c0cea0426813e047c25c044"
+    },
+    {
+      "path": "anim",
+      "type": "dir",
+      "sha": "d42ba5ea8bc827b8b7eafcda73baef0b2fe6d6c2"
+    },
+    {
+      "path": "asset",
+      "type": "dir",
+      "sha": "ad8f3e28b4bc17c1950bb29aad981a2c6e02da16"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "d884e4ab2320b7e2f6f0580b3ea9ad556c4e273c"
+    },
+    {
+      "path": "dev.log",
+      "type": "file",
+      "sha": "a0017d98ea30384d37d79909f3f8221d5520fe26"
+    },
+    {
+      "path": "effect",
+      "type": "dir",
+      "sha": "fa2b7e69f5c1422cd9b4f386398127bbcea93c56"
+    },
+    {
+      "path": "engi",
+      "type": "dir",
+      "sha": "501a3f033b8c5cfd7f3e791a1b57db42f4e63aac"
+    },
+    {
+      "path": "event",
+      "type": "dir",
+      "sha": "45a6d5a7344f7a48295acbd981e5f169261690b8"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "1a0e1d9db6ed97e431f78cac5cc81a77f970b064"
+    },
+    {
+      "path": "gfx",
+      "type": "dir",
+      "sha": "01f52dc7fb0494af638d590a58bc9849479ddc4f"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "2361fb3b1d548d4dd2d64c6ca18aa4353a658ff7"
+    },
+    {
+      "path": "hid",
+      "type": "dir",
+      "sha": "fe8c944ac75879b5377c68553805908f094f4b81"
+    },
+    {
+      "path": "korok.go",
+      "type": "file",
+      "sha": "903b1ac0c6be05601950a21b8c519e373fc37d76"
+    },
+    {
+      "path": "math",
+      "type": "dir",
+      "sha": "4f94dd291c555ef3fff37b69cf728ad89684f70f"
+    },
+    {
+      "path": "webav",
+      "type": "dir",
+      "sha": "c9465ce77cef763e7a21935e926f3890b24e7117"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,104 @@
+{
+  "repository": "iiyo/WebStory-Engine",
+  "repository_id": 4849651,
+  "commit": "54391596b35b5a175bc6e397fe0eb99664caa30b",
+  "source_url": "https://github.com/iiyo/WebStory-Engine/tree/54391596b35b5a175bc6e397fe0eb99664caa30b",
+  "readme_path": "README.md",
+  "readme_sha256": "77075c04da29eb6ba55038146324337fc6c7f6f59ad5915b1797c23fa5e1bcd3",
+  "entries": [
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "5350ab69dd85b6bc2b69365d7096542612ed0be7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6380180f6ddb278473d7332d093dd4f1598e7980"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "8a531956b3684f2825992ab984c3ecdb067d488a"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "20835cc8cac555ebb3be44069e6c5e4b3eac5d64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "44a7320e870b11a5483e85a85a5baede06ec217b"
+    },
+    {
+      "path": "build.js",
+      "type": "file",
+      "sha": "27a48c31fdb6bf0359a22de0724f4d839b7fcf49"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "4aef41e6fbfb17599f2bf07328b7f484accc45e4"
+    },
+    {
+      "path": "docs.json",
+      "type": "file",
+      "sha": "98d20e4f0afa66c9943a8023a177a2e10adbfadb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "4f146497ba9e9b0c2d5a900578378dd4d54e39c3"
+    },
+    {
+      "path": "index.js",
+      "type": "file",
+      "sha": "58db75280a16fa5e2009b77eaef6926b0df238df"
+    },
+    {
+      "path": "index.md",
+      "type": "file",
+      "sha": "c03958d56d69ea0ca7e124c82d3455c1869f5cbf"
+    },
+    {
+      "path": "package.js",
+      "type": "file",
+      "sha": "131991be62978f047cc5d3e14e70d6671e3b5181"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d7093bbc1a14a4e606590ccf01595c25231a0cb1"
+    },
+    {
+      "path": "scripts.json",
+      "type": "file",
+      "sha": "a8d253443910ebfab620dd3a640f40bd33f8cb19"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c7df0284f600d84daef398410214f79f2d171311"
+    },
+    {
+      "path": "story",
+      "type": "dir",
+      "sha": "9b5bec572ecb145d61d433b26ccd87d0e1767fc5"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "41804c5621f6ad096c4ae565aed5f768fa3cdb48"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Browser XML visual-novel/story runtime with sources/build/tests; inactive development noted.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

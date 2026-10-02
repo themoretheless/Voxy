@@ -1,0 +1,74 @@
+{
+  "repository": "Porcupine-Factory/FirstPersonController",
+  "repository_id": 595382655,
+  "commit": "2306ceae38edbc38087105c1f3cf9dc566bc414a",
+  "source_url": "https://github.com/Porcupine-Factory/FirstPersonController/tree/2306ceae38edbc38087105c1f3cf9dc566bc414a",
+  "readme_path": "README.md",
+  "readme_sha256": "d14ace2d768b72a377b63f04b758708c3db926f09bfac745c185b5b15557ca1e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "cfddf5fa62d62cf58636d6ed1adbb0b25abdcdd1"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "66440ac07ba1b6d391efd7723a8aebc26f403e97"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8e10828f830137e90e64cbb07649fb528b469d7d"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "5290bd6e119ac61d535f27936288a78dd3ef0b3d"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "3d0118034fd568c6273ed6bfd692a1d66caa2c22"
+    },
+    {
+      "path": "Code",
+      "type": "dir",
+      "sha": "a4ccbfb04db67c527941df96370e90130bc99a4e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "438eeddc8a0356cbe20764c5bfa76ad0d28ff2df"
+    },
+    {
+      "path": "Registry",
+      "type": "dir",
+      "sha": "122430561c437ec18ee41eec94758dd3a090a234"
+    },
+    {
+      "path": "gem.json",
+      "type": "file",
+      "sha": "27aa43a1f42e2dd76e4ec4e2f42dbbbc46ec9e86"
+    },
+    {
+      "path": "preview.png",
+      "type": "file",
+      "sha": "c99cff46639ff29cb48e168985c813fe04fda8aa"
+    },
+    {
+      "path": "repo.json",
+      "type": "file",
+      "sha": "d5207ac9d7a97fc135bd05e316b6c5bbe6b5e352"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "O3DE first-person controller Gem requiring existing engine and optional Multiplayer Gem.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

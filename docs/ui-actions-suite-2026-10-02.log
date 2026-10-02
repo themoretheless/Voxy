@@ -1,0 +1,129 @@
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_scene)
+   Compiling voxy_input v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_input)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: method `queue_ui_action` is never used
+    --> crates/voxy_editor/src/lib.rs:1345:8
+     |
+ 306 | impl App {
+     | -------- method in this implementation
+...
+1345 |     fn queue_ui_action(&mut self, event: voxy_gameplay::UiActionEvent) {
+     |        ^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_editor` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.75s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-3dcdb8b03d36775c)
+
+running 64 tests
+test gizmo::tests::axis_hits_use_physical_viewport_coordinates ... ok
+test audio_play::tests::aggregate_input_and_pcm_admission_preserve_counters_on_rejection ... ok
+test camera::tests::both_projections_round_trip_after_orbit_pan_zoom ... ok
+test panel_focus::tests::invalid_reconciliation_preserves_live_focus_and_target ... ok
+test panel_focus::tests::repeats_after_focus_loss_cannot_reactivate_a_target ... ok
+test game_ui_input::tests::input_waits_for_visible_snapshot_and_cancels_capture_across_publications ... ok
+test frame_styles::tests::ui_owner_snapshot_tracks_activity_removal_and_reused_generation ... ok
+test game_ui_input::tests::keyboard_combines_activation_edges_and_revalidates_live_targets ... ok
+test panel_focus::tests::held_activation_cannot_jump_to_reindexed_object ... ok
+test game_ui_input::tests::live_pointer_release_revalidates_removal_disable_and_failed_layout ... ok
+test frame_styles::tests::styles_own_camera_material_and_light_and_reject_invalid_inputs ... ok
+test audio_play::tests::scoped_audio_denial_preserves_counters_and_scene ... ok
+test panel_focus::tests::surviving_identity_updates_action_and_context_changes_cancel ... ok
+test picking::tests::empty_triangle_bounds_do_not_hide_a_real_hit_behind ... ok
+test panel_focus::ui_scene_integration::ui_scene_validation_undo_and_play_restore_use_common_registry ... ok
+test prefab_authoring::tests::subtree_export_keeps_nested_links_overrides_and_authored_parent ... ok
+test tests::audio_inspector_edits_asset_and_parameters_with_validated_history ... ok
+test gpu_model::tests::deferral_wakes_on_source_budget_or_residency_change ... ok
+test gpu_model::tests::residency_drops_with_last_owner_and_dead_entries_are_pruned ... ok
+test packaged_game::tests::launch_rejects_traversal_and_nested_bootstrap_before_running ... ok
+test scene3d_tests::gpu_residency_requires_active_renderable_descendants ... ok
+test tests::audio_settings_reference_inspector_supports_default_and_history ... ok
+test tests::authored_motion_runs_in_fixed_loop_and_stop_restores_descriptor ... ok
+test tests::behavior_inspector_edits_undoes_and_rejects_conflicting_writers ... ok
+test scene3d_tests::static_gltf_hierarchy_material_camera_edit_and_persistence_share_resources ... ok
+test tests::deletion_restores_empty_scene_and_preserves_object_identity ... ok
+test tests::drag_is_one_undo_step_and_cancel_preserves_redo ... ok
+test tests::audio_component_crud_discovers_assets_and_rejects_competing_listener ... ok
+test tests::gizmo_pointer_gestures_constrain_axes_and_undo_without_changing_resource ... ok
+test tests::duplication_preserves_registered_behavior_and_activity_with_new_identity ... ok
+test tests::hierarchy_inspector_and_play_preserve_authoring_history ... ok
+test tests::mixer_inspector_round_trip_history_and_duplicate_bus_rollback ... ok
+test tests::mouse_selection_uses_transforms_depth_activity_and_restored_handles ... ok
+test audio_reload::tests::replacement_budget_rejects_candidate_and_retains_old_publication ... ok
+test scene3d_tests::camera_and_light_without_model_round_trip_and_unknown_assets_reject ... ok
+test tests::pending_play_cancel_keeps_authoring_history_and_simulation_stopped ... ok
+test tests::native_play_simulation_ticks_and_stop_preserve_authoring ... ok
+test scene3d_tests::textured_static_import_rejects_truncation_and_observes_external_dependencies ... ok
+test audio_settings::tests::manifest_relocation_rejects_stale_settings_save_until_explicit_reload ... ok
+test tests::shutdown_joins_workers_even_if_simulation_rejects_scene ... ok
+test tests::play_pointer_path_activates_runtime_ui_and_stop_cancels_capture ... ok
+test tests::reload_preserves_scene_instance_and_edited_transform ... ok
+test tests::shutdown_joins_workers_after_behavior_destroy_panics ... ok
+test tests::physics_component_inspector_crud_history_and_play_use_authored_descriptors ... ok
+test tests::transform_inspector_rejects_invalid_physics_pose_without_history_change ... ok
+test tests::playable_fixture_persists_physics_and_rejects_invalid_parenting_or_scale ... ok
+test tests::standalone_uses_fixed_loop_without_preview_spin_or_authoring_controls ... ok
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ignored, requires a real GPU adapter and local TrueType font
+test ui_draw::tests::backgrounds_follow_scene_painter_order ... ok
+test tests::authoring_file_round_trip_preserves_ids_transforms_and_resource_references ... ok
+test ui_live::presentation_tests::upload_is_not_input_publication_until_native_frame_acknowledgement ... ok
+test ui_text::tests::font_count_budget_rejects_before_any_file_reads ... ok
+test ui_live::tests::finished_panic_does_not_lose_unfinished_worker_ownership ... ok
+test panel_focus::integration_tests::real_panels_and_native_key_adapter_share_focus_and_authoring_actions ... ok
+test scene3d_tests::multi_material_nodes_preserve_parent_transforms_and_all_six_min_filters ... ok
+test ui_draw::tests::glyph_geometry_clips_uvs_and_rejects_stale_owner_publications ... ok
+test ui_text::worker_tests::worker_publication_failure_retains_old_text_and_source_observations ... ok
+test prefab_authoring::tests::editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene ... ok
+test ui_text::tests::observed_logical_font_unicode_runs_share_atlas_and_invalid_font_retains_prior ... ok
+test scene3d_tests::incompatible_gltf_hierarchy_reload_retains_resource_and_edited_owners ... ok
+test import::lod_model_tests::model_certificate_identity_and_dependency_publication ... ok
+test ui_text::budget_tests::repeated_font_content_still_counts_each_retained_input ... ok
+test tests::multiple_resources_reload_independently_and_round_trip ... ok
+test tests::play_imports_scene_audio_advances_pcm_and_stop_releases_session ... ok
+
+test result: ok. 63 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.75s
+
+     Running unittests src/lib.rs (target/debug/deps/voxy_gameplay-0dbfa528f762d184)
+
+running 23 tests
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running unittests src/lib.rs (target/debug/deps/voxy_input-f56f0e6d3a0041ee)
+
+running 6 tests
+test tests::logical_activation_preserves_physical_hold_and_fixed_frame_edges ... ok
+test tests::axis_rebinding_focus_and_disconnect ... ok
+test tests::analog_dead_zone_rejects_drift_rescales_and_preserves_rebinding ... ok
+test tests::disconnection_releases_only_its_device_and_focus_cancels_pending_taps ... ok
+test tests::invalid_bindings_and_capacity_preserve_previous_configuration ... ok
+test tests::taps_repeat_and_multiple_bindings_preserve_edges ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

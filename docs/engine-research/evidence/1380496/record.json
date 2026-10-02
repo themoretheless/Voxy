@@ -1,0 +1,134 @@
+{
+  "repository": "HaxePunk/HaxePunk",
+  "repository_id": 1380496,
+  "commit": "957d9403f138af04afbe9d6b4fc5ba533c3eb29a",
+  "source_url": "https://github.com/HaxePunk/HaxePunk/tree/957d9403f138af04afbe9d6b4fc5ba533c3eb29a",
+  "readme_path": "README.md",
+  "readme_sha256": "999207328e9b603f38a8372372ec7bb5931d143ef00102e593ce758ad0f23705",
+  "entries": [
+    {
+      "path": ".codeclimate.yml",
+      "type": "file",
+      "sha": "1b5c400a2e0606971baf778db7b82d85debd68a8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ed61c86333b280d20ed1552bd9151d35ac18be99"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "2c2e83395b75088456a24f50b3e59456b515ad45"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "9a4e2f9f6ba64c7d0918befe08ee7031d2075187"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "77f3600a38c941b018d194779e82b25f3da0e5ea"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "9f1e853a5940c0f10557c4adffcb580fa3b11302"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4fa6f6f547fc9c9b0dfa869efde2e6c3eef54f70"
+    },
+    {
+      "path": "MIGRATION.md",
+      "type": "file",
+      "sha": "6c95a181cd5dd1d195f36af56d459bee50e20c18"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "d467d59781fbb6049119eaa822ad01db81547480"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c7bd3b7b537def31a84cf977ad01893a8ccc7d9c"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "aff26d3b003866d2b64dd4848949192e81c01ac0"
+    },
+    {
+      "path": "backend",
+      "type": "dir",
+      "sha": "4c78c7179502ff1de1cc9d9452014198b7ceae96"
+    },
+    {
+      "path": "checkstyle.json",
+      "type": "file",
+      "sha": "de8663b27ebee2517a17d5e6cecd2d519a898c01"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "ae4ea7d7ab72ff426e7e0c959aad53bc87719148"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "083f9a453664c011e1d9c359f4441bcbca9bfbec"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "9655fa9b87977d02588e728aa90d46913c09ef30"
+    },
+    {
+      "path": "haxelib.json",
+      "type": "file",
+      "sha": "5922246a6683c25cfe25f8ef187ba498bc1762e1"
+    },
+    {
+      "path": "haxepunk",
+      "type": "dir",
+      "sha": "08278629f9c625dd35207381db95497e76fc6282"
+    },
+    {
+      "path": "include.xml",
+      "type": "file",
+      "sha": "8d0ef6db95ddd2c1adfa73909d1a67225ea69d7e"
+    },
+    {
+      "path": "run.n",
+      "type": "file",
+      "sha": "9646945af4f8338766c5cd31e30eee4d24f56319"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "4ba5a42014e9e0fff17faea5c3f4188d85945ee9"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "512aa3574cd007ac79ecbba6a39cd98666ab1a15"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "26424c58832578dc58baaf35f018177585e983c0"
+    },
+    {
+      "path": "travis-build.sh",
+      "type": "file",
+      "sha": "c96064bec57945347012eb064bd02463f8ca41bd"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Haxe 2D engine based on FlashPunk; owned haxepunk/backend source with Haxe/build/examples.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

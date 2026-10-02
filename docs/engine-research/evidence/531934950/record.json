@@ -1,0 +1,154 @@
+{
+  "repository": "jrouwe/JoltPhysics.js",
+  "repository_id": 531934950,
+  "commit": "3e3b5ff0bae3db323395d72fe1ae1ca693dedc17",
+  "source_url": "https://github.com/jrouwe/JoltPhysics.js/tree/3e3b5ff0bae3db323395d72fe1ae1ca693dedc17",
+  "readme_path": "README.md",
+  "readme_sha256": "327ab9e9ef0a4e8d4c28e4247ff9b675e4b182bb087d6545d71366b82c63f7a7",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ef9dce0fee8bd2f4e7e989d46391d347bf7f05c2"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "4325f7c92b2b2e3d240aa7189e537592ee56af02"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fe09cfff33b90ee8bd4cb9be4717e94ab95010fb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4066bcf6df7edc17567ed4a78f1fd765663a0ae5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "461a2bce7f7813d4d10471ffff004ecb8611526e"
+    },
+    {
+      "path": "Examples",
+      "type": "dir",
+      "sha": "42711eecea2c563d24fc75914ecd395a59b9980b"
+    },
+    {
+      "path": "JoltJS-DebugRenderer.h",
+      "type": "file",
+      "sha": "e013bb1dde5addbadddcde852eb66f315b471613"
+    },
+    {
+      "path": "JoltJS-DebugRenderer.idl",
+      "type": "file",
+      "sha": "5cf90cb7e4df74c611fdb7a9780dd29a251cb656"
+    },
+    {
+      "path": "JoltJS.h",
+      "type": "file",
+      "sha": "12b675a803aa42158656f1e8be0a8098de4fe4ae"
+    },
+    {
+      "path": "JoltJS.idl",
+      "type": "file",
+      "sha": "c2e299b75fcc0ea0f36cdd3c50930ffc1463b8b7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fc2eded1031a0c0686573b6cfd6146b6a3c8e82a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cac9688e0a9ae3ecaa91821c2afa23d962773d3e"
+    },
+    {
+      "path": "asm",
+      "type": "dir",
+      "sha": "9b5f38575ccd8a0e23f3e92febc4cc547daa7d7d"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "74b84ef6dade2fc9211ea2c3f7edda3f57fc846a"
+    },
+    {
+      "path": "ci",
+      "type": "dir",
+      "sha": "69ee8e9515ab5de67be44e7e05bbff5e11b406b5"
+    },
+    {
+      "path": "debug-wasm-compat-multithread",
+      "type": "dir",
+      "sha": "1c62eb868aeeb07468e4ad7407718f60fd7141be"
+    },
+    {
+      "path": "debug-wasm-compat",
+      "type": "dir",
+      "sha": "e5d4bf673512c2c86b8c4794cab8b9b91e38e750"
+    },
+    {
+      "path": "front-matter.js",
+      "type": "file",
+      "sha": "4af1ff373fe803a4fd4452702938a0d3909d24cc"
+    },
+    {
+      "path": "helloworld",
+      "type": "dir",
+      "sha": "d916592898aeda12d5d36779d35c62d7ddaf0878"
+    },
+    {
+      "path": "helpers.js",
+      "type": "file",
+      "sha": "a71e22e076bd3662515f4df05664a812da2a4422"
+    },
+    {
+      "path": "multi-threaded.js",
+      "type": "file",
+      "sha": "7e8356936db7fefb1bf7b9eaf92b7486194904ef"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "fa1071cdbee8638b27a5a1ddf399f99112a13ebf"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "3af4e0ac598d746ea5bb61759e57e21996529a53"
+    },
+    {
+      "path": "serveexamples",
+      "type": "dir",
+      "sha": "b8da856494078fcc9bcfbd9c089fec02e1a214ef"
+    },
+    {
+      "path": "wasm-compat-multithread",
+      "type": "dir",
+      "sha": "8a1ac80d0b6d9f5368d7b0f09ca06072fa79a6ae"
+    },
+    {
+      "path": "wasm-compat",
+      "type": "dir",
+      "sha": "12c4688911f649ea1acdde2a44f94dbeeea4988b"
+    },
+    {
+      "path": "wasm-multithread",
+      "type": "dir",
+      "sha": "266c5a012d3f156217523ea74ebaea2343ede12a"
+    },
+    {
+      "path": "wasm",
+      "type": "dir",
+      "sha": "58cf8791c053d9eeea3aa7d1ea97509db3a5db09"
+    }
+  ],
+  "classification": "bindings",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Emscripten physics library port; binding headers and CMake/wasm build, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

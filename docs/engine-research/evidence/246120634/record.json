@@ -1,0 +1,99 @@
+{
+  "repository": "OverShifted/OverEngine",
+  "repository_id": 246120634,
+  "commit": "a42dd09b09e913cd18aa3cd0c9c72d9f76af3eae",
+  "source_url": "https://github.com/OverShifted/OverEngine/tree/a42dd09b09e913cd18aa3cd0c9c72d9f76af3eae",
+  "readme_path": "README.md",
+  "readme_sha256": "c8a37c323138d2e0c6eca04ff78e8a609df2bcf05a3f70e6ce7a23d44b048eee",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ebc5bf6f67878f63e34040999a816a0d947db6ec"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "beed46a6d6b0507de2234ade6529ea8c4cac4ada"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cb7b92d7cc3c5d55e95d6acd390ff99cd4ffa6b3"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "453d9be1c3c2f1d263a42e9bcbc2828765c44b8c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d23916090c9c3623b27a100fea82cb8b09907b9d"
+    },
+    {
+      "path": "GenerateProjectFiles.bat",
+      "type": "file",
+      "sha": "0d1f502f5273fc4680fd2707abb3636346f87e95"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c3a4d5780074a7cb5f561d1e5e63c88578495e3d"
+    },
+    {
+      "path": "OverEditor",
+      "type": "dir",
+      "sha": "41c7ac5b58175ae83b38c027e91d092ff177d67b"
+    },
+    {
+      "path": "OverEngine",
+      "type": "dir",
+      "sha": "07ec944551ca21967a32f80419e224359a2d4455"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ba0877515329a4ca749a4b61d247c772db341ce5"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "ab821b20c8ea9eb4b2fdf9e89bf2e943726db59d"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "9f0d17ce120e55fdbcd2fb282e1e2ec5374f3698"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "c69940c20eeb45b7a2b5b462992c5278bebe95b2"
+    },
+    {
+      "path": "run-editor.sh",
+      "type": "file",
+      "sha": "93eaed09b7da0bc40a934ccb8db4b38f4f9c74c9"
+    },
+    {
+      "path": "run-sandbox.sh",
+      "type": "file",
+      "sha": "63ad40a92f6737190c1f3700b22c6876c5ad7f8e"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "8cd6c104b2e8e804fcd86b7bccb5f349d2123611"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "096cde891ef01678227c29e3f39ac4cc90475278"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native game engine; owned OverEngine/Editor and CMake/premake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

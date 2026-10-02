@@ -1,0 +1,219 @@
+{
+  "repository": "OpenRA/OpenRA",
+  "repository_id": 959908,
+  "commit": "7d57605bca2cbe963068d42505e00072afe19868",
+  "source_url": "https://github.com/OpenRA/OpenRA/tree/7d57605bca2cbe963068d42505e00072afe19868",
+  "readme_path": "README.md",
+  "readme_sha256": "1bec5138e3033212ed382167a655e80cffbed9cba35cb8d84e962ecca2da3c2a",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ae2ad1f875fd776f1875c68fc70bd01669672ea8"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "949fc967715002b4d8e7b8c82282b21a3e708683"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "382f5b0b601a99bd58a451f72d60a0e606318947"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cc85d4c0489e55fa04e5f150f9a160bb272ba9ce"
+    },
+    {
+      "path": ".kateproject",
+      "type": "file",
+      "sha": "d6deb54bfa1916afd0892c8d026e595da35c7b27"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "9fbff846c9d60bf96425e77dad10e55f8b7a097b"
+    },
+    {
+      "path": "AUTHORS",
+      "type": "file",
+      "sha": "307a4fdb60216dc5e23080981289ef3f8842612e"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "3a7d532a0f927b00232e4565fcfab77b33215d10"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "f330c21a31c0b2b89fe2af5dba98c3f5b110739d"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "e60008693e017bec1b4eb49c84be3898e26fcf2a"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "020388e5aadd67a24aa367343c8d21850e9c398c"
+    },
+    {
+      "path": "INSTALL.md",
+      "type": "file",
+      "sha": "08d45a6358f4c48c4a99e5db430ebd3e2ef73c9d"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "d08c495387df9960d0cb763c757dd64c3f98423b"
+    },
+    {
+      "path": "OpenRA.Game",
+      "type": "dir",
+      "sha": "acce6483a1576424b921c7010b005b440696e5e9"
+    },
+    {
+      "path": "OpenRA.Launcher",
+      "type": "dir",
+      "sha": "76b77253c34bd1174548d2707433fa8d7f75efcb"
+    },
+    {
+      "path": "OpenRA.Mods.Cnc",
+      "type": "dir",
+      "sha": "7104f7b30391395d48ddcd7dcefcbd6b954fd76f"
+    },
+    {
+      "path": "OpenRA.Mods.Common",
+      "type": "dir",
+      "sha": "d9c0ab8ed52523289afd59e9f10ebb888f404070"
+    },
+    {
+      "path": "OpenRA.Mods.D2k",
+      "type": "dir",
+      "sha": "3af59f665911ccb48b360113ad5a8f7d04d131d7"
+    },
+    {
+      "path": "OpenRA.Platforms.Default",
+      "type": "dir",
+      "sha": "6336fb2b4937ccb77297c6935b0b244c2592f02f"
+    },
+    {
+      "path": "OpenRA.Server",
+      "type": "dir",
+      "sha": "65db1915878088eff1dd8bf27ab54fd20c75cfab"
+    },
+    {
+      "path": "OpenRA.Test",
+      "type": "dir",
+      "sha": "e829664a6f288e32226d74e5aa008f0bb1730afb"
+    },
+    {
+      "path": "OpenRA.Utility",
+      "type": "dir",
+      "sha": "9a2cbade4130165c4311ee305052ab19e6034110"
+    },
+    {
+      "path": "OpenRA.WindowsLauncher",
+      "type": "dir",
+      "sha": "c967412c6915699d392da30ab95c62dcd05ed87f"
+    },
+    {
+      "path": "OpenRA.slnx",
+      "type": "file",
+      "sha": "ef5f444144a50c76f8e3957513026a74f5362655"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9c21451a478a5935214d814074fbb419d31a1ac3"
+    },
+    {
+      "path": "VERSION",
+      "type": "file",
+      "sha": "5c0d013319a50dbdb43945395dde65355f119d68"
+    },
+    {
+      "path": "configure-system-libraries.sh",
+      "type": "file",
+      "sha": "7112deb98e529dd5dd68fec4c306760446cfe49b"
+    },
+    {
+      "path": "fetch-geoip.sh",
+      "type": "file",
+      "sha": "54a5c32acc97ab67f93604f4d99285521ee60dbc"
+    },
+    {
+      "path": "global mix database.dat",
+      "type": "file",
+      "sha": "273db510a3284d2dc533954e5ee3a909d6153a0e"
+    },
+    {
+      "path": "glsl",
+      "type": "dir",
+      "sha": "087cdf13644aa93c1fe5cfdc2d1e04123a86d4ca"
+    },
+    {
+      "path": "launch-dedicated.cmd",
+      "type": "file",
+      "sha": "a41c75fa740af484edc8cb288e59a19a313c31fc"
+    },
+    {
+      "path": "launch-dedicated.sh",
+      "type": "file",
+      "sha": "2b2753102d32355fba14ad7670f75634ee49ab26"
+    },
+    {
+      "path": "launch-game.cmd",
+      "type": "file",
+      "sha": "4b7b9e40b3d4046bbac29b06ac1f7e93a7b7992f"
+    },
+    {
+      "path": "launch-game.sh",
+      "type": "file",
+      "sha": "980306c3d5321e6ba45a235ac32988012fa719bb"
+    },
+    {
+      "path": "make.cmd",
+      "type": "file",
+      "sha": "92b05b70693ac3d9dc2dc23bc51726d29f516bf3"
+    },
+    {
+      "path": "make.ps1",
+      "type": "file",
+      "sha": "9ff919490da64484d8b20d438db73b4586420c53"
+    },
+    {
+      "path": "mods",
+      "type": "dir",
+      "sha": "e2e6821cfd3afda30924937dcd9038c7ed385a5d"
+    },
+    {
+      "path": "omnisharp.json",
+      "type": "file",
+      "sha": "0bad48f52af4a83c11b7b57cb79f15a4ea4bcbfe"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "4d2c67128782d106935842ebd17ec36105bfa5ff"
+    },
+    {
+      "path": "utility.cmd",
+      "type": "file",
+      "sha": "33867a147c7297e37251128a056db379039b84b8"
+    },
+    {
+      "path": "utility.sh",
+      "type": "file",
+      "sha": "10bc7e080aa30626235d0d8f52b77d5329f81429"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies an RTS engine; Game/Server/platform source, mod definitions and solution build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

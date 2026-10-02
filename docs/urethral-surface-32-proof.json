@@ -1,0 +1,56 @@
+{
+  "specimen": "urethra",
+  "sectors": 32,
+  "stages": [
+    {
+      "specimen": "urethra",
+      "sectors": "32",
+      "stage": "rest",
+      "lumen_volume_m3": "8.427901911097e-8",
+      "tip_z_m": "2.000000000000e-2",
+      "min_j": "1.000000000000e0",
+      "residual_n": "7.346253860538e-17",
+      "min_pair_distance_m": "1.800000000000e-3",
+      "barrier_energy_j": "0.000000000000e0"
+    },
+    {
+      "specimen": "urethra",
+      "sectors": "32",
+      "stage": "compressed",
+      "lumen_volume_m3": "4.226948800195e-8",
+      "tip_z_m": "2.017860953239e-2",
+      "min_j": "6.600590287050e-1",
+      "residual_n": "9.875381744747e-8",
+      "min_pair_distance_m": "2.290227996660e-4",
+      "barrier_energy_j": "0.000000000000e0"
+    },
+    {
+      "specimen": "urethra",
+      "sectors": "32",
+      "stage": "barrier",
+      "lumen_volume_m3": "6.815627760260e-8",
+      "tip_z_m": "1.516271652903e-2",
+      "min_j": "8.121403248572e-1",
+      "residual_n": "9.981695607984e-8",
+      "min_pair_distance_m": "1.488836721998e-3",
+      "barrier_energy_j": "8.581659805002e-8"
+    },
+    {
+      "specimen": "urethra",
+      "sectors": "32",
+      "stage": "released",
+      "lumen_volume_m3": "8.427881042453e-8",
+      "tip_z_m": "2.000046742155e-2",
+      "min_j": "9.999455705171e-1",
+      "residual_n": "9.353161698024e-8",
+      "min_pair_distance_m": "1.799994483947e-3",
+      "barrier_energy_j": "0.000000000000e0"
+    }
+  ],
+  "meshes_sha256": {
+    "rest": "c750de3d8341458d71db5d81e0ec79b8d445d9599bbdb180659e83a8900bc2a0",
+    "barrier": "95f40f38fb9662081fd8cd8900094870f4e1bf069eb755d2aa2131a44dd200f1",
+    "released": "9d7698b417467573a8b5b9a5be86cfbe7d1eb4b665062a49a3fd9ccb908c3576"
+  },
+  "scope": "synthetic constitutive parameters; only angular refinement; full-body registration not verified"
+}

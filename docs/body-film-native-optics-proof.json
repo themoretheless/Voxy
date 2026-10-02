@@ -1,0 +1,41 @@
+{
+  "command": "target/release/examples/surface_film --smoke --motion",
+  "session": 14241,
+  "exitCode": 0,
+  "backend": "Metal Apple M4 Max",
+  "observedOutput": [
+    "FILM OPTICAL SMOKE PASS: 120 presented layers, temporal=true, resize_stages=3",
+    "FEMALE SKIN SMOKE PASS: 122 nonlinear steps with rendered surface deformation",
+    "SCENE SMOKE PASS: 120 presented frames"
+  ],
+  "checks": {
+    "presentedFrames": 120,
+    "filmLayerPresentedFrames": 120,
+    "secondaryTissueSteps": 122,
+    "motionTemporalFrameIdentityChecks": "passed",
+    "resizeStagesBitmask": 3,
+    "releaseBuild": "passed",
+    "editorCheck": "passed",
+    "localDeformationFocusedTest": {
+      "passed": 1,
+      "failed": 0,
+      "session": 97917
+    }
+  },
+  "sha256AfterRun": {
+    "crates/voxy_app/src/scene_app.rs": "cab71b3bfa3f56fc28170642d54ddefb649e083a698ed83b91dcaf5aec88a806",
+    "crates/voxy_render/src/surface.rs": "723f83c796d8502068f8c96084541476eea159af3f0f7ef4e769bdce9e1c6744",
+    "crates/voxy_render/src/scene.rs": "93c71b6ea8cd9328dd354993773a5d89680232e145f761d58dfca81effa1228c",
+    "crates/voxy_app/examples/surface_film.rs": "7cb467d63a861e1e596f6bde8ba72fb5bd05222eb2b47aea5104b2f75f7e0388",
+    "crates/voxy_app/src/volume_regions.rs": "ea9223ba7e6879f22aa6e3004a755631f8e01c37b6596fe7641c63be09ded180",
+    "crates/voxy_app/src/female_demo.rs": "79ef54e9602f6f04730d9cc99156350bd115b8bf74e6a82523f1c65499d97080",
+    "target/release/examples/surface_film": "81a73affedae522cb072a33ed0d8c7e8c2bf46635f2e19d9fe72053595b21fe0"
+  },
+  "limitations": [
+    "No native screenshot or close-up pixel validation",
+    "No GPU completion/readback comparison of temporal color",
+    "No physiologically calibrated optics",
+    "Current source hashes recorded after execution, not a frozen compilation manifest",
+    "Full anatomy, liquid, contact and material development plan remains incomplete"
+  ]
+}

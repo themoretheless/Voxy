@@ -1,0 +1,79 @@
+{
+  "repository": "benpollarduk/NetAF",
+  "repository_id": 623992545,
+  "commit": "4edb4fdc385d96fc3b2b2d5bd34ddf0985f1f020",
+  "source_url": "https://github.com/benpollarduk/NetAF/tree/4edb4fdc385d96fc3b2b2d5bd34ddf0985f1f020",
+  "readme_path": "README.md",
+  "readme_sha256": "e52a8953ab8c472e18eca31f7047ec9b96dd609e9a2d0e4cd1ff264e5f318fec",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fcb9204b3a0afdf985fd7a86ccb803a98ad7da48"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f8c606c6001267236d221bc42ed3dabbcfce303d"
+    },
+    {
+      "path": ".nuget",
+      "type": "dir",
+      "sha": "ed4c14f0efff2d8b01c8e86383306b2063a704d0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6e33415625588865bbf35033ef46943f3a53b252"
+    },
+    {
+      "path": "NetAF.Example.Blazor",
+      "type": "dir",
+      "sha": "ab370f467a71dbe9392f21b6cecaeb77be99da60"
+    },
+    {
+      "path": "NetAF.Example.Console",
+      "type": "dir",
+      "sha": "02b98111f44b31909f421337f022e6fa91bfd44d"
+    },
+    {
+      "path": "NetAF.Example.WPF",
+      "type": "dir",
+      "sha": "9ecda7cf9872612f3d067137f613dc84861d411a"
+    },
+    {
+      "path": "NetAF.Example",
+      "type": "dir",
+      "sha": "6d41f2af1a164be5310ab859364093766c25efd7"
+    },
+    {
+      "path": "NetAF.Tests",
+      "type": "dir",
+      "sha": "36275e2671257242240c05ecd5593dcc60fd8c46"
+    },
+    {
+      "path": "NetAF.sln",
+      "type": "file",
+      "sha": "ee6e727fcd3f34c5baa9c83e595b03119447b03e"
+    },
+    {
+      "path": "NetAF",
+      "type": "dir",
+      "sha": "5826e1385dd88d1d6967c5f1adc710c5204c6c40"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0f79cc11e1b9b95ba6733ef2662bc589e0cb1eb6"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d0bab76a5d58c358277aff6fd0713e6ed4ca329d"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Text adventure .NET library with console/Blazor/WPF examples, not a graphical game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

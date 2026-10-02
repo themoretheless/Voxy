@@ -1,0 +1,89 @@
+{
+  "repository": "gents83/INOX",
+  "repository_id": 292375708,
+  "commit": "2c18bcacb71dcca1f06fb9da8b6ee2cb3e439d39",
+  "source_url": "https://github.com/gents83/INOX/tree/2c18bcacb71dcca1f06fb9da8b6ee2cb3e439d39",
+  "readme_path": "README.md",
+  "readme_sha256": "96a497d644bdda85be4da26609ef3925fc40d1c912b7e6fb139939af123e9904",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "2d13ecd90c3eb7844298d033b52fa9e32da5994e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "51d80faf4490b4dc0979c080af9cae8c2e939f60"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "423d012c9e39f47f326854341464be764b0f67dd"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "5ae93cb3d1a050b996ee2a9f4649f57f70aade1c"
+    },
+    {
+      "path": "INOX.code-workspace",
+      "type": "file",
+      "sha": "dfc99d4575153712d1560cfb641906cab212bd02"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4df55d3baf7d143b6be57863fae76335f286a995"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f01a1c498582d3101c8321fa51b1a50603d672a1"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "8e49bef9d8e972ca60b038310393548726a3912d"
+    },
+    {
+      "path": "data_raw",
+      "type": "dir",
+      "sha": "dce095156dc2452ffe8651facd9d6325595d1c69"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0b92bb622da9fe0aed394f49536b8da0a621dcd9"
+    },
+    {
+      "path": "server.py",
+      "type": "file",
+      "sha": "37c9ecf9577c3b081fafc83df18ca0a09ae7b416"
+    },
+    {
+      "path": "start_inox_viewer.bat",
+      "type": "file",
+      "sha": "cd869bf0fc167f49302881b02bba03a7a3a7b381"
+    },
+    {
+      "path": "start_server.bat",
+      "type": "file",
+      "sha": "0162e82ca39fe17b3939e62d3247c5a44810abc2"
+    },
+    {
+      "path": "test_wgpu.html",
+      "type": "file",
+      "sha": "aa2707c7efe24c49a91f7797083ae6cf20bfa9c1"
+    },
+    {
+      "path": "web",
+      "type": "dir",
+      "sha": "d3b0b0e5f6bc1bd93e55adef915995ca76ee6c78"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Rust engine with Blender as external editor, crates and runtime launch workflow; broad platform/streaming goals are not treated as verified features.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

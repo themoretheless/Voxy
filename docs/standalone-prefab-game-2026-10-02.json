@@ -1,0 +1,7 @@
+{
+  "binary_sha256": "374a3523d884e46a54df8b3bdb4faddaeeb7a78d93c2b0580ec98bfbcb6c88f8",
+  "standalone_log": "MODEL PUBLISHED frames=0 first_x=0 asset=mesh\nGAME CHECK PASS ticks=120 objects=2 prefab_instances=2",
+  "corrupt_prefab_error": "Error: Json(Error(\"expected value\", line: 1, column: 1))",
+  "corrupt_model_error": "Error: \"game asset mesh failed: OBJ line 1: unsupported OBJ directive\"",
+  "scope": "actual standalone executable, nested composition, model import, 120 fixed steps and failure diagnostics; game-check alone makes no window/GPU presentation claim"
+}

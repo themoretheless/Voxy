@@ -1,0 +1,104 @@
+{
+  "repository": "storm-devs/captain-blood",
+  "repository_id": 571174439,
+  "commit": "18d8fecce3d918b6e20a7ee2c330cf5a20d864c8",
+  "source_url": "https://github.com/storm-devs/captain-blood/tree/18d8fecce3d918b6e20a7ee2c330cf5a20d864c8",
+  "readme_path": "README.md",
+  "readme_sha256": "c3564773981d7415c7b8c7f314c39c08c8caf0262218ecb942f824231df46a76",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f09bd3df6f3208699ed959b6261d8430be2ce04f"
+    },
+    {
+      "path": "ArcadeSea",
+      "type": "dir",
+      "sha": "0fe6b1bd17e56e2eabba05fb82827fda729fce8e"
+    },
+    {
+      "path": "Build",
+      "type": "dir",
+      "sha": "53284733e44e23df32f74da1968a518ee1d4de71"
+    },
+    {
+      "path": "Character",
+      "type": "dir",
+      "sha": "cddd0678f9d5268d4f0b15810cc80b2d9830eb69"
+    },
+    {
+      "path": "DRIVE_V3.sln",
+      "type": "file",
+      "sha": "a996d205f98cf923ce331dd03fa3bdbcd9addcdc"
+    },
+    {
+      "path": "ENGINE",
+      "type": "dir",
+      "sha": "0133dcedd78fcb6813dc9bd61e91fa79ee59d9dd"
+    },
+    {
+      "path": "Editors",
+      "type": "dir",
+      "sha": "3b1c4945511105715c51e0b417a9beadb530785e"
+    },
+    {
+      "path": "Game",
+      "type": "dir",
+      "sha": "4a7d7a83b8429d4613074645add25239e0c3c95b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "MissionEditor",
+      "type": "dir",
+      "sha": "43afbaf9b457543fff253856be9bdf8ea86796f4"
+    },
+    {
+      "path": "Particles",
+      "type": "dir",
+      "sha": "c4d114dd23ddcad9ecec0e725126af225758e944"
+    },
+    {
+      "path": "Physics",
+      "type": "dir",
+      "sha": "59fa3bcfee66938e17bdcb7f3367a18c84d4f0df"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aca94aa822c0475b8a4279dbb8237e1bad56b2d1"
+    },
+    {
+      "path": "System",
+      "type": "dir",
+      "sha": "16ca69131f53fb143dd882228a758470679a22c8"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "9257089d76d7347df4537d622b04f5d28c0ac6e5"
+    },
+    {
+      "path": "XENGINE",
+      "type": "dir",
+      "sha": "43caa5e7d05e5c084fbb07767a38161c8d5c4140"
+    },
+    {
+      "path": "common_h",
+      "type": "dir",
+      "sha": "296a54080f9c13b539d1c678b27b4debf674b162"
+    },
+    {
+      "path": "xbox_memory_map.txt",
+      "type": "file",
+      "sha": "f2e6623e742e3f4eab2f2a3aad7b5b087d924574"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies full Captain Blood engine source; owned ENGINE/XENGINE/editor/physics and native solution/build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

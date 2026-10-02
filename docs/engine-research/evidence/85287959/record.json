@@ -1,0 +1,84 @@
+{
+  "repository": "FreneticLLC/FreneticGameEngine",
+  "repository_id": 85287959,
+  "commit": "84994b9274ea5b9cb2887f35aa365485809b23ab",
+  "source_url": "https://github.com/FreneticLLC/FreneticGameEngine/tree/84994b9274ea5b9cb2887f35aa365485809b23ab",
+  "readme_path": "README.md",
+  "readme_sha256": "e51a517560369edb60168f062e3b51c92713df35e57efc5b72ba3762c590e355",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "d740d4193d842ec977ae6fa4ff39f5dbfd4091f3"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "400c7f1fde2d5c7053bf517ec3f7e2dbcadca4b1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cac80ee1adffdc607ce3009f4d7c4b06179ebe5c"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "e67e16c81c94ea739a37c5b2681207a33397d438"
+    },
+    {
+      "path": "FGECore",
+      "type": "dir",
+      "sha": "9d4918eda12cd596eba2dd827007fa3fdb9e5369"
+    },
+    {
+      "path": "FGEGraphics",
+      "type": "dir",
+      "sha": "136df0abf07253d0f2ca15758189fcdb6b493cde"
+    },
+    {
+      "path": "FGETests",
+      "type": "dir",
+      "sha": "aacc6047500ff41e8b9c894b4c0e7565ef0b728a"
+    },
+    {
+      "path": "FGEWelcomer",
+      "type": "dir",
+      "sha": "7abc41fe32ee6d02f1c0024bc41b031cf44e8b2b"
+    },
+    {
+      "path": "FreneticGameEngine.sln",
+      "type": "file",
+      "sha": "ef196c6be0693ceaa9291405584fb68fdd8dbd4a"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "0257025343bdcb6c4245cd51189ef9f0e1754ee0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "49471e82c4aae1238305d8098b92d6c71f565a2d"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "93199aa783f0febf663bf1c44f43dcb5db22ffb2"
+    },
+    {
+      "path": "oalinst.exe",
+      "type": "file",
+      "sha": "0b61822d6ab94f0d6977dac2a68ab16d1275cf82"
+    },
+    {
+      "path": "run_tests.bat",
+      "type": "file",
+      "sha": "d7ea350cbb7a83c1ba46f698a194475ca30ed271"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate C# core/graphics engine and tests with documented rendering, game utilities and physics integration; feature completeness not claimed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

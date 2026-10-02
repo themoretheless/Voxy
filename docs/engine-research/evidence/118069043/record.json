@@ -1,0 +1,99 @@
+{
+  "repository": "ejoy/ant",
+  "repository_id": 118069043,
+  "commit": "f32fbd4811e90c2433bf159aa40fb8f8aceb8b58",
+  "source_url": "https://github.com/ejoy/ant/tree/f32fbd4811e90c2433bf159aa40fb8f8aceb8b58",
+  "readme_path": "README.md",
+  "readme_sha256": "5f5fba3abaec9c215cb825ead504cb1551753bb0d00c17b81bbd2e5700ef8a46",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "3319ec6f1613830dc80521267ec9cbc99fc7555e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "42477442b28feacb3a816bff20daf419d8f003d6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "906bd3cffc9a051c74a5d75247cf938ed0de94ff"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "8e2d4ec6f14518223f959fbd5afbe599ac9ed68f"
+    },
+    {
+      "path": ".luarc.json",
+      "type": "file",
+      "sha": "a5e8cd838a6ff01966afb18a19465a5ca2fe2004"
+    },
+    {
+      "path": "3rd",
+      "type": "dir",
+      "sha": "ce01cb9271ba5258f1cc7676cb3b0abfbe431d41"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8e7507b370698e8ab34e5b2f944542ab5fabed41"
+    },
+    {
+      "path": "README.en.md",
+      "type": "file",
+      "sha": "ea4f9f41b400b58e274ec1cd3d98d17420a08e26"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "caed4eb45c7e5252d68b1c3e72d4d9b719b1c148"
+    },
+    {
+      "path": "clibs",
+      "type": "dir",
+      "sha": "2075320b0021727e63d2047c38fbfbeb0da0ca45"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "b9095deea36a28fa6f855b03c10c3f4389fd1780"
+    },
+    {
+      "path": "make.lua",
+      "type": "file",
+      "sha": "9b8e348aac2126a6af51b3705c6097bf70cb63f9"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "e4c66c28decd9e6689881f7ccee2f62ed7fc8611"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "a168cd16b48341c8c36081a2beda36b9721ed9c7"
+    },
+    {
+      "path": "runtime",
+      "type": "dir",
+      "sha": "6c0957613796953d6fe7e7834498b77e99dbf407"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "ec062e2629b043121f891aa2df26db64fbd8b093"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c9b11e5c12df455e6a51e024ee1862046da505e6"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Open engine/runtime sources with asset/shader tools and tests, documented runtime builds; formal release/docs incomplete.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

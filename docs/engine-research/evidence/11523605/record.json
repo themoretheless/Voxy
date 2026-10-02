@@ -1,0 +1,564 @@
+{
+  "repository": "mdziekon/UniEngine",
+  "repository_id": 11523605,
+  "commit": "77f809089919b027aa2aa1ac901792750ecb71af",
+  "source_url": "https://github.com/mdziekon/UniEngine/tree/77f809089919b027aa2aa1ac901792750ecb71af",
+  "readme_path": "README.md",
+  "readme_sha256": "0e98e205bfad01ca9d26fab07f5242c3074972c0dda499118139adea1a4d5135",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "fe2c45181395cf84498ea59bf1acd542981a875a"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "83682a238619f66cf58d1bd192c6ab3b6e63299c"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "7bb3483a70f04adc0476196545026004765e63c6"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "4fd712c314d9e2034e9b8e1d92116c0b89c0521e"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "3cc98082144f223eebe5f3c8218e3cd606fc2564"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "36969b04b3e33786ad0163b0b9476ec986c8c2cb"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "53d838af2152fa3b72fb027d2aebf4ddeb6acb08"
+    },
+    {
+      "path": ".stylelintignore",
+      "type": "file",
+      "sha": "8f90b4016722d6c985e49cd37e0235b86d9c9e8a"
+    },
+    {
+      "path": ".stylelintrc.json",
+      "type": "file",
+      "sha": "dc74e4a3b38edab5767d487562faf3d3745efa84"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "3abf4b8b127c80ef7919fa8437398ef2a3da3dfb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa47defa8b6bf947bf4a5ee7c7c90349081fd99a"
+    },
+    {
+      "path": "aboutpro.php",
+      "type": "file",
+      "sha": "8f6d964a30655becbbe36b3fd2b831894d12f18e"
+    },
+    {
+      "path": "action_logs",
+      "type": "dir",
+      "sha": "beb670744aa8b1ef0e87034d4797765627ecf6c7"
+    },
+    {
+      "path": "activate.php",
+      "type": "file",
+      "sha": "1ce1e9fe24e7fb24dde8ea627a87be83caf42cec"
+    },
+    {
+      "path": "admin",
+      "type": "dir",
+      "sha": "b04a73dff6066f76ea1dee985f9066184d4b1457"
+    },
+    {
+      "path": "ainfo.php",
+      "type": "file",
+      "sha": "a9d94a6806b1f207a8960eba2f5f5ba8923a6dbc"
+    },
+    {
+      "path": "ajax",
+      "type": "dir",
+      "sha": "0ffec6fadaa1bcc37d669e69d298f753f06d6cd9"
+    },
+    {
+      "path": "alliance.php",
+      "type": "file",
+      "sha": "afadf6ffd13207da906ac95470c0443c23b196a2"
+    },
+    {
+      "path": "attackslist.php",
+      "type": "file",
+      "sha": "8af4c1fcaa4226d270e85fd66765f06f35b81a0f"
+    },
+    {
+      "path": "banned.php",
+      "type": "file",
+      "sha": "997f5cc4aa96d896887be8c5f40c6226257d0774"
+    },
+    {
+      "path": "battlereport.php",
+      "type": "file",
+      "sha": "2574715bd1b8707f18d87f8e20522debd53c163b"
+    },
+    {
+      "path": "buddy.php",
+      "type": "file",
+      "sha": "3f3b0cb0ce5320047280f14fd7f6d4b30781becb"
+    },
+    {
+      "path": "buildings.php",
+      "type": "file",
+      "sha": "07f03dc4857356165e7010d615cf8386ccc9cfe7"
+    },
+    {
+      "path": "cache",
+      "type": "dir",
+      "sha": "aa84659cb2bf8e3f1b7b5433270c04434d39d4bb"
+    },
+    {
+      "path": "changelog.php",
+      "type": "file",
+      "sha": "12d231ccd2f8dc178f77cb371204861fe10b7d9b"
+    },
+    {
+      "path": "chat.php",
+      "type": "file",
+      "sha": "ef22747bd5d30202311984362df50a54a00c6469"
+    },
+    {
+      "path": "chat_edit.php",
+      "type": "file",
+      "sha": "ac2369c3fcca7c457f5b1c45d8e10c8e58701ed8"
+    },
+    {
+      "path": "class",
+      "type": "dir",
+      "sha": "2a4a7b12d8cc3b45d65c5b41635eee653aee14bd"
+    },
+    {
+      "path": "common.minimal.php",
+      "type": "file",
+      "sha": "656232d7e69211da0b05cf51c1baa018ec626dde"
+    },
+    {
+      "path": "common.php",
+      "type": "file",
+      "sha": "2645bb86730d07ac91950e2e2b53df40e43eeea6"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "908559e9e8b2f1b77f6137bb18b17c7ac66a58f8"
+    },
+    {
+      "path": "composer.json",
+      "type": "file",
+      "sha": "dd3337379a025ccf9d311e9e321ebe3704d01138"
+    },
+    {
+      "path": "composer.lock",
+      "type": "file",
+      "sha": "50df86856eb2e8820af9c76cce92899a2f4e179a"
+    },
+    {
+      "path": "config.php",
+      "type": "file",
+      "sha": "53c34ff315f4ace2cadb41ec1a4d64034f81a870"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "d564d0bc3dd917926892c55e3706cc116d5b165e"
+    },
+    {
+      "path": "contact.php",
+      "type": "file",
+      "sha": "ddf759d8cfe0d584dfb8368875c8eeb339cbb72e"
+    },
+    {
+      "path": "converter.php",
+      "type": "file",
+      "sha": "8e30cf231a712ec1f476ac1d8e3ebaa67da33610"
+    },
+    {
+      "path": "css",
+      "type": "dir",
+      "sha": "d65206f6556fe6f4d1d7409f8670ebb4aa30306c"
+    },
+    {
+      "path": "declaration.php",
+      "type": "file",
+      "sha": "657defec758783818c27c822d634126f9b0b3b41"
+    },
+    {
+      "path": "destroy_rockets.php",
+      "type": "file",
+      "sha": "b122a6ad027da46274758cb39869b7aae5f9a19c"
+    },
+    {
+      "path": "disassembler.php",
+      "type": "file",
+      "sha": "6dbe99c1dc476a951a67e35ad774401705214722"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "73ca76739c89632fe34f17c4d9ca3c0cf881ff1f"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "f5d9050c5fbcea77ff255136b40bb899984a2ec3"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e4b9f1982b39255e8f25a9e9badae1518a37ffbb"
+    },
+    {
+      "path": "email_change.php",
+      "type": "file",
+      "sha": "b142040db10bd60e8ad194e32e20cc5a1823d580"
+    },
+    {
+      "path": "empire.php",
+      "type": "file",
+      "sha": "52c928d03914a812cf2cfb593a4582fc1ba056b6"
+    },
+    {
+      "path": "example.env",
+      "type": "file",
+      "sha": "1f226d1e936e7f1b8515c582c357547230cdd526"
+    },
+    {
+      "path": "fleet.php",
+      "type": "file",
+      "sha": "69865d6102036e706dd9768f1c154da512ff5594"
+    },
+    {
+      "path": "fleet1.php",
+      "type": "file",
+      "sha": "9ccdd2434d913e3f4f4ab7a02ce4a371951e3e5c"
+    },
+    {
+      "path": "fleet2.php",
+      "type": "file",
+      "sha": "2a5a852ec4f77b093b8f7e0a4093e30ef3d0a26b"
+    },
+    {
+      "path": "fleet3.php",
+      "type": "file",
+      "sha": "ef00ac19ffaff740ab291884a3a3d2e559d2dbdd"
+    },
+    {
+      "path": "fleetretreat.php",
+      "type": "file",
+      "sha": "4bbb29b991f0941d8b1b9c2b6f0ccc5bd850aa9e"
+    },
+    {
+      "path": "fleetshortcut.php",
+      "type": "file",
+      "sha": "7ace956a9d6f333568f77d35699254250998fe22"
+    },
+    {
+      "path": "galacticshop.php",
+      "type": "file",
+      "sha": "25e80bac41138349d953754f138c16f0375f4211"
+    },
+    {
+      "path": "galaxy.php",
+      "type": "file",
+      "sha": "8b8da58157f5daaf28613245354262d9a3510352"
+    },
+    {
+      "path": "generate_sig.php",
+      "type": "file",
+      "sha": "b5f161599128f26c22dc538f207858bbea64c121"
+    },
+    {
+      "path": "gulpfile.js",
+      "type": "file",
+      "sha": "f3d769ed86ac57a0a3f5cd9a51185ca25ad446a0"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "ba8b64c0877b4aa2d7065946470c7bc4e2576d67"
+    },
+    {
+      "path": "includes",
+      "type": "dir",
+      "sha": "6e0f9da77a4f87410905933c5fa89f567da0f10a"
+    },
+    {
+      "path": "index.php",
+      "type": "file",
+      "sha": "b492cd987c3ebeb6ed798a13f22f03db8e63b6eb"
+    },
+    {
+      "path": "infos.php",
+      "type": "file",
+      "sha": "3a751462d32b58dba9ab3c73dc83df84b605ab37"
+    },
+    {
+      "path": "install",
+      "type": "dir",
+      "sha": "885585b239f9681d2adf87d6a2d4ec8c148ffdb1"
+    },
+    {
+      "path": "js",
+      "type": "dir",
+      "sha": "48f7e6dba6cf6d1989c98ca658dfe0ff42352250"
+    },
+    {
+      "path": "jumpgate.php",
+      "type": "file",
+      "sha": "c999948731f5e0eb69998c49db80b39fe1b55b23"
+    },
+    {
+      "path": "language",
+      "type": "dir",
+      "sha": "0c0ec7f00c04db365c1768d6991e67dd92e5b754"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "66319ea8dfe1f714a29f4864488f6358d3c1bf91"
+    },
+    {
+      "path": "licenses",
+      "type": "dir",
+      "sha": "4494d6a2b24da8037d5401dc53fb99899c139af2"
+    },
+    {
+      "path": "login.php",
+      "type": "file",
+      "sha": "9f0dcabd86b8cf9306f4d19a3951e2b0d5c2b814"
+    },
+    {
+      "path": "logout.php",
+      "type": "file",
+      "sha": "53fd747dc7285cdd60a0431a4eaab55ac3a9e656"
+    },
+    {
+      "path": "lostcode.php",
+      "type": "file",
+      "sha": "b6b8f5fbce9d1ad987f4d2c4c613374dcef6cd7f"
+    },
+    {
+      "path": "lostpassword.php",
+      "type": "file",
+      "sha": "cad740a1cffcbac49f8cf74a34dd0a472bf7ce6c"
+    },
+    {
+      "path": "merchant.php",
+      "type": "file",
+      "sha": "a98846232f8d582dc54a7ffd5799c6fe5becdc60"
+    },
+    {
+      "path": "messages.php",
+      "type": "file",
+      "sha": "ff73bffb92fdf52b52d0b277cead5962aaaf5ddc"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "5a1dab30ac2b6f7dad8c8bd2b68721146ac9dc49"
+    },
+    {
+      "path": "moon_sim.php",
+      "type": "file",
+      "sha": "e22bfbe58bde990ee3be1a2f9e585009c50fe0c8"
+    },
+    {
+      "path": "morale_info.php",
+      "type": "file",
+      "sha": "a85a7fca6c8d176c00e88dbd38e1b5559766873c"
+    },
+    {
+      "path": "nginx.conf",
+      "type": "file",
+      "sha": "57cfbf6a67f41d82504aee1fc17dd945ce872fed"
+    },
+    {
+      "path": "nginx.dockerfile",
+      "type": "file",
+      "sha": "b7ce447d2a2e49aff0a4741fc07a7fe2357dd8c2"
+    },
+    {
+      "path": "notes.php",
+      "type": "file",
+      "sha": "c645ff5a0aabf25b79c311314f00cdb31bd46ae4"
+    },
+    {
+      "path": "officers.php",
+      "type": "file",
+      "sha": "c0379e7046cd93c59bf616ff98934ba089fc8a3c"
+    },
+    {
+      "path": "other",
+      "type": "dir",
+      "sha": "162e88aed0614a3a94827c1ecd787024773de854"
+    },
+    {
+      "path": "overview.php",
+      "type": "file",
+      "sha": "50363bafeae63650d67aaab752629224f3efef15"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "d0aef214b9aea2c3fcd6438623a329532f867f84"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "1cdfb27c636029e29514ceb25bde83bb14815bff"
+    },
+    {
+      "path": "phalanx.php",
+      "type": "file",
+      "sha": "0f06551b44692de8aa50160dac174ee3d9e83107"
+    },
+    {
+      "path": "php.dockerfile",
+      "type": "file",
+      "sha": "c464969a18bbede375382b9b861ea5fc59bfe569"
+    },
+    {
+      "path": "phpcs.xml",
+      "type": "file",
+      "sha": "c790b8f0a8f2d4aaef930de62ba6618c75d8c41f"
+    },
+    {
+      "path": "polls.php",
+      "type": "file",
+      "sha": "062867df88efb8d4d1ed190aabaf702e18254853"
+    },
+    {
+      "path": "profile.php",
+      "type": "file",
+      "sha": "ba23bd3d052067ad0d649172d3935f2289d8b50c"
+    },
+    {
+      "path": "records.php",
+      "type": "file",
+      "sha": "0857d2c07ebd3a39767e08b3af7e5b2d25bbe9d7"
+    },
+    {
+      "path": "redirect.php",
+      "type": "file",
+      "sha": "bd93f2ab6f9e5e138ad94a078899a253e9fa76fb"
+    },
+    {
+      "path": "ref_table.php",
+      "type": "file",
+      "sha": "17b428fe63aea12ddd2f516ebd4a66dc7c6f9ab5"
+    },
+    {
+      "path": "reg_ajax.php",
+      "type": "file",
+      "sha": "b57642b96408fd8ff84d4f489cd7d93bf788013f"
+    },
+    {
+      "path": "reg_mainpage.php",
+      "type": "file",
+      "sha": "c994a3d39fc971f021ad87a9efbd72faecb8a630"
+    },
+    {
+      "path": "report.php",
+      "type": "file",
+      "sha": "c02ddb94a1aca9bc973c1f118885822461e2bd79"
+    },
+    {
+      "path": "resources.php",
+      "type": "file",
+      "sha": "1090d5a32af4697ed2df68f2a443f07fae081bd2"
+    },
+    {
+      "path": "rocket_simulator.php",
+      "type": "file",
+      "sha": "88f7b4e2ad279960d9059cdd321013ffb9e500df"
+    },
+    {
+      "path": "rules.php",
+      "type": "file",
+      "sha": "00e5bb8378b1d8192f1350365818fb73a9e513b0"
+    },
+    {
+      "path": "search.php",
+      "type": "file",
+      "sha": "4256094e65f7e0ef0338e2d46ae679be9c001fc7"
+    },
+    {
+      "path": "settings.php",
+      "type": "file",
+      "sha": "29a7944eea29dfb4bc4fc9a85b244fbbdd4b8f23"
+    },
+    {
+      "path": "simulator.php",
+      "type": "file",
+      "sha": "38df57758345e225cb170fd6aa059cdfdd4b6863"
+    },
+    {
+      "path": "skins",
+      "type": "dir",
+      "sha": "11d90566005ae8a084c4e00f444e217c5be06e88"
+    },
+    {
+      "path": "stats.php",
+      "type": "file",
+      "sha": "fdc41db914aa0b3ee1df328cd6ea00c691a1fdf7"
+    },
+    {
+      "path": "tasks.php",
+      "type": "file",
+      "sha": "05b2949b7d9812d3454f50314f65e09e93df4e17"
+    },
+    {
+      "path": "techtree.php",
+      "type": "file",
+      "sha": "7a497213958ab1e2dffc8cc540809599aa198d37"
+    },
+    {
+      "path": "templates",
+      "type": "dir",
+      "sha": "1a9fd66b92d67e3dc2c34bb4ce2d95c52f8c5693"
+    },
+    {
+      "path": "texts.php",
+      "type": "file",
+      "sha": "8ae122c6cee4722621bc8b0cbb145d725917c1cc"
+    },
+    {
+      "path": "tmp",
+      "type": "dir",
+      "sha": "f65807b558943e1cc3e2956faa76b5e0f7fc8647"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "3b5f85c6c1ea1f467fe7ad1081cbb364c0a2aa47"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "PHP OGame-clone browsergame engine/framework; site gameplay and database scripts rather than general graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

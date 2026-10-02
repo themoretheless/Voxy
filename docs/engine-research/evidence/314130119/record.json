@@ -1,0 +1,59 @@
+{
+  "repository": "CapsCollective/raylib-cpp-starter",
+  "repository_id": 314130119,
+  "commit": "a19367d1c63640ef251a89acac6ad4776c1cc87f",
+  "source_url": "https://github.com/CapsCollective/raylib-cpp-starter/tree/a19367d1c63640ef251a89acac6ad4776c1cc87f",
+  "readme_path": "README.md",
+  "readme_sha256": "68edd5e5a474d32131c0e826628537b059c0814568776656d92eeb9c8afd845c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "710e3578378964e3d62aa84da7243cd5ccf20ad6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "03d655a1021dcd13b1cedf4b7f388701fd7f89ec"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c019d905db47f49c3b5834ba429e842f12f07d92"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "0e7dc442c681a64a1e17e71f9887574f60502635"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "54eb9c808b949d19501affe47beccab2a4060d10"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d53e13b01f2cb17029a6983230633ffdf3152519"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "e3d1396f5b3a8c6267b5bb70e3268312ecaef66d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f35ec2b2f03535fda7cbb906994d9cfabd2945c9"
+    },
+    {
+      "path": "vendor",
+      "type": "dir",
+      "sha": "b77ca891c6b0d3f2881e3deb6f4a32451da05644"
+    }
+  ],
+  "classification": "excluded_game_template",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Build/starter template for raylib and C++ bindings, not an engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

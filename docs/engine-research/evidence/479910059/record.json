@@ -1,0 +1,77 @@
+{
+  "repository": "toxoidengine/toxoid",
+  "repository_id": 479910059,
+  "commit": "e3c5860a1c1431de47aa439639ce6f7e42a0271e",
+  "source_url": "https://github.com/toxoidengine/toxoid/tree/e3c5860a1c1431de47aa439639ce6f7e42a0271e",
+  "readme_path": "README.md",
+  "readme_sha256": "0cf44f96ea8cc1c3d5966e175d7714332bbb7d8c67ae3d5f2e0c4d26ccb31dac",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e5bf895a7e18c7de79b2aca0ee68dd59600d1cf9"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "142804e8eb9e58eb972b39f44d8854ed110ad498"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "251a83aca73be7d84550546ca2457fe710c1fc1f"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "827c968d442d08b7bca73cd1f8f3cb5004159ab2"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "707421f9add59b218364acfb07770257872607f3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d634e7bd8e31b9c0dd3cf59e9f0ba1c138e51b04"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "58cbebb94abebdf1ccc9c7f1baf9d4b7d218e367"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "44046834267aaec6f34e02578c2c7b7da93f709f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "08ba0156b0c2cc76d3cd7a9691b9017fa2f14fe7"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "eb0ef31a8680ed761f2cc92c6b3e48556fc83cf7"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "f5fb324313f5274bd8bbc47cb2ef67c8f01b9805"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "f85d97b6958a64bde79b3d261892fd1804174739"
+    },
+    {
+      "path": "notes",
+      "type": "dir",
+      "sha": "cf9f5f5f94810cb1800df8c3a1a5bff81afb07d7"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

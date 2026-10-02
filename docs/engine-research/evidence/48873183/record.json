@@ -1,0 +1,37 @@
+{
+  "repository": "Shogan/PixelSpriteGenerator-Unity",
+  "repository_id": 48873183,
+  "commit": "733c8f28df57a2e6c5abfa49c81e93482e04f6cd",
+  "source_url": "https://github.com/Shogan/PixelSpriteGenerator-Unity/tree/733c8f28df57a2e6c5abfa49c81e93482e04f6cd",
+  "readme_path": "README.md",
+  "readme_sha256": "6ff87882da4c2ac7bf4257287b0cd52983b52d24691b2859da3144e8089559fc",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "255c5162106008e81492e25122848bbcf74423c4"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "489d12143442efa3b4a30a6de49af7811479b58a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f02379aba0458fc19ad2dda94f5965a0cf89ff02"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "d2603322e6a50e499a03d05a1d087916f5b403e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2d4482622bc2aef1ab650899d1fccdc0a34fb8c3"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,54 @@
+{
+  "repository": "ehsankamrani/vandaengine",
+  "repository_id": 140518445,
+  "commit": "a5d5a6b2bd83d8fe523a97f82c7d2ef3c4674ff4",
+  "source_url": "https://github.com/ehsankamrani/vandaengine/tree/a5d5a6b2bd83d8fe523a97f82c7d2ef3c4674ff4",
+  "readme_path": "README.md",
+  "readme_sha256": "3d003ec54fa36f898a66b1506de25d1f75e5c5118ff720f0d88f4dfe729dfa69",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5be64c7dafef34ac2b4bef0370a84571b0fb8a0a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b09fdc67aa8b4768dacd7d4d9e7957c63417dafd"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6a051f91afef345f2f21bb2fdd57c34684e3a5e0"
+    },
+    {
+      "path": "Sample Scripts",
+      "type": "dir",
+      "sha": "71fc1a7be48afc4606c11578f22f2edaa78b19b6"
+    },
+    {
+      "path": "Vanda Engine Editor",
+      "type": "dir",
+      "sha": "c961312623a5c7a3d08fe8c037033db67aea7ba0"
+    },
+    {
+      "path": "Vanda Engine Win32",
+      "type": "dir",
+      "sha": "73b5798b6bb9cd670fe7303e76b95626dca95ec7"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "5a0ec5f25d18197093ba714be67d3e3580f1bb53"
+    },
+    {
+      "path": "videos",
+      "type": "dir",
+      "sha": "3b76041d7e0e35774e1199ff1f9023c4755c6865"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate Windows engine and editor source plus sample scripts, documented Visual Studio builds; runtime/features not locally executed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

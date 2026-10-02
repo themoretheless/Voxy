@@ -1,0 +1,44 @@
+{
+  "repository": "smokku/bevy_miniquad",
+  "repository_id": 296891116,
+  "commit": "a0a6adf4f1e96278c501ef139c10dd334a8aa902",
+  "source_url": "https://github.com/smokku/bevy_miniquad/tree/a0a6adf4f1e96278c501ef139c10dd334a8aa902",
+  "readme_path": "README.md",
+  "readme_sha256": "7b8a0a636de0cb537131913ca06d8fab04ce19eb5960e508fc31b421dd61fe38",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "932c325d816469c61e713b7e8e4913a013a1b5c5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "96ef6c0b944e24fc22f51f18136cd62ffd5b0b8f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "18fa3e5495073172edfcd183e15a085005c653a1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d0da107d2885aa2893be16714768672e26975166"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "b7e3a56fc1a5c37068f9fc1a33c3ce5dbddd9dfc"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a68b55c70c9df237a2fb4059a10d1f9370a26917"
+    }
+  ],
+  "classification": "game_extension_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bevy window/render plugin backed by miniquad; user supplies render callback, existing Bevy runtime required.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

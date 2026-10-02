@@ -1,0 +1,59 @@
+{
+  "repository": "in0finite/SanAndreasUnity",
+  "repository_id": 133872077,
+  "commit": "f685c437f48721afc0787f27d22c85d96e8684c7",
+  "source_url": "https://github.com/in0finite/SanAndreasUnity/tree/f685c437f48721afc0787f27d22c85d96e8684c7",
+  "readme_path": "README.md",
+  "readme_sha256": "29b7d7568f17154aed8a03953bd49b2737b8d111a4757feaf123694b5fe1b494",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "58ce38bb29622d7350a4147275caf3568849b6e8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "668565c7f3ad424a2a46e95b258712fc8d1e467e"
+    },
+    {
+      "path": ".vsconfig",
+      "type": "file",
+      "sha": "d70cd98b77b4984d6943f1ee8d64b111f4847b24"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "7c1362cc0f2b227432077a3bc57483e6bf6df831"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "4471830587938cbedc30d2c980b015e3b288c9a7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f82e3b896ae4eb4a862195a4e06e7e40c4a27df5"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "423fe185d182f914593c0a2ccdd89a31bb8b312c"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "443fba8a869e9c2fd8d033f51bdb28d5a32aee8b"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2ca1eac5799ba347f98074eefdc227306337deab"
+    }
+  ],
+  "classification": "excluded_engine_game_project",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly reimplements gameplay in Unity; Assets/ProjectSettings depend on Unity runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

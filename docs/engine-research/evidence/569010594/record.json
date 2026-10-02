@@ -1,0 +1,149 @@
+{
+  "repository": "u3d-community/U3D",
+  "repository_id": 569010594,
+  "commit": "5be027ab2759f8cc45cd8fff6af375d622550260",
+  "source_url": "https://github.com/u3d-community/U3D/tree/5be027ab2759f8cc45cd8fff6af375d622550260",
+  "readme_path": "README.md",
+  "readme_sha256": "e6f51c576fc01c1db4993324aa019555b15c7fd96f224fa92fc51dd7e52d394e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "bb645c28fcf158ca61ce21eeec2a64990b038479"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "2bf321db82e1d28514088973efaca0e435ccc127"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "2ef95a79c7e5bb995b41dab03d105c7cb4aa3c0f"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "02f92f1a28d7d8b2253cb52a5a6f553b531fc3b8"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9f56231e75731da8562da7bf7e69f64ca6cbe84e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4449106dff111b8dc2681fa701d605bda1e4f7f6"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "35b60c59b7c86c6bba056c7d97af85222df44c37"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "d2e606bcccaa898c6ba6c731a292964306546b22"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "c38ed1d72fd77df360fbd41ff7a3f674f9ff4f21"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "ddc918d4787faa0df23bc32ef9179a1e2542fc4a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "5e4a36fb0d1a96426cd1d80ccc57925604cd8f09"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f4c80302c9f1436a27f21e163e6dd121fce1b6a9"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "424687c2a37a686be5932db6bc7d4045ca23b95d"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "0807ad02980a238754606dcf12cdf055a03c8d09"
+    },
+    {
+      "path": "SourceAssets",
+      "type": "dir",
+      "sha": "0e612da6ce4e73b1d212c26a9823493b47717cf0"
+    },
+    {
+      "path": "android",
+      "type": "dir",
+      "sha": "e32e59136792fc3c1755a65aa20075cde161a765"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "f5927865527cf186cd196a5527a9c63ec9ce58a3"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "b8553618420021fd8a5bb72d81fe5d51be48eeec"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "f17a94f1b5199ab961cb2e551ae3736b4116c22d"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "24de792883b59555a99836fa009ba4a7b502fe68"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "7760ab60eb5e4a570e1dd587160e69c9c8f68746"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "4f906e0c811fc9e230eb44819f509cd0627f2600"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "107acd32c4e687021ef32db511e8a206129b88ec"
+    },
+    {
+      "path": "rakefile",
+      "type": "file",
+      "sha": "d95fc2645e2544b1a5b955b9bb8e1d27c27ae127"
+    },
+    {
+      "path": "script",
+      "type": "dir",
+      "sha": "f494d1a9a0ae9abe150ad95d2bc92d372382891d"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "7f1829f20182b06b0a9ddb123962401bc2b73b96"
+    },
+    {
+      "path": "website",
+      "type": "dir",
+      "sha": "361ba4cfd701a2edf1f0be12b1f7e0f73915ffa1"
+    }
+  ],
+  "classification": "derived_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Urho3D-derived native runtime; Source and CMake/platform builds.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "slashman/jsrl",
+  "repository_id": 111475164,
+  "commit": "1feeb629898f1be647a83568ba89bf2c12fc2dd6",
+  "source_url": "https://github.com/slashman/jsrl/tree/1feeb629898f1be647a83568ba89bf2c12fc2dd6",
+  "readme_path": "README.md",
+  "readme_sha256": "bd326c5e4a9c8d32bb2f8aee488e5fb629b360f9b03c3d3c7127a1fdeb15405e",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6a347abd8d103b057ce33253153cd472b01c102c"
+    },
+    {
+      "path": ".nvmrc",
+      "type": "file",
+      "sha": "3f430af82b3dfa7a8d8f7d9ce7ac699fec0a07b2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "519569e5920b934074472ec3be51f2142e2985ae"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "20ba37becf00db2d341d8da4789028b4da52c9b3"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "2655d3f51b7a9e774f6ef12c20e79a7a9281b88c"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "9f21b9d6d89bc0652513cd007b41b29f5b86edc1"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "53c54eeeea2fb883504a19e2275baa3313001de2"
+    },
+    {
+      "path": "screenshot-pixi.png",
+      "type": "file",
+      "sha": "d9d76c90cf7cfb1809a1505300809bf6d8809443"
+    },
+    {
+      "path": "screenshot-unicodeTiles.png",
+      "type": "file",
+      "sha": "f86acdb5769433704a27b914ac852ea54201354d"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "93a19995f5ee2ecc45e64366850af3c964acdeae"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "c6fca55998563d6d8eb55c0033d5c43d8f13b2a2"
+    },
+    {
+      "path": "webpack.config.js",
+      "type": "file",
+      "sha": "03eb804f174b664453c4ae97210897ca3e5b02f1"
+    },
+    {
+      "path": "webpack",
+      "type": "dir",
+      "sha": "3bca93abd15302bdfdd6c2c916f6eb4153787611"
+    }
+  ],
+  "classification": "excluded_game_template",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Bare-bones playable roguelike template intended as a starting game, not a separately packaged engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

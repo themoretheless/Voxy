@@ -1,0 +1,92 @@
+{
+  "repository": "kesiev/akihabara",
+  "repository_id": 620862,
+  "commit": "b40e0e418ebf7dcff6dcbc63be79cb7579adcefd",
+  "source_url": "https://github.com/kesiev/akihabara/tree/b40e0e418ebf7dcff6dcbc63be79cb7579adcefd",
+  "readme_path": "README.markdown",
+  "readme_sha256": "84a80d66c0ce2e84b1f366980e339c8d838e163b14bfdd842e43406a740bdb59",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "93bfd12e59da684c7f70c6b19c04b4a37749270b"
+    },
+    {
+      "path": "GPL-LICENSE.txt",
+      "type": "file",
+      "sha": "11dddd00ef0e91a0bce53b034d6b5b318a84e690"
+    },
+    {
+      "path": "MIT-LICENSE.txt",
+      "type": "file",
+      "sha": "9e82c0c85adff7bc67824fbad859b3f0fc90ef9d"
+    },
+    {
+      "path": "README-AUDIO.markdown",
+      "type": "file",
+      "sha": "b59adb4b3a506575dabf7d5dd5250d87c5fbf5ed"
+    },
+    {
+      "path": "README.markdown",
+      "type": "file",
+      "sha": "11420ffcac6458b47796d418bd864c1ac1a17082"
+    },
+    {
+      "path": "akihabara",
+      "type": "dir",
+      "sha": "897e55c267d3f7b31ef46ee8f630acecb1ae6a24"
+    },
+    {
+      "path": "extra-halloffame.html",
+      "type": "file",
+      "sha": "8d455fd5cbc32179f685baaafac4c53374a93bf9"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "627db09d8370ce2720681796e97b8f7dbf3e543c"
+    },
+    {
+      "path": "game-akibahero.html",
+      "type": "file",
+      "sha": "78d11f6caac4f14bd740ee95cd97abf5d010aeb7"
+    },
+    {
+      "path": "game-capman.html",
+      "type": "file",
+      "sha": "f47528e3f7d0e8e5daa355687fc93e34c965514e"
+    },
+    {
+      "path": "game-leavemealone.html",
+      "type": "file",
+      "sha": "35baa2be6ea1cf9964cf427eed077a848bc6618e"
+    },
+    {
+      "path": "game-solitude.html",
+      "type": "file",
+      "sha": "1adef70d571ed7d544f4a8c0c3ce5d32de5ae9cf"
+    },
+    {
+      "path": "game-tlol.html",
+      "type": "file",
+      "sha": "37aeccc0eac62828493801a2a7b7398dc93d060d"
+    },
+    {
+      "path": "game-tspin.html",
+      "type": "file",
+      "sha": "253a7ecb56b955b4ed1b27eeaaab5840f5bb994d"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "287aa5577abaa879689b7bb5aaed84e277f91eb1"
+    },
+    {
+      "path": "tool-settings.html",
+      "type": "file",
+      "sha": "e5fd2ebba61f712fac054ba7af98f9d0834c7c33"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

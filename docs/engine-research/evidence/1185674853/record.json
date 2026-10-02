@@ -1,0 +1,104 @@
+{
+  "repository": "Bloom-Engine/engine",
+  "repository_id": 1185674853,
+  "commit": "82fd842d7f28750b5cc82a036fbd693fee43ddcd",
+  "source_url": "https://github.com/Bloom-Engine/engine/tree/82fd842d7f28750b5cc82a036fbd693fee43ddcd",
+  "readme_path": "README.md",
+  "readme_sha256": "5dde2adc5e2b52ad30407085bcbae8437a77de2f086beafbd0a110fa458027f3",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "23d94ff84953302c4fceb989ab54a258842351e4"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7ecdf55ba5a84ad59785a0aee3771f852aa279cb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "08a7925642550dc9f4316284f33b88627f19b404"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "108e4eca683856a7c03460e39be625b83a61d0a7"
+    },
+    {
+      "path": ".npmignore",
+      "type": "file",
+      "sha": "05f73c0dbf0ba0def4cab2de42ec2e3c6c59f201"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "eae42468aa486a538e899361669441f9b4069d55"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "580204dd91be35506d74cd1def6534dd8ca80642"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aeb91b7567ec1563c62f4d909f014670d3fe3c50"
+    },
+    {
+      "path": "bloom-renderer-spec-v2.md",
+      "type": "file",
+      "sha": "6de9ed40fe9d18420ecf980426606b3eccea692e"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0c25dc874a186669d78f87d74a7368d2e1079457"
+    },
+    {
+      "path": "embed-perry",
+      "type": "dir",
+      "sha": "cd8bd2e5a8bc508c515eef07c883a4f922969565"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "557024c97d992d17388f6fec9d163414e74c5972"
+    },
+    {
+      "path": "native",
+      "type": "dir",
+      "sha": "23b60ff7e01eac93571a67f30f8f9412f3054c8f"
+    },
+    {
+      "path": "npm",
+      "type": "dir",
+      "sha": "5414ba3ca19959efbed40e3cea22ba5805f2d786"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "152552af99bf7f355be5b124bbfa3f91e91f4e24"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "b464a3ab1f0d46bea9d65ed55a709aa43a46ccde"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "318546d833b4a5df1e746fe799054fb2722ed11d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "0244eeee466de94e96b3299c58b90f3d5117ce63"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Independent TypeScript API and native Rust engine with physics shim and examples; raylib-inspired API is explicitly not a port. Platform compilation claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

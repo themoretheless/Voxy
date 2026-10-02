@@ -1,0 +1,59 @@
+{
+  "repository": "avilapa/vxr",
+  "repository_id": 154171179,
+  "commit": "9b21596dd8447fb6c8a0ff41a7a16a920401946b",
+  "source_url": "https://github.com/avilapa/vxr/tree/9b21596dd8447fb6c8a0ff41a7a16a920401946b",
+  "readme_path": "README.md",
+  "readme_sha256": "f1348fb50bb38807ad39fd7671a0e8e4c9d8ad20cc6d3d0e39ce1593b1bee75d",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a4f183773d4300c26709896a075aed19a9298776"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "8643054f7326c22d7e0526ee2a8aee7143a65357"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b113b417c7f983b2665a183ef2042e8f7bee31a7"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "a1572ba1e1ca292bf6af6c4fa1621bbec05f29cc"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "3a93580ac47a2dd046de2f0fdd374e574f70e6ed"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "c0b060621f5e8260378d7a88b2dd95790d1126d3"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "905b39fb17628aa822b336d693b2fb24e7019b46"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "f0d7229d3d1133b2b3b97330e53a978a2b3be87f"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "c8677b0a0b78914cb9973fed90c981440ba79a96"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native general game-development engine; owned src/include/tools and native project builds. Rendering/threading claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

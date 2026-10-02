@@ -1,0 +1,60 @@
+{
+  "repository": "godotengine/godot",
+  "commit": "084a2caa05119b625a99b6b51d44b459a26362de",
+  "sources": [
+    {
+      "path": "scene/resources/mesh.cpp",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/scene/resources/mesh.cpp",
+      "file": "scene__resources__mesh.cpp",
+      "sha256": "1c8f8c85aab3dfcd7bb8d37b2024fcde3822b78ebf9d524de94116bb34cedd3e"
+    },
+    {
+      "path": "servers/rendering/renderer_rd/storage_rd/mesh_storage.cpp",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/servers/rendering/renderer_rd/storage_rd/mesh_storage.cpp",
+      "file": "servers__rendering__renderer_rd__storage_rd__mesh_storage.cpp",
+      "sha256": "d7932dbb70c8c2b69087a148b169748e64264d08e48e147f4edc8f0171573863"
+    },
+    {
+      "path": "servers/rendering/renderer_rd/storage_rd/mesh_storage.h",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/servers/rendering/renderer_rd/storage_rd/mesh_storage.h",
+      "file": "servers__rendering__renderer_rd__storage_rd__mesh_storage.h",
+      "sha256": "c833605aeed7e67443bdd802ab019aea242376d4a6dac180f17d97ce2997971a"
+    },
+    {
+      "path": "scene/resources/3d/importer_mesh.cpp",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/scene/resources/3d/importer_mesh.cpp",
+      "file": "scene__resources__3d__importer_mesh.cpp",
+      "sha256": "805c249cc01290d996feeff7ca52c3421c3c3381640909e7aeb252b77bf36b81"
+    },
+    {
+      "path": "modules/meshoptimizer/register_types.cpp",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/modules/meshoptimizer/register_types.cpp",
+      "file": "modules__meshoptimizer__register_types.cpp",
+      "sha256": "f33a451e9bffc07c8856ae1181ffbb4ef96e6e64e82dd7a6f972cbf4d494f869"
+    },
+    {
+      "path": "thirdparty/meshoptimizer/meshoptimizer.h",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/thirdparty/meshoptimizer/meshoptimizer.h",
+      "file": "thirdparty__meshoptimizer__meshoptimizer.h",
+      "sha256": "21a72040a75bacf6ddefb7e74f1cf566af1e68ea5e4dc0db598278f4681e0b87"
+    },
+    {
+      "path": "thirdparty/meshoptimizer/simplifier.cpp",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/thirdparty/meshoptimizer/simplifier.cpp",
+      "file": "thirdparty__meshoptimizer__simplifier.cpp",
+      "sha256": "dc40aadb307577ed3f7adb5102a506263de8b9fea1d5582a24c04bff2874a2cc"
+    },
+    {
+      "path": "thirdparty/meshoptimizer/LICENSE.md",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/thirdparty/meshoptimizer/LICENSE.md",
+      "file": "thirdparty__meshoptimizer__LICENSE.md",
+      "sha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26"
+    },
+    {
+      "path": "thirdparty/meshoptimizer/allocator.cpp",
+      "url": "https://raw.githubusercontent.com/godotengine/godot/084a2caa05119b625a99b6b51d44b459a26362de/thirdparty/meshoptimizer/allocator.cpp",
+      "file": "thirdparty__meshoptimizer__allocator.cpp",
+      "sha256": "d2cc48691fe2f4c6d097bf7a766389cfb7f83ca14a5f747e3944332656d02254"
+    }
+  ]
+}

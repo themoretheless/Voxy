@@ -1,0 +1,129 @@
+{
+  "repository": "andygeiss/ecs",
+  "repository_id": 164319238,
+  "commit": "cc1e3e26b5bb901c4b1bb978d28db89b63d704ce",
+  "source_url": "https://github.com/andygeiss/ecs/tree/cc1e3e26b5bb901c4b1bb978d28db89b63d704ce",
+  "readme_path": "README.md",
+  "readme_sha256": "61c7718f1172cf1b2dea55aa72fd6d630c83389b407a40169aef03dc18593157",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e43b0f988953ae3a84b00331d0ccf5f7d51cb3cf"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b73d0684dd63b47533685e4cb3ad305d13a768bc"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "260e687ce67316f093bf8e7e5cb57fc917a08efc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "302af6f8d0b54f1d7238b8685730784eb148411c"
+    },
+    {
+      "path": "SPEC.md",
+      "type": "file",
+      "sha": "59b2329acce36bcef4978eeb2fb0c16cbadbc102"
+    },
+    {
+      "path": "benchmarks_test.go",
+      "type": "file",
+      "sha": "83d5c7bf94de70fabeebe3b804bfb42c924e38ed"
+    },
+    {
+      "path": "component.go",
+      "type": "file",
+      "sha": "dab712f52bd9432c1f9adc1464bae0a271f6ec7a"
+    },
+    {
+      "path": "doc.go",
+      "type": "file",
+      "sha": "97674ae4f892fd44cc9e1213a49d77a0909cdec3"
+    },
+    {
+      "path": "engine.go",
+      "type": "file",
+      "sha": "43b63e5acb62bdba6548fbb8d1621c656e51efba"
+    },
+    {
+      "path": "engine_default.go",
+      "type": "file",
+      "sha": "856aa176fc371883cfb10b4cfdf76394abf2fdb1"
+    },
+    {
+      "path": "engine_default_test.go",
+      "type": "file",
+      "sha": "4a72bb703ea31cba0d305f471b1de76ef7f72809"
+    },
+    {
+      "path": "entity.go",
+      "type": "file",
+      "sha": "ca48c7275b3bf526de88e49b2a1ffe7a92c2c099"
+    },
+    {
+      "path": "entity_manager.go",
+      "type": "file",
+      "sha": "4bea4819cb7dbdd004ece1e003a2d9e278c0bc75"
+    },
+    {
+      "path": "entity_manager_default.go",
+      "type": "file",
+      "sha": "3756d01ab2d1ce4a065133aa7f6b08b7a9f447bd"
+    },
+    {
+      "path": "entity_manager_default_test.go",
+      "type": "file",
+      "sha": "3d08eb070b0013a14eab7b4d0c18f32307a2aace"
+    },
+    {
+      "path": "entity_test.go",
+      "type": "file",
+      "sha": "10a5873ae8fd8fd00dfbb3343570b220aa34a435"
+    },
+    {
+      "path": "example_test.go",
+      "type": "file",
+      "sha": "02bf5d9a7bf5b0904fd08ea721e616f2f4ec955e"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "c0e7d9fb7d0bbf767c879313435fb67bc22472be"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "0080ddbeb351fbd98123f7722bfe581eb24b7a85"
+    },
+    {
+      "path": "system.go",
+      "type": "file",
+      "sha": "6f51dcc0301728b9278cee59c39d5cc9f41f8d9d"
+    },
+    {
+      "path": "system_manager.go",
+      "type": "file",
+      "sha": "bc97e36341d5ca16de87b07163f59136d25c592a"
+    },
+    {
+      "path": "system_manager_default.go",
+      "type": "file",
+      "sha": "2adfaf15d55e36785557d307c07586cd8e55f1c4"
+    },
+    {
+      "path": "system_manager_default_test.go",
+      "type": "file",
+      "sha": "f4203cdd0f75715cbfc47d6db27be11adeebc104"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README describes ECS foundation requiring external game library; entity/component systems and Go tests, not complete engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

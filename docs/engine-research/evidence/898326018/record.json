@@ -1,0 +1,59 @@
+{
+  "repository": "GiveJavaAChance/PolyrayGameEngine",
+  "repository_id": 898326018,
+  "commit": "37a910cd6918db3649f3e9461e4201b741aa9c51",
+  "source_url": "https://github.com/GiveJavaAChance/PolyrayGameEngine/tree/37a910cd6918db3649f3e9461e4201b741aa9c51",
+  "readme_path": "README.md",
+  "readme_sha256": "d34d61a4e37d9f16f2426adfc9cdeb9ae1066f99596c664fcfbb5f43075e3337",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "2b9b87f4b45fa028d78b15781bd99260378cf41f"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "0329a001f9782684fa085a7dbc00208b00bd1e24"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dc12bb6da0e3c3f60aad7f2c2f62c20955382e3c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f8710ea27834a49eaeb28dd4cfd997ca69fd05b3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "75ebb4937e6c7d46de68346cb70c7f1d1677fdee"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "11e39d7364975a2e6f915782f6f486b2e539d93f"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "848663aeefc06851b401eae60221eeca267d819d"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "16cb7459216987a8ce5b8d1e0107397eaf2ef08e"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "364b075cff1537c0c5b78b3e9a8665473143ab6f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ engine documents ECS, scenes, Verlet physics, scripting, animation and networking; future modules are explicitly excluded from current claims.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

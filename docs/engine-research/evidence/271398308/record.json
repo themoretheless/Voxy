@@ -1,0 +1,62 @@
+{
+  "repository": "wojtekpil/Godot-Octahedral-Impostors",
+  "repository_id": 271398308,
+  "commit": "706e9a5550e77844815c8608879514e702d77e84",
+  "source_url": "https://github.com/wojtekpil/Godot-Octahedral-Impostors/tree/706e9a5550e77844815c8608879514e702d77e84",
+  "readme_path": "README.md",
+  "readme_sha256": "ddd9bed4102314f595207453d7210bd00757b0780e0150fcd7dd58e55f7d147b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f923fc58461557124d0823c59672b26d6ac8f55f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "db6a60718066b469c40e3e1a6e41560a1d38d74c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "529aed09327675dde88eac432b28a07132f0bb6f"
+    },
+    {
+      "path": "TestBaker.tscn",
+      "type": "file",
+      "sha": "39b8d68bd08f676ee64fc5d5611d63a40c447a4d"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "4bcd97cf3c9640e5bb951aa9c36e438d0ac3c6cd"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4dfa9e8dfd4a1ff5266d2ff6022c23909b01948f"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "2b658158b6a2211b656d83fee35e3941e5ad376a"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "2142e781cc4b8e6c36a982b8593df1f6d6b3efa3"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "8055a5d93b032f01e86632865d516e486d20cd5f"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "6d17ab6907248849354afe0bc304bf33b07806cf"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

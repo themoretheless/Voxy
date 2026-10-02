@@ -1,0 +1,49 @@
+{
+  "repository": "indianakernick/Simpleton-Engine",
+  "repository_id": 94754777,
+  "commit": "ab1905f805d1e1c951d96775d0d6646a3548b4ce",
+  "source_url": "https://github.com/indianakernick/Simpleton-Engine/tree/ab1905f805d1e1c951d96775d0d6646a3548b4ce",
+  "readme_path": "README.md",
+  "readme_sha256": "1ac5a01a877c459a0e0dcaed908dfd9d7340b79d5295c2961cbfc3ecd421bd5a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "56a8739d9393a9ce1e76c71eab7ca47d5afbd1d1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b9ad8bc419ed9fd516edf3c9c73eb9ba53108751"
+    },
+    {
+      "path": "Pack",
+      "type": "dir",
+      "sha": "32db7b726d0ee10737fd9bbdfbbfdfeb50854cbf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3621f8b6c4b635e2a22ead712ad877c7f55673d0"
+    },
+    {
+      "path": "Simpleton Engine.xcodeproj",
+      "type": "dir",
+      "sha": "0e64891b5347c02116609c80ffef8f7054818b4b"
+    },
+    {
+      "path": "Simpleton",
+      "type": "dir",
+      "sha": "83d5f0a69aa425363a64d6724ed02937a78861d1"
+    },
+    {
+      "path": "Test",
+      "type": "dir",
+      "sha": "acc9739e165d3e14429a4b80df0acc850c62adc3"
+    }
+  ],
+  "classification": "game_library_toolkit",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit selectable header-only game utility library, no engine framework assumptions or integrated runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

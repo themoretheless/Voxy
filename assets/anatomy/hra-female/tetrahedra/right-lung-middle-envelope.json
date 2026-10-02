@@ -1,0 +1,86 @@
+{
+  "format": "VXTM/1",
+  "units": "metres",
+  "source_file": "assets/anatomy/hra-female/lungs.glb",
+  "source_sha256": "5e9f758a2f6c47c3b7c5c4f1eb86f8665fbf66abc26e8be60a897b761e49b516",
+  "source_node": 918,
+  "source_nodes": [
+    918,
+    919,
+    920
+  ],
+  "source_anatomy": [
+    {
+      "source_node": 918,
+      "name": "VH_F_right_medial_bronchopulmonary_segment",
+      "currentUVSet": "map1",
+      "anatomical_structure_of": "#VHFLungV1.2",
+      "source_spatial_entity": "#VHFemaleOrgans",
+      "label": "Right Medial Bronchopulmonary Segment",
+      "ontologyid": "FMA:7360",
+      "representation_of": "http://purl.org/sig/ont/fma/fma7360",
+      "glb_file_of_single_organs": "3d-vh-f-lung&lf;",
+      "node_type": "surface"
+    },
+    {
+      "source_node": 919,
+      "name": "VH_F_right_lateral_bronchopulmonary_segmennt",
+      "currentUVSet": "map1",
+      "anatomical_structure_of": "#VHFLungV1.2",
+      "source_spatial_entity": "#VHFemaleOrgans",
+      "label": "Right Lateral Bronchopulmonary Segment",
+      "ontologyid": "FMA:7361",
+      "representation_of": "http://purl.org/sig/ont/fma/fma7361",
+      "glb_file_of_single_organs": "3d-vh-f-lung&lf;",
+      "node_type": "surface"
+    },
+    {
+      "source_node": 920,
+      "name": "VH_F_hilum_middle_R",
+      "currentUVSet": "map1",
+      "anatomical_structure_of": "#VHFLungV1.2",
+      "source_spatial_entity": "#VHFemaleOrgans",
+      "label": "right lung hilus",
+      "ontologyid": "UBERON:0004888",
+      "representation_of": "http://purl.obolibrary.org/obo/UBERON_0004888",
+      "glb_file_of_single_organs": "3d-vh-f-lung&lf;",
+      "node_type": "surface"
+    }
+  ],
+  "source_surface_audit": {
+    "welded_vertices": 1785,
+    "triangles": 3566,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0,
+    "closed_oriented_edge_manifold": true
+  },
+  "atlas_source": "https://cdn.humanatlas.io/digital-objects/ref-organ/united-female/v1.10/assets/3d-vh-f-united.glb",
+  "atlas_source_sha256": "95f0c3d2f918582608692ca1139e8bdb18c147a16470e9ee9af8b276bd77c422",
+  "atlas_metadata": "https://cdn.humanatlas.io/digital-objects/ref-organ/united-female/v1.10/metadata.json",
+  "license": "CC BY 4.0",
+  "attribution": "Kristen Browne and Heidi Schlehlein, HuBMAP / Human Reference Atlas. CC BY 4.0.",
+  "original_volume_m3": 0.000213489017940728,
+  "tetrahedral_volume_m3": 0.000213489017940728,
+  "minimum_tet_volume_m3": 2.864527884462384e-13,
+  "maximum_tet_volume_m3": 2.586547941771057e-07,
+  "source_surface_flipped": false,
+  "points": 5280,
+  "tetrahedra": 21696,
+  "boundary_faces": 6670,
+  "max_boundary_vertex_distance_m": 3.98073516376828e-17,
+  "relative_volume_error": 0.0,
+  "relative_surface_area_error": 1.3428107063563716e-16,
+  "sha256": "6c42c7f2e6fa44a2e1479ccbe1553253c58db85db00b01eb3c7ac46075135f54",
+  "generator": {
+    "name": "tetgen",
+    "version": "0.8.3",
+    "numpy": "2.5.3",
+    "minratio": 1.4,
+    "mindihedral": 10,
+    "plc": true,
+    "docheck": true,
+    "nomergefacet": true,
+    "nomergevertex": true
+  }
+}

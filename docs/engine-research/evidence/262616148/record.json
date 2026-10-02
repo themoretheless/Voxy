@@ -1,0 +1,172 @@
+{
+  "repository": "lihop/godot-xterm",
+  "repository_id": 262616148,
+  "commit": "e65b9d1d2a5982c721aeb7ddff8e5b9876e53ec6",
+  "source_url": "https://github.com/lihop/godot-xterm/tree/e65b9d1d2a5982c721aeb7ddff8e5b9876e53ec6",
+  "readme_path": "README.md",
+  "readme_sha256": "1a2be1013d8b60e287a332af37a58f936a04a110b45dccdcb9750bedfe50acbe",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "f902304bb0b7abeee5e7571f8b212a3e33300212"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "e814634a645781ad5aa4f39268b8408ed2bec024"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "bad24c45f6921b4b8b5f4464df04bd0089c81c8d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6a4af38617a72791db6dce422b3d5b00770c25f9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "aedcf7897e7e9d0c07717b983cfd7c388e94b043"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "4cd7f4fc719da8a3394dc911690864294cf4657a"
+    },
+    {
+      "path": ".gutconfig.integration.json",
+      "type": "file",
+      "sha": "17445f42c5b8837416549ab0013b2255a1fbafef"
+    },
+    {
+      "path": ".gutconfig.integration.unix.json",
+      "type": "file",
+      "sha": "2eb8f637713fe64c32dd2f3e9bdea3dd9f6563c1"
+    },
+    {
+      "path": ".gutconfig.json",
+      "type": "file",
+      "sha": "a3e7c3d757856f89ea8098d55de0201aa7f844be"
+    },
+    {
+      "path": ".gutconfig.unit.json",
+      "type": "file",
+      "sha": "6e336be893af6793f532805a2437571869d45715"
+    },
+    {
+      "path": ".gutconfig.unix.json",
+      "type": "file",
+      "sha": "ef6feadaf421566ff05ca5834b1a57950101b2e0"
+    },
+    {
+      "path": ".gutconfig.visual.json",
+      "type": "file",
+      "sha": "a707b38f3406861b239f44ff8fc3e4655334ff75"
+    },
+    {
+      "path": ".plugged",
+      "type": "dir",
+      "sha": "41e63549af4db2377e03c21e25ccf04ae8cf98a6"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "02c762815f1a0a4e87675a2b0b831e1a7c779aad"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "692e3cbbf8609ad8d08f258b1d4cd82a8c3cb0f8"
+    },
+    {
+      "path": "Justfile",
+      "type": "file",
+      "sha": "1c0a80dd8083602f989fc2c0948fd764b0b8fed5"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "7a09002c949660ee2b433786ab3e9e8407e1c645"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5b2b825c03260c25227bdca19e122fbb0c25e72a"
+    },
+    {
+      "path": "addons",
+      "type": "dir",
+      "sha": "f691340d9f814b86bfbbcc3a19d5e5074456082d"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "3da2e5994df2600e8bd70c73a2428ec2fcfc34d4"
+    },
+    {
+      "path": "default_env.tres",
+      "type": "file",
+      "sha": "1a5570b873f0a38e1b92b3f68c01489f759b599f"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9286575aea966d8f198f3186602e0fc157ccded6"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "581fca1d32e26f35275db986253921c12190764d"
+    },
+    {
+      "path": "export_presets.cfg",
+      "type": "file",
+      "sha": "ce9e98ca624e449092ed8c57808ca016a752422d"
+    },
+    {
+      "path": "icon.png",
+      "type": "file",
+      "sha": "0a4909ce7159e521eab064a5a12eeb04fddab351"
+    },
+    {
+      "path": "icon.png.import",
+      "type": "file",
+      "sha": "4e49967e085e1b0d8b0c2664c17624d1509275dc"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "039445a0b8f935c0bd7607ac3d9ddb98392b0282"
+    },
+    {
+      "path": "plug.gd",
+      "type": "file",
+      "sha": "2f23e7b06f10d0390b44774579140cdc75c50903"
+    },
+    {
+      "path": "plug.gd.uid",
+      "type": "file",
+      "sha": "0524801b9666381fbdabdff50d68e5a7bc1efdac"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "893ff3c1b5f7e00a73d93f5c22858842d627b6ea"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "7ca792faf73e69434403af28a6f9cc1ce540458b"
+    },
+    {
+      "path": "themes",
+      "type": "dir",
+      "sha": "5fa0cdfd1aafb3397300b65df120472eea132f6d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

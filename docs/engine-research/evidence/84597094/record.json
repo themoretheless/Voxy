@@ -1,0 +1,74 @@
+{
+  "repository": "RonenNess/GeonBit",
+  "repository_id": 84597094,
+  "commit": "988989b71e3ea695778d12cee264f0f849ab06c7",
+  "source_url": "https://github.com/RonenNess/GeonBit/tree/988989b71e3ea695778d12cee264f0f849ab06c7",
+  "readme_path": "README.md",
+  "readme_sha256": "209f5c05677999ac20f7811a42901f112d5c3c0c139a4ce7eac6d29fcd1401c9",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f971e875eb2af8a13902274b7c1164f889879b64"
+    },
+    {
+      "path": "GeonBit.nuspec",
+      "type": "file",
+      "sha": "949ad756ecc54a81dc2b3d9a24b4cde98a6f0b3b"
+    },
+    {
+      "path": "GeonBit.sln",
+      "type": "file",
+      "sha": "095aa77721263049a2ced3302a9fd83bed8c56c9"
+    },
+    {
+      "path": "GeonBit",
+      "type": "dir",
+      "sha": "5d9f3e9eb885c5bff526c605adf54315bbc54cff"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "dc67fe80500ad9f309e19d7900c9ca413c2c740a"
+    },
+    {
+      "path": "PluginTemplate",
+      "type": "dir",
+      "sha": "dc7e76671f75c8c9295c20b5956002789de64222"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2ffbc93e257fbe77409a1941deef3edbfc5f981d"
+    },
+    {
+      "path": "Template",
+      "type": "dir",
+      "sha": "fa655e7daa5a2b5a449a7f9c5bf633ec311d6afb"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "226a6e38ed27a57e1738dbb8539252fb1dc92f55"
+    },
+    {
+      "path": "geonbit.shfbproj",
+      "type": "file",
+      "sha": "9968a93a69bdf1e36adbbf649354731658a441af"
+    },
+    {
+      "path": "readme.txt",
+      "type": "file",
+      "sha": "50b593e626018f047cb783143f6630cd14d1492a"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "MonoGame-powered C# 3D entity/component engine; README warns abandoned and disputes ECS characterization.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

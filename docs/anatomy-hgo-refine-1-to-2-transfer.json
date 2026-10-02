@@ -1,0 +1,34 @@
+{
+  "scope": "Reference geometry and boundary transfer only; fine physical solve still pending",
+  "nodes": [
+    2768,
+    19499
+  ],
+  "boundary_faces": [
+    2520,
+    10080
+  ],
+  "pins": [
+    63,
+    265
+  ],
+  "maximum_midpoint_error_m": 0.0,
+  "load_area_and_first_moment": [
+    [
+      1.3236670749083329e-05,
+      -9.631293706637689e-07,
+      9.593237740298064e-07,
+      -6.440913703854584e-07
+    ],
+    [
+      1.3236670749083327e-05,
+      -9.631293706637686e-07,
+      9.593237740298064e-07,
+      -6.440913703854583e-07
+    ]
+  ],
+  "reference_sha256": [
+    "157374fe040d0b22cbe8bf24f76142092580d24a6098f87cb3050f2db69bfaed",
+    "47c4b6a6c6a54cd8e5f0556cd15ff27bde1f78585fad26e8ae91b9d4ff44f3b3"
+  ]
+}

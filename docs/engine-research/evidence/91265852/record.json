@@ -1,0 +1,94 @@
+{
+  "repository": "Haeri/PhotonBox",
+  "repository_id": 91265852,
+  "commit": "ed83345e7c10d35eea83b607b1692cb3f0a113fa",
+  "source_url": "https://github.com/Haeri/PhotonBox/tree/ed83345e7c10d35eea83b607b1692cb3f0a113fa",
+  "readme_path": "README.md",
+  "readme_sha256": "2156d7d4bc60b356b45074f53eb42c4396f12e75274283b8ddbb668db3975464",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b8dcc52fa1a2592133051a87b92700eff1d4498c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "105ebcbe0bc30cb17f1a1cb7d6dbe1183fc71618"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "63ff859c514dde133843815e432e2b292c7e6a13"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "d4323463caf4efe5c5c7c0d7e69f99ad9b2b9678"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8601b479da903c86eadd59f2c7ce64b138885bd6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1c625d179edfc6947aaef7e342a5305c550f5d39"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "fdb0cbefa13c09cb223bf21db0fa35d2690f02ce"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "607ead3f85eda72ad5d540dda1e7c9b24d733738"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "b0f2d3448f64bac041724626b3833ad3e066abf4"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "b3baafe62a82236bc8e13cd3bb16632c3f48bbc9"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "3c48fc77d66dfae046742623b992fcc382e8d076"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "baa68efb71cd774317ff93bd409c7030a2d51a14"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0b05403e8de79416d6402a30580f0f20a3643a08"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0f80f56791257c8f5fd4188486a9b79d26678e9c"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "5b42bf84df69b723179771e179e528a7fad0e526"
+    },
+    {
+      "path": "workbench",
+      "type": "dir",
+      "sha": "c3f3266980e884494d901507586cd9864b4e7f49"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++ OpenGL game engine with scene system, source/include and examples; graphics quality/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

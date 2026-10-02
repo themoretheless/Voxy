@@ -1,0 +1,54 @@
+{
+  "repository": "stevinz/awesome-game-engine-dev",
+  "repository_id": 412261785,
+  "commit": "f7f76faaf7f78ab3c5f24cbe10e7b9a83a205a4b",
+  "source_url": "https://github.com/stevinz/awesome-game-engine-dev/tree/f7f76faaf7f78ab3c5f24cbe10e7b9a83a205a4b",
+  "readme_path": "README.md",
+  "readme_sha256": "f7325b1bfce5befb73600e18cd22bc2b0a293571e901893a4fe76dafbf5682ef",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "02348bcfe93e4144ac388bd623d3da5735dac55a"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bc244322fc9c89cb6c5128ba6c323aa2f3472db8"
+    },
+    {
+      "path": "ARCHIVE.md",
+      "type": "file",
+      "sha": "f7c09c9e420f02ae37ca1c6bcf6c1e7f2d538a3f"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "986e6a33add7535c447eac3285ace3186da20f31"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0e259d42c996742e9e3cba14c677129b2c1b6311"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0cb679e26cd9901fe0254b0501eba1d5b7bbbc29"
+    },
+    {
+      "path": "aged-title.png",
+      "type": "file",
+      "sha": "073cdc273f44431c7ddee4f0e98e0eef5215f9c1"
+    },
+    {
+      "path": "mlc_config.json",
+      "type": "file",
+      "sha": "d29325fc8c311a619ea39a333e7c0cfe80a85c6d"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Curated engine development resources, not runtime implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

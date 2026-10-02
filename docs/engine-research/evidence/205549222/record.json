@@ -1,0 +1,59 @@
+{
+  "repository": "phantacix/litchi",
+  "repository_id": 205549222,
+  "commit": "1cf32c70336a6b55c6695b4c6a81a1318cdd8efe",
+  "source_url": "https://github.com/phantacix/litchi/tree/1cf32c70336a6b55c6695b4c6a81a1318cdd8efe",
+  "readme_path": "README.md",
+  "readme_sha256": "4103fb8ccc258f4fbf096d134a7b521e525bc4351f5a7970dbbc02a8de6d4167",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "077a071c1929f6550ddf617550c631436d9c8b9b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "383f4cb8080394cd404df984b71fe4a9e84f92a8"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "7bc5a4a96384f50f2b1355ed2a42742917292774"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "77fcd6a0dcad4becf7d44b0027d84b5273249d10"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "8ef9cc3f19f8c97b78643da13d09125e6d2e9916"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "cccdd3d517fc5249beaefa600691cf150f2fa3e6"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "f9553162f122c71b34635112e717c3e733b5b212"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "cc2d77ac67c250f9831f183ea2cf76042c616978"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java distributed game-server framework with routing, RPC and configuration; no graphical runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

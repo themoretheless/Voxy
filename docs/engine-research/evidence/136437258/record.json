@@ -1,0 +1,169 @@
+{
+  "repository": "feng3d-labs/feng3d",
+  "repository_id": 136437258,
+  "commit": "98ca083408a712a66339688603f7d41198623e2c",
+  "source_url": "https://github.com/feng3d-labs/feng3d/tree/98ca083408a712a66339688603f7d41198623e2c",
+  "readme_path": "README.md",
+  "readme_sha256": "3ec061dc65166ab5259ec97f60a16ecea550a63c720b5c2c06dfdaacf528aa2f",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "64030e3ad5230345642c763c43bab0f5fcc56bc4"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e439fdbf844f2edd1e57abbdd3c098f8da597db2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f34e9c8eb99e0ac62df79ea87e12c4af22308c3e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "674a0a7011a5f10eff196733b73e4c8a40080efb"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "55808cc1701dc7772517575d42001d8240e6e2f2"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "7dabc4ffdc4856839ee290171ffcc4e5fa4dbbd7"
+    },
+    {
+      "path": ".npmrc",
+      "type": "file",
+      "sha": "d7a62e6be2b5b97cded3c61941ba6d3acabacc68"
+    },
+    {
+      "path": ".verify",
+      "type": "dir",
+      "sha": "2ba845859270d294592ca3d7efa96bd4c3e912c2"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7c944f99cc172ebd989cb00de2c6716ec7b42340"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "477580c12d93a3d254b669dad9aae2fee4e0983e"
+    },
+    {
+      "path": "BENCHMARK_BASELINE.md",
+      "type": "file",
+      "sha": "298e940ea9ccc3cfad19c30c73bac90261754e09"
+    },
+    {
+      "path": "EFFECT_INVENTORY.md",
+      "type": "file",
+      "sha": "3f357a1e064e17f2542fde61f783dfc08736d16d"
+    },
+    {
+      "path": "FRAMEWORK_DESIGN.md",
+      "type": "file",
+      "sha": "158e98408a47a08a1d7c8c6b55c3ca5a9c860807"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "42b90ec6ea97c1a6ecd02136cf9e4ee739e6a844"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "764b0a5f8cc95f99ef0754bbf432c000e51a9afc"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "bc3367d9adfa9db61144f7097e339942cc59e2e4"
+    },
+    {
+      "path": "dts.config.cjs",
+      "type": "file",
+      "sha": "090cfc2038eb7fdf067834ab439ee85ba2bc580b"
+    },
+    {
+      "path": "e2e",
+      "type": "dir",
+      "sha": "126296050b26c0be23a8829b1072e1d6f82d9f03"
+    },
+    {
+      "path": "eslint.config.js",
+      "type": "file",
+      "sha": "80eab639dbbca096d8e32d1dbeb0cd2dd5c25e36"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "8754a3b32166edd5aa5451358decbb2ed4d98b74"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "adfc0971fd1f40ffeb6c9b19fa0d133894fac68e"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c8fe7ca8485d58582b87e0ccb1adcff1173917cd"
+    },
+    {
+      "path": "packages",
+      "type": "dir",
+      "sha": "207718fa5815cbe4da2f01df51d9743e7cd995b3"
+    },
+    {
+      "path": "playwright.config.ts",
+      "type": "file",
+      "sha": "4ba8ecb867f992b1b07b0a3377e483aa683e84ed"
+    },
+    {
+      "path": "playwright.editor.config.ts",
+      "type": "file",
+      "sha": "6810dac5dab04696318211094010f631d03040ce"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "9189853f3b89f5bfe102bdc8decf04f0874dbfe8"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6302c0bf25096e3db5552c40ca61356034c7e627"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "c5291333207fafd7d9cc6eee7743c13e32ca4edd"
+    },
+    {
+      "path": "vite.config.js",
+      "type": "file",
+      "sha": "95a1a47f3c3a953cd8825818278037ac77cc3de8"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "d44fccc5e03fe8dda1ace0a4f3b74795684f79dc"
+    },
+    {
+      "path": "vitest.setup.ts",
+      "type": "file",
+      "sha": "c35e3f33e9048930c5d93dd58586790718452188"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "WebGPU engine monorepo with serialized scenes/components, behavior logic, rendering and editor tests; computed evaluation/performance statements remain unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

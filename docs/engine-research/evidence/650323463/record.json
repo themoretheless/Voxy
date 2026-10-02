@@ -1,0 +1,62 @@
+{
+  "repository": "MrScautHD/Sparkle",
+  "repository_id": 650323463,
+  "commit": "78ab87d4e1620aef11634c97f773440ccdc5d3c5",
+  "source_url": "https://github.com/MrScautHD/Sparkle/tree/78ab87d4e1620aef11634c97f773440ccdc5d3c5",
+  "readme_path": "README.md",
+  "readme_sha256": "2c639349688de008bf285e857dc774a9cf6412192722fa145455573c527dc523",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "cfa75e5024e706dfd7b574d6448d12fc15e41a19"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1de6999373d3e3daa6d933f2cf967e608637f5b4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "80e2cdb09861bcdfb5a4e99d018f256db5d2deac"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "18c91471812cb6f4c4e8d0fc407f70c4612e1648"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "64ce272e1bc8cc7d340627fb9665da25bf594a60"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "79a3417c6613026c9b24517bdf34fea6bc9939c4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "beefc141d2a582b23737213ba18844d64fbce9d1"
+    },
+    {
+      "path": "Sparkle.slnx",
+      "type": "file",
+      "sha": "4e47fce37b47f51383ac8868a061e444d0e0a997"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d3f1fd7289dbdf94cc864ed4a8a706839cc122a6"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "df2eab9f2af4ba6f8bb1b819329c6aa85ba5b349"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

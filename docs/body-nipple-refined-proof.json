@@ -1,0 +1,24 @@
+{
+  "renderer": "Metal Apple M4 Max",
+  "image_sha256": {
+    "body-nipple-refined-neutral.png": "e346699c81fce0d2113e11962a4578a05f05dee99bf5d6f3bc46874d8f0731c0",
+    "body-nipple-refined-cold.png": "26a8766b8010b51b3f28b71a8e2e551891f0a55717f9a00fdc83ac04cc45cad0"
+  },
+  "changed_pixels": 1340,
+  "maximum_channel_difference": 24,
+  "difference_bounds_px": [
+    124,
+    366,
+    444,
+    399
+  ],
+  "vertices": 45203,
+  "triangles": 90402,
+  "complete_bindings": 45203,
+  "physiologically_calibrated": false,
+  "known_limitations": [
+    "facet shading around morph",
+    "male model missing",
+    "shell density unchanged"
+  ]
+}

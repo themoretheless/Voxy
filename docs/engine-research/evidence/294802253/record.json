@@ -1,0 +1,99 @@
+{
+  "repository": "moddio/taro",
+  "repository_id": 294802253,
+  "commit": "1700b6b9dc868407bba1f88ca9dd8dd6e6f9b4a8",
+  "source_url": "https://github.com/moddio/taro/tree/1700b6b9dc868407bba1f88ca9dd8dd6e6f9b4a8",
+  "readme_path": "README.md",
+  "readme_sha256": "47c18475e113f9323a26aab43f2094055b83a3272728d8e0e0101da1910be477",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "610970e7679eefac154b7b6ba1ad97b689ec5fa0"
+    },
+    {
+      "path": ".eslintignore",
+      "type": "file",
+      "sha": "c8bbfa01296d16a029a4b9544569002e8e5c3e09"
+    },
+    {
+      "path": ".eslintrc.json",
+      "type": "file",
+      "sha": "a731734d25de69125c8f15c9c43cf21e9fb6bacc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "36d44b669791a9af0277cad4ceb2ce26e3e430c8"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cbabbfe565e62d27ffd5a5a8e0aae91df596dc29"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f91b0ccb1f5e1789b1b56f230d9f16aa929bb362"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f1e18f6bc21bb66235b52946c9c3831a41e81244"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "c858b66b0570243b39d8f4c625247b4c2bf3ab59"
+    },
+    {
+      "path": "be.js",
+      "type": "file",
+      "sha": "5e9ca9bf1c6f2402a888b32fc34fe00d2da85ed8"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "50d95a80191b36eec6de3c72dad1016ce198ab9e"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "6060ee3a9b356982118ac969f58dfee8b1af884d"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "8a7929ebcc981c650bdb39efd7592134f70acd61"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "1e058ebcc5e86ea26db61879511856829e875bbd"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "e9db0d8ce38e9c65c6ff6ba71e494430e5628d01"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "78181a80f8c75ec3256485ddd98710e794b324ae"
+    },
+    {
+      "path": "ts",
+      "type": "dir",
+      "sha": "45cfd1b82a1ba865b1ce07fc8175ab008ba81fe7"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "4c187169066aa3d57bdc93b89bb6214ed10a0cf3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies archived multiplayer web engine; owned engine/server/src/TypeScript and npm build. Capacity/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

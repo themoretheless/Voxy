@@ -1,0 +1,11 @@
+{
+  "nipple_type": "projecting",
+  "nipple_radius_mm": 5,
+  "nipple_projection_mm": 4,
+  "areola_radius_mm": 10,
+  "nipple_cold_response": 0,
+  "left_nipple_radius_scale": 1.5,
+  "right_nipple_radius_scale": 0.6,
+  "left_nipple_projection_scale": 1.5,
+  "right_nipple_projection_scale": 0.6
+}

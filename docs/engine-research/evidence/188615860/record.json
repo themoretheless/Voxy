@@ -1,0 +1,57 @@
+{
+  "repository": "amethyst/space-menace",
+  "repository_id": 188615860,
+  "commit": "8be706d2e993d594557ec3f88d5ac2d331b955d7",
+  "source_url": "https://github.com/amethyst/space-menace/tree/8be706d2e993d594557ec3f88d5ac2d331b955d7",
+  "readme_path": "README.md",
+  "readme_sha256": "4afd4c8951400ab1549b9819685235c66543a0a6aca395444c81744b99920ed3",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0786fe121c288b90298ecda1eaa3bef6f9775714"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "edc73efe0a022127e12bc580b0bac35a8446eb2a"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "84bceb7101bed788195a87600839b218b09dd947"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "156390178d5ddb30aec575a6a6e9dbe220d3db95"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0c75d6287798dad5e3385c42bba1cd13161116ca"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "74f071b45a995cc7e6ca4def31a6c45080b68892"
+    },
+    {
+      "path": "demo.gif",
+      "type": "file",
+      "sha": "33fdf8e2253cc48de444c9125b0564661ebfe3ec"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "a1d2c0d054191cf908dc1e5e536963b11af2c8e4"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c083e785a665ed6de429860ea90399ad85af0fb9"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,59 @@
+{
+  "repository": "Doraku/DefaultEcs",
+  "repository_id": 121024896,
+  "commit": "508033cfa22d849fb62e4eb65e03850ba101429c",
+  "source_url": "https://github.com/Doraku/DefaultEcs/tree/508033cfa22d849fb62e4eb65e03850ba101429c",
+  "readme_path": "README.md",
+  "readme_sha256": "b17340777f95c2bf657d573518ab5cb087c730f7145a59505a825d15051502c8",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "edac425d3fb63bbc24645a8c20aee5a0cf40544b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "67390c6fab3537dd27e853bb739b7d3925a244b3"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "7ca08dce61936bb0a69d2cf71c40cb9d8e0d22cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "90006c5d1e644e7a48ef15296abb2aba3498dce0"
+    },
+    {
+      "path": "Release.bat",
+      "type": "file",
+      "sha": "da9b33615eb8d2e81dfb04edf854b55c5e715bdb"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "0ed6bfcd496b364ecc8eca16fb99b3283ef9438b"
+    },
+    {
+      "path": "ds.snk.gpg",
+      "type": "file",
+      "sha": "b9d4115f6878ce95596be4c86467e7ef8706f63f"
+    },
+    {
+      "path": "image",
+      "type": "dir",
+      "sha": "c9b14daba30415766c94be4409a03340f0ebc86c"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "5e71a38fdfdb27c87a28e2569c60d998e3b2c946"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies C# ECS framework; source/build/test infrastructure, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

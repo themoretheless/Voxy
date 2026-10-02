@@ -1,0 +1,38 @@
+{
+  "points_m": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0.01,
+      0,
+      0.01
+    ],
+    [
+      0,
+      0.01,
+      0.01
+    ],
+    [
+      0.002,
+      0.002,
+      0.009
+    ],
+    [
+      0.003,
+      0.002,
+      0.009
+    ],
+    [
+      0.004,
+      0.002,
+      0.009
+    ]
+  ],
+  "before_regression_exit": 101,
+  "after_kernel_tests_passed": 4,
+  "ignored_benchmark": 1,
+  "full_cargo_tests": "blocked by unresolved super::dot import in liquid/film_rebound.rs"
+}

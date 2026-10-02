@@ -1,0 +1,29 @@
+{
+  "repository": "StrataSource/Engine",
+  "repository_id": 312723413,
+  "commit": "f76b411c1eaa08b42c8b0da589e081eb500e7378",
+  "source_url": "https://github.com/StrataSource/Engine/tree/f76b411c1eaa08b42c8b0da589e081eb500e7378",
+  "readme_path": "README.md",
+  "readme_sha256": "a638fad432966af52e80a6946b0cca7aaefede63c16359e6c206319b527b9667",
+  "entries": [
+    {
+      "path": ".assets",
+      "type": "dir",
+      "sha": "0ded06530194540b76f6913d5ea601de04c97857"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4b79447abf668a9711f45fc319c0bd804a78e1ae"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4e72e60f9088b11af24965812b956f99336872d3"
+    }
+  ],
+  "classification": "excluded_issue_repository",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README-only issue tracker for closed/nonprovided Strata engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

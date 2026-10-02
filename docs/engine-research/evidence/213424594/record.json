@@ -1,0 +1,304 @@
+{
+  "repository": "BBQGiraffe/OpenNitemare3D",
+  "repository_id": 213424594,
+  "commit": "178dcf4b1075462b01de9321870a3c2665b855f3",
+  "source_url": "https://github.com/BBQGiraffe/OpenNitemare3D/tree/178dcf4b1075462b01de9321870a3c2665b855f3",
+  "readme_path": "README.MD",
+  "readme_sha256": "526d6a69e2718eefb18e30bffafc26263dcaf65dff5199ccc6b26a2b2ad36f1d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "26d1615dc012201d5480dfe0f30efdea500d243b"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "5381826df2ad1f6af6c43b00c6026ce2fd0e0dca"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "c8e529787a48776f72e0e5fc5bbdbcb7e6a3946f"
+    },
+    {
+      "path": "AnimatedWall.cs",
+      "type": "file",
+      "sha": "7a38c89dfd604e7fe98826ca159297b9e83de2dc"
+    },
+    {
+      "path": "AnimationHandler.cs",
+      "type": "file",
+      "sha": "a537be2f489fa146e8b4659bbae1ce49ed8ff3c2"
+    },
+    {
+      "path": "Curtain.cs",
+      "type": "file",
+      "sha": "6268c449dddc4a81f4d4b42f2433c685d5027ebc"
+    },
+    {
+      "path": "Dat.cs",
+      "type": "file",
+      "sha": "efa5b94aa89360908bb11cf00e9c144f1dfafa0b"
+    },
+    {
+      "path": "Direction.cs",
+      "type": "file",
+      "sha": "6d795356cd4120f84bef1b7f48c25013fbeaecab"
+    },
+    {
+      "path": "DirectionalGuard.cs",
+      "type": "file",
+      "sha": "be6a7d1a83fa377f57a6f6306253f57a6532b388"
+    },
+    {
+      "path": "DumbObject.cs",
+      "type": "file",
+      "sha": "35f507420296c7e6f21beb6caa9a8ada9496c08e"
+    },
+    {
+      "path": "Entity.cs",
+      "type": "file",
+      "sha": "f18606f88dc712b70a872c31dc9621c1c3c17198"
+    },
+    {
+      "path": "EntityParser.cs",
+      "type": "file",
+      "sha": "db4e1df2bbf78f3627dc040f43258897465a749f"
+    },
+    {
+      "path": "FuseBox.cs",
+      "type": "file",
+      "sha": "6a237c7e5f6927211cc8744cb4aee20213434df0"
+    },
+    {
+      "path": "Game.cs",
+      "type": "file",
+      "sha": "32d745ef2c2010ae30624debae6d006f36cd367c"
+    },
+    {
+      "path": "GameWindow.cs",
+      "type": "file",
+      "sha": "ecf769dffe09eed773580b703ce7afc9288acc19"
+    },
+    {
+      "path": "Guard.cs",
+      "type": "file",
+      "sha": "5ab1c245a7c6a92aa88586c0ae16c9f81be54cb5"
+    },
+    {
+      "path": "HiddenPanel.cs",
+      "type": "file",
+      "sha": "571ccb20226c8b925243a6c739baf0889ae5e2e8"
+    },
+    {
+      "path": "ISprite.cs",
+      "type": "file",
+      "sha": "9d3546ce22692294707341f5318608053732a67c"
+    },
+    {
+      "path": "IUsable.cs",
+      "type": "file",
+      "sha": "e844871d303ca53b816eb5f9ac508e0479c7433c"
+    },
+    {
+      "path": "ImageConsts.cs",
+      "type": "file",
+      "sha": "6f68607c9d8714d561cc87ae726a1caac2eb7e45"
+    },
+    {
+      "path": "Img.cs",
+      "type": "file",
+      "sha": "50e51b74bd610f435bab6aeafaa1e8d8782a8b7d"
+    },
+    {
+      "path": "Input.cs",
+      "type": "file",
+      "sha": "d70ffb072f782a93fbe875a8828133e8e38218b5"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "Level.cs",
+      "type": "file",
+      "sha": "02068911b28f695d9f7ab714ec4c4556b0d76394"
+    },
+    {
+      "path": "LevelExit.cs",
+      "type": "file",
+      "sha": "8afdc5cda394c0a9f05d335102f1190443c85eb3"
+    },
+    {
+      "path": "LevelSelect.cs",
+      "type": "file",
+      "sha": "2eb1dd4d4e4f6d15891457751356f16d6d868140"
+    },
+    {
+      "path": "MainMenu.cs",
+      "type": "file",
+      "sha": "73c9eae60f1df301d95b9db8304a5b03601f0fed"
+    },
+    {
+      "path": "MidiConsts.cs",
+      "type": "file",
+      "sha": "45c7e7a93f57c9ad5c9d2585935570e2442f81cb"
+    },
+    {
+      "path": "MidiPlayer.cs",
+      "type": "file",
+      "sha": "ee324fe89e1cee585b7363a653ca786d930a7438"
+    },
+    {
+      "path": "MusicPlayer.cs",
+      "type": "file",
+      "sha": "93f85d0aa6b27543a6aa118e48c96c31db41b8f3"
+    },
+    {
+      "path": "Nitemare3D.csproj",
+      "type": "file",
+      "sha": "72e54553e62b25b420541d71e5770bc1cb872201"
+    },
+    {
+      "path": "ObjectType.cs",
+      "type": "file",
+      "sha": "4b0467784cdf19a9fa91b5fe3313ebe3b622658b"
+    },
+    {
+      "path": "Pcx.cs",
+      "type": "file",
+      "sha": "b41ddc92cd345fdc4aa3f43890250f6830b0f38a"
+    },
+    {
+      "path": "Pickup.cs",
+      "type": "file",
+      "sha": "1038b92785c114ea1ac6540ce2a638ff53f04bb3"
+    },
+    {
+      "path": "Player.cs",
+      "type": "file",
+      "sha": "e569812c84d1be579579c7db23a00aad2643c8b8"
+    },
+    {
+      "path": "PlayerAutoPistol.cs",
+      "type": "file",
+      "sha": "21c922f70bd11db350dbb05588a6cf6b5b88db6d"
+    },
+    {
+      "path": "PlayerMagicWand.cs",
+      "type": "file",
+      "sha": "8770b0ab8aca14b3ef30c185f439106e5d83631b"
+    },
+    {
+      "path": "PlayerPlasmaPistol.cs",
+      "type": "file",
+      "sha": "66521b2b080f1c4d8ec50b684b5b819df655bc60"
+    },
+    {
+      "path": "PlayerRevolver.cs",
+      "type": "file",
+      "sha": "29ea7a7a9652d53c3570b9ce44a952aae46e9c29"
+    },
+    {
+      "path": "PlayerWeapon.cs",
+      "type": "file",
+      "sha": "46d7040845e61fa074eba2d1e1107d2e46adba79"
+    },
+    {
+      "path": "Program.cs",
+      "type": "file",
+      "sha": "eb25c314f8de0edbb7f447ed5b84f933057ac513"
+    },
+    {
+      "path": "Projectile.cs",
+      "type": "file",
+      "sha": "604b34d43c14d9500978254aa8aa73d9020ea48f"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "9fef8b723337e394995a7c0f370e353fefb34a8b"
+    },
+    {
+      "path": "Scene.cs",
+      "type": "file",
+      "sha": "05c1e52d07462ab48240374b54e3ba21b5e8b740"
+    },
+    {
+      "path": "SoundConsts.cs",
+      "type": "file",
+      "sha": "2f075dace0cfc81c2adfd00e8d9e84f7cd208187"
+    },
+    {
+      "path": "SoundEditor.cs",
+      "type": "file",
+      "sha": "7a6289756201329d26ccebd17fbab832ef850a36"
+    },
+    {
+      "path": "SoundEffect.cs",
+      "type": "file",
+      "sha": "7c63f2d7d0e648da455871e38f1d6268fd50e15c"
+    },
+    {
+      "path": "StartMenu.cs",
+      "type": "file",
+      "sha": "75aed5384bbb4744802bafa8c6a0d7e8a6e4d14f"
+    },
+    {
+      "path": "Tile.cs",
+      "type": "file",
+      "sha": "23afefb4fc0a15f28c4ff89fc8f72130c5fbe3fa"
+    },
+    {
+      "path": "Time.cs",
+      "type": "file",
+      "sha": "bce8aef595bdf2ae1c87cefd8a6d57ebc2e83fa9"
+    },
+    {
+      "path": "Vec2.cs",
+      "type": "file",
+      "sha": "5bcf0eaa52d17a87953768839703e2f8ffa42e10"
+    },
+    {
+      "path": "Vec2i.cs",
+      "type": "file",
+      "sha": "016866007ecfac507dbb6220d036421229ae9c73"
+    },
+    {
+      "path": "WallType.cs",
+      "type": "file",
+      "sha": "4b273d5fe041452098fa0926549fc9911b1c560b"
+    },
+    {
+      "path": "Warp.cs",
+      "type": "file",
+      "sha": "102d5243503c66a97a139154542577c8aba4235b"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "fd649de17a8875665d70bb9581a6f766ba80c669"
+    },
+    {
+      "path": "config.ini",
+      "type": "file",
+      "sha": "61b299649108baa6644d87bded8be46527c87e42"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "cc918c570e97a9ab67d98be7e85eed5a53734938"
+    },
+    {
+      "path": "obj",
+      "type": "dir",
+      "sha": "e954c3b65a3f1411f1a82a05b783de34b0b7c957"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# original-data FPS runtime with entities/levels/input/audio; menus known to crash and C rewrite is a separate branch.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

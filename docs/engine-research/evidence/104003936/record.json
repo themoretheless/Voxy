@@ -1,0 +1,59 @@
+{
+  "repository": "Gforcex/OpenGraphic",
+  "repository_id": 104003936,
+  "commit": "5ca208e3be43dd2f70c26d82618311db29f6b60f",
+  "source_url": "https://github.com/Gforcex/OpenGraphic/tree/5ca208e3be43dd2f70c26d82618311db29f6b60f",
+  "readme_path": "README.md",
+  "readme_sha256": "df9f5a5364f78ad1dbc10cedfae65226a772d8d9d1b22a1b7a3e303d32c262bd",
+  "entries": [
+    {
+      "path": "Behaviour.md",
+      "type": "file",
+      "sha": "9959e2ae408f45823be5e770dc15c258bbb64f49"
+    },
+    {
+      "path": "Blender.md",
+      "type": "file",
+      "sha": "c74164e10d8ccd1cef1d5d9bb32e07c3876cab7e"
+    },
+    {
+      "path": "Houdini.md",
+      "type": "file",
+      "sha": "142257a5781987c868e86049e6fd298f862686d7"
+    },
+    {
+      "path": "Physics.md",
+      "type": "file",
+      "sha": "19c98982e36abc9f795a81328ff5034fb517ae0a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d05b3745ed1511400aa143cf6e47e24d5c936618"
+    },
+    {
+      "path": "Researchs.md",
+      "type": "file",
+      "sha": "3b8cc26b2345df96942677a74b8b5908734b7aeb"
+    },
+    {
+      "path": "SubstanceDesigner.md",
+      "type": "file",
+      "sha": "0526ceef219874c8441b83a13fb9d440d35532dd"
+    },
+    {
+      "path": "Unity.md",
+      "type": "file",
+      "sha": "ff3f2ffe4f6731e56e7ad65a65e7d10c8c44c484"
+    },
+    {
+      "path": "UnrealEngine.md",
+      "type": "file",
+      "sha": "33747a75554f0c56e5b4d5304269b504625ffa16"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Graphics/game-engine resources list rather than implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

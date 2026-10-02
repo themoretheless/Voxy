@@ -1,0 +1,27 @@
+{
+  "repository": "ChessMax/awesome-game-engines",
+  "repository_id": 692994172,
+  "commit": "e19767a028d1975d1e5a46361c203327bdbb9152",
+  "source_url": "https://github.com/ChessMax/awesome-game-engines/tree/e19767a028d1975d1e5a46361c203327bdbb9152",
+  "readme_path": "README.md",
+  "readme_sha256": "8e9385bcf94dfd5a5277ceca5ee629bab1ca602e7845aadcf586328a560af27b",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "a158744534ea2cb560296f647509a63e8028f033"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a9c9c7544abda06d1e5b264fb0238c67f88246fc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "7e6ca159063c32c0d501d66941e83659adf278c2"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

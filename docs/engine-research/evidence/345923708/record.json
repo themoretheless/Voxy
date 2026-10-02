@@ -1,0 +1,84 @@
+{
+  "repository": "ThisisGame/cpp-game-engine-book",
+  "repository_id": 345923708,
+  "commit": "c7f9f8095274c98c62c24b18742966f6c45e638a",
+  "source_url": "https://github.com/ThisisGame/cpp-game-engine-book/tree/c7f9f8095274c98c62c24b18742966f6c45e638a",
+  "readme_path": "README.md",
+  "readme_sha256": "f567ef22bee537f8751396cc1edf0164b918b9e7646550dff50082c2a0e2880e",
+  "entries": [
+    {
+      "path": ".bookignore",
+      "type": "file",
+      "sha": "81154dd4d199220e54c82d4a507f05ee8e231c0d"
+    },
+    {
+      "path": ".code.yml",
+      "type": "file",
+      "sha": "45a9f0718e9ca796f9cf682d83465dac7c3ec90b"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "473835c81e45a079154ad68dc66a4b52b825ec5e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "54f52907e1f5fccb7915820a3d10306f53926a87"
+    },
+    {
+      "path": "LANGS.md",
+      "type": "file",
+      "sha": "e9cddb67c1336604ae07a22199455abf665e46ab"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b4c997cd09c1a03a39a7d05150bf44f46c85207c"
+    },
+    {
+      "path": "book.json",
+      "type": "file",
+      "sha": "016497329447a466ff0eb2ed58b8eab8b4bc6546"
+    },
+    {
+      "path": "files",
+      "type": "dir",
+      "sha": "cf3e6d7d5b9003870772b97ea9f3d0ef43be5add"
+    },
+    {
+      "path": "gitbook_serve.bat",
+      "type": "file",
+      "sha": "4d7fa89cc34833cf597d004d542a7421d0839dd8"
+    },
+    {
+      "path": "imgs",
+      "type": "dir",
+      "sha": "22c5578a20def669f19c104df7420e38a6d4b2fd"
+    },
+    {
+      "path": "pages",
+      "type": "dir",
+      "sha": "78fb4f5d2f52a3175f3e30b4057fd541ecae49b3"
+    },
+    {
+      "path": "pages_en",
+      "type": "dir",
+      "sha": "3783cb6e3cff75b79d6b12bf730a49039f8f3f52"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "2bd5e628ef152f996d863707ce7a39ef4769be4b"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Engine construction book with chapter samples; educational implementations not established as one separate engine repository.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

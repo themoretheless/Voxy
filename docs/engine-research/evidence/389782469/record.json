@@ -1,0 +1,822 @@
+{
+  "repository": "goplus/spx",
+  "repository_id": 389782469,
+  "commit": "035c6ac6e1ab1e4fbe9c62709c789eaa390f1c55",
+  "source_url": "https://github.com/goplus/spx/tree/035c6ac6e1ab1e4fbe9c62709c789eaa390f1c55",
+  "readme_path": "README.md",
+  "readme_sha256": "7e42df1c42f6ccecc943e8aa76623dd2d2f8fd075cc996e4db3f8712b341e6b1",
+  "entries": [
+    {
+      "path": ".gitattribute",
+      "type": "file",
+      "sha": "07764a78d9844210a15958387933a1fa526c43a5"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "ad9ee84b82162ad9b8679f02c9264ea08babf5ea"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "477ad1aad6aaa160cd66fc710d336e32b31830a6"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "bc7d39d067618c0690721bb04c6d2d41f1656b5a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "1cc4107549b11efca84116dfef3517485954247a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "359e4941af64a62dc791bcc974eb12187143ba6c"
+    },
+    {
+      "path": "baseobj.go",
+      "type": "file",
+      "sha": "f67cd7728138583befa076d8032ad970b03dc249"
+    },
+    {
+      "path": "baseobj_test.go",
+      "type": "file",
+      "sha": "c395736369c5235fec0da5b38c7df1a6191fb5ed"
+    },
+    {
+      "path": "bubble.go",
+      "type": "file",
+      "sha": "5339dde01450d9e3a78a2da75f13fa9ccfbc7cbd"
+    },
+    {
+      "path": "bubble_test.go",
+      "type": "file",
+      "sha": "cc639014214c301920bd9a254ad6f19f69cfee09"
+    },
+    {
+      "path": "camera.go",
+      "type": "file",
+      "sha": "dede945a83d92726f1017c8891ada6a224cfc1d3"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "b0ff81568208fde6c3aaa1ca31b7004361b4e31a"
+    },
+    {
+      "path": "collision_query.go",
+      "type": "file",
+      "sha": "98a59ba9887acb601a8a86f14e4eeb8ce56657f6"
+    },
+    {
+      "path": "collision_query_test.go",
+      "type": "file",
+      "sha": "c10c54e32ecff449af22f7d96e023c12d772c98a"
+    },
+    {
+      "path": "color.go",
+      "type": "file",
+      "sha": "c01a1bc007047bd7795d29bb8c5833f29974baf6"
+    },
+    {
+      "path": "color_test.go",
+      "type": "file",
+      "sha": "09449817f66044ea70ff8d96f0bc1698c9022801"
+    },
+    {
+      "path": "component.go",
+      "type": "file",
+      "sha": "2136fd4571395cada4425fca6c34079e0a54b8ed"
+    },
+    {
+      "path": "component_animation.go",
+      "type": "file",
+      "sha": "8ec0599b3c5e6f8cba3c272117f58ae92ea9ac9a"
+    },
+    {
+      "path": "component_animation_audio.go",
+      "type": "file",
+      "sha": "ce0fe02cac5ba8c781b259331ee28c91a1f9c5fe"
+    },
+    {
+      "path": "component_animation_lifecycle_native_test.go",
+      "type": "file",
+      "sha": "1557a5ba6a7ff54e6973833b26743ec6d93810f9"
+    },
+    {
+      "path": "component_animation_test.go",
+      "type": "file",
+      "sha": "b745e7deff42a8851a691acfd6e1091e1d6e73d6"
+    },
+    {
+      "path": "component_bubble.go",
+      "type": "file",
+      "sha": "8d7ff03c968259ee70451f51552f10f7b2ae1a31"
+    },
+    {
+      "path": "component_pen.go",
+      "type": "file",
+      "sha": "929c6d769af64aea839fbda6a8cd4bcd5219cbc1"
+    },
+    {
+      "path": "component_pen_test.go",
+      "type": "file",
+      "sha": "a75d6548ce9c3b9787ebbbc51b6fedae8f9ba6a0"
+    },
+    {
+      "path": "component_physics.go",
+      "type": "file",
+      "sha": "2ac76c60c11674315fc394aae1604aa6f5983f42"
+    },
+    {
+      "path": "component_sound.go",
+      "type": "file",
+      "sha": "265d5396bd78f49d109b699bffdd8da406ef39a8"
+    },
+    {
+      "path": "component_transform.go",
+      "type": "file",
+      "sha": "66a6a802e6603563853adffc0d8011e97ec7b795"
+    },
+    {
+      "path": "costume.go",
+      "type": "file",
+      "sha": "b3b67b94395c8b039fb3418327d27f305eb568f7"
+    },
+    {
+      "path": "costume_native_test.go",
+      "type": "file",
+      "sha": "7dc9bea61d168aad3ab6f130c8c2bfc4eae4a6d8"
+    },
+    {
+      "path": "debug.go",
+      "type": "file",
+      "sha": "9f911f04bb0f62539b2b92bc0c007d8a5e275776"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "892cdb6f883bd815f3e0a06a7f56892c8ea6df10"
+    },
+    {
+      "path": "edge_options.go",
+      "type": "file",
+      "sha": "e7378373790135c77cd1f3d495b3aa397b6f977c"
+    },
+    {
+      "path": "fs",
+      "type": "dir",
+      "sha": "7f56c7f6298cf9e5099ad21b18636d222bd64eb4"
+    },
+    {
+      "path": "game.go",
+      "type": "file",
+      "sha": "ae6939933e6858ca679004c3c1646e23d7d4b05c"
+    },
+    {
+      "path": "game_api_test.go",
+      "type": "file",
+      "sha": "ec7f59bd019b515cd4b711c04b29e62dcc7f97bc"
+    },
+    {
+      "path": "game_build.go",
+      "type": "file",
+      "sha": "617b9ac8d3bcb4696ef7d9597e99bd3130981adb"
+    },
+    {
+      "path": "game_build_native_test.go",
+      "type": "file",
+      "sha": "24079dfc99494e02ee9e372c3f41e03fd7501309"
+    },
+    {
+      "path": "game_fonts.go",
+      "type": "file",
+      "sha": "d8e4e34e5b94100aa8d8c5bb257f32a7b3043224"
+    },
+    {
+      "path": "game_fonts_test.go",
+      "type": "file",
+      "sha": "e88d98f74e7bebd5a17288feeff729fe6d5c106a"
+    },
+    {
+      "path": "game_load.go",
+      "type": "file",
+      "sha": "06f7054a5b011b58d55ff3195f1f17b080472938"
+    },
+    {
+      "path": "game_load_test.go",
+      "type": "file",
+      "sha": "596903f8e8435d07f70a60ea9708ac749ccb27f8"
+    },
+    {
+      "path": "game_physics.go",
+      "type": "file",
+      "sha": "9a4b7dd10e0608f1de08d81bcbd03c862c050873"
+    },
+    {
+      "path": "game_reload.go",
+      "type": "file",
+      "sha": "6fad925ef1d8ef81d533ea9d728f9bd4c2def5c0"
+    },
+    {
+      "path": "game_reload_native_test.go",
+      "type": "file",
+      "sha": "21c80d4d17c736f95c89ae356b25c3feae8d9c20"
+    },
+    {
+      "path": "game_reload_test.go",
+      "type": "file",
+      "sha": "4e96479f834683deda94f95f5f5ca7be0c7a638f"
+    },
+    {
+      "path": "game_run.go",
+      "type": "file",
+      "sha": "b16ac95f0920e6bba18bd24bae09de228b4f3764"
+    },
+    {
+      "path": "game_run_test.go",
+      "type": "file",
+      "sha": "398add4007cd4e7e1c3c8c3cd62a6bfb232e7df2"
+    },
+    {
+      "path": "game_sound.go",
+      "type": "file",
+      "sha": "d71458a8b869e0c7637b96cb0db29137918ab10b"
+    },
+    {
+      "path": "game_sprite_prepare_test.go",
+      "type": "file",
+      "sha": "4ca47dea51a1c67723e3aee007b557b6d3aece98"
+    },
+    {
+      "path": "game_stage.go",
+      "type": "file",
+      "sha": "c53113800c473c964cf72c74526bb692553f717e"
+    },
+    {
+      "path": "game_stage_plan.go",
+      "type": "file",
+      "sha": "9294f54c1e0a6efd077463c15764cd60b74ccd30"
+    },
+    {
+      "path": "game_stage_plan_test.go",
+      "type": "file",
+      "sha": "5c92b40aa485cc547ef1fca80b45318edad6d333"
+    },
+    {
+      "path": "game_state.go",
+      "type": "file",
+      "sha": "ba4f505ffefd72fc8049bc6e5738bcd955532601"
+    },
+    {
+      "path": "game_widget.go",
+      "type": "file",
+      "sha": "e37d6ceef54b391ef3aba95744f652baa8b33eb1"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "c27cfd041e0fe9525a9329dc7a236b6fe64a0b8f"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "cea8e71564863936b2cb188254eede2cd606eeec"
+    },
+    {
+      "path": "godot_modules",
+      "type": "dir",
+      "sha": "399bc4f3a431d20265b31e93b5e5c0f05e96ca29"
+    },
+    {
+      "path": "gox.mod",
+      "type": "file",
+      "sha": "bac6d22c8d294315c562e1081550c3702acbd7dd"
+    },
+    {
+      "path": "input_manager.go",
+      "type": "file",
+      "sha": "b093ed1401bef0aa638717d1f69eb98e49c3fb98"
+    },
+    {
+      "path": "input_manager_test.go",
+      "type": "file",
+      "sha": "114fd01158e9e8305be132ec6fc9068300e08e93"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "b06b2a1d942236237eb368f60ab9af1d975bf560"
+    },
+    {
+      "path": "list.go",
+      "type": "file",
+      "sha": "d6a60890fc9940c1452e187fc605e1d37fde3cff"
+    },
+    {
+      "path": "list_test.go",
+      "type": "file",
+      "sha": "1b3373fe998e0cf1761680c49277f87d87ba9024"
+    },
+    {
+      "path": "mainthread_test.go",
+      "type": "file",
+      "sha": "6cfcc596d18227429c4b68b415edb58854b44c26"
+    },
+    {
+      "path": "monitor.go",
+      "type": "file",
+      "sha": "223113040f738d789a930b1dc6ba14d420b70e9a"
+    },
+    {
+      "path": "monitor_binding.go",
+      "type": "file",
+      "sha": "ed80be521d9adf46b8270350fed331eae23a35ae"
+    },
+    {
+      "path": "monitor_config.go",
+      "type": "file",
+      "sha": "1a4b9b675914b8c92f07b211a402dbd177b5764c"
+    },
+    {
+      "path": "monitor_list.go",
+      "type": "file",
+      "sha": "fd71109f80648e3caaf0f6a64d3503d36eac11d5"
+    },
+    {
+      "path": "monitor_list_test.go",
+      "type": "file",
+      "sha": "a9fe95ae3a693617804ded12bd512e440f537317"
+    },
+    {
+      "path": "monitor_slider_test.go",
+      "type": "file",
+      "sha": "f43f1cab5781ea280e77c92e24661bf58ee83365"
+    },
+    {
+      "path": "monitor_test.go",
+      "type": "file",
+      "sha": "37f9e4f5f06c579cc2f4b61f242bb6015249000e"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "9d01cb6a919e8b9039370e7434b22f6624ae7a77"
+    },
+    {
+      "path": "runtime.go",
+      "type": "file",
+      "sha": "26663244307fe256dc96576c8b2638caf2cf12d5"
+    },
+    {
+      "path": "runtime_bootstrap_test.go",
+      "type": "file",
+      "sha": "751a88528c493874e2d643727f7e7b20b3a35f12"
+    },
+    {
+      "path": "runtime_capture_js.go",
+      "type": "file",
+      "sha": "9903f61e202d43963827fc22100a21e07fc666d6"
+    },
+    {
+      "path": "runtime_capture_noop.go",
+      "type": "file",
+      "sha": "7ad9b31180276d7648b36aee5448e77b7e5284b6"
+    },
+    {
+      "path": "runtime_capture_noop_test.go",
+      "type": "file",
+      "sha": "75fdbf44b3a5b3934fb903b5e18c2d9c89335a15"
+    },
+    {
+      "path": "runtime_conditions.go",
+      "type": "file",
+      "sha": "74e35eb483996fb9c90938823668b0e109eb34dc"
+    },
+    {
+      "path": "runtime_config.go",
+      "type": "file",
+      "sha": "603baf91193452bd3155729fae5af3db99dc6736"
+    },
+    {
+      "path": "runtime_config_test.go",
+      "type": "file",
+      "sha": "ec48d6f390a9841d5010f8559e44923913f07d69"
+    },
+    {
+      "path": "runtime_control.go",
+      "type": "file",
+      "sha": "f012daa537d949204bd12fee3ec28d88572ba156"
+    },
+    {
+      "path": "runtime_display.go",
+      "type": "file",
+      "sha": "151f07863a85f55cc6b96206b1c0c590c9728e7c"
+    },
+    {
+      "path": "runtime_display_test.go",
+      "type": "file",
+      "sha": "d945563fde05964257d01ad37f8b9e47d563adb1"
+    },
+    {
+      "path": "runtime_engine.go",
+      "type": "file",
+      "sha": "12a0388eeba00444e63710c972a17aeece2feaa9"
+    },
+    {
+      "path": "runtime_engine_test.go",
+      "type": "file",
+      "sha": "8747d2d7f0af4335fce94115bac474ce7b5ba1e8"
+    },
+    {
+      "path": "runtime_event_dispatch.go",
+      "type": "file",
+      "sha": "ac85483c93e34ca931bfbee40c79fd49c14aa30f"
+    },
+    {
+      "path": "runtime_event_dispatch_abort_test.go",
+      "type": "file",
+      "sha": "4832f616f46974890057bbb5189ef299d240f346"
+    },
+    {
+      "path": "runtime_event_dispatch_native_test.go",
+      "type": "file",
+      "sha": "77b186d9795732fd7da4de3457db26183f6f0cc6"
+    },
+    {
+      "path": "runtime_event_dispatch_test.go",
+      "type": "file",
+      "sha": "e09067be3c4a69679772847f47654d9ff578badc"
+    },
+    {
+      "path": "runtime_event_lifecycle_test.go",
+      "type": "file",
+      "sha": "1cf7c4ad3598e2a129da18ac949530638b94f832"
+    },
+    {
+      "path": "runtime_events.go",
+      "type": "file",
+      "sha": "39445f3e5b416e1567c57d2476823ecc4967843d"
+    },
+    {
+      "path": "runtime_events_order_test.go",
+      "type": "file",
+      "sha": "7404842c0c16b578ee3b680e692af0b73d858e56"
+    },
+    {
+      "path": "runtime_events_test.go",
+      "type": "file",
+      "sha": "036d1aa303ad308b34f2f3e23913fc764016a757"
+    },
+    {
+      "path": "runtime_frame.go",
+      "type": "file",
+      "sha": "f1f064ce4459f6275f88e260271c418023689b8f"
+    },
+    {
+      "path": "runtime_frame_test.go",
+      "type": "file",
+      "sha": "564c39ee716ae9fe7477afedc9e0b5e5902d7c8f"
+    },
+    {
+      "path": "runtime_loops.go",
+      "type": "file",
+      "sha": "7ff1d8ec8180fa74851571e3094a6d0780f3cf94"
+    },
+    {
+      "path": "runtime_message_context_test.go",
+      "type": "file",
+      "sha": "768701b87a1aa6b64b0276898c1362ea9a14f63a"
+    },
+    {
+      "path": "runtime_pen_sync.go",
+      "type": "file",
+      "sha": "9e060d8d8e15546b2dfba9bbaa40e8194f9dec7c"
+    },
+    {
+      "path": "runtime_pen_sync_test.go",
+      "type": "file",
+      "sha": "f1090b5f53a40f8b5bed26a80e7411adb8339f98"
+    },
+    {
+      "path": "runtime_queue.go",
+      "type": "file",
+      "sha": "5b4a89cfbe9cf9f6db780b2bae0299432ccca9df"
+    },
+    {
+      "path": "runtime_queue_test.go",
+      "type": "file",
+      "sha": "00d6be3de0444d4bc3c5f3d3f3dea2a8df01f20f"
+    },
+    {
+      "path": "runtime_random.go",
+      "type": "file",
+      "sha": "603b5d496a69ba16fc2e8d08590ca9256666c96c"
+    },
+    {
+      "path": "runtime_random_test.go",
+      "type": "file",
+      "sha": "20921ced27049a055a691a3438b3c69a55327ab2"
+    },
+    {
+      "path": "runtime_replay.go",
+      "type": "file",
+      "sha": "a88f63dce8e5a8cdb3181bdce471be3d4d85fc5d"
+    },
+    {
+      "path": "runtime_replay_environment.go",
+      "type": "file",
+      "sha": "f4eccbbde3258711b6fe1ede48e24cbba6260545"
+    },
+    {
+      "path": "runtime_replay_input.go",
+      "type": "file",
+      "sha": "3feb365fb973080f8d621a98c94dd79bcf5f5b85"
+    },
+    {
+      "path": "runtime_replay_session.go",
+      "type": "file",
+      "sha": "4d126ea7b78d81b11161803be1226ae79f7dbb97"
+    },
+    {
+      "path": "runtime_replay_test.go",
+      "type": "file",
+      "sha": "a736e3627cd0aaf7ff912e9a8ccacfd1d964812e"
+    },
+    {
+      "path": "runtime_replay_tick.go",
+      "type": "file",
+      "sha": "1f8e9d5a60cec70681894c9732627aa26b2bf5b0"
+    },
+    {
+      "path": "runtime_scheduler_test.go",
+      "type": "file",
+      "sha": "18284255f7d09c7f73a914b3bbc400b8d582887a"
+    },
+    {
+      "path": "runtime_scratch_scheduler_test.go",
+      "type": "file",
+      "sha": "182eaf40dfbe9f96d85b35f651b78b94d310574e"
+    },
+    {
+      "path": "runtime_screen_refresh_test.go",
+      "type": "file",
+      "sha": "05882e581637f1d710327b754cea04b5d7000ce4"
+    },
+    {
+      "path": "runtime_snapshot.go",
+      "type": "file",
+      "sha": "d5f74a1d0c72643cd909f506e119f212d3c66508"
+    },
+    {
+      "path": "runtime_stop.go",
+      "type": "file",
+      "sha": "c94f06cb598945fda33914b3953203d59c5e5c94"
+    },
+    {
+      "path": "runtime_stop_resources_test.go",
+      "type": "file",
+      "sha": "62e250d00cfb59c346fd644d74225145393e74a8"
+    },
+    {
+      "path": "runtime_stop_test.go",
+      "type": "file",
+      "sha": "465d598906463b10e197be2a5a24a621b9e6f6cb"
+    },
+    {
+      "path": "runtime_sync.go",
+      "type": "file",
+      "sha": "5fd37a1e0e2f93669a322747b21583e77f720b7f"
+    },
+    {
+      "path": "runtime_sync_test.go",
+      "type": "file",
+      "sha": "6d051b2b33c9986aa3e34f1e5157e79e02fd1ff7"
+    },
+    {
+      "path": "runtime_targets.go",
+      "type": "file",
+      "sha": "55c9536ea892987478f806542192f1df3116eeb6"
+    },
+    {
+      "path": "runtime_util.go",
+      "type": "file",
+      "sha": "36a28c39af14037c9b3255fa9d2caf74ffad7d27"
+    },
+    {
+      "path": "runtime_util_test.go",
+      "type": "file",
+      "sha": "fb6568ba01e2ad15afd41b04457a6789f033d1ca"
+    },
+    {
+      "path": "shape_manager.go",
+      "type": "file",
+      "sha": "c374e30dd9d4c11daffdf7cde620adf919b0ece4"
+    },
+    {
+      "path": "shape_manager_test.go",
+      "type": "file",
+      "sha": "c175b45b36ffdf048cab9597e6255e2dc284eb6c"
+    },
+    {
+      "path": "sprite.go",
+      "type": "file",
+      "sha": "215b4f633ac43700c10c192b9dd0343552e1c42f"
+    },
+    {
+      "path": "sprite_animation.go",
+      "type": "file",
+      "sha": "d481798d4ef5ec44ba6dc7099f15eff7359b2c71"
+    },
+    {
+      "path": "sprite_animation_native_test.go",
+      "type": "file",
+      "sha": "0c087ea7bf161203fb917577b3ae812a50a558a6"
+    },
+    {
+      "path": "sprite_api_test.go",
+      "type": "file",
+      "sha": "14d4d0853cae921289ca79218e8910616f7bc275"
+    },
+    {
+      "path": "sprite_bubble.go",
+      "type": "file",
+      "sha": "8cf1a29e17501015285f7c9166b1cf9c7c25d1e7"
+    },
+    {
+      "path": "sprite_clone.go",
+      "type": "file",
+      "sha": "5d90943d4e649e4411bb8f7a10ab4a18fbeda339"
+    },
+    {
+      "path": "sprite_clone_collision_test.go",
+      "type": "file",
+      "sha": "3486ee69ba9ea3746b30f3880480ba3b96004ca5"
+    },
+    {
+      "path": "sprite_clone_components_test.go",
+      "type": "file",
+      "sha": "f8974575bea43746b6f40dad586b2c2b2b8ed381"
+    },
+    {
+      "path": "sprite_clone_limit_test.go",
+      "type": "file",
+      "sha": "12db94f99c74c6ac2935f51eda98da5e2bdd9ad6"
+    },
+    {
+      "path": "sprite_clone_pen_test.go",
+      "type": "file",
+      "sha": "6babcbb264c67e077cd26a0939c3c3ba38024c6b"
+    },
+    {
+      "path": "sprite_clone_sound_test.go",
+      "type": "file",
+      "sha": "add83b826af2c059eaee47bd03a81ecd51649f94"
+    },
+    {
+      "path": "sprite_clone_test.go",
+      "type": "file",
+      "sha": "deedab40129be2963fb4fa90cce83df7a852e9c4"
+    },
+    {
+      "path": "sprite_core.go",
+      "type": "file",
+      "sha": "22bc0b8efbe66f3a1d23f0dae4a66555887bf6bb"
+    },
+    {
+      "path": "sprite_edge_test.go",
+      "type": "file",
+      "sha": "aff227de99ce02586daea63c5a4a76358b4a12fc"
+    },
+    {
+      "path": "sprite_events.go",
+      "type": "file",
+      "sha": "cf8642f36ddcd7565f09f09ec458c36998a3647f"
+    },
+    {
+      "path": "sprite_events_test.go",
+      "type": "file",
+      "sha": "362fefc31a4da8b3e256275b4acd5d0ea4dc487c"
+    },
+    {
+      "path": "sprite_layout_test.go",
+      "type": "file",
+      "sha": "dc8f2b945a8b82cbde143ca1f5104d184bee212f"
+    },
+    {
+      "path": "sprite_pen.go",
+      "type": "file",
+      "sha": "7aaba6c62885dc05acbc868b686a40509d5915f0"
+    },
+    {
+      "path": "sprite_physics.go",
+      "type": "file",
+      "sha": "0ac0325cdfb29ffb3cf5b1dbab0de86b21df40d3"
+    },
+    {
+      "path": "sprite_physics_test.go",
+      "type": "file",
+      "sha": "19bb16031de24c912383c43a5727e3834171ff59"
+    },
+    {
+      "path": "sprite_properties.go",
+      "type": "file",
+      "sha": "d6ca0f284a71a5fd14621c9d75043d0fef599028"
+    },
+    {
+      "path": "sprite_properties_test.go",
+      "type": "file",
+      "sha": "62c0f33046de84cb8378180b9f5f0afdb32ff266"
+    },
+    {
+      "path": "sprite_query.go",
+      "type": "file",
+      "sha": "7fcca21fca19666cc1f72252e1eeb52b512bcaa2"
+    },
+    {
+      "path": "sprite_query_test.go",
+      "type": "file",
+      "sha": "2545048fe67fac2c042b3837d8f921a864f7c83e"
+    },
+    {
+      "path": "sprite_render.go",
+      "type": "file",
+      "sha": "ff166065d78a8daf31e3473cb36206ff1162d391"
+    },
+    {
+      "path": "sprite_render_test.go",
+      "type": "file",
+      "sha": "636997529805508567b383836a2db48dc8aad787"
+    },
+    {
+      "path": "sprite_render_util.go",
+      "type": "file",
+      "sha": "179b89ba7ea2d89930c5958e82add88eef2b6763"
+    },
+    {
+      "path": "sprite_sound.go",
+      "type": "file",
+      "sha": "375a1e1c6138fc478ff8095e91aa780507bb9dd6"
+    },
+    {
+      "path": "sprite_transform.go",
+      "type": "file",
+      "sha": "6223c392185a471b30a95c36f1bdb01ea2def3b9"
+    },
+    {
+      "path": "sprite_transform_target_test.go",
+      "type": "file",
+      "sha": "78abd3e5ef38723c67542f284167830f3e730a6c"
+    },
+    {
+      "path": "sprite_transform_test.go",
+      "type": "file",
+      "sha": "6d6065811d5e71e2acac1c7ecf075a3b77983090"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "eeba9dd94be7184a096f8bf76b941abfb02ec3ad"
+    },
+    {
+      "path": "tilemap.go",
+      "type": "file",
+      "sha": "579ecff20a0815d76462906bab6452d336a664e1"
+    },
+    {
+      "path": "tilemap_pen_test.go",
+      "type": "file",
+      "sha": "956a217cb958f3b1d38e24b7e31065934a0671fe"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "316718fc8afc1a64a09b899600ccf4ecfedc552e"
+    },
+    {
+      "path": "tutorial",
+      "type": "dir",
+      "sha": "1063457128ff671e09af13f951cacb943bd021e0"
+    },
+    {
+      "path": "types.go",
+      "type": "file",
+      "sha": "629b457f804a9d1de3e91c4714741ae2f241b97c"
+    },
+    {
+      "path": "x",
+      "type": "dir",
+      "sha": "522f5a9a4c6a73786f177d201d5bd602cfffba51"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

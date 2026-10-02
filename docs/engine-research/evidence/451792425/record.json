@@ -1,0 +1,64 @@
+{
+  "repository": "GalaxyShad/Zuma-Deluxe-HD",
+  "repository_id": 451792425,
+  "commit": "56e54f0c8949558931a9305c3ab723d22a07b77e",
+  "source_url": "https://github.com/GalaxyShad/Zuma-Deluxe-HD/tree/56e54f0c8949558931a9305c3ab723d22a07b77e",
+  "readme_path": "README.md",
+  "readme_sha256": "849d0a2ea6da8aca05c949cbeb01018c98b6ea8dd273c00f6e5b8e9251aeeea1",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "af04f0920da60cd0b7bc4c1fb965e49efc2a8c9a"
+    },
+    {
+      "path": "1.bat",
+      "type": "file",
+      "sha": "937fa3639abfa88bae17667ec9ad566dec7e6505"
+    },
+    {
+      "path": "2.bat",
+      "type": "file",
+      "sha": "003a72187c0d74e35d268385005456f0c89d0c70"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "20f92da4fa322292626f167400afa4a7be8b992c"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "9204f06ebd6395e5bb287664342eeed3b4a35f97"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "76b539223640f8fc73b0b53abc6d80fc469a4996"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a465385f270df6eca16761970775ceded4c56867"
+    },
+    {
+      "path": "TODO.txt",
+      "type": "file",
+      "sha": "ccec1e2d0509d71236b22660bf6659f54f960524"
+    },
+    {
+      "path": "content",
+      "type": "dir",
+      "sha": "5b9b598dae79f59e72470225acb95c4033dbfd51"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "3d9c9af4370ec36c61126e1e1743795570bab3a0"
+    }
+  ],
+  "classification": "excluded_game_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Zuma remake with internal HQC framework; primary product is the game and current rewrite is documented as not playable.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,21 @@
+{
+  "file": "assets/characters/blender-female/prepared/body-component-repair-v13.obj",
+  "sha256": "ffa0a2cc1a5e868844d2543d75ab292790b3458a3d78e0410a1396ffd03f4537",
+  "reloadedCrossingPairs": 98,
+  "segmentLengthM": 0.0224769366089663,
+  "audit": {
+    "vertices": 76052,
+    "triangles": 152100,
+    "area_m2": 1.5671278394363082,
+    "max_edge_m": 0.011999540395577154,
+    "degenerate_triangles": [],
+    "duplicate_triangles": 0,
+    "boundary_edges": 0,
+    "nonmanifold_edges": 0,
+    "inconsistent_winding_edges": 0
+  },
+  "bodyOutsideHeadPreserved": true,
+  "normalReversals": 0,
+  "maximumCumulativeDisplacementM": 0.0021435344750506667,
+  "scope": "Prepared intersecting candidate, no runtime replacement."
+}

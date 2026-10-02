@@ -1,0 +1,84 @@
+{
+  "repository": "andreas-jonsson/openwar",
+  "repository_id": 57234885,
+  "commit": "42b0621cf2c17b1c631f2fb59004c4b9913ab243",
+  "source_url": "https://github.com/andreas-jonsson/openwar/tree/42b0621cf2c17b1c631f2fb59004c4b9913ab243",
+  "readme_path": "README.md",
+  "readme_sha256": "ea39e317dae26120acc19e244d082184866522dcee49359b7f449e50f74dfded",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8e491a084a8bbd1b6d7264f92a6e67e3ca3a21a6"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "73258462c0d6996cf4c96f80a10c5759524785c1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "733c072369ca77331f392c40da7404c85c36542c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "92dc2327ee2731e79b99afb13bd99b336c53894d"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "833239725a0c78298d4d4515edb3ac4f6455642d"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "577f46e4b648cf76d549067dc7439baf1c9383bc"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "f665db39957d1146d305536977bfdb1eb20955ba"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "03332075913eac82023c6d81cd4aaf04fd223229"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "50db602737c5c3303541850ff7642da054b0c635"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "41ad41514efa8b960467a3bf0dedff0326229ef1"
+    },
+    {
+      "path": "openwar.go",
+      "type": "file",
+      "sha": "a6b2f8005bde6eeb20867e5a58b683dfa1079dfd"
+    },
+    {
+      "path": "platform",
+      "type": "dir",
+      "sha": "56ec5e1cbd9121ad7fce30228ceb79323e8ca37a"
+    },
+    {
+      "path": "resource",
+      "type": "dir",
+      "sha": "4cbdf1f1e2370440521e0d29e96d2dadbdb79339"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "214c1ee22ce634f226e615e23e70414929815bd7"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Alternative Warcraft runtime with game/platform/network/resource sources; requires original game data.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

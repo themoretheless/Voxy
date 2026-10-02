@@ -1,0 +1,27 @@
+{
+  "repository": "meemknight/PikaEngine",
+  "repository_id": 528805422,
+  "commit": "824caf2b4b53444af392feb1aed95eebf0a26e4b",
+  "source_url": "https://github.com/meemknight/PikaEngine/tree/824caf2b4b53444af392feb1aed95eebf0a26e4b",
+  "readme_path": "README.md",
+  "readme_sha256": "c720a7b2973dfa899fb60cd86c0baf3277ab082609a0a595adc40a4db9e12ba5",
+  "entries": [
+    {
+      "path": "Pika",
+      "type": "dir",
+      "sha": "5bab26f4514d5a72ef086a517ce5c7ad2d3671bb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "2b8ff78c339e1b23044b13f31f6861bb5dd3bf2a"
+    },
+    {
+      "path": "art",
+      "type": "dir",
+      "sha": "ac576c8aec86640129726489e76c164d854568d7"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

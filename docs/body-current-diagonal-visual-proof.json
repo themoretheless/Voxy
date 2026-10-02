@@ -1,0 +1,16 @@
+{
+  "changedPixels": 159,
+  "differenceBounds": [
+    210,
+    503,
+    344,
+    526
+  ],
+  "imageSha256": {
+    "docs/body-current-face-original.png": "5b18c9752b6691caa50f7e9cf672b40779e667e2089aea31dae3cdab99ef193f",
+    "docs/body-current-face-diagonal.png": "3257ccab50a05e576815465841914aed4ff1d9869a206317efed49b9412da58f"
+  },
+  "rendererSha256": "491c98065820478c54686a3b90e0072e60adede4e071cf0d9bc10576a0127125",
+  "inspected": true,
+  "scope": "Offscreen front face closeup only; no adoption, full body or dynamic geometry proof"
+}

@@ -1,0 +1,79 @@
+{
+  "repository": "pingw33n/vault13",
+  "repository_id": 159169654,
+  "commit": "9add0692571c941b6aa771bfc893d52e3198629e",
+  "source_url": "https://github.com/pingw33n/vault13/tree/9add0692571c941b6aa771bfc893d52e3198629e",
+  "readme_path": "README.MD",
+  "readme_sha256": "017caf255e9ad2063d2cab6c18850831c039fcde2a15714bb21175afd201520d",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "2056ab38fe9007f354320c0883fb97acfa55bfdf"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "835895ecabf16fb65db8a78c1299b45ea13d1b22"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eb5a316cbd195d26e3f768c7dd8e1b47299e17f8"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "623678e517a20e90be3cf4935df6bc8b32896bff"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "16f9ce42af085659734781ce9871a4b2f4f34462"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.MD",
+      "type": "file",
+      "sha": "30ce3e6ec796ccc6eda0fdfd6c2168fb5d91b195"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "4ed59b6532ffa10a2edd17d4bfea50e1cae0e030"
+    },
+    {
+      "path": "screenshot_20190830114533.png",
+      "type": "file",
+      "sha": "23e90c0b97179b6ea1cf3e0c509c6bdbf5ece033"
+    },
+    {
+      "path": "screenshot_20190917010852.png",
+      "type": "file",
+      "sha": "f837dad3804bf25b00a201903785c4fa4b56a95c"
+    },
+    {
+      "path": "screenshot_20200707141001.png",
+      "type": "file",
+      "sha": "31a305d2bfcac88cf9e8bca7e9923406b64a78f5"
+    },
+    {
+      "path": "sdl2_windows_binaries",
+      "type": "dir",
+      "sha": "9a05f1380d18a72737f880725070815122a60915"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4db281a40cf2428e16f3b639c6cd4e0c2ae705bb"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies independent Fallout-compatible runtime; owned Rust source with Cargo/build and SDL backend.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,13 @@
+{
+  "fixture": "flat-grid-base.obj and flat-grid-coarse.obj",
+  "depth": 1,
+  "indexed_triangles": 40,
+  "output_cells": 160,
+  "triangle_tests": 640,
+  "node_visits": 608,
+  "reference_candidate_pairs": 2048,
+  "verified_bound": 5.622719070614828e-16,
+  "exact_triangle_budget_640_accepted": true,
+  "triangle_budget_639_rejected": true,
+  "scope": "offline indexed OBJ certification; no elapsed-time speedup or native frame claim"
+}

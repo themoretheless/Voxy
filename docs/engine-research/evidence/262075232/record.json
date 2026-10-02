@@ -1,0 +1,52 @@
+{
+  "repository": "keijiro/Khoreo",
+  "repository_id": 262075232,
+  "commit": "186951dd386079bc7c9101fee5361ad5a9fa0d1d",
+  "source_url": "https://github.com/keijiro/Khoreo/tree/186951dd386079bc7c9101fee5361ad5a9fa0d1d",
+  "readme_path": "README.md",
+  "readme_sha256": "a0924ad232a38e7372920ec26bcc3778d1e794a4ebfda443837d2b358a15c351",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "962aa3867d3fec500f076a9227a021bf3dba207b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "45293efc8b49477e7a7521d075dc3f5c7ff6f601"
+    },
+    {
+      "path": "Assets",
+      "type": "dir",
+      "sha": "6d48a0edac33a0aa788a0bd0c9ab41534f0ededd"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "fdddb29aa445bf3d6a5d843d6dd77e10a9f99657"
+    },
+    {
+      "path": "MC101",
+      "type": "dir",
+      "sha": "b2b5a9fc7a19767b753d3657a91c5f4863b7cb2f"
+    },
+    {
+      "path": "Packages",
+      "type": "dir",
+      "sha": "c8a555b01ff44ee76a2b1dbd7b22a7cfac76e9e8"
+    },
+    {
+      "path": "ProjectSettings",
+      "type": "dir",
+      "sha": "7b725ce25b8f57f55e8340b0dd74e903f5c99ee5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "f7ac3cb2e487a1fc5974c4bc0dcbf776d1a46361"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

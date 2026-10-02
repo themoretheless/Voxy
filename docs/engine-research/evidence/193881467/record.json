@@ -1,0 +1,94 @@
+{
+  "repository": "Martenfur/Monofoxe",
+  "repository_id": 193881467,
+  "commit": "628aead1a3283ab005f13e4dc390201aa962579b",
+  "source_url": "https://github.com/Martenfur/Monofoxe/tree/628aead1a3283ab005f13e4dc390201aa962579b",
+  "readme_path": "README.md",
+  "readme_sha256": "e11750b9b74371a5dd1e0112e64a15afd0d1da7487539a8d04366fa5fac100e1",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "04ad01fc314d4f7e53c5766d40aed7ead8dbf6af"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f3b4f1acbdf95529a22ab575854d15d188b33248"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "c32153327dc13105334f382dcf812722581a9839"
+    },
+    {
+      "path": "Codestyle.cs",
+      "type": "file",
+      "sha": "e3ca67a8ecde72695cada669228f81cde7a3dd35"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "b6af13cec630f2a9a4f84d7cfda26fed261f3d7f"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "fecee9521cef92bca612050bd544569d0425d028"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "e41e54a23a66afbe8de4afc161dc6ced151e2f1e"
+    },
+    {
+      "path": "Monofoxe",
+      "type": "dir",
+      "sha": "ace2550258bb54131be625f9f7ad98370724ee4b"
+    },
+    {
+      "path": "Nuget.props",
+      "type": "file",
+      "sha": "7c9b1fddde5b165791c6415dfba6a68f93e1609f"
+    },
+    {
+      "path": "Packages.props",
+      "type": "file",
+      "sha": "359e44253bff7e464c8b0427374e1bed6a3675f2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "80f32f18c7f6aef950a74b34b33fa6606adb2c4f"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "3cecfcb4d9a0dd4b1e1b7638ad19c9626332a168"
+    },
+    {
+      "path": "Templates",
+      "type": "dir",
+      "sha": "a91259157edb7f4c35ac9e5c687a647915d53753"
+    },
+    {
+      "path": "logo",
+      "type": "dir",
+      "sha": "08456bff8dc4a7b1ab1a34b8b034bb1945f74af3"
+    },
+    {
+      "path": "release.ps1",
+      "type": "file",
+      "sha": "7794a3e8c10b1101a4bf59ba055ba088c36ee56b"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine over MonoGame backend; owned Monofoxe runtime/templates/samples and .NET build manifests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

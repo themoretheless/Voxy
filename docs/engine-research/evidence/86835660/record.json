@@ -1,0 +1,47 @@
+{
+  "repository": "ChrisRx/dungeonfs",
+  "repository_id": 86835660,
+  "commit": "1c33fcaff7278f18b9ddc4d14c90024b75856256",
+  "source_url": "https://github.com/ChrisRx/dungeonfs/tree/1c33fcaff7278f18b9ddc4d14c90024b75856256",
+  "readme_path": "README.md",
+  "readme_sha256": "43b253358bc0cd56a5c28d7ba05328b266a550c1651c005369db7aa53c685fcb",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a69fa0883872036a3bfa7385ddddff2b6b62fdaa"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "360246f41adbbbe0d78a10e9716348e623823516"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "4ce9b588cb5887a6adec2265b9b40d96f043824a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5f456c6e3f1488c782f3a1387e0c28282dbf51f3"
+    },
+    {
+      "path": "cmd",
+      "type": "dir",
+      "sha": "bd6d90945f1cf73e24ab7f3786481945f62d96d1"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "4f32b2ea404ac89ea988a65c78ff0a435baee814"
+    },
+    {
+      "path": "pkg",
+      "type": "dir",
+      "sha": "e19c056026aaef2f3d81988ecb0e01ce66ca5864"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

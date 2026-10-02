@@ -1,0 +1,89 @@
+{
+  "repository": "platonvin/lum",
+  "repository_id": 750638000,
+  "commit": "b5a10d9c46d9a756bd09ef8f26e0f0326df3265a",
+  "source_url": "https://github.com/platonvin/lum/tree/b5a10d9c46d9a756bd09ef8f26e0f0326df3265a",
+  "readme_path": "README.md",
+  "readme_sha256": "09fec603c4f62dfbb47a30078b14289b01ec44a1c3776a5fcb271b52fb979439",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "1f7f8a8cd633b5435d94645656809bba014e595a"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "123552cf4439db252142addc78fb3604793bb4cc"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5ac1e6c061f920b1a5943af50e471e46d0011acb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "fc3adcac5644fe3b4b0e871fab25300712b6e0dc"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6fa1e56e5c398b069054fd49dab4282cfaaedfd2"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "a02468d11f9d8be971698c52a8929927527cc2ea"
+    },
+    {
+      "path": "MakefileLegacy",
+      "type": "file",
+      "sha": "b356ea047beb30741306e2d952a61ad24cce7244"
+    },
+    {
+      "path": "MakefileLegacyLegacy",
+      "type": "file",
+      "sha": "98a0ed45a99e34ff8b0bf23afb6b5ff40659c128"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b07dd4908d4a49289406236a6567756f78f8b9cb"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4863e19f2386818ebfa974b2e4209a3ff5d44ad2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "09bb274c300b5c976eef2c7d32af266df12efe83"
+    },
+    {
+      "path": "screenshot_v0.3.png",
+      "type": "file",
+      "sha": "830305b470ed7b4bb2cfdf598c45283edd0975f9"
+    },
+    {
+      "path": "screenshot_v0.4.png",
+      "type": "file",
+      "sha": "2596cc75cbcf470415c2aa0655da9b6cb0a75fad"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "3d534d4a9d9e191f4f8655ba28d0dcfe13f1e434"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e97052ded70cc5e4542fcfdb5703b7cbf0358e63"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Explicit abandoned C++ Vulkan voxel renderer with demo controls, separate Rust successor; not full game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

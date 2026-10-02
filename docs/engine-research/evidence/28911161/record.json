@@ -1,0 +1,84 @@
+{
+  "repository": "apistol78/traktor",
+  "repository_id": 28911161,
+  "commit": "ddf5320df553e68e3d09a3eea9fd3fd360c8054f",
+  "source_url": "https://github.com/apistol78/traktor/tree/ddf5320df553e68e3d09a3eea9fd3fd360c8054f",
+  "readme_path": "README.md",
+  "readme_sha256": "1c5eb531ecde83a00e42f11ed5993b97ee5f65f0bb3f38d155331ad2ad5f3d05",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "337bda69fa748b841cac16f75de0a2acfa3b18f6"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f60a7daa20ba98482a81437734165b17fe9db3dd"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "3ddb6ee4e0fe211f246528fcd109c16f35610081"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cd9878028aed0f523ae579df447963d333965ee9"
+    },
+    {
+      "path": "Traktor.code-workspace",
+      "type": "file",
+      "sha": "c2c48ae1ce04ec65e0b971c7b7d9c2527782b52e"
+    },
+    {
+      "path": "Traktor.workspace",
+      "type": "file",
+      "sha": "5d9f8a9fedaf652fa00957107e539a69f3418ee5"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "e5499fc482484a5ff95df2c93e093a3af000f063"
+    },
+    {
+      "path": "code",
+      "type": "dir",
+      "sha": "98614ea62db180d5a5ed7da8ecae1248221c8a62"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "f43c203ef69f53c514b9c78acf9a8b8415702c3a"
+    },
+    {
+      "path": "header.sh",
+      "type": "file",
+      "sha": "20c8c43ad732e8bd852bc98e58185e259849234a"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "89a90db97b87fd6e13c29ab010b4f9bb75b3d332"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "49e4ba297cd36469dd42484077f516d39b3d6c4d"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "8baaa90d86d68bc48baaa5c17295a1980d5f9187"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native 3D engine; owned code/tools/runtime assets and workspace/build scripts. Commercial usage claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

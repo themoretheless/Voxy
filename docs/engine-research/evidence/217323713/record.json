@@ -1,0 +1,82 @@
+{
+  "repository": "Technici4n/voxel-rs",
+  "repository_id": 217323713,
+  "commit": "fc4c18f5b8376a10b64d9ce077bcbff456aec5ae",
+  "source_url": "https://github.com/Technici4n/voxel-rs/tree/fc4c18f5b8376a10b64d9ce077bcbff456aec5ae",
+  "readme_path": "README.md",
+  "readme_sha256": "18bfed3dcf83ab0a173cb756cd976f31d4defc030ad3149f623f36920088a796",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "3d2e621fe09bbcd55d1e389adae4733a8dd61d43"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "3548ef3488812db02213d017e3477688f40c520f"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "4af43b93b7ba4ab49061ba7eb8b0657bf671a728"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f0bee3196f7bca3df31ca5daea50bd85d97ddf35"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0501fff2564ebac2f648b07dd67663536e2991de"
+    },
+    {
+      "path": "TEXTURES_LICENSE",
+      "type": "file",
+      "sha": "f5675b7b37956f8ebc851ad4b3424382f419548e"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "c0c42a2160f4714dc1ebc04eea2c26fa64fb00fe"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "1a2cbd75c93b804a899c41ffda2d3b972e422588"
+    },
+    {
+      "path": "common",
+      "type": "dir",
+      "sha": "7c64fe0efe46fda124260ae652bc3c88836111c3"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "ef8a4a278b190f95962c9f609db8026d88a1a220"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "f1cad2447032cd65395db03f9fa215606b37c552"
+    },
+    {
+      "path": "quint",
+      "type": "dir",
+      "sha": "1598b3285b648d24ae75b75626d5dde8b8fe2f6f"
+    },
+    {
+      "path": "screenshots",
+      "type": "dir",
+      "sha": "27df442e67dd59e6a239f9803b27fe1d8f31a238"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "cb6d3feb3256d9b5e4c06adb47748a91de2ce70f"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

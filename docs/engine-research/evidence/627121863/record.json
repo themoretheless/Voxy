@@ -1,0 +1,117 @@
+{
+  "repository": "gameflorist/dunedynasty",
+  "repository_id": 627121863,
+  "commit": "4469449c75f51388ad2725297a95f09a6c601905",
+  "source_url": "https://github.com/gameflorist/dunedynasty/tree/4469449c75f51388ad2725297a95f09a6c601905",
+  "readme_path": "README.md",
+  "readme_sha256": "3de62c7c287a9d78f84d02a732ca0eb82050546e4be39ddc338db9949ad20cc0",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "6402d9daf0bafa1660163ce58d503e3fe3817c87"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4e0810c84e773555e8d902d0814f924382bc6e89"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "82b9fcd750f71d59cf07dff230778ad1cb0c7577"
+    },
+    {
+      "path": "CHANGES.txt",
+      "type": "file",
+      "sha": "88a3025d57c24e74a412dea8c4896365310830e5"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "1a2873cb3585888381f91a64ef0136c93bb51873"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "18c47b284b50424f24cbf3f34e8f2fbbeb79316e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "eb87d56b57913996f17501f8110e6be1d3ea8142"
+    },
+    {
+      "path": "README.txt",
+      "type": "file",
+      "sha": "77dc49309131aa42074aba4371ac6449ed369f82"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e4b20593188d349a2405bb3fc2f1996645161b42"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "db1044f5d0a7c7b9c505cbbe8cfbc3b583eb7fb7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "213ff2c4b50e7b058caecfab96c072b9e1f7f2d2"
+    },
+    {
+      "path": "enhancement.txt",
+      "type": "file",
+      "sha": "9ffa717c0bbf05ef419e3ed3aff1f86778e631d8"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "6087678b9cc34d86e4b02f1b0d20ff9354fb5735"
+    },
+    {
+      "path": "licences",
+      "type": "dir",
+      "sha": "222dfb44e3a5e4a77f4ca43bd394a4553410574b"
+    },
+    {
+      "path": "opendune.txt",
+      "type": "file",
+      "sha": "4f126ade89b4753d4439f891649f373af3fbb360"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "a1becbe15fee2f9c4e9c3de1f8d386cb993e977b"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "a1e4507413643cd75584f1e7f8a39a529a5311db"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "075f180dac939e2545add03e69e1c15676d45ec7"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7ae9ea3f12b610d7729423b3924335ed88fe9afc"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "3bb2b6d0006fb29cd856f4b69dd586bd0d462b22"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

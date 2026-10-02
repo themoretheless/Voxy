@@ -1,0 +1,109 @@
+{
+  "repository": "djeedai/bevy_hanabi",
+  "repository_id": 452809222,
+  "commit": "3848132f0048f8a4eafba4d685c00804dc7cdbc4",
+  "source_url": "https://github.com/djeedai/bevy_hanabi/tree/3848132f0048f8a4eafba4d685c00804dc7cdbc4",
+  "readme_path": "README.md",
+  "readme_sha256": "2b7c543d8deff427ab7aebc60d5be2aef829cb9b4634bd61fefaa1701ff6d373",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "5fb4f73cfb76d39eb03a006edccf5959abc97ce1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "809821ec032b3b2cd080bfc50106ed2a4f428834"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "3db9cf1f55cdeb19d68236f0367df8560ea42aaf"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "39c849cf0776db919252c5df4df245005f27eab5"
+    },
+    {
+      "path": "LICENSE-APACHE2",
+      "type": "file",
+      "sha": "10450495836423b4fd9c63e66cba7c3a14319dbf"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "537fab66825595908c5201cede25438246fdcc75"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "299abbcaa519b9c1745f1d59a3f4371074242073"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "67c1a447dc402a5fd560c30ad7d16ab7384fca96"
+    },
+    {
+      "path": "build_examples_wasm.bat",
+      "type": "file",
+      "sha": "b1bbf2609783381d12b045dba9f76d789aada249"
+    },
+    {
+      "path": "build_examples_wasm.sh",
+      "type": "file",
+      "sha": "602dcf64d2d88c89c64ef7c771dbab25dd49f3a0"
+    },
+    {
+      "path": "deny.toml",
+      "type": "file",
+      "sha": "e656febc0fa394a2be04861ce6f233c2fe572ba4"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c79275ac7654ab5bfe80d28dca71d8820ff25fb0"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "2d11954ee2734efba446ce1a3c544b553f22efcf"
+    },
+    {
+      "path": "gpu_tests",
+      "type": "dir",
+      "sha": "fafb27782aa259294c6dae27cabfe30c912bc6e8"
+    },
+    {
+      "path": "release.md",
+      "type": "file",
+      "sha": "53f114b9eb7a01a2cd79457aec415d2f3040a459"
+    },
+    {
+      "path": "run_examples.bat",
+      "type": "file",
+      "sha": "d7c6bd7cc03bd9bb61455be358422264a92b1904"
+    },
+    {
+      "path": "run_examples.sh",
+      "type": "file",
+      "sha": "249c3efbc9f5b2f4a73415622b29b46dfde5f1f0"
+    },
+    {
+      "path": "rustfmt.toml.nightly",
+      "type": "file",
+      "sha": "7c1c603ee14421b29b4b870171985b835d163a9c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "12a03c38eee1e4c5d3691b9695df95b3db9a4e2f"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "GPU particle system plugin for Bevy, not standalone game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

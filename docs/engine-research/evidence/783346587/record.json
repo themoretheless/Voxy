@@ -1,0 +1,89 @@
+{
+  "repository": "AbyssEngine/AbyssEngine",
+  "repository_id": 783346587,
+  "commit": "885eea067f0d41a4fb75de2e88b3704215859a58",
+  "source_url": "https://github.com/AbyssEngine/AbyssEngine/tree/885eea067f0d41a4fb75de2e88b3704215859a58",
+  "readme_path": "README.md",
+  "readme_sha256": "d140f9586a0504278b6cdb165dc8f71c1e8a38ac7c5705155412ee43f5e2a34e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "acf30f22784f843551ba4f1134300dea6c7e2cb7"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "fd8c681c437a0ea951114c37165fbd3314b06e10"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "ba0564310fa94135e68d23b6f7eea7571ad367ae"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8fd13095476220943966961bf133a7d77ec9d206"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "706ceb0db87f43ddd7c4d2972d6ea363f23622fc"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "37760a306cb87f9b26dc931d7985876d4df63600"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "157c7985871f2c0eda50c535bbd4671ada6f2c5c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d0c3c7a209208f7b842d57e105f6d269ed240899"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "bdcb668d1b8ccc69b6cf7b877f27140cb02fe743"
+    },
+    {
+      "path": "content",
+      "type": "dir",
+      "sha": "a07381075520f96bd95819ffcb4871806ec4c14c"
+    },
+    {
+      "path": "extra",
+      "type": "dir",
+      "sha": "d8a3586b9eff0270ff4d44849791d9ed2ab49584"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e53991c02422f2ff7714de3096eeef4dbc4ffbd4"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "9b16f79018f014049685814a5b536f5cfe73cdeb"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "6b798cc2bd72a69ee137665d54970eb9fe8b4315"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies clean-room Diablo-compatible C runtime; owned src and CMake/tests, distinct historical repository from AbyssEngineOld.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

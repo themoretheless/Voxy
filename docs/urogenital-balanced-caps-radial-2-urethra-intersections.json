@@ -1,0 +1,44 @@
+{
+  "scope": "Static floating-point classification; shared-vertex pairs excluded; no CCD or anatomy certification.",
+  "states": [
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "rest",
+      "source": "/private/tmp/voxy-balanced-caps-radial-2/urethra-rest.obj",
+      "sha256": "7745aa5d327bf18507cc8b6efbdbe8e0755e2e239caae72fcd13b3e6adee79ab",
+      "vertices": 3600,
+      "triangles": 2048,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 5408
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "barrier",
+      "source": "/private/tmp/voxy-balanced-caps-radial-2/urethra-barrier.obj",
+      "sha256": "7f242eec164a5edf22166e1a0d9c27b92b675b26feabcb7ec6f9dc19c35ff2dc",
+      "vertices": 3600,
+      "triangles": 2048,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1582
+    },
+    {
+      "specimen": "urethra",
+      "sectors": 16,
+      "stage": "released",
+      "source": "/private/tmp/voxy-balanced-caps-radial-2/urethra-released.obj",
+      "sha256": "249f42f4d29f75080bcd28f210e866e12f825a00c5ef3203e1e9956da0b786f4",
+      "vertices": 3600,
+      "triangles": 2048,
+      "classification_counts": {},
+      "candidate_pairs": [],
+      "limit_reached": false,
+      "narrowphase_pairs": 1450
+    }
+  ]
+}

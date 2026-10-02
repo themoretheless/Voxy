@@ -1,0 +1,114 @@
+{
+  "repository": "ocornut/imgui",
+  "repository_id": 22067521,
+  "commit": "3f00c0d0f414d45af2a0979b925ebf2e8f09936b",
+  "source_url": "https://github.com/ocornut/imgui/tree/3f00c0d0f414d45af2a0979b925ebf2e8f09936b",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "5adfefa20d8ed8288d2485486c3a21775da68cb1"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d48470eeff11532332505d3e73aab440bb0f170b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7d40e316a6a00bf21fc000d52b3f681ee53b9389"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "009e61ede3b0ce26aec777c558a3216ffce74ad5"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "d5ba3155f0f438ba765551a5e2419bf3eaa8be64"
+    },
+    {
+      "path": "backends",
+      "type": "dir",
+      "sha": "776c18f37f3a44e12bb3a38d888c366da5d346c9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "982032d71b2d7f7d57fbc62074c069356393dd49"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "4be3e1f0c9f9aa6b5d494b57a070a4a633b9c7aa"
+    },
+    {
+      "path": "imconfig.h",
+      "type": "file",
+      "sha": "a25fa89af006f3837fd8f7991404b858cc8077f3"
+    },
+    {
+      "path": "imgui.cpp",
+      "type": "file",
+      "sha": "ef9ca7f2924ee163aca1cf28e42074cd90e897dc"
+    },
+    {
+      "path": "imgui.h",
+      "type": "file",
+      "sha": "8c5be4a44cecc3430cf13caeb129921fed836bf1"
+    },
+    {
+      "path": "imgui_demo.cpp",
+      "type": "file",
+      "sha": "0b16dab3c07d564731a46c42fadfe046aa9e1dfb"
+    },
+    {
+      "path": "imgui_draw.cpp",
+      "type": "file",
+      "sha": "e2085f6e6d68461b2bbdc41f5b6af5ce5fda28ec"
+    },
+    {
+      "path": "imgui_internal.h",
+      "type": "file",
+      "sha": "b0f8856f8cd3e5cf22fc30e58cdcbfed6a94a174"
+    },
+    {
+      "path": "imgui_tables.cpp",
+      "type": "file",
+      "sha": "b3e0458eb9270b95d94bc98b26c78890e71149c1"
+    },
+    {
+      "path": "imgui_widgets.cpp",
+      "type": "file",
+      "sha": "ceabc13baeaacf9418cddeb1344a7b37d4cb8056"
+    },
+    {
+      "path": "imstb_rectpack.h",
+      "type": "file",
+      "sha": "ad089213096115f070b52e0a3e554f3cbcd30f2d"
+    },
+    {
+      "path": "imstb_textedit.h",
+      "type": "file",
+      "sha": "583508f0b603d310eed047572df5dfac61351787"
+    },
+    {
+      "path": "imstb_truetype.h",
+      "type": "file",
+      "sha": "ec4d42c7dc55ce71aac39fe20d61dcf724855dfd"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "050baacc88e1a239e5e6b1374fa6956b0aebab06"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "imgui widget/draw/table source and backend adapters implement GUI, not a game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

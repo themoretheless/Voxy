@@ -1,0 +1,74 @@
+{
+  "repository": "TheAssemblyArmada/Chronoshift",
+  "repository_id": 154659121,
+  "commit": "9fd980161bb5aae1fa7d33da699570d7e61f111e",
+  "source_url": "https://github.com/TheAssemblyArmada/Chronoshift/tree/9fd980161bb5aae1fa7d33da699570d7e61f111e",
+  "readme_path": "README.md",
+  "readme_sha256": "e55d2bc8d1a32d34c884e9f200b7b8df1cfa8db9e62274a8ff5f391c04275e14",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "bc0bd7a625710098cd49e7c42526c62c69a5cc1d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a254076917c39265aa461a8b96ee64ab7e2a536e"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c089b9873024c61ba0a68af759656d749148a782"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "353d1e2c1735734556a788fce8c724d6b6c4a72e"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "967c326c9908ae79fa97bf91b6aee7a5e29aef04"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8cdb8451d9b90c1d4000c6f22eb86471a4568be6"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1b522f2831202a3db558eabbb321d689a323ffe7"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "7fa2602f5c1c0f93f285251087b052534fed65d6"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "f0acbeea1c69cf376d80a55d5088962c4d286b48"
+    },
+    {
+      "path": "launcher",
+      "type": "file",
+      "sha": "bd6cd5e63a7e825b0fcbae19b6fce1a08e8e5068"
+    },
+    {
+      "path": "libs",
+      "type": "dir",
+      "sha": "c3c37a460eee5e705ff7032f32a32fdcbe313b50"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "02438fbb34defc4ad055b7582bae50b46ae3a79f"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify native Red Alert-compatible runtime recreation; src/launcher/libs and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,89 @@
+{
+  "repository": "KelvinShadewing/brux-gdk",
+  "repository_id": 40664314,
+  "commit": "d8e73aa44d39029421738a1606ac78c79b98d2c1",
+  "source_url": "https://github.com/KelvinShadewing/brux-gdk/tree/d8e73aa44d39029421738a1606ac78c79b98d2c1",
+  "readme_path": "README.md",
+  "readme_sha256": "2ba525c92dace932f3efaa7b39d52b4f6648d25a4f2ed043699c43cc4f2b1f59",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f27da14c2daed577e37c9e0e64ab2ad9069ff7a7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c6876a6d280c8e322c9d7384b38caed19a8da063"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "ea35b50f1dace7676df79e1981e633d86313541a"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "f4c9411822b33e1257e49672675b7f8a97183ec3"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "479a4d5c57d452c2a5d57a7a02636a2a3c53b075"
+    },
+    {
+      "path": "BUILD_ALL.sh",
+      "type": "file",
+      "sha": "aad197a9440ce3be68c308cffa9d2382d40395b8"
+    },
+    {
+      "path": "INSTALL-SteamDeck.md",
+      "type": "file",
+      "sha": "f50d5229eb43a822767e6b04632a9df7f5f23fa4"
+    },
+    {
+      "path": "INSTALL.md",
+      "type": "file",
+      "sha": "ed5d50db5ee00848ce253fcd853d6b8c9a1da9f9"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "84ab4b4f1d027d1906479403fdb88d217d87314d"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0fb4ebcacd8141b02493e0bd26bd383084538834"
+    },
+    {
+      "path": "ide",
+      "type": "dir",
+      "sha": "765954c16de621a2f2818fccbe6b9a1ccd2cb9d0"
+    },
+    {
+      "path": "rte",
+      "type": "dir",
+      "sha": "309328ba9e90c847b96fc0cbaa23016889754d5e"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "0bb4b518e051bce6250507a9a6b02ce920e0a1d5"
+    },
+    {
+      "path": "test_old",
+      "type": "dir",
+      "sha": "9faca415f72ac5610e0a5629b004e403fd25c301"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "SDL/Squirrel game runtime with sprite/audio/input/map/JSON persistence and timing; editor mostly planned and sprite deletion issue documented.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

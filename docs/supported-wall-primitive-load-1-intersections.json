@@ -1,0 +1,25 @@
+{
+  "scope": "Static floating-point audit; shared-vertex pairs excluded, not CCD or anatomical certification",
+  "states": [
+    {
+      "stage": "rest",
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/rest.obj",
+      "sha256": "3d9052288563e12741b605f1dfeabdfac56fda6f64ac0276a40147f1f2085a3a",
+      "vertices": 896,
+      "triangles": 1152,
+      "classification_counts": {},
+      "limit_reached": false,
+      "narrowphase_pairs": 5576
+    },
+    {
+      "stage": "load-1",
+      "source": "/tmp/voxy-supported-wall-primitive-ramp/load-1.obj",
+      "sha256": "4e15e986bc9f230f54e3c3847b88963c1c53b5704fa8c4ada55c5935e09e5ef0",
+      "vertices": 896,
+      "triangles": 1152,
+      "classification_counts": {},
+      "limit_reached": false,
+      "narrowphase_pairs": 3072
+    }
+  ]
+}

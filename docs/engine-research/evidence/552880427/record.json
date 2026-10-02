@@ -1,0 +1,74 @@
+{
+  "repository": "Fewnity/Xenity-Engine",
+  "repository_id": 552880427,
+  "commit": "a1fcb5ad8c7d11f8a3394120bd169cfc2cd6687c",
+  "source_url": "https://github.com/Fewnity/Xenity-Engine/tree/a1fcb5ad8c7d11f8a3394120bd169cfc2cd6687c",
+  "readme_path": "README.md",
+  "readme_sha256": "a487ac1900d72d34c3681faa50eb0da3a8062a9b8c43731577f0af7d6439a24f",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "895d7c618b1858a5174da248c23f9f04cae9d5b1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5ad36bb8a55f3b02cc6e0491e44c725737cef7f9"
+    },
+    {
+      "path": "Licenses",
+      "type": "dir",
+      "sha": "563e7bafd4f1ba5539f6b76f06f5a179f5d0a459"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "617bfa716d464b7d95d45c5fadf6a240132f5fdc"
+    },
+    {
+      "path": "Raw Assets",
+      "type": "dir",
+      "sha": "7838460539593c95d315e131447d9a1db839b7fa"
+    },
+    {
+      "path": "TODO.md",
+      "type": "file",
+      "sha": "5aee4e275f02fc786ddaf10b8a865f3630c5cf42"
+    },
+    {
+      "path": "Web site sources",
+      "type": "dir",
+      "sha": "5cd54bf503276634b0ccdecdbe346000b28e4f3c"
+    },
+    {
+      "path": "Xenity_Engine.sln",
+      "type": "file",
+      "sha": "2a8d753e5adea9c312c0c10b41ebb40f576adeff"
+    },
+    {
+      "path": "Xenity_Engine",
+      "type": "dir",
+      "sha": "52e9b918e4ddee2b449894551fe9d7f7204a36e1"
+    },
+    {
+      "path": "Xenity_Engine_Executable",
+      "type": "dir",
+      "sha": "ac479ed095a99b80348381b0029a99cc6c221b37"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "0275dbf5e034f6431fe0edc38d451d373f0249ac"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies console/desktop game engine; owned runtime/executable and native solution build. Platform operation unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

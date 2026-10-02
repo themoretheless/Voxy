@@ -1,0 +1,94 @@
+{
+  "repository": "xeltica-studio/DotFeather",
+  "repository_id": 159349664,
+  "commit": "d4c86f2bacddab421833dca08b74b28659459f98",
+  "source_url": "https://github.com/xeltica-studio/DotFeather/tree/d4c86f2bacddab421833dca08b74b28659459f98",
+  "readme_path": "README.md",
+  "readme_sha256": "06d576a3fec1131b0095787ed7f7993cf75fa90f278f83f506c51123a7111ba4",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "bd575402137a5e69b7fff3e34a4074bcc3ee6a3a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "f38f7ed0fd96f2550e46bd7c1e92d64e1a086a4c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "2be9d641ec5720a831fe6ad46b5cf3325f161956"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cd51a9f3b36bcaf92cf6bf72c2afca662f65a087"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "e872c47dacdf51ca4b537e61f6104216f0658f4e"
+    },
+    {
+      "path": "CONTRIBUTING-ja.md",
+      "type": "file",
+      "sha": "f63f9bcaaf29ee8c30ae1b3f3ba7a41c358e3b8d"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "7b2792b9f8290e7e5988fba7303bcbfec5f817a8"
+    },
+    {
+      "path": "DotFeather.sln",
+      "type": "file",
+      "sha": "d8985a7a1732beb5bae454743c448f76968270e7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d8fd0d5f84801b7d024788ce3639b59580ea623c"
+    },
+    {
+      "path": "README-ja.md",
+      "type": "file",
+      "sha": "de52206f6d696ddd1c6301930c2d7b91579f7de4"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c4c7b60f6eb88083b870459b3d1ca3d18991ec24"
+    },
+    {
+      "path": "THIRD_PARTIES.md",
+      "type": "file",
+      "sha": "6320969bd66df582697d478cabd1b824dc8359a7"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "36d87e9e395bd066a597180860c942eab711f938"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b9f1bfc838ebb3f6935e73c6955640b5ded91dfb"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "86185b3e8244d4b7f10c81a112526d6439b4e882"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "903eb8f34827cd2596d60dfa252157eff7d520e1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C# 2D runtime with scenes, drawable containers, tilemaps, text, keyboard/mouse, music/SFX and extension APIs; sources/examples present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

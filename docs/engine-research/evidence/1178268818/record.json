@@ -1,0 +1,234 @@
+{
+  "repository": "phase-rs/phase",
+  "repository_id": 1178268818,
+  "commit": "9b2f66c688f78b84969d063d1ad8e0c454493d8c",
+  "source_url": "https://github.com/phase-rs/phase/tree/9b2f66c688f78b84969d063d1ad8e0c454493d8c",
+  "readme_path": "README.md",
+  "readme_sha256": "2c2a395c13c17ec2a123356c7a57c8095037cce74eac549d5ad679917eb6a299",
+  "entries": [
+    {
+      "path": ".agents",
+      "type": "dir",
+      "sha": "ca0e488b7100635e97bf52d465452ede0dd97cb1"
+    },
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "7d1ee9331498d1e712374a1c4678ea2e10e4b2be"
+    },
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "b9e007cbb2f681cf622627af2f2cbfab75983d82"
+    },
+    {
+      "path": ".coderabbit.yaml",
+      "type": "file",
+      "sha": "967cef2663e67a614d9db0e6221799554d5805ae"
+    },
+    {
+      "path": ".codex",
+      "type": "dir",
+      "sha": "a8425a3c28e42878fde39346370225368ef1fb0f"
+    },
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "1b2f9a3083b2f4622bb98eac439ca97e39687edc"
+    },
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "1d949036b78417908873e59e4ce45674cac693e6"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "c117f625bd94e6238f882ed857c681669618d735"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "fc50a61685a0bc44f193e375ea7891b3eef1189c"
+    },
+    {
+      "path": ".gitconfig",
+      "type": "file",
+      "sha": "1c8d4a7e35f7b97fbd1caf966e3f9363e58fbd3b"
+    },
+    {
+      "path": ".githooks",
+      "type": "dir",
+      "sha": "f73ecd6cd04cce3ec720ed8f1b51e29926ddea31"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "430ce5dda1c9195d178d873f745eacfe70cbfca4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e6c69816e26ea5c96096c21881ecebeba7fea153"
+    },
+    {
+      "path": ".impeccable",
+      "type": "dir",
+      "sha": "08aeab8769d955bf29ab2df674d3a2898517e682"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "681311eb9cf453d0faddf3aacaec7357e97ba8e9"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "a442d1abc351fb7bf4072eb9008e05704cff3390"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "570ce1f8931e14676c458caf1d0d13595b68b02b"
+    },
+    {
+      "path": "Caddyfile",
+      "type": "file",
+      "sha": "07fb6c4a0d711346a7a1a3390dd9ffa8975dc813"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "b60d5e4a56d3dd0c7cc337bc23569f9f97340bed"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "5a9e4eadaeccd68c2d6738761a49c4fd93dc10c1"
+    },
+    {
+      "path": "DMCA.md",
+      "type": "file",
+      "sha": "ccf430e6e9b6f77a53b810cf32dc238150fbae51"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "ae70420490d7cf3a2209afc2b2833a70a4f29aac"
+    },
+    {
+      "path": "GEMINI.md",
+      "type": "file",
+      "sha": "681311eb9cf453d0faddf3aacaec7357e97ba8e9"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "f5c2a72aa04b76d55ba884bee16541b2a6851bfc"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "757ab5c3f8cddd11a8f05d4d16d6d0bd5bc5ba1a"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "cdb1c35f24b59921d69720e6c4c597f5a5ea2abb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9cf2ce5b165690fe4568ef2d871bbfb77cd01b5b"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "3495481a9529265db9a630fc3235996926d3573b"
+    },
+    {
+      "path": "Tiltfile",
+      "type": "file",
+      "sha": "b4226b7c144a9b6ed5f7fb6a5cfd541debaa1a61"
+    },
+    {
+      "path": "client",
+      "type": "dir",
+      "sha": "288dd099622faaec4bc6ca763106469c113a6308"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "1b41a486a962f90c785746d70830b1eb5539e062"
+    },
+    {
+      "path": "data-files.json",
+      "type": "file",
+      "sha": "7bd79e93516ee85dc7ddb8399e6a797ea4abe3e1"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "967c56ba35608fab77146be205d278e6969ec4f0"
+    },
+    {
+      "path": "deploy",
+      "type": "dir",
+      "sha": "b19f4ba9d82348e6379a52dde861b9e047a5fcb8"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "98ce8f7d094baaf408c8e9a89947ace59fc294e6"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "979e3c9ab16a93f75ca63e061871bb83a4b3c557"
+    },
+    {
+      "path": "fixtures",
+      "type": "dir",
+      "sha": "2b15ae57c925b7d339d750f6f438bea346a9bf15"
+    },
+    {
+      "path": "lobby-worker",
+      "type": "dir",
+      "sha": "8e29f272cc12732b590451f1cc0c1ade749d5626"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "295072433925271eb8cad8a80df472c42fa8ea74"
+    },
+    {
+      "path": "probe-pin",
+      "type": "dir",
+      "sha": "f1007c886d1b6603565e78338feaf499e03d2522"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "type": "file",
+      "sha": "837b383b7e0afe7b57eea07ad31ee886886692db"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "a9a76eafd586d0d08d6d1cabd92b23ec7cc8dd9a"
+    },
+    {
+      "path": "supabase",
+      "type": "dir",
+      "sha": "6d2d6faae8cb2e7be3c83213dd0eb2f29ca113c4"
+    },
+    {
+      "path": "triage",
+      "type": "dir",
+      "sha": "3ecfefbe59c5c0ce97b10de41a8a527b8405ba7b"
+    }
+  ],
+  "classification": "specialized_rules_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Magic rules engine and client; Rust/Wasm application stack, outside complete graphical engine count.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,149 @@
+{
+  "repository": "SFTtech/openage",
+  "repository_id": 14095175,
+  "commit": "8960e52cf7b8dc7a8deb43b6753c4ace874dc00a",
+  "source_url": "https://github.com/SFTtech/openage/tree/8960e52cf7b8dc7a8deb43b6753c4ace874dc00a",
+  "readme_path": "README.md",
+  "readme_sha256": "631a895a49cb747eaec568654286ab22cbc54158e92e0715e88a98810928b5d3",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "e07d1e83c4e2a1e6b6fa1c46a0c7a54b9408a815"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "a7e2e55ef9f8a77aff35da8d223a241b5c445ce3"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06263991e63296605475c4bbba0632f76f12aeb6"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "ff964a01d7c01e93bb1c0a8a8e90bdbbf695da16"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "7a6a785bf466688c3e09dd9f20cf2f5ee7cb4cba"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "ffaaf178fada129f7f1f1f2cb580b7a2718fdc3e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "86660837837ef97439628c34009ebe3e528f35a3"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "1e524376a85370e74c0e6980283a1314b807a748"
+    },
+    {
+      "path": "buildsystem",
+      "type": "dir",
+      "sha": "f2a914904f510b606e9a62d86f597224051c49b2"
+    },
+    {
+      "path": "cfg",
+      "type": "dir",
+      "sha": "9ce8b113c7ebfe8c4e98ca4bd04446386b8a9de1"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "0bdd94b21bec6a628ad974b4e951312d8e73da37"
+    },
+    {
+      "path": "configure",
+      "type": "file",
+      "sha": "5c328563253265adcb2b9edffbaadefe77ec644e"
+    },
+    {
+      "path": "copying.md",
+      "type": "file",
+      "sha": "62e0d16bb4b5ee98b392743169334e894a2d5480"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "d5d3e98494da7adbed31f811f2a9fb4d566b7fd8"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "915c58d1bd65dfa0a84ec6ec0a840f75b3c5de42"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "6332ce4f7385eb814f2af1e818907f28b6f4b871"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "dae268d7dcfc5b574de3d7d15982f0f45272856a"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "2e28a3b7ddeba30af5615cd6c628f2c65cb7f32d"
+    },
+    {
+      "path": "kevinfile",
+      "type": "file",
+      "sha": "fe58cf1800234cd56b4b33953e07a9f1a82881d2"
+    },
+    {
+      "path": "legal",
+      "type": "dir",
+      "sha": "af6c829350d2f63ac22116ff77ab5fcfd1311156"
+    },
+    {
+      "path": "libopenage",
+      "type": "dir",
+      "sha": "6cb167b7218f93e5f4b0839fc3e2012730cd21cb"
+    },
+    {
+      "path": "nix",
+      "type": "dir",
+      "sha": "f2c7e46fcbfb422d1c8cf751de10085d274c4201"
+    },
+    {
+      "path": "openage",
+      "type": "dir",
+      "sha": "e3f2b9848d979ed84f7a57d67e56d2defaa01a8c"
+    },
+    {
+      "path": "openage_version",
+      "type": "file",
+      "sha": "a918a2aa18d5bec6a8bb93891a7a63c243111796"
+    },
+    {
+      "path": "packaging",
+      "type": "dir",
+      "sha": "f9bcc6e9b4cc513d3a1a1a1065e8feab07d79098"
+    },
+    {
+      "path": "run.py.in",
+      "type": "file",
+      "sha": "14e4b269bcc359bf9dcb0982cb9faa820b778d3f"
+    },
+    {
+      "path": "shell.nix",
+      "type": "file",
+      "sha": "5d80e0669faf8d8370844a29007b698308f8bb78"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Genie engine recreation and C++ core; libopenage/openage with CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

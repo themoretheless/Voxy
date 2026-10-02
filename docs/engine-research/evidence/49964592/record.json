@@ -1,0 +1,54 @@
+{
+  "repository": "bbuck/dragon-mud",
+  "repository_id": 49964592,
+  "commit": "2bd3f7ab1c4cd80b56138a0b4f7a69b3c3dd5064",
+  "source_url": "https://github.com/bbuck/dragon-mud/tree/2bd3f7ab1c4cd80b56138a0b4f7a69b3c3dd5064",
+  "readme_path": null,
+  "readme_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "dd472dc76f5c4460be4a5c3cbbb9bf71af87b298"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "dfe3ad88ce878c12be11b3d78814289e5da78f62"
+    },
+    {
+      "path": "cmds",
+      "type": "dir",
+      "sha": "d3dec4eac12c63bdf5c81c4f695efd6c3cf16550"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "e9cf665786660d310b1df3b1d76c08e4b6889038"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "dea35be98e1992a95f9eb5dd239e7a6040def703"
+    },
+    {
+      "path": "hello.lua",
+      "type": "file",
+      "sha": "46f38d17455152c660fe530c676eaf0fd1951f64"
+    },
+    {
+      "path": "plan.md",
+      "type": "file",
+      "sha": "1314cad7e57298f53b906c03832843f51f5cdcc9"
+    },
+    {
+      "path": "scripting",
+      "type": "dir",
+      "sha": "528bbfdc1a54510a8cafd21ab16deae3de7051bd"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Discovery describes Go/Lua text engine but pinned README is absent and root has commands/scripting/plan; runtime completeness unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

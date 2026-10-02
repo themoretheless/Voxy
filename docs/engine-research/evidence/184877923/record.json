@@ -1,0 +1,69 @@
+{
+  "repository": "smartblade/BldMystery",
+  "repository_id": 184877923,
+  "commit": "e1fa9f46c02569c0e681c356f2dcb547c25a3b0c",
+  "source_url": "https://github.com/smartblade/BldMystery/tree/e1fa9f46c02569c0e681c356f2dcb547c25a3b0c",
+  "readme_path": "README.md",
+  "readme_sha256": "30cf009398ceac44232e4366ffab2ab3361e7f1a0583ba38fcfc34fbb9ebb516",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6aed5cdad8ac547a6605d6bf8b7918195b0ebb0e"
+    },
+    {
+      "path": "Mss32_info.txt",
+      "type": "file",
+      "sha": "4b0f5ea96bdc140be3e57a29cc6ed6196ac1e6c1"
+    },
+    {
+      "path": "Mss32dummy.sln",
+      "type": "file",
+      "sha": "a59180d27a1e10ab3ea17eaaad5fc57c47ba073b"
+    },
+    {
+      "path": "Mss32dummy",
+      "type": "dir",
+      "sha": "2062679c89c4ffb6ee93b4bf97d4cc89e1aba0f2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4853175079f944d5cc1c5fb232f97a768644da0f"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "27f57490b2ef3d00a54a6e2285eea84fbd8c02e2"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "d0e6e9f7bb23f44cba7e16d3fb975fb67496adb6"
+    },
+    {
+      "path": "process_asm.py",
+      "type": "file",
+      "sha": "da2c4a02f0a331bbb2c33e6358e8de095a78577c"
+    },
+    {
+      "path": "shw32_info.txt",
+      "type": "file",
+      "sha": "05a889390d20b84dc4116fb2d3ce08699cba1563"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "54f3846156fec024bd34e872885dd329f9cbc0e1"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "2f998171831c7595248d04897f40bee230e15220"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Decompiled original Blade of Darkness binaries with remaining assembly and no root license evidence; defer until provenance/distribution rights reviewed.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

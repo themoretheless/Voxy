@@ -1,0 +1,159 @@
+{
+  "repository": "corax89/esp8266_game_engine",
+  "repository_id": 171103804,
+  "commit": "d23560cd5a48cbbde90103b7eeb629a57df69844",
+  "source_url": "https://github.com/corax89/esp8266_game_engine/tree/d23560cd5a48cbbde90103b7eeb629a57df69844",
+  "readme_path": "README.md",
+  "readme_sha256": "95d0a5ef0882769232ea8b1d05c8da93ae44591a185110af553b305c3fbbe02f",
+  "entries": [
+    {
+      "path": "ESP8266_little_game_engine.ino",
+      "type": "file",
+      "sha": "8828604426122112847874ed5519cc8255dff545"
+    },
+    {
+      "path": "ESP8266_little_game_engine.ino.d1_mini.bin",
+      "type": "file",
+      "sha": "43d31c86cded692a5489c5732f1360545c69aa56"
+    },
+    {
+      "path": "ESPboyLogo.h",
+      "type": "file",
+      "sha": "9585097190c96c623ce1ce1c7334fc376193bbd1"
+    },
+    {
+      "path": "ESPboyOTA.cpp",
+      "type": "file",
+      "sha": "c4965d800f3740bdf34c65dd42a42ef2a0391e53"
+    },
+    {
+      "path": "ESPboyOTA.h",
+      "type": "file",
+      "sha": "9e86f5bd64515978a41660d3d3837dca75568f33"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4ed64f73f58b1c4ed75096dbee22449568b604e4"
+    },
+    {
+      "path": "TFT_eSPI",
+      "type": "dir",
+      "sha": "56e33921693ec7422817f92c516d5e1fbca3c260"
+    },
+    {
+      "path": "WiFiFileUploader.ino",
+      "type": "file",
+      "sha": "c1b06abcf573e59aba2f0e4bef4429f884875b06"
+    },
+    {
+      "path": "acoos.h",
+      "type": "file",
+      "sha": "908290a4ba694565e67fa0575832deb5f28325d8"
+    },
+    {
+      "path": "connect.ino",
+      "type": "file",
+      "sha": "0cfe6e92d4f75b9c025cb5b9726b6e44e31808c3"
+    },
+    {
+      "path": "cpu.ino",
+      "type": "file",
+      "sha": "e8444861b4b0560da4a1c118d469d1de0d2c9451"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "d2d2c26670cc88b4306174996d4ea2b2ada1ace2"
+    },
+    {
+      "path": "display.ino",
+      "type": "file",
+      "sha": "56cc9e7916d2b0138305ed6cb3211c0d74a3f42d"
+    },
+    {
+      "path": "esp_little_game_engine_description.pdf",
+      "type": "file",
+      "sha": "e4e08f9f8d1716bcfd32f91597434c5263c56277"
+    },
+    {
+      "path": "esp_little_game_engine_user_guide-2.pdf",
+      "type": "file",
+      "sha": "473dcb2ce765b90401055b83ed263bcac8c5fcd4"
+    },
+    {
+      "path": "esp_little_game_engine_user_guide.pdf",
+      "type": "file",
+      "sha": "0aa86f089e59c13e4076111b3966d9781973515a"
+    },
+    {
+      "path": "fileUpload.html",
+      "type": "file",
+      "sha": "93b9033b19a108e30b37190892d7aa90590550b7"
+    },
+    {
+      "path": "file_manager.ino",
+      "type": "file",
+      "sha": "65b36cf816feaa3b51955c70e51a04eac8695e36"
+    },
+    {
+      "path": "font_a.c",
+      "type": "file",
+      "sha": "d343ad5c4210f6e60094e08ccf46a6fe99a1ab9d"
+    },
+    {
+      "path": "keyboard.ino",
+      "type": "file",
+      "sha": "6027f2e32649297304e82108e86cd4e1449a755a"
+    },
+    {
+      "path": "lge_memory.ino",
+      "type": "file",
+      "sha": "5184eebf0ac74a94e8a97b9ed8ddcd0efc7910a9"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "a24cfcf851744a1ea30516353bac7c5adb7a7562"
+    },
+    {
+      "path": "libraries.7z",
+      "type": "file",
+      "sha": "6dcd8b4b393da38a30d33bd9970f0c3f33430dd4"
+    },
+    {
+      "path": "logo.png",
+      "type": "file",
+      "sha": "7d6f010bec2bad4741a6eda1ede6d10b5b92a847"
+    },
+    {
+      "path": "rom.h",
+      "type": "file",
+      "sha": "ab923928cbdcb0b94ba8b606fef39369ffd8e8fe"
+    },
+    {
+      "path": "rom.ino",
+      "type": "file",
+      "sha": "71d06de33a7f4c2bb3e2f38eb0c39de21c61f9b6"
+    },
+    {
+      "path": "settings.h",
+      "type": "file",
+      "sha": "9e83692a2ee3c1b1752ccf9431022b32de91f31b"
+    },
+    {
+      "path": "sound.ino",
+      "type": "file",
+      "sha": "8442b3e7ff87fcc2eabbd0de3e7887e66ac5e665"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify embedded game VM/runtime; owned Arduino engine/OTA/render sources with device SDK build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

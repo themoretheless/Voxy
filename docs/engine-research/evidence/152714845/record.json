@@ -1,0 +1,94 @@
+{
+  "repository": "L-Sun/HitagiEngine",
+  "repository_id": 152714845,
+  "commit": "3e019a5405eaca25951f46b5e1bcfe90cfc34763",
+  "source_url": "https://github.com/L-Sun/HitagiEngine/tree/3e019a5405eaca25951f46b5e1bcfe90cfc34763",
+  "readme_path": "README.md",
+  "readme_sha256": "887a20d4df0dcc983c1c8dd1ffec8ae264a2d3f5cceed7fa1f3bad7b67032ad2",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "124e4a6cd48ade808dea371cea8ebaae08afa5ee"
+    },
+    {
+      "path": ".clangd",
+      "type": "file",
+      "sha": "5f39f6cf02dd551e7c2fab8f6e8260f795d3f061"
+    },
+    {
+      "path": ".cursor",
+      "type": "dir",
+      "sha": "460d651565681d56e2bc965f5d6abc94d78df4a0"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "266717bc793d4db9eedd57d1e8ef1368a20fac92"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6c394bc6e54550c7182e9071eb2d1e3988625f6e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "415d51a9cedc92cfd0fab57c8f15fe7708e57a77"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "6ba98c32091a7fc4c3e6b1477c7dc56fac66addd"
+    },
+    {
+      "path": "AGENT.md",
+      "type": "file",
+      "sha": "c21b3a7ae230c11998b0dcbfa47273d330465c0e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a4bb08cd91efd642bf41c64e44b4d9c11b491edf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aa50e6f1f57ea4c159a2d636ec2cdcec4dda4474"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e4070366f0655dfad2396cd4610ecf920662bc54"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "2f4907adc670e841fec63d1e986e1c3376d90fa1"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "f3f90977200b4490881fa13861aca54c869f2421"
+    },
+    {
+      "path": "hitagi",
+      "type": "dir",
+      "sha": "9a1652f34f439e493c478ac0201037ecad040b8e"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "44ed947d5db8ab50dd6528d2e5adcad82229edd8"
+    },
+    {
+      "path": "xmake",
+      "type": "dir",
+      "sha": "0cb72abb2e262aef0eacf12e98643a89e1e67730"
+    }
+  ],
+  "classification": "engine_prototype_pending_runtime_review",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Experimental C++ core/HID/assets/GUI with DX12 and render graph still WIP; broader runtime unresolved.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,74 @@
+{
+  "repository": "generatives/Wrecker",
+  "repository_id": 196329849,
+  "commit": "809b52966dc5eccff6d26927d165c9ef985cf9cf",
+  "source_url": "https://github.com/generatives/Wrecker/tree/809b52966dc5eccff6d26927d165c9ef985cf9cf",
+  "readme_path": "README.md",
+  "readme_sha256": "befc27109c6fa8058cec84388ccefb1e884b0afc8ed1e56fc8701b6fa6331ae0",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5a5f80a7fa70810caf3e76754644bdbe78fd6318"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "9369d72938940cd7c19335f0b8ccbd021842f53f"
+    },
+    {
+      "path": "Clunker",
+      "type": "dir",
+      "sha": "8f348404f275c6a5d155f8d8c524c81465166e2d"
+    },
+    {
+      "path": "ClunkerGO",
+      "type": "dir",
+      "sha": "27c27c8f584868512f06fe1161fdee5eeedcce5c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "b5ceffcd7aee479d592fde2101d4061887d54dda"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a7c7f0030b083d9b344d8efe3cd67600785a872d"
+    },
+    {
+      "path": "Wrecker.PerformanceTests",
+      "type": "dir",
+      "sha": "ac1c6ee051b45c36f85228f5d616d94529c62a31"
+    },
+    {
+      "path": "Wrecker.sln",
+      "type": "file",
+      "sha": "4342e74d8f1ea80866202cb9a379e35fff07d320"
+    },
+    {
+      "path": "Wrecker",
+      "type": "dir",
+      "sha": "0159d6571fa21340a20e5bdfc16399ef16530b39"
+    },
+    {
+      "path": "WreckerGO",
+      "type": "dir",
+      "sha": "a77b956259b58f2ad8fca2c49b2a781281b8c202"
+    },
+    {
+      "path": "bepuphysics2",
+      "type": "file",
+      "sha": "ec86cfeadbbab5916bb6db3b8e1b1b47a4d46511"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "2d32d03496e428e585f7b5887312ae87a72e7c20"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Separate Clunker voxel engine and Wrecker game with dynamic voxel physics/editing/sunlight, C# runtime and performance tests.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

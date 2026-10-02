@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "model-0",
+      "parent": null,
+      "name": "Square",
+      "active": true,
+      "translation": [
+        -0.2,
+        0,
+        0.6
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "components": {
+        "editor.model.v1": "square"
+      }
+    },
+    {
+      "id": "model-1",
+      "parent": null,
+      "name": "Triangle",
+      "active": true,
+      "translation": [
+        0.2,
+        0,
+        0.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "components": {
+        "editor.model.v1": "triangle"
+      }
+    }
+  ]
+}

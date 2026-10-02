@@ -1,0 +1,67 @@
+{
+  "repository": "PVDoriginal/firefly",
+  "repository_id": 1080085832,
+  "commit": "7665dfd7a9200292eb2756f4012b31986589fcd8",
+  "source_url": "https://github.com/PVDoriginal/firefly/tree/7665dfd7a9200292eb2756f4012b31986589fcd8",
+  "readme_path": "README.md",
+  "readme_sha256": "2eaaa8bc8c8af74a0dbb10b9089f5c4fab2c6724639baa9aa435c3e1ab387286",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "06dd731ecd5805ac82eb067ec6c455fd02ca8796"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "86258259621576e430b51c1e0adda794b2dddf75"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "20e210d562bc1e54bf006df58b884ca3d2b578ad"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "e188ad24c49e9a7429a07f83de3eb18ab81137d5"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "2bb9ad240fa04c8cf706a4901c4807878e90c2dc"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "e99e79abfce04f9f5cd2f462cf20df0b8f1efa99"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "1a2d1cc1613398091fcec3dadfcfe21df8e3baaa"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "ba9c737a82274c3c3283dc5a512c3fe5ad617fc2"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "69177a5306977d2ed0fc7b7464413c5ac77f4c59"
+    },
+    {
+      "path": "release-notes",
+      "type": "dir",
+      "sha": "b3817f577e6e5081d23e9f1ede67ffdd6fbf0aad"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "781cb8e02ab41f19f704f9b171fa74f80961ee50"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

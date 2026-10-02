@@ -1,0 +1,64 @@
+{
+  "repository": "ditn/Doom-Compose",
+  "repository_id": 255043636,
+  "commit": "add91d8fd6b6867baa200ded8956ed449fac8e4b",
+  "source_url": "https://github.com/ditn/Doom-Compose/tree/add91d8fd6b6867baa200ded8956ed449fac8e4b",
+  "readme_path": "README.md",
+  "readme_sha256": "dd0784e94c61d5d551a09e02dbdd9f5c113fbd22371eca0cabd039ece75c2ddd",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "56cc6425e036a5ea3738290ca3bf5adccad671ad"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ee7fbb219d9333ab26180c05ba56bfef4e1aade6"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "e4bedcc7b2428cfd291602d6a9b34dc39ace4d3a"
+    },
+    {
+      "path": "build.gradle",
+      "type": "file",
+      "sha": "4c592055a7ea2d9e2603afe145b24da2fe9edc45"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "4d15d015f8d8d9d4bb845a42ff1e52d9dcb4e005"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "6249d4c943193ffacaa289126cffe8dd6bc45697"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "cccdd3d517fc5249beaefa600691cf150f2fa3e6"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "e95643d6a2ca62258464e83c72f5156dc941c609"
+    },
+    {
+      "path": "settings.gradle",
+      "type": "file",
+      "sha": "318dd10d134e9f72d1da2356ef07ea12d4dad950"
+    }
+  ],
+  "classification": "rendering_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Jetpack Compose DOOM fire effect demo, not DOOM engine source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

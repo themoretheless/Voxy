@@ -1,0 +1,84 @@
+{
+  "repository": "TheCherno/Sparky",
+  "repository_id": 32199327,
+  "commit": "a679d0834e37eb3570dff18b01550210734cb97e",
+  "source_url": "https://github.com/TheCherno/Sparky/tree/a679d0834e37eb3570dff18b01550210734cb97e",
+  "readme_path": "README.md",
+  "readme_sha256": "7636d22682218c733f515afc08f3dcef00607d98189bd1dbe1963c17cf43835c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cf469312fd8b128bef2e6e5054a1dd5309229cc0"
+    },
+    {
+      "path": "Dependencies",
+      "type": "dir",
+      "sha": "562f325a5374132192c8f4f60e6045185fb67f2a"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "c56b0d8c05d20a0fee2fdad789381ac44ec2aca8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "c3de95d59acfd783fab28108825f6a8e3010430f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b3055f06e281d733585398abc0c173093dd0db58"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "4f0fe659e37bb3790a899e7d0c17f8f224882e8a"
+    },
+    {
+      "path": "Sandbox",
+      "type": "dir",
+      "sha": "9807e193e1a60f17a1d68047b557599f61cd3650"
+    },
+    {
+      "path": "SandboxCS",
+      "type": "dir",
+      "sha": "a954314e577415ca94a10bdf119e60a386684577"
+    },
+    {
+      "path": "Sparky-core",
+      "type": "dir",
+      "sha": "c89c973b769703b6c24edf3f88dcd1bc96c61e03"
+    },
+    {
+      "path": "Sparky.sln",
+      "type": "file",
+      "sha": "0205507bdf2d8e8b428fef2a9d0805267c1add63"
+    },
+    {
+      "path": "SparkyCLI",
+      "type": "dir",
+      "sha": "bd9768dba0a8c9c315c968e28ad7dddd66a4deef"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "f6243fd56eebbafd31ba312e9502789bad46c0ba"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "2a5e72b181adda552d0b871c27608a3390688779"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "ea05dd57314cc714ee8103a198af6e0b92638f94"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native game engine under development; Sparky-core, sandbox/bindings and solution build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

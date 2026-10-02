@@ -1,0 +1,259 @@
+{
+  "repository": "iamlukethedev/Claw3D",
+  "repository_id": 1182106379,
+  "commit": "0565b7892909eca7bbc8f2d9b0fad171dd75ad7c",
+  "source_url": "https://github.com/iamlukethedev/Claw3D/tree/0565b7892909eca7bbc8f2d9b0fad171dd75ad7c",
+  "readme_path": "README.md",
+  "readme_sha256": "7fcd70365a50810d80518cd3ea668a9d0690d86c089c8b0979ef14cef876af4e",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "4790676bbc61b1d05284c8d0d459a3072c1e6cfe"
+    },
+    {
+      "path": ".env.example",
+      "type": "file",
+      "sha": "8842418b5013fa5db822e1f935d97f1fa008a572"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1ea7d9921f540451fbaa506f15f65ce43e58eac4"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "82423166314276fa228709f335b30331345c6bea"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "f3ba53296ea1f371a2d6d9c191f621ce6362415a"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "type": "file",
+      "sha": "9846fdc82e0c3e0ff455fae129a5b747d36582e5"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "1e66263feeb28e33dd5ca733bfb3de2ef3e33f19"
+    },
+    {
+      "path": "CODE_DOCUMENTATION.md",
+      "type": "file",
+      "sha": "b9e09feed620a6bc737cc87e93a13ba23b0e2fd9"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.MD",
+      "type": "file",
+      "sha": "41a5a4306380be1124819def6eb8fed93b0ee494"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "969a6994bf150146c05d8fc88f6fc24611dd88a2"
+    },
+    {
+      "path": "CREATING_SKILLS.md",
+      "type": "file",
+      "sha": "7af6fc399b4e1286325e7761f99d6329acf8fecd"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "41f2df8e0ffdd9f70457b6a98a7f84a22b22f0e0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "aa960c1c9fff563358bfd49aecee4d4d1001b781"
+    },
+    {
+      "path": "MULTI_AGENT_BETA.md",
+      "type": "file",
+      "sha": "87198dcf5fc1f08423a5c4924a4c11916207f80f"
+    },
+    {
+      "path": "PR89.md",
+      "type": "file",
+      "sha": "0b5773c2a3129525f701b1b0d1e783b1b7bf0c45"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4fc53d90ba40ffe37c5d46913c2362dfa031ae8f"
+    },
+    {
+      "path": "ROADMAP.md",
+      "type": "file",
+      "sha": "bf9de8e82c68cebd65a6d47e074f78fa33e68572"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "2f5c80570f21e53ce78ad1ecd54ee9175d48adc8"
+    },
+    {
+      "path": "SECURITY_HARDENING.md",
+      "type": "file",
+      "sha": "b2a52b01a8fc803b905cf201d01b4ec3ed4a11dd"
+    },
+    {
+      "path": "SUPPORT.md",
+      "type": "file",
+      "sha": "91451fad8b76b5a8f38fde6e6d36b7864c491a79"
+    },
+    {
+      "path": "TUTORIAL.md",
+      "type": "file",
+      "sha": "1e5e1544f91396fe0468d2ec5bc87e7dce60074e"
+    },
+    {
+      "path": "VISION.md",
+      "type": "file",
+      "sha": "daf1e60db8ea2d51de8e61f71cb30cb283662af5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "d7b13c36dd227d9e6d486f6fd7c125681289e676"
+    },
+    {
+      "path": "components.json",
+      "type": "file",
+      "sha": "761072a51dc5752276ffb26ab231c7394f07ec48"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "1cc0fe4ebd64d292491a90b5d2470bae0ffac647"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "type": "file",
+      "sha": "c2dc6d4719ff45af615cc529af61083d0da9ecd9"
+    },
+    {
+      "path": "get_angles.js",
+      "type": "file",
+      "sha": "4400e6ae9d36348b26bfcfa6427ce1f08719a745"
+    },
+    {
+      "path": "get_angles2.js",
+      "type": "file",
+      "sha": "e30c9ad29b35316afd9fc4790fa8d867349f0b93"
+    },
+    {
+      "path": "home-screen.png",
+      "type": "file",
+      "sha": "3fc5345a1cf6c714d9d682ec81c825844339f00e"
+    },
+    {
+      "path": "make_continents.js",
+      "type": "file",
+      "sha": "1418d090ba6b57eb2eeb55c025a9e835387ca8ab"
+    },
+    {
+      "path": "next.config.ts",
+      "type": "file",
+      "sha": "15b59ba6c168f6beacb839ae93396e8767e97fba"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "d14ed3dc91032f400e3deebe71a62aca656d7041"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "6feff73a9c029be207a80d79422be4cb9b3d0636"
+    },
+    {
+      "path": "playwright.config.ts",
+      "type": "file",
+      "sha": "fd356b416505064a80c6bb0136b19848aaf65f3b"
+    },
+    {
+      "path": "playwright.kanban.config.ts",
+      "type": "file",
+      "sha": "f82c02c0a14e6623bc7a4ab1bbc875d7bc852ee1"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "type": "file",
+      "sha": "61e36849cf7cfa9f1f71b4a3964a4953e3e243d3"
+    },
+    {
+      "path": "public",
+      "type": "dir",
+      "sha": "b6852e87cca4fc8aff6287b07f40f665fe8e5e0c"
+    },
+    {
+      "path": "readme-image.png",
+      "type": "file",
+      "sha": "89f6ae0b62686f23a1675c076e161d3565fcf364"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3994eff0ac6d56346cc729e03e9a2f9f9eccefee"
+    },
+    {
+      "path": "server",
+      "type": "dir",
+      "sha": "faf8a726d2af76ca0b1c6982fbd9793a5ed44c4f"
+    },
+    {
+      "path": "skills-overview.md",
+      "type": "file",
+      "sha": "04c10b28450dfb5170bd68a6b6f32d44a46bb10b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7fc8603a1b21b69d342155da7cfe73b43240f86b"
+    },
+    {
+      "path": "test-textures.js",
+      "type": "file",
+      "sha": "34c82c99571c27efd85fad1e0f04f9b8950abd53"
+    },
+    {
+      "path": "test_coords.js",
+      "type": "file",
+      "sha": "f8c8df5748188925eb50b636684e627edbd413bb"
+    },
+    {
+      "path": "test_patches.js",
+      "type": "file",
+      "sha": "cbfce9b049e9180dc1b6162d84da92babc30cf31"
+    },
+    {
+      "path": "test_patches2.js",
+      "type": "file",
+      "sha": "8f2bb44f191ae3be2a4e1ba537b1a0fbc7bed494"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "897b0efdd4d5bb7bb1741c78cfe80cf9306543c6"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "e697227836f8952c72971d44386aaf6105da7708"
+    },
+    {
+      "path": "vitest.config.ts",
+      "type": "file",
+      "sha": "516d68025c55dbf17720d6bfc57f969e2cf94a02"
+    }
+  ],
+  "classification": "excluded_application",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Pinned README identifies 3D AI-office application, contradicting broad engine description; engine ownership not demonstrated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

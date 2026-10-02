@@ -1,0 +1,154 @@
+{
+  "repository": "4ian/GDevelop",
+  "repository_id": 21331090,
+  "commit": "2ff7e45b40f52fbb2f90968e2cf1a91b248e8fcc",
+  "source_url": "https://github.com/4ian/GDevelop/tree/2ff7e45b40f52fbb2f90968e2cf1a91b248e8fcc",
+  "readme_path": "README.md",
+  "readme_sha256": "1699bd9f2aae8a294bfddbcefb9a7c93390edb5b9ec16f00d7b406feeed925d5",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "4f20a777c3316f6e234a983a2468c1f24966bb7c"
+    },
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "67d53f5c09ebf9ed9ec1cc3c051f55953649a1c2"
+    },
+    {
+      "path": ".clang_complete",
+      "type": "file",
+      "sha": "39c0a4185693fb84fc9a4442afd90ba581b2722a"
+    },
+    {
+      "path": ".clang_format",
+      "type": "file",
+      "sha": "b0de8de27d863de625d57ddfd28840e3d0b346a1"
+    },
+    {
+      "path": ".devcontainer",
+      "type": "dir",
+      "sha": "03e2538633cb55282a18a8f9767d0f828bd6146c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b447163f1264544bce7d578ca5d960b6af7d7a23"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "072533d5b69914c3983e21100df4c5cf77c651a7"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "5ac54410440ebce3ce8ec85b2b3f33291fd69408"
+    },
+    {
+      "path": ".gitpod.yml",
+      "type": "file",
+      "sha": "348b6b5916a9e099ee03081aac26110cc177aca2"
+    },
+    {
+      "path": ".husky",
+      "type": "dir",
+      "sha": "a75c75adf9bf7a0d78134dce1f18df89edd6e6ee"
+    },
+    {
+      "path": ".semaphore",
+      "type": "dir",
+      "sha": "f43111296d441c2501de9d02aea86a448745883a"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "a13a45e66219351f6e613c484467d3ef2f12059f"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "235b8c3466f6b40f0ecc3b7467f9baf51547cd17"
+    },
+    {
+      "path": "Binaries",
+      "type": "dir",
+      "sha": "20ebb332f3599251d12edd117c2f170fd2b4b351"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "09a13098f49a1dd459fed20c73b3264602747240"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "2ed6193d1f38e6ca6f97638cf22681015eedf5af"
+    },
+    {
+      "path": "ExtLibs",
+      "type": "dir",
+      "sha": "53bf54e6f456f5d6ed7d0b9f1a85220a965ff7a9"
+    },
+    {
+      "path": "Extensions",
+      "type": "dir",
+      "sha": "7f1db05a01c24d01f1f0e7354c3bb49193a9139e"
+    },
+    {
+      "path": "GDJS",
+      "type": "dir",
+      "sha": "18fe70f993b90d0b96d043dbf199f890ac16a410"
+    },
+    {
+      "path": "GDevelop.js",
+      "type": "dir",
+      "sha": "20e191b159008902567a7c3dc71dd174981df5ff"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f57bac1faad6f8e52d2423a34b4fc7876ffff1d3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9a5e4101e3cce856a35bf67b87d63490145a05c5"
+    },
+    {
+      "path": "SharedLibs",
+      "type": "dir",
+      "sha": "098e70bce00a77b54599e00a0dfb1870fdafa202"
+    },
+    {
+      "path": "appveyor.yml",
+      "type": "file",
+      "sha": "7d2e316e716ef1a3d00bf28faa709203b4a3d20b"
+    },
+    {
+      "path": "crowdin.yml",
+      "type": "file",
+      "sha": "145691a7a2f3c158a05ede6ea67e81d8ff9fb828"
+    },
+    {
+      "path": "newIDE",
+      "type": "dir",
+      "sha": "bfcb87f3b856e4bfc044c86262d07a54c6389ff1"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "3c5c8259b08d74b911cb322153388d258adc7f5a"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "7d029178a75e2ec22547548f01217901ad716f70"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly maps GDJS runtime and newIDE authoring; Core/GDJS sources and CMake build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

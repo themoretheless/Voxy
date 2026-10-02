@@ -1,0 +1,64 @@
+{
+  "repository": "sebas77/Svelto.ECS",
+  "repository_id": 41632308,
+  "commit": "15c336fd1d01be086d0bccde64395e3eab1d834d",
+  "source_url": "https://github.com/sebas77/Svelto.ECS/tree/15c336fd1d01be086d0bccde64395e3eab1d834d",
+  "readme_path": "README.md",
+  "readme_sha256": "4b8696442d0d90a45cc71e1d4b9a269c6f072bee4cc39ad0e3aaf466aded773b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "17d0cb4d7fb7ab793cc1ec83c5c25e2568fd75a1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4cd8b266a7bad4cbc3705d909394a467db0ff7c7"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "f0b87ac2bc91c89ddf3e0ff31c8ed5b9c3022351"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "04c13f1d5b49e1c3aa842069c7e020dbb7edfdcd"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "602ec13a7930c9f7366fe50dc13a0054e7dfad9f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "40a38088f32b186295603462f8c294ca27c5006b"
+    },
+    {
+      "path": "Svelto.ECS.sln",
+      "type": "file",
+      "sha": "04b826f109d6309a5bede2bd28a72766a4b756a7"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "9da9a0291e156704087140ead076a41c801e9116"
+    },
+    {
+      "path": "com.sebaslab.svelto.common",
+      "type": "file",
+      "sha": "d932ede73bad3e0b5ed65789ab3ab339c7f3f957"
+    },
+    {
+      "path": "com.sebaslab.svelto.ecs",
+      "type": "dir",
+      "sha": "7aad4904ff8314c92d9137c31770e0afee4898db"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies ECS framework; Unity/.NET packages and solution implement subsystem.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

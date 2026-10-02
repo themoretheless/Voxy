@@ -1,0 +1,69 @@
+{
+  "repository": "RogerKang/JasonAmbition",
+  "repository_id": 70491106,
+  "commit": "812566b1116871062b6807a7572c1da3cc64c88f",
+  "source_url": "https://github.com/RogerKang/JasonAmbition/tree/812566b1116871062b6807a7572c1da3cc64c88f",
+  "readme_path": "README.md",
+  "readme_sha256": "ba1504992503b03bcda5be8b1abe0fc5b9e62eb635acdf7c59d7acbabb2d3412",
+  "entries": [
+    {
+      "path": ".cocos-project.json",
+      "type": "file",
+      "sha": "e9335384dbe523e5609faa6a77f22630111e5ea7"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "9cecc1d4669ee8af2ca727a5d8cde10cd8b2d7cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "125195321844aa058f0c95ca04d598f0353bd8ff"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "00620fa4bc9e93263149ca8ca32e8e6216c4ed80"
+    },
+    {
+      "path": "init.js",
+      "type": "file",
+      "sha": "554f2fe59ab6217dc45db14b1b645549a0ffeb4c"
+    },
+    {
+      "path": "main.js",
+      "type": "file",
+      "sha": "f0640bfd4a819b1e8361bb7e91073114d5b6ff67"
+    },
+    {
+      "path": "project.json",
+      "type": "file",
+      "sha": "a812f5453ca9acd1c706e323731379b3767ef67e"
+    },
+    {
+      "path": "publish",
+      "type": "dir",
+      "sha": "37fcc5cf51d48c109d8438bc2d0e2dabe75aed0b"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "25ecf1f1291e0a6e91112a17f300f0b47ed1d34b"
+    },
+    {
+      "path": "settings",
+      "type": "dir",
+      "sha": "c56f5f523319c7faa130d70e33b2d99e47e2c494"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a9e32b77264eacf2c792a0a8048243631be220d1"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Cocos2dx-JS shooter sample relying on existing Cocos runtime and external game materials.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

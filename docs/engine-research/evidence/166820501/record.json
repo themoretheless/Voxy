@@ -1,0 +1,89 @@
+{
+  "repository": "ikemen-engine/Ikemen-GO",
+  "repository_id": 166820501,
+  "commit": "efbd7ebabcece66d7c7c8e336be975100c11e7c4",
+  "source_url": "https://github.com/ikemen-engine/Ikemen-GO/tree/efbd7ebabcece66d7c7c8e336be975100c11e7c4",
+  "readme_path": "README.md",
+  "readme_sha256": "e450126dc67468e472771575f08ecd038c03abb04d181e910df45724886ad30a",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "db473fc184840e75222976af2d58e37659839148"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "af79121839621f2b120a9fce17eb583de78c46a5"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "bbe3922cc0ea99cee50d6e4c2d52888ad40d6692"
+    },
+    {
+      "path": "BUILDING.md",
+      "type": "file",
+      "sha": "cb9f448744b38dcf32070ed70ae499116b27e5c8"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "96f818631198fc07a02cc4062f8db5d50b01a41e"
+    },
+    {
+      "path": "LICENCE.txt",
+      "type": "file",
+      "sha": "e00a5b19e48b534e08c5fec844cbc58d2f999359"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "71da5d558a7ab99fa2d2b02fbb33ef2db8820988"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c93d053a1102d054bb9d565f45833e1395dbcd90"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "2ba7b43cdb1862593160e40b03091f51e0a293e2"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "6758965218b5943cbe3867a1d57fe3bd113d7071"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "ae3b18599e4d3716d0d6a8797edf6de945e2bd1d"
+    },
+    {
+      "path": "font",
+      "type": "dir",
+      "sha": "d9cfb30c95afd53a9a631c24ea393226bbd1e4b6"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "19a1469dcb2212e8a6f5c93c4c8097439216e1ed"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "c445dbebdf24d8c8f58822158d22d79f1ec87d35"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6f4e41781d7698f09500ec1d6da6ca206d1c8fc4"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Go fighting engine and MUGEN resource compatibility; src/go.mod/Makefile build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

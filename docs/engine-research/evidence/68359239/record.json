@@ -1,0 +1,124 @@
+{
+  "repository": "borodust/cl-bodge",
+  "repository_id": 68359239,
+  "commit": "3b26935fb786808a87fd8bb4b7dc1bf8a8a4d6a6",
+  "source_url": "https://github.com/borodust/cl-bodge/tree/3b26935fb786808a87fd8bb4b7dc1bf8a8a4d6a6",
+  "readme_path": "README.md",
+  "readme_sha256": "9aef2cf89ad7ba1a80fb727c2e1872a648ec15c6714d02d9e8d19ee59f544499",
+  "entries": [
+    {
+      "path": ".distignore",
+      "type": "file",
+      "sha": "36f69a0f8a644f9753e8d90c4abdf672e128f446"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "cc967f311c485b110f4c220634dff2b253b41777"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "77d6bdce84b4f08475572e53de313326ee4e0aa2"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "da53b8891be8c88c4edfc5e4eb5d0b41a8b76ffa"
+    },
+    {
+      "path": "animation",
+      "type": "dir",
+      "sha": "cd2f7e591871b51ce0d5e16fae8fff41a0af56bf"
+    },
+    {
+      "path": "appkit",
+      "type": "dir",
+      "sha": "d848da3e875be37e0594c81bc605b79140636198"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "aade91e81fbd59e14c630aab6e05a8486f40a36a"
+    },
+    {
+      "path": "canvas",
+      "type": "dir",
+      "sha": "5f302383c31799600716e92a7ef755d4baef110d"
+    },
+    {
+      "path": "cl-bodge.asd",
+      "type": "file",
+      "sha": "a0407f1eddc8dc96bdfdd41233df068a2e8fa48e"
+    },
+    {
+      "path": "distribution",
+      "type": "dir",
+      "sha": "97286a215eca2c218dab75f62bfe24e828fec7aa"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "1c9e40889c1b8c2d9c4beaf61bb6a74a020bf508"
+    },
+    {
+      "path": "graphics",
+      "type": "dir",
+      "sha": "6d85a2d593367cef6d02c2fbf8ae300490240939"
+    },
+    {
+      "path": "host",
+      "type": "dir",
+      "sha": "b422304d1db3c44ca9e1915a7607be2778dd1071"
+    },
+    {
+      "path": "packages.lisp",
+      "type": "file",
+      "sha": "d750cb823f404398b9ca39b5d708c48a399772d7"
+    },
+    {
+      "path": "physics",
+      "type": "dir",
+      "sha": "7a91900a2579f2da32078c00d79526217d039763"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "b1cc7f5c38f7726ee18927a67aba6ee876fb5dd6"
+    },
+    {
+      "path": "scene",
+      "type": "dir",
+      "sha": "8aa19523b184422d0dd9a16df52e7991f8e1f2de"
+    },
+    {
+      "path": "shading",
+      "type": "dir",
+      "sha": "4dc1f4ed93f0015955c91c158427967c582db17d"
+    },
+    {
+      "path": "t",
+      "type": "dir",
+      "sha": "3a30a245480fbfbb09150328acc5196b5d0e920d"
+    },
+    {
+      "path": "text",
+      "type": "dir",
+      "sha": "e45e5fecb3394aaf3c95a721157cfdf0ce752231"
+    },
+    {
+      "path": "ui",
+      "type": "dir",
+      "sha": "571a902040af06f4653aee852ce91a06da0a2338"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "fdb09889ce45675232dc1e0c56aa816603e914da"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify Common Lisp framework; scene/graphics/audio/physics modules and ASDF build, complete engine count separated.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

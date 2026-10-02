@@ -1,0 +1,89 @@
+{
+  "repository": "clibequilibrium/EquilibriumEngine",
+  "repository_id": 545212131,
+  "commit": "09c41464a67492d60f7266402bb0a569fe861f55",
+  "source_url": "https://github.com/clibequilibrium/EquilibriumEngine/tree/09c41464a67492d60f7266402bb0a569fe861f55",
+  "readme_path": "README.md",
+  "readme_sha256": "43ef9aead15dc8f08adb725692f76e5ccae6c2359b2a447e3c70073871837e2d",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "a178193cb0285c63e674d7a3eed517ade33ee31a"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "dfe0770424b2a19faf507a501ebfc23be8f54e7b"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "14a629116b3ff4b833e963720e57da255adc5a25"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b9366f8e3cb54bc1d773c6441bbde0888cdc3394"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "c9dac31956457c33a007b85d75288bbe25f4d332"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "b09042bb6e313109d9450edecd3da3df41f03d1f"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "8f6d58390bcae5459fc4d3e39b84841b4ffce12e"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a58183475a3dce87657e76dce283ed2dff2e95d4"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "7b4cc3f34b754ad23618a13071ae64d5583aefb1"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "8f54e5b5dc5349971cb254749a96f708bc6ac274"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "46a625fc854a2fb1cefc6eacc1c2dd1d6c55476d"
+    },
+    {
+      "path": "equilibrium",
+      "type": "dir",
+      "sha": "6c05736eacce092386fdb2d1befdccc5c0afa088"
+    },
+    {
+      "path": "imgui.ini",
+      "type": "file",
+      "sha": "2eeb41d5c71358232fa99fad6b49d0a9832d0aa9"
+    },
+    {
+      "path": "launcher",
+      "type": "dir",
+      "sha": "e9ea451511b686f5b8e25e723e0367a889c8db0c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native ECS/hot-reload engine; owned equilibrium/editor/launcher and CMake build. Concurrency/performance claims unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

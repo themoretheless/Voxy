@@ -1,0 +1,109 @@
+{
+  "repository": "PurpleKingdomGames/indigo",
+  "repository_id": 268077899,
+  "commit": "6e357eef01b3381d7c45ec8d3e350a230a8736a3",
+  "source_url": "https://github.com/PurpleKingdomGames/indigo/tree/6e357eef01b3381d7c45ec8d3e350a230a8736a3",
+  "readme_path": "README.md",
+  "readme_sha256": "7e2b7c1f58b0226afbeb5581d40f9d62e18c777727d9a5c63ec6286205ed9a08",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "125e4deb1e6da8e2833d6ea1b6acaca25b1c2352"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "10ea9cce0107d9c6c78555c59425c6769d259cf4"
+    },
+    {
+      "path": ".indigo-version",
+      "type": "file",
+      "sha": "f6d028cefa479b6cfcc82f6c9c5467f9dc965cba"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "57a9ffd540fba5094e533fb23ceee22d99e72f31"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "23673e40f41935344564edd9e51b60a8b1724dd2"
+    },
+    {
+      "path": "LICENCE.md",
+      "type": "file",
+      "sha": "15438d854ad9ca49b89f7641609f7024e17da1bf"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "63923b22f74b903f3a2c658cfe467b1294f6ffa9"
+    },
+    {
+      "path": "ascii-logo",
+      "type": "dir",
+      "sha": "49c78e884f78c1c6efbf89dd349f20358bd4b53a"
+    },
+    {
+      "path": "build.ps1",
+      "type": "file",
+      "sha": "130e9e7e934b24e2240da0f64c0362401d271263"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "335ff1cd676a143d9cd6c285fe057535dfb8d818"
+    },
+    {
+      "path": "ci.sh",
+      "type": "file",
+      "sha": "0337786840425956982d1c15875a03eee27c2750"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "206e4a4e349f99504a446d27a51c2be887d48820"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "f3b7e0cb986613fe19d04b8d911ff393ab079982"
+    },
+    {
+      "path": "indigo-plugin",
+      "type": "dir",
+      "sha": "180a26aec7da1cacb94e2919ab63a65e8bec529b"
+    },
+    {
+      "path": "indigo",
+      "type": "dir",
+      "sha": "c95a3fb205cbcf6a0230e3c9661af5bfdb3041e8"
+    },
+    {
+      "path": "localpublish-plugin.sh",
+      "type": "file",
+      "sha": "6eb0228399871d96c1cd573abb32176aaa45395a"
+    },
+    {
+      "path": "project",
+      "type": "dir",
+      "sha": "83795c713c9d0143e900e556d29fbb6ee7d55e9a"
+    },
+    {
+      "path": "sbt-indigo",
+      "type": "dir",
+      "sha": "fcc9fff46a8fa302d289eb6920d2844c112c155f"
+    },
+    {
+      "path": "sponsors",
+      "type": "dir",
+      "sha": "fd76773eb1c2109cde581e06885ea363ddf613a1"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies functional Scala game engine; owned indigo runtime/plugin and build scripts.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

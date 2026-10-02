@@ -1,0 +1,94 @@
+{
+  "repository": "kochol/ariyana",
+  "repository_id": 187961918,
+  "commit": "71652081c6c02cce69369564b4e1336c084b8710",
+  "source_url": "https://github.com/kochol/ariyana/tree/71652081c6c02cce69369564b4e1336c084b8710",
+  "readme_path": "README.md",
+  "readme_sha256": "eee8a5b5ab28d398631a0f6a8f3608ce2b3a9d8e1134dd8b4eb920ce49fb915e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b02ba885c7123c7b607f3bd0c3e7acff11971bbf"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "9e34138814b1001db37799a92a3452a5a2f59bfc"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "Beef",
+      "type": "dir",
+      "sha": "7f87b2e9168d6c032dde4232e08850e7fc75d04f"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "84cc453a48f424efb233534e25f65d5b567cc7f6"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8bb38f709633dd28ad77cd32c1b5784b04777914"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "630befd4fe8252552bc87ea67c38f55ec080dca9"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "adbd374fe5c23ab84b7e1438c5f58196f40c3156"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c96f51630f29c696315df7999964d6860b74af48"
+    },
+    {
+      "path": "fips",
+      "type": "file",
+      "sha": "9f0a69406ca7243abdb83794f7080012f5d0baa8"
+    },
+    {
+      "path": "fips-files",
+      "type": "dir",
+      "sha": "6f03a30c1671695fc7003dabeb1b1d86ceb26f11"
+    },
+    {
+      "path": "fips.cmd",
+      "type": "file",
+      "sha": "2cbd7c363236e326a37ef7b1501f1e79494e1aa4"
+    },
+    {
+      "path": "fips.yml",
+      "type": "file",
+      "sha": "97076e2caade5e51c97362385f160f8c5a66a632"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "23bcaf83993a90c53711b1185482a424b4bd3e50"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "d3be5fa91661dda93a6ee9c591307d422fffb53b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "a173ff226072de95a9f3aeae4dd1b4e0df2722c5"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "C++/Beef ECS game engine with rendering/assets/network replication and src/tests; multiplayer correctness unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

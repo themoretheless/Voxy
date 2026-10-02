@@ -1,0 +1,144 @@
+{
+  "repository": "korlibs/korge",
+  "repository_id": 80095683,
+  "commit": "bd2bbaad6e2abc865c87f3a5fdd10fc9100e3746",
+  "source_url": "https://github.com/korlibs/korge/tree/bd2bbaad6e2abc865c87f3a5fdd10fc9100e3746",
+  "readme_path": "README.md",
+  "readme_sha256": "550cf8bc670f938c4edba39541ce6ce920122383d5bda679550d16503af42ce2",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "4f30f92742b89dfbbeeb47569c2d730f01de6ed5"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "7b581ab159953dbd5d51e2c1e672062f5c43061c"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "74e513cb2a34980538697892871c4b051428ca09"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "16e5414fddf7c6787dd5c45f840420a29622d75c"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "2539f1c40b43873f08f1213140bd8726f60429ec"
+    },
+    {
+      "path": ".run",
+      "type": "dir",
+      "sha": "f29135aba0564ae20031582665280140cbbda39c"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "628c7489c895d981069a600eebf8cd0167694ee0"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "43227e30a17f4e2637610a3fb3b0a011e56a9090"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d0681792c9392bc5b9e629928988806b5f169cfb"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "32da5059c877c7352746c2f3bf9bb15482f5caca"
+    },
+    {
+      "path": "e2e",
+      "type": "dir",
+      "sha": "aa711cdc600cf726aa88d5488ac1c5ef335b66b7"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "f01e3025a628965e1784e7db10ab47fd9f339777"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "646047fecfe5d908529a5c57acdaee972bf5831d"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "23d15a9367071145e9c79bb4ddf879d1fbe78b5d"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "5eed7ee8452842305a18a4eb967442683808226a"
+    },
+    {
+      "path": "korge-benchmarks",
+      "type": "dir",
+      "sha": "90b41e6f13e165180c1c55cec4927e4a6a9a4bdd"
+    },
+    {
+      "path": "korge-core",
+      "type": "dir",
+      "sha": "ae441be723117ffca1d554d3ebcd219010525a7f"
+    },
+    {
+      "path": "korge-gradle-plugin",
+      "type": "dir",
+      "sha": "05809ee0ad7f3ad3ec79af3cd4b2487065300268"
+    },
+    {
+      "path": "korge-ipc",
+      "type": "dir",
+      "sha": "3e4b480aca7aa90638e92d64743179d92dc7ae4f"
+    },
+    {
+      "path": "korge-reload-agent",
+      "type": "dir",
+      "sha": "321063657e34b4b735211a5e03a267a8693a7729"
+    },
+    {
+      "path": "korge-sandbox",
+      "type": "dir",
+      "sha": "acd47ae1f4d4a5d0a9bb22313417b810594236a3"
+    },
+    {
+      "path": "korge",
+      "type": "dir",
+      "sha": "2f4dc35825ab548ff102c9c330a980db79d80a9c"
+    },
+    {
+      "path": "kotlin-js-store",
+      "type": "dir",
+      "sha": "88c92861ac5a63a058085d64641468d0f2e06ef1"
+    },
+    {
+      "path": "proguard-rules.pro",
+      "type": "file",
+      "sha": "8bc72ca2dfaaba632f4f7cd632143cdfb3081161"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "138b841c198d9f404dc48cc2dfc5098a6fd0424e"
+    },
+    {
+      "path": "webgpu.h",
+      "type": "file",
+      "sha": "cb423fc0749e11f9ffc8a9c546da17e41ed15fc3"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Kotlin multiplatform engine; korge/core/benchmarks, plugin and Gradle build.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

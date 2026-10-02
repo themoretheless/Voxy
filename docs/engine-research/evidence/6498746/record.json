@@ -1,0 +1,197 @@
+{
+  "repository": "DeltaEngine/DeltaEngine",
+  "repository_id": 6498746,
+  "commit": "c75417c24d2e2a412426e783050694f88265677b",
+  "source_url": "https://github.com/DeltaEngine/DeltaEngine/tree/c75417c24d2e2a412426e783050694f88265677b",
+  "readme_path": "README.md",
+  "readme_sha256": "73bb3c545ba0593b814954ddf4f62a106c911891f63f2e7a9b315cf86e068471",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "78aaaedec2822db860352bff113ab4631731a224"
+    },
+    {
+      "path": ".hgignore",
+      "type": "file",
+      "sha": "dd17490b7f61ce51f7f411a8dabf18c86df35b69"
+    },
+    {
+      "path": "Commands",
+      "type": "dir",
+      "sha": "7f5afc7c3936cf9a69016a827fd84d704acf1569"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "a7f994adc47550ab83fc1f157b83b1b54904b513"
+    },
+    {
+      "path": "Core",
+      "type": "dir",
+      "sha": "0fe672985b71b469a01005c03262142dc985b690"
+    },
+    {
+      "path": "Datatypes",
+      "type": "dir",
+      "sha": "a885839dd566e621346fa0efe8fcc381cbb61346"
+    },
+    {
+      "path": "DeltaEngine.OpenGL.Samples.sln",
+      "type": "file",
+      "sha": "85207792c31a0f1ed12725f144463e75444a364f"
+    },
+    {
+      "path": "DeltaEngine.OpenGL.sln",
+      "type": "file",
+      "sha": "5ba3ce146b41faf904e28a28b350df437805f2b7"
+    },
+    {
+      "path": "DeltaEngine.csproj",
+      "type": "file",
+      "sha": "eb58c3210fcb6fe954aac448702a2a1598af650b"
+    },
+    {
+      "path": "DeltaEngineAll.sln",
+      "type": "file",
+      "sha": "501da953cccdc791b5a2a42292d1cbe653548d94"
+    },
+    {
+      "path": "DeltaEngineVS2010Express.sln",
+      "type": "file",
+      "sha": "6def364d8fb171cda9b6090f27907b8a0e9802e2"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "e99328e0b111016bd1e397419a1d17d59141a5cf"
+    },
+    {
+      "path": "Entities",
+      "type": "dir",
+      "sha": "ff64a173f23fd0357021472551800995609ca8b3"
+    },
+    {
+      "path": "Extensions",
+      "type": "dir",
+      "sha": "96454b287531d9e0c45dcc47c1123c8ee193bcd0"
+    },
+    {
+      "path": "GameLogic",
+      "type": "dir",
+      "sha": "db161dbdabe3f16752a60cede125dfa69fa66f59"
+    },
+    {
+      "path": "Graphics",
+      "type": "dir",
+      "sha": "f50e4b79f34a9fa4ace4795ec2d480c310e625c3"
+    },
+    {
+      "path": "InAppPurchase",
+      "type": "dir",
+      "sha": "e213e6aa4acccd1391503fe0389e4446131a5e71"
+    },
+    {
+      "path": "Input",
+      "type": "dir",
+      "sha": "73d17fe4400fdae18bfb1fa2179dacfd32c3ffdb"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "f7ed88b2c6015ad50b4e4196f03c7bbc77ea8fc7"
+    },
+    {
+      "path": "Logging",
+      "type": "dir",
+      "sha": "ddf8400ef840a586a9281e9a3614f3f6034b2cbc"
+    },
+    {
+      "path": "Mocks",
+      "type": "dir",
+      "sha": "9ccf137886947e924a5b099e732455add29fa2f4"
+    },
+    {
+      "path": "Multimedia",
+      "type": "dir",
+      "sha": "34a64fef8a5f03da9b1b8ba596a6df38766932bd"
+    },
+    {
+      "path": "Networking",
+      "type": "dir",
+      "sha": "f6eeb3e8c3977f4ee61eb9b6114da782b8177ad8"
+    },
+    {
+      "path": "Physics2D",
+      "type": "dir",
+      "sha": "28fdde1c6495a7101750930424e22eb189db61ec"
+    },
+    {
+      "path": "Physics3D",
+      "type": "dir",
+      "sha": "67e8ddf9a5e10ab92b4118c7a2398ebe9c12eac7"
+    },
+    {
+      "path": "Platforms",
+      "type": "dir",
+      "sha": "1e83995531ac300e7497d4e093f7a2e262c10c70"
+    },
+    {
+      "path": "Profiling",
+      "type": "dir",
+      "sha": "687db77fd3f655902420880f9cc474aa87d548d9"
+    },
+    {
+      "path": "Properties",
+      "type": "dir",
+      "sha": "0ae0561ce5d4b777ef39410b8ff359ff0ae70893"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "ba4d4a3ca51a824ed286892143f92aad7a6a7df5"
+    },
+    {
+      "path": "Rendering2D",
+      "type": "dir",
+      "sha": "87925c6a37a7cf8ea24a59148513de299c171b38"
+    },
+    {
+      "path": "Rendering3D",
+      "type": "dir",
+      "sha": "0bab2b3e3573fd2c416313f6c33497f687f402b7"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "3f28de959bc4337458b5e57caac4c29db59e3433"
+    },
+    {
+      "path": "Scenes",
+      "type": "dir",
+      "sha": "664e73e624ebb7e1ba835185df9862d4f14dc0fc"
+    },
+    {
+      "path": "ScreenSpaces",
+      "type": "dir",
+      "sha": "9fb991f35721526b6c4d60c876af9a1678a40d2b"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "f3887836bdf80d523c81ff43c54e15ea7545157e"
+    },
+    {
+      "path": "Tutorials",
+      "type": "dir",
+      "sha": "19db50fe4637c663199e6d9e0068cabe5040a859"
+    },
+    {
+      "path": "VisualStudioTemplates",
+      "type": "dir",
+      "sha": "a3e93eec02008429a7eb1283f85141a7fb389add"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

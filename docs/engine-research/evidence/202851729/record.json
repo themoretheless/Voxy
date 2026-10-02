@@ -1,0 +1,47 @@
+{
+  "repository": "gdquest-demos/godot-3-beginner-2d-platformer",
+  "repository_id": 202851729,
+  "commit": "ce0871640b17b108f5f37a9e52b35e66b382abde",
+  "source_url": "https://github.com/gdquest-demos/godot-3-beginner-2d-platformer/tree/ce0871640b17b108f5f37a9e52b35e66b382abde",
+  "readme_path": "README.md",
+  "readme_sha256": "bdbab373f7893c3c32a0d2bbdc8112888dc8d7ef3a3188052d3468e87104dfdc",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "20882344e1e2fe22c400368340b821ffb527a29b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "af189011e5234d7c2c1aac042614a4064f2985c0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b61bdb44b8287cd55e95dad0b5270d13fd848d5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "c19baf9d29053e8a24bcad24e18d1d41a011a794"
+    },
+    {
+      "path": "game",
+      "type": "dir",
+      "sha": "9227dc32047ff9ca0502bcc331b7162ea533d853"
+    },
+    {
+      "path": "godot-4game",
+      "type": "dir",
+      "sha": "2d556c178c5bd23df53393c1aecdc80bf468e57e"
+    },
+    {
+      "path": "mono-game",
+      "type": "dir",
+      "sha": "a22b685dca3a9b0ed939c2410c45266ab42eb08d"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,47 @@
+{
+  "repository": "qiciengine/qiciengine",
+  "repository_id": 47888260,
+  "commit": "c43c371919bdb2a5fe8925635bdd3d9fe0fbaee4",
+  "source_url": "https://github.com/qiciengine/qiciengine/tree/c43c371919bdb2a5fe8925635bdd3d9fe0fbaee4",
+  "readme_path": "README.md",
+  "readme_sha256": "5d88deb67a25a623d4f8f5b5d562c231a7b710731ea7176b1e8b9005c35629b6",
+  "entries": [
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4c493c984a258256e87a51c92c8ad5bf4802df35"
+    },
+    {
+      "path": "README-cn.md",
+      "type": "file",
+      "sha": "3b3a38a342100592847f9509a8b6ef7afe26fa11"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "610067632576bc6671e523f13e0681e2459620b5"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "bff4ef9c3df16dc3eff63c258986ebd0ee21fca1"
+    },
+    {
+      "path": "presentations",
+      "type": "dir",
+      "sha": "5d10c0fd2790892f6afa84e7e79c71cb6eed4056"
+    },
+    {
+      "path": "release-notes.md",
+      "type": "file",
+      "sha": "34c92bffe3a9f4bfb642ec998ae76dddc2539802"
+    },
+    {
+      "path": "releases",
+      "type": "dir",
+      "sha": "cd5e3b2e77eac551570fe68605f8eae10680178e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

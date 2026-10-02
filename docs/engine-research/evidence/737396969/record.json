@@ -1,0 +1,69 @@
+{
+  "repository": "FloatyMonkey/engine",
+  "repository_id": 737396969,
+  "commit": "6b18494c1717ad8ae44c9a2e29cc76334b556cbd",
+  "source_url": "https://github.com/FloatyMonkey/engine/tree/6b18494c1717ad8ae44c9a2e29cc76334b556cbd",
+  "readme_path": "README.md",
+  "readme_sha256": "682c25f65be9e8e8a3e7bf2787fae61bd42f06945e68e96b19a3286087e31f88",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8f03e608c69be3c7d4ad034ef2147af5495a7dc8"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "f2779bfef8f95127000cc38487b0b782edd90d79"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "f49a4e16e68b128803cc2dcea614603632b04eac"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "6802bc4b80c0f8df1413d55b16267c0969e352c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "4e78abd278354cecf26ad457820608489ea6c70e"
+    },
+    {
+      "path": "build.rs",
+      "type": "file",
+      "sha": "d4ab47e2b39a6919cbec9f8e702dccb64bf46bf5"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "1902aeef6b9824c41e438e4ac5b6b1cf1f1fb170"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "eeb4aeaf39e6a9c336050dfb72d0729da4088b6d"
+    },
+    {
+      "path": "rustfmt.toml",
+      "type": "file",
+      "sha": "218e203215e949dd53a7fef74c0bc306914d9e39"
+    },
+    {
+      "path": "shaders",
+      "type": "dir",
+      "sha": "06ebc3b5e739a6a4e923458c8321a335dbaff96c"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2e3bfa473b6b255b95d891d8ee7a2f0a98bb554d"
+    }
+  ],
+  "classification": "rendering_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Early path-traced renderer/editor with RHI/Slang/OpenUSD loading; game simulation/lifecycle not established.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

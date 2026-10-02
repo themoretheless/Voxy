@@ -1,0 +1,84 @@
+{
+  "repository": "skywind3000/GameLib",
+  "repository_id": 1199383725,
+  "commit": "c0237529c58dc966dd40d0d497f6015f772512e2",
+  "source_url": "https://github.com/skywind3000/GameLib/tree/c0237529c58dc966dd40d0d497f6015f772512e2",
+  "readme_path": "README.md",
+  "readme_sha256": "93f130f33ff824ab0fe2db869ef96e7d49cc568edcdcf4c8b806c1866bfaf3f6",
+  "entries": [
+    {
+      "path": ".claude",
+      "type": "dir",
+      "sha": "7583fbec03bf7c40ea8ff3a4912c81f743ca8f9f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0f923d985059306ef3eb85c19213171db1d5ccb1"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "ffa90f3836cd7a296cb747c70bdbd8e43e5193a9"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "fd25442bfe103cc8139958f676ef2fa1e743f313"
+    },
+    {
+      "path": "GameLib.SDL.h",
+      "type": "file",
+      "sha": "696c802d7a45509e0362c24d1ef276e1b2d360c1"
+    },
+    {
+      "path": "GameLib.h",
+      "type": "file",
+      "sha": "fe02f52ce534cdc23b2a642e6380fe30eae89f9b"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "80c6aec0d9a022b700c25e7a99d865755ef840fb"
+    },
+    {
+      "path": "README.en.md",
+      "type": "file",
+      "sha": "e4cb8fa72da5bd27aa149213b37c2b02ad283e3e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "621ab50a5b4e84534a1587f02839c7f478603299"
+    },
+    {
+      "path": "SDL2PORT.md",
+      "type": "file",
+      "sha": "98cfc7f9a783cf91d317ebb80291de9a97b951e2"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "e732f82cb8c3506811d052c51b9e2706e7ed224c"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "59dc0e71537a731f05745d0bf49a40ffa14f960a"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "07dec0d125786135895665a8d58e6483ce177b87"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "8914685f176d096024b25d4369f89c7029a59f97"
+    }
+  ],
+  "classification": "game_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/root identify single-header native game library; GameLib headers, samples and tests, not full engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

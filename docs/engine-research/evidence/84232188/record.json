@@ -1,0 +1,139 @@
+{
+  "repository": "g3n/engine",
+  "repository_id": 84232188,
+  "commit": "83026d7a122877e722885090410c002ffae6defc",
+  "source_url": "https://github.com/g3n/engine/tree/83026d7a122877e722885090410c002ffae6defc",
+  "readme_path": "README.md",
+  "readme_sha256": "c36b1e7263c686b84fe9420865e1ca7c1bccb987a7bc97db8efc767b8fb25c27",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "e78ad048f8db858478c0af86f7760c140a18e367"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "3e226f42d7f27402ba93b71df65d8fca9336ec32"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "c61e18d7edb296788aafd8a9c8401b80a06943d8"
+    },
+    {
+      "path": "animation",
+      "type": "dir",
+      "sha": "896c31c6ee53f89cab5358322a4e03dffc456495"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "fa6ee70aa365a3db55bc4c61989496d5420b04b8"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "4d80a6ce53789616c38265c1fee4001414ad30e8"
+    },
+    {
+      "path": "camera",
+      "type": "dir",
+      "sha": "9f579ca1556c42ff50afea3914a8aa19330935a2"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "62f9d4ce1be8f6c573a99a876512f7913971b742"
+    },
+    {
+      "path": "experimental",
+      "type": "dir",
+      "sha": "08404eebc28cf3fdd3de82e12d0a5a3e418d6343"
+    },
+    {
+      "path": "geometry",
+      "type": "dir",
+      "sha": "6da9bcbf44a42bc9c930853347e4765e196f9023"
+    },
+    {
+      "path": "gls",
+      "type": "dir",
+      "sha": "cff4eba48624d8c1bb3fb42e57379ee0dea9a73f"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "9d9676d624baf85ee98c18884e87da1c64b9fcdd"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "17731f810eae65fa588274b2cf2f70778afd4368"
+    },
+    {
+      "path": "graphic",
+      "type": "dir",
+      "sha": "cf325aa0e1e8eeb752326fbbb71e935b5448991b"
+    },
+    {
+      "path": "gui",
+      "type": "dir",
+      "sha": "294ed43ca1ca0d8e47f95cc24fba8160bf1e31a3"
+    },
+    {
+      "path": "light",
+      "type": "dir",
+      "sha": "93b8cac48f368dd03613567ecccb385e5f8809f3"
+    },
+    {
+      "path": "loader",
+      "type": "dir",
+      "sha": "c40aeb6314ec9e79c758a7973a38a700d9b0d678"
+    },
+    {
+      "path": "material",
+      "type": "dir",
+      "sha": "f8ee3ff21bc2f25917f8167d93aadc92d6e8204c"
+    },
+    {
+      "path": "math32",
+      "type": "dir",
+      "sha": "05419259e7d3937ac1ae2cfb454fd31a231200b5"
+    },
+    {
+      "path": "renderer",
+      "type": "dir",
+      "sha": "cb931ae660047128e7eaee0fd95ff8c5dd5c5957"
+    },
+    {
+      "path": "text",
+      "type": "dir",
+      "sha": "9bfeacb75c09fc72455e87a9b1e3c82f753bbf7c"
+    },
+    {
+      "path": "texture",
+      "type": "dir",
+      "sha": "75ace70eb08b65c281b43f5aa4fdd71b2e9c58e6"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "9035e8c965a2d16f50f6ad129d725b207d2877b2"
+    },
+    {
+      "path": "util",
+      "type": "dir",
+      "sha": "137b03e92f3adcc5ec2595903caaac8ac211a76c"
+    },
+    {
+      "path": "window",
+      "type": "dir",
+      "sha": "ee29bf216513af514ad939ae72a20c6290260fdd"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Owned animation/audio/core/renderer/GUI/loader source and Go build demonstrate engine runtime boundaries.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "stackos/Viry3D",
+  "repository_id": 99479945,
+  "commit": "a57638c4b807faa7cbaa11f2019cab47029ca5ba",
+  "source_url": "https://github.com/stackos/Viry3D/tree/a57638c4b807faa7cbaa11f2019cab47029ca5ba",
+  "readme_path": "README.md",
+  "readme_sha256": "a229cee80b9d9fdbef1c63eb2d8d838a9de9b02f3378873572f508e4e7683214",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "b7f1a8b28d738ffaf18b1e565cec658cb32adf0c"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "09355cad62f05d434890a024233ba4bfce585673"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "8fe7b0e8a832531b53d673fe9e0665859cba087f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8dada3edaf50dbc082c9a125058f25def75e625a"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "157e834f30a6e3cd7424a5a7c5e8db50130dc58c"
+    },
+    {
+      "path": "app",
+      "type": "dir",
+      "sha": "532707dfaf78392ad6f87990bbbbbb1860daf7b0"
+    },
+    {
+      "path": "build_wasm.sh",
+      "type": "file",
+      "sha": "c091c8f133c9199ac6820d1f3887250cd0b86796"
+    },
+    {
+      "path": "gen_build_ios.sh",
+      "type": "file",
+      "sha": "b64918207c1068c74d3fbb8607398ad139457524"
+    },
+    {
+      "path": "gen_build_mac.sh",
+      "type": "file",
+      "sha": "6a3a19d5602600f1cf8d692850c6d8e0e734c32e"
+    },
+    {
+      "path": "gen_build_uwp.bat",
+      "type": "file",
+      "sha": "c8fd9bca13b2e34a46fa44a8c7cb593c4cbfdc6c"
+    },
+    {
+      "path": "gen_build_win.bat",
+      "type": "file",
+      "sha": "7bf61022e7d7c989c92628379cf2046ca3896594"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "84ec34d703cbdc0067bb5e47975a9c84fca8cfdc"
+    },
+    {
+      "path": "tool",
+      "type": "dir",
+      "sha": "db284ada2614a9922e6b66ffb606d0518b48a9b6"
+    },
+    {
+      "path": "unity",
+      "type": "dir",
+      "sha": "5233a2736c26916d77f9682874e331dbb01ea2ea"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies native 2D/3D engine; owned lib/app/tool and CMake/platform build scripts. Unity directory is integration, independent runtime presence distinguished.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

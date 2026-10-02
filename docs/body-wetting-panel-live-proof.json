@@ -1,0 +1,372 @@
+{
+  "frames": [
+    {
+      "frame": 3,
+      "measurements": {
+        "anatomicalVolumeMeasurement": false,
+        "fluid": {
+          "calibratedPhysiology": false,
+          "drivingPotentialError": null,
+          "drivingPotentialIncludesGravity": true,
+          "drivingPotentialRangePa": [
+            -23589460.898751184,
+            3636.2027033580616
+          ],
+          "initialMassKg": 5e-05,
+          "massKg": 4.999999999999999e-05,
+          "maximumCellThicknessM": 2.9625311940231118e-05,
+          "settings": {
+            "absorption_b_per_m": 0.04,
+            "absorption_g_per_m": 0.08,
+            "absorption_r_per_m": 0.2,
+            "contact_angle_rad": 0.20943951023931953,
+            "density": 1000.0,
+            "display_mode": "thickness",
+            "precursor_thickness_m": 5e-07,
+            "precursor_wetting_enabled": true,
+            "refractive_index": 1.333,
+            "source_radius_m": 0.04,
+            "source_rate_m3_s": 0.0,
+            "source_x_m": 0.0,
+            "source_y_m": 0.2,
+            "source_z_m": 0.13,
+            "sources": [],
+            "surface_tension": 0.04,
+            "viscosity": 0.05,
+            "wetting": 1e-07
+          },
+          "sourceAddedMassKg": 0.0,
+          "volumeM3": 4.999999999999999e-08
+        },
+        "skinShell": {
+          "areaRatioRange": [
+            0.9999999999999851,
+            1.0000000000000553
+          ],
+          "calibratedPhysiology": false,
+          "energyError": null,
+          "physicalTriangles": 1268,
+          "principalStretchRange": [
+            0.9999999999999802,
+            1.000000000000056
+          ],
+          "reference": "currentStressFreeShell",
+          "scope": "skinShellOnly",
+          "shellMassKg": 2.835011875845822,
+          "solverActive": false,
+          "storedEnergyJ": 1.8244478492048813e-28,
+          "thicknessRangeM": [
+            0.0016499999999999087,
+            0.0016500000000000245
+          ],
+          "valid": true
+        },
+        "tissueCageOrder": [
+          "leftBreast",
+          "rightBreast",
+          "leftButtock",
+          "rightButtock"
+        ],
+        "tissueCageVolumesM3": [
+          0.006144752551552323,
+          0.0061447525515523176,
+          0.00614475252724582,
+          0.006144752527245822
+        ],
+        "view": {
+          "mode": "material"
+        }
+      },
+      "parameters": {
+        "arm_length": 1.0,
+        "breast_size": 1.0,
+        "buttock_size": 1.0,
+        "calf_width": 1.0,
+        "foot_size": 1.0,
+        "forearm_length": 1.0,
+        "forearm_width": 1.0,
+        "hand_size": 1.0,
+        "head_size": 1.0,
+        "height_cm": 164.0,
+        "hip_width": 1.0,
+        "left_breast_size": 1.0,
+        "left_buttock_size": 1.0,
+        "leg_length": 1.0,
+        "navel_depth_mm": 4.0,
+        "navel_height_mm": 20.0,
+        "navel_shape": "reference",
+        "navel_width_mm": 16.0,
+        "neck_length": 1.0,
+        "nipple_projection_mm": 3.0,
+        "nipple_radius_mm": 8.0,
+        "nipple_type": "reference",
+        "right_breast_size": 1.0,
+        "right_buttock_size": 1.0,
+        "shin_length": 1.0,
+        "shoulder_width": 1.0,
+        "thigh_length": 1.0,
+        "thigh_width": 1.0,
+        "torso_depth": 1.0,
+        "torso_length": 1.0,
+        "upper_arm_length": 1.0,
+        "upper_arm_width": 1.0,
+        "waist_width": 1.0,
+        "weight_kg": 60.0
+      },
+      "presentedAtUnixSeconds": 1790855077.667736,
+      "rendererOutcome": "Presented",
+      "simulationTime": 0.16765354163944723,
+      "size": [
+        1800,
+        1300
+      ],
+      "viewerPid": 31173
+    },
+    {
+      "frame": 6,
+      "measurements": {
+        "anatomicalVolumeMeasurement": false,
+        "fluid": {
+          "calibratedPhysiology": false,
+          "drivingPotentialError": null,
+          "drivingPotentialIncludesGravity": true,
+          "drivingPotentialRangePa": [
+            -7267.158151020045,
+            8813.364617149988
+          ],
+          "initialMassKg": 5e-05,
+          "massKg": 4.999999999999999e-05,
+          "maximumCellThicknessM": 2.826305317714953e-05,
+          "settings": {
+            "absorption_b_per_m": 0.04,
+            "absorption_g_per_m": 0.08,
+            "absorption_r_per_m": 0.2,
+            "contact_angle_rad": 0.20943951023931953,
+            "density": 1000.0,
+            "display_mode": "material",
+            "precursor_thickness_m": 5e-07,
+            "precursor_wetting_enabled": false,
+            "refractive_index": 1.333,
+            "source_radius_m": 0.04,
+            "source_rate_m3_s": 0.0,
+            "source_x_m": 0.0,
+            "source_y_m": 0.2,
+            "source_z_m": 0.13,
+            "sources": [],
+            "surface_tension": 0.04,
+            "viscosity": 0.05,
+            "wetting": 1e-07
+          },
+          "sourceAddedMassKg": 0.0,
+          "volumeM3": 4.999999999999999e-08
+        },
+        "skinShell": {
+          "areaRatioRange": [
+            0.9999999999999851,
+            1.0000000000000553
+          ],
+          "calibratedPhysiology": false,
+          "energyError": null,
+          "physicalTriangles": 1268,
+          "principalStretchRange": [
+            0.9999999999999802,
+            1.000000000000056
+          ],
+          "reference": "currentStressFreeShell",
+          "scope": "skinShellOnly",
+          "shellMassKg": 2.835011875845822,
+          "solverActive": false,
+          "storedEnergyJ": 1.8244478492048813e-28,
+          "thicknessRangeM": [
+            0.0016499999999999087,
+            0.0016500000000000245
+          ],
+          "valid": true
+        },
+        "tissueCageOrder": [
+          "leftBreast",
+          "rightBreast",
+          "leftButtock",
+          "rightButtock"
+        ],
+        "tissueCageVolumesM3": [
+          0.006143309555550392,
+          0.006143309555550393,
+          0.006143309596460718,
+          0.006143309596460717
+        ],
+        "view": {
+          "mode": "material"
+        }
+      },
+      "parameters": {
+        "arm_length": 1.0,
+        "breast_size": 1.0,
+        "buttock_size": 1.0,
+        "calf_width": 1.0,
+        "foot_size": 1.0,
+        "forearm_length": 1.0,
+        "forearm_width": 1.0,
+        "hand_size": 1.0,
+        "head_size": 1.0,
+        "height_cm": 164.0,
+        "hip_width": 1.0,
+        "left_breast_size": 1.0,
+        "left_buttock_size": 1.0,
+        "leg_length": 1.0,
+        "navel_depth_mm": 4.0,
+        "navel_height_mm": 20.0,
+        "navel_shape": "reference",
+        "navel_width_mm": 16.0,
+        "neck_length": 1.0,
+        "nipple_projection_mm": 3.0,
+        "nipple_radius_mm": 8.0,
+        "nipple_type": "reference",
+        "right_breast_size": 1.0,
+        "right_buttock_size": 1.0,
+        "shin_length": 1.0,
+        "shoulder_width": 1.0,
+        "thigh_length": 1.0,
+        "thigh_width": 1.0,
+        "torso_depth": 1.0,
+        "torso_length": 1.0,
+        "upper_arm_length": 1.0,
+        "upper_arm_width": 1.0,
+        "waist_width": 1.0,
+        "weight_kg": 60.0
+      },
+      "presentedAtUnixSeconds": 1790855078.229327,
+      "rendererOutcome": "Presented",
+      "simulationTime": 0.3176535416394472,
+      "size": [
+        1800,
+        1300
+      ],
+      "viewerPid": 31173
+    },
+    {
+      "frame": 9,
+      "measurements": {
+        "anatomicalVolumeMeasurement": false,
+        "fluid": {
+          "calibratedPhysiology": false,
+          "drivingPotentialError": null,
+          "drivingPotentialIncludesGravity": true,
+          "drivingPotentialRangePa": [
+            -23589625.12365,
+            3543.287410564676
+          ],
+          "initialMassKg": 5e-05,
+          "massKg": 4.999999999999994e-05,
+          "maximumCellThicknessM": 2.9165504079307412e-05,
+          "settings": {
+            "absorption_b_per_m": 0.04,
+            "absorption_g_per_m": 0.08,
+            "absorption_r_per_m": 0.2,
+            "contact_angle_rad": 0.20943951023931953,
+            "density": 1000.0,
+            "display_mode": "thickness",
+            "precursor_thickness_m": 5e-07,
+            "precursor_wetting_enabled": true,
+            "refractive_index": 1.333,
+            "source_radius_m": 0.04,
+            "source_rate_m3_s": 0.0,
+            "source_x_m": 0.0,
+            "source_y_m": 0.2,
+            "source_z_m": 0.13,
+            "sources": [],
+            "surface_tension": 0.04,
+            "viscosity": 0.05,
+            "wetting": 1e-07
+          },
+          "sourceAddedMassKg": 0.0,
+          "volumeM3": 4.999999999999994e-08
+        },
+        "skinShell": {
+          "areaRatioRange": [
+            0.9999999999999851,
+            1.0000000000000553
+          ],
+          "calibratedPhysiology": false,
+          "energyError": null,
+          "physicalTriangles": 1268,
+          "principalStretchRange": [
+            0.9999999999999802,
+            1.000000000000056
+          ],
+          "reference": "currentStressFreeShell",
+          "scope": "skinShellOnly",
+          "shellMassKg": 2.835011875845822,
+          "solverActive": false,
+          "storedEnergyJ": 1.8244478492048813e-28,
+          "thicknessRangeM": [
+            0.0016499999999999087,
+            0.0016500000000000245
+          ],
+          "valid": true
+        },
+        "tissueCageOrder": [
+          "leftBreast",
+          "rightBreast",
+          "leftButtock",
+          "rightButtock"
+        ],
+        "tissueCageVolumesM3": [
+          0.006144240096578245,
+          0.006144240096578245,
+          0.006144240108046561,
+          0.0061442401080465565
+        ],
+        "view": {
+          "mode": "material"
+        }
+      },
+      "parameters": {
+        "arm_length": 1.0,
+        "breast_size": 1.0,
+        "buttock_size": 1.0,
+        "calf_width": 1.0,
+        "foot_size": 1.0,
+        "forearm_length": 1.0,
+        "forearm_width": 1.0,
+        "hand_size": 1.0,
+        "head_size": 1.0,
+        "height_cm": 164.0,
+        "hip_width": 1.0,
+        "left_breast_size": 1.0,
+        "left_buttock_size": 1.0,
+        "leg_length": 1.0,
+        "navel_depth_mm": 4.0,
+        "navel_height_mm": 20.0,
+        "navel_shape": "reference",
+        "navel_width_mm": 16.0,
+        "neck_length": 1.0,
+        "nipple_projection_mm": 3.0,
+        "nipple_radius_mm": 8.0,
+        "nipple_type": "reference",
+        "right_breast_size": 1.0,
+        "right_buttock_size": 1.0,
+        "shin_length": 1.0,
+        "shoulder_width": 1.0,
+        "thigh_length": 1.0,
+        "thigh_width": 1.0,
+        "torso_depth": 1.0,
+        "torso_length": 1.0,
+        "upper_arm_length": 1.0,
+        "upper_arm_width": 1.0,
+        "waist_width": 1.0,
+        "weight_kg": 60.0
+      },
+      "presentedAtUnixSeconds": 1790855078.79234,
+      "rendererOutcome": "Presented",
+      "simulationTime": 0.46765354163944717,
+      "size": [
+        1800,
+        1300
+      ],
+      "viewerPid": 31173
+    }
+  ],
+  "relativeMassChange": 9.486769009248166e-16,
+  "scope": "MCP settings applied in fresh Presented frames; not monitor screenshot"
+}

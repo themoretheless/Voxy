@@ -1,0 +1,94 @@
+{
+  "repository": "cvet/fonline",
+  "repository_id": 155445149,
+  "commit": "ba2a13ff736cae204372aafc4e2490aeb0bfb717",
+  "source_url": "https://github.com/cvet/fonline/tree/ba2a13ff736cae204372aafc4e2490aeb0bfb717",
+  "readme_path": "README.md",
+  "readme_sha256": "893a2d3a7d9ebb77313a5b36f7ca6b5c250ab6d18937df674c3aa779382c021e",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5d1c6faf6311b8ec4df0a67e8c3e0f31106678d2"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "9a966148078272ec2a4a675086581e32428cf03e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "652e0544eec35681f57d07194032b35fae8f2f85"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "1733c2e3513d70916cf8d375c76ce95e30bf0e8b"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "46c68f0a807706fd317b3e8908ada61ed0f78478"
+    },
+    {
+      "path": "BuildTools",
+      "type": "dir",
+      "sha": "0f306c808273100cd8f249a0394ad68d0ae3640f"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "43c994c2d3617f947bcb5adf1933e21dabe46bb5"
+    },
+    {
+      "path": "CNAME",
+      "type": "file",
+      "sha": "15471ac0b046c467e97a0637b35bdfa4195ee792"
+    },
+    {
+      "path": "Docs",
+      "type": "dir",
+      "sha": "ed609dc0cb31716fa602eced27e4d6caa58e073a"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "cb16aac1bf127f46b4ebcc3e6514a75c05d217c3"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fe160e8b8c90515b8b017e8bc441b120287cb529"
+    },
+    {
+      "path": "Resources",
+      "type": "dir",
+      "sha": "1e545321ebe9dbfef74121eac3397235e1b6f50d"
+    },
+    {
+      "path": "Source",
+      "type": "dir",
+      "sha": "f4835eb3ad9a79904b0c08fa74de14086709c20f"
+    },
+    {
+      "path": "ThirdParty",
+      "type": "dir",
+      "sha": "2f42fa4ea2e379f4cc196dcb9cb46396619d76fd"
+    },
+    {
+      "path": "VERSION",
+      "type": "file",
+      "sha": "25822b227bc24d29626e0685cc2fde56684b35ad"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "917067d889972047abca4a45db87788895013b35"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies authoritative RPG server/client/editor/content engine; owned Source/BuildTools and native build infrastructure.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

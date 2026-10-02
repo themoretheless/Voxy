@@ -1,0 +1,99 @@
+{
+  "repository": "Ancurio/mkxp",
+  "repository_id": 12521911,
+  "commit": "6a875b30d20728cf67f3690bef4c006790f4d682",
+  "source_url": "https://github.com/Ancurio/mkxp/tree/6a875b30d20728cf67f3690bef4c006790f4d682",
+  "readme_path": "README.md",
+  "readme_sha256": "7ced8bbbfe4386b24ea1e821cd9ae0ef68015c60b31071ba9a5d530d5418147b",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "9c8f37165e2b9b407d37276d4a9f02045f884fec"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "81a36901db786dfac78df5cfc248965a943c7b6c"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "bcb4096533c99bc6993923dc5e7178f38d45e499"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "d159169d1050894d3ea3b98e1c965c4058208fe1"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5762988f451a902e2bfdd2a41987c178b6c3d591"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "c579097896bcbeaf410cc15d23a1ff38fa1de357"
+    },
+    {
+      "path": "binding-mri",
+      "type": "dir",
+      "sha": "7fd5aa86e0bdc6e02e0c476775012bf16f3c9997"
+    },
+    {
+      "path": "binding-mruby",
+      "type": "dir",
+      "sha": "ec5b1c5be905d3ebfa90581ec728945699afd7f6"
+    },
+    {
+      "path": "binding-null",
+      "type": "dir",
+      "sha": "1466236ae52f309f90367980f04498b5fdcd434e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "1ae2ff7b219f12acc5a04097d4564ad354f8acaa"
+    },
+    {
+      "path": "mkxp.conf.sample",
+      "type": "file",
+      "sha": "9863eafdaa78b8d2aaf4f476d2a95a93888e71ed"
+    },
+    {
+      "path": "mkxp.pro",
+      "type": "file",
+      "sha": "ae229d7154d4436420aa37a3f5cc99bee2b2acd9"
+    },
+    {
+      "path": "patches",
+      "type": "dir",
+      "sha": "43cbe4c6fe99c92bb44199ad6ba67270e7c33745"
+    },
+    {
+      "path": "shader",
+      "type": "dir",
+      "sha": "f253e9773b638ad42ac6523e5102407cea85ec9b"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7237275fe5be1a7a9f809d72856da27942aacfa4"
+    },
+    {
+      "path": "windows",
+      "type": "dir",
+      "sha": "3aadebb9240e7c6421eaf4944630b028f2219ed5"
+    },
+    {
+      "path": "xxd+",
+      "type": "dir",
+      "sha": "7090b1af5782dd5edb05d66eb670f0b2b83fb542"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies RGSS implementation; owned src/shaders/Ruby bindings and CMake/qmake build for compatible game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

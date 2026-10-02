@@ -1,0 +1,59 @@
+{
+  "repository": "skarndev/umodel_tools",
+  "repository_id": 609797609,
+  "commit": "c76ebf73bf17012e304a8cee3fb6c68f1073f877",
+  "source_url": "https://github.com/skarndev/umodel_tools/tree/c76ebf73bf17012e304a8cee3fb6c68f1073f877",
+  "readme_path": "README.md",
+  "readme_sha256": "21e28319e65c70072a4bc11460cf0dad9e3e16147d2050b2ad1a7db0cacbf82c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "cae60c9ad0caf166bd1eda4662e3afff7477d3c9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "0b83cc597d6b7d40604a5b075aefb274496054d1"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "a897ec4a2a0857e5a68dd954d3ddd37f400b9aa9"
+    },
+    {
+      "path": "build.py",
+      "type": "file",
+      "sha": "5861054678ec569d0b421d3868d5280a46dbbf49"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "7ad1a5c26bb3b9450f667edc7e98d7b7a74a480c"
+    },
+    {
+      "path": "requirements.txt",
+      "type": "file",
+      "sha": "408fe7b492c17ac4b42d96a2100b3b2c3bc49895"
+    },
+    {
+      "path": "setup.cfg",
+      "type": "file",
+      "sha": "87aa0792c65e57a2b09bfa3bff6f883b435d1524"
+    },
+    {
+      "path": "umodel_tools",
+      "type": "dir",
+      "sha": "7515fc45fef8c8ce60863c15d25756c49113d12a"
+    }
+  ],
+  "classification": "excluded_editor_tool",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Blender addon importing Unreal meshes and maps, not a game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

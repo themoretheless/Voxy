@@ -1,0 +1,179 @@
+{
+  "repository": "triplea-game/triplea",
+  "repository_id": 39766308,
+  "commit": "2a8b4401d9a6442636fb1d90bf5659b15fa46343",
+  "source_url": "https://github.com/triplea-game/triplea/tree/2a8b4401d9a6442636fb1d90bf5659b15fa46343",
+  "readme_path": "README.md",
+  "readme_sha256": "ea2535aa0f20c19f5fbbbc9439590002d6c6d3d636e5f949419f3a332568b7c5",
+  "entries": [
+    {
+      "path": ".build",
+      "type": "dir",
+      "sha": "83e40b8fe58e79dea5dcbc5c4579e2215a61c828"
+    },
+    {
+      "path": ".copilotignore",
+      "type": "file",
+      "sha": "5b224f84813700660eb0c1fcf53bb336d8bd9956"
+    },
+    {
+      "path": ".docker",
+      "type": "dir",
+      "sha": "e3f555c857342443c30992c5858ff07708a4f107"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "834433c3f8d4aa809a99ffeddd0d4c7ae37be67d"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "d12ba774d06904ee529516eb6b3dfe1ae76fc269"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bddb3e65981322132046d13c71081f94c5ce023f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "7688b53c7ae5c5ccc6e8819d472aded996ab1746"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "0b50e471e46b80e090d893fd4202a29c88482d6a"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "type": "file",
+      "sha": "59334e9a97ce560f5a68d69b41e5607783a3ed5c"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "244229657adf8ed30f458288493528eb99f42878"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "f1279c6ea9d07be257d10f55b0db0209f8f109ba"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "18c91471812cb6f4c4e8d0fc407f70c4612e1648"
+    },
+    {
+      "path": "Justfile",
+      "type": "file",
+      "sha": "6a27a3eb931e5a41729eeaa3d8dad37becf0b837"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "22a22714a05093b4a63f2cd33e68e4823c9067a5"
+    },
+    {
+      "path": "build.gradle.kts",
+      "type": "file",
+      "sha": "d8388b202a200b88e68219bde93819a33837284a"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "60552fa210e6c3755b5c9d13f4f1542b02a6268d"
+    },
+    {
+      "path": "format",
+      "type": "file",
+      "sha": "66955177d323aa0b5aec032387ece5b94f7e23b2"
+    },
+    {
+      "path": "game-app",
+      "type": "dir",
+      "sha": "b1bcc4d423ab4686148999bf66777dfcd1952367"
+    },
+    {
+      "path": "gradle.properties",
+      "type": "file",
+      "sha": "6cbbc335d380905057d59e856fd864d1a75e944b"
+    },
+    {
+      "path": "gradle",
+      "type": "dir",
+      "sha": "4ad0733cfc05d36b0f803499e131c7a02428ff06"
+    },
+    {
+      "path": "gradlew",
+      "type": "file",
+      "sha": "249efbb032ce46a80c687c0723eb172e85f6a136"
+    },
+    {
+      "path": "gradlew.bat",
+      "type": "file",
+      "sha": "a51ec4f5886d3bb106b26724ee4507addbbe3fa8"
+    },
+    {
+      "path": "http-clients",
+      "type": "dir",
+      "sha": "ce6df16a2b850818f50f596eda9baa8d914e1d1a"
+    },
+    {
+      "path": "latest_version.properties",
+      "type": "file",
+      "sha": "f27ece83a82fc915f4f16814842e8701bb6eaf07"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "d5aa400204671095a54b37f173a2742a18fccf75"
+    },
+    {
+      "path": "lobby_server.yaml",
+      "type": "file",
+      "sha": "846ebeb1acb188813213bd24eca0b071634f6e89"
+    },
+    {
+      "path": "mise.toml",
+      "type": "file",
+      "sha": "7b623133ddd6ce18e294c5c72567b58ec6dba686"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "e9054bdf24a76a14e7a0e27ccf6aaacf3d39386d"
+    },
+    {
+      "path": "servers.yml",
+      "type": "file",
+      "sha": "f4924c6ff7ceccdd18699453c791bc53fb7a31c2"
+    },
+    {
+      "path": "settings.gradle.kts",
+      "type": "file",
+      "sha": "1bcb2903a6a5be6209c6cf88d821a988935d78ab"
+    },
+    {
+      "path": "triplea_maps.yaml",
+      "type": "file",
+      "sha": "b20b085870ea7093b9c6bdc6d18b8902e18d6319"
+    },
+    {
+      "path": "verify",
+      "type": "file",
+      "sha": "57ab6d21cee1bdbccd47099d885f92184fed52a3"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Content-driven strategy/board-game runtime with custom maps/scenarios, AI and network lobby, Java game app source.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

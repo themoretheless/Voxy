@@ -1,0 +1,154 @@
+{
+  "repository": "sean-lawless/computersystems",
+  "repository_id": 190340191,
+  "commit": "794502f85611accf8b1842f9d3aeb44503a8c1dd",
+  "source_url": "https://github.com/sean-lawless/computersystems/tree/794502f85611accf8b1842f9d3aeb44503a8c1dd",
+  "readme_path": "README.md",
+  "readme_sha256": "5bd20bccd7eb67db97695aeee59c4d3d19d1403f2cfe4dd22f3af851d7d193dc",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d54e0556d4cac78c76dfcaa73c961763906d0579"
+    },
+    {
+      "path": "AppendixA.md",
+      "type": "file",
+      "sha": "3cc88fcf1e18a6c75281499040c2b11284e08024"
+    },
+    {
+      "path": "AppendixB.md",
+      "type": "file",
+      "sha": "0544a26cf2ce2ddc55412994679dc04c1f3c495f"
+    },
+    {
+      "path": "ClassroomApplication_1_0.pdf",
+      "type": "file",
+      "sha": "7ceb7278c70f11df808a1c98f68c5cc5540cc3f8"
+    },
+    {
+      "path": "Lab1 Hardware and Case",
+      "type": "dir",
+      "sha": "55c4e334b753685b36a398b6298c4d115fee50c8"
+    },
+    {
+      "path": "Lab10 Console",
+      "type": "dir",
+      "sha": "5dab91c0e6d07085b1eba330f817cb59196cbec6"
+    },
+    {
+      "path": "Lab11 Game",
+      "type": "dir",
+      "sha": "1f9ca1d37a1be11149d09ea1fe27c656aed5471f"
+    },
+    {
+      "path": "Lab12 Animation",
+      "type": "dir",
+      "sha": "7aa4b61360bf4aa20912873f2a34c624a8f539ac"
+    },
+    {
+      "path": "Lab13 Universal Serial Bus",
+      "type": "dir",
+      "sha": "1269e98575e422854987766c2ad62e1610387ace"
+    },
+    {
+      "path": "Lab14 Rootport",
+      "type": "dir",
+      "sha": "a610ab245b2dd2e8b360567b05c1969467c68248"
+    },
+    {
+      "path": "Lab15 Device Configuration",
+      "type": "dir",
+      "sha": "8620ffed4b95940937fa7bff51473e36d1539adb"
+    },
+    {
+      "path": "Lab16 Hub Enumeration",
+      "type": "dir",
+      "sha": "1f93cb6b11098fcb9968d50ca060444e5ef7266c"
+    },
+    {
+      "path": "Lab17 Keyboard",
+      "type": "dir",
+      "sha": "d732888da51cf660ab815d52bf0d7dbbb5b53380"
+    },
+    {
+      "path": "Lab18 Mouse",
+      "type": "dir",
+      "sha": "bc112d35a8a5e2e608fd5764951ada4c702b66ed"
+    },
+    {
+      "path": "Lab19 Ethernet",
+      "type": "dir",
+      "sha": "0c2e0939083bc9da7bb6f9595c491d4e4ea9cfaf"
+    },
+    {
+      "path": "Lab2 Command Shell and Editors",
+      "type": "dir",
+      "sha": "44ae1a15191b81e75c86826ddd112aa85947cc49"
+    },
+    {
+      "path": "Lab20 Mass Storage",
+      "type": "dir",
+      "sha": "d81282ec635aeee4882b30c10db8b4f482919366"
+    },
+    {
+      "path": "Lab24 TFTP",
+      "type": "dir",
+      "sha": "5e3c6561306e715b233723dead5a084aef6e0dde"
+    },
+    {
+      "path": "Lab3 GCC Tool Chain",
+      "type": "dir",
+      "sha": "34669fd70d14ebbf2d3579ad8a2c0156b32b6500"
+    },
+    {
+      "path": "Lab4 LED",
+      "type": "dir",
+      "sha": "eaced3419e85fe921d0d0c3aeff4b9de069a44a9"
+    },
+    {
+      "path": "Lab5 Timed LED",
+      "type": "dir",
+      "sha": "80a4f8ea2ce46fd90bd518b0950a60c9eb8f0f38"
+    },
+    {
+      "path": "Lab6 UART Shell",
+      "type": "dir",
+      "sha": "ed96500202f94931405315e0937955ec1857e3a2"
+    },
+    {
+      "path": "Lab7 Boot Loader",
+      "type": "dir",
+      "sha": "3fabdf63fb7f8c1f8e849b4569a0c49a48552b26"
+    },
+    {
+      "path": "Lab8 Operating System",
+      "type": "dir",
+      "sha": "10e465814f67775b670e5da95ad02ac83c2c53ab"
+    },
+    {
+      "path": "Lab9 Framebuffer",
+      "type": "dir",
+      "sha": "e601ac1e5192cb586c3bc0cff60f0b9a3047252d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "57dd8b2a12e07f8c9c12664642997edff1e926ec"
+    },
+    {
+      "path": "_config.yml",
+      "type": "file",
+      "sha": "fc24e7a62dc288c776f8448cd073a01e7721ed32"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "2f673fa58c213fd055fd25c35a701d7ef523919c"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Incremental Raspberry Pi systems engineering book/labs culminating in a game; not reusable engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

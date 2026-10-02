@@ -1,0 +1,37 @@
+{
+  "repository": "Master-J/DecalCo",
+  "repository_id": 269016102,
+  "commit": "bd4381d5e171795b003e79c27526c15fdff1af43",
+  "source_url": "https://github.com/Master-J/DecalCo/tree/bd4381d5e171795b003e79c27526c15fdff1af43",
+  "readme_path": "README.md",
+  "readme_sha256": "c9fa45cbbccbfffa8947c23ef4aedc9fc47299f954ea3363713388db570e1d8d",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "79d3eb446efdb664340ab8b080588e89599b3129"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "43edbc711b602bf385fe552888ce3d105d9fb7e0"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "b9c3d7207b5c0802e6e8b3c329eb1e9b2b541555"
+    },
+    {
+      "path": "decalco",
+      "type": "dir",
+      "sha": "588e794cc8c2ae36fb17d3bfaf4a641bbde1578d"
+    },
+    {
+      "path": "project.godot",
+      "type": "file",
+      "sha": "6282bb912c3c2bed7007558e21c93866bc875e10"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

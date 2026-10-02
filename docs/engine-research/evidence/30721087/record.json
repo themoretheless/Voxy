@@ -1,0 +1,49 @@
+{
+  "repository": "AlmasB/FXTutorials",
+  "repository_id": 30721087,
+  "commit": "e17583ceee30392878ffc41abe09d861f915dae0",
+  "source_url": "https://github.com/AlmasB/FXTutorials/tree/e17583ceee30392878ffc41abe09d861f915dae0",
+  "readme_path": "README.md",
+  "readme_sha256": "a44f8a39dac2fc377719091111c30880ebe15c6c84c42f1d34c4c299b40f6769",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "519f41dd9ae10d6db0c6dfa4ff9e7d76338a910d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "382cdcdd279a08bc1539a2ffbd20d9de968ccccc"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "01a300e89be1372842cf69fa6978ce6ac6b5fd3d"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "9cb9068d4394564c6036f93044dee003d067ba6a"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "1292aeb37bd477795ef37092ca16f4a33806b85b"
+    },
+    {
+      "path": "res",
+      "type": "dir",
+      "sha": "e8d123cc85c31d00d0c5eeacc59adcff8606d2de"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "8a8dcf406181c927430382b445d249ed4478b93f"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description/README identify JavaFX tutorial collection; samples and Maven, not owned engine runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

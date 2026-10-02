@@ -1,0 +1,74 @@
+{
+  "repository": "island-org/island",
+  "repository_id": 19101253,
+  "commit": "3cb72404f8bdf07b49b301690d8ecdd28d424ffa",
+  "source_url": "https://github.com/island-org/island/tree/3cb72404f8bdf07b49b301690d8ecdd28d424ffa",
+  "readme_path": "README.md",
+  "readme_sha256": "40aaa22297c41d6f11f4fee5fa332657c8392bdb762ef9c93e74136205d36e03",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c1f1e62a0762cec06c4ef2829c0cb839ae6fb698"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "322d6261e7e7414570ba6bd426fab94b014b993b"
+    },
+    {
+      "path": "3rdparty",
+      "type": "dir",
+      "sha": "a0f507f40b185377066880c079fb5a6b4ca08636"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "8936aaaf69edcafda0ff4ec7080643b78c138695"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "452ea45815de56c4e777462d8af76423ccc66662"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "0750f492ecc47ca24e71a72999d6cc9da6844c61"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "e8e0293889b482521fc6a807b1dc627243434f69"
+    },
+    {
+      "path": "lib",
+      "type": "dir",
+      "sha": "32f6f5d0bcc82230368b70be54fa582b68626023"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "44a14b31c6b9c05a564bc37df90e23d13d67ae44"
+    },
+    {
+      "path": "premake5.lua",
+      "type": "file",
+      "sha": "ad5bbd9c05a4e75af5f7e8e35345c738f4909944"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "c49da0a2fd72e0dca9e2371ff8cdbb557d8c47bb"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "58cadb580b4dc9cea44d8b144025b2e3577fd21b"
+    }
+  ],
+  "classification": "application_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies creative-coding framework; src/include and premake build, not complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

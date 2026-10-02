@@ -1,0 +1,87 @@
+{
+  "repository": "renatillas/tiramisu",
+  "repository_id": 1070192257,
+  "commit": "d1e4403197fd230416909e01e25cfdf6a7c58a68",
+  "source_url": "https://github.com/renatillas/tiramisu/tree/d1e4403197fd230416909e01e25cfdf6a7c58a68",
+  "readme_path": "README.md",
+  "readme_sha256": "09ca4e6b69f282177b4fb4098f2877de9006925294142c82f62bf9618c2ff643",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "6bce25f663000ea91c536b325e365ab78a8b0132"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "368592decde545d1fc326635d9af497e4b19f563"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "ad0dede727198cf554c667c0f0444a0c623cc211"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "dfa518e36c5ccd4b05ef6c94dde4367dc71e8889"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "73ea8cecced7a691cb97cc7b48822660883b8c84"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b8b31b45e066426ee153a61958e9949e503e1102"
+    },
+    {
+      "path": "bun.lock",
+      "type": "file",
+      "sha": "915611d6bc609aff1b89eb8f97084f68b3c61078"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9c48fdd0c1a42dd06cf75068ceaaa7e164efd9a2"
+    },
+    {
+      "path": "example-games",
+      "type": "dir",
+      "sha": "fc93534214fa92489065bc10d0a608f71512a257"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "01150f49df6f5eccc3df0cfeb1c8c3f7886535c6"
+    },
+    {
+      "path": "gleam.toml",
+      "type": "file",
+      "sha": "0747bcb5580a290e596f7a9e69b374deb5a35a48"
+    },
+    {
+      "path": "manifest.toml",
+      "type": "file",
+      "sha": "9bfa07d057f6cb2b931389c856a04a2f781e1936"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "d22a44e3cd005afc80cd8351d635c711dbec8e92"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "429c37a863fccd9c287225c58f86cc5ea472ba0b"
+    },
+    {
+      "path": "test",
+      "type": "dir",
+      "sha": "eda3cbb76a796f43bd5d541367aa06f9f12fa2f5"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

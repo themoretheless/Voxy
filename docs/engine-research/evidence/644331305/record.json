@@ -1,0 +1,74 @@
+{
+  "repository": "Code-Guy/Bamboo",
+  "repository_id": 644331305,
+  "commit": "0da6a7369b87220bb2b517e4a1a6f31290befffd",
+  "source_url": "https://github.com/Code-Guy/Bamboo/tree/0da6a7369b87220bb2b517e4a1a6f31290befffd",
+  "readme_path": "README.md",
+  "readme_sha256": "4f568b3fbd0ed8af3c49d58480ce5f4a21aa09ecb0995a53c993cac01f007a3f",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4f264ca1d8e3de0c9dc85ce387a8b52f2ac246b0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "e902b135fca81200bf024211b4a4d19ad029843d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "705fca35ec852430dcfd79f7985ca0905e977b04"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d3290122d32046d3be1db03a1b931647de6f352e"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "7611ab0c06fd358dac38948d9c6c79b1fab5dd79"
+    },
+    {
+      "path": "external",
+      "type": "dir",
+      "sha": "9646fcb497e2966af23d3b62c002eed7cc5c1dc4"
+    },
+    {
+      "path": "generate.sh",
+      "type": "file",
+      "sha": "78ea61e0ea64ea7502a0ef528b7c775b09366ec3"
+    },
+    {
+      "path": "install.sh",
+      "type": "file",
+      "sha": "007a8bac1dd66a509c47481d06d7359199867a7b"
+    },
+    {
+      "path": "shader",
+      "type": "dir",
+      "sha": "da141d9a6b4908e4f233afad46907d80d8f35aef"
+    },
+    {
+      "path": "snapshot",
+      "type": "dir",
+      "sha": "496e4c4c30aae385e446a0c0e12d0c0b86f2e3de"
+    },
+    {
+      "path": "source",
+      "type": "dir",
+      "sha": "16dad1941956143990f55f4c3b069d5701e03404"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "13a7e8e0f449b71094fef1d6e78a65fb7f558a37"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies native graphics/simulation/gameplay engine; owned source/template and CMake build. Future AI direction not implemented evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

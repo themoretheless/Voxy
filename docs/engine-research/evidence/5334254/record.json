@@ -1,0 +1,79 @@
+{
+  "repository": "DGLE-HQ/DGLE",
+  "repository_id": 5334254,
+  "commit": "8464846396451db22478b97eb4ef8c2294045428",
+  "source_url": "https://github.com/DGLE-HQ/DGLE/tree/8464846396451db22478b97eb4ef8c2294045428",
+  "readme_path": "ReadMe.md",
+  "readme_sha256": "91b41d9032b6bf9734a45b37951a1809b7737dfaaeee45310dcbb97cf4362e18",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "5565c474bdd3b245a784363f4f5663c015876c34"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e2e32112bd34b9cd77392ef40eed566b11661e9a"
+    },
+    {
+      "path": "ChangeLog.txt",
+      "type": "file",
+      "sha": "47ba5b8f616e134c18e22cab0bd2542922f697cd"
+    },
+    {
+      "path": "License.txt",
+      "type": "file",
+      "sha": "3462706c121e78c43e264a2d0ee9df1c3749fd3c"
+    },
+    {
+      "path": "ReadMe.md",
+      "type": "file",
+      "sha": "64b5cae41b5569727020e74d6d97b9c31b78b52d"
+    },
+    {
+      "path": "bin",
+      "type": "dir",
+      "sha": "b328ec4ce5522566479710af95906983a808c751"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "b1251d0cb94e13671ff93be8d5c582a411dff196"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "15c750e6f3394230d0452f85b179a87051bf16c0"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "9b558ba9cb08727129e8ce7205e794393d4d3762"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "6ad83c5734d50d905f8de2674c148e1ab09749c0"
+    },
+    {
+      "path": "misc",
+      "type": "dir",
+      "sha": "352784dd52e9a627b08cc095d45e198542ec5e38"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "f9df0a798422b73d00624ae09e5f845ac7cdd803"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "908b902ee59805d3936e1cdc82172cb4e3b7f76f"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies an independent native 2D/3D game engine with plugins; include/src and build directories are present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

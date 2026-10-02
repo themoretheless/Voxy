@@ -1,0 +1,70 @@
+{
+  "samples": [
+    {
+      "assemblyMs": 14.640125000000001,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 73.697833
+    },
+    {
+      "assemblyMs": 17.9105,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 87.30449999999999
+    },
+    {
+      "assemblyMs": 14.477958000000001,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 103.730459
+    },
+    {
+      "assemblyMs": 30.589292,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 93.365792
+    },
+    {
+      "assemblyMs": 18.322958,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 117.86637499999999
+    },
+    {
+      "assemblyMs": 20.251542,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 95.47175
+    },
+    {
+      "assemblyMs": 18.402584,
+      "iterations": [
+        86,
+        60,
+        42
+      ],
+      "solveMs": 84.745875
+    }
+  ],
+  "scope": "Static imported-body kernel profile, seven samples after warmup; not GPU or full renderer timing.",
+  "triangles": 84680,
+  "vertices": 42342
+}

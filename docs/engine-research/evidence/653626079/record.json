@@ -1,0 +1,137 @@
+{
+  "repository": "dwjclark11/Scion2D",
+  "repository_id": 653626079,
+  "commit": "aa502d63f6ad5e9eadd99c33825587d6d9c2a591",
+  "source_url": "https://github.com/dwjclark11/Scion2D/tree/aa502d63f6ad5e9eadd99c33825587d6d9c2a591",
+  "readme_path": "README.md",
+  "readme_sha256": "2a114fdabde81ee294e94df1788a5ff3c8f2897cfa57ede9fd618aeb4f3ad28e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "3be2c67d9b441fe0c65399321f09f793cc17418f"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "7e3a12978a37a4bd31fd2797392e7c9126b9f39a"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b23accb5e6cbb671abdfb439e026c26faca6d4bd"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "a324ce0600dd0ecac210f50256393540b97538fb"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6b43fde3763155d9e2f172de5f7375d9b059025f"
+    },
+    {
+      "path": "CMakeSettings.json",
+      "type": "file",
+      "sha": "343e1e9fac817dd6c4019aeceab385a0cee25e0a"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "b611adeacfc419265ed366238075e42235aea171"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "440e0aeaa628fab2bf9a82f914508ce0aadee26c"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "cef9a9efddb77bd66c99219069de93c1de41e81d"
+    },
+    {
+      "path": "SCION_CORE",
+      "type": "dir",
+      "sha": "31a04c93904ffad86a872d304b9bfc00c4b69c64"
+    },
+    {
+      "path": "SCION_EDITOR",
+      "type": "dir",
+      "sha": "09419cf05a0fc84adfe56ba6dff3dd936470c46d"
+    },
+    {
+      "path": "SCION_ENGINE",
+      "type": "dir",
+      "sha": "77f6ffbcba001cbeac4ae28ecc66fb09cbfd6675"
+    },
+    {
+      "path": "SCION_FILESYSTEM",
+      "type": "dir",
+      "sha": "f81722fe3f0db75de9ba0a15761c62bbddb6577c"
+    },
+    {
+      "path": "SCION_LOGGER",
+      "type": "dir",
+      "sha": "10375de3344253813fd489aac1d52d6709386b8a"
+    },
+    {
+      "path": "SCION_PHYSICS",
+      "type": "dir",
+      "sha": "9c1f1483e1d179548fa572c118824e3857d6f2a7"
+    },
+    {
+      "path": "SCION_RENDERING",
+      "type": "dir",
+      "sha": "ecd255792b8f42a2c9cd0437a782121b956d2f65"
+    },
+    {
+      "path": "SCION_SOUNDS",
+      "type": "dir",
+      "sha": "b3451a48db9b3e6e6198655a4f9ae28113c038b8"
+    },
+    {
+      "path": "SCION_UTILITIES",
+      "type": "dir",
+      "sha": "b535e7f7577ee345545b8183aa0058a1357fe880"
+    },
+    {
+      "path": "SCION_WINDOW",
+      "type": "dir",
+      "sha": "98860f763fb88e06b9362ef8d8e51f9500be3064"
+    },
+    {
+      "path": "_Games",
+      "type": "dir",
+      "sha": "24f113dae06b6526d712268f3e643b89ea44869f"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "c587fad7e1fa1889e556c1689cca23f11f86d583"
+    },
+    {
+      "path": "crash_reporter",
+      "type": "dir",
+      "sha": "59cb62dc64b420baa235bbfd7ce5d4d2fddba418"
+    },
+    {
+      "path": "resources",
+      "type": "dir",
+      "sha": "48e0e6a7b7a388b50d5f6691ba30ed95e725544d"
+    },
+    {
+      "path": "shared_pch",
+      "type": "dir",
+      "sha": "649a862ba09c5eb6ea89510d7d3f874a8db88595"
+    },
+    {
+      "path": "vcpkg.json",
+      "type": "file",
+      "sha": "3b1929fbc0ff1e5515162231081b22aa444c957e"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,117 @@
+{
+  "repository": "runejs/server",
+  "repository_id": 229809105,
+  "commit": "3c1e6a757e73c7e26b27bbddcf6404c7b2aa25e6",
+  "source_url": "https://github.com/runejs/server/tree/3c1e6a757e73c7e26b27bbddcf6404c7b2aa25e6",
+  "readme_path": "README.md",
+  "readme_sha256": "2369aefa66be6fc5ce7d318684fd8419b7128d3063fcb4c3b8c3504138072f3d",
+  "entries": [
+    {
+      "path": ".dockerignore",
+      "type": "file",
+      "sha": "269c43ac09a6acb6c61ef56ee0288f33b85f05e6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "1cfb93a81cb66208d3b70e1b12e739fa4a157e21"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "16d91b3a4bdce6bad8cb4af615444d2363c2c913"
+    },
+    {
+      "path": ".swcrc",
+      "type": "file",
+      "sha": "da2f0684eb194c6c9e4ef8dceb807837958f6a51"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "028aeea088cb6b7a375f677634885ada2059b606"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "12d5f81a382717f9025ba12880b9040320ca7f69"
+    },
+    {
+      "path": "Dockerfile",
+      "type": "file",
+      "sha": "d91d5abc77188002877af2c703dac9aadd079be7"
+    },
+    {
+      "path": "FEATURES.md",
+      "type": "file",
+      "sha": "3b3d5ee8ce4b436cc4a274adaf9bcf598b4343d8"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "851f9ea4508fe673f279cdcb9cb2935928555934"
+    },
+    {
+      "path": "biome.json",
+      "type": "file",
+      "sha": "825268c3bd49b1f66d5318fde30833d37762df92"
+    },
+    {
+      "path": "cache",
+      "type": "dir",
+      "sha": "80667110d5c14ed8d95c6c17ea521119edc06e94"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "c2f09c54380d2e3fca3781cbee215b740a37470a"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "104c83113688695787e3ede7462568adf5cefc0f"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "file",
+      "sha": "67ca335d880522c8cca97d6e518fd0c5be398adf"
+    },
+    {
+      "path": "jest.config.ts",
+      "type": "file",
+      "sha": "3a4d0bb8066f29a872aa5bc42ce464fc14e46839"
+    },
+    {
+      "path": "nodemon.json",
+      "type": "file",
+      "sha": "889ff16d5cc722c5205f5fb1233de80e355d3741"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "927034f595e652659d21035a997f87b07b941048"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "025e326e57ff8738585c673f13dc9c23846b852f"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "0f6528f040efbe9db13162465e9a7498592a3d0e"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "0f339032a43c10788989f0843c2fdfb79710acad"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

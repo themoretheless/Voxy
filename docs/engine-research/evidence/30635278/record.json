@@ -1,0 +1,79 @@
+{
+  "repository": "fenomas/noa",
+  "repository_id": 30635278,
+  "commit": "bd74cd8add3abf216b53a995139276af665b1d52",
+  "source_url": "https://github.com/fenomas/noa/tree/bd74cd8add3abf216b53a995139276af665b1d52",
+  "readme_path": "README.md",
+  "readme_sha256": "faae8ee76d729127957ba065883e968dcf689f8b08a7cfffd96a40426c026b3d",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "623883267dd7c8619228d53ccb9bc76660259ee9"
+    },
+    {
+      "path": ".eslintrc.js",
+      "type": "file",
+      "sha": "dbc827f620e4a840c0a9e2e895d83f5ad27ce4a1"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "91d30458a0772d356b6f74ed188abfba4bbc232c"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "b53f77ae9f4f7074020721f60ad46418cbb72aec"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "990930685635d31eff012dc12e3e15a1d4c938eb"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "564e6c24d7558d87096579b5171272bf073ee602"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "d374e61b49a7e478b9833e05a1927c963b4c9294"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "a048dbee3c6eeff2e473701414f016a037fb6c1b"
+    },
+    {
+      "path": "package-lock.json",
+      "type": "file",
+      "sha": "9df7f495800a114c63d00392e6e3fe2eaca486ce"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "8d703a18798e1d77e7b2ddd4c2d762b7177b0f77"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e4c1a7d2dfea7e7e418e594322f49b6982b32ee9"
+    },
+    {
+      "path": "tsconfig.json",
+      "type": "file",
+      "sha": "27ede9eab300688be56a116bb91a7b6cce4b56f2"
+    },
+    {
+      "path": "types",
+      "type": "dir",
+      "sha": "8ce0f7bc9ac6729a8c4135ffa96c03c778043ecc"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies experimental voxel game engine; owned src, npm/TypeScript build and docs.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

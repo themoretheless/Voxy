@@ -1,0 +1,74 @@
+{
+  "repository": "ajweeks/FlexEngine",
+  "repository_id": 82951590,
+  "commit": "65b05e3da18afa41dcd10de2c52df1d13a635c3e",
+  "source_url": "https://github.com/ajweeks/FlexEngine/tree/65b05e3da18afa41dcd10de2c52df1d13a635c3e",
+  "readme_path": "readme.md",
+  "readme_sha256": "94ddd2afa3ff08966ab915c5c50bfb6511a0fdb72a1b4229625489d39f8f3838",
+  "entries": [
+    {
+      "path": ".clang-tidy",
+      "type": "file",
+      "sha": "b3a3fa41d047e5c1a22bc0cfd6230eb664fd778c"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "0187977212ff4e739ceea6a64490e708fd5ee7a9"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "c471f61f3d0ac0ee19370600893e49097354748f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "77c96140199654d63b38ad6300137386b9829437"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "2082d171946b166aef95b8339a1749802eaf617f"
+    },
+    {
+      "path": "AdditionalFiles",
+      "type": "dir",
+      "sha": "307fe9c478801c459554227824a69cb42a376868"
+    },
+    {
+      "path": "FlexEngine",
+      "type": "dir",
+      "sha": "abc1c6e2ca10d40cef6a86a961f10914526598f0"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "3fa160568c26eac91b0521f892ab664d2d293b46"
+    },
+    {
+      "path": "build.md",
+      "type": "file",
+      "sha": "7feb083f8b3754f1579cc0d840432b83bcda5ba8"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "44951387fba526d5c0f88ee6c0f5d9e9cf45c4df"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "09556448919edc7ffe4a70bdeb91ef232af820ba"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "124dd3d2827a3dcd26ab98fffc44cd6b32120a28"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies personal research game engine; owned FlexEngine runtime and build documentation/scripts. Not a production-quality claim.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

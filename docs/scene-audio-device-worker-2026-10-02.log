@@ -1,0 +1,5 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_audio_device v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_audio_device)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 15.94s
+     Running `target/debug/examples/scene_audio_output`
+SCENE DEVICE PASS rate=48000 submitted=4800 supplied=4800 errors=0

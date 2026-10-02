@@ -1,0 +1,119 @@
+{
+  "repository": "PaoloMazzon/Astro",
+  "repository_id": 585814718,
+  "commit": "f5da1533ff8b14ca7dcca024773599475f890213",
+  "source_url": "https://github.com/PaoloMazzon/Astro/tree/f5da1533ff8b14ca7dcca024773599475f890213",
+  "readme_path": "README.md",
+  "readme_sha256": "f0456cf0013e45bd6f8fbccbb4e99e948d33555586518c69610ee9be993df59c",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "77d1e687d364ee027841775d5abe3327a4a265c8"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "90132d71db95e28c49518606c65a7a761a2bb066"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "6a288473f83d3a0f5711bcb7ff5b5feb49c6f47a"
+    },
+    {
+      "path": "FindSDL2.cmake",
+      "type": "file",
+      "sha": "3dda156ab5f5309afeba47d6d7151445a6ff675c"
+    },
+    {
+      "path": "LICENSE-3RD-PARTY.txt",
+      "type": "file",
+      "sha": "eb1fb740baf97a885b072629e71849520b0c435e"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "5def2e90b4e5f58c8764672cd8d95273732b5061"
+    },
+    {
+      "path": "Packer",
+      "type": "dir",
+      "sha": "23617ef7c63a1cbbab2fa98737b78458f85f88cc"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e09117719ee7bdd8d92ac75590860f69c6adfe6a"
+    },
+    {
+      "path": "Vulkan2D",
+      "type": "file",
+      "sha": "f1ae4ce03c4d2e824386742972470703b846e7f7"
+    },
+    {
+      "path": "distro.png",
+      "type": "file",
+      "sha": "9c4cc29c5db47cd3229766c573dc65c5aa686e8b"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "b34db6cbcdb40a2a56d6928a8f587e9322a9d6a7"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "4eb9b371923d0d13d2a559537bc2fe8a53f04fb7"
+    },
+    {
+      "path": "font.png",
+      "type": "file",
+      "sha": "92d97058246acdb9613b303c5aa63875b106e500"
+    },
+    {
+      "path": "generate_wren_blobs.py",
+      "type": "file",
+      "sha": "fc12c742465db9fb7d8027a7e633db9f7f60a2c7"
+    },
+    {
+      "path": "icon.rc",
+      "type": "file",
+      "sha": "4f902deed8296ba39f44dd39de2ff9c93d91242c"
+    },
+    {
+      "path": "loading.png",
+      "type": "file",
+      "sha": "36aeb57aa920caee5fc0dbb7a504623e1bf3fb44"
+    },
+    {
+      "path": "main.c",
+      "type": "file",
+      "sha": "23fbdaaee2e0ed9fe111ed0b9bed7e6a6bae179c"
+    },
+    {
+      "path": "package-engine.sh",
+      "type": "file",
+      "sha": "81f775b408ea678ac0262ed78b55cc289e4d7788"
+    },
+    {
+      "path": "prog",
+      "type": "dir",
+      "sha": "5e02a5a0e447523e7033e55d1748d1531ea501d3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "2b289220a0cc928a9ffee89accb60e6c9f1e0860"
+    },
+    {
+      "path": "wren",
+      "type": "file",
+      "sha": "c2a75f1eaf9b1ba1245d7533a723360863fb012d"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Wren game runtime with levels/entities, camera/resource lifecycle and Tiled maps; unmaintained educational status retained.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

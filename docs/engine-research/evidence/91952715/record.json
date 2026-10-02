@@ -1,0 +1,99 @@
+{
+  "repository": "swordmaster2k/rpgwizard",
+  "repository_id": 91952715,
+  "commit": "871c7aed078c3405b14619a708c3e5159bfcf303",
+  "source_url": "https://github.com/swordmaster2k/rpgwizard/tree/871c7aed078c3405b14619a708c3e5159bfcf303",
+  "readme_path": "README.md",
+  "readme_sha256": "4513449a2e33fc0a1b106fae6c9d70f52abbacf7a9291aed1a1328e88bcd7766",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "be11edd6da1bb4aff471cb676aa8adabf5324f00"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "a14f52c882ce74001ca333696dad01962e2d15f2"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "63316554fd7f86d114c55356f4b92c799f65fd5b"
+    },
+    {
+      "path": "RELEASE.md",
+      "type": "file",
+      "sha": "ebcfdba64c5aa21756a6b24cb417d09e864daaf3"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "1356746b44f86d3848ac32d6125db27edb8b75cb"
+    },
+    {
+      "path": "demo",
+      "type": "dir",
+      "sha": "3afc3829d5f192481c5be205a67cc0a90d35738d"
+    },
+    {
+      "path": "distribution",
+      "type": "dir",
+      "sha": "bc0df9d5e72c664f68adfb1cfb9943ecab2dfb7e"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "4ece305aa32b221d4aab54d28bef30d92aa7e05c"
+    },
+    {
+      "path": "documentation",
+      "type": "dir",
+      "sha": "1e439081d6c1e72c59a1bf3dd952698992c1301e"
+    },
+    {
+      "path": "eclipse-formatter-config.xml",
+      "type": "file",
+      "sha": "2d6447cccc5bd185c83bcf5417f180ffd4967a4a"
+    },
+    {
+      "path": "editor",
+      "type": "dir",
+      "sha": "106d751c36053f730a0dc0936f5963a8610b5a9e"
+    },
+    {
+      "path": "engine",
+      "type": "dir",
+      "sha": "5fce697383500678574469d4d637604e1c541740"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "e4265c9edd78d3a3bfefb27050a12417328540a1"
+    },
+    {
+      "path": "images",
+      "type": "dir",
+      "sha": "aa38c96d00e628b8493e42852ba4cc66b394a695"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "b16eddfc043fb49b24ac94cf92ae2cd1325fb28d"
+    },
+    {
+      "path": "unmanaged_dependencies",
+      "type": "dir",
+      "sha": "b3510ee7882048b520f2366241697126e3ba2c80"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Legacy RPG editor/browser runtime with authored boards/characters/assets and separate engine source; Lua rewrite planned, not assumed present.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

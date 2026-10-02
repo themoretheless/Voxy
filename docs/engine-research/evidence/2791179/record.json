@@ -1,0 +1,89 @@
+{
+  "repository": "mosra/magnum-examples",
+  "repository_id": 2791179,
+  "commit": "358ca32944967ec4a79f18d2769d68eb58c724dd",
+  "source_url": "https://github.com/mosra/magnum-examples/tree/358ca32944967ec4a79f18d2769d68eb58c724dd",
+  "readme_path": "README.md",
+  "readme_sha256": "a1e99f213d991c8989c0bee94a2cf61e674155a0c47cebdb1d6f2e644daa2082",
+  "entries": [
+    {
+      "path": ".circleci",
+      "type": "dir",
+      "sha": "a28c6b9d5e831ca1f98282c8e599e567a33941b5"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "4c86f3ff1618bb6c8e065a68506ab163fd013211"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "472f9ddcc767a5cada464afbcabcfdc01606586f"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "0bd99777a93c17e1b4a19e8368ed5d993aea2793"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "bcbff3669fe4a85bf6d6982a53ceb23b5adb48b8"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "bd3ad647fc5c06a62de25b5df2a114aa697c1f00"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "66ddcd3680ed3d7c8add86907fb014fec66b8357"
+    },
+    {
+      "path": "COPYING",
+      "type": "file",
+      "sha": "3a6921a1d787fbfa508b8813eb61d6a15b7c5645"
+    },
+    {
+      "path": "CREDITS.md",
+      "type": "file",
+      "sha": "7c2706b0b0a37f76da39aaceffed8445e2b9cd9e"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "15caaeb2f5aa5d1f4de8e598a9173500491ce866"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "dbb925546e2f3252ed5c19e05650d3773ce86e16"
+    },
+    {
+      "path": "modules",
+      "type": "dir",
+      "sha": "e21a241759c7da371b7ecf5684a7189f1a8454be"
+    },
+    {
+      "path": "package",
+      "type": "dir",
+      "sha": "acdc7ccd7077f21969197fad7c5d96975b9fc384"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "bfa31bb713b30c85e1fc3e2e4feb32b6a3a5b892"
+    },
+    {
+      "path": "toolchains",
+      "type": "file",
+      "sha": "fa282e82b5ef058e361f64672e09be5bfc5e6e76"
+    }
+  ],
+  "classification": "excluded_game_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies Magnum examples; demonstrations of another graphics runtime, not independent engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,219 @@
+{
+  "repository": "dobyte/due",
+  "repository_id": 529135807,
+  "commit": "42c995cfaf5c3ca81270b451f227eaf5b5cf20fe",
+  "source_url": "https://github.com/dobyte/due/tree/42c995cfaf5c3ca81270b451f227eaf5b5cf20fe",
+  "readme_path": "README.md",
+  "readme_sha256": "e908ccfdfc4eb052cafd8b46745f35d80e9324033edd1f7a0c208453b1641a7b",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "4a26ab5b2ce9952b66a03357a062ce40cdc08fd2"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d066412b9ae966ea9623a3ecf6f56333d4a5b67b"
+    },
+    {
+      "path": "AGENTS.md",
+      "type": "file",
+      "sha": "a9c519f435aa2c78e7543ffdf901f04404df7f1d"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "da232f20d048a5186a82a2af4824903bdbad7d25"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "61d05c62e1d3a06b6a97e8e159e9310d948ee255"
+    },
+    {
+      "path": "architecture.jpg",
+      "type": "file",
+      "sha": "71d411ecc5b044dbff68232dd86080199d64d3d3"
+    },
+    {
+      "path": "benchmark.md",
+      "type": "file",
+      "sha": "dda77a21e2674bf18e5c09976c45f60371195da8"
+    },
+    {
+      "path": "benchmark",
+      "type": "dir",
+      "sha": "3722cfaa317f2914c9a36712c71d94533991d0db"
+    },
+    {
+      "path": "cache",
+      "type": "dir",
+      "sha": "d679f965697081aa81c1128bfebd191548399c06"
+    },
+    {
+      "path": "cluster",
+      "type": "dir",
+      "sha": "0fd5b46503cd13e359d1478f0039354c24ed2ca2"
+    },
+    {
+      "path": "codes",
+      "type": "dir",
+      "sha": "77f1f45189bb2984f62108619cb6b514e5a409f5"
+    },
+    {
+      "path": "component",
+      "type": "dir",
+      "sha": "47f666c1caf89b06292036b4a9d325d3aff8d0e4"
+    },
+    {
+      "path": "config",
+      "type": "dir",
+      "sha": "601dae20cc1764f40b543454e18630b3cdcd6a69"
+    },
+    {
+      "path": "container.go",
+      "type": "file",
+      "sha": "94bb95046638cd1886b0bf6131d466d8f070adca"
+    },
+    {
+      "path": "core",
+      "type": "dir",
+      "sha": "e52f06b66cd26e37d69f7d3c7fefdc18633f359a"
+    },
+    {
+      "path": "crypto",
+      "type": "dir",
+      "sha": "be9fcf046a942a2fbb03259cb32e85d4945da136"
+    },
+    {
+      "path": "docker",
+      "type": "dir",
+      "sha": "b04a741d22d5521df8288ccbbd370ce674fd6dcb"
+    },
+    {
+      "path": "encoding",
+      "type": "dir",
+      "sha": "055a103fc671bd3c8ce85e21302a582c19723d72"
+    },
+    {
+      "path": "env",
+      "type": "dir",
+      "sha": "f6627d86eb1f40183b7c4b0d5310cc5c057052a3"
+    },
+    {
+      "path": "errors",
+      "type": "dir",
+      "sha": "d650843566ef51df3dab1558e2adf49b93897de2"
+    },
+    {
+      "path": "etc",
+      "type": "dir",
+      "sha": "12be551d5209619672920e0d8d338489bda55692"
+    },
+    {
+      "path": "eventbus",
+      "type": "dir",
+      "sha": "f457e3f8a52f1e0259e51aa0c1a831d55737aa38"
+    },
+    {
+      "path": "flag",
+      "type": "dir",
+      "sha": "2e2fbad4e0117a7175a8e0ec8bc68d6e87943285"
+    },
+    {
+      "path": "go.mod",
+      "type": "file",
+      "sha": "fd05927abc61ff56332fc8af7747605643497623"
+    },
+    {
+      "path": "go.sum",
+      "type": "file",
+      "sha": "e630a6ee04f117d283ed31187fac815b07a553cb"
+    },
+    {
+      "path": "group_qrcode.jpeg",
+      "type": "file",
+      "sha": "b4614e1dc4a7a112a536c7d931598298d4918f9a"
+    },
+    {
+      "path": "internal",
+      "type": "dir",
+      "sha": "78524aba02d0ad179b34a2ddb1fed9a6271c8c72"
+    },
+    {
+      "path": "locate",
+      "type": "dir",
+      "sha": "a8dacdbf0fb7fb1d5e3cccad52fd2847a6ac4780"
+    },
+    {
+      "path": "lock",
+      "type": "dir",
+      "sha": "71994eefd2a348fab30331cb553c6666670e3ce9"
+    },
+    {
+      "path": "log",
+      "type": "dir",
+      "sha": "991563fb2c63a500e4a91064df5615ac1cde8d39"
+    },
+    {
+      "path": "mode",
+      "type": "dir",
+      "sha": "826546059da68f725ab563a532f9c54dee864a96"
+    },
+    {
+      "path": "network",
+      "type": "dir",
+      "sha": "2a4f4084b5269b450cf7c0f31caaa5af04f073c2"
+    },
+    {
+      "path": "packet",
+      "type": "dir",
+      "sha": "7db25db1cd50d3947b73d4c1783eb2afe18f7c02"
+    },
+    {
+      "path": "personal_qrcode.jpeg",
+      "type": "file",
+      "sha": "266ada95671743950906b2ac7caad3ce598786da"
+    },
+    {
+      "path": "registry",
+      "type": "dir",
+      "sha": "e876607ede6c999811f20155e6da2193bb9e94fc"
+    },
+    {
+      "path": "session",
+      "type": "dir",
+      "sha": "759976f080a1e16256536d82308afe6c945b67f8"
+    },
+    {
+      "path": "task",
+      "type": "dir",
+      "sha": "f0c37afe2db0571017467e95e4b53d3ca3379792"
+    },
+    {
+      "path": "testdata",
+      "type": "dir",
+      "sha": "fc469e1e9cf0fb57881598fbaa7a79cce99b6907"
+    },
+    {
+      "path": "tidy.sh",
+      "type": "file",
+      "sha": "3950742a1c74318588a6ccf173b50998d1805c0f"
+    },
+    {
+      "path": "transport",
+      "type": "dir",
+      "sha": "44c7d094069704e30e8a38cf6e550f1c6b8643ce"
+    },
+    {
+      "path": "utils",
+      "type": "dir",
+      "sha": "a756b824b2b5788560af42f33dc8ede633c70a94"
+    }
+  ],
+  "classification": "server_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Description identifies distributed Go server framework; cluster/network/core/config and Go build evidence, not full game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

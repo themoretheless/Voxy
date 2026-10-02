@@ -1,0 +1,102 @@
+{
+  "repository": "giordi91/SirEngineThe3rd",
+  "repository_id": 156106971,
+  "commit": "551328144f513e7e7ea9af03327672096baae610",
+  "source_url": "https://github.com/giordi91/SirEngineThe3rd/tree/551328144f513e7e7ea9af03327672096baae610",
+  "readme_path": "README.md",
+  "readme_sha256": "b4b609221cbf039c83a657dc810fc4b1ed93e4aaec2eae8796f5b9ff8b094bf8",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "9ae9de8f8239db3ae594a4ad057d98180da7cc74"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "f0f0e94b93977e3d28a9f3fe0816c2387c4a7df9"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "e8af0393e0639cc45dfe2a6302bc6b3380074e51"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "c30f784f7b12996916aed2d9e306b9f2b000ed28"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "f5e2fb36ef082221e83bfb4d7f4b420afc3fede3"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "8bbe5d4b0afdf383d34f8135368d675830b35d7f"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "db9587e9396626fbab14d77342cb8bfdef552bf8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "54e1daacd7e71c12cfc360b33a3a465d330b92da"
+    },
+    {
+      "path": "SirEngineThe3rdLib",
+      "type": "dir",
+      "sha": "a1511a9cfe7193d540ba95bbd02633cc5969b4af"
+    },
+    {
+      "path": "Tests",
+      "type": "dir",
+      "sha": "68ee737231c2c58456eb739ba57fa6fa5a792d36"
+    },
+    {
+      "path": "Tools",
+      "type": "dir",
+      "sha": "0ab9248b5a20300099e71a6297173dc8bf448698"
+    },
+    {
+      "path": "builtDependencies",
+      "type": "dir",
+      "sha": "7f0096f631529514a8d372e7089fef28f9eb5455"
+    },
+    {
+      "path": "ciSetup.ps1",
+      "type": "file",
+      "sha": "8a594b2bf30d285eeaa79aeeee9aef09559f389e"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "65851b52966b92d52f513bd3adefe6780549c714"
+    },
+    {
+      "path": "data",
+      "type": "dir",
+      "sha": "dd53482dbcce9ca2d89644225e6dbb84d968ee46"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c487b0cd4c74151bae3cae6a33e82fd6551265cf"
+    },
+    {
+      "path": "vendors",
+      "type": "dir",
+      "sha": "2b83ef3bac9894095d20599b6ca7f7b490bb54c5"
+    },
+    {
+      "path": "vk_layer_settings.txt",
+      "type": "file",
+      "sha": "e7c139c784c69e6cd0ed8a7332a68463fc5a9a86"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

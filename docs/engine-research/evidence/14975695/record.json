@@ -1,0 +1,84 @@
+{
+  "repository": "jtrfp/terminal-recall",
+  "repository_id": 14975695,
+  "commit": "e11da1f7cb65355aab2516b7f9b758a9c1efe32d",
+  "source_url": "https://github.com/jtrfp/terminal-recall/tree/e11da1f7cb65355aab2516b7f9b758a9c1efe32d",
+  "readme_path": "README.md",
+  "readme_sha256": "0dbb28e60daa4fff0c756c3abab84490bb153a3e5bcdb1c5d9ad877efdd63e01",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "eba0b5aa9a4fb13f71b8352c93b84a5a6d7c2c48"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "234950890182cb81fbedd477f5c068e5261e5c23"
+    },
+    {
+      "path": ".settings",
+      "type": "dir",
+      "sha": "d8b8fca09d99dde9b2b90424707d4e23666a2e30"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "191cf833367f91ff4c0234dc0376c6de4f70440e"
+    },
+    {
+      "path": "COPYING.gpl3.txt",
+      "type": "file",
+      "sha": "94a045322262546cfb9d72561e1d587b5c2ffb1e"
+    },
+    {
+      "path": "CREDITS",
+      "type": "file",
+      "sha": "3357228cbb3f6cffdf8faf103dd1a33dacd92019"
+    },
+    {
+      "path": "LICENSE-2.0.apache.txt",
+      "type": "file",
+      "sha": "d645695673349e3947e8e5ae42332d0ac3164cd7"
+    },
+    {
+      "path": "LICENSE.eclipse",
+      "type": "file",
+      "sha": "818acd54ff0d4a401d35cb9565c07dc1a3ac1116"
+    },
+    {
+      "path": "LICENSE.jogl.txt",
+      "type": "file",
+      "sha": "3550ab2822a865c0a372b2b672a8e0ce7f6e0410"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "660e84660b9cd08df6824855b6e0af3207729397"
+    },
+    {
+      "path": "dependency-reduced-pom.xml",
+      "type": "file",
+      "sha": "d76e01f39d33b0f00ce76eee1196c49a98fbc615"
+    },
+    {
+      "path": "pom.xml",
+      "type": "file",
+      "sha": "49e3d51293948ca999f039cdb65316b56285eefa"
+    },
+    {
+      "path": "print_surefire_reports.sh",
+      "type": "file",
+      "sha": "d9bf0c59b3e77004e8be82a927e1e3b0c16f0fd3"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "e6ba1279792d9d0c67b9bbf50689c1910bb3eaba"
+    }
+  ],
+  "classification": "specialized_engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Java Terminal Velocity/Fury3 runtime recreation accepting original/custom POD assets; source/build present, compatibility unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

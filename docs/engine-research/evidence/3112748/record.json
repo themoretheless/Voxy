@@ -1,0 +1,19 @@
+{
+  "repository": "leereilly/games",
+  "repository_id": 3112748,
+  "commit": "c67976ddcf6f7aef26dc3884116205ab9ef40f74",
+  "source_url": "https://github.com/leereilly/games/tree/c67976ddcf6f7aef26dc3884116205ab9ef40f74",
+  "readme_path": "README.md",
+  "readme_sha256": "a6ea73f215584554045ca0d2055d27623f9285abac41f3e91f5a16651968d103",
+  "entries": [
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6c1dd472d6c789fcf8cfc0d721f7538c2ead1158"
+    }
+  ],
+  "classification": "excluded_resource_list",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Root contains only README listing games and other projects; no owned engine implementation.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

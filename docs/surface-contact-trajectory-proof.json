@@ -1,0 +1,7 @@
+{
+  "samples": 10000,
+  "accepted": 2871,
+  "rejected": 7129,
+  "unsafe_acceptances_vs_baseline": 0,
+  "scope": "deterministic randomized two-triangle trajectories; not anatomical validation"
+}

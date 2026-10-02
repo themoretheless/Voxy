@@ -1,0 +1,38 @@
+{
+  "editor_sha256": "0ee0118a67e9dfb69f1a453cba64b6335d21d5991546e5e2ea484ea4d1433b97",
+  "saved_authoring": {
+    "version": 1,
+    "objects": [],
+    "instances": [
+      {
+        "id": "first",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {
+          "5:child4:root": {
+            "deleted": false,
+            "parent": null,
+            "name": null,
+            "active": null,
+            "translation": [
+              0.05,
+              0.0,
+              0.5
+            ],
+            "rotation": null,
+            "scale": null,
+            "components": {}
+          }
+        }
+      },
+      {
+        "id": "second",
+        "asset": "nested",
+        "parent": null,
+        "overrides": {}
+      }
+    ]
+  },
+  "native_log": "MODEL PUBLISHED frames=0 first_x=-0.5 asset=mesh\nPREFAB NATIVE PANEL PLACE SAVE UNDO REDO PASS frames=3\nPREFAB NATIVE PANEL REVERT UNDO REDO PASS frames=3\nPREFAB NATIVE STRUCTURAL SAVE UNDO PASS frames=3\nPREFAB NATIVE SAVE UNDO AND LAST GOOD PASS frames=3\nPREFAB NATIVE PRESENTED AFTER FAILURE PASS frames=6\nMODEL PUBLISHED frames=10 first_x=-0.5 asset=mesh\nPREFAB NATIVE PLAY STOP PASS frames=13 ticks=1",
+  "scope": "presented native editor frames, rendered panel hit-test, prefab placement/save/load/undo/redo and instance revert/save/load/undo/redo, nested prefab structural edits, last-good scene after damaged dependency, restored dependency and isolated Play/Stop; no image-equivalence claim"
+}

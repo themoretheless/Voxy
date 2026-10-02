@@ -1,0 +1,119 @@
+{
+  "repository": "MassiveHeights/Black",
+  "repository_id": 85088784,
+  "commit": "4a4a1929be146ecf5db6eb3ba304240a38e10c33",
+  "source_url": "https://github.com/MassiveHeights/Black/tree/4a4a1929be146ecf5db6eb3ba304240a38e10c33",
+  "readme_path": "README.md",
+  "readme_sha256": "1928815ec2a12d9177b7955918e2f471892dcffa87130d8d4e1670ad464a3cc1",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "223b11b8b78a2be266b17c7a4a8788b0d1a63ddb"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "f592a9afb8e9a9d0985ad490de9fa7e40c172afe"
+    },
+    {
+      "path": ".jsdoc",
+      "type": "file",
+      "sha": "e1a5f2bab87f59ddbfab70a3c536a22af4cf889f"
+    },
+    {
+      "path": ".jshintrc",
+      "type": "file",
+      "sha": "2b6f469f0ce2d3d4c5828858c035c204bf976ff9"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "7692120812097aeb7a32f651930a44d43d98341b"
+    },
+    {
+      "path": "LICENSE.md",
+      "type": "file",
+      "sha": "1513a2a7143bc671e3a3618a7a3e92b4a80a3813"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "15190a4548ba7b4ea928e23d3c847fc4220a51c1"
+    },
+    {
+      "path": "TexturePacker",
+      "type": "dir",
+      "sha": "47c1ea0b5591d5fad719bf0ef77b32907c308b1b"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "47d6c4ac63b2344d3cae496aed30514da477d531"
+    },
+    {
+      "path": "cats.json",
+      "type": "file",
+      "sha": "fe929de96b9e071b2488cf5918285d0775c99129"
+    },
+    {
+      "path": "dist",
+      "type": "dir",
+      "sha": "73318981872e98b58c8134d6f7f4876f1ca5b5a9"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "d51240abae4b6efe855c9588269198816ae6af6b"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "57b94b844bba6c5948556f825c56618bdf142804"
+    },
+    {
+      "path": "jsconfig.json",
+      "type": "file",
+      "sha": "23b979caef9048ed8ae31535ca5da86d1ffe70d6"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "f45401a50f5a032c24825da7d8a794f212889397"
+    },
+    {
+      "path": "package.json",
+      "type": "file",
+      "sha": "c71df8bd805745aaae269a4da850b478eafe89fd"
+    },
+    {
+      "path": "rollup.config.js",
+      "type": "file",
+      "sha": "efbe11591445b1c3228a712db8c34133c3743cae"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "644f3042f6bd4c0a92732877d4bfdb8b0a11a2fa"
+    },
+    {
+      "path": "site",
+      "type": "dir",
+      "sha": "02970165d430d82f39dc6644c896de2590d6ff62"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6d12ab8683560f297c308d8806b1227a08a32e5b"
+    },
+    {
+      "path": "template",
+      "type": "dir",
+      "sha": "70244dc7d85422db8611bc547ddd7c54eefd082b"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies web 2D framework; runtime/src/build and npm/rollup, complete engine count separated. Fastest claim unverified.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

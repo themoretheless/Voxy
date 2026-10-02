@@ -1,0 +1,89 @@
+{
+  "repository": "AmigaPorts/ACE",
+  "repository_id": 47679408,
+  "commit": "9e6ce064897cbd6b517d56fbd15da43919261a56",
+  "source_url": "https://github.com/AmigaPorts/ACE/tree/9e6ce064897cbd6b517d56fbd15da43919261a56",
+  "readme_path": "README.md",
+  "readme_sha256": "a95f4ce52688f13fc4e9ded73d1c1fca69eed864d17ea9c85916424de4baf5af",
+  "entries": [
+    {
+      "path": ".codedocs",
+      "type": "file",
+      "sha": "04d4c44617872e7fce52936190052ca5313e3b30"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "27d80ea29f86e0f8f2b97cac26af1288a6983230"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "bf82fc7176f0991a0879094ceee220e82c1b311d"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "efc7dab46ea4831ec591c02d78f40895ee0c1e59"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "75a63fc06ea12ef233a0b88414c7707ee39f1f06"
+    },
+    {
+      "path": "Doxyfile",
+      "type": "file",
+      "sha": "ff3a900566166a10bdf5ba7aa755c8e72ceeec29"
+    },
+    {
+      "path": "Jenkinsfile",
+      "type": "file",
+      "sha": "897a500571909547297a764f23eaa1d83bd050fb"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "a612ad9813b006ce81d1ee438dd784da99a54007"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d329d761f79792558c3b58220f6fd827198de1e9"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "e447cddb335b5cdc19d8438805c1f317425708e7"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c11d736f7f431b6fb4baa4afec6ed9ffcedb3031"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "2e7803d19aa07b02a4cb0fc74ccfd26e2110a003"
+    },
+    {
+      "path": "showcase",
+      "type": "dir",
+      "sha": "93f2b411ad012a19dee0b9ee08c03f1325dec7db"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "a1453d6b509f42a6b4e56b9af83ee55591d2342b"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "719e95f5e86daff6fbb69c7f5af266b611202361"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies engine/framework/support library for classic Amiga; src/include and CMake/tools, complete engine scope needs deeper inspection.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

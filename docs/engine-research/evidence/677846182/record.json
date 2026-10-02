@@ -1,0 +1,132 @@
+{
+  "repository": "darthdeus/comfy",
+  "repository_id": 677846182,
+  "commit": "31aa6efce135ec3d8feeb8b1b2483f2c0e915d12",
+  "source_url": "https://github.com/darthdeus/comfy/tree/31aa6efce135ec3d8feeb8b1b2483f2c0e915d12",
+  "readme_path": "README.md",
+  "readme_sha256": "c866566262767d6d43059d34efd325219bcf713990afaf905c4bef720d3d5958",
+  "entries": [
+    {
+      "path": ".cargo",
+      "type": "dir",
+      "sha": "e82095abb596bbfc84bbc7ea62e084da43afdf4a"
+    },
+    {
+      "path": ".clippy.toml",
+      "type": "file",
+      "sha": "01655a2ce549f7c917125c228bd5ad9dab589cda"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "7ead6639dd5b486e28e911f557fe267e0408203f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "14e0b4c655105279d9a80a874e404a8c6d6c3aa6"
+    },
+    {
+      "path": ".rustfmt.toml",
+      "type": "file",
+      "sha": "e7adedfc38e0e345fad3b5ef39be64b90ca88e3f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "f3efd167edc13fde313d69bdb998d4a87efc117f"
+    },
+    {
+      "path": "CHEATSHEET.md",
+      "type": "file",
+      "sha": "f81b57912bce1aa5d8a4547091c97f712a7a3304"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "a46f4bc623113d10bb577a39b1aaf45f7e5c5866"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "79bc41228bf4e27efd2959fc72c20e133631f31a"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "72328ce0d821fd4fbbc4638923b03501d7ed7d73"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "e9880e06f661ffac1e0787de2602c00f708cf419"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "a14d966e846bf1a6bc8956b3c9f949c1e5385e16"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "3079c63931d9100b605b1e982a7f8bf3e782702f"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "9f773fbb49144f1e9da8699caafead4e9d72fdfb"
+    },
+    {
+      "path": "build-examples.sh",
+      "type": "file",
+      "sha": "40f0d6dd96480bc917417ff6d331b41bff9adba9"
+    },
+    {
+      "path": "comfy-core",
+      "type": "dir",
+      "sha": "df2ec826596fe11a26c75415e4566e83b38b31f9"
+    },
+    {
+      "path": "comfy-ldtk",
+      "type": "dir",
+      "sha": "066cfe4b389010ad8fd810092cd510a6dec6b0ed"
+    },
+    {
+      "path": "comfy-wgpu",
+      "type": "dir",
+      "sha": "7cb1a9649ad5f5fc943c9863e29609b36ac014bb"
+    },
+    {
+      "path": "comfy",
+      "type": "dir",
+      "sha": "b8dbbad3aca3670856296663b5a5a69ac6d6d8fb"
+    },
+    {
+      "path": "demos",
+      "type": "dir",
+      "sha": "9e91585bf4f84ba28e8028d94e74e1903b273fe1"
+    },
+    {
+      "path": "flake.lock",
+      "type": "file",
+      "sha": "1b9cb1e85bfcced15f0234bc14e0af230f8e8111"
+    },
+    {
+      "path": "flake.nix",
+      "type": "file",
+      "sha": "9c36c595c0be5d78378d2e536238a3158680a882"
+    },
+    {
+      "path": "index.html",
+      "type": "file",
+      "sha": "227bef4c11b7f527e2ebcf72ea0fc0684188950a"
+    },
+    {
+      "path": "run-examples.sh",
+      "type": "file",
+      "sha": "0c44445dbbff6f3416b1a794e40c0ddea286f9ab"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

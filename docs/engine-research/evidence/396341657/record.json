@@ -1,0 +1,124 @@
+{
+  "repository": "AmplitudeAudio/sdk",
+  "repository_id": 396341657,
+  "commit": "35c8a777d29e92f6f2518893d0da1fb753a2beeb",
+  "source_url": "https://github.com/AmplitudeAudio/sdk/tree/35c8a777d29e92f6f2518893d0da1fb753a2beeb",
+  "readme_path": "README.md",
+  "readme_sha256": "3013db0476dd4c8554ba421d199e7e9b66e602defbb19b7470f3cec7f77e596e",
+  "entries": [
+    {
+      "path": ".clang-format",
+      "type": "file",
+      "sha": "6368297f8a00febe9d81feb7416a8ad10a7f329f"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "fae7ccbfb56541b7aab0ab08214843ee13485798"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "eed4e396f0f0fb21a809f5dde012754d16809d92"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "CLAUDE.md",
+      "type": "file",
+      "sha": "863a08bc6cd4e5d7fb78305106cc84fb5a96057b"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "0073f6c5d17cc5d50711dc5875f11e6c19a6459c"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "NOTICE",
+      "type": "file",
+      "sha": "c247071115db2d1aed58d8eebdf8bb10e138ede5"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5f23c37e83fc876fba745e5e6750c8ababae8467"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "b52b37b1a023e20349d37cd39557ebfeae8b1da3"
+    },
+    {
+      "path": "cmake",
+      "type": "dir",
+      "sha": "022041030f7e11f41c55de229921f72493716566"
+    },
+    {
+      "path": "codecov.yml",
+      "type": "file",
+      "sha": "f3b6d78a6e8fd2fdebae034fdeeb42baa6bf53db"
+    },
+    {
+      "path": "include",
+      "type": "dir",
+      "sha": "6ac526abef13608cd2139522a7861763b743d3dd"
+    },
+    {
+      "path": "sample_project",
+      "type": "dir",
+      "sha": "d66956895215729d203acb8d4564245bb9ed9a0f"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "484d86069910544dfd2a81d73a8a2b519a34b68e"
+    },
+    {
+      "path": "schemas",
+      "type": "dir",
+      "sha": "b967794b880d8695f910e10de328542820f5d22b"
+    },
+    {
+      "path": "scripts",
+      "type": "dir",
+      "sha": "03eff671cd5f0f45cb38c7edbc14f227403747cf"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "6d05a957e0592e53e8df3fce8e3624f4473ce516"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "353129a0592c1f151b135ebc1c15d744aadbf4fb"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "2cd48062352091912734e2e860ecb4ac3fb1ce0c"
+    },
+    {
+      "path": "xmake.lua",
+      "type": "file",
+      "sha": "d49acbbe09ce6d747ddbae8a55b3aea7b3c24ec1"
+    },
+    {
+      "path": "xmake",
+      "type": "dir",
+      "sha": "9f66c1da988c118f2638a81c904653ca325e2557"
+    }
+  ],
+  "classification": "subsystem_library",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Game audio engine with spatialization, attenuation, buses and source/tests; not complete game runtime.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

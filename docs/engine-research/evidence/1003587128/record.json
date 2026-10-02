@@ -1,0 +1,82 @@
+{
+  "repository": "janhohenheim/rerecast",
+  "repository_id": 1003587128,
+  "commit": "94c069ebe43701eb9687ab236cdfcfbb5282cee5",
+  "source_url": "https://github.com/janhohenheim/rerecast/tree/94c069ebe43701eb9687ab236cdfcfbb5282cee5",
+  "readme_path": "readme.md",
+  "readme_sha256": "af0b43a9c8b6e8ed002c03c1dd0da4fb389f1e6660e257a337c425aed002620a",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "98c314c755af7485a0174a01aa8950023d8af238"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "8c28e9a657ddf499b88851d7456629050c8d5b55"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "7c6d3166477ab4159ff8adc4c4b9ee3ff346ae20"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "4464d3fb0aea63d824f30f7a5c082c4171ad1b16"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "c10597e021c2cd0795f68fe3f2b4659ca38f1b16"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "4498b339e8def60a3889cbe9f16c5e7b08e211e7"
+    },
+    {
+      "path": "changelog.md",
+      "type": "file",
+      "sha": "8558c3a832ce3e7c3fa13a0cd3e51179b63f5d22"
+    },
+    {
+      "path": "clippy.toml",
+      "type": "file",
+      "sha": "7fdcb8636cc7e610d2300a7907229987b727f780"
+    },
+    {
+      "path": "crates",
+      "type": "dir",
+      "sha": "0c866a15af68cf71bd71f42f53758bbe630e58b9"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "7537c8eeff53916a1a2bd9f76d7094c778d49439"
+    },
+    {
+      "path": "license-apache.txt",
+      "type": "file",
+      "sha": "d9a10c0d8e868ebf8da0b3dc95bb0be634c34bfe"
+    },
+    {
+      "path": "license-mit.txt",
+      "type": "file",
+      "sha": "6802bc4b80c0f8df1413d55b16267c0969e352c9"
+    },
+    {
+      "path": "media",
+      "type": "dir",
+      "sha": "2aacd00db2789f1758e579cf7502e1b6cf26e8b2"
+    },
+    {
+      "path": "readme.md",
+      "type": "file",
+      "sha": "501e3ff90e765e097e250f3ae9ff5dbc5317e432"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

@@ -1,0 +1,84 @@
+{
+  "repository": "turanszkij/WickedEngine",
+  "repository_id": 37770961,
+  "commit": "df44c3db4c4927492bc9c791eac715d98d7ed091",
+  "source_url": "https://github.com/turanszkij/WickedEngine/tree/df44c3db4c4927492bc9c791eac715d98d7ed091",
+  "readme_path": "README.md",
+  "readme_sha256": "13d8c8136f45847e5bc5441cf183ecb95aa185054fef47e8685f02279c8ec979",
+  "entries": [
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "2425a78e12b059fe7f8642bd7d82ddaf9d2c85d1"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "1ff0c423042b46cb1d617b81efb715defbe8054d"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "97d8fd63ae8803ab8d76c11b85789d17ae15d87f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "6e23d430d97a7401e4ee39716954b9cb01ad4257"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "62e92554ef01be7164fa0703e4f4cca18fccf989"
+    },
+    {
+      "path": "Content",
+      "type": "dir",
+      "sha": "d010064c01b7165e96eb49fcc343ea13fa7d14f6"
+    },
+    {
+      "path": "Editor",
+      "type": "dir",
+      "sha": "867836e98118adfe929e27fe0ee39744653031d2"
+    },
+    {
+      "path": "LICENSE.txt",
+      "type": "file",
+      "sha": "58e05c35ecd234a8d46336131a2bf2f3d1ec6b03"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "d3d6cc218f78b1c4c73a6517911e237b70c17961"
+    },
+    {
+      "path": "Samples",
+      "type": "dir",
+      "sha": "d0113786dde50f45aac898c471ee4994795d9517"
+    },
+    {
+      "path": "WickedEngine.sln",
+      "type": "file",
+      "sha": "1ee870e9365e39c549ba5abaef1274dd06170c4a"
+    },
+    {
+      "path": "WickedEngine",
+      "type": "dir",
+      "sha": "f3591d3b13ec291a1b41fd72788b6605d0a6d757"
+    },
+    {
+      "path": "features.txt",
+      "type": "file",
+      "sha": "19580658611f15f4409f00b5259945c1866b4abf"
+    },
+    {
+      "path": "third_party_software.txt",
+      "type": "file",
+      "sha": "f73917d56956f9c32b8959266fe2675de4d0d75c"
+    }
+  ],
+  "classification": "engine",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies Wicked Engine; runtime and Editor native roots, Samples, CMake and solution files.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

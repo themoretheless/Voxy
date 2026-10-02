@@ -1,0 +1,154 @@
+{
+  "repository": "udinmoInc/WindEffects",
+  "repository_id": 1281040832,
+  "commit": "2903dd133bc6363ca6012a9c63b929525e12bd8e",
+  "source_url": "https://github.com/udinmoInc/WindEffects/tree/2903dd133bc6363ca6012a9c63b929525e12bd8e",
+  "readme_path": "README.md",
+  "readme_sha256": "1d7c300cd1fac037d30423c0d8283e6cd24666d52917f8ffac66250e8a97d772",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b33afc06992fba4d445e31a3c9d91727d82f2e43"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "4756efe070c4b37ddb26b5485ae26b2505f18430"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "73816f30530aa977861caf53c7f47b311683844b"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "3fbe7484aa1d73ebc61fc2c81b557f7d331f5a1c"
+    },
+    {
+      "path": "BUILD.md",
+      "type": "file",
+      "sha": "93474ca0f72050a50b41b31a07ebc52f1bc6d3ae"
+    },
+    {
+      "path": "CHANGELOG.MD",
+      "type": "file",
+      "sha": "be554ad59341890e18e253db37b1ede2757ca754"
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "type": "file",
+      "sha": "4c842daad8bb302380655444edd5555d146b7554"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "type": "file",
+      "sha": "31234f3d430ebef7a0c1822f13955c1bb642d713"
+    },
+    {
+      "path": "Engine",
+      "type": "dir",
+      "sha": "6d433f78bf7ce2715da4336302c6fdbd8b7eda81"
+    },
+    {
+      "path": "IgniteBT.SDKs.json",
+      "type": "file",
+      "sha": "6b453f4d4d2f841f4eb22be12f5f019565cc589b"
+    },
+    {
+      "path": "IgniteBT.SDKs.json.example",
+      "type": "file",
+      "sha": "a71e12886bd813d43b6471c43dcaa03b77366009"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "db98ec74156aa1392f6c9f5875bfb036dd55fc50"
+    },
+    {
+      "path": "Legal",
+      "type": "dir",
+      "sha": "3a9b94e389f2198ee706f86b76cf285901cce7b1"
+    },
+    {
+      "path": "Projects",
+      "type": "dir",
+      "sha": "f9dfdbe011cd47ee8cab452d943f15c46d9dfea9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "fa762c2242a21f078d3a2b8d63020b2e81436d00"
+    },
+    {
+      "path": "SECURITY.md",
+      "type": "file",
+      "sha": "ba8e68e91a451e04a1acb6f7bca1677bbecacd51"
+    },
+    {
+      "path": "Scripts",
+      "type": "dir",
+      "sha": "992f361aea7e195439d83515436134328ccb22ed"
+    },
+    {
+      "path": "Visuals",
+      "type": "dir",
+      "sha": "781f55023c04c264d86c526bae2bb242bc89ce3f"
+    },
+    {
+      "path": "WindEffects.engine",
+      "type": "file",
+      "sha": "020ee1dd16788ac98c7413f4d536721e4e363b33"
+    },
+    {
+      "path": "chec.py",
+      "type": "file",
+      "sha": "797155f7789e0adadf2977406addde4f8aa2b226"
+    },
+    {
+      "path": "force_rebuild.ps1",
+      "type": "file",
+      "sha": "0ea1d74a2d1ca95e90d77430f80b3f86bc0939f6"
+    },
+    {
+      "path": "nuget.config",
+      "type": "file",
+      "sha": "a79daaf8984aa320030c8cb2f8e1e178b6de4b2c"
+    },
+    {
+      "path": "run.ps1",
+      "type": "file",
+      "sha": "d4d191733814cc02fbaeb037d4c8fe2649850d33"
+    },
+    {
+      "path": "vswhere.ps1",
+      "type": "file",
+      "sha": "300fb6fb9011bcc24898ecd384a9eaf850c79930"
+    },
+    {
+      "path": "we",
+      "type": "file",
+      "sha": "94b38d614eb403a3f1732b8615397a2edc555cca"
+    },
+    {
+      "path": "we.bat",
+      "type": "file",
+      "sha": "1b3f9092369951393a82eb1aabd6ca3689d3f909"
+    },
+    {
+      "path": "we.cmd",
+      "type": "file",
+      "sha": "1b3f9092369951393a82eb1aabd6ca3689d3f909"
+    },
+    {
+      "path": "we.ps1",
+      "type": "file",
+      "sha": "4dd39dcd1a9f80a1089449eb95fcdfe67ba1e748"
+    }
+  ],
+  "classification": "excluded_unclear_distribution_rights",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Source-visible C++ engine marked proprietary EULA and no public releases; excluded pending license scope review.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

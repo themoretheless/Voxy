@@ -1,0 +1,44 @@
+{
+  "repository": "jakehffn/lesser-doom",
+  "repository_id": 622738529,
+  "commit": "a0be76f41fd476edb8ed16287ad329a6eb2ecab1",
+  "source_url": "https://github.com/jakehffn/lesser-doom/tree/a0be76f41fd476edb8ed16287ad329a6eb2ecab1",
+  "readme_path": "README.md",
+  "readme_sha256": "3dfc9d41d63e267a33493e926e69e49c98bdd5a64696bac9d9a55806a816d41b",
+  "entries": [
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "01f9cb9fbe0239c305ee4768b71097f17fe83ca1"
+    },
+    {
+      "path": "CMake",
+      "type": "dir",
+      "sha": "6f50ded6dfb386b9494f3e92870d86f407cb2daa"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "type": "file",
+      "sha": "a54d1e5df23c4a7bf2b06af27ebfc41409a8ab5f"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "0b0cbbca15827cb102f0a0404e80a3b4e354cad5"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "bbd033bc71f95418e15600844f9365b1642be021"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "de073b6dddf0298807081f6488e4192c781a993d"
+    }
+  ],
+  "classification": "rendering_demo",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Wolfenstein-style software rendering experiment with camera controls; no content-driven gameplay runtime evidence.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

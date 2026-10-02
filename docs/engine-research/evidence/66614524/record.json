@@ -1,0 +1,264 @@
+{
+  "repository": "ppy/osu-framework",
+  "repository_id": 66614524,
+  "commit": "589103bc385fc8ac568c97d1d6f8699e07bc8cbb",
+  "source_url": "https://github.com/ppy/osu-framework/tree/589103bc385fc8ac568c97d1d6f8699e07bc8cbb",
+  "readme_path": "README.md",
+  "readme_sha256": "d524e557ee384cda9f234b22989017fbdb280210a7e06fece4ccac21364da873",
+  "entries": [
+    {
+      "path": ".cfsignore",
+      "type": "file",
+      "sha": "13a83eeb18a4a19921a784b0c780451dc7c5f23a"
+    },
+    {
+      "path": ".config",
+      "type": "dir",
+      "sha": "3c43e57d90db567e73c7b032ce951b3a94f15206"
+    },
+    {
+      "path": ".editorconfig",
+      "type": "file",
+      "sha": "75ec70710a767d25014f629367ca2b9ece189c3a"
+    },
+    {
+      "path": ".git-blame-ignore-revs",
+      "type": "file",
+      "sha": "ffd1c2e4eb8400415a286cad1557378576f23403"
+    },
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "baf69b41d1aa93babb9cc189dbb4b8a8c4c3d0d6"
+    },
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "8bbb0a6f0dc42a93a1206b615933fdacc9b5d79e"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "c0510bfbb7208e7c65cb818885fd742ef8a26146"
+    },
+    {
+      "path": ".idea",
+      "type": "dir",
+      "sha": "e528e34a6f85277ff678876f2b78592f5021dc05"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "0feff59aee73bc476d1594124587474041a3841c"
+    },
+    {
+      "path": ".vscode",
+      "type": "dir",
+      "sha": "0736eaf32f4216915387541e0410293c1586069c"
+    },
+    {
+      "path": "CodeAnalysis",
+      "type": "dir",
+      "sha": "46f87ae0cdefd551ebd6662c34f2486322d22dfa"
+    },
+    {
+      "path": "Directory.Build.props",
+      "type": "file",
+      "sha": "fa5ef3d7f86c9440d99c15bc7fed8f1990ca3af2"
+    },
+    {
+      "path": "InspectCode.ps1",
+      "type": "file",
+      "sha": "5ccd19165cf77374de021ef30d67ae1f88afeac5"
+    },
+    {
+      "path": "InspectCode.sh",
+      "type": "file",
+      "sha": "45e923b726b9d7eca5fde63204772da214a0a2a7"
+    },
+    {
+      "path": "LICENCE",
+      "type": "file",
+      "sha": "3bb8b62d5d74b4f0d0d85dc469994aea42e487d8"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "aee0e9b045abce76ee78fddaa582dfcc99c5c292"
+    },
+    {
+      "path": "SampleGame.Android",
+      "type": "dir",
+      "sha": "38153d40e5bd5b830a8b1ff3fa3794a10a051d3d"
+    },
+    {
+      "path": "SampleGame.Desktop",
+      "type": "dir",
+      "sha": "c9126d8460ea165e72de70afbb84ef6bea52f838"
+    },
+    {
+      "path": "SampleGame.iOS",
+      "type": "dir",
+      "sha": "21a0e370ca3ef03d6439c25e0da87bcc1d3cf378"
+    },
+    {
+      "path": "SampleGame",
+      "type": "dir",
+      "sha": "0bd68469dc44b653cc7712264e9f68fd10b39858"
+    },
+    {
+      "path": "UseLocalOpenTabletDriver.ps1",
+      "type": "file",
+      "sha": "3f1a83b3797f743ae278c128f4a1e939743f30f7"
+    },
+    {
+      "path": "UseLocalOpenTabletDriver.sh",
+      "type": "file",
+      "sha": "2455db7879fdac776dbe2ef96ac9b566d140aa8d"
+    },
+    {
+      "path": "UseLocalVeldrid.ps1",
+      "type": "file",
+      "sha": "f78ad8297969c2bcfde6d1d9634f8a5ad3022e93"
+    },
+    {
+      "path": "UseLocalVeldrid.sh",
+      "type": "file",
+      "sha": "9c82f7c488f6087c959c2beafba87f5aee9e9b42"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "8dff3bbc818304e03f52e5333ee174c01f056ff6"
+    },
+    {
+      "path": "build.ps1",
+      "type": "file",
+      "sha": "44b7a6048c65a65dd92c5420011a8cceff478f07"
+    },
+    {
+      "path": "build.sh",
+      "type": "file",
+      "sha": "abb813db3c6a80998abd30c0500b995d2e044a5d"
+    },
+    {
+      "path": "build",
+      "type": "dir",
+      "sha": "0b2a454e11051f8a0c2e0c39b7e03a94fe1fd075"
+    },
+    {
+      "path": "cake.config",
+      "type": "file",
+      "sha": "69f5158c6e85168e6245e3980d6850b18719b1e3"
+    },
+    {
+      "path": "global.json",
+      "type": "file",
+      "sha": "d46d21e50b3f3284ca3589173cac1e0af1076810"
+    },
+    {
+      "path": "osu-framework.Android.slnf",
+      "type": "file",
+      "sha": "d3287f7d9e0296a6e6a8c9fdae608cb5fa794261"
+    },
+    {
+      "path": "osu-framework.Desktop.slnf",
+      "type": "file",
+      "sha": "25c106d659740e63a11281347b16ad5d4153e593"
+    },
+    {
+      "path": "osu-framework.iOS.slnf",
+      "type": "file",
+      "sha": "4826b8adf221f051689f2c5ad5a99b41b5bf395c"
+    },
+    {
+      "path": "osu-framework.licenseheader",
+      "type": "file",
+      "sha": "be6504d0ae1cc6046cf5e51f22f049a03b4ed052"
+    },
+    {
+      "path": "osu-framework.sln",
+      "type": "file",
+      "sha": "3ba713ce6aa7caf6ff3466606dea4a0c827235de"
+    },
+    {
+      "path": "osu-framework.sln.DotSettings",
+      "type": "file",
+      "sha": "408cb89627ed835028f564186cbe42d9e4df7b1e"
+    },
+    {
+      "path": "osu.Framework.Android.props",
+      "type": "file",
+      "sha": "6d13f0e3f1a23fe42867048c6f90df8952255c28"
+    },
+    {
+      "path": "osu.Framework.Android",
+      "type": "dir",
+      "sha": "ab8c60d70aaa00e98f6f793681a31a1a6cbc7f51"
+    },
+    {
+      "path": "osu.Framework.Benchmarks",
+      "type": "dir",
+      "sha": "25e21a42b610cc72f5b5e4da010506f31030dec1"
+    },
+    {
+      "path": "osu.Framework.NativeLibs",
+      "type": "dir",
+      "sha": "74f7c101be8d2535b91d6e963dc939381fe59f49"
+    },
+    {
+      "path": "osu.Framework.SourceGeneration.Tests",
+      "type": "dir",
+      "sha": "aa5edef5a570a5a6319133530525f8ceb08fc351"
+    },
+    {
+      "path": "osu.Framework.SourceGeneration",
+      "type": "dir",
+      "sha": "b735b9bcefc4ebf462eaadfcad05b9a20f85623d"
+    },
+    {
+      "path": "osu.Framework.Templates",
+      "type": "dir",
+      "sha": "581b485a67c33d41f9cc5a52e10b209b82a114d1"
+    },
+    {
+      "path": "osu.Framework.Tests.Android",
+      "type": "dir",
+      "sha": "401ed5da4646e7780daf94af8de981cff4cdbbca"
+    },
+    {
+      "path": "osu.Framework.Tests.iOS",
+      "type": "dir",
+      "sha": "6eaec39bb7d273b0c75f043d430c5f42cb172b3a"
+    },
+    {
+      "path": "osu.Framework.Tests",
+      "type": "dir",
+      "sha": "70f41ea862cae8faedbd599dd806f913740dc416"
+    },
+    {
+      "path": "osu.Framework.iOS.props",
+      "type": "file",
+      "sha": "e30fd6889bc7a29dc6fa4cac813cb0aaa490bfe3"
+    },
+    {
+      "path": "osu.Framework.iOS",
+      "type": "dir",
+      "sha": "e8f549208edc3dd0fccecbecc521cd46c1d16ae2"
+    },
+    {
+      "path": "osu.Framework",
+      "type": "dir",
+      "sha": "37cc4bc1effc5a98c00ddc3c53d10f50a2618661"
+    },
+    {
+      "path": "tools",
+      "type": "dir",
+      "sha": "97f6acb25d5ba9a17fce8d9f07812ac492356684"
+    }
+  ],
+  "classification": "game_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README explicitly identifies osu-focused framework; .NET solution/build and sample applications.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

@@ -1,0 +1,92 @@
+{
+  "repository": "diptools/dip",
+  "repository_id": 494593568,
+  "commit": "11276ad4dc77ab5dd481577eca78a3f1df6fdcc1",
+  "source_url": "https://github.com/diptools/dip/tree/11276ad4dc77ab5dd481577eca78a3f1df6fdcc1",
+  "readme_path": "README.md",
+  "readme_sha256": "8d53109116bb644a32bc86cf7d6abe552e0a978c58e2a767ae34abaa2a7d4c07",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b5b2b4281d86bbb83bb8285ff59f2db4fb7a9433"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "38ce0456a7c4bdfa387c48774b13db43fed6ac60"
+    },
+    {
+      "path": ".gitmodules",
+      "type": "file",
+      "sha": "76c91253b0aaed04538aafc9298e1723255d3fdb"
+    },
+    {
+      "path": ".obsidian",
+      "type": "dir",
+      "sha": "69ac9858263d984410094dbdd5d1f4399f7040cb"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "28797d998752ffa5bb898977fd4de11f17f02448"
+    },
+    {
+      "path": "Cargo.lock",
+      "type": "file",
+      "sha": "d7a3b014c2ce218725d9291839500f51132c7ee8"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "0cc6cedca094bc10f9f89691afffe785e3053294"
+    },
+    {
+      "path": "LICENSE-APACHE",
+      "type": "file",
+      "sha": "1b5ec8b78e237b5c3b3d812a7c0a6589d0f7161d"
+    },
+    {
+      "path": "LICENSE-MIT",
+      "type": "file",
+      "sha": "31aa79387f27e730e33d871925e152e35e428031"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "6dd54178bae6aff58d4ca016c3bb2259c4d3c8b2"
+    },
+    {
+      "path": "cliff.toml",
+      "type": "file",
+      "sha": "2025a9b6f0d230abe3ccfff5fc55ab8c30df968c"
+    },
+    {
+      "path": "dipin",
+      "type": "dir",
+      "sha": "49a527145f4490d4b40fbbc7001f0871e4e73c51"
+    },
+    {
+      "path": "docs",
+      "type": "dir",
+      "sha": "c63520cf1034b165e1fb86416f89ac93112da35f"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "8285814db4b7e588554345bbc3502a511a4fb86d"
+    },
+    {
+      "path": "plugins",
+      "type": "dir",
+      "sha": "ad2ccb8e07bd0369d6438905c3a4a5426615b067"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "4796907d71149ed2c821abd646d7477ce38efd84"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

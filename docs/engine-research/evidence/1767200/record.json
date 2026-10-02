@@ -1,0 +1,204 @@
+{
+  "repository": "ecere/ecere-sdk",
+  "repository_id": 1767200,
+  "commit": "cca43ca73c12aba5a152a8dba909483eef494faf",
+  "source_url": "https://github.com/ecere/ecere-sdk/tree/cca43ca73c12aba5a152a8dba909483eef494faf",
+  "readme_path": "README.md",
+  "readme_sha256": "a8f66865d20c2290350e553d693a6920f14c44a4afc5cc4d01c6044235ee6adf",
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "type": "file",
+      "sha": "4359087cd66d8279d46b94eca2f04417d5655369"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "af25317b42aaaf872e26dc4f2b4c60a7e9eb3d62"
+    },
+    {
+      "path": ".gitlab-ci.yml",
+      "type": "file",
+      "sha": "408b377dc86c98c0184d4505662a100f84882800"
+    },
+    {
+      "path": ".mailmap",
+      "type": "file",
+      "sha": "18df350d73bd488a5c5d7d86eb820b7677e4221a"
+    },
+    {
+      "path": ".onedev-buildspec.yml",
+      "type": "file",
+      "sha": "5d9a9d20ef5e3d78d2e67784a2366177527e955c"
+    },
+    {
+      "path": ".travis.yml",
+      "type": "file",
+      "sha": "1b004aa0108a97e0e05007a3c12c02d5f2e9421c"
+    },
+    {
+      "path": "Cleanfile",
+      "type": "file",
+      "sha": "f31008e0e82745b22fb65d3369a33d92f62272ea"
+    },
+    {
+      "path": "EcereSDK",
+      "type": "dir",
+      "sha": "e9b3707a5df3d69ea89433c949e82d7317bd1e78"
+    },
+    {
+      "path": "INSTALL",
+      "type": "file",
+      "sha": "282f5fd68e62b6821dde836d36cc8171b2eb9bc3"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "6436db9f519bae11d1a2312f9e22c6fe39e17c95"
+    },
+    {
+      "path": "MANIFEST.in",
+      "type": "file",
+      "sha": "1d99127a0739da83bff79bd3ac84b374ffedb1f6"
+    },
+    {
+      "path": "Makefile",
+      "type": "file",
+      "sha": "f7c60cf57579901d9f70bcafa57d6e507cb81afd"
+    },
+    {
+      "path": "Makefile.bindings",
+      "type": "file",
+      "sha": "5021d1a5edd374e5a1072e007ff7d4a0a8621009"
+    },
+    {
+      "path": "NEWS",
+      "type": "file",
+      "sha": "1957d268c4eeb4c11b43df1af8caaafb6d9c5cac"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "e0f026845a8b745089b4e5fc4e4a38e9c13763f3"
+    },
+    {
+      "path": "audio",
+      "type": "dir",
+      "sha": "9acee3cd25c3595ed2104a293c8c762c4779cbbf"
+    },
+    {
+      "path": "autoLayout",
+      "type": "dir",
+      "sha": "15083964c583f85cacf01a378036491ea22db806"
+    },
+    {
+      "path": "bgen",
+      "type": "dir",
+      "sha": "04b3d9198c8252571a37d7b5be04e0b11bf7ed8b"
+    },
+    {
+      "path": "butterbur",
+      "type": "dir",
+      "sha": "fdd5075e5732a62141e6c2c1d5991a9ac16e4757"
+    },
+    {
+      "path": "compiler",
+      "type": "dir",
+      "sha": "a12723a5b5bc128b08e236544582a825c70cdb98"
+    },
+    {
+      "path": "configure",
+      "type": "file",
+      "sha": "31f8f1541ac4c1bf7974bf5fa4eaa4d93620efdd"
+    },
+    {
+      "path": "crossplatform.mk",
+      "type": "file",
+      "sha": "5ec7f2adf129068b9764732cf4f4a7a58aa57627"
+    },
+    {
+      "path": "default.cf",
+      "type": "file",
+      "sha": "f5ba8534c88fd5a04f463a6b3569da30b87f39ad"
+    },
+    {
+      "path": "deps",
+      "type": "dir",
+      "sha": "581882c8239ec6e266598c45287a964c078132d5"
+    },
+    {
+      "path": "doc",
+      "type": "dir",
+      "sha": "2c671e6b1c7c5dea3cfdf03e2588c078afb4bb32"
+    },
+    {
+      "path": "documentor",
+      "type": "dir",
+      "sha": "f1fc7f999d7cb645d71c5e39e2898c0d77ab0273"
+    },
+    {
+      "path": "ear",
+      "type": "dir",
+      "sha": "3e9d7cb5dd38777e31c149ba0d26ebaca825e650"
+    },
+    {
+      "path": "ecere",
+      "type": "dir",
+      "sha": "d1b3a41b9999eced4ab0a8c81e8b10e0c55da1be"
+    },
+    {
+      "path": "eda",
+      "type": "dir",
+      "sha": "c67df3da19ab584a47877bd6cbb7c511f90c14c8"
+    },
+    {
+      "path": "epj2make",
+      "type": "dir",
+      "sha": "06280d175d9c53fd1973078c748c9f2f8fc9ba82"
+    },
+    {
+      "path": "extras",
+      "type": "dir",
+      "sha": "1629e54abb164d776338f3a4c4ff0236fb25e0d5"
+    },
+    {
+      "path": "ide",
+      "type": "dir",
+      "sha": "b5b5b9fea5f7ef494ccb99e1a6c6d257dda2986b"
+    },
+    {
+      "path": "installed.cf",
+      "type": "file",
+      "sha": "a8d90bb349bf069564ccc669addad4b5f29c2dea"
+    },
+    {
+      "path": "installer",
+      "type": "dir",
+      "sha": "c8cd936e1c16ba2f5c472aafc3c71532e34f763b"
+    },
+    {
+      "path": "samples",
+      "type": "dir",
+      "sha": "ada7e474f2ff9dc90cb383a3280a1a9d5978912f"
+    },
+    {
+      "path": "setup.py",
+      "type": "file",
+      "sha": "94ee3e90d53fe599eaf2b88751b89d9f31f697bb"
+    },
+    {
+      "path": "share",
+      "type": "dir",
+      "sha": "8c8f027b3f34f5401d7cb03ea118b7b7054776bb"
+    },
+    {
+      "path": "tests",
+      "type": "dir",
+      "sha": "fc47f372ab0951395ffa7255c9a920843cbfe219"
+    }
+  ],
+  "classification": "application_framework",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "README identifies language/compiler/IDE and cross-platform runtime library; SDK/GUI/audio source and Makefile, not specifically complete game engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}

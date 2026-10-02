@@ -1,0 +1,62 @@
+{
+  "scope": "First committed physical increment only; level-2 full protocol remains live/incomplete; synthetic material, no formal convergence claim",
+  "time_s": 0.025,
+  "stage": "loaded-sub-1",
+  "states": [
+    {
+      "nodes": 433,
+      "row": {
+        "stage": "loaded-sub-1",
+        "physical_time_s": "0.02500000",
+        "force_n": "1.000000000000e-3",
+        "max_displacement_m": "7.522639980751e-4",
+        "residual_n": "9.917086080068e-8"
+      },
+      "csv_snapshot_sha256": "073d1ea076e7a1e07ea472986df8434f73cac75dfce2955e5f6d1366bbfb1ae8",
+      "mesh_sha256": "9ff1d166589fcde31934de470d9d5d54bc7886c6d604a368b15dea97a05d9310"
+    },
+    {
+      "nodes": 2768,
+      "row": {
+        "stage": "loaded-sub-1",
+        "physical_time_s": "0.02500000",
+        "force_n": "1.000000000000e-3",
+        "max_displacement_m": "1.030179618218e-3",
+        "residual_n": "8.453231594642e-8"
+      },
+      "csv_snapshot_sha256": "43dcc71a3c8150cc0a7e24bf5319e4a8ce70ece441d53663271bd5f13290684f",
+      "mesh_sha256": "a0847f914640af019af2a892a11e6cf24bd4365f828a062304d77337c5a29e61"
+    },
+    {
+      "nodes": 19499,
+      "row": {
+        "stage": "loaded-sub-1",
+        "physical_time_s": "0.02500000",
+        "force_n": "1.000000000000e-3",
+        "max_displacement_m": "1.220976671824e-3",
+        "residual_n": "8.605820024206e-8"
+      },
+      "csv_snapshot_sha256": "206ac0b205f2308b15b24dbaadf2da5eb169836c37565fda0fff3c309eb27664",
+      "mesh_sha256": "6583879a7efbd814429732be5f0241ba68dd8bd27a8144fb99b58ec29b9f7072"
+    }
+  ],
+  "pairs": [
+    {
+      "levels": [
+        0,
+        1
+      ],
+      "max_difference_m": 0.00028018751735028354,
+      "rms_node_difference_m": 0.00015574198087335326
+    },
+    {
+      "levels": [
+        1,
+        2
+      ],
+      "max_difference_m": 0.0001917232052836254,
+      "rms_node_difference_m": 0.00010793476619805363
+    }
+  ],
+  "finer_pair_decreases": true
+}

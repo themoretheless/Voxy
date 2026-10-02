@@ -1,0 +1,62 @@
+{
+  "repository": "jgayfer/bevy_light_2d",
+  "repository_id": 796138688,
+  "commit": "4738926da238acebd05eac84ab588693a5c4803e",
+  "source_url": "https://github.com/jgayfer/bevy_light_2d/tree/4738926da238acebd05eac84ab588693a5c4803e",
+  "readme_path": "README.md",
+  "readme_sha256": "581e23650d52a8bb86c0ed31db02e90921a6b860bd1520ba0570602c211d841c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "b18b602c0b1d17e93836a6604aa4c038d349937f"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "96ef6c0b944e24fc22f51f18136cd62ffd5b0b8f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "type": "file",
+      "sha": "78e7dab603d008ff8a03dd426398c8be59931041"
+    },
+    {
+      "path": "Cargo.toml",
+      "type": "file",
+      "sha": "94dcba989c4f31643fd048697e57811c0b7db173"
+    },
+    {
+      "path": "LICENSE",
+      "type": "file",
+      "sha": "4ead16af04272453111b0a76840da28efc5bf9c9"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5a7da7044cd04e94735f03c2a9c0947f4a70b4f5"
+    },
+    {
+      "path": "assets",
+      "type": "dir",
+      "sha": "548d6f091b56c29f88cee2656adb43dc2e56fe73"
+    },
+    {
+      "path": "examples",
+      "type": "dir",
+      "sha": "06cf2d7cdccecf22d65d710c5b13cf756b59d4e9"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "7573cc0fc490790ca42ab8fb2613d068045e032c"
+    },
+    {
+      "path": "static",
+      "type": "dir",
+      "sha": "c7f6daa06802e60a2ae6bb164c0a8eb1e24c3e4b"
+    }
+  ],
+  "classification": "pending_manual_review",
+  "source_review": "root_and_readme_only"
+}

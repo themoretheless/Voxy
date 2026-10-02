@@ -1,0 +1,64 @@
+{
+  "repository": "bevy-cheatbook/bevy-cheatbook",
+  "repository_id": 331961653,
+  "commit": "254400b230827e7fe0b3f9a86f04b1939b04c2db",
+  "source_url": "https://github.com/bevy-cheatbook/bevy-cheatbook/tree/254400b230827e7fe0b3f9a86f04b1939b04c2db",
+  "readme_path": "README.md",
+  "readme_sha256": "7f5cd6f092f56311984f035ded942f9fab351873dd5c3c7e1073d2a489bf3d8c",
+  "entries": [
+    {
+      "path": ".github",
+      "type": "dir",
+      "sha": "747525c6956c8c3926227e472fa8e5fa74d40a81"
+    },
+    {
+      "path": ".gitignore",
+      "type": "file",
+      "sha": "d861c88806e0b8a79f818a3b38f12904957db975"
+    },
+    {
+      "path": "README.md",
+      "type": "file",
+      "sha": "5cdfb659bb4d78e89077c36aae5947a36be4014d"
+    },
+    {
+      "path": "assets-src",
+      "type": "dir",
+      "sha": "02f6b02747ca1ab9f23599f168a34d82273342bd"
+    },
+    {
+      "path": "book.toml",
+      "type": "file",
+      "sha": "a6f297ff9fbe97e767508d69310d1fda3aeee298"
+    },
+    {
+      "path": "check.sh",
+      "type": "file",
+      "sha": "dbcf44bfb1c4d9cd45515f2cddb01a24ff4756f9"
+    },
+    {
+      "path": "robots.txt",
+      "type": "file",
+      "sha": "e863af68f354c7e2a51f59ee8a05bdd81a90cb83"
+    },
+    {
+      "path": "sidebar.css",
+      "type": "file",
+      "sha": "12db2498818bd2b802b3ff6357d2456c1612fc39"
+    },
+    {
+      "path": "src",
+      "type": "dir",
+      "sha": "9b9a7b1253a18de143526c145fac7f3048951607"
+    },
+    {
+      "path": "theme",
+      "type": "dir",
+      "sha": "8af1dedb969cae02b76016f3e602753f5e6a742c"
+    }
+  ],
+  "classification": "excluded_documentation",
+  "source_review": "root_and_readme_only",
+  "classification_reason": "Unofficial Bevy reference book with examples, not engine.",
+  "classification_basis": "README and root source/build evidence inspected; no runtime verification"
+}
