@@ -1,0 +1,21 @@
+   Compiling wgpu-hal v30.0.1 (/Users/themoretheless/Documents/ChatGPT/Voxy/vendor/wgpu-hal)
+   Compiling gltf-json v1.4.1
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+   Compiling getrandom v0.3.4
+   Compiling voxy_assets v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_assets)
+   Compiling image v0.25.10
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_scene)
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+   Compiling voxy_input v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_input)
+   Compiling voxy_ui_winit v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_ui_winit)
+   Compiling gltf v1.4.1
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics_voxel)
+   Compiling wgpu-core-deps-apple v30.0.1
+   Compiling wgpu-core v30.0.1
+   Compiling wgpu v30.0.1 (/Users/themoretheless/Documents/ChatGPT/Voxy/vendor/wgpu)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `release` profile [optimized] target(s) in 42.08s
+     Running `target/release/examples/profile_skinned_lod target/reference-rig-reduced-lod/RiggedFigure.glb target/reference-rig-reduced-lod/proof.lod target/reference-rig-reduced-lod/pose-camera-release.csv`
+RIG_LOD_PROFILE build=release vertices=370 base_indices=768 reduced_indices=510 samples=258 near_base=258 far_reduced=258 different_views=258 geometric_bound_min=0.05768435280447696 geometric_bound_max=0.07462178142773605 certificate_median_us=945.875 certificate_p95_us=1022.167

@@ -41,6 +41,28 @@ struct Owner {
     playback: ModelPlayback,
     ticks: u64,
     primitives: Vec<Primitive>,
+    lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
+    lod_levels: HashMap<usize, LodGeometry>,
+    lod_history: HashMap<u8, usize>,
+}
+#[derive(Debug)]
+enum LodGeometry {
+    Gpu(voxy_render::SceneSkinLodLevel),
+    Cpu(SceneGeometry),
+}
+impl LodGeometry {
+    fn geometry(&self) -> &SceneGeometry {
+        match self {
+            Self::Gpu(level) => level.geometry(),
+            Self::Cpu(mesh) => mesh,
+        }
+    }
+    fn bytes(&self) -> u64 {
+        match self {
+            Self::Gpu(level) => level.index_allocation_bytes(),
+            Self::Cpu(mesh) => mesh.allocation_bytes(),
+        }
+    }
 }
 #[derive(Debug)]
 struct SharedSource {
@@ -57,6 +79,7 @@ pub(super) struct Request {
     pub owner: NodeId,
     pub model: Arc<ModelAsset>,
     pub settings: ModelAnimation,
+    pub lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
 }
 
 fn admit(live: u64, additional: u64, budget: u64) -> Result<(), String> {
@@ -112,6 +135,40 @@ impl AnimatedModels {
             ))
         })
     }
+    pub(super) fn lod_selection(&self, owner: NodeId, view: u8) -> Option<(usize, u32)> {
+        let state = self.owners.get(&owner)?;
+        let level = *state.lod_history.get(&view)?;
+        let geometry = state
+            .lod_levels
+            .get(&level)
+            .map_or_else(|| state.primitives[0].geometry(), LodGeometry::geometry);
+        Some((level, geometry.index_count()))
+    }
+    pub(super) fn lod_world_bounds(
+        &self,
+        owner: NodeId,
+        world: glam::Mat4,
+    ) -> Result<Option<(glam::Vec3, glam::Vec3)>, String> {
+        let Some(state) = self.owners.get(&owner) else {
+            return Ok(None);
+        };
+        let Some(source) = &state.lod else {
+            return Ok(None);
+        };
+        let mut playback = state.playback.clone();
+        let frame = playback.advance_with(0., |_, frame| Ok(frame.clone()))?;
+        let posed = source
+            .prepare(&frame.skin_matrices, world)
+            .map_err(|e| e.to_string())?;
+        let mut min = glam::Vec3::splat(f32::INFINITY);
+        let mut max = glam::Vec3::splat(f32::NEG_INFINITY);
+        for position in posed.positions() {
+            let p = glam::Vec3::from_array(*position);
+            min = min.min(p);
+            max = max.max(p);
+        }
+        Ok(Some((min, max)))
+    }
     pub(super) fn counts(&self) -> (usize, usize, usize) {
         let mut sources = HashSet::new();
         let mut primitives = 0;
@@ -143,12 +200,140 @@ impl AnimatedModels {
                 };
                 primitive.bytes() + source
             })
-            .sum()
+            .sum::<u64>()
+            + self
+                .owners
+                .values()
+                .flat_map(|owner| owner.lod_levels.values())
+                .map(LodGeometry::bytes)
+                .sum::<u64>()
     }
     pub(super) fn geometries(&self, owner: NodeId) -> Option<impl Iterator<Item = &SceneGeometry>> {
         self.owners
             .get(&owner)
             .map(|state| state.primitives.iter().map(Primitive::geometry))
+    }
+    pub(super) fn geometries_for_view(
+        &self,
+        owner: NodeId,
+        view: u8,
+    ) -> Option<impl Iterator<Item = &SceneGeometry>> {
+        self.owners.get(&owner).map(move |state| {
+            let selected = state
+                .lod_history
+                .get(&view)
+                .and_then(|level| state.lod_levels.get(level));
+            state
+                .primitives
+                .iter()
+                .enumerate()
+                .map(move |(index, primitive)| {
+                    if index == 0 {
+                        selected.map_or_else(|| primitive.geometry(), LodGeometry::geometry)
+                    } else {
+                        primitive.geometry()
+                    }
+                })
+        })
+    }
+    /// Retire closed views before admission. Levels selected by any remaining
+    /// view stay pinned, including last-good selections after a failed update.
+    pub(super) fn retain_lod_views(&mut self, views: &[u8]) {
+        for state in self.owners.values_mut() {
+            state.lod_history.retain(|view, _| views.contains(view));
+        }
+        self.evict_unused_lod();
+    }
+    /// Run after all view selections and before borrowing draw geometry.
+    /// Base geometry is permanently resident until owner retirement.
+    pub(super) fn evict_unused_lod(&mut self) -> u64 {
+        let mut released = 0;
+        for state in self.owners.values_mut() {
+            state.lod_levels.retain(|level, geometry| {
+                let keep = state.lod_history.values().any(|selected| selected == level);
+                if !keep {
+                    released += geometry.bytes();
+                }
+                keep
+            });
+        }
+        released
+    }
+    /// Selection/admission succeeds before publishing per-view history.
+    pub(super) fn select_lod(
+        &mut self,
+        renderer: &SceneRenderer,
+        device: &wgpu::Device,
+        owner: NodeId,
+        view: u8,
+        camera: Option<voxy_render::SceneCamera>,
+        world: glam::Mat4,
+        viewport: [u32; 2],
+        other_live: u64,
+        budget: u64,
+    ) -> Result<(), String> {
+        let Some(camera) = camera else {
+            return Ok(());
+        };
+        let live = other_live.saturating_add(self.allocation_bytes());
+        let Some(state) = self.owners.get_mut(&owner) else {
+            return Ok(());
+        };
+        let Some(source) = &state.lod else {
+            return Ok(());
+        };
+        let frame = state
+            .playback
+            .advance_with(0., |_, frame| Ok(frame.clone()))?;
+        let posed = source
+            .prepare(&frame.skin_matrices, world)
+            .map_err(|e| e.to_string())?;
+        let level = posed
+            .select_for_camera(
+                camera,
+                viewport,
+                voxy_render::LodPolicy {
+                    target_pixels: 1.0,
+                    hysteresis: 0.15,
+                },
+                state.lod_history.get(&view).copied(),
+            )
+            .map_err(|e| format!("{e:?}"))?;
+        if level > 0 && !state.lod_levels.contains_key(&level) {
+            let geometry = match (&self.skinner, &state.primitives[0]) {
+                (Some(skinner), Primitive::Skin { instance, .. }) => LodGeometry::Gpu(
+                    skinner
+                        .create_lod_level(instance, source, level, live, budget)
+                        .map_err(|e| e.to_string())?,
+                ),
+                _ => {
+                    let local = source
+                        .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
+                        .map_err(|e| e.to_string())?;
+                    let mesh = local
+                        .posed_scene_mesh(level, state.model.primitives[0].color)
+                        .map_err(|e| e.to_string())?
+                        .with_material_coordinates(
+                            source
+                                .mesh()
+                                .vertices()
+                                .iter()
+                                .map(|v| v.position)
+                                .collect(),
+                        )
+                        .map_err(|e| e.to_string())?;
+                    admit(live, SceneRenderer::mesh_allocation_bytes(&mesh), budget)?;
+                    LodGeometry::Cpu(
+                        renderer
+                            .upload_mesh(device, &mesh)
+                            .map_err(|e| e.to_string())?,
+                    )
+                }
+            };
+            state.lod_levels.insert(level, geometry);
+        }
+        state.lod_history.insert(view, level);
+        Ok(())
     }
     /// One logical fixed-step clock drives all views; each owner advances at most
     /// eight pending steps per publication. Failures keep its last good frame.
@@ -175,6 +360,7 @@ impl AnimatedModels {
                 request.owner,
                 request.model,
                 request.settings,
+                request.lod,
                 ticks,
                 other_live,
                 budget,
@@ -192,12 +378,18 @@ impl AnimatedModels {
         owner: NodeId,
         model: Arc<ModelAsset>,
         settings: ModelAnimation,
+        lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
         ticks: u64,
         other_live: u64,
         budget: u64,
     ) -> Result<(), String> {
         let current = self.owners.get(&owner);
         let replace = current.is_none_or(|old| !Arc::ptr_eq(&old.model, &model));
+        let lod_changed = current.is_none_or(|old| match (&old.lod, &lod) {
+            (Some(old), Some(new)) => !Arc::ptr_eq(old, new),
+            (None, None) => false,
+            _ => true,
+        });
         let switch_clip = current.is_some_and(|old| old.settings.clip != settings.clip);
         let reset_clock = replace || switch_clip;
         let mut playback = if reset_clock {
@@ -213,7 +405,10 @@ impl AnimatedModels {
             current.unwrap().ticks
         };
         let steps = ticks.saturating_sub(old_ticks).min(8);
-        if !reset_clock && (steps == 0 || settings.speed == 0.0 || settings.clip.is_none()) {
+        if !reset_clock
+            && !lod_changed
+            && (steps == 0 || settings.speed == 0.0 || settings.clip.is_none())
+        {
             let state = self.owners.get_mut(&owner).unwrap();
             state.playback = playback;
             state.settings = settings;
@@ -224,17 +419,23 @@ impl AnimatedModels {
         for _ in 0..steps {
             frame = playback.advance_with(1. / 60., |_, frame| Ok(frame.clone()))?;
         }
-        // Existing streams remain untouched until every primitive is preflighted.
-        if !replace && self.skinner.is_some() {
-            for primitive in &current.unwrap().primitives {
-                if let Primitive::Skin { instance, .. } = primitive {
-                    self.skinner
-                        .as_ref()
-                        .unwrap()
-                        .validate_pose(instance, &frame.skin_matrices)
-                        .map_err(|e| e.to_string())?;
-                }
+        if let Some(source) = &lod {
+            let Some(primitive) = model.primitives.first() else {
+                return Err("missing skeletal LOD primitive".into());
+            };
+            let ModelGeometry::Skinned(mesh) = &primitive.geometry else {
+                return Err("skeletal LOD requires a skin".into());
+            };
+            if model.primitives.len() != 1
+                || mesh.vertices() != source.mesh().vertices()
+                || mesh.indices() != source.mesh().indices()
+                || mesh.joint_count() != source.mesh().joint_count()
+            {
+                return Err("skeletal LOD source differs from animation model".into());
             }
+            source
+                .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
+                .map_err(|e| e.to_string())?;
         }
         let mut live = other_live.saturating_add(self.allocation_bytes());
         let mut staged = Vec::with_capacity(model.primitives.len());
@@ -330,16 +531,25 @@ impl AnimatedModels {
             } else {
                 Some(&current.unwrap().primitives)
             };
+            let mut prepared = Vec::new();
+            // Every primitive must validate before the first palette write.
             for (i, staged) in staged.iter().enumerate() {
                 let primitive = staged
                     .as_ref()
                     .or_else(|| primitives.map(|p| &p[i]))
                     .ok_or("missing animated primitive")?;
                 if let Primitive::Skin { instance, .. } = primitive {
-                    skinner
-                        .encode_pose(queue, &mut encoder, instance, &frame.skin_matrices)
-                        .map_err(|e| e.to_string())?;
+                    prepared.push(
+                        skinner
+                            .prepare_pose(instance, &frame.skin_matrices)
+                            .map_err(|e| e.to_string())?,
+                    );
                 }
+            }
+            for pose in &prepared {
+                skinner
+                    .encode_prepared_pose(queue, &mut encoder, pose)
+                    .map_err(|e| e.to_string())?;
             }
         }
         queue.submit([encoder.finish()]);
@@ -352,6 +562,9 @@ impl AnimatedModels {
                     playback,
                     ticks: old_ticks + steps,
                     primitives: staged.into_iter().map(Option::unwrap).collect(),
+                    lod,
+                    lod_levels: HashMap::new(),
+                    lod_history: HashMap::new(),
                 },
             );
         } else {
@@ -361,6 +574,13 @@ impl AnimatedModels {
                     state.primitives[i] = primitive;
                 }
             }
+            if lod_changed {
+                state.lod_history.clear();
+            }
+            if lod_changed || self.skinner.is_none() {
+                state.lod_levels.clear();
+            }
+            state.lod = lod;
             state.playback = playback;
             state.settings = settings;
             state.ticks = old_ticks + steps;

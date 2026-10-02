@@ -1,0 +1,5 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 19.17s
+     Running `target/debug/examples/certify_skinned_lod target/editor-native-skeletal-lod/motion.glb target/editor-native-skeletal-lod/variant.txt target/editor-native-skeletal-lod/proof.lod`
+skeletal_lod_archive_bytes=239 base_indices=6

@@ -1,0 +1,9 @@
+MODEL PUBLISHED frames=0 first_x=0 asset=model.vmodel
+ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=26 first_x=0 asset=model.vmodel
+ANIMATION NATIVE PLAY PASS frames=28 ticks=12 owners=2 gpu_primitives=2 shared_sources=1 bytes=976
+ANIMATION NATIVE LOD FAR PASS owners=2 level=1 indices=3
+ANIMATION NATIVE LOD NEAR PASS level=0 indices=6 before=976 after=952
+ANIMATION NATIVE STOP PASS frames=34 animated_bytes=0 authoring_restored=true
+ANIMATION NATIVE STOP PASS frames=34 animated_bytes=0 authoring_restored=true

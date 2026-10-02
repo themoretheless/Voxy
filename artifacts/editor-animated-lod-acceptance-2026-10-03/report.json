@@ -1,0 +1,49 @@
+{
+  "scope": "Animated editor LOD source propagation, pose/world camera selection, index admission and GPU/CPU render routing",
+  "editor_tests": {
+    "passed": 88,
+    "failed": 0,
+    "ignored": 5
+  },
+  "gpu_tests": {
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  "lod_test": {
+    "fixture": "synthetic duplicate-triangle source with existing GLB skeleton/clip",
+    "base_indices": 6,
+    "selected_indices": 3,
+    "gpu_additional_bytes": 12,
+    "views": "orthographic reduced level and near-plane-crossing perspective base level",
+    "cpu_and_gpu_pixels_equal_reference": true,
+    "colored_pixels_above": 50,
+    "failed_admission_keeps_history": true,
+    "invalid_viewport_keeps_history": true,
+    "clear_releases_all_logical_bytes": true
+  },
+  "native_regression": {
+    "fixture": "animated GLB without LOD recipe; checks shared playback/editor flow only",
+    "inspector": "pass",
+    "play_frame": 27,
+    "fixed_ticks": 12,
+    "owners": 2,
+    "shared_sources": 1,
+    "logical_animation_bytes": 928,
+    "stop_frame": 30,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true
+  },
+  "remaining": [
+    "Native camera near/far verification with a reduced skeletal LOD recipe",
+    "Eviction of unused optional levels under pressure",
+    "Production mesh/pose coverage and performance measurements",
+    "CUDA and other hardware backend acceptance",
+    "Full broad engine goal remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/animated_models.rs": "a64251abf62739834594aebc4510e63faa96b3570bf629ad6a9bd3f6574d3ca9",
+    "crates/voxy_editor/src/animated_models/tests.rs": "d31f1a2196d236640161fee9fdb20f416a21fd05bbd993bff90d123bcb274124",
+    "crates/voxy_editor/src/lib.rs": "1d63d532408469d1330bd7c47fdbbbbcc41d9cf0e72d198caafafb3bdebdc39b"
+  }
+}

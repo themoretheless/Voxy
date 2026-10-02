@@ -1,0 +1,81 @@
+{
+  "scope": "Reference skeletal animation GPU positions and reusable preflight in editor; full production animation goal remains open",
+  "asset": {
+    "source": {
+      "repository": "https://api.github.com/repos/KhronosGroup/glTF-Sample-Assets",
+      "commit": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+      "model": "RiggedFigure",
+      "source_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/RiggedFigure/glTF-Binary/RiggedFigure.glb",
+      "sha256": "d6be85417d3e256861ee733eea6916093a7af7c79c16366181fd8abcaeb38cf5"
+    },
+    "skin_bones": 19,
+    "imported_palette_nodes": 22,
+    "vertices": 370,
+    "animation_clips": 1,
+    "license": "CC-BY-4.0; copyright 2017 Cesium; upstream asset unchanged"
+  },
+  "gpu_reference": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "samples": 65,
+    "max_position_error": 2.3841858e-07,
+    "max_observed_motion": 0.33529755,
+    "logical_single_owner_bytes": 50408,
+    "passed": true,
+    "foreign_prepared_pose_rejected": true
+  },
+  "host_diagnostics_us": {
+    "build": "debug test profile",
+    "statistic": "median,p95",
+    "cpu_pose_and_skin": [
+      392.375,
+      404.875
+    ],
+    "preflight": [
+      328.083,
+      341.042
+    ],
+    "prepared_encode_and_copy": [
+      81.75,
+      159.375
+    ],
+    "submission_wait_and_readback": [
+      406.709,
+      1185.5
+    ]
+  },
+  "tests": {
+    "editor_passed": 88,
+    "editor_failed": 0,
+    "editor_ignored": 5,
+    "editor_gpu_passed": 3,
+    "editor_gpu_failed": 0,
+    "borrow_contract_passed": 2,
+    "renderer_passed": 126,
+    "renderer_failed": 0,
+    "renderer_ignored": 7
+  },
+  "native": {
+    "play_frame": 27,
+    "ticks": 12,
+    "owners": 2,
+    "shared_gpu_sources": 1,
+    "logical_animation_bytes": 77136,
+    "stop_frame": 30,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true
+  },
+  "limits": [
+    "65 point samples do not prove all-time continuity or every animation/rig",
+    "Position comparison does not prove deformed normal correctness",
+    "Debug host diagnostics and queue/readback waiting are not GPU timestamps or game FPS",
+    "Native controller evidence does not include screenshot/pointer acceptance",
+    "This reference rig has no reduced skeletal LOD recipe; real rig LOD quality/performance acceptance remains open",
+    "No NVIDIA/CUDA or other backend acceptance"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/scene/skinning.rs": "92a7f92d7bd52caedfbb07a3e0219a1eca7f792b28f429ed817d9c6f90d43bea",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "f2ee61dc2ef2eaaa866c1c26049c248883bdc034b37e7119431cbfac300f582a",
+    "crates/voxy_editor/src/animated_models.rs": "158e75deb6e9ae21e2e11701beb4f7ff9a82aacb9aac4bdf6af4c8392bac3cdf"
+  }
+}

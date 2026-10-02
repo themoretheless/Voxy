@@ -46,6 +46,40 @@ pub struct SceneSkinInstance {
     bytes: u64,
 }
 
+/// A pose preflight bound to immutable instance and palette borrows.
+/// Private fields prevent bypassing validation or substituting another palette.
+///
+/// ```compile_fail
+/// fn mutate_palette(skinner: &voxy_render::SceneSkinner,
+///     instance: &voxy_render::SceneSkinInstance, queue: &wgpu::Queue,
+///     encoder: &mut wgpu::CommandEncoder, joints: &mut Vec<glam::Mat4>) {
+///     let prepared = skinner.prepare_pose(instance, joints).unwrap();
+///     joints[0] = glam::Mat4::IDENTITY;
+///     skinner.encode_prepared_pose(queue, encoder, &prepared).unwrap();
+/// }
+/// ```
+#[derive(Debug)]
+pub struct SceneSkinPose<'a> {
+    instance: &'a SceneSkinInstance,
+    joints: &'a [Mat4],
+}
+
+/// One immutable index variant borrowing the owner's deformed GPU streams.
+/// Keep the owner instance alive while updating/rendering this level.
+#[derive(Debug)]
+pub struct SceneSkinLodLevel {
+    geometry: SceneGeometry,
+}
+impl SceneSkinLodLevel {
+    pub fn geometry(&self) -> &SceneGeometry {
+        &self.geometry
+    }
+    /// Additional logical bytes; shared streams are counted by the owner.
+    pub fn index_allocation_bytes(&self) -> u64 {
+        self.geometry.indices.size()
+    }
+}
+
 fn admit(live: u64, additional: u64, budget: u64) -> Result<(), SceneSkinError> {
     if additional > budget.saturating_sub(live) || live > budget {
         return Err(SceneSkinError::BudgetExceeded {
@@ -139,6 +173,14 @@ impl SceneSkinner {
         if self.device != renderer.device || self.device != source.device {
             return Err(SceneSkinError::Scene(SceneError::DeviceMismatch));
         }
+        source
+            .mesh
+            .validate_temporal_pose(joints, Mat4::IDENTITY)
+            .map_err(SceneSkinError::Pose)?;
+        source
+            .mesh
+            .validate_scene_normals(joints)
+            .map_err(SceneSkinError::Pose)?;
         let mesh = source
             .mesh
             .posed_scene_mesh(joints, Mat4::IDENTITY, color)
@@ -212,8 +254,23 @@ impl SceneSkinner {
         instance: &SceneSkinInstance,
         joints: &[Mat4],
     ) -> Result<(), SceneSkinError> {
-        self.validate_pose(instance, joints)?;
-        queue.write_buffer(&instance.palette, 0, bytemuck::cast_slice(joints));
+        let pose = self.prepare_pose(instance, joints)?;
+        self.encode_prepared_pose(queue, encoder, &pose)
+    }
+
+    /// Encodes a previously preflighted immutable palette without repeating
+    /// CPU vertex validation. Rejects tokens prepared by another skinner.
+    pub fn encode_prepared_pose(
+        &self,
+        queue: &wgpu::Queue,
+        encoder: &mut wgpu::CommandEncoder,
+        pose: &SceneSkinPose<'_>,
+    ) -> Result<(), SceneSkinError> {
+        let instance = pose.instance;
+        if !Arc::ptr_eq(&self.identity, &instance.owner) {
+            return Err(SceneSkinError::ForeignSkinner);
+        }
+        queue.write_buffer(&instance.palette, 0, bytemuck::cast_slice(pose.joints));
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("scene skin pose"),
             timestamp_writes: None,
@@ -227,6 +284,62 @@ impl SceneSkinner {
         );
         Ok(())
     }
+    /// Uploads only a certified source's chosen index variant. Vertex, normal,
+    /// material-coordinate and material-parameter streams remain shared with
+    /// the owner's base geometry. Pose-specific error certification and camera
+    /// selection belong to the caller; this operation makes no pose-quality claim.
+    /// Failed source validation/admission leaves the owner untouched.
+    pub fn create_lod_level(
+        &self,
+        instance: &SceneSkinInstance,
+        source: &crate::SkinnedLodMesh,
+        level: usize,
+        live: u64,
+        budget: u64,
+    ) -> Result<SceneSkinLodLevel, SceneSkinError> {
+        if !Arc::ptr_eq(&self.identity, &instance.owner) {
+            return Err(SceneSkinError::ForeignSkinner);
+        }
+        let mesh = source.mesh();
+        if mesh.joint_count() != instance.source.mesh.joint_count()
+            || mesh.vertices() != instance.source.mesh.vertices()
+            || mesh.indices() != instance.source.mesh.indices()
+        {
+            return Err(SceneSkinError::Scene(SceneError::InvalidGeometry));
+        }
+        let indices = source
+            .indices(level)
+            .ok_or(SceneSkinError::Scene(SceneError::InvalidGeometry))?;
+        geometry_sizes(&self.device, mesh.vertices().len(), indices.len())
+            .map_err(SceneSkinError::Scene)?;
+        let bytes = indices.len() as u64 * 4;
+        admit(live, bytes, budget)?;
+        let indices_buffer = self
+            .device
+            .create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                label: Some("scene skeletal LOD indices"),
+                contents: bytemuck::cast_slice(indices),
+                usage: wgpu::BufferUsages::INDEX,
+            });
+        let base = &instance.geometry;
+        Ok(SceneSkinLodLevel {
+            geometry: SceneGeometry {
+                device: self.device.clone(),
+                vertices: base.vertices.clone(),
+                normals: base.normals.clone(),
+                normal_cache: NormalCache::default(),
+                material_coordinates: base.material_coordinates.clone(),
+                coordinate_cache: Vec::new(),
+                material_parameters: base.material_parameters.clone(),
+                indices: indices_buffer,
+                index_count: indices.len() as u32,
+                vertex_capacity: base.vertex_capacity,
+                index_capacity: indices.len(),
+                depth_mode: base.depth_mode,
+            },
+        })
+    }
+
     /// Preflights a palette without writing GPU buffers or encoding commands.
     /// Use before publishing a model containing several animated primitives.
     pub fn validate_pose(
@@ -234,6 +347,16 @@ impl SceneSkinner {
         instance: &SceneSkinInstance,
         joints: &[Mat4],
     ) -> Result<(), SceneSkinError> {
+        self.prepare_pose(instance, joints).map(|_| ())
+    }
+
+    /// Preflights without queue writes. Borrowed inputs cannot be modified while
+    /// the prepared pose is in use; callers may stage all primitives first.
+    pub fn prepare_pose<'a>(
+        &self,
+        instance: &'a SceneSkinInstance,
+        joints: &'a [Mat4],
+    ) -> Result<SceneSkinPose<'a>, SceneSkinError> {
         if self.device != instance.source.device {
             return Err(SceneSkinError::Scene(SceneError::DeviceMismatch));
         }
@@ -245,7 +368,12 @@ impl SceneSkinner {
             .mesh
             .validate_temporal_pose(joints, Mat4::IDENTITY)
             .map_err(SceneSkinError::Pose)?;
-        Ok(())
+        instance
+            .source
+            .mesh
+            .validate_scene_normals(joints)
+            .map_err(SceneSkinError::Pose)?;
+        Ok(SceneSkinPose { instance, joints })
     }
 }
 impl SceneSkinSource {

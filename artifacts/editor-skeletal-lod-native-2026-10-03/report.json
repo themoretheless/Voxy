@@ -1,0 +1,49 @@
+{
+  "scope": "Skeletal LOD view residency eviction and real native camera/Play/Stop integration",
+  "gpu_tests": {
+    "passed": 3,
+    "failed": 0,
+    "ignored": 0
+  },
+  "native": {
+    "fixture": "animated GLB with two duplicate triangles reduced to one; exact equivalent surface",
+    "far": {
+      "owners": 2,
+      "level": 1,
+      "indices": 3,
+      "logical_animation_bytes": 976
+    },
+    "near_plane": {
+      "level": 0,
+      "indices": 6,
+      "logical_animation_bytes": 952,
+      "released_bytes": 24
+    },
+    "stop": {
+      "frame": 34,
+      "animation_bytes": 0,
+      "authoring_restored": true
+    },
+    "inspector_undo_redo_pause": "pass"
+  },
+  "eviction": "Unused optional levels retire after all view selections; closed-view history retires before admission; levels selected by another view remain pinned",
+  "limits": [
+    "Tiny equivalent-surface fixture, not production rig visual/quality acceptance",
+    "No screenshot or pointer hit-testing evidence",
+    "Logical allocation accounting excludes driver and in-flight memory",
+    "Current pose recertification uses CPU work; no measured runtime performance target",
+    "Full engine, physics and hardware goal remains open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/animated_models.rs": "7cd2e70ba7fab0393ac293ecc2f12ff556a18c8a9573b707c6ddb485dc7f00e4",
+    "crates/voxy_editor/src/animated_models/tests.rs": "0ad367a65623756ce16a7fa210ed071fc5d8f24626f7fa3842aa4ac7760c6d9c",
+    "crates/voxy_editor/src/animation_smoke.rs": "fc8523711d0ec7c6cc8c390481d4e835c5e02052e822bd3ff0ddf2cda7eec812",
+    "crates/voxy_editor/src/lib.rs": "f834d7227ee52302931e33706ad56484035876f7a3b4ce7fba9098ad995cce7f",
+    "crates/voxy_render/examples/certify_skinned_lod.rs": "eac20a60e483f42a03e3d4af0e81c8464454d4122cc57d1d11c943e79c9f146c"
+  },
+  "editor_tests": {
+    "passed": 88,
+    "failed": 0,
+    "ignored": 5
+  }
+}

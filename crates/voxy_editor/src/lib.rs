@@ -1225,6 +1225,7 @@ impl App {
                         owner: instance.owner,
                         model,
                         settings,
+                        lod: imported.value().skinned_lod.clone(),
                     })
                 })
                 .collect()
@@ -1265,6 +1266,22 @@ impl App {
                     .iter()
                     .find(|instance| instance.owner == *node)
             });
+            graphics.animated_models.retain_lod_views(
+                &views.iter().filter(|view| view.3.is_some()).map(|view| view.0).collect::<Vec<_>>(),
+            );
+            let animation_other_live = graphics.geometry_bytes().saturating_sub(graphics.animated_models.allocation_bytes());
+            for &(view, region, _, camera) in &views {
+                for instance in self.extraction.instances() {
+                    if let Err(error) = graphics.animated_models.select_lod(
+                        &graphics.renderer, graphics.host.device(), instance.owner, view,
+                        camera, instance.world, [region[2], region[3]], animation_other_live,
+                        graphics.residency_cache.geometry_budget,
+                    ) {
+                        eprintln!("ANIMATED LOD retained previous selection: {error}");
+                    }
+                }
+            }
+            graphics.animated_models.evict_unused_lod();
             let mut requirements = Vec::new();
             for &(view, region, view_projection, lod_camera) in &views {
                 for instance in self.extraction.instances() {
@@ -1356,7 +1373,7 @@ impl App {
             for &(view, region, _, lod_camera) in &views {
                 let mut draws = Vec::with_capacity(self.extraction.instances().len() + 2);
                 for instance in self.extraction.instances() {
-                    if let Some(geometries) = graphics.animated_models.geometries(instance.owner) {
+                    if let Some(geometries) = graphics.animated_models.geometries_for_view(instance.owner, view) {
                         for geometry in geometries {
                             draws.push(SceneDraw {
                                 geometry,
@@ -2176,6 +2193,16 @@ impl App {
         {
             return Err("invalid editor camera/material/light".into());
         }
+        for (node, animation) in loaded.graph.components::<ModelAnimation>() {
+            let model = loaded.graph.component::<String>(node)?
+                .ok_or("animation requires a model owner")?;
+            // Scene loading may precede asynchronous resource publication.
+            // Runtime admission validates again against the published revision.
+            let clip_count = self.catalog.snapshot(&AssetId(model.clone()))
+                .map(|asset| asset.value().animated.as_ref()
+                    .map_or(0, |model| model.animations.len()));
+            animation.validate(clip_count)?;
+        }
         for (node, part) in loaded.graph.components::<ModelPart>() {
             if part.node != u32::MAX
                 && let Some(model) = loaded.graph.component::<String>(node)?
@@ -2843,6 +2870,22 @@ impl App {
             panels::Action::AudioBus => self.toggle_audio_bus(),
             panels::Action::AudioSettingsLoad => self.open_audio_settings(),
             panels::Action::AudioSettingsSave => self.save_audio_settings(),
+            panels::Action::Animation => {
+                if self.play.playing.is_some() {
+                    return Err("stop play before editing animation".into());
+                }
+                let node = self.instances.get(self.selected).copied()
+                    .ok_or("missing selected model")?;
+                if self.scene.component::<ModelAnimation>(node)?.is_some() {
+                    self.scene.remove_component::<ModelAnimation>(node)?;
+                } else {
+                    self.scene.insert_component(node, ModelAnimation::default())?;
+                }
+                self.commit_authoring()?;
+                self.inspector = InspectorMode::Components(0);
+                self.field = None;
+                Ok(())
+            }
             panels::Action::Behavior => {
                 self.inspector = match self.inspector {
                     InspectorMode::Behavior | InspectorMode::ImportSettings => InspectorMode::Audio,

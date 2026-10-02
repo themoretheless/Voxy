@@ -1,0 +1,9 @@
+{
+  "meshoptimizer_source": "084a2caa05119b625a99b6b51d44b459a26362de",
+  "input_sha256": "d6be85417d3e256861ee733eea6916093a7af7c79c16366181fd8abcaeb38cf5",
+  "vertices": 370,
+  "base_indices": 768,
+  "variant_indices": 510,
+  "upstream_relative_error_estimate": 0.01697428524494171,
+  "scope": "Position-only offline candidate; skin/pose/normal/visual acceptance required"
+}

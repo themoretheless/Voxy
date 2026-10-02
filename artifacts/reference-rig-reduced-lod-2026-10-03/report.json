@@ -1,0 +1,70 @@
+{
+  "scope": "Actually reduced reference-rig LOD certification, CPU release profiling and native camera/residency integration",
+  "candidate": {
+    "meshoptimizer_source": "084a2caa05119b625a99b6b51d44b459a26362de",
+    "input_sha256": "d6be85417d3e256861ee733eea6916093a7af7c79c16366181fd8abcaeb38cf5",
+    "vertices": 370,
+    "base_indices": 768,
+    "variant_indices": 510,
+    "upstream_relative_error_estimate": 0.01697428524494171,
+    "scope": "Position-only offline candidate; skin/pose/normal/visual acceptance required"
+  },
+  "certification": {
+    "depth": 2,
+    "archive_bytes": 284354,
+    "triangle_tests": 84508,
+    "node_visits": 152354
+  },
+  "pose_camera": {
+    "samples": 258,
+    "sampled_clip_times": 129,
+    "world_transforms": [
+      "identity",
+      "nonuniform scale 1.2,0.8,2.0"
+    ],
+    "near_base": 258,
+    "far_reduced": 258,
+    "max_geometric_bound": 0.07462178142773605,
+    "min_geometric_bound": 0.05768435280447696,
+    "camera_pixel_target": 1.0,
+    "viewport": [
+      600,
+      600
+    ],
+    "near_orthographic_span": 2,
+    "far_orthographic_span": 200
+  },
+  "release_cpu_certificate_us": {
+    "median": 945.875,
+    "p95": 1022.167,
+    "host": "Apple M4 Max macOS",
+    "measurement": "Wall time of PreparedSkinnedLod creation; excludes offline witness search, rendering and whole-frame work"
+  },
+  "native": {
+    "base_indices": 768,
+    "reduced_indices": 510,
+    "owners": 2,
+    "far_logical_animation_bytes": 81216,
+    "near_logical_animation_bytes": 77136,
+    "evicted_bytes": 4080,
+    "stop_frame": 17,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true
+  },
+  "limits": [
+    "Position-only offline candidate; no skin attribute or normal/texture error certificate",
+    "Samples do not prove every continuous clip time",
+    "Surface bounds/camera routing are not screenshot or perceptual-quality acceptance",
+    "Native far view uses a wide camera to exercise residency; not a legibility proof",
+    "Release CPU stage timings are not game FPS or GPU timestamps",
+    "No CUDA or non-Metal hardware acceptance",
+    "Full engine and production animation objective remains open"
+  ],
+  "source_sha256": {
+    "tools/prepare_reference_rig_lod.py": "25a40254605b93c6476e0ea6f7af9c827a2ef64979df6b0ad73a7b914813f2d6",
+    "crates/voxy_render/examples/certify_skinned_lod.rs": "a2ef2b1a940844191fa3e3042f5b04a28e9cc35ae4e1124130afbf91862c77bc",
+    "crates/voxy_render/examples/profile_skinned_lod.rs": "b11bb7d491a1b682ce472d43d0b021ffc06462c2a422ba75a48402cbaef87a29",
+    "crates/voxy_editor/src/animation_smoke.rs": "2e635fcc685a4dee42061a88de22f2c283d9c6208a6ee529debbb4c4a39a2d33"
+  },
+  "profile_binary_sha256": "e3da343f8784e6ebf8648cd746b8b9d6970a645005d296ae95f5f4847ef8620e"
+}

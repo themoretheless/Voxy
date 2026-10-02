@@ -1,0 +1,7 @@
+MODEL PUBLISHED frames=0 first_x=0 asset=motion.glb
+ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=23 first_x=0 asset=motion.glb
+ANIMATION NATIVE PLAY PASS frames=28 ticks=12 owners=2 gpu_primitives=2 shared_sources=1 bytes=928
+ANIMATION NATIVE STOP PASS frames=31 animated_bytes=0 authoring_restored=true
+ANIMATION NATIVE STOP PASS frames=31 animated_bytes=0 authoring_restored=true

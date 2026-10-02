@@ -1,0 +1,33 @@
+{
+  "scope": "GPU skeletal LOD index residency; camera/editor integration remains open",
+  "gpu_tests": {
+    "passed": 1,
+    "failed": 0,
+    "ignored": 0
+  },
+  "renderer_tests": {
+    "passed": 126,
+    "failed": 0,
+    "ignored": 6
+  },
+  "evidence": {
+    "base_indices": 6,
+    "lod_indices": 3,
+    "additional_index_bytes": 12,
+    "shared_vertex_and_normal_streams": true,
+    "gpu_positions_match_cpu_reference": true,
+    "budget_rejection_preserves_base": true,
+    "foreign_skinner_rejected": true,
+    "source_mismatch_rejected": true
+  },
+  "limitations": [
+    "Small synthetic mesh validates resource and deformation mechanisms, not production asset quality",
+    "Pose-specific certificate and camera/view selection must be connected in editor",
+    "No CUDA or non-host GPU acceptance"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/scene/skinning.rs": "c2431b1ad18ded871cf343121a4bd51f77fd7cf5c9701cabc15c6bb16de2cee4",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "a9ea3d84b822e25292f8206ab0aea15f20cc109f7e0e0bae3a764878f6bf4a3a"
+  },
+  "formatting": "Source formatting applied after successful tests; no semantic edits after tests"
+}

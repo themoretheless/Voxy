@@ -1,0 +1,7 @@
+MODEL PUBLISHED frames=0 first_x=-0.09162995 asset=RiggedFigure.glb
+ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=20 first_x=-0.09162995 asset=RiggedFigure.glb
+ANIMATION NATIVE PLAY PASS frames=27 ticks=12 owners=2 gpu_primitives=2 shared_sources=1 bytes=77136
+ANIMATION NATIVE STOP PASS frames=30 animated_bytes=0 authoring_restored=true
+ANIMATION NATIVE STOP PASS frames=30 animated_bytes=0 authoring_restored=true

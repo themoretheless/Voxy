@@ -1,0 +1,5 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.14s
+     Running `target/debug/examples/certify_skinned_lod target/reference-rig-reduced-lod/RiggedFigure.glb target/reference-rig-reduced-lod/variant.txt target/reference-rig-reduced-lod/proof.lod 2`
+certificate_depth=2 triangle_tests=84508 node_visits=152354
+skeletal_lod_archive_bytes=284354 base_indices=768

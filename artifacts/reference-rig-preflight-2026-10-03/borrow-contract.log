@@ -1,0 +1,11 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.24s
+   Doc-tests voxy_render
+
+running 2 tests
+test crates/voxy_render/src/scene/skinning.rs - scene::skinning::SceneSkinPose (line 52) - compile fail ... ok
+test crates/voxy_render/src/scene/lod_geometry.rs - scene::lod_geometry::SceneLodGeometry (line 32) - compile fail ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.25s
+

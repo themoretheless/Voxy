@@ -1,0 +1,33 @@
+{
+  "scope": "Editor animation inspector authoring and native Play/Stop integration; full engine goal remains open",
+  "editor_tests": {
+    "passed": 88,
+    "failed": 0,
+    "ignored": 4
+  },
+  "native": {
+    "inspector_clip_bind_clip": true,
+    "pause": true,
+    "undo_redo": true,
+    "play_frame": 28,
+    "fixed_ticks": 12,
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_sources": 1,
+    "logical_animation_bytes": 928,
+    "stop_frame": 31,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true
+  },
+  "limitations": [
+    "Controller actions and text-entry path exercised in a real native window; no screenshot or pointer hit-testing acceptance",
+    "Clip transitions, layers, root motion, animated editor LOD and other hardware backends remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_editor/src/animation_smoke.rs": "42441532bc742e469b378ede3d9ec6f7fc9ac0aff1770ed9c2f1c43838c7677f",
+    "crates/voxy_editor/src/component_fields.rs": "d607f950369ed78a8c0480f9bf122ad303578872d4b79b1e4b1f46ae27b191b8",
+    "crates/voxy_editor/src/model_playback.rs": "62892b9cb6f7ac03c1b52138f942ce89264c79bbf481cc735f9f1b7eecbece02",
+    "crates/voxy_editor/src/panels.rs": "a2b1ef6f487fb5abba73598f060f99ab740464807503ba91bc82e99dbe5b2e67"
+  },
+  "binary_sha256": "b28a0cb701f9074cd2e658e4c82bd7c81f1288ed69cf7d21df792f56624db8cf"
+}

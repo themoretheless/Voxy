@@ -1,0 +1,4 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.93s
+     Running `target/debug/examples/profile_skinned_lod target/reference-rig-reduced-lod/RiggedFigure.glb target/reference-rig-reduced-lod/proof.lod target/reference-rig-reduced-lod/pose-camera-debug.csv`
+RIG_LOD_PROFILE build=debug vertices=370 base_indices=768 reduced_indices=510 samples=258 near_base=258 far_reduced=258 different_views=258 geometric_bound_min=0.05768435280447696 geometric_bound_max=0.07462178142773605 certificate_median_us=38846.291 certificate_p95_us=63749.5

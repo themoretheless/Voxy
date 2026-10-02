@@ -122,7 +122,7 @@ impl SkinnedMesh {
     /// Bake a skeletal pose into indexed world-space scene geometry. Use the
     /// returned mesh with identity model for raster guides and ray-scene updates.
     /// Shares the exact position calculation used by temporal correspondence;
-    /// scene shading recomputes smooth normals from the deformed geometry.
+    /// scene shading retains authored normals transformed by the blended inverse transpose.
     /// Palettes already include inverse-bind transforms. CPU baking is explicit
     /// and does not advance pose history or update acceleration structures.
     /// # Errors
@@ -145,7 +145,30 @@ impl SkinnedMesh {
                 })
             })
             .collect::<Result<Vec<_>, SkinnedUploadError>>()?;
-        Ok(crate::SceneMesh::new(vertices, self.indices.to_vec())?)
+        Ok(crate::SceneMesh::new(vertices, self.indices.to_vec())?
+            .with_normals(self.posed_normals(joints, model)?)?)
+    }
+
+    /// Scene shading requires an invertible local blended deformation. A
+    /// scaled cofactor test avoids overflow and rejects numerically collapsed
+    /// normals before publishing GPU writes.
+    pub(crate) fn validate_scene_normals(&self, joints: &[Mat4]) -> Result<(), SkinnedUploadError> {
+        for vertex in self.vertices.iter() {
+            skinned_normal(vertex, joints, Mat4::IDENTITY)?;
+        }
+        Ok(())
+    }
+
+    pub(crate) fn posed_normals(
+        &self,
+        joints: &[Mat4],
+        model: Mat4,
+    ) -> Result<Vec<[f32; 3]>, SkinnedUploadError> {
+        validate_temporal_palette(self, joints, model)?;
+        self.vertices
+            .iter()
+            .map(|vertex| skinned_normal(vertex, joints, model))
+            .collect()
     }
 
     pub(crate) fn validate_temporal_pose(
@@ -432,6 +455,7 @@ pub enum SkinnedUploadError {
     /// Prepared temporal snapshot no longer matches this history generation.
     StaleHistory,
     NonAffineMatrix,
+    SingularNormalMatrix,
     JointCountMismatch,
     NonFiniteMatrix,
     TooManyIndices,
@@ -602,4 +626,57 @@ fn skinned_position(
         return Err(SkinnedUploadError::NonFiniteMatrix);
     }
     Ok(world.truncate().to_array())
+}
+
+fn skinned_normal(
+    vertex: &SkinnedVertex,
+    joints: &[Mat4],
+    model: Mat4,
+) -> Result<[f32; 3], SkinnedUploadError> {
+    let mut skin = Mat4::ZERO;
+    for (joint, weight) in vertex.joints.into_iter().zip(vertex.weights) {
+        skin += joints[usize::from(joint)] * (f32::from(weight) / 65535.0);
+    }
+    let mut linear = glam::Mat3::from_mat4(model * skin);
+    let scale = linear
+        .to_cols_array()
+        .into_iter()
+        .map(f32::abs)
+        .fold(0.0, f32::max);
+    if !scale.is_finite() || scale <= f32::MIN_POSITIVE || scale >= 1.0 / f32::MIN_POSITIVE {
+        return Err(SkinnedUploadError::SingularNormalMatrix);
+    }
+    linear *= 1.0 / scale;
+    let determinant = linear.determinant();
+    let a = linear.x_axis.abs();
+    let b = linear.y_axis.abs();
+    let c = linear.z_axis.abs();
+    let terms = a.x * (b.y * c.z + b.z * c.y)
+        + a.y * (b.z * c.x + b.x * c.z)
+        + a.z * (b.x * c.y + b.y * c.x);
+    // Reject an uncertain determinant sign, rather than imposing a fixed
+    // minimum scale ratio on otherwise stable anisotropic transforms.
+    let uncertainty = (16.0 * f32::EPSILON * terms).max(f32::MIN_POSITIVE);
+    if !determinant.is_finite() || determinant.abs() <= uncertainty {
+        return Err(SkinnedUploadError::SingularNormalMatrix);
+    }
+    let original = glam::Vec3::from_array(vertex.normal);
+    let magnitude = original.abs().max_element();
+    if magnitude == 0.0 {
+        return Ok(glam::Vec3::Z.to_array());
+    }
+    if magnitude <= f32::MIN_POSITIVE || magnitude >= 1.0 / f32::MIN_POSITIVE {
+        return Err(SkinnedUploadError::SingularNormalMatrix);
+    }
+    let cofactor = glam::Mat3::from_cols(
+        linear.y_axis.cross(linear.z_axis),
+        linear.z_axis.cross(linear.x_axis),
+        linear.x_axis.cross(linear.y_axis),
+    );
+    let transformed = cofactor * (original / magnitude) * determinant.signum();
+    let max = transformed.abs().max_element();
+    if !transformed.is_finite() || max == 0.0 {
+        return Err(SkinnedUploadError::SingularNormalMatrix);
+    }
+    Ok((transformed / max).normalize().to_array())
 }
