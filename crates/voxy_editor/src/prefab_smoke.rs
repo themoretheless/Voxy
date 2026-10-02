@@ -33,9 +33,9 @@ impl App {
         if self.authoring_document()? != *original {
             return Err("asset creation changed scene".into());
         }
-        if self
+        if self.authoring
             .prefab_assets
-            .get(self.prefab_choice)
+            .get(self.authoring.prefab_choice)
             .is_none_or(|asset| !asset.0.starts_with("prefab-"))
         {
             return Err("created asset was not selected".into());
@@ -83,9 +83,9 @@ impl App {
             return Err("choice button overlaps another region".into());
         }
         self.panel_action(choice)?;
-        if self
+        if self.authoring
             .prefab_assets
-            .get(self.prefab_choice)
+            .get(self.authoring.prefab_choice)
             .is_none_or(|asset| asset.0 != "nested")
         {
             return Err("native fixture did not select nested prefab".into());
@@ -123,7 +123,7 @@ impl App {
         if self.authoring_document()? != placed {
             return Err("placement save/load lost source links".into());
         }
-        if self
+        if self.authoring
             .authoring_source
             .as_ref()
             .ok_or("missing placement publication")?
@@ -256,8 +256,8 @@ impl App {
                 }
                 self.verify_prefab_revert(&original, &edited)?;
                 self.verify_prefab_structure(&edited)?;
-                let (path, bytes): (PathBuf, Vec<u8>) = self.authoring_project.smoke_dependency(
-                    self.authoring_source
+                let (path, bytes): (PathBuf, Vec<u8>) = self.authoring.authoring_project.smoke_dependency(
+                    self.authoring.authoring_source
                         .as_ref()
                         .ok_or("missing prefab source")?,
                 )?;
@@ -289,7 +289,7 @@ impl App {
                 smoke.frame = self.frames;
             }
             2 => {
-                if self.simulation_ticks == 0 {
+                if self.play.simulation_ticks == 0 {
                     return Ok(false);
                 }
                 self.toggle_play()?;
@@ -309,7 +309,7 @@ impl App {
                 }
                 println!(
                     "PREFAB NATIVE PLAY STOP PASS frames={} ticks={}",
-                    self.frames, self.simulation_ticks
+                    self.frames, self.play.simulation_ticks
                 );
                 self.prefab_smoke = None;
                 return Ok(true);

@@ -6,6 +6,7 @@ license.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+voxy_animation = { path = "../voxy_animation" }
 getrandom = "0.3.4"
 voxy_audio_device = { path = "../voxy_audio_device" }
 voxy_audio = { path = "../voxy_audio" }

@@ -1956,7 +1956,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 std::path::Path::new(output),
             );
         }
-        let mode = if arguments.iter().any(|arg| arg == "--game-native-smoke") {
+        let mode = if arguments.iter().any(|arg| arg == "--animation-native-smoke") {
+            voxy_editor::ViewportMode::AnimationSmoke
+        } else if arguments.iter().any(|arg| arg == "--game-native-smoke") {
             voxy_editor::ViewportMode::GameSmoke
         } else if arguments.iter().any(|arg| arg == "--game-check") {
             voxy_editor::ViewportMode::GameCheck

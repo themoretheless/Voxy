@@ -1,0 +1,231 @@
+{
+  "accepted": false,
+  "scope": "22 bind-preserving pivot offsets, both hands, 121 no-object closure samples, unchanged local rotations/weights/rest geometry; no corrective solver",
+  "bind_matrices_identity_tolerance": 1e-06,
+  "cases": [
+    {
+      "offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_extra_crease": 1.8911699,
+      "min_area_ratio": 0.054490693,
+      "tip_motion_m": 0.06764318
+    },
+    {
+      "offset_m": [
+        -0.01,
+        0.0,
+        0.0
+      ],
+      "max_extra_crease": 1.641147,
+      "min_area_ratio": 0.16096741,
+      "tip_motion_m": 0.066490345
+    },
+    {
+      "offset_m": [
+        -0.005,
+        0.0,
+        0.0
+      ],
+      "max_extra_crease": 1.7689244,
+      "min_area_ratio": 0.10646388,
+      "tip_motion_m": 0.067063406
+    },
+    {
+      "offset_m": [
+        0.005,
+        0.0,
+        0.0
+      ],
+      "max_extra_crease": 2.1305635,
+      "min_area_ratio": 0.0278214,
+      "tip_motion_m": 0.0682296
+    },
+    {
+      "offset_m": [
+        0.01,
+        0.0,
+        0.0
+      ],
+      "max_extra_crease": 3.0338836,
+      "min_area_ratio": 0.024770586,
+      "tip_motion_m": 0.06882233
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.01,
+        0.0
+      ],
+      "max_extra_crease": 1.0817431,
+      "min_area_ratio": 0.45657763,
+      "tip_motion_m": 0.06494272
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.005,
+        0.0
+      ],
+      "max_extra_crease": 1.4365717,
+      "min_area_ratio": 0.26390126,
+      "tip_motion_m": 0.06621474
+    },
+    {
+      "offset_m": [
+        0.0,
+        0.005,
+        0.0
+      ],
+      "max_extra_crease": 2.7528098,
+      "min_area_ratio": 0.013684502,
+      "tip_motion_m": 0.06921844
+    },
+    {
+      "offset_m": [
+        0.0,
+        0.01,
+        0.0
+      ],
+      "max_extra_crease": 2.8568394,
+      "min_area_ratio": 0.006671874,
+      "tip_motion_m": 0.070944495
+    },
+    {
+      "offset_m": [
+        0.0,
+        0.0,
+        -0.01
+      ],
+      "max_extra_crease": 2.4822533,
+      "min_area_ratio": 0.020998664,
+      "tip_motion_m": 0.07272929
+    },
+    {
+      "offset_m": [
+        0.0,
+        0.0,
+        -0.005
+      ],
+      "max_extra_crease": 2.6300926,
+      "min_area_ratio": 0.112018384,
+      "tip_motion_m": 0.07014135
+    },
+    {
+      "offset_m": [
+        0.0,
+        0.0,
+        0.005
+      ],
+      "max_extra_crease": 1.8168563,
+      "min_area_ratio": 0.20969437,
+      "tip_motion_m": 0.06524517
+    },
+    {
+      "offset_m": [
+        0.0,
+        0.0,
+        0.01
+      ],
+      "max_extra_crease": 1.3630416,
+      "min_area_ratio": 0.29023767,
+      "tip_motion_m": 0.062958695
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.015,
+        0.0
+      ],
+      "max_extra_crease": 0.8214575,
+      "min_area_ratio": 0.5336697,
+      "tip_motion_m": 0.06383654
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.015,
+        0.01
+      ],
+      "max_extra_crease": 0.53692186,
+      "min_area_ratio": 0.5411432,
+      "tip_motion_m": 0.058822844
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.015,
+        0.02
+      ],
+      "max_extra_crease": 0.57334226,
+      "min_area_ratio": 0.5321876,
+      "tip_motion_m": 0.054289006
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.02,
+        0.0
+      ],
+      "max_extra_crease": 0.62667465,
+      "min_area_ratio": 0.56503195,
+      "tip_motion_m": 0.062904954
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.02,
+        0.01
+      ],
+      "max_extra_crease": 0.54998493,
+      "min_area_ratio": 0.58339494,
+      "tip_motion_m": 0.057801306
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.02,
+        0.02
+      ],
+      "max_extra_crease": 0.5840737,
+      "min_area_ratio": 0.57493234,
+      "tip_motion_m": 0.05317049
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.025,
+        0.0
+      ],
+      "max_extra_crease": 0.5506647,
+      "min_area_ratio": 0.5967367,
+      "tip_motion_m": 0.062233653
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.025,
+        0.01
+      ],
+      "max_extra_crease": 0.56409955,
+      "min_area_ratio": 0.6252892,
+      "tip_motion_m": 0.056975756
+    },
+    {
+      "offset_m": [
+        0.0,
+        -0.025,
+        0.02
+      ],
+      "max_extra_crease": 0.5961374,
+      "min_area_ratio": 0.6172737,
+      "tip_motion_m": 0.05226171
+    }
+  ],
+  "logs": [
+    "/tmp/voxy-hand-thumb-pivot-isolation.log",
+    "/tmp/voxy-hand-thumb-pivot-refined.log"
+  ]
+}

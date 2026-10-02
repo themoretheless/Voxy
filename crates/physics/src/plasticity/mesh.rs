@@ -25,6 +25,7 @@ pub use quadratic::{
     QuadraticContactEvaluation, QuadraticCoulombImpulse, QuadraticFrictionEvaluation,
     QuadraticPlaneContact, QuadraticPlaneCoulomb, QuadraticPlaneFriction,
 };
+mod source_mapping;
 mod topology;
 pub use dynamics::{AdvanceLimits, Diagnostics, DynamicBody, DynamicStep, Fragment};
 use interfaces::Interface;

@@ -21,7 +21,7 @@ impl App {
             .ok_or_else(|| "choose an import-settings asset on the audio source first".into())
     }
     fn settings_drafts(&self) -> Result<Drafts, Box<dyn std::error::Error>> {
-        let value = self.history.as_ref().ok_or("missing history")?.auxiliary();
+        let value = self.authoring.history.as_ref().ok_or("missing history")?.auxiliary();
         if value.is_null() {
             Ok(Drafts::new())
         } else {
@@ -36,21 +36,21 @@ impl App {
     }
     pub(super) fn open_audio_settings(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let id = self.settings_id()?;
-        let draft = self.authoring_project.audio_settings_draft(&id)?;
+        let draft = self.authoring.authoring_project.audio_settings_draft(&id)?;
         let mut drafts = self.settings_drafts()?;
         if drafts.len() >= 128 && !drafts.contains_key(&id) {
             return Err("settings draft capacity exceeded".into());
         }
         let source = draft.source.clone();
         drafts.insert(id, draft);
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
             .commit_auxiliary(
                 serde_json::to_value(drafts)?,
-                &self.authoring_project.registry,
+                &self.authoring.authoring_project.registry,
             )?;
-        self.settings_written.remove(&source);
+        self.authoring.settings_written.remove(&source);
         self.inspector = InspectorMode::ImportSettings;
         Ok(())
     }
@@ -74,12 +74,12 @@ impl App {
             _ => return Err("unknown import setting".into()),
         }
         draft.config.settings(48000)?;
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
             .commit_auxiliary(
                 serde_json::to_value(drafts)?,
-                &self.authoring_project.registry,
+                &self.authoring.authoring_project.registry,
             )?;
         self.field = None;
         Ok(())
@@ -90,10 +90,10 @@ impl App {
         let draft = drafts
             .get(&id)
             .ok_or("open import settings before saving")?;
-        let digest = self
+        let digest = self.authoring
             .authoring_project
-            .save_audio_settings(draft, &self.settings_written)?;
-        self.settings_written.insert(draft.source.clone(), digest);
+            .save_audio_settings(draft, &self.authoring.settings_written)?;
+        self.authoring.settings_written.insert(draft.source.clone(), digest);
         if let Some(window) = &self.window {
             window.set_title("Voxy — import settings saved");
         }
@@ -179,7 +179,7 @@ pub(crate) mod tests {
     pub(crate) fn verify_settings_editor(app: &mut App, path: &std::path::Path) {
         let scene = app.authoring_document().unwrap();
         let original = std::fs::read(path).unwrap();
-        let composition = app.history.as_ref().unwrap().metadata().clone();
+        let composition = app.authoring.history.as_ref().unwrap().metadata().clone();
         app.panel_action(super::super::panels::Action::AudioSettingsLoad)
             .unwrap();
         assert_eq!(app.inspector, InspectorMode::ImportSettings);
@@ -245,7 +245,7 @@ pub(crate) mod tests {
         app.panel_action(super::super::panels::Action::AudioSettingsSave)
             .unwrap();
         assert_eq!(app.authoring_document().unwrap(), scene);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &composition);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &composition);
         println!(
             "EDITOR IMPORT SETTINGS PASS: staged edits, undo/redo after save, external conflict and validated reload"
         );

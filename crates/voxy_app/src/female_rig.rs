@@ -261,14 +261,15 @@ impl GraspObject {
                 if point.cmplt(bounds[0]).any() || point.cmpgt(bounds[1]).any() {
                     return delta.length();
                 }
-                // Nearest normals cannot classify inside at mesh edges.
-                let winding: f64 = triangles.iter().map(|&face| solid_angle(face, point)).sum();
-                delta.length()
-                    * if winding.abs() > std::f64::consts::TAU {
-                        -1.
-                    } else {
-                        1.
-                    }
+                // Ambiguous ray hits retain the solid-angle winding classifier.
+                let inside = mesh
+                    .contains_closed_surface(point.to_array().map(f64::from))
+                    .expect("finite hand position")
+                    .unwrap_or_else(|| {
+                        triangles.iter().map(|&face| solid_angle(face, point)).sum::<f64>().abs()
+                            > std::f64::consts::TAU
+                    });
+                delta.length() * if inside { -1. } else { 1. }
             }
         }
     }
@@ -2085,6 +2086,47 @@ mod tests {
             GraspObject::from_mesh(&pinch, &faces).unwrap_err(),
             "nonmanifold grasp mesh vertex"
         );
+    }
+
+    #[test]
+    fn imported_grasp_mesh_bvh_classification_matches_winding() {
+        let object = handle_object();
+        let GraspObject::Mesh { surface, triangles, bounds } = &object else {
+            unreachable!();
+        };
+        let mut seed = 0x7319_u32;
+        let mut queries = Vec::new();
+        for _ in 0..5000 {
+            let coordinates = std::array::from_fn(|axis| {
+                seed = seed.wrapping_mul(1664525).wrapping_add(1013904223);
+                let fraction = seed as f32 / u32::MAX as f32;
+                bounds[0][axis] + (bounds[1][axis] - bounds[0][axis]) * fraction
+            });
+            queries.push(Vec3::from_array(coordinates));
+        }
+        for face in triangles.iter().step_by((triangles.len() / 100).max(1)) {
+            let center = (face[0] + face[1] + face[2]) / 3.;
+            let normal = (face[1] - face[0]).cross(face[2] - face[0]).normalize();
+            queries.extend([center + normal * 0.000001, center - normal * 0.000001]);
+        }
+        let winding_start = std::time::Instant::now();
+        let reference: Vec<_> = queries.iter().map(|&point| {
+            triangles.iter().map(|&face| solid_angle(face, point)).sum::<f64>().abs()
+                > std::f64::consts::TAU
+        }).collect();
+        let winding_elapsed = winding_start.elapsed();
+        let query_start = std::time::Instant::now();
+        let mut classified = 0;
+        for (&point, &expected) in queries.iter().zip(&reference) {
+            if let Some(inside) = surface.contains_closed_surface(point.to_array().map(f64::from)).unwrap() {
+                assert_eq!(inside, expected, "point {point:?}");
+                classified += 1;
+            }
+        }
+        eprintln!("handle classification: {classified}/{} unambiguous; BVH {:?}, winding {:?}", queries.len(), query_start.elapsed(), winding_elapsed);
+        assert!(classified * 100 > queries.len() * 95);
+        assert!(surface.contains_closed_surface([f64::NAN, 0., 0.]).is_err());
+        assert_eq!(surface.contains_closed_surface(triangles[0][0].to_array().map(f64::from)).unwrap(), None);
     }
 
     fn handle_object() -> GraspObject {

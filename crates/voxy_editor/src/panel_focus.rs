@@ -619,7 +619,7 @@ mod integration_tests {
             .unwrap();
         let authored = app.authoring_document().unwrap();
         app.toggle_play().unwrap();
-        assert!(app.playing.is_some());
+        assert!(app.play.playing.is_some());
         let panels = app.panels.as_mut().unwrap();
         panels
             .build(

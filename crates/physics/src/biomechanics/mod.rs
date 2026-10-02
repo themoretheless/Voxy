@@ -23,6 +23,7 @@ mod inertia;
 pub use inertia::{
     DrivenMuscleStep, InertialBody, InertialDiagnostics, MuscleDynamicStep, PlaneContact,
 };
+mod invariants;
 mod myocardium;
 pub use coupling::{CouplingConfig, FemChamber};
 mod viscoelastic;
@@ -167,23 +168,7 @@ impl Material {
         let inv_t = transpose(inverse(f)?);
         let i1: f64 = f.iter().flatten().map(|x| x * x).sum();
         let q = j.powf(-2. / 3.);
-        // det(Cbar)=1 implies tr(D)=-I2(D)-det(D), D=Cbar-I.
-        // Near rest this avoids subtracting two O(1) values to recover O(strain²).
-        let mut deviation = mm(transpose(f), f).map(|r| r.map(|v| q * v));
-        for (i, row) in deviation.iter_mut().enumerate() {
-            row[i] -= 1.;
-        }
-        let excess = if deviation.iter().flatten().all(|v| v.abs() < 0.1) {
-            let second = deviation[0][0] * deviation[1][1]
-                + deviation[0][0] * deviation[2][2]
-                + deviation[1][1] * deviation[2][2]
-                - deviation[0][1] * deviation[1][0]
-                - deviation[0][2] * deviation[2][0]
-                - deviation[1][2] * deviation[2][1];
-            (-second - det(deviation)).max(0.)
-        } else {
-            q * i1 - 3.
-        };
+        let excess = invariants::isochoric_excess(f, q, q * i1);
         let mut energy = self.shear_pa / 2. * excess + self.bulk_pa / 2. * (j - 1.).powi(2);
         let mut p: Matrix = std::array::from_fn(|i| {
             std::array::from_fn(|k| {
