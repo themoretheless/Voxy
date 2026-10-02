@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"document_id\":\"e9d72f02-2fb7-433f-996d-e16214d812e4\",\"uri\":\"wiki://voxy-engine-chat-01a0f31e-2026-10-03\",\"slug\":\"voxy-engine-chat-01a0f31e-2026-10-03\",\"chunk_count\":8,\"node_id\":\"bc24297a-2732-40d1-8b05-2d61a6b99eac\",\"edge_count\":6,\"index_id\":\"idx-e9d72f02-2fb7-433f-996d-e16214d812e4\",\"revision\":1,\"etag\":\"W/\\\"1\\\"\"}"
+    }
+  ],
+  "isError": false
+}

@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"id\":\"72ba0fd9-7761-4c12-b489-c3d84380e63e\",\"seq\":4304,\"ts\":\"2026-10-02T21:09:45.322363Z\",\"op\":\"voxy_chat_import\",\"prefix\":\"INGEST\",\"message\":\"Ingested current Voxy engine chat snapshot; raw and wiki contents verified, catalog retrieval and doctor passed.\",\"entity_id\":\"wiki://voxy-engine-chat-01a0f31e-2026-10-03\",\"entity_kind\":\"wiki\",\"payload_json\":\"{\\\"thread_id\\\": \\\"01a0f31e-0e04-7161-95aa-d590c9d04edb\\\", \\\"message_counts\\\": {\\\"user\\\": 21, \\\"assistant\\\": 1653}, \\\"final_reports\\\": 512, \\\"source\\\": \\\"voxy://chats/codex/01a0f31e-0e04-7161-95aa-d590c9d04edb\\\"}\",\"agent_name\":\"codex\"}"
+    }
+  ],
+  "isError": false
+}

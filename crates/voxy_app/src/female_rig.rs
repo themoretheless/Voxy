@@ -822,29 +822,16 @@ impl FemaleRig {
             if bend_enabled {
                 for &(ids, rest_angle) in &self.thumb_web_hinges {
                     let p = ids.map(|i| Vec3::from_array(vertices[i].position));
-                    let angle = |points: [Vec3; 4]| {
-                        let a = (points[1] - points[0])
-                            .cross(points[2] - points[0])
-                            .normalize();
-                        let b = (points[0] - points[1])
-                            .cross(points[3] - points[1])
-                            .normalize();
-                        a.cross(b).length().atan2(a.dot(b))
+                    let Some(angle) = crate::rig_skinning::hinge_angle(p) else {
+                        continue;
                     };
-                    let excess = angle(p) - rest_angle - 0.25;
+                    let excess = angle - rest_angle - 0.25;
                     if excess <= 0. {
                         continue;
                     }
-                    let gradients: [Vec3; 4] = std::array::from_fn(|j| {
-                        let components: [f32; 3] = std::array::from_fn(|axis| {
-                            let mut plus = p;
-                            let mut minus = p;
-                            plus[j][axis] += 0.00001;
-                            minus[j][axis] -= 0.00001;
-                            (angle(plus) - angle(minus)) / 0.00002
-                        });
-                        Vec3::from_array(components)
-                    });
+                    let Some((_, gradients)) = crate::rig_skinning::hinge_angle_gradient(p, 0.00001) else {
+                        continue;
+                    };
                     let denominator: f32 = (0..4)
                         .map(|j| self.hand_mobility[ids[j]] * gradients[j].length_squared())
                         .sum();

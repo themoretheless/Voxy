@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"id\":\"abd0a4fa-62e5-427b-87a1-0f997b676d11\",\"seq\":4301,\"ts\":\"2026-10-02T20:52:40.479240Z\",\"op\":\"voxy_archive_import\",\"prefix\":\"INGEST\",\"message\":\"Imported all 21 selected archived Voxy-related chats, 6281 public messages, with per-chat historical summaries and provenance.\",\"entity_id\":\"wiki://voxy-archived-work-2026-10-03\",\"entity_kind\":\"wiki\",\"payload_json\":\"{\\\"raw_sources\\\": 21, \\\"wiki_summaries\\\": 21, \\\"index\\\": \\\"voxy-archived-work-2026-10-03\\\", \\\"manifest\\\": \\\"/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/manifest.json\\\"}\",\"agent_name\":\"codex\"}"
+    }
+  ],
+  "isError": false
+}

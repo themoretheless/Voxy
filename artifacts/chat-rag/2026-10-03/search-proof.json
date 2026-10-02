@@ -1,0 +1,43 @@
+{
+  "query": "voxy-engine-chat-01a0f31e-2026-10-03",
+  "match_count": 3,
+  "matches": [
+    {
+      "entry": {
+        "id": "idx-e9d72f02-2fb7-433f-996d-e16214d812e4",
+        "slug": "voxy-engine-chat-01a0f31e-2026-10-03",
+        "title": "Voxy — Создать 2D/3D движок: снимок чата 2026-10-03",
+        "kind": "source_summary",
+        "summary": "Полная история разработки 2D/3D Voxy: Metal ray tracing, сцены и общий цикл, HDR/compute/UI, отражения, WebGPU/WebGL, CUDA/DX12/RTX/DLSS/Frame Generation, OpenXR и мобильные платформы; проверенные отчёты и оставшаяся работа. 1674 сообщения, 512 итоговых отчётов.",
+        "page_id": "e9d72f02-2fb7-433f-996d-e16214d812e4",
+        "updated_at": "2026-10-02T21:09:42.061923Z"
+      },
+      "score": 8.428572
+    },
+    {
+      "entry": {
+        "id": "idx-33261138-0d49-4b82-84fd-66770e662db1",
+        "slug": "voxy-archived-work-2026-10-03",
+        "title": "Voxy — все наработки архивных чатов на 2026-10-03",
+        "kind": "wiki",
+        "summary": "21 архивный чат, 6281 сообщения: CUDA/Metal/shaders, LOD и игровой цикл, Rush, анимация/риг/лица, жидкости, ткани, сопромат, гравитация, волосы, X-ray, рельеф, время и pinball. Источники, проверки и оставшаяся работа.",
+        "page_id": "33261138-0d49-4b82-84fd-66770e662db1",
+        "updated_at": "2026-10-02T21:09:42.061923Z"
+      },
+      "score": 4.0
+    },
+    {
+      "entry": {
+        "id": "idx-fd9067a3-3336-4c8a-823e-3b43fa4d6d4c",
+        "slug": "open-scad-viewer-priorities-2026-09-10",
+        "title": "open-scad-viewer — приоритеты P0 на 2026-09-10",
+        "kind": "wiki",
+        "category": "plans",
+        "summary": "P0: R1 mid-loop cancel (partial), R3, R4; then native P0 / print P2. Hotpath observed.",
+        "page_id": "fd9067a3-3336-4c8a-823e-3b43fa4d6d4c",
+        "updated_at": "2026-10-02T21:09:42.061923Z"
+      },
+      "score": 2.0
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "thread_id": "01a0f31e-0e04-7161-95aa-d590c9d04edb",
+  "title": "Создать 2D/3D движок",
+  "uri": "voxy://chats/codex/01a0f31e-0e04-7161-95aa-d590c9d04edb",
+  "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/chat-rag/2026-10-03/01a0f31e-0e04-7161-95aa-d590c9d04edb.md",
+  "rollout_path": "/Users/themoretheless/.codex/sessions/2026/09/30/rollout-2026-09-30T20-20-28-01a0f31e-0e04-7161-95aa-d590c9d04edb.jsonl",
+  "message_counts": {
+    "user": 21,
+    "assistant": 1653
+  },
+  "final_reports": 512,
+  "bytes": 769848,
+  "sha256": "3085dde29ccdeddf66bc3c5da832459a6e042b7503932910a30491fe900eeed4",
+  "snapshot_last_timestamp": "2026-10-02T21:07:22.219Z",
+  "wing": "voxy",
+  "room": "chat-history",
+  "snapshot_date": "2026-10-03",
+  "historical": true
+}

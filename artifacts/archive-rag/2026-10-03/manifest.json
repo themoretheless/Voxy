@@ -1,0 +1,443 @@
+[
+  {
+    "id": "01a0f498-ac7c-7493-8942-0d64c7a7a7bf",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973360,
+    "title": "Добавить анимацию лица",
+    "summary": "Voxy: добавить лицевую анимацию",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f498-ac7c-7493-8942-0d64c7a7a7bf.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T03-14-01-01a0f498-ac7c-7493-8942-0d64c7a7a7bf.jsonl",
+    "uri": "voxy://archives/codex/01a0f498-ac7c-7493-8942-0d64c7a7a7bf",
+    "counts": {
+      "user": 22,
+      "assistant": 729
+    },
+    "final_count": 186,
+    "bytes": 397510,
+    "sha256": "bfee63bb896d58714116472e0af7158e0c7d7a55ec8bb66840c7f77cba37db6c"
+  },
+  {
+    "id": "01a0fd09-5dfc-7d61-90fc-e9d298750887",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973344,
+    "title": "Проверить, подделка ли это",
+    "summary": "Определить, является ли объект или материал подделкой",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0fd09-5dfc-7d61-90fc-e9d298750887.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-02T18-34-04-01a0fd09-5dfc-7d61-90fc-e9d298750887.jsonl",
+    "uri": "voxy://archives/codex/01a0fd09-5dfc-7d61-90fc-e9d298750887",
+    "counts": {
+      "user": 7,
+      "assistant": 11
+    },
+    "final_count": 7,
+    "bytes": 13624,
+    "sha256": "616bf0ca609986e9ae5214b6b48c264f72e27693a73887b50a001e107218ebfd"
+  },
+  {
+    "id": "01a0f44e-6f11-75b3-b748-de9368d88d89",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973313,
+    "title": "Найти физику воды",
+    "summary": "Найти реализацию физики воды в проекте Voxy",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f44e-6f11-75b3-b748-de9368d88d89.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T01-52-56-01a0f44e-6f11-75b3-b748-de9368d88d89.jsonl",
+    "uri": "voxy://archives/codex/01a0f44e-6f11-75b3-b748-de9368d88d89",
+    "counts": {
+      "user": 15,
+      "assistant": 598
+    },
+    "final_count": 156,
+    "bytes": 340302,
+    "sha256": "99f9ad15181a187b98806416f4fb32137dd8c2649dce09a05e53270ba4a7482f"
+  },
+  {
+    "id": "01a0f45f-3339-71f3-b432-ae35a0dede51",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973309,
+    "title": "Добавить физику упругой кожи",
+    "summary": "Voxy: физика упругой кожи для ягодиц, груди, губ и сфинктера",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f45f-3339-71f3-b432-ae35a0dede51.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-11-14-01a0f45f-3339-71f3-b432-ae35a0dede51.jsonl",
+    "uri": "voxy://archives/codex/01a0f45f-3339-71f3-b432-ae35a0dede51",
+    "counts": {
+      "user": 17,
+      "assistant": 772
+    },
+    "final_count": 223,
+    "bytes": 448921,
+    "sha256": "27888bb73ba1826bf4b3114180229d8124c2aff09bd64e8c433d995278661d5f"
+  },
+  {
+    "id": "01a0f45e-cab9-7be2-bdd0-cde160b76ef8",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973308,
+    "title": "Добавить физику полового акта",
+    "summary": "Voxy визуализация физики полового акта",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f45e-cab9-7be2-bdd0-cde160b76ef8.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-10-48-01a0f45e-cab9-7be2-bdd0-cde160b76ef8.jsonl",
+    "uri": "voxy://archives/codex/01a0f45e-cab9-7be2-bdd0-cde160b76ef8",
+    "counts": {
+      "user": 31,
+      "assistant": 889
+    },
+    "final_count": 277,
+    "bytes": 463588,
+    "sha256": "45ae4db3fc7dbc7d766dbb864eba3b7ec336f0466c67dc92b885f2d8ca27a62c"
+  },
+  {
+    "id": "01a0f9e0-f294-73f0-af28-2b8f658a7478",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973202,
+    "title": "Завершить LOD",
+    "summary": "Voxy: GPU-загрузка LOD, выбор по камере, бюджет памяти, сохранение модели при ошибке и проверка в ре",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f9e0-f294-73f0-af28-2b8f658a7478.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-02T03-51-04-01a0f9e0-f294-73f0-af28-2b8f658a7478.jsonl",
+    "uri": "voxy://archives/codex/01a0f9e0-f294-73f0-af28-2b8f658a7478",
+    "counts": {
+      "user": 7,
+      "assistant": 253
+    },
+    "final_count": 52,
+    "bytes": 139538,
+    "sha256": "ac53b73a1edad475de933690e058987d204e9b53fb61bea7d172b3c2209bbf40"
+  },
+  {
+    "id": "01a0f478-2ce6-7143-b83b-1a8b07048f71",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973129,
+    "title": "Добавить поддержку CUDA и шейдеров",
+    "summary": "Voxy: цель — полная аппаратная поддержка, включая CUDA и шейдеры",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f478-2ce6-7143-b83b-1a8b07048f71.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-38-31-01a0f478-2ce6-7143-b83b-1a8b07048f71.jsonl",
+    "uri": "voxy://archives/codex/01a0f478-2ce6-7143-b83b-1a8b07048f71",
+    "counts": {
+      "user": 5,
+      "assistant": 937
+    },
+    "final_count": 255,
+    "bytes": 452065,
+    "sha256": "7ad3f7d41297b95f0057d77094bda7c9434ebf498258a11d1b1a2b06860293b7"
+  },
+  {
+    "id": "01a0f480-80bd-77c2-8a82-5629bb37157f",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790973087,
+    "title": "Добавить риг и скелетную анимацию",
+    "summary": "Добавить в Voxy риг и скелетную анимацию на модели",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f480-80bd-77c2-8a82-5629bb37157f.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-47-37-01a0f480-80bd-77c2-8a82-5629bb37157f.jsonl",
+    "uri": "voxy://archives/codex/01a0f480-80bd-77c2-8a82-5629bb37157f",
+    "counts": {
+      "user": 19,
+      "assistant": 690
+    },
+    "final_count": 149,
+    "bytes": 369467,
+    "sha256": "f63bd0e7e28244cff2d9458a0f6681aa2fa6f0feea6bf321070800142924f983"
+  },
+  {
+    "id": "01a0f47d-9f43-78e3-83a3-01ee3c0f8cdc",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790892238,
+    "title": "Улучшить физику и сопромат",
+    "summary": "Voxy: сделать физику и сопротивление материалов реалистичнее",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f47d-9f43-78e3-83a3-01ee3c0f8cdc.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-44-28-01a0f47d-9f43-78e3-83a3-01ee3c0f8cdc.jsonl",
+    "uri": "voxy://archives/codex/01a0f47d-9f43-78e3-83a3-01ee3c0f8cdc",
+    "counts": {
+      "user": 13,
+      "assistant": 535
+    },
+    "final_count": 161,
+    "bytes": 306018,
+    "sha256": "1915fa132bbf2bb13ad49d07db27c4cad43a79fe12abeada9e9c8d9a3064fe4f"
+  },
+  {
+    "id": "01a0f863-5900-7602-9822-89725fb8a242",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/Sources/tokenizer",
+    "updatedAt": 1790881214,
+    "title": "Интегрировать Rush в Voxy",
+    "summary": "Voxy Rush: менеджер .r, API сцены, диагностика, ввод и события, перезагрузка скриптов",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f863-5900-7602-9822-89725fb8a242.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T20-54-15-01a0f863-5900-7602-9822-89725fb8a242.jsonl",
+    "uri": "voxy://archives/codex/01a0f863-5900-7602-9822-89725fb8a242",
+    "counts": {
+      "user": 4,
+      "assistant": 15
+    },
+    "final_count": 4,
+    "bytes": 14879,
+    "sha256": "69dc014eb2b2eff8a1ce44ef36914ae5e504e1cc27bc3f4f62d1586f560ed970"
+  },
+  {
+    "id": "01a0f6c4-8707-7360-ab2d-dfa212a8873e",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790874282,
+    "title": "Добавить Rush из tokenizer",
+    "summary": "Добавить поддержку языка Rush из репозитория tokenizer в Voxy",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f6c4-8707-7360-ab2d-dfa212a8873e.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T13-21-09-01a0f6c4-8707-7360-ab2d-dfa212a8873e.jsonl",
+    "uri": "voxy://archives/codex/01a0f6c4-8707-7360-ab2d-dfa212a8873e",
+    "counts": {
+      "user": 10,
+      "assistant": 19
+    },
+    "final_count": 10,
+    "bytes": 19322,
+    "sha256": "291549f931f5ae4a5dda0a917cf67dacc3bd318d3d5e979a4e0166bada2d4ffb"
+  },
+  {
+    "id": "01a0f44e-5242-7c40-848e-5617ca7d040c",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790848569,
+    "title": "Найти физику гравитации",
+    "summary": "Найти реализацию физики гравитации в проекте Voxy",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f44e-5242-7c40-848e-5617ca7d040c.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T01-52-48-01a0f44e-5242-7c40-848e-5617ca7d040c.jsonl",
+    "uri": "voxy://archives/codex/01a0f44e-5242-7c40-848e-5617ca7d040c",
+    "counts": {
+      "user": 6,
+      "assistant": 280
+    },
+    "final_count": 98,
+    "bytes": 155018,
+    "sha256": "3d0bbedab00ff32dc2b65ea099903d4d9b8d0a937a39354e350bf9ff15a582c3"
+  },
+  {
+    "id": "01a0f467-a6cc-73b1-ad8d-11357579437a",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790838183,
+    "title": "Добавить X-ray для сфинктера",
+    "summary": "X-ray для сфинктера на body.obj, крупный план таза, внутреннее кольцо",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f467-a6cc-73b1-ad8d-11357579437a.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-20-28-01a0f467-a6cc-73b1-ad8d-11357579437a.jsonl",
+    "uri": "voxy://archives/codex/01a0f467-a6cc-73b1-ad8d-11357579437a",
+    "counts": {
+      "user": 6,
+      "assistant": 24
+    },
+    "final_count": 6,
+    "bytes": 13121,
+    "sha256": "0194059e767c586e85e17df94e9143a1917dc01f5637f0a99b3049ce143366cb"
+  },
+  {
+    "id": "01a0f466-3c15-7e23-adb2-c44f739f012c",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790837915,
+    "title": "Объяснить физику пениса и сфинктера",
+    "summary": "Запрос о физике пениса и анального сфинктера",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f466-3c15-7e23-adb2-c44f739f012c.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-18-56-01a0f466-3c15-7e23-adb2-c44f739f012c.jsonl",
+    "uri": "voxy://archives/codex/01a0f466-3c15-7e23-adb2-c44f739f012c",
+    "counts": {
+      "user": 9,
+      "assistant": 35
+    },
+    "final_count": 7,
+    "bytes": 24551,
+    "sha256": "ac0945d075d3ae0e0cb08989c3b8337a32cb447b6cd603a8f246e86b751d9ae4"
+  },
+  {
+    "id": "01a0f484-937c-71b2-9968-00a21c6eb1b9",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790837831,
+    "title": "Добавь модели волосы",
+    "summary": "Voxy модель и наша библиотека волос",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f484-937c-71b2-9968-00a21c6eb1b9.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T02-52-04-01a0f484-937c-71b2-9968-00a21c6eb1b9.jsonl",
+    "uri": "voxy://archives/codex/01a0f484-937c-71b2-9968-00a21c6eb1b9",
+    "counts": {
+      "user": 3,
+      "assistant": 14
+    },
+    "final_count": 3,
+    "bytes": 9471,
+    "sha256": "bdb3e20c5b9ea92fde400db17521b7ad113ef0913d162d1ddee92ee071deb7dd"
+  },
+  {
+    "id": "01a0f44e-f0e0-7172-9926-72d62948f93f",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790806584,
+    "title": "Найти процедурную генерацию",
+    "summary": "Voxy: найти код и примеры процедурной генерации",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f44e-f0e0-7172-9926-72d62948f93f.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T01-53-29-01a0f44e-f0e0-7172-9926-72d62948f93f.jsonl",
+    "uri": "voxy://archives/codex/01a0f44e-f0e0-7172-9926-72d62948f93f",
+    "counts": {
+      "user": 3,
+      "assistant": 8
+    },
+    "final_count": 3,
+    "bytes": 4857,
+    "sha256": "40cd8fce67b00ac2a0fc31dbe7fd2d9656383667ff144c2979c8c9711c1c5fce"
+  },
+  {
+    "id": "01a0f44f-183d-7580-b759-4e317e0516a6",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790805905,
+    "title": "Добавить физику травы и волос",
+    "summary": "Voxy физика травы и волос в voxel engine",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f44f-183d-7580-b759-4e317e0516a6.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T01-53-39-01a0f44f-183d-7580-b759-4e317e0516a6.jsonl",
+    "uri": "voxy://archives/codex/01a0f44f-183d-7580-b759-4e317e0516a6",
+    "counts": {
+      "user": 2,
+      "assistant": 8
+    },
+    "final_count": 2,
+    "bytes": 6145,
+    "sha256": "f4943b52bde870cb2544f2fed3c7b0c409d78525c312ec865a10b3bd63143fbf"
+  },
+  {
+    "id": "01a0f444-95c6-7651-910e-8904710c9cf5",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790805222,
+    "title": "Исследовать физику времени",
+    "summary": "Физика времени: замедление и ускорение времени",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f444-95c6-7651-910e-8904710c9cf5.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T01-42-10-01a0f444-95c6-7651-910e-8904710c9cf5.jsonl",
+    "uri": "voxy://archives/codex/01a0f444-95c6-7651-910e-8904710c9cf5",
+    "counts": {
+      "user": 5,
+      "assistant": 11
+    },
+    "final_count": 5,
+    "bytes": 12084,
+    "sha256": "3e6faaf72afa37c458caad33fade20be2cf10d904fc587decc2c444f66fd7891"
+  },
+  {
+    "id": "01a0f3f0-c4ca-7c10-8599-91f666e72d3f",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790801090,
+    "title": "Добавить модели и скелетную анимацию",
+    "summary": "Поддержка моделей и скелетной анимации в Voxy",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a0f3f0-c4ca-7c10-8599-91f666e72d3f.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-10-01T00-10-37-01a0f3f0-c4ca-7c10-8599-91f666e72d3f.jsonl",
+    "uri": "voxy://archives/codex/01a0f3f0-c4ca-7c10-8599-91f666e72d3f",
+    "counts": {
+      "user": 2,
+      "assistant": 8
+    },
+    "final_count": 2,
+    "bytes": 5629,
+    "sha256": "c2be0ecc625ba32bd46457260c0c4429542ef4aab4e7187f2861347dd12ac812"
+  },
+  {
+    "id": "01a062c8-6eee-72f2-b765-b8118762a43c",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790793399,
+    "title": "Спроектировать архитектуру воксель-",
+    "summary": "Voxy: архитектура воксельного движка, модули, данные и рендеринг",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a062c8-6eee-72f2-b765-b8118762a43c.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-09-02T19-41-37-01a062c8-6eee-72f2-b765-b8118762a43c.jsonl",
+    "uri": "voxy://archives/codex/01a062c8-6eee-72f2-b765-b8118762a43c",
+    "counts": {
+      "user": 40,
+      "assistant": 203
+    },
+    "final_count": 59,
+    "bytes": 146011,
+    "sha256": "090eb3a6cd974dacaf1ab85cd0d5bdba0c8e817eaab010927928ab2565194656"
+  },
+  {
+    "id": "01a07130-920a-7ec2-9f19-e3431d8be1a4",
+    "kind": "codex",
+    "projectId": null,
+    "hostId": "local",
+    "status": "notLoaded",
+    "cwd": "/Users/themoretheless/Documents/ChatGPT/Voxy",
+    "updatedAt": 1790793389,
+    "title": "Оценить пинбол на движке",
+    "summary": "Voxy engine feasibility for building a pinball game",
+    "path": "/Users/themoretheless/Documents/ChatGPT/Voxy/artifacts/archive-rag/2026-10-03/01a07130-920a-7ec2-9f19-e3431d8be1a4.md",
+    "rollout_path": "/Users/themoretheless/.codex/archived_sessions/rollout-2026-09-05T14-50-03-01a07130-920a-7ec2-9f19-e3431d8be1a4.jsonl",
+    "uri": "voxy://archives/codex/01a07130-920a-7ec2-9f19-e3431d8be1a4",
+    "counts": {
+      "user": 4,
+      "assistant": 12
+    },
+    "final_count": 3,
+    "bytes": 12729,
+    "sha256": "472a43503eed70da0b49f044971d2ab511bab1a3a453e749af5dbbf1a2f4640e"
+  }
+]

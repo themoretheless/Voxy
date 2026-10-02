@@ -1,0 +1,9 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"document_id\":\"aa251860-7b61-4a42-b23f-47819c83a804\",\"chunk_count\":759,\"node_id\":\"86a3b424-9576-44e8-9a3d-7e575ca032ce\",\"edge_count\":2,\"content_hash\":\"e75671fad6623ab9850fd391caf96ff30b362eb486f28a6a39457cb7e7ed7f81\",\"op\":\"inserted\",\"revision\":1,\"etag\":\"W/\\\"1\\\"\"}"
+    }
+  ],
+  "isError": false
+}
