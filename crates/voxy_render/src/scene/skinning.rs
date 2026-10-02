@@ -212,17 +212,7 @@ impl SceneSkinner {
         instance: &SceneSkinInstance,
         joints: &[Mat4],
     ) -> Result<(), SceneSkinError> {
-        if self.device != instance.source.device {
-            return Err(SceneSkinError::Scene(SceneError::DeviceMismatch));
-        }
-        if !Arc::ptr_eq(&self.identity, &instance.owner) {
-            return Err(SceneSkinError::ForeignSkinner);
-        }
-        instance
-            .source
-            .mesh
-            .validate_temporal_pose(joints, Mat4::IDENTITY)
-            .map_err(SceneSkinError::Pose)?;
+        self.validate_pose(instance, joints)?;
         queue.write_buffer(&instance.palette, 0, bytemuck::cast_slice(joints));
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("scene skin pose"),
@@ -235,6 +225,26 @@ impl SceneSkinner {
             1,
             1,
         );
+        Ok(())
+    }
+    /// Preflights a palette without writing GPU buffers or encoding commands.
+    /// Use before publishing a model containing several animated primitives.
+    pub fn validate_pose(
+        &self,
+        instance: &SceneSkinInstance,
+        joints: &[Mat4],
+    ) -> Result<(), SceneSkinError> {
+        if self.device != instance.source.device {
+            return Err(SceneSkinError::Scene(SceneError::DeviceMismatch));
+        }
+        if !Arc::ptr_eq(&self.identity, &instance.owner) {
+            return Err(SceneSkinError::ForeignSkinner);
+        }
+        instance
+            .source
+            .mesh
+            .validate_temporal_pose(joints, Mat4::IDENTITY)
+            .map_err(SceneSkinError::Pose)?;
         Ok(())
     }
 }

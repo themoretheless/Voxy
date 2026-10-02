@@ -308,10 +308,10 @@ impl App {
                     smoke.start_x = self.scene.world_matrix(self.instances[0])?.w_axis.x;
                     self.toggle_play()?;
                     self.game_key(KeyCode::ArrowRight, ElementState::Pressed)?;
-                    smoke.ticks = self.simulation_ticks;
+                    smoke.ticks = self.play.simulation_ticks;
                 }
                 2 => {
-                    if self.simulation_ticks < smoke.ticks + 25 {
+                    if self.play.simulation_ticks < smoke.ticks + 25 {
                         return Ok(false);
                     }
                     let position = self
@@ -335,7 +335,7 @@ impl App {
                     self.load_authoring()?;
                     println!(
                         "SCENE3D PLAY STOP RELOAD PASS ticks={} frames={}",
-                        self.simulation_ticks, self.frames
+                        self.play.simulation_ticks, self.frames
                     );
                 }
                 _ => {

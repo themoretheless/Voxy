@@ -125,10 +125,10 @@ mod tests {
             registry,
         )
         .unwrap();
-        let worker = app.authoring_project.worker_project().unwrap();
+        let worker = app.authoring.authoring_project.worker_project().unwrap();
         assert!(std::sync::Arc::ptr_eq(
             &worker.registry,
-            &app.authoring_project.registry
+            &app.authoring.authoring_project.registry
         ));
         assert_eq!(
             worker
@@ -181,7 +181,7 @@ mod tests {
         let directory =
             std::env::temp_dir().join(format!("voxy-custom-registry-{}", std::process::id()));
         std::fs::create_dir_all(&directory).unwrap();
-        app.scene_path = Some(directory.join("scene.json"));
+        app.authoring.scene_path = Some(directory.join("scene.json"));
         app.save_authoring().unwrap();
         app.load_authoring().unwrap();
         assert_eq!(app.authoring_document().unwrap(), edited);
@@ -625,7 +625,7 @@ impl crate::App {
             self.component_edit = None;
             return Ok(());
         }
-        let registry = &self.authoring_project.registry;
+        let registry = &self.authoring.authoring_project.registry;
         let index = if let Some(object) = document
             .objects
             .get(self.selected)
@@ -659,7 +659,7 @@ impl crate::App {
         index: usize,
         text: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Err("stop play before editing components".into());
         }
         let document = self.authoring_document()?;
@@ -671,7 +671,7 @@ impl crate::App {
             .into_iter()
             .nth(index)
             .ok_or("missing component field")?;
-        let binding = field.bind(object, &self.authoring_project.registry)?;
+        let binding = field.bind(object, &self.authoring.authoring_project.registry)?;
         self.commit_component_binding(&binding, text)
     }
     pub(super) fn commit_component_binding(
@@ -679,18 +679,18 @@ impl crate::App {
         binding: &BoundComponentField,
         text: &str,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Err("stop play before editing components".into());
         }
         let mut document = self.authoring_document()?;
         binding.replace(&mut document, text)?;
         let next = self.validate_authoring_document(&document)?;
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
-            .commit(document, &self.authoring_project.registry)?;
+            .commit(document, &self.authoring.authoring_project.registry)?;
         self.restore_authoring()?;
-        self.next_object_id = next;
+        self.authoring.next_object_id = next;
         self.field = None;
         self.component_edit = None;
         self.panel_cache = None;

@@ -1,0 +1,30 @@
+{
+  "candidate": "/Users/themoretheless/Documents/ChatGPT/Voxy/target/hand-metacarpal-engine-audit/candidate-v4.rs",
+  "candidate_sha256": "4357855a53abaf6343a15ebc89285ba208a0c5b6e1d4cd9b4000ed00f23506ba",
+  "weights_sha256": "d1dbeccc10104b7955b8e98e1c2009844e906e28d86513644f19535596a31134",
+  "comparison_log": "/tmp/voxy-hand-prototype-hinge-comparison.log",
+  "accepted": false,
+  "no_object_samples": [
+    {
+      "fraction": 0.5,
+      "before_crease": 0.27219236,
+      "before_min_area": 0.5999839
+    },
+    {
+      "fraction": 0.75,
+      "before_crease": 0.40951014,
+      "after_crease": 0.4095043,
+      "before_min_area": 0.595148,
+      "after_min_area": 0.5951451
+    },
+    {
+      "fraction": 1.0,
+      "before_crease": 1.2972131,
+      "after_crease": 1.297163,
+      "before_min_area": 0.5598111,
+      "after_min_area": 0.56064206
+    }
+  ],
+  "acceptance_crease_limit": 0.3,
+  "diagnostic_scope": "Three no-object poses, both hands. Finite-metric assertions only; not acceptance or native visual proof."
+}

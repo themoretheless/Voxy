@@ -123,7 +123,7 @@ impl crate::App {
     pub(super) fn prefab_field_base(
         &self,
     ) -> Result<Option<SceneObject>, Box<dyn std::error::Error>> {
-        let metadata = self.history.as_ref().ok_or("missing history")?.metadata();
+        let metadata = self.authoring.history.as_ref().ok_or("missing history")?.metadata();
         if metadata.is_null() {
             return Ok(None);
         }
@@ -142,7 +142,7 @@ impl crate::App {
             return Ok(None);
         }
         let baseline = snapshot.source.instance_baseline(
-            &self.authoring_project.registry,
+            &self.authoring.authoring_project.registry,
             voxy_scene::PrefabLimits {
                 max_objects: 128,
                 max_instances: 128,
@@ -164,7 +164,7 @@ impl crate::App {
         &self,
         document: &voxy_scene::SceneDocument,
     ) -> Result<std::collections::BTreeSet<usize>, Box<dyn std::error::Error>> {
-        if self.playing.is_some() || document.objects.is_empty() {
+        if self.play.playing.is_some() || document.objects.is_empty() {
             return Ok(Default::default());
         }
         let Some(base) = self.prefab_field_base()? else {
@@ -179,7 +179,7 @@ impl crate::App {
                 .enumerate()
                 .filter_map(|(index, field)| {
                     let differs = field
-                        .prefab_reset_value(object, &base, &self.authoring_project.registry)
+                        .prefab_reset_value(object, &base, &self.authoring.authoring_project.registry)
                         .ok()
                         .flatten()
                         .is_some_and(|(path, inherited)| {
@@ -200,7 +200,7 @@ impl crate::App {
         &mut self,
         index: usize,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Err("stop playing before resetting a prefab field".into());
         }
         let mut snapshot = self.prefab_reset_snapshot()?;
@@ -226,7 +226,7 @@ impl crate::App {
                 .nth(index)
                 .ok_or("missing component field")?;
             let (path, replacement) = field
-                .prefab_reset_value(object, &base, &self.authoring_project.registry)?
+                .prefab_reset_value(object, &base, &self.authoring.authoring_project.registry)?
                 .ok_or("prefab has no inherited field for this item")?;
             *object
                 .components
@@ -261,13 +261,13 @@ impl crate::App {
     pub(super) fn prefab_reset_snapshot(
         &self,
     ) -> Result<crate::prefab_authoring::AuthoredScene, Box<dyn std::error::Error>> {
-        let observed = self
+        let observed = self.authoring
             .authoring_source
             .as_ref()
             .ok_or("missing observed prefab scene")?;
-        self.authoring_project.validate(observed)?;
+        self.authoring.authoring_project.validate(observed)?;
         let snapshot: crate::prefab_authoring::AuthoredScene = serde_json::from_value(
-            self.history
+            self.authoring.history
                 .as_ref()
                 .ok_or("missing history")?
                 .metadata()
@@ -286,7 +286,7 @@ impl crate::App {
         document: voxy_scene::SceneDocument,
     ) -> Result<(), Box<dyn std::error::Error>> {
         self.validate_authoring_document(&document)?;
-        let registry = &self.authoring_project.registry;
+        let registry = &self.authoring.authoring_project.registry;
         let baseline = snapshot.source.instance_baseline(
             &registry,
             voxy_scene::PrefabLimits {
@@ -304,7 +304,7 @@ impl crate::App {
             .source
             .capture_edits(&baseline, &document, &registry, 128)?;
         snapshot.expanded = document.clone();
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
             .commit_with_metadata(document, serde_json::to_value(snapshot)?, &registry)?;
@@ -349,7 +349,7 @@ mod collection_reset_tests {
         let document = app.authoring_document().unwrap();
         let lists = crate::component_collections::collections(
             &document.objects[0],
-            &app.authoring_project.registry,
+            &app.authoring.authoring_project.registry,
         )
         .unwrap();
         let key = lists
@@ -359,7 +359,7 @@ mod collection_reset_tests {
             .key;
         let action = Action::CollectionReset(key, crate::component_collections::item_key(id));
         let mut panels =
-            crate::panels::Panels::with_registry(app.authoring_project.registry.clone()).unwrap();
+            crate::panels::Panels::with_registry(app.authoring.authoring_project.registry.clone()).unwrap();
         panels.collection_resets = app.prefab_collection_resets(&document).unwrap();
         panels
             .build(
@@ -420,10 +420,10 @@ mod collection_reset_tests {
         let mut edited = app.authoring_document().unwrap();
         edited.objects[0].components.get_mut("custom.list").unwrap()["items"] = serde_json::json!([
             {"id":"b","count":9,"gain":20},{"id":"local","count":7,"gain":7},{"id":"a","count":8,"gain":11}]);
-        app.history
+        app.authoring.history
             .as_mut()
             .unwrap()
-            .commit(edited.clone(), &app.authoring_project.registry)
+            .commit(edited.clone(), &app.authoring.authoring_project.registry)
             .unwrap();
         app.restore_authoring().unwrap();
         app.save_authoring().unwrap();
@@ -434,7 +434,7 @@ mod collection_reset_tests {
         assert!(!marks.contains(&field(&app, "b", "gain")));
         assert!(!marks.contains(&field(&app, "b", "id")));
         assert!(!marks.contains(&field(&app, "local", "count")));
-        let old_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let old_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         app.panel_action(Action::ResetField(b_count)).unwrap();
         let reset = app.authoring_document().unwrap();
         let mut expected = edited.clone();
@@ -450,10 +450,10 @@ mod collection_reset_tests {
         );
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), edited);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &old_metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &old_metadata);
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
         assert_eq!(app.authoring_document().unwrap(), reset);
-        let metadata = app.history.as_ref().unwrap().metadata().clone();
+        let metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         assert!(
             app.panel_action(Action::ResetField(field(&app, "local", "count")))
                 .is_err()
@@ -463,7 +463,7 @@ mod collection_reset_tests {
                 .is_err()
         );
         assert_eq!(app.authoring_document().unwrap(), reset);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &metadata);
         app.save_authoring().unwrap();
         let saved: voxy_scene::PrefabSceneDocument =
             serde_json::from_slice(&std::fs::read(&scene).unwrap()).unwrap();
@@ -496,7 +496,7 @@ mod collection_reset_tests {
             11
         );
         let before_whole = app.authoring_document().unwrap();
-        let before_whole_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let before_whole_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         reset_item(&mut app, "a");
         let whole_reset = app.authoring_document().unwrap();
         assert_eq!(
@@ -507,7 +507,7 @@ mod collection_reset_tests {
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), before_whole);
         assert_eq!(
-            app.history.as_ref().unwrap().metadata(),
+            app.authoring.history.as_ref().unwrap().metadata(),
             &before_whole_metadata
         );
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
@@ -536,7 +536,7 @@ mod collection_reset_tests {
         assert!(changes.order.is_some());
         let key = crate::component_collections::collections(
             &local_reset.objects[0],
-            &app.authoring_project.registry,
+            &app.authoring.authoring_project.registry,
         )
         .unwrap()[0]
             .key;
@@ -545,10 +545,10 @@ mod collection_reset_tests {
                 .unwrap()
                 .contains(&key)
         );
-        let before_order_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let before_order_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         app.inspector = InspectorMode::Collections(0, 0);
         let mut panels =
-            crate::panels::Panels::with_registry(app.authoring_project.registry.clone()).unwrap();
+            crate::panels::Panels::with_registry(app.authoring.authoring_project.registry.clone()).unwrap();
         panels.collection_order_resets = app.prefab_collection_order_resets(&local_reset).unwrap();
         panels.collection_deleted_resets =
             app.prefab_collection_deleted_resets(&local_reset).unwrap();
@@ -606,7 +606,7 @@ mod collection_reset_tests {
                 .is_empty()
         );
         let snapshot: crate::prefab_authoring::AuthoredScene =
-            serde_json::from_value(app.history.as_ref().unwrap().metadata().clone()).unwrap();
+            serde_json::from_value(app.authoring.history.as_ref().unwrap().metadata().clone()).unwrap();
         let changes = &snapshot.source.instances[0].overrides[&leaf.objects[0].id]
             .component_collections["custom.list"]["/items"];
         assert!(changes.order.is_none());
@@ -614,7 +614,7 @@ mod collection_reset_tests {
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), local_reset);
         assert_eq!(
-            app.history.as_ref().unwrap().metadata(),
+            app.authoring.history.as_ref().unwrap().metadata(),
             &before_order_metadata
         );
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
@@ -625,7 +625,7 @@ mod collection_reset_tests {
                 .unwrap()
                 .contains(&key)
         );
-        let before_restore_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let before_restore_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         app.panel_action(Action::CollectionRestoreDeleted(key))
             .unwrap();
         let restored = app.authoring_document().unwrap();
@@ -641,7 +641,7 @@ mod collection_reset_tests {
                 .is_empty()
         );
         let snapshot: crate::prefab_authoring::AuthoredScene =
-            serde_json::from_value(app.history.as_ref().unwrap().metadata().clone()).unwrap();
+            serde_json::from_value(app.authoring.history.as_ref().unwrap().metadata().clone()).unwrap();
         let changes = &snapshot.source.instances[0].overrides[&leaf.objects[0].id]
             .component_collections["custom.list"]["/items"];
         assert!(changes.removed.is_empty());
@@ -649,7 +649,7 @@ mod collection_reset_tests {
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), local_reset);
         assert_eq!(
-            app.history.as_ref().unwrap().metadata(),
+            app.authoring.history.as_ref().unwrap().metadata(),
             &before_restore_metadata
         );
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
@@ -662,9 +662,9 @@ mod collection_reset_tests {
         ))
         .unwrap();
         let two_deleted = app.authoring_document().unwrap();
-        let two_deleted_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let two_deleted_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         let mut panels =
-            crate::panels::Panels::with_registry(app.authoring_project.registry.clone()).unwrap();
+            crate::panels::Panels::with_registry(app.authoring.authoring_project.registry.clone()).unwrap();
         panels.collection_deleted_items =
             app.prefab_collection_deleted_items(&two_deleted).unwrap();
         assert_eq!(panels.collection_deleted_items[&key].len(), 2);
@@ -756,14 +756,14 @@ mod collection_reset_tests {
             ])
         );
         let snapshot: crate::prefab_authoring::AuthoredScene =
-            serde_json::from_value(app.history.as_ref().unwrap().metadata().clone()).unwrap();
+            serde_json::from_value(app.authoring.history.as_ref().unwrap().metadata().clone()).unwrap();
         let changes = &snapshot.source.instances[0].overrides[&leaf.objects[0].id]
             .component_collections["custom.list"]["/items"];
         assert_eq!(
             changes.removed,
             std::collections::BTreeSet::from(["c".to_owned()])
         );
-        let stable_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let stable_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         assert!(
             app.panel_action(Action::CollectionRestoreItem(
                 key,
@@ -779,11 +779,11 @@ mod collection_reset_tests {
             .is_err()
         );
         assert_eq!(app.authoring_document().unwrap(), one_restored);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &stable_metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &stable_metadata);
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), two_deleted);
         assert_eq!(
-            app.history.as_ref().unwrap().metadata(),
+            app.authoring.history.as_ref().unwrap().metadata(),
             &two_deleted_metadata
         );
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
@@ -794,10 +794,10 @@ mod collection_reset_tests {
         leaf.objects[0].components.get_mut("custom.list").unwrap()["items"][1]["gain"] =
             serde_json::json!(200);
         std::fs::write(&prefab, leaf.to_json().unwrap()).unwrap();
-        let metadata = app.history.as_ref().unwrap().metadata().clone();
+        let metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         let key = crate::component_collections::collections(
             &local_reset.objects[0],
-            &app.authoring_project.registry,
+            &app.authoring.authoring_project.registry,
         )
         .unwrap()[0]
             .key;
@@ -809,7 +809,7 @@ mod collection_reset_tests {
             .is_err()
         );
         assert_eq!(app.authoring_document().unwrap(), local_reset);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &metadata);
         let removed_source = leaf.objects[0].components.get_mut("custom.list").unwrap()["items"]
             .as_array_mut()
             .unwrap()
@@ -818,7 +818,7 @@ mod collection_reset_tests {
         std::fs::write(&prefab, leaf.to_json().unwrap()).unwrap();
         app.load_authoring().unwrap();
         let absent_document = app.authoring_document().unwrap();
-        let absent_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let absent_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         assert!(
             app.prefab_collection_deleted_resets(&absent_document)
                 .unwrap()
@@ -836,7 +836,7 @@ mod collection_reset_tests {
                 .is_empty()
         );
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &absent_metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &absent_metadata);
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
         app.save_authoring().unwrap();
         app.load_authoring().unwrap();

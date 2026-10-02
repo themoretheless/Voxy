@@ -1,0 +1,46 @@
+{
+  "scope": "Imported model animation in native editor Play/Stop and standalone draw path; this is not complete engine or production animation acceptance.",
+  "editor_tests": {
+    "passed": 87,
+    "failed": 0,
+    "ignored": 4
+  },
+  "explicit_gpu_tests": {
+    "passed": 2,
+    "failed": 0,
+    "ignored": 0
+  },
+  "native": {
+    "play_presented_frame": 27,
+    "fixed_ticks": 12,
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_skin_sources": 1,
+    "logical_animation_bytes": 928,
+    "stop_presented_frame": 30,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true
+  },
+  "source_hashes_at_report": {
+    "crates/voxy_editor/src/model_playback.rs": "2cf15701080ab8a9b4225ad4710a1ad6040f4e77e59bf86f9fc903fc68c41cb0",
+    "crates/voxy_editor/src/animated_models.rs": "1ab06d2e57c3eaee77d4e702ed5f798ae11c8dc89d72010d0872fc53f1094aec",
+    "crates/voxy_editor/src/animated_models/tests.rs": "5718f5abf8bf628cfe4764c0d8341486bf93655b487ae6787a13d667a27ee8e2",
+    "crates/voxy_editor/src/animation_smoke.rs": "f6045c97fe492be3db8ec51656c77916928f4facf27f7a3651fb3cb9df60458f",
+    "crates/voxy_render/src/scene/skinning.rs": "5c04e955673a14c3f5861b07cbe75d1ad22439de34662d291a16c9b62ef91182"
+  },
+  "native_binary_sha256": "5ea60ddef195a2e62caafcdc5616068c674abdde944f2a47478735ec0d7ab61a",
+  "logs": {
+    "editor-regressions.log": "/tmp/voxy-editor-animation-full-final-regressions.log",
+    "gpu-owner-proof.log": "/tmp/voxy-editor-animation-gpu-final-proof.log",
+    "native-play-stop.log": "/tmp/voxy-editor-animation-native-final-proof.log",
+    "native-build.log": "/tmp/voxy-editor-animation-native-final-build.log"
+  },
+  "remaining": [
+    "Animated LOD/certified per-pose error and residency integration",
+    "Root motion scene/physics application and render interpolation",
+    "Clip/transition and layered animation controls in the inspector",
+    "Skeletal normal validation for broader deformation/scaling cases",
+    "Native hardware acceptance beyond this host and CPU fallback on genuinely compute-limited platforms",
+    "Hand prototype deformation repair"
+  ]
+}

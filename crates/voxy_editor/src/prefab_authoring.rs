@@ -729,8 +729,8 @@ impl crate::App {
     pub(super) fn create_prefab_from_selection(
         &mut self,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if let Some(observed) = &self.authoring_source {
-            self.authoring_project.validate(observed)?;
+        if let Some(observed) = &self.authoring.authoring_source {
+            self.authoring.authoring_project.validate(observed)?;
         }
         let document = self.authoring_document()?;
         let root = self
@@ -770,7 +770,7 @@ impl crate::App {
                 .cloned()
                 .collect(),
         };
-        let metadata = self.history.as_ref().ok_or("missing history")?.metadata();
+        let metadata = self.authoring.history.as_ref().ok_or("missing history")?.metadata();
         let source = if metadata.is_null() {
             PrefabSceneDocument {
                 version: 1,
@@ -783,18 +783,18 @@ impl crate::App {
                 &snapshot,
                 &edited,
                 &selected,
-                &self.authoring_project.registry,
+                &self.authoring.authoring_project.registry,
             )?
         };
-        let asset = self.authoring_project.create_prefab(&source, &expected)?;
-        if let Some(observed) = &self.authoring_source {
-            let refreshed = self
+        let asset = self.authoring.authoring_project.create_prefab(&source, &expected)?;
+        if let Some(observed) = &self.authoring.authoring_source {
+            let refreshed = self.authoring
                 .authoring_project
-                .prepare(observed.value().source.clone(), self.scene_path.as_deref())?;
-            self.authoring_source = Some(refreshed);
+                .prepare(observed.value().source.clone(), self.authoring.scene_path.as_deref())?;
+            self.authoring.authoring_source = Some(refreshed);
         }
-        self.prefab_assets = self.authoring_project.prefabs()?;
-        self.prefab_choice = self
+        self.authoring.prefab_assets = self.authoring.authoring_project.prefabs()?;
+        self.authoring.prefab_choice = self.authoring
             .prefab_assets
             .iter()
             .position(|id| *id == asset)
@@ -803,16 +803,16 @@ impl crate::App {
         Ok(())
     }
     pub(super) fn place_prefab(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let asset = self
+        let asset = self.authoring
             .prefab_assets
-            .get(self.prefab_choice)
+            .get(self.authoring.prefab_choice)
             .ok_or("choose a prefab asset")?
             .clone();
-        let registry = self.authoring_project.registry.clone();
+        let registry = self.authoring.authoring_project.registry.clone();
         let edited = self.authoring_document()?;
-        let history = self.history.as_ref().ok_or("missing history")?;
-        if let Some(observed) = &self.authoring_source {
-            self.authoring_project.validate(observed)?;
+        let history = self.authoring.history.as_ref().ok_or("missing history")?;
+        if let Some(observed) = &self.authoring.authoring_source {
+            self.authoring.authoring_project.validate(observed)?;
         }
         let snapshot = if history.metadata().is_null() {
             None
@@ -845,7 +845,7 @@ impl crate::App {
                 instances: Vec::new(),
             }
         };
-        let mut next = self.next_object_id;
+        let mut next = self.authoring.next_object_id;
         let id = loop {
             let id = voxy_scene::ObjectId(format!("prefab-{next}"));
             next = next.checked_add(1).ok_or("prefab identity exhausted")?;
@@ -862,9 +862,9 @@ impl crate::App {
             parent: None,
             overrides: std::collections::BTreeMap::new(),
         });
-        let candidate = self
+        let candidate = self.authoring
             .authoring_project
-            .prepare(source, self.scene_path.as_deref())?;
+            .prepare(source, self.authoring.scene_path.as_deref())?;
         if let Some(snapshot) = &snapshot {
             for (asset, expected) in &snapshot.dependencies {
                 if candidate.value().dependencies.get(asset) != Some(expected) {
@@ -874,13 +874,13 @@ impl crate::App {
         }
         let document = &candidate.value().expanded;
         self.validate_authoring_document(document)?;
-        if let Some(observed) = &self.authoring_source {
-            self.authoring_project.validate(observed)?;
+        if let Some(observed) = &self.authoring.authoring_source {
+            self.authoring.authoring_project.validate(observed)?;
         }
         let selected = document.objects.iter().position(|object| {
             object.id.0.starts_with(&prefix) && !self.object_ids.contains(&object.id)
         });
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
             .commit_with_metadata(
@@ -890,24 +890,24 @@ impl crate::App {
             )?;
         self.restore_authoring()?;
         self.selected = selected.unwrap_or(self.selected);
-        self.next_object_id = next;
-        self.authoring_source = Some(candidate);
+        self.authoring.next_object_id = next;
+        self.authoring.authoring_source = Some(candidate);
         self.update_edit_title();
         Ok(())
     }
     /// Revert one linked instance without changing siblings or its source asset.
     pub(super) fn revert_prefab(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let history = self.history.as_ref().ok_or("missing history")?;
+        let history = self.authoring.history.as_ref().ok_or("missing history")?;
         if history.metadata().is_null() {
             return Err("selected object is not a prefab instance".into());
         }
         let snapshot: AuthoredScene = serde_json::from_value(history.metadata().clone())?;
-        self.authoring_project.validate(
-            self.authoring_source
+        self.authoring.authoring_project.validate(
+            self.authoring.authoring_source
                 .as_ref()
                 .ok_or("missing observed authoring publication")?,
         )?;
-        let observed = self
+        let observed = self.authoring
             .authoring_source
             .as_ref()
             .ok_or("missing observed authoring publication")?;
@@ -943,7 +943,7 @@ impl crate::App {
                     .starts_with(prefix.0.strip_suffix("0:").unwrap_or(&prefix.0))
             })
             .ok_or("selected object is not a prefab instance")?;
-        let registry = self.authoring_project.registry.clone();
+        let registry = self.authoring.authoring_project.registry.clone();
         let limits = PrefabLimits {
             max_objects: 128,
             max_instances: 128,
@@ -973,7 +973,7 @@ impl crate::App {
             expanded: expanded.clone(),
             dependencies: snapshot.dependencies,
         })?;
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
             .commit_with_metadata(expanded, metadata, &registry)?;
@@ -1075,8 +1075,8 @@ mod tests {
         let original = app.authoring_document().unwrap();
         std::fs::write(&path, original.to_json().unwrap()).unwrap();
         app.configure_scene(&path).unwrap();
-        assert!(app.authoring_source.is_some());
-        assert!(app.history.as_ref().unwrap().metadata().is_null());
+        assert!(app.authoring.authoring_source.is_some());
+        assert!(app.authoring.history.as_ref().unwrap().metadata().is_null());
         app.scene.set_name(app.instances[0], "First save").unwrap();
         app.save_authoring().unwrap();
         app.scene.set_name(app.instances[0], "Second save").unwrap();
@@ -1118,7 +1118,7 @@ mod tests {
             .components
             .get_mut("game.angular-motion.v1")
             .unwrap()["radians_per_second"] = serde_json::json!(2);
-        app.history
+        app.authoring.history
             .as_mut()
             .unwrap()
             .commit(edited, &model_registry().unwrap())
@@ -1273,14 +1273,14 @@ mod tests {
         app.load_authoring().unwrap();
         assert_eq!(app.authoring_document().unwrap(), retained);
         app.inspector = crate::InspectorMode::Behavior;
-        let metadata = app.history.as_ref().unwrap().metadata().clone();
+        let metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         std::fs::write(&leaf_path, "external invalid source").unwrap();
         assert!(
             app.panel_action(crate::panels::Action::ResetField(3))
                 .is_err()
         );
         assert_eq!(app.authoring_document().unwrap(), retained);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &metadata);
         app.stop_workers().unwrap();
         drop(app);
         std::fs::remove_dir_all(root).unwrap();
@@ -1310,7 +1310,7 @@ mod tests {
         app.configure_scene(&scene_path).unwrap();
         assert_eq!(app.instances.len(), 2);
         assert_eq!(
-            app.authoring_source
+            app.authoring.authoring_source
                 .as_ref()
                 .unwrap()
                 .inputs()
@@ -1323,7 +1323,7 @@ mod tests {
         let mut edited = original.clone();
         edited.objects[0].translation[0] = 3.0;
         edited.objects[0].name = "Edited prefab".into();
-        app.history
+        app.authoring.history
             .as_mut()
             .unwrap()
             .commit(edited.clone(), &model_registry().unwrap())
@@ -1341,11 +1341,11 @@ mod tests {
         assert_eq!(app.object_ids, identities);
         // Play mutates a detached graph; Stop must preserve both the authoring
         // rows and prefab source metadata, without inserting a history entry.
-        let before_play_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let before_play_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         let before_play_bytes = std::fs::read(&scene_path).unwrap();
         let authoring_handle = app.instances[0];
         app.toggle_play().unwrap();
-        assert!(app.playing.is_some());
+        assert!(app.play.playing.is_some());
         assert!(app.scene.name(authoring_handle).is_err());
         let runtime_handle = app.instances[0];
         app.scene.set_name(runtime_handle, "Runtime only").unwrap();
@@ -1354,12 +1354,12 @@ mod tests {
         app.edit_key(KeyCode::F5).unwrap();
         assert_eq!(std::fs::read(&scene_path).unwrap(), before_play_bytes);
         app.toggle_play().unwrap();
-        assert!(app.playing.is_none());
+        assert!(app.play.playing.is_none());
         assert!(app.scene.name(runtime_handle).is_err());
         assert_eq!(app.authoring_document().unwrap(), edited);
         assert_eq!(app.object_ids, identities);
         assert_eq!(
-            app.history.as_ref().unwrap().metadata(),
+            app.authoring.history.as_ref().unwrap().metadata(),
             &before_play_metadata
         );
         assert_eq!(std::fs::read(&scene_path).unwrap(), before_play_bytes);
@@ -1388,12 +1388,12 @@ mod tests {
         app.save_authoring().unwrap();
         let retained = app.authoring_document().unwrap();
         std::fs::write(root.join("leaf.prefab"), b"broken source").unwrap();
-        let history_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let history_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         assert!(
             app.panel_action(crate::panels::Action::RevertPrefab)
                 .is_err()
         );
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &history_metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &history_metadata);
         assert_eq!(app.authoring_document().unwrap(), retained);
         assert!(app.load_authoring().is_err());
         assert_eq!(app.authoring_document().unwrap(), retained);
@@ -1425,7 +1425,7 @@ mod tests {
         app.load_authoring().unwrap();
         assert_eq!(app.authoring_document().unwrap(), retained);
         assert!(
-            app.authoring_source
+            app.authoring.authoring_source
                 .as_ref()
                 .unwrap()
                 .value()
@@ -1435,8 +1435,8 @@ mod tests {
         );
         // A different composition with identical flattened rows still creates a
         // metadata undo entry. Reload/saving must not erase the old source links.
-        let old_metadata = app.history.as_ref().unwrap().metadata().clone();
-        let mut replacement = app
+        let old_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
+        let mut replacement = app.authoring
             .authoring_source
             .as_ref()
             .unwrap()
@@ -1447,9 +1447,9 @@ mod tests {
         replacement.instances.clear();
         std::fs::write(&scene_path, serde_json::to_vec(&replacement).unwrap()).unwrap();
         app.load_authoring().unwrap();
-        assert!(app.history.as_ref().unwrap().metadata().is_null());
+        assert!(app.authoring.history.as_ref().unwrap().metadata().is_null());
         app.history_key(KeyCode::KeyZ).unwrap();
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &old_metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &old_metadata);
         app.save_authoring().unwrap();
         let restored_links: PrefabSceneDocument =
             serde_json::from_slice(&std::fs::read(&scene_path).unwrap()).unwrap();
@@ -1457,7 +1457,7 @@ mod tests {
         assert!(restored_links.objects.is_empty());
         let mut siblings = app.authoring_document().unwrap();
         siblings.objects[1].name = "Independent sibling edit".into();
-        app.history
+        app.authoring.history
             .as_mut()
             .unwrap()
             .commit(siblings.clone(), &model_registry().unwrap())
@@ -1475,7 +1475,7 @@ mod tests {
             .unwrap();
         let placed = app.authoring_document().unwrap();
         assert_eq!(placed.objects.len(), siblings.objects.len() + 1);
-        let placed_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let placed_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         assert_eq!(
             placed_metadata["source"]["instances"]
                 .as_array()
@@ -1490,7 +1490,7 @@ mod tests {
         app.save_authoring().unwrap();
         app.load_authoring().unwrap();
         assert_eq!(app.authoring_document().unwrap(), placed);
-        let retained_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let retained_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         let retained_bytes = std::fs::read(&scene_path).unwrap();
         std::fs::write(root.join("leaf.prefab"), b"broken source").unwrap();
         assert!(
@@ -1498,21 +1498,21 @@ mod tests {
                 .is_err()
         );
         assert_eq!(app.authoring_document().unwrap(), placed);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &retained_metadata);
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &retained_metadata);
         assert_eq!(std::fs::read(&scene_path).unwrap(), retained_bytes);
         std::fs::write(root.join("leaf.prefab"), leaf.to_string()).unwrap();
         let before_creation = app.authoring_document().unwrap();
-        let before_metadata = app.history.as_ref().unwrap().metadata().clone();
+        let before_metadata = app.authoring.history.as_ref().unwrap().metadata().clone();
         app.panel_action(crate::panels::Action::CreatePrefab)
             .unwrap();
         assert_eq!(app.authoring_document().unwrap(), before_creation);
-        assert_eq!(app.history.as_ref().unwrap().metadata(), &before_metadata);
-        let created = app.prefab_assets[app.prefab_choice].clone();
+        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &before_metadata);
+        let created = app.authoring.prefab_assets[app.authoring.prefab_choice].clone();
         let template: PrefabSceneDocument =
             serde_json::from_slice(&std::fs::read(root.join(&created.0)).unwrap()).unwrap();
         assert!(template.objects.is_empty());
         assert_eq!(template.instances.len(), 1);
-        let exported = app.authoring_project.prepare(template, None).unwrap();
+        let exported = app.authoring.authoring_project.prepare(template, None).unwrap();
         assert_eq!(exported.value().expanded.objects.len(), 1);
         assert!(exported.value().expanded.objects[0].parent.is_none());
         app.panel_action(crate::panels::Action::PlacePrefab)

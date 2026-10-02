@@ -1,7 +1,7 @@
 //! Orthotropic passive myocardium: fiber, sheet and fiber-sheet coupling.
 //! Holzapfel–Ogden-type isochoric invariants with a volumetric penalty.
 //! Parameters require experimental calibration; no universal human defaults.
-use super::{Matrix, Response, Vec3, det, dot, inverse, mm, mv, outer, transpose};
+use super::{Matrix, Response, Vec3, det, dot, inverse, mv, outer, transpose};
 
 /// Exponential energy coefficient in Pa and dimensionless exponent.
 #[derive(Clone, Copy, Debug)]
@@ -64,23 +64,7 @@ impl Myocardium {
         let i4f = q * dot(ff, ff);
         let i4s = q * dot(fs, fs);
         let i8 = q * dot(ff, fs);
-        // det(Cbar)=1: tr(Cbar-I)=-I2(Cbar-I)-det(Cbar-I).
-        // Recover quadratic strain energy without subtracting O(1) invariants.
-        let mut deviation = mm(transpose(f), f).map(|r| r.map(|v| q * v));
-        for (i, row) in deviation.iter_mut().enumerate() {
-            row[i] -= 1.;
-        }
-        let excess = if deviation.iter().flatten().all(|v| v.abs() < 0.1) {
-            let second = deviation[0][0] * deviation[1][1]
-                + deviation[0][0] * deviation[2][2]
-                + deviation[1][1] * deviation[2][2]
-                - deviation[0][1] * deviation[1][0]
-                - deviation[0][2] * deviation[2][0]
-                - deviation[1][2] * deviation[2][1];
-            (-second - det(deviation)).max(0.)
-        } else {
-            i1 - 3.
-        };
+        let excess = super::invariants::isochoric_excess(f, q, i1);
         let matrix_argument = self.matrix.exponent * excess;
         let matrix_exp = matrix_argument.exp();
         let mut energy = self.matrix.scale_pa / (2. * self.matrix.exponent)

@@ -1,0 +1,42 @@
+{
+  "accepted": false,
+  "scope": "121 no-object closure samples, both hands, unchanged poses; no corrective solver; thumb weights only; pinned distal tip.",
+  "variants": [
+    {
+      "rounds": 0,
+      "crease": 1.8910724,
+      "min_area": 0.054490693,
+      "max_deviation_m": 1.01338856e-07,
+      "tip_deviation_m": 0.0
+    },
+    {
+      "rounds": 4,
+      "crease": 2.9683318,
+      "min_area": 0.12981825,
+      "max_deviation_m": 0.0022285595,
+      "tip_deviation_m": 0.0
+    },
+    {
+      "rounds": 16,
+      "crease": 2.775336,
+      "min_area": 0.057776008,
+      "max_deviation_m": 0.004513613,
+      "tip_deviation_m": 0.0
+    },
+    {
+      "rounds": 64,
+      "crease": 2.7023897,
+      "min_area": 0.23501375,
+      "max_deviation_m": 0.0070429617,
+      "tip_deviation_m": 0.0
+    },
+    {
+      "rounds": 256,
+      "crease": 2.8184018,
+      "min_area": 0.023979688,
+      "max_deviation_m": 0.015242038,
+      "tip_deviation_m": 0.0
+    }
+  ],
+  "log": "/tmp/voxy-hand-thumb-weight-conditioning.log"
+}

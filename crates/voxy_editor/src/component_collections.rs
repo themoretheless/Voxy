@@ -41,7 +41,7 @@ impl crate::App {
         document: &voxy_scene::SceneDocument,
     ) -> Result<std::collections::BTreeSet<[u8; 32]>, Box<dyn std::error::Error>> {
         let mut result = std::collections::BTreeSet::new();
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Ok(result);
         }
         let Some(base) = self.prefab_field_base()? else {
@@ -50,7 +50,7 @@ impl crate::App {
         let Some(object) = document.objects.get(self.selected) else {
             return Ok(result);
         };
-        for list in collections(object, &self.authoring_project.registry)? {
+        for list in collections(object, &self.authoring.authoring_project.registry)? {
             let Some(source) = base
                 .components
                 .get(list.schema)
@@ -94,7 +94,7 @@ impl crate::App {
         restore_deleted: bool,
         target: Option<[u8; 32]>,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Err("stop Play before resetting collection order".into());
         }
         let mut snapshot = self.prefab_reset_snapshot()?;
@@ -106,7 +106,7 @@ impl crate::App {
             .objects
             .get(self.selected)
             .ok_or("missing selected object")?;
-        let lists = collections(object, &self.authoring_project.registry)?;
+        let lists = collections(object, &self.authoring.authoring_project.registry)?;
         let list = lists
             .iter()
             .find(|list| list.key == key)
@@ -242,7 +242,7 @@ impl crate::App {
         document: &voxy_scene::SceneDocument,
     ) -> Result<DeletedItems, Box<dyn std::error::Error>> {
         let mut result = DeletedItems::new();
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Ok(result);
         }
         let Some(base) = self.prefab_field_base()? else {
@@ -252,13 +252,13 @@ impl crate::App {
             return Ok(result);
         };
         let snapshot: crate::prefab_authoring::AuthoredScene = serde_json::from_value(
-            self.history
+            self.authoring.history
                 .as_ref()
                 .ok_or("missing history")?
                 .metadata()
                 .clone(),
         )?;
-        for list in collections(object, &self.authoring_project.registry)? {
+        for list in collections(object, &self.authoring.authoring_project.registry)? {
             let mut deleted = std::collections::BTreeMap::<String, String>::new();
             if let Some(source) = base
                 .components
@@ -330,7 +330,7 @@ impl crate::App {
             .objects
             .get(self.selected)
             .ok_or("missing selected object")?;
-        let lists = collections(object, &self.authoring_project.registry)?;
+        let lists = collections(object, &self.authoring.authoring_project.registry)?;
         if lists.is_empty() {
             return Ok(());
         }
@@ -357,7 +357,7 @@ impl crate::App {
         target: Option<[u8; 32]>,
         forward: Option<bool>,
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Err("stop Play before editing collections".into());
         }
         let mut document = self.authoring_document()?;
@@ -365,7 +365,7 @@ impl crate::App {
             .objects
             .get(self.selected)
             .ok_or("missing selected object")?;
-        let lists = collections(object, &self.authoring_project.registry)?;
+        let lists = collections(object, &self.authoring.authoring_project.registry)?;
         let list = lists
             .iter()
             .find(|list| list.key == key)
@@ -425,7 +425,7 @@ impl crate::App {
         let schema = list.schema.to_owned();
         let path = list.path.to_owned();
         document.edit_collection(
-            &self.authoring_project.registry,
+            &self.authoring.authoring_project.registry,
             &owner,
             &schema,
             &path,
@@ -433,12 +433,12 @@ impl crate::App {
             128,
         )?;
         let next = self.validate_authoring_document(&document)?;
-        self.history
+        self.authoring.history
             .as_mut()
             .ok_or("missing history")?
-            .commit(document, &self.authoring_project.registry)?;
+            .commit(document, &self.authoring.authoring_project.registry)?;
         self.restore_authoring()?;
-        self.next_object_id = next;
+        self.authoring.next_object_id = next;
         self.panel_cache = None;
         Ok(())
     }
@@ -555,10 +555,10 @@ mod tests {
             .unwrap();
         app.commit_authoring().unwrap();
         app.inspector = InspectorMode::Collections(0, 0);
-        app.panels = Some(Panels::with_registry(app.authoring_project.registry.clone()).unwrap());
+        app.panels = Some(Panels::with_registry(app.authoring.authoring_project.registry.clone()).unwrap());
         let original = app.authoring_document().unwrap();
         let key =
-            collections(&original.objects[0], &app.authoring_project.registry).unwrap()[0].key;
+            collections(&original.objects[0], &app.authoring.authoring_project.registry).unwrap()[0].key;
         click(&mut app, Action::CollectionAdd(key));
         let first = ids(&app)[0].clone();
         let delete_first = Action::CollectionDelete(key, item_key(&first));
@@ -594,7 +594,7 @@ mod tests {
         let directory =
             std::env::temp_dir().join(format!("voxy-collection-controls-{}", std::process::id()));
         std::fs::create_dir_all(&directory).unwrap();
-        app.scene_path = Some(directory.join("scene.json"));
+        app.authoring.scene_path = Some(directory.join("scene.json"));
         app.save_authoring().unwrap();
         app.load_authoring().unwrap();
         assert_eq!(ids(&app), [first.clone()]);
@@ -657,7 +657,7 @@ impl crate::App {
         document: &voxy_scene::SceneDocument,
     ) -> Result<std::collections::BTreeSet<([u8; 32], [u8; 32])>, Box<dyn std::error::Error>> {
         let mut resets = std::collections::BTreeSet::new();
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Ok(resets);
         }
         let Some(base) = self.prefab_field_base()? else {
@@ -666,7 +666,7 @@ impl crate::App {
         let Some(object) = document.objects.get(self.selected) else {
             return Ok(resets);
         };
-        for list in collections(object, &self.authoring_project.registry)? {
+        for list in collections(object, &self.authoring.authoring_project.registry)? {
             let Some(inherited) = base
                 .components
                 .get(list.schema)
@@ -694,7 +694,7 @@ impl crate::App {
         key: [u8; 32],
         target: [u8; 32],
     ) -> Result<(), Box<dyn std::error::Error>> {
-        if self.playing.is_some() {
+        if self.play.playing.is_some() {
             return Err("stop Play before resetting a collection item".into());
         }
         let mut snapshot = self.prefab_reset_snapshot()?;
@@ -706,7 +706,7 @@ impl crate::App {
             .objects
             .get(self.selected)
             .ok_or("missing selected object")?;
-        let lists = collections(object, &self.authoring_project.registry)?;
+        let lists = collections(object, &self.authoring.authoring_project.registry)?;
         let list = lists
             .iter()
             .find(|list| list.key == key)

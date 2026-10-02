@@ -1,0 +1,6 @@
+MODEL PUBLISHED frames=0 first_x=0 asset=motion.glb
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=22 first_x=0 asset=motion.glb
+ANIMATION NATIVE PLAY PASS frames=27 ticks=12 owners=2 gpu_primitives=2 shared_sources=1 bytes=928
+ANIMATION NATIVE STOP PASS frames=30 animated_bytes=0 authoring_restored=true
+ANIMATION NATIVE STOP PASS frames=30 animated_bytes=0 authoring_restored=true

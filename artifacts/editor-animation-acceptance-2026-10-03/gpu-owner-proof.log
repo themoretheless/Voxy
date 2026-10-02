@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-f5ead3363db76828)
+
+running 2 tests
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ok
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 89 filtered out; finished in 42.58s
+

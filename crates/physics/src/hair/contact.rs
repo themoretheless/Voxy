@@ -83,6 +83,73 @@ impl TriangleMesh {
         self.nearest(point, 0, &mut best);
         Ok((best.2, self.triangles[best.1].normal))
     }
+    /// Classifies a point using oriented ray crossings through the existing BVH.
+    /// The caller must supply a closed, consistently oriented surface (including
+    /// reversed cavity shells). Construction alone does not validate topology.
+    /// Returns `None` at numerically ambiguous edge, vertex or parallel hits;
+    /// callers must use their robust winding classifier in that case.
+    /// # Errors
+    /// Rejects nonfinite query positions.
+    pub fn contains_closed_surface(&self, point: V) -> Result<Option<bool>, &'static str> {
+        if !finite(point) {
+            return Err("invalid surface query");
+        }
+        let direction = [1.0, 0.3713906763541037, 0.5291121672691435];
+        Ok(self.oriented_crossings(point, direction, 0).map(|n| n != 0))
+    }
+
+    fn oriented_crossings(&self, point: V, direction: V, node: usize) -> Option<i64> {
+        let n = &self.nodes[node];
+        let mut entry = 0.0_f64;
+        let mut exit = f64::INFINITY;
+        for axis in 0..3 {
+            let padding = 1e-12 * (n.max[axis] - n.min[axis]).abs().max(1.0);
+            entry = entry.max((n.min[axis] - padding - point[axis]) / direction[axis]);
+            exit = exit.min((n.max[axis] + padding - point[axis]) / direction[axis]);
+        }
+        if entry > exit {
+            return Some(0);
+        }
+        if let Some([a, b]) = n.children {
+            return Some(
+                self.oriented_crossings(point, direction, a)?
+                    + self.oriented_crossings(point, direction, b)?,
+            );
+        }
+        let mut crossings = 0;
+        for triangle in &self.triangles[n.range.clone()] {
+            let edge_a = sub(triangle.p[1], triangle.p[0]);
+            let edge_b = sub(triangle.p[2], triangle.p[0]);
+            let h = cross(direction, edge_b);
+            let determinant = dot(edge_a, h);
+            let scale = len(edge_a) * len(edge_b) * len(direction);
+            if !determinant.is_finite() || determinant.abs() <= 1e-12 * scale {
+                return None;
+            }
+            let relative = sub(point, triangle.p[0]);
+            let u = dot(relative, h) / determinant;
+            let q = cross(relative, edge_a);
+            let v = dot(direction, q) / determinant;
+            let t = dot(edge_b, q) / determinant;
+            if !u.is_finite() || !v.is_finite() || !t.is_finite() {
+                return None;
+            }
+            let tolerance = 1e-10;
+            if u < -tolerance || v < -tolerance || u + v > 1.0 + tolerance || t < -tolerance {
+                continue;
+            }
+            if u <= tolerance || v <= tolerance || 1.0 - u - v <= tolerance || t <= tolerance {
+                return None;
+            }
+            crossings += if dot(triangle.normal, direction) > 0.0 {
+                1
+            } else {
+                -1
+            };
+        }
+        Some(crossings)
+    }
+
     /// Closest position with a barycentrically interpolated supplied vertex normal.
     /// This is a shading-normal query, not a signed-distance certificate.
     pub fn closest_surface_interpolated(
@@ -826,5 +893,48 @@ mod first_surface_segment_tests {
                 .is_none()
         );
         assert!(mesh.first_segment_hit([0.; 3], [0.; 3]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod closed_surface_tests {
+    use super::*;
+
+    #[test]
+    fn oriented_crossings_preserve_nested_cavities() {
+        let mut points = vec![[0., 0., 0.], [3., 0., 0.], [0., 3., 0.], [0., 0., 3.]];
+        let outer = [[0, 2, 1], [0, 1, 3], [0, 3, 2], [1, 2, 3]];
+        let mut faces = outer.to_vec();
+        points.extend([
+            [0.3, 0.3, 0.3],
+            [0.6, 0.3, 0.3],
+            [0.3, 0.6, 0.3],
+            [0.3, 0.3, 0.6],
+        ]);
+        faces.extend(outer.map(|[a, b, c]| [a + 4, c + 4, b + 4]));
+        let mesh = TriangleMesh::new(&points, &faces).unwrap();
+        assert_eq!(
+            mesh.contains_closed_surface([0.1, 0.1, 0.1]).unwrap(),
+            Some(true)
+        );
+        assert_eq!(
+            mesh.contains_closed_surface([0.35, 0.35, 0.35]).unwrap(),
+            Some(false)
+        );
+        assert_eq!(
+            mesh.contains_closed_surface([2., 2., 2.]).unwrap(),
+            Some(false)
+        );
+    }
+
+    #[test]
+    fn surface_vertex_is_ambiguous_and_nonfinite_queries_are_rejected() {
+        let mesh = TriangleMesh::new(
+            &[[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]],
+            &[[0, 2, 1], [0, 1, 3], [0, 3, 2], [1, 2, 3]],
+        )
+        .unwrap();
+        assert_eq!(mesh.contains_closed_surface([0., 0., 0.]).unwrap(), None);
+        assert!(mesh.contains_closed_surface([f64::NAN, 0., 0.]).is_err());
     }
 }

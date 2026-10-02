@@ -1,0 +1,153 @@
+{
+  "scope": "Uncorrected 54-bone v4 skinning; 121 no-object samples; both hands; body motion disabled. Finite metrics are diagnostic, not acceptance.",
+  "cases": [
+    {
+      "case": "all_thumb_joints",
+      "max_extra_crease": 1.8911699,
+      "min_area_ratio": 0.054490693,
+      "worst_hinge_indices": [
+        19641,
+        19642,
+        19427,
+        19640
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "thumb_disabled",
+      "max_extra_crease": 0.00011526758,
+      "min_area_ratio": 0.9999972,
+      "worst_hinge_indices": [
+        40367,
+        40368,
+        40561,
+        40364
+      ],
+      "worst_fraction": 0.45833334
+    },
+    {
+      "case": "base_disabled",
+      "max_extra_crease": 0.57299393,
+      "min_area_ratio": 0.5287831,
+      "worst_hinge_indices": [
+        19119,
+        19120,
+        19121,
+        19105
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "middle_disabled",
+      "max_extra_crease": 1.7975729,
+      "min_area_ratio": 0.09502307,
+      "worst_hinge_indices": [
+        19636,
+        19638,
+        19639,
+        19637
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "tip_disabled",
+      "max_extra_crease": 1.8911699,
+      "min_area_ratio": 0.054490693,
+      "worst_hinge_indices": [
+        19641,
+        19642,
+        19427,
+        19640
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "base_only",
+      "max_extra_crease": 1.7975729,
+      "min_area_ratio": 0.09502307,
+      "worst_hinge_indices": [
+        19636,
+        19638,
+        19639,
+        19637
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "middle_only",
+      "max_extra_crease": 0.57299393,
+      "min_area_ratio": 0.5287831,
+      "worst_hinge_indices": [
+        19119,
+        19120,
+        19121,
+        19105
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "tip_only",
+      "max_extra_crease": 0.027823538,
+      "min_area_ratio": 0.9377638,
+      "worst_hinge_indices": [
+        40009,
+        40014,
+        40015,
+        40006
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "base_flexion_only",
+      "max_extra_crease": 0.15124977,
+      "min_area_ratio": 0.83460456,
+      "worst_hinge_indices": [
+        19641,
+        19642,
+        19427,
+        19640
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "base_spread_only",
+      "max_extra_crease": 1.9947889,
+      "min_area_ratio": 0.08948237,
+      "worst_hinge_indices": [
+        19636,
+        19638,
+        19639,
+        19637
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "base_twist_only",
+      "max_extra_crease": 0.15053298,
+      "min_area_ratio": 0.8762984,
+      "worst_hinge_indices": [
+        19640,
+        19642,
+        19643,
+        19641
+      ],
+      "worst_fraction": 1.0
+    },
+    {
+      "case": "base_flexion_and_spread",
+      "max_extra_crease": 1.685717,
+      "min_area_ratio": 0.24581888,
+      "worst_hinge_indices": [
+        19641,
+        19642,
+        19427,
+        19640
+      ],
+      "worst_fraction": 1.0
+    }
+  ],
+  "logs": [
+    "/tmp/voxy-hand-thumb-articulation-isolation.log",
+    "/tmp/voxy-hand-thumb-base-channel-isolation.log"
+  ]
+}
