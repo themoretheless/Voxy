@@ -1,0 +1,8 @@
+METAL WINDOW number=34189 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+MODEL PUBLISHED frames=0 first_x=0 asset=target.glb
+MODEL PUBLISHED frames=0 first_x=0 asset=target.glb
+Error: "native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)"

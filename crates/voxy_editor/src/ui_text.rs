@@ -215,7 +215,7 @@ mod tests {
         let root = std::env::temp_dir();
         let project = AuthoringProject::new(
             &root,
-            &crate::InputRecipe::Direct(voxy_assets::SourcePath::new("unused.obj").unwrap()),
+            &crate::InputRecipe::Direct,
         )
         .unwrap();
         let mut scene = SceneGraph::new(9);
@@ -358,7 +358,7 @@ mod worker_tests {
         std::fs::write(root.join("font.ttf"), super::tests::font_bytes()).unwrap();
         let project = AuthoringProject::new(
             &root,
-            &crate::InputRecipe::Direct(voxy_assets::SourcePath::new("unused.obj").unwrap()),
+            &crate::InputRecipe::Direct,
         )
         .unwrap();
         let mut scene = SceneGraph::new(1);

@@ -31,6 +31,9 @@ pub(super) fn schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_scene
 #[derive(Clone, Debug)]
 struct Owner {
     model: Arc<ModelAsset>,
+    animation_model: Arc<ModelAsset>,
+    retarget_profile: Option<crate::ModelRetarget>,
+    retarget_binding: Option<voxy_animation::RetargetBinding>,
     settings: ModelAnimation,
     playback: ModelPlayback,
     frame: Arc<AnimatorFrame>,
@@ -80,7 +83,7 @@ impl AnimationRuntime {
             let Some(owner) = self.owners.get_mut(&accepted.owner) else { continue; };
             let Some(feet) = &mut owner.feet else { continue; };
             owner.frame = Arc::new(feet.correct_at_phase(&owner.model, (*owner.frame).clone(),
-                accepted.world_matrix.as_dmat4(), accepted.grounded, preview, budget, owner.settings.clip.map(|index| owner.model.animations[index].name()), owner.playback.contact_phase(), owner.playback.contact_interval(), owner.playback.pose_blend_phases(), owner.playback.source_contact_interval(), owner.playback.frozen_source_tick())?);
+                accepted.world_matrix.as_dmat4(), accepted.grounded, preview, budget, owner.playback.pose_blend_phases().map(|phase| phase.target.clip.name()), owner.playback.contact_phase(), owner.playback.contact_interval(), owner.playback.pose_blend_phases(), owner.playback.source_contact_interval(), owner.playback.frozen_source_tick())?);
         }
         Ok(self)
     }
@@ -162,36 +165,48 @@ impl AnimationRuntime {
             let Some(model) = models.get(&instance.asset) else {
                 continue;
             };
+            let profile = scene.component::<crate::ModelRetarget>(owner).map_err(|e|e.to_string())?.cloned();
+            let animation_model = if let Some(profile) = &profile {
+                models.get(&AssetId(profile.source.clone())).ok_or("retarget source is not loaded")?
+            } else { model };
+            let current = next.owners.get(&owner);
+            let same_binding = current.is_some_and(|old| old.retarget_profile == profile
+                && old.model.skeleton.joints() == model.skeleton.joints());
+            let binding = if let Some(profile) = &profile {
+                if let Some(old) = current.filter(|old| same_binding && Arc::ptr_eq(&old.animation_model, animation_model)) {
+                    old.retarget_binding.clone()
+                } else { Some(profile.compile_models(animation_model, model)?) }
+            } else { None };
             let mut settings = scene
                 .component::<ModelAnimation>(owner)
                 .map_err(|e| e.to_string())?
                 .cloned()
                 .unwrap_or(ModelAnimation {
-                    clip: (!model.animations.is_empty()).then_some(0),
+                    clip: (!animation_model.animations.is_empty()).then_some(0),
                     ..Default::default()
                 });
-            settings.validate(Some(model.animations.len()), Some(model.skeleton.joints().len()))?;
-            settings.clip = settings.resolve_clip(model)?;
-            let current = next.owners.get(&owner);
+            settings.validate(Some(animation_model.animations.len()), Some(animation_model.skeleton.joints().len()))?;
+            settings.clip = settings.resolve_clip(animation_model)?;
+
             let named_identity = current.is_some_and(|old| !settings.clip_name.is_empty()
                 && old.settings.clip_name == settings.clip_name);
             let same_clip = current.is_some_and(|old| old.settings.clip == settings.clip || named_identity);
             let compatible_model = current.is_some_and(|old|
-                Arc::ptr_eq(&old.model, model) || old.playback.can_rebind(model, named_identity));
-            let reload_transition = !compatible_model && settings.transition_seconds > 0.
+                same_binding && (Arc::ptr_eq(&old.animation_model, animation_model) || old.playback.can_rebind(animation_model, named_identity)));
+            let reload_transition = same_binding && !compatible_model && settings.transition_seconds > 0.
                 && current.is_some_and(|old| same_clip
-                    && old.model.skeleton.joints() == model.skeleton.joints()
-                    && old.settings.clip.zip(settings.clip).is_some_and(|(old_index,index)| old.model.animations.get(old_index)
-                        .zip(model.animations.get(index)).is_some_and(|(a,b)| a.name() == b.name())));
+                    && old.animation_model.skeleton.joints() == animation_model.skeleton.joints()
+                    && old.settings.clip.zip(settings.clip).is_some_and(|(old_index,index)| old.animation_model.animations.get(old_index)
+                        .zip(animation_model.animations.get(index)).is_some_and(|(a,b)| a.name() == b.name())));
             let mut playback = if current.is_none_or(|old| {
                 !(compatible_model || reload_transition)
                     || (!same_clip
                         && (settings.transition_seconds == 0. || old.settings.clip.is_none() || settings.clip.is_none()))
             }) {
-                ModelPlayback::new(model.clone(), settings.clone())?
+                ModelPlayback::new(animation_model.clone(), settings.clone())?
             } else {
                 let mut playback = current.unwrap().playback.clone();
-                playback.rebind(model.clone());
+                playback.rebind(animation_model.clone());
                 if reload_transition {
                     playback.reload_clip(settings.clip.ok_or("missing reload target")?,settings.transition_seconds)?;
                 }
@@ -199,15 +214,28 @@ impl AnimationRuntime {
                     playback.transition_to_clip(settings.clip.ok_or("missing transition target")?, settings.transition_seconds)?;
                 }
                 playback.set_speed(settings.speed)?;
-                playback.set_root_motion_joint(settings.resolve_motion_joint(model)?)?;
+                playback.set_root_motion_joint(settings.resolve_motion_joint(animation_model)?)?;
                 playback
             };
-            let (mut frame, trajectory) = playback.advance_with_motion(
+            let source_axes = if settings.root_motion_rotation {
+                if let Some(binding) = &binding {
+                    binding.source_root_motion_axes(settings.resolve_motion_joint(animation_model)?, settings.root_motion_axes)
+                        .map_err(|e|e.to_string())?
+                } else { settings.root_motion_axes }
+            } else { settings.root_motion_axes };
+            let (mut frame, mut trajectory) = playback.advance_with_motion(
                 dt,
                 settings.root_motion_rotation,
-                settings.root_motion_axes,
+                source_axes,
                 |_, frame, path| Ok((frame.clone(), path.cloned())),
             )?;
+            if let Some(binding) = &binding {
+                if let Some(path) = trajectory.as_ref() {
+                    trajectory = Some(binding.apply_root_path(path, frame.root_motion_joint, settings.root_motion_axes)
+                        .map_err(|e|e.to_string())?);
+                }
+                frame = binding.apply_frame(&frame).map_err(|e|e.to_string())?;
+            }
             if settings.root_motion_rotation
                 || settings.root_motion_axes.into_iter().any(|axis| axis)
             {
@@ -219,7 +247,9 @@ impl AnimationRuntime {
                     return Err("root motion requires a CharacterBody on the model owner".into());
                 }
                 let (basis, rotation_basis, scale) =
-                    constant_parent_basis(model, &settings, frame.root_motion_joint)?;
+                    if let Some(profile) = &profile {
+                        retarget_parent_basis(model, animation_model, profile, frame.root_motion_joint, settings.root_motion_rotation)?
+                    } else { constant_parent_basis(model, &settings, frame.root_motion_joint)? };
                 let (in_place, displacement) = frame
                     .into_in_place_translation(&model.skeleton, settings.root_motion_axes)
                     .map_err(|error| error.to_string())?;
@@ -266,13 +296,16 @@ impl AnimationRuntime {
                         || playback.source_contact_interval().is_some() || playback.frozen_source_tick().is_some())).and_then(|old| old.feet.as_ref())
                     .filter(|feet| feet.matches(foot_settings)) {
                     Some(feet.clone())
-                } else { Some(crate::foot_placement::FootRuntime::new(model, foot_settings.clone())?) }
+                } else { Some(crate::foot_placement::FootRuntime::new_with_clips(model, foot_settings.clone(), &animation_model.animations)?) }
             } else { None };
             let frame = Arc::new(frame);
             next.owners.insert(
                 owner,
                 Owner {
                     model: model.clone(),
+                    animation_model: animation_model.clone(),
+                    retarget_profile: profile,
+                    retarget_binding: binding,
                     settings,
                     playback,
                     frame,
@@ -286,6 +319,25 @@ impl AnimationRuntime {
             .ok_or("animation tick overflow")?;
         Ok(next)
     }
+}
+
+// A mapped ancestor must retain its bind transform across source clips and fades.
+// Unmapped target ancestors are bind pose by the retarget contract.
+fn retarget_parent_basis(target: &ModelAsset, source: &ModelAsset, profile: &crate::ModelRetarget, root: u16, rotation: bool)
+    -> Result<(glam::Mat4, glam::DQuat, f64), String> {
+    let mut parent = target.skeleton.joints()[usize::from(root)].parent;
+    while let Some(index) = parent {
+        for mapping in &profile.joints {
+            if target.resolve_joint_name(&mapping.target).map_err(|e|e.to_string())? == index {
+                let source_index = usize::from(source.resolve_joint_name(&mapping.source).map_err(|e|e.to_string())?);
+                if source.animations.iter().any(|clip| !clip.joint_uses_bind_pose(source_index)) {
+                    return Err("retarget motion parent is animated; interval basis is unproved".into());
+                }
+            }
+        }
+        parent = target.skeleton.joints()[usize::from(index)].parent;
+    }
+    constant_parent_basis(target, &ModelAnimation { clip: None, root_motion_rotation:rotation, ..Default::default() }, root)
 }
 
 // Only immutable clip admission proofs establish an ancestor for the whole interval.

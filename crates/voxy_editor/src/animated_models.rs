@@ -411,7 +411,9 @@ impl AnimatedModels {
         budget: u64,
     ) -> Result<(), String> {
         let frame = frame.ok_or("waiting for an accepted fixed-tick animation frame")?;
-        settings.validate(Some(model.animations.len()), Some(model.skeleton.joints().len()))?;
+        // Playback selection belongs to the accepted owner and may use a separate
+        // source rig. Rendering admits descriptor values and the target-bound frame.
+        settings.validate(None, None)?;
         if frame.skin_matrices != frame.pose.skin_matrices(&model.skeleton).map_err(|e| e.to_string())? {
             return Err("animation frame palette differs from pose".into());
         }

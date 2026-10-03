@@ -22,7 +22,7 @@ fn gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watc
     std::fs::write(root.join("font.ttf"), &first).unwrap();
     let project = AuthoringProject::new(
         &root,
-        &crate::InputRecipe::Direct(voxy_assets::SourcePath::new("quad.obj").unwrap()),
+        &crate::InputRecipe::Direct,
     )
     .unwrap();
     let mut scene = SceneGraph::new(1);

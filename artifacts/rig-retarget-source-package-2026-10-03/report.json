@@ -1,0 +1,11 @@
+{
+  "editor_cpu_passed": 132,
+  "ignored": 10,
+  "source_only_import": true,
+  "distinct_source_bone": "sourceHip",
+  "target_bone": "hip",
+  "source_gpu_required": false,
+  "package_source_bytes_verified": true,
+  "game_check_after_source_deletion": true,
+  "retarget_play_consumption": false
+}

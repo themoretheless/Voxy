@@ -1,0 +1,18 @@
+{
+  "cpu_passed": 134,
+  "optional_ignored": 11,
+  "gpu_gates_passed": 2,
+  "hardware": "Apple M4 Max",
+  "backend": "Metal",
+  "target_without_clips": true,
+  "distinct_source_bones_and_bind_pose": true,
+  "source_motion_sample_verified": true,
+  "locked_geometry_pixels_exact": true,
+  "source_only_gpu_upload": false,
+  "gpu_source_geometry_count": 1,
+  "gpu_bytes": 1184,
+  "clear_gpu_bytes": 0,
+  "contact_budget_retry_atomic": true,
+  "native_window_gate": false,
+  "angular_retarget": false
+}

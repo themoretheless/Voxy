@@ -25,6 +25,7 @@ mod model_playback;
 mod animation_runtime;
 mod foot_placement;
 mod retarget_profile;
+mod retarget_authoring;
 pub use retarget_profile::{ModelRetarget, RetargetJointProfile};
 pub use foot_placement::{ModelFootPlacement, FootBinding, FootContactKey};
 mod scene_limits;
@@ -196,7 +197,7 @@ impl ModelGraphics {
 }
 #[derive(Debug)]
 enum InputRecipe {
-    Direct(SourcePath),
+    Direct,
     Manifest(AssetId),
 }
 #[derive(Debug)]
@@ -287,6 +288,8 @@ struct App {
     modifiers: winit::keyboard::ModifiersState,
     field: Option<(usize, String)>,
     component_edit: Option<component_fields::BoundComponentField>,
+    retarget_draft: Option<retarget_authoring::Draft>,
+    retarget_picker: Option<retarget_authoring::BonePicker>,
     tree_scroll: usize,
     parenting: Option<NodeId>,
     id: AssetId,
@@ -318,7 +321,8 @@ impl App {
                 .ok_or("source name must be UTF-8")?
                 .into(),
         );
-        let recipe = InputRecipe::Direct(SourcePath::new(id.0.clone())?);
+        SourcePath::new(id.0.clone())?;
+        let recipe = InputRecipe::Direct;
         Self::create(root, id, recipe, smoke)
     }
     fn from_manifest(
@@ -356,7 +360,7 @@ impl App {
         registry: Arc<ComponentRegistry>,
     ) -> Result<Self, Box<dyn std::error::Error>> {
         let available = match &recipe {
-            InputRecipe::Direct(_) => BTreeSet::from([id.clone()]),
+            InputRecipe::Direct => BTreeSet::from([id.clone()]),
             InputRecipe::Manifest(manifest) => {
                 let bytes = FileInputs::new(root)?.read(manifest, 65536)?;
                 AssetLocations::from_json(std::str::from_utf8(&bytes)?, 128, 65536, 65536)?
@@ -388,7 +392,7 @@ impl App {
             32 * 1024 * 1024,
             move |asset, provider, inputs| {
                 let source_path = match &recipe {
-                    InputRecipe::Direct(_) => SourcePath::new(asset.0.clone()).map_err(|error|error.to_string())?,
+                    InputRecipe::Direct => SourcePath::new(asset.0.clone()).map_err(|error|error.to_string())?,
                     InputRecipe::Manifest(manifest) => {
                         let snapshot = inputs
                             .read(manifest.clone(), |id, limit| {
@@ -473,6 +477,8 @@ impl App {
             modifiers: winit::keyboard::ModifiersState::empty(),
             field: None,
             component_edit: None,
+            retarget_draft: None,
+            retarget_picker: None,
             tree_scroll: 0,
             parenting: None,
             id,
@@ -541,7 +547,8 @@ impl App {
         let gizmo_transform = renderer.create_transform(host.device(), Mat4::IDENTITY)?;
         let panel_transform = renderer.create_transform(host.device(), Mat4::IDENTITY)?;
         let panel_texture = if !self.standalone
-            && (self.smoke_deadline.is_none() || self.prefab_smoke.is_some())
+            && (self.smoke_deadline.is_none() || self.prefab_smoke.is_some()
+                || std::env::var_os("VOXY_RETARGET_ROTATION_SMOKE").is_some())
         {
             let panels = panels::Panels::with_registry(self.authoring.authoring_project.registry.clone())?;
             let texture =
@@ -616,6 +623,7 @@ impl App {
         if let Some(audio) = self.audio.play_mut() {
             audio.poll_reload(&self.scene)?;
         }
+        self.queue_retarget_draft_source();
         for (_, profile) in self.scene.components::<ModelRetarget>() {
             let source = AssetId(profile.source.clone());
             if self.catalog.status(&source).is_none() { self.reload.insert(source); }
@@ -1080,6 +1088,8 @@ impl App {
             if size.width > 0.0 && size.height > 0.0 {
                 let document = self.panel_document()?;
                 self.reconcile_component_edit(&document)?;
+                self.panels.as_mut().unwrap().retarget_draft=self.retarget_draft.is_some();
+                self.panels.as_mut().unwrap().bone_picker=self.retarget_picker.as_ref().map(|p|(p.choices.clone(),p.page));
                 let input = PanelInput {
                     prefab_metadata: self.authoring
                         .history
@@ -2300,9 +2310,11 @@ impl App {
         for (node, animation) in loaded.graph.components::<ModelAnimation>() {
             let model = loaded.graph.component::<String>(node)?
                 .ok_or("animation requires a model owner")?;
+            let model = loaded.graph.component::<ModelRetarget>(node)?
+                .map_or(model.as_str(), |profile| profile.source.as_str());
             // Scene loading may precede asynchronous resource publication.
             // Runtime admission validates again against the published revision.
-            let counts = self.catalog.snapshot(&AssetId(model.clone()))
+            let counts = self.catalog.snapshot(&AssetId(model.to_owned()))
                 .map(|asset| asset.value().animated.as_ref()
                     .map_or((0, 0), |model| (model.animations.len(), model.skeleton.joints().len())));
             animation.validate(counts.map(|value| value.0), counts.map(|value| value.1))?;
@@ -2310,7 +2322,7 @@ impl App {
                 && loaded.graph.component::<CharacterBody>(node)?.is_none() {
                 return Err("root motion requires a CharacterBody on the model owner".into());
             }
-            if let Some(asset) = self.catalog.snapshot(&AssetId(model.clone()))
+            if let Some(asset) = self.catalog.snapshot(&AssetId(model.to_owned()))
                 && let Some(model) = asset.value().animated.as_ref()
             {
                 animation.resolve_clip(model)?;
@@ -2330,11 +2342,17 @@ impl App {
             if let Some(asset) = self.catalog.snapshot(&AssetId(model.clone()))
                 && let Some(model) = asset.value().animated.as_ref()
             {
-                foot_placement::FootRuntime::new(model, settings.clone())?;
+                let source_asset = loaded.graph.component::<ModelRetarget>(node)?
+                    .map(|profile| self.catalog.snapshot(&AssetId(profile.source.clone())));
+                let animation_model = if let Some(source) = &source_asset {
+                    source.as_ref().and_then(|source| source.value().animated.as_ref())
+                } else { Some(model) };
+                let Some(animation_model) = animation_model else { continue; };
+                foot_placement::FootRuntime::new_with_clips(model, settings.clone(), &animation_model.animations)?;
                 let animation = loaded.graph.component::<ModelAnimation>(node)?
                     .cloned().unwrap_or_default();
-                let clip_name = animation.resolve_clip(model)?.and_then(|index|
-                    model.animations.get(index).map(|clip| clip.name()));
+                let clip_name = animation.resolve_clip(animation_model)?.and_then(|index|
+                    animation_model.animations.get(index).map(|clip| clip.name()));
                 for foot in &settings.feet {
                     foot.contact_keys(clip_name)?;
                 }
@@ -2447,6 +2465,7 @@ impl App {
         self.parenting = None;
     }
     fn panel_document(&self) -> Result<SceneDocument, Box<dyn std::error::Error>> {
+        if let Some(draft)=&self.retarget_draft {return Ok(draft.document.clone());}
         if self.play.playing.is_some() {
             Ok(self.authoring
                 .history
@@ -2555,6 +2574,10 @@ impl App {
     }
     #[allow(clippy::too_many_lines)]
     fn edit_key(&mut self, key: KeyCode) -> Result<(), Box<dyn std::error::Error>> {
+        if self.retarget_draft.is_some() {
+            if key==KeyCode::Escape {self.cancel_retarget();return Ok(());}
+            return Err("apply or cancel the retarget profile edit first".into());
+        }
         if self.standalone {
             return Ok(());
         }
@@ -2944,6 +2967,9 @@ impl App {
         self.commit_authoring()
     }
     fn panel_action(&mut self, action: panels::Action) -> Result<(), Box<dyn std::error::Error>> {
+        if self.retarget_draft.is_some() && !matches!(action, panels::Action::Field(_) | panels::Action::ComponentPage(_) | panels::Action::RetargetApply | panels::Action::RetargetCancel | panels::Action::RetargetRemove | panels::Action::RetargetPair(_) | panels::Action::RetargetBones(_) | panels::Action::RetargetBone(_) | panels::Action::RetargetBonePage(_) | panels::Action::RetargetBoneClose) {
+            return Err("apply or cancel the retarget profile edit first".into());
+        }
         self.finish_drag(false)?;
         self.trace.pending = true;
         self.trace.last_outcome = None;
@@ -2970,7 +2996,7 @@ impl App {
             }
             panels::Action::Field(index) => {
                 if matches!(self.inspector, InspectorMode::Components(_)) {
-                    let document = self.authoring_document()?;
+                    let document = self.panel_document()?;
                     let object = document
                         .objects
                         .get(self.selected)
@@ -3007,6 +3033,15 @@ impl App {
             panels::Action::AudioBus => self.toggle_audio_bus(),
             panels::Action::AudioSettingsLoad => self.open_audio_settings(),
             panels::Action::AudioSettingsSave => self.save_audio_settings(),
+            panels::Action::RetargetBones(index) => self.open_retarget_bones(index),
+            panels::Action::RetargetBone(index) => self.choose_retarget_bone(index),
+            panels::Action::RetargetBonePage(forward) => self.retarget_bone_page(forward),
+            panels::Action::RetargetBoneClose => {self.retarget_picker=None;self.panel_cache=None;Ok(())},
+            panels::Action::Retarget => self.begin_retarget(),
+            panels::Action::RetargetApply => self.apply_retarget(),
+            panels::Action::RetargetCancel => {self.cancel_retarget();Ok(())},
+            panels::Action::RetargetPair(add) => self.retarget_pair(add),
+            panels::Action::RetargetRemove => {self.remove_retarget_draft()?;Ok(())},
             panels::Action::Animation => {
                 if self.play.playing.is_some() {
                     return Err("stop play before editing animation".into());
@@ -3037,7 +3072,7 @@ impl App {
             }
             panels::Action::ComponentPage(forward) => {
                 if let InspectorMode::Components(page) = self.inspector {
-                    let document = self.authoring_document()?;
+                    let document = self.panel_document()?;
                     let object = document
                         .objects
                         .get(self.selected)
@@ -3433,6 +3468,7 @@ impl App {
         Ok(())
     }
     fn toggle_play(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        if self.retarget_draft.is_some() {return Err("apply or cancel the retarget profile edit before Play".into());}
         self.finish_drag(false)?;
         self.clear_panel_interactions();
         if self.audio.is_pending() {
@@ -4135,7 +4171,7 @@ fn configured_app_with_registry(
     let source_path = SourcePath::new(name)?;
     let (id, recipe) = match asset {
         Some(id) => (id, InputRecipe::Manifest(source_path.observation_id())),
-        None => (AssetId(name.into()), InputRecipe::Direct(source_path)),
+        None => (AssetId(name.into()), InputRecipe::Direct),
     };
     let mut app = App::create_with_registry(root, id, recipe, smoke, Arc::new(registry))?;
     if let Some(path) = scene_path

@@ -1,0 +1,51 @@
+{
+  "native_exits": [
+    0,
+    0
+  ],
+  "presented_frames": [
+    29,
+    29
+  ],
+  "stop_frames": [
+    32,
+    32
+  ],
+  "simulation_ticks": 12,
+  "target_clips": 0,
+  "target_pivot": 0.8,
+  "translation_scale": 2.0,
+  "contact_angle": 0.17616777487386365,
+  "centers": [
+    [
+      0.012381962,
+      0.0,
+      0.14020637
+    ],
+    [
+      0.14020637,
+      0.012381962,
+      0.0
+    ]
+  ],
+  "rotation_axes": [
+    "Y",
+    "Z"
+  ],
+  "masks": [
+    "XZ",
+    "XY"
+  ],
+  "basis_permutation": [
+    false,
+    true
+  ],
+  "source_gpu_model_resident": false,
+  "accepted_palette_matches": true,
+  "gpu_animation_bytes": 928,
+  "stop_animation_bytes": 0,
+  "authoring_restored": true,
+  "cpu_passed": 135,
+  "ignored": 11,
+  "angular_crossfade": false
+}

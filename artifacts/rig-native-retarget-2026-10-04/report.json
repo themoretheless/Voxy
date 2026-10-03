@@ -1,0 +1,34 @@
+{
+  "native_exit": 0,
+  "presented_frame": 28,
+  "stop_frame": 31,
+  "simulation_ticks": 12,
+  "source_phase": 0.20000001043081284,
+  "hip": [
+    0.0,
+    0.51,
+    0.0
+  ],
+  "sole": [
+    0.0050000213,
+    1.1920929e-07,
+    0.0
+  ],
+  "actor": [
+    0.06,
+    1.0,
+    0.0
+  ],
+  "target_clips": 0,
+  "source_gpu_model_resident": false,
+  "accepted_gpu_palette_matches": true,
+  "owners": 2,
+  "gpu_primitives": 2,
+  "source_geometry_buffers": 1,
+  "animation_bytes": 1184,
+  "stop_animation_bytes": 0,
+  "stop_authoring_restored": true,
+  "editor_cpu_passed": 134,
+  "ignored": 11,
+  "angular_retarget": false
+}

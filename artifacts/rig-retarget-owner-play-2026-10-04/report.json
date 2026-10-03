@@ -1,0 +1,12 @@
+{
+  "editor_cpu_passed": 133,
+  "ignored": 10,
+  "one_source_playback_clock": true,
+  "target_without_clips": true,
+  "independent_target_palette": true,
+  "mapped_translation_motion": true,
+  "invalid_profile_retains_frame_and_clock": true,
+  "package_after_source_deletion": true,
+  "angular_trajectory_transport": false,
+  "native_retarget_gpu_acceptance": false
+}

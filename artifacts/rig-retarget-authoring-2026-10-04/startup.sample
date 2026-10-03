@@ -1,0 +1,31 @@
+Analysis of sampling voxy-retarget-authoring-final-test (pid 47115) every 1 millisecond
+Process:         voxy-retarget-authoring-final-test [47115]
+Path:            /private/tmp/voxy-retarget-authoring-final-test
+Load Address:    0x1004fc000
+Identifier:      voxy-retarget-authoring-final-test
+Version:         ???
+Code Type:       ARM64
+Parent Process:  Python [47114]
+Target Type:     live task
+
+Date/Time:       2026-10-04 00:42:14.801 +0400
+Launch Time:     2026-10-04 00:41:40.478 +0400
+OS Version:      macOS 26.7.1 (25G313)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         112K
+Physical footprint (peak):  112K
+Idle exit:                  untracked
+----
+
+Call graph:
+    801 Thread_24068818: Main Thread   DispatchQueue_<multiple>
+      801 _dyld_start  (in dyld) + 0  [0x104da89c0]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        _dyld_start  (in dyld)        801
+
+Binary images description not available

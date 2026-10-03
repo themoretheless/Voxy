@@ -1,0 +1,13 @@
+{
+  "editor_cpu_passed": 135,
+  "animation_cpu_passed": 73,
+  "target_pivot": 0.8,
+  "source_pivot": 0.6,
+  "translation_scale": 2.0,
+  "target_clips": 0,
+  "ordered_cubic_collision_reference": true,
+  "query_failure_retains_scene_and_clock": true,
+  "mismatched_motion_basis_rejected": true,
+  "partial_translation_masks_supported": false,
+  "native_angular_acceptance": false
+}

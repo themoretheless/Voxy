@@ -1,0 +1,7 @@
+
+running 1 test
+VOXY_FOOT_GPU_ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+VOXY_FOOT_GPU retarget=false cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes=1184 stop_bytes=0
+test animated_models::tests::planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.06s

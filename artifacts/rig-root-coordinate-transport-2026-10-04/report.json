@@ -1,0 +1,9 @@
+{
+  "animation_cpu_passed": 73,
+  "linear_step_cubic": true,
+  "loop_span_order_preserved": true,
+  "projection_hulls_checked": true,
+  "speed_bounds_checked": true,
+  "invalid_and_overflow_recovery": true,
+  "retarget_owner_angular_integration": false
+}

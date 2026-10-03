@@ -204,6 +204,58 @@ pub struct RootRigidPath {
     end: RootRigidTransform,
 }
 impl RootRigidPath {
+    /// Changes coordinates by x_target = scale * basis * x_source + offset.
+    /// Retains every ordered span, cubic coefficient and STEP event.
+    /// # Errors
+    /// Rejects nonunit/nonfinite bases, negative/nonfinite scales and overflow.
+    pub fn transformed(
+        &self,
+        basis: DQuat,
+        scale: f64,
+        offset: DVec3,
+    ) -> Result<Self, AnimationError> {
+        if !basis.is_finite()
+            || !basis.is_normalized()
+            || !scale.is_finite()
+            || scale < 0.
+            || !offset.is_finite()
+        {
+            return Err(AnimationError::InvalidRetargetBinding);
+        }
+        let map = |value: DVec3| -> Result<DVec3, AnimationError> {
+            let result = scale * (basis * value) + offset;
+            if !result.is_finite() {
+                return Err(AnimationError::NumericalOverflow);
+            }
+            Ok(result)
+        };
+        let mut spans = Vec::with_capacity(self.spans.len());
+        for span in &self.spans {
+            let mut additive = [DVec3::ZERO; 4];
+            let mut pivot = [DVec3::ZERO; 4];
+            for i in 0..4 {
+                additive[i] = map(span.additive[i])?;
+                pivot[i] = map(span.pivot[i])?;
+            }
+            spans.push(RootRigidSpan {
+                rotation: span.rotation.conjugated(basis),
+                additive,
+                pivot,
+            });
+        }
+        let rotation = (basis * self.end.rotation * basis.conjugate()).normalize();
+        let end = RootRigidTransform {
+            translation: scale * (basis * self.end.translation) + offset - rotation * offset,
+            rotation,
+        }
+        .checked()?;
+        Ok(Self {
+            spans,
+            duration: self.duration,
+            end,
+        })
+    }
+
     #[must_use]
     pub fn spans(&self) -> &[RootRigidSpan] {
         &self.spans

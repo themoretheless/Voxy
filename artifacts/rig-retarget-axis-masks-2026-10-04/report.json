@@ -1,0 +1,11 @@
+{
+  "animation_cpu_passed": 74,
+  "editor_cpu_passed": 135,
+  "all_eight_target_masks": true,
+  "axis_permutation_source_routing": true,
+  "independent_target_clip_trajectory": true,
+  "planar_mask": true,
+  "mixing_subspaces_rejected": true,
+  "angular_collision_partial_mask": true,
+  "native_angular_gate": false
+}

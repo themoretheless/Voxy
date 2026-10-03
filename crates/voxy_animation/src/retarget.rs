@@ -135,6 +135,70 @@ impl RetargetBinding {
             local,
         })
     }
+    fn rigid_motion_joint(&self, source_joint: u16) -> Result<(&BoundJoint, Quat), AnimationError> {
+        let joint = self
+            .joints
+            .iter()
+            .find(|joint| joint.source == usize::from(source_joint))
+            .ok_or(AnimationError::InvalidRetargetBinding)?;
+        let source = self.source[joint.source].bind_local;
+        let target = self.target[joint.target].bind_local;
+        let basis =
+            (target.rotation * joint.rotation_basis * source.rotation.conjugate()).normalize();
+        if basis != joint.translation_basis && basis != -joint.translation_basis {
+            return Err(AnimationError::InvalidRetargetBinding);
+        }
+        Ok((joint, basis))
+    }
+    /// Resolves the source mask corresponding to target parent-local axes.
+    /// # Errors
+    /// Rejects mappings whose selected subspace needs a nondiagonal source mask.
+    /// Tests exact zero coefficients, never an angular tolerance or axis snapping.
+    pub fn source_root_motion_axes(
+        &self,
+        source_joint: u16,
+        target_axes: [bool; 3],
+    ) -> Result<[bool; 3], AnimationError> {
+        let (_, basis) = self.rigid_motion_joint(source_joint)?;
+        let matrix = glam::DMat3::from_quat(basis.as_dquat().normalize());
+        let mut source_axes = [false; 3];
+        for (axis, column) in [matrix.x_axis, matrix.y_axis, matrix.z_axis]
+            .iter()
+            .enumerate()
+        {
+            let mut selected = None;
+            for (row, value) in column.to_array().iter().enumerate() {
+                if *value != 0. {
+                    if selected.is_some_and(|flag| flag != target_axes[row]) {
+                        return Err(AnimationError::InvalidRetargetBinding);
+                    }
+                    selected = Some(target_axes[row]);
+                }
+            }
+            source_axes[axis] = selected.ok_or(AnimationError::InvalidRetargetBinding)?;
+        }
+        Ok(source_axes)
+    }
+    /// Transports a selected joint's ordered rigid trajectory into target coordinates.
+    /// The source path must be generated with `source_root_motion_axes` for this mask.
+    /// # Errors
+    /// Requires a common rigid basis and a representable target/source axis mask.
+    pub fn apply_root_path(
+        &self,
+        path: &crate::RootRigidPath,
+        source_joint: u16,
+        axes: [bool; 3],
+    ) -> Result<crate::RootRigidPath, AnimationError> {
+        self.source_root_motion_axes(source_joint, axes)?;
+        let (joint, basis) = self.rigid_motion_joint(source_joint)?;
+        let source = self.source[joint.source].bind_local;
+        let target = self.target[joint.target].bind_local;
+        let scale = f64::from(joint.translation_scale);
+        let basis = basis.as_dquat().normalize();
+        let offset =
+            target.translation.as_dvec3() - scale * (basis * source.translation.as_dvec3());
+        path.transformed(basis, scale, offset)
+    }
     /// Transfers pose and extracted parent-local root displacement as one candidate.
     /// No root motion is inferred from the difference between bind translations.
     /// # Errors
@@ -388,5 +452,127 @@ mod tests {
         assert!(binding.apply_frame(&frame).is_err());
         frame.root_motion = Vec3::ZERO;
         assert_eq!(binding.apply_frame(&frame).unwrap().root_motion, Vec3::ZERO);
+    }
+    #[test]
+    fn partial_masks_route_between_axes_and_match_independently_authored_target_curves() {
+        let rig = |name: &str, translation: Vec3| {
+            Skeleton::new(vec![Joint {
+                name: name.into(),
+                parent: None,
+                bind_local: Transform {
+                    translation,
+                    ..Transform::IDENTITY
+                },
+                inverse_bind: Mat4::IDENTITY,
+            }])
+            .unwrap()
+        };
+        let source_bind = Vec3::new(0.6, 0.2, 0.4);
+        let target_bind = Vec3::new(1., 2., 3.);
+        let source = rig("s", source_bind);
+        let target = rig("t", target_bind);
+        let basis = Quat::from_xyzw(0.5, 0.5, 0.5, 0.5);
+        let make_binding = |basis| {
+            RetargetBinding::new(
+                &source,
+                &target,
+                &[RetargetJoint {
+                    source: "s".into(),
+                    target: "t".into(),
+                    rotation_basis: basis,
+                    translation_basis: basis,
+                    translation_scale: 2.,
+                }],
+            )
+            .unwrap()
+        };
+        let binding = make_binding(basis);
+        assert_eq!(
+            binding
+                .source_root_motion_axes(0, [true, false, false])
+                .unwrap(),
+            [false, false, true]
+        );
+        let positions = [
+            source_bind + Vec3::new(0.1, 0.2, 0.3),
+            source_bind + Vec3::new(0.5, 0.5, 0.5),
+        ];
+        let rotations = [Quat::IDENTITY, Quat::from_rotation_y(0.8)];
+        let make_clip = |rig: &Skeleton, positions: [Vec3; 2], rotations: [Quat; 2]| {
+            AnimationClip::new(
+                "turn",
+                1.,
+                Playback::Loop,
+                vec![JointTrack {
+                    translations: positions
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, value)| Vec3Key {
+                            time: i as f32,
+                            value,
+                        })
+                        .collect(),
+                    rotations: rotations
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, value)| QuatKey {
+                            time: i as f32,
+                            value,
+                        })
+                        .collect(),
+                    ..Default::default()
+                }],
+                rig,
+            )
+            .unwrap()
+        };
+        let source_clip = make_clip(&source, positions, rotations);
+        let target_clip = make_clip(
+            &target,
+            positions.map(|p| target_bind + 2. * (basis * (p - source_bind))),
+            rotations.map(|q| (basis * q * basis.conjugate()).normalize()),
+        );
+        for mask in 0..8 {
+            let target_axes = std::array::from_fn(|i| mask & (1 << i) != 0);
+            let source_axes = binding.source_root_motion_axes(0, target_axes).unwrap();
+            let path = source_clip
+                .root_rigid_curve(0)
+                .unwrap()
+                .path(0.13, 1.2, source_axes, 256)
+                .unwrap();
+            let transported = binding.apply_root_path(&path, 0, target_axes).unwrap();
+            let reference = target_clip
+                .root_rigid_curve(0)
+                .unwrap()
+                .path(0.13, 1.2, target_axes, 256)
+                .unwrap();
+            assert_eq!(transported.spans().len(), reference.spans().len());
+            for (a, b) in transported.spans().iter().zip(reference.spans()) {
+                for i in 0..=100 {
+                    let a = a.sample(i as f64 / 100.).unwrap();
+                    let b = b.sample(i as f64 / 100.).unwrap();
+                    assert!(
+                        a.translation.abs_diff_eq(b.translation, 1e-6),
+                        "{target_axes:?} {a:?} {b:?}"
+                    );
+                    for axis in [glam::DVec3::X, glam::DVec3::Y, glam::DVec3::Z] {
+                        assert!((a.rotation * axis).abs_diff_eq(b.rotation * axis, 1e-6));
+                    }
+                }
+            }
+        }
+        let planar = make_binding(Quat::from_rotation_y(0.3));
+        assert_eq!(
+            planar
+                .source_root_motion_axes(0, [true, false, true])
+                .unwrap(),
+            [true, false, true]
+        );
+        assert!(
+            planar
+                .source_root_motion_axes(0, [true, false, false])
+                .is_err()
+        );
+        assert!(binding.source_root_motion_axes(1, [true; 3]).is_err());
     }
 }

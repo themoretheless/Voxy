@@ -1,0 +1,16 @@
+
+running 1 test
+VOXY_FOOT_GPU_ADAPTER AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+
+thread 'animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources' (23910737) panicked at crates/voxy_editor/src/animated_models/tests.rs:1319:5:
+assertion failed: render.synchronize(&renderer, &device, &queue, requests(), 1, 0,
+        65536).is_empty()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... FAILED
+
+failures:
+
+failures:
+    animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.07s

@@ -1,0 +1,22 @@
+{
+  "editor_cpu_passed": 137,
+  "ignored": 11,
+  "profile_draft_ui": true,
+  "source_and_joint_mapping_atomic": true,
+  "quaternion_intermediate_values_staged": true,
+  "invalid_apply_preserves_scene": true,
+  "cancel_preserves_scene": true,
+  "source_only_import_during_draft": true,
+  "undo_redo_one_transaction": true,
+  "profile_remove_undo": true,
+  "all_256_joint_profiles_fit_inspector": true,
+  "native_exit": 0,
+  "draft_controls_frame": 8,
+  "play_check_frame": 32,
+  "stop_frame": 35,
+  "simulation_ticks": 12,
+  "permuted_rotation_collision": true,
+  "stop_gpu_bytes": 0,
+  "initial_native_failure": "panels were disabled in smoke mode; final gate enables actual inspector presentation",
+  "angular_crossfade": false
+}
