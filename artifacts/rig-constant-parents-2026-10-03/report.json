@@ -11,5 +11,10 @@
     "crates/voxy_editor/src/animation_runtime.rs": "a6192da0c96d5d97ef1c6f4e0ab52d1d93fc0094c9d8c9c7420ece716d386dcb",
     "crates/voxy_editor/src/animation_smoke.rs": "195e023b79cfabf62a82ecbb3d11ec9ca5db2186eb1ece7c4cb7ec02a8169aa3",
     "target/release/voxy_app": "0cabc4a5930e3c4df8c2676a335ee3e569ad7a2e6970db86569e911ab15ea07a"
+  },
+  "final_validation": {
+    "ordinary_and_documentation_passed": 409,
+    "editor_device_passed": 6,
+    "all_commands_exit": 0
   }
 }
