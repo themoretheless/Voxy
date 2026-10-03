@@ -2048,3 +2048,41 @@ fn foot_contact_candidates_publish_only_after_character_tick_accepts() {
     assert_eq!(published_foot.anchor(), planted.state.anchor());
     assert!(published_foot.anchor().is_some());
 }
+
+#[test]
+fn ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_atomic() {
+    use glam::{DQuat,DVec3};
+    use voxy_animation::{RootRigidPath,RootRigidTwist};
+    use voxy_gameplay::CharacterRigidTrajectoryMotion;
+    let angular = DVec3::Y*2.;
+    let pivot = DVec3::X*0.6;
+    let path = RootRigidPath::from_twists(&[
+        (RootRigidTwist { linear:DVec3::X,angular:DVec3::ZERO },0.1),
+        (RootRigidTwist { linear:-angular.cross(pivot),angular },0.5)
+    ],2).unwrap();
+    let (mut scene,player) = trajectory_wall_scene();
+    let before = scene.local(player).unwrap();
+    let mut input = player_input().unwrap();
+    input.event(JUMP,1.).unwrap();
+    let request = CharacterRigidTrajectoryMotion { owner:player, trajectory:&path,
+        basis:DQuat::IDENTITY,origin:Vec3::ZERO,scale:1. };
+    let mut limited = CharacterPhysics::new(&scene,1,1).with_angular_trajectory_query_budget(1).unwrap();
+    assert_eq!(limited.fixed_step_with_rigid_trajectories(&mut scene,&mut input,1./60.,&[request]).unwrap_err(),PhysicsError::SweepBudget);
+    assert_eq!(scene.local(player).unwrap(),before);
+    assert!(input.state("jump").unwrap().pressed);
+    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let receipt = physics.fixed_step_with_rigid_trajectories(&mut scene,&mut input,1./60.,&[request]).unwrap()[0];
+    // Center: (.6-.5*cos(angle),0,.5*sin(angle)); front extent: .4*sin+.02*cos.
+    let angle = (0.23/0.9_f64.hypot(0.02)).asin()-0.02_f64.atan2(0.9);
+    let fraction = (0.1+angle/2.)/0.6;
+    assert!(!receipt.complete);
+    assert!((receipt.path_fraction-fraction).abs()<1e-7,"{receipt:?}");
+    assert!(receipt.path_fraction<=fraction);
+    assert_eq!(receipt.completed_spans,1);
+    assert!(receipt.displacement.as_dvec3().abs_diff_eq(DVec3::new(0.6-0.5*angle.cos(),0.,0.5*angle.sin()),1e-7));
+    assert!(receipt.rotation.abs_diff_eq(DQuat::from_rotation_y(angle),1e-7));
+    assert!(!input.state("jump").unwrap().pressed);
+    let accepted = scene.local(player).unwrap();
+    physics.fixed_step(&mut scene,&mut input,1./60.).unwrap();
+    assert_eq!(scene.local(player).unwrap(),accepted);
+}

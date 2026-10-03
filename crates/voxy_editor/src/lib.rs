@@ -2967,7 +2967,7 @@ impl App {
         self.commit_authoring()
     }
     fn panel_action(&mut self, action: panels::Action) -> Result<(), Box<dyn std::error::Error>> {
-        if self.retarget_draft.is_some() && !matches!(action, panels::Action::Field(_) | panels::Action::ComponentPage(_) | panels::Action::RetargetApply | panels::Action::RetargetCancel | panels::Action::RetargetRemove | panels::Action::RetargetPair(_) | panels::Action::RetargetBones(_) | panels::Action::RetargetBone(_) | panels::Action::RetargetBonePage(_) | panels::Action::RetargetBoneClose) {
+        if self.retarget_draft.is_some() && !matches!(action, panels::Action::Field(_) | panels::Action::ComponentPage(_) | panels::Action::RetargetApply | panels::Action::RetargetCancel | panels::Action::RetargetRemove | panels::Action::RetargetPair(_) | panels::Action::RetargetDeletePair(_) | panels::Action::RetargetBones(_) | panels::Action::RetargetBone(_) | panels::Action::RetargetBonePage(_) | panels::Action::RetargetBoneClose) {
             return Err("apply or cancel the retarget profile edit first".into());
         }
         self.finish_drag(false)?;
@@ -3041,6 +3041,7 @@ impl App {
             panels::Action::RetargetApply => self.apply_retarget(),
             panels::Action::RetargetCancel => {self.cancel_retarget();Ok(())},
             panels::Action::RetargetPair(add) => self.retarget_pair(add),
+            panels::Action::RetargetDeletePair(index) => self.delete_retarget_pair(index),
             panels::Action::RetargetRemove => {self.remove_retarget_draft()?;Ok(())},
             panels::Action::Animation => {
                 if self.play.playing.is_some() {

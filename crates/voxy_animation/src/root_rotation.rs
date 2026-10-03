@@ -116,6 +116,34 @@ impl RootRotationSpan {
         }
     }
 
+    pub(super) fn shifted_and_postcomposed(&self, offset:f64, rotation:DQuat) -> Result<Self,AnimationError> {
+        let mut span=self.clone();
+        span.start+=offset;
+        span.end+=offset;
+        if !span.start.is_finite() || !span.end.is_finite()
+            || (self.end>self.start && span.end<=span.start) {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        if self.end>self.start {
+            let factor=(self.end-self.start)/(span.end-span.start);
+            span.speed_bound=span.speed_bound.map(|bound|bound*factor);
+            if span.speed_bound.is_some_and(|bound| !bound.is_finite()) {
+                return Err(AnimationError::NumericalOverflow);
+            }
+        }
+        span.right=(span.right*rotation).normalize();
+        Ok(span)
+    }
+    pub(super) fn constant_velocity(start: f64, end: f64, from: DQuat, angular: DVec3)
+        -> Result<Self, AnimationError> {
+        let axis = from.conjugate() * angular * (end-start);
+        let speed = angular.length();
+        if !axis.is_finite() || !speed.is_finite() || end <= start {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        Ok(Self { start, end, shape: Shape::Arc { from, axis },
+            left:DQuat::IDENTITY, right:DQuat::IDENTITY, speed_bound:Some(speed) })
+    }
     pub(super) fn held(start: f64, end: f64, rotation: DQuat) -> Self {
         Self {
             start,
@@ -153,6 +181,7 @@ impl RootRotationSpan {
             return Err(AnimationError::InvalidSampleTime);
         }
         let dt = self.end - self.start;
+        if dt == 0. { return Ok(None); }
         let velocity = match &self.shape {
             Shape::Step { .. } => return Ok(None),
             Shape::Hold(_) => DVec3::ZERO,
@@ -172,6 +201,26 @@ impl RootRotationSpan {
         if !result.is_finite() {
             return Err(AnimationError::NumericalOverflow);
         }
+        Ok(Some(result))
+    }
+
+    /// Whole-span angular acceleration magnitude, per clip second squared.
+    /// STEP has no finite derivative. Cubic bounds include normalization terms.
+    /// # Errors
+    /// Rejects unproved quaternion norms or overflowing derivative bounds.
+    pub fn angular_acceleration_bound(&self) -> Result<Option<f64>, AnimationError> {
+        let dt = self.end-self.start;
+        if dt == 0. || self.is_step() { return Ok(None); }
+        let Shape::Cubic(control) = &self.shape else { return Ok(Some(0.)); };
+        let norm = norm_lower_bound(*control);
+        if norm <= 0. { return Err(AnimationError::RootRotationBudget); }
+        let first = control.windows(2).map(|p| 3.*(p[1]-p[0]).length()).fold(0_f64,f64::max)/dt;
+        let second = control.windows(3).map(|p| 6.*(p[2]-2.*p[1]+p[0]).length()).fold(0_f64,f64::max)/(dt*dt);
+        let bound = 2.*second/norm + 4.*(first/norm).powi(2);
+        let control_norm = control.iter().map(|q| q.length()).fold(0_f64,f64::max);
+        let guard = 4096.*f64::EPSILON*(bound+control_norm/norm/(dt*dt));
+        let result = bound+guard;
+        if !result.is_finite() { return Err(AnimationError::NumericalOverflow); }
         Ok(Some(result))
     }
 

@@ -103,3 +103,39 @@ Evidence: `artifacts/rig-retarget-authoring-2026-10-04/`, including the pre-fix 
 Retarget drafts now offer paged source/target bone selection from published models. The picker captures the draft and durable field binding, excludes unnamed or ambiguous joints, and rejects selection after intervening profile edits. Selection changes only the draft; Apply retains the existing single-transaction validation and history behavior. The native authoring driver includes a presented bone-choice phase before Apply.
 
 All 137 editor CPU tests passed again (11 optional GPU gates ignored); the release build completed. Three new native picker attempts exited with an acceptance timeout before any presented frame, reporting SkippedOccluded. Raising the final window made it focused but did not change the occlusion result. These failures do not establish native picker acceptance; earlier successful native retarget gates predate this picker change. Evidence is preserved under artifacts/rig-retarget-bone-picker-2026-10-04/. Push-or-clear saves the work locally and holds publication because the required native check failed.
+
+## Pose-only partial retarget profiles (2026-10-04)
+
+AnimationRuntime now transports pose-only frames separately when all root translation axes and root rotation consumption are disabled. RetargetBinding::apply_pose_frame validates source rig/channels, target palette and blend weight, preserves blend metadata and returns zero extracted motion without requiring the unused source motion joint to be mapped. Enabled root motion continues through apply_frame and its strict mapped-root admission.
+
+The partial-profile regression maps an animated child while leaving the selected root unmapped, verifies the independent target displacement and unchanged unmapped target bind pose, and proves that motion-enabled conversion still rejects. All 75 animation and 137 editor CPU tests pass (11 optional editor GPU gates ignored). Evidence: artifacts/rig-retarget-pose-only-2026-10-04/. This does not resolve the native picker occlusion failure or prove broad rig production readiness.
+
+The editor owner regression now imports a real multi-node GLB, attaches a child translation clip to the external source and uses a clipless target with only the child mapped. It independently checks target child displacement and skin matrix, unchanged root bind pose, no queued actor motion, rejection after enabling root extraction retaining accepted frame/clock, and retry from the accepted phase. The final editor CPU suite passes 138 tests (11 optional GPU gates ignored). Evidence: editor-owner-build.log, editor-owner-tests.log and report.json in the pose-only artifact directory.
+
+## Bone selection across rig reloads (2026-10-04)
+
+BonePicker now captures the published ModelAsset identity in addition to its draft/profile binding. Selection rejects a replaced rig even when the selected public name still resolves, requiring the list to be reopened. A failed reload retaining the same last-good ModelAsset keeps that accepted identity.
+
+The real-model authoring regression now opens the target list, verifies that source-only sourceHip is absent, triggers ordinary asynchronous target reimport with identical bone names, and checks stale selection rejection retaining both draft and accepted scene. Reopening selects the current target hip before the existing Apply/Undo/Redo checks. All 138 editor CPU tests pass (11 optional GPU gates ignored). Evidence: artifacts/rig-retarget-picker-reload-2026-10-04/. The prior native picker occlusion failure remains unresolved.
+
+## Current native picker gate and strict evidence (2026-10-04)
+
+A fresh release including pose-only partial retargeting and picker rig identity protection compiled successfully. The owned angular/permuted native runner exited with failure before any presented frame, again reporting SkippedOccluded; CUA observation returned cgWindowNotFound while the owned process was running. The process subsequently exited on its acceptance deadline and the runner recorded exit 1. AppKit's installed NSWindow.h confirms the existing visible mask (1UL << 1); the Metal visibility guard was not bypassed.
+
+The native runner now requires exact marker tokens for bone selection, authoring, angular Play and Stop in that order. Substring acceptance formerly allowed a Stop token to satisfy its Play prefix; that ambiguity is removed. Synthetic verifier checks reject missing selection, Stop-only Play substitution, reversed order and prefixed debug text, and admit complete ordered evidence. Current native success remains unproved. Evidence: artifacts/rig-retarget-picker-current-native-2026-10-04/.
+
+## Arbitrary retarget pair deletion (2026-10-04)
+
+Each source-bone inspector row now offers Remove for that particular pair, beside Pick. The field hit region is shortened so controls do not overlap. RetargetDeletePair mutates only the draft, checks bounds before removal, retains other pair order and closes picker/text bindings invalidated by the changed topology. Existing last-pair removal remains available. Apply still commits the complete validated draft as one history entry.
+
+The real-model regression deletes the middle of a three-bone profile while its picker is open, verifies exact remaining pairs and closed picker, checks out-of-range rejection retaining draft and authoring scene, then applies and undoes the deletion. All 138 editor CPU tests pass (11 optional GPU gates ignored). Evidence: artifacts/rig-retarget-pair-remove-2026-10-04/. Native presentation of the new controls remains unverified due the previously observed occlusion failure.
+
+## Zero-motion angular crossfade admission (2026-10-04)
+
+Animator's rigid and rotation trajectory entrypoints now permit active crossfades when elapsed timestep or playback speed is exactly zero. With zero speed, both source and target phase clocks remain fixed while the normal wall-time pose fade advances. The extracted velocity motion is exactly identity, so no moving blended rotation approximation is involved. Moving angular crossfades still reject before publication. Invalid timestep/rig/path errors retain the existing candidate transaction.
+
+The core regression starts a fade at a different target phase, compares paused blending against ordinary Animator advancement, checks identity composed path and rotation-only path, attempts moving and invalid-timestep updates, completes the fade while paused and resumes ordinary angular playback. All 76 animation and 138 editor CPU tests pass (11 optional editor GPU gates ignored). Evidence: artifacts/rig-angular-paused-fade-2026-10-04/. This admission does not implement moving angular crossfade trajectories.
+
+## Paused angular fade through physical owner ticks (2026-10-04)
+
+The editor regression imports the authored cubic root-pivot turn, starts a clip transition with zero playback speed and runs four owner preparation/CharacterPhysics ticks with root rotation consumption enabled. Transition weight progresses 0.25, 0.5, 0.75, 1 while clip phase remains zero. Empty identity trajectories cause no actor translation or orientation drift. A moving-fade attempt after the first tick rejects while retaining the accepted frame; after paused completion, resumed playback produces a nonempty angular trajectory. All 139 editor CPU tests pass (11 optional GPU gates ignored). Evidence: artifacts/rig-angular-paused-owner-2026-10-04/. This is CPU physical integration evidence; native presentation and general moving angular fade trajectory support remain unfinished.
