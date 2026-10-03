@@ -1,0 +1,20 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.85s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 2 tests
+test scene::skinning::tests::gpu_fox_step_clips_match_cpu_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1944
+REFERENCE_RIG_FRAME_PIXELS colored=1685
+REFERENCE_RIG_FRAME_PIXELS colored=1533
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((18.291, 30.917)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((76.584, 87.791)) compute_to_render_end_us=Some((103.375, 130.958))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000015258789 max_normal_error=0 motion=55.07767 cpu_pose_skin_us=(1513.792, 1619.125) preflight_us=(3297.709, 3440.875) prepared_encode_us=(32.541, 59.875) submit_readback_us=(1165.875, 1499.542) logical_bytes=222896
+ok
+test scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig-step supported=true period_ns=1 interval_us=Some((19.584, 26.792)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig-step supported=true viewport=128x128 render_us=Some((59.542, 70.833)) compute_to_render_end_us=Some((85.958, 190.083))
+REFERENCE_RIG_PROFILE asset=reference-rig-step adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000011920929 max_normal_error=0.00000014057727 motion=0 cpu_pose_skin_us=(328.125, 357.459) preflight_us=(750.875, 821.334) prepared_encode_us=(26.417, 32.958) submit_readback_us=(1040.5410000000002, 1475.3329999999999) logical_bytes=50408
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 137 filtered out; finished in 36.83s
+

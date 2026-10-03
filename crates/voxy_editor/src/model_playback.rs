@@ -24,7 +24,11 @@ impl ModelAnimation {
         if !self.speed.is_finite() || !(0.0..=8.0).contains(&self.speed) {
             return Err("invalid model animation speed");
         }
-        if self.clip.zip(clip_count).is_some_and(|(index, count)| index >= count) {
+        if self
+            .clip
+            .zip(clip_count)
+            .is_some_and(|(index, count)| index >= count)
+        {
             return Err("invalid model animation clip");
         }
         Ok(())
@@ -136,6 +140,65 @@ mod tests {
         );
         assert_eq!(other.advance_with(0.5, take).unwrap(), paused);
     }
+    #[test]
+    fn cubic_invalid_pose_never_reaches_publication_and_preserves_owner_clock() {
+        use voxy_animation::{
+            AnimationClip, Interpolation, JointTangents, JointTrack, Playback, QuatKey,
+            TrackInterpolation,
+        };
+        let mut model = model();
+        let count = model.skeleton.joints().len();
+        let mut tracks = vec![JointTrack::default(); count];
+        tracks[0].rotations = vec![
+            QuatKey {
+                time: 0.0,
+                value: glam::Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 2.0,
+                value: -glam::Quat::IDENTITY,
+            },
+        ];
+        let mut modes = vec![TrackInterpolation::default(); count];
+        modes[0].rotation = Interpolation::CubicSpline;
+        let mut tangents = vec![JointTangents::default(); count];
+        tangents[0].rotation = vec![[glam::Vec4::ZERO; 2]; 2];
+        let clip = AnimationClip::new_with_tangents(
+            "invalid middle",
+            2.0,
+            Playback::Clamp,
+            tracks,
+            modes,
+            tangents,
+            &model.skeleton,
+        )
+        .unwrap();
+        Arc::make_mut(&mut model).animations = vec![Arc::new(clip)];
+        assert!(model.sample_pose(Some(0), 1.0).is_err());
+        let mut playback = ModelPlayback::new(model, ModelAnimation::default()).unwrap();
+        playback.advance_with(0.25, |_, _| Ok(())).unwrap();
+        let mut control = playback.clone();
+        let mut published = false;
+        assert!(
+            playback
+                .advance_with(0.75, |_, _| {
+                    published = true;
+                    Ok(())
+                })
+                .is_err()
+        );
+        assert!(!published);
+        let pose = playback
+            .advance_with(0.25, |_, f| Ok(f.pose.clone()))
+            .unwrap();
+        assert_eq!(
+            pose,
+            control
+                .advance_with(0.25, |_, f| Ok(f.pose.clone()))
+                .unwrap()
+        );
+    }
+
     #[test]
     fn bind_selection_and_invalid_settings_are_explicit() {
         let model = model();

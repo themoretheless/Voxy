@@ -1,0 +1,49 @@
+{
+  "scope": "CUBICSPLINE TRS import, derivatives, bounded input and validated runtime pose admission",
+  "specification": "https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#_cubic_spline_interpolation",
+  "ordinary_tests": {
+    "animation": 15,
+    "editor": 91,
+    "renderer": 129,
+    "total_passed": 235,
+    "failed": 0
+  },
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "passed_tests": 1,
+    "samples": 65,
+    "vertices": 370,
+    "palette_nodes": 22,
+    "max_position_error": 2.3841858e-07,
+    "max_normal_error": 1.9082798e-07,
+    "rendered_every_sample": true,
+    "fixture": "Pinned RiggedFigure with unchanged key values and synthetic zero cubic derivatives",
+    "native_window_screenshot_acceptance": false,
+    "note": "GPU runtime implementation is unchanged by later additions to CPU failure tests and Rust documentation."
+  },
+  "source_hashes": {
+    "crates/voxy_animation/src/lib.rs": "04068214343e16ec6f67c1f4c2a3496b2e16c415bbcfd916ac061b6880753d95",
+    "crates/voxy_render/src/model.rs": "913dd34691800d3aaecf218bdd017c3008c96fdf82011fc4effa181028ba0ab4",
+    "crates/voxy_editor/src/model_playback.rs": "fe8e7ccd1978c7e0bd591d0c844b5645ac8bd969bb7fc85cc3cae41bd37ff5cd",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "2f85119f5407d73b56abe0b5fe8306dd0a9d086538dfbf0f36d6b644aee5be14"
+  },
+  "safety": {
+    "nonzero_derivatives_analytic_test": true,
+    "segment_seconds_test": true,
+    "zero_scale_rejected": true,
+    "zero_quaternion_rejected": true,
+    "failed_active_transition_keeps_clock": true,
+    "invalid_owner_pose_does_not_call_publication_consumer": true,
+    "all_three_outputs_count_toward_key_budget": true
+  },
+  "limitations": [
+    "Existing positive-scale skeleton constraint remains; zero/negative cubic scale is rejected",
+    "Morph-weight interpolation unsupported",
+    "No unchanged authored cubic asset acceptance",
+    "No native-window cubic screenshot acceptance",
+    "No non-Metal/CUDA claim",
+    "No continuous-time safety certificate; invalid samples retain the previous accepted pose",
+    "Infallible AnimationClip.sample remains available; validated runtime paths use try_sample"
+  ]
+}

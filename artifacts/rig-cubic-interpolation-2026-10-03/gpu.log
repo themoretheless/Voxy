@@ -1,0 +1,12 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 1 test
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig-cubic supported=true period_ns=1 interval_us=Some((18.667, 28.625)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig-cubic supported=true viewport=128x128 render_us=Some((56.459, 118.875)) compute_to_render_end_us=Some((83.958, 180.792))
+REFERENCE_RIG_PROFILE asset=reference-rig-cubic adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000019082798 motion=0.33887926 cpu_pose_skin_us=(353.58299999999997, 385.95799999999997) preflight_us=(773.459, 820.958) prepared_encode_us=(28.333000000000002, 38.208) submit_readback_us=(965.208, 1454.375) logical_bytes=50408
+test scene::skinning::tests::gpu_reference_rig_cubic_clips_match_cpu_and_render ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 140 filtered out; finished in 35.03s
+

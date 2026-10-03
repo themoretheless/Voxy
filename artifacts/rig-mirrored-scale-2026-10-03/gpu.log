@@ -1,0 +1,16 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 1 test
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=bind-mirror supported=true period_ns=1 interval_us=Some((19.167, 30.667)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=bind-mirror supported=true viewport=128x128 render_us=Some((56.5, 76.875)) compute_to_render_end_us=Some((82.708, 169.333))
+REFERENCE_RIG_PROFILE asset=bind-mirror adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000020861626 motion=0.33529758 cpu_pose_skin_us=(358.167, 392.834) preflight_us=(786.167, 848.083) prepared_encode_us=(29.75, 42.667) submit_readback_us=(1048.875, 1176.5420000000001) logical_bytes=50408
+REFERENCE_RIG_FRAME_PIXELS colored=1601
+REFERENCE_RIG_GPU_TIMESTAMPS asset=animated-mirror supported=true period_ns=1 interval_us=Some((19.125, 28.959)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=animated-mirror supported=true viewport=128x128 render_us=Some((58.375, 116.292)) compute_to_render_end_us=Some((85.125, 194.375))
+REFERENCE_RIG_PROFILE asset=animated-mirror adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000018907454 motion=0.33792466 cpu_pose_skin_us=(355.41700000000003, 384.625) preflight_us=(782.375, 858.9169999999999) prepared_encode_us=(30.209000000000003, 49.25) submit_readback_us=(1076.7089999999998, 1336.25) logical_bytes=50408
+test scene::skinning::tests::gpu_mirrored_rig_matches_cpu_positions_normals_and_render ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 142 filtered out; finished in 36.02s
+

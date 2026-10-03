@@ -1,0 +1,49 @@
+{
+  "scope": "Native two-primitive/two-texture authoring, Run and Stop; explicit motion only",
+  "fixture_generator": "tools/prepare_rig_material_preview.py",
+  "fixture_files": {
+    "materials.gltf": "3fe06963920375f9c3100eebd7e53652db8d54a391252af39088669883e2c347",
+    "fox.bin": "29cbee0a966259188522fcc4b831976c5057b3f7f73af30dde43938d182de365",
+    "cyan.png": "6099fbd6373c4ec6fc9655e81be0c331add48e550f95647c7aac54ada3710fa9",
+    "magenta.png": "3c5b6a0cc8a50ec551aa02af4546cd50a6db8a180ea3bf04fc0c628b2d4d2095"
+  },
+  "source_hashes": {
+    "crates/voxy_editor/src/lib.rs": "ec8fc0ed831d4b650a46cd0b6e10b503449d4a9b6e8e587fc3f1714fd42a4650",
+    "crates/voxy_editor/src/gpu_model.rs": "8aae6276e5d1bf1dd9d16dd520e9346c4c247887037b28b6e9024b6f6a085211"
+  },
+  "native_binary_sha256": "c084a63f5d39dd418c1763810c8682cbe6615b1e7de6af612b238a2998e1b801",
+  "viewed_screenshots": [
+    "before-play.png",
+    "playing.png",
+    "after-stop.png"
+  ],
+  "pointer_path": "Behavior -> Audio -> Mixer -> Components -> Add model animation -> clip 2 -> Play -> Stop",
+  "pixels": {
+    "before-play": {
+      "magenta": 40701,
+      "cyan": 23842
+    },
+    "playing": {
+      "magenta": 40713,
+      "cyan": 30830
+    },
+    "after-stop": {
+      "magenta": 40701,
+      "cyan": 23842
+    }
+  },
+  "viewport_material_masks_before_after_equal": true,
+  "playing_material_mask_differs": true,
+  "limitations": [
+    "Two opaque constant-color textures; no rich PBR or alpha acceptance",
+    "Image proves material visibility and bind preview restoration, not full animation pose equivalence",
+    "No non-Metal/CUDA claim",
+    "Initial camera framing provided by diagnostic parent; production auto-framing incomplete"
+  ],
+  "ordinary_editor_tests": {
+    "passed": 90,
+    "failed": 0,
+    "ignored": 6
+  },
+  "fixture_generator_sha256": "a89f565d479ffd46276ff8d304e1c65f234f6b5d731a80f80fb119bf0091a856"
+}

@@ -3,7 +3,7 @@
 use std::fmt;
 use std::sync::Arc;
 
-use glam::{Mat4, Quat, Vec3};
+use glam::{Mat4, Quat, Vec3, Vec4};
 
 pub const MAX_JOINTS: usize = 256;
 
@@ -31,7 +31,7 @@ impl Transform {
             && self.rotation.is_finite()
             && self.rotation.is_normalized()
             && self.scale.is_finite()
-            && self.scale.min_element() > 0.0
+            && self.scale.abs().min_element() > 0.0
     }
 }
 
@@ -116,6 +116,31 @@ pub struct JointTrack {
     pub scales: Vec<Vec3Key>,
 }
 
+/// Sampling mode belongs to each property channel, not to the whole clip.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub enum Interpolation {
+    #[default]
+    Linear,
+    Step,
+    CubicSpline,
+}
+
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct TrackInterpolation {
+    pub translation: Interpolation,
+    pub rotation: Interpolation,
+    pub scale: Interpolation,
+}
+
+/// Incoming and outgoing derivatives per key, in value units per second.
+/// Quaternion derivatives are four-component vectors, not normalized rotations.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct JointTangents {
+    pub translation: Vec<[Vec3; 2]>,
+    pub rotation: Vec<[Vec4; 2]>,
+    pub scale: Vec<[Vec3; 2]>,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Playback {
     Loop,
@@ -128,6 +153,8 @@ pub struct AnimationClip {
     duration: f32,
     playback: Playback,
     tracks: Arc<[JointTrack]>,
+    interpolation: Arc<[TrackInterpolation]>,
+    tangents: Arc<[JointTangents]>,
 }
 
 impl AnimationClip {
@@ -144,6 +171,59 @@ impl AnimationClip {
         tracks: Vec<JointTrack>,
         skeleton: &Skeleton,
     ) -> Result<Self, AnimationError> {
+        let interpolation = vec![TrackInterpolation::default(); tracks.len()];
+        Self::new_with_interpolation(name, duration, playback, tracks, interpolation, skeleton)
+    }
+
+    /// Creates a clip with independently specified translation, rotation and scale modes.
+    /// # Errors
+    /// Applies the same key validation as `new`, and rejects mismatched mode counts.
+    pub fn new_with_interpolation(
+        name: impl Into<Arc<str>>,
+        duration: f32,
+        playback: Playback,
+        tracks: Vec<JointTrack>,
+        interpolation: Vec<TrackInterpolation>,
+        skeleton: &Skeleton,
+    ) -> Result<Self, AnimationError> {
+        let tangents = vec![JointTangents::default(); tracks.len()];
+        Self::new_with_tangents(
+            name,
+            duration,
+            playback,
+            tracks,
+            interpolation,
+            tangents,
+            skeleton,
+        )
+    }
+
+    /// Creates a clip with validated cubic derivative streams.
+    /// # Errors
+    /// Rejects missing, non-finite, unused or incorrectly sized derivative streams,
+    /// or cubic channels with fewer than two keys, in addition to `new` validation.
+    #[allow(clippy::too_many_arguments)]
+    pub fn new_with_tangents(
+        name: impl Into<Arc<str>>,
+        duration: f32,
+        playback: Playback,
+        tracks: Vec<JointTrack>,
+        interpolation: Vec<TrackInterpolation>,
+        tangents: Vec<JointTangents>,
+        skeleton: &Skeleton,
+    ) -> Result<Self, AnimationError> {
+        if tangents.len() != tracks.len() {
+            return Err(AnimationError::TangentCountMismatch {
+                expected: tracks.len(),
+                actual: tangents.len(),
+            });
+        }
+        if interpolation.len() != tracks.len() {
+            return Err(AnimationError::InterpolationCountMismatch {
+                expected: tracks.len(),
+                actual: interpolation.len(),
+            });
+        }
         let name = name.into();
         if name.is_empty() || !duration.is_finite() || duration <= 0.0 {
             return Err(AnimationError::InvalidClipHeader);
@@ -155,6 +235,45 @@ impl AnimationClip {
             });
         }
         for (joint, track) in tracks.iter().enumerate() {
+            let mode = interpolation[joint];
+            let derivatives = &tangents[joint];
+            for (mode, count, tangent_count, finite) in [
+                (
+                    mode.translation,
+                    track.translations.len(),
+                    derivatives.translation.len(),
+                    derivatives
+                        .translation
+                        .iter()
+                        .flatten()
+                        .all(|v| v.is_finite()),
+                ),
+                (
+                    mode.rotation,
+                    track.rotations.len(),
+                    derivatives.rotation.len(),
+                    derivatives.rotation.iter().flatten().all(|v| v.is_finite()),
+                ),
+                (
+                    mode.scale,
+                    track.scales.len(),
+                    derivatives.scale.len(),
+                    derivatives.scale.iter().flatten().all(|v| v.is_finite()),
+                ),
+            ] {
+                if !finite
+                    || if mode == Interpolation::CubicSpline {
+                        count < 2 || tangent_count != count
+                    } else {
+                        tangent_count != 0
+                    }
+                {
+                    return Err(AnimationError::InvalidTrack {
+                        joint,
+                        reason: TrackError::InvalidTangents,
+                    });
+                }
+            }
             validate_vec_keys(&track.translations, duration, false)
                 .map_err(|reason| AnimationError::InvalidTrack { joint, reason })?;
             validate_quat_keys(&track.rotations, duration)
@@ -167,6 +286,8 @@ impl AnimationClip {
             duration,
             playback,
             tracks: tracks.into(),
+            interpolation: interpolation.into(),
+            tangents: tangents.into(),
         })
     }
 
@@ -180,6 +301,8 @@ impl AnimationClip {
         self.duration
     }
 
+    /// Samples without runtime admission. Cubic curves can produce invalid TRS;
+    /// use `try_sample` to reject those poses before publication.
     #[must_use]
     pub fn sample(&self, skeleton: &Skeleton, time: f32) -> Pose {
         let time = match self.playback {
@@ -189,15 +312,57 @@ impl AnimationClip {
         self.sample_local(skeleton, time)
     }
 
+    /// Samples a pose suitable for admission into a runtime or GPU palette.
+    /// # Errors
+    /// Rejects non-finite time, mismatched joint counts and invalid interpolated TRS.
+    pub fn try_sample(&self, skeleton: &Skeleton, time: f32) -> Result<Pose, AnimationError> {
+        if !time.is_finite() {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if self.tracks.len() != skeleton.joints.len() {
+            return Err(AnimationError::TrackCountMismatch {
+                expected: skeleton.joints.len(),
+                actual: self.tracks.len(),
+            });
+        }
+        let pose = self.sample(skeleton, time);
+        for (joint, transform) in pose.local.iter().enumerate() {
+            if !transform.is_valid() {
+                return Err(AnimationError::InvalidPose(joint));
+            }
+        }
+        Ok(pose)
+    }
+
     fn sample_local(&self, skeleton: &Skeleton, time: f32) -> Pose {
         let local = skeleton
             .joints
             .iter()
             .zip(self.tracks.iter())
-            .map(|(joint, track)| Transform {
-                translation: sample_vec3(&track.translations, time, joint.bind_local.translation),
-                rotation: sample_quat(&track.rotations, time, joint.bind_local.rotation),
-                scale: sample_vec3(&track.scales, time, joint.bind_local.scale),
+            .zip(self.interpolation.iter())
+            .zip(self.tangents.iter())
+            .map(|(((joint, track), mode), tangents)| Transform {
+                translation: sample_vec3(
+                    &track.translations,
+                    time,
+                    joint.bind_local.translation,
+                    mode.translation,
+                    &tangents.translation,
+                ),
+                rotation: sample_quat(
+                    &track.rotations,
+                    time,
+                    joint.bind_local.rotation,
+                    mode.rotation,
+                    &tangents.rotation,
+                ),
+                scale: sample_vec3(
+                    &track.scales,
+                    time,
+                    joint.bind_local.scale,
+                    mode.scale,
+                    &tangents.scale,
+                ),
             })
             .collect();
         Pose { local }
@@ -289,7 +454,7 @@ impl Pose {
     ///
     /// # Errors
     ///
-    /// Rejects different pose lengths or a non-finite weight.
+    /// Rejects different pose lengths, a non-finite weight, or invalid input/result TRS.
     pub fn blend(a: &Self, b: &Self, weight: f32) -> Result<Self, AnimationError> {
         if a.local.len() != b.local.len() {
             return Err(AnimationError::PoseCountMismatch);
@@ -298,18 +463,28 @@ impl Pose {
             return Err(AnimationError::InvalidBlendWeight);
         }
         let weight = weight.clamp(0.0, 1.0);
-        Ok(Self {
-            local: a
-                .local
-                .iter()
-                .zip(&b.local)
-                .map(|(a, b)| Transform {
+        let local = a
+            .local
+            .iter()
+            .zip(&b.local)
+            .enumerate()
+            .map(|(index, (a, b))| {
+                if !a.is_valid() || !b.is_valid() {
+                    return Err(AnimationError::InvalidPose(index));
+                }
+                let value = Transform {
                     translation: a.translation.lerp(b.translation, weight),
                     rotation: a.rotation.slerp(b.rotation, weight).normalize(),
                     scale: a.scale.lerp(b.scale, weight),
-                })
-                .collect(),
-        })
+                };
+                if value.is_valid() {
+                    Ok(value)
+                } else {
+                    Err(AnimationError::InvalidPose(index))
+                }
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        Ok(Self { local })
     }
 }
 
@@ -436,12 +611,14 @@ impl Animator {
         if !self.time.is_finite() || !root_motion.is_finite() {
             return Err(AnimationError::NumericalOverflow);
         }
-        let target = self.current.sample(skeleton, self.time);
+        let target = self.current.try_sample(skeleton, self.time)?;
         let (pose, weight, transition_complete) = if let Some(transition) = &mut self.transition {
             transition.source_time += delta;
             transition.elapsed = (transition.elapsed + dt).min(transition.duration);
             let weight = transition.elapsed / transition.duration;
-            let source = transition.source.sample(skeleton, transition.source_time);
+            let source = transition
+                .source
+                .try_sample(skeleton, transition.source_time)?;
             (
                 Pose::blend(&source, &target, weight)?,
                 weight,
@@ -472,7 +649,7 @@ fn validate_vec_keys(keys: &[Vec3Key], duration: f32, scale: bool) -> Result<(),
         {
             return Err(TrackError::InvalidTime);
         }
-        if !key.value.is_finite() || (scale && key.value.min_element() <= 0.0) {
+        if !key.value.is_finite() || (scale && key.value.abs().min_element() <= 0.0) {
             return Err(TrackError::InvalidValue);
         }
         previous = Some(key.time);
@@ -497,7 +674,13 @@ fn validate_quat_keys(keys: &[QuatKey], duration: f32) -> Result<(), TrackError>
     Ok(())
 }
 
-fn sample_vec3(keys: &[Vec3Key], time: f32, fallback: Vec3) -> Vec3 {
+fn sample_vec3(
+    keys: &[Vec3Key],
+    time: f32,
+    fallback: Vec3,
+    mode: Interpolation,
+    tangents: &[[Vec3; 2]],
+) -> Vec3 {
     let Some(first) = keys.first() else {
         return fallback;
     };
@@ -510,11 +693,34 @@ fn sample_vec3(keys: &[Vec3Key], time: f32, fallback: Vec3) -> Vec3 {
     }
     sample_segment(keys, time).map_or_else(
         || first.value,
-        |(from, to, alpha)| from.value.lerp(to.value, alpha),
+        |(index, from, to, alpha)| match mode {
+            Interpolation::Step => from.value,
+            Interpolation::Linear => from.value.lerp(to.value, alpha),
+            Interpolation::CubicSpline => {
+                if alpha == 0.0 {
+                    from.value
+                } else {
+                    hermite(
+                        from.value,
+                        to.value,
+                        tangents[index][1],
+                        tangents[index + 1][0],
+                        alpha,
+                        to.time - from.time,
+                    )
+                }
+            }
+        },
     )
 }
 
-fn sample_quat(keys: &[QuatKey], time: f32, fallback: Quat) -> Quat {
+fn sample_quat(
+    keys: &[QuatKey],
+    time: f32,
+    fallback: Quat,
+    mode: Interpolation,
+    tangents: &[[Vec4; 2]],
+) -> Quat {
     let Some(first) = keys.first() else {
         return fallback;
     };
@@ -527,8 +733,44 @@ fn sample_quat(keys: &[QuatKey], time: f32, fallback: Quat) -> Quat {
     }
     sample_segment(keys, time).map_or_else(
         || first.value,
-        |(from, to, alpha)| from.value.slerp(to.value, alpha).normalize(),
+        |(index, from, to, alpha)| match mode {
+            Interpolation::Step => from.value,
+            Interpolation::Linear => from.value.slerp(to.value, alpha).normalize(),
+            Interpolation::CubicSpline => {
+                if alpha == 0.0 {
+                    return from.value;
+                }
+                let value = hermite(
+                    Vec4::from_array(from.value.to_array()),
+                    Vec4::from_array(to.value.to_array()),
+                    tangents[index][1],
+                    tangents[index + 1][0],
+                    alpha,
+                    to.time - from.time,
+                );
+                let scale = value.abs().max_element();
+                if !value.is_finite() || scale == 0.0 {
+                    // The existing pose/palette admission rejects this invalid
+                    // sample before committing clocks or GPU resources.
+                    Quat::from_array([f32::NAN; 4])
+                } else {
+                    Quat::from_array((value / scale).normalize().to_array())
+                }
+            }
+        },
     )
+}
+
+fn hermite<T>(from: T, to: T, outgoing: T, incoming: T, t: f32, duration: f32) -> T
+where
+    T: Copy + std::ops::Mul<f32, Output = T> + std::ops::Add<Output = T>,
+{
+    let t2 = t * t;
+    let t3 = t2 * t;
+    from * (2.0 * t3 - 3.0 * t2 + 1.0)
+        + outgoing * (duration * (t3 - 2.0 * t2 + t))
+        + to * (-2.0 * t3 + 3.0 * t2)
+        + incoming * (duration * (t3 - t2))
 }
 
 trait Timed {
@@ -547,7 +789,7 @@ impl Timed for QuatKey {
     }
 }
 
-fn sample_segment<T: Timed>(keys: &[T], time: f32) -> Option<(&T, &T, f32)> {
+fn sample_segment<T: Timed>(keys: &[T], time: f32) -> Option<(usize, &T, &T, f32)> {
     let upper = keys.partition_point(|key| key.time() <= time);
     if upper == 0 || upper == keys.len() {
         return None;
@@ -555,23 +797,27 @@ fn sample_segment<T: Timed>(keys: &[T], time: f32) -> Option<(&T, &T, f32)> {
     let from = &keys[upper - 1];
     let to = &keys[upper];
     let alpha = (time - from.time()) / (to.time() - from.time());
-    Some((from, to, alpha))
+    Some((upper - 1, from, to, alpha))
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum TrackError {
+    InvalidTangents,
     InvalidTime,
     InvalidValue,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AnimationError {
+    InvalidSampleTime,
     InvalidJointCount(usize),
     InvalidJointName(usize),
     InvalidJointTransform(usize),
     InvalidParent { joint: usize, parent: u16 },
     InvalidClipHeader,
     TrackCountMismatch { expected: usize, actual: usize },
+    InterpolationCountMismatch { expected: usize, actual: usize },
+    TangentCountMismatch { expected: usize, actual: usize },
     InvalidTrack { joint: usize, reason: TrackError },
     PoseCountMismatch,
     InvalidPose(usize),
@@ -616,6 +862,161 @@ mod tests {
     }
 
     #[test]
+    fn mirrored_bind_transforms_keep_signed_scale_through_hierarchy_and_palette() {
+        for bits in 0_u32..8 {
+            let scale = Vec3::new(
+                if bits & 1 != 0 { -2.0 } else { 2.0 },
+                if bits & 2 != 0 { -3.0 } else { 3.0 },
+                if bits & 4 != 0 { -4.0 } else { 4.0 },
+            );
+            let root = Transform {
+                scale,
+                rotation: Quat::from_rotation_y(0.4),
+                translation: Vec3::new(1.0, 2.0, 3.0),
+            };
+            let child = Transform {
+                translation: Vec3::Y,
+                ..Transform::IDENTITY
+            };
+            let skeleton = Skeleton::new(vec![
+                Joint {
+                    name: "root".into(),
+                    parent: None,
+                    bind_local: root,
+                    inverse_bind: Mat4::IDENTITY,
+                },
+                Joint {
+                    name: "child".into(),
+                    parent: Some(0),
+                    bind_local: child,
+                    inverse_bind: Mat4::IDENTITY,
+                },
+            ])
+            .unwrap();
+            let palette = skeleton.bind_pose().skin_matrices(&skeleton).unwrap();
+            assert!(palette[0].abs_diff_eq(root.matrix(), 1e-6));
+            assert!(palette[1].abs_diff_eq(root.matrix() * child.matrix(), 1e-6));
+            assert_eq!(
+                palette[0].determinant().is_sign_negative(),
+                bits.count_ones() % 2 == 1
+            );
+        }
+    }
+
+    #[test]
+    fn signed_scale_channels_and_blends_reject_only_singular_samples() {
+        let skeleton = skeleton();
+        let tracks = vec![
+            JointTrack {
+                scales: vec![
+                    Vec3Key {
+                        time: 0.0,
+                        value: Vec3::ONE,
+                    },
+                    Vec3Key {
+                        time: 2.0,
+                        value: Vec3::new(-1.0, 1.0, 1.0),
+                    },
+                ],
+                ..JointTrack::default()
+            },
+            JointTrack::default(),
+        ];
+        let linear =
+            AnimationClip::new("mirror", 2.0, Playback::Clamp, tracks.clone(), &skeleton).unwrap();
+        assert_eq!(
+            linear.try_sample(&skeleton, 1.5).unwrap().local()[0]
+                .scale
+                .x,
+            -0.5
+        );
+        assert!(linear.try_sample(&skeleton, 1.0).is_err());
+        let a = linear.try_sample(&skeleton, 0.0).unwrap();
+        let b = linear.try_sample(&skeleton, 2.0).unwrap();
+        assert!(Pose::blend(&a, &b, 0.5).is_err());
+        assert_eq!(Pose::blend(&a, &b, 1.0).unwrap(), b);
+        let mut animator = Animator::new(Arc::new(linear));
+        animator.advance(&skeleton, 0.5).unwrap();
+        let before = animator.time;
+        assert!(animator.advance(&skeleton, 0.5).is_err());
+        assert_eq!(animator.time, before);
+        let step = AnimationClip::new_with_interpolation(
+            "step mirror",
+            2.0,
+            Playback::Clamp,
+            tracks.clone(),
+            vec![
+                TrackInterpolation {
+                    scale: Interpolation::Step,
+                    ..TrackInterpolation::default()
+                },
+                TrackInterpolation::default(),
+            ],
+            &skeleton,
+        )
+        .unwrap();
+        assert_eq!(
+            step.try_sample(&skeleton, 1.0).unwrap().local()[0].scale,
+            Vec3::ONE
+        );
+        assert_eq!(
+            step.try_sample(&skeleton, 2.0).unwrap().local()[0].scale,
+            Vec3::new(-1.0, 1.0, 1.0)
+        );
+        let cubic = AnimationClip::new_with_tangents(
+            "cubic mirror",
+            2.0,
+            Playback::Clamp,
+            tracks,
+            vec![
+                TrackInterpolation {
+                    scale: Interpolation::CubicSpline,
+                    ..TrackInterpolation::default()
+                },
+                TrackInterpolation::default(),
+            ],
+            vec![
+                JointTangents {
+                    scale: vec![[Vec3::ZERO; 2]; 2],
+                    ..JointTangents::default()
+                },
+                JointTangents::default(),
+            ],
+            &skeleton,
+        )
+        .unwrap();
+        assert!(cubic.try_sample(&skeleton, 1.0).is_err());
+        assert!(cubic.try_sample(&skeleton, 1.5).unwrap().local()[0].scale.x < 0.0);
+        let mirrored = AnimationClip::new(
+            "negative endpoints",
+            2.0,
+            Playback::Clamp,
+            vec![
+                JointTrack {
+                    scales: vec![
+                        Vec3Key {
+                            time: 0.0,
+                            value: -Vec3::ONE,
+                        },
+                        Vec3Key {
+                            time: 2.0,
+                            value: -Vec3::ONE * 2.0,
+                        },
+                    ],
+                    ..JointTrack::default()
+                },
+                JointTrack::default(),
+            ],
+            &skeleton,
+        )
+        .unwrap();
+        assert_eq!(
+            mirrored.try_sample(&skeleton, 1.0).unwrap().local()[0].scale,
+            Vec3::splat(-1.5)
+        );
+    }
+
+    #[test]
     fn hierarchy_and_inverse_bind_produce_skin_matrices() {
         let skeleton = skeleton();
         let matrices = skeleton.bind_pose().skin_matrices(&skeleton).unwrap();
@@ -625,6 +1026,384 @@ mod tests {
                 .iter()
                 .all(|matrix| matrix.abs_diff_eq(Mat4::IDENTITY, 1.0e-6))
         );
+    }
+
+    #[test]
+    fn cubic_derivatives_use_segment_seconds_and_normalize_rotation() {
+        let skeleton = skeleton();
+        let end = Quat::from_rotation_y(std::f32::consts::FRAC_PI_2);
+        let tracks = vec![
+            JointTrack {
+                translations: vec![
+                    Vec3Key {
+                        time: 1.0,
+                        value: Vec3::ZERO,
+                    },
+                    Vec3Key {
+                        time: 3.0,
+                        value: Vec3::X * 2.0,
+                    },
+                ],
+                rotations: vec![
+                    QuatKey {
+                        time: 1.0,
+                        value: Quat::IDENTITY,
+                    },
+                    QuatKey {
+                        time: 3.0,
+                        value: end,
+                    },
+                ],
+                scales: vec![
+                    Vec3Key {
+                        time: 1.0,
+                        value: Vec3::ONE,
+                    },
+                    Vec3Key {
+                        time: 3.0,
+                        value: Vec3::splat(3.0),
+                    },
+                ],
+            },
+            JointTrack::default(),
+        ];
+        let mode = TrackInterpolation {
+            translation: Interpolation::CubicSpline,
+            rotation: Interpolation::CubicSpline,
+            scale: Interpolation::Linear,
+        };
+        let tangents = vec![
+            JointTangents {
+                translation: vec![[Vec3::ZERO, Vec3::X * 4.0], [Vec3::X * -2.0, Vec3::ZERO]],
+                rotation: vec![[Vec4::ZERO, Vec4::Z * 2.0], [Vec4::ZERO; 2]],
+                scale: vec![],
+            },
+            JointTangents::default(),
+        ];
+        let clip = AnimationClip::new_with_tangents(
+            "cubic",
+            4.0,
+            Playback::Clamp,
+            tracks.clone(),
+            vec![mode, TrackInterpolation::default()],
+            tangents.clone(),
+            &skeleton,
+        )
+        .unwrap();
+        assert_eq!(
+            clip.try_sample(&skeleton, 0.0).unwrap().local()[0].translation,
+            Vec3::ZERO
+        );
+        assert!(
+            clip.try_sample(&skeleton, 1.5).unwrap().local()[0]
+                .translation
+                .abs_diff_eq(Vec3::X * 1.625, 1e-6)
+        );
+        let midpoint = clip.try_sample(&skeleton, 2.0).unwrap();
+        assert!(
+            midpoint.local()[0]
+                .translation
+                .abs_diff_eq(Vec3::X * 2.5, 1e-6)
+        );
+        assert_eq!(midpoint.local()[0].scale, Vec3::splat(2.0));
+        let expected = (Vec4::from_array(Quat::IDENTITY.to_array()) * 0.5
+            + Vec4::from_array(end.to_array()) * 0.5
+            + Vec4::Z * 0.5)
+            .normalize();
+        assert!(
+            Vec4::from_array(midpoint.local()[0].rotation.to_array()).abs_diff_eq(expected, 1e-6)
+        );
+        assert!(midpoint.local()[0].rotation.is_normalized());
+        assert_eq!(
+            clip.try_sample(&skeleton, 3.0).unwrap().local()[0].rotation,
+            end
+        );
+        assert_eq!(
+            clip.try_sample(&skeleton, 10.0).unwrap().local()[0].translation,
+            Vec3::X * 2.0
+        );
+        assert!(clip.try_sample(&skeleton, f32::NAN).is_err());
+        assert!(
+            AnimationClip::new_with_interpolation(
+                "missing",
+                4.0,
+                Playback::Clamp,
+                tracks.clone(),
+                vec![mode, TrackInterpolation::default()],
+                &skeleton
+            )
+            .is_err()
+        );
+        let mut broken = tangents.clone();
+        broken[0].rotation[0][1].x = f32::INFINITY;
+        assert!(
+            AnimationClip::new_with_tangents(
+                "bad",
+                4.0,
+                Playback::Clamp,
+                tracks.clone(),
+                vec![mode, TrackInterpolation::default()],
+                broken,
+                &skeleton
+            )
+            .is_err()
+        );
+        let mut short = tracks;
+        short[0].translations.truncate(1);
+        assert!(
+            AnimationClip::new_with_tangents(
+                "short",
+                4.0,
+                Playback::Clamp,
+                short,
+                vec![mode, TrackInterpolation::default()],
+                tangents,
+                &skeleton
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn invalid_cubic_pose_keeps_animator_clock_and_transition() {
+        let skeleton = skeleton();
+        let cubic = AnimationClip::new_with_tangents(
+            "zero quaternion",
+            2.0,
+            Playback::Clamp,
+            vec![
+                JointTrack {
+                    rotations: vec![
+                        QuatKey {
+                            time: 0.0,
+                            value: Quat::IDENTITY,
+                        },
+                        QuatKey {
+                            time: 2.0,
+                            value: -Quat::IDENTITY,
+                        },
+                    ],
+                    ..JointTrack::default()
+                },
+                JointTrack::default(),
+            ],
+            vec![
+                TrackInterpolation {
+                    rotation: Interpolation::CubicSpline,
+                    ..TrackInterpolation::default()
+                },
+                TrackInterpolation::default(),
+            ],
+            vec![
+                JointTangents {
+                    rotation: vec![[Vec4::ZERO; 2]; 2],
+                    ..JointTangents::default()
+                },
+                JointTangents::default(),
+            ],
+            &skeleton,
+        )
+        .unwrap();
+        assert!(matches!(
+            cubic.try_sample(&skeleton, 1.0),
+            Err(AnimationError::InvalidPose(0))
+        ));
+        let valid = Arc::new(
+            AnimationClip::new(
+                "bind",
+                2.0,
+                Playback::Clamp,
+                vec![JointTrack::default(); 2],
+                &skeleton,
+            )
+            .unwrap(),
+        );
+        let mut animator = Animator::new(valid);
+        animator.transition_to(Arc::new(cubic), 2.0).unwrap();
+        let before = animator.clone();
+        assert!(animator.advance(&skeleton, 1.0).is_err());
+        assert_eq!(animator.time, before.time);
+        assert_eq!(
+            animator.transition.as_ref().unwrap().elapsed,
+            before.transition.as_ref().unwrap().elapsed
+        );
+        assert_eq!(
+            animator.transition.as_ref().unwrap().source_time,
+            before.transition.as_ref().unwrap().source_time
+        );
+        assert!(animator.advance(&skeleton, 0.25).is_ok());
+    }
+
+    #[test]
+    fn cubic_scale_overshoot_is_sampled_and_invalid_zero_scale_is_rejected() {
+        let skeleton = skeleton();
+        let clip = AnimationClip::new_with_tangents(
+            "scale",
+            2.0,
+            Playback::Clamp,
+            vec![
+                JointTrack {
+                    scales: vec![
+                        Vec3Key {
+                            time: 0.0,
+                            value: Vec3::ONE,
+                        },
+                        Vec3Key {
+                            time: 1.0,
+                            value: Vec3::ONE,
+                        },
+                    ],
+                    ..JointTrack::default()
+                },
+                JointTrack::default(),
+            ],
+            vec![
+                TrackInterpolation {
+                    scale: Interpolation::CubicSpline,
+                    ..TrackInterpolation::default()
+                },
+                TrackInterpolation::default(),
+            ],
+            vec![
+                JointTangents {
+                    scale: vec![
+                        [Vec3::ZERO, Vec3::splat(-4.0)],
+                        [Vec3::splat(4.0), Vec3::ZERO],
+                    ],
+                    ..JointTangents::default()
+                },
+                JointTangents::default(),
+            ],
+            &skeleton,
+        )
+        .unwrap();
+        assert!(
+            clip.try_sample(&skeleton, 0.25).unwrap().local()[0]
+                .scale
+                .abs_diff_eq(Vec3::splat(0.25), 1e-6)
+        );
+        assert!(matches!(
+            clip.try_sample(&skeleton, 0.5),
+            Err(AnimationError::InvalidPose(0))
+        ));
+        assert_eq!(
+            clip.try_sample(&skeleton, 1.0).unwrap().local()[0].scale,
+            Vec3::ONE
+        );
+    }
+
+    #[test]
+    fn step_channels_hold_values_at_boundaries_without_changing_linear_channels() {
+        let skeleton = skeleton();
+        let rotation = Quat::from_rotation_z(1.2);
+        let track = JointTrack {
+            translations: vec![
+                Vec3Key {
+                    time: 0.2,
+                    value: Vec3::ZERO,
+                },
+                Vec3Key {
+                    time: 0.5,
+                    value: Vec3::X,
+                },
+                Vec3Key {
+                    time: 1.0,
+                    value: Vec3::Y,
+                },
+            ],
+            rotations: vec![
+                QuatKey {
+                    time: 0.2,
+                    value: Quat::IDENTITY,
+                },
+                QuatKey {
+                    time: 0.5,
+                    value: rotation,
+                },
+            ],
+            scales: vec![
+                Vec3Key {
+                    time: 0.0,
+                    value: Vec3::ONE,
+                },
+                Vec3Key {
+                    time: 1.0,
+                    value: Vec3::splat(3.0),
+                },
+            ],
+        };
+        let tracks = vec![track, JointTrack::default()];
+        let modes = vec![
+            TrackInterpolation {
+                translation: Interpolation::Step,
+                rotation: Interpolation::Step,
+                scale: Interpolation::Linear,
+            },
+            TrackInterpolation::default(),
+        ];
+        let clip = AnimationClip::new_with_interpolation(
+            "mixed",
+            2.0,
+            Playback::Clamp,
+            tracks.clone(),
+            modes.clone(),
+            &skeleton,
+        )
+        .unwrap();
+        for (time, expected) in [
+            (-1.0, Vec3::ZERO),
+            (0.2, Vec3::ZERO),
+            (0.5_f32.next_down(), Vec3::ZERO),
+            (0.5, Vec3::X),
+            (0.5_f32.next_up(), Vec3::X),
+            (1.0_f32.next_down(), Vec3::X),
+            (1.0, Vec3::Y),
+            (3.0, Vec3::Y),
+        ] {
+            let pose = clip.sample(&skeleton, time);
+            assert_eq!(pose.local()[0].translation, expected, "time={time}");
+            assert_eq!(pose.local()[1], skeleton.joints()[1].bind_local);
+        }
+        assert_eq!(
+            clip.sample(&skeleton, 0.5_f32.next_down()).local()[0].rotation,
+            Quat::IDENTITY
+        );
+        assert_eq!(clip.sample(&skeleton, 0.5).local()[0].rotation, rotation);
+        assert_eq!(
+            clip.sample(&skeleton, 0.5).local()[0].scale,
+            Vec3::splat(2.0)
+        );
+        let looped = AnimationClip::new_with_interpolation(
+            "mixed",
+            2.0,
+            Playback::Loop,
+            tracks.clone(),
+            modes,
+            &skeleton,
+        )
+        .unwrap();
+        assert_eq!(
+            looped.sample(&skeleton, 2.0).local()[0].translation,
+            Vec3::ZERO
+        );
+        assert_eq!(
+            looped.sample(&skeleton, -1.5).local()[0].translation,
+            Vec3::X
+        );
+        assert!(matches!(
+            AnimationClip::new_with_interpolation(
+                "bad",
+                2.0,
+                Playback::Loop,
+                tracks,
+                vec![],
+                &skeleton
+            ),
+            Err(AnimationError::InterpolationCountMismatch {
+                expected: 2,
+                actual: 0
+            })
+        ));
     }
 
     #[test]

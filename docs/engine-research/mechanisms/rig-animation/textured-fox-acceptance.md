@@ -45,6 +45,25 @@ Final native binary is a separate hashed snapshot preceding later legacy shader
 source editing and formatting; native scene-material acceptance is unchanged.
 Evidence and images: artifacts/fox-animation-2026-10-03/.
 
-Limits remain: multi-primitive authoring material preview, rich material maps,
+Subsequent local work adds separate bind-pose authoring draws for multiple
+primitives, each using its published texture binding. Additional preview buffers
+are preflighted and counted as mandatory geometry; single-primitive models reuse
+the existing base geometry. A two-color primitive regression verifies ordering,
+color preservation and exact allocation accounting with the NOOP device. Native
+visual acceptance now covers two independently bound textures before Play, Run
+selected through the inspector, and Stop through actual pointer input. The
+magenta/cyan viewport masks match exactly before Play and after Stop; both remain
+visible during Run. See artifacts/rig-material-preview-2026-10-03/report.json and
+its three inspected screenshots. The deterministic fixture generator splits
+the pinned Fox triangles and adds a diagnostic framing parent. This proves the
+material path and authoring restoration, not full glTF material support.
+
+The same acceptance exposed implicit demo Spin attached to ordinary scene roots
+on Play. That behavior has been removed: authored AngularMotion and explicit
+registered gameplay behavior remain the sources of motion. Fixed-loop regression
+now requires an unconfigured object to retain its rotation; the separate authored
+motion regression continues to require its configured two radians of rotation.
+
+Limits remain: rich material maps,
 alpha modes, influence counts above four, morphs, complex humanoids, retargeting,
 blending/root motion, full native-frame profiling and non-Metal/CUDA verification.

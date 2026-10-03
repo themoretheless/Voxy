@@ -4,7 +4,8 @@ use std::sync::Arc;
 use glam::{Mat4, Quat, Vec3};
 use gltf::animation::util::ReadOutputs;
 use voxy_animation::{
-    AnimationClip, Joint, JointTrack, Playback, QuatKey, Skeleton, Transform, Vec3Key,
+    AnimationClip, Interpolation, Joint, JointTangents, JointTrack, Playback, QuatKey, Skeleton,
+    TrackInterpolation, Transform, Vec3Key,
 };
 
 use crate::{SceneMesh, SceneVertex, SkinnedMesh, SkinnedVertex};
@@ -427,18 +428,35 @@ impl ModelAsset {
         let mut key_count = 0usize;
         for animation in gltf.animations() {
             let mut tracks = vec![JointTrack::default(); nodes.len()];
+            let mut modes = vec![TrackInterpolation::default(); nodes.len()];
+            let mut tangents = vec![JointTangents::default(); nodes.len()];
             let mut seen = std::collections::HashSet::new();
             let mut duration = 0f32;
             for channel in animation.channels() {
-                if channel.sampler().interpolation() != gltf::animation::Interpolation::Linear {
-                    return Err(fail("only LINEAR animation supported"));
-                }
+                let mode = match channel.sampler().interpolation() {
+                    gltf::animation::Interpolation::Linear => Interpolation::Linear,
+                    gltf::animation::Interpolation::Step => Interpolation::Step,
+                    gltf::animation::Interpolation::CubicSpline => Interpolation::CubicSpline,
+                };
                 let target = channel.target();
                 if !seen.insert((target.node().index(), target.property() as u8)) {
                     return Err(fail("duplicate animation channel"));
                 }
+                let output_count = channel
+                    .sampler()
+                    .input()
+                    .count()
+                    .checked_mul(if mode == Interpolation::CubicSpline {
+                        3
+                    } else {
+                        1
+                    })
+                    .ok_or_else(|| fail("animation key overflow"))?;
+                if channel.sampler().output().count() != output_count {
+                    return Err(fail("animation output count mismatch"));
+                }
                 key_count = key_count
-                    .checked_add(channel.sampler().input().count())
+                    .checked_add(output_count)
                     .ok_or_else(|| fail("key overflow"))?;
                 if key_count > limits.keys {
                     return Err(fail("animation key budget exceeded"));
@@ -450,37 +468,48 @@ impl ModelAsset {
                     .collect();
                 duration = duration.max(*times.last().ok_or_else(|| fail("empty animation"))?);
                 let track = &mut tracks[mapping[target.node().index()]];
+                let interpolation = &mut modes[mapping[target.node().index()]];
+                let derivatives = &mut tangents[mapping[target.node().index()]];
                 match reader
                     .read_outputs()
                     .ok_or_else(|| fail("missing animation outputs"))?
                 {
                     ReadOutputs::Translations(values) => {
+                        interpolation.translation = mode;
+                        let (values, curve_tangents) =
+                            animation_values(values.map(Vec3::from_array), times.len(), mode)?;
+                        derivatives.translation = curve_tangents;
                         track.translations = times
                             .iter()
                             .zip(values)
-                            .map(|(&time, value)| Vec3Key {
-                                time,
-                                value: Vec3::from_array(value),
-                            })
+                            .map(|(&time, value)| Vec3Key { time, value: value })
                             .collect();
                     }
                     ReadOutputs::Scales(values) => {
+                        interpolation.scale = mode;
+                        let (values, curve_tangents) =
+                            animation_values(values.map(Vec3::from_array), times.len(), mode)?;
+                        derivatives.scale = curve_tangents;
                         track.scales = times
                             .iter()
                             .zip(values)
-                            .map(|(&time, value)| Vec3Key {
-                                time,
-                                value: Vec3::from_array(value),
-                            })
+                            .map(|(&time, value)| Vec3Key { time, value: value })
                             .collect();
                     }
                     ReadOutputs::Rotations(values) => {
+                        interpolation.rotation = mode;
+                        let (values, curve_tangents) = animation_values(
+                            values.into_f32().map(glam::Vec4::from_array),
+                            times.len(),
+                            mode,
+                        )?;
+                        derivatives.rotation = curve_tangents;
                         track.rotations = times
                             .iter()
-                            .zip(values.into_f32())
+                            .zip(values)
                             .map(|(&time, value)| QuatKey {
                                 time,
-                                value: Quat::from_array(value),
+                                value: Quat::from_array(value.to_array()),
                             })
                             .collect();
                     }
@@ -488,16 +517,15 @@ impl ModelAsset {
                         return Err(fail("morph animation unsupported"));
                     }
                 }
-                if channel.sampler().output().count() != times.len() {
-                    return Err(fail("animation output count mismatch"));
-                }
             }
             animations.push(Arc::new(
-                AnimationClip::new(
+                AnimationClip::new_with_tangents(
                     animation.name().unwrap_or("animation"),
                     duration.max(f32::EPSILON),
                     Playback::Loop,
                     tracks,
+                    modes,
+                    tangents,
                     &skeleton,
                 )
                 .map_err(|e| fail(e.to_string()))?,
@@ -517,7 +545,7 @@ impl ModelAsset {
     /// `None` selects the bind pose. Finite negative times retain the clip's
     /// authored loop/clamp behavior.
     /// # Errors
-    /// Rejects non-finite time and a clip index absent from this asset.
+    /// Rejects non-finite time, an absent clip index and invalid interpolated local TRS.
     pub fn sample_pose(
         &self,
         clip: Option<usize>,
@@ -531,8 +559,9 @@ impl ModelAsset {
             Some(index) => self
                 .animations
                 .get(index)
-                .map(|clip| clip.sample(&self.skeleton, time))
-                .ok_or_else(|| fail("animation clip index out of range")),
+                .ok_or_else(|| fail("animation clip index out of range"))?
+                .try_sample(&self.skeleton, time)
+                .map_err(|error| fail(error.to_string())),
         }
     }
 
@@ -602,6 +631,32 @@ impl ModelAsset {
     }
 }
 
+fn animation_values<T: Copy>(
+    values: impl Iterator<Item = T>,
+    count: usize,
+    mode: Interpolation,
+) -> Result<(Vec<T>, Vec<[T; 2]>), ModelError> {
+    let values: Vec<_> = values.collect();
+    if mode == Interpolation::CubicSpline {
+        if count < 2
+            || values.len()
+                != count
+                    .checked_mul(3)
+                    .ok_or_else(|| fail("animation key overflow"))?
+        {
+            return Err(fail("invalid cubic animation stream"));
+        }
+        Ok((
+            values.chunks_exact(3).map(|key| key[1]).collect(),
+            values.chunks_exact(3).map(|key| [key[0], key[2]]).collect(),
+        ))
+    } else if values.len() == count {
+        Ok((values, Vec::new()))
+    } else {
+        Err(fail("animation output count mismatch"))
+    }
+}
+
 // Values are checked nonnegative and normalized into the u16 range.
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 fn quantize_weights(weights: [f32; 4]) -> Result<[u16; 4], ModelError> {
@@ -624,6 +679,133 @@ fn quantize_weights(weights: [f32; 4]) -> Result<[u16; 4], ModelError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn gltf_step_translation_holds_until_key_and_linear_keeps_interpolating() {
+        let (json, bytes) = fixture();
+        let step = ModelAsset::parse(
+            json.replace("LINEAR", "STEP").as_bytes(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let linear = ModelAsset::parse(json.as_bytes(), &[&bytes], ModelLimits::default()).unwrap();
+        let position = |model: &ModelAsset, time| {
+            let pose = model.sample_pose(Some(0), time).unwrap();
+            model.scene_meshes(&pose).unwrap()[0].vertices()[0].position
+        };
+        assert_eq!(position(&step, 0.75), [0.; 3]);
+        assert_eq!(position(&linear, 0.75), [1.5, 0., 0.]);
+        // Loop endpoint wraps, while the last value is selected by the sampler
+        // at an internal exact key (covered independently in voxy_animation).
+        assert_eq!(position(&step, 1.0), [0.; 3]);
+        assert!(
+            ModelAsset::parse(
+                json.replace("LINEAR", "CUBICSPLINE").as_bytes(),
+                &[&bytes],
+                ModelLimits::default()
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn cubic_gltf_triplets_preserve_nonzero_derivatives_and_bound_decoded_keys() {
+        let (json, mut bytes) = fixture();
+        let mut document: serde_json::Value = serde_json::from_str(&json).unwrap();
+        bytes.truncate(144);
+        for value in [1.0_f32, 3.0] {
+            bytes.extend(value.to_le_bytes());
+        }
+        for vector in [
+            [0.0_f32; 3],
+            [0.; 3],
+            [4., 0., 0.],
+            [-2., 0., 0.],
+            [2., 0., 0.],
+            [0.; 3],
+        ] {
+            for value in vector {
+                bytes.extend(value.to_le_bytes());
+            }
+        }
+        document["buffers"][0]["byteLength"] = bytes.len().into();
+        document["bufferViews"][5]["byteLength"] = 72.into();
+        document["accessors"][4]["min"] = serde_json::json!([1]);
+        document["accessors"][4]["max"] = serde_json::json!([3]);
+        document["accessors"][5]["count"] = 6.into();
+        document["animations"][0]["samplers"][0]["interpolation"] = "CUBICSPLINE".into();
+        let json = serde_json::to_vec(&document).unwrap();
+        let asset = ModelAsset::parse(&json, &[&bytes], ModelLimits::default()).unwrap();
+        let pose = asset.sample_pose(Some(0), 1.5).unwrap();
+        assert!(
+            Vec3::from_array(asset.scene_meshes(&pose).unwrap()[0].vertices()[0].position)
+                .abs_diff_eq(Vec3::X * 1.625, 1e-6)
+        );
+        assert!(
+            ModelAsset::parse(
+                &json,
+                &[&bytes],
+                ModelLimits {
+                    keys: 5,
+                    ..ModelLimits::default()
+                }
+            )
+            .is_err()
+        );
+        assert!(
+            ModelAsset::parse(
+                &json,
+                &[&bytes],
+                ModelLimits {
+                    keys: 6,
+                    ..ModelLimits::default()
+                }
+            )
+            .is_ok()
+        );
+        document["accessors"][5]["count"] = 5.into();
+        assert!(
+            ModelAsset::parse(
+                &serde_json::to_vec(&document).unwrap(),
+                &[&bytes],
+                ModelLimits::default()
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn gltf_mirrored_root_preserves_positions_and_inverse_transpose_normals() {
+        let (json, bytes) = fixture();
+        let mut document: serde_json::Value = serde_json::from_str(&json).unwrap();
+        document["nodes"][0]["scale"] = serde_json::json!([-2, 3, 4]);
+        let model = ModelAsset::parse(
+            &serde_json::to_vec(&document).unwrap(),
+            &[&bytes],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let pose = model.sample_pose(None, 0.0).unwrap();
+        let mesh = model.scene_meshes(&pose).unwrap().remove(0);
+        assert_eq!(mesh.vertices()[1].position, [-2., 0., 0.]);
+        assert_eq!(mesh.vertices()[2].position, [0., 3., 0.]);
+        assert!(
+            mesh.authored_normals()
+                .unwrap()
+                .iter()
+                .all(|n| *n == [0., 0., 1.])
+        );
+        document["nodes"][0]["scale"] = serde_json::json!([-2, 3, 0]);
+        assert!(
+            ModelAsset::parse(
+                &serde_json::to_vec(&document).unwrap(),
+                &[&bytes],
+                ModelLimits::default()
+            )
+            .is_err()
+        );
+    }
 
     fn fixture() -> (String, Vec<u8>) {
         let json = r#"{
@@ -755,7 +937,7 @@ mod tests {
             ModelGeometry::Static(_)
         ));
         for bad in [
-            json.replace("LINEAR", "STEP"),
+            json.replace("LINEAR", "CUBICSPLINE"),
             json.replace("\"byteOffset\":152", "\"byteOffset\":172"),
         ] {
             assert!(ModelAsset::parse(bad.as_bytes(), &[&bytes], ModelLimits::default()).is_err());

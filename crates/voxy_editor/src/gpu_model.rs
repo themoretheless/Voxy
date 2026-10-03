@@ -389,7 +389,25 @@ impl ModelGraphics {
         };
         self.geometry_bytes() == minimum.saturating_add(optional)
     }
+    fn preview_meshes(
+        asset: &EditorAsset,
+    ) -> Result<Vec<voxy_render::SceneMesh>, voxy_render::ModelError> {
+        match &asset.animated {
+            Some(model) if model.primitives.len() > 1 => {
+                model.scene_meshes(&model.skeleton.bind_pose())
+            }
+            _ => Ok(Vec::new()),
+        }
+    }
     pub(super) fn geometry_estimate(asset: &EditorAsset) -> u64 {
+        Self::preview_meshes(asset).map_or(u64::MAX, |preview| {
+            Self::geometry_estimate_with_preview(asset, &preview)
+        })
+    }
+    fn geometry_estimate_with_preview(
+        asset: &EditorAsset,
+        preview: &[voxy_render::SceneMesh],
+    ) -> u64 {
         let bytes = |mesh: &voxy_render::SceneMesh| {
             SceneRenderer::mesh_allocation_bytes(mesh)
                 + selection_outline(mesh)
@@ -419,6 +437,9 @@ impl ModelGraphics {
                 total += bytes(mesh);
             }
         }
+        for mesh in preview {
+            total = total.saturating_add(SceneRenderer::mesh_allocation_bytes(mesh));
+        }
         total
     }
 
@@ -438,6 +459,11 @@ impl ModelGraphics {
             }
         }
         bytes
+            + self
+                .animated_preview
+                .iter()
+                .map(SceneGeometry::allocation_bytes)
+                .sum::<u64>()
     }
     pub(super) fn upload(
         renderer: &SceneRenderer,
@@ -445,7 +471,8 @@ impl ModelGraphics {
         asset: &EditorAsset,
         residency_cache: &mut ResidencyCache,
     ) -> Result<Self, Box<dyn std::error::Error>> {
-        let additional = Self::geometry_estimate(asset);
+        let preview = Self::preview_meshes(asset)?;
+        let additional = Self::geometry_estimate_with_preview(asset, &preview);
         if additional
             > residency_cache
                 .geometry_budget
@@ -520,10 +547,15 @@ impl ModelGraphics {
                 )?);
             }
         }
+        let animated_preview = preview
+            .iter()
+            .map(|mesh| renderer.upload_mesh(host.device(), mesh))
+            .collect::<Result<Vec<_>, _>>()?;
         Ok(Self {
             geometry,
             outline,
             parts,
+            animated_preview,
             animated_textures,
             animated_model: asset.animated.clone(),
             animated_lod: asset.skinned_lod.clone(),
@@ -665,6 +697,81 @@ pub(super) fn reconcile_lod_residency(
 #[cfg(test)]
 mod tests {
     #[test]
+    fn animated_preview_preserves_primitive_colors_and_accounts_all_allocations() {
+        use super::*;
+        let bytes = include_bytes!("../../voxy_render/examples/assets/fox/Fox.glb");
+        let gltf = gltf::Gltf::from_slice(bytes).unwrap();
+        let mut model = voxy_render::ModelAsset::parse(
+            bytes,
+            &[gltf.blob.as_deref().unwrap()],
+            voxy_render::ModelLimits::default(),
+        )
+        .unwrap();
+        let original = model.primitives[0].clone();
+        model.primitives[0].color = [1., 0., 0., 1.];
+        model.primitives.push(original);
+        model.primitives[1].color = [0., 0., 1., 1.];
+        let meshes = model.scene_meshes(&model.skeleton.bind_pose()).unwrap();
+        let asset = EditorAsset {
+            mesh: meshes[0].clone(),
+            lod: None,
+            animated: Some(Arc::new(model)),
+            skinned_lod: None,
+            nodes: vec![],
+            images: vec![],
+        };
+        let preview = ModelGraphics::preview_meshes(&asset).unwrap();
+        assert_eq!(preview.len(), 2);
+        assert!(
+            preview[0]
+                .vertices()
+                .iter()
+                .all(|v| v.color == [1., 0., 0., 1.])
+        );
+        assert!(
+            preview[1]
+                .vertices()
+                .iter()
+                .all(|v| v.color == [0., 0., 1., 1.])
+        );
+        let (device, _) = wgpu::Device::noop(&wgpu::DeviceDescriptor::default());
+        let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+        let graphics = ModelGraphics {
+            geometry: ModelGeometry::Single(renderer.upload_mesh(&device, &asset.mesh).unwrap()),
+            outline: selection_outline(&asset.mesh)
+                .ok()
+                .map(|m| renderer.upload_mesh(&device, &m).unwrap()),
+            parts: BTreeMap::new(),
+            animated_preview: preview
+                .iter()
+                .map(|m| renderer.upload_mesh(&device, m).unwrap())
+                .collect(),
+            animated_textures: vec![None, None],
+            animated_model: asset.animated.clone(),
+            animated_lod: None,
+            _images: vec![],
+        };
+        assert_eq!(
+            graphics.geometry_bytes(),
+            ModelGraphics::geometry_estimate(&asset)
+        );
+        assert!(graphics.geometry_residency_valid(&asset));
+        let mut single = asset.clone();
+        Arc::make_mut(single.animated.as_mut().unwrap())
+            .primitives
+            .truncate(1);
+        assert!(ModelGraphics::preview_meshes(&single).unwrap().is_empty());
+        let extra: u64 = preview
+            .iter()
+            .map(SceneRenderer::mesh_allocation_bytes)
+            .sum();
+        assert_eq!(
+            ModelGraphics::geometry_estimate(&asset) - ModelGraphics::geometry_estimate(&single),
+            extra
+        );
+    }
+
+    #[test]
     fn global_lod_admission_retains_all_requests_and_recovers_after_eviction() {
         use super::*;
         use std::collections::BTreeSet;
@@ -710,6 +817,7 @@ mod tests {
             },
             outline: None,
             parts: BTreeMap::new(),
+            animated_preview: vec![],
             animated_textures: vec![],
             animated_model: None,
             animated_lod: None,
@@ -884,6 +992,7 @@ mod tests {
                     },
                     outline: None,
                     parts: BTreeMap::new(),
+                    animated_preview: vec![],
                     animated_textures: vec![],
                     animated_model: None,
                     animated_lod: None,

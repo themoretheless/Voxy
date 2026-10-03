@@ -1,0 +1,19 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 1 test
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+
+thread 'scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render' (20108711) panicked at crates/voxy_render/src/scene/skinning/tests.rs:610:5:
+reference rig animation did not move
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render ... FAILED
+
+failures:
+
+failures:
+    scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 137 filtered out; finished in 35.79s
+
+error: test failed, to rerun pass `-p voxy_render --lib`

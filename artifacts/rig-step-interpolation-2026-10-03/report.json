@@ -1,0 +1,39 @@
+{
+  "scope": "Per-property STEP and LINEAR import and skeletal sampling",
+  "specification": "https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#appendix-c-animation-sampler-interpolation-modes",
+  "ordinary_tests": {
+    "animation": 12,
+    "editor": 90,
+    "renderer": 128,
+    "failed_final": 0,
+    "note": "Animation/editor passed in combined run; renderer final run supersedes obsolete STEP rejection failure in the combined log."
+  },
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "passed_tests": 2,
+    "fox_clips": 3,
+    "fox_samples": 195,
+    "fox_max_position_error": 1.5258789e-05,
+    "fox_normal_stream_error": 0,
+    "rigged_figure_samples": 65,
+    "rigged_figure_max_position_error": 1.1920929e-07,
+    "rigged_figure_normal_error": 1.4057727e-07,
+    "rigged_figure_motion": 0,
+    "every_frame_visible_render": true,
+    "rigged_figure_static_reason": "Two keys at 0 and clip duration 1.25; loop playback wraps the last key, so STEP always holds the initial pose."
+  },
+  "compatibility": "Existing AnimationClip::new and JointTrack callers remain LINEAR; additive mode constructor rejects mismatched descriptor counts.",
+  "source_hashes": {
+    "crates/voxy_animation/src/lib.rs": "b1426f3a699f86933759ad8c423f895175a06b7713b51948388d7bcf5ed937e0",
+    "crates/voxy_render/src/model.rs": "66dfdd2144844a2523e820fb88b0cd515613f65edeb5a3fb1d2ece009b5194e5",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "047dc173fa1605d08294ffe5b0f644ffd3ba90ae82aff8ee09ed0c32c43f1008"
+  },
+  "limitations": [
+    "CUBICSPLINE explicitly rejected",
+    "Morph animation, blending and retargeting remain incomplete",
+    "No native-window STEP screenshot acceptance in this run",
+    "No non-Metal/CUDA claim",
+    "Fox absent normals are zero stream with fragment flat shading; zero stream error is not a surface angular metric"
+  ]
+}
