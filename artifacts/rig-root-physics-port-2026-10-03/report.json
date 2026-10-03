@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-03",
+  "base_commit": "3e7d6bb190e86f1e40b4b29b27a72b7f70167b0b",
+  "tests": {
+    "animation": 33,
+    "gameplay_library": 24,
+    "editor": 94,
+    "character_integration": 19,
+    "distinct_total": 170
+  },
+  "bridge_fixture": {
+    "ticks": 125,
+    "dt": 0.02,
+    "requested_distance": 25.0,
+    "wall_limited_distance": 0.9,
+    "basis": "identity locomotion parent and world",
+    "in_place_palette": "identity",
+    "failed_physics_clock_retry": true
+  },
+  "coverage": [
+    "Axis masks, selected child, rotation/signed scale preservation, rig rejection and loop displacement",
+    "Static wall sweep, tangent sliding, vertical floor/ceiling and affine wall",
+    "Duplicate/invalid owner and nonfinite/range rejection preserve all owners and input edges",
+    "Contacts project persistent velocity; jumping skips ground snap",
+    "Requests are not retained across ticks"
+  ],
+  "verification_sequence": [
+    "Initial animation fixture compile typo corrected before final 33-test suite",
+    "Initial jump fixture had never acquired grounded state; corrected to land through the motion API before jumping",
+    "Library regressions passed 32 animation, 94 editor and 24 gameplay; added extraction-mask test then all 33 animation passed",
+    "Final character integration suite passed all 19 tests after jump fixture repair; formatting only afterward"
+  ],
+  "limits": [
+    "Automatic editor root-driven movement not wired yet",
+    "Displacement is applied after input/gravity, a defined sequential kinematic policy",
+    "World-space conversion through arbitrary animated ancestors and root rotation not implemented",
+    "No character-character contacts, new native physical scene, CUDA or GPU throughput proof"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "b2eacb6cfd0c606d53be6b03dbd66e884e760f9d67965872fc41440559bb0443",
+    "crates/voxy_gameplay/src/lib.rs": "f741d38e257588af127591ebc0f228f6cc16b98aa72bc32c0c66c27ec28f7c28",
+    "crates/voxy_gameplay/src/convex.rs": "7d495caee1b1660f735c8d90ee3d53cd791b18e8a9caaf7dae8fd8bea4f8513b",
+    "crates/voxy_gameplay/tests/integration.rs": "6f8bbbf58b645b0f47dffc59b5329f4dfab6d6a02a9d9fc5bf7935a9c8f95cff",
+    "crates/voxy_gameplay/Cargo.toml": "9ec441cef36d11f73d3e1f0886aee4306644af10b5057fbdc263cab86004dbfa",
+    "Cargo.lock": "2d292c3c6da3216724eb39dda23fef17a3cdfa02d66527eac516cd33eb3171be"
+  }
+}

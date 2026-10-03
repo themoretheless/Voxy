@@ -1,3 +1,119 @@
+// Test-only frame producers; the production renderer receives accepted frames.
+fn test_frame(
+    model: &Arc<ModelAsset>,
+    settings: ModelAnimation,
+    time: f32,
+) -> Arc<voxy_animation::AnimatorFrame> {
+    let mut playback = crate::model_playback::ModelPlayback::new(model.clone(), settings).unwrap();
+    Arc::new(
+        playback
+            .advance_with(time, |_, frame| Ok(frame.clone()))
+            .unwrap(),
+    )
+}
+struct FrameFixture {
+    render: AnimatedModels,
+    clocks: HashMap<
+        NodeId,
+        (
+            Arc<ModelAsset>,
+            ModelAnimation,
+            crate::model_playback::ModelPlayback,
+            u64,
+        ),
+    >,
+}
+impl std::ops::Deref for FrameFixture {
+    type Target = AnimatedModels;
+    fn deref(&self) -> &Self::Target {
+        &self.render
+    }
+}
+impl std::ops::DerefMut for FrameFixture {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.render
+    }
+}
+impl FrameFixture {
+    fn new(renderer: &SceneRenderer) -> Result<Self, String> {
+        Ok(Self {
+            render: AnimatedModels::new(renderer)?,
+            clocks: HashMap::new(),
+        })
+    }
+    fn synchronize_fixture(
+        &mut self,
+        renderer: &SceneRenderer,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        mut requests: Vec<Request>,
+        ticks: u64,
+        live: u64,
+        budget: u64,
+    ) -> Vec<(NodeId, String)> {
+        let active: HashSet<_> = requests.iter().map(|request| request.owner).collect();
+        self.clocks.retain(|owner, _| active.contains(owner));
+        let mut candidates = Vec::new();
+        for request in &mut requests {
+            let previous = self.clocks.get(&request.owner);
+            let reset = previous.is_none_or(|old| {
+                !Arc::ptr_eq(&old.0, &request.model) || old.1.clip != request.settings.clip
+            });
+            let mut playback = if reset {
+                crate::model_playback::ModelPlayback::new(
+                    request.model.clone(),
+                    request.settings.clone(),
+                )
+                .unwrap()
+            } else {
+                let mut playback = previous.unwrap().2.clone();
+                playback.set_speed(request.settings.speed).unwrap();
+                playback
+                    .set_root_motion_joint(
+                        request
+                            .settings
+                            .resolve_motion_joint(&request.model)
+                            .unwrap(),
+                    )
+                    .unwrap();
+                playback
+            };
+            let steps = if reset {
+                0
+            } else {
+                ticks.saturating_sub(previous.unwrap().3).min(8)
+            };
+            let mut frame = playback
+                .advance_with(0., |_, frame| Ok(frame.clone()))
+                .unwrap();
+            for _ in 0..steps {
+                frame = playback
+                    .advance_with(1. / 60., |_, frame| Ok(frame.clone()))
+                    .unwrap();
+            }
+            request.frame = Some(Arc::new(frame));
+            candidates.push((
+                request.owner,
+                (
+                    request.model.clone(),
+                    request.settings.clone(),
+                    playback,
+                    ticks,
+                ),
+            ));
+        }
+        let errors = self
+            .render
+            .synchronize(renderer, device, queue, requests, ticks, live, budget);
+        for (owner, candidate) in candidates {
+            if !errors.iter().any(|(failed, _)| *failed == owner) {
+                self.clocks.insert(owner, candidate);
+            }
+        }
+        errors
+    }
+}
+
 use super::*;
 
 fn fixture() -> Arc<ModelAsset> {
@@ -13,6 +129,7 @@ fn fixture() -> Arc<ModelAsset> {
 fn request(owner: NodeId, model: &Arc<ModelAsset>, speed: f32) -> Request {
     Request {
         owner,
+        frame: None,
         model: model.clone(),
         lod: None,
         textures: vec![],
@@ -126,7 +243,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
-    let mut runtime = AnimatedModels::new(&renderer).unwrap();
+    let mut runtime = FrameFixture::new(&renderer).unwrap();
     assert!(runtime.skinner.is_some());
     let mut scene = voxy_scene::SceneGraph::new(4);
     let first = scene.spawn(None, voxy_scene::Transform::default()).unwrap();
@@ -134,7 +251,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     let model = fixture();
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -153,7 +270,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     let initial_bytes = runtime.allocation_bytes();
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -201,10 +318,38 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
             matrix
         )
     );
+    // Waiting for a fixed-tick frame retains GPU geometry and its accepted version.
+    let accepted_frame = runtime.owners[&first].frame.clone();
+    assert!(
+        runtime
+            .render
+            .synchronize(
+                &renderer,
+                &device,
+                &queue,
+                vec![request(first, &model, 1.), request(second, &model, 0.)],
+                999,
+                0,
+                initial_bytes
+            )
+            .is_empty()
+    );
+    assert!(Arc::ptr_eq(&accepted_frame, &runtime.owners[&first].frame));
+    assert_eq!(runtime.owners[&first].ticks, 8);
+    assert_eq!(
+        moving,
+        pixels(
+            &renderer,
+            &device,
+            &queue,
+            runtime.geometries(first).unwrap().collect(),
+            matrix
+        )
+    );
     // No extra fixed steps: repeated views/presents do not consume animation time.
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -228,7 +373,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     // Pause/resume changes the existing owner clock without reallocating or resetting its pose.
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -252,7 +397,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     );
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -282,8 +427,9 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
                 &device,
                 &queue,
                 first,
-                revised,
+                revised.clone(),
                 ModelAnimation::default(),
+                Some(test_frame(&revised, ModelAnimation::default(), 0.)),
                 None,
                 vec![],
                 vec![],
@@ -307,7 +453,7 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
     );
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -342,16 +488,19 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
         base_color_texture: None,
     });
     let model = Arc::new(model);
-    let mut runtime = AnimatedModels {
-        skinner: None,
-        owners: HashMap::new(),
-        sources: HashMap::new(),
+    let mut runtime = FrameFixture {
+        render: AnimatedModels {
+            skinner: None,
+            owners: HashMap::new(),
+            sources: HashMap::new(),
+        },
+        clocks: HashMap::new(),
     };
     let mut scene = voxy_scene::SceneGraph::new(1);
     let owner = scene.spawn(None, voxy_scene::Transform::default()).unwrap();
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -365,7 +514,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
     assert_eq!(runtime.geometries(owner).unwrap().count(), 2);
     assert!(
         runtime
-            .synchronize(
+            .synchronize_fixture(
                 &renderer,
                 &device,
                 &queue,
@@ -385,7 +534,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
     );
     assert!(
         runtime
-            .synchronize(&renderer, &device, &queue, Vec::new(), 8, 0, 65536)
+            .synchronize_fixture(&renderer, &device, &queue, Vec::new(), 8, 0, 65536)
             .is_empty()
     );
     assert_eq!(runtime.allocation_bytes(), 0);
@@ -455,12 +604,13 @@ fn animated_lod_views_budget_and_cpu_fallback() {
         ..far
     };
     for cpu in [false, true] {
-        let mut owners = AnimatedModels::new(&renderer).unwrap();
+        let mut owners = FrameFixture::new(&renderer).unwrap();
         if cpu {
             owners.skinner = None;
         }
         let make_request = || Request {
             owner,
+            frame: None,
             model: model.clone(),
             settings: ModelAnimation::default(),
             lod: Some(lod.clone()),
@@ -469,7 +619,7 @@ fn animated_lod_views_budget_and_cpu_fallback() {
         };
         assert!(
             owners
-                .synchronize(&renderer, &device, &queue, vec![make_request()], 0, 0, 8192)
+                .synchronize_fixture(&renderer, &device, &queue, vec![make_request()], 0, 0, 8192)
                 .is_empty()
         );
         let base_bytes = owners.allocation_bytes();
@@ -688,7 +838,7 @@ fn animated_lod_views_budget_and_cpu_fallback() {
         assert_eq!(owners.allocation_bytes(), accepted_bytes);
         assert!(
             owners
-                .synchronize(&renderer, &device, &queue, vec![make_request()], 8, 0, 8192)
+                .synchronize_fixture(&renderer, &device, &queue, vec![make_request()], 8, 0, 8192)
                 .is_empty()
         );
         owners
@@ -704,13 +854,7 @@ fn animated_lod_views_budget_and_cpu_fallback() {
                 8192,
             )
             .unwrap();
-        let frame = owners
-            .owners
-            .get_mut(&owner)
-            .unwrap()
-            .playback
-            .advance_with(0., |_, frame| Ok(frame.clone()))
-            .unwrap();
+        let frame = owners.owners[&owner].frame.clone();
         let baked = lod
             .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
             .unwrap()
@@ -785,13 +929,13 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
             .upload_texture(&device, &queue, 1, 1, &[0, 0, 255, 255])
             .unwrap(),
     );
-    let mut runtime = AnimatedModels::new(&renderer).unwrap();
+    let mut runtime = FrameFixture::new(&renderer).unwrap();
     let mut original = request(owner, &model, 1.);
     original.textures = vec![Some(red.clone())];
     original.texture_storage = vec![storage.clone()];
     assert!(
         runtime
-            .synchronize(&renderer, &device, &queue, vec![original], 0, 0, 8192)
+            .synchronize_fixture(&renderer, &device, &queue, vec![original], 0, 0, 8192)
             .is_empty()
     );
     drop(storage);
@@ -805,7 +949,7 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     };
     assert_eq!(
         runtime
-            .synchronize(&renderer, &device, &queue, vec![replacement()], 8, 0, 0)
+            .synchronize_fixture(&renderer, &device, &queue, vec![replacement()], 8, 0, 0)
             .len(),
         1
     );
@@ -819,14 +963,14 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     let missing = request(owner, &revised, 1.);
     assert_eq!(
         runtime
-            .synchronize(&renderer, &device, &queue, vec![missing], 8, 0, 8192)
+            .synchronize_fixture(&renderer, &device, &queue, vec![missing], 8, 0, 8192)
             .len(),
         1
     );
     assert!(weak_storage.upgrade().is_some());
     assert!(
         runtime
-            .synchronize(&renderer, &device, &queue, vec![replacement()], 8, 0, 8192)
+            .synchronize_fixture(&renderer, &device, &queue, vec![replacement()], 8, 0, 8192)
             .is_empty()
     );
     assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &revised));

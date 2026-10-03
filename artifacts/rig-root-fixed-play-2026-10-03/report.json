@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-03",
+  "base_commit": "3e7d6bb190e86f1e40b4b29b27a72b7f70167b0b",
+  "tests": {
+    "animation": 33,
+    "editor": 97,
+    "scene": 66,
+    "ordinary_total": 196,
+    "device_tests": 6
+  },
+  "architecture": {
+    "playback_authority": "PlaySession AnimationRuntime",
+    "render_authority": "Immutable accepted frame and GPU geometry only",
+    "render_advances_clock": false,
+    "publication": "Animation candidate publishes after character physics accepts",
+    "scope": "character.step declares and checks animation.playback write grant",
+    "partial_failure_completed_ticks_counted": true
+  },
+  "root_native": {
+    "fixture": "animated-triangle.glb",
+    "x": 0.050000004,
+    "fixed_serial": 12,
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_sources": 1,
+    "animated_bytes": 928,
+    "stop_animated_bytes": 0,
+    "authoring_restored": true,
+    "palette_in_place": true
+  },
+  "fox_native": {
+    "fixture": "original Fox.glb",
+    "clips": 3,
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_sources": 1,
+    "textured_primitives": 1,
+    "animated_bytes": 335200,
+    "stop_animated_bytes": 0,
+    "authoring_restored": true
+  },
+  "verification_sequence": [
+    "Initial fixtures exposed root anchor ModelPart sentinel exclusion; runtime corrected",
+    "Converted GLB fixture required explicit external buffer URI; fixed fixture",
+    "Wall fixture used Z=0 while model owner starts at Z=0.5; fixed relative placement",
+    "Old GPU test producer incorrectly rebuilt paused frames from zero; replaced with separate staged fixture source",
+    "All editor 97 passed and GPU 4 passed; waiting-frame retention added and GPU 4 passed again",
+    "Scheduler resource extension added; final 33 animation + 97 editor + 66 scene passed",
+    "Final release built and both native root motion and Fox smokes passed",
+    "All six device/editor ignored tests passed on final source"
+  ],
+  "limits": [
+    "Translation axes only, on the model owner CharacterBody",
+    "Bind-only ancestors; constant authored ancestor channels conservatively rejected",
+    "Root rotation, animated-parent integration and foot locking not implemented",
+    "Clock remains f32; long-running precision not certified",
+    "Clip/model replacement resets time; no reimport temporal continuity or skeletal presentation interpolation",
+    "Native pose signature and scene position assertions are not an independent GPU world-position readback",
+    "No CUDA or other new hardware/backend conformance claim"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "1eede3c10a73a32505f48f7b9f5efb3486f06acc85e36f8478657e63a9f99297",
+    "crates/voxy_editor/src/lib.rs": "7d7e86e1c46dff60b11ad9a977237d02df30c537bca6e26a9a22c35bc2c24f06",
+    "crates/voxy_editor/src/animation_runtime.rs": "41d114f87e0e79de45227a5a716234f7e17690c4be903add94a5f28eff214ece",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "8fba64ba9b31998ee8afbcf868c599729c332a3fc1e5e3b4214af417998fa0bb",
+    "crates/voxy_editor/src/animated_models.rs": "bfa330a15569b25be763f81da985c29f3d9244fcc128fb0e169c1e36c2e261cb",
+    "crates/voxy_editor/src/animated_models/tests.rs": "1de0631d0c202c65e3887b0c3f19fa558e0f99be91137ad310ca1158f77a375b",
+    "crates/voxy_editor/src/animation_smoke.rs": "96368e2f5c2a31a10db6b9d6f4e58dd16f7ab4fd9ad8083079663821e4d69be0",
+    "crates/voxy_editor/src/model_playback.rs": "bc82707848155fa26e8902a6897605315e374bda9b70eee0d813e487ce598b17",
+    "crates/voxy_editor/src/play_session.rs": "b7cdc2198f27c2a44322dae3cc0d763a29b8b0a729ff2e7ba14894ae7d48356b",
+    "crates/voxy_editor/src/panels.rs": "0a5cc998bff1b33001a81327d78ea7881ab97d0a13fe9149a82b52b03ffa7a55",
+    "crates/voxy_scene/src/schedule.rs": "42cd935de4372a4472700f05e6e6dc038ed4dc89eefc3511e38132195055567d"
+  },
+  "binary_sha256": "4aa1e6a18c654c7d9d5de3744041932a18c01a758d7c63ba4ce283ceb5f3f7c9"
+}

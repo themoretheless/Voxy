@@ -119,6 +119,18 @@ pub(crate) fn move_body(
     dt: f64,
     boxes: &[AffineBox],
 ) -> bool {
+    move_body_carrying_velocity(center, half, velocity, dt, boxes, None)
+}
+
+/// A kinematic displacement also removes persistent velocity into its contacts.
+pub(crate) fn move_body_carrying_velocity(
+    center: &mut DVec3,
+    half: DVec3,
+    velocity: &mut DVec3,
+    dt: f64,
+    boxes: &[AffineBox],
+    mut carried: Option<&mut DVec3>,
+) -> bool {
     let mut remaining = *velocity * dt;
     let mut grounded = false;
     for _ in 0..4 {
@@ -143,9 +155,15 @@ pub(crate) fn move_body(
         if into < 0. {
             *velocity -= normal * into;
         }
+        if let Some(carried) = carried.as_deref_mut() {
+            let into = carried.dot(normal);
+            if into < 0. {
+                *carried -= normal * into;
+            }
+        }
         grounded |= normal.y > 0.5;
     }
-    if velocity.y <= 0. {
+    if velocity.y <= 0. && carried.as_ref().is_none_or(|carried| carried.y <= 0.) {
         let snap = DVec3::new(0., -0.005, 0.);
         if let Some((fraction, _)) = boxes
             .iter()
@@ -155,6 +173,9 @@ pub(crate) fn move_body(
         {
             *center += snap * fraction;
             velocity.y = 0.;
+            if let Some(carried) = carried.as_deref_mut() {
+                carried.y = carried.y.max(0.);
+            }
             grounded = true;
         }
     }

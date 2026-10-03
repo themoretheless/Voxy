@@ -166,6 +166,7 @@ pub struct AnimationClip {
     tracks: Arc<[JointTrack]>,
     interpolation: Arc<[TrackInterpolation]>,
     tangents: Arc<[JointTangents]>,
+    constant_transforms: Arc<[Option<Transform>]>,
 }
 
 impl AnimationClip {
@@ -299,7 +300,19 @@ impl AnimationClip {
             duration,
             playback,
         ));
+        let constant_transforms = skeleton
+            .joints
+            .iter()
+            .zip(&tracks)
+            .zip(&interpolation)
+            .zip(&tangents)
+            .map(|(((joint, track), mode), tangents)| {
+                constant_transform(joint.bind_local, track, *mode, tangents)
+            })
+            .collect::<Vec<_>>()
+            .into();
         Ok(Self {
+            constant_transforms,
             rig: skeleton.joints.clone(),
             root_curve,
             name,
@@ -340,6 +353,25 @@ impl AnimationClip {
     #[must_use]
     pub fn is_compatible_with(&self, skeleton: &Skeleton) -> bool {
         rigs_match(&self.rig, &skeleton.joints)
+    }
+
+    /// Whether a joint has no authored channels and therefore remains at bind TRS.
+    /// Unknown joint indices return false. This is deliberately conservative:
+    /// constant authored channels are still channels, not an implicit fixed basis.
+    #[must_use]
+    pub fn joint_uses_bind_pose(&self, index: usize) -> bool {
+        self.tracks.get(index).is_some_and(|track| {
+            track.translations.is_empty() && track.rotations.is_empty() && track.scales.is_empty()
+        })
+    }
+
+    /// A transform proved constant over the entire authored clip, including held
+    /// endpoints and loop seams. Missing channels use bind values. Authored values
+    /// may differ from bind. None means moving, unproved or an unknown joint.
+    /// Proofs are compiled once at clip admission; this lookup is constant-time.
+    #[must_use]
+    pub fn constant_joint_transform(&self, index: usize) -> Option<Transform> {
+        self.constant_transforms.get(index).copied().flatten()
     }
 
     /// Samples without runtime admission. Cubic curves can produce invalid TRS;
@@ -559,6 +591,52 @@ pub struct AnimatorFrame {
     pub root_motion: Vec3,
     pub root_motion_joint: u16,
     pub transition_weight: f32,
+}
+
+impl AnimatorFrame {
+    /// Consumes selected translation axes into a separate parent-local motion request.
+    /// The selected joint's corresponding pose coordinates return to bind translation;
+    /// rotations, scale, other axes and other joints are retained. The palette is
+    /// rebuilt before returning, so skinning cannot retain the extracted translation.
+    /// Extracted axes are removed from `root_motion` to prevent repeated consumption.
+    /// This does not transform the request into world space or apply character physics.
+    ///
+    /// # Errors
+    /// Rejects a foreign rig, unknown motion joint, invalid displacement or palette.
+    pub fn into_in_place_translation(
+        mut self,
+        skeleton: &Skeleton,
+        axes: [bool; 3],
+    ) -> Result<(Self, Vec3), AnimationError> {
+        let index = usize::from(self.root_motion_joint);
+        let joint = skeleton
+            .joints
+            .get(index)
+            .ok_or(AnimationError::InvalidRootMotionJoint(
+                self.root_motion_joint,
+            ))?;
+        if !self.root_motion.is_finite() {
+            return Err(AnimationError::InvalidPose(index));
+        }
+        if !rigs_match(&self.pose.rig, &skeleton.joints) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        let local = self
+            .pose
+            .local
+            .get_mut(index)
+            .ok_or(AnimationError::InvalidPose(index))?;
+        let mut extracted = Vec3::ZERO;
+        for axis in 0..3 {
+            if axes[axis] {
+                local.translation[axis] = joint.bind_local.translation[axis];
+                extracted[axis] = self.root_motion[axis];
+                self.root_motion[axis] = 0.0;
+            }
+        }
+        self.skin_matrices = self.pose.skin_matrices(skeleton)?;
+        Ok((self, extracted))
+    }
 }
 
 impl Animator {
@@ -794,6 +872,65 @@ impl Animator {
             transition_weight: weight,
         })
     }
+}
+
+// Constant Hermite vector channels require zero derivatives on every used
+// segment. First incoming and last outgoing tangents are never sampled.
+fn constant_transform(
+    bind: Transform,
+    track: &JointTrack,
+    mode: TrackInterpolation,
+    tangents: &JointTangents,
+) -> Option<Transform> {
+    fn vec_channel(
+        keys: &[Vec3Key],
+        fallback: Vec3,
+        mode: Interpolation,
+        tangents: &[[Vec3; 2]],
+    ) -> Option<Vec3> {
+        let Some(first) = keys.first() else {
+            return Some(fallback);
+        };
+        if keys.iter().any(|key| key.value != first.value) {
+            return None;
+        }
+        if mode == Interpolation::CubicSpline
+            && tangents
+                .windows(2)
+                .any(|pair| pair[0][1] != Vec3::ZERO || pair[1][0] != Vec3::ZERO)
+        {
+            return None;
+        }
+        Some(first.value)
+    }
+    let rotation = if let Some(first) = track.rotations.first() {
+        let constant = track.rotations.iter().all(|key| {
+            key.value == first.value
+                || (mode.rotation != Interpolation::CubicSpline && key.value == -first.value)
+        });
+        if !constant
+            || (mode.rotation == Interpolation::CubicSpline
+                && tangents
+                    .rotation
+                    .windows(2)
+                    .any(|pair| pair[0][1] != Vec4::ZERO || pair[1][0] != Vec4::ZERO))
+        {
+            return None;
+        }
+        first.value
+    } else {
+        bind.rotation
+    };
+    Some(Transform {
+        translation: vec_channel(
+            &track.translations,
+            bind.translation,
+            mode.translation,
+            &tangents.translation,
+        )?,
+        rotation,
+        scale: vec_channel(&track.scales, bind.scale, mode.scale, &tangents.scale)?,
+    })
 }
 
 fn validate_vec_keys(keys: &[Vec3Key], duration: f32, scale: bool) -> Result<(), TrackError> {
@@ -1455,6 +1592,194 @@ mod tests {
             },
         ])
         .unwrap()
+    }
+
+    #[test]
+    fn constant_joint_proofs_cover_authored_nonbind_values_and_unused_cubic_tangents() {
+        let rig = skeleton();
+        let expected = Transform {
+            translation: Vec3::new(7., 8., 9.),
+            rotation: Quat::from_rotation_y(0.4),
+            scale: Vec3::new(-2., 3., 4.),
+        };
+        for mode in [
+            Interpolation::Linear,
+            Interpolation::Step,
+            Interpolation::CubicSpline,
+        ] {
+            let track = JointTrack {
+                translations: vec![
+                    Vec3Key {
+                        time: 0.,
+                        value: expected.translation,
+                    },
+                    Vec3Key {
+                        time: 1.,
+                        value: expected.translation,
+                    },
+                ],
+                rotations: vec![
+                    QuatKey {
+                        time: 0.,
+                        value: expected.rotation,
+                    },
+                    QuatKey {
+                        time: 1.,
+                        value: expected.rotation,
+                    },
+                ],
+                scales: vec![
+                    Vec3Key {
+                        time: 0.,
+                        value: expected.scale,
+                    },
+                    Vec3Key {
+                        time: 1.,
+                        value: expected.scale,
+                    },
+                ],
+            };
+            let mut tangents = JointTangents::default();
+            if mode == Interpolation::CubicSpline {
+                tangents.translation = vec![
+                    [Vec3::splat(f32::MAX), Vec3::ZERO],
+                    [Vec3::ZERO, Vec3::splat(f32::MAX)],
+                ];
+                tangents.rotation = vec![
+                    [Vec4::splat(f32::MAX), Vec4::ZERO],
+                    [Vec4::ZERO, Vec4::splat(f32::MAX)],
+                ];
+                tangents.scale = tangents.translation.clone();
+            }
+            let clip = AnimationClip::new_with_tangents(
+                "constant",
+                1.,
+                Playback::Loop,
+                vec![track, JointTrack::default()],
+                vec![
+                    TrackInterpolation {
+                        translation: mode,
+                        rotation: mode,
+                        scale: mode,
+                    },
+                    TrackInterpolation::default(),
+                ],
+                vec![tangents, JointTangents::default()],
+                &rig,
+            )
+            .unwrap();
+            assert_eq!(clip.constant_joint_transform(0), Some(expected));
+            assert_eq!(
+                clip.constant_joint_transform(1),
+                Some(rig.joints()[1].bind_local)
+            );
+            assert_eq!(clip.constant_joint_transform(2), None);
+            assert!(!clip.joint_uses_bind_pose(0));
+            for time in [-1., 0., 0.1, 0.25, 0.5, 0.75, 1., 2.] {
+                assert!(
+                    clip.try_sample(&rig, time).unwrap().local()[0]
+                        .matrix()
+                        .abs_diff_eq(expected.matrix(), 2e-6)
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn constant_joint_proofs_reject_hidden_cubic_motion_and_accept_linear_antipodes() {
+        let rig = skeleton();
+        let q = Quat::from_rotation_y(0.4);
+        for mode in [Interpolation::Linear, Interpolation::Step] {
+            let track = JointTrack {
+                rotations: vec![
+                    QuatKey { time: 0., value: q },
+                    QuatKey {
+                        time: 1.,
+                        value: -q,
+                    },
+                ],
+                ..Default::default()
+            };
+            let clip = AnimationClip::new_with_interpolation(
+                "antipodes",
+                1.,
+                Playback::Clamp,
+                vec![track, JointTrack::default()],
+                vec![
+                    TrackInterpolation {
+                        rotation: mode,
+                        ..Default::default()
+                    },
+                    TrackInterpolation::default(),
+                ],
+                &rig,
+            )
+            .unwrap();
+            assert_eq!(clip.constant_joint_transform(0).unwrap().rotation, q);
+        }
+        for channel in 0..4 {
+            let mut track = JointTrack {
+                translations: vec![
+                    Vec3Key {
+                        time: 0.,
+                        value: Vec3::ZERO,
+                    },
+                    Vec3Key {
+                        time: 1.,
+                        value: Vec3::ZERO,
+                    },
+                ],
+                rotations: vec![
+                    QuatKey { time: 0., value: q },
+                    QuatKey { time: 1., value: q },
+                ],
+                scales: vec![
+                    Vec3Key {
+                        time: 0.,
+                        value: Vec3::ONE,
+                    },
+                    Vec3Key {
+                        time: 1.,
+                        value: Vec3::ONE,
+                    },
+                ],
+            };
+            let mut tangents = JointTangents {
+                translation: vec![[Vec3::ZERO; 2]; 2],
+                rotation: vec![[Vec4::ZERO; 2]; 2],
+                scale: vec![[Vec3::ZERO; 2]; 2],
+            };
+            match channel {
+                0 => tangents.translation[0][1] = Vec3::X,
+                1 => tangents.rotation[0][1] = Vec4::X,
+                2 => tangents.scale[0][1] = Vec3::X,
+                _ => track.rotations[1].value = -q,
+            }
+            let clip = AnimationClip::new_with_tangents(
+                "hidden motion",
+                1.,
+                Playback::Clamp,
+                vec![track, JointTrack::default()],
+                vec![
+                    TrackInterpolation {
+                        translation: Interpolation::CubicSpline,
+                        rotation: Interpolation::CubicSpline,
+                        scale: Interpolation::CubicSpline,
+                    },
+                    TrackInterpolation::default(),
+                ],
+                vec![tangents, JointTangents::default()],
+                &rig,
+            )
+            .unwrap();
+            assert!(clip.constant_joint_transform(0).is_none());
+            if channel == 0 {
+                assert!(clip.try_sample(&rig, 0.5).unwrap().local()[0].translation.x > 0.1);
+            }
+            if channel == 3 {
+                assert!(clip.try_sample(&rig, 0.5).is_err());
+            }
+        }
     }
 
     #[test]
@@ -2137,6 +2462,97 @@ mod tests {
             )
             .unwrap(),
         )
+    }
+
+    #[test]
+    fn extraction_masks_selected_child_axes_and_preserves_other_channels() {
+        let rig = skeleton();
+        let mut pose = rig.bind_pose();
+        pose.local[0].translation = Vec3::X * 7.0;
+        pose.local[1] = Transform {
+            translation: Vec3::new(3.0, 4.0, 5.0),
+            rotation: Quat::from_rotation_z(0.4),
+            scale: Vec3::new(-2.0, 3.0, 4.0),
+        };
+        let original = pose.clone();
+        let frame = AnimatorFrame {
+            skin_matrices: pose.skin_matrices(&rig).unwrap(),
+            pose,
+            root_motion: Vec3::new(0.1, 0.2, 0.3),
+            root_motion_joint: 1,
+            transition_weight: 0.5,
+        };
+        let (frame, motion) = frame
+            .into_in_place_translation(&rig, [false, true, false])
+            .unwrap();
+        assert_eq!(motion, Vec3::Y * 0.2);
+        assert_eq!(frame.root_motion, Vec3::new(0.1, 0.0, 0.3));
+        assert_eq!(frame.pose.local()[0], original.local()[0]);
+        assert_eq!(frame.pose.local()[1].translation, Vec3::new(3.0, 1.0, 5.0));
+        assert_eq!(frame.pose.local()[1].rotation, original.local()[1].rotation);
+        assert_eq!(frame.pose.local()[1].scale, original.local()[1].scale);
+        assert_eq!(frame.transition_weight, 0.5);
+        assert_eq!(frame.skin_matrices, frame.pose.skin_matrices(&rig).unwrap());
+        let mut invalid = frame;
+        invalid.root_motion = Vec3::splat(f32::INFINITY);
+        assert!(invalid.into_in_place_translation(&rig, [true; 3]).is_err());
+    }
+
+    #[test]
+    fn extracted_translation_is_removed_from_pose_palette_and_consumed_once() {
+        let rig = skeleton();
+        let mut animator = Animator::new(root_clip(&rig, 2.0));
+        let sampled = animator.advance(&rig, 0.75).unwrap();
+        let original = sampled.clone();
+        let (in_place, motion) = sampled
+            .into_in_place_translation(&rig, [true, false, true])
+            .unwrap();
+        assert_eq!(motion, Vec3::X * 1.5);
+        assert_eq!(in_place.root_motion, Vec3::ZERO);
+        assert_eq!(
+            in_place.pose.local()[0].translation.x,
+            rig.joints()[0].bind_local.translation.x
+        );
+        assert_eq!(in_place.pose.local()[1], original.pose.local()[1]);
+        assert_eq!(
+            in_place.pose.local()[0].rotation,
+            original.pose.local()[0].rotation
+        );
+        assert_eq!(
+            in_place.skin_matrices,
+            in_place.pose.skin_matrices(&rig).unwrap()
+        );
+        assert_ne!(in_place.skin_matrices, original.skin_matrices);
+        let (again, twice) = in_place
+            .clone()
+            .into_in_place_translation(&rig, [true, false, true])
+            .unwrap();
+        assert_eq!(twice, Vec3::ZERO);
+        assert_eq!(again.pose, in_place.pose);
+        let (wrapped, motion) = animator
+            .advance(&rig, 0.5)
+            .unwrap()
+            .into_in_place_translation(&rig, [true, false, true])
+            .unwrap();
+        assert_eq!(motion, Vec3::X);
+        assert_eq!(
+            wrapped.pose.local()[0].translation.x,
+            rig.joints()[0].bind_local.translation.x
+        );
+        let (unchanged, zero) = original
+            .clone()
+            .into_in_place_translation(&rig, [false; 3])
+            .unwrap();
+        assert_eq!(zero, Vec3::ZERO);
+        assert_eq!(unchanged.pose, original.pose);
+        assert_eq!(unchanged.root_motion, original.root_motion);
+        let mut joints = rig.joints().to_vec();
+        joints[0].name = "foreign".into();
+        let foreign = Skeleton::new(joints).unwrap();
+        assert!(matches!(
+            original.into_in_place_translation(&foreign, [true; 3]),
+            Err(AnimationError::SkeletonMismatch)
+        ));
     }
 
     #[test]

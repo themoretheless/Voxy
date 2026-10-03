@@ -22,6 +22,7 @@ mod gameplay_smoke;
 mod gizmo;
 mod gpu_model;
 mod model_playback;
+mod animation_runtime;
 mod animated_models;
 mod animation_smoke;
 pub use model_playback::ModelAnimation;
@@ -427,6 +428,7 @@ impl App {
                 simulation_time: Instant::now(),
                 simulation: None,
                 angular_motion: None,
+                animations: Default::default(),
                 simulation_ticks: 0,
                 physics: None,
                 player_input: voxy_gameplay::player_input()?,
@@ -895,6 +897,16 @@ impl App {
         Ok(())
     }
     fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
+        let models: BTreeMap<_, _> = if let Some(graphics) = &self.graphics {
+            graphics.models.iter().filter_map(|(id, resource)|
+                resource.animated_model.as_ref().map(|model| (id.clone(), model.clone()))).collect()
+        } else {
+            self.scene.components::<ModelInstance>().filter_map(|(_, instance)| {
+                let resource = self.catalog.snapshot(&instance.asset)?;
+                Some((instance.asset.clone(), resource.value().animated.as_ref()?.clone()))
+            }).collect()
+        };
+        self.play.animations.synchronize(&self.scene)?;
         if let Some(simulation) = &mut self.play.simulation {
             if let Some(actions) = &mut self.play.ui_actions {
                 for result in actions.dispatch(&self.scene, simulation.commands())? {
@@ -906,30 +918,54 @@ impl App {
             if let Some(physics) = &mut self.play.physics {
                 physics.synchronize(&self.scene)?;
             }
-            let frame = simulation.advance_scoped(
+            let frame_result = simulation.advance_scoped(
                 &mut self.scene,
                 elapsed,
-                voxy_gameplay::gameplay_schedule()?,
-                |system, access, dt| {
+                animation_runtime::schedule()?,
+                |system, mut access, dt| {
                     if system == "angular.step" {
                         if let Some(motion) = &mut self.play.angular_motion {
                             motion
                                 .fixed_scoped(access, dt)
                                 .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
                         }
-                    } else if let Some(physics) = &mut self.play.physics {
-                        physics
-                            .run_scoped_system(system, access, &mut self.play.player_input, dt)
-                            .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                     } else if system == "character.step" {
-                        access.require_write("player.input").map_err(|error| {
-                            voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                        })?;
-                        self.play.player_input.finish_frame();
+                        access.require_write("animation.playback").map_err(|error|
+                            voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
+                        let candidate = self.play.animations.prepare(
+                            access.read().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
+                            &models, dt as f32,
+                        ).map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                        if let Some(physics) = &mut self.play.physics {
+                            access.require_write("character.physics").map_err(|error|
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
+                            access.require_write("player.input").map_err(|error|
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
+                            physics.fixed_step_with_motion(
+                                access.write().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
+                                &mut self.play.player_input, dt, candidate.motions(),
+                            ).map_err(voxy_gameplay::GameplayFixedError::Physics)?;
+                        } else {
+                            if !candidate.motions().is_empty() {
+                                return Err(voxy_gameplay::GameplayFixedError::Motion("root motion requires a physics runtime".into()));
+                            }
+                            access.require_write("player.input").map_err(|error|
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
+                            self.play.player_input.finish_frame();
+                        }
+                        self.play.animations = candidate;
+                    } else if let Some(physics) = &mut self.play.physics {
+                        physics.run_scoped_system(system, access, &mut self.play.player_input, dt)
+                            .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                     }
                     Ok::<(), voxy_gameplay::GameplayFixedError>(())
                 },
-            )?;
+            );
+            if let Err(voxy_scene::SimulationStepError::System { completed_steps, .. }) = &frame_result {
+                self.play.simulation_ticks = self.play.simulation_ticks
+                    .saturating_add(u64::try_from(*completed_steps)?);
+            }
+            let frame = frame_result?;
             if let Some(audio) = self.audio.play_mut() {
                 audio_play::schedule()?
                     .run_scene(&mut self.scene, |_, access| {
@@ -1207,7 +1243,7 @@ impl App {
                         .component::<ModelAnimation>(instance.owner)
                         .ok()
                         .flatten()
-                        .copied()
+                        .cloned()
                         .unwrap_or(ModelAnimation {
                             clip: (!model.animations.is_empty()).then_some(0),
                             speed: 1.0,
@@ -1215,6 +1251,7 @@ impl App {
                         });
                     Some(animated_models::Request {
                         owner: instance.owner,
+                        frame: self.play.animations.frame(instance.owner, &model),
                         model,
                         settings,
                         lod: published.animated_lod.clone(),
@@ -1239,7 +1276,7 @@ impl App {
                     graphics.host.device(),
                     graphics.host.queue(),
                     animation_requests,
-                    self.play.simulation_ticks,
+                    self.play.animations.serial(),
                     other_live,
                     graphics.residency_cache.geometry_budget,
                 ) {
@@ -2224,6 +2261,15 @@ impl App {
                 .map(|asset| asset.value().animated.as_ref()
                     .map_or((0, 0), |model| (model.animations.len(), model.skeleton.joints().len())));
             animation.validate(counts.map(|value| value.0), counts.map(|value| value.1))?;
+            if animation.root_motion_axes.into_iter().any(|axis| axis)
+                && loaded.graph.component::<CharacterBody>(node)?.is_none() {
+                return Err("root motion requires a CharacterBody on the model owner".into());
+            }
+            if let Some(asset) = self.catalog.snapshot(&AssetId(model.clone()))
+                && let Some(model) = asset.value().animated.as_ref()
+            {
+                animation.resolve_motion_joint(model)?;
+            }
         }
         for (node, part) in loaded.graph.components::<ModelPart>() {
             if part.node != u32::MAX
@@ -3384,6 +3430,7 @@ impl App {
             self.audio.set_play(audio);
             self.play.simulation = Some(simulation);
             self.play.simulation_ticks = 0;
+            self.play.animations.clear();
             self.play.simulation_time = Instant::now();
         }
         self.update_edit_title();
@@ -4154,6 +4201,7 @@ fn run_model_viewport_configured_registry(
     if mode == ViewportMode::AnimationSmoke {
         let mut smoke = animation_smoke::Smoke::default();
         smoke.profile = std::env::var_os("VOXY_ANIMATION_PROFILE").is_some();
+        smoke.root_motion = std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();
         app.animation_smoke = Some(smoke);
         app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
     }

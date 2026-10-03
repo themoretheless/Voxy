@@ -466,7 +466,15 @@ impl Panels {
                     let button_width = label_width.ceil() + 12.0;
                     let width = right - if overridden { button_width + 12.0 } else { 8.0 };
                     let label = if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_joint" {
-                        "Motion bone"
+                        "Motion bone index"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_bone" {
+                        "Motion bone name"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/0" {
+                        "Root motion X"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/1" {
+                        "Root motion Y"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/2" {
+                        "Root motion Z"
                     } else if member.path.is_empty() {
                         member.schema.as_str()
                     } else {

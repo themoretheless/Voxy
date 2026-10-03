@@ -5,6 +5,7 @@ use winit::keyboard::KeyCode;
 #[derive(Debug, Default)]
 pub(super) struct Smoke {
     pub(super) profile: bool,
+    pub(super) root_motion: bool,
     phase: u8,
     since: u64,
     authoring: Option<voxy_scene::SceneDocument>,
@@ -52,6 +53,10 @@ impl App {
                     return Err("animation acceptance requires a clip".into());
                 }
                 let clip_count = model.animations.len();
+                let motion_name = model.joint_names().iter().flatten()
+                    .find(|name| name.starts_with("b_Hip_01"))
+                    .or_else(|| model.joint_names().get(1).and_then(Option::as_ref))
+                    .filter(|name| model.resolve_joint_name(name).is_ok()).map(|name| name.to_string());
                 if self
                     .graphics
                     .as_ref()
@@ -86,6 +91,19 @@ impl App {
                     return Err("native motion joint redo failed".into());
                 }
                 println!("VOXY_NATIVE_ROOT_JOINT selected=1 undo=true redo=true");
+                if let Some(name) = motion_name {
+                    self.animation_inspector_input("/root_motion_bone", &name)?;
+                    let named = self.authoring_document()?;
+                    self.edit_key(KeyCode::KeyZ)?;
+                    if self.authoring_document()? != root_selected {
+                        return Err("native named motion bone undo failed".into());
+                    }
+                    self.edit_key(KeyCode::KeyY)?;
+                    if self.authoring_document()? != named {
+                        return Err("native named motion bone redo failed".into());
+                    }
+                    println!("VOXY_NATIVE_ROOT_NAME name={name:?} undo=true redo=true");
+                }
                 let before = self.authoring_document()?;
                 self.animation_inspector_input("/clip", "null")?;
                 let bind = self.authoring_document()?;
@@ -127,6 +145,24 @@ impl App {
                 println!(
                     "ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true"
                 );
+                if self.animation_smoke.as_ref().unwrap().root_motion {
+                    self.panel_action(crate::panels::Action::Select(0))?;
+                    self.edit_key(KeyCode::KeyC)?;
+                    let body = self.scene.component_mut::<voxy_gameplay::CharacterBody>(self.instances[0])?
+                        .ok_or("missing native root-motion body")?;
+                    body.gravity = 0.0;
+                    body.speed = 0.0;
+                    self.commit_authoring()?;
+                    self.animation_inspector_input("/root_motion_joint", "0")?;
+                    self.animation_inspector_input("/root_motion_bone", "root")?;
+                    self.animation_inspector_input("/root_motion_axes/0", "true")?;
+                    self.panel_action(crate::panels::Action::Select(1))?;
+                    self.edit_key(KeyCode::KeyB)?;
+                    let mut local = self.scene.local(self.instances[1])?;
+                    local.translation = self.scene.local(self.instances[0])?.translation + glam::Vec3::X * 0.15;
+                    self.scene.set_local(self.instances[1], local)?;
+                    self.commit_authoring()?;
+                }
                 let authoring = self.authoring_document()?;
                 self.toggle_play()?;
                 let smoke = self.animation_smoke.as_mut().unwrap();
@@ -150,7 +186,16 @@ impl App {
                 let Some(paused) = graphics.animated_models.pose_signature(second)? else {
                     return Ok(false);
                 };
-                if moving == paused {
+                if smoke.root_motion {
+                    let position = self.scene.local(first)?.translation;
+                    if (position.x - 0.05).abs() > 1e-5 || moving != paused {
+                        return Err(format!("native root motion failed wall/in-place admission: {position:?}").into());
+                    }
+                    let requested = self.play.animations.motions().iter()
+                        .find(|(owner, _)| *owner == first).ok_or("missing native root motion request")?.1;
+                    println!("VOXY_NATIVE_ROOT_PHYSICS x={} wall_limited=true in_place=true fixed_serial={} requested={requested:?}",
+                        position.x, self.play.animations.serial());
+                } else if moving == paused {
                     return Err("native owners failed to independently animate/pause".into());
                 }
                 let (owners, gpu_primitives, sources) = graphics.animated_models.counts();

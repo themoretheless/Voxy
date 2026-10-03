@@ -1,0 +1,41 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.65s
+     Running unittests src/lib.rs (target/debug/deps/voxy_animation-88e9daec251bcb5a)
+
+running 33 tests
+test root_curve::tests::million_cycles_are_summed_and_large_constant_offsets_cancel_exactly ... ok
+test root_curve::tests::cubic_weighted_integral_matches_analytic_polynomial_and_substeps ... ok
+test root_curve::tests::step_jumps_use_weight_at_event_including_loop_boundaries ... ok
+test tests::clip_interpolates_loops_and_uses_bind_fallbacks ... ok
+test tests::animator_root_integral_uses_nonzero_cubic_derivatives_in_seconds ... ok
+test tests::crossfade_is_bounded_and_reaches_target ... ok
+test tests::completed_fade_does_not_admit_invalid_zero_weight_source ... ok
+test tests::animator_root_integral_uses_step_event_weights_and_substeps ... ok
+test tests::cubic_derivatives_use_segment_seconds_and_normalize_rotation ... ok
+test tests::animator_preserves_root_motion_across_loop_boundary ... ok
+test tests::extraction_masks_selected_child_axes_and_preserves_other_channels ... ok
+test tests::cubic_scale_overshoot_is_sampled_and_invalid_zero_scale_is_rejected ... ok
+test tests::finite_local_scales_cannot_publish_overflowing_global_matrices ... ok
+test tests::extracted_translation_is_removed_from_pose_palette_and_consumed_once ... ok
+test tests::hierarchy_and_inverse_bind_produce_skin_matrices ... ok
+test tests::foreign_transition_and_advance_preserve_active_crossfade ... ok
+test tests::incompatible_clip_rejects_without_advancing ... ok
+test tests::interrupted_fade_preserves_rotated_scaled_hierarchical_palette ... ok
+test tests::interrupted_crossfade_starts_from_displayed_pose_and_releases_snapshot ... ok
+test tests::interrupted_frozen_source_has_no_root_displacement_and_pause_is_zero ... ok
+test tests::invalid_cubic_pose_keeps_animator_clock_and_transition ... ok
+test tests::joint_override_rejects_invalid_rotation_without_mutation ... ok
+test tests::malformed_hierarchy_and_tracks_are_rejected ... ok
+test tests::interrupted_snapshot_is_shared_and_failed_advance_keeps_it ... ok
+test tests::mirrored_bind_transforms_keep_signed_scale_through_hierarchy_and_palette ... ok
+test tests::pose_blend_uses_shortest_rotation_path ... ok
+test tests::palette_overflow_preserves_clock_and_unfinished_transition ... ok
+test tests::rig_binding_accepts_exact_reconstruction_and_rejects_same_count_foreign_layouts ... ok
+test tests::root_motion_crossfade_blends_velocities_and_splits_completion_tail ... ok
+test tests::root_motion_overflow_rejects_without_advancing ... ok
+test tests::signed_scale_channels_and_blends_reject_only_singular_samples ... ok
+test tests::step_channels_hold_values_at_boundaries_without_changing_linear_channels ... ok
+test tests::selected_motion_joint_updates_both_fade_curves_and_preserves_invalid_selection ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

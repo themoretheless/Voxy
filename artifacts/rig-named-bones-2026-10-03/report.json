@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-03",
+  "base_commit": "3e7d6bb190e86f1e40b4b29b27a72b7f70167b0b",
+  "editor_tests": 94,
+  "render_tests": 133,
+  "focused_inspector_tests": 1,
+  "native_smoke": {
+    "bone": "b_Hip_01",
+    "undo_redo": true,
+    "owners": 2,
+    "animated_bytes_after_stop": 0
+  },
+  "verification_sequence": [
+    "94 editor tests passed with named selection; initial renderer fixture incorrectly permuted children only",
+    "focused inspector test passed after named history assertions",
+    "release build and native smoke passed with b_Hip_01",
+    "133 renderer tests passed after fixture permutes source node array; production code unchanged by fixture repair"
+  ],
+  "limits": [
+    "Exact unique source names only; missing or duplicate names reject",
+    "No rename retargeting, path disambiguation, dropdown, physics application or inplace pose removal",
+    "No new CUDA or GPU shader conformance claim",
+    "Numeric fallback retained for old and unnamed rigs"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/model_playback.rs": "1cb3cb8f883e1928f385cc1e43831ad6882543f184999132b6e4fec7eeed54d7",
+    "crates/voxy_editor/src/animated_models.rs": "e678571c4e87a461ff02e5cc034f423a2c637ed154fb85a4e945c3a471693b28",
+    "crates/voxy_editor/src/animation_smoke.rs": "096292c507f28ab2392cf121c90c20ba7b70022f1c9bee17df47ecde5cff898c",
+    "crates/voxy_editor/src/component_fields.rs": "8ba5b22eeb33ff81bc06af3a9b66db78f9957e8073c2bfb114bb31d84fbe994f",
+    "crates/voxy_editor/src/lib.rs": "ef3386976efed47d406a9d61ace932b7876b69d118ba07923e91abb4a257f0c5",
+    "crates/voxy_editor/src/panels.rs": "9d30348e259be6037ad897439c377074e104ed376a567bcaef496c8944d04477",
+    "crates/voxy_render/src/model.rs": "89769a4007f7abb95e43e7b50be59d9a60c943ce507b2d4bdf76009195c7c542"
+  },
+  "binary_sha256": "7e17b811cf81bd2654028f797f9b353071660a6cd20a21ea41b5461a56ce8a7c"
+}

@@ -36,6 +36,7 @@ pub struct ModelAsset {
     pub primitives: Vec<ModelPrimitive>,
     pub skeleton: Skeleton,
     pub animations: Vec<Arc<AnimationClip>>,
+    joint_names: Vec<Option<Arc<str>>>,
     mesh_joint: usize,
     skinned: bool,
 }
@@ -71,6 +72,23 @@ fn fail(message: impl Into<String>) -> ModelError {
 }
 
 impl ModelAsset {
+    /// Original authored node names, in skeleton order. Unnamed nodes have no stable name.
+    pub fn joint_names(&self) -> &[Option<Arc<str>>] {
+        &self.joint_names
+    }
+
+    /// Resolve an exact, unique authored name in this imported revision.
+    /// Missing or ambiguous names fail rather than selecting a different joint.
+    pub fn resolve_joint_name(&self, name: &str) -> Result<u16, ModelError> {
+        let mut matches = self.joint_names.iter().enumerate()
+            .filter(|(_, candidate)| candidate.as_deref() == Some(name));
+        let (index, _) = matches.next().ok_or_else(|| fail("motion bone name not found"))?;
+        if matches.next().is_some() {
+            return Err(fail("motion bone name is ambiguous"));
+        }
+        u16::try_from(index).map_err(|_| fail("motion bone index exceeds supported range"))
+    }
+
     /// Imports GLB's embedded buffer, or glTF buffers provided in document order.
     ///
     /// # Errors
@@ -219,6 +237,7 @@ impl ModelAsset {
                 inverse_bind: inverse[index],
             });
         }
+        let joint_names = order.iter().map(|&index| nodes[index].name().map(Arc::from)).collect();
         let skeleton = Skeleton::new(joints).map_err(|e| fail(e.to_string()))?;
         let mut primitives = Vec::new();
         let (mut vertex_count, mut index_count) = (0usize, 0usize);
@@ -532,6 +551,7 @@ impl ModelAsset {
             ));
         }
         Ok(Self {
+            joint_names,
             primitives,
             skeleton,
             animations,
@@ -804,6 +824,26 @@ mod tests {
             )
             .is_err()
         );
+    }
+
+    #[test]
+    fn authored_bone_names_survive_inserted_nodes_and_reject_ambiguity() {
+        let (json, bytes) = fixture();
+        let mut doc: serde_json::Value = serde_json::from_str(&json).unwrap();
+        doc["nodes"][1]["name"] = "motion#1".into();
+        let parse = |doc: &serde_json::Value| ModelAsset::parse(
+            &serde_json::to_vec(doc).unwrap(), &[&bytes], ModelLimits::default()).unwrap();
+        let original = parse(&doc);
+        assert_eq!(original.resolve_joint_name("motion#1").unwrap(), 1);
+        doc["nodes"].as_array_mut().unwrap().push(serde_json::json!({"name":"new sibling"}));
+        doc["nodes"].as_array_mut().unwrap().swap(1, 2);
+        doc["nodes"][0]["children"] = serde_json::json!([1, 2]);
+        let reordered = parse(&doc);
+        assert_eq!(reordered.resolve_joint_name("motion#1").unwrap(), 2);
+        assert_eq!(reordered.joint_names()[2].as_deref(), Some("motion#1"));
+        assert!(reordered.resolve_joint_name("missing").is_err());
+        doc["nodes"][1]["name"] = "motion#1".into();
+        assert!(parse(&doc).resolve_joint_name("motion#1").is_err());
     }
 
     #[test]

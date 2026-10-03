@@ -586,3 +586,305 @@ fn character_domain_denials_preserve_live_physics_pose_and_input() {
         assert!(input.state("jump").unwrap().pressed);
     }
 }
+
+fn motion_fixture() -> (SceneGraph, NodeId) {
+    let mut scene = SceneGraph::new(8);
+    let player = scene.spawn(None, Transform::default()).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                gravity: 0.0,
+                speed: 0.0,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    (scene, player)
+}
+
+#[test]
+fn animation_displacement_sweeps_slides_and_is_consumed_once() {
+    let (mut scene, player) = motion_fixture();
+    let wall = scene.spawn(None, at(Vec3::X)).unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [0.05, 5.0, 5.0],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    let applied = physics
+        .fixed_step_with_motion(
+            &mut scene,
+            &mut input,
+            0.02,
+            &[(player, Vec3::new(2.0, 0.0, 0.25))],
+        )
+        .unwrap();
+    let center = scene.local(player).unwrap().translation;
+    assert!((center.x - 0.9).abs() < 1e-5, "{center:?}");
+    assert!((center.z - 0.25).abs() < 1e-5);
+    assert_eq!(applied.len(), 1);
+    assert!(applied[0].1.abs_diff_eq(center, 1e-5));
+    physics.fixed_step(&mut scene, &mut input, 0.02).unwrap();
+    assert!(
+        scene
+            .local(player)
+            .unwrap()
+            .translation
+            .abs_diff_eq(center, 1e-5)
+    );
+    let blocked = physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, Vec3::X)])
+        .unwrap();
+    assert!(blocked[0].1.length() < 1e-5);
+}
+
+#[test]
+fn animation_displacement_collides_vertically_and_with_affine_walls() {
+    for direction in [-1.0, 1.0] {
+        let (mut scene, player) = motion_fixture();
+        let obstacle = scene.spawn(None, at(Vec3::Y * direction)).unwrap();
+        scene
+            .insert_component(
+                obstacle,
+                BoxCollider {
+                    half_extents: [5.0, 0.05, 5.0],
+                },
+            )
+            .unwrap();
+        let mut physics = CharacterPhysics::new(&scene, 4, 4);
+        let mut input = player_input().unwrap();
+        let applied = physics
+            .fixed_step_with_motion(
+                &mut scene,
+                &mut input,
+                0.02,
+                &[(player, Vec3::Y * direction * 2.0)],
+            )
+            .unwrap();
+        assert!(
+            (applied[0].1.y - direction * 0.9).abs() < 1e-5,
+            "{applied:?}"
+        );
+        assert_eq!(
+            physics.state(&scene, player).unwrap().unwrap().grounded,
+            direction < 0.0
+        );
+    }
+    let (mut scene, player) = motion_fixture();
+    let wall = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::X,
+                rotation: Quat::from_rotation_y(std::f32::consts::FRAC_PI_4),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [0.05, 5.0, 5.0],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let applied = physics
+        .fixed_step_with_motion(
+            &mut scene,
+            &mut player_input().unwrap(),
+            0.02,
+            &[(player, Vec3::X * 2.0)],
+        )
+        .unwrap();
+    assert!(applied[0].1.x < 1.5 && applied[0].1.z > 0.4, "{applied:?}");
+}
+
+#[test]
+fn invalid_animation_motion_preserves_all_owners_and_pending_input() {
+    let (mut scene, player) = motion_fixture();
+    let other = scene.spawn(None, at(Vec3::Z)).unwrap();
+    scene
+        .insert_component(
+            other,
+            CharacterBody {
+                gravity: 0.0,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let non_character = scene.spawn(None, Transform::default()).unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    physics.fixed_step(&mut scene, &mut input, 0.02).unwrap();
+    input.event(JUMP, 1.0).unwrap();
+    let before = scene.local(player).unwrap();
+    let before_other = scene.local(other).unwrap();
+    let state = physics.state(&scene, player).unwrap();
+    for motions in [
+        vec![(player, Vec3::X), (other, Vec3::splat(f32::NAN))],
+        vec![(player, Vec3::X), (player, Vec3::Z)],
+        vec![(non_character, Vec3::ZERO)],
+        vec![(player, Vec3::X * 1e7)],
+    ] {
+        assert_eq!(
+            physics.fixed_step_with_motion(&mut scene, &mut input, 0.02, &motions),
+            Err(PhysicsError::InvalidMotion)
+        );
+        assert_eq!(scene.local(player).unwrap(), before);
+        assert_eq!(scene.local(other).unwrap(), before_other);
+        assert_eq!(physics.state(&scene, player).unwrap(), state);
+        assert!(input.state("jump").unwrap().pressed);
+    }
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, Vec3::X)])
+        .unwrap();
+    assert!(!input.state("jump").unwrap().pressed);
+}
+
+#[test]
+fn looped_animation_drives_collisions_without_duplicate_pose_translation() {
+    use std::sync::Arc;
+    use voxy_animation::{AnimationClip, Animator, Joint, JointTrack, Playback, Skeleton, Vec3Key};
+    let rig = Skeleton::new(vec![Joint {
+        name: "locomotion".into(),
+        parent: None,
+        bind_local: voxy_animation::Transform::IDENTITY,
+        inverse_bind: glam::Mat4::IDENTITY,
+    }])
+    .unwrap();
+    let clip = Arc::new(
+        AnimationClip::new(
+            "walk",
+            1.0,
+            Playback::Loop,
+            vec![JointTrack {
+                translations: vec![
+                    Vec3Key {
+                        time: 0.0,
+                        value: Vec3::ZERO,
+                    },
+                    Vec3Key {
+                        time: 1.0,
+                        value: Vec3::X * 10.0,
+                    },
+                ],
+                ..Default::default()
+            }],
+            &rig,
+        )
+        .unwrap(),
+    );
+    let mut animator = Animator::new(clip);
+    let (mut scene, player) = motion_fixture();
+    let wall = scene.spawn(None, at(Vec3::X)).unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [0.05, 5.0, 5.0],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    let mut requested = 0.0;
+    let mut accepted = 0.0;
+    for _ in 0..125 {
+        let mut candidate = animator.clone();
+        let frame = candidate.advance(&rig, 0.02).unwrap();
+        let (frame, motion) = frame
+            .into_in_place_translation(&rig, [true, false, true])
+            .unwrap();
+        assert_eq!(frame.pose.local()[0].translation, Vec3::ZERO);
+        assert_eq!(frame.skin_matrices[0], glam::Mat4::IDENTITY);
+        // This fixture's locomotion parent and model-to-world basis are identity.
+        let applied = physics
+            .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, motion)])
+            .unwrap();
+        animator = candidate;
+        requested += motion.x;
+        accepted += applied[0].1.x;
+    }
+    assert!((requested - 25.0).abs() < 1e-3, "{requested}");
+    assert!((accepted - 0.9).abs() < 1e-5, "{accepted}");
+    assert!((scene.local(player).unwrap().translation.x - 0.9).abs() < 1e-5);
+    let mut candidate = animator.clone();
+    let pending = candidate.advance(&rig, 0.02).unwrap().root_motion;
+    assert_eq!(
+        physics.fixed_step_with_motion(
+            &mut scene,
+            &mut input,
+            0.02,
+            &[(player, pending), (player, pending)]
+        ),
+        Err(PhysicsError::InvalidMotion)
+    );
+    // Failed physics publication leaves the animation owner untouched for retry.
+    assert_eq!(animator.advance(&rig, 0.02).unwrap().root_motion, pending);
+}
+
+#[test]
+fn horizontal_animation_during_jump_does_not_snap_back_to_floor() {
+    let (mut scene, player) = motion_fixture();
+    let mut descriptor = *scene.component::<CharacterBody>(player).unwrap().unwrap();
+    descriptor.jump_speed = 0.1;
+    scene.insert_component(player, descriptor).unwrap();
+    let floor = scene.spawn(None, at(Vec3::new(0.0, -0.1, 0.0))).unwrap();
+    scene
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [5.0, 0.05, 5.0],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, -Vec3::Y * 0.01)])
+        .unwrap();
+    assert!(physics.state(&scene, player).unwrap().unwrap().grounded);
+    input.event(JUMP, 1.0).unwrap();
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, Vec3::X * 0.1)])
+        .unwrap();
+    let state = physics.state(&scene, player).unwrap().unwrap();
+    assert!(!state.grounded);
+    assert!((state.velocity[1] - 0.1).abs() < 1e-6);
+    assert!((scene.local(player).unwrap().translation.y - 0.002).abs() < 1e-6);
+}
+
+#[test]
+fn animation_ceiling_contact_removes_persistent_upward_velocity() {
+    let (mut scene, player) = motion_fixture();
+    let mut descriptor = *scene.component::<CharacterBody>(player).unwrap().unwrap();
+    descriptor.jump_speed = 0.1;
+    scene.insert_component(player, descriptor).unwrap();
+    for (y, half) in [(-0.1, [5.0, 0.05, 5.0]), (0.15, [5.0, 0.05, 5.0])] {
+        let obstacle = scene.spawn(None, at(Vec3::Y * y)).unwrap();
+        scene
+            .insert_component(obstacle, BoxCollider { half_extents: half })
+            .unwrap();
+    }
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, -Vec3::Y * 0.01)])
+        .unwrap();
+    input.event(JUMP, 1.0).unwrap();
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.02, &[(player, Vec3::Y)])
+        .unwrap();
+    let state = physics.state(&scene, player).unwrap().unwrap();
+    assert!(!state.grounded);
+    assert_eq!(state.velocity[1], 0.0);
+    assert!((scene.local(player).unwrap().translation.y - 0.05).abs() < 1e-6);
+}
