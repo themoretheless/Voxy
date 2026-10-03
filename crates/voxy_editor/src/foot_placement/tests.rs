@@ -913,7 +913,14 @@ fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_ato
     let id = AssetId("fading-feet".into());
     scene.insert_component(owner, crate::ModelInstance { asset: id.clone() }).unwrap();
     scene.insert_component(owner, crate::ModelAnimation::default()).unwrap();
-    scene.insert_component(owner, settings()).unwrap();
+    let mut feet = settings();
+    // Explicit curves incur event work even while the existing anchor remains valid.
+    // Two distant colliders alone do not force a probe of an already planted foot.
+    feet.feet[0].contact_curve = vec![
+        FootContactKey { phase: 0., weight: 1. },
+        FootContactKey { phase: 1., weight: 1. },
+    ];
+    scene.insert_component(owner, feet).unwrap();
     scene.insert_component(owner, CharacterBody { half_extents: [0.1, 1., 0.1], ..Default::default() }).unwrap();
     for x in [0., 10.] {
         let floor = scene.spawn(None, Transform { translation: Vec3::new(x, -0.1, 0.), ..Default::default() }).unwrap();
@@ -941,7 +948,8 @@ fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_ato
     let serial = runtime.serial();
     let position = scene.local(owner).unwrap();
     physics = physics.with_angular_trajectory_query_budget(1).unwrap();
-    assert!(tick(&runtime, &mut physics, &mut scene, &mut input).is_err());
+    let error = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap_err();
+    assert!(format!("{error:?}").contains("contact event budget exceeded"));
     assert!(Arc::ptr_eq(&frame, &runtime.frame(owner, &model).unwrap()));
     assert_eq!(runtime.serial(), serial);
     assert_eq!(scene.local(owner).unwrap(), position);
