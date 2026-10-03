@@ -465,7 +465,9 @@ impl Panels {
                         .sum();
                     let button_width = label_width.ceil() + 12.0;
                     let width = right - if overridden { button_width + 12.0 } else { 8.0 };
-                    let label = if member.path.is_empty() {
+                    let label = if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_joint" {
+                        "Motion bone"
+                    } else if member.path.is_empty() {
                         member.schema.as_str()
                     } else {
                         member.path.as_str()

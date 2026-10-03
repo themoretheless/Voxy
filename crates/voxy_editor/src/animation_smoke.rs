@@ -70,6 +70,22 @@ impl App {
                 }
                 self.panel_action(crate::panels::Action::Select(0))?;
                 self.panel_action(crate::panels::Action::Animation)?;
+                let root_before = self.authoring_document()?;
+                self.animation_inspector_input("/root_motion_joint", "1")?;
+                let root_selected = self.authoring_document()?;
+                if self.scene.component::<crate::ModelAnimation>(self.instances[0])?
+                    .is_none_or(|settings| settings.root_motion_joint != 1) {
+                    return Err("native inspector did not select motion joint".into());
+                }
+                self.edit_key(KeyCode::KeyZ)?;
+                if self.authoring_document()? != root_before {
+                    return Err("native motion joint undo failed".into());
+                }
+                self.edit_key(KeyCode::KeyY)?;
+                if self.authoring_document()? != root_selected {
+                    return Err("native motion joint redo failed".into());
+                }
+                println!("VOXY_NATIVE_ROOT_JOINT selected=1 undo=true redo=true");
                 let before = self.authoring_document()?;
                 self.animation_inspector_input("/clip", "null")?;
                 let bind = self.authoring_document()?;

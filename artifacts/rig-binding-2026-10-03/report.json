@@ -1,0 +1,30 @@
+{
+  "ordinary_tests": 242,
+  "animation_tests": 19,
+  "editor_tests": 92,
+  "renderer_tests": 131,
+  "gpu_tests": 19,
+  "gpu_editor_tests": 4,
+  "gpu_renderer_tests": 15,
+  "backend": "Metal",
+  "binding": "Shared immutable joint layout, pointer fast path and exact structural fallback",
+  "checks": [
+    "Same-count foreign names/order/parents/local-bind/inverse-bind rejection",
+    "Independent exact reconstruction accepted",
+    "Source-bound legacy sampler defaults",
+    "Foreign palette/blend rejected",
+    "Failed crossfade switch and advance preserve state",
+    "Editor rejects before playback owner creation",
+    "Numerical overflow still rejects within a compatible rig"
+  ],
+  "limits": [
+    "No automatic retargeting or approximate rig equivalence",
+    "No external clip remapping/import acceptance",
+    "Raw matrix GPU API cannot recover originating clip identity",
+    "No non-Metal hardware acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "298c1dbba86f18f181b6477beaafb648551e76af4d13b4042c10a59e4fcc43d0",
+    "crates/voxy_editor/src/model_playback.rs": "e22aa6b760b24444249dae84c0643125aaf4a41de8f59ecb61da8f06bd955374"
+  }
+}

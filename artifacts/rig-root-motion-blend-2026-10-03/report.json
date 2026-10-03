@@ -1,0 +1,25 @@
+{
+  "ordinary_tests": 248,
+  "animation_tests": 25,
+  "editor_tests": 92,
+  "renderer_tests": 131,
+  "scope": "Root displacement blending in Animator; no new GPU/native-window acceptance",
+  "checks": [
+    "Constant velocities blended over linear fade weight",
+    "Loop crossing",
+    "Completion interval split from target-only tail",
+    "One-second vs two half-second steps match for constant velocities",
+    "Frozen interruption source contributes zero displacement",
+    "Zero speed root displacement zero",
+    "Completed fade skips invalid zero-weight source pose",
+    "Existing overflow and retained-transition regressions pass"
+  ],
+  "limits": [
+    "Nonlinear and STEP motion use interval displacement approximation, not exact weighted curve integration",
+    "No rotation/root bone selection or in-place pose extraction",
+    "No gameplay collision application or root-motion editor controls",
+    "Interrupted snapshot does not preserve source velocity"
+  ],
+  "sha256": "42c885bbffc2b5cb98947a81f03f8d20955fc876dd73fdfec84e69a095c38c28",
+  "test_sequence": "All three suites passed before adding one completed-fade test; complete animation suite rerun afterward, runtime unchanged."
+}

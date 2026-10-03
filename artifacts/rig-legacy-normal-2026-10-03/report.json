@@ -1,0 +1,18 @@
+{
+  "ordinary_tests_passed": 130,
+  "gpu_tests_passed": 1,
+  "gpu_cases": 12,
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "maximum_direction_error": 8.5600654e-08,
+  "old_forward_transform_maximum_error": 1.2534771,
+  "scope": "Production WGSL normal helper executed as compute and independently compared with a double-precision inverse transpose; not a full legacy draw pixel acceptance.",
+  "limits": [
+    "No NVIDIA/CUDA hardware evidence",
+    "Legacy singular-pose admission and single-sided mirrored winding remain incomplete"
+  ],
+  "sha256": {
+    "crates/voxy_render/src/skinned.wgsl": "1e07c433251024f01d108aec33955149a279c443e1afa38b479c32f4ab5b0d86",
+    "crates/voxy_render/src/skinned_normal_gpu_tests.rs": "c88cb10f6f968fdfe9d37d98c12cc37daa2ed4e73da97658fa6db035025b9540"
+  }
+}

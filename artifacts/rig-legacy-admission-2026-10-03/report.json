@@ -1,0 +1,28 @@
+{
+  "ordinary_tests": 222,
+  "editor_tests": 91,
+  "renderer_tests": 131,
+  "gpu_renderer_tests": 14,
+  "backend": "Metal",
+  "checks": [
+    "singular blended bones despite invertible endpoints",
+    "singular model",
+    "nonaffine transform",
+    "overflow",
+    "reflection accepted",
+    "failed admission leaves history untouched",
+    "invalid initial upload rejected"
+  ],
+  "limits": [
+    "Renderer update guards verified by source ordering and shared admission regression, not native-window rejected-update pixel equivalence",
+    "Full legacy raster pixel equivalence and non-Metal hardware remain unverified"
+  ],
+  "sha256": {
+    "crates/voxy_render/src/skinned.rs": "3f4868edd5273e90b535cd95c5f4723e98c9e71bb8b42389b2d4f56dfef52fb3",
+    "crates/voxy_render/src/renderer.rs": "962d2fed8fa0c1af1fed3d6405b44302ad5e9ce45406d7b1be83aba1e6caca5f",
+    "crates/voxy_render/src/renderer/skinned_lod.rs": "07b3292312f476dd0ecdb28b377d2bbb92911853ce3fdf9fcd39fe764290a17c",
+    "crates/voxy_render/src/skinned_motion.rs": "2034834b7aec0be575f5eeb9f455c77ac22380310f119a67fceacbb0ca8c8c2a",
+    "crates/voxy_render/src/skinned_normal_gpu_tests.rs": "d49abc46f7142cf841a5b57e047f5ffc335829f9ae38cc5bf02404c812149c7b"
+  },
+  "post_test_changes": "Rustdoc relocation and formatting only"
+}

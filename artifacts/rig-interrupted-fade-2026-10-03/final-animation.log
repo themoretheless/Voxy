@@ -1,0 +1,29 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.69s
+     Running unittests src/lib.rs (target/debug/deps/voxy_animation-88e9daec251bcb5a)
+
+running 22 tests
+test tests::cubic_scale_overshoot_is_sampled_and_invalid_zero_scale_is_rejected ... ok
+test tests::finite_local_scales_cannot_publish_overflowing_global_matrices ... ok
+test tests::clip_interpolates_loops_and_uses_bind_fallbacks ... ok
+test tests::hierarchy_and_inverse_bind_produce_skin_matrices ... ok
+test tests::animator_preserves_root_motion_across_loop_boundary ... ok
+test tests::incompatible_clip_rejects_without_advancing ... ok
+test tests::crossfade_is_bounded_and_reaches_target ... ok
+test tests::cubic_derivatives_use_segment_seconds_and_normalize_rotation ... ok
+test tests::foreign_transition_and_advance_preserve_active_crossfade ... ok
+test tests::malformed_hierarchy_and_tracks_are_rejected ... ok
+test tests::interrupted_fade_preserves_rotated_scaled_hierarchical_palette ... ok
+test tests::joint_override_rejects_invalid_rotation_without_mutation ... ok
+test tests::mirrored_bind_transforms_keep_signed_scale_through_hierarchy_and_palette ... ok
+test tests::interrupted_snapshot_is_shared_and_failed_advance_keeps_it ... ok
+test tests::invalid_cubic_pose_keeps_animator_clock_and_transition ... ok
+test tests::pose_blend_uses_shortest_rotation_path ... ok
+test tests::interrupted_crossfade_starts_from_displayed_pose_and_releases_snapshot ... ok
+test tests::rig_binding_accepts_exact_reconstruction_and_rejects_same_count_foreign_layouts ... ok
+test tests::palette_overflow_preserves_clock_and_unfinished_transition ... ok
+test tests::root_motion_overflow_rejects_without_advancing ... ok
+test tests::step_channels_hold_values_at_boundaries_without_changing_linear_channels ... ok
+test tests::signed_scale_channels_and_blends_reject_only_singular_samples ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

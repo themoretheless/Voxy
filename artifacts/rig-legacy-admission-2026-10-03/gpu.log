@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 14 tests
+test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ok
+test scene::lod_geometry::tests::gpu_lod_upload_shares_streams_and_counts_all_index_buffers ... ok
+test scene::multi_view_tests::gpu_disjoint_views_preserve_both_regions_and_clear_gap ... ok
+test scene::multi_view_tests::gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth ... ok
+test scene::skinning::tests::gpu_fox_all_clips_match_cpu_and_render ... ok
+test scene::skinning::tests::gpu_fox_step_clips_match_cpu_and_render ... ok
+test scene::skinning::tests::gpu_mirrored_rig_matches_cpu_positions_normals_and_render ... ok
+test scene::skinning::tests::gpu_reference_rig_cubic_clips_match_cpu_and_render ... ok
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... ok
+test scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render ... ok
+test scene::skinning::tests::gpu_scene_skinning_independent_instances_and_last_good_pose ... ok
+test scene::skinning::tests::gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ok
+test scene::skinning::tests::gpu_skin_normals_follow_inverse_transpose_and_keep_last_good ... ok
+test skinned::normal_gpu_tests::gpu_legacy_normal_transport_matches_inverse_transpose ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 131 filtered out; finished in 40.82s

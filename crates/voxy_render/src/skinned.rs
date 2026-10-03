@@ -151,6 +151,21 @@ impl SkinnedMesh {
             .with_normals(self.posed_normals(joints, model)?)?)
     }
 
+    /// Validate the complete world-space deformation before any legacy GPU writes.
+    /// Positions alone can remain finite when a blended normal matrix collapses.
+    pub(crate) fn validate_render_pose(
+        &self,
+        joints: &[Mat4],
+        model: Mat4,
+    ) -> Result<(), SkinnedUploadError> {
+        validate_temporal_palette(self, joints, model)?;
+        for vertex in self.vertices.iter() {
+            skinned_position(vertex, joints, model)?;
+            skinned_normal(vertex, joints, model)?;
+        }
+        Ok(())
+    }
+
     /// Scene shading requires an invertible local blended deformation. A
     /// scaled cofactor test avoids overflow and rejects numerically collapsed
     /// normals before publishing GPU writes.
@@ -270,6 +285,28 @@ pub(crate) struct GpuSkinnedMesh {
     pub object_buffer: wgpu::Buffer,
 }
 impl GpuSkinnedMesh {
+    /// Admit the whole candidate before writing either GPU buffer. The caller
+    /// publishes its CPU pose only after this succeeds.
+    pub(crate) fn write_pose(
+        &self,
+        queue: &wgpu::Queue,
+        mesh: &SkinnedMesh,
+        joints: &[Mat4],
+        model: Mat4,
+    ) -> Result<(), SkinnedUploadError> {
+        if joints.len() != self.joint_count {
+            return Err(SkinnedUploadError::JointCountMismatch);
+        }
+        mesh.validate_render_pose(joints, model)?;
+        queue.write_buffer(&self.joint_buffer, 0, bytemuck::cast_slice(joints));
+        queue.write_buffer(
+            &self.object_buffer,
+            0,
+            bytemuck::bytes_of(&object_uniform(model, self.material_layer)),
+        );
+        Ok(())
+    }
+
     pub fn allocation_bytes(&self) -> u64 {
         self.vertex.size()
             + self.index.size()
@@ -389,7 +426,7 @@ pub(crate) fn upload_skinned(
     model: Mat4,
     material_layer: u32,
 ) -> Result<GpuSkinnedMesh, SkinnedUploadError> {
-    validate_palette(mesh, joints, model)?;
+    mesh.validate_render_pose(joints, model)?;
     let index_count =
         u32::try_from(mesh.indices.len()).map_err(|_| SkinnedUploadError::TooManyIndices)?;
     let vertex = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -682,3 +719,7 @@ fn skinned_normal(
     }
     Ok((transformed / max).normalize().to_array())
 }
+
+#[cfg(test)]
+#[path = "skinned_normal_gpu_tests.rs"]
+mod normal_tests;

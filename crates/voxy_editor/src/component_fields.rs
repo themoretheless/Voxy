@@ -394,7 +394,17 @@ mod tests {
         assert!(app.edit_component_field(clip, "9999").is_err());
         assert!(app.edit_component_field(speed, "-1").is_err());
         assert!(app.edit_component_field(speed, "9").is_err());
+        let motion = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/root_motion_joint").unwrap();
+        assert!(app.edit_component_field(motion, "-1").is_err());
+        assert!(app.edit_component_field(motion, "9999").is_err());
+        assert!(app.edit_component_field(motion, "255").is_err());
         assert_eq!(app.authoring_document().unwrap(), before);
+        app.edit_component_field(motion, "1").unwrap();
+        let selected = app.authoring_document().unwrap();
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), before);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), selected);
         app.edit_component_field(clip, "null").unwrap();
         app.edit_component_field(speed, "0").unwrap();
         let paused = app.authoring_document().unwrap();

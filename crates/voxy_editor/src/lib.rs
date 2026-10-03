@@ -1211,6 +1211,7 @@ impl App {
                         .unwrap_or(ModelAnimation {
                             clip: (!model.animations.is_empty()).then_some(0),
                             speed: 1.0,
+                            ..ModelAnimation::default()
                         });
                     Some(animated_models::Request {
                         owner: instance.owner,
@@ -2219,10 +2220,10 @@ impl App {
                 .ok_or("animation requires a model owner")?;
             // Scene loading may precede asynchronous resource publication.
             // Runtime admission validates again against the published revision.
-            let clip_count = self.catalog.snapshot(&AssetId(model.clone()))
+            let counts = self.catalog.snapshot(&AssetId(model.clone()))
                 .map(|asset| asset.value().animated.as_ref()
-                    .map_or(0, |model| model.animations.len()));
-            animation.validate(clip_count)?;
+                    .map_or((0, 0), |model| (model.animations.len(), model.skeleton.joints().len())));
+            animation.validate(counts.map(|value| value.0), counts.map(|value| value.1))?;
         }
         for (node, part) in loaded.graph.components::<ModelPart>() {
             if part.node != u32::MAX

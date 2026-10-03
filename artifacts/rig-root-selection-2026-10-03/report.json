@@ -1,0 +1,27 @@
+{
+  "ordinary_tests": 255,
+  "animation_tests": 31,
+  "editor_tests": 92,
+  "renderer_tests": 132,
+  "test_sequence": "Runtime passed all three suites; one additional Fox regression then compiled and passed separately.",
+  "checks": [
+    "Both active fade curves updated when joint changes",
+    "Invalid index leaves selection and clock unchanged",
+    "Immediate clip switch retains selected joint",
+    "Imported Fox static root produces zero displacement",
+    "Selected Fox hip matches sampled local translation delta",
+    "Pose remains identical to unmodified imported animation"
+  ],
+  "motion_space": "Selected joint parent-local translation; excludes animated ancestors and is not removed from pose",
+  "limits": [
+    "No editor joint selection control yet",
+    "No world-space conversion or gameplay collision application",
+    "No rotation extraction/in-place conversion",
+    "No new GPU/native-window acceptance claim"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "9b09c4d4f16ecdd2c32a34f8b7b00046730e2ac036918b4de195606b458c8331",
+    "crates/voxy_editor/src/model_playback.rs": "6f36ce839180955a72cd7be92135412be588a24fb14ca4be6a071df17509395c",
+    "crates/voxy_render/src/model.rs": "98545820df24c7df85ed930d017f509a4926806f2832b3a9fb562b268005baf2"
+  }
+}

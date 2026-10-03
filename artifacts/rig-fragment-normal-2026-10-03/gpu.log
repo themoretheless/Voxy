@@ -1,0 +1,59 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 15 tests
+test renderer::legacy_skin_tests::gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose ... LEGACY_SMOOTH_NORMALS checked_pixels=3092 max_srgb_channel_error=0 old_unnormalized_differing_pixels=2950
+LEGACY_FLAT_NORMALS model=Mat4 { x_axis: Vec4(1.0, 0.0, 0.0, 0.0), y_axis: Vec4(0.0, 1.0, 0.0, 0.0), z_axis: Vec4(0.0, 0.0, 1.0, 0.0), w_axis: Vec4(0.0, 0.0, 0.0, 1.0) } cpu_face_channel_difference=0
+LEGACY_FLAT_NORMALS model=Mat4 { x_axis: Vec4(0.7368488, 0.0, -0.31153467, 0.0), y_axis: Vec4(0.0, 0.7, 0.0, 0.0), z_axis: Vec4(0.38941833, 0.0, 0.921061, 0.0), w_axis: Vec4(0.0, 0.0, 0.0, 1.0) } cpu_face_channel_difference=0
+LEGACY_RASTER adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None } colored=1733 cpu_pixel_difference=0 old_normal_channel_difference=5199 rejected_frames=2 recovery=true
+ok
+test renderer::skinned_lod::tests::gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams ... ok
+test scene::lod_geometry::tests::gpu_lod_upload_shares_streams_and_counts_all_index_buffers ... ok
+test scene::multi_view_tests::gpu_disjoint_views_preserve_both_regions_and_clear_gap ... ok
+test scene::multi_view_tests::gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth ... ok
+test scene::skinning::tests::gpu_fox_all_clips_match_cpu_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1944
+REFERENCE_RIG_FRAME_PIXELS colored=1685
+REFERENCE_RIG_FRAME_PIXELS colored=1533
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((18.375, 30.459)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((79.083, 175.208)) compute_to_render_end_us=Some((109.708, 454.04200000000003))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000019073486 max_normal_error=0 motion=54.77839 cpu_pose_skin_us=(1637.5, 1707.75) preflight_us=(3500.5829999999996, 3637.25) prepared_encode_us=(57.125, 92.041) submit_readback_us=(1163.125, 1681.791) logical_bytes=222896
+ok
+test scene::skinning::tests::gpu_fox_step_clips_match_cpu_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1944
+REFERENCE_RIG_FRAME_PIXELS colored=1685
+REFERENCE_RIG_FRAME_PIXELS colored=1533
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((18.084, 47.542)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((77.208, 323.75)) compute_to_render_end_us=Some((108.625, 392.91700000000003))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000015258789 max_normal_error=0 motion=55.07767 cpu_pose_skin_us=(1641.25, 1735.7920000000001) preflight_us=(3509.083, 3663.583) prepared_encode_us=(53.125, 103.708) submit_readback_us=(1181.3329999999999, 2069.708) logical_bytes=222896
+ok
+test scene::skinning::tests::gpu_mirrored_rig_matches_cpu_positions_normals_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=bind-mirror supported=true period_ns=1 interval_us=Some((19.167, 42.917)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=bind-mirror supported=true viewport=128x128 render_us=Some((56.292, 337.083)) compute_to_render_end_us=Some((86.25, 455.125))
+REFERENCE_RIG_PROFILE asset=bind-mirror adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000020861626 motion=0.33529758 cpu_pose_skin_us=(388.5, 403.375) preflight_us=(855.0409999999999, 891.875) prepared_encode_us=(48.625, 78.375) submit_readback_us=(1160.9579999999999, 1495.375) logical_bytes=50408
+REFERENCE_RIG_FRAME_PIXELS colored=1601
+REFERENCE_RIG_GPU_TIMESTAMPS asset=animated-mirror supported=true period_ns=1 interval_us=Some((18.875, 33.25)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=animated-mirror supported=true viewport=128x128 render_us=Some((58.167, 155.875)) compute_to_render_end_us=Some((85.333, 241.333))
+REFERENCE_RIG_PROFILE asset=animated-mirror adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000018907454 motion=0.33792466 cpu_pose_skin_us=(387.375, 399.33299999999997) preflight_us=(862.333, 887.375) prepared_encode_us=(49.292, 69.333) submit_readback_us=(1178.0, 1398.75) logical_bytes=50408
+ok
+test scene::skinning::tests::gpu_reference_rig_cubic_clips_match_cpu_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig-cubic supported=true period_ns=1 interval_us=Some((19.166, 452.792)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig-cubic supported=true viewport=128x128 render_us=Some((57.333, 235.5)) compute_to_render_end_us=Some((89.542, 535.458))
+REFERENCE_RIG_PROFILE asset=reference-rig-cubic adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000019082798 motion=0.33887926 cpu_pose_skin_us=(390.334, 415.334) preflight_us=(868.2909999999999, 960.4159999999999) prepared_encode_us=(52.792, 87.375) submit_readback_us=(1200.792, 2321.375) logical_bytes=50408
+ok
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig supported=true period_ns=1 interval_us=Some((18.958, 162.958)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig supported=true viewport=128x128 render_us=Some((56.042, 364.958)) compute_to_render_end_us=Some((89.583, 542.8340000000001))
+REFERENCE_RIG_PROFILE asset=reference-rig adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000021699616 motion=0.33529755 cpu_pose_skin_us=(388.792, 402.167) preflight_us=(853.583, 899.4159999999999) prepared_encode_us=(41.084, 74.083) submit_readback_us=(1133.4579999999999, 2308.334) logical_bytes=50408
+ok
+test scene::skinning::tests::gpu_reference_rig_step_clips_match_cpu_and_render ... REFERENCE_RIG_FRAME_PIXELS colored=1612
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig-step supported=true period_ns=1 interval_us=Some((18.75, 40.708)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig-step supported=true viewport=128x128 render_us=Some((57.667, 162.125)) compute_to_render_end_us=Some((86.583, 483.29200000000003))
+REFERENCE_RIG_PROFILE asset=reference-rig-step adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000011920929 max_normal_error=0.00000014057727 motion=0 cpu_pose_skin_us=(381.08299999999997, 396.5) preflight_us=(843.5, 886.541) prepared_encode_us=(37.709, 57.541) submit_readback_us=(1108.833, 1389.9170000000001) logical_bytes=50408
+ok
+test scene::skinning::tests::gpu_scene_skinning_independent_instances_and_last_good_pose ... ok
+test scene::skinning::tests::gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ok
+test scene::skinning::tests::gpu_skin_normals_follow_inverse_transpose_and_keep_last_good ... LIT_NORMAL_COMPARISON colored_pixels=2317 max_cpu_gpu_channel_delta=0 old_formula_difference_pixels=2317
+ok
+test skinned::normal_tests::gpu_legacy_normal_transport_matches_inverse_transpose ... LEGACY_NORMAL_PROBE adapter=AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None } cases=12 max_error=0.000000085600654 old_forward_error=1.2534771
+ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 132 filtered out; finished in 43.28s

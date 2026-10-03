@@ -1,0 +1,25 @@
+{
+  "ordinary_tests": 253,
+  "animation": 30,
+  "editor": 92,
+  "renderer": 131,
+  "method": "Piecewise polynomial antiderivatives and integration by parts for linear fade weights; right-continuous STEP jump weighting; algebraic cycle summation",
+  "analytic_cases": {
+    "cubic_zero_tangents_half_interval": 0.15625,
+    "step_single_cycle": 2.75,
+    "step_four_cycles": 10.25,
+    "nonzero_derivative_first_second": 0.5,
+    "nonzero_derivative_two_seconds": 0.0,
+    "million_cycle_linear_weighted_displacement": 524288.0
+  },
+  "limits": [
+    "Translation of joint zero only; no root rotation/in-place/gameplay application",
+    "Clock remains f32; coefficients/integrals use f64, output uses f32",
+    "Prefix cache consumes CPU memory proportional to root keys and is outside GPU residency budget",
+    "No new hardware/native-window acceptance claim"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "d84c6f97575829e1f98f18a8409367fd93dacb7651d3655d77cd815f6f505679",
+    "crates/voxy_animation/src/root_curve.rs": "6237a251bcf8be6c7531af648323be79bed124b94cee414000d338b5d4b58904"
+  }
+}

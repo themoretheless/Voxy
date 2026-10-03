@@ -1,0 +1,31 @@
+{
+  "editor_tests": 93,
+  "gpu_editor_tests": 6,
+  "native_smoke": {
+    "motion_joint": 1,
+    "undo": true,
+    "redo": true,
+    "clips": 3,
+    "owners": 2,
+    "shared_sources": 1,
+    "stop_bytes": 0,
+    "authoring_restored": true
+  },
+  "visual": "Native CUA pointer/keyboard edit verified value 1 under Motion bone label; screenshot viewed and retained. Temporary review app closed.",
+  "compatibility": "Missing root_motion_joint defaults to zero when loading old component JSON.",
+  "test_sequence": "CPU/GPU/native smoke passed before final label-only change; release rebuilt and labeled inspector visually edited afterward.",
+  "limits": [
+    "Numeric joint index; named picker and stable reference across reordered reimports remain pending",
+    "No gameplay root displacement application or world-space conversion",
+    "Smoke checks inspector and playback lifecycle, not root movement pixels"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/model_playback.rs": "1fe66bd3b0fb9ac0e28cca3360a3263b9d002e81d958ee8c052098512ed2a668",
+    "crates/voxy_editor/src/animated_models.rs": "dba661e7783233b8ad1b5d86bedc9c28a5647c7c80a70372fd12494ce49337b9",
+    "crates/voxy_editor/src/animation_smoke.rs": "9916f8bc0fb0c01ae5b8b76f4f828911e3dbb397f402d0f121e7b591397a548a",
+    "crates/voxy_editor/src/component_fields.rs": "d7b2fba2d2d12880961a5c3ebfb2c90b58982aa8f37987f5ff3ae006e40d35a1",
+    "crates/voxy_editor/src/panels.rs": "c67487754472503b91fbac1f2e801173cd77e4b3ff5f63181f3d56131c1b5035",
+    "crates/voxy_editor/src/lib.rs": "2ed0244ffa9442a210ef4617da567cdc44a8682e9723c908138becdda538f2df"
+  },
+  "binary_sha256": "f69dc6eff2950b2544d42546e435d2f754c73bc1fe3c5f0d6f4e025f60f97b6e"
+}

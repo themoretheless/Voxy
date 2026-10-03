@@ -1,0 +1,18 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-46647fa993615647)
+
+running 1 test
+
+thread 'renderer::legacy_skin_tests::gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose' (20232721) panicked at crates/voxy_render/src/renderer/legacy_skin_tests.rs:225:5:
+old transform must change lighting: changed=0, normal=Vec3(0.23619618, 0.5202859, 0.82067895), old=Vec3(0.8613564, 0.50443244, 0.06010925)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test renderer::legacy_skin_tests::gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose ... FAILED
+
+failures:
+
+failures:
+    renderer::legacy_skin_tests::gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 146 filtered out; finished in 38.49s
+
+error: test failed, to rerun pass `-p voxy_render --lib`

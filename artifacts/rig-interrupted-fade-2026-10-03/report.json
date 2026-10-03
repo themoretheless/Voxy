@@ -1,0 +1,22 @@
+{
+  "animation_tests": 22,
+  "editor_tests": 92,
+  "renderer_tests": 131,
+  "total_ordinary_tests": 245,
+  "test_sequence": "All three suites passed; afterward one hierarchical rotation/scale regression was added and all animation tests rerun. Runtime implementation unchanged between these runs.",
+  "checks": [
+    "Interrupted transition begins at current blend",
+    "Repeated interruption remains continuous",
+    "Snapshot shared on staged clone",
+    "Snapshot released on replacement and completion",
+    "Rejected advance keeps snapshot and clock",
+    "Rotation/scale hierarchical palette continuous within 2e-6"
+  ],
+  "limits": [
+    "Frozen source pose provides pose continuity, not velocity continuity",
+    "Root motion still follows current target clip",
+    "Downstream IK edits not captured",
+    "No native-window interrupted-fade evidence or new GPU claim"
+  ],
+  "sha256": "1c6158712d55433b91e92c7b1f5292f6fe0b9f661639d17087df7ff12aff05f4"
+}

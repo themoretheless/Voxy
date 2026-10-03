@@ -1,0 +1,45 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "viewport": [
+    128,
+    128
+  ],
+  "visible_pixels": 1733,
+  "cpu_reference_pixel_difference": 0,
+  "old_forward_normal_changed_color_channels": 5199,
+  "rejected_frames_retained_exactly": 2,
+  "valid_pose_recovery": true,
+  "ordinary_tests": 222,
+  "release_admission_microseconds": {
+    "Fox": {
+      "vertices": 1728,
+      "samples": 208,
+      "median": 37.208,
+      "p95": 42.417
+    },
+    "RiggedFigure": {
+      "vertices": 370,
+      "samples": 208,
+      "median": 11.542,
+      "p95": 11.667
+    }
+  },
+  "scope": "Full production offscreen vertex/fragment pipeline with synthetic triangle; independent double-precision CPU bake, actual shared GPU write admission, exact retained pixels.",
+  "limits": [
+    "Not native window or swapchain acceptance",
+    "Not complete real-rig full-pixel equivalence",
+    "No full-frame CPU/FPS cost inferred",
+    "No non-Metal acceptance or single-sided mirrored culling proof"
+  ],
+  "sha256": {
+    "crates/voxy_render/src/skinned.rs": "d4df1072ca38491336999e6a0fa10a17bce1645e6efd7659362a4abf668cbb31",
+    "crates/voxy_render/src/renderer.rs": "d81dc689b9d0153a353b534c3d073ffef3b2a698c5e170cf6e95aed7bfc617bd",
+    "crates/voxy_render/src/renderer/skinned_lod.rs": "a4d3a8f6f901a9b7823f3eff1f88058666f40e2dc6d01e760922a7fd98b365a4",
+    "crates/voxy_render/src/skinned_motion.rs": "20c1e191bbb74e6c0a5a06557647cc2c5e48bae1ec0ebd9db2625655f624f2ff",
+    "crates/voxy_render/src/renderer/legacy_skin_tests.rs": "882231e23cc077df9b61f055eb65099dd2205609a81777ccc1d97056cf3f1632",
+    "crates/voxy_render/src/skinned_normal_gpu_tests.rs": "9a85cc9fbe0d09b35fe3e73f59be31bb8e7f642fc3a3c77ecb30a8f6abef9feb"
+  },
+  "gpu_renderer_tests": 15,
+  "test_module_rename": "Profiling remains release-only and excluded from the GPU name filter"
+}

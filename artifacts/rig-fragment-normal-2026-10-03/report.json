@@ -1,0 +1,22 @@
+{
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "ordinary_tests": 222,
+  "renderer_gpu_tests": 15,
+  "smooth_pixels_checked": 3092,
+  "smooth_max_srgb_channel_error": 0,
+  "old_unnormalized_different_pixels": 2950,
+  "flat_pose_cases": 2,
+  "flat_difference_channels": 0,
+  "initial_reversed_flat_difference_channels": 11070,
+  "scope": "Production legacy vertex/fragment draw, independent interior-pixel Lambert and sRGB oracle; flat fallback compared with authored CCW face under identity and rotated anisotropic model.",
+  "limits": [
+    "Samples within quantizer threshold 1e-4 excluded from smooth oracle",
+    "No tiny/huge triangle derivative-range certification",
+    "No non-Metal hardware evidence or native-window acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_render/src/skinned.wgsl": "ed346aea03082e851aec3631548600664a198d0bc55356b0c786501e4f71f10e",
+    "crates/voxy_render/src/renderer/legacy_skin_tests.rs": "024a3e4e58b2d5e0a8d05d559771295a562b98d0e06d1d51d724c8fa7f5300dd"
+  }
+}
