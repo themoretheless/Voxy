@@ -8,4 +8,3 @@ test animated_models::tests::curved_root_rotation_collision_renders_once_with_in
 ok
 
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 112 filtered out; finished in 69.02s
-

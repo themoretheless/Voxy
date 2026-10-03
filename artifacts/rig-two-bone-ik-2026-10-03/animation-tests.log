@@ -70,4 +70,3 @@ test root_rotation::tests::projection_hulls_enclose_curved_motion_and_certify_gr
 test tests::bounded_clocks_preserve_small_ticks_after_long_elapsed_time_and_many_loops ... ok
 
 test result: ok. 65 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
-
