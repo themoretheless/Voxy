@@ -18,4 +18,3 @@ test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ok
 test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ok
 
 test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 99 filtered out; finished in 85.43s
-
