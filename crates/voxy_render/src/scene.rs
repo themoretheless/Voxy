@@ -115,6 +115,7 @@ pub enum SceneError {
     InvalidTransform,
     GeometryCapacityExceeded,
     MultisamplingNotEnabled,
+    TimestampQueriesNotEnabled,
     DeviceMismatch,
 }
 impl std::fmt::Display for SceneError {
@@ -132,6 +133,12 @@ impl SceneMesh {
     #[must_use]
     pub fn indices(&self) -> &[u32] {
         &self.indices
+    }
+    /// Explicit normal stream, including zero normals that request geometric
+    /// flat shading in supporting scene shaders.
+    #[must_use]
+    pub fn authored_normals(&self) -> Option<&[[f32; 3]]> {
+        self.authored_normals.as_deref()
     }
     /// Split a shader-tagged triangle layer, preserving vertex IDs, bind-space
     /// coordinates and optical parameters in both outputs. Returns None if absent.
@@ -1885,7 +1892,27 @@ impl SceneRenderer {
                 &self.overlay_pipeline,
                 &self.transparent_pipeline,
             ),
+            None,
         );
+    }
+
+    /// Timestamp the ordinary single-sample scene pass. Query indices/type and
+    /// device must satisfy wgpu validation. Does not measure presentation or
+    /// other shadow/composition passes. Rejects unavailable timing before encoding.
+    #[allow(clippy::too_many_arguments)]
+    pub fn encode_profiled(
+        &self, encoder: &mut wgpu::CommandEncoder,
+        color: &wgpu::TextureView, depth: &wgpu::TextureView,
+        clear: wgpu::Color, draws: &[SceneDraw<'_>],
+        timestamps: wgpu::RenderPassTimestampWrites<'_>,
+    ) -> Result<(), SceneError> {
+        if !self.device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
+            return Err(SceneError::TimestampQueriesNotEnabled);
+        }
+        self.encode_pass(encoder, color, depth, None, clear, draws,
+            (&self.world_pipeline, &self.overlay_pipeline, &self.transparent_pipeline),
+            Some(timestamps));
+        Ok(())
     }
 
     /// Records disjoint views in one pass, clearing color/depth once. Each view
@@ -2277,6 +2304,7 @@ impl SceneRenderer {
             clear,
             draws,
             (world, overlay, transparent),
+            None,
         );
         Ok(())
     }
@@ -2295,6 +2323,7 @@ impl SceneRenderer {
             &wgpu::RenderPipeline,
             &wgpu::RenderPipeline,
         ),
+        timestamp_writes: Option<wgpu::RenderPassTimestampWrites<'_>>,
     ) {
         let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
             label: Some("general 2D/3D scene"),
@@ -2315,6 +2344,7 @@ impl SceneRenderer {
                 }),
                 stencil_ops: None,
             }),
+            timestamp_writes,
             ..Default::default()
         });
         self.encode_draws(&mut pass, draws, pipelines);

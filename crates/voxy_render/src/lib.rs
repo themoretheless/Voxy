@@ -98,7 +98,7 @@ mod xr;
 pub use backend::{GraphicsBackend, GraphicsCapabilities, GraphicsOptions};
 pub use blit::{ProcessedColorTarget, TextureBlit};
 pub use material::{MaterialError, MaterialLayer, MaterialPack, MaterialSet};
-pub use model::{ModelAsset, ModelError, ModelGeometry, ModelLimits, ModelPrimitive};
+pub use model::{ModelAsset, ModelError, ModelGeometry, ModelLimits, ModelPrimitive, ModelTexture};
 pub use renderer::{
     CameraView, GpuQuad, RenderOutcome, Renderer, RendererError, SkinnedMotionOutput, SurfaceState,
 };

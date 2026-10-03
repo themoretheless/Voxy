@@ -15,10 +15,18 @@ pub enum ModelGeometry {
     Skinned(SkinnedMesh),
 }
 
+#[derive(Clone, Copy, Debug)]
+pub struct ModelTexture {
+    pub image: usize,
+    pub sampling: crate::TextureSampling,
+    pub use_mips: bool,
+}
+
 #[derive(Clone, Debug)]
 pub struct ModelPrimitive {
     pub geometry: ModelGeometry,
     pub color: [f32; 4],
+    pub base_color_texture: Option<ModelTexture>,
 }
 
 /// A single mesh instance with its complete node hierarchy and optional skin.
@@ -227,14 +235,81 @@ impl ModelAsset {
             }
             let material = primitive.material();
             let pbr = material.pbr_metallic_roughness();
-            if pbr.base_color_texture().is_some()
-                || pbr.metallic_roughness_texture().is_some()
+            if pbr.metallic_roughness_texture().is_some()
                 || material.normal_texture().is_some()
                 || material.occlusion_texture().is_some()
                 || material.emissive_texture().is_some()
             {
-                return Err(fail("textured glTF materials unsupported"));
+                return Err(fail("non-base glTF material maps unsupported"));
             }
+            if pbr.base_color_texture().is_some()
+                && material.alpha_mode() != gltf::material::AlphaMode::Opaque
+            {
+                return Err(fail("textured alpha modes unsupported"));
+            }
+            let base_color_texture = pbr
+                .base_color_texture()
+                .map(|info| {
+                    if info.tex_coord() != 0
+                        || primitive.get(&gltf::Semantic::TexCoords(0)).is_none()
+                    {
+                        return Err(fail("base color texture requires TEXCOORD_0"));
+                    }
+                    let sampler = info.texture().sampler();
+                    let wrap = |mode| match mode {
+                        gltf::texture::WrappingMode::ClampToEdge => crate::TextureWrap::Clamp,
+                        gltf::texture::WrappingMode::Repeat => crate::TextureWrap::Repeat,
+                        gltf::texture::WrappingMode::MirroredRepeat => crate::TextureWrap::Mirror,
+                    };
+                    Ok(ModelTexture {
+                        image: info.texture().source().index(),
+                        use_mips: !matches!(
+                            sampler.min_filter(),
+                            Some(
+                                gltf::texture::MinFilter::Nearest
+                                    | gltf::texture::MinFilter::Linear
+                            )
+                        ),
+                        sampling: crate::TextureSampling {
+                            wrap_u: wrap(sampler.wrap_s()),
+                            wrap_v: wrap(sampler.wrap_t()),
+                            min_filter: if matches!(
+                                sampler.min_filter(),
+                                Some(
+                                    gltf::texture::MinFilter::Nearest
+                                        | gltf::texture::MinFilter::NearestMipmapNearest
+                                        | gltf::texture::MinFilter::NearestMipmapLinear
+                                )
+                            ) {
+                                crate::TextureFilter::Nearest
+                            } else {
+                                crate::TextureFilter::Linear
+                            },
+                            mag_filter: if sampler.mag_filter()
+                                == Some(gltf::texture::MagFilter::Nearest)
+                            {
+                                crate::TextureFilter::Nearest
+                            } else {
+                                crate::TextureFilter::Linear
+                            },
+                            mipmap_filter: Some(
+                                if matches!(
+                                    sampler.min_filter(),
+                                    Some(
+                                        gltf::texture::MinFilter::NearestMipmapNearest
+                                            | gltf::texture::MinFilter::LinearMipmapNearest
+                                    )
+                                ) {
+                                    crate::TextureFilter::Nearest
+                                } else {
+                                    crate::TextureFilter::Linear
+                                },
+                            ),
+                            anisotropy: 1,
+                        },
+                    })
+                })
+                .transpose()?;
             let positions_accessor = primitive
                 .get(&gltf::Semantic::Positions)
                 .ok_or_else(|| fail("missing positions"))?;
@@ -262,7 +337,7 @@ impl ModelAsset {
                 .collect();
             let position_count =
                 u32::try_from(positions.len()).map_err(|_| fail("too many positions"))?;
-            let indices = reader
+            let indices: Vec<u32> = reader
                 .read_indices()
                 .map_or_else(|| (0..position_count).collect(), |r| r.into_u32().collect());
             let uvs: Vec<_> = reader.read_tex_coords(0).map_or_else(
@@ -274,10 +349,7 @@ impl ModelAsset {
             }
             let color = pbr.base_color_factor();
             let geometry = if skin.is_some() {
-                let normals: Vec<_> = reader
-                    .read_normals()
-                    .ok_or_else(|| fail("skinned mesh requires normals"))?
-                    .collect();
+                let normals: Option<Vec<_>> = reader.read_normals().map(Iterator::collect);
                 let ids: Vec<_> = reader
                     .read_joints(0)
                     .ok_or_else(|| fail("missing JOINTS_0"))?
@@ -291,7 +363,9 @@ impl ModelAsset {
                 if reader.read_joints(1).is_some() || reader.read_weights(1).is_some() {
                     return Err(fail("more than four influences unsupported"));
                 }
-                if normals.len() != positions.len()
+                if normals
+                    .as_ref()
+                    .is_some_and(|normals| normals.len() != positions.len())
                     || ids.len() != positions.len()
                     || weights.len() != positions.len()
                 {
@@ -311,12 +385,14 @@ impl ModelAsset {
                     }
                     vertices.push(SkinnedVertex {
                         position: positions[i],
-                        normal: normals[i],
+                        normal: normals.as_ref().map_or([0.; 3], |normals| normals[i]),
                         uv: uvs[i],
                         joints,
                         weights,
                     });
                 }
+                // A zero normal stream marks absent NORMAL. The scene shader
+                // derives one flat face normal from the current deformed geometry.
                 ModelGeometry::Skinned(
                     SkinnedMesh::new(vertices, indices, nodes.len() as u16)
                         .map_err(|e| fail(e.to_string()))?,
@@ -338,7 +414,11 @@ impl ModelAsset {
                     .map_err(|e| fail(e.to_string()))?,
                 )
             };
-            primitives.push(ModelPrimitive { geometry, color });
+            primitives.push(ModelPrimitive {
+                geometry,
+                color,
+                base_color_texture,
+            });
         }
         if primitives.is_empty() {
             return Err(fail("empty model"));

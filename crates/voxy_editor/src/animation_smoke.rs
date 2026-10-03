@@ -4,6 +4,7 @@ use winit::keyboard::KeyCode;
 
 #[derive(Debug, Default)]
 pub(super) struct Smoke {
+    pub(super) profile: bool,
     phase: u8,
     since: u64,
     authoring: Option<voxy_scene::SceneDocument>,
@@ -50,6 +51,7 @@ impl App {
                 if model.animations.is_empty() {
                     return Err("animation acceptance requires a clip".into());
                 }
+                let clip_count = model.animations.len();
                 if self
                     .graphics
                     .as_ref()
@@ -82,7 +84,20 @@ impl App {
                 if self.authoring_document()? != bind {
                     return Err("native animation inspector redo failed".into());
                 }
-                self.animation_inspector_input("/clip", "0")?;
+                for clip in 0..clip_count {
+                    self.animation_inspector_input("/clip", &clip.to_string())?;
+                    let selected = self
+                        .scene
+                        .component::<crate::ModelAnimation>(self.instances[0])?
+                        .ok_or("missing animation after clip switch")?;
+                    if selected.clip != Some(clip) {
+                        return Err("native inspector clip switch failed".into());
+                    }
+                }
+                println!(
+                    "ANIMATION NATIVE CLIPS PASS clips={clip_count} active_clip={}",
+                    clip_count - 1
+                );
                 self.panel_action(crate::panels::Action::Select(1))?;
                 self.panel_action(crate::panels::Action::Animation)?;
                 self.animation_inspector_input("/speed", "0")?;
@@ -104,7 +119,7 @@ impl App {
                 smoke.since = self.frames;
             }
             1 => {
-                if self.play.simulation_ticks < 12 {
+                if self.play.simulation_ticks < if smoke.profile { 120 } else { 12 } {
                     return Ok(false);
                 }
                 let graphics = self
@@ -129,6 +144,32 @@ impl App {
                 if gpu_primitives > 0 && sources * 2 != gpu_primitives {
                     return Err("native animation sources were not shared".into());
                 }
+                let mut textured = 0;
+                if let Some(model) = graphics
+                    .models
+                    .get(&self.id)
+                    .and_then(|m| m.animated_model.as_ref())
+                {
+                    for (primitive, material) in model.primitives.iter().enumerate() {
+                        if material.base_color_texture.is_some() {
+                            let first_texture = graphics
+                                .animated_models
+                                .texture(first, primitive)
+                                .ok_or("moving owner's texture missing")?;
+                            let second_texture = graphics
+                                .animated_models
+                                .texture(second, primitive)
+                                .ok_or("paused owner's texture missing")?;
+                            if !std::ptr::eq(first_texture, second_texture) {
+                                return Err("native owners did not share texture binding".into());
+                            }
+                            textured += 1;
+                        }
+                    }
+                }
+                println!(
+                    "ANIMATION NATIVE TEXTURES PASS textured_primitives={textured} shared_bindings=true"
+                );
                 println!(
                     "ANIMATION NATIVE PLAY PASS frames={} ticks={} owners={owners} gpu_primitives={gpu_primitives} shared_sources={sources} bytes={}",
                     self.frames,

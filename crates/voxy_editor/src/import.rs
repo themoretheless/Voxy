@@ -77,7 +77,7 @@ fn observe(
 }
 /// Bounded import: static material nodes/textures or explicit skeletal/clip data
 /// through the renderer's model parser. Skeletal previews use the bind pose;
-/// unsupported textures, morphs and interpolation reject in that parser.
+/// unsupported material maps, morphs and interpolation reject in that parser.
 #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
 pub(crate) fn load(
     source: &SourcePath,
@@ -127,9 +127,6 @@ pub(crate) fn load(
             return Err("truncated glTF buffer".into());
         }
         buffers.push(data);
-    }
-    if gltf.animations().next().is_some() || gltf.skins().next().is_some() {
-        return load_animated_model(&bytes, &buffers);
     }
     // Reader utilities assume valid accessor ranges; check every view/accessor first.
     for view in gltf.views() {
@@ -188,6 +185,9 @@ pub(crate) fn load(
     }
     if images.iter().map(|image| image.rgba().len()).sum::<usize>() > 32 * 1024 * 1024 {
         return Err("decoded image budget exceeded".into());
+    }
+    if gltf.animations().next().is_some() || gltf.skins().next().is_some() {
+        return load_animated_model(&bytes, &buffers, images);
     }
     let raw: Vec<_> = gltf.nodes().collect();
     let mut parents = vec![None; raw.len()];
@@ -415,7 +415,11 @@ pub(crate) fn load(
     })
 }
 
-fn load_animated_model(bytes: &[u8], buffers: &[Vec<u8>]) -> Result<EditorAsset, String> {
+fn load_animated_model(
+    bytes: &[u8],
+    buffers: &[Vec<u8>],
+    images: Vec<ImageAsset>,
+) -> Result<EditorAsset, String> {
     let buffers: Vec<_> = buffers.iter().map(Vec::as_slice).collect();
     let model = voxy_render::ModelAsset::parse(
         bytes,
@@ -437,18 +441,26 @@ fn load_animated_model(bytes: &[u8], buffers: &[Vec<u8>]) -> Result<EditorAsset,
         .map_err(|error| error.to_string())?;
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
+    let mut normals = Vec::new();
     for mesh in meshes {
         let offset = u32::try_from(vertices.len()).map_err(|error| error.to_string())?;
         vertices.extend_from_slice(mesh.vertices());
+        if let Some(stream) = mesh.authored_normals() {
+            normals.extend_from_slice(stream);
+        } else {
+            normals.resize(normals.len() + mesh.vertices().len(), [0.; 3]);
+        }
         indices.extend(mesh.indices().iter().map(|index| index + offset));
     }
     Ok(EditorAsset {
-        mesh: SceneMesh::new(vertices, indices).map_err(|error| error.to_string())?,
+        mesh: SceneMesh::new(vertices, indices)
+            .and_then(|mesh| mesh.with_normals(normals))
+            .map_err(|error| error.to_string())?,
         animated: Some(std::sync::Arc::new(model)),
         skinned_lod: None,
         lod: None,
         nodes: Vec::new(),
-        images: Vec::new(),
+        images,
     })
 }
 

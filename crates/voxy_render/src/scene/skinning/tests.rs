@@ -366,23 +366,70 @@ fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
 #[test]
 #[ignore = "requires GPU; upstream 19-bone rig and host timing diagnostics"]
 fn gpu_reference_rig_full_clip_matches_cpu_positions() {
-    let asset = crate::ModelAsset::parse(
+    reference_rig_gpu_acceptance(
         include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb"),
-        &[],
-        crate::ModelLimits::default(),
-    )
-    .unwrap();
+        "reference-rig", 370, 22, 1,
+    );
+}
+
+#[test]
+#[ignore = "requires GPU; 24-bone Fox with Survey, Walk and Run"]
+fn gpu_fox_all_clips_match_cpu_and_render() {
+    reference_rig_gpu_acceptance(
+        include_bytes!("../../../examples/assets/fox/Fox.glb"),
+        "fox", 1728, 26, 3,
+    );
+}
+
+fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, joints: usize, clips: usize) {
+    let asset = crate::ModelAsset::parse(bytes, &[], crate::ModelLimits::default()).unwrap();
+    assert_eq!(asset.animations.len(), clips);
     assert_eq!(asset.primitives.len(), 1);
     let crate::ModelGeometry::Skinned(mesh) = &asset.primitives[0].geometry else {
         panic!("skin required");
     };
-    assert_eq!(mesh.vertices().len(), 370);
+    assert_eq!(mesh.vertices().len(), vertices);
+    assert_eq!(usize::from(mesh.joint_count()), joints);
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
     let info = adapter.get_info();
-    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let timestamp_features = wgpu::Features::TIMESTAMP_QUERY;
+    let timestamps_supported = adapter.features().contains(timestamp_features);
+    let descriptor = wgpu::DeviceDescriptor {
+        required_features: if timestamps_supported { timestamp_features } else { wgpu::Features::empty() },
+        ..Default::default()
+    };
+    let (device, queue) = pollster::block_on(adapter.request_device(&descriptor)).unwrap();
+    let queries = timestamps_supported.then(|| device.create_query_set(&wgpu::QuerySetDescriptor {
+        label: Some("reference rig GPU interval"), ty: wgpu::QueryType::Timestamp, count: 4,
+    }));
+    let resolved = queries.as_ref().map(|_| device.create_buffer(&wgpu::BufferDescriptor {
+        label: None, size: 256, usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
+        mapped_at_creation: false,
+    }));
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let color_format = if label == "fox" { wgpu::TextureFormat::Rgba8UnormSrgb } else { wgpu::TextureFormat::Rgba8Unorm };
+    let mut renderer = SceneRenderer::new(&device, color_format);
+    pollster::block_on(renderer.reload_shader(&device, include_str!("../../../../voxy_editor/src/material.wgsl"))).unwrap();
+    let transform = renderer.create_transform(&device, Mat4::IDENTITY).unwrap();
+    transform.update_scene_material(&queue, Mat4::IDENTITY, if label == "fox" { [1.; 4] } else { [0.35, 0.55, 0.75, 1.] }, [-0.3, 0.7, 0.6, 0.9]).unwrap();
+    let texture = if let Some(material) = asset.primitives[0].base_color_texture {
+        let gltf = gltf::Gltf::from_slice(bytes).unwrap();
+        let image = gltf.images().nth(material.image).unwrap();
+        let gltf::image::Source::View { view, .. } = image.source() else { panic!("embedded image required"); };
+        let blob = gltf.blob.as_ref().unwrap();
+        let image = crate::ImageAsset::decode(&blob[view.offset()..view.offset() + view.length()], crate::ImageLimits::default()).unwrap();
+        if material.use_mips { renderer.upload_image_mips(&device, &queue, &image.mip_chain(), material.sampling).unwrap() }
+        else { renderer.upload_image(&device, &queue, &image, material.sampling).unwrap() }
+    } else { renderer.upload_texture(&device, &queue, 1, 1, &[255; 4]).unwrap() };
+    let target = |format, usage| device.create_texture(&wgpu::TextureDescriptor {
+        label: None, size: wgpu::Extent3d { width: 128, height: 128, depth_or_array_layers: 1 },
+        mip_level_count: 1, sample_count: 1, dimension: wgpu::TextureDimension::D2, format, usage, view_formats: &[],
+    });
+    let color = target(color_format, wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC);
+    let depth = target(wgpu::TextureFormat::Depth32Float, wgpu::TextureUsages::RENDER_ATTACHMENT);
+    let color_view = color.create_view(&Default::default());
+    let depth_view = depth.create_view(&Default::default());
     let skinner = SceneSkinner::new(&renderer).unwrap();
     let source = skinner
         .upload_source(Arc::new(mesh.clone()), 0, 1024 * 1024)
@@ -393,16 +440,18 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
             &renderer,
             source.clone(),
             &palette,
-            [1.; 4],
+            asset.primitives[0].color,
             source.allocation_bytes(),
             1024 * 1024,
         )
         .unwrap();
     let bytes = instance.geometry.vertices.size();
     let normal_bytes = instance.geometry.normals.size();
+    let timestamp_bytes = if timestamps_supported { 32 } else { 0 };
+    let image_offset = bytes + normal_bytes + timestamp_bytes;
     let staging = device.create_buffer(&wgpu::BufferDescriptor {
         label: None,
-        size: bytes + normal_bytes,
+        size: image_offset + 512 * 128,
         usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
         mapped_at_creation: false,
     });
@@ -414,26 +463,53 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
     let mut preflight_us = Vec::new();
     let mut encode_us = Vec::new();
     let mut submit_read_us = Vec::new();
-    for sample in 0..65 {
-        let time = asset.animations[0].duration() * sample as f32 / 64.;
+    let mut gpu_interval_us = Vec::new();
+    let mut render_us = Vec::new();
+    let mut gpu_frame_us = Vec::new();
+    for (clip, sample) in (0..clips).flat_map(|clip| (0..65).map(move |sample| (clip, sample))) {
+        let time = asset.animations[clip].duration() * sample as f32 / 64.;
         let started = std::time::Instant::now();
-        let pose = asset.sample_pose(Some(0), time).unwrap();
+        let pose = asset.sample_pose(Some(clip), time).unwrap();
         let palette = asset.skin_matrices(&pose).unwrap();
         let expected = mesh.posed_positions(&palette, Mat4::IDENTITY).unwrap();
         cpu_us.push(started.elapsed().as_secs_f64() * 1e6);
         let started = std::time::Instant::now();
+        let view = if label == "fox" { Mat4::from_rotation_y(std::f32::consts::FRAC_PI_2) } else { Mat4::IDENTITY };
+        let min = expected.iter().map(|p| view.transform_point3(glam::Vec3::from_array(*p))).fold(glam::Vec3::splat(f32::INFINITY), glam::Vec3::min);
+        let max = expected.iter().map(|p| view.transform_point3(glam::Vec3::from_array(*p))).fold(glam::Vec3::splat(f32::NEG_INFINITY), glam::Vec3::max);
+        let extent = (max - min).max_element();
+        transform.update(&queue, Mat4::from_translation(glam::Vec3::new(0., 0., 0.5))
+            * Mat4::from_scale(glam::Vec3::new(1.5 / extent, 1.5 / extent, 0.2 / extent))
+            * Mat4::from_translation(-(min + max) * 0.5) * view).unwrap();
         let prepared = skinner.prepare_pose(&instance, &palette).unwrap();
         preflight_us.push(started.elapsed().as_secs_f64() * 1e6);
         let started = std::time::Instant::now();
         let mut encoder = device.create_command_encoder(&Default::default());
         skinner
-            .encode_prepared_pose(&queue, &mut encoder, &prepared)
+            .encode_prepared_pose_profiled(&queue, &mut encoder, &prepared, queries.as_ref().map(|query_set| wgpu::ComputePassTimestampWrites { query_set, beginning_of_pass_write_index: Some(0), end_of_pass_write_index: Some(1) }))
             .unwrap();
+        let draws = [SceneDraw { geometry: instance.geometry(), texture: &texture, transform: &transform, overlay: false }];
+        if let Some(queries) = &queries {
+            renderer.encode_profiled(&mut encoder, &color_view, &depth_view, wgpu::Color::BLACK, &draws,
+                wgpu::RenderPassTimestampWrites { query_set: queries, beginning_of_pass_write_index: Some(2), end_of_pass_write_index: Some(3) }).unwrap();
+        } else { renderer.encode(&mut encoder, &color_view, &depth_view, wgpu::Color::BLACK, &draws); }
+        encoder.copy_texture_to_buffer(color.as_image_copy(), wgpu::TexelCopyBufferInfo {
+            buffer: &staging, layout: wgpu::TexelCopyBufferLayout { offset: image_offset, bytes_per_row: Some(512), rows_per_image: Some(128) } },
+            wgpu::Extent3d { width: 128, height: 128, depth_or_array_layers: 1 });
         encoder.copy_buffer_to_buffer(&instance.geometry.vertices, 0, &staging, 0, bytes);
         encoder.copy_buffer_to_buffer(&instance.geometry.normals, 0, &staging, bytes, normal_bytes);
         encode_us.push(started.elapsed().as_secs_f64() * 1e6);
         let started = std::time::Instant::now();
-        let submission = queue.submit([encoder.finish()]);
+        let mut submission = queue.submit([encoder.finish()]);
+        // Counter resolution follows completed rendering on a separate command
+        // buffer; this also detects backends that expose unwritten stage samples.
+        if let (Some(queries), Some(resolved)) = (&queries, &resolved) {
+            device.poll(wgpu::PollType::Wait { submission_index: Some(submission), timeout: None }).unwrap();
+            let mut resolve = device.create_command_encoder(&Default::default());
+            resolve.resolve_query_set(queries, 0..4, resolved, 0);
+            resolve.copy_buffer_to_buffer(resolved, 0, &staging, bytes + normal_bytes, 32);
+            submission = queue.submit([resolve.finish()]);
+        }
         let (tx, rx) = std::sync::mpsc::channel();
         staging
             .slice(..)
@@ -448,7 +524,23 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
         submit_read_us.push(started.elapsed().as_secs_f64() * 1e6);
         let mapped = staging.slice(..).get_mapped_range().unwrap();
         let actual = bytemuck::cast_slice::<u8, SceneVertex>(&mapped[..bytes as usize]);
-        let actual_normals = bytemuck::cast_slice::<u8, [f32; 3]>(&mapped[bytes as usize..]);
+        let actual_normals = bytemuck::cast_slice::<u8, [f32; 3]>(&mapped[bytes as usize..(bytes + normal_bytes) as usize]);
+        if timestamps_supported {
+            let offset = (bytes + normal_bytes) as usize;
+            let begin = u64::from_le_bytes(mapped[offset..offset + 8].try_into().unwrap());
+            let end = u64::from_le_bytes(mapped[offset + 8..offset + 16].try_into().unwrap());
+            assert!(end >= begin, "GPU timestamp interval went backwards");
+            let interval = (end - begin) as f64 * f64::from(queue.get_timestamp_period()) / 1000.;
+            assert!(interval.is_finite());
+            gpu_interval_us.push(interval);
+            let render_begin = u64::from_le_bytes(mapped[offset + 16..offset + 24].try_into().unwrap());
+            let render_end = u64::from_le_bytes(mapped[offset + 24..offset + 32].try_into().unwrap());
+            if sample == 0 { println!("REFERENCE_RIG_FRAME_PIXELS colored={}", mapped[image_offset as usize..].chunks_exact(4).filter(|p| p[2] > 0).count()); }
+            assert!(render_end >= render_begin && render_end >= begin, "sample={sample} compute_begin={begin} compute_end={end} render_begin={render_begin} render_end={render_end}");
+            let period = f64::from(queue.get_timestamp_period()) / 1000.;
+            render_us.push((render_end - render_begin) as f64 * period);
+            gpu_frame_us.push((render_end - begin) as f64 * period);
+        }
         let expected_normals = mesh.posed_normals(&palette, Mat4::IDENTITY).unwrap();
         for (actual, expected) in actual_normals.iter().zip(&expected_normals) {
             let normal = glam::Vec3::from_array(*actual);
@@ -469,6 +561,15 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
         }
         if first_positions.is_none() {
             first_positions = Some(actual.iter().map(|v| v.position).collect());
+        }
+        let pixels = &mapped[image_offset as usize..];
+        assert!(pixels.chunks_exact(4).filter(|p| p[2] > 0).count() > 100, "reference rig absent from render");
+        if label == "fox" {
+            assert!(pixels.chunks_exact(4).filter(|p| p[0] > p[2].saturating_add(10)).count() > 50, "authored Fox texture absent");
+        }
+        if sample == 32 && let Some(directory) = std::env::var_os("VOXY_RIG_FRAME_IMAGE_DIR") {
+            let path = std::path::PathBuf::from(directory); std::fs::create_dir_all(&path).unwrap();
+            std::fs::write(path.join(format!("{label}-clip-{clip}-frame.rgba")), pixels).unwrap();
         }
         drop(mapped);
         staging.unmap();
@@ -491,12 +592,18 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
         values.sort_by(f64::total_cmp);
         (values[values.len() / 2], values[values.len() * 95 / 100])
     };
+    println!("REFERENCE_RIG_GPU_TIMESTAMPS asset={label} supported={timestamps_supported} period_ns={} interval_us={:?} samples={}",
+        queue.get_timestamp_period(), if gpu_interval_us.is_empty() { None } else { Some(stats(gpu_interval_us.clone())) }, gpu_interval_us.len());
+    println!("REFERENCE_RIG_RENDER_GPU asset={label} supported={timestamps_supported} viewport=128x128 render_us={:?} compute_to_render_end_us={:?}",
+        if render_us.is_empty() { None } else { Some(stats(render_us)) },
+        if gpu_frame_us.is_empty() { None } else { Some(stats(gpu_frame_us)) });
     println!(
-        "REFERENCE_RIG_PROFILE adapter={:?} backend={:?} vertices={} joints={} samples=65 max_position_error={} max_normal_error={} motion={} cpu_pose_skin_us={:?} preflight_us={:?} prepared_encode_us={:?} submit_readback_us={:?} logical_bytes={}",
+        "REFERENCE_RIG_PROFILE asset={label} adapter={:?} backend={:?} vertices={} joints={} clips={clips} samples={} max_position_error={} max_normal_error={} motion={} cpu_pose_skin_us={:?} preflight_us={:?} prepared_encode_us={:?} submit_readback_us={:?} logical_bytes={}",
         info.name,
         info.backend,
         mesh.vertices().len(),
         mesh.joint_count(),
+        clips * 65,
         max_error,
         max_normal_error,
         motion,

@@ -60,8 +60,17 @@ impl ResidencyCache {
     fn preflight(&mut self, asset: &EditorAsset) -> Result<(), Box<dyn std::error::Error>> {
         self.prune();
         let mut incoming = BTreeMap::new();
-        let indices: std::collections::BTreeSet<_> =
-            asset.nodes.iter().filter_map(|node| node.image).collect();
+        let indices: std::collections::BTreeSet<_> = asset
+            .nodes
+            .iter()
+            .filter_map(|node| node.image)
+            .chain(asset.animated.iter().flat_map(|model| {
+                model
+                    .primitives
+                    .iter()
+                    .filter_map(|p| p.base_color_texture.map(|t| t.image))
+            }))
+            .collect();
         for index in indices {
             let image = asset.images.get(index).ok_or(SceneError::InvalidTexture)?;
             let key = image_key(image);
@@ -315,6 +324,54 @@ struct CachedTexture {
     mips: bool,
     texture: Arc<SceneTexture>,
 }
+#[allow(clippy::too_many_arguments)]
+fn model_texture(
+    renderer: &SceneRenderer,
+    host: &SceneSurface,
+    asset: &EditorAsset,
+    image_index_option: Option<usize>,
+    sampling: TextureSampling,
+    use_mips: bool,
+    residency_cache: &mut ResidencyCache,
+    textures: &mut Vec<CachedTexture>,
+    images: &mut BTreeMap<usize, Arc<SceneTexture>>,
+) -> Result<Option<Arc<SceneTexture>>, Box<dyn std::error::Error>> {
+    let texture = if let Some(image_index) = image_index_option {
+        if let Some(cached) = textures.iter().find(|entry| {
+            entry.image == image_index && entry.sampling == sampling && entry.mips == use_mips
+        }) {
+            Some(Arc::clone(&cached.texture))
+        } else {
+            if let std::collections::btree_map::Entry::Vacant(entry) = images.entry(image_index) {
+                let image = asset
+                    .images
+                    .get(image_index)
+                    .ok_or(SceneError::InvalidTexture)?;
+                let storage = residency_cache.get_or_upload(renderer, host, image)?;
+                entry.insert(storage);
+            }
+            let image = &images[&image_index];
+            let levels = if use_mips {
+                image.texture().mip_level_count()
+            } else {
+                1
+            };
+            let texture = renderer.texture_binding(host.device(), image, sampling, levels)?;
+            let texture = Arc::new(texture);
+            textures.push(CachedTexture {
+                image: image_index,
+                sampling: sampling,
+                mips: use_mips,
+                texture: Arc::clone(&texture),
+            });
+            Some(texture)
+        }
+    } else {
+        None
+    };
+    Ok(texture)
+}
+
 impl ModelGraphics {
     pub(super) fn geometry_residency_valid(&self, asset: &EditorAsset) -> bool {
         let minimum = Self::geometry_estimate(asset);
@@ -426,44 +483,17 @@ impl ModelGraphics {
                 geometry_cache.insert(key, (Arc::clone(&geometry), outline.clone()));
                 (geometry, outline)
             };
-            let texture = if let Some(image_index) = node.image {
-                if let Some(cached) = textures.iter().find(|entry| {
-                    entry.image == image_index
-                        && entry.sampling == node.sampling
-                        && entry.mips == node.use_mips
-                }) {
-                    Some(Arc::clone(&cached.texture))
-                } else {
-                    if let std::collections::btree_map::Entry::Vacant(entry) =
-                        images.entry(image_index)
-                    {
-                        let image = asset
-                            .images
-                            .get(image_index)
-                            .ok_or(SceneError::InvalidTexture)?;
-                        let storage = residency_cache.get_or_upload(renderer, host, image)?;
-                        entry.insert(storage);
-                    }
-                    let image = &images[&image_index];
-                    let levels = if node.use_mips {
-                        image.texture().mip_level_count()
-                    } else {
-                        1
-                    };
-                    let texture =
-                        renderer.texture_binding(host.device(), image, node.sampling, levels)?;
-                    let texture = Arc::new(texture);
-                    textures.push(CachedTexture {
-                        image: image_index,
-                        sampling: node.sampling,
-                        mips: node.use_mips,
-                        texture: Arc::clone(&texture),
-                    });
-                    Some(texture)
-                }
-            } else {
-                None
-            };
+            let texture = model_texture(
+                renderer,
+                host,
+                asset,
+                node.image,
+                node.sampling,
+                node.use_mips,
+                residency_cache,
+                &mut textures,
+                &mut images,
+            )?;
             parts.insert(
                 u32::try_from(index).map_err(|_| SceneError::GeometryCapacityExceeded)?,
                 PartGraphics {
@@ -473,10 +503,30 @@ impl ModelGraphics {
                 },
             );
         }
+        let mut animated_textures = Vec::new();
+        if let Some(model) = &asset.animated {
+            for primitive in &model.primitives {
+                let texture = primitive.base_color_texture;
+                animated_textures.push(model_texture(
+                    renderer,
+                    host,
+                    asset,
+                    texture.map(|t| t.image),
+                    texture.map_or_else(TextureSampling::default, |t| t.sampling),
+                    texture.is_some_and(|t| t.use_mips),
+                    residency_cache,
+                    &mut textures,
+                    &mut images,
+                )?);
+            }
+        }
         Ok(Self {
             geometry,
             outline,
             parts,
+            animated_textures,
+            animated_model: asset.animated.clone(),
+            animated_lod: asset.skinned_lod.clone(),
             _images: images.into_values().collect(),
         })
     }
@@ -660,6 +710,9 @@ mod tests {
             },
             outline: None,
             parts: BTreeMap::new(),
+            animated_textures: vec![],
+            animated_model: None,
+            animated_lod: None,
             _images: vec![],
         };
         let a = voxy_assets::AssetId("a".into());
@@ -831,6 +884,9 @@ mod tests {
                     },
                     outline: None,
                     parts: BTreeMap::new(),
+                    animated_textures: vec![],
+                    animated_model: None,
+                    animated_lod: None,
                     _images: vec![],
                 },
             ),

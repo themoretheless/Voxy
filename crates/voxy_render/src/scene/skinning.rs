@@ -266,6 +266,23 @@ impl SceneSkinner {
         encoder: &mut wgpu::CommandEncoder,
         pose: &SceneSkinPose<'_>,
     ) -> Result<(), SceneSkinError> {
+        self.encode_prepared_pose_profiled(queue, encoder, pose, None)
+    }
+
+    /// Optional compute-pass boundary timestamps. The caller owns the timestamp
+    /// query set and resolves it after encoding. Requires TIMESTAMP_QUERY; query
+    /// device, indices and type must satisfy wgpu validation requirements.
+    /// Unsupported timestamp features are rejected before palette writes.
+    pub fn encode_prepared_pose_profiled(
+        &self,
+        queue: &wgpu::Queue,
+        encoder: &mut wgpu::CommandEncoder,
+        pose: &SceneSkinPose<'_>,
+        timestamp_writes: Option<wgpu::ComputePassTimestampWrites<'_>>,
+    ) -> Result<(), SceneSkinError> {
+        if timestamp_writes.is_some() && !self.device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
+            return Err(SceneSkinError::Unsupported);
+        }
         let instance = pose.instance;
         if !Arc::ptr_eq(&self.identity, &instance.owner) {
             return Err(SceneSkinError::ForeignSkinner);
@@ -273,7 +290,7 @@ impl SceneSkinner {
         queue.write_buffer(&instance.palette, 0, bytemuck::cast_slice(pose.joints));
         let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("scene skin pose"),
-            timestamp_writes: None,
+            timestamp_writes,
         });
         pass.set_pipeline(&self.pipeline);
         pass.set_bind_group(0, &instance.binding, &[]);
