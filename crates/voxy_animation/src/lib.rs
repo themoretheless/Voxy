@@ -412,6 +412,22 @@ impl AnimationClip {
         Ok(pose)
     }
 
+    fn phase(&self, time: f64) -> f64 {
+        let duration = f64::from(self.duration);
+        match self.playback {
+            Playback::Loop => time.rem_euclid(duration),
+            Playback::Clamp => time.clamp(0.0, duration),
+        }
+    }
+
+    fn try_sample_clock(&self, skeleton: &Skeleton, time: f64) -> Result<Pose, AnimationError> {
+        if !time.is_finite() {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        // Reduce before conversion so accumulated elapsed time never loses phase bits.
+        self.try_sample(skeleton, self.phase(time) as f32)
+    }
+
     fn sample_local(&self, time: f32) -> Pose {
         let local = self
             .rig
@@ -565,11 +581,11 @@ impl Pose {
 struct Transition {
     source: Arc<AnimationClip>,
     source_curve: Arc<root_curve::RootCurve>,
-    source_time: f32,
+    source_time: f64,
     // Interruption captures the displayed blend once; staging shares this snapshot.
     source_pose: Option<Arc<Pose>>,
-    elapsed: f32,
-    duration: f32,
+    elapsed: f64,
+    duration: f64,
 }
 
 #[derive(Clone, Debug)]
@@ -577,7 +593,7 @@ pub struct Animator {
     current: Arc<AnimationClip>,
     motion_joint: u16,
     motion_curve: Arc<root_curve::RootCurve>,
-    time: f32,
+    time: f64,
     speed: f32,
     transition: Option<Transition>,
 }
@@ -726,17 +742,21 @@ impl Animator {
             let skeleton = Skeleton {
                 joints: self.current.rig.clone(),
             };
-            let target = self.current.try_sample(&skeleton, self.time)?;
+            let target = self.current.try_sample_clock(&skeleton, self.time)?;
             let sampled;
             let source = if let Some(pose) = &transition.source_pose {
                 pose.as_ref()
             } else {
                 sampled = transition
                     .source
-                    .try_sample(&skeleton, transition.source_time)?;
+                    .try_sample_clock(&skeleton, transition.source_time)?;
                 &sampled
             };
-            let pose = Pose::blend(source, &target, transition.elapsed / transition.duration)?;
+            let pose = Pose::blend(
+                source,
+                &target,
+                (transition.elapsed / transition.duration) as f32,
+            )?;
             // A snapshot must pass the same palette admission as a displayed frame.
             pose.skin_matrices(&skeleton)?;
             Some(Arc::new(pose))
@@ -749,7 +769,7 @@ impl Animator {
             source: Arc::clone(&self.current),
             source_time: self.time,
             elapsed: 0.0,
-            duration,
+            duration: f64::from(duration),
         });
         self.current = next;
         self.motion_curve = next_curve;
@@ -797,7 +817,13 @@ impl Animator {
                 return Err(AnimationError::SkeletonMismatch);
             }
         }
-        let delta = dt * self.speed;
+        let dt = f64::from(dt);
+        let speed = f64::from(self.speed);
+        self.time = self.current.phase(self.time);
+        if let Some(transition) = &mut self.transition {
+            transition.source_time = transition.source.phase(transition.source_time);
+        }
+        let delta = dt * speed;
         let old_time = self.time;
         self.time += delta;
         let mut root_motion = if self.transition.is_none() {
@@ -810,13 +836,12 @@ impl Animator {
         if !self.time.is_finite() || !root_motion.is_finite() {
             return Err(AnimationError::NumericalOverflow);
         }
-        let target = self.current.try_sample(skeleton, self.time)?;
+        let target = self.current.try_sample_clock(skeleton, self.time)?;
         let (pose, weight, transition_complete) = if let Some(transition) = &mut self.transition {
             let fade_dt = dt.min((transition.duration - transition.elapsed).max(0.0));
-            let fade_delta = fade_dt * self.speed;
-            let start_weight = f64::from(transition.elapsed) / f64::from(transition.duration);
-            let end_weight =
-                f64::from(transition.elapsed + fade_dt) / f64::from(transition.duration);
+            let fade_delta = fade_dt * speed;
+            let start_weight = transition.elapsed / transition.duration;
+            let end_weight = (transition.elapsed + fade_dt) / transition.duration;
             let target_end = old_time + fade_delta;
             let target_fade =
                 self.motion_curve
@@ -838,7 +863,7 @@ impl Animator {
             }
             transition.source_time += fade_delta;
             transition.elapsed = (transition.elapsed + dt).min(transition.duration);
-            let weight = transition.elapsed / transition.duration;
+            let weight = (transition.elapsed / transition.duration) as f32;
             if weight >= 1.0 {
                 (target, 1.0, true)
             } else {
@@ -848,7 +873,7 @@ impl Animator {
                 } else {
                     sampled = transition
                         .source
-                        .try_sample(skeleton, transition.source_time)?;
+                        .try_sample_clock(skeleton, transition.source_time)?;
                     &sampled
                 };
                 (
@@ -864,6 +889,11 @@ impl Animator {
             self.transition = None;
         }
         let skin_matrices = pose.skin_matrices(skeleton)?;
+        // Bound storage only after integrating this complete tick, including all loops.
+        self.time = self.current.phase(self.time);
+        if let Some(transition) = &mut self.transition {
+            transition.source_time = transition.source.phase(transition.source_time);
+        }
         Ok(AnimatorFrame {
             pose,
             skin_matrices,
@@ -988,9 +1018,19 @@ fn sample_vec3(
         || first.value,
         |(index, from, to, alpha)| match mode {
             Interpolation::Step => from.value,
-            Interpolation::Linear => from.value.lerp(to.value, alpha),
+            Interpolation::Linear => {
+                if from.value == to.value {
+                    from.value
+                } else {
+                    from.value.lerp(to.value, alpha)
+                }
+            }
             Interpolation::CubicSpline => {
-                if alpha == 0.0 {
+                if alpha == 0.0
+                    || (from.value == to.value
+                        && tangents[index][1] == Vec3::ZERO
+                        && tangents[index + 1][0] == Vec3::ZERO)
+                {
                     from.value
                 } else {
                     hermite(
@@ -1675,7 +1715,10 @@ mod tests {
             );
             assert_eq!(clip.constant_joint_transform(2), None);
             assert!(!clip.joint_uses_bind_pose(0));
-            for time in [-1., 0., 0.1, 0.25, 0.5, 0.75, 1., 2.] {
+            for time in [-1., 0., 0.1, 0.20000002, 0.25, 0.5, 0.75, 1., 2.] {
+                let sample = clip.try_sample(&rig, time).unwrap();
+                assert_eq!(sample.local()[0].translation, expected.translation);
+                assert_eq!(sample.local()[0].scale, expected.scale);
                 assert!(
                     clip.try_sample(&rig, time).unwrap().local()[0]
                         .matrix()
@@ -2556,6 +2599,79 @@ mod tests {
     }
 
     #[test]
+    fn bounded_clocks_preserve_small_ticks_after_long_elapsed_time_and_many_loops() {
+        let rig = skeleton();
+        let mut animator = Animator::new(root_clip(&rig, 2.));
+        // At this elapsed time f32 addition loses a 60 Hz tick completely.
+        let long = 1_048_576_f32;
+        assert_eq!(long + 1. / 60., long);
+        animator.time = f64::from(long) + 0.875;
+        let dt = 1. / 60.;
+        let frame = animator.advance(&rig, dt).unwrap();
+        assert!(frame.root_motion.abs_diff_eq(Vec3::X * (2. * dt), 1e-7));
+        assert!((animator.time - (0.875 + f64::from(dt))).abs() < 1e-12);
+        animator.set_speed(8.).unwrap();
+        let frame = animator.advance(&rig, 1.).unwrap();
+        assert_eq!(frame.root_motion, Vec3::X * 16.);
+        assert!((0. ..1.).contains(&animator.time));
+        animator.set_speed(1.).unwrap();
+        let initial = animator.time;
+        let mut displacement = 0_f64;
+        for _ in 0..100_000 {
+            let frame = animator.advance(&rig, dt).unwrap();
+            displacement += f64::from(frame.root_motion.x);
+            assert!((0. ..1.).contains(&animator.time));
+        }
+        assert!((displacement - 200_000. * f64::from(dt)).abs() < 1e-6);
+        let expected = (initial + 100_000. * f64::from(dt)).rem_euclid(1.);
+        assert!((animator.time - expected).abs() < 1e-12);
+    }
+
+    #[test]
+    fn bounded_crossfade_clocks_match_local_phase_and_preserve_failed_tick() {
+        let rig = skeleton();
+        let mut control = Animator::new(root_clip(&rig, 2.));
+        control.advance(&rig, 0.875).unwrap();
+        control.transition_to(root_clip(&rig, 4.), 0.5).unwrap();
+        control.advance(&rig, 0.125).unwrap();
+        let mut long = control.clone();
+        long.time += 1_048_576.;
+        long.transition.as_mut().unwrap().source_time += 1_048_576.;
+        let before = long.clone();
+        assert!(long.advance(&rig, f32::NAN).is_err());
+        assert_eq!(long.time, before.time);
+        assert_eq!(
+            long.transition.as_ref().unwrap().source_time,
+            before.transition.as_ref().unwrap().source_time
+        );
+        for dt in [1. / 60., 0.25, 0.5] {
+            let actual = long.advance(&rig, dt).unwrap();
+            let expected = control.advance(&rig, dt).unwrap();
+            assert_eq!(actual.pose, expected.pose);
+            assert!(actual.root_motion.abs_diff_eq(expected.root_motion, 1e-7));
+            assert_eq!(actual.transition_weight, expected.transition_weight);
+        }
+        assert!(long.transition.is_none());
+        // Clamp remains at its endpoint rather than wrapping and replaying motion.
+        let mut clip = (*root_clip(&rig, 2.)).clone();
+        clip.playback = Playback::Clamp;
+        clip.root_curve = Arc::new(root_curve::RootCurve::new(
+            &clip.tracks[0].translations,
+            clip.interpolation[0].translation,
+            &clip.tangents[0].translation,
+            clip.duration,
+            Playback::Clamp,
+        ));
+        let mut clamped = Animator::new(Arc::new(clip));
+        clamped.time = 1_048_576.;
+        assert_eq!(
+            clamped.advance(&rig, 1. / 60.).unwrap().root_motion,
+            Vec3::ZERO
+        );
+        assert_eq!(clamped.time, 1.);
+    }
+
+    #[test]
     fn animator_preserves_root_motion_across_loop_boundary() {
         let skeleton = skeleton();
         let mut animator = Animator::new(root_clip(&skeleton, 2.0));
@@ -2588,7 +2704,7 @@ mod tests {
             animator.advance(&other, 0.5),
             Err(AnimationError::TrackCountMismatch { .. })
         ));
-        assert_eq!(animator.time.to_bits(), 0.0f32.to_bits());
+        assert_eq!(animator.time.to_bits(), 0.0f64.to_bits());
         assert!((animator.advance(&skeleton, 0.5).unwrap().root_motion.x - 1.0).abs() < 1e-6);
     }
 
@@ -2646,7 +2762,7 @@ mod tests {
             animator.advance(&skeleton, 1.0),
             Err(AnimationError::NumericalOverflow)
         ));
-        assert_eq!(animator.time.to_bits(), 0.0f32.to_bits());
+        assert_eq!(animator.time.to_bits(), 0.0f64.to_bits());
         animator.set_speed(0.0).unwrap();
         assert!(
             animator

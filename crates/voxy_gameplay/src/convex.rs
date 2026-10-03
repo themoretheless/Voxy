@@ -1,4 +1,4 @@
-//! Continuous SAT for a translating axis-aligned character against affine boxes.
+//! Continuous SAT for a translating oriented character against affine boxes.
 //! Static boxes may rotate, scale and inherit shear; normals remain continuous.
 use glam::DVec3;
 
@@ -8,34 +8,51 @@ pub(crate) struct AffineBox {
     pub edges: [DVec3; 3],
 }
 impl AffineBox {
-    pub fn axes(&self) -> impl Iterator<Item = DVec3> {
-        let mut axes = [DVec3::ZERO; 15];
-        axes[..3].copy_from_slice(&[DVec3::X, DVec3::Y, DVec3::Z]);
-        let mut count = 3;
-        for (a, b) in [(0, 1), (1, 2), (2, 0)] {
-            axes[count] = self.edges[a].cross(self.edges[b]);
-            count += 1;
+    pub(crate) fn axes_for(&self, body: [DVec3; 3]) -> impl Iterator<Item = DVec3> {
+        // Normalize directions before crossing: tiny/large extents must not
+        // remove separating axes or overflow their cross products.
+        fn direction(vector: DVec3) -> DVec3 {
+            let scale = vector.abs().max_element();
+            if scale == 0. {
+                DVec3::ZERO
+            } else {
+                (vector / scale).normalize()
+            }
         }
-        for world in [DVec3::X, DVec3::Y, DVec3::Z] {
-            for edge in self.edges {
-                axes[count] = world.cross(edge);
-                count += 1;
+        let body = body.map(direction);
+        let obstacle = self.edges.map(direction);
+        let mut axes = [DVec3::ZERO; 15];
+        for (index, (a, b)) in [(1, 2), (2, 0), (0, 1)].into_iter().enumerate() {
+            axes[index] = body[a].cross(body[b]);
+        }
+        for (index, (a, b)) in [(0, 1), (1, 2), (2, 0)].into_iter().enumerate() {
+            axes[index + 3] = obstacle[a].cross(obstacle[b]);
+        }
+        for (i, first) in body.into_iter().enumerate() {
+            for (j, second) in obstacle.into_iter().enumerate() {
+                axes[6 + i * 3 + j] = first.cross(second);
             }
         }
         axes.into_iter()
-            .filter(|axis| axis.length_squared() > 1e-20)
-            .map(DVec3::normalize)
+            .filter(|axis| *axis != DVec3::ZERO)
+            .map(direction)
     }
-    fn radius(&self, axis: DVec3) -> f64 {
+    pub(crate) fn radius(&self, axis: DVec3) -> f64 {
         self.edges.iter().map(|edge| edge.dot(axis).abs()).sum()
     }
+    #[cfg(test)]
     pub fn penetration(&self, center: DVec3, half: DVec3) -> Option<DVec3> {
+        self.penetration_affine(center, aligned_edges(half))
+    }
+    pub fn penetration_affine(&self, center: DVec3, body: [DVec3; 3]) -> Option<DVec3> {
         let relative = center - self.center;
         let mut minimum = f64::INFINITY;
         let mut normal = DVec3::ZERO;
-        for axis in self.axes() {
+        for axis in self.axes_for(body) {
             let distance = relative.dot(axis);
-            let overlap = self.radius(axis) + half.dot(axis.abs()) - distance.abs();
+            let overlap = self.radius(axis)
+                + body.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>()
+                - distance.abs();
             // Ignore only double precision arithmetic at touching faces.
             let epsilon = 64. * f64::EPSILON * (1. + self.center.abs().max_element());
             if overlap <= epsilon {
@@ -48,13 +65,23 @@ impl AffineBox {
         }
         Some(normal * (minimum + 1e-7))
     }
+    #[cfg(test)]
     pub fn sweep(&self, center: DVec3, half: DVec3, displacement: DVec3) -> Option<(f64, DVec3)> {
+        self.sweep_affine(center, aligned_edges(half), displacement)
+    }
+    pub fn sweep_affine(
+        &self,
+        center: DVec3,
+        body: [DVec3; 3],
+        displacement: DVec3,
+    ) -> Option<(f64, DVec3)> {
         let relative = center - self.center;
         let mut enter = 0.;
         let mut exit: f64 = 1.;
         let mut normal = DVec3::ZERO;
-        for axis in self.axes() {
-            let radius = self.radius(axis) + half.dot(axis.abs());
+        for axis in self.axes_for(body) {
+            let radius =
+                self.radius(axis) + body.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>();
             let distance = relative.dot(axis);
             let speed = displacement.dot(axis);
             let epsilon = 64. * f64::EPSILON * (1. + self.center.abs().max_element());
@@ -88,15 +115,27 @@ impl AffineBox {
     }
 }
 
+#[cfg(test)]
+fn aligned_edges(half: DVec3) -> [DVec3; 3] {
+    [DVec3::X * half.x, DVec3::Y * half.y, DVec3::Z * half.z]
+}
+#[cfg(test)]
 pub(crate) fn recover(
     center: &mut DVec3,
     half: DVec3,
     boxes: &[AffineBox],
 ) -> Result<(), super::PhysicsError> {
+    recover_affine(center, aligned_edges(half), boxes)
+}
+pub(crate) fn recover_affine(
+    center: &mut DVec3,
+    body: [DVec3; 3],
+    boxes: &[AffineBox],
+) -> Result<(), super::PhysicsError> {
     for _ in 0..16 {
         let correction = boxes
             .iter()
-            .find_map(|obstacle| obstacle.penetration(*center, half));
+            .find_map(|obstacle| obstacle.penetration_affine(*center, body));
         let Some(correction) = correction else {
             return Ok(());
         };
@@ -104,7 +143,7 @@ pub(crate) fn recover(
     }
     if boxes
         .iter()
-        .any(|obstacle| obstacle.penetration(*center, half).is_some())
+        .any(|obstacle| obstacle.penetration_affine(*center, body).is_some())
     {
         Err(super::PhysicsError::InitialOverlap)
     } else {
@@ -112,6 +151,7 @@ pub(crate) fn recover(
     }
 }
 
+#[cfg(test)]
 pub(crate) fn move_body(
     center: &mut DVec3,
     half: DVec3,
@@ -119,13 +159,13 @@ pub(crate) fn move_body(
     dt: f64,
     boxes: &[AffineBox],
 ) -> bool {
-    move_body_carrying_velocity(center, half, velocity, dt, boxes, None)
+    move_body_affine_carrying_velocity(center, aligned_edges(half), velocity, dt, boxes, None)
 }
 
 /// A kinematic displacement also removes persistent velocity into its contacts.
-pub(crate) fn move_body_carrying_velocity(
+pub(crate) fn move_body_affine_carrying_velocity(
     center: &mut DVec3,
-    half: DVec3,
+    body: [DVec3; 3],
     velocity: &mut DVec3,
     dt: f64,
     boxes: &[AffineBox],
@@ -139,7 +179,7 @@ pub(crate) fn move_body_carrying_velocity(
         }
         let nearest = boxes
             .iter()
-            .filter_map(|obstacle| obstacle.sweep(*center, half, remaining))
+            .filter_map(|obstacle| obstacle.sweep_affine(*center, body, remaining))
             .min_by(|a, b| a.0.total_cmp(&b.0));
         let Some((fraction, normal)) = nearest else {
             *center += remaining;
@@ -167,7 +207,7 @@ pub(crate) fn move_body_carrying_velocity(
         let snap = DVec3::new(0., -0.005, 0.);
         if let Some((fraction, _)) = boxes
             .iter()
-            .filter_map(|obstacle| obstacle.sweep(*center, half, snap))
+            .filter_map(|obstacle| obstacle.sweep_affine(*center, body, snap))
             .filter(|(_, normal)| normal.y > 0.5)
             .min_by(|a, b| a.0.total_cmp(&b.0))
         {
@@ -185,6 +225,44 @@ pub(crate) fn move_body_carrying_velocity(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn oriented_face_contact_is_analytic_and_invariant_to_extent_scale() {
+        let rotation = glam::DQuat::from_rotation_y(std::f64::consts::FRAC_PI_4);
+        for scale in [1e-8, 1., 1e8] {
+            let obstacle = AffineBox {
+                center: DVec3::Z * scale,
+                edges: [
+                    DVec3::X * 0.1 * scale,
+                    DVec3::Y * 0.1 * scale,
+                    DVec3::Z * 0.1 * scale,
+                ],
+            };
+            let body = [
+                rotation * DVec3::X * 0.4 * scale,
+                DVec3::Y * 0.1 * scale,
+                rotation * DVec3::Z * 0.05 * scale,
+            ];
+            let (fraction, normal) = obstacle
+                .sweep_affine(DVec3::ZERO, body, DVec3::Z * 2. * scale)
+                .unwrap();
+            let expected = (1. - 0.2 - 0.05 * std::f64::consts::SQRT_2) / 2.;
+            assert!(
+                (fraction - expected).abs() < 1e-12,
+                "scale={scale} fraction={fraction}"
+            );
+            assert!(normal.abs_diff_eq(-(rotation * DVec3::Z), 1e-12));
+            assert!(
+                obstacle
+                    .penetration_affine(DVec3::Z * (2. * fraction - 1e-4) * scale, body)
+                    .is_none()
+            );
+            assert!(
+                obstacle
+                    .penetration_affine(DVec3::Z * (2. * fraction + 1e-4) * scale, body)
+                    .is_some()
+            );
+        }
+    }
     #[test]
     fn rotated_thin_box_does_not_collide_with_empty_aabb_corner() {
         let r = glam::DQuat::from_rotation_y(std::f64::consts::FRAC_PI_4);

@@ -9,6 +9,8 @@ use voxy_assets::AssetId;
 use voxy_render::ModelAsset;
 use voxy_scene::{NodeId, SceneGraph, SceneId};
 
+pub(super) const MAX_OWNERS: usize = 128;
+
 /// The editor adds its playback authority to the existing character transaction.
 pub(super) fn schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_scene::ScheduleError> {
     static PLAN: std::sync::OnceLock<Result<voxy_scene::SchedulePlan, voxy_scene::ScheduleError>> =
@@ -90,7 +92,20 @@ impl AnimationRuntime {
         next.motions.clear();
         next.synchronize(scene)?;
         next.scene = Some(scene.identity());
-        if scene.components::<ModelInstance>().count() > 128 {
+        // Imported hierarchy parts reference the shared model but own no clocks.
+        // Inactive logical owners count too: their retained playback consumes storage.
+        let owner_count = scene
+            .components::<ModelInstance>()
+            .filter(|(owner, instance)| {
+                (models.contains_key(&instance.asset) || next.owners.contains_key(owner))
+                    && scene
+                        .component::<ModelPart>(*owner)
+                        .ok()
+                        .flatten()
+                        .is_none_or(|part| part.node == u32::MAX)
+            })
+            .count();
+        if owner_count > MAX_OWNERS {
             return Err("animation owner capacity exceeded".into());
         }
         for (owner, instance) in scene.active_components::<ModelInstance>() {

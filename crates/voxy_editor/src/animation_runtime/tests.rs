@@ -173,8 +173,11 @@ fn motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors() {
     let authored = runtime.prepare(&scene, &authored_models, 1. / 60.).unwrap();
     assert!(authored.motions()[0].1.abs_diff_eq(-Vec3::Z * 0.1, 1e-6));
     let parent = authored_model.resolve_joint_name("basis").unwrap() as usize;
-    assert!(authored.frame(owner, &authored_model).unwrap().pose.local()[parent]
-        .scale.abs_diff_eq(Vec3::new(3., 5., 7.), 1e-6));
+    assert!(
+        authored.frame(owner, &authored_model).unwrap().pose.local()[parent]
+            .scale
+            .abs_diff_eq(Vec3::new(3., 5., 7.), 1e-6)
+    );
     doc["animations"][0]["channels"]
         .as_array_mut()
         .unwrap()
@@ -330,4 +333,234 @@ fn editor_play_drives_root_motion_through_wall_and_preserves_failed_tick() {
     assert!(app.play.animations.frame(owner, &model).is_none());
     assert_eq!(app.authoring_document().unwrap(), authored);
     app.stop_workers().unwrap();
+}
+
+#[test]
+fn hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic() {
+    let (_, _, model, models) = fixture();
+    let mut scene = SceneGraph::new(512);
+    let mut owners = Vec::new();
+    let mut parts = Vec::new();
+    for index in 0..128 {
+        let owner = scene.spawn(None, Default::default()).unwrap();
+        scene
+            .insert_component(
+                owner,
+                ModelInstance {
+                    asset: AssetId("rig".into()),
+                },
+            )
+            .unwrap();
+        if index % 2 == 0 {
+            scene
+                .insert_component(owner, ModelPart { node: u32::MAX })
+                .unwrap();
+        }
+        owners.push(owner);
+        for node in 0..2 {
+            let part = scene.spawn(Some(owner), Default::default()).unwrap();
+            scene
+                .insert_component(
+                    part,
+                    ModelInstance {
+                        asset: AssetId("rig".into()),
+                    },
+                )
+                .unwrap();
+            scene.insert_component(part, ModelPart { node }).unwrap();
+            parts.push(part);
+        }
+    }
+    assert_eq!(scene.components::<ModelInstance>().count(), 384);
+    let mut runtime = AnimationRuntime::default()
+        .prepare(&scene, &models, 1. / 60.)
+        .unwrap();
+    assert_eq!(runtime.owners.len(), 128);
+    let frames: Vec<_> = owners
+        .iter()
+        .map(|&owner| runtime.frame(owner, &model).unwrap())
+        .collect();
+    assert!(
+        parts
+            .iter()
+            .all(|&part| runtime.frame(part, &model).is_none())
+    );
+    for frame in &frames {
+        assert!((frame.pose.local()[0].translation.x - 2. / 60.).abs() < 1e-6);
+    }
+    let overflow = scene.spawn(None, Default::default()).unwrap();
+    scene
+        .insert_component(
+            overflow,
+            ModelInstance {
+                asset: AssetId("rig".into()),
+            },
+        )
+        .unwrap();
+    for active in [true, false] {
+        scene.set_active(overflow, active).unwrap();
+        assert!(
+            runtime
+                .prepare(&scene, &models, 1. / 60.)
+                .unwrap_err()
+                .contains("capacity")
+        );
+        assert_eq!(runtime.serial(), 1);
+        assert_eq!(runtime.owners.len(), 128);
+        for (&owner, frame) in owners.iter().zip(&frames) {
+            assert!(Arc::ptr_eq(frame, &runtime.frame(owner, &model).unwrap()));
+        }
+    }
+    scene.remove_subtree(overflow).unwrap();
+    runtime = runtime.prepare(&scene, &models, 1. / 60.).unwrap();
+    assert_eq!(runtime.serial(), 2);
+    assert!(
+        (runtime.frame(owners[0], &model).unwrap().pose.local()[0]
+            .translation
+            .x
+            - 4. / 60.)
+            .abs()
+            < 1e-6
+    );
+    scene.remove_subtree(owners[0]).unwrap();
+    runtime.synchronize(&scene).unwrap();
+    assert_eq!(runtime.owners.len(), 127);
+    assert!(runtime.frame(owners[0], &model).is_none());
+    runtime.clear();
+    assert!(runtime.owners.is_empty());
+}
+
+#[test]
+fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
+    let directory = std::env::temp_dir().join(format!(
+        "voxy-rig-owner-scene-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir(&directory).unwrap();
+    let source = directory.join("model.gltf");
+    let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../artifacts/rig-constant-parents-2026-10-03");
+    std::fs::copy(fixture.join("rig.gltf"), &source).unwrap();
+    std::fs::copy(fixture.join("rig.bin"), directory.join("rig.bin")).unwrap();
+    let scene_path = directory.join("scene.json");
+    let manifest = directory.join("assets.json");
+    std::fs::write(&manifest, r#"{"version":1,"assets":[{"asset":"model.gltf","source":"model.gltf"},{"asset":"static.gltf","source":"static.gltf"}]}"#).unwrap();
+    let mut app =
+        crate::App::from_manifest(&manifest, AssetId("model.gltf".into()), false).unwrap();
+    app.configure_scene(&scene_path).unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while app.catalog.snapshot(&app.id).is_none() {
+        app.tick().unwrap();
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    for _ in 1..50 {
+        app.edit_key(winit::keyboard::KeyCode::KeyD).unwrap();
+    }
+    // Skeletal resources retain their internal skeleton; expand a static hierarchy
+    // beside the independent rigs through the actual editor command.
+    let mut static_doc: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&source).unwrap()).unwrap();
+    static_doc.as_object_mut().unwrap().remove("animations");
+    static_doc.as_object_mut().unwrap().remove("skins");
+    for node in static_doc["nodes"].as_array_mut().unwrap() {
+        node.as_object_mut().unwrap().remove("skin");
+    }
+    for mesh in static_doc["meshes"].as_array_mut().unwrap() {
+        for primitive in mesh["primitives"].as_array_mut().unwrap() {
+            let attributes = primitive["attributes"].as_object_mut().unwrap();
+            attributes.remove("JOINTS_0");
+            attributes.remove("WEIGHTS_0");
+        }
+    }
+    for index in 3..100 {
+        static_doc["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"name":format!("part-{index}")}));
+        static_doc["nodes"][2]["children"]
+            .as_array_mut()
+            .unwrap()
+            .push(index.into());
+    }
+    std::fs::write(
+        directory.join("static.gltf"),
+        serde_json::to_vec(&static_doc).unwrap(),
+    )
+    .unwrap();
+    app.edit_key(winit::keyboard::KeyCode::KeyD).unwrap();
+    let owner = app.instances[app.selected];
+    let static_id = AssetId("static.gltf".into());
+    app.scene
+        .insert_component(
+            owner,
+            ModelInstance {
+                asset: static_id.clone(),
+            },
+        )
+        .unwrap();
+    app.commit_authoring().unwrap();
+    app.reload.insert(static_id.clone());
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while app.catalog.snapshot(&static_id).is_none() {
+        app.tick().unwrap();
+        assert!(std::time::Instant::now() < deadline, "{:?}", app.error);
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    app.expand_model().unwrap();
+    let authored = app.authoring_document().unwrap();
+    assert_eq!(authored.objects.len(), 151);
+    app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
+    assert_eq!(app.authoring_document().unwrap().objects.len(), 51);
+    app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
+    assert_eq!(app.authoring_document().unwrap(), authored);
+    app.save_authoring().unwrap();
+    app.load_authoring().unwrap();
+    assert_eq!(app.authoring_document().unwrap(), authored);
+    app.tick().unwrap(); // Exercise ordinary scene extraction above the former 128 cap.
+    app.toggle_play().unwrap();
+    for _ in 0..3 {
+        app.advance_game(1. / 60.).unwrap();
+    }
+    assert_eq!(app.play.animations.owners.len(), 50);
+    assert_eq!(app.play.animations.serial(), 3);
+    let model = app
+        .catalog
+        .snapshot(&app.id)
+        .unwrap()
+        .value()
+        .animated
+        .as_ref()
+        .unwrap()
+        .clone();
+    let animated_owners: Vec<_> = app
+        .scene
+        .components::<ModelInstance>()
+        .filter(|(_, instance)| instance.asset == app.id)
+        .map(|(owner, _)| owner)
+        .collect();
+    assert_eq!(animated_owners.len(), 50);
+    for owner in animated_owners {
+        assert!(
+            (app.play
+                .animations
+                .frame(owner, &model)
+                .unwrap()
+                .pose
+                .local()[usize::from(model.resolve_joint_name("root").unwrap())]
+            .translation
+            .x - 0.1)
+                .abs()
+                < 1e-6
+        );
+    }
+    app.toggle_play().unwrap();
+    assert!(app.play.animations.owners.is_empty());
+    assert_eq!(app.authoring_document().unwrap(), authored);
+    app.stop_workers().unwrap();
+    std::fs::remove_dir_all(directory).unwrap();
 }

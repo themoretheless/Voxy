@@ -888,3 +888,329 @@ fn animation_ceiling_contact_removes_persistent_upward_velocity() {
     assert_eq!(state.velocity[1], 0.0);
     assert!((scene.local(player).unwrap().translation.y - 0.05).abs() < 1e-6);
 }
+
+#[test]
+fn oriented_character_ignores_empty_enclosing_aabb_corner_and_slides_at_true_support() {
+    let mut scene = SceneGraph::new(4);
+    let rotation = Quat::from_rotation_y(std::f32::consts::FRAC_PI_4);
+    let player = scene
+        .spawn(
+            None,
+            Transform {
+                rotation,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.4, 0.1, 0.05],
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let corner = scene.spawn(None, at(Vec3::new(0.3, 0., 0.3))).unwrap();
+    scene
+        .insert_component(
+            corner,
+            BoxCollider {
+                half_extents: [0.02; 3],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 2);
+    physics.validate_start(&scene).unwrap();
+    let mut input = player_input().unwrap();
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    assert_eq!(scene.local(player).unwrap().translation, Vec3::ZERO);
+    scene.remove_subtree(corner).unwrap();
+    let wall = scene.spawn(None, at(Vec3::X)).unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [0.1, 1., 1.],
+            },
+        )
+        .unwrap();
+    let requested = Vec3::new(2., 0., 0.25);
+    let applied = physics
+        .fixed_step_with_motion(&mut scene, &mut input, 1. / 60., &[(player, requested)])
+        .unwrap();
+    let support = (rotation * Vec3::X * 0.4).x.abs() + (rotation * Vec3::Z * 0.05).x.abs();
+    let expected_x = 1. - 0.1 - support;
+    let position = scene.local(player).unwrap().translation;
+    assert!((position.x - expected_x).abs() < 1e-6, "{position:?}");
+    assert!((position.z - 0.25).abs() < 1e-6);
+    assert!(applied[0].1.abs_diff_eq(position, 1e-6));
+    assert_eq!(scene.local(player).unwrap().rotation, rotation);
+    let state = physics.state(&scene, player).unwrap().unwrap();
+    assert!(((state.body.max[0] - state.body.min[0]) * 0.5 - f64::from(support)).abs() < 1e-7);
+    assert!(!state.grounded);
+}
+
+#[test]
+fn tilted_character_floor_contact_jump_and_recovery_use_rotated_shape() {
+    let mut scene = SceneGraph::new(4);
+    let rotation = Quat::from_rotation_z(0.3);
+    let player = scene
+        .spawn(
+            None,
+            Transform {
+                rotation,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.4, 0.1, 0.05],
+                speed: 0.,
+                gravity: 0.,
+                jump_speed: 2.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let floor = scene.spawn(None, at(Vec3::new(0., -1.1, 0.))).unwrap();
+    scene
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [2., 0.1, 2.],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
+    let mut input = player_input().unwrap();
+    let displacement = Vec3::Y * -2.;
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 1. / 60., &[(player, displacement)])
+        .unwrap();
+    let support = (rotation * Vec3::X * 0.4).y.abs() + (rotation * Vec3::Y * 0.1).y.abs();
+    let grounded = scene.local(player).unwrap().translation;
+    assert!((grounded.y - (-1. + support)).abs() < 1e-6);
+    assert!(physics.state(&scene, player).unwrap().unwrap().grounded);
+    input.event(JUMP, 1.).unwrap();
+    physics
+        .fixed_step_with_motion(&mut scene, &mut input, 0.01, &[(player, Vec3::X * 0.01)])
+        .unwrap();
+    assert!(scene.local(player).unwrap().translation.y > grounded.y + 0.019);
+    assert!(physics.state(&scene, player).unwrap().unwrap().velocity[1] > 1.99);
+    // A teleported overlap rejects atomically; the opt-in recovery uses the OBB.
+    scene
+        .set_local(
+            player,
+            Transform {
+                translation: Vec3::new(0., -0.95, 0.),
+                rotation,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let before = scene.local(player).unwrap();
+    input.event(JUMP, 0.).unwrap();
+    input.event(JUMP, 1.).unwrap();
+    assert_eq!(
+        physics.fixed_step(&mut scene, &mut input, 0.01),
+        Err(PhysicsError::InitialOverlap)
+    );
+    assert_eq!(scene.local(player).unwrap(), before);
+    assert!(input.state("jump").unwrap().pressed);
+    let mut recovering = CharacterPhysics::new(&scene, 1, 1).with_depenetration(true);
+    recovering.fixed_step(&mut scene, &mut input, 0.01).unwrap();
+    assert!(scene.local(player).unwrap().translation.y >= -1. + support - 1e-6);
+    assert_eq!(scene.local(player).unwrap().rotation, rotation);
+}
+
+#[test]
+fn rigid_motion_preserves_winding_clips_mid_arc_and_retains_accepted_orientation() {
+    use voxy_gameplay::CharacterMotion;
+    let mut scene = SceneGraph::new(3);
+    let player = scene.spawn(None, Default::default()).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.4, 0.1, 0.02],
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let wall = scene.spawn(None, at(Vec3::Z * 0.25)).unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [2., 2., 0.02],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
+    let mut input = player_input().unwrap();
+    let requested = CharacterMotion {
+        owner: player,
+        displacement: Vec3::ZERO,
+        angular_displacement: Vec3::Y * std::f32::consts::TAU,
+    };
+    let receipt = physics
+        .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[requested])
+        .unwrap()[0];
+    assert!((0.05..0.2).contains(&receipt.angular_fraction));
+    let expected = (0.23_f64 / 0.4_f64.hypot(0.02)).asin() - 0.02_f64.atan2(0.4);
+    assert!((f64::from(receipt.angular_displacement.y) - expected).abs() < 1e-6);
+    let accepted = scene.local(player).unwrap();
+    assert!(
+        accepted
+            .rotation
+            .abs_diff_eq(Quat::from_rotation_y(receipt.angular_displacement.y), 1e-6)
+    );
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    assert_eq!(scene.local(player).unwrap().rotation, accepted.rotation);
+    let reverse = CharacterMotion {
+        angular_displacement: -receipt.angular_displacement,
+        ..requested
+    };
+    assert_eq!(
+        physics
+            .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[reverse])
+            .unwrap()[0]
+            .angular_fraction,
+        1.
+    );
+    assert!(
+        scene
+            .local(player)
+            .unwrap()
+            .rotation
+            .abs_diff_eq(Quat::IDENTITY, 1e-6)
+    );
+}
+
+#[test]
+fn angular_ground_turn_preserves_jump_and_continuing_velocity() {
+    use voxy_gameplay::CharacterMotion;
+    let (mut scene, _, player) = fixture();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    for _ in 0..60 {
+        physics
+            .fixed_step(&mut scene, &mut input, 1. / 60.)
+            .unwrap();
+    }
+    assert!(physics.state(&scene, player).unwrap().unwrap().grounded);
+    let request = CharacterMotion {
+        owner: player,
+        displacement: Vec3::ZERO,
+        angular_displacement: Vec3::Y * 0.3,
+    };
+    assert_eq!(
+        physics
+            .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[request])
+            .unwrap()[0]
+            .angular_fraction,
+        1.
+    );
+    assert!(physics.state(&scene, player).unwrap().unwrap().grounded);
+    input.event(JUMP, 1.).unwrap();
+    physics
+        .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[request])
+        .unwrap();
+    let before = physics.state(&scene, player).unwrap().unwrap().velocity[1];
+    assert!(before > 0.);
+    assert!(!physics.state(&scene, player).unwrap().unwrap().grounded);
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    let after = physics.state(&scene, player).unwrap().unwrap().velocity[1];
+    assert!((after - (before - 2.4 / 60.)).abs() < 1e-10);
+}
+
+#[test]
+fn angular_budget_and_invalid_requests_preserve_pose_state_and_input() {
+    use voxy_gameplay::CharacterMotion;
+    let mut scene = SceneGraph::new(3);
+    let player = scene.spawn(None, Default::default()).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.4, 0.1, 0.02],
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let wall = scene.spawn(None, at(Vec3::Z * 0.25)).unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [2., 2., 0.02],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1)
+        .with_angular_sweep_budget(1)
+        .unwrap();
+    let mut input = player_input().unwrap();
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    let before = scene.local(player).unwrap();
+    let velocity = physics.state(&scene, player).unwrap().unwrap().velocity;
+    input.event(JUMP, 1.).unwrap();
+    let request = CharacterMotion {
+        owner: player,
+        displacement: Vec3::X * 0.01,
+        angular_displacement: Vec3::Y * std::f32::consts::PI,
+    };
+    assert_eq!(
+        physics
+            .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[request])
+            .unwrap_err(),
+        PhysicsError::SweepBudget
+    );
+    for invalid in [Vec3::splat(f32::NAN), Vec3::Y * 100.] {
+        let request = CharacterMotion {
+            angular_displacement: invalid,
+            ..request
+        };
+        assert_eq!(
+            physics
+                .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[request])
+                .unwrap_err(),
+            PhysicsError::InvalidMotion
+        );
+    }
+    assert_eq!(
+        physics
+            .fixed_step_with_rigid_motion(&mut scene, &mut input, 1. / 60., &[request, request])
+            .unwrap_err(),
+        PhysicsError::InvalidMotion
+    );
+    assert_eq!(scene.local(player).unwrap(), before);
+    assert_eq!(
+        physics.state(&scene, player).unwrap().unwrap().velocity,
+        velocity
+    );
+    assert!(input.state("jump").unwrap().pressed);
+    assert!(
+        CharacterPhysics::new(&scene, 1, 1)
+            .with_angular_sweep_budget(0)
+            .is_err()
+    );
+}

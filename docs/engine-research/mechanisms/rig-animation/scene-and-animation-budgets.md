@@ -1,0 +1,13 @@
+# Scene and animation ownership budgets
+
+Editor document objects and animation owners have separate budgets. `scene_limits` supplies 4096 graph/document objects, 4 MiB per scene/prefab file, and a 64-entry history with a 64 MiB byte budget. Those limits are shared by creation, loading, saving, history, hierarchy expansion, prefab expansion/edit capture, extraction and frame styles. Asset counts, prefab instance/depth limits, behavior/physics/UI budgets and aggregate import-input limits remain independently bounded.
+
+AnimationRuntime admits at most 128 logical owners with an accepted animated model or retained playback. A real ModelPart node references imported geometry and consumes no animation-owner slot; the u32::MAX container sentinel remains a logical owner. Static models with no animated runtime resource consume no playback slot. Inactive accepted/retained owners remain counted. Missing resources can wait; publication of a 129th known animation owner rejects the candidate tick before clocks or frames publish. Deletion frees its owner slot during synchronization.
+
+Skeletal import currently keeps the skeleton inside its shared ModelAsset. The ordinary editor hierarchy-expansion command applies to static imported node tables. This change does not publish skeletal joints as independent scene transform owners.
+
+Evidence is saved in `artifacts/rig-owner-capacity-2026-10-03`. A regression that failed before the correction admits 128 logical roots plus 256 internal ModelPart references, checks the active and inactive 129th-owner refusal against retained Arc frames, and verifies recovery/deletion/clear. An ordinary editor test builds 50 independent rigs alongside one expanded 100-node static model: 151 objects survive undo/redo, manifest-backed save/load, extraction and Play/Stop.
+
+A real-device test consumes frames from the production fixed-tick AnimationRuntime, admits all 128 triangle rigs to AnimatedModels, verifies one shared GPU source and all frame bindings, renders 128 overlapping draws and compares the image exactly with a CPU-deformed reference. It accounts for 47,296 geometry bytes, verifies unchanged allocations on a render-only publication and zero bytes after clear. Overlapping offscreen triangles verify admission and deformation correctness; they do not establish crowd visibility, frame rate, complex-avatar throughput or CUDA support. The separate native smoke verifies actual Play/Stop and collision-limited in-place root motion with two owners.
+
+Root rotation, moving-ancestor integration, contact feedback/foot locking and scalable production performance profiling remain open.

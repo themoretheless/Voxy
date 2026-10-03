@@ -119,12 +119,11 @@ impl RootCurve {
     /// Whole cycles are summed algebraically rather than iterated.
     #[cfg(test)]
     fn weighted_delta(&self, start: f32, end: f32, w0: f64, w1: f64) -> Vec3 {
-        self.integral(start, end, w0, w1).as_vec3()
+        self.integral(f64::from(start), f64::from(end), w0, w1)
+            .as_vec3()
     }
 
-    pub(super) fn integral(&self, start: f32, end: f32, w0: f64, w1: f64) -> DVec3 {
-        let start = f64::from(start);
-        let end = f64::from(end);
+    pub(super) fn integral(&self, start: f64, end: f64, w0: f64, w1: f64) -> DVec3 {
         if end == start {
             return DVec3::ZERO;
         }

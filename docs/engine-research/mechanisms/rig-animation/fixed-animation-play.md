@@ -22,4 +22,14 @@ CPU tests cover resource waiting, inactive/resumed/paused owners, read-only fram
 
 Native root-motion smoke authors the component fields through the ordinary inspector, runs two owners, and verifies a wall-limited X position near 0.05 with an in-place palette. Native Fox smoke separately verifies all three original clips, shared texture bindings, a paused owner and Stop. Both use the ordinary Play/Stop path and actual presented frames.
 
-Remaining production work includes rotation extraction, animated-parent world integration, long-running clock precision, skeletal render interpolation, model/clip reimport continuity beyond reset, character/platform contacts, contact feedback and foot locking. This does not establish CUDA support, general dynamic rigid-body physics or completion of the broader engine goal.
+Remaining production work includes rotation extraction, animated-parent world integration, skeletal render interpolation, model/clip reimport continuity beyond reset, character/platform contacts, contact feedback and foot locking. This does not establish CUDA support, general dynamic rigid-body physics or completion of the broader engine goal.
+
+## Bounded playback clocks
+
+Animator target/source clocks and fade elapsed time use f64 internally. Each clip clock is reduced to its loop phase or clamped endpoint before a tick and after successful pose/palette admission. Root motion integrates the complete unwrapped interval within that tick, including multiple crossed cycles, before storage is reduced. Pose keys and public timesteps remain f32; this preserves authored format and does not claim sub-key precision beyond those inputs. Staging still publishes clocks only on success.
+
+Regression evidence in `artifacts/rig-bounded-clocks-2026-10-03` covers an injected elapsed clock of 1,048,576 seconds (where f32 loses a 60 Hz tick), speed-eight multi-cycle motion, 100,000 sequential ticks, source/target crossfade equivalence to local phase, failed-tick preservation, and a clamped endpoint. The large-clock test is synthetic; it is not a twelve-day live run.
+
+Constant vector channels avoid arithmetic drift: equal LINEAR endpoints return the authored value directly; equal CUBICSPLINE endpoints do so only when both participating tangents are zero. Nonzero tangents still undergo Hermite evaluation and admission. Native smoke exposed this rounding issue by comparing the in-place moving palette with a paused owner; the corrected path passes that exact comparison.
+
+Scene-node and playback-owner capacity are now independent; see [scene and animation budgets](scene-and-animation-budgets.md) for the shared editor limits and real-device boundary test.

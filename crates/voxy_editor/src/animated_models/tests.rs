@@ -984,3 +984,65 @@ fn gpu_material_revision_failure_preserves_texture_storage() {
     assert!(runtime.texture(owner, 0).is_none());
     assert!(pollster::block_on(scope.pop()).is_none());
 }
+
+#[test]
+#[ignore = "requires real GPU; fixed-tick hierarchy owners at runtime capacity"]
+fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
+    let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+    let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let model = fixture();
+    let asset = voxy_assets::AssetId("rig".into());
+    let models = std::collections::BTreeMap::from([(asset.clone(), model.clone())]);
+    let mut scene = voxy_scene::SceneGraph::new(crate::scene_limits::OBJECTS);
+    let mut owners = Vec::new();
+    for _ in 0..crate::animation_runtime::MAX_OWNERS {
+        let owner = scene.spawn(None, Default::default()).unwrap();
+        scene.insert_component(owner, crate::ModelInstance { asset: asset.clone() }).unwrap();
+        scene.insert_component(owner, crate::ModelPart { node: u32::MAX }).unwrap();
+        owners.push(owner);
+        for node in 0..2 {
+            let part = scene.spawn(Some(owner), Default::default()).unwrap();
+            scene.insert_component(part, crate::ModelInstance { asset: asset.clone() }).unwrap();
+            scene.insert_component(part, crate::ModelPart { node }).unwrap();
+        }
+    }
+    let playback = crate::animation_runtime::AnimationRuntime::default()
+        .prepare(&scene, &models, 1. / 60.).unwrap();
+    let requests = || owners.iter().map(|&owner| {
+        let mut request = request(owner, &model, 1.);
+        request.frame = playback.frame(owner, &model);
+        request
+    }).collect();
+    let mut render = AnimatedModels::new(&renderer).unwrap();
+    assert!(render.skinner.is_some());
+    assert!(render.synchronize(&renderer, &device, &queue, requests(), playback.serial(), 0, 1_048_576).is_empty());
+    assert_eq!(render.counts(), (128, 128, 1));
+    let bytes = render.allocation_bytes();
+    let source = match &render.owners[&owners[0]].primitives[0] {
+        Primitive::Skin { source, .. } => Arc::as_ptr(source),
+        _ => panic!("GPU skin expected"),
+    };
+    for &owner in &owners {
+        let Primitive::Skin { source: actual, .. } = &render.owners[&owner].primitives[0] else { panic!("GPU skin expected") };
+        assert_eq!(Arc::as_ptr(actual), source);
+        assert!(Arc::ptr_eq(&render.owners[&owner].frame, &playback.frame(owner, &model).unwrap()));
+    }
+    let frame = playback.frame(owners[0], &model).unwrap();
+    let baked = model.scene_meshes(&frame.pose).unwrap();
+    let reference = renderer.upload_mesh(&device, &baked[0]).unwrap();
+    let matrix = glam::Mat4::from_translation(glam::Vec3::new(-0.1, 0., 0.5));
+    let expected = pixels(&renderer, &device, &queue, vec![&reference], matrix);
+    assert!(expected.chunks_exact(4).any(|pixel| pixel[..3] != [0, 0, 0]));
+    let draws = owners.iter().flat_map(|&owner| render.geometries(owner).unwrap()).collect();
+    assert_eq!(pixels(&renderer, &device, &queue, draws, matrix), expected);
+    assert!(render.synchronize(&renderer, &device, &queue, requests(), playback.serial(), 0, 1_048_576).is_empty());
+    assert_eq!(render.allocation_bytes(), bytes);
+    render.clear();
+    assert_eq!(render.allocation_bytes(), 0);
+    assert_eq!(render.counts(), (0, 0, 0));
+    assert!(pollster::block_on(scope.pop()).is_none());
+    println!("VOXY_HIERARCHY_CAPACITY_GPU owners=128 parts=256 sources=1 bytes={bytes} cpu_pixels_equal=true stop_bytes=0");
+}

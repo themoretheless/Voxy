@@ -1,0 +1,22 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 11.37s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-f5ead3363db76828)
+
+running 1 test
+test animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic ... FAILED
+
+failures:
+
+---- animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic stdout ----
+
+thread 'animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic' (20831109) panicked at crates/voxy_editor/src/animation_runtime/tests.rs:356:86:
+called `Result::unwrap()` on an `Err` value: "animation owner capacity exceeded"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 103 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p voxy_editor --lib`

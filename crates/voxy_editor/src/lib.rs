@@ -23,6 +23,7 @@ mod gizmo;
 mod gpu_model;
 mod model_playback;
 mod animation_runtime;
+mod scene_limits;
 mod animated_models;
 mod animation_smoke;
 pub use model_playback::ModelAnimation;
@@ -401,7 +402,7 @@ impl App {
                 import::load(&source_path, provider, inputs)
             },
         )?;
-        let mut scene = SceneGraph::new(128);
+        let mut scene = SceneGraph::new(scene_limits::OBJECTS);
         let model_node = scene.spawn(
             None,
             Transform {
@@ -435,7 +436,7 @@ impl App {
                 ui_actions: None,
             },
             scene,
-            extraction: SceneExtraction::new(128),
+            extraction: SceneExtraction::new(scene_limits::OBJECTS),
             frame_styles: None,
             object_ids: vec![ObjectId("model-0".into())],
             instances: vec![model_node],
@@ -494,9 +495,9 @@ impl App {
         app.authoring.history = Some(SceneHistory::new(
             app.authoring_document()?,
             &app.authoring.authoring_project.registry,
-            128,
+            scene_limits::OBJECTS,
             64,
-            1_048_576,
+            scene_limits::HISTORY_BYTES,
         )?);
         Ok(app)
     }
@@ -1023,7 +1024,7 @@ impl App {
         self.advance_game(elapsed)?;
         voxy_scene::extraction_schedule()?
             .run_scene(&mut self.scene, |_, access| {
-                let styles = frame_styles::FrameStyles::prepare(&access, &self.camera, 128)?;
+                let styles = frame_styles::FrameStyles::prepare(&access, &self.camera, scene_limits::OBJECTS)?;
                 self.extraction
                     .refresh_scoped_with(access, |scene, owner| {
                         if let Some(simulation) = &self.play.simulation {
@@ -2072,7 +2073,7 @@ impl App {
     }
     fn restore_authoring(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         let document = self.authoring.history.as_ref().ok_or("missing history")?.current();
-        let mut loaded = document.load(&self.authoring.authoring_project.registry, 128)?;
+        let mut loaded = document.load(&self.authoring.authoring_project.registry, scene_limits::OBJECTS)?;
         let mut instances = Vec::with_capacity(document.objects.len());
         for object in &document.objects {
             let node = loaded.resolve(&object.id).ok_or("missing restored node")?;
@@ -2136,8 +2137,8 @@ impl App {
                 path,
                 &edited,
                 &self.authoring.authoring_project.registry,
-                128,
-                1_048_576,
+                scene_limits::OBJECTS,
+                scene_limits::DOCUMENT_BYTES,
             )?;
             self.authoring.scene_revision = Some(scene_revision::SceneRevision::written(path, &edited)?);
             // Refresh the observation after our own publication so the next save
@@ -2158,7 +2159,7 @@ impl App {
             let baseline = snapshot.source.instance_baseline(
                 &self.authoring.authoring_project.registry,
                 voxy_scene::PrefabLimits {
-                    max_objects: 128,
+                    max_objects: scene_limits::OBJECTS,
                     max_instances: 128,
                     max_depth: 16,
                 },
@@ -2174,7 +2175,7 @@ impl App {
                 &baseline,
                 &edited,
                 &self.authoring.authoring_project.registry,
-                128,
+                scene_limits::OBJECTS,
             )?;
             let proposed_metadata = serde_json::to_value(prefab_authoring::AuthoredScene {
                 source: source.clone(),
@@ -2206,7 +2207,7 @@ impl App {
         &self,
         document: &SceneDocument,
     ) -> Result<u64, Box<dyn std::error::Error>> {
-        let loaded = document.load(&self.authoring.authoring_project.registry, 128)?;
+        let loaded = document.load(&self.authoring.authoring_project.registry, scene_limits::OBJECTS)?;
         voxy_gameplay::validate_game_descriptors(&loaded.graph, 128)?;
         for object in &document.objects {
             loaded
@@ -2362,9 +2363,9 @@ impl App {
                 self.authoring_document()?,
                 metadata,
                 &self.authoring.authoring_project.registry,
-                128,
+                scene_limits::OBJECTS,
                 64,
-                1_048_576,
+                scene_limits::HISTORY_BYTES,
             )?);
         }
         Ok(())
@@ -2692,7 +2693,7 @@ impl App {
                 }
             }
             KeyCode::KeyD => {
-                if self.instances.len() >= 128 {
+                if self.instances.len() >= scene_limits::OBJECTS {
                     return Ok(());
                 }
                 if node.is_some() {
@@ -3300,7 +3301,7 @@ impl App {
             return Err("selected asset has no glTF hierarchy".into());
         }
         let mut document = self.authoring_document()?;
-        if document.objects.len() + asset.value().nodes.len() > 128 {
+        if document.objects.len() + asset.value().nodes.len() > scene_limits::OBJECTS {
             return Err("scene capacity exceeded".into());
         }
         let old_id = document.objects[self.selected].id.clone();
@@ -4202,6 +4203,7 @@ fn run_model_viewport_configured_registry(
         let mut smoke = animation_smoke::Smoke::default();
         smoke.profile = std::env::var_os("VOXY_ANIMATION_PROFILE").is_some();
         smoke.root_motion = std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();
+        smoke.oriented_body = smoke.root_motion && std::env::var_os("VOXY_ORIENTED_CHARACTER_SMOKE").is_some();
         app.animation_smoke = Some(smoke);
         app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
     }
@@ -4924,26 +4926,37 @@ mod tests {
     }
 
     #[test]
-    fn transform_inspector_rejects_invalid_physics_pose_without_history_change() {
+    fn transform_inspector_accepts_character_rotation_and_rejects_scale_atomically() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/quad.obj");
         let mut app = App::new(&fixture, false).unwrap();
         app.panel_action(panels::Action::Character).unwrap();
         let before = app.authoring_document().unwrap();
-        for (index, text) in [(6, "2"), (4, "90")] {
+        for (index, text) in [(6, "2"), (7, "0.5"), (8, "-1")] {
             app.panel_action(panels::Action::Field(index)).unwrap();
             app.field_key(KeyCode::Digit2, Some(text)).unwrap();
             assert!(app.field_key(KeyCode::Enter, None).is_err());
             assert_eq!(app.authoring_document().unwrap(), before);
             assert_eq!(app.authoring.history.as_ref().unwrap().current(), &before);
         }
+        app.panel_action(panels::Action::Field(4)).unwrap();
+        app.field_key(KeyCode::Digit9, Some("90")).unwrap();
+        app.field_key(KeyCode::Enter, None).unwrap();
+        let rotated = app.authoring_document().unwrap();
+        let rotation = glam::Quat::from_array(rotated.objects[0].rotation);
+        assert!(rotation.abs_diff_eq(glam::Quat::from_rotation_y(std::f32::consts::FRAC_PI_2), 1e-6));
+        assert_eq!(app.authoring.history.as_ref().unwrap().current(), &rotated);
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), before);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), rotated);
         app.panel_action(panels::Action::Field(0)).unwrap();
         app.field_key(KeyCode::Digit2, Some("2")).unwrap();
         app.field_key(KeyCode::Enter, None).unwrap();
         let moved = app.authoring_document().unwrap();
         assert!((moved.objects[0].translation[0] - 2.).abs() < 1e-6);
         app.edit_key(KeyCode::KeyZ).unwrap();
-        assert_eq!(app.authoring_document().unwrap(), before);
+        assert_eq!(app.authoring_document().unwrap(), rotated);
         app.edit_key(KeyCode::KeyY).unwrap();
         assert_eq!(app.authoring_document().unwrap(), moved);
         app.stop_workers().unwrap();

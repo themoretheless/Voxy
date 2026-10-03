@@ -1,0 +1,65 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.78s
+     Running unittests src/lib.rs (target/debug/deps/voxy_gameplay-0c1006d36aee166a)
+
+running 25 tests
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test convex::tests::oriented_face_contact_is_analytic_and_invariant_to_extent_scale ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/integration.rs (target/debug/deps/integration-844c2565546eb7e7)
+
+running 21 tests
+test initial_penetration_is_an_explicit_error_without_partial_publication ... ok
+test failure_in_later_body_preserves_all_poses_runtime_state_and_input ... ok
+test animation_ceiling_contact_removes_persistent_upward_velocity ... ok
+test character_step_read_only_grant_preserves_pose_and_pending_input ... ok
+test horizontal_animation_during_jump_does_not_snap_back_to_floor ... ok
+test animation_displacement_sweeps_slides_and_is_consumed_once ... ok
+test oriented_character_ignores_empty_enclosing_aabb_corner_and_slides_at_true_support ... ok
+test invalid_animation_motion_preserves_all_owners_and_pending_input ... ok
+test bounded_recovery_failure_preserves_every_pose_and_input_edge ... ok
+test parent_activity_deletion_component_removal_and_reused_generation_reconcile ... ok
+test animation_displacement_collides_vertically_and_with_affine_walls ... ok
+test durable_descriptors_reload_with_new_runtime_identity_and_no_velocity ... ok
+test rotated_scaled_static_boxes_use_exact_sweeps_and_runtime_overlap_recovery ... ok
+test character_domain_denials_preserve_live_physics_pose_and_input ... ok
+test unknown_scheduled_system_preserves_scene_physics_and_input ... ok
+test swept_motion_hits_wall_without_tunneling_and_focus_cancels_intent ... ok
+test translated_parent_teleport_resets_velocity_and_affine_dynamic_ancestors_fail ... ok
+test tilted_character_floor_contact_jump_and_recovery_use_rotated_shape ... ok
+test quick_tap_survives_render_only_frames_and_is_consumed_once_during_catch_up ... ok
+test grounded_tangent_motion_is_not_blocked_by_time_zero_floor_contact ... ok
+test looped_animation_drives_collisions_without_duplicate_pose_translation ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests voxy_gameplay
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

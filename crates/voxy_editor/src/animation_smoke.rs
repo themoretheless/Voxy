@@ -6,6 +6,7 @@ use winit::keyboard::KeyCode;
 pub(super) struct Smoke {
     pub(super) profile: bool,
     pub(super) root_motion: bool,
+    pub(super) oriented_body: bool,
     phase: u8,
     since: u64,
     authoring: Option<voxy_scene::SceneDocument>,
@@ -146,18 +147,29 @@ impl App {
                     "ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true"
                 );
                 if self.animation_smoke.as_ref().unwrap().root_motion {
+                    let oriented = self.animation_smoke.as_ref().unwrap().oriented_body;
                     self.panel_action(crate::panels::Action::Select(0))?;
                     self.edit_key(KeyCode::KeyC)?;
                     let body = self.scene.component_mut::<voxy_gameplay::CharacterBody>(self.instances[0])?
                         .ok_or("missing native root-motion body")?;
                     body.gravity = 0.0;
                     body.speed = 0.0;
+                    if oriented {
+                        body.half_extents = [0.08, 0.05, 0.02];
+                        let mut local = self.scene.local(self.instances[0])?;
+                        local.rotation = glam::Quat::from_rotation_y(0.4);
+                        self.scene.set_local(self.instances[0], local)?;
+                    }
                     self.commit_authoring()?;
                     self.animation_inspector_input("/root_motion_joint", "0")?;
                     self.animation_inspector_input("/root_motion_bone", "root")?;
                     self.animation_inspector_input("/root_motion_axes/0", "true")?;
                     self.panel_action(crate::panels::Action::Select(1))?;
                     self.edit_key(KeyCode::KeyB)?;
+                    if oriented {
+                        self.scene.component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
+                            .ok_or("missing oriented-body wall")?.half_extents[2] = 2.0;
+                    }
                     let mut local = self.scene.local(self.instances[1])?;
                     local.translation = self.scene.local(self.instances[0])?.translation + glam::Vec3::X * 0.15;
                     self.scene.set_local(self.instances[1], local)?;
@@ -188,13 +200,29 @@ impl App {
                 };
                 if smoke.root_motion {
                     let position = self.scene.local(first)?.translation;
-                    if (position.x - 0.05).abs() > 1e-5 || moving != paused {
+                    let expected_x = if smoke.oriented_body {
+                        let body = self.scene.component::<voxy_gameplay::CharacterBody>(first)?.ok_or("missing oriented body")?;
+                        let matrix = self.scene.world_matrix(first)?;
+                        let support = matrix.x_axis.x.abs() * body.half_extents[0]
+                            + matrix.y_axis.x.abs() * body.half_extents[1]
+                            + matrix.z_axis.x.abs() * body.half_extents[2];
+                        let wall = self.scene.component::<voxy_gameplay::BoxCollider>(second)?.ok_or("missing oriented wall")?;
+                        self.scene.local(second)?.translation.x - wall.half_extents[0] - support
+                    } else { 0.05 };
+                    if (position.x - expected_x).abs() > 1e-5 || moving != paused {
                         return Err(format!("native root motion failed wall/in-place admission: {position:?}").into());
                     }
                     let requested = self.play.animations.motions().iter()
                         .find(|(owner, _)| *owner == first).ok_or("missing native root motion request")?.1;
                     println!("VOXY_NATIVE_ROOT_PHYSICS x={} wall_limited=true in_place=true fixed_serial={} requested={requested:?}",
                         position.x, self.play.animations.serial());
+                    if smoke.oriented_body {
+                        if self.scene.local(first)?.rotation != glam::Quat::from_rotation_y(0.4)
+                            || requested.z.abs() < 0.001 {
+                            return Err("oriented body lost yaw or world-space locomotion".into());
+                        }
+                        println!("VOXY_NATIVE_ORIENTED_BODY yaw=0.4 expected_x={expected_x} actual_x={} orientation_preserved=true", position.x);
+                    }
                 } else if moving == paused {
                     return Err("native owners failed to independently animate/pause".into());
                 }

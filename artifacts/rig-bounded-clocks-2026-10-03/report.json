@@ -1,0 +1,23 @@
+{
+  "change": "Bound f64 animation phases and f64 fade clocks; integrate complete per-tick root intervals before phase reduction; exact constant vector interpolation.",
+  "verified": {
+    "animation_tests": 37,
+    "editor_tests": 97,
+    "native_play_stop_exit": 0,
+    "release_build_exit": 0,
+    "sequential_ticks": 100000,
+    "synthetic_initial_clock_seconds": 1048576,
+    "native_wall_x": 0.050000004
+  },
+  "limitations": [
+    "synthetic elapsed-clock injection, not a twelve-day live run",
+    "authored keys, public dt, pose and palette remain f32",
+    "moving ancestor integration, root rotation and foot locking remain open",
+    "no CUDA or other-platform hardware certification"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "b2d1a1ccda2b24cb31c8372398a2ef03185d7ca596821ec11abf0d0064c9a32a",
+    "crates/voxy_animation/src/root_curve.rs": "c460700ef82859228fab80a7658b55c2947dd062178836882b54bcb5cea082b4",
+    "target/release/voxy_app": "c336065e969330bf9e313845a63b7b5e0b50af66e59bb66e02db6b1f9419bd6a"
+  }
+}

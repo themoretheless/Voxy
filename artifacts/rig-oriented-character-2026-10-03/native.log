@@ -1,0 +1,13 @@
+MODEL PUBLISHED frames=0 first_x=0 asset=rig.gltf
+VOXY_NATIVE_ROOT_JOINT selected=1 undo=true redo=true
+VOXY_NATIVE_ROOT_NAME name="root" undo=true redo=true
+ANIMATION NATIVE CLIPS PASS clips=1 active_clip=0
+ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=26 first_x=0 asset=rig.gltf
+VOXY_NATIVE_ROOT_PHYSICS x=0.018526763 wall_limited=true in_place=true fixed_serial=12 requested=Vec3(0.092106104, 0.0, -0.038941838)
+VOXY_NATIVE_ORIENTED_BODY yaw=0.4 expected_x=0.018526763 actual_x=0.018526763 orientation_preserved=true
+ANIMATION NATIVE TEXTURES PASS textured_primitives=0 shared_bindings=true
+ANIMATION NATIVE PLAY PASS frames=27 ticks=12 owners=2 gpu_primitives=2 shared_sources=1 bytes=1056
+ANIMATION NATIVE STOP PASS frames=30 animated_bytes=0 authoring_restored=true
+ANIMATION NATIVE STOP PASS frames=30 animated_bytes=0 authoring_restored=true

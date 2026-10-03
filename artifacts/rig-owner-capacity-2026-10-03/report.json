@@ -1,0 +1,40 @@
+{
+  "change": "Separate graph/document object budgets from actual animation-owner slots; preserve shared skeletal resource ownership.",
+  "limits": {
+    "scene_objects": 4096,
+    "document_bytes": 4194304,
+    "history_entries": 64,
+    "history_bytes": 67108864,
+    "animation_owners": 128
+  },
+  "verified": {
+    "ordinary_editor_tests": 99,
+    "device_tests": 7,
+    "native_play_stop_exit": 0,
+    "release_build_exit": 0,
+    "gpu_owners": 128,
+    "internal_part_references": 256,
+    "gpu_sources": 1,
+    "geometry_bytes": 47296,
+    "mixed_editor_scene_objects": 151,
+    "mixed_editor_rigs": 50,
+    "mixed_editor_static_nodes": 100
+  },
+  "limitations": [
+    "Skeletal import keeps joints in ModelAsset; ordinary hierarchy expansion uses static node tables.",
+    "128 overlapping offscreen triangle rigs; no crowd visibility or complex-avatar performance claim.",
+    "Byte and graph upper limits configured; ordinary editor roundtrip demonstrated at 151 objects.",
+    "Separate asset, prefab instance, physics, UI and aggregate import budgets remain.",
+    "Root rotation, animated-parent integration, foot locking and CUDA certification remain open."
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/scene_limits.rs": "7604b440486e7df53dbd1c2027be8601734dbc7ef1fe56b4fcbe3be55449be0e",
+    "crates/voxy_editor/src/animation_runtime.rs": "89a153ea2be880fe581d89731fe7afa83499e5835685b600a98ca62fc4c8b72a",
+    "crates/voxy_editor/src/animation_runtime/tests.rs": "18c7b4334adf24978e90d4e66538a7f98dcfd7213b51c451fc279ab4fbda4e83",
+    "crates/voxy_editor/src/animated_models/tests.rs": "6a6a85db03aa36532ede165ae7ac948b7eaec8a985c560e0e1311002a6ee83c7",
+    "crates/voxy_editor/src/lib.rs": "dd965ca2b144d72287c23ff98e7a7079272423182ebf6b1a509f2813f8ef68c2",
+    "crates/voxy_editor/src/prefab_authoring.rs": "21c76fd4985514dcc89b13787e958759ac220798c565bcdc152e6d2583587664",
+    "crates/voxy_editor/src/scene_revision.rs": "4f9b6629f78df25096d1d56dbb0494b8d63aa317c29f80f904111284d32c6706",
+    "target/release/voxy_app": "eb91991c4a845e2e6b655bcade0526c523368d4aefb0680d70c6a5f5bce4feeb"
+  }
+}

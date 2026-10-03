@@ -1,0 +1,38 @@
+{
+  "change": "Authored oriented character shape with fixed-orientation translational SAT, oriented overlap/recovery, root-displacement sliding and atomic publication.",
+  "verified": {
+    "gameplay_unit_tests": 25,
+    "gameplay_integration_tests": 21,
+    "editor_tests": 99,
+    "release_build_exit": 0,
+    "native_play_stop_exit": 0,
+    "native_body_yaw": 0.4,
+    "native_half_extents": [
+      0.08,
+      0.05,
+      0.02
+    ],
+    "native_support_x": 0.018526763,
+    "native_world_request": [
+      0.092106104,
+      0.0,
+      -0.038941838
+    ]
+  },
+  "limits": [
+    "orientation fixed during each translational sweep",
+    "authored orientation changes reset velocity/grounding as a teleport",
+    "unit character scale and translation-only scene ancestors",
+    "no root rotation extraction or angular CCD yet",
+    "no character-character collision or CUDA certificate"
+  ],
+  "binary_note": "Production build preceded final cfg(test)-only inspector expectation changes; production code is unchanged.",
+  "sha256": {
+    "crates/voxy_gameplay/src/convex.rs": "af18bfa202f6425f9ba979d9e93517cd487fb83003c4bc867332db27047c8324",
+    "crates/voxy_gameplay/src/lib.rs": "6a12aa84d8fd7376eccd151d241e161dad422b9c40d2fedb868f03cbd20ebbed",
+    "crates/voxy_gameplay/tests/integration.rs": "53b03fcd1a58bbfc1952ab0d346aea5e65efbd82aa19fd38f20df37d96d2ebb7",
+    "crates/voxy_editor/src/animation_smoke.rs": "d05c6ef9f438991130706593f1ab916eadbbba8c4f49bdfff572e3db7447bcbc",
+    "crates/voxy_editor/src/lib.rs": "4c7df6135153fb82b9a1f93aaf1bb6f2c808b08902deec25440bca2a51fca233",
+    "target/release/voxy_app": "77eaef083311c94543682da6d278029ca8480fc2f26789bc116dbce99cb53ecf"
+  }
+}
