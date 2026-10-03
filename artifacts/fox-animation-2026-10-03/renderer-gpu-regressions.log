@@ -1,0 +1,23 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-09b59d6c85f7f9fb)
+
+running 5 tests
+test scene::skinning::tests::gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=1612
+test scene::skinning::tests::gpu_scene_skinning_independent_instances_and_last_good_pose ... ok
+LIT_NORMAL_COMPARISON colored_pixels=2317 max_cpu_gpu_channel_delta=0 old_formula_difference_pixels=2317
+test scene::skinning::tests::gpu_skin_normals_follow_inverse_transpose_and_keep_last_good ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=715
+REFERENCE_RIG_GPU_TIMESTAMPS asset=reference-rig supported=true period_ns=1 interval_us=Some((19.0, 19.791)) samples=65
+REFERENCE_RIG_RENDER_GPU asset=reference-rig supported=true viewport=128x128 render_us=Some((55.417, 59.75)) compute_to_render_end_us=Some((80.917, 103.0))
+REFERENCE_RIG_PROFILE asset=reference-rig adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 clips=1 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000021699616 motion=0.33529755 cpu_pose_skin_us=(371.875, 396.0) preflight_us=(775.917, 811.25) prepared_encode_us=(30.834000000000003, 37.917) submit_readback_us=(1038.0, 1311.333) logical_bytes=50408
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... ok
+REFERENCE_RIG_FRAME_PIXELS colored=376
+REFERENCE_RIG_FRAME_PIXELS colored=440
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((18.542, 28.292)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((76.666, 93.75)) compute_to_render_end_us=Some((106.416, 148.083))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000019073486 max_normal_error=0 motion=54.77839 cpu_pose_skin_us=(1564.375, 1644.0420000000001) preflight_us=(3231.583, 3373.833) prepared_encode_us=(34.208999999999996, 70.33300000000001) submit_readback_us=(1158.458, 1492.9579999999999) logical_bytes=222896
+test scene::skinning::tests::gpu_fox_all_clips_match_cpu_and_render ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 131 filtered out; finished in 36.31s
+

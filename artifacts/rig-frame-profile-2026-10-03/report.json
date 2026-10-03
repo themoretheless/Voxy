@@ -1,0 +1,51 @@
+{
+  "host": "Apple M4 Max / Metal / macOS",
+  "scope": "Native release editor CPU draw path including tick, fixed simulation, extraction, animation, LOD and host submit/present call. Excludes GPU completion timing, event-loop idle and logging.",
+  "samples": 235,
+  "warmup_excluded_playing_frames": 5,
+  "owners": 2,
+  "simulation_ticks": 120,
+  "base_indices": 768,
+  "reduced_indices": 510,
+  "cpu_us": {
+    "animation_us": {
+      "median": 1054.959,
+      "p95": 1386.833,
+      "max": 2345.417
+    },
+    "lod_us": {
+      "median": 2412.125,
+      "p95": 2581.25,
+      "max": 2650.458
+    },
+    "submit_present_us": {
+      "median": 5312.958,
+      "p95": 7092.25,
+      "max": 17546.75
+    },
+    "total_cpu_us": {
+      "median": 8237.125,
+      "p95": 9624.75,
+      "max": 20513.5
+    }
+  },
+  "acceptance": {
+    "far_lod": true,
+    "near_base": true,
+    "stop_bytes": 0,
+    "authoring_restored": true
+  },
+  "limits": [
+    "Single small reference rig, one view, two owners",
+    "No before/after release speedup claim; debug log is diagnostic only",
+    "No GPU timestamps or CUDA/non-Metal verification",
+    "Certificate cache holds one exact palette/world pair per owner; alternating world matrices may miss",
+    "CPU certificate storage is not accounted in GPU geometry budget"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/lib.rs": "dabd8ff0b2c0fa7bb11462c2e71eb48eb30f689bdd01c38a334ca497b4e660f6",
+    "crates/voxy_editor/src/animated_models.rs": "56edd256de140439c0bea97171a1f9d4a966f515748bbad90f78c92c04ca8994",
+    "crates/voxy_editor/src/animation_smoke.rs": "fee363dbdf6405ddb8aa209d8837c5b8de992f22bc7da6680594ac90b97fc767",
+    "target/release/voxy_app": "e90d97b8661569c3907fc1cfd3414c774a50255bba33e187924dcebb20529733"
+  }
+}

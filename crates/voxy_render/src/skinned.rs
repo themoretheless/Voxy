@@ -8,6 +8,8 @@ use wgpu::util::DeviceExt;
 #[derive(Clone, Copy, Debug, PartialEq, Pod, Zeroable)]
 pub struct SkinnedVertex {
     pub position: [f32; 3],
+    /// Authored direction, or zero to request flat shading from posed geometry
+    /// in the built-in scene/material shaders.
     pub normal: [f32; 3],
     pub uv: [f32; 2],
     pub joints: [u16; 4],
@@ -663,7 +665,7 @@ fn skinned_normal(
     let original = glam::Vec3::from_array(vertex.normal);
     let magnitude = original.abs().max_element();
     if magnitude == 0.0 {
-        return Ok(glam::Vec3::Z.to_array());
+        return Ok(glam::Vec3::ZERO.to_array());
     }
     if magnitude <= f32::MIN_POSITIVE || magnitude >= 1.0 / f32::MIN_POSITIVE {
         return Err(SkinnedUploadError::SingularNormalMatrix);

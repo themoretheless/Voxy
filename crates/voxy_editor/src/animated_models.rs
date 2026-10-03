@@ -42,6 +42,10 @@ struct Owner {
     ticks: u64,
     primitives: Vec<Primitive>,
     lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
+    textures: Vec<Option<Arc<voxy_render::SceneTexture>>>,
+    // Keep residency-cache storage alive while an accepted owner's bindings live.
+    texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
+    prepared_lod: Option<voxy_render::PreparedSkinnedLod>,
     lod_levels: HashMap<usize, LodGeometry>,
     lod_history: HashMap<u8, usize>,
 }
@@ -80,6 +84,8 @@ pub(super) struct Request {
     pub model: Arc<ModelAsset>,
     pub settings: ModelAnimation,
     pub lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
+    pub textures: Vec<Option<Arc<voxy_render::SceneTexture>>>,
+    pub texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
 }
 
 fn admit(live: u64, additional: u64, budget: u64) -> Result<(), String> {
@@ -108,6 +114,14 @@ fn rigid_mesh(model: &ModelAsset, pose: &Pose, mesh: &SceneMesh) -> Result<Scene
     .map_err(|e| e.to_string())
 }
 impl AnimatedModels {
+    pub(super) fn texture(
+        &self,
+        owner: NodeId,
+        primitive: usize,
+    ) -> Option<&voxy_render::SceneTexture> {
+        self.owners.get(&owner)?.textures.get(primitive)?.as_deref()
+    }
+
     pub(super) fn new(renderer: &SceneRenderer) -> Result<Self, String> {
         let skinner = match SceneSkinner::new(renderer) {
             Ok(s) => Some(s),
@@ -285,9 +299,20 @@ impl AnimatedModels {
         let frame = state
             .playback
             .advance_with(0., |_, frame| Ok(frame.clone()))?;
-        let posed = source
-            .prepare(&frame.skin_matrices, world)
-            .map_err(|e| e.to_string())?;
+        // Exact palette/world equality permits reuse across cameras and paused frames.
+        // A failed replacement leaves the accepted certificate and view history intact.
+        let candidate = if state.prepared_lod.as_ref().is_none_or(|posed| {
+            posed.model() != world || posed.joints() != frame.skin_matrices.as_slice()
+        }) {
+            Some(
+                source
+                    .prepare(&frame.skin_matrices, world)
+                    .map_err(|e| e.to_string())?,
+            )
+        } else {
+            None
+        };
+        let posed = candidate.as_ref().or(state.prepared_lod.as_ref()).unwrap();
         let level = posed
             .select_for_camera(
                 camera,
@@ -332,6 +357,9 @@ impl AnimatedModels {
             };
             state.lod_levels.insert(level, geometry);
         }
+        if let Some(candidate) = candidate {
+            state.prepared_lod = Some(candidate);
+        }
         state.lod_history.insert(view, level);
         Ok(())
     }
@@ -361,6 +389,8 @@ impl AnimatedModels {
                 request.model,
                 request.settings,
                 request.lod,
+                request.textures,
+                request.texture_storage,
                 ticks,
                 other_live,
                 budget,
@@ -379,10 +409,22 @@ impl AnimatedModels {
         model: Arc<ModelAsset>,
         settings: ModelAnimation,
         lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
+        textures: Vec<Option<Arc<voxy_render::SceneTexture>>>,
+        texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
         ticks: u64,
         other_live: u64,
         budget: u64,
     ) -> Result<(), String> {
+        if !textures.is_empty() && textures.len() != model.primitives.len() {
+            return Err("animation material count mismatch".into());
+        }
+        for (index, primitive) in model.primitives.iter().enumerate() {
+            if primitive.base_color_texture.is_some()
+                && textures.get(index).is_none_or(Option::is_none)
+            {
+                return Err("animated material texture is not GPU-ready".into());
+            }
+        }
         let current = self.owners.get(&owner);
         let replace = current.is_none_or(|old| !Arc::ptr_eq(&old.model, &model));
         let lod_changed = current.is_none_or(|old| match (&old.lod, &lod) {
@@ -410,6 +452,8 @@ impl AnimatedModels {
             && (steps == 0 || settings.speed == 0.0 || settings.clip.is_none())
         {
             let state = self.owners.get_mut(&owner).unwrap();
+            state.textures = textures;
+            state.texture_storage = texture_storage;
             state.playback = playback;
             state.settings = settings;
             state.ticks = old_ticks + steps;
@@ -419,7 +463,7 @@ impl AnimatedModels {
         for _ in 0..steps {
             frame = playback.advance_with(1. / 60., |_, frame| Ok(frame.clone()))?;
         }
-        if let Some(source) = &lod {
+        let prepared_lod = if let Some(source) = &lod {
             let Some(primitive) = model.primitives.first() else {
                 return Err("missing skeletal LOD primitive".into());
             };
@@ -433,10 +477,14 @@ impl AnimatedModels {
             {
                 return Err("skeletal LOD source differs from animation model".into());
             }
-            source
-                .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
-                .map_err(|e| e.to_string())?;
-        }
+            Some(
+                source
+                    .prepare(&frame.skin_matrices, glam::Mat4::IDENTITY)
+                    .map_err(|e| e.to_string())?,
+            )
+        } else {
+            None
+        };
         let mut live = other_live.saturating_add(self.allocation_bytes());
         let mut staged = Vec::with_capacity(model.primitives.len());
         for (index, primitive) in model.primitives.iter().enumerate() {
@@ -563,6 +611,9 @@ impl AnimatedModels {
                     ticks: old_ticks + steps,
                     primitives: staged.into_iter().map(Option::unwrap).collect(),
                     lod,
+                    prepared_lod,
+                    textures,
+                    texture_storage,
                     lod_levels: HashMap::new(),
                     lod_history: HashMap::new(),
                 },
@@ -581,6 +632,9 @@ impl AnimatedModels {
                 state.lod_levels.clear();
             }
             state.lod = lod;
+            state.prepared_lod = prepared_lod;
+            state.textures = textures;
+            state.texture_storage = texture_storage;
             state.playback = playback;
             state.settings = settings;
             state.ticks = old_ticks + steps;

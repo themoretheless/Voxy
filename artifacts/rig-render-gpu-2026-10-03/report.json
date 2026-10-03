@@ -1,0 +1,55 @@
+{
+  "scope": "Offscreen lit reference-rig skin compute plus scene draw GPU timestamps, excluding presentation",
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "host_build": "debug",
+  "viewport": [
+    128,
+    128
+  ],
+  "samples": 65,
+  "vertices": 370,
+  "palette_nodes": 22,
+  "draws": 1,
+  "gpu_us": {
+    "compute": {
+      "median": 18.959,
+      "p95": 19.667
+    },
+    "render": {
+      "median": 56.416,
+      "p95": 58.667
+    },
+    "compute_begin_to_render_end": {
+      "median": 80.291,
+      "p95": 83.875
+    }
+  },
+  "validation": {
+    "max_position_error": 2.3841858e-07,
+    "max_normal_error": 2.1699616e-07,
+    "every_pose_colored_pixels_greater_than": 100,
+    "first_pose_colored_pixels": 1612,
+    "gpu_validation_errors": 0
+  },
+  "counter_readback": {
+    "same_command_buffer": "first sample render_end=0 while render_begin nonzero; strict test failed",
+    "after_completed_render_separate_submission": "65 monotonic valid compute and render intervals",
+    "normal_scene_path": "no completion wait added; profiling caller resolves separately"
+  },
+  "limits": [
+    "One small reference rig and single offscreen pass; not complete native editor GPU frame",
+    "No UI, shadows, postprocess, MSAA, swapchain or presentation in this fixture",
+    "Not a GPU throughput or FPS claim",
+    "Initial samples retained; debug host preflight timing includes camera fitting/transform upload",
+    "Separate completion/readback serialization makes this a diagnostic profiler",
+    "No demonstrated common root with upstream macOS zero-counter reports",
+    "Complex rigs, LOD perceptual quality, CUDA and other hardware remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/scene.rs": "e283238d78d9f8cb6d15e60940c63ca577c597b9f16c5514f9be7ae07a77edcf",
+    "crates/voxy_render/src/scene/skinning.rs": "3ced96ade32328d8195802ad20f9e4b75818039e394b80332c94bc18d15821ff",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "8d16330f8ba70a282d1acafd2ce007e83f3fd19fc0f052babb916e48ff01e781",
+    "crates/voxy_editor/src/material.wgsl": "80ab706c85e92838dc3d3b1fda3858f6a7d5687647b8b1304d4ed8db000b652d"
+  }
+}

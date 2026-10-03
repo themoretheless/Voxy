@@ -153,3 +153,80 @@ fn observed_skeletal_lod_import_keeps_clips_source_and_last_good() {
     app.stop_workers().unwrap();
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn fox_texture_import_observes_external_image_and_preserves_animation() {
+    let stamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_nanos();
+    let root =
+        std::env::temp_dir().join(format!("voxy-fox-texture-{}-{stamp}", std::process::id()));
+    std::fs::create_dir(&root).unwrap();
+    let glb = include_bytes!("../../../voxy_render/examples/assets/fox/Fox.glb");
+    let gltf = gltf::Gltf::from_slice(glb).unwrap();
+    let json_len = u32::from_le_bytes(glb[12..16].try_into().unwrap()) as usize;
+    let mut document: serde_json::Value = serde_json::from_slice(&glb[20..20 + json_len]).unwrap();
+    let gltf::image::Source::View { view, .. } = gltf.images().next().unwrap().source() else {
+        panic!("embedded image required");
+    };
+    let buffer = gltf.blob.as_ref().unwrap();
+    let image = buffer[view.offset()..view.offset() + view.length()].to_vec();
+    document["buffers"][0]["uri"] = "fox.bin".into();
+    document["images"][0]
+        .as_object_mut()
+        .unwrap()
+        .remove("bufferView");
+    document["images"][0]["uri"] = "fox.png".into();
+    std::fs::write(
+        root.join("fox.gltf"),
+        serde_json::to_vec(&document).unwrap(),
+    )
+    .unwrap();
+    std::fs::write(root.join("fox.bin"), buffer).unwrap();
+    std::fs::write(root.join("fox.png"), &image).unwrap();
+    let provider = FileInputs::new(&root).unwrap();
+    let source = SourcePath::new("fox.gltf").unwrap();
+    let mut inputs = ImportInputs::new(4, 4 * 1024 * 1024);
+    let asset = load(&source, &provider, &mut inputs).unwrap();
+    let imported = inputs
+        .finish(asset, |id, limit| provider.read(id, limit))
+        .unwrap();
+    assert_eq!(
+        imported
+            .inputs()
+            .observations()
+            .keys()
+            .map(|id| id.0.as_str())
+            .collect::<std::collections::BTreeSet<_>>(),
+        std::collections::BTreeSet::from(["fox.gltf", "fox.bin", "fox.png"])
+    );
+    let asset = imported.value();
+    assert!(asset.nodes.is_empty()); // Preserve the animated owner rather than creating static parts.
+    assert_eq!(asset.images.len(), 1);
+    let model = asset.animated.as_ref().unwrap();
+    assert_eq!(model.animations.len(), 3);
+    assert_eq!(model.primitives[0].base_color_texture.unwrap().image, 0);
+    assert_eq!(asset.mesh.vertices().len(), 1728);
+    assert!(
+        asset
+            .mesh
+            .authored_normals()
+            .unwrap()
+            .iter()
+            .all(|normal| *normal == [0.; 3])
+    );
+    std::fs::write(root.join("fox.png"), &image[..image.len() / 2]).unwrap();
+    let mut inputs = ImportInputs::new(4, 4 * 1024 * 1024);
+    assert!(load(&source, &provider, &mut inputs).is_err());
+    document["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]["texCoord"] = 1.into();
+    assert!(
+        ModelAsset::parse(
+            &serde_json::to_vec(&document).unwrap(),
+            &[buffer],
+            ModelLimits::default()
+        )
+        .is_err()
+    );
+    std::fs::remove_dir_all(&root).unwrap();
+}

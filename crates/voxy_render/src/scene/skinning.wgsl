@@ -25,7 +25,8 @@ fn deform(@builtin(global_invocation_id) id: vec3<u32>) {
     let cofactor = mat3x3<f32>(cross(b, c), cross(c, a), cross(a, b));
     var original = vec3<f32>(source[s+3u], source[s+4u], source[s+5u]);
     let normal_scale = max(max(abs(original.x), abs(original.y)), abs(original.z));
-    var n = vec3<f32>(0., 0., 1.);
+    // Zero denotes absent authored normals; lighting derives a flat posed face.
+    var n = vec3<f32>(0.);
     if normal_scale > 0. {
         original /= normal_scale;
         let transformed = (cofactor * original) * sign(determinant);

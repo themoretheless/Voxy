@@ -1,0 +1,12 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 19.73s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-09b59d6c85f7f9fb)
+
+running 1 test
+REFERENCE_RIG_GPU_TIMESTAMPS supported=false period_ns=1 interval_us=None samples=0
+REFERENCE_RIG_PROFILE adapter="Apple M4 Max" backend=Metal vertices=370 joints=22 samples=65 max_position_error=0.00000023841858 max_normal_error=0.00000021699616 motion=0.33529755 cpu_pose_skin_us=(352.875, 394.916) preflight_us=(707.625, 751.875) prepared_encode_us=(44.625, 65.833) submit_readback_us=(352.5, 658.666) logical_bytes=50408
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 134 filtered out; finished in 34.74s
+

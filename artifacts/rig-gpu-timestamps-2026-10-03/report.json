@@ -1,0 +1,37 @@
+{
+  "scope": "GPU compute-pass boundary timestamp interval and transactional exact-pose LOD cache",
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "build": "debug",
+  "vertices": 370,
+  "palette_nodes": 22,
+  "samples": 65,
+  "timestamp_period_ns": 1,
+  "encoder_timestamps_supported": false,
+  "pass_timestamps_supported": true,
+  "gpu_compute_interval_us": {
+    "median": 18.875,
+    "p95": 19.416
+  },
+  "max_position_error": 2.3841858e-07,
+  "max_normal_error": 2.1699616e-07,
+  "lod_cache_acceptance": [
+    "Matching palette/world reused across views",
+    "NaN world and invalid viewport preserve accepted cache",
+    "New world positions/levels equal independent certification",
+    "Existing residency failure/eviction and CPU fallback tests pass"
+  ],
+  "limits": [
+    "GPU interval covers one skin compute pass, not render frame",
+    "Small reference rig; no large-rig or other-hardware proof",
+    "Includes initial sample; no shader warmup exclusion",
+    "GPU timings do not include CPU preflight, transfer/readback, shading, or presentation",
+    "Earlier native-frame profile report is a separate binary/source snapshot, preceding stronger transaction commit ordering"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/scene/skinning.rs": "3ced96ade32328d8195802ad20f9e4b75818039e394b80332c94bc18d15821ff",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "89d3cd7a0b9a54cdfcd52bef069dc3a5740b68e459ac7ba2544070d92683f112",
+    "crates/voxy_editor/src/animated_models.rs": "36107a365e20c25da022f2cdf937759cd6b31ace421253376dd2f60de87a9e48",
+    "crates/voxy_editor/src/animated_models/tests.rs": "58cfa4c18ac8fdfef41cdbc459697051f0a1bf41e928399917e39d64dcbc1280"
+  }
+}

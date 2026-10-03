@@ -1,0 +1,19 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.87s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-09b59d6c85f7f9fb)
+
+running 1 test
+
+thread 'scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions' (19889200) panicked at crates/voxy_render/src/scene/skinning/tests.rs:510:13:
+sample=0 compute_begin=148591539682666 compute_end=148591539701291 render_begin=148591544526375 render_end=0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions ... FAILED
+
+failures:
+
+failures:
+    scene::skinning::tests::gpu_reference_rig_full_clip_matches_cpu_positions
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 134 filtered out; finished in 34.76s
+
+error: test failed, to rerun pass `-p voxy_render --lib`

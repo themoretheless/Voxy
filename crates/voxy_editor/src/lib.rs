@@ -167,6 +167,9 @@ struct ModelGraphics {
     geometry: gpu_model::ModelGeometry,
     outline: Option<SceneGeometry>,
     parts: BTreeMap<u32, PartGraphics>,
+    animated_textures: Vec<Option<Arc<SceneTexture>>>,
+    animated_model: Option<Arc<voxy_render::ModelAsset>>,
+    animated_lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
     _images: Vec<Arc<SceneTexture>>,
 }
 #[derive(Debug)]
@@ -185,7 +188,8 @@ impl ModelGraphics {
         Option<&SceneTexture>,
     )> {
         match index {
-            None => Some((self.geometry.base(), self.outline.as_ref(), None)),
+            None => Some((self.geometry.base(), self.outline.as_ref(),
+                (self.animated_textures.len() == 1).then(|| self.animated_textures[0].as_deref()).flatten())),
             Some(index) => self.parts.get(&index).map(|part| {
                 (
                     part.geometry.as_ref(),
@@ -990,6 +994,7 @@ impl App {
     }
     #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
     fn draw(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        let profile_start = self.animation_smoke.as_ref().is_some_and(|s| s.profile).then(Instant::now);
         self.tick()?;
         let elapsed = self.play.simulation_time.elapsed().as_secs_f64();
         self.play.simulation_time = Instant::now();
@@ -1209,8 +1214,8 @@ impl App {
                     if styles.parts.contains_key(&instance.owner) {
                         return None;
                     }
-                    let imported = self.catalog.snapshot(&instance.component.asset)?;
-                    let model = imported.value().animated.as_ref()?.clone();
+                    let published = self.graphics.as_ref()?.models.get(&instance.component.asset)?;
+                    let model = published.animated_model.as_ref()?.clone();
                     let settings = self
                         .scene
                         .component::<ModelAnimation>(instance.owner)
@@ -1225,7 +1230,9 @@ impl App {
                         owner: instance.owner,
                         model,
                         settings,
-                        lod: imported.value().skinned_lod.clone(),
+                        lod: published.animated_lod.clone(),
+                        textures: published.animated_textures.clone(),
+                        texture_storage: published._images.clone(),
                     })
                 })
                 .collect()
@@ -1233,6 +1240,7 @@ impl App {
             Vec::new()
         };
         if let Some(graphics) = &mut self.graphics {
+            let animation_start = profile_start.map(|_| Instant::now());
             let other_live = graphics
                 .geometry_bytes()
                 .saturating_sub(graphics.animated_models.allocation_bytes());
@@ -1251,6 +1259,7 @@ impl App {
                     eprintln!("MODEL ANIMATION retained previous frame for {owner:?}: {error}");
                 }
             }
+            let animation_us = animation_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
             graphics.transforms.retain(|(view, owner), _| {
                 views.iter().any(|v| v.0 == *view) && styles.materials.contains_key(owner)
             });
@@ -1270,6 +1279,7 @@ impl App {
                 &views.iter().filter(|view| view.3.is_some()).map(|view| view.0).collect::<Vec<_>>(),
             );
             let animation_other_live = graphics.geometry_bytes().saturating_sub(graphics.animated_models.allocation_bytes());
+            let lod_start = profile_start.map(|_| Instant::now());
             for &(view, region, _, camera) in &views {
                 for instance in self.extraction.instances() {
                     if let Err(error) = graphics.animated_models.select_lod(
@@ -1282,6 +1292,7 @@ impl App {
                 }
             }
             graphics.animated_models.evict_unused_lod();
+            let lod_us = lod_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
             let mut requirements = Vec::new();
             for &(view, region, view_projection, lod_camera) in &views {
                 for instance in self.extraction.instances() {
@@ -1374,10 +1385,12 @@ impl App {
                 let mut draws = Vec::with_capacity(self.extraction.instances().len() + 2);
                 for instance in self.extraction.instances() {
                     if let Some(geometries) = graphics.animated_models.geometries_for_view(instance.owner, view) {
-                        for geometry in geometries {
+                        for (primitive, geometry) in geometries.enumerate() {
+                            let texture = graphics.animated_models.texture(instance.owner, primitive)
+                                .unwrap_or(&graphics.texture);
                             draws.push(SceneDraw {
                                 geometry,
-                                texture: &graphics.texture,
+                                texture,
                                 transform: &graphics.transforms[&(view, instance.owner)],
                                 overlay: false,
                             });
@@ -1474,6 +1487,7 @@ impl App {
                 });
             }
             let draw_count = view_draws.iter().map(Vec::len).sum::<usize>() + overlays.len();
+            let present_start = profile_start.map(|_| Instant::now());
             let outcome = if !split || views.len() == 1 {
                 let mut draws = view_draws.pop().ok_or("missing view draws")?;
                 draws.extend(overlays);
@@ -1491,6 +1505,12 @@ impl App {
                     .host
                     .render_scene_views(&graphics.renderer, &scene_views, &overlays)?
             };
+            if let Some(start) = profile_start {
+                println!("ANIMATION FRAME PROFILE frame={} playing={} views={} draws={} animation_us={animation_us:.3} lod_us={lod_us:.3} submit_present_us={:.3} total_cpu_us={:.3} outcome={outcome:?}",
+                    self.frames, self.play.playing.is_some(), views.len(), draw_count,
+                    present_start.unwrap().elapsed().as_secs_f64() * 1e6,
+                    start.elapsed().as_secs_f64() * 1e6);
+            }
             if self.trace.enabled && self.trace.pending && self.trace.last_outcome != Some(outcome)
             {
                 println!(
@@ -4147,7 +4167,9 @@ fn run_model_viewport_configured_registry(
         }
     }
     if mode == ViewportMode::AnimationSmoke {
-        app.animation_smoke = Some(animation_smoke::Smoke::default());
+        let mut smoke = animation_smoke::Smoke::default();
+        smoke.profile = std::env::var_os("VOXY_ANIMATION_PROFILE").is_some();
+        app.animation_smoke = Some(smoke);
         app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
     }
     if mode == ViewportMode::PrefabSmoke {

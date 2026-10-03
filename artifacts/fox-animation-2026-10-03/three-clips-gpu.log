@@ -1,0 +1,14 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.15s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-09b59d6c85f7f9fb)
+
+running 1 test
+REFERENCE_RIG_FRAME_PIXELS colored=1944
+REFERENCE_RIG_FRAME_PIXELS colored=1685
+REFERENCE_RIG_FRAME_PIXELS colored=1533
+REFERENCE_RIG_GPU_TIMESTAMPS asset=fox supported=true period_ns=1 interval_us=Some((18.042, 35.667)) samples=195
+REFERENCE_RIG_RENDER_GPU asset=fox supported=true viewport=128x128 render_us=Some((77.0, 92.625)) compute_to_render_end_us=Some((104.334, 215.584))
+REFERENCE_RIG_PROFILE asset=fox adapter="Apple M4 Max" backend=Metal vertices=1728 joints=26 clips=3 samples=195 max_position_error=0.000019073486 max_normal_error=0 motion=54.77839 cpu_pose_skin_us=(1549.209, 1629.583) preflight_us=(3345.125, 3484.583) prepared_encode_us=(34.166, 70.917) submit_readback_us=(1182.7910000000002, 1525.459) logical_bytes=222896
+test scene::skinning::tests::gpu_fox_all_clips_match_cpu_and_render ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 135 filtered out; finished in 36.53s
+

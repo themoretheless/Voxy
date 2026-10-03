@@ -1,0 +1,29 @@
+ANIMATION FRAME PROFILE frame=0 playing=false views=1 draws=0 animation_us=0.958 lod_us=0.458 submit_present_us=151.750 total_cpu_us=1091.792 outcome=SkippedOccluded
+ANIMATION FRAME PROFILE frame=0 playing=false views=1 draws=0 animation_us=0.958 lod_us=0.333 submit_present_us=1980.625 total_cpu_us=2276.667 outcome=Presented
+ANIMATION FRAME PROFILE frame=1 playing=false views=1 draws=0 animation_us=0.792 lod_us=0.333 submit_present_us=7115.584 total_cpu_us=7343.042 outcome=Presented
+ANIMATION FRAME PROFILE frame=2 playing=false views=1 draws=0 animation_us=0.875 lod_us=0.459 submit_present_us=10029.250 total_cpu_us=10252.417 outcome=Presented
+ANIMATION FRAME PROFILE frame=3 playing=false views=1 draws=0 animation_us=0.917 lod_us=0.875 submit_present_us=4038.666 total_cpu_us=4280.375 outcome=Presented
+ANIMATION FRAME PROFILE frame=4 playing=false views=1 draws=0 animation_us=0.833 lod_us=0.333 submit_present_us=7437.875 total_cpu_us=7657.875 outcome=Presented
+ANIMATION FRAME PROFILE frame=5 playing=false views=1 draws=0 animation_us=0.750 lod_us=0.334 submit_present_us=7029.708 total_cpu_us=7264.667 outcome=Presented
+ANIMATION FRAME PROFILE frame=6 playing=false views=1 draws=0 animation_us=0.667 lod_us=0.625 submit_present_us=7677.625 total_cpu_us=7897.709 outcome=Presented
+ANIMATION FRAME PROFILE frame=7 playing=false views=1 draws=0 animation_us=0.875 lod_us=0.500 submit_present_us=7850.625 total_cpu_us=8074.417 outcome=Presented
+ANIMATION FRAME PROFILE frame=8 playing=false views=1 draws=0 animation_us=1.167 lod_us=0.500 submit_present_us=7933.791 total_cpu_us=8175.042 outcome=Presented
+MODEL PUBLISHED frames=9 first_x=-0.09162995 asset=model.vmodel
+ANIMATION FRAME PROFILE frame=9 playing=false views=1 draws=3 animation_us=1.000 lod_us=0.542 submit_present_us=6702.375 total_cpu_us=8273.083 outcome=Presented
+ANIMATION NATIVE INSPECTOR PASS clip_bind_clip=true pause=true undo_redo=true
+ANIMATION FRAME PROFILE frame=10 playing=true views=1 draws=2 animation_us=82627.667 lod_us=75616.500 submit_present_us=704.500 total_cpu_us=159526.542 outcome=Presented
+GAME UI GPU PUBLISHED draws=0
+ANIMATION FRAME PROFILE frame=11 playing=true views=1 draws=2 animation_us=39444.250 lod_us=75762.000 submit_present_us=714.875 total_cpu_us=116486.875 outcome=Presented
+ANIMATION FRAME PROFILE frame=12 playing=true views=1 draws=2 animation_us=40681.708 lod_us=81022.208 submit_present_us=746.542 total_cpu_us=123045.167 outcome=Presented
+ANIMATION NATIVE PLAY PASS frames=13 ticks=12 owners=2 gpu_primitives=2 shared_sources=1 bytes=81216
+ANIMATION NATIVE LOD FAR PASS owners=2 level=1 indices=510
+MODEL PUBLISHED frames=13 first_x=-0.09162995 asset=model.vmodel
+ANIMATION FRAME PROFILE frame=13 playing=true views=1 draws=2 animation_us=91222.208 lod_us=85080.292 submit_present_us=790.541 total_cpu_us=178882.500 outcome=Presented
+ANIMATION FRAME PROFILE frame=14 playing=true views=1 draws=2 animation_us=46314.666 lod_us=89215.458 submit_present_us=781.625 total_cpu_us=136824.834 outcome=Presented
+ANIMATION FRAME PROFILE frame=15 playing=true views=1 draws=2 animation_us=46383.167 lod_us=93197.167 submit_present_us=860.250 total_cpu_us=140967.625 outcome=Presented
+ANIMATION NATIVE LOD NEAR PASS level=0 indices=768 before=81216 after=77136
+ANIMATION FRAME PROFILE frame=16 playing=false views=1 draws=4 animation_us=1.166 lod_us=1.083 submit_present_us=858.458 total_cpu_us=1368.584 outcome=Presented
+ANIMATION FRAME PROFILE frame=17 playing=false views=1 draws=4 animation_us=1.292 lod_us=1.041 submit_present_us=840.792 total_cpu_us=1206.500 outcome=Presented
+ANIMATION FRAME PROFILE frame=18 playing=false views=1 draws=4 animation_us=1.000 lod_us=0.916 submit_present_us=8194.084 total_cpu_us=8442.791 outcome=Presented
+ANIMATION NATIVE STOP PASS frames=19 animated_bytes=0 authoring_restored=true
+ANIMATION NATIVE STOP PASS frames=19 animated_bytes=0 authoring_restored=true

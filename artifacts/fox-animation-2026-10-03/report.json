@@ -1,0 +1,122 @@
+{
+  "scope": "Opaque base-color texture import and accepted revision ownership; absent NORMAL flat shading; three-clip Fox CPU/GPU and native editor acceptance",
+  "source": {
+    "repository": "https://github.com/KhronosGroup/glTF-Sample-Assets",
+    "commit": "edc7c9e67c639d230715049ee31f9a96a6babbbe",
+    "model": "Fox",
+    "source_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/edc7c9e67c639d230715049ee31f9a96a6babbbe/Models/Fox/glTF-Binary/Fox.glb",
+    "sha256": "d97044e701822bac5a62696459b27d7b375aada5de8574ed4362edbba94771f7"
+  },
+  "asset": {
+    "skin_joints": 24,
+    "palette_nodes": 26,
+    "vertices": 1728,
+    "triangles": 576,
+    "texture_dimensions": [
+      1024,
+      1024
+    ],
+    "clips": [
+      "Survey",
+      "Walk",
+      "Run"
+    ],
+    "original_binary_unchanged": true
+  },
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "viewport": [
+      128,
+      128
+    ],
+    "format": "Rgba8UnormSrgb",
+    "view": "side, rotation Y pi/2",
+    "samples": 195,
+    "samples_per_clip": 65,
+    "max_position_error": 1.9073486e-05,
+    "normal_stream": "absent authored normals preserved as zero sentinel; fragment derivatives derive flat normal from posed geometry",
+    "normal_stream_error": 0,
+    "every_pose_checks": [
+      "colored_pixels >100",
+      "orange_texture_pixels >50",
+      "position CPU/GPU error <1e-4",
+      "normal-stream CPU/GPU agreement",
+      "GPU validation scope empty"
+    ],
+    "images_viewed": [
+      "Survey midpoint",
+      "Walk midpoint",
+      "Run midpoint"
+    ],
+    "native_window_image_viewed": false,
+    "gpu_us": {
+      "compute": {
+        "median": 18.042,
+        "p95": 35.667
+      },
+      "draw": {
+        "median": 77,
+        "p95": 92.625
+      },
+      "compute_to_draw_end": {
+        "median": 104.334,
+        "p95": 215.584
+      }
+    }
+  },
+  "native": {
+    "release": true,
+    "clip_selector_count": 3,
+    "active_clip": 2,
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_sources": 1,
+    "textured_primitives": 1,
+    "shared_texture_bindings": true,
+    "animation_bytes_during_play": 335200,
+    "animation_bytes_after_stop": 0,
+    "authoring_restored": true
+  },
+  "checks": {
+    "ordinary_editor": 89,
+    "ordinary_renderer": 127,
+    "gpu_renderer_suite": 5,
+    "gpu_editor_suite": 4,
+    "wgsl_files": 50,
+    "wgsl_variants": 55,
+    "wgsl_entrypoints": 94,
+    "wgsl_failures": 0
+  },
+  "ownership": [
+    "Requests use GPU-published model revision and its materials",
+    "Owner commits geometry/pose/texture/storage together",
+    "Rejected geometry budget or missing texture retains old owner material and storage",
+    "Storage roots stay strong while accepted owner bindings survive, keeping weak-cache accounting valid",
+    "External image is an observed dependency; truncated image rejects import"
+  ],
+  "limits": [
+    "Only opaque base-color TEXCOORD_0 texture materials; other maps and textured alpha modes reject",
+    "PBR, more than four influences, morph targets and interpolation extensions remain incomplete",
+    "Animated multi-primitive authoring preview does not yet draw separate material bindings; single-primitive Fox preview is covered",
+    "Zero normal metric proves sentinel preservation, not surface angular error",
+    "Custom shaders must support geometric flat-normal fallback for zero streams",
+    "Legacy renderer zero-normal fallback source/NOOP pipeline validated; no legacy-renderer GPU pixel acceptance in this report",
+    "GPU timings cover one small offscreen compute/draw frame, not native UI/shadows/presentation or FPS",
+    "Final native binary predates the subsequent legacy shader fallback edit and formatting; native scene path is the tested material path",
+    "CUDA and non-Metal acceptance remain open"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/model.rs": "3c0c9ac01eb77079dac30048d7eeb53bbd0d51dfd0866a5c6831f81dfeceddc3",
+    "crates/voxy_render/src/scene/skinning/tests.rs": "8855025d55bb38351b2279ced3ae4872e74358c888dfb56888a02c01f1dd4bec",
+    "crates/voxy_render/src/scene/skinning.wgsl": "066aca1e8f047f5941c67046c235813d5f2c533054cbc46beb37d1308d96040f",
+    "crates/voxy_render/src/skinned.rs": "0bb8fc13063fe58f0ae17537c7ec0289dfde0abf09550f7da17f1a27a7436115",
+    "crates/voxy_render/src/skinned.wgsl": "0f5d85711b7050c0002db50bbeafcc13d189f3fd967b8550653e4150b89650d3",
+    "crates/voxy_editor/src/import.rs": "0ea570d778aba0a81ae027a0f16f75b4bab0c0b23fd9ffbe12a54d88e275dbde",
+    "crates/voxy_editor/src/gpu_model.rs": "ebe4823b9a9f4022eb2a3612c18570cf3c263d4cda607de1420b1cedf17d6732",
+    "crates/voxy_editor/src/animated_models.rs": "a35ba850157cfab45cbedf879341247e6cb02b8f6698df7e7abfc40b223a84fe",
+    "crates/voxy_editor/src/animation_smoke.rs": "1189870cd270ae9d3fb6be7d629cb42cda035e7e5d86fc7813c65aedf3861991",
+    "crates/voxy_editor/src/lib.rs": "1f76b814787f2fe8e3549663075f3141ad060b94c629fb2099eaba36e3fe00f9"
+  },
+  "native_binary_sha256": "7fb5b1da29491733ff3bd167fcd70b3ff9bdea4a56220d705ffaca612e8c8437"
+}

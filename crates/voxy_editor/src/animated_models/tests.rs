@@ -15,6 +15,8 @@ fn request(owner: NodeId, model: &Arc<ModelAsset>, speed: f32) -> Request {
         owner,
         model: model.clone(),
         lod: None,
+        textures: vec![],
+        texture_storage: vec![],
         settings: ModelAnimation {
             speed,
             ..ModelAnimation::default()
@@ -283,6 +285,8 @@ fn gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision() {
                 revised,
                 ModelAnimation::default(),
                 None,
+                vec![],
+                vec![],
                 9,
                 0,
                 initial_bytes
@@ -335,6 +339,7 @@ fn cpu_fallback_supports_mixed_primitives_and_removal() {
     model.primitives.push(voxy_render::ModelPrimitive {
         geometry: ModelGeometry::Static(bind[0].clone()),
         color: [1.; 4],
+        base_color_texture: None,
     });
     let model = Arc::new(model);
     let mut runtime = AnimatedModels {
@@ -459,6 +464,8 @@ fn animated_lod_views_budget_and_cpu_fallback() {
             model: model.clone(),
             settings: ModelAnimation::default(),
             lod: Some(lod.clone()),
+            textures: vec![],
+            texture_storage: vec![],
         };
         assert!(
             owners
@@ -482,6 +489,12 @@ fn animated_lod_views_budget_and_cpu_fallback() {
                 .is_err()
         );
         assert!(!owners.owners[&owner].lod_history.contains_key(&0));
+        let certificate_positions = owners.owners[&owner]
+            .prepared_lod
+            .as_ref()
+            .unwrap()
+            .positions()
+            .as_ptr();
         owners
             .select_lod(
                 &renderer,
@@ -502,6 +515,73 @@ fn animated_lod_views_budget_and_cpu_fallback() {
                 owner,
                 1,
                 Some(near),
+                glam::Mat4::IDENTITY,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        assert_eq!(
+            owners.owners[&owner]
+                .prepared_lod
+                .as_ref()
+                .unwrap()
+                .positions()
+                .as_ptr(),
+            certificate_positions
+        );
+        // Rejected camera/world requests must not replace the accepted cache.
+        let world = glam::Mat4::from_scale_rotation_translation(
+            glam::Vec3::new(1.2, 0.8, 2.),
+            glam::Quat::from_rotation_y(0.3),
+            glam::Vec3::new(1., 0., 0.),
+        );
+        let invalid_world = glam::Mat4::from_scale(glam::Vec3::splat(f32::NAN));
+        for (matrix, viewport) in [(world, [0, 100]), (invalid_world, [100, 100])] {
+            assert!(
+                owners
+                    .select_lod(
+                        &renderer,
+                        &device,
+                        owner,
+                        0,
+                        Some(far),
+                        matrix,
+                        viewport,
+                        0,
+                        8192
+                    )
+                    .is_err()
+            );
+            let cached = owners.owners[&owner].prepared_lod.as_ref().unwrap();
+            assert_eq!(cached.model(), glam::Mat4::IDENTITY);
+            assert_eq!(cached.positions().as_ptr(), certificate_positions);
+        }
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                0,
+                Some(far),
+                world,
+                [100, 100],
+                0,
+                8192,
+            )
+            .unwrap();
+        let cached = owners.owners[&owner].prepared_lod.as_ref().unwrap();
+        assert_eq!(cached.model(), world);
+        let reference = lod.prepare(cached.joints(), world).unwrap();
+        assert_eq!(cached.positions(), reference.positions());
+        assert_eq!(cached.levels(), reference.levels());
+        owners
+            .select_lod(
+                &renderer,
+                &device,
+                owner,
+                0,
+                Some(far),
                 glam::Mat4::IDENTITY,
                 [100, 100],
                 0,
@@ -662,5 +742,101 @@ fn animated_lod_views_budget_and_cpu_fallback() {
         owners.clear();
         assert_eq!(owners.allocation_bytes(), 0);
     }
+    assert!(pollster::block_on(scope.pop()).is_none());
+}
+
+#[test]
+#[ignore = "requires GPU; accepted material revision and residency storage lifetime"]
+fn gpu_material_revision_failure_preserves_texture_storage() {
+    let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+    let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let mut model = (*fixture()).clone();
+    model.primitives[0].base_color_texture = Some(voxy_render::ModelTexture {
+        image: 0,
+        sampling: voxy_render::TextureSampling::default(),
+        use_mips: false,
+    });
+    let model = Arc::new(model);
+    let revised = Arc::new((*model).clone());
+    let mut graph = voxy_scene::SceneGraph::new(8);
+    let owner = graph.spawn(None, voxy_scene::Transform::default()).unwrap();
+    let storage = Arc::new(
+        renderer
+            .upload_texture(&device, &queue, 1, 1, &[255, 0, 0, 255])
+            .unwrap(),
+    );
+    let weak_storage = Arc::downgrade(&storage);
+    let red = Arc::new(
+        renderer
+            .texture_binding(
+                &device,
+                &storage,
+                voxy_render::TextureSampling::default(),
+                1,
+            )
+            .unwrap(),
+    );
+    let weak_red = Arc::downgrade(&red);
+    let blue = Arc::new(
+        renderer
+            .upload_texture(&device, &queue, 1, 1, &[0, 0, 255, 255])
+            .unwrap(),
+    );
+    let mut runtime = AnimatedModels::new(&renderer).unwrap();
+    let mut original = request(owner, &model, 1.);
+    original.textures = vec![Some(red.clone())];
+    original.texture_storage = vec![storage.clone()];
+    assert!(
+        runtime
+            .synchronize(&renderer, &device, &queue, vec![original], 0, 0, 8192)
+            .is_empty()
+    );
+    drop(storage);
+    drop(red);
+    assert!(weak_storage.upgrade().is_some());
+    let replacement = || {
+        let mut next = request(owner, &revised, 1.);
+        next.textures = vec![Some(blue.clone())];
+        next.texture_storage = vec![blue.clone()];
+        next
+    };
+    assert_eq!(
+        runtime
+            .synchronize(&renderer, &device, &queue, vec![replacement()], 8, 0, 0)
+            .len(),
+        1
+    );
+    assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &model));
+    assert_eq!(runtime.owners[&owner].ticks, 0);
+    assert_eq!(
+        runtime.texture(owner, 0).unwrap() as *const _,
+        weak_red.as_ptr()
+    );
+    assert!(weak_storage.upgrade().is_some());
+    let missing = request(owner, &revised, 1.);
+    assert_eq!(
+        runtime
+            .synchronize(&renderer, &device, &queue, vec![missing], 8, 0, 8192)
+            .len(),
+        1
+    );
+    assert!(weak_storage.upgrade().is_some());
+    assert!(
+        runtime
+            .synchronize(&renderer, &device, &queue, vec![replacement()], 8, 0, 8192)
+            .is_empty()
+    );
+    assert!(Arc::ptr_eq(&runtime.owners[&owner].model, &revised));
+    assert_eq!(
+        runtime.texture(owner, 0).unwrap() as *const _,
+        Arc::as_ptr(&blue)
+    );
+    assert!(weak_storage.upgrade().is_none());
+    assert!(weak_red.upgrade().is_none());
+    runtime.clear();
+    assert!(runtime.texture(owner, 0).is_none());
     assert!(pollster::block_on(scope.pop()).is_none());
 }

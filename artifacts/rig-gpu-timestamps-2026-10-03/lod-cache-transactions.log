@@ -1,0 +1,11 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.90s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-f5ead3363db76828)
+
+running 3 tests
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ok
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ok
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 90 filtered out; finished in 34.51s
+
