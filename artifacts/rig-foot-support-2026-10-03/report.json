@@ -1,0 +1,13 @@
+{
+  "scope": "Immutable affine box support queries and local anchors; no automatic foot locking in Play",
+  "support_tests": 10,
+  "broader_checkpoint_tests": 279,
+  "broader_checkpoint_note": "Preceded final exact face-dimension comparison; all ten support tests passed after final change",
+  "clippy": "passed with warnings",
+  "sha256": {
+    "crates/voxy_gameplay/src/support.rs": "9a279aacccd34b2456e6448828e7b50827f857f1dd6d05a99b61ad805557c605",
+    "crates/voxy_gameplay/src/support/tests.rs": "3e867188cd7ec15f4eceeabf20c622862420549040bfee8d19adf35798bdab65",
+    "crates/voxy_gameplay/src/lib.rs": "d77c709ab447a01026de43452bff737be711862550a0f792e9d61e5f67e0bb96",
+    "crates/voxy_scene/src/lib.rs": "ecdf2f7801d35f55c3f476cdcd6269b3a8abaea84b7fbad9b52a605a8f3c1074"
+  }
+}
