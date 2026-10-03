@@ -475,6 +475,8 @@ impl Panels {
                         "Root motion Y"
                     } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/2" {
                         "Root motion Z"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_rotation" {
+                        "Root motion rotation"
                     } else if member.path.is_empty() {
                         member.schema.as_str()
                     } else {

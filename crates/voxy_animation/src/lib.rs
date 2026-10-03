@@ -1,6 +1,8 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
 mod root_curve;
+mod root_rigid;
+pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform};
 mod root_rotation;
 pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
@@ -14,6 +16,8 @@ use std::sync::{Arc, OnceLock};
 use glam::{Mat4, Quat, Vec3, Vec4};
 
 pub const MAX_JOINTS: usize = 256;
+/// Aggregate compiled translation keys per immutable clip, including its primary root.
+pub const MAX_ROOT_TRANSLATION_CACHE_KEYS: usize = 65_536;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Transform {
@@ -166,6 +170,9 @@ pub enum Playback {
 pub struct AnimationClip {
     rig: Arc<[Joint]>,
     root_curve: Arc<root_curve::RootCurve>,
+    motion_curves: Arc<[OnceLock<Result<Arc<root_curve::RootCurve>, AnimationError>>]>,
+    motion_cache_keys: Arc<AtomicUsize>,
+    rigid_curves: Arc<[OnceLock<Result<RootRigidCurve, AnimationError>>]>,
     rotation_curves: Arc<[OnceLock<Result<RootRotationCurve, AnimationError>>]>,
     rotation_cache_keys: Arc<AtomicUsize>,
     name: Arc<str>,
@@ -175,6 +182,7 @@ pub struct AnimationClip {
     interpolation: Arc<[TrackInterpolation]>,
     tangents: Arc<[JointTangents]>,
     constant_transforms: Arc<[Option<Transform>]>,
+    constant_translations: Arc<[Option<Vec3>]>,
 }
 
 impl AnimationClip {
@@ -301,6 +309,9 @@ impl AnimationClip {
             validate_vec_keys(&track.scales, duration, true)
                 .map_err(|reason| AnimationError::InvalidTrack { joint, reason })?;
         }
+        if tracks[0].translations.len() > MAX_ROOT_TRANSLATION_CACHE_KEYS {
+            return Err(AnimationError::RootMotionBudget);
+        }
         let root_curve = Arc::new(root_curve::RootCurve::new(
             &tracks[0].translations,
             interpolation[0].translation,
@@ -319,10 +330,18 @@ impl AnimationClip {
             })
             .collect::<Vec<_>>()
             .into();
+        let constant_translations = skeleton.joints.iter().zip(&tracks).zip(&interpolation).zip(&tangents)
+            .map(|(((joint, track), mode), tangents)| constant_vec_channel(
+                &track.translations, joint.bind_local.translation, mode.translation, &tangents.translation,
+            )).collect::<Vec<_>>().into();
         Ok(Self {
+            constant_translations,
             constant_transforms,
             rig: skeleton.joints.clone(),
             root_curve,
+            motion_cache_keys: Arc::new(AtomicUsize::new(tracks[0].translations.len())),
+            motion_curves: (0..tracks.len()).map(|_| OnceLock::new()).collect::<Vec<_>>().into(),
+            rigid_curves: (0..tracks.len()).map(|_| OnceLock::new()).collect::<Vec<_>>().into(),
             rotation_curves: (0..tracks.len())
                 .map(|_| OnceLock::new())
                 .collect::<Vec<_>>()
@@ -347,18 +366,32 @@ impl AnimationClip {
         self.duration
     }
 
-    fn motion_curve(&self, joint: u16) -> Arc<root_curve::RootCurve> {
-        if joint == 0 {
-            return self.root_curve.clone();
-        }
+    fn motion_curve(&self, joint: u16) -> Result<Arc<root_curve::RootCurve>, AnimationError> {
         let i = usize::from(joint);
-        Arc::new(root_curve::RootCurve::new(
-            &self.tracks[i].translations,
-            self.interpolation[i].translation,
-            &self.tangents[i].translation,
-            self.duration,
-            self.playback,
-        ))
+        let slot = self.motion_curves.get(i).ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        if joint == 0 { return Ok(self.root_curve.clone()); }
+        slot.get_or_init(|| {
+            let keys = self.tracks[i].translations.len();
+            self.motion_cache_keys.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |used| {
+                used.checked_add(keys).filter(|total| *total <= MAX_ROOT_TRANSLATION_CACHE_KEYS)
+            }).map_err(|_| AnimationError::RootMotionBudget)?;
+            Ok(Arc::new(root_curve::RootCurve::new(&self.tracks[i].translations,
+                self.interpolation[i].translation, &self.tangents[i].translation, self.duration, self.playback)))
+        }).clone()
+    }
+
+    /// Shared composed rotation/translation coefficients for one motion joint.
+    /// Translation masks are interval inputs, not separate compiled copies.
+    /// # Errors
+    /// Invalid joints or exhausted per-clip channel-cache budgets reject selection.
+    pub fn root_rigid_curve(&self, joint: u16) -> Result<RootRigidCurve, AnimationError> {
+        let i = usize::from(joint);
+        let slot = self.rigid_curves.get(i).ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        slot.get_or_init(|| {
+            RootRigidCurve::new(self.motion_curve(joint)?, self.root_rotation_curve(joint)?,
+                self.tracks[i].translations.first().map_or(self.rig[i].bind_local.translation, |key| key.value),
+                self.rig[i].bind_local.translation, self.duration, self.playback)
+        }).clone()
     }
 
     /// Compiles one selected quaternion channel for ordered root rotation extraction.
@@ -419,6 +452,14 @@ impl AnimationClip {
     pub fn constant_joint_transform(&self, index: usize) -> Option<Transform> {
         self.constant_transforms.get(index).copied().flatten()
     }
+
+    /// A whole-channel admission proof, independent of animated rotation/scale.
+    /// Cubic translation with equal endpoints and nonzero tangents is not constant.
+    #[must_use]
+    pub fn constant_joint_translation(&self, index: usize) -> Option<Vec3> {
+        self.constant_translations.get(index).copied().flatten()
+    }
+
 
     /// Samples without runtime admission. Cubic curves can produce invalid TRS;
     /// use `try_sample` to reject those poses before publication. Bind defaults
@@ -746,11 +787,11 @@ impl Animator {
         if joint == self.motion_joint {
             return Ok(());
         }
-        let curve = self.current.motion_curve(joint);
+        let curve = self.current.motion_curve(joint)?;
         let source = self
             .transition
             .as_ref()
-            .map(|t| t.source.motion_curve(joint));
+            .map(|t| t.source.motion_curve(joint)).transpose()?;
         self.motion_joint = joint;
         self.motion_curve = curve;
         if let (Some(transition), Some(curve)) = (&mut self.transition, source) {
@@ -777,6 +818,51 @@ impl Animator {
         Ok(())
     }
 
+    /// Produces the selected joint's complete rotation path and displayed frame
+    /// from the same bounded clock interval. Both succeed before the clock publishes.
+    /// The caller still owns coordinate conversion, in-place extraction and physics.
+    /// # Errors
+    /// Rejects active crossfades until velocity-blended angular trajectories are
+    /// available, and preserves the clock on rig, path-budget or sampling failure.
+    pub fn advance_with_root_rotation(
+        &mut self,
+        skeleton: &Skeleton,
+        dt: f32,
+        max_spans: usize,
+    ) -> Result<(AnimatorFrame, RootRotationPath), AnimationError> {
+        if self.transition.is_some() {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
+        let mut candidate = self.clone();
+        let start = self.current.phase(self.time);
+        let frame = candidate.advance_candidate(skeleton, dt)?;
+        let end = start + f64::from(dt) * f64::from(self.speed);
+        let path = self
+            .current
+            .root_rotation_curve(self.motion_joint)?
+            .path(start, end, max_spans)?;
+        *self = candidate;
+        Ok((frame, path))
+    }
+
+    /// Stages a displayed frame and complete simultaneous root-motion path from
+    /// one phase interval. The legacy translation delta remains a compatibility
+    /// view: consumers must not apply it alongside this composed path.
+    /// # Errors
+    /// Rig, pose, trajectory-budget and active crossfade errors preserve the clock.
+    pub fn advance_with_root_rigid_motion(
+        &mut self, skeleton: &Skeleton, dt: f32, axes: [bool; 3], max_spans: usize,
+    ) -> Result<(AnimatorFrame, RootRigidPath), AnimationError> {
+        if self.transition.is_some() { return Err(AnimationError::RootRotationTransitionUnsupported); }
+        let mut candidate = self.clone();
+        let start = self.current.phase(self.time);
+        let frame = candidate.advance_candidate(skeleton, dt)?;
+        let end = start + f64::from(dt) * f64::from(self.speed);
+        let path = self.current.root_rigid_curve(self.motion_joint)?.path(start, end, axes, max_spans)?;
+        *self = candidate;
+        Ok((frame, path))
+    }
+
     /// Starts a crossfade to a new clip. Interrupting an active fade starts from
     /// its current blended pose, keeping pose continuity. The captured source
     /// is held for the new fade; ordinary fade sources continue playing.
@@ -796,7 +882,7 @@ impl Animator {
         if !rigs_match(&self.current.rig, &next.rig) {
             return Err(AnimationError::SkeletonMismatch);
         }
-        let next_curve = next.motion_curve(self.motion_joint);
+        let next_curve = next.motion_curve(self.motion_joint)?;
         if duration == 0.0 {
             self.motion_curve = next_curve;
             self.current = next;
@@ -972,33 +1058,34 @@ impl Animator {
 
 // Constant Hermite vector channels require zero derivatives on every used
 // segment. First incoming and last outgoing tangents are never sampled.
+fn constant_vec_channel(
+    keys: &[Vec3Key],
+    fallback: Vec3,
+    mode: Interpolation,
+    tangents: &[[Vec3; 2]],
+) -> Option<Vec3> {
+    let Some(first) = keys.first() else {
+        return Some(fallback);
+    };
+    if keys.iter().any(|key| key.value != first.value) {
+        return None;
+    }
+    if mode == Interpolation::CubicSpline
+        && tangents
+            .windows(2)
+            .any(|pair| pair[0][1] != Vec3::ZERO || pair[1][0] != Vec3::ZERO)
+    {
+        return None;
+    }
+    Some(first.value)
+}
+
 fn constant_transform(
     bind: Transform,
     track: &JointTrack,
     mode: TrackInterpolation,
     tangents: &JointTangents,
 ) -> Option<Transform> {
-    fn vec_channel(
-        keys: &[Vec3Key],
-        fallback: Vec3,
-        mode: Interpolation,
-        tangents: &[[Vec3; 2]],
-    ) -> Option<Vec3> {
-        let Some(first) = keys.first() else {
-            return Some(fallback);
-        };
-        if keys.iter().any(|key| key.value != first.value) {
-            return None;
-        }
-        if mode == Interpolation::CubicSpline
-            && tangents
-                .windows(2)
-                .any(|pair| pair[0][1] != Vec3::ZERO || pair[1][0] != Vec3::ZERO)
-        {
-            return None;
-        }
-        Some(first.value)
-    }
     let rotation = if let Some(first) = track.rotations.first() {
         let constant = track.rotations.iter().all(|key| {
             key.value == first.value
@@ -1018,14 +1105,14 @@ fn constant_transform(
         bind.rotation
     };
     Some(Transform {
-        translation: vec_channel(
+        translation: constant_vec_channel(
             &track.translations,
             bind.translation,
             mode.translation,
             &tangents.translation,
         )?,
         rotation,
-        scale: vec_channel(&track.scales, bind.scale, mode.scale, &tangents.scale)?,
+        scale: constant_vec_channel(&track.scales, bind.scale, mode.scale, &tangents.scale)?,
     })
 }
 
@@ -1208,7 +1295,10 @@ pub enum TrackError {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AnimationError {
+    RootRigidBudget,
+    RootMotionBudget,
     RootRotationBudget,
+    RootRotationTransitionUnsupported,
     InvalidRootRotationCurve,
     InvalidRootMotionJoint(u16),
     SkeletonMismatch,
@@ -2902,3 +2992,6 @@ mod tests {
         ));
     }
 }
+
+#[cfg(test)]
+mod rotation_runtime_tests;

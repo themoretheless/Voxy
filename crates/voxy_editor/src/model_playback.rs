@@ -16,6 +16,8 @@ pub struct ModelAnimation {
     pub root_motion_bone: String,
     #[serde(default)]
     pub root_motion_axes: [bool; 3],
+    #[serde(default)]
+    pub root_motion_rotation: bool,
 }
 impl Default for ModelAnimation {
     fn default() -> Self {
@@ -25,6 +27,7 @@ impl Default for ModelAnimation {
             root_motion_joint: 0,
             root_motion_bone: String::new(),
             root_motion_axes: [false; 3],
+            root_motion_rotation: false,
         }
     }
 }
@@ -136,19 +139,46 @@ impl ModelPlayback {
 
     /// Publishes the clock only after the consumer accepts the validated frame.
     /// The consumer must preflight its own writes before committing resources.
+    #[cfg(test)]
     pub(crate) fn advance_with<T>(
         &mut self,
         dt: f32,
         publish: impl FnOnce(&ModelAsset, &AnimatorFrame) -> Result<T, String>,
     ) -> Result<T, String> {
+        self.advance_with_motion(dt, false, |model, frame, _| publish(model, frame))
+    }
+
+    pub(crate) fn advance_with_motion<T>(
+        &mut self,
+        dt: f32,
+        rotation: bool,
+        publish: impl FnOnce(
+            &ModelAsset,
+            &AnimatorFrame,
+            Option<&voxy_animation::RootRotationPath>,
+        ) -> Result<T, String>,
+    ) -> Result<T, String> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err("invalid model animation timestep".into());
         }
         let mut candidate = self.animator.clone();
+        let mut path = None;
         let frame = if let Some(animator) = &mut candidate {
-            animator
-                .advance(&self.model.skeleton, dt)
-                .map_err(|error| error.to_string())?
+            if rotation {
+                let (frame, rotation) = animator
+                    .advance_with_root_rotation(
+                        &self.model.skeleton,
+                        dt,
+                        voxy_animation::MAX_ROOT_ROTATION_SPANS,
+                    )
+                    .map_err(|error| error.to_string())?;
+                path = Some(rotation);
+                frame
+            } else {
+                animator
+                    .advance(&self.model.skeleton, dt)
+                    .map_err(|error| error.to_string())?
+            }
         } else {
             let pose = self.model.skeleton.bind_pose();
             let skin_matrices = pose
@@ -162,7 +192,7 @@ impl ModelPlayback {
                 transition_weight: 1.0,
             }
         };
-        let result = publish(&self.model, &frame)?;
+        let result = publish(&self.model, &frame, path.as_ref())?;
         self.animator = candidate;
         Ok(result)
     }

@@ -1,4 +1,4 @@
-//! Conservative advancement along a complete fixed-center angular arc.
+//! Conservative advancement along complete angular paths around a fixed pivot.
 use super::{PhysicsError, convex::AffineBox};
 use glam::{DQuat, DVec3};
 
@@ -111,11 +111,10 @@ pub(crate) fn sweep(
     let mut steps = iterations;
     let mut queries = usize::MAX;
     advance(
-        center,
         &candidates,
         |time| {
             let rotation = DQuat::from_axis_angle(axis, angle * time);
-            Ok(edges.map(|edge| rotation * edge))
+            Ok((center, edges.map(|edge| rotation * edge)))
         },
         angle * rotation_radius,
         radius,
@@ -133,9 +132,8 @@ fn query(remaining: &mut usize) -> Result<(), PhysicsError> {
 // One advancement kernel serves constant-axis arcs and complete cubic spans.
 #[allow(clippy::too_many_arguments)]
 fn advance(
-    center: DVec3,
     candidates: &[&AffineBox],
-    sample: impl Fn(f64) -> Result<[DVec3; 3], PhysicsError>,
+    sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
     speed_bound: f64,
     radius: f64,
     rotation_radius: f64,
@@ -151,7 +149,7 @@ fn advance(
     let mut time = 0.;
     while *steps > 0 {
         *steps -= 1;
-        let current = sample(time)?;
+        let (center, current) = sample(time)?;
         let mut distance = f64::INFINITY;
         let mut contact = DVec3::ZERO;
         let mut tolerance = 0.;
@@ -188,7 +186,7 @@ fn advance(
             });
         }
         // A projection gap is a lower bound on Euclidean separation. Every body
-        // point travels at most angle*radius over the normalized unit interval.
+        // point travels at most speed_bound over the normalized unit interval.
         let next = (time + 0.8 * distance / speed_bound).min(1.);
         if next >= 1. {
             return Ok(Hit {
@@ -206,6 +204,7 @@ fn advance(
 
 #[derive(Debug)]
 pub(crate) struct PathHit {
+    pub displacement: DVec3,
     pub rotation: DQuat,
     pub normal: Option<DVec3>,
     pub completed_spans: usize,
@@ -232,16 +231,22 @@ pub(crate) fn sweep_path(
     orientation: DQuat,
     path: &voxy_animation::RootRotationPath,
     basis: DQuat,
+    pivot: DVec3,
     boxes: &[AffineBox],
     iterations: usize,
     queries: &mut usize,
 ) -> Result<PathHit, PhysicsError> {
     let initial_queries = *queries;
+    let displacement = |rotation: DQuat| orientation * (pivot - rotation * pivot);
+    let anchor = center + orientation * pivot;
     if boxes.is_empty() {
         *queries = queries
             .checked_sub(path.spans().len())
             .ok_or(PhysicsError::SweepBudget)?;
         return Ok(PathHit {
+            displacement: displacement(
+                (basis * path.end_rotation() * basis.conjugate()).normalize(),
+            ),
             rotation: (basis * path.end_rotation() * basis.conjugate()).normalize(),
             normal: None,
             completed_spans: path.spans().len(),
@@ -252,22 +257,25 @@ pub(crate) fn sweep_path(
             trajectory_queries: path.spans().len(),
         });
     }
-    let vertices = corners(rest_edges).map(|vertex| basis.conjugate() * vertex);
+    let vertices = corners(rest_edges).map(|vertex| basis.conjugate() * (vertex - pivot));
     let radius = vertices.iter().map(|v| v.length()).fold(0_f64, f64::max);
     let left = (orientation * basis).normalize();
     let mut steps = iterations;
     for (index, span) in path.spans().iter().enumerate() {
         query(queries)?;
-        let sample = |fraction| -> Result<[DVec3; 3], PhysicsError> {
+        let sample = |fraction| -> Result<(DVec3, [DVec3; 3]), PhysicsError> {
             let rotation = (left
                 * span
                     .sample(fraction)
                     .map_err(|_| PhysicsError::InvalidMotion)?
                 * basis.conjugate())
             .normalize();
-            Ok(rest_edges.map(|edge| rotation * edge))
+            Ok((
+                anchor - rotation * pivot,
+                rest_edges.map(|edge| rotation * edge),
+            ))
         };
-        let initial = sample(0.)?;
+        let (_, initial) = sample(0.)?;
         let duration = span.end() - span.start();
         let angular_travel = span.angular_speed_bound().map_or_else(
             || {
@@ -299,7 +307,7 @@ pub(crate) fn sweep_path(
         if speed_bound > 0. {
             for obstacle in boxes {
                 query(queries)?;
-                let relative = center - obstacle.center;
+                let relative = anchor - obstacle.center;
                 let epsilon = 4096.
                     * f64::EPSILON
                     * (1.
@@ -315,10 +323,10 @@ pub(crate) fn sweep_path(
                     }
                     let mut support = f64::NEG_INFINITY;
                     for vertex in vertices {
-                        let upper = span
+                        let bounds = span
                             .projection_bounds(vertex, left.conjugate() * normal)
-                            .map_err(|_| PhysicsError::InvalidMotion)?[1];
-                        support = support.max(upper);
+                            .map_err(|_| PhysicsError::InvalidMotion)?;
+                        support = support.max(bounds[0].abs().max(bounds[1].abs()));
                     }
                     if space - support >= -epsilon {
                         separated = true;
@@ -331,7 +339,6 @@ pub(crate) fn sweep_path(
             }
         }
         let hit = advance(
-            center,
             &candidates,
             sample,
             speed_bound,
@@ -343,6 +350,7 @@ pub(crate) fn sweep_path(
         if hit.fraction < 1. {
             let accepted_time = span.start() + duration * hit.fraction;
             return Ok(PathHit {
+                displacement: sample(hit.fraction)?.0 - center,
                 rotation: (basis
                     * span
                         .sample(hit.fraction)
@@ -364,6 +372,7 @@ pub(crate) fn sweep_path(
         }
     }
     Ok(PathHit {
+        displacement: displacement((basis * path.end_rotation() * basis.conjugate()).normalize()),
         rotation: (basis * path.end_rotation() * basis.conjugate()).normalize(),
         normal: None,
         completed_spans: path.spans().len(),
