@@ -549,7 +549,7 @@ pub(crate) fn fields(object: &SceneObject) -> Result<Vec<ComponentField>, &'stat
         depth: usize,
         out: &mut Vec<ComponentField>,
     ) -> Result<(), &'static str> {
-        if depth > 32 || out.len() >= 256 {
+        if depth > 32 || out.len() >= 4096 {
             return Err("component inspector capacity exceeded");
         }
         match value {
@@ -751,7 +751,7 @@ impl crate::App {
         if self.play.playing.is_some() {
             return Err("stop play before editing components".into());
         }
-        let document = self.authoring_document()?;
+        let document = self.panel_document()?;
         let object = document
             .objects
             .get(self.selected)
@@ -770,6 +770,11 @@ impl crate::App {
     ) -> Result<(), Box<dyn std::error::Error>> {
         if self.play.playing.is_some() {
             return Err("stop play before editing components".into());
+        }
+        if let Some(draft)=&mut self.retarget_draft {
+            binding.replace(&mut draft.document,text)?;
+            self.field=None;self.component_edit=None;self.panel_cache=None;
+            return Ok(());
         }
         let mut document = self.authoring_document()?;
         binding.replace(&mut document, text)?;

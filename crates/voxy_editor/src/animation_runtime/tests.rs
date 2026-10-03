@@ -610,3 +610,47 @@ fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
     assert_eq!(runtime.frame(owner, &asset).unwrap().transition_weight, 1.);
     assert_eq!(runtime.frame(owner, &asset).unwrap().pose.local()[0].translation.x, 20.);
 }
+
+#[test]
+fn retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_frame() {
+    let (mut scene, owner, source, _) = fixture();
+    let glb = gltf::binary::Glb::from_slice(include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb")).unwrap();
+    let mut json: serde_json::Value = serde_json::from_slice(&glb.json).unwrap();
+    json["nodes"][0]["name"] = serde_json::json!("pelvis");
+    json["nodes"][0]["translation"] = serde_json::json!([3.,4.,0.]);
+    json["animations"] = serde_json::json!([]);
+    let bytes = gltf::binary::Glb { header:glb.header, json:serde_json::to_vec(&json).unwrap().into(), bin:glb.bin }.to_vec().unwrap();
+    let target = Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+    let source_id = AssetId("source".into());
+    let models = BTreeMap::from([(AssetId("rig".into()), target.clone()), (source_id, source.clone())]);
+    let profile = crate::ModelRetarget { source:"source".into(), joints:vec![crate::RetargetJointProfile {
+        source:"root".into(),target:"pelvis".into(),rotation_basis:glam::Quat::IDENTITY.to_array(),
+        translation_basis:glam::Quat::from_rotation_z(std::f32::consts::FRAC_PI_2).to_array(),translation_scale:2.
+    }]};
+    scene.insert_component(owner,profile.clone()).unwrap();
+    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().clip_name = "move".into();
+    let runtime = AnimationRuntime::default().prepare(&scene,&models,0.05).unwrap();
+    let frame = runtime.frame(owner,&target).unwrap();
+    assert!(runtime.frame(owner,&source).is_none());
+    assert!((frame.pose.local()[0].translation - Vec3::new(3.,4.2,0.)).length() < 1e-6);
+    assert!((runtime.clip_phase(owner).unwrap()-0.05).abs()<1e-6);
+    let independent = glam::Mat4::from_translation(Vec3::new(3.,4.2,0.)) * target.skeleton.joints()[0].inverse_bind;
+    for (a,b) in frame.skin_matrices[0].to_cols_array().iter().zip(independent.to_cols_array()) { assert!((*a-b).abs()<1e-6); }
+    scene.component_mut::<crate::ModelRetarget>(owner).unwrap().unwrap().joints[0].target = "missing".into();
+    assert!(runtime.prepare(&scene,&models,0.05).is_err());
+    assert_eq!(runtime.serial(),1);
+    assert!(Arc::ptr_eq(&frame,&runtime.frame(owner,&target).unwrap()));
+    scene.insert_component(owner,profile).unwrap();
+    let resumed = runtime.prepare(&scene,&models,0.05).unwrap();
+    assert!((resumed.frame(owner,&target).unwrap().pose.local()[0].translation.y-4.4).abs()<1e-6);
+    scene.insert_component(owner,voxy_gameplay::CharacterBody::default()).unwrap();
+    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().root_motion_axes=[false,true,false];
+    let moving = resumed.prepare(&scene,&models,0.05).unwrap();
+    assert!((moving.motions()[0].1 - Vec3::Y*0.2).length()<1e-6);
+    assert!((moving.frame(owner,&target).unwrap().pose.local()[0].translation-Vec3::new(3.,4.,0.)).length()<1e-6);
+    let mut missing = models.clone(); missing.remove(&AssetId("source".into()));
+    assert!(resumed.prepare(&scene,&missing,0.05).is_err());
+    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().root_motion_rotation=true;
+    assert!(resumed.prepare(&scene,&models,0.05).is_err());
+    assert!((resumed.clip_phase(owner).unwrap()-0.1).abs()<1e-6);
+}

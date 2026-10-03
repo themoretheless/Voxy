@@ -194,11 +194,15 @@ impl FootRuntime {
         self.settings.as_ref() == settings
     }
     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+        Self::new_with_clips(model, settings, &model.animations)
+    }
+    pub(super) fn new_with_clips(model: &ModelAsset, settings: ModelFootPlacement,
+        clips: &[Arc<voxy_animation::AnimationClip>]) -> Result<Self, String> {
         settings.validate()?;
         let mut feet = Vec::new();
         for foot in &settings.feet {
             for name in foot.clip_contact_curves.keys() {
-                if model.animations.iter().filter(|clip| clip.name() == name).count() != 1 {
+                if clips.iter().filter(|clip| clip.name() == name).count() != 1 {
                     return Err("foot contact clip name is missing or ambiguous".into());
                 }
             }

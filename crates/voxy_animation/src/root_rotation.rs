@@ -65,6 +65,14 @@ pub struct RootRotationSpan {
     speed_bound: Option<f64>,
 }
 impl RootRotationSpan {
+    /// Preserves the authored curve while changing its coordinate basis.
+    pub(super) fn conjugated(&self, basis: DQuat) -> Self {
+        let mut span = self.clone();
+        span.left = (basis * span.left).normalize();
+        span.right = (span.right * basis.conjugate()).normalize();
+        span
+    }
+
     #[must_use]
     pub const fn start(&self) -> f64 {
         self.start

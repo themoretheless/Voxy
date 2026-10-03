@@ -48,7 +48,7 @@ impl AuthoringProject {
             provider: FileInputs::new(root)?,
             manifest: match recipe {
                 InputRecipe::Manifest(id) => Some(id.clone()),
-                InputRecipe::Direct(_) => None,
+                InputRecipe::Direct => None,
             },
         })
     }

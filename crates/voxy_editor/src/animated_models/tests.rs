@@ -1239,6 +1239,14 @@ fn rig_trajectory_gpu(composed: bool) {
 #[test]
 #[ignore = "requires a graphics adapter"]
 fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
+    planted_foot_gpu_acceptance(false);
+}
+#[test]
+#[ignore = "requires a graphics adapter"]
+fn retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
+    planted_foot_gpu_acceptance(true);
+}
+fn planted_foot_gpu_acceptance(retarget: bool) {
     use glam::{Mat4, Vec3};
     use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -1247,8 +1255,10 @@ fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
     let (device,queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
     let renderer = SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
-    let model = Arc::new(ModelAsset::parse(include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
-        &[],voxy_render::ModelLimits::default()).unwrap());
+    let mut model = ModelAsset::parse(include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
+        &[],voxy_render::ModelLimits::default()).unwrap();
+    if retarget { model.animations.clear(); }
+    let model = Arc::new(model);
     let mut scene = voxy_scene::SceneGraph::new(4);
     let first = scene.spawn(None,voxy_scene::Transform { translation:Vec3::Y,..Default::default() }).unwrap();
     let second = scene.spawn(None,Default::default()).unwrap();
@@ -1264,7 +1274,26 @@ fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
         scene.insert_component(owner,crate::ModelInstance { asset:asset.clone() }).unwrap();
         scene.insert_component(owner,ModelAnimation { clip:None,..Default::default() }).unwrap();
     }
-    let models = std::collections::BTreeMap::from([(asset,model.clone())]);
+    let mut models = std::collections::BTreeMap::from([(asset,model.clone())]);
+    if retarget {
+        let glb = gltf::binary::Glb::from_slice(include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb")).unwrap();
+        let mut json: serde_json::Value = serde_json::from_slice(&glb.json).unwrap();
+        for (index,name) in ["sourceHip","sourceKnee","sourceFoot"].iter().enumerate() { json["nodes"][index]["name"] = serde_json::json!(name); }
+        json["nodes"][0]["translation"] = serde_json::json!([0.,0.6,0.]);
+        let mut bin = glb.bin.unwrap().into_owned();
+        let view = json["accessors"][5]["bufferView"].as_u64().unwrap() as usize;
+        let offset = json["bufferViews"][view]["byteOffset"].as_u64().unwrap() as usize;
+        for key in 0..2 {
+            let at = offset + key*12 + 4;
+            let value = f32::from_le_bytes(bin[at..at+4].try_into().unwrap()) + 0.1 + key as f32 * 0.05;
+            bin[at..at+4].copy_from_slice(&value.to_le_bytes());
+        }
+        let bytes = gltf::binary::Glb {header:glb.header,json:serde_json::to_vec(&json).unwrap().into(),bin:Some(bin.into())}.to_vec().unwrap();
+        let source = Arc::new(ModelAsset::parse(&bytes,&[],voxy_render::ModelLimits::default()).unwrap());
+        models.insert(voxy_assets::AssetId("source".into()),source);
+        scene.insert_component(first,crate::ModelRetarget {source:"source".into(),joints:[("sourceHip","hip"),("sourceKnee","knee"),("sourceFoot","foot")].into_iter().map(|(a,b)|crate::RetargetJointProfile {source:a.into(),target:b.into(),rotation_basis:glam::Quat::IDENTITY.to_array(),translation_basis:glam::Quat::IDENTITY.to_array(),translation_scale:1.}).collect()}).unwrap();
+        scene.insert_component(first,ModelAnimation {clip_name:"move".into(),..Default::default()}).unwrap();
+    }
     let mut runtime = crate::animation_runtime::AnimationRuntime::default();
     let mut physics = CharacterPhysics::new(&scene,1,1);
     let mut input = voxy_gameplay::player_input().unwrap();
@@ -1274,7 +1303,13 @@ fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
             &[(first,Vec3::X*0.03)],&[],|preview,budget| candidate.clone().correct_feet(preview,budget)).unwrap().1;
     }
     let frame = runtime.frame(first,&model).unwrap();
+    if retarget {
+        assert!((frame.pose.local()[0].translation.y - (0.5 + 0.05*4./60.)).abs()<1e-6);
+        assert!(model.animations.is_empty());
+    }
     let authored = runtime.frame(second,&model).unwrap();
+
+
     let mut render = AnimatedModels::new(&renderer).unwrap();
     assert!(render.skinner.is_some());
     let requests = || {
@@ -1299,12 +1334,12 @@ fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
     let matrix = view * scene.world_matrix(first).unwrap();
     let actual = pixels(&renderer,&device,&queue,render.geometries(first).unwrap().collect(),matrix);
     assert!(actual.chunks_exact(4).filter(|p|p[..3]!=[0,0,0]).count()>100);
-    assert_eq!(actual,pixels(&renderer,&device,&queue,vec![&reference],view));
+    assert!(actual == pixels(&renderer,&device,&queue,vec![&reference],view), "locked geometry pixels differ");
     assert_ne!(actual,pixels(&renderer,&device,&queue,render.geometries(second).unwrap().collect(),matrix));
     let bytes = render.allocation_bytes();
     assert!(render.synchronize(&renderer,&device,&queue,requests(),2,0,65536).is_empty());
     assert_eq!(render.allocation_bytes(),bytes);
     render.clear(); assert_eq!(render.allocation_bytes(),0);assert_eq!(render.counts(),(0,0,0));
     assert!(pollster::block_on(scope.pop()).is_none());
-    println!("VOXY_FOOT_GPU cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0");
+    println!("VOXY_FOOT_GPU retarget={retarget} cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0");
 }

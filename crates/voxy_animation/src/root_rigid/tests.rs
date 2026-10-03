@@ -500,3 +500,110 @@ fn primary_translation_compilation_is_bounded_and_concurrent_rigid_selection_sha
         2
     );
 }
+
+#[test]
+fn coordinate_transport_preserves_ordered_curves_bounds_and_step_events() {
+    let basis = DQuat::from_rotation_z(0.7) * DQuat::from_rotation_x(-0.4);
+    let offset = DVec3::new(3., -2., 0.5);
+    for mode in [
+        Interpolation::Linear,
+        Interpolation::Step,
+        Interpolation::CubicSpline,
+    ] {
+        let tangents = if mode == Interpolation::CubicSpline {
+            JointTangents {
+                translation: vec![
+                    [Vec3::ZERO, Vec3::new(0., 3., 1.)],
+                    [-Vec3::new(0., 3., 1.), Vec3::ZERO],
+                ],
+                rotation: vec![[Vec4::ZERO, Vec4::Y * 2.], [-Vec4::Y * 2., Vec4::ZERO]],
+                ..Default::default()
+            }
+        } else {
+            Default::default()
+        };
+        let (_, clip) = clip(
+            Vec3::X * 0.6,
+            vec![
+                Vec3Key {
+                    time: 0.,
+                    value: Vec3::X * 0.6,
+                },
+                Vec3Key {
+                    time: 1.,
+                    value: Vec3::new(1.6, 0.2, 0.),
+                },
+            ],
+            vec![
+                QuatKey {
+                    time: 0.,
+                    value: Quat::IDENTITY,
+                },
+                QuatKey {
+                    time: 1.,
+                    value: Quat::from_rotation_y(1.2),
+                },
+            ],
+            TrackInterpolation {
+                translation: mode,
+                rotation: mode,
+                ..Default::default()
+            },
+            tangents,
+            Playback::Loop,
+        );
+        let path = clip
+            .root_rigid_curve(0)
+            .unwrap()
+            .path(0.13, 2.4, [true; 3], 256)
+            .unwrap();
+        for scale in [0., 2.5] {
+            let mapped = path.transformed(basis, scale, offset).unwrap();
+            assert_eq!(mapped.spans().len(), path.spans().len());
+            assert_eq!(mapped.duration(), path.duration());
+            assert!((mapped.angular_travel_bound() - path.angular_travel_bound()).abs() < 1e-10);
+            let convert = |h: RootRigidTransform| RootRigidTransform {
+                rotation: (basis * h.rotation * basis.conjugate()).normalize(),
+                translation: scale * (basis * h.translation) + offset
+                    - (basis * h.rotation * basis.conjugate()) * offset,
+            };
+            equivalent(mapped.end_transform(), convert(path.end_transform()), 1e-10);
+            for (a, b) in path.spans().iter().zip(mapped.spans()) {
+                assert_eq!(
+                    (a.start(), a.end(), a.is_step()),
+                    (b.start(), b.end(), b.is_step())
+                );
+                let point = DVec3::new(1.4, -0.7, 2.);
+                let normal = DVec3::new(-0.3, 0.8, 0.4);
+                let bounds = b.projection_bounds(point, normal).unwrap();
+                let speed = b.point_speed_bound(point).unwrap();
+                for i in 0..=100 {
+                    let u = i as f64 / 100.;
+                    equivalent(b.sample(u).unwrap(), convert(a.sample(u).unwrap()), 1e-10);
+                    let value = normal.dot(b.sample(u).unwrap().transform_point(point).unwrap());
+                    assert!(
+                        value >= bounds[0] && value <= bounds[1],
+                        "{mode:?} {value} {bounds:?}"
+                    );
+                    if i < 100 {
+                        let delta = (b.sample(u + 0.01).unwrap().transform_point(point).unwrap()
+                            - b.sample(u).unwrap().transform_point(point).unwrap())
+                        .length()
+                            / 0.01;
+                        assert!(delta <= speed + 1e-8, "{delta} {speed}");
+                    }
+                }
+            }
+        }
+        for (q, s, c) in [
+            (DQuat::from_xyzw(0., 0., 0., 0.), 1., offset),
+            (basis, -1., offset),
+            (basis, f64::INFINITY, offset),
+            (basis, 1., DVec3::NAN),
+        ] {
+            assert!(path.transformed(q, s, c).is_err());
+        }
+        assert!(path.transformed(basis, f64::MAX, offset).is_err());
+        assert!(path.transformed(basis, 2.5, offset).is_ok());
+    }
+}
