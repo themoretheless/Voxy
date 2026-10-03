@@ -108,21 +108,55 @@ pub(crate) fn sweep(
             candidates.push(obstacle);
         }
     }
-    if candidates.is_empty() {
+    let mut steps = iterations;
+    let mut queries = usize::MAX;
+    advance(
+        center,
+        &candidates,
+        |time| {
+            let rotation = DQuat::from_axis_angle(axis, angle * time);
+            Ok(edges.map(|edge| rotation * edge))
+        },
+        angle * rotation_radius,
+        radius,
+        rotation_radius,
+        &mut steps,
+        &mut queries,
+    )
+}
+
+fn query(remaining: &mut usize) -> Result<(), PhysicsError> {
+    *remaining = remaining.checked_sub(1).ok_or(PhysicsError::SweepBudget)?;
+    Ok(())
+}
+
+// One advancement kernel serves constant-axis arcs and complete cubic spans.
+#[allow(clippy::too_many_arguments)]
+fn advance(
+    center: DVec3,
+    candidates: &[&AffineBox],
+    sample: impl Fn(f64) -> Result<[DVec3; 3], PhysicsError>,
+    speed_bound: f64,
+    radius: f64,
+    rotation_radius: f64,
+    steps: &mut usize,
+    queries: &mut usize,
+) -> Result<Hit, PhysicsError> {
+    if candidates.is_empty() || speed_bound == 0. {
         return Ok(Hit {
             fraction: 1.,
             normal: None,
         });
     }
-    let speed_bound = angle * rotation_radius;
     let mut time = 0.;
-    for _ in 0..iterations {
-        let rotation = DQuat::from_axis_angle(axis, angle * time);
-        let current = edges.map(|edge| rotation * edge);
+    while *steps > 0 {
+        *steps -= 1;
+        let current = sample(time)?;
         let mut distance = f64::INFINITY;
         let mut contact = DVec3::ZERO;
         let mut tolerance = 0.;
-        for obstacle in &candidates {
+        for obstacle in candidates {
+            query(queries)?;
             let relative = center - obstacle.center;
             let mut separation = f64::NEG_INFINITY;
             let mut normal = DVec3::ZERO;
@@ -168,6 +202,177 @@ pub(crate) fn sweep(
         time = next;
     }
     Err(PhysicsError::SweepBudget)
+}
+
+#[derive(Debug)]
+pub(crate) struct PathHit {
+    pub rotation: DQuat,
+    pub normal: Option<DVec3>,
+    pub completed_spans: usize,
+    pub span_fraction: f64,
+    pub path_fraction: f64,
+    pub complete: bool,
+    pub advancement_iterations: usize,
+    pub trajectory_queries: usize,
+}
+
+fn corners(edges: [DVec3; 3]) -> [DVec3; 8] {
+    std::array::from_fn(|index| {
+        edges[0] * if index & 1 == 0 { -1. } else { 1. }
+            + edges[1] * if index & 2 == 0 { -1. } else { 1. }
+            + edges[2] * if index & 4 == 0 { -1. } else { 1. }
+    })
+}
+
+/// Steps and queries are shared over all spans, never reset at a key boundary.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn sweep_path(
+    center: DVec3,
+    rest_edges: [DVec3; 3],
+    orientation: DQuat,
+    path: &voxy_animation::RootRotationPath,
+    basis: DQuat,
+    boxes: &[AffineBox],
+    iterations: usize,
+    queries: &mut usize,
+) -> Result<PathHit, PhysicsError> {
+    let initial_queries = *queries;
+    if boxes.is_empty() {
+        *queries = queries
+            .checked_sub(path.spans().len())
+            .ok_or(PhysicsError::SweepBudget)?;
+        return Ok(PathHit {
+            rotation: (basis * path.end_rotation() * basis.conjugate()).normalize(),
+            normal: None,
+            completed_spans: path.spans().len(),
+            span_fraction: 1.,
+            path_fraction: 1.,
+            complete: true,
+            advancement_iterations: 0,
+            trajectory_queries: path.spans().len(),
+        });
+    }
+    let vertices = corners(rest_edges).map(|vertex| basis.conjugate() * vertex);
+    let radius = vertices.iter().map(|v| v.length()).fold(0_f64, f64::max);
+    let left = (orientation * basis).normalize();
+    let mut steps = iterations;
+    for (index, span) in path.spans().iter().enumerate() {
+        query(queries)?;
+        let sample = |fraction| -> Result<[DVec3; 3], PhysicsError> {
+            let rotation = (left
+                * span
+                    .sample(fraction)
+                    .map_err(|_| PhysicsError::InvalidMotion)?
+                * basis.conjugate())
+            .normalize();
+            Ok(rest_edges.map(|edge| rotation * edge))
+        };
+        let initial = sample(0.)?;
+        let duration = span.end() - span.start();
+        let angular_travel = span.angular_speed_bound().map_or_else(
+            || {
+                span.body_angular_displacement()
+                    .map_or(0., |axis| axis.length())
+            },
+            |speed| speed * duration,
+        );
+        let mut speed_bound = 0_f64;
+        for vertex in vertices {
+            let speed = span
+                .point_speed_bound(vertex)
+                .map_err(|_| PhysicsError::InvalidMotion)?;
+            let travel = speed.map_or_else(
+                || {
+                    span.body_angular_displacement()
+                        .map_or(0., |axis| axis.cross(vertex).length())
+                },
+                |speed| speed * duration,
+            );
+            speed_bound = speed_bound.max(travel);
+        }
+        let motion_radius = if angular_travel > 0. {
+            (speed_bound / angular_travel).min(radius)
+        } else {
+            0.
+        };
+        let mut candidates = Vec::new();
+        if speed_bound > 0. {
+            for obstacle in boxes {
+                query(queries)?;
+                let relative = center - obstacle.center;
+                let epsilon = 4096.
+                    * f64::EPSILON
+                    * (1.
+                        + center.abs().max_element()
+                        + obstacle.center.abs().max_element()
+                        + radius);
+                let mut separated = false;
+                for normal in obstacle.axes_for(initial) {
+                    let space = relative.dot(normal).abs() - obstacle.radius(normal);
+                    if space >= radius {
+                        separated = true;
+                        break;
+                    }
+                    let mut support = f64::NEG_INFINITY;
+                    for vertex in vertices {
+                        let upper = span
+                            .projection_bounds(vertex, left.conjugate() * normal)
+                            .map_err(|_| PhysicsError::InvalidMotion)?[1];
+                        support = support.max(upper);
+                    }
+                    if space - support >= -epsilon {
+                        separated = true;
+                        break;
+                    }
+                }
+                if !separated {
+                    candidates.push(obstacle);
+                }
+            }
+        }
+        let hit = advance(
+            center,
+            &candidates,
+            sample,
+            speed_bound,
+            radius,
+            motion_radius,
+            &mut steps,
+            queries,
+        )?;
+        if hit.fraction < 1. {
+            let accepted_time = span.start() + duration * hit.fraction;
+            return Ok(PathHit {
+                rotation: (basis
+                    * span
+                        .sample(hit.fraction)
+                        .map_err(|_| PhysicsError::InvalidMotion)?
+                    * basis.conjugate())
+                .normalize(),
+                normal: hit.normal,
+                completed_spans: index,
+                span_fraction: hit.fraction,
+                path_fraction: if path.duration() > 0. {
+                    (accepted_time / path.duration()).clamp(0., 1.)
+                } else {
+                    1.
+                },
+                complete: false,
+                advancement_iterations: iterations - steps,
+                trajectory_queries: initial_queries - *queries,
+            });
+        }
+    }
+    Ok(PathHit {
+        rotation: (basis * path.end_rotation() * basis.conjugate()).normalize(),
+        normal: None,
+        completed_spans: path.spans().len(),
+        span_fraction: 1.,
+        path_fraction: 1.,
+        complete: true,
+        advancement_iterations: iterations - steps,
+        trajectory_queries: initial_queries - *queries,
+    })
 }
 
 #[cfg(test)]

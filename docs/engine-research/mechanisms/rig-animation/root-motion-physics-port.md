@@ -18,4 +18,4 @@ Fixed-tick PlaySession application is now implemented; see [fixed-animation-play
 
 No CUDA, new native animation/physics scene or GPU throughput claim is made by these CPU tests.
 
-Character owners now support authored orientation with oriented translational collision; see [oriented character](oriented-character.md). Rotation remains fixed within each sweep; angular requests and extracted root rotation are still open.
+Character owners now support authored orientation with oriented translational collision; see [oriented character](oriented-character.md). Complete single-axis angular requests and authored AngularMotion are handled by character physics; see [angular CCD](angular-character-ccd.md). Ordered extraction for LINEAR/STEP/CUBICSPLINE root rotation is available as a curve API; see [root rotation trajectories](root-rotation-path.md). Animation-driven rotation, crossfade integration and curved trajectory admission remain open.

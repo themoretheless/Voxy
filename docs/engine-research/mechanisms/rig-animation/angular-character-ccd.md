@@ -18,7 +18,16 @@ projection bounds against independent quaternion samples, grounded yaw, turning
 away from contact, tall bodies, retained orientation and velocity, jump continuity,
 and atomic failure after staged translation.
 
-This is a physics API foundation. Animation root rotation extraction and routing
-authored AngularMotion on character owners remain unfinished. The native oriented
+Active AngularMotion on a character owner is consumed by CharacterPhysics in the
+ordinary fixed loop. Its axis retains parent-local semantics; the nonphysics batch
+and legacy behavior skip character owners. A simultaneous explicit nonzero angular
+request is rejected atomically. Inactive owners do not turn, live descriptors are
+read every tick, and Stop restores authoring. Rotating physics ancestors and static
+colliders remain rejected. Tests exercise mid-arc collision through the existing
+translation-only API and ordinary editor Play/Stop.
+
+Animation-driven root rotation remains unfinished; its [ordered trajectory
+foundation](root-rotation-path.md) now preserves LINEAR/STEP/CUBICSPLINE paths.
+The native oriented
 character smoke validates translation collisions and Play/Stop; it does not exercise
 the new angular request API.
