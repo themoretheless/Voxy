@@ -174,4 +174,3 @@ test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserv
 test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
 
 test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
-

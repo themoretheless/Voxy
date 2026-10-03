@@ -1,0 +1,19 @@
+    Blocking waiting for file lock on build directory
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2m 48s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-f5ead3363db76828)
+
+running 6 tests
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback has been running for over 60 seconds
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal has been running for over 60 seconds
+test animated_models::tests::gpu_material_revision_failure_preserves_texture_storage has been running for over 60 seconds
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision has been running for over 60 seconds
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip has been running for over 60 seconds
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher has been running for over 60 seconds
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ok
+test animated_models::tests::gpu_material_revision_failure_preserves_texture_storage ... ok
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ok
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ok
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ok
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 97 filtered out; finished in 90.07s
