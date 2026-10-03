@@ -80,7 +80,7 @@ impl AnimationRuntime {
             let Some(owner) = self.owners.get_mut(&accepted.owner) else { continue; };
             let Some(feet) = &mut owner.feet else { continue; };
             owner.frame = Arc::new(feet.correct_at_phase(&owner.model, (*owner.frame).clone(),
-                accepted.world_matrix.as_dmat4(), accepted.grounded, preview, budget, owner.playback.contact_phase(), owner.playback.contact_interval())?);
+                accepted.world_matrix.as_dmat4(), accepted.grounded, preview, budget, owner.settings.clip.map(|index| owner.model.animations[index].name()), owner.playback.contact_phase(), owner.playback.contact_interval(), owner.playback.pose_blend_phases(), owner.playback.source_contact_interval(), owner.playback.frozen_source_tick())?);
         }
         Ok(self)
     }
@@ -164,13 +164,19 @@ impl AnimationRuntime {
                     clip: (!model.animations.is_empty()).then_some(0),
                     ..Default::default()
                 });
+            settings.validate(Some(model.animations.len()), Some(model.skeleton.joints().len()))?;
             let current = next.owners.get(&owner);
             let mut playback = if current.is_none_or(|old| {
-                !Arc::ptr_eq(&old.model, model) || old.settings.clip != settings.clip
+                !Arc::ptr_eq(&old.model, model)
+                    || (old.settings.clip != settings.clip
+                        && (settings.transition_seconds == 0. || old.settings.clip.is_none() || settings.clip.is_none()))
             }) {
                 ModelPlayback::new(model.clone(), settings.clone())?
             } else {
                 let mut playback = current.unwrap().playback.clone();
+                if current.unwrap().settings.clip != settings.clip {
+                    playback.transition_to_clip(settings.clip.ok_or("missing transition target")?, settings.transition_seconds)?;
+                }
                 playback.set_speed(settings.speed)?;
                 playback.set_root_motion_joint(settings.resolve_motion_joint(model)?)?;
                 playback
@@ -235,7 +241,8 @@ impl AnimationRuntime {
                     return Err("foot placement requires a CharacterBody on the model owner".into());
                 }
                 if let Some(feet) = current.filter(|old| Arc::ptr_eq(&old.model, model)
-                    && old.settings.clip == settings.clip).and_then(|old| old.feet.as_ref())
+                    && (old.settings.clip == settings.clip || playback.has_transition()
+                        || playback.source_contact_interval().is_some() || playback.frozen_source_tick().is_some())).and_then(|old| old.feet.as_ref())
                     .filter(|feet| feet.matches(foot_settings)) {
                     Some(feet.clone())
                 } else { Some(crate::foot_placement::FootRuntime::new(model, foot_settings.clone())?) }

@@ -394,6 +394,11 @@ mod tests {
         assert!(app.edit_component_field(clip, "9999").is_err());
         assert!(app.edit_component_field(speed, "-1").is_err());
         assert!(app.edit_component_field(speed, "9").is_err());
+        let transition = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/transition_seconds").unwrap();
+        assert!(app.edit_component_field(transition, "-1").is_err());
+        assert!(app.edit_component_field(transition, "61").is_err());
+        assert_eq!(app.authoring_document().unwrap(), before);
+
         let motion = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/root_motion_joint").unwrap();
         assert!(app.edit_component_field(motion, "-1").is_err());
         assert!(app.edit_component_field(motion, "9999").is_err());

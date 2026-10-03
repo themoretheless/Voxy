@@ -25,6 +25,28 @@ impl Default for FootContactSettings {
         }
     }
 }
+impl FootContactSettings {
+    /// Validates authored support distances and slope admission without queries.
+    pub fn validate(&self) -> Result<(), PhysicsError> {
+        let distances = [
+            self.probe_lift,
+            self.probe_drop,
+            self.plant_distance,
+            self.release_distance,
+        ];
+        if distances
+            .iter()
+            .any(|v| !v.is_finite() || !(0. ..=1e6).contains(v))
+            || self.probe_lift + self.probe_drop > 1e6
+            || self.release_distance < self.plant_distance
+            || !self.min_up_dot.is_finite()
+            || !(0. ..=1.).contains(&self.min_up_dot)
+        {
+            return Err(PhysicsError::InvalidMotion);
+        }
+        Ok(())
+    }
+}
 #[derive(Clone, Copy, Debug)]
 pub struct FootContactInput {
     /// Animated sole before IK, in the physically accepted actor world frame.
@@ -76,20 +98,8 @@ impl FootContactState {
         input: FootContactInput,
         budget: &mut SupportQueryBudget,
     ) -> Result<FootContactCandidate, PhysicsError> {
-        let distances = [
-            settings.probe_lift,
-            settings.probe_drop,
-            settings.plant_distance,
-            settings.release_distance,
-        ];
-        if distances
-            .iter()
-            .any(|v| !v.is_finite() || !(0. ..=1e6).contains(v))
-            || settings.probe_lift + settings.probe_drop > 1e6
-            || settings.release_distance < settings.plant_distance
-            || !settings.min_up_dot.is_finite()
-            || !(0. ..=1.).contains(&settings.min_up_dot)
-            || !input.sole.is_finite()
+        settings.validate()?;
+        if !input.sole.is_finite()
             || input.sole.abs().max_element() > 1e6
             || !input.up.is_finite()
             || (input.up.length_squared() - 1.).abs() > 1e-12

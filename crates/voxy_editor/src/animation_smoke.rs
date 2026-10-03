@@ -448,7 +448,7 @@ impl App {
                 self.scene.insert_component(second,crate::ModelAnimation { clip:None,..Default::default() })?;
                 self.scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
                     bones:["hip".into(),"knee".into(),"foot".into()],sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
-                    pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],
+                    pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],clip_contact_curves:Default::default(),
                 }] })?;
                 self.camera.legacy = false; self.camera.perspective = false;
                 self.camera.target = Vec3::new(0.,0.15,0.); self.camera.distance=2.;

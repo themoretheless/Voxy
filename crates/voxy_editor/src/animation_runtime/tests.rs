@@ -564,3 +564,49 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
     app.stop_workers().unwrap();
     std::fs::remove_dir_all(directory).unwrap();
 }
+
+#[test]
+fn clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks() {
+    let (mut scene, owner, source, _) = fixture();
+    let mut asset = (*source).clone();
+    let mut tracks = vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()];
+    tracks[0].translations = vec![voxy_animation::Vec3Key { time: 0., value: Vec3::X * 10. }];
+    asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(
+        "target", 1., voxy_animation::Playback::Loop, tracks, &asset.skeleton).unwrap()));
+    let mut tracks = vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()];
+    tracks[0].translations = vec![voxy_animation::Vec3Key { time: 0., value: Vec3::X * 20. }];
+    asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(
+        "interrupted-target", 1., voxy_animation::Playback::Loop, tracks, &asset.skeleton).unwrap()));
+    let asset = Arc::new(asset);
+    let id = scene.component::<ModelInstance>(owner).unwrap().unwrap().asset.clone();
+    let models = BTreeMap::from([(id, asset.clone())]);
+    let mut runtime = AnimationRuntime::default().prepare(&scene, &models, 0.1).unwrap();
+    let before = runtime.frame(owner, &asset).unwrap();
+    scene.insert_component(owner, ModelAnimation {
+        clip: Some(1), transition_seconds: 0.5, ..Default::default() }).unwrap();
+    runtime = runtime.prepare(&scene, &models, 0.1).unwrap();
+    let frame = runtime.frame(owner, &asset).unwrap();
+    assert!((frame.transition_weight - 0.2).abs() < 1e-6);
+    assert!((frame.pose.local()[0].translation.x - 2.32).abs() < 1e-5);
+    assert!((before.pose.local()[0].translation.x - 0.2).abs() < 1e-6);
+    let held = runtime.frame(owner, &asset).unwrap();
+    scene.insert_component(owner, crate::ModelFootPlacement { feet: vec![crate::FootBinding {
+        bones: ["root".into(), "root".into(), "root".into()], sole_offset: [0.; 3],
+        sole_up: [0., 1., 0.], pole: [1., 0., 0.], plant: true, weight: 1.,
+        contact: Default::default(), contact_curve: vec![], clip_contact_curves: Default::default(),
+    }] }).unwrap();
+    assert_eq!(runtime.prepare(&scene, &models, 0.1).err().unwrap(),
+        "foot placement requires a CharacterBody on the model owner");
+    assert!(Arc::ptr_eq(&held, &runtime.frame(owner, &asset).unwrap()));
+    scene.insert_component(owner, ModelAnimation {
+        clip: Some(2), transition_seconds: 0.5, ..Default::default() }).unwrap();
+    assert_eq!(runtime.prepare(&scene, &models, 0.1).err().unwrap(),
+        "foot placement requires a CharacterBody on the model owner");
+    assert!(Arc::ptr_eq(&held, &runtime.frame(owner, &asset).unwrap()));
+    scene.remove_component::<crate::ModelFootPlacement>(owner).unwrap();
+    runtime = runtime.prepare(&scene, &models, 0.1).unwrap();
+    assert!((runtime.frame(owner, &asset).unwrap().pose.local()[0].translation.x - 5.856).abs() < 1e-5);
+    for _ in 0..4 { runtime = runtime.prepare(&scene, &models, 0.1).unwrap(); }
+    assert_eq!(runtime.frame(owner, &asset).unwrap().transition_weight, 1.);
+    assert_eq!(runtime.frame(owner, &asset).unwrap().pose.local()[0].translation.x, 20.);
+}

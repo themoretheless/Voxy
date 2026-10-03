@@ -9,6 +9,9 @@ use voxy_render::ModelAsset;
 pub struct ModelAnimation {
     pub clip: Option<usize>,
     pub speed: f32,
+    /// Clip-switch fade duration in seconds. Zero retains immediate switching.
+    #[serde(default)]
+    pub transition_seconds: f32,
     #[serde(default)]
     pub root_motion_joint: u16,
     /// Exact unique authored node name. Empty preserves legacy numeric selection.
@@ -24,6 +27,7 @@ impl Default for ModelAnimation {
         Self {
             clip: Some(0),
             speed: 1.0,
+            transition_seconds: 0.0,
             root_motion_joint: 0,
             root_motion_bone: String::new(),
             root_motion_axes: [false; 3],
@@ -48,6 +52,9 @@ impl ModelAnimation {
         clip_count: Option<usize>,
         joint_count: Option<usize>,
     ) -> Result<(), &'static str> {
+        if !self.transition_seconds.is_finite() || !(0. ..=60.).contains(&self.transition_seconds) {
+            return Err("invalid model animation transition duration");
+        }
         if !self.speed.is_finite() || !(0.0..=8.0).contains(&self.speed) {
             return Err("invalid model animation speed");
         }
@@ -73,11 +80,19 @@ impl ModelAnimation {
 }
 
 #[derive(Clone, Debug)]
+pub(crate) struct SourceContactInterval {
+    pub clip: Arc<voxy_animation::AnimationClip>,
+    pub phase: voxy_animation::AnimationPhaseInterval,
+    pub active_tick_fraction: f64,
+}
+#[derive(Clone, Debug)]
 pub(crate) struct ModelPlayback {
     model: Arc<ModelAsset>,
     animator: Option<Animator>,
     root_motion_joint: u16,
     contact_interval: Option<voxy_animation::AnimationPhaseInterval>,
+    source_contact_interval: Option<SourceContactInterval>,
+    frozen_source_tick: Option<(Arc<voxy_animation::Pose>, f64)>,
 }
 impl ModelPlayback {
     pub(crate) fn new(model: Arc<ModelAsset>, settings: ModelAnimation) -> Result<Self, String> {
@@ -111,6 +126,8 @@ impl ModelPlayback {
             animator,
             root_motion_joint,
             contact_interval: None,
+            source_contact_interval: None,
+            frozen_source_tick: None,
         })
     }
 
@@ -125,6 +142,27 @@ impl ModelPlayback {
         }
         self.root_motion_joint = joint;
         Ok(())
+    }
+
+    pub(crate) fn pose_blend_phases(&self) -> Option<voxy_animation::PoseBlendPhases<'_>> {
+        self.animator.as_ref().map(Animator::pose_blend_phases)
+    }
+
+    pub(crate) fn has_transition(&self) -> bool {
+        self.animator.as_ref().is_some_and(|animator| animator.pose_blend_phases().source.is_some())
+    }
+
+    pub(crate) fn transition_to_clip(&mut self, index: usize, duration: f32) -> Result<(), String> {
+        let clip = self.model.animations.get(index).ok_or("invalid transition clip")?;
+        self.animator.as_mut().ok_or("bind pose has no playing transition source")?
+            .transition_to(clip.clone(), duration).map_err(|e| e.to_string())
+    }
+
+    pub(crate) fn frozen_source_tick(&self) -> Option<&(Arc<voxy_animation::Pose>, f64)> {
+        self.frozen_source_tick.as_ref()
+    }
+    pub(crate) fn source_contact_interval(&self) -> Option<&SourceContactInterval> {
+        self.source_contact_interval.as_ref()
     }
 
     pub(crate) fn contact_interval(&self) -> Option<voxy_animation::AnimationPhaseInterval> {
@@ -175,6 +213,13 @@ impl ModelPlayback {
         }
         let interval = self.animator.as_ref().map(|animator| animator.phase_interval(dt))
             .transpose().map_err(|error| error.to_string())?;
+        let source_interval = self.animator.as_ref().map(|animator| animator.source_phase_interval(dt))
+            .transpose().map_err(|error| error.to_string())?.flatten()
+            .map(|source| SourceContactInterval { clip: source.clip.clone(), phase: source.phase,
+                active_tick_fraction: source.active_tick_fraction });
+        let frozen_source_tick = self.animator.as_ref().map(|animator| animator.frozen_source_tick(dt))
+            .transpose().map_err(|e| e.to_string())?.flatten()
+            .map(|source| (source.snapshot.clone(), source.active_tick_fraction));
         let mut candidate = self.animator.clone();
         let mut path = None;
         let frame = if let Some(animator) = &mut candidate {
@@ -210,6 +255,8 @@ impl ModelPlayback {
         let result = publish(&self.model, &frame, path.as_ref())?;
         self.animator = candidate;
         self.contact_interval = interval;
+        self.source_contact_interval = source_interval;
+        self.frozen_source_tick = frozen_source_tick;
         Ok(result)
     }
 }
@@ -455,4 +502,61 @@ mod tests {
             bind
         );
     }
+    #[test]
+    fn source_contact_interval_survives_fade_completion_and_failed_publication() {
+        let mut asset = (*model()).clone();
+        let source = asset.animations[0].clone();
+        asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(
+            "target", 1., voxy_animation::Playback::Loop,
+            vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+            &asset.skeleton).unwrap()));
+        let mut playback = ModelPlayback::new(Arc::new(asset), ModelAnimation::default()).unwrap();
+        playback.advance_with(0.25, |_, _| Ok(())).unwrap();
+        playback.transition_to_clip(1, 0.25).unwrap();
+        assert!(playback.advance_with(0.5, |_, _| Err::<(), _>("reject".into())).is_err());
+        assert!(playback.source_contact_interval().is_none());
+        assert_eq!(playback.contact_phase(), Some(0.));
+        assert_eq!(playback.advance_with(0.5, |_, frame| Ok(frame.transition_weight)).unwrap(), 1.);
+        assert!(!playback.has_transition());
+        let held = playback.source_contact_interval().unwrap().clone();
+        assert!(Arc::ptr_eq(&held.clip, &source));
+        assert_eq!(held.phase.start, 0.25);
+        assert_eq!(held.phase.end, 0.5);
+        assert_eq!(held.active_tick_fraction, 0.5);
+        assert!(playback.advance_with(0.1, |_, _| Err::<(), _>("reject".into())).is_err());
+        let retained = playback.source_contact_interval().unwrap();
+        assert!(Arc::ptr_eq(&held.clip, &retained.clip));
+        assert_eq!(retained.phase, held.phase);
+        assert_eq!(retained.active_tick_fraction, held.active_tick_fraction);
+        playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+        assert!(playback.source_contact_interval().is_none());
+    }
+
+    #[test]
+    fn frozen_source_tick_survives_completion_and_rejection_then_releases_snapshot() {
+        let mut asset = (*model()).clone();
+        asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(
+            "target", 1., voxy_animation::Playback::Loop,
+            vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+            &asset.skeleton).unwrap()));
+        let mut playback = ModelPlayback::new(Arc::new(asset), ModelAnimation::default()).unwrap();
+        playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+        playback.transition_to_clip(1, 0.5).unwrap();
+        playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+        playback.transition_to_clip(0, 0.25).unwrap();
+        assert!(playback.advance_with(0.5, |_, _| Err::<(), _>("reject".into())).is_err());
+        assert!(playback.frozen_source_tick().is_none());
+        assert_eq!(playback.contact_phase(), Some(0.));
+        playback.advance_with(0.5, |_, _| Ok(())).unwrap();
+        assert!(!playback.has_transition());
+        assert_eq!(playback.frozen_source_tick().unwrap().1, 0.5);
+        let snapshot = Arc::downgrade(&playback.frozen_source_tick().unwrap().0);
+        assert!(playback.advance_with(0.1, |_, _| Err::<(), _>("reject".into())).is_err());
+        assert_eq!(playback.frozen_source_tick().unwrap().1, 0.5);
+        assert!(snapshot.upgrade().is_some());
+        playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+        assert!(playback.frozen_source_tick().is_none());
+        assert!(snapshot.upgrade().is_none());
+    }
+
 }

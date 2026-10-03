@@ -2287,6 +2287,29 @@ impl App {
                 animation.resolve_motion_joint(model)?;
             }
         }
+        for (node, settings) in loaded.graph.components::<ModelFootPlacement>() {
+            settings.validate()?;
+            if settings.feet.is_empty() {
+                continue;
+            }
+            let model = loaded.graph.component::<String>(node)?
+                .ok_or("foot placement requires a model owner")?;
+            if loaded.graph.component::<CharacterBody>(node)?.is_none() {
+                return Err("foot placement requires a CharacterBody on the model owner".into());
+            }
+            if let Some(asset) = self.catalog.snapshot(&AssetId(model.clone()))
+                && let Some(model) = asset.value().animated.as_ref()
+            {
+                foot_placement::FootRuntime::new(model, settings.clone())?;
+                let animation = loaded.graph.component::<ModelAnimation>(node)?
+                    .cloned().unwrap_or_default();
+                let clip_name = animation.clip.and_then(|index|
+                    model.animations.get(index).map(|clip| clip.name()));
+                for foot in &settings.feet {
+                    foot.contact_keys(clip_name)?;
+                }
+            }
+        }
         for (node, part) in loaded.graph.components::<ModelPart>() {
             if part.node != u32::MAX
                 && let Some(model) = loaded.graph.component::<String>(node)?
