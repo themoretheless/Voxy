@@ -1,0 +1,20 @@
+{
+  "base_commit": "19c02c335641df3175737e82b20653e590d0599b",
+  "editor_tests_passed": 124,
+  "editor_tests_ignored": 10,
+  "gpu_tests_passed": 1,
+  "verified": [
+    "full-weight contact anchor continuity across live clip fade",
+    "interrupted fade completing inside fixed tick",
+    "explicit contact event budget exhaustion preserves accepted scene and frame",
+    "retry accepts completion with retained sole anchor"
+  ],
+  "limitations": [
+    "variable-weight mixed swing physical integration needs further coverage",
+    "native Metal presentation remains unresolved",
+    "angular root trajectory fades remain rejected"
+  ],
+  "animation_tests_passed": 67,
+  "gameplay_tests_passed": 43,
+  "gameplay_integration_tests_passed": 41
+}
