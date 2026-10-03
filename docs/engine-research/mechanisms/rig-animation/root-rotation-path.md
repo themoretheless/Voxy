@@ -41,9 +41,64 @@ outside the exact integer range of f64 are rejected. Constant channels can span
 large elapsed times without walking their cycles. Small increments after a large
 clock and near-singular, nonzero cubic curves are covered by tests.
 
-This is the rotation extraction and trajectory-query foundation. It is not yet
-connected to AnimatorFrame, ModelAnimation or ordinary animation-driven character
-physics. Remaining work includes transactional multi-span/cubic CCD, in-place pose
-and palette removal, constant-parent frame conversion, blended angular velocities
-during crossfades, coupled translation/rotation, and native presented-frame proof.
-The existing authored AngularMotion path uses single-axis angular CCD separately.
+`point_speed_bound(vector)` bounds the speed of each body vertex over a whole
+span. Cubic spans use the degree-five numerator of the normalized quaternion
+angular velocity and the proved lower norm. This avoids using a tall body's
+full sphere radius as its speed when it turns around the vertical axis.
+
+`CharacterPhysics::fixed_step_with_trajectory_motion` consumes immutable ordered
+paths after translation in one staged fixed tick. Each request supplies a
+body-local basis and a body-local pivot offset. For a pivot `p`, initial body
+orientation `W` and accepted path delta `D(u)`, the center follows
+`c(u) = c(0) + W * (p - D(u) * p)`. Every corner is therefore a rotated
+`corner - p` around the stationary world anchor. Point-speed bounds and whole-span
+projection hulls use these shifted corners, and SAT queries use the moving center.
+Per-span projection hulls can certify an obstacle as separated;
+remaining candidates use SAT conservative advancement on the actual curve. The
+iteration budget is shared across spans and the query budget across bodies. A
+failure preserves all scene poses, velocities and input edges. Normal grounding
+refresh can subsequently adjust the accepted center; the receipt includes that
+adjustment. A collision returns
+the accepted span, fraction and rotation, stops before later spans, and retains the
+accepted orientation on subsequent ticks. Explicit paths and authored AngularMotion
+cannot both write one character's rotation.
+
+`AnimatorFrame::without_root_rotation` restores only the selected joint's bind
+rotation and rebuilds its skin palette. It checks the exact rig binding and all
+pose transforms. Translation, signed scale, other joints and translation motion
+remain intact. The caller owns extraction and physics admission separately.
+
+`Animator::advance_with_root_rotation` samples the displayed frame and selected
+rotation path from the same bounded phase interval, retaining complete loop winding
+before folding the clock. Pose, path and clock publish together only when all
+admission succeeds. Active crossfades currently return an explicit unsupported
+error; ordinary Animator pose/translation crossfades remain available.
+
+`ModelAnimation.root_motion_rotation` opts a model owner into this path. Existing
+scene documents default it off. AnimationRuntime stages the selected path,
+constant-parent basis and pivot, removes the selected bone's displayed rotation,
+and forwards the immutable frame to the existing renderer. The editor admits
+translation-only and trajectory owners in one character transaction, then publishes
+the candidate animation clocks. Rejected physics preserves the earlier frame Arc,
+clock serial, body poses, velocity and input. Play/Stop restores the authoring
+scene normally. See [ordinary Play admission](root-rotation-play.md).
+
+A skeletal root whose translation changes the pivot still requires a general
+rigid trajectory; independently applying its translation before rotation does not
+represent simultaneous authored motion. Such clips explicitly reject angular
+root-motion activation before publication. Constant parent TRS admission allows
+uniform signed scale and correctly transforms rotation axes through reflection;
+nonuniform parent scale, moving/unproved ancestors, and active core crossfades
+remain unsupported for angular extraction. Full moving-pivot trajectories,
+velocity-blended angular transitions and general locomotion collision feedback
+remain required for the broader production animation goal.
+
+GPU admission is covered by an opt-in real-device editor test:
+`curved_root_rotation_collision_renders_once_with_in_place_gpu_palette`. It
+submits frames produced by the actual AnimationRuntime to AnimatedModels after
+curved physics collision, compares exact rendered pixels with an independently baked bind-pose
+mesh at the accepted body transform, and checks that retaining authored bone
+rotation gives different pixels. Two owners share one source, repeated publication
+does not grow allocation, and clearing releases all owner resources. This is an
+offscreen fixed-tick runtime/renderer/physics proof; native presented-frame
+admission is exercised separately by the ordinary Play diagnostic.

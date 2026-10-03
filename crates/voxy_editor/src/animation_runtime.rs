@@ -41,6 +41,12 @@ pub(super) struct AnimationRuntime {
     owners: HashMap<NodeId, Owner>,
     serial: u64,
     motions: Vec<(NodeId, glam::Vec3)>,
+    rotations: Vec<(
+        NodeId,
+        voxy_animation::RootRotationPath,
+        glam::DQuat,
+        glam::Vec3,
+    )>,
 }
 impl AnimationRuntime {
     pub(super) fn clear(&mut self) {
@@ -48,6 +54,24 @@ impl AnimationRuntime {
     }
     pub(super) fn motions(&self) -> &[(NodeId, glam::Vec3)] {
         &self.motions
+    }
+    pub(super) fn trajectories(&self) -> Vec<voxy_gameplay::CharacterTrajectoryMotion<'_>> {
+        self.rotations
+            .iter()
+            .map(
+                |(owner, rotation, basis, pivot)| voxy_gameplay::CharacterTrajectoryMotion {
+                    owner: *owner,
+                    rotation,
+                    basis: *basis,
+                    pivot: *pivot,
+                    displacement: self
+                        .motions
+                        .iter()
+                        .find(|(node, _)| node == owner)
+                        .map_or(glam::Vec3::ZERO, |(_, value)| *value),
+                },
+            )
+            .collect()
     }
     pub(super) fn serial(&self) -> u64 {
         self.serial
@@ -90,6 +114,8 @@ impl AnimationRuntime {
         }
         let mut next = self.clone();
         next.motions.clear();
+        next.rotations.clear();
+        let mut rotation_spans = 0_usize;
         next.synchronize(scene)?;
         next.scene = Some(scene.identity());
         // Imported hierarchy parts reference the shared model but own no clocks.
@@ -138,8 +164,14 @@ impl AnimationRuntime {
                 playback.set_root_motion_joint(settings.resolve_motion_joint(model)?)?;
                 playback
             };
-            let mut frame = playback.advance_with(dt, |_, frame| Ok(frame.clone()))?;
-            if settings.root_motion_axes.into_iter().any(|axis| axis) {
+            let (mut frame, trajectory) = playback.advance_with_motion(
+                dt,
+                settings.root_motion_rotation,
+                |_, frame, path| Ok((frame.clone(), path.cloned())),
+            )?;
+            if settings.root_motion_rotation
+                || settings.root_motion_axes.into_iter().any(|axis| axis)
+            {
                 if scene
                     .component::<voxy_gameplay::CharacterBody>(owner)
                     .map_err(|error| error.to_string())?
@@ -147,22 +179,16 @@ impl AnimationRuntime {
                 {
                     return Err("root motion requires a CharacterBody on the model owner".into());
                 }
-                // A clip-admission proof establishes each constant ancestor over
-                // the whole interval, including authored values different from bind.
-                let mut basis = glam::Mat4::IDENTITY;
-                let mut parent =
-                    model.skeleton.joints()[usize::from(frame.root_motion_joint)].parent;
-                while let Some(index) = parent {
-                    let index = usize::from(index);
-                    let joint = &model.skeleton.joints()[index];
-                    let transform = if let Some(clip) = settings.clip {
-                        model.animations[clip].constant_joint_transform(index)
-                            .ok_or("root motion parent is moving or unproved; choose a fixed locomotion root")?
-                    } else {
-                        joint.bind_local
-                    };
-                    basis = transform.matrix() * basis;
-                    parent = joint.parent;
+                let (basis, rotation_basis) =
+                    constant_parent_basis(model, &settings, frame.root_motion_joint)?;
+                if settings.root_motion_rotation
+                    && settings.clip.is_some_and(|clip| {
+                        model.animations[clip]
+                            .constant_joint_translation(usize::from(frame.root_motion_joint))
+                            .is_none()
+                    })
+                {
+                    return Err("Selected motion bone has a moving pivot in this clip; angular root motion for moving bones is not supported yet".into());
                 }
                 let (in_place, displacement) = frame
                     .into_in_place_translation(&model.skeleton, settings.root_motion_axes)
@@ -176,6 +202,29 @@ impl AnimationRuntime {
                     return Err("root motion coordinate conversion overflow".into());
                 }
                 next.motions.push((owner, displacement));
+                if settings.root_motion_rotation {
+                    let pivot = basis.transform_point3(
+                        frame.pose.local()[usize::from(frame.root_motion_joint)].translation,
+                    );
+                    if !pivot.is_finite() {
+                        return Err("root rotation pivot conversion overflow".into());
+                    }
+                    frame = frame
+                        .without_root_rotation(&model.skeleton)
+                        .map_err(|error| error.to_string())?;
+                    if let Some(trajectory) = trajectory {
+                        rotation_spans = rotation_spans
+                            .checked_add(trajectory.spans().len())
+                            .ok_or("root rotation span overflow")?;
+                        if rotation_spans > voxy_gameplay::MAX_CHARACTER_TRAJECTORY_SPANS {
+                            return Err(
+                                "aggregate root rotation trajectory capacity exceeded".into()
+                            );
+                        }
+                        next.rotations
+                            .push((owner, trajectory, rotation_basis, pivot));
+                    }
+                }
             }
             let frame = Arc::new(frame);
             next.owners.insert(
@@ -196,5 +245,52 @@ impl AnimationRuntime {
     }
 }
 
+// Only immutable clip admission proofs establish an ancestor for the whole interval.
+// For rotation, a uniform signed scale is orthogonal up to magnitude; its axis
+// conversion uses the proper pseudovector basis det(S)*S, including reflections.
+fn constant_parent_basis(
+    model: &ModelAsset,
+    settings: &ModelAnimation,
+    root: u16,
+) -> Result<(glam::Mat4, glam::DQuat), String> {
+    let mut matrix = glam::Mat4::IDENTITY;
+    let mut rotation = glam::DQuat::IDENTITY;
+    let mut parent = model.skeleton.joints()[usize::from(root)].parent;
+    while let Some(index) = parent {
+        let index = usize::from(index);
+        let joint = &model.skeleton.joints()[index];
+        let transform = if let Some(clip) = settings.clip {
+            model.animations[clip]
+                .constant_joint_transform(index)
+                .ok_or("root motion parent is moving or unproved; choose a fixed locomotion root")?
+        } else {
+            joint.bind_local
+        };
+        if settings.root_motion_rotation {
+            let scale = transform.scale.abs();
+            if scale.x != scale.y || scale.x != scale.z {
+                return Err("A parent of the selected motion bone has nonuniform scale; root rotation requires uniform scale".into());
+            }
+            let signs = transform.scale.signum().as_dvec3();
+            let determinant = signs.x * signs.y * signs.z;
+            let reflection =
+                glam::DQuat::from_mat3(&glam::DMat3::from_diagonal(signs * determinant))
+                    .normalize();
+            let authored =
+                glam::DQuat::from_array(transform.rotation.to_array().map(f64::from)).normalize();
+            rotation = (authored * reflection * rotation).normalize();
+        }
+        matrix = transform.matrix() * matrix;
+        parent = joint.parent;
+    }
+    if !matrix.is_finite() || !rotation.is_finite() {
+        return Err("root motion parent conversion overflow".into());
+    }
+    Ok((matrix, rotation))
+}
+
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod rotation_tests;

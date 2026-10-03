@@ -108,6 +108,35 @@ impl RootRotationSpan {
         }
     }
 
+    pub(super) fn held(start: f64, end: f64, rotation: DQuat) -> Self {
+        Self {
+            start,
+            end,
+            shape: Shape::Hold(rotation),
+            left: DQuat::IDENTITY,
+            right: DQuat::IDENTITY,
+            speed_bound: Some(0.),
+        }
+    }
+    pub(super) fn restricted(&self, start: f64, end: f64) -> Result<Self, AnimationError> {
+        if self.is_step() || start < self.start || end > self.end || end <= start {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let duration = self.end - self.start;
+        Ok(Self {
+            start,
+            end,
+            shape: restrict(
+                &self.shape,
+                (start - self.start) / duration,
+                (end - self.start) / duration,
+            )?,
+            left: self.left,
+            right: self.right,
+            speed_bound: self.speed_bound,
+        })
+    }
+
     /// Analytic angular velocity in the interval-start frame; STEP has no finite derivative.
     /// # Errors
     /// Rejects an invalid sampling fraction or a singular cubic quaternion.
@@ -445,6 +474,13 @@ impl RootRotationCurve {
             return Err(AnimationError::RootRotationBudget);
         }
         Ok((cycles as u64, time.rem_euclid(self.0.duration)))
+    }
+
+    pub(super) fn phase_rotation(&self, time: f64) -> Result<DQuat, AnimationError> {
+        Ok((self.local(time)? * self.0.origin.conjugate()).normalize())
+    }
+    pub(super) fn is_constant(&self) -> bool {
+        self.0.constant
     }
 
     /// Unwrapped parent-local orientation relative to the first authored value.

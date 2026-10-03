@@ -942,12 +942,12 @@ impl App {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
                             access.require_write("player.input").map_err(|error|
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
-                            physics.fixed_step_with_motion(
+                            physics.fixed_step_with_motion_and_trajectories(
                                 access.write().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
-                                &mut self.play.player_input, dt, candidate.motions(),
+                                &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
                             ).map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                         } else {
-                            if !candidate.motions().is_empty() {
+                            if !candidate.motions().is_empty() || !candidate.trajectories().is_empty() {
                                 return Err(voxy_gameplay::GameplayFixedError::Motion("root motion requires a physics runtime".into()));
                             }
                             access.require_write("player.input").map_err(|error|
@@ -2262,7 +2262,7 @@ impl App {
                 .map(|asset| asset.value().animated.as_ref()
                     .map_or((0, 0), |model| (model.animations.len(), model.skeleton.joints().len())));
             animation.validate(counts.map(|value| value.0), counts.map(|value| value.1))?;
-            if animation.root_motion_axes.into_iter().any(|axis| axis)
+            if (animation.root_motion_rotation || animation.root_motion_axes.into_iter().any(|axis| axis))
                 && loaded.graph.component::<CharacterBody>(node)?.is_none() {
                 return Err("root motion requires a CharacterBody on the model owner".into());
             }
@@ -4202,8 +4202,9 @@ fn run_model_viewport_configured_registry(
     if mode == ViewportMode::AnimationSmoke {
         let mut smoke = animation_smoke::Smoke::default();
         smoke.profile = std::env::var_os("VOXY_ANIMATION_PROFILE").is_some();
-        smoke.root_motion = std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();
-        smoke.oriented_body = smoke.root_motion && std::env::var_os("VOXY_ORIENTED_CHARACTER_SMOKE").is_some();
+        smoke.root_rotation = std::env::var_os("VOXY_ROOT_ROTATION_SMOKE").is_some();
+        smoke.root_motion = smoke.root_rotation || std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();
+        smoke.oriented_body = smoke.root_motion && !smoke.root_rotation && std::env::var_os("VOXY_ORIENTED_CHARACTER_SMOKE").is_some();
         app.animation_smoke = Some(smoke);
         app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
     }

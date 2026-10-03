@@ -6,6 +6,8 @@ use winit::keyboard::KeyCode;
 pub(super) struct Smoke {
     pub(super) profile: bool,
     pub(super) root_motion: bool,
+    pub(super) root_rotation: bool,
+    rotation_origin: Option<voxy_scene::Transform>,
     pub(super) oriented_body: bool,
     phase: u8,
     since: u64,
@@ -148,12 +150,14 @@ impl App {
                 );
                 if self.animation_smoke.as_ref().unwrap().root_motion {
                     let oriented = self.animation_smoke.as_ref().unwrap().oriented_body;
+                    let rotating = self.animation_smoke.as_ref().unwrap().root_rotation;
                     self.panel_action(crate::panels::Action::Select(0))?;
                     self.edit_key(KeyCode::KeyC)?;
                     let body = self.scene.component_mut::<voxy_gameplay::CharacterBody>(self.instances[0])?
                         .ok_or("missing native root-motion body")?;
                     body.gravity = 0.0;
                     body.speed = 0.0;
+                    if rotating { body.half_extents = [0.4, 0.1, 0.02]; }
                     if oriented {
                         body.half_extents = [0.08, 0.05, 0.02];
                         let mut local = self.scene.local(self.instances[0])?;
@@ -163,27 +167,38 @@ impl App {
                     self.commit_authoring()?;
                     self.animation_inspector_input("/root_motion_joint", "0")?;
                     self.animation_inspector_input("/root_motion_bone", "root")?;
-                    self.animation_inspector_input("/root_motion_axes/0", "true")?;
+                    if rotating {
+                        self.animation_inspector_input("/root_motion_rotation", "true")?;
+                    } else {
+                        self.animation_inspector_input("/root_motion_axes/0", "true")?;
+                    }
                     self.panel_action(crate::panels::Action::Select(1))?;
                     self.edit_key(KeyCode::KeyB)?;
                     if oriented {
                         self.scene.component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
                             .ok_or("missing oriented-body wall")?.half_extents[2] = 2.0;
                     }
+                    if rotating {
+                        self.scene.component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
+                            .ok_or("missing rotating-root wall")?.half_extents = [2., 2., 0.02];
+                    }
                     let mut local = self.scene.local(self.instances[1])?;
-                    local.translation = self.scene.local(self.instances[0])?.translation + glam::Vec3::X * 0.15;
+                    local.translation = self.scene.local(self.instances[0])?.translation
+                        + if rotating { glam::Vec3::Z * 0.25 } else { glam::Vec3::X * 0.15 };
                     self.scene.set_local(self.instances[1], local)?;
                     self.commit_authoring()?;
                 }
                 let authoring = self.authoring_document()?;
+                let rotation_origin = self.scene.local(self.instances[0])?;
                 self.toggle_play()?;
                 let smoke = self.animation_smoke.as_mut().unwrap();
                 smoke.authoring = Some(authoring);
+                smoke.rotation_origin = Some(rotation_origin);
                 smoke.phase = 1;
                 smoke.since = self.frames;
             }
             1 => {
-                if self.play.simulation_ticks < if smoke.profile { 120 } else { 12 } {
+                if self.play.simulation_ticks < if smoke.profile && !smoke.root_rotation { 120 } else { 12 } {
                     return Ok(false);
                 }
                 let graphics = self
@@ -198,7 +213,23 @@ impl App {
                 let Some(paused) = graphics.animated_models.pose_signature(second)? else {
                     return Ok(false);
                 };
-                if smoke.root_motion {
+                if smoke.root_rotation {
+                    let origin = smoke.rotation_origin.ok_or("missing rotation origin")?;
+                    let paths = self.play.animations.trajectories();
+                    let path = paths.iter().find(|path| path.owner == first).ok_or("missing native rotation trajectory")?;
+                    if !path.pivot.abs_diff_eq(glam::Vec3::X * 0.6, 1e-6) {
+                        return Err("native rotation diagnostic requires the root-pivot-turn fixture".into());
+                    }
+                    let angle = (0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.);
+                    let center = glam::Vec3::new((0.6 * (1. - angle.cos())) as f32, 0., (0.6 * angle.sin()) as f32);
+                    let pose = self.scene.local(first)?;
+                    if !pose.rotation.abs_diff_eq(glam::Quat::from_rotation_y(angle as f32), 1e-5)
+                        || !pose.translation.abs_diff_eq(origin.translation + center, 1e-5) || moving != paused {
+                        return Err(format!("native rotation failed curved wall/in-place admission: {pose:?}").into());
+                    }
+                    println!("VOXY_NATIVE_ROOT_ROTATION angle={angle} pivot={:?} center={:?} wall_limited=true in_place=true fixed_serial={}",
+                        path.pivot, pose.translation, self.play.animations.serial());
+                } else if smoke.root_motion {
                     let position = self.scene.local(first)?.translation;
                     let expected_x = if smoke.oriented_body {
                         let body = self.scene.component::<voxy_gameplay::CharacterBody>(first)?.ok_or("missing oriented body")?;

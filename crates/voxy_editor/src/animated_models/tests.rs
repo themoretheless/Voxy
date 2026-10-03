@@ -1046,3 +1046,177 @@ fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
     assert!(pollster::block_on(scope.pop()).is_none());
     println!("VOXY_HIERARCHY_CAPACITY_GPU owners=128 parts=256 sources=1 bytes={bytes} cpu_pixels_equal=true stop_bytes=0");
 }
+
+#[test]
+#[ignore = "requires real GPU; curved character turn and in-place skin palette"]
+fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
+    use glam::{Mat4, Quat, Vec3};
+    use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
+    let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+    let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let model = Arc::new(
+        ModelAsset::parse(
+            include_bytes!("../../../voxy_render/examples/assets/root-pivot-turn.glb"),
+            &[],
+            voxy_render::ModelLimits::default(),
+        )
+        .unwrap(),
+    );
+    let mut scene = voxy_scene::SceneGraph::new(4);
+    let first = scene.spawn(None, Default::default()).unwrap();
+    let second = scene.spawn(None, Default::default()).unwrap();
+    scene
+        .insert_component(
+            first,
+            CharacterBody {
+                half_extents: [0.4, 0.1, 0.02],
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let wall = scene
+        .spawn(
+            None,
+            voxy_scene::Transform {
+                translation: Vec3::Z * 0.25,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [2., 2., 0.02],
+            },
+        )
+        .unwrap();
+    let asset = voxy_assets::AssetId("turn".into());
+    for owner in [first, second] {
+        scene
+            .insert_component(
+                owner,
+                crate::ModelInstance {
+                    asset: asset.clone(),
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                owner,
+                ModelAnimation {
+                    root_motion_rotation: owner == first,
+                    root_motion_bone: "root".into(),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+    }
+    let models = std::collections::BTreeMap::from([(asset, model.clone())]);
+    let candidate = crate::animation_runtime::AnimationRuntime::default()
+        .prepare(&scene, &models, 1. / 60.)
+        .unwrap();
+    let authored = candidate.frame(second, &model).unwrap();
+    let accepted = candidate.frame(first, &model).unwrap();
+    // The independent CPU reference starts from bind, not the extracted frame.
+    assert_eq!(accepted.pose, model.skeleton.bind_pose());
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let receipt = physics
+        .fixed_step_with_motion_and_trajectories(
+            &mut scene,
+            &mut input,
+            1. / 60.,
+            candidate.motions(),
+            &candidate.trajectories(),
+        )
+        .unwrap()[0];
+    let angle = (0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.);
+    assert!(!receipt.complete);
+    assert!(
+        scene
+            .local(first)
+            .unwrap()
+            .rotation
+            .abs_diff_eq(Quat::from_rotation_y(angle as f32), 1e-6)
+    );
+    let mut render = AnimatedModels::new(&renderer).unwrap();
+    assert!(render.skinner.is_some());
+    let requests = || {
+        let mut a = request(first, &model, 1.);
+        a.frame = Some(accepted.clone());
+        let mut b = request(second, &model, 1.);
+        b.frame = Some(authored.clone());
+        vec![a, b]
+    };
+    assert!(
+        render
+            .synchronize(&renderer, &device, &queue, requests(), 1, 0, 65536)
+            .is_empty()
+    );
+    assert_eq!(render.counts(), (2, 2, 1));
+    let source = |owner| match &render.owners[&owner].primitives[0] {
+        Primitive::Skin { source, .. } => Arc::as_ptr(source),
+        _ => panic!("GPU skin expected"),
+    };
+    assert_eq!(source(first), source(second));
+    assert!(Arc::ptr_eq(&render.owners[&first].frame, &accepted));
+    let reference_mesh = model.scene_meshes(&model.skeleton.bind_pose()).unwrap();
+    let reference = renderer.upload_mesh(&device, &reference_mesh[0]).unwrap();
+    let matrix =
+        Mat4::from_translation(Vec3::new(-0.1, 0., 0.5)) * scene.world_matrix(first).unwrap();
+    let actual = pixels(
+        &renderer,
+        &device,
+        &queue,
+        render.geometries(first).unwrap().collect(),
+        matrix,
+    );
+    assert!(
+        actual
+            .chunks_exact(4)
+            .filter(|p| p[..3] != [0, 0, 0])
+            .count()
+            > 50
+    );
+    assert_eq!(
+        actual,
+        pixels(&renderer, &device, &queue, vec![&reference], matrix)
+    );
+    assert_ne!(
+        actual,
+        pixels(
+            &renderer,
+            &device,
+            &queue,
+            render.geometries(second).unwrap().collect(),
+            matrix
+        )
+    );
+    let bytes = render.allocation_bytes();
+    assert!(
+        render
+            .synchronize(&renderer, &device, &queue, requests(), 2, 0, 65536)
+            .is_empty()
+    );
+    assert_eq!(render.allocation_bytes(), bytes);
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    assert_eq!(
+        matrix,
+        Mat4::from_translation(Vec3::new(-0.1, 0., 0.5)) * scene.world_matrix(first).unwrap()
+    );
+    render.clear();
+    assert_eq!(render.counts(), (0, 0, 0));
+    assert_eq!(render.allocation_bytes(), 0);
+    assert!(pollster::block_on(scope.pop()).is_none());
+    println!(
+        "VOXY_CURVED_ROOT_GPU accepted_angle={angle} cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes={bytes} stop_bytes=0"
+    );
+}

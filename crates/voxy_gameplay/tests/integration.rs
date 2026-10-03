@@ -1308,7 +1308,7 @@ fn one_tick_curved_trajectory_hits_before_equal_endpoints_and_retains_orientatio
     let mut physics = CharacterPhysics::new(&scene, 1, 1);
     let mut input = player_input().unwrap();
     let request = CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO,
-        rotation: &trajectory, basis: glam::DQuat::IDENTITY };
+        rotation: &trajectory, basis: glam::DQuat::IDENTITY, pivot: Vec3::ZERO };
     let receipt = physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request]).unwrap()[0];
     let angle = (0.23 / 0.4_f64.hypot(0.02)).asin() - 0.02_f64.atan2(0.4);
     // q(t) = normalize([0, 8t(1-t), 0, 1]); first wall contact is analytic.
@@ -1335,7 +1335,7 @@ fn ordered_full_turn_and_final_step_do_not_hide_a_collision() {
         let mut input = player_input().unwrap();
         let receipt = physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60.,
             &[CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO,
-                rotation: &trajectory, basis: glam::DQuat::IDENTITY }]).unwrap()[0];
+                rotation: &trajectory, basis: glam::DQuat::IDENTITY, pivot: Vec3::ZERO }]).unwrap()[0];
         let angle = (0.23 / 0.4_f64.hypot(0.02)).asin() - 0.02_f64.atan2(0.4);
         assert!(!receipt.complete);
         assert!(scene.local(player).unwrap().rotation.abs_diff_eq(Quat::from_rotation_y(angle as f32), 1e-6));
@@ -1365,7 +1365,7 @@ fn noncommuting_curved_path_uses_body_basis_and_commits_once() {
     let mut input = player_input().unwrap();
     let receipt = physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60.,
         &[CharacterTrajectoryMotion { owner: player, displacement: Vec3::X * 0.05,
-            rotation: &trajectory, basis }]).unwrap()[0];
+            rotation: &trajectory, basis, pivot: Vec3::ZERO }]).unwrap()[0];
     assert!(receipt.complete);
     assert_eq!(receipt.completed_spans, trajectory.spans().len());
     let expected_delta = basis * trajectory.end_rotation() * basis.conjugate();
@@ -1387,7 +1387,7 @@ fn curved_grounded_yaw_preserves_jump_and_tall_body_avoids_sphere_speed_overesti
     let mut input = player_input().unwrap();
     for _ in 0..60 { physics.fixed_step(&mut scene, &mut input, 1. / 60.).unwrap(); }
     let request = CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO,
-        rotation: &yaw, basis: glam::DQuat::IDENTITY };
+        rotation: &yaw, basis: glam::DQuat::IDENTITY, pivot: Vec3::ZERO };
     assert!(physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request]).unwrap()[0].complete);
     assert!(physics.state(&scene, player).unwrap().unwrap().grounded);
     input.event(JUMP, 1.).unwrap();
@@ -1426,7 +1426,7 @@ fn trajectory_query_failure_after_another_body_stages_motion_is_atomic() {
     let velocities = [physics.state(&scene, player).unwrap().unwrap().velocity, physics.state(&scene, other).unwrap().unwrap().velocity];
     input.event(JUMP, 1.).unwrap();
     let request = CharacterTrajectoryMotion { owner: player, displacement: Vec3::X * 0.01,
-        rotation: &trajectory, basis: glam::DQuat::IDENTITY };
+        rotation: &trajectory, basis: glam::DQuat::IDENTITY, pivot: Vec3::ZERO };
     let requests = [CharacterTrajectoryMotion { owner: other, ..request }, request];
     assert_eq!(physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &requests).unwrap_err(), PhysicsError::SweepBudget);
     for (index, owner) in [player, other].into_iter().enumerate() {
@@ -1460,7 +1460,7 @@ fn angular_iteration_budget_is_shared_across_ordered_spans() {
     let mut physics = CharacterPhysics::new(&scene, 1, 1);
     let mut input = player_input().unwrap();
     let receipt = physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60.,
-        &[CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO, rotation: &first, basis: glam::DQuat::IDENTITY }]).unwrap()[0];
+        &[CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO, rotation: &first, basis: glam::DQuat::IDENTITY, pivot: Vec3::ZERO }]).unwrap()[0];
     assert!(receipt.complete);
     assert!(receipt.advancement_iterations > 0 && receipt.advancement_iterations < 256);
     assert_eq!(receipt.trajectory_queries, receipt.advancement_iterations + 2);
@@ -1468,7 +1468,7 @@ fn angular_iteration_budget_is_shared_across_ordered_spans() {
     let before = scene.local(player).unwrap();
     let mut physics = CharacterPhysics::new(&scene, 1, 1).with_angular_sweep_budget(receipt.advancement_iterations).unwrap();
     input.event(JUMP, 1.).unwrap();
-    let request = CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO, rotation: &full, basis: glam::DQuat::IDENTITY };
+    let request = CharacterTrajectoryMotion { owner: player, displacement: Vec3::ZERO, rotation: &full, basis: glam::DQuat::IDENTITY, pivot: Vec3::ZERO };
     assert_eq!(physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request]).unwrap_err(), PhysicsError::SweepBudget);
     assert_eq!(scene.local(player).unwrap(), before);
     assert!(physics.state(&scene, player).unwrap().is_none());
@@ -1477,4 +1477,162 @@ fn angular_iteration_budget_is_shared_across_ordered_spans() {
     let completed = physics.fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request]).unwrap()[0];
     assert!(completed.complete);
     assert!(completed.advancement_iterations > receipt.advancement_iterations);
+}
+
+#[test]
+fn offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints() {
+    use voxy_animation::Interpolation;
+    use voxy_gameplay::CharacterTrajectoryMotion;
+    let trajectory = rotation_trajectory(
+        &[Quat::IDENTITY, Quat::IDENTITY],
+        Interpolation::CubicSpline,
+        vec![
+            [glam::Vec4::ZERO, glam::Vec4::Y * 8.],
+            [-glam::Vec4::Y * 8., glam::Vec4::ZERO],
+        ],
+    );
+    for sign in [-1_f32, 1.] {
+        let (mut scene, player) = trajectory_wall_scene();
+        let wall = scene.active_components::<BoxCollider>().next().unwrap().0;
+        scene.set_local(wall, at(Vec3::Z * (0.25 * sign))).unwrap();
+        let mut physics = CharacterPhysics::new(&scene, 1, 1);
+        let mut input = player_input().unwrap();
+        let request = CharacterTrajectoryMotion {
+            owner: player,
+            displacement: Vec3::ZERO,
+            rotation: &trajectory,
+            basis: glam::DQuat::IDENTITY,
+            pivot: Vec3::X * (0.6 * sign),
+        };
+        let receipt = physics
+            .fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request])
+            .unwrap()[0];
+        // Pivot at x=.6: the center's z=.6*sin(angle), and the front corner's
+        // z=1*sin(angle)+.02*cos(angle). The first contact is independent of sampling.
+        let angle = (0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.);
+        let time = (1. - (1. - 4. * (angle * 0.5).tan() / 8.).sqrt()) * 0.5;
+        assert!(!receipt.complete);
+        assert!((receipt.path_fraction - time).abs() < 1e-7, "{receipt:?}");
+        let pose = scene.local(player).unwrap();
+        assert!(
+            pose.rotation
+                .abs_diff_eq(Quat::from_rotation_y(angle as f32), 1e-6)
+        );
+        let expected = Vec3::new(
+            (0.6 * (1. - angle.cos())) as f32,
+            0.,
+            (0.6 * angle.sin()) as f32,
+        );
+        let expected = expected * sign;
+        assert!(pose.translation.abs_diff_eq(expected, 1e-7), "{pose:?}");
+        assert!(receipt.displacement.abs_diff_eq(expected, 1e-7));
+        let body = physics.state(&scene, player).unwrap().unwrap().body;
+        let physical = glam::DVec3::new(body.anchor.x as f64, body.anchor.y as f64, body.anchor.z as f64)
+            + (glam::DVec3::from_array(body.min) + glam::DVec3::from_array(body.max)) * 0.5;
+        assert!((physical + receipt.rotation * request.pivot.as_dvec3()).abs_diff_eq(request.pivot.as_dvec3(), 1e-12));
+        // Scene transforms are f32: casting and normalizing the quaternion adds a few ULPs.
+        let anchor = pose.translation + pose.rotation * request.pivot;
+        assert!(
+            anchor.abs_diff_eq(request.pivot, 2e-7),
+            "pose={pose:?} anchor={anchor:?} receipt={receipt:?}"
+        );
+        physics
+            .fixed_step(&mut scene, &mut input, 1. / 60.)
+            .unwrap();
+        assert_eq!(scene.local(player).unwrap(), pose);
+    }
+}
+
+#[test]
+fn noncommuting_offset_pivot_uses_body_basis_and_failure_is_atomic() {
+    use voxy_animation::Interpolation;
+    use voxy_gameplay::CharacterTrajectoryMotion;
+    let trajectory = rotation_trajectory(
+        &[
+            Quat::IDENTITY,
+            Quat::from_rotation_x(0.6),
+            Quat::from_rotation_z(-0.7) * Quat::from_rotation_y(0.4),
+        ],
+        Interpolation::CubicSpline,
+        vec![[glam::Vec4::ZERO; 2]; 3],
+    );
+    let mut scene = SceneGraph::new(2);
+    let start = Transform {
+        translation: Vec3::new(0.2, 0.3, -0.1),
+        rotation: Quat::from_rotation_z(0.3),
+        ..Default::default()
+    };
+    let player = scene.spawn(None, start).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let basis = glam::DQuat::from_rotation_y(-0.4);
+    let pivot = Vec3::new(0.4, 0.7, -0.2);
+    let displacement = Vec3::X * 0.05;
+    let request = CharacterTrajectoryMotion {
+        owner: player,
+        displacement,
+        rotation: &trajectory,
+        basis,
+        pivot,
+    };
+    let mut physics = CharacterPhysics::new(&scene, 1, 0);
+    let mut input = player_input().unwrap();
+    let receipt = physics
+        .fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request])
+        .unwrap()[0];
+    let initial = glam::DQuat::from_array(start.rotation.to_array().map(f64::from)).normalize();
+    let delta = (basis * trajectory.end_rotation() * basis.conjugate()).normalize();
+    let expected =
+        displacement.as_dvec3() + initial * (pivot.as_dvec3() - delta * pivot.as_dvec3());
+    let pose = scene.local(player).unwrap();
+    assert!(receipt.complete);
+    assert!(receipt.rotation.abs_diff_eq(delta, 1e-12));
+    assert!(
+        pose.translation
+            .abs_diff_eq(start.translation + expected.as_vec3(), 2e-7)
+    );
+    assert!((pose.translation + pose.rotation * pivot).abs_diff_eq(
+        start.translation + displacement + start.rotation * pivot,
+        2e-7
+    ));
+    // A rejected pivot must leave the already accepted scene, carried velocity and input intact.
+    input.event(JUMP, 1.).unwrap();
+    let state = physics.state(&scene, player).unwrap().unwrap();
+    let invalid = CharacterTrajectoryMotion {
+        pivot: Vec3::splat(f32::NAN),
+        ..request
+    };
+    assert_eq!(
+        physics
+            .fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[invalid])
+            .unwrap_err(),
+        PhysicsError::InvalidMotion
+    );
+    assert_eq!(scene.local(player).unwrap(), pose);
+    assert_eq!(
+        physics.state(&scene, player).unwrap().unwrap().velocity,
+        state.velocity
+    );
+    assert!(input.state("jump").unwrap().pressed);
+    let mut limited = physics.with_angular_trajectory_query_budget(1).unwrap();
+    assert_eq!(
+        limited
+            .fixed_step_with_trajectory_motion(&mut scene, &mut input, 1. / 60., &[request])
+            .unwrap_err(),
+        PhysicsError::SweepBudget
+    );
+    assert_eq!(scene.local(player).unwrap(), pose);
+    assert_eq!(
+        limited.state(&scene, player).unwrap().unwrap().velocity,
+        state.velocity
+    );
+    assert!(input.state("jump").unwrap().pressed);
 }

@@ -1,0 +1,19 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.21s
+     Running tests/integration.rs (target/debug/deps/integration-2fafe314fe4d2b2f)
+
+running 1 test
+
+thread 'offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints' (21449764) panicked at crates/voxy_gameplay/tests/integration.rs:1530:9:
+pose=Transform { translation: Vec3(-0.0134369545, 0.0, -0.12626874), rotation: Quat(0.0, 0.10581808, 0.0, 0.9943856), scale: Vec3(1.0, 1.0, 1.0) } anchor=Vec3(-0.60000014, 0.0, 2.9802322e-8) receipt=AppliedCharacterTrajectoryMotion { owner: NodeId { scene: 1, slot: 0, generation: 0 }, displacement: Vec3(-0.0134369545, 0.0, -0.12626874), rotation: DQuat(0.0, 0.1058180598738658, 0.0, 0.9943855078411648), completed_spans: 0, span_fraction: 0.215740043451102, path_fraction: 0.013483752715693876, complete: false, advancement_iterations: 14, trajectory_queries: 16 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints ... FAILED
+
+failures:
+
+failures:
+    offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_gameplay --test integration`

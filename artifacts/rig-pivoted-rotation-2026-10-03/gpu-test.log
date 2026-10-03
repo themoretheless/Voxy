@@ -1,0 +1,12 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 44.38s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-0773fd9aa87bd708)
+
+running 1 test
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette has been running for over 60 seconds
+VOXY_CURVED_ROOT_GPU accepted_angle=0.5617691632760681 cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes=928 stop_bytes=0
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 107 filtered out; finished in 208.53s
+

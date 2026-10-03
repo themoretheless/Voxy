@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-03",
+  "status": "verified local changes, not pushed",
+  "checks": {
+    "gameplay_library": 29,
+    "gameplay_integration": 34,
+    "real_gpu_test": 1,
+    "release_build_exit": 0,
+    "clippy_exit": 0,
+    "clippy_warnings": "existing repository and test pedantic warnings remain"
+  },
+  "proved": [
+    "Exact moving-center SAT admission around a body-local pivot on normalized cubic paths",
+    "Analytic first contact for both mirrored wall/pivot directions with equal path endpoint orientations",
+    "Stationary physical pivot within 1e-12 in tested ungrounded collision case",
+    "Noncommuting path basis conversion and atomic invalid-pivot/query-budget failure",
+    "GPU output exactly equals independently baked bind-pose CPU mesh at accepted body pose",
+    "Retaining authored root rotation produces different GPU pixels",
+    "Two owners share one GPU source; allocations do not grow on repeated publication; clear releases all bytes"
+  ],
+  "gpu": {
+    "accepted_angle": 0.5617691632760681,
+    "shared_sources": 1,
+    "allocation_bytes": 928,
+    "clear_bytes": 0,
+    "presentation": "offscreen 64x64, caller-provided accepted frame and path"
+  },
+  "diagnostic": "An initial 1e-7 scene-pivot assertion was too tight for f32 quaternion normalization (2 ULPs). Final test independently checks physical f64 pivot at 1e-12 and scene pivot at 2e-7.",
+  "remaining": [
+    "Ordinary ModelAnimation/AnimationRuntime angular root-motion producer and transactional clock publication",
+    "Moving skeletal pivots and simultaneous authored translation/rotation",
+    "Constant-parent conversion and crossfade angular velocity integration",
+    "Ordinary native Play proof",
+    "Remaining engine features and full hardware/CUDA support in the original goal"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/angular_sweep.rs": "82e2ae205c2462d80a19e31bd0b80d9041921f6d1bbf41a995d14dbc5ac7344c",
+    "crates/voxy_gameplay/src/lib.rs": "10f432d1125103d627e324108d3cdfbba2ef6531f40623cf14b42ab89fa206ce",
+    "crates/voxy_gameplay/tests/integration.rs": "e65c22e794a38534d03afbecde3e42d1e5667c9b97b52037b1b0d596e897f4fd",
+    "crates/voxy_editor/src/animated_models/tests.rs": "7c9264c2581d07fdebb3040474f8a1b1b4591c1abe524f7c6421b152fbea340b",
+    "docs/engine-research/mechanisms/rig-animation/root-rotation-path.md": "6d01ece3f51a44e72a1e5a2460279b8f6decf1278cfbbff9e44b7aa0cea9653b"
+  }
+}

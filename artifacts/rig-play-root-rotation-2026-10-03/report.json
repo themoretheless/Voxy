@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-03",
+  "status": "verified local implementation; not pushed",
+  "base_commit": "9cc29594fcf0b19546f741134bf2b9cca66e61b1",
+  "feature": "Opt-in angular root motion in ordinary ModelAnimation Play with fixed selected-bone pivot",
+  "checks": {
+    "animation_library": 52,
+    "editor_library": 104,
+    "editor_ignored_device_cases": 8,
+    "gameplay_library": 29,
+    "gameplay_integration": 34,
+    "total_regular_tests": 219,
+    "real_gpu_test": 1,
+    "release_build_exit": 0,
+    "clippy_exit": 0,
+    "clippy": "completed with repository/pedantic warnings; not a warning-free certification",
+    "final_editor_check_exit": 0,
+    "changed_error_messages_targeted_test": 1
+  },
+  "proof": [
+    "Frame and ordered rotation path sample the same bounded phase interval; loop winding and pause are retained",
+    "Path budget, foreign rig and active transition preserve the core clock on error",
+    "Ordinary App Play admits a curved turn into a wall, removes root bone rotation from skin palette, and Stop restores authoring",
+    "Mixed translation-only and rotation owners use one physical/input transaction, with matching-translation conflict checks",
+    "Physics rejection preserves scene, input edge, clock serial and immutable accepted frame Arc; retry succeeds",
+    "Compiled constant translation proof rejects equal-key cubic pivot excursions",
+    "Uniform signed parent scale uses the proper reflected angular basis; nonuniform/moving parents and moving root pivots reject before publication",
+    "Real GPU pixels match independently baked bind pose at accepted body transform; double rotation differs; two owners share one source; repeat does not allocate; clear releases all bytes"
+  ],
+  "native": {
+    "foreground_presented_frames": 20,
+    "physics_serial": 12,
+    "accepted_angle": 0.21203309612481186,
+    "pivot": [
+      0.6,
+      0,
+      0
+    ],
+    "world_center": [
+      0.0134369545,
+      0,
+      0.62626874
+    ],
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_sources": 1,
+    "animation_bytes": 928,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true,
+    "evidence": "native-foreground.log; ordinary inspector/Play/Stop on current release binary; process terminated after complete acceptance",
+    "first_attempt": "background CLI was occluded, presented zero frames and timed out; excluded from proof",
+    "visual_scope": "native presented-frame instrumentation and exact offscreen GPU comparison; no manual screenshot review",
+    "hardware_scope": "available macOS GPU path only; no CUDA/NVIDIA or full-device compatibility certification"
+  },
+  "remaining": [
+    "General simultaneous translation/rotation with moving skeletal pivots",
+    "Velocity-blended angular crossfades and editor transition authoring",
+    "Foot locking and collision feedback",
+    "Complete production rig/hardware feature coverage and the original broader engine objective"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "12149d46576675decb1a8881ea57dfcbab86a82b5e3b17be2bd3b86ac560d97c",
+    "crates/voxy_animation/src/rotation_runtime_tests.rs": "b09f739ebbb1859746979cbdae4d1e02e72de655167adfe91f7723e8cee1bf18",
+    "crates/voxy_editor/src/model_playback.rs": "5c2d744e9c95df2381ad4eb4b648c0a91b9bf26889f334e98e75ef49e9d99feb",
+    "crates/voxy_editor/src/animation_runtime.rs": "93fe2801e2edba356e9d2a81607d7b35f8f069a5371b64d06ce4d7e4fb1815b3",
+    "crates/voxy_editor/src/animation_runtime/rotation_tests.rs": "4b576d158c3ee0f5c499b1755dc4042b583d9e883cd990e3e13745668f8e445f",
+    "crates/voxy_editor/src/animated_models/tests.rs": "26d35bac77cb2581a71dcafb1a1449de461bd026a9d182dcc9d657592fcd51f3",
+    "crates/voxy_editor/src/animation_smoke.rs": "2c84edacb1d3fee2ade81b38c599578437510af1bef5599032a434e5ff374b93",
+    "crates/voxy_editor/src/lib.rs": "3137defbc4d2f1edd12ad1cc12a8da92646677456d5bbf62b4bc86bae2fbac71",
+    "crates/voxy_editor/src/panels.rs": "a38ff4cef7e0cb631cc517a873642dd1777cd8d5f899f651618856498c9ba959",
+    "crates/voxy_gameplay/src/angular_sweep.rs": "82e2ae205c2462d80a19e31bd0b80d9041921f6d1bbf41a995d14dbc5ac7344c",
+    "crates/voxy_gameplay/src/lib.rs": "174096b8625d0e618304b31ec0f622ddd0996ea998ab2e741ac109afdd659744",
+    "crates/voxy_gameplay/tests/integration.rs": "e65c22e794a38534d03afbecde3e42d1e5667c9b97b52037b1b0d596e897f4fd",
+    "crates/voxy_render/examples/assets/root-pivot-turn.glb": "47c18959c43f232c7869a8683b5d30f9a763b3f3391ebe9ba28de645610329d9",
+    "docs/engine-research/mechanisms/rig-animation/root-rotation-path.md": "1876e5a729f652b95ade3bd9caf550fdf7f1cf580bb5cdc09b3d34d073631dfb",
+    "docs/engine-research/mechanisms/rig-animation/root-rotation-play.md": "c8a158813ea5e1734bff5a78920390fb9e13521ee11251d6995e96eb8f60b08c"
+  }
+}

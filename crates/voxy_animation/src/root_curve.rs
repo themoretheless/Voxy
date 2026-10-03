@@ -15,6 +15,7 @@ pub(super) struct RootCurve {
     knots: Vec<Knot>,
     duration: f64,
     playback: Playback,
+    mode: Interpolation,
 }
 
 impl RootCurve {
@@ -65,6 +66,7 @@ impl RootCurve {
             knots,
             duration: f64::from(duration),
             playback,
+            mode,
         }
     }
 
@@ -90,6 +92,67 @@ impl RootCurve {
         } else {
             (k.value, k.area + k.value * (time - k.time))
         }
+    }
+
+    pub(super) fn position(&self, time: f64) -> DVec3 {
+        self.local(time).0
+    }
+    pub(super) fn has_motion(&self, axes: [bool; 3]) -> bool {
+        self.knots.iter().any(|knot| {
+            knot.coefficients.iter().any(|value| {
+                axes.into_iter()
+                    .enumerate()
+                    .any(|(i, active)| active && value[i] != 0.)
+            })
+        })
+    }
+    pub(super) fn cuts(
+        &self,
+        start: f64,
+        end: f64,
+        limit: usize,
+    ) -> Result<Vec<f64>, super::AnimationError> {
+        let first = self.knots.partition_point(|knot| knot.time <= start);
+        let last = self.knots.partition_point(|knot| knot.time <= end);
+        if last - first > limit {
+            return Err(super::AnimationError::RootRigidBudget);
+        }
+        Ok(self.knots[first..last]
+            .iter()
+            .map(|knot| knot.time)
+            .collect())
+    }
+    pub(super) fn jump(&self, time: f64) -> Option<[DVec3; 2]> {
+        if self.mode != Interpolation::Step {
+            return None;
+        }
+        let index = self.knots.partition_point(|knot| knot.time < time);
+        if index == 0 || self.knots.get(index)?.time != time {
+            return None;
+        }
+        let values = [self.knots[index - 1].value, self.knots[index].value];
+        (values[0] != values[1]).then_some(values)
+    }
+    /// Exact Bernstein controls on a single key interval; the right endpoint
+    /// remains the pre-event value for STEP, assigning the jump separately.
+    pub(super) fn piece(&self, start: f64, end: f64) -> [DVec3; 4] {
+        let first = self.knots.partition_point(|knot| knot.time <= start);
+        if first == 0 {
+            return [DVec3::ZERO; 4];
+        }
+        let knot = &self.knots[first - 1];
+        let Some(next) = self.knots.get(first) else {
+            return [knot.value; 4];
+        };
+        let delta = next.time - knot.time;
+        let u = (start - knot.time) / delta;
+        let v = (end - start) / delta;
+        let c = knot.coefficients;
+        let a = ((c[3] * u + c[2]) * u + c[1]) * u + c[0];
+        let b = (c[1] + c[2] * (2. * u) + c[3] * (3. * u * u)) * v;
+        let d = (c[2] + c[3] * (3. * u)) * (v * v);
+        let e = c[3] * (v * v * v);
+        [a, a + b / 3., a + b * (2. / 3.) + d / 3., a + b + d + e]
     }
 
     fn unwrapped(&self, time: f64) -> (DVec3, DVec3) {
