@@ -9,6 +9,8 @@ pub(super) struct Smoke {
     pub(super) root_rotation: bool,
     pub(super) composed_root: bool,
     pub(super) foot_contact: bool,
+    pub(super) foot_reload: bool,
+    foot_reload_seen: bool,
     foot_review_until: Option<std::time::Instant>,
     rotation_origin: Option<voxy_scene::Transform>,
     pub(super) oriented_body: bool,
@@ -430,6 +432,7 @@ impl App {
     fn foot_contact_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         use glam::{Mat4, Vec3};
         let smoke = self.animation_smoke.as_ref().ok_or("missing foot smoke")?;
+        let foot_reload = smoke.foot_reload;
         if self.frames < smoke.since + 3 { return Ok(false); }
         match smoke.phase {
             0 => {
@@ -444,7 +447,7 @@ impl App {
                 self.scene.insert_component(first,voxy_gameplay::CharacterBody {
                     half_extents:[0.1,1.,0.1],speed:0.3,..Default::default() })?;
                 self.scene.insert_component(second,voxy_gameplay::BoxCollider { half_extents:[4.,0.1,4.] })?;
-                self.scene.insert_component(first,crate::ModelAnimation::default())?;
+                self.scene.insert_component(first,crate::ModelAnimation { clip_name:if std::env::var_os("VOXY_FOOT_REORDER_SMOKE").is_some() {"move".into()}else{String::new()},transition_seconds:if foot_reload {0.5}else{0.},..Default::default() })?;
                 self.scene.insert_component(second,crate::ModelAnimation { clip:None,..Default::default() })?;
                 self.scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
                     bones:["hip".into(),"knee".into(),"foot".into()],sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
@@ -458,6 +461,7 @@ impl App {
                 self.play.player_input.event(voxy_gameplay::RIGHT,1.)?;
                 let smoke = self.animation_smoke.as_mut().unwrap();
                 smoke.authoring=Some(authoring);smoke.phase=1;smoke.since=self.frames;
+                if smoke.foot_reload { println!("VOXY_NATIVE_FOOT_RELOAD_READY frames={}",self.frames); }
             }
             1 => {
                 if self.play.simulation_ticks < 12 { return Ok(false); }
@@ -465,6 +469,22 @@ impl App {
                 let asset = self.catalog.snapshot(&self.id).ok_or("missing foot asset")?;
                 let model = asset.value().animated.as_ref().ok_or("missing foot model")?;
                 let frame = self.play.animations.frame(first,model).ok_or("missing accepted foot frame")?;
+                if smoke.foot_reload {
+                    self.play.player_input.event(voxy_gameplay::RIGHT,0.)?;
+                    let selected = self.scene.component::<crate::ModelAnimation>(first)?
+                        .ok_or("missing foot animation settings")?.resolve_clip(model)?
+                        .ok_or("missing foot animation selection")?;
+                    if model.animations[selected].duration()!=2. { return Ok(false); }
+                    if frame.transition_weight < 1. {
+                        if !smoke.foot_reload_seen {
+                            println!("VOXY_NATIVE_FOOT_RELOAD_FADE frames={} ticks={} duration=2 weight={}",
+                                self.frames,self.play.simulation_ticks,frame.transition_weight);
+                            self.animation_smoke.as_mut().unwrap().foot_reload_seen=true;
+                        }
+                        return Ok(false);
+                    }
+                    if !smoke.foot_reload_seen { return Err("revised clip did not present an active fade".into()); }
+                }
                 let tip = usize::from(model.resolve_joint_name("foot")?);
                 let mut globals: Vec<Mat4> = Vec::new();
                 for (local,joint) in frame.pose.local().iter().zip(model.skeleton.joints()) {
@@ -479,6 +499,22 @@ impl App {
                 let signature = frame.skin_matrices.iter().map(|m|m.to_cols_array().map(f32::to_bits)).collect();
                 if graphics.animated_models.pose_signature(first)? != Some(signature) {
                     return Ok(false);
+                }
+                if std::env::var_os("VOXY_FOOT_RELOAD_MOTION").is_some() {
+                    let phase = self.play.animations.clip_phase(first).ok_or("missing revised clip phase")?;
+                    let hip = frame.pose.local()[usize::from(model.resolve_joint_name("hip")?)].translation;
+                    let expected = Vec3::new(0.15*phase as f32,0.5+0.05*phase as f32,0.);
+                    if phase <= 0.01 || !hip.abs_diff_eq(expected,2e-6) {
+                        return Err(format!("revised motion mismatch: phase={phase} hip={hip:?} expected={expected:?}").into());
+                    }
+                    println!("VOXY_NATIVE_FOOT_RELOAD_MOTION frames={} phase={phase} hip={hip:?} accepted_palette=true",self.frames);
+                }
+                if std::env::var_os("VOXY_FOOT_REORDER_SMOKE").is_some() {
+                    let settings = self.scene.component::<crate::ModelAnimation>(first)?.ok_or("missing named selection")?;
+                    if settings.resolve_clip(model)? != Some(1) || self.play.animations.clip_name(first) != Some("move") {
+                        return Err("reordered clips changed the named animation selection".into());
+                    }
+                    println!("VOXY_NATIVE_NAMED_CLIP_REORDER frames={} name=move index=1 accepted_palette=true",self.frames);
                 }
                 let (owners,gpu_primitives,sources) = graphics.animated_models.counts();
                 if (owners,gpu_primitives,sources)!=(2,2,1) { return Err("native foot skin resources missing".into()); }

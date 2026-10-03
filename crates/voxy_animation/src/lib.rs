@@ -2,6 +2,8 @@
 
 mod root_curve;
 mod ik;
+mod retarget;
+pub use retarget::{RetargetBinding, RetargetJoint};
 mod blend_phase;
 pub use blend_phase::{ClipPhase, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval, FrozenSourceTick};
 
@@ -359,6 +361,19 @@ impl AnimationClip {
             interpolation: interpolation.into(),
             tangents: tangents.into(),
         })
+    }
+
+    /// Exact authored equivalence for retaining playback across asset reloads.
+    /// Derived motion caches and allocation identity do not affect the animation.
+    #[must_use]
+    pub fn has_same_authored_animation(&self, other: &Self) -> bool {
+        rigs_match(&self.rig, &other.rig)
+            && self.name == other.name
+            && self.duration == other.duration
+            && self.playback == other.playback
+            && self.tracks == other.tracks
+            && self.interpolation == other.interpolation
+            && self.tangents == other.tangents
     }
 
     #[must_use]
@@ -906,6 +921,22 @@ impl Animator {
         next: Arc<AnimationClip>,
         duration: f32,
     ) -> Result<(), AnimationError> {
+        self.transition_to_at_phase(next, duration, 0.)
+    }
+
+    /// Starts a transition at a normalized target phase, for live clip revisions.
+    /// Phase transfer changes the sampling origin, not extracted root displacement.
+    /// Every admission error preserves the previous playback state.
+    pub fn transition_to_at_phase(
+        &mut self,
+        next: Arc<AnimationClip>,
+        duration: f32,
+        phase: f64,
+    ) -> Result<(), AnimationError> {
+        if !phase.is_finite() || !(0. ..=1.).contains(&phase) {
+            return Err(AnimationError::InvalidAnimationPhase);
+        }
+        let next_time = phase * f64::from(next.duration);
         if !duration.is_finite() || !(0.0..=60.0).contains(&duration) {
             return Err(AnimationError::InvalidTransitionDuration);
         }
@@ -916,7 +947,7 @@ impl Animator {
         if duration == 0.0 {
             self.motion_curve = next_curve;
             self.current = next;
-            self.time = 0.0;
+            self.time = next_time;
             self.transition = None;
             return Ok(());
         }
@@ -955,7 +986,7 @@ impl Animator {
         });
         self.current = next;
         self.motion_curve = next_curve;
-        self.time = 0.0;
+        self.time = next_time;
         Ok(())
     }
 
@@ -1325,6 +1356,7 @@ pub enum TrackError {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AnimationError {
+    InvalidRetargetBinding,
     InvalidIkChain,
     InvalidIkTarget,
     UnsupportedIkScale,
@@ -1352,6 +1384,7 @@ pub enum AnimationError {
     InvalidPlaybackSpeed,
     InvalidTransitionDuration,
     InvalidAnimationTimeStep,
+    InvalidAnimationPhase,
     NumericalOverflow,
 }
 

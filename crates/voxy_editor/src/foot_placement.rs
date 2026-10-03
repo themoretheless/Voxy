@@ -291,7 +291,8 @@ impl FootRuntime {
                 } else if let Some((weight, active_fraction)) = frozen_event {
                     Some(contact_events::SourceTravel::Frozen { weight, active_fraction })
                 } else { None };
-                contact_events::mixed_swing(keys, interval, source, budget)?
+                contact_events::mixed_swing(keys, interval, source,
+                    blend.is_some_and(|phases| phases.source.is_some()), budget)?
             } else { false };
             if swing {
                 foot.state = FootContactState::default();
