@@ -276,4 +276,3 @@ test lod_search::tests::indexed_search_prunes_without_changing_flat_geometry_bou
 test reconstruction_material::ggx_tests::white_furnace_energy_and_analytic_maximum_roughness ... ok
 
 test result: ok. 130 passed; 0 failed; 13 ignored; 0 measured; 0 filtered out; finished in 0.29s
-

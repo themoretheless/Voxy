@@ -9,4 +9,3 @@ REFERENCE_RIG_PROFILE asset=reference-rig-cubic adapter="Apple M4 Max" backend=M
 test scene::skinning::tests::gpu_reference_rig_cubic_clips_match_cpu_and_render ... ok
 
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 140 filtered out; finished in 35.03s
-

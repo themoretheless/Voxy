@@ -17,4 +17,3 @@ REFERENCE_RIG_PROFILE asset=reference-rig-step adapter="Apple M4 Max" backend=Me
 ok
 
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 137 filtered out; finished in 36.83s
-
