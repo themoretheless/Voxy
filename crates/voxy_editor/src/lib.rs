@@ -5159,6 +5159,27 @@ mod tests {
         assert!(app.play.playing.is_none());
     }
     #[test]
+    fn authored_character_turn_uses_physics_and_stop_restores_pose() {
+        let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../voxy_render/examples/assets/quad.obj");
+        let mut app = App::new(&fixture, false).unwrap();
+        let owner = app.instances[0];
+        app.scene.insert_component(owner, CharacterBody {
+            speed: 0., gravity: 0., ..Default::default()
+        }).unwrap();
+        app.scene.insert_component(owner, voxy_gameplay::AngularMotion {
+            axis: [0., 1., 0.], radians_per_second: 2.,
+        }).unwrap();
+        app.commit_authoring().unwrap();
+        let expected = app.authoring_document().unwrap();
+        app.toggle_play().unwrap();
+        for _ in 0..60 { app.advance_game(1. / 60.).unwrap(); }
+        assert!(app.scene.local(app.instances[0]).unwrap().rotation.abs_diff_eq(glam::Quat::from_rotation_y(2.), 1e-5));
+        assert_eq!(app.authoring.history.as_ref().unwrap().current(), &expected);
+        app.toggle_play().unwrap();
+        assert_eq!(app.authoring_document().unwrap(), expected);
+    }
+    #[test]
     fn shutdown_joins_workers_after_behavior_destroy_panics() {
         #[derive(Debug)]
         struct PanickingDestroy;

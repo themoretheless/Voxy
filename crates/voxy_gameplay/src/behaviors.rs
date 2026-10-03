@@ -25,6 +25,9 @@ impl AngularMotion {
 impl Behavior for AngularMotion {
     #[allow(clippy::cast_possible_truncation)]
     fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
+        if scene.component::<CharacterBody>(owner).ok().flatten().is_some() {
+            return; // CharacterPhysics is the sole pose writer for this owner.
+        }
         if let Ok(mut local) = scene.local(owner) {
             let mut angle = (self.radians_per_second * delta).rem_euclid(std::f64::consts::TAU);
             if angle > std::f64::consts::PI {
@@ -115,7 +118,9 @@ impl AngularMotionBatch {
         self.reconcile(scene)?;
         self.edits.clear();
         for (owner, motion) in &self.motions {
-            if !scene.active_in_hierarchy(*owner).unwrap_or(false) {
+            if !scene.active_in_hierarchy(*owner).unwrap_or(false)
+                || scene.component::<CharacterBody>(*owner).map_err(|e| e.to_string())?.is_some()
+            {
                 continue;
             }
             let mut local = scene.local(*owner).map_err(|e| e.to_string())?;
@@ -189,7 +194,10 @@ pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), String> {
     {
         let mut current = Some(node);
         while let Some(owner) = current {
-            if scene
+            let character_self = owner == node
+                && scene.component::<CharacterBody>(node).map_err(|e| e.to_string())?.is_some()
+                && scene.component::<BoxCollider>(node).map_err(|e| e.to_string())?.is_none();
+            if !character_self && scene
                 .component::<AngularMotion>(owner)
                 .map_err(|error| error.to_string())?
                 .is_some()

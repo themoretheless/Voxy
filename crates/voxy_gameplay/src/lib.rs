@@ -241,6 +241,32 @@ pub struct AppliedCharacterMotion {
     pub angular_fraction: f64,
 }
 
+/// Aggregate trajectory storage/work admitted in one fixed tick.
+pub const MAX_CHARACTER_TRAJECTORY_SPANS: usize = 4096;
+/// World translation followed by a complete fixed-center rotation path.
+/// `basis` conjugates the path's initial parent-local frame into body-local axes.
+#[derive(Clone, Copy, Debug)]
+pub struct CharacterTrajectoryMotion<'a> {
+    pub owner: NodeId,
+    pub displacement: Vec3,
+    pub rotation: &'a voxy_animation::RootRotationPath,
+    pub basis: glam::DQuat,
+}
+/// A STEP collision may have path_fraction=1 without completing the final event.
+/// Use `complete`, `completed_spans` and `span_fraction` for exact admission.
+#[derive(Clone, Copy, Debug)]
+pub struct AppliedCharacterTrajectoryMotion {
+    pub owner: NodeId,
+    pub displacement: Vec3,
+    pub rotation: glam::DQuat,
+    pub completed_spans: usize,
+    pub span_fraction: f64,
+    pub path_fraction: f64,
+    pub complete: bool,
+    pub advancement_iterations: usize,
+    pub trajectory_queries: usize,
+}
+
 #[derive(Clone, Copy, Debug)]
 struct RuntimeBody {
     state: CharacterState,
@@ -331,6 +357,7 @@ pub struct CharacterPhysics {
     max_colliders: usize,
     depenetration: bool,
     angular_iterations: usize,
+    trajectory_queries: usize,
 }
 impl CharacterPhysics {
     #[must_use]
@@ -342,6 +369,7 @@ impl CharacterPhysics {
             max_colliders,
             depenetration: false,
             angular_iterations: 256,
+            trajectory_queries: 65_536,
         }
     }
     /// Bounds conservative angular advancement work per requested body.
@@ -352,6 +380,16 @@ impl CharacterPhysics {
             return Err(PhysicsError::Capacity);
         }
         self.angular_iterations = iterations;
+        Ok(self)
+    }
+    /// Bounds total curved-trajectory queries over all requested bodies in a tick.
+    /// One query admits one span, one whole-interval obstacle test, or one SAT
+    /// obstacle distance test. Exhaustion rejects all staged bodies and input.
+    /// # Errors
+    /// Rejects zero or more than 1,048,576 queries.
+    pub fn with_angular_trajectory_query_budget(mut self, queries: usize) -> Result<Self, PhysicsError> {
+        if !(1..=1_048_576).contains(&queries) { return Err(PhysicsError::Capacity); }
+        self.trajectory_queries = queries;
         Ok(self)
     }
     /// Enables bounded overlap recovery on runtime admission and external teleports.
@@ -372,6 +410,7 @@ impl CharacterPhysics {
     /// dynamic/static shape combinations. Dynamic ancestors are unsupported.
     pub fn validate(&self, scene: &SceneGraph) -> Result<(), PhysicsError> {
         self.validate_scene(scene)?;
+        validate_behavior_descriptors(scene).map_err(|_| PhysicsError::InvalidMotion)?;
         if scene.components::<CharacterBody>().count() > self.max_bodies
             || scene.components::<BoxCollider>().count() > self.max_colliders
         {
@@ -546,6 +585,7 @@ impl CharacterPhysics {
         if motions.len() > self.max_bodies {
             return Err(PhysicsError::InvalidMotion);
         }
+        let requested_owners: HashSet<_> = motions.iter().map(|(owner, _)| *owner).collect();
         let motions: Vec<_> = motions
             .iter()
             .map(|&(owner, displacement)| CharacterMotion {
@@ -558,6 +598,7 @@ impl CharacterPhysics {
             .map(|applied| {
                 applied
                     .into_iter()
+                    .filter(|motion| requested_owners.contains(&motion.owner))
                     .map(|motion| (motion.owner, motion.displacement))
                     .collect()
             })
@@ -566,6 +607,8 @@ impl CharacterPhysics {
     /// Sweeps each requested translation, then its complete fixed-center rotation
     /// against active static boxes. Input/gravity runs first. Contact-limited arcs
     /// return their accepted fraction; winding is not discarded at equal endpoints.
+    /// Active authored AngularMotion also produces receipts; a simultaneous nonzero
+    /// explicit angular request is rejected rather than applied by two writers.
     /// # Errors
     /// Invalid requests and sweep-budget failure preserve all scene/body/input state.
     pub fn fixed_step_with_rigid_motion(
@@ -575,7 +618,47 @@ impl CharacterPhysics {
         dt: f64,
         motions: &[CharacterMotion],
     ) -> Result<Vec<AppliedCharacterMotion>, PhysicsError> {
+        self.fixed_step_with_rotation_paths(scene, input, dt, motions, &[])
+            .map(|(arcs, _)| arcs)
+    }
+
+    /// Admits each complete ordered LINEAR/STEP/CUBICSPLINE path in one staged
+    /// tick. Contact stops at the first hit; later spans are not applied. Shared
+    /// budgets never reset at key boundaries. Input/gravity precedes translation;
+    /// grounding is refreshed once after the accepted rotation.
+    /// # Errors
+    /// Invalid/duplicate/inactive requests, conflicting AngularMotion, aggregate
+    /// capacity and solver-budget failure preserve scene, all body state and input.
+    pub fn fixed_step_with_trajectory_motion(
+        &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
+        paths: &[CharacterTrajectoryMotion<'_>],
+    ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
+        if paths.len() > self.max_bodies { return Err(PhysicsError::InvalidMotion); }
+        let motions: Vec<_> = paths.iter().map(|path| CharacterMotion {
+            owner: path.owner, displacement: path.displacement, angular_displacement: Vec3::ZERO,
+        }).collect();
+        self.fixed_step_with_rotation_paths(scene, input, dt, &motions, paths)
+            .map(|(_, paths)| paths)
+    }
+
+    fn fixed_step_with_rotation_paths(
+        &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
+        motions: &[CharacterMotion], paths: &[CharacterTrajectoryMotion<'_>],
+    ) -> Result<(Vec<AppliedCharacterMotion>, Vec<AppliedCharacterTrajectoryMotion>), PhysicsError> {
         self.validate(scene)?;
+        let mut requested_paths = HashMap::with_capacity(paths.len());
+        let mut total_spans = 0_usize;
+        for path in paths {
+            total_spans = total_spans.checked_add(path.rotation.spans().len()).ok_or(PhysicsError::InvalidMotion)?;
+            let travel = path.rotation.angular_travel_bound();
+            if total_spans > MAX_CHARACTER_TRAJECTORY_SPANS || !travel.is_finite()
+                || travel > f64::from(4. * std::f32::consts::TAU)
+                || !path.basis.is_finite() || !path.basis.is_normalized()
+                || requested_paths.insert(path.owner, (path.rotation, path.basis.normalize())).is_some()
+            { return Err(PhysicsError::InvalidMotion); }
+        }
+        let mut trajectory_queries = self.trajectory_queries;
+        let mut applied_paths = Vec::with_capacity(paths.len());
         if motions.len() > self.max_bodies {
             return Err(PhysicsError::InvalidMotion);
         }
@@ -601,6 +684,32 @@ impl CharacterPhysics {
         let mut applied = Vec::with_capacity(motions.len());
         if !dt.is_finite() || dt <= 0.0 || dt > 0.1 {
             return Err(PhysicsError::InvalidStep);
+        }
+        // Authored axes are parent-local; character ancestors have identity
+        // rotation/scale, so this is a world axis. Convert to the API's body axis.
+        // Preserve winding and admit exactly one angular source per owner.
+        for (owner, _) in scene.active_components::<CharacterBody>() {
+            let Some(motion) = scene.component::<AngularMotion>(owner)? else { continue; };
+            let angle = motion.radians_per_second * dt;
+            if angle.abs() > f64::from(4. * std::f32::consts::TAU) {
+                return Err(PhysicsError::InvalidMotion);
+            }
+            if angle == 0. { continue; }
+            let request = requested.entry(owner).or_insert(CharacterMotion {
+                owner, displacement: Vec3::ZERO, angular_displacement: Vec3::ZERO,
+            });
+            if request.angular_displacement != Vec3::ZERO || requested_paths.contains_key(&owner) {
+                return Err(PhysicsError::InvalidMotion);
+            }
+            let local_rotation = scene.local(owner)?.rotation;
+            let orientation = self.states.get(&owner)
+                .filter(|state| state.published_rotation == local_rotation
+                    && scene.component::<CharacterBody>(owner).ok().flatten() == Some(&state.descriptor)
+                    && translation(scene, owner).ok() == Some(state.published))
+                .map_or_else(|| glam::DQuat::from_array(local_rotation.to_array().map(f64::from)).normalize(),
+                    |state| state.orientation);
+            request.angular_displacement = (orientation.conjugate()
+                * Vec3::from_array(motion.axis).as_dvec3().normalize() * angle).as_vec3();
         }
         let live: HashSet<_> = scene
             .components::<CharacterBody>()
@@ -696,25 +805,33 @@ impl CharacterPhysics {
                     runtime.state.velocity[1] = 0.;
                 }
                 let mut angular_fraction = 1.;
-                if request.angular_displacement != Vec3::ZERO {
+                let mut accepted_path = None;
+                let angular = if let Some((path, basis)) = requested_paths.get(&owner) {
+                    let hit = angular_sweep::sweep_path(position, runtime.rest_edges, runtime.orientation,
+                        path, *basis, &shapes, self.angular_iterations, &mut trajectory_queries)?;
+                    angular_fraction = hit.path_fraction;
+                    accepted_path = Some(AppliedCharacterTrajectoryMotion {
+                        owner, displacement: Vec3::ZERO, rotation: hit.rotation,
+                        completed_spans: hit.completed_spans, span_fraction: hit.span_fraction,
+                        path_fraction: hit.path_fraction, complete: hit.complete,
+                        advancement_iterations: hit.advancement_iterations, trajectory_queries: hit.trajectory_queries,
+                    });
+                    Some((hit.rotation, hit.normal))
+                } else if request.angular_displacement != Vec3::ZERO {
                     let angular = request.angular_displacement.as_dvec3();
                     let world_angular = runtime.orientation * angular;
-                    let hit = angular_sweep::sweep(
-                        position,
-                        runtime.edges,
-                        world_angular,
-                        &shapes,
-                        self.angular_iterations,
-                    )?;
+                    let hit = angular_sweep::sweep(position, runtime.edges, world_angular,
+                        &shapes, self.angular_iterations)?;
                     angular_fraction = hit.fraction;
-                    runtime.orientation = (runtime.orientation
-                        * glam::DQuat::from_scaled_axis(angular * angular_fraction))
-                    .normalize();
+                    Some((glam::DQuat::from_scaled_axis(angular * angular_fraction), hit.normal))
+                } else { None };
+                if let Some((rotation, normal)) = angular {
+                    runtime.orientation = (runtime.orientation * rotation).normalize();
                     runtime.edges = runtime.rest_edges.map(|edge| runtime.orientation * edge);
                     runtime.published_rotation =
                         Quat::from_array(runtime.orientation.to_array().map(|value| value as f32))
                             .normalize();
-                    if let Some(normal) = hit.normal {
+                    if let Some(normal) = normal {
                         let into = carried_velocity.dot(normal);
                         if into < 0. {
                             carried_velocity -= normal * into;
@@ -733,6 +850,10 @@ impl CharacterPhysics {
                     );
                     runtime.state.velocity = carried_velocity.to_array();
                     relocate(runtime, position, *descriptor);
+                }
+                if let Some(mut receipt) = accepted_path {
+                    receipt.displacement = (position - start).as_vec3();
+                    applied_paths.push(receipt);
                 }
                 applied.push(AppliedCharacterMotion {
                     owner,
@@ -778,7 +899,7 @@ impl CharacterPhysics {
         scene.set_locals(&edits)?;
         self.states = next;
         input.finish_frame();
-        Ok(applied)
+        Ok((applied, applied_paths))
     }
 }
 fn step_affine(

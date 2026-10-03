@@ -1,0 +1,42 @@
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_curve.rs:127:12
+    |
+127 |         if end == start {
+    |            ^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(end - start).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+    = note: `-W clippy::float-cmp` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::float_cmp)]`
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/lib.rs:459:35
+    |
+459 |         self.try_sample(skeleton, self.phase(time) as f32)
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+    = note: `-W clippy::cast-possible-truncation` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::cast_possible_truncation)]`
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/lib.rs:789:17
+    |
+789 |                 (transition.elapsed / transition.duration) as f32,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/lib.rs:897:26
+    |
+897 |             let weight = (transition.elapsed / transition.duration) as f32;
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: `voxy_animation` (lib) generated 4 warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.55s

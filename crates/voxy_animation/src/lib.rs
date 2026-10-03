@@ -1,9 +1,15 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
 mod root_curve;
+mod root_rotation;
+pub use root_rotation::{
+    MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
+    RootRotationCurve, RootRotationPath, RootRotationSpan,
+};
 
 use std::fmt;
-use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, OnceLock};
 
 use glam::{Mat4, Quat, Vec3, Vec4};
 
@@ -160,6 +166,8 @@ pub enum Playback {
 pub struct AnimationClip {
     rig: Arc<[Joint]>,
     root_curve: Arc<root_curve::RootCurve>,
+    rotation_curves: Arc<[OnceLock<Result<RootRotationCurve, AnimationError>>]>,
+    rotation_cache_keys: Arc<AtomicUsize>,
     name: Arc<str>,
     duration: f32,
     playback: Playback,
@@ -315,6 +323,11 @@ impl AnimationClip {
             constant_transforms,
             rig: skeleton.joints.clone(),
             root_curve,
+            rotation_curves: (0..tracks.len())
+                .map(|_| OnceLock::new())
+                .collect::<Vec<_>>()
+                .into(),
+            rotation_cache_keys: Arc::new(AtomicUsize::new(0)),
             name,
             duration,
             playback,
@@ -346,6 +359,39 @@ impl AnimationClip {
             self.duration,
             self.playback,
         ))
+    }
+
+    /// Compiles one selected quaternion channel for ordered root rotation extraction.
+    /// Selected channels compile once per immutable clip, including concurrent
+    /// callers. Clones share coefficients. This preserves curves and winding across
+    /// keys/loops; it does not collapse the path to an endpoint quaternion.
+    /// # Errors
+    /// Rejects an unknown joint or more than 65,536 compiled rotation keys in
+    /// total across this clip's selected channels. Cached data lasts with the clip.
+    pub fn root_rotation_curve(&self, joint: u16) -> Result<RootRotationCurve, AnimationError> {
+        let index = usize::from(joint);
+        let Some(cache) = self.rotation_curves.get(index) else {
+            return Err(AnimationError::InvalidRootMotionJoint(joint));
+        };
+        cache
+            .get_or_init(|| {
+                let count = self.tracks[index].rotations.len();
+                self.rotation_cache_keys
+                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |keys| {
+                        keys.checked_add(count)
+                            .filter(|total| *total <= MAX_ROOT_ROTATION_CACHE_KEYS)
+                    })
+                    .map_err(|_| AnimationError::RootRotationBudget)?;
+                RootRotationCurve::new(
+                    &self.tracks[index].rotations,
+                    self.interpolation[index].rotation,
+                    &self.tangents[index].rotation,
+                    self.rig[index].bind_local.rotation,
+                    self.duration,
+                    self.playback,
+                )
+            })
+            .clone()
     }
 
     /// Exact rig compatibility, including ordered names, hierarchy and bind data.
@@ -610,6 +656,26 @@ pub struct AnimatorFrame {
 }
 
 impl AnimatorFrame {
+    /// Removes the selected joint's displayed rotation after its ordered motion
+    /// has been extracted separately. Bind rotation, translation, signed scale,
+    /// other joints and translation motion remain authoritative. Rebuilds the
+    /// skin palette before returning; it neither extracts nor applies a path.
+    /// # Errors
+    /// Rejects a foreign rig, unknown motion joint, invalid pose or palette.
+    pub fn without_root_rotation(mut self, skeleton: &Skeleton) -> Result<Self, AnimationError> {
+        let index = usize::from(self.root_motion_joint);
+        let joint = skeleton.joints.get(index)
+            .ok_or(AnimationError::InvalidRootMotionJoint(self.root_motion_joint))?;
+        if !rigs_match(&self.pose.rig, &skeleton.joints) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        let local = self.pose.local.get_mut(index).ok_or(AnimationError::InvalidPose(index))?;
+        if !local.is_valid() { return Err(AnimationError::InvalidPose(index)); }
+        local.rotation = joint.bind_local.rotation;
+        self.skin_matrices = self.pose.skin_matrices(skeleton)?;
+        Ok(self)
+    }
+
     /// Consumes selected translation axes into a separate parent-local motion request.
     /// The selected joint's corresponding pose coordinates return to bind translation;
     /// rotations, scale, other axes and other joints are retained. The palette is
@@ -1142,6 +1208,8 @@ pub enum TrackError {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AnimationError {
+    RootRotationBudget,
+    InvalidRootRotationCurve,
     InvalidRootMotionJoint(u16),
     SkeletonMismatch,
     InvalidSampleTime,
@@ -2507,6 +2575,54 @@ mod tests {
         )
     }
 
+    #[test]
+    fn extracted_root_rotation_returns_to_bind_and_rebuilds_the_hierarchical_palette() {
+        let mut joints = skeleton().joints().to_vec();
+        joints[1].bind_local.rotation = Quat::from_rotation_x(0.23);
+        joints[1].bind_local.scale = Vec3::new(-1., 2., 1.);
+        joints[1].inverse_bind = joints[1].bind_local.matrix().inverse();
+        let rig = Skeleton::new(joints).unwrap();
+        let mut pose = rig.bind_pose();
+        pose.local[0].translation = Vec3::X * 7.;
+        pose.local[0].rotation = Quat::from_rotation_y(0.4);
+        pose.local[1] = Transform { translation: Vec3::new(3., 4., 5.),
+            rotation: Quat::from_rotation_z(0.7), scale: Vec3::new(-2., 3., 4.) };
+        let original = AnimatorFrame { skin_matrices: pose.skin_matrices(&rig).unwrap(), pose,
+            root_motion: Vec3::new(0.1, 0.2, 0.3), root_motion_joint: 1, transition_weight: 0.5 };
+        let output = original.clone().without_root_rotation(&rig).unwrap();
+        assert_eq!(output.pose.local()[0], original.pose.local()[0]);
+        assert_eq!(output.pose.local()[1].translation, original.pose.local()[1].translation);
+        assert_eq!(output.pose.local()[1].scale, original.pose.local()[1].scale);
+        assert_eq!(output.pose.local()[1].rotation, rig.joints()[1].bind_local.rotation);
+        assert_eq!(output.root_motion, original.root_motion);
+        assert_eq!(output.transition_weight, original.transition_weight);
+        let expected_global = original.pose.local()[0].matrix()
+            * Mat4::from_scale_rotation_translation(Vec3::new(-2., 3., 4.),
+                Quat::from_rotation_x(0.23), Vec3::new(3., 4., 5.));
+        assert!(output.skin_matrices[1].abs_diff_eq(expected_global * rig.joints()[1].inverse_bind, 1e-6));
+        assert!((output.skin_matrices[1].transform_point3(Vec3::X)
+            - original.skin_matrices[1].transform_point3(Vec3::X)).length() > 0.1);
+        let (first, displacement) = output.clone().into_in_place_translation(&rig, [true, false, true]).unwrap();
+        let (second, other_displacement) = original.clone().into_in_place_translation(&rig, [true, false, true]).unwrap();
+        let second = second.without_root_rotation(&rig).unwrap();
+        assert_eq!(first.pose, second.pose);
+        assert_eq!(first.skin_matrices, second.skin_matrices);
+        assert_eq!(displacement, other_displacement);
+        assert_eq!(displacement, Vec3::new(0.1, 0., 0.3));
+        let mut foreign = rig.joints().to_vec();
+        foreign[1].name = Arc::from("different");
+        assert_eq!(original.clone().without_root_rotation(&Skeleton::new(foreign).unwrap()).unwrap_err(), AnimationError::SkeletonMismatch);
+        let mut invalid = original.clone();
+        invalid.root_motion_joint = u16::MAX;
+        assert_eq!(invalid.without_root_rotation(&rig).unwrap_err(), AnimationError::InvalidRootMotionJoint(u16::MAX));
+        let mut invalid = original.clone();
+        invalid.pose.local[1].rotation = Quat::from_array([f32::NAN; 4]);
+        assert_eq!(invalid.without_root_rotation(&rig).unwrap_err(), AnimationError::InvalidPose(1));
+        let mut invalid = original.clone();
+        invalid.pose.local[0].translation = Vec3::splat(f32::INFINITY);
+        assert_eq!(invalid.without_root_rotation(&rig).unwrap_err(), AnimationError::InvalidPose(0));
+        assert!(original.pose.local[1].rotation.abs_diff_eq(Quat::from_rotation_z(0.7), 1e-6));
+    }
     #[test]
     fn extraction_masks_selected_child_axes_and_preserves_other_channels() {
         let rig = skeleton();

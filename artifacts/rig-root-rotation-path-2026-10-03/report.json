@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-03",
+  "base_commit": "7e10fbfccfa0c014dd695cae648d02125871253f",
+  "state": "local uncommitted",
+  "implemented": [
+    "Ordered LINEAR/STEP/normalized CUBICSPLINE rotation paths",
+    "Noncommuting right composition and unwrapped loops",
+    "Whole-span norm, speed and projection bounds",
+    "Bounded subdivision with whole-request failure",
+    "Shared lazy per-clip cache with aggregate key admission"
+  ],
+  "tests": {
+    "animation_unit": 48,
+    "new_rotation_path_tests": 11,
+    "editor_unit": 100,
+    "gameplay_unit": 29,
+    "editor_gpu_not_run": 7
+  },
+  "release": "pass with existing warnings",
+  "clippy": "pass; four pre-existing warnings in root_curve.rs and clock conversions",
+  "primary_reference": "https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#appendix-c-animation-sampler-interpolation-modes",
+  "rag_lookup": "Index lookup returned an older Voxy archive and Maya summary; neither was used as algorithm evidence",
+  "native_proof": "not claimed for the new curve API; ordinary animation-driven character application is unfinished",
+  "remaining": [
+    "Transactional multi-span/cubic character CCD",
+    "AnimatorFrame and ModelAnimation wiring",
+    "In-place rotation removal and palette admission",
+    "Constant-parent frame conversion",
+    "Angular velocity crossfade integration",
+    "Coupled translation/rotation and collision feedback",
+    "Native presented-frame proof"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "7a2d61caecf9dd70443eaefbc3c8cecc2ab8360b6d83b64580db0bdcc62847fb",
+    "crates/voxy_animation/src/root_rotation.rs": "c9c54b9b9e357c5e1a2589d540cc11438916c4df71f30043365401239c67c69b"
+  }
+}

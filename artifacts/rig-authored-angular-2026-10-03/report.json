@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-03",
+  "base_commit": "7e10fbfccfa0c014dd695cae648d02125871253f",
+  "state": "local uncommitted",
+  "tests": {
+    "gameplay_unit": 29,
+    "gameplay_integration": 26,
+    "editor_unit": 100,
+    "editor_gpu_ignored": 7
+  },
+  "release_build": "pass with existing warnings",
+  "native_oriented_regression": "pass; verifies previous translation/Play/Stop path, not authored angular motion",
+  "new_path_proof": "headless integration plus ordinary App Play/Stop test",
+  "unfinished": [
+    "Animation root rotation extraction",
+    "Native presented-frame proof of authored character angular motion"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/lib.rs": "e9dd7f5f59d32d235349c9d09211a3cf33b13758fbb70a89ccc8b32a10ef95d8",
+    "crates/voxy_gameplay/src/behaviors.rs": "630342ca8f09678c35858c28f1c1b8b2b95a26f109b2c7b996b138e18723c5a6",
+    "crates/voxy_gameplay/tests/integration.rs": "dea02452ebb6ddc802f54d504d3432cb0b52f25a2b0f53cbad0e5b5207eab8f8",
+    "crates/voxy_editor/src/lib.rs": "5594e92581c43292f4f078104bce4c8670f0f995657164210c03e1a901ed9f2a"
+  }
+}
