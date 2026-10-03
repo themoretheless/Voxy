@@ -74,4 +74,3 @@ test root_rotation::tests::selected_channel_key_budget_is_enforced_at_compilatio
 test tests::bounded_clocks_preserve_small_ticks_after_long_elapsed_time_and_many_loops ... ok
 
 test result: ok. 72 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
-
