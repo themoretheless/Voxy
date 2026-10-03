@@ -145,17 +145,20 @@ impl ModelPlayback {
         dt: f32,
         publish: impl FnOnce(&ModelAsset, &AnimatorFrame) -> Result<T, String>,
     ) -> Result<T, String> {
-        self.advance_with_motion(dt, false, |model, frame, _| publish(model, frame))
+        self.advance_with_motion(dt, false, [false; 3], |model, frame, _| {
+            publish(model, frame)
+        })
     }
 
     pub(crate) fn advance_with_motion<T>(
         &mut self,
         dt: f32,
         rotation: bool,
+        axes: [bool; 3],
         publish: impl FnOnce(
             &ModelAsset,
             &AnimatorFrame,
-            Option<&voxy_animation::RootRotationPath>,
+            Option<&voxy_animation::RootRigidPath>,
         ) -> Result<T, String>,
     ) -> Result<T, String> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
@@ -166,9 +169,10 @@ impl ModelPlayback {
         let frame = if let Some(animator) = &mut candidate {
             if rotation {
                 let (frame, rotation) = animator
-                    .advance_with_root_rotation(
+                    .advance_with_root_rigid_motion(
                         &self.model.skeleton,
                         dt,
+                        axes,
                         voxy_animation::MAX_ROOT_ROTATION_SPANS,
                     )
                     .map_err(|error| error.to_string())?;

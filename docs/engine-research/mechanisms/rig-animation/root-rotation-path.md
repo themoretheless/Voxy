@@ -83,15 +83,11 @@ the candidate animation clocks. Rejected physics preserves the earlier frame Arc
 clock serial, body poses, velocity and input. Play/Stop restores the authoring
 scene normally. See [ordinary Play admission](root-rotation-play.md).
 
-A skeletal root whose translation changes the pivot still requires a general
-rigid trajectory; independently applying its translation before rotation does not
-represent simultaneous authored motion. Such clips explicitly reject angular
-root-motion activation before publication. Constant parent TRS admission allows
-uniform signed scale and correctly transforms rotation axes through reflection;
-nonuniform parent scale, moving/unproved ancestors, and active core crossfades
-remain unsupported for angular extraction. Full moving-pivot trajectories,
-velocity-blended angular transitions and general locomotion collision feedback
-remain required for the broader production animation goal.
+A skeletal root whose translation changes the pivot uses the composed
+RootRigidPath in ordinary Play. Translation and rotation are sampled together by
+physics; the legacy RootRotationPath remains available for explicit angular paths.
+Constant parent TRS proofs admit uniform signed scale and reflection. Nonuniform
+scale, moving or unproved ancestors and active angular crossfades remain unsupported.
 
 GPU admission is covered by an opt-in real-device editor test:
 `curved_root_rotation_collision_renders_once_with_in_place_gpu_palette`. It
@@ -102,3 +98,7 @@ rotation gives different pixels. Two owners share one source, repeated publicati
 does not grow allocation, and clearing releases all owner resources. This is an
 offscreen fixed-tick runtime/renderer/physics proof; native presented-frame
 admission is exercised separately by the ordinary Play diagnostic.
+
+The composed translation/rotation physics entry point and its coordinate mapping
+are described in [root-rigid-physics.md](root-rigid-physics.md). Ordinary Play now
+uses that path for both fixed and moving root pivots.

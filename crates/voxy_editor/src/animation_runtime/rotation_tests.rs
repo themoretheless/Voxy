@@ -122,7 +122,8 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
     let candidate = runtime.prepare(&scene, &models, 1. / 60.).unwrap();
     let paths = candidate.trajectories();
     assert_eq!(paths.len(), 1);
-    assert_eq!(paths[0].pivot, Vec3::X * 0.6);
+    assert_eq!(paths[0].origin, Vec3::ZERO);
+    assert_eq!(paths[0].scale, 1.);
     assert_eq!(
         candidate.frame(owner, &model).unwrap().pose,
         model.skeleton.bind_pose()
@@ -135,7 +136,7 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
         .unwrap();
     assert_eq!(
         limited
-            .fixed_step_with_motion_and_trajectories(
+            .fixed_step_with_motion_and_rigid_trajectories(
                 &mut scene,
                 &mut input,
                 1. / 60.,
@@ -152,7 +153,7 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
     assert_eq!(scene.local(walk).unwrap(), before[1]);
     let mut physics = CharacterPhysics::new(&scene, 2, 1);
     let receipt = physics
-        .fixed_step_with_motion_and_trajectories(
+        .fixed_step_with_motion_and_rigid_trajectories(
             &mut scene,
             &mut input,
             1. / 60.,
@@ -167,7 +168,7 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
     for _ in 0..11 {
         let next = runtime.prepare(&scene, &models, 1. / 60.).unwrap();
         physics
-            .fixed_step_with_motion_and_trajectories(
+            .fixed_step_with_motion_and_rigid_trajectories(
                 &mut scene,
                 &mut input,
                 1. / 60.,
@@ -194,7 +195,7 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
     let pose = scene.local(owner).unwrap();
     assert_eq!(
         physics
-            .fixed_step_with_motion_and_trajectories(
+            .fixed_step_with_motion_and_rigid_trajectories(
                 &mut scene,
                 &mut input,
                 1. / 60.,
@@ -208,8 +209,18 @@ fn prepared_rotation_and_translation_only_owners_publish_one_atomic_tick() {
 }
 #[test]
 fn ordinary_play_rotates_from_rig_limits_at_wall_and_stop_restores_authoring() {
-    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../voxy_render/examples/assets/root-pivot-turn.glb");
+    ordinary_play(false);
+}
+#[test]
+fn ordinary_play_composes_moving_root_and_stop_restores_authoring() {
+    ordinary_play(true);
+}
+fn ordinary_play(composed: bool) {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(if composed {
+        "../voxy_render/examples/assets/root-moving-turn.glb"
+    } else {
+        "../voxy_render/examples/assets/root-pivot-turn.glb"
+    });
     let mut app = crate::App::new(&path, false).unwrap();
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
     while app.catalog.snapshot(&app.id).is_none() {
@@ -236,6 +247,7 @@ fn ordinary_play_rotates_from_rig_limits_at_wall_and_stop_restores_authoring() {
             owner,
             ModelAnimation {
                 root_motion_rotation: true,
+                root_motion_axes: [composed; 3],
                 root_motion_bone: "root".into(),
                 ..Default::default()
             },
@@ -285,16 +297,11 @@ fn ordinary_play_rotates_from_rig_limits_at_wall_and_stop_restores_authoring() {
     for _ in 0..12 {
         app.advance_game(1. / 60.).unwrap();
     }
-    let angle = (0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.);
+    let (angle, center) = crate::animation_smoke::rotation_contact(composed);
     let pose = app.scene.local(owner).unwrap();
     assert!(
         pose.rotation
             .abs_diff_eq(Quat::from_rotation_y(angle as f32), 1e-6)
-    );
-    let center = Vec3::new(
-        (0.6 * (1. - angle.cos())) as f32,
-        0.,
-        (0.6 * angle.sin()) as f32,
     );
     assert!(
         pose.translation
@@ -349,7 +356,7 @@ fn old_authored_settings_default_rotation_off() {
 }
 
 #[test]
-fn signed_uniform_parent_converts_axes_and_nonrigid_or_moving_pivots_reject() {
+fn signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject() {
     use voxy_animation::{
         AnimationClip, Interpolation, Joint, JointTangents, JointTrack, Playback, QuatKey,
         Skeleton, TrackInterpolation, Transform, Vec3Key,
@@ -418,7 +425,7 @@ fn signed_uniform_parent_converts_axes_and_nonrigid_or_moving_pivots_reject() {
                 },
             ];
             modes[1].translation = Interpolation::CubicSpline;
-            tangents[1].translation = vec![[Vec3::ZERO, Vec3::Y], [-Vec3::Y, Vec3::ZERO]];
+            tangents[1].translation = vec![[Vec3::ZERO, Vec3::Z], [-Vec3::Z, Vec3::ZERO]];
         }
         asset.animations = vec![Arc::new(
             AnimationClip::new_with_tangents(
@@ -466,13 +473,10 @@ fn signed_uniform_parent_converts_axes_and_nonrigid_or_moving_pivots_reject() {
     let prepared = runtime.prepare(&scene, &models, 0.1).unwrap();
     let paths = prepared.trajectories();
     let parent = model.skeleton.joints()[0].bind_local;
-    assert!(
-        paths[0]
-            .pivot
-            .abs_diff_eq(parent.matrix().transform_point3(Vec3::X * 0.6), 1e-6)
-    );
+    assert!(paths[0].origin.abs_diff_eq(parent.translation, 1e-6));
     let expected_axis = DQuat::from_rotation_z(0.3) * -glam::DVec3::Y;
-    let delta = paths[0].basis * paths[0].rotation.end_rotation() * paths[0].basis.conjugate();
+    let delta =
+        paths[0].basis * paths[0].trajectory.end_transform().rotation * paths[0].basis.conjugate();
     assert!(delta.abs_diff_eq(
         DQuat::from_axis_angle(expected_axis, f64::from(0.1_f32)),
         1e-7
@@ -481,7 +485,6 @@ fn signed_uniform_parent_converts_axes_and_nonrigid_or_moving_pivots_reject() {
     assert_eq!(frame.pose.local()[1].rotation, Quat::IDENTITY);
     for (scale, moving, moving_parent, message) in [
         (Vec3::new(-2., 3., 2.), false, false, "nonuniform scale"),
-        (Vec3::new(-2., 2., 2.), true, false, "moving pivot"),
         (Vec3::new(-2., 2., 2.), false, true, "parent is moving"),
     ] {
         let unsupported = build(scale, moving, moving_parent);
@@ -493,5 +496,66 @@ fn signed_uniform_parent_converts_axes_and_nonrigid_or_moving_pivots_reject() {
         );
         assert_eq!(prepared.serial(), 1);
         assert!(Arc::ptr_eq(&frame, &prepared.frame(owner, &model).unwrap()));
+    }
+    for (scale, axes) in [
+        (Vec3::new(-2., 2., 2.), [false; 3]),
+        (Vec3::new(-2., 2., 2.), [true; 3]),
+        (Vec3::splat(0.5), [false, false, true]),
+    ] {
+        let moving = build(scale, true, false);
+        scene.set_local(owner, Default::default()).unwrap();
+        scene
+            .component_mut::<ModelAnimation>(owner)
+            .unwrap()
+            .unwrap()
+            .root_motion_axes = axes;
+        let candidate = runtime
+            .prepare(&scene, &BTreeMap::from([(id.clone(), moving.clone())]), 0.1)
+            .unwrap();
+        assert!(candidate.motions().is_empty());
+        let paths = candidate.trajectories();
+        assert_eq!(paths.len(), 1);
+        let t = f64::from(0.1_f32);
+        let source_rotation = DQuat::from_rotation_y(t);
+        let source_position = glam::DVec3::X * f64::from(0.6_f32) + glam::DVec3::Z * (t * (1. - t));
+        let pivot = if axes[2] {
+            glam::DVec3::X * f64::from(0.6_f32)
+        } else {
+            source_position
+        };
+        let source_translation = source_position - source_rotation * pivot;
+        let delta = paths[0].basis * source_rotation * paths[0].basis.conjugate();
+        let expected = paths[0].scale * (paths[0].basis * source_translation)
+            + paths[0].origin.as_dvec3()
+            - delta * paths[0].origin.as_dvec3();
+        let frame = candidate.frame(owner, &moving).unwrap();
+        assert_eq!(frame.pose.local()[1].rotation, Quat::IDENTITY);
+        let expected_bone = if axes[2] {
+            Vec3::X * 0.6
+        } else {
+            source_position.as_vec3()
+        };
+        assert!(
+            frame.pose.local()[1]
+                .translation
+                .abs_diff_eq(expected_bone, 1e-7)
+        );
+        let mut physics = CharacterPhysics::new(&scene, 1, 0);
+        let mut input = voxy_gameplay::player_input().unwrap();
+        let receipt = physics
+            .fixed_step_with_motion_and_rigid_trajectories(
+                &mut scene,
+                &mut input,
+                0.1,
+                candidate.motions(),
+                &paths,
+            )
+            .unwrap()[0];
+        assert!(receipt.complete);
+        assert!(
+            receipt.displacement.as_dvec3().abs_diff_eq(expected, 2e-7),
+            "{receipt:?} {expected:?}"
+        );
+        assert!(receipt.rotation.abs_diff_eq(delta, 1e-7));
     }
 }

@@ -1636,3 +1636,323 @@ fn noncommuting_offset_pivot_uses_body_basis_and_failure_is_atomic() {
     );
     assert!(input.state("jump").unwrap().pressed);
 }
+
+fn moving_root_trajectory(axes: [bool; 3], end: f64) -> voxy_animation::RootRigidPath {
+    use std::sync::Arc;
+    use voxy_animation::{
+        AnimationClip, Interpolation, Joint, JointTangents, JointTrack, Playback, QuatKey,
+        Skeleton, TrackInterpolation, Transform as BoneTransform, Vec3Key,
+    };
+    let pivot = Vec3::X * 0.6;
+    let skeleton = Skeleton::new(vec![Joint {
+        name: Arc::from("root"),
+        parent: None,
+        bind_local: BoneTransform {
+            translation: pivot,
+            ..BoneTransform::IDENTITY
+        },
+        inverse_bind: glam::Mat4::IDENTITY,
+    }])
+    .unwrap();
+    let clip = AnimationClip::new_with_tangents(
+        "moving pivot",
+        1.,
+        Playback::Clamp,
+        vec![JointTrack {
+            translations: vec![
+                Vec3Key {
+                    time: 0.,
+                    value: pivot,
+                },
+                Vec3Key {
+                    time: 1.,
+                    value: pivot,
+                },
+            ],
+            rotations: vec![
+                QuatKey {
+                    time: 0.,
+                    value: Quat::IDENTITY,
+                },
+                QuatKey {
+                    time: 1.,
+                    value: Quat::IDENTITY,
+                },
+            ],
+            ..Default::default()
+        }],
+        vec![TrackInterpolation {
+            translation: Interpolation::CubicSpline,
+            rotation: Interpolation::CubicSpline,
+            ..Default::default()
+        }],
+        vec![JointTangents {
+            translation: vec![[Vec3::ZERO, Vec3::Z * 2.], [-Vec3::Z * 2., Vec3::ZERO]],
+            rotation: vec![
+                [glam::Vec4::ZERO, glam::Vec4::Y * 8.],
+                [-glam::Vec4::Y * 8., glam::Vec4::ZERO],
+            ],
+            ..Default::default()
+        }],
+        &skeleton,
+    )
+    .unwrap();
+    clip.root_rigid_curve(0)
+        .unwrap()
+        .path(0., end, axes, 128)
+        .unwrap()
+}
+
+#[test]
+fn simultaneous_translation_and_turn_clip_the_closed_curve_before_the_wall() {
+    use voxy_gameplay::CharacterRigidTrajectoryMotion;
+    for axes in [[false; 3], [true; 3]] {
+        let path = moving_root_trajectory(axes, 1.);
+        assert!(path.end_transform().translation.length() < 1e-12);
+        let (mut scene, player) = trajectory_wall_scene();
+        let mut physics = CharacterPhysics::new(&scene, 1, 1);
+        let mut input = player_input().unwrap();
+        let request = CharacterRigidTrajectoryMotion {
+            scale: 1.,
+            owner: player,
+            trajectory: &path,
+            basis: glam::DQuat::IDENTITY,
+            origin: Vec3::ZERO,
+        };
+        let receipt = physics
+            .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &[request])
+            .unwrap()[0];
+        // Independent source equations: pz=2t(1-t), q=normalize(0,8t(1-t),0,1).
+        // This is neither a straight endpoint chord nor translation followed by rotation.
+        let front = |t: f64| {
+            let angle = 2. * (8. * t * (1. - t)).atan();
+            let z = 2. * t * (1. - t);
+            angle.sin() + 0.02 * angle.cos() + if axes[2] { z } else { z * (1. - angle.cos()) }
+        };
+        let (mut low, mut high) = (0., 0.2);
+        assert!(front(high) > 0.23);
+        for _ in 0..80 {
+            let mid = (low + high) * 0.5;
+            if front(mid) < 0.23 {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
+        let time = (low + high) * 0.5;
+        assert!(!receipt.complete);
+        assert!(
+            (receipt.path_fraction - time).abs() < 1e-7,
+            "{receipt:?} expected={time}"
+        );
+        assert!(receipt.path_fraction <= time);
+        let angle = 2. * (8. * time * (1. - time)).atan();
+        let rotation = glam::DQuat::from_rotation_y(angle);
+        let pivot = glam::DVec3::X * 0.6 + glam::DVec3::Z * (2. * time * (1. - time));
+        let expected = pivot - rotation * if axes[2] { glam::DVec3::X * 0.6 } else { pivot };
+        assert!(receipt.displacement.as_dvec3().abs_diff_eq(expected, 1e-7));
+        assert!(receipt.rotation.abs_diff_eq(rotation, 1e-7));
+        let pose = scene.local(player).unwrap();
+        physics
+            .fixed_step(&mut scene, &mut input, 1. / 60.)
+            .unwrap();
+        assert_eq!(scene.local(player).unwrap(), pose);
+    }
+}
+
+#[test]
+fn composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick() {
+    use voxy_gameplay::CharacterRigidTrajectoryMotion;
+    let path = moving_root_trajectory([true; 3], 1.);
+    let (mut scene, player) = trajectory_wall_scene();
+    let start = scene.local(player).unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1)
+        .with_angular_trajectory_query_budget(1)
+        .unwrap();
+    let mut input = player_input().unwrap();
+    input.event(JUMP, 1.).unwrap();
+    let request = CharacterRigidTrajectoryMotion {
+        scale: 1.,
+        owner: player,
+        trajectory: &path,
+        basis: glam::DQuat::IDENTITY,
+        origin: Vec3::ZERO,
+    };
+    assert_eq!(
+        physics
+            .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &[request])
+            .unwrap_err(),
+        PhysicsError::SweepBudget
+    );
+    assert_eq!(scene.local(player).unwrap(), start);
+    assert!(input.state("jump").unwrap().pressed);
+    assert_eq!(
+        physics
+            .fixed_step_with_rigid_trajectories(
+                &mut scene,
+                &mut input,
+                1. / 60.,
+                &[request, request]
+            )
+            .unwrap_err(),
+        PhysicsError::InvalidMotion
+    );
+    assert_eq!(scene.local(player).unwrap(), start);
+    assert!(input.state("jump").unwrap().pressed);
+
+    let mut scene = SceneGraph::new(2);
+    let initial = Transform {
+        translation: Vec3::new(0.2, 0.3, -0.1),
+        rotation: Quat::from_rotation_z(0.3),
+        ..Default::default()
+    };
+    let player = scene.spawn(None, initial).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                gravity: 0.,
+                speed: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    // Restrict to a nonidentity endpoint, and independently conjugate the full rigid transform.
+    let path = moving_root_trajectory([true; 3], 0.2);
+    let basis = glam::DQuat::from_rotation_y(-0.4);
+    let origin = Vec3::new(0.4, 0.7, -0.2);
+    let request = CharacterRigidTrajectoryMotion {
+        scale: 1.,
+        owner: player,
+        trajectory: &path,
+        basis,
+        origin,
+    };
+    let mut physics = CharacterPhysics::new(&scene, 1, 0);
+    let receipt = physics
+        .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &[request])
+        .unwrap()[0];
+    assert!(receipt.complete);
+    let q = glam::DQuat::from_rotation_y(2. * (8_f64 * 0.2 * 0.8).atan());
+    let bind = f64::from(0.6_f32);
+    let p = glam::DVec3::new(bind, 0., 2. * 0.2 * 0.8) - q * glam::DVec3::X * bind;
+    let delta = (basis * q * basis.conjugate()).normalize();
+    let orientation =
+        glam::DQuat::from_array(initial.rotation.to_array().map(f64::from)).normalize();
+    let expected = orientation * (basis * p + origin.as_dvec3() - delta * origin.as_dvec3());
+    assert!(receipt.displacement.as_dvec3().abs_diff_eq(expected, 1e-7));
+    assert!(receipt.rotation.abs_diff_eq(delta, 1e-7));
+    assert!(
+        scene
+            .local(player)
+            .unwrap()
+            .translation
+            .abs_diff_eq((initial.translation.as_dvec3() + expected).as_vec3(), 1e-7),
+        "pose={:?} expected={:?} receipt={receipt:?}",
+        scene.local(player).unwrap(),
+        (initial.translation.as_dvec3() + expected).as_vec3()
+    );
+}
+
+#[test]
+fn moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement() {
+    use voxy_gameplay::CharacterRigidTrajectoryMotion;
+    let path = moving_root_trajectory([false; 3], 1.);
+    let mut scene = SceneGraph::new(3);
+    let player = scene.spawn(None, Transform::default()).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.4, 1000., 0.02],
+                gravity: 0.,
+                speed: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let floor = scene.spawn(None, at(Vec3::Y * -1000.125)).unwrap();
+    scene
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [10., 0.125, 10.],
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1)
+        .with_angular_sweep_budget(1)
+        .unwrap();
+    let mut input = player_input().unwrap();
+    let request = CharacterRigidTrajectoryMotion {
+        scale: 1.,
+        owner: player,
+        trajectory: &path,
+        basis: glam::DQuat::IDENTITY,
+        origin: Vec3::ZERO,
+    };
+    let receipt = physics
+        .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &[request])
+        .unwrap()[0];
+    assert!(receipt.complete, "{receipt:?}");
+    assert_eq!(receipt.advancement_iterations, 0);
+    assert!(receipt.displacement.length() < 1e-6);
+}
+
+#[test]
+fn reflected_uniform_source_frame_sweeps_translation_and_rotation_together() {
+    use voxy_gameplay::CharacterRigidTrajectoryMotion;
+    let path = moving_root_trajectory([true; 3], 1.);
+    let (mut scene, player) = trajectory_wall_scene();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
+    let mut input = player_input().unwrap();
+    let request = CharacterRigidTrajectoryMotion {
+        owner: player,
+        trajectory: &path,
+        scale: -2.,
+        basis: glam::DQuat::from_rotation_x(std::f64::consts::PI),
+        origin: Vec3::ZERO,
+    };
+    let receipt = physics
+        .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &[request])
+        .unwrap()[0];
+    let (mut low, mut high) = (0., 0.1);
+    for _ in 0..80 {
+        let t = (low + high) * 0.5;
+        let angle = 2. * (8_f64 * t * (1. - t)).atan();
+        let front = 1.6 * angle.sin() + 4. * t * (1. - t) + 0.02 * angle.cos();
+        if front < 0.23 {
+            low = t;
+        } else {
+            high = t;
+        }
+    }
+    let time = (low + high) * 0.5;
+    assert!(!receipt.complete);
+    assert!((receipt.path_fraction - time).abs() < 1e-7, "{receipt:?}");
+    let angle = 2. * (8_f64 * time * (1. - time)).atan();
+    assert!(
+        receipt
+            .rotation
+            .abs_diff_eq(glam::DQuat::from_rotation_y(-angle), 1e-7)
+    );
+    let expected = glam::DVec3::new(
+        -1.2 * (1. - angle.cos()),
+        0.,
+        1.2 * angle.sin() + 4. * time * (1. - time),
+    );
+    assert!(receipt.displacement.as_dvec3().abs_diff_eq(expected, 1e-7));
+    let pose = scene.local(player).unwrap();
+    input.event(JUMP, 1.).unwrap();
+    for scale in [0., f64::NAN, f64::INFINITY] {
+        let invalid = CharacterRigidTrajectoryMotion { scale, ..request };
+        assert_eq!(
+            physics
+                .fixed_step_with_rigid_trajectories(&mut scene, &mut input, 1. / 60., &[invalid])
+                .unwrap_err(),
+            PhysicsError::InvalidMotion
+        );
+        assert_eq!(scene.local(player).unwrap(), pose);
+        assert!(input.state("jump").unwrap().pressed);
+    }
+}

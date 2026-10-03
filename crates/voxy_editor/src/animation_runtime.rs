@@ -43,9 +43,10 @@ pub(super) struct AnimationRuntime {
     motions: Vec<(NodeId, glam::Vec3)>,
     rotations: Vec<(
         NodeId,
-        voxy_animation::RootRotationPath,
+        voxy_animation::RootRigidPath,
         glam::DQuat,
         glam::Vec3,
+        f64,
     )>,
 }
 impl AnimationRuntime {
@@ -55,22 +56,18 @@ impl AnimationRuntime {
     pub(super) fn motions(&self) -> &[(NodeId, glam::Vec3)] {
         &self.motions
     }
-    pub(super) fn trajectories(&self) -> Vec<voxy_gameplay::CharacterTrajectoryMotion<'_>> {
+    pub(super) fn trajectories(&self) -> Vec<voxy_gameplay::CharacterRigidTrajectoryMotion<'_>> {
         self.rotations
             .iter()
-            .map(
-                |(owner, rotation, basis, pivot)| voxy_gameplay::CharacterTrajectoryMotion {
+            .map(|(owner, trajectory, basis, origin, scale)| {
+                voxy_gameplay::CharacterRigidTrajectoryMotion {
                     owner: *owner,
-                    rotation,
+                    trajectory,
                     basis: *basis,
-                    pivot: *pivot,
-                    displacement: self
-                        .motions
-                        .iter()
-                        .find(|(node, _)| node == owner)
-                        .map_or(glam::Vec3::ZERO, |(_, value)| *value),
-                },
-            )
+                    origin: *origin,
+                    scale: *scale,
+                }
+            })
             .collect()
     }
     pub(super) fn serial(&self) -> u64 {
@@ -167,6 +164,7 @@ impl AnimationRuntime {
             let (mut frame, trajectory) = playback.advance_with_motion(
                 dt,
                 settings.root_motion_rotation,
+                settings.root_motion_axes,
                 |_, frame, path| Ok((frame.clone(), path.cloned())),
             )?;
             if settings.root_motion_rotation
@@ -179,17 +177,8 @@ impl AnimationRuntime {
                 {
                     return Err("root motion requires a CharacterBody on the model owner".into());
                 }
-                let (basis, rotation_basis) =
+                let (basis, rotation_basis, scale) =
                     constant_parent_basis(model, &settings, frame.root_motion_joint)?;
-                if settings.root_motion_rotation
-                    && settings.clip.is_some_and(|clip| {
-                        model.animations[clip]
-                            .constant_joint_translation(usize::from(frame.root_motion_joint))
-                            .is_none()
-                    })
-                {
-                    return Err("Selected motion bone has a moving pivot in this clip; angular root motion for moving bones is not supported yet".into());
-                }
                 let (in_place, displacement) = frame
                     .into_in_place_translation(&model.skeleton, settings.root_motion_axes)
                     .map_err(|error| error.to_string())?;
@@ -201,13 +190,13 @@ impl AnimationRuntime {
                 if !basis.is_finite() || !displacement.is_finite() {
                     return Err("root motion coordinate conversion overflow".into());
                 }
-                next.motions.push((owner, displacement));
+                if !settings.root_motion_rotation {
+                    next.motions.push((owner, displacement));
+                }
                 if settings.root_motion_rotation {
-                    let pivot = basis.transform_point3(
-                        frame.pose.local()[usize::from(frame.root_motion_joint)].translation,
-                    );
-                    if !pivot.is_finite() {
-                        return Err("root rotation pivot conversion overflow".into());
+                    let origin = basis.w_axis.truncate();
+                    if !origin.is_finite() {
+                        return Err("root trajectory origin conversion overflow".into());
                     }
                     frame = frame
                         .without_root_rotation(&model.skeleton)
@@ -222,7 +211,7 @@ impl AnimationRuntime {
                             );
                         }
                         next.rotations
-                            .push((owner, trajectory, rotation_basis, pivot));
+                            .push((owner, trajectory, rotation_basis, origin, scale));
                     }
                 }
             }
@@ -252,9 +241,10 @@ fn constant_parent_basis(
     model: &ModelAsset,
     settings: &ModelAnimation,
     root: u16,
-) -> Result<(glam::Mat4, glam::DQuat), String> {
+) -> Result<(glam::Mat4, glam::DQuat, f64), String> {
     let mut matrix = glam::Mat4::IDENTITY;
     let mut rotation = glam::DQuat::IDENTITY;
+    let mut uniform_scale = 1_f64;
     let mut parent = model.skeleton.joints()[usize::from(root)].parent;
     while let Some(index) = parent {
         let index = usize::from(index);
@@ -273,6 +263,7 @@ fn constant_parent_basis(
             }
             let signs = transform.scale.signum().as_dvec3();
             let determinant = signs.x * signs.y * signs.z;
+            uniform_scale *= f64::from(scale.x) * determinant;
             let reflection =
                 glam::DQuat::from_mat3(&glam::DMat3::from_diagonal(signs * determinant))
                     .normalize();
@@ -283,10 +274,14 @@ fn constant_parent_basis(
         matrix = transform.matrix() * matrix;
         parent = joint.parent;
     }
-    if !matrix.is_finite() || !rotation.is_finite() {
+    if !matrix.is_finite()
+        || !rotation.is_finite()
+        || !uniform_scale.is_finite()
+        || uniform_scale == 0.
+    {
         return Err("root motion parent conversion overflow".into());
     }
-    Ok((matrix, rotation))
+    Ok((matrix, rotation, uniform_scale))
 }
 
 #[cfg(test)]
