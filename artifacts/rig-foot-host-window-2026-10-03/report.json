@@ -1,0 +1,14 @@
+{
+  "check_exit": 0,
+  "release_exit": 0,
+  "native_exit": 1,
+  "native_presented": 0,
+  "native_accepted": false,
+  "metal_occlusion": 8192,
+  "active_space": true,
+  "binary_sha256": "b9103a49fbda13c90b563c89bc8e63a94c4e9f23826639fcfdae04d79cbb6cf6",
+  "surface_source_sha256": "3a5445ff16ce4f5ed9c47704335926debe7c3ecbfb2a180f4d2f3234b72a9a68",
+  "change": "Hosting-window traversal checks selector support and NSWindow class, and continues after detached or unrelated delegates.",
+  "scope": "macOS Metal hosting-window traversal only; no bypass of occlusion guard.",
+  "result": "Fresh binary retained zero presented frames; traversal hardening did not resolve native foot Play/Stop acceptance."
+}

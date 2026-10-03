@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 67,
+  "api": "Animator::source_phase_interval",
+  "source_clock": "same bounded f64 clock as pose sampling",
+  "fade_completion": "source interval clipped to active tick prefix; target interval spans full tick",
+  "frozen_pose": "no clip interval returned",
+  "verified": "loop crossing, speed zero, zero timestep, invalid timestep, interrupted snapshot, completed fade",
+  "remaining": "retain source interval through candidate publication and combine mixed-curve zero windows before allowing foot transitions; native presentation still open"
+}

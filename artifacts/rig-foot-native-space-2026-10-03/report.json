@@ -1,0 +1,24 @@
+{
+  "source_commit": "f73e62ea60093965aa1479719db5e80113caf0fd",
+  "binary_sha256": "4c4874fcb2b4d1852395bb9b189a6739b2e686221c09a08a5458e1684a351cc8",
+  "adapter_scope": "Apple M4 Max / Metal only",
+  "native_accepted": false,
+  "active_space_run": {
+    "exit": 1,
+    "presented": 0,
+    "active_space": true,
+    "occlusion": 8192
+  },
+  "fullscreen_run": {
+    "exit": 1,
+    "presented": 0,
+    "active_space_transitions": [
+      true,
+      false,
+      true
+    ],
+    "occlusion": 8192
+  },
+  "conclusion": "Being on the active Space and entering fullscreen did not make this native acceptance process present frames. No occlusion guard bypass was applied. A separate automatically launched default window displayed geometry; it is not acceptance evidence for this test.",
+  "next_requirement": "Reproduce and diagnose hosting NSWindow occlusion state with actual frame presentation; foot native Play/Stop gate remains open."
+}

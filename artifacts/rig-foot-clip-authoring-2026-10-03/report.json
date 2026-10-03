@@ -1,0 +1,8 @@
+{
+  "cpu_editor_tests_passed": 115,
+  "gpu_tests_ignored": 10,
+  "authoring_switch_without_target_contact_curve": "rejected with scene/history unchanged",
+  "authoring_switch_after_adding_target_curve": "accepted",
+  "rig_named_contact_binding": "valid two-clip rig accepted; duplicate clip names rejected",
+  "native_gate": "still open; this does not prove native presentation"
+}

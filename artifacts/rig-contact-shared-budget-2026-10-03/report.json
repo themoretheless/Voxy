@@ -1,0 +1,11 @@
+{
+  "editor_cpu_tests_passed": 122,
+  "gameplay_lib_tests_passed": 43,
+  "gameplay_integration_tests_passed": 41,
+  "gpu_tests_ignored": 10,
+  "budget": "contact event traversal and support queries share the same SupportQueryBudget passed through accepted character preparation",
+  "query_charge": "support queries and contact work use charge_work; failed reservation does not underflow",
+  "verified": "successive contact work exhausts a shared limit; prior support work plus single-clip traversal consumes the same limit; prior atomic physics regressions remain passing",
+  "transition_gate": "active-foot fades still rejected",
+  "remaining": "frozen-source completion tick metadata, retained anchors and physical blended-contact acceptance; native presentation remains open"
+}

@@ -1,0 +1,9 @@
+{
+  "editor_cpu_tests_passed": 119,
+  "gpu_tests_ignored": 10,
+  "source_interval_retention": "captured before advance with shared clip Arc; published only after frame acceptance",
+  "completion_tail": "source metadata remains available on the tick that completes a fade",
+  "failed_publication": "retains previous interval and clock; next accepted nonfade tick clears metadata",
+  "contact_admission": "source curve names and interval sanity checked before support queries",
+  "remaining": "mixed-curve zero-window detection and physical fade-contact acceptance; native presentation remains open"
+}

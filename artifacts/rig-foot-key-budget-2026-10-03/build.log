@@ -1,0 +1,3 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 21.29s
+  Executable unittests src/lib.rs (target/debug/deps/voxy_editor-9307c5efc2715376)

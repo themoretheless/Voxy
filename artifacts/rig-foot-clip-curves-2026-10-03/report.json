@@ -1,0 +1,9 @@
+{
+  "editor_cpu_tests_passed": 114,
+  "gpu_tests_ignored": 10,
+  "named_clip_contact_curves": true,
+  "crossed_swing_and_atomic_physics_regression": true,
+  "native_gate": "still open",
+  "remaining": "contact blending during crossfade; imported contact tracks; native presentation",
+  "source_sha256": "2e059e60993a07d30546aacd5c00ddccde8f614f013966149ba8bcdebc5e7334"
+}

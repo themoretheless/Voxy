@@ -1257,7 +1257,7 @@ fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
     scene.insert_component(first,CharacterBody { half_extents:[0.1,1.,0.1],..Default::default() }).unwrap();
     scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
         bones:["hip".into(),"knee".into(),"foot".into()], sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
-        pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],
+        pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],clip_contact_curves:Default::default(),
     }] }).unwrap();
     let asset = voxy_assets::AssetId("foot".into());
     for owner in [first,second] {

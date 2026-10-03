@@ -1,0 +1,8 @@
+{
+  "editor_cpu_tests_passed": 117,
+  "gpu_tests_ignored": 10,
+  "descriptor": "ModelAnimation.transition_seconds (0..60, default zero)",
+  "runtime": "clip switches reuse the running Animator for nonzero fades; bind-pose switches remain immediate",
+  "verified": "fixed-tick live-source fade, interrupted displayed-pose snapshot, completion, invalid authoring durations, explicit rejection of foot transitions with last frame retained",
+  "limitations": "foot contact blending not integrated; angular root-motion fade not admitted by existing trajectory API; native presentation still open"
+}

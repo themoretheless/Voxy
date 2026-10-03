@@ -1,0 +1,10 @@
+{
+  "editor_cpu_tests_passed": 118,
+  "animation_tests_passed": 66,
+  "gpu_tests_ignored": 10,
+  "contact_weight_blend": "live source curve plus target curve weighted by accepted Animator blend state",
+  "interrupted_source": "identity of retained frozen pose captures previous accepted contact weight once; repeated interruptions recapture the last displayed weight",
+  "publication": "candidate clone isolates unpublished contact weights",
+  "runtime_transition_admission": "still rejected for active foot bindings",
+  "remaining": "mixed-curve crossed-swing and physical anchor/reach acceptance before removing the transition admission guard; native presentation remains open"
+}

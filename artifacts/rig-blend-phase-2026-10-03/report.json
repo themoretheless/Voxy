@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 66,
+  "editor_check_exit": 0,
+  "api": "Animator::pose_blend_phases",
+  "live_source": "uses source clip and normalized source clock",
+  "interrupted_source": "FrozenPose; no fabricated clip phase",
+  "contact_blending_integrated": false,
+  "remaining": "preserve contact-weight snapshot on interrupted fades and integrate source/target contact blending into editor runtime; native presentation still open"
+}

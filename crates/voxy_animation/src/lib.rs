@@ -2,6 +2,9 @@
 
 mod root_curve;
 mod ik;
+mod blend_phase;
+pub use blend_phase::{ClipPhase, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval, FrozenSourceTick};
+
 pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod root_rigid;
 pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform};

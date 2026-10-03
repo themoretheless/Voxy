@@ -465,8 +465,12 @@ impl Panels {
                         .sum();
                     let button_width = label_width.ceil() + 12.0;
                     let width = right - if overridden { button_width + 12.0 } else { 8.0 };
+                    let foot_label = (member.schema == "editor.foot-placement.v1")
+                        .then(|| foot_field_label(&member.path)).flatten();
                     let label = if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_joint" {
                         "Motion bone index"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/transition_seconds" {
+                        "Clip transition seconds"
                     } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_bone" {
                         "Motion bone name"
                     } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/0" {
@@ -477,6 +481,8 @@ impl Panels {
                         "Root motion Z"
                     } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_rotation" {
                         "Root motion rotation"
+                    } else if member.schema == "editor.foot-placement.v1" {
+                        foot_label.as_deref().unwrap_or(member.path.as_str())
                     } else if member.path.is_empty() {
                         member.schema.as_str()
                     } else {
@@ -1118,4 +1124,33 @@ fn visit(
         order.push((index, depth));
         visit(document, Some(&object.id), depth + 1, order);
     }
+}
+
+// Keep foot authoring names readable in the existing component inspector.
+fn foot_field_label(path: &str) -> Option<String> {
+    let mut parts = path.strip_prefix("/feet/")?.split('/');
+    let foot = parts.next()?.parse::<usize>().ok()?;
+    let field = parts.next()?;
+    let member = parts.next();
+    let label = match (field, member) {
+        ("bones", Some("0")) => "Hip bone name",
+        ("bones", Some("1")) => "Knee bone name",
+        ("bones", Some("2")) => "Foot bone name",
+        ("plant", None) => "Enable foot planting",
+        ("weight", None) => "Foot IK weight",
+        ("sole_offset", Some("0")) => "Sole offset X",
+        ("sole_offset", Some("1")) => "Sole offset Y",
+        ("sole_offset", Some("2")) => "Sole offset Z",
+        ("sole_up", Some("0")) => "Sole up X",
+        ("sole_up", Some("1")) => "Sole up Y",
+        ("sole_up", Some("2")) => "Sole up Z",
+        ("pole", Some("0")) => "Knee pole X",
+        ("pole", Some("1")) => "Knee pole Y",
+        ("pole", Some("2")) => "Knee pole Z",
+        ("contact", Some("plant_distance")) => "Plant distance",
+        ("contact", Some("release_distance")) => "Release distance",
+        ("contact", Some("min_up_dot")) => "Minimum ground up dot",
+        _ => return None,
+    };
+    parts.next().is_none().then(|| format!("Foot {foot}: {label}"))
 }

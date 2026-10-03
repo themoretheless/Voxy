@@ -1,0 +1,7 @@
+{
+  "check_exit": 0,
+  "editor_tests_passed": 113,
+  "gpu_tests_ignored": 10,
+  "invalid_authoring_edits_preserve_scene_and_history": true,
+  "native_presentation_gate": "still open; not exercised by these tests"
+}

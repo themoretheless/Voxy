@@ -1,0 +1,9 @@
+{
+  "cpu_editor_tests_passed": 116,
+  "gpu_tests_ignored": 10,
+  "max_contact_keys_per_foot_total": 4096,
+  "exact_limit": "accepted",
+  "one_key_over": "rejected",
+  "legacy_and_named_curves": "share budget",
+  "native_gate": "still open"
+}

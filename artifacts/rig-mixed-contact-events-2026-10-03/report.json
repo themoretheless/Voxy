@@ -1,0 +1,8 @@
+{
+  "editor_cpu_tests_passed": 121,
+  "gpu_tests_ignored": 10,
+  "mixed_contact_zero_windows": "source and target zero-window intersection in common tick coordinates; completion tail ignores source; start-only events excluded",
+  "verified": "coincident versus disjoint zero events, positive versus zero frozen source, completion at boundary and within tick, loops, exhausted operation budget",
+  "runtime": "ordinary single-clip path uses helper; active-foot transition guard remains",
+  "remaining": "capture complete live/frozen transition tick context, pass mixed source through runtime and share operation budget across accepted physics tick; physical anchor/reach and native presentation gates remain open"
+}

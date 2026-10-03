@@ -1,4 +1,5 @@
 //! Authored rig bindings; contact and palettes are staged against accepted physics.
+mod contact_events;
 use glam::{DMat3, DMat4, DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -29,12 +30,60 @@ pub struct FootBinding {
     /// Normalized target-clip phase keys. Empty retains explicit fixed stance.
     #[serde(default)]
     pub contact_curve: Vec<FootContactKey>,
+    /// Optional named-clip curves. Every selected clip must be mapped when used.
+    #[serde(default)]
+    pub clip_contact_curves: std::collections::BTreeMap<String, Vec<FootContactKey>>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FootContactKey {
     pub phase: f32,
     pub weight: f32,
+}
+impl FootBinding {
+    pub(super) fn contact_keys(&self, clip_name: Option<&str>) -> Result<&[FootContactKey], String> {
+        if self.clip_contact_curves.is_empty() {
+            return Ok(&self.contact_curve);
+        }
+        self.clip_contact_curves.get(clip_name.ok_or("foot clip curves require an active clip")?)
+            .map(Vec::as_slice).ok_or_else(|| "selected clip has no foot contact curve".into())
+    }
+}
+#[derive(Clone, Debug, Default)]
+struct ContactBlendState {
+    last_weight: Option<f32>,
+    frozen: Option<(Arc<voxy_animation::Pose>, f32)>,
+}
+impl ContactBlendState {
+    fn snapshot_weight(&mut self, snapshot: &Arc<voxy_animation::Pose>) -> Result<f32, String> {
+        if self.frozen.as_ref().is_none_or(|(held, _)| !Arc::ptr_eq(held, snapshot)) {
+            self.frozen = Some((snapshot.clone(), self.last_weight
+                .ok_or("interrupted foot transition has no accepted contact snapshot")?));
+        }
+        Ok(self.frozen.as_ref().unwrap().1)
+    }
+
+    fn sample(&mut self, binding: &FootBinding, clip_name: Option<&str>, phase: Option<f64>,
+        blend: Option<voxy_animation::PoseBlendPhases<'_>>) -> Result<f32, String> {
+        let target = contact_weight(binding.contact_keys(clip_name)?, phase)?;
+        let weight = match blend.and_then(|blend| blend.source.map(|source| (source, blend.target_weight))) {
+            None => { self.frozen = None; target }
+            Some((source, alpha)) => {
+                let source_weight = match source {
+                    voxy_animation::PoseBlendSource::Clip(source) => {
+                        self.frozen = None;
+                        contact_weight(binding.contact_keys(Some(source.clip.name()))?, Some(source.normalized_phase))?
+                    }
+                    voxy_animation::PoseBlendSource::FrozenPose(snapshot) => {
+                        self.snapshot_weight(snapshot)?
+                    }
+                };
+                (f64::from(source_weight) + (f64::from(target) - f64::from(source_weight)) * f64::from(alpha)) as f32
+            }
+        };
+        self.last_weight = Some(weight);
+        Ok(weight)
+    }
 }
 fn contact_weight(keys: &[FootContactKey], phase: Option<f64>) -> Result<f32, String> {
     if keys.is_empty() {
@@ -74,27 +123,13 @@ fn crossed_swing(
             || (interval.looping && phase + 1. > interval.start && phase + 1. <= interval.end)
     })
 }
-#[derive(Clone, Debug)]
-struct BoundFoot {
-    joints: [u16; 3],
-    chain: TwoBoneChain,
-    state: FootContactState,
-}
-#[derive(Clone, Debug)]
-pub(super) struct FootRuntime {
-    settings: Arc<ModelFootPlacement>,
-    feet: Vec<BoundFoot>,
-}
-impl FootRuntime {
-    pub(super) fn matches(&self, settings: &ModelFootPlacement) -> bool {
-        self.settings.as_ref() == settings
-    }
-    pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
-        if settings.feet.len() > 8 {
+impl ModelFootPlacement {
+    /// Validates authored values before rig-dependent admission.
+    pub fn validate(&self) -> Result<(), String> {
+        if self.feet.len() > 8 {
             return Err("foot binding capacity exceeded".into());
         }
-        let mut feet = Vec::new();
-        for foot in &settings.feet {
+        for foot in &self.feet {
             if foot
                 .bones
                 .iter()
@@ -110,7 +145,17 @@ impl FootRuntime {
             {
                 return Err("invalid authored foot binding".into());
             }
-            let keys = &foot.contact_curve;
+            if foot.clip_contact_curves.len() > 64
+                || foot.clip_contact_curves.keys().any(|name| name.is_empty() || name.len() > 1024 || name.contains('\0'))
+            {
+                return Err("invalid foot clip contact mapping".into());
+            }
+            let total_keys = foot.clip_contact_curves.values().try_fold(
+                foot.contact_curve.len(), |total, keys| total.checked_add(keys.len()));
+            if total_keys.is_none_or(|count| count > 4096) {
+                return Err("aggregate foot contact key budget exceeded".into());
+            }
+            for keys in std::iter::once(&foot.contact_curve).chain(foot.clip_contact_curves.values()) {
             if keys.len() > 4096
                 || (!keys.is_empty()
                     && (keys.len() < 2
@@ -125,6 +170,37 @@ impl FootRuntime {
                         || keys.windows(2).any(|pair| pair[0].phase >= pair[1].phase)))
             {
                 return Err("invalid foot contact curve".into());
+            }
+            }
+            foot.contact.validate().map_err(|e| e.to_string())?;
+        }
+        Ok(())
+    }
+}
+#[derive(Clone, Debug)]
+struct BoundFoot {
+    joints: [u16; 3],
+    chain: TwoBoneChain,
+    state: FootContactState,
+    blend: ContactBlendState,
+}
+#[derive(Clone, Debug)]
+pub(super) struct FootRuntime {
+    settings: Arc<ModelFootPlacement>,
+    feet: Vec<BoundFoot>,
+}
+impl FootRuntime {
+    pub(super) fn matches(&self, settings: &ModelFootPlacement) -> bool {
+        self.settings.as_ref() == settings
+    }
+    pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+        settings.validate()?;
+        let mut feet = Vec::new();
+        for foot in &settings.feet {
+            for name in foot.clip_contact_curves.keys() {
+                if model.animations.iter().filter(|clip| clip.name() == name).count() != 1 {
+                    return Err("foot contact clip name is missing or ambiguous".into());
+                }
             }
             let joints = [
                 model
@@ -152,6 +228,7 @@ impl FootRuntime {
                 joints,
                 chain: TwoBoneChain::new(&model.skeleton, joints).map_err(|e| e.to_string())?,
                 state: FootContactState::default(),
+                blend: ContactBlendState::default(),
             });
         }
         Ok(Self {
@@ -169,7 +246,7 @@ impl FootRuntime {
         preview: &CharacterTickPreview,
         budget: &mut SupportQueryBudget,
     ) -> Result<AnimatorFrame, String> {
-        self.correct_at_phase(model, frame, actor, grounded, preview, budget, None, None)
+        self.correct_at_phase(model, frame, actor, grounded, preview, budget, None, None, None, None, None, None)
     }
     pub(super) fn correct_at_phase(
         &mut self,
@@ -179,16 +256,44 @@ impl FootRuntime {
         grounded: bool,
         preview: &CharacterTickPreview,
         budget: &mut SupportQueryBudget,
+        clip_name: Option<&str>,
         phase: Option<f64>,
         interval: Option<voxy_animation::AnimationPhaseInterval>,
+        blend: Option<voxy_animation::PoseBlendPhases<'_>>,
+        source_interval: Option<&crate::model_playback::SourceContactInterval>,
+        frozen_tick: Option<&(Arc<voxy_animation::Pose>, f64)>,
     ) -> Result<AnimatorFrame, String> {
         let inverse = actor.inverse();
         if !inverse.is_finite() {
             return Err("foot actor frame is singular".into());
         }
+        if let Some(source) = source_interval {
+            if !source.active_tick_fraction.is_finite() || !(0. ..=1.).contains(&source.active_tick_fraction)
+                || !source.phase.start.is_finite() || !source.phase.end.is_finite()
+                || source.phase.end < source.phase.start {
+                return Err("invalid source contact interval".into());
+            }
+            for binding in &self.settings.feet {
+                binding.contact_keys(Some(source.clip.name()))?;
+            }
+        }
         for (foot, binding) in self.feet.iter_mut().zip(&self.settings.feet) {
-            let weight = binding.weight * contact_weight(&binding.contact_curve, phase)?;
-            if crossed_swing(&binding.contact_curve, interval) {
+            let keys = binding.contact_keys(clip_name)?;
+            let frozen_event = frozen_tick.map(|(snapshot, fraction)|
+                foot.blend.snapshot_weight(snapshot).map(|weight| (weight, *fraction))).transpose()?;
+            let weight = binding.weight * foot.blend.sample(binding, clip_name, phase, blend)?;
+            let swing = if let Some(interval) = interval {
+                let source = if let Some(source) = source_interval {
+                    Some(contact_events::SourceTravel::Clip {
+                        keys: binding.contact_keys(Some(source.clip.name()))?, phase: source.phase,
+                        active_fraction: source.active_tick_fraction,
+                    })
+                } else if let Some((weight, active_fraction)) = frozen_event {
+                    Some(contact_events::SourceTravel::Frozen { weight, active_fraction })
+                } else { None };
+                contact_events::mixed_swing(keys, interval, source, budget)?
+            } else { false };
+            if swing {
                 foot.state = FootContactState::default();
             }
             let mut globals: Vec<DMat4> = Vec::with_capacity(frame.pose.local().len());

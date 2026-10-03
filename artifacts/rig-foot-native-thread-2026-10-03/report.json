@@ -1,0 +1,13 @@
+{
+  "release_exit": 0,
+  "native_exit": 1,
+  "presented": 0,
+  "main_thread": true,
+  "window_class": "NSKVONotifying_WinitWindow",
+  "active_space": true,
+  "occlusion_state": 8192,
+  "accepted": false,
+  "binary_sha256": "5792535b2d6e7e600c865570e08afabd75dec3754b5c414b3eee01e6b5c63bda",
+  "upstream_reference": "https://github.com/gfx-rs/wgpu/pull/9141",
+  "conclusion": "This run excludes off-main-thread access and a non-NSWindow delegate as explanations; native presentation remains unverified."
+}

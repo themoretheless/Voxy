@@ -1,0 +1,17 @@
+METAL WINDOW number=33705 occlusion=8192 visible=true miniaturized=false key=false active_space=true
+EDITOR PRESENT frames=0 draws=0 outcome=SkippedOccluded positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=foot-contact.glb
+METAL WINDOW number=33705 occlusion=8192 visible=true miniaturized=false key=true active_space=true
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=foot-contact.glb
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1424 }) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 4112, height: 2580 }) visible=Some(true) focused=Some(true)
+METAL WINDOW number=33705 occlusion=8192 visible=true miniaturized=false key=true active_space=false
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(true) visible=Some(true) focused=Some(true)
+METAL WINDOW number=33705 occlusion=8192 visible=true miniaturized=false key=true active_space=true
+METAL WINDOW number=33705 occlusion=8192 visible=false miniaturized=false key=false active_space=true
+Error: "native acceptance timed out: presented=0, last_surface=Some(SkippedOccluded)"

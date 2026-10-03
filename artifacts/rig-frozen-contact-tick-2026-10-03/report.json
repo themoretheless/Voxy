@@ -1,0 +1,9 @@
+{
+  "editor_cpu_tests_passed": 123,
+  "gpu_tests_ignored": 10,
+  "frozen_context": "snapshot Arc and active tick fraction captured before advance and published only after acceptance",
+  "completion": "snapshot weight captured before clearing the ended blend; event detection uses exact active fraction rather than full tick",
+  "failure": "previous context retained on rejected publication",
+  "resource_lifecycle": "snapshot released after next accepted nonfade tick; verified with Weak",
+  "remaining": "retain physical anchors across clip fades and verify ordinary accepted character ticks before removing foot transition guard; native presentation still open"
+}

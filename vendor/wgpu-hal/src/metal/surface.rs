@@ -18,8 +18,8 @@ use parking_lot::{Mutex, RwLock};
 use super::OsFeatures;
 
 /// Walks up from `start` to the `NSWindow` hosting this layer: the first ancestor
-/// layer with a delegate is the backing `NSView`, and we return its `window`.
-/// `None` if no ancestor has a delegate.
+/// delegate that exposes a real hosting `NSWindow` is used. Other layer
+/// delegates and detached views are skipped while searching ancestors.
 #[cfg(target_os = "macos")]
 fn hosting_window(
     start: Retained<objc2_quartz_core::CALayer>,
@@ -27,7 +27,17 @@ fn hosting_window(
     let mut current = Some(start);
     while let Some(layer) = current {
         if let Some(delegate) = layer.delegate() {
-            return unsafe { objc2::msg_send![&*delegate, window] };
+            if delegate.respondsToSelector(objc2::sel!(window)) {
+                let window: Option<Retained<objc2::runtime::NSObject>> =
+                    unsafe { objc2::msg_send![&*delegate, window] };
+                if let (Some(window), Some(window_class)) =
+                    (window, objc2::runtime::AnyClass::get(c"NSWindow"))
+                {
+                    if window.isKindOfClass(window_class) {
+                        return Some(window);
+                    }
+                }
+            }
         }
         current = layer.superlayer();
     }
@@ -376,12 +386,14 @@ impl crate::Surface for super::Surface {
                     let miniaturized: bool = unsafe { objc2::msg_send![&*window, isMiniaturized] };
                     let key: bool = unsafe { objc2::msg_send![&*window, isKeyWindow] };
                     let on_active_space: bool = unsafe { objc2::msg_send![&*window, isOnActiveSpace] };
+                    let main_thread = objc2::MainThreadMarker::new().is_some();
+                    let window_class = window.class().name();
                     let state = occlusion_state | ((visible as usize) << 8)
                         | ((miniaturized as usize) << 9) | ((key as usize) << 10)
                         | ((on_active_space as usize) << 11);
                     if LAST.swap(state, std::sync::atomic::Ordering::Relaxed) != state {
                         let number: isize = unsafe { objc2::msg_send![&*window, windowNumber] };
-                        eprintln!("METAL WINDOW number={number} occlusion={occlusion_state} visible={visible} miniaturized={miniaturized} key={key} active_space={on_active_space}");
+                        eprintln!("METAL WINDOW number={number} occlusion={occlusion_state} visible={visible} miniaturized={miniaturized} key={key} active_space={on_active_space} main_thread={main_thread} class={window_class:?}");
                     }
                 }
                 if occlusion_state & NS_WINDOW_OCCLUSION_STATE_VISIBLE == 0 {
