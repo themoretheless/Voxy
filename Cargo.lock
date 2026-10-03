@@ -2634,6 +2634,7 @@ dependencies = [
  "physics_voxel",
  "pollster",
  "raw-window-handle",
+ "serde_json",
  "voxy_animation",
  "voxy_assets",
  "voxy_core",

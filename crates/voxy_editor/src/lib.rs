@@ -86,21 +86,6 @@ use winit::{
     keyboard::{KeyCode, PhysicalKey},
     window::{Window, WindowId},
 };
-#[derive(Debug)]
-struct Spin;
-impl Behavior for Spin {
-    #[allow(clippy::cast_possible_truncation)]
-    fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
-        if let Ok(mut local) = scene.local(owner) {
-            local.rotation =
-                (glam::Quat::from_rotation_z(delta as f32) * local.rotation).normalize();
-            // The fixed step is finite and rotation is normalized before publication.
-            scene
-                .set_local(owner, local)
-                .expect("valid fixed-step rotation");
-        }
-    }
-}
 fn game_control(key: KeyCode) -> Option<voxy_input::Control> {
     match key {
         KeyCode::ArrowLeft => Some(voxy_gameplay::LEFT),
@@ -168,6 +153,7 @@ struct ModelGraphics {
     outline: Option<SceneGeometry>,
     parts: BTreeMap<u32, PartGraphics>,
     animated_textures: Vec<Option<Arc<SceneTexture>>>,
+    animated_preview: Vec<SceneGeometry>,
     animated_model: Option<Arc<voxy_render::ModelAsset>>,
     animated_lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
     _images: Vec<Arc<SceneTexture>>,
@@ -1391,6 +1377,21 @@ impl App {
                             draws.push(SceneDraw {
                                 geometry,
                                 texture,
+                                transform: &graphics.transforms[&(view, instance.owner)],
+                                overlay: false,
+                            });
+                        }
+                        continue;
+                    }
+                    if let Some(model) = graphics.models.get(&instance.component.asset)
+                        && !styles.parts.contains_key(&instance.owner)
+                        && !model.animated_preview.is_empty()
+                    {
+                        for (primitive, geometry) in model.animated_preview.iter().enumerate() {
+                            draws.push(SceneDraw {
+                                geometry,
+                                texture: model.animated_textures[primitive].as_deref()
+                                    .unwrap_or(&graphics.texture),
                                 transform: &graphics.transforms[&(view, instance.owner)],
                                 overlay: false,
                             });
@@ -3363,7 +3364,7 @@ impl App {
             }
             self.play.playing = Some(authoring_before_play);
             self.play.ui_actions = Some(actions);
-            let mut simulation = SceneSimulation::new(
+            let simulation = SceneSimulation::new(
                 &self.scene,
                 SimulationLimits {
                     fixed_step: 1.0 / 60.0,
@@ -3378,24 +3379,7 @@ impl App {
                 self.play.physics =
                     Some(CharacterPhysics::new(&self.scene, 128, 128).with_depenetration(true));
             }
-            let has_authored_behaviors = self
-                .scene
-                .components::<voxy_gameplay::AngularMotion>()
-                .next()
-                .is_some();
             self.play.angular_motion = Some(voxy_gameplay::AngularMotionBatch::new(&self.scene, 128)?);
-            let roots: Vec<_> = self
-                .scene
-                .nodes()
-                .filter(|(_, _, parent)| parent.is_none())
-                .map(|(id, _, _)| id)
-                .collect();
-            for root in roots
-                .into_iter()
-                .filter(|_| !has_characters && !self.standalone && !has_authored_behaviors)
-            {
-                simulation.attach(&mut self.scene, root, Spin)?;
-            }
             self.audio.set_play(audio);
             self.play.simulation = Some(simulation);
             self.play.simulation_ticks = 0;
@@ -5441,7 +5425,7 @@ mod tests {
         }
         assert_eq!(ticks, 60);
         let rotation = app.scene.local(app.instances[0]).unwrap().rotation;
-        assert!(rotation.angle_between(glam::Quat::from_rotation_z(1.0)) < 1e-3);
+        assert!(rotation.angle_between(glam::Quat::IDENTITY) < 1e-6);
         assert_eq!(app.authoring.history.as_ref().unwrap().current(), &expected);
         app.toggle_play().unwrap();
         assert_eq!(app.authoring_document().unwrap(), expected);

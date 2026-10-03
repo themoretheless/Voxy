@@ -381,6 +381,125 @@ fn gpu_fox_all_clips_match_cpu_and_render() {
     );
 }
 
+#[test]
+#[ignore = "requires GPU; STEP interpolation through the skeletal renderer"]
+fn gpu_reference_rig_step_clips_match_cpu_and_render() {
+    let glb = step_glb(include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb"));
+    reference_rig_gpu_acceptance(&glb, "reference-rig-step", 370, 22, 1);
+}
+
+#[test]
+#[ignore = "requires GPU; intermediate STEP keys in Survey, Walk and Run"]
+fn gpu_fox_step_clips_match_cpu_and_render() {
+    let glb = step_glb(include_bytes!("../../../examples/assets/fox/Fox.glb"));
+    reference_rig_gpu_acceptance(&glb, "fox", 1728, 26, 3);
+}
+
+#[test]
+#[ignore = "requires GPU; cubic rig pose and normal comparison"]
+fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
+    let original = include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb");
+    let source = gltf::Gltf::from_slice(original).unwrap();
+    let mut binary = source.blob.unwrap();
+    let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
+    let mut document: serde_json::Value = serde_json::from_slice(&original[20..20 + json_size]).unwrap();
+    let mut outputs = std::collections::BTreeMap::new();
+    for animation in document["animations"].as_array().unwrap() {
+        for sampler in animation["samplers"].as_array().unwrap() {
+            let index = sampler["output"].as_u64().unwrap() as usize;
+            outputs.insert(index, ());
+        }
+    }
+    for index in outputs.keys() {
+        let mut accessor = document["accessors"][*index].clone();
+        assert_eq!(accessor["componentType"], 5126);
+        let view = &document["bufferViews"][accessor["bufferView"].as_u64().unwrap() as usize];
+        let count = accessor["count"].as_u64().unwrap() as usize;
+        let width = match accessor["type"].as_str().unwrap() { "VEC3" => 3, "VEC4" => 4, _ => panic!("TRS required") };
+        let offset = view["byteOffset"].as_u64().unwrap_or(0) as usize + accessor["byteOffset"].as_u64().unwrap_or(0) as usize;
+        let stride = view["byteStride"].as_u64().map_or(width * 4, |v| v as usize);
+        let values: Vec<_> = (0..count).map(|key| binary[offset + key * stride..offset + key * stride + width * 4].to_vec()).collect();
+        let begin = binary.len();
+        for value in values { binary.extend(vec![0; width * 4]); binary.extend(value); binary.extend(vec![0; width * 4]); }
+        accessor["count"] = (count * 3).into();
+        accessor["byteOffset"] = 0.into();
+        accessor["bufferView"] = document["bufferViews"].as_array().unwrap().len().into();
+        document["bufferViews"].as_array_mut().unwrap().push(serde_json::json!({"buffer":0,"byteOffset":begin,"byteLength":binary.len()-begin}));
+        let output = document["accessors"].as_array().unwrap().len();
+        document["accessors"].as_array_mut().unwrap().push(accessor);
+        for animation in document["animations"].as_array_mut().unwrap() {
+            for sampler in animation["samplers"].as_array_mut().unwrap() {
+                if sampler["output"].as_u64().unwrap() as usize == *index {
+                    sampler["output"] = output.into(); sampler["interpolation"] = "CUBICSPLINE".into();
+                }
+            }
+        }
+    }
+    document["buffers"][0]["byteLength"] = binary.len().into();
+    let mut json = serde_json::to_vec(&document).unwrap();
+    while json.len() % 4 != 0 { json.push(b' '); }
+    let size = 28 + json.len() + binary.len();
+    let mut glb = Vec::new();
+    glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend((size as u32).to_le_bytes());
+    glb.extend((json.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(json);
+    glb.extend((binary.len() as u32).to_le_bytes()); glb.extend(b"BIN\0"); glb.extend(binary);
+    reference_rig_gpu_acceptance(&glb, "reference-rig-cubic", 370, 22, 1);
+}
+
+#[test]
+#[ignore = "requires GPU; mirrored bind hierarchy and animated negative scale"]
+fn gpu_mirrored_rig_matches_cpu_positions_normals_and_render() {
+    let original = include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb");
+    let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
+    for animated in [false, true] {
+        let mut document: serde_json::Value = serde_json::from_slice(&original[20..20 + json_size]).unwrap();
+        let parsed = gltf::Gltf::from_slice(original).unwrap();
+        let mut binary = parsed.blob.as_ref().unwrap().clone();
+        if animated {
+            let channel = parsed.animations().next().unwrap().channels().find(|c| c.target().node().index() == 2 && c.target().property() == gltf::animation::Property::Scale).unwrap();
+            let accessor = channel.sampler().output();
+            assert_eq!(accessor.data_type(), gltf::accessor::DataType::F32);
+            let view = accessor.view().unwrap();
+            let stride = view.stride().unwrap_or(12);
+            for key in 0..accessor.count() {
+                let offset = view.offset() + accessor.offset() + key * stride;
+                let value = f32::from_le_bytes(binary[offset..offset + 4].try_into().unwrap());
+                binary[offset..offset + 4].copy_from_slice(&(-value.abs()).to_le_bytes());
+            }
+        } else {
+            for index in [0, 4, 8, 12] {
+                document["nodes"][0]["matrix"][index] = (-document["nodes"][0]["matrix"][index].as_f64().unwrap()).into();
+            }
+        }
+        let mut json = serde_json::to_vec(&document).unwrap();
+        while json.len() % 4 != 0 { json.push(b' '); }
+        let size = 28 + json.len() + binary.len();
+        let mut glb = Vec::new();
+        glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend((size as u32).to_le_bytes());
+        glb.extend((json.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(json);
+        glb.extend((binary.len() as u32).to_le_bytes()); glb.extend(b"BIN\0"); glb.extend(binary);
+        reference_rig_gpu_acceptance(&glb, if animated { "animated-mirror" } else { "bind-mirror" }, 370, 22, 1);
+    }
+}
+
+fn step_glb(original: &[u8]) -> Vec<u8> {
+    let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
+    let mut document: serde_json::Value = serde_json::from_slice(&original[20..20 + json_size]).unwrap();
+    for animation in document["animations"].as_array_mut().unwrap() {
+        for sampler in animation["samplers"].as_array_mut().unwrap() {
+            sampler["interpolation"] = "STEP".into();
+        }
+    }
+    let mut json = serde_json::to_vec(&document).unwrap();
+    while json.len() % 4 != 0 { json.push(b' '); }
+    let binary_chunk = &original[20 + json_size..];
+    let size = 20 + json.len() + binary_chunk.len();
+    let mut glb = Vec::new();
+    glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend((size as u32).to_le_bytes());
+    glb.extend((json.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(json); glb.extend(binary_chunk);
+    glb
+}
+
 fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, joints: usize, clips: usize) {
     let asset = crate::ModelAsset::parse(bytes, &[], crate::ModelLimits::default()).unwrap();
     assert_eq!(asset.animations.len(), clips);
@@ -586,7 +705,13 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
         max_normal_error < 2e-5,
         "CPU/GPU normal error {max_normal_error}"
     );
-    assert!(motion > 0.01, "reference rig animation did not move");
+    if label == "reference-rig-step" {
+        // This fixture has only keys at 0 and clip duration. Loop playback
+        // wraps the final key, so STEP must hold the initial pose throughout.
+        assert!(motion < 1e-6, "two-endpoint STEP loop unexpectedly moved");
+    } else {
+        assert!(motion > 0.01, "reference rig animation did not move");
+    }
     assert!(pollster::block_on(scope.pop()).is_none());
     let stats = |mut values: Vec<f64>| {
         values.sort_by(f64::total_cmp);
