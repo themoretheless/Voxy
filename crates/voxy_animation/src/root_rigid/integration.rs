@@ -61,6 +61,33 @@ impl RootRigidApproximation {
         }
         Ok(bound)
     }
+    /// Projection enclosure for the original field, including discretization error.
+    /// The global point envelope applies at every fraction of every screw span.
+    /// Normals need not be unit length. Numerical evaluation error is still a
+    /// separate obligation; this must not be treated as a certified swept hit.
+    pub fn span_projection_bounds(
+        &self,
+        span_index: usize,
+        point: DVec3,
+        normal: DVec3,
+    ) -> Result<[f64; 2], AnimationError> {
+        let error = self.point_error_bound(point)?;
+        if !normal.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let span = self
+            .path
+            .spans()
+            .get(span_index)
+            .ok_or(AnimationError::InvalidSampleTime)?;
+        let bounds = span.projection_bounds(point, normal)?;
+        let projection_error = error * normal.length();
+        let result = [bounds[0] - projection_error, bounds[1] + projection_error];
+        if result.iter().any(|value| !value.is_finite()) {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        Ok(result)
+    }
     /// Transports the approximate path and its conditional errors together.
     /// Angular discrepancy moves a shifted origin, including at scale zero.
     /// # Errors
@@ -100,6 +127,46 @@ impl RootRigidPath {
         max_spans: usize,
         mut sample: impl FnMut(f64) -> Result<RootRigidTwist, AnimationError>,
     ) -> Result<RootRigidApproximation, AnimationError> {
+        Self::integrate_spatial_with_errors(
+            duration,
+            rates,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+            |time| Ok((sample(time)?, RootTwistErrorBounds::ZERO)),
+        )
+    }
+    /// Adds caller-enclosed sampled velocity uncertainty to discretization errors.
+    /// Rates bound the original field, not just rounded sample values. Floating
+    /// evaluation of the path and error accumulation still needs separate bounds.
+    pub fn integrate_spatial_enclosed(
+        duration: f64,
+        rates: RootTwistRateBounds,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+        mut sample: impl FnMut(f64) -> Result<(RootRigidTwist, RootRigidTwistEnclosure), AnimationError>,
+    ) -> Result<RootRigidApproximation, AnimationError> {
+        Self::integrate_spatial_with_errors(
+            duration,
+            rates,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+            |time| {
+                let (nominal, enclosure) = sample(time)?;
+                Ok((nominal, enclosure.error_bounds(nominal)?))
+            },
+        )
+    }
+    fn integrate_spatial_with_errors(
+        duration: f64,
+        rates: RootTwistRateBounds,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+        mut sample: impl FnMut(f64) -> Result<(RootRigidTwist, RootTwistErrorBounds), AnimationError>,
+    ) -> Result<RootRigidApproximation, AnimationError> {
         if !duration.is_finite()
             || duration < 0.
             || [
@@ -137,7 +204,7 @@ impl RootRigidPath {
                 if !dt.is_finite() || dt <= 0. {
                     return Err(AnimationError::NumericalOverflow);
                 }
-                let twist = sample(start)?;
+                let (twist, error) = sample(start)?;
                 let increment = twist.increment(dt)?;
                 // Skew angular dynamics preserve prior error norm. Variation
                 // over this span gives integral s*(Lv + Lw*|x_approx(s)|),
@@ -145,7 +212,10 @@ impl RootRigidPath {
                 origin_error +=
                     0.5 * dt * dt * (rates.linear + rates.angular * prefix.translation.length())
                         + rates.angular * twist.linear.length() * dt * dt * dt / 3.;
-                angular_error += 0.5 * rates.angular * dt * dt;
+                origin_error += error.linear_bound() * dt
+                    + error.angular_bound()
+                        * (prefix.translation.length() * dt + twist.linear.length() * dt * dt / 2.);
+                angular_error += error.angular_bound() * dt + 0.5 * rates.angular * dt * dt;
                 if !origin_error.is_finite() || !angular_error.is_finite() {
                     return Err(AnimationError::NumericalOverflow);
                 }

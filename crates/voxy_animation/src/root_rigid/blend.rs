@@ -198,3 +198,138 @@ fn validate_coordinates(basis: DQuat, scale: f64, offset: DVec3) -> Result<(), A
     }
     Ok(())
 }
+
+impl RootRigidPath {
+    /// Integrates a linear-weight velocity blend in one explicitly shared frame.
+    /// Both paths must already be transported into that frame. Their full clip
+    /// durations are retimed to `wall_seconds`; no derivative crosses a key.
+    /// STEP paths require a discrete-event policy and are rejected here.
+    /// Returned errors cover real-arithmetic discretization, not roundoff or
+    /// physical collision acceptance. Neither input is mutated on failure.
+    pub fn blend_spatial(
+        &self,
+        target: &Self,
+        weights: [f64; 2],
+        wall_seconds: f64,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidApproximation, AnimationError> {
+        if !wall_seconds.is_finite() || wall_seconds <= 0. {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        if weights
+            .iter()
+            .any(|w| !w.is_finite() || !(0. ..=1.).contains(w))
+        {
+            return Err(AnimationError::InvalidBlendWeight);
+        }
+        if [origin_tolerance, angular_tolerance]
+            .into_iter()
+            .any(|v| !v.is_finite() || v < 0.)
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let partition = self.partition_for_blend(target, max_spans)?;
+        if !partition.steps.is_empty() {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
+        let weight = |progress: f64| weights[0] + (weights[1] - weights[0]) * progress;
+        let bounds =
+            |path: &Self, index: Option<usize>| -> Result<RootSpatialTwistBounds, AnimationError> {
+                match index {
+                    Some(index) => path.spans()[index]
+                        .twist_bounds()?
+                        .ok_or(AnimationError::RootRotationTransitionUnsupported)?
+                        .retimed(path.duration() / wall_seconds),
+                    None => Ok(RootSpatialTwistBounds {
+                        linear_speed_bound: 0.,
+                        angular_speed_bound: 0.,
+                        rates: RootTwistRateBounds {
+                            linear: 0.,
+                            angular: 0.,
+                        },
+                    }),
+                }
+            };
+        let mut prepared = Vec::with_capacity(partition.intervals.len());
+        let mut radius = 0.;
+        for interval in &partition.intervals {
+            let duration = wall_seconds * (interval.end - interval.start);
+            let blended = bounds(self, interval.source_span)?.blend(
+                bounds(target, interval.target_span)?,
+                weight(interval.start),
+                weight(interval.end),
+                duration,
+            )?;
+            // Skew angular dynamics do not increase the origin's norm. The
+            // integrated linear speed bounds every approximate prefix radius.
+            radius += duration * blended.linear_speed_bound;
+            prepared.push((duration, blended.rates));
+        }
+        if !radius.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let count = prepared.len() as f64;
+        let local_origin = origin_tolerance / (2. * count);
+        let local_angle = (angular_tolerance / count).min(if radius == 0. {
+            f64::INFINITY
+        } else {
+            origin_tolerance / (2. * count * radius)
+        });
+        let twist = |path: &Self,
+                     index: Option<usize>,
+                     progress: f64|
+         -> Result<RootRigidTwist, AnimationError> {
+            let Some(index) = index else {
+                return Ok(RootRigidTwist {
+                    linear: DVec3::ZERO,
+                    angular: DVec3::ZERO,
+                });
+            };
+            let span = &path.spans()[index];
+            let time = progress * path.duration();
+            let u = ((time - span.start()) / (span.end() - span.start())).clamp(0., 1.);
+            span.velocity(u)?
+                .ok_or(AnimationError::RootRotationTransitionUnsupported)?
+                .spatial_twist(span.sample(u)?)?
+                .retimed(path.duration() / wall_seconds)
+        };
+        let mut result = RootRigidApproximation {
+            path: Self::from_twists(&[], 0)?,
+            origin_error_bound: 0.,
+            angular_error_bound: 0.,
+        };
+        let capacity = max_spans.min(MAX_ROOT_ROTATION_SPANS);
+        for (index, (interval, (duration, rates))) in
+            partition.intervals.iter().zip(prepared).enumerate()
+        {
+            let reserved = partition.intervals.len() - index - 1;
+            let available = capacity
+                .checked_sub(result.path.spans().len() + reserved)
+                .ok_or(AnimationError::RootRigidBudget)?;
+            let part = Self::integrate_spatial(
+                duration,
+                rates,
+                local_origin,
+                local_angle,
+                available,
+                |time| {
+                    let progress =
+                        interval.start + (interval.end - interval.start) * (time / duration);
+                    twist(self, interval.source_span, progress)?.blend(
+                        twist(target, interval.target_span, progress)?,
+                        weight(progress),
+                    )
+                },
+            )?;
+            result = result.append_spatial(&part, capacity)?;
+        }
+        if result.origin_error_bound > origin_tolerance
+            || result.angular_error_bound > angular_tolerance
+        {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        Ok(result)
+    }
+}

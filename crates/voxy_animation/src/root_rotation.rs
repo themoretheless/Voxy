@@ -86,6 +86,19 @@ impl RootRotationSpan {
         matches!(self.shape, Shape::Step { .. })
     }
 
+    pub(super) fn cubic_velocity_inputs(&self) -> Option<([[f64;4];4], DQuat, DQuat)> {
+        match &self.shape {
+            Shape::Cubic(control) => Some((control.map(|q|q.to_array()), self.left, self.right)),
+            _ => None,
+        }
+    }
+    pub(super) fn arc_velocity_inputs(&self) -> Option<(DQuat,DVec3,DQuat,DQuat)> {
+        match &self.shape {
+            Shape::Hold(from) => Some((*from,DVec3::ZERO,self.left,self.right)),
+            Shape::Arc {from,axis} => Some((*from,*axis,self.left,self.right)),
+            _ => None,
+        }
+    }
     /// Upper bound on interval-local angular speed in radians per clip second.
     /// STEP is instantaneous and returns None; it needs separate event admission.
     #[must_use]
@@ -116,22 +129,26 @@ impl RootRotationSpan {
         }
     }
 
-    pub(super) fn shifted_and_postcomposed(&self, offset:f64, rotation:DQuat) -> Result<Self,AnimationError> {
-        let mut span=self.clone();
-        span.start+=offset;
-        span.end+=offset;
-        if !span.start.is_finite() || !span.end.is_finite()
-            || (self.end>self.start && span.end<=span.start) {
+    pub(super) fn with_times(&self, start: f64, end: f64) -> Result<Self, AnimationError> {
+        if !start.is_finite() || !end.is_finite() || start < 0. || end < start
+            || (self.end > self.start && end <= start) {
             return Err(AnimationError::NumericalOverflow);
         }
-        if self.end>self.start {
-            let factor=(self.end-self.start)/(span.end-span.start);
-            span.speed_bound=span.speed_bound.map(|bound|bound*factor);
+        let mut span = self.clone();
+        span.start = start;
+        span.end = end;
+        if self.end > self.start {
+            let factor = (self.end-self.start)/(end-start);
+            span.speed_bound = span.speed_bound.map(|bound| bound*factor);
             if span.speed_bound.is_some_and(|bound| !bound.is_finite()) {
                 return Err(AnimationError::NumericalOverflow);
             }
         }
-        span.right=(span.right*rotation).normalize();
+        Ok(span)
+    }
+    pub(super) fn shifted_and_postcomposed(&self, offset: f64, rotation: DQuat) -> Result<Self, AnimationError> {
+        let mut span = self.with_times(self.start+offset, self.end+offset)?;
+        span.right = (span.right*rotation).normalize();
         Ok(span)
     }
     pub(super) fn constant_velocity(start: f64, end: f64, from: DQuat, angular: DVec3)

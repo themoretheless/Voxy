@@ -140,7 +140,29 @@ fn advance(
     steps: &mut usize,
     queries: &mut usize,
 ) -> Result<Hit, PhysicsError> {
-    if candidates.is_empty() || speed_bound == 0. {
+    advance_with_clearance(candidates, sample, speed_bound, radius, rotation_radius,
+        0., steps, queries)
+}
+
+// A uniform Hausdorff envelope inflates every nominal pose by this radius.
+// Advancing by the nominal speed is sufficient: the fixed envelope's boundary
+// moves with that speed too. This is not a true-contact witness or an evaluation
+// error certificate; callers must prove the envelope before physical admission.
+#[allow(clippy::too_many_arguments)]
+fn advance_with_clearance(
+    candidates: &[&AffineBox],
+    sample: impl Fn(f64) -> Result<(DVec3, [DVec3; 3]), PhysicsError>,
+    speed_bound: f64,
+    radius: f64,
+    rotation_radius: f64,
+    clearance: f64,
+    steps: &mut usize,
+    queries: &mut usize,
+) -> Result<Hit, PhysicsError> {
+    if !clearance.is_finite() || clearance < 0. {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    if candidates.is_empty() || (speed_bound == 0. && clearance == 0.) {
         return Ok(Hit {
             fraction: 1.,
             normal: None,
@@ -161,7 +183,8 @@ fn advance(
             for axis in obstacle.axes_for(current) {
                 let gap = relative.dot(axis).abs()
                     - obstacle.radius(axis)
-                    - current.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>();
+                    - current.iter().map(|edge| edge.dot(axis).abs()).sum::<f64>()
+                    - clearance;
                 if gap > separation {
                     separation = gap;
                     normal = axis * if relative.dot(axis) < 0. { -1. } else { 1. };
@@ -184,6 +207,9 @@ fn advance(
                 fraction: time,
                 normal: Some(contact),
             });
+        }
+        if speed_bound == 0. {
+            return Ok(Hit { fraction: 1., normal: None });
         }
         // A projection gap is a lower bound on Euclidean separation. Every body
         // point travels at most speed_bound over the normalized unit interval.
@@ -399,10 +425,77 @@ pub(crate) fn sweep_rigid_path(
     iterations: usize,
     queries: &mut usize,
 ) -> Result<PathHit, PhysicsError> {
+    sweep_rigid_path_with_clearance(center, rest_edges, orientation, path, basis,
+        origin, scale, 0., boxes, iterations, queries)
+}
+
+fn rigid_vertices(
+    edges: [DVec3; 3], basis: DQuat, origin: DVec3, scale: f64,
+) -> Result<[DVec3; 8], PhysicsError> {
+    if !basis.is_finite() || !basis.is_normalized() || !origin.is_finite()
+        || !scale.is_finite() || scale == 0. || edges.iter().any(|v| !v.is_finite()) {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    let vertices = corners(edges).map(|v| (basis.conjugate()*(v-origin))/scale);
+    if vertices.iter().any(|v| !v.is_finite()) { return Err(PhysicsError::InvalidMotion); }
+    Ok(vertices)
+}
+
+fn rigid_body_clearance(
+    approximation: &voxy_animation::RootRigidApproximation,
+    edges: [DVec3; 3], basis: DQuat, origin: DVec3, scale: f64,
+    evaluation_radius: f64,
+) -> Result<f64, PhysicsError> {
+    if !evaluation_radius.is_finite() || evaluation_radius < 0. {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    let mut error = 0_f64;
+    for vertex in rigid_vertices(edges,basis,origin,scale)? {
+        error = error.max(approximation.point_error_bound(vertex).map_err(|_|PhysicsError::InvalidMotion)?);
+    }
+    let clearance = scale.abs()*error+evaluation_radius;
+    if !clearance.is_finite() { return Err(PhysicsError::InvalidMotion); }
+    Ok(clearance)
+}
+
+/// Conditional sweep of an approximate field; evaluation_radius is a caller
+/// proof obligation in world units, covering all numeric evaluation uncertainty.
+/// This read-only query is not wired into runtime candidate publication yet.
+#[cfg_attr(not(test), allow(dead_code))]
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn sweep_rigid_approximation(
+    center: DVec3, rest_edges: [DVec3;3], orientation: DQuat,
+    approximation: &voxy_animation::RootRigidApproximation,
+    basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
+    boxes: &[AffineBox], iterations: usize, queries: &mut usize,
+) -> Result<PathHit,PhysicsError> {
+    let clearance = rigid_body_clearance(approximation,rest_edges,basis,origin,scale,evaluation_radius)?;
+    sweep_rigid_path_with_clearance(center,rest_edges,orientation,&approximation.path,
+        basis,origin,scale,clearance,boxes,iterations,queries)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn sweep_rigid_path_with_clearance(
+    center: DVec3,
+    rest_edges: [DVec3; 3],
+    orientation: DQuat,
+    path: &voxy_animation::RootRigidPath,
+    basis: DQuat,
+    origin: DVec3,
+    scale: f64,
+    clearance: f64,
+    boxes: &[AffineBox],
+    iterations: usize,
+    queries: &mut usize,
+) -> Result<PathHit, PhysicsError> {
+    if !clearance.is_finite() || clearance < 0. || !center.is_finite()
+        || !orientation.is_finite() || !orientation.is_normalized() {
+        return Err(PhysicsError::InvalidMotion);
+    }
     let initial_queries = *queries;
     let left = (orientation * basis).normalize();
     let anchor = center + orientation * origin;
-    let vertices = corners(rest_edges).map(|v| (basis.conjugate() * (v - origin)) / scale);
+    let vertices = rigid_vertices(rest_edges,basis,origin,scale)?;
     let radius = rest_edges.iter().map(|e| e.length()).sum::<f64>();
     let transform = |motion: voxy_animation::RootRigidTransform| {
         let rotation = (basis * motion.rotation * basis.conjugate()).normalize();
@@ -411,6 +504,18 @@ pub(crate) fn sweep_rigid_path(
         (displacement, rotation)
     };
     let mut steps = iterations;
+    if path.spans().is_empty() && clearance > 0. {
+        let candidates: Vec<_> = boxes.iter().collect();
+        let hit = advance_with_clearance(&candidates,
+            |_| Ok((center,rest_edges.map(|edge|orientation*edge))),
+            0.,radius,radius,clearance,&mut steps,queries)?;
+        if hit.fraction < 1. {
+            return Ok(PathHit {displacement:DVec3::ZERO,rotation:DQuat::IDENTITY,
+                normal:hit.normal,completed_spans:0,span_fraction:0.,path_fraction:0.,
+                complete:false,advancement_iterations:iterations-steps,
+                trajectory_queries:initial_queries-*queries});
+        }
+    }
     for (index, span) in path.spans().iter().enumerate() {
         query(queries)?;
         let sample = |fraction| -> Result<(DVec3, [DVec3; 3]), PhysicsError> {
@@ -436,7 +541,7 @@ pub(crate) fn sweep_rigid_path(
             return Err(PhysicsError::InvalidMotion);
         }
         let mut candidates = Vec::new();
-        if speed_bound > 0. {
+        if speed_bound > 0. || clearance > 0. {
             for obstacle in boxes {
                 query(queries)?;
                 let epsilon = 16384.
@@ -458,7 +563,13 @@ pub(crate) fn sweep_rigid_path(
                         upper = upper.max(bounds[1] + offset);
                     }
                     let support = obstacle.radius(normal);
-                    if lower >= support - epsilon || upper <= -support + epsilon {
+                    let separated_axis = if clearance == 0. {
+                        lower >= support - epsilon || upper <= -support + epsilon
+                    } else {
+                        lower > support + clearance + epsilon
+                            || upper < -support - clearance - epsilon
+                    };
+                    if separated_axis {
                         separated = true;
                         break;
                     }
@@ -468,12 +579,13 @@ pub(crate) fn sweep_rigid_path(
                 }
             }
         }
-        let hit = advance(
+        let hit = advance_with_clearance(
             &candidates,
             sample,
             speed_bound,
             radius,
             radius,
+            clearance,
             &mut steps,
             queries,
         )?;
@@ -629,4 +741,93 @@ mod tests {
         .unwrap();
         assert!((0.1..0.3).contains(&hit.fraction));
     }
+    #[test]
+    fn clearance_stops_before_nominal_contact_and_checks_stationary_envelopes() {
+        let edges = [DVec3::X*0.1,DVec3::Y*0.1,DVec3::Z*0.1];
+        let obstacle = AffineBox {center:DVec3::X*2.,edges};
+        let candidates = [&obstacle];
+        let run = |clearance, speed: f64, center: DVec3| {
+            advance_with_clearance(&candidates, |t| Ok((center+DVec3::X*speed*t,edges)),
+                speed, 0.3, 0.3, clearance, &mut 256, &mut 4096)
+        };
+        let nominal = run(0.,3.,DVec3::ZERO).unwrap();
+        let inflated = run(0.2,3.,DVec3::ZERO).unwrap();
+        assert!((nominal.fraction-0.6).abs()<1e-8);
+        assert!((inflated.fraction-(1.6/3.)).abs()<1e-8);
+        assert!(inflated.fraction<nominal.fraction);
+        // A truly displaced body can reach the wall here, while the nominal
+        // body still has a 0.2 gap. The envelope must not advance beyond it.
+        let front = 3.*inflated.fraction+0.1+0.2;
+        assert!(front<=1.9+1e-8);
+        assert!(front>=1.9-1e-8);
+        assert_eq!(run(0.2,0.,DVec3::X*1.7).unwrap().fraction,0.);
+        assert_eq!(run(0.2,0.,DVec3::ZERO).unwrap().fraction,1.);
+        assert!(run(-0.1,3.,DVec3::ZERO).is_err());
+        assert!(run(f64::NAN,3.,DVec3::ZERO).is_err());
+    }
+
+    #[test]
+    fn rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep() {
+        use voxy_animation::{RootRigidPath, RootRigidTwist};
+        let edges = [DVec3::X*0.1,DVec3::Y*0.1,DVec3::Z*0.1];
+        let wall = AffineBox {center:DVec3::X, edges:[DVec3::X*0.1,DVec3::Y*2.,DVec3::Z*2.]};
+        let path = RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear:DVec3::X*0.7, angular:DVec3::ZERO },1.)],1).unwrap();
+        let run = |clearance, queries: &mut usize| sweep_rigid_path_with_clearance(
+            DVec3::ZERO,edges,DQuat::IDENTITY,&path,DQuat::IDENTITY,
+            DVec3::ZERO,1.,clearance,&[wall],256,queries);
+        assert!(run(0.,&mut 4096).unwrap().complete);
+        let hit = run(0.2,&mut 4096).unwrap();
+        assert!(!hit.complete);
+        assert!((hit.path_fraction-0.6/0.7).abs()<1e-8);
+        assert!((hit.displacement.x-0.6).abs()<1e-8);
+        assert_eq!(hit.completed_spans,0);
+        assert!(matches!(run(0.2,&mut 1),Err(PhysicsError::SweepBudget)));
+        assert!(run(f64::NAN,&mut 4096).is_err());
+        let stationary = RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear:DVec3::ZERO, angular:DVec3::ZERO },1.)],1).unwrap();
+        let hit = sweep_rigid_path_with_clearance(DVec3::X*0.7,edges,DQuat::IDENTITY,
+            &stationary,DQuat::IDENTITY,DVec3::ZERO,1.,0.2,&[wall],256,&mut 4096).unwrap();
+        assert!(!hit.complete);
+        assert_eq!(hit.path_fraction,0.);
+    }
+
+    #[test]
+    fn whole_body_clearance_accounts_for_pivot_signed_scale_and_evaluation_error() {
+        use voxy_animation::{RootRigidApproximation,RootRigidPath,RootRigidTwist};
+        let edges = [DVec3::X*0.4,DVec3::Y*0.1,DVec3::Z*0.02];
+        let origin = DVec3::new(0.6,-0.1,0.2);
+        let basis = DQuat::from_rotation_z(0.4);
+        let approximation = RootRigidApproximation {
+            path:RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::ZERO,angular:DVec3::ZERO},1.)],1).unwrap(),
+            origin_error_bound:0.01,angular_error_bound:0.2 };
+        let physical_radius = corners(edges).into_iter().map(|v|(v-origin).length()).fold(0_f64,f64::max);
+        for scale in [-2.,0.5,2.] {
+            let clearance = rigid_body_clearance(&approximation,edges,basis,origin,scale,0.003).unwrap();
+            let expected = scale.abs()*0.01+2.*(0.1_f64).sin()*physical_radius+0.003;
+            assert!((clearance-expected).abs()<1e-12);
+            for corner in corners(edges) {
+                let source = basis.conjugate()*(corner-origin)/scale;
+                let actual = scale*(basis*(DQuat::from_rotation_y(0.2)*source+DVec3::Z*0.01))+origin;
+                assert!((actual-corner).length()<=clearance);
+            }
+        }
+        assert!(rigid_body_clearance(&approximation,edges,basis,origin,0.,0.).is_err());
+        assert!(rigid_body_clearance(&approximation,edges,basis,origin,1.,f64::NAN).is_err());
+        let moving = RootRigidApproximation {path:RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear:DVec3::X*0.7,angular:DVec3::ZERO},1.)],1).unwrap(),origin_error_bound:0.15,angular_error_bound:0.};
+        let body = [DVec3::X*0.1,DVec3::Y*0.1,DVec3::Z*0.1];
+        let wall = AffineBox {center:DVec3::X,edges:[DVec3::X*0.1,DVec3::Y*2.,DVec3::Z*2.]};
+        let hit = sweep_rigid_approximation(DVec3::ZERO,body,DQuat::IDENTITY,&moving,
+            DQuat::IDENTITY,DVec3::ZERO,1.,0.05,&[wall],256,&mut 4096).unwrap();
+        assert!(!hit.complete);
+        assert!((hit.path_fraction-0.6/0.7).abs()<1e-8);
+        let empty = RootRigidApproximation {path:RootRigidPath::from_twists(&[],0).unwrap(),
+            origin_error_bound:0.2,angular_error_bound:0.};
+        let hit = sweep_rigid_approximation(DVec3::X*0.7,body,DQuat::IDENTITY,&empty,
+            DQuat::IDENTITY,DVec3::ZERO,1.,0.,&[wall],256,&mut 4096).unwrap();
+        assert!(!hit.complete);
+        assert_eq!(hit.path_fraction,0.);
+    }
+
 }
