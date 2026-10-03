@@ -1,6 +1,8 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
 mod root_curve;
+mod ik;
+pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod root_rigid;
 pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform};
 mod root_rotation;
@@ -1295,6 +1297,10 @@ pub enum TrackError {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AnimationError {
+    InvalidIkChain,
+    InvalidIkTarget,
+    UnsupportedIkScale,
+    DegenerateIkChain,
     RootRigidBudget,
     RootMotionBudget,
     RootRotationBudget,

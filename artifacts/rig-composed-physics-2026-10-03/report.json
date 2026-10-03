@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-03",
+  "scope": "Composed root trajectory character physics admission",
+  "tests": {
+    "library": 29,
+    "integration": 37,
+    "failed": 0
+  },
+  "clippy": "completed with warnings",
+  "verified": [
+    "Independent analytic first contact for closed cubic moving-pivot paths with translation axes selected and unselected",
+    "Rigid coordinate frame conjugation with translated origin and initial actor orientation",
+    "Atomic scene and pending-input preservation on query budget rejection",
+    "Grounded tall-body yaw certified without conservative advancement iterations"
+  ],
+  "not_verified_or_remaining": [
+    "Ordinary editor Play integration",
+    "Scaled or reflected model ancestor coordinate adapter",
+    "Angular crossfades and foot placement feedback",
+    "GPU and native acceptance for composed trajectory",
+    "Complete engine parity and hardware support"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/lib.rs": "540d47f9019af96fa64eaa36b230e4e628c688c3f778c78a62bc0a709d6398d7",
+    "crates/voxy_gameplay/src/angular_sweep.rs": "9b464c8295bba354b308097b5ececa8f2fbd4042e424a428f7114cf543d51189",
+    "crates/voxy_gameplay/tests/integration.rs": "5bfdb42ec9589c1807d8c22fe76d296cc0d25f631f40d0dddfc85a59d383ae44",
+    "docs/engine-research/mechanisms/rig-animation/root-rigid-physics.md": "c9e4ba4a474931cd52cfb2f934a1e7568ca6ef93ec9768540c08b9894f4b5c4a"
+  },
+  "editor_check": "passed"
+}

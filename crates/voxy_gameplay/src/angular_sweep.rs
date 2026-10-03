@@ -1,4 +1,4 @@
-//! Conservative advancement along complete angular paths around a fixed pivot.
+//! Conservative advancement over authored rigid trajectories and angular paths.
 use super::{PhysicsError, convex::AffineBox};
 use glam::{DQuat, DVec3};
 
@@ -374,6 +374,136 @@ pub(crate) fn sweep_path(
     Ok(PathHit {
         displacement: displacement((basis * path.end_rotation() * basis.conjugate()).normalize()),
         rotation: (basis * path.end_rotation() * basis.conjugate()).normalize(),
+        normal: None,
+        completed_spans: path.spans().len(),
+        span_fraction: 1.,
+        path_fraction: 1.,
+        complete: true,
+        advancement_iterations: iterations - steps,
+        trajectory_queries: initial_queries - *queries,
+    })
+}
+
+/// Collision admission for simultaneous authored translation and rotation.
+/// The source frame is conjugated as A M A^-1, including its translated origin.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn sweep_rigid_path(
+    center: DVec3,
+    rest_edges: [DVec3; 3],
+    orientation: DQuat,
+    path: &voxy_animation::RootRigidPath,
+    basis: DQuat,
+    origin: DVec3,
+    scale: f64,
+    boxes: &[AffineBox],
+    iterations: usize,
+    queries: &mut usize,
+) -> Result<PathHit, PhysicsError> {
+    let initial_queries = *queries;
+    let left = (orientation * basis).normalize();
+    let anchor = center + orientation * origin;
+    let vertices = corners(rest_edges).map(|v| (basis.conjugate() * (v - origin)) / scale);
+    let radius = rest_edges.iter().map(|e| e.length()).sum::<f64>();
+    let transform = |motion: voxy_animation::RootRigidTransform| {
+        let rotation = (basis * motion.rotation * basis.conjugate()).normalize();
+        let displacement =
+            orientation * (scale * (basis * motion.translation) + origin - rotation * origin);
+        (displacement, rotation)
+    };
+    let mut steps = iterations;
+    for (index, span) in path.spans().iter().enumerate() {
+        query(queries)?;
+        let sample = |fraction| -> Result<(DVec3, [DVec3; 3]), PhysicsError> {
+            let motion = span
+                .sample(fraction)
+                .map_err(|_| PhysicsError::InvalidMotion)?;
+            let (displacement, rotation) = transform(motion);
+            Ok((
+                center + displacement,
+                rest_edges.map(|e| orientation * rotation * e),
+            ))
+        };
+        let (_, initial) = sample(0.)?;
+        let mut speed_bound = 0_f64;
+        for vertex in vertices {
+            speed_bound = speed_bound.max(
+                span.point_speed_bound(vertex)
+                    .map_err(|_| PhysicsError::InvalidMotion)?,
+            );
+        }
+        speed_bound *= scale.abs();
+        if !speed_bound.is_finite() {
+            return Err(PhysicsError::InvalidMotion);
+        }
+        let mut candidates = Vec::new();
+        if speed_bound > 0. {
+            for obstacle in boxes {
+                query(queries)?;
+                let epsilon = 16384.
+                    * f64::EPSILON
+                    * (1.
+                        + anchor.abs().max_element()
+                        + obstacle.center.abs().max_element()
+                        + radius);
+                let mut separated = false;
+                for normal in obstacle.axes_for(initial) {
+                    let offset = (anchor - obstacle.center).dot(normal);
+                    let mut lower = f64::INFINITY;
+                    let mut upper = f64::NEG_INFINITY;
+                    for vertex in vertices {
+                        let bounds = span
+                            .projection_bounds(vertex, scale * (left.conjugate() * normal))
+                            .map_err(|_| PhysicsError::InvalidMotion)?;
+                        lower = lower.min(bounds[0] + offset);
+                        upper = upper.max(bounds[1] + offset);
+                    }
+                    let support = obstacle.radius(normal);
+                    if lower >= support - epsilon || upper <= -support + epsilon {
+                        separated = true;
+                        break;
+                    }
+                }
+                if !separated {
+                    candidates.push(obstacle);
+                }
+            }
+        }
+        let hit = advance(
+            &candidates,
+            sample,
+            speed_bound,
+            radius,
+            radius,
+            &mut steps,
+            queries,
+        )?;
+        if hit.fraction < 1. {
+            let accepted = span
+                .sample(hit.fraction)
+                .map_err(|_| PhysicsError::InvalidMotion)?;
+            let (displacement, rotation) = transform(accepted);
+            let time = span.start() + (span.end() - span.start()) * hit.fraction;
+            return Ok(PathHit {
+                displacement,
+                rotation,
+                normal: hit.normal,
+                completed_spans: index,
+                span_fraction: hit.fraction,
+                path_fraction: if path.duration() > 0. {
+                    (time / path.duration()).clamp(0., 1.)
+                } else {
+                    1.
+                },
+                complete: false,
+                advancement_iterations: iterations - steps,
+                trajectory_queries: initial_queries - *queries,
+            });
+        }
+    }
+    let (displacement, rotation) = transform(path.end_transform());
+    Ok(PathHit {
+        displacement,
+        rotation,
         normal: None,
         completed_spans: path.spans().len(),
         span_fraction: 1.,

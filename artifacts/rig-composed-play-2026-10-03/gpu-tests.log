@@ -1,0 +1,11 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-0773fd9aa87bd708)
+
+running 2 tests
+test animated_models::tests::composed_root_motion_collision_renders_once_with_in_place_gpu_palette ... VOXY_CURVED_ROOT_GPU composed=true accepted_angle=0.18789900936171997 cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes=928 stop_bytes=0
+ok
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette ... VOXY_CURVED_ROOT_GPU composed=false accepted_angle=0.21203309612481186 cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes=928 stop_bytes=0
+ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 112 filtered out; finished in 69.02s
+

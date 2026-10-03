@@ -67,7 +67,7 @@ pub struct SceneId(u64);
 
 static NEXT_SCENE: AtomicU64 = AtomicU64::new(1);
 
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct NodeId {
     scene: u64,
     slot: usize,

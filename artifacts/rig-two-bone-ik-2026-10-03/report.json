@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-03",
+  "scope": "Rig-bound two-bone IK kernel and immutable frame correction",
+  "tests": {
+    "animation": 65,
+    "editor": 105,
+    "gameplay": 29,
+    "integration": 38,
+    "total_passed": 237,
+    "hardware_ignored": 9
+  },
+  "clippy": "completed with warnings",
+  "verified": [
+    "Reachable endpoints and segment lengths against independently evaluated skin matrices",
+    "Pole side, degenerate poles and antiparallel direction stability",
+    "Both unreachable reach limits and fully folded coincident endpoint",
+    "Uniform signed ancestor reflection and proper global orientation with a signed nonuniform tip scale",
+    "Zero/full/partial local rotation weights",
+    "No changes to local translations, scales, unrelated rotations or extracted root-motion metadata",
+    "Skin palette rebuilt from solved pose",
+    "Foreign rigs and failed target/topology/scale admission preserve the source pose"
+  ],
+  "not_claimed_or_remaining": [
+    "Foot contact acquisition and foot-lock plant/release state",
+    "Ordinary Play foot-lock integration before atomic scene/input/frame publication",
+    "Moving-platform support identity and contact normals",
+    "IK-specific native/GPU rendering acceptance",
+    "Angular crossfades, pelvis corrections and full production animation objective",
+    "Full engine parity, universal hardware/CUDA and solid/fluid mechanics objective"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "3a3f1c5ec96e541e5b970d73a722eed63bf78199d0ce5fc998fa3b7999892e8c",
+    "crates/voxy_animation/src/ik.rs": "ec011d2db8450d6d803e1888d97c75cb889c18c1c5156878f7a33e1bad525150",
+    "crates/voxy_animation/src/ik/tests.rs": "f809632f4666fbe369f9794440e6cd4be79bdf2489a5af2b1ed27bd7a0735207",
+    "docs/engine-research/mechanisms/rig-animation/two-bone-ik.md": "277cf2e03fb9dc2c20b538988e8bd524a7bec07999ef6759d2fb7bdf053f823f"
+  }
+}

@@ -1,0 +1,862 @@
+    Checking voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+warning: 7 bindings with single-character names in scope
+   --> crates/voxy_animation/src/root_curve.rs:148:13
+    |
+148 |         let u = (start - knot.time) / delta;
+    |             ^
+149 |         let v = (end - start) / delta;
+    |             ^
+150 |         let c = knot.coefficients;
+    |             ^
+151 |         let a = ((c[3] * u + c[2]) * u + c[1]) * u + c[0];
+    |             ^
+152 |         let b = (c[1] + c[2] * (2. * u) + c[3] * (3. * u * u)) * v;
+    |             ^
+153 |         let d = (c[2] + c[3] * (3. * u)) * (v * v);
+    |             ^
+154 |         let e = c[3] * (v * v * v);
+    |             ^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#many_single_char_names
+    = note: `-W clippy::many-single-char-names` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::many_single_char_names)]`
+
+warning: 5 bindings with single-character names in scope
+   --> crates/voxy_animation/src/root_rigid.rs:194:11
+    |
+194 | fn bezier(c: [DVec3; 4], t: f64) -> DVec3 {
+    |           ^              ^
+195 |     let a = c[0].lerp(c[1], t);
+    |         ^
+196 |     let b = c[1].lerp(c[2], t);
+    |         ^
+197 |     let d = c[2].lerp(c[3], t);
+    |         ^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#many_single_char_names
+
+warning: long literal lacking separators
+   --> crates/voxy_animation/src/root_curve.rs:285:29
+    |
+285 |         let duration = 1. / 1048576.;
+    |                             ^^^^^^^^ help: consider: `1_048_576.`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unreadable_literal
+    = note: `-W clippy::unreadable-literal` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::unreadable_literal)]`
+
+warning: long literal lacking separators
+   --> crates/voxy_animation/src/root_curve.rs:302:68
+    |
+302 |         assert_eq!(curve.weighted_delta(0., 1., 0., 1.), Vec3::X * 524288.);
+    |                                                                    ^^^^^^^ help: consider: `524_288.`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unreadable_literal
+
+warning: 6 bindings with single-character names in scope
+   --> crates/voxy_animation/src/root_rigid/tests.rs:236:25
+    |
+236 |                     let u = f64::from(step) / 40.;
+    |                         ^
+237 |                     let time = span.start() + u * (span.end() - span.start());
+238 |                     let p = p0.as_dvec3() + tangent.as_dvec3() * (time * (1. - time));
+    |                         ^
+239 |                     let q = DQuat::from_xyzw(0., 8. * time * (1. - time), 0., 1.).normalize();
+    |                         ^
+...
+258 |                         let h = 1e-5;
+    |                             ^
+259 |                         let a = span.sample(u - h).unwrap().transform_point(point).unwrap();
+    |                             ^
+260 |                         let b = span.sample(u + h).unwrap().transform_point(point).unwrap();
+    |                             ^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#many_single_char_names
+
+warning: long literal lacking separators
+    --> crates/voxy_animation/src/lib.rs:1882:40
+     |
+1882 |             for time in [-1., 0., 0.1, 0.20000002, 0.25, 0.5, 0.75, 1., 2.] {
+     |                                        ^^^^^^^^^^ help: consider: `0.200_000_02`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unreadable_literal
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_curve.rs:130:26
+    |
+130 |         if index == 0 || self.knots.get(index)?.time != time {
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(self.knots.get(index)?.time - time).abs() > error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+    = note: `-W clippy::float-cmp` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::float_cmp)]`
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_curve.rs:190:12
+    |
+190 |         if end == start {
+    |            ^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(end - start).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/ik.rs:80:12
+   |
+80 |         if scale.x != scale.y || scale.x != scale.z {
+   |            ^^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(scale.x - scale.y).abs() > error_margin`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/ik.rs:80:34
+   |
+80 |         if scale.x != scale.y || scale.x != scale.z {
+   |                                  ^^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(scale.x - scale.z).abs() > error_margin`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/ik.rs:132:54
+    |
+132 |         Quat::from_array(rotation.to_array().map(|v| v as f32)).normalize(),
+    |                                                      ^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+    = note: `-W clippy::cast-possible-truncation` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::cast_possible_truncation)]`
+
+warning: this function has too many lines (108/100)
+   --> crates/voxy_animation/src/ik.rs:141:5
+    |
+141 | /     pub fn solve_two_bone(
+142 | |         &self,
+143 | |         chain: &TwoBoneChain,
+144 | |         target: TwoBoneTarget,
+145 | |     ) -> Result<(Self, TwoBoneResult), AnimationError> {
+    | |______________________________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+    = note: `-W clippy::too-many-lines` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::too_many_lines)]`
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/ik.rs:226:59
+    |
+226 |                 Quat::from_array(local.to_array().map(|v| v as f32)).normalize(),
+    |                                                           ^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/ik.rs:236:27
+    |
+236 |                 } else if target.weight == 1. {
+    |                           ^^^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(target.weight - 1.).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/ik.rs:252:32
+    |
+252 |                 reach_clamped: requested != d,
+    |                                ^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(requested - d).abs() > error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rigid.rs:108:9
+    |
+108 |         self.start() == self.end()
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(self.start() - self.end()).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: redundant closure
+   --> crates/voxy_animation/src/root_rigid.rs:228:41
+    |
+228 | ...                   .map_or(0., |v| v.length())
+    |                                   ^^^^^^^^^^^^^^ help: replace the closure with the method itself: `glam::DVec3::length`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#redundant_closure_for_method_calls
+    = note: `-W clippy::redundant-closure-for-method-calls` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::redundant_closure_for_method_calls)]`
+
+warning: this function's return value is unnecessarily wrapped by `Result`
+   --> crates/voxy_animation/src/root_rigid.rs:237:5
+    |
+237 | /     pub(super) fn new(
+238 | |         translation: Arc<RootCurve>,
+239 | |         rotation: RootRotationCurve,
+240 | |         origin: Vec3,
+...   |
+243 | |         playback: Playback,
+244 | |     ) -> Result<Self, AnimationError> {
+    | |_____________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#unnecessary_wraps
+    = note: `-W clippy::unnecessary-wraps` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::unnecessary_wraps)]`
+help: remove `Result` from the return type...
+    |
+244 -     ) -> Result<Self, AnimationError> {
+244 +     ) -> root_rigid::RootRigidCurve {
+    |
+help: ...and then remove the surrounding `Ok()` from returning expressions
+    |
+245 ~         Self(Arc::new(Curve {
+246 +             translation,
+247 +             rotation,
+248 +             origin: origin.as_dvec3(),
+249 +             bind: bind.as_dvec3(),
+250 +             duration: f64::from(duration),
+251 +             playback,
+252 +         }))
+    |
+
+warning: casting `f64` to `u64` may truncate the value
+   --> crates/voxy_animation/src/root_rigid.rs:293:13
+    |
+293 |         Ok((cycle as u64, time.rem_euclid(self.0.duration)))
+    |             ^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: casting `f64` to `u64` may lose the sign of the value
+   --> crates/voxy_animation/src/root_rigid.rs:293:13
+    |
+293 |         Ok((cycle as u64, time.rem_euclid(self.0.duration)))
+    |             ^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_sign_loss
+    = note: `-W clippy::cast-sign-loss` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::cast_sign_loss)]`
+
+warning: casting `f64` to `usize` may truncate the value
+   --> crates/voxy_animation/src/root_rigid.rs:398:13
+    |
+398 |             (end / self.0.duration).floor() as usize
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: casting `f64` to `usize` may lose the sign of the value
+   --> crates/voxy_animation/src/root_rigid.rs:398:13
+    |
+398 |             (end / self.0.duration).floor() as usize
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_sign_loss
+
+warning: casting `usize` to `f64` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f64`'s mantissa is only 52 bits wide)
+   --> crates/voxy_animation/src/root_rigid.rs:406:24
+    |
+406 |             let base = n as f64 * self.0.duration;
+    |                        ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+    = note: `-W clippy::cast-precision-loss` implied by `-W clippy::pedantic`
+    = help: to override `-W clippy::pedantic` add `#[allow(clippy::cast_precision_loss)]`
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rigid.rs:475:50
+    |
+475 |                 .filter(|span| span.is_step() && span.start() == b);
+    |                                                  ^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(span.start() - b).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: very complex type used. Consider factoring parts into `type` definitions
+   --> crates/voxy_animation/src/lib.rs:175:20
+    |
+175 |     motion_curves: Arc<[OnceLock<Result<Arc<root_curve::RootCurve>, AnimationError>>]>,
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#type_complexity
+    = note: `-W clippy::type-complexity` implied by `-W clippy::all`
+    = help: to override `-W clippy::all` add `#[allow(clippy::type_complexity)]`
+
+warning: this function has too many lines (114/100)
+   --> crates/voxy_animation/src/lib.rs:236:5
+    |
+236 | /     pub fn new_with_tangents(
+237 | |         name: impl Into<Arc<str>>,
+238 | |         duration: f32,
+239 | |         playback: Playback,
+...   |
+243 | |         skeleton: &Skeleton,
+244 | |     ) -> Result<Self, AnimationError> {
+    | |_____________________________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/lib.rs:517:35
+    |
+517 |         self.try_sample(skeleton, self.phase(time) as f32)
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/lib.rs:912:17
+    |
+912 |                 (transition.elapsed / transition.duration) as f32,
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: casting `f64` to `f32` may truncate the value
+    --> crates/voxy_animation/src/lib.rs:1020:26
+     |
+1020 |             let weight = (transition.elapsed / transition.duration) as f32;
+     |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: `voxy_animation` (lib) generated 25 warnings (run `cargo clippy --fix --lib -p voxy_animation -- ` to apply 1 suggestion)
+warning: struct update has no effect, all the fields in the struct have already been specified
+  --> crates/voxy_animation/src/ik/tests.rs:17:19
+   |
+17 |                 ..Transform::IDENTITY
+   |                   ^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_update
+   = note: `-W clippy::needless-update` implied by `-W clippy::all`
+   = help: to override `-W clippy::all` add `#[allow(clippy::needless_update)]`
+
+warning: casting `i32` to `f32` may cause a loss of precision (`i32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+  --> crates/voxy_animation/src/ik/tests.rs:70:25
+   |
+70 |             let phase = i as f32 * 0.16;
+   |                         ^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+   = note: `-W clippy::cast-precision-loss` implied by `-W clippy::pedantic`
+   = help: to override `-W clippy::pedantic` add `#[allow(clippy::cast_precision_loss)]`
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/ik/tests.rs:144:46
+    |
+144 |             assert_eq!(result.reach_clamped, distance != reach);
+    |                                              ^^^^^^^^^^^^^^^^^ help: consider comparing them within some margin of error: `(distance - reach).abs() > error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/ik/tests.rs:226:5
+    |
+226 |     assert_eq!(next.transition_weight, previous.transition_weight);
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `usize` to `f64` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f64`'s mantissa is only 52 bits wide)
+   --> crates/voxy_animation/src/root_rigid.rs:406:24
+    |
+406 |             let base = n as f64 * self.0.duration;
+    |                        ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rigid/tests.rs:304:16
+    |
+304 |             if time == 0.5 { 1 } else { 2 }
+    |                ^^^^^^^^^^^ help: consider comparing them within some margin of error: `(time - 0.5).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rigid/tests.rs:308:16
+    |
+308 |             if time == 0.5 {
+    |                ^^^^^^^^^^^ help: consider comparing them within some margin of error: `(time - 0.5).abs() < error_margin`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rigid/tests.rs:400:21
+    |
+400 |                     i as f32 / (count - 1) as f32
+    |                     ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rigid/tests.rs:400:32
+    |
+400 |                     i as f32 / (count - 1) as f32
+    |                                ^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rigid/tests.rs:406:25
+    |
+406 |                         i as f32 / (count - 1) as f32
+    |                         ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rigid/tests.rs:406:36
+    |
+406 |                         i as f32 / (count - 1) as f32
+    |                                    ^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rigid/tests.rs:452:5
+    |
+452 |     assert_eq!(animator.time, clock);
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rigid/tests.rs:454:5
+    |
+454 |     assert_eq!(animator.advance(&rig, 0.1).unwrap().root_motion.x, 0.1);
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rigid/tests.rs:462:19
+    |
+462 |             time: i as f32 / crate::MAX_ROOT_TRANSLATION_CACHE_KEYS as f32,
+    |                   ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rigid/tests.rs:462:30
+    |
+462 |             time: i as f32 / crate::MAX_ROOT_TRANSLATION_CACHE_KEYS as f32,
+    |                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rotation.rs:832:23
+    |
+832 |                 time: i as f32 / (values.len() - 1) as f32,
+    |                       ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rotation.rs:832:34
+    |
+832 |                 time: i as f32 / (values.len() - 1) as f32,
+    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `i32` to `f32` may cause a loss of precision (`i32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+   --> crates/voxy_animation/src/root_rotation.rs:862:44
+    |
+862 |             .map(|i| Quat::from_rotation_y(i as f32 * std::f32::consts::FRAC_PI_2))
+    |                                            ^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: strict comparison of `f32` or `f64`
+   --> crates/voxy_animation/src/root_rotation.rs:937:9
+    |
+937 |         assert_eq!(event.start(), event.end());
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `f64` to `f32` may truncate the value
+   --> crates/voxy_animation/src/root_rotation.rs:971:21
+    |
+971 |                     t as f32,
+    |                     ^^^^^^^^
+    |
+    = help: if this is intentional allow the lint with `#[allow(clippy::cast_possible_truncation)]` ...
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_possible_truncation
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/root_rotation.rs:1055:9
+     |
+1055 |         assert_eq!(path.duration(), 3.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/root_rotation.rs:1056:9
+     |
+1056 |         assert_eq!(path.spans().last().unwrap().end(), 3.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/root_rotation.rs:1060:9
+     |
+1060 |         assert_eq!(held.angular_travel_bound(), 0.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+    --> crates/voxy_animation/src/root_rotation.rs:1225:23
+     |
+1225 |                 time: i as f32 / MAX_ROOT_ROTATION_KEYS as f32,
+     |                       ^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `usize` to `f32` may cause a loss of precision (`usize` can be up to 64 bits wide depending on the target architecture, but `f32`'s mantissa is only 23 bits wide)
+    --> crates/voxy_animation/src/root_rotation.rs:1225:34
+     |
+1225 |                 time: i as f32 / MAX_ROOT_ROTATION_KEYS as f32,
+     |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/root_rotation.rs:1254:9
+     |
+1254 |         assert_eq!(curve.path(0., 1e6, 1).unwrap().angular_travel_bound(), 0.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `i32` to `f32` may cause a loss of precision (`i32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+    --> crates/voxy_animation/src/root_rotation.rs:1308:23
+     |
+1308 |                 time: i as f32 / 40_000.,
+     |                       ^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/root_rotation.rs:1338:9
+     |
+1338 |         assert_eq!(accepted.path(0., 1., 1).unwrap().angular_travel_bound(), 0.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1430:13
+     |
+1430 |             assert_eq!(animator.time, control.time);
+     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1431:13
+     |
+1431 | /             assert_eq!(
+1432 | |                 animator.transition.as_ref().unwrap().elapsed,
+1433 | |                 control.transition.as_ref().unwrap().elapsed
+1434 | |             );
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1435:13
+     |
+1435 | /             assert_eq!(
+1436 | |                 animator.transition.as_ref().unwrap().source_time,
+1437 | |                 control.transition.as_ref().unwrap().source_time
+1438 | |             );
+     | |_____________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1448:9
+     |
+1448 |         assert_eq!(actual.transition_weight, expected.transition_weight);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1466:9
+     |
+1466 |         assert_eq!(displayed.pose.local()[0].translation.x, 2.5);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1478:9
+     |
+1478 | /         assert_eq!(
+1479 | |             animator.advance(&rig, 0.2).unwrap().pose.local()[0]
+1480 | |                 .translation
+1481 | |                 .x,
+1482 | |             6.
+1483 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1497:9
+     |
+1497 | /         assert_eq!(
+1498 | |             animator.advance(&rig, 0.5).unwrap().pose.local()[0]
+1499 | |                 .translation
+1500 | |                 .x,
+1501 | |             -10.
+1502 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1533:9
+     |
+1533 |         assert_eq!(animator.time, control.time);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: redundant closure
+    --> crates/voxy_animation/src/lib.rs:1571:48
+     |
+1571 |         assert!(frame.skin_matrices.iter().all(|m| m.is_finite()));
+     |                                                ^^^^^^^^^^^^^^^^^ help: replace the closure with the method itself: `glam::Mat4::is_finite`
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#redundant_closure_for_method_calls
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:1644:9
+     |
+1644 |         assert_eq!(frame.transition_weight, 1.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: this function has too many lines (109/100)
+    --> crates/voxy_animation/src/lib.rs:2035:5
+     |
+2035 |     fn signed_scale_channels_and_blends_reject_only_singular_samples() {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2055:9
+     |
+2055 | /         assert_eq!(
+2056 | |             linear.try_sample(&skeleton, 1.5).unwrap().local()[0]
+2057 | |                 .scale
+2058 | |                 .x,
+2059 | |             -0.5
+2060 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2070:9
+     |
+2070 |         assert_eq!(animator.time, before);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: this function has too many lines (132/100)
+    --> crates/voxy_animation/src/lib.rs:2160:5
+     |
+2160 |     fn cubic_derivatives_use_segment_seconds_and_normalize_rotation() {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2353:9
+     |
+2353 |         assert_eq!(animator.time, before.time);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2354:9
+     |
+2354 | /         assert_eq!(
+2355 | |             animator.transition.as_ref().unwrap().elapsed,
+2356 | |             before.transition.as_ref().unwrap().elapsed
+2357 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2358:9
+     |
+2358 | /         assert_eq!(
+2359 | |             animator.transition.as_ref().unwrap().source_time,
+2360 | |             before.transition.as_ref().unwrap().source_time
+2361 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: this function has too many lines (110/100)
+    --> crates/voxy_animation/src/lib.rs:2424:5
+     |
+2424 |     fn step_channels_hold_values_at_boundaries_without_changing_linear_channels() {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#too_many_lines
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2694:9
+     |
+2694 |         assert_eq!(output.transition_weight, original.transition_weight);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2749:9
+     |
+2749 |         assert_eq!(frame.transition_weight, 0.5);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2767:9
+     |
+2767 | /         assert_eq!(
+2768 | |             in_place.pose.local()[0].translation.x,
+2769 | |             rig.joints()[0].bind_local.translation.x
+2770 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2793:9
+     |
+2793 | /         assert_eq!(
+2794 | |             wrapped.pose.local()[0].translation.x,
+2795 | |             rig.joints()[0].bind_local.translation.x
+2796 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2819:9
+     |
+2819 |         assert_eq!(long + 1. / 60., long);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2854:9
+     |
+2854 |         assert_eq!(long.time, before.time);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2855:9
+     |
+2855 | /         assert_eq!(
+2856 | |             long.transition.as_ref().unwrap().source_time,
+2857 | |             before.transition.as_ref().unwrap().source_time
+2858 | |         );
+     | |_________^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2864:13
+     |
+2864 |             assert_eq!(actual.transition_weight, expected.transition_weight);
+     |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+    --> crates/voxy_animation/src/lib.rs:2883:9
+     |
+2883 |         assert_eq!(clamped.time, 1.);
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     |
+     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: casting `i32` to `f32` may cause a loss of precision (`i32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:12:19
+   |
+12 |             time: i as f32 / 16.,
+   |                   ^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: casting `i32` to `f32` may cause a loss of precision (`i32` is 32 bits wide, but `f32`'s mantissa is only 23 bits wide)
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:13:42
+   |
+13 |             value: Quat::from_rotation_y(i as f32 * std::f32::consts::FRAC_PI_2),
+   |                                          ^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cast_precision_loss
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:41:5
+   |
+41 |     assert_eq!(animator.time, 0.);
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:50:5
+   |
+50 |     assert_eq!(hold.angular_travel_bound(), 0.);
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:63:5
+   |
+63 |     assert_eq!(animator.time, control.time);
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:93:5
+   |
+93 |     assert_eq!(animator.time, clock);
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: strict comparison of `f32` or `f64`
+  --> crates/voxy_animation/src/rotation_runtime_tests.rs:94:5
+   |
+94 |     assert_eq!(animator.transition.as_ref().unwrap().elapsed, elapsed);
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#float_cmp
+
+warning: `voxy_animation` (lib test) generated 90 warnings (24 duplicates) (run `cargo clippy --fix --lib -p voxy_animation --tests -- ` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 23.83s

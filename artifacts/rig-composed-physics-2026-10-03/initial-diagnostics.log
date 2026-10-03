@@ -1,0 +1,100 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.16s
+     Running unittests src/lib.rs (target/debug/deps/voxy_gameplay-0c1006d36aee166a)
+
+running 29 tests
+test angular_sweep::tests::grounded_yaw_and_turning_away_are_certified_over_the_whole_arc ... ok
+test angular_sweep::tests::budget_failure_is_explicit_and_tall_yaw_uses_perpendicular_radius ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test angular_sweep::tests::middle_of_half_and_full_turn_hits_even_when_endpoints_are_clear ... ok
+test convex::tests::oriented_face_contact_is_analytic_and_invariant_to_extent_scale ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test angular_sweep::tests::projection_extrema_bound_independent_quaternion_samples ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+
+test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/integration.rs (target/debug/deps/integration-2fafe314fe4d2b2f)
+
+running 37 tests
+test failure_in_later_body_preserves_all_poses_runtime_state_and_input ... ok
+test authored_axes_are_parent_local_and_conflicting_sources_are_atomic ... ok
+test character_step_read_only_grant_preserves_pose_and_pending_input ... ok
+test animation_displacement_sweeps_slides_and_is_consumed_once ... ok
+test animation_ceiling_contact_removes_persistent_upward_velocity ... ok
+test bounded_recovery_failure_preserves_every_pose_and_input_edge ... ok
+test durable_descriptors_reload_with_new_runtime_identity_and_no_velocity ... ok
+test angular_budget_and_invalid_requests_preserve_pose_state_and_input ... ok
+test horizontal_animation_during_jump_does_not_snap_back_to_floor ... ok
+test animation_displacement_collides_vertically_and_with_affine_walls ... ok
+test initial_penetration_is_an_explicit_error_without_partial_publication ... ok
+test character_domain_denials_preserve_live_physics_pose_and_input ... ok
+test noncommuting_curved_path_uses_body_basis_and_commits_once ... ok
+test authored_character_rotation_uses_one_writer_and_complete_arc ... ok
+test invalid_animation_motion_preserves_all_owners_and_pending_input ... ok
+test noncommuting_offset_pivot_uses_body_basis_and_failure_is_atomic ... ok
+test oriented_character_ignores_empty_enclosing_aabb_corner_and_slides_at_true_support ... ok
+test angular_iteration_budget_is_shared_across_ordered_spans ... ok
+test parent_activity_deletion_component_removal_and_reused_generation_reconcile ... ok
+test composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick ... FAILED
+test rotated_scaled_static_boxes_use_exact_sweeps_and_runtime_overlap_recovery ... ok
+test rigid_motion_preserves_winding_clips_mid_arc_and_retains_accepted_orientation ... ok
+test ordered_full_turn_and_final_step_do_not_hide_a_collision ... ok
+test swept_motion_hits_wall_without_tunneling_and_focus_cancels_intent ... ok
+test unknown_scheduled_system_preserves_scene_physics_and_input ... ok
+test translated_parent_teleport_resets_velocity_and_affine_dynamic_ancestors_fail ... ok
+test tilted_character_floor_contact_jump_and_recovery_use_rotated_shape ... ok
+test trajectory_query_failure_after_another_body_stages_motion_is_atomic ... ok
+test one_tick_curved_trajectory_hits_before_equal_endpoints_and_retains_orientation ... ok
+test offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints ... ok
+test angular_ground_turn_preserves_jump_and_continuing_velocity ... ok
+test moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement ... FAILED
+test curved_grounded_yaw_preserves_jump_and_tall_body_avoids_sphere_speed_overestimate ... ok
+test grounded_tangent_motion_is_not_blocked_by_time_zero_floor_contact ... ok
+test quick_tap_survives_render_only_frames_and_is_consumed_once_during_catch_up ... ok
+test simultaneous_translation_and_turn_clip_the_closed_curve_before_the_wall ... ok
+test looped_animation_drives_collisions_without_duplicate_pose_translation ... ok
+
+failures:
+
+---- composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick stdout ----
+
+thread 'composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick' (22120558) panicked at crates/voxy_gameplay/tests/integration.rs:1841:5:
+assertion failed: scene.local(player).unwrap().translation.abs_diff_eq(initial.translation +
+        expected.as_vec3(), 1e-7)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement stdout ----
+
+thread 'moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement' (22120567) panicked at crates/voxy_gameplay/tests/integration.rs:1889:5:
+AppliedCharacterTrajectoryMotion { owner: NodeId { scene: 31, slot: 0, generation: 0 }, displacement: Vec3(0.0, 0.0, 0.0), rotation: DQuat(0.0, 0.0, 0.0, 1.0), completed_spans: 0, span_fraction: 0.0, path_fraction: 0.0, complete: false, advancement_iterations: 1, trajectory_queries: 3 }
+
+
+failures:
+    composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick
+    moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement
+
+test result: FAILED. 35 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `-p voxy_gameplay --test integration`

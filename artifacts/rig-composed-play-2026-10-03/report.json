@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-03",
+  "scope": "Ordinary Play composed root trajectories with constant signed-uniform ancestor frames",
+  "tests": {
+    "animation": 59,
+    "editor": 105,
+    "gameplay": 29,
+    "integration": 38,
+    "total_regular": 231,
+    "hardware_tests_ignored_in_regular_run": 9,
+    "gpu_tests_explicitly_passed": 2
+  },
+  "native": {
+    "exit_code": 0,
+    "presented_frames": 30,
+    "simulation_ticks": 12,
+    "accepted_angle": 0.18789900936171997,
+    "accepted_world_center": [
+      0.010560685,
+      0.0,
+      0.6356339
+    ],
+    "owners": 2,
+    "gpu_primitives": 2,
+    "shared_sources": 1,
+    "animation_bytes": 928,
+    "stop_animation_bytes": 0,
+    "authoring_restored": true,
+    "launch": "Fresh release binary in foreground LaunchServices app bundle",
+    "screenshot_review": false
+  },
+  "release_build": "passed",
+  "clippy": "completed with warnings",
+  "verified": [
+    "Composed full-curve collision admission in ordinary Play",
+    "Moving root pivot, selected and unselected translation axes",
+    "Constant signed-uniform ancestor scale and reflection conversion",
+    "Mixed translation-only and composed owners in one atomic tick",
+    "Body, scene, pending input and animation clock preservation on failed physics publication",
+    "GPU pixels match independently baked bind-pose mesh at accepted actor transform",
+    "Stop clears GPU resources and restores authored scene"
+  ],
+  "remaining": [
+    "Angular velocity crossfades and editor transitions",
+    "Foot locking and contact feedback",
+    "Moving or nonuniform ancestor coordinate support",
+    "Presentation interpolation and automatic avatar collider fitting",
+    "Hardware/CUDA/NVIDIA support across all target devices",
+    "Full engine parity, material damage, solid mechanics and fluid simulation objective"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/animation_runtime.rs": "ed711d60f2df6cf6496fe5afaf3d1349416b7e4d392ff2ae492c716f1ec20a9a",
+    "crates/voxy_editor/src/model_playback.rs": "899c5752fc302886eb0f318ca609e13d8f0ca3cf25cc03182ed2981e03c0ae43",
+    "crates/voxy_editor/src/lib.rs": "26de247126327a7c56821c045614eaa1490a4906a5cb26c8b16739c7373993a8",
+    "crates/voxy_editor/src/animation_smoke.rs": "38c026e2c794d15db76e02cca81373b2464af7ae01105a826a3be3ab4100dea9",
+    "crates/voxy_editor/src/animation_runtime/rotation_tests.rs": "1357396f9afc3fef8e8b6388d68280389e6dfbc443d8701f24c1d540ffcf248f",
+    "crates/voxy_editor/src/animated_models/tests.rs": "df2851618168d85b35f07da2c7106e2f9c4c7ca061c6d6d40834a5d140df49c0",
+    "crates/voxy_gameplay/src/lib.rs": "f95f73699f25c71f398570cad2b52639c3c19cee953c68e74b20e30eadf02166",
+    "crates/voxy_gameplay/src/angular_sweep.rs": "812cbf6c6edc90d619b1ad37609837ac82bbdd081a1a10651c664329c1ee0825",
+    "crates/voxy_gameplay/tests/integration.rs": "b0d24052c278325a1df1e8defddc047a877935e00b70063babd4fe47e7bbb1a8",
+    "crates/voxy_render/examples/assets/root-moving-turn.glb": "bf638f259f23f545d57ce633fa2cc8f6ff9eeaebd154d8aa3d58e6e5fd0ee8ae",
+    "docs/engine-research/mechanisms/rig-animation/root-rotation-play.md": "b52f0daea9e6a0f47bf1534ca6388a72f4adced2f59b9d85eae59d1ea4c7aa84",
+    "docs/engine-research/mechanisms/rig-animation/root-rigid-physics.md": "79193edee98041a57d9e1c7cb2d345e47f44161cf01713e86daa545aea63c183"
+  },
+  "native_binary_sha256": "5f4d5a03329e32d0f4a93c65f0b672764b5f090363c91042f2f3a9d715a16158"
+}

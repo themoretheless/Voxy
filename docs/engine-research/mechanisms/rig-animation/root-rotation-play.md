@@ -1,69 +1,64 @@
-# Angular root motion in ordinary Play
+# Composed root motion in ordinary Play
 
 The inspector's **Root motion rotation** field maps to the backward-compatible
-`ModelAnimation.root_motion_rotation` boolean, off by default. The existing motion
-bone name/index selects the same joint for translation and rotation. A CharacterBody
-must belong to that model owner.
+`ModelAnimation.root_motion_rotation` boolean, off by default. The selected motion
+bone name/index selects both translation and rotation. A CharacterBody must belong
+to that model owner.
 
-One fixed tick stages owner-local ModelPlayback clocks and a frame plus complete
-RootRotationPath from the exact same phase interval. Pause produces no angular
-path. Loop crossings retain their complete arcs before the clock folds; no winding
-is inferred from endpoint quaternions. Path or pose failure leaves the prior clock.
+One fixed tick stages an owner-local ModelPlayback clock, an AnimatorFrame and a
+complete RootRigidPath over the same interval. Translation masks are compiled into
+that trajectory. Cubic excursions, merged STEP bridges and ordered loop transforms
+remain intact. Pause produces no movement. Path or pose failure preserves the clock.
 
-A whole-clip translation-channel proof establishes a fixed selected-bone pivot.
-It is independent of the rotation channel and rejects cubic translation excursions
-between equal keys. Each bone ancestor must have a compiled constant TRS proof.
-For angular motion every ancestor's absolute scale components must agree. Uniform
-signed scales transform angular axes using the proper pseudovector basis det(S)*S;
-a negative determinant reverses handedness. Nonuniform scale cannot be represented
-by a rigid body rotation and explicitly rejects this mode.
+Constant model ancestors require compiled whole-clip TRS proofs. Every ancestor's
+absolute scale components must agree for angular extraction. Their product defines
+one similarity frame A(x)=signed_scale*basis*x+origin. The basis is a proper rotation;
+reflections use the pseudovector conversion det(S)*S and a negative scalar. Physics
+conjugates the complete source transform as A M A^-1, including the translated
+origin. Nonuniform scale and moving or unproved ancestors reject before publication.
 
-The pivot is the in-place selected-bone translation transformed through those
-constant model ancestors. Translation masks are consumed first, then root rotation
-returns to bind and the skin palette rebuilds. Physics checks the entire moving
-center path around that pivot, including normalized cubic spans and STEP events.
-A collision admits only its prefix; the clip clock still advances through the tick,
-like blocked translational locomotion. Later path spans are not applied to the body.
+The selected root translation can move during a turn. Selected translation axes
+return to bind in the displayed pose, unselected axes retain their authored value,
+and extracted rotation returns to bind before rebuilding the skin palette.
+Physics samples translation and rotation together and admits only the collision-safe
+prefix. It never adds the legacy translation delta for this owner. The clip clock
+continues through a blocked tick, as in blocked translational locomotion; foot
+placement feedback is not implemented yet.
 
-`fixed_step_with_motion_and_trajectories` combines translation-only owners and
-trajectory owners in the existing character transaction. An owner present in both
-lists must have exactly matching requested translation. Duplicate/conflicting or
-invalid requests fail before publication. Successful physics consumes input once;
-only then does the editor replace the animation runtime candidate. Rendering receives
-the accepted immutable frame Arc and does not own a second animation clock.
+`fixed_step_with_motion_and_rigid_trajectories` combines translation-only owners
+and composed owners in the existing atomic character transaction. An owner cannot
+appear in both lists. Duplicate or conflicting requests, invalid source frames and
+exhausted budgets fail before scene, input, body cache or animation runtime publication.
+Only successful physics consumes input and publishes the candidate animation runtime.
+Rendering receives immutable accepted frames and owns no second playback clock.
 
-Tests cover ordinary App Play/Stop, wall admission with a root pivot at x=.6,
-mixed translation/rotation owners, physics failure and retry without clock drift,
-reflection conversion, old settings, and explicit unsupported-pivot/parent rejection.
-The opt-in real-device test compares exact GPU pixels with an independently baked
-bind-pose CPU mesh at the physically accepted body transform, detects double rotation,
-shares one source between two owners and releases all resources on clear.
+Tests cover ordinary App Play/Stop for fixed and moving pivots, exact source-frame
+conjugation with reflection and uniform scale, mixed owner types, physics failure
+and retry without clock drift, old settings and unsupported ancestor rejection.
+Opt-in GPU tests compare exact rendered pixels against an independently baked
+bind-pose mesh at the accepted actor transform, detect retained authored motion,
+share one source between two owners and release allocations on clear.
 
-The native diagnostic uses the same inspector, Play loop, imported model, GPU owner
-frames and Stop path. It requires actual presented frames:
+The native moving-root diagnostic uses ordinary inspector edits, Play, presented
+GPU frames and Stop:
 
 ```sh
-VOXY_ROOT_ROTATION_SMOKE=1 target/release/voxy_app \
-  --model crates/voxy_render/examples/assets/root-pivot-turn.glb \
+VOXY_COMPOSED_ROOT_SMOKE=1 target/release/voxy_app \
+  --model crates/voxy_render/examples/assets/root-moving-turn.glb \
   --animation-native-smoke
 ```
 
-The fixture has a cubic rotation with identical endpoint orientations and a
-constant pivot at x=.6. A thin character body turns into a wall .25 along z;
-first contact satisfies sin(angle)+.02*cos(angle)=.23. This is a controlled
-rig/character collision fixture, not an automatic avatar collider fitting proof.
-An occluded window with zero presented frames does not prove native admission.
-
-Remaining production work includes moving-pivot simultaneous translation/rotation
-trajectories, core crossfade angular velocity integration, animation transitions in
-the editor, contact feedback/foot locking, and hardware coverage beyond the device
-on which these checks run. The original broader engine goal remains unfinished.
-
-The 2026-10-03 foreground native run admitted the expected angle
-0.21203309612481186, pivot (.6,0,0), accepted world center
-(.0134369545,0,.62626874), and serial 12. It presented 20 frames in
-total, used two GPU primitives sharing one source (928 bytes), then reported
-zero animation bytes and exact authoring restoration after Stop. The initial
-background CLI attempt was occluded and is retained as a failed diagnostic, not
-counted as native proof. Logs and source hashes are in
+This fixture has p(t)=(.6,0,2t(1-t)) and
+q(t)=normalize(0,8t(1-t),0,1), with equal endpoint poses. All translation axes are
+extracted. A thin body hits a wall .25 along z before the end of the first fixed
+tick. The independent contact equation is
+2t(1-t)+sin(angle)+.02*cos(angle)=.23, angle=2atan(8t(1-t)).
+The fixed-pivot diagnostic remains available with `VOXY_ROOT_ROTATION_SMOKE=1`
+and `root-pivot-turn.glb`; its historical evidence is in
 `artifacts/rig-play-root-rotation-2026-10-03/`.
+
+These fixtures prove controlled rig/character collision admission, not automatic
+avatar collider fitting. Zero presented frames from an occluded window do not
+prove native acceptance. Angular velocity crossfades, editor transitions, contact
+feedback and foot locking, animated/nonuniform ancestor support and hardware
+coverage beyond the tested device remain open. The broader engine goal is unfinished.

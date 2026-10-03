@@ -1050,6 +1050,14 @@ fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
 #[test]
 #[ignore = "requires real GPU; curved character turn and in-place skin palette"]
 fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
+    rig_trajectory_gpu(false);
+}
+#[test]
+#[ignore = "requires real GPU; composed root path and in-place skin palette"]
+fn composed_root_motion_collision_renders_once_with_in_place_gpu_palette() {
+    rig_trajectory_gpu(true);
+}
+fn rig_trajectory_gpu(composed: bool) {
     use glam::{Mat4, Quat, Vec3};
     use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
@@ -1059,7 +1067,13 @@ fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
     let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
     let model = Arc::new(
         ModelAsset::parse(
-            include_bytes!("../../../voxy_render/examples/assets/root-pivot-turn.glb"),
+            if composed {
+                include_bytes!("../../../voxy_render/examples/assets/root-moving-turn.glb")
+                    .as_slice()
+            } else {
+                include_bytes!("../../../voxy_render/examples/assets/root-pivot-turn.glb")
+                    .as_slice()
+            },
             &[],
             voxy_render::ModelLimits::default(),
         )
@@ -1111,6 +1125,7 @@ fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
                 owner,
                 ModelAnimation {
                     root_motion_rotation: owner == first,
+                    root_motion_axes: [composed && owner == first; 3],
                     root_motion_bone: "root".into(),
                     ..Default::default()
                 },
@@ -1128,7 +1143,7 @@ fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
     let mut physics = CharacterPhysics::new(&scene, 1, 1);
     let mut input = voxy_gameplay::player_input().unwrap();
     let receipt = physics
-        .fixed_step_with_motion_and_trajectories(
+        .fixed_step_with_motion_and_rigid_trajectories(
             &mut scene,
             &mut input,
             1. / 60.,
@@ -1136,7 +1151,7 @@ fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
             &candidate.trajectories(),
         )
         .unwrap()[0];
-    let angle = (0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.);
+    let (angle, _) = crate::animation_smoke::rotation_contact(composed);
     assert!(!receipt.complete);
     assert!(
         scene
@@ -1217,6 +1232,6 @@ fn curved_root_rotation_collision_renders_once_with_in_place_gpu_palette() {
     assert_eq!(render.allocation_bytes(), 0);
     assert!(pollster::block_on(scope.pop()).is_none());
     println!(
-        "VOXY_CURVED_ROOT_GPU accepted_angle={angle} cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes={bytes} stop_bytes=0"
+        "VOXY_CURVED_ROOT_GPU composed={composed} accepted_angle={angle} cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes={bytes} stop_bytes=0"
     );
 }

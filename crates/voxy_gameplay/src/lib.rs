@@ -4,6 +4,8 @@
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
 mod angular_sweep;
+mod support;
+pub use support::{SupportAnchor, SupportContact, SupportProbe, SupportQueryBudget, SupportWorld};
 mod audio_assets;
 pub use audio_assets::{
     AudioImportConfig, AudioImportSettings, decode_wav_observed, import_wav_asset,
@@ -255,6 +257,17 @@ pub struct CharacterTrajectoryMotion<'a> {
     /// Zero preserves fixed-center rotation. The center follows the exact curve.
     pub pivot: Vec3,
 }
+/// Simultaneous translation and rotation, expressed in a rigid source frame.
+/// `basis` and `origin` map source coordinates into initial body-local coordinates.
+#[derive(Clone, Copy, Debug)]
+pub struct CharacterRigidTrajectoryMotion<'a> {
+    pub owner: NodeId,
+    pub trajectory: &'a voxy_animation::RootRigidPath,
+    /// Nonzero signed uniform scale; reflections use a negative scale and proper basis.
+    pub scale: f64,
+    pub basis: glam::DQuat,
+    pub origin: Vec3,
+}
 /// A STEP collision may have path_fraction=1 without completing the final event.
 /// Use `complete`, `completed_spans` and `span_fraction` for exact admission.
 #[derive(Clone, Copy, Debug)]
@@ -282,6 +295,7 @@ struct RuntimeBody {
 }
 #[derive(Clone, Copy, Debug)]
 struct StaticBox {
+    half_extents: [f32; 3],
     shape: convex::AffineBox,
     axis_aligned: bool,
     owner: NodeId,
@@ -289,7 +303,7 @@ struct StaticBox {
     max: [f64; 3],
 }
 #[derive(Debug)]
-struct StaticWorld(Vec<StaticBox>);
+struct StaticWorld(Vec<StaticBox>, SceneId);
 impl CollisionWorld for StaticWorld {
     type Obstacle = NodeId;
     type Error = PhysicsError;
@@ -435,15 +449,7 @@ impl CharacterPhysics {
             }
         }
         for (owner, collider) in scene.components::<BoxCollider>() {
-            validate_extents(collider.half_extents)?;
-            affine_box(scene, owner, collider.half_extents)?;
-            let mut parent = scene.parent(owner)?;
-            while let Some(id) = parent {
-                if scene.component::<CharacterBody>(id)?.is_some() {
-                    return Err(PhysicsError::UnsupportedDynamicParent);
-                }
-                parent = scene.parent(id)?;
-            }
+            validate_static_collider(scene, owner, *collider)?;
         }
         Ok(())
     }
@@ -621,7 +627,7 @@ impl CharacterPhysics {
         dt: f64,
         motions: &[CharacterMotion],
     ) -> Result<Vec<AppliedCharacterMotion>, PhysicsError> {
-        self.fixed_step_with_rotation_paths(scene, input, dt, motions, &[])
+        self.fixed_step_with_paths(scene, input, dt, motions, &[], &[])
             .map(|(arcs, _)| arcs)
     }
 
@@ -668,13 +674,54 @@ impl CharacterPhysics {
                     angular_displacement: Vec3::ZERO });
             }
         }
-        self.fixed_step_with_rotation_paths(scene, input, dt, &motions, paths)
+        self.fixed_step_with_paths(scene, input, dt, &motions, paths, &[])
             .map(|(_, paths)| paths)
     }
 
-    fn fixed_step_with_rotation_paths(
+    /// Advances complete composed trajectories through the same atomic character tick.
+    /// # Errors
+    /// Rejects duplicate owners, invalid frames, conflicting angular writers and
+    /// exhausted collision budgets before publishing scene, input or body state.
+    pub fn fixed_step_with_rigid_trajectories(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        paths: &[CharacterRigidTrajectoryMotion<'_>],
+    ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
+        self.fixed_step_with_motion_and_rigid_trajectories(scene, input, dt, &[], paths)
+    }
+
+    /// Shares one atomic tick between translation-only owners and composed paths.
+    /// # Errors
+    /// A composed owner cannot also receive an additive translation request.
+    pub fn fixed_step_with_motion_and_rigid_trajectories(
+        &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
+        translations: &[(NodeId, Vec3)], paths: &[CharacterRigidTrajectoryMotion<'_>],
+    ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
+        if paths.len() > self.max_bodies || translations.len() > self.max_bodies {
+            return Err(PhysicsError::InvalidMotion);
+        }
+        let mut owners = HashSet::new();
+        let mut motions = Vec::new();
+        for &(owner, displacement) in translations {
+            if !owners.insert(owner) { return Err(PhysicsError::InvalidMotion); }
+            motions.push(CharacterMotion { owner, displacement, angular_displacement: Vec3::ZERO });
+        }
+        for path in paths {
+            if !owners.insert(path.owner) || owners.len() > self.max_bodies {
+                return Err(PhysicsError::InvalidMotion);
+            }
+            motions.push(CharacterMotion { owner: path.owner, displacement: Vec3::ZERO,
+                angular_displacement: Vec3::ZERO });
+        }
+        self.fixed_step_with_paths(scene, input, dt, &motions, &[], paths).map(|(_, paths)| paths)
+    }
+
+    fn fixed_step_with_paths(
         &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
         motions: &[CharacterMotion], paths: &[CharacterTrajectoryMotion<'_>],
+        rigid_paths: &[CharacterRigidTrajectoryMotion<'_>],
     ) -> Result<(Vec<AppliedCharacterMotion>, Vec<AppliedCharacterTrajectoryMotion>), PhysicsError> {
         self.validate(scene)?;
         let mut requested_paths = HashMap::with_capacity(paths.len());
@@ -691,8 +738,22 @@ impl CharacterPhysics {
                 ).is_some()
             { return Err(PhysicsError::InvalidMotion); }
         }
+        let mut requested_rigid = HashMap::with_capacity(rigid_paths.len());
+        for path in rigid_paths {
+            total_spans = total_spans.checked_add(path.trajectory.spans().len())
+                .ok_or(PhysicsError::InvalidMotion)?;
+            let travel = path.trajectory.angular_travel_bound();
+            if total_spans > MAX_CHARACTER_TRAJECTORY_SPANS || !travel.is_finite()
+                || travel > f64::from(4. * std::f32::consts::TAU)
+                || !path.basis.is_finite() || !path.basis.is_normalized()
+                || !path.origin.is_finite() || path.origin.abs().max_element() > 1e6
+                || !path.scale.is_finite() || path.scale == 0. || path.scale.abs() > 1e6
+                || requested_paths.contains_key(&path.owner)
+                || requested_rigid.insert(path.owner, *path).is_some()
+            { return Err(PhysicsError::InvalidMotion); }
+        }
         let mut trajectory_queries = self.trajectory_queries;
-        let mut applied_paths = Vec::with_capacity(paths.len());
+        let mut applied_paths = Vec::with_capacity(paths.len() + rigid_paths.len());
         if motions.len() > self.max_bodies {
             return Err(PhysicsError::InvalidMotion);
         }
@@ -732,7 +793,7 @@ impl CharacterPhysics {
             let request = requested.entry(owner).or_insert(CharacterMotion {
                 owner, displacement: Vec3::ZERO, angular_displacement: Vec3::ZERO,
             });
-            if request.angular_displacement != Vec3::ZERO || requested_paths.contains_key(&owner) {
+            if request.angular_displacement != Vec3::ZERO || requested_paths.contains_key(&owner) || requested_rigid.contains_key(&owner) {
                 return Err(PhysicsError::InvalidMotion);
             }
             let local_rotation = scene.local(owner)?.rotation;
@@ -850,6 +911,20 @@ impl CharacterPhysics {
                         completed_spans: hit.completed_spans, span_fraction: hit.span_fraction,
                         path_fraction: hit.path_fraction, complete: hit.complete,
                         advancement_iterations: hit.advancement_iterations, trajectory_queries: hit.trajectory_queries,
+                    });
+                    Some((hit.rotation, hit.normal))
+                } else if let Some(path) = requested_rigid.get(&owner) {
+                    let hit = angular_sweep::sweep_rigid_path(position, runtime.rest_edges,
+                        runtime.orientation, path.trajectory, path.basis, path.origin.as_dvec3(), path.scale,
+                        &shapes, self.angular_iterations, &mut trajectory_queries)?;
+                    position += hit.displacement;
+                    angular_fraction = hit.path_fraction;
+                    accepted_path = Some(AppliedCharacterTrajectoryMotion {
+                        owner, displacement: Vec3::ZERO, rotation: hit.rotation,
+                        completed_spans: hit.completed_spans, span_fraction: hit.span_fraction,
+                        path_fraction: hit.path_fraction, complete: hit.complete,
+                        advancement_iterations: hit.advancement_iterations,
+                        trajectory_queries: hit.trajectory_queries,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if request.angular_displacement != Vec3::ZERO {
@@ -1012,6 +1087,7 @@ fn static_world(scene: &SceneGraph) -> Result<StaticWorld, PhysicsError> {
                 == 1
         });
         boxes.push(StaticBox {
+            half_extents: collider.half_extents,
             shape,
             axis_aligned,
             owner,
@@ -1019,7 +1095,7 @@ fn static_world(scene: &SceneGraph) -> Result<StaticWorld, PhysicsError> {
             max,
         });
     }
-    Ok(StaticWorld(boxes))
+    Ok(StaticWorld(boxes, scene.identity()))
 }
 fn aligned_edges(edges: [glam::DVec3; 3]) -> bool {
     edges.iter().all(|edge| {
@@ -1041,6 +1117,17 @@ fn overlaps(body: &RuntimeBody, world: &StaticWorld) -> bool {
 }
 fn contact_epsilon(min: f64, max: f64) -> f64 {
     32.0 * f64::EPSILON * (1.0 + min.abs().max(max.abs()))
+}
+fn validate_static_collider(scene: &SceneGraph, owner: NodeId, collider: BoxCollider) -> Result<(), PhysicsError> {
+    validate_extents(collider.half_extents)?;
+    affine_box(scene, owner, collider.half_extents)?;
+    if scene.component::<CharacterBody>(owner)?.is_some() { return Err(PhysicsError::InvalidBody); }
+    let mut parent = scene.parent(owner)?;
+    while let Some(id) = parent {
+        if scene.component::<CharacterBody>(id)?.is_some() { return Err(PhysicsError::UnsupportedDynamicParent); }
+        parent = scene.parent(id)?;
+    }
+    Ok(())
 }
 fn validate_extents(extents: [f32; 3]) -> Result<(), PhysicsError> {
     if extents

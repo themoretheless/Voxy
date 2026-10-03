@@ -7,6 +7,7 @@ pub(super) struct Smoke {
     pub(super) profile: bool,
     pub(super) root_motion: bool,
     pub(super) root_rotation: bool,
+    pub(super) composed_root: bool,
     rotation_origin: Option<voxy_scene::Transform>,
     pub(super) oriented_body: bool,
     phase: u8,
@@ -15,6 +16,24 @@ pub(super) struct Smoke {
     lod_bytes: u64,
     base_indices: u32,
 }
+// Independent analytic reference for the native fixture, outside trajectory sampling.
+pub(super) fn rotation_contact(composed: bool) -> (f64, glam::Vec3) {
+    let (angle, z) = if composed {
+        let (mut low, mut high) = (0., 0.1);
+        for _ in 0..80 {
+            let t = (low + high) * 0.5;
+            let angle = 2. * (8_f64 * t * (1. - t)).atan();
+            let z = 2. * t * (1. - t);
+            if z + angle.sin() + 0.02 * angle.cos() < 0.23 { low = t; } else { high = t; }
+        }
+        let t = (low + high) * 0.5;
+        (2. * (8_f64 * t * (1. - t)).atan(), 2. * t * (1. - t))
+    } else {
+        ((0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.), 0.)
+    };
+    (angle, glam::Vec3::new((0.6 * (1. - angle.cos())) as f32, 0., (z + 0.6 * angle.sin()) as f32))
+}
+
 impl App {
     fn animation_inspector_input(
         &mut self,
@@ -169,6 +188,9 @@ impl App {
                     self.animation_inspector_input("/root_motion_bone", "root")?;
                     if rotating {
                         self.animation_inspector_input("/root_motion_rotation", "true")?;
+                        if self.animation_smoke.as_ref().unwrap().composed_root {
+                            for axis in 0..3 { self.animation_inspector_input(&format!("/root_motion_axes/{axis}"), "true")?; }
+                        }
                     } else {
                         self.animation_inspector_input("/root_motion_axes/0", "true")?;
                     }
@@ -217,18 +239,17 @@ impl App {
                     let origin = smoke.rotation_origin.ok_or("missing rotation origin")?;
                     let paths = self.play.animations.trajectories();
                     let path = paths.iter().find(|path| path.owner == first).ok_or("missing native rotation trajectory")?;
-                    if !path.pivot.abs_diff_eq(glam::Vec3::X * 0.6, 1e-6) {
+                    if !path.origin.abs_diff_eq(glam::Vec3::ZERO, 1e-6) || path.scale != 1. {
                         return Err("native rotation diagnostic requires the root-pivot-turn fixture".into());
                     }
-                    let angle = (0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.);
-                    let center = glam::Vec3::new((0.6 * (1. - angle.cos())) as f32, 0., (0.6 * angle.sin()) as f32);
+                    let (angle, center) = rotation_contact(smoke.composed_root);
                     let pose = self.scene.local(first)?;
                     if !pose.rotation.abs_diff_eq(glam::Quat::from_rotation_y(angle as f32), 1e-5)
                         || !pose.translation.abs_diff_eq(origin.translation + center, 1e-5) || moving != paused {
                         return Err(format!("native rotation failed curved wall/in-place admission: {pose:?}").into());
                     }
-                    println!("VOXY_NATIVE_ROOT_ROTATION angle={angle} pivot={:?} center={:?} wall_limited=true in_place=true fixed_serial={}",
-                        path.pivot, pose.translation, self.play.animations.serial());
+                    println!("VOXY_NATIVE_ROOT_ROTATION composed={} angle={angle} pivot={:?} center={:?} wall_limited=true in_place=true fixed_serial={}",
+                        smoke.composed_root, glam::Vec3::X * 0.6, pose.translation, self.play.animations.serial());
                 } else if smoke.root_motion {
                     let position = self.scene.local(first)?.translation;
                     let expected_x = if smoke.oriented_body {
