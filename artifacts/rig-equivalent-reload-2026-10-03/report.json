@@ -1,0 +1,33 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "editor_cpu_passed": 128,
+  "editor_ignored": 10,
+  "compatibility": "Exact joint layout and every authored clip name duration playback tracks interpolation and tangents; excludes derived caches and Arc allocation identity.",
+  "cpu_verified": [
+    "Independently reconstructed rig and clips retain fade weights 1/3 and 2/3 and original sole anchor",
+    "Rejected preparation preserves published state",
+    "Changed clip duration resets playback and contact state"
+  ],
+  "native_exit": 0,
+  "native_frames": 30,
+  "model_republication_frame": 20,
+  "contact_check_frame": 27,
+  "fixed_ticks": 12,
+  "sole": [
+    0.0049999915,
+    0.0,
+    0.0
+  ],
+  "center": [
+    0.06,
+    1.0,
+    0.0
+  ],
+  "animated_bytes_play": 1184,
+  "animated_bytes_stop": 0,
+  "authoring_restored": true,
+  "limitations": [
+    "Changed clip or rig remapping remains a reset",
+    "This is single-machine Metal evidence, not all hardware support"
+  ]
+}

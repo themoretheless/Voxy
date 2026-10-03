@@ -1,0 +1,17 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "editor_cpu_passed": 128,
+  "editor_ignored": 10,
+  "feature": "ModelAnimation.clip_name defaults empty; exact unique name overrides legacy numeric clip.",
+  "verified": [
+    "JSON name round trip and missing-field compatibility",
+    "Reordered clips retain named selected target phase, active fade weight and planted anchor",
+    "Invalid legacy numeric index ignored when an exact name resolves",
+    "Duplicate or missing selected names rejected",
+    "Ambiguous reload preparation retains accepted frame and serial"
+  ],
+  "limitations": [
+    "Native watched clip reordering gate remains pending",
+    "Different-rig retargeting and angular root trajectory fades remain pending"
+  ]
+}

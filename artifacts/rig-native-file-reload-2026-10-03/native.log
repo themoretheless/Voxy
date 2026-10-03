@@ -1,0 +1,21 @@
+METAL WINDOW number=34041 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=0 outcome=SkippedOccluded positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=foot-contact.glb
+METAL WINDOW number=34041 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=3 key=KeyD
+VOXY_NATIVE_FOOT_RELOAD_READY frames=3
+EDITOR PRESENT frames=3 draws=3 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 1.0, 0.0, 1.0)), (NodeId { scene: 7, slot: 1, generation: 0 }, Vec4(0.0, -0.1, 0.0, 1.0))]
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=18 first_x=-0.25 asset=foot-contact.glb
+VOXY_NATIVE_FOOT_RELOAD_FADE frames=26 ticks=12 duration=2 weight=0.20000002
+VOXY_NATIVE_FOOT_CONTACT frames=75 ticks=36 sole=Vec3(0.0049999915, 0.0, 0.0) center=Vec3(0.06, 1.0, 0.0) accepted_palette=true owners=2 gpu_primitives=2 sources=1 bytes=1184
+VOXY_NATIVE_FOOT_STOP frames=78 animated_bytes=0 authoring_restored=true
+VOXY_NATIVE_FOOT_STOP frames=78 animated_bytes=0 authoring_restored=true
+METAL WINDOW number=34041 occlusion=8194 visible=false miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+VOXY_NATIVE_FOOT_STOP frames=79 animated_bytes=0 authoring_restored=true

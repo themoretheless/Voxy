@@ -433,6 +433,21 @@ mod tests {
         let encoded = serde_json::to_string(&resumed).unwrap();
         let decoded = voxy_scene::SceneDocument::from_json(&encoded).unwrap();
         app.validate_authoring_document(&decoded).unwrap();
+        let clip_name = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/clip_name").unwrap();
+        assert!(app.edit_component_field(clip_name,"missing clip").is_err());
+        assert_eq!(app.authoring_document().unwrap(),resumed);
+        let selected_name = app.catalog.snapshot(&app.id).unwrap().value().animated.as_ref().unwrap()
+            .animations[0].name().to_owned();
+        app.edit_component_field(clip_name,&selected_name).unwrap();
+        let named_clip = app.authoring_document().unwrap();
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(),resumed);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(),named_clip);
+        let decoded_name = voxy_scene::SceneDocument::from_json(&serde_json::to_string(&named_clip).unwrap()).unwrap();
+        app.validate_authoring_document(&decoded_name).unwrap();
+        assert_eq!(decoded_name,named_clip);
+
         assert_eq!(decoded, resumed);
         app.stop_workers().unwrap();
     }

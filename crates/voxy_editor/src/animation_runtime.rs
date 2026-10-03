@@ -84,6 +84,12 @@ impl AnimationRuntime {
         }
         Ok(self)
     }
+    pub(super) fn clip_name(&self, owner: NodeId) -> Option<&str> {
+        Some(self.owners.get(&owner)?.playback.pose_blend_phases()?.target.clip.name())
+    }
+    pub(super) fn clip_phase(&self, owner: NodeId) -> Option<f64> {
+        self.owners.get(&owner)?.playback.contact_phase()
+    }
     pub(super) fn serial(&self) -> u64 {
         self.serial
     }
@@ -156,7 +162,7 @@ impl AnimationRuntime {
             let Some(model) = models.get(&instance.asset) else {
                 continue;
             };
-            let settings = scene
+            let mut settings = scene
                 .component::<ModelAnimation>(owner)
                 .map_err(|e| e.to_string())?
                 .cloned()
@@ -165,16 +171,31 @@ impl AnimationRuntime {
                     ..Default::default()
                 });
             settings.validate(Some(model.animations.len()), Some(model.skeleton.joints().len()))?;
+            settings.clip = settings.resolve_clip(model)?;
             let current = next.owners.get(&owner);
+            let named_identity = current.is_some_and(|old| !settings.clip_name.is_empty()
+                && old.settings.clip_name == settings.clip_name);
+            let same_clip = current.is_some_and(|old| old.settings.clip == settings.clip || named_identity);
+            let compatible_model = current.is_some_and(|old|
+                Arc::ptr_eq(&old.model, model) || old.playback.can_rebind(model, named_identity));
+            let reload_transition = !compatible_model && settings.transition_seconds > 0.
+                && current.is_some_and(|old| same_clip
+                    && old.model.skeleton.joints() == model.skeleton.joints()
+                    && old.settings.clip.zip(settings.clip).is_some_and(|(old_index,index)| old.model.animations.get(old_index)
+                        .zip(model.animations.get(index)).is_some_and(|(a,b)| a.name() == b.name())));
             let mut playback = if current.is_none_or(|old| {
-                !Arc::ptr_eq(&old.model, model)
-                    || (old.settings.clip != settings.clip
+                !(compatible_model || reload_transition)
+                    || (!same_clip
                         && (settings.transition_seconds == 0. || old.settings.clip.is_none() || settings.clip.is_none()))
             }) {
                 ModelPlayback::new(model.clone(), settings.clone())?
             } else {
                 let mut playback = current.unwrap().playback.clone();
-                if current.unwrap().settings.clip != settings.clip {
+                playback.rebind(model.clone());
+                if reload_transition {
+                    playback.reload_clip(settings.clip.ok_or("missing reload target")?,settings.transition_seconds)?;
+                }
+                if !same_clip {
                     playback.transition_to_clip(settings.clip.ok_or("missing transition target")?, settings.transition_seconds)?;
                 }
                 playback.set_speed(settings.speed)?;
@@ -240,8 +261,8 @@ impl AnimationRuntime {
                 if scene.component::<voxy_gameplay::CharacterBody>(owner).map_err(|e| e.to_string())?.is_none() {
                     return Err("foot placement requires a CharacterBody on the model owner".into());
                 }
-                if let Some(feet) = current.filter(|old| Arc::ptr_eq(&old.model, model)
-                    && (old.settings.clip == settings.clip || playback.has_transition()
+                if let Some(feet) = current.filter(|_| (compatible_model || reload_transition)
+                    && (same_clip || playback.has_transition()
                         || playback.source_contact_interval().is_some() || playback.frozen_source_tick().is_some())).and_then(|old| old.feet.as_ref())
                     .filter(|feet| feet.matches(foot_settings)) {
                     Some(feet.clone())

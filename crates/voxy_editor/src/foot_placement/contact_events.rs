@@ -91,6 +91,7 @@ pub(super) fn mixed_swing(
     target: &[FootContactKey],
     target_phase: AnimationPhaseInterval,
     source: Option<SourceTravel<'_>>,
+    source_continues: bool,
     budget: &mut voxy_gameplay::SupportQueryBudget,
 ) -> Result<bool, String> {
     let Some(source) = source else {
@@ -131,7 +132,7 @@ pub(super) fn mixed_swing(
             )
         }
     };
-    if target
+    if !source_continues && target
         .iter()
         .any(|window| window[1] >= fraction && window[1] > 0.)
     {
@@ -165,7 +166,7 @@ mod tests {
     ) -> Result<bool, String> {
         let mut budget =
             voxy_gameplay::SupportQueryBudget::new(limit).map_err(|e| e.to_string())?;
-        super::mixed_swing(target, phase, source, &mut budget)
+        super::mixed_swing(target, phase, source, false, &mut budget)
     }
 
     fn curve(zero: f32) -> Vec<FootContactKey> {
@@ -307,13 +308,27 @@ mod tests {
             active_fraction: 1.,
         };
         let mut budget = voxy_gameplay::SupportQueryBudget::new(12).unwrap();
-        assert!(super::mixed_swing(&keys, phase(0., 1.), Some(source), &mut budget).unwrap());
-        assert!(super::mixed_swing(&keys, phase(0., 1.), Some(source), &mut budget).is_err());
+        assert!(super::mixed_swing(&keys, phase(0., 1.), Some(source), false, &mut budget).unwrap());
+        assert!(super::mixed_swing(&keys, phase(0., 1.), Some(source), false, &mut budget).is_err());
         let mut budget = voxy_gameplay::SupportQueryBudget::new(8).unwrap();
         budget.charge_work(5).unwrap();
-        assert!(super::mixed_swing(&keys, phase(0., 1.), None, &mut budget).unwrap());
+        assert!(super::mixed_swing(&keys, phase(0., 1.), None, false, &mut budget).unwrap());
         assert_eq!(budget.remaining(), 0);
         assert!(budget.charge_work(1).is_err());
         assert_eq!(budget.remaining(), 0);
     }
+    #[test]
+    fn tick_end_does_not_mean_fade_completion_for_live_or_frozen_sources() {
+        let keys = curve(0.5);
+        for source in [
+            SourceTravel::Clip { keys: &[], phase: phase(0.,0.5), active_fraction: 1. },
+            SourceTravel::Frozen { weight: 1., active_fraction: 1. },
+        ] {
+            let mut budget = voxy_gameplay::SupportQueryBudget::new(100).unwrap();
+            assert!(!super::mixed_swing(&keys,phase(0.,0.5),Some(source),true,&mut budget).unwrap());
+            let mut budget = voxy_gameplay::SupportQueryBudget::new(100).unwrap();
+            assert!(super::mixed_swing(&keys,phase(0.,0.5),Some(source),false,&mut budget).unwrap());
+        }
+    }
+
 }

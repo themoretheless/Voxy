@@ -1,0 +1,17 @@
+METAL WINDOW number=34029 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=0 outcome=SkippedOccluded positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=-0.25 asset=foot-contact.glb
+METAL WINDOW number=34029 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=3 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=3 key=KeyD
+EDITOR PRESENT frames=3 draws=3 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 1.0, 0.0, 1.0)), (NodeId { scene: 7, slot: 1, generation: 0 }, Vec4(0.0, -0.1, 0.0, 1.0))]
+GAME UI GPU PUBLISHED draws=0
+MODEL PUBLISHED frames=20 first_x=-0.25 asset=foot-contact.glb
+VOXY_NATIVE_FOOT_CONTACT frames=27 ticks=12 sole=Vec3(0.0049999915, 0.0, 0.0) center=Vec3(0.06, 1.0, 0.0) accepted_palette=true owners=2 gpu_primitives=2 sources=1 bytes=1184
+VOXY_NATIVE_FOOT_STOP frames=30 animated_bytes=0 authoring_restored=true
+VOXY_NATIVE_FOOT_STOP frames=30 animated_bytes=0 authoring_restored=true

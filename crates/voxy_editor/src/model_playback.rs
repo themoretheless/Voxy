@@ -8,6 +8,9 @@ use voxy_render::ModelAsset;
 #[serde(deny_unknown_fields)]
 pub struct ModelAnimation {
     pub clip: Option<usize>,
+    /// Exact unique clip name; empty retains legacy numeric selection.
+    #[serde(default)]
+    pub clip_name: String,
     pub speed: f32,
     /// Clip-switch fade duration in seconds. Zero retains immediate switching.
     #[serde(default)]
@@ -26,6 +29,7 @@ impl Default for ModelAnimation {
     fn default() -> Self {
         Self {
             clip: Some(0),
+            clip_name: String::new(),
             speed: 1.0,
             transition_seconds: 0.0,
             root_motion_joint: 0,
@@ -37,6 +41,13 @@ impl Default for ModelAnimation {
 }
 
 impl ModelAnimation {
+    pub(crate) fn resolve_clip(&self, model: &ModelAsset) -> Result<Option<usize>, String> {
+        if self.clip_name.is_empty() { return Ok(self.clip); }
+        let mut matches = model.animations.iter().enumerate().filter(|(_,clip)|clip.name()==self.clip_name);
+        let index = matches.next().ok_or("named animation clip is missing")?.0;
+        if matches.next().is_some() { return Err("named animation clip is ambiguous".into()); }
+        Ok(Some(index))
+    }
     pub(crate) fn resolve_motion_joint(&self, model: &ModelAsset) -> Result<u16, String> {
         if self.root_motion_bone.is_empty() {
             Ok(self.root_motion_joint)
@@ -58,7 +69,10 @@ impl ModelAnimation {
         if !self.speed.is_finite() || !(0.0..=8.0).contains(&self.speed) {
             return Err("invalid model animation speed");
         }
-        if self
+        if self.clip_name.len() > 1024 || self.clip_name.contains('\0') {
+            return Err("invalid model animation clip name");
+        }
+        if self.clip_name.is_empty() && self
             .clip
             .zip(clip_count)
             .is_some_and(|(index, count)| index >= count)
@@ -95,11 +109,27 @@ pub(crate) struct ModelPlayback {
     frozen_source_tick: Option<(Arc<voxy_animation::Pose>, f64)>,
 }
 impl ModelPlayback {
-    pub(crate) fn new(model: Arc<ModelAsset>, settings: ModelAnimation) -> Result<Self, String> {
+    pub(crate) fn can_rebind(&self, model: &ModelAsset, allow_reorder: bool) -> bool {
+        self.model.skeleton.joints() == model.skeleton.joints()
+            && self.model.animations.len() == model.animations.len()
+            && (self.model.animations.iter().zip(&model.animations)
+                .all(|(old, new)| old.has_same_authored_animation(new))
+                || (allow_reorder && self.model.animations.iter().all(|old| {
+                    let mut matches = model.animations.iter().filter(|new|new.name()==old.name());
+                    matches.next().is_some_and(|new|old.has_same_authored_animation(new))
+                        && matches.next().is_none()
+                        && self.model.animations.iter().filter(|clip|clip.name()==old.name()).count()==1
+                })))
+    }
+    pub(crate) fn rebind(&mut self, model: Arc<ModelAsset>) {
+        self.model = model;
+    }
+    pub(crate) fn new(model: Arc<ModelAsset>, mut settings: ModelAnimation) -> Result<Self, String> {
         settings.validate(
             Some(model.animations.len()),
             Some(model.skeleton.joints().len()),
         )?;
+        settings.clip = settings.resolve_clip(&model)?;
         let root_motion_joint = settings.resolve_motion_joint(&model)?;
         let animator = match settings.clip {
             Some(index) => {
@@ -150,6 +180,13 @@ impl ModelPlayback {
 
     pub(crate) fn has_transition(&self) -> bool {
         self.animator.as_ref().is_some_and(|animator| animator.pose_blend_phases().source.is_some())
+    }
+
+    pub(crate) fn reload_clip(&mut self, index: usize, duration: f32) -> Result<(), String> {
+        let clip = self.model.animations.get(index).ok_or("invalid reload clip")?;
+        let animator = self.animator.as_mut().ok_or("bind pose has no reload phase")?;
+        animator.transition_to_at_phase(clip.clone(), duration, animator.normalized_phase())
+            .map_err(|error| error.to_string())
     }
 
     pub(crate) fn transition_to_clip(&mut self, index: usize, duration: f32) -> Result<(), String> {

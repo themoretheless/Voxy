@@ -1,0 +1,32 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "native_exit": 0,
+  "native_frames": 94,
+  "fixed_ticks": 12,
+  "sole": [
+    0.0049999915,
+    0.0,
+    0.0
+  ],
+  "actor_center": [
+    0.06,
+    1.0,
+    0.0
+  ],
+  "accepted_palette": true,
+  "gpu_owners": 2,
+  "gpu_primitives": 2,
+  "shared_sources": 1,
+  "animated_bytes_play": 1184,
+  "animated_bytes_stop": 0,
+  "authoring_restored": true,
+  "implementation": "Create hidden editor window, initialize graphics, show then focus/request redraw.",
+  "acceptance_setup": "Wait for imported model publication to settle before starting stable-rig motion. Unknown watcher sources intentionally trigger first invalidation.",
+  "limitations": [
+    "This validates one Apple Metal machine and fixture, not all hardware",
+    "Rig replacement during Play resets contacts and needs separate reload continuity acceptance",
+    "Angular root trajectory fades remain rejected"
+  ],
+  "editor_cpu_passed": 127,
+  "editor_ignored": 10
+}

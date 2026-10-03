@@ -1,0 +1,20 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "editor_cpu_passed": 131,
+  "editor_ignored": 10,
+  "schema": "editor.model-retarget.v1",
+  "profile": "Source asset string, one-to-one named bone mappings, explicit unit-quaternion rotation/translation bases and scale.",
+  "verified": [
+    "Profile defaults and JSON round trip",
+    "Capacity uniqueness quaternion and scale validation before model publication",
+    "Loaded source/target skeletal admission and binding compilation",
+    "Public imported bone names resolved through ModelAsset before canonical Skeleton binding",
+    "Invalid missing target bone field rejected without history mutation",
+    "Valid target edit undo/redo and SceneDocument JSON round trip"
+  ],
+  "remaining": [
+    "Source asset import/dependency/packaging integration",
+    "Owner Play consumption of retarget profile",
+    "Retargeted physics/foot IK and native GPU acceptance"
+  ]
+}

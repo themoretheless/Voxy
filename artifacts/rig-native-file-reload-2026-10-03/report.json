@@ -1,0 +1,43 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "native_exit": 0,
+  "fixture_revision": "Real watched GLB time accessor changed from [0,1] to [0,2]; name and skeleton retained.",
+  "ready_frame": 3,
+  "republication_frame": 18,
+  "intermediate_fade": {
+    "frame": 26,
+    "fixed_ticks": 12,
+    "duration": 2,
+    "weight": 0.20000002
+  },
+  "contact_check": {
+    "frame": 75,
+    "fixed_ticks": 36,
+    "sole": [
+      0.0049999915,
+      0.0,
+      0.0
+    ],
+    "actor": [
+      0.06,
+      1.0,
+      0.0
+    ],
+    "accepted_palette": true,
+    "owners": 2,
+    "primitives": 2,
+    "sources": 1,
+    "bytes": 1184
+  },
+  "first_stop_frame": 78,
+  "last_stop_frame": 79,
+  "animated_bytes_stop": 0,
+  "authoring_restored": true,
+  "editor_cpu_passed": 128,
+  "editor_ignored": 10,
+  "limitations": [
+    "One constant-pose fixture on Apple Metal; native arbitrary edited motion/retargeting remains unproven",
+    "Angular root trajectory fades remain rejected",
+    "No wider hardware/CUDA proof from this gate"
+  ]
+}

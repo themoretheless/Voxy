@@ -24,6 +24,8 @@ mod gpu_model;
 mod model_playback;
 mod animation_runtime;
 mod foot_placement;
+mod retarget_profile;
+pub use retarget_profile::{ModelRetarget, RetargetJointProfile};
 pub use foot_placement::{ModelFootPlacement, FootBinding, FootContactKey};
 mod scene_limits;
 mod animated_models;
@@ -106,6 +108,7 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
     registry.register::<ModelPart>("editor.model-part.v1")?;
     registry.register::<ModelAnimation>("editor.model-animation.v1")?;
     registry.register::<ModelFootPlacement>("editor.foot-placement.v1")?;
+    registry.register::<ModelRetarget>("editor.model-retarget.v1")?;
     registry.register::<SceneMaterial>("editor.material.v1")?;
     registry.register::<DirectionalLight>("editor.light.v1")?;
     registry.register::<EditorCamera>("editor.camera.v1")?;
@@ -385,7 +388,7 @@ impl App {
             32 * 1024 * 1024,
             move |asset, provider, inputs| {
                 let source_path = match &recipe {
-                    InputRecipe::Direct(path) => path.clone(),
+                    InputRecipe::Direct(_) => SourcePath::new(asset.0.clone()).map_err(|error|error.to_string())?,
                     InputRecipe::Manifest(manifest) => {
                         let snapshot = inputs
                             .read(manifest.clone(), |id, limit| {
@@ -511,6 +514,7 @@ impl App {
         let window = Arc::new(
             events.create_window(
                 Window::default_attributes()
+                    .with_visible(false)
                     .with_title(if self.standalone {
                         "Voxy Game"
                     } else {
@@ -520,9 +524,6 @@ impl App {
                     .with_min_inner_size(winit::dpi::LogicalSize::new(480.0, if self.standalone { 480.0 } else { 680.0 })),
             )?,
         );
-        if self.prefab_smoke.is_some() {
-            window.focus_window();
-        }
         let size = window.inner_size();
         let mut host = pollster::block_on(SceneSurface::new(
             Arc::clone(&window),
@@ -581,7 +582,9 @@ impl App {
                 std::env::var("VOXY_GPU_GEOMETRY_BUDGET_BYTES")
                     .map_or(Ok(256 * 1024 * 1024), |value| value.parse::<u64>())?;
         }
+        window.set_visible(true);
         window.focus_window();
+        window.request_redraw();
         self.window = Some(window);
         if self.smoke_deadline.is_some() {
             self.smoke_deadline = Some(Instant::now() + Duration::from_secs(15));
@@ -612,6 +615,10 @@ impl App {
         self.poll_audio_device()?;
         if let Some(audio) = self.audio.play_mut() {
             audio.poll_reload(&self.scene)?;
+        }
+        for (_, profile) in self.scene.components::<ModelRetarget>() {
+            let source = AssetId(profile.source.clone());
+            if self.catalog.status(&source).is_none() { self.reload.insert(source); }
         }
         // Apply known invalidations before accepting any ready import completion.
         self.poll_sources()?;
@@ -755,6 +762,11 @@ impl App {
         }
         self.synchronize_gpu_residency();
         Ok(())
+    }
+    fn required_cpu_model_assets(&self) -> BTreeSet<AssetId> {
+        self.scene.components::<ModelInstance>().map(|(_,model)|model.asset.clone())
+            .chain(self.scene.components::<ModelRetarget>().map(|(_,profile)|AssetId(profile.source.clone())))
+            .chain(std::iter::once(self.id.clone())).collect()
     }
     fn required_gpu_assets(&self) -> std::collections::BTreeSet<AssetId> {
         self.scene
@@ -901,7 +913,7 @@ impl App {
         Ok(())
     }
     fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
-        let models: BTreeMap<_, _> = if let Some(graphics) = &self.graphics {
+        let mut models: BTreeMap<_, _> = if let Some(graphics) = &self.graphics {
             graphics.models.iter().filter_map(|(id, resource)|
                 resource.animated_model.as_ref().map(|model| (id.clone(), model.clone()))).collect()
         } else {
@@ -910,6 +922,13 @@ impl App {
                 Some((instance.asset.clone(), resource.value().animated.as_ref()?.clone()))
             }).collect()
         };
+        for (_, profile) in self.scene.components::<ModelRetarget>() {
+            let source = AssetId(profile.source.clone());
+            if let Some(asset) = self.catalog.snapshot(&source)
+                && let Some(model) = asset.value().animated.as_ref() {
+                models.insert(source,model.clone());
+            }
+        }
         self.play.animations.synchronize(&self.scene)?;
         if let Some(simulation) = &mut self.play.simulation {
             if let Some(actions) = &mut self.play.ui_actions {
@@ -1002,12 +1021,7 @@ impl App {
         Ok(())
     }
     fn start_standalone(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let mut required: BTreeSet<_> = self
-            .scene
-            .components::<ModelInstance>()
-            .map(|(_, model)| model.asset.clone())
-            .collect();
-        required.insert(self.id.clone());
+        let required = self.required_cpu_model_assets();
         let deadline = Instant::now() + Duration::from_secs(15);
         loop {
             self.tick()?;
@@ -1027,6 +1041,7 @@ impl App {
             }
             std::thread::sleep(Duration::from_millis(2));
         }
+        self.validate_authoring_document(&self.authoring_document()?)?;
         self.standalone = true;
         self.toggle_play()
     }
@@ -2268,6 +2283,20 @@ impl App {
         {
             return Err("invalid editor camera/material/light".into());
         }
+        for (node, profile) in loaded.graph.components::<ModelRetarget>() {
+            profile.validate()?;
+            let target_asset = loaded.graph.component::<String>(node)?
+                .ok_or("retarget profile requires a model owner")?;
+            let source = self.catalog.snapshot(&AssetId(profile.source.clone()));
+            let target = self.catalog.snapshot(&AssetId(target_asset.clone()));
+            let source = source.as_ref().map(|asset| asset.value().animated.as_ref()
+                .ok_or("retarget source has no skeletal model")).transpose()?;
+            let target = target.as_ref().map(|asset| asset.value().animated.as_ref()
+                .ok_or("retarget target has no skeletal model")).transpose()?;
+            if let (Some(source),Some(target)) = (source,target) {
+                profile.compile_models(source,target)?;
+            }
+        }
         for (node, animation) in loaded.graph.components::<ModelAnimation>() {
             let model = loaded.graph.component::<String>(node)?
                 .ok_or("animation requires a model owner")?;
@@ -2284,6 +2313,7 @@ impl App {
             if let Some(asset) = self.catalog.snapshot(&AssetId(model.clone()))
                 && let Some(model) = asset.value().animated.as_ref()
             {
+                animation.resolve_clip(model)?;
                 animation.resolve_motion_joint(model)?;
             }
         }
@@ -2303,7 +2333,7 @@ impl App {
                 foot_placement::FootRuntime::new(model, settings.clone())?;
                 let animation = loaded.graph.component::<ModelAnimation>(node)?
                     .cloned().unwrap_or_default();
-                let clip_name = animation.clip.and_then(|index|
+                let clip_name = animation.resolve_clip(model)?.and_then(|index|
                     model.animations.get(index).map(|clip| clip.name()));
                 for foot in &settings.feet {
                     foot.contact_keys(clip_name)?;
@@ -3977,15 +4007,10 @@ pub fn export_game_package(
             .as_ref()
             .ok_or("packaging requires a project-scoped scene")?;
         let mut observations = authored.inputs().observations().clone();
-        for asset in app
-            .scene
-            .components::<ModelInstance>()
-            .map(|(_, model)| &model.asset)
-            .chain(std::iter::once(&app.id))
-        {
+        for asset in app.required_cpu_model_assets() {
             let imported = app
                 .catalog
-                .snapshot(asset)
+                .snapshot(&asset)
                 .ok_or("missing packaged model")?;
             for (id, input) in imported.inputs().observations() {
                 if observations
@@ -4241,6 +4266,7 @@ fn run_model_viewport_configured_registry(
         let mut smoke = animation_smoke::Smoke::default();
         smoke.profile = std::env::var_os("VOXY_ANIMATION_PROFILE").is_some();
         smoke.foot_contact = std::env::var_os("VOXY_FOOT_CONTACT_SMOKE").is_some();
+        smoke.foot_reload = std::env::var_os("VOXY_FOOT_RELOAD_SMOKE").is_some();
         smoke.composed_root = std::env::var_os("VOXY_COMPOSED_ROOT_SMOKE").is_some();
         smoke.root_rotation = smoke.composed_root || std::env::var_os("VOXY_ROOT_ROTATION_SMOKE").is_some();
         smoke.root_motion = smoke.root_rotation || std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();

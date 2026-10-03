@@ -1,0 +1,15 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "editor_cpu_passed": 127,
+  "editor_ignored": 10,
+  "verified": [
+    "three authored clip contact curves through interrupted fade",
+    "partial accepted contact captured by frozen source",
+    "explicit preparation budget failure leaves accepted frame Arc serial and actor transform intact",
+    "retry completes transition retaining original sole anchor x=.02 despite target zero window"
+  ],
+  "limitations": [
+    "native Metal presentation still unresolved",
+    "physical zero-weight frozen-source replant and repeated interruptions need acceptance"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "native_exit": 0,
+  "mutation": "Real watched GLB changes duration 1 to 2 and hip translation endpoint (0,.5,0) to (.15,.55,0).",
+  "fade_weight_observed": 0.20000002,
+  "phase": 0.35000001825392246,
+  "analytic_hip": [
+    0.052500006,
+    0.5175,
+    0.0
+  ],
+  "reference": "hip=(.15*phase,.5+.05*phase,0), checked within 2e-6 after IK; accepted GPU palette signature matches full pose.",
+  "contact": {
+    "frame": 76,
+    "ticks": 36,
+    "sole": [
+      0.0049999915,
+      5.9604645e-08,
+      0.0
+    ],
+    "actor": [
+      0.06,
+      1.0,
+      0.0
+    ],
+    "owners": 2,
+    "primitives": 2,
+    "sources": 1,
+    "bytes": 1184
+  },
+  "stop_frame": 79,
+  "animated_bytes_stop": 0,
+  "authoring_restored": true,
+  "editor_cpu_passed": 128,
+  "editor_ignored": 10,
+  "driver": "../rig-native-file-reload-2026-10-03/run.py --motion",
+  "limitations": [
+    "One bounded translation edit on Apple Metal, not arbitrary motion or all hardware",
+    "Angular root trajectory fades, clip name/index remapping and different-rig retargeting remain open"
+  ]
+}

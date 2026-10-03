@@ -1,0 +1,16 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "editor_cpu_passed": 127,
+  "editor_ignored": 10,
+  "verified": [
+    "multiple interrupted fades retain original anchor with displayed partial contact",
+    "full release followed by live zero-to-zero fade",
+    "interrupted zero frozen source allows swing and new anchor acquisition",
+    "final anchor equals actor position at renewed stance rather than original anchor"
+  ],
+  "remaining": [
+    "native Metal foot Play/Stop presentation",
+    "angular root trajectory fades",
+    "moving platform character carry"
+  ]
+}

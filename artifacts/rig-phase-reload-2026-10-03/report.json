@@ -1,0 +1,20 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "animation_cpu_passed": 68,
+  "editor_cpu_passed": 128,
+  "editor_ignored": 10,
+  "policy": "Same skeleton and same selected clip index/name with authored positive fade: revision starts at accepted target normalized phase. Zero fade or different rig/name retains reset.",
+  "verified": [
+    "Different duration preserves phase",
+    "Target sampling offset +100 does not become root delta",
+    "Interrupted revision begins from displayed blended pose",
+    "Invalid phase commands preserve clock",
+    "Physical revised-duration fade preserves planted anchor",
+    "Zero-fade changed duration resets contact"
+  ],
+  "limitations": [
+    "Changed authored clip fade has CPU physical evidence; native changed-file gate remains pending",
+    "Clip reordering/name remapping and different-rig retargeting remain pending",
+    "Angular root trajectory fades remain rejected"
+  ]
+}

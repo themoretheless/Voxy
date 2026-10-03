@@ -1,0 +1,17 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "editor_cpu_passed": 126,
+  "editor_ignored": 10,
+  "gpu_passed": 1,
+  "fix": "Do not treat end of a full active source tick as fade completion when source still contributes after advance.",
+  "physical_evidence": {
+    "positive_source_target_swing": "original sole anchor x=0.02 retained",
+    "coincident_source_target_swing": "rearmed sole anchor x=0.08"
+  },
+  "unit_evidence": "Live and frozen sources reject target-only tick-end swing while fade continues, admit exact completion.",
+  "remaining": [
+    "physical interrupted variable-contact transitions",
+    "native Metal presentation",
+    "angular root trajectory fades"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "animation_cpu_passed": 72,
+  "editor_check_exit": 0,
+  "contract": "Explicit one-to-one named local-channel mapping, separately authored rotation/translation bases and translation scale. Target-bound pose/frame and palette, no inferred world-space goals.",
+  "verified": [
+    "Independent target translation rotation scale and palette formulas",
+    "Different names bone ordering bind poses and signed nonuniform scale",
+    "Selected root joint and displacement remapping without bind-offset motion",
+    "Unmapped target joints retained in bind pose",
+    "Exact reconstructed source admitted and foreign rig rejected",
+    "Malformed mapping and source channels rejected",
+    "Overflow leaves inputs intact and binding usable for subsequent valid work"
+  ],
+  "remaining": [
+    "Persisted editor retarget profile and source asset selection",
+    "Existing owner playback/physics/foot IK integration",
+    "Native retargeted-rig GPU acceptance",
+    "Ordered angular root trajectory coordinate transport"
+  ]
+}

@@ -469,6 +469,8 @@ impl Panels {
                         .then(|| foot_field_label(&member.path)).flatten();
                     let label = if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_joint" {
                         "Motion bone index"
+                    } else if member.schema == "editor.model-animation.v1" && member.path == "/clip_name" {
+                        "Animation clip name (empty uses index)".into()
                     } else if member.schema == "editor.model-animation.v1" && member.path == "/transition_seconds" {
                         "Clip transition seconds"
                     } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_bone" {

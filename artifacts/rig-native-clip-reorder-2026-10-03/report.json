@@ -1,0 +1,44 @@
+{
+  "base_commit": "009ca38e54826875ee369717558abd153463838e",
+  "native_exit": 0,
+  "mutation": "Temporary watched GLB initially [move,other], revised to [other,move], with move duration 1->2 and changed hip endpoint. Other has independent constant hip translation -.1.",
+  "selected_clip": {
+    "name": "move",
+    "revised_index": 1,
+    "check_frame": 69
+  },
+  "fade_weight_observed": 0.16666667,
+  "phase": 0.36666668578982353,
+  "hip": [
+    0.055000003,
+    0.5183333,
+    0.0
+  ],
+  "accepted_palette": true,
+  "fixed_ticks": 37,
+  "sole": [
+    0.0049999915,
+    0.0,
+    0.0
+  ],
+  "actor": [
+    0.06,
+    1.0,
+    0.0
+  ],
+  "stop_frame": 72,
+  "animated_bytes_stop": 0,
+  "authoring_restored": true,
+  "editor_cpu_passed": 128,
+  "editor_ignored": 10,
+  "editor_verified": [
+    "Unknown name edit rejected without history mutation",
+    "Named edit undo/redo",
+    "Named scene JSON round trip and authoring validation"
+  ],
+  "driver": "../rig-native-file-reload-2026-10-03/run.py --motion --reorder",
+  "limitations": [
+    "One bounded Metal fixture",
+    "Different-rig retargeting and angular root trajectory fades remain open"
+  ]
+}
