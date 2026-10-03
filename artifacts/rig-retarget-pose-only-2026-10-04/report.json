@@ -1,0 +1,12 @@
+{
+  "animation_cpu_passed": 75,
+  "editor_cpu_passed": 138,
+  "editor_optional_ignored": 11,
+  "verified": [
+    "partial child mapping with unmapped source root",
+    "independent target palette",
+    "root motion admission rejection retains accepted frame and clock",
+    "retry continues from accepted phase"
+  ],
+  "native_picker": "unverified; previous SkippedOccluded failure remains"
+}

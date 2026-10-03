@@ -1,0 +1,12 @@
+{
+  "editor_cpu_passed": 138,
+  "optional_gpu_ignored": 11,
+  "verified": [
+    "middle pair deletion preserves remaining order",
+    "invalid pair deletion retains draft",
+    "deletion closes captured bone picker",
+    "accepted scene unchanged before Apply",
+    "Apply and single Undo restore prior profile"
+  ],
+  "native_presentation": "unverified"
+}

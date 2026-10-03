@@ -1,0 +1,14 @@
+{
+  "animation_cpu_passed": 80,
+  "new_api": "RootRigidPath::from_twists",
+  "verified": [
+    "ordered noncommuting rotations",
+    "continuous span boundaries",
+    "exact constant-twist samples",
+    "coordinate/velocity transport scales zero and 2.5",
+    "point projection and speed bounds sampled at 101 fractions",
+    "span budget and invalid duration rejection"
+  ],
+  "character_physics_integration": "not yet verified",
+  "time_varying_blend": "not implemented"
+}

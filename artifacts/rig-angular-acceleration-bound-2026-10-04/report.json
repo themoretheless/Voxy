@@ -1,0 +1,11 @@
+{
+  "animation_cpu_passed": 83,
+  "new_api": "RootRotationSpan::angular_acceleration_bound",
+  "verified": [
+    "normalized cubic yaw acceleration against independent analytic derivative",
+    "constant angular arc zero acceleration",
+    "zero-duration STEP has no finite derivative"
+  ],
+  "contract": "within a compiled span; key boundaries require splitting",
+  "linear_spatial_rate_proof": "not yet implemented"
+}

@@ -5,6 +5,12 @@ use super::{
 use crate::root_curve::RootCurve;
 use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
+mod integration;
+mod blend;
+pub use blend::RootSpatialTwistBounds;
+mod partition;
+pub use partition::{RootMotionInterval, RootMotionStep, RootMotionPartition};
+pub use integration::{RootRigidApproximation, RootTwistRateBounds};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct RootRigidTransform {
@@ -88,8 +94,97 @@ struct Curve {
 /// not create additional compiled key arrays; this object contains no clock.
 #[derive(Clone, Debug)]
 pub struct RootRigidCurve(Arc<Curve>);
+/// Origin linear velocity and angular velocity in the interval-start frame,
+/// measured per clip second. This is not a body-coordinate twist.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RootRigidVelocity {
+    pub linear: DVec3,
+    pub angular: DVec3,
+}
+/// Spatial twist: t_dot = angular cross t + linear, in one fixed frame.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RootRigidTwist {
+    pub linear: DVec3,
+    pub angular: DVec3,
+}
+impl RootRigidTwist {
+    /// Exact constant-twist increment. Left-compose it with the starting transform.
+    /// # Errors
+    /// Rejects invalid duration, nonfinite twist or numerical overflow.
+    pub fn increment(self, duration: f64) -> Result<RootRigidTransform, AnimationError> {
+        if !duration.is_finite() || duration < 0. {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        if !self.linear.is_finite() || !self.angular.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let displacement = self.linear * duration;
+        let scaled = self.angular * duration;
+        if !displacement.is_finite() || !scaled.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let maximum = scaled.abs().max_element();
+        if maximum == 0. {
+            return RootRigidTransform { translation: displacement, rotation: DQuat::IDENTITY }.checked();
+        }
+        let norm = (scaled / maximum).length();
+        let angle = maximum * norm;
+        if !angle.is_finite() { return Err(AnimationError::NumericalOverflow); }
+        let axis = (scaled / maximum) / norm;
+        let (a,b) = if angle < 1e-3 {
+            let x = angle * angle;
+            (angle * (0.5 - x/24. + x*x/720. - x*x*x/40320.),
+                x * (1./6. - x/120. + x*x/5040. - x*x*x/362880.))
+        } else {
+            ((1. - angle.cos())/angle, 1. - angle.sin()/angle)
+        };
+        let cross = axis.cross(displacement);
+        RootRigidTransform {
+            translation: displacement + a*cross + b*axis.cross(cross),
+            rotation: DQuat::from_axis_angle(axis,angle).normalize(),
+        }.checked()
+    }
+}
+impl RootRigidVelocity {
+    /// Converts origin derivative to a spatial twist at the supplied transform.
+    /// # Errors
+    /// Rejects invalid transform/velocity or overflowing origin conversion.
+    pub fn spatial_twist(self, transform: RootRigidTransform) -> Result<RootRigidTwist, AnimationError> {
+        transform.checked()?;
+        if !self.linear.is_finite() || !self.angular.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let linear = self.linear - self.angular.cross(transform.translation);
+        if !linear.is_finite() { return Err(AnimationError::NumericalOverflow); }
+        Ok(RootRigidTwist { linear, angular: self.angular })
+    }
+    /// Transports velocity through x_target = scale * basis * x_source + offset.
+    /// `rotation` is the source path rotation at this velocity's sampling time.
+    /// The shifted target origin contributes velocity even when scale is zero.
+    /// # Errors
+    /// Rejects invalid coordinates, source velocity and numerical overflow.
+    pub fn transformed(self, rotation: DQuat, basis: DQuat, scale: f64, offset: DVec3)
+        -> Result<Self, AnimationError> {
+        if !basis.is_finite() || !basis.is_normalized()
+            || !rotation.is_finite() || !rotation.is_normalized()
+            || !scale.is_finite() || scale < 0. || !offset.is_finite() {
+            return Err(AnimationError::InvalidRetargetBinding);
+        }
+        if !self.linear.is_finite() || !self.angular.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let angular = basis * self.angular;
+        let target_rotation = (basis * rotation * basis.conjugate()).normalize();
+        let linear = scale * (basis * self.linear) - angular.cross(target_rotation * offset);
+        if !linear.is_finite() || !angular.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        Ok(Self { linear, angular })
+    }
+}
 #[derive(Clone, Debug)]
 pub struct RootRigidSpan {
+    screw: Option<(RootRigidTwist, RootRigidTransform)>,
     rotation: RootRotationSpan,
     additive: [DVec3; 4],
     pivot: [DVec3; 4],
@@ -116,12 +211,69 @@ impl RootRigidSpan {
     /// # Errors
     /// Rejects invalid fractions or numerical overflow.
     pub fn sample(&self, fraction: f64) -> Result<RootRigidTransform, AnimationError> {
+        if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if let Some((twist, initial)) = self.screw {
+            return twist.increment((self.end()-self.start())*fraction)?.compose(initial);
+        }
         let rotation = self.rotation.sample(fraction)?;
         RootRigidTransform {
             translation: bezier(self.additive, fraction) - rotation * bezier(self.pivot, fraction),
             rotation,
         }
         .checked()
+    }
+    /// Analytic velocity of the simultaneous translation/rotation curve.
+    /// STEP events have no finite clip-time derivative and return None.
+    /// # Errors
+    /// Rejects invalid fractions, singular rotation curves or numerical overflow.
+    pub fn velocity(&self, fraction: f64) -> Result<Option<RootRigidVelocity>, AnimationError> {
+        if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if self.is_step() { return Ok(None); }
+        if let Some((twist, _)) = self.screw {
+            let transform = self.sample(fraction)?;
+            let linear = twist.angular.cross(transform.translation) + twist.linear;
+            if !linear.is_finite() { return Err(AnimationError::NumericalOverflow); }
+            return Ok(Some(RootRigidVelocity { linear, angular:twist.angular }));
+        }
+        let Some(angular) = self.rotation.angular_velocity(fraction)? else { return Ok(None); };
+        let rotation = self.rotation.sample(fraction)?;
+        let duration = self.end() - self.start();
+        let derivative = |control: [DVec3; 4]| {
+            let a = 3. * (control[1] - control[0]);
+            let b = 3. * (control[2] - control[1]);
+            let c = 3. * (control[3] - control[2]);
+            a.lerp(b, fraction).lerp(b.lerp(c, fraction), fraction) / duration
+        };
+        let pivot = rotation * bezier(self.pivot, fraction);
+        let linear = derivative(self.additive) - angular.cross(pivot) - rotation * derivative(self.pivot);
+        if !linear.is_finite() { return Err(AnimationError::NumericalOverflow); }
+        Ok(Some(RootRigidVelocity { linear, angular }))
+    }
+    /// Within-span derivative bounds for the spatial twist, per clip second.
+    /// Key boundaries and STEP events must be partitioned before integration.
+    /// # Errors
+    /// Rejects unproved rotation bounds or overflowing coefficient derivatives.
+    pub fn twist_rate_bounds(&self) -> Result<Option<RootTwistRateBounds>, AnimationError> {
+        if self.is_step() { return Ok(None); }
+        if self.screw.is_some() { return Ok(Some(RootTwistRateBounds { linear:0., angular:0. })); }
+        let Some(angular) = self.rotation.angular_acceleration_bound()? else { return Ok(None); };
+        let omega = self.rotation.angular_speed_bound().ok_or(AnimationError::RootRotationBudget)?;
+        let dt = self.end()-self.start();
+        let position = self.additive.iter().map(|v| v.length()).fold(0_f64,f64::max);
+        let first = |c: [DVec3;4]| c.windows(2).map(|p| 3.*(p[1]-p[0]).length()).fold(0_f64,f64::max)/dt;
+        let second = |c: [DVec3;4]| c.windows(3).map(|p| 6.*(p[2]-2.*p[1]+p[0]).length()).fold(0_f64,f64::max)/(dt*dt);
+        // Spatial linear twist is a_dot - omega cross a - R*p_dot;
+        // its derivative retains normalization, moving-pivot and cross terms.
+        let linear = second(self.additive) + angular*position
+            + omega*(first(self.additive)+first(self.pivot)) + second(self.pivot);
+        let control_norm = self.additive.iter().chain(&self.pivot).map(|v| v.length()).fold(0_f64,f64::max);
+        let guarded = linear+4096.*f64::EPSILON*(linear+control_norm/(dt*dt));
+        if !guarded.is_finite() { return Err(AnimationError::NumericalOverflow); }
+        Ok(Some(RootTwistRateBounds { linear:guarded, angular }))
     }
     /// Encloses n dot (sample(u) * point) over the whole span. The position
     /// polynomial and rotated pivot retain matching Bernstein weights. Bounds
@@ -133,6 +285,15 @@ impl RootRigidSpan {
         point: DVec3,
         normal: DVec3,
     ) -> Result<[f64; 2], AnimationError> {
+        if self.screw.is_some() {
+            if !point.is_finite() || !normal.is_finite() { return Err(AnimationError::NumericalOverflow); }
+            let center = normal.dot(self.sample(0.5)?.transform_point(point)?);
+            let radius = normal.length()*self.point_speed_bound(point)?*0.5;
+            let guard = 4096.*f64::EPSILON*(center.abs()+radius);
+            let bounds = [center-radius-guard, center+radius+guard];
+            if !bounds.into_iter().all(f64::is_finite) { return Err(AnimationError::NumericalOverflow); }
+            return Ok(bounds);
+        }
         let mut low = f64::INFINITY;
         let mut high = f64::NEG_INFINITY;
         for i in 0..4 {
@@ -164,6 +325,13 @@ impl RootRigidSpan {
     /// # Errors
     /// Rejects invalid points or overflowing derivative bounds.
     pub fn point_speed_bound(&self, point: DVec3) -> Result<f64, AnimationError> {
+        if let Some((twist, initial)) = self.screw {
+            let position = initial.transform_point(point)?;
+            let speed = (twist.angular.cross(position)+twist.linear).length()*(self.end()-self.start());
+            let guarded = speed*(1.+4096.*f64::EPSILON);
+            if !guarded.is_finite() { return Err(AnimationError::NumericalOverflow); }
+            return Ok(guarded);
+        }
         let mut angular = 0_f64;
         for pivot in self.pivot {
             let vector = point - pivot;
@@ -204,6 +372,56 @@ pub struct RootRigidPath {
     end: RootRigidTransform,
 }
 impl RootRigidPath {
+    /// Builds ordered, exact constant-spatial-twist segments in one fixed frame.
+    /// This does not approximate or certify a time-varying velocity field.
+    /// # Errors
+    /// Rejects invalid/zero durations, span capacity and numerical overflow.
+    pub fn from_twists(segments: &[(RootRigidTwist, f64)], max_spans: usize)
+        -> Result<Self, AnimationError> {
+        if segments.len() > max_spans.min(MAX_ROOT_ROTATION_SPANS) {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let mut spans = Vec::with_capacity(segments.len());
+        let mut end = RootRigidTransform::IDENTITY;
+        let mut time = 0.;
+        for &(twist, duration) in segments {
+            if !duration.is_finite() || duration <= 0. { return Err(AnimationError::InvalidAnimationTimeStep); }
+            let next = time+duration;
+            if !next.is_finite() || next <= time { return Err(AnimationError::NumericalOverflow); }
+            let rotation = RootRotationSpan::constant_velocity(time,next,end.rotation,twist.angular)?;
+            let span = RootRigidSpan { screw:Some((twist,end)), rotation,
+                additive:[DVec3::ZERO;4], pivot:[DVec3::ZERO;4] };
+            end = span.sample(1.)?;
+            spans.push(span);
+            time = next;
+        }
+        Ok(Self { spans, duration:time, end })
+    }
+    /// Appends a path expressed in the same fixed spatial frame.
+    /// Each following sample left-composes this path's accepted endpoint.
+    /// # Errors
+    /// Rejects aggregate span capacity, collapsed shifted times or overflow.
+    pub fn append_spatial(&self,next:&Self,max_spans:usize) -> Result<Self,AnimationError> {
+        let count=self.spans.len().checked_add(next.spans.len()).ok_or(AnimationError::RootRigidBudget)?;
+        if count>max_spans.min(MAX_ROOT_ROTATION_SPANS) {return Err(AnimationError::RootRigidBudget);}
+        let duration=self.duration+next.duration;
+        if !duration.is_finite() || (next.duration>0. && duration<=self.duration) {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let prefix=self.end;
+        let mut spans=self.spans.clone();
+        for original in &next.spans {
+            let rotation=original.rotation.shifted_and_postcomposed(self.duration,prefix.rotation)?;
+            let screw=if let Some((twist,initial))=original.screw {
+                let rate=(original.end()-original.start())/(rotation.end()-rotation.start());
+                Some((twist.retimed(rate)?,initial.compose(prefix)?))
+            } else {None};
+            let pivot=original.pivot.map(|value| prefix.rotation.conjugate()*(value-prefix.translation));
+            if !pivot.iter().all(|v|v.is_finite()) {return Err(AnimationError::NumericalOverflow);}
+            spans.push(RootRigidSpan {rotation,screw,pivot,additive:original.additive});
+        }
+        Ok(Self {spans,duration,end:next.end.compose(prefix)?})
+    }
     /// Changes coordinates by x_target = scale * basis * x_source + offset.
     /// Retains every ordered span, cubic coefficient and STEP event.
     /// # Errors
@@ -237,7 +455,16 @@ impl RootRigidPath {
                 additive[i] = map(span.additive[i])?;
                 pivot[i] = map(span.pivot[i])?;
             }
+            let screw = if let Some((twist, initial)) = span.screw {
+                let twist = twist.transformed(basis,scale,offset)?;
+                let rotation = (basis*initial.rotation*basis.conjugate()).normalize();
+                let initial = RootRigidTransform { rotation,
+                    translation:scale*(basis*initial.translation)+offset-rotation*offset }.checked()?;
+                twist.increment(0.)?;
+                Some((twist,initial))
+            } else { None };
             spans.push(RootRigidSpan {
+                screw,
                 rotation: span.rotation.conjugated(basis),
                 additive,
                 pivot,
@@ -373,6 +600,7 @@ impl RootRigidCurve {
         axes: [bool; 3],
     ) -> RootRigidSpan {
         RootRigidSpan {
+            screw:None,
             rotation,
             additive: positions
                 .map(|p| prefix.translation + prefix.rotation * self.adjusted_position(p, axes)),

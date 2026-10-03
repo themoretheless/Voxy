@@ -10,6 +10,17 @@ import struct
 import subprocess
 import tempfile
 
+def require_native_markers(text, markers):
+    """Require exact marker tokens in execution order, not substring matches."""
+    lines = text.splitlines()
+    after = -1
+    for marker in markers:
+        matches = [i for i, line in enumerate(lines)
+                   if i > after and line.startswith(marker + ' ')]
+        if not matches:
+            raise AssertionError(f'missing or out-of-order native marker: {marker}\n{text[-12000:]}')
+        after = matches[0]
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--binary', type=Path, required=True)
 parser.add_argument('--fixture', type=Path, required=True)
@@ -91,7 +102,6 @@ with tempfile.TemporaryDirectory(prefix='voxy-native-retarget-') as directory:
     args.output.joinpath('native.exit').write_text(str(result)+'\n')
     text = log.read_text()
     assert result == 0, text[-12000:]
-    markers = ['VOXY_NATIVE_RETARGET_ROTATION', 'VOXY_NATIVE_RETARGET_ROTATION_STOP'] if args.angular else ['VOXY_NATIVE_RETARGET','VOXY_NATIVE_FOOT_CONTACT','VOXY_NATIVE_FOOT_STOP']
-    for marker in markers:
-        assert marker in text, text[-12000:]
+    markers = ['VOXY_NATIVE_RETARGET_BONE_PICK', 'VOXY_NATIVE_RETARGET_AUTHORING', 'VOXY_NATIVE_RETARGET_ROTATION', 'VOXY_NATIVE_RETARGET_ROTATION_STOP'] if args.angular else ['VOXY_NATIVE_RETARGET','VOXY_NATIVE_FOOT_CONTACT','VOXY_NATIVE_FOOT_STOP']
+    require_native_markers(text, markers)
     print('\n'.join(line for line in text.splitlines() if line.startswith('VOXY_NATIVE_')))

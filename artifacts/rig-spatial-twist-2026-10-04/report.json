@@ -1,0 +1,16 @@
+{
+  "animation_cpu_passed": 79,
+  "apis": [
+    "RootRigidVelocity::spatial_twist",
+    "RootRigidTwist::increment"
+  ],
+  "verified": [
+    "offset pivot rotation plus axial translation",
+    "rates 0, 1e-9, 1e-4, 0.3, 7",
+    "zero and positive durations",
+    "two half increments equal full increment",
+    "left composition from translated rotated start",
+    "invalid duration velocity overflow rejection and retry"
+  ],
+  "moving_fade_integrator": "not implemented"
+}

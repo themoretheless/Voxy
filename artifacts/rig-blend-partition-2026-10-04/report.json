@@ -1,0 +1,11 @@
+{
+  "animation_cpu_passed": 85,
+  "new_api": "RootRigidPath::partition_for_blend",
+  "verified": [
+    "union of different normalized span boundaries and durations",
+    "source and target STEP indices and local order retained",
+    "stationary paths and capacity rejection",
+    "normalization collapse of positive duration rejects"
+  ],
+  "integration_runtime": "not enabled"
+}

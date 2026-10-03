@@ -1,0 +1,12 @@
+{
+  "editor_cpu_passed": 139,
+  "optional_gpu_ignored": 11,
+  "verified": [
+    "four paused angular fade ticks through CharacterPhysics",
+    "no actor translation or orientation drift",
+    "phase stays fixed while transition weights advance",
+    "moving fade rejection retains accepted frame",
+    "completed fade resumes nonempty angular trajectory"
+  ],
+  "native_window": "not verified"
+}

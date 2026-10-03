@@ -1,0 +1,7 @@
+{
+  "animation_cpu_tests": 89,
+  "failed": 0,
+  "spatial_append": "ordered left composition with pivot transport, shifted time rate preservation and accumulated approximation error",
+  "moving_fade_runtime": "not enabled",
+  "native_picker": "previous acceptance failed before presentation; not rerun"
+}

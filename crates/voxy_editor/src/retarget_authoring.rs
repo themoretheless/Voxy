@@ -14,6 +14,7 @@ pub(super) struct BonePicker {
     binding: crate::component_fields::BoundComponentField,
     profile: serde_json::Value,
     target: bool,
+    model: std::sync::Arc<voxy_render::ModelAsset>,
     pub choices: Vec<String>,
     pub page: usize,
 }
@@ -87,6 +88,7 @@ impl App {
             binding: field.bind(object, &self.authoring.authoring_project.registry)?,
             profile: object.components[SCHEMA].clone(),
             target,
+            model,
             choices,
             page: 0,
         });
@@ -109,8 +111,11 @@ impl App {
         if draft.document.objects[draft.owner].components.get(SCHEMA) != Some(&picker.profile) {
             return Err("profile changed; reopen the bone list".into());
         }
-        self.retarget_bone_model(picker.target)?
-            .resolve_joint_name(&name)?;
+        let model = self.retarget_bone_model(picker.target)?;
+        if !std::sync::Arc::ptr_eq(&model, &picker.model) {
+            return Err("rig changed; reopen the bone list".into());
+        }
+        model.resolve_joint_name(&name)?;
         let binding = picker.binding.clone();
         self.commit_component_binding(&binding, &name)?;
         self.retarget_picker = None;
@@ -264,6 +269,19 @@ impl App {
         self.panel_cache = None;
         Ok(())
     }
+    pub(super) fn delete_retarget_pair(&mut self, index: usize) -> Result<(), Box<dyn std::error::Error>> {
+        let draft = self.retarget_draft.as_mut().ok_or("open a profile edit first")?;
+        let pairs = draft.document.objects[draft.owner].components.get_mut(SCHEMA)
+            .and_then(|value| value.get_mut("joints"))
+            .and_then(serde_json::Value::as_array_mut).ok_or("missing bone pairs")?;
+        if index >= pairs.len() { return Err("missing bone pair".into()); }
+        pairs.remove(index);
+        self.retarget_picker = None;
+        self.field = None;
+        self.component_edit = None;
+        self.panel_cache = None;
+        Ok(())
+    }
     pub(super) fn retarget_pair(&mut self, add: bool) -> Result<(), Box<dyn std::error::Error>> {
         let draft = self
             .retarget_draft
@@ -405,6 +423,30 @@ mod tests {
         app.panel_action(Action::RetargetBonePage(true)).unwrap();
         app.panel_action(Action::RetargetBone(choice)).unwrap();
         assert!(app.retarget_picker.is_none());
+        let target_field = field(&app, "/joints/0/target");
+        app.panel_action(Action::RetargetBones(target_field)).unwrap();
+        let target_model = app.retarget_picker.as_ref().unwrap().model.clone();
+        let target_choice = app.retarget_picker.as_ref().unwrap().choices.iter()
+            .position(|name| name == "hip").unwrap();
+        assert!(!app.retarget_picker.as_ref().unwrap().choices.contains(&"sourceHip".into()));
+        let draft_before_reload = app.retarget_draft.as_ref().unwrap().document.clone();
+        // Reimport identical names: name lookup alone cannot detect this stale list.
+        app.reload.insert(app.id.clone());
+        let reload_deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+        while std::sync::Arc::ptr_eq(&target_model, &app.retarget_bone_model(true).unwrap()) {
+            app.tick().unwrap();
+            assert!(std::time::Instant::now() < reload_deadline);
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+        assert!(app.panel_action(Action::RetargetBone(target_choice)).is_err());
+        assert_eq!(app.retarget_draft.as_ref().unwrap().document, draft_before_reload);
+        assert_eq!(app.authoring_document().unwrap(), before);
+        app.panel_action(Action::RetargetBoneClose).unwrap();
+        app.panel_action(Action::RetargetBones(target_field)).unwrap();
+        let choice = app.retarget_picker.as_ref().unwrap().choices.iter()
+            .position(|name| name == "hip").unwrap();
+        app.panel_action(Action::RetargetBone(choice)).unwrap();
+        assert!(app.retarget_picker.is_none());
         let index = field(&app, "/joints/0/rotation_basis/2");
         app.edit_component_field(index, "0.70710677").unwrap();
         assert!(app.panel_action(Action::RetargetApply).is_err());
@@ -418,6 +460,22 @@ mod tests {
         app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), before);
         app.edit_key(winit::keyboard::KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), accepted);
+        app.panel_action(Action::Retarget).unwrap();
+        let pairs_before = app.retarget_draft.as_ref().unwrap().document.objects[0].components[SCHEMA]["joints"].as_array().unwrap().clone();
+        assert!(pairs_before.len() >= 3);
+        let bone_field = field(&app, "/joints/1/source");
+        app.panel_action(Action::RetargetBones(bone_field)).unwrap();
+        app.panel_action(Action::RetargetDeletePair(1)).unwrap();
+        assert!(app.retarget_picker.is_none());
+        let mut expected = pairs_before.clone(); expected.remove(1);
+        assert_eq!(app.retarget_draft.as_ref().unwrap().document.objects[0].components[SCHEMA]["joints"], serde_json::json!(expected));
+        let draft_after = app.retarget_draft.as_ref().unwrap().document.clone();
+        assert!(app.panel_action(Action::RetargetDeletePair(usize::MAX)).is_err());
+        assert_eq!(app.retarget_draft.as_ref().unwrap().document, draft_after);
+        assert_eq!(app.authoring_document().unwrap(), accepted);
+        app.panel_action(Action::RetargetApply).unwrap();
+        app.edit_key(winit::keyboard::KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), accepted);
         app.panel_action(Action::Retarget).unwrap();
         app.panel_action(Action::RetargetPair(true)).unwrap();

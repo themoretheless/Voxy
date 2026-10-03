@@ -1,0 +1,16 @@
+{
+  "animation_cpu_passed": 83,
+  "apis": [
+    "RootRigidApproximation::transformed",
+    "RootRigidApproximation::point_error_bound"
+  ],
+  "verified": [
+    "shifted-origin angular error retained at scale zero",
+    "similarity scale 2.5 and rotated basis",
+    "independent endpoint and per-span point error checks",
+    "large angular error capped by full rotation chord",
+    "invalid metadata and points rejected"
+  ],
+  "physics_envelope_acceptance": "not connected",
+  "numerical_evaluation_certificate": "not implemented"
+}

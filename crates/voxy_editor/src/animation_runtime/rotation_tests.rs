@@ -602,3 +602,46 @@ fn retargeted_pivot_turn_uses_target_origin_and_collision_acceptance() {
     assert!(accepted.prepare(&scene,&models,1./60.).is_err());
     assert!(Arc::ptr_eq(&frame,&accepted.frame(owner,&target).unwrap()));assert_eq!(accepted.serial(),12);
 }
+
+#[test]
+fn paused_angular_fade_runs_through_owner_and_physics_without_actor_drift() {
+    let (mut scene, owner, original, _) = scene_fixture();
+    let mut asset = (*original).clone();
+    asset.animations.push(asset.animations[0].clone());
+    let model = Arc::new(asset);
+    let models = BTreeMap::from([(AssetId("turn".into()),model.clone())]);
+    let mut runtime = AnimationRuntime::default().prepare(&scene,&models,0.025).unwrap();
+    {
+        let settings = scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap();
+        settings.clip = Some(1);
+        settings.speed = 0.;
+        settings.transition_seconds = 0.1;
+    }
+    let before = scene.local(owner).unwrap();
+    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    for tick in 1..=4 {
+        let candidate = runtime.prepare(&scene,&models,0.025).unwrap();
+        let frame = candidate.frame(owner,&model).unwrap();
+        assert!((frame.transition_weight - tick as f32 * 0.25).abs()<1e-6);
+        assert_eq!(candidate.clip_phase(owner).unwrap(),0.);
+        for trajectory in candidate.trajectories() {
+            assert!(trajectory.trajectory.spans().is_empty());
+        }
+        physics.fixed_step_with_motion_and_rigid_trajectories(&mut scene,&mut input,0.025,
+            candidate.motions(),&candidate.trajectories()).unwrap();
+        assert_eq!(scene.local(owner).unwrap(),before);
+        runtime = candidate;
+        if tick == 1 {
+            scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().speed = 1.;
+            assert!(runtime.prepare(&scene,&models,0.025).is_err());
+            assert!(Arc::ptr_eq(&frame,&runtime.frame(owner,&model).unwrap()));
+            assert_eq!(scene.local(owner).unwrap(),before);
+            scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().speed = 0.;
+        }
+    }
+    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().speed = 1.;
+    let resumed = runtime.prepare(&scene,&models,0.025).unwrap();
+    assert!((resumed.clip_phase(owner).unwrap()-0.025).abs()<1e-6);
+    assert!(resumed.trajectories().iter().any(|trajectory| !trajectory.trajectory.spans().is_empty()));
+}

@@ -234,7 +234,11 @@ impl AnimationRuntime {
                     trajectory = Some(binding.apply_root_path(path, frame.root_motion_joint, settings.root_motion_axes)
                         .map_err(|e|e.to_string())?);
                 }
-                frame = binding.apply_frame(&frame).map_err(|e|e.to_string())?;
+                frame = if settings.root_motion_rotation || settings.root_motion_axes.into_iter().any(|axis| axis) {
+                    binding.apply_frame(&frame)
+                } else {
+                    binding.apply_pose_frame(&frame)
+                }.map_err(|e|e.to_string())?;
             }
             if settings.root_motion_rotation
                 || settings.root_motion_axes.into_iter().any(|axis| axis)

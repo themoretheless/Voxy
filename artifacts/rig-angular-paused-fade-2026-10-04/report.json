@@ -1,0 +1,7 @@
+{
+  "animation_passed": 76,
+  "editor_passed": 138,
+  "editor_optional_ignored": 11,
+  "moving_angular_fades": "remain unsupported",
+  "paused_and_zero_dt_angular_fades": "identity motion with normal pose blending"
+}

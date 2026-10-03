@@ -1,0 +1,11 @@
+{
+  "animation_cpu_passed": 84,
+  "new_api": "RootRigidSpan::twist_rate_bounds",
+  "verified": [
+    "independent cubic moving-pivot spatial linear derivative",
+    "STEP derivative absence",
+    "constant spatial screw zero derivative",
+    "actual compiled clip velocities and rates drive bounded integration within returned error"
+  ],
+  "moving_blend_runtime": "not enabled"
+}

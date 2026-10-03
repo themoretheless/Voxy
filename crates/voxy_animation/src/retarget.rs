@@ -199,6 +199,19 @@ impl RetargetBinding {
             target.translation.as_dvec3() - scale * (basis * source.translation.as_dvec3());
         path.transformed(basis, scale, offset)
     }
+    /// Transfers only pose channels. The returned frame has no extracted motion.
+    /// Use this when root motion consumption is disabled; no mapped root is required.
+    pub fn apply_pose_frame(&self, frame: &AnimatorFrame) -> Result<AnimatorFrame, AnimationError> {
+        if !frame.transition_weight.is_finite() || !(0. ..=1.).contains(&frame.transition_weight) {
+            return Err(AnimationError::InvalidBlendWeight);
+        }
+        let pose = self.transport_pose(&frame.pose)?;
+        let skin_matrices = pose.skin_matrices(&Skeleton { joints: self.target.clone() })?;
+        Ok(AnimatorFrame {
+            pose, skin_matrices, root_motion: glam::Vec3::ZERO,
+            root_motion_joint: 0, transition_weight: frame.transition_weight,
+        })
+    }
     /// Transfers pose and extracted parent-local root displacement as one candidate.
     /// No root motion is inferred from the difference between bind translations.
     /// # Errors
@@ -293,6 +306,29 @@ mod tests {
             translation_basis: Quat::from_rotation_z(std::f32::consts::FRAC_PI_2),
             translation_scale: 2.,
         }
+    }
+    #[test]
+    fn pose_only_partial_mapping_does_not_require_the_unused_motion_joint() {
+        let (source, target) = rigs();
+        let mut joints = source.joints().to_vec();
+        let mut arm = joints[0].clone();
+        arm.name = "arm".into();
+        arm.parent = Some(0);
+        joints.push(arm);
+        let source = Skeleton::new(joints).unwrap();
+        let mut mapping = entry();
+        mapping.source = "arm".into();
+        let binding = RetargetBinding::new(&source, &target, &[mapping]).unwrap();
+        let mut pose = source.bind_pose();
+        pose.local[1].translation += Vec3::X;
+        let frame = AnimatorFrame { skin_matrices: pose.skin_matrices(&source).unwrap(), pose,
+            root_motion: Vec3::X, root_motion_joint: 0, transition_weight: 0.4 };
+        assert!(binding.apply_frame(&frame).is_err());
+        let converted = binding.apply_pose_frame(&frame).unwrap();
+        assert!((converted.pose.local()[1].translation - (Vec3::Y * 12.)).length() < 1e-5);
+        assert_eq!(converted.root_motion, Vec3::ZERO);
+        assert_eq!(converted.transition_weight, 0.4);
+        assert_eq!(converted.pose.local()[0], target.joints()[0].bind_local);
     }
     #[test]
     fn bind_relative_channels_preserve_target_proportions_and_drive_its_palette() {

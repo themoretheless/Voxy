@@ -47,6 +47,7 @@ pub(crate) enum Action {
     RetargetCancel,
     RetargetRemove,
     RetargetPair(bool),
+    RetargetDeletePair(usize),
     RetargetBones(usize),
     RetargetBone(usize),
     RetargetBonePage(bool),
@@ -491,7 +492,9 @@ impl Panels {
                         .sum();
                     let button_width = label_width.ceil() + 12.0;
                     let bone_choice=self.retarget_draft && member.schema=="editor.model-retarget.v1" && member.path.starts_with("/joints/") && (member.path.ends_with("/source")||member.path.ends_with("/target"));
-                    let width = right - if overridden { button_width + 12.0 } else { 8.0 } - if bone_choice {42.}else{0.};
+                    let delete_pair = (bone_choice && member.path.ends_with("/source"))
+                        .then(|| member.path.split('/').nth(2).and_then(|value| value.parse::<usize>().ok())).flatten();
+                    let width = right - if overridden { button_width + 12.0 } else { 8.0 } - if bone_choice {42.}else{0.} - if delete_pair.is_some() {58.} else {0.};
                     let foot_label = if member.schema == "editor.model-retarget.v1" {retarget_field_label(&member.path)}else{(member.schema == "editor.foot-placement.v1").then(|| foot_field_label(&member.path)).flatten()};
                     let label = if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_joint" {
                         "Motion bone index"
@@ -529,6 +532,11 @@ impl Panels {
                         let rect=[rx+width+4.,y,38.,25.];
                         self.text(&mut batch,"Pick",Vec2::new(rect[0]+3.,y+18.),34.,size)?;
                         self.regions.push((rect,Action::RetargetBones(index)));
+                    }
+                    if let Some(pair) = delete_pair {
+                        let rect=[rx+width+46.,y,54.,25.];
+                        self.text(&mut batch,"Remove",Vec2::new(rect[0]+3.,y+18.),48.,size)?;
+                        self.regions.push((rect,Action::RetargetDeletePair(pair)));
                     }
                     if overridden {
                         let rect = [rx + right - button_width - 4.0, y, button_width, 25.0];

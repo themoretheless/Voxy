@@ -1,0 +1,13 @@
+{
+  "animation_cpu_passed": 88,
+  "new_api": "Animator::prepare_root_rigid_fade",
+  "verified": [
+    "staged frame matches ordinary full tick",
+    "source clocks unchanged after preparation or aggregate span failure",
+    "completion prefix and target tail separated",
+    "frozen interruption source has no invented clip path or frame",
+    "paused completion yields empty motion paths"
+  ],
+  "candidate_publication": "requires later physical acceptance",
+  "moving_fade_api": "existing rejection retained"
+}

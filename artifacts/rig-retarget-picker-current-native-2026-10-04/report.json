@@ -1,0 +1,16 @@
+{
+  "release_build": "passed",
+  "native_exit": 1,
+  "presented_frames": 0,
+  "surface": "SkippedOccluded",
+  "ui_observation": "CUA cgWindowNotFound",
+  "acceptance": "failed before picker presentation",
+  "sdk_visible_mask": "NSWindowOcclusionStateVisible = 1UL << 1",
+  "verifier_checks_passed": [
+    "ordered exact markers",
+    "stop cannot substitute for play",
+    "missing picker rejected",
+    "out-of-order rejected",
+    "debug prefixes rejected"
+  ]
+}

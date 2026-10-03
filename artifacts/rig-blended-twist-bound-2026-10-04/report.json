@@ -1,0 +1,18 @@
+{
+  "animation_cpu_passed": 86,
+  "apis": [
+    "RootRigidSpan::twist_bounds",
+    "RootSpatialTwistBounds::retimed",
+    "RootSpatialTwistBounds::blend",
+    "RootRigidTwist::retimed",
+    "RootRigidTwist::blend"
+  ],
+  "verified": [
+    "compiled cubic spatial velocity magnitude bounds",
+    "playback derivative scaling by squared speed",
+    "linear fade weight derivative contribution",
+    "commuting fade integral matches exp(3.25*xi0) within returned errors",
+    "invalid speeds weights durations rejected"
+  ],
+  "runtime_fades": "not enabled"
+}

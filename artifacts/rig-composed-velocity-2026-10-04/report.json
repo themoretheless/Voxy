@@ -1,0 +1,12 @@
+{
+  "animation_cpu_passed": 77,
+  "new_api": "RootRigidSpan::velocity",
+  "frame": "interval-start frame, clip seconds",
+  "verified": [
+    "independent linear moving-pivot formula",
+    "independent normalized cubic quaternion and moving-pivot formula",
+    "point derivatives over cubic intervals",
+    "STEP velocity absent and invalid fraction rejected"
+  ],
+  "moving_angular_crossfade": "not implemented"
+}

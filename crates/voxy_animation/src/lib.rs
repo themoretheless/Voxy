@@ -8,8 +8,10 @@ mod blend_phase;
 pub use blend_phase::{ClipPhase, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval, FrozenSourceTick};
 
 pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
+mod rigid_fade;
+pub use rigid_fade::RootRigidFadePlan;
 mod root_rigid;
-pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform};
+pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform, RootRigidVelocity, RootRigidTwist, RootRigidApproximation, RootTwistRateBounds, RootMotionInterval, RootMotionStep, RootMotionPartition, RootSpatialTwistBounds};
 mod root_rotation;
 pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
@@ -867,15 +869,16 @@ impl Animator {
     /// from the same bounded clock interval. Both succeed before the clock publishes.
     /// The caller still owns coordinate conversion, in-place extraction and physics.
     /// # Errors
-    /// Rejects active crossfades until velocity-blended angular trajectories are
-    /// available, and preserves the clock on rig, path-budget or sampling failure.
+    /// Rejects moving crossfades until velocity-blended angular trajectories are
+    /// available. Zero elapsed time or zero playback speed yields identity motion
+    /// while retaining normal pose blending. All failures preserve the clock.
     pub fn advance_with_root_rotation(
         &mut self,
         skeleton: &Skeleton,
         dt: f32,
         max_spans: usize,
     ) -> Result<(AnimatorFrame, RootRotationPath), AnimationError> {
-        if self.transition.is_some() {
+        if self.transition.is_some() && dt != 0. && self.speed != 0. {
             return Err(AnimationError::RootRotationTransitionUnsupported);
         }
         let mut candidate = self.clone();
@@ -898,7 +901,7 @@ impl Animator {
     pub fn advance_with_root_rigid_motion(
         &mut self, skeleton: &Skeleton, dt: f32, axes: [bool; 3], max_spans: usize,
     ) -> Result<(AnimatorFrame, RootRigidPath), AnimationError> {
-        if self.transition.is_some() { return Err(AnimationError::RootRotationTransitionUnsupported); }
+        if self.transition.is_some() && dt != 0. && self.speed != 0. { return Err(AnimationError::RootRotationTransitionUnsupported); }
         let mut candidate = self.clone();
         let start = self.current.phase(self.time);
         let frame = candidate.advance_candidate(skeleton, dt)?;

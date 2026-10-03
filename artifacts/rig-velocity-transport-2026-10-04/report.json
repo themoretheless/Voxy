@@ -1,0 +1,11 @@
+{
+  "animation_cpu_passed": 78,
+  "new_api": "RootRigidVelocity::transformed",
+  "verified": [
+    "velocity commutes with existing path coordinate transport at 101 fractions per span",
+    "LINEAR STEP CUBICSPLINE through loops",
+    "zero scale shifted-origin motion",
+    "invalid rotation basis scale offset velocity and overflow reject"
+  ],
+  "moving_angular_fades": "not implemented"
+}

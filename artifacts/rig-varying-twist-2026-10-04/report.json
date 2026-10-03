@@ -1,0 +1,13 @@
+{
+  "animation_cpu_passed": 82,
+  "new_api": "RootRigidPath::integrate_spatial",
+  "verified": [
+    "commuting ramp matches independent exponential integral within returned errors",
+    "noncommuting Ry(t^2/2) Rx(t/2) with authored translation within returned errors",
+    "sampled span boundaries and midpoints",
+    "constant field single-span zero discretization error",
+    "capacity invalid rates callback errors zero-duration handling"
+  ],
+  "error_contract": "conditional real-arithmetic discretization bounds; numerical evaluation not certified",
+  "physics_acceptance": "not enabled for approximated varying fields"
+}

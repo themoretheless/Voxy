@@ -1,0 +1,12 @@
+{
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "translation segment followed by external-pivot screw turn",
+    "analytic first-contact path fraction displacement and rotation within 1e-7",
+    "first span completed before collision",
+    "query budget failure retains scene and jump input",
+    "accepted orientation retained on next ordinary tick"
+  ],
+  "native_render": "not verified",
+  "varying_velocity_blend": "not implemented"
+}

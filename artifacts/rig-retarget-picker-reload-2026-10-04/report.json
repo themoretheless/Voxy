@@ -1,0 +1,11 @@
+{
+  "editor_cpu_passed": 138,
+  "optional_gpu_ignored": 11,
+  "checks": [
+    "target picker excludes source-only names",
+    "identically named target rig reimport rejects stale picker",
+    "rejection preserves draft and authoritative scene",
+    "reopening permits current target selection"
+  ],
+  "native_picker": "not verified"
+}

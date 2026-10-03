@@ -1,0 +1,15 @@
+{
+  "animation_cpu_passed": 87,
+  "apis": [
+    "RootRigidTwist::transformed",
+    "RootSpatialTwistBounds::transformed"
+  ],
+  "verified": [
+    "spatial twist transport matches derivative of transported LINEAR and CUBICSPLINE paths across loops",
+    "mapped speed bounds cover sampled twists",
+    "zero-scale shifted origin contributes linear speed and derivative bounds",
+    "invalid bases scales offsets and overflow reject"
+  ],
+  "architecture": "constant screw path reuses shared twist transport",
+  "moving_runtime_fades": "not enabled"
+}
