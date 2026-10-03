@@ -4,13 +4,18 @@ use voxy_animation::{Animator, AnimatorFrame};
 use voxy_render::ModelAsset;
 
 /// Authored playback selection. `None` keeps the bind pose; zero speed pauses.
-#[derive(Clone, Copy, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct ModelAnimation {
     pub clip: Option<usize>,
     pub speed: f32,
     #[serde(default)]
     pub root_motion_joint: u16,
+    /// Exact unique authored node name. Empty preserves legacy numeric selection.
+    #[serde(default)]
+    pub root_motion_bone: String,
+    #[serde(default)]
+    pub root_motion_axes: [bool; 3],
 }
 impl Default for ModelAnimation {
     fn default() -> Self {
@@ -18,11 +23,23 @@ impl Default for ModelAnimation {
             clip: Some(0),
             speed: 1.0,
             root_motion_joint: 0,
+            root_motion_bone: String::new(),
+            root_motion_axes: [false; 3],
         }
     }
 }
 
 impl ModelAnimation {
+    pub(crate) fn resolve_motion_joint(&self, model: &ModelAsset) -> Result<u16, String> {
+        if self.root_motion_bone.is_empty() {
+            Ok(self.root_motion_joint)
+        } else {
+            model
+                .resolve_joint_name(&self.root_motion_bone)
+                .map_err(|error| error.to_string())
+        }
+    }
+
     pub(crate) fn validate(
         &self,
         clip_count: Option<usize>,
@@ -38,9 +55,13 @@ impl ModelAnimation {
         {
             return Err("invalid model animation clip");
         }
+        if self.root_motion_bone.len() > 1024 || self.root_motion_bone.contains('\0') {
+            return Err("invalid model animation motion bone name");
+        }
         let joint = usize::from(self.root_motion_joint);
         if joint >= voxy_animation::MAX_JOINTS
-            || joint_count.is_some_and(|count| joint >= count && (count != 0 || joint != 0))
+            || (self.root_motion_bone.is_empty()
+                && joint_count.is_some_and(|count| joint >= count && (count != 0 || joint != 0)))
         {
             return Err("invalid model animation motion joint");
         }
@@ -60,6 +81,7 @@ impl ModelPlayback {
             Some(model.animations.len()),
             Some(model.skeleton.joints().len()),
         )?;
+        let root_motion_joint = settings.resolve_motion_joint(&model)?;
         let animator = match settings.clip {
             Some(index) => {
                 let clip = model
@@ -74,7 +96,7 @@ impl ModelPlayback {
                     .set_speed(settings.speed)
                     .map_err(|error| error.to_string())?;
                 animator
-                    .set_root_motion_joint(settings.root_motion_joint)
+                    .set_root_motion_joint(root_motion_joint)
                     .map_err(|error| error.to_string())?;
                 Some(animator)
             }
@@ -83,7 +105,7 @@ impl ModelPlayback {
         Ok(Self {
             model,
             animator,
-            root_motion_joint: settings.root_motion_joint,
+            root_motion_joint,
         })
     }
 
@@ -260,6 +282,45 @@ mod tests {
     }
 
     #[test]
+    fn named_selection_resolves_imported_names_without_resetting_time() {
+        let model = model();
+        let name = model
+            .joint_names()
+            .iter()
+            .flatten()
+            .next()
+            .unwrap()
+            .to_string();
+        let settings = ModelAnimation {
+            root_motion_bone: name.clone(),
+            ..Default::default()
+        };
+        let joint = settings.resolve_motion_joint(&model).unwrap();
+        let mut playback = ModelPlayback::new(model.clone(), ModelAnimation::default()).unwrap();
+        playback.advance_with(0.25, |_, _| Ok(())).unwrap();
+        let mut control = playback.clone();
+        playback.set_root_motion_joint(joint).unwrap();
+        let actual = playback
+            .advance_with(0.25, |_, frame| Ok(frame.clone()))
+            .unwrap();
+        assert_eq!(
+            actual.pose,
+            control
+                .advance_with(0.25, |_, frame| Ok(frame.pose.clone()))
+                .unwrap()
+        );
+        assert_eq!(actual.root_motion_joint, joint);
+        let encoded = serde_json::to_string(&settings).unwrap();
+        assert_eq!(
+            serde_json::from_str::<ModelAnimation>(&encoded).unwrap(),
+            settings
+        );
+        let mut bad = settings.clone();
+        bad.root_motion_bone = "missing bone".into();
+        assert!(ModelPlayback::new(model, bad).is_err());
+    }
+
+    #[test]
     fn motion_joint_settings_keep_old_scenes_and_owner_clock_compatible() {
         let old: ModelAnimation = serde_json::from_str(r#"{"clip":0,"speed":1.0}"#).unwrap();
         assert_eq!(old.root_motion_joint, 0);
@@ -273,7 +334,7 @@ mod tests {
             serde_json::from_str::<ModelAnimation>(&encoded).unwrap(),
             settings
         );
-        let mut playback = ModelPlayback::new(model.clone(), old).unwrap();
+        let mut playback = ModelPlayback::new(model.clone(), old.clone()).unwrap();
         playback.advance_with(0.25, |_, _| Ok(())).unwrap();
         let mut control = playback.clone();
         playback.set_root_motion_joint(1).unwrap();

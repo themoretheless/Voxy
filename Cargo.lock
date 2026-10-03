@@ -2544,6 +2544,7 @@ dependencies = [
  "physics",
  "serde",
  "serde_json",
+ "voxy_animation",
  "voxy_assets",
  "voxy_audio",
  "voxy_audio_device",

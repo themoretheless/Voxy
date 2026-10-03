@@ -21,6 +21,7 @@ serde_json = "1.0"
 workspace = true
 
 [dev-dependencies]
+voxy_animation = { path = "../voxy_animation" }
 voxy_audio_device = { path = "../voxy_audio_device" }
 
 [[bench]]

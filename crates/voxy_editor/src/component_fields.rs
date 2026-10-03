@@ -405,6 +405,17 @@ mod tests {
         assert_eq!(app.authoring_document().unwrap(), before);
         app.edit_key(KeyCode::KeyY).unwrap();
         assert_eq!(app.authoring_document().unwrap(), selected);
+        let named = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/root_motion_bone").unwrap();
+        assert!(app.edit_component_field(named, "missing bone").is_err());
+        assert_eq!(app.authoring_document().unwrap(), selected);
+        let name = app.catalog.snapshot(&app.id).unwrap().value().animated.as_ref().unwrap()
+            .joint_names().iter().flatten().next().unwrap().to_string();
+        app.edit_component_field(named, &name).unwrap();
+        let named_document = app.authoring_document().unwrap();
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), selected);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), named_document);
         app.edit_component_field(clip, "null").unwrap();
         app.edit_component_field(speed, "0").unwrap();
         let paused = app.authoring_document().unwrap();

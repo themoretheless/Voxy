@@ -1,28 +1,11 @@
-# Authoring the motion joint
+# Authoring root motion
 
-ModelAnimation adds root_motion_joint (u16) to editor.model-animation.v1, with
-serde default zero so existing component JSON remains readable. The ordinary
-component inspector displays Motion bone. Generic scene persistence and history
-include this value. Scene admission checks the global joint limit before import,
-and checks the published CPU rig count when available. Runtime admission repeats
-validation against its accepted model revision.
+ModelAnimation keeps the `editor.model-animation.v1` codec. Numeric `root_motion_joint` defaults to zero, `root_motion_bone` defaults to an empty string, and `root_motion_axes` defaults to all false, preserving old scene documents.
 
-ModelPlayback applies selection at construction and exposes a setter that keeps
-its clock. AnimatedModels applies it to a staged playback clone before publication;
-invalid settings cannot replace the current owner. Bind-only playback reports the
-configured joint with zero displacement. Existing clip and speed behavior remains.
+The ordinary inspector displays Motion bone index/name and Root motion X/Y/Z. A nonempty authored bone name takes precedence over the numeric index and must resolve uniquely in the accepted imported revision. Scene admission validates descriptor ranges and requires CharacterBody on the model owner when any motion axis is enabled. Runtime repeats checks against the accepted model and rejects animated ancestor bases before physics publication.
 
-93 editor tests and all 6 editor GPU tests pass. Inspector tests cover invalid
-indices, rejected edits without history mutation, selection undo/redo and document
-round-trip. Old JSON loads with zero selection; owner selection keeps playback time.
-Release native smoke edits the motion joint through ordinary inspector input,
-checks undo/redo, switches three Fox clips, runs two owners sharing GPU sources and
-stops with zero animation bytes and restored authoring state. A separate native
-CUA pointer/keyboard edit visually confirms 1 Motion bone in the reviewed screenshot.
-The final label-only build was visually checked after the CPU/GPU/native checks.
-Artifacts: artifacts/rig-root-authoring-2026-10-03/.
+ModelPlayback applies bone selection without resetting time. PlaySession's AnimationRuntime owns the staged clock and applies authored settings at fixed ticks. AnimatedModels owns immutable accepted render frames; it does not advance playback. Bind-only playback has zero displacement. Enabled axes are extracted from the pose and applied through character collisions as described in [fixed-animation-play](fixed-animation-play.md). Names remain stable across node-order changes, with the existing clock-reset policy on asset replacement.
 
-This is numeric selection, not a named bone picker or stable reference across
-reordered reimports. Root displacement still has parent-local coordinates and is
-not applied to the character or removed from the pose. World conversion, named
-selection, rotation extraction, in-place conversion and collision application remain.
+Original numeric-authoring verification remains recorded in `artifacts/rig-root-authoring-2026-10-03/`: 93 editor tests, 6 device tests, Fox native Play/Stop and a viewed CUA screenshot labelled Motion bone. Named-selection evidence is in `artifacts/rig-named-bones-2026-10-03/`. Current fixed-tick/physics evidence is in `artifacts/rig-root-fixed-play-2026-10-03/`.
+
+A named hierarchy dropdown, rename retargeting, root rotation, animated-parent world integration, foot contact feedback and skeletal presentation interpolation remain open. See [named-motion-bones](named-motion-bones.md) and [root-motion-physics-port](root-motion-physics-port.md) for specific contracts and limits.

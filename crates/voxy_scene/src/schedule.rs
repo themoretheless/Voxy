@@ -118,7 +118,7 @@ impl SceneSystemAccess<'_> {
 /// conflicts. Batches are ordered barriers; lower phases always finish first.
 /// Scene declarations grant capabilities only through run_scene. Other resource
 /// declarations and the legacy run methods do not enforce borrowing.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SchedulePlan {
     batches: Vec<Vec<String>>,
     resource_grants: BTreeMap<String, BTreeMap<String, bool>>,
@@ -221,6 +221,50 @@ impl SchedulePlan {
             resource_grants,
         })
     }
+    /// Extends one existing system's resource contract, retaining all barriers.
+    /// Newly conflicting systems are split into serial batches. Existing write
+    /// grants are never downgraded by an added read declaration.
+    /// # Errors
+    /// Rejects an unknown system or an empty resource without changing this plan.
+    pub fn with_resource_access(
+        &self,
+        system: &str,
+        access: SystemAccess,
+    ) -> Result<Self, ScheduleError> {
+        if access.resource.is_empty() {
+            return Err(ScheduleError::Invalid("empty resource".into()));
+        }
+        let mut next = self.clone();
+        let grants = next
+            .resource_grants
+            .get_mut(system)
+            .ok_or_else(|| ScheduleError::Invalid(format!("unknown system {system}")))?;
+        *grants.entry(access.resource).or_default() |= access.write;
+        let mut batches = Vec::new();
+        for batch in &self.batches {
+            let mut pending: Vec<String> = Vec::new();
+            for name in batch {
+                let grants = &next.resource_grants[name];
+                let conflict = pending.iter().any(|other| {
+                    grants.iter().any(|(resource, write)| {
+                        next.resource_grants[other]
+                            .get(resource)
+                            .is_some_and(|other_write| *write || *other_write)
+                    })
+                });
+                if conflict {
+                    batches.push(std::mem::take(&mut pending));
+                }
+                pending.push(name.clone());
+            }
+            if !pending.is_empty() {
+                batches.push(pending);
+            }
+        }
+        next.batches = batches;
+        Ok(next)
+    }
+
     /// Composes validated plans as ordered barriers, without merging batches.
     /// # Errors
     /// Rejects total system capacity overflow and duplicate system names.
@@ -362,5 +406,82 @@ mod tests {
             .is_err()
         );
         assert_eq!(calls, vec!["a"]);
+    }
+}
+
+#[cfg(test)]
+mod extended_access_tests {
+    use super::*;
+    #[test]
+    fn extending_grants_splits_conflicts_without_relaxing_existing_plan() {
+        let plan = SchedulePlan::build(
+            &[
+                SystemSpec {
+                    name: "a".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![SystemAccess {
+                        resource: "animation".into(),
+                        write: true,
+                    }],
+                },
+                SystemSpec {
+                    name: "b".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![],
+                },
+            ],
+            2,
+        )
+        .unwrap();
+        assert_eq!(plan.batches().len(), 1);
+        let extended = plan
+            .with_resource_access(
+                "b",
+                SystemAccess {
+                    resource: "animation".into(),
+                    write: true,
+                },
+            )
+            .unwrap();
+        assert_eq!(
+            extended.batches(),
+            &[vec!["a".to_string()], vec!["b".to_string()]]
+        );
+        let reread = extended
+            .with_resource_access(
+                "b",
+                SystemAccess {
+                    resource: "animation".into(),
+                    write: false,
+                },
+            )
+            .unwrap();
+        let mut scene = crate::SceneGraph::new(0);
+        reread
+            .run_scene(&mut scene, |_, access| access.require_write("animation"))
+            .unwrap();
+        assert_eq!(plan.batches().len(), 1);
+        assert!(
+            plan.with_resource_access(
+                "missing",
+                SystemAccess {
+                    resource: "animation".into(),
+                    write: true
+                }
+            )
+            .is_err()
+        );
+        assert!(
+            plan.with_resource_access(
+                "b",
+                SystemAccess {
+                    resource: String::new(),
+                    write: true
+                }
+            )
+            .is_err()
+        );
     }
 }

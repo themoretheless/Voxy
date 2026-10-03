@@ -1,0 +1,15 @@
+{
+  "proof": "Exact authored constant channels cached at clip admission; native glTF parent scale 3,5,7 differs from bind 2,3,4. Requested X approximately 0.1; wall limits position to 0.05; in-place palette and Stop verified.",
+  "limitations": [
+    "moving ancestors rejected",
+    "nonzero cubic quaternion tangents remain unproved",
+    "CPU cache outside GPU residency accounting",
+    "no CUDA evidence"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "6946a19c190ba6cccc5149a98fafc12feacfb8a252c9ab01b0259cf5174013f7",
+    "crates/voxy_editor/src/animation_runtime.rs": "a6192da0c96d5d97ef1c6f4e0ab52d1d93fc0094c9d8c9c7420ece716d386dcb",
+    "crates/voxy_editor/src/animation_smoke.rs": "195e023b79cfabf62a82ecbb3d11ec9ca5db2186eb1ece7c4cb7ec02a8169aa3",
+    "target/release/voxy_app": "0cabc4a5930e3c4df8c2676a335ee3e569ad7a2e6970db86569e911ab15ea07a"
+  }
+}

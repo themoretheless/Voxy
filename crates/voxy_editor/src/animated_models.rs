@@ -1,6 +1,6 @@
 //! Scene-owner playback and deformation. Immutable attributes are shared by revision;
 //! clocks, palettes and posed geometry are owned by generational scene handles.
-use crate::model_playback::{ModelAnimation, ModelPlayback};
+use crate::model_playback::ModelAnimation;
 use std::{
     collections::{HashMap, HashSet},
     sync::{Arc, Weak},
@@ -38,7 +38,7 @@ impl Primitive {
 struct Owner {
     model: Arc<ModelAsset>,
     settings: ModelAnimation,
-    playback: ModelPlayback,
+    frame: Arc<voxy_animation::AnimatorFrame>,
     ticks: u64,
     primitives: Vec<Primitive>,
     lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
@@ -83,6 +83,7 @@ pub(super) struct Request {
     pub owner: NodeId,
     pub model: Arc<ModelAsset>,
     pub settings: ModelAnimation,
+    pub frame: Option<Arc<voxy_animation::AnimatorFrame>>,
     pub lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
     pub textures: Vec<Option<Arc<voxy_render::SceneTexture>>>,
     pub texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
@@ -138,16 +139,8 @@ impl AnimatedModels {
         let Some(owner) = self.owners.get(&owner) else {
             return Ok(None);
         };
-        let mut playback = owner.playback.clone();
-        playback.advance_with(0., |_, frame| {
-            Ok(Some(
-                frame
-                    .skin_matrices
-                    .iter()
-                    .map(|matrix| matrix.to_cols_array().map(f32::to_bits))
-                    .collect(),
-            ))
-        })
+        Ok(Some(owner.frame.skin_matrices.iter()
+            .map(|matrix| matrix.to_cols_array().map(f32::to_bits)).collect()))
     }
     pub(super) fn lod_selection(&self, owner: NodeId, view: u8) -> Option<(usize, u32)> {
         let state = self.owners.get(&owner)?;
@@ -169,8 +162,7 @@ impl AnimatedModels {
         let Some(source) = &state.lod else {
             return Ok(None);
         };
-        let mut playback = state.playback.clone();
-        let frame = playback.advance_with(0., |_, frame| Ok(frame.clone()))?;
+        let frame = &state.frame;
         let posed = source
             .prepare(&frame.skin_matrices, world)
             .map_err(|e| e.to_string())?;
@@ -296,9 +288,7 @@ impl AnimatedModels {
         let Some(source) = &state.lod else {
             return Ok(());
         };
-        let frame = state
-            .playback
-            .advance_with(0., |_, frame| Ok(frame.clone()))?;
+        let frame = &state.frame;
         // Exact palette/world equality permits reuse across cameras and paused frames.
         // A failed replacement leaves the accepted certificate and view history intact.
         let candidate = if state.prepared_lod.as_ref().is_none_or(|posed| {
@@ -363,8 +353,8 @@ impl AnimatedModels {
         state.lod_history.insert(view, level);
         Ok(())
     }
-    /// One logical fixed-step clock drives all views; each owner advances at most
-    /// eight pending steps per publication. Failures keep its last good frame.
+    /// Publish immutable fixed-tick frames to all views. No clock advances here.
+    /// GPU admission failures retain the previously rendered frame.
     pub(super) fn synchronize(
         &mut self,
         renderer: &SceneRenderer,
@@ -381,6 +371,9 @@ impl AnimatedModels {
             .retain(|_, entry| entry.source.strong_count() > 0 && entry.model.strong_count() > 0);
         let mut errors = Vec::new();
         for request in requests {
+            // A render-only frame may precede the first fixed tick or accepted
+            // revision. Keep any prior geometry while the animation owner waits.
+            if request.frame.is_none() { continue; }
             if let Err(error) = self.update(
                 renderer,
                 device,
@@ -388,6 +381,7 @@ impl AnimatedModels {
                 request.owner,
                 request.model,
                 request.settings,
+                request.frame,
                 request.lod,
                 request.textures,
                 request.texture_storage,
@@ -408,6 +402,7 @@ impl AnimatedModels {
         owner: NodeId,
         model: Arc<ModelAsset>,
         settings: ModelAnimation,
+        frame: Option<Arc<voxy_animation::AnimatorFrame>>,
         lod: Option<Arc<voxy_render::SkinnedLodMesh>>,
         textures: Vec<Option<Arc<voxy_render::SceneTexture>>>,
         texture_storage: Vec<Arc<voxy_render::SceneTexture>>,
@@ -415,6 +410,11 @@ impl AnimatedModels {
         other_live: u64,
         budget: u64,
     ) -> Result<(), String> {
+        let frame = frame.ok_or("waiting for an accepted fixed-tick animation frame")?;
+        settings.validate(Some(model.animations.len()), Some(model.skeleton.joints().len()))?;
+        if frame.skin_matrices != frame.pose.skin_matrices(&model.skeleton).map_err(|e| e.to_string())? {
+            return Err("animation frame palette differs from pose".into());
+        }
         if !textures.is_empty() && textures.len() != model.primitives.len() {
             return Err("animation material count mismatch".into());
         }
@@ -432,37 +432,16 @@ impl AnimatedModels {
             (None, None) => false,
             _ => true,
         });
-        let switch_clip = current.is_some_and(|old| old.settings.clip != settings.clip);
-        let reset_clock = replace || switch_clip;
-        let mut playback = if reset_clock {
-            ModelPlayback::new(model.clone(), settings)?
-        } else {
-            let mut playback = current.unwrap().playback.clone();
-            playback.set_speed(settings.speed)?;
-            playback.set_root_motion_joint(settings.root_motion_joint)?;
-            playback
-        };
-        let old_ticks = if reset_clock {
-            ticks
-        } else {
-            current.unwrap().ticks
-        };
-        let steps = ticks.saturating_sub(old_ticks).min(8);
-        if !reset_clock
-            && !lod_changed
-            && (steps == 0 || settings.speed == 0.0 || settings.clip.is_none())
-        {
+        let unchanged = current.is_some_and(|old| old.frame.pose == frame.pose
+            && old.frame.skin_matrices == frame.skin_matrices);
+        if !replace && !lod_changed && unchanged {
             let state = self.owners.get_mut(&owner).unwrap();
             state.textures = textures;
             state.texture_storage = texture_storage;
-            state.playback = playback;
+            state.frame = frame;
             state.settings = settings;
-            state.ticks = old_ticks + steps;
+            state.ticks = ticks;
             return Ok(());
-        }
-        let mut frame = playback.advance_with(0., |_, frame| Ok(frame.clone()))?;
-        for _ in 0..steps {
-            frame = playback.advance_with(1. / 60., |_, frame| Ok(frame.clone()))?;
         }
         let prepared_lod = if let Some(source) = &lod {
             let Some(primitive) = model.primitives.first() else {
@@ -608,8 +587,8 @@ impl AnimatedModels {
                 Owner {
                     model,
                     settings,
-                    playback,
-                    ticks: old_ticks + steps,
+                    frame,
+                    ticks,
                     primitives: staged.into_iter().map(Option::unwrap).collect(),
                     lod,
                     prepared_lod,
@@ -636,9 +615,9 @@ impl AnimatedModels {
             state.prepared_lod = prepared_lod;
             state.textures = textures;
             state.texture_storage = texture_storage;
-            state.playback = playback;
+            state.frame = frame;
             state.settings = settings;
-            state.ticks = old_ticks + steps;
+            state.ticks = ticks;
         }
         Ok(())
     }

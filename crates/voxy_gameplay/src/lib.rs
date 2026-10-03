@@ -134,6 +134,7 @@ pub enum PhysicsError {
     InitialOverlap,
     CoordinateRange,
     InvalidStep,
+    InvalidMotion,
     SweepBudget,
     Solver,
     UnknownSystem,
@@ -479,7 +480,42 @@ impl CharacterPhysics {
         input: &mut InputMap,
         dt: f64,
     ) -> Result<(), PhysicsError> {
+        self.fixed_step_with_motion(scene, input, dt, &[])
+            .map(|_| ())
+    }
+
+    /// Applies explicit world-space displacement once, after input/gravity in this tick.
+    /// Each motion is swept against the same active static boxes; contacts slide and
+    /// ground snap follows the existing controller policy. Returns actual motion only
+    /// (excluding the preceding input/gravity movement). Requests are not retained.
+    /// Animation owners should publish their clocks only after this operation succeeds.
+    ///
+    /// # Errors
+    /// Duplicate, inactive, stale or non-character owners, nonfinite/excessive motions,
+    /// and ordinary physics errors preserve all poses, body states and input edges.
+    pub fn fixed_step_with_motion(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        motions: &[(NodeId, Vec3)],
+    ) -> Result<Vec<(NodeId, Vec3)>, PhysicsError> {
         self.validate(scene)?;
+        let active: HashSet<_> = scene
+            .active_components::<CharacterBody>()
+            .map(|(owner, _)| owner)
+            .collect();
+        let mut requested = HashMap::with_capacity(motions.len().min(active.len()));
+        for &(owner, displacement) in motions {
+            if !active.contains(&owner)
+                || !displacement.is_finite()
+                || displacement.abs().max_element() > 1e6
+                || requested.insert(owner, displacement).is_some()
+            {
+                return Err(PhysicsError::InvalidMotion);
+            }
+        }
+        let mut applied = Vec::with_capacity(motions.len());
         if !dt.is_finite() || dt <= 0.0 || dt > 0.1 {
             return Err(PhysicsError::InvalidStep);
         }
@@ -553,6 +589,28 @@ impl CharacterPhysics {
                 )
                 .map_err(|_| PhysicsError::Solver)?;
             }
+            if let Some(displacement) = requested.get(&owner) {
+                let start = precise_center(runtime.state.body);
+                let mut position = start;
+                let mut motion = displacement.as_dvec3();
+                let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
+                let mut carried_velocity = glam::DVec3::from_array(runtime.state.velocity);
+                let grounded = convex::move_body_carrying_velocity(
+                    &mut position,
+                    Vec3::from_array(descriptor.half_extents).as_dvec3(),
+                    &mut motion,
+                    1.0,
+                    &shapes,
+                    Some(&mut carried_velocity),
+                );
+                relocate(runtime, position, *descriptor);
+                runtime.state.velocity = carried_velocity.to_array();
+                runtime.state.grounded = grounded;
+                if grounded && runtime.state.velocity[1] < 0. {
+                    runtime.state.velocity[1] = 0.;
+                }
+                applied.push((owner, (position - start).as_vec3()));
+            }
             let position = center_of(runtime.state.body)?;
             let mut local = scene.local(owner)?;
             local.translation += position - center;
@@ -573,7 +631,7 @@ impl CharacterPhysics {
         scene.set_locals(&edits)?;
         self.states = next;
         input.finish_frame();
-        Ok(())
+        Ok(applied)
     }
 }
 fn step_affine(
