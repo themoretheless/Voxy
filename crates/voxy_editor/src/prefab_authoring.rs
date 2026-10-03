@@ -1,5 +1,5 @@
 //! Scene composition uses the same bounded source observations as model import.
-use crate::InputRecipe;
+use crate::{InputRecipe, scene_limits};
 #[cfg(test)]
 use crate::model_registry;
 use std::{
@@ -302,7 +302,7 @@ impl AuthoringProject {
             SourcePath::new(relative.to_str().ok_or("scene path must be UTF-8")?)?.observation_id();
         let mut inputs = ImportInputs::new(130, 16 * 1024 * 1024);
         let snapshot = inputs
-            .read(id, |id, limit| self.provider.read(id, limit.min(1_048_576)))
+            .read(id, |id, limit| self.provider.read(id, limit.min(scene_limits::DOCUMENT_BYTES)))
             .map_err(|error| format!("scene input: {error:?}"))?;
         let source: PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
         self.expand_inputs(source, inputs)
@@ -319,7 +319,7 @@ impl AuthoringProject {
             let id = SourcePath::new(relative.to_str().ok_or("scene path must be UTF-8")?)?
                 .observation_id();
             inputs
-                .read(id, |id, limit| self.provider.read(id, limit.min(1_048_576)))
+                .read(id, |id, limit| self.provider.read(id, limit.min(scene_limits::DOCUMENT_BYTES)))
                 .map_err(|error| format!("scene input: {error:?}"))?;
         }
         self.expand_inputs(source, inputs)
@@ -354,7 +354,7 @@ impl AuthoringProject {
         let expanded = source.expand(
             &self.registry,
             PrefabLimits {
-                max_objects: 128,
+                max_objects: scene_limits::OBJECTS,
                 max_instances: 128,
                 max_depth: 16,
             },
@@ -372,7 +372,7 @@ impl AuthoringProject {
                 };
                 let snapshot = inputs
                     .read(path.observation_id(), |id, limit| {
-                        self.provider.read(id, limit.min(1_048_576))
+                        self.provider.read(id, limit.min(scene_limits::DOCUMENT_BYTES))
                     })
                     .map_err(|error| DocumentError::Invalid(format!("prefab input: {error:?}")))?;
                 let document: PrefabSceneDocument = serde_json::from_slice(&snapshot.bytes)?;
@@ -422,7 +422,7 @@ impl AuthoringProject {
             return Err("prefab export changed selected objects or references".into());
         }
         let bytes = serde_json::to_vec_pretty(&candidate.value().source)?;
-        if bytes.len() > 1_048_576 {
+        if bytes.len() > scene_limits::DOCUMENT_BYTES {
             return Err("prefab exceeds document budget".into());
         }
         let (asset, path) = (1..=4096)
@@ -557,7 +557,7 @@ impl AuthoringProject {
             };
             let input = inputs
                 .read(path.observation_id(), |id, limit| {
-                    self.provider.read(id, limit.min(1_048_576))
+                    self.provider.read(id, limit.min(scene_limits::DOCUMENT_BYTES))
                 })
                 .map_err(|error| format!("prefab source: {error:?}"))?;
             let current: PrefabSceneDocument = serde_json::from_slice(&input.bytes)?;
@@ -573,11 +573,11 @@ impl AuthoringProject {
             source,
             &self.registry,
             PrefabLimits {
-                max_objects: 128,
+                max_objects: scene_limits::OBJECTS,
                 max_instances: 128,
                 max_depth: 16,
             },
-            1_048_576,
+            scene_limits::DOCUMENT_BYTES,
             |asset| {
                 snapshot.dependencies.get(asset).cloned().ok_or_else(|| {
                     DocumentError::Invalid(format!("unobserved prefab dependency {asset}"))
@@ -669,7 +669,7 @@ fn export_linked_subtree(
         snapshot.source.instance_baseline(
             &registry,
             PrefabLimits {
-                max_objects: 128,
+                max_objects: scene_limits::OBJECTS,
                 max_instances: 128,
                 max_depth: 16,
             },
@@ -681,7 +681,7 @@ fn export_linked_subtree(
         )?;
     let mut source = snapshot
         .source
-        .capture_edits(&baseline, edited, &registry, 128)?;
+        .capture_edits(&baseline, edited, &registry, scene_limits::OBJECTS)?;
     let authored: std::collections::BTreeSet<_> = snapshot
         .source
         .objects
@@ -825,7 +825,7 @@ impl crate::App {
             let baseline = snapshot.source.instance_baseline(
                 &registry,
                 PrefabLimits {
-                    max_objects: 128,
+                    max_objects: scene_limits::OBJECTS,
                     max_instances: 128,
                     max_depth: 16,
                 },
@@ -837,7 +837,7 @@ impl crate::App {
             )?;
             snapshot
                 .source
-                .capture_edits(&baseline, &edited, &registry, 128)?
+                .capture_edits(&baseline, &edited, &registry, scene_limits::OBJECTS)?
         } else {
             PrefabSceneDocument {
                 version: 1,
@@ -945,7 +945,7 @@ impl crate::App {
             .ok_or("selected object is not a prefab instance")?;
         let registry = self.authoring.authoring_project.registry.clone();
         let limits = PrefabLimits {
-            max_objects: 128,
+            max_objects: scene_limits::OBJECTS,
             max_instances: 128,
             max_depth: 16,
         };
@@ -964,7 +964,7 @@ impl crate::App {
         let edited = self.authoring_document()?;
         let mut source = snapshot
             .source
-            .capture_edits(&baseline, &edited, &registry, 128)?;
+            .capture_edits(&baseline, &edited, &registry, scene_limits::OBJECTS)?;
         source.instances[instance].overrides.clear();
         let expanded = source.expand(&registry, limits, resolve)?.document;
         self.validate_authoring_document(&expanded)?;

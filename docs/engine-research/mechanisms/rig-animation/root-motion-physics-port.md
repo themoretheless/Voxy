@@ -17,3 +17,5 @@ Stage an Animator clone, advance exactly once per fixed tick, extract selected a
 Fixed-tick PlaySession application is now implemented; see [fixed-animation-play](fixed-animation-play.md). The render subsystem holds immutable accepted frames and never advances a ModelPlayback. Root motion is opt-in through ModelAnimation axis fields and requires a CharacterBody on the same model owner. The current conversion accepts bind-only ancestors and proved constant authored channels, using their authored transform; moving or unproved ancestors are rejected. Root rotation, collision feedback/foot sliding, moving platforms, skeletal presentation interpolation and continuous integration through animated ancestors remain open.
 
 No CUDA, new native animation/physics scene or GPU throughput claim is made by these CPU tests.
+
+Character owners now support authored orientation with oriented translational collision; see [oriented character](oriented-character.md). Rotation remains fixed within each sweep; angular requests and extracted root rotation are still open.

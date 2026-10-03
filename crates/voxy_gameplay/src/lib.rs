@@ -1,8 +1,9 @@
 //! Owner-side integration of named input and the existing swept character solver.
 //! Authoring descriptors live in the scene; velocity/grounding are runtime-only.
 //! Characters collide with active static boxes, not with each other. Physics owns
-//! translations during ticks. Rotation/scale of a physics owner or ancestor must
-//! be identity; unsupported affine shapes are rejected rather than approximated.
+//! translations during ticks. A character may rotate; its scale and ancestor
+//! rotation/scale must be identity. Static boxes support affine transforms.
+mod angular_sweep;
 mod audio_assets;
 pub use audio_assets::{
     AudioImportConfig, AudioImportSettings, decode_wav_observed, import_wav_asset,
@@ -223,11 +224,32 @@ pub fn player_input() -> Result<InputMap, voxy_input::InputError> {
     )?;
     Ok(input)
 }
+/// One world displacement followed by a body-local angular arc in radians.
+/// Angular magnitude preserves winding; up to four full turns per tick are admitted.
+#[derive(Clone, Copy, Debug)]
+pub struct CharacterMotion {
+    pub owner: NodeId,
+    pub displacement: Vec3,
+    pub angular_displacement: Vec3,
+}
+/// Accepted motion excludes preceding input/gravity and includes angular ground snap.
+#[derive(Clone, Copy, Debug)]
+pub struct AppliedCharacterMotion {
+    pub owner: NodeId,
+    pub displacement: Vec3,
+    pub angular_displacement: Vec3,
+    pub angular_fraction: f64,
+}
+
 #[derive(Clone, Copy, Debug)]
 struct RuntimeBody {
     state: CharacterState,
     published: Vec3,
     descriptor: CharacterBody,
+    edges: [glam::DVec3; 3],
+    rest_edges: [glam::DVec3; 3],
+    orientation: glam::DQuat,
+    published_rotation: Quat,
 }
 #[derive(Clone, Copy, Debug)]
 struct StaticBox {
@@ -308,6 +330,7 @@ pub struct CharacterPhysics {
     max_bodies: usize,
     max_colliders: usize,
     depenetration: bool,
+    angular_iterations: usize,
 }
 impl CharacterPhysics {
     #[must_use]
@@ -318,7 +341,18 @@ impl CharacterPhysics {
             max_bodies,
             max_colliders,
             depenetration: false,
+            angular_iterations: 256,
         }
+    }
+    /// Bounds conservative angular advancement work per requested body.
+    /// # Errors
+    /// Rejects zero or more than 4096 iterations; exhaustion rejects the staged tick.
+    pub fn with_angular_sweep_budget(mut self, iterations: usize) -> Result<Self, PhysicsError> {
+        if !(1..=4096).contains(&iterations) {
+            return Err(PhysicsError::Capacity);
+        }
+        self.angular_iterations = iterations;
+        Ok(self)
     }
     /// Enables bounded overlap recovery on runtime admission and external teleports.
     #[must_use]
@@ -346,6 +380,7 @@ impl CharacterPhysics {
         for (owner, body) in scene.components::<CharacterBody>() {
             validate_body(*body)?;
             translation(scene, owner)?;
+            affine_box(scene, owner, body.half_extents)?;
             if scene.component::<BoxCollider>(owner)?.is_some() {
                 return Err(PhysicsError::InvalidBody);
             }
@@ -380,7 +415,15 @@ impl CharacterPhysics {
         let world = static_world(scene)?;
         for (owner, body) in scene.active_components::<CharacterBody>() {
             if !self.depenetration
-                && overlaps(fresh(translation(scene, owner)?, *body).state.body, &world)
+                && overlaps(
+                    &fresh(
+                        translation(scene, owner)?,
+                        *body,
+                        affine_box(scene, owner, body.half_extents)?.edges,
+                        scene.local(owner)?.rotation,
+                    ),
+                    &world,
+                )
             {
                 return Err(PhysicsError::InitialOverlap);
             }
@@ -500,17 +543,57 @@ impl CharacterPhysics {
         dt: f64,
         motions: &[(NodeId, Vec3)],
     ) -> Result<Vec<(NodeId, Vec3)>, PhysicsError> {
+        if motions.len() > self.max_bodies {
+            return Err(PhysicsError::InvalidMotion);
+        }
+        let motions: Vec<_> = motions
+            .iter()
+            .map(|&(owner, displacement)| CharacterMotion {
+                owner,
+                displacement,
+                angular_displacement: Vec3::ZERO,
+            })
+            .collect();
+        self.fixed_step_with_rigid_motion(scene, input, dt, &motions)
+            .map(|applied| {
+                applied
+                    .into_iter()
+                    .map(|motion| (motion.owner, motion.displacement))
+                    .collect()
+            })
+    }
+
+    /// Sweeps each requested translation, then its complete fixed-center rotation
+    /// against active static boxes. Input/gravity runs first. Contact-limited arcs
+    /// return their accepted fraction; winding is not discarded at equal endpoints.
+    /// # Errors
+    /// Invalid requests and sweep-budget failure preserve all scene/body/input state.
+    pub fn fixed_step_with_rigid_motion(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        motions: &[CharacterMotion],
+    ) -> Result<Vec<AppliedCharacterMotion>, PhysicsError> {
         self.validate(scene)?;
+        if motions.len() > self.max_bodies {
+            return Err(PhysicsError::InvalidMotion);
+        }
         let active: HashSet<_> = scene
             .active_components::<CharacterBody>()
             .map(|(owner, _)| owner)
             .collect();
         let mut requested = HashMap::with_capacity(motions.len().min(active.len()));
-        for &(owner, displacement) in motions {
+        for &motion in motions {
+            let owner = motion.owner;
+            let displacement = motion.displacement;
             if !active.contains(&owner)
                 || !displacement.is_finite()
                 || displacement.abs().max_element() > 1e6
-                || requested.insert(owner, displacement).is_some()
+                || !motion.angular_displacement.is_finite()
+                || motion.angular_displacement.as_dvec3().length()
+                    > f64::from(4. * std::f32::consts::TAU)
+                || requested.insert(owner, motion).is_some()
             {
                 return Err(PhysicsError::InvalidMotion);
             }
@@ -533,23 +616,24 @@ impl CharacterPhysics {
         let mut edits = Vec::new();
         for (owner, descriptor) in scene.active_components::<CharacterBody>() {
             let center = translation(scene, owner)?;
+            let edges = affine_box(scene, owner, descriptor.half_extents)?.edges;
+            let authored_rotation = scene.local(owner)?.rotation;
             let runtime = next
                 .entry(owner)
-                .or_insert_with(|| fresh(center, *descriptor));
-            if runtime.published != center || runtime.descriptor != *descriptor {
-                *runtime = fresh(center, *descriptor);
+                .or_insert_with(|| fresh(center, *descriptor, edges, authored_rotation));
+            if runtime.published != center
+                || runtime.descriptor != *descriptor
+                || runtime.published_rotation != authored_rotation
+            {
+                *runtime = fresh(center, *descriptor, edges, authored_rotation);
             }
-            if overlaps(runtime.state.body, &world) {
+            if overlaps(runtime, &world) {
                 if !self.depenetration {
                     return Err(PhysicsError::InitialOverlap);
                 }
                 let mut recovered = precise_center(runtime.state.body);
                 let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
-                convex::recover(
-                    &mut recovered,
-                    Vec3::from_array(descriptor.half_extents).as_dvec3(),
-                    &shapes,
-                )?;
+                convex::recover_affine(&mut recovered, runtime.edges, &shapes)?;
                 relocate(runtime, recovered, *descriptor);
             }
             let config = CharacterConfig {
@@ -561,7 +645,9 @@ impl CharacterPhysics {
                 max_slide_iterations: 4,
                 max_candidates_per_sweep: self.max_colliders.max(1),
             };
-            if world.0.iter().any(|obstacle| !obstacle.axis_aligned) {
+            if !aligned_edges(runtime.edges)
+                || world.0.iter().any(|obstacle| !obstacle.axis_aligned)
+            {
                 step_affine(
                     runtime,
                     *descriptor,
@@ -589,15 +675,15 @@ impl CharacterPhysics {
                 )
                 .map_err(|_| PhysicsError::Solver)?;
             }
-            if let Some(displacement) = requested.get(&owner) {
+            if let Some(request) = requested.get(&owner) {
                 let start = precise_center(runtime.state.body);
                 let mut position = start;
-                let mut motion = displacement.as_dvec3();
+                let mut motion = request.displacement.as_dvec3();
                 let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
                 let mut carried_velocity = glam::DVec3::from_array(runtime.state.velocity);
-                let grounded = convex::move_body_carrying_velocity(
+                let grounded = convex::move_body_affine_carrying_velocity(
                     &mut position,
-                    Vec3::from_array(descriptor.half_extents).as_dvec3(),
+                    runtime.edges,
                     &mut motion,
                     1.0,
                     &shapes,
@@ -609,11 +695,65 @@ impl CharacterPhysics {
                 if grounded && runtime.state.velocity[1] < 0. {
                     runtime.state.velocity[1] = 0.;
                 }
-                applied.push((owner, (position - start).as_vec3()));
+                let mut angular_fraction = 1.;
+                if request.angular_displacement != Vec3::ZERO {
+                    let angular = request.angular_displacement.as_dvec3();
+                    let world_angular = runtime.orientation * angular;
+                    let hit = angular_sweep::sweep(
+                        position,
+                        runtime.edges,
+                        world_angular,
+                        &shapes,
+                        self.angular_iterations,
+                    )?;
+                    angular_fraction = hit.fraction;
+                    runtime.orientation = (runtime.orientation
+                        * glam::DQuat::from_scaled_axis(angular * angular_fraction))
+                    .normalize();
+                    runtime.edges = runtime.rest_edges.map(|edge| runtime.orientation * edge);
+                    runtime.published_rotation =
+                        Quat::from_array(runtime.orientation.to_array().map(|value| value as f32))
+                            .normalize();
+                    if let Some(normal) = hit.normal {
+                        let into = carried_velocity.dot(normal);
+                        if into < 0. {
+                            carried_velocity -= normal * into;
+                        }
+                    }
+                    // Refresh grounding with the accepted shape. Upward carried
+                    // velocity still suppresses snap, preserving a pending jump.
+                    let mut zero = glam::DVec3::ZERO;
+                    runtime.state.grounded = convex::move_body_affine_carrying_velocity(
+                        &mut position,
+                        runtime.edges,
+                        &mut zero,
+                        0.,
+                        &shapes,
+                        Some(&mut carried_velocity),
+                    );
+                    runtime.state.velocity = carried_velocity.to_array();
+                    relocate(runtime, position, *descriptor);
+                }
+                applied.push(AppliedCharacterMotion {
+                    owner,
+                    displacement: (position - start).as_vec3(),
+                    angular_displacement: request.angular_displacement * angular_fraction as f32,
+                    angular_fraction,
+                });
+            }
+            let physical_center = precise_center(runtime.state.body);
+            let extent = runtime
+                .edges
+                .iter()
+                .map(|edge| edge.abs())
+                .sum::<glam::DVec3>();
+            if (physical_center.abs() + extent).max_element() > 1e6 {
+                return Err(PhysicsError::CoordinateRange);
             }
             let position = center_of(runtime.state.body)?;
             let mut local = scene.local(owner)?;
             local.translation += position - center;
+            local.rotation = runtime.published_rotation;
             local.matrix()?;
             let matrix = local.matrix()?;
             let composed = if let Some(parent) = scene.parent(owner)? {
@@ -622,7 +762,14 @@ impl CharacterPhysics {
                 matrix
             };
             let published = composed.w_axis.truncate();
-            if !composed.is_finite() || published.abs().max_element() > 1e6 {
+            let displayed_extent = [composed.x_axis, composed.y_axis, composed.z_axis]
+                .into_iter()
+                .zip(descriptor.half_extents)
+                .map(|(axis, half)| axis.truncate().as_dvec3().abs() * f64::from(half))
+                .sum::<glam::DVec3>();
+            if !composed.is_finite()
+                || (published.as_dvec3().abs() + displayed_extent).max_element() > 1e6
+            {
                 return Err(PhysicsError::CoordinateRange);
             }
             runtime.published = published;
@@ -651,12 +798,13 @@ fn step_affine(
     }
     velocity.y = (velocity.y + descriptor.gravity * dt).max(-100.);
     let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
-    let grounded = convex::move_body(
+    let grounded = convex::move_body_affine_carrying_velocity(
         &mut position,
-        Vec3::from_array(descriptor.half_extents).as_dvec3(),
+        runtime.edges,
         &mut velocity,
         dt,
         &shapes,
+        None,
     );
     relocate(runtime, position, descriptor);
     runtime.state.velocity = velocity.to_array();
@@ -672,10 +820,19 @@ fn precise_center(body: AnchoredAabb) -> glam::DVec3 {
 }
 #[allow(clippy::cast_precision_loss)]
 fn relocate(runtime: &mut RuntimeBody, position: glam::DVec3, descriptor: CharacterBody) {
-    let fresh_state = fresh(position.as_vec3(), descriptor);
+    let fresh_state = fresh(
+        position.as_vec3(),
+        descriptor,
+        runtime.edges,
+        runtime.published_rotation,
+    );
     let anchor = fresh_state.state.body.anchor;
     let relative = position - glam::DVec3::new(anchor.x as f64, anchor.y as f64, anchor.z as f64);
-    let half = Vec3::from_array(descriptor.half_extents).as_dvec3();
+    let half = runtime
+        .edges
+        .iter()
+        .map(|edge| edge.abs())
+        .sum::<glam::DVec3>();
     runtime.state.body = fresh_state.state.body;
     runtime.state.body.min = (relative - half).to_array();
     runtime.state.body.max = (relative + half).to_array();
@@ -708,19 +865,21 @@ fn static_world(scene: &SceneGraph) -> Result<StaticWorld, PhysicsError> {
     }
     Ok(StaticWorld(boxes))
 }
-#[allow(clippy::cast_precision_loss)]
-fn overlaps(body: AnchoredAabb, world: &StaticWorld) -> bool {
-    let anchor = [
-        body.anchor.x as f64,
-        body.anchor.y as f64,
-        body.anchor.z as f64,
-    ];
-    let min = glam::DVec3::from_array(std::array::from_fn(|i| body.min[i] + anchor[i]));
-    let max = glam::DVec3::from_array(std::array::from_fn(|i| body.max[i] + anchor[i]));
+fn aligned_edges(edges: [glam::DVec3; 3]) -> bool {
+    edges.iter().all(|edge| {
+        edge.to_array()
+            .into_iter()
+            .filter(|value| *value != 0.)
+            .count()
+            == 1
+    })
+}
+fn overlaps(body: &RuntimeBody, world: &StaticWorld) -> bool {
+    let center = precise_center(body.state.body);
     world.0.iter().any(|obstacle| {
         obstacle
             .shape
-            .penetration((min + max) * 0.5, (max - min) * 0.5)
+            .penetration_affine(center, body.edges)
             .is_some()
     })
 }
@@ -778,7 +937,9 @@ fn translation(scene: &SceneGraph, owner: NodeId) -> Result<Vec3, PhysicsError> 
     while let Some(id) = cursor {
         let local = scene.local(id)?;
         if local.scale != Vec3::ONE
-            || (local.rotation != Quat::IDENTITY && local.rotation != -Quat::IDENTITY)
+            || (id != owner
+                && local.rotation != Quat::IDENTITY
+                && local.rotation != -Quat::IDENTITY)
         {
             return Err(PhysicsError::UnsupportedTransform);
         }
@@ -790,16 +951,17 @@ fn translation(scene: &SceneGraph, owner: NodeId) -> Result<Vec3, PhysicsError> 
     }
     Ok(position)
 }
-fn bounds(center: Vec3, extents: [f32; 3]) -> ([f64; 3], [f64; 3]) {
-    let center = center.to_array().map(f64::from);
-    let extents = extents.map(f64::from);
-    (
-        std::array::from_fn(|i| center[i] - extents[i]),
-        std::array::from_fn(|i| center[i] + extents[i]),
-    )
-}
-fn fresh(center: Vec3, descriptor: CharacterBody) -> RuntimeBody {
-    let (min, max) = bounds(center, descriptor.half_extents);
+fn fresh(
+    center: Vec3,
+    descriptor: CharacterBody,
+    edges: [glam::DVec3; 3],
+    rotation: Quat,
+) -> RuntimeBody {
+    let orientation = glam::DQuat::from_array(rotation.to_array().map(f64::from)).normalize();
+    let rest_edges = edges.map(|edge| orientation.conjugate() * edge);
+    let half = edges.iter().map(|edge| edge.abs()).sum::<glam::DVec3>();
+    let min = (center.as_dvec3() - half).to_array();
+    let max = (center.as_dvec3() + half).to_array();
     RuntimeBody {
         state: CharacterState {
             body: AnchoredAabb {
@@ -812,6 +974,10 @@ fn fresh(center: Vec3, descriptor: CharacterBody) -> RuntimeBody {
         },
         published: center,
         descriptor,
+        edges,
+        rest_edges,
+        orientation,
+        published_rotation: rotation,
     }
 }
 #[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation)]

@@ -6,7 +6,7 @@ use std::{
 };
 use voxy_scene::SceneDocument;
 
-const MAX_BYTES: usize = 1_048_576;
+const MAX_BYTES: usize = crate::scene_limits::DOCUMENT_BYTES;
 
 #[derive(Debug)]
 pub(super) struct SceneRevision {
