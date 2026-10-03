@@ -1,0 +1,85 @@
+//! Fallible pose preparation inside the character publication transaction.
+use super::{
+    AppliedCharacterTrajectoryMotion, CharacterPhysics, CharacterRigidTrajectoryMotion,
+    PhysicsError, SupportQueryBudget, SupportWorld,
+};
+use glam::{DQuat, DVec3, Mat4, Vec3};
+use voxy_input::InputMap;
+use voxy_scene::{NodeId, SceneGraph};
+
+#[derive(Clone, Copy, Debug)]
+pub struct AcceptedCharacterPose {
+    pub owner: NodeId,
+    /// Exact matrix that rendering will observe after this tick publishes.
+    pub world_matrix: Mat4,
+    /// Solver precision, before narrowing to the scene's f32 transform.
+    pub physical_center: DVec3,
+    pub physical_rotation: DQuat,
+    pub velocity: DVec3,
+    pub grounded: bool,
+}
+#[derive(Debug)]
+pub struct CharacterTickPreview {
+    pub characters: Vec<AcceptedCharacterPose>,
+    pub support: SupportWorld,
+}
+#[derive(Debug, PartialEq)]
+pub enum CharacterTickError<E> {
+    Physics(PhysicsError),
+    Preparation(E),
+}
+pub(super) type Prepare<'a> =
+    dyn FnMut(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<(), PhysicsError> + 'a;
+
+impl CharacterPhysics {
+    /// Prepares a candidate (e.g. corrected skin palettes) against accepted physics.
+    /// It is returned only after scene, body state and input publish successfully.
+    /// The callback receives no mutable scene or physics access. Callers must keep
+    /// their own preparation state local and publish only the returned candidate.
+    /// # Errors
+    /// Physics or preparation failures preserve the scene, body state and input.
+    pub fn fixed_step_with_preparation<T, E>(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        translations: &[(NodeId, Vec3)],
+        paths: &[CharacterRigidTrajectoryMotion<'_>],
+        prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
+    ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
+        let mut prepare = Some(prepare);
+        let mut candidate = None;
+        let mut failure = None;
+        let result = self.fixed_step_mixed(
+            scene,
+            input,
+            dt,
+            translations,
+            paths,
+            Some(
+                &mut |preview, budget| match prepare.take().expect("preparation runs exactly once")(
+                    preview, budget,
+                ) {
+                    Ok(value) => {
+                        candidate = Some(value);
+                        Ok(())
+                    }
+                    Err(error) => {
+                        failure = Some(error);
+                        Err(PhysicsError::Solver)
+                    }
+                },
+            ),
+        );
+        match result {
+            Ok(receipts) => Ok((
+                receipts,
+                candidate.expect("successful tick prepared a candidate"),
+            )),
+            Err(error) => Err(failure.map_or(
+                CharacterTickError::Physics(error),
+                CharacterTickError::Preparation,
+            )),
+        }
+    }
+}

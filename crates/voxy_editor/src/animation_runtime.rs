@@ -34,6 +34,7 @@ struct Owner {
     settings: ModelAnimation,
     playback: ModelPlayback,
     frame: Arc<AnimatorFrame>,
+    feet: Option<crate::foot_placement::FootRuntime>,
 }
 #[derive(Clone, Debug, Default)]
 pub(super) struct AnimationRuntime {
@@ -69,6 +70,19 @@ impl AnimationRuntime {
                 }
             })
             .collect()
+    }
+    pub(super) fn has_foot_placement(&self) -> bool {
+        self.owners.values().any(|owner| owner.feet.is_some())
+    }
+    pub(super) fn correct_feet(mut self, preview: &voxy_gameplay::CharacterTickPreview,
+        budget: &mut voxy_gameplay::SupportQueryBudget) -> Result<Self, String> {
+        for accepted in &preview.characters {
+            let Some(owner) = self.owners.get_mut(&accepted.owner) else { continue; };
+            let Some(feet) = &mut owner.feet else { continue; };
+            owner.frame = Arc::new(feet.correct_at_phase(&owner.model, (*owner.frame).clone(),
+                accepted.world_matrix.as_dmat4(), accepted.grounded, preview, budget, owner.playback.contact_phase(), owner.playback.contact_interval())?);
+        }
+        Ok(self)
     }
     pub(super) fn serial(&self) -> u64 {
         self.serial
@@ -215,6 +229,17 @@ impl AnimationRuntime {
                     }
                 }
             }
+            let feet = if let Some(foot_settings) = scene.component::<crate::ModelFootPlacement>(owner)
+                .map_err(|e| e.to_string())?.filter(|settings| !settings.feet.is_empty()) {
+                if scene.component::<voxy_gameplay::CharacterBody>(owner).map_err(|e| e.to_string())?.is_none() {
+                    return Err("foot placement requires a CharacterBody on the model owner".into());
+                }
+                if let Some(feet) = current.filter(|old| Arc::ptr_eq(&old.model, model)
+                    && old.settings.clip == settings.clip).and_then(|old| old.feet.as_ref())
+                    .filter(|feet| feet.matches(foot_settings)) {
+                    Some(feet.clone())
+                } else { Some(crate::foot_placement::FootRuntime::new(model, foot_settings.clone())?) }
+            } else { None };
             let frame = Arc::new(frame);
             next.owners.insert(
                 owner,
@@ -223,6 +248,7 @@ impl AnimationRuntime {
                     settings,
                     playback,
                     frame,
+                    feet,
                 },
             );
         }

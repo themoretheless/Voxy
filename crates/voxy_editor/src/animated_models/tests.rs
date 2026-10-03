@@ -1235,3 +1235,76 @@ fn rig_trajectory_gpu(composed: bool) {
         "VOXY_CURVED_ROOT_GPU composed={composed} accepted_angle={angle} cpu_pixels_equal=true double_rotation_differs=true sources=1 bytes={bytes} stop_bytes=0"
     );
 }
+
+#[test]
+#[ignore = "requires a graphics adapter"]
+fn planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources() {
+    use glam::{Mat4, Vec3};
+    use voxy_gameplay::{BoxCollider, CharacterBody, CharacterPhysics};
+    let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
+    let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
+    println!("VOXY_FOOT_GPU_ADAPTER {:?}", adapter.get_info());
+    let (device,queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+    let renderer = SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
+    let model = Arc::new(ModelAsset::parse(include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
+        &[],voxy_render::ModelLimits::default()).unwrap());
+    let mut scene = voxy_scene::SceneGraph::new(4);
+    let first = scene.spawn(None,voxy_scene::Transform { translation:Vec3::Y,..Default::default() }).unwrap();
+    let second = scene.spawn(None,Default::default()).unwrap();
+    let floor = scene.spawn(None,voxy_scene::Transform { translation:-Vec3::Y*0.1,..Default::default() }).unwrap();
+    scene.insert_component(floor,BoxCollider { half_extents:[4.,0.1,4.] }).unwrap();
+    scene.insert_component(first,CharacterBody { half_extents:[0.1,1.,0.1],..Default::default() }).unwrap();
+    scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
+        bones:["hip".into(),"knee".into(),"foot".into()], sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
+        pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],
+    }] }).unwrap();
+    let asset = voxy_assets::AssetId("foot".into());
+    for owner in [first,second] {
+        scene.insert_component(owner,crate::ModelInstance { asset:asset.clone() }).unwrap();
+        scene.insert_component(owner,ModelAnimation { clip:None,..Default::default() }).unwrap();
+    }
+    let models = std::collections::BTreeMap::from([(asset,model.clone())]);
+    let mut runtime = crate::animation_runtime::AnimationRuntime::default();
+    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    for _ in 0..4 {
+        let candidate = runtime.prepare(&scene,&models,1. / 60.).unwrap();
+        runtime = physics.fixed_step_with_preparation(&mut scene,&mut input,1. / 60.,
+            &[(first,Vec3::X*0.03)],&[],|preview,budget| candidate.clone().correct_feet(preview,budget)).unwrap().1;
+    }
+    let frame = runtime.frame(first,&model).unwrap();
+    let authored = runtime.frame(second,&model).unwrap();
+    let mut render = AnimatedModels::new(&renderer).unwrap();
+    assert!(render.skinner.is_some());
+    let requests = || {
+        let mut a = request(first,&model,1.); a.frame=Some(frame.clone());
+        let mut b = request(second,&model,1.); b.frame=Some(authored.clone()); vec![a,b]
+    };
+    assert!(render.synchronize(&renderer,&device,&queue,requests(),1,0,65536).is_empty());
+    assert_eq!(render.counts(),(2,2,1));
+    let source = |owner| match &render.owners[&owner].primitives[0] {
+        Primitive::Skin { source,.. } => Arc::as_ptr(source),_=>panic!("GPU skin expected"),
+    };
+    assert_eq!(source(first),source(second));
+    // Independent expected world points from authored triangle and locked x=.03.
+    // No solved pose, skin palette or CPU skinning helper enters this reference.
+    let mesh = voxy_render::SceneMesh::new(vec![
+        voxy_render::SceneVertex { position:[-0.22,0.,0.],uv:[0.,0.],color:model.primitives[0].color },
+        voxy_render::SceneVertex { position:[0.28,0.,0.],uv:[0.,0.],color:model.primitives[0].color },
+        voxy_render::SceneVertex { position:[0.03,0.4,0.],uv:[0.,0.],color:model.primitives[0].color },
+    ],vec![0,1,2]).unwrap();
+    let reference = renderer.upload_mesh(&device,&mesh).unwrap();
+    let view = Mat4::from_scale_rotation_translation(Vec3::splat(2.),glam::Quat::IDENTITY,Vec3::new(0.,-0.4,0.5));
+    let matrix = view * scene.world_matrix(first).unwrap();
+    let actual = pixels(&renderer,&device,&queue,render.geometries(first).unwrap().collect(),matrix);
+    assert!(actual.chunks_exact(4).filter(|p|p[..3]!=[0,0,0]).count()>100);
+    assert_eq!(actual,pixels(&renderer,&device,&queue,vec![&reference],view));
+    assert_ne!(actual,pixels(&renderer,&device,&queue,render.geometries(second).unwrap().collect(),matrix));
+    let bytes = render.allocation_bytes();
+    assert!(render.synchronize(&renderer,&device,&queue,requests(),2,0,65536).is_empty());
+    assert_eq!(render.allocation_bytes(),bytes);
+    render.clear(); assert_eq!(render.allocation_bytes(),0);assert_eq!(render.counts(),(0,0,0));
+    assert!(pollster::block_on(scope.pop()).is_none());
+    println!("VOXY_FOOT_GPU cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0");
+}

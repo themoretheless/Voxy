@@ -1956,3 +1956,95 @@ fn reflected_uniform_source_frame_sweeps_translation_and_rotation_together() {
         assert!(input.state("jump").unwrap().pressed);
     }
 }
+
+#[test]
+fn failed_pose_preparation_preserves_physics_scene_and_pending_input() {
+    use voxy_gameplay::CharacterTickError;
+    let (mut scene, _, player) = fixture();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    for _ in 0..120 { physics.fixed_step(&mut scene, &mut input, 1. / 60.).unwrap(); }
+    let before = scene.local(player).unwrap();
+    let state = physics.state(&scene, player).unwrap().unwrap();
+    input.event(JUMP, 1.).unwrap();
+    input.event(JUMP, 0.).unwrap();
+    let error = physics.fixed_step_with_preparation(&mut scene, &mut input, 1. / 60.,
+        &[(player, Vec3::new(0.1, 0., 0.))], &[], |preview, _| {
+            let accepted = &preview.characters[0];
+            assert_eq!(accepted.owner, player);
+            assert!(accepted.world_matrix.w_axis.x > before.translation.x);
+            assert!(accepted.world_matrix.w_axis.y > before.translation.y);
+            Err::<(), _>("IK rejected")
+        }).unwrap_err();
+    assert_eq!(error, CharacterTickError::Preparation("IK rejected"));
+    assert_eq!(scene.local(player).unwrap(), before);
+    assert_eq!(physics.state(&scene, player).unwrap().unwrap(), state);
+    assert!(input.state("jump").unwrap().pressed);
+    let (_, candidate) = physics.fixed_step_with_preparation(&mut scene, &mut input,
+        1. / 60., &[(player, Vec3::new(0.1, 0., 0.))], &[], |preview, _| {
+            Ok::<_, ()>(preview.characters[0])
+        }).unwrap();
+    assert_eq!(scene.world_matrix(player).unwrap(), candidate.world_matrix);
+    assert_eq!(physics.state(&scene, player).unwrap().unwrap().grounded, candidate.grounded);
+    assert!(!input.state("jump").unwrap().pressed);
+}
+
+#[test]
+fn support_failure_in_preparation_rolls_back_and_physics_failure_skips_preparation() {
+    use voxy_gameplay::{CharacterTickError, SupportProbe};
+    let (mut scene, _, player) = fixture();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    physics = physics.with_angular_trajectory_query_budget(1).unwrap();
+    let before = scene.local(player).unwrap();
+    let error = physics.fixed_step_with_preparation(&mut scene, &mut input, 1. / 60.,
+        &[], &[], |preview, budget| {
+            assert_eq!(budget.remaining(), 1);
+            let probe = SupportProbe {
+                origin: glam::DVec3::Y, direction: -glam::DVec3::Y,
+                max_distance: 2., up: glam::DVec3::Y, min_up_dot: 0.7,
+            };
+            preview.support.probe(probe, budget)?;
+            preview.support.probe(probe, budget)
+        }).unwrap_err();
+    assert_eq!(error, CharacterTickError::Preparation(PhysicsError::SweepBudget));
+    assert_eq!(scene.local(player).unwrap(), before);
+    assert!(physics.state(&scene, player).unwrap().is_none());
+    let error = physics.fixed_step_with_preparation(&mut scene, &mut input, f64::NAN,
+        &[], &[], |_, _| -> Result<(), ()> { panic!("invalid physics cannot invoke preparation") }
+    ).unwrap_err();
+    assert_eq!(error, CharacterTickError::Physics(PhysicsError::InvalidStep));
+}
+
+#[test]
+fn foot_contact_candidates_publish_only_after_character_tick_accepts() {
+    use voxy_gameplay::{FootContactInput, FootContactSettings, FootContactState, FootContactStatus,
+        CharacterTickError};
+    let (mut scene, _, player) = fixture();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    for _ in 0..120 { physics.fixed_step(&mut scene, &mut input, 1. / 60.).unwrap(); }
+    let published_foot = FootContactState::default();
+    let sole = glam::DVec3::new(0.3, -f64::from(0.1_f32), 0.2);
+    let settings = FootContactSettings::default();
+    let (_, planted) = physics.fixed_step_with_preparation(&mut scene, &mut input, 1. / 60.,
+        &[], &[], |preview, budget| published_foot.prepare(&preview.support, settings,
+            FootContactInput { sole, up: glam::DVec3::Y,
+                grounded: preview.characters[0].grounded, plant: true }, budget)
+    ).unwrap();
+    assert_eq!(planted.status, FootContactStatus::Planted);
+    let published_foot = planted.state;
+    let before = scene.local(player).unwrap();
+    let error = physics.fixed_step_with_preparation(&mut scene, &mut input, 1. / 60.,
+        &[(player, Vec3::X * 0.1)], &[], |preview, budget| {
+            let candidate = published_foot.prepare(&preview.support, settings,
+                FootContactInput { sole: sole + glam::DVec3::X * 0.4, up: glam::DVec3::Y,
+                    grounded: preview.characters[0].grounded, plant: true }, budget).unwrap();
+            assert_eq!(candidate.status, FootContactStatus::Released);
+            Err::<(), _>("later leg IK rejected")
+        }).unwrap_err();
+    assert_eq!(error, CharacterTickError::Preparation("later leg IK rejected"));
+    assert_eq!(scene.local(player).unwrap(), before);
+    assert_eq!(published_foot.anchor(), planted.state.anchor());
+    assert!(published_foot.anchor().is_some());
+}

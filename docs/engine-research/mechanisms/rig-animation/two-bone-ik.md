@@ -37,12 +37,10 @@ nonuniform tip scale. They also cover both unreachable reach limits, complete
 folding at a coincident target, degenerate poles, antiparallel targets, blend weights,
 metadata/palette preservation, foreign rigs and failed admission.
 
-This is the IK kernel. Automatic foot placement and foot locking in ordinary Play
-are not implemented yet. [Support queries](foot-support-queries.md) now provide contact normals and stable
-local anchors. Authored chain selection, plant/release state and integration are
-still required. The
-world contact anchor must be converted through the physically accepted actor
-transform. Corrections must be staged before the existing physics/scene/input/frame
-transaction publishes; applying a fallible correction after physics publication
-would violate tick atomicity. Angular crossfades, pelvis adjustments and locomotion
-contact feedback remain part of the broader production animation work.
+[Authored foot placement in ordinary Play](foot-placement-play.md) now binds named
+chains and applies this kernel inside the prepublication character transaction.
+[Support queries and contact state](foot-support-queries.md) supply stable anchors,
+normal alignment, acquisition/release hysteresis and rollback. Smooth clip-phase
+contact curves are implemented. Per-clip curve selection, pelvis adjustments,
+angular crossfades and native/GPU foot
+acceptance remain part of the broader production animation work.
