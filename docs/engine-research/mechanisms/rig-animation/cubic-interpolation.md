@@ -24,7 +24,8 @@ Animator retains its previous time/transition on failure. ModelPlayback does not
 invoke its publication consumer for an invalid pose and retains the owner's
 clock. The legacy infallible AnimationClip.sample API can return an invalid cubic
 pose; runtime callers must use try_sample or the validated asset/animator path.
-Skeleton compatibility validation checks joint count, not skeleton identity.
+Clip and pose compatibility now checks exact rig layout, not only joint count;
+see [rig binding](rig-binding.md).
 
 Analytic regressions cover nonzero translation/rotation derivatives, segment
 length in seconds, normalized quaternion output, mixed cubic/LINEAR channels,

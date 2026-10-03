@@ -678,6 +678,37 @@ fn quantize_weights(weights: [f32; 4]) -> Result<[u16; 4], ModelError> {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn imported_fox_selects_animated_hip_instead_of_static_container() {
+        let bytes = include_bytes!("../examples/assets/fox/Fox.glb");
+        let gltf = gltf::Gltf::from_slice(bytes).unwrap();
+        let asset = ModelAsset::parse(
+            bytes,
+            &[gltf.blob.as_deref().unwrap()],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let joint = asset
+            .skeleton
+            .joints()
+            .iter()
+            .position(|j| j.name.starts_with("b_Hip_01#"))
+            .unwrap();
+        let clip = asset.animations[2].clone();
+        let mut animator = voxy_animation::Animator::new(clip);
+        let first = animator.advance(&asset.skeleton, 0.1).unwrap();
+        assert!(first.root_motion.length() < 1e-6);
+        animator.set_root_motion_joint(joint as u16).unwrap();
+        let frame = animator.advance(&asset.skeleton, 0.1).unwrap();
+        let before = asset.sample_pose(Some(2), 0.1).unwrap();
+        let after = asset.sample_pose(Some(2), 0.2).unwrap();
+        let expected = after.local()[joint].translation - before.local()[joint].translation;
+        assert!(expected.length() > 0.01);
+        assert!(frame.root_motion.abs_diff_eq(expected, 1e-5));
+        assert_eq!(frame.root_motion_joint, joint as u16);
+        assert_eq!(frame.pose, after);
+    }
+
     use super::*;
 
     #[test]

@@ -1,5 +1,7 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
+mod root_curve;
+
 use std::fmt;
 use std::sync::Arc;
 
@@ -35,12 +37,18 @@ impl Transform {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Joint {
     pub name: Arc<str>,
     pub parent: Option<u16>,
     pub bind_local: Transform,
     pub inverse_bind: Mat4,
+}
+
+// Shared immutable layout is the fast path; exact structural equality also
+// permits independently reconstructed copies without hashes or process IDs.
+fn rigs_match(a: &Arc<[Joint]>, b: &Arc<[Joint]>) -> bool {
+    Arc::ptr_eq(a, b) || a.as_ref() == b.as_ref()
 }
 
 #[derive(Clone, Debug)]
@@ -92,6 +100,7 @@ impl Skeleton {
     #[must_use]
     pub fn bind_pose(&self) -> Pose {
         Pose {
+            rig: self.joints.clone(),
             local: self.joints.iter().map(|joint| joint.bind_local).collect(),
         }
     }
@@ -149,6 +158,8 @@ pub enum Playback {
 
 #[derive(Clone, Debug)]
 pub struct AnimationClip {
+    rig: Arc<[Joint]>,
+    root_curve: Arc<root_curve::RootCurve>,
     name: Arc<str>,
     duration: f32,
     playback: Playback,
@@ -281,7 +292,16 @@ impl AnimationClip {
             validate_vec_keys(&track.scales, duration, true)
                 .map_err(|reason| AnimationError::InvalidTrack { joint, reason })?;
         }
+        let root_curve = Arc::new(root_curve::RootCurve::new(
+            &tracks[0].translations,
+            interpolation[0].translation,
+            &tangents[0].translation,
+            duration,
+            playback,
+        ));
         Ok(Self {
+            rig: skeleton.joints.clone(),
+            root_curve,
             name,
             duration,
             playback,
@@ -301,20 +321,43 @@ impl AnimationClip {
         self.duration
     }
 
-    /// Samples without runtime admission. Cubic curves can produce invalid TRS;
-    /// use `try_sample` to reject those poses before publication.
+    fn motion_curve(&self, joint: u16) -> Arc<root_curve::RootCurve> {
+        if joint == 0 {
+            return self.root_curve.clone();
+        }
+        let i = usize::from(joint);
+        Arc::new(root_curve::RootCurve::new(
+            &self.tracks[i].translations,
+            self.interpolation[i].translation,
+            &self.tangents[i].translation,
+            self.duration,
+            self.playback,
+        ))
+    }
+
+    /// Exact rig compatibility, including ordered names, hierarchy and bind data.
+    /// Shared immutable layouts use a constant-time pointer fast path.
     #[must_use]
-    pub fn sample(&self, skeleton: &Skeleton, time: f32) -> Pose {
+    pub fn is_compatible_with(&self, skeleton: &Skeleton) -> bool {
+        rigs_match(&self.rig, &skeleton.joints)
+    }
+
+    /// Samples without runtime admission. Cubic curves can produce invalid TRS;
+    /// use `try_sample` to reject those poses before publication. Bind defaults
+    /// always come from the clip's source rig; the legacy skeleton argument does
+    /// not retarget a clip. Returned poses retain the source rig binding.
+    #[must_use]
+    pub fn sample(&self, _skeleton: &Skeleton, time: f32) -> Pose {
         let time = match self.playback {
             Playback::Loop => time.rem_euclid(self.duration),
             Playback::Clamp => time.clamp(0.0, self.duration),
         };
-        self.sample_local(skeleton, time)
+        self.sample_local(time)
     }
 
     /// Samples a pose suitable for admission into a runtime or GPU palette.
     /// # Errors
-    /// Rejects non-finite time, mismatched joint counts and invalid interpolated TRS.
+    /// Rejects non-finite time, mismatched rig layouts and invalid interpolated TRS.
     pub fn try_sample(&self, skeleton: &Skeleton, time: f32) -> Result<Pose, AnimationError> {
         if !time.is_finite() {
             return Err(AnimationError::InvalidSampleTime);
@@ -325,6 +368,9 @@ impl AnimationClip {
                 actual: self.tracks.len(),
             });
         }
+        if !self.is_compatible_with(skeleton) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
         let pose = self.sample(skeleton, time);
         for (joint, transform) in pose.local.iter().enumerate() {
             if !transform.is_valid() {
@@ -334,9 +380,9 @@ impl AnimationClip {
         Ok(pose)
     }
 
-    fn sample_local(&self, skeleton: &Skeleton, time: f32) -> Pose {
-        let local = skeleton
-            .joints
+    fn sample_local(&self, time: f32) -> Pose {
+        let local = self
+            .rig
             .iter()
             .zip(self.tracks.iter())
             .zip(self.interpolation.iter())
@@ -365,30 +411,16 @@ impl AnimationClip {
                 ),
             })
             .collect();
-        Pose { local }
-    }
-
-    fn root_at_unwrapped(&self, skeleton: &Skeleton, time: f32) -> Vec3 {
-        match self.playback {
-            Playback::Clamp => {
-                self.sample_local(skeleton, time.clamp(0.0, self.duration))
-                    .local[0]
-                    .translation
-            }
-            Playback::Loop => {
-                let cycles = (time / self.duration).floor();
-                let local_time = time.rem_euclid(self.duration);
-                let start = self.sample_local(skeleton, 0.0).local[0].translation;
-                let end = self.sample_local(skeleton, self.duration).local[0].translation;
-                self.sample_local(skeleton, local_time).local[0].translation
-                    + (end - start) * cycles
-            }
+        Pose {
+            rig: self.rig.clone(),
+            local,
         }
     }
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Pose {
+    rig: Arc<[Joint]>,
     local: Vec<Transform>,
 }
 
@@ -430,6 +462,9 @@ impl Pose {
         if self.local.len() != skeleton.joints.len() {
             return Err(AnimationError::PoseCountMismatch);
         }
+        if !rigs_match(&self.rig, &skeleton.joints) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
         let mut global = Vec::with_capacity(self.local.len());
         let mut skin = Vec::with_capacity(self.local.len());
         for (index, (local, joint)) in self.local.iter().zip(skeleton.joints.iter()).enumerate() {
@@ -459,6 +494,9 @@ impl Pose {
         if a.local.len() != b.local.len() {
             return Err(AnimationError::PoseCountMismatch);
         }
+        if !rigs_match(&a.rig, &b.rig) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
         if !weight.is_finite() {
             return Err(AnimationError::InvalidBlendWeight);
         }
@@ -484,14 +522,20 @@ impl Pose {
                 }
             })
             .collect::<Result<Vec<_>, _>>()?;
-        Ok(Self { local })
+        Ok(Self {
+            rig: a.rig.clone(),
+            local,
+        })
     }
 }
 
 #[derive(Clone, Debug)]
 struct Transition {
     source: Arc<AnimationClip>,
+    source_curve: Arc<root_curve::RootCurve>,
     source_time: f32,
+    // Interruption captures the displayed blend once; staging shares this snapshot.
+    source_pose: Option<Arc<Pose>>,
     elapsed: f32,
     duration: f32,
 }
@@ -499,6 +543,8 @@ struct Transition {
 #[derive(Clone, Debug)]
 pub struct Animator {
     current: Arc<AnimationClip>,
+    motion_joint: u16,
+    motion_curve: Arc<root_curve::RootCurve>,
     time: f32,
     speed: f32,
     transition: Option<Transition>,
@@ -508,7 +554,10 @@ pub struct Animator {
 pub struct AnimatorFrame {
     pub pose: Pose,
     pub skin_matrices: Vec<Mat4>,
+    /// Translation displacement in the selected joint's parent-local frame.
+    /// It excludes animated ancestor motion and has not been applied to the pose.
     pub root_motion: Vec3,
+    pub root_motion_joint: u16,
     pub transition_weight: f32,
 }
 
@@ -516,11 +565,43 @@ impl Animator {
     #[must_use]
     pub fn new(initial: Arc<AnimationClip>) -> Self {
         Self {
+            motion_joint: 0,
+            motion_curve: initial.root_curve.clone(),
             current: initial,
             time: 0.0,
             speed: 1.0,
             transition: None,
         }
+    }
+
+    /// Select the joint whose local translation drives displacement extraction.
+    /// Curves are compiled only on selection/switch, not on every frame.
+    /// This does not remove motion from the pose or convert it to model/world space.
+    /// # Errors
+    /// An unknown joint preserves the selection, clocks and active transition.
+    pub fn set_root_motion_joint(&mut self, joint: u16) -> Result<(), AnimationError> {
+        if usize::from(joint) >= self.current.rig.len() {
+            return Err(AnimationError::InvalidRootMotionJoint(joint));
+        }
+        if joint == self.motion_joint {
+            return Ok(());
+        }
+        let curve = self.current.motion_curve(joint);
+        let source = self
+            .transition
+            .as_ref()
+            .map(|t| t.source.motion_curve(joint));
+        self.motion_joint = joint;
+        self.motion_curve = curve;
+        if let (Some(transition), Some(curve)) = (&mut self.transition, source) {
+            transition.source_curve = curve;
+        }
+        Ok(())
+    }
+
+    #[must_use]
+    pub const fn root_motion_joint(&self) -> u16 {
+        self.motion_joint
     }
 
     /// Changes playback speed. Zero pauses the animator.
@@ -536,11 +617,14 @@ impl Animator {
         Ok(())
     }
 
-    /// Starts a crossfade to a new clip. A zero duration switches immediately.
+    /// Starts a crossfade to a new clip. Interrupting an active fade starts from
+    /// its current blended pose, keeping pose continuity. The captured source
+    /// is held for the new fade; ordinary fade sources continue playing.
+    /// A zero duration switches immediately.
     ///
     /// # Errors
     ///
-    /// Rejects non-finite, negative, or excessively long transitions.
+    /// Rejects incompatible rigs or non-finite, negative, or excessively long transitions.
     pub fn transition_to(
         &mut self,
         next: Arc<AnimationClip>,
@@ -549,19 +633,48 @@ impl Animator {
         if !duration.is_finite() || !(0.0..=60.0).contains(&duration) {
             return Err(AnimationError::InvalidTransitionDuration);
         }
+        if !rigs_match(&self.current.rig, &next.rig) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        let next_curve = next.motion_curve(self.motion_joint);
         if duration == 0.0 {
+            self.motion_curve = next_curve;
             self.current = next;
             self.time = 0.0;
             self.transition = None;
             return Ok(());
         }
+        let source_pose = if let Some(transition) = &self.transition {
+            let skeleton = Skeleton {
+                joints: self.current.rig.clone(),
+            };
+            let target = self.current.try_sample(&skeleton, self.time)?;
+            let sampled;
+            let source = if let Some(pose) = &transition.source_pose {
+                pose.as_ref()
+            } else {
+                sampled = transition
+                    .source
+                    .try_sample(&skeleton, transition.source_time)?;
+                &sampled
+            };
+            let pose = Pose::blend(source, &target, transition.elapsed / transition.duration)?;
+            // A snapshot must pass the same palette admission as a displayed frame.
+            pose.skin_matrices(&skeleton)?;
+            Some(Arc::new(pose))
+        } else {
+            None
+        };
         self.transition = Some(Transition {
+            source_curve: self.motion_curve.clone(),
+            source_pose,
             source: Arc::clone(&self.current),
             source_time: self.time,
             elapsed: 0.0,
             duration,
         });
         self.current = next;
+        self.motion_curve = next_curve;
         self.time = 0.0;
         Ok(())
     }
@@ -602,28 +715,70 @@ impl Animator {
                     actual: clip.tracks.len(),
                 });
             }
+            if !rigs_match(&clip.rig, &skeleton.joints) {
+                return Err(AnimationError::SkeletonMismatch);
+            }
         }
         let delta = dt * self.speed;
         let old_time = self.time;
         self.time += delta;
-        let root_motion = self.current.root_at_unwrapped(skeleton, self.time)
-            - self.current.root_at_unwrapped(skeleton, old_time);
+        let mut root_motion = if self.transition.is_none() {
+            self.motion_curve
+                .integral(old_time, self.time, 1., 1.)
+                .as_vec3()
+        } else {
+            Vec3::ZERO
+        };
         if !self.time.is_finite() || !root_motion.is_finite() {
             return Err(AnimationError::NumericalOverflow);
         }
         let target = self.current.try_sample(skeleton, self.time)?;
         let (pose, weight, transition_complete) = if let Some(transition) = &mut self.transition {
-            transition.source_time += delta;
+            let fade_dt = dt.min((transition.duration - transition.elapsed).max(0.0));
+            let fade_delta = fade_dt * self.speed;
+            let start_weight = f64::from(transition.elapsed) / f64::from(transition.duration);
+            let end_weight =
+                f64::from(transition.elapsed + fade_dt) / f64::from(transition.duration);
+            let target_end = old_time + fade_delta;
+            let target_fade =
+                self.motion_curve
+                    .integral(old_time, target_end, start_weight, end_weight);
+            let source_fade = if transition.source_pose.is_some() {
+                glam::DVec3::ZERO
+            } else {
+                transition.source_curve.integral(
+                    transition.source_time,
+                    transition.source_time + fade_delta,
+                    1. - start_weight,
+                    1. - end_weight,
+                )
+            };
+            let tail = self.motion_curve.integral(target_end, self.time, 1., 1.);
+            root_motion = (source_fade + target_fade + tail).as_vec3();
+            if !root_motion.is_finite() {
+                return Err(AnimationError::NumericalOverflow);
+            }
+            transition.source_time += fade_delta;
             transition.elapsed = (transition.elapsed + dt).min(transition.duration);
             let weight = transition.elapsed / transition.duration;
-            let source = transition
-                .source
-                .try_sample(skeleton, transition.source_time)?;
-            (
-                Pose::blend(&source, &target, weight)?,
-                weight,
-                transition.elapsed >= transition.duration,
-            )
+            if weight >= 1.0 {
+                (target, 1.0, true)
+            } else {
+                let sampled;
+                let source = if let Some(pose) = &transition.source_pose {
+                    pose.as_ref()
+                } else {
+                    sampled = transition
+                        .source
+                        .try_sample(skeleton, transition.source_time)?;
+                    &sampled
+                };
+                (
+                    Pose::blend(source, &target, weight)?,
+                    weight,
+                    transition.elapsed >= transition.duration,
+                )
+            }
         } else {
             (target, 1.0, false)
         };
@@ -635,6 +790,7 @@ impl Animator {
             pose,
             skin_matrices,
             root_motion,
+            root_motion_joint: self.motion_joint,
             transition_weight: weight,
         })
     }
@@ -809,6 +965,8 @@ pub enum TrackError {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum AnimationError {
+    InvalidRootMotionJoint(u16),
+    SkeletonMismatch,
     InvalidSampleTime,
     InvalidJointCount(usize),
     InvalidJointName(usize),
@@ -839,6 +997,444 @@ impl std::error::Error for AnimationError {}
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn rig_binding_accepts_exact_reconstruction_and_rejects_same_count_foreign_layouts() {
+        let source = skeleton();
+        let clip = AnimationClip::new(
+            "bound",
+            2.,
+            Playback::Clamp,
+            vec![JointTrack::default(); 2],
+            &source,
+        )
+        .unwrap();
+        let reconstructed = Skeleton::new(source.joints().to_vec()).unwrap();
+        assert!(!Arc::ptr_eq(&source.joints, &reconstructed.joints));
+        let pose = clip.try_sample(&reconstructed, 0.5).unwrap();
+        assert_eq!(
+            pose.skin_matrices(&reconstructed).unwrap(),
+            source.bind_pose().skin_matrices(&source).unwrap()
+        );
+        assert!(Pose::blend(&pose, &reconstructed.bind_pose(), 0.5).is_ok());
+        for change in 0..5 {
+            let mut joints = source.joints().to_vec();
+            match change {
+                0 => joints[1].name = Arc::from("other bone"),
+                1 => joints[1].parent = None,
+                2 => joints[1].bind_local.translation = Vec3::Z,
+                3 => joints[1].inverse_bind = Mat4::from_translation(-Vec3::Z),
+                _ => {
+                    joints[0].name = Arc::from("hand");
+                    joints[1].name = Arc::from("root");
+                }
+            }
+            let foreign = Skeleton::new(joints).unwrap();
+            assert!(matches!(
+                clip.try_sample(&foreign, 0.5),
+                Err(AnimationError::SkeletonMismatch)
+            ));
+            assert!(matches!(
+                pose.skin_matrices(&foreign),
+                Err(AnimationError::SkeletonMismatch)
+            ));
+            for weight in [0., 0.5, 1.] {
+                assert!(matches!(
+                    Pose::blend(&pose, &foreign.bind_pose(), weight),
+                    Err(AnimationError::SkeletonMismatch)
+                ));
+            }
+            // The legacy sampler cannot substitute foreign bind defaults or relabel a clip.
+            let unchecked = clip.sample(&foreign, 0.5);
+            assert_eq!(unchecked, source.bind_pose());
+            assert!(matches!(
+                unchecked.skin_matrices(&foreign),
+                Err(AnimationError::SkeletonMismatch)
+            ));
+        }
+    }
+
+    #[test]
+    fn foreign_transition_and_advance_preserve_active_crossfade() {
+        let source = skeleton();
+        let make = |rig: &Skeleton, name: &str| {
+            Arc::new(
+                AnimationClip::new(
+                    name,
+                    2.,
+                    Playback::Loop,
+                    vec![JointTrack::default(); 2],
+                    rig,
+                )
+                .unwrap(),
+            )
+        };
+        let first = make(&source, "first");
+        let reconstructed = Skeleton::new(source.joints().to_vec()).unwrap();
+        let second = make(&reconstructed, "second");
+        let mut animator = Animator::new(first);
+        animator.advance(&source, 0.2).unwrap();
+        animator.transition_to(second, 0.5).unwrap();
+        animator.advance(&source, 0.1).unwrap();
+        let mut control = animator.clone();
+        let mut joints = source.joints().to_vec();
+        joints[1].parent = None;
+        let foreign = Skeleton::new(joints).unwrap();
+        for duration in [0., 0.5] {
+            assert!(matches!(
+                animator.transition_to(make(&foreign, "foreign"), duration),
+                Err(AnimationError::SkeletonMismatch)
+            ));
+            assert!(Arc::ptr_eq(&animator.current, &control.current));
+            assert_eq!(animator.time, control.time);
+            assert_eq!(
+                animator.transition.as_ref().unwrap().elapsed,
+                control.transition.as_ref().unwrap().elapsed
+            );
+            assert_eq!(
+                animator.transition.as_ref().unwrap().source_time,
+                control.transition.as_ref().unwrap().source_time
+            );
+        }
+        assert!(matches!(
+            animator.advance(&foreign, 0.1),
+            Err(AnimationError::SkeletonMismatch)
+        ));
+        let actual = animator.advance(&source, 0.1).unwrap();
+        let expected = control.advance(&source, 0.1).unwrap();
+        assert_eq!(actual.pose, expected.pose);
+        assert_eq!(actual.skin_matrices, expected.skin_matrices);
+        assert_eq!(actual.transition_weight, expected.transition_weight);
+        assert_eq!(actual.root_motion, expected.root_motion);
+    }
+
+    #[test]
+    fn interrupted_crossfade_starts_from_displayed_pose_and_releases_snapshot() {
+        let rig = skeleton();
+        let constant = |name: &str, x: f32| {
+            let mut tracks = vec![JointTrack::default(); 2];
+            tracks[0].translations = vec![Vec3Key {
+                time: 0.,
+                value: Vec3::X * x,
+            }];
+            Arc::new(AnimationClip::new(name, 2., Playback::Clamp, tracks, &rig).unwrap())
+        };
+        let mut animator = Animator::new(constant("a", 0.));
+        animator.transition_to(constant("b", 10.), 1.).unwrap();
+        let displayed = animator.advance(&rig, 0.25).unwrap();
+        assert_eq!(displayed.pose.local()[0].translation.x, 2.5);
+        animator.transition_to(constant("c", 20.), 1.).unwrap();
+        let snapshot = Arc::downgrade(
+            animator
+                .transition
+                .as_ref()
+                .unwrap()
+                .source_pose
+                .as_ref()
+                .unwrap(),
+        );
+        assert_eq!(animator.advance(&rig, 0.).unwrap().pose, displayed.pose);
+        assert_eq!(
+            animator.advance(&rig, 0.2).unwrap().pose.local()[0]
+                .translation
+                .x,
+            6.
+        );
+        let next_displayed = animator.advance(&rig, 0.).unwrap().pose;
+        animator.transition_to(constant("d", -10.), 0.5).unwrap();
+        assert!(snapshot.upgrade().is_none());
+        assert_eq!(animator.advance(&rig, 0.).unwrap().pose, next_displayed);
+        let snapshot = Arc::downgrade(
+            animator
+                .transition
+                .as_ref()
+                .unwrap()
+                .source_pose
+                .as_ref()
+                .unwrap(),
+        );
+        assert_eq!(
+            animator.advance(&rig, 0.5).unwrap().pose.local()[0]
+                .translation
+                .x,
+            -10.
+        );
+        assert!(animator.transition.is_none());
+        assert!(snapshot.upgrade().is_none());
+    }
+
+    #[test]
+    fn interrupted_snapshot_is_shared_and_failed_advance_keeps_it() {
+        let rig = skeleton();
+        let mut animator = Animator::new(root_clip(&rig, 0.));
+        animator.transition_to(root_clip(&rig, 2.), 1.).unwrap();
+        animator.advance(&rig, 0.25).unwrap();
+        let displayed = animator.advance(&rig, 0.).unwrap().pose;
+        animator.transition_to(root_clip(&rig, 4.), 1.).unwrap();
+        assert_eq!(animator.advance(&rig, 0.).unwrap().pose, displayed);
+        let mut control = animator.clone();
+        let left = animator
+            .transition
+            .as_ref()
+            .unwrap()
+            .source_pose
+            .as_ref()
+            .unwrap();
+        let right = control
+            .transition
+            .as_ref()
+            .unwrap()
+            .source_pose
+            .as_ref()
+            .unwrap();
+        assert!(Arc::ptr_eq(left, right));
+        assert!(animator.advance(&rig, f32::NAN).is_err());
+        assert_eq!(animator.time, control.time);
+        let actual = animator.advance(&rig, 0.1).unwrap();
+        let expected = control.advance(&rig, 0.1).unwrap();
+        assert_eq!(actual.pose, expected.pose);
+        assert_eq!(actual.skin_matrices, expected.skin_matrices);
+    }
+
+    #[test]
+    fn interrupted_fade_preserves_rotated_scaled_hierarchical_palette() {
+        let rig = skeleton();
+        let clip = |name: &str, angle: f32, scale: f32| {
+            let mut tracks = vec![JointTrack::default(); 2];
+            for track in &mut tracks {
+                track.rotations = vec![QuatKey {
+                    time: 0.,
+                    value: Quat::from_rotation_y(angle),
+                }];
+                track.scales = vec![Vec3Key {
+                    time: 0.,
+                    value: Vec3::splat(scale),
+                }];
+            }
+            Arc::new(AnimationClip::new(name, 1., Playback::Clamp, tracks, &rig).unwrap())
+        };
+        let mut animator = Animator::new(clip("a", -0.6, 0.8));
+        animator.transition_to(clip("b", 1.2, 1.7), 1.).unwrap();
+        let before = animator.advance(&rig, 0.3).unwrap();
+        animator.transition_to(clip("c", -1.1, 1.1), 0.4).unwrap();
+        let after = animator.advance(&rig, 0.).unwrap();
+        for (a, b) in before.pose.local().iter().zip(after.pose.local()) {
+            assert!(a.translation.abs_diff_eq(b.translation, 1e-6));
+            assert!(a.scale.abs_diff_eq(b.scale, 1e-6));
+            assert!(a.rotation.angle_between(b.rotation) < 1e-5);
+        }
+        for (a, b) in before.skin_matrices.iter().zip(after.skin_matrices.iter()) {
+            assert!(a.abs_diff_eq(*b, 2e-6));
+        }
+        let frame = animator.advance(&rig, 0.4).unwrap();
+        assert!(frame.skin_matrices.iter().all(|m| m.is_finite()));
+        assert!(animator.transition.is_none());
+    }
+
+    #[test]
+    fn root_motion_crossfade_blends_velocities_and_splits_completion_tail() {
+        let rig = skeleton();
+        let mut animator = Animator::new(root_clip(&rig, 2.));
+        animator.advance(&rig, 0.8).unwrap();
+        animator.transition_to(root_clip(&rig, 6.), 1.).unwrap();
+        let frame = animator.advance(&rig, 0.25).unwrap();
+        assert!((frame.root_motion.x - 0.625).abs() < 1e-5);
+        let mut single = animator.clone();
+        let mut split = animator.clone();
+        let whole = single.advance(&rig, 1.).unwrap().root_motion;
+        let pieces = split.advance(&rig, 0.5).unwrap().root_motion
+            + split.advance(&rig, 0.5).unwrap().root_motion;
+        assert!(whole.abs_diff_eq(pieces, 1e-5));
+        assert!((whole.x - 4.875).abs() < 1e-5);
+        assert!(single.transition.is_none());
+        single.set_speed(0.).unwrap();
+        assert_eq!(single.advance(&rig, 0.1).unwrap().root_motion, Vec3::ZERO);
+    }
+
+    #[test]
+    fn interrupted_frozen_source_has_no_root_displacement_and_pause_is_zero() {
+        let rig = skeleton();
+        let mut animator = Animator::new(root_clip(&rig, 2.));
+        animator.transition_to(root_clip(&rig, 6.), 1.).unwrap();
+        animator.advance(&rig, 0.2).unwrap();
+        animator.transition_to(root_clip(&rig, 10.), 1.).unwrap();
+        assert!((animator.advance(&rig, 0.2).unwrap().root_motion.x - 0.2).abs() < 1e-5);
+        animator.set_speed(0.).unwrap();
+        assert_eq!(animator.advance(&rig, 0.1).unwrap().root_motion, Vec3::ZERO);
+    }
+
+    #[test]
+    fn completed_fade_does_not_admit_invalid_zero_weight_source() {
+        let rig = skeleton();
+        let mut tracks = vec![JointTrack::default(); 2];
+        tracks[0].rotations = vec![
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 1.,
+                value: -Quat::IDENTITY,
+            },
+        ];
+        let mut modes = vec![TrackInterpolation::default(); 2];
+        modes[0].rotation = Interpolation::CubicSpline;
+        let mut tangents = vec![JointTangents::default(); 2];
+        tangents[0].rotation = vec![[Vec4::ZERO; 2]; 2];
+        let source = Arc::new(
+            AnimationClip::new_with_tangents(
+                "singular midpoint",
+                1.,
+                Playback::Clamp,
+                tracks,
+                modes,
+                tangents,
+                &rig,
+            )
+            .unwrap(),
+        );
+        assert!(source.try_sample(&rig, 0.5).is_err());
+        let mut animator = Animator::new(source);
+        let target = root_clip(&rig, 2.);
+        animator.transition_to(target.clone(), 0.5).unwrap();
+        animator.advance(&rig, 0.25).unwrap();
+        let frame = animator.advance(&rig, 0.25).unwrap();
+        assert_eq!(frame.pose, target.try_sample(&rig, 0.5).unwrap());
+        assert_eq!(frame.transition_weight, 1.);
+        assert!(animator.transition.is_none());
+    }
+
+    #[test]
+    fn animator_root_integral_uses_step_event_weights_and_substeps() {
+        let rig = skeleton();
+        let mut tracks = vec![JointTrack::default(); 2];
+        tracks[0].translations = vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::ZERO,
+            },
+            Vec3Key {
+                time: 0.25,
+                value: Vec3::X * 2.,
+            },
+            Vec3Key {
+                time: 0.75,
+                value: Vec3::X * 5.,
+            },
+        ];
+        let mut modes = vec![TrackInterpolation::default(); 2];
+        modes[0].translation = Interpolation::Step;
+        let target = Arc::new(
+            AnimationClip::new_with_interpolation(
+                "step motion",
+                1.,
+                Playback::Loop,
+                tracks,
+                modes,
+                &rig,
+            )
+            .unwrap(),
+        );
+        let mut whole = Animator::new(root_clip(&rig, 0.));
+        whole.transition_to(target, 1.).unwrap();
+        let mut split = whole.clone();
+        let full = whole.advance(&rig, 1.).unwrap().root_motion;
+        let mut sum = Vec3::ZERO;
+        for _ in 0..4 {
+            sum += split.advance(&rig, 0.25).unwrap().root_motion;
+        }
+        assert!(full.abs_diff_eq(Vec3::X * 2.75, 1e-6));
+        assert!(sum.abs_diff_eq(full, 1e-6));
+    }
+
+    #[test]
+    fn animator_root_integral_uses_nonzero_cubic_derivatives_in_seconds() {
+        let rig = skeleton();
+        let mut tracks = vec![JointTrack::default(); 2];
+        tracks[0].translations = vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::ZERO,
+            },
+            Vec3Key {
+                time: 2.,
+                value: Vec3::X * 2.,
+            },
+        ];
+        let mut modes = vec![TrackInterpolation::default(); 2];
+        modes[0].translation = Interpolation::CubicSpline;
+        let mut tangents = vec![JointTangents::default(); 2];
+        tangents[0].translation = vec![[Vec3::ZERO, Vec3::X * 4.], [Vec3::X * (-2.), Vec3::ZERO]];
+        let target = Arc::new(
+            AnimationClip::new_with_tangents(
+                "cubic motion",
+                2.,
+                Playback::Clamp,
+                tracks,
+                modes,
+                tangents,
+                &rig,
+            )
+            .unwrap(),
+        );
+        let mut animator = Animator::new(root_clip(&rig, 0.));
+        animator.transition_to(target, 2.).unwrap();
+        let first = animator.advance(&rig, 1.).unwrap().root_motion;
+        let second = animator.advance(&rig, 1.).unwrap().root_motion;
+        assert!(first.abs_diff_eq(Vec3::X * 0.5, 1e-6));
+        assert!((first + second).abs_diff_eq(Vec3::ZERO, 1e-6));
+    }
+
+    #[test]
+    fn selected_motion_joint_updates_both_fade_curves_and_preserves_invalid_selection() {
+        let rig = skeleton();
+        let clip = |name: &str, speed: f32| {
+            let mut tracks = vec![JointTrack::default(); 2];
+            tracks[0].translations = vec![
+                Vec3Key {
+                    time: 0.,
+                    value: Vec3::ZERO,
+                },
+                Vec3Key {
+                    time: 1.,
+                    value: Vec3::X * 100.,
+                },
+            ];
+            tracks[1].translations = vec![
+                Vec3Key {
+                    time: 0.,
+                    value: Vec3::Y,
+                },
+                Vec3Key {
+                    time: 1.,
+                    value: Vec3::Y * (1. + speed),
+                },
+            ];
+            Arc::new(AnimationClip::new(name, 1., Playback::Loop, tracks, &rig).unwrap())
+        };
+        let mut animator = Animator::new(clip("a", 2.));
+        animator.transition_to(clip("b", 6.), 1.).unwrap();
+        animator.advance(&rig, 0.25).unwrap();
+        animator.set_root_motion_joint(1).unwrap();
+        let mut control = animator.clone();
+        assert!(matches!(
+            animator.set_root_motion_joint(2),
+            Err(AnimationError::InvalidRootMotionJoint(2))
+        ));
+        assert_eq!(animator.root_motion_joint(), 1);
+        assert!(Arc::ptr_eq(&animator.motion_curve, &control.motion_curve));
+        let actual = animator.advance(&rig, 0.25).unwrap();
+        let expected = control.advance(&rig, 0.25).unwrap();
+        assert_eq!(actual.root_motion_joint, 1);
+        assert!(actual.root_motion.abs_diff_eq(Vec3::Y * 0.875, 1e-6));
+        assert_eq!(actual.root_motion, expected.root_motion);
+        assert_eq!(actual.pose, expected.pose);
+        animator.transition_to(clip("c", 10.), 0.).unwrap();
+        assert_eq!(
+            animator.advance(&rig, 0.25).unwrap().root_motion,
+            Vec3::Y * 2.5
+        );
+    }
 
     fn skeleton() -> Skeleton {
         Skeleton::new(vec![
@@ -1442,6 +2038,7 @@ mod tests {
     #[test]
     fn joint_override_rejects_invalid_rotation_without_mutation() {
         let mut pose = Pose {
+            rig: Arc::from([skeleton().joints()[0].clone()]),
             local: vec![Transform::IDENTITY],
         };
         for invalid in [
@@ -1461,9 +2058,11 @@ mod tests {
     #[test]
     fn pose_blend_uses_shortest_rotation_path() {
         let a = Pose {
+            rig: Arc::from([skeleton().joints()[0].clone()]),
             local: vec![Transform::IDENTITY],
         };
         let b = Pose {
+            rig: a.rig.clone(),
             local: vec![Transform {
                 translation: Vec3::new(2.0, 0.0, 0.0),
                 rotation: Quat::from_rotation_y(std::f32::consts::PI),
@@ -1581,15 +2180,29 @@ mod tests {
     fn palette_overflow_preserves_clock_and_unfinished_transition() {
         let good = skeleton();
         let mut joints = good.joints().to_vec();
-        joints[0].bind_local.scale = Vec3::splat(2.0);
         joints[0].inverse_bind = Mat4::from_scale(Vec3::splat(f32::MAX));
         let bad = Skeleton::new(joints).unwrap();
-        let mut animator = Animator::new(root_clip(&good, 0.0));
-        animator.transition_to(root_clip(&good, 2.0), 0.5).unwrap();
-        animator.advance(&good, 0.25).unwrap();
+        let mut tracks = vec![JointTrack::default(); bad.joints().len()];
+        tracks[0].scales = vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::splat(0.5),
+            },
+            Vec3Key {
+                time: 1.,
+                value: Vec3::splat(3.),
+            },
+        ];
+        let target = Arc::new(
+            AnimationClip::new("overflow scale", 1., Playback::Clamp, tracks, &bad).unwrap(),
+        );
+        let mut animator = Animator::new(root_clip(&bad, 0.0));
+        animator.advance(&bad, 0.25).unwrap();
+        animator.transition_to(target, 0.5).unwrap();
+        animator.advance(&bad, 0.1).unwrap();
         let before = animator.clone();
         assert!(matches!(
-            animator.advance(&bad, 0.25),
+            animator.advance(&bad, 0.4),
             Err(AnimationError::InvalidPose(_))
         ));
         assert_eq!(animator.time.to_bits(), before.time.to_bits());
@@ -1601,11 +2214,11 @@ mod tests {
         );
         assert_eq!(transition.elapsed.to_bits(), prior.elapsed.to_bits());
         let mut control = before;
-        let actual = animator.advance(&good, 0.25).unwrap();
-        let expected = control.advance(&good, 0.25).unwrap();
+        let actual = animator.advance(&bad, 0.05).unwrap();
+        let expected = control.advance(&bad, 0.05).unwrap();
         assert_eq!(actual.pose, expected.pose);
         assert_eq!(actual.root_motion, expected.root_motion);
-        assert!(animator.transition.is_none());
+        assert!(animator.transition.is_some());
     }
 
     #[test]

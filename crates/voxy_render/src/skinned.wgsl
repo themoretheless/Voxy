@@ -28,6 +28,24 @@ struct VertexOutput {
     @location(2) world_position: vec3<f32>,
 };
 
+// Inverse transpose of the complete blended world deformation. Scaling the
+// columns and direction first avoids overflow in the cofactor calculation.
+fn transported_normal(world: mat4x4<f32>, original: vec3<f32>) -> vec3<f32> {
+    let normal_scale = max(max(abs(original.x), abs(original.y)), abs(original.z));
+    if normal_scale == 0. { return vec3<f32>(0.); }
+    var a = world[0].xyz; var b = world[1].xyz; var c = world[2].xyz;
+    let scale = max(max(max(abs(a.x), abs(a.y)), abs(a.z)),
+        max(max(max(abs(b.x), abs(b.y)), abs(b.z)), max(max(abs(c.x), abs(c.y)), abs(c.z))));
+    if scale == 0. { return vec3<f32>(0.); }
+    a /= scale; b /= scale; c /= scale;
+    let determinant = dot(a, cross(b, c));
+    let cofactors = mat3x3<f32>(cross(b, c), cross(c, a), cross(a, b));
+    let transformed = (cofactors * (original / normal_scale)) * sign(determinant);
+    let magnitude = max(max(abs(transformed.x), abs(transformed.y)), abs(transformed.z));
+    if magnitude == 0. { return vec3<f32>(0.); }
+    return normalize(transformed / magnitude);
+}
+
 @vertex
 fn vs_main(input: VertexInput) -> VertexOutput {
     let skin = joints[input.joint.x] * input.weight.x
@@ -38,10 +56,7 @@ fn vs_main(input: VertexInput) -> VertexOutput {
     var output: VertexOutput;
     output.position = camera.view_proj * world * vec4<f32>(input.position, 1.0);
     output.world_position = (world * vec4<f32>(input.position, 1.0)).xyz;
-    output.normal = vec3<f32>(0.);
-    let transformed = (world * vec4<f32>(input.normal, 0.0)).xyz;
-    let magnitude = max(max(abs(transformed.x), abs(transformed.y)), abs(transformed.z));
-    if magnitude > 0. { output.normal = normalize(transformed / magnitude); }
+    output.normal = transported_normal(world, input.normal);
     output.uv = input.uv;
     return output;
 }
@@ -51,10 +66,15 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     let albedo = textureSample(materials, material_sampler, input.uv, i32(object.material.x));
     let sun = normalize(vec3<f32>(0.45, 0.82, 0.35));
     var normal = input.normal;
-    if dot(normal, normal) == 0. {
-        let face = cross(dpdx(input.world_position), dpdy(input.world_position));
-        normal = face / max(length(face), 0.000001);
+    var magnitude = max(max(abs(normal.x), abs(normal.y)), abs(normal.z));
+    if magnitude == 0. {
+        // Framebuffer Y increases downwards; this order preserves the CCW face.
+        normal = cross(dpdy(input.world_position), dpdx(input.world_position));
+        magnitude = max(max(abs(normal.x), abs(normal.y)), abs(normal.z));
     }
+    // Raster interpolation changes length even when every vertex normal is unit.
+    // Scaling first also keeps tiny posed triangles from losing flat lighting.
+    if magnitude > 0. { normal = normalize(normal / magnitude); }
     let light = 0.18 + 0.82 * max(dot(normal, sun), 0.0);
     let source = dot(albedo.rgb, vec3<f32>(0.299, 0.587, 0.114)) * light;
     let level = floor(clamp(source, 0.0, 0.999) * 32.0) / 31.0;

@@ -439,6 +439,7 @@ impl AnimatedModels {
         } else {
             let mut playback = current.unwrap().playback.clone();
             playback.set_speed(settings.speed)?;
+            playback.set_root_motion_joint(settings.root_motion_joint)?;
             playback
         };
         let old_ticks = if reset_clock {

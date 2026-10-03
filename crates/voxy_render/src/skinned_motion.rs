@@ -89,6 +89,10 @@ impl PreparedSkinnedFrame {
 }
 
 impl SkinnedMotionHistory {
+    pub(crate) fn mesh(&self) -> &SkinnedMesh {
+        &self.mesh
+    }
+
     #[must_use]
     pub fn new(mesh: SkinnedMesh) -> Self {
         Self {

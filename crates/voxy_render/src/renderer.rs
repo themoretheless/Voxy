@@ -570,7 +570,7 @@ impl Renderer {
     ///
     /// # Errors
     ///
-    /// Rejects palette mismatch, non-finite transforms, or an excessive index count.
+    /// Rejects invalid/singular world deformation, palette mismatch or excessive indices.
     pub fn upload_skinned_mesh(
         &mut self,
         mesh: &SkinnedMesh,
@@ -713,7 +713,7 @@ impl Renderer {
     ///
     /// # Errors
     ///
-    /// Rejects missing geometry, palette length mismatch, or non-finite matrices.
+    /// Rejects missing geometry or invalid/singular deformation before GPU writes.
     pub fn update_skin_matrices(&mut self, joints: &[Mat4]) -> Result<(), RendererError> {
         self.check_device()?;
         let lod_pose = self
@@ -735,8 +735,12 @@ impl Renderer {
         if joints.iter().any(|matrix| !matrix.is_finite()) {
             return Err(RendererError::Skinned(SkinnedUploadError::NonFiniteMatrix));
         }
-        self.queue
-            .write_buffer(&skinned.joint_buffer, 0, bytemuck::cast_slice(joints));
+        let motion = self
+            .skinned_motion
+            .as_ref()
+            .ok_or(RendererError::NoSkinnedMesh)?;
+        skinned.write_pose(&self.queue, motion.history.mesh(), joints, motion.model)
+            .map_err(RendererError::Skinned)?;
         if let Some(motion) = &mut self.skinned_motion {
             motion.joints.clone_from_slice(joints);
         }
@@ -754,7 +758,7 @@ impl Renderer {
     ///
     /// # Errors
     ///
-    /// Rejects a missing skinned mesh or non-finite transform.
+    /// Rejects missing geometry or invalid/singular deformation before GPU writes.
     pub fn update_skinned_model(&mut self, model: Mat4) -> Result<(), RendererError> {
         self.check_device()?;
         if !model.is_finite() {
@@ -771,9 +775,12 @@ impl Renderer {
             })
             .transpose()?;
         let skinned = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
-        let uniform = crate::skinned::object_uniform(model, skinned.material_layer);
-        self.queue
-            .write_buffer(&skinned.object_buffer, 0, bytemuck::bytes_of(&uniform));
+        let motion = self
+            .skinned_motion
+            .as_ref()
+            .ok_or(RendererError::NoSkinnedMesh)?;
+        skinned.write_pose(&self.queue, motion.history.mesh(), &motion.joints, model)
+            .map_err(RendererError::Skinned)?;
         if let Some(motion) = &mut self.skinned_motion {
             motion.model = model;
         }
@@ -1598,3 +1605,7 @@ fn encode_motion_layers(
     }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "renderer/legacy_skin_tests.rs"]
+mod legacy_skin_tests;
