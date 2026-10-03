@@ -1,0 +1,15 @@
+{
+  "animation_tests_passed": 103,
+  "independent_decimal_cases": 40,
+  "decimal_precision": 400,
+  "extraction_axis_masks": 8,
+  "verified": [
+    "held rotation finite field",
+    "ordered arc exponential subdivision",
+    "constant arc angular derivative",
+    "moving pivot spatial velocity",
+    "STEP returns no finite velocity",
+    "independent matrix reference"
+  ],
+  "runtime_moving_fades": "not enabled"
+}

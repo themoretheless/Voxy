@@ -1,0 +1,17 @@
+{
+  "animation_tests_passed": 96,
+  "independent_decimal_precision": 400,
+  "independent_segment_counts": [
+    2,
+    16,
+    64
+  ],
+  "verified": [
+    "ordered noncommuting composition intervals",
+    "accumulated translation and quaternion contain matrix oracle",
+    "transformed point contains matrix oracle",
+    "reversing two rotations produces distinct enclosures",
+    "invalid points reject"
+  ],
+  "scope": "stored small-angle increments and outward composition; not an entire physical sweep certificate"
+}

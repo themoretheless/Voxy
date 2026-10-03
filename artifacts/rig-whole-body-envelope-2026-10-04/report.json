@@ -1,0 +1,15 @@
+{
+  "gameplay_unit_tests_passed": 46,
+  "gameplay_integration_tests_passed": 42,
+  "verified": [
+    "eight-corner envelope includes displaced pivot",
+    "proper basis and positive/negative uniform scales",
+    "independent perturbed rigid transform is contained",
+    "supplied world evaluation radius adds to discretization radius",
+    "approximate sweep contact with combined radius",
+    "empty stationary path still checks envelope",
+    "invalid mapping and evaluation radius reject"
+  ],
+  "runtime_candidate_publication": "not enabled",
+  "automatic_evaluation_error_certificate": "not implemented"
+}

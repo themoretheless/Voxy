@@ -1,0 +1,6 @@
+{
+  "animation_tests_passed": 94,
+  "verified": "projection enclosure expands with translation and rotation error at an offset body vertex; nonunit normal scales envelope; invalid points/normals/span/error reject",
+  "physical_sweep": "not connected",
+  "numerical_roundoff": "not certified"
+}

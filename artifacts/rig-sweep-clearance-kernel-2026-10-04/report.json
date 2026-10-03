@@ -1,0 +1,13 @@
+{
+  "gameplay_unit_tests_passed": 44,
+  "angular_sweep_tests_passed": 5,
+  "verified": [
+    "linear approach stops at analytic inflated contact",
+    "stationary nominal near wall rejects complete motion when envelope overlaps",
+    "stationary envelope clear of wall completes",
+    "negative and NaN clearance reject",
+    "existing angular sweep regressions"
+  ],
+  "runtime_exact_paths": "retain zero clearance",
+  "approximate_physical_paths": "not admitted"
+}

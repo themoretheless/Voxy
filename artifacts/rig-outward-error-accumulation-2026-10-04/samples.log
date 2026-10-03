@@ -1,0 +1,9 @@
+
+running 1 test
+ERROR_ACCUMULATION (0.0, 0.1, [1.0, -0.5, 0.3], [0.4, 0.1, -0.2], [0.7, 0.2], [0.04, 0.010000000000000012], [0.011181666666666687, 0.0020000000000000035])
+ERROR_ACCUMULATION (0.1, 0.3, [1.0, -0.5, 0.3], [0.4, 0.1, -0.2], [0.7, 0.2], [0.04, 0.010000000000000012], [0.044495000000000076, 0.008000000000000012])
+ERROR_ACCUMULATION (0.3, 0.6, [1.0, -0.5, 0.3], [0.4, 0.1, -0.2], [0.7, 0.2], [0.04, 0.010000000000000012], [0.11117000000000019, 0.020000000000000028])
+test root_rigid::enclosure::accumulation::tests::error_accumulation_encloses_exact_clock_and_prefix_arithmetic ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 104 filtered out; finished in 0.00s
+

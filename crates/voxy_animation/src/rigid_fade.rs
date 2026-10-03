@@ -18,6 +18,72 @@ pub struct RootRigidFadePlan {
     pub fade_wall_seconds: f64,
     pub tail_wall_seconds: f64,
 }
+impl RootRigidFadePlan {
+    /// Builds this staged tick in an explicitly chosen common rigid frame.
+    /// Frames map each fade path's interval-local coordinates to that frame.
+    /// A frozen source requires `None`; an actual source requires `Some`.
+    /// The tail continues the target's spatial field at its own fade endpoint,
+    /// rather than restarting its local axes at the blended endpoint.
+    /// No animator clock is published and no physical acceptance is implied.
+    pub fn integrate_spatial(
+        &self,
+        source_frame: Option<RootRigidTransform>,
+        target_frame: RootRigidTransform,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidApproximation, AnimationError> {
+        target_frame.compose(RootRigidTransform::IDENTITY)?;
+        let source = match (&self.source_fade, source_frame) {
+            (Some(path), Some(frame)) => path.transformed(frame.rotation, 1., frame.translation)?,
+            (None, None) => RootRigidPath::from_twists(&[], 0)?,
+            _ => return Err(AnimationError::InvalidRetargetBinding),
+        };
+        let target =
+            self.target_fade
+                .transformed(target_frame.rotation, 1., target_frame.translation)?;
+        let tail_frame = target_frame.compose(self.target_fade.end_transform())?;
+        let tail = self
+            .target_tail
+            .transformed(tail_frame.rotation, 1., tail_frame.translation)?
+            .retimed(self.tail_wall_seconds)?;
+        let capacity = max_spans.min(MAX_ROOT_ROTATION_SPANS);
+        let available = capacity
+            .checked_sub(tail.spans().len())
+            .ok_or(AnimationError::RootRigidBudget)?;
+        let fade = if self.fade_wall_seconds == 0. {
+            // Preserve input/tolerance validation through the existing integrator.
+            RootRigidPath::integrate_spatial(
+                0.,
+                RootTwistRateBounds {
+                    linear: 0.,
+                    angular: 0.,
+                },
+                origin_tolerance,
+                angular_tolerance,
+                available,
+                |_| unreachable!("a zero-time interval has no samples"),
+            )?
+        } else {
+            source.blend_spatial(
+                &target,
+                self.weights,
+                self.fade_wall_seconds,
+                origin_tolerance,
+                angular_tolerance,
+                available,
+            )?
+        };
+        fade.append_spatial(
+            &RootRigidApproximation {
+                path: tail,
+                origin_error_bound: 0.,
+                angular_error_bound: 0.,
+            },
+            capacity,
+        )
+    }
+}
 impl Animator {
     /// Stages active-fade paths and displayed pose without publishing either clock.
     /// Frozen interruption sources have zero motion and no invented clip phase.

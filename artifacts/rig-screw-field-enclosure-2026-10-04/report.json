@@ -1,0 +1,13 @@
+{
+  "animation_tests_passed": 98,
+  "independent_decimal_cases": 12,
+  "decimal_precision": 400,
+  "verified": [
+    "canonical ordered stored screw field",
+    "exact differences of stored timestamps",
+    "partial and full span endpoints and transformed points",
+    "capacity and invalid sample rejection",
+    "polynomial prefixes explicitly reject"
+  ],
+  "scope": "canonical screw field only; not upstream curve/blend or full collision certificate"
+}

@@ -1,0 +1,18 @@
+{
+  "animation_tests_passed": 101,
+  "independent_decimal_cases": 35,
+  "decimal_precision": 400,
+  "verified": [
+    "normalized stored cubic angular derivative",
+    "exact stored timestamp differences",
+    "normalized left frame transport",
+    "independent rotation matrix differentiation",
+    "invalid fraction rejects and unsupported shape returns None"
+  ],
+  "not_certified": [
+    "compilation before stored coefficients",
+    "complete root linear spatial derivative",
+    "full collision pipeline",
+    "runtime moving fade admission"
+  ]
+}

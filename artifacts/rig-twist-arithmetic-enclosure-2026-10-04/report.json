@@ -1,0 +1,19 @@
+{
+  "animation_tests_passed": 100,
+  "independent_decimal_cases": 4,
+  "decimal_precision": 400,
+  "verified": [
+    "exact stored twist input enclosure",
+    "clip/wall time ratio rounding",
+    "linear weight interpolation and source weight subtraction",
+    "shifted spatial similarity",
+    "signed and zero scales",
+    "invalid inputs reject"
+  ],
+  "not_certified": [
+    "obtaining source twist from general imported curves",
+    "clock and frame extraction before the provided inputs",
+    "full collision pipeline",
+    "runtime physical admission"
+  ]
+}

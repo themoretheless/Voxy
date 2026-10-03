@@ -1,0 +1,5 @@
+{
+  "animation_tests_passed": 89,
+  "verified": "STEP event times, ordering, intermediate swept transforms and undefined instantaneous velocity survive spatial prefix concatenation",
+  "runtime_moving_fades": "not enabled"
+}

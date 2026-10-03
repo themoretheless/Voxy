@@ -1,0 +1,18 @@
+{
+  "animation_tests_passed": 95,
+  "independent_decimal_cases": 5,
+  "decimal_precision": 400,
+  "verified": "real SE3 increment translation and quaternion enclosed for axial/zero/general/small-angle cases",
+  "assumptions": [
+    "IEEE-754 round-to-nearest basic operations",
+    "gradual underflow",
+    "no fast-math reassociation"
+  ],
+  "domain": "interval upper bound on squared angular increment <= 1",
+  "not_certified": [
+    "accumulated path prefixes",
+    "frame conversion",
+    "collision evaluation",
+    "runtime physical admission"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 104,
+  "verified": [
+    "outward sampled linear/angular discrepancy bounds",
+    "shared integration kernel retains exact-sample API",
+    "sample errors accumulate into origin and angular envelopes",
+    "analytic commuting motion lies within reported errors",
+    "irreducible sample bias rejects tighter tolerance after budget exhaustion"
+  ],
+  "scope": "conditional real-arithmetic integration error; full numeric accumulation and clock/collision pipeline not certified"
+}

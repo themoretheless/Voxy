@@ -1,0 +1,13 @@
+{
+  "animation_tests_passed": 105,
+  "decimal_precision": 400,
+  "independent_accumulated_intervals": 3,
+  "verified": [
+    "outward stored-clock difference",
+    "interval prefix translation upper norm",
+    "sample and derivative uncertainty accumulation",
+    "zero variation/sample error remains zero",
+    "pure linear variation leaves angular error exactly zero"
+  ],
+  "scope": "conditional inequality arithmetic; derivative-rate validity and full integration/collision wiring remain separate"
+}

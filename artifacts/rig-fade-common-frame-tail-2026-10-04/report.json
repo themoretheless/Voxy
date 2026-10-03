@@ -1,0 +1,19 @@
+{
+  "animation_tests_passed": 93,
+  "verified": [
+    "explicit nonidentity source and target frames",
+    "real Animator fade with 2x playback",
+    "target tail spatial conjugation at target fade endpoint",
+    "wall-time duration and tail angular velocity",
+    "original animator clock remains unchanged",
+    "missing source frame and aggregate budget reject",
+    "screw path retiming preserves geometry and scales velocity"
+  ],
+  "physical_moving_fades": "not enabled",
+  "remaining": [
+    "actor frame selection by runtime",
+    "collision error envelope acceptance",
+    "numerical evaluation bound",
+    "STEP fade policy"
+  ]
+}

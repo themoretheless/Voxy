@@ -262,6 +262,9 @@ fn closed_cubic_moving_pivot_preserves_excursion_projection_hulls_and_speed() {
                     let independent_acceleration = (-32./denominator
                         -256.*r*(1.-2.*time).powi(2)/(denominator*denominator)).abs();
                     assert!(independent_acceleration <= span.rotation().angular_acceleration_bound().unwrap().unwrap());
+                    let enclosed=span.rotation().enclosed_angular_derivative_bounds().unwrap().unwrap();
+                    assert!(independent_acceleration<=enclosed.acceleration_bound());
+                    assert!((16. * (1.-2.*time)/(1.+r*r)).abs()<=enclosed.speed_bound());
                     let rates = span.twist_rate_bounds().unwrap().unwrap();
                     let bounds = span.twist_bounds().unwrap().unwrap();
                     let twist = velocity.spatial_twist(span.sample(u).unwrap()).unwrap();
@@ -275,6 +278,9 @@ fn closed_cubic_moving_pivot_preserves_excursion_projection_hulls_and_speed() {
                     let spatial_linear_rate = ddp - acceleration.cross(p) - omega.cross(dp)
                         - omega.cross(q*dpivot_rate) - q*ddpivot;
                     assert!(spatial_linear_rate.length()<=rates.linear);
+                    let enclosed=span.enclosed_twist_bounds().unwrap().unwrap();
+                    assert!(spatial_linear_rate.length()<=enclosed.rates.linear);
+                    assert!(twist.linear.length()<=enclosed.linear_speed_bound);
                     let dpivot = if axes[0] { DVec3::ZERO } else { dp };
                     let expected_velocity = dp + omega.cross(q * (point - pivot)) - q * dpivot;
                     let actual_velocity = velocity.linear + velocity.angular.cross(span.sample(u).unwrap().rotation * point);
@@ -329,6 +335,28 @@ fn step_events_merge_simultaneous_channels_and_boundaries_are_consumed_once() {
             path.spans().iter().filter(|span| span.is_step()).count(),
             if time == 0.5 { 1 } else { 2 }
         );
+        // A spatial prefix must retain each instantaneous event and its swept geometry.
+        let prefix = RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear: DVec3::new(0.2, -0.1, 0.3),
+            angular: DVec3::X * 0.4,
+        }, 0.3)], 1).unwrap();
+        let joined = prefix.append_spatial(&path, 256).unwrap();
+        for (original, appended) in path.spans().iter().zip(&joined.spans()[1..]) {
+            assert_eq!(original.is_step(), appended.is_step());
+            assert!((appended.start() - (original.start() + 0.3)).abs() < 1e-12);
+            assert!((appended.end() - (original.end() + 0.3)).abs() < 1e-12);
+            for u in [0., 0.25, 0.5, 0.75, 1.] {
+                equivalent(appended.sample(u).unwrap(),
+                    original.sample(u).unwrap().compose(prefix.end_transform()).unwrap(), 1e-12);
+            }
+            if original.is_step() {
+                assert!(appended.velocity(0.5).unwrap().is_none());
+            }
+        }
+        equivalent(joined.end_transform(),
+            path.end_transform().compose(prefix.end_transform()).unwrap(), 1e-12);
+        assert!(matches!(path.blend_spatial(&path, [0., 1.], 1., 0.01, 0.01, 256),
+            Err(AnimationError::RootRotationTransitionUnsupported)));
         let partition = path.partition_for_blend(&path,256).unwrap();
         let recorded_source:Vec<_> = partition.steps.iter().flat_map(|step|step.source_spans.iter().copied()).collect();
         let recorded_target:Vec<_> = partition.steps.iter().flat_map(|step|step.target_spans.iter().copied()).collect();
@@ -343,7 +371,11 @@ fn step_events_merge_simultaneous_channels_and_boundaries_are_consumed_once() {
             assert!(span.twist_rate_bounds().unwrap().is_none());
             assert_eq!(span.velocity(0.5).unwrap(), None);
             assert_eq!(span.rotation().angular_velocity(0.5).unwrap(), None);
+            assert!(span.rotation().angular_velocity_bounds(0.5).unwrap().is_none());
+            assert!(span.spatial_twist_enclosure(0.5).unwrap().is_none());
+            assert!(span.enclosed_twist_bounds().unwrap().is_none());
             assert_eq!(span.rotation().angular_acceleration_bound().unwrap(), None);
+            assert!(span.rotation().enclosed_angular_derivative_bounds().unwrap().is_none());
             assert!(span.velocity(f64::NAN).is_err());
             assert!(span.point_speed_bound(DVec3::X).unwrap() > 0.);
             if time == 0.5 {
@@ -1082,4 +1114,248 @@ fn spatial_path_append_matches_ordered_twists_and_transports_polynomial_pivot() 
     assert!((actual.translation-nominal.translation).length()<=assembled.origin_error_bound);
     assert!((actual.rotation*nominal.rotation.conjugate()).to_scaled_axis().length()<=assembled.angular_error_bound);
     assert!(first.append_spatial(&second,1).is_err());
+}
+
+#[test]
+fn compiled_spatial_blend_retimes_keys_and_bounds_a_commuting_fade() {
+    let base = RootRigidTwist { linear: DVec3::new(0.2, 0.1, -0.3), angular: DVec3::Y * 0.7 };
+    let source = RootRigidPath::from_twists(&[(base, 0.2), (base.retimed(2.).unwrap(), 0.3)], 2).unwrap();
+    let target = RootRigidPath::from_twists(&[(base.retimed(3.).unwrap(), 2.)], 1).unwrap();
+    let blended = source.blend_spatial(&target, [0., 1.], 1., 0.01, 0.01, 4096).unwrap();
+    assert!(blended.origin_error_bound <= 0.01);
+    assert!(blended.angular_error_bound <= 0.01);
+    let integral = |t: f64| if t <= 0.4 { 0.5*t + 2.75*t*t } else { 0.64 + t + 2.5*t*t - 0.8 };
+    for span in blended.path.spans() {
+        for u in [0., 0.5, 1.] {
+            let t = span.start() + (span.end()-span.start())*u;
+            let expected = base.increment(integral(t)).unwrap();
+            let actual = span.sample(u).unwrap();
+            assert!((actual.translation-expected.translation).length() <= blended.origin_error_bound + 1e-12);
+            assert!((actual.rotation*expected.rotation.conjugate()).to_scaled_axis().length() <= blended.angular_error_bound + 1e-12);
+        }
+    }
+    assert!(source.blend_spatial(&target, [0., 1.], 1., 0.01, 0.01, 2).is_err());
+    let stationary = RootRigidPath::from_twists(&[], 0).unwrap();
+    let frozen = stationary.blend_spatial(&target, [0., 1.], 1., 0.01, 0.01, 4096).unwrap();
+    let expected = base.increment(3.).unwrap();
+    let actual = frozen.path.end_transform();
+    assert!((actual.translation-expected.translation).length() <= frozen.origin_error_bound);
+    assert!((actual.rotation*expected.rotation.conjugate()).to_scaled_axis().length() <= frozen.angular_error_bound);
+    assert!(source.blend_spatial(&target, [0., 2.], 1., 0.01, 0.01, 4096).is_err());
+}
+
+#[test]
+fn compiled_spatial_blend_preserves_noncommuting_key_order() {
+    let source = RootRigidPath::from_twists(&[(RootRigidTwist { linear: DVec3::ZERO, angular: DVec3::X }, 0.2),
+        (RootRigidTwist { linear: DVec3::ZERO, angular: DVec3::X * 2. }, 0.3)], 2).unwrap();
+    let target = RootRigidPath::from_twists(&[(RootRigidTwist { linear: DVec3::ZERO, angular: DVec3::Y * 3. }, 2.)], 1).unwrap();
+    let blended = source.blend_spatial(&target, [0.3, 0.3], 1., 0., 0., 2).unwrap();
+    assert_eq!(blended.path.spans().len(), 2);
+    let first = DQuat::from_scaled_axis(DVec3::new(0.35, 1.8, 0.) * 0.4);
+    let second = DQuat::from_scaled_axis(DVec3::new(0.7, 1.8, 0.) * 0.6);
+    equivalent(blended.path.end_transform(), RootRigidTransform { translation: DVec3::ZERO,
+        rotation: (second*first).normalize() }, 1e-12);
+    assert!((first*second*blended.path.end_transform().rotation.conjugate()).to_scaled_axis().length() > 0.01);
+}
+
+#[test]
+fn rigid_fade_integration_keeps_explicit_frames_and_target_completion_tail() {
+    let (rig, clip) = linear_turn(Vec3::X*0.6);
+    let mut animator = Animator::new(clip.clone());
+    animator.advance(&rig, 0.2).unwrap();
+    animator.set_speed(2.).unwrap();
+    animator.transition_to_at_phase(clip, 0.1, 0.4).unwrap();
+    let phase = animator.normalized_phase();
+    let plan = animator.prepare_root_rigid_fade(&rig, 0.25, [true;3], 256).unwrap().unwrap();
+    let source_frame = RootRigidTransform {translation:DVec3::new(0.4,0.1,-0.2), rotation:DQuat::from_rotation_x(0.3)};
+    let target_frame = RootRigidTransform {translation:DVec3::Z*0.5, rotation:DQuat::from_rotation_y(0.7)};
+    let assembled = plan.integrate_spatial(Some(source_frame), target_frame, 0.01, 0.01, 4096).unwrap();
+    assert!((assembled.path.duration()-0.25).abs()<1e-12);
+    assert_eq!(animator.normalized_phase(), phase);
+    let count = plan.target_tail.spans().len();
+    let fade_spans = &assembled.path.spans()[..assembled.path.spans().len()-count];
+    let fade_end = fade_spans.last().unwrap().sample(1.).unwrap();
+    let tail_frame = target_frame.compose(plan.target_fade.end_transform()).unwrap();
+    let mut different_from_restarting_axes = false;
+    for (original, actual) in plan.target_tail.spans().iter().zip(&assembled.path.spans()[fade_spans.len()..]) {
+        for u in [0.,0.5,1.] {
+            let local = original.sample(u).unwrap();
+            let rotation = tail_frame.rotation*local.rotation*tail_frame.rotation.conjugate();
+            let spatial = RootRigidTransform {rotation:rotation.normalize(),
+                translation:tail_frame.rotation*local.translation+tail_frame.translation-rotation*tail_frame.translation};
+            equivalent(actual.sample(u).unwrap(),spatial.compose(fade_end).unwrap(),1e-12);
+            let restarted = fade_end.compose(local).unwrap();
+            different_from_restarting_axes |= (actual.sample(u).unwrap().translation-restarted.translation).length()>1e-4;
+        }
+        let speed = original.velocity(0.5).unwrap().unwrap().angular.length();
+        let retimed_speed = actual.velocity(0.5).unwrap().unwrap().angular.length();
+        assert!((retimed_speed-2.*speed).abs()<1e-6);
+    }
+    assert!(different_from_restarting_axes);
+    assert!(plan.integrate_spatial(None,target_frame,0.01,0.01,4096).is_err());
+    assert!(plan.integrate_spatial(Some(source_frame),target_frame,0.01,0.01,1).is_err());
+    assert_eq!(animator.normalized_phase(),phase);
+}
+
+#[test]
+fn rigid_path_retiming_preserves_geometry_and_changes_velocity() {
+    let twist = RootRigidTwist {linear:DVec3::new(0.4,0.1,0.2),angular:DVec3::Y*0.7};
+    let path = RootRigidPath::from_twists(&[(twist,0.5),(twist,1.)],2).unwrap();
+    let slower = path.retimed(3.).unwrap();
+    equivalent(slower.end_transform(),path.end_transform(),1e-12);
+    for (a,b) in path.spans().iter().zip(slower.spans()) {
+        for u in [0.,0.3,1.] {equivalent(a.sample(u).unwrap(),b.sample(u).unwrap(),1e-12);}
+        assert_eq!(b.start(),a.start()*2.);
+        assert_eq!(b.end(),a.end()*2.);
+        let a = a.velocity(0.5).unwrap().unwrap();
+        let b = b.velocity(0.5).unwrap().unwrap();
+        assert!((b.linear-a.linear*0.5).length()<1e-12);
+        assert!((b.angular-a.angular*0.5).length()<1e-12);
+    }
+    assert!(path.retimed(0.).is_err());
+    assert!(path.retimed(f64::NAN).is_err());
+    let stationary = RootRigidPath::from_twists(&[],0).unwrap().retimed(0.4).unwrap();
+    assert_eq!(stationary.duration(),0.4);
+    assert!(stationary.spans().is_empty());
+}
+
+#[test]
+fn approximation_projection_expands_for_origin_and_angular_error_at_body_vertices() {
+    let path = RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear:DVec3::ZERO, angular:DVec3::ZERO },1.)],1).unwrap();
+    let approximation = RootRigidApproximation {path,origin_error_bound:0.2,angular_error_bound:0.3};
+    let point = DVec3::X*2.;
+    let normal = DVec3::Z*3.;
+    let nominal = approximation.path.spans()[0].projection_bounds(point,normal).unwrap();
+    let bounds = approximation.span_projection_bounds(0,point,normal).unwrap();
+    let exact = (DQuat::from_rotation_y(0.3)*point-DVec3::Z*0.2).dot(normal);
+    assert!(exact<nominal[0]);
+    assert!(bounds[0]<=exact && exact<=bounds[1]);
+    let unit = approximation.span_projection_bounds(0,point,DVec3::Z).unwrap();
+    assert!((bounds[0]-unit[0]*3.).abs()<1e-10);
+    assert!((bounds[1]-unit[1]*3.).abs()<1e-10);
+    assert!(approximation.span_projection_bounds(1,point,normal).is_err());
+    assert!(approximation.span_projection_bounds(0,point,DVec3::NAN).is_err());
+    assert!(approximation.span_projection_bounds(0,DVec3::NAN,normal).is_err());
+    let malformed = RootRigidApproximation {angular_error_bound:f64::NAN,..approximation};
+    assert!(malformed.span_projection_bounds(0,point,normal).is_err());
+}
+
+#[test]
+fn screw_field_enclosure_rejects_polynomial_motion_without_a_certificate() {
+    let (_,clip)=linear_turn(Vec3::X*0.6);
+    let path=clip.root_rigid_curve(0).unwrap().path(0.,1.,[true;3],256).unwrap();
+    assert!(matches!(path.screw_field_enclosure(0,0.5,256),
+        Err(AnimationError::RootRotationTransitionUnsupported)));
+}
+
+#[test]
+fn imported_cubic_angular_derivative_has_outward_rational_bounds() {
+    let p0=Vec3::X*0.6;
+    let (_,clip)=clip(p0,vec![Vec3Key {time:0.,value:p0},Vec3Key {time:1.,value:p0}],
+        vec![QuatKey {time:0.,value:Quat::IDENTITY},QuatKey {time:1.,value:Quat::IDENTITY}],
+        TrackInterpolation {rotation:Interpolation::CubicSpline,..Default::default()},
+        JointTangents {rotation:vec![[Vec4::ZERO,Vec4::new(3.,7.,-2.,1.)],
+            [Vec4::new(-1.,4.,2.,0.3),Vec4::ZERO]],..Default::default()},Playback::Clamp);
+    let path=clip.root_rigid_curve(0).unwrap().path(0.,1.,[true;3],256).unwrap()
+        .transformed(DQuat::from_rotation_z(0.4),1.,DVec3::ZERO).unwrap();
+    for span in path.spans() {
+        let (control,left,_right)=span.rotation().cubic_velocity_inputs().unwrap();
+        let bounds=span.rotation().enclosed_angular_derivative_bounds().unwrap().unwrap();
+        println!("ANGULAR_RATE_ENCLOSURE {:?}",(control,span.start(),span.end(),
+            [bounds.speed_bound(),bounds.acceleration_bound()]));
+        for u in [0.,0.2,0.5,0.8,1.] {
+            let bounds=span.rotation().cubic_angular_velocity_bounds(u).unwrap().unwrap();
+            assert!(bounds.iter().all(|v|v[0].is_finite()&&v[1]-v[0]<1e-8));
+            println!("CUBIC_ANGULAR_ENCLOSURE {:?}",(control,left.to_array(),span.start(),span.end(),u,bounds));
+        }
+        assert!(span.rotation().cubic_angular_velocity_bounds(f64::NAN).is_err());
+    }
+    let (_,linear)=linear_turn(p0);
+    let path=linear.root_rigid_curve(0).unwrap().path(0.,1.,[true;3],256).unwrap();
+    assert!(path.spans()[0].rotation().cubic_angular_velocity_bounds(0.5).unwrap().is_none());
+}
+
+#[test]
+fn cubic_spatial_velocity_encloses_moving_pivot_for_all_extraction_axes() {
+    let p0=Vec3::X*0.6;
+    let (_,clip)=clip(p0,vec![Vec3Key {time:0.,value:p0},Vec3Key {time:1.,value:p0+Vec3::new(0.3,0.2,-0.1)}],
+        vec![QuatKey {time:0.,value:Quat::IDENTITY},QuatKey {time:1.,value:Quat::IDENTITY}],
+        TrackInterpolation {translation:Interpolation::CubicSpline,rotation:Interpolation::CubicSpline,..Default::default()},
+        JointTangents {translation:vec![[Vec3::ZERO,Vec3::new(0.,3.,1.)],[Vec3::new(-0.5,-2.,2.),Vec3::ZERO]],
+            rotation:vec![[Vec4::ZERO,Vec4::new(3.,7.,-2.,1.)],[Vec4::new(-1.,4.,2.,0.3),Vec4::ZERO]],
+            ..Default::default()},Playback::Clamp);
+    for mask in 0..8 {
+        let axes=[mask&1!=0,mask&2!=0,mask&4!=0];
+        let path=clip.root_rigid_curve(0).unwrap().path(0.,1.,axes,256).unwrap()
+            .transformed(DQuat::from_rotation_z(0.4),1.5,DVec3::new(0.4,-0.2,0.3)).unwrap();
+        for span in path.spans() {
+            let (control,left,right)=span.rotation().cubic_velocity_inputs().unwrap();
+            let angular=span.rotation().enclosed_angular_derivative_bounds().unwrap().unwrap();
+            let bounds=span.enclosed_twist_bounds().unwrap().unwrap();
+            println!("SPATIAL_RATE_ENCLOSURE {:?}",(span.additive.map(|v|v.to_array()),span.pivot.map(|v|v.to_array()),
+                span.start(),span.end(),[angular.speed_bound(),angular.acceleration_bound()],
+                [bounds.linear_speed_bound,bounds.angular_speed_bound,bounds.rates.linear,bounds.rates.angular]));
+            for u in [0.,0.2,0.5,0.8,1.] {
+                let e=span.spatial_twist_enclosure(u).unwrap().unwrap();
+                assert!(e.linear_bounds().into_iter().chain(e.angular_bounds()).all(|v|v[0].is_finite()&&v[1]-v[0]<1e-7));
+                println!("CUBIC_SPATIAL_ENCLOSURE {:?}",(span.additive.map(|v|v.to_array()),span.pivot.map(|v|v.to_array()),
+                    control,left.to_array(),right.to_array(),span.start(),span.end(),u,e.linear_bounds(),e.angular_bounds()));
+            }
+        }
+    }
+}
+
+#[test]
+fn linear_and_held_spatial_fields_have_velocity_enclosures() {
+    let (_,clip)=linear_turn(Vec3::X*0.6);
+    for mask in 0..8 {
+        let axes=[mask&1!=0,mask&2!=0,mask&4!=0];
+        let path=clip.root_rigid_curve(0).unwrap().path(0.,1.,axes,256).unwrap()
+            .transformed(DQuat::from_rotation_z(0.4),1.5,DVec3::new(0.4,-0.2,0.3)).unwrap();
+        for span in path.spans() {
+            let (from,axis,left,right)=span.rotation().arc_velocity_inputs().unwrap();
+            for u in [0.,0.2,0.5,0.8,1.] {
+                let e=span.spatial_twist_enclosure(u).unwrap().unwrap();
+                println!("ARC_SPATIAL_ENCLOSURE {:?}",(span.additive.map(|v|v.to_array()),span.pivot.map(|v|v.to_array()),
+                    (from.to_array(),axis.to_array(),left.to_array(),right.to_array()),span.start(),span.end(),u,
+                    e.linear_bounds(),e.angular_bounds()));
+            }
+        }
+    }
+    let p0=Vec3::ZERO;
+    let (_,clip)=self::clip(p0,vec![Vec3Key {time:0.,value:p0},Vec3Key {time:1.,value:Vec3::X}],
+        vec![],TrackInterpolation::default(),JointTangents::default(),Playback::Clamp);
+    let path=clip.root_rigid_curve(0).unwrap().path(0.,1.,[true;3],256).unwrap();
+    for span in path.spans() {
+        let e=span.spatial_twist_enclosure(0.5).unwrap().unwrap();
+        for (i,value) in [1.,0.,0.].into_iter().enumerate() {
+            assert!(e.linear_bounds()[i][0]<=value && value<=e.linear_bounds()[i][1]);
+            assert!(e.angular_bounds()[i][0]<=0. && 0.<=e.angular_bounds()[i][1]);
+        }
+    }
+}
+
+#[test]
+fn sampled_velocity_uncertainty_is_accumulated_and_cannot_be_refined_away() {
+    let actual=RootRigidTwist {linear:DVec3::X,angular:DVec3::Y};
+    let nominal=actual.retimed(0.9).unwrap();
+    let enclosure=actual.enclosure().unwrap();
+    let error=enclosure.error_bounds(nominal).unwrap();
+    assert!(error.linear_bound()>=0.1_f64.next_down());
+    assert!(error.angular_bound()>=0.1_f64.next_down());
+    assert_eq!(actual.enclosure().unwrap().error_bounds(actual).unwrap().linear_bound(),0.);
+    let approximation=RootRigidPath::integrate_spatial_enclosed(1.,RootTwistRateBounds {linear:0.,angular:0.},
+        0.3,0.11,64,|_|Ok((nominal,enclosure))).unwrap();
+    for span in approximation.path.spans() {
+        for u in [0.,0.5,1.] {
+            let time=span.start()+u*(span.end()-span.start());
+            let reference=actual.increment(time).unwrap();
+            let sampled=span.sample(u).unwrap();
+            assert!((reference.translation-sampled.translation).length()<=approximation.origin_error_bound);
+            assert!((reference.rotation*sampled.rotation.conjugate()).to_scaled_axis().length()<=approximation.angular_error_bound+1e-14);
+        }
+    }
+    assert!(RootRigidPath::integrate_spatial_enclosed(1.,RootTwistRateBounds {linear:0.,angular:0.},
+        0.01,0.01,64,|_|Ok((nominal,enclosure))).is_err());
 }

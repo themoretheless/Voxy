@@ -1,0 +1,17 @@
+{
+  "animation_tests_passed": 99,
+  "independent_decimal_cases": 4,
+  "decimal_precision": 400,
+  "verified": [
+    "real normalization of stored finite unit-near quaternion",
+    "rigid inverse and composition",
+    "similarity with displaced origin",
+    "signed scales -2,0,0.5,2",
+    "mapped point within independent matrix enclosure"
+  ],
+  "not_certified": [
+    "upstream velocity extraction",
+    "full collision pipeline",
+    "runtime candidate publication"
+  ]
+}

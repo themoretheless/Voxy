@@ -1,0 +1,13 @@
+{
+  "animation_tests_passed": 91,
+  "verified": [
+    "piecewise analytic commuting blend at every approximate span boundary and midpoint",
+    "different clip duration retiming",
+    "noncommuting ordered quaternion product",
+    "frozen stationary source",
+    "capacity failure",
+    "STEP rejection"
+  ],
+  "physical_moving_fades": "not enabled",
+  "error_bounds": "conditional real arithmetic; numerical roundoff not certified"
+}

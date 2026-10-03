@@ -1,0 +1,12 @@
+{
+  "gameplay_unit_tests_passed": 45,
+  "gameplay_integration_tests_passed": 42,
+  "verified": [
+    "envelope broadphase retains a contact absent from nominal sweep",
+    "stationary nonzero envelope is checked",
+    "analytic contact fraction and displacement",
+    "query exhaustion and invalid clearance reject",
+    "exact trajectory integration regressions"
+  ],
+  "approximate_runtime_admission": "not enabled"
+}

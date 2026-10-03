@@ -6,6 +6,8 @@ use crate::root_curve::RootCurve;
 use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
 mod integration;
+mod enclosure;
+pub use enclosure::{RootRigidEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds};
 mod blend;
 pub use blend::RootSpatialTwistBounds;
 mod partition;
@@ -396,6 +398,28 @@ impl RootRigidPath {
             time = next;
         }
         Ok(Self { spans, duration:time, end })
+    }
+    /// Changes total elapsed time while retaining every geometric span/event.
+    /// Moving spans cannot collapse to zero duration; stationary paths can acquire
+    /// a wall duration without inventing velocity or motion.
+    pub fn retimed(&self, duration: f64) -> Result<Self, AnimationError> {
+        if !duration.is_finite() || duration < 0. {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        let mut spans = Vec::with_capacity(self.spans.len());
+        for original in &self.spans {
+            let start = (original.start()/self.duration)*duration;
+            let end = (original.end()/self.duration)*duration;
+            let rotation = original.rotation.with_times(start,end)?;
+            let screw = match original.screw {
+                Some((twist, initial)) => Some((twist.retimed(
+                    (original.end()-original.start())/(end-start))?,initial)),
+                None => None,
+            };
+            spans.push(RootRigidSpan { rotation, screw,
+                additive: original.additive, pivot: original.pivot });
+        }
+        Ok(Self { spans, duration, end: self.end })
     }
     /// Appends a path expressed in the same fixed spatial frame.
     /// Each following sample left-composes this path's accepted endpoint.

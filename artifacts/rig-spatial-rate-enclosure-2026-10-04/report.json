@@ -1,0 +1,13 @@
+{
+  "animation_tests_passed": 105,
+  "independent_whole_span_cases": 56,
+  "decimal_precision": 400,
+  "extraction_axis_masks": 8,
+  "verified": [
+    "whole-span additive/pivot position and derivative hulls",
+    "outward full spatial speed/rate coupling",
+    "analytic moving-pivot derivative regression",
+    "STEP no finite field bounds"
+  ],
+  "scope": "canonical stored field; full builder/collision integration remains outstanding"
+}

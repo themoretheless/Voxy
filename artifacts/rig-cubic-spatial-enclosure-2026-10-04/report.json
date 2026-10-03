@@ -1,0 +1,19 @@
+{
+  "animation_tests_passed": 102,
+  "independent_decimal_cases": 280,
+  "decimal_precision": 400,
+  "extraction_axis_masks": 8,
+  "verified": [
+    "stored cubic full rotation including both constant frames",
+    "linear spatial field and moving-pivot derivative",
+    "all extraction masks",
+    "shifted scaled rotated coordinates",
+    "independent matrix differentiation"
+  ],
+  "not_certified": [
+    "errors before stored coefficients",
+    "held and arc interpolation velocity enclosures",
+    "full collision arithmetic",
+    "runtime moving fades"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "animation_tests_passed": 105,
+  "independent_whole_span_cases": 7,
+  "decimal_precision": 400,
+  "verified": [
+    "Bernstein component hull proves positive cubic norm",
+    "outward first and second coefficient derivative bounds",
+    "whole-span angular speed and acceleration inequality",
+    "analytic closed cubic derivative regression",
+    "STEP returns no finite rate bound"
+  ],
+  "remaining": [
+    "full linear spatial rate envelope",
+    "builder wiring",
+    "collision numeric bounds"
+  ]
+}
