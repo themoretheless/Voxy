@@ -1,0 +1,47 @@
+{
+  "scope": "Named authored stance foot IK inside ordinary App Play transaction",
+  "tests": {
+    "broader_checkpoint": {
+      "editor": 109,
+      "gameplay_lib": 43,
+      "gameplay_integration": 41,
+      "total": 193,
+      "gpu_tests_ignored": 9
+    },
+    "final_foot_tests": 5,
+    "final_foot_tests_overlap_with_broader_checkpoint": 4,
+    "total_distinct_passed": 194
+  },
+  "check": "passed",
+  "clippy": "passed with warnings; before final unreachable-target regression was added",
+  "verified": [
+    "ordinary App Play holds sole world point while body moves",
+    "ordinary Stop clears runtime and restores authored scene including foot bindings",
+    "sole plane normal and offset on sloped supports with reflected ancestor and nonuniform reflected tip",
+    "joint translations/scales and root motion metadata preserved",
+    "overlapping and missing named bindings rejected",
+    "budget failure retains scene, frame Arc and serial",
+    "unreachable target releases without publishing clamped pose or immediately replanting"
+  ],
+  "native_visual_foot_acceptance": false,
+  "gpu_foot_acceptance": false,
+  "remaining": [
+    "inspector editing of authored foot configuration",
+    "clip-driven stance/contact curves",
+    "smooth contact weights and pelvis adjustments",
+    "helper/twist bones between selected IK joints",
+    "moving-platform body carry and transported foot twist",
+    "native/GPU foot acceptance",
+    "full engine parity, hardware/CUDA, solid mechanics and fluid objective"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/lib.rs": "2d587f5bd5abe0a792a6dce5e388f02eb206e68c76dcc92008ac494321223222",
+    "crates/voxy_editor/src/animation_runtime.rs": "cd6373c7c78ef673de4d8c0c42bae3efe489a305a8d0491b8994a9262fcbd6df",
+    "crates/voxy_editor/src/foot_placement.rs": "8576c98329513ef723a73acdf07d554f933376ce8e58f6c1da0598824cd1a088",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "cb862743c3503f91eadc5d39575309ff2b29656776772a41d09a277543e6bcd9",
+    "crates/voxy_gameplay/src/lib.rs": "c073ce57e0cff12097a4b4a5baf154df73e4731926de78c20dc21f62f1d64e4c",
+    "crates/voxy_gameplay/src/staged_tick.rs": "e3623eda7c2b645c6c894f795958a039cb2d911b20102fd4bff3f47853e285a1",
+    "crates/voxy_gameplay/src/foot_contact.rs": "816a0c5ba2761a04f278067b68be4aac8308f0cc6122167a03374ccf68317de0",
+    "docs/engine-research/mechanisms/rig-animation/foot-placement-play.md": "5e269164a1e3567f86f7fff109fdcb1f5eb0e0061b81f68650e9d1a094277f80"
+  }
+}

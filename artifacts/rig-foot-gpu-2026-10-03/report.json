@@ -1,0 +1,51 @@
+{
+  "scope": "Foot-specific GPU pixel/reference and resource ownership acceptance; native presentation remains unverified",
+  "adapter": {
+    "name": "Apple M4 Max",
+    "backend": "Metal"
+  },
+  "tests": {
+    "editor_regular": 113,
+    "ignored_in_regular_run": 10,
+    "foot_gpu_explicit_passed": 1
+  },
+  "gpu": {
+    "independent_reference": "Three world-space triangle vertices at locked x=.03; no solved palette or CPU skinning helper",
+    "pixel_equality": true,
+    "uncorrected_image_differs": true,
+    "owners": 2,
+    "shared_sources": 1,
+    "allocation_bytes": 1184,
+    "clear_bytes": 0,
+    "validation_error": null
+  },
+  "release_build": "passed with warnings",
+  "clippy": "passed with warnings before optional native review hold was added; final review hook release build passed",
+  "native": {
+    "status": "not accepted",
+    "exit_code": 1,
+    "presented_frames": 0,
+    "surface_outcome": "SkippedOccluded",
+    "window_occlusion_state": 8192,
+    "window_visible": true,
+    "window_key": true,
+    "cua_raise_and_click": "Window focused; screenshot remained blank",
+    "initial_source_directory_wait": "Diagnostic process interrupted; asset copied to temporary directory before subsequent completed native runs",
+    "binary_replace": "Fresh destination inode used after prior overwritten executable was killed",
+    "manual_render_review_passed": false
+  },
+  "remaining": [
+    "Diagnose Metal surface visibility with focused window and missing NSWindow visible occlusion bit",
+    "Native foot presented-frame and Stop acceptance",
+    "GPU slope/reflection/contact-curve acceptance",
+    "Full hardware/CUDA, engine parity, solid mechanics and fluids objective"
+  ],
+  "sha256": {
+    "crates/voxy_editor/src/lib.rs": "b3c8b2b60dfe45d0e1c8f4382d0f842d2f5fa396653346ae9f66a6bef5960b5b",
+    "crates/voxy_editor/src/animated_models/tests.rs": "e9dcfe52816fd861496658805708350b1c3c6da7d739569b7a2ac9d8cf2502fb",
+    "crates/voxy_editor/src/animation_smoke.rs": "5dcd219dff954241972b44c3294801adf39285b3ca95cf1e0637d99ef725c7dc",
+    "crates/voxy_render/examples/assets/foot-contact.glb": "73e5851dd02049c29e86e867511658b4cfdd3ea0495ddd0311aa891d96af0ddd",
+    "vendor/wgpu-hal/src/metal/surface.rs": "e32437996be1d1ddb809446c93286941c33344c92324c2b9cda3ad1cae789bcb"
+  },
+  "native_binary_sha256": "ee1a4c7089657ca37f4193f5e18104da6ddec9d8181d2ec13c8a0319e281de61"
+}

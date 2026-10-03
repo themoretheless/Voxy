@@ -677,6 +677,10 @@ struct Transition {
     duration: f64,
 }
 
+/// Normalized target-clip interval. Looping end may exceed one; no cycles are enumerated.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct AnimationPhaseInterval { pub start: f64, pub end: f64, pub looping: bool }
+
 #[derive(Clone, Debug)]
 pub struct Animator {
     current: Arc<AnimationClip>,
@@ -775,6 +779,27 @@ impl Animator {
             speed: 1.0,
             transition: None,
         }
+    }
+
+    /// Current target clip phase in [0,1], using the same bounded f64 clock as pose sampling.
+    #[must_use]
+    pub fn normalized_phase(&self) -> f64 {
+        self.current.phase(self.time) / f64::from(self.current.duration)
+    }
+
+    /// Predicts the interval from the current clock without advancing it.
+    /// # Errors
+    /// Rejects the same invalid timestep range as `advance`.
+    pub fn phase_interval(&self, dt: f32) -> Result<AnimationPhaseInterval, AnimationError> {
+        if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        let duration = f64::from(self.current.duration);
+        let start = self.current.phase(self.time);
+        let end = start + f64::from(dt) * f64::from(self.speed);
+        let looping = self.current.playback == Playback::Loop;
+        Ok(AnimationPhaseInterval { start: start/duration,
+            end: if looping { end/duration } else { end.min(duration)/duration }, looping })
     }
 
     /// Select the joint whose local translation drives displacement extraction.

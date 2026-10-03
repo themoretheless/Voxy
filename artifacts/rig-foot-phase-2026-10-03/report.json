@@ -1,0 +1,38 @@
+{
+  "scope": "Smooth normalized target-clip stance weights and interval-aware swing release using existing animator clock",
+  "tests": {
+    "broader_checkpoint_animation": 65,
+    "broader_checkpoint_editor": 112,
+    "broader_checkpoint_total": 177,
+    "hardware_tests_ignored": 9,
+    "final_contact_tests": 8,
+    "final_contact_overlap": 7,
+    "total_distinct_passed": 178
+  },
+  "scope_note": "Broad checkpoint preceded immutable settings Arc sharing and final skipped-swing integration test; final eight contact tests verify both deltas",
+  "clippy": "passed with warnings",
+  "verified": [
+    "smoothstep keyed weights and bounded admission",
+    "speed pause loop and clamp share animator clock",
+    "zero-weight keys crossed within ticks across seams and full loops rearm contact",
+    "skipped swing acquires new sole point",
+    "budget rejection preserves old frame serial phase and contacts; retry succeeds",
+    "legacy fixed stance and ordinary App Play/Stop remain tested"
+  ],
+  "remaining": [
+    "per-clip contact curve selection",
+    "imported contact event tracks and crossfade contact blending",
+    "inspector editing of foot configuration",
+    "pelvis adjustment and platform body carry/twist",
+    "native/GPU foot-specific acceptance",
+    "full engine, hardware/CUDA, solid mechanics and fluids goal"
+  ],
+  "sha256": {
+    "crates/voxy_animation/src/lib.rs": "873d70d991eeff244c2e668ff13eea0ce146bccb439dab19289dddde985f722d",
+    "crates/voxy_editor/src/model_playback.rs": "5da950232681cd5526f2194edd24423271f2b0b5a2dd9e312d182456a391de81",
+    "crates/voxy_editor/src/animation_runtime.rs": "137cac03cd7edd01d6fbfad9870870b1efcf54334768523b23cbb74860d1a9c3",
+    "crates/voxy_editor/src/foot_placement.rs": "d45650ded23522ca95316b83d449356001d1c25374503cb8156ca381eefbc48b",
+    "crates/voxy_editor/src/foot_placement/tests.rs": "c21d5224845de95e6dc64c77762d1d71c30f7d112483d72265c62c524d352a5c",
+    "docs/engine-research/mechanisms/rig-animation/foot-placement-play.md": "bde92aad3e93f208aa35126ac0fdef31785e3b2f017e631883323fded840e0d3"
+  }
+}

@@ -23,6 +23,8 @@ mod gizmo;
 mod gpu_model;
 mod model_playback;
 mod animation_runtime;
+mod foot_placement;
+pub use foot_placement::{ModelFootPlacement, FootBinding, FootContactKey};
 mod scene_limits;
 mod animated_models;
 mod animation_smoke;
@@ -103,6 +105,7 @@ fn model_registry() -> Result<ComponentRegistry, voxy_scene::DocumentError> {
     registry.register::<String>("editor.model.v1")?;
     registry.register::<ModelPart>("editor.model-part.v1")?;
     registry.register::<ModelAnimation>("editor.model-animation.v1")?;
+    registry.register::<ModelFootPlacement>("editor.foot-placement.v1")?;
     registry.register::<SceneMaterial>("editor.material.v1")?;
     registry.register::<DirectionalLight>("editor.light.v1")?;
     registry.register::<EditorCamera>("editor.camera.v1")?;
@@ -933,7 +936,7 @@ impl App {
                     } else if system == "character.step" {
                         access.require_write("animation.playback").map_err(|error|
                             voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
-                        let candidate = self.play.animations.prepare(
+                        let mut candidate = self.play.animations.prepare(
                             access.read().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
                             &models, dt as f32,
                         ).map_err(voxy_gameplay::GameplayFixedError::Motion)?;
@@ -942,12 +945,24 @@ impl App {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
                             access.require_write("player.input").map_err(|error|
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
-                            physics.fixed_step_with_motion_and_rigid_trajectories(
-                                access.write().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
-                                &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
-                            ).map_err(voxy_gameplay::GameplayFixedError::Physics)?;
+                            if candidate.has_foot_placement() {
+                                let (_, corrected) = physics.fixed_step_with_preparation(
+                                    access.write().map_err(|e| voxy_gameplay::GameplayFixedError::Motion(e.to_string()))?,
+                                    &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
+                                    |preview, budget| candidate.clone().correct_feet(preview, budget),
+                                ).map_err(|error| match error {
+                                    voxy_gameplay::CharacterTickError::Physics(error) => voxy_gameplay::GameplayFixedError::Physics(error),
+                                    voxy_gameplay::CharacterTickError::Preparation(error) => voxy_gameplay::GameplayFixedError::Motion(error),
+                                })?;
+                                candidate = corrected;
+                            } else {
+                                physics.fixed_step_with_motion_and_rigid_trajectories(
+                                    access.write().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
+                                    &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
+                                ).map_err(voxy_gameplay::GameplayFixedError::Physics)?;
+                            }
                         } else {
-                            if !candidate.motions().is_empty() || !candidate.trajectories().is_empty() {
+                            if candidate.has_foot_placement() || !candidate.motions().is_empty() || !candidate.trajectories().is_empty() {
                                 return Err(voxy_gameplay::GameplayFixedError::Motion("root motion requires a physics runtime".into()));
                             }
                             access.require_write("player.input").map_err(|error|
@@ -4202,6 +4217,7 @@ fn run_model_viewport_configured_registry(
     if mode == ViewportMode::AnimationSmoke {
         let mut smoke = animation_smoke::Smoke::default();
         smoke.profile = std::env::var_os("VOXY_ANIMATION_PROFILE").is_some();
+        smoke.foot_contact = std::env::var_os("VOXY_FOOT_CONTACT_SMOKE").is_some();
         smoke.composed_root = std::env::var_os("VOXY_COMPOSED_ROOT_SMOKE").is_some();
         smoke.root_rotation = smoke.composed_root || std::env::var_os("VOXY_ROOT_ROTATION_SMOKE").is_some();
         smoke.root_motion = smoke.root_rotation || std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();

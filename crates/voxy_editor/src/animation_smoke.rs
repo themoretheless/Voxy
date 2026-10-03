@@ -8,6 +8,8 @@ pub(super) struct Smoke {
     pub(super) root_motion: bool,
     pub(super) root_rotation: bool,
     pub(super) composed_root: bool,
+    pub(super) foot_contact: bool,
+    foot_review_until: Option<std::time::Instant>,
     rotation_origin: Option<voxy_scene::Transform>,
     pub(super) oriented_body: bool,
     phase: u8,
@@ -55,6 +57,9 @@ impl App {
         self.field_key(KeyCode::Enter, None)
     }
     pub(super) fn animation_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+        if self.animation_smoke.as_ref().is_some_and(|smoke| smoke.foot_contact) {
+            return self.foot_contact_acceptance();
+        }
         let Some(smoke) = &self.animation_smoke else {
             return Ok(false);
         };
@@ -416,6 +421,95 @@ impl App {
                 return Ok(true);
             }
             _ => unreachable!(),
+        }
+        Ok(false)
+    }
+}
+
+impl App {
+    fn foot_contact_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+        use glam::{Mat4, Vec3};
+        let smoke = self.animation_smoke.as_ref().ok_or("missing foot smoke")?;
+        if self.frames < smoke.since + 3 { return Ok(false); }
+        match smoke.phase {
+            0 => {
+                if self.catalog.snapshot(&self.id).is_none()
+                    || self.graphics.as_ref().is_none_or(|g| !g.models.contains_key(&self.id)) {
+                    return Ok(false);
+                }
+                self.edit_key(KeyCode::KeyD)?;
+                let first = self.instances[0]; let second = self.instances[1];
+                self.scene.set_local(first,voxy_scene::Transform { translation:Vec3::Y,..Default::default() })?;
+                self.scene.set_local(second,voxy_scene::Transform { translation:-Vec3::Y*0.1,..Default::default() })?;
+                self.scene.insert_component(first,voxy_gameplay::CharacterBody {
+                    half_extents:[0.1,1.,0.1],speed:0.3,..Default::default() })?;
+                self.scene.insert_component(second,voxy_gameplay::BoxCollider { half_extents:[4.,0.1,4.] })?;
+                self.scene.insert_component(first,crate::ModelAnimation::default())?;
+                self.scene.insert_component(second,crate::ModelAnimation { clip:None,..Default::default() })?;
+                self.scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
+                    bones:["hip".into(),"knee".into(),"foot".into()],sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
+                    pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],
+                }] })?;
+                self.camera.legacy = false; self.camera.perspective = false;
+                self.camera.target = Vec3::new(0.,0.15,0.); self.camera.distance=2.;
+                self.commit_authoring()?;
+                let authoring = self.authoring_document()?;
+                self.toggle_play()?;
+                self.play.player_input.event(voxy_gameplay::RIGHT,1.)?;
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.authoring=Some(authoring);smoke.phase=1;smoke.since=self.frames;
+            }
+            1 => {
+                if self.play.simulation_ticks < 12 { return Ok(false); }
+                let first = self.instances[0];
+                let asset = self.catalog.snapshot(&self.id).ok_or("missing foot asset")?;
+                let model = asset.value().animated.as_ref().ok_or("missing foot model")?;
+                let frame = self.play.animations.frame(first,model).ok_or("missing accepted foot frame")?;
+                let tip = usize::from(model.resolve_joint_name("foot")?);
+                let mut globals: Vec<Mat4> = Vec::new();
+                for (local,joint) in frame.pose.local().iter().zip(model.skeleton.joints()) {
+                    globals.push(joint.parent.map_or(local.matrix(),|p| globals[usize::from(p)]*local.matrix()));
+                }
+                let sole = self.scene.world_matrix(first)?.transform_point3(globals[tip].transform_point3(Vec3::new(0.,-0.1,0.)));
+                let center = self.scene.local(first)?.translation;
+                if !sole.abs_diff_eq(Vec3::new(0.005,0.,0.),5e-6) || center.x < 0.05 {
+                    return Err(format!("native foot contact drifted: sole={sole:?} center={center:?}").into());
+                }
+                let graphics = self.graphics.as_ref().ok_or("missing foot graphics")?;
+                let signature = frame.skin_matrices.iter().map(|m|m.to_cols_array().map(f32::to_bits)).collect();
+                if graphics.animated_models.pose_signature(first)? != Some(signature) {
+                    return Ok(false);
+                }
+                let (owners,gpu_primitives,sources) = graphics.animated_models.counts();
+                if (owners,gpu_primitives,sources)!=(2,2,1) { return Err("native foot skin resources missing".into()); }
+                println!("VOXY_NATIVE_FOOT_CONTACT frames={} ticks={} sole={sole:?} center={center:?} accepted_palette=true owners={owners} gpu_primitives={gpu_primitives} sources={sources} bytes={}",
+                    self.frames,self.play.simulation_ticks,graphics.animated_models.allocation_bytes());
+                if std::env::var_os("VOXY_FOOT_REVIEW_SMOKE").is_some() {
+                    self.play.player_input.event(voxy_gameplay::RIGHT,0.)?;
+                    let smoke = self.animation_smoke.as_mut().unwrap();
+                    smoke.phase=4;
+                    smoke.foot_review_until=Some(std::time::Instant::now()+std::time::Duration::from_secs(10));
+                } else {
+                    self.toggle_play()?;
+                    let smoke = self.animation_smoke.as_mut().unwrap();smoke.phase=2;smoke.since=self.frames;
+                }
+            }
+            4 => {
+                if std::time::Instant::now() < smoke.foot_review_until.ok_or("missing review interval")? {
+                    return Ok(false);
+                }
+                self.toggle_play()?;
+                let smoke = self.animation_smoke.as_mut().unwrap();smoke.phase=2;smoke.since=self.frames;
+            }
+            2 => {
+                if self.graphics.as_ref().ok_or("missing foot graphics after Stop")?.animated_models.allocation_bytes()!=0
+                    || self.authoring_document()? != *smoke.authoring.as_ref().ok_or("missing foot authoring")? {
+                    return Err("native foot Stop did not restore authoring and release resources".into());
+                }
+                println!("VOXY_NATIVE_FOOT_STOP frames={} animated_bytes=0 authoring_restored=true",self.frames);
+                return Ok(true);
+            }
+            _=>return Err("invalid native foot phase".into()),
         }
         Ok(false)
     }

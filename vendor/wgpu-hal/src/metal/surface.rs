@@ -375,11 +375,13 @@ impl crate::Surface for super::Surface {
                     let visible: bool = unsafe { objc2::msg_send![&*window, isVisible] };
                     let miniaturized: bool = unsafe { objc2::msg_send![&*window, isMiniaturized] };
                     let key: bool = unsafe { objc2::msg_send![&*window, isKeyWindow] };
+                    let on_active_space: bool = unsafe { objc2::msg_send![&*window, isOnActiveSpace] };
                     let state = occlusion_state | ((visible as usize) << 8)
-                        | ((miniaturized as usize) << 9) | ((key as usize) << 10);
+                        | ((miniaturized as usize) << 9) | ((key as usize) << 10)
+                        | ((on_active_space as usize) << 11);
                     if LAST.swap(state, std::sync::atomic::Ordering::Relaxed) != state {
                         let number: isize = unsafe { objc2::msg_send![&*window, windowNumber] };
-                        eprintln!("METAL WINDOW number={number} occlusion={occlusion_state} visible={visible} miniaturized={miniaturized} key={key}");
+                        eprintln!("METAL WINDOW number={number} occlusion={occlusion_state} visible={visible} miniaturized={miniaturized} key={key} active_space={on_active_space}");
                     }
                 }
                 if occlusion_state & NS_WINDOW_OCCLUSION_STATE_VISIBLE == 0 {

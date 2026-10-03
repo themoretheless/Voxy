@@ -1,0 +1,27 @@
+{
+  "scope": "Fallible character pose preparation before physics/scene/input publication",
+  "tests": {
+    "lib": 39,
+    "integration": 40,
+    "total": 79
+  },
+  "clippy": "passed with warnings",
+  "checks": [
+    "preparation failure retains scene and body state",
+    "pending jump survives failed preparation and is consumed by successful retry",
+    "accepted renderer matrix matches committed scene",
+    "support budget failure aborts publication",
+    "invalid physics skips preparation"
+  ],
+  "remaining": [
+    "authored foot chains and sole offsets",
+    "plant/release state",
+    "editor IK preparation callback",
+    "native and GPU foot-lock acceptance"
+  ],
+  "sha256": {
+    "crates/voxy_gameplay/src/lib.rs": "22491625bd5eea7baa9485a91329ecf6a5fcd432659fa0ab29cc6b2bfc29931f",
+    "crates/voxy_gameplay/src/staged_tick.rs": "e3623eda7c2b645c6c894f795958a039cb2d911b20102fd4bff3f47853e285a1",
+    "crates/voxy_gameplay/tests/integration.rs": "da026128ca39a93e608441dcee148a4c80d9c6cc7d77cfeb2da3869ce5168d99"
+  }
+}

@@ -5,6 +5,10 @@
 //! rotation/scale must be identity. Static boxes support affine transforms.
 mod angular_sweep;
 mod support;
+mod staged_tick;
+mod foot_contact;
+pub use foot_contact::{FootContactSettings, FootContactInput, FootContactStatus, FootContactState, FootContactCandidate};
+pub use staged_tick::{AcceptedCharacterPose, CharacterTickPreview, CharacterTickError};
 pub use support::{SupportAnchor, SupportContact, SupportProbe, SupportQueryBudget, SupportWorld};
 mod audio_assets;
 pub use audio_assets::{
@@ -627,7 +631,7 @@ impl CharacterPhysics {
         dt: f64,
         motions: &[CharacterMotion],
     ) -> Result<Vec<AppliedCharacterMotion>, PhysicsError> {
-        self.fixed_step_with_paths(scene, input, dt, motions, &[], &[])
+        self.fixed_step_with_paths(scene, input, dt, motions, &[], &[], None)
             .map(|(arcs, _)| arcs)
     }
 
@@ -674,7 +678,7 @@ impl CharacterPhysics {
                     angular_displacement: Vec3::ZERO });
             }
         }
-        self.fixed_step_with_paths(scene, input, dt, &motions, paths, &[])
+        self.fixed_step_with_paths(scene, input, dt, &motions, paths, &[], None)
             .map(|(_, paths)| paths)
     }
 
@@ -699,6 +703,14 @@ impl CharacterPhysics {
         &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
         translations: &[(NodeId, Vec3)], paths: &[CharacterRigidTrajectoryMotion<'_>],
     ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
+        self.fixed_step_mixed(scene, input, dt, translations, paths, None)
+    }
+
+    fn fixed_step_mixed(
+        &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
+        translations: &[(NodeId, Vec3)], paths: &[CharacterRigidTrajectoryMotion<'_>],
+        prepare: Option<&mut staged_tick::Prepare<'_>>,
+    ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
         if paths.len() > self.max_bodies || translations.len() > self.max_bodies {
             return Err(PhysicsError::InvalidMotion);
         }
@@ -715,13 +727,14 @@ impl CharacterPhysics {
             motions.push(CharacterMotion { owner: path.owner, displacement: Vec3::ZERO,
                 angular_displacement: Vec3::ZERO });
         }
-        self.fixed_step_with_paths(scene, input, dt, &motions, &[], paths).map(|(_, paths)| paths)
+        self.fixed_step_with_paths(scene, input, dt, &motions, &[], paths, prepare).map(|(_, paths)| paths)
     }
 
     fn fixed_step_with_paths(
         &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
         motions: &[CharacterMotion], paths: &[CharacterTrajectoryMotion<'_>],
         rigid_paths: &[CharacterRigidTrajectoryMotion<'_>],
+        prepare: Option<&mut staged_tick::Prepare<'_>>,
     ) -> Result<(Vec<AppliedCharacterMotion>, Vec<AppliedCharacterTrajectoryMotion>), PhysicsError> {
         self.validate(scene)?;
         let mut requested_paths = HashMap::with_capacity(paths.len());
@@ -1005,6 +1018,26 @@ impl CharacterPhysics {
             }
             runtime.published = published;
             edits.push((owner, local));
+        }
+        if let Some(prepare) = prepare {
+            let mut characters = Vec::with_capacity(edits.len());
+            for &(owner, local) in &edits {
+                let runtime = &next[&owner];
+                let world_matrix = if let Some(parent) = scene.parent(owner)? {
+                    scene.world_matrix(parent)? * local.matrix()?
+                } else { local.matrix()? };
+                characters.push(AcceptedCharacterPose {
+                    owner, world_matrix, physical_center: precise_center(runtime.state.body),
+                    physical_rotation: runtime.orientation,
+                    velocity: glam::DVec3::from_array(runtime.state.velocity),
+                    grounded: runtime.state.grounded,
+                });
+            }
+            characters.sort_by_key(|character| character.owner);
+            let support = SupportWorld::from_static_world(&world)?;
+            let preview = CharacterTickPreview { characters, support };
+            let mut budget = SupportQueryBudget::new(trajectory_queries.min(65536))?;
+            prepare(&preview, &mut budget)?;
         }
         scene.set_locals(&edits)?;
         self.states = next;

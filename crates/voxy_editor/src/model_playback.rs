@@ -77,6 +77,7 @@ pub(crate) struct ModelPlayback {
     model: Arc<ModelAsset>,
     animator: Option<Animator>,
     root_motion_joint: u16,
+    contact_interval: Option<voxy_animation::AnimationPhaseInterval>,
 }
 impl ModelPlayback {
     pub(crate) fn new(model: Arc<ModelAsset>, settings: ModelAnimation) -> Result<Self, String> {
@@ -109,6 +110,7 @@ impl ModelPlayback {
             model,
             animator,
             root_motion_joint,
+            contact_interval: None,
         })
     }
 
@@ -123,6 +125,13 @@ impl ModelPlayback {
         }
         self.root_motion_joint = joint;
         Ok(())
+    }
+
+    pub(crate) fn contact_interval(&self) -> Option<voxy_animation::AnimationPhaseInterval> {
+        self.contact_interval
+    }
+    pub(crate) fn contact_phase(&self) -> Option<f64> {
+        self.animator.as_ref().map(Animator::normalized_phase)
     }
 
     pub(crate) fn set_speed(&mut self, speed: f32) -> Result<(), String> {
@@ -164,6 +173,8 @@ impl ModelPlayback {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err("invalid model animation timestep".into());
         }
+        let interval = self.animator.as_ref().map(|animator| animator.phase_interval(dt))
+            .transpose().map_err(|error| error.to_string())?;
         let mut candidate = self.animator.clone();
         let mut path = None;
         let frame = if let Some(animator) = &mut candidate {
@@ -198,6 +209,7 @@ impl ModelPlayback {
         };
         let result = publish(&self.model, &frame, path.as_ref())?;
         self.animator = candidate;
+        self.contact_interval = interval;
         Ok(result)
     }
 }

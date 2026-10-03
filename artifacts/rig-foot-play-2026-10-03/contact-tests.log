@@ -1,0 +1,12 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 32.81s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-0773fd9aa87bd708)
+
+running 5 tests
+test foot_placement::tests::binding_rejects_missing_and_dependent_chains ... ok
+test foot_placement::tests::unreachable_retained_contact_releases_without_publishing_a_clamped_pose ... ok
+test foot_placement::tests::slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface ... ok
+test foot_placement::tests::fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clock ... ok
+test foot_placement::tests::ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 114 filtered out; finished in 0.03s

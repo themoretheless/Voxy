@@ -1,0 +1,231 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.99s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-0773fd9aa87bd708)
+
+running 118 tests
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ignored, requires GPU; animated editor LOD camera and budget publication
+test animated_models::tests::composed_root_motion_collision_renders_once_with_in_place_gpu_palette ... ignored, requires real GPU; composed root path and in-place skin palette
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ignored, requires GPU upload; explicit CPU deformation fallback
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette ... ignored, requires real GPU; curved character turn and in-place skin palette
+test animated_models::tests::fixed_tick_hierarchy_owners_share_gpu_source_at_capacity ... ignored, requires real GPU; fixed-tick hierarchy owners at runtime capacity
+test animated_models::tests::gpu_material_revision_failure_preserves_texture_storage ... ignored, requires GPU; accepted material revision and residency storage lifetime
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ignored, requires real GPU; editor owner playback and scene draw
+test audio_play::tests::aggregate_input_and_pcm_admission_preserve_counters_on_rejection ... ok
+test camera::tests::both_projections_round_trip_after_orbit_pan_zoom ... ok
+test animation_runtime::rotation_tests::old_authored_settings_default_rotation_off ... ok
+test audio_play::tests::scoped_audio_denial_preserves_counters_and_scene ... ok
+test component_fields::tests::bound_collection_field_follows_item_id_and_rejects_stale_edits ... ok
+test animation_runtime::tests::fixed_frames_wait_for_assets_pause_resume_and_never_advance_on_read ... ok
+test component_fields::tests::editor_typing_survives_component_reindexing_but_rejects_changed_values ... ok
+test animation_runtime::rotation_tests::signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject ... ok
+test animation_runtime::tests::motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors ... ok
+test component_fields::tests::escaped_paths_scalar_types_and_atomic_array_reset ... ok
+test component_fields::tests::identified_member_reset_uses_escaped_ids_and_keeps_inner_arrays_atomic ... ok
+test foot_placement::tests::binding_rejects_missing_and_dependent_chains ... ok
+test foot_placement::tests::slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface ... ok
+test component_fields::tests::generic_inspector_commits_validates_and_undoes_registered_fields ... ok
+test frame_styles::tests::styles_own_camera_material_and_light_and_reject_invalid_inputs ... ok
+test frame_styles::tests::ui_owner_snapshot_tracks_activity_removal_and_reused_generation ... ok
+test foot_placement::tests::fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clock ... ok
+test game_ui_input::tests::focus_visual_uses_admitted_visible_owner_and_clears_on_cancel_or_publication_change ... ok
+test game_ui_input::tests::input_waits_for_visible_snapshot_and_cancels_capture_across_publications ... ok
+test gizmo::tests::axis_hits_use_physical_viewport_coordinates ... ok
+test game_ui_input::tests::live_pointer_release_revalidates_removal_disable_and_failed_layout ... ok
+test game_ui_input::tests::keyboard_combines_activation_edges_and_revalidates_live_targets ... ok
+test animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic ... ok
+test gpu_model::tests::deferral_wakes_on_source_budget_or_residency_change ... ok
+test gpu_model::tests::global_lod_admission_retains_all_requests_and_recovers_after_eviction ... ok
+test gpu_model::tests::residency_drops_with_last_owner_and_dead_entries_are_pruned ... ok
+test model_playback::tests::bind_selection_and_invalid_settings_are_explicit ... ok
+test component_fields::tests::animation_inspector_rejects_invalid_values_and_round_trips_bind_pose_history ... ok
+test animation_runtime::tests::editor_play_drives_root_motion_through_wall_and_preserves_failed_tick ... ok
+test animation_runtime::rotation_tests::prepared_rotation_and_translation_only_owners_publish_one_atomic_tick ... ok
+test foot_placement::tests::ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings ... ok
+test component_fields::tests::installed_custom_codecs_survive_editor_history_scene_io_play_and_workers ... ok
+test model_playback::tests::foreign_clip_is_rejected_before_owner_creation_or_publication ... ok
+test model_playback::tests::cubic_invalid_pose_never_reaches_publication_and_preserves_owner_clock ... ok
+test model_playback::tests::named_selection_resolves_imported_names_without_resetting_time ... ok
+test model_playback::tests::motion_joint_settings_keep_old_scenes_and_owner_clock_compatible ... ok
+test model_playback::tests::shared_asset_has_independent_owner_clocks_and_failed_publication_retries ... ok
+test panel_focus::tests::component_focus_tracks_schema_and_path_when_fields_are_reindexed ... ok
+test panel_focus::tests::invalid_reconciliation_preserves_live_focus_and_target ... ok
+test panel_focus::tests::held_activation_cannot_jump_to_reindexed_object ... ok
+test panel_focus::tests::repeats_after_focus_loss_cannot_reactivate_a_target ... ok
+test audio_settings::tests::manifest_relocation_rejects_stale_settings_save_until_explicit_reload ... ok
+test packaged_game::tests::launch_rejects_traversal_and_nested_bootstrap_before_running ... ok
+test picking::tests::empty_triangle_bounds_do_not_hide_a_real_hit_behind ... ok
+test panel_focus::tests::surviving_identity_updates_action_and_context_changes_cancel ... ok
+test prefab_authoring::tests::subtree_export_keeps_nested_links_overrides_and_authored_parent ... ok
+test panel_focus::ui_scene_integration::ui_scene_validation_undo_and_play_restore_use_common_registry ... ok
+test animation_runtime::rotation_tests::ordinary_play_rotates_from_rig_limits_at_wall_and_stop_restores_authoring ... ok
+test animation_runtime::rotation_tests::ordinary_play_composes_moving_root_and_stop_restores_authoring ... ok
+test audio_reload::tests::replacement_budget_rejects_candidate_and_retains_old_publication ... ok
+test gpu_model::tests::animated_preview_preserves_primitive_colors_and_accounts_all_allocations ... ok
+test scene3d_tests::gpu_residency_requires_active_renderable_descendants ... ok
+test scene3d_tests::static_gltf_hierarchy_material_camera_edit_and_persistence_share_resources ... ok
+test panel_focus::integration_tests::unpresented_panels_block_hits_and_cancel_held_activation_until_represented ... ok
+test panel_focus::integration_tests::real_panels_and_native_key_adapter_share_focus_and_authoring_actions ... ok
+test scene3d_tests::camera_and_light_without_model_round_trip_and_unknown_assets_reject ... ok
+test tests::audio_settings_reference_inspector_supports_default_and_history ... ok
+test tests::audio_inspector_edits_asset_and_parameters_with_validated_history ... ok
+test tests::authored_character_turn_uses_physics_and_stop_restores_pose ... ok
+test tests::audio_component_crud_discovers_assets_and_rejects_competing_listener ... ok
+test component_collections::tests::collection_buttons_edit_empty_lists_follow_ids_and_round_trip_history ... ok
+test tests::behavior_inspector_edits_undoes_and_rejects_conflicting_writers ... ok
+test tests::custom_ui_setup_recreates_callback_state_per_play_and_rejects_failed_start ... ok
+test tests::authored_motion_runs_in_fixed_loop_and_stop_restores_descriptor ... ok
+test prefab_authoring::tests::flat_project_scene_save_rejects_external_edits_and_refreshes_own_revision ... ok
+test tests::drag_is_one_undo_step_and_cancel_preserves_redo ... ok
+test tests::deletion_restores_empty_scene_and_preserves_object_identity ... ok
+test tests::gizmo_pointer_gestures_constrain_axes_and_undo_without_changing_resource ... ok
+test tests::duplication_preserves_registered_behavior_and_activity_with_new_identity ... ok
+test tests::hierarchy_inspector_and_play_preserve_authoring_history ... ok
+test tests::mouse_selection_uses_transforms_depth_activity_and_restored_handles ... ok
+test tests::native_play_simulation_ticks_and_stop_preserve_authoring ... ok
+test tests::mixer_inspector_round_trip_history_and_duplicate_bus_rollback ... ok
+test scene3d_tests::textured_static_import_rejects_truncation_and_observes_external_dependencies ... ok
+test tests::pending_play_cancel_keeps_authoring_history_and_simulation_stopped ... ok
+test tests::play_pointer_path_activates_runtime_ui_and_stop_cancels_capture ... ok
+test tests::physics_component_inspector_crud_history_and_play_use_authored_descriptors ... ok
+test scene3d_tests::multi_material_nodes_preserve_parent_transforms_and_all_six_min_filters ... ok
+test tests::shutdown_joins_workers_even_if_simulation_rejects_scene ... ok
+test tests::registered_ui_callback_uses_scene_barrier_without_creating_input_action ... ok
+test tests::reload_preserves_scene_instance_and_edited_transform ... ok
+test tests::shutdown_joins_workers_after_behavior_destroy_panics ... ok
+test tests::playable_fixture_persists_physics_and_rejects_invalid_parenting_or_scale ... ok
+test ui_draw::focus_tests::ring_is_clipped_inward_and_handles_tiny_controls ... ok
+test tests::split_view_input_keeps_cameras_independent_and_drag_coordinates_local ... ok
+test import::animated_tests::fox_texture_import_observes_external_image_and_preserves_animation ... ok
+test tests::ui_activation_reaches_fixed_input_once_and_stop_resets_custom_actions ... ok
+test tests::transform_inspector_accepts_character_rotation_and_rejects_scale_atomically ... ok
+test tests::standalone_uses_fixed_loop_without_preview_spin_or_authoring_controls ... ok
+test ui_draw::gpu_tests::gpu_overlay_preserves_glyph_alpha_and_clip ... ignored, requires a real GPU adapter and local TrueType font
+test ui_live::gpu_reload_tests::gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher ... ignored, requires a real GPU and two local TrueType fonts
+test ui_draw::tests::backgrounds_follow_scene_painter_order ... ok
+test ui_live::presentation_tests::upload_is_not_input_publication_until_native_frame_acknowledgement ... ok
+test ui_live::tests::finished_panic_does_not_lose_unfinished_worker_ownership ... ok
+test ui_text::tests::font_count_budget_rejects_before_any_file_reads ... ok
+test view_layout::tests::odd_width_boundary_and_scaled_pixels_share_one_layout ... ok
+test animation_runtime::tests::editor_expanded_rig_scene_survives_history_save_load_play_and_stop ... ok
+test ui_live::source_reload_tests::font_content_change_unavailability_and_recovery_invalidate_attempt_without_losing_visible_layout ... ok
+test ui_draw::tests::glyph_geometry_clips_uvs_and_rejects_stale_owner_publications ... ok
+test tests::authoring_file_round_trip_preserves_ids_transforms_and_resource_references ... ok
+test prefab_authoring::tests::editor_saves_member_override_and_inherits_other_motion_fields_on_reload ... ok
+test ui_text::worker_tests::worker_publication_failure_retains_old_text_and_source_observations ... ok
+test prefab_authoring::tests::editor_nested_prefab_edits_save_undo_and_dependency_failure_retain_scene ... ok
+test scene3d_tests::incompatible_gltf_hierarchy_reload_retains_resource_and_edited_owners ... ok
+test ui_text::tests::observed_logical_font_unicode_runs_share_atlas_and_invalid_font_retains_prior ... ok
+test import::lod_model_tests::model_certificate_identity_and_dependency_publication ... ok
+test prefab_fields::collection_reset_tests::collection_member_reset_preserves_topology_other_members_and_source_inheritance ... ok
+test import::animated_tests::observed_skeletal_lod_import_keeps_clips_source_and_last_good ... ok
+test ui_text::budget_tests::repeated_font_content_still_counts_each_retained_input ... ok
+test tests::multiple_resources_reload_independently_and_round_trip ... ok
+test tests::play_imports_scene_audio_advances_pcm_and_stop_releases_session ... ok
+
+test result: ok. 109 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 2.10s
+
+     Running unittests src/main.rs (target/debug/deps/voxy_editor-d0b3e3a83f28528d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (target/debug/deps/voxy_gameplay-2d12eb0a0844e160)
+
+running 43 tests
+test angular_sweep::tests::grounded_yaw_and_turning_away_are_certified_over_the_whole_arc ... ok
+test angular_sweep::tests::budget_failure_is_explicit_and_tall_yaw_uses_perpendicular_radius ... ok
+test angular_sweep::tests::middle_of_half_and_full_turn_hits_even_when_endpoints_are_clear ... ok
+test convex::tests::oriented_face_contact_is_analytic_and_invariant_to_extent_scale ... ok
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test foot_contact::tests::acquisition_distance_validation_and_failed_budget_leave_published_state_intact ... ok
+test foot_contact::tests::contact_holds_surface_point_through_animation_drift_and_platform_transform ... ok
+test foot_contact::tests::release_hysteresis_prevents_replanting_until_swing_and_landing_rearms ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test support::tests::a_one_ulp_thickness_change_on_a_wide_platform_releases_the_old_face_anchor ... ok
+test foot_contact::tests::missing_or_steep_support_releases_instead_of_transferring_a_planted_foot ... ok
+test support::tests::extreme_finite_inverse_face_vectors_keep_unit_normals_instead_of_zero_or_nan ... ok
+test support::tests::invalid_input_capacity_and_budget_failures_do_not_return_partial_ground ... ok
+test support::tests::nearest_contact_and_equal_distance_ties_use_stable_owner_identity ... ok
+test support::tests::removal_generation_reuse_activity_dimensions_and_foreign_scenes_release_or_reject_anchors ... ok
+test support::tests::shared_collision_snapshot_keeps_geometry_extents_and_scene_identity_from_one_revision ... ok
+test support::tests::sheared_reflected_support_normals_and_local_anchors_follow_parent_transforms ... ok
+test support::tests::support_queries_reuse_character_physics_dynamic_parent_restrictions ... ok
+test support::tests::touching_faces_endpoint_hits_parallel_misses_and_corner_normal_ties_are_defined ... ok
+test support::tests::unwalkable_first_hit_occludes_lower_ground_and_inside_origins_do_not_plant ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test angular_sweep::tests::projection_extrema_bound_independent_quaternion_samples ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+
+test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/integration.rs (target/debug/deps/integration-ebb9f6ae4a53c8e7)
+
+running 41 tests
+test failure_in_later_body_preserves_all_poses_runtime_state_and_input ... ok
+test character_step_read_only_grant_preserves_pose_and_pending_input ... ok
+test authored_axes_are_parent_local_and_conflicting_sources_are_atomic ... ok
+test animation_displacement_sweeps_slides_and_is_consumed_once ... ok
+test animation_ceiling_contact_removes_persistent_upward_velocity ... ok
+test bounded_recovery_failure_preserves_every_pose_and_input_edge ... ok
+test animation_displacement_collides_vertically_and_with_affine_walls ... ok
+test angular_budget_and_invalid_requests_preserve_pose_state_and_input ... ok
+test durable_descriptors_reload_with_new_runtime_identity_and_no_velocity ... ok
+test horizontal_animation_during_jump_does_not_snap_back_to_floor ... ok
+test initial_penetration_is_an_explicit_error_without_partial_publication ... ok
+test authored_character_rotation_uses_one_writer_and_complete_arc ... ok
+test character_domain_denials_preserve_live_physics_pose_and_input ... ok
+test noncommuting_curved_path_uses_body_basis_and_commits_once ... ok
+test noncommuting_offset_pivot_uses_body_basis_and_failure_is_atomic ... ok
+test invalid_animation_motion_preserves_all_owners_and_pending_input ... ok
+test oriented_character_ignores_empty_enclosing_aabb_corner_and_slides_at_true_support ... ok
+test composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick ... ok
+test parent_activity_deletion_component_removal_and_reused_generation_reconcile ... ok
+test angular_iteration_budget_is_shared_across_ordered_spans ... ok
+test support_failure_in_preparation_rolls_back_and_physics_failure_skips_preparation ... ok
+test ordered_full_turn_and_final_step_do_not_hide_a_collision ... ok
+test rotated_scaled_static_boxes_use_exact_sweeps_and_runtime_overlap_recovery ... ok
+test rigid_motion_preserves_winding_clips_mid_arc_and_retains_accepted_orientation ... ok
+test one_tick_curved_trajectory_hits_before_equal_endpoints_and_retains_orientation ... ok
+test swept_motion_hits_wall_without_tunneling_and_focus_cancels_intent ... ok
+test unknown_scheduled_system_preserves_scene_physics_and_input ... ok
+test translated_parent_teleport_resets_velocity_and_affine_dynamic_ancestors_fail ... ok
+test tilted_character_floor_contact_jump_and_recovery_use_rotated_shape ... ok
+test trajectory_query_failure_after_another_body_stages_motion_is_atomic ... ok
+test offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints ... ok
+test angular_ground_turn_preserves_jump_and_continuing_velocity ... ok
+test reflected_uniform_source_frame_sweeps_translation_and_rotation_together ... ok
+test curved_grounded_yaw_preserves_jump_and_tall_body_avoids_sphere_speed_overestimate ... ok
+test moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement ... ok
+test failed_pose_preparation_preserves_physics_scene_and_pending_input ... ok
+test grounded_tangent_motion_is_not_blocked_by_time_zero_floor_contact ... ok
+test foot_contact_candidates_publish_only_after_character_tick_accepts ... ok
+test quick_tap_survives_render_only_frames_and_is_consumed_once_during_catch_up ... ok
+test simultaneous_translation_and_turn_clip_the_closed_curve_before_the_wall ... ok
+test looped_animation_drives_collisions_without_duplicate_pose_translation ... ok
+
+test result: ok. 41 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
