@@ -5,6 +5,7 @@ use super::*;
 pub struct RootRigidFadePlan {
     initial: Animator,
     wall_seconds: f64,
+    extraction_axes: [bool; 3],
     /// Staged full-tick animator. Publish only after motion/physics acceptance.
     pub candidate: Animator,
     pub frame: AnimatorFrame,
@@ -21,6 +22,85 @@ pub struct RootRigidFadePlan {
     pub tail_wall_seconds: f64,
 }
 impl RootRigidFadePlan {
+    /// Compile directly from the retained animator snapshot's authored curves.
+    /// Original phases, speed, weights and completion are derived from that
+    /// snapshot rather than mutable diagnostic paths/factors on this plan.
+    /// Common-frame/body/publication error obligations remain with the owner.
+    pub fn integrate_original_sources_common_similarity(
+        &self,
+        common: RootRigidEnclosure,
+        scale: RootUniformScaleEnclosure,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        let initial = &self.initial;
+        let transition = initial
+            .transition
+            .as_ref()
+            .ok_or(AnimationError::RootRotationTransitionUnsupported)?;
+        let target_curve = initial.current.root_rigid_curve(initial.motion_joint)?;
+        let target_start = initial.current.phase(initial.time);
+        let travel = self.wall_seconds * f64::from(initial.speed);
+        let target = RootRigidSourceField::new(
+            &target_curve,
+            0.,
+            [target_start, target_start + travel],
+            self.extraction_axes,
+            common,
+            scale,
+            max_spans,
+        )?;
+        let source_curve = if transition.source_pose.is_some() {
+            None
+        } else {
+            Some(transition.source.root_rigid_curve(initial.motion_joint)?)
+        };
+        let source = source_curve
+            .as_ref()
+            .map(|curve| {
+                let start = transition.source.phase(transition.source_time);
+                RootRigidSourceField::new(
+                    curve,
+                    0.,
+                    [start, start + travel],
+                    self.extraction_axes,
+                    common,
+                    scale,
+                    max_spans,
+                )
+            })
+            .transpose()?;
+        let fade = self
+            .wall_seconds
+            .min((transition.duration - transition.elapsed).max(0.));
+        if fade == 0. {
+            return RootRigidCertifiedFadeInterval::integrate_sources(
+                None,
+                target,
+                [1., 1.],
+                self.wall_seconds,
+                origin_tolerance,
+                angular_tolerance,
+                max_spans,
+            );
+        }
+        let weights = [
+            transition.elapsed / transition.duration,
+            (transition.elapsed + fade) / transition.duration,
+        ];
+        RootRigidCertifiedFadeInterval::integrate_sources_with_completion(
+            source,
+            target,
+            weights,
+            self.wall_seconds,
+            fade,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )
+    }
+
     /// Maps both interval-local paths through their stored authored-origin
     /// factors into an explicit common frame. This encloses composition rather
     /// than rounding the two composed frames first. Imported factor/compiler
@@ -382,6 +462,7 @@ impl Animator {
         Ok(Some(RootRigidFadePlan {
             initial: self.clone(),
             wall_seconds: wall,
+            extraction_axes: axes,
             candidate,
             frame,
             source_fade,

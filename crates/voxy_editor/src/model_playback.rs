@@ -124,6 +124,34 @@ pub(crate) struct PreparedModelFade {
     plan: voxy_animation::RootRigidFadePlan,
 }
 impl PreparedModelFade {
+    /// Original-source compiler with the same asset/animator receipt owner.
+    /// Numerical body/publication admission is still a separate obligation.
+    pub(crate) fn bind_original_sources_common_similarity(
+        self,
+        owner: voxy_scene::NodeId,
+        common: voxy_animation::RootRigidEnclosure,
+        scale: voxy_animation::RootUniformScaleEnclosure,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<PreparedModelFadeMotion, String> {
+        let motion = self
+            .plan
+            .integrate_original_sources_common_similarity(
+                common,
+                scale,
+                origin_tolerance,
+                angular_tolerance,
+                max_spans,
+            )
+            .map_err(|error| error.to_string())?;
+        Ok(PreparedModelFadeMotion {
+            owner,
+            prepared: self,
+            motion,
+        })
+    }
+
     pub(crate) fn bind_common_similarity(
         self,
         owner: voxy_scene::NodeId,
@@ -939,12 +967,63 @@ mod physical_fade_receipt_tests {
     use super::*;
     #[test]
     fn physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back() {
+        exercise_physical_fade_receipt(false);
+    }
+    #[test]
+    fn original_source_fade_preserves_asset_receipt_and_transactional_rollback() {
+        exercise_physical_fade_receipt(true);
+    }
+    fn exercise_physical_fade_receipt(original_sources: bool) {
         use voxy_animation::RootRigidTransform;
         use voxy_gameplay::{CharacterBody, CharacterPhysics, CharacterTickError, player_input};
         use voxy_scene::{SceneGraph, Transform};
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
-        let model =
-            Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap());
+        let mut model = ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap();
+        if original_sources {
+            use voxy_animation::{
+                AnimationClip, Interpolation, JointTangents, JointTrack, Playback, QuatKey,
+                TrackInterpolation, Vec3Key,
+            };
+            let count = model.skeleton.joints().len();
+            let mut tracks = vec![JointTrack::default(); count];
+            tracks[0].translations = vec![
+                Vec3Key {
+                    time: 0.,
+                    value: glam::Vec3::ZERO,
+                },
+                Vec3Key {
+                    time: 1.,
+                    value: glam::Vec3::X,
+                },
+            ];
+            tracks[0].rotations = vec![
+                QuatKey {
+                    time: 0.,
+                    value: glam::Quat::IDENTITY,
+                },
+                QuatKey {
+                    time: 1.,
+                    value: glam::Quat::IDENTITY,
+                },
+            ];
+            let mut modes = vec![TrackInterpolation::default(); count];
+            modes[0].rotation = Interpolation::CubicSpline;
+            let mut tangents = vec![JointTangents::default(); count];
+            tangents[0].rotation = vec![[glam::Vec4::ZERO; 2]; 2];
+            model.animations = vec![Arc::new(
+                AnimationClip::new_with_tangents(
+                    "source receipt",
+                    1.,
+                    Playback::Loop,
+                    tracks,
+                    modes,
+                    tangents,
+                    &model.skeleton,
+                )
+                .unwrap(),
+            )];
+        }
+        let model = Arc::new(model);
         let mut playback = ModelPlayback::new(model, ModelAnimation::default()).unwrap();
         playback.transition_to_clip(0, 0.125).unwrap();
         let mut scene = SceneGraph::new(1);
@@ -961,19 +1040,33 @@ mod physical_fade_receipt_tests {
             .unwrap();
         let dt = 0.0625;
         let build = || {
-            playback
+            let prepared = playback
                 .prepare_certified_fade(dt, [true; 3], 256)
                 .unwrap()
-                .unwrap()
-                .bind_motion(
-                    owner,
-                    Some(RootRigidTransform::IDENTITY),
-                    RootRigidTransform::IDENTITY,
-                    0.01,
-                    0.01,
-                    4096,
-                )
-                .unwrap()
+                .unwrap();
+            if original_sources {
+                prepared
+                    .bind_original_sources_common_similarity(
+                        owner,
+                        voxy_animation::RootRigidEnclosure::IDENTITY,
+                        voxy_animation::RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+                        0.01,
+                        0.01,
+                        4096,
+                    )
+                    .unwrap()
+            } else {
+                prepared
+                    .bind_motion(
+                        owner,
+                        Some(RootRigidTransform::IDENTITY),
+                        RootRigidTransform::IDENTITY,
+                        0.01,
+                        0.01,
+                        4096,
+                    )
+                    .unwrap()
+            }
         };
         let staged = build();
         let other = build();
@@ -1012,6 +1105,12 @@ mod physical_fade_receipt_tests {
             )
             .unwrap();
         assert!(receipts[0].complete);
+        if original_sources {
+            assert_eq!(
+                scene.local(owner).unwrap().translation.x - before.translation.x,
+                dt
+            );
+        }
         assert!(frame.transition_weight > 0.);
         assert!(
             candidate.contact_interval().unwrap().end > candidate.contact_interval().unwrap().start

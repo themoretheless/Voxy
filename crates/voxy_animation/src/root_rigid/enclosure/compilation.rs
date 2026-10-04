@@ -669,6 +669,120 @@ pub(crate) fn translation_source_velocity_bounds(
     Ok(result)
 }
 
+/// Componentwise exact-source spatial angular velocity. The normalization
+/// derivative cancels in 2*vec(raw' * conjugate(raw))/|raw|².
+pub(crate) fn quaternion_cubic_source_angular_bounds(
+    control: [[f64; 4]; 4],
+    error: [f64; 4],
+    key_times: [f64; 2],
+    times: [f64; 2],
+) -> Result<[[f64; 2]; 3], AnimationError> {
+    if control.iter().flatten().any(|v| !v.is_finite())
+        || error.iter().any(|v| !v.is_finite() || *v < 0.)
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    if key_times.into_iter().chain(times).any(|v| !v.is_finite())
+        || key_times[1] <= key_times[0]
+        || times[0] < key_times[0]
+        || times[1] > key_times[1]
+        || times[1] < times[0]
+    {
+        return Err(AnimationError::InvalidSampleTime);
+    }
+    let dt = Scalar::exact(key_times[1]).sub(Scalar::exact(key_times[0]))?;
+    let u = Scalar(times[0], times[1])
+        .sub(Scalar::exact(key_times[0]))?
+        .div_interval_positive(dt)?;
+    let mut source = [[Scalar::exact(0.); 4]; 4];
+    for i in 0..4 {
+        for axis in 0..4 {
+            source[i][axis] = if error[axis] == 0. {
+                Scalar::exact(control[i][axis])
+            } else {
+                Scalar::exact(control[i][axis]).add(Scalar(-error[axis], error[axis]))?
+            };
+        }
+    }
+    let mut pending = vec![(Scalar(u.0.max(0.), u.1.min(1.)), 0_u32)];
+    let mut hull = [[f64::INFINITY, f64::NEG_INFINITY]; 3];
+    let mut visited = 0;
+    while let Some((u, depth)) = pending.pop() {
+        visited += 1;
+        if visited > 8191 {
+            return Err(AnimationError::RootRotationBudget);
+        }
+        let (value, derivative) = super::cubic::polynomial(source, u, dt)?;
+        let mut norm_squared = Scalar::exact(0.);
+        for component in value {
+            norm_squared = norm_squared.add(component.square()?)?;
+        }
+        if norm_squared.0 <= 0. {
+            let middle = u.0 * 0.5 + u.1 * 0.5;
+            if depth == 12 || middle <= u.0 || middle >= u.1 {
+                return Err(AnimationError::InvalidRootRotationCurve);
+            }
+            pending.push((Scalar(middle, u.1), depth + 1));
+            pending.push((Scalar(u.0, middle), depth + 1));
+            continue;
+        }
+        let product = cross(
+            [derivative[0], derivative[1], derivative[2]],
+            [value[0], value[1], value[2]],
+        )?;
+        for axis in 0..3 {
+            let angular = derivative[axis]
+                .mul(value[3])?
+                .sub(derivative[3].mul(value[axis])?)?
+                .sub(product[axis])?
+                .mul(Scalar::exact(2.))?
+                .div_interval_positive(norm_squared)?;
+            hull[axis][0] = hull[axis][0].min(angular.0);
+            hull[axis][1] = hull[axis][1].max(angular.1);
+        }
+    }
+    Ok(hull)
+}
+
+#[cfg(test)]
+mod source_angular_tests {
+    use super::*;
+    #[test]
+    fn source_angular_components_cover_noncommuting_polynomial_and_reject_zero_norm() {
+        // Bernstein controls of raw(u)=(u,u²,u³,1). The explicit error covers
+        // the exact rational thirds before the stored f64 control rounding.
+        let control = [
+            [0., 0., 0., 1.],
+            [1. / 3., 0., 0., 1.],
+            [2. / 3., 1. / 3., 0., 1.],
+            [1., 1., 1., 1.],
+        ];
+        for i in 0..=16 {
+            let u = f64::from(i) / 16.;
+            let bounds =
+                quaternion_cubic_source_angular_bounds(control, [1e-15; 4], [0., 1.], [u, u])
+                    .unwrap();
+            assert!(bounds.iter().all(|r| r[1] - r[0] < 1e-9));
+            if i == 8 {
+                for (range, expected) in bounds.into_iter().zip([8. / 5., 96. / 85., 128. / 85.]) {
+                    assert!(range[0] <= expected && range[1] >= expected);
+                }
+            }
+            println!("SOURCE_ANGULAR_COMPONENTS {:?}", (u, bounds));
+        }
+        let singular = [
+            [0., 0., 0., 1.],
+            [0., 0., 0., 1.],
+            [0., 0., 0., -1.],
+            [0., 0., 0., -1.],
+        ];
+        assert!(matches!(
+            quaternion_cubic_source_angular_bounds(singular, [0.; 4], [0., 1.], [0.5, 0.5]),
+            Err(AnimationError::InvalidRootRotationCurve)
+        ));
+    }
+}
+
 /// |omega| <= 2 |raw quaternion derivative| / |raw quaternion|.
 pub(crate) fn quaternion_cubic_source_speed_bound(
     control: [[f64; 4]; 4],

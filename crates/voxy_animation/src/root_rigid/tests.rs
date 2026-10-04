@@ -3427,6 +3427,202 @@ fn accepted_fade_prefix_keeps_precise_clocks_and_never_mutates_staged_tick() {
 }
 
 #[test]
+fn authored_constant_linear_rotation_is_exact_and_tiny_turns_are_not_held() {
+    let q = Quat::from_xyzw(0.5, 0.5, 0.5, 0.5);
+    let (_, source) = clip(
+        Vec3::X * 2.,
+        vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::ZERO,
+            },
+            Vec3Key {
+                time: 1.,
+                value: Vec3::X,
+            },
+        ],
+        vec![
+            QuatKey { time: 0., value: q },
+            QuatKey {
+                time: 1.,
+                value: -q,
+            },
+        ],
+        TrackInterpolation::default(),
+        JointTangents::default(),
+        Playback::Loop,
+    );
+    let curve = source.root_rigid_curve(0).unwrap();
+    let pose = curve
+        .source_sample_enclosure(0.5, [true; 3])
+        .unwrap()
+        .unwrap();
+    assert_eq!(pose.rotation_bounds(), [[0.; 2], [0.; 2], [0.; 2], [1.; 2]]);
+    let zero = curve
+        .source_delta_twist_enclosure(0., [0., 2.], [false; 3], 4)
+        .unwrap()
+        .unwrap();
+    assert_eq!(zero.linear_bounds(), [[0.; 2]; 3]);
+    assert_eq!(zero.angular_bounds(), [[0.; 2]; 3]);
+    let bound = RootRigidSourceField::new(
+        &curve,
+        0.,
+        [0., 2.],
+        [true; 3],
+        RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        4,
+    )
+    .unwrap();
+    let fade = RootRigidCertifiedFadeInterval::integrate_sources(
+        None,
+        bound,
+        [0., 1.],
+        1.,
+        0.01,
+        0.001,
+        256,
+    )
+    .unwrap();
+    assert!(
+        (fade.approximation().path.end_transform().translation.x - 1.).abs()
+            <= fade.approximation().origin_error_bound
+    );
+    assert!(curve.source_phase_enclosure(2., [true; 3]).is_err());
+    let (_, moving) = clip(
+        Vec3::ZERO,
+        vec![],
+        vec![
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 1.,
+                value: Quat::from_xyzw(1e-20, 0., 0., 1.),
+            },
+        ],
+        TrackInterpolation::default(),
+        JointTangents::default(),
+        Playback::Loop,
+    );
+    let angular = moving
+        .root_rotation_curve(0)
+        .unwrap()
+        .linear_source_angular_velocity_bounds(0., 1.)
+        .unwrap()
+        .unwrap();
+    assert!(angular[0][0] > 0. && angular[0][1] < 3e-20);
+    assert_eq!(angular[1], [0.; 2]);
+    assert_eq!(angular[2], [0.; 2]);
+    assert!(
+        moving
+            .root_rigid_curve(0)
+            .unwrap()
+            .source_phase_enclosure(0.5, [true; 3])
+            .unwrap()
+            .is_none()
+    );
+}
+
+#[test]
+fn original_source_fade_uses_private_animator_snapshot_and_signed_common_frame() {
+    let (rig, clip) = clip(
+        Vec3::X * 2.,
+        vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::ZERO,
+            },
+            Vec3Key {
+                time: 1.,
+                value: Vec3::X,
+            },
+        ],
+        vec![
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 1.,
+                value: Quat::IDENTITY,
+            },
+        ],
+        TrackInterpolation {
+            translation: Interpolation::Linear,
+            rotation: Interpolation::CubicSpline,
+            ..Default::default()
+        },
+        JointTangents {
+            rotation: vec![[Vec4::ZERO; 2]; 2],
+            ..Default::default()
+        },
+        Playback::Loop,
+    );
+    let mut animator = Animator::new(clip.clone());
+    animator.advance(&rig, 0.2).unwrap();
+    animator
+        .transition_to_at_phase(clip.clone(), 0.125, 0.4)
+        .unwrap();
+    let plan = animator
+        .prepare_root_rigid_fade_wall(&rig, 0.25, [true; 3], 256)
+        .unwrap()
+        .unwrap();
+    let common = RootRigidEnclosure::from_transform(RootRigidTransform {
+        translation: DVec3::new(10., 3., -2.),
+        rotation: DQuat::from_xyzw(0., 1., 0., 0.),
+    })
+    .unwrap();
+    let scale = RootUniformScaleEnclosure::from_scale(-2.).unwrap();
+    let compiled = plan
+        .integrate_original_sources_common_similarity(common, scale, 0.01, 0.001, 256)
+        .unwrap();
+    let approximation = compiled.approximation();
+    assert!(
+        (approximation.path.end_transform().translation - DVec3::X * 0.5).length()
+            <= approximation.origin_error_bound
+    );
+    assert!(plan.matches_animator(&animator));
+    let mut modified_diagnostics = plan.clone();
+    modified_diagnostics.weights = [0.9, 0.9];
+    modified_diagnostics.source_fade = None;
+    modified_diagnostics.source_factor = None;
+    modified_diagnostics.target_factor.translation = DVec3::splat(1e6);
+    let compiled_again = modified_diagnostics
+        .integrate_original_sources_common_similarity(common, scale, 0.01, 0.001, 256)
+        .unwrap();
+    assert_eq!(
+        compiled_again.approximation().path.end_transform(),
+        approximation.path.end_transform()
+    );
+    let mut changed = animator.clone();
+    changed.set_speed(0.5).unwrap();
+    assert!(!plan.matches_animator(&changed));
+    let (_, accepted) = plan.prepare_accepted_frame(&rig, 0.125).unwrap();
+    assert!(
+        accepted
+            .pose
+            .local
+            .iter()
+            .all(|joint| joint.matrix().is_finite())
+    );
+    animator.transition_to_at_phase(clip, 0.125, 0.8).unwrap();
+    let frozen = animator
+        .prepare_root_rigid_fade_wall(&rig, 0.0625, [true; 3], 256)
+        .unwrap()
+        .unwrap();
+    assert!(frozen.source_fade.is_none());
+    let motion = frozen
+        .integrate_original_sources_common_similarity(common, scale, 0.01, 0.001, 256)
+        .unwrap();
+    assert!(
+        (motion.approximation().path.end_transform().translation - DVec3::X / 32.).length()
+            <= motion.approximation().origin_error_bound
+    );
+}
+
+#[test]
 fn authored_common_frame_uses_both_original_phase_factors() {
     let (rig, clip) = linear_turn(Vec3::X * 0.6);
     let mut animator = Animator::new(clip.clone());
@@ -3995,6 +4191,12 @@ fn source_point_speed_accounts_for_bind_pivot_and_extraction_masks() {
         Playback::Clamp,
     );
     let curve = clip.root_rigid_curve(0).unwrap();
+    let tail = curve
+        .source_delta_twist_enclosure(0., [1., 3.], [true; 3], 4)
+        .unwrap()
+        .unwrap();
+    assert_eq!(tail.linear_bounds(), [[0.; 2]; 3]);
+    assert_eq!(tail.angular_bounds(), [[0.; 2]; 3]);
     let angular = curve
         .rotation_cubic_source_angular_speed_bound(0., 1.)
         .unwrap()
@@ -4082,6 +4284,158 @@ fn source_loop_enclosure_covers_exact_linear_motion_with_cubic_identity_rotation
         Playback::Loop,
     );
     let curve = clip.root_rigid_curve(0).unwrap();
+    let bound_source = RootRigidSourceField::new(
+        &curve,
+        0.,
+        [0., 1.],
+        [true; 3],
+        RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        4,
+    )
+    .unwrap();
+    let source_fade = RootRigidCertifiedFadeInterval::integrate_sources(
+        None,
+        bound_source,
+        [0., 1.],
+        1.,
+        0.01,
+        0.001,
+        256,
+    )
+    .unwrap();
+    let approximation = source_fade.approximation();
+    assert!(
+        (approximation.path.end_transform().translation.x - 0.5).abs()
+            <= approximation.origin_error_bound
+    );
+    assert!(approximation.origin_error_bound <= 0.01);
+    assert_eq!(
+        source_fade
+            .coordinate_certificate(1, 256)
+            .unwrap()
+            .unwrap()
+            .error_bound(),
+        0.
+    );
+    let cache = approximation.path.prepare_screw_enclosures(256).unwrap();
+    let proof = cache
+        .certify_fade_point_error(source_fade.fields(), [[-2., 2.]; 3], 256)
+        .unwrap();
+    assert!(proof.radius() <= 0.01);
+    assert!(matches!(
+        RootRigidCertifiedFadeInterval::integrate_sources(
+            None,
+            bound_source,
+            [0., 1.],
+            1.,
+            1e-6,
+            1e-6,
+            1
+        ),
+        Err(AnimationError::RootRigidBudget)
+    ));
+    let twice = RootRigidSourceField::new(
+        &curve,
+        0.,
+        [0., 2.],
+        [true; 3],
+        RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        4,
+    )
+    .unwrap();
+    let two_clock_fade = RootRigidCertifiedFadeInterval::integrate_sources(
+        Some(bound_source),
+        twice,
+        [0., 1.],
+        1.,
+        0.01,
+        0.001,
+        256,
+    )
+    .unwrap();
+    let approximation = two_clock_fade.approximation();
+    // Source speed 1, target speed 2, one global linear weight: integral=3/2.
+    assert!(
+        (approximation.path.end_transform().translation.x - 1.5).abs()
+            <= approximation.origin_error_bound
+    );
+    for (weights, exact) in [([0., 1.], 15. / 8.), ([0.5, 1.], 31. / 16.)] {
+        let completed = RootRigidCertifiedFadeInterval::integrate_sources_with_completion(
+            Some(bound_source),
+            twice,
+            weights,
+            1.,
+            0.25,
+            0.01,
+            0.001,
+            256,
+        )
+        .unwrap();
+        let approximation = completed.approximation();
+        assert!(
+            (approximation.path.end_transform().translation.x - exact).abs()
+                <= approximation.origin_error_bound
+        );
+        let cut = approximation
+            .path
+            .spans()
+            .iter()
+            .position(|span| span.end() == 0.25)
+            .unwrap();
+        assert_eq!(completed.accepted_wall_time(cut, 1., false).unwrap(), 0.25);
+        assert!(approximation.path.spans().len() <= 256);
+        let cache = approximation.path.prepare_screw_enclosures(256).unwrap();
+        assert!(
+            cache
+                .certify_fade_point_error(completed.fields(), [[-2., 2.]; 3], 256)
+                .unwrap()
+                .radius()
+                <= 0.01
+        );
+    }
+    assert!(matches!(
+        RootRigidCertifiedFadeInterval::integrate_sources_with_completion(
+            Some(bound_source),
+            twice,
+            [0., 1.],
+            1.,
+            0.25,
+            0.01,
+            0.001,
+            1
+        ),
+        Err(AnimationError::RootRigidBudget)
+    ));
+    assert!(matches!(
+        RootRigidCertifiedFadeInterval::integrate_sources_with_completion(
+            Some(bound_source),
+            twice,
+            [0., 0.75],
+            1.,
+            0.25,
+            0.01,
+            0.001,
+            256
+        ),
+        Err(AnimationError::RootRotationTransitionUnsupported)
+    ));
+    for invalid in [0., 2., f64::NAN] {
+        assert!(
+            RootRigidCertifiedFadeInterval::integrate_sources_with_completion(
+                Some(bound_source),
+                twice,
+                [0., 1.],
+                1.,
+                invalid,
+                0.01,
+                0.001,
+                256
+            )
+            .is_err()
+        );
+    }
     let candidate = RootRigidPath::from_twists(
         &[(
             RootRigidTwist {
@@ -4094,6 +4448,43 @@ fn source_loop_enclosure_covers_exact_linear_motion_with_cubic_identity_rotation
     )
     .unwrap();
     let prepared = candidate.prepare_screw_enclosures(1).unwrap();
+    let original = RootRigidFieldInterval::from_source_domain(
+        &curve,
+        0.,
+        [0., 1.],
+        [true; 3],
+        [0., 1.],
+        &RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        4,
+    )
+    .unwrap()
+    .unwrap();
+    let original_fade =
+        [RootRigidFadeFieldInterval::new(original, original, [0., 1.], [0., 1.]).unwrap()];
+    let source_proof = prepared
+        .certify_fade_point_error(&original_fade, [[-2., 2.]; 3], 1)
+        .unwrap();
+    assert!(source_proof.radius() >= 1. && source_proof.radius() < 1.000000001);
+    let matching = RootRigidPath::from_twists(
+        &[(
+            RootRigidTwist {
+                linear: DVec3::X,
+                angular: DVec3::ZERO,
+            },
+            1.,
+        )],
+        1,
+    )
+    .unwrap();
+    let matching_cache = matching.prepare_screw_enclosures(1).unwrap();
+    assert!(
+        matching_cache
+            .certify_fade_point_error(&original_fade, [[-2., 2.]; 3], 1)
+            .unwrap()
+            .radius()
+            < 1e-9
+    );
     let (error, radius) = curve
         .source_screw_point_error([0., 1.], [true; 3], [[0.; 2]; 3], &prepared, 4)
         .unwrap()
@@ -4224,7 +4615,147 @@ fn source_turning_cycles_cover_analytic_half_turn_and_pivot() {
         Playback::Loop,
     );
     let curve = clip.root_rigid_curve(0).unwrap();
+    let target = RootRigidSourceField::new(
+        &curve,
+        0.,
+        [0., 1.],
+        [true; 3],
+        RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        4,
+    )
+    .unwrap();
+    let source_fade = RootRigidCertifiedFadeInterval::integrate_sources(
+        None,
+        target,
+        [1., 1.],
+        1.,
+        0.25,
+        0.05,
+        1024,
+    )
+    .unwrap();
+    let approximation = source_fade.approximation();
+    let candidate = approximation.path.prepare_screw_enclosures(1024).unwrap();
+    let proof = candidate
+        .certify_fade_point_error(source_fade.fields(), [[1., 1.], [0., 0.], [0., 0.]], 1024)
+        .unwrap();
+    assert!(proof.radius() <= 0.3);
+    let end = approximation.path.end_transform();
+    let evaluated = end.translation + end.rotation * DVec3::X;
+    assert!((evaluated - DVec3::X * 4.).length() <= proof.radius());
+    assert_eq!(
+        source_fade
+            .coordinate_certificate(1, 1024)
+            .unwrap()
+            .unwrap()
+            .error_bound(),
+        0.
+    );
     let point_box = [[1., 1.], [0., 0.], [0., 0.]];
+    // At u=1/2: t=(5/2,0,2), t'=(13,0,0), omega=(0,6,0).
+    // The spatial linear field is t' - omega cross t = (1,0,15).
+    let source_field = curve
+        .source_phase_twist_enclosure([0.25, 0.75], [true; 3])
+        .unwrap()
+        .unwrap();
+    let midpoint_field = curve
+        .source_phase_twist_enclosure([0.5, 0.5], [true; 3])
+        .unwrap()
+        .unwrap();
+    for (ranges, exact) in [
+        (midpoint_field.linear_bounds(), [1., 0., 15.]),
+        (midpoint_field.angular_bounds(), [0., 6., 0.]),
+    ] {
+        for axis in 0..3 {
+            assert!(ranges[axis][0] <= exact[axis] && ranges[axis][1] >= exact[axis]);
+            assert!(ranges[axis][1] - ranges[axis][0] < 1e-10);
+        }
+    }
+    assert_eq!(source_field.angular_bounds()[0], [0., 0.]);
+    assert_eq!(source_field.angular_bounds()[2], [0., 0.]);
+    assert_eq!(source_field.coordinate_velocity_range(1), Some([0., 0.]));
+    let loop_field = curve
+        .source_delta_twist_enclosure(0., [0.25, 2.75], [true; 3], 4)
+        .unwrap()
+        .unwrap();
+    // Half-turn cycle prefix alternates the sign of X; its translation
+    // contributes to the spatial adjoint, retaining Z=15 at every midpoint.
+    for x in [-1., 1.] {
+        for (ranges, exact) in [
+            (loop_field.linear_bounds(), [x, 0., 15.]),
+            (loop_field.angular_bounds(), [0., 6., 0.]),
+        ] {
+            for axis in 0..3 {
+                assert!(ranges[axis][0] <= exact[axis] && ranges[axis][1] >= exact[axis]);
+            }
+        }
+    }
+    assert!(matches!(
+        curve.source_delta_twist_enclosure(0., [0.25, 2.75], [true; 3], 1),
+        Err(AnimationError::RootRigidBudget)
+    ));
+    let paused = RootRigidFieldInterval::from_source_domain(
+        &curve,
+        0.,
+        [1.5, 1.5],
+        [true; 3],
+        [10., 11.],
+        &RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        4,
+    )
+    .unwrap()
+    .unwrap();
+    assert_eq!(paused.velocity_enclosure().linear_bounds(), [[0.; 2]; 3]);
+    assert_eq!(paused.velocity_enclosure().angular_bounds(), [[0.; 2]; 3]);
+    for (ranges, exact) in [
+        (source_field.linear_bounds(), [1., 0., 15.]),
+        (source_field.angular_bounds(), [0., 6., 0.]),
+    ] {
+        for axis in 0..3 {
+            assert!(ranges[axis][0] <= exact[axis] && ranges[axis][1] >= exact[axis]);
+        }
+    }
+    assert!(source_field.coordinate_velocity_range(0).is_none());
+    let common_frame = RootRigidEnclosure::from_transform(RootRigidTransform {
+        translation: DVec3::X * 10.,
+        rotation: DQuat::from_xyzw(0., 1., 0., 0.),
+    })
+    .unwrap();
+    let wall = [10., 10.25];
+    let mapped = RootRigidFieldInterval::from_source_phase(
+        &curve,
+        [0.25, 0.75],
+        [true; 3],
+        wall,
+        &common_frame,
+        RootUniformScaleEnclosure::from_scale(-2.).unwrap(),
+    )
+    .unwrap()
+    .unwrap();
+    let mixed = RootRigidFadeFieldInterval::new(
+        mapped,
+        RootRigidFieldInterval::frozen(wall).unwrap(),
+        wall,
+        [0.5, 0.5],
+    )
+    .unwrap();
+    // Signed similarity adjoint, 2x retiming, then equal blend with zero:
+    // v=(2,0,90), omega=(0,6,0) at the interval midpoint.
+    for (ranges, exact) in [
+        (mixed.velocity_enclosure().linear_bounds(), [2., 0., 90.]),
+        (mixed.velocity_enclosure().angular_bounds(), [0., 6., 0.]),
+    ] {
+        for axis in 0..3 {
+            assert!(ranges[axis][0] <= exact[axis] && ranges[axis][1] >= exact[axis]);
+        }
+    }
+    assert!(
+        curve
+            .source_phase_twist_enclosure([0.75, 1.25], [true; 3])
+            .is_err()
+    );
     let runtime_error = curve
         .phase_point_evaluation_error_bounds([0.5, 0.5], [true; 3], point_box)
         .unwrap()
@@ -4489,6 +5020,33 @@ fn source_partition_unions_distinct_channel_keys_and_rejects_lost_boundaries() {
         Playback::Loop,
     );
     let curve = clip.root_rigid_curve(0).unwrap();
+    let whole = RootRigidFieldInterval::from_source_domain(
+        &curve,
+        0.,
+        [0., 2.],
+        [true; 3],
+        [10., 14.],
+        &RootRigidEnclosure::IDENTITY,
+        RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+        6,
+    )
+    .unwrap()
+    .unwrap();
+    let range = whole.velocity_enclosure().linear_bounds()[0];
+    assert!(range[0] <= 2. / 3. && range[1] >= 2.);
+    assert!(
+        RootRigidFieldInterval::from_source_domain(
+            &curve,
+            0.,
+            [0., 2.],
+            [true; 3],
+            [10., 10.],
+            &RootRigidEnclosure::IDENTITY,
+            RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+            6
+        )
+        .is_err()
+    );
     let cells = curve
         .source_delta_partition(0., [0., 1.], [true; 3], 3)
         .unwrap()
@@ -4556,6 +5114,10 @@ fn source_partition_unions_distinct_channel_keys_and_rejects_lost_boundaries() {
     .unwrap();
     assert_eq!(1. + f64::from(tiny), 1.);
     assert!(matches!(
+        curve.source_delta_twist_enclosure(1., [1., 1.5], [true; 3], 8),
+        Err(AnimationError::RootRigidBudget)
+    ));
+    assert!(matches!(
         curve.source_delta_partition(1., [1., 1.5], [true; 3], 8),
         Err(AnimationError::RootRigidBudget)
     ));
@@ -4581,6 +5143,10 @@ fn source_partition_unions_distinct_channel_keys_and_rejects_lost_boundaries() {
     .unwrap();
     assert!(matches!(
         step.source_phase_interval_enclosure([0., f64::from(tiny)], [true; 3]),
+        Err(AnimationError::RootRotationTransitionUnsupported)
+    ));
+    assert!(matches!(
+        step.source_delta_twist_enclosure(0., [0., 0.5], [true; 3], 8),
         Err(AnimationError::RootRotationTransitionUnsupported)
     ));
 }

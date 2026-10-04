@@ -297,6 +297,9 @@ impl RootRigidCertifiedFadeInterval {
     pub fn approximation(&self) -> &RootRigidApproximation {
         &self.approximation
     }
+    pub fn fields(&self) -> &[RootRigidFadeFieldInterval] {
+        &self.fields
+    }
     pub fn coordinate_certificate(
         &self,
         axis: usize,

@@ -36,7 +36,7 @@ fn bezier<const N: usize>(
     }
     Ok(control[0])
 }
-fn polynomial<const N: usize>(
+pub(super) fn polynomial<const N: usize>(
     control: [[Scalar; N]; 4],
     u: Scalar,
     duration: Scalar,
