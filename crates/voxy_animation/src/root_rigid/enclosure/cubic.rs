@@ -38,7 +38,7 @@ fn polynomial<const N: usize>(
 impl RootRotationSpan {
     fn cubic_motion(
         &self,
-        fraction: f64,
+        fraction: Scalar,
     ) -> Result<Option<(RootRigidEnclosure, [Scalar; 3])>, AnimationError> {
         let Some((control, left, right)) = self.cubic_velocity_inputs() else {
             return Ok(None);
@@ -50,11 +50,8 @@ impl RootRotationSpan {
         if duration.0 <= 0. {
             return Err(AnimationError::RootRotationBudget);
         }
-        let (value, derivative) = polynomial(
-            control.map(|v| v.map(Scalar::exact)),
-            Scalar::exact(fraction),
-            duration,
-        )?;
+        let (value, derivative) =
+            polynomial(control.map(|v| v.map(Scalar::exact)), fraction, duration)?;
         let norm = value[0]
             .square()?
             .add(value[1].square()?)?
@@ -102,7 +99,7 @@ impl RootRotationSpan {
     }
     fn rotation_motion_enclosure(
         &self,
-        fraction: f64,
+        fraction: Scalar,
     ) -> Result<Option<(RootRigidEnclosure, [Scalar; 3])>, AnimationError> {
         if self.cubic_velocity_inputs().is_some() {
             return self.cubic_motion(fraction);
@@ -134,11 +131,11 @@ impl RootRotationSpan {
             ],
         )?;
         let mut exponential = RootRigidEnclosure::IDENTITY;
-        if fraction > 0. && axis != DVec3::ZERO {
+        if fraction.1 > 0. && axis != DVec3::ZERO {
             let radius = Scalar::exact(axis.x.abs())
                 .add(Scalar::exact(axis.y.abs()))?
                 .add(Scalar::exact(axis.z.abs()))?
-                .mul(Scalar::exact(fraction))?
+                .mul(fraction)?
                 .mul(Scalar::exact(2.))?;
             let count = radius.1.ceil().max(1.);
             if count > MAX_ROOT_ROTATION_SPANS as f64 {
@@ -148,7 +145,7 @@ impl RootRotationSpan {
                 linear: DVec3::ZERO,
                 angular: axis,
             }
-            .increment_interval_enclosure(Scalar::exact(fraction).div_positive(count)?)?;
+            .increment_interval_enclosure(fraction.div_positive(count)?)?;
             for _ in 0..count as usize {
                 exponential = step.compose(&exponential)?;
             }
@@ -168,7 +165,7 @@ impl RootRotationSpan {
             return Err(AnimationError::InvalidSampleTime);
         }
         Ok(self
-            .rotation_motion_enclosure(fraction)?
+            .rotation_motion_enclosure(Scalar::exact(fraction))?
             .map(|(_, angular)| angular.map(Scalar::array)))
     }
     /// Encloses the rational angular derivative of normalized stored cubic data.
@@ -182,7 +179,7 @@ impl RootRotationSpan {
             return Err(AnimationError::InvalidSampleTime);
         }
         Ok(self
-            .cubic_motion(fraction)?
+            .cubic_motion(Scalar::exact(fraction))?
             .map(|(_, angular)| angular.map(Scalar::array)))
     }
 }
@@ -197,6 +194,46 @@ impl RootRigidSpan {
         if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {
             return Err(AnimationError::InvalidSampleTime);
         }
+        self.spatial_twist_enclosure_range([fraction, fraction])
+    }
+    /// Converts a closed stored-time interval outward, including subtraction and
+    /// division error. Times must stay in this continuous span; events are split
+    /// by the caller. Intersecting with [0,1] uses that checked domain proof.
+    pub fn spatial_twist_enclosure_at_times(
+        &self,
+        times: [f64; 2],
+    ) -> Result<Option<RootRigidTwistEnclosure>, AnimationError> {
+        if times.into_iter().any(|v| !v.is_finite())
+            || times[1] < times[0]
+            || times[0] < self.start()
+            || times[1] > self.end()
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if self.end() <= self.start() {
+            return Ok(None);
+        }
+        let duration = Scalar::exact(self.end()).sub(Scalar::exact(self.start()))?;
+        let fraction = Scalar(times[0], times[1])
+            .sub(Scalar::exact(self.start()))?
+            .div_interval_positive(duration)?;
+        self.spatial_twist_enclosure_range([fraction.0.max(0.), fraction.1.min(1.)])
+    }
+    /// Encloses every field value on a closed progress interval. This retains
+    /// uncertainty from clock conversion rather than sampling rounded progress.
+    /// An interval whose cubic quaternion norm cannot be proved positive rejects.
+    pub fn spatial_twist_enclosure_range(
+        &self,
+        fractions: [f64; 2],
+    ) -> Result<Option<RootRigidTwistEnclosure>, AnimationError> {
+        if fractions
+            .into_iter()
+            .any(|v| !v.is_finite() || !(0. ..=1.).contains(&v))
+            || fractions[1] < fractions[0]
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let fraction = Scalar(fractions[0], fractions[1]);
         if self.end() <= self.start() {
             return Ok(None);
         }
@@ -209,12 +246,12 @@ impl RootRigidSpan {
         let duration = Scalar::exact(self.end()).sub(Scalar::exact(self.start()))?;
         let (additive, derivative) = polynomial(
             self.additive.map(|v| v.to_array().map(Scalar::exact)),
-            Scalar::exact(fraction),
+            fraction,
             duration,
         )?;
         let (_, pivot_derivative) = polynomial(
             self.pivot.map(|v| v.to_array().map(Scalar::exact)),
-            Scalar::exact(fraction),
+            fraction,
             duration,
         )?;
         let (_, q) = rotation.vectors();

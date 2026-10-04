@@ -1,0 +1,100 @@
+//! Path-borrowed canonical prefix cache. Preparation is linear; sample is constant work.
+use super::*;
+#[derive(Debug)]
+pub struct RootScrewEnclosurePath<'a> {
+    pub(super) path: &'a RootRigidPath,
+    pub(super) prefixes: Vec<RootRigidEnclosure>,
+    coordinate_ranges: [Option<[f64; 2]>; 3],
+}
+impl RootRigidPath {
+    /// Prepares all canonical real screw prefixes with outward arithmetic.
+    /// The returned owner borrows this immutable path, preventing stale reuse
+    /// after mutation. Unsupported fields/angles, overflow and capacity reject.
+    pub fn prepare_screw_enclosures(
+        &self,
+        max_spans: usize,
+    ) -> Result<RootScrewEnclosurePath<'_>, AnimationError> {
+        if self.spans.len() > max_spans.min(MAX_ROOT_ROTATION_SPANS) {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let mut prefixes = Vec::with_capacity(self.spans.len() + 1);
+        prefixes.push(RootRigidEnclosure::IDENTITY);
+        let mut coordinate_ranges = [Some([f64::INFINITY, f64::NEG_INFINITY]); 3];
+        for span in &self.spans {
+            let (twist, _) = span
+                .screw
+                .ok_or(AnimationError::RootRotationTransitionUnsupported)?;
+            let increment = twist.increment_between_enclosure(span.start(), span.end())?;
+            let next =
+                increment.compose(prefixes.last().ok_or(AnimationError::RootRigidBudget)?)?;
+            for coordinate in 0..3 {
+                if let Some(range) = &mut coordinate_ranges[coordinate] {
+                    if (0..3).any(|i| i != coordinate && twist.angular[i] != 0.) {
+                        coordinate_ranges[coordinate] = None;
+                    } else {
+                        range[0] = range[0].min(twist.linear[coordinate]);
+                        range[1] = range[1].max(twist.linear[coordinate]);
+                    }
+                }
+            }
+            prefixes.push(next);
+        }
+        if self.spans.is_empty() {
+            coordinate_ranges = [Some([0., 0.]); 3];
+        }
+        Ok(RootScrewEnclosurePath {
+            path: self,
+            prefixes,
+            coordinate_ranges,
+        })
+    }
+}
+impl RootScrewEnclosurePath<'_> {
+    pub fn path(&self) -> &RootRigidPath {
+        self.path
+    }
+    /// Samples the canonical stored field without replaying earlier segments.
+    /// Endpoint samples use their prepared enclosure directly.
+    pub fn sample(
+        &self,
+        index: usize,
+        fraction: f64,
+    ) -> Result<RootRigidEnclosure, AnimationError> {
+        if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let span = self
+            .path
+            .spans
+            .get(index)
+            .ok_or(AnimationError::InvalidSampleTime)?;
+        if fraction == 0. {
+            return Ok(self.prefixes[index]);
+        }
+        if fraction == 1. {
+            return Ok(self.prefixes[index + 1]);
+        }
+        let (twist, _) = span
+            .screw
+            .ok_or(AnimationError::RootRotationTransitionUnsupported)?;
+        let mut duration = Scalar::exact(span.end())
+            .sub(Scalar::exact(span.start()))?
+            .mul(Scalar::exact(fraction))?;
+        duration.0 = duration.0.max(0.);
+        twist
+            .increment_interval_enclosure(duration)?
+            .compose(&self.prefixes[index])
+    }
+}
+
+impl RootScrewEnclosurePath<'_> {
+    /// Exact structural projection invariant: rotation fixes this coordinate
+    /// whenever every spatial angular field has zero orthogonal components.
+    /// Returns extrema of the stored coordinate translation velocity across all
+    /// segments. These compare signs exactly; no sampled or rounded cross product
+    /// is used. Prepared once with the prefixes; each lookup is constant work.
+    /// Unsupported coordinate/rotation returns None.
+    pub fn coordinate_velocity_range(&self, coordinate: usize) -> Option<[f64; 2]> {
+        self.coordinate_ranges.get(coordinate).copied().flatten()
+    }
+}

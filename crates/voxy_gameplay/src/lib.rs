@@ -942,7 +942,7 @@ impl CharacterPhysics {
                     Some((hit.rotation, hit.normal))
                 } else if request.angular_displacement != Vec3::ZERO {
                     let angular = request.angular_displacement.as_dvec3();
-                    let world_angular = runtime.orientation * angular;
+                    let world_angular = convex::rotate_vector(runtime.orientation,angular);
                     let hit = angular_sweep::sweep(position, runtime.edges, world_angular,
                         &shapes, self.angular_iterations)?;
                     angular_fraction = hit.fraction;
@@ -950,7 +950,7 @@ impl CharacterPhysics {
                 } else { None };
                 if let Some((rotation, normal)) = angular {
                     runtime.orientation = (runtime.orientation * rotation).normalize();
-                    runtime.edges = runtime.rest_edges.map(|edge| runtime.orientation * edge);
+                    runtime.edges = runtime.rest_edges.map(|edge| convex::rotate_vector(runtime.orientation,edge));
                     runtime.published_rotation =
                         Quat::from_array(runtime.orientation.to_array().map(|value| value as f32))
                             .normalize();
@@ -1234,7 +1234,7 @@ fn fresh(
     rotation: Quat,
 ) -> RuntimeBody {
     let orientation = glam::DQuat::from_array(rotation.to_array().map(f64::from)).normalize();
-    let rest_edges = edges.map(|edge| orientation.conjugate() * edge);
+    let rest_edges = edges.map(|edge| convex::rotate_vector(orientation.conjugate(),edge));
     let half = edges.iter().map(|edge| edge.abs()).sum::<glam::DVec3>();
     let min = (center.as_dvec3() - half).to_array();
     let max = (center.as_dvec3() + half).to_array();
