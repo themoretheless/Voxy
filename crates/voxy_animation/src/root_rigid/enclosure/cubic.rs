@@ -1,8 +1,22 @@
 //! Stored polynomial rotation and simultaneous moving-pivot velocity enclosures.
 use super::*;
 use crate::RootRotationSpan;
-fn interpolate(a: Scalar, b: Scalar, u: Scalar) -> Result<Scalar, AnimationError> {
-    a.mul(Scalar::exact(1.).sub(u)?)?.add(b.mul(u)?)
+pub(super) fn interpolate(a: Scalar, b: Scalar, u: Scalar) -> Result<Scalar, AnimationError> {
+    let mut value = a.mul(Scalar::exact(1.).sub(u)?)?.add(b.mul(u)?)?;
+    // A second equivalent expression retains weight/complement correlation.
+    // An overflowing alternate expression supplies no bound; the first remains
+    // valid and is not discarded merely because an optional tightening failed.
+    if let Ok(alternate) = b.sub(a).and_then(|delta| delta.mul(u)).and_then(|delta| a.add(delta)) {
+        value.0 = value.0.max(alternate.0);
+        value.1 = value.1.min(alternate.1);
+    }
+    // Both interval evaluation and the convex hull enclose (1-u)*a+u*b.
+    // Intersect them only with the explicit nonnegative-weight domain proof.
+    if u.0 >= 0. && u.1 <= 1. {
+        value.0 = value.0.max(a.0.min(b.0));
+        value.1 = value.1.min(a.1.max(b.1));
+    }
+    Ok(value)
 }
 fn bezier<const N: usize>(
     mut control: [[Scalar; N]; 4],
@@ -219,6 +233,34 @@ impl RootRigidSpan {
             .div_interval_positive(duration)?;
         self.spatial_twist_enclosure_range([fraction.0.max(0.), fraction.1.min(1.)])
     }
+    /// Encloses the complete clip-time field after a linear mapping onto wall
+    /// time. Both stored endpoint differences and their ratio round outward.
+    /// Source clip times must remain inside this span; STEP events stay separate.
+    pub fn retimed_spatial_twist_enclosure_between(
+        &self,
+        clip_times: [f64; 2],
+        wall_times: [f64; 2],
+    ) -> Result<Option<RootRigidTwistEnclosure>, AnimationError> {
+        let factor = super::twist::retiming_factor_between_times(clip_times, wall_times)?;
+        self.spatial_twist_enclosure_at_times(clip_times)?
+            .map(|field| field.scaled(factor)).transpose()
+    }
+    /// Uniform coordinate displacement error against a frozen spatial field.
+    /// Both fields must have angular velocity parallel to the chosen axis over
+    /// the complete stored-time interval. Then x_dot[axis] = v[axis] for every
+    /// material point, and integrating the velocity discrepancy bounds every
+    /// prefix of this interval. Initial coordinate discrepancy is separate.
+    /// No claim is made about the other coordinates or floating pose evaluation.
+    pub fn enclosed_coordinate_displacement_error_between(
+        &self,
+        times: [f64; 2],
+        axis: usize,
+        reference: RootRigidTwist,
+    ) -> Result<Option<f64>, AnimationError> {
+        reference.enclosure()?;
+        let Some(field) = self.spatial_twist_enclosure_at_times(times)? else { return Ok(None); };
+        field.coordinate_displacement_error_between(times, axis, reference)
+    }
     /// Encloses every field value on a closed progress interval. This retains
     /// uncertainty from clock conversion rather than sampling rounded progress.
     /// An interval whose cubic quaternion norm cannot be proved positive rejects.
@@ -265,5 +307,18 @@ impl RootRigidSpan {
             ],
             angular,
         )))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn interpolation_retains_convex_hull_with_uncertain_weights() {
+        let value = interpolate(Scalar(2., 3.), Scalar(4., 5.), Scalar(0., 1.)).unwrap();
+        assert_eq!(value.array(), [2., 5.]);
+        let extrapolated = interpolate(Scalar::exact(2.), Scalar::exact(4.), Scalar::exact(2.)).unwrap();
+        assert!(extrapolated.0 <= 6. && extrapolated.1 >= 6.);
+        assert!(extrapolated.0 > 4.);
     }
 }

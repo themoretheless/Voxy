@@ -1,0 +1,9 @@
+{
+  "animation_tests": 140,
+  "gameplay_unit_tests": 59,
+  "gameplay_integration_tests": 42,
+  "exact_phase_oracle_exit": 0,
+  "runtime_moving_fades_enabled": false,
+  "native_acceptance": "still blocked by SkippedOccluded; see rig-retarget-picker-current-native-2026-10-04",
+  "scope": "automatic original-clock fade assembly and conservative physical query; runtime publication remains incomplete"
+}

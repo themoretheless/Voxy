@@ -1607,3 +1607,127 @@ fn prepared_coordinate_ranges_cover_late_reversal_and_empty_paths() {
     let cache=zero.prepare_screw_enclosures(0).unwrap();
     for axis in 0..3 {assert_eq!(cache.coordinate_velocity_range(axis),Some([0.,0.]));}
 }
+
+#[test]
+fn whole_cubic_planar_field_preserves_normal_coordinate_velocity() {
+    let p0 = Vec3::X * 0.6;
+    let (_, clip) = clip(p0,
+        vec![Vec3Key {time:0.,value:p0},Vec3Key {time:1.,value:p0+Vec3::new(0.3,0.,-0.1)}],
+        vec![QuatKey {time:0.,value:Quat::IDENTITY},QuatKey {time:1.,value:Quat::from_rotation_y(0.7)}],
+        TrackInterpolation {translation:Interpolation::CubicSpline,rotation:Interpolation::CubicSpline,..Default::default()},
+        JointTangents {
+            translation:vec![[Vec3::ZERO,Vec3::new(0.,0.,1.)],[Vec3::new(-0.5,0.,2.),Vec3::ZERO]],
+            rotation:vec![[Vec4::ZERO,Vec4::new(0.,2.,0.,0.3)],[Vec4::new(0.,1.,0.,0.2),Vec4::ZERO]],
+            ..Default::default()}, Playback::Clamp);
+    for mask in 0..8 {
+        let path = clip.root_rigid_curve(0).unwrap().path(0.,1.,[mask&1!=0,mask&2!=0,mask&4!=0],256).unwrap();
+        for span in path.spans() {
+            let whole = span.spatial_twist_enclosure_range([0.,1.]).unwrap().unwrap();
+            assert_eq!(whole.coordinate_velocity_range(1), Some([0.,0.]));
+            let clock_range = span.spatial_twist_enclosure_at_times([span.start(),span.end()]).unwrap().unwrap();
+            assert_eq!(clock_range.coordinate_velocity_range(1), Some([0.,0.]));
+            let times = [span.start(),span.end()];
+            let reference = RootRigidTwist {linear:DVec3::new(50.,0.,-80.),angular:DVec3::Y*30.};
+            assert_eq!(span.enclosed_coordinate_displacement_error_between(times,1,reference).unwrap(),Some(0.));
+            let biased = RootRigidTwist {linear:reference.linear+DVec3::Y*0.125,..reference};
+            let error = span.enclosed_coordinate_displacement_error_between(times,1,biased).unwrap().unwrap();
+            let exact = 0.125*(span.end()-span.start());
+            assert!(error>=exact && error-exact<1e-12);
+            let tilted = RootRigidTwist {angular:reference.angular+DVec3::X*1e-300,..reference};
+            assert!(span.enclosed_coordinate_displacement_error_between(times,1,tilted).unwrap().is_none());
+            assert!(span.enclosed_coordinate_displacement_error_between([span.start()-1.,span.end()],1,reference).is_err());
+            assert!(span.enclosed_coordinate_displacement_error_between(times,3,reference).unwrap().is_none());
+            let stationary = [span.start(),span.start()];
+            assert_eq!(span.enclosed_coordinate_displacement_error_between(stationary,1,biased).unwrap(),Some(0.));
+        }
+    }
+}
+
+#[test]
+fn directional_error_accounts_for_velocity_bias_and_rejects_tilted_source() {
+    let source = RootRigidTwist {linear:DVec3::Y*0.5,angular:DVec3::Y*0.2};
+    let path = RootRigidPath::from_twists(&[(source,0.75)],1).unwrap();
+    let span = &path.spans()[0];
+    let reference = RootRigidTwist {linear:DVec3::Y*0.25,angular:DVec3::Y*10.};
+    let error = span.enclosed_coordinate_displacement_error_between([0.125,0.625],1,reference).unwrap().unwrap();
+    assert!(error>=0.125 && error-0.125<1e-12);
+    let tilted = RootRigidPath::from_twists(&[(RootRigidTwist {angular:DVec3::new(1e-300,0.2,0.),..source},0.75)],1).unwrap();
+    assert!(tilted.spans()[0].enclosed_coordinate_displacement_error_between([0.,0.75],1,reference).unwrap().is_none());
+    assert!(span.enclosed_coordinate_displacement_error_between([0.,0.75],1,RootRigidTwist {linear:DVec3::NAN,..reference}).is_err());
+}
+
+#[test]
+fn source_spans_retime_complete_domains_before_whole_interval_blending() {
+    let a = RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::X,angular:DVec3::Y*2.},0.7)],1).unwrap();
+    let b = RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::Z*3.,angular:-DVec3::Y},0.9)],1).unwrap();
+    let wall = [1e12,1e12+0.5];
+    let source = a.spans()[0].retimed_spatial_twist_enclosure_between([0.1,0.6],wall).unwrap().unwrap();
+    let target = b.spans()[0].retimed_spatial_twist_enclosure_between([0.2,0.8],wall).unwrap().unwrap();
+    let mixed = source.blended_over_progress(&target,[0.,1.],[0.,1.]).unwrap();
+    assert_eq!(mixed.coordinate_velocity_range(1),Some([0.,0.]));
+    assert!(a.spans()[0].retimed_spatial_twist_enclosure_between([0.,0.8],wall).is_err());
+    assert!(a.spans()[0].retimed_spatial_twist_enclosure_between([0.,0.7],[2.,1.]).is_err());
+}
+
+#[test]
+fn partitioned_outward_integration_preserves_key_cuts_and_noncommuting_order() {
+    let rates=RootTwistRateBounds {linear:0.,angular:0.};
+    let twists=[RootRigidTwist {linear:DVec3::X,angular:DVec3::ZERO},RootRigidTwist {linear:DVec3::ZERO,angular:DVec3::Y}];
+    let mut samples=Vec::new();
+    let result=RootRigidPath::integrate_spatial_outward_partitioned(&[(0.3,rates),(1.,rates)],0.,0.,2,|domain,time| {
+        samples.push((domain,time)); Ok((twists[domain],twists[domain].enclosure()?))
+    }).unwrap();
+    assert_eq!(samples,vec![(0,0.),(1,0.3)]);
+    assert_eq!(result.path.spans()[0].end(),0.3);
+    assert_eq!(result.path.spans()[1].start(),0.3);
+    assert_eq!(result.path.spans()[1].end(),1.);
+    assert_eq!([result.origin_error_bound,result.angular_error_bound],[0.,0.]);
+    let expected=DQuat::from_rotation_y(0.7)*(DVec3::X*0.3);
+    assert!((result.path.end_transform().translation-expected).length()<1e-12);
+    let mut called=false;
+    assert!(RootRigidPath::integrate_spatial_outward_partitioned(&[(0.3,rates),(1.,rates)],0.,0.,1,|_,_| {
+        called=true; unreachable!()
+    }).is_err());
+    assert!(!called);
+    assert!(RootRigidPath::integrate_spatial_outward_partitioned(&[(0.3,rates),(0.3,rates)],1.,1.,2,|_,_|unreachable!()).is_err());
+}
+
+#[test]
+fn partitioned_outward_refinement_keeps_velocity_jump_outside_derivative_domains() {
+    let rates=RootTwistRateBounds {linear:1.,angular:0.};
+    let result=RootRigidPath::integrate_spatial_outward_partitioned(&[(0.3,rates),(1.,rates)],0.01,0.,128,|domain,time| {
+        if domain==0 {assert!(time<0.3);} else {assert!(time>=0.3 && time<1.);}
+        let twist=RootRigidTwist {linear:DVec3::X*if domain==0 {time} else {-time},angular:DVec3::ZERO};
+        Ok((twist,twist.enclosure()?))
+    }).unwrap();
+    assert!(result.path.spans().len()>2);
+    assert!(result.path.spans().iter().any(|span|span.end()==0.3));
+    assert!(result.path.spans().iter().all(|span|!(span.start()<0.3 && span.end()>0.3)));
+    assert!((result.path.end_transform().translation.x+0.41).abs()<=result.origin_error_bound);
+    assert!(result.origin_error_bound<=0.01);
+    assert_eq!(result.angular_error_bound,0.);
+}
+
+#[test]
+fn whole_field_guard_stays_one_adjacent_clock_span_during_smooth_refinement() {
+    let guard_start=0.5_f64;let guard_end=guard_start.next_up();
+    let modes=[(guard_start,RootRigidIntegrationDomain::Derivative(RootTwistRateBounds {linear:1.,angular:0.})),
+        (guard_end,RootRigidIntegrationDomain::WholeField),(1.,RootRigidIntegrationDomain::Derivative(RootTwistRateBounds {linear:1.,angular:0.}))];
+    let result=RootRigidPath::integrate_spatial_outward_domains(&modes,0.01,0.,256,|index,query| {
+        if index==1 {
+            assert_eq!(query,[guard_start,guard_end]);
+            let low=RootRigidTwist {linear:-DVec3::X*3.,angular:DVec3::ZERO}.enclosure()?;
+            let high=RootRigidTwist {linear:DVec3::X*3.,angular:DVec3::ZERO}.enclosure()?;
+            Ok((RootRigidTwist {linear:DVec3::ZERO,angular:DVec3::ZERO},low.hull(&high)))
+        } else {
+            assert_eq!(query[0],query[1]);
+            let twist=RootRigidTwist {linear:DVec3::X*query[0],angular:DVec3::ZERO};
+            Ok((twist,twist.enclosure()?))
+        }
+    }).unwrap();
+    assert!(result.path.spans().len()>3);
+    assert_eq!(result.path.spans().iter().filter(|span|span.start()==guard_start && span.end()==guard_end).count(),1);
+    assert!((result.path.end_transform().translation.x-0.5).abs()<=result.origin_error_bound);
+    assert!(result.origin_error_bound<=0.01);
+    assert_eq!(result.angular_error_bound,0.);
+}

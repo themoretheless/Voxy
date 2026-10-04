@@ -1,0 +1,5 @@
+{
+  "exact_rational_corner_checks": 16000,
+  "seed": 547,
+  "scope": "independent binary64 interval interpolation model and convex-hull intersection; not full cubic derivative verification"
+}

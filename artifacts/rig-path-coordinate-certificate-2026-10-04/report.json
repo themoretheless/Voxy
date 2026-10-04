@@ -1,0 +1,13 @@
+{
+  "animation_passed": 127,
+  "verified": [
+    "certificate borrows exact canonical screw path",
+    "whole fade intervals match every stored span in order",
+    "positive error accumulates outward",
+    "zero directional error stays exact zero",
+    "late tilt invalidates full certificate",
+    "missing reordered and over-budget domains reject",
+    "empty trajectory zero error"
+  ],
+  "scope": "path-bound coordinate discrepancy; initial coordinate error, collider mapping, gameplay consumption and runtime fade acceptance remain outstanding"
+}

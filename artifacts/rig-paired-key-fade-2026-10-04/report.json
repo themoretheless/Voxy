@@ -1,0 +1,15 @@
+{
+  "animation_passed": 134,
+  "gameplay_unit_passed": 58,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "explicit source/target clip-pair domains use one global fade clock",
+    "target-only key retains analytic displacement 1.4375",
+    "distinct source and target keys retain analytic displacement [2.1875,0,0.5]",
+    "stored cuts survive adaptive refinement",
+    "whole path height certificate derives from same fields",
+    "single-domain path delegates to partitioned assembly",
+    "physical floor and wall regressions pass"
+  ],
+  "scope": "explicit checked clip/wall domain mappings; automatic Animator key mapping, STEP pose policy, completion/tail integration, state publication and native acceptance remain outstanding"
+}

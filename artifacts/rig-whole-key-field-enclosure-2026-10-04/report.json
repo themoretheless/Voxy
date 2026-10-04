@@ -1,0 +1,13 @@
+{
+  "animation_passed": 137,
+  "verified": [
+    "both one-sided velocity limits enclosed at a key",
+    "whole interval spanning key preserves planar constraints",
+    "stationary gaps contribute zero",
+    "neighboring tiny tilt invalidates normal certificate",
+    "invalid clip intervals reject",
+    "empty source zero field",
+    "binary search followed by intersecting span scan"
+  ],
+  "scope": "whole-field range for uncertain key domains; bounded-domain integration and complete automatic fade/tail assembly/runtime acceptance remain outstanding"
+}

@@ -1,0 +1,4 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.02s
+  Executable unittests src/lib.rs (target/debug/deps/voxy_gameplay-f2a014491beec698)
+  Executable tests/integration.rs (target/debug/deps/integration-487c054af9be441c)

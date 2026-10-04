@@ -1,0 +1,13 @@
+{
+  "animation_passed": 138,
+  "verified": [
+    "explicit derivative vs whole-domain proof contracts",
+    "whole callback receives full stored interval",
+    "uniform field discrepancy accumulated without derivative precondition",
+    "adjacent clock guard remains one representable span",
+    "smooth domains refine around guard",
+    "one shared prefix/error and global span budget",
+    "legacy integration APIs delegate to same owner"
+  ],
+  "scope": "mixed-domain integration primitive; automatic guarded original-path fade assembly, completion/tail policy, publication and native acceptance remain outstanding"
+}

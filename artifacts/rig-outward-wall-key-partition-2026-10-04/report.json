@@ -1,0 +1,14 @@
+{
+  "animation_passed": 135,
+  "exact_rational_key_references": 1,
+  "verified": [
+    "outward wall time bounds for nonrepresentable key",
+    "explicit key uncertainty domains without single-span derivative claim",
+    "proved source and target indices outside guards",
+    "full contiguous wall coverage",
+    "partition borrows authoritative source and target paths",
+    "sorted monotone cursor traversal",
+    "bounded partition rejection"
+  ],
+  "scope": "automatic key-clock partition preparation; guard-domain whole-field integration, full Animator fade/tail assembly, STEP policy and runtime/native acceptance remain outstanding"
+}

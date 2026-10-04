@@ -1,0 +1,12 @@
+{
+  "gameplay_unit_passed": 58,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "original-source assembled increasing-weight translation plus yaw accepted along floor",
+    "nonzero origin approximation error does not mask exact normal invariance",
+    "wall still stops assembled motion",
+    "directional certificate generated internally from same immutable fade owner",
+    "rounded proposed pose gate remains active"
+  ],
+  "scope": "one continuous staged interval; multi-key STEP/tail assembly, Animator clock publication, grounding relocation and native editor acceptance remain outstanding"
+}

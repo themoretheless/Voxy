@@ -1,0 +1,12 @@
+{
+  "animation_passed": 121,
+  "verified": [
+    "whole-clock cubic certificate across all extraction masks",
+    "zero normal error with different horizontal velocities and yaw rates",
+    "positive normal bias bound",
+    "subnormal-scale source and nominal tilt reject",
+    "out-of-span clocks and nonfinite nominal field reject",
+    "zero duration retains exact zero"
+  ],
+  "scope": "stored-span coordinate displacement error; initial coordinate discrepancy, frame transport, blended fade integration, gameplay attachment and floating pose publication are separate"
+}

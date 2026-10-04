@@ -1,0 +1,13 @@
+{
+  "gameplay_unit_passed": 56,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "zero directional error permits floor contact with nonzero isotropic margin",
+    "wall retains conservative clearance and stops motion",
+    "missing certificate preserves old conservative rejection",
+    "positive numeric evaluation radius disables support bypass",
+    "different path identity rejects before query",
+    "rounded proposed pose still certified"
+  ],
+  "scope": "conditional read-only sweep for certified canonical fade fields; runtime publication, positive directional margins, tilted planes and native acceptance remain outstanding"
+}

@@ -509,12 +509,46 @@ pub(crate) fn sweep_rigid_approximation(
     basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
     boxes: &[AffineBox], iterations: usize, queries: &mut usize,
 ) -> Result<PathHit,PhysicsError> {
+    sweep_rigid_approximation_with_coordinate_certificate(center,rest_edges,orientation,approximation,
+        basis,origin,scale,evaluation_radius,boxes,iterations,queries,None)
+}
+
+/// Read-only acceptance query for one immutable assembled fade. The directional
+/// proof is constructed from the same owned source domains as the trajectory.
+#[cfg_attr(not(test), allow(dead_code))]
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn sweep_certified_rigid_fade(
+    center: DVec3, rest_edges: [DVec3;3], orientation: DQuat,
+    fade: &voxy_animation::RootRigidCertifiedFadeInterval, coordinate_axis: usize,
+    basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
+    boxes: &[AffineBox], iterations: usize, queries: &mut usize,
+) -> Result<PathHit,PhysicsError> {
+    let certificate=fade.coordinate_certificate(coordinate_axis,4096).map_err(|_|PhysicsError::InvalidMotion)?;
+    sweep_rigid_approximation_with_coordinate_certificate(center,rest_edges,orientation,fade.approximation(),
+        basis,origin,scale,evaluation_radius,boxes,iterations,queries,certificate.as_ref())
+}
+
+#[cfg_attr(not(test), allow(dead_code))]
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
+    center: DVec3, rest_edges: [DVec3;3], orientation: DQuat,
+    approximation: &voxy_animation::RootRigidApproximation,
+    basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
+    boxes: &[AffineBox], iterations: usize, queries: &mut usize,
+    coordinate_certificate: Option<&voxy_animation::RootRigidCoordinateCertificate<'_>>,
+) -> Result<PathHit,PhysicsError> {
+    if coordinate_certificate.is_some_and(|proof|!std::ptr::eq(proof.path(),&approximation.path)) {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    let coordinate_certificate=coordinate_certificate.map(|proof|
+        proof.enclosed_scaled_error_bound(scale,evaluation_radius)
+            .map(|margin|(proof,margin)).map_err(|_|PhysicsError::InvalidMotion)).transpose()?;
     let clearance = rigid_body_clearance(approximation,rest_edges,basis,origin,scale,evaluation_radius)?;
     let vertices=rigid_vertex_enclosures(rest_edges,basis,origin,scale)?;
     let enclosed_path=approximation.path.prepare_screw_enclosures(4096).map_err(|_|PhysicsError::InvalidMotion)?;
     let speeds=enclosed_path.point_speed_bounds(&vertices,scale).map_err(|_|PhysicsError::InvalidMotion)?;
     let mut hit=sweep_rigid_path_with_bounds(center,rest_edges,orientation,&approximation.path,
-        basis,origin,scale,clearance,boxes,iterations,queries,Some(&speeds),Some(&enclosed_path))?;
+        basis,origin,scale,clearance,boxes,iterations,queries,Some(&speeds),Some(&enclosed_path),coordinate_certificate)?;
     // Mirror the physical controller's proposed orientation/edge update. This
     // checks the rounded proposal itself, not merely the canonical field pose.
     let proposed_orientation=(orientation*hit.rotation).normalize();
@@ -540,20 +574,24 @@ fn sweep_rigid_path_with_clearance(
     queries: &mut usize,
 ) -> Result<PathHit, PhysicsError> {
     sweep_rigid_path_with_bounds(center,rest_edges,orientation,path,basis,origin,scale,clearance,
-        boxes,iterations,queries,None,None)
+        boxes,iterations,queries,None,None,None)
 }
 
 // Structural coordinate-plane certificate for an exact canonical screw field.
-// Both real frame rotations must fix the tested coordinate. Uniform nonzero
-// error clearance cannot use this certificate without directional error proof.
+// Both real frame rotations must transport an exact coordinate row. Uniform nonzero
+// error clearance requires a matching certificate and its outward world margin.
 fn invariant_projection_separates(
     center:DVec3,edges:[DVec3;3],obstacle:&AffineBox,normal:DVec3,
     orientation:DQuat,basis:DQuat,scale:f64,cache:&voxy_animation::RootScrewEnclosurePath<'_>,
+    coordinate_certificate:Option<(&voxy_animation::RootRigidCoordinateCertificate<'_>,f64)>,
 )->Result<bool,PhysicsError> {
     let Some(coordinate)=(0..3).find(|i|normal[*i]!=0.) else {return Ok(false);};
     if (0..3).any(|i|i!=coordinate && normal[i]!=0.) {return Ok(false);}
     let Some((actor_coordinate,actor_sign))=rotation_coordinate_preimage(orientation,coordinate) else {return Ok(false);};
     let Some((source_coordinate,source_sign))=rotation_coordinate_preimage(basis,actor_coordinate) else {return Ok(false);};
+    if coordinate_certificate.is_some_and(|proof|proof.0.axis()!=source_coordinate) {
+        return Ok(false);
+    }
     let Some(range)=cache.coordinate_velocity_range(source_coordinate) else {return Ok(false);};
     let projected_scale=scale*actor_sign*source_sign;
     let away=if center[coordinate]>obstacle.center[coordinate] {
@@ -561,7 +599,11 @@ fn invariant_projection_separates(
     } else if center[coordinate]<obstacle.center[coordinate] {
         if projected_scale>0. {range[1]<=0.} else {range[0]>=0.}
     } else {false};
-    Ok(away && exact_gap::sign(center,edges,obstacle,normal)? >= 0)
+    if !away {return Ok(false);}
+    let margin=coordinate_certificate.map_or(0.,|proof|proof.1);
+    let separated=if margin==0. {exact_gap::sign(center,edges,obstacle,normal)? >= 0}
+        else {gap::lower(center,edges,obstacle,normal,margin)? > 0.};
+    Ok(separated)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -579,9 +621,13 @@ fn sweep_rigid_path_with_bounds(
     queries: &mut usize,
     enclosed_speeds: Option<&[f64]>,
     enclosed_path: Option<&voxy_animation::RootScrewEnclosurePath<'_>>,
+    coordinate_certificate: Option<(&voxy_animation::RootRigidCoordinateCertificate<'_>,f64)>,
 ) -> Result<PathHit, PhysicsError> {
     if !clearance.is_finite() || clearance < 0. || !center.is_finite()
         || !orientation.is_finite() || !orientation.is_normalized() {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    if coordinate_certificate.is_some_and(|proof|!std::ptr::eq(proof.0.path(),path)) {
         return Err(PhysicsError::InvalidMotion);
     }
     if enclosed_speeds.is_some()!=enclosed_path.is_some()
@@ -683,12 +729,12 @@ fn sweep_rigid_path_with_bounds(
                         + radius);
                 let mut separated = false;
                 for normal in obstacle.axes_for(initial) {
-                    if clearance==0. {
+                    if clearance==0. || coordinate_certificate.is_some() {
                         if let Some(cache)=enclosed_path {
                             // The whole field is monotone away from this plane;
                             // exact initial touching is safe throughout it.
                             if invariant_projection_separates(center,rest_edges.map(|e|rotate_vector(orientation,e)),obstacle,
-                                normal,orientation,basis,scale,cache)? {
+                                normal,orientation,basis,scale,cache,if clearance==0. {None} else {coordinate_certificate})? {
                                 separated=true;
                                 break;
                             }
@@ -1034,4 +1080,110 @@ mod tests {
         }
     }
 
+}
+
+#[cfg(test)]
+mod directional_fade_tests {
+    use super::*;
+    use voxy_animation::{RootRigidApproximation,RootRigidPath,RootRigidTwist,RootRigidFieldInterval,RootRigidFadeFieldInterval,RootRigidTransform};
+    #[test]
+    fn directional_fade_proof_admits_floor_contact_but_preserves_wall_and_evaluation_margin() {
+        let edges=[DVec3::X*0.125,DVec3::Y*0.125,DVec3::Z*0.125];
+        let floor=AffineBox {center:DVec3::Y*(-0.5),edges:[DVec3::X*4.,DVec3::Y*0.5,DVec3::Z*4.]};
+        let wall=AffineBox {center:DVec3::X,edges:[DVec3::X*0.125,DVec3::Y*2.,DVec3::Z*2.]};
+        let path=RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::X*1.2,angular:DVec3::ZERO},1.)],1).unwrap();
+        let approximation=RootRigidApproximation {path,origin_error_bound:0.02,angular_error_bound:0.1};
+        let span=&approximation.path.spans()[0];
+        let source=RootRigidFieldInterval::from_span(span,[0.,1.],[0.,1.],RootRigidTransform::IDENTITY,1.).unwrap().unwrap();
+        let field=RootRigidFadeFieldInterval::new(source,source,[0.,1.],[0.,1.]).unwrap();
+        let proof=approximation.path.enclose_fade_coordinate_error(&[field],1,1).unwrap().unwrap();
+        assert_eq!(proof.error_bound(),0.);
+        let query=|boxes:&[AffineBox],evaluation,certificate|sweep_rigid_approximation_with_coordinate_certificate(
+            DVec3::Y*0.125,edges,DQuat::IDENTITY,&approximation,DQuat::IDENTITY,DVec3::ZERO,1.,evaluation,
+            boxes,256,&mut 4096,certificate);
+        assert!(query(&[floor],0.,Some(&proof)).unwrap().complete);
+        let wall_hit=query(&[floor,wall],0.,Some(&proof)).unwrap();
+        assert!(!wall_hit.complete && wall_hit.path_fraction>0. && wall_hit.path_fraction<0.75/1.2);
+        assert!(!query(&[floor],0.,None).unwrap().complete);
+        assert!(!query(&[floor],0.001,Some(&proof)).unwrap().complete);
+        let other=approximation.path.clone();
+        let wrong=other.enclose_fade_coordinate_error(&[field],1,1).unwrap().unwrap();
+        assert!(query(&[floor],0.,Some(&wrong)).is_err());
+    }
+}
+
+#[cfg(test)]
+mod directional_margin_tests {
+    use super::*;
+    use voxy_animation::{RootRigidApproximation,RootRigidPath,RootRigidTwist,RootRigidFieldInterval,RootRigidFadeFieldInterval,RootRigidTransform};
+    #[test]
+    fn positive_directional_error_requires_a_proven_initial_gap_including_numeric_radius() {
+        let edges=[DVec3::X*0.125,DVec3::Y*0.125,DVec3::Z*0.125];
+        let floor=AffineBox {center:DVec3::Y*(-0.5),edges:[DVec3::X*4.,DVec3::Y*0.5,DVec3::Z*4.]};
+        let nominal=RootRigidTwist {linear:DVec3::X*0.3,angular:DVec3::ZERO};
+        let path=RootRigidPath::from_twists(&[(nominal,1.)],1).unwrap();
+        let source_path=RootRigidPath::from_twists(&[(RootRigidTwist {linear:nominal.linear-DVec3::Y*0.002,..nominal},1.)],1).unwrap();
+        let source=RootRigidFieldInterval::from_span(&source_path.spans()[0],[0.,1.],[0.,1.],RootRigidTransform::IDENTITY,1.).unwrap().unwrap();
+        let field=RootRigidFadeFieldInterval::new(source,source,[0.,1.],[0.,1.]).unwrap();
+        let approximation=RootRigidApproximation {path,origin_error_bound:0.05,angular_error_bound:0.1};
+        let proof=approximation.path.enclose_fade_coordinate_error(&[field],1,1).unwrap().unwrap();
+        assert!(proof.error_bound()>=0.002);
+        for scale in [-2.,1.] {
+            let query=|height,certificate|sweep_rigid_approximation_with_coordinate_certificate(
+                DVec3::Y*(0.125+height),edges,DQuat::IDENTITY,&approximation,DQuat::IDENTITY,DVec3::ZERO,
+                scale,0.001,&[floor],256,&mut 4096,certificate).unwrap();
+            assert!(query(0.01,Some(&proof)).complete);
+            assert!(!query(0.001,Some(&proof)).complete);
+            assert!(!query(0.01,None).complete);
+            assert!(proof.enclosed_scaled_error_bound(scale,0.001).unwrap()>=0.002*scale.abs()+0.001);
+        }
+        assert!(proof.enclosed_scaled_error_bound(1.,-0.001).is_err());
+    }
+}
+
+#[cfg(test)]
+mod assembled_fade_tests {
+    use super::*;
+    use voxy_animation::{RootRigidPath,RootRigidTwist,RootRigidMappedField,RootRigidCertifiedFadeInterval,RootRigidTransform};
+    #[test]
+    fn original_source_fade_assembly_and_collision_query_preserve_floor_and_wall() {
+        let edges=[DVec3::X*0.125,DVec3::Y*0.125,DVec3::Z*0.125];
+        let floor=AffineBox {center:DVec3::Y*(-0.5),edges:[DVec3::X*4.,DVec3::Y*0.5,DVec3::Z*4.]};
+        let wall=AffineBox {center:DVec3::X,edges:[DVec3::X*0.125,DVec3::Y*2.,DVec3::Z*2.]};
+        for speed in [0.3,3.] {
+            let source=RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::X*speed,angular:DVec3::Y*0.4},1.)],1).unwrap();
+            let field=RootRigidMappedField::new(&source.spans()[0],[0.,1.],RootRigidTransform::IDENTITY,1.).unwrap();
+            let fade=RootRigidCertifiedFadeInterval::integrate(None,field,[0.,1.],1.,0.01,0.01,4096).unwrap();
+            assert!(fade.approximation().origin_error_bound>0.);
+            let hit=sweep_certified_rigid_fade(DVec3::Y*0.125,edges,DQuat::IDENTITY,&fade,1,
+                DQuat::IDENTITY,DVec3::ZERO,1.,0.,&[floor],256,&mut 16384).unwrap();
+            assert!(hit.complete);
+            assert_eq!(hit.displacement.y,0.);
+            if speed==3. {
+                let hit=sweep_certified_rigid_fade(DVec3::Y*0.125,edges,DQuat::IDENTITY,&fade,1,
+                    DQuat::IDENTITY,DVec3::ZERO,1.,0.,&[floor,wall],256,&mut 16384).unwrap();
+                assert!(!hit.complete && hit.path_fraction>0.);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod automatic_fade_tests {
+    use super::*;
+    use voxy_animation::{RootRigidPath,RootRigidTwist,RootRigidMappedPath,RootRigidCertifiedFadeInterval,RootRigidTransform};
+    #[test]
+    fn automatically_discovered_key_guard_preserves_floor_during_translating_yaw_fade() {
+        let edges=[DVec3::X*0.125,DVec3::Y*0.125,DVec3::Z*0.125];
+        let floor=AffineBox {center:DVec3::Y*(-0.5),edges:[DVec3::X*4.,DVec3::Y*0.5,DVec3::Z*4.]};
+        let target=RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::X*0.3,angular:DVec3::Y*0.4},1.),
+            (RootRigidTwist {linear:DVec3::X*0.6,angular:DVec3::Y*0.2},2.)],2).unwrap();
+        let target=RootRigidMappedPath::new(&target,RootRigidTransform::IDENTITY,1.).unwrap();
+        let fade=RootRigidCertifiedFadeInterval::integrate_paths(None,target,[0.,1.],1.,0.01,0.01,4096).unwrap();
+        let hit=sweep_certified_rigid_fade(DVec3::Y*0.125,edges,DQuat::IDENTITY,&fade,1,
+            DQuat::IDENTITY,DVec3::ZERO,1.,0.,&[floor],512,&mut 16384).unwrap();
+        assert!(hit.complete);
+        assert_eq!(hit.displacement.y,0.);
+        assert!(hit.displacement.x>0.);
+    }
 }

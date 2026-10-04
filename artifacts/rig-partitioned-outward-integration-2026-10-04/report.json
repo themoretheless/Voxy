@@ -1,0 +1,13 @@
+{
+  "animation_passed": 132,
+  "verified": [
+    "single global prefix and error owner across stored cuts",
+    "domain-specific rate caps and callback index",
+    "noncommuting translation then rotation order",
+    "adaptive subdivision preserves key cut exactly",
+    "velocity jump stays outside derivative domains",
+    "global span budget rejects before callback",
+    "old single-interval API delegates to same owner"
+  ],
+  "scope": "partitioned canonical integration; actual clip-key/wall mapping, full fade/tail assembly, STEP pose policy, runtime publication and native acceptance remain outstanding"
+}

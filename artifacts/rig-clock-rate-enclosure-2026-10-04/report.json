@@ -1,0 +1,11 @@
+{
+  "animation_passed": 128,
+  "verified": [
+    "derivative and velocity retiming share exact stored-clock ratio owner",
+    "speed scales by ratio and rates by outward squared ratio",
+    "long elapsed adjacent endpoints",
+    "paused clip exact zero caps",
+    "reversed and numerically unproved wall intervals reject"
+  ],
+  "scope": "whole-field derivative cap clock transport; certified fade builder assembly, key/event partition, publication and native acceptance remain outstanding"
+}

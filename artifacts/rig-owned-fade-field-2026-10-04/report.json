@@ -1,0 +1,13 @@
+{
+  "animation_passed": 126,
+  "verified": [
+    "opaque whole-span wall-domain snapshots",
+    "enclosed frame mapping and signed scale before blending",
+    "identical source/target wall domain required",
+    "whole-fade directional displacement error",
+    "frozen interruption source",
+    "shifted yaw preserves zero normal error",
+    "tilted frame invalidates coordinate certificate"
+  ],
+  "scope": "single continuous fade interval; frame selection by engine owner, STEP/tail partition, whole-path accumulation and gameplay admission remain outstanding"
+}

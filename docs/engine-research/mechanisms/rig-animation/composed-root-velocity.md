@@ -536,3 +536,317 @@ empty-path direction queries. This removes the repeated path traversal from the
 support certificate; no whole-game speedup is asserted. Evidence:
 `artifacts/rig-cached-support-ranges-2026-10-04/`. Nonzero directional approximation
 error and arbitrary tilted support planes remain outstanding.
+
+### Exact zero identities in velocity enclosures
+
+Interval arithmetic now preserves exact algebraic zero for multiplication,
+positive division, squaring, addition of zero, and subtraction of identical
+finite singleton values. Non-singleton self-subtraction retains its uncertainty;
+zero multiplication does not conceal infinite or NaN operands. These rules
+avoid introducing artificial subnormal off-axis angular velocity or vertical
+linear velocity in planar fields.
+
+`RootRigidTwistEnclosure::coordinate_velocity_range` reports a coordinate
+velocity interval only when both orthogonal angular intervals are exactly zero.
+Its certificate covers the enclosure's represented domain: a sample certificate
+cannot establish invariance between samples. Retimed and blended planar fields
+retain exact zero normal velocity. This is groundwork for directional error
+bounds; it does not enable runtime moving fades or replace editor acceptance.
+
+Whole-span planar verification exposed dependency loss in interval De Casteljau
+interpolation: independently evaluated `u` and `1-u` allowed an artificial zero
+quaternion norm despite positive scalar control points. Each interpolation now
+intersects the arithmetic enclosure with the convex hull of its two controls
+when the complete weight interval lies in [0,1]. Both independently contain the
+real interpolation, so their intersection remains conservative. Extrapolation
+retains the arithmetic enclosure. This proves planar coordinate constraints on
+whole cubic spans rather than just at samples, without weakening norm rejection
+for genuinely unproved curves.
+
+### Directional displacement error over stored-time intervals
+
+`RootRigidSpan::enclosed_coordinate_displacement_error_between` obtains the
+source velocity enclosure for the entire checked time interval and compares it
+with a finite frozen spatial field. Both angular fields must be exactly parallel
+to the selected coordinate axis. For every material point, the corresponding
+component of `omega cross x` then vanishes, so the coordinate discrepancy at any
+prefix is bounded by the maximum enclosed linear velocity discrepancy times an
+outward duration. Initial coordinate error remains separate.
+
+This certificate allows different yaw speeds and arbitrarily different horizontal
+velocities while proving exact zero height error. Nonzero normal velocity bias
+produces a positive bound; even a subnormal-scale orthogonal angular component
+rejects the directional certificate. The API checks the full clock interval
+against the source span and cannot accept an unrelated point-sample enclosure.
+It does not yet transport this certificate through fade frame mapping or attach
+it to gameplay collision queries. Floating pose publication remains a separate
+admission check.
+
+### Whole-progress velocity blend enclosures
+
+`RootRigidTwistEnclosure::blended_over_progress` encloses all linear-weight
+blends over a closed progress interval. It uses the shared convex interpolation
+owner for both the weight and the field components; the point-progress API now
+calls the same implementation with a singleton interval. Increasing, decreasing
+and constant weights share the contract. Complete source and target time-domain
+enclosures must already use the same frame and playback clock; upstream clock
+conversion uncertainty must be included in the supplied progress interval.
+
+Exact planar normal velocity survives the whole blend interval, whereas a
+nonzero orthogonal angular component prevents the coordinate certificate.
+This operation supplies the whole-field input needed for directional fade
+errors. It does not on its own couple progress to clip clocks, prove common
+frame ownership, handle STEP events, or enable moving fades in the runtime.
+
+### Retiming complete clip domains from stored clocks
+
+`RootRigidTwistEnclosure::retimed_between_times` computes both durations from
+stored finite endpoints with outward subtraction, then divides outward.
+`RootRigidSpan::retimed_spatial_twist_enclosure_between` couples that operation
+with the complete checked source interval. Source and target spans can now be
+mapped independently onto the same wall interval before whole-progress blending.
+
+Equal clip endpoints represent a paused clip and retain exact zero velocity.
+The wall interval must be strictly increasing; decreasing clip intervals,
+nonfinite clocks, out-of-span clip times, and an unprovably positive numerical
+wall-duration enclosure reject. This includes tiny adjacent-float wall intervals
+rather than silently treating an uncertain denominator as positive. Long elapsed
+clocks are tested with adjacent stored endpoints. The contract uses exact stored
+endpoint differences; upstream timestamp acquisition error remains separate.
+Frame ownership, progress-clock coupling and runtime admission remain outstanding.
+
+### Fade progress from the stored wall clock
+
+`RootRigidTwistEnclosure::blended_between_times` derives a whole progress
+interval by outward subtraction and division of stored fade/query clocks.
+The checked query must remain inside a strictly positive continuous fade;
+completion and target tails must be split by the caller. Increasing and
+reversing weights use the shared whole-progress blend owner. Clamping the
+outward progress enclosure to [0,1] relies on that checked domain, not a
+numerical tolerance. Complete source and target field coverage in the same
+frame/wall clock remains a precondition. Clock acquisition error, event
+partitioning and runtime collision admission remain separate.
+
+The shared interpolation owner also intersects its result with the outward
+`a+(b-a)*u` expression, which retains the dependence of weight and complement
+for fixed controls. If this optional expression overflows, the original valid
+enclosure remains. An independent exact-rational oracle checks 16,000 corner
+values against the intersection of both expressions and the convex hull.
+
+### Owned whole-domain fade field snapshots
+
+`RootRigidFieldInterval::from_span` snapshots the complete checked clip domain,
+retimes it to stored wall endpoints, and maps it through an enclosed normalized
+frame and signed scale. `frozen` represents the zero-velocity interruption source.
+These snapshots have private field/clock state; callers cannot construct them
+from unrelated point samples. `RootRigidFadeFieldInterval` requires identical
+source/target wall endpoints and derives the blend from the stored fade clock.
+Both supplied mappings must target the caller-selected common coordinate frame.
+
+The fade owner provides a uniform coordinate displacement error bound against a
+frozen field for every prefix and every material point, sharing the existing
+single-span error arithmetic owner. Shifted yaw frames, reflected scales and a
+frozen interruption source preserve zero normal displacement error; a tilted
+mapping invalidates the coordinate certificate. Initial discrepancies, proof
+transport to arbitrary planes, whole-path accumulation and gameplay admission
+remain separate. These values are immutable snapshots of stored source data;
+subsequent source edits require rebuilding the fade snapshot.
+
+### Path-bound directional fade certificate
+
+`RootRigidPath::enclose_fade_coordinate_error` requires one complete fade field
+interval per stored screw span, with exactly matching endpoints and order. It
+compares each whole fade domain against that span's own stored twist, rather
+than a separately supplied nominal velocity, then accumulates coordinate error
+outward. Because both fields remain parallel to the selected axis, initial
+coordinate discrepancy propagates unchanged and local displacement discrepancy
+bounds add for every prefix and every material point.
+
+The resulting `RootRigidCoordinateCertificate` privately borrows the exact path,
+records its axis and uniform error bound, and cannot survive mutation of that
+path. Missing/reordered domains and exhausted span budgets reject; a late
+orthogonal angular component or unsupported non-screw span returns no complete
+certificate. Exact zero directional error remains zero across all spans.
+Initial coordinate error, floating pose evaluation and collider frame transport
+are still separate. Gameplay has not yet consumed this certificate.
+
+### Directional certificate consumed by the conditional collision query
+
+The conditional approximate-motion sweep now accepts an optional path-bound
+coordinate certificate. It verifies exact path identity before any query and
+uses a zero-error certificate only for the matching coordinate after exact
+actor/source coordinate-row transport. Thus a conservative nonzero isotropic
+approximation margin need not block touching a floor when the complete fade
+field has provably identical normal displacement to the nominal trajectory.
+The existing whole-path monotone-away condition and exact initial SAT contact
+predicate remain required. Other obstacle axes retain the isotropic margin.
+
+A positive scalar floating-evaluation radius disables this directional bypass,
+since it supplies no exact zero normal-error proof. The proposed rounded pose
+still passes the separate exact-contact admission gate. The read-only query
+remains disconnected from runtime moving-fade publication; the caller must use
+certified fade domains for the actual original field. General positive
+coordinate-error margins and tilted support planes are not yet handled.
+
+### Positive directional margins at support planes
+
+The directional collision path now also handles nonzero coordinate error when
+there is a proven initial gap. The certificate computes an outward world margin
+`abs(scale)*coordinate_error + evaluation_radius`; exact coordinate-row frame
+transport supplies only a sign and does not enlarge the magnitude. A monotone
+nominal field may discard a support candidate only when its initial directed
+projection gap exceeds this margin. Zero margin retains the exact touching
+predicate. Other axes continue to use the complete isotropic approximation
+margin, and the rounded proposed pose still passes its separate admission gate.
+
+This supersedes the earlier blanket disabling of directional support for a
+positive numerical evaluation radius: that radius now participates in the
+required gap and cannot permit exact touching. Reflected scales and insufficient
+support gaps are checked. Runtime publication and general tilted support remain
+outstanding.
+
+### Derivative caps use the same stored-clock mapping
+
+Audit of the staged fade builder found that using rounded duration subtraction
+for derivative retiming would break the endpoint-clock reference used by
+velocity enclosures. `RootSpatialTwistBounds::enclosed_retimed_between_times`
+now shares the outward endpoint-difference ratio owner with velocity retiming.
+Speed caps scale by the enclosed ratio; derivative caps scale by its outward
+square. Existing exact-duration retiming shares the same bound scaling owner.
+Paused clip clocks retain exact zero caps; invalid or unprovably positive wall
+intervals reject. The legacy `blend_spatial` builder still uses its earlier
+real-arithmetic contract and is not silently promoted to a certified builder.
+
+### Integrated certified continuous fade interval
+
+`RootRigidMappedField` borrows an authoritative continuous source span and
+records its clip endpoints, enclosed common-frame mapping and signed scale.
+`RootRigidCertifiedFadeInterval::integrate` derives whole-field derivative caps
+from those same sources, retimes/transforms them outward, and integrates with
+`integrate_spatial_outward`. Point samples and whole output-span certificates
+share one field evaluator. That evaluator maps stored wall time to an outward
+clip-time interval, preserving mapping uncertainty and the original global
+clip/wall rate rather than recomputing it from rounded local durations.
+
+The nominal stored twist is the finite componentwise midpoint of its enclosure;
+its discrepancy is included by the existing outward integrator. The immutable
+result owns both approximation and complete fade domains, and constructs its
+path-bound coordinate certificate on demand. A frozen interruption source is
+supported. This builds one key-free continuous interval only; multi-key and STEP
+partitioning, composed tail error transport, Animator publication and native
+acceptance remain outstanding.
+
+Canonical yaw verification sums stored angular speed times exact stored endpoint
+differences using independent rational arithmetic and checks the analytic half
+radian phase against the emitted angular bound over 64 spans. A rounded pose's
+`angle_between` is not substituted for this canonical comparison: floating pose
+evaluation uncertainty remains separate from the discretization certificate.
+
+### Assembled fade passed directly to collision acceptance
+
+`sweep_certified_rigid_fade` consumes the immutable assembled interval and builds
+its coordinate certificate internally from that object's source domains. The
+caller no longer supplies unrelated approximation metadata and a separate fade
+certificate. The existing enclosed sweep, directional support margin, shared
+query/iteration budgets and rounded proposed-pose admission gate are reused.
+
+The verification path assembles increasing-weight translation plus yaw from the
+original continuous source, then checks floor contact and a wall in the same
+query. This is still a read-only staged acceptance query; it does not publish
+Animator clocks, grounding/relocation updates or editor state. Multi-key/tail
+assembly and native acceptance remain outstanding.
+
+### One global integrator across stored key-domain cuts
+
+`integrate_spatial_outward_partitioned` accepts strictly ordered stored domain
+endpoints and separate whole-domain derivative caps. It keeps one global nominal
+prefix, canonical prefix enclosure and outward error accumulator across all
+cuts. The original single-interval API delegates to this owner. Every output
+span stays inside its selected domain, and the final subdivision uses that
+domain's exact stored endpoint. No rounded local-duration summation or post-hoc
+path append transports the error bound.
+
+The callback receives both active domain index and stored wall time, so a
+velocity discontinuity at a cut selects the next domain explicitly. Instantaneous
+pose STEP events still require a separate policy. Subdivision uses one bounded
+global span budget and publishes only a complete candidate. A translation then
+rotation test verifies preserved order, stored cut identity and budget rejection
+before sampling. Mapping actual clip keys onto these wall cuts and assembling
+the complete Animator fade/tail remain outstanding.
+
+### Certified fade assembly across explicit clip-pair domains
+
+`RootRigidFadeDomain` pairs checked source/target span mappings with a stored
+wall endpoint. `RootRigidCertifiedFadeInterval::integrate_partitioned` retimes
+each mapping from its own exact endpoint differences, uses global fade weights
+and weight derivative bounds, and passes all domains to the single partitioned
+outward integrator. The one-domain API delegates to this owner. Whole-span
+coordinate certificates are assembled from the same global-time field evaluator
+and remain attached to the complete owned path.
+
+The global weight does not restart at a key. A frozen-source example changes
+target speed from 1 to 3 at wall time 0.25; its analytic fade displacement is
+1.4375. Restarting the weight locally would produce a different trajectory and
+is rejected by the error-bound comparison. Stored key cuts are retained during
+refinement, and all domains retain zero normal discrepancy. This API requires
+explicit checked clip-to-wall domain mappings; automatic extraction from both
+Animator key streams, pose STEP policy, completion/tail assembly and publication
+remain outstanding.
+
+A paired-key verification uses a source key at 0.5 and a target key at 0.25,
+with explicit common cuts [0.25, 0.5, 1]. Both fields retain the global weight
+`t`; the analytic blended displacement is (2.1875, 0, 0.5). All stored cuts and
+zero normal discrepancy survive adaptive integration. Automatic discovery and
+certified temporal mapping of arbitrary imported key streams remain separate.
+
+### Outward wall-clock key partition with explicit uncertainty domains
+
+`RootRigidPath::partition_wall_outward` computes interval bounds for each exact
+stored `key_time / clip_duration * wall_duration`. Outer endpoints preserve the
+algebraic identities zero and the complete wall duration. Every non-singleton
+key-time enclosure contributes a marked uncertainty domain. Outside their union,
+source/target span indices are selected only when the entire stored wall interval
+is proved between the enclosed key boundaries. Marked domains supply no invented
+single-span derivative cap and require a future whole-field discrepancy bound.
+
+The partition borrows both exact input paths, preventing stale indices after
+mutation. Overlapping guards merge; sorted guards and source spans are traversed
+with monotone cursors. A nonrepresentable 1/3 key verifies guarded timing, proved
+outside indices and contiguous wall coverage. Pose STEP events reject explicitly.
+This prepares automatic certified key mapping; consuming the marked domains in
+fade integration remains outstanding, so the older rounded normalized partition
+is not promoted to a numerical certificate.
+
+### Complete field hull over a key-uncertainty clip domain
+
+`RootRigidPath::spatial_twist_enclosure_between` bounds all intersecting continuous
+span limits on a checked clip-time interval. A key boundary contributes both
+neighbors, stationary gaps contribute zero, and any intersecting instantaneous
+pose STEP rejects. Componentwise `RootRigidTwistEnclosure::hull` preserves exact
+planar constraints only if every included field satisfies them; even a tiny
+orthogonal angular component in a neighboring span invalidates the certificate.
+No finite derivative cap across the hull's key boundaries is implied.
+
+A binary search locates the first intersecting ordered span, followed by a scan
+of only the required spans and gap boundaries. This supplies the velocity
+range needed for marked uncertain wall-key domains. Uniform whole-field
+integration of that range, automatic complete fade assembly and Animator/native
+publication remain outstanding.
+
+### Whole-field integration domains without fictitious derivative bounds
+
+`RootRigidIntegrationDomain` distinguishes derivative-bounded smooth domains
+from `WholeField` domains. Smooth callbacks enclose the stored start instant;
+whole-field callbacks receive the complete stored [start,end] interval and must
+bound every velocity there. `append_bounded_field_interval` has no derivative
+precondition: the skew term in the discrepancy dynamics preserves norm, giving
+`ev*h + ew*(prefix_radius*h + nominal_linear_speed*h*h/2)` and angular error
+`ew*h`. Both modes share the private outward error arithmetic owner.
+
+The global integrator retains whole-field domains as one span while refining
+smooth domains under the remaining shared budget. This avoids subdividing an
+adjacent-float key guard into nonrepresentable timestamps. A mixed ramp/guard/ramp
+case verifies successful refinement, one exact adjacent-clock guard span and
+bounded displacement without assigning zero original acceleration at a key.
+The original partitioned and single-domain APIs delegate to this owner.
+Automatic assembly from original path key guards remains outstanding.

@@ -1,0 +1,7 @@
+
+running 1 test
+WALL_KEY_GUARD (1.0, 3.0, 1.0, [0.3333333333333332, 0.3333333333333334])
+test root_rigid::enclosure::wall_partition::tests::nonrepresentable_key_clock_is_guarded_and_spans_outside_are_proved ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 134 filtered out; finished in 0.00s
+

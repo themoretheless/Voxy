@@ -1,0 +1,11 @@
+{
+  "animation_passed": 120,
+  "exact_rational_interpolation_checks": 16000,
+  "verified": [
+    "exact zero identities without hiding invalid operands",
+    "planar retiming and blending",
+    "whole cubic field across eight extraction masks",
+    "convex hull only for weights in [0,1]"
+  ],
+  "scope": "stored-field planar velocity constraints; directional approximation error and moving fade runtime integration remain outstanding"
+}

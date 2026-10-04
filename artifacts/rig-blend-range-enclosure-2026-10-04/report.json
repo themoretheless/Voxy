@@ -1,0 +1,12 @@
+{
+  "animation_passed": 122,
+  "verified": [
+    "whole progress interval blending",
+    "increasing decreasing and constant weights",
+    "planar normal velocity invariant across complete transition weight range",
+    "tilted target invalidates coordinate certificate",
+    "invalid reversed and nonfinite progress rejection",
+    "singleton API shares interval implementation"
+  ],
+  "scope": "velocity blend arithmetic; common frame, clip clock coupling, STEP event partition, directional integration and runtime moving fade admission remain outstanding"
+}

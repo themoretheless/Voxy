@@ -1,0 +1,13 @@
+{
+  "animation_passed": 130,
+  "canonical_yaw_exact_rational_spans": 64,
+  "verified": [
+    "original source-derived bounds and adaptive integration",
+    "frozen interruption source",
+    "analytic linear acceleration displacement",
+    "exact rational canonical yaw against half-radian analytic phase",
+    "height certificate derived from same assembled trajectory",
+    "insufficient zero-tolerance budget rejects"
+  ],
+  "scope": "one continuous key-free fade interval; multi-key STEP/tail composition, runtime candidate publication, floating pose evaluation and native acceptance remain outstanding"
+}

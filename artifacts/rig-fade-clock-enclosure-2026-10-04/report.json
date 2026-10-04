@@ -1,0 +1,12 @@
+{
+  "animation_passed": 125,
+  "exact_rational_interpolation_checks": 16000,
+  "verified": [
+    "fade progress from outward stored wall-clock differences",
+    "long elapsed and adjacent clock endpoints",
+    "increasing and decreasing weights",
+    "query tail and invalid clocks reject",
+    "two equivalent interpolation expressions intersect conservatively"
+  ],
+  "scope": "fade clock arithmetic; complete common-frame field coverage, event partition, directional fade integration and runtime admission remain outstanding"
+}

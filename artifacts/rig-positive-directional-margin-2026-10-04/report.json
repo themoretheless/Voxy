@@ -1,0 +1,14 @@
+{
+  "gameplay_unit_passed": 57,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "positive coordinate-error bound consumed by support-plane gap test",
+    "signed scale magnitude rounds outward",
+    "world numeric evaluation radius retained in margin",
+    "sufficient initial gap admits motion",
+    "insufficient initial gap rejects",
+    "absence of certificate keeps isotropic fallback",
+    "zero-error contact and wall tests still pass"
+  ],
+  "scope": "conditional read-only certified fade sweep; engine fade integration/publication, general tilted support and native acceptance remain outstanding"
+}

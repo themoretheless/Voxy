@@ -1,0 +1,11 @@
+{
+  "animation_passed": 124,
+  "verified": [
+    "clip/wall exact stored endpoint differences rounded outward",
+    "long elapsed adjacent clock endpoints",
+    "paused clip exact zero velocity",
+    "whole source and target domains mapped before blending",
+    "out-of-span reversed nonfinite and numerically unproved durations reject"
+  ],
+  "scope": "clip/wall domain coupling; common frame, fade progress clock mapping, STEP partition and runtime admission remain outstanding"
+}
