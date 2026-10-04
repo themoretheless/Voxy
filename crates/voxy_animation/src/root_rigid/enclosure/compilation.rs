@@ -980,32 +980,24 @@ pub(crate) fn quaternion_normalized_composition_uniform_error(
     normalization_uniform_error(discrepancy)
 }
 
-fn normalization_uniform_error(discrepancy: Scalar) -> Result<[f64; 4], AnimationError> {
+pub(super) fn normalization_uniform_error(discrepancy: Scalar) -> Result<[f64; 4], AnimationError> {
     if discrepancy.1 > 0.25 {
         return Err(AnimationError::InvalidRootRotationCurve);
     }
-    // Actual raw product norm is [3/4,5/4]. Dot rounding preserves sqrt >=1/2.
-    let dot = Scalar::exact(rounding_error(Scalar(0., 2.))?)
-        .mul(Scalar::exact(4.))?
-        .add(Scalar::exact(rounding_error(Scalar(0., 8.))?).mul(Scalar::exact(3.))?)?;
-    if dot.1 >= 0.25 {
-        return Err(AnimationError::NumericalOverflow);
+    // A raw product within discrepancy of a unit source has norm in
+    // [1-discrepancy, 1+discrepancy]. Keep this relational proof even though
+    // component boxes alone may all contain zero.
+    let lower = Scalar::exact(1.).sub(discrepancy)?.0;
+    let upper = Scalar::exact(1.).add(discrepancy)?.1;
+    let q = [Scalar(-upper, upper); 4];
+    let squared = Scalar(lower, upper).square()?;
+    let rounding = normalization_rounding_for_domain(q, Some(squared))?;
+    let selection = discrepancy.mul(Scalar::exact(2.))?.div_positive(lower)?;
+    let mut result = [0.; 4];
+    for i in 0..4 {
+        result[i] = selection.add(Scalar::exact(rounding[i]))?.1;
     }
-    let norm_error = dot
-        .div_positive(0.75)?
-        .add(Scalar::exact(rounding_error(Scalar(0., 4.))?))?;
-    let reciprocal_error = norm_error
-        .mul(Scalar::exact(4.))?
-        .add(Scalar::exact(rounding_error(Scalar(0., 2.))?))?;
-    let normalization = reciprocal_error
-        .mul(Scalar::exact(1.25))?
-        .add(Scalar::exact(rounding_error(Scalar(-3., 3.))?))?;
-    let bound = discrepancy
-        .mul(Scalar::exact(2.))?
-        .div_positive(0.75)?
-        .add(normalization)?
-        .1;
-    Ok([bound; 4])
+    Ok(result)
 }
 
 /// Uniform raw Hamilton product error; deliberately performs no normalization.
@@ -1231,4 +1223,363 @@ pub(super) fn mapped_point_runtime_error(
         actual_box[i] = expanded(mapped.value, mapped.error.1)?.array();
     }
     Ok((error, actual_box))
+}
+
+/// Uniform rounding discrepancy of glam 0.33.7 DQuat::normalize against
+/// exact real normalization of the same stored quaternion. No source error.
+pub(super) fn stored_quaternion_normalization_error(
+    input: [[f64; 2]; 4],
+) -> Result<[f64; 4], AnimationError> {
+    if input
+        .iter()
+        .any(|v| !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1])
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let q = input.map(|v| Scalar(v[0], v[1]));
+    normalization_rounding_for_domain(q, None)
+}
+
+// A supplied squared-norm interval must follow from a private relational proof;
+// external callers cannot assert one for an arbitrary input box.
+fn normalization_rounding_for_domain(
+    q: [Scalar; 4],
+    squared_norm: Option<Scalar>,
+) -> Result<[f64; 4], AnimationError> {
+    let mut products = [RoundedRange::exact(0.); 4];
+    for i in 0..4 {
+        let square = q[i].square()?;
+        products[i] = RoundedRange {
+            value: square,
+            error: Scalar::exact(rounding_error(square)?),
+        };
+    }
+    // glam uses four products followed by three left-associated additions.
+    let dot = products[0]
+        .add(products[1])?
+        .add(products[2])?
+        .add(products[3])?;
+    let squared = squared_norm.unwrap_or(dot.value);
+    let exact_norm = squared.sqrt_positive()?;
+    let raw_norm = expanded(squared, dot.error.1)?.sqrt_positive()?;
+    let sqrt_rounding = rounding_error(raw_norm)?;
+    let norm_error = dot
+        .error
+        .div_interval_positive(Scalar::exact(exact_norm.0).add(Scalar::exact(raw_norm.0))?)?
+        .add(Scalar::exact(sqrt_rounding))?;
+    let actual_norm = expanded(raw_norm, sqrt_rounding)?;
+    let reciprocal_range = Scalar::exact(1.).div_interval_positive(actual_norm)?;
+    let reciprocal_rounding = rounding_error(reciprocal_range)?;
+    let reciprocal_error = norm_error
+        .div_interval_positive(Scalar::exact(exact_norm.0).mul(Scalar::exact(actual_norm.0))?)?
+        .add(Scalar::exact(reciprocal_rounding))?;
+    let actual_reciprocal = expanded(reciprocal_range, reciprocal_rounding)?;
+    let mut result = [0.; 4];
+    for i in 0..4 {
+        result[i] = Scalar::exact(absolute_upper(q[i]))
+            .mul(reciprocal_error)?
+            .add(Scalar::exact(rounding_error(q[i].mul(actual_reciprocal)?)?))?
+            .1;
+    }
+    Ok(result)
+}
+
+/// Uniform component/operation error for a family of evaluated rigid poses.
+/// Caller-provided errors must bound those same canonical source pose components.
+pub(super) fn rigid_point_runtime_error(
+    source: &RootRigidEnclosure,
+    translation_error: [f64; 3],
+    rotation_error: [f64; 4],
+    point: [[f64; 2]; 3],
+) -> Result<[f64; 3], AnimationError> {
+    if point
+        .iter()
+        .any(|v| !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1])
+        || translation_error
+            .iter()
+            .chain(rotation_error.iter())
+            .any(|v| !v.is_finite() || *v < 0.)
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let q = std::array::from_fn(|i| RoundedRange {
+        value: Scalar(source.rotation[i][0], source.rotation[i][1]),
+        error: Scalar::exact(rotation_error[i]),
+    });
+    let p = point.map(|v| RoundedRange {
+        value: Scalar(v[0], v[1]),
+        error: Scalar::exact(0.),
+    });
+    let rotated = rounded_rotate(q, p)?;
+    let mut result = [0.; 3];
+    for i in 0..3 {
+        let offset = RoundedRange {
+            value: Scalar(source.translation[i][0], source.translation[i][1]),
+            error: Scalar::exact(translation_error[i]),
+        };
+        result[i] = rotated[i].add(offset)?.error.1;
+    }
+    Ok(result)
+}
+
+fn rounded_cross_rotate(
+    q: [RoundedRange; 4],
+    p: [RoundedRange; 3],
+) -> Result<[RoundedRange; 3], AnimationError> {
+    let v = [q[0], q[1], q[2]];
+    let cross =
+        |a: [RoundedRange; 3], b: [RoundedRange; 3]| -> Result<[RoundedRange; 3], AnimationError> {
+            Ok([
+                a[1].mul(b[2])?.sub(a[2].mul(b[1])?)?,
+                a[2].mul(b[0])?.sub(a[0].mul(b[2])?)?,
+                a[0].mul(b[1])?.sub(a[1].mul(b[0])?)?,
+            ])
+        };
+    let first = cross(v, p)?;
+    let twice = [
+        first[0].mul(RoundedRange::exact(2.))?,
+        first[1].mul(RoundedRange::exact(2.))?,
+        first[2].mul(RoundedRange::exact(2.))?,
+    ];
+    let second = cross(v, twice)?;
+    Ok([
+        p[0].add(q[3].mul(twice[0])?)?.add(second[0])?,
+        p[1].add(q[3].mul(twice[1])?)?.add(second[1])?,
+        p[2].add(q[3].mul(twice[2])?)?.add(second[2])?,
+    ])
+}
+
+pub(super) fn physical_rotation_runtime_error(
+    source_rotation: [[f64; 2]; 4],
+    selection_error: [f64; 4],
+    basis: DQuat,
+    orientation: DQuat,
+) -> Result<[f64; 4], AnimationError> {
+    Ok(physical_rotation_runtime_errors(source_rotation, selection_error, basis, orientation)?.1)
+}
+
+fn physical_rotation_runtime_errors(
+    source_rotation: [[f64; 2]; 4],
+    selection_error: [f64; 4],
+    basis: DQuat,
+    orientation: DQuat,
+) -> Result<([f64; 4], [f64; 4]), AnimationError> {
+    let source = |q: DQuat| {
+        RootRigidEnclosure::from_transform(RootRigidTransform {
+            translation: DVec3::ZERO,
+            rotation: q,
+        })
+    };
+    let basis_source = source(basis)?;
+    let actor_source = source(orientation)?;
+    let discrepancy = |bounds: [f64; 2], actual: f64| -> Result<f64, AnimationError> {
+        Ok(absolute_upper(
+            Scalar(bounds[0], bounds[1]).sub(Scalar::exact(actual))?,
+        ))
+    };
+    let mut b = [RoundedRange::exact(0.); 4];
+    let mut actor_error = [0.; 4];
+    for i in 0..4 {
+        b[i] = RoundedRange {
+            value: Scalar(basis_source.rotation[i][0], basis_source.rotation[i][1]),
+            error: Scalar::exact(discrepancy(basis_source.rotation[i], basis.to_array()[i])?),
+        };
+        actor_error[i] = discrepancy(actor_source.rotation[i], orientation.to_array()[i])?;
+    }
+    let p = std::array::from_fn(|i| RoundedRange {
+        value: Scalar(source_rotation[i][0], source_rotation[i][1]),
+        error: Scalar::exact(selection_error[i]),
+    });
+    let vector = rounded_cross_rotate(b, p)?;
+    let mut reframed_raw = Scalar::exact(selection_error[3]);
+    for component in vector {
+        reframed_raw = reframed_raw.add(component.error)?;
+    }
+    // Structural coordinate-row replacement in the controller is exact for
+    // the real normalization of this same stored basis. Its only discrepancy
+    // is the input component error, already included by the cross-form cap.
+    let reframed = normalization_uniform_error(reframed_raw)?;
+    let composed = quaternion_composition_uniform_error(actor_error, reframed)?;
+    let mut raw = Scalar::exact(0.);
+    for error in composed {
+        raw = raw.add(Scalar::exact(error))?;
+    }
+    Ok((reframed, normalization_uniform_error(raw)?))
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(super) fn physical_body_runtime_error(
+    source: &RootRigidEnclosure,
+    translation_error: [f64; 3],
+    rotation_error: [f64; 4],
+    center: DVec3,
+    edges: [DVec3; 3],
+    basis: DQuat,
+    origin: DVec3,
+    orientation: DQuat,
+    scale: f64,
+) -> Result<[f64; 3], AnimationError> {
+    Ok(physical_body_runtime_domains(
+        source,
+        translation_error,
+        rotation_error,
+        center,
+        edges,
+        basis,
+        origin,
+        orientation,
+        scale,
+    )?
+    .0)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(super) fn physical_body_runtime_domains(
+    source: &RootRigidEnclosure,
+    translation_error: [f64; 3],
+    rotation_error: [f64; 4],
+    center: DVec3,
+    edges: [DVec3; 3],
+    basis: DQuat,
+    origin: DVec3,
+    orientation: DQuat,
+    scale: f64,
+) -> Result<([f64; 3], [[f64; 2]; 3], [[f64; 2]; 3]), AnimationError> {
+    if !center.is_finite()
+        || edges.iter().any(|v| !v.is_finite())
+        || !origin.is_finite()
+        || !scale.is_finite()
+        || scale == 0.
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let fixed = |q: DQuat| {
+        RootRigidEnclosure::from_transform(RootRigidTransform {
+            translation: DVec3::ZERO,
+            rotation: q,
+        })
+    };
+    let basis_source = fixed(basis)?;
+    let actor_source = fixed(orientation)?;
+    let reference_rotation = basis_source
+        .compose(source)?
+        .compose(&basis_source.inverse()?)?;
+    let body_rotation = actor_source.compose(&reference_rotation)?;
+    let (reframed_error, body_error) =
+        physical_rotation_runtime_errors(source.rotation, rotation_error, basis, orientation)?;
+    let input_q = |reference: &RootRigidEnclosure, error: [f64; 4]| {
+        std::array::from_fn(|i| RoundedRange {
+            value: Scalar(reference.rotation[i][0], reference.rotation[i][1]),
+            error: Scalar::exact(error[i]),
+        })
+    };
+    let fixed_q = |reference: &RootRigidEnclosure,
+                   actual: DQuat|
+     -> Result<[RoundedRange; 4], AnimationError> {
+        let mut error = [0.; 4];
+        for i in 0..4 {
+            error[i] = absolute_upper(
+                Scalar(reference.rotation[i][0], reference.rotation[i][1])
+                    .sub(Scalar::exact(actual.to_array()[i]))?,
+            );
+        }
+        Ok(input_q(reference, error))
+    };
+    // A coordinate-row override evaluates the exact real normalization of its
+    // stored quaternion. Its distance from the canonical unit source is at
+    // most 2*L1(raw discrepancy)/(1-L1(raw discrepancy)). Inflating all component
+    // errors by this bound also covers the ordinary cross-form branch.
+    let structural_errors = |error: [f64; 4]| -> Result<[f64; 4], AnimationError> {
+        let mut total = Scalar::exact(0.);
+        for e in error {
+            total = total.add(Scalar::exact(e))?;
+        }
+        let lower = Scalar::exact(1.).sub(total)?.0;
+        Ok([total.mul(Scalar::exact(2.))?.div_positive(lower)?.1; 4])
+    };
+    let actor = fixed_q(&actor_source, orientation)?;
+    let b = fixed_q(&basis_source, basis)?;
+    let reframe = input_q(&reference_rotation, structural_errors(reframed_error)?);
+    let body = input_q(&body_rotation, structural_errors(body_error)?);
+    let translation = std::array::from_fn(|i| RoundedRange {
+        value: Scalar(source.translation[i][0], source.translation[i][1]),
+        error: Scalar::exact(translation_error[i]),
+    });
+    let mapped_translation = rounded_cross_rotate(b, translation)?;
+    let pivot = origin.to_array().map(RoundedRange::exact);
+    let pivot_image = rounded_cross_rotate(reframe, pivot)?;
+    let mut local = [RoundedRange::exact(0.); 3];
+    for i in 0..3 {
+        local[i] = mapped_translation[i]
+            .mul(RoundedRange::exact(scale))?
+            .add(pivot[i])?
+            .sub(pivot_image[i])?;
+    }
+    let displacement = rounded_cross_rotate(actor, local)?;
+    let mut moved = [RoundedRange::exact(0.); 3];
+    for i in 0..3 {
+        moved[i] = RoundedRange::exact(center[i]).add(displacement[i])?;
+    }
+    let mut rotated_edges = [[RoundedRange::exact(0.); 3]; 3];
+    for i in 0..3 {
+        rotated_edges[i] =
+            rounded_cross_rotate(body, edges[i].to_array().map(RoundedRange::exact))?;
+    }
+    let mut result = [0_f64; 3];
+    for corner in 0..8 {
+        for axis in 0..3 {
+            let mut value = moved[axis];
+            for (i, edge) in rotated_edges.iter().enumerate() {
+                value = value.add(edge[axis].mul(RoundedRange::exact(
+                    if corner & (1 << i) == 0 { -1. } else { 1. },
+                ))?)?;
+            }
+            result[axis] = result[axis].max(value.error.1);
+        }
+    }
+    let mut center_domain = [[0.; 2]; 3];
+    let mut half_domain = [[0.; 2]; 3];
+    for axis in 0..3 {
+        center_domain[axis] = expanded(moved[axis].value, moved[axis].error.1)?.array();
+        let mut half = Scalar::exact(0.);
+        for edge in rotated_edges {
+            let component = expanded(edge[axis].value, edge[axis].error.1)?;
+            half = half.add(Scalar(0., absolute_upper(component)))?;
+        }
+        half_domain[axis] = [0., half.1];
+    }
+    Ok((result, center_domain, half_domain))
+}
+
+/// Numeric error relative to the exact stored-input snap displacement, for
+/// every snap fraction in [0,1], followed by zero-anchor min/max reconstruction.
+pub(super) fn snap_center_reconstruction_error(
+    center: [[f64; 2]; 3],
+    half: [[f64; 2]; 3],
+    snap: DVec3,
+) -> Result<[f64; 3], AnimationError> {
+    if !snap.is_finite()
+        || center
+            .iter()
+            .chain(half.iter())
+            .any(|v| !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1])
+        || half.iter().any(|v| v[0] < 0.)
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let input = |v: [f64; 2]| RoundedRange {
+        value: Scalar(v[0], v[1]),
+        error: Scalar::exact(0.),
+    };
+    let fraction = input([0., 1.]);
+    let mut result = [0.; 3];
+    for axis in 0..3 {
+        let displacement = RoundedRange::exact(snap[axis]).mul(fraction)?;
+        let moved = input(center[axis]).add(displacement)?;
+        let minimum = moved.sub(input(half[axis]))?;
+        let maximum = moved.add(input(half[axis]))?;
+        let reconstructed = minimum.add(maximum)?.mul(RoundedRange::exact(0.5))?;
+        result[axis] = reconstructed.error.1;
+    }
+    Ok(result)
 }

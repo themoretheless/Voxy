@@ -35,7 +35,7 @@ pub(crate) use linear_source::{
 mod wall_partition;
 pub use accumulation::RootRigidErrorAccumulator;
 pub use automatic_fade::RootRigidMappedPath;
-pub use cache::RootScrewEnclosurePath;
+pub use cache::{RootRigidEvaluatedPose, RootScrewEnclosurePath};
 pub use coordinate::RootRigidCoordinateCertificate;
 pub use fade::{RootRigidFadeFieldInterval, RootRigidFieldInterval};
 pub use fade_point::RootRigidFadePointCertificate;
@@ -297,20 +297,66 @@ impl Scalar {
         [self.0, self.1]
     }
 }
-fn cross(a: [Scalar; 3], b: [Scalar; 3]) -> Result<[Scalar; 3], AnimationError> {
+// Shared expression tree for ordinary enclosures and temporal width families.
+trait EnclosureArithmetic: Copy {
+    fn exact(value: f64) -> Self;
+    fn domain(self) -> Scalar;
+    fn add(self, other: Self) -> Result<Self, AnimationError>;
+    fn sub(self, other: Self) -> Result<Self, AnimationError>;
+    fn mul(self, other: Self) -> Result<Self, AnimationError>;
+    fn square(self) -> Result<Self, AnimationError>;
+    fn div_positive(self, value: f64) -> Result<Self, AnimationError>;
+    fn negate(self) -> Self;
+    fn nonnegative(self) -> Self;
+    fn symmetric_remainder(self) -> Result<Self, AnimationError>;
+}
+impl EnclosureArithmetic for Scalar {
+    fn exact(value: f64) -> Self {
+        Self::exact(value)
+    }
+    fn domain(self) -> Scalar {
+        self
+    }
+    fn add(self, other: Self) -> Result<Self, AnimationError> {
+        self.add(other)
+    }
+    fn sub(self, other: Self) -> Result<Self, AnimationError> {
+        self.sub(other)
+    }
+    fn mul(self, other: Self) -> Result<Self, AnimationError> {
+        self.mul(other)
+    }
+    fn square(self) -> Result<Self, AnimationError> {
+        self.square()
+    }
+    fn div_positive(self, value: f64) -> Result<Self, AnimationError> {
+        self.div_positive(value)
+    }
+    fn negate(self) -> Self {
+        Self(-self.1, -self.0)
+    }
+    fn nonnegative(self) -> Self {
+        Self(self.0.max(0.), self.1)
+    }
+    fn symmetric_remainder(self) -> Result<Self, AnimationError> {
+        let radius = self.0.abs().max(self.1.abs());
+        Ok(Self(-radius, radius))
+    }
+}
+fn cross<S: EnclosureArithmetic>(a: [S; 3], b: [S; 3]) -> Result<[S; 3], AnimationError> {
     Ok([
         a[1].mul(b[2])?.sub(a[2].mul(b[1])?)?,
         a[2].mul(b[0])?.sub(a[0].mul(b[2])?)?,
         a[0].mul(b[1])?.sub(a[1].mul(b[0])?)?,
     ])
 }
-fn rotate(q: [Scalar; 4], v: [Scalar; 3]) -> Result<[Scalar; 3], AnimationError> {
+fn rotate<S: EnclosureArithmetic>(q: [S; 4], v: [S; 3]) -> Result<[S; 3], AnimationError> {
     let vector = [q[0], q[1], q[2]];
     let c = cross(vector, v)?;
     let twice = [
-        c[0].mul(Scalar::exact(2.))?,
-        c[1].mul(Scalar::exact(2.))?,
-        c[2].mul(Scalar::exact(2.))?,
+        c[0].mul(S::exact(2.))?,
+        c[1].mul(S::exact(2.))?,
+        c[2].mul(S::exact(2.))?,
     ];
     let second = cross(vector, twice)?;
     Ok([
@@ -319,7 +365,50 @@ fn rotate(q: [Scalar; 4], v: [Scalar; 3]) -> Result<[Scalar; 3], AnimationError>
         v[2].add(q[3].mul(twice[2])?)?.add(second[2])?,
     ])
 }
+fn compose_components<S: EnclosureArithmetic>(
+    at: [S; 3],
+    a: [S; 4],
+    bt: [S; 3],
+    b: [S; 4],
+) -> Result<([S; 3], [S; 4]), AnimationError> {
+    let rotated = rotate(a, bt)?;
+    let translation = [
+        at[0].add(rotated[0])?,
+        at[1].add(rotated[1])?,
+        at[2].add(rotated[2])?,
+    ];
+    let rotation = [
+        a[3].mul(b[0])?
+            .add(a[0].mul(b[3])?)?
+            .add(a[1].mul(b[2])?)?
+            .sub(a[2].mul(b[1])?)?,
+        a[3].mul(b[1])?
+            .sub(a[0].mul(b[2])?)?
+            .add(a[1].mul(b[3])?)?
+            .add(a[2].mul(b[0])?)?,
+        a[3].mul(b[2])?
+            .add(a[0].mul(b[1])?)?
+            .sub(a[1].mul(b[0])?)?
+            .add(a[2].mul(b[3])?)?,
+        a[3].mul(b[3])?
+            .sub(a[0].mul(b[0])?)?
+            .sub(a[1].mul(b[1])?)?
+            .sub(a[2].mul(b[2])?)?,
+    ];
+    Ok((translation, rotation))
+}
+
 impl RootRigidEnclosure {
+    /// Uniform rounding cap for glam 0.33.7 DQuat::normalize on stored f64
+    /// inputs in these boxes, relative to exact normalization of those inputs.
+    /// Does not include source selection, composition or publication error.
+    /// Rejects boxes whose nonzero norm and finite operations cannot be proved.
+    pub fn stored_quaternion_normalization_error_bounds(
+        input: [[f64; 2]; 4],
+    ) -> Result<[f64; 4], AnimationError> {
+        compilation::stored_quaternion_normalization_error(input)
+    }
+
     pub const IDENTITY: Self = Self {
         translation: [[0., 0.]; 3],
         rotation: [[0., 0.], [0., 0.], [0., 0.], [1., 1.]],
@@ -437,39 +526,13 @@ impl RootRigidEnclosure {
     pub fn compose(&self, other: &Self) -> Result<Self, AnimationError> {
         let (at, a) = self.vectors();
         let (bt, b) = other.vectors();
-        let rotated = rotate(a, bt)?;
-        let translation = [
-            at[0].add(rotated[0])?.array(),
-            at[1].add(rotated[1])?.array(),
-            at[2].add(rotated[2])?.array(),
-        ];
-        let rotation = [
-            a[3].mul(b[0])?
-                .add(a[0].mul(b[3])?)?
-                .add(a[1].mul(b[2])?)?
-                .sub(a[2].mul(b[1])?)?
-                .array(),
-            a[3].mul(b[1])?
-                .sub(a[0].mul(b[2])?)?
-                .add(a[1].mul(b[3])?)?
-                .add(a[2].mul(b[0])?)?
-                .array(),
-            a[3].mul(b[2])?
-                .add(a[0].mul(b[1])?)?
-                .sub(a[1].mul(b[0])?)?
-                .add(a[2].mul(b[3])?)?
-                .array(),
-            a[3].mul(b[3])?
-                .sub(a[0].mul(b[0])?)?
-                .sub(a[1].mul(b[1])?)?
-                .sub(a[2].mul(b[2])?)?
-                .array(),
-        ];
+        let (translation, rotation) = compose_components(at, a, bt, b)?;
         Ok(Self {
-            translation,
-            rotation,
+            translation: translation.map(Scalar::array),
+            rotation: rotation.map(Scalar::array),
         })
     }
+
     /// Encloses a transformed exact stored point, including prefix arithmetic.
     pub fn transform_point(&self, point: DVec3) -> Result<[[f64; 2]; 3], AnimationError> {
         if !point.is_finite() {
@@ -487,21 +550,20 @@ impl RootRigidEnclosure {
 // Eight alternating terms plus the magnitude of the ninth. For x in [0,1]
 // successive term magnitudes decrease; the alternating remainder is bounded
 // by the first omitted term. Every recurrence operation is outward rounded.
-fn series(
-    x: Scalar,
-    initial: Scalar,
+fn series<S: EnclosureArithmetic>(
+    x: S,
+    initial: S,
     denominator: impl Fn(u32) -> u32,
-) -> Result<Scalar, AnimationError> {
+) -> Result<S, AnimationError> {
     let mut term = initial;
     let mut sum = initial;
     for n in 1..=7 {
         term = term.mul(x)?.div_positive(f64::from(denominator(n)))?;
-        term = Scalar(-term.1, -term.0);
+        term = term.negate();
         sum = sum.add(term)?;
     }
     let remainder = term.mul(x)?.div_positive(f64::from(denominator(8)))?;
-    let radius = remainder.0.abs().max(remainder.1.abs());
-    sum.add(Scalar(-radius, radius))
+    sum.add(remainder.symmetric_remainder()?)
 }
 impl RootRigidTwist {
     /// Encloses the real SE(3) exponential of these exact stored f64 inputs.
@@ -531,52 +593,59 @@ impl RootRigidTwist {
         self,
         dt: Scalar,
     ) -> Result<RootRigidEnclosure, AnimationError> {
-        if !self.linear.is_finite() || !self.angular.is_finite() {
-            return Err(AnimationError::NumericalOverflow);
-        }
-        if dt.0 == 0. && dt.1 == 0. {
-            return Ok(RootRigidEnclosure {
-                translation: [[0., 0.]; 3],
-                rotation: [[0., 0.], [0., 0.], [0., 0.], [1., 1.]],
-            });
-        }
-        let mut omega = [Scalar::exact(0.); 3];
-        let mut displacement = omega;
-        for i in 0..3 {
-            omega[i] = Scalar::exact(self.angular[i]).mul(dt)?;
-            displacement[i] = Scalar::exact(self.linear[i]).mul(dt)?;
-        }
-        let mut x = omega[0]
-            .square()?
-            .add(omega[1].square()?)?
-            .add(omega[2].square()?)?;
-        x.0 = x.0.max(0.);
-        if x.1 > 1. {
-            return Err(AnimationError::RootRigidBudget);
-        }
-        let a = series(x, Scalar::exact(0.5), |n| (2 * n + 1) * (2 * n + 2))?;
-        let b = series(x, Scalar::exact(1.).div_positive(6.)?, |n| {
-            (2 * n + 2) * (2 * n + 3)
-        })?;
-        let q = series(x, Scalar::exact(0.5), |n| 4 * (2 * n) * (2 * n + 1))?;
-        let w = series(x, Scalar::exact(1.), |n| 4 * (2 * n - 1) * (2 * n))?;
-        let first = cross(omega, displacement)?;
-        let second = cross(omega, first)?;
-        let mut translation = [[0.; 2]; 3];
-        let mut rotation = [[0.; 2]; 4];
-        for i in 0..3 {
-            translation[i] = displacement[i]
-                .add(a.mul(first[i])?)?
-                .add(b.mul(second[i])?)?
-                .array();
-            rotation[i] = omega[i].mul(q)?.array();
-        }
-        rotation[3] = w.array();
+        let (translation, rotation) = increment_components(self, dt)?;
         Ok(RootRigidEnclosure {
-            translation,
-            rotation,
+            translation: translation.map(Scalar::array),
+            rotation: rotation.map(Scalar::array),
         })
     }
+}
+
+fn increment_components<S: EnclosureArithmetic>(
+    twist: RootRigidTwist,
+    dt: S,
+) -> Result<([S; 3], [S; 4]), AnimationError> {
+    if !twist.linear.is_finite() || !twist.angular.is_finite() {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    if dt.domain().is_zero() {
+        return Ok((
+            [S::exact(0.); 3],
+            [S::exact(0.), S::exact(0.), S::exact(0.), S::exact(1.)],
+        ));
+    }
+    let mut omega = [S::exact(0.); 3];
+    let mut displacement = omega;
+    for i in 0..3 {
+        omega[i] = S::exact(twist.angular[i]).mul(dt)?;
+        displacement[i] = S::exact(twist.linear[i]).mul(dt)?;
+    }
+    let mut x = omega[0]
+        .square()?
+        .add(omega[1].square()?)?
+        .add(omega[2].square()?)?;
+    x = x.nonnegative();
+    if x.domain().1 > 1. {
+        return Err(AnimationError::RootRigidBudget);
+    }
+    let a = series(x, S::exact(0.5), |n| (2 * n + 1) * (2 * n + 2))?;
+    let b = series(x, S::exact(1.).div_positive(6.)?, |n| {
+        (2 * n + 2) * (2 * n + 3)
+    })?;
+    let q = series(x, S::exact(0.5), |n| 4 * (2 * n) * (2 * n + 1))?;
+    let w = series(x, S::exact(1.), |n| 4 * (2 * n - 1) * (2 * n))?;
+    let first = cross(omega, displacement)?;
+    let second = cross(omega, first)?;
+    let mut translation = [S::exact(0.); 3];
+    let mut rotation = [S::exact(0.); 4];
+    for i in 0..3 {
+        translation[i] = displacement[i]
+            .add(a.mul(first[i])?)?
+            .add(b.mul(second[i])?)?;
+        rotation[i] = omega[i].mul(q)?;
+    }
+    rotation[3] = w;
+    Ok((translation, rotation))
 }
 
 impl RootRigidPath {
@@ -1909,5 +1978,71 @@ impl RootRigidCurve {
             radius = radius.add(Scalar::exact(error))?;
         }
         Ok(Some((result, radius.1)))
+    }
+}
+
+#[cfg(test)]
+mod stored_normalization_tests {
+    use super::*;
+    #[test]
+    fn stored_normalization_rounding_covers_uniform_boxes_and_rejects_singular_inputs() {
+        let domain = [[-0.125, 0.125], [-0.25, 0.25], [-0.5, 0.5], [0.75, 1.25]];
+        let cap = RootRigidEnclosure::stored_quaternion_normalization_error_bounds(domain).unwrap();
+        assert!(cap.iter().all(|v| v.is_finite() && *v > 0. && *v < 1e-12));
+        for input in [
+            [0., 1e-20, 0., 1.],
+            [0.125, -0.25, 0.5, 0.75],
+            [-0.125, 0.25, -0.5, 1.25],
+            [0., 0., 0., 1.],
+        ] {
+            let actual = DQuat::from_array(input).normalize().to_array();
+            println!("STORED_NORMALIZATION {:?}", (input, actual, cap));
+        }
+        assert!(
+            RootRigidEnclosure::stored_quaternion_normalization_error_bounds([[0.; 2]; 4]).is_err()
+        );
+        assert!(
+            RootRigidEnclosure::stored_quaternion_normalization_error_bounds([[-1., 1.]; 4])
+                .is_err()
+        );
+        assert!(
+            RootRigidEnclosure::stored_quaternion_normalization_error_bounds([[f64::NAN; 2]; 4])
+                .is_err()
+        );
+        assert!(
+            RootRigidEnclosure::stored_quaternion_normalization_error_bounds([[f64::MAX; 2]; 4])
+                .is_err()
+        );
+    }
+}
+
+#[cfg(test)]
+mod normalized_composition_rounding_tests {
+    use super::*;
+    #[test]
+    fn normalized_composition_uses_relational_norm_proof_for_sign_changing_boxes() {
+        let b = DQuat::from_array([0.5, -0.5, 0.5, 0.5]);
+        let cap = quaternion_normalized_composition_uniform_error([0.; 4], b.to_array(), [0.; 4])
+            .unwrap();
+        assert!(cap.iter().all(|v| v.is_finite() && *v > 0. && *v < 1e-12));
+        for a in [
+            DQuat::IDENTITY,
+            DQuat::from_array([0.5, 0.5, -0.5, 0.5]),
+            DQuat::from_array([-0.5, 0.5, 0.5, -0.5]),
+        ] {
+            let actual = (a * b).normalize().to_array();
+            println!(
+                "NORMALIZED_COMPOSITION {:?}",
+                (a.to_array(), b.to_array(), actual, cap)
+            );
+        }
+        let perturbed =
+            quaternion_normalized_composition_uniform_error([1e-4; 4], b.to_array(), [0.; 4])
+                .unwrap();
+        assert!(perturbed.iter().zip(cap).all(|(v, clean)| *v > clean));
+        assert!(
+            quaternion_normalized_composition_uniform_error([0.1; 4], b.to_array(), [0.; 4])
+                .is_err()
+        );
     }
 }

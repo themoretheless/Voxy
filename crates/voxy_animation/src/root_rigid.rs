@@ -9,11 +9,12 @@ mod enclosure;
 mod integration;
 pub use enclosure::{
     RootAngularDerivativeBounds, RootRigidCertifiedFadeInterval, RootRigidCoordinateCertificate,
-    RootRigidEnclosure, RootRigidErrorAccumulator, RootRigidFadeDomain, RootRigidFadeFieldInterval,
-    RootRigidFadePointCertificate, RootRigidFieldInterval, RootRigidMappedField,
-    RootRigidMappedPath, RootRigidSourceField, RootRigidTwistEnclosure, RootRigidWallInterval,
-    RootRigidWallPartition, RootScrewEnclosurePath, RootSourceScrewPointCertificate,
-    RootTimeCutEnclosure, RootTwistErrorBounds, RootUniformScaleEnclosure,
+    RootRigidEnclosure, RootRigidErrorAccumulator, RootRigidEvaluatedPose, RootRigidFadeDomain,
+    RootRigidFadeFieldInterval, RootRigidFadePointCertificate, RootRigidFieldInterval,
+    RootRigidMappedField, RootRigidMappedPath, RootRigidSourceField, RootRigidTwistEnclosure,
+    RootRigidWallInterval, RootRigidWallPartition, RootScrewEnclosurePath,
+    RootSourceScrewPointCertificate, RootTimeCutEnclosure, RootTwistErrorBounds,
+    RootUniformScaleEnclosure,
 };
 pub(crate) use enclosure::{
     quaternion_composition_evaluation_error_bounds, quaternion_composition_uniform_error,

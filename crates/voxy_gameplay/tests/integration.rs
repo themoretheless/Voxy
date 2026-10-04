@@ -2864,7 +2864,14 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
             &mut input,
             dt,
             &[request],
-            |preview, _| Ok::<_, ()>(preview.characters[0]),
+            |preview, _| {
+                assert!(
+                    preview.motions[0]
+                        .published_pose_evaluation_error_bounds()
+                        .is_some()
+                );
+                Ok::<_, ()>(preview.characters[0])
+            },
         )
         .unwrap();
     assert!(receipts[0].complete);
@@ -2874,6 +2881,14 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
             .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
     );
     assert!(radius < 1e-8);
+    let (axes, radius) = receipts[0]
+        .published_pose_evaluation_error_bounds()
+        .unwrap();
+    assert!(
+        axes.iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
+    );
+    assert!(radius < 1e-6);
 
     assert_eq!(scene.world_matrix(player).unwrap(), accepted.world_matrix);
     assert_eq!(scene.local(player).unwrap().translation.y, 0.125);
