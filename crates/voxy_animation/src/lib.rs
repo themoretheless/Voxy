@@ -474,6 +474,26 @@ impl AnimationClip {
         .clone()
     }
 
+    /// Original-key absolute local translation/unit rotation over one continuous
+    /// local key interval. Bind offsets and initial authored rotation are retained;
+    /// extracted root factors and loop powers are not substituted for local poses.
+    /// Scale channels are excluded. None denotes an unsupported source channel.
+    /// # Errors
+    /// Rejects unknown joints, invalid intervals, jumps and enclosure overflow.
+    pub fn joint_rigid_pose_interval_enclosure(
+        &self,
+        joint: u16,
+        times: [f64; 2],
+    ) -> Result<Option<RootRigidEnclosure>, AnimationError> {
+        let curve = self.root_rigid_curve(joint)?;
+        let index = usize::from(joint);
+        let initial = self.tracks[index]
+            .rotations
+            .first()
+            .map_or(self.rig[index].bind_local.rotation, |key| key.value);
+        curve.absolute_source_pose_interval_enclosure(times, initial)
+    }
+
     /// Compiles one selected quaternion channel for ordered root rotation extraction.
     /// Selected channels compile once per immutable clip, including concurrent
     /// callers. Clones share coefficients. This preserves curves and winding across

@@ -265,6 +265,54 @@ impl RetargetBinding {
             position.with_rotation_from(unit_rotation),
         ))
     }
+    /// Transports an original clip's absolute local pose interval, retaining
+    /// source rig identity and initial/bind offsets. Scale channels are excluded.
+    /// # Errors
+    /// Rejects foreign clips, absent mappings, invalid intervals and overflow.
+    /// Returns None when the source cannot supply a continuous pose enclosure.
+    pub fn joint_rigid_clip_interval_enclosure(
+        &self,
+        clip: &crate::AnimationClip,
+        source_joint: u16,
+        times: [f64; 2],
+    ) -> Result<Option<(u16, crate::RootRigidEnclosure)>, AnimationError> {
+        if !rigs_match(&clip.rig, &self.source) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        self.mapped_joint(source_joint)?;
+        clip.joint_rigid_pose_interval_enclosure(source_joint, times)?
+            .map(|source| self.joint_rigid_field_enclosure(source_joint, source))
+            .transpose()
+    }
+    /// Uniform same-time translation discrepancy over an incoming source domain.
+    /// source_error must bound source evaluation against those original positions;
+    /// zero qualifies retarget arithmetic alone on exact stored source positions.
+    /// Includes the fixed raw-vs-unit basis difference, actual f64 subtraction,
+    /// glam rotation, scale/addition and final f32 publication. Temporal variation
+    /// of the position domain is not itself counted as error. Rotation/scale
+    /// channels and ancestor/scene arithmetic are separate.
+    /// # Errors
+    /// Rejects absent mappings, invalid domains/errors and nonfinite publication.
+    pub fn joint_translation_evaluation_error_bounds(
+        &self,
+        source_joint: u16,
+        position: [[f64; 2]; 3],
+        source_error: [f64; 3],
+    ) -> Result<(u16, ([f64; 3], f64)), AnimationError> {
+        let joint = self.mapped_joint(source_joint)?;
+        let bounds = crate::RootRigidEnclosure::retarget_translation_evaluation_error(
+            position,
+            source_error,
+            self.source[joint.source].bind_local.translation.as_dvec3(),
+            self.target[joint.target].bind_local.translation.as_dvec3(),
+            joint.translation_basis.as_dquat(),
+            f64::from(joint.translation_scale),
+        )?;
+        Ok((
+            u16::try_from(joint.target).map_err(|_| AnimationError::InvalidRetargetBinding)?,
+            bounds,
+        ))
+    }
     /// Resolves the source mask corresponding to target parent-local axes.
     /// # Errors
     /// Rejects mappings whose selected subspace needs a nondiagonal source mask.
@@ -645,6 +693,290 @@ mod tests {
         assert!(binding.apply_frame(&frame).is_err());
         frame.root_motion = Vec3::ZERO;
         assert_eq!(binding.apply_frame(&frame).unwrap().root_motion, Vec3::ZERO);
+    }
+    #[test]
+    fn uniform_translation_rounding_caps_exclude_motion_width_and_include_source_error() {
+        let rig = |name: &str, translation| {
+            Skeleton::new(vec![Joint {
+                name: name.into(),
+                parent: None,
+                bind_local: Transform {
+                    translation,
+                    ..Transform::IDENTITY
+                },
+                inverse_bind: Mat4::IDENTITY,
+            }])
+            .unwrap()
+        };
+        let source = rig("s", Vec3::new(0.6, -0.2, 0.4));
+        let target = rig("t", Vec3::new(-1., 2., 3.));
+        let h = core::f32::consts::FRAC_1_SQRT_2;
+        let arbitrary = Quat::from_euler(glam::EulerRot::XYZ, 0.2, -0.4, 0.7);
+        let bases = [
+            Quat::IDENTITY,
+            Quat::from_xyzw(0., 0., h, h),
+            Quat::from_rotation_y(0.3),
+            arbitrary,
+            -arbitrary,
+            Quat::from_xyzw(0., 0., 0., 1_f32.next_up()),
+        ];
+        let domain = [[-10., 10.]; 3];
+        for basis in bases {
+            for scale in [0., 2., 1e6] {
+                let binding = RetargetBinding::new(
+                    &source,
+                    &target,
+                    &[RetargetJoint {
+                        source: "s".into(),
+                        target: "t".into(),
+                        rotation_basis: Quat::IDENTITY,
+                        translation_basis: basis,
+                        translation_scale: scale,
+                    }],
+                )
+                .unwrap();
+                for incoming in [[0.; 3], [0.03125, 0.0625, 0.125]] {
+                    let (joint, (axes, radius)) = binding
+                        .joint_translation_evaluation_error_bounds(0, domain, incoming)
+                        .unwrap();
+                    assert_eq!(joint, 0);
+                    assert!(axes.iter().all(|v| v.is_finite() && *v >= 0.) && radius.is_finite());
+                    if scale == 0. {
+                        assert_eq!((axes, radius), ([0.; 3], 0.));
+                    }
+                    if incoming == [0.; 3] {
+                        assert!(radius < if scale <= 2. { 1e-4 } else { 100. });
+                    }
+                    for position in [Vec3::new(-8., -4., 2.), Vec3::ZERO, Vec3::new(8., 9., -9.)] {
+                        let mut pose = source.bind_pose();
+                        pose.local[0].translation =
+                            position + glam::DVec3::from_array(incoming).as_vec3();
+                        let actual = binding.apply_pose(&pose).unwrap().local()[0].translation;
+                        println!(
+                            "retarget_translation_error_reference={{\"basis\":{:?},\"scale\":{scale:?},\"source_bind\":{:?},\"target_bind\":{:?},\"source_input\":{:?},\"source_error\":{incoming:?},\"evaluated\":{:?},\"axes\":{axes:?},\"radius\":{radius:?}}}",
+                            basis.to_array(),
+                            source.joints()[0].bind_local.translation.to_array(),
+                            target.joints()[0].bind_local.translation.to_array(),
+                            position.to_array(),
+                            actual.to_array()
+                        );
+                    }
+                }
+                assert!(
+                    binding
+                        .joint_translation_evaluation_error_bounds(1, domain, [0.; 3])
+                        .is_err()
+                );
+                for bad in [
+                    [[1., -1.]; 3],
+                    [[f64::NAN, 1.]; 3],
+                    [[0., f64::INFINITY]; 3],
+                ] {
+                    assert!(
+                        binding
+                            .joint_translation_evaluation_error_bounds(0, bad, [0.; 3])
+                            .is_err()
+                    );
+                }
+                assert!(
+                    binding
+                        .joint_translation_evaluation_error_bounds(0, domain, [-1., 0., 0.])
+                        .is_err()
+                );
+                assert!(
+                    binding
+                        .joint_translation_evaluation_error_bounds(0, domain, [f64::NAN, 0., 0.])
+                        .is_err()
+                );
+                if scale == 1e6 {
+                    assert!(
+                        binding
+                            .joint_translation_evaluation_error_bounds(
+                                0,
+                                [[f64::from(f32::MAX); 2]; 3],
+                                [0.; 3]
+                            )
+                            .is_err()
+                    );
+                }
+            }
+        }
+    }
+    #[test]
+    fn original_clip_interval_retains_nonbind_origin_and_initial_rotation() {
+        let source = Skeleton::new(vec![Joint {
+            name: "s".into(),
+            parent: None,
+            bind_local: Transform {
+                translation: Vec3::new(0.6, -0.2, 0.4),
+                rotation: Quat::from_xyzw(1., 0., 0., 0.),
+                ..Transform::IDENTITY
+            },
+            inverse_bind: Mat4::IDENTITY,
+        }])
+        .unwrap();
+        let target = Skeleton::new(vec![Joint {
+            name: "t".into(),
+            parent: None,
+            bind_local: Transform {
+                translation: Vec3::new(-1., 2., 3.),
+                rotation: Quat::from_rotation_z(-0.4),
+                ..Transform::IDENTITY
+            },
+            inverse_bind: Mat4::IDENTITY,
+        }])
+        .unwrap();
+        let initial_position = Vec3::new(4., -2., 1.);
+        let delta = Vec3::new(-0.5, 0.25, 0.75);
+        let initial_rotation = Quat::from_xyzw(0.5, 0.5, 0.5, 0.5);
+        let h = core::f32::consts::FRAC_1_SQRT_2;
+        let clip = AnimationClip::new(
+            "original",
+            1.,
+            Playback::Clamp,
+            vec![JointTrack {
+                translations: vec![
+                    Vec3Key {
+                        time: 0.,
+                        value: initial_position,
+                    },
+                    Vec3Key {
+                        time: 1.,
+                        value: initial_position + delta,
+                    },
+                ],
+                rotations: vec![
+                    QuatKey {
+                        time: 0.,
+                        value: initial_rotation,
+                    },
+                    QuatKey {
+                        time: 1.,
+                        value: Quat::from_xyzw(h, h, 0., 0.),
+                    },
+                ],
+                ..Default::default()
+            }],
+            &source,
+        )
+        .unwrap();
+        let correction = Quat::from_euler(glam::EulerRot::XYZ, 0.3, -0.1, 0.7);
+        let basis = Quat::from_rotation_y(0.3);
+        let mut saw_actual_outside_ideal_field = false;
+        for scale in [0., 2., 1e6] {
+            let binding = RetargetBinding::new(
+                &source,
+                &target,
+                &[RetargetJoint {
+                    source: "s".into(),
+                    target: "t".into(),
+                    rotation_basis: correction,
+                    translation_basis: basis,
+                    translation_scale: scale,
+                }],
+            )
+            .unwrap();
+            for times in [[0.125, 0.25], [0.5, 0.625]] {
+                let (joint, field) = binding
+                    .joint_rigid_clip_interval_enclosure(&clip, 0, times)
+                    .unwrap()
+                    .unwrap();
+                assert_eq!(joint, 0);
+                for point in [
+                    Vec3::ZERO,
+                    Vec3::X,
+                    Vec3::new(0.25, -0.5, 0.75),
+                    Vec3::new(-4., 5., -6.),
+                ] {
+                    let image = field
+                        .transform_point_box_bounds(point.as_dvec3().to_array().map(|v| [v, v]))
+                        .unwrap();
+                    for fraction in [0., 0.25, 0.5, 0.75, 1.] {
+                        let phase = times[0] + fraction * (times[1] - times[0]);
+                        let source_pose = clip.try_sample(&source, phase as f32).unwrap();
+                        let pose = binding.apply_pose(&source_pose).unwrap();
+                        let actual = pose.local()[0].matrix().transform_point3(point);
+                        if image.iter().zip(actual.to_array()).any(|(bounds, value)| {
+                            f64::from(value) < bounds[0] || f64::from(value) > bounds[1]
+                        }) {
+                            saw_actual_outside_ideal_field = true;
+                            let stored = binding
+                                .joint_rigid_pose_enclosure(&source_pose, 0)
+                                .unwrap()
+                                .1;
+                            let (_, error) = stored
+                                .enclosed_point_evaluation_error(
+                                    point.as_dvec3().to_array().map(|v| [v, v]),
+                                    1.,
+                                    actual.as_dvec3(),
+                                )
+                                .unwrap();
+                            assert!(error > 0. && error.is_finite());
+                        }
+                    }
+                    println!(
+                        "retarget_absolute_interval_reference={{\"target_rotation\":{:?},\"correction\":{:?},\"basis\":{:?},\"target_translation\":{:?},\"source_bind_translation\":{:?},\"source_initial_translation\":{:?},\"source_bind_rotation\":{:?},\"source_initial_rotation\":{:?},\"end_translation\":{:?},\"times\":{times:?},\"scale\":{scale:?},\"point\":{:?},\"image\":{image:?}}}",
+                        target.joints()[0].bind_local.rotation.to_array(),
+                        correction.to_array(),
+                        basis.to_array(),
+                        target.joints()[0].bind_local.translation.to_array(),
+                        source.joints()[0].bind_local.translation.to_array(),
+                        initial_position.to_array(),
+                        source.joints()[0].bind_local.rotation.to_array(),
+                        initial_rotation.to_array(),
+                        delta.to_array(),
+                        point.to_array()
+                    );
+                }
+            }
+            let foreign = AnimationClip::new(
+                "foreign",
+                1.,
+                Playback::Clamp,
+                vec![JointTrack::default()],
+                &target,
+            )
+            .unwrap();
+            assert!(
+                binding
+                    .joint_rigid_clip_interval_enclosure(&foreign, 0, [0.125, 0.25])
+                    .is_err()
+            );
+            assert!(
+                binding
+                    .joint_rigid_clip_interval_enclosure(&clip, 1, [0.125, 0.25])
+                    .is_err()
+            );
+            assert!(
+                binding
+                    .joint_rigid_clip_interval_enclosure(&clip, 0, [0.25, 0.125])
+                    .is_err()
+            );
+            let held = AnimationClip::new(
+                "bind",
+                1.,
+                Playback::Clamp,
+                vec![JointTrack::default()],
+                &source,
+            )
+            .unwrap();
+            let (_, field) = binding
+                .joint_rigid_clip_interval_enclosure(&held, 0, [0.125, 0.25])
+                .unwrap()
+                .unwrap();
+            let expected = binding
+                .joint_rigid_pose_enclosure(&source.bind_pose(), 0)
+                .unwrap()
+                .1;
+            for (bounds, pose_bounds) in field
+                .translation_bounds()
+                .into_iter()
+                .zip(expected.translation_bounds())
+            {
+                assert!(bounds[0] <= pose_bounds[1] && pose_bounds[0] <= bounds[1]);
+            }
+        }
+        assert!(saw_actual_outside_ideal_field);
     }
     #[test]
     fn continuous_source_interval_transports_independent_retarget_channels() {
