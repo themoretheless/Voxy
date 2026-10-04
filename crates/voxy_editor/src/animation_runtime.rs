@@ -779,9 +779,7 @@ impl AnimationRuntime {
         self.has_foot_placement()
             || self.owners.values().any(|owner| {
                 owner.root_reference.is_some()
-                    || (owner.settings.root_motion_rotation
-                        && owner.settings.clip.is_some()
-                        && owner.retarget_binding.is_none())
+                    || (owner.settings.root_motion_rotation && owner.settings.clip.is_some())
             })
     }
     pub(super) fn prepare_accepted_pose(
@@ -806,19 +804,40 @@ impl AnimationRuntime {
                     .transported_body_reference(&reference.body_to_world, &body)
                     .map_err(|error| error.to_string())?;
                 reference.body_to_world = body;
-            } else if owner.settings.root_motion_rotation
-                && owner.settings.clip.is_some()
-                && owner.retarget_binding.is_none()
-            {
+            } else if owner.settings.root_motion_rotation && owner.settings.clip.is_some() {
                 let root = owner
                     .settings
                     .resolve_motion_joint(&owner.animation_model)?;
-                let (frame, scale) = constant_parent_similarity_enclosure(&owner.model, root)?;
-                let authored_to_body = owner.playback.reference_at_current_phase(
-                    owner.settings.root_motion_axes,
-                    frame,
-                    scale,
-                )?;
+                let (axes, frame, scale) = if let Some(binding) = &owner.retarget_binding {
+                    let similarity = binding
+                        .root_similarity_enclosure(root, owner.settings.root_motion_axes)
+                        .map_err(|e| e.to_string())?;
+                    let profile = owner
+                        .retarget_profile
+                        .as_ref()
+                        .ok_or("retarget root reference profile disappeared")?;
+                    validate_retarget_motion_parents(
+                        &owner.model,
+                        &owner.animation_model,
+                        profile,
+                        similarity.target_joint,
+                    )?;
+                    let (parent, parent_scale) = static_parent_similarity_enclosure(
+                        &owner.model,
+                        similarity.target_joint,
+                        |_, joint| Ok(joint.bind_local),
+                    )?;
+                    let similarity = similarity
+                        .in_parent(parent, parent_scale)
+                        .map_err(|e| e.to_string())?;
+                    (similarity.source_axes, similarity.frame, similarity.scale)
+                } else {
+                    let (frame, scale) = constant_parent_similarity_enclosure(&owner.model, root)?;
+                    (owner.settings.root_motion_axes, frame, scale)
+                };
+                let authored_to_body = owner
+                    .playback
+                    .reference_at_current_phase(axes, frame, scale)?;
                 let body_to_world = voxy_animation::RootRigidEnclosure::from_transform(
                     voxy_animation::RootRigidTransform {
                         translation: accepted.physical_center,
@@ -1300,6 +1319,24 @@ fn retarget_parent_basis(
     root: u16,
     rotation: bool,
 ) -> Result<(glam::Mat4, glam::DQuat, f64), String> {
+    validate_retarget_motion_parents(target, source, profile, root)?;
+    constant_parent_basis(
+        target,
+        &ModelAnimation {
+            clip: None,
+            root_motion_rotation: rotation,
+            ..Default::default()
+        },
+        root,
+    )
+}
+
+fn validate_retarget_motion_parents(
+    target: &ModelAsset,
+    source: &ModelAsset,
+    profile: &crate::ModelRetarget,
+    root: u16,
+) -> Result<(), String> {
     let mut parent = target.skeleton.joints()[usize::from(root)].parent;
     while let Some(index) = parent {
         for mapping in &profile.joints {
@@ -1326,15 +1363,7 @@ fn retarget_parent_basis(
         }
         parent = target.skeleton.joints()[usize::from(index)].parent;
     }
-    constant_parent_basis(
-        target,
-        &ModelAnimation {
-            clip: None,
-            root_motion_rotation: rotation,
-            ..Default::default()
-        },
-        root,
-    )
+    Ok(())
 }
 
 /// Compiles a static ancestor similarity from stored TRS values, enclosing
@@ -1342,6 +1371,39 @@ fn retarget_parent_basis(
 fn constant_parent_similarity_enclosure(
     model: &ModelAsset,
     root: u16,
+) -> Result<
+    (
+        voxy_animation::RootRigidEnclosure,
+        voxy_animation::RootUniformScaleEnclosure,
+    ),
+    String,
+> {
+    static_parent_similarity_enclosure(model, root, |index, joint| {
+        let transform = model
+            .animations
+            .first()
+            .map_or(Some(joint.bind_local), |clip| {
+                clip.constant_joint_transform(index)
+            })
+            .ok_or("root parent reference is animated")?;
+        if model
+            .animations
+            .iter()
+            .any(|clip| clip.constant_joint_transform(index) != Some(transform))
+        {
+            return Err("root parent reference differs between clips".into());
+        }
+        Ok(transform)
+    })
+}
+
+fn static_parent_similarity_enclosure(
+    model: &ModelAsset,
+    root: u16,
+    mut transform_at: impl FnMut(
+        usize,
+        &voxy_animation::Joint,
+    ) -> Result<voxy_animation::Transform, String>,
 ) -> Result<
     (
         voxy_animation::RootRigidEnclosure,
@@ -1361,20 +1423,7 @@ fn constant_parent_similarity_enclosure(
     while let Some(index) = parent {
         let index = usize::from(index);
         let joint = &model.skeleton.joints()[index];
-        let transform = model
-            .animations
-            .first()
-            .map_or(Some(joint.bind_local), |clip| {
-                clip.constant_joint_transform(index)
-            })
-            .ok_or("root parent reference is animated")?;
-        if model
-            .animations
-            .iter()
-            .any(|clip| clip.constant_joint_transform(index) != Some(transform))
-        {
-            return Err("root parent reference differs between clips".into());
-        }
+        let transform = transform_at(index, joint)?;
         let magnitude = transform.scale.abs();
         if magnitude.x == 0. || magnitude.x != magnitude.y || magnitude.x != magnitude.z {
             return Err("root parent reference requires nonzero uniform scale".into());

@@ -2170,6 +2170,193 @@ fn root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames() {
 }
 
 #[test]
+fn retarget_accepted_reference_uses_source_axes_bind_parents_and_rolls_back() {
+    let (mut scene, owner, source, _) = fixture();
+    let original = gltf::binary::Glb::from_slice(include_bytes!(
+        "../../../voxy_render/examples/assets/animated-triangle.glb"
+    ))
+    .unwrap();
+    let mut json: serde_json::Value = serde_json::from_slice(&original.json).unwrap();
+    json["nodes"][0]["name"] = serde_json::json!("pelvis");
+    json["nodes"][0]["translation"] = serde_json::json!([3., 4., 0.]);
+    json["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(serde_json::json!({
+            "name":"target_parent", "children":[0], "translation":[0.25,0.5,-0.25],
+            "rotation":[0.5,0.5,0.5,0.5], "scale":[-0.5,0.5,0.5]
+        }));
+    // Target-owned clips are not the source of retargeted ancestor transforms.
+    json["animations"][0]["channels"][0]["target"]["node"] = serde_json::json!(2);
+    let bytes = gltf::binary::Glb {
+        header: original.header,
+        json: serde_json::to_vec(&json).unwrap().into(),
+        bin: original.bin.clone(),
+    }
+    .to_vec()
+    .unwrap();
+    let target =
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+    let models = BTreeMap::from([
+        (AssetId("rig".into()), target.clone()),
+        (AssetId("source".into()), source),
+    ]);
+    let h = core::f32::consts::FRAC_1_SQRT_2;
+    scene
+        .insert_component(
+            owner,
+            crate::ModelRetarget {
+                source: "source".into(),
+                joints: vec![crate::RetargetJointProfile {
+                    source: "root".into(),
+                    target: "pelvis".into(),
+                    rotation_basis: [0., 0., h, h],
+                    translation_basis: [0., 0., h, h],
+                    translation_scale: 2.,
+                }],
+            },
+        )
+        .unwrap();
+    let settings = scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap();
+    settings.root_motion_rotation = true;
+    settings.root_motion_axes = [false, true, false];
+    scene
+        .insert_component(
+            owner,
+            voxy_gameplay::CharacterBody {
+                speed: 0.,
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let runtime = AnimationRuntime::default()
+        .prepare_wall(&scene, &models, 0.0625)
+        .unwrap();
+    assert!(runtime.requires_pose_preparation());
+    assert!(runtime.owners[&owner].root_reference.is_none());
+    let original_frame = runtime.frame(owner, &target).unwrap();
+    let original_local = scene.local(owner).unwrap();
+    let mut physics = voxy_gameplay::CharacterPhysics::new(&scene, 1, 0);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let failed = physics.fixed_step_with_preparation(
+        &mut scene,
+        &mut input,
+        0.0625,
+        &[(owner, Vec3::X * 0.25)],
+        &[],
+        |preview, budget| {
+            let candidate = runtime.clone().prepare_accepted_pose(preview, budget)?;
+            assert!(candidate.owners[&owner].root_reference.is_some());
+            Err::<AnimationRuntime, String>("late retarget preparation rejection".into())
+        },
+    );
+    assert!(failed.is_err());
+    assert_eq!(scene.local(owner).unwrap(), original_local);
+    assert!(physics.accepted_pose(&scene, owner).unwrap().is_none());
+    assert!(runtime.owners[&owner].root_reference.is_none());
+    assert!(Arc::ptr_eq(
+        &original_frame,
+        &runtime.frame(owner, &target).unwrap()
+    ));
+    let (_, accepted) = physics
+        .fixed_step_with_preparation(
+            &mut scene,
+            &mut input,
+            0.0625,
+            &[(owner, Vec3::X * 0.25)],
+            &[],
+            |preview, budget| runtime.clone().prepare_accepted_pose(preview, budget),
+        )
+        .unwrap();
+    let reference = accepted.owners[&owner].root_reference.unwrap();
+    assert!(reference.scale.bounds()[0] <= -1. && reference.scale.bounds()[1] >= -1.);
+    let pose = physics.accepted_pose(&scene, owner).unwrap().unwrap();
+    // Independent signed coordinate permutations: the source X phase offset
+    // becomes target Y, then world Z through the reflected cyclic parent.
+    let expected = pose.physical_center + glam::DVec3::new(0.25, -1., 1.625);
+    let (_, transported) = physics
+        .fixed_step_with_preparation(
+            &mut scene,
+            &mut input,
+            0.0625,
+            &[(owner, Vec3::X * 0.25)],
+            &[],
+            |preview, budget| accepted.clone().prepare_accepted_pose(preview, budget),
+        )
+        .unwrap();
+    for state in [&accepted, &transported] {
+        let reference = state.owners[&owner].root_reference.unwrap();
+        let anchor = reference
+            .body_to_world
+            .compose(&reference.authored_to_body)
+            .unwrap();
+        for (bounds, value) in anchor
+            .translation_bounds()
+            .into_iter()
+            .zip(expected.to_array())
+        {
+            assert!(
+                bounds[0] <= value && value <= bounds[1],
+                "{bounds:?} {value}"
+            );
+        }
+    }
+    // Capture is groundwork; moving-fade display/error qualification remains a gate.
+    assert!(
+        accepted
+            .prepare_owner_fade(&scene, &models, owner, &target, 0.0625, 0.001, 0.001, 4096)
+            .is_err()
+    );
+
+    let mut source_json: serde_json::Value = serde_json::from_slice(&original.json).unwrap();
+    source_json["nodes"]
+        .as_array_mut()
+        .unwrap()
+        .push(serde_json::json!({
+            "name":"source_parent", "children":[0]
+        }));
+    source_json["animations"][0]["channels"][0]["target"]["node"] = serde_json::json!(2);
+    let bytes = gltf::binary::Glb {
+        header: original.header,
+        json: serde_json::to_vec(&source_json).unwrap().into(),
+        bin: original.bin.clone(),
+    }
+    .to_vec()
+    .unwrap();
+    let moving_source =
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+    let mut changed_models = models.clone();
+    changed_models.insert(AssetId("source".into()), moving_source);
+    let profile = scene
+        .component_mut::<crate::ModelRetarget>(owner)
+        .unwrap()
+        .unwrap();
+    profile.joints.push(crate::RetargetJointProfile {
+        source: "source_parent".into(),
+        target: "target_parent".into(),
+        rotation_basis: glam::Quat::IDENTITY.to_array(),
+        translation_basis: glam::Quat::IDENTITY.to_array(),
+        translation_scale: 1.,
+    });
+    let retained = transported.frame(owner, &target).unwrap();
+    let reference = transported.owners[&owner].root_reference.unwrap();
+    assert!(
+        transported
+            .prepare_wall(&scene, &changed_models, 0.0625)
+            .is_err()
+    );
+    assert!(reference.matches(&transported.owners[&owner].root_reference.unwrap()));
+    assert!(Arc::ptr_eq(
+        &retained,
+        &transported.frame(owner, &target).unwrap()
+    ));
+}
+
+#[test]
 fn first_accepted_pose_bootstraps_root_reference_atomically_without_feet() {
     let (mut scene, owner, model, models) = fixture();
     scene

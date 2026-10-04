@@ -5,7 +5,7 @@ mod root_curve;
 pub use root_clock::{RootCyclePhase, enclose_root_cycle_phase};
 mod ik;
 mod retarget;
-pub use retarget::{RetargetBinding, RetargetJoint};
+pub use retarget::{RetargetBinding, RetargetJoint, RetargetRootSimilarity};
 mod blend_phase;
 pub use blend_phase::{
     ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
