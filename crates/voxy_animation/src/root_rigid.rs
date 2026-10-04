@@ -7,7 +7,7 @@ use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
 mod integration;
 mod enclosure;
-pub use enclosure::{RootRigidEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds};
+pub use enclosure::{RootRigidEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath};
 mod blend;
 pub use blend::RootSpatialTwistBounds;
 mod partition;

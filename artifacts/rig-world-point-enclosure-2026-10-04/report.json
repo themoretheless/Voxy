@@ -1,0 +1,8 @@
+{
+  "animation_tests_passed": 110,
+  "gameplay_unit_passed": 46,
+  "gameplay_integration_passed": 42,
+  "independent_point_cases": 96,
+  "decimal_precision": 400,
+  "scope": "outward conditional world clearance; coordinate extraction and collision arithmetic proof outstanding"
+}

@@ -1,0 +1,14 @@
+{
+  "gameplay_unit_passed": 48,
+  "gameplay_integration_passed": 42,
+  "independent_advancement_cases": 6,
+  "decimal_precision": 400,
+  "verified": [
+    "directed step arithmetic",
+    "underflow no-progress handling",
+    "overflow endpoint clamp",
+    "far obstacle rejection with zero advancement budget",
+    "near obstacle retained with zero advancement budget"
+  ],
+  "scope": "positive-clearance advancement and broadphase arithmetic conditional on supplied point-speed bound; full pose/speed certification remains outstanding"
+}

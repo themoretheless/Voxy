@@ -237,3 +237,66 @@ impl RootRigidPath {
         }
     }
 }
+
+impl RootRigidPath {
+    /// Integrates with outward error accumulation and canonical prefix enclosures.
+    /// The callback encloses the original field at each exact stored start time.
+    /// Rates must bound that field between these times. Returned error compares
+    /// it to the real ordered stored screw field, not floating pose evaluation.
+    /// Unlike `integrate_spatial_enclosed`, clocks are preserved directly rather
+    /// than reconstructed by summing rounded interval durations.
+    pub fn integrate_spatial_outward(
+        duration: f64,
+        rates: RootTwistRateBounds,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+        mut sample: impl FnMut(f64) -> Result<(RootRigidTwist, RootRigidTwistEnclosure), AnimationError>,
+    ) -> Result<RootRigidApproximation, AnimationError> {
+        if !duration.is_finite() || duration < 0. ||
+            [rates.linear, rates.angular, origin_tolerance, angular_tolerance]
+                .into_iter().any(|v| !v.is_finite() || v < 0.) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if duration == 0. {
+            return Ok(RootRigidApproximation {path: Self::from_twists(&[],0)?, origin_error_bound:0., angular_error_bound:0.});
+        }
+        let capacity = max_spans.min(MAX_ROOT_ROTATION_SPANS);
+        if capacity == 0 { return Err(AnimationError::RootRigidBudget); }
+        let mut count = 1;
+        loop {
+            let mut spans = Vec::with_capacity(count);
+            let mut nominal_prefix = RootRigidTransform::IDENTITY;
+            let mut prefix = RootRigidEnclosure::IDENTITY;
+            let mut error = RootRigidErrorAccumulator::ZERO;
+            let mut start = 0.;
+            let mut angle_budget = false;
+            for i in 0..count {
+                let end = duration * ((i+1) as f64/count as f64);
+                if !end.is_finite() || end <= start { return Err(AnimationError::NumericalOverflow); }
+                let (twist, enclosure) = sample(start)?;
+                let sample_error = enclosure.error_bounds(twist)?;
+                let increment = match twist.increment_between_enclosure(start,end) {
+                    Ok(value) => value,
+                    Err(AnimationError::RootRigidBudget) => {angle_budget=true; break;},
+                    Err(error) => return Err(error),
+                };
+                error = error.append_frozen_interval(start,end,rates,sample_error,&prefix,twist)?;
+                prefix = increment.compose(&prefix)?;
+                let rotation = RootRotationSpan::constant_velocity(start,end,nominal_prefix.rotation,twist.angular)?;
+                let span = RootRigidSpan {screw:Some((twist,nominal_prefix)),rotation,additive:[DVec3::ZERO;4],pivot:[DVec3::ZERO;4]};
+                nominal_prefix = span.sample(1.)?;
+                spans.push(span);
+                start = end;
+            }
+            if !angle_budget && error.origin_bound() <= origin_tolerance && error.angular_bound() <= angular_tolerance {
+                return Ok(RootRigidApproximation {
+                    path: Self {spans,duration,end:nominal_prefix},
+                    origin_error_bound:error.origin_bound(),angular_error_bound:error.angular_bound(),
+                });
+            }
+            if count == capacity {return Err(AnimationError::RootRigidBudget);}
+            count = count.saturating_mul(2).min(capacity);
+        }
+    }
+}

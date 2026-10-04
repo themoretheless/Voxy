@@ -1,0 +1,14 @@
+{
+  "gameplay_unit_passed": 55,
+  "gameplay_integration_passed": 42,
+  "independent_exact_coordinate_rows": 9,
+  "verified": [
+    "exact signed coordinate mappings from quaternion identities",
+    "one-ulp identity perturbation rejects",
+    "bitwise physical projection preservation",
+    "imaginary-vector quaternion frame conversion",
+    "source and actor coordinate permutations retain floor support",
+    "reflected scale support"
+  ],
+  "scope": "coordinate-plane support through signed coordinate frame mappings with zero clearance; nonzero directional error/general tilted planes/runtime moving fades outstanding"
+}

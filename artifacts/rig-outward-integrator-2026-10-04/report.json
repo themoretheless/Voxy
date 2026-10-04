@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 108,
+  "verified": [
+    "direct stored clock preservation",
+    "outward canonical prefix and error accumulation",
+    "large angle subdivision",
+    "sample bias and error floor rejection",
+    "independently analytic accelerating translation"
+  ],
+  "scope": "canonical stored screw field; floating pose/collision and fade builder wiring remain outstanding"
+}

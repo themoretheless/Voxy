@@ -1,0 +1,17 @@
+{
+  "animation_tests_passed": 115,
+  "gameplay_unit_passed": 53,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "structural all-span coordinate projection invariant",
+    "tiny orthogonal rotation proof rejection",
+    "grounded tangent yaw",
+    "upward away motion",
+    "downward into support clipping",
+    "reflected scale sign reversal",
+    "actor/source yaw frames and shifted origin",
+    "near wall retained beside floor",
+    "shared physical cross-product rotation preserves fixed coordinate bitwise"
+  ],
+  "scope": "coordinate-plane support with zero total clearance; nonzero directional error/general support/runtime publication outstanding"
+}

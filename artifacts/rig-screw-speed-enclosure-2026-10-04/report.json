@@ -1,0 +1,8 @@
+{
+  "animation_tests_passed": 112,
+  "gameplay_unit_passed": 48,
+  "gameplay_integration_passed": 42,
+  "independent_ordered_speed_cases": 27,
+  "decimal_precision": 400,
+  "scope": "canonical ordered screw field point-speed caps connected to conditional approximation sweep; full pose/support-contact certification outstanding"
+}

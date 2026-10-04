@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 114,
+  "gameplay_unit_passed": 49,
+  "gameplay_integration_passed": 42,
+  "independent_cached_field_cases": 12,
+  "decimal_precision": 400,
+  "prepared_queries": 64,
+  "local_debug_median_speedup": 15.709496855394143,
+  "scope": "path-borrowed canonical prefix cache shared by conditional speed and corner gap queries; publication/support-contact proof outstanding"
+}

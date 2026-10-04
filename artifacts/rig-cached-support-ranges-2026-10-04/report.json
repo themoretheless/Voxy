@@ -1,0 +1,13 @@
+{
+  "animation_tests_passed": 116,
+  "gameplay_unit_passed": 55,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "coordinate ranges accumulated during prefix preparation",
+    "constant-work coordinate lookup",
+    "late reversal retained",
+    "empty path zero ranges",
+    "orthogonal angular field invalidation"
+  ],
+  "scope": "support query work bounded independently of path length after preparation; directional approximation error/general support/full moving fades outstanding"
+}

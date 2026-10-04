@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 106,
+  "verified": [
+    "reflected offset transport",
+    "clip/wall ratio and squared derivative scaling",
+    "increasing decreasing constant blend weights",
+    "zero clip duration",
+    "invalid input and overflow rejection"
+  ],
+  "scope": "outward transport of caller-proven field caps; builder integration remains outstanding"
+}

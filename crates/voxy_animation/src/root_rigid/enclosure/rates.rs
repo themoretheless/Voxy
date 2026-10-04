@@ -189,3 +189,144 @@ impl RootRigidSpan {
         }))
     }
 }
+
+impl RootSpatialTwistBounds {
+    fn enclosed_checked(self) -> Result<Self, AnimationError> {
+        if [
+            self.linear_speed_bound,
+            self.angular_speed_bound,
+            self.rates.linear,
+            self.rates.angular,
+        ]
+        .into_iter()
+        .any(|v| !v.is_finite() || v < 0.)
+        {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        Ok(self)
+    }
+    /// Outward transport through a constant similarity frame. The frame must
+    /// enclose a normalized real rotation; its uncertain offset uses an L1 cap.
+    pub fn enclosed_transformed(
+        self,
+        frame: RootRigidEnclosure,
+        scale: f64,
+    ) -> Result<Self, AnimationError> {
+        self.enclosed_checked()?;
+        if !scale.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let radius = l1(frame.translation.map(|v| Scalar(v[0], v[1])))?;
+        let s = Scalar::exact(scale.abs());
+        let coupled = |linear, angular| -> Result<f64, AnimationError> {
+            Ok(s.mul(Scalar::exact(linear))?
+                .add(radius.mul(Scalar::exact(angular))?)?
+                .1)
+        };
+        Self {
+            linear_speed_bound: coupled(self.linear_speed_bound, self.angular_speed_bound)?,
+            angular_speed_bound: self.angular_speed_bound,
+            rates: RootTwistRateBounds {
+                linear: coupled(self.rates.linear, self.rates.angular)?,
+                angular: self.rates.angular,
+            },
+        }
+        .enclosed_checked()
+    }
+    /// Exact stored clip/wall duration ratio, with outward division and square.
+    pub fn enclosed_retimed_between(
+        self,
+        clip_duration: f64,
+        wall_duration: f64,
+    ) -> Result<Self, AnimationError> {
+        self.enclosed_checked()?;
+        if !clip_duration.is_finite()
+            || clip_duration < 0.
+            || !wall_duration.is_finite()
+            || wall_duration <= 0.
+        {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        if clip_duration == 0. {
+            return Ok(Self {
+                linear_speed_bound: 0.,
+                angular_speed_bound: 0.,
+                rates: RootTwistRateBounds {
+                    linear: 0.,
+                    angular: 0.,
+                },
+            });
+        }
+        let s = Scalar::exact(clip_duration).div_interval_positive(Scalar::exact(wall_duration))?;
+        let squared = s.mul(s)?;
+        Self {
+            linear_speed_bound: Scalar::exact(self.linear_speed_bound).mul(s)?.1,
+            angular_speed_bound: Scalar::exact(self.angular_speed_bound).mul(s)?.1,
+            rates: RootTwistRateBounds {
+                linear: Scalar::exact(self.rates.linear).mul(squared)?.1,
+                angular: Scalar::exact(self.rates.angular).mul(squared)?.1,
+            },
+        }
+        .enclosed_checked()
+    }
+    /// Whole-interval linear-weight blend, including the weight derivative.
+    /// Inputs must already bound fields in the same frame and wall clock.
+    pub fn enclosed_blend(
+        self,
+        target: Self,
+        weights: [f64; 2],
+        duration: f64,
+    ) -> Result<Self, AnimationError> {
+        self.enclosed_checked()?;
+        target.enclosed_checked()?;
+        if weights
+            .into_iter()
+            .any(|w| !w.is_finite() || !(0. ..=1.).contains(&w))
+        {
+            return Err(AnimationError::InvalidBlendWeight);
+        }
+        if !duration.is_finite() || duration <= 0. {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        let delta = Scalar::exact(weights[1]).sub(Scalar::exact(weights[0]))?;
+        let rate = Scalar::exact(delta.0.abs().max(delta.1.abs())).div_positive(duration)?;
+        let weighted = |a, b| -> Result<Scalar, AnimationError> {
+            let mut upper = 0_f64;
+            for w in weights {
+                let w = Scalar::exact(w);
+                upper = upper.max(
+                    Scalar::exact(1.)
+                        .sub(w)?
+                        .mul(Scalar::exact(a))?
+                        .add(w.mul(Scalar::exact(b))?)?
+                        .1,
+                );
+            }
+            Ok(Scalar::exact(upper))
+        };
+        let derivative = |a, b, va, vb| -> Result<f64, AnimationError> {
+            Ok(weighted(a, b)?
+                .add(rate.mul(Scalar::exact(va).add(Scalar::exact(vb))?)?)?
+                .1)
+        };
+        Self {
+            linear_speed_bound: weighted(self.linear_speed_bound, target.linear_speed_bound)?.1,
+            angular_speed_bound: weighted(self.angular_speed_bound, target.angular_speed_bound)?.1,
+            rates: RootTwistRateBounds {
+                linear: derivative(
+                    self.rates.linear,
+                    target.rates.linear,
+                    self.linear_speed_bound,
+                    target.linear_speed_bound,
+                )?,
+                angular: derivative(
+                    self.rates.angular,
+                    target.rates.angular,
+                    self.angular_speed_bound,
+                    target.angular_speed_bound,
+                )?,
+            },
+        }
+        .enclosed_checked()
+    }
+}

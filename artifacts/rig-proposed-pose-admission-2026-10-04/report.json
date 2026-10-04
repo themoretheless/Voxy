@@ -1,0 +1,12 @@
+{
+  "gameplay_unit_passed": 50,
+  "gameplay_integration_passed": 42,
+  "verified": [
+    "separate proposed rounded pose certificate",
+    "overlapping and touching proposal rejection",
+    "per-obstacle trajectory query accounting",
+    "query exhaustion rejection",
+    "invalid finite pose rejection"
+  ],
+  "scope": "conditional approximation returned pose before grounding/relocation; supported contacts and full runtime publication outstanding"
+}

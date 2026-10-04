@@ -1,0 +1,27 @@
+{
+  "mode": "debug CPU test; 64 partial queries; cached timing includes preparation",
+  "rounds": [
+    {
+      "round": 0,
+      "spans": 64,
+      "replay_ns": 41117541,
+      "prepared_ns": 2615417,
+      "ratio": 15.721218069623314
+    },
+    {
+      "round": 1,
+      "spans": 64,
+      "replay_ns": 40969708,
+      "prepared_ns": 2607958,
+      "ratio": 15.709496855394143
+    },
+    {
+      "round": 2,
+      "spans": 64,
+      "replay_ns": 41012208,
+      "prepared_ns": 2623208,
+      "ratio": 15.634371349889143
+    }
+  ],
+  "median_ratio": 15.709496855394143
+}

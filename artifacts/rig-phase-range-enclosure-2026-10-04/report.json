@@ -1,0 +1,14 @@
+{
+  "animation_tests_passed": 109,
+  "independent_cubic_values": 840,
+  "independent_arc_values": 120,
+  "decimal_precision": 400,
+  "extraction_masks": 8,
+  "verified": [
+    "closed phase interval enclosures",
+    "outward timestamp conversion",
+    "invalid interval/domain rejection",
+    "endpoint and interior matrix reference coverage"
+  ],
+  "scope": "stored continuous field; fade builder and collision certification outstanding"
+}

@@ -2,6 +2,47 @@
 //! Static boxes may rotate, scale and inherit shear; normals remain continuous.
 use glam::DVec3;
 
+/// Exact coordinate row of the normalized real quaternion rotation, if known.
+/// Linear component identities characterize signed coordinate-axis mappings;
+/// comparisons are exact and never use a near-zero matrix tolerance.
+pub(crate) fn rotation_coordinate_preimage(rotation:glam::DQuat,coordinate:usize)->Option<(usize,f64)> {
+    if coordinate>=3 || !rotation.is_finite() {return None;}
+    let q=rotation.to_array();
+    if q.iter().all(|v|*v==0.) {return None;}
+    if (0..3).all(|i|i==coordinate || q[i]==0.) {return Some((coordinate,1.));}
+    if q[coordinate]==0. && q[3]==0. {return Some((coordinate,-1.));}
+    for source in 0..3 {
+        if source==coordinate {continue;}
+        let third=3-coordinate-source;
+        let epsilon=if (coordinate,source)==(0,1) || (coordinate,source)==(1,2) || (coordinate,source)==(2,0) {1.}else{-1.};
+        for sign in [-1.,1.] {
+            if q[coordinate]==sign*q[source] && q[third]==-epsilon*sign*q[3] {
+                return Some((source,sign));
+            }
+        }
+    }
+    None
+}
+/// Unit-quaternion cross form, with exact structurally known coordinate rows.
+/// Preserves support projections even after a coordinate-axis frame permutation.
+pub(crate) fn rotate_vector(rotation:glam::DQuat,vector:DVec3)->DVec3 {
+    let q=rotation.xyz();
+    let cross=2.*q.cross(vector);
+    let mut mapped=vector+rotation.w*cross+q.cross(cross);
+    for coordinate in 0..3 {
+        if let Some((source,sign))=rotation_coordinate_preimage(rotation,coordinate) {
+            mapped[coordinate]=sign*vector[source];
+        }
+    }
+    mapped
+}
+/// B*q*B^-1 rotates q's imaginary vector through B and leaves its scalar fixed.
+/// This avoids rounded quaternion products destroying exact coordinate rows.
+pub(crate) fn reframe_rotation(basis:glam::DQuat,rotation:glam::DQuat)->glam::DQuat {
+    let vector=rotate_vector(basis,rotation.xyz());
+    glam::DQuat::from_xyzw(vector.x,vector.y,vector.z,rotation.w).normalize()
+}
+
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct AffineBox {
     pub center: DVec3,
@@ -305,5 +346,47 @@ mod tests {
             &[obstacle]
         ));
         assert!(center.is_finite());
+    }
+}
+
+#[cfg(test)]
+mod rotation_tests {
+    use super::*;
+    #[test]
+    fn unit_axis_rotation_preserves_fixed_coordinate_exactly() {
+        let point=DVec3::new(0.125,-1000.,0.3);
+        for coordinate in 0..3 {
+            let mut axis=DVec3::ZERO;axis[coordinate]=1.;
+            for angle in [0.2,0.3,0.4,1.,17.] {
+                let rotation=glam::DQuat::from_axis_angle(axis,angle).normalize();
+                let mapped=rotate_vector(rotation,point);
+                assert_eq!(mapped[coordinate].to_bits(),point[coordinate].to_bits());
+                assert!((mapped.length()-point.length()).abs()<2e-12);
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod coordinate_mapping_tests {
+    use super::*;
+    #[test]
+    fn signed_coordinate_rows_are_exact_without_rounded_matrix_comparison() {
+        let vector=DVec3::new(0.125,-1000.,0.3);
+        for rotation in [glam::DQuat::from_xyzw(0.,0.,0.5,0.5).normalize(),
+            glam::DQuat::from_xyzw(0.2,0.2,0.3,0.3).normalize(),
+            glam::DQuat::from_xyzw(0.2,-0.2,0.3,-0.3).normalize(),
+            glam::DQuat::from_xyzw(0.5,0.5,0.5,0.5),
+            glam::DQuat::from_xyzw(0.3,0.4,0.,0.).normalize()] {
+            let mapped=rotate_vector(rotation,vector);
+            for coordinate in 0..3 {
+                if let Some((source,sign))=rotation_coordinate_preimage(rotation,coordinate) {
+                    assert_eq!(mapped[coordinate].to_bits(),(sign*vector[source]).to_bits());
+                    println!("EXACT_COORDINATE_ROW {:?}",(rotation.to_array(),coordinate,source,sign));
+                }
+            }
+        }
+        let changed=glam::DQuat::from_xyzw(0.2_f64.next_up(),0.2,0.3,0.3).normalize();
+        assert_eq!(rotation_coordinate_preimage(changed,1),None);
     }
 }

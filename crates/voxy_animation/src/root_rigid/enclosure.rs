@@ -6,6 +6,9 @@ mod twist;
 mod cubic;
 mod accumulation;
 mod rates;
+mod points;
+mod cache;
+pub use cache::RootScrewEnclosurePath;
 pub use rates::RootAngularDerivativeBounds;
 pub use accumulation::RootRigidErrorAccumulator;
 pub use twist::{RootRigidTwistEnclosure,RootTwistErrorBounds};
@@ -268,6 +271,14 @@ impl RootRigidTwist {
         }
         self.increment_interval_enclosure(Scalar::exact(duration))
     }
+    pub(super) fn increment_between_enclosure(self, start: f64, end: f64) -> Result<RootRigidEnclosure, AnimationError> {
+        if !start.is_finite() || !end.is_finite() || start < 0. || end <= start {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        let mut duration = Scalar::exact(end).sub(Scalar::exact(start))?;
+        duration.0 = duration.0.max(0.);
+        self.increment_interval_enclosure(duration)
+    }
     fn increment_interval_enclosure(
         self,
         dt: Scalar,
@@ -491,9 +502,17 @@ mod tests {
             })
             .collect();
         let point = DVec3::new(0.4, -0.1, 0.7);
+        let cache=path.prepare_screw_enclosures(4).unwrap();
+        assert!(std::ptr::eq(cache.path(),&path));
+        assert!(path.prepare_screw_enclosures(3).is_err());
+        assert!(cache.sample(4,0.5).is_err());
+        assert!(cache.sample(0,f64::NAN).is_err());
         for index in 0..4 {
             for fraction in [0., 0.37, 1.] {
                 let enclosure = path.screw_field_enclosure(index, fraction, 4).unwrap();
+                let prepared=cache.sample(index,fraction).unwrap();
+                println!("CACHED_SCREW_ENCLOSURE {:?}",(&definitions,index,fraction,point.to_array(),
+                    prepared.translation_bounds(),prepared.rotation_bounds(),prepared.transform_point(point).unwrap()));
                 let transformed = enclosure.transform_point(point).unwrap();
                 assert!(transformed.iter().all(|v| v[1] - v[0] < 1e-10));
                 println!(

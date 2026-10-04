@@ -197,3 +197,342 @@ All 105 animation CPU tests pass with expanded independent analytic cubic speed/
 `RootRigidSpan::enclosed_twist_bounds` now combines outward angular bounds with Bernstein position/first/second derivative hulls for additive and pivot polynomials. For canonical spatial `v=a_dot-omega cross a-R*p_dot`, its speed bound is `A1+omega*A+P1` and derivative bound is `A2+alpha*A+omega*(A1+P1)+P2`; all arithmetic rounds outward. Screw fields have exact zero derivative rates. STEP/zero-duration events return None and an unproved rotation norm rejects.
 
 All 105 animation CPU tests pass with expanded independent moving-pivot derivative checks. A 400-digit reference verifies 56 whole-span speed/rate inequalities across all eight extraction masks. Evidence: `artifacts/rig-spatial-rate-enclosure-2026-10-04/`. These bounds describe canonical stored coefficients. Outward rate transport, blend-builder wiring, prefix/clock alignment and full collision arithmetic remain outstanding before runtime moving-fade admission.
+
+### Outward bound transport (2026-10-04)
+
+`RootSpatialTwistBounds::enclosed_retimed_between` encloses the exact stored
+clip/wall duration ratio and its square, avoiding a rounded ratio as a proof
+input. `enclosed_transformed` transports magnitude/rate caps through a constant
+normalized real frame, including signed scale and the L1 cap of the enclosed
+origin offset. `enclosed_blend` bounds both endpoint weighted caps and the
+weight-derivative contribution using outward subtraction, division, addition
+and multiplication. The caps remain conditional on the source fields already
+being enclosed in the same frame and wall clock; these APIs do not certify
+source compilation or automatically enable physical moving fades.
+
+Validation: 106 animation tests pass, including reflected offset transport,
+nontrivial playback ratios, increasing/decreasing/constant weights, a stopped
+clip, invalid times/weights and overflow rejection. Evidence is saved in
+`artifacts/rig-bound-transport-enclosure-2026-10-04/`. The existing fast APIs and
+blend builder still use their earlier arithmetic contract; wiring the new caps
+and outward error accumulator into that builder remains outstanding.
+
+### Outward frozen-field integrator (2026-10-04)
+
+`RootRigidPath::integrate_spatial_outward` connects sampled velocity enclosures,
+`RootRigidErrorAccumulator` and outward canonical prefix composition. It stores
+selected start/end clocks directly in the output spans rather than rebuilding
+those clocks by summing rounded durations. The callback reference is the exact
+stored start time, and the interval reference duration is the real difference
+of the stored endpoints. Large angular increments trigger uniform refinement;
+other callback/numeric failures propagate without returning a candidate path.
+
+Its envelope compares the original field to the canonical real ordered screw
+field. Floating pose sampling, collision arithmetic, original curve extraction
+and composed approximation transport still require their own guarantees. The
+older integration API keeps its documented arithmetic contract. The fade builder
+has not yet switched to the new integrator.
+
+All 108 animation tests pass. New regressions cover angular subdivision with
+zero field error, exact output clocks, sampled bias and its nonzero error floor,
+and independently analytic accelerating translation at intermediate fractions.
+Evidence: `artifacts/rig-outward-integrator-2026-10-04/`.
+
+### Clock intervals carried into velocity enclosures (2026-10-04)
+
+`RootRigidSpan::spatial_twist_enclosure_range` now encloses a closed interval of
+progress values, retaining De Casteljau, normalization and moving-pivot coupling
+throughout the interval. The arc exponential accepts interval progress and
+subdivides using its upper angular cap. `spatial_twist_enclosure_at_times`
+converts checked in-span timestamps by outward subtraction/division. Intersection
+with [0,1] relies on the validated timestamp domain; out-of-span times reject
+rather than being silently clamped. Cubic norm positivity must still be proved;
+a box that cannot exclude zero rejects and requires smaller intervals.
+
+This supplies a necessary building block for certified clock conversion in the
+fade builder; that builder still uses its old contract. 109 animation tests pass.
+Independent 400-digit matrix references verify 840 cubic and 120 arc values at
+interval endpoints and interior points over all eight extraction masks, shifted
+coordinates and moving pivots. These checks support the implementation but do
+not alone constitute a whole collision or upstream extraction certificate.
+Evidence: `artifacts/rig-phase-range-enclosure-2026-10-04/`.
+
+### Outward world point envelope (2026-10-04)
+
+`RootRigidApproximation::enclosed_world_point_error_bound` converts caller-proven
+origin/angular error metadata to a world point clearance. Euclidean point norm,
+rotation chord, absolute signed scale and world evaluation radius are accumulated
+outward. The chord uses an alternating sin(z)/z polynomial with a bounded ninth
+term below stored pi, and the universal diameter bound 2 at/above it. This sine
+series remains decreasing for z squared <= 2.5 (first ratio <= 2.5/6); it uses
+no platform transcendental error assumptions. Exact zero error/scale cases avoid
+inventing an artificial clearance.
+
+The conditional gameplay whole-body sweep now uses this API for every mapped
+collider corner. The computed stored corners are still a separate mapping proof
+obligation, as are SAT/contact arithmetic and support-contact behavior. This
+change does not enable runtime moving fades or certify upstream old error caps.
+Independent 400-digit references cover 96 combinations of angular error, point,
+signed scale and world radius, including tiny angles and the pi transition.
+Evidence: `artifacts/rig-world-point-enclosure-2026-10-04/`.
+
+### Enclosed inverse corner coordinates (2026-10-04)
+
+`RootRigidEnclosure::inverse_similarity_point_sum_bounds` encloses inverse
+similarity coordinates of an exact sum of stored vectors. Sum, enclosed origin,
+normalized real inverse rotation and signed scale division all use outward
+arithmetic. `RootRigidApproximation::enclosed_world_point_box_error_bound` accepts
+these coordinate boxes and bounds their Euclidean radius before error transport.
+
+The conditional whole-body clearance now feeds all eight signed sums of collider
+edges through this mapping instead of treating rounded inverse corners as exact.
+This closes the coordinate-sum/mapping obligation for the canonical stored-edge,
+normalized real-frame model. Runtime floating pose evaluation, broadphase/SAT
+roundoff and support contacts remain separate obligations; moving fades remain
+disabled. Zero scale and nonfinite data reject before returning a clearance.
+
+111 animation tests pass; 24 independent 400-digit matrix reference cases verify
+skewed collider corners, shifted/rotated frames, positive/reflected scales and the
+resulting world clearance. Evidence:
+`artifacts/rig-inverse-point-enclosure-2026-10-04/`.
+
+### Directed projection gaps for inflated poses (2026-10-04)
+
+The conditional positive-clearance advancement path now obtains each projection
+gap from `angular_sweep/gap.rs`. It encloses center subtraction, dot products,
+absolute support sums and clearance dilation with directed adjacent-float
+arithmetic. Because a generated stored axis need not have exact unit norm, a
+positive projection gap is divided downward by an outward axis norm upper bound.
+A nonpositive/inconclusive gap returns zero; it is not a penetration or true
+contact certificate. Any arbitrary nonzero separating axis is sufficient for
+this positive-gap certificate; completeness of the SAT axis set is unnecessary
+for safety of that particular claim.
+
+The legacy zero-clearance path retains its existing contract. Floating pose
+sampling, broadphase rejection, advancement-time arithmetic, speed bounds and
+support contacts remain obligations before certifying a complete swept result.
+47 gameplay unit tests and 42 integration tests pass, including existing
+inflated-wall/stationary-overlap tests. Nine independent 400-digit projection
+references verify large-coordinate subtraction, nonunit/skew axes and different
+clearance radii. Evidence: `artifacts/rig-projection-gap-enclosure-2026-10-04/`.
+
+### Directed advancement and excursion-based rejection (2026-10-04)
+
+The positive-clearance path now rounds multiplication, division and time addition
+downward when advancing by a fraction of the proven gap/speed ratio. Underflow
+may yield no progress (budget rejection); overflowing positive ratios clamp to
+the unit endpoint only after downward rounding. Finite nonnegative gap, valid
+unit time and finite positive speed are required.
+
+Its broadphase now rejects an obstacle only when a directed initial world gap
+exceeds the supplied whole-unit-interval point excursion bound. This preserves
+near obstacles without depending on the old floating projection-extrema guard.
+Completeness/performance may be conservative; a positive gap beyond the entire
+point excursion is sufficient to prove this rejection. Source point speed bounds
+and pose evaluation remain caller proof obligations: current legacy speed caps
+are not yet fully certified outward. Legacy zero-clearance behavior is unchanged.
+
+Validation: 48 gameplay unit and 42 integration tests pass. Six independent
+400-digit advancement references cover ordinary ratios, endpoint completion,
+underflow and overflow. Near/far obstacle regressions verify broadphase decisions
+with zero advancement budget. Evidence:
+`artifacts/rig-directed-advancement-2026-10-04/`.
+
+### Canonical ordered screw point speeds (2026-10-04)
+
+`RootRigidPath::enclosed_screw_point_speed_bounds` recomputes the canonical real
+prefix once and bounds each mapped point-box velocity `omega cross position + v`
+at the start of each constant field. Its norm stays constant because its time
+derivative is `omega cross velocity`. Outward cross products, Euclidean norm,
+exact stored endpoint duration and absolute world scale give a cap per normalized
+span. Exact stationary fields preserve zero speed. Invalid boxes, unsupported
+non-screw fields, exhausted span capacity and large unsubdivided angles reject.
+The outward integrator already subdivides its angular increments appropriately.
+
+Conditional `sweep_rigid_approximation` now passes these caps to the shared
+advancement/broadphase kernel. Collider inverse-coordinate boxes share one owner
+with clearance calculation. Exact/legacy paths keep their separate speed contract.
+This covers canonical stored screw speed arithmetic; runtime pose evaluation and
+support-contact admission still need completion. No moving fade is enabled.
+
+112 animation tests pass. 27 independent 400-digit ordered matrix/exponential
+references verify point speed after noncommuting prefixes, signed scales and a
+point 1000 units from the origin. Evidence:
+`artifacts/rig-screw-speed-enclosure-2026-10-04/`.
+
+### Canonical enclosed corner geometry in gap queries (2026-10-04)
+
+`RootRigidEnclosure::{transform_point_box_bounds,similarity_point_box_bounds}`
+propagate coordinate boxes through rigid/signed similarity frames. Conditional
+approximation sweeps now recompute the canonical ordered screw field at each
+sample, transform all eight inverse corner boxes through that field and the
+composed normalized real actor/source frame, and pass the resulting world boxes
+to a directed corner-projection gap calculation. The rounded pose selects arbitrary
+candidate axes only; a positive gap is established from enclosed geometry.
+The same corner certificate feeds the whole-excursion broadphase rejection.
+Empty/stationary conditional paths also check enclosed initial geometry, including
+zero-error metadata. Legacy queries retain their documented contract.
+
+This avoids requiring the rounded sampled pose to be exact for a gap certificate.
+It does not prove that a subsequently published floating pose has no evaluation
+error: the supplied world evaluation radius still covers that publication/model
+obligation. Error metadata, upstream curve extraction and support contacts remain
+separate proof obligations. Prefix recomputation currently costs linear work in
+span index per sample; caching canonical prefixes is a required performance step
+before enabling long production fades. Moving fades remain disabled.
+
+Validation: 113 animation, 49 gameplay unit and 42 integration tests pass.
+Independent 400-digit matrix/projection references cover 32 transformed coordinate
+box corners and three directed world-corner gaps, including nonunit/skew axes.
+Evidence: `artifacts/rig-enclosed-pose-gap-2026-10-04/`.
+
+### Path-borrowed canonical prefix cache (2026-10-04)
+
+`RootRigidPath::prepare_screw_enclosures` returns `RootScrewEnclosurePath`, an
+immutable path-borrowed owner with one prepared enclosure per prefix, including
+the final endpoint. Preparation uses one ordered pass and rejects unsupported
+fields/angles, invalid intervals, overflow or exhausted capacity before publishing
+an owner. Each interior sample evaluates one local exponential and composes one
+cached prefix; endpoint samples return prepared boxes directly. The borrow binds
+cache lifetime to the actual immutable path; the gameplay kernel additionally
+checks source path pointer identity. Speed caps and corner-gap queries share this
+prepared owner, eliminating replay of prior spans on every query.
+
+114 animation tests pass. Twelve independent 400-digit canonical timestamp/field
+references confirm cached translation, quaternion and point boxes. A paired debug
+CPU measurement of 64 partial queries, including cache preparation, took median
+41.01 ms by replay and 2.62 ms with preparation/cache (median per-round ratio
+15.71x). This is a local microbenchmark, not a claim about whole game performance.
+Evidence: `artifacts/rig-prefix-cache-2026-10-04/`. Pose publication error and
+support-contact admission remain outstanding; moving fades remain disabled.
+
+### Separate admission of the rounded proposed pose (2026-10-04)
+
+Conditional approximation sweeps now validate the returned proposal independently
+of the canonical trajectory: proposed center is the actual stored `center + hit
+displacement`; orientation/edges mirror the physical controller's stored quaternion
+composition/normalization and edge update. Directed projection gaps prove separation from every obstacle; the exact dyadic
+fallback below can additionally prove projection touching. Each obstacle consumes the shared query
+budget, including checks for previously discarded broadphase obstacles, and the
+receipt includes those queries. Overlap, unproved touching, invalid geometry
+or exhausted work reject without returning an accepted proposal.
+
+This establishes a certificate for that exact rounded proposed center/edge model.
+The check occurs before the runtime's later grounding/relocation operation; it
+is not proof of the entire published scene/GPU transform. Ground-support touching
+needs explicit directional/support admission rather than silently ignoring a floor.
+The conditional API remains a read-only query, and moving fades remain disabled.
+
+50 gameplay unit and 42 integration tests pass. New regressions distinguish a
+separated proposal, a changed overlapping proposal and a touching proposal, and
+check invalid data and budget exhaustion. Existing conditional inflated sweeps
+also exercise the connected gate. Evidence:
+`artifacts/rig-proposed-pose-admission-2026-10-04/`.
+
+
+### Exact endpoint touching predicate (2026-10-04)
+
+`angular_sweep/exact_gap.rs` computes the exact sign of the stored binary64
+projection gap. Each finite product is decoded into a signed dyadic integer in
+units 2^-2148. Products occupy at most 4196 bits; the 24 terms of one projection
+gap require at most 4201 bits. A fixed 66-limb (4224-bit) accumulator therefore
+supports every finite input exponent, including subnormals, without heap
+allocation or rounded intermediate products. Center subtraction occurs through
+exact dot subtraction, never through a possibly overflowing floating difference.
+
+Proposed-pose admission uses directed positive separation as its fast path and
+exact nonnegative gap as fallback, including interval-arithmetic overflow. Exact
+zero proves disjoint interiors on that projection and permits touching. Any
+nonzero stored direction can prove this condition; failure to find a certificate
+still rejects. This is endpoint nonpenetration, not proof of a supported continuous
+trajectory, floor snapping or later scene/GPU publication. Isotropic error
+clearance still blocks supported moving paths until directional admission is
+implemented. Moving fades remain disabled.
+
+51 gameplay unit and 42 integration tests pass. Independent arbitrary-precision
+rational references verify 21 exact sign cases across the full binary64 exponent
+range and touching versus adjacent-float penetration. Connected pose tests admit
+an exactly touching proposal and reject its next-float penetrating neighbor.
+Evidence: `artifacts/rig-exact-contact-sign-2026-10-04/`.
+
+### Whole-path coordinate-plane support certificate (2026-10-04)
+
+`RootScrewEnclosurePath::coordinate_velocity_range` proves a structural projection
+property over every stored field: angular components orthogonal to the selected
+coordinate must be exactly zero. Then that coordinate of every moving point has
+derivative equal to the stored coordinate of linear spatial velocity. The returned
+whole-path velocity extrema support exact sign comparisons without rounded cross
+products or sampled invariants. Tiny nonzero orthogonal rotation rejects the proof.
+
+Conditional approximation broadphase can now retain an exact initial coordinate
+plane contact when both normalized real actor/source rotations fix that coordinate,
+the signed-scale velocity is everywhere tangent or directed away from the obstacle,
+and an exact initial SAT sign proves nonpenetration. The proof is for all times,
+not an endpoint guess; nearby walls still require ordinary certified sweeping.
+This certificate is used only with zero total clearance. Nonzero isotropic error
+cannot be treated as zero directional error; varying fades require separately
+proved projection error before this can admit their floor contact. General tilted
+support planes, grounding/relocation and runtime moving fade publication remain
+outstanding. Moving fades stay disabled.
+
+Evidence is saved in `artifacts/rig-coordinate-support-admission-2026-10-04/`.
+
+The connected floor test exposed a real rounded-pose defect: the expanded
+quaternion/vector norm-coefficient formula can change the fixed coordinate of a
+pure coordinate-axis rotation. That turns exact support touching into a tiny
+penetration. `convex::rotate_vector` now owns the cross-product unit-rotation form
+for physical controller rest-edge recovery/updates and sweep point/frame vectors.
+It preserves the fixed coordinate bit for bit when quaternion orthogonal vector
+components are exactly zero. This corrects the physical calculation rather than
+weakening the exact endpoint predicate. Sweep samples use the same normalized
+combined orientation as the controller's proposed edge update.
+
+Validation: 115 animation, 53 gameplay unit and 42 integration tests pass.
+Connected conditional sweeps cover tangent/away/into-plane motion, positive and
+reflected scales, actor/source yaw frames and an offset origin, plus a near wall
+that the support certificate must not discard. The shared physical rotation test
+checks bitwise fixed-coordinate preservation on all three coordinate axes. The
+full integration suite retains tilted/sheared collider, jump, winding, rollback
+and query-budget behavior. These are CPU checks; native editor proof is separate.
+
+### Signed coordinate frame mappings preserve support (2026-10-04)
+
+`convex::rotation_coordinate_preimage` recognizes an exact signed coordinate row
+of the normalized real quaternion rotation from linear stored-component identities.
+Diagonal rows follow zero orthogonal quaternion components (fixed direction), or
+zero scalar/selected-vector components (reversed direction). Off-diagonal rows
+use `q_i = sign*q_j` and `q_k = -epsilon_ijk*sign*q_w`; the corresponding rational
+matrix row is exactly a signed coordinate selector. No rounded matrix or near-zero
+tolerance enters the certificate. `rotate_vector` applies these known rows exactly
+and uses the unit cross form for other coordinates.
+
+Support proof now transports its world coordinate through actor and source rows,
+including their signs and reflected scale, instead of requiring both frames to
+fix the same coordinate. `reframe_rotation` conjugates a motion quaternion by
+rotating its imaginary vector and retaining its scalar, avoiding needless rounded
+quaternion products that destroy these structural identities. Controller and sweep
+rotation ownership remains shared.
+
+55 gameplay unit and 42 integration tests pass. Nine independent exact rational
+matrix rows validate coordinate selectors, including quarter turns, signed cycle
+permutations and partial rows with arbitrary spin. A one-ulp component perturbation
+rejects the claimed row. Connected sweeps preserve floor support through source
+or actor quarter turns and reflected scale. This still requires a world coordinate
+plane and zero total clearance; directional error bounds, general tilted planes
+and full moving fade publication remain outstanding. Evidence:
+`artifacts/rig-permuted-support-admission-2026-10-04/`.
+
+### Prepared support direction ranges (2026-10-04)
+
+Canonical screw preparation now accumulates all three structural coordinate
+velocity ranges in the same pass as prefix enclosures. `coordinate_velocity_range`
+is a constant-work lookup instead of replaying the whole path for every support
+axis/obstacle/span. The source borrow still binds this metadata to the immutable
+path. Orthogonal angular motion invalidates a coordinate permanently, late linear
+velocity reversal remains in its min/max, and empty paths return exact zero.
+
+116 animation tests pass, including late reversal after 64 earlier fields and
+empty-path direction queries. This removes the repeated path traversal from the
+support certificate; no whole-game speedup is asserted. Evidence:
+`artifacts/rig-cached-support-ranges-2026-10-04/`. Nonzero directional approximation
+error and arbitrary tilted support planes remain outstanding.

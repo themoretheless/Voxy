@@ -1,0 +1,8 @@
+{
+  "animation_tests_passed": 111,
+  "gameplay_unit_passed": 46,
+  "gameplay_integration_passed": 42,
+  "independent_inverse_mapping_and_clearance_cases": 24,
+  "decimal_precision": 400,
+  "scope": "canonical stored edge sums and normalized real-frame inverse mapping; runtime pose and collision arithmetic proof outstanding"
+}

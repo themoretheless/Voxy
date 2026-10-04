@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "arithmetic": "independent arbitrary precision rational matrix",
+  "cases": [
+    {
+      "quaternion": [
+        0.0,
+        0.0,
+        0.7071067811865475,
+        0.7071067811865475
+      ],
+      "coordinate": 0,
+      "source": 1,
+      "sign": -1.0
+    },
+    {
+      "quaternion": [
+        0.0,
+        0.0,
+        0.7071067811865475,
+        0.7071067811865475
+      ],
+      "coordinate": 1,
+      "source": 0,
+      "sign": 1.0
+    },
+    {
+      "quaternion": [
+        0.0,
+        0.0,
+        0.7071067811865475,
+        0.7071067811865475
+      ],
+      "coordinate": 2,
+      "source": 2,
+      "sign": 1.0
+    },
+    {
+      "quaternion": [
+        0.3922322702763681,
+        0.3922322702763681,
+        0.588348405414552,
+        0.588348405414552
+      ],
+      "coordinate": 1,
+      "source": 0,
+      "sign": 1.0
+    },
+    {
+      "quaternion": [
+        0.3922322702763681,
+        -0.3922322702763681,
+        0.588348405414552,
+        -0.588348405414552
+      ],
+      "coordinate": 1,
+      "source": 0,
+      "sign": -1.0
+    },
+    {
+      "quaternion": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinate": 0,
+      "source": 2,
+      "sign": 1.0
+    },
+    {
+      "quaternion": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinate": 1,
+      "source": 0,
+      "sign": 1.0
+    },
+    {
+      "quaternion": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "coordinate": 2,
+      "source": 1,
+      "sign": 1.0
+    },
+    {
+      "quaternion": [
+        0.6,
+        0.8,
+        0.0,
+        0.0
+      ],
+      "coordinate": 2,
+      "source": 2,
+      "sign": -1.0
+    }
+  ]
+}

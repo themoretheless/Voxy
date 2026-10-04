@@ -1,0 +1,7 @@
+{
+  "gameplay_unit_passed": 47,
+  "gameplay_integration_passed": 42,
+  "independent_projection_gap_cases": 9,
+  "decimal_precision": 400,
+  "scope": "positive-clearance stored-pose projection gap certificate; full swept collision proof outstanding"
+}
