@@ -1,0 +1,13 @@
+{
+  "runtime_tests_passed": 10,
+  "playback_tests_passed": 10,
+  "foot_tests_passed": 17,
+  "verified": [
+    "ordinary no-foot movement retains and transports reference",
+    "App preparation dispatch includes retained reference",
+    "shared single transport owner",
+    "original runtime preserved"
+  ],
+  "automatic_reference_initialization": false,
+  "ordinary_moving_fades": false
+}

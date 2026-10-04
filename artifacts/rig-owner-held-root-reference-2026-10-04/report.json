@@ -1,0 +1,14 @@
+{
+  "runtime_tests_passed": 9,
+  "playback_tests_passed": 10,
+  "foot_tests_passed": 17,
+  "verified": [
+    "owner-held enclosed reference",
+    "accepted pose owner admission",
+    "free and partial candidate world anchor preservation",
+    "original reference unchanged until publication"
+  ],
+  "ordinary_initialization_policy": false,
+  "nonfade_reference_updates": false,
+  "ordinary_app_dispatch": false
+}

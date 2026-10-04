@@ -35,14 +35,21 @@ impl Animator {
         &self,
         dt: f32,
     ) -> Result<Option<FrozenSourceTick<'_>>, super::AnimationError> {
-        self.phase_interval(dt)?;
+        self.frozen_source_tick_wall(f64::from(dt))
+    }
+
+    /// Contact metadata for an accepted stored f64 wall prefix.
+    pub fn frozen_source_tick_wall(
+        &self,
+        dt: f64,
+    ) -> Result<Option<FrozenSourceTick<'_>>, super::AnimationError> {
+        self.phase_interval_wall(dt)?;
         let Some(transition) = &self.transition else {
             return Ok(None);
         };
         let Some(snapshot) = &transition.source_pose else {
             return Ok(None);
         };
-        let dt = f64::from(dt);
         let active = dt.min((transition.duration - transition.elapsed).max(0.));
         Ok(Some(FrozenSourceTick {
             snapshot,
@@ -57,14 +64,21 @@ impl Animator {
         &self,
         dt: f32,
     ) -> Result<Option<SourcePhaseInterval<'_>>, super::AnimationError> {
-        self.phase_interval(dt)?;
+        self.source_phase_interval_wall(f64::from(dt))
+    }
+
+    /// Contact metadata for an accepted stored f64 wall prefix.
+    pub fn source_phase_interval_wall(
+        &self,
+        dt: f64,
+    ) -> Result<Option<SourcePhaseInterval<'_>>, super::AnimationError> {
+        self.phase_interval_wall(dt)?;
         let Some(transition) = &self.transition else {
             return Ok(None);
         };
         if transition.source_pose.is_some() {
             return Ok(None);
         }
-        let dt = f64::from(dt);
         let active = dt.min((transition.duration - transition.elapsed).max(0.));
         let duration = f64::from(transition.source.duration);
         let start = transition.source.phase(transition.source_time);

@@ -1,0 +1,14 @@
+{
+  "animation_tests_passed": 146,
+  "verified": [
+    "distinct original-phase factors",
+    "enclosed common-frame composition",
+    "agreement with explicit-frame reference",
+    "original tick duration",
+    "missing factor rejection",
+    "live clock preservation"
+  ],
+  "actor_frame_policy_inferred": false,
+  "upstream_factor_errors_enclosed": false,
+  "ordinary_app_dispatch": false
+}

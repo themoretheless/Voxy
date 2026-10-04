@@ -1,0 +1,13 @@
+{
+  "unit_tests_passed": 60,
+  "integration_tests_passed": 43,
+  "verified": [
+    "final physical and displayed box gates before preparation",
+    "contact narrowing rejects before callback",
+    "scene/body/input rollback",
+    "safe candidate matches published preview"
+  ],
+  "scope": "prepared rigid trajectories",
+  "certified_fade_runtime_publication": false,
+  "representable_contact_recovery": false
+}

@@ -1,0 +1,13 @@
+{
+  "runtime_tests_passed": 9,
+  "verified": [
+    "free and wall-clipped fixed tick",
+    "partial accepted pose/contact clock",
+    "transition weight excludes rejected suffix",
+    "body remains before wall",
+    "displayed root remains in place"
+  ],
+  "ordinary_app_dispatch": false,
+  "active_foot_fixture": false,
+  "general_contact_narrowing_recovery": false
+}

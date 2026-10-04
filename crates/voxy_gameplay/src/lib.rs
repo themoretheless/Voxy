@@ -272,10 +272,23 @@ pub struct CharacterRigidTrajectoryMotion<'a> {
     pub basis: glam::DQuat,
     pub origin: Vec3,
 }
+/// Owned-field fade trajectory admitted through the staged character tick.
+#[derive(Clone, Copy, Debug)]
+pub struct CharacterCertifiedFadeMotion<'a> {
+    pub owner: NodeId,
+    pub fade: &'a voxy_animation::RootRigidCertifiedFadeInterval,
+    pub scale: f64,
+    pub basis: glam::DQuat,
+    pub origin: Vec3,
+    pub coordinate_axis: usize,
+    /// Caller-supplied world bound for rounded pose evaluation error.
+    pub evaluation_radius: f64,
+}
 /// A STEP collision may have path_fraction=1 without completing the final event.
 /// Use `complete`, `completed_spans` and `span_fraction` for exact admission.
 #[derive(Clone, Copy, Debug)]
 pub struct AppliedCharacterTrajectoryMotion {
+    rigid_identity: Option<usize>,
     pub owner: NodeId,
     pub displacement: Vec3,
     pub rotation: glam::DQuat,
@@ -285,6 +298,13 @@ pub struct AppliedCharacterTrajectoryMotion {
     pub complete: bool,
     pub advancement_iterations: usize,
     pub trajectory_queries: usize,
+}
+impl AppliedCharacterTrajectoryMotion {
+    /// Identity admission within the lifetime of the borrowed rigid request.
+    /// The address is never dereferenced and is not a persistent asset ID.
+    pub fn matches_rigid_trajectory(&self, path: &voxy_animation::RootRigidPath) -> bool {
+        self.rigid_identity == Some(path as *const _ as usize)
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -631,7 +651,7 @@ impl CharacterPhysics {
         dt: f64,
         motions: &[CharacterMotion],
     ) -> Result<Vec<AppliedCharacterMotion>, PhysicsError> {
-        self.fixed_step_with_paths(scene, input, dt, motions, &[], &[], None)
+        self.fixed_step_with_paths(scene, input, dt, motions, &[], &[], &[], None)
             .map(|(arcs, _)| arcs)
     }
 
@@ -678,7 +698,7 @@ impl CharacterPhysics {
                     angular_displacement: Vec3::ZERO });
             }
         }
-        self.fixed_step_with_paths(scene, input, dt, &motions, paths, &[], None)
+        self.fixed_step_with_paths(scene, input, dt, &motions, paths, &[], &[], None)
             .map(|(_, paths)| paths)
     }
 
@@ -703,12 +723,13 @@ impl CharacterPhysics {
         &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
         translations: &[(NodeId, Vec3)], paths: &[CharacterRigidTrajectoryMotion<'_>],
     ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
-        self.fixed_step_mixed(scene, input, dt, translations, paths, None)
+        self.fixed_step_mixed(scene, input, dt, translations, paths, &[], None)
     }
 
     fn fixed_step_mixed(
         &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
         translations: &[(NodeId, Vec3)], paths: &[CharacterRigidTrajectoryMotion<'_>],
+        certified: &[CharacterCertifiedFadeMotion<'_>],
         prepare: Option<&mut staged_tick::Prepare<'_>>,
     ) -> Result<Vec<AppliedCharacterTrajectoryMotion>, PhysicsError> {
         if paths.len() > self.max_bodies || translations.len() > self.max_bodies {
@@ -727,13 +748,14 @@ impl CharacterPhysics {
             motions.push(CharacterMotion { owner: path.owner, displacement: Vec3::ZERO,
                 angular_displacement: Vec3::ZERO });
         }
-        self.fixed_step_with_paths(scene, input, dt, &motions, &[], paths, prepare).map(|(_, paths)| paths)
+        self.fixed_step_with_paths(scene, input, dt, &motions, &[], paths, certified, prepare).map(|(_, paths)| paths)
     }
 
     fn fixed_step_with_paths(
         &mut self, scene: &mut SceneGraph, input: &mut InputMap, dt: f64,
         motions: &[CharacterMotion], paths: &[CharacterTrajectoryMotion<'_>],
         rigid_paths: &[CharacterRigidTrajectoryMotion<'_>],
+        certified: &[CharacterCertifiedFadeMotion<'_>],
         prepare: Option<&mut staged_tick::Prepare<'_>>,
     ) -> Result<(Vec<AppliedCharacterMotion>, Vec<AppliedCharacterTrajectoryMotion>), PhysicsError> {
         self.validate(scene)?;
@@ -764,6 +786,17 @@ impl CharacterPhysics {
                 || requested_paths.contains_key(&path.owner)
                 || requested_rigid.insert(path.owner, *path).is_some()
             { return Err(PhysicsError::InvalidMotion); }
+        }
+        let mut certified_by_owner = HashMap::with_capacity(certified.len());
+        for request in certified {
+            let path = requested_rigid.get(&request.owner).ok_or(PhysicsError::InvalidMotion)?;
+            if !std::ptr::eq(path.trajectory, &request.fade.approximation().path)
+                || path.trajectory.duration() != dt
+                || request.coordinate_axis >= 3
+                || !request.evaluation_radius.is_finite() || request.evaluation_radius < 0.
+                || certified_by_owner.insert(request.owner, request).is_some() {
+                return Err(PhysicsError::InvalidMotion);
+            }
         }
         let mut trajectory_queries = self.trajectory_queries;
         let mut applied_paths = Vec::with_capacity(paths.len() + rigid_paths.len());
@@ -920,6 +953,7 @@ impl CharacterPhysics {
                     position += hit.displacement;
                     angular_fraction = hit.path_fraction;
                     accepted_path = Some(AppliedCharacterTrajectoryMotion {
+                        rigid_identity: None,
                         owner, displacement: Vec3::ZERO, rotation: hit.rotation,
                         completed_spans: hit.completed_spans, span_fraction: hit.span_fraction,
                         path_fraction: hit.path_fraction, complete: hit.complete,
@@ -927,12 +961,20 @@ impl CharacterPhysics {
                     });
                     Some((hit.rotation, hit.normal))
                 } else if let Some(path) = requested_rigid.get(&owner) {
-                    let hit = angular_sweep::sweep_rigid_path(position, runtime.rest_edges,
+                    let hit = if let Some(request) = certified_by_owner.get(&owner) {
+                        angular_sweep::sweep_certified_rigid_fade(position, runtime.rest_edges,
+                            runtime.orientation, request.fade, request.coordinate_axis,
+                            path.basis, path.origin.as_dvec3(), path.scale, request.evaluation_radius,
+                            &shapes, self.angular_iterations, &mut trajectory_queries)?
+                    } else {
+                        angular_sweep::sweep_rigid_path(position, runtime.rest_edges,
                         runtime.orientation, path.trajectory, path.basis, path.origin.as_dvec3(), path.scale,
-                        &shapes, self.angular_iterations, &mut trajectory_queries)?;
+                        &shapes, self.angular_iterations, &mut trajectory_queries)?
+                    };
                     position += hit.displacement;
                     angular_fraction = hit.path_fraction;
                     accepted_path = Some(AppliedCharacterTrajectoryMotion {
+                        rigid_identity: Some(path.trajectory as *const _ as usize),
                         owner, displacement: Vec3::ZERO, rotation: hit.rotation,
                         completed_spans: hit.completed_spans, span_fraction: hit.span_fraction,
                         path_fraction: hit.path_fraction, complete: hit.complete,
@@ -1017,6 +1059,19 @@ impl CharacterPhysics {
                 return Err(PhysicsError::CoordinateRange);
             }
             runtime.published = published;
+            if prepare.is_some() && requested_rigid.contains_key(&owner) {
+                // Check both representations after snap/relocation. The rounded
+                // scene matrix is the pose the preparation callback/render sees.
+                let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();
+                angular_sweep::certify_published_pose(physical_center, runtime.edges,
+                    &shapes, &mut trajectory_queries)?;
+                let displayed_edges = [composed.x_axis, composed.y_axis, composed.z_axis]
+                    .map(|axis| axis.truncate().as_dvec3());
+                let displayed_edges = std::array::from_fn(|i|
+                    displayed_edges[i] * f64::from(descriptor.half_extents[i]));
+                angular_sweep::certify_published_pose(published.as_dvec3(), displayed_edges,
+                    &shapes, &mut trajectory_queries)?;
+            }
             edits.push((owner, local));
         }
         if let Some(prepare) = prepare {
@@ -1035,7 +1090,7 @@ impl CharacterPhysics {
             }
             characters.sort_by_key(|character| character.owner);
             let support = SupportWorld::from_static_world(&world)?;
-            let preview = CharacterTickPreview { characters, support };
+            let preview = CharacterTickPreview { characters, support, motions: applied_paths.clone() };
             let mut budget = SupportQueryBudget::new(trajectory_queries.min(65536))?;
             prepare(&preview, &mut budget)?;
         }

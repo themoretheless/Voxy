@@ -3,6 +3,8 @@ use super::*;
 
 #[derive(Clone, Debug)]
 pub struct RootRigidFadePlan {
+    initial: Animator,
+    wall_seconds: f64,
     /// Staged full-tick animator. Publish only after motion/physics acceptance.
     pub candidate: Animator,
     pub frame: AnimatorFrame,
@@ -19,6 +21,144 @@ pub struct RootRigidFadePlan {
     pub tail_wall_seconds: f64,
 }
 impl RootRigidFadePlan {
+    /// Maps both interval-local paths through their stored authored-origin
+    /// factors into an explicit common frame. This encloses composition rather
+    /// than rounding the two composed frames first. Imported factor/compiler
+    /// errors preceding the stored data remain a separate caller obligation.
+    pub fn integrate_authored_common_frame(
+        &self,
+        authored_to_common: RootRigidTransform,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        let common = RootRigidEnclosure::from_transform(authored_to_common)?;
+        let map = |factor| common.compose(&RootRigidEnclosure::from_transform(factor)?);
+        let source = match (&self.source_fade, self.source_factor) {
+            (Some(path), Some(factor)) => Some(RootRigidMappedPath::from_enclosed_frame(path,map(factor)?,1.)?),
+            (None, None) => None,
+            _ => return Err(AnimationError::InvalidRetargetBinding),
+        };
+        let target_frame = map(self.target_factor)?;
+        let target = RootRigidMappedPath::from_enclosed_frame(&self.target_fade,target_frame,1.)?;
+        let completion = if self.tail_wall_seconds == 0. { None } else {
+            let frame = target_frame.compose(&self.target_fade.continuous_end_enclosure(max_spans)?)?;
+            Some((RootRigidMappedPath::from_enclosed_frame(&self.target_tail,frame,1.)?,self.wall_seconds))
+        };
+        RootRigidCertifiedFadeInterval::integrate_paths_with_completion(source,target,
+            self.weights,self.fade_wall_seconds,completion,origin_tolerance,angular_tolerance,max_spans)
+    }
+
+    /// Exact snapshot admission for a staged candidate. Clip and frozen-pose
+    /// identity are checked as well as clocks, selection and transition state.
+    pub fn matches_animator(&self, animator: &Animator) -> bool {
+        let initial = &self.initial;
+        if !Arc::ptr_eq(&initial.current, &animator.current)
+            || !Arc::ptr_eq(&initial.motion_curve, &animator.motion_curve)
+            || initial.time != animator.time || initial.speed != animator.speed
+            || initial.motion_joint != animator.motion_joint {
+            return false;
+        }
+        match (&initial.transition, &animator.transition) {
+            (None, None) => true,
+            (Some(a), Some(b)) => Arc::ptr_eq(&a.source, &b.source)
+                && Arc::ptr_eq(&a.source_curve, &b.source_curve)
+                && a.source_time == b.source_time && a.elapsed == b.elapsed
+                && a.duration == b.duration
+                && match (&a.source_pose, &b.source_pose) {
+                    (None, None) => true,
+                    (Some(a), Some(b)) => Arc::ptr_eq(a, b),
+                    _ => false,
+                },
+            _ => false,
+        }
+    }
+
+    /// Rebuilds clocks and displayed pose for an accepted wall-time prefix from
+    /// the immutable pre-tick snapshot. The consumer must still validate final
+    /// actor pose and asset identity before publishing this candidate.
+    pub fn prepare_accepted_frame(
+        &self,
+        skeleton: &Skeleton,
+        accepted_wall_seconds: f64,
+    ) -> Result<(Animator, AnimatorFrame), AnimationError> {
+        if !accepted_wall_seconds.is_finite()
+            || accepted_wall_seconds < 0. || accepted_wall_seconds > self.wall_seconds {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        let mut candidate = self.initial.clone();
+        let frame = candidate.advance_candidate_wall(skeleton, accepted_wall_seconds)?;
+        Ok((candidate, frame))
+    }
+
+    /// Builds the complete staged moving tick through one outward accumulator.
+    /// The total stored wall endpoint is fade plus completion duration. No clock
+    /// or actor pose is published; zero-duration fades require a separate policy.
+    pub fn integrate_certified_tick(
+        &self,
+        source_frame: Option<RootRigidTransform>,
+        target_frame: RootRigidTransform,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        let source = match (&self.source_fade, source_frame) {
+            (Some(path), Some(frame)) => Some(RootRigidMappedPath::new(path, frame, 1.)?),
+            (None, None) => None,
+            _ => return Err(AnimationError::InvalidRetargetBinding),
+        };
+        let completion = if self.tail_wall_seconds == 0. { None } else {
+            Some((self.certified_target_tail_mapping(target_frame, max_spans)?,
+                self.wall_seconds))
+        };
+        RootRigidCertifiedFadeInterval::integrate_paths_with_completion(
+            source, RootRigidMappedPath::new(&self.target_fade, target_frame, 1.)?,
+            self.weights, self.fade_wall_seconds, completion,
+            origin_tolerance, angular_tolerance, max_spans,
+        )
+    }
+
+    /// Maps the target completion tail through the original target endpoint,
+    /// retaining its enclosed pose rather than using the blended endpoint or
+    /// the floating cached `end_transform`. This does not integrate the tail.
+    pub fn certified_target_tail_mapping(
+        &self,
+        target_frame: RootRigidTransform,
+        max_spans: usize,
+    ) -> Result<RootRigidMappedPath<'_>, AnimationError> {
+        let frame = RootRigidEnclosure::from_transform(target_frame)?
+            .compose(&self.target_fade.continuous_end_enclosure(max_spans)?)?;
+        RootRigidMappedPath::from_enclosed_frame(&self.target_tail, frame, 1.)
+    }
+
+    /// Encloses the fade portion using the original stored path clocks and keys.
+    /// The returned interval ends at `fade_wall_seconds`; a completion tail is
+    /// deliberately separate until its original endpoint frame is enclosed.
+    /// Neither the staged animator nor its clocks are published here.
+    pub fn integrate_certified_fade(
+        &self,
+        source_frame: Option<RootRigidTransform>,
+        target_frame: RootRigidTransform,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        let source = match (&self.source_fade, source_frame) {
+            (Some(path), Some(frame)) => Some(RootRigidMappedPath::new(path, frame, 1.)?),
+            (None, None) => None,
+            _ => return Err(AnimationError::InvalidRetargetBinding),
+        };
+        RootRigidCertifiedFadeInterval::integrate_paths(
+            source,
+            RootRigidMappedPath::new(&self.target_fade, target_frame, 1.)?,
+            self.weights,
+            self.fade_wall_seconds,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )
+    }
+
     /// Builds this staged tick in an explicitly chosen common rigid frame.
     /// Frames map each fade path's interval-local coordinates to that frame.
     /// A frozen source requires `None`; an actual source requires `Some`.
@@ -96,14 +236,25 @@ impl Animator {
         axes: [bool; 3],
         max_spans: usize,
     ) -> Result<Option<RootRigidFadePlan>, AnimationError> {
-        self.phase_interval(dt)?;
+        self.prepare_root_rigid_fade_wall(skeleton, f64::from(dt), axes, max_spans)
+    }
+
+    /// Stages the original fixed-step wall endpoint without narrowing to f32.
+    pub fn prepare_root_rigid_fade_wall(
+        &self,
+        skeleton: &Skeleton,
+        dt: f64,
+        axes: [bool; 3],
+        max_spans: usize,
+    ) -> Result<Option<RootRigidFadePlan>, AnimationError> {
+        self.phase_interval_wall(dt)?;
         let Some(transition) = &self.transition else {
             return Ok(None);
         };
         if !(1..=MAX_ROOT_ROTATION_SPANS).contains(&max_spans) {
             return Err(AnimationError::RootRigidBudget);
         }
-        let wall = f64::from(dt);
+        let wall = dt;
         let fade = wall.min((transition.duration - transition.elapsed).max(0.));
         let start = self.current.phase(self.time);
         let delta = fade * f64::from(self.speed);
@@ -131,8 +282,10 @@ impl Animator {
             return Err(AnimationError::RootRigidBudget);
         }
         let mut candidate = self.clone();
-        let frame = candidate.advance_candidate(skeleton, dt)?;
+        let frame = candidate.advance_candidate_wall(skeleton, dt)?;
         Ok(Some(RootRigidFadePlan {
+            initial: self.clone(),
+            wall_seconds: wall,
             candidate,
             frame,
             source_fade,

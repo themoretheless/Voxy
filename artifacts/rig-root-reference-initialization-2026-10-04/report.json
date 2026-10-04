@@ -1,0 +1,14 @@
+{
+  "runtime_tests_passed": 11,
+  "playback_tests_passed": 10,
+  "foot_tests_passed": 17,
+  "verified": [
+    "explicit owner initialization",
+    "foreign model rejection",
+    "nonfinite pose rejection",
+    "repeat initialization rejection",
+    "transport fixtures use admission API"
+  ],
+  "automatic_initial_frame_policy": false,
+  "ordinary_moving_fades": false
+}

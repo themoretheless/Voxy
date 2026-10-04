@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 148,
+  "verified": [
+    "world anchor retained under body translation and exact half turn",
+    "repeated inverse transport",
+    "outward reference composition"
+  ],
+  "persistent_runtime_reference_owner": false,
+  "input_reanchoring_policy": false,
+  "ordinary_app_dispatch": false
+}

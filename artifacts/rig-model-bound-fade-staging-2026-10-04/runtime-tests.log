@@ -1,0 +1,13 @@
+
+running 8 tests
+test animation_runtime::tests::fixed_frames_wait_for_assets_pause_resume_and_never_advance_on_read ... ok
+test animation_runtime::tests::partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomically ... ok
+test animation_runtime::tests::clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks ... ok
+test animation_runtime::tests::retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_frame ... ok
+test animation_runtime::tests::motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors ... ok
+test animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic ... ok
+test animation_runtime::tests::editor_play_drives_root_motion_through_wall_and_preserves_failed_tick ... ok
+test animation_runtime::tests::editor_expanded_rig_scene_survives_history_save_load_play_and_stop ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.14s
+

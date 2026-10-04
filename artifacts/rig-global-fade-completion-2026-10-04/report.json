@@ -1,0 +1,6 @@
+{
+  "animation_tests_passed": 143,
+  "verified": "explicit paired domains, global fade clock, target-only completion, one integrator prefix and error accumulator, enclosed continuation frame, completion cut and budget rejection",
+  "automatic_whole_tick_assembly": false,
+  "runtime_moving_fades_enabled": false
+}

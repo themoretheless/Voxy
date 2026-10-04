@@ -1192,6 +1192,20 @@ fn rigid_fade_integration_keeps_explicit_frames_and_target_completion_tail() {
         assert!((retimed_speed-2.*speed).abs()<1e-6);
     }
     assert!(different_from_restarting_axes);
+    let certified = plan.integrate_certified_fade(Some(source_frame), target_frame, 0.01, 0.01, 4096).unwrap();
+    assert_eq!(certified.approximation().path.duration(), plan.fade_wall_seconds);
+    assert!(certified.approximation().origin_error_bound <= 0.01);
+    assert!(certified.approximation().angular_error_bound <= 0.01);
+    let tail_mapping = plan.certified_target_tail_mapping(target_frame, 256).unwrap();
+    let tail = RootRigidCertifiedFadeInterval::integrate_paths(None, tail_mapping,
+        [1.,1.], plan.tail_wall_seconds, 0.01, 0.01, 4096).unwrap();
+    assert_eq!(tail.approximation().path.duration(), plan.tail_wall_seconds);
+    let full = plan.integrate_certified_tick(Some(source_frame), target_frame,
+        0.01, 0.01, 4096).unwrap();
+    assert_eq!(full.approximation().path.duration(), 0.25);
+    assert!(full.approximation().origin_error_bound <= 0.01);
+    assert!(full.approximation().angular_error_bound <= 0.01);
+    assert!(plan.integrate_certified_fade(None, target_frame, 0.01, 0.01, 4096).is_err());
     assert!(plan.integrate_spatial(None,target_frame,0.01,0.01,4096).is_err());
     assert!(plan.integrate_spatial(Some(source_frame),target_frame,0.01,0.01,1).is_err());
     assert_eq!(animator.normalized_phase(),phase);
@@ -1622,6 +1636,12 @@ fn whole_cubic_planar_field_preserves_normal_coordinate_velocity() {
     for mask in 0..8 {
         let path = clip.root_rigid_curve(0).unwrap().path(0.,1.,[mask&1!=0,mask&2!=0,mask&4!=0],256).unwrap();
         for span in path.spans() {
+            for fraction in [0., 0.25, 0.5, 0.75, 1.] {
+                let pose = span.continuous_pose_enclosure(fraction).unwrap().unwrap();
+                assert_eq!(pose.translation_bounds()[1], [0., 0.]);
+                assert_eq!(pose.rotation_bounds()[0], [0., 0.]);
+                assert_eq!(pose.rotation_bounds()[2], [0., 0.]);
+            }
             let whole = span.spatial_twist_enclosure_range([0.,1.]).unwrap().unwrap();
             assert_eq!(whole.coordinate_velocity_range(1), Some([0.,0.]));
             let clock_range = span.spatial_twist_enclosure_at_times([span.start(),span.end()]).unwrap().unwrap();
@@ -1640,6 +1660,24 @@ fn whole_cubic_planar_field_preserves_normal_coordinate_velocity() {
             let stationary = [span.start(),span.start()];
             assert_eq!(span.enclosed_coordinate_displacement_error_between(stationary,1,biased).unwrap(),Some(0.));
         }
+    }
+}
+
+#[test]
+fn continuous_screw_pose_encloses_exact_translation_and_rejects_invalid_fraction() {
+    let path = RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear: DVec3::new(2., -4., 8.), angular: DVec3::ZERO,
+    }, 0.5)], 1).unwrap();
+    let span = &path.spans()[0];
+    for fraction in [0., 0.25, 0.5, 0.75, 1.] {
+        let enclosed = span.continuous_pose_enclosure(fraction).unwrap().unwrap();
+        let exact = DVec3::new(1., -2., 4.) * fraction;
+        for (bounds, value) in enclosed.translation_bounds().into_iter().zip(exact.to_array()) {
+            assert!(bounds[0] <= value && value <= bounds[1]);
+        }
+    }
+    for fraction in [-1., 2., f64::NAN] {
+        assert!(span.continuous_pose_enclosure(fraction).is_err());
     }
 }
 
@@ -1730,4 +1768,118 @@ fn whole_field_guard_stays_one_adjacent_clock_span_during_smooth_refinement() {
     assert!((result.path.end_transform().translation.x-0.5).abs()<=result.origin_error_bound);
     assert!(result.origin_error_bound<=0.01);
     assert_eq!(result.angular_error_bound,0.);
+}
+
+#[test]
+fn continuous_path_endpoint_ignores_rounded_screw_caches_and_preserves_budget() {
+    let mut path = RootRigidPath::from_twists(&[
+        (RootRigidTwist {linear:DVec3::X, angular:DVec3::Y*0.2}, 0.25),
+        (RootRigidTwist {linear:DVec3::Z, angular:DVec3::X*0.1}, 0.5),
+    ], 2).unwrap();
+    let expected = path.prepare_screw_enclosures(2).unwrap().sample(1,1.).unwrap();
+    path.end.translation = DVec3::splat(1000.);
+    path.spans[1].screw.as_mut().unwrap().1.translation = DVec3::splat(-1000.);
+    let actual = path.continuous_end_enclosure(2).unwrap();
+    assert_eq!(actual.translation_bounds(),expected.translation_bounds());
+    assert_eq!(actual.rotation_bounds(),expected.rotation_bounds());
+    assert!(path.continuous_end_enclosure(1).is_err());
+    let empty = RootRigidPath::from_twists(&[],0).unwrap();
+    assert_eq!(empty.continuous_end_enclosure(0).unwrap().translation_bounds(),[[0.,0.];3]);
+}
+
+#[test]
+fn accepted_fade_prefix_keeps_precise_clocks_and_never_mutates_staged_tick() {
+    let (rig,clip) = linear_turn(Vec3::X*0.6);
+    let mut animator = Animator::new(clip.clone());
+    animator.transition_to_at_phase(clip,0.125,0.).unwrap();
+    let plan = animator.prepare_root_rigid_fade(&rig,0.25,[true;3],256).unwrap().unwrap();
+    let (zero,_) = plan.prepare_accepted_frame(&rig,0.).unwrap();
+    assert_eq!(zero.normalized_phase(),animator.normalized_phase());
+    let near = 0.125f64.next_down();
+    let (partial,frame) = plan.prepare_accepted_frame(&rig,near).unwrap();
+    assert_eq!(partial.time,near);
+    let target_interval = animator.phase_interval_wall(near).unwrap();
+    assert_eq!(target_interval.end,partial.normalized_phase());
+    assert!(target_interval.end < animator.phase_interval(near as f32).unwrap().end);
+    let source_interval = animator.source_phase_interval_wall(near).unwrap().unwrap();
+    assert_eq!(source_interval.active_tick_fraction,1.);
+    assert!(source_interval.phase.end < animator.source_phase_interval(near as f32).unwrap().unwrap().phase.end);
+    assert_eq!(frame.transition_weight,1.);
+    assert!(partial.transition.is_some());
+    let (complete,_) = plan.prepare_accepted_frame(&rig,0.125).unwrap();
+    assert!(complete.transition.is_none());
+    for invalid in [-1.,0.25f64.next_up(),f64::NAN] {
+        assert!(plan.prepare_accepted_frame(&rig,invalid).is_err());
+    }
+    assert_eq!(animator.time,0.);
+    assert_eq!(plan.candidate.time,0.25);
+    assert!(animator.transition.is_some());
+}
+
+#[test]
+fn authored_common_frame_uses_both_original_phase_factors() {
+    let (rig,clip) = linear_turn(Vec3::X*0.6);
+    let mut animator = Animator::new(clip.clone());
+    animator.advance(&rig,0.2).unwrap();
+    animator.transition_to_at_phase(clip,0.125,0.4).unwrap();
+    let plan = animator.prepare_root_rigid_fade_wall(&rig,1./60.,[true;3],256).unwrap().unwrap();
+    assert_ne!(plan.source_factor.unwrap().translation,plan.target_factor.translation);
+    let common = RootRigidTransform {translation:DVec3::new(0.5,0.,-0.25),
+        rotation:DQuat::from_rotation_y(0.3)};
+    let assembled = plan.integrate_authored_common_frame(common,0.01,0.01,4096).unwrap();
+    let explicit = plan.integrate_certified_tick(
+        Some(common.compose(plan.source_factor.unwrap()).unwrap()),
+        common.compose(plan.target_factor).unwrap(),0.01,0.01,4096).unwrap();
+    assert_eq!(assembled.approximation().path.duration(),1./60.);
+    equivalent(assembled.approximation().path.end_transform(),
+        explicit.approximation().path.end_transform(),1e-10);
+    let mut malformed = plan.clone();
+    malformed.source_factor = None;
+    assert!(malformed.integrate_authored_common_frame(common,0.01,0.01,4096).is_err());
+    assert_eq!(animator.normalized_phase(),0.4);
+}
+
+#[test]
+fn authored_factor_transport_matches_parent_frame_increment_with_nonidentity_root_origin() {
+    let origin = Quat::from_rotation_x(0.4);
+    let (_,clip) = clip(Vec3::new(0.6,0.2,-0.3),
+        vec![Vec3Key {time:0.,value:Vec3::new(0.6,0.2,-0.3)},
+            Vec3Key {time:1.,value:Vec3::new(0.9,0.3,-0.1)}],
+        vec![QuatKey {time:0.,value:origin},
+            QuatKey {time:1.,value:Quat::from_rotation_y(0.7)*origin}],
+        TrackInterpolation::default(),JointTangents::default(),Playback::Clamp);
+    let curve = clip.root_rigid_curve(0).unwrap();
+    for axes in [[true;3],[false;3],[true,false,true]] {
+        equivalent(curve.sample(0.,axes).unwrap(),RootRigidTransform::IDENTITY,1e-12);
+        let from = curve.sample(0.2,axes).unwrap();
+        let to = curve.sample(0.7,axes).unwrap();
+        let path = curve.path(0.2,0.7,axes,256).unwrap();
+        let restored = from.compose(path.end_transform()).unwrap().compose(from.inverse().unwrap()).unwrap();
+        let parent_increment = to.compose(from.inverse().unwrap()).unwrap();
+        equivalent(restored,parent_increment,1e-12);
+    }
+}
+
+#[test]
+fn transported_body_reference_retains_world_anchor_across_translation_and_turn() {
+    let make = |translation,rotation| RootRigidEnclosure::from_transform(
+        RootRigidTransform {translation,rotation}).unwrap();
+    let reference = make(DVec3::new(0.5,0.25,-0.125),DQuat::IDENTITY);
+    let previous = make(DVec3::new(2.,1.,-3.),DQuat::IDENTITY);
+    // Quaternion (0,0,1,0) is an exact half turn: independent reference needs
+    // no trig or floating quaternion normalization approximation.
+    let next = make(DVec3::new(-1.,2.,0.5),DQuat::from_xyzw(0.,0.,1.,0.));
+    let moved = reference.transported_body_reference(&previous,&next).unwrap();
+    let world = next.compose(&moved).unwrap();
+    for point in [DVec3::ZERO,DVec3::X,DVec3::new(-0.25,0.5,2.)] {
+        let exact = point+DVec3::new(2.5,1.25,-3.125);
+        for (bounds,value) in world.transform_point(point).unwrap().into_iter().zip(exact.to_array()) {
+            assert!(bounds[0]<=value && value<=bounds[1]);
+        }
+    }
+    // Repeated accepted transport retains the same world anchor, rather than
+    // silently taking the new clip's first root frame as a replacement.
+    let again = moved.transported_body_reference(&next,&previous).unwrap();
+    for (bounds,value) in previous.compose(&again).unwrap().translation_bounds().into_iter()
+        .zip([2.5,1.25,-3.125]) {assert!(bounds[0]<=value && value<=bounds[1]);}
 }

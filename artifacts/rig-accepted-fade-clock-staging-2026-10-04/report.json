@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 145,
+  "verified": [
+    "accepted f64 wall prefix staging",
+    "zero prefix retains original clock",
+    "invalid prefix rejection",
+    "rounded pose weight cannot complete transition early",
+    "original wall endpoint retained"
+  ],
+  "runtime_publication_enabled": false
+}

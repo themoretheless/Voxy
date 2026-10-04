@@ -1,6 +1,6 @@
 //! Fallible pose preparation inside the character publication transaction.
 use super::{
-    AppliedCharacterTrajectoryMotion, CharacterPhysics, CharacterRigidTrajectoryMotion,
+    AppliedCharacterTrajectoryMotion, CharacterPhysics, CharacterRigidTrajectoryMotion, CharacterCertifiedFadeMotion,
     PhysicsError, SupportQueryBudget, SupportWorld,
 };
 use glam::{DQuat, DVec3, Mat4, Vec3};
@@ -22,6 +22,8 @@ pub struct AcceptedCharacterPose {
 pub struct CharacterTickPreview {
     pub characters: Vec<AcceptedCharacterPose>,
     pub support: SupportWorld,
+    /// Accepted trajectory prefixes, available before animator preparation.
+    pub motions: Vec<AppliedCharacterTrajectoryMotion>,
 }
 #[derive(Debug, PartialEq)]
 pub enum CharacterTickError<E> {
@@ -47,6 +49,40 @@ impl CharacterPhysics {
         paths: &[CharacterRigidTrajectoryMotion<'_>],
         prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
     ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
+        self.fixed_step_preparing(scene, input, dt, translations, paths, &[], prepare)
+    }
+
+    /// Admits certified fade fields and prepares their accepted animator prefix
+    /// before scene/body/input publication. Callback failure rolls the tick back.
+    pub fn fixed_step_with_certified_fade_preparation<T, E>(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        fades: &[CharacterCertifiedFadeMotion<'_>],
+        prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
+    ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
+        if fades.len() > self.max_bodies {
+            return Err(CharacterTickError::Physics(PhysicsError::InvalidMotion));
+        }
+        let paths: Vec<_> = fades.iter().map(|request| CharacterRigidTrajectoryMotion {
+            owner: request.owner, trajectory: &request.fade.approximation().path,
+            scale: request.scale, basis: request.basis, origin: request.origin,
+        }).collect();
+        self.fixed_step_preparing(scene, input, dt, &[], &paths, fades, prepare)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn fixed_step_preparing<T, E>(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        translations: &[(NodeId, Vec3)],
+        paths: &[CharacterRigidTrajectoryMotion<'_>],
+        certified: &[CharacterCertifiedFadeMotion<'_>],
+        prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
+    ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
         let mut prepare = Some(prepare);
         let mut candidate = None;
         let mut failure = None;
@@ -56,6 +92,7 @@ impl CharacterPhysics {
             dt,
             translations,
             paths,
+            certified,
             Some(
                 &mut |preview, budget| match prepare.take().expect("preparation runs exactly once")(
                     preview, budget,

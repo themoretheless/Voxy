@@ -1,0 +1,6 @@
+{
+  "animation_tests_passed": 140,
+  "verified": "staged plan certified fade portion, explicit frame mismatch rejection, duration and error budgets, unchanged animator phase",
+  "completion_tail_certified": false,
+  "runtime_publication_enabled": false
+}

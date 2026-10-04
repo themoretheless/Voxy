@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 142,
+  "verified": [
+    "canonical screw endpoint independent of rounded caches",
+    "endpoint budget rejection",
+    "enclosed original target continuation mapping and tail integration"
+  ],
+  "whole_tick_certified": false,
+  "runtime_publication_enabled": false
+}

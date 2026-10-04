@@ -1,0 +1,14 @@
+{
+  "animation_tests_passed": 144,
+  "duration_seconds": 6.98,
+  "verified": [
+    "automatic original-key tail enclosure",
+    "whole-tick shared prefix and error accumulator",
+    "staged-plan completion",
+    "zero coordinate error",
+    "global budget rejection"
+  ],
+  "tail_policy": "adaptive whole-field domains; original clock subtraction enclosed",
+  "runtime_moving_fades_enabled": false,
+  "performance_qualified": false
+}

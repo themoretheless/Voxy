@@ -1,0 +1,15 @@
+{
+  "playback_tests_passed": 9,
+  "runtime_tests_passed": 8,
+  "foot_placement_tests_passed": 17,
+  "verified": [
+    "model Arc identity gate",
+    "animator snapshot admission",
+    "speed change rejection",
+    "model rebind rejection",
+    "invalid accepted prefix rejection",
+    "existing playback and foot preparation compatibility"
+  ],
+  "editor_moving_fade_publication": false,
+  "native_acceptance": false
+}

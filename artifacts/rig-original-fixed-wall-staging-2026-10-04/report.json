@@ -1,0 +1,8 @@
+{
+  "playback_tests_passed": 10,
+  "runtime_tests_passed": 9,
+  "foot_tests_passed": 17,
+  "verified": "original f64 1/60 wall step retained through certified physical/runtime candidate preparation",
+  "ordinary_app_dispatch_enabled": false,
+  "native_acceptance": false
+}

@@ -2086,3 +2086,88 @@ fn ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_at
     physics.fixed_step(&mut scene,&mut input,1./60.).unwrap();
     assert_eq!(scene.local(player).unwrap(),accepted);
 }
+
+#[test]
+fn rigid_preparation_rejects_final_contact_narrowing_before_publication() {
+    use voxy_animation::{RootRigidPath,RootRigidTwist};
+    use voxy_gameplay::{CharacterRigidTrajectoryMotion,CharacterTickError};
+    let mut scene = SceneGraph::new(2);
+    let wall = scene.spawn(None,at(Vec3::X)).unwrap();
+    scene.insert_component(wall,BoxCollider {half_extents:[0.1,2.,2.]}).unwrap();
+    let player = scene.spawn(None,Transform::default()).unwrap();
+    scene.insert_component(player,CharacterBody {half_extents:[0.1;3],speed:0.,gravity:0.,
+        ..Default::default()}).unwrap();
+    let path = RootRigidPath::from_twists(&[(RootRigidTwist {linear:glam::DVec3::X*2.,
+        angular:glam::DVec3::ZERO},1.)],1).unwrap();
+    let request = CharacterRigidTrajectoryMotion {owner:player,trajectory:&path,
+        scale:1.,basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO};
+    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let mut input = player_input().unwrap();
+    input.event(JUMP,1.).unwrap();
+    let before = scene.local(player).unwrap();
+    let mut prepared = false;
+    let result = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,&[],
+        &[request],|_,_| {prepared=true;Ok::<_,()>(())});
+    assert!(matches!(result,Err(CharacterTickError::Physics(_))));
+    assert!(!prepared);
+    assert_eq!(scene.local(player).unwrap(),before);
+    assert!(physics.state(&scene,player).unwrap().is_none());
+    assert!(input.state("jump").unwrap().pressed);
+    let safe = RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear:glam::DVec3::X*0.2,angular:glam::DVec3::ZERO},1.)],1).unwrap();
+    let safe_request = CharacterRigidTrajectoryMotion {trajectory:&safe,..request};
+    let (_, accepted) = physics.fixed_step_with_preparation(&mut scene,&mut input,
+        1./60.,&[],&[safe_request],|preview,_| {
+            prepared=true;Ok::<_,()>(preview.characters[0])
+        }).unwrap();
+    assert!(prepared);
+    assert_eq!(scene.world_matrix(player).unwrap(),accepted.world_matrix);
+    assert!(!input.state("jump").unwrap().pressed);
+}
+
+#[test]
+fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_preparation() {
+    use voxy_animation::{RootRigidPath,RootRigidTwist,RootRigidMappedPath,
+        RootRigidCertifiedFadeInterval,RootRigidTransform};
+    use voxy_gameplay::{CharacterCertifiedFadeMotion,CharacterTickError};
+    let mut scene = SceneGraph::new(2);
+    let floor = scene.spawn(None,at(Vec3::Y*(-0.5))).unwrap();
+    scene.insert_component(floor,BoxCollider {half_extents:[4.,0.5,4.]}).unwrap();
+    let player = scene.spawn(None,at(Vec3::Y*0.125)).unwrap();
+    scene.insert_component(player,CharacterBody {half_extents:[0.125;3],speed:0.,
+        gravity:0.,jump_speed:0.,..Default::default()}).unwrap();
+    let path = RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear:glam::DVec3::X*0.3,angular:glam::DVec3::Y*0.4},1.)],1).unwrap();
+    let mapped = RootRigidMappedPath::new(&path,RootRigidTransform::IDENTITY,1.).unwrap();
+    let dt = 0.0625;
+    let fade = RootRigidCertifiedFadeInterval::integrate_paths(None,mapped,[0.,1.],dt,
+        0.01,0.01,4096).unwrap();
+    let request = CharacterCertifiedFadeMotion {owner:player,fade:&fade,scale:1.,
+        basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,coordinate_axis:1,evaluation_radius:0.};
+    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let mut input = player_input().unwrap();
+    input.event(JUMP,1.).unwrap();
+    let before = scene.local(player).unwrap();
+    let result = physics.fixed_step_with_certified_fade_preparation(&mut scene,&mut input,
+        dt,&[request],|preview,_| {
+            assert_eq!(preview.motions.len(),1);
+            assert!(preview.motions[0].complete);
+            assert_eq!(preview.characters[0].physical_center.y,0.125);
+            Err::<(),_>("stale rig")
+        });
+    assert_eq!(result.unwrap_err(),CharacterTickError::Preparation("stale rig"));
+    assert_eq!(scene.local(player).unwrap(),before);
+    assert!(physics.state(&scene,player).unwrap().is_none());
+    assert!(input.state("jump").unwrap().pressed);
+    let (receipts,accepted) = physics.fixed_step_with_certified_fade_preparation(
+        &mut scene,&mut input,dt,&[request],|preview,_| Ok::<_,()>(preview.characters[0])).unwrap();
+    assert!(receipts[0].complete);
+    assert_eq!(scene.world_matrix(player).unwrap(),accepted.world_matrix);
+    assert_eq!(scene.local(player).unwrap().translation.y,0.125);
+    assert!(!input.state("jump").unwrap().pressed);
+    let before = scene.local(player).unwrap();
+    let error = physics.fixed_step_with_certified_fade_preparation(
+        &mut scene,&mut input,dt*0.5,&[request],|_,_| Ok::<_,()>(())).unwrap_err();
+    assert_eq!(error,CharacterTickError::Physics(PhysicsError::InvalidMotion));
+    assert_eq!(scene.local(player).unwrap(),before);
+}

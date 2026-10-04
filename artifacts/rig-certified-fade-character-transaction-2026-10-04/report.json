@@ -1,0 +1,15 @@
+{
+  "unit_tests_passed": 60,
+  "integration_tests_passed": 44,
+  "verified": [
+    "certified fade through shared character transaction",
+    "owned directional field proof",
+    "final physical/displayed pose gates",
+    "accepted receipts visible before preparation",
+    "preparation rollback",
+    "duration mismatch rejection"
+  ],
+  "editor_moving_fades_enabled": false,
+  "animator_asset_identity_binding": false,
+  "evaluation_radius": "caller supplied conditional bound"
+}

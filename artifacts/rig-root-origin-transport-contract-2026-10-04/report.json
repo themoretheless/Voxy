@@ -1,0 +1,12 @@
+{
+  "animation_tests_passed": 147,
+  "verified": [
+    "nonidentity authored root origin",
+    "parent increment transport order",
+    "moving pivot",
+    "selected and unselected axes"
+  ],
+  "actor_reference_transport_owned": false,
+  "compiler_roundoff_enclosed": false,
+  "ordinary_app_dispatch": false
+}

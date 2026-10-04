@@ -1,0 +1,13 @@
+{
+  "gameplay_unit_tests_passed": 60,
+  "gameplay_integration_tests_passed": 42,
+  "verified": [
+    "whole-tick automatic original-key fade and tail",
+    "enclosed original-target endpoint mapping",
+    "grounded translating yaw",
+    "wall clips only after fade end",
+    "positive evaluation radius retained"
+  ],
+  "runtime_animator_publication": false,
+  "native_editor_acceptance": false
+}

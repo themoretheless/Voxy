@@ -1,0 +1,15 @@
+
+running 10 tests
+test model_playback::tests::foreign_clip_is_rejected_before_owner_creation_or_publication ... ok
+test model_playback::tests::bind_selection_and_invalid_settings_are_explicit ... ok
+test model_playback::tests::cubic_invalid_pose_never_reaches_publication_and_preserves_owner_clock ... ok
+test model_playback::tests::shared_asset_has_independent_owner_clocks_and_failed_publication_retries ... ok
+test model_playback::tests::source_contact_interval_survives_fade_completion_and_failed_publication ... ok
+test model_playback::tests::named_selection_resolves_imported_names_without_resetting_time ... ok
+test model_playback::tests::frozen_source_tick_survives_completion_and_rejection_then_releases_snapshot ... ok
+test model_playback::tests::motion_joint_settings_keep_old_scenes_and_owner_clock_compatible ... ok
+test model_playback::accepted_fade_tests::asset_bound_fade_rejects_rebind_and_changed_clock_before_pose_preparation ... ok
+test model_playback::physical_fade_receipt_tests::physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 145 filtered out; finished in 0.00s
+

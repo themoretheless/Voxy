@@ -108,7 +108,107 @@ pub(crate) struct ModelPlayback {
     source_contact_interval: Option<SourceContactInterval>,
     frozen_source_tick: Option<(Arc<voxy_animation::Pose>, f64)>,
 }
+/// Asset-bound immutable preparation; publication remains in the owner tick.
+#[derive(Debug)]
+pub(crate) struct PreparedModelFade {
+    model: Arc<ModelAsset>,
+    plan: voxy_animation::RootRigidFadePlan,
+}
+impl PreparedModelFade {
+    pub(crate) fn bind_motion(
+        self,
+        owner: voxy_scene::NodeId,
+        source_frame: Option<voxy_animation::RootRigidTransform>,
+        target_frame: voxy_animation::RootRigidTransform,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<PreparedModelFadeMotion, String> {
+        let motion = self.plan.integrate_certified_tick(source_frame, target_frame,
+            origin_tolerance, angular_tolerance, max_spans).map_err(|error| error.to_string())?;
+        Ok(PreparedModelFadeMotion {owner, prepared:self, motion})
+    }
+    pub(crate) fn accepted_frame(
+        &self,
+        current: &ModelPlayback,
+        accepted_wall_seconds: f64,
+    ) -> Result<(Animator, AnimatorFrame), String> {
+        let animator = current.animator.as_ref().ok_or("fade animator disappeared")?;
+        if !Arc::ptr_eq(&self.model, &current.model) || !self.plan.matches_animator(animator) {
+            return Err("staged fade model or animator changed".into());
+        }
+        self.plan.prepare_accepted_frame(&self.model.skeleton, accepted_wall_seconds)
+            .map_err(|error| error.to_string())
+    }
+}
+#[derive(Debug)]
+pub(crate) struct PreparedModelFadeMotion {
+    owner: voxy_scene::NodeId,
+    prepared: PreparedModelFade,
+    motion: voxy_animation::RootRigidCertifiedFadeInterval,
+}
+impl PreparedModelFadeMotion {
+    /// Stages playback and contact travel for the same accepted physical prefix.
+    /// The returned owner state is published only after the physics transaction.
+    pub(crate) fn accepted_playback(
+        &self,
+        current: &ModelPlayback,
+        receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
+    ) -> Result<(ModelPlayback, AnimatorFrame), String> {
+        let (animator, frame) = self.accepted_frame(current, receipt)?;
+        let wall = self.motion.accepted_wall_time(receipt.completed_spans,
+            receipt.span_fraction, receipt.complete).map_err(|error| error.to_string())?;
+        let initial = current.animator.as_ref().ok_or("fade animator disappeared")?;
+        let contact_interval = initial.phase_interval_wall(wall).map_err(|error| error.to_string())?;
+        let source = initial.source_phase_interval_wall(wall).map_err(|error| error.to_string())?
+            .map(|source| SourceContactInterval {clip:source.clip.clone(),phase:source.phase,
+                active_tick_fraction:source.active_tick_fraction});
+        let frozen = initial.frozen_source_tick_wall(wall).map_err(|error| error.to_string())?
+            .map(|source| (source.snapshot.clone(),source.active_tick_fraction));
+        let mut candidate = current.clone();
+        candidate.animator = Some(animator);
+        candidate.contact_interval = Some(contact_interval);
+        candidate.source_contact_interval = source;
+        candidate.frozen_source_tick = frozen;
+        Ok((candidate,frame))
+    }
+
+    pub(crate) fn accepted_frame(
+        &self,
+        current: &ModelPlayback,
+        receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
+    ) -> Result<(Animator, AnimatorFrame), String> {
+        if receipt.owner != self.owner
+            || !receipt.matches_rigid_trajectory(&self.motion.approximation().path) {
+            return Err("accepted fade receipt belongs to another motion".into());
+        }
+        let time = self.motion.accepted_wall_time(receipt.completed_spans,
+            receipt.span_fraction, receipt.complete).map_err(|error| error.to_string())?;
+        self.prepared.accepted_frame(current, time)
+    }
+    pub(crate) fn request(
+        &self, basis: glam::DQuat, origin: glam::Vec3, scale: f64,
+        coordinate_axis: usize, evaluation_radius: f64,
+    ) -> voxy_gameplay::CharacterCertifiedFadeMotion<'_> {
+        voxy_gameplay::CharacterCertifiedFadeMotion {owner:self.owner,fade:&self.motion,
+            basis,origin,scale,coordinate_axis,evaluation_radius}
+    }
+}
 impl ModelPlayback {
+    pub(crate) fn prepare_certified_fade(
+        &self, dt: f32, axes: [bool; 3], max_spans: usize,
+    ) -> Result<Option<PreparedModelFade>, String> {
+        self.prepare_certified_fade_wall(f64::from(dt), axes, max_spans)
+    }
+    pub(crate) fn prepare_certified_fade_wall(
+        &self, dt: f64, axes: [bool; 3], max_spans: usize,
+    ) -> Result<Option<PreparedModelFade>, String> {
+        let plan = self.animator.as_ref().map(|animator|
+            animator.prepare_root_rigid_fade_wall(&self.model.skeleton, dt, axes, max_spans))
+            .transpose().map_err(|error| error.to_string())?.flatten();
+        Ok(plan.map(|plan| PreparedModelFade {model:self.model.clone(), plan}))
+    }
+
     pub(crate) fn can_rebind(&self, model: &ModelAsset, allow_reorder: bool) -> bool {
         self.model.skeleton.joints() == model.skeleton.joints()
             && self.model.animations.len() == model.animations.len()
@@ -596,4 +696,75 @@ mod tests {
         assert!(snapshot.upgrade().is_none());
     }
 
+}
+
+#[cfg(test)]
+mod accepted_fade_tests {
+    use super::*;
+    #[test]
+    fn asset_bound_fade_rejects_rebind_and_changed_clock_before_pose_preparation() {
+        let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
+        let asset = Arc::new(ModelAsset::parse(glb,&[],voxy_render::ModelLimits::default()).unwrap());
+        let mut playback = ModelPlayback::new(asset.clone(),ModelAnimation::default()).unwrap();
+        playback.transition_to_clip(0,0.125).unwrap();
+        let staged = playback.prepare_certified_fade(0.25,[true;3],256).unwrap().unwrap();
+        assert!(staged.accepted_frame(&playback,0.0625).is_ok());
+        assert!(staged.accepted_frame(&playback,0.5).is_err());
+        let mut changed = playback.clone();
+        changed.set_speed(0.5).unwrap();
+        assert!(staged.accepted_frame(&changed,0.0625).is_err());
+        let replacement = Arc::new(ModelAsset::parse(glb,&[],voxy_render::ModelLimits::default()).unwrap());
+        changed = playback.clone();
+        changed.rebind(replacement);
+        assert!(staged.accepted_frame(&changed,0.0625).is_err());
+        assert!(staged.accepted_frame(&playback,0.).is_ok());
+    }
+}
+
+#[cfg(test)]
+mod physical_fade_receipt_tests {
+    use super::*;
+    #[test]
+    fn physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back() {
+        use voxy_animation::RootRigidTransform;
+        use voxy_gameplay::{CharacterBody,CharacterPhysics,CharacterTickError,player_input};
+        use voxy_scene::{SceneGraph,Transform};
+        let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
+        let model = Arc::new(ModelAsset::parse(glb,&[],voxy_render::ModelLimits::default()).unwrap());
+        let mut playback = ModelPlayback::new(model,ModelAnimation::default()).unwrap();
+        playback.transition_to_clip(0,0.125).unwrap();
+        let mut scene = SceneGraph::new(1);
+        let owner = scene.spawn(None,Transform::default()).unwrap();
+        scene.insert_component(owner,CharacterBody {gravity:0.,speed:0.,..Default::default()}).unwrap();
+        let dt = 0.0625;
+        let build = || playback.prepare_certified_fade(dt,[true;3],256).unwrap().unwrap()
+            .bind_motion(owner,Some(RootRigidTransform::IDENTITY),RootRigidTransform::IDENTITY,
+                0.01,0.01,4096).unwrap();
+        let staged = build();
+        let other = build();
+        let request = staged.request(glam::DQuat::IDENTITY,glam::Vec3::ZERO,1.,1,0.);
+        let mut physics = CharacterPhysics::new(&scene,1,0);
+        let mut input = player_input().unwrap();
+        let before = scene.local(owner).unwrap();
+        let result = physics.fixed_step_with_certified_fade_preparation(&mut scene,&mut input,
+            f64::from(dt),&[request],|preview,_| {
+                staged.accepted_frame(&playback,&preview.motions[0])?;
+                assert!(other.accepted_frame(&playback,&preview.motions[0]).is_err());
+                Err::<(),String>("palette rejected".into())
+            });
+        assert_eq!(result.unwrap_err(),CharacterTickError::Preparation("palette rejected".into()));
+        assert_eq!(scene.local(owner).unwrap(),before);
+        assert!(physics.state(&scene,owner).unwrap().is_none());
+        let (receipts,(candidate,frame)) = physics.fixed_step_with_certified_fade_preparation(
+            &mut scene,&mut input,f64::from(dt),&[request],|preview,_|
+                staged.accepted_playback(&playback,&preview.motions[0])).unwrap();
+        assert!(receipts[0].complete);
+        assert!(frame.transition_weight>0.);
+        assert!(candidate.contact_interval().unwrap().end > candidate.contact_interval().unwrap().start);
+        assert_eq!(candidate.contact_interval().unwrap().end, candidate.contact_phase().unwrap());
+        assert!(candidate.source_contact_interval().is_some());
+        assert!(playback.contact_interval().is_none());
+        playback = candidate;
+        assert!(staged.accepted_frame(&playback,&receipts[0]).is_err());
+    }
 }

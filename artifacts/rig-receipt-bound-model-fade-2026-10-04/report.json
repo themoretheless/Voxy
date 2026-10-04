@@ -1,0 +1,16 @@
+{
+  "animation_tests_passed": 145,
+  "editor_playback_tests_passed": 10,
+  "editor_runtime_tests_passed": 8,
+  "editor_foot_tests_passed": 17,
+  "verified": [
+    "physical receipt bound to owner and live trajectory",
+    "accepted animator candidate staged in physical callback",
+    "preparation failure rolls back",
+    "replay after animator publication rejects",
+    "wall-prefix bounds and malformed receipt rejection"
+  ],
+  "ordinary_editor_moving_fade_dispatch": false,
+  "native_acceptance": false,
+  "contact_interval_publication": false
+}

@@ -1,0 +1,15 @@
+{
+  "playback_tests_passed": 10,
+  "runtime_tests_passed": 9,
+  "foot_tests_passed": 17,
+  "verified": [
+    "shared retarget and root extraction owner",
+    "receipt-driven runtime frame candidate",
+    "physical callback and correction pipeline",
+    "body movement with in-place displayed root",
+    "original runtime frame preserved"
+  ],
+  "active_foot_fixture": false,
+  "ordinary_app_moving_fades": false,
+  "native_acceptance": false
+}

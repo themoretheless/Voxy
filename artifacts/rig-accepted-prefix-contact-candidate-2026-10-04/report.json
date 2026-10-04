@@ -1,0 +1,14 @@
+{
+  "animation_tests_passed": 145,
+  "editor_playback_tests_passed": 10,
+  "editor_runtime_tests_passed": 8,
+  "editor_foot_tests_passed": 17,
+  "verified": [
+    "accepted playback/contact candidate in physical preparation",
+    "target contact end matches accepted pose",
+    "original contact metadata preserved until publication",
+    "f64 target/source travel does not round up to f32 completion"
+  ],
+  "ordinary_editor_dispatch": false,
+  "native_moving_fade_acceptance": false
+}

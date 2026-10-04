@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 141,
+  "new_checks": [
+    "exact dyadic screw translation",
+    "invalid fraction rejection",
+    "structural planar cubic pose across all extraction masks"
+  ],
+  "reference": "real normalized stored continuous span controls; screw uses stored initial frame, not canonical path prefix",
+  "whole_tick_tail_assembly": false,
+  "runtime_moving_fades_enabled": false
+}
