@@ -264,6 +264,29 @@ impl PreparedModelFadeMotion {
             .map_err(|error| error.to_string())?;
         self.prepared.accepted_frame(current, time)
     }
+    pub(crate) fn automatic_coordinate_axis(
+        &self,
+        preferred: Option<usize>,
+    ) -> Result<usize, String> {
+        if let Some(axis) = preferred {
+            return Ok(axis);
+        }
+        let mut best = None;
+        for axis in [1, 0, 2] {
+            if let Some(proof) = self
+                .motion
+                .coordinate_certificate(axis, 4096)
+                .map_err(|error| error.to_string())?
+            {
+                let error = proof.error_bound();
+                if best.is_none_or(|(_, old)| error < old) {
+                    best = Some((axis, error));
+                }
+            }
+        }
+        Ok(best.map_or(1, |(axis, _)| axis))
+    }
+
     pub(crate) fn request(
         &self,
         basis: glam::DQuat,
@@ -518,19 +541,33 @@ impl ModelPlayback {
             Option<&voxy_animation::RootRigidPath>,
         ) -> Result<T, String>,
     ) -> Result<T, String> {
+        self.advance_with_motion_wall(f64::from(dt), rotation, axes, publish)
+    }
+
+    pub(crate) fn advance_with_motion_wall<T>(
+        &mut self,
+        dt: f64,
+        rotation: bool,
+        axes: [bool; 3],
+        publish: impl FnOnce(
+            &ModelAsset,
+            &AnimatorFrame,
+            Option<&voxy_animation::RootRigidPath>,
+        ) -> Result<T, String>,
+    ) -> Result<T, String> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err("invalid model animation timestep".into());
         }
         let interval = self
             .animator
             .as_ref()
-            .map(|animator| animator.phase_interval(dt))
+            .map(|animator| animator.phase_interval_wall(dt))
             .transpose()
             .map_err(|error| error.to_string())?;
         let source_interval = self
             .animator
             .as_ref()
-            .map(|animator| animator.source_phase_interval(dt))
+            .map(|animator| animator.source_phase_interval_wall(dt))
             .transpose()
             .map_err(|error| error.to_string())?
             .flatten()
@@ -542,7 +579,7 @@ impl ModelPlayback {
         let frozen_source_tick = self
             .animator
             .as_ref()
-            .map(|animator| animator.frozen_source_tick(dt))
+            .map(|animator| animator.frozen_source_tick_wall(dt))
             .transpose()
             .map_err(|e| e.to_string())?
             .flatten()
@@ -552,7 +589,7 @@ impl ModelPlayback {
         let frame = if let Some(animator) = &mut candidate {
             if rotation {
                 let (frame, rotation) = animator
-                    .advance_with_root_rigid_motion(
+                    .advance_with_root_rigid_motion_wall(
                         &self.model.skeleton,
                         dt,
                         axes,
@@ -563,7 +600,7 @@ impl ModelPlayback {
                 frame
             } else {
                 animator
-                    .advance(&self.model.skeleton, dt)
+                    .advance_wall(&self.model.skeleton, dt)
                     .map_err(|error| error.to_string())?
             }
         } else {

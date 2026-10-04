@@ -660,10 +660,10 @@ fn rigid_body_clearance(
     Ok(error)
 }
 
-/// Conditional sweep of an approximate field; evaluation_radius is a caller
-/// proof obligation in world units, covering all numeric evaluation uncertainty.
-/// Certified requests use this sweep within transactional candidate preparation;
-/// ordinary editor dispatch still needs qualified caller error bounds.
+/// Sweep of an approximate field with automatically derived controller pose
+/// evaluation bounds. evaluation_radius is an additional world allowance.
+/// Source-field approximation error is carried separately by the approximation;
+/// grounding and final scene publication are checked at the transaction boundary.
 #[cfg_attr(not(test), allow(dead_code))]
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_approximation(
@@ -817,9 +817,11 @@ fn sweep_rigid_approximation_with_axis_errors(
     queries: &mut usize,
     coordinate_certificate: Option<&voxy_animation::RootRigidCoordinateCertificate<'_>>,
 ) -> Result<PathHit, PhysicsError> {
-    if evaluation_axes
-        .iter()
-        .any(|value| !value.is_finite() || *value < 0. || *value > evaluation_radius)
+    if !evaluation_radius.is_finite()
+        || evaluation_radius < 0.
+        || evaluation_axes
+            .iter()
+            .any(|value| !value.is_finite() || *value < 0. || *value > evaluation_radius)
     {
         return Err(PhysicsError::InvalidMotion);
     }
@@ -827,6 +829,35 @@ fn sweep_rigid_approximation_with_axis_errors(
     {
         return Err(PhysicsError::InvalidMotion);
     }
+    // Derive the controller's rounding allowance from the same immutable cache
+    // used by every candidate evaluation. Caller allowances add to it.
+    let enclosed_path = approximation
+        .path
+        .prepare_screw_enclosures(4096)
+        .map_err(|_| PhysicsError::InvalidMotion)?;
+    let (mut runtime_axes, runtime_radius) = enclosed_path
+        .physical_body_selection_error_bounds(center, rest_edges, basis, origin, orientation, scale)
+        .map_err(|_| PhysicsError::InvalidMotion)?;
+    for axis in 0..3 {
+        if exact_stationary_physical_projection(&enclosed_path, orientation, basis, axis) {
+            runtime_axes[axis] = 0.;
+        }
+    }
+    // Exact source fields and zero additional directional uncertainty may use
+    // support monotonicity instead of a symmetric error ball. The actual
+    // coordinate arithmetic is monotone, including pivot cancellation.
+    let exact_projection_axes = std::array::from_fn(|axis| {
+        approximation.origin_error_bound == 0.
+            && approximation.angular_error_bound == 0.
+            && evaluation_axes[axis] == 0.
+            && exact_physical_projection_frame(orientation, basis, axis).is_some()
+    });
+    let evaluation_radius = add_evaluation_allowances(evaluation_radius, runtime_radius)?;
+    let mut combined_axes = [0.; 3];
+    for axis in 0..3 {
+        combined_axes[axis] = add_evaluation_allowances(evaluation_axes[axis], runtime_axes[axis])?;
+    }
+    let evaluation_axes = combined_axes;
     let coordinate_certificate = coordinate_certificate
         .map(|proof| {
             let mut margins = [0.; 3];
@@ -847,10 +878,7 @@ fn sweep_rigid_approximation_with_axis_errors(
         evaluation_radius,
     )?;
     let vertices = rigid_vertex_enclosures(rest_edges, basis, origin, scale)?;
-    let enclosed_path = approximation
-        .path
-        .prepare_screw_enclosures(4096)
-        .map_err(|_| PhysicsError::InvalidMotion)?;
+
     let speeds = enclosed_path
         .point_speed_bounds(&vertices, scale)
         .map_err(|_| PhysicsError::InvalidMotion)?;
@@ -869,6 +897,7 @@ fn sweep_rigid_approximation_with_axis_errors(
         Some(&speeds),
         Some(&enclosed_path),
         coordinate_certificate,
+        exact_projection_axes,
     )?;
     // Mirror the physical controller's proposed orientation/edge update. This
     // checks the rounded proposal itself, not merely the canonical field pose.
@@ -938,12 +967,65 @@ fn sweep_rigid_path_with_clearance(
         None,
         None,
         None,
+        [false; 3],
     )
+}
+
+fn add_evaluation_allowances(a: f64, b: f64) -> Result<f64, PhysicsError> {
+    // Preserve an exact zero directional allowance. Positive independent
+    // allowances add with outward rounding, never merely take their maximum.
+    let sum = if a == 0. {
+        b
+    } else if b == 0. {
+        a
+    } else {
+        (a + b).next_up()
+    };
+    if sum.is_finite() {
+        Ok(sum)
+    } else {
+        Err(PhysicsError::InvalidMotion)
+    }
+}
+
+// A stationary source coordinate survives the actual evaluation chain exactly
+// when the basis maps every row structurally. Cached screw arithmetic retains
+// zero orthogonal quaternion components and zero coordinate translation. Basis
+// reframing therefore retains a single imaginary axis. Right multiplication of
+// the actor by this axis quaternion uses at most two nonzero products per
+// component; its signed coordinate-row identities have identical products and
+// sums (up to sign/order), so normalization preserves them as well. The cross
+// evaluator then copies the coordinate directly. Pivot cancellation is exact.
+fn exact_physical_projection_frame(
+    orientation: DQuat,
+    basis: DQuat,
+    world_axis: usize,
+) -> Option<usize> {
+    let (actor_axis, _) = rotation_coordinate_preimage(orientation, world_axis)?;
+    let (source_axis, _) = rotation_coordinate_preimage(basis, actor_axis)?;
+    let permutation = (0..3).all(|axis| rotation_coordinate_preimage(basis, axis).is_some());
+    // A quaternion about this same coordinate (or a half turn orthogonal to
+    // it) also maps an axial imaginary vector without off-axis arithmetic.
+    let q = basis.to_array();
+    let axial = source_axis == actor_axis
+        && ((0..3).all(|axis| axis == source_axis || q[axis] == 0.)
+            || (q[source_axis] == 0. && q[3] == 0.));
+    (permutation || axial).then_some(source_axis)
+}
+fn exact_stationary_physical_projection(
+    cache: &voxy_animation::RootScrewEnclosurePath<'_>,
+    orientation: DQuat,
+    basis: DQuat,
+    world_axis: usize,
+) -> bool {
+    exact_physical_projection_frame(orientation, basis, world_axis)
+        .is_some_and(|axis| cache.coordinate_velocity_range(axis) == Some([0., 0.]))
 }
 
 // Structural coordinate-plane certificate for an exact canonical screw field.
 // Both real frame rotations must transport an exact coordinate row. Uniform nonzero
-// error clearance requires a matching certificate and its outward world margin.
+// source error clearance requires a matching certificate and outward margin.
+// Pure candidate rounding may use the derived exact projection-frame policy.
 fn invariant_projection_separates(
     center: DVec3,
     edges: [DVec3; 3],
@@ -1027,6 +1109,7 @@ fn sweep_rigid_path_with_bounds(
         &voxy_animation::RootRigidCoordinateCertificate<'_>,
         [f64; 3],
     )>,
+    exact_projection_axes: [bool; 3],
 ) -> Result<PathHit, PhysicsError> {
     if !clearance.is_finite()
         || clearance < 0.
@@ -1090,8 +1173,8 @@ fn sweep_rigid_path_with_bounds(
     let contact_reserve = if clearance == 0. && enclosed_path.is_none() {
         0.5 * f64::from(f32::EPSILON) * (anchor.abs().max_element() + radius).max(1.)
     } else {
-        // Enclosed/clearance queries already carry their caller's numeric
-        // envelope. Preserve that contract instead of adding a second one.
+        // Enclosed/clearance queries carry the derived numeric envelope and
+        // any additional caller allowance; avoid a second heuristic reserve.
         0.
     };
     let mut steps = iterations;
@@ -1206,7 +1289,15 @@ fn sweep_rigid_path_with_bounds(
                         + radius);
                 let mut separated = false;
                 for normal in obstacle.axes_for(initial) {
-                    if clearance == 0. || coordinate_certificate.is_some() {
+                    let exact_numeric_projection = (0..3).any(|axis| {
+                        exact_projection_axes[axis]
+                            && normal[axis] != 0.
+                            && (0..3).all(|other| other == axis || normal[other] == 0.)
+                    });
+                    if clearance == 0.
+                        || coordinate_certificate.is_some()
+                        || exact_numeric_projection
+                    {
                         if let Some(cache) = enclosed_path {
                             // The whole field is monotone away from this plane;
                             // exact initial touching is safe throughout it.
@@ -1219,7 +1310,7 @@ fn sweep_rigid_path_with_bounds(
                                 basis,
                                 scale,
                                 cache,
-                                if clearance == 0. {
+                                if clearance == 0. || exact_numeric_projection {
                                     None
                                 } else {
                                     coordinate_certificate
@@ -2483,5 +2574,204 @@ mod physical_body_error_tests {
                 .physical_body_selection_error_bounds(center, edges, basis, origin, actor, 0.)
                 .is_err()
         );
+    }
+}
+
+#[cfg(test)]
+mod automatic_physical_allowance_tests {
+    use super::*;
+
+    #[test]
+    fn stationary_coordinate_survives_actual_cache_reframe_pivot_and_body_update() {
+        let actors = [
+            DQuat::IDENTITY,
+            DQuat::from_xyzw(0.5, 0.5, 0.5, 0.5),
+            DQuat::from_xyzw(0.123, 0.123, -0.7, 0.7).normalize(),
+            DQuat::from_xyzw(0.5, -0.5, 0.5, 0.5),
+        ];
+        let bases = [
+            DQuat::IDENTITY,
+            DQuat::from_xyzw(0.5, 0.5, 0.5, 0.5),
+            DQuat::from_rotation_y(0.37),
+            DQuat::from_xyzw(0.123, 0., 0.7, 0.).normalize(),
+        ];
+        let origin = DVec3::new(0.123, -0.731, 0.417);
+        let edges = [DVec3::X * 0.125, DVec3::Y * 0.25, DVec3::Z * 0.5];
+        let mut cases = 0;
+        for orientation in actors {
+            for basis in bases {
+                for world_axis in 0..3 {
+                    let Some((actor_axis, actor_sign)) =
+                        rotation_coordinate_preimage(orientation, world_axis)
+                    else {
+                        continue;
+                    };
+                    let Some((source_axis, _)) = rotation_coordinate_preimage(basis, actor_axis)
+                    else {
+                        continue;
+                    };
+                    let mut angular = DVec3::ZERO;
+                    angular[source_axis] = 0.7;
+                    let mut linear = DVec3::new(0.3, -0.2, 0.1);
+                    linear[source_axis] = 0.;
+                    let path = voxy_animation::RootRigidPath::from_twists(
+                        &[(voxy_animation::RootRigidTwist { linear, angular }, 0.5)],
+                        1,
+                    )
+                    .unwrap();
+                    let cache = path.prepare_screw_enclosures(1).unwrap();
+                    if !exact_stationary_physical_projection(&cache, orientation, basis, world_axis)
+                    {
+                        continue;
+                    }
+                    for fraction in [0., 0.1, 0.3, 0.5, 0.9, 1.] {
+                        let pose = cache.sample_evaluated(0, fraction).unwrap().0;
+                        let rotation = reframe_rotation(basis, pose.rotation);
+                        let body_rotation = (orientation * rotation).normalize();
+                        assert_eq!(
+                            rotation_coordinate_preimage(body_rotation, world_axis),
+                            Some((actor_axis, actor_sign))
+                        );
+                        for scale in [-2., 1.] {
+                            let displacement = rotate_vector(
+                                orientation,
+                                scale * rotate_vector(basis, pose.translation) + origin
+                                    - rotate_vector(rotation, origin),
+                            );
+                            assert_eq!(displacement[world_axis], 0.);
+                            for edge in edges {
+                                assert_eq!(
+                                    rotate_vector(body_rotation, edge)[world_axis],
+                                    rotate_vector(orientation, edge)[world_axis]
+                                );
+                            }
+                        }
+                    }
+                    cases += 1;
+                }
+            }
+        }
+        assert!(cases >= 20, "only {cases} admitted frame cases");
+    }
+
+    #[test]
+    fn zero_requested_allowance_still_reserves_derived_body_error_before_wall() {
+        let approximation = voxy_animation::RootRigidApproximation {
+            path: voxy_animation::RootRigidPath::from_twists(
+                &[(
+                    voxy_animation::RootRigidTwist {
+                        linear: DVec3::X * 0.25,
+                        angular: DVec3::ZERO,
+                    },
+                    1.,
+                )],
+                1,
+            )
+            .unwrap(),
+            origin_error_bound: 0.,
+            angular_error_bound: 0.,
+        };
+        let center = DVec3::ZERO;
+        let edges = [DVec3::X * 0.125, DVec3::Y * 0.125, DVec3::Z * 0.125];
+        let cache = approximation.path.prepare_screw_enclosures(1).unwrap();
+        let (_, radius) = cache
+            .physical_body_selection_error_bounds(
+                center,
+                edges,
+                DQuat::IDENTITY,
+                DVec3::ZERO,
+                DQuat::IDENTITY,
+                1.,
+            )
+            .unwrap();
+        assert!(radius > 0. && radius < 1e-6);
+        let wall = AffineBox {
+            center: DVec3::X * (0.5 + radius * 0.25),
+            edges,
+        };
+        assert!(wall.center.x > 0.5);
+        let run = |allowance, queries: &mut usize| {
+            sweep_rigid_approximation(
+                center,
+                edges,
+                DQuat::IDENTITY,
+                &approximation,
+                DQuat::IDENTITY,
+                DVec3::ZERO,
+                1.,
+                allowance,
+                &[wall],
+                256,
+                queries,
+            )
+        };
+        let vertices = rigid_vertex_enclosures(edges, DQuat::IDENTITY, DVec3::ZERO, 1.).unwrap();
+        let speeds = cache.point_speed_bounds(&vertices, 1.).unwrap();
+        let control = sweep_rigid_path_with_bounds(
+            center,
+            edges,
+            DQuat::IDENTITY,
+            &approximation.path,
+            DQuat::IDENTITY,
+            DVec3::ZERO,
+            1.,
+            0.,
+            &[wall],
+            256,
+            &mut 4096,
+            Some(&speeds),
+            Some(&cache),
+            None,
+            [false; 3],
+        )
+        .unwrap();
+        assert!(
+            control.complete,
+            "zero-clearance control must reach the endpoint"
+        );
+        let hit = run(0., &mut 4096).unwrap();
+        assert!(!hit.complete);
+        assert!(hit.displacement.x < 0.25 && hit.displacement.x > 0.249);
+        println!(
+            "AUTOMATIC_PHYSICAL_MARGIN {:?}",
+            (radius, wall.center.x, hit.displacement.x)
+        );
+        for invalid in [f64::NAN, f64::INFINITY, -1.] {
+            assert!(matches!(
+                run(invalid, &mut 4096),
+                Err(PhysicsError::InvalidMotion)
+            ));
+        }
+        assert_eq!(add_evaluation_allowances(0., 0.).unwrap(), 0.);
+        assert!(add_evaluation_allowances(0.25, 0.5).unwrap() >= 0.75);
+        assert!(add_evaluation_allowances(f64::MAX, f64::MAX).is_err());
+    }
+
+    #[test]
+    fn moving_projection_and_unproved_basis_do_not_get_zero_error() {
+        let path = voxy_animation::RootRigidPath::from_twists(
+            &[(
+                voxy_animation::RootRigidTwist {
+                    linear: DVec3::Y * 0.01,
+                    angular: DVec3::Y * 0.7,
+                },
+                0.5,
+            )],
+            1,
+        )
+        .unwrap();
+        let cache = path.prepare_screw_enclosures(1).unwrap();
+        assert!(!exact_stationary_physical_projection(
+            &cache,
+            DQuat::IDENTITY,
+            DQuat::IDENTITY,
+            1
+        ));
+        assert!(!exact_stationary_physical_projection(
+            &cache,
+            DQuat::from_rotation_x(0.37),
+            DQuat::IDENTITY,
+            1
+        ));
     }
 }

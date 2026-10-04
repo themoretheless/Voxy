@@ -532,9 +532,26 @@ impl AnimationRuntime {
             if state.root_reference.is_none() {
                 continue;
             }
-            let model = models
-                .get(&instance.asset)
-                .ok_or("fade model is not loaded")?;
+            let Some(model) = models.get(&instance.asset) else {
+                continue;
+            };
+            // Asset/binding changes belong to ordinary preparation, which resets
+            // the retained reference before another certified plan is admitted.
+            let profile = scene
+                .component::<crate::ModelRetarget>(owner)
+                .map_err(|error| error.to_string())?;
+            let feet = scene
+                .component::<crate::ModelFootPlacement>(owner)
+                .map_err(|error| error.to_string())?
+                .filter(|settings| !settings.feet.is_empty());
+            if !state.settings.root_motion_rotation
+                || !Arc::ptr_eq(model, &state.model)
+                || profile != state.retarget_profile.as_ref()
+                || state.retarget_binding.is_some()
+                || feet != state.feet.as_ref().map(|feet| feet.settings())
+            {
+                continue;
+            }
             candidate = candidate.stage_owner_selection(scene, models, owner, model)?;
             let state = &candidate.owners[&owner];
             if state.root_reference.is_some() && state.playback.has_transition() {
@@ -553,6 +570,65 @@ impl AnimationRuntime {
             }
         }
         Ok((candidate, prepared))
+    }
+
+    /// Production fixed tick. Stage every selection first, then publish clocks,
+    /// physical bodies and displayed poses through one mixed transaction.
+    pub(super) fn fixed_step(
+        &self,
+        scene: &mut SceneGraph,
+        models: &BTreeMap<AssetId, Arc<ModelAsset>>,
+        physics: &mut voxy_gameplay::CharacterPhysics,
+        input: &mut voxy_input::InputMap,
+        dt: f64,
+    ) -> Result<Self, voxy_gameplay::CharacterTickError<String>> {
+        use voxy_gameplay::CharacterTickError;
+        // Approximation quality targets in the common body/world frame. These
+        // bound field approximation; numerical evaluation is derived by physics.
+        let (candidate, plans) = self
+            .prepare_scene_fades(
+                scene,
+                models,
+                dt,
+                1e-4,
+                1e-4,
+                voxy_gameplay::MAX_CHARACTER_TRAJECTORY_SPANS,
+            )
+            .map_err(CharacterTickError::Preparation)?;
+        let requests = plans
+            .iter()
+            .map(|plan| {
+                let orientation = match physics
+                    .accepted_pose(scene, plan.owner)
+                    .map_err(|error| error.to_string())?
+                {
+                    Some(pose) => pose.physical_rotation,
+                    None => scene
+                        .local(plan.owner)
+                        .map_err(|error| error.to_string())?
+                        .rotation
+                        .as_dquat()
+                        .normalize(),
+                };
+                let preferred = voxy_gameplay::rigid_source_coordinate_axis(
+                    orientation,
+                    glam::DQuat::IDENTITY,
+                    1,
+                );
+                Ok((
+                    plan,
+                    OwnerFadeAdmission {
+                        coordinate_axis: plan.motion.automatic_coordinate_axis(preferred)?,
+                        evaluation_radius: 0.,
+                        evaluation_axes: None,
+                    },
+                ))
+            })
+            .collect::<Result<Vec<_>, String>>()
+            .map_err(CharacterTickError::Preparation)?;
+        let (_, accepted) =
+            candidate.fixed_step_owner_fades(scene, models, physics, input, dt, &requests)?;
+        Ok(accepted)
     }
 
     /// Complete scene-driven selection, plan admission and physical publication
@@ -644,7 +720,7 @@ impl AnimationRuntime {
             .map(|(prepared, _)| prepared.owner)
             .collect::<HashSet<_>>();
         let ordinary = self
-            .prepare_deferred(scene, models, dt as f32, &deferred)
+            .prepare_deferred(scene, models, dt, &deferred)
             .map_err(CharacterTickError::Preparation)?;
         let ordinary_paths = ordinary.trajectories();
         physics.fixed_step_with_mixed_certified_fade_preparation(
@@ -810,10 +886,8 @@ impl AnimationRuntime {
         )?;
         owner.playback = playback;
         owner.frame = Arc::new(frame);
-        self.serial = self
-            .serial
-            .checked_add(1)
-            .ok_or("animation tick overflow")?;
+        // prepare_deferred owns the tick serial; each accepted owner only
+        // replaces its staged playback/frame within that same transaction.
         Ok(self)
     }
 
@@ -867,6 +941,15 @@ impl AnimationRuntime {
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         dt: f32,
     ) -> Result<Self, String> {
+        self.prepare_wall(scene, models, f64::from(dt))
+    }
+
+    pub(super) fn prepare_wall(
+        &self,
+        scene: &SceneGraph,
+        models: &BTreeMap<AssetId, Arc<ModelAsset>>,
+        dt: f64,
+    ) -> Result<Self, String> {
         self.prepare_deferred(scene, models, dt, &HashSet::new())
     }
 
@@ -874,10 +957,10 @@ impl AnimationRuntime {
         &self,
         scene: &SceneGraph,
         models: &BTreeMap<AssetId, Arc<ModelAsset>>,
-        dt: f32,
+        dt: f64,
         deferred: &HashSet<NodeId>,
     ) -> Result<Self, String> {
-        if !dt.is_finite() || dt <= 0.0 || dt > 0.1 {
+        if !dt.is_finite() || dt <= 0.0 || dt > f64::from(0.1_f32) {
             return Err("invalid fixed animation timestep".into());
         }
         let mut next = self.clone();
@@ -973,7 +1056,7 @@ impl AnimationRuntime {
             } else {
                 settings.root_motion_axes
             };
-            let (mut frame, mut trajectory) = playback.advance_with_motion(
+            let (mut frame, mut trajectory) = playback.advance_with_motion_wall(
                 dt,
                 settings.root_motion_rotation,
                 source_axes,

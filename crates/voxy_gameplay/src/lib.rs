@@ -250,6 +250,18 @@ pub struct AppliedCharacterMotion {
     pub angular_fraction: f64,
 }
 
+/// Source coordinate corresponding exactly to a world coordinate through the
+/// fixed actor and root basis. None means a directional certificate cannot be
+/// selected structurally; no near-zero rotation-matrix tolerance is used.
+pub fn rigid_source_coordinate_axis(
+    orientation: glam::DQuat,
+    basis: glam::DQuat,
+    world_axis: usize,
+) -> Option<usize> {
+    let (actor_axis, _) = convex::rotation_coordinate_preimage(orientation, world_axis)?;
+    convex::rotation_coordinate_preimage(basis, actor_axis).map(|(source_axis, _)| source_axis)
+}
+
 /// Aggregate trajectory storage/work admitted in one fixed tick.
 pub const MAX_CHARACTER_TRAJECTORY_SPANS: usize = 4096;
 /// World translation followed by a complete rotation path around a fixed pivot.
@@ -284,10 +296,11 @@ pub struct CharacterCertifiedFadeMotion<'a> {
     pub basis: glam::DQuat,
     pub origin: Vec3,
     pub coordinate_axis: usize,
-    /// Caller-supplied world bound for rounded pose evaluation error.
+    /// Additional world allowance beyond the automatically derived physical
+    /// candidate evaluation error. Zero requests the derived allowance alone.
     pub evaluation_radius: f64,
-    /// Optional caller-proven errors on each world axis, after all frame mappings.
-    /// None uses the whole-body radius on every axis. Bounds must not exceed it.
+    /// Optional additional errors on each world axis, after all frame mappings.
+    /// None uses the additional radius on every axis. Bounds must not exceed it.
     pub evaluation_axes: Option<[f64; 3]>,
 }
 /// A STEP collision may have path_fraction=1 without completing the final event.
@@ -307,6 +320,7 @@ pub struct AppliedCharacterTrajectoryMotion {
     proposal_evaluation_error: Option<([f64; 3], f64)>,
     canonical_world_pose: Option<angular_sweep::CanonicalWorldPose>,
     published_evaluation_error: Option<([f64; 3], f64)>,
+    physical_evaluation_error: Option<([f64; 3], f64)>,
 }
 impl AppliedCharacterTrajectoryMotion {
     /// World-axis and L1 discrepancy for the accepted sweep proposal against
@@ -314,6 +328,14 @@ impl AppliedCharacterTrajectoryMotion {
     /// relocation and f32 scene publication; not a uniform trajectory bound.
     pub fn proposal_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.proposal_evaluation_error
+    }
+
+    /// World-axis and L1 discrepancy of the actual physical affine body after
+    /// grounding and relocation against the accepted canonical prefix. Ground
+    /// correction is included as displacement, not merely numerical error.
+    /// This certifies this accepted pose, not every trajectory time.
+    pub fn physical_pose_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
+        self.physical_evaluation_error
     }
 
     /// World-axis and L1 discrepancy of the whole published affine body
@@ -1129,6 +1151,7 @@ impl CharacterPhysics {
                         proposal_evaluation_error: hit.pose_evaluation_error,
                         canonical_world_pose: hit.canonical_world_pose,
                         published_evaluation_error: None,
+                        physical_evaluation_error: None,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if let Some(path) = requested_rigid.get(&owner) {
@@ -1178,6 +1201,7 @@ impl CharacterPhysics {
                         proposal_evaluation_error: hit.pose_evaluation_error,
                         canonical_world_pose: hit.canonical_world_pose,
                         published_evaluation_error: None,
+                        physical_evaluation_error: None,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if request.angular_displacement != Vec3::ZERO {
@@ -1293,6 +1317,8 @@ impl CharacterPhysics {
                 if let Some(receipt) = applied_paths.iter_mut().find(|r| r.owner == owner)
                     && let Some(witness) = receipt.canonical_world_pose
                 {
+                    receipt.physical_evaluation_error =
+                        Some(witness.evaluation_error(physical_center, runtime.edges)?);
                     receipt.published_evaluation_error =
                         Some(witness.evaluation_error(published.as_dvec3(), displayed_edges)?);
                 }
