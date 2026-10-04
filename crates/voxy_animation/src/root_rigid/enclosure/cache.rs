@@ -82,6 +82,29 @@ impl RootScrewEnclosurePath<'_> {
     pub fn path(&self) -> &RootRigidPath {
         self.path
     }
+    /// Selects a finite rounded pose from the canonical source enclosure.
+    /// Includes actual quaternion normalization in the selected stored pose.
+    /// The returned enclosure supports point-specific discrepancy accounting;
+    /// body/world mapping and f32 publication remain separate obligations.
+    pub fn sample_evaluated(
+        &self,
+        index: usize,
+        fraction: f64,
+    ) -> Result<(RootRigidTransform, RootRigidEnclosure), AnimationError> {
+        let source = self.sample(index, fraction)?;
+        let midpoint = |v: [f64; 2]| v[0] * 0.5 + v[1] * 0.5;
+        let q = DQuat::from_array(source.rotation_bounds().map(midpoint));
+        if !q.is_finite() || q.length_squared() == 0. {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let evaluated = RootRigidTransform {
+            translation: DVec3::from_array(source.translation_bounds().map(midpoint)),
+            rotation: q.normalize(),
+        }
+        .checked()?;
+        Ok((evaluated, source))
+    }
+
     /// Encloses every canonical pose over a closed fraction interval in a span.
     /// Uses the entire elapsed-time interval, without sampled extrema.
     pub fn span_fraction_enclosure(

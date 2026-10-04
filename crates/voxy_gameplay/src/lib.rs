@@ -304,8 +304,16 @@ pub struct AppliedCharacterTrajectoryMotion {
     pub complete: bool,
     pub advancement_iterations: usize,
     pub trajectory_queries: usize,
+    proposal_evaluation_error: Option<([f64; 3], f64)>,
 }
 impl AppliedCharacterTrajectoryMotion {
+    /// World-axis and L1 discrepancy for the accepted sweep proposal against
+    /// its canonical field. Covers the whole affine body before ground snap,
+    /// relocation and f32 scene publication; not a uniform trajectory bound.
+    pub fn proposal_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
+        self.proposal_evaluation_error
+    }
+
     /// Identity admission within the lifetime of the borrowed rigid request.
     /// The address is never dereferenced and is not a persistent asset ID.
     pub fn matches_rigid_trajectory(&self, path: &voxy_animation::RootRigidPath) -> bool {
@@ -1109,6 +1117,7 @@ impl CharacterPhysics {
                         complete: hit.complete,
                         advancement_iterations: hit.advancement_iterations,
                         trajectory_queries: hit.trajectory_queries,
+                        proposal_evaluation_error: hit.pose_evaluation_error,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if let Some(path) = requested_rigid.get(&owner) {
@@ -1155,6 +1164,7 @@ impl CharacterPhysics {
                         complete: hit.complete,
                         advancement_iterations: hit.advancement_iterations,
                         trajectory_queries: hit.trajectory_queries,
+                        proposal_evaluation_error: hit.pose_evaluation_error,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if request.angular_displacement != Vec3::ZERO {
@@ -1246,7 +1256,7 @@ impl CharacterPhysics {
                 return Err(PhysicsError::CoordinateRange);
             }
             runtime.published = published;
-            if prepare.is_some() && requested_rigid.contains_key(&owner) {
+            if requested_rigid.contains_key(&owner) {
                 // Check both representations after snap/relocation. The rounded
                 // scene matrix is the pose the preparation callback/render sees.
                 let shapes: Vec<_> = world.0.iter().map(|obstacle| obstacle.shape).collect();

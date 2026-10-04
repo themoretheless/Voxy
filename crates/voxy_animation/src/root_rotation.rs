@@ -653,6 +653,41 @@ impl RootRotationCurve {
     pub(super) fn phase_key_times(&self) -> impl Iterator<Item = f64> + '_ {
         self.0.knots.iter().map(|k| k.time)
     }
+    /// Original normalized LINEAR source pose relative to its authored origin.
+    /// Returns None for other modes; no cached quaternion logs are used.
+    pub fn linear_relative_source_phase_rotation_bounds(
+        &self,
+        phase: f64,
+    ) -> Result<Option<[[f64; 2]; 4]>, AnimationError> {
+        if !phase.is_finite() || phase < 0. || phase > self.0.duration {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if self.0.mode != Interpolation::Linear {
+            return Ok(None);
+        }
+        if self.0.source_constant || phase == 0. {
+            return Ok(Some([[0.; 2], [0.; 2], [0.; 2], [1.; 2]]));
+        }
+        let source_pose = |time: f64| -> Result<[[f64; 2]; 4], AnimationError> {
+            let upper = self.0.knots.partition_point(|k| k.time <= time);
+            let key = if upper == 0 {
+                &self.0.knots[0]
+            } else {
+                &self.0.knots[upper - 1]
+            };
+            if upper == 0 || upper == self.0.knots.len() {
+                return crate::root_rigid::source_key_rotation_bounds(key.source);
+            }
+            let next = &self.0.knots[upper];
+            let fraction = crate::root_rigid::source_linear_fraction(time, [key.time, next.time])?;
+            crate::root_rigid::source_linear_rotation_bounds([key.source, next.source], fraction)
+        };
+        Ok(Some(crate::root_rigid::source_relative_rotation_bounds(
+            source_pose(phase)?,
+            source_pose(0.)?,
+        )?))
+    }
+
     /// Source-key short-arc spatial angular velocity, including normalization
     /// and angle enclosure. Cached quaternion logs are not used as proof.
     pub fn linear_source_angular_velocity_bounds(
@@ -730,6 +765,46 @@ impl RootRotationCurve {
             control.map(|q| q.to_array()),
             [knot.time, next.time],
         )))
+    }
+
+    /// Spatial source angular field on one continuous key cell. Unsupported
+    /// moving STEP channels remain unavailable; keyed jumps are not smoothed.
+    pub(super) fn source_angular_velocity_bounds(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<Option<[[f64; 2]; 3]>, AnimationError> {
+        if self.0.mode == Interpolation::Linear {
+            self.linear_source_angular_velocity_bounds(start, end)
+        } else {
+            self.cubic_source_angular_velocity_bounds(start, end)
+        }
+    }
+
+    /// Source speed cap. Cubic retains its tighter Bernstein cap; LINEAR uses
+    /// an outward L1 norm of the proved constant spatial angular field.
+    pub(super) fn source_angular_speed_bound(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<Option<f64>, AnimationError> {
+        if let Some(speed) = self.cubic_source_angular_speed_bound(start, end)? {
+            return Ok(Some(speed));
+        }
+        let Some(bounds) = self.linear_source_angular_velocity_bounds(start, end)? else {
+            return Ok(None);
+        };
+        let mut speed = 0_f64;
+        for v in bounds {
+            let component = v[0].abs().max(v[1].abs());
+            if component != 0. {
+                speed = (speed + component).next_up();
+            }
+        }
+        if !speed.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        Ok(Some(speed))
     }
 
     /// Exact-source angular speed on a single cubic key interval. Uses a whole-key
