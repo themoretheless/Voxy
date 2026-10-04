@@ -1,0 +1,10 @@
+{
+  "editor_tests_passed": 41,
+  "free_fade_completion": true,
+  "wall_blocked_nonzero_partial_prefix": true,
+  "planted_sole_world_anchor_preserved": true,
+  "contact_interval_matches_accepted_phase": true,
+  "displayed_affine_box_remains_before_wall": true,
+  "ordinary_app_moving_fades": false,
+  "frozen_interrupt_with_active_feet": false
+}

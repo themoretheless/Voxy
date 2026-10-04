@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 150,
+  "editor_tests_passed": 41,
+  "read_only_unblended_phase_factor": true,
+  "phase_anchor_uses_enclosed_inverse": true,
+  "active_blend_anchor_rejected": true,
+  "rigid_extraction_required": true,
+  "planted_free_wall_interrupt_scenarios_passed": true,
+  "automatic_body_and_parent_frame_policy": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,10 @@
+{
+  "editor_tests_passed": 41,
+  "shared_playback_selection_logic": true,
+  "scene_driven_clip_and_interruption_selection": true,
+  "accepted_frame_and_serial_preserved_during_selection": true,
+  "source_phase_retained": true,
+  "changed_foot_binding_rejected": true,
+  "ordinary_app_moving_fades": false,
+  "automatic_reference_initialization": false
+}

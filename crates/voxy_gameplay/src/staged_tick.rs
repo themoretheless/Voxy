@@ -62,14 +62,32 @@ impl CharacterPhysics {
         fades: &[CharacterCertifiedFadeMotion<'_>],
         prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
     ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
-        if fades.len() > self.max_bodies {
-            return Err(CharacterTickError::Physics(PhysicsError::InvalidMotion));
-        }
-        let paths: Vec<_> = fades.iter().map(|request| CharacterRigidTrajectoryMotion {
+        self.fixed_step_with_mixed_certified_fade_preparation(
+            scene, input, dt, &[], &[], fades, prepare)
+    }
+
+    /// Combines ordinary root translations/rigid paths and certified fades in
+    /// the same admission, query budget and scene/body/input transaction.
+    pub fn fixed_step_with_mixed_certified_fade_preparation<T, E>(
+        &mut self,
+        scene: &mut SceneGraph,
+        input: &mut InputMap,
+        dt: f64,
+        translations: &[(NodeId, Vec3)],
+        ordinary_paths: &[CharacterRigidTrajectoryMotion<'_>],
+        fades: &[CharacterCertifiedFadeMotion<'_>],
+        prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
+    ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
+        let path_count = ordinary_paths.len().checked_add(fades.len())
+            .filter(|count| *count <= self.max_bodies)
+            .ok_or(CharacterTickError::Physics(PhysicsError::InvalidMotion))?;
+        let mut paths = Vec::with_capacity(path_count);
+        paths.extend_from_slice(ordinary_paths);
+        paths.extend(fades.iter().map(|request| CharacterRigidTrajectoryMotion {
             owner: request.owner, trajectory: &request.fade.approximation().path,
             scale: request.scale, basis: request.basis, origin: request.origin,
-        }).collect();
-        self.fixed_step_preparing(scene, input, dt, &[], &paths, fades, prepare)
+        }));
+        self.fixed_step_preparing(scene, input, dt, translations, &paths, fades, prepare)
     }
 
     #[allow(clippy::too_many_arguments)]

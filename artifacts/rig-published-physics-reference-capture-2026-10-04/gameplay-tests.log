@@ -1,0 +1,50 @@
+
+running 45 tests
+test character_step_read_only_grant_preserves_pose_and_pending_input ... ok
+test authored_axes_are_parent_local_and_conflicting_sources_are_atomic ... ok
+test animation_displacement_sweeps_slides_and_is_consumed_once ... ok
+test animation_ceiling_contact_removes_persistent_upward_velocity ... ok
+test bounded_recovery_failure_preserves_every_pose_and_input_edge ... ok
+test angular_budget_and_invalid_requests_preserve_pose_state_and_input ... ok
+test durable_descriptors_reload_with_new_runtime_identity_and_no_velocity ... ok
+test animation_displacement_collides_vertically_and_with_affine_walls ... ok
+test failure_in_later_body_preserves_all_poses_runtime_state_and_input ... ok
+test character_domain_denials_preserve_live_physics_pose_and_input ... ok
+test authored_character_rotation_uses_one_writer_and_complete_arc ... ok
+test horizontal_animation_during_jump_does_not_snap_back_to_floor ... ok
+test initial_penetration_is_an_explicit_error_without_partial_publication ... ok
+test composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick ... ok
+test noncommuting_curved_path_uses_body_basis_and_commits_once ... ok
+test invalid_animation_motion_preserves_all_owners_and_pending_input ... ok
+test noncommuting_offset_pivot_uses_body_basis_and_failure_is_atomic ... ok
+test angular_iteration_budget_is_shared_across_ordered_spans ... ok
+test oriented_character_ignores_empty_enclosing_aabb_corner_and_slides_at_true_support ... ok
+test parent_activity_deletion_component_removal_and_reused_generation_reconcile ... ok
+test one_tick_curved_trajectory_hits_before_equal_endpoints_and_retains_orientation ... ok
+test ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_atomic ... ok
+test ordered_full_turn_and_final_step_do_not_hide_a_collision ... ok
+test rigid_motion_preserves_winding_clips_mid_arc_and_retains_accepted_orientation ... ok
+test rotated_scaled_static_boxes_use_exact_sweeps_and_runtime_overlap_recovery ... ok
+test support_failure_in_preparation_rolls_back_and_physics_failure_skips_preparation ... ok
+test swept_motion_hits_wall_without_tunneling_and_focus_cancels_intent ... ok
+test rigid_preparation_rejects_final_contact_narrowing_before_publication ... ok
+test tilted_character_floor_contact_jump_and_recovery_use_rotated_shape ... ok
+test trajectory_query_failure_after_another_body_stages_motion_is_atomic ... ok
+test offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints ... ok
+test translated_parent_teleport_resets_velocity_and_affine_dynamic_ancestors_fail ... ok
+test reflected_uniform_source_frame_sweeps_translation_and_rotation_together ... ok
+test unknown_scheduled_system_preserves_scene_physics_and_input ... ok
+test angular_ground_turn_preserves_jump_and_continuing_velocity ... ok
+test grounded_tangent_motion_is_not_blocked_by_time_zero_floor_contact ... ok
+test foot_contact_candidates_publish_only_after_character_tick_accepts ... ok
+test quick_tap_survives_render_only_frames_and_is_consumed_once_during_catch_up ... ok
+test looped_animation_drives_collisions_without_duplicate_pose_translation ... ok
+test curved_grounded_yaw_preserves_jump_and_tall_body_avoids_sphere_speed_overestimate ... ok
+test simultaneous_translation_and_turn_clip_the_closed_curve_before_the_wall ... ok
+test moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement ... ok
+test failed_pose_preparation_preserves_physics_scene_and_pending_input ... ok
+test mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds ... ok
+test certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_preparation ... ok
+
+test result: ok. 45 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

@@ -1,0 +1,8 @@
+{
+  "build": "passed",
+  "new_regression": "failed",
+  "zero_gravity": "initial anchor not retained; final grounded true and sole follows body",
+  "gravity_enabled": "initial ordinary physics preparation returns InvalidBody",
+  "production_planted_moving_fade": "unverified",
+  "ordinary_app_moving_fades": false
+}

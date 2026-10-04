@@ -30,6 +30,25 @@ pub struct RootRigidEnclosure {
     /// Quaternion components in x,y,z,w order. No floating normalization applied.
     rotation: [[f64; 2]; 4],
 }
+/// Outward enclosure of products of stored signed uniform scales.
+#[derive(Clone, Copy, Debug)]
+pub struct RootUniformScaleEnclosure {
+    value: Scalar,
+}
+impl RootUniformScaleEnclosure {
+    pub const ONE: Self = Self {value: Scalar(1.,1.)};
+    pub fn from_scale(scale: f64) -> Result<Self, AnimationError> {
+        if !scale.is_finite() { return Err(AnimationError::InvalidRetargetBinding); }
+        Ok(Self {value: Scalar::exact(scale)})
+    }
+    pub fn multiplied(self, other: Self) -> Result<Self, AnimationError> {
+        Ok(Self {value: self.value.mul(other.value)?})
+    }
+    pub fn bounds(self) -> [f64;2] { self.value.array() }
+    fn absolute_upper(self) -> f64 { self.value.0.abs().max(self.value.1.abs()) }
+    fn invertible(self) -> bool { self.value.0>0. || self.value.1<0. }
+}
+
 #[derive(Clone, Copy, Debug)]
 struct Scalar(f64, f64);
 impl Scalar {
@@ -180,6 +199,23 @@ impl RootRigidEnclosure {
             ],
         })
     }
+    /// Changes translation units under a nonzero signed uniform scale while
+    /// retaining the same proper rotation. Products remain outward enclosed.
+    pub fn with_translation_scale(&self, scale: f64) -> Result<Self, AnimationError> {
+        if !scale.is_finite() || scale == 0. {
+            return Err(AnimationError::InvalidRetargetBinding);
+        }
+        self.with_translation_scale_enclosed(RootUniformScaleEnclosure::from_scale(scale)?)
+    }
+    pub fn with_translation_scale_enclosed(&self, scale: RootUniformScaleEnclosure) -> Result<Self, AnimationError> {
+        if !scale.invertible() { return Err(AnimationError::InvalidRetargetBinding); }
+        let mut translation = [[0.;2];3];
+        for (target, source) in translation.iter_mut().zip(self.translation) {
+            *target = Scalar(source[0],source[1]).mul(scale.value)?.array();
+        }
+        Ok(Self {translation, rotation:self.rotation})
+    }
+
     /// Encloses the inverse of the represented real unit rigid transforms.
     pub fn inverse(&self) -> Result<Self, AnimationError> {
         let (translation, q) = self.vectors();

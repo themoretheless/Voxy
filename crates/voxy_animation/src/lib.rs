@@ -11,7 +11,7 @@ pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::RootRigidFadePlan;
 mod root_rigid;
-pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform, RootRigidVelocity, RootRigidTwist, RootRigidApproximation, RootTwistRateBounds, RootRigidIntegrationDomain, RootMotionInterval, RootMotionStep, RootMotionPartition, RootSpatialTwistBounds, RootRigidEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
+pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform, RootRigidVelocity, RootRigidTwist, RootRigidApproximation, RootTwistRateBounds, RootRigidIntegrationDomain, RootMotionInterval, RootMotionStep, RootMotionPartition, RootSpatialTwistBounds, RootRigidEnclosure, RootUniformScaleEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
 mod root_rotation;
 pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
@@ -805,6 +805,15 @@ impl Animator {
     #[must_use]
     pub fn normalized_phase(&self) -> f64 {
         self.current.phase(self.time) / f64::from(self.current.duration)
+    }
+
+    /// Reads the stored root extraction factor at the current bounded clip
+    /// phase. An active blend has no unique authored phase anchor.
+    pub fn root_rigid_phase_factor(&self, axes: [bool; 3]) -> Result<RootRigidTransform, AnimationError> {
+        if self.transition.is_some() {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
+        self.current.root_rigid_curve(self.motion_joint)?.sample(self.current.phase(self.time), axes)
     }
 
     /// Predicts the interval from the current clock without advancing it.

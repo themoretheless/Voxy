@@ -1,0 +1,10 @@
+{
+  "gameplay_integration_tests_passed": 45,
+  "editor_tests_passed": 41,
+  "published_solver_pose_matches_transaction_preview": true,
+  "unstepped_and_stale_bodies_rejected": true,
+  "root_reference_capture_uses_solver_precision": true,
+  "free_wall_and_interrupt_planted_cases_passed": true,
+  "automatic_root_parent_frame_selection": false,
+  "ordinary_app_moving_fades": false
+}

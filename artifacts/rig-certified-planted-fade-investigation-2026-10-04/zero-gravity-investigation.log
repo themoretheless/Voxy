@@ -1,0 +1,18 @@
+
+running 1 test
+test animation_runtime::tests::certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor ... FAILED
+
+failures:
+
+---- animation_runtime::tests::certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor stdout ----
+
+thread 'animation_runtime::tests::certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor' (25477190) panicked at crates/voxy_editor/src/animation_runtime/tests.rs:1009:5:
+anchor=Vec3(0.0, 0.0, 0.0), actual=Vec3(0.01666672, 0.0, 2.430548e-5), grounded=Some(CharacterState { body: AnchoredAabb { anchor: Origin { x: 0, y: 0, z: 0 }, min: [-0.10885302641423716, 0.0, -0.12549544125207066], max: [0.14218646704871546, 2.0, 0.12554405221088197] }, velocity: [0.0, 0.0, 0.0], grounded: true })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    animation_runtime::tests::certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 157 filtered out; finished in 0.01s
+

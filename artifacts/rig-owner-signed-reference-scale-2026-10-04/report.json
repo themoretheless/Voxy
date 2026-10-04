@@ -1,0 +1,13 @@
+{
+  "editor_tests_passed": 42,
+  "owner_held_signed_scale": true,
+  "scales_verified": [
+    0.5,
+    -2
+  ],
+  "consecutive_tick_transport_verified": true,
+  "stale_scale_rejected_before_publication": true,
+  "invalid_scale_capture_preserves_original": true,
+  "automatic_parent_capture": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 151,
+  "enclosed_scale_product_field_propagation": true,
+  "independent_exact_rational_product_checks": 8,
+  "epsilon_in_product_checker": false,
+  "target_completion_tail_verified": true,
+  "editor_ancestor_scale_capture": false,
+  "ordinary_app_moving_fades": false
+}

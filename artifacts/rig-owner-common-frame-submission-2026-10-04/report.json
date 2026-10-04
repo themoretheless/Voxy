@@ -1,0 +1,8 @@
+{
+  "editor_tests_passed": 39,
+  "owner_reference_staging": true,
+  "physical_free_and_blocked_fade_verified": true,
+  "missing_reference_and_foreign_model_rejected": true,
+  "retarget_submission": false,
+  "ordinary_app_moving_fades": false
+}

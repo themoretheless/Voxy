@@ -1,0 +1,54 @@
+
+running 12 tests
+test animation_runtime::tests::fixed_frames_wait_for_assets_pause_resume_and_never_advance_on_read ... ok
+test animation_runtime::tests::root_reference_initialization_rejects_stale_model_invalid_pose_and_reset ... ok
+test animation_runtime::tests::partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomically ... ok
+test animation_runtime::tests::clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks ... ok
+test animation_runtime::tests::root_reference_lifetime_tracks_asset_and_extraction_identity ... ok
+test animation_runtime::tests::retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_frame ... ok
+test animation_runtime::tests::ordinary_preparation_transports_root_reference_without_foot_settings ... ok
+test animation_runtime::tests::motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors ... ok
+test animation_runtime::tests::accepted_physical_fade_uses_runtime_extraction_before_frame_publication ... ok
+test animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic ... ok
+test animation_runtime::tests::editor_play_drives_root_motion_through_wall_and_preserves_failed_tick ... ok
+test animation_runtime::tests::editor_expanded_rig_scene_survives_history_save_load_play_and_stop ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.14s
+
+
+running 10 tests
+test model_playback::tests::foreign_clip_is_rejected_before_owner_creation_or_publication ... ok
+test model_playback::tests::bind_selection_and_invalid_settings_are_explicit ... ok
+test model_playback::tests::cubic_invalid_pose_never_reaches_publication_and_preserves_owner_clock ... ok
+test model_playback::tests::shared_asset_has_independent_owner_clocks_and_failed_publication_retries ... ok
+test model_playback::tests::source_contact_interval_survives_fade_completion_and_failed_publication ... ok
+test model_playback::tests::named_selection_resolves_imported_names_without_resetting_time ... ok
+test model_playback::tests::frozen_source_tick_survives_completion_and_rejection_then_releases_snapshot ... ok
+test model_playback::tests::motion_joint_settings_keep_old_scenes_and_owner_clock_compatible ... ok
+test model_playback::accepted_fade_tests::asset_bound_fade_rejects_rebind_and_changed_clock_before_pose_preparation ... ok
+test model_playback::physical_fade_receipt_tests::physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 146 filtered out; finished in 0.00s
+
+
+running 17 tests
+test foot_placement::tests::contact_key_budget_is_shared_between_named_clips_and_legacy_curve ... ok
+test foot_placement::tests::contact_curves_are_smooth_bounded_and_preserve_crossed_swing_events ... ok
+test foot_placement::tests::binding_rejects_missing_and_dependent_chains ... ok
+test foot_placement::tests::contact_blending_keeps_displayed_weight_across_repeated_interruptions_and_staging ... ok
+test foot_placement::tests::slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface ... ok
+test foot_placement::tests::clip_phase_uses_playback_clock_speed_pause_loops_and_failed_publication ... ok
+test foot_placement::tests::named_clip_contacts_select_distinct_curves_and_reject_unmapped_clips ... ok
+test foot_placement::tests::unreachable_retained_contact_releases_without_publishing_a_clamped_pose ... ok
+test foot_placement::tests::skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_contacts ... ok
+test foot_placement::tests::physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_atomically ... ok
+test foot_placement::tests::fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clock ... ok
+test foot_placement::tests::equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them ... ok
+test foot_placement::tests::retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry ... ok
+test foot_placement::tests::physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing ... ok
+test foot_placement::tests::interrupted_variable_contact_fade_retains_anchor_and_accepted_snapshot_on_retry ... ok
+test foot_placement::tests::authoring_clip_switch_requires_contact_mapping_and_preserves_history_on_rejection ... ok
+test foot_placement::tests::ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 139 filtered out; finished in 0.02s
+

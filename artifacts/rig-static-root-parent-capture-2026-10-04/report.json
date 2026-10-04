@@ -1,0 +1,10 @@
+{
+  "editor_tests_passed": 43,
+  "automatic_static_ancestor_capture": true,
+  "nested_half_turn_reflections_enclosed": true,
+  "ancestor_scale_enclosure_owned_by_reference": true,
+  "nonuniform_and_animated_ancestors_rejected": true,
+  "same_static_parent_required_across_clips": true,
+  "planted_free_wall_interrupt_scenarios_passed": true,
+  "ordinary_app_moving_fades": false
+}

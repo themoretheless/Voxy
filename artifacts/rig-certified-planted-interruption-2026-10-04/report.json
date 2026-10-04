@@ -1,0 +1,15 @@
+{
+  "editor_tests_passed": 41,
+  "scenarios": [
+    "free fade",
+    "wall fade",
+    "free frozen interruption",
+    "wall frozen interruption"
+  ],
+  "query_budget_failure_rollback": true,
+  "same_staged_candidate_retry": true,
+  "frozen_source_tick_present_after_acceptance": true,
+  "planted_sole_world_anchor_preserved": true,
+  "ordinary_app_moving_fades": false,
+  "variable_contact_weight_interruption": false
+}

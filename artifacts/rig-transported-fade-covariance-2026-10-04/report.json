@@ -1,0 +1,8 @@
+{
+  "animation_tests_passed": 149,
+  "transported_common_frame_covariance": true,
+  "fade_completion_tail_included": true,
+  "independent_half_turn_inverse": true,
+  "compiler_error_qualified": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,19 @@
+{
+  "editor_tests_passed": 39,
+  "owner_snapshot_admission": true,
+  "rejected_changes": [
+    "extraction axes",
+    "missing reference",
+    "replacement reference"
+  ],
+  "rollback_verified": [
+    "scene transform",
+    "unpublished physics state",
+    "original displayed frame"
+  ],
+  "retry_verified": [
+    "free motion",
+    "wall-blocked prefix"
+  ],
+  "ordinary_app_moving_fades": false
+}

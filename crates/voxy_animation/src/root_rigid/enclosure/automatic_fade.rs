@@ -5,7 +5,7 @@ use super::*;
 pub struct RootRigidMappedPath<'a> {
     path: &'a RootRigidPath,
     frame: RootRigidEnclosure,
-    scale: f64,
+    scale: RootUniformScaleEnclosure,
 }
 impl<'a> RootRigidMappedPath<'a> {
     pub fn new(
@@ -22,14 +22,12 @@ impl<'a> RootRigidMappedPath<'a> {
         frame: RootRigidEnclosure,
         scale: f64,
     ) -> Result<Self, AnimationError> {
-        if !scale.is_finite() {
-            return Err(AnimationError::InvalidRetargetBinding);
-        }
-        Ok(Self {
-            path,
-            frame,
-            scale,
-        })
+        Self::from_enclosed_similarity(path,frame,RootUniformScaleEnclosure::from_scale(scale)?)
+    }
+    pub fn from_enclosed_similarity(
+        path: &'a RootRigidPath, frame: RootRigidEnclosure, scale: RootUniformScaleEnclosure,
+    ) -> Result<Self, AnimationError> {
+        Ok(Self {path,frame,scale})
     }
     fn field(
         self,
@@ -80,7 +78,7 @@ impl<'a> RootRigidMappedPath<'a> {
             zero
         };
         Ok(RootRigidFieldInterval::from_enclosed_domain(
-            field.scaled(factor)?.transformed(&self.frame, self.scale)?,
+            field.scaled(factor)?.transformed_enclosed_scale(&self.frame, self.scale)?,
             query,
         ))
     }
@@ -94,7 +92,7 @@ impl<'a> RootRigidMappedPath<'a> {
                 .enclosed_twist_bounds()?
                 .ok_or(AnimationError::RootRotationTransitionUnsupported)?
                 .enclosed_retimed_between_times([0., self.path.duration()], [0., duration])?
-                .enclosed_transformed(self.frame, self.scale),
+                .enclosed_transformed(self.frame, self.scale.absolute_upper()),
             None => Ok(RootSpatialTwistBounds {
                 linear_speed_bound: 0.,
                 angular_speed_bound: 0.,

@@ -1,0 +1,12 @@
+{
+  "editor_tests_passed": 39,
+  "scene_admission_required_for_request": true,
+  "rejected_changes": [
+    "authored extraction axes without runtime synchronization",
+    "model instance asset",
+    "loaded model Arc replacement"
+  ],
+  "scene_identity_and_hierarchy_checked": true,
+  "automatic_boundary_orchestration": false,
+  "ordinary_app_moving_fades": false
+}

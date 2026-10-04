@@ -1,0 +1,14 @@
+{
+  "animation_tests_passed": 150,
+  "common_frame_similarity_assembly": true,
+  "tested_scales": [
+    1,
+    -2,
+    0.5
+  ],
+  "fade_and_target_tail_scaled_consistently": true,
+  "common_body_translation_not_rescaled": true,
+  "zero_nonfinite_scales_rejected": true,
+  "editor_parent_frame_auto_capture": false,
+  "ordinary_app_moving_fades": false
+}

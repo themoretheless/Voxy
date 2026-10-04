@@ -1,0 +1,9 @@
+{
+  "editor_tests_passed": 40,
+  "scene_admission_inside_operation": true,
+  "batch_owner_admission": true,
+  "two_owner_atomic_retry": true,
+  "free_and_wall_blocked_verified": true,
+  "ordinary_app_moving_fades": false,
+  "mixed_ordinary_motion_submission": false
+}

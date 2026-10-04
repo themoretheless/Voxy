@@ -1,0 +1,12 @@
+{
+  "editor_tests_passed": 41,
+  "initial_grounding_verified": true,
+  "gravity_sign_fixed_in_fixture": true,
+  "distinct_walk_run_clips": true,
+  "moving_turning_fade_ticks": 8,
+  "completion_tail_included": true,
+  "planted_sole_world_anchor_tolerance": 3e-06,
+  "accepted_contact_clock_verified_each_tick": true,
+  "ordinary_app_moving_fades": false,
+  "blocked_planted_fade_verified": false
+}

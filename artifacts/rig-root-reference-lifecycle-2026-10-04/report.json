@@ -1,0 +1,11 @@
+{
+  "runtime_tests_passed": 12,
+  "verified": [
+    "ordinary preparation retains reference",
+    "axis change invalidates reference",
+    "rotation extraction change invalidates reference",
+    "equivalent replacement model invalidates reference",
+    "rejected or separate candidates preserve original owner reference"
+  ],
+  "ordinary_moving_fades": false
+}

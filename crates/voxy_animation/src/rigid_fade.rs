@@ -32,18 +32,49 @@ impl RootRigidFadePlan {
         angular_tolerance: f64,
         max_spans: usize,
     ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
-        let common = RootRigidEnclosure::from_transform(authored_to_common)?;
-        let map = |factor| common.compose(&RootRigidEnclosure::from_transform(factor)?);
+        self.integrate_authored_common_enclosure(
+            RootRigidEnclosure::from_transform(authored_to_common)?,
+            origin_tolerance, angular_tolerance, max_spans)
+    }
+
+    /// Preserves an actor-owned common frame enclosure, including uncertainty
+    /// accumulated while transporting the reference through accepted body poses.
+    pub fn integrate_authored_common_enclosure(
+        &self,
+        common: RootRigidEnclosure,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        self.integrate_authored_common_similarity(common,1.,origin_tolerance,angular_tolerance,max_spans)
+    }
+
+    /// Assembles the field in common-frame units under a signed uniform scale.
+    /// Common-frame translation is already in body units and is not rescaled.
+    pub fn integrate_authored_common_similarity(
+        &self, common: RootRigidEnclosure, scale: f64,
+        origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        self.integrate_authored_common_similarity_enclosed(common,
+            RootUniformScaleEnclosure::from_scale(scale)?,origin_tolerance,angular_tolerance,max_spans)
+    }
+    /// Retains scale-product uncertainty from the root's ancestor chain.
+    pub fn integrate_authored_common_similarity_enclosed(
+        &self, common: RootRigidEnclosure, scale: RootUniformScaleEnclosure,
+        origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+    ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
+        let map = |factor| common.compose(&RootRigidEnclosure::from_transform(factor)?
+            .with_translation_scale_enclosed(scale)?);
         let source = match (&self.source_fade, self.source_factor) {
-            (Some(path), Some(factor)) => Some(RootRigidMappedPath::from_enclosed_frame(path,map(factor)?,1.)?),
+            (Some(path), Some(factor)) => Some(RootRigidMappedPath::from_enclosed_similarity(path,map(factor)?,scale)?),
             (None, None) => None,
             _ => return Err(AnimationError::InvalidRetargetBinding),
         };
         let target_frame = map(self.target_factor)?;
-        let target = RootRigidMappedPath::from_enclosed_frame(&self.target_fade,target_frame,1.)?;
+        let target = RootRigidMappedPath::from_enclosed_similarity(&self.target_fade,target_frame,scale)?;
         let completion = if self.tail_wall_seconds == 0. { None } else {
-            let frame = target_frame.compose(&self.target_fade.continuous_end_enclosure(max_spans)?)?;
-            Some((RootRigidMappedPath::from_enclosed_frame(&self.target_tail,frame,1.)?,self.wall_seconds))
+            let frame = target_frame.compose(&self.target_fade.continuous_end_enclosure(max_spans)?.with_translation_scale_enclosed(scale)?)?;
+            Some((RootRigidMappedPath::from_enclosed_similarity(&self.target_tail,frame,scale)?,self.wall_seconds))
         };
         RootRigidCertifiedFadeInterval::integrate_paths_with_completion(source,target,
             self.weights,self.fade_wall_seconds,completion,origin_tolerance,angular_tolerance,max_spans)

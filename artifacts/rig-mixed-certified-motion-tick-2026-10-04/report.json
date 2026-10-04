@@ -1,0 +1,8 @@
+{
+  "integration_tests_passed": 45,
+  "unit_tests_passed": 60,
+  "mixed_translations_rigid_paths_and_certified_fades": true,
+  "scene_physics_input_rollback": true,
+  "retry_publishes_all_motion_kinds": true,
+  "ordinary_app_moving_fades": false
+}

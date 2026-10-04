@@ -1,0 +1,9 @@
+{
+  "editor_tests_passed": 40,
+  "ordinary_owners_prepared_in_same_tick": true,
+  "fade_owners_deferred_until_physical_acceptance": true,
+  "old_motion_buffers_cleared": true,
+  "three_owner_atomic_admission_and_retry": true,
+  "ordinary_motion_uses_new_tick_duration": true,
+  "ordinary_app_moving_fades": false
+}

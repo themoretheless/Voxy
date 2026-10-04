@@ -2171,3 +2171,85 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
     assert_eq!(error,CharacterTickError::Physics(PhysicsError::InvalidMotion));
     assert_eq!(scene.local(player).unwrap(),before);
 }
+
+#[test]
+fn mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds() {
+    use voxy_animation::{RootRigidPath,RootRigidTwist,RootRigidMappedPath,
+        RootRigidCertifiedFadeInterval,RootRigidTransform};
+    use voxy_gameplay::{CharacterCertifiedFadeMotion,CharacterRigidTrajectoryMotion,CharacterTickError};
+    let mut scene = SceneGraph::new(3);
+    let mut owners = Vec::new();
+    for x in [0.,2.,4.] {
+        let owner = scene.spawn(None,at(Vec3::X*x)).unwrap();
+        scene.insert_component(owner,CharacterBody {half_extents:[0.125;3],
+            speed:0.,gravity:0.,jump_speed:0.,..Default::default()}).unwrap();
+        owners.push(owner);
+    }
+    let dt = 0.0625;
+    let ordinary = RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear:glam::DVec3::X*0.25,angular:glam::DVec3::ZERO},dt)],1).unwrap();
+    let fade_source = RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear:glam::DVec3::X*0.5,angular:glam::DVec3::Y*0.25},1.)],1).unwrap();
+    let fade = RootRigidCertifiedFadeInterval::integrate_paths(None,
+        RootRigidMappedPath::new(&fade_source,RootRigidTransform::IDENTITY,1.).unwrap(),
+        [0.,1.],dt,0.01,0.01,4096).unwrap();
+    let rigid = CharacterRigidTrajectoryMotion {owner:owners[1],trajectory:&ordinary,
+        scale:1.,basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO};
+    let certified = CharacterCertifiedFadeMotion {owner:owners[2],fade:&fade,
+        scale:1.,basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,coordinate_axis:1,evaluation_radius:0.};
+    let translations = [(owners[0],Vec3::X*0.125)];
+    let mut physics = CharacterPhysics::new(&scene,3,0);
+    let mut input = player_input().unwrap();
+    input.event(JUMP,1.).unwrap();
+    let before:Vec<_> = owners.iter().map(|owner|scene.local(*owner).unwrap()).collect();
+    for owner in &owners {assert!(physics.accepted_pose(&scene,*owner).unwrap().is_none());}
+    let error = physics.fixed_step_with_mixed_certified_fade_preparation(&mut scene,&mut input,
+        dt,&translations,&[rigid],&[certified],|preview,_| {
+            assert_eq!(preview.characters.len(),3);
+            assert_eq!(preview.motions.len(),2);
+            Err::<(),_>("palette failure")
+        }).unwrap_err();
+    assert_eq!(error,CharacterTickError::Preparation("palette failure"));
+    for (owner,pose) in owners.iter().zip(&before) {
+        assert_eq!(&scene.local(*owner).unwrap(),pose);
+        assert!(physics.state(&scene,*owner).unwrap().is_none());
+    }
+    assert!(input.state("jump").unwrap().pressed);
+    let (receipts,accepted) = physics.fixed_step_with_mixed_certified_fade_preparation(
+        &mut scene,&mut input,dt,&translations,&[rigid],&[certified],|preview,_|
+            Ok::<_,()>(preview.characters.clone())).unwrap();
+    assert_eq!(receipts.len(),2);
+    assert!(receipts.iter().all(|receipt|receipt.complete));
+    assert_eq!(scene.local(owners[0]).unwrap().translation.x,0.125);
+    assert!(scene.local(owners[1]).unwrap().translation.x>2.);
+    assert!(scene.local(owners[2]).unwrap().translation.x>4.);
+    for pose in accepted {
+        let published = physics.accepted_pose(&scene,pose.owner).unwrap().unwrap();
+        assert_eq!(published.world_matrix,pose.world_matrix);
+        assert_eq!(published.physical_center,pose.physical_center);
+        assert_eq!(published.physical_rotation,pose.physical_rotation);
+        assert_eq!(published.velocity,pose.velocity);
+        assert_eq!(published.grounded,pose.grounded);
+    }
+    let published_local = scene.local(owners[2]).unwrap();
+    let mut edited = published_local;
+    edited.translation.x += 0.5;
+    scene.set_local(owners[2],edited).unwrap();
+    assert!(physics.accepted_pose(&scene,owners[2]).unwrap().is_none());
+    scene.set_local(owners[2],published_local).unwrap();
+    assert!(physics.accepted_pose(&scene,owners[2]).unwrap().is_some());
+    edited = published_local;
+    edited.rotation = glam::Quat::from_rotation_y(0.2);
+    scene.set_local(owners[2],edited).unwrap();
+    assert!(physics.accepted_pose(&scene,owners[2]).unwrap().is_none());
+    scene.set_local(owners[2],published_local).unwrap();
+    let descriptor = *scene.component::<CharacterBody>(owners[2]).unwrap().unwrap();
+    scene.component_mut::<CharacterBody>(owners[2]).unwrap().unwrap().gravity=-1.;
+    assert!(physics.accepted_pose(&scene,owners[2]).unwrap().is_none());
+    scene.insert_component(owners[2],descriptor).unwrap();
+    scene.set_active(owners[2],false).unwrap();
+    assert!(physics.accepted_pose(&scene,owners[2]).unwrap().is_none());
+    scene.set_active(owners[2],true).unwrap();
+    assert!(physics.accepted_pose(&scene,owners[2]).unwrap().is_some());
+    assert!(!input.state("jump").unwrap().pressed);
+}
