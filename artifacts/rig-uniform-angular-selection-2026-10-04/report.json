@@ -1,0 +1,25 @@
+{
+  "scope": "Uniform local canonical screw-path midpoint selection and actual normalization over all fractions; shared Scalar/EnclosureFamily expression tree",
+  "validation": {
+    "animation_tests": 188,
+    "gameplay_library_tests": 63,
+    "gameplay_integration_tests": 46,
+    "editor_runtime_tests": 20,
+    "independent_rational_components": 84,
+    "format": "passed",
+    "diff_check": "passed"
+  },
+  "fixture_translation_caps": [
+    2.868539024598631e-15,
+    8.343538726951775e-16,
+    2.2580509767402965e-15
+  ],
+  "fixture_rotation_cap": 2.8289370680379522e-14,
+  "remaining": [
+    "uniform physical actor/body/world evaluation",
+    "runtime phase arithmetic qualification",
+    "composed f32 scene and grounding admission",
+    "ordinary App moving fade production qualification"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

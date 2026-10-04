@@ -1,0 +1,16 @@
+{
+  "scope": "Whole stored-point box at one immutable evaluated pose, explicit local quaternion/map/signed scale/offset/direct-f32 operation sequence",
+  "animation_tests_passed": 186,
+  "independent_exact_axis_checks": 24,
+  "independent_exact_L1_checks": 8,
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "actual composed scene matrix evaluation",
+    "grounding and relocation trajectory semantics",
+    "uniform temporal selection and world/body error",
+    "runtime phase arithmetic",
+    "production moving fade admission"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

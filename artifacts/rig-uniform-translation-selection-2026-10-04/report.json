@@ -1,0 +1,21 @@
+{
+  "scope": "Uniform local sample_evaluated translation selection discrepancy over all fractions of every translation-only canonical screw span; temporal excursion excluded from numerical width",
+  "animation_tests_passed": 187,
+  "independent_exact_component_checks": 42,
+  "observed_nonzero_rounding_discrepancies": 12,
+  "fixture_uniform_axis_caps": [
+    7.032152637975749e-13,
+    4.662936703425663e-15,
+    3.851086116668516e-16
+  ],
+  "format": "passed",
+  "diff_check": "passed",
+  "angular_paths": "None, not yet qualified",
+  "remaining": [
+    "angular increment and prefix enclosure width propagation",
+    "uniform body/world mapping",
+    "runtime phase arithmetic",
+    "scene publication and grounding qualification",
+    "ordinary App moving fade admission"
+  ]
+}

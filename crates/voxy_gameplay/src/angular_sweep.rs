@@ -297,6 +297,21 @@ fn advance_with_enclosures(
     Err(PhysicsError::SweepBudget)
 }
 
+/// Immutable world-corner enclosure for one accepted canonical prefix.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct CanonicalWorldPose {
+    corners: PointBoxes,
+}
+impl CanonicalWorldPose {
+    pub(crate) fn evaluation_error(
+        &self,
+        center: DVec3,
+        edges: [DVec3; 3],
+    ) -> Result<([f64; 3], f64), PhysicsError> {
+        gap::world_pose_error(self.corners, center, edges)
+    }
+}
+
 #[derive(Debug)]
 pub(crate) struct PathHit {
     pub displacement: DVec3,
@@ -309,6 +324,7 @@ pub(crate) struct PathHit {
     pub advancement_iterations: usize,
     pub trajectory_queries: usize,
     pub pose_evaluation_error: Option<([f64; 3], f64)>,
+    pub canonical_world_pose: Option<CanonicalWorldPose>,
 }
 
 fn corners(edges: [DVec3; 3]) -> [DVec3; 8] {
@@ -351,6 +367,7 @@ pub(crate) fn sweep_path(
             advancement_iterations: 0,
             trajectory_queries: path.spans().len(),
             pose_evaluation_error: None,
+            canonical_world_pose: None,
         });
     }
     let vertices =
@@ -466,6 +483,7 @@ pub(crate) fn sweep_path(
                 advancement_iterations: iterations - steps,
                 trajectory_queries: initial_queries - *queries,
                 pose_evaluation_error: None,
+                canonical_world_pose: None,
             });
         }
     }
@@ -480,6 +498,7 @@ pub(crate) fn sweep_path(
         advancement_iterations: iterations - steps,
         trajectory_queries: initial_queries - *queries,
         pose_evaluation_error: None,
+        canonical_world_pose: None,
     })
 }
 
@@ -877,11 +896,10 @@ fn sweep_rigid_approximation_with_axis_errors(
             .similarity_point_box_bounds(point, scale)
             .map_err(|_| PhysicsError::InvalidMotion)?;
     }
-    hit.pose_evaluation_error = Some(gap::world_pose_error(
-        world,
-        center + hit.displacement,
-        proposed_edges,
-    )?);
+    let witness = CanonicalWorldPose { corners: world };
+    hit.pose_evaluation_error =
+        Some(witness.evaluation_error(center + hit.displacement, proposed_edges)?);
+    hit.canonical_world_pose = Some(witness);
     let before = *queries;
     gap::certify_pose(center + hit.displacement, proposed_edges, boxes, queries)?;
     hit.trajectory_queries = hit
@@ -1123,6 +1141,7 @@ fn sweep_rigid_path_with_bounds(
                 advancement_iterations: iterations - steps,
                 trajectory_queries: initial_queries - *queries,
                 pose_evaluation_error: None,
+                canonical_world_pose: None,
             });
         }
     }
@@ -1287,6 +1306,7 @@ fn sweep_rigid_path_with_bounds(
                 advancement_iterations: iterations - steps,
                 trajectory_queries: initial_queries - *queries,
                 pose_evaluation_error: None,
+                canonical_world_pose: None,
             });
         }
     }
@@ -1306,6 +1326,7 @@ fn sweep_rigid_path_with_bounds(
         advancement_iterations: iterations - steps,
         trajectory_queries: initial_queries - *queries,
         pose_evaluation_error: None,
+        canonical_world_pose: None,
     })
 }
 
@@ -2303,5 +2324,164 @@ mod publication_error_tests {
             }
             assert!(axes[0] >= 1.);
         }
+    }
+}
+
+#[cfg(test)]
+mod published_world_error_tests {
+    use super::*;
+    #[test]
+    fn canonical_witness_covers_f32_publication_and_ground_relocation() {
+        let center = DVec3::new(65536.009765625, 2., -3.);
+        let edges = [DVec3::X * 0.125, DVec3::Y * 0.25, DVec3::Z * 0.5];
+        let witness = CanonicalWorldPose {
+            corners: std::array::from_fn(|i| {
+                let point = center + corners(edges)[i];
+                point.to_array().map(|x| [x, x])
+            }),
+        };
+        let (_, proposal) = witness.evaluation_error(center, edges).unwrap();
+        assert!(proposal < 1e-8);
+        let published = center.as_vec3().as_dvec3();
+        let (axes, radius) = witness.evaluation_error(published, edges).unwrap();
+        assert!(axes[0] >= 1. / 512. && axes[0] < 1. / 512. + 1e-8);
+        assert!(radius >= 1. / 512. && radius < 1. / 512. + 1e-8);
+        println!("PUBLISHED_WORLD_ERROR {:?}", (axes, radius));
+        let relocated = published + DVec3::Y * 0.125;
+        let (axes, radius) = witness.evaluation_error(relocated, edges).unwrap();
+        assert!(axes[1] >= 0.125 && radius >= 0.125 + 1. / 512.);
+        assert!(
+            witness
+                .evaluation_error(DVec3::splat(f64::NAN), edges)
+                .is_err()
+        );
+    }
+}
+
+#[cfg(test)]
+mod physical_rotation_error_tests {
+    use super::*;
+    #[test]
+    fn physical_controller_reframe_and_orientation_update_fit_uniform_rotation_caps() {
+        let path = voxy_animation::RootRigidPath::from_twists(
+            &[
+                (
+                    voxy_animation::RootRigidTwist {
+                        linear: DVec3::new(1., 0., 0.5),
+                        angular: DVec3::Y * 0.7,
+                    },
+                    0.5,
+                ),
+                (
+                    voxy_animation::RootRigidTwist {
+                        linear: DVec3::new(0., 0.25, 0.),
+                        angular: DVec3::X * -0.6,
+                    },
+                    0.25,
+                ),
+            ],
+            2,
+        )
+        .unwrap();
+        let cache = path.prepare_screw_enclosures(2).unwrap();
+        let basis = DQuat::from_array([0.5, 0.5, 0.5, 0.5]);
+        let orientation = DQuat::from_array([0.5, -0.5, 0.5, 0.5]);
+        let caps = cache
+            .physical_rotation_selection_error_bounds(basis, orientation)
+            .unwrap();
+        assert!(caps.iter().all(|v| v.is_finite() && *v > 0. && *v < 1e-9));
+        for span in 0..2 {
+            for fraction in [0., 0.1, 0.3, 0.5, 0.875, 1.] {
+                let local = cache
+                    .sample_evaluated_with_errors(span, fraction)
+                    .unwrap()
+                    .pose();
+                let actual = (orientation * reframe_rotation(basis, local.rotation)).normalize();
+                println!(
+                    "PHYSICAL_ROTATION_ERROR {:?}",
+                    (span, fraction, actual.to_array(), caps)
+                );
+            }
+        }
+        assert!(
+            cache
+                .physical_rotation_selection_error_bounds(
+                    DQuat::from_array([f64::NAN; 4]),
+                    orientation
+                )
+                .is_err()
+        );
+    }
+}
+
+#[cfg(test)]
+mod physical_body_error_tests {
+    use super::*;
+    #[test]
+    fn actual_controller_center_and_edges_fit_uniform_whole_body_caps() {
+        let path = voxy_animation::RootRigidPath::from_twists(
+            &[
+                (
+                    voxy_animation::RootRigidTwist {
+                        linear: DVec3::new(1., 0., 0.5),
+                        angular: DVec3::Y * 0.7,
+                    },
+                    0.5,
+                ),
+                (
+                    voxy_animation::RootRigidTwist {
+                        linear: DVec3::new(0., 0.25, 0.),
+                        angular: DVec3::X * -0.6,
+                    },
+                    0.25,
+                ),
+            ],
+            2,
+        )
+        .unwrap();
+        let cache = path.prepare_screw_enclosures(2).unwrap();
+        let center = DVec3::new(65536.009765625, 2., -3.);
+        let edges = [DVec3::X * 0.125, DVec3::Y * 0.25, DVec3::Z * 0.5];
+        let basis = DQuat::from_array([0.5, 0.5, 0.5, 0.5]);
+        let actor = DQuat::from_array([0.5, -0.5, 0.5, 0.5]);
+        let origin = DVec3::new(0.25, -0.125, 0.5);
+        let scale = -2.;
+        let (axes, radius) = cache
+            .physical_body_selection_error_bounds(center, edges, basis, origin, actor, scale)
+            .unwrap();
+        assert!(
+            axes.iter()
+                .all(|v| v.is_finite() && *v > 0. && *v <= radius)
+        );
+        assert!(radius < 1e-7);
+        for span in 0..2 {
+            for fraction in [0., 0.1, 0.5, 0.875, 1.] {
+                let local = cache
+                    .sample_evaluated_with_errors(span, fraction)
+                    .unwrap()
+                    .pose();
+                let rotation = reframe_rotation(basis, local.rotation);
+                let displacement = rotate_vector(
+                    actor,
+                    scale * rotate_vector(basis, local.translation) + origin
+                        - rotate_vector(rotation, origin),
+                );
+                let actual_center = center + displacement;
+                let orientation = (actor * rotation).normalize();
+                let actual_edges = edges.map(|edge| rotate_vector(orientation, edge));
+                for corner in 0..8 {
+                    let actual = actual_center + corners(actual_edges)[corner];
+                    println!(
+                        "PHYSICAL_BODY_ERROR {:?}",
+                        (span, fraction, corner, actual.to_array(), axes, radius)
+                    );
+                }
+            }
+        }
+        assert!(
+            cache
+                .physical_body_selection_error_bounds(center, edges, basis, origin, actor, 0.)
+                .is_err()
+        );
     }
 }

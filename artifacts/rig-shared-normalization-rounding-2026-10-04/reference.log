@@ -1,0 +1,9 @@
+
+running 1 test
+NORMALIZED_COMPOSITION ([0.0, 0.0, 0.0, 1.0], [0.5, -0.5, 0.5, 0.5], [0.5, -0.5, 0.5, 0.5], [1.26565424807269e-14, 1.26565424807269e-14, 1.26565424807269e-14, 1.26565424807269e-14])
+NORMALIZED_COMPOSITION ([0.5, 0.5, -0.5, 0.5], [0.5, -0.5, 0.5, 0.5], [0.5, -0.5, -0.5, 0.5], [1.26565424807269e-14, 1.26565424807269e-14, 1.26565424807269e-14, 1.26565424807269e-14])
+NORMALIZED_COMPOSITION ([-0.5, 0.5, 0.5, -0.5], [0.5, -0.5, 0.5, 0.5], [0.0, 1.0, 0.0, 0.0], [1.26565424807269e-14, 1.26565424807269e-14, 1.26565424807269e-14, 1.26565424807269e-14])
+test root_rigid::enclosure::normalized_composition_rounding_tests::normalized_composition_uses_relational_norm_proof_for_sign_changing_boxes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 183 filtered out; finished in 0.00s
+

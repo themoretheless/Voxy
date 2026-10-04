@@ -1,0 +1,16 @@
+{
+  "scope": "Uniform whole-path stored point box, evaluated local pose, fixed world frame, signed scale, offset and direct f32 conversion",
+  "animation_tests_passed": 189,
+  "independent_rational_axis_checks": 240,
+  "independent_rational_L1_checks": 80,
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "actual physical actor orientation and edge update",
+    "composed scene matrix evaluation",
+    "grounding and relocation",
+    "upstream source-field approximation and runtime phase arithmetic",
+    "ordinary App moving fade production admission"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

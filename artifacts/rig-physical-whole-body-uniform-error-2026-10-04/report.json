@@ -1,0 +1,23 @@
+{
+  "scope": "Uniform actual pre-grounding physical center displacement, basis/pivot/actor rotation, normalized orientation, separate rest-edge rotations and whole affine body",
+  "gameplay_library_tests_passed": 65,
+  "gameplay_integration_tests_passed": 46,
+  "independent_rational_axis_checks": 240,
+  "independent_rational_L1_checks": 80,
+  "fixture_axis_caps": [
+    1.025679108869894e-09,
+    9.605114005615093e-10,
+    9.55463630239304e-10
+  ],
+  "fixture_L1_cap": 2.941654139670708e-09,
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "grounding and relocation qualification",
+    "composed f32 scene matrix",
+    "runtime phase arithmetic",
+    "source-field approximation propagation",
+    "automatic production numeric admission"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

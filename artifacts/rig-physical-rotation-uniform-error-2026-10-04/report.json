@@ -1,0 +1,23 @@
+{
+  "scope": "Uniform actual gameplay cross-form basis reframe, normalization, actor multiplication and normalization over all canonical screw fractions",
+  "gameplay_library_tests_passed": 64,
+  "gameplay_integration_tests_passed": 46,
+  "independent_rational_quaternion_component_checks": 48,
+  "fixture_caps": [
+    2.3741356175631196e-11,
+    2.3741356175631196e-11,
+    2.3741356175631196e-11,
+    2.3741356175631196e-11
+  ],
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "physical center displacement",
+    "affine edge rotation and corner summation",
+    "grounding and relocation",
+    "composed f32 scene matrix",
+    "runtime phase arithmetic",
+    "automatic production numeric request admission"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

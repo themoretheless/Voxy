@@ -1,0 +1,7 @@
+
+running 1 test
+PUBLISHED_WORLD_ERROR ([0.001953125043655746, 1.332267629550188e-15, 1.332267629550188e-15], 0.001953125043658412)
+test angular_sweep::published_world_error_tests::canonical_witness_covers_f32_publication_and_ground_relocation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 62 filtered out; finished in 0.00s
+

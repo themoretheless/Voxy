@@ -305,6 +305,8 @@ pub struct AppliedCharacterTrajectoryMotion {
     pub advancement_iterations: usize,
     pub trajectory_queries: usize,
     proposal_evaluation_error: Option<([f64; 3], f64)>,
+    canonical_world_pose: Option<angular_sweep::CanonicalWorldPose>,
+    published_evaluation_error: Option<([f64; 3], f64)>,
 }
 impl AppliedCharacterTrajectoryMotion {
     /// World-axis and L1 discrepancy for the accepted sweep proposal against
@@ -312,6 +314,13 @@ impl AppliedCharacterTrajectoryMotion {
     /// relocation and f32 scene publication; not a uniform trajectory bound.
     pub fn proposal_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
         self.proposal_evaluation_error
+    }
+
+    /// World-axis and L1 discrepancy of the whole published affine body
+    /// against the accepted canonical prefix. Includes grounding, relocation
+    /// and composed f32 scene matrix; this is not a uniform trajectory bound.
+    pub fn published_pose_evaluation_error_bounds(&self) -> Option<([f64; 3], f64)> {
+        self.published_evaluation_error
     }
 
     /// Identity admission within the lifetime of the borrowed rigid request.
@@ -1118,6 +1127,8 @@ impl CharacterPhysics {
                         advancement_iterations: hit.advancement_iterations,
                         trajectory_queries: hit.trajectory_queries,
                         proposal_evaluation_error: hit.pose_evaluation_error,
+                        canonical_world_pose: hit.canonical_world_pose,
+                        published_evaluation_error: None,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if let Some(path) = requested_rigid.get(&owner) {
@@ -1165,6 +1176,8 @@ impl CharacterPhysics {
                         advancement_iterations: hit.advancement_iterations,
                         trajectory_queries: hit.trajectory_queries,
                         proposal_evaluation_error: hit.pose_evaluation_error,
+                        canonical_world_pose: hit.canonical_world_pose,
+                        published_evaluation_error: None,
                     });
                     Some((hit.rotation, hit.normal))
                 } else if request.angular_displacement != Vec3::ZERO {
@@ -1277,6 +1290,12 @@ impl CharacterPhysics {
                     &shapes,
                     &mut trajectory_queries,
                 )?;
+                if let Some(receipt) = applied_paths.iter_mut().find(|r| r.owner == owner)
+                    && let Some(witness) = receipt.canonical_world_pose
+                {
+                    receipt.published_evaluation_error =
+                        Some(witness.evaluation_error(published.as_dvec3(), displayed_edges)?);
+                }
             }
             edits.push((owner, local));
         }
@@ -1548,4 +1567,92 @@ fn center_of(body: AnchoredAabb) -> Result<Vec3, PhysicsError> {
         return Err(PhysicsError::CoordinateRange);
     }
     Ok(Vec3::from_array(position.map(|value| value as f32)))
+}
+
+#[cfg(test)]
+mod post_snap_relocation_error_tests {
+    use super::*;
+    #[test]
+    fn snap_and_actual_relocation_fit_numeric_bounds_relative_to_selected_fraction() {
+        let path = voxy_animation::RootRigidPath::from_twists(
+            &[(
+                voxy_animation::RootRigidTwist {
+                    linear: glam::DVec3::X * 0.125,
+                    angular: glam::DVec3::Y * 0.7,
+                },
+                0.5,
+            )],
+            1,
+        )
+        .unwrap();
+        let cache = path.prepare_screw_enclosures(1).unwrap();
+        let center = glam::DVec3::new(65536.009765625, 2.003, -3.);
+        let edges = [
+            glam::DVec3::X * 0.125,
+            glam::DVec3::Y * 0.25,
+            glam::DVec3::Z * 0.5,
+        ];
+        let snap = glam::DVec3::new(0., -0.005, 0.);
+        let (axes, radius) = cache
+            .physical_post_snap_selection_error_bounds(
+                center,
+                edges,
+                glam::DQuat::IDENTITY,
+                glam::DVec3::ZERO,
+                glam::DQuat::IDENTITY,
+                1.,
+                snap,
+            )
+            .unwrap();
+        assert!(
+            axes.iter()
+                .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
+        );
+        assert!(radius < 1e-7);
+        for fraction in [0., 0.1, 0.5, 0.875, 1.] {
+            let pose = cache
+                .sample_evaluated_with_errors(0, fraction)
+                .unwrap()
+                .pose();
+            let rotation = convex::reframe_rotation(glam::DQuat::IDENTITY, pose.rotation);
+            let orientation = (glam::DQuat::IDENTITY * rotation).normalize();
+            let actual_edges = edges.map(|edge| convex::rotate_vector(orientation, edge));
+            let before = center
+                + convex::rotate_vector(
+                    glam::DQuat::IDENTITY,
+                    convex::rotate_vector(glam::DQuat::IDENTITY, pose.translation),
+                );
+            for snap_fraction in [0., 0.1, 0.5, 1.] {
+                let after = before + snap * snap_fraction;
+                let descriptor = CharacterBody::default();
+                let mut runtime = fresh(before.as_vec3(), descriptor, actual_edges, Quat::IDENTITY);
+                relocate(&mut runtime, after, descriptor);
+                let reconstructed = precise_center(runtime.state.body);
+                assert_eq!(runtime.state.body.anchor, Origin::default());
+                println!(
+                    "POST_SNAP_RELOCATION {:?}",
+                    (
+                        fraction,
+                        snap_fraction,
+                        reconstructed.to_array(),
+                        axes,
+                        radius
+                    )
+                );
+            }
+        }
+        assert!(
+            cache
+                .physical_post_snap_selection_error_bounds(
+                    center,
+                    edges,
+                    glam::DQuat::IDENTITY,
+                    glam::DVec3::ZERO,
+                    glam::DQuat::IDENTITY,
+                    1.,
+                    glam::DVec3::splat(f64::NAN)
+                )
+                .is_err()
+        );
+    }
 }

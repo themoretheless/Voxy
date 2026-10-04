@@ -1,0 +1,17 @@
+{
+  "scope": "Accepted canonical prefix against post-grounding, relocated composed f32 affine body; whole-body per-pose bound",
+  "validation": {
+    "gameplay_library_passed": 63,
+    "gameplay_integration_passed": 46,
+    "editor_runtime_passed": 20,
+    "exact_rational_axis_and_L1_comparisons": 4,
+    "format": "passed",
+    "diff_check": "passed"
+  },
+  "remaining": [
+    "uniform trajectory numeric envelope",
+    "runtime phase arithmetic qualification",
+    "ordinary App moving-fade admission"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

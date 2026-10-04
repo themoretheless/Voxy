@@ -1,0 +1,16 @@
+{
+  "scope": "Immutable canonical source, evaluated midpoint pose and translation/quaternion component discrepancy; existing physical evaluator delegates to same computation",
+  "animation_tests_passed": 185,
+  "gameplay_library_tests_passed": 63,
+  "gameplay_integration_tests_passed": 46,
+  "editor_runtime_tests_passed": 20,
+  "independent_exact_quaternion_components": 8,
+  "sqrt_bracket_bits": 384,
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "uniform actual body/world mapping and selection bounds",
+    "phase arithmetic qualification",
+    "ordinary App moving fade production admission"
+  ]
+}

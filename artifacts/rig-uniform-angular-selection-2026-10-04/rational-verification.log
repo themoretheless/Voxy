@@ -1,0 +1,1 @@
+PASS: 84 translation/quaternion components enclose independent rational SE(3) exponentials and noncommuting prefix composition; explicit Taylor remainders; no tolerance

@@ -1,0 +1,16 @@
+{
+  "scope": "Shared operation-level rounding in source quaternion composition; relational norm lower bound retained",
+  "animation_tests_passed": 184,
+  "gameplay_library_tests_passed": 63,
+  "gameplay_integration_tests_passed": 46,
+  "editor_runtime_tests_passed": 20,
+  "independent_exact_component_checks": 12,
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "canonical midpoint selection bound",
+    "uniform actual body/world mapping error",
+    "runtime phase arithmetic",
+    "ordinary App moving fade qualification"
+  ]
+}

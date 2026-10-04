@@ -1626,3 +1626,87 @@ The enclosed rigid approximation sweep now compares all eight canonical world co
 The resulting private optional metric is carried through PathHit into AppliedCharacterTrajectoryMotion::proposal_evaluation_error_bounds. It belongs to the accepted canonical sweep proposal, before grounding, relocation and f32 scene publication. Ordinary unenclosed paths report None rather than a manufactured zero bound. The source-fade transaction integration test requires the metric to be present, finite, internally consistent and below 1e-8 in its fixture. An independent exact-rational affine-shift fixture at world coordinate 65536 checks all three axes and the exact 7/8 L1 displacement with no tolerance. All 62 library, 46 integration and 20 editor runtime tests pass.
 
 This is a per-pose numerical discrepancy, not a uniform trajectory bound and not a post-snap/published-scene certificate. It must not replace CharacterCertifiedFadeMotion's whole-interval numeric proof obligation. General uniform body/world numerical admission and ordinary App moving-fade dispatch remain incomplete; ordinary App moving fades remain disabled.
+
+### Accepted published world-pose discrepancy (2026-10-04)
+
+The canonical accepted prefix now retains an immutable world-corner enclosure through the physical receipt. After grounding, relocation and composed f32 scene publication, the controller compares that same witness against the displayed center and affine edges. AppliedCharacterTrajectoryMotion::published_pose_evaluation_error_bounds exposes componentwise and L1 bounds for every material point of the published body. The estimate is available before the preparation callback; unsupported unenclosed paths retain None. Actual collision admission remains independent and mandatory.
+
+The large-coordinate dyadic fixture distinguishes the negligible proposal error from a published X displacement of exactly 1/512, then adds a 1/8 ground relocation. This is a per-accepted-prefix discrepancy, not a uniform trajectory margin. It does not close the automatic numeric-envelope obligation or enable ordinary App moving fades.
+
+Validation: all 63 gameplay library, 46 gameplay integration and 20 editor runtime tests pass. The independent exact-rational verifier checks three axis caps and the L1 cap against the exact 1/512 displacement without tolerance. Formatting and diff checks pass. Evidence is retained in artifacts/rig-published-world-pose-error-2026-10-04/.
+
+### Uniform stored quaternion normalization rounding (2026-10-04)
+
+RootRigidEnclosure::stored_quaternion_normalization_error_bounds now bounds glam 0.33.7 DQuat::normalize over an entire supplied stored-input box. The inspected implementation evaluates four squared products, three left-associated additions, sqrt, reciprocal and component multiplication. Directed nominal intervals plus separate operation-rounding caps propagate the error through positive norm and reciprocal sensitivity bounds. This estimates rounding relative to exact normalization of each stored quaternion, without charging the motion variation within the input box as a numeric error.
+
+Singular/ambiguous-zero boxes, nonfinite values and unprovable finite operation ranges reject. The regression uses a nontrivial input box with component sign changes and a positive fourth-component norm floor; four stored quaternions, including a 1e-20 component, are checked independently using exact rational 384-bit square-root brackets. This primitive does not yet bound canonical-enclosure midpoint selection, actor composition, runtime phase arithmetic or the whole physical trajectory. Ordinary App moving fades remain disabled.
+
+Validation: 183 animation library tests pass; all 16 independently checked normalized components lie within their caps against rational square-root brackets, without tolerance. Formatting and diff checks pass. Evidence: artifacts/rig-stored-quaternion-normalization-2026-10-04/.
+
+### Shared normalization rounding in source composition (2026-10-04)
+
+quaternion_normalized_composition_uniform_error now calls the same operation-level normalization rounding helper as stored_quaternion_normalization_error_bounds. Its raw product discrepancy supplies a private relational squared-norm proof via [1-discrepancy, 1+discrepancy]. That proof is retained even when all component boxes contain zero. The helper accounts for the actual dot/sqrt/reciprocal/multiply sequence; a separate normalization sensitivity term carries the source-to-raw-product discrepancy.
+
+This replaces the duplicated coarse normalization rounding formula in source composition. The regression checks sign-changing unit-source products, monotonic growth for perturbed input bounds, and rejection above the established raw-discrepancy limit. Independent exact rational Hamilton products qualify 12 stored result components without tolerance. This is composition error propagation, not qualification of canonical midpoint selection, world/body mapping or a complete physical-trajectory numeric envelope. Ordinary App moving fades remain disabled.
+
+Validation: 184 animation, 63 gameplay library, 46 gameplay integration and 20 editor runtime tests pass. Formatting and diff checks pass. Evidence: artifacts/rig-shared-normalization-rounding-2026-10-04/.
+
+### Frozen canonical midpoint evaluation with component errors (2026-10-04)
+
+RootRigidEvaluatedPose retains the selected stored transform, canonical source enclosure, and translation/quaternion component discrepancies in private immutable fields. RootRigidEnclosure::evaluate_midpoint computes the midpoint and actual quaternion normalization once, then directed differences compare the exact stored result against every component in the source enclosure. RootScrewEnclosurePath::sample_evaluated_with_errors selects through the borrowed canonical cache; the existing physical sample_evaluated interface delegates to that same implementation.
+
+This preserves the physical proposal while making source selection/normalization discrepancy available for downstream body-frame error propagation. The poisoned cached-prefix regression checks identical selected transforms, finite small component caps and the existing point discrepancy across five fractions. Two independent normalized-source fixtures check selected quaternion components against exact-rational square-root brackets. The bounds belong to their sampled canonical enclosures; they are not a whole-trajectory numeric certificate. General world/body propagation and phase arithmetic remain unfinished, and ordinary App moving fades remain disabled.
+
+Validation: 185 animation, 63 gameplay library, 46 gameplay integration and 20 editor runtime tests pass. Independent rational checks cover eight normalized-source quaternion components without tolerance. Formatting and diff checks pass. Evidence: artifacts/rig-midpoint-component-error-2026-10-04/.
+
+### Evaluated-pose point-box and fixed world publication error (2026-10-04)
+
+RootRigidEvaluatedPose::point_evaluation_error_bounds propagates the frozen source-to-stored pose discrepancy through the actual glam f64 quaternion point rotation and offset for every stored point in a supplied coordinate box. mapped_f32_point_error_bounds carries that local error through a fixed source/actual world frame, signed scale, offset and direct f32 conversion. Both use the existing operation-level RoundedRange propagation; invalid point boxes, nonfinite scale and unprovable finite evaluation reject.
+
+The exact fixture combines a Y half-turn, a cyclic-axis world frame, signed scale -2, a body box with nonzero extents and world coordinate 65536+5/512. All eight stored corners are compared independently against rational dyadic world coordinates, checking each axis and L1 cap without tolerance. Bounds cover every point in the box by interval algebra. The APIs qualify the stated local/map/direct-cast operation sequence at one frozen canonical pose; composed scene matrices, grounding and trajectory-time uncertainty still require their own qualification. Ordinary App moving fades remain disabled.
+
+Validation: 186 animation library tests pass. Independent exact-rational checks pass for 24 axis and eight L1 discrepancies. Formatting and diff checks pass. Evidence: artifacts/rig-evaluated-point-box-world-error-2026-10-04/.
+
+### Uniform translation-path midpoint selection error (2026-10-04)
+
+RootScrewEnclosurePath::translation_selection_error_bounds supplies local translation component caps over every fraction of every translation-only screw span, including cached endpoint selections. Nonzero angular rates return None. The private EnclosureFamily arithmetic stores two different quantities: an endpoint domain across the time family and an upper bound on each member enclosure's diameter. Variable exact fractions have domain [0,1] and width zero. Directed addition/product width propagation includes four adjacent spacings for outward endpoint rounding; midpoint selection adds four spacings for halving/addition. Fixed prepared prefix widths are retained.
+
+Consequently the cap does not charge the physical path excursion as numerical error. The two-span regression traverses hundreds of units and reverses direction, while its uniform local selection caps remain below 1e-9. Per-pose component caps at endpoints and interior fractions lie within the whole-path caps; exact rational references qualify the computed coordinates, including stored fractions such as 0.1 and 0.3 that expose actual coordinate rounding. This is the translation-only stage of temporal selection qualification, not a substitute for angular trajectories or world/body/clock/scene publication error. Ordinary App moving fades remain disabled.
+
+Validation: 187 animation tests pass. Independent exact-rational verification passes 42 component comparisons, including 12 nonzero observed coordinate-rounding discrepancies. The fixture uniform caps are [7.032152637975749e-13, 4.662936703425663e-15, 3.851086116668516e-16]. Formatting and diff checks pass. Evidence: artifacts/rig-uniform-translation-selection-2026-10-04/.
+
+### Uniform angular screw-path selection error (2026-10-04)
+
+RootScrewEnclosurePath::selection_error_bounds now propagates pointwise enclosure diameters over every fraction of each prepared angular screw span. EnclosureArithmetic provides a shared expression tree for Scalar and EnclosureFamily: cross products, point rotation, Hamilton composition and the SE(3) increment's alternating series use exactly the same operation order. Family division, square, signed subtraction and explicit symmetric Taylor remainder bounds retain endpoint domains independently of per-member width. Fixed canonical prefix enclosures are included, and midpoint discrepancy is carried through the shared real-unit normalization sensitivity/rounding calculation.
+
+The new regression combines moving Y and X screw spans with noncommuting prefix composition, endpoints and interior stored fractions. Whole-path local translation/quaternion caps enclose each sampled component discrepancy and remain below 1e-9 in the fixture. The independent verifier evaluates SE(3) increments and Hamilton products using exact rational Taylor bounds, checking 84 components without tolerance. Existing scalar operation behavior is preserved by the shared implementation, and the prior translation-only API remains available. This closes local temporal midpoint/normalization selection for the supported prepared screw domain; uniform actual physical body/world mapping, runtime phase arithmetic and scene publication still require qualification. Ordinary App moving fades remain disabled.
+
+Validation: 188 animation, 63 gameplay library, 46 gameplay integration and 20 editor runtime tests pass. Independent rational checks cover 84 components with explicit Taylor remainder intervals and no tolerance. Formatting and diff checks pass. Evidence: artifacts/rig-uniform-angular-selection-2026-10-04/.
+
+### Uniform screw-path point-box and fixed world publication error (2026-10-04)
+
+RootScrewEnclosurePath::point_selection_error_bounds carries its uniform translation/quaternion selection caps through the inspected runtime quaternion point polynomial and translation. It evaluates operation-error domains over every prepared prefix and whole-span pose enclosure, while temporal motion remains nominal interval variation rather than an error term. The result covers every stored point in the supplied box over every fraction of the same immutable canonical screw path.
+
+mapped_f32_point_selection_error_bounds propagates that local error through a fixed source/actual world frame, signed scale, offset and direct f32 conversion. Invalid point boxes, nonfinite actual scale and unprovable finite domains reject. This qualifies the explicit local point/map/direct-cast sequence, not the different physical controller orientation/edge update, composed scene matrix, grounding, upstream source-field approximation or runtime phase arithmetic.
+
+The regression uses noncommuting moving Y/X screw spans, a body box, cyclic-axis frame, scale -2 and world coordinate 65536+5/512. Uniform local error stays below 1e-9 and covers the independently obtained per-pose point caps. The rational verifier evaluates the real screw exponentials, transforms all eight corners at five fractions of each span, and checks 240 axis plus 80 L1 errors without tolerance. All 189 animation tests, formatting and diff checks pass. Evidence: artifacts/rig-uniform-world-point-error-2026-10-04/. Ordinary App moving fades remain disabled pending actual physical/controller/publication qualification.
+
+### Uniform actual physical orientation error (2026-10-04)
+
+RootScrewEnclosurePath::physical_rotation_selection_error_bounds follows the controller's actual rotation arithmetic. It rotates the selected quaternion's imaginary vector through the fixed stored basis using the cross form, retains the scalar component, normalizes, then multiplies by the fixed actor orientation and normalizes again. Source bases/orientations are the exact real normalizations of those same stored inputs. Directed operation-error propagation, the existing uniform canonical selection cap, raw Hamilton composition error and the shared normalization sensitivity/rounding bound qualify the whole prepared path.
+
+The controller's structural coordinate-row replacement is exact for the real normalization of the same stored basis; it retains only input-vector error, already covered by the conservative cross-form bound. The regression calls the actual gameplay reframe_rotation function, not a substitute evaluator, over noncommuting moving Y/X screw spans and a cyclic-axis basis. The independent rational verifier computes source quaternion exponentials, basis conjugation and actor multiplication, checking 48 actual result components without tolerance.
+
+This qualifies the rotation chain itself. Center displacement, separately rotated affine edges, grounding/relocation, composed f32 scene matrices and runtime phase arithmetic remain separate obligations. The bound is not yet an automatic production request margin, and ordinary App moving fades remain disabled. Evidence: artifacts/rig-physical-rotation-uniform-error-2026-10-04/.
+
+Validation: 64 gameplay library and 46 gameplay integration tests pass. Independent rational checks cover 48 actual controller quaternion components without tolerance. Formatting and diff checks pass.
+
+### Uniform actual pre-grounding physical body error (2026-10-04)
+
+RootScrewEnclosurePath::physical_body_selection_error_bounds follows the stored controller body arithmetic over every canonical screw fraction: basis/pivot displacement, actor rotation, center addition, normalized body-orientation update, independently rotated rest edges and affine corner sums. The bound covers every material point by affine corner interpolation. Source body/frame inputs are the exact real normalizations of the same stored actor/basis inputs; signed translation scale and the stored pivot are retained.
+
+The shared rotation helper now returns both reframe and body-orientation errors. Coordinate-row overrides require an additional geometric normalization cap: the real normalization of a stored quaternion within raw L1 discrepancy d of a canonical unit source differs by at most 2d/(1-d). This component inflation covers both the ordinary cross polynomial and its exact structural-row branch, with no near-zero geometry tolerance. Directed operation errors propagate through center and edge evaluation. Invalid frames, nonfinite inputs, zero scale or unproved positive normalization domains reject.
+
+The regression calls actual gameplay reframe_rotation and rotate_vector across moving noncommuting Y/X screw spans, a nonzero pivot, signed scale -2, unequal body extents and world coordinate 65536+5/512. Independent rational SE(3) exponentials and quaternion products transform all eight corners at five fractions per span, checking 240 axis and 80 L1 discrepancies without tolerance. This qualifies the body before grounding and relocation. Input clocks, source-field approximation, grounding and composed f32 scene publication remain separate obligations; ordinary App moving fades remain disabled. Evidence: artifacts/rig-physical-whole-body-uniform-error-2026-10-04/.
+
+Validation: 65 gameplay library and 46 gameplay integration tests pass. Independent rational checks pass for 240 axis and 80 L1 actual corner discrepancies. Formatting and diff checks pass.

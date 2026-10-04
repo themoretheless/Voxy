@@ -1,0 +1,15 @@
+{
+  "scope": "Uniform rounding of stored glam 0.33.7 DQuat::normalize on proved nonzero input boxes; exact stored-input normalization reference",
+  "animation_tests_passed": 183,
+  "independent_rational_component_checks": 16,
+  "sqrt_bracket_bits": 384,
+  "format": "passed",
+  "diff_check": "passed",
+  "remaining": [
+    "canonical enclosure midpoint selection discrepancy",
+    "actor/body mapping and quaternion composition",
+    "runtime phase arithmetic",
+    "uniform whole-trajectory admission"
+  ],
+  "ordinary_app_moving_fades_enabled": false
+}

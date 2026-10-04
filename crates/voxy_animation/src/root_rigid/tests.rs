@@ -3369,7 +3369,16 @@ fn canonical_evaluated_pose_ignores_cached_prefix_and_bounds_actual_point_error(
     path.spans[1].screw.as_mut().unwrap().1.translation = DVec3::splat(-1000.);
     let cache = path.prepare_screw_enclosures(2).unwrap();
     for fraction in [0., 0.25, 0.5, 0.75, 1.] {
+        let frozen = cache.sample_evaluated_with_errors(1, fraction).unwrap();
         let (pose, source) = cache.sample_evaluated(1, fraction).unwrap();
+        assert_eq!(pose, frozen.pose());
+        let (translation_error, rotation_error) = frozen.component_error_bounds();
+        assert!(
+            translation_error
+                .iter()
+                .chain(rotation_error.iter())
+                .all(|v| v.is_finite() && *v >= 0. && *v < 1e-10)
+        );
         assert!(pose.translation.length() < 1.);
         let point = DVec3::new(0.5, -0.25, 0.125);
         let actual = pose.transform_point(point).unwrap();
@@ -5377,4 +5386,289 @@ fn stored_similarity_rounding_covers_lost_offsets_and_quaternion_polynomial() {
             )
         );
     }
+}
+
+#[test]
+fn midpoint_component_errors_cover_canonical_unit_source_after_actual_normalization() {
+    for q in [
+        DQuat::from_array([0., 0.6, 0., 0.8]),
+        DQuat::from_array([0.1, 0.2, -0.3, 0.9]).normalize(),
+    ] {
+        let input = RootRigidTransform {
+            translation: DVec3::new(65536.009765625, -0.125, 0.5),
+            rotation: q,
+        };
+        let source = RootRigidEnclosure::from_transform(input).unwrap();
+        let frozen = source.evaluate_midpoint().unwrap();
+        let (translation, rotation) = frozen.component_error_bounds();
+        assert!(
+            translation
+                .iter()
+                .chain(rotation.iter())
+                .all(|v| v.is_finite() && *v >= 0. && *v < 1e-8)
+        );
+        println!(
+            "MIDPOINT_COMPONENT_ERROR {:?}",
+            (q.to_array(), frozen.pose().rotation.to_array(), rotation)
+        );
+        assert_eq!(frozen.pose().translation, input.translation);
+    }
+    assert_eq!(
+        RootRigidEnclosure::IDENTITY
+            .evaluate_midpoint()
+            .unwrap()
+            .pose(),
+        RootRigidTransform::IDENTITY
+    );
+}
+
+#[test]
+fn evaluated_pose_point_box_errors_cover_signed_world_mapping_and_f32_publication() {
+    let source = RootRigidEnclosure::from_transform(RootRigidTransform {
+        translation: DVec3::new(0.125, -0.25, 0.5),
+        rotation: DQuat::from_array([0., 1., 0., 0.]),
+    })
+    .unwrap();
+    let frozen = source.evaluate_midpoint().unwrap();
+    let points = [[-0.125, 0.125], [-0.25, 0.25], [-0.5, 0.5]];
+    let (local_axes, local_radius) = frozen.point_evaluation_error_bounds(points).unwrap();
+    assert!(
+        local_axes
+            .iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= local_radius)
+    );
+    assert!(local_radius < 1e-10);
+    let frame = RootRigidTransform {
+        translation: DVec3::new(65536.009765625, 2., -3.),
+        rotation: DQuat::from_array([0.5, 0.5, 0.5, 0.5]),
+    };
+    let source_frame = RootRigidEnclosure::from_transform(frame).unwrap();
+    let scale = RootUniformScaleEnclosure::from_scale(-2.).unwrap();
+    let (axes, radius) = frozen
+        .mapped_f32_point_error_bounds(points, &source_frame, scale, frame, -2.)
+        .unwrap();
+    assert!(
+        axes.iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
+    );
+    assert!(radius >= 1. / 512. && radius < 0.1);
+    for i in 0..8 {
+        let point = DVec3::from_array(std::array::from_fn(|axis| points[axis][(i >> axis) & 1]));
+        let local = frozen.pose().transform_point(point).unwrap();
+        let actual = (-2. * (frame.rotation * local) + frame.translation)
+            .as_vec3()
+            .as_dvec3();
+        println!(
+            "MAPPED_EVALUATED_POINT {:?}",
+            (point.to_array(), actual.to_array(), axes, radius)
+        );
+    }
+    let mut invalid = points;
+    invalid[0] = [1., 0.];
+    assert!(frozen.point_evaluation_error_bounds(invalid).is_err());
+    assert!(
+        frozen
+            .mapped_f32_point_error_bounds(points, &source_frame, scale, frame, f64::NAN)
+            .is_err()
+    );
+}
+
+#[test]
+fn translation_selection_error_is_uniform_without_charging_path_excursion() {
+    let path = RootRigidPath::from_twists(
+        &[
+            (
+                RootRigidTwist {
+                    linear: DVec3::new(1000., -2., 0.125),
+                    angular: DVec3::ZERO,
+                },
+                0.25,
+            ),
+            (
+                RootRigidTwist {
+                    linear: DVec3::new(-500., 3., -0.25),
+                    angular: DVec3::ZERO,
+                },
+                0.5,
+            ),
+        ],
+        2,
+    )
+    .unwrap();
+    let cache = path.prepare_screw_enclosures(2).unwrap();
+    let caps = cache.translation_selection_error_bounds().unwrap().unwrap();
+    assert!(caps.iter().all(|v| v.is_finite() && *v >= 0. && *v < 1e-9));
+    for span in 0..2 {
+        for fraction in [0., 0.1, 0.125, 0.3, 0.5, 0.875, 1.] {
+            let frozen = cache.sample_evaluated_with_errors(span, fraction).unwrap();
+            let (point, _) = frozen.component_error_bounds();
+            assert!(point.iter().zip(caps).all(|(point, cap)| *point <= cap));
+            println!(
+                "UNIFORM_TRANSLATION_SELECTION {:?}",
+                (span, fraction, frozen.pose().translation.to_array(), caps)
+            );
+        }
+    }
+    let angular = RootRigidPath::from_twists(
+        &[(
+            RootRigidTwist {
+                linear: DVec3::ZERO,
+                angular: DVec3::Y,
+            },
+            0.5,
+        )],
+        1,
+    )
+    .unwrap();
+    assert!(
+        angular
+            .prepare_screw_enclosures(1)
+            .unwrap()
+            .translation_selection_error_bounds()
+            .unwrap()
+            .is_none()
+    );
+}
+
+#[test]
+fn angular_selection_error_is_uniform_for_noncommuting_moving_screw_spans() {
+    let twists = [
+        (
+            RootRigidTwist {
+                linear: DVec3::new(1., 0., 0.5),
+                angular: DVec3::Y * 0.7,
+            },
+            0.5,
+        ),
+        (
+            RootRigidTwist {
+                linear: DVec3::new(0., 0.25, 0.),
+                angular: DVec3::X * -0.6,
+            },
+            0.25,
+        ),
+    ];
+    let path = RootRigidPath::from_twists(&twists, 2).unwrap();
+    let cache = path.prepare_screw_enclosures(2).unwrap();
+    let (translation, rotation) = cache.selection_error_bounds().unwrap();
+    assert!(
+        translation
+            .iter()
+            .chain(rotation.iter())
+            .all(|v| v.is_finite() && *v >= 0. && *v < 1e-9)
+    );
+    for span in 0..2 {
+        for fraction in [0., 0.1, 0.3, 0.5, 0.875, 1.] {
+            let frozen = cache.sample_evaluated_with_errors(span, fraction).unwrap();
+            let (t, q) = frozen.component_error_bounds();
+            assert!(t.iter().zip(translation).all(|(point, cap)| *point <= cap));
+            assert!(q.iter().zip(rotation).all(|(point, cap)| *point <= cap));
+            println!(
+                "ANGULAR_SELECTION {:?}",
+                (
+                    span,
+                    fraction,
+                    frozen.pose().translation.to_array(),
+                    frozen.pose().rotation.to_array(),
+                    translation,
+                    rotation
+                )
+            );
+        }
+    }
+    let pure = RootRigidPath::from_twists(
+        &[(
+            RootRigidTwist {
+                linear: DVec3::X * 1000.,
+                angular: DVec3::ZERO,
+            },
+            0.25,
+        )],
+        1,
+    )
+    .unwrap();
+    let pure = pure.prepare_screw_enclosures(1).unwrap();
+    let (t, q) = pure.selection_error_bounds().unwrap();
+    assert!(t.iter().chain(q.iter()).all(|v| v.is_finite() && *v < 1e-9));
+}
+
+#[test]
+fn uniform_screw_point_box_error_covers_all_times_signed_world_mapping_and_publication() {
+    let path = RootRigidPath::from_twists(
+        &[
+            (
+                RootRigidTwist {
+                    linear: DVec3::new(1., 0., 0.5),
+                    angular: DVec3::Y * 0.7,
+                },
+                0.5,
+            ),
+            (
+                RootRigidTwist {
+                    linear: DVec3::new(0., 0.25, 0.),
+                    angular: DVec3::X * -0.6,
+                },
+                0.25,
+            ),
+        ],
+        2,
+    )
+    .unwrap();
+    let cache = path.prepare_screw_enclosures(2).unwrap();
+    let points = [[-0.125, 0.125], [-0.25, 0.25], [-0.5, 0.5]];
+    let (local_axes, local_radius) = cache.point_selection_error_bounds(points).unwrap();
+    assert!(
+        local_axes
+            .iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= local_radius)
+    );
+    assert!(local_radius < 1e-9);
+    let frame = RootRigidTransform {
+        translation: DVec3::new(65536.009765625, 2., -3.),
+        rotation: DQuat::from_array([0.5, 0.5, 0.5, 0.5]),
+    };
+    let source_frame = RootRigidEnclosure::from_transform(frame).unwrap();
+    let scale = RootUniformScaleEnclosure::from_scale(-2.).unwrap();
+    let (axes, radius) = cache
+        .mapped_f32_point_selection_error_bounds(points, &source_frame, scale, frame, -2.)
+        .unwrap();
+    assert!(
+        axes.iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
+    );
+    assert!(radius >= 1. / 512. && radius < 0.1);
+    for span in 0..2 {
+        for fraction in [0., 0.1, 0.5, 0.875, 1.] {
+            let frozen = cache.sample_evaluated_with_errors(span, fraction).unwrap();
+            let (at_pose, _) = frozen.point_evaluation_error_bounds(points).unwrap();
+            assert!(
+                at_pose
+                    .iter()
+                    .zip(local_axes)
+                    .all(|(point, cap)| *point <= cap)
+            );
+            for i in 0..8 {
+                let point =
+                    DVec3::from_array(std::array::from_fn(|axis| points[axis][(i >> axis) & 1]));
+                let local = frozen.pose().transform_point(point).unwrap();
+                let actual = (-2. * (frame.rotation * local) + frame.translation)
+                    .as_vec3()
+                    .as_dvec3();
+                println!(
+                    "UNIFORM_WORLD_POINT {:?}",
+                    (
+                        span,
+                        fraction,
+                        point.to_array(),
+                        actual.to_array(),
+                        axes,
+                        radius
+                    )
+                );
+            }
+        }
+    }
+    let mut invalid = points;
+    invalid[0] = [1., 0.];
+    assert!(cache.point_selection_error_bounds(invalid).is_err());
 }
