@@ -200,7 +200,7 @@ impl PreparedModelFadeMotion {
         coordinate_axis: usize, evaluation_radius: f64,
     ) -> voxy_gameplay::CharacterCertifiedFadeMotion<'_> {
         voxy_gameplay::CharacterCertifiedFadeMotion {owner:self.owner,fade:&self.motion,
-            basis,origin,scale,coordinate_axis,evaluation_radius}
+            basis,origin,scale,coordinate_axis,evaluation_radius,evaluation_axes:None}
     }
 }
 impl ModelPlayback {

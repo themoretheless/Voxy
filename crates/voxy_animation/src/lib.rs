@@ -1,6 +1,8 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
 mod root_curve;
+mod root_clock;
+pub use root_clock::{RootCyclePhase,enclose_root_cycle_phase};
 mod ik;
 mod retarget;
 pub use retarget::{RetargetBinding, RetargetJoint};

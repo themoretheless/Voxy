@@ -1,0 +1,10 @@
+{
+  "gameplay_integration_tests_passed": 45,
+  "editor_tests_passed": 27,
+  "public_transaction_world_axis_errors": true,
+  "nonzero_tangent_error_floor_motion": true,
+  "preparation_failure_rollback": true,
+  "invalid_axis_errors_rejected_before_publication": true,
+  "imported_numeric_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 157,
+  "pointwise_source_to_actual_cubic_evaluation_error": true,
+  "control_compilation_parameter_and_normalization_included": true,
+  "exact_zero_components_preserved": true,
+  "uniform_tick_runtime_error_proof": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 158,
+  "uniform_source_to_actual_cubic_evaluation_error": true,
+  "de_casteljau_parameter_and_scaled_normalization_rounding_included": true,
+  "high_precision_component_checks_passed": 132,
+  "extra_reference_tolerance": 0,
+  "relative_frame_and_loop_error_proof": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

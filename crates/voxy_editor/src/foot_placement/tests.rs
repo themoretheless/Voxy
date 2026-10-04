@@ -126,7 +126,7 @@ fn fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clo
                 1. / 60.,
                 &[(owner, Vec3::X * 0.03)],
                 &[],
-                |preview, budget| candidate.clone().correct_feet(preview, budget),
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
             )
             .unwrap();
         runtime = corrected;
@@ -178,7 +178,7 @@ fn fixed_play_candidates_keep_sole_on_anchor_and_failures_preserve_frame_and_clo
                 1. / 60.,
                 &[],
                 &[],
-                |preview, budget| candidate.clone().correct_feet(preview, budget)
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget)
             )
             .is_err()
     );
@@ -688,7 +688,7 @@ fn skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_con
                 0.1,
                 &[(owner, Vec3::X * 0.03)],
                 &[],
-                |preview, budget| next.clone().correct_feet(preview, budget),
+                |preview, budget| next.clone().prepare_accepted_pose(preview, budget),
             )
             .unwrap()
             .1;
@@ -724,7 +724,7 @@ fn skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_con
                 0.1,
                 &[(owner, Vec3::X * 0.03)],
                 &[],
-                |preview, budget| next.clone().correct_feet(preview, budget)
+                |preview, budget| next.clone().prepare_accepted_pose(preview, budget)
             )
             .is_err()
     );
@@ -740,7 +740,7 @@ fn skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_con
             0.1,
             &[(owner, Vec3::X * 0.03)],
             &[],
-            |preview, budget| next.clone().correct_feet(preview, budget),
+            |preview, budget| next.clone().prepare_accepted_pose(preview, budget),
         )
         .unwrap()
         .1;
@@ -936,7 +936,7 @@ fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_ato
         scene: &mut SceneGraph, input: &mut voxy_input::InputMap| {
         let candidate = runtime.prepare(scene, &models, 1./60.).unwrap();
         physics.fixed_step_with_preparation(scene, input, 1./60., &[(owner, Vec3::X*0.02)], &[],
-            |preview, budget| candidate.clone().correct_feet(preview, budget)).map(|(_, frame)| frame)
+            |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget)).map(|(_, frame)| frame)
     };
     runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
     scene.insert_component(owner, crate::ModelAnimation { clip: Some(1), transition_seconds: 0.05, ..Default::default() }).unwrap();
@@ -998,7 +998,7 @@ fn physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing() {
             }
             let candidate = runtime.prepare(&scene,&models,0.1).unwrap();
             runtime = physics.fixed_step_with_preparation(&mut scene,&mut input,0.1,
-                &[(owner,Vec3::X*0.02)],&[],|preview,budget| candidate.clone().correct_feet(preview,budget)).unwrap().1;
+                &[(owner,Vec3::X*0.02)],&[],|preview,budget| candidate.clone().prepare_accepted_pose(preview,budget)).unwrap().1;
         }
         let final_sole = sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap());
         // The target-only zero window must retain the original anchor. Coincident
@@ -1040,7 +1040,7 @@ fn interrupted_variable_contact_fade_retains_anchor_and_accepted_snapshot_on_ret
         scene: &mut SceneGraph,input: &mut voxy_input::InputMap| {
         let candidate = runtime.prepare(scene,&models,0.1).unwrap();
         physics.fixed_step_with_preparation(scene,input,0.1,&[(owner,Vec3::X*0.02)],&[],
-            |preview,budget|candidate.clone().correct_feet(preview,budget)).map(|(_,candidate)|candidate)
+            |preview,budget|candidate.clone().prepare_accepted_pose(preview,budget)).map(|(_,candidate)|candidate)
     };
     runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
     scene.insert_component(owner,crate::ModelAnimation {clip:Some(1),transition_seconds:0.5,..Default::default()}).unwrap();
@@ -1119,7 +1119,7 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
         scene: &mut SceneGraph, input: &mut voxy_input::InputMap, models: &BTreeMap<AssetId,Arc<ModelAsset>>| {
         let candidate = runtime.prepare(scene, models, 1./60.).unwrap();
         physics.fixed_step_with_preparation(scene, input, 1./60., &[(owner, Vec3::X*0.02)], &[],
-            |preview, budget| candidate.clone().correct_feet(preview, budget)).map(|(_, frame)| frame)
+            |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget)).map(|(_, frame)| frame)
     };
     runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
     scene.insert_component(owner, crate::ModelAnimation { clip: Some(1), transition_seconds: 0.05, ..Default::default() }).unwrap();
@@ -1246,7 +1246,7 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
     let mut input=player_input().unwrap();
     let tick=|runtime:&crate::animation_runtime::AnimationRuntime,physics:&mut CharacterPhysics,scene:&mut SceneGraph,input:&mut voxy_input::InputMap| {
         let candidate=runtime.prepare(scene,&models,1./60.).unwrap();
-        physics.fixed_step_with_preparation(scene,input,1./60.,candidate.motions(),&[],|preview,budget|candidate.clone().correct_feet(preview,budget)).map(|(_,frame)|frame)
+        physics.fixed_step_with_preparation(scene,input,1./60.,candidate.motions(),&[],|preview,budget|candidate.clone().prepare_accepted_pose(preview,budget)).map(|(_,frame)|frame)
     };
     runtime=tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
     let anchor=sole(&target,&runtime.frame(owner,&target).unwrap(),scene.world_matrix(owner).unwrap());

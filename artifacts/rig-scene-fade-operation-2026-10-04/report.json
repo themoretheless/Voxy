@@ -1,0 +1,8 @@
+{
+  "runtime_tests_passed": 18,
+  "scene_selection_to_physics_transaction": true,
+  "two_owner_receipts_and_frames_published": true,
+  "missing_evaluation_frame_rejected_before_physics": true,
+  "ordinary_app_moving_fades": false,
+  "production_evaluation_error_policy": false
+}

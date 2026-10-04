@@ -489,6 +489,41 @@ fn rigid_vertex_enclosures(edges:[DVec3;3],basis:DQuat,origin:DVec3,scale:f64)
     Ok(vertices)
 }
 
+fn rigid_world_frame(center: DVec3, orientation: DQuat, basis: DQuat, origin: DVec3)
+    -> Result<voxy_animation::RootRigidEnclosure,PhysicsError> {
+    let actor = voxy_animation::RootRigidEnclosure::from_transform(voxy_animation::RootRigidTransform {
+        translation:center,rotation:orientation,
+    }).map_err(|_|PhysicsError::InvalidMotion)?;
+    let source = voxy_animation::RootRigidEnclosure::from_transform(voxy_animation::RootRigidTransform {
+        translation:origin,rotation:basis,
+    }).map_err(|_|PhysicsError::InvalidMotion)?;
+    actor.compose(&source).map_err(|_|PhysicsError::InvalidMotion)
+}
+
+/// Rounding-only bounds for all body vertices throughout the canonical path.
+/// Earlier path evaluation/compiler errors must be accounted for separately.
+#[cfg_attr(not(test),allow(dead_code))]
+fn rigid_path_publication_errors(
+    center: DVec3, edges: [DVec3;3], orientation: DQuat,
+    cache: &voxy_animation::RootScrewEnclosurePath<'_>,
+    basis: DQuat, origin: DVec3, scale: f64,
+) -> Result<([f64;3],f64),PhysicsError> {
+    let frame = rigid_world_frame(center,orientation,basis,origin)?;
+    let mut axes = [0_f64;3];
+    let mut radius = 0_f64;
+    for vertex in rigid_vertex_enclosures(edges,basis,origin,scale)? {
+        let source = cache.whole_path_point_box_bounds(vertex)
+            .map_err(|_|PhysicsError::InvalidMotion)?;
+        let world = frame.similarity_point_box_bounds(source,scale)
+            .map_err(|_|PhysicsError::InvalidMotion)?;
+        let (error,whole) = voxy_animation::RootRigidEnclosure::enclosed_f32_publication_error(world)
+            .map_err(|_|PhysicsError::InvalidMotion)?;
+        for axis in 0..3 {axes[axis]=axes[axis].max(error[axis]);}
+        radius = radius.max(whole);
+    }
+    Ok((axes,radius))
+}
+
 fn rigid_body_clearance(
     approximation: &voxy_animation::RootRigidApproximation,
     edges: [DVec3; 3], basis: DQuat, origin: DVec3, scale: f64,
@@ -507,7 +542,8 @@ fn rigid_body_clearance(
 
 /// Conditional sweep of an approximate field; evaluation_radius is a caller
 /// proof obligation in world units, covering all numeric evaluation uncertainty.
-/// This read-only query is not wired into runtime candidate publication yet.
+/// Certified requests use this sweep within transactional candidate preparation;
+/// ordinary editor dispatch still needs qualified caller error bounds.
 #[cfg_attr(not(test), allow(dead_code))]
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn sweep_rigid_approximation(
@@ -530,9 +566,22 @@ pub(crate) fn sweep_certified_rigid_fade(
     basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
     boxes: &[AffineBox], iterations: usize, queries: &mut usize,
 ) -> Result<PathHit,PhysicsError> {
+    sweep_certified_rigid_fade_with_axis_errors(center,rest_edges,orientation,fade,
+        coordinate_axis,basis,origin,scale,evaluation_radius,None,boxes,iterations,queries)
+}
+
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn sweep_certified_rigid_fade_with_axis_errors(
+    center: DVec3, rest_edges: [DVec3;3], orientation: DQuat,
+    fade: &voxy_animation::RootRigidCertifiedFadeInterval, coordinate_axis: usize,
+    basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
+    evaluation_axes: Option<[f64;3]>, boxes: &[AffineBox], iterations: usize,
+    queries: &mut usize,
+) -> Result<PathHit,PhysicsError> {
     let certificate=fade.coordinate_certificate(coordinate_axis,4096).map_err(|_|PhysicsError::InvalidMotion)?;
-    sweep_rigid_approximation_with_coordinate_certificate(center,rest_edges,orientation,fade.approximation(),
-        basis,origin,scale,evaluation_radius,boxes,iterations,queries,certificate.as_ref())
+    sweep_rigid_approximation_with_axis_errors(center,rest_edges,orientation,fade.approximation(),
+        basis,origin,scale,evaluation_radius,evaluation_axes.unwrap_or([evaluation_radius;3]),
+        boxes,iterations,queries,certificate.as_ref())
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -544,12 +593,37 @@ pub(crate) fn sweep_rigid_approximation_with_coordinate_certificate(
     boxes: &[AffineBox], iterations: usize, queries: &mut usize,
     coordinate_certificate: Option<&voxy_animation::RootRigidCoordinateCertificate<'_>>,
 ) -> Result<PathHit,PhysicsError> {
+    sweep_rigid_approximation_with_axis_errors(center, rest_edges, orientation, approximation,
+        basis, origin, scale, evaluation_radius, [evaluation_radius;3], boxes,
+        iterations, queries, coordinate_certificate)
+}
+
+/// Both the whole-body radius and world-axis bounds are caller proof obligations.
+/// Axis bounds apply in world coordinates, after actor and authored-frame mapping.
+#[allow(clippy::too_many_arguments)]
+fn sweep_rigid_approximation_with_axis_errors(
+    center: DVec3, rest_edges: [DVec3;3], orientation: DQuat,
+    approximation: &voxy_animation::RootRigidApproximation,
+    basis: DQuat, origin: DVec3, scale: f64, evaluation_radius: f64,
+    evaluation_axes: [f64;3], boxes: &[AffineBox], iterations: usize,
+    queries: &mut usize,
+    coordinate_certificate: Option<&voxy_animation::RootRigidCoordinateCertificate<'_>>,
+) -> Result<PathHit,PhysicsError> {
+    if evaluation_axes.iter().any(|value| !value.is_finite() || *value < 0.
+        || *value > evaluation_radius) {
+        return Err(PhysicsError::InvalidMotion);
+    }
     if coordinate_certificate.is_some_and(|proof|!std::ptr::eq(proof.path(),&approximation.path)) {
         return Err(PhysicsError::InvalidMotion);
     }
-    let coordinate_certificate=coordinate_certificate.map(|proof|
-        proof.enclosed_scaled_error_bound(scale,evaluation_radius)
-            .map(|margin|(proof,margin)).map_err(|_|PhysicsError::InvalidMotion)).transpose()?;
+    let coordinate_certificate=coordinate_certificate.map(|proof| {
+        let mut margins = [0.;3];
+        for axis in 0..3 {
+            margins[axis] = proof.enclosed_scaled_error_bound(scale,evaluation_axes[axis])
+                .map_err(|_|PhysicsError::InvalidMotion)?;
+        }
+        Ok::<_,PhysicsError>((proof,margins))
+    }).transpose()?;
     let clearance = rigid_body_clearance(approximation,rest_edges,basis,origin,scale,evaluation_radius)?;
     let vertices=rigid_vertex_enclosures(rest_edges,basis,origin,scale)?;
     let enclosed_path=approximation.path.prepare_screw_enclosures(4096).map_err(|_|PhysicsError::InvalidMotion)?;
@@ -590,7 +664,7 @@ fn sweep_rigid_path_with_clearance(
 fn invariant_projection_separates(
     center:DVec3,edges:[DVec3;3],obstacle:&AffineBox,normal:DVec3,
     orientation:DQuat,basis:DQuat,scale:f64,cache:&voxy_animation::RootScrewEnclosurePath<'_>,
-    coordinate_certificate:Option<(&voxy_animation::RootRigidCoordinateCertificate<'_>,f64)>,
+    coordinate_certificate:Option<(&voxy_animation::RootRigidCoordinateCertificate<'_>,[f64;3])>,
 )->Result<bool,PhysicsError> {
     let Some(coordinate)=(0..3).find(|i|normal[*i]!=0.) else {return Ok(false);};
     if (0..3).any(|i|i!=coordinate && normal[i]!=0.) {return Ok(false);}
@@ -607,7 +681,7 @@ fn invariant_projection_separates(
         if projected_scale>0. {range[1]<=0.} else {range[0]>=0.}
     } else {false};
     if !away {return Ok(false);}
-    let margin=coordinate_certificate.map_or(0.,|proof|proof.1);
+    let margin=coordinate_certificate.map_or(0.,|proof|proof.1[coordinate]);
     let separated=if margin==0. {exact_gap::sign(center,edges,obstacle,normal)? >= 0}
         else {gap::lower(center,edges,obstacle,normal,margin)? > 0.};
     Ok(separated)
@@ -628,7 +702,7 @@ fn sweep_rigid_path_with_bounds(
     queries: &mut usize,
     enclosed_speeds: Option<&[f64]>,
     enclosed_path: Option<&voxy_animation::RootScrewEnclosurePath<'_>>,
-    coordinate_certificate: Option<(&voxy_animation::RootRigidCoordinateCertificate<'_>,f64)>,
+    coordinate_certificate: Option<(&voxy_animation::RootRigidCoordinateCertificate<'_>,[f64;3])>,
 ) -> Result<PathHit, PhysicsError> {
     if !clearance.is_finite() || clearance < 0. || !center.is_finite()
         || !orientation.is_finite() || !orientation.is_normalized() {
@@ -645,13 +719,7 @@ fn sweep_rigid_path_with_bounds(
         return Err(PhysicsError::InvalidMotion);
     }
     let world_frame = if enclosed_speeds.is_some() {
-        let actor=voxy_animation::RootRigidEnclosure::from_transform(voxy_animation::RootRigidTransform {
-            translation:center,rotation:orientation,
-        }).map_err(|_|PhysicsError::InvalidMotion)?;
-        let source=voxy_animation::RootRigidEnclosure::from_transform(voxy_animation::RootRigidTransform {
-            translation:origin,rotation:basis,
-        }).map_err(|_|PhysicsError::InvalidMotion)?;
-        Some(actor.compose(&source).map_err(|_|PhysicsError::InvalidMotion)?)
+        Some(rigid_world_frame(center,orientation,basis,origin)?)
     } else {None};
     let vertex_boxes=if world_frame.is_some() {Some(rigid_vertex_enclosures(rest_edges,basis,origin,scale)?)} else {None};
     let initial_queries = *queries;
@@ -1231,5 +1299,50 @@ mod whole_tick_fade_tests {
         assert!(blocked.displacement.x<0.75);
         assert_eq!(blocked.displacement.y,0.);
         assert!(!query(&[floor],0.001).complete);
+        let certificate = tick.coordinate_certificate(1,4096).unwrap().unwrap();
+        let axis_query = |axes| sweep_rigid_approximation_with_axis_errors(
+            DVec3::Y*0.125,edges,DQuat::IDENTITY,tick.approximation(),
+            DQuat::IDENTITY,DVec3::ZERO,1.,0.002,axes,&[floor],8192,&mut 65536,
+            Some(&certificate));
+        assert!(axis_query([0.001,0.,0.001]).unwrap().complete);
+        assert!(!axis_query([0.001,0.001,0.]).unwrap().complete);
+        assert!(axis_query([0.,-0.001,0.]).is_err());
+        assert!(axis_query([0.,f64::NAN,0.]).is_err());
+        assert!(axis_query([0.003,0.,0.]).is_err());
+
+    }
+}
+
+#[cfg(test)]
+mod publication_error_tests {
+    use super::*;
+    #[test]
+    fn world_publication_bounds_cover_body_vertices_signed_scale_and_offset_origin() {
+        let path = voxy_animation::RootRigidPath::from_twists(&[
+            (voxy_animation::RootRigidTwist {linear:DVec3::X*0.5,angular:DVec3::Y*0.1},0.25),
+            (voxy_animation::RootRigidTwist {linear:DVec3::Z*0.25,angular:-DVec3::Y*0.2},0.25)],2).unwrap();
+        let cache = path.prepare_screw_enclosures(2).unwrap();
+        let edges = [DVec3::X*0.125,DVec3::Y*0.25,DVec3::Z*0.0625];
+        let center = DVec3::new(16777216.,1.,-2.);
+        let orientation = DQuat::from_xyzw(0.,1.,0.,0.);
+        let basis = DQuat::from_xyzw(1.,0.,0.,0.);
+        let origin = DVec3::new(0.25,0.,0.5);
+        for scale in [-2.,0.5,1.] {
+            let (axes,radius) = rigid_path_publication_errors(center,edges,orientation,
+                &cache,basis,origin,scale).unwrap();
+            for span in path.spans() {
+                for step in 0..=32 {
+                    let motion = span.sample(f64::from(step)/32.).unwrap();
+                    for vertex in rigid_vertices(edges,basis,origin,scale).unwrap() {
+                        let world = center+orientation*(origin+scale*(basis*
+                            (motion.translation+motion.rotation*vertex)));
+                        let error = world-world.as_vec3().as_dvec3();
+                        for axis in 0..3 {assert!(error[axis].abs()<=axes[axis]);}
+                        assert!(error.length()<=radius);
+                    }
+                }
+            }
+            assert!(axes[0]>=1.);
+        }
     }
 }

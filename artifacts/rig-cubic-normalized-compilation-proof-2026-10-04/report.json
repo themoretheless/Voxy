@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 157,
+  "whole_key_span_normalized_cubic_compilation_bound": true,
+  "positive_cached_and_source_norm_proved": true,
+  "singular_or_insufficient_norm_proofs_rejected": true,
+  "exact_zero_components_preserved": true,
+  "runtime_normalized_evaluation_error_included": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

@@ -3,6 +3,11 @@
 //! No platform sin/cos, argument reduction or sampled error estimates are used.
 use super::*;
 mod twist;
+mod compilation;
+pub(crate) use compilation::{translation_coefficient_error_bounds,translation_piece_error_bounds,
+    quaternion_normalization_error_bounds,quaternion_cubic_control_error_bounds,
+    quaternion_cubic_normalized_error_bounds,quaternion_cubic_restriction_error_bounds,
+    quaternion_cubic_phase_evaluation_error_bounds,translation_phase_evaluation_error_bounds,translation_interval_evaluation_error_bounds,quaternion_cubic_interval_evaluation_error_bounds,quaternion_composition_evaluation_error_bounds};
 mod cubic;
 mod accumulation;
 mod rates;

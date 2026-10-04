@@ -7,6 +7,7 @@ use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
 mod integration;
 mod enclosure;
+pub(crate) use enclosure::{translation_coefficient_error_bounds,translation_piece_error_bounds,quaternion_normalization_error_bounds,quaternion_cubic_control_error_bounds,quaternion_cubic_normalized_error_bounds,quaternion_cubic_restriction_error_bounds,quaternion_cubic_phase_evaluation_error_bounds,translation_phase_evaluation_error_bounds,translation_interval_evaluation_error_bounds,quaternion_cubic_interval_evaluation_error_bounds,quaternion_composition_evaluation_error_bounds};
 pub use enclosure::{RootRigidEnclosure, RootUniformScaleEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
 mod blend;
 pub use blend::RootSpatialTwistBounds;
@@ -537,6 +538,82 @@ impl RootRigidPath {
     }
 }
 impl RootRigidCurve {
+    /// Uniform position discrepancy of the stored translation polynomial from
+    /// exact stored-key coefficient compilation, at equal normalized parameter.
+    /// Parameter evaluation, Bernstein conversion, rotation and loop powers are
+    /// separate proof obligations.
+    pub fn translation_compilation_error_bounds(&self) -> Result<[f64;3],AnimationError> {
+        self.0.translation.compilation_error_bounds()
+    }
+    /// Componentwise error of cached quaternion key normalization only.
+    /// Arc logarithms, cubic controls, interval restriction and cycle composition
+    /// require additional compilation proofs.
+    pub fn rotation_key_normalization_error_bounds(&self) -> [f64;4] {
+        self.0.rotation.key_normalization_error_bounds()
+    }
+    /// Componentwise unnormalized cubic control compilation discrepancy.
+    /// None indicates a non-cubic rotation channel.
+    pub fn rotation_cubic_control_compilation_error_bounds(&self) -> Option<[f64;4]> {
+        self.0.rotation.cubic_control_compilation_error_bounds()
+    }
+    /// Whole-channel normalized cubic compilation discrepancy, requiring a
+    /// positive norm proof. Does not cover rounded runtime pose evaluation.
+    pub fn rotation_cubic_normalized_compilation_error_bounds(
+        &self,
+    ) -> Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_normalized_compilation_error_bounds()
+    }
+    /// Normalized cubic source/cached discrepancy through interval restriction.
+    /// Rejects crossing rotation keys; relative frames and loops are separate.
+    pub fn rotation_cubic_piece_compilation_error_bounds(&self,start:f64,end:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_piece_compilation_error_bounds(start,end)
+    }
+    /// Exact supplied local phase versus the actually evaluated cubic quaternion.
+    /// This pointwise proof does not include phase selection or relative frames.
+    pub fn rotation_cubic_phase_evaluation_error_bounds(&self,phase:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_phase_evaluation_error_bounds(phase)
+    }
+    /// Pointwise exact source translation versus actual local Horner evaluation.
+    /// The supplied local phase is exact; extraction/loops remain separate.
+    pub fn translation_phase_evaluation_error_bounds(&self,phase:f64)
+        -> Result<[f64;3],AnimationError> {
+        self.0.translation.phase_evaluation_error_bounds(phase)
+    }
+    /// Uniform source-to-runtime translation error within one key interval.
+    /// Covers parameter and Horner rounding; source phase/extraction are separate.
+    pub fn translation_interval_evaluation_error_bounds(&self,start:f64,end:f64)
+        -> Result<[f64;3],AnimationError> {
+        self.0.translation.interval_evaluation_error_bounds(start,end)
+    }
+    /// Uniform source-to-runtime cubic quaternion error within one key interval.
+    /// Includes scaled normalization rounding; relative frames/loops are separate.
+    pub fn rotation_cubic_interval_evaluation_error_bounds(&self,start:f64,end:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_interval_evaluation_error_bounds(start,end)
+    }
+    /// Pointwise relative cubic quaternion proof, including origin composition.
+    pub fn rotation_cubic_relative_phase_evaluation_error_bounds(&self,phase:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_relative_phase_evaluation_error_bounds(phase)
+    }
+    /// Cubic rotation error through explicit cycle powers and local phase.
+    /// Wall-time cycle/phase mapping is not included.
+    pub fn rotation_cubic_cycle_phase_evaluation_error_bounds(&self,cycles:u64,phase:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_cycle_phase_evaluation_error_bounds(cycles,phase)
+    }
+    /// Position discrepancy from exact stored-key compilation through one
+    /// restricted Bernstein piece. Rejects crossing a translation key boundary.
+    /// Rotation/extraction and cycle composition are not included.
+    pub fn translation_piece_compilation_error_bounds(
+        &self, start: f64, end: f64,
+    ) -> Result<[f64;3],AnimationError> {
+        self.0.translation.piece_error_bounds(start,end)
+    }
+
+
     pub(super) fn new(
         translation: Arc<RootCurve>,
         rotation: RootRotationCurve,
@@ -583,17 +660,11 @@ impl RootRigidCurve {
         .checked()
     }
     fn cycle_phase(&self, time: f64) -> Result<(u64, f64), AnimationError> {
-        if !time.is_finite() || time < 0. {
-            return Err(AnimationError::InvalidSampleTime);
-        }
-        if self.0.playback == Playback::Clamp {
-            return Ok((0, time.min(self.0.duration)));
-        }
-        let cycle = (time / self.0.duration).floor();
-        if cycle > 9_007_199_254_740_991. {
-            return Err(AnimationError::RootRigidBudget);
-        }
-        Ok((cycle as u64, time.rem_euclid(self.0.duration)))
+        let proof=crate::enclose_root_cycle_phase(time,self.0.duration as f32,self.0.playback)
+            .map_err(|error|if error==AnimationError::RootRigidBudget {
+                AnimationError::RootRigidBudget
+            } else {error})?;
+        Ok((proof.cycle(),proof.phase()))
     }
     /// Unwrapped composed transform relative to the first authored root factor.
     /// Each cycle transports the following cycle's displacement through its turn.

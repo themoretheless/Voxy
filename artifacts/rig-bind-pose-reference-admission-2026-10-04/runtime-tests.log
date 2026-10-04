@@ -1,0 +1,24 @@
+
+running 19 tests
+test animation_runtime::tests::accepted_physical_fade_uses_runtime_extraction_before_frame_publication ... ok
+test animation_runtime::tests::certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor ... ok
+test animation_runtime::tests::clip_switch_fades_from_the_running_source_and_completes_in_fixed_ticks ... ok
+test animation_runtime::tests::editor_expanded_rig_scene_survives_history_save_load_play_and_stop ... ok
+test animation_runtime::tests::editor_play_drives_root_motion_through_wall_and_preserves_failed_tick ... ok
+test animation_runtime::tests::first_accepted_pose_bootstraps_root_reference_atomically_without_feet ... ok
+test animation_runtime::tests::fixed_frames_wait_for_assets_pause_resume_and_never_advance_on_read ... ok
+test animation_runtime::tests::hierarchy_parts_do_not_consume_owner_capacity_and_overflow_is_atomic ... ok
+test animation_runtime::tests::motion_conversion_uses_fixed_parent_basis_and_rejects_animated_ancestors ... ok
+test animation_runtime::tests::ordinary_preparation_transports_root_reference_without_foot_settings ... ok
+test animation_runtime::tests::owner_fade_operation_admits_all_owners_before_any_publication ... ok
+test animation_runtime::tests::partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomically ... ok
+test animation_runtime::tests::retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_frame ... ok
+test animation_runtime::tests::rigid_bind_pose_waits_for_clip_before_reference_bootstrap ... ok
+test animation_runtime::tests::root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames ... ok
+test animation_runtime::tests::root_reference_initialization_rejects_stale_model_invalid_pose_and_reset ... ok
+test animation_runtime::tests::root_reference_lifetime_tracks_asset_and_extraction_identity ... ok
+test animation_runtime::tests::scene_fade_batch_stages_selection_without_advancing_and_rejects_late_owner ... ok
+test animation_runtime::tests::signed_reference_scale_survives_body_transport_and_next_fade ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 144 filtered out; finished in 0.33s
+

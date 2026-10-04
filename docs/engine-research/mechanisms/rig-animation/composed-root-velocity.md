@@ -1256,3 +1256,157 @@ The moving/turning planted-foot regression now covers free and wall-blocked fade
 ### Static root-parent capture (2026-10-04)
 
 `constant_parent_similarity_enclosure` traverses the selected root ancestors, composes stored translations and enclosed normalized rotations, represents sign reflections with exact proper half-turn quaternions, and accumulates outward signed uniform scale products. It requires identical constant ancestor transforms across model clips; moving, differing or nonuniform ancestors reject. Owner reference scale is now the complete `RootUniformScaleEnclosure`, propagated through phase capture, snapshot comparison, body transport and common fade assembly. `capture_owner_reference_from_parent` combines this derived frame with the published physical pose; planted free/wall/interruption fixtures use automatic parent capture. A nested reflected-parent regression checks three points against independent exact dyadic transforms, and rejects nonuniform/moving parents. All 43 editor checks pass. Different static parent frames per clip, retarget frame qualification, compiler/evaluation error and ordinary App dispatch remain outstanding.
+
+
+### Automatic accepted-pose reference bootstrap (2026-10-04)
+
+The editor now initializes an unreferenced rigid root-motion owner inside accepted-pose preparation, after physics supplies the accepted body pose. Static parent similarity and current playback factor establish the reference without a separate post-step capture. Existing references are transported once; newly initialized references already use the accepted body frame. Retarget owners remain excluded from automatic capture pending qualification of their common frame.
+
+The preparation operation now names both responsibilities: `prepare_accepted_pose` transports or initializes the root reference and then corrects feet. A callback rejection after initialization leaves scene, physics publication, displayed frame, and original reference untouched; retry initializes successfully. The planted free, wall-prefix, and interrupted-fade scenarios use automatic capture. Editor runtime/playback/foot tests: 42 passed. Ordinary App moving-fade dispatch remains incomplete; this verifies bootstrap and transactional preparation, not complete production integration.
+
+
+### Scene selection and fade batch (2026-10-04)
+
+`prepare_scene_fades` reads active scene owners with initialized references, stages their selections using the existing selection owner, and prepares all active rigid fades before advancing physics. It returns a candidate and owned plans; failure of a later owner exposes no partial candidate or clock publication. Caller-provided integration tolerances remain explicit. This is preparation infrastructure, not yet ordinary App dispatch or a production sampling-error policy.
+
+A two-owner scene-selection regression verifies both plans, unchanged accepted frame and serial, and rejection of an invalid second clip while the original runtime remains untouched. A newly selected target starts at its existing selection-policy phase; staging does not advance time. All 18 animation runtime tests pass, including bootstrap rollback, mixed physics submissions, planted wall prefixes, interruption, and signed scales. Evidence: `artifacts/rig-scene-fade-batch-2026-10-04/`.
+
+
+### Scene-driven physical fade operation (2026-10-04)
+
+`fixed_step_scene_fades` joins scene selection staging and plan compilation with existing mixed physics admission and accepted-pose publication. It requires an explicit evaluation frame for every active fade and rejects extra frames without active plans. No candidate escapes between selection and physical execution. Production evaluation-error policy and ordinary App dispatch remain incomplete.
+
+The batch regression now executes two scene-selected fades through this operation, verifies two receipts, published physics poses, advanced target clocks and replaced accepted frames, and confirms that the original runtime remains unchanged. A missing second evaluation frame rejects before physics publication; correcting the request succeeds. All 18 runtime regressions pass. Evidence: `artifacts/rig-scene-fade-operation-2026-10-04/`.
+
+
+### Bind-pose admission and evaluation-margin review (2026-10-04)
+
+An owner with rotation extraction configured but no selected clip has no playback phase factor. Automatic accepted-pose preparation now waits for a selected clip rather than attempting phase capture in bind pose. Existing references still transport normally. A regression executes bind-pose physics without creating a reference, selects a clip, then verifies automatic initialization after its accepted physical tick. All 19 runtime regressions pass.
+
+Review of the actual sweep confirms that the scalar world evaluation radius is added to both whole-body clearance and the directional coordinate certificate margin. The existing `completion_keeps_floor_contact_and_wall_stops_motion_after_fade` regression asserts that radius 0 accepts floor-tangent motion while radius 0.001 prevents completion at exact contact. Therefore a positive arbitrary global allowance is not a workable production contact policy. Direction-specific upstream compilation/evaluation enclosures remain necessary; the current scalar contract cannot infer a zero normal error. Ordinary editor fade dispatch remains unqualified.
+
+
+### Separate world-axis evaluation margins (2026-10-04)
+
+The shared certified sweep now has an internal entrypoint accepting a whole-body world evaluation radius and three independently proven world-coordinate error bounds. The existing scalar entrypoint delegates with the scalar bound on each axis, retaining its conservative contact behavior. Coordinate certificates accumulate their integration discrepancy with each world-axis error separately; invariant plane admission chooses the actual world normal axis after exact actor/authored coordinate preimage checks. Whole-body clearance still uses the full radius. Nonfinite, negative, or per-axis bounds larger than that radius reject.
+
+The fade-completion floor regression now proves that a radius 0.002 with axis errors [0.001,0,0.001] permits tangent floor motion, while [0.001,0.001,0] prevents completion. It rejects negative, NaN and oversized axis bounds. All 60 gameplay unit tests pass. These bounds remain caller proof obligations; public staged requests still use the scalar interface, and imported compiler/evaluation bounds and ordinary App dispatch remain incomplete. Evidence: `artifacts/rig-world-axis-evaluation-errors-2026-10-04/`.
+
+
+### World-axis errors through staged requests (2026-10-04)
+
+`CharacterCertifiedFadeMotion` now carries optional caller-proven world-axis evaluation bounds in addition to its whole-body radius. None retains the scalar contract. The staged physics admission rejects nonfinite, negative and oversized axis bounds before publication. The shared certified sweep consumes those bounds, and editor `OwnerFadeFrame` forwards them through scene-driven and explicitly prepared operations.
+
+The existing transactional fade integration regression now uses radius 0.002 with world-axis bounds [0.001,0,0.001] at exact floor contact. It verifies complete movement, callback-rejection rollback of scene/body/input, successful retry, and early rejection of three invalid bound sets without invoking publication preparation. All 45 gameplay integration tests and 27 editor runtime/playback tests pass. This verifies transport and consumption of externally proven bounds, not derivation of imported animation/compiler errors. Ordinary App moving fades remain incomplete. Evidence: `artifacts/rig-axis-error-transaction-2026-10-04/`.
+
+
+### Enclosed point publication discrepancy (2026-10-04)
+
+`RootRigidEnclosure::enclosed_point_evaluation_error` computes outward world-axis discrepancy between the exact enclosed similarity image of a point box and an already evaluated world coordinate. It also returns an outward L1 radius bounding Euclidean discrepancy, without a square-root or guessed epsilon. The evaluated coordinate may be a widened f32 publication. Invalid/nonfinite inputs reject; exact zero maps retain zero discrepancy.
+
+A regression compares signed scales and an exact dyadic half-turn at translation 16777216 against independently constructed dyadic coordinates. It verifies that the lost unit at f32 publication is enclosed and that all axes and Euclidean discrepancy are covered. All 152 animation tests pass. This derives a bound for a specific point/pose; it is not a uniform bound for all points and times in a physical tick, nor a proof of imported curve compilation. Those obligations and ordinary App fade dispatch remain incomplete. Evidence: `artifacts/rig-point-publication-error-2026-10-04/`.
+
+
+### Uniform f32 publication bound on a world box (2026-10-04)
+
+`RootRigidEnclosure::enclosed_f32_publication_error` accepts a world-coordinate enclosure and returns world-axis rounding-error bounds plus an outward L1 radius. For varying coordinates, one full adjacent f32 spacing at an upward endpoint magnitude covers round-to-nearest errors at all smaller magnitudes, including subnormals and binade changes. Near f32::MAX it uses the finite preceding spacing and rejects coordinates beyond the finite representable range. Singleton coordinates use enclosed exact subtraction from their actual f32 result, preserving zero for fixed exactly representable coordinates.
+
+The regression checks symmetric large-coordinate ranges, subnormal ranges, a binade boundary, the upper finite range, fixed zero/quarter axes, and singleton loss of a unit at 16777217. Invalid/reversed/overflow ranges reject. All 153 animation tests pass. This is uniform rounding-only coverage on the supplied box, not a derivation of the world box for an entire tick or coverage of earlier path/curve arithmetic. Those obligations remain outstanding. Evidence: `artifacts/rig-f32-publication-box-error-2026-10-04/`.
+
+
+### Whole canonical path point box (2026-10-04)
+
+`RootScrewEnclosurePath::span_fraction_enclosure` encloses canonical poses throughout a closed fraction interval using an outward elapsed-time interval and the existing interval exponential, composed with the immutable canonical prefix. `whole_path_point_box_bounds` takes the hull of all span images and the initial box. It uses entire intervals, not sampled extrema, and retains existing unsupported-angle/overflow admission boundaries.
+
+A two-span moving/turning regression checks the whole hull against narrower pose images, retains an exactly fixed zero Y coordinate, and derives uniform f32 rounding bounds on that hull. It exercises corners, invalid fraction intervals, out-of-range spans and an empty path. All 154 animation tests pass. This supplies a whole-path box for the stored canonical screw reference; transforming it to the actor world, enclosing earlier numerical evaluation, and proving imported curve compilation remain necessary for ordinary App integration. Evidence: `artifacts/rig-whole-path-point-box-2026-10-04/`.
+
+
+### World body vertex publication bounds (2026-10-04)
+
+Gameplay now derives rounding-only bounds for body vertices throughout the canonical path. It encloses inverse source-frame vertices with the existing collision helper, takes each whole-path point box, maps it through actor/source composition and signed scale, and derives f32 publication bounds. The actor/source frame construction was extracted and reused by the actual collision sweep so both operations use the same outward coordinate model. Axis bounds and whole-point radii are maxima across vertices.
+
+The regression exercises two moving/turning spans, exact actor/authored half-turns, a translated pivot, three signed scales and actor translation 16777216. It checks all body vertices across sample fractions against the derived uniform bounds. All 61 gameplay unit tests pass. The helper is not yet used to supply automatic admission: earlier evaluation and compiler errors must be included, and a rounding-only result must not be presented as a complete error certificate. Evidence: `artifacts/rig-world-body-publication-error-2026-10-04/`.
+
+
+### Stored-key translation compilation discrepancy (2026-10-04)
+
+Each `RootCurve` knot now retains an outward coefficient-compilation discrepancy from the exact stored f32 keys/tangents and times. The interval compiler encloses subtraction of the root origin and STEP/linear/cubic power coefficients, then sums coefficient discrepancies per coordinate; because every normalized monomial has magnitude at most one on [0,1], that sum bounds position discrepancy at equal normalized parameter. Failures remain explicit in the knot proof and are propagated by the query rather than erased. `RootRigidCurve::translation_compilation_error_bounds` exposes the maximum over knot intervals.
+
+A regression uses origin 2^100 and a final key of 1, where the relative cache loses a whole unit, and verifies coverage for all three interpolation modes while preserving exact zero on unrelated coordinates. Empty curves return zero. All 155 animation tests pass. This proves only translation coefficient compilation at equal normalized parameter. Runtime parameter evaluation, power-to-Bernstein conversion/restriction, rotation compilation, extraction/factors and loop composition remain separate obligations, so no complete imported-curve or ordinary App acceptance claim follows. Evidence: `artifacts/rig-translation-compilation-errors-2026-10-04/`.
+
+
+### Restricted translation Bernstein discrepancy (2026-10-04)
+
+`RootRigidCurve::translation_piece_compilation_error_bounds` now bounds exact stored-key translation against the rounded restricted Bernstein piece. It widens cached power coefficients by the retained compilation discrepancy, encloses exact normalized u/v using outward subtraction and interval division of stored key times, then encloses restriction and power-to-Bernstein conversion. Maximum control discrepancy per coordinate bounds the whole Bernstein curve by convexity. Requests crossing a translation key or invalid time interval reject; held regions retain their corresponding compilation proof.
+
+The compilation regression now exercises a restricted interval of all three channel modes, confirms preserved zero orthogonal axes, rejects cross-key and NaN intervals, and distinguishes a STEP's exact pre-jump zero from linear/cubic lost-unit coverage. All 155 animation tests pass. The interval times are interpreted exactly as supplied: phase selection, rotation, extraction frames and cycle composition remain separate obligations. Evidence: `artifacts/rig-translation-piece-errors-2026-10-04/`.
+
+
+### Quaternion key normalization discrepancy (2026-10-04)
+
+`RootRotationCurve` now retains componentwise outward discrepancy between its rounded normalized quaternion keys/bind fallback and real normalization of the original stored f32 components. The proof uses outward squares, sum, square root and interval division, then compares against the cached normalized values. `RootRigidCurve::rotation_key_normalization_error_bounds` exposes that retained proof. Invalid zero/nonfinite normalization rejects rather than publishing a missing proof.
+
+A regression covers STEP/linear/cubic modes with axial keys, verifies bounded normalization discrepancy against the independent equal-component reference, and preserves exactly zero X/Z components. It also rejects zero and NaN quaternion inputs. All 156 animation tests pass. This covers key normalization only; arc logarithms, cubic control construction/restriction, relative origin/cycle compositions and extraction remain outstanding. Evidence: `artifacts/rig-rotation-key-normalization-proof-2026-10-04/`.
+
+
+### Quaternion cubic control compilation discrepancy (2026-10-04)
+
+`RootRotationCurve` now retains componentwise outward discrepancy for raw cubic Bernstein controls compiled from exact stored quaternion keys, tangents and key times. Outward elapsed time, division by three and tangent/control arithmetic cover the rounded cached controls. Maximum control error bounds raw polynomial discrepancy by Bernstein convexity. `RootRigidCurve::rotation_cubic_control_compilation_error_bounds` exposes it; non-cubic channels return None rather than a misleading zero cubic certificate.
+
+A regression checks nonzero tangent/duration rounding with exact zero X/Z and unchanged W components, distinguishes a linear channel, and rejects reversed times. All 157 animation tests pass. Normalized cubic pose error requires a positive norm lower bound and normalization amplification; restriction, relative frames, arc logarithms and cycle composition remain outstanding. Evidence: `artifacts/rig-quaternion-cubic-control-proof-2026-10-04/`.
+
+
+### Normalized cubic compilation discrepancy (2026-10-04)
+
+`RootRotationCurve::cubic_normalized_compilation_error_bounds` now derives a uniform source/cached normalized-polynomial discrepancy over complete cubic key spans. Bernstein component hulls supply a positive norm lower bound L for the cached polynomial. The retained raw control error yields an outward L1 discrepancy E; requiring L>E proves that the exact source polynomial remains nonsingular too. Normalization discrepancy is bounded outward by 2E/L. Exactly zero components shared by source/cached polynomials retain zero error. Key/bind normalization discrepancies are included for held endpoints; non-cubic channels remain None.
+
+The cubic regression verifies small finite normalized bounds and exact zero axial components, and rejects a hull containing the zero quaternion and an error large enough to invalidate the norm proof. All 157 animation tests pass. The hull proof can conservatively reject nonsingular curves requiring subdivision. Runtime rounded normalization/evaluation, restricted cubic controls, relative frame/cycle composition and arc logarithm proof remain outstanding. Evidence: `artifacts/rig-cubic-normalized-compilation-proof-2026-10-04/`.
+
+
+### Restricted normalized cubic compilation discrepancy (2026-10-04)
+
+`RootRotationCurve::cubic_piece_compilation_error_bounds` carries exact-source control discrepancy through restriction of one key interval. It encloses elapsed/key-time division, de Casteljau splitting at the requested end, and the second split at the exact start/end ratio. The restricted source controls are compared with the actual rounded cached restriction; Bernstein control discrepancy and a positive norm proof then bound normalized source/cached curves uniformly. It rejects cross-key intervals and invalid times. Relative left/right frames and runtime pose arithmetic remain outside this certificate.
+
+Stored-key compilation proofs now live together in `root_rigid/enclosure/compilation.rs`, reusing existing outward scalar arithmetic and interpolation. The cubic regression verifies finite small restricted error, preserved zero X/Z components and rejection of a cross-key interval. All 157 animation tests pass. Runtime evaluation, arc compilation and relative/cycle compositions remain outstanding before ordinary App integration. Evidence: `artifacts/rig-cubic-restriction-compilation-proof-2026-10-04/`.
+
+
+### Pointwise cubic runtime evaluation discrepancy (2026-10-04)
+
+`RootRotationCurve::cubic_phase_evaluation_error_bounds` now compares its actual local cubic quaternion sample against an enclosure of the normalized exact-source polynomial. It starts from cached controls widened by source compilation discrepancy, encloses exact key-time parameter division and de Casteljau evaluation, proves positive norm, then encloses normalized components and subtracts the actual quaternion produced by the existing `local`/`unit` implementation. Thus earlier rounded polynomial evaluation and normalization are included by comparison with the source enclosure, not by a guessed operation count. Held endpoints use retained key normalization bounds.
+
+The cubic regression queries 33 supplied phases, verifies small finite bounds and exact zero axial components, and rejects invalid phases. All 157 animation tests pass. This is pointwise at the exact supplied phase, not a uniform error bound for a whole tick; phase/loop selection, relative quaternion frames and arc proof remain outstanding. Evidence: `artifacts/rig-cubic-phase-evaluation-proof-2026-10-04/`.
+
+
+### Pointwise translation runtime discrepancy and imported proof retention (2026-10-04)
+
+`RootCurve::phase_evaluation_error_bounds` now encloses exact supplied key-time parameter division and Horner evaluation from cached power coefficients widened by source compilation discrepancy, then compares to the actual existing local position evaluator. `RootRigidCurve` exposes the pointwise source-to-runtime translation error. Held knots use retained compilation bounds; invalid phases reject. The lost-unit regression exercises this evaluation for all interpolation modes while preserving zero orthogonal coordinates.
+
+An editor regression loads the existing animated GLB model through the normal parser, obtains the shared selected-joint rigid curve and verifies retained translation/quaternion-key proofs plus finite small translation evaluation error at 33 local phases. Its non-cubic rotation channel explicitly returns None for cubic evaluation. All 157 animation tests and 45 editor runtime/playback/foot-placement tests pass. These are pointwise phase proofs, not uniform tick or relative-frame/cycle certificates; arc compilation and complete App dispatch remain outstanding. Evidence: `artifacts/rig-translation-evaluation-import-proof-2026-10-04/`.
+
+
+### Uniform translation runtime discrepancy (2026-10-04)
+
+`RootCurve::interval_evaluation_error_bounds` now supplies source-to-runtime translation error uniformly throughout one closed key interval. It encloses key-time denominator subtraction, numerator rounding and quotient sensitivity, then propagates a rounding-error bound through each Horner multiplication/addition using interval magnitudes and complete f64 spacing bounds. Source coefficient compilation discrepancy is added at equal exact normalized parameter. The right endpoint includes the next key's proof explicitly, respecting STEP right-continuity. Exact zero coordinate polynomials retain zero error; invalid/cross-key intervals reject.
+
+A dyadic cubic regression compares actual evaluations with an independently expanded exactly representable polynomial across the interval. The lost-unit regression covers all interpolation modes and the STEP endpoint. All 158 animation tests pass. The supplied phase interval is interpreted exactly; clock/loop mapping, uniform quaternion runtime error, relative extraction frames and arc compilation remain outstanding before ordinary App moving fades. Evidence: `artifacts/rig-uniform-translation-evaluation-proof-2026-10-04/`.
+
+
+### Uniform cubic runtime discrepancy (2026-10-04)
+
+`RootRotationCurve::cubic_interval_evaluation_error_bounds` now derives a uniform source-to-runtime quaternion error on one closed key interval. A shared rounded-parameter owner encloses time subtraction/division. Rounded-range propagation follows the actual de Casteljau lerp multiply/add operations, while retaining exact nominal convex interpolation ranges. Source control compilation discrepancy is combined with the raw runtime error; a positive source norm and a discrepancy smaller than that norm prove normalization remains nonsingular. Scaled normalization error follows the inspected glam f64 divide-by-max, dot, sqrt, reciprocal and multiplication path, with full-spacing rounding bounds. Exact zero source/cached components retain zero error; right-key normalization is included separately at the endpoint.
+
+All 158 animation tests pass. An independent Decimal calculation at 100-digit precision compares 132 quaternion components over 33 phases against the uniform error without extra tolerance; the verifier and raw actual samples are saved. The phase interval is exact as supplied. Relative rotation/extraction frames, loop mapping/composition and arc logarithm compilation remain unqualified; ordinary App dispatch remains incomplete. Evidence: `artifacts/rig-uniform-cubic-evaluation-proof-2026-10-04/`.
+
+
+### Pointwise relative cubic rotation discrepancy (2026-10-04)
+
+`RootRotationCurve::cubic_relative_phase_evaluation_error_bounds` now includes the initial-key inverse frame: it encloses the normalized exact-source local sample and initial quaternion through retained component errors, forms their real unit Hamilton product with the shared outward rigid-frame composition, then compares to the actual normalized `phase_rotation` output. This accounts for rounded product/normalization by comparison with an enclosed source product. It is pointwise at the supplied local phase; a unit-source proof is required for each input.
+
+A regression starts from a nonidentity axial quaternion, samples a zero-tangent cubic midpoint and independently derives relative rotation (0,1,0,2)/sqrt(5). It verifies coverage and exact zero X/Z errors, and rejects NaN phase. All 159 animation tests pass. Uniform relative-frame evaluation, cycle selection/composition, translation extraction coupling and arc compilation remain outstanding. Evidence: `artifacts/rig-relative-cubic-phase-proof-2026-10-04/`.
+
+
+### Explicit cubic cycle composition discrepancy (2026-10-04)
+
+`RootRotationCurve::cubic_cycle_phase_evaluation_error_bounds` now carries source key normalization, cycle construction and binary-power composition errors through an explicit cycle count and local phase. `power_with_error` mirrors the actual rounded quaternion operations and propagates source unit-product enclosures at each used multiply/square. The final query matches sample's unnormalized intermediate product and its final normalization; unused final square proofs are omitted because they cannot affect the returned orientation. Nonzero cycle counts reject for Clamp playback.
+
+The nonidentity-origin regression now uses Loop playback and checks four cycles plus midpoint against the independently derived negative quaternion (0,-1,0,-2)/sqrt(5), preserving zero X/Z errors and rejecting invalid phase. All 159 animation tests pass. This does not prove cycle/phase selection from wall time, uniform relative-frame error, translation/rotation extraction coupling or arc compilation. Ordinary App fades remain incomplete. Evidence: `artifacts/rig-cubic-cycle-composition-proof-2026-10-04/`.

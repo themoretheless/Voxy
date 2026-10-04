@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 157,
+  "editor_tests_passed": 45,
+  "pointwise_source_to_actual_translation_evaluation_error": true,
+  "imported_glb_curve_proofs_verified": true,
+  "exact_zero_coordinates_preserved": true,
+  "uniform_tick_runtime_error_proof": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,10 @@
+{
+  "gameplay_unit_tests_passed": 60,
+  "separate_world_axis_error_margins": true,
+  "tangent_error_preserves_floor_motion": true,
+  "normal_error_blocks_floor_contact": true,
+  "invalid_axis_bounds_rejected": true,
+  "public_certified_request_axis_bounds": false,
+  "imported_numeric_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 153,
+  "uniform_box_f32_rounding_bound": true,
+  "binades_subnormals_and_fixed_axes_checked": true,
+  "earlier_numeric_evaluation_errors_included": false,
+  "whole_tick_world_box_derived": false,
+  "imported_curve_compilation_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

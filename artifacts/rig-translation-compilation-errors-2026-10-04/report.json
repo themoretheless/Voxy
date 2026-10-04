@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 155,
+  "stored_key_translation_coefficient_error_bounds": true,
+  "step_linear_cubic_channels": true,
+  "lost_relative_key_unit_covered": true,
+  "equal_normalized_parameter_required": true,
+  "rotation_compilation_error_proof": false,
+  "bernstein_conversion_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

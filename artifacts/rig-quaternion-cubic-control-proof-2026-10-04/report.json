@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 157,
+  "raw_quaternion_cubic_control_compilation_error": true,
+  "duration_and_tangent_arithmetic_enclosed": true,
+  "exact_zero_components_preserved": true,
+  "noncubic_channel_distinguished": true,
+  "normalized_cubic_pose_error_proof": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

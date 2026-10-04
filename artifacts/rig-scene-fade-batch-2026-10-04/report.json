@@ -1,0 +1,9 @@
+{
+  "runtime_tests_passed": 18,
+  "scene_selection_batch": true,
+  "two_owner_plans_prepared": true,
+  "accepted_frame_and_serial_preserved": true,
+  "late_owner_rejection_keeps_original_runtime": true,
+  "ordinary_app_moving_fades": false,
+  "production_evaluation_error_policy": false
+}

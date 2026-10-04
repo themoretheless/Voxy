@@ -1,0 +1,1 @@
+161 animation tests passed. Exact rational verification of printed binary floating-point clock: cycle and remainder match; no tolerance used. Ordinary App moving fades remain disabled.

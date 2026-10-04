@@ -1,0 +1,8 @@
+
+running 2 tests
+test root_clock::tests::exact_floor_corrects_rounded_division_and_encloses_remainder ... ROOT_CLOCK_PROOF (109951164416.09999, 0.10000000149011612, 1099511627776, 0.0999908447265625, [0.0999908447265625, 0.0999908447265625])
+ok
+test root_clock::tests::seam_neighbors_clamp_and_invalid_clocks_are_explicit ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 159 filtered out; finished in 0.00s
+

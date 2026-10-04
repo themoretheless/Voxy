@@ -1,0 +1,9 @@
+{
+  "editor_tests_passed": 42,
+  "automatic_reference_after_accepted_step": true,
+  "rollback_after_initialization_verified": true,
+  "no_feet_bootstrap_verified": true,
+  "planted_free_wall_interruption_verified": true,
+  "ordinary_app_moving_fades": false,
+  "retarget_reference_bootstrap_qualified": false
+}

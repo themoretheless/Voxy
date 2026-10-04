@@ -1,0 +1,6 @@
+{
+  "runtime_tests_passed": 19,
+  "bind_pose_does_not_capture_missing_phase": true,
+  "first_selected_clip_bootstraps_reference": true,
+  "ordinary_app_moving_fades": false
+}

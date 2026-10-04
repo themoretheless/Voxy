@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 155,
+  "translation_piece_restriction_and_bernstein_error_bounds": true,
+  "source_coefficient_error_included": true,
+  "normalized_parameter_arithmetic_enclosed": true,
+  "cross_key_intervals_rejected": true,
+  "rotation_compilation_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

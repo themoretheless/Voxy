@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 156,
+  "stored_quaternion_key_normalization_errors": true,
+  "bind_fallback_normalization_included": true,
+  "exact_zero_components_preserved": true,
+  "arc_logarithm_error_proof": false,
+  "cubic_rotation_compilation_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

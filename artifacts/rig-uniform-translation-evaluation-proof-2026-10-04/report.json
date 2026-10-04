@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 158,
+  "uniform_source_to_runtime_translation_interval_error": true,
+  "parameter_subtraction_division_and_horner_rounding_included": true,
+  "right_key_step_endpoint_included": true,
+  "exact_zero_coordinates_preserved": true,
+  "uniform_rotation_runtime_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

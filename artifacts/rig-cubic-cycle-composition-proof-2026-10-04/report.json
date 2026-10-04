@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 159,
+  "explicit_cycle_and_local_phase_cubic_error": true,
+  "binary_power_error_propagation": true,
+  "actual_sample_composition_order_preserved": true,
+  "four_cycle_nonidentity_origin_reference_verified": true,
+  "wall_time_cycle_phase_selection_error_proof": false,
+  "uniform_relative_runtime_error_proof": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

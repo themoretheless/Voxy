@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 157,
+  "normalized_cubic_restriction_compilation_errors": true,
+  "de_casteljau_and_key_time_divisions_enclosed": true,
+  "cross_key_intervals_rejected": true,
+  "exact_zero_components_preserved": true,
+  "runtime_normalized_evaluation_error_included": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

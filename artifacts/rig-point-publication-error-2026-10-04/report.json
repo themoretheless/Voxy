@@ -1,0 +1,9 @@
+{
+  "animation_tests_passed": 152,
+  "point_pose_error_derived_from_enclosure": true,
+  "large_coordinate_f32_error_enclosed": true,
+  "signed_scale_and_exact_half_turn_checked": true,
+  "uniform_whole_tick_error_proof": false,
+  "imported_curve_compilation_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

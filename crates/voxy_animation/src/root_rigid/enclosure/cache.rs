@@ -81,6 +81,40 @@ impl RootScrewEnclosurePath<'_> {
     pub fn path(&self) -> &RootRigidPath {
         self.path
     }
+    /// Encloses every canonical pose over a closed fraction interval in a span.
+    /// Uses the entire elapsed-time interval, without sampled extrema.
+    pub fn span_fraction_enclosure(
+        &self, index: usize, fractions: [f64;2],
+    ) -> Result<RootRigidEnclosure,AnimationError> {
+        if fractions.iter().any(|value| !value.is_finite()) || fractions[0] < 0.
+            || fractions[1] > 1. || fractions[0] > fractions[1] {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let span = self.path.spans.get(index).ok_or(AnimationError::InvalidSampleTime)?;
+        let (twist,_) = span.screw.ok_or(AnimationError::RootRotationTransitionUnsupported)?;
+        let mut duration = Scalar::exact(span.end()).sub(Scalar::exact(span.start()))?
+            .mul(Scalar(fractions[0],fractions[1]))?;
+        duration.0 = duration.0.max(0.);
+        twist.increment_interval_enclosure(duration)?.compose(&self.prefixes[index])
+    }
+
+    /// Hull of every image of every point in the supplied box for the whole path.
+    /// The immutable prefix cache and interval exponentials cover each span.
+    pub fn whole_path_point_box_bounds(
+        &self, point: [[f64;2];3],
+    ) -> Result<[[f64;2];3],AnimationError> {
+        let mut hull = RootRigidEnclosure::IDENTITY.transform_point_box_bounds(point)?;
+        for index in 0..self.path.spans.len() {
+            let image = self.span_fraction_enclosure(index,[0.,1.])?
+                .transform_point_box_bounds(point)?;
+            for axis in 0..3 {
+                hull[axis][0] = hull[axis][0].min(image[axis][0]);
+                hull[axis][1] = hull[axis][1].max(image[axis][1]);
+            }
+        }
+        Ok(hull)
+    }
+
     /// Samples the canonical stored field without replaying earlier segments.
     /// Endpoint samples use their prepared enclosure directly.
     pub fn sample(

@@ -1,0 +1,10 @@
+{
+  "animation_tests_passed": 154,
+  "canonical_whole_path_point_box": true,
+  "closed_fraction_interval_enclosures": true,
+  "multi_span_and_fixed_axis_checked": true,
+  "rounding_error_on_path_box": true,
+  "earlier_numeric_evaluation_errors_included": false,
+  "imported_curve_compilation_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

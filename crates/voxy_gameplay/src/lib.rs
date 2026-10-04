@@ -283,6 +283,9 @@ pub struct CharacterCertifiedFadeMotion<'a> {
     pub coordinate_axis: usize,
     /// Caller-supplied world bound for rounded pose evaluation error.
     pub evaluation_radius: f64,
+    /// Optional caller-proven errors on each world axis, after all frame mappings.
+    /// None uses the whole-body radius on every axis. Bounds must not exceed it.
+    pub evaluation_axes: Option<[f64;3]>,
 }
 /// A STEP collision may have path_fraction=1 without completing the final event.
 /// Use `complete`, `completed_spans` and `span_fraction` for exact admission.
@@ -817,6 +820,8 @@ impl CharacterPhysics {
                 || path.trajectory.duration() != dt
                 || request.coordinate_axis >= 3
                 || !request.evaluation_radius.is_finite() || request.evaluation_radius < 0.
+                || request.evaluation_axes.is_some_and(|axes| axes.iter().any(|value|
+                    !value.is_finite() || *value < 0. || *value > request.evaluation_radius))
                 || certified_by_owner.insert(request.owner, request).is_some() {
                 return Err(PhysicsError::InvalidMotion);
             }
@@ -985,9 +990,9 @@ impl CharacterPhysics {
                     Some((hit.rotation, hit.normal))
                 } else if let Some(path) = requested_rigid.get(&owner) {
                     let hit = if let Some(request) = certified_by_owner.get(&owner) {
-                        angular_sweep::sweep_certified_rigid_fade(position, runtime.rest_edges,
+                        angular_sweep::sweep_certified_rigid_fade_with_axis_errors(position, runtime.rest_edges,
                             runtime.orientation, request.fade, request.coordinate_axis,
-                            path.basis, path.origin.as_dvec3(), path.scale, request.evaluation_radius,
+                            path.basis, path.origin.as_dvec3(), path.scale, request.evaluation_radius, request.evaluation_axes,
                             &shapes, self.angular_iterations, &mut trajectory_queries)?
                     } else {
                         angular_sweep::sweep_rigid_path(position, runtime.rest_edges,

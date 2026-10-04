@@ -1,0 +1,10 @@
+{
+  "gameplay_unit_tests_passed": 61,
+  "whole_path_world_body_vertex_rounding_errors": true,
+  "shared_collision_world_frame": true,
+  "signed_scale_offset_origin_large_coordinates_checked": true,
+  "automatic_admission_uses_derived_errors": false,
+  "earlier_numeric_evaluation_errors_included": false,
+  "imported_curve_compilation_error_proof": false,
+  "ordinary_app_moving_fades": false
+}

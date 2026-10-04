@@ -1,0 +1,11 @@
+{
+  "animation_tests_passed": 159,
+  "pointwise_relative_cubic_phase_error": true,
+  "origin_key_normalization_and_composition_included": true,
+  "nonidentity_origin_reference_verified": true,
+  "exact_zero_components_preserved": true,
+  "uniform_relative_runtime_error_proof": false,
+  "cycle_composition_error_proof": false,
+  "arc_logarithm_error_proof": false,
+  "ordinary_app_moving_fades": false
+}
