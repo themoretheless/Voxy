@@ -1,0 +1,11 @@
+{
+  "animation_tests": 179,
+  "independent_rational_pose_components": 120,
+  "source_linear_pose_enclosure": true,
+  "source_key_normalization_enclosed": true,
+  "platform_trigonometry_used": false,
+  "source_phase_relative_origin_enclosed": true,
+  "moving_linear_whole_interval_field_supported": false,
+  "ordinary_app_moving_fades": false,
+  "general_runtime_publication_qualified": false
+}

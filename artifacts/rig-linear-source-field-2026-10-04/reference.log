@@ -1,0 +1,7 @@
+
+running 1 test
+LINEAR_SOURCE_FIELD ([[0.0, 0.0], [0.0, 0.0], [6.28318530717955, 6.283185307179626]], [[0.0, 0.0], [3.1415926535897754, 3.1415926535898127], [0.0, 0.0]], [[0.0, 0.0], [0.0, 0.0], [6.283185307179323, 6.2831853071798545]], [[0.0, 0.0], [3.1415926535897754, 3.1415926535898127], [0.0, 0.0]], 2.8473011834989193e-13, 2.0428103653102896e-14, 3.4601442930920067e-13)
+test root_rigid::tests::moving_linear_source_field_keeps_pivot_loops_and_fade_completion ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 179 filtered out; finished in 0.00s
+

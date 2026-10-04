@@ -1,0 +1,2 @@
+PASS: 18 source LINEAR angular components; rational sqrt and atan bounds, no tolerance
+PASS: 12 local/loop source field components, exact rational pi enclosure

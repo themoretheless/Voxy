@@ -2644,7 +2644,7 @@ fn ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_at
 }
 
 #[test]
-fn rigid_preparation_rejects_final_contact_narrowing_before_publication() {
+fn rigid_preparation_stops_before_rounded_contact_and_preserves_callback_rollback() {
     use voxy_animation::{RootRigidPath, RootRigidTwist};
     use voxy_gameplay::{CharacterRigidTrajectoryMotion, CharacterTickError};
     let mut scene = SceneGraph::new(2);
@@ -2698,13 +2698,21 @@ fn rigid_preparation_rejects_final_contact_narrowing_before_publication() {
         1. / 60.,
         &[],
         &[request],
-        |_, _| {
+        |preview, _| {
             prepared = true;
-            Ok::<_, ()>(())
+            let published = preview.characters[0].world_matrix.w_axis.x;
+            let wall_left = 1. - f64::from(0.1_f32);
+            assert!(f64::from(published) + f64::from(0.1_f32) <= wall_left);
+            Err::<(), _>("discard validated candidate")
         },
     );
-    assert!(matches!(result, Err(CharacterTickError::Physics(_))));
-    assert!(!prepared);
+    assert!(matches!(
+        result,
+        Err(CharacterTickError::Preparation(
+            "discard validated candidate"
+        ))
+    ));
+    assert!(prepared);
     assert_eq!(scene.local(player).unwrap(), before);
     assert!(physics.state(&scene, player).unwrap().is_none());
     assert!(input.state("jump").unwrap().pressed);
@@ -2723,6 +2731,7 @@ fn rigid_preparation_rejects_final_contact_narrowing_before_publication() {
         trajectory: &safe,
         ..request
     };
+    prepared = false;
     let (_, accepted) = physics
         .fixed_step_with_preparation(
             &mut scene,
@@ -2859,6 +2868,13 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
         )
         .unwrap();
     assert!(receipts[0].complete);
+    let (axes, radius) = receipts[0].proposal_evaluation_error_bounds().unwrap();
+    assert!(
+        axes.iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
+    );
+    assert!(radius < 1e-8);
+
     assert_eq!(scene.world_matrix(player).unwrap(), accepted.world_matrix);
     assert_eq!(scene.local(player).unwrap().translation.y, 0.125);
     assert!(!input.state("jump").unwrap().pressed);
@@ -3039,5 +3055,72 @@ fn mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds() {
     assert!(physics.accepted_pose(&scene, owners[2]).unwrap().is_none());
     scene.set_active(owners[2], true).unwrap();
     assert!(physics.accepted_pose(&scene, owners[2]).unwrap().is_some());
+    assert!(!input.state("jump").unwrap().pressed);
+}
+
+#[test]
+fn rigid_path_publication_reserve_keeps_rounded_pose_outside_wall_without_callback() {
+    use glam::{DQuat, DVec3};
+    use voxy_animation::{RootRigidPath, RootRigidTwist};
+    use voxy_gameplay::CharacterRigidTrajectoryMotion;
+    let mut scene = SceneGraph::new(2);
+    let wall = scene
+        .spawn(None, at(Vec3::new(65536.0234375, 0., 0.)))
+        .unwrap();
+    scene
+        .insert_component(
+            wall,
+            BoxCollider {
+                half_extents: [0.01, 2., 2.],
+            },
+        )
+        .unwrap();
+    let player = scene.spawn(None, at(Vec3::new(65536., 0., 0.))).unwrap();
+    scene
+        .insert_component(
+            player,
+            CharacterBody {
+                half_extents: [0.001, 0.1, 0.1],
+                gravity: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
+    let mut input = player_input().unwrap();
+    physics
+        .fixed_step(&mut scene, &mut input, 1. / 60.)
+        .unwrap();
+    let before = scene.local(player).unwrap();
+
+    input.event(JUMP, 1.).unwrap();
+    input.event(JUMP, 0.).unwrap();
+    let dt = 1. / 60.;
+    let path = RootRigidPath::from_twists(
+        &[(
+            RootRigidTwist {
+                linear: DVec3::X * 1.8,
+                angular: DVec3::ZERO,
+            },
+            dt,
+        )],
+        1,
+    )
+    .unwrap();
+    let request = CharacterRigidTrajectoryMotion {
+        owner: player,
+        trajectory: &path,
+        basis: DQuat::IDENTITY,
+        origin: Vec3::ZERO,
+        scale: 1.,
+    };
+    let receipt = physics
+        .fixed_step_with_rigid_trajectories(&mut scene, &mut input, dt, &[request])
+        .unwrap()[0];
+    assert!(!receipt.complete);
+    let published = scene.local(player).unwrap().translation.x;
+    let wall_left = f64::from(scene.local(wall).unwrap().translation.x) - f64::from(0.01_f32);
+    assert!(f64::from(published) + f64::from(0.001_f32) <= wall_left);
+    assert!(published > before.translation.x);
     assert!(!input.state("jump").unwrap().pressed);
 }

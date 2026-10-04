@@ -1,0 +1,13 @@
+{
+  "gameplay_library_tests": 61,
+  "gameplay_integration_tests": 46,
+  "editor_runtime_tests": 20,
+  "physical_and_scene_pose_admission_without_callback": true,
+  "ordinary_unenclosed_zero_clearance_contact_reserve": true,
+  "explicit_clearance_envelope_preserved": true,
+  "large_coordinate_f32_regression": 65536,
+  "independent_exact_dyadic_rounding_proof": true,
+  "safe_candidate_callback_failure_rolls_back": true,
+  "general_uniform_numeric_margin_qualified": false,
+  "ordinary_app_moving_fades": false
+}

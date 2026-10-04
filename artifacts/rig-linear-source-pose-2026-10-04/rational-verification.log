@@ -1,0 +1,2 @@
+PASS: 18 source LINEAR angular components; rational sqrt and atan bounds, no tolerance
+PASS: 120 source LINEAR pose components, independent rational series/sqrt bounds

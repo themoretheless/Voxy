@@ -3344,6 +3344,50 @@ fn whole_field_guard_stays_one_adjacent_clock_span_during_smooth_refinement() {
 }
 
 #[test]
+fn canonical_evaluated_pose_ignores_cached_prefix_and_bounds_actual_point_error() {
+    let mut path = RootRigidPath::from_twists(
+        &[
+            (
+                RootRigidTwist {
+                    linear: DVec3::X,
+                    angular: DVec3::ZERO,
+                },
+                0.25,
+            ),
+            (
+                RootRigidTwist {
+                    linear: DVec3::ZERO,
+                    angular: DVec3::Y * 0.7,
+                },
+                0.5,
+            ),
+        ],
+        2,
+    )
+    .unwrap();
+    path.end.translation = DVec3::splat(1000.);
+    path.spans[1].screw.as_mut().unwrap().1.translation = DVec3::splat(-1000.);
+    let cache = path.prepare_screw_enclosures(2).unwrap();
+    for fraction in [0., 0.25, 0.5, 0.75, 1.] {
+        let (pose, source) = cache.sample_evaluated(1, fraction).unwrap();
+        assert!(pose.translation.length() < 1.);
+        let point = DVec3::new(0.5, -0.25, 0.125);
+        let actual = pose.transform_point(point).unwrap();
+        let (axes, radius) = source
+            .enclosed_point_evaluation_error(point.to_array().map(|v| [v, v]), 1., actual)
+            .unwrap();
+        assert!(radius < 1e-10);
+        let expected = source.transform_point(point).unwrap();
+        for i in 0..3 {
+            assert!((expected[i][0] - actual[i]).abs() <= axes[i]);
+            assert!((expected[i][1] - actual[i]).abs() <= axes[i]);
+        }
+    }
+    assert!(cache.sample_evaluated(2, 0.).is_err());
+    assert!(cache.sample_evaluated(0, f64::NAN).is_err());
+}
+
+#[test]
 fn continuous_path_endpoint_ignores_rounded_screw_caches_and_preserves_budget() {
     let mut path = RootRigidPath::from_twists(
         &[
@@ -3424,6 +3468,108 @@ fn accepted_fade_prefix_keeps_precise_clocks_and_never_mutates_staged_tick() {
     assert_eq!(animator.time, 0.);
     assert_eq!(plan.candidate.time, 0.25);
     assert!(animator.transition.is_some());
+}
+
+#[test]
+fn moving_linear_source_field_keeps_pivot_loops_and_fade_completion() {
+    let (_, clip) = clip(
+        Vec3::X * 2.,
+        vec![],
+        vec![
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 1.,
+                value: Quat::from_xyzw(0., 1., 0., 0.),
+            },
+        ],
+        TrackInterpolation::default(),
+        JointTangents::default(),
+        Playback::Loop,
+    );
+    let curve = clip.root_rigid_curve(0).unwrap();
+    let field = curve
+        .source_phase_twist_enclosure([0., 1.], [true; 3])
+        .unwrap()
+        .unwrap();
+    assert_eq!(field.angular_bounds()[0], [0.; 2]);
+    assert_eq!(field.angular_bounds()[2], [0.; 2]);
+    assert_eq!(field.linear_bounds()[0], [0.; 2]);
+    assert_eq!(field.linear_bounds()[1], [0.; 2]);
+    let angular = field.angular_bounds()[1];
+    let linear = field.linear_bounds()[2];
+    // Independent broad rational brackets for pi and 2*pi.
+    assert!(angular[0] > 3.14 && angular[1] < 3.15);
+    assert!(linear[0] > 6.28 && linear[1] < 6.30);
+    let whole = curve
+        .source_delta_twist_enclosure(0., [0., 2.], [true; 3], 8)
+        .unwrap()
+        .unwrap();
+    assert!(whole.angular_bounds()[1][0] > 3.14);
+    assert!(whole.linear_bounds()[2][0] > 6.28);
+    let make = |times| {
+        RootRigidSourceField::new(
+            &curve,
+            0.,
+            times,
+            [true; 3],
+            RootRigidEnclosure::IDENTITY,
+            RootUniformScaleEnclosure::from_scale(1.).unwrap(),
+            8,
+        )
+        .unwrap()
+    };
+    let motion = RootRigidCertifiedFadeInterval::integrate_sources_with_completion(
+        Some(make([0., 1.])),
+        make([0.5, 1.5]),
+        [0., 1.],
+        1.,
+        0.25,
+        0.01,
+        0.001,
+        4096,
+    )
+    .unwrap();
+    let end = motion.approximation().path.end_transform();
+    assert!(
+        (end.translation - DVec3::X * 4.).length() <= motion.approximation().origin_error_bound
+    );
+    let prefix = motion
+        .approximation()
+        .path
+        .prepare_screw_enclosures(4096)
+        .unwrap();
+    let certificate = prefix
+        .certify_fade_point_error(motion.fields(), [[-1., 1.]; 3], 4096)
+        .unwrap();
+    assert!(certificate.radius() < 0.02);
+    let cut = motion
+        .approximation()
+        .path
+        .spans()
+        .iter()
+        .position(|s| s.end() == 0.25)
+        .unwrap();
+    assert_eq!(motion.accepted_wall_time(cut, 1., false).unwrap(), 0.25);
+    assert!(
+        curve
+            .source_delta_twist_enclosure(0., [0., 2.], [true; 3], 1)
+            .is_err()
+    );
+    println!(
+        "LINEAR_SOURCE_FIELD {:?}",
+        (
+            field.linear_bounds(),
+            field.angular_bounds(),
+            whole.linear_bounds(),
+            whole.angular_bounds(),
+            motion.approximation().origin_error_bound,
+            motion.approximation().angular_error_bound,
+            certificate.radius()
+        )
+    );
 }
 
 #[test]
@@ -3521,7 +3667,7 @@ fn authored_constant_linear_rotation_is_exact_and_tiny_turns_are_not_held() {
             .unwrap()
             .source_phase_enclosure(0.5, [true; 3])
             .unwrap()
-            .is_none()
+            .is_some()
     );
 }
 
@@ -3857,6 +4003,51 @@ fn transported_common_frame_preserves_fade_and_completion_motion() {
                 .is_err()
         );
     }
+}
+
+#[test]
+fn source_phase_anchor_retains_tiny_turn_and_rejects_blended_reference() {
+    let (rig, clip) = clip(
+        Vec3::ZERO,
+        vec![],
+        vec![
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 1.,
+                value: Quat::from_xyzw(1e-20, 0., 0., 1.),
+            },
+        ],
+        TrackInterpolation::default(),
+        JointTangents::default(),
+        Playback::Loop,
+    );
+    let mut animator = Animator::new(clip.clone());
+    animator.advance(&rig, 0.5).unwrap();
+    let source = animator
+        .root_rigid_source_phase_factor_enclosure([true; 3])
+        .unwrap()
+        .unwrap();
+    assert!(source.rotation_bounds()[0][0] > 0.);
+    assert!(source.rotation_bounds()[0][1] < 1e-20);
+    assert_eq!(animator.normalized_phase(), 0.5);
+    let reference = source.inverse().unwrap();
+    let restored = reference.compose(&source).unwrap();
+    for (bounds, exact) in restored
+        .transform_point(DVec3::Y)
+        .unwrap()
+        .into_iter()
+        .zip([0., 1., 0.])
+    {
+        assert!(bounds[0] <= exact && exact <= bounds[1]);
+    }
+    animator.transition_to_at_phase(clip, 0.125, 0.25).unwrap();
+    assert!(matches!(
+        animator.root_rigid_source_phase_factor_enclosure([true; 3]),
+        Err(AnimationError::RootRotationTransitionUnsupported)
+    ));
 }
 
 #[test]

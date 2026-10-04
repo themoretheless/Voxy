@@ -21,10 +21,12 @@ pub(crate) use enclosure::{
     quaternion_cubic_normalized_error_bounds, quaternion_cubic_phase_evaluation_error_bounds,
     quaternion_cubic_restriction_error_bounds, quaternion_cubic_source_angular_bounds,
     quaternion_cubic_source_speed_bound, quaternion_normalization_error_bounds,
-    quaternion_normalized_composition_uniform_error, source_linear_angular_bounds,
-    translation_coefficient_error_bounds, translation_interval_evaluation_error_bounds,
-    translation_phase_evaluation_error_bounds, translation_piece_error_bounds,
-    translation_source_position_bounds, translation_source_velocity_bounds,
+    quaternion_normalized_composition_uniform_error, source_key_rotation_bounds,
+    source_linear_angular_bounds, source_linear_fraction, source_linear_rotation_bounds,
+    source_relative_rotation_bounds, translation_coefficient_error_bounds,
+    translation_interval_evaluation_error_bounds, translation_phase_evaluation_error_bounds,
+    translation_piece_error_bounds, translation_source_position_bounds,
+    translation_source_velocity_bounds,
 };
 mod blend;
 pub use blend::RootSpatialTwistBounds;

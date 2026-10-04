@@ -28,7 +28,10 @@ mod path_field;
 mod points;
 mod rates;
 mod source_fade;
-pub(crate) use linear_source::source_linear_angular_bounds;
+pub(crate) use linear_source::{
+    source_key_rotation_bounds, source_linear_angular_bounds, source_linear_fraction,
+    source_linear_rotation_bounds, source_relative_rotation_bounds,
+};
 mod wall_partition;
 pub use accumulation::RootRigidErrorAccumulator;
 pub use automatic_fade::RootRigidMappedPath;
@@ -910,7 +913,7 @@ impl RootRigidCurve {
         let Some(angular_bounds) = self
             .0
             .rotation
-            .cubic_source_angular_velocity_bounds(times[0], times[1])?
+            .source_angular_velocity_bounds(times[0], times[1])?
         else {
             return Ok(None);
         };
@@ -951,7 +954,7 @@ impl RootRigidCurve {
         Ok(Some(RootRigidTwistEnclosure::from_parts(linear, angular)))
     }
 
-    /// Source point-speed cap for one translation/cubic-or-constant-rotation interval.
+    /// Source point-speed cap for one translation/cubic-or-LINEAR-rotation interval.
     /// Includes extraction masks and moving pivots; no loop-prefix or parent-frame proof.
     /// Radius bounds the fixed authored point relative to the local frame origin.
     pub fn source_point_speed_bound(
@@ -966,11 +969,7 @@ impl RootRigidCurve {
         }
         let velocity = self.0.translation.source_velocity_bounds(start, end)?;
         let position = self.0.translation.source_position_bounds(start, end)?;
-        let Some(angular) = self
-            .0
-            .rotation
-            .cubic_source_angular_speed_bound(start, end)?
-        else {
+        let Some(angular) = self.0.rotation.source_angular_speed_bound(start, end)? else {
             return Ok(None);
         };
         let mut translation_speed = Scalar::exact(0.);
@@ -1025,7 +1024,7 @@ impl RootRigidCurve {
 
 impl RootRigidCurve {
     /// Source factor at an exact local phase, including the extraction pivot.
-    /// Cubic or proved constant rotation; represents real unit rotations.
+    /// Cubic, LINEAR or proved constant rotation; represents real unit rotations.
     pub fn source_phase_enclosure(
         &self,
         phase: f64,
@@ -1037,6 +1036,12 @@ impl RootRigidCurve {
         let position = self.0.translation.source_position_bounds(phase, phase)?;
         let rotation = if self.0.rotation.source_rotation_is_constant() {
             [0., 0., 0., 1.].map(Scalar::exact)
+        } else if let Some(bounds) = self
+            .0
+            .rotation
+            .linear_relative_source_phase_rotation_bounds(phase)?
+        {
+            bounds.map(|q| Scalar(q[0], q[1]))
         } else {
             let Some(error) = self
                 .0
@@ -1188,7 +1193,7 @@ impl RootRigidCurve {
         let Some(angular) = self
             .0
             .rotation
-            .cubic_source_angular_speed_bound(times[0], times[1])?
+            .source_angular_speed_bound(times[0], times[1])?
         else {
             return Ok(None);
         };

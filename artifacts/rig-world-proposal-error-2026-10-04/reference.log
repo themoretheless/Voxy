@@ -1,0 +1,7 @@
+
+running 1 test
+WORLD_POSE_ERROR ([0.12500000004365577, 0.2500000000000014, 0.5000000000000014], 0.8750000000436587)
+test angular_sweep::gap::world_error_tests::world_corner_discrepancy_covers_exact_affine_shift_and_rejects_bad_boxes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 61 filtered out; finished in 0.00s
+

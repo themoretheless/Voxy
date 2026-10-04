@@ -1,0 +1,10 @@
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.14s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-9307c5efc2715376)
+
+running 2 tests
+test model_playback::physical_fade_receipt_tests::original_source_fade_preserves_asset_receipt_and_transactional_rollback ... ok
+test model_playback::physical_fade_receipt_tests::physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 163 filtered out; finished in 0.01s
+

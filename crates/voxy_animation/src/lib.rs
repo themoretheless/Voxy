@@ -892,6 +892,21 @@ impl Animator {
             .sample(self.current.phase(self.time), axes)
     }
 
+    /// Original-source extraction factor at the stored current clip phase.
+    /// Encloses source normalization/evaluation; an active blend has no unique
+    /// phase anchor. None identifies an unsupported source rotation channel.
+    pub fn root_rigid_source_phase_factor_enclosure(
+        &self,
+        axes: [bool; 3],
+    ) -> Result<Option<RootRigidEnclosure>, AnimationError> {
+        if self.transition.is_some() {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
+        self.current
+            .root_rigid_curve(self.motion_joint)?
+            .source_phase_enclosure(self.current.phase(self.time), axes)
+    }
+
     /// Predicts the interval from the current clock without advancing it.
     /// # Errors
     /// Rejects the same invalid timestep range as `advance`.

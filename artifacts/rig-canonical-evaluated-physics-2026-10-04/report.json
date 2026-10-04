@@ -1,0 +1,11 @@
+{
+  "animation_tests": 182,
+  "gameplay_tests": 61,
+  "editor_runtime_tests": 20,
+  "canonical_enclosure_selects_physical_proposal": true,
+  "rounded_cached_prefix_and_end_ignored": true,
+  "actual_point_error_fixture_fractions": 5,
+  "actual_point_error_fixture_bound_below": 1e-10,
+  "general_uniform_body_world_publication_margin_qualified": false,
+  "ordinary_app_moving_fades": false
+}

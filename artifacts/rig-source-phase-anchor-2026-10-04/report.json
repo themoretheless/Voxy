@@ -1,0 +1,10 @@
+{
+  "animation_tests": 181,
+  "editor_runtime_tests": 20,
+  "source_phase_reference_enclosure_selected": true,
+  "tiny_turn_source_anchor_nonzero": true,
+  "active_blend_anchor_rejected": true,
+  "unsupported_source_ordinary_playback_fallback_retained": true,
+  "general_runtime_publication_qualified": false,
+  "ordinary_app_moving_fades": false
+}

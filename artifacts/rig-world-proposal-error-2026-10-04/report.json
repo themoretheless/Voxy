@@ -1,0 +1,12 @@
+{
+  "gameplay_library_tests": 62,
+  "gameplay_integration_tests": 46,
+  "editor_runtime_tests": 20,
+  "world_corner_discrepancy_on_accepted_canonical_proposal": true,
+  "whole_affine_body_bound_by_convex_corner_interpolation": true,
+  "receipt_reports_private_optional_proposal_error": true,
+  "exact_rational_reference_components": 4,
+  "bound_scope": "accepted sweep proposal before grounding relocation and f32 scene publication",
+  "uniform_trajectory_numeric_margin_qualified": false,
+  "ordinary_app_moving_fades": false
+}

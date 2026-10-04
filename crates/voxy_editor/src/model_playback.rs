@@ -152,31 +152,6 @@ impl PreparedModelFade {
         })
     }
 
-    pub(crate) fn bind_common_similarity(
-        self,
-        owner: voxy_scene::NodeId,
-        common: voxy_animation::RootRigidEnclosure,
-        scale: voxy_animation::RootUniformScaleEnclosure,
-        origin_tolerance: f64,
-        angular_tolerance: f64,
-        max_spans: usize,
-    ) -> Result<PreparedModelFadeMotion, String> {
-        let motion = self
-            .plan
-            .integrate_authored_common_similarity_enclosed(
-                common,
-                scale,
-                origin_tolerance,
-                angular_tolerance,
-                max_spans,
-            )
-            .map_err(|error| error.to_string())?;
-        Ok(PreparedModelFadeMotion {
-            owner,
-            prepared: self,
-            motion,
-        })
-    }
     pub(crate) fn bind_motion(
         self,
         owner: voxy_scene::NodeId,
@@ -320,11 +295,22 @@ impl ModelPlayback {
             .animator
             .as_ref()
             .ok_or("root reference needs a playing clip")?;
-        let factor = animator
-            .root_rigid_phase_factor(axes)
-            .map_err(|e| e.to_string())?;
-        let factor = voxy_animation::RootRigidEnclosure::from_transform(factor)
-            .and_then(|factor| factor.with_translation_scale_enclosed(scale))
+        let factor = match animator
+            .root_rigid_source_phase_factor_enclosure(axes)
+            .map_err(|e| e.to_string())?
+        {
+            Some(source) => source,
+            // Ordinary playback retains unsupported STEP channels. Such moving
+            // channels cannot enter the original-source fade compiler.
+            None => voxy_animation::RootRigidEnclosure::from_transform(
+                animator
+                    .root_rigid_phase_factor(axes)
+                    .map_err(|e| e.to_string())?,
+            )
+            .map_err(|e| e.to_string())?,
+        };
+        let factor = factor
+            .with_translation_scale_enclosed(scale)
             .map_err(|e| e.to_string())?;
         current_root_to_body
             .compose(&factor.inverse().map_err(|e| e.to_string())?)

@@ -1,0 +1,22 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 17.42s
+     Running tests/integration.rs (target/debug/deps/integration-487c054af9be441c)
+
+running 1 test
+test rigid_path_publication_rounding_rejects_penetration_without_preparation_callback ... FAILED
+
+failures:
+
+---- rigid_path_publication_rounding_rejects_penetration_without_preparation_callback stdout ----
+
+thread 'rigid_path_publication_rounding_rejects_penetration_without_preparation_callback' (26985731) panicked at crates/voxy_gameplay/tests/integration.rs:3104:14:
+called `Result::unwrap_err()` on an `Ok` value: [AppliedCharacterTrajectoryMotion { rigid_identity: Some(6102245216), owner: NodeId { scene: 1, slot: 1, generation: 0 }, displacement: Vec3(0.012437499, 0.0, 0.0), rotation: DQuat(0.0, 0.0, 0.0, 1.0), completed_spans: 0, span_fraction: 0.41458329690272167, path_fraction: 0.41458329690272167, complete: false, advancement_iterations: 11, trajectory_queries: 13 }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    rigid_path_publication_rounding_rejects_penetration_without_preparation_callback
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 45 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_gameplay --test integration`

@@ -1,0 +1,15 @@
+{
+  "animation_tests": 180,
+  "source_linear_whole_interval_field_supported": true,
+  "source_linear_loop_field_supported": true,
+  "independent_rational_field_components": 12,
+  "source_fade_completion_wall_time": 0.25,
+  "source_fade_exact_displacement": [
+    4,
+    0,
+    0
+  ],
+  "fixture_uniform_point_error_bound": 3.4601442930920067e-13,
+  "ordinary_app_moving_fades": false,
+  "general_runtime_publication_qualified": false
+}

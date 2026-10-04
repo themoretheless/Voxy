@@ -383,7 +383,7 @@ impl AnimationRuntime {
             .playback
             .prepare_certified_fade_wall(dt, state.settings.root_motion_axes, max_spans)?
             .map(|prepared| {
-                let motion = prepared.bind_common_similarity(
+                let motion = prepared.bind_original_sources_common_similarity(
                     owner,
                     reference.authored_to_body,
                     reference.scale,

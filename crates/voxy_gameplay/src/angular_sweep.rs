@@ -189,6 +189,7 @@ fn advance_with_clearance(
         speed_bound,
         radius,
         rotation_radius,
+        0.,
         clearance,
         steps,
         queries,
@@ -203,12 +204,17 @@ fn advance_with_enclosures(
     speed_bound: f64,
     radius: f64,
     rotation_radius: f64,
+    contact_reserve: f64,
     clearance: f64,
     steps: &mut usize,
     queries: &mut usize,
     point_sample: Option<&dyn Fn(f64) -> Result<PointBoxes, PhysicsError>>,
 ) -> Result<Hit, PhysicsError> {
-    if !clearance.is_finite() || clearance < 0. {
+    if !clearance.is_finite()
+        || clearance < 0.
+        || !contact_reserve.is_finite()
+        || contact_reserve < 0.
+    {
         return Err(PhysicsError::InvalidMotion);
     }
     if candidates.is_empty() || (speed_bound == 0. && clearance == 0. && point_sample.is_none()) {
@@ -254,7 +260,8 @@ fn advance_with_enclosures(
                         + center.abs().max_element()
                         + obstacle.center.abs().max_element()
                         + radius)
-                    + 1e-8 * rotation_radius;
+                    + 1e-8 * rotation_radius
+                    + contact_reserve;
             }
         }
         if distance <= tolerance {
@@ -272,9 +279,9 @@ fn advance_with_enclosures(
         // A projection gap is a lower bound on Euclidean separation. Every body
         // point travels at most speed_bound over the normalized unit interval.
         let next = if clearance > 0. || point_sample.is_some() {
-            gap::advance_time(time, distance, speed_bound)?
+            gap::advance_time(time, (distance - contact_reserve).max(0.), speed_bound)?
         } else {
-            (time + 0.8 * distance / speed_bound).min(1.)
+            (time + 0.8 * (distance - contact_reserve).max(0.) / speed_bound).min(1.)
         };
         if next >= 1. {
             return Ok(Hit {
@@ -301,6 +308,7 @@ pub(crate) struct PathHit {
     pub complete: bool,
     pub advancement_iterations: usize,
     pub trajectory_queries: usize,
+    pub pose_evaluation_error: Option<([f64; 3], f64)>,
 }
 
 fn corners(edges: [DVec3; 3]) -> [DVec3; 8] {
@@ -342,6 +350,7 @@ pub(crate) fn sweep_path(
             complete: true,
             advancement_iterations: 0,
             trajectory_queries: path.spans().len(),
+            pose_evaluation_error: None,
         });
     }
     let vertices =
@@ -456,6 +465,7 @@ pub(crate) fn sweep_path(
                 complete: false,
                 advancement_iterations: iterations - steps,
                 trajectory_queries: initial_queries - *queries,
+                pose_evaluation_error: None,
             });
         }
     }
@@ -469,6 +479,7 @@ pub(crate) fn sweep_path(
         complete: true,
         advancement_iterations: iterations - steps,
         trajectory_queries: initial_queries - *queries,
+        pose_evaluation_error: None,
     })
 }
 
@@ -844,6 +855,33 @@ fn sweep_rigid_approximation_with_axis_errors(
     // checks the rounded proposal itself, not merely the canonical field pose.
     let proposed_orientation = (orientation * hit.rotation).normalize();
     let proposed_edges = rest_edges.map(|edge| rotate_vector(proposed_orientation, edge));
+    let canonical = if approximation.path.spans().is_empty() {
+        voxy_animation::RootRigidEnclosure::IDENTITY
+    } else {
+        let index = if hit.complete {
+            approximation.path.spans().len() - 1
+        } else {
+            hit.completed_spans
+        };
+        enclosed_path
+            .sample(index, hit.span_fraction)
+            .map_err(|_| PhysicsError::InvalidMotion)?
+    };
+    let frame = rigid_world_frame(center, orientation, basis, origin)?;
+    let mut world = [[[0.; 2]; 3]; 8];
+    for i in 0..8 {
+        let point = canonical
+            .transform_point_box_bounds(vertices[i])
+            .map_err(|_| PhysicsError::InvalidMotion)?;
+        world[i] = frame
+            .similarity_point_box_bounds(point, scale)
+            .map_err(|_| PhysicsError::InvalidMotion)?;
+    }
+    hit.pose_evaluation_error = Some(gap::world_pose_error(
+        world,
+        center + hit.displacement,
+        proposed_edges,
+    )?);
     let before = *queries;
     gap::certify_pose(center + hit.displacement, proposed_edges, boxes, queries)?;
     hit.trajectory_queries = hit
@@ -1017,6 +1055,27 @@ fn sweep_rigid_path_with_bounds(
         );
         (displacement, rotation)
     };
+    let evaluated_motion = |index: usize, fraction: f64| {
+        match enclosed_path {
+            Some(cache) => cache.sample_evaluated(index, fraction).map(|v| v.0),
+            None => path
+                .spans()
+                .get(index)
+                .ok_or(voxy_animation::AnimationError::InvalidSampleTime)
+                .and_then(|span| span.sample(fraction)),
+        }
+        .map_err(|_| PhysicsError::InvalidMotion)
+    };
+    // Prefer a candidate before the f32 grid boundary. This is an early-stop
+    // policy, not a certified numeric-error margin; final stored poses are
+    // independently checked against every obstacle before publication.
+    let contact_reserve = if clearance == 0. && enclosed_path.is_none() {
+        0.5 * f64::from(f32::EPSILON) * (anchor.abs().max_element() + radius).max(1.)
+    } else {
+        // Enclosed/clearance queries already carry their caller's numeric
+        // envelope. Preserve that contract instead of adding a second one.
+        0.
+    };
     let mut steps = iterations;
     if path.spans().is_empty() && (clearance > 0. || world_frame.is_some()) {
         let candidates: Vec<_> = boxes.iter().collect();
@@ -1042,6 +1101,7 @@ fn sweep_rigid_path_with_bounds(
             0.,
             radius,
             radius,
+            contact_reserve,
             clearance,
             &mut steps,
             queries,
@@ -1062,15 +1122,14 @@ fn sweep_rigid_path_with_bounds(
                 complete: false,
                 advancement_iterations: iterations - steps,
                 trajectory_queries: initial_queries - *queries,
+                pose_evaluation_error: None,
             });
         }
     }
     for (index, span) in path.spans().iter().enumerate() {
         query(queries)?;
         let sample = |fraction| -> Result<(DVec3, [DVec3; 3]), PhysicsError> {
-            let motion = span
-                .sample(fraction)
-                .map_err(|_| PhysicsError::InvalidMotion)?;
+            let motion = evaluated_motion(index, fraction)?;
             let (displacement, rotation) = transform(motion);
             Ok((
                 center + displacement,
@@ -1199,6 +1258,7 @@ fn sweep_rigid_path_with_bounds(
             speed_bound,
             radius,
             radius,
+            contact_reserve,
             clearance,
             &mut steps,
             queries,
@@ -1209,9 +1269,7 @@ fn sweep_rigid_path_with_bounds(
             },
         )?;
         if hit.fraction < 1. {
-            let accepted = span
-                .sample(hit.fraction)
-                .map_err(|_| PhysicsError::InvalidMotion)?;
+            let accepted = evaluated_motion(index, hit.fraction)?;
             let (displacement, rotation) = transform(accepted);
             let time = span.start() + (span.end() - span.start()) * hit.fraction;
             return Ok(PathHit {
@@ -1228,10 +1286,15 @@ fn sweep_rigid_path_with_bounds(
                 complete: false,
                 advancement_iterations: iterations - steps,
                 trajectory_queries: initial_queries - *queries,
+                pose_evaluation_error: None,
             });
         }
     }
-    let (displacement, rotation) = transform(path.end_transform());
+    let end = match path.spans().len().checked_sub(1) {
+        Some(index) => evaluated_motion(index, 1.)?,
+        None => path.end_transform(),
+    };
+    let (displacement, rotation) = transform(end);
     Ok(PathHit {
         displacement,
         rotation,
@@ -1242,6 +1305,7 @@ fn sweep_rigid_path_with_bounds(
         complete: true,
         advancement_iterations: iterations - steps,
         trajectory_queries: initial_queries - *queries,
+        pose_evaluation_error: None,
     })
 }
 

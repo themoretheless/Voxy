@@ -1580,3 +1580,49 @@ A proved constant source rotation relative to its authored origin is identity an
 ### Original LINEAR source angular velocity (2026-10-04)
 
 Retained f32 quaternion keys now supply outward short-arc angular velocity bounds without cached logs or platform atan/atan2. The angle enclosure uses the alternating arctangent series with an explicit remainder and a rational Machin enclosure for pi. Independent exact-rational checks cover 18 components, including tiny angles, half-turns, antipodal choices and noncommuting keys. All 178 animation tests pass. Moving LINEAR source pose/fade support and general publication qualification remain incomplete; ordinary App moving fades remain disabled.
+
+### Original LINEAR source phase pose (2026-10-04)
+
+linear_relative_source_phase_rotation_bounds encloses source-key normalization, the short-arc exponential and composition with the inverse authored source origin. source_phase_enclosure now accepts moving LINEAR poses. Sine and cosine use alternating Taylor series through 32 terms with explicit first-omitted-term remainders on angles at most 2 radians; no platform trigonometric result is used as proof. Source fractions use outward affine arithmetic inside a proved key cell. The independent rational verifier covers 120 quaternion components across six source key pairs and five fractions, including tiny angles, half-turns, negative hemisphere and noncommuting rotations. All 179 animation tests pass. Whole-interval moving LINEAR source fields still require the speed-cap and componentwise-field paths to be connected; ordinary App moving fades and general runtime publication qualification remain incomplete.
+
+### Whole-interval original LINEAR fields and source fades (2026-10-04)
+
+The shared source angular-field selector now admits moving LINEAR channels alongside cubic channels. Their speed cap is the outward L1 norm of the certified source angular field; cubic retains its Bernstein cap. Source phase interval enclosures, pivot-aware spatial velocity, loop-prefix adjoints and original-clock fade integration use these shared operations. Moving STEP channels remain unsupported.
+
+The exact half-turn fixture rotates around bind pivot 2X with angular velocity pi*Y and spatial linear velocity 2*pi*Z. Both local and two-loop field hulls contain independent rational Machin pi bounds for all 12 components. A source fade from clock [0,1] to [1/2,3/2], completing at wall time 1/4, preserves the same pivot field and ends at translation 4X. Its uniform material-point certificate for box [-1,1]^3 is 3.4601442930920067e-13. The fixed capacity rejection and exact completion receipt cut are checked. All 180 animation tests pass. These source trajectory certificates do not qualify general runtime/f32/world publication or ordinary App dispatch; ordinary App moving fades remain disabled.
+
+### Editor owner preparation selects original source compiler (2026-10-04)
+
+prepare_owner_fade now calls bind_original_sources_common_similarity. The asset/Animator snapshot, owner identity, accepted-motion receipt and transactional publication pipeline are retained. The unused cached-path bind_common_similarity wrapper was removed. All 20 editor runtime tests and both physical receipt tests pass; they cover scene batches, rollback, signed root-reference transport and planted-foot preservation.
+
+This is owner preparation integration, not unconditional production admission. The editor root-reference initialization still encloses its evaluated stored factor rather than qualifying source-to-cached factor discrepancy. CharacterCertifiedFadeMotion still accepts a caller-provided evaluation radius. General source/reference numeric error, canonical evaluation and f32 body/world publication margins require separate proof; ordinary App moving fades remain disabled.
+
+### Source phase reference anchoring (2026-10-04)
+
+Animator::root_rigid_source_phase_factor_enclosure encloses the original source factor at the stored current clip phase and rejects anchoring an active blend. ModelPlayback::reference_at_current_phase uses this source enclosure before signed scaling and inverse composition. Ordinary unsupported source channels retain the previous evaluated-factor fallback; moving unsupported channels cannot enter original-source fade integration. Supported LINEAR/cubic phase anchors no longer treat a rounded cache factor as an exact source pose.
+
+The regression retains a nonzero authored turn of 1e-20 at half phase, composes its source inverse back to a box containing the identity action, preserves the Animator clock and rejects an active blend. The cached factor also retains the small turn; this change supplies a source enclosure rather than repairing a lost cached turn. All 181 animation tests and 20 editor runtime tests pass, including physical receipt acceptance, signed reference transport and planted sole preservation. Source anchoring at the stored phase does not qualify runtime phase arithmetic, canonical path evaluation, or f32 body/world publication. General numeric admission and ordinary App moving fade dispatch remain incomplete.
+
+### Canonical evaluated poses in physical sweep (2026-10-04)
+
+RootScrewEnclosurePath::sample_evaluated selects a finite stored pose from the outward canonical prefix/increment enclosure, with explicit actual quaternion normalization. It returns that pose and its source enclosure so the existing enclosed_point_evaluation_error operation can bound the actual computed point discrepancy. Invalid fractions, missing spans, nonfinite or vanishing midpoint quaternions reject.
+
+The enclosed physical sweep uses this same evaluator for intermediate proposals, partial accepted motion and complete endpoint motion. It no longer samples rounded screw-prefix caches or path.end for a nonempty enclosed canonical path. Cache/path owner identity remains checked. The regression deliberately corrupts stored rounded prefix/end translations, then verifies canonical selection and point-error coverage at five fractions. Point bounds in this fixture are below 1e-10. All 182 animation tests, 61 gameplay tests and 20 editor runtime tests pass, including wall stops, floor contact, in-tick fade completion, transactional acceptance and planted soles.
+
+This connects evaluated local proposals to their canonical point enclosure. It does not yet construct a uniform automatic numeric margin for the actual body/world mapping, orientation/edge update or f32 publication. Caller-supplied evaluation margins remain conditional proof obligations; ordinary App moving fades remain disabled.
+
+### Physical publication admission without a pose callback (2026-10-04)
+
+The post-snap physical pose and composed f32 scene shape are now certified against every obstacle for every requested rigid trajectory, regardless of whether a preparation callback exists. The previous prepare.is_some gate allowed unprepared trajectories to bypass these checks. Exact dyadic separation still permits true touching and rejects overlapping interiors before scene/body/input publication.
+
+Ordinary unenclosed zero-clearance trajectories now use an early-stop contact reserve of half f32 epsilon times max(1, anchor L-infinity magnitude plus body edge radius). Advancement subtracts that reserve and the stopping threshold includes it. This is candidate-selection policy, not a proof of uniform numeric error. Explicit clearance/enclosed queries retain their supplied numeric-envelope contract without a second reserve; every physical rigid tick still undergoes final actual-pose admission.
+
+The regression at coordinate 65536 independently proves that a precisely touching center rounds to f32 center 65536.015625, which places the body's right face inside the wall. The previous f32 lattice center 65536.0078125 has disjoint interiors. Ordinary no-callback movement now selects and publishes a safe earlier candidate, consumes input once, and remains clipped by the wall. The preparation regression likewise obtains a safe candidate, then deliberately fails its callback to verify full rollback before retrying a smaller successful motion. All 61 library, 46 integration and 20 editor runtime tests pass. General uniform body/world numeric error and ordinary App moving-fade dispatch remain unqualified; ordinary App moving fades remain disabled.
+
+### Accepted canonical proposal world error (2026-10-04)
+
+The enclosed rigid approximation sweep now compares all eight canonical world corner enclosures against the exact affine box defined by its actual stored proposed center and rotated edges. gap::world_pose_error uses directed interval corner sums/subtractions, rejects invalid boxes and nonfinite poses, and returns componentwise maxima plus a directed L1 radius. Affine corner interpolation extends these bounds to every material point of the body.
+
+The resulting private optional metric is carried through PathHit into AppliedCharacterTrajectoryMotion::proposal_evaluation_error_bounds. It belongs to the accepted canonical sweep proposal, before grounding, relocation and f32 scene publication. Ordinary unenclosed paths report None rather than a manufactured zero bound. The source-fade transaction integration test requires the metric to be present, finite, internally consistent and below 1e-8 in its fixture. An independent exact-rational affine-shift fixture at world coordinate 65536 checks all three axes and the exact 7/8 L1 displacement with no tolerance. All 62 library, 46 integration and 20 editor runtime tests pass.
+
+This is a per-pose numerical discrepancy, not a uniform trajectory bound and not a post-snap/published-scene certificate. It must not replace CharacterCertifiedFadeMotion's whole-interval numeric proof obligation. General uniform body/world numerical admission and ordinary App moving-fade dispatch remain incomplete; ordinary App moving fades remain disabled.

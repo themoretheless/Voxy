@@ -38,6 +38,69 @@ impl Interval {
         )
     }
 }
+/// Discrepancy between enclosed canonical world corners and the exact affine
+/// shape defined by the actual stored center/edges. Convex interpolation of
+/// corners extends the component and L1 caps to every material point of the box.
+pub(super) fn world_pose_error(
+    reference: PointBoxes,
+    center: DVec3,
+    edges: [DVec3; 3],
+) -> Result<([f64; 3], f64), PhysicsError> {
+    if !center.is_finite() || edges.iter().any(|v| !v.is_finite()) {
+        return Err(PhysicsError::InvalidMotion);
+    }
+    let mut axes = [0_f64; 3];
+    for (corner, source) in reference.iter().enumerate() {
+        for axis in 0..3 {
+            let v = source[axis];
+            if !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1] {
+                return Err(PhysicsError::InvalidMotion);
+            }
+            let mut actual = Interval(center[axis], center[axis]);
+            for (i, edge) in edges.iter().enumerate() {
+                let value = edge[axis] * if corner & (1 << i) == 0 { -1. } else { 1. };
+                actual = actual.add(Interval(value, value))?;
+            }
+            let difference = Interval(v[0], v[1]).sub(actual)?.absolute();
+            axes[axis] = axes[axis].max(difference.1);
+        }
+    }
+    let mut radius = Interval(0., 0.);
+    for error in axes {
+        radius = radius.add(Interval(error, error))?;
+    }
+    Ok((axes, radius.1))
+}
+
+#[cfg(test)]
+mod world_error_tests {
+    use super::*;
+    #[test]
+    fn world_corner_discrepancy_covers_exact_affine_shift_and_rejects_bad_boxes() {
+        let center = DVec3::new(65536., 2., -3.);
+        let edges = [DVec3::X * 0.125, DVec3::Y * 0.25, DVec3::Z * 0.5];
+        let delta = DVec3::new(0.125, -0.25, 0.5);
+        let points = std::array::from_fn(|i| {
+            let point = center
+                + delta
+                + edges[0] * if i & 1 == 0 { -1. } else { 1. }
+                + edges[1] * if i & 2 == 0 { -1. } else { 1. }
+                + edges[2] * if i & 4 == 0 { -1. } else { 1. };
+            point.to_array().map(|x| [x, x])
+        });
+        let (axes, radius) = world_pose_error(points, center, edges).unwrap();
+        for i in 0..3 {
+            assert!(axes[i] >= delta[i].abs() && axes[i] < delta[i].abs() + 1e-8);
+        }
+        assert!(radius >= 0.875 && radius < 0.875 + 1e-8);
+        let mut invalid = points;
+        invalid[0][0] = [1., 0.];
+        assert!(world_pose_error(invalid, center, edges).is_err());
+        assert!(world_pose_error(points, DVec3::splat(f64::NAN), edges).is_err());
+        println!("WORLD_POSE_ERROR {:?}", (axes, radius));
+    }
+}
+
 fn dot(a: [Interval; 3], b: DVec3) -> Result<Interval, PhysicsError> {
     let mut result = Interval(0., 0.);
     for i in 0..3 {

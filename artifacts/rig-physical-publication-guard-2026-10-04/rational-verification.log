@@ -1,0 +1,2 @@
+PASS: exact dyadic source dimensions; contact is safe before narrowing and penetrates after nearest-even f32 publication
+PASS: preceding f32 center retains disjoint interiors

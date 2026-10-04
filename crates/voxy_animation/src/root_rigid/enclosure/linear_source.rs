@@ -124,9 +124,156 @@ pub(crate) fn source_linear_angular_bounds(
     Ok(result)
 }
 
+/// Exact source-key normalization. Raw f32 squares are exact f64 products.
+pub(crate) fn source_key_rotation_bounds(key: [f32; 4]) -> Result<[[f64; 2]; 4], AnimationError> {
+    if key.iter().any(|x| !x.is_finite()) || key.iter().all(|x| *x == 0.) {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    let q = key.map(|x| Scalar::exact(f64::from(x)));
+    let mut norm = Scalar::exact(0.);
+    for x in key.map(f64::from) {
+        norm = norm.add(Scalar::exact(x * x))?;
+    }
+    let norm = norm.sqrt_positive()?;
+    let mut result = [[0.; 2]; 4];
+    for i in 0..4 {
+        result[i] = q[i].div_interval_positive(norm)?.array();
+    }
+    Ok(result)
+}
+
+// Alternating Taylor series with the first omitted term as uniform remainder.
+// No platform trigonometric evaluations; |x|<=2 keeps the tail decreasing.
+fn sine_cosine(x: Scalar) -> Result<(Scalar, Scalar), AnimationError> {
+    if !x.is_finite() || x.0 < 0. || x.1 > 2. {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    let square = x.square()?;
+    let mut sine = x;
+    let mut cosine = Scalar::exact(1.);
+    let mut st = x;
+    let mut ct = Scalar::exact(1.);
+    for n in 1..32 {
+        st = st
+            .mul(square)?
+            .div_positive(f64::from((2 * n) * (2 * n + 1)))?;
+        ct = ct
+            .mul(square)?
+            .div_positive(f64::from((2 * n - 1) * (2 * n)))?;
+        if n % 2 == 0 {
+            sine = sine.add(st)?;
+            cosine = cosine.add(ct)?;
+        } else {
+            sine = sine.sub(st)?;
+            cosine = cosine.sub(ct)?;
+        }
+    }
+    let sr = st.mul(square)?.div_positive(64. * 65.)?;
+    let cr = ct.mul(square)?.div_positive(63. * 64.)?;
+    Ok((
+        sine.add(Scalar(-sr.1, sr.1))?,
+        cosine.add(Scalar(-cr.1, cr.1))?,
+    ))
+}
+
+/// Unit source slerp lift at an outward affine key fraction. This encloses
+/// source normalization and the short-arc exponential, not the cached pose.
+pub(crate) fn source_linear_rotation_bounds(
+    keys: [[f32; 4]; 2],
+    fraction: [f64; 2],
+) -> Result<[[f64; 2]; 4], AnimationError> {
+    if fraction.iter().any(|x| !x.is_finite())
+        || fraction[0] < 0.
+        || fraction[1] > 1.
+        || fraction[1] < fraction[0]
+    {
+        return Err(AnimationError::InvalidSampleTime);
+    }
+    let first = source_key_rotation_bounds(keys[0])?;
+    let angular = source_linear_angular_bounds(keys, [0., 1.])?.map(|x| Scalar(x[0], x[1]));
+    if angular.iter().all(|x| x.is_zero()) || fraction == [0., 0.] {
+        return Ok(first);
+    }
+    let norm = angular[0]
+        .square()?
+        .add(angular[1].square()?)?
+        .add(angular[2].square()?)?
+        .sqrt_positive()?;
+    let angle = norm
+        .mul(Scalar(fraction[0], fraction[1]))?
+        .div_positive(2.)?;
+    let (sine, cosine) = sine_cosine(angle)?;
+    let mut delta = [[0.; 2]; 4];
+    for i in 0..3 {
+        delta[i] = angular[i].div_interval_positive(norm)?.mul(sine)?.array();
+    }
+    delta[3] = cosine.array();
+    Ok(RootRigidEnclosure {
+        translation: [[0.; 2]; 3],
+        rotation: delta,
+    }
+    .compose(&RootRigidEnclosure {
+        translation: [[0.; 2]; 3],
+        rotation: first,
+    })?
+    .rotation_bounds())
+}
+
+pub(crate) fn source_relative_rotation_bounds(
+    current: [[f64; 2]; 4],
+    origin: [[f64; 2]; 4],
+) -> Result<[[f64; 2]; 4], AnimationError> {
+    let mut inverse = origin;
+    for v in &mut inverse[..3] {
+        *v = [-v[1], -v[0]];
+    }
+    Ok(RootRigidEnclosure {
+        translation: [[0.; 2]; 3],
+        rotation: current,
+    }
+    .compose(&RootRigidEnclosure {
+        translation: [[0.; 2]; 3],
+        rotation: inverse,
+    })?
+    .rotation_bounds())
+}
+pub(crate) fn source_linear_fraction(
+    time: f64,
+    keys: [f64; 2],
+) -> Result<[f64; 2], AnimationError> {
+    let fraction = Scalar::exact(time)
+        .sub(Scalar::exact(keys[0]))?
+        .div_interval_positive(Scalar::exact(keys[1]).sub(Scalar::exact(keys[0]))?)?;
+    // The caller proves time lies inside this key cell.
+    Ok([fraction.0.max(0.), fraction.1.min(1.)])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn source_linear_pose_encloses_short_arc_without_platform_trigonometry() {
+        let cases = [
+            [[0., 0., 0., 1.], [0., 1e-20, 0., 1.]],
+            [[0., 0., 0., 1.], [0., 0.5, 0., 1.]],
+            [[0., 0., 0., 1.], [0., 1., 0., 1.]],
+            [[0., 0., 0., 1.], [0., 1., 0., 0.]],
+            [[0., 0., 0., 1.], [0., 1., 0., -1.]],
+            [[0.5, 0.5, 0.5, 0.5], [-0.5, 0.5, 0.5, 0.5]],
+        ];
+        for keys in cases {
+            for u in [0., 0.25, 0.5, 0.75, 1.] {
+                let bounds = source_linear_rotation_bounds(keys, [u, u]).unwrap();
+                assert!(bounds.iter().all(|x| x[1] - x[0] < 1e-10));
+                println!(
+                    "SOURCE_LINEAR_POSE {:?}",
+                    (keys.map(|q| q.map(f64::from)), u, bounds)
+                );
+            }
+        }
+        assert!(source_linear_rotation_bounds(cases[0], [-0.1, 0.]).is_err());
+        assert!(source_linear_rotation_bounds(cases[0], [0., 1.1]).is_err());
+    }
     #[test]
     fn source_linear_log_covers_small_large_antipodal_and_noncommuting_keys() {
         let cases = [
