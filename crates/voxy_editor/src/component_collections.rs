@@ -252,7 +252,8 @@ impl crate::App {
             return Ok(result);
         };
         let snapshot: crate::prefab_authoring::AuthoredScene = serde_json::from_value(
-            self.authoring.history
+            self.authoring
+                .history
                 .as_ref()
                 .ok_or("missing history")?
                 .metadata()
@@ -433,7 +434,8 @@ impl crate::App {
             128,
         )?;
         let next = self.validate_authoring_document(&document)?;
-        self.authoring.history
+        self.authoring
+            .history
             .as_mut()
             .ok_or("missing history")?
             .commit(document, &self.authoring.authoring_project.registry)?;
@@ -555,10 +557,15 @@ mod tests {
             .unwrap();
         app.commit_authoring().unwrap();
         app.inspector = InspectorMode::Collections(0, 0);
-        app.panels = Some(Panels::with_registry(app.authoring.authoring_project.registry.clone()).unwrap());
+        app.panels =
+            Some(Panels::with_registry(app.authoring.authoring_project.registry.clone()).unwrap());
         let original = app.authoring_document().unwrap();
-        let key =
-            collections(&original.objects[0], &app.authoring.authoring_project.registry).unwrap()[0].key;
+        let key = collections(
+            &original.objects[0],
+            &app.authoring.authoring_project.registry,
+        )
+        .unwrap()[0]
+            .key;
         click(&mut app, Action::CollectionAdd(key));
         let first = ids(&app)[0].clone();
         let delete_first = Action::CollectionDelete(key, item_key(&first));

@@ -369,7 +369,9 @@ impl SurfaceReflectionJob {
         );
     }
     pub(crate) fn validate_device(&self, device: &wgpu::Device) -> Result<(), RaySceneError> {
-        if self.device != *device { return Err(RaySceneError::DeviceMismatch); }
+        if self.device != *device {
+            return Err(RaySceneError::DeviceMismatch);
+        }
         Ok(())
     }
     /// Row-major ReflectionHit records written by this job's GPU dispatch.

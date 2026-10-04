@@ -80,9 +80,14 @@ impl ModelAsset {
     /// Resolve an exact, unique authored name in this imported revision.
     /// Missing or ambiguous names fail rather than selecting a different joint.
     pub fn resolve_joint_name(&self, name: &str) -> Result<u16, ModelError> {
-        let mut matches = self.joint_names.iter().enumerate()
+        let mut matches = self
+            .joint_names
+            .iter()
+            .enumerate()
             .filter(|(_, candidate)| candidate.as_deref() == Some(name));
-        let (index, _) = matches.next().ok_or_else(|| fail("motion bone name not found"))?;
+        let (index, _) = matches
+            .next()
+            .ok_or_else(|| fail("motion bone name not found"))?;
         if matches.next().is_some() {
             return Err(fail("motion bone name is ambiguous"));
         }
@@ -237,7 +242,10 @@ impl ModelAsset {
                 inverse_bind: inverse[index],
             });
         }
-        let joint_names = order.iter().map(|&index| nodes[index].name().map(Arc::from)).collect();
+        let joint_names = order
+            .iter()
+            .map(|&index| nodes[index].name().map(Arc::from))
+            .collect();
         let skeleton = Skeleton::new(joints).map_err(|e| fail(e.to_string()))?;
         let mut primitives = Vec::new();
         let (mut vertex_count, mut index_count) = (0usize, 0usize);
@@ -831,11 +839,20 @@ mod tests {
         let (json, bytes) = fixture();
         let mut doc: serde_json::Value = serde_json::from_str(&json).unwrap();
         doc["nodes"][1]["name"] = "motion#1".into();
-        let parse = |doc: &serde_json::Value| ModelAsset::parse(
-            &serde_json::to_vec(doc).unwrap(), &[&bytes], ModelLimits::default()).unwrap();
+        let parse = |doc: &serde_json::Value| {
+            ModelAsset::parse(
+                &serde_json::to_vec(doc).unwrap(),
+                &[&bytes],
+                ModelLimits::default(),
+            )
+            .unwrap()
+        };
         let original = parse(&doc);
         assert_eq!(original.resolve_joint_name("motion#1").unwrap(), 1);
-        doc["nodes"].as_array_mut().unwrap().push(serde_json::json!({"name":"new sibling"}));
+        doc["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"name":"new sibling"}));
         doc["nodes"].as_array_mut().unwrap().swap(1, 2);
         doc["nodes"][0]["children"] = serde_json::json!([1, 2]);
         let reordered = parse(&doc);

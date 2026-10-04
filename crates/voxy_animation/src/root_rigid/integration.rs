@@ -262,16 +262,33 @@ impl RootRigidPath {
         max_spans: usize,
         mut sample: impl FnMut(f64) -> Result<(RootRigidTwist, RootRigidTwistEnclosure), AnimationError>,
     ) -> Result<RootRigidApproximation, AnimationError> {
-        if !duration.is_finite() || duration < 0. ||
-            [rates.linear, rates.angular, origin_tolerance, angular_tolerance]
-                .into_iter().any(|v| !v.is_finite() || v < 0.) {
+        if !duration.is_finite()
+            || duration < 0.
+            || [
+                rates.linear,
+                rates.angular,
+                origin_tolerance,
+                angular_tolerance,
+            ]
+            .into_iter()
+            .any(|v| !v.is_finite() || v < 0.)
+        {
             return Err(AnimationError::InvalidSampleTime);
         }
         if duration == 0. {
-            return Ok(RootRigidApproximation {path: Self::from_twists(&[],0)?, origin_error_bound:0., angular_error_bound:0.});
+            return Ok(RootRigidApproximation {
+                path: Self::from_twists(&[], 0)?,
+                origin_error_bound: 0.,
+                angular_error_bound: 0.,
+            });
         }
-        Self::integrate_spatial_outward_partitioned(&[(duration,rates)],origin_tolerance,angular_tolerance,max_spans,
-            |_,time|sample(time))
+        Self::integrate_spatial_outward_partitioned(
+            &[(duration, rates)],
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+            |_, time| sample(time),
+        )
     }
     /// Integrates ordered continuous domains in one fixed spatial frame.
     /// Each pair supplies a stored end time and whole-domain derivative caps;
@@ -280,96 +297,184 @@ impl RootRigidPath {
     /// The callback receives the active domain index, including at key cuts.
     /// One global prefix/error owner prevents append-time rounding gaps.
     pub fn integrate_spatial_outward_partitioned(
-        intervals: &[(f64,RootTwistRateBounds)],
+        intervals: &[(f64, RootTwistRateBounds)],
         origin_tolerance: f64,
         angular_tolerance: f64,
         max_spans: usize,
-        mut sample: impl FnMut(usize,f64) -> Result<(RootRigidTwist,RootRigidTwistEnclosure),AnimationError>,
-    ) -> Result<RootRigidApproximation,AnimationError> {
-        let domains=intervals.iter().map(|(end,rates)|(*end,RootRigidIntegrationDomain::Derivative(*rates))).collect::<Vec<_>>();
-        Self::integrate_spatial_outward_domains(&domains,origin_tolerance,angular_tolerance,max_spans,
-            |index,query|sample(index,query[0]))
+        mut sample: impl FnMut(
+            usize,
+            f64,
+        )
+            -> Result<(RootRigidTwist, RootRigidTwistEnclosure), AnimationError>,
+    ) -> Result<RootRigidApproximation, AnimationError> {
+        let domains = intervals
+            .iter()
+            .map(|(end, rates)| (*end, RootRigidIntegrationDomain::Derivative(*rates)))
+            .collect::<Vec<_>>();
+        Self::integrate_spatial_outward_domains(
+            &domains,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+            |index, query| sample(index, query[0]),
+        )
     }
     /// Integrates mixed smooth and uniformly bounded whole-field domains.
     /// Derivative callbacks receive [start,start]; WholeField callbacks receive
     /// [start,end] and must enclose all field values there, not just its start.
     /// No derivative is assumed for WholeField, including velocity key jumps.
     pub fn integrate_spatial_outward_domains(
-        intervals: &[(f64,RootRigidIntegrationDomain)],
+        intervals: &[(f64, RootRigidIntegrationDomain)],
         origin_tolerance: f64,
         angular_tolerance: f64,
         max_spans: usize,
-        mut sample: impl FnMut(usize,[f64;2]) -> Result<(RootRigidTwist,RootRigidTwistEnclosure),AnimationError>,
-    ) -> Result<RootRigidApproximation,AnimationError> {
-        if [origin_tolerance,angular_tolerance].into_iter().any(|v|!v.is_finite() || v<0.) {
+        mut sample: impl FnMut(
+            usize,
+            [f64; 2],
+        )
+            -> Result<(RootRigidTwist, RootRigidTwistEnclosure), AnimationError>,
+    ) -> Result<RootRigidApproximation, AnimationError> {
+        if [origin_tolerance, angular_tolerance]
+            .into_iter()
+            .any(|v| !v.is_finite() || v < 0.)
+        {
             return Err(AnimationError::InvalidSampleTime);
         }
-        let mut previous=0.;
-        for (end,mode) in intervals {
-            let invalid_rates=match mode {
-                RootRigidIntegrationDomain::Derivative(rates)=>[rates.linear,rates.angular].into_iter().any(|v|!v.is_finite() || v<0.),
-                RootRigidIntegrationDomain::WholeField=>false,
+        let mut previous = 0.;
+        for (end, mode) in intervals {
+            let invalid_rates = match mode {
+                RootRigidIntegrationDomain::Derivative(rates) => [rates.linear, rates.angular]
+                    .into_iter()
+                    .any(|v| !v.is_finite() || v < 0.),
+                RootRigidIntegrationDomain::WholeField => false,
             };
-            if !end.is_finite() || *end<=previous || invalid_rates {
+            if !end.is_finite() || *end <= previous || invalid_rates {
                 return Err(AnimationError::InvalidSampleTime);
             }
-            previous=*end;
+            previous = *end;
         }
-        let duration=previous;
+        let duration = previous;
         if intervals.is_empty() {
-            return Ok(RootRigidApproximation {path:Self::from_twists(&[],0)?,origin_error_bound:0.,angular_error_bound:0.});
+            return Ok(RootRigidApproximation {
+                path: Self::from_twists(&[], 0)?,
+                origin_error_bound: 0.,
+                angular_error_bound: 0.,
+            });
         }
-        let total_capacity=max_spans.min(MAX_ROOT_ROTATION_SPANS);
-        if intervals.len()>total_capacity {return Err(AnimationError::RootRigidBudget);}
-        let fixed=intervals.iter().filter(|(_,mode)|matches!(mode,RootRigidIntegrationDomain::WholeField)).count();
-        let variable=intervals.len()-fixed;
-        let capacity=if variable==0 {1} else {(total_capacity-fixed)/variable};
-        let mut count=1;
+        let total_capacity = max_spans.min(MAX_ROOT_ROTATION_SPANS);
+        if intervals.len() > total_capacity {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let fixed = intervals
+            .iter()
+            .filter(|(_, mode)| matches!(mode, RootRigidIntegrationDomain::WholeField))
+            .count();
+        let variable = intervals.len() - fixed;
+        let capacity = if variable == 0 {
+            1
+        } else {
+            (total_capacity - fixed) / variable
+        };
+        let mut count = 1;
         loop {
-            let mut spans=Vec::with_capacity(count*variable+fixed);
-            let mut nominal_prefix=RootRigidTransform::IDENTITY;
-            let mut prefix=RootRigidEnclosure::IDENTITY;
-            let mut error=RootRigidErrorAccumulator::ZERO;
-            let mut start=0.;
-            let mut segment_start=0.;
-            let mut angle_budget=false;
-            'domains: for (domain,(segment_end,mode)) in intervals.iter().enumerate() {
-                let steps=if matches!(mode,RootRigidIntegrationDomain::WholeField) {1} else {count};
+            let mut spans = Vec::with_capacity(count * variable + fixed);
+            let mut nominal_prefix = RootRigidTransform::IDENTITY;
+            let mut prefix = RootRigidEnclosure::IDENTITY;
+            let mut error = RootRigidErrorAccumulator::ZERO;
+            let mut start = 0.;
+            let mut segment_start = 0.;
+            let mut angle_budget = false;
+            'domains: for (domain, (segment_end, mode)) in intervals.iter().enumerate() {
+                let steps = if matches!(mode, RootRigidIntegrationDomain::WholeField) {
+                    1
+                } else {
+                    count
+                };
                 for i in 0..steps {
-                    let end=if i+1==steps {*segment_end} else {
-                        segment_start+(*segment_end-segment_start)*((i+1) as f64/steps as f64)
+                    let end = if i + 1 == steps {
+                        *segment_end
+                    } else {
+                        segment_start
+                            + (*segment_end - segment_start) * ((i + 1) as f64 / steps as f64)
                     };
-                    if !end.is_finite() || end<=start {return Err(AnimationError::NumericalOverflow);}
-                    let query=if matches!(mode,RootRigidIntegrationDomain::WholeField) {[start,end]} else {[start,start]};
-                    let (twist,enclosure)=sample(domain,query)?;
-                    let sample_error=enclosure.error_bounds(twist)?;
-                    let increment=match twist.increment_between_enclosure(start,end) {
-                        Ok(value)=>value,
-                        Err(AnimationError::RootRigidBudget)=>{
-                            if matches!(mode,RootRigidIntegrationDomain::WholeField) {return Err(AnimationError::RootRigidBudget);}
-                            angle_budget=true;break 'domains;
-                        },
-                        Err(error)=>return Err(error),
+                    if !end.is_finite() || end <= start {
+                        return Err(AnimationError::NumericalOverflow);
+                    }
+                    let query = if matches!(mode, RootRigidIntegrationDomain::WholeField) {
+                        [start, end]
+                    } else {
+                        [start, start]
                     };
-                    error=match mode {
-                        RootRigidIntegrationDomain::Derivative(rates)=>error.append_frozen_interval(start,end,*rates,sample_error,&prefix,twist)?,
-                        RootRigidIntegrationDomain::WholeField=>error.append_bounded_field_interval(start,end,sample_error,&prefix,twist)?,
+                    let (twist, enclosure) = sample(domain, query)?;
+                    let sample_error = enclosure.error_bounds(twist)?;
+                    let increment = match twist.increment_between_enclosure(start, end) {
+                        Ok(value) => value,
+                        Err(AnimationError::RootRigidBudget) => {
+                            if matches!(mode, RootRigidIntegrationDomain::WholeField) {
+                                return Err(AnimationError::RootRigidBudget);
+                            }
+                            angle_budget = true;
+                            break 'domains;
+                        }
+                        Err(error) => return Err(error),
                     };
-                    prefix=increment.compose(&prefix)?;
-                    let rotation=RootRotationSpan::constant_velocity(start,end,nominal_prefix.rotation,twist.angular)?;
-                    let span=RootRigidSpan {screw:Some((twist,nominal_prefix)),rotation,additive:[DVec3::ZERO;4],pivot:[DVec3::ZERO;4]};
-                    nominal_prefix=span.sample(1.)?;
+                    error = match mode {
+                        RootRigidIntegrationDomain::Derivative(rates) => error
+                            .append_frozen_interval(
+                                start,
+                                end,
+                                *rates,
+                                sample_error,
+                                &prefix,
+                                twist,
+                            )?,
+                        RootRigidIntegrationDomain::WholeField => error
+                            .append_bounded_field_interval(
+                                start,
+                                end,
+                                sample_error,
+                                &prefix,
+                                twist,
+                            )?,
+                    };
+                    prefix = increment.compose(&prefix)?;
+                    let rotation = RootRotationSpan::constant_velocity(
+                        start,
+                        end,
+                        nominal_prefix.rotation,
+                        twist.angular,
+                    )?;
+                    let span = RootRigidSpan {
+                        screw: Some((twist, nominal_prefix)),
+                        rotation,
+                        additive: [DVec3::ZERO; 4],
+                        pivot: [DVec3::ZERO; 4],
+                    };
+                    nominal_prefix = span.sample(1.)?;
                     spans.push(span);
-                    start=end;
+                    start = end;
                 }
-                segment_start=*segment_end;
+                segment_start = *segment_end;
             }
-            if !angle_budget && error.origin_bound()<=origin_tolerance && error.angular_bound()<=angular_tolerance {
-                return Ok(RootRigidApproximation {path:Self {spans,duration,end:nominal_prefix,translation_cuts:vec![]},
-                    origin_error_bound:error.origin_bound(),angular_error_bound:error.angular_bound()});
+            if !angle_budget
+                && error.origin_bound() <= origin_tolerance
+                && error.angular_bound() <= angular_tolerance
+            {
+                return Ok(RootRigidApproximation {
+                    path: Self {
+                        spans,
+                        duration,
+                        end: nominal_prefix,
+                        translation_cuts: vec![],
+                    },
+                    origin_error_bound: error.origin_bound(),
+                    angular_error_bound: error.angular_bound(),
+                });
             }
-            if count==capacity {return Err(AnimationError::RootRigidBudget);}
-            count=count.saturating_mul(2).min(capacity);
+            if count == capacity {
+                return Err(AnimationError::RootRigidBudget);
+            }
+            count = count.saturating_mul(2).min(capacity);
         }
     }
 }

@@ -206,10 +206,15 @@ impl RetargetBinding {
             return Err(AnimationError::InvalidBlendWeight);
         }
         let pose = self.transport_pose(&frame.pose)?;
-        let skin_matrices = pose.skin_matrices(&Skeleton { joints: self.target.clone() })?;
+        let skin_matrices = pose.skin_matrices(&Skeleton {
+            joints: self.target.clone(),
+        })?;
         Ok(AnimatorFrame {
-            pose, skin_matrices, root_motion: glam::Vec3::ZERO,
-            root_motion_joint: 0, transition_weight: frame.transition_weight,
+            pose,
+            skin_matrices,
+            root_motion: glam::Vec3::ZERO,
+            root_motion_joint: 0,
+            transition_weight: frame.transition_weight,
         })
     }
     /// Transfers pose and extracted parent-local root displacement as one candidate.
@@ -321,8 +326,13 @@ mod tests {
         let binding = RetargetBinding::new(&source, &target, &[mapping]).unwrap();
         let mut pose = source.bind_pose();
         pose.local[1].translation += Vec3::X;
-        let frame = AnimatorFrame { skin_matrices: pose.skin_matrices(&source).unwrap(), pose,
-            root_motion: Vec3::X, root_motion_joint: 0, transition_weight: 0.4 };
+        let frame = AnimatorFrame {
+            skin_matrices: pose.skin_matrices(&source).unwrap(),
+            pose,
+            root_motion: Vec3::X,
+            root_motion_joint: 0,
+            transition_weight: 0.4,
+        };
         assert!(binding.apply_frame(&frame).is_err());
         let converted = binding.apply_pose_frame(&frame).unwrap();
         assert!((converted.pose.local()[1].translation - (Vec3::Y * 12.)).length() < 1e-5);

@@ -281,17 +281,26 @@ impl Demo {
                             wgpu::DeviceType::DiscreteGpu | wgpu::DeviceType::IntegratedGpu
                         )
                         && adapter.is_surface_supported(&surface)
-                        && adapter.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+                        && adapter
+                            .features()
+                            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
                 })
-                .ok_or("no physical NVIDIA ray-query adapter supports the selected window/backend")?
+                .ok_or(
+                    "no physical NVIDIA ray-query adapter supports the selected window/backend",
+                )?
         } else {
             pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
                 compatible_surface: Some(&surface),
                 ..Default::default()
             }))?
         };
-        if !adapter.features().contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY) {
-            return Err("selected surface adapter does not support experimental ray queries".into());
+        if !adapter
+            .features()
+            .contains(wgpu::Features::EXPERIMENTAL_RAY_QUERY)
+        {
+            return Err(
+                "selected surface adapter does not support experimental ray queries".into(),
+            );
         }
         drop(surface);
         let size = window.inner_size();

@@ -124,8 +124,13 @@ impl Renderer {
             .map_err(|error| RendererError::SkinnedLod(SkinnedLodGpuError::Policy(error)))?;
         let selected = lod.fallback(desired).map_err(RendererError::SkinnedLod)?;
         let gpu = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
-        gpu.write_pose(&self.queue, pose.source().mesh(), pose.joints(), pose.model())
-            .map_err(RendererError::Skinned)?;
+        gpu.write_pose(
+            &self.queue,
+            pose.source().mesh(),
+            pose.joints(),
+            pose.model(),
+        )
+        .map_err(RendererError::Skinned)?;
         if let Some(motion) = &mut self.skinned_motion {
             motion.joints.clone_from_slice(pose.joints());
             motion.model = pose.model();

@@ -8,8 +8,7 @@ mod camera;
 mod planar_capture;
 pub use planar_capture::{
     PLANAR_REFLECTION_CLIP_SHADER, PLANAR_REFLECTION_FRESNEL_SHADER,
-    PLANAR_REFLECTION_ROUGH_SHADER,
-    PLANAR_REFLECTION_SURFACE_SHADER, PlanarReflectionCapture,
+    PLANAR_REFLECTION_ROUGH_SHADER, PLANAR_REFLECTION_SURFACE_SHADER, PlanarReflectionCapture,
     planar_reflection_pbr_clip_shader,
 };
 mod camera_lod;
@@ -31,13 +30,13 @@ mod direct_lighting;
 mod exposure;
 mod frame_generation;
 pub use exposure::{AutoExposure, AutoExposureFrame, ExposureSettings};
-mod hdr_resolve;
 mod hdr_mips;
+mod hdr_resolve;
 pub use hdr_mips::HdrMipPyramid;
 mod dfg;
 pub use dfg::GgxDfgLut;
-mod environment_lighting;
 mod environment_diffuse;
+mod environment_lighting;
 pub use environment_diffuse::DiffuseEnvironmentConvolution;
 mod environment_ggx;
 pub use environment_ggx::GgxEnvironmentPrefilter;
@@ -60,7 +59,10 @@ mod material;
 pub use lod_witness::{LodWitnessError, LodWitnesses, generate_lod_witnesses};
 mod lod_archive;
 mod lod_search;
-pub use lod_archive::{LodArchiveError, LodArchiveLimits, SkinnedLodArchiveError, decode_lod_archive, decode_skinned_lod_archive, encode_lod_archive};
+pub use lod_archive::{
+    LodArchiveError, LodArchiveLimits, SkinnedLodArchiveError, decode_lod_archive,
+    decode_skinned_lod_archive, encode_lod_archive,
+};
 mod lod_subdivision;
 pub use lod_search::{LodSearchBudget, LodSearchWork, generate_indexed_lod_witnesses};
 pub use lod_subdivision::{
@@ -111,8 +113,8 @@ pub use skinned_motion::{PreparedSkinnedFrame, SkinnedMotionFrame, SkinnedMotion
 
 pub use scene::{
     DEFAULT_SCENE_SHADER, SceneDepthMode, SceneDraw, SceneError, SceneGeometry, SceneLodGeometry,
-    SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneTexture, SceneTransform,
-    SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner,
+    SceneLodHistory, SceneMesh, SceneRenderer, SceneShaderError, SceneSkinError, SceneSkinInstance,
+    SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner, SceneTexture, SceneTransform,
     SceneVertex, SceneView, SceneViewTargets,
 };
 
@@ -156,10 +158,13 @@ pub use surface_lighting::{
     GgxLightingBatch, GgxLightingInputs, GgxLightingPipeline, SurfaceLightingJob, SurfacePointLight,
 };
 pub use surface_reflection::{
-    GgxReflectionInputs, GgxReflectionPipeline, ReflectionHit, SurfaceReflectionJob, SurfaceReflectionOptions,
+    GgxReflectionInputs, GgxReflectionPipeline, ReflectionHit, SurfaceReflectionJob,
+    SurfaceReflectionOptions,
 };
 mod reflection_spatial;
-pub use reflection_spatial::{ReflectionSpatialJob, ReflectionSpatialOptions, ReflectionSpatialPipeline};
+pub use reflection_spatial::{
+    ReflectionSpatialJob, ReflectionSpatialOptions, ReflectionSpatialPipeline,
+};
 
 pub use image_asset::{ImageAsset, ImageAssetError, ImageLimits};
 pub use motion::{InvalidMotionMatrix, MOTION_SCENE_SHADER, MotionHistory, MotionMatrices};
@@ -190,8 +195,8 @@ pub use raster_ray_frame::{
     GgxRasterRayResources, RasterRayAttachments, RasterRayFrame, RasterRayOptions,
 };
 
-mod temporal_resolve;
 mod temporal_history;
+mod temporal_resolve;
 pub use temporal_history::TemporalHistory;
 pub use temporal_resolve::{
     TemporalResolve, TemporalResolveFrame, TemporalResolveInputs, TemporalResolveOptions,
@@ -207,9 +212,13 @@ mod shadow_visibility;
 pub use shadow_visibility::{ShadowFilter, ShadowSettings};
 
 mod reflection_correspondence;
-pub use reflection_correspondence::{PreviousReflectionTriangle, ReflectionCorrespondenceJob, ReflectionCorrespondencePipeline};
+pub use reflection_correspondence::{
+    PreviousReflectionTriangle, ReflectionCorrespondenceJob, ReflectionCorrespondencePipeline,
+};
 mod planar_reflection;
-pub use planar_reflection::{PlanarReflectionCameras, PlanarReflectionJob, PlanarReflectionPipeline};
+pub use planar_reflection::{
+    PlanarReflectionCameras, PlanarReflectionJob, PlanarReflectionPipeline,
+};
 
 mod planar_temporal;
 pub use planar_temporal::{PlanarTemporalError, PlanarTemporalFrame, PlanarTemporalPipeline};

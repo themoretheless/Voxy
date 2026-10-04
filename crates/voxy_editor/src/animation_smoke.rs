@@ -28,19 +28,34 @@ pub(super) fn rotation_contact(composed: bool) -> (f64, glam::Vec3) {
             let t = (low + high) * 0.5;
             let angle = 2. * (8_f64 * t * (1. - t)).atan();
             let z = 2. * t * (1. - t);
-            if z + angle.sin() + 0.02 * angle.cos() < 0.23 { low = t; } else { high = t; }
+            if z + angle.sin() + 0.02 * angle.cos() < 0.23 {
+                low = t;
+            } else {
+                high = t;
+            }
         }
         let t = (low + high) * 0.5;
         (2. * (8_f64 * t * (1. - t)).atan(), 2. * t * (1. - t))
     } else {
         ((0.23 / 1_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.), 0.)
     };
-    (angle, glam::Vec3::new((0.6 * (1. - angle.cos())) as f32, 0., (z + 0.6 * angle.sin()) as f32))
+    (
+        angle,
+        glam::Vec3::new(
+            (0.6 * (1. - angle.cos())) as f32,
+            0.,
+            (z + 0.6 * angle.sin()) as f32,
+        ),
+    )
 }
 
 impl App {
-    fn animation_inspector_input(&mut self,path:&str,text:&str)->Result<(),Box<dyn std::error::Error>> {
-        self.component_inspector_input("editor.model-animation.v1",path,text)
+    fn animation_inspector_input(
+        &mut self,
+        path: &str,
+        text: &str,
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        self.component_inspector_input("editor.model-animation.v1", path, text)
     }
     fn component_inspector_input(
         &mut self,
@@ -67,7 +82,11 @@ impl App {
             return self.retarget_rotation_acceptance();
         }
 
-        if self.animation_smoke.as_ref().is_some_and(|smoke| smoke.foot_contact) {
+        if self
+            .animation_smoke
+            .as_ref()
+            .is_some_and(|smoke| smoke.foot_contact)
+        {
             return self.foot_contact_acceptance();
         }
         let Some(smoke) = &self.animation_smoke else {
@@ -90,10 +109,14 @@ impl App {
                     return Err("animation acceptance requires a clip".into());
                 }
                 let clip_count = model.animations.len();
-                let motion_name = model.joint_names().iter().flatten()
+                let motion_name = model
+                    .joint_names()
+                    .iter()
+                    .flatten()
                     .find(|name| name.starts_with("b_Hip_01"))
                     .or_else(|| model.joint_names().get(1).and_then(Option::as_ref))
-                    .filter(|name| model.resolve_joint_name(name).is_ok()).map(|name| name.to_string());
+                    .filter(|name| model.resolve_joint_name(name).is_ok())
+                    .map(|name| name.to_string());
                 if self
                     .graphics
                     .as_ref()
@@ -115,8 +138,11 @@ impl App {
                 let root_before = self.authoring_document()?;
                 self.animation_inspector_input("/root_motion_joint", "1")?;
                 let root_selected = self.authoring_document()?;
-                if self.scene.component::<crate::ModelAnimation>(self.instances[0])?
-                    .is_none_or(|settings| settings.root_motion_joint != 1) {
+                if self
+                    .scene
+                    .component::<crate::ModelAnimation>(self.instances[0])?
+                    .is_none_or(|settings| settings.root_motion_joint != 1)
+                {
                     return Err("native inspector did not select motion joint".into());
                 }
                 self.edit_key(KeyCode::KeyZ)?;
@@ -187,11 +213,15 @@ impl App {
                     let rotating = self.animation_smoke.as_ref().unwrap().root_rotation;
                     self.panel_action(crate::panels::Action::Select(0))?;
                     self.edit_key(KeyCode::KeyC)?;
-                    let body = self.scene.component_mut::<voxy_gameplay::CharacterBody>(self.instances[0])?
+                    let body = self
+                        .scene
+                        .component_mut::<voxy_gameplay::CharacterBody>(self.instances[0])?
                         .ok_or("missing native root-motion body")?;
                     body.gravity = 0.0;
                     body.speed = 0.0;
-                    if rotating { body.half_extents = [0.4, 0.1, 0.02]; }
+                    if rotating {
+                        body.half_extents = [0.4, 0.1, 0.02];
+                    }
                     if oriented {
                         body.half_extents = [0.08, 0.05, 0.02];
                         let mut local = self.scene.local(self.instances[0])?;
@@ -204,7 +234,12 @@ impl App {
                     if rotating {
                         self.animation_inspector_input("/root_motion_rotation", "true")?;
                         if self.animation_smoke.as_ref().unwrap().composed_root {
-                            for axis in 0..3 { self.animation_inspector_input(&format!("/root_motion_axes/{axis}"), "true")?; }
+                            for axis in 0..3 {
+                                self.animation_inspector_input(
+                                    &format!("/root_motion_axes/{axis}"),
+                                    "true",
+                                )?;
+                            }
                         }
                     } else {
                         self.animation_inspector_input("/root_motion_axes/0", "true")?;
@@ -212,16 +247,24 @@ impl App {
                     self.panel_action(crate::panels::Action::Select(1))?;
                     self.edit_key(KeyCode::KeyB)?;
                     if oriented {
-                        self.scene.component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
-                            .ok_or("missing oriented-body wall")?.half_extents[2] = 2.0;
+                        self.scene
+                            .component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
+                            .ok_or("missing oriented-body wall")?
+                            .half_extents[2] = 2.0;
                     }
                     if rotating {
-                        self.scene.component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
-                            .ok_or("missing rotating-root wall")?.half_extents = [2., 2., 0.02];
+                        self.scene
+                            .component_mut::<voxy_gameplay::BoxCollider>(self.instances[1])?
+                            .ok_or("missing rotating-root wall")?
+                            .half_extents = [2., 2., 0.02];
                     }
                     let mut local = self.scene.local(self.instances[1])?;
                     local.translation = self.scene.local(self.instances[0])?.translation
-                        + if rotating { glam::Vec3::Z * 0.25 } else { glam::Vec3::X * 0.15 };
+                        + if rotating {
+                            glam::Vec3::Z * 0.25
+                        } else {
+                            glam::Vec3::X * 0.15
+                        };
                     self.scene.set_local(self.instances[1], local)?;
                     self.commit_authoring()?;
                 }
@@ -235,7 +278,13 @@ impl App {
                 smoke.since = self.frames;
             }
             1 => {
-                if self.play.simulation_ticks < if smoke.profile && !smoke.root_rotation { 120 } else { 12 } {
+                if self.play.simulation_ticks
+                    < if smoke.profile && !smoke.root_rotation {
+                        120
+                    } else {
+                        12
+                    }
+                {
                     return Ok(false);
                 }
                 let graphics = self
@@ -253,42 +302,86 @@ impl App {
                 if smoke.root_rotation {
                     let origin = smoke.rotation_origin.ok_or("missing rotation origin")?;
                     let paths = self.play.animations.trajectories();
-                    let path = paths.iter().find(|path| path.owner == first).ok_or("missing native rotation trajectory")?;
+                    let path = paths
+                        .iter()
+                        .find(|path| path.owner == first)
+                        .ok_or("missing native rotation trajectory")?;
                     if !path.origin.abs_diff_eq(glam::Vec3::ZERO, 1e-6) || path.scale != 1. {
-                        return Err("native rotation diagnostic requires the root-pivot-turn fixture".into());
+                        return Err(
+                            "native rotation diagnostic requires the root-pivot-turn fixture"
+                                .into(),
+                        );
                     }
                     let (angle, center) = rotation_contact(smoke.composed_root);
                     let pose = self.scene.local(first)?;
-                    if !pose.rotation.abs_diff_eq(glam::Quat::from_rotation_y(angle as f32), 1e-5)
-                        || !pose.translation.abs_diff_eq(origin.translation + center, 1e-5) || moving != paused {
-                        return Err(format!("native rotation failed curved wall/in-place admission: {pose:?}").into());
+                    if !pose
+                        .rotation
+                        .abs_diff_eq(glam::Quat::from_rotation_y(angle as f32), 1e-5)
+                        || !pose
+                            .translation
+                            .abs_diff_eq(origin.translation + center, 1e-5)
+                        || moving != paused
+                    {
+                        return Err(format!(
+                            "native rotation failed curved wall/in-place admission: {pose:?}"
+                        )
+                        .into());
                     }
-                    println!("VOXY_NATIVE_ROOT_ROTATION composed={} angle={angle} pivot={:?} center={:?} wall_limited=true in_place=true fixed_serial={}",
-                        smoke.composed_root, glam::Vec3::X * 0.6, pose.translation, self.play.animations.serial());
+                    println!(
+                        "VOXY_NATIVE_ROOT_ROTATION composed={} angle={angle} pivot={:?} center={:?} wall_limited=true in_place=true fixed_serial={}",
+                        smoke.composed_root,
+                        glam::Vec3::X * 0.6,
+                        pose.translation,
+                        self.play.animations.serial()
+                    );
                 } else if smoke.root_motion {
                     let position = self.scene.local(first)?.translation;
                     let expected_x = if smoke.oriented_body {
-                        let body = self.scene.component::<voxy_gameplay::CharacterBody>(first)?.ok_or("missing oriented body")?;
+                        let body = self
+                            .scene
+                            .component::<voxy_gameplay::CharacterBody>(first)?
+                            .ok_or("missing oriented body")?;
                         let matrix = self.scene.world_matrix(first)?;
                         let support = matrix.x_axis.x.abs() * body.half_extents[0]
                             + matrix.y_axis.x.abs() * body.half_extents[1]
                             + matrix.z_axis.x.abs() * body.half_extents[2];
-                        let wall = self.scene.component::<voxy_gameplay::BoxCollider>(second)?.ok_or("missing oriented wall")?;
+                        let wall = self
+                            .scene
+                            .component::<voxy_gameplay::BoxCollider>(second)?
+                            .ok_or("missing oriented wall")?;
                         self.scene.local(second)?.translation.x - wall.half_extents[0] - support
-                    } else { 0.05 };
+                    } else {
+                        0.05
+                    };
                     if (position.x - expected_x).abs() > 1e-5 || moving != paused {
-                        return Err(format!("native root motion failed wall/in-place admission: {position:?}").into());
+                        return Err(format!(
+                            "native root motion failed wall/in-place admission: {position:?}"
+                        )
+                        .into());
                     }
-                    let requested = self.play.animations.motions().iter()
-                        .find(|(owner, _)| *owner == first).ok_or("missing native root motion request")?.1;
-                    println!("VOXY_NATIVE_ROOT_PHYSICS x={} wall_limited=true in_place=true fixed_serial={} requested={requested:?}",
-                        position.x, self.play.animations.serial());
+                    let requested = self
+                        .play
+                        .animations
+                        .motions()
+                        .iter()
+                        .find(|(owner, _)| *owner == first)
+                        .ok_or("missing native root motion request")?
+                        .1;
+                    println!(
+                        "VOXY_NATIVE_ROOT_PHYSICS x={} wall_limited=true in_place=true fixed_serial={} requested={requested:?}",
+                        position.x,
+                        self.play.animations.serial()
+                    );
                     if smoke.oriented_body {
                         if self.scene.local(first)?.rotation != glam::Quat::from_rotation_y(0.4)
-                            || requested.z.abs() < 0.001 {
+                            || requested.z.abs() < 0.001
+                        {
                             return Err("oriented body lost yaw or world-space locomotion".into());
                         }
-                        println!("VOXY_NATIVE_ORIENTED_BODY yaw=0.4 expected_x={expected_x} actual_x={} orientation_preserved=true", position.x);
+                        println!(
+                            "VOXY_NATIVE_ORIENTED_BODY yaw=0.4 expected_x={expected_x} actual_x={} orientation_preserved=true",
+                            position.x
+                        );
                     }
                 } else if moving == paused {
                     return Err("native owners failed to independently animate/pause".into());
@@ -439,106 +532,324 @@ impl App {
 impl App {
     fn retarget_rotation_acceptance(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         use glam::{Quat, Vec3};
-        let permute=std::env::var_os("VOXY_RETARGET_ROTATION_PERMUTE").is_some();
-        let smoke = self.animation_smoke.as_ref().ok_or("missing retarget rotation smoke")?;
-        if self.frames < smoke.since + 3 { return Ok(false); }
+        let permute = std::env::var_os("VOXY_RETARGET_ROTATION_PERMUTE").is_some();
+        let smoke = self
+            .animation_smoke
+            .as_ref()
+            .ok_or("missing retarget rotation smoke")?;
+        if self.frames < smoke.since + 3 {
+            return Ok(false);
+        }
         match smoke.phase {
             0 => {
                 let source = voxy_assets::AssetId("source.glb".into());
                 if self.catalog.snapshot(&source).is_none() {
-                    if self.catalog.status(&source).is_none() { self.reload.insert(source); }
+                    if self.catalog.status(&source).is_none() {
+                        self.reload.insert(source);
+                    }
                     return Ok(false);
                 }
-                if self.graphics.as_ref().is_none_or(|g| !g.models.contains_key(&self.id)) {return Ok(false);}
+                if self
+                    .graphics
+                    .as_ref()
+                    .is_none_or(|g| !g.models.contains_key(&self.id))
+                {
+                    return Ok(false);
+                }
                 let target = self.catalog.snapshot(&self.id).ok_or("missing target")?;
-                if !target.value().animated.as_ref().ok_or("missing target rig")?.animations.is_empty() {return Err("angular retarget requires a clipless target".into());}
+                if !target
+                    .value()
+                    .animated
+                    .as_ref()
+                    .ok_or("missing target rig")?
+                    .animations
+                    .is_empty()
+                {
+                    return Err("angular retarget requires a clipless target".into());
+                }
                 self.edit_key(KeyCode::KeyD)?;
-                let first=self.instances[0];let second=self.instances[1];
-                self.scene.set_local(first,Default::default())?;
-                self.scene.set_local(second,voxy_scene::Transform {translation:if permute {Vec3::X*0.25}else{Vec3::Z*0.25},..Default::default()})?;
-                self.scene.insert_component(first,voxy_gameplay::CharacterBody {half_extents:if permute {[0.02,0.4,0.1]}else{[0.4,0.1,0.02]},speed:0.,gravity:0.,..Default::default()})?;
-                self.scene.insert_component(second,voxy_gameplay::BoxCollider {half_extents:if permute {[0.02,2.,2.]}else{[2.,2.,0.02]}})?;
-                self.scene.insert_component(second,crate::ModelAnimation {clip:None,..Default::default()})?;
-                self.scene.insert_component(first,crate::ModelAnimation {clip:None,..Default::default()})?;
-                self.camera.legacy=false;self.camera.perspective=false;self.camera.target=if permute {Vec3::Y*0.8}else{Vec3::X*0.8};self.camera.distance=2.;
+                let first = self.instances[0];
+                let second = self.instances[1];
+                self.scene.set_local(first, Default::default())?;
+                self.scene.set_local(
+                    second,
+                    voxy_scene::Transform {
+                        translation: if permute {
+                            Vec3::X * 0.25
+                        } else {
+                            Vec3::Z * 0.25
+                        },
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    first,
+                    voxy_gameplay::CharacterBody {
+                        half_extents: if permute {
+                            [0.02, 0.4, 0.1]
+                        } else {
+                            [0.4, 0.1, 0.02]
+                        },
+                        speed: 0.,
+                        gravity: 0.,
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    second,
+                    voxy_gameplay::BoxCollider {
+                        half_extents: if permute {
+                            [0.02, 2., 2.]
+                        } else {
+                            [2., 2., 0.02]
+                        },
+                    },
+                )?;
+                self.scene.insert_component(
+                    second,
+                    crate::ModelAnimation {
+                        clip: None,
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    first,
+                    crate::ModelAnimation {
+                        clip: None,
+                        ..Default::default()
+                    },
+                )?;
+                self.camera.legacy = false;
+                self.camera.perspective = false;
+                self.camera.target = if permute {
+                    Vec3::Y * 0.8
+                } else {
+                    Vec3::X * 0.8
+                };
+                self.camera.distance = 2.;
                 self.commit_authoring()?;
                 self.panel_action(crate::panels::Action::Select(0))?;
                 self.panel_action(crate::panels::Action::Retarget)?;
-                self.component_inspector_input("editor.model-retarget.v1","/source","source.glb")?;
-                self.component_inspector_input("editor.model-retarget.v1","/joints/0/source","missing")?;
-                let baseline=self.retarget_draft.as_ref().unwrap().base.clone();
-                if self.panel_action(crate::panels::Action::RetargetApply).is_ok() || self.authoring_document()?!=baseline {return Err("invalid native profile changed authoring".into());}
-                self.component_inspector_input("editor.model-retarget.v1","/joints/0/translation_scale","2")?;
+                self.component_inspector_input(
+                    "editor.model-retarget.v1",
+                    "/source",
+                    "source.glb",
+                )?;
+                self.component_inspector_input(
+                    "editor.model-retarget.v1",
+                    "/joints/0/source",
+                    "missing",
+                )?;
+                let baseline = self.retarget_draft.as_ref().unwrap().base.clone();
+                if self
+                    .panel_action(crate::panels::Action::RetargetApply)
+                    .is_ok()
+                    || self.authoring_document()? != baseline
+                {
+                    return Err("invalid native profile changed authoring".into());
+                }
+                self.component_inspector_input(
+                    "editor.model-retarget.v1",
+                    "/joints/0/translation_scale",
+                    "2",
+                )?;
                 if permute {
-                    for property in ["rotation_basis","translation_basis"] {
-                        for index in 0..4 {self.component_inspector_input("editor.model-retarget.v1",&format!("/joints/0/{property}/{index}"),"0.5")?;}
+                    for property in ["rotation_basis", "translation_basis"] {
+                        for index in 0..4 {
+                            self.component_inspector_input(
+                                "editor.model-retarget.v1",
+                                &format!("/joints/0/{property}/{index}"),
+                                "0.5",
+                            )?;
+                        }
                     }
                 }
-                self.animation_inspector_input("/clip","0")?;
-                self.animation_inspector_input("/clip_name","curved pivot turn")?;
-                self.animation_inspector_input("/root_motion_bone","sourceRoot")?;
-                self.animation_inspector_input("/root_motion_rotation","true")?;
-                for axis in if permute {[0,1]}else{[0,2]} {self.animation_inspector_input(&format!("/root_motion_axes/{axis}"),"true")?;}
-                if self.authoring_document()?!=baseline {return Err("draft input leaked into the scene".into());}
-                let document=self.panel_document()?;
-                let index=crate::component_fields::fields(&document.objects[self.selected])?.iter().position(|f|f.schema=="editor.model-retarget.v1" && f.path=="/joints/0/source").ok_or("missing native bone field")?;
+                self.animation_inspector_input("/clip", "0")?;
+                self.animation_inspector_input("/clip_name", "curved pivot turn")?;
+                self.animation_inspector_input("/root_motion_bone", "sourceRoot")?;
+                self.animation_inspector_input("/root_motion_rotation", "true")?;
+                for axis in if permute { [0, 1] } else { [0, 2] } {
+                    self.animation_inspector_input(&format!("/root_motion_axes/{axis}"), "true")?;
+                }
+                if self.authoring_document()? != baseline {
+                    return Err("draft input leaked into the scene".into());
+                }
+                let document = self.panel_document()?;
+                let index = crate::component_fields::fields(&document.objects[self.selected])?
+                    .iter()
+                    .position(|f| {
+                        f.schema == "editor.model-retarget.v1" && f.path == "/joints/0/source"
+                    })
+                    .ok_or("missing native bone field")?;
                 self.panel_action(crate::panels::Action::RetargetBones(index))?;
-                let smoke=self.animation_smoke.as_mut().unwrap();smoke.phase=6;smoke.since=self.frames;
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.phase = 6;
+                smoke.since = self.frames;
             }
             6 => {
-                let picker=self.retarget_picker.as_ref().ok_or("missing native bone list")?;
-                let choice=picker.choices.iter().position(|name|name=="sourceRoot").ok_or("native source bone not offered")?;
-                if !self.panels.as_ref().ok_or("missing native bone panel")?.regions.iter().any(|(_,action)|*action==crate::panels::Action::RetargetBone(choice)) {return Err("native bone choices were not presented".into());}
+                let picker = self
+                    .retarget_picker
+                    .as_ref()
+                    .ok_or("missing native bone list")?;
+                let choice = picker
+                    .choices
+                    .iter()
+                    .position(|name| name == "sourceRoot")
+                    .ok_or("native source bone not offered")?;
+                if !self
+                    .panels
+                    .as_ref()
+                    .ok_or("missing native bone panel")?
+                    .regions
+                    .iter()
+                    .any(|(_, action)| *action == crate::panels::Action::RetargetBone(choice))
+                {
+                    return Err("native bone choices were not presented".into());
+                }
                 self.panel_action(crate::panels::Action::RetargetBone(choice))?;
-                println!("VOXY_NATIVE_RETARGET_BONE_PICK frames={} source=sourceRoot choices_presented=true draft_only=true",self.frames);
-                let smoke=self.animation_smoke.as_mut().unwrap();smoke.phase=5;smoke.since=self.frames;
+                println!(
+                    "VOXY_NATIVE_RETARGET_BONE_PICK frames={} source=sourceRoot choices_presented=true draft_only=true",
+                    self.frames
+                );
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.phase = 5;
+                smoke.since = self.frames;
             }
             5 => {
-                let panels=self.panels.as_ref().ok_or("missing retarget inspector")?;
-                for action in [crate::panels::Action::RetargetApply,crate::panels::Action::RetargetCancel,crate::panels::Action::RetargetPair(true),crate::panels::Action::RetargetPair(false)] {
-                    if !panels.regions.iter().any(|(_,actual)|*actual==action) {return Err("native retarget controls were not presented".into());}
+                let panels = self.panels.as_ref().ok_or("missing retarget inspector")?;
+                for action in [
+                    crate::panels::Action::RetargetApply,
+                    crate::panels::Action::RetargetCancel,
+                    crate::panels::Action::RetargetPair(true),
+                    crate::panels::Action::RetargetPair(false),
+                ] {
+                    if !panels.regions.iter().any(|(_, actual)| *actual == action) {
+                        return Err("native retarget controls were not presented".into());
+                    }
                 }
-                let baseline=self.retarget_draft.as_ref().ok_or("missing native draft")?.base.clone();
+                let baseline = self
+                    .retarget_draft
+                    .as_ref()
+                    .ok_or("missing native draft")?
+                    .base
+                    .clone();
                 self.panel_action(crate::panels::Action::RetargetApply)?;
-                let authoring=self.authoring_document()?;
+                let authoring = self.authoring_document()?;
                 self.edit_key(KeyCode::KeyZ)?;
-                if self.authoring_document()?!=baseline {return Err("native retarget undo was not atomic".into());}
+                if self.authoring_document()? != baseline {
+                    return Err("native retarget undo was not atomic".into());
+                }
                 self.edit_key(KeyCode::KeyY)?;
-                if self.authoring_document()?!=authoring {return Err("native retarget redo failed".into());}
-                println!("VOXY_NATIVE_RETARGET_AUTHORING frames={} draft_controls_presented=true invalid_edit_atomic=true source_pairs_and_motion_applied=true undo=true redo=true",self.frames);
+                if self.authoring_document()? != authoring {
+                    return Err("native retarget redo failed".into());
+                }
+                println!(
+                    "VOXY_NATIVE_RETARGET_AUTHORING frames={} draft_controls_presented=true invalid_edit_atomic=true source_pairs_and_motion_applied=true undo=true redo=true",
+                    self.frames
+                );
                 self.toggle_play()?;
-                let smoke=self.animation_smoke.as_mut().unwrap();smoke.authoring=Some(authoring);smoke.phase=1;smoke.since=self.frames;
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.authoring = Some(authoring);
+                smoke.phase = 1;
+                smoke.since = self.frames;
             }
             1 => {
-                if self.play.simulation_ticks<12 {return Ok(false);}
-                let first=self.instances[0];let second=self.instances[1];
-                let target=self.catalog.snapshot(&self.id).ok_or("missing angular target")?;
-                let model=target.value().animated.as_ref().ok_or("missing angular rig")?;
-                let frame=self.play.animations.frame(first,model).ok_or("missing angular retarget frame")?;
-                let graphics=self.graphics.as_ref().ok_or("missing angular graphics")?;
-                let signature=frame.skin_matrices.iter().map(|m|m.to_cols_array().map(f32::to_bits)).collect();
-                if graphics.animated_models.pose_signature(first)?!=Some(signature) {return Ok(false);}
-                let angle=(0.23/1.2_f64.hypot(0.02)).asin()-0.02_f64.atan2(1.2);
-                let center=if permute {Vec3::new((0.8*angle.sin()) as f32,(0.8*(1.-angle.cos())) as f32,0.)}else{Vec3::new((0.8*(1.-angle.cos())) as f32,0.,(0.8*angle.sin()) as f32)};
-                let rotation=if permute {Quat::from_rotation_z(angle as f32)}else{Quat::from_rotation_y(angle as f32)};
-                let pose=self.scene.local(first)?;
-                if !pose.rotation.abs_diff_eq(rotation,1e-5)
-                    || !pose.translation.abs_diff_eq(center,1e-5)
-                    || frame.pose!=model.skeleton.bind_pose()
-                    || graphics.animated_models.pose_signature(first)?!=graphics.animated_models.pose_signature(second)?
+                if self.play.simulation_ticks < 12 {
+                    return Ok(false);
+                }
+                let first = self.instances[0];
+                let second = self.instances[1];
+                let target = self
+                    .catalog
+                    .snapshot(&self.id)
+                    .ok_or("missing angular target")?;
+                let model = target
+                    .value()
+                    .animated
+                    .as_ref()
+                    .ok_or("missing angular rig")?;
+                let frame = self
+                    .play
+                    .animations
+                    .frame(first, model)
+                    .ok_or("missing angular retarget frame")?;
+                let graphics = self.graphics.as_ref().ok_or("missing angular graphics")?;
+                let signature = frame
+                    .skin_matrices
+                    .iter()
+                    .map(|m| m.to_cols_array().map(f32::to_bits))
+                    .collect();
+                if graphics.animated_models.pose_signature(first)? != Some(signature) {
+                    return Ok(false);
+                }
+                let angle = (0.23 / 1.2_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.2);
+                let center = if permute {
+                    Vec3::new(
+                        (0.8 * angle.sin()) as f32,
+                        (0.8 * (1. - angle.cos())) as f32,
+                        0.,
+                    )
+                } else {
+                    Vec3::new(
+                        (0.8 * (1. - angle.cos())) as f32,
+                        0.,
+                        (0.8 * angle.sin()) as f32,
+                    )
+                };
+                let rotation = if permute {
+                    Quat::from_rotation_z(angle as f32)
+                } else {
+                    Quat::from_rotation_y(angle as f32)
+                };
+                let pose = self.scene.local(first)?;
+                if !pose.rotation.abs_diff_eq(rotation, 1e-5)
+                    || !pose.translation.abs_diff_eq(center, 1e-5)
+                    || frame.pose != model.skeleton.bind_pose()
+                    || graphics.animated_models.pose_signature(first)?
+                        != graphics.animated_models.pose_signature(second)?
                     || !model.animations.is_empty()
-                    || graphics.models.contains_key(&voxy_assets::AssetId("source.glb".into()))
-                    || self.play.animations.clip_name(first)!=Some("curved pivot turn") {return Err(format!("native angular retarget mismatch: {pose:?}").into());}
-                let (owners,primitives,sources)=graphics.animated_models.counts();
-                if (owners,primitives,sources)!=(2,2,1) {return Err("native angular resources are not shared".into());}
-                println!("VOXY_NATIVE_RETARGET_ROTATION frames={} ticks={} angle={angle} center={center:?} target_pivot=0.8 scale=2 permute={permute} partial_mask=true wall_limited=true in_place=true accepted_palette=true target_clips=0 source_gpu=false bytes={}",self.frames,self.play.simulation_ticks,graphics.animated_models.allocation_bytes());
+                    || graphics
+                        .models
+                        .contains_key(&voxy_assets::AssetId("source.glb".into()))
+                    || self.play.animations.clip_name(first) != Some("curved pivot turn")
+                {
+                    return Err(format!("native angular retarget mismatch: {pose:?}").into());
+                }
+                let (owners, primitives, sources) = graphics.animated_models.counts();
+                if (owners, primitives, sources) != (2, 2, 1) {
+                    return Err("native angular resources are not shared".into());
+                }
+                println!(
+                    "VOXY_NATIVE_RETARGET_ROTATION frames={} ticks={} angle={angle} center={center:?} target_pivot=0.8 scale=2 permute={permute} partial_mask=true wall_limited=true in_place=true accepted_palette=true target_clips=0 source_gpu=false bytes={}",
+                    self.frames,
+                    self.play.simulation_ticks,
+                    graphics.animated_models.allocation_bytes()
+                );
                 self.toggle_play()?;
-                let smoke=self.animation_smoke.as_mut().unwrap();smoke.phase=2;smoke.since=self.frames;
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.phase = 2;
+                smoke.since = self.frames;
             }
             2 => {
-                if self.authoring_document()?!=*smoke.authoring.as_ref().ok_or("missing angular authoring")?
-                    || self.graphics.as_ref().ok_or("missing angular graphics after Stop")?.animated_models.allocation_bytes()!=0 {return Err("native angular Stop did not restore authoring/resources".into());}
-                println!("VOXY_NATIVE_RETARGET_ROTATION_STOP frames={} animated_bytes=0 authoring_restored=true",self.frames);
+                if self.authoring_document()?
+                    != *smoke
+                        .authoring
+                        .as_ref()
+                        .ok_or("missing angular authoring")?
+                    || self
+                        .graphics
+                        .as_ref()
+                        .ok_or("missing angular graphics after Stop")?
+                        .animated_models
+                        .allocation_bytes()
+                        != 0
+                {
+                    return Err("native angular Stop did not restore authoring/resources".into());
+                }
+                println!(
+                    "VOXY_NATIVE_RETARGET_ROTATION_STOP frames={} animated_bytes=0 authoring_restored=true",
+                    self.frames
+                );
                 return Ok(true);
             }
             _ => return Err("invalid angular retarget phase".into()),
@@ -550,144 +861,337 @@ impl App {
         let smoke = self.animation_smoke.as_ref().ok_or("missing foot smoke")?;
         let foot_reload = smoke.foot_reload;
         let retarget = std::env::var_os("VOXY_FOOT_RETARGET_SMOKE").is_some();
-        if self.frames < smoke.since + 3 { return Ok(false); }
+        if self.frames < smoke.since + 3 {
+            return Ok(false);
+        }
         match smoke.phase {
             0 => {
                 if self.catalog.snapshot(&self.id).is_none()
-                    || self.graphics.as_ref().is_none_or(|g| !g.models.contains_key(&self.id)) {
+                    || self
+                        .graphics
+                        .as_ref()
+                        .is_none_or(|g| !g.models.contains_key(&self.id))
+                {
                     return Ok(false);
                 }
                 if retarget {
                     let source = voxy_assets::AssetId("source.glb".into());
                     if self.catalog.snapshot(&source).is_none() {
-                        if self.catalog.status(&source).is_none() { self.reload.insert(source); }
+                        if self.catalog.status(&source).is_none() {
+                            self.reload.insert(source);
+                        }
                         return Ok(false);
                     }
-                    if self.catalog.snapshot(&self.id).unwrap().value().animated.as_ref().ok_or("missing target rig")?.animations.len()!=0 {
+                    if self
+                        .catalog
+                        .snapshot(&self.id)
+                        .unwrap()
+                        .value()
+                        .animated
+                        .as_ref()
+                        .ok_or("missing target rig")?
+                        .animations
+                        .len()
+                        != 0
+                    {
                         return Err("native retarget target must have no clips".into());
                     }
                 }
                 self.edit_key(KeyCode::KeyD)?;
-                let first = self.instances[0]; let second = self.instances[1];
-                self.scene.set_local(first,voxy_scene::Transform { translation:Vec3::Y,..Default::default() })?;
-                self.scene.set_local(second,voxy_scene::Transform { translation:-Vec3::Y*0.1,..Default::default() })?;
-                self.scene.insert_component(first,voxy_gameplay::CharacterBody {
-                    half_extents:[0.1,1.,0.1],speed:0.3,..Default::default() })?;
-                self.scene.insert_component(second,voxy_gameplay::BoxCollider { half_extents:[4.,0.1,4.] })?;
-                self.scene.insert_component(first,crate::ModelAnimation { clip_name:if retarget || std::env::var_os("VOXY_FOOT_REORDER_SMOKE").is_some() {"move".into()}else{String::new()},transition_seconds:if foot_reload {0.5}else{0.},..Default::default() })?;
-                self.scene.insert_component(second,crate::ModelAnimation { clip:None,..Default::default() })?;
-                self.scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
-                    bones:["hip".into(),"knee".into(),"foot".into()],sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
-                    pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],clip_contact_curves:Default::default(),
-                }] })?;
+                let first = self.instances[0];
+                let second = self.instances[1];
+                self.scene.set_local(
+                    first,
+                    voxy_scene::Transform {
+                        translation: Vec3::Y,
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.set_local(
+                    second,
+                    voxy_scene::Transform {
+                        translation: -Vec3::Y * 0.1,
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    first,
+                    voxy_gameplay::CharacterBody {
+                        half_extents: [0.1, 1., 0.1],
+                        speed: 0.3,
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    second,
+                    voxy_gameplay::BoxCollider {
+                        half_extents: [4., 0.1, 4.],
+                    },
+                )?;
+                self.scene.insert_component(
+                    first,
+                    crate::ModelAnimation {
+                        clip_name: if retarget
+                            || std::env::var_os("VOXY_FOOT_REORDER_SMOKE").is_some()
+                        {
+                            "move".into()
+                        } else {
+                            String::new()
+                        },
+                        transition_seconds: if foot_reload { 0.5 } else { 0. },
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    second,
+                    crate::ModelAnimation {
+                        clip: None,
+                        ..Default::default()
+                    },
+                )?;
+                self.scene.insert_component(
+                    first,
+                    crate::ModelFootPlacement {
+                        feet: vec![crate::FootBinding {
+                            bones: ["hip".into(), "knee".into(), "foot".into()],
+                            sole_offset: [0., -0.1, 0.],
+                            sole_up: [0., 1., 0.],
+                            pole: [1., 0., 0.],
+                            plant: true,
+                            weight: 1.,
+                            contact: Default::default(),
+                            contact_curve: vec![],
+                            clip_contact_curves: Default::default(),
+                        }],
+                    },
+                )?;
                 if retarget {
-                    self.scene.insert_component(first,crate::ModelRetarget {source:"source.glb".into(),joints:[("sourceHip","hip"),("sourceKnee","knee"),("sourceFoot","foot")].into_iter().map(|(a,b)|crate::RetargetJointProfile {source:a.into(),target:b.into(),rotation_basis:glam::Quat::IDENTITY.to_array(),translation_basis:glam::Quat::IDENTITY.to_array(),translation_scale:1.}).collect()})?;
+                    self.scene.insert_component(
+                        first,
+                        crate::ModelRetarget {
+                            source: "source.glb".into(),
+                            joints: [
+                                ("sourceHip", "hip"),
+                                ("sourceKnee", "knee"),
+                                ("sourceFoot", "foot"),
+                            ]
+                            .into_iter()
+                            .map(|(a, b)| crate::RetargetJointProfile {
+                                source: a.into(),
+                                target: b.into(),
+                                rotation_basis: glam::Quat::IDENTITY.to_array(),
+                                translation_basis: glam::Quat::IDENTITY.to_array(),
+                                translation_scale: 1.,
+                            })
+                            .collect(),
+                        },
+                    )?;
                 }
-                self.camera.legacy = false; self.camera.perspective = false;
-                self.camera.target = Vec3::new(0.,0.15,0.); self.camera.distance=2.;
+                self.camera.legacy = false;
+                self.camera.perspective = false;
+                self.camera.target = Vec3::new(0., 0.15, 0.);
+                self.camera.distance = 2.;
                 self.commit_authoring()?;
                 let authoring = self.authoring_document()?;
                 self.toggle_play()?;
-                self.play.player_input.event(voxy_gameplay::RIGHT,1.)?;
+                self.play.player_input.event(voxy_gameplay::RIGHT, 1.)?;
                 let smoke = self.animation_smoke.as_mut().unwrap();
-                smoke.authoring=Some(authoring);smoke.phase=1;smoke.since=self.frames;
-                if smoke.foot_reload { println!("VOXY_NATIVE_FOOT_RELOAD_READY frames={}",self.frames); }
+                smoke.authoring = Some(authoring);
+                smoke.phase = 1;
+                smoke.since = self.frames;
+                if smoke.foot_reload {
+                    println!("VOXY_NATIVE_FOOT_RELOAD_READY frames={}", self.frames);
+                }
             }
             1 => {
-                if self.play.simulation_ticks < 12 { return Ok(false); }
+                if self.play.simulation_ticks < 12 {
+                    return Ok(false);
+                }
                 let first = self.instances[0];
-                let asset = self.catalog.snapshot(&self.id).ok_or("missing foot asset")?;
-                let model = asset.value().animated.as_ref().ok_or("missing foot model")?;
-                let frame = self.play.animations.frame(first,model).ok_or("missing accepted foot frame")?;
+                let asset = self
+                    .catalog
+                    .snapshot(&self.id)
+                    .ok_or("missing foot asset")?;
+                let model = asset
+                    .value()
+                    .animated
+                    .as_ref()
+                    .ok_or("missing foot model")?;
+                let frame = self
+                    .play
+                    .animations
+                    .frame(first, model)
+                    .ok_or("missing accepted foot frame")?;
                 if smoke.foot_reload {
-                    self.play.player_input.event(voxy_gameplay::RIGHT,0.)?;
-                    let selected = self.scene.component::<crate::ModelAnimation>(first)?
-                        .ok_or("missing foot animation settings")?.resolve_clip(model)?
+                    self.play.player_input.event(voxy_gameplay::RIGHT, 0.)?;
+                    let selected = self
+                        .scene
+                        .component::<crate::ModelAnimation>(first)?
+                        .ok_or("missing foot animation settings")?
+                        .resolve_clip(model)?
                         .ok_or("missing foot animation selection")?;
-                    if model.animations[selected].duration()!=2. { return Ok(false); }
+                    if model.animations[selected].duration() != 2. {
+                        return Ok(false);
+                    }
                     if frame.transition_weight < 1. {
                         if !smoke.foot_reload_seen {
-                            println!("VOXY_NATIVE_FOOT_RELOAD_FADE frames={} ticks={} duration=2 weight={}",
-                                self.frames,self.play.simulation_ticks,frame.transition_weight);
-                            self.animation_smoke.as_mut().unwrap().foot_reload_seen=true;
+                            println!(
+                                "VOXY_NATIVE_FOOT_RELOAD_FADE frames={} ticks={} duration=2 weight={}",
+                                self.frames, self.play.simulation_ticks, frame.transition_weight
+                            );
+                            self.animation_smoke.as_mut().unwrap().foot_reload_seen = true;
                         }
                         return Ok(false);
                     }
-                    if !smoke.foot_reload_seen { return Err("revised clip did not present an active fade".into()); }
+                    if !smoke.foot_reload_seen {
+                        return Err("revised clip did not present an active fade".into());
+                    }
                 }
                 let tip = usize::from(model.resolve_joint_name("foot")?);
                 let mut globals: Vec<Mat4> = Vec::new();
-                for (local,joint) in frame.pose.local().iter().zip(model.skeleton.joints()) {
-                    globals.push(joint.parent.map_or(local.matrix(),|p| globals[usize::from(p)]*local.matrix()));
+                for (local, joint) in frame.pose.local().iter().zip(model.skeleton.joints()) {
+                    globals.push(
+                        joint
+                            .parent
+                            .map_or(local.matrix(), |p| globals[usize::from(p)] * local.matrix()),
+                    );
                 }
-                let sole = self.scene.world_matrix(first)?.transform_point3(globals[tip].transform_point3(Vec3::new(0.,-0.1,0.)));
+                let sole = self
+                    .scene
+                    .world_matrix(first)?
+                    .transform_point3(globals[tip].transform_point3(Vec3::new(0., -0.1, 0.)));
                 let center = self.scene.local(first)?.translation;
-                if !sole.abs_diff_eq(Vec3::new(0.005,0.,0.),5e-6) || center.x < 0.05 {
-                    return Err(format!("native foot contact drifted: sole={sole:?} center={center:?}").into());
+                if !sole.abs_diff_eq(Vec3::new(0.005, 0., 0.), 5e-6) || center.x < 0.05 {
+                    return Err(format!(
+                        "native foot contact drifted: sole={sole:?} center={center:?}"
+                    )
+                    .into());
                 }
                 let graphics = self.graphics.as_ref().ok_or("missing foot graphics")?;
-                let signature = frame.skin_matrices.iter().map(|m|m.to_cols_array().map(f32::to_bits)).collect();
+                let signature = frame
+                    .skin_matrices
+                    .iter()
+                    .map(|m| m.to_cols_array().map(f32::to_bits))
+                    .collect();
                 if graphics.animated_models.pose_signature(first)? != Some(signature) {
                     return Ok(false);
                 }
                 if std::env::var_os("VOXY_FOOT_RELOAD_MOTION").is_some() {
-                    let phase = self.play.animations.clip_phase(first).ok_or("missing revised clip phase")?;
-                    let hip = frame.pose.local()[usize::from(model.resolve_joint_name("hip")?)].translation;
-                    let expected = Vec3::new(0.15*phase as f32,0.5+0.05*phase as f32,0.);
-                    if phase <= 0.01 || !hip.abs_diff_eq(expected,2e-6) {
+                    let phase = self
+                        .play
+                        .animations
+                        .clip_phase(first)
+                        .ok_or("missing revised clip phase")?;
+                    let hip = frame.pose.local()[usize::from(model.resolve_joint_name("hip")?)]
+                        .translation;
+                    let expected = Vec3::new(0.15 * phase as f32, 0.5 + 0.05 * phase as f32, 0.);
+                    if phase <= 0.01 || !hip.abs_diff_eq(expected, 2e-6) {
                         return Err(format!("revised motion mismatch: phase={phase} hip={hip:?} expected={expected:?}").into());
                     }
-                    println!("VOXY_NATIVE_FOOT_RELOAD_MOTION frames={} phase={phase} hip={hip:?} accepted_palette=true",self.frames);
+                    println!(
+                        "VOXY_NATIVE_FOOT_RELOAD_MOTION frames={} phase={phase} hip={hip:?} accepted_palette=true",
+                        self.frames
+                    );
                 }
                 if std::env::var_os("VOXY_FOOT_REORDER_SMOKE").is_some() {
-                    let settings = self.scene.component::<crate::ModelAnimation>(first)?.ok_or("missing named selection")?;
-                    if settings.resolve_clip(model)? != Some(1) || self.play.animations.clip_name(first) != Some("move") {
+                    let settings = self
+                        .scene
+                        .component::<crate::ModelAnimation>(first)?
+                        .ok_or("missing named selection")?;
+                    if settings.resolve_clip(model)? != Some(1)
+                        || self.play.animations.clip_name(first) != Some("move")
+                    {
                         return Err("reordered clips changed the named animation selection".into());
                     }
-                    println!("VOXY_NATIVE_NAMED_CLIP_REORDER frames={} name=move index=1 accepted_palette=true",self.frames);
+                    println!(
+                        "VOXY_NATIVE_NAMED_CLIP_REORDER frames={} name=move index=1 accepted_palette=true",
+                        self.frames
+                    );
                 }
                 if retarget {
-                    let phase = self.play.animations.clip_phase(first).ok_or("missing retarget source phase")?;
-                    let hip = frame.pose.local()[usize::from(model.resolve_joint_name("hip")?)].translation;
-                    let expected = Vec3::new(0.,0.5+0.05*phase as f32,0.);
-                    if !model.animations.is_empty() || self.play.animations.clip_name(first)!=Some("move")
-                        || !hip.abs_diff_eq(expected,2e-6)
-                        || self.required_gpu_assets().contains(&voxy_assets::AssetId("source.glb".into()))
-                        || graphics.models.contains_key(&voxy_assets::AssetId("source.glb".into())) {
-                        return Err("native retarget source/target ownership or motion mismatch".into());
+                    let phase = self
+                        .play
+                        .animations
+                        .clip_phase(first)
+                        .ok_or("missing retarget source phase")?;
+                    let hip = frame.pose.local()[usize::from(model.resolve_joint_name("hip")?)]
+                        .translation;
+                    let expected = Vec3::new(0., 0.5 + 0.05 * phase as f32, 0.);
+                    if !model.animations.is_empty()
+                        || self.play.animations.clip_name(first) != Some("move")
+                        || !hip.abs_diff_eq(expected, 2e-6)
+                        || self
+                            .required_gpu_assets()
+                            .contains(&voxy_assets::AssetId("source.glb".into()))
+                        || graphics
+                            .models
+                            .contains_key(&voxy_assets::AssetId("source.glb".into()))
+                    {
+                        return Err(
+                            "native retarget source/target ownership or motion mismatch".into()
+                        );
                     }
-                    println!("VOXY_NATIVE_RETARGET frames={} phase={phase} hip={hip:?} target_clips=0 source_gpu=false accepted_palette=true",self.frames);
+                    println!(
+                        "VOXY_NATIVE_RETARGET frames={} phase={phase} hip={hip:?} target_clips=0 source_gpu=false accepted_palette=true",
+                        self.frames
+                    );
                 }
-                let (owners,gpu_primitives,sources) = graphics.animated_models.counts();
-                if (owners,gpu_primitives,sources)!=(2,2,1) { return Err("native foot skin resources missing".into()); }
-                println!("VOXY_NATIVE_FOOT_CONTACT frames={} ticks={} sole={sole:?} center={center:?} accepted_palette=true owners={owners} gpu_primitives={gpu_primitives} sources={sources} bytes={}",
-                    self.frames,self.play.simulation_ticks,graphics.animated_models.allocation_bytes());
+                let (owners, gpu_primitives, sources) = graphics.animated_models.counts();
+                if (owners, gpu_primitives, sources) != (2, 2, 1) {
+                    return Err("native foot skin resources missing".into());
+                }
+                println!(
+                    "VOXY_NATIVE_FOOT_CONTACT frames={} ticks={} sole={sole:?} center={center:?} accepted_palette=true owners={owners} gpu_primitives={gpu_primitives} sources={sources} bytes={}",
+                    self.frames,
+                    self.play.simulation_ticks,
+                    graphics.animated_models.allocation_bytes()
+                );
                 if std::env::var_os("VOXY_FOOT_REVIEW_SMOKE").is_some() {
-                    self.play.player_input.event(voxy_gameplay::RIGHT,0.)?;
+                    self.play.player_input.event(voxy_gameplay::RIGHT, 0.)?;
                     let smoke = self.animation_smoke.as_mut().unwrap();
-                    smoke.phase=4;
-                    smoke.foot_review_until=Some(std::time::Instant::now()+std::time::Duration::from_secs(10));
+                    smoke.phase = 4;
+                    smoke.foot_review_until =
+                        Some(std::time::Instant::now() + std::time::Duration::from_secs(10));
                 } else {
                     self.toggle_play()?;
-                    let smoke = self.animation_smoke.as_mut().unwrap();smoke.phase=2;smoke.since=self.frames;
+                    let smoke = self.animation_smoke.as_mut().unwrap();
+                    smoke.phase = 2;
+                    smoke.since = self.frames;
                 }
             }
             4 => {
-                if std::time::Instant::now() < smoke.foot_review_until.ok_or("missing review interval")? {
+                if std::time::Instant::now()
+                    < smoke.foot_review_until.ok_or("missing review interval")?
+                {
                     return Ok(false);
                 }
                 self.toggle_play()?;
-                let smoke = self.animation_smoke.as_mut().unwrap();smoke.phase=2;smoke.since=self.frames;
+                let smoke = self.animation_smoke.as_mut().unwrap();
+                smoke.phase = 2;
+                smoke.since = self.frames;
             }
             2 => {
-                if self.graphics.as_ref().ok_or("missing foot graphics after Stop")?.animated_models.allocation_bytes()!=0
-                    || self.authoring_document()? != *smoke.authoring.as_ref().ok_or("missing foot authoring")? {
-                    return Err("native foot Stop did not restore authoring and release resources".into());
+                if self
+                    .graphics
+                    .as_ref()
+                    .ok_or("missing foot graphics after Stop")?
+                    .animated_models
+                    .allocation_bytes()
+                    != 0
+                    || self.authoring_document()?
+                        != *smoke.authoring.as_ref().ok_or("missing foot authoring")?
+                {
+                    return Err(
+                        "native foot Stop did not restore authoring and release resources".into(),
+                    );
                 }
-                println!("VOXY_NATIVE_FOOT_STOP frames={} animated_bytes=0 authoring_restored=true",self.frames);
+                println!(
+                    "VOXY_NATIVE_FOOT_STOP frames={} animated_bytes=0 authoring_restored=true",
+                    self.frames
+                );
                 return Ok(true);
             }
-            _=>return Err("invalid native foot phase".into()),
+            _ => return Err("invalid native foot phase".into()),
         }
         Ok(false)
     }

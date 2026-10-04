@@ -4,25 +4,35 @@ impl RootRigidPath {
     /// Per-cut stored-field displacement allowances, not source compilation proofs.
     /// Each corridor includes both exact-source clock bounds and its evaluated time.
     /// A corridor outside this path rejects; pose STEP events reject as well.
-    pub fn translation_cut_motion_errors(&self,point_radius:f64)
-        ->Result<Option<Vec<[f64;2]>>,AnimationError> {
-        if !point_radius.is_finite() || point_radius<0. {
+    pub fn translation_cut_motion_errors(
+        &self,
+        point_radius: f64,
+    ) -> Result<Option<Vec<[f64; 2]>>, AnimationError> {
+        if !point_radius.is_finite() || point_radius < 0. {
             return Err(AnimationError::InvalidSampleTime);
         }
-        let mut errors=Vec::with_capacity(self.translation_cut_enclosures().len());
+        let mut errors = Vec::with_capacity(self.translation_cut_enclosures().len());
         for cut in self.translation_cut_enclosures() {
-            let source=cut.exact_source_bounds();
-            let corridor=[source[0].min(cut.evaluated()),source[1].max(cut.evaluated())];
-            let Some(field)=self.spatial_twist_enclosure_between(corridor)? else {return Ok(None);};
-            let l1=|bounds:[[f64;2];3]|->Result<f64,AnimationError> {
-                let mut result=Scalar::exact(0.);
+            let source = cut.exact_source_bounds();
+            let corridor = [
+                source[0].min(cut.evaluated()),
+                source[1].max(cut.evaluated()),
+            ];
+            let Some(field) = self.spatial_twist_enclosure_between(corridor)? else {
+                return Ok(None);
+            };
+            let l1 = |bounds: [[f64; 2]; 3]| -> Result<f64, AnimationError> {
+                let mut result = Scalar::exact(0.);
                 for axis in bounds {
-                    result=result.add(Scalar::exact(axis[0].abs().max(axis[1].abs())))?;
+                    result = result.add(Scalar::exact(axis[0].abs().max(axis[1].abs())))?;
                 }
                 Ok(result.1)
             };
-            errors.push(cut.continuous_motion_error(l1(field.linear_bounds())?,
-                l1(field.angular_bounds())?,point_radius)?);
+            errors.push(cut.continuous_motion_error(
+                l1(field.linear_bounds())?,
+                l1(field.angular_bounds())?,
+                point_radius,
+            )?);
         }
         Ok(Some(errors))
     }
@@ -170,12 +180,14 @@ mod gap_tests {
             2,
         )
         .unwrap();
-        assert!(tilted
-            .spatial_twist_enclosure_between([0.2, 0.4])
-            .unwrap()
-            .unwrap()
-            .coordinate_velocity_range(1)
-            .is_none());
+        assert!(
+            tilted
+                .spatial_twist_enclosure_between([0.2, 0.4])
+                .unwrap()
+                .unwrap()
+                .coordinate_velocity_range(1)
+                .is_none()
+        );
     }
 }
 
@@ -184,16 +196,21 @@ mod cut_motion_tests {
     use super::*;
     #[test]
     fn cut_corridor_uses_both_neighbor_speeds_and_rejects_outside_domain() {
-        let twist=|v|RootRigidTwist {linear:DVec3::X*v,angular:DVec3::ZERO};
-        let mut path=RootRigidPath::from_twists(&[(twist(1.),0.5),(twist(3.),0.5)],2).unwrap();
-        let cut=RootTimeCutEnclosure::new(1,0.5,2_f64.powi(-60),0.).unwrap();
+        let twist = |v| RootRigidTwist {
+            linear: DVec3::X * v,
+            angular: DVec3::ZERO,
+        };
+        let mut path =
+            RootRigidPath::from_twists(&[(twist(1.), 0.5), (twist(3.), 0.5)], 2).unwrap();
+        let cut = RootTimeCutEnclosure::new(1, 0.5, 2_f64.powi(-60), 0.).unwrap();
         path.translation_cuts.push(cut);
-        let result=path.translation_cut_motion_errors(2.).unwrap().unwrap();
-        assert_eq!(result.len(),1);
-        assert!(result[0][0]>=3.*cut.absolute_error_bound());
-        assert_eq!(result[0][1],0.);
+        let result = path.translation_cut_motion_errors(2.).unwrap().unwrap();
+        assert_eq!(result.len(), 1);
+        assert!(result[0][0] >= 3. * cut.absolute_error_bound());
+        assert_eq!(result[0][1], 0.);
         assert!(path.translation_cut_motion_errors(-1.).is_err());
-        path.translation_cuts.push(RootTimeCutEnclosure::new(3,1.,0.,0.).unwrap());
+        path.translation_cuts
+            .push(RootTimeCutEnclosure::new(3, 1., 0., 0.).unwrap());
         assert!(path.translation_cut_motion_errors(0.).is_err());
     }
 }

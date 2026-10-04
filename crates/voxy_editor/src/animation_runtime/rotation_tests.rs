@@ -562,45 +562,126 @@ fn signed_uniform_parent_converts_composed_motion_and_unproved_ancestors_reject(
 
 #[test]
 fn retargeted_pivot_turn_uses_target_origin_and_collision_acceptance() {
-    let (mut scene,owner,source,_) = scene_fixture();
-    let glb=gltf::binary::Glb::from_slice(include_bytes!("../../../voxy_render/examples/assets/root-pivot-turn.glb")).unwrap();
-    let mut json:serde_json::Value=serde_json::from_slice(&glb.json).unwrap();
-    json["nodes"][0]["name"]=serde_json::json!("targetRoot");
-    json["nodes"][0]["translation"]=serde_json::json!([0.8,0.,0.]);
-    json["animations"]=serde_json::json!([]);
-    let bytes=gltf::binary::Glb {header:glb.header,json:serde_json::to_vec(&json).unwrap().into(),bin:glb.bin}.to_vec().unwrap();
-    let target=Arc::new(ModelAsset::parse(&bytes,&[],voxy_render::ModelLimits::default()).unwrap());
-    let models=BTreeMap::from([(AssetId("turn".into()),target.clone()),(AssetId("source".into()),source)]);
-    scene.insert_component(owner,crate::ModelRetarget {source:"source".into(),joints:vec![crate::RetargetJointProfile {source:"root".into(),target:"targetRoot".into(),rotation_basis:Quat::IDENTITY.to_array(),translation_basis:Quat::IDENTITY.to_array(),translation_scale:2.}]}).unwrap();
-    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().root_motion_axes=[true,false,true];
-    let runtime=AnimationRuntime::default();
-    let candidate=runtime.prepare(&scene,&models,1./60.).unwrap();
-    let span=candidate.trajectories()[0].trajectory.spans()[0].clone();
-    let end=span.sample(1.).unwrap();
-    let angle=2.*(8_f64*(1./60.)*(1.-1./60.)).atan();
-    assert!((end.rotation*glam::DVec3::X).abs_diff_eq(DQuat::from_rotation_y(angle)*glam::DVec3::X,1e-7));
-    assert!(end.translation.abs_diff_eq(glam::DVec3::new(0.8*(1.-angle.cos()),0.,0.8*angle.sin()),1e-7));
-    let before=scene.local(owner).unwrap();
-    let mut input=voxy_gameplay::player_input().unwrap();
-    let mut exhausted=CharacterPhysics::new(&scene,1,1).with_angular_trajectory_query_budget(1).unwrap();
-    assert!(exhausted.fixed_step_with_motion_and_rigid_trajectories(&mut scene,&mut input,1./60.,candidate.motions(),&candidate.trajectories()).is_err());
-    assert_eq!(scene.local(owner).unwrap(),before);assert_eq!(runtime.serial(),0);
-    let mut physics=CharacterPhysics::new(&scene,1,1);
-    let mut accepted=runtime;
-    for _ in 0..12 {
-        let next=accepted.prepare(&scene,&models,1./60.).unwrap();
-        physics.fixed_step_with_motion_and_rigid_trajectories(&mut scene,&mut input,1./60.,next.motions(),&next.trajectories()).unwrap();
-        accepted=next;
+    let (mut scene, owner, source, _) = scene_fixture();
+    let glb = gltf::binary::Glb::from_slice(include_bytes!(
+        "../../../voxy_render/examples/assets/root-pivot-turn.glb"
+    ))
+    .unwrap();
+    let mut json: serde_json::Value = serde_json::from_slice(&glb.json).unwrap();
+    json["nodes"][0]["name"] = serde_json::json!("targetRoot");
+    json["nodes"][0]["translation"] = serde_json::json!([0.8, 0., 0.]);
+    json["animations"] = serde_json::json!([]);
+    let bytes = gltf::binary::Glb {
+        header: glb.header,
+        json: serde_json::to_vec(&json).unwrap().into(),
+        bin: glb.bin,
     }
-    let contact=(0.23/1.2_f64.hypot(0.02)).asin()-0.02_f64.atan2(1.2);
-    let actor=scene.local(owner).unwrap();
-    assert!(actor.rotation.abs_diff_eq(Quat::from_rotation_y(contact as f32),1e-6));
-    assert!(actor.translation.abs_diff_eq(Vec3::new((0.8*(1.-contact.cos())) as f32,0.,(0.8*contact.sin()) as f32),1e-6));
-    assert_eq!(accepted.frame(owner,&target).unwrap().pose,target.skeleton.bind_pose());
-    let frame=accepted.frame(owner,&target).unwrap();
-    scene.component_mut::<crate::ModelRetarget>(owner).unwrap().unwrap().joints[0].translation_basis=Quat::from_rotation_z(0.3).to_array();
-    assert!(accepted.prepare(&scene,&models,1./60.).is_err());
-    assert!(Arc::ptr_eq(&frame,&accepted.frame(owner,&target).unwrap()));assert_eq!(accepted.serial(),12);
+    .to_vec()
+    .unwrap();
+    let target =
+        Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+    let models = BTreeMap::from([
+        (AssetId("turn".into()), target.clone()),
+        (AssetId("source".into()), source),
+    ]);
+    scene
+        .insert_component(
+            owner,
+            crate::ModelRetarget {
+                source: "source".into(),
+                joints: vec![crate::RetargetJointProfile {
+                    source: "root".into(),
+                    target: "targetRoot".into(),
+                    rotation_basis: Quat::IDENTITY.to_array(),
+                    translation_basis: Quat::IDENTITY.to_array(),
+                    translation_scale: 2.,
+                }],
+            },
+        )
+        .unwrap();
+    scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .root_motion_axes = [true, false, true];
+    let runtime = AnimationRuntime::default();
+    let candidate = runtime.prepare(&scene, &models, 1. / 60.).unwrap();
+    let span = candidate.trajectories()[0].trajectory.spans()[0].clone();
+    let end = span.sample(1.).unwrap();
+    let angle = 2. * (8_f64 * (1. / 60.) * (1. - 1. / 60.)).atan();
+    assert!(
+        (end.rotation * glam::DVec3::X)
+            .abs_diff_eq(DQuat::from_rotation_y(angle) * glam::DVec3::X, 1e-7)
+    );
+    assert!(end.translation.abs_diff_eq(
+        glam::DVec3::new(0.8 * (1. - angle.cos()), 0., 0.8 * angle.sin()),
+        1e-7
+    ));
+    let before = scene.local(owner).unwrap();
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let mut exhausted = CharacterPhysics::new(&scene, 1, 1)
+        .with_angular_trajectory_query_budget(1)
+        .unwrap();
+    assert!(
+        exhausted
+            .fixed_step_with_motion_and_rigid_trajectories(
+                &mut scene,
+                &mut input,
+                1. / 60.,
+                candidate.motions(),
+                &candidate.trajectories()
+            )
+            .is_err()
+    );
+    assert_eq!(scene.local(owner).unwrap(), before);
+    assert_eq!(runtime.serial(), 0);
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
+    let mut accepted = runtime;
+    for _ in 0..12 {
+        let next = accepted.prepare(&scene, &models, 1. / 60.).unwrap();
+        physics
+            .fixed_step_with_motion_and_rigid_trajectories(
+                &mut scene,
+                &mut input,
+                1. / 60.,
+                next.motions(),
+                &next.trajectories(),
+            )
+            .unwrap();
+        accepted = next;
+    }
+    let contact = (0.23 / 1.2_f64.hypot(0.02)).asin() - 0.02_f64.atan2(1.2);
+    let actor = scene.local(owner).unwrap();
+    assert!(
+        actor
+            .rotation
+            .abs_diff_eq(Quat::from_rotation_y(contact as f32), 1e-6)
+    );
+    assert!(actor.translation.abs_diff_eq(
+        Vec3::new(
+            (0.8 * (1. - contact.cos())) as f32,
+            0.,
+            (0.8 * contact.sin()) as f32
+        ),
+        1e-6
+    ));
+    assert_eq!(
+        accepted.frame(owner, &target).unwrap().pose,
+        target.skeleton.bind_pose()
+    );
+    let frame = accepted.frame(owner, &target).unwrap();
+    scene
+        .component_mut::<crate::ModelRetarget>(owner)
+        .unwrap()
+        .unwrap()
+        .joints[0]
+        .translation_basis = Quat::from_rotation_z(0.3).to_array();
+    assert!(accepted.prepare(&scene, &models, 1. / 60.).is_err());
+    assert!(Arc::ptr_eq(
+        &frame,
+        &accepted.frame(owner, &target).unwrap()
+    ));
+    assert_eq!(accepted.serial(), 12);
 }
 
 #[test]
@@ -609,39 +690,68 @@ fn paused_angular_fade_runs_through_owner_and_physics_without_actor_drift() {
     let mut asset = (*original).clone();
     asset.animations.push(asset.animations[0].clone());
     let model = Arc::new(asset);
-    let models = BTreeMap::from([(AssetId("turn".into()),model.clone())]);
-    let mut runtime = AnimationRuntime::default().prepare(&scene,&models,0.025).unwrap();
+    let models = BTreeMap::from([(AssetId("turn".into()), model.clone())]);
+    let mut runtime = AnimationRuntime::default()
+        .prepare(&scene, &models, 0.025)
+        .unwrap();
     {
-        let settings = scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap();
+        let settings = scene
+            .component_mut::<ModelAnimation>(owner)
+            .unwrap()
+            .unwrap();
         settings.clip = Some(1);
         settings.speed = 0.;
         settings.transition_seconds = 0.1;
     }
     let before = scene.local(owner).unwrap();
-    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
     let mut input = voxy_gameplay::player_input().unwrap();
     for tick in 1..=4 {
-        let candidate = runtime.prepare(&scene,&models,0.025).unwrap();
-        let frame = candidate.frame(owner,&model).unwrap();
-        assert!((frame.transition_weight - tick as f32 * 0.25).abs()<1e-6);
-        assert_eq!(candidate.clip_phase(owner).unwrap(),0.);
+        let candidate = runtime.prepare(&scene, &models, 0.025).unwrap();
+        let frame = candidate.frame(owner, &model).unwrap();
+        assert!((frame.transition_weight - tick as f32 * 0.25).abs() < 1e-6);
+        assert_eq!(candidate.clip_phase(owner).unwrap(), 0.);
         for trajectory in candidate.trajectories() {
             assert!(trajectory.trajectory.spans().is_empty());
         }
-        physics.fixed_step_with_motion_and_rigid_trajectories(&mut scene,&mut input,0.025,
-            candidate.motions(),&candidate.trajectories()).unwrap();
-        assert_eq!(scene.local(owner).unwrap(),before);
+        physics
+            .fixed_step_with_motion_and_rigid_trajectories(
+                &mut scene,
+                &mut input,
+                0.025,
+                candidate.motions(),
+                &candidate.trajectories(),
+            )
+            .unwrap();
+        assert_eq!(scene.local(owner).unwrap(), before);
         runtime = candidate;
         if tick == 1 {
-            scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().speed = 1.;
-            assert!(runtime.prepare(&scene,&models,0.025).is_err());
-            assert!(Arc::ptr_eq(&frame,&runtime.frame(owner,&model).unwrap()));
-            assert_eq!(scene.local(owner).unwrap(),before);
-            scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().speed = 0.;
+            scene
+                .component_mut::<ModelAnimation>(owner)
+                .unwrap()
+                .unwrap()
+                .speed = 1.;
+            assert!(runtime.prepare(&scene, &models, 0.025).is_err());
+            assert!(Arc::ptr_eq(&frame, &runtime.frame(owner, &model).unwrap()));
+            assert_eq!(scene.local(owner).unwrap(), before);
+            scene
+                .component_mut::<ModelAnimation>(owner)
+                .unwrap()
+                .unwrap()
+                .speed = 0.;
         }
     }
-    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().speed = 1.;
-    let resumed = runtime.prepare(&scene,&models,0.025).unwrap();
-    assert!((resumed.clip_phase(owner).unwrap()-0.025).abs()<1e-6);
-    assert!(resumed.trajectories().iter().any(|trajectory| !trajectory.trajectory.spans().is_empty()));
+    scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .speed = 1.;
+    let resumed = runtime.prepare(&scene, &models, 0.025).unwrap();
+    assert!((resumed.clip_phase(owner).unwrap() - 0.025).abs() < 1e-6);
+    assert!(
+        resumed
+            .trajectories()
+            .iter()
+            .any(|trajectory| !trajectory.trajectory.spans().is_empty())
+    );
 }

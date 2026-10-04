@@ -280,7 +280,12 @@ impl SceneSkinner {
         pose: &SceneSkinPose<'_>,
         timestamp_writes: Option<wgpu::ComputePassTimestampWrites<'_>>,
     ) -> Result<(), SceneSkinError> {
-        if timestamp_writes.is_some() && !self.device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
+        if timestamp_writes.is_some()
+            && !self
+                .device
+                .features()
+                .contains(wgpu::Features::TIMESTAMP_QUERY)
+        {
             return Err(SceneSkinError::Unsupported);
         }
         let instance = pose.instance;

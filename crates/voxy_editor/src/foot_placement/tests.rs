@@ -40,7 +40,8 @@ fn settings() -> ModelFootPlacement {
             plant: true,
             weight: 1.,
             contact: FootContactSettings::default(),
-            contact_curve: vec![], clip_contact_curves: Default::default(),
+            contact_curve: vec![],
+            clip_contact_curves: Default::default(),
         }],
     }
 }
@@ -366,8 +367,10 @@ fn ordinary_app_play_applies_foot_ik_and_stop_restores_authored_settings() {
         ("/feet/0/contact/probe_lift", "-1"),
         ("/feet/0/bones/2", "missing-foot"),
     ] {
-        let field = members.iter().position(|field|
-            field.schema == "editor.foot-placement.v1" && field.path == path).unwrap();
+        let field = members
+            .iter()
+            .position(|field| field.schema == "editor.foot-placement.v1" && field.path == path)
+            .unwrap();
         assert!(app.edit_component_field(field, value).is_err(), "{path}");
         assert_eq!(app.authoring_document().unwrap(), authored);
         assert_eq!(app.authoring.history.as_ref().unwrap().current(), &authored);
@@ -656,7 +659,9 @@ fn skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_con
         },
     ];
     let curve = std::mem::take(&mut config.feet[0].contact_curve);
-    config.feet[0].clip_contact_curves.insert("stance".into(), curve);
+    config.feet[0]
+        .clip_contact_curves
+        .insert("stance".into(), curve);
     scene.insert_component(owner, config).unwrap();
     let floor = scene
         .spawn(
@@ -759,49 +764,99 @@ fn skipped_swing_rearms_at_new_sole_and_failed_tick_preserves_clip_phase_and_con
 fn named_clip_contacts_select_distinct_curves_and_reject_unmapped_clips() {
     let mut authored = settings();
     let foot = &mut authored.feet[0];
-    foot.clip_contact_curves.insert("walk".into(), vec![
-        FootContactKey { phase: 0., weight: 1. },
-        FootContactKey { phase: 1., weight: 1. },
-    ]);
-    foot.clip_contact_curves.insert("jump".into(), vec![
-        FootContactKey { phase: 0., weight: 0. },
-        FootContactKey { phase: 1., weight: 0. },
-    ]);
-    assert_eq!(contact_weight(foot.contact_keys(Some("walk")).unwrap(), Some(0.5)).unwrap(), 1.);
-    assert_eq!(contact_weight(foot.contact_keys(Some("jump")).unwrap(), Some(0.5)).unwrap(), 0.);
+    foot.clip_contact_curves.insert(
+        "walk".into(),
+        vec![
+            FootContactKey {
+                phase: 0.,
+                weight: 1.,
+            },
+            FootContactKey {
+                phase: 1.,
+                weight: 1.,
+            },
+        ],
+    );
+    foot.clip_contact_curves.insert(
+        "jump".into(),
+        vec![
+            FootContactKey {
+                phase: 0.,
+                weight: 0.,
+            },
+            FootContactKey {
+                phase: 1.,
+                weight: 0.,
+            },
+        ],
+    );
+    assert_eq!(
+        contact_weight(foot.contact_keys(Some("walk")).unwrap(), Some(0.5)).unwrap(),
+        1.
+    );
+    assert_eq!(
+        contact_weight(foot.contact_keys(Some("jump")).unwrap(), Some(0.5)).unwrap(),
+        0.
+    );
     assert!(foot.contact_keys(None).is_err());
     assert!(foot.contact_keys(Some("run")).is_err());
     authored.validate().unwrap();
     let encoded = serde_json::to_vec(&authored).unwrap();
-    assert_eq!(serde_json::from_slice::<ModelFootPlacement>(&encoded).unwrap(), authored);
+    assert_eq!(
+        serde_json::from_slice::<ModelFootPlacement>(&encoded).unwrap(),
+        authored
+    );
     assert!(FootRuntime::new(&model(), authored.clone()).is_err());
     let mut rig = (*model()).clone();
     for name in ["walk", "jump"] {
-        rig.animations.push(Arc::new(voxy_animation::AnimationClip::new(
-            name, 1., voxy_animation::Playback::Loop,
-            vec![voxy_animation::JointTrack::default(); rig.skeleton.joints().len()],
-            &rig.skeleton).unwrap()));
+        rig.animations.push(Arc::new(
+            voxy_animation::AnimationClip::new(
+                name,
+                1.,
+                voxy_animation::Playback::Loop,
+                vec![voxy_animation::JointTrack::default(); rig.skeleton.joints().len()],
+                &rig.skeleton,
+            )
+            .unwrap(),
+        ));
     }
     assert!(FootRuntime::new(&rig, authored.clone()).is_ok());
     rig.animations.push(rig.animations[0].clone());
     assert!(FootRuntime::new(&rig, authored.clone()).is_err());
-    authored.feet[0].clip_contact_curves.get_mut("walk").unwrap()[1].phase = 0.;
+    authored.feet[0]
+        .clip_contact_curves
+        .get_mut("walk")
+        .unwrap()[1]
+        .phase = 0.;
     assert!(authored.validate().is_err());
 }
 
 #[test]
 fn authoring_clip_switch_requires_contact_mapping_and_preserves_history_on_rejection() {
     let original = gltf::binary::Glb::from_slice(include_bytes!(
-        "../../../voxy_render/examples/assets/foot-contact.glb")).unwrap();
+        "../../../voxy_render/examples/assets/foot-contact.glb"
+    ))
+    .unwrap();
     let mut json: serde_json::Value = serde_json::from_slice(&original.json).unwrap();
     let mut clip = json["animations"][0].clone();
     json["animations"][0]["name"] = serde_json::json!("walk");
     clip["name"] = serde_json::json!("jump");
     json["animations"].as_array_mut().unwrap().push(clip);
-    let bytes = gltf::binary::Glb { header: original.header,
-        json: serde_json::to_vec(&json).unwrap().into(), bin: original.bin }.to_vec().unwrap();
-    let root = std::env::temp_dir().join(format!("voxy-foot-clip-admission-{}-{}",
-        std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+    let bytes = gltf::binary::Glb {
+        header: original.header,
+        json: serde_json::to_vec(&json).unwrap().into(),
+        bin: original.bin,
+    }
+    .to_vec()
+    .unwrap();
+    let root = std::env::temp_dir().join(format!(
+        "voxy-foot-clip-admission-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
     std::fs::create_dir(&root).unwrap();
     let path = root.join("foot.glb");
     std::fs::write(&path, bytes).unwrap();
@@ -813,29 +868,68 @@ fn authoring_clip_switch_requires_contact_mapping_and_preserves_history_on_rejec
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
     let owner = app.instances[0];
-    app.scene.insert_component(owner, CharacterBody::default()).unwrap();
-    app.scene.insert_component(owner, crate::ModelAnimation::default()).unwrap();
+    app.scene
+        .insert_component(owner, CharacterBody::default())
+        .unwrap();
+    app.scene
+        .insert_component(owner, crate::ModelAnimation::default())
+        .unwrap();
     let mut contact = settings();
-    contact.feet[0].clip_contact_curves.insert("walk".into(), vec![
-        FootContactKey { phase: 0., weight: 1. }, FootContactKey { phase: 1., weight: 1. }]);
+    contact.feet[0].clip_contact_curves.insert(
+        "walk".into(),
+        vec![
+            FootContactKey {
+                phase: 0.,
+                weight: 1.,
+            },
+            FootContactKey {
+                phase: 1.,
+                weight: 1.,
+            },
+        ],
+    );
     app.scene.insert_component(owner, contact.clone()).unwrap();
     app.commit_authoring().unwrap();
     let before = app.authoring_document().unwrap();
     app.validate_authoring_document(&before).unwrap();
     let fields = crate::component_fields::fields(&before.objects[0]).unwrap();
-    let index = fields.iter().position(|f| f.schema == "editor.model-animation.v1" && f.path == "/clip").unwrap();
+    let index = fields
+        .iter()
+        .position(|f| f.schema == "editor.model-animation.v1" && f.path == "/clip")
+        .unwrap();
     assert!(app.edit_component_field(index, "1").is_err());
     assert_eq!(app.authoring_document().unwrap(), before);
     assert_eq!(app.authoring.history.as_ref().unwrap().current(), &before);
-    contact.feet[0].clip_contact_curves.insert("jump".into(), vec![
-        FootContactKey { phase: 0., weight: 0. }, FootContactKey { phase: 1., weight: 0. }]);
+    contact.feet[0].clip_contact_curves.insert(
+        "jump".into(),
+        vec![
+            FootContactKey {
+                phase: 0.,
+                weight: 0.,
+            },
+            FootContactKey {
+                phase: 1.,
+                weight: 0.,
+            },
+        ],
+    );
     app.scene.insert_component(owner, contact).unwrap();
     app.commit_authoring().unwrap();
     let after_mapping = app.authoring_document().unwrap();
     let fields = crate::component_fields::fields(&after_mapping.objects[0]).unwrap();
-    let index = fields.iter().position(|f| f.schema == "editor.model-animation.v1" && f.path == "/clip").unwrap();
+    let index = fields
+        .iter()
+        .position(|f| f.schema == "editor.model-animation.v1" && f.path == "/clip")
+        .unwrap();
     app.edit_component_field(index, "1").unwrap();
-    assert_eq!(app.scene.component::<crate::ModelAnimation>(app.instances[0]).unwrap().unwrap().clip, Some(1));
+    assert_eq!(
+        app.scene
+            .component::<crate::ModelAnimation>(app.instances[0])
+            .unwrap()
+            .unwrap()
+            .clip,
+        Some(1)
+    );
     app.stop_workers().unwrap();
     drop(app);
     std::fs::remove_dir_all(root).unwrap();
@@ -844,40 +938,80 @@ fn authoring_clip_switch_requires_contact_mapping_and_preserves_history_on_rejec
 #[test]
 fn contact_key_budget_is_shared_between_named_clips_and_legacy_curve() {
     fn keys(count: usize) -> Vec<FootContactKey> {
-        (0..count).map(|index| FootContactKey {
-            phase: index as f32 / (count - 1) as f32,
-            weight: 1.,
-        }).collect()
+        (0..count)
+            .map(|index| FootContactKey {
+                phase: index as f32 / (count - 1) as f32,
+                weight: 1.,
+            })
+            .collect()
     }
     let mut authored = settings();
-    authored.feet[0].clip_contact_curves.insert("walk".into(), keys(2048));
-    authored.feet[0].clip_contact_curves.insert("jump".into(), keys(2048));
+    authored.feet[0]
+        .clip_contact_curves
+        .insert("walk".into(), keys(2048));
+    authored.feet[0]
+        .clip_contact_curves
+        .insert("jump".into(), keys(2048));
     authored.validate().unwrap();
-    authored.feet[0].clip_contact_curves.insert("jump".into(), keys(2049));
-    assert_eq!(authored.validate().unwrap_err(), "aggregate foot contact key budget exceeded");
-    authored.feet[0].clip_contact_curves.insert("jump".into(), keys(2048));
+    authored.feet[0]
+        .clip_contact_curves
+        .insert("jump".into(), keys(2049));
+    assert_eq!(
+        authored.validate().unwrap_err(),
+        "aggregate foot contact key budget exceeded"
+    );
+    authored.feet[0]
+        .clip_contact_curves
+        .insert("jump".into(), keys(2048));
     authored.feet[0].contact_curve = keys(2);
-    assert_eq!(authored.validate().unwrap_err(), "aggregate foot contact key budget exceeded");
-    authored.feet[0].clip_contact_curves.insert("walk".into(), keys(2046));
+    assert_eq!(
+        authored.validate().unwrap_err(),
+        "aggregate foot contact key budget exceeded"
+    );
+    authored.feet[0]
+        .clip_contact_curves
+        .insert("walk".into(), keys(2046));
     authored.validate().unwrap();
 }
 
 #[test]
 fn contact_blending_keeps_displayed_weight_across_repeated_interruptions_and_staging() {
     let rig = model();
-    let clip = |name| Arc::new(voxy_animation::AnimationClip::new(name, 1., voxy_animation::Playback::Loop,
-        vec![voxy_animation::JointTrack::default(); rig.skeleton.joints().len()], &rig.skeleton).unwrap());
+    let clip = |name| {
+        Arc::new(
+            voxy_animation::AnimationClip::new(
+                name,
+                1.,
+                voxy_animation::Playback::Loop,
+                vec![voxy_animation::JointTrack::default(); rig.skeleton.joints().len()],
+                &rig.skeleton,
+            )
+            .unwrap(),
+        )
+    };
     let mut config = settings();
     let binding = &mut config.feet[0];
     for (name, weight) in [("walk", 1.), ("jump", 0.), ("land", 1.)] {
-        binding.clip_contact_curves.insert(name.into(), vec![
-            FootContactKey { phase: 0., weight }, FootContactKey { phase: 1., weight }]);
+        binding.clip_contact_curves.insert(
+            name.into(),
+            vec![
+                FootContactKey { phase: 0., weight },
+                FootContactKey { phase: 1., weight },
+            ],
+        );
     }
     let mut animator = voxy_animation::Animator::new(clip("walk"));
     let mut state = ContactBlendState::default();
     let sample = |state: &mut ContactBlendState, animator: &voxy_animation::Animator| {
         let phases = animator.pose_blend_phases();
-        state.sample(binding, Some(phases.target.clip.name()), Some(phases.target.normalized_phase), Some(phases)).unwrap()
+        state
+            .sample(
+                binding,
+                Some(phases.target.clip.name()),
+                Some(phases.target.normalized_phase),
+                Some(phases),
+            )
+            .unwrap()
     };
     assert_eq!(sample(&mut state, &animator), 1.);
     animator.transition_to(clip("jump"), 0.5).unwrap();
@@ -898,54 +1032,145 @@ fn contact_blending_keeps_displayed_weight_across_repeated_interruptions_and_sta
     assert!((sample(&mut staged, &animator) - 0.608).abs() < 1e-6);
     assert_eq!(state.last_weight, accepted);
     assert!((sample(&mut state, &animator) - 0.608).abs() < 1e-6);
-    assert!(ContactBlendState::default().sample(binding, Some("jump"), Some(0.1), Some(animator.pose_blend_phases())).is_err());
+    assert!(
+        ContactBlendState::default()
+            .sample(
+                binding,
+                Some("jump"),
+                Some(0.1),
+                Some(animator.pose_blend_phases())
+            )
+            .is_err()
+    );
 }
 
 #[test]
 fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_atomically() {
     let mut asset = (*model()).clone();
     for name in ["walk", "run"] {
-        asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(name, 1.,
-            voxy_animation::Playback::Loop, vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
-            &asset.skeleton).unwrap()));
+        asset.animations.push(Arc::new(
+            voxy_animation::AnimationClip::new(
+                name,
+                1.,
+                voxy_animation::Playback::Loop,
+                vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+                &asset.skeleton,
+            )
+            .unwrap(),
+        ));
     }
     let model = Arc::new(asset);
     let mut scene = SceneGraph::new(4);
-    let owner = scene.spawn(None, Transform { translation: Vec3::Y, ..Default::default() }).unwrap();
+    let owner = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::Y,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let id = AssetId("fading-feet".into());
-    scene.insert_component(owner, crate::ModelInstance { asset: id.clone() }).unwrap();
-    scene.insert_component(owner, crate::ModelAnimation::default()).unwrap();
+    scene
+        .insert_component(owner, crate::ModelInstance { asset: id.clone() })
+        .unwrap();
+    scene
+        .insert_component(owner, crate::ModelAnimation::default())
+        .unwrap();
     let mut feet = settings();
     // Explicit curves incur event work even while the existing anchor remains valid.
     // Two distant colliders alone do not force a probe of an already planted foot.
     feet.feet[0].contact_curve = vec![
-        FootContactKey { phase: 0., weight: 1. },
-        FootContactKey { phase: 1., weight: 1. },
+        FootContactKey {
+            phase: 0.,
+            weight: 1.,
+        },
+        FootContactKey {
+            phase: 1.,
+            weight: 1.,
+        },
     ];
     scene.insert_component(owner, feet).unwrap();
-    scene.insert_component(owner, CharacterBody { half_extents: [0.1, 1., 0.1], ..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            CharacterBody {
+                half_extents: [0.1, 1., 0.1],
+                ..Default::default()
+            },
+        )
+        .unwrap();
     for x in [0., 10.] {
-        let floor = scene.spawn(None, Transform { translation: Vec3::new(x, -0.1, 0.), ..Default::default() }).unwrap();
-        scene.insert_component(floor, BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+        let floor = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::new(x, -0.1, 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                floor,
+                BoxCollider {
+                    half_extents: [4., 0.1, 4.],
+                },
+            )
+            .unwrap();
     }
     let models = BTreeMap::from([(id, model.clone())]);
     let mut runtime = crate::animation_runtime::AnimationRuntime::default();
     let mut physics = CharacterPhysics::new(&scene, 4, 4);
     let mut input = player_input().unwrap();
-    let tick = |runtime: &crate::animation_runtime::AnimationRuntime, physics: &mut CharacterPhysics,
-        scene: &mut SceneGraph, input: &mut voxy_input::InputMap| {
-        let candidate = runtime.prepare(scene, &models, 1./60.).unwrap();
-        physics.fixed_step_with_preparation(scene, input, 1./60., &[(owner, Vec3::X*0.02)], &[],
-            |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget)).map(|(_, frame)| frame)
+    let tick = |runtime: &crate::animation_runtime::AnimationRuntime,
+                physics: &mut CharacterPhysics,
+                scene: &mut SceneGraph,
+                input: &mut voxy_input::InputMap| {
+        let candidate = runtime.prepare(scene, &models, 1. / 60.).unwrap();
+        physics
+            .fixed_step_with_preparation(
+                scene,
+                input,
+                1. / 60.,
+                &[(owner, Vec3::X * 0.02)],
+                &[],
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+            )
+            .map(|(_, frame)| frame)
     };
     runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
-    scene.insert_component(owner, crate::ModelAnimation { clip: Some(1), transition_seconds: 0.05, ..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(1),
+                transition_seconds: 0.05,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     for _ in 0..2 {
         runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
-        assert!(sole(&model, &runtime.frame(owner, &model).unwrap(), scene.world_matrix(owner).unwrap())
-            .abs_diff_eq(Vec3::new(0.02,0.,0.), 3e-6));
+        assert!(
+            sole(
+                &model,
+                &runtime.frame(owner, &model).unwrap(),
+                scene.world_matrix(owner).unwrap()
+            )
+            .abs_diff_eq(Vec3::new(0.02, 0., 0.), 3e-6)
+        );
     }
-    scene.insert_component(owner, crate::ModelAnimation { clip: Some(0), transition_seconds: 0.01, ..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(0),
+                transition_seconds: 0.01,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let frame = runtime.frame(owner, &model).unwrap();
     let serial = runtime.serial();
     let position = scene.local(owner).unwrap();
@@ -958,8 +1183,14 @@ fn physical_clip_fades_retain_the_planted_anchor_and_retry_frozen_completion_ato
     physics = physics.with_angular_trajectory_query_budget(65536).unwrap();
     runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
     assert_eq!(runtime.frame(owner, &model).unwrap().transition_weight, 1.);
-    assert!(sole(&model, &runtime.frame(owner, &model).unwrap(), scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(0.02,0.,0.), 3e-6));
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(0.02, 0., 0.), 3e-6)
+    );
 }
 
 #[test]
@@ -967,45 +1198,123 @@ fn physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing() {
     for shared_swing in [false, true] {
         let mut asset = (*model()).clone();
         for name in ["source", "target"] {
-            asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(name, 1.,
-                voxy_animation::Playback::Loop, vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
-                &asset.skeleton).unwrap()));
+            asset.animations.push(Arc::new(
+                voxy_animation::AnimationClip::new(
+                    name,
+                    1.,
+                    voxy_animation::Playback::Loop,
+                    vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+                    &asset.skeleton,
+                )
+                .unwrap(),
+            ));
         }
         let model = Arc::new(asset);
         let mut scene = SceneGraph::new(3);
-        let owner = scene.spawn(None, Transform { translation: Vec3::Y, ..Default::default() }).unwrap();
+        let owner = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::Y,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
         let id = AssetId("mixed-contact".into());
-        scene.insert_component(owner, crate::ModelInstance { asset: id.clone() }).unwrap();
-        scene.insert_component(owner, crate::ModelAnimation::default()).unwrap();
-        scene.insert_component(owner, CharacterBody { half_extents: [0.1, 1., 0.1], ..Default::default() }).unwrap();
+        scene
+            .insert_component(owner, crate::ModelInstance { asset: id.clone() })
+            .unwrap();
+        scene
+            .insert_component(owner, crate::ModelAnimation::default())
+            .unwrap();
+        scene
+            .insert_component(
+                owner,
+                CharacterBody {
+                    half_extents: [0.1, 1., 0.1],
+                    ..Default::default()
+                },
+            )
+            .unwrap();
         let mut feet = settings();
-        let keys = |pairs: &[(f32, f32)]| pairs.iter().map(|&(phase, weight)| FootContactKey { phase, weight }).collect();
-        feet.feet[0].clip_contact_curves.insert("source".into(), if shared_swing {
-            keys(&[(0.,1.),(0.25,0.),(0.35,0.),(0.4,1.),(1.,1.)])
-        } else { keys(&[(0.,1.),(1.,1.)]) });
-        feet.feet[0].clip_contact_curves.insert("target".into(),
-            keys(&[(0.,1.),(0.15,0.),(0.25,0.),(0.3,1.),(1.,1.)]));
+        let keys = |pairs: &[(f32, f32)]| {
+            pairs
+                .iter()
+                .map(|&(phase, weight)| FootContactKey { phase, weight })
+                .collect()
+        };
+        feet.feet[0].clip_contact_curves.insert(
+            "source".into(),
+            if shared_swing {
+                keys(&[(0., 1.), (0.25, 0.), (0.35, 0.), (0.4, 1.), (1., 1.)])
+            } else {
+                keys(&[(0., 1.), (1., 1.)])
+            },
+        );
+        feet.feet[0].clip_contact_curves.insert(
+            "target".into(),
+            keys(&[(0., 1.), (0.15, 0.), (0.25, 0.), (0.3, 1.), (1., 1.)]),
+        );
         scene.insert_component(owner, feet).unwrap();
-        let floor = scene.spawn(None, Transform { translation: -Vec3::Y*0.1, ..Default::default() }).unwrap();
-        scene.insert_component(floor, BoxCollider { half_extents: [4.,0.1,4.] }).unwrap();
+        let floor = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: -Vec3::Y * 0.1,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                floor,
+                BoxCollider {
+                    half_extents: [4., 0.1, 4.],
+                },
+            )
+            .unwrap();
         let models = BTreeMap::from([(id, model.clone())]);
         let mut runtime = crate::animation_runtime::AnimationRuntime::default();
-        let mut physics = CharacterPhysics::new(&scene,3,3);
+        let mut physics = CharacterPhysics::new(&scene, 3, 3);
         let mut input = player_input().unwrap();
         for step in 0..7 {
             if step == 1 {
-                scene.insert_component(owner, crate::ModelAnimation { clip: Some(1), transition_seconds: 0.5, ..Default::default() }).unwrap();
+                scene
+                    .insert_component(
+                        owner,
+                        crate::ModelAnimation {
+                            clip: Some(1),
+                            transition_seconds: 0.5,
+                            ..Default::default()
+                        },
+                    )
+                    .unwrap();
             }
-            let candidate = runtime.prepare(&scene,&models,0.1).unwrap();
-            runtime = physics.fixed_step_with_preparation(&mut scene,&mut input,0.1,
-                &[(owner,Vec3::X*0.02)],&[],|preview,budget| candidate.clone().prepare_accepted_pose(preview,budget)).unwrap().1;
+            let candidate = runtime.prepare(&scene, &models, 0.1).unwrap();
+            runtime = physics
+                .fixed_step_with_preparation(
+                    &mut scene,
+                    &mut input,
+                    0.1,
+                    &[(owner, Vec3::X * 0.02)],
+                    &[],
+                    |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+                )
+                .unwrap()
+                .1;
         }
-        let final_sole = sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap());
+        let final_sole = sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap(),
+        );
         // The target-only zero window must retain the original anchor. Coincident
         // source/target swing releases it and the following stance acquires x=.08.
         let expected_x = if shared_swing { 0.08 } else { 0.02 };
-        assert!(final_sole.abs_diff_eq(Vec3::new(expected_x,0.,0.),3e-6),
-            "shared_swing={shared_swing}, sole={final_sole:?}");
+        assert!(
+            final_sole.abs_diff_eq(Vec3::new(expected_x, 0., 0.), 3e-6),
+            "shared_swing={shared_swing}, sole={final_sole:?}"
+        );
     }
 }
 
@@ -1013,131 +1322,383 @@ fn physical_mixed_contact_windows_release_only_when_both_clips_are_in_swing() {
 fn interrupted_variable_contact_fade_retains_anchor_and_accepted_snapshot_on_retry() {
     let mut asset = (*model()).clone();
     for name in ["stance", "air", "step", "void"] {
-        asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(name,1.,voxy_animation::Playback::Loop,
-            vec![voxy_animation::JointTrack::default();asset.skeleton.joints().len()],&asset.skeleton).unwrap()));
+        asset.animations.push(Arc::new(
+            voxy_animation::AnimationClip::new(
+                name,
+                1.,
+                voxy_animation::Playback::Loop,
+                vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+                &asset.skeleton,
+            )
+            .unwrap(),
+        ));
     }
     let model = Arc::new(asset);
     let mut scene = SceneGraph::new(3);
-    let owner = scene.spawn(None,Transform { translation: Vec3::Y,..Default::default() }).unwrap();
+    let owner = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::Y,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let id = AssetId("interrupted-contacts".into());
-    scene.insert_component(owner,crate::ModelInstance { asset:id.clone() }).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation::default()).unwrap();
-    scene.insert_component(owner,CharacterBody { half_extents:[0.1,1.,0.1],..Default::default() }).unwrap();
-    let keys = |pairs: &[(f32,f32)]| pairs.iter().map(|&(phase,weight)| FootContactKey {phase,weight}).collect();
-    let mut feet = settings();
-    feet.feet[0].clip_contact_curves.insert("stance".into(),keys(&[(0.,1.),(1.,1.)]));
-    feet.feet[0].clip_contact_curves.insert("air".into(),keys(&[(0.,0.),(1.,0.)]));
-    feet.feet[0].clip_contact_curves.insert("step".into(),keys(&[(0.,1.),(0.15,0.),(0.25,0.),(0.3,1.),(1.,1.)]));
-    feet.feet[0].clip_contact_curves.insert("void".into(),keys(&[(0.,0.),(1.,0.)]));
-    scene.insert_component(owner,feet).unwrap();
-    let floor = scene.spawn(None,Transform {translation:-Vec3::Y*0.1,..Default::default()}).unwrap();
-    scene.insert_component(floor,BoxCollider {half_extents:[4.,0.1,4.]}).unwrap();
-    let models = BTreeMap::from([(id,model.clone())]);
-    let mut runtime = crate::animation_runtime::AnimationRuntime::default();
-    let mut physics = CharacterPhysics::new(&scene,3,3);
-    let mut input = player_input().unwrap();
-    let tick = |runtime: &crate::animation_runtime::AnimationRuntime,physics: &mut CharacterPhysics,
-        scene: &mut SceneGraph,input: &mut voxy_input::InputMap| {
-        let candidate = runtime.prepare(scene,&models,0.1).unwrap();
-        physics.fixed_step_with_preparation(scene,input,0.1,&[(owner,Vec3::X*0.02)],&[],
-            |preview,budget|candidate.clone().prepare_accepted_pose(preview,budget)).map(|(_,candidate)|candidate)
+    scene
+        .insert_component(owner, crate::ModelInstance { asset: id.clone() })
+        .unwrap();
+    scene
+        .insert_component(owner, crate::ModelAnimation::default())
+        .unwrap();
+    scene
+        .insert_component(
+            owner,
+            CharacterBody {
+                half_extents: [0.1, 1., 0.1],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let keys = |pairs: &[(f32, f32)]| {
+        pairs
+            .iter()
+            .map(|&(phase, weight)| FootContactKey { phase, weight })
+            .collect()
     };
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(1),transition_seconds:0.5,..Default::default()}).unwrap();
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(2),transition_seconds:0.5,..Default::default()}).unwrap();
-    let accepted = runtime.frame(owner,&model).unwrap();
+    let mut feet = settings();
+    feet.feet[0]
+        .clip_contact_curves
+        .insert("stance".into(), keys(&[(0., 1.), (1., 1.)]));
+    feet.feet[0]
+        .clip_contact_curves
+        .insert("air".into(), keys(&[(0., 0.), (1., 0.)]));
+    feet.feet[0].clip_contact_curves.insert(
+        "step".into(),
+        keys(&[(0., 1.), (0.15, 0.), (0.25, 0.), (0.3, 1.), (1., 1.)]),
+    );
+    feet.feet[0]
+        .clip_contact_curves
+        .insert("void".into(), keys(&[(0., 0.), (1., 0.)]));
+    scene.insert_component(owner, feet).unwrap();
+    let floor = scene
+        .spawn(
+            None,
+            Transform {
+                translation: -Vec3::Y * 0.1,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [4., 0.1, 4.],
+            },
+        )
+        .unwrap();
+    let models = BTreeMap::from([(id, model.clone())]);
+    let mut runtime = crate::animation_runtime::AnimationRuntime::default();
+    let mut physics = CharacterPhysics::new(&scene, 3, 3);
+    let mut input = player_input().unwrap();
+    let tick = |runtime: &crate::animation_runtime::AnimationRuntime,
+                physics: &mut CharacterPhysics,
+                scene: &mut SceneGraph,
+                input: &mut voxy_input::InputMap| {
+        let candidate = runtime.prepare(scene, &models, 0.1).unwrap();
+        physics
+            .fixed_step_with_preparation(
+                scene,
+                input,
+                0.1,
+                &[(owner, Vec3::X * 0.02)],
+                &[],
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+            )
+            .map(|(_, candidate)| candidate)
+    };
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(1),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(2),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let accepted = runtime.frame(owner, &model).unwrap();
     let position = scene.local(owner).unwrap();
     let serial = runtime.serial();
     physics = physics.with_angular_trajectory_query_budget(1).unwrap();
-    let error = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap_err();
+    let error = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap_err();
     assert!(format!("{error:?}").contains("contact event budget exceeded"));
-    assert!(Arc::ptr_eq(&accepted,&runtime.frame(owner,&model).unwrap()));
-    assert_eq!(scene.local(owner).unwrap(),position);
-    assert_eq!(runtime.serial(),serial);
+    assert!(Arc::ptr_eq(
+        &accepted,
+        &runtime.frame(owner, &model).unwrap()
+    ));
+    assert_eq!(scene.local(owner).unwrap(), position);
+    assert_eq!(runtime.serial(), serial);
     physics = physics.with_angular_trajectory_query_budget(65536).unwrap();
     // Interrupt again while the displayed contact is partial, then return to step.
-    for _ in 0..2 { runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap(); }
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(1),transition_seconds:0.5,..Default::default()}).unwrap();
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(2),transition_seconds:0.5,..Default::default()}).unwrap();
-    for _ in 0..6 { runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap(); }
-    assert_eq!(runtime.frame(owner,&model).unwrap().transition_weight,1.);
-    assert!(sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(0.02,0.,0.),3e-6));
+    for _ in 0..2 {
+        runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    }
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(1),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(2),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    for _ in 0..6 {
+        runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    }
+    assert_eq!(runtime.frame(owner, &model).unwrap().transition_weight, 1.);
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(0.02, 0., 0.), 3e-6)
+    );
     // Fully release, start a live zero-to-zero fade, then interrupt its zero
     // snapshot with a stepping clip. The new swing must rearm at the new sole.
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(1),transition_seconds:0.01,..Default::default()}).unwrap();
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(3),transition_seconds:0.5,..Default::default()}).unwrap();
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation {clip:Some(2),transition_seconds:0.5,..Default::default()}).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(1),
+                transition_seconds: 0.01,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(3),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(2),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let mut expected_anchor = 0.;
     for step in 0..6 {
-        runtime = tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-        if step == 2 { expected_anchor = scene.world_matrix(owner).unwrap().w_axis.x; }
+        runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+        if step == 2 {
+            expected_anchor = scene.world_matrix(owner).unwrap().w_axis.x;
+        }
     }
-    assert_eq!(runtime.frame(owner,&model).unwrap().transition_weight,1.);
-    assert!(sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(expected_anchor,0.,0.),3e-6));
+    assert_eq!(runtime.frame(owner, &model).unwrap().transition_weight, 1.);
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(expected_anchor, 0., 0.), 3e-6)
+    );
     assert!(expected_anchor > 0.1);
-
 }
 
 #[test]
 fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them() {
     let mut asset = (*model()).clone();
     for name in ["walk", "run"] {
-        asset.animations.push(Arc::new(voxy_animation::AnimationClip::new(name, 1.,
-            voxy_animation::Playback::Loop, vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
-            &asset.skeleton).unwrap()));
+        asset.animations.push(Arc::new(
+            voxy_animation::AnimationClip::new(
+                name,
+                1.,
+                voxy_animation::Playback::Loop,
+                vec![voxy_animation::JointTrack::default(); asset.skeleton.joints().len()],
+                &asset.skeleton,
+            )
+            .unwrap(),
+        ));
     }
     let mut model = Arc::new(asset);
     let mut scene = SceneGraph::new(4);
-    let owner = scene.spawn(None, Transform { translation: Vec3::Y, ..Default::default() }).unwrap();
+    let owner = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::Y,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let id = AssetId("fading-feet".into());
-    scene.insert_component(owner, crate::ModelInstance { asset: id.clone() }).unwrap();
-    scene.insert_component(owner, crate::ModelAnimation::default()).unwrap();
+    scene
+        .insert_component(owner, crate::ModelInstance { asset: id.clone() })
+        .unwrap();
+    scene
+        .insert_component(owner, crate::ModelAnimation::default())
+        .unwrap();
     let mut feet = settings();
     // Explicit curves incur event work even while the existing anchor remains valid.
     // Two distant colliders alone do not force a probe of an already planted foot.
     feet.feet[0].contact_curve = vec![
-        FootContactKey { phase: 0., weight: 1. },
-        FootContactKey { phase: 1., weight: 1. },
+        FootContactKey {
+            phase: 0.,
+            weight: 1.,
+        },
+        FootContactKey {
+            phase: 1.,
+            weight: 1.,
+        },
     ];
     scene.insert_component(owner, feet).unwrap();
-    scene.insert_component(owner, CharacterBody { half_extents: [0.1, 1., 0.1], ..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            CharacterBody {
+                half_extents: [0.1, 1., 0.1],
+                ..Default::default()
+            },
+        )
+        .unwrap();
     for x in [0., 10.] {
-        let floor = scene.spawn(None, Transform { translation: Vec3::new(x, -0.1, 0.), ..Default::default() }).unwrap();
-        scene.insert_component(floor, BoxCollider { half_extents: [4., 0.1, 4.] }).unwrap();
+        let floor = scene
+            .spawn(
+                None,
+                Transform {
+                    translation: Vec3::new(x, -0.1, 0.),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                floor,
+                BoxCollider {
+                    half_extents: [4., 0.1, 4.],
+                },
+            )
+            .unwrap();
     }
     let mut models = BTreeMap::from([(id.clone(), model.clone())]);
     let mut runtime = crate::animation_runtime::AnimationRuntime::default();
     let mut physics = CharacterPhysics::new(&scene, 4, 4);
     let mut input = player_input().unwrap();
-    let tick = |runtime: &crate::animation_runtime::AnimationRuntime, physics: &mut CharacterPhysics,
-        scene: &mut SceneGraph, input: &mut voxy_input::InputMap, models: &BTreeMap<AssetId,Arc<ModelAsset>>| {
-        let candidate = runtime.prepare(scene, models, 1./60.).unwrap();
-        physics.fixed_step_with_preparation(scene, input, 1./60., &[(owner, Vec3::X*0.02)], &[],
-            |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget)).map(|(_, frame)| frame)
+    let tick = |runtime: &crate::animation_runtime::AnimationRuntime,
+                physics: &mut CharacterPhysics,
+                scene: &mut SceneGraph,
+                input: &mut voxy_input::InputMap,
+                models: &BTreeMap<AssetId, Arc<ModelAsset>>| {
+        let candidate = runtime.prepare(scene, models, 1. / 60.).unwrap();
+        physics
+            .fixed_step_with_preparation(
+                scene,
+                input,
+                1. / 60.,
+                &[(owner, Vec3::X * 0.02)],
+                &[],
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+            )
+            .map(|(_, frame)| frame)
     };
     runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
-    scene.insert_component(owner, crate::ModelAnimation { clip: Some(1), transition_seconds: 0.05, ..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(1),
+                transition_seconds: 0.05,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     for step in 0..2 {
         let mut rebuilt = (*model).clone();
         rebuilt.skeleton = voxy_animation::Skeleton::new(model.skeleton.joints().to_vec()).unwrap();
-        rebuilt.animations = ["walk", "run"].into_iter().map(|name| Arc::new(
-            voxy_animation::AnimationClip::new(name,1.,voxy_animation::Playback::Loop,
-                vec![voxy_animation::JointTrack::default();rebuilt.skeleton.joints().len()],&rebuilt.skeleton).unwrap())).collect();
+        rebuilt.animations = ["walk", "run"]
+            .into_iter()
+            .map(|name| {
+                Arc::new(
+                    voxy_animation::AnimationClip::new(
+                        name,
+                        1.,
+                        voxy_animation::Playback::Loop,
+                        vec![
+                            voxy_animation::JointTrack::default();
+                            rebuilt.skeleton.joints().len()
+                        ],
+                        &rebuilt.skeleton,
+                    )
+                    .unwrap(),
+                )
+            })
+            .collect();
         assert!(!Arc::ptr_eq(&rebuilt.animations[0], &model.animations[0]));
         model = Arc::new(rebuilt);
-        models.insert(id.clone(),model.clone());
+        models.insert(id.clone(), model.clone());
         runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
-        assert!((runtime.frame(owner,&model).unwrap().transition_weight - (step + 1) as f32 / 3.).abs() < 1e-6);
-        assert!(sole(&model, &runtime.frame(owner, &model).unwrap(), scene.world_matrix(owner).unwrap())
-            .abs_diff_eq(Vec3::new(0.02,0.,0.), 3e-6));
+        assert!(
+            (runtime.frame(owner, &model).unwrap().transition_weight - (step + 1) as f32 / 3.)
+                .abs()
+                < 1e-6
+        );
+        assert!(
+            sole(
+                &model,
+                &runtime.frame(owner, &model).unwrap(),
+                scene.world_matrix(owner).unwrap()
+            )
+            .abs_diff_eq(Vec3::new(0.02, 0., 0.), 3e-6)
+        );
     }
-    scene.insert_component(owner, crate::ModelAnimation { clip: Some(0), transition_seconds: 0.01, ..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(0),
+                transition_seconds: 0.01,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let frame = runtime.frame(owner, &model).unwrap();
     let serial = runtime.serial();
     let position = scene.local(owner).unwrap();
@@ -1150,64 +1711,153 @@ fn equivalent_rig_reload_preserves_fade_and_anchor_but_changed_clip_resets_them(
     physics = physics.with_angular_trajectory_query_budget(65536).unwrap();
     runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
     assert_eq!(runtime.frame(owner, &model).unwrap().transition_weight, 1.);
-    assert!(sole(&model, &runtime.frame(owner, &model).unwrap(), scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(0.02,0.,0.), 3e-6));
-    scene.insert_component(owner,crate::ModelAnimation { clip:Some(0),transition_seconds:0.,..Default::default() }).unwrap();
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(0.02, 0., 0.), 3e-6)
+    );
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(0),
+                transition_seconds: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let mut changed = (*model).clone();
-    changed.animations[0] = Arc::new(voxy_animation::AnimationClip::new("walk",2.,voxy_animation::Playback::Loop,
-        vec![voxy_animation::JointTrack::default();changed.skeleton.joints().len()],&changed.skeleton).unwrap());
+    changed.animations[0] = Arc::new(
+        voxy_animation::AnimationClip::new(
+            "walk",
+            2.,
+            voxy_animation::Playback::Loop,
+            vec![voxy_animation::JointTrack::default(); changed.skeleton.joints().len()],
+            &changed.skeleton,
+        )
+        .unwrap(),
+    );
     model = Arc::new(changed);
-    models.insert(id.clone(),model.clone());
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input,&models).unwrap();
+    models.insert(id.clone(), model.clone());
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
     let actor_x = scene.world_matrix(owner).unwrap().w_axis.x;
-    assert!(sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(actor_x,0.,0.),3e-6));
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(actor_x, 0., 0.), 3e-6)
+    );
     assert!(actor_x > 0.02);
 
     // An explicitly authored fade admits a revised duration at the current phase.
-    scene.insert_component(owner,crate::ModelAnimation { clip:Some(0),transition_seconds:0.5,..Default::default() }).unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip: Some(0),
+                transition_seconds: 0.5,
+                ..Default::default()
+            },
+        )
+        .unwrap();
     let mut revised = (*model).clone();
-    revised.animations[0] = Arc::new(voxy_animation::AnimationClip::new("walk",3.,voxy_animation::Playback::Loop,
-        vec![voxy_animation::JointTrack::default();revised.skeleton.joints().len()],&revised.skeleton).unwrap());
+    revised.animations[0] = Arc::new(
+        voxy_animation::AnimationClip::new(
+            "walk",
+            3.,
+            voxy_animation::Playback::Loop,
+            vec![voxy_animation::JointTrack::default(); revised.skeleton.joints().len()],
+            &revised.skeleton,
+        )
+        .unwrap(),
+    );
     model = Arc::new(revised);
-    models.insert(id.clone(),model.clone());
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input,&models).unwrap();
-    assert!((runtime.frame(owner,&model).unwrap().transition_weight - 1./30.).abs() < 1e-6);
-    assert!(sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(actor_x,0.,0.),3e-6));
+    models.insert(id.clone(), model.clone());
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
+    assert!((runtime.frame(owner, &model).unwrap().transition_weight - 1. / 30.).abs() < 1e-6);
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(actor_x, 0., 0.), 3e-6)
+    );
 
-    let named = crate::ModelAnimation {clip:Some(usize::MAX),clip_name:"walk".into(),transition_seconds:0.5,..Default::default()};
+    let named = crate::ModelAnimation {
+        clip: Some(usize::MAX),
+        clip_name: "walk".into(),
+        transition_seconds: 0.5,
+        ..Default::default()
+    };
     let encoded = serde_json::to_value(&named).unwrap();
-    assert_eq!(serde_json::from_value::<crate::ModelAnimation>(encoded.clone()).unwrap(),named);
+    assert_eq!(
+        serde_json::from_value::<crate::ModelAnimation>(encoded.clone()).unwrap(),
+        named
+    );
     let mut legacy = encoded;
     legacy.as_object_mut().unwrap().remove("clip_name");
-    assert!(serde_json::from_value::<crate::ModelAnimation>(legacy).unwrap().clip_name.is_empty());
-    scene.insert_component(owner,named.clone()).unwrap();
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input,&models).unwrap();
+    assert!(
+        serde_json::from_value::<crate::ModelAnimation>(legacy)
+            .unwrap()
+            .clip_name
+            .is_empty()
+    );
+    scene.insert_component(owner, named.clone()).unwrap();
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
     let old_phase = runtime.clip_phase(owner).unwrap();
-    let old_weight = runtime.frame(owner,&model).unwrap().transition_weight;
+    let old_weight = runtime.frame(owner, &model).unwrap().transition_weight;
     let mut reordered = (*model).clone();
-    reordered.animations.swap(0,1);
+    reordered.animations.swap(0, 1);
     model = Arc::new(reordered);
-    models.insert(id.clone(),model.clone());
-    runtime = tick(&runtime,&mut physics,&mut scene,&mut input,&models).unwrap();
-    assert!((runtime.clip_phase(owner).unwrap() - old_phase - (1./60.)/3.).abs()<1e-7);
-    assert!((runtime.frame(owner,&model).unwrap().transition_weight-old_weight-1./30.).abs()<1e-6);
-    assert!(sole(&model,&runtime.frame(owner,&model).unwrap(),scene.world_matrix(owner).unwrap())
-        .abs_diff_eq(Vec3::new(actor_x,0.,0.),3e-6));
-    assert_eq!(named.resolve_clip(&model).unwrap(),Some(1));
+    models.insert(id.clone(), model.clone());
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input, &models).unwrap();
+    assert!((runtime.clip_phase(owner).unwrap() - old_phase - (1. / 60.) / 3.).abs() < 1e-7);
+    assert!(
+        (runtime.frame(owner, &model).unwrap().transition_weight - old_weight - 1. / 30.).abs()
+            < 1e-6
+    );
+    assert!(
+        sole(
+            &model,
+            &runtime.frame(owner, &model).unwrap(),
+            scene.world_matrix(owner).unwrap()
+        )
+        .abs_diff_eq(Vec3::new(actor_x, 0., 0.), 3e-6)
+    );
+    assert_eq!(named.resolve_clip(&model).unwrap(), Some(1));
     let mut duplicate = (*model).clone();
     duplicate.animations.push(duplicate.animations[1].clone());
-    assert!(named.resolve_clip(&duplicate).unwrap_err().contains("ambiguous"));
-    let accepted = runtime.frame(owner,&model).unwrap();
+    assert!(
+        named
+            .resolve_clip(&duplicate)
+            .unwrap_err()
+            .contains("ambiguous")
+    );
+    let accepted = runtime.frame(owner, &model).unwrap();
     let serial = runtime.serial();
-    models.insert(id,Arc::new(duplicate));
-    assert!(runtime.prepare(&scene,&models,1./60.).unwrap_err().contains("ambiguous"));
-    assert_eq!(runtime.serial(),serial);
-    assert!(Arc::ptr_eq(&accepted,&runtime.frame(owner,&model).unwrap()));
-    let absent = crate::ModelAnimation {clip_name:"missing".into(),..Default::default()};
+    models.insert(id, Arc::new(duplicate));
+    assert!(
+        runtime
+            .prepare(&scene, &models, 1. / 60.)
+            .unwrap_err()
+            .contains("ambiguous")
+    );
+    assert_eq!(runtime.serial(), serial);
+    assert!(Arc::ptr_eq(
+        &accepted,
+        &runtime.frame(owner, &model).unwrap()
+    ));
+    let absent = crate::ModelAnimation {
+        clip_name: "missing".into(),
+        ..Default::default()
+    };
     assert!(absent.resolve_clip(&model).unwrap_err().contains("missing"));
-
 }
 
 #[test]
@@ -1216,54 +1866,218 @@ fn retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry
     let original = model_bytes();
     let glb = gltf::binary::Glb::from_slice(&original).unwrap();
     let mut json: serde_json::Value = serde_json::from_slice(&glb.json).unwrap();
-    for (index,name) in ["sourceHip","sourceKnee","sourceFoot"].iter().enumerate() {
+    for (index, name) in ["sourceHip", "sourceKnee", "sourceFoot"].iter().enumerate() {
         json["nodes"][index]["name"] = serde_json::json!(name);
     }
-    json["nodes"][0]["translation"] = serde_json::json!([0.,0.8,0.]);
-    let bytes = gltf::binary::Glb { header:glb.header, json:serde_json::to_vec(&json).unwrap().into(), bin:glb.bin }.to_vec().unwrap();
-    let mut source = ModelAsset::parse(&bytes,&[],voxy_render::ModelLimits::default()).unwrap();
-    for (name,speed) in [("walk",0.2),("run",0.4)] {
-        let mut tracks = vec![voxy_animation::JointTrack::default();source.skeleton.joints().len()];
-        tracks[0].translations=vec![voxy_animation::Vec3Key {time:0.,value:Vec3::new(0.,0.8,0.)},voxy_animation::Vec3Key {time:1.,value:Vec3::new(speed,0.8,0.)}];
-        source.animations.push(Arc::new(voxy_animation::AnimationClip::new(name,1.,voxy_animation::Playback::Loop,tracks,&source.skeleton).unwrap()));
+    json["nodes"][0]["translation"] = serde_json::json!([0., 0.8, 0.]);
+    let bytes = gltf::binary::Glb {
+        header: glb.header,
+        json: serde_json::to_vec(&json).unwrap().into(),
+        bin: glb.bin,
     }
-    let source=Arc::new(source);
-    let mut scene=SceneGraph::new(4);
-    let owner=scene.spawn(None,Transform {translation:Vec3::Y,..Default::default()}).unwrap();
-    scene.insert_component(owner,crate::ModelInstance {asset:AssetId("target".into())}).unwrap();
-    scene.insert_component(owner,crate::ModelAnimation {clip_name:"walk".into(),root_motion_bone:"sourceHip".into(),root_motion_axes:[true,false,false],..Default::default()}).unwrap();
-    scene.insert_component(owner,crate::ModelRetarget {source:"source".into(),joints:[("sourceHip","hip"),("sourceKnee","knee"),("sourceFoot","foot")].into_iter().map(|(a,b)|crate::RetargetJointProfile {source:a.into(),target:b.into(),rotation_basis:glam::Quat::IDENTITY.to_array(),translation_basis:glam::Quat::IDENTITY.to_array(),translation_scale:1.}).collect()}).unwrap();
-    let mut feet=settings();
-    for name in ["walk","run"] {feet.feet[0].clip_contact_curves.insert(name.into(),vec![FootContactKey {phase:0.,weight:1.},FootContactKey {phase:1.,weight:1.}]);}
-    assert!(FootRuntime::new(&target,feet.clone()).is_err());
-    scene.insert_component(owner,feet).unwrap();
-    scene.insert_component(owner,CharacterBody {half_extents:[0.1,1.,0.1],..Default::default()}).unwrap();
-    let floor=scene.spawn(None,Transform {translation:-Vec3::Y*0.1,..Default::default()}).unwrap();
-    scene.insert_component(floor,BoxCollider {half_extents:[4.,0.1,4.]}).unwrap();
-    let models=BTreeMap::from([(AssetId("target".into()),target.clone()),(AssetId("source".into()),source)]);
-    let mut runtime=crate::animation_runtime::AnimationRuntime::default();
-    let mut physics=CharacterPhysics::new(&scene,4,4);
-    let mut input=player_input().unwrap();
-    let tick=|runtime:&crate::animation_runtime::AnimationRuntime,physics:&mut CharacterPhysics,scene:&mut SceneGraph,input:&mut voxy_input::InputMap| {
-        let candidate=runtime.prepare(scene,&models,1./60.).unwrap();
-        physics.fixed_step_with_preparation(scene,input,1./60.,candidate.motions(),&[],|preview,budget|candidate.clone().prepare_accepted_pose(preview,budget)).map(|(_,frame)|frame)
+    .to_vec()
+    .unwrap();
+    let mut source = ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap();
+    for (name, speed) in [("walk", 0.2), ("run", 0.4)] {
+        let mut tracks =
+            vec![voxy_animation::JointTrack::default(); source.skeleton.joints().len()];
+        tracks[0].translations = vec![
+            voxy_animation::Vec3Key {
+                time: 0.,
+                value: Vec3::new(0., 0.8, 0.),
+            },
+            voxy_animation::Vec3Key {
+                time: 1.,
+                value: Vec3::new(speed, 0.8, 0.),
+            },
+        ];
+        source.animations.push(Arc::new(
+            voxy_animation::AnimationClip::new(
+                name,
+                1.,
+                voxy_animation::Playback::Loop,
+                tracks,
+                &source.skeleton,
+            )
+            .unwrap(),
+        ));
+    }
+    let source = Arc::new(source);
+    let mut scene = SceneGraph::new(4);
+    let owner = scene
+        .spawn(
+            None,
+            Transform {
+                translation: Vec3::Y,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelInstance {
+                asset: AssetId("target".into()),
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelAnimation {
+                clip_name: "walk".into(),
+                root_motion_bone: "sourceHip".into(),
+                root_motion_axes: [true, false, false],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            owner,
+            crate::ModelRetarget {
+                source: "source".into(),
+                joints: [
+                    ("sourceHip", "hip"),
+                    ("sourceKnee", "knee"),
+                    ("sourceFoot", "foot"),
+                ]
+                .into_iter()
+                .map(|(a, b)| crate::RetargetJointProfile {
+                    source: a.into(),
+                    target: b.into(),
+                    rotation_basis: glam::Quat::IDENTITY.to_array(),
+                    translation_basis: glam::Quat::IDENTITY.to_array(),
+                    translation_scale: 1.,
+                })
+                .collect(),
+            },
+        )
+        .unwrap();
+    let mut feet = settings();
+    for name in ["walk", "run"] {
+        feet.feet[0].clip_contact_curves.insert(
+            name.into(),
+            vec![
+                FootContactKey {
+                    phase: 0.,
+                    weight: 1.,
+                },
+                FootContactKey {
+                    phase: 1.,
+                    weight: 1.,
+                },
+            ],
+        );
+    }
+    assert!(FootRuntime::new(&target, feet.clone()).is_err());
+    scene.insert_component(owner, feet).unwrap();
+    scene
+        .insert_component(
+            owner,
+            CharacterBody {
+                half_extents: [0.1, 1., 0.1],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let floor = scene
+        .spawn(
+            None,
+            Transform {
+                translation: -Vec3::Y * 0.1,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [4., 0.1, 4.],
+            },
+        )
+        .unwrap();
+    let models = BTreeMap::from([
+        (AssetId("target".into()), target.clone()),
+        (AssetId("source".into()), source),
+    ]);
+    let mut runtime = crate::animation_runtime::AnimationRuntime::default();
+    let mut physics = CharacterPhysics::new(&scene, 4, 4);
+    let mut input = player_input().unwrap();
+    let tick = |runtime: &crate::animation_runtime::AnimationRuntime,
+                physics: &mut CharacterPhysics,
+                scene: &mut SceneGraph,
+                input: &mut voxy_input::InputMap| {
+        let candidate = runtime.prepare(scene, &models, 1. / 60.).unwrap();
+        physics
+            .fixed_step_with_preparation(
+                scene,
+                input,
+                1. / 60.,
+                candidate.motions(),
+                &[],
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+            )
+            .map(|(_, frame)| frame)
     };
-    runtime=tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-    let anchor=sole(&target,&runtime.frame(owner,&target).unwrap(),scene.world_matrix(owner).unwrap());
-    assert!(anchor.abs_diff_eq(Vec3::new(0.2/60.,0.,0.),3e-6));
-    scene.component_mut::<crate::ModelAnimation>(owner).unwrap().unwrap().clip_name="run".into();
-    scene.component_mut::<crate::ModelAnimation>(owner).unwrap().unwrap().transition_seconds=0.1;
+    runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+    let anchor = sole(
+        &target,
+        &runtime.frame(owner, &target).unwrap(),
+        scene.world_matrix(owner).unwrap(),
+    );
+    assert!(anchor.abs_diff_eq(Vec3::new(0.2 / 60., 0., 0.), 3e-6));
+    scene
+        .component_mut::<crate::ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .clip_name = "run".into();
+    scene
+        .component_mut::<crate::ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .transition_seconds = 0.1;
     for _ in 0..3 {
-        runtime=tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();
-        assert!(sole(&target,&runtime.frame(owner,&target).unwrap(),scene.world_matrix(owner).unwrap()).abs_diff_eq(anchor,3e-6));
+        runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+        assert!(
+            sole(
+                &target,
+                &runtime.frame(owner, &target).unwrap(),
+                scene.world_matrix(owner).unwrap()
+            )
+            .abs_diff_eq(anchor, 3e-6)
+        );
     }
-    assert!(runtime.frame(owner,&target).unwrap().transition_weight<1.);
-    let frame=runtime.frame(owner,&target).unwrap();let serial=runtime.serial();let position=scene.local(owner).unwrap();let phase=runtime.clip_phase(owner);
-    physics=physics.with_angular_trajectory_query_budget(1).unwrap();
-    assert!(format!("{:?}",tick(&runtime,&mut physics,&mut scene,&mut input).unwrap_err()).contains("contact event budget exceeded"));
-    assert!(Arc::ptr_eq(&frame,&runtime.frame(owner,&target).unwrap()));assert_eq!(runtime.serial(),serial);assert_eq!(runtime.clip_phase(owner),phase);assert_eq!(scene.local(owner).unwrap(),position);
-    physics=physics.with_angular_trajectory_query_budget(65536).unwrap();
-    for _ in 0..5 {runtime=tick(&runtime,&mut physics,&mut scene,&mut input).unwrap();assert!(sole(&target,&runtime.frame(owner,&target).unwrap(),scene.world_matrix(owner).unwrap()).abs_diff_eq(anchor,3e-6));}
-    assert_eq!(runtime.frame(owner,&target).unwrap().transition_weight,1.);
-    assert!(scene.local(owner).unwrap().translation.x>anchor.x+0.03);
+    assert!(runtime.frame(owner, &target).unwrap().transition_weight < 1.);
+    let frame = runtime.frame(owner, &target).unwrap();
+    let serial = runtime.serial();
+    let position = scene.local(owner).unwrap();
+    let phase = runtime.clip_phase(owner);
+    physics = physics.with_angular_trajectory_query_budget(1).unwrap();
+    assert!(
+        format!(
+            "{:?}",
+            tick(&runtime, &mut physics, &mut scene, &mut input).unwrap_err()
+        )
+        .contains("contact event budget exceeded")
+    );
+    assert!(Arc::ptr_eq(&frame, &runtime.frame(owner, &target).unwrap()));
+    assert_eq!(runtime.serial(), serial);
+    assert_eq!(runtime.clip_phase(owner), phase);
+    assert_eq!(scene.local(owner).unwrap(), position);
+    physics = physics.with_angular_trajectory_query_budget(65536).unwrap();
+    for _ in 0..5 {
+        runtime = tick(&runtime, &mut physics, &mut scene, &mut input).unwrap();
+        assert!(
+            sole(
+                &target,
+                &runtime.frame(owner, &target).unwrap(),
+                scene.world_matrix(owner).unwrap()
+            )
+            .abs_diff_eq(anchor, 3e-6)
+        );
+    }
+    assert_eq!(runtime.frame(owner, &target).unwrap().transition_weight, 1.);
+    assert!(scene.local(owner).unwrap().translation.x > anchor.x + 0.03);
 }

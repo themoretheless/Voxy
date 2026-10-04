@@ -1,13 +1,13 @@
 use std::process::ExitCode;
+#[cfg(all(windows, feature = "scene-dx12"))]
+#[path = "support/fg_resources.rs"]
+mod fg_resources;
 #[cfg(any(test, all(windows, feature = "wgpu-dx12")))]
 #[path = "support/sr_pixels.rs"]
 mod sr_pixels;
 #[cfg(all(windows, feature = "wgpu-dx12"))]
 #[path = "support/sr_probe.rs"]
 mod sr_probe;
-#[cfg(all(windows, feature = "scene-dx12"))]
-#[path = "support/fg_resources.rs"]
-mod fg_resources;
 
 #[cfg(all(windows, feature = "wgpu-dx12"))]
 #[allow(unsafe_code)]

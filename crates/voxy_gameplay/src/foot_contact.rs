@@ -81,7 +81,10 @@ impl FootContactState {
     /// Releases an unreachable IK target; rearm on swing or airborne landing.
     #[must_use]
     pub fn release_until_swing(&self) -> Self {
-        Self { anchor: None, awaiting_swing: true }
+        Self {
+            anchor: None,
+            awaiting_swing: true,
+        }
     }
 
     #[must_use]

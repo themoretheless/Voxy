@@ -139,8 +139,14 @@ impl AnimatedModels {
         let Some(owner) = self.owners.get(&owner) else {
             return Ok(None);
         };
-        Ok(Some(owner.frame.skin_matrices.iter()
-            .map(|matrix| matrix.to_cols_array().map(f32::to_bits)).collect()))
+        Ok(Some(
+            owner
+                .frame
+                .skin_matrices
+                .iter()
+                .map(|matrix| matrix.to_cols_array().map(f32::to_bits))
+                .collect(),
+        ))
     }
     pub(super) fn lod_selection(&self, owner: NodeId, view: u8) -> Option<(usize, u32)> {
         let state = self.owners.get(&owner)?;
@@ -373,7 +379,9 @@ impl AnimatedModels {
         for request in requests {
             // A render-only frame may precede the first fixed tick or accepted
             // revision. Keep any prior geometry while the animation owner waits.
-            if request.frame.is_none() { continue; }
+            if request.frame.is_none() {
+                continue;
+            }
             if let Err(error) = self.update(
                 renderer,
                 device,
@@ -414,7 +422,12 @@ impl AnimatedModels {
         // Playback selection belongs to the accepted owner and may use a separate
         // source rig. Rendering admits descriptor values and the target-bound frame.
         settings.validate(None, None)?;
-        if frame.skin_matrices != frame.pose.skin_matrices(&model.skeleton).map_err(|e| e.to_string())? {
+        if frame.skin_matrices
+            != frame
+                .pose
+                .skin_matrices(&model.skeleton)
+                .map_err(|e| e.to_string())?
+        {
             return Err("animation frame palette differs from pose".into());
         }
         if !textures.is_empty() && textures.len() != model.primitives.len() {
@@ -434,8 +447,9 @@ impl AnimatedModels {
             (None, None) => false,
             _ => true,
         });
-        let unchanged = current.is_some_and(|old| old.frame.pose == frame.pose
-            && old.frame.skin_matrices == frame.skin_matrices);
+        let unchanged = current.is_some_and(|old| {
+            old.frame.pose == frame.pose && old.frame.skin_matrices == frame.skin_matrices
+        });
         if !replace && !lod_changed && unchanged {
             let state = self.owners.get_mut(&owner).unwrap();
             state.textures = textures;

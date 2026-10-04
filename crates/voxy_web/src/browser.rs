@@ -282,21 +282,32 @@ impl WebEngine {
     /// # Errors
     /// Requires an active animated HDR scene.
     pub fn set_animated_temporal_guides(&mut self, enabled: bool) -> Result<(), JsValue> {
-        self.animated_hdr.as_mut().ok_or_else(|| error("temporal guides require animated WebGPU"))?
+        self.animated_hdr
+            .as_mut()
+            .ok_or_else(|| error("temporal guides require animated WebGPU"))?
             .enable_temporal_guides(enabled);
         Ok(())
     }
     /// Load a bounded Radiance HDR panorama into the animated WebGPU scene.
     /// The caller must suspend frame calls until this async operation completes.
     pub async fn load_hdr_environment(&mut self, bytes: Vec<u8>) -> Result<(), JsValue> {
-        self.animated_hdr.as_mut().ok_or_else(|| error("HDR environment requires animated WebGPU scene"))?
-            .load_environment(&self.device,&self.queue,&bytes).await.map_err(error)
+        self.animated_hdr
+            .as_mut()
+            .ok_or_else(|| error("HDR environment requires animated WebGPU scene"))?
+            .load_environment(&self.device, &self.queue, &bytes)
+            .await
+            .map_err(error)
     }
 
     /// Return a completed imported-environment HDR center-pixel diagnostic once.
-    pub fn take_hdr_probe(&self) -> Result<Vec<f32>,JsValue> {
-        self.animated_hdr.as_ref().and_then(|hdr|hdr.probe.as_ref()).and_then(voxy_render::HdrPixelProbe::take_result)
-            .transpose().map(|value|value.map_or_else(Vec::new,|v|v.to_vec())).map_err(error)
+    pub fn take_hdr_probe(&self) -> Result<Vec<f32>, JsValue> {
+        self.animated_hdr
+            .as_ref()
+            .and_then(|hdr| hdr.probe.as_ref())
+            .and_then(voxy_render::HdrPixelProbe::take_result)
+            .transpose()
+            .map(|value| value.map_or_else(Vec::new, |v| v.to_vec()))
+            .map_err(error)
     }
     /// Whether the animated scene uses a floating-point HDR intermediate.
     #[must_use]
@@ -317,7 +328,9 @@ impl WebEngine {
     /// # Errors
     /// Reports GPU readback or CPU reference mismatches.
     pub fn temporal_guide_checks(&mut self) -> Result<u32, JsValue> {
-        self.animated_hdr.as_mut().map_or(Ok(0), |hdr| hdr.poll_guide_checks())
+        self.animated_hdr
+            .as_mut()
+            .map_or(Ok(0), |hdr| hdr.poll_guide_checks())
     }
     /// Number of sampled moving surfaces checked against CPU reprojection.
     pub fn temporal_moving_checks(&self) -> u32 {
@@ -325,15 +338,22 @@ impl WebEngine {
     }
     /// Production HDR channels checked and sampled depth-based history rejections.
     pub fn temporal_color_checks(&self) -> Vec<u32> {
-        self.animated_hdr.as_ref().map_or_else(|| vec![0,0,0], |hdr| vec![hdr.color_checks,hdr.depth_rejections,hdr.color_blends])
+        self.animated_hdr.as_ref().map_or_else(
+            || vec![0, 0, 0],
+            |hdr| vec![hdr.color_checks, hdr.depth_rejections, hdr.color_blends],
+        )
     }
     /// Retrieve the first temporal HDR output diagnostic pixel once mapping completes.
     /// # Errors
     /// Returns asynchronous readback errors.
     pub fn take_temporal_probe(&self) -> Result<Vec<f32>, JsValue> {
-        self.animated_hdr.as_ref().and_then(|hdr| hdr.temporal_probe.as_ref())
+        self.animated_hdr
+            .as_ref()
+            .and_then(|hdr| hdr.temporal_probe.as_ref())
             .and_then(voxy_render::HdrPixelProbe::take_result)
-            .transpose().map(|value| value.map_or_else(Vec::new, |pixel| pixel.to_vec())).map_err(error)
+            .transpose()
+            .map(|value| value.map_or_else(Vec::new, |pixel| pixel.to_vec()))
+            .map_err(error)
     }
     /// Set the animated point light's scalar radiant intensity.
     /// # Errors
@@ -347,7 +367,9 @@ impl WebEngine {
                 "animated light requires HDR and intensity in [0,100]",
             ));
         }
-        if let Some(hdr) = &mut self.animated_hdr { hdr.invalidate_temporal(); }
+        if let Some(hdr) = &mut self.animated_hdr {
+            hdr.invalidate_temporal();
+        }
         self.animated_light_intensity = intensity;
         Ok(())
     }
@@ -355,8 +377,11 @@ impl WebEngine {
     /// # Errors
     /// Requires HDR and finite nonnegative intensity.
     pub fn set_animated_environment_intensity(&mut self, intensity: f32) -> Result<(), JsValue> {
-        self.animated_hdr.as_mut().ok_or_else(||error("HDR unavailable in this scene/backend"))?
-            .environment_intensity(&self.queue,intensity).map_err(error)
+        self.animated_hdr
+            .as_mut()
+            .ok_or_else(|| error("HDR unavailable in this scene/backend"))?
+            .environment_intensity(&self.queue, intensity)
+            .map_err(error)
     }
     /// Toggle projective raster shadow visibility without replacing resources.
     /// # Errors
@@ -365,7 +390,9 @@ impl WebEngine {
         if self.animated_hdr.is_none() {
             return Err(error("shadow rendering unavailable"));
         }
-        if let Some(hdr) = &mut self.animated_hdr { hdr.invalidate_temporal(); }
+        if let Some(hdr) = &mut self.animated_hdr {
+            hdr.invalidate_temporal();
+        }
         self.animated_shadows = enabled;
         Ok(())
     }
@@ -382,7 +409,9 @@ impl WebEngine {
             2 => voxy_render::ShadowFilter::Pcf5x5,
             _ => return Err(error("unknown shadow filter")),
         };
-        if let Some(hdr) = &mut self.animated_hdr { hdr.invalidate_temporal(); }
+        if let Some(hdr) = &mut self.animated_hdr {
+            hdr.invalidate_temporal();
+        }
         Ok(())
     }
     /// Set the animated mesh's GGX roughness and metallic weight.
@@ -407,13 +436,23 @@ impl WebEngine {
     /// Set the planar receiver material independently from the animated mesh.
     /// # Errors
     /// Requires HDR and finite parameters in [0,1].
-    pub fn set_animated_reflector_material(&mut self, roughness: f32, metallic: f32) -> Result<(), JsValue> {
-        if !roughness.is_finite() || !metallic.is_finite()
-            || !(0.0..=1.0).contains(&roughness) || !(0.0..=1.0).contains(&metallic) {
+    pub fn set_animated_reflector_material(
+        &mut self,
+        roughness: f32,
+        metallic: f32,
+    ) -> Result<(), JsValue> {
+        if !roughness.is_finite()
+            || !metallic.is_finite()
+            || !(0.0..=1.0).contains(&roughness)
+            || !(0.0..=1.0).contains(&metallic)
+        {
             return Err(error("reflector parameters must be finite and in [0,1]"));
         }
-        let hdr = self.animated_hdr.as_mut().ok_or_else(||error("HDR reflector unavailable"))?;
-        hdr.reflector_material = [roughness,metallic];
+        let hdr = self
+            .animated_hdr
+            .as_mut()
+            .ok_or_else(|| error("HDR reflector unavailable"))?;
+        hdr.reflector_material = [roughness, metallic];
         hdr.invalidate_temporal();
         Ok(())
     }
@@ -834,7 +873,9 @@ impl WebEngine {
     /// # Errors
     /// Requires WebGPU; reports readback timeout or numerical mismatch.
     pub async fn validate_temporal(&self) -> Result<u32, JsValue> {
-        if self.backend != "BrowserWebGpu" { return Err(error("temporal validation requires WebGPU")); }
+        if self.backend != "BrowserWebGpu" {
+            return Err(error("temporal validation requires WebGPU"));
+        }
         super::temporal_validation::validate(&self.device, &self.queue).await
     }
 
@@ -1015,12 +1056,28 @@ impl WebEngine {
             animated_pose.as_ref(),
         )?;
         self.queue.submit([encoder.finish()]);
-        if let Some(probe)=self.animated_hdr.as_mut().and_then(|hdr|hdr.probe.as_mut()) {probe.begin_read();}
-        if let Some(probe) = self.animated_hdr.as_mut().and_then(|hdr| hdr.temporal_probe.as_mut()) { probe.begin_read(); }
-        if let Some(hdr) = &mut self.animated_hdr { hdr.begin_guide_read(); }
+        if let Some(probe) = self
+            .animated_hdr
+            .as_mut()
+            .and_then(|hdr| hdr.probe.as_mut())
+        {
+            probe.begin_read();
+        }
+        if let Some(probe) = self
+            .animated_hdr
+            .as_mut()
+            .and_then(|hdr| hdr.temporal_probe.as_mut())
+        {
+            probe.begin_read();
+        }
+        if let Some(hdr) = &mut self.animated_hdr {
+            hdr.begin_guide_read();
+        }
         self.queue.present(frame);
         self.commit_animated_pose(animated_pose.as_ref())?;
-        if let Some(hdr) = &mut self.animated_hdr { hdr.presented(); }
+        if let Some(hdr) = &mut self.animated_hdr {
+            hdr.presented();
+        }
         Ok(true)
     }
 }

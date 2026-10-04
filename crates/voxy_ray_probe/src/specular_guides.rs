@@ -966,14 +966,22 @@ fn rough_gpu(
     let correspondence = voxy_render::ReflectionCorrespondencePipeline::new(device)?;
     let previous_triangle = voxy_render::PreviousReflectionTriangle {
         identity: [0; 4],
-        vertices: [[-10.0, -10.0, 2.0, 1.0], [12.0, -10.0, 2.5, 1.0], [0.0, 12.0, 4.0, 1.0]],
+        vertices: [
+            [-10.0, -10.0, 2.0, 1.0],
+            [12.0, -10.0, 2.5, 1.0],
+            [0.0, 12.0, 4.0, 1.0],
+        ],
     };
     let mut decoy = previous_triangle;
     decoy.identity = [1, 0, 0, 0];
     let previous = correspondence.prepare(&job, &[decoy, previous_triangle], false)?;
     let reset = correspondence.prepare(&job, &[previous_triangle], true)?;
     let unknown = correspondence.prepare(&job, &[decoy], false)?;
-    assert!(correspondence.prepare(&job, &[previous_triangle, previous_triangle], false).is_err());
+    assert!(
+        correspondence
+            .prepare(&job, &[previous_triangle, previous_triangle], false)
+            .is_err()
+    );
     let mut malformed = previous_triangle;
     malformed.vertices[0][0] = f32::NAN;
     assert!(correspondence.prepare(&job, &[malformed], false).is_err());
@@ -1009,7 +1017,11 @@ fn verify_rough_gpu(
             let record_offset = 7168 + usize::try_from(index)? * 48;
             let words: [u32; 12] = std::array::from_fn(|i| {
                 let offset = record_offset + i * 4;
-                u32::from_le_bytes(mapped[offset..offset + 4].try_into().expect("four-byte word"))
+                u32::from_le_bytes(
+                    mapped[offset..offset + 4]
+                        .try_into()
+                        .expect("four-byte word"),
+                )
             });
             let hit = voxy_render::ReflectionHit {
                 position_distance: std::array::from_fn(|i| f32::from_bits(words[i])),
@@ -1030,30 +1042,46 @@ fn verify_rough_gpu(
                 assert!(b >= -1.0e-5 && c >= -1.0e-5 && b + c <= 1.00001);
                 let reconstructed = [-10.0 + 20.0 * b + 10.0 * c, -10.0 + 20.0 * c, 3.0];
                 for (actual, expected) in hit.position_distance[..3].iter().zip(reconstructed) {
-                    assert!(actual.is_finite() && (*actual - expected).abs() < 0.001,
-                        "reflected hit world position != triangle barycentric position");
+                    assert!(
+                        actual.is_finite() && (*actual - expected).abs() < 0.001,
+                        "reflected hit world position != triangle barycentric position"
+                    );
                 }
             }
             let read_position = |base: usize| -> [f32; 4] {
                 std::array::from_fn(|i| {
-                    let offset = base + usize::try_from(index).expect("small pixel index") * 16 + i * 4;
+                    let offset =
+                        base + usize::try_from(index).expect("small pixel index") * 16 + i * 4;
                     f32::from_le_bytes(mapped[offset..offset + 4].try_into().expect("four bytes"))
                 })
             };
             let previous = read_position(7936);
-            assert_eq!(read_position(8192), [0.0; 4], "reset retained correspondence");
-            assert_eq!(read_position(8448), [0.0; 4], "foreign identity matched geometry");
+            assert_eq!(
+                read_position(8192),
+                [0.0; 4],
+                "reset retained correspondence"
+            );
+            assert_eq!(
+                read_position(8448),
+                [0.0; 4],
+                "foreign identity matched geometry"
+            );
             if distance == 0.0 {
                 assert_eq!(previous, [0.0; 4]);
             } else {
                 let b = hit.barycentrics_valid[0];
                 let c = hit.barycentrics_valid[1];
-                let expected = [-10.0 + 22.0 * b + 10.0 * c,
-                    -10.0 + 22.0 * c, 2.0 + 0.5 * b + 2.0 * c];
+                let expected = [
+                    -10.0 + 22.0 * b + 10.0 * c,
+                    -10.0 + 22.0 * c,
+                    2.0 + 0.5 * b + 2.0 * c,
+                ];
                 assert_eq!(previous[3], 1.0);
                 for (actual, expected) in previous[..3].iter().zip(expected) {
-                    assert!((*actual - expected).abs() < 0.001,
-                        "previous deformed reflection point mismatch");
+                    assert!(
+                        (*actual - expected).abs() < 0.001,
+                        "previous deformed reflection point mismatch"
+                    );
                 }
             }
             let mut mean_expected = [0.0; 3];

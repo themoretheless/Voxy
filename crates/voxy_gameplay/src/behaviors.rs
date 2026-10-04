@@ -25,7 +25,12 @@ impl AngularMotion {
 impl Behavior for AngularMotion {
     #[allow(clippy::cast_possible_truncation)]
     fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, delta: f64) {
-        if scene.component::<CharacterBody>(owner).ok().flatten().is_some() {
+        if scene
+            .component::<CharacterBody>(owner)
+            .ok()
+            .flatten()
+            .is_some()
+        {
             return; // CharacterPhysics is the sole pose writer for this owner.
         }
         if let Ok(mut local) = scene.local(owner) {
@@ -119,7 +124,10 @@ impl AngularMotionBatch {
         self.edits.clear();
         for (owner, motion) in &self.motions {
             if !scene.active_in_hierarchy(*owner).unwrap_or(false)
-                || scene.component::<CharacterBody>(*owner).map_err(|e| e.to_string())?.is_some()
+                || scene
+                    .component::<CharacterBody>(*owner)
+                    .map_err(|e| e.to_string())?
+                    .is_some()
             {
                 continue;
             }
@@ -195,12 +203,19 @@ pub fn validate_behavior_descriptors(scene: &SceneGraph) -> Result<(), String> {
         let mut current = Some(node);
         while let Some(owner) = current {
             let character_self = owner == node
-                && scene.component::<CharacterBody>(node).map_err(|e| e.to_string())?.is_some()
-                && scene.component::<BoxCollider>(node).map_err(|e| e.to_string())?.is_none();
-            if !character_self && scene
-                .component::<AngularMotion>(owner)
-                .map_err(|error| error.to_string())?
-                .is_some()
+                && scene
+                    .component::<CharacterBody>(node)
+                    .map_err(|e| e.to_string())?
+                    .is_some()
+                && scene
+                    .component::<BoxCollider>(node)
+                    .map_err(|e| e.to_string())?
+                    .is_none();
+            if !character_self
+                && scene
+                    .component::<AngularMotion>(owner)
+                    .map_err(|error| error.to_string())?
+                    .is_some()
             {
                 return Err(format!(
                     "game.angular-motion.v1 rotates physics-owned hierarchy at {owner:?}"

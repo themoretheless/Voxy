@@ -1000,25 +1000,61 @@ fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
     let mut owners = Vec::new();
     for _ in 0..crate::animation_runtime::MAX_OWNERS {
         let owner = scene.spawn(None, Default::default()).unwrap();
-        scene.insert_component(owner, crate::ModelInstance { asset: asset.clone() }).unwrap();
-        scene.insert_component(owner, crate::ModelPart { node: u32::MAX }).unwrap();
+        scene
+            .insert_component(
+                owner,
+                crate::ModelInstance {
+                    asset: asset.clone(),
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(owner, crate::ModelPart { node: u32::MAX })
+            .unwrap();
         owners.push(owner);
         for node in 0..2 {
             let part = scene.spawn(Some(owner), Default::default()).unwrap();
-            scene.insert_component(part, crate::ModelInstance { asset: asset.clone() }).unwrap();
-            scene.insert_component(part, crate::ModelPart { node }).unwrap();
+            scene
+                .insert_component(
+                    part,
+                    crate::ModelInstance {
+                        asset: asset.clone(),
+                    },
+                )
+                .unwrap();
+            scene
+                .insert_component(part, crate::ModelPart { node })
+                .unwrap();
         }
     }
     let playback = crate::animation_runtime::AnimationRuntime::default()
-        .prepare(&scene, &models, 1. / 60.).unwrap();
-    let requests = || owners.iter().map(|&owner| {
-        let mut request = request(owner, &model, 1.);
-        request.frame = playback.frame(owner, &model);
-        request
-    }).collect();
+        .prepare(&scene, &models, 1. / 60.)
+        .unwrap();
+    let requests = || {
+        owners
+            .iter()
+            .map(|&owner| {
+                let mut request = request(owner, &model, 1.);
+                request.frame = playback.frame(owner, &model);
+                request
+            })
+            .collect()
+    };
     let mut render = AnimatedModels::new(&renderer).unwrap();
     assert!(render.skinner.is_some());
-    assert!(render.synchronize(&renderer, &device, &queue, requests(), playback.serial(), 0, 1_048_576).is_empty());
+    assert!(
+        render
+            .synchronize(
+                &renderer,
+                &device,
+                &queue,
+                requests(),
+                playback.serial(),
+                0,
+                1_048_576
+            )
+            .is_empty()
+    );
     assert_eq!(render.counts(), (128, 128, 1));
     let bytes = render.allocation_bytes();
     let source = match &render.owners[&owners[0]].primitives[0] {
@@ -1026,25 +1062,51 @@ fn fixed_tick_hierarchy_owners_share_gpu_source_at_capacity() {
         _ => panic!("GPU skin expected"),
     };
     for &owner in &owners {
-        let Primitive::Skin { source: actual, .. } = &render.owners[&owner].primitives[0] else { panic!("GPU skin expected") };
+        let Primitive::Skin { source: actual, .. } = &render.owners[&owner].primitives[0] else {
+            panic!("GPU skin expected")
+        };
         assert_eq!(Arc::as_ptr(actual), source);
-        assert!(Arc::ptr_eq(&render.owners[&owner].frame, &playback.frame(owner, &model).unwrap()));
+        assert!(Arc::ptr_eq(
+            &render.owners[&owner].frame,
+            &playback.frame(owner, &model).unwrap()
+        ));
     }
     let frame = playback.frame(owners[0], &model).unwrap();
     let baked = model.scene_meshes(&frame.pose).unwrap();
     let reference = renderer.upload_mesh(&device, &baked[0]).unwrap();
     let matrix = glam::Mat4::from_translation(glam::Vec3::new(-0.1, 0., 0.5));
     let expected = pixels(&renderer, &device, &queue, vec![&reference], matrix);
-    assert!(expected.chunks_exact(4).any(|pixel| pixel[..3] != [0, 0, 0]));
-    let draws = owners.iter().flat_map(|&owner| render.geometries(owner).unwrap()).collect();
+    assert!(
+        expected
+            .chunks_exact(4)
+            .any(|pixel| pixel[..3] != [0, 0, 0])
+    );
+    let draws = owners
+        .iter()
+        .flat_map(|&owner| render.geometries(owner).unwrap())
+        .collect();
     assert_eq!(pixels(&renderer, &device, &queue, draws, matrix), expected);
-    assert!(render.synchronize(&renderer, &device, &queue, requests(), playback.serial(), 0, 1_048_576).is_empty());
+    assert!(
+        render
+            .synchronize(
+                &renderer,
+                &device,
+                &queue,
+                requests(),
+                playback.serial(),
+                0,
+                1_048_576
+            )
+            .is_empty()
+    );
     assert_eq!(render.allocation_bytes(), bytes);
     render.clear();
     assert_eq!(render.allocation_bytes(), 0);
     assert_eq!(render.counts(), (0, 0, 0));
     assert!(pollster::block_on(scope.pop()).is_none());
-    println!("VOXY_HIERARCHY_CAPACITY_GPU owners=128 parts=256 sources=1 bytes={bytes} cpu_pixels_equal=true stop_bytes=0");
+    println!(
+        "VOXY_HIERARCHY_CAPACITY_GPU owners=128 parts=256 sources=1 bytes={bytes} cpu_pixels_equal=true stop_bytes=0"
+    );
 }
 
 #[test]
@@ -1252,94 +1314,270 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
     let gpu = wgpu::Instance::new(wgpu::InstanceDescriptor::new_without_display_handle());
     let adapter = pollster::block_on(gpu.request_adapter(&Default::default())).unwrap();
     println!("VOXY_FOOT_GPU_ADAPTER {:?}", adapter.get_info());
-    let (device,queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let renderer = SceneRenderer::new(&device,wgpu::TextureFormat::Rgba8Unorm);
-    let mut model = ModelAsset::parse(include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
-        &[],voxy_render::ModelLimits::default()).unwrap();
-    if retarget { model.animations.clear(); }
+    let renderer = SceneRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm);
+    let mut model = ModelAsset::parse(
+        include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb"),
+        &[],
+        voxy_render::ModelLimits::default(),
+    )
+    .unwrap();
+    if retarget {
+        model.animations.clear();
+    }
     let model = Arc::new(model);
     let mut scene = voxy_scene::SceneGraph::new(4);
-    let first = scene.spawn(None,voxy_scene::Transform { translation:Vec3::Y,..Default::default() }).unwrap();
-    let second = scene.spawn(None,Default::default()).unwrap();
-    let floor = scene.spawn(None,voxy_scene::Transform { translation:-Vec3::Y*0.1,..Default::default() }).unwrap();
-    scene.insert_component(floor,BoxCollider { half_extents:[4.,0.1,4.] }).unwrap();
-    scene.insert_component(first,CharacterBody { half_extents:[0.1,1.,0.1],..Default::default() }).unwrap();
-    scene.insert_component(first,crate::ModelFootPlacement { feet:vec![crate::FootBinding {
-        bones:["hip".into(),"knee".into(),"foot".into()], sole_offset:[0.,-0.1,0.],sole_up:[0.,1.,0.],
-        pole:[1.,0.,0.],plant:true,weight:1.,contact:Default::default(),contact_curve:vec![],clip_contact_curves:Default::default(),
-    }] }).unwrap();
+    let first = scene
+        .spawn(
+            None,
+            voxy_scene::Transform {
+                translation: Vec3::Y,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let second = scene.spawn(None, Default::default()).unwrap();
+    let floor = scene
+        .spawn(
+            None,
+            voxy_scene::Transform {
+                translation: -Vec3::Y * 0.1,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            floor,
+            BoxCollider {
+                half_extents: [4., 0.1, 4.],
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            first,
+            CharacterBody {
+                half_extents: [0.1, 1., 0.1],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    scene
+        .insert_component(
+            first,
+            crate::ModelFootPlacement {
+                feet: vec![crate::FootBinding {
+                    bones: ["hip".into(), "knee".into(), "foot".into()],
+                    sole_offset: [0., -0.1, 0.],
+                    sole_up: [0., 1., 0.],
+                    pole: [1., 0., 0.],
+                    plant: true,
+                    weight: 1.,
+                    contact: Default::default(),
+                    contact_curve: vec![],
+                    clip_contact_curves: Default::default(),
+                }],
+            },
+        )
+        .unwrap();
     let asset = voxy_assets::AssetId("foot".into());
-    for owner in [first,second] {
-        scene.insert_component(owner,crate::ModelInstance { asset:asset.clone() }).unwrap();
-        scene.insert_component(owner,ModelAnimation { clip:None,..Default::default() }).unwrap();
+    for owner in [first, second] {
+        scene
+            .insert_component(
+                owner,
+                crate::ModelInstance {
+                    asset: asset.clone(),
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                owner,
+                ModelAnimation {
+                    clip: None,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
     }
-    let mut models = std::collections::BTreeMap::from([(asset,model.clone())]);
+    let mut models = std::collections::BTreeMap::from([(asset, model.clone())]);
     if retarget {
-        let glb = gltf::binary::Glb::from_slice(include_bytes!("../../../voxy_render/examples/assets/foot-contact.glb")).unwrap();
+        let glb = gltf::binary::Glb::from_slice(include_bytes!(
+            "../../../voxy_render/examples/assets/foot-contact.glb"
+        ))
+        .unwrap();
         let mut json: serde_json::Value = serde_json::from_slice(&glb.json).unwrap();
-        for (index,name) in ["sourceHip","sourceKnee","sourceFoot"].iter().enumerate() { json["nodes"][index]["name"] = serde_json::json!(name); }
-        json["nodes"][0]["translation"] = serde_json::json!([0.,0.6,0.]);
+        for (index, name) in ["sourceHip", "sourceKnee", "sourceFoot"].iter().enumerate() {
+            json["nodes"][index]["name"] = serde_json::json!(name);
+        }
+        json["nodes"][0]["translation"] = serde_json::json!([0., 0.6, 0.]);
         let mut bin = glb.bin.unwrap().into_owned();
         let view = json["accessors"][5]["bufferView"].as_u64().unwrap() as usize;
         let offset = json["bufferViews"][view]["byteOffset"].as_u64().unwrap() as usize;
         for key in 0..2 {
-            let at = offset + key*12 + 4;
-            let value = f32::from_le_bytes(bin[at..at+4].try_into().unwrap()) + 0.1 + key as f32 * 0.05;
-            bin[at..at+4].copy_from_slice(&value.to_le_bytes());
+            let at = offset + key * 12 + 4;
+            let value =
+                f32::from_le_bytes(bin[at..at + 4].try_into().unwrap()) + 0.1 + key as f32 * 0.05;
+            bin[at..at + 4].copy_from_slice(&value.to_le_bytes());
         }
-        let bytes = gltf::binary::Glb {header:glb.header,json:serde_json::to_vec(&json).unwrap().into(),bin:Some(bin.into())}.to_vec().unwrap();
-        let source = Arc::new(ModelAsset::parse(&bytes,&[],voxy_render::ModelLimits::default()).unwrap());
-        models.insert(voxy_assets::AssetId("source".into()),source);
-        scene.insert_component(first,crate::ModelRetarget {source:"source".into(),joints:[("sourceHip","hip"),("sourceKnee","knee"),("sourceFoot","foot")].into_iter().map(|(a,b)|crate::RetargetJointProfile {source:a.into(),target:b.into(),rotation_basis:glam::Quat::IDENTITY.to_array(),translation_basis:glam::Quat::IDENTITY.to_array(),translation_scale:1.}).collect()}).unwrap();
-        scene.insert_component(first,ModelAnimation {clip_name:"move".into(),..Default::default()}).unwrap();
+        let bytes = gltf::binary::Glb {
+            header: glb.header,
+            json: serde_json::to_vec(&json).unwrap().into(),
+            bin: Some(bin.into()),
+        }
+        .to_vec()
+        .unwrap();
+        let source =
+            Arc::new(ModelAsset::parse(&bytes, &[], voxy_render::ModelLimits::default()).unwrap());
+        models.insert(voxy_assets::AssetId("source".into()), source);
+        scene
+            .insert_component(
+                first,
+                crate::ModelRetarget {
+                    source: "source".into(),
+                    joints: [
+                        ("sourceHip", "hip"),
+                        ("sourceKnee", "knee"),
+                        ("sourceFoot", "foot"),
+                    ]
+                    .into_iter()
+                    .map(|(a, b)| crate::RetargetJointProfile {
+                        source: a.into(),
+                        target: b.into(),
+                        rotation_basis: glam::Quat::IDENTITY.to_array(),
+                        translation_basis: glam::Quat::IDENTITY.to_array(),
+                        translation_scale: 1.,
+                    })
+                    .collect(),
+                },
+            )
+            .unwrap();
+        scene
+            .insert_component(
+                first,
+                ModelAnimation {
+                    clip_name: "move".into(),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
     }
     let mut runtime = crate::animation_runtime::AnimationRuntime::default();
-    let mut physics = CharacterPhysics::new(&scene,1,1);
+    let mut physics = CharacterPhysics::new(&scene, 1, 1);
     let mut input = voxy_gameplay::player_input().unwrap();
     for _ in 0..4 {
-        let candidate = runtime.prepare(&scene,&models,1. / 60.).unwrap();
-        runtime = physics.fixed_step_with_preparation(&mut scene,&mut input,1. / 60.,
-            &[(first,Vec3::X*0.03)],&[],|preview,budget| candidate.clone().prepare_accepted_pose(preview,budget)).unwrap().1;
+        let candidate = runtime.prepare(&scene, &models, 1. / 60.).unwrap();
+        runtime = physics
+            .fixed_step_with_preparation(
+                &mut scene,
+                &mut input,
+                1. / 60.,
+                &[(first, Vec3::X * 0.03)],
+                &[],
+                |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
+            )
+            .unwrap()
+            .1;
     }
-    let frame = runtime.frame(first,&model).unwrap();
+    let frame = runtime.frame(first, &model).unwrap();
     if retarget {
-        assert!((frame.pose.local()[0].translation.y - (0.5 + 0.05*4./60.)).abs()<1e-6);
+        assert!((frame.pose.local()[0].translation.y - (0.5 + 0.05 * 4. / 60.)).abs() < 1e-6);
         assert!(model.animations.is_empty());
     }
-    let authored = runtime.frame(second,&model).unwrap();
-
+    let authored = runtime.frame(second, &model).unwrap();
 
     let mut render = AnimatedModels::new(&renderer).unwrap();
     assert!(render.skinner.is_some());
     let requests = || {
-        let mut a = request(first,&model,1.); a.frame=Some(frame.clone());
-        let mut b = request(second,&model,1.); b.frame=Some(authored.clone()); vec![a,b]
+        let mut a = request(first, &model, 1.);
+        a.frame = Some(frame.clone());
+        let mut b = request(second, &model, 1.);
+        b.frame = Some(authored.clone());
+        vec![a, b]
     };
-    assert!(render.synchronize(&renderer,&device,&queue,requests(),1,0,65536).is_empty());
-    assert_eq!(render.counts(),(2,2,1));
+    assert!(
+        render
+            .synchronize(&renderer, &device, &queue, requests(), 1, 0, 65536)
+            .is_empty()
+    );
+    assert_eq!(render.counts(), (2, 2, 1));
     let source = |owner| match &render.owners[&owner].primitives[0] {
-        Primitive::Skin { source,.. } => Arc::as_ptr(source),_=>panic!("GPU skin expected"),
+        Primitive::Skin { source, .. } => Arc::as_ptr(source),
+        _ => panic!("GPU skin expected"),
     };
-    assert_eq!(source(first),source(second));
+    assert_eq!(source(first), source(second));
     // Independent expected world points from authored triangle and locked x=.03.
     // No solved pose, skin palette or CPU skinning helper enters this reference.
-    let mesh = voxy_render::SceneMesh::new(vec![
-        voxy_render::SceneVertex { position:[-0.22,0.,0.],uv:[0.,0.],color:model.primitives[0].color },
-        voxy_render::SceneVertex { position:[0.28,0.,0.],uv:[0.,0.],color:model.primitives[0].color },
-        voxy_render::SceneVertex { position:[0.03,0.4,0.],uv:[0.,0.],color:model.primitives[0].color },
-    ],vec![0,1,2]).unwrap();
-    let reference = renderer.upload_mesh(&device,&mesh).unwrap();
-    let view = Mat4::from_scale_rotation_translation(Vec3::splat(2.),glam::Quat::IDENTITY,Vec3::new(0.,-0.4,0.5));
+    let mesh = voxy_render::SceneMesh::new(
+        vec![
+            voxy_render::SceneVertex {
+                position: [-0.22, 0., 0.],
+                uv: [0., 0.],
+                color: model.primitives[0].color,
+            },
+            voxy_render::SceneVertex {
+                position: [0.28, 0., 0.],
+                uv: [0., 0.],
+                color: model.primitives[0].color,
+            },
+            voxy_render::SceneVertex {
+                position: [0.03, 0.4, 0.],
+                uv: [0., 0.],
+                color: model.primitives[0].color,
+            },
+        ],
+        vec![0, 1, 2],
+    )
+    .unwrap();
+    let reference = renderer.upload_mesh(&device, &mesh).unwrap();
+    let view = Mat4::from_scale_rotation_translation(
+        Vec3::splat(2.),
+        glam::Quat::IDENTITY,
+        Vec3::new(0., -0.4, 0.5),
+    );
     let matrix = view * scene.world_matrix(first).unwrap();
-    let actual = pixels(&renderer,&device,&queue,render.geometries(first).unwrap().collect(),matrix);
-    assert!(actual.chunks_exact(4).filter(|p|p[..3]!=[0,0,0]).count()>100);
-    assert!(actual == pixels(&renderer,&device,&queue,vec![&reference],view), "locked geometry pixels differ");
-    assert_ne!(actual,pixels(&renderer,&device,&queue,render.geometries(second).unwrap().collect(),matrix));
+    let actual = pixels(
+        &renderer,
+        &device,
+        &queue,
+        render.geometries(first).unwrap().collect(),
+        matrix,
+    );
+    assert!(
+        actual
+            .chunks_exact(4)
+            .filter(|p| p[..3] != [0, 0, 0])
+            .count()
+            > 100
+    );
+    assert!(
+        actual == pixels(&renderer, &device, &queue, vec![&reference], view),
+        "locked geometry pixels differ"
+    );
+    assert_ne!(
+        actual,
+        pixels(
+            &renderer,
+            &device,
+            &queue,
+            render.geometries(second).unwrap().collect(),
+            matrix
+        )
+    );
     let bytes = render.allocation_bytes();
-    assert!(render.synchronize(&renderer,&device,&queue,requests(),2,0,65536).is_empty());
-    assert_eq!(render.allocation_bytes(),bytes);
-    render.clear(); assert_eq!(render.allocation_bytes(),0);assert_eq!(render.counts(),(0,0,0));
+    assert!(
+        render
+            .synchronize(&renderer, &device, &queue, requests(), 2, 0, 65536)
+            .is_empty()
+    );
+    assert_eq!(render.allocation_bytes(), bytes);
+    render.clear();
+    assert_eq!(render.allocation_bytes(), 0);
+    assert_eq!(render.counts(), (0, 0, 0));
     assert!(pollster::block_on(scope.pop()).is_none());
-    println!("VOXY_FOOT_GPU retarget={retarget} cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0");
+    println!(
+        "VOXY_FOOT_GPU retarget={retarget} cpu_pixels_equal=true uncorrected_differs=true sources=1 bytes={bytes} stop_bytes=0"
+    );
 }

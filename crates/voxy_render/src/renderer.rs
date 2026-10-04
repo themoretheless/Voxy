@@ -723,7 +723,9 @@ impl Renderer {
                 lod.pose
                     .source()
                     .prepare(joints, lod.pose.model())
-                    .map_err(|error| RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error)))
+                    .map_err(|error| {
+                        RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error))
+                    })
             })
             .transpose()?;
         let skinned = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
@@ -739,7 +741,8 @@ impl Renderer {
             .skinned_motion
             .as_ref()
             .ok_or(RendererError::NoSkinnedMesh)?;
-        skinned.write_pose(&self.queue, motion.history.mesh(), joints, motion.model)
+        skinned
+            .write_pose(&self.queue, motion.history.mesh(), joints, motion.model)
             .map_err(RendererError::Skinned)?;
         if let Some(motion) = &mut self.skinned_motion {
             motion.joints.clone_from_slice(joints);
@@ -771,7 +774,9 @@ impl Renderer {
                 lod.pose
                     .source()
                     .prepare(lod.pose.joints(), model)
-                    .map_err(|error| RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error)))
+                    .map_err(|error| {
+                        RendererError::SkinnedLod(crate::SkinnedLodGpuError::Pose(error))
+                    })
             })
             .transpose()?;
         let skinned = self.skinned.as_ref().ok_or(RendererError::NoSkinnedMesh)?;
@@ -779,7 +784,8 @@ impl Renderer {
             .skinned_motion
             .as_ref()
             .ok_or(RendererError::NoSkinnedMesh)?;
-        skinned.write_pose(&self.queue, motion.history.mesh(), &motion.joints, model)
+        skinned
+            .write_pose(&self.queue, motion.history.mesh(), &motion.joints, model)
             .map_err(RendererError::Skinned)?;
         if let Some(motion) = &mut self.skinned_motion {
             motion.model = model;

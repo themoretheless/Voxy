@@ -6,7 +6,11 @@ pub(super) fn interpolate(a: Scalar, b: Scalar, u: Scalar) -> Result<Scalar, Ani
     // A second equivalent expression retains weight/complement correlation.
     // An overflowing alternate expression supplies no bound; the first remains
     // valid and is not discarded merely because an optional tightening failed.
-    if let Ok(alternate) = b.sub(a).and_then(|delta| delta.mul(u)).and_then(|delta| a.add(delta)) {
+    if let Ok(alternate) = b
+        .sub(a)
+        .and_then(|delta| delta.mul(u))
+        .and_then(|delta| a.add(delta))
+    {
         value.0 = value.0.max(alternate.0);
         value.1 = value.1.min(alternate.1);
     }
@@ -212,22 +216,38 @@ impl RootRigidSpan {
             let duration = Scalar::exact(self.end())
                 .sub(Scalar::exact(self.start()))?
                 .mul(Scalar::exact(fraction))?;
-            return Ok(Some(twist.increment_interval_enclosure(duration)?
-                .compose(&RootRigidEnclosure::from_transform(initial)?)?));
+            return Ok(Some(
+                twist
+                    .increment_interval_enclosure(duration)?
+                    .compose(&RootRigidEnclosure::from_transform(initial)?)?,
+            ));
         }
-        let Some((rotation, _)) = self.rotation
-            .rotation_motion_enclosure(Scalar::exact(fraction))? else {
-                return Ok(None);
-            };
-        let additive = bezier(self.additive.map(|v| v.to_array().map(Scalar::exact)), 3, Scalar::exact(fraction))?;
-        let pivot = bezier(self.pivot.map(|v| v.to_array().map(Scalar::exact)), 3, Scalar::exact(fraction))?;
+        let Some((rotation, _)) = self
+            .rotation
+            .rotation_motion_enclosure(Scalar::exact(fraction))?
+        else {
+            return Ok(None);
+        };
+        let additive = bezier(
+            self.additive.map(|v| v.to_array().map(Scalar::exact)),
+            3,
+            Scalar::exact(fraction),
+        )?;
+        let pivot = bezier(
+            self.pivot.map(|v| v.to_array().map(Scalar::exact)),
+            3,
+            Scalar::exact(fraction),
+        )?;
         let (_, q) = rotation.vectors();
         let rotated = rotate(q, pivot)?;
         let mut translation = [[0.; 2]; 3];
         for i in 0..3 {
             translation[i] = additive[i].sub(rotated[i])?.array();
         }
-        Ok(Some(RootRigidEnclosure { translation, rotation: rotation.rotation }))
+        Ok(Some(RootRigidEnclosure {
+            translation,
+            rotation: rotation.rotation,
+        }))
     }
 
     /// Stored-field spatial velocity enclosure for screw, HOLD, LINEAR or CUBIC spans.
@@ -275,7 +295,8 @@ impl RootRigidSpan {
     ) -> Result<Option<RootRigidTwistEnclosure>, AnimationError> {
         let factor = super::twist::retiming_factor_between_times(clip_times, wall_times)?;
         self.spatial_twist_enclosure_at_times(clip_times)?
-            .map(|field| field.scaled(factor)).transpose()
+            .map(|field| field.scaled(factor))
+            .transpose()
     }
     /// Uniform coordinate displacement error against a frozen spatial field.
     /// Both fields must have angular velocity parallel to the chosen axis over
@@ -290,7 +311,9 @@ impl RootRigidSpan {
         reference: RootRigidTwist,
     ) -> Result<Option<f64>, AnimationError> {
         reference.enclosure()?;
-        let Some(field) = self.spatial_twist_enclosure_at_times(times)? else { return Ok(None); };
+        let Some(field) = self.spatial_twist_enclosure_at_times(times)? else {
+            return Ok(None);
+        };
         field.coordinate_displacement_error_between(times, axis, reference)
     }
     /// Encloses every field value on a closed progress interval. This retains
@@ -349,7 +372,8 @@ mod tests {
     fn interpolation_retains_convex_hull_with_uncertain_weights() {
         let value = interpolate(Scalar(2., 3.), Scalar(4., 5.), Scalar(0., 1.)).unwrap();
         assert_eq!(value.array(), [2., 5.]);
-        let extrapolated = interpolate(Scalar::exact(2.), Scalar::exact(4.), Scalar::exact(2.)).unwrap();
+        let extrapolated =
+            interpolate(Scalar::exact(2.), Scalar::exact(4.), Scalar::exact(2.)).unwrap();
         assert!(extrapolated.0 <= 6. && extrapolated.1 >= 6.);
         assert!(extrapolated.0 > 4.);
     }

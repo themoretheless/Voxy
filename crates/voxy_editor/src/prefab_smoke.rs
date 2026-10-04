@@ -33,7 +33,8 @@ impl App {
         if self.authoring_document()? != *original {
             return Err("asset creation changed scene".into());
         }
-        if self.authoring
+        if self
+            .authoring
             .prefab_assets
             .get(self.authoring.prefab_choice)
             .is_none_or(|asset| !asset.0.starts_with("prefab-"))
@@ -83,7 +84,8 @@ impl App {
             return Err("choice button overlaps another region".into());
         }
         self.panel_action(choice)?;
-        if self.authoring
+        if self
+            .authoring
             .prefab_assets
             .get(self.authoring.prefab_choice)
             .is_none_or(|asset| asset.0 != "nested")
@@ -123,7 +125,8 @@ impl App {
         if self.authoring_document()? != placed {
             return Err("placement save/load lost source links".into());
         }
-        if self.authoring
+        if self
+            .authoring
             .authoring_source
             .as_ref()
             .ok_or("missing placement publication")?
@@ -256,11 +259,13 @@ impl App {
                 }
                 self.verify_prefab_revert(&original, &edited)?;
                 self.verify_prefab_structure(&edited)?;
-                let (path, bytes): (PathBuf, Vec<u8>) = self.authoring.authoring_project.smoke_dependency(
-                    self.authoring.authoring_source
-                        .as_ref()
-                        .ok_or("missing prefab source")?,
-                )?;
+                let (path, bytes): (PathBuf, Vec<u8>) =
+                    self.authoring.authoring_project.smoke_dependency(
+                        self.authoring
+                            .authoring_source
+                            .as_ref()
+                            .ok_or("missing prefab source")?,
+                    )?;
                 std::fs::write(&path, b"invalid prefab dependency")?;
                 let rejected = self.load_authoring().is_err();
                 // Restore even when the last-good assertion below fails.
