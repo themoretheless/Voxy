@@ -850,3 +850,329 @@ case verifies successful refinement, one exact adjacent-clock guard span and
 bounded displacement without assigning zero original acceleration at a key.
 The original partitioned and single-domain APIs delegate to this owner.
 Automatic assembly from original path key guards remains outstanding.
+
+### Certified staged-plan fade portion (2026-10-04)
+
+`RootRigidFadePlan::integrate_certified_fade` now routes the staged source and
+ target paths directly through the automatic original-clock assembler. Explicit
+ source/target frames retain their outward normalization enclosure; mismatched
+ frozen/live source frames are rejected. The returned interval covers exactly
+ `fade_wall_seconds`, with the original global weights and discovered key guards.
+ It does not publish the candidate animator. Completion tails still require an
+ enclosed original-target endpoint frame and a single whole-tick accumulator;
+ the existing `integrate_spatial` whole-tick API remains the legacy arithmetic
+ reference rather than a certificate for runtime publication.
+
+### Continuous endpoint pose enclosure (2026-10-04)
+
+`RootRigidSpan::continuous_pose_enclosure` evaluates the stored continuous
+reference directly with outward arithmetic. Normalized cubic and arc rotations
+share the existing rotation enclosure owner; translation retains both additive
+controls and the rotated moving pivot. Screw spans enclose their exact stored
+time difference and their stored initial frame. This span API does not replace
+canonical ordered screw-prefix preparation: cached floating initial frames have
+a different reference. STEP returns unsupported; unproved normalization or
+exponential range fails instead of using a sampled rounded pose. This supplies
+the pose arithmetic needed for an enclosed target continuation frame, which is
+still not assembled into a whole-tick runtime fade.
+
+### Enclosed original target continuation mapping (2026-10-04)
+
+`continuous_end_enclosure` uses canonical prefixes for an ordered screw path and
+its final absolute stored span for a compiled polynomial path. Empty paths are
+identity; mixed reference kinds and STEP events reject. A cache-corruption test
+confirms that screw endpoint enclosures do not depend on cached floating poses.
+`RootRigidMappedPath::from_enclosed_frame` retains this frame enclosure, and
+`RootRigidFadePlan::certified_target_tail_mapping` composes it with the original
+common target frame. A completion-tail integration test exercises that mapping.
+Fade and tail still need one global integration/error accumulator; independently
+certified intervals cannot be concatenated with the legacy zero-error append and
+called a certified whole tick. Runtime publication remains disabled.
+
+### One-accumulator explicit fade completion (2026-10-04)
+
+`integrate_partitioned_with_completion` now integrates explicitly mapped fade
+and target-tail domains through the same outward partitioned integrator. Fade
+weights use the fade clock, completion uses target-only weight one, and both
+share the canonical prefix and accumulated origin/angular error. A completion
+requires an explicit cut at fade end and final fade weight one; live completion
+sources and missing cuts reject. The regression covers a fade cut at 0.5,
+completion at 1, tail through 3, analytic translation 7, retained cuts, zero
+height error, and global budget rejection. Original-clock automatic key guards
+and staged-plan tail mappings still need to be routed through this whole-tick
+owner before enabling runtime publication.
+
+### Automatic whole-tick completion assembly (2026-10-04)
+
+`integrate_paths_with_completion` retains automatic outward source/target fade
+key domains and adds target-only tail domains to the same integrator invocation.
+The tail's original clip clock is mapped from the stored whole-tick endpoints
+using enclosed subtraction and division, never a rounded local duration. Full
+field queries enclose every intersected original tail key. Tail subdivisions
+increase on budget failure, sharing the fixed global span/error budget with the
+fade; no prefix or error is appended or reset. Stored subdivision cuts define
+integration domains only, so their rounding does not reparameterize the clip.
+`RootRigidFadePlan::integrate_certified_tick` supplies the enclosed original-target
+continuation mapping. Tests cover staged completion within a tick and an
+original tail key at one third of its clip, with total analytic translation 16,
+zero height discrepancy and insufficient-capacity rejection. All 144 animation
+tests passed in 6.98 seconds. Whole-field tail refinement is conservative and
+currently more expensive than outward shifted key guards; production performance
+and physical/runtime publication remain unverified. Zero-time fade handling
+still needs an explicit runtime policy.
+
+### Whole-tick fade collision regression (2026-10-04)
+
+The gameplay collision consumer now has an end-to-end regression using automatic
+whole-tick assembly, an enclosed original-target endpoint frame, translating yaw
+and a target tail with an internal original key. The floor-only query accepts the
+complete tick with exactly zero height displacement. Adding a wall stops the
+trajectory after the fade boundary and before the wall; a positive evaluation
+radius still rejects exact touching floor contact rather than dropping that
+radius. All 60 gameplay unit tests and 42 integration tests passed. This proves
+the read-only collision path for this fixture, not animator clock publication,
+post-grounding/relocation acceptance, or native editor runtime fades. Those
+runtime boundaries remain to be wired and verified.
+
+### Accepted wall-time pose staging (2026-10-04)
+
+A fade plan retains a private pre-tick animator snapshot and original stored wall
+endpoint. `prepare_accepted_frame` rebuilds a candidate animator and displayed
+frame for a finite accepted wall time inside that interval, without publishing
+anything. The internal advancement owner now accepts f64 wall time; public f32
+advancement delegates to it unchanged, avoiding an upward f32 conversion of a
+physics-accepted prefix. Whole-tick assembly uses the saved original wall endpoint.
+Transition completion now checks elapsed time against duration, not rounded f32
+pose weight. A regression at the preceding f64 value below fade end produces
+weight 1 but retains the unfinished transition, then completes exactly at end.
+Zero acceptance and invalid-prefix rejection preserve the original and full-tick
+staged candidates. All 145 animation tests passed. The consumer still must bind
+the accepted time to its physical path, validate current asset identity and final
+post-grounding/relocation actor pose, and atomically publish scene and animator;
+this helper alone does not enable runtime moving fades.
+
+### Final prepared rigid-pose publication gate (2026-10-04)
+
+Character ticks with rigid trajectories and a preparation callback now certify
+both the final physical box and the box represented by the proposed scene world
+matrix. This runs after grounding, relocation and f32 narrowing, before callback
+execution or any scene/body/input publication, using the shared collision query
+budget. The exact stored-projection owner permits touching but rejects interior
+intersection. A wall-contact narrowing regression rejects publication, leaves the
+callback uncalled, retains the scene, absent runtime state and pending jump; a
+subsequent safe trajectory prepares and publishes the exact preview matrix.
+All 60 gameplay unit and 43 integration tests passed. This gate currently applies
+to prepared rigid trajectories; certified fade requests and accepted-clock
+receipts still need to be introduced into that transactional entry point. A
+rejected rounded contact currently rolls back the tick rather than finding an
+alternate representable contact pose; production contact continuation remains
+incomplete.
+
+### Certified fade character transaction (2026-10-04)
+
+`CharacterCertifiedFadeMotion` and `fixed_step_with_certified_fade_preparation`
+route owned fade fields through the existing character transaction rather than a
+second solver. Admission requires the exact path identity, matching stored tick
+duration, valid coordinate axis and nonnegative finite world evaluation radius.
+Existing rigid-frame, owner, writer and aggregate budgets still apply. The sweep
+constructs the directional certificate from the owned field snapshots; final
+physical/displayed pose checks run before preparation. `CharacterTickPreview`
+now carries accepted trajectory receipts so an animator owner can stage its
+accepted wall prefix in the callback. Preparation dispatch is shared with the
+existing rigid preparation entry point. The new grounded-yaw regression rejects
+a preparation error with scene/body/input intact, then publishes the successful
+preview and rejects duration mismatch atomically. All 60 gameplay unit and 44
+integration tests passed. The model editor still uses the legacy moving-fade
+rejection path; actual animator/asset identity binding and accepted-clock
+publication remain to be connected. Supplied evaluation-radius validity remains
+a caller proof obligation, not inferred from these fixture tests.
+
+### Model-bound accepted fade staging (2026-10-04)
+
+`PreparedModelFade` retains the exact imported model Arc and immutable original
+fade plan. Accepted-pose preparation requires that model identity and the original
+animator snapshot still match. `RootRigidFadePlan::matches_animator` checks current
+clip/root-curve identity, motion selection, clock, speed, source clip/curve identity,
+source clock, transition elapsed/duration and frozen-source pose identity. The
+candidate is rebuilt from the retained snapshot only after those checks; this
+helper does not mutate or publish playback. Contact intervals, retargeting and
+editor character-loop publication still require integration with the certified
+physical receipts; the existing moving-fade runtime rejection remains enabled.
+
+Editor verification: compilation passed after adding empty accepted-motion
+receipts to the two manually constructed foot-placement preview fixtures.
+Playback (9), animation-runtime (8) and foot-placement (17) targeted tests passed.
+The new asset-bound staging regression checks a successful accepted prefix,
+invalid prefix, changed speed and a separately imported equivalent model Arc.
+Native editor acceptance and end-to-end moving-fade publication remain unproven.
+
+### Receipt-bound model fade preparation (2026-10-04)
+
+`PreparedModelFadeMotion` owns the model-bound plan and its certified whole-tick
+interval. Its borrowed physics request references that exact trajectory. Rigid
+receipts carry a private transient trajectory identity (address comparison only,
+never dereferenced or persisted); rotation-only receipts cannot match it. Accepted
+model preparation requires both the owner and this live trajectory identity, then
+uses `accepted_wall_time` to convert the completed-span/fraction receipt with
+outward interpolation. Partial acceptance uses the lower wall-time endpoint;
+complete acceptance requires all spans and fraction one. The prepared snapshot
+and model gates remain in force. These bridge the physical preparation callback
+to a candidate animator; ordinary model runtime dispatch, precise contact
+intervals and foot/retarget publication are still not switched over.
+
+Verification: 10 playback, 8 animation-runtime and 17 foot-placement tests passed,
+including the physical callback bridge, wrong live trajectory, preparation rollback
+and stale snapshot replay rejection. The animation suite passed all 145 tests,
+with endpoint/partial wall-prefix and malformed completion checks. Partial time
+is conservatively bounded; precise correspondence of contact intervals to that
+accepted wall prefix and ordinary editor dispatch are still outstanding.
+
+### Accepted-prefix contact candidate (2026-10-04)
+
+`phase_interval_wall`, `source_phase_interval_wall` and `frozen_source_tick_wall`
+share the existing phase owners while accepting stored f64 wall time. Legacy f32
+APIs delegate without changing their contract. `accepted_playback` now stages a
+complete ModelPlayback candidate: accepted animator plus target contact interval,
+source interval/active fraction, or frozen-source snapshot/active fraction, all
+computed from the same pre-tick state and accepted wall prefix. Nothing mutates
+the live owner in preparation. The physical callback regression checks that target
+contact end matches the accepted pose phase, live source metadata is present and
+the original owner retains no contact interval until candidate publication.
+Ordinary editor runtime dispatch and root extraction/retarget/foot correction of
+this candidate remain to be connected before moving fades can be enabled.
+
+Verification passed: 145 animation tests and 10 playback / 8 runtime / 17 foot
+placement editor checks. The adjacent-f64-prefix regression confirms that target
+and source contact travel preserve the accepted time instead of rounding up to
+the f32 fade completion boundary. These are staged candidate proofs, not native
+editor moving-fade acceptance.
+
+### Accepted displayed-frame owner (2026-10-04)
+
+Ordinary runtime preparation and accepted fade staging now share
+`prepare_displayed_frame`: retargeting, selected-axis in-place translation and
+root rotation removal occur in one owner. `AnimationRuntime::accept_fade` rebuilds
+an immutable runtime candidate from the receipt-bound playback, validates the
+target model Arc, and replaces only the staged owner's playback/frame. The
+physical preparation regression routes it through the existing foot-correction
+callback, confirms the original accepted frame remains unchanged, and checks that
+movement is applied to the body while the displayed root retains bind translation
+and zero extracted translation delta. This fixture has no active foot settings;
+it does not prove moving-fade planted-foot behavior. Existing retarget and foot
+checks passed: 10 playback, 9 animation-runtime and 17 foot tests. The initial
+zero-step test fixture was corrected to a valid fixed tick after runtime admission
+rejected it. Ordinary App dispatch still rejects moving fades. Original f64 fixed
+wall time, canonical common-frame selection and bounded floating evaluation error
+must be carried through that dispatch before enabling it broadly.
+
+### Original fixed-step wall staging (2026-10-04)
+
+`prepare_root_rigid_fade_wall` and `prepare_certified_fade_wall` retain the
+scheduler's stored f64 wall endpoint through path staging, candidate advancement
+and owned whole-tick integration. The existing f32 methods delegate as compatibility
+wrappers. The physical runtime-candidate regression now uses the actual 1/60 f64
+step; certified duration admission succeeds without narrowing. Its initial
+ordinary setup tick is 1/120, so accepted target-phase progress remains observable.
+All 10 playback, 9 runtime and 17 foot-placement tests passed. Ordinary App dispatch
+still calls the legacy animation preparation path; this change supplies the exact
+wall staging needed for its future certified fade branch. Common-frame policy,
+upstream compilation/evaluation error enclosure and active-foot fade acceptance
+remain required before enabling that branch in production.
+
+### Partial fade runtime-candidate admission (2026-10-04)
+
+The physical runtime-candidate regression now runs both free and wall-clipped
+1/60 ticks. A dyadic wall/body fixture keeps final stored touching representable,
+so partial-path admission can be tested independently of the separate contact
+narrowing rejection. The clipped receipt is strictly between zero and one;
+accepted target/contact phase and transition weight stop before full-tick values,
+body translation stays at or before the wall, and displayed root extraction remains
+in-place. The original runtime frame remains unchanged until candidate publication.
+All 9 targeted animation-runtime tests passed. This verifies partial accepted
+candidate staging for a translating fixture, not ordinary App fade dispatch,
+noncommuting common-frame policy, active-foot contact behavior or general rounded
+contact recovery.
+
+### Explicit authored-origin common-frame assembly (2026-10-04)
+
+`integrate_authored_common_frame` maps each interval-local path through its stored
+original-phase root factor, then through a caller-selected authored-to-common
+frame. Both compositions stay enclosed rather than first rounding composed poses.
+The continuation frame follows the original mapped target endpoint. Missing
+live-source factors reject. A distinct source/target phase regression checks
+agreement with the explicit-frame reference, original f64 tick duration and
+unchanged live animator; all 146 animation tests passed. The agreement tolerance
+is a regression check, not an independent arithmetic enclosure proof. The method
+formalizes a chosen stored-data mapping; it does not infer the actor's correct
+common frame or enclose errors accumulated before imported/compiled factors were
+stored. Actor-frame policy and those upstream errors remain production obligations.
+
+### Root-origin transport contract (2026-10-04)
+
+Inspected reference: phase rotation is R(t)*R(0)^-1 in parent coordinates; extracted
+translation subtracts the original authored offset on selected axes. Consequently
+F(0)=identity even with a nonidentity authored root rotation. An interval path is
+rebased by F(start)^-1; restoring it through F(start) yields the parent-frame
+increment F(end)*F(start)^-1. A regression verifies this order for a nonidentity
+root origin, noncommuting turn, translating pivot, all-selected/all-unselected
+and mixed-axis extraction. All 147 animation tests passed. The 1e-12 pose agreement
+is a compatibility regression, not a proof that floating path compilation error
+is enclosed. This establishes the clip-to-parent mapping; actor reference
+transport across accepted fades, reloads and physical corrections still requires
+explicit persistent ownership before ordinary dispatch can choose its common
+frame automatically.
+
+### Enclosed body-reference transport (2026-10-04)
+
+`RootRigidEnclosure::transported_body_reference` implements
+C_next = B_next^-1 * B_previous * C_previous using existing outward inverse and
+composition owners. Thus the represented authored reference retains its world
+anchor when body coordinates change. The regression uses dyadic positions and an
+exact half-turn quaternion for an independent world-point reference, then returns
+to the previous body and checks the same anchor. All 148 animation tests passed.
+This is the transport primitive, not persistent runtime state ownership: callers
+still must decide which body pose boundaries to use and when player input or
+physics corrections should move/re-anchor the reference. No automatic common-frame
+policy or ordinary App moving-fade dispatch is enabled by this addition.
+
+### Owner-held root reference candidate (2026-10-04)
+
+Animation owners now optionally retain an enclosed authored-to-body reference and
+its accepted body-to-world pose. `accept_fade` requires the matching physical pose
+owner and transports the reference while staging accepted playback/frame; failed
+candidate preparation cannot mutate the original runtime. Ordinary owner rebuilds
+retain a reference only for identical model/source-model Arcs, retarget profile and
+root extraction settings; otherwise it is invalidated. The free/partial physical
+fixture explicitly initializes the reference and verifies its world anchor stays
+at zero while the original owner retains the unchanged reference. All 9 runtime,
+10 playback and 17 foot-placement tests passed. Initialization/re-anchoring policy
+is still not supplied by ordinary App dispatch, and non-fade movement paths do not
+yet update this reference. Consequently this optional state cannot be treated as
+an automatically valid common frame for every live tick or reload.
+
+### Shared accepted-pose reference preparation (2026-10-04)
+
+Reference transport now runs in the shared physical preparation callback before
+optional foot IK, so it applies to ordinary movement as well as accepted fades.
+The App selects that callback whenever an owner has foot settings or retained
+root-reference state; absence of physics rejects either requirement. Fade staging
+no longer performs a separate transport, avoiding duplicate interval growth for
+the same accepted pose. A no-foot ordinary movement regression retains the
+reference through owner preparation, transports it after a 0.25 displacement and
+checks the fixed world anchor and unchanged original runtime. All 10 runtime,
+10 playback and 17 foot tests passed. Reference initialization/re-anchoring remains
+explicit and unwired in ordinary owner creation; moving-fade dispatch and compiler/
+evaluation-error proof remain outstanding.
+
+### Explicit root-reference initialization admission (2026-10-04)
+
+`initialize_root_reference` provides the owner entry point for a chosen enclosed
+authored-to-body frame at a known body-to-world pose. Invalid pose, disappeared
+owner, different model Arc and repeat initialization reject before changing owner
+state. Ordinary and fade transport fixtures now use this admission API rather than
+writing private fields. The new regression verifies foreign model, nonfinite pose,
+unchanged absent state, successful capture and rejection of silent reset. All
+11 runtime, 10 playback and 17 foot tests passed. The caller still must choose a
+physically justified initial authored frame and body snapshot; ordinary App owner
+creation does not invent that choice. Input re-anchoring, full compiler/evaluation
+error accounting and ordinary moving-fade dispatch remain outstanding.

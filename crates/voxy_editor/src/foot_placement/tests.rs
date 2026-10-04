@@ -234,6 +234,7 @@ fn slope_normal_and_nonuniform_reflected_tip_keep_the_authored_sole_on_surface()
         )
         .unwrap();
     let preview = CharacterTickPreview {
+        motions: vec![],
         characters: vec![],
         support: voxy_gameplay::SupportWorld::from_scene(&scene, 1).unwrap(),
     };
@@ -426,6 +427,7 @@ fn unreachable_retained_contact_releases_without_publishing_a_clamped_pose() {
         )
         .unwrap();
     let preview = CharacterTickPreview {
+        motions: vec![],
         characters: vec![],
         support: voxy_gameplay::SupportWorld::from_scene(&scene, 1).unwrap(),
     };

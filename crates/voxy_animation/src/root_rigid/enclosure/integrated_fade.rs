@@ -15,6 +15,15 @@ impl<'a> RootRigidMappedField<'a> {
         frame: RootRigidTransform,
         scale: f64,
     ) -> Result<Self, AnimationError> {
+        Self::from_enclosed_frame(span, clip_times, RootRigidEnclosure::from_transform(frame)?, scale)
+    }
+    /// Preserves an enclosed original-target endpoint for completion domains.
+    pub fn from_enclosed_frame(
+        span: &'a RootRigidSpan,
+        clip_times: [f64; 2],
+        frame: RootRigidEnclosure,
+        scale: f64,
+    ) -> Result<Self, AnimationError> {
         if !scale.is_finite() {
             return Err(AnimationError::InvalidRetargetBinding);
         }
@@ -23,7 +32,7 @@ impl<'a> RootRigidMappedField<'a> {
         Ok(Self {
             span,
             clip_times,
-            frame: RootRigidEnclosure::from_transform(frame)?,
+            frame,
             scale,
         })
     }
@@ -77,6 +86,30 @@ pub struct RootRigidCertifiedFadeInterval {
     fields: Vec<RootRigidFadeFieldInterval>,
 }
 impl RootRigidCertifiedFadeInterval {
+    /// Conservative stored wall prefix for a physical span receipt. The lower
+    /// endpoint never advances beyond the real stored-time interpolation.
+    pub fn accepted_wall_time(
+        &self, completed_spans: usize, span_fraction: f64, complete: bool,
+    ) -> Result<f64, AnimationError> {
+        let path = &self.approximation.path;
+        if !span_fraction.is_finite() || !(0. ..=1.).contains(&span_fraction) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if complete {
+            if completed_spans != path.spans().len() || span_fraction != 1. {
+                return Err(AnimationError::InvalidSampleTime);
+            }
+            return Ok(path.duration());
+        }
+        let span = path.spans().get(completed_spans)
+            .ok_or(AnimationError::InvalidSampleTime)?;
+        if span_fraction == 0. { return Ok(span.start()); }
+        if span_fraction == 1. { return Ok(span.end()); }
+        let time = super::cubic::interpolate(Scalar::exact(span.start()),
+            Scalar::exact(span.end()), Scalar::exact(span_fraction))?;
+        Ok(time.0.max(span.start()))
+    }
+
     pub(super) fn from_integrated_domains(
         approximation: RootRigidApproximation,
         fields: Vec<RootRigidFadeFieldInterval>,
@@ -123,10 +156,34 @@ impl RootRigidCertifiedFadeInterval {
         angular_tolerance: f64,
         max_spans: usize,
     ) -> Result<Self, AnimationError> {
+        let duration = domains.last().ok_or(AnimationError::InvalidAnimationTimeStep)?.end;
+        Self::integrate_partitioned_with_completion(domains, weights, duration,
+            origin_tolerance, angular_tolerance, max_spans)
+    }
+
+    /// Integrates a fade and target-only completion in one canonical trajectory
+    /// and error accumulator. Domains must cut exactly at the stored fade end;
+    /// continuation mappings must already retain the original target frame.
+    #[allow(clippy::too_many_arguments)]
+    pub fn integrate_partitioned_with_completion(
+        domains: &[RootRigidFadeDomain<'_>],
+        weights: [f64; 2],
+        fade_duration: f64,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<Self, AnimationError> {
         let duration = domains
             .last()
             .ok_or(AnimationError::InvalidAnimationTimeStep)?
             .end;
+        if !fade_duration.is_finite() || fade_duration <= 0. || fade_duration > duration {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        if duration > fade_duration &&
+            (weights[1] != 1. || !domains.iter().any(|domain| domain.end == fade_duration)) {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
         let zero = RootSpatialTwistBounds {
             linear_speed_bound: 0.,
             angular_speed_bound: 0.,
@@ -141,6 +198,7 @@ impl RootRigidCertifiedFadeInterval {
         }
         .enclosure()?;
         let mut prepared = Vec::with_capacity(domains.len());
+        let mut clocks = Vec::with_capacity(domains.len());
         let mut intervals = Vec::with_capacity(domains.len());
         let mut start = 0.;
         for domain in domains {
@@ -148,15 +206,25 @@ impl RootRigidCertifiedFadeInterval {
                 return Err(AnimationError::InvalidSampleTime);
             }
             let wall = [start, domain.end];
+            let completion = start >= fade_duration;
+            if completion && domain.source.is_some() {
+                return Err(AnimationError::InvalidRetargetBinding);
+            }
+            let (domain_weights, weight_duration) = if completion {
+                ([1., 1.], duration)
+            } else {
+                (weights, fade_duration)
+            };
             let rates = domain
                 .source
                 .map(|source| source.bounds(wall))
                 .transpose()?
                 .unwrap_or(zero)
-                .enclosed_blend(domain.target.bounds(wall)?, weights, duration)?
+                .enclosed_blend(domain.target.bounds(wall)?, domain_weights, weight_duration)?
                 .rates;
             intervals.push((domain.end, rates));
             prepared.push(wall);
+            clocks.push((domain_weights, weight_duration));
             start = domain.end;
         }
         let field = |index: usize, query| -> Result<RootRigidFadeFieldInterval, AnimationError> {
@@ -171,8 +239,8 @@ impl RootRigidCertifiedFadeInterval {
             RootRigidFadeFieldInterval::new(
                 source,
                 domain.target.field(query, prepared[index])?,
-                [0., duration],
-                weights,
+                [0., clocks[index].1],
+                clocks[index].0,
             )
         };
         let approximation = RootRigidPath::integrate_spatial_outward_partitioned(
@@ -456,5 +524,52 @@ mod paired_key_tests {
                 .error_bound(),
             0.
         );
+    }
+}
+
+#[cfg(test)]
+mod completion_tests {
+    use super::*;
+    #[test]
+    fn fade_completion_uses_one_clock_prefix_and_global_error_budget() {
+        let target = RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear: DVec3::X * 2., angular: DVec3::ZERO,
+        }, 1.)],1).unwrap();
+        let tail = RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear: DVec3::X * 3., angular: DVec3::ZERO,
+        }, 2.)],1).unwrap();
+        let mapped = |times| RootRigidMappedField::new(&target.spans()[0], times,
+            RootRigidTransform::IDENTITY, 1.).unwrap();
+        let domains = [
+            RootRigidFadeDomain {end:0.5, source:None, target:mapped([0.,0.5])},
+            RootRigidFadeDomain {end:1., source:None, target:mapped([0.5,1.])},
+            RootRigidFadeDomain {end:3., source:None, target:RootRigidMappedField::from_enclosed_frame(
+                &tail.spans()[0],[0.,2.],target.continuous_end_enclosure(1).unwrap(),1.).unwrap()},
+        ];
+        let assembled = RootRigidCertifiedFadeInterval::integrate_partitioned_with_completion(
+            &domains,[0.,1.],1.,0.01,0.01,4096).unwrap();
+        let result = assembled.approximation();
+        assert_eq!(result.path.duration(),3.);
+        assert_eq!(assembled.accepted_wall_time(result.path.spans().len(),1.,true).unwrap(),3.);
+        let first = &result.path.spans()[0];
+        assert_eq!(assembled.accepted_wall_time(0,0.,false).unwrap(),first.start());
+        assert_eq!(assembled.accepted_wall_time(0,1.,false).unwrap(),first.end());
+        let partial = assembled.accepted_wall_time(0,0.5,false).unwrap();
+        assert!(partial >= first.start() && partial <= (first.start()+first.end())*0.5);
+        assert!(assembled.accepted_wall_time(0,1.,true).is_err());
+        assert!(assembled.accepted_wall_time(result.path.spans().len(),0.,false).is_err());
+        assert!(assembled.accepted_wall_time(0,f64::NAN,false).is_err());
+        assert!((result.path.end_transform().translation.x - 7.).abs() <= result.origin_error_bound);
+        assert!(result.origin_error_bound <= 0.01);
+        assert_eq!(assembled.coordinate_certificate(1,4096).unwrap().unwrap().error_bound(),0.);
+        for cut in [0.5,1.] {
+            assert!(result.path.spans().iter().any(|span| span.end() == cut));
+        }
+        assert!(RootRigidCertifiedFadeInterval::integrate_partitioned_with_completion(
+            &domains,[0.,0.9],1.,0.01,0.01,4096).is_err());
+        assert!(RootRigidCertifiedFadeInterval::integrate_partitioned_with_completion(
+            &domains,[0.,1.],0.75,0.01,0.01,4096).is_err());
+        assert!(RootRigidCertifiedFadeInterval::integrate_partitioned_with_completion(
+            &domains,[0.,1.],1.,0.01,0.01,2).is_err());
     }
 }

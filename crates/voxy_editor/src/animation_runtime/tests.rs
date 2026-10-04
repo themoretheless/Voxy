@@ -703,3 +703,99 @@ fn partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomi
     let resumed = runtime.prepare(&scene,&models,0.05).unwrap();
     assert!((resumed.frame(owner,&target).unwrap().pose.local()[1].translation-(Vec3::Y+Vec3::X*0.4)).length()<1e-6);
 }
+
+#[test]
+fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
+    use voxy_animation::RootRigidTransform;
+    use voxy_gameplay::{CharacterBody,CharacterPhysics,player_input};
+    for blocked in [false,true] {
+    let (mut scene,owner,model,models) = fixture();
+    scene.insert_component(owner,CharacterBody {half_extents:[0.00390625;3],speed:0.,gravity:0.,..Default::default()}).unwrap();
+    scene.insert_component(owner,ModelAnimation {root_motion_rotation:true,
+        root_motion_axes:[true,false,false],..Default::default()}).unwrap();
+    let mut runtime = AnimationRuntime::default().prepare(&scene,&models,1./120.).unwrap();
+    runtime.owners.get_mut(&owner).unwrap().playback.transition_to_clip(0,0.125).unwrap();
+    runtime.initialize_root_reference(owner,&model,voxy_animation::RootRigidTransform::IDENTITY,
+        voxy_animation::RootRigidEnclosure::IDENTITY).unwrap();
+    let before = runtime.frame(owner,&model).unwrap();
+    let dt = 1. / 60.;
+    let staged = runtime.owners[&owner].playback.prepare_certified_fade_wall(dt,[true,false,false],256)
+        .unwrap().unwrap().bind_motion(owner,Some(RootRigidTransform::IDENTITY),
+            RootRigidTransform::IDENTITY,0.01,0.01,4096).unwrap();
+    let request = staged.request(glam::DQuat::IDENTITY,Vec3::ZERO,1.,1,0.);
+    if blocked {
+        let wall = scene.spawn(None,voxy_scene::Transform {translation:Vec3::X*0.0234375,
+            ..Default::default()}).unwrap();
+        scene.insert_component(wall,voxy_gameplay::BoxCollider {half_extents:[0.00390625,2.,2.]}).unwrap();
+    }
+    let mut physics = CharacterPhysics::new(&scene,1,usize::from(blocked));
+    let mut input = player_input().unwrap();
+    let (receipts,accepted) = physics.fixed_step_with_certified_fade_preparation(&mut scene,&mut input,
+        dt,&[request],|preview,budget| {
+            runtime.clone().accept_fade(&model,&staged,&preview.motions[0],&preview.characters[0])?
+                .correct_feet(preview,budget)
+        }).unwrap();
+    assert!(Arc::ptr_eq(&before,&runtime.frame(owner,&model).unwrap()));
+    let reference = accepted.owners[&owner].root_reference.unwrap();
+    for bound in reference.body_to_world.compose(&reference.authored_to_body).unwrap().translation_bounds() {
+        assert!(bound[0]<=0. && bound[1]>=0.);
+    }
+    assert_eq!(runtime.owners[&owner].root_reference.unwrap().authored_to_body.translation_bounds(),[[0.,0.];3]);
+    let frame = accepted.frame(owner,&model).unwrap();
+    assert_eq!(frame.pose.local()[0].translation.x,model.skeleton.joints()[0].bind_local.translation.x);
+    assert_eq!(frame.root_motion.x,0.);
+    assert_eq!(receipts[0].complete,!blocked);
+    let contact = accepted.owners[&owner].playback.contact_interval().unwrap();
+    assert_eq!(contact.end,accepted.clip_phase(owner).unwrap());
+    if blocked {
+        assert!(receipts[0].path_fraction>0. && receipts[0].path_fraction<1.);
+        assert!(contact.end>0. && contact.end<dt);
+        assert!(frame.transition_weight < (dt/0.125) as f32);
+        assert!(scene.local(owner).unwrap().translation.x<=0.015625);
+    } else {
+        assert!(accepted.clip_phase(owner).unwrap()>runtime.clip_phase(owner).unwrap());
+    }
+    assert!(scene.local(owner).unwrap().translation.x>0.);
+    }
+}
+
+#[test]
+fn ordinary_preparation_transports_root_reference_without_foot_settings() {
+    let (mut scene,owner,model,models) = fixture();
+    scene.insert_component(owner,voxy_gameplay::CharacterBody {speed:0.,gravity:0.,..Default::default()}).unwrap();
+    let mut runtime = AnimationRuntime::default().prepare(&scene,&models,1./60.).unwrap();
+    runtime.initialize_root_reference(owner,&model,voxy_animation::RootRigidTransform::IDENTITY,
+        voxy_animation::RootRigidEnclosure::IDENTITY).unwrap();
+    assert!(!runtime.has_foot_placement());
+    assert!(runtime.requires_pose_preparation());
+    let candidate = runtime.prepare(&scene,&models,1./60.).unwrap();
+    assert!(candidate.requires_pose_preparation());
+    let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,1,0);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let (_,accepted) = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,
+        &[(owner,Vec3::X*0.25)],&[],|preview,budget| candidate.clone().correct_feet(preview,budget)).unwrap();
+    let reference = accepted.owners[&owner].root_reference.unwrap();
+    for bounds in reference.body_to_world.compose(&reference.authored_to_body).unwrap().translation_bounds() {
+        assert!(bounds[0]<=0. && bounds[1]>=0.);
+    }
+    assert_eq!(runtime.owners[&owner].root_reference.unwrap().body_to_world.translation_bounds(),[[0.,0.];3]);
+    assert_eq!(scene.local(owner).unwrap().translation.x,0.25);
+}
+
+#[test]
+fn root_reference_initialization_rejects_stale_model_invalid_pose_and_reset() {
+    let (scene,owner,model,models) = fixture();
+    let mut runtime = AnimationRuntime::default().prepare(&scene,&models,1./60.).unwrap();
+    let foreign = Arc::new(ModelAsset::parse(
+        include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
+        &[],voxy_render::ModelLimits::default()).unwrap());
+    let identity = voxy_animation::RootRigidTransform::IDENTITY;
+    let reference = voxy_animation::RootRigidEnclosure::IDENTITY;
+    assert!(runtime.initialize_root_reference(owner,&foreign,identity,reference).is_err());
+    let invalid = voxy_animation::RootRigidTransform {translation:glam::DVec3::splat(f64::NAN),..identity};
+    assert!(runtime.initialize_root_reference(owner,&model,invalid,reference).is_err());
+    assert!(runtime.owners[&owner].root_reference.is_none());
+    runtime.initialize_root_reference(owner,&model,identity,reference).unwrap();
+    assert!(runtime.initialize_root_reference(owner,&model,identity,reference).is_err());
+    assert_eq!(runtime.owners[&owner].root_reference.unwrap().authored_to_body.translation_bounds(),[[0.,0.];3]);
+}

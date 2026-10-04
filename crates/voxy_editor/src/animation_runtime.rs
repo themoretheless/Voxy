@@ -28,8 +28,14 @@ pub(super) fn schedule() -> Result<&'static voxy_scene::SchedulePlan, voxy_scene
     .map_err(Clone::clone)
 }
 
+#[derive(Clone, Copy, Debug)]
+struct RootReference {
+    body_to_world: voxy_animation::RootRigidEnclosure,
+    authored_to_body: voxy_animation::RootRigidEnclosure,
+}
 #[derive(Clone, Debug)]
 struct Owner {
+    root_reference: Option<RootReference>,
     model: Arc<ModelAsset>,
     animation_model: Arc<ModelAsset>,
     retarget_profile: Option<crate::ModelRetarget>,
@@ -54,6 +60,28 @@ pub(super) struct AnimationRuntime {
     )>,
 }
 impl AnimationRuntime {
+    /// Captures a caller-selected authored reference at a known body pose.
+    /// A live reference cannot be silently reset by another clip switch.
+    pub(super) fn initialize_root_reference(
+        &mut self,
+        owner: NodeId,
+        expected_model: &Arc<ModelAsset>,
+        body_to_world: voxy_animation::RootRigidTransform,
+        authored_to_body: voxy_animation::RootRigidEnclosure,
+    ) -> Result<(), String> {
+        let body_to_world = voxy_animation::RootRigidEnclosure::from_transform(body_to_world)
+            .map_err(|error| error.to_string())?;
+        let state = self.owners.get_mut(&owner).ok_or("root reference owner disappeared")?;
+        if !Arc::ptr_eq(expected_model, &state.model) {
+            return Err("root reference model changed".into());
+        }
+        if state.root_reference.is_some() {
+            return Err("root reference is already initialized".into());
+        }
+        state.root_reference = Some(RootReference {body_to_world,authored_to_body});
+        Ok(())
+    }
+
     pub(super) fn clear(&mut self) {
         *self = Self::default();
     }
@@ -77,16 +105,49 @@ impl AnimationRuntime {
     pub(super) fn has_foot_placement(&self) -> bool {
         self.owners.values().any(|owner| owner.feet.is_some())
     }
+    pub(super) fn requires_pose_preparation(&self) -> bool {
+        self.has_foot_placement() || self.owners.values().any(|owner| owner.root_reference.is_some())
+    }
     pub(super) fn correct_feet(mut self, preview: &voxy_gameplay::CharacterTickPreview,
         budget: &mut voxy_gameplay::SupportQueryBudget) -> Result<Self, String> {
         for accepted in &preview.characters {
             let Some(owner) = self.owners.get_mut(&accepted.owner) else { continue; };
+        if let Some(reference) = &mut owner.root_reference {
+            let body = voxy_animation::RootRigidEnclosure::from_transform(voxy_animation::RootRigidTransform {
+                translation:accepted.physical_center,rotation:accepted.physical_rotation,
+            }).map_err(|error| error.to_string())?;
+            reference.authored_to_body = reference.authored_to_body
+                .transported_body_reference(&reference.body_to_world,&body).map_err(|error| error.to_string())?;
+            reference.body_to_world = body;
+        }
             let Some(feet) = &mut owner.feet else { continue; };
             owner.frame = Arc::new(feet.correct_at_phase(&owner.model, (*owner.frame).clone(),
                 accepted.world_matrix.as_dmat4(), accepted.grounded, preview, budget, owner.playback.pose_blend_phases().map(|phase| phase.target.clip.name()), owner.playback.contact_phase(), owner.playback.contact_interval(), owner.playback.pose_blend_phases(), owner.playback.source_contact_interval(), owner.playback.frozen_source_tick())?);
         }
         Ok(self)
     }
+    /// Rebuilds the displayed frame from the physically accepted playback,
+    /// retaining the same extraction/retarget owner used by ordinary ticks.
+    pub(super) fn accept_fade(
+        mut self,
+        expected_model: &Arc<ModelAsset>,
+        staged: &crate::model_playback::PreparedModelFadeMotion,
+        receipt: &voxy_gameplay::AppliedCharacterTrajectoryMotion,
+        accepted_pose: &voxy_gameplay::AcceptedCharacterPose,
+    ) -> Result<Self, String> {
+        let owner = self.owners.get_mut(&receipt.owner).ok_or("fade owner disappeared")?;
+        if accepted_pose.owner != receipt.owner || !Arc::ptr_eq(expected_model, &owner.model) {
+            return Err("fade target model changed".into());
+        }
+        let (playback, frame) = staged.accepted_playback(&owner.playback, receipt)?;
+        let (frame, _) = prepare_displayed_frame(frame, &owner.model,
+            &owner.settings, owner.retarget_binding.as_ref())?;
+        owner.playback = playback;
+        owner.frame = Arc::new(frame);
+        self.serial = self.serial.checked_add(1).ok_or("animation tick overflow")?;
+        Ok(self)
+    }
+
     pub(super) fn clip_name(&self, owner: NodeId) -> Option<&str> {
         Some(self.owners.get(&owner)?.playback.pose_blend_phases()?.target.clip.name())
     }
@@ -234,12 +295,10 @@ impl AnimationRuntime {
                     trajectory = Some(binding.apply_root_path(path, frame.root_motion_joint, settings.root_motion_axes)
                         .map_err(|e|e.to_string())?);
                 }
-                frame = if settings.root_motion_rotation || settings.root_motion_axes.into_iter().any(|axis| axis) {
-                    binding.apply_frame(&frame)
-                } else {
-                    binding.apply_pose_frame(&frame)
-                }.map_err(|e|e.to_string())?;
             }
+            let (displayed, extracted_displacement) = prepare_displayed_frame(
+                frame, model, &settings, binding.as_ref())?;
+            frame = displayed;
             if settings.root_motion_rotation
                 || settings.root_motion_axes.into_iter().any(|axis| axis)
             {
@@ -254,10 +313,7 @@ impl AnimationRuntime {
                     if let Some(profile) = &profile {
                         retarget_parent_basis(model, animation_model, profile, frame.root_motion_joint, settings.root_motion_rotation)?
                     } else { constant_parent_basis(model, &settings, frame.root_motion_joint)? };
-                let (in_place, displacement) = frame
-                    .into_in_place_translation(&model.skeleton, settings.root_motion_axes)
-                    .map_err(|error| error.to_string())?;
-                frame = in_place;
+                let displacement = extracted_displacement;
                 let world = scene
                     .world_matrix(owner)
                     .map_err(|error| error.to_string())?;
@@ -273,9 +329,6 @@ impl AnimationRuntime {
                     if !origin.is_finite() {
                         return Err("root trajectory origin conversion overflow".into());
                     }
-                    frame = frame
-                        .without_root_rotation(&model.skeleton)
-                        .map_err(|error| error.to_string())?;
                     if let Some(trajectory) = trajectory {
                         rotation_spans = rotation_spans
                             .checked_add(trajectory.spans().len())
@@ -306,6 +359,14 @@ impl AnimationRuntime {
             next.owners.insert(
                 owner,
                 Owner {
+                    root_reference: current.filter(|old| Arc::ptr_eq(&old.model,model)
+                        && Arc::ptr_eq(&old.animation_model,animation_model)
+                        && old.retarget_profile == profile
+                        && old.settings.root_motion_joint == settings.root_motion_joint
+                        && old.settings.root_motion_bone == settings.root_motion_bone
+                        && old.settings.root_motion_axes == settings.root_motion_axes
+                        && old.settings.root_motion_rotation == settings.root_motion_rotation)
+                        .and_then(|old| old.root_reference),
                     model: model.clone(),
                     animation_model: animation_model.clone(),
                     retarget_profile: profile,
@@ -327,6 +388,28 @@ impl AnimationRuntime {
 
 // A mapped ancestor must retain its bind transform across source clips and fades.
 // Unmapped target ancestors are bind pose by the retarget contract.
+fn prepare_displayed_frame(
+    mut frame: AnimatorFrame,
+    model: &ModelAsset,
+    settings: &ModelAnimation,
+    binding: Option<&voxy_animation::RetargetBinding>,
+) -> Result<(AnimatorFrame, glam::Vec3), String> {
+    let extracted = settings.root_motion_rotation || settings.root_motion_axes.into_iter().any(|axis| axis);
+    if let Some(binding) = binding {
+        frame = if extracted {binding.apply_frame(&frame)} else {binding.apply_pose_frame(&frame)}
+            .map_err(|error| error.to_string())?;
+    }
+    let mut displacement = glam::Vec3::ZERO;
+    if extracted {
+        (frame, displacement) = frame.into_in_place_translation(&model.skeleton,
+            settings.root_motion_axes).map_err(|error| error.to_string())?;
+        if settings.root_motion_rotation {
+            frame = frame.without_root_rotation(&model.skeleton).map_err(|error| error.to_string())?;
+        }
+    }
+    Ok((frame, displacement))
+}
+
 fn retarget_parent_basis(target: &ModelAsset, source: &ModelAsset, profile: &crate::ModelRetarget, root: u16, rotation: bool)
     -> Result<(glam::Mat4, glam::DQuat, f64), String> {
     let mut parent = target.skeleton.joints()[usize::from(root)].parent;

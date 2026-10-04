@@ -7,6 +7,34 @@ pub struct RootScrewEnclosurePath<'a> {
     coordinate_ranges: [Option<[f64; 2]>; 3],
 }
 impl RootRigidPath {
+    /// End pose of the stored continuous reference. Ordered screw paths use
+    /// canonical prefixes rather than their rounded cached initial transforms.
+    /// Compiled polynomial paths use their final stored absolute span. Mixed
+    /// references and instantaneous events reject instead of silently switching.
+    pub fn continuous_end_enclosure(
+        &self,
+        max_spans: usize,
+    ) -> Result<RootRigidEnclosure, AnimationError> {
+        if self.spans.len() > max_spans.min(MAX_ROOT_ROTATION_SPANS) {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let Some(last) = self.spans.last() else {
+            return Ok(RootRigidEnclosure::IDENTITY);
+        };
+        if self.spans.iter().any(|span| span.is_step()) {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
+        if self.spans.iter().all(|span| span.screw.is_some()) {
+            return self.prepare_screw_enclosures(max_spans)?
+                .sample(self.spans.len() - 1, 1.);
+        }
+        if self.spans.iter().any(|span| span.screw.is_some()) {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
+        last.continuous_pose_enclosure(1.)?
+            .ok_or(AnimationError::RootRotationTransitionUnsupported)
+    }
+
     /// Prepares all canonical real screw prefixes with outward arithmetic.
     /// The returned owner borrows this immutable path, preventing stale reuse
     /// after mutation. Unsupported fields/angles, overflow and capacity reject.

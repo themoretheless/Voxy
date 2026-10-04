@@ -811,12 +811,17 @@ impl Animator {
     /// # Errors
     /// Rejects the same invalid timestep range as `advance`.
     pub fn phase_interval(&self, dt: f32) -> Result<AnimationPhaseInterval, AnimationError> {
+        self.phase_interval_wall(f64::from(dt))
+    }
+
+    /// Exact stored f64 wall time for physics-accepted contact intervals.
+    pub fn phase_interval_wall(&self, dt: f64) -> Result<AnimationPhaseInterval, AnimationError> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err(AnimationError::InvalidAnimationTimeStep);
         }
         let duration = f64::from(self.current.duration);
         let start = self.current.phase(self.time);
-        let end = start + f64::from(dt) * f64::from(self.speed);
+        let end = start + dt * f64::from(self.speed);
         let looping = self.current.playback == Playback::Loop;
         Ok(AnimationPhaseInterval { start: start/duration,
             end: if looping { end/duration } else { end.min(duration)/duration }, looping })
@@ -1017,6 +1022,14 @@ impl Animator {
         skeleton: &Skeleton,
         dt: f32,
     ) -> Result<AnimatorFrame, AnimationError> {
+        self.advance_candidate_wall(skeleton, f64::from(dt))
+    }
+
+    fn advance_candidate_wall(
+        &mut self,
+        skeleton: &Skeleton,
+        dt: f64,
+    ) -> Result<AnimatorFrame, AnimationError> {
         if !dt.is_finite() || !(0.0..=1.0).contains(&dt) {
             return Err(AnimationError::InvalidAnimationTimeStep);
         }
@@ -1033,7 +1046,6 @@ impl Animator {
                 return Err(AnimationError::SkeletonMismatch);
             }
         }
-        let dt = f64::from(dt);
         let speed = f64::from(self.speed);
         self.time = self.current.phase(self.time);
         if let Some(transition) = &mut self.transition {
@@ -1080,7 +1092,7 @@ impl Animator {
             transition.source_time += fade_delta;
             transition.elapsed = (transition.elapsed + dt).min(transition.duration);
             let weight = (transition.elapsed / transition.duration) as f32;
-            if weight >= 1.0 {
+            if transition.elapsed >= transition.duration {
                 (target, 1.0, true)
             } else {
                 let sampled;

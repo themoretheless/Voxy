@@ -972,7 +972,7 @@ impl App {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
                             access.require_write("player.input").map_err(|error|
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
-                            if candidate.has_foot_placement() {
+                            if candidate.requires_pose_preparation() {
                                 let (_, corrected) = physics.fixed_step_with_preparation(
                                     access.write().map_err(|e| voxy_gameplay::GameplayFixedError::Motion(e.to_string()))?,
                                     &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
@@ -989,7 +989,7 @@ impl App {
                                 ).map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                             }
                         } else {
-                            if candidate.has_foot_placement() || !candidate.motions().is_empty() || !candidate.trajectories().is_empty() {
+                            if candidate.requires_pose_preparation() || !candidate.motions().is_empty() || !candidate.trajectories().is_empty() {
                                 return Err(voxy_gameplay::GameplayFixedError::Motion("root motion requires a physics runtime".into()));
                             }
                             access.require_write("player.input").map_err(|error|

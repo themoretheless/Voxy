@@ -198,6 +198,38 @@ impl RootRotationSpan {
     }
 }
 impl RootRigidSpan {
+    /// Encloses the continuous stored curve pose, including the moving pivot.
+    /// This is the real normalized-control reference, not a bound derived from
+    /// the rounded result of `sample`. STEP events have no continuous reference.
+    pub fn continuous_pose_enclosure(
+        &self,
+        fraction: f64,
+    ) -> Result<Option<RootRigidEnclosure>, AnimationError> {
+        if !fraction.is_finite() || !(0. ..=1.).contains(&fraction) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        if let Some((twist, initial)) = self.screw {
+            let duration = Scalar::exact(self.end())
+                .sub(Scalar::exact(self.start()))?
+                .mul(Scalar::exact(fraction))?;
+            return Ok(Some(twist.increment_interval_enclosure(duration)?
+                .compose(&RootRigidEnclosure::from_transform(initial)?)?));
+        }
+        let Some((rotation, _)) = self.rotation
+            .rotation_motion_enclosure(Scalar::exact(fraction))? else {
+                return Ok(None);
+            };
+        let additive = bezier(self.additive.map(|v| v.to_array().map(Scalar::exact)), 3, Scalar::exact(fraction))?;
+        let pivot = bezier(self.pivot.map(|v| v.to_array().map(Scalar::exact)), 3, Scalar::exact(fraction))?;
+        let (_, q) = rotation.vectors();
+        let rotated = rotate(q, pivot)?;
+        let mut translation = [[0.; 2]; 3];
+        for i in 0..3 {
+            translation[i] = additive[i].sub(rotated[i])?.array();
+        }
+        Ok(Some(RootRigidEnclosure { translation, rotation: rotation.rotation }))
+    }
+
     /// Stored-field spatial velocity enclosure for screw, HOLD, LINEAR or CUBIC spans.
     /// Includes moving-pivot coupling v=a_dot-omega cross a-R*p_dot.
     /// Unsupported interpolation and instantaneous events return None.

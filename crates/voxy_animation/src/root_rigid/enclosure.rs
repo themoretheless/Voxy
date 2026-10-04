@@ -195,6 +195,17 @@ impl RootRigidEnclosure {
             rotation: conjugate.map(Scalar::array),
         })
     }
+    /// Transports an authored-to-body frame between two body-to-world poses,
+    /// preserving its world anchor: B_next*C_next = B_previous*C_previous.
+    /// Includes pose normalization and composition uncertainty retained by the
+    /// enclosure owners. Choosing when an anchor follows input is caller policy.
+    pub fn transported_body_reference(
+        &self,
+        previous_body_to_world: &Self,
+        next_body_to_world: &Self,
+    ) -> Result<Self, AnimationError> {
+        next_body_to_world.inverse()?.compose(&previous_body_to_world.compose(self)?)
+    }
     /// Similarity x_target = scale * frame.rotation * x_source + frame.translation.
     /// Signed uniform scale supports reflection; zero retains shifted rotation.
     /// Encloses all frame conjugation arithmetic, without treating frame bounds

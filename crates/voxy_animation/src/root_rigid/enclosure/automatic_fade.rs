@@ -13,12 +13,21 @@ impl<'a> RootRigidMappedPath<'a> {
         frame: RootRigidTransform,
         scale: f64,
     ) -> Result<Self, AnimationError> {
+        Self::from_enclosed_frame(path, RootRigidEnclosure::from_transform(frame)?, scale)
+    }
+    /// Retains a previously enclosed continuation frame without reducing it to
+    /// a rounded nominal pose. The private enclosure owner supplies validity.
+    pub fn from_enclosed_frame(
+        path: &'a RootRigidPath,
+        frame: RootRigidEnclosure,
+        scale: f64,
+    ) -> Result<Self, AnimationError> {
         if !scale.is_finite() {
             return Err(AnimationError::InvalidRetargetBinding);
         }
         Ok(Self {
             path,
-            frame: RootRigidEnclosure::from_transform(frame)?,
+            frame,
             scale,
         })
     }
@@ -29,6 +38,18 @@ impl<'a> RootRigidMappedPath<'a> {
         index: Option<usize>,
         uncertain: bool,
     ) -> Result<RootRigidFieldInterval, AnimationError> {
+        self.field_between(query, [0., duration], index, uncertain)
+    }
+    fn field_between(
+        self,
+        query: [f64; 2],
+        wall: [f64; 2],
+        index: Option<usize>,
+        uncertain: bool,
+    ) -> Result<RootRigidFieldInterval, AnimationError> {
+        if query[0] < wall[0] || query[1] > wall[1] || query[1] < query[0] {
+            return Err(AnimationError::InvalidSampleTime);
+        }
         let zero = RootRigidTwist {
             linear: DVec3::ZERO,
             angular: DVec3::ZERO,
@@ -36,10 +57,11 @@ impl<'a> RootRigidMappedPath<'a> {
         .enclosure()?;
         let factor = super::twist::retiming_factor_between_times(
             [0., self.path.duration()],
-            [0., duration],
+            wall,
         )?;
         let clip = Scalar(query[0], query[1])
-            .div_interval_positive(Scalar::exact(duration))?
+            .sub(Scalar::exact(wall[0]))?
+            .div_interval_positive(Scalar::exact(wall[1]).sub(Scalar::exact(wall[0]))?)?
             .mul(Scalar::exact(self.path.duration()))?;
         let mut times = [clip.0.max(0.), clip.1.min(self.path.duration())];
         let field = if uncertain {
@@ -98,6 +120,29 @@ impl RootRigidCertifiedFadeInterval {
         angular_tolerance: f64,
         max_spans: usize,
     ) -> Result<Self, AnimationError> {
+        Self::integrate_paths_with_completion(source, target, weights, duration, None,
+            origin_tolerance, angular_tolerance, max_spans)
+    }
+    /// Automatically encloses key crossings in a target-only completion tail.
+    /// Tail domains use complete original fields and share the fade integrator's
+    /// canonical prefix and global error accumulator. The endpoint is a stored
+    /// whole-tick wall time; its difference from fade end is enclosed directly.
+    #[allow(clippy::too_many_arguments)]
+    pub fn integrate_paths_with_completion(
+        source: Option<RootRigidMappedPath<'_>>,
+        target: RootRigidMappedPath<'_>,
+        weights: [f64; 2],
+        duration: f64,
+        completion: Option<(RootRigidMappedPath<'_>, f64)>,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
+    ) -> Result<Self, AnimationError> {
+        if let Some((_, end)) = completion {
+            if !end.is_finite() || end <= duration || weights[1] != 1. {
+                return Err(AnimationError::InvalidAnimationTimeStep);
+            }
+        }
         let frozen = RootRigidPath::from_twists(&[], 0)?;
         let source_path = source.map_or(&frozen, |source| source.path);
         let partition = source_path.partition_wall_outward(target.path, duration, max_spans)?;
@@ -135,6 +180,13 @@ impl RootRigidCertifiedFadeInterval {
         }
         .enclosure()?;
         let field = |index: usize, query| -> Result<RootRigidFadeFieldInterval, AnimationError> {
+            if index >= partition.intervals().len() {
+                let (tail, end) = completion.ok_or(AnimationError::InvalidSampleTime)?;
+                let target = tail.field_between(query, [duration, end], None, true)?;
+                return RootRigidFadeFieldInterval::new(
+                    RootRigidFieldInterval::from_enclosed_domain(zero, query),
+                    target, [0., end], [1., 1.]);
+            }
             let domain = &partition.intervals()[index];
             let source = source
                 .map(|source| {
@@ -146,20 +198,44 @@ impl RootRigidCertifiedFadeInterval {
                 target.field(query, duration, domain.target_span, domain.key_uncertainty)?;
             RootRigidFadeFieldInterval::new(source, target, [0., duration], weights)
         };
-        let approximation = RootRigidPath::integrate_spatial_outward_domains(
-            &intervals,
-            origin_tolerance,
-            angular_tolerance,
-            max_spans,
-            |index, query| {
-                let enclosed = *field(index, query)?.velocity_enclosure();
-                Ok((enclosed.nominal_midpoint(), enclosed))
-            },
-        )?;
+        let base_count = intervals.len();
+        let mut tail_count = usize::from(completion.is_some());
+        let approximation = loop {
+            intervals.truncate(base_count);
+            if let Some((_, end)) = completion {
+                if base_count + tail_count > max_spans.min(MAX_ROOT_ROTATION_SPANS) {
+                    return Err(AnimationError::RootRigidBudget);
+                }
+                let mut previous = duration;
+                for index in 1..=tail_count {
+                    let cut = if index == tail_count { end } else {
+                        duration + (end - duration) * (index as f64 / tail_count as f64)
+                    };
+                    if cut <= previous || cut > end {
+                        return Err(AnimationError::RootRigidBudget);
+                    }
+                    intervals.push((cut, RootRigidIntegrationDomain::WholeField));
+                    previous = cut;
+                }
+            }
+            match RootRigidPath::integrate_spatial_outward_domains(
+                &intervals, origin_tolerance, angular_tolerance, max_spans,
+                |index, query| {
+                    let enclosed = *field(index, query)?.velocity_enclosure();
+                    Ok((enclosed.nominal_midpoint(), enclosed))
+                },
+            ) {
+                Ok(value) => break value,
+                Err(AnimationError::RootRigidBudget) if completion.is_some() => {
+                    tail_count = tail_count.checked_mul(2).ok_or(AnimationError::RootRigidBudget)?;
+                }
+                Err(error) => return Err(error),
+            }
+        };
         let mut fields = Vec::with_capacity(approximation.path.spans().len());
         let mut index = 0;
         for span in approximation.path.spans() {
-            while span.start() >= partition.intervals()[index].end {
+            while span.start() >= intervals[index].0 {
                 index += 1;
             }
             fields.push(field(index, [span.start(), span.end()])?);
@@ -295,5 +371,30 @@ mod paired_tests {
                     .collect::<Vec<_>>()
             )
         );
+    }
+}
+
+#[cfg(test)]
+mod completion_tests {
+    use super::*;
+    #[test]
+    fn automatic_completion_encloses_original_tail_key_with_one_global_budget() {
+        let fade = RootRigidPath::from_twists(&[(RootRigidTwist {
+            linear:DVec3::X*2., angular:DVec3::ZERO,
+        },1.)],1).unwrap();
+        let tail = RootRigidPath::from_twists(&[
+            (RootRigidTwist {linear:DVec3::X*3., angular:DVec3::ZERO},1.),
+            (RootRigidTwist {linear:DVec3::X*6., angular:DVec3::ZERO},2.),
+        ],2).unwrap();
+        let mapped = |path| RootRigidMappedPath::new(path,RootRigidTransform::IDENTITY,1.).unwrap();
+        let result = RootRigidCertifiedFadeInterval::integrate_paths_with_completion(
+            None,mapped(&fade),[0.,1.],1.,Some((mapped(&tail),3.)),0.02,0.01,4096).unwrap();
+        assert_eq!(result.approximation().path.duration(),3.);
+        assert!((result.approximation().path.end_transform().translation.x-16.).abs()
+            <= result.approximation().origin_error_bound);
+        assert!(result.approximation().origin_error_bound<=0.02);
+        assert_eq!(result.coordinate_certificate(1,4096).unwrap().unwrap().error_bound(),0.);
+        assert!(RootRigidCertifiedFadeInterval::integrate_paths_with_completion(
+            None,mapped(&fade),[0.,1.],1.,Some((mapped(&tail),3.)),0.02,0.01,2).is_err());
     }
 }
