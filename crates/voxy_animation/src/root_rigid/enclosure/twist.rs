@@ -221,6 +221,11 @@ impl RootRigidTwistEnclosure {
         if !scale.is_finite() {
             return Err(AnimationError::InvalidRetargetBinding);
         }
+        self.transformed_enclosed_scale(frame, RootUniformScaleEnclosure::from_scale(scale)?)
+    }
+    pub fn transformed_enclosed_scale(
+        &self, frame: &RootRigidEnclosure, scale: RootUniformScaleEnclosure,
+    ) -> Result<Self, AnimationError> {
         let (offset, rotation) = frame.vectors();
         let angular = rotate(rotation, self.angular)?;
         let linear = rotate(rotation, self.linear)?;
@@ -228,9 +233,9 @@ impl RootRigidTwistEnclosure {
         Ok(Self {
             angular,
             linear: [
-                linear[0].mul(Scalar::exact(scale))?.sub(coupling[0])?,
-                linear[1].mul(Scalar::exact(scale))?.sub(coupling[1])?,
-                linear[2].mul(Scalar::exact(scale))?.sub(coupling[2])?,
+                linear[0].mul(scale.value)?.sub(coupling[0])?,
+                linear[1].mul(scale.value)?.sub(coupling[1])?,
+                linear[2].mul(scale.value)?.sub(coupling[2])?,
             ],
         })
     }

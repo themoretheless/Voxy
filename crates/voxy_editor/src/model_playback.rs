@@ -115,6 +115,15 @@ pub(crate) struct PreparedModelFade {
     plan: voxy_animation::RootRigidFadePlan,
 }
 impl PreparedModelFade {
+    pub(crate) fn bind_common_similarity(
+        self, owner: voxy_scene::NodeId,
+        common: voxy_animation::RootRigidEnclosure, scale: voxy_animation::RootUniformScaleEnclosure,
+        origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+    ) -> Result<PreparedModelFadeMotion, String> {
+        let motion = self.plan.integrate_authored_common_similarity_enclosed(common,scale,
+            origin_tolerance, angular_tolerance, max_spans).map_err(|error| error.to_string())?;
+        Ok(PreparedModelFadeMotion {owner, prepared: self, motion})
+    }
     pub(crate) fn bind_motion(
         self,
         owner: voxy_scene::NodeId,
@@ -195,6 +204,17 @@ impl PreparedModelFadeMotion {
     }
 }
 impl ModelPlayback {
+    pub(crate) fn reference_at_current_phase(
+        &self, axes: [bool; 3], current_root_to_body: voxy_animation::RootRigidEnclosure, scale: voxy_animation::RootUniformScaleEnclosure,
+    ) -> Result<voxy_animation::RootRigidEnclosure, String> {
+        let animator = self.animator.as_ref().ok_or("root reference needs a playing clip")?;
+        let factor = animator.root_rigid_phase_factor(axes).map_err(|e|e.to_string())?;
+        let factor = voxy_animation::RootRigidEnclosure::from_transform(factor)
+            .and_then(|factor|factor.with_translation_scale_enclosed(scale)).map_err(|e|e.to_string())?;
+        current_root_to_body.compose(&factor.inverse().map_err(|e|e.to_string())?)
+            .map_err(|e|e.to_string())
+    }
+
     pub(crate) fn prepare_certified_fade(
         &self, dt: f32, axes: [bool; 3], max_spans: usize,
     ) -> Result<Option<PreparedModelFade>, String> {

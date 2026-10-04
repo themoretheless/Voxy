@@ -582,6 +582,29 @@ impl CharacterPhysics {
         scene.local(owner)?;
         Ok(self.states.get(&owner).map(|body| body.state))
     }
+    /// Reads the published solver pose without reconstructing its orientation
+    /// from narrowed scene values. Unstepped, inactive, detached or externally
+    /// edited bodies return None until a new physical tick accepts them.
+    pub fn accepted_pose(
+        &self, scene: &SceneGraph, owner: NodeId,
+    ) -> Result<Option<AcceptedCharacterPose>, PhysicsError> {
+        self.validate_scene(scene)?;
+        let local = scene.local(owner)?;
+        let Some(runtime) = self.states.get(&owner) else { return Ok(None); };
+        if !scene.active_in_hierarchy(owner)?
+            || scene.component::<CharacterBody>(owner)? != Some(&runtime.descriptor)
+            || local.rotation != runtime.published_rotation
+            || translation(scene,owner)? != runtime.published {
+            return Ok(None);
+        }
+        Ok(Some(AcceptedCharacterPose {
+            owner, world_matrix: scene.world_matrix(owner)?,
+            physical_center: precise_center(runtime.state.body),
+            physical_rotation: runtime.orientation,
+            velocity: glam::DVec3::from_array(runtime.state.velocity),
+            grounded: runtime.state.grounded,
+        }))
+    }
     /// Advances all active bodies using named input. All bodies and scene edits
     /// publish together after every solver query succeeds. No character contacts
     /// with other characters are implied. External position/descriptor changes

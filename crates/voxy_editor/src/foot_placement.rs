@@ -190,6 +190,9 @@ pub(super) struct FootRuntime {
     feet: Vec<BoundFoot>,
 }
 impl FootRuntime {
+    pub(super) fn settings(&self) -> &ModelFootPlacement {
+        &self.settings
+    }
     pub(super) fn matches(&self, settings: &ModelFootPlacement) -> bool {
         self.settings.as_ref() == settings
     }

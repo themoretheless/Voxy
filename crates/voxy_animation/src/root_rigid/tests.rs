@@ -1827,6 +1827,10 @@ fn authored_common_frame_uses_both_original_phase_factors() {
     let common = RootRigidTransform {translation:DVec3::new(0.5,0.,-0.25),
         rotation:DQuat::from_rotation_y(0.3)};
     let assembled = plan.integrate_authored_common_frame(common,0.01,0.01,4096).unwrap();
+    let enclosed = plan.integrate_authored_common_enclosure(
+        RootRigidEnclosure::from_transform(common).unwrap(),0.01,0.01,4096).unwrap();
+    assert_eq!(assembled.approximation().path.end_transform(),
+        enclosed.approximation().path.end_transform());
     let explicit = plan.integrate_certified_tick(
         Some(common.compose(plan.source_factor.unwrap()).unwrap()),
         common.compose(plan.target_factor).unwrap(),0.01,0.01,4096).unwrap();
@@ -1882,4 +1886,104 @@ fn transported_body_reference_retains_world_anchor_across_translation_and_turn()
     let again = moved.transported_body_reference(&next,&previous).unwrap();
     for (bounds,value) in previous.compose(&again).unwrap().translation_bounds().into_iter()
         .zip([2.5,1.25,-3.125]) {assert!(bounds[0]<=value && value<=bounds[1]);}
+}
+
+#[test]
+fn transported_common_frame_preserves_fade_and_completion_motion() {
+    let (rig, clip) = linear_turn(Vec3::X * 0.6);
+    let mut animator = Animator::new(clip.clone());
+    animator.advance(&rig, 0.2).unwrap();
+    animator.transition_to_at_phase(clip, 0.125, 0.4).unwrap();
+    let plan = animator.prepare_root_rigid_fade_wall(&rig, 0.15, [true; 3], 256)
+        .unwrap().unwrap();
+    assert!(plan.tail_wall_seconds > 0.);
+    let half_turn = DQuat::from_xyzw(0., 0., 1., 0.);
+    let next_body = RootRigidEnclosure::from_transform(RootRigidTransform {
+        translation: DVec3::new(-1., 2., 0.5), rotation: half_turn,
+    }).unwrap();
+    let transported = RootRigidEnclosure::IDENTITY.transported_body_reference(
+        &RootRigidEnclosure::IDENTITY, &next_body).unwrap();
+    // Independent exact dyadic half-turn inverse. This is the retained authored
+    // frame in the new body coordinates, rather than a reset identity frame.
+    let common = RootRigidTransform {
+        translation: DVec3::new(-1., 2., -0.5), rotation: half_turn,
+    };
+    for (bounds, value) in transported.translation_bounds().into_iter()
+        .zip(common.translation.to_array()) {
+        assert!(bounds[0] <= value && value <= bounds[1]);
+    }
+    let original = plan.integrate_authored_common_frame(
+        RootRigidTransform::IDENTITY, 0.01, 0.01, 4096).unwrap();
+    for scale in [1.,-2.,0.5] {
+    let mapped = plan.integrate_authored_common_similarity(
+        transported, scale, 0.01, 0.01, 4096).unwrap();
+    let reference = original.approximation();
+    let actual = mapped.approximation();
+    let end = reference.path.end_transform();
+    let scaled_end = RootRigidTransform {translation:end.translation*scale,..end};
+    let expected = common.compose(scaled_end).unwrap()
+        .compose(common.inverse().unwrap()).unwrap();
+    // Nominal covariance regression: the certified error bounds cover the two
+    // independent approximations. The small additional allowance covers only
+    // this test's ordinary floating composition, not a runtime error contract.
+    let allowance = actual.origin_error_bound + scale.abs()*reference.origin_error_bound
+        + reference.angular_error_bound * common.translation.length() + 1e-12;
+    assert!(actual.path.end_transform().translation.distance(expected.translation) <= allowance);
+    assert!(actual.path.end_transform().rotation.angle_between(expected.rotation).abs()
+        <= actual.angular_error_bound + reference.angular_error_bound + 1e-12);
+    assert_eq!(actual.path.duration(), 0.15);
+    assert_eq!(animator.normalized_phase(), 0.4);
+    }
+    for scale in [0.,f64::NAN,f64::INFINITY] {
+        assert!(plan.integrate_authored_common_similarity(transported,scale,0.01,0.01,4096).is_err());
+    }
+}
+
+#[test]
+fn phase_reference_factor_is_read_only_and_rejects_blended_anchor_guessing() {
+    let (rig,clip) = linear_turn(Vec3::X*0.6);
+    let mut animator = Animator::new(clip.clone());
+    animator.advance(&rig,0.2).unwrap();
+    let phase = animator.normalized_phase();
+    let factor = animator.root_rigid_phase_factor([true;3]).unwrap();
+    equivalent(factor,clip.root_rigid_curve(0).unwrap().sample(phase,[true;3]).unwrap(),0.);
+    assert_ne!(factor,RootRigidTransform::IDENTITY);
+    let enclosed = RootRigidEnclosure::from_transform(factor).unwrap();
+    let anchored = enclosed.inverse().unwrap().compose(&enclosed).unwrap();
+    for point in [DVec3::ZERO,DVec3::X] {
+        for (bounds,value) in anchored.transform_point(point).unwrap().into_iter().zip(point.to_array()) {
+            assert!(bounds[0]<=value && value<=bounds[1]);
+        }
+    }
+    assert_eq!(animator.normalized_phase(),phase);
+    animator.transition_to_at_phase(clip,0.125,0.4).unwrap();
+    assert_eq!(animator.root_rigid_phase_factor([true;3]).unwrap_err(),
+        AnimationError::RootRotationTransitionUnsupported);
+    assert_eq!(animator.normalized_phase(),0.4);
+}
+
+#[test]
+fn accumulated_scale_products_retain_outward_bounds_through_fade_assembly() {
+    for (group,factors) in [[1.1,-0.3,0.7,-2.],[-1.1,0.3,1e-150,1e150]].into_iter().enumerate() {
+        let mut scale = RootUniformScaleEnclosure::from_scale(1.).unwrap();
+        for (step,factor) in factors.into_iter().enumerate() {
+            scale = scale.multiplied(RootUniformScaleEnclosure::from_scale(factor).unwrap()).unwrap();
+            let bounds = scale.bounds();
+            assert!(bounds[0].is_finite() && bounds[1].is_finite() && bounds[0]<=bounds[1]);
+            // Binary64 bit patterns allow an independent exact rational checker
+            // to verify real products without formatting or epsilon assumptions.
+            eprintln!("scale-product:{group}:{step}:{}:{}:{}",
+                factor.to_bits(),bounds[0].to_bits(),bounds[1].to_bits());
+        }
+        let (rig,clip) = linear_turn(Vec3::X*0.6);
+        let mut animator = Animator::new(clip.clone());
+        animator.advance(&rig,0.2).unwrap();
+        animator.transition_to_at_phase(clip,0.125,0.4).unwrap();
+        let plan = animator.prepare_root_rigid_fade_wall(&rig,0.15,[true;3],256).unwrap().unwrap();
+        let field = plan.integrate_authored_common_similarity_enclosed(
+            RootRigidEnclosure::IDENTITY,scale,0.01,0.01,4096).unwrap();
+        assert_eq!(field.approximation().path.duration(),0.15);
+        assert!(field.approximation().origin_error_bound<=0.01);
+        assert!(field.approximation().angular_error_bound<=0.01);
+    }
 }
