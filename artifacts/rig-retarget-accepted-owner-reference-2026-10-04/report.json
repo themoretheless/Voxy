@@ -1,0 +1,26 @@
+{
+  "scope": "Automatic original-source retarget root reference capture and transport at physical acceptance",
+  "editor_library_passed": 157,
+  "gpu_ignored": 11,
+  "fixture": {
+    "translation_scale": 2.0,
+    "target_parent_scale": [-0.5, 0.5, 0.5],
+    "target_parent_rotation": [0.5, 0.5, 0.5, 0.5],
+    "source_selected_axis": "X",
+    "target_selected_axis": "Y",
+    "fixed_wall_step": 0.0625,
+    "independent_reference_local_translation": [0.25, -1.0, 1.625]
+  },
+  "verified": [
+    "Target-owned ancestor animation does not replace retarget bind ancestry",
+    "Late rejection preserves physical state, displayed frame and absent retained reference",
+    "Retry captures original-source axes, reflected frame and enclosed signed scale",
+    "Subsequent physical movement retains the same world anchor",
+    "Mapped moving source ancestor rejects without replacing retained frame/reference"
+  ],
+  "limitations": [
+    "Retargeted moving owner fades remain disabled pending displayed-pose evaluation qualification",
+    "No GPU or native window run in this turn",
+    "Independent translation and rotation bases still need general field transport"
+  ]
+}

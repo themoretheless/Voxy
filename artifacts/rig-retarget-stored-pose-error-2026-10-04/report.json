@@ -1,0 +1,28 @@
+{
+  "scope": "Conditional ideal rigid retarget pose enclosure and actual f32 matrix point discrepancy for a stored source pose",
+  "animation_library_passed": 196,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "independent_exact_reference": {
+    "ideal_point_coordinate_checks": 288,
+    "actual_discrepancy_axis_checks": 288,
+    "actual_discrepancy_L1_checks": 96,
+    "arithmetic": "Fraction Hamilton products and normalized homogeneous rotation matrices"
+  },
+  "fixture": {
+    "translation_bases": 2,
+    "translation_scales": [0.0, 2.0, 1000000.0],
+    "stored_source_poses": 4,
+    "points_per_pose": 4,
+    "independent_rotation_correction": true,
+    "nonidentity_bind_rotations": true,
+    "actual_evaluator": "RetargetBinding::apply_pose followed by f32 Mat4::transform_point3"
+  },
+  "limitations": [
+    "Conditioned on a stored source pose, not original-source interpolation/blending error",
+    "Not a uniform time-interval retarget evaluation cap",
+    "Scale channels are excluded from the rigid pose certificate",
+    "Ancestor matrix arithmetic and owner scene publication need separate qualification",
+    "Retargeted moving owner fade dispatch remains disabled"
+  ]
+}

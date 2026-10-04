@@ -1,0 +1,3 @@
+Exact retarget pose image checks: 288
+Actual f32 retarget point discrepancy axis checks: 288
+Actual f32 retarget point discrepancy L1 checks: 96

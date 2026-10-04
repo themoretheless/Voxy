@@ -1,0 +1,29 @@
+{
+  "scope": "Exact original stored quaternion similarity admission and compiled source-axis routing",
+  "final_compiled_binding_validation": {
+    "animation_retarget_passed": 10,
+    "editor_retarget_passed": 10,
+    "editor_retarget_gpu_ignored": 1
+  },
+  "library_validation_before_compiled_cache": {
+    "animation_passed": 193,
+    "editor_passed": 156,
+    "editor_gpu_ignored": 11
+  },
+  "oracle": {
+    "kind": "Independent i128 Hamilton products and homogeneous rotation matrix",
+    "dyadic_input_sets": 512,
+    "same_source_target_cancellation_checks": 512
+  },
+  "regressions": [
+    "All eight quarter-turn target masks",
+    "Opposite quaternion signs",
+    "Subnormal product lost by prior f32 rounded basis comparison",
+    "Pose-only mapping remains available for noncoherent rigid channels"
+  ],
+  "limitations": [
+    "Retargeted moving owner fades are still not enabled",
+    "Independent translation and rotation bases require general pose-dependent field transport",
+    "Target parent frame and displayed pose numerical qualification remain separate requirements"
+  ]
+}

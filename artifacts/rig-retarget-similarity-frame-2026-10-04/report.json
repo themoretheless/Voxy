@@ -1,0 +1,24 @@
+{
+  "scope": "Original-input root similarity enclosure and composition through static signed uniform ancestor frames",
+  "animation_library_passed": 195,
+  "editor_library_passed": 156,
+  "default_gpu_ignored": 11,
+  "exact_rational_coordinate_checks": 180,
+  "reference_bases": 5,
+  "reference_translation_scales": [0.25, 2.0, 1000000.0],
+  "reference_points_per_case": 4,
+  "nested_parent_cases": {
+    "ancestor_levels": 2,
+    "first_parent_scales": [0.5, -3.0],
+    "second_parent_scale": -2.0,
+    "points_per_case": 3,
+    "oracle": "Exact signed coordinate permutations"
+  },
+  "limitations": [
+    "Caller must prove target ancestor transforms remain static over the source interval",
+    "Physical owner anchoring is not yet connected for retargeted moving fades",
+    "Displayed retarget pose evaluation discrepancy needs qualification",
+    "Retargeted moving owner fades remain disabled",
+    "Independent translation and rotation bases require general field transport"
+  ]
+}

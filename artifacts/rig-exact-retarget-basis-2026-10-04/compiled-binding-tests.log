@@ -1,0 +1,38 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 37.61s
+     Running unittests src/lib.rs (target/debug/deps/voxy_animation-3e232c2fa92670fb)
+
+running 10 tests
+test retarget::exact_basis::tests::homogeneous_rows_preserve_quarter_turns_and_subnormal_terms ... ok
+test retarget::exact_basis::tests::coherence_rejects_products_that_only_round_to_the_same_quaternion ... ok
+test retarget::tests::quarter_turn_masks_use_original_components_and_reject_rounded_coherence ... ok
+test retarget::tests::bind_pose_and_independently_reconstructed_source_are_admitted ... ok
+test retarget::tests::overflowing_transport_rejects_without_mutating_input_or_poisoning_binding ... ok
+test retarget::tests::malformed_mapping_and_foreign_pose_are_rejected_without_mutation ... ok
+test retarget::tests::pose_only_partial_mapping_does_not_require_the_unused_motion_joint ... ok
+test retarget::tests::bind_relative_channels_preserve_target_proportions_and_drive_its_palette ... ok
+test retarget::tests::partial_masks_route_between_axes_and_match_independently_authored_target_curves ... ok
+test retarget::exact_basis::tests::coherence_matches_integer_hamilton_oracle_for_dyadic_inputs ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 183 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-9307c5efc2715376)
+
+running 11 tests
+test animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ignored, requires a graphics adapter
+test retarget_profile::tests::defaults_round_trip_and_invalid_authoring_never_reaches_compilation ... ok
+test retarget_profile::tests::persisted_names_compile_against_actual_rigs_and_reject_missing_bones ... ok
+test animation_runtime::tests::partial_retarget_child_animation_keeps_unmapped_root_and_rejects_motion_atomically ... ok
+test animation_runtime::tests::retarget_source_clock_produces_target_palette_and_failure_keeps_accepted_frame ... ok
+test retarget_authoring::tests::full_capacity_profiles_fit_the_paged_component_inspector ... ok
+test foot_placement::tests::retargeted_source_clips_keep_target_sole_locked_through_fade_and_budget_retry ... ok
+test retarget_profile::tests::editor_profile_history_round_trip_and_invalid_bone_edit_are_atomic ... ok
+test animation_runtime::rotation_tests::retargeted_pivot_turn_uses_target_origin_and_collision_acceptance ... ok
+test retarget_authoring::tests::source_and_pairs_apply_once_invalid_drafts_cancel_and_history_are_atomic ... ok
+test retarget_profile::tests::source_only_rig_imports_and_survives_package_without_project_files ... ok
+
+test result: ok. 10 passed; 0 failed; 1 ignored; 0 measured; 156 filtered out; finished in 0.06s
+

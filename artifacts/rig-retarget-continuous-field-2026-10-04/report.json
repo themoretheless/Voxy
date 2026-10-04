@@ -1,0 +1,27 @@
+{
+  "scope": "Conditional transport of continuous ideal absolute local pose fields through independent retarget channels",
+  "animation_library_passed": 197,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "independent_oracle": {
+    "whole_interval_coordinate_checks": 72,
+    "interior_endpoint_coordinate_checks": 360,
+    "arithmetic": "Fraction Machin pi bounds and alternating sine/cosine Taylor remainder intervals"
+  },
+  "fixture": {
+    "source": "Original LINEAR quarter-turn plus three-axis translation",
+    "intervals": [[0.125, 0.25], [0.5, 0.625]],
+    "translation_scales": [0.0, 2.0, 1000000.0],
+    "points_per_field": 4,
+    "independent_channel_corrections": true,
+    "bind_initial_translation": "zero",
+    "initial_rotation": "identity"
+  },
+  "limitations": [
+    "Caller must prove absolute pose field source identity and temporal coverage",
+    "Relative root factors cannot generally be substituted for absolute local poses",
+    "Uniform actual floating evaluation discrepancy remains separate from motion range",
+    "Scale channels and final ancestor/owner publication remain separate obligations",
+    "Retargeted moving owner fade dispatch remains disabled"
+  ]
+}

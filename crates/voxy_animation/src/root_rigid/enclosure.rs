@@ -399,6 +399,15 @@ fn compose_components<S: EnclosureArithmetic>(
 }
 
 impl RootRigidEnclosure {
+    /// Combines this translation enclosure with a separately qualified unit
+    /// rotation enclosure. Their independent product may lose correlation but
+    /// includes every original combination; no unchecked quaternion boxes enter.
+    pub fn with_rotation_from(self, rotation: Self) -> Self {
+        Self {
+            rotation: rotation.rotation,
+            ..self
+        }
+    }
     /// Uniform rounding cap for glam 0.33.7 DQuat::normalize on stored f64
     /// inputs in these boxes, relative to exact normalization of those inputs.
     /// Does not include source selection, composition or publication error.
