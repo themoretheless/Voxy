@@ -1,6 +1,6 @@
 //! Outward-rounded small-angle exponential enclosures.
 //! Assumes IEEE-754 round-to-nearest basic operations and gradual underflow.
-//! No platform sin/cos, argument reduction or sampled error estimates are used.
+//! No platform sin/cos/atan or platform argument-reduction assumptions are used.
 use super::*;
 mod compilation;
 mod twist;
@@ -8,11 +8,12 @@ pub(crate) use compilation::{
     quaternion_composition_evaluation_error_bounds, quaternion_composition_uniform_error,
     quaternion_cubic_control_error_bounds, quaternion_cubic_interval_evaluation_error_bounds,
     quaternion_cubic_normalized_error_bounds, quaternion_cubic_phase_evaluation_error_bounds,
-    quaternion_cubic_restriction_error_bounds, quaternion_cubic_source_speed_bound,
-    quaternion_normalization_error_bounds, quaternion_normalized_composition_uniform_error,
-    translation_coefficient_error_bounds, translation_interval_evaluation_error_bounds,
-    translation_phase_evaluation_error_bounds, translation_piece_error_bounds,
-    translation_source_position_bounds, translation_source_velocity_bounds,
+    quaternion_cubic_restriction_error_bounds, quaternion_cubic_source_angular_bounds,
+    quaternion_cubic_source_speed_bound, quaternion_normalization_error_bounds,
+    quaternion_normalized_composition_uniform_error, translation_coefficient_error_bounds,
+    translation_interval_evaluation_error_bounds, translation_phase_evaluation_error_bounds,
+    translation_piece_error_bounds, translation_source_position_bounds,
+    translation_source_velocity_bounds,
 };
 mod accumulation;
 mod automatic_fade;
@@ -20,20 +21,26 @@ mod cache;
 mod coordinate;
 mod cubic;
 mod fade;
+mod fade_point;
 mod integrated_fade;
+mod linear_source;
 mod path_field;
 mod points;
 mod rates;
+mod source_fade;
+pub(crate) use linear_source::source_linear_angular_bounds;
 mod wall_partition;
 pub use accumulation::RootRigidErrorAccumulator;
 pub use automatic_fade::RootRigidMappedPath;
 pub use cache::RootScrewEnclosurePath;
 pub use coordinate::RootRigidCoordinateCertificate;
 pub use fade::{RootRigidFadeFieldInterval, RootRigidFieldInterval};
+pub use fade_point::RootRigidFadePointCertificate;
 pub use integrated_fade::{
     RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidMappedField,
 };
 pub use rates::RootAngularDerivativeBounds;
+pub use source_fade::RootRigidSourceField;
 pub use twist::{RootRigidTwistEnclosure, RootTwistErrorBounds};
 pub use wall_partition::{RootRigidWallInterval, RootRigidWallPartition};
 
@@ -871,7 +878,80 @@ mod tests {
 }
 
 impl RootRigidCurve {
-    /// Source point-speed cap for one translation/cubic-rotation key interval.
+    /// Spatial velocity of the exact source pose on one continuous local key interval.
+    /// For a pose `(t, Q)`, this bounds `omega` and `v = t' - omega cross t`.
+    /// Key endpoints use one-sided derivatives; isolated velocity changes do
+    /// not change the integrated continuous pose. Pose STEP impulses reject.
+    /// Loop prefixes, retiming and fixed-frame adjoints must be applied separately.
+    pub fn source_phase_twist_enclosure(
+        &self,
+        times: [f64; 2],
+        axes: [bool; 3],
+    ) -> Result<Option<RootRigidTwistEnclosure>, AnimationError> {
+        let Some(pose) = self.source_phase_interval_enclosure(times, axes)? else {
+            return Ok(None);
+        };
+        if self.0.rotation.source_rotation_is_constant() {
+            let velocity = self
+                .0
+                .translation
+                .source_velocity_bounds(times[0], times[1])?;
+            return Ok(Some(RootRigidTwistEnclosure::from_parts(
+                std::array::from_fn(|i| {
+                    if axes[i] {
+                        Scalar(velocity[i][0], velocity[i][1])
+                    } else {
+                        Scalar::exact(0.)
+                    }
+                }),
+                [Scalar::exact(0.); 3],
+            )));
+        }
+        let Some(angular_bounds) = self
+            .0
+            .rotation
+            .cubic_source_angular_velocity_bounds(times[0], times[1])?
+        else {
+            return Ok(None);
+        };
+        let angular = angular_bounds.map(|v| Scalar(v[0], v[1]));
+        let velocity = self
+            .0
+            .translation
+            .source_velocity_bounds(times[0], times[1])?
+            .map(|v| Scalar(v[0], v[1]));
+        let position = self
+            .0
+            .translation
+            .source_position_bounds(times[0], times[1])?;
+        let mut adjusted = [Scalar::exact(0.); 3];
+        let mut pivot_velocity = velocity;
+        for i in 0..3 {
+            adjusted[i] = Scalar(position[i][0], position[i][1]);
+            if axes[i] {
+                adjusted[i] = adjusted[i].add(Scalar::exact(self.0.bind[i]))?;
+                pivot_velocity[i] = Scalar::exact(0.);
+            } else {
+                adjusted[i] = adjusted[i].add(Scalar::exact(self.0.origin[i]))?;
+            }
+        }
+        // t=a-Q*b: t'=a'-omega cross (Q*b)-Q*b'.
+        // Subtracting omega cross t cancels the pivot position exactly:
+        // v=p'-Q*b'-omega cross a. Keep that cancellation before interval
+        // arithmetic to preserve signed translation derivatives.
+        let rotated = rotate(
+            pose.rotation_bounds().map(|q| Scalar(q[0], q[1])),
+            pivot_velocity,
+        )?;
+        let coupling = cross(angular, adjusted)?;
+        let mut linear = velocity;
+        for i in 0..3 {
+            linear[i] = linear[i].sub(rotated[i])?.sub(coupling[i])?;
+        }
+        Ok(Some(RootRigidTwistEnclosure::from_parts(linear, angular)))
+    }
+
+    /// Source point-speed cap for one translation/cubic-or-constant-rotation interval.
     /// Includes extraction masks and moving pivots; no loop-prefix or parent-frame proof.
     /// Radius bounds the fixed authored point relative to the local frame origin.
     pub fn source_point_speed_bound(
@@ -945,29 +1025,37 @@ impl RootRigidCurve {
 
 impl RootRigidCurve {
     /// Source factor at an exact local phase, including the extraction pivot.
-    /// Cubic rotation only; the enclosure represents real unit rotations.
+    /// Cubic or proved constant rotation; represents real unit rotations.
     pub fn source_phase_enclosure(
         &self,
         phase: f64,
         axes: [bool; 3],
     ) -> Result<Option<RootRigidEnclosure>, AnimationError> {
-        let position = self.0.translation.source_position_bounds(phase, phase)?;
-        let Some(error) = self
-            .0
-            .rotation
-            .cubic_relative_phase_evaluation_error_bounds(phase)?
-        else {
-            return Ok(None);
-        };
-        let q = self.0.rotation.phase_rotation(phase)?.to_array();
-        let mut rotation = [Scalar::exact(0.); 4];
-        for i in 0..4 {
-            rotation[i] = if error[i] == 0. {
-                Scalar::exact(q[i])
-            } else {
-                Scalar::exact(q[i]).add(Scalar(-error[i], error[i]))?
-            };
+        if !phase.is_finite() || phase < 0. || phase > self.0.duration {
+            return Err(AnimationError::InvalidSampleTime);
         }
+        let position = self.0.translation.source_position_bounds(phase, phase)?;
+        let rotation = if self.0.rotation.source_rotation_is_constant() {
+            [0., 0., 0., 1.].map(Scalar::exact)
+        } else {
+            let Some(error) = self
+                .0
+                .rotation
+                .cubic_relative_phase_evaluation_error_bounds(phase)?
+            else {
+                return Ok(None);
+            };
+            let q = self.0.rotation.phase_rotation(phase)?.to_array();
+            let mut rotation = [Scalar::exact(0.); 4];
+            for i in 0..4 {
+                rotation[i] = if error[i] == 0. {
+                    Scalar::exact(q[i])
+                } else {
+                    Scalar::exact(q[i]).add(Scalar(-error[i], error[i]))?
+                };
+            }
+            rotation
+        };
         let mut adjusted = [Scalar::exact(0.); 3];
         let mut pivot = [Scalar::exact(0.); 3];
         for i in 0..3 {
@@ -1158,18 +1246,75 @@ impl RootRigidCurve {
 }
 
 impl RootRigidCurve {
-    /// Uniform source-motion cells split at both channels' keys and loop seams.
-    /// Nonrepresentable authored boundaries reject rather than moving an event.
-    pub fn source_delta_partition(
+    /// Exact source spatial field relative to a fixed source reference.
+    /// Includes every loop prefix and both channels' key domains. The returned
+    /// hull covers the whole interval, without a derivative or axis constraint.
+    /// STEP impulses reject; clamp completion tails have zero velocity.
+    pub fn source_delta_twist_enclosure(
         &self,
         reference: f64,
         times: [f64; 2],
         axes: [bool; 3],
         limit: usize,
-    ) -> Result<Option<Vec<([f64; 2], RootRigidEnclosure)>>, AnimationError> {
-        if !reference.is_finite()
-            || reference < 0.
-            || reference > times[0]
+    ) -> Result<Option<RootRigidTwistEnclosure>, AnimationError> {
+        if !reference.is_finite() || reference < 0. || reference > times[0] {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let cuts = self.source_partition_cuts(times, limit)?;
+        let Some(initial) = self.source_sample_enclosure(reference, axes)? else {
+            return Ok(None);
+        };
+        let inverse = initial.inverse()?;
+        let zero = RootRigidTwist {
+            linear: DVec3::ZERO,
+            angular: DVec3::ZERO,
+        }
+        .enclosure()?;
+        let mut result: Option<RootRigidTwistEnclosure> = None;
+        // A point domain retains its source derivative; wall retiming supplies
+        // the zero clock rate for paused playback.
+        let cells = if times[0] == times[1] {
+            vec![times]
+        } else {
+            cuts.windows(2).map(|cell| [cell[0], cell[1]]).collect()
+        };
+        for cell in cells {
+            let field = if self.0.playback == Playback::Clamp && cell[0] >= self.0.duration {
+                zero
+            } else {
+                let phases = crate::root_clock::root_segment_phases(
+                    cell[0],
+                    cell[1],
+                    self.0.duration as f32,
+                    self.0.playback,
+                )?;
+                let Some(local) = self.source_phase_twist_enclosure(phases, axes)? else {
+                    return Ok(None);
+                };
+                let clock = crate::enclose_root_cycle_phase(
+                    cell[0],
+                    self.0.duration as f32,
+                    self.0.playback,
+                )?;
+                let Some(prefix) = self.source_cycle_prefix_enclosure(clock.cycle(), axes)? else {
+                    return Ok(None);
+                };
+                local.transformed(&inverse.compose(&prefix)?, 1.)?
+            };
+            result = Some(match result {
+                Some(previous) => previous.hull(&field),
+                None => field,
+            });
+        }
+        Ok(result)
+    }
+
+    fn source_partition_cuts(
+        &self,
+        times: [f64; 2],
+        limit: usize,
+    ) -> Result<Vec<f64>, AnimationError> {
+        if times.into_iter().any(|v| !v.is_finite() || v < 0.)
             || times[1] < times[0]
             || limit == 0
             || limit > MAX_ROOT_ROTATION_SPANS
@@ -1226,6 +1371,22 @@ impl RootRigidCurve {
         if cuts.len() - 1 > limit {
             return Err(AnimationError::RootRigidBudget);
         }
+        Ok(cuts)
+    }
+
+    /// Uniform source-motion cells split at both channels' keys and loop seams.
+    /// Nonrepresentable authored boundaries reject rather than moving an event.
+    pub fn source_delta_partition(
+        &self,
+        reference: f64,
+        times: [f64; 2],
+        axes: [bool; 3],
+        limit: usize,
+    ) -> Result<Option<Vec<([f64; 2], RootRigidEnclosure)>>, AnimationError> {
+        if !reference.is_finite() || reference < 0. || reference > times[0] {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let cuts = self.source_partition_cuts(times, limit)?;
         let mut result = Vec::with_capacity(cuts.len() - 1);
         for cell in cuts.windows(2) {
             let times = [cell[0], cell[1]];

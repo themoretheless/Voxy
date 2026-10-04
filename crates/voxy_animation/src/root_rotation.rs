@@ -31,6 +31,7 @@ impl Shape {
 #[derive(Debug)]
 struct Knot {
     time: f64,
+    source: [f32; 4],
     value: DQuat,
     shape: Shape,
 }
@@ -44,6 +45,7 @@ struct Curve {
     origin: DQuat,
     cycle: DQuat,
     constant: bool,
+    source_constant: bool,
     key_normalization_error: [f64; 4],
     cubic_control_error: Option<[f64; 4]>,
 }
@@ -505,6 +507,18 @@ impl RootRotationCurve {
             return Err(AnimationError::RootRotationBudget);
         }
         let fallback_source = fallback.to_array().map(f64::from);
+        // Products of finite f32 components are exact normal f64 values
+        // (at most 48 significant bits). Pairwise cross products therefore
+        // prove proportional authored quaternions without a tolerance.
+        let source_constant = keys.is_empty()
+            || (mode != Interpolation::CubicSpline
+                && keys.first().is_some_and(|first| {
+                    let a = first.value.to_array().map(f64::from);
+                    keys.iter().all(|key| {
+                        let b = key.value.to_array().map(f64::from);
+                        (0..4).all(|i| (0..4).all(|j| a[i] * b[j] == a[j] * b[i]))
+                    })
+                }));
         let fallback = double(fallback);
         let mut key_normalization_error = crate::root_rigid::quaternion_normalization_error_bounds(
             fallback_source,
@@ -566,6 +580,7 @@ impl RootRotationCurve {
                 }
             }
             knots.push(Knot {
+                source: key.value.to_array(),
                 time: f64::from(key.time),
                 value,
                 shape,
@@ -590,9 +605,15 @@ impl RootRotationCurve {
             origin,
             cycle: (end * origin.conjugate()).normalize(),
             constant,
+            source_constant,
             key_normalization_error,
             cubic_control_error,
         })))
+    }
+
+    /// Exact authored orientation constancy, independent of rounded cache logs.
+    pub(super) fn source_rotation_is_constant(&self) -> bool {
+        self.0.source_constant
     }
 
     /// Enclosed errors of normalization from stored keys and bind fallback.
@@ -632,13 +653,13 @@ impl RootRotationCurve {
     pub(super) fn phase_key_times(&self) -> impl Iterator<Item = f64> + '_ {
         self.0.knots.iter().map(|k| k.time)
     }
-    /// Exact-source angular speed on a single cubic key interval. Uses a whole-key
-    /// Bernstein bound; returns None for other interpolation modes.
-    pub fn cubic_source_angular_speed_bound(
+    /// Source-key short-arc spatial angular velocity, including normalization
+    /// and angle enclosure. Cached quaternion logs are not used as proof.
+    pub fn linear_source_angular_velocity_bounds(
         &self,
         start: f64,
         end: f64,
-    ) -> Result<Option<f64>, AnimationError> {
+    ) -> Result<Option<[[f64; 2]; 3]>, AnimationError> {
         if !start.is_finite()
             || !end.is_finite()
             || start < 0.
@@ -647,7 +668,45 @@ impl RootRotationCurve {
         {
             return Err(AnimationError::InvalidSampleTime);
         }
-        let Some(error) = self.0.cubic_control_error else {
+        if self.0.mode != Interpolation::Linear {
+            return Ok(None);
+        }
+        if self.0.source_constant {
+            return Ok(Some([[0.; 2]; 3]));
+        }
+        let upper = self.0.knots.partition_point(|k| k.time <= start);
+        if upper == 0 {
+            if self.0.knots.first().is_some_and(|k| end > k.time) {
+                return Err(AnimationError::InvalidSampleTime);
+            }
+            return Ok(Some([[0.; 2]; 3]));
+        }
+        let knot = &self.0.knots[upper - 1];
+        let Some(next) = self.0.knots.get(upper) else {
+            return Ok(Some([[0.; 2]; 3]));
+        };
+        if end > next.time {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        Ok(Some(crate::root_rigid::source_linear_angular_bounds(
+            [knot.source, next.source],
+            [knot.time, next.time],
+        )?))
+    }
+    fn source_cubic_inputs(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<Option<([[f64; 4]; 4], [f64; 2])>, AnimationError> {
+        if !start.is_finite()
+            || !end.is_finite()
+            || start < 0.
+            || end < start
+            || end > self.0.duration
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(_) = self.0.cubic_control_error else {
             return Ok(None);
         };
         let upper = self.0.knots.partition_point(|k| k.time <= start);
@@ -655,23 +714,71 @@ impl RootRotationCurve {
             if self.0.knots.first().is_some_and(|k| end > k.time) {
                 return Err(AnimationError::InvalidSampleTime);
             }
-            return Ok(Some(0.));
+            return Ok(None);
         }
         let knot = &self.0.knots[upper - 1];
         let Some(next) = self.0.knots.get(upper) else {
-            return Ok(Some(0.));
+            return Ok(None);
         };
         if end > next.time {
             return Err(AnimationError::InvalidSampleTime);
         }
         let Shape::Cubic(control) = &knot.shape else {
+            return Ok(None);
+        };
+        Ok(Some((
+            control.map(|q| q.to_array()),
+            [knot.time, next.time],
+        )))
+    }
+
+    /// Exact-source angular speed on a single cubic key interval. Uses a whole-key
+    /// Bernstein bound; proved constant channels of any mode return zero.
+    /// Moving noncubic channels return None.
+    pub fn cubic_source_angular_speed_bound(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<Option<f64>, AnimationError> {
+        let inputs = self.source_cubic_inputs(start, end)?;
+        if self.0.source_constant {
+            return Ok(Some(0.));
+        }
+        let Some(error) = self.0.cubic_control_error else {
+            return Ok(None);
+        };
+        let Some((control, keys)) = inputs else {
             return Ok(Some(0.));
         };
         Ok(Some(
-            crate::root_rigid::quaternion_cubic_source_speed_bound(
-                control.map(|q| q.to_array()),
+            crate::root_rigid::quaternion_cubic_source_speed_bound(control, error, keys)?,
+        ))
+    }
+
+    /// Spatial angular velocity of the exact normalized authored cubic.
+    /// Includes source control compilation error; right normalization by the
+    /// fixed origin rotation does not change this spatial velocity.
+    pub fn cubic_source_angular_velocity_bounds(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<Option<[[f64; 2]; 3]>, AnimationError> {
+        let inputs = self.source_cubic_inputs(start, end)?;
+        if self.0.source_constant {
+            return Ok(Some([[0.; 2]; 3]));
+        }
+        let Some(error) = self.0.cubic_control_error else {
+            return Ok(None);
+        };
+        let Some((control, keys)) = inputs else {
+            return Ok(Some([[0.; 2]; 3]));
+        };
+        Ok(Some(
+            crate::root_rigid::quaternion_cubic_source_angular_bounds(
+                control,
                 error,
-                [knot.time, next.time],
+                keys,
+                [start, end],
             )?,
         ))
     }

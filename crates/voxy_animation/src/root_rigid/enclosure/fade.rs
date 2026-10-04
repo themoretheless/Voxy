@@ -7,6 +7,57 @@ pub struct RootRigidFieldInterval {
     wall_times: [f64; 2],
 }
 impl RootRigidFieldInterval {
+    /// Whole original-clock source domain, including keys, loop prefixes and
+    /// clamp tails. Uses one fixed reference and one common frame throughout.
+    /// Hull aggregation encloses key timing even when retimed cuts round.
+    pub fn from_source_domain(
+        source: &RootRigidCurve,
+        reference: f64,
+        clip_times: [f64; 2],
+        axes: [bool; 3],
+        wall_times: [f64; 2],
+        frame: &RootRigidEnclosure,
+        scale: RootUniformScaleEnclosure,
+        limit: usize,
+    ) -> Result<Option<Self>, AnimationError> {
+        super::twist::retiming_factor_between_times(clip_times, wall_times)?;
+        let Some(field) =
+            source.source_delta_twist_enclosure(reference, clip_times, axes, limit)?
+        else {
+            return Ok(None);
+        };
+        Ok(Some(Self::from_enclosed_domain(
+            field
+                .retimed_between_times(clip_times, wall_times)?
+                .transformed_enclosed_scale(frame, scale)?,
+            wall_times,
+        )))
+    }
+
+    /// Exact authored source field on one continuous local key interval.
+    /// The fixed frame must enclose a real unit rotation; scale is a proved
+    /// nonzero signed similarity. Loop prefixes must be included in that frame.
+    /// This does not certify floating-point playback or an integrated fade path.
+    pub fn from_source_phase(
+        source: &RootRigidCurve,
+        phase_times: [f64; 2],
+        axes: [bool; 3],
+        wall_times: [f64; 2],
+        frame: &RootRigidEnclosure,
+        scale: RootUniformScaleEnclosure,
+    ) -> Result<Option<Self>, AnimationError> {
+        super::twist::retiming_factor_between_times(phase_times, wall_times)?;
+        let Some(field) = source.source_phase_twist_enclosure(phase_times, axes)? else {
+            return Ok(None);
+        };
+        Ok(Some(Self::from_enclosed_domain(
+            field
+                .retimed_between_times(phase_times, wall_times)?
+                .transformed_enclosed_scale(frame, scale)?,
+            wall_times,
+        )))
+    }
+
     pub(super) fn from_enclosed_domain(
         field: RootRigidTwistEnclosure,
         wall_times: [f64; 2],

@@ -19,12 +19,12 @@ pub use root_rigid::{
     RootAngularDerivativeBounds, RootMotionInterval, RootMotionPartition, RootMotionStep,
     RootRigidApproximation, RootRigidCertifiedFadeInterval, RootRigidCoordinateCertificate,
     RootRigidCurve, RootRigidEnclosure, RootRigidErrorAccumulator, RootRigidFadeDomain,
-    RootRigidFadeFieldInterval, RootRigidFieldInterval, RootRigidIntegrationDomain,
-    RootRigidMappedField, RootRigidMappedPath, RootRigidPath, RootRigidSpan, RootRigidTransform,
-    RootRigidTwist, RootRigidTwistEnclosure, RootRigidVelocity, RootRigidWallInterval,
-    RootRigidWallPartition, RootScrewEnclosurePath, RootSourceScrewPointCertificate,
-    RootSpatialTwistBounds, RootTimeCutEnclosure, RootTwistErrorBounds, RootTwistRateBounds,
-    RootUniformScaleEnclosure,
+    RootRigidFadeFieldInterval, RootRigidFadePointCertificate, RootRigidFieldInterval,
+    RootRigidIntegrationDomain, RootRigidMappedField, RootRigidMappedPath, RootRigidPath,
+    RootRigidSourceField, RootRigidSpan, RootRigidTransform, RootRigidTwist,
+    RootRigidTwistEnclosure, RootRigidVelocity, RootRigidWallInterval, RootRigidWallPartition,
+    RootScrewEnclosurePath, RootSourceScrewPointCertificate, RootSpatialTwistBounds,
+    RootTimeCutEnclosure, RootTwistErrorBounds, RootTwistRateBounds, RootUniformScaleEnclosure,
 };
 mod root_rotation;
 pub use root_rotation::{
