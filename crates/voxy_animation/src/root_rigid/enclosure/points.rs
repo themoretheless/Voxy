@@ -206,15 +206,14 @@ impl RootRigidEnclosure {
     /// world box as IEEE-754 round-to-nearest f32. Does not cover earlier point
     /// evaluation arithmetic. A caller may supply a whole-tick world enclosure.
     pub fn enclosed_f32_publication_error(
-        world: [[f64;2];3],
-    ) -> Result<([f64;3],f64),AnimationError> {
-        let mut axes = [0.;3];
+        world: [[f64; 2]; 3],
+    ) -> Result<([f64; 3], f64), AnimationError> {
+        let mut axes = [0.; 3];
         let mut radius = Scalar::exact(0.);
         for axis in 0..3 {
-            let [lo,hi] = world[axis];
+            let [lo, hi] = world[axis];
             let magnitude = lo.abs().max(hi.abs());
-            if !lo.is_finite() || !hi.is_finite() || lo > hi
-                || magnitude > f64::from(f32::MAX) {
+            if !lo.is_finite() || !hi.is_finite() || lo > hi || magnitude > f64::from(f32::MAX) {
                 return Err(AnimationError::NumericalOverflow);
             }
             axes[axis] = if lo == hi {
@@ -222,18 +221,20 @@ impl RootRigidEnclosure {
                 delta.0.abs().max(delta.1.abs())
             } else {
                 let mut upper = magnitude as f32;
-                if f64::from(upper) < magnitude { upper = upper.next_up(); }
+                if f64::from(upper) < magnitude {
+                    upper = upper.next_up();
+                }
                 // One full adjacent spacing bounds nearest rounding across all
                 // smaller magnitudes, including subnormals and binade changes.
                 if upper == f32::MAX {
-                    f64::from(upper)-f64::from(upper.next_down())
+                    f64::from(upper) - f64::from(upper.next_down())
                 } else {
-                    f64::from(upper.next_up())-f64::from(upper)
+                    f64::from(upper.next_up()) - f64::from(upper)
                 }
             };
             radius = radius.add(Scalar::exact(axes[axis]))?;
         }
-        Ok((axes,radius.1))
+        Ok((axes, radius.1))
     }
 
     /// Bounds the discrepancy between the exact enclosed similarity image and
@@ -242,19 +243,24 @@ impl RootRigidEnclosure {
     /// Euclidean discrepancy. This certifies this point/pose only, not all times
     /// in a trajectory or upstream curve compilation.
     pub fn enclosed_point_evaluation_error(
-        &self, point: [[f64;2];3], scale: f64, evaluated: DVec3,
-    ) -> Result<([f64;3],f64),AnimationError> {
-        if !evaluated.is_finite() { return Err(AnimationError::NumericalOverflow); }
-        let image = self.similarity_point_box_bounds(point,scale)?;
-        let mut axes = [0.;3];
+        &self,
+        point: [[f64; 2]; 3],
+        scale: f64,
+        evaluated: DVec3,
+    ) -> Result<([f64; 3], f64), AnimationError> {
+        if !evaluated.is_finite() {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let image = self.similarity_point_box_bounds(point, scale)?;
+        let mut axes = [0.; 3];
         let mut radius = Scalar::exact(0.);
         for axis in 0..3 {
-            let delta = Scalar(image[axis][0],image[axis][1])
-                .sub(Scalar::exact(evaluated[axis]))?;
+            let delta =
+                Scalar(image[axis][0], image[axis][1]).sub(Scalar::exact(evaluated[axis]))?;
             axes[axis] = delta.0.abs().max(delta.1.abs());
             radius = radius.add(Scalar::exact(axes[axis]))?;
         }
-        Ok((axes,radius.1))
+        Ok((axes, radius.1))
     }
 
     /// Outward image of every point in a coordinate box under this rigid frame.
@@ -289,20 +295,40 @@ impl RootRigidEnclosure {
 
 impl RootRigidEnclosure {
     /// Inverse point-box image through a fixed signed uniform similarity.
-    pub fn inverse_similarity_point_box_bounds_enclosed(&self,point:[[f64;2];3],
-        scale:RootUniformScaleEnclosure)->Result<[[f64;2];3],AnimationError> {
-        if !scale.invertible() || point.iter().any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+    pub fn inverse_similarity_point_box_bounds_enclosed(
+        &self,
+        point: [[f64; 2]; 3],
+        scale: RootUniformScaleEnclosure,
+    ) -> Result<[[f64; 2]; 3], AnimationError> {
+        if !scale.invertible()
+            || point
+                .iter()
+                .any(|v| !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1])
+        {
             return Err(AnimationError::InvalidRetargetBinding);
         }
-        let (translation,q)=self.vectors();
-        let mut difference=point.map(|v|Scalar(v[0],v[1]));
-        for axis in 0..3 {difference[axis]=difference[axis].sub(translation[axis])?;}
-        let inverse=[Scalar(-q[0].1,-q[0].0),Scalar(-q[1].1,-q[1].0),Scalar(-q[2].1,-q[2].0),q[3]];
-        let mut source=rotate(inverse,difference)?;
-        let positive=if scale.value.0>0. {scale.value} else {Scalar(-scale.value.1,-scale.value.0)};
+        let (translation, q) = self.vectors();
+        let mut difference = point.map(|v| Scalar(v[0], v[1]));
+        for axis in 0..3 {
+            difference[axis] = difference[axis].sub(translation[axis])?;
+        }
+        let inverse = [
+            Scalar(-q[0].1, -q[0].0),
+            Scalar(-q[1].1, -q[1].0),
+            Scalar(-q[2].1, -q[2].0),
+            q[3],
+        ];
+        let mut source = rotate(inverse, difference)?;
+        let positive = if scale.value.0 > 0. {
+            scale.value
+        } else {
+            Scalar(-scale.value.1, -scale.value.0)
+        };
         for axis in &mut source {
-            *axis=axis.div_interval_positive(positive)?;
-            if scale.value.1<0. {*axis=Scalar(-axis.1,-axis.0);}
+            *axis = axis.div_interval_positive(positive)?;
+            if scale.value.1 < 0. {
+                *axis = Scalar(-axis.1, -axis.0);
+            }
         }
         Ok(source.map(Scalar::array))
     }
@@ -310,14 +336,22 @@ impl RootRigidEnclosure {
 
 impl RootRigidEnclosure {
     /// Exact enclosed similarity image; floating point evaluation is separate.
-    pub fn similarity_point_box_bounds_enclosed(&self,point:[[f64;2];3],scale:RootUniformScaleEnclosure)
-        ->Result<[[f64;2];3],AnimationError> {
-        if point.iter().any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+    pub fn similarity_point_box_bounds_enclosed(
+        &self,
+        point: [[f64; 2]; 3],
+        scale: RootUniformScaleEnclosure,
+    ) -> Result<[[f64; 2]; 3], AnimationError> {
+        if point
+            .iter()
+            .any(|v| !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1])
+        {
             return Err(AnimationError::NumericalOverflow);
         }
-        let (translation,rotation)=self.vectors();
-        let mut result=rotate(rotation,point.map(|v|Scalar(v[0],v[1])))?;
-        for axis in 0..3 {result[axis]=result[axis].mul(scale.value)?.add(translation[axis])?;}
+        let (translation, rotation) = self.vectors();
+        let mut result = rotate(rotation, point.map(|v| Scalar(v[0], v[1])))?;
+        for axis in 0..3 {
+            result[axis] = result[axis].mul(scale.value)?.add(translation[axis])?;
+        }
         Ok(result.map(Scalar::array))
     }
 }

@@ -1,19 +1,31 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
-mod root_curve;
 mod root_clock;
-pub use root_clock::{RootCyclePhase,enclose_root_cycle_phase};
+mod root_curve;
+pub use root_clock::{RootCyclePhase, enclose_root_cycle_phase};
 mod ik;
 mod retarget;
 pub use retarget::{RetargetBinding, RetargetJoint};
 mod blend_phase;
-pub use blend_phase::{ClipPhase, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval, FrozenSourceTick};
+pub use blend_phase::{
+    ClipPhase, FrozenSourceTick, PoseBlendPhases, PoseBlendSource, SourcePhaseInterval,
+};
 
 pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::RootRigidFadePlan;
 mod root_rigid;
-pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform, RootRigidVelocity, RootRigidTwist, RootRigidApproximation, RootTwistRateBounds, RootRigidIntegrationDomain, RootMotionInterval, RootMotionStep, RootMotionPartition, RootSpatialTwistBounds, RootRigidEnclosure, RootUniformScaleEnclosure, RootTimeCutEnclosure, RootSourceScrewPointCertificate, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
+pub use root_rigid::{
+    RootAngularDerivativeBounds, RootMotionInterval, RootMotionPartition, RootMotionStep,
+    RootRigidApproximation, RootRigidCertifiedFadeInterval, RootRigidCoordinateCertificate,
+    RootRigidCurve, RootRigidEnclosure, RootRigidErrorAccumulator, RootRigidFadeDomain,
+    RootRigidFadeFieldInterval, RootRigidFieldInterval, RootRigidIntegrationDomain,
+    RootRigidMappedField, RootRigidMappedPath, RootRigidPath, RootRigidSpan, RootRigidTransform,
+    RootRigidTwist, RootRigidTwistEnclosure, RootRigidVelocity, RootRigidWallInterval,
+    RootRigidWallPartition, RootScrewEnclosurePath, RootSourceScrewPointCertificate,
+    RootSpatialTwistBounds, RootTimeCutEnclosure, RootTwistErrorBounds, RootTwistRateBounds,
+    RootUniformScaleEnclosure,
+};
 mod root_rotation;
 pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,
@@ -341,18 +353,36 @@ impl AnimationClip {
             })
             .collect::<Vec<_>>()
             .into();
-        let constant_translations = skeleton.joints.iter().zip(&tracks).zip(&interpolation).zip(&tangents)
-            .map(|(((joint, track), mode), tangents)| constant_vec_channel(
-                &track.translations, joint.bind_local.translation, mode.translation, &tangents.translation,
-            )).collect::<Vec<_>>().into();
+        let constant_translations = skeleton
+            .joints
+            .iter()
+            .zip(&tracks)
+            .zip(&interpolation)
+            .zip(&tangents)
+            .map(|(((joint, track), mode), tangents)| {
+                constant_vec_channel(
+                    &track.translations,
+                    joint.bind_local.translation,
+                    mode.translation,
+                    &tangents.translation,
+                )
+            })
+            .collect::<Vec<_>>()
+            .into();
         Ok(Self {
             constant_translations,
             constant_transforms,
             rig: skeleton.joints.clone(),
             root_curve,
             motion_cache_keys: Arc::new(AtomicUsize::new(tracks[0].translations.len())),
-            motion_curves: (0..tracks.len()).map(|_| OnceLock::new()).collect::<Vec<_>>().into(),
-            rigid_curves: (0..tracks.len()).map(|_| OnceLock::new()).collect::<Vec<_>>().into(),
+            motion_curves: (0..tracks.len())
+                .map(|_| OnceLock::new())
+                .collect::<Vec<_>>()
+                .into(),
+            rigid_curves: (0..tracks.len())
+                .map(|_| OnceLock::new())
+                .collect::<Vec<_>>()
+                .into(),
             rotation_curves: (0..tracks.len())
                 .map(|_| OnceLock::new())
                 .collect::<Vec<_>>()
@@ -392,16 +422,30 @@ impl AnimationClip {
 
     fn motion_curve(&self, joint: u16) -> Result<Arc<root_curve::RootCurve>, AnimationError> {
         let i = usize::from(joint);
-        let slot = self.motion_curves.get(i).ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
-        if joint == 0 { return Ok(self.root_curve.clone()); }
+        let slot = self
+            .motion_curves
+            .get(i)
+            .ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        if joint == 0 {
+            return Ok(self.root_curve.clone());
+        }
         slot.get_or_init(|| {
             let keys = self.tracks[i].translations.len();
-            self.motion_cache_keys.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |used| {
-                used.checked_add(keys).filter(|total| *total <= MAX_ROOT_TRANSLATION_CACHE_KEYS)
-            }).map_err(|_| AnimationError::RootMotionBudget)?;
-            Ok(Arc::new(root_curve::RootCurve::new(&self.tracks[i].translations,
-                self.interpolation[i].translation, &self.tangents[i].translation, self.duration, self.playback)))
-        }).clone()
+            self.motion_cache_keys
+                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |used| {
+                    used.checked_add(keys)
+                        .filter(|total| *total <= MAX_ROOT_TRANSLATION_CACHE_KEYS)
+                })
+                .map_err(|_| AnimationError::RootMotionBudget)?;
+            Ok(Arc::new(root_curve::RootCurve::new(
+                &self.tracks[i].translations,
+                self.interpolation[i].translation,
+                &self.tangents[i].translation,
+                self.duration,
+                self.playback,
+            )))
+        })
+        .clone()
     }
 
     /// Shared composed rotation/translation coefficients for one motion joint.
@@ -410,12 +454,24 @@ impl AnimationClip {
     /// Invalid joints or exhausted per-clip channel-cache budgets reject selection.
     pub fn root_rigid_curve(&self, joint: u16) -> Result<RootRigidCurve, AnimationError> {
         let i = usize::from(joint);
-        let slot = self.rigid_curves.get(i).ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        let slot = self
+            .rigid_curves
+            .get(i)
+            .ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
         slot.get_or_init(|| {
-            RootRigidCurve::new(self.motion_curve(joint)?, self.root_rotation_curve(joint)?,
-                self.tracks[i].translations.first().map_or(self.rig[i].bind_local.translation, |key| key.value),
-                self.rig[i].bind_local.translation, self.duration, self.playback)
-        }).clone()
+            RootRigidCurve::new(
+                self.motion_curve(joint)?,
+                self.root_rotation_curve(joint)?,
+                self.tracks[i]
+                    .translations
+                    .first()
+                    .map_or(self.rig[i].bind_local.translation, |key| key.value),
+                self.rig[i].bind_local.translation,
+                self.duration,
+                self.playback,
+            )
+        })
+        .clone()
     }
 
     /// Compiles one selected quaternion channel for ordered root rotation extraction.
@@ -483,7 +539,6 @@ impl AnimationClip {
     pub fn constant_joint_translation(&self, index: usize) -> Option<Vec3> {
         self.constant_translations.get(index).copied().flatten()
     }
-
 
     /// Samples without runtime admission. Cubic curves can produce invalid TRS;
     /// use `try_sample` to reject those poses before publication. Bind defaults
@@ -701,7 +756,11 @@ struct Transition {
 
 /// Normalized target-clip interval. Looping end may exceed one; no cycles are enumerated.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct AnimationPhaseInterval { pub start: f64, pub end: f64, pub looping: bool }
+pub struct AnimationPhaseInterval {
+    pub start: f64,
+    pub end: f64,
+    pub looping: bool,
+}
 
 #[derive(Clone, Debug)]
 pub struct Animator {
@@ -733,13 +792,23 @@ impl AnimatorFrame {
     /// Rejects a foreign rig, unknown motion joint, invalid pose or palette.
     pub fn without_root_rotation(mut self, skeleton: &Skeleton) -> Result<Self, AnimationError> {
         let index = usize::from(self.root_motion_joint);
-        let joint = skeleton.joints.get(index)
-            .ok_or(AnimationError::InvalidRootMotionJoint(self.root_motion_joint))?;
+        let joint = skeleton
+            .joints
+            .get(index)
+            .ok_or(AnimationError::InvalidRootMotionJoint(
+                self.root_motion_joint,
+            ))?;
         if !rigs_match(&self.pose.rig, &skeleton.joints) {
             return Err(AnimationError::SkeletonMismatch);
         }
-        let local = self.pose.local.get_mut(index).ok_or(AnimationError::InvalidPose(index))?;
-        if !local.is_valid() { return Err(AnimationError::InvalidPose(index)); }
+        let local = self
+            .pose
+            .local
+            .get_mut(index)
+            .ok_or(AnimationError::InvalidPose(index))?;
+        if !local.is_valid() {
+            return Err(AnimationError::InvalidPose(index));
+        }
         local.rotation = joint.bind_local.rotation;
         self.skin_matrices = self.pose.skin_matrices(skeleton)?;
         Ok(self)
@@ -811,11 +880,16 @@ impl Animator {
 
     /// Reads the stored root extraction factor at the current bounded clip
     /// phase. An active blend has no unique authored phase anchor.
-    pub fn root_rigid_phase_factor(&self, axes: [bool; 3]) -> Result<RootRigidTransform, AnimationError> {
+    pub fn root_rigid_phase_factor(
+        &self,
+        axes: [bool; 3],
+    ) -> Result<RootRigidTransform, AnimationError> {
         if self.transition.is_some() {
             return Err(AnimationError::RootRotationTransitionUnsupported);
         }
-        self.current.root_rigid_curve(self.motion_joint)?.sample(self.current.phase(self.time), axes)
+        self.current
+            .root_rigid_curve(self.motion_joint)?
+            .sample(self.current.phase(self.time), axes)
     }
 
     /// Predicts the interval from the current clock without advancing it.
@@ -834,8 +908,15 @@ impl Animator {
         let start = self.current.phase(self.time);
         let end = start + dt * f64::from(self.speed);
         let looping = self.current.playback == Playback::Loop;
-        Ok(AnimationPhaseInterval { start: start/duration,
-            end: if looping { end/duration } else { end.min(duration)/duration }, looping })
+        Ok(AnimationPhaseInterval {
+            start: start / duration,
+            end: if looping {
+                end / duration
+            } else {
+                end.min(duration) / duration
+            },
+            looping,
+        })
     }
 
     /// Select the joint whose local translation drives displacement extraction.
@@ -854,7 +935,8 @@ impl Animator {
         let source = self
             .transition
             .as_ref()
-            .map(|t| t.source.motion_curve(joint)).transpose()?;
+            .map(|t| t.source.motion_curve(joint))
+            .transpose()?;
         self.motion_joint = joint;
         self.motion_curve = curve;
         if let (Some(transition), Some(curve)) = (&mut self.transition, source) {
@@ -915,14 +997,23 @@ impl Animator {
     /// # Errors
     /// Rig, pose, trajectory-budget and active crossfade errors preserve the clock.
     pub fn advance_with_root_rigid_motion(
-        &mut self, skeleton: &Skeleton, dt: f32, axes: [bool; 3], max_spans: usize,
+        &mut self,
+        skeleton: &Skeleton,
+        dt: f32,
+        axes: [bool; 3],
+        max_spans: usize,
     ) -> Result<(AnimatorFrame, RootRigidPath), AnimationError> {
-        if self.transition.is_some() && dt != 0. && self.speed != 0. { return Err(AnimationError::RootRotationTransitionUnsupported); }
+        if self.transition.is_some() && dt != 0. && self.speed != 0. {
+            return Err(AnimationError::RootRotationTransitionUnsupported);
+        }
         let mut candidate = self.clone();
         let start = self.current.phase(self.time);
         let frame = candidate.advance_candidate(skeleton, dt)?;
         let end = start + f64::from(dt) * f64::from(self.speed);
-        let path = self.current.root_rigid_curve(self.motion_joint)?.path(start, end, axes, max_spans)?;
+        let path = self
+            .current
+            .root_rigid_curve(self.motion_joint)?
+            .path(start, end, axes, max_spans)?;
         *self = candidate;
         Ok((frame, path))
     }
@@ -2768,25 +2859,55 @@ mod tests {
         let mut pose = rig.bind_pose();
         pose.local[0].translation = Vec3::X * 7.;
         pose.local[0].rotation = Quat::from_rotation_y(0.4);
-        pose.local[1] = Transform { translation: Vec3::new(3., 4., 5.),
-            rotation: Quat::from_rotation_z(0.7), scale: Vec3::new(-2., 3., 4.) };
-        let original = AnimatorFrame { skin_matrices: pose.skin_matrices(&rig).unwrap(), pose,
-            root_motion: Vec3::new(0.1, 0.2, 0.3), root_motion_joint: 1, transition_weight: 0.5 };
+        pose.local[1] = Transform {
+            translation: Vec3::new(3., 4., 5.),
+            rotation: Quat::from_rotation_z(0.7),
+            scale: Vec3::new(-2., 3., 4.),
+        };
+        let original = AnimatorFrame {
+            skin_matrices: pose.skin_matrices(&rig).unwrap(),
+            pose,
+            root_motion: Vec3::new(0.1, 0.2, 0.3),
+            root_motion_joint: 1,
+            transition_weight: 0.5,
+        };
         let output = original.clone().without_root_rotation(&rig).unwrap();
         assert_eq!(output.pose.local()[0], original.pose.local()[0]);
-        assert_eq!(output.pose.local()[1].translation, original.pose.local()[1].translation);
+        assert_eq!(
+            output.pose.local()[1].translation,
+            original.pose.local()[1].translation
+        );
         assert_eq!(output.pose.local()[1].scale, original.pose.local()[1].scale);
-        assert_eq!(output.pose.local()[1].rotation, rig.joints()[1].bind_local.rotation);
+        assert_eq!(
+            output.pose.local()[1].rotation,
+            rig.joints()[1].bind_local.rotation
+        );
         assert_eq!(output.root_motion, original.root_motion);
         assert_eq!(output.transition_weight, original.transition_weight);
         let expected_global = original.pose.local()[0].matrix()
-            * Mat4::from_scale_rotation_translation(Vec3::new(-2., 3., 4.),
-                Quat::from_rotation_x(0.23), Vec3::new(3., 4., 5.));
-        assert!(output.skin_matrices[1].abs_diff_eq(expected_global * rig.joints()[1].inverse_bind, 1e-6));
-        assert!((output.skin_matrices[1].transform_point3(Vec3::X)
-            - original.skin_matrices[1].transform_point3(Vec3::X)).length() > 0.1);
-        let (first, displacement) = output.clone().into_in_place_translation(&rig, [true, false, true]).unwrap();
-        let (second, other_displacement) = original.clone().into_in_place_translation(&rig, [true, false, true]).unwrap();
+            * Mat4::from_scale_rotation_translation(
+                Vec3::new(-2., 3., 4.),
+                Quat::from_rotation_x(0.23),
+                Vec3::new(3., 4., 5.),
+            );
+        assert!(
+            output.skin_matrices[1]
+                .abs_diff_eq(expected_global * rig.joints()[1].inverse_bind, 1e-6)
+        );
+        assert!(
+            (output.skin_matrices[1].transform_point3(Vec3::X)
+                - original.skin_matrices[1].transform_point3(Vec3::X))
+            .length()
+                > 0.1
+        );
+        let (first, displacement) = output
+            .clone()
+            .into_in_place_translation(&rig, [true, false, true])
+            .unwrap();
+        let (second, other_displacement) = original
+            .clone()
+            .into_in_place_translation(&rig, [true, false, true])
+            .unwrap();
         let second = second.without_root_rotation(&rig).unwrap();
         assert_eq!(first.pose, second.pose);
         assert_eq!(first.skin_matrices, second.skin_matrices);
@@ -2794,17 +2915,36 @@ mod tests {
         assert_eq!(displacement, Vec3::new(0.1, 0., 0.3));
         let mut foreign = rig.joints().to_vec();
         foreign[1].name = Arc::from("different");
-        assert_eq!(original.clone().without_root_rotation(&Skeleton::new(foreign).unwrap()).unwrap_err(), AnimationError::SkeletonMismatch);
+        assert_eq!(
+            original
+                .clone()
+                .without_root_rotation(&Skeleton::new(foreign).unwrap())
+                .unwrap_err(),
+            AnimationError::SkeletonMismatch
+        );
         let mut invalid = original.clone();
         invalid.root_motion_joint = u16::MAX;
-        assert_eq!(invalid.without_root_rotation(&rig).unwrap_err(), AnimationError::InvalidRootMotionJoint(u16::MAX));
+        assert_eq!(
+            invalid.without_root_rotation(&rig).unwrap_err(),
+            AnimationError::InvalidRootMotionJoint(u16::MAX)
+        );
         let mut invalid = original.clone();
         invalid.pose.local[1].rotation = Quat::from_array([f32::NAN; 4]);
-        assert_eq!(invalid.without_root_rotation(&rig).unwrap_err(), AnimationError::InvalidPose(1));
+        assert_eq!(
+            invalid.without_root_rotation(&rig).unwrap_err(),
+            AnimationError::InvalidPose(1)
+        );
         let mut invalid = original.clone();
         invalid.pose.local[0].translation = Vec3::splat(f32::INFINITY);
-        assert_eq!(invalid.without_root_rotation(&rig).unwrap_err(), AnimationError::InvalidPose(0));
-        assert!(original.pose.local[1].rotation.abs_diff_eq(Quat::from_rotation_z(0.7), 1e-6));
+        assert_eq!(
+            invalid.without_root_rotation(&rig).unwrap_err(),
+            AnimationError::InvalidPose(0)
+        );
+        assert!(
+            original.pose.local[1]
+                .rotation
+                .abs_diff_eq(Quat::from_rotation_z(0.7), 1e-6)
+        );
     }
     #[test]
     fn extraction_masks_selected_child_axes_and_preserves_other_channels() {

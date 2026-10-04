@@ -21,7 +21,12 @@ impl App {
             .ok_or_else(|| "choose an import-settings asset on the audio source first".into())
     }
     fn settings_drafts(&self) -> Result<Drafts, Box<dyn std::error::Error>> {
-        let value = self.authoring.history.as_ref().ok_or("missing history")?.auxiliary();
+        let value = self
+            .authoring
+            .history
+            .as_ref()
+            .ok_or("missing history")?
+            .auxiliary();
         if value.is_null() {
             Ok(Drafts::new())
         } else {
@@ -43,7 +48,8 @@ impl App {
         }
         let source = draft.source.clone();
         drafts.insert(id, draft);
-        self.authoring.history
+        self.authoring
+            .history
             .as_mut()
             .ok_or("missing history")?
             .commit_auxiliary(
@@ -74,7 +80,8 @@ impl App {
             _ => return Err("unknown import setting".into()),
         }
         draft.config.settings(48000)?;
-        self.authoring.history
+        self.authoring
+            .history
             .as_mut()
             .ok_or("missing history")?
             .commit_auxiliary(
@@ -90,10 +97,13 @@ impl App {
         let draft = drafts
             .get(&id)
             .ok_or("open import settings before saving")?;
-        let digest = self.authoring
+        let digest = self
+            .authoring
             .authoring_project
             .save_audio_settings(draft, &self.authoring.settings_written)?;
-        self.authoring.settings_written.insert(draft.source.clone(), digest);
+        self.authoring
+            .settings_written
+            .insert(draft.source.clone(), digest);
         if let Some(window) = &self.window {
             window.set_title("Voxy — import settings saved");
         }
@@ -245,7 +255,10 @@ pub(crate) mod tests {
         app.panel_action(super::super::panels::Action::AudioSettingsSave)
             .unwrap();
         assert_eq!(app.authoring_document().unwrap(), scene);
-        assert_eq!(app.authoring.history.as_ref().unwrap().metadata(), &composition);
+        assert_eq!(
+            app.authoring.history.as_ref().unwrap().metadata(),
+            &composition
+        );
         println!(
             "EDITOR IMPORT SETTINGS PASS: staged edits, undo/redo after save, external conflict and validated reload"
         );

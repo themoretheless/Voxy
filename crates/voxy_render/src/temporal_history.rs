@@ -12,8 +12,13 @@ pub struct TemporalHistory {
     depth_sampler: wgpu::Sampler,
 }
 impl TemporalHistory {
-    pub(crate) fn validate_device(&self, device: &wgpu::Device) -> Result<(), crate::RaySceneError> {
-        if self.device != *device { return Err(crate::RaySceneError::DeviceMismatch); }
+    pub(crate) fn validate_device(
+        &self,
+        device: &wgpu::Device,
+    ) -> Result<(), crate::RaySceneError> {
+        if self.device != *device {
+            return Err(crate::RaySceneError::DeviceMismatch);
+        }
         Ok(())
     }
 

@@ -29,7 +29,7 @@ impl RootRigidErrorAccumulator {
         prefix: &RootRigidEnclosure,
         nominal: RootRigidTwist,
     ) -> Result<Self, AnimationError> {
-        self.append_interval_error(start,end,rates,sample_error,prefix,nominal)
+        self.append_interval_error(start, end, rates, sample_error, prefix, nominal)
     }
     /// Uniform velocity discrepancy on the whole interval, without a derivative
     /// assumption. For delta_dot=omega_original cross delta + delta_omega cross
@@ -37,15 +37,34 @@ impl RootRigidErrorAccumulator {
     /// |x_nominal(t)| <= prefix_radius + |v_nominal|*t. Integrating this bound
     /// yields ev*h + ew*(radius*h + |v_nominal|*h*h/2), even at velocity jumps.
     pub fn append_bounded_field_interval(
-        &self, start: f64, end: f64, whole_error: RootTwistErrorBounds,
-        prefix: &RootRigidEnclosure, nominal: RootRigidTwist,
-    ) -> Result<Self,AnimationError> {
-        self.append_interval_error(start,end,RootTwistRateBounds {linear:0.,angular:0.},whole_error,prefix,nominal)
+        &self,
+        start: f64,
+        end: f64,
+        whole_error: RootTwistErrorBounds,
+        prefix: &RootRigidEnclosure,
+        nominal: RootRigidTwist,
+    ) -> Result<Self, AnimationError> {
+        self.append_interval_error(
+            start,
+            end,
+            RootTwistRateBounds {
+                linear: 0.,
+                angular: 0.,
+            },
+            whole_error,
+            prefix,
+            nominal,
+        )
     }
     fn append_interval_error(
-        &self, start: f64, end: f64, rates: RootTwistRateBounds, sample_error: RootTwistErrorBounds,
-        prefix: &RootRigidEnclosure, nominal: RootRigidTwist,
-    ) -> Result<Self,AnimationError> {
+        &self,
+        start: f64,
+        end: f64,
+        rates: RootTwistRateBounds,
+        sample_error: RootTwistErrorBounds,
+        prefix: &RootRigidEnclosure,
+        nominal: RootRigidTwist,
+    ) -> Result<Self, AnimationError> {
         if !start.is_finite()
             || !end.is_finite()
             || start < 0.

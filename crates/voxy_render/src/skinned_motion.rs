@@ -209,7 +209,12 @@ mod tests {
             .prepare_frame(&joints, Mat4::IDENTITY, [1.0; 4])
             .unwrap();
         assert!(!first.motion().history_valid);
-        assert!(first.previous_reflection_triangles([4, 7, 2], 9).unwrap().is_empty());
+        assert!(
+            first
+                .previous_reflection_triangles([4, 7, 2], 9)
+                .unwrap()
+                .is_empty()
+        );
         joints[0] = Mat4::from_translation(glam::Vec3::X);
         history.presented_frame(&first).unwrap();
         assert_eq!(
@@ -237,16 +242,27 @@ mod tests {
         let reflected = next.previous_reflection_triangles([4, 7, 2], 9).unwrap();
         assert_eq!(reflected.len(), 1);
         assert_eq!(reflected[0].identity, [4, 7, 2, 9]);
-        assert_eq!(reflected[0].vertices, [[0.0,0.0,0.0,1.0], [1.0,0.0,0.0,1.0], [0.0,1.0,0.0,1.0]]);
+        assert_eq!(
+            reflected[0].vertices,
+            [
+                [0.0, 0.0, 0.0, 1.0],
+                [1.0, 0.0, 0.0, 1.0],
+                [0.0, 1.0, 0.0, 1.0]
+            ]
+        );
         let extra = next.motion.vertices.clone();
         next.motion.vertices.extend(extra);
-        assert!(matches!(next.previous_reflection_triangles([0; 3], u32::MAX),
-            Err(crate::RaySceneError::Capacity)));
+        assert!(matches!(
+            next.previous_reflection_triangles([0; 3], u32::MAX),
+            Err(crate::RaySceneError::Capacity)
+        ));
         next.motion.vertices.truncate(3);
         let saved = next.motion.vertices[0].previous;
         next.motion.vertices[0].previous[0] = f32::NAN;
-        assert!(matches!(next.previous_reflection_triangles([0; 3], 0),
-            Err(crate::RaySceneError::InvalidGeometry)));
+        assert!(matches!(
+            next.previous_reflection_triangles([0; 3], 0),
+            Err(crate::RaySceneError::InvalidGeometry)
+        ));
         next.motion.vertices[0].previous = saved;
         // The discarded X-translation candidate must not replace the previous pose.
         history.presented_frame(&next).unwrap();

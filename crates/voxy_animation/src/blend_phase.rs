@@ -222,30 +222,66 @@ mod tests {
     }
     #[test]
     fn revised_clip_phase_transfer_does_not_extract_sampling_offset_and_is_atomic() {
-        let rig = Skeleton::new(vec![Joint {name:"root".into(),parent:None,
-            bind_local:Transform::IDENTITY,inverse_bind:glam::Mat4::IDENTITY}]).unwrap();
-        let clip = |duration,offset,travel| Arc::new(AnimationClip::new("walk",duration,Playback::Loop,
-            vec![JointTrack {translations:vec![crate::Vec3Key {time:0.,value:glam::Vec3::X*offset},
-                crate::Vec3Key {time:duration,value:glam::Vec3::X*(offset+travel)}],..Default::default()}],&rig).unwrap());
-        let mut animator = Animator::new(clip(1.,0.,1.));
-        animator.advance(&rig,0.25).unwrap();
+        let rig = Skeleton::new(vec![Joint {
+            name: "root".into(),
+            parent: None,
+            bind_local: Transform::IDENTITY,
+            inverse_bind: glam::Mat4::IDENTITY,
+        }])
+        .unwrap();
+        let clip = |duration, offset, travel| {
+            Arc::new(
+                AnimationClip::new(
+                    "walk",
+                    duration,
+                    Playback::Loop,
+                    vec![JointTrack {
+                        translations: vec![
+                            crate::Vec3Key {
+                                time: 0.,
+                                value: glam::Vec3::X * offset,
+                            },
+                            crate::Vec3Key {
+                                time: duration,
+                                value: glam::Vec3::X * (offset + travel),
+                            },
+                        ],
+                        ..Default::default()
+                    }],
+                    &rig,
+                )
+                .unwrap(),
+            )
+        };
+        let mut animator = Animator::new(clip(1., 0., 1.));
+        animator.advance(&rig, 0.25).unwrap();
         let phase = animator.normalized_phase();
-        animator.transition_to_at_phase(clip(2.,100.,4.),0.5,phase).unwrap();
-        assert_eq!(animator.normalized_phase(),0.25);
-        let zero = animator.advance(&rig,0.).unwrap();
-        assert_eq!(zero.root_motion,glam::Vec3::ZERO);
-        assert!((zero.pose.local()[0].translation.x-0.25).abs()<1e-6);
-        let moving = animator.advance(&rig,0.1).unwrap();
-        assert!(moving.root_motion.x>=0.1 && moving.root_motion.x<=0.2);
-        assert!((animator.normalized_phase()-0.3).abs()<1e-7);
+        animator
+            .transition_to_at_phase(clip(2., 100., 4.), 0.5, phase)
+            .unwrap();
+        assert_eq!(animator.normalized_phase(), 0.25);
+        let zero = animator.advance(&rig, 0.).unwrap();
+        assert_eq!(zero.root_motion, glam::Vec3::ZERO);
+        assert!((zero.pose.local()[0].translation.x - 0.25).abs() < 1e-6);
+        let moving = animator.advance(&rig, 0.1).unwrap();
+        assert!(moving.root_motion.x >= 0.1 && moving.root_motion.x <= 0.2);
+        assert!((animator.normalized_phase() - 0.3).abs() < 1e-7);
         let displayed = moving.pose;
-        animator.transition_to_at_phase(clip(3.,-100.,3.),0.5,animator.normalized_phase()).unwrap();
-        assert_eq!(animator.advance(&rig,0.).unwrap().pose.local(),displayed.local());
+        animator
+            .transition_to_at_phase(clip(3., -100., 3.), 0.5, animator.normalized_phase())
+            .unwrap();
+        assert_eq!(
+            animator.advance(&rig, 0.).unwrap().pose.local(),
+            displayed.local()
+        );
         let before = animator.normalized_phase();
-        for invalid in [f64::NAN,-0.1,1.1] {
-            assert!(animator.transition_to_at_phase(clip(1.,0.,1.),0.5,invalid).is_err());
-            assert_eq!(animator.normalized_phase(),before);
+        for invalid in [f64::NAN, -0.1, 1.1] {
+            assert!(
+                animator
+                    .transition_to_at_phase(clip(1., 0., 1.), 0.5, invalid)
+                    .is_err()
+            );
+            assert_eq!(animator.normalized_phase(), before);
         }
     }
-
 }

@@ -29,7 +29,7 @@ struct Smoke {
     skipped: usize,
     hdr: bool,
     exposure: Option<ExposureState>,
-    retained: Option<(voxy_render::TemporalResolve,voxy_render::TemporalHistory)>,
+    retained: Option<(voxy_render::TemporalResolve, voxy_render::TemporalHistory)>,
     layer: Option<(SceneGeometry, SceneTransform)>,
     geometry: Option<(SceneGeometry, SceneTexture, SceneTransform)>,
     failure: Option<String>,
@@ -140,9 +140,12 @@ impl Smoke {
             },
         );
         let exposure = self.exposure.as_mut();
-        let retained_enabled=std::env::var("VOXY_TEMPORAL_RETAINED").as_deref()==Ok("1");
-        let previous_history=self.retained.as_ref().map(|(_,history)|history.color().clone());
-        let retained=&mut self.retained;
+        let retained_enabled = std::env::var("VOXY_TEMPORAL_RETAINED").as_deref() == Ok("1");
+        let previous_history = self
+            .retained
+            .as_ref()
+            .map(|(_, history)| history.color().clone());
+        let retained = &mut self.retained;
         let previous_exposure_id = exposure.as_ref().and_then(|state| state.presentation_id);
         let mut candidate = None;
         let expected_motion = if std::env::var("VOXY_TEMPORAL_RG_MOTION").as_deref() == Ok("1") {
@@ -181,21 +184,48 @@ impl Smoke {
                 let mut encoder =
                     device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
                 if retained_enabled {
-                    if !hdr || input.motion.format()!=wgpu::TextureFormat::Rg16Float {
-                        return Err(RendererError::TemporalConsumer("retained history proof requires HDR and RG motion".into()));
+                    if !hdr || input.motion.format() != wgpu::TextureFormat::Rg16Float {
+                        return Err(RendererError::TemporalConsumer(
+                            "retained history proof requires HDR and RG motion".into(),
+                        ));
                     }
                     if retained.is_none() {
-                        *retained=Some((voxy_render::TemporalResolve::new(device).map_err(|e|RendererError::TemporalConsumer(e.to_string()))?,
-                            voxy_render::TemporalHistory::new(device,input.color.width(),input.color.height()).map_err(|e|RendererError::TemporalConsumer(e.to_string()))?));
+                        *retained = Some((
+                            voxy_render::TemporalResolve::new(device)
+                                .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?,
+                            voxy_render::TemporalHistory::new(
+                                device,
+                                input.color.width(),
+                                input.color.height(),
+                            )
+                            .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?,
+                        ));
                     }
-                    let (resolve,history)=retained.as_mut().expect("initialized history");
-                    history.resize(input.color.width(),input.color.height()).map_err(|e|RendererError::TemporalConsumer(e.to_string()))?;
-                    history.encode_depth_attachment(&mut encoder,input.depth).map_err(|e|RendererError::TemporalConsumer(e.to_string()))?;
-                    let frame=resolve.prepare_into(voxy_render::TemporalResolveInputs {
-                        current:input.color,motion:input.motion,history:history.color(),
-                        expected_previous_depth:history.depth(),history_depth:history.depth(),
-                    },voxy_render::TemporalResolveOptions {history_weight:0.0,depth_tolerance:0.0,reset_history:true},history.output(),false)
-                        .map_err(|e|RendererError::TemporalConsumer(e.to_string()))?;
+                    let (resolve, history) = retained.as_mut().expect("initialized history");
+                    history
+                        .resize(input.color.width(), input.color.height())
+                        .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
+                    history
+                        .encode_depth_attachment(&mut encoder, input.depth)
+                        .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
+                    let frame = resolve
+                        .prepare_into(
+                            voxy_render::TemporalResolveInputs {
+                                current: input.color,
+                                motion: input.motion,
+                                history: history.color(),
+                                expected_previous_depth: history.depth(),
+                                history_depth: history.depth(),
+                            },
+                            voxy_render::TemporalResolveOptions {
+                                history_weight: 0.0,
+                                depth_tolerance: 0.0,
+                                reset_history: true,
+                            },
+                            history.output(),
+                            false,
+                        )
+                        .map_err(|e| RendererError::TemporalConsumer(e.to_string()))?;
                     frame.encode(&mut encoder);
                 }
                 let proof_value = u32::try_from(input.presentation_id)
@@ -300,12 +330,16 @@ impl Smoke {
                 state.presentation_id = Some(expected.0);
             }
         }
-        if let Some((_,history))=&mut self.retained {
-            if attempt==1 {
-                if previous_history.as_ref()!=Some(history.color()) {return Err("failed consumer committed retained history".into());}
+        if let Some((_, history)) = &mut self.retained {
+            if attempt == 1 {
+                if previous_history.as_ref() != Some(history.color()) {
+                    return Err("failed consumer committed retained history".into());
+                }
             } else {
                 history.presented();
-                if !history.valid() {return Err("presented history invalid".into());}
+                if !history.valid() {
+                    return Err("presented history invalid".into());
+                }
             }
         }
         if attempt == 3 {

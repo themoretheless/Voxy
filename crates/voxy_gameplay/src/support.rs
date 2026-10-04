@@ -29,7 +29,10 @@ impl SupportQueryBudget {
     /// Charges bounded preparation work against the same accepted-tick budget
     /// used by support queries. Failed reservations preserve the remaining budget.
     pub fn charge_work(&mut self, units: usize) -> Result<(), PhysicsError> {
-        self.remaining = self.remaining.checked_sub(units).ok_or(PhysicsError::SweepBudget)?;
+        self.remaining = self
+            .remaining
+            .checked_sub(units)
+            .ok_or(PhysicsError::SweepBudget)?;
         Ok(())
     }
     fn spend(&mut self) -> Result<(), PhysicsError> {

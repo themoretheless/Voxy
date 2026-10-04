@@ -71,7 +71,8 @@ impl App {
                     .iter()
                     .position(|node| *node == owner)
                     .ok_or("missing game actor")?;
-                self.play.simulation
+                self.play
+                    .simulation
                     .as_mut()
                     .ok_or("missing simulation")?
                     .attach(&mut self.scene, owner, Lifecycle(Arc::clone(&smoke.log)))?;
@@ -81,7 +82,8 @@ impl App {
             }
             1 => {
                 let owner = smoke.owner.ok_or("missing owner")?;
-                if self.play
+                if self
+                    .play
                     .physics
                     .as_ref()
                     .ok_or("missing physics")?
@@ -99,7 +101,8 @@ impl App {
             }
             2 if self.play.simulation_ticks >= smoke.tick + 3 => {
                 let owner = smoke.owner.ok_or("missing owner")?;
-                let state = self.play
+                let state = self
+                    .play
                     .physics
                     .as_ref()
                     .ok_or("missing physics")?
@@ -121,7 +124,8 @@ impl App {
             3 if self.play.simulation_ticks >= smoke.tick + 20 => {
                 self.game_key(KeyCode::ArrowRight, ElementState::Released)?;
                 let owner = smoke.owner.ok_or("missing owner")?;
-                self.play.simulation
+                self.play
+                    .simulation
                     .as_mut()
                     .ok_or("missing simulation")?
                     .commands()
@@ -141,7 +145,8 @@ impl App {
                 {
                     return Err("inactive body moved or remained rendered".into());
                 }
-                self.play.simulation
+                self.play
+                    .simulation
                     .as_mut()
                     .ok_or("missing simulation")?
                     .commands()
@@ -150,7 +155,8 @@ impl App {
                 smoke.phase = 5;
             }
             5 if self.play.simulation_ticks >= smoke.tick + 2 => {
-                self.play.simulation
+                self.play
+                    .simulation
                     .as_mut()
                     .ok_or("missing simulation")?
                     .commands()
@@ -163,7 +169,13 @@ impl App {
             6 if self.frames > smoke.frame + 1 => {
                 let old = smoke.owner.ok_or("missing owner")?;
                 if self.scene.local(old).is_ok()
-                    || self.play.physics.as_ref().ok_or("missing physics")?.body_count() != 0
+                    || self
+                        .play
+                        .physics
+                        .as_ref()
+                        .ok_or("missing physics")?
+                        .body_count()
+                        != 0
                     || self
                         .extraction
                         .instances()
@@ -186,7 +198,8 @@ impl App {
                 {
                     return Err("unexpected lifecycle transitions".into());
                 }
-                self.play.simulation
+                self.play
+                    .simulation
                     .as_mut()
                     .ok_or("missing simulation")?
                     .commands()
@@ -201,7 +214,8 @@ impl App {
                 smoke.phase = 7;
             }
             7 if self.frames > smoke.frame => {
-                let commands = self.play
+                let commands = self
+                    .play
                     .simulation
                     .as_mut()
                     .ok_or("missing simulation")?
@@ -241,7 +255,8 @@ impl App {
                         .transforms
                         .keys()
                         .any(|(_, node)| *node == owner)
-                    || self.play
+                    || self
+                        .play
                         .physics
                         .as_ref()
                         .ok_or("missing physics")?
@@ -265,7 +280,10 @@ impl App {
                 smoke.phase = 9;
             }
             9 if self.frames > smoke.frame => {
-                if self.play.physics.is_some() || self.play.simulation.is_some() || self.play.playing.is_some() {
+                if self.play.physics.is_some()
+                    || self.play.simulation.is_some()
+                    || self.play.playing.is_some()
+                {
                     return Err("Stop retained runtime state".into());
                 }
                 println!(

@@ -266,7 +266,11 @@ impl GraspObject {
                     .contains_closed_surface(point.to_array().map(f64::from))
                     .expect("finite hand position")
                     .unwrap_or_else(|| {
-                        triangles.iter().map(|&face| solid_angle(face, point)).sum::<f64>().abs()
+                        triangles
+                            .iter()
+                            .map(|&face| solid_angle(face, point))
+                            .sum::<f64>()
+                            .abs()
                             > std::f64::consts::TAU
                     });
                 delta.length() * if inside { -1. } else { 1. }
@@ -830,7 +834,9 @@ impl FemaleRig {
                     if excess <= 0. {
                         continue;
                     }
-                    let Some((_, gradients)) = crate::rig_skinning::hinge_angle_gradient(p, 0.00001) else {
+                    let Some((_, gradients)) =
+                        crate::rig_skinning::hinge_angle_gradient(p, 0.00001)
+                    else {
                         continue;
                     };
                     let denominator: f32 = (0..4)
@@ -2091,7 +2097,12 @@ mod tests {
     #[test]
     fn imported_grasp_mesh_bvh_classification_matches_winding() {
         let object = handle_object();
-        let GraspObject::Mesh { surface, triangles, bounds } = &object else {
+        let GraspObject::Mesh {
+            surface,
+            triangles,
+            bounds,
+        } = &object
+        else {
             unreachable!();
         };
         let mut seed = 0x7319_u32;
@@ -2110,23 +2121,43 @@ mod tests {
             queries.extend([center + normal * 0.000001, center - normal * 0.000001]);
         }
         let winding_start = std::time::Instant::now();
-        let reference: Vec<_> = queries.iter().map(|&point| {
-            triangles.iter().map(|&face| solid_angle(face, point)).sum::<f64>().abs()
-                > std::f64::consts::TAU
-        }).collect();
+        let reference: Vec<_> = queries
+            .iter()
+            .map(|&point| {
+                triangles
+                    .iter()
+                    .map(|&face| solid_angle(face, point))
+                    .sum::<f64>()
+                    .abs()
+                    > std::f64::consts::TAU
+            })
+            .collect();
         let winding_elapsed = winding_start.elapsed();
         let query_start = std::time::Instant::now();
         let mut classified = 0;
         for (&point, &expected) in queries.iter().zip(&reference) {
-            if let Some(inside) = surface.contains_closed_surface(point.to_array().map(f64::from)).unwrap() {
+            if let Some(inside) = surface
+                .contains_closed_surface(point.to_array().map(f64::from))
+                .unwrap()
+            {
                 assert_eq!(inside, expected, "point {point:?}");
                 classified += 1;
             }
         }
-        eprintln!("handle classification: {classified}/{} unambiguous; BVH {:?}, winding {:?}", queries.len(), query_start.elapsed(), winding_elapsed);
+        eprintln!(
+            "handle classification: {classified}/{} unambiguous; BVH {:?}, winding {:?}",
+            queries.len(),
+            query_start.elapsed(),
+            winding_elapsed
+        );
         assert!(classified * 100 > queries.len() * 95);
         assert!(surface.contains_closed_surface([f64::NAN, 0., 0.]).is_err());
-        assert_eq!(surface.contains_closed_surface(triangles[0][0].to_array().map(f64::from)).unwrap(), None);
+        assert_eq!(
+            surface
+                .contains_closed_surface(triangles[0][0].to_array().map(f64::from))
+                .unwrap(),
+            None
+        );
     }
 
     fn handle_object() -> GraspObject {

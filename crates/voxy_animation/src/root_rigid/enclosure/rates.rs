@@ -268,7 +268,9 @@ impl RootSpatialTwistBounds {
         wall_times: [f64; 2],
     ) -> Result<Self, AnimationError> {
         self.enclosed_checked()?;
-        self.enclosed_retimed_factor(super::twist::retiming_factor_between_times(clip_times, wall_times)?)
+        self.enclosed_retimed_factor(super::twist::retiming_factor_between_times(
+            clip_times, wall_times,
+        )?)
     }
     pub(super) fn enclosed_retimed_factor(self, s: Scalar) -> Result<Self, AnimationError> {
         let squared = s.mul(s)?;
@@ -349,19 +351,47 @@ mod clock_rate_tests {
     use super::*;
     #[test]
     fn rate_caps_share_exact_clock_ratio_and_paused_clip_zero() {
-        let bounds = RootSpatialTwistBounds {linear_speed_bound:2.,angular_speed_bound:3.,
-            rates:RootTwistRateBounds {linear:5.,angular:7.}};
-        let clip=[1e12,1e12_f64.next_up()];
-        let wall=[1e14,1e14_f64.next_up()];
-        let scaled=bounds.enclosed_retimed_between_times(clip,wall).unwrap();
-        let ratio=(clip[1]-clip[0])/(wall[1]-wall[0]);
-        for (actual,expected) in [(scaled.linear_speed_bound,2.*ratio),(scaled.angular_speed_bound,3.*ratio),
-            (scaled.rates.linear,5.*ratio*ratio),(scaled.rates.angular,7.*ratio*ratio)] {
-            assert!(actual>=expected && actual-expected<1e-12);
+        let bounds = RootSpatialTwistBounds {
+            linear_speed_bound: 2.,
+            angular_speed_bound: 3.,
+            rates: RootTwistRateBounds {
+                linear: 5.,
+                angular: 7.,
+            },
+        };
+        let clip = [1e12, 1e12_f64.next_up()];
+        let wall = [1e14, 1e14_f64.next_up()];
+        let scaled = bounds.enclosed_retimed_between_times(clip, wall).unwrap();
+        let ratio = (clip[1] - clip[0]) / (wall[1] - wall[0]);
+        for (actual, expected) in [
+            (scaled.linear_speed_bound, 2. * ratio),
+            (scaled.angular_speed_bound, 3. * ratio),
+            (scaled.rates.linear, 5. * ratio * ratio),
+            (scaled.rates.angular, 7. * ratio * ratio),
+        ] {
+            assert!(actual >= expected && actual - expected < 1e-12);
         }
-        let paused=bounds.enclosed_retimed_between_times([0.3,0.3],[0.1,0.4]).unwrap();
-        assert_eq!([paused.linear_speed_bound,paused.angular_speed_bound,paused.rates.linear,paused.rates.angular],[0.;4]);
-        assert!(bounds.enclosed_retimed_between_times([1.,0.],[0.,1.]).is_err());
-        assert!(bounds.enclosed_retimed_between_times([0.,1.],[0.,f64::from_bits(1)]).is_err());
+        let paused = bounds
+            .enclosed_retimed_between_times([0.3, 0.3], [0.1, 0.4])
+            .unwrap();
+        assert_eq!(
+            [
+                paused.linear_speed_bound,
+                paused.angular_speed_bound,
+                paused.rates.linear,
+                paused.rates.angular
+            ],
+            [0.; 4]
+        );
+        assert!(
+            bounds
+                .enclosed_retimed_between_times([1., 0.], [0., 1.])
+                .is_err()
+        );
+        assert!(
+            bounds
+                .enclosed_retimed_between_times([0., 1.], [0., f64::from_bits(1)])
+                .is_err()
+        );
     }
 }

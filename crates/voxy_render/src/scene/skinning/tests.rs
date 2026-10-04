@@ -368,7 +368,10 @@ fn gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission() {
 fn gpu_reference_rig_full_clip_matches_cpu_positions() {
     reference_rig_gpu_acceptance(
         include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb"),
-        "reference-rig", 370, 22, 1,
+        "reference-rig",
+        370,
+        22,
+        1,
     );
 }
 
@@ -377,14 +380,19 @@ fn gpu_reference_rig_full_clip_matches_cpu_positions() {
 fn gpu_fox_all_clips_match_cpu_and_render() {
     reference_rig_gpu_acceptance(
         include_bytes!("../../../examples/assets/fox/Fox.glb"),
-        "fox", 1728, 26, 3,
+        "fox",
+        1728,
+        26,
+        3,
     );
 }
 
 #[test]
 #[ignore = "requires GPU; STEP interpolation through the skeletal renderer"]
 fn gpu_reference_rig_step_clips_match_cpu_and_render() {
-    let glb = step_glb(include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb"));
+    let glb = step_glb(include_bytes!(
+        "../../../examples/assets/rigged-figure/RiggedFigure.glb"
+    ));
     reference_rig_gpu_acceptance(&glb, "reference-rig-step", 370, 22, 1);
 }
 
@@ -402,7 +410,8 @@ fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
     let source = gltf::Gltf::from_slice(original).unwrap();
     let mut binary = source.blob.unwrap();
     let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
-    let mut document: serde_json::Value = serde_json::from_slice(&original[20..20 + json_size]).unwrap();
+    let mut document: serde_json::Value =
+        serde_json::from_slice(&original[20..20 + json_size]).unwrap();
     let mut outputs = std::collections::BTreeMap::new();
     for animation in document["animations"].as_array().unwrap() {
         for sampler in animation["samplers"].as_array().unwrap() {
@@ -415,34 +424,58 @@ fn gpu_reference_rig_cubic_clips_match_cpu_and_render() {
         assert_eq!(accessor["componentType"], 5126);
         let view = &document["bufferViews"][accessor["bufferView"].as_u64().unwrap() as usize];
         let count = accessor["count"].as_u64().unwrap() as usize;
-        let width = match accessor["type"].as_str().unwrap() { "VEC3" => 3, "VEC4" => 4, _ => panic!("TRS required") };
-        let offset = view["byteOffset"].as_u64().unwrap_or(0) as usize + accessor["byteOffset"].as_u64().unwrap_or(0) as usize;
-        let stride = view["byteStride"].as_u64().map_or(width * 4, |v| v as usize);
-        let values: Vec<_> = (0..count).map(|key| binary[offset + key * stride..offset + key * stride + width * 4].to_vec()).collect();
+        let width = match accessor["type"].as_str().unwrap() {
+            "VEC3" => 3,
+            "VEC4" => 4,
+            _ => panic!("TRS required"),
+        };
+        let offset = view["byteOffset"].as_u64().unwrap_or(0) as usize
+            + accessor["byteOffset"].as_u64().unwrap_or(0) as usize;
+        let stride = view["byteStride"]
+            .as_u64()
+            .map_or(width * 4, |v| v as usize);
+        let values: Vec<_> = (0..count)
+            .map(|key| binary[offset + key * stride..offset + key * stride + width * 4].to_vec())
+            .collect();
         let begin = binary.len();
-        for value in values { binary.extend(vec![0; width * 4]); binary.extend(value); binary.extend(vec![0; width * 4]); }
+        for value in values {
+            binary.extend(vec![0; width * 4]);
+            binary.extend(value);
+            binary.extend(vec![0; width * 4]);
+        }
         accessor["count"] = (count * 3).into();
         accessor["byteOffset"] = 0.into();
         accessor["bufferView"] = document["bufferViews"].as_array().unwrap().len().into();
-        document["bufferViews"].as_array_mut().unwrap().push(serde_json::json!({"buffer":0,"byteOffset":begin,"byteLength":binary.len()-begin}));
+        document["bufferViews"].as_array_mut().unwrap().push(
+            serde_json::json!({"buffer":0,"byteOffset":begin,"byteLength":binary.len()-begin}),
+        );
         let output = document["accessors"].as_array().unwrap().len();
         document["accessors"].as_array_mut().unwrap().push(accessor);
         for animation in document["animations"].as_array_mut().unwrap() {
             for sampler in animation["samplers"].as_array_mut().unwrap() {
                 if sampler["output"].as_u64().unwrap() as usize == *index {
-                    sampler["output"] = output.into(); sampler["interpolation"] = "CUBICSPLINE".into();
+                    sampler["output"] = output.into();
+                    sampler["interpolation"] = "CUBICSPLINE".into();
                 }
             }
         }
     }
     document["buffers"][0]["byteLength"] = binary.len().into();
     let mut json = serde_json::to_vec(&document).unwrap();
-    while json.len() % 4 != 0 { json.push(b' '); }
+    while json.len() % 4 != 0 {
+        json.push(b' ');
+    }
     let size = 28 + json.len() + binary.len();
     let mut glb = Vec::new();
-    glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend((size as u32).to_le_bytes());
-    glb.extend((json.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(json);
-    glb.extend((binary.len() as u32).to_le_bytes()); glb.extend(b"BIN\0"); glb.extend(binary);
+    glb.extend(b"glTF");
+    glb.extend(2u32.to_le_bytes());
+    glb.extend((size as u32).to_le_bytes());
+    glb.extend((json.len() as u32).to_le_bytes());
+    glb.extend(b"JSON");
+    glb.extend(json);
+    glb.extend((binary.len() as u32).to_le_bytes());
+    glb.extend(b"BIN\0");
+    glb.extend(binary);
     reference_rig_gpu_acceptance(&glb, "reference-rig-cubic", 370, 22, 1);
 }
 
@@ -452,11 +485,21 @@ fn gpu_mirrored_rig_matches_cpu_positions_normals_and_render() {
     let original = include_bytes!("../../../examples/assets/rigged-figure/RiggedFigure.glb");
     let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
     for animated in [false, true] {
-        let mut document: serde_json::Value = serde_json::from_slice(&original[20..20 + json_size]).unwrap();
+        let mut document: serde_json::Value =
+            serde_json::from_slice(&original[20..20 + json_size]).unwrap();
         let parsed = gltf::Gltf::from_slice(original).unwrap();
         let mut binary = parsed.blob.as_ref().unwrap().clone();
         if animated {
-            let channel = parsed.animations().next().unwrap().channels().find(|c| c.target().node().index() == 2 && c.target().property() == gltf::animation::Property::Scale).unwrap();
+            let channel = parsed
+                .animations()
+                .next()
+                .unwrap()
+                .channels()
+                .find(|c| {
+                    c.target().node().index() == 2
+                        && c.target().property() == gltf::animation::Property::Scale
+                })
+                .unwrap();
             let accessor = channel.sampler().output();
             assert_eq!(accessor.data_type(), gltf::accessor::DataType::F32);
             let view = accessor.view().unwrap();
@@ -468,39 +511,72 @@ fn gpu_mirrored_rig_matches_cpu_positions_normals_and_render() {
             }
         } else {
             for index in [0, 4, 8, 12] {
-                document["nodes"][0]["matrix"][index] = (-document["nodes"][0]["matrix"][index].as_f64().unwrap()).into();
+                document["nodes"][0]["matrix"][index] =
+                    (-document["nodes"][0]["matrix"][index].as_f64().unwrap()).into();
             }
         }
         let mut json = serde_json::to_vec(&document).unwrap();
-        while json.len() % 4 != 0 { json.push(b' '); }
+        while json.len() % 4 != 0 {
+            json.push(b' ');
+        }
         let size = 28 + json.len() + binary.len();
         let mut glb = Vec::new();
-        glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend((size as u32).to_le_bytes());
-        glb.extend((json.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(json);
-        glb.extend((binary.len() as u32).to_le_bytes()); glb.extend(b"BIN\0"); glb.extend(binary);
-        reference_rig_gpu_acceptance(&glb, if animated { "animated-mirror" } else { "bind-mirror" }, 370, 22, 1);
+        glb.extend(b"glTF");
+        glb.extend(2u32.to_le_bytes());
+        glb.extend((size as u32).to_le_bytes());
+        glb.extend((json.len() as u32).to_le_bytes());
+        glb.extend(b"JSON");
+        glb.extend(json);
+        glb.extend((binary.len() as u32).to_le_bytes());
+        glb.extend(b"BIN\0");
+        glb.extend(binary);
+        reference_rig_gpu_acceptance(
+            &glb,
+            if animated {
+                "animated-mirror"
+            } else {
+                "bind-mirror"
+            },
+            370,
+            22,
+            1,
+        );
     }
 }
 
 fn step_glb(original: &[u8]) -> Vec<u8> {
     let json_size = u32::from_le_bytes(original[12..16].try_into().unwrap()) as usize;
-    let mut document: serde_json::Value = serde_json::from_slice(&original[20..20 + json_size]).unwrap();
+    let mut document: serde_json::Value =
+        serde_json::from_slice(&original[20..20 + json_size]).unwrap();
     for animation in document["animations"].as_array_mut().unwrap() {
         for sampler in animation["samplers"].as_array_mut().unwrap() {
             sampler["interpolation"] = "STEP".into();
         }
     }
     let mut json = serde_json::to_vec(&document).unwrap();
-    while json.len() % 4 != 0 { json.push(b' '); }
+    while json.len() % 4 != 0 {
+        json.push(b' ');
+    }
     let binary_chunk = &original[20 + json_size..];
     let size = 20 + json.len() + binary_chunk.len();
     let mut glb = Vec::new();
-    glb.extend(b"glTF"); glb.extend(2u32.to_le_bytes()); glb.extend((size as u32).to_le_bytes());
-    glb.extend((json.len() as u32).to_le_bytes()); glb.extend(b"JSON"); glb.extend(json); glb.extend(binary_chunk);
+    glb.extend(b"glTF");
+    glb.extend(2u32.to_le_bytes());
+    glb.extend((size as u32).to_le_bytes());
+    glb.extend((json.len() as u32).to_le_bytes());
+    glb.extend(b"JSON");
+    glb.extend(json);
+    glb.extend(binary_chunk);
     glb
 }
 
-fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, joints: usize, clips: usize) {
+fn reference_rig_gpu_acceptance(
+    bytes: &[u8],
+    label: &str,
+    vertices: usize,
+    joints: usize,
+    clips: usize,
+) {
     let asset = crate::ModelAsset::parse(bytes, &[], crate::ModelLimits::default()).unwrap();
     assert_eq!(asset.animations.len(), clips);
     assert_eq!(asset.primitives.len(), 1);
@@ -515,38 +591,104 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
     let timestamp_features = wgpu::Features::TIMESTAMP_QUERY;
     let timestamps_supported = adapter.features().contains(timestamp_features);
     let descriptor = wgpu::DeviceDescriptor {
-        required_features: if timestamps_supported { timestamp_features } else { wgpu::Features::empty() },
+        required_features: if timestamps_supported {
+            timestamp_features
+        } else {
+            wgpu::Features::empty()
+        },
         ..Default::default()
     };
     let (device, queue) = pollster::block_on(adapter.request_device(&descriptor)).unwrap();
-    let queries = timestamps_supported.then(|| device.create_query_set(&wgpu::QuerySetDescriptor {
-        label: Some("reference rig GPU interval"), ty: wgpu::QueryType::Timestamp, count: 4,
-    }));
-    let resolved = queries.as_ref().map(|_| device.create_buffer(&wgpu::BufferDescriptor {
-        label: None, size: 256, usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
-        mapped_at_creation: false,
-    }));
+    let queries = timestamps_supported.then(|| {
+        device.create_query_set(&wgpu::QuerySetDescriptor {
+            label: Some("reference rig GPU interval"),
+            ty: wgpu::QueryType::Timestamp,
+            count: 4,
+        })
+    });
+    let resolved = queries.as_ref().map(|_| {
+        device.create_buffer(&wgpu::BufferDescriptor {
+            label: None,
+            size: 256,
+            usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        })
+    });
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
-    let color_format = if label == "fox" { wgpu::TextureFormat::Rgba8UnormSrgb } else { wgpu::TextureFormat::Rgba8Unorm };
+    let color_format = if label == "fox" {
+        wgpu::TextureFormat::Rgba8UnormSrgb
+    } else {
+        wgpu::TextureFormat::Rgba8Unorm
+    };
     let mut renderer = SceneRenderer::new(&device, color_format);
-    pollster::block_on(renderer.reload_shader(&device, include_str!("../../../../voxy_editor/src/material.wgsl"))).unwrap();
+    pollster::block_on(renderer.reload_shader(
+        &device,
+        include_str!("../../../../voxy_editor/src/material.wgsl"),
+    ))
+    .unwrap();
     let transform = renderer.create_transform(&device, Mat4::IDENTITY).unwrap();
-    transform.update_scene_material(&queue, Mat4::IDENTITY, if label == "fox" { [1.; 4] } else { [0.35, 0.55, 0.75, 1.] }, [-0.3, 0.7, 0.6, 0.9]).unwrap();
+    transform
+        .update_scene_material(
+            &queue,
+            Mat4::IDENTITY,
+            if label == "fox" {
+                [1.; 4]
+            } else {
+                [0.35, 0.55, 0.75, 1.]
+            },
+            [-0.3, 0.7, 0.6, 0.9],
+        )
+        .unwrap();
     let texture = if let Some(material) = asset.primitives[0].base_color_texture {
         let gltf = gltf::Gltf::from_slice(bytes).unwrap();
         let image = gltf.images().nth(material.image).unwrap();
-        let gltf::image::Source::View { view, .. } = image.source() else { panic!("embedded image required"); };
+        let gltf::image::Source::View { view, .. } = image.source() else {
+            panic!("embedded image required");
+        };
         let blob = gltf.blob.as_ref().unwrap();
-        let image = crate::ImageAsset::decode(&blob[view.offset()..view.offset() + view.length()], crate::ImageLimits::default()).unwrap();
-        if material.use_mips { renderer.upload_image_mips(&device, &queue, &image.mip_chain(), material.sampling).unwrap() }
-        else { renderer.upload_image(&device, &queue, &image, material.sampling).unwrap() }
-    } else { renderer.upload_texture(&device, &queue, 1, 1, &[255; 4]).unwrap() };
-    let target = |format, usage| device.create_texture(&wgpu::TextureDescriptor {
-        label: None, size: wgpu::Extent3d { width: 128, height: 128, depth_or_array_layers: 1 },
-        mip_level_count: 1, sample_count: 1, dimension: wgpu::TextureDimension::D2, format, usage, view_formats: &[],
-    });
-    let color = target(color_format, wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC);
-    let depth = target(wgpu::TextureFormat::Depth32Float, wgpu::TextureUsages::RENDER_ATTACHMENT);
+        let image = crate::ImageAsset::decode(
+            &blob[view.offset()..view.offset() + view.length()],
+            crate::ImageLimits::default(),
+        )
+        .unwrap();
+        if material.use_mips {
+            renderer
+                .upload_image_mips(&device, &queue, &image.mip_chain(), material.sampling)
+                .unwrap()
+        } else {
+            renderer
+                .upload_image(&device, &queue, &image, material.sampling)
+                .unwrap()
+        }
+    } else {
+        renderer
+            .upload_texture(&device, &queue, 1, 1, &[255; 4])
+            .unwrap()
+    };
+    let target = |format, usage| {
+        device.create_texture(&wgpu::TextureDescriptor {
+            label: None,
+            size: wgpu::Extent3d {
+                width: 128,
+                height: 128,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage,
+            view_formats: &[],
+        })
+    };
+    let color = target(
+        color_format,
+        wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+    );
+    let depth = target(
+        wgpu::TextureFormat::Depth32Float,
+        wgpu::TextureUsages::RENDER_ATTACHMENT,
+    );
     let color_view = color.create_view(&Default::default());
     let depth_view = depth.create_view(&Default::default());
     let skinner = SceneSkinner::new(&renderer).unwrap();
@@ -593,28 +735,93 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
         let expected = mesh.posed_positions(&palette, Mat4::IDENTITY).unwrap();
         cpu_us.push(started.elapsed().as_secs_f64() * 1e6);
         let started = std::time::Instant::now();
-        let view = if label == "fox" { Mat4::from_rotation_y(std::f32::consts::FRAC_PI_2) } else { Mat4::IDENTITY };
-        let min = expected.iter().map(|p| view.transform_point3(glam::Vec3::from_array(*p))).fold(glam::Vec3::splat(f32::INFINITY), glam::Vec3::min);
-        let max = expected.iter().map(|p| view.transform_point3(glam::Vec3::from_array(*p))).fold(glam::Vec3::splat(f32::NEG_INFINITY), glam::Vec3::max);
+        let view = if label == "fox" {
+            Mat4::from_rotation_y(std::f32::consts::FRAC_PI_2)
+        } else {
+            Mat4::IDENTITY
+        };
+        let min = expected
+            .iter()
+            .map(|p| view.transform_point3(glam::Vec3::from_array(*p)))
+            .fold(glam::Vec3::splat(f32::INFINITY), glam::Vec3::min);
+        let max = expected
+            .iter()
+            .map(|p| view.transform_point3(glam::Vec3::from_array(*p)))
+            .fold(glam::Vec3::splat(f32::NEG_INFINITY), glam::Vec3::max);
         let extent = (max - min).max_element();
-        transform.update(&queue, Mat4::from_translation(glam::Vec3::new(0., 0., 0.5))
-            * Mat4::from_scale(glam::Vec3::new(1.5 / extent, 1.5 / extent, 0.2 / extent))
-            * Mat4::from_translation(-(min + max) * 0.5) * view).unwrap();
+        transform
+            .update(
+                &queue,
+                Mat4::from_translation(glam::Vec3::new(0., 0., 0.5))
+                    * Mat4::from_scale(glam::Vec3::new(1.5 / extent, 1.5 / extent, 0.2 / extent))
+                    * Mat4::from_translation(-(min + max) * 0.5)
+                    * view,
+            )
+            .unwrap();
         let prepared = skinner.prepare_pose(&instance, &palette).unwrap();
         preflight_us.push(started.elapsed().as_secs_f64() * 1e6);
         let started = std::time::Instant::now();
         let mut encoder = device.create_command_encoder(&Default::default());
         skinner
-            .encode_prepared_pose_profiled(&queue, &mut encoder, &prepared, queries.as_ref().map(|query_set| wgpu::ComputePassTimestampWrites { query_set, beginning_of_pass_write_index: Some(0), end_of_pass_write_index: Some(1) }))
+            .encode_prepared_pose_profiled(
+                &queue,
+                &mut encoder,
+                &prepared,
+                queries
+                    .as_ref()
+                    .map(|query_set| wgpu::ComputePassTimestampWrites {
+                        query_set,
+                        beginning_of_pass_write_index: Some(0),
+                        end_of_pass_write_index: Some(1),
+                    }),
+            )
             .unwrap();
-        let draws = [SceneDraw { geometry: instance.geometry(), texture: &texture, transform: &transform, overlay: false }];
+        let draws = [SceneDraw {
+            geometry: instance.geometry(),
+            texture: &texture,
+            transform: &transform,
+            overlay: false,
+        }];
         if let Some(queries) = &queries {
-            renderer.encode_profiled(&mut encoder, &color_view, &depth_view, wgpu::Color::BLACK, &draws,
-                wgpu::RenderPassTimestampWrites { query_set: queries, beginning_of_pass_write_index: Some(2), end_of_pass_write_index: Some(3) }).unwrap();
-        } else { renderer.encode(&mut encoder, &color_view, &depth_view, wgpu::Color::BLACK, &draws); }
-        encoder.copy_texture_to_buffer(color.as_image_copy(), wgpu::TexelCopyBufferInfo {
-            buffer: &staging, layout: wgpu::TexelCopyBufferLayout { offset: image_offset, bytes_per_row: Some(512), rows_per_image: Some(128) } },
-            wgpu::Extent3d { width: 128, height: 128, depth_or_array_layers: 1 });
+            renderer
+                .encode_profiled(
+                    &mut encoder,
+                    &color_view,
+                    &depth_view,
+                    wgpu::Color::BLACK,
+                    &draws,
+                    wgpu::RenderPassTimestampWrites {
+                        query_set: queries,
+                        beginning_of_pass_write_index: Some(2),
+                        end_of_pass_write_index: Some(3),
+                    },
+                )
+                .unwrap();
+        } else {
+            renderer.encode(
+                &mut encoder,
+                &color_view,
+                &depth_view,
+                wgpu::Color::BLACK,
+                &draws,
+            );
+        }
+        encoder.copy_texture_to_buffer(
+            color.as_image_copy(),
+            wgpu::TexelCopyBufferInfo {
+                buffer: &staging,
+                layout: wgpu::TexelCopyBufferLayout {
+                    offset: image_offset,
+                    bytes_per_row: Some(512),
+                    rows_per_image: Some(128),
+                },
+            },
+            wgpu::Extent3d {
+                width: 128,
+                height: 128,
+                depth_or_array_layers: 1,
+            },
+        );
         encoder.copy_buffer_to_buffer(&instance.geometry.vertices, 0, &staging, 0, bytes);
         encoder.copy_buffer_to_buffer(&instance.geometry.normals, 0, &staging, bytes, normal_bytes);
         encode_us.push(started.elapsed().as_secs_f64() * 1e6);
@@ -623,7 +830,12 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
         // Counter resolution follows completed rendering on a separate command
         // buffer; this also detects backends that expose unwritten stage samples.
         if let (Some(queries), Some(resolved)) = (&queries, &resolved) {
-            device.poll(wgpu::PollType::Wait { submission_index: Some(submission), timeout: None }).unwrap();
+            device
+                .poll(wgpu::PollType::Wait {
+                    submission_index: Some(submission),
+                    timeout: None,
+                })
+                .unwrap();
             let mut resolve = device.create_command_encoder(&Default::default());
             resolve.resolve_query_set(queries, 0..4, resolved, 0);
             resolve.copy_buffer_to_buffer(resolved, 0, &staging, bytes + normal_bytes, 32);
@@ -643,7 +855,9 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
         submit_read_us.push(started.elapsed().as_secs_f64() * 1e6);
         let mapped = staging.slice(..).get_mapped_range().unwrap();
         let actual = bytemuck::cast_slice::<u8, SceneVertex>(&mapped[..bytes as usize]);
-        let actual_normals = bytemuck::cast_slice::<u8, [f32; 3]>(&mapped[bytes as usize..(bytes + normal_bytes) as usize]);
+        let actual_normals = bytemuck::cast_slice::<u8, [f32; 3]>(
+            &mapped[bytes as usize..(bytes + normal_bytes) as usize],
+        );
         if timestamps_supported {
             let offset = (bytes + normal_bytes) as usize;
             let begin = u64::from_le_bytes(mapped[offset..offset + 8].try_into().unwrap());
@@ -652,10 +866,23 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
             let interval = (end - begin) as f64 * f64::from(queue.get_timestamp_period()) / 1000.;
             assert!(interval.is_finite());
             gpu_interval_us.push(interval);
-            let render_begin = u64::from_le_bytes(mapped[offset + 16..offset + 24].try_into().unwrap());
-            let render_end = u64::from_le_bytes(mapped[offset + 24..offset + 32].try_into().unwrap());
-            if sample == 0 { println!("REFERENCE_RIG_FRAME_PIXELS colored={}", mapped[image_offset as usize..].chunks_exact(4).filter(|p| p[2] > 0).count()); }
-            assert!(render_end >= render_begin && render_end >= begin, "sample={sample} compute_begin={begin} compute_end={end} render_begin={render_begin} render_end={render_end}");
+            let render_begin =
+                u64::from_le_bytes(mapped[offset + 16..offset + 24].try_into().unwrap());
+            let render_end =
+                u64::from_le_bytes(mapped[offset + 24..offset + 32].try_into().unwrap());
+            if sample == 0 {
+                println!(
+                    "REFERENCE_RIG_FRAME_PIXELS colored={}",
+                    mapped[image_offset as usize..]
+                        .chunks_exact(4)
+                        .filter(|p| p[2] > 0)
+                        .count()
+                );
+            }
+            assert!(
+                render_end >= render_begin && render_end >= begin,
+                "sample={sample} compute_begin={begin} compute_end={end} render_begin={render_begin} render_end={render_end}"
+            );
             let period = f64::from(queue.get_timestamp_period()) / 1000.;
             render_us.push((render_end - render_begin) as f64 * period);
             gpu_frame_us.push((render_end - begin) as f64 * period);
@@ -682,12 +909,25 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
             first_positions = Some(actual.iter().map(|v| v.position).collect());
         }
         let pixels = &mapped[image_offset as usize..];
-        assert!(pixels.chunks_exact(4).filter(|p| p[2] > 0).count() > 100, "reference rig absent from render");
+        assert!(
+            pixels.chunks_exact(4).filter(|p| p[2] > 0).count() > 100,
+            "reference rig absent from render"
+        );
         if label == "fox" {
-            assert!(pixels.chunks_exact(4).filter(|p| p[0] > p[2].saturating_add(10)).count() > 50, "authored Fox texture absent");
+            assert!(
+                pixels
+                    .chunks_exact(4)
+                    .filter(|p| p[0] > p[2].saturating_add(10))
+                    .count()
+                    > 50,
+                "authored Fox texture absent"
+            );
         }
-        if sample == 32 && let Some(directory) = std::env::var_os("VOXY_RIG_FRAME_IMAGE_DIR") {
-            let path = std::path::PathBuf::from(directory); std::fs::create_dir_all(&path).unwrap();
+        if sample == 32
+            && let Some(directory) = std::env::var_os("VOXY_RIG_FRAME_IMAGE_DIR")
+        {
+            let path = std::path::PathBuf::from(directory);
+            std::fs::create_dir_all(&path).unwrap();
             std::fs::write(path.join(format!("{label}-clip-{clip}-frame.rgba")), pixels).unwrap();
         }
         drop(mapped);
@@ -717,11 +957,29 @@ fn reference_rig_gpu_acceptance(bytes: &[u8], label: &str, vertices: usize, join
         values.sort_by(f64::total_cmp);
         (values[values.len() / 2], values[values.len() * 95 / 100])
     };
-    println!("REFERENCE_RIG_GPU_TIMESTAMPS asset={label} supported={timestamps_supported} period_ns={} interval_us={:?} samples={}",
-        queue.get_timestamp_period(), if gpu_interval_us.is_empty() { None } else { Some(stats(gpu_interval_us.clone())) }, gpu_interval_us.len());
-    println!("REFERENCE_RIG_RENDER_GPU asset={label} supported={timestamps_supported} viewport=128x128 render_us={:?} compute_to_render_end_us={:?}",
-        if render_us.is_empty() { None } else { Some(stats(render_us)) },
-        if gpu_frame_us.is_empty() { None } else { Some(stats(gpu_frame_us)) });
+    println!(
+        "REFERENCE_RIG_GPU_TIMESTAMPS asset={label} supported={timestamps_supported} period_ns={} interval_us={:?} samples={}",
+        queue.get_timestamp_period(),
+        if gpu_interval_us.is_empty() {
+            None
+        } else {
+            Some(stats(gpu_interval_us.clone()))
+        },
+        gpu_interval_us.len()
+    );
+    println!(
+        "REFERENCE_RIG_RENDER_GPU asset={label} supported={timestamps_supported} viewport=128x128 render_us={:?} compute_to_render_end_us={:?}",
+        if render_us.is_empty() {
+            None
+        } else {
+            Some(stats(render_us))
+        },
+        if gpu_frame_us.is_empty() {
+            None
+        } else {
+            Some(stats(gpu_frame_us))
+        }
+    );
     println!(
         "REFERENCE_RIG_PROFILE asset={label} adapter={:?} backend={:?} vertices={} joints={} clips={clips} samples={} max_position_error={} max_normal_error={} motion={} cpu_pose_skin_us={:?} preflight_us={:?} prepared_encode_us={:?} submit_readback_us={:?} logical_bytes={}",
         info.name,

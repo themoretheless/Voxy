@@ -67,15 +67,28 @@ impl HdrScene {
     pub(crate) fn enable_temporal_guides(&mut self, enabled: bool) {
         self.temporal_guides_enabled = enabled;
         self.previous_camera = None;
-        if !enabled { self.motion = None; self.previous_depth = None; self.temporal = None; }
+        if !enabled {
+            self.motion = None;
+            self.previous_depth = None;
+            self.temporal = None;
+        }
     }
     pub(crate) fn begin_guide_read(&mut self) {
-        if let Some(probe) = &mut self.color_probe { probe.begin_read(); }
-        if let Some(probe) = &mut self.guide_probe { probe.begin_read(); }
+        if let Some(probe) = &mut self.color_probe {
+            probe.begin_read();
+        }
+        if let Some(probe) = &mut self.guide_probe {
+            probe.begin_read();
+        }
     }
     pub(crate) fn poll_guide_checks(&mut self) -> Result<u32, wasm_bindgen::JsValue> {
         if let Some(probe) = &mut self.color_probe {
-            if let Some((checked,rejected,blended)) = probe.poll()? { self.color_checks += checked; self.depth_rejections += rejected; self.color_blends += blended; self.color_probe = None; }
+            if let Some((checked, rejected, blended)) = probe.poll()? {
+                self.color_checks += checked;
+                self.depth_rejections += rejected;
+                self.color_blends += blended;
+                self.color_probe = None;
+            }
         }
         if let Some(probe) = &mut self.guide_probe {
             if let Some((checked, moving)) = probe.poll()? {
@@ -88,13 +101,17 @@ impl HdrScene {
     }
     pub(crate) fn invalidate_temporal(&mut self) {
         self.previous_camera = None;
-        if let Some((_, history)) = &mut self.temporal { history.reset(); }
+        if let Some((_, history)) = &mut self.temporal {
+            history.reset();
+        }
     }
     pub(crate) fn presented(&mut self) {
         if self.temporal_guides_enabled {
             self.previous_camera = Some(self.camera.get());
             self.guide_frames = self.guide_frames.saturating_add(1);
-            if let Some((_, history)) = &mut self.temporal { history.presented(); }
+            if let Some((_, history)) = &mut self.temporal {
+                history.presented();
+            }
         }
     }
     pub(crate) fn environment_intensity(
@@ -440,54 +457,118 @@ impl HdrScene {
             let receiver = plane_mesh([1.0; 4], -0.5)?;
             for index in receiver.indices() {
                 let current = receiver.vertices()[*index as usize].position;
-                vertices.push(voxy_render::PreviousPositionVertex { current, previous: current });
+                vertices.push(voxy_render::PreviousPositionVertex {
+                    current,
+                    previous: current,
+                });
             }
-            let cameras = [self.camera.get(), self.previous_camera.unwrap_or(self.camera.get())];
+            let cameras = [
+                self.camera.get(),
+                self.previous_camera.unwrap_or(self.camera.get()),
+            ];
             let reset = self.previous_camera.is_none() || !pose.motion().history_valid;
             let motion = match self.motion.take() {
-                Some(previous) => previous.next_frame_reusing(device, depth.texture(), cameras, &vertices, reset),
-                None => voxy_render::RasterMotionPass::new(device, depth.texture(), cameras, &vertices, reset),
-            }.map_err(|e| JsError(e.to_string()))?;
+                Some(previous) => {
+                    previous.next_frame_reusing(device, depth.texture(), cameras, &vertices, reset)
+                }
+                None => voxy_render::RasterMotionPass::new(
+                    device,
+                    depth.texture(),
+                    cameras,
+                    &vertices,
+                    reset,
+                ),
+            }
+            .map_err(|e| JsError(e.to_string()))?;
             let previous_depth = match self.previous_depth.take() {
-                Some(previous) => previous.next_frame_reusing(device, depth.texture(), cameras, &vertices),
-                None => voxy_render::PreviousDepthPass::new(device, depth.texture(), cameras, &vertices),
-            }.map_err(|e| JsError(e.to_string()))?;
+                Some(previous) => {
+                    previous.next_frame_reusing(device, depth.texture(), cameras, &vertices)
+                }
+                None => {
+                    voxy_render::PreviousDepthPass::new(device, depth.texture(), cameras, &vertices)
+                }
+            }
+            .map_err(|e| JsError(e.to_string()))?;
             motion.encode(encoder);
             previous_depth.encode(encoder);
             if self.guide_probe.is_none() && [0, 30, 60, 120].contains(&self.guide_frames) {
-                self.guide_probe = Some(super::temporal_guides_probe::GuideProbe::encode(
-                    device, encoder, motion.output(), previous_depth.output(), cameras, &vertices, reset,
-                ).map_err(|e| JsError(format!("{e:?}")))?);
+                self.guide_probe = Some(
+                    super::temporal_guides_probe::GuideProbe::encode(
+                        device,
+                        encoder,
+                        motion.output(),
+                        previous_depth.output(),
+                        cameras,
+                        &vertices,
+                        reset,
+                    )
+                    .map_err(|e| JsError(format!("{e:?}")))?,
+                );
             }
             if self.temporal.is_none() {
                 self.probe = Some(voxy_render::HdrPixelProbe::new(device));
                 self.temporal_probe = Some(voxy_render::HdrPixelProbe::new(device));
                 self.temporal = Some((
-                    voxy_render::TemporalResolve::new(device).map_err(|e| JsError(e.to_string()))?,
-                    voxy_render::TemporalHistory::new(device, size[0], size[1]).map_err(|e| JsError(e.to_string()))?,
+                    voxy_render::TemporalResolve::new(device)
+                        .map_err(|e| JsError(e.to_string()))?,
+                    voxy_render::TemporalHistory::new(device, size[0], size[1])
+                        .map_err(|e| JsError(e.to_string()))?,
                 ));
             }
-            let (resolver, history) = self.temporal.as_mut().ok_or_else(|| JsError("missing temporal history".into()))?;
-            history.resize(size[0], size[1]).map_err(|e| JsError(e.to_string()))?;
-            history.encode_depth_attachment(encoder, depth.texture()).map_err(|e| JsError(e.to_string()))?;
-            let frame = history.prepare_resolve(
-                resolver, self.target.texture(), motion.output(), previous_depth.output(),
-                voxy_render::TemporalResolveOptions {
-                    history_weight: 0.85, depth_tolerance: 0.001, reset_history: reset,
-                }, true,
-            ).map_err(|e| JsError(e.to_string()))?;
+            let (resolver, history) = self
+                .temporal
+                .as_mut()
+                .ok_or_else(|| JsError("missing temporal history".into()))?;
+            history
+                .resize(size[0], size[1])
+                .map_err(|e| JsError(e.to_string()))?;
+            history
+                .encode_depth_attachment(encoder, depth.texture())
+                .map_err(|e| JsError(e.to_string()))?;
+            let frame = history
+                .prepare_resolve(
+                    resolver,
+                    self.target.texture(),
+                    motion.output(),
+                    previous_depth.output(),
+                    voxy_render::TemporalResolveOptions {
+                        history_weight: 0.85,
+                        depth_tolerance: 0.001,
+                        reset_history: reset,
+                    },
+                    true,
+                )
+                .map_err(|e| JsError(e.to_string()))?;
             frame.encode(encoder);
-            if self.color_probe.is_none() && [0,30,60,120].contains(&self.guide_frames) {
-                let pipeline = self.color_pipeline.get_or_insert_with(|| super::temporal_color_probe::pipeline(device));
-                let pixels = super::temporal_guides_probe::sample_pixels(size, cameras[0], &vertices, 0.5);
-                self.color_probe = Some(super::temporal_color_probe::ColorProbe::encode(
-                    device, encoder, pipeline,
-                    [self.target.texture(), motion.output(), previous_depth.output(), history.color(), history.depth(), frame.output()],
-                    &pixels, reset || !history.valid(),
-                ).map_err(|e| JsError(format!("{e:?}")))?);
+            if self.color_probe.is_none() && [0, 30, 60, 120].contains(&self.guide_frames) {
+                let pipeline = self
+                    .color_pipeline
+                    .get_or_insert_with(|| super::temporal_color_probe::pipeline(device));
+                let pixels =
+                    super::temporal_guides_probe::sample_pixels(size, cameras[0], &vertices, 0.5);
+                self.color_probe = Some(
+                    super::temporal_color_probe::ColorProbe::encode(
+                        device,
+                        encoder,
+                        pipeline,
+                        [
+                            self.target.texture(),
+                            motion.output(),
+                            previous_depth.output(),
+                            history.color(),
+                            history.depth(),
+                            frame.output(),
+                        ],
+                        &pixels,
+                        reset || !history.valid(),
+                    )
+                    .map_err(|e| JsError(format!("{e:?}")))?,
+                );
             }
             if let Some(probe) = &mut self.temporal_probe {
-                probe.encode(encoder, frame.output(), size[0] / 2, size[1] / 2).map_err(|e| JsError(e.to_string()))?;
+                probe
+                    .encode(encoder, frame.output(), size[0] / 2, size[1] / 2)
+                    .map_err(|e| JsError(e.to_string()))?;
             }
             resolved = Some(frame);
             self.motion = Some(motion);
@@ -498,9 +579,16 @@ impl HdrScene {
                 .encode(encoder, self.target.texture(), size[0] / 2, size[1] / 2)
                 .map_err(|e| JsError(e.to_string()))?;
         }
-        let resolved_view = resolved.as_ref().map(|frame| frame.output().create_view(&Default::default()));
+        let resolved_view = resolved
+            .as_ref()
+            .map(|frame| frame.output().create_view(&Default::default()));
         self.display
-            .encode_checked(device, encoder, resolved_view.as_ref().unwrap_or(self.target.view()), output)
+            .encode_checked(
+                device,
+                encoder,
+                resolved_view.as_ref().unwrap_or(self.target.view()),
+                output,
+            )
             .map_err(|e| JsError(e.to_string()))?;
         Ok(())
     }

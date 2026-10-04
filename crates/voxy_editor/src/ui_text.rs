@@ -213,11 +213,7 @@ mod tests {
     #[test]
     fn font_count_budget_rejects_before_any_file_reads() {
         let root = std::env::temp_dir();
-        let project = AuthoringProject::new(
-            &root,
-            &crate::InputRecipe::Direct,
-        )
-        .unwrap();
+        let project = AuthoringProject::new(&root, &crate::InputRecipe::Direct).unwrap();
         let mut scene = SceneGraph::new(9);
         for i in 0..9 {
             let owner = scene.spawn(None, Transform::default()).unwrap();
@@ -356,11 +352,7 @@ mod worker_tests {
         ));
         std::fs::create_dir(&root).unwrap();
         std::fs::write(root.join("font.ttf"), super::tests::font_bytes()).unwrap();
-        let project = AuthoringProject::new(
-            &root,
-            &crate::InputRecipe::Direct,
-        )
-        .unwrap();
+        let project = AuthoringProject::new(&root, &crate::InputRecipe::Direct).unwrap();
         let mut scene = SceneGraph::new(1);
         let owner = scene.spawn(None, Transform::default()).unwrap();
         scene

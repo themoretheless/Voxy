@@ -36,10 +36,12 @@ impl RootRigidTwist {
     }
 }
 pub(super) fn retiming_factor_between_times(
-    clip: [f64; 2], wall: [f64; 2],
+    clip: [f64; 2],
+    wall: [f64; 2],
 ) -> Result<Scalar, AnimationError> {
     if clip.into_iter().chain(wall).any(|v| !v.is_finite())
-        || clip[1] < clip[0] || wall[1] <= wall[0]
+        || clip[1] < clip[0]
+        || wall[1] <= wall[0]
     {
         return Err(AnimationError::InvalidPlaybackSpeed);
     }
@@ -50,8 +52,13 @@ pub(super) fn retiming_factor_between_times(
 }
 impl RootRigidTwistEnclosure {
     pub(super) fn nominal_midpoint(&self) -> RootRigidTwist {
-        let midpoint=|values:[Scalar;3]|DVec3::from_array(values.map(|value|value.0*0.5+value.1*0.5));
-        RootRigidTwist {linear:midpoint(self.linear),angular:midpoint(self.angular)}
+        let midpoint = |values: [Scalar; 3]| {
+            DVec3::from_array(values.map(|value| value.0 * 0.5 + value.1 * 0.5))
+        };
+        RootRigidTwist {
+            linear: midpoint(self.linear),
+            angular: midpoint(self.angular),
+        }
     }
     pub(super) fn from_parts(linear: [Scalar; 3], angular: [Scalar; 3]) -> Self {
         Self { linear, angular }
@@ -59,9 +66,11 @@ impl RootRigidTwistEnclosure {
     /// Componentwise hull containing both represented velocity domains.
     /// This does not establish a derivative bound across their boundary.
     pub fn hull(&self, other: &Self) -> Self {
-        let hull=|a:Scalar,b:Scalar|Scalar(a.0.min(b.0),a.1.max(b.1));
-        Self {linear:std::array::from_fn(|i|hull(self.linear[i],other.linear[i])),
-            angular:std::array::from_fn(|i|hull(self.angular[i],other.angular[i]))}
+        let hull = |a: Scalar, b: Scalar| Scalar(a.0.min(b.0), a.1.max(b.1));
+        Self {
+            linear: std::array::from_fn(|i| hull(self.linear[i], other.linear[i])),
+            angular: std::array::from_fn(|i| hull(self.angular[i], other.angular[i])),
+        }
     }
     pub fn linear_bounds(&self) -> [[f64; 2]; 3] {
         self.linear.map(Scalar::array)
@@ -79,11 +88,18 @@ impl RootRigidTwistEnclosure {
         Some(self.linear[axis].array())
     }
     pub(super) fn coordinate_displacement_error_between(
-        &self, times: [f64; 2], axis: usize, reference: RootRigidTwist,
+        &self,
+        times: [f64; 2],
+        axis: usize,
+        reference: RootRigidTwist,
     ) -> Result<Option<f64>, AnimationError> {
         let nominal = reference.enclosure()?;
-        let (Some(actual), Some(frozen)) = (self.coordinate_velocity_range(axis), nominal.coordinate_velocity_range(axis))
-        else { return Ok(None); };
+        let (Some(actual), Some(frozen)) = (
+            self.coordinate_velocity_range(axis),
+            nominal.coordinate_velocity_range(axis),
+        ) else {
+            return Ok(None);
+        };
         let delta = Scalar(actual[0], actual[1]).sub(Scalar(frozen[0], frozen[1]))?;
         let speed_error = Scalar::exact(delta.0.abs().max(delta.1.abs()));
         let mut duration = Scalar::exact(times[1]).sub(Scalar::exact(times[0]))?;
@@ -167,20 +183,24 @@ impl RootRigidTwistEnclosure {
         weights: [f64; 2],
         progress: [f64; 2],
     ) -> Result<Self, AnimationError> {
-        if weights.into_iter().chain(progress)
+        if weights
+            .into_iter()
+            .chain(progress)
             .any(|v| !v.is_finite() || !(0. ..=1.).contains(&v))
             || progress[0] > progress[1]
         {
             return Err(AnimationError::InvalidBlendWeight);
         }
         let weight = super::cubic::interpolate(
-            Scalar::exact(weights[0]), Scalar::exact(weights[1]),
+            Scalar::exact(weights[0]),
+            Scalar::exact(weights[1]),
             Scalar(progress[0], progress[1]),
         )?;
         let mut result = *self;
         for i in 0..3 {
             result.linear[i] = super::cubic::interpolate(self.linear[i], target.linear[i], weight)?;
-            result.angular[i] = super::cubic::interpolate(self.angular[i], target.angular[i], weight)?;
+            result.angular[i] =
+                super::cubic::interpolate(self.angular[i], target.angular[i], weight)?;
         }
         Ok(result)
     }
@@ -195,7 +215,10 @@ impl RootRigidTwistEnclosure {
         fade_times: [f64; 2],
         query_times: [f64; 2],
     ) -> Result<Self, AnimationError> {
-        if fade_times.into_iter().chain(query_times).any(|v| !v.is_finite())
+        if fade_times
+            .into_iter()
+            .chain(query_times)
+            .any(|v| !v.is_finite())
             || fade_times[1] <= fade_times[0]
             || query_times[1] < query_times[0]
             || query_times[0] < fade_times[0]
@@ -208,8 +231,7 @@ impl RootRigidTwistEnclosure {
             .sub(Scalar::exact(fade_times[0]))?
             .div_interval_positive(duration)?;
         // The checked query domain proves true progress remains in [0,1].
-        self.blended_over_progress(target, weights,
-            [progress.0.max(0.), progress.1.min(1.)])
+        self.blended_over_progress(target, weights, [progress.0.max(0.), progress.1.min(1.)])
     }
     /// Similarity for a spatial field: omega'=R*omega,
     /// v'=scale*R*v - omega' cross frame.translation.
@@ -224,7 +246,9 @@ impl RootRigidTwistEnclosure {
         self.transformed_enclosed_scale(frame, RootUniformScaleEnclosure::from_scale(scale)?)
     }
     pub fn transformed_enclosed_scale(
-        &self, frame: &RootRigidEnclosure, scale: RootUniformScaleEnclosure,
+        &self,
+        frame: &RootRigidEnclosure,
+        scale: RootUniformScaleEnclosure,
     ) -> Result<Self, AnimationError> {
         let (offset, rotation) = frame.vectors();
         let angular = rotate(rotation, self.angular)?;
@@ -245,8 +269,18 @@ mod tests {
     use super::*;
     #[test]
     fn planar_constraints_survive_retiming_and_blending() {
-        let a = RootRigidTwist { linear: DVec3::X, angular: DVec3::Y }.enclosure().unwrap();
-        let b = RootRigidTwist { linear: DVec3::Z, angular: -DVec3::Y }.enclosure().unwrap();
+        let a = RootRigidTwist {
+            linear: DVec3::X,
+            angular: DVec3::Y,
+        }
+        .enclosure()
+        .unwrap();
+        let b = RootRigidTwist {
+            linear: DVec3::Z,
+            angular: -DVec3::Y,
+        }
+        .enclosure()
+        .unwrap();
         let a = a.retimed_between(0.3, 0.7).unwrap();
         let b = b.retimed_between(0.2, 0.9).unwrap();
         for progress in [0., 0.37, 1.] {
@@ -254,7 +288,12 @@ mod tests {
             assert_eq!(mixed.coordinate_velocity_range(1), Some([0., 0.]));
             assert_eq!(mixed.coordinate_velocity_range(3), None);
         }
-        let tilted = RootRigidTwist { linear: DVec3::ZERO, angular: DVec3::new(1e-300, 1., 0.) }.enclosure().unwrap();
+        let tilted = RootRigidTwist {
+            linear: DVec3::ZERO,
+            angular: DVec3::new(1e-300, 1., 0.),
+        }
+        .enclosure()
+        .unwrap();
         assert_eq!(tilted.coordinate_velocity_range(1), None);
     }
     #[test]
@@ -320,26 +359,51 @@ mod range_tests {
     use super::*;
     #[test]
     fn whole_blend_range_encloses_reversing_weights_and_preserves_planarity() {
-        let a = RootRigidTwist {linear:DVec3::new(2.,0.,-3.),angular:DVec3::Y*4.}.enclosure().unwrap();
-        let b = RootRigidTwist {linear:DVec3::new(-5.,0.,7.),angular:-DVec3::Y*2.}.enclosure().unwrap();
-        for weights in [[0.,1.],[1.,0.],[0.3,0.7],[0.5,0.5]] {
-            let whole = a.blended_over_progress(&b,weights,[0.1,0.9]).unwrap();
-            assert_eq!(whole.coordinate_velocity_range(1),Some([0.,0.]));
-            for progress in [0.1,0.3,0.5,0.9] {
-                let weight = weights[0]*(1.-progress)+weights[1]*progress;
-                let source = [2.,0.,-3.,0.,4.,0.];
-                let target = [-5.,0.,7.,0.,-2.,0.];
-                for (i,bounds) in whole.linear_bounds().into_iter().chain(whole.angular_bounds()).enumerate() {
-                    let value = source[i]*(1.-weight)+target[i]*weight;
-                    assert!(bounds[0]<=value && value<=bounds[1]);
+        let a = RootRigidTwist {
+            linear: DVec3::new(2., 0., -3.),
+            angular: DVec3::Y * 4.,
+        }
+        .enclosure()
+        .unwrap();
+        let b = RootRigidTwist {
+            linear: DVec3::new(-5., 0., 7.),
+            angular: -DVec3::Y * 2.,
+        }
+        .enclosure()
+        .unwrap();
+        for weights in [[0., 1.], [1., 0.], [0.3, 0.7], [0.5, 0.5]] {
+            let whole = a.blended_over_progress(&b, weights, [0.1, 0.9]).unwrap();
+            assert_eq!(whole.coordinate_velocity_range(1), Some([0., 0.]));
+            for progress in [0.1, 0.3, 0.5, 0.9] {
+                let weight = weights[0] * (1. - progress) + weights[1] * progress;
+                let source = [2., 0., -3., 0., 4., 0.];
+                let target = [-5., 0., 7., 0., -2., 0.];
+                for (i, bounds) in whole
+                    .linear_bounds()
+                    .into_iter()
+                    .chain(whole.angular_bounds())
+                    .enumerate()
+                {
+                    let value = source[i] * (1. - weight) + target[i] * weight;
+                    assert!(bounds[0] <= value && value <= bounds[1]);
                 }
             }
         }
-        for progress in [[0.8,0.2],[-0.1,0.5],[0.,f64::NAN]] {
-            assert!(a.blended_over_progress(&b,[0.,1.],progress).is_err());
+        for progress in [[0.8, 0.2], [-0.1, 0.5], [0., f64::NAN]] {
+            assert!(a.blended_over_progress(&b, [0., 1.], progress).is_err());
         }
-        let tilted = RootRigidTwist {linear:DVec3::ZERO,angular:DVec3::new(1e-300,1.,0.)}.enclosure().unwrap();
-        assert!(a.blended_over_progress(&tilted,[0.,1.],[0.,1.]).unwrap().coordinate_velocity_range(1).is_none());
+        let tilted = RootRigidTwist {
+            linear: DVec3::ZERO,
+            angular: DVec3::new(1e-300, 1., 0.),
+        }
+        .enclosure()
+        .unwrap();
+        assert!(
+            a.blended_over_progress(&tilted, [0., 1.], [0., 1.])
+                .unwrap()
+                .coordinate_velocity_range(1)
+                .is_none()
+        );
     }
 }
 
@@ -348,19 +412,38 @@ mod clock_tests {
     use super::*;
     #[test]
     fn clock_retiming_covers_long_elapsed_tiny_ticks_and_paused_clip() {
-        let twist = RootRigidTwist {linear:DVec3::new(0.,2.,0.),angular:DVec3::Y*3.}.enclosure().unwrap();
-        let clip = [1e12,1e12_f64.next_up()];
-        let wall = [1e14,1e14_f64.next_up()];
-        let value = twist.retimed_between_times(clip,wall).unwrap();
-        let exact_ratio = (clip[1]-clip[0])/(wall[1]-wall[0]);
-        let range = value.coordinate_velocity_range(1).unwrap();
-        assert!(range[0]<=2.*exact_ratio && range[1]>=2.*exact_ratio);
-        let paused = twist.retimed_between_times([0.3,0.3],[0.1,0.4]).unwrap();
-        assert!(paused.linear_bounds().into_iter().chain(paused.angular_bounds()).all(|b|b==[0.,0.]));
-        for (clip,wall) in [([1.,0.],[0.,1.]),([0.,1.],[1.,1.]),([0.,f64::NAN],[0.,1.])] {
-            assert!(twist.retimed_between_times(clip,wall).is_err());
+        let twist = RootRigidTwist {
+            linear: DVec3::new(0., 2., 0.),
+            angular: DVec3::Y * 3.,
         }
-        assert!(twist.retimed_between_times([0.,1.],[0.,f64::from_bits(1)]).is_err());
+        .enclosure()
+        .unwrap();
+        let clip = [1e12, 1e12_f64.next_up()];
+        let wall = [1e14, 1e14_f64.next_up()];
+        let value = twist.retimed_between_times(clip, wall).unwrap();
+        let exact_ratio = (clip[1] - clip[0]) / (wall[1] - wall[0]);
+        let range = value.coordinate_velocity_range(1).unwrap();
+        assert!(range[0] <= 2. * exact_ratio && range[1] >= 2. * exact_ratio);
+        let paused = twist.retimed_between_times([0.3, 0.3], [0.1, 0.4]).unwrap();
+        assert!(
+            paused
+                .linear_bounds()
+                .into_iter()
+                .chain(paused.angular_bounds())
+                .all(|b| b == [0., 0.])
+        );
+        for (clip, wall) in [
+            ([1., 0.], [0., 1.]),
+            ([0., 1.], [1., 1.]),
+            ([0., f64::NAN], [0., 1.]),
+        ] {
+            assert!(twist.retimed_between_times(clip, wall).is_err());
+        }
+        assert!(
+            twist
+                .retimed_between_times([0., 1.], [0., f64::from_bits(1)])
+                .is_err()
+        );
     }
 }
 
@@ -369,22 +452,45 @@ mod fade_clock_tests {
     use super::*;
     #[test]
     fn fade_clocks_cover_long_elapsed_ticks_and_reject_unsplit_tails() {
-        let source = RootRigidTwist {linear:DVec3::X*2.,angular:DVec3::Y}.enclosure().unwrap();
-        let target = RootRigidTwist {linear:DVec3::X*6.,angular:-DVec3::Y}.enclosure().unwrap();
-        let fade = [1e12,1e12+1.];
-        let query = [1e12+0.25,1e12+0.75];
-        for weights in [[0.,1.],[1.,0.]] {
-            let blend = source.blended_between_times(&target,weights,fade,query).unwrap();
-            let bounds = blend.linear_bounds()[0];
-            assert!(bounds[0]<=3. && bounds[1]>=5.);
-            assert!(bounds[0]>2.9 && bounds[1]<5.1);
-            assert_eq!(blend.coordinate_velocity_range(1),Some([0.,0.]));
+        let source = RootRigidTwist {
+            linear: DVec3::X * 2.,
+            angular: DVec3::Y,
         }
-        let adjacent = [1e12,1e12_f64.next_up()];
-        let blend = source.blended_between_times(&target,[0.,1.],adjacent,adjacent).unwrap();
-        assert!(blend.linear_bounds()[0][0]<=2. && blend.linear_bounds()[0][1]>=6.);
-        for (fade,query) in [([0.,1.],[0.,1.1]),([0.,0.],[0.,0.]),([0.,1.],[0.8,0.2]),([0.,1.],[0.,f64::NAN])] {
-            assert!(source.blended_between_times(&target,[0.,1.],fade,query).is_err());
+        .enclosure()
+        .unwrap();
+        let target = RootRigidTwist {
+            linear: DVec3::X * 6.,
+            angular: -DVec3::Y,
+        }
+        .enclosure()
+        .unwrap();
+        let fade = [1e12, 1e12 + 1.];
+        let query = [1e12 + 0.25, 1e12 + 0.75];
+        for weights in [[0., 1.], [1., 0.]] {
+            let blend = source
+                .blended_between_times(&target, weights, fade, query)
+                .unwrap();
+            let bounds = blend.linear_bounds()[0];
+            assert!(bounds[0] <= 3. && bounds[1] >= 5.);
+            assert!(bounds[0] > 2.9 && bounds[1] < 5.1);
+            assert_eq!(blend.coordinate_velocity_range(1), Some([0., 0.]));
+        }
+        let adjacent = [1e12, 1e12_f64.next_up()];
+        let blend = source
+            .blended_between_times(&target, [0., 1.], adjacent, adjacent)
+            .unwrap();
+        assert!(blend.linear_bounds()[0][0] <= 2. && blend.linear_bounds()[0][1] >= 6.);
+        for (fade, query) in [
+            ([0., 1.], [0., 1.1]),
+            ([0., 0.], [0., 0.]),
+            ([0., 1.], [0.8, 0.2]),
+            ([0., 1.], [0., f64::NAN]),
+        ] {
+            assert!(
+                source
+                    .blended_between_times(&target, [0., 1.], fade, query)
+                    .is_err()
+            );
         }
     }
 }

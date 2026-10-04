@@ -201,8 +201,12 @@ impl SceneMesh {
     /// Preserve authored/deformed normals instead of regenerating welded
     /// geometry normals. Rejects mismatched counts and nonfinite values.
     pub fn with_normals(mut self, normals: Vec<[f32; 3]>) -> Result<Self, SceneError> {
-        if normals.len() != self.vertices.len() { return Err(SceneError::InvalidGeometry); }
-        if normals.iter().flatten().any(|value| !value.is_finite()) { return Err(SceneError::NonFiniteVertex); }
+        if normals.len() != self.vertices.len() {
+            return Err(SceneError::InvalidGeometry);
+        }
+        if normals.iter().flatten().any(|value| !value.is_finite()) {
+            return Err(SceneError::NonFiniteVertex);
+        }
         self.authored_normals = Some(normals);
         Ok(self)
     }
@@ -1244,12 +1248,16 @@ impl SceneRenderer {
             vertices: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("scene vertices"),
                 contents: bytemuck::cast_slice(&mesh.vertices),
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST | additional_vertex_usage,
+                usage: wgpu::BufferUsages::VERTEX
+                    | wgpu::BufferUsages::COPY_DST
+                    | additional_vertex_usage,
             }),
             normals: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: Some("scene smooth normals"),
                 contents: bytemuck::cast_slice(&normal_cache.normals),
-                usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST | additional_vertex_usage,
+                usage: wgpu::BufferUsages::VERTEX
+                    | wgpu::BufferUsages::COPY_DST
+                    | additional_vertex_usage,
             }),
             normal_cache,
             material_coordinates: device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -1901,17 +1909,35 @@ impl SceneRenderer {
     /// other shadow/composition passes. Rejects unavailable timing before encoding.
     #[allow(clippy::too_many_arguments)]
     pub fn encode_profiled(
-        &self, encoder: &mut wgpu::CommandEncoder,
-        color: &wgpu::TextureView, depth: &wgpu::TextureView,
-        clear: wgpu::Color, draws: &[SceneDraw<'_>],
+        &self,
+        encoder: &mut wgpu::CommandEncoder,
+        color: &wgpu::TextureView,
+        depth: &wgpu::TextureView,
+        clear: wgpu::Color,
+        draws: &[SceneDraw<'_>],
         timestamps: wgpu::RenderPassTimestampWrites<'_>,
     ) -> Result<(), SceneError> {
-        if !self.device.features().contains(wgpu::Features::TIMESTAMP_QUERY) {
+        if !self
+            .device
+            .features()
+            .contains(wgpu::Features::TIMESTAMP_QUERY)
+        {
             return Err(SceneError::TimestampQueriesNotEnabled);
         }
-        self.encode_pass(encoder, color, depth, None, clear, draws,
-            (&self.world_pipeline, &self.overlay_pipeline, &self.transparent_pipeline),
-            Some(timestamps));
+        self.encode_pass(
+            encoder,
+            color,
+            depth,
+            None,
+            clear,
+            draws,
+            (
+                &self.world_pipeline,
+                &self.overlay_pipeline,
+                &self.transparent_pipeline,
+            ),
+            Some(timestamps),
+        );
         Ok(())
     }
 
@@ -2461,7 +2487,10 @@ impl NormalCache {
         {
             return false;
         }
-        self.normals = mesh.authored_normals.clone().unwrap_or_else(|| smooth_normals(mesh));
+        self.normals = mesh
+            .authored_normals
+            .clone()
+            .unwrap_or_else(|| smooth_normals(mesh));
         self.authored.clone_from(&mesh.authored_normals);
         self.positions.clear();
         self.positions
@@ -2938,4 +2967,7 @@ mod tests {
 mod lod_geometry;
 pub use lod_geometry::{SceneLodGeometry, SceneLodHistory};
 mod skinning;
-pub use skinning::{SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource, SceneSkinner};
+pub use skinning::{
+    SceneSkinError, SceneSkinInstance, SceneSkinLodLevel, SceneSkinPose, SceneSkinSource,
+    SceneSkinner,
+};

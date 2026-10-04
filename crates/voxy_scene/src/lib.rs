@@ -21,15 +21,15 @@ pub use events::{EventChannel, EventCursor, EventError, EventRead};
 
 mod schedule;
 pub use schedule::{
-    ResourceAccessDenied, SceneAccessDenied, SceneSystemAccess, ScheduleError, SchedulePlan, SystemAccess, SystemFailure,
-    SystemSpec,
+    ResourceAccessDenied, SceneAccessDenied, SceneSystemAccess, ScheduleError, SchedulePlan,
+    SystemAccess, SystemFailure, SystemSpec,
 };
 
 mod transaction;
 pub use transaction::{MutationError, SceneMutation};
 
-mod commands;
 mod collection_override;
+mod commands;
 pub use collection_override::{CollectionEdit, CollectionOverride};
 pub use commands::{SceneCommand, SceneCommands};
 

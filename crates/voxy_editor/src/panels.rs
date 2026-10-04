@@ -66,7 +66,7 @@ pub(crate) struct Panels {
     pub collection_deleted_items: crate::component_collections::DeletedItems,
     pub deleted_page: usize,
     pub retarget_draft: bool,
-    pub bone_picker: Option<(Vec<String>,usize)>,
+    pub bone_picker: Option<(Vec<String>, usize)>,
     pub overridden_fields: std::collections::BTreeSet<usize>,
     glyphs: BTreeMap<char, (voxy_text::GlyphBitmap, Option<GlyphRegion>)>,
     pub rgba: Vec<u8>,
@@ -462,20 +462,40 @@ impl Panels {
                     ));
                 }
             }
-            if let Some((choices,page))=self.bone_picker.clone() {
+            if let Some((choices, page)) = self.bone_picker.clone() {
                 values.clear();
-                for (row,(index,name)) in choices.iter().enumerate().skip(page*6).take(6).enumerate() {
-                    let y=116.+row as f32*26.;
-                    self.text(&mut batch,name,Vec2::new(rx+10.,y+18.),right-20.,size)?;
-                    self.regions.push(([rx+4.,y,right-8.,25.],Action::RetargetBone(index)));
+                for (row, (index, name)) in choices
+                    .iter()
+                    .enumerate()
+                    .skip(page * 6)
+                    .take(6)
+                    .enumerate()
+                {
+                    let y = 116. + row as f32 * 26.;
+                    self.text(
+                        &mut batch,
+                        name,
+                        Vec2::new(rx + 10., y + 18.),
+                        right - 20.,
+                        size,
+                    )?;
+                    self.regions
+                        .push(([rx + 4., y, right - 8., 25.], Action::RetargetBone(index)));
                 }
-                for (column,label,action) in [(0,"Previous",Action::RetargetBonePage(false)),(1,"Next",Action::RetargetBonePage(true)),(2,"Close",Action::RetargetBoneClose)] {
-                    let width=(right-8.)/3.;let x=rx+4.+column as f32*width;
-                    self.text(&mut batch,label,Vec2::new(x+4.,302.),width-8.,size)?;
-                    self.regions.push(([x,284.,width,25.],action));
+                for (column, label, action) in [
+                    (0, "Previous", Action::RetargetBonePage(false)),
+                    (1, "Next", Action::RetargetBonePage(true)),
+                    (2, "Close", Action::RetargetBoneClose),
+                ] {
+                    let width = (right - 8.) / 3.;
+                    let x = rx + 4. + column as f32 * width;
+                    self.text(&mut batch, label, Vec2::new(x + 4., 302.), width - 8., size)?;
+                    self.regions.push(([x, 284., width, 25.], action));
                 }
             }
-            if let InspectorMode::Components(page) = inspector && self.bone_picker.is_none() {
+            if let InspectorMode::Components(page) = inspector
+                && self.bone_picker.is_none()
+            {
                 values.clear();
                 let fields = crate::component_fields::fields(object)?;
                 for (row, (index, member)) in
@@ -491,28 +511,66 @@ impl Panels {
                         .map(|character| self.glyphs[&character].0.advance)
                         .sum();
                     let button_width = label_width.ceil() + 12.0;
-                    let bone_choice=self.retarget_draft && member.schema=="editor.model-retarget.v1" && member.path.starts_with("/joints/") && (member.path.ends_with("/source")||member.path.ends_with("/target"));
+                    let bone_choice = self.retarget_draft
+                        && member.schema == "editor.model-retarget.v1"
+                        && member.path.starts_with("/joints/")
+                        && (member.path.ends_with("/source") || member.path.ends_with("/target"));
                     let delete_pair = (bone_choice && member.path.ends_with("/source"))
-                        .then(|| member.path.split('/').nth(2).and_then(|value| value.parse::<usize>().ok())).flatten();
-                    let width = right - if overridden { button_width + 12.0 } else { 8.0 } - if bone_choice {42.}else{0.} - if delete_pair.is_some() {58.} else {0.};
-                    let foot_label = if member.schema == "editor.model-retarget.v1" {retarget_field_label(&member.path)}else{(member.schema == "editor.foot-placement.v1").then(|| foot_field_label(&member.path)).flatten()};
-                    let label = if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_joint" {
+                        .then(|| {
+                            member
+                                .path
+                                .split('/')
+                                .nth(2)
+                                .and_then(|value| value.parse::<usize>().ok())
+                        })
+                        .flatten();
+                    let width = right
+                        - if overridden { button_width + 12.0 } else { 8.0 }
+                        - if bone_choice { 42. } else { 0. }
+                        - if delete_pair.is_some() { 58. } else { 0. };
+                    let foot_label = if member.schema == "editor.model-retarget.v1" {
+                        retarget_field_label(&member.path)
+                    } else {
+                        (member.schema == "editor.foot-placement.v1")
+                            .then(|| foot_field_label(&member.path))
+                            .flatten()
+                    };
+                    let label = if member.schema == "editor.model-animation.v1"
+                        && member.path == "/root_motion_joint"
+                    {
                         "Motion bone index"
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/clip_name" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/clip_name"
+                    {
                         "Animation clip name (empty uses index)".into()
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/transition_seconds" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/transition_seconds"
+                    {
                         "Clip transition seconds"
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_bone" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/root_motion_bone"
+                    {
                         "Motion bone name"
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/0" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/root_motion_axes/0"
+                    {
                         "Root motion X"
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/1" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/root_motion_axes/1"
+                    {
                         "Root motion Y"
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_axes/2" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/root_motion_axes/2"
+                    {
                         "Root motion Z"
-                    } else if member.schema == "editor.model-animation.v1" && member.path == "/root_motion_rotation" {
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/root_motion_rotation"
+                    {
                         "Root motion rotation"
-                    } else if matches!(member.schema.as_str(),"editor.foot-placement.v1"|"editor.model-retarget.v1") {
+                    } else if matches!(
+                        member.schema.as_str(),
+                        "editor.foot-placement.v1" | "editor.model-retarget.v1"
+                    ) {
                         foot_label.as_deref().unwrap_or(member.path.as_str())
                     } else if member.path.is_empty() {
                         member.schema.as_str()
@@ -529,14 +587,26 @@ impl Panels {
                     self.regions
                         .push(([rx + 4.0, y, width, 25.0], Action::Field(index)));
                     if bone_choice {
-                        let rect=[rx+width+4.,y,38.,25.];
-                        self.text(&mut batch,"Pick",Vec2::new(rect[0]+3.,y+18.),34.,size)?;
-                        self.regions.push((rect,Action::RetargetBones(index)));
+                        let rect = [rx + width + 4., y, 38., 25.];
+                        self.text(
+                            &mut batch,
+                            "Pick",
+                            Vec2::new(rect[0] + 3., y + 18.),
+                            34.,
+                            size,
+                        )?;
+                        self.regions.push((rect, Action::RetargetBones(index)));
                     }
                     if let Some(pair) = delete_pair {
-                        let rect=[rx+width+46.,y,54.,25.];
-                        self.text(&mut batch,"Remove",Vec2::new(rect[0]+3.,y+18.),48.,size)?;
-                        self.regions.push((rect,Action::RetargetDeletePair(pair)));
+                        let rect = [rx + width + 46., y, 54., 25.];
+                        self.text(
+                            &mut batch,
+                            "Remove",
+                            Vec2::new(rect[0] + 3., y + 18.),
+                            48.,
+                            size,
+                        )?;
+                        self.regions.push((rect, Action::RetargetDeletePair(pair)));
                     }
                     if overridden {
                         let rect = [rx + right - button_width - 4.0, y, button_width, 25.0];
@@ -914,7 +984,9 @@ impl Panels {
             for (row, label, action) in [
                 (
                     3,
-                    if self.retarget_draft {"Add bone pair"}else if matches!(
+                    if self.retarget_draft {
+                        "Add bone pair"
+                    } else if matches!(
                         inspector,
                         InspectorMode::Audio | InspectorMode::ImportSettings
                     ) {
@@ -935,7 +1007,9 @@ impl Panels {
                         InspectorMode::Audio | InspectorMode::ImportSettings
                     ) {
                         Action::AudioSettingsLoad
-                    } else if self.retarget_draft {Action::RetargetPair(true)} else if matches!(inspector, InspectorMode::Components(_)) {
+                    } else if self.retarget_draft {
+                        Action::RetargetPair(true)
+                    } else if matches!(inspector, InspectorMode::Components(_)) {
                         Action::Animation
                     } else {
                         Action::Motion
@@ -943,19 +1017,31 @@ impl Panels {
                 ),
                 (
                     4,
-                    if self.retarget_draft {"Remove last bone pair"}else{match inspector {
-                        InspectorMode::Behavior | InspectorMode::ImportSettings => "Audio fields",
-                        InspectorMode::Audio => "Mixer fields",
-                        InspectorMode::Mixer => "Component fields",
-                        InspectorMode::Components(_) => "Collections",
-                        InspectorMode::Collections(_, _) => "Transform fields",
-                        _ => "Behavior fields",
-                    }},
-                    if self.retarget_draft {Action::RetargetPair(false)}else{Action::Behavior},
+                    if self.retarget_draft {
+                        "Remove last bone pair"
+                    } else {
+                        match inspector {
+                            InspectorMode::Behavior | InspectorMode::ImportSettings => {
+                                "Audio fields"
+                            }
+                            InspectorMode::Audio => "Mixer fields",
+                            InspectorMode::Mixer => "Component fields",
+                            InspectorMode::Components(_) => "Collections",
+                            InspectorMode::Collections(_, _) => "Transform fields",
+                            _ => "Behavior fields",
+                        }
+                    },
+                    if self.retarget_draft {
+                        Action::RetargetPair(false)
+                    } else {
+                        Action::Behavior
+                    },
                 ),
                 (
                     0,
-                    if self.retarget_draft {"Apply retarget profile"}else if inspector == InspectorMode::ImportSettings {
+                    if self.retarget_draft {
+                        "Apply retarget profile"
+                    } else if inspector == InspectorMode::ImportSettings {
                         "Save import settings"
                     } else if inspector == InspectorMode::Mixer {
                         if object.components.contains_key("game.audio-bus.v1") {
@@ -974,7 +1060,9 @@ impl Panels {
                     } else {
                         "Add character (C)"
                     },
-                    if self.retarget_draft {Action::RetargetApply}else if inspector == InspectorMode::ImportSettings {
+                    if self.retarget_draft {
+                        Action::RetargetApply
+                    } else if inspector == InspectorMode::ImportSettings {
                         Action::AudioSettingsSave
                     } else if inspector == InspectorMode::Mixer {
                         Action::AudioBus
@@ -986,7 +1074,11 @@ impl Panels {
                 ),
                 (
                     1,
-                    if self.retarget_draft {"Cancel profile edit"}else if matches!(inspector, InspectorMode::Components(_)) {"Edit retarget profile"}else if audio_mode {
+                    if self.retarget_draft {
+                        "Cancel profile edit"
+                    } else if matches!(inspector, InspectorMode::Components(_)) {
+                        "Edit retarget profile"
+                    } else if audio_mode {
                         if object.components.contains_key("game.audio-listener.v1") {
                             "Remove audio listener"
                         } else {
@@ -997,7 +1089,11 @@ impl Panels {
                     } else {
                         "Add collider (B)"
                     },
-                    if self.retarget_draft {Action::RetargetCancel}else if matches!(inspector, InspectorMode::Components(_)) {Action::Retarget}else if audio_mode {
+                    if self.retarget_draft {
+                        Action::RetargetCancel
+                    } else if matches!(inspector, InspectorMode::Components(_)) {
+                        Action::Retarget
+                    } else if audio_mode {
                         Action::AudioListener
                     } else {
                         Action::Collider
@@ -1005,12 +1101,18 @@ impl Panels {
                 ),
                 (
                     2,
-                    if self.retarget_draft {"Remove retarget profile"}else if inspector == InspectorMode::Physics {
+                    if self.retarget_draft {
+                        "Remove retarget profile"
+                    } else if inspector == InspectorMode::Physics {
                         "Transform fields (I)"
                     } else {
                         "Physics fields (I)"
                     },
-                    if self.retarget_draft {Action::RetargetRemove}else{Action::Physics},
+                    if self.retarget_draft {
+                        Action::RetargetRemove
+                    } else {
+                        Action::Physics
+                    },
                 ),
             ] {
                 let y = 354.0
@@ -1193,21 +1295,39 @@ fn foot_field_label(path: &str) -> Option<String> {
         ("contact", Some("min_up_dot")) => "Minimum ground up dot",
         _ => return None,
     };
-    parts.next().is_none().then(|| format!("Foot {foot}: {label}"))
+    parts
+        .next()
+        .is_none()
+        .then(|| format!("Foot {foot}: {label}"))
 }
 
 fn retarget_field_label(path: &str) -> Option<String> {
-    if path=="/source" {return Some("Animation source asset".into());}
-    let mut parts=path.strip_prefix("/joints/")?.split('/');
-    let pair=parts.next()?.parse::<usize>().ok()?+1;
-    let member=parts.next()?;
-    let label=match member {
-        "source"=>"Source bone".into(),"target"=>"Target bone".into(),"translation_scale"=>"Translation scale".into(),
-        "rotation_basis"|"translation_basis"=>{
-            let axis=parts.next()?.parse::<usize>().ok()?;
-            let component=["X","Y","Z","W"].get(axis)?;
-            format!("{} basis {component}",if member=="rotation_basis" {"Rotation"}else{"Translation"})
-        },_=>return None
+    if path == "/source" {
+        return Some("Animation source asset".into());
+    }
+    let mut parts = path.strip_prefix("/joints/")?.split('/');
+    let pair = parts.next()?.parse::<usize>().ok()? + 1;
+    let member = parts.next()?;
+    let label = match member {
+        "source" => "Source bone".into(),
+        "target" => "Target bone".into(),
+        "translation_scale" => "Translation scale".into(),
+        "rotation_basis" | "translation_basis" => {
+            let axis = parts.next()?.parse::<usize>().ok()?;
+            let component = ["X", "Y", "Z", "W"].get(axis)?;
+            format!(
+                "{} basis {component}",
+                if member == "rotation_basis" {
+                    "Rotation"
+                } else {
+                    "Translation"
+                }
+            )
+        }
+        _ => return None,
     };
-    parts.next().is_none().then(||format!("Pair {pair}: {label}"))
+    parts
+        .next()
+        .is_none()
+        .then(|| format!("Pair {pair}: {label}"))
 }

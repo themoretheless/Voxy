@@ -377,8 +377,10 @@ mod tests {
         let mut app = App::new(&fixture, false).unwrap();
         // Authored settings must load before the model import completes.
         let mut pending = app.authoring_document().unwrap();
-        pending.objects[0].components.insert("editor.model-animation.v1".into(),
-            serde_json::json!({"clip": 0, "speed": 1.0}));
+        pending.objects[0].components.insert(
+            "editor.model-animation.v1".into(),
+            serde_json::json!({"clip": 0, "speed": 1.0}),
+        );
         app.validate_authoring_document(&pending).unwrap();
         let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
         while app.catalog.snapshot(&app.id).is_none() {
@@ -389,17 +391,33 @@ mod tests {
         app.panel_action(panels::Action::Animation).unwrap();
         let before = app.authoring_document().unwrap();
         let members = fields(&before.objects[0]).unwrap();
-        let clip = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/clip").unwrap();
-        let speed = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/speed").unwrap();
+        let clip = members
+            .iter()
+            .position(|field| field.schema == "editor.model-animation.v1" && field.path == "/clip")
+            .unwrap();
+        let speed = members
+            .iter()
+            .position(|field| field.schema == "editor.model-animation.v1" && field.path == "/speed")
+            .unwrap();
         assert!(app.edit_component_field(clip, "9999").is_err());
         assert!(app.edit_component_field(speed, "-1").is_err());
         assert!(app.edit_component_field(speed, "9").is_err());
-        let transition = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/transition_seconds").unwrap();
+        let transition = members
+            .iter()
+            .position(|field| {
+                field.schema == "editor.model-animation.v1" && field.path == "/transition_seconds"
+            })
+            .unwrap();
         assert!(app.edit_component_field(transition, "-1").is_err());
         assert!(app.edit_component_field(transition, "61").is_err());
         assert_eq!(app.authoring_document().unwrap(), before);
 
-        let motion = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/root_motion_joint").unwrap();
+        let motion = members
+            .iter()
+            .position(|field| {
+                field.schema == "editor.model-animation.v1" && field.path == "/root_motion_joint"
+            })
+            .unwrap();
         assert!(app.edit_component_field(motion, "-1").is_err());
         assert!(app.edit_component_field(motion, "9999").is_err());
         assert!(app.edit_component_field(motion, "255").is_err());
@@ -410,11 +428,28 @@ mod tests {
         assert_eq!(app.authoring_document().unwrap(), before);
         app.edit_key(KeyCode::KeyY).unwrap();
         assert_eq!(app.authoring_document().unwrap(), selected);
-        let named = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/root_motion_bone").unwrap();
+        let named = members
+            .iter()
+            .position(|field| {
+                field.schema == "editor.model-animation.v1" && field.path == "/root_motion_bone"
+            })
+            .unwrap();
         assert!(app.edit_component_field(named, "missing bone").is_err());
         assert_eq!(app.authoring_document().unwrap(), selected);
-        let name = app.catalog.snapshot(&app.id).unwrap().value().animated.as_ref().unwrap()
-            .joint_names().iter().flatten().next().unwrap().to_string();
+        let name = app
+            .catalog
+            .snapshot(&app.id)
+            .unwrap()
+            .value()
+            .animated
+            .as_ref()
+            .unwrap()
+            .joint_names()
+            .iter()
+            .flatten()
+            .next()
+            .unwrap()
+            .to_string();
         app.edit_component_field(named, &name).unwrap();
         let named_document = app.authoring_document().unwrap();
         app.edit_key(KeyCode::KeyZ).unwrap();
@@ -433,20 +468,36 @@ mod tests {
         let encoded = serde_json::to_string(&resumed).unwrap();
         let decoded = voxy_scene::SceneDocument::from_json(&encoded).unwrap();
         app.validate_authoring_document(&decoded).unwrap();
-        let clip_name = members.iter().position(|field| field.schema == "editor.model-animation.v1" && field.path == "/clip_name").unwrap();
-        assert!(app.edit_component_field(clip_name,"missing clip").is_err());
-        assert_eq!(app.authoring_document().unwrap(),resumed);
-        let selected_name = app.catalog.snapshot(&app.id).unwrap().value().animated.as_ref().unwrap()
-            .animations[0].name().to_owned();
-        app.edit_component_field(clip_name,&selected_name).unwrap();
+        let clip_name = members
+            .iter()
+            .position(|field| {
+                field.schema == "editor.model-animation.v1" && field.path == "/clip_name"
+            })
+            .unwrap();
+        assert!(app.edit_component_field(clip_name, "missing clip").is_err());
+        assert_eq!(app.authoring_document().unwrap(), resumed);
+        let selected_name = app
+            .catalog
+            .snapshot(&app.id)
+            .unwrap()
+            .value()
+            .animated
+            .as_ref()
+            .unwrap()
+            .animations[0]
+            .name()
+            .to_owned();
+        app.edit_component_field(clip_name, &selected_name).unwrap();
         let named_clip = app.authoring_document().unwrap();
         app.edit_key(KeyCode::KeyZ).unwrap();
-        assert_eq!(app.authoring_document().unwrap(),resumed);
+        assert_eq!(app.authoring_document().unwrap(), resumed);
         app.edit_key(KeyCode::KeyY).unwrap();
-        assert_eq!(app.authoring_document().unwrap(),named_clip);
-        let decoded_name = voxy_scene::SceneDocument::from_json(&serde_json::to_string(&named_clip).unwrap()).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), named_clip);
+        let decoded_name =
+            voxy_scene::SceneDocument::from_json(&serde_json::to_string(&named_clip).unwrap())
+                .unwrap();
         app.validate_authoring_document(&decoded_name).unwrap();
-        assert_eq!(decoded_name,named_clip);
+        assert_eq!(decoded_name, named_clip);
 
         assert_eq!(decoded, resumed);
         app.stop_workers().unwrap();
@@ -686,7 +737,8 @@ impl ComponentField {
             && (replacement.is_null() || replacement.as_u64().is_some())
             && (self.value.is_null() || self.value.as_u64().is_some());
         if !optional_clip
-            && std::mem::discriminant(&replacement) != std::mem::discriminant(&self.value) {
+            && std::mem::discriminant(&replacement) != std::mem::discriminant(&self.value)
+        {
             return Err("component field type cannot change".into());
         }
         let current = object
@@ -771,15 +823,18 @@ impl crate::App {
         if self.play.playing.is_some() {
             return Err("stop play before editing components".into());
         }
-        if let Some(draft)=&mut self.retarget_draft {
-            binding.replace(&mut draft.document,text)?;
-            self.field=None;self.component_edit=None;self.panel_cache=None;
+        if let Some(draft) = &mut self.retarget_draft {
+            binding.replace(&mut draft.document, text)?;
+            self.field = None;
+            self.component_edit = None;
+            self.panel_cache = None;
             return Ok(());
         }
         let mut document = self.authoring_document()?;
         binding.replace(&mut document, text)?;
         let next = self.validate_authoring_document(&document)?;
-        self.authoring.history
+        self.authoring
+            .history
             .as_mut()
             .ok_or("missing history")?
             .commit(document, &self.authoring.authoring_project.registry)?;

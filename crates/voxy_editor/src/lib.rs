@@ -1,36 +1,36 @@
 //! Native authoring viewport; IO/decoding is asynchronous, publication/upload is owner-only.
 mod audio_play;
-mod audio_session;
-mod authoring_session;
-mod play_session;
 mod audio_reload;
+mod audio_session;
 mod audio_settings;
+mod authoring_session;
 mod camera;
-mod view_layout;
 mod component_collections;
 mod component_fields;
 mod frame_styles;
 mod lod_smoke;
 mod packaged_game;
+mod play_session;
 mod prefab_authoring;
 mod prefab_fields;
 mod scene_revision;
+mod view_layout;
 pub use packaged_game::{run_packaged_game, run_packaged_game_with_ui_actions};
 mod prefab_smoke;
 pub use camera::ViewportCamera as EditorCamera;
+mod animation_runtime;
+mod foot_placement;
 mod gameplay_smoke;
 mod gizmo;
 mod gpu_model;
 mod model_playback;
-mod animation_runtime;
-mod foot_placement;
-mod retarget_profile;
 mod retarget_authoring;
+mod retarget_profile;
+pub use foot_placement::{FootBinding, FootContactKey, ModelFootPlacement};
 pub use retarget_profile::{ModelRetarget, RetargetJointProfile};
-pub use foot_placement::{ModelFootPlacement, FootBinding, FootContactKey};
-mod scene_limits;
 mod animated_models;
 mod animation_smoke;
+mod scene_limits;
 pub use model_playback::ModelAnimation;
 mod import;
 mod material;
@@ -147,7 +147,10 @@ impl Graphics {
             .sum::<u64>()
             + self.animated_models.allocation_bytes()
             + self.gizmo_geometry.allocation_bytes()
-            + self.panel_geometry.as_ref().map_or(0, SceneGeometry::allocation_bytes)
+            + self
+                .panel_geometry
+                .as_ref()
+                .map_or(0, SceneGeometry::allocation_bytes)
             + self
                 .ui_draws
                 .iter()
@@ -183,8 +186,13 @@ impl ModelGraphics {
         Option<&SceneTexture>,
     )> {
         match index {
-            None => Some((self.geometry.base(), self.outline.as_ref(),
-                (self.animated_textures.len() == 1).then(|| self.animated_textures[0].as_deref()).flatten())),
+            None => Some((
+                self.geometry.base(),
+                self.outline.as_ref(),
+                (self.animated_textures.len() == 1)
+                    .then(|| self.animated_textures[0].as_deref())
+                    .flatten(),
+            )),
             Some(index) => self.parts.get(&index).map(|part| {
                 (
                     part.geometry.as_ref(),
@@ -392,7 +400,9 @@ impl App {
             32 * 1024 * 1024,
             move |asset, provider, inputs| {
                 let source_path = match &recipe {
-                    InputRecipe::Direct => SourcePath::new(asset.0.clone()).map_err(|error|error.to_string())?,
+                    InputRecipe::Direct => {
+                        SourcePath::new(asset.0.clone()).map_err(|error| error.to_string())?
+                    }
                     InputRecipe::Manifest(manifest) => {
                         let snapshot = inputs
                             .read(manifest.clone(), |id, limit| {
@@ -526,8 +536,14 @@ impl App {
                     } else {
                         "Voxy model viewport"
                     })
-                    .with_inner_size(winit::dpi::LogicalSize::new(640.0, if self.standalone { 480.0 } else { 680.0 }))
-                    .with_min_inner_size(winit::dpi::LogicalSize::new(480.0, if self.standalone { 480.0 } else { 680.0 })),
+                    .with_inner_size(winit::dpi::LogicalSize::new(
+                        640.0,
+                        if self.standalone { 480.0 } else { 680.0 },
+                    ))
+                    .with_min_inner_size(winit::dpi::LogicalSize::new(
+                        480.0,
+                        if self.standalone { 480.0 } else { 680.0 },
+                    )),
             )?,
         );
         let size = window.inner_size();
@@ -547,10 +563,12 @@ impl App {
         let gizmo_transform = renderer.create_transform(host.device(), Mat4::IDENTITY)?;
         let panel_transform = renderer.create_transform(host.device(), Mat4::IDENTITY)?;
         let panel_texture = if !self.standalone
-            && (self.smoke_deadline.is_none() || self.prefab_smoke.is_some()
+            && (self.smoke_deadline.is_none()
+                || self.prefab_smoke.is_some()
                 || std::env::var_os("VOXY_RETARGET_ROTATION_SMOKE").is_some())
         {
-            let panels = panels::Panels::with_registry(self.authoring.authoring_project.registry.clone())?;
+            let panels =
+                panels::Panels::with_registry(self.authoring.authoring_project.registry.clone())?;
             let texture =
                 renderer.upload_texture(host.device(), host.queue(), 512, 128, &panels.rgba)?;
             self.panels = Some(panels);
@@ -626,7 +644,9 @@ impl App {
         self.queue_retarget_draft_source();
         for (_, profile) in self.scene.components::<ModelRetarget>() {
             let source = AssetId(profile.source.clone());
-            if self.catalog.status(&source).is_none() { self.reload.insert(source); }
+            if self.catalog.status(&source).is_none() {
+                self.reload.insert(source);
+            }
         }
         // Apply known invalidations before accepting any ready import completion.
         self.poll_sources()?;
@@ -772,9 +792,16 @@ impl App {
         Ok(())
     }
     fn required_cpu_model_assets(&self) -> BTreeSet<AssetId> {
-        self.scene.components::<ModelInstance>().map(|(_,model)|model.asset.clone())
-            .chain(self.scene.components::<ModelRetarget>().map(|(_,profile)|AssetId(profile.source.clone())))
-            .chain(std::iter::once(self.id.clone())).collect()
+        self.scene
+            .components::<ModelInstance>()
+            .map(|(_, model)| model.asset.clone())
+            .chain(
+                self.scene
+                    .components::<ModelRetarget>()
+                    .map(|(_, profile)| AssetId(profile.source.clone())),
+            )
+            .chain(std::iter::once(self.id.clone()))
+            .collect()
     }
     fn required_gpu_assets(&self) -> std::collections::BTreeSet<AssetId> {
         self.scene
@@ -922,19 +949,34 @@ impl App {
     }
     fn advance_game(&mut self, elapsed: f64) -> Result<(), Box<dyn std::error::Error>> {
         let mut models: BTreeMap<_, _> = if let Some(graphics) = &self.graphics {
-            graphics.models.iter().filter_map(|(id, resource)|
-                resource.animated_model.as_ref().map(|model| (id.clone(), model.clone()))).collect()
+            graphics
+                .models
+                .iter()
+                .filter_map(|(id, resource)| {
+                    resource
+                        .animated_model
+                        .as_ref()
+                        .map(|model| (id.clone(), model.clone()))
+                })
+                .collect()
         } else {
-            self.scene.components::<ModelInstance>().filter_map(|(_, instance)| {
-                let resource = self.catalog.snapshot(&instance.asset)?;
-                Some((instance.asset.clone(), resource.value().animated.as_ref()?.clone()))
-            }).collect()
+            self.scene
+                .components::<ModelInstance>()
+                .filter_map(|(_, instance)| {
+                    let resource = self.catalog.snapshot(&instance.asset)?;
+                    Some((
+                        instance.asset.clone(),
+                        resource.value().animated.as_ref()?.clone(),
+                    ))
+                })
+                .collect()
         };
         for (_, profile) in self.scene.components::<ModelRetarget>() {
             let source = AssetId(profile.source.clone());
             if let Some(asset) = self.catalog.snapshot(&source)
-                && let Some(model) = asset.value().animated.as_ref() {
-                models.insert(source,model.clone());
+                && let Some(model) = asset.value().animated.as_ref()
+            {
+                models.insert(source, model.clone());
             }
         }
         self.play.animations.synchronize(&self.scene)?;
@@ -961,51 +1003,97 @@ impl App {
                                 .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
                         }
                     } else if system == "character.step" {
-                        access.require_write("animation.playback").map_err(|error|
-                            voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
-                        let mut candidate = self.play.animations.prepare(
-                            access.read().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
-                            &models, dt as f32,
-                        ).map_err(voxy_gameplay::GameplayFixedError::Motion)?;
+                        access
+                            .require_write("animation.playback")
+                            .map_err(|error| {
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                            })?;
+                        let mut candidate = self
+                            .play
+                            .animations
+                            .prepare(
+                                access.read().map_err(|error| {
+                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                })?,
+                                &models,
+                                dt as f32,
+                            )
+                            .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
                         if let Some(physics) = &mut self.play.physics {
-                            access.require_write("character.physics").map_err(|error|
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
-                            access.require_write("player.input").map_err(|error|
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
+                            access.require_write("character.physics").map_err(|error| {
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                            })?;
+                            access.require_write("player.input").map_err(|error| {
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                            })?;
                             if candidate.requires_pose_preparation() {
-                                let (_, corrected) = physics.fixed_step_with_preparation(
-                                    access.write().map_err(|e| voxy_gameplay::GameplayFixedError::Motion(e.to_string()))?,
-                                    &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
-                                    |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
-                                ).map_err(|error| match error {
-                                    voxy_gameplay::CharacterTickError::Physics(error) => voxy_gameplay::GameplayFixedError::Physics(error),
-                                    voxy_gameplay::CharacterTickError::Preparation(error) => voxy_gameplay::GameplayFixedError::Motion(error),
-                                })?;
+                                let (_, corrected) = physics
+                                    .fixed_step_with_preparation(
+                                        access.write().map_err(|e| {
+                                            voxy_gameplay::GameplayFixedError::Motion(e.to_string())
+                                        })?,
+                                        &mut self.play.player_input,
+                                        dt,
+                                        candidate.motions(),
+                                        &candidate.trajectories(),
+                                        |preview, budget| {
+                                            candidate.clone().prepare_accepted_pose(preview, budget)
+                                        },
+                                    )
+                                    .map_err(|error| match error {
+                                        voxy_gameplay::CharacterTickError::Physics(error) => {
+                                            voxy_gameplay::GameplayFixedError::Physics(error)
+                                        }
+                                        voxy_gameplay::CharacterTickError::Preparation(error) => {
+                                            voxy_gameplay::GameplayFixedError::Motion(error)
+                                        }
+                                    })?;
                                 candidate = corrected;
                             } else {
-                                physics.fixed_step_with_motion_and_rigid_trajectories(
-                                    access.write().map_err(|error| voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?,
-                                    &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
-                                ).map_err(voxy_gameplay::GameplayFixedError::Physics)?;
+                                physics
+                                    .fixed_step_with_motion_and_rigid_trajectories(
+                                        access.write().map_err(|error| {
+                                            voxy_gameplay::GameplayFixedError::Motion(
+                                                error.to_string(),
+                                            )
+                                        })?,
+                                        &mut self.play.player_input,
+                                        dt,
+                                        candidate.motions(),
+                                        &candidate.trajectories(),
+                                    )
+                                    .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                             }
                         } else {
-                            if candidate.requires_pose_preparation() || !candidate.motions().is_empty() || !candidate.trajectories().is_empty() {
-                                return Err(voxy_gameplay::GameplayFixedError::Motion("root motion requires a physics runtime".into()));
+                            if candidate.requires_pose_preparation()
+                                || !candidate.motions().is_empty()
+                                || !candidate.trajectories().is_empty()
+                            {
+                                return Err(voxy_gameplay::GameplayFixedError::Motion(
+                                    "root motion requires a physics runtime".into(),
+                                ));
                             }
-                            access.require_write("player.input").map_err(|error|
-                                voxy_gameplay::GameplayFixedError::Motion(error.to_string()))?;
+                            access.require_write("player.input").map_err(|error| {
+                                voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                            })?;
                             self.play.player_input.finish_frame();
                         }
                         self.play.animations = candidate;
                     } else if let Some(physics) = &mut self.play.physics {
-                        physics.run_scoped_system(system, access, &mut self.play.player_input, dt)
+                        physics
+                            .run_scoped_system(system, access, &mut self.play.player_input, dt)
                             .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                     }
                     Ok::<(), voxy_gameplay::GameplayFixedError>(())
                 },
             );
-            if let Err(voxy_scene::SimulationStepError::System { completed_steps, .. }) = &frame_result {
-                self.play.simulation_ticks = self.play.simulation_ticks
+            if let Err(voxy_scene::SimulationStepError::System {
+                completed_steps, ..
+            }) = &frame_result
+            {
+                self.play.simulation_ticks = self
+                    .play
+                    .simulation_ticks
                     .saturating_add(u64::try_from(*completed_steps)?);
             }
             let frame = frame_result?;
@@ -1016,7 +1104,8 @@ impl App {
                     })
                     .map_err(|error| error.to_string())?;
             }
-            self.play.simulation_ticks = self.play
+            self.play.simulation_ticks = self
+                .play
                 .simulation_ticks
                 .saturating_add(u64::try_from(frame.time.steps)?);
             for result in frame.commands {
@@ -1055,14 +1144,22 @@ impl App {
     }
     #[allow(clippy::too_many_lines, clippy::cast_precision_loss)]
     fn draw(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let profile_start = self.animation_smoke.as_ref().is_some_and(|s| s.profile).then(Instant::now);
+        let profile_start = self
+            .animation_smoke
+            .as_ref()
+            .is_some_and(|s| s.profile)
+            .then(Instant::now);
         self.tick()?;
         let elapsed = self.play.simulation_time.elapsed().as_secs_f64();
         self.play.simulation_time = Instant::now();
         self.advance_game(elapsed)?;
         voxy_scene::extraction_schedule()?
             .run_scene(&mut self.scene, |_, access| {
-                let styles = frame_styles::FrameStyles::prepare(&access, &self.camera, scene_limits::OBJECTS)?;
+                let styles = frame_styles::FrameStyles::prepare(
+                    &access,
+                    &self.camera,
+                    scene_limits::OBJECTS,
+                )?;
                 self.extraction
                     .refresh_scoped_with(access, |scene, owner| {
                         if let Some(simulation) = &self.play.simulation {
@@ -1088,10 +1185,14 @@ impl App {
             if size.width > 0.0 && size.height > 0.0 {
                 let document = self.panel_document()?;
                 self.reconcile_component_edit(&document)?;
-                self.panels.as_mut().unwrap().retarget_draft=self.retarget_draft.is_some();
-                self.panels.as_mut().unwrap().bone_picker=self.retarget_picker.as_ref().map(|p|(p.choices.clone(),p.page));
+                self.panels.as_mut().unwrap().retarget_draft = self.retarget_draft.is_some();
+                self.panels.as_mut().unwrap().bone_picker = self
+                    .retarget_picker
+                    .as_ref()
+                    .map(|p| (p.choices.clone(), p.page));
                 let input = PanelInput {
-                    prefab_metadata: self.authoring
+                    prefab_metadata: self
+                        .authoring
                         .history
                         .as_ref()
                         .map_or(serde_json::Value::Null, |history| {
@@ -1120,7 +1221,8 @@ impl App {
                             asset.value().nodes.get(part.node as usize)?.image
                         })
                         .map_or_else(|| "Texture: none".into(), |_| "Texture: PNG/JPEG".into()),
-                    prefab_label: self.authoring
+                    prefab_label: self
+                        .authoring
                         .prefab_assets
                         .get(self.authoring.prefab_choice)
                         .map_or_else(|| "Prefab: none".into(), |id| format!("Prefab: {}", id.0)),
@@ -1277,7 +1379,11 @@ impl App {
                     if styles.parts.contains_key(&instance.owner) {
                         return None;
                     }
-                    let published = self.graphics.as_ref()?.models.get(&instance.component.asset)?;
+                    let published = self
+                        .graphics
+                        .as_ref()?
+                        .models
+                        .get(&instance.component.asset)?;
                     let model = published.animated_model.as_ref()?.clone();
                     let settings = self
                         .scene
@@ -1324,7 +1430,8 @@ impl App {
                     eprintln!("MODEL ANIMATION retained previous frame for {owner:?}: {error}");
                 }
             }
-            let animation_us = animation_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
+            let animation_us =
+                animation_start.map_or(0., |start| start.elapsed().as_secs_f64() * 1e6);
             graphics.transforms.retain(|(view, owner), _| {
                 views.iter().any(|v| v.0 == *view) && styles.materials.contains_key(owner)
             });
@@ -1341,15 +1448,27 @@ impl App {
                     .find(|instance| instance.owner == *node)
             });
             graphics.animated_models.retain_lod_views(
-                &views.iter().filter(|view| view.3.is_some()).map(|view| view.0).collect::<Vec<_>>(),
+                &views
+                    .iter()
+                    .filter(|view| view.3.is_some())
+                    .map(|view| view.0)
+                    .collect::<Vec<_>>(),
             );
-            let animation_other_live = graphics.geometry_bytes().saturating_sub(graphics.animated_models.allocation_bytes());
+            let animation_other_live = graphics
+                .geometry_bytes()
+                .saturating_sub(graphics.animated_models.allocation_bytes());
             let lod_start = profile_start.map(|_| Instant::now());
             for &(view, region, _, camera) in &views {
                 for instance in self.extraction.instances() {
                     if let Err(error) = graphics.animated_models.select_lod(
-                        &graphics.renderer, graphics.host.device(), instance.owner, view,
-                        camera, instance.world, [region[2], region[3]], animation_other_live,
+                        &graphics.renderer,
+                        graphics.host.device(),
+                        instance.owner,
+                        view,
+                        camera,
+                        instance.world,
+                        [region[2], region[3]],
+                        animation_other_live,
                         graphics.residency_cache.geometry_budget,
                     ) {
                         eprintln!("ANIMATED LOD retained previous selection: {error}");
@@ -1449,9 +1568,14 @@ impl App {
             for &(view, region, _, lod_camera) in &views {
                 let mut draws = Vec::with_capacity(self.extraction.instances().len() + 2);
                 for instance in self.extraction.instances() {
-                    if let Some(geometries) = graphics.animated_models.geometries_for_view(instance.owner, view) {
+                    if let Some(geometries) = graphics
+                        .animated_models
+                        .geometries_for_view(instance.owner, view)
+                    {
                         for (primitive, geometry) in geometries.enumerate() {
-                            let texture = graphics.animated_models.texture(instance.owner, primitive)
+                            let texture = graphics
+                                .animated_models
+                                .texture(instance.owner, primitive)
                                 .unwrap_or(&graphics.texture);
                             draws.push(SceneDraw {
                                 geometry,
@@ -1469,7 +1593,8 @@ impl App {
                         for (primitive, geometry) in model.animated_preview.iter().enumerate() {
                             draws.push(SceneDraw {
                                 geometry,
-                                texture: model.animated_textures[primitive].as_deref()
+                                texture: model.animated_textures[primitive]
+                                    .as_deref()
                                     .unwrap_or(&graphics.texture),
                                 transform: &graphics.transforms[&(view, instance.owner)],
                                 overlay: false,
@@ -1518,7 +1643,10 @@ impl App {
                 }
                 if !self.standalone
                     && let Some(instance) = selected
-                    && graphics.animated_models.geometries(instance.owner).is_none()
+                    && graphics
+                        .animated_models
+                        .geometries(instance.owner)
+                        .is_none()
                     && let Some(model) = graphics.models.get(&instance.component.asset)
                     && let Some((_, Some(outline), _)) =
                         model.part(styles.parts.get(&instance.owner).copied())
@@ -1586,10 +1714,15 @@ impl App {
                     .render_scene_views(&graphics.renderer, &scene_views, &overlays)?
             };
             if let Some(start) = profile_start {
-                println!("ANIMATION FRAME PROFILE frame={} playing={} views={} draws={} animation_us={animation_us:.3} lod_us={lod_us:.3} submit_present_us={:.3} total_cpu_us={:.3} outcome={outcome:?}",
-                    self.frames, self.play.playing.is_some(), views.len(), draw_count,
+                println!(
+                    "ANIMATION FRAME PROFILE frame={} playing={} views={} draws={} animation_us={animation_us:.3} lod_us={lod_us:.3} submit_present_us={:.3} total_cpu_us={:.3} outcome={outcome:?}",
+                    self.frames,
+                    self.play.playing.is_some(),
+                    views.len(),
+                    draw_count,
                     present_start.unwrap().elapsed().as_secs_f64() * 1e6,
-                    start.elapsed().as_secs_f64() * 1e6);
+                    start.elapsed().as_secs_f64() * 1e6
+                );
             }
             if self.trace.enabled && self.trace.pending && self.trace.last_outcome != Some(outcome)
             {
@@ -1774,7 +1907,12 @@ impl App {
             original: self.scene.local(node)?,
             world_origin: self.scene.world_matrix(node)?.w_axis.truncate(),
             axis: DragAxis::Plane,
-            edit: self.authoring.history.as_ref().ok_or("missing history")?.begin_edit(),
+            edit: self
+                .authoring
+                .history
+                .as_ref()
+                .ok_or("missing history")?
+                .begin_edit(),
         });
         Ok(())
     }
@@ -1806,7 +1944,8 @@ impl App {
         &mut self,
         event: voxy_gameplay::UiActionEvent,
     ) -> Result<(), voxy_input::InputError> {
-        if self.play
+        if self
+            .play
             .ui_actions
             .as_ref()
             .is_some_and(|actions| actions.handles(&event.action))
@@ -1951,7 +2090,9 @@ impl App {
         } else if self.pick_model(cursor, viewport)? {
             self.begin_drag(cursor, viewport)?;
         }
-        if let Some(drag) = &mut self.drag { drag.viewport_origin = viewport_origin; }
+        if let Some(drag) = &mut self.drag {
+            drag.viewport_origin = viewport_origin;
+        }
         Ok(())
     }
     fn preview_drag(&mut self, cursor: Vec2) -> Result<(), Box<dyn std::error::Error>> {
@@ -2022,7 +2163,8 @@ impl App {
                 return Err(error.into());
             }
         };
-        if let Err(error) = self.authoring
+        if let Err(error) = self
+            .authoring
             .history
             .as_mut()
             .ok_or("missing history")?
@@ -2112,8 +2254,16 @@ impl App {
         })
     }
     fn restore_authoring(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        let document = self.authoring.history.as_ref().ok_or("missing history")?.current();
-        let mut loaded = document.load(&self.authoring.authoring_project.registry, scene_limits::OBJECTS)?;
+        let document = self
+            .authoring
+            .history
+            .as_ref()
+            .ok_or("missing history")?
+            .current();
+        let mut loaded = document.load(
+            &self.authoring.authoring_project.registry,
+            scene_limits::OBJECTS,
+        )?;
         let mut instances = Vec::with_capacity(document.objects.len());
         for object in &document.objects {
             let node = loaded.resolve(&object.id).ok_or("missing restored node")?;
@@ -2160,12 +2310,18 @@ impl App {
     }
     fn save_authoring(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         self.finish_drag(false)?;
-        let path = self.authoring
+        let path = self
+            .authoring
             .scene_path
             .as_ref()
             .ok_or("start editor with --scene PATH to save")?;
         let edited = self.authoring_document()?;
-        let metadata = self.authoring.history.as_ref().ok_or("missing history")?.metadata();
+        let metadata = self
+            .authoring
+            .history
+            .as_ref()
+            .ok_or("missing history")?
+            .metadata();
         if metadata.is_null() {
             if let Some(imported) = &self.authoring.authoring_source {
                 self.authoring.authoring_project.validate(imported)?;
@@ -2180,7 +2336,8 @@ impl App {
                 scene_limits::OBJECTS,
                 scene_limits::DOCUMENT_BYTES,
             )?;
-            self.authoring.scene_revision = Some(scene_revision::SceneRevision::written(path, &edited)?);
+            self.authoring.scene_revision =
+                Some(scene_revision::SceneRevision::written(path, &edited)?);
             // Refresh the observation after our own publication so the next save
             // does not mistake it for an external edit. Legacy paths also retain
             // an exact file revision without requiring project membership.
@@ -2192,7 +2349,8 @@ impl App {
         } else {
             let snapshot: prefab_authoring::AuthoredScene =
                 serde_json::from_value(metadata.clone())?;
-            let imported = self.authoring
+            let imported = self
+                .authoring
                 .authoring_source
                 .as_ref()
                 .ok_or("missing observed authoring publication")?;
@@ -2222,14 +2380,20 @@ impl App {
                 expanded: edited.clone(),
                 dependencies: snapshot.dependencies.clone(),
             })?;
-            self.authoring.history
+            self.authoring
+                .history
                 .as_ref()
                 .ok_or("missing history")?
-                .check_metadata(&proposed_metadata, &self.authoring.authoring_project.registry)?;
-            self.authoring.authoring_project
+                .check_metadata(
+                    &proposed_metadata,
+                    &self.authoring.authoring_project.registry,
+                )?;
+            self.authoring
+                .authoring_project
                 .save(path, imported, &snapshot, &source)?;
             let imported = self.authoring.authoring_project.load(path)?;
-            self.authoring.history
+            self.authoring
+                .history
                 .as_mut()
                 .ok_or("missing history")?
                 .refresh_metadata(
@@ -2247,7 +2411,10 @@ impl App {
         &self,
         document: &SceneDocument,
     ) -> Result<u64, Box<dyn std::error::Error>> {
-        let loaded = document.load(&self.authoring.authoring_project.registry, scene_limits::OBJECTS)?;
+        let loaded = document.load(
+            &self.authoring.authoring_project.registry,
+            scene_limits::OBJECTS,
+        )?;
         voxy_gameplay::validate_game_descriptors(&loaded.graph, 128)?;
         for object in &document.objects {
             loaded
@@ -2295,31 +2462,60 @@ impl App {
         }
         for (node, profile) in loaded.graph.components::<ModelRetarget>() {
             profile.validate()?;
-            let target_asset = loaded.graph.component::<String>(node)?
+            let target_asset = loaded
+                .graph
+                .component::<String>(node)?
                 .ok_or("retarget profile requires a model owner")?;
             let source = self.catalog.snapshot(&AssetId(profile.source.clone()));
             let target = self.catalog.snapshot(&AssetId(target_asset.clone()));
-            let source = source.as_ref().map(|asset| asset.value().animated.as_ref()
-                .ok_or("retarget source has no skeletal model")).transpose()?;
-            let target = target.as_ref().map(|asset| asset.value().animated.as_ref()
-                .ok_or("retarget target has no skeletal model")).transpose()?;
-            if let (Some(source),Some(target)) = (source,target) {
-                profile.compile_models(source,target)?;
+            let source = source
+                .as_ref()
+                .map(|asset| {
+                    asset
+                        .value()
+                        .animated
+                        .as_ref()
+                        .ok_or("retarget source has no skeletal model")
+                })
+                .transpose()?;
+            let target = target
+                .as_ref()
+                .map(|asset| {
+                    asset
+                        .value()
+                        .animated
+                        .as_ref()
+                        .ok_or("retarget target has no skeletal model")
+                })
+                .transpose()?;
+            if let (Some(source), Some(target)) = (source, target) {
+                profile.compile_models(source, target)?;
             }
         }
         for (node, animation) in loaded.graph.components::<ModelAnimation>() {
-            let model = loaded.graph.component::<String>(node)?
+            let model = loaded
+                .graph
+                .component::<String>(node)?
                 .ok_or("animation requires a model owner")?;
-            let model = loaded.graph.component::<ModelRetarget>(node)?
+            let model = loaded
+                .graph
+                .component::<ModelRetarget>(node)?
                 .map_or(model.as_str(), |profile| profile.source.as_str());
             // Scene loading may precede asynchronous resource publication.
             // Runtime admission validates again against the published revision.
-            let counts = self.catalog.snapshot(&AssetId(model.to_owned()))
-                .map(|asset| asset.value().animated.as_ref()
-                    .map_or((0, 0), |model| (model.animations.len(), model.skeleton.joints().len())));
+            let counts = self
+                .catalog
+                .snapshot(&AssetId(model.to_owned()))
+                .map(|asset| {
+                    asset.value().animated.as_ref().map_or((0, 0), |model| {
+                        (model.animations.len(), model.skeleton.joints().len())
+                    })
+                });
             animation.validate(counts.map(|value| value.0), counts.map(|value| value.1))?;
-            if (animation.root_motion_rotation || animation.root_motion_axes.into_iter().any(|axis| axis))
-                && loaded.graph.component::<CharacterBody>(node)?.is_none() {
+            if (animation.root_motion_rotation
+                || animation.root_motion_axes.into_iter().any(|axis| axis))
+                && loaded.graph.component::<CharacterBody>(node)?.is_none()
+            {
                 return Err("root motion requires a CharacterBody on the model owner".into());
             }
             if let Some(asset) = self.catalog.snapshot(&AssetId(model.to_owned()))
@@ -2334,7 +2530,9 @@ impl App {
             if settings.feet.is_empty() {
                 continue;
             }
-            let model = loaded.graph.component::<String>(node)?
+            let model = loaded
+                .graph
+                .component::<String>(node)?
                 .ok_or("foot placement requires a model owner")?;
             if loaded.graph.component::<CharacterBody>(node)?.is_none() {
                 return Err("foot placement requires a CharacterBody on the model owner".into());
@@ -2342,17 +2540,36 @@ impl App {
             if let Some(asset) = self.catalog.snapshot(&AssetId(model.clone()))
                 && let Some(model) = asset.value().animated.as_ref()
             {
-                let source_asset = loaded.graph.component::<ModelRetarget>(node)?
+                let source_asset = loaded
+                    .graph
+                    .component::<ModelRetarget>(node)?
                     .map(|profile| self.catalog.snapshot(&AssetId(profile.source.clone())));
                 let animation_model = if let Some(source) = &source_asset {
-                    source.as_ref().and_then(|source| source.value().animated.as_ref())
-                } else { Some(model) };
-                let Some(animation_model) = animation_model else { continue; };
-                foot_placement::FootRuntime::new_with_clips(model, settings.clone(), &animation_model.animations)?;
-                let animation = loaded.graph.component::<ModelAnimation>(node)?
-                    .cloned().unwrap_or_default();
-                let clip_name = animation.resolve_clip(animation_model)?.and_then(|index|
-                    animation_model.animations.get(index).map(|clip| clip.name()));
+                    source
+                        .as_ref()
+                        .and_then(|source| source.value().animated.as_ref())
+                } else {
+                    Some(model)
+                };
+                let Some(animation_model) = animation_model else {
+                    continue;
+                };
+                foot_placement::FootRuntime::new_with_clips(
+                    model,
+                    settings.clone(),
+                    &animation_model.animations,
+                )?;
+                let animation = loaded
+                    .graph
+                    .component::<ModelAnimation>(node)?
+                    .cloned()
+                    .unwrap_or_default();
+                let clip_name = animation.resolve_clip(animation_model)?.and_then(|index| {
+                    animation_model
+                        .animations
+                        .get(index)
+                        .map(|clip| clip.name())
+                });
                 for foot in &settings.feet {
                     foot.contact_keys(clip_name)?;
                 }
@@ -2372,7 +2589,8 @@ impl App {
     }
     fn load_authoring(&mut self) -> Result<(), Box<dyn std::error::Error>> {
         self.finish_drag(false)?;
-        let path = self.authoring
+        let path = self
+            .authoring
             .scene_path
             .as_ref()
             .ok_or("start editor with --scene PATH to load")?;
@@ -2388,7 +2606,8 @@ impl App {
         };
         let next = self.validate_authoring_document(&document)?;
 
-        self.authoring.history
+        self.authoring
+            .history
             .as_mut()
             .ok_or("missing history")?
             .commit_with_metadata(
@@ -2439,7 +2658,8 @@ impl App {
         self.authoring.scene_path = Some(path.into());
         if path.try_exists()? {
             self.load_authoring()?;
-            let metadata = self.authoring
+            let metadata = self
+                .authoring
                 .history
                 .as_ref()
                 .ok_or("missing history")?
@@ -2465,9 +2685,12 @@ impl App {
         self.parenting = None;
     }
     fn panel_document(&self) -> Result<SceneDocument, Box<dyn std::error::Error>> {
-        if let Some(draft)=&self.retarget_draft {return Ok(draft.document.clone());}
+        if let Some(draft) = &self.retarget_draft {
+            return Ok(draft.document.clone());
+        }
         if self.play.playing.is_some() {
-            Ok(self.authoring
+            Ok(self
+                .authoring
                 .history
                 .as_ref()
                 .ok_or("missing history")?
@@ -2575,7 +2798,10 @@ impl App {
     #[allow(clippy::too_many_lines)]
     fn edit_key(&mut self, key: KeyCode) -> Result<(), Box<dyn std::error::Error>> {
         if self.retarget_draft.is_some() {
-            if key==KeyCode::Escape {self.cancel_retarget();return Ok(());}
+            if key == KeyCode::Escape {
+                self.cancel_retarget();
+                return Ok(());
+            }
             return Err("apply or cancel the retarget profile edit first".into());
         }
         if self.standalone {
@@ -2790,7 +3016,8 @@ impl App {
                 if node.is_some() {
                     local.translation.x += 0.15;
                 }
-                let next = self.authoring
+                let next = self
+                    .authoring
                     .next_object_id
                     .checked_add(1)
                     .ok_or("object identity exhausted")?;
@@ -2810,16 +3037,17 @@ impl App {
                     },
                 )?;
                 if let Some(source) = node {
-                    self.authoring.authoring_project.registry.copy_registered_components(
-                        &mut self.scene,
-                        source,
-                        duplicate,
-                    )?;
+                    self.authoring
+                        .authoring_project
+                        .registry
+                        .copy_registered_components(&mut self.scene, source, duplicate)?;
                     self.scene
                         .set_active(duplicate, self.scene.active_self(source)?)?;
                 }
-                self.scene
-                    .set_name(duplicate, format!("Model {}", self.authoring.next_object_id + 1))?;
+                self.scene.set_name(
+                    duplicate,
+                    format!("Model {}", self.authoring.next_object_id + 1),
+                )?;
                 self.instances.push(duplicate);
                 self.object_ids
                     .push(ObjectId(format!("model-{}", self.authoring.next_object_id)));
@@ -2876,7 +3104,8 @@ impl App {
             CharacterPhysics::new(&self.scene, 128, 128).validate(&self.scene)?;
             let document = self.authoring_document()?;
             self.validate_authoring_document(&document)?;
-            self.authoring.history
+            self.authoring
+                .history
                 .as_mut()
                 .ok_or("missing history")?
                 .commit(document, &self.authoring.authoring_project.registry)?;
@@ -2900,7 +3129,8 @@ impl App {
             self.scene
                 .remove_component::<voxy_gameplay::AudioSource>(node)?;
         } else {
-            let asset = self.authoring
+            let asset = self
+                .authoring
                 .authoring_project
                 .audio_assets()?
                 .into_iter()
@@ -2967,7 +3197,22 @@ impl App {
         self.commit_authoring()
     }
     fn panel_action(&mut self, action: panels::Action) -> Result<(), Box<dyn std::error::Error>> {
-        if self.retarget_draft.is_some() && !matches!(action, panels::Action::Field(_) | panels::Action::ComponentPage(_) | panels::Action::RetargetApply | panels::Action::RetargetCancel | panels::Action::RetargetRemove | panels::Action::RetargetPair(_) | panels::Action::RetargetDeletePair(_) | panels::Action::RetargetBones(_) | panels::Action::RetargetBone(_) | panels::Action::RetargetBonePage(_) | panels::Action::RetargetBoneClose) {
+        if self.retarget_draft.is_some()
+            && !matches!(
+                action,
+                panels::Action::Field(_)
+                    | panels::Action::ComponentPage(_)
+                    | panels::Action::RetargetApply
+                    | panels::Action::RetargetCancel
+                    | panels::Action::RetargetRemove
+                    | panels::Action::RetargetPair(_)
+                    | panels::Action::RetargetDeletePair(_)
+                    | panels::Action::RetargetBones(_)
+                    | panels::Action::RetargetBone(_)
+                    | panels::Action::RetargetBonePage(_)
+                    | panels::Action::RetargetBoneClose
+            )
+        {
             return Err("apply or cancel the retarget profile edit first".into());
         }
         self.finish_drag(false)?;
@@ -3036,23 +3281,37 @@ impl App {
             panels::Action::RetargetBones(index) => self.open_retarget_bones(index),
             panels::Action::RetargetBone(index) => self.choose_retarget_bone(index),
             panels::Action::RetargetBonePage(forward) => self.retarget_bone_page(forward),
-            panels::Action::RetargetBoneClose => {self.retarget_picker=None;self.panel_cache=None;Ok(())},
+            panels::Action::RetargetBoneClose => {
+                self.retarget_picker = None;
+                self.panel_cache = None;
+                Ok(())
+            }
             panels::Action::Retarget => self.begin_retarget(),
             panels::Action::RetargetApply => self.apply_retarget(),
-            panels::Action::RetargetCancel => {self.cancel_retarget();Ok(())},
+            panels::Action::RetargetCancel => {
+                self.cancel_retarget();
+                Ok(())
+            }
             panels::Action::RetargetPair(add) => self.retarget_pair(add),
             panels::Action::RetargetDeletePair(index) => self.delete_retarget_pair(index),
-            panels::Action::RetargetRemove => {self.remove_retarget_draft()?;Ok(())},
+            panels::Action::RetargetRemove => {
+                self.remove_retarget_draft()?;
+                Ok(())
+            }
             panels::Action::Animation => {
                 if self.play.playing.is_some() {
                     return Err("stop play before editing animation".into());
                 }
-                let node = self.instances.get(self.selected).copied()
+                let node = self
+                    .instances
+                    .get(self.selected)
+                    .copied()
                     .ok_or("missing selected model")?;
                 if self.scene.component::<ModelAnimation>(node)?.is_some() {
                     self.scene.remove_component::<ModelAnimation>(node)?;
                 } else {
-                    self.scene.insert_component(node, ModelAnimation::default())?;
+                    self.scene
+                        .insert_component(node, ModelAnimation::default())?;
                 }
                 self.commit_authoring()?;
                 self.inspector = InspectorMode::Components(0);
@@ -3101,8 +3360,12 @@ impl App {
                 self.reset_prefab_collection_item(key, item)
             }
             panels::Action::CollectionResetOrder(key) => self.reset_prefab_collection_order(key),
-            panels::Action::CollectionRestoreDeleted(key) => self.restore_prefab_collection_deleted(key),
-            panels::Action::CollectionRestoreItem(key, item) => self.restore_prefab_collection_item(key, item),
+            panels::Action::CollectionRestoreDeleted(key) => {
+                self.restore_prefab_collection_deleted(key)
+            }
+            panels::Action::CollectionRestoreItem(key, item) => {
+                self.restore_prefab_collection_item(key, item)
+            }
             panels::Action::CollectionDeletedPage => {
                 let panels = self.panels.as_mut().ok_or("missing panels")?;
                 panels.deleted_page = panels.deleted_page.wrapping_add(1);
@@ -3144,7 +3407,8 @@ impl App {
             panels::Action::PrefabChoice => {
                 self.authoring.prefab_assets = self.authoring.authoring_project.prefabs()?;
                 if !self.authoring.prefab_assets.is_empty() {
-                    self.authoring.prefab_choice = (self.authoring.prefab_choice + 1) % self.authoring.prefab_assets.len();
+                    self.authoring.prefab_choice =
+                        (self.authoring.prefab_choice + 1) % self.authoring.prefab_assets.len();
                 }
                 Ok(())
             }
@@ -3414,7 +3678,8 @@ impl App {
             "editor.model-part.v1".into(),
             serde_json::to_value(ModelPart { node: u32::MAX })?,
         );
-        let next = self.authoring
+        let next = self
+            .authoring
             .next_object_id
             .checked_add(u64::try_from(asset.value().nodes.len())?)
             .ok_or("object identity exhausted")?;
@@ -3447,7 +3712,8 @@ impl App {
                 ]),
             });
         }
-        self.authoring.history
+        self.authoring
+            .history
             .as_mut()
             .ok_or("missing history")?
             .commit(document, &self.authoring.authoring_project.registry)?;
@@ -3462,14 +3728,21 @@ impl App {
         self.audio.close_audio_device();
     }
     fn poll_audio_device(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        match self.audio.poll(&self.scene, &self.authoring.authoring_project)? {
-            audio_session::AudioPoll::Ready | audio_session::AudioPoll::RetryPlay => self.toggle_play()?,
+        match self
+            .audio
+            .poll(&self.scene, &self.authoring.authoring_project)?
+        {
+            audio_session::AudioPoll::Ready | audio_session::AudioPoll::RetryPlay => {
+                self.toggle_play()?
+            }
             audio_session::AudioPoll::Pending => {}
         }
         Ok(())
     }
     fn toggle_play(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        if self.retarget_draft.is_some() {return Err("apply or cancel the retarget profile edit before Play".into());}
+        if self.retarget_draft.is_some() {
+            return Err("apply or cancel the retarget profile edit before Play".into());
+        }
         self.finish_drag(false)?;
         self.clear_panel_interactions();
         if self.audio.is_pending() {
@@ -3495,7 +3768,9 @@ impl App {
                 .validate_start(&self.scene)?;
             voxy_gameplay::validate_game_descriptors(&self.scene, 128)?;
             let audio = match self.audio.prepare_start(
-                &self.scene, &self.authoring.authoring_project, self.window.is_some(),
+                &self.scene,
+                &self.authoring.authoring_project,
+                self.window.is_some(),
             )? {
                 audio_session::AudioStart::Pending => {
                     self.update_edit_title();
@@ -3532,7 +3807,8 @@ impl App {
                 self.play.physics =
                     Some(CharacterPhysics::new(&self.scene, 128, 128).with_depenetration(true));
             }
-            self.play.angular_motion = Some(voxy_gameplay::AngularMotionBatch::new(&self.scene, 128)?);
+            self.play.angular_motion =
+                Some(voxy_gameplay::AngularMotionBatch::new(&self.scene, 128)?);
             self.audio.set_play(audio);
             self.play.simulation = Some(simulation);
             self.play.simulation_ticks = 0;
@@ -3633,7 +3909,10 @@ impl App {
         })) {
             Ok(Ok(())) => {}
             Ok(Err(error)) => errors.push(format!("simulation stop: {error}")),
-            Err(payload) => errors.push(format!("simulation stop panicked: {}", panic_message(payload.as_ref()))),
+            Err(payload) => errors.push(format!(
+                "simulation stop panicked: {}",
+                panic_message(payload.as_ref())
+            )),
         }
         // Close both producers before waiting for either thread to finish.
         let imports = self
@@ -3704,11 +3983,16 @@ impl ApplicationHandler for App {
     )]
     fn window_event(&mut self, events: &ActiveEventLoop, _: WindowId, event: WindowEvent) {
         if self.trace.enabled
-            && matches!(event, WindowEvent::Focused(_) | WindowEvent::Occluded(_) | WindowEvent::Resized(_))
+            && matches!(
+                event,
+                WindowEvent::Focused(_) | WindowEvent::Occluded(_) | WindowEvent::Resized(_)
+            )
         {
-            println!("EDITOR WINDOW event={event:?} visible={:?} focused={:?}",
+            println!(
+                "EDITOR WINDOW event={event:?} visible={:?} focused={:?}",
                 self.window.as_ref().and_then(|window| window.is_visible()),
-                self.window.as_ref().map(|window| window.has_focus()));
+                self.window.as_ref().map(|window| window.has_focus())
+            );
         }
         let result = match event {
             WindowEvent::CloseRequested => {
@@ -3743,7 +4027,9 @@ impl ApplicationHandler for App {
                             let s = w.inner_size();
                             Vec2::new(s.width as f32, s.height as f32)
                         });
-                        self.camera.pan(delta, self.active_camera_size(size)).map_err(Into::into)
+                        self.camera
+                            .pan(delta, self.active_camera_size(size))
+                            .map_err(Into::into)
                     }
                 } else {
                     self.preview_drag(cursor)
@@ -3758,17 +4044,32 @@ impl ApplicationHandler for App {
                     && cursor.x / (window.scale_factor() as f32) < 150.0
                 {
                     self.tree_scroll = if y < 0.0 {
-                        self.tree_scroll.saturating_add(1).min(self.instances.len().saturating_sub(1))
-                    } else { self.tree_scroll.saturating_sub(1) };
+                        self.tree_scroll
+                            .saturating_add(1)
+                            .min(self.instances.len().saturating_sub(1))
+                    } else {
+                        self.tree_scroll.saturating_sub(1)
+                    };
                     Ok(())
-                } else if self.cursor.is_some_and(|cursor| !self.standalone && self.cursor_in_viewport(cursor))
-                    && self.panels.as_ref().is_none_or(|panels| panels.input_ready())
+                } else if self
+                    .cursor
+                    .is_some_and(|cursor| !self.standalone && self.cursor_in_viewport(cursor))
+                    && self
+                        .panels
+                        .as_ref()
+                        .is_none_or(|panels| panels.input_ready())
                 {
                     let cursor = self.cursor.unwrap();
                     let size = self.window.as_ref().map(|w| w.inner_size()).unwrap();
                     self.view_pointer(cursor, Vec2::new(size.width as f32, size.height as f32))
-                        .map(|hit| { if hit.is_some() { self.camera.zoom(y); } })
-                } else { Ok(()) }
+                        .map(|hit| {
+                            if hit.is_some() {
+                                self.camera.zoom(y);
+                            }
+                        })
+                } else {
+                    Ok(())
+                }
             }
             WindowEvent::MouseInput {
                 state,
@@ -3777,10 +4078,17 @@ impl ApplicationHandler for App {
             } => self.finish_drag(false).and_then(|()| {
                 self.camera_drag = None;
                 if state == ElementState::Pressed
-                    && self.panels.as_ref().is_none_or(|panels| panels.input_ready())
-                    && let Some(cursor) = self.cursor.filter(|cursor| !self.standalone && self.cursor_in_viewport(*cursor))
+                    && self
+                        .panels
+                        .as_ref()
+                        .is_none_or(|panels| panels.input_ready())
+                    && let Some(cursor) = self
+                        .cursor
+                        .filter(|cursor| !self.standalone && self.cursor_in_viewport(*cursor))
                     && let Some(size) = self.window.as_ref().map(|w| w.inner_size())
-                    && self.view_pointer(cursor, Vec2::new(size.width as f32, size.height as f32))?.is_some()
+                    && self
+                        .view_pointer(cursor, Vec2::new(size.width as f32, size.height as f32))?
+                        .is_some()
                 {
                     self.camera_drag = Some((button, cursor));
                 }
@@ -4039,7 +4347,8 @@ pub fn export_game_package(
     let mut app = configured_app(source, Some(scene), false)?;
     let result = (|| {
         app.start_standalone()?;
-        let authored = app.authoring
+        let authored = app
+            .authoring
             .authoring_source
             .as_ref()
             .ok_or("packaging requires a project-scoped scene")?;
@@ -4100,7 +4409,8 @@ pub fn export_game_package(
                 serde_json::json!({"version":1,"scene":app.authoring.authoring_project.source_path(scene)?.as_str(),"model":asset.0,"manifest":app.authoring.authoring_project.source_path(path)?.as_str()})
             }
         };
-        let package = app.authoring
+        let package = app
+            .authoring
             .authoring_project
             .capture_package(&paths, &serde_json::to_vec(&launch)?)?;
         for (id, original) in observations {
@@ -4261,11 +4571,12 @@ fn run_model_viewport_configured_registry(
         if scene_path.is_none_or(|path| !path.is_file()) {
             return Err("standalone game requires an existing --scene file".into());
         }
-        app.audio.set_output_mode(if mode == ViewportMode::GameCheck {
-            AudioOutputMode::Offline
-        } else {
-            AudioOutputMode::Native
-        });
+        app.audio
+            .set_output_mode(if mode == ViewportMode::GameCheck {
+                AudioOutputMode::Offline
+            } else {
+                AudioOutputMode::Native
+            });
         if let Err(error) = app.start_standalone() {
             app.stop_workers()?;
             return Err(error);
@@ -4289,11 +4600,10 @@ fn run_model_viewport_configured_registry(
                 "GAME CHECK PASS ticks={} objects={} prefab_instances={}",
                 app.play.simulation_ticks,
                 app.object_ids.len(),
-                app.authoring.authoring_source.as_ref().map_or(0, |source| source
-                    .value()
-                    .source
-                    .instances
-                    .len())
+                app.authoring
+                    .authoring_source
+                    .as_ref()
+                    .map_or(0, |source| source.value().source.instances.len())
             );
             app.stop_workers()?;
             return Ok(());
@@ -4305,9 +4615,13 @@ fn run_model_viewport_configured_registry(
         smoke.foot_contact = std::env::var_os("VOXY_FOOT_CONTACT_SMOKE").is_some();
         smoke.foot_reload = std::env::var_os("VOXY_FOOT_RELOAD_SMOKE").is_some();
         smoke.composed_root = std::env::var_os("VOXY_COMPOSED_ROOT_SMOKE").is_some();
-        smoke.root_rotation = smoke.composed_root || std::env::var_os("VOXY_ROOT_ROTATION_SMOKE").is_some();
-        smoke.root_motion = smoke.root_rotation || std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();
-        smoke.oriented_body = smoke.root_motion && !smoke.root_rotation && std::env::var_os("VOXY_ORIENTED_CHARACTER_SMOKE").is_some();
+        smoke.root_rotation =
+            smoke.composed_root || std::env::var_os("VOXY_ROOT_ROTATION_SMOKE").is_some();
+        smoke.root_motion =
+            smoke.root_rotation || std::env::var_os("VOXY_ROOT_MOTION_SMOKE").is_some();
+        smoke.oriented_body = smoke.root_motion
+            && !smoke.root_rotation
+            && std::env::var_os("VOXY_ORIENTED_CHARACTER_SMOKE").is_some();
         app.animation_smoke = Some(smoke);
         app.smoke_deadline = Some(Instant::now() + Duration::from_secs(30));
     }
@@ -4682,7 +4996,8 @@ mod tests {
     }
     fn verify_background_audio_preparation(app: &mut App, expected: &SceneDocument) {
         let mut preparation =
-            audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000).unwrap();
+            audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+                .unwrap();
         assert!(preparation.matches(&app.scene).unwrap());
         let deadline = Instant::now() + Duration::from_secs(5);
         while !preparation.poll().unwrap() {
@@ -4703,7 +5018,8 @@ mod tests {
             .import_settings = Some("tone.import.json".into());
         preparation.close().join().unwrap();
         let mut preparation =
-            audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000).unwrap();
+            audio_play::AudioPreparation::new(&app.scene, &app.authoring.authoring_project, 48000)
+                .unwrap();
         assert!(!preparation.poll().unwrap());
         app.audio.inject_preparation(preparation);
         app.toggle_play().unwrap();
@@ -5048,7 +5364,10 @@ mod tests {
         app.field_key(KeyCode::Enter, None).unwrap();
         let rotated = app.authoring_document().unwrap();
         let rotation = glam::Quat::from_array(rotated.objects[0].rotation);
-        assert!(rotation.abs_diff_eq(glam::Quat::from_rotation_y(std::f32::consts::FRAC_PI_2), 1e-6));
+        assert!(rotation.abs_diff_eq(
+            glam::Quat::from_rotation_y(std::f32::consts::FRAC_PI_2),
+            1e-6
+        ));
         assert_eq!(app.authoring.history.as_ref().unwrap().current(), &rotated);
         app.edit_key(KeyCode::KeyZ).unwrap();
         assert_eq!(app.authoring_document().unwrap(), before);
@@ -5168,7 +5487,8 @@ mod tests {
             .unwrap();
         for _ in 0..3 {
             let physics = app.play.physics.as_mut().unwrap();
-            app.play.simulation
+            app.play
+                .simulation
                 .as_mut()
                 .unwrap()
                 .advance_with(&mut app.scene, 1.0 / 60.0, |scene, dt| {
@@ -5268,17 +5588,38 @@ mod tests {
             .join("../voxy_render/examples/assets/quad.obj");
         let mut app = App::new(&fixture, false).unwrap();
         let owner = app.instances[0];
-        app.scene.insert_component(owner, CharacterBody {
-            speed: 0., gravity: 0., ..Default::default()
-        }).unwrap();
-        app.scene.insert_component(owner, voxy_gameplay::AngularMotion {
-            axis: [0., 1., 0.], radians_per_second: 2.,
-        }).unwrap();
+        app.scene
+            .insert_component(
+                owner,
+                CharacterBody {
+                    speed: 0.,
+                    gravity: 0.,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        app.scene
+            .insert_component(
+                owner,
+                voxy_gameplay::AngularMotion {
+                    axis: [0., 1., 0.],
+                    radians_per_second: 2.,
+                },
+            )
+            .unwrap();
         app.commit_authoring().unwrap();
         let expected = app.authoring_document().unwrap();
         app.toggle_play().unwrap();
-        for _ in 0..60 { app.advance_game(1. / 60.).unwrap(); }
-        assert!(app.scene.local(app.instances[0]).unwrap().rotation.abs_diff_eq(glam::Quat::from_rotation_y(2.), 1e-5));
+        for _ in 0..60 {
+            app.advance_game(1. / 60.).unwrap();
+        }
+        assert!(
+            app.scene
+                .local(app.instances[0])
+                .unwrap()
+                .rotation
+                .abs_diff_eq(glam::Quat::from_rotation_y(2.), 1e-5)
+        );
         assert_eq!(app.authoring.history.as_ref().unwrap().current(), &expected);
         app.toggle_play().unwrap();
         assert_eq!(app.authoring_document().unwrap(), expected);
@@ -5601,7 +5942,8 @@ mod tests {
         app.toggle_play().unwrap();
         let mut ticks = 0;
         for _ in 0..100 {
-            ticks += app.play
+            ticks += app
+                .play
                 .simulation
                 .as_mut()
                 .unwrap()
@@ -5661,7 +6003,8 @@ mod tests {
         local.scale = Vec3::splat(2.0);
         app.scene.set_local(parent, local).unwrap();
         let document = app.authoring_document().unwrap();
-        app.authoring.history
+        app.authoring
+            .history
             .as_mut()
             .unwrap()
             .commit(document, &model_registry().unwrap())

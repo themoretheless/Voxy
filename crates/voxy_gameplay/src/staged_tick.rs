@@ -1,7 +1,7 @@
 //! Fallible pose preparation inside the character publication transaction.
 use super::{
-    AppliedCharacterTrajectoryMotion, CharacterPhysics, CharacterRigidTrajectoryMotion, CharacterCertifiedFadeMotion,
-    PhysicsError, SupportQueryBudget, SupportWorld,
+    AppliedCharacterTrajectoryMotion, CharacterCertifiedFadeMotion, CharacterPhysics,
+    CharacterRigidTrajectoryMotion, PhysicsError, SupportQueryBudget, SupportWorld,
 };
 use glam::{DQuat, DVec3, Mat4, Vec3};
 use voxy_input::InputMap;
@@ -63,7 +63,14 @@ impl CharacterPhysics {
         prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
     ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
         self.fixed_step_with_mixed_certified_fade_preparation(
-            scene, input, dt, &[], &[], fades, prepare)
+            scene,
+            input,
+            dt,
+            &[],
+            &[],
+            fades,
+            prepare,
+        )
     }
 
     /// Combines ordinary root translations/rigid paths and certified fades in
@@ -78,14 +85,19 @@ impl CharacterPhysics {
         fades: &[CharacterCertifiedFadeMotion<'_>],
         prepare: impl FnOnce(&CharacterTickPreview, &mut SupportQueryBudget) -> Result<T, E>,
     ) -> Result<(Vec<AppliedCharacterTrajectoryMotion>, T), CharacterTickError<E>> {
-        let path_count = ordinary_paths.len().checked_add(fades.len())
+        let path_count = ordinary_paths
+            .len()
+            .checked_add(fades.len())
             .filter(|count| *count <= self.max_bodies)
             .ok_or(CharacterTickError::Physics(PhysicsError::InvalidMotion))?;
         let mut paths = Vec::with_capacity(path_count);
         paths.extend_from_slice(ordinary_paths);
         paths.extend(fades.iter().map(|request| CharacterRigidTrajectoryMotion {
-            owner: request.owner, trajectory: &request.fade.approximation().path,
-            scale: request.scale, basis: request.basis, origin: request.origin,
+            owner: request.owner,
+            trajectory: &request.fade.approximation().path,
+            scale: request.scale,
+            basis: request.basis,
+            origin: request.origin,
         }));
         self.fixed_step_preparing(scene, input, dt, translations, &paths, fades, prepare)
     }

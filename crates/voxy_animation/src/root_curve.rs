@@ -7,7 +7,7 @@ struct Knot {
     value: DVec3,
     area: DVec3,
     coefficients: [DVec3; 4],
-    compilation_error: Result<[f64;3],super::AnimationError>,
+    compilation_error: Result<[f64; 3], super::AnimationError>,
 }
 
 /// Relative polynomial positions and prefix integrals; shared by clip clones.
@@ -52,13 +52,23 @@ impl RootCurve {
             } else {
                 [value, DVec3::ZERO, DVec3::ZERO, DVec3::ZERO]
             };
-            let next = keys.get(i+1);
+            let next = keys.get(i + 1);
             let compilation_error = crate::root_rigid::translation_coefficient_error_bounds(
-                origin,key.value.as_dvec3(),next.map(|key|key.value.as_dvec3()),
-                [f64::from(key.time),next.map_or(f64::from(key.time),|key|f64::from(key.time))],
+                origin,
+                key.value.as_dvec3(),
+                next.map(|key| key.value.as_dvec3()),
+                [
+                    f64::from(key.time),
+                    next.map_or(f64::from(key.time), |key| f64::from(key.time)),
+                ],
                 if mode == Interpolation::CubicSpline && next.is_some() {
-                    [tangents[i][1].as_dvec3(),tangents[i+1][0].as_dvec3()]
-                } else {[DVec3::ZERO;2]},mode,coefficients);
+                    [tangents[i][1].as_dvec3(), tangents[i + 1][0].as_dvec3()]
+                } else {
+                    [DVec3::ZERO; 2]
+                },
+                mode,
+                coefficients,
+            );
             knots.push(Knot {
                 compilation_error,
                 time: f64::from(key.time),
@@ -79,94 +89,161 @@ impl RootCurve {
         }
     }
 
-    pub(super) fn compilation_error_bounds(&self) -> Result<[f64;3],super::AnimationError> {
-        let mut bound = [0_f64;3];
+    pub(super) fn compilation_error_bounds(&self) -> Result<[f64; 3], super::AnimationError> {
+        let mut bound = [0_f64; 3];
         for knot in &self.knots {
             let error = knot.compilation_error.clone()?;
-            for axis in 0..3 {bound[axis]=bound[axis].max(error[axis]);}
+            for axis in 0..3 {
+                bound[axis] = bound[axis].max(error[axis]);
+            }
         }
         Ok(bound)
     }
 
-    pub(super) fn source_position_bounds(&self,start:f64,end:f64)
-        ->Result<[[f64;2];3],super::AnimationError> {
-        self.checked_piece(start,end)?;
-        let upper=self.knots.partition_point(|k|k.time<=start);
-        if upper==0 {return Ok([[0.;2];3]);}
-        let knot=&self.knots[upper-1];
-        let error=knot.compilation_error.clone()?;
-        let (coefficients,key_times,times)=if let Some(next)=self.knots.get(upper) {
-            (knot.coefficients,[knot.time,next.time],[start,end])
-        } else {([knot.value,DVec3::ZERO,DVec3::ZERO,DVec3::ZERO],[0.,1.],[0.,0.])};
-        crate::root_rigid::translation_source_position_bounds(coefficients,error,key_times,times)
-    }
-
-    pub(super) fn source_velocity_bounds(&self,start:f64,end:f64)
-        ->Result<[[f64;2];3],super::AnimationError> {
-        self.checked_piece(start,end)?;
-        let upper=self.knots.partition_point(|knot|knot.time<=start);
-        if upper==0 || upper==self.knots.len() || self.mode==Interpolation::Step {
-            return Ok([[0.;2];3]);
+    pub(super) fn source_position_bounds(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<[[f64; 2]; 3], super::AnimationError> {
+        self.checked_piece(start, end)?;
+        let upper = self.knots.partition_point(|k| k.time <= start);
+        if upper == 0 {
+            return Ok([[0.; 2]; 3]);
         }
-        let knot=&self.knots[upper-1];let next=&self.knots[upper];
-        crate::root_rigid::translation_source_velocity_bounds(knot.coefficients,
-            knot.compilation_error.clone()?,[knot.time,next.time],[start,end])
+        let knot = &self.knots[upper - 1];
+        let error = knot.compilation_error.clone()?;
+        let (coefficients, key_times, times) = if let Some(next) = self.knots.get(upper) {
+            (knot.coefficients, [knot.time, next.time], [start, end])
+        } else {
+            (
+                [knot.value, DVec3::ZERO, DVec3::ZERO, DVec3::ZERO],
+                [0., 1.],
+                [0., 0.],
+            )
+        };
+        crate::root_rigid::translation_source_position_bounds(coefficients, error, key_times, times)
     }
 
-    pub(super) fn piece_error_bounds(&self, start: f64, end: f64)
-        -> Result<[f64;3],super::AnimationError> {
-        if !start.is_finite() || !end.is_finite() || start<0. || end<start || end>self.duration {
+    pub(super) fn source_velocity_bounds(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<[[f64; 2]; 3], super::AnimationError> {
+        self.checked_piece(start, end)?;
+        let upper = self.knots.partition_point(|knot| knot.time <= start);
+        if upper == 0 || upper == self.knots.len() || self.mode == Interpolation::Step {
+            return Ok([[0.; 2]; 3]);
+        }
+        let knot = &self.knots[upper - 1];
+        let next = &self.knots[upper];
+        crate::root_rigid::translation_source_velocity_bounds(
+            knot.coefficients,
+            knot.compilation_error.clone()?,
+            [knot.time, next.time],
+            [start, end],
+        )
+    }
+
+    pub(super) fn piece_error_bounds(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<[f64; 3], super::AnimationError> {
+        if !start.is_finite()
+            || !end.is_finite()
+            || start < 0.
+            || end < start
+            || end > self.duration
+        {
             return Err(super::AnimationError::InvalidSampleTime);
         }
-        let first = self.knots.partition_point(|knot|knot.time<=start);
-        if first==0 {
-            if self.knots.first().is_some_and(|knot|end>knot.time) {
+        let first = self.knots.partition_point(|knot| knot.time <= start);
+        if first == 0 {
+            if self.knots.first().is_some_and(|knot| end > knot.time) {
                 return Err(super::AnimationError::InvalidSampleTime);
             }
-            return Ok([0.;3]);
+            return Ok([0.; 3]);
         }
-        let knot = &self.knots[first-1];
+        let knot = &self.knots[first - 1];
         let compilation = knot.compilation_error.clone()?;
-        let Some(next) = self.knots.get(first) else {return Ok(compilation);};
-        if end>next.time {return Err(super::AnimationError::InvalidSampleTime);}
-        crate::root_rigid::translation_piece_error_bounds(knot.coefficients,compilation,
-            [knot.time,next.time],[start,end],self.piece(start,end))
-    }
-
-    pub(super) fn phase_evaluation_error_bounds(&self,phase:f64)
-        -> Result<[f64;3],super::AnimationError> {
-        if !phase.is_finite() || phase<0. || phase>self.duration {
+        let Some(next) = self.knots.get(first) else {
+            return Ok(compilation);
+        };
+        if end > next.time {
             return Err(super::AnimationError::InvalidSampleTime);
         }
-        let upper = self.knots.partition_point(|knot|knot.time<=phase);
-        if upper==0 {return Ok([0.;3]);}
-        let knot = &self.knots[upper-1];
-        let compilation = knot.compilation_error.clone()?;
-        let Some(next) = self.knots.get(upper) else {return Ok(compilation);};
-        crate::root_rigid::translation_phase_evaluation_error_bounds(knot.coefficients,
-            compilation,[knot.time,next.time],phase,self.position(phase))
+        crate::root_rigid::translation_piece_error_bounds(
+            knot.coefficients,
+            compilation,
+            [knot.time, next.time],
+            [start, end],
+            self.piece(start, end),
+        )
     }
 
-    pub(super) fn interval_evaluation_error_bounds(&self,start:f64,end:f64)
-        -> Result<[f64;3],super::AnimationError> {
-        if !start.is_finite() || !end.is_finite() || start<0. || end<start || end>self.duration {
+    pub(super) fn phase_evaluation_error_bounds(
+        &self,
+        phase: f64,
+    ) -> Result<[f64; 3], super::AnimationError> {
+        if !phase.is_finite() || phase < 0. || phase > self.duration {
             return Err(super::AnimationError::InvalidSampleTime);
         }
-        let upper = self.knots.partition_point(|knot|knot.time<=start);
-        if upper==0 {
-            if self.knots.first().is_some_and(|knot|end>knot.time) {
+        let upper = self.knots.partition_point(|knot| knot.time <= phase);
+        if upper == 0 {
+            return Ok([0.; 3]);
+        }
+        let knot = &self.knots[upper - 1];
+        let compilation = knot.compilation_error.clone()?;
+        let Some(next) = self.knots.get(upper) else {
+            return Ok(compilation);
+        };
+        crate::root_rigid::translation_phase_evaluation_error_bounds(
+            knot.coefficients,
+            compilation,
+            [knot.time, next.time],
+            phase,
+            self.position(phase),
+        )
+    }
+
+    pub(super) fn interval_evaluation_error_bounds(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<[f64; 3], super::AnimationError> {
+        if !start.is_finite()
+            || !end.is_finite()
+            || start < 0.
+            || end < start
+            || end > self.duration
+        {
+            return Err(super::AnimationError::InvalidSampleTime);
+        }
+        let upper = self.knots.partition_point(|knot| knot.time <= start);
+        if upper == 0 {
+            if self.knots.first().is_some_and(|knot| end > knot.time) {
                 return Err(super::AnimationError::InvalidSampleTime);
             }
-            return Ok([0.;3]);
+            return Ok([0.; 3]);
         }
-        let knot = &self.knots[upper-1];
-        let Some(next) = self.knots.get(upper) else {return knot.compilation_error.clone();};
-        if end>next.time {return Err(super::AnimationError::InvalidSampleTime);}
-        let mut error = crate::root_rigid::translation_interval_evaluation_error_bounds(knot.coefficients,
-            knot.compilation_error.clone()?,[knot.time,next.time],[start,end])?;
-        if end==next.time {
+        let knot = &self.knots[upper - 1];
+        let Some(next) = self.knots.get(upper) else {
+            return knot.compilation_error.clone();
+        };
+        if end > next.time {
+            return Err(super::AnimationError::InvalidSampleTime);
+        }
+        let mut error = crate::root_rigid::translation_interval_evaluation_error_bounds(
+            knot.coefficients,
+            knot.compilation_error.clone()?,
+            [knot.time, next.time],
+            [start, end],
+        )?;
+        if end == next.time {
             let endpoint = next.compilation_error.clone()?;
-            for axis in 0..3 {error[axis]=error[axis].max(endpoint[axis]);}
+            for axis in 0..3 {
+                error[axis] = error[axis].max(endpoint[axis]);
+            }
         }
         Ok(error)
     }
@@ -235,16 +312,24 @@ impl RootCurve {
         (values[0] != values[1]).then_some(values)
     }
     /// A path partition must never silently restrict one polynomial across a key.
-    pub(super) fn checked_piece(&self,start:f64,end:f64)
-        ->Result<[DVec3;4],super::AnimationError> {
-        if !start.is_finite() || !end.is_finite() || start<0. || end<start || end>self.duration {
+    pub(super) fn checked_piece(
+        &self,
+        start: f64,
+        end: f64,
+    ) -> Result<[DVec3; 4], super::AnimationError> {
+        if !start.is_finite()
+            || !end.is_finite()
+            || start < 0.
+            || end < start
+            || end > self.duration
+        {
             return Err(super::AnimationError::InvalidSampleTime);
         }
-        let upper=self.knots.partition_point(|knot|knot.time<=start);
-        if self.knots.get(upper).is_some_and(|next|end>next.time) {
+        let upper = self.knots.partition_point(|knot| knot.time <= start);
+        if self.knots.get(upper).is_some_and(|next| end > next.time) {
             return Err(super::AnimationError::RootRigidBudget);
         }
-        Ok(self.piece(start,end))
+        Ok(self.piece(start, end))
     }
     /// Exact Bernstein controls on a single key interval; the right endpoint
     /// remains the pre-event value for STEP, assigning the jump separately.
@@ -439,45 +524,63 @@ mod compilation_error_tests {
     #[test]
     fn translation_compilation_proof_covers_lost_key_units_and_cubic_tangents() {
         let large = 2_f32.powi(100);
-        for mode in [Interpolation::Step,Interpolation::Linear,Interpolation::CubicSpline] {
-            let curve = RootCurve::new(&[
-                Vec3Key {time:0.,value:Vec3::X*large},
-                Vec3Key {time:0.75,value:Vec3::X},
-            ],mode,&[[Vec3::ZERO,Vec3::X*0.25],[Vec3::X*0.5,Vec3::ZERO]],
-                1.,Playback::Clamp);
+        for mode in [
+            Interpolation::Step,
+            Interpolation::Linear,
+            Interpolation::CubicSpline,
+        ] {
+            let curve = RootCurve::new(
+                &[
+                    Vec3Key {
+                        time: 0.,
+                        value: Vec3::X * large,
+                    },
+                    Vec3Key {
+                        time: 0.75,
+                        value: Vec3::X,
+                    },
+                ],
+                mode,
+                &[[Vec3::ZERO, Vec3::X * 0.25], [Vec3::X * 0.5, Vec3::ZERO]],
+                1.,
+                Playback::Clamp,
+            );
             let error = curve.compilation_error_bounds().unwrap();
             // At the final key, exact relative coordinate is 1-2^100 while the
             // rounded cache stores -2^100; the lost unit must remain covered.
-            assert!(error[0]>=1.);
-            assert_eq!(error[1],0.);
-            assert_eq!(error[2],0.);
-            let piece = curve.piece_error_bounds(0.125,0.625).unwrap();
-            if mode == Interpolation::Step {assert_eq!(piece,[0.;3]);}
-            else {assert!(piece[0]>=1.);}
-            assert_eq!(piece[1],0.);
-            assert_eq!(piece[2],0.);
-            assert!(curve.piece_error_bounds(0.125,0.875).is_err());
-            assert!(curve.checked_piece(0.125,0.875).is_err());
-            assert!(curve.checked_piece(0.125,0.75_f64.next_up()).is_err());
-            assert!(curve.checked_piece(0.125,0.75).is_ok());
-            assert!(curve.checked_piece(0.75,1.).is_ok());
-            assert!(curve.piece_error_bounds(f64::NAN,0.5).is_err());
+            assert!(error[0] >= 1.);
+            assert_eq!(error[1], 0.);
+            assert_eq!(error[2], 0.);
+            let piece = curve.piece_error_bounds(0.125, 0.625).unwrap();
+            if mode == Interpolation::Step {
+                assert_eq!(piece, [0.; 3]);
+            } else {
+                assert!(piece[0] >= 1.);
+            }
+            assert_eq!(piece[1], 0.);
+            assert_eq!(piece[2], 0.);
+            assert!(curve.piece_error_bounds(0.125, 0.875).is_err());
+            assert!(curve.checked_piece(0.125, 0.875).is_err());
+            assert!(curve.checked_piece(0.125, 0.75_f64.next_up()).is_err());
+            assert!(curve.checked_piece(0.125, 0.75).is_ok());
+            assert!(curve.checked_piece(0.75, 1.).is_ok());
+            assert!(curve.piece_error_bounds(f64::NAN, 0.5).is_err());
             let evaluation = curve.phase_evaluation_error_bounds(0.5).unwrap();
-            assert_eq!(evaluation[1],0.);
-            assert_eq!(evaluation[2],0.);
-            if mode==Interpolation::Step {assert_eq!(evaluation,[0.;3]);}
-            else {assert!(evaluation[0]>=1.);}
+            assert_eq!(evaluation[1], 0.);
+            assert_eq!(evaluation[2], 0.);
+            if mode == Interpolation::Step {
+                assert_eq!(evaluation, [0.; 3]);
+            } else {
+                assert!(evaluation[0] >= 1.);
+            }
             assert!(curve.phase_evaluation_error_bounds(-0.5).is_err());
-            let uniform = curve.interval_evaluation_error_bounds(0.,0.75).unwrap();
-            assert!(uniform[0]>=1.);
-            assert_eq!(uniform[1],0.);
-            assert_eq!(uniform[2],0.);
-
-
-
+            let uniform = curve.interval_evaluation_error_bounds(0., 0.75).unwrap();
+            assert!(uniform[0] >= 1.);
+            assert_eq!(uniform[1], 0.);
+            assert_eq!(uniform[2], 0.);
         }
-        let empty = RootCurve::new(&[],Interpolation::Linear,&[],1.,Playback::Clamp);
-        assert_eq!(empty.compilation_error_bounds().unwrap(),[0.;3]);
+        let empty = RootCurve::new(&[], Interpolation::Linear, &[], 1., Playback::Clamp);
+        assert_eq!(empty.compilation_error_bounds().unwrap(), [0.; 3]);
     }
 }
 
@@ -486,24 +589,40 @@ mod uniform_evaluation_tests {
     use super::*;
     #[test]
     fn whole_interval_horner_error_preserves_zero_axes_and_covers_dyadic_curve() {
-        let curve = RootCurve::new(&[
-            Vec3Key {time:0.,value:Vec3::ZERO},Vec3Key {time:0.75,value:Vec3::X*0.75}],
-            Interpolation::CubicSpline,&[[Vec3::ZERO,Vec3::X*0.25],
-                [Vec3::X*0.5,Vec3::ZERO]],1.,Playback::Clamp);
-        let error = curve.interval_evaluation_error_bounds(0.,0.75).unwrap();
-        assert_eq!(error[1],0.);
-        assert_eq!(error[2],0.);
-        assert!(error[0]>0. && error[0]<1e-12);
+        let curve = RootCurve::new(
+            &[
+                Vec3Key {
+                    time: 0.,
+                    value: Vec3::ZERO,
+                },
+                Vec3Key {
+                    time: 0.75,
+                    value: Vec3::X * 0.75,
+                },
+            ],
+            Interpolation::CubicSpline,
+            &[[Vec3::ZERO, Vec3::X * 0.25], [Vec3::X * 0.5, Vec3::ZERO]],
+            1.,
+            Playback::Clamp,
+        );
+        let error = curve.interval_evaluation_error_bounds(0., 0.75).unwrap();
+        assert_eq!(error[1], 0.);
+        assert_eq!(error[2], 0.);
+        assert!(error[0] > 0. && error[0] < 1e-12);
         for i in 0..=64 {
-            let u = f64::from(i)/64.;
+            let u = f64::from(i) / 64.;
             // All coefficients and sampled parameters are exact dyadics, small
             // enough that this expanded independent evaluation is exact in f64.
-            let exact = 0.1875*u+1.5*u*u-0.9375*u*u*u;
-            let actual = curve.position(0.75*u).x;
-            assert!((exact-actual).abs()<=error[0]);
+            let exact = 0.1875 * u + 1.5 * u * u - 0.9375 * u * u * u;
+            let actual = curve.position(0.75 * u).x;
+            assert!((exact - actual).abs() <= error[0]);
         }
-        assert!(curve.interval_evaluation_error_bounds(0.,0.875).is_err());
-        assert!(curve.interval_evaluation_error_bounds(f64::NAN,0.5).is_err());
+        assert!(curve.interval_evaluation_error_bounds(0., 0.875).is_err());
+        assert!(
+            curve
+                .interval_evaluation_error_bounds(f64::NAN, 0.5)
+                .is_err()
+        );
     }
 }
 
@@ -512,19 +631,35 @@ mod source_velocity_tests {
     use super::*;
     #[test]
     fn source_derivative_covers_linear_and_cubic_and_preserves_zero_axes() {
-        let keys=[Vec3Key {time:0.,value:Vec3::ZERO},Vec3Key {time:1.,value:Vec3::X}];
-        for mode in [Interpolation::Step,Interpolation::Linear,Interpolation::CubicSpline] {
-            let curve=RootCurve::new(&keys,mode,&[[Vec3::ZERO;2];2],1.,Playback::Clamp);
-            let bounds=curve.source_velocity_bounds(0.,1.).unwrap();
-            assert_eq!(bounds[1..],[[0.;2];2]);
+        let keys = [
+            Vec3Key {
+                time: 0.,
+                value: Vec3::ZERO,
+            },
+            Vec3Key {
+                time: 1.,
+                value: Vec3::X,
+            },
+        ];
+        for mode in [
+            Interpolation::Step,
+            Interpolation::Linear,
+            Interpolation::CubicSpline,
+        ] {
+            let curve = RootCurve::new(&keys, mode, &[[Vec3::ZERO; 2]; 2], 1., Playback::Clamp);
+            let bounds = curve.source_velocity_bounds(0., 1.).unwrap();
+            assert_eq!(bounds[1..], [[0.; 2]; 2]);
             for i in 0..=64 {
-                let u=f64::from(i)/64.;
-                let exact=match mode {Interpolation::Step=>0.,Interpolation::Linear=>1.,
-                    Interpolation::CubicSpline=>6.*u*(1.-u)};
-                assert!(bounds[0][0]<=exact && bounds[0][1]>=exact);
+                let u = f64::from(i) / 64.;
+                let exact = match mode {
+                    Interpolation::Step => 0.,
+                    Interpolation::Linear => 1.,
+                    Interpolation::CubicSpline => 6. * u * (1. - u),
+                };
+                assert!(bounds[0][0] <= exact && bounds[0][1] >= exact);
             }
-            assert!(curve.source_velocity_bounds(-1.,0.5).is_err());
-            assert_eq!(curve.source_velocity_bounds(1.,1.).unwrap(),[[0.;2];3]);
+            assert!(curve.source_velocity_bounds(-1., 0.5).is_err());
+            assert_eq!(curve.source_velocity_bounds(1., 1.).unwrap(), [[0.; 2]; 3]);
         }
     }
 }

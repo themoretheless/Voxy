@@ -328,13 +328,15 @@ mod publication_tests {
             edges,
         };
         certify_pose(DVec3::splat(f64::MAX), edges, &[huge_wall], &mut 1).unwrap();
-        assert!(certify_pose(
-            DVec3::X * 0.75_f64.next_up(),
-            exact_edges,
-            &[exact_wall],
-            &mut 1
-        )
-        .is_err());
+        assert!(
+            certify_pose(
+                DVec3::X * 0.75_f64.next_up(),
+                exact_edges,
+                &[exact_wall],
+                &mut 1
+            )
+            .is_err()
+        );
         assert!(certify_pose(DVec3::splat(f64::NAN), edges, &[], &mut 0).is_err());
     }
 }

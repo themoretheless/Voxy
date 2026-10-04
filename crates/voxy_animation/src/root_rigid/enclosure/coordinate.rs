@@ -102,9 +102,10 @@ mod tests {
         assert_eq!(proof.axis(), 1);
         assert!(proof.error_bound() >= 0.25 && proof.error_bound() - 0.25 < 1e-12);
         assert!(path.enclose_fade_coordinate_error(&fields, 1, 1).is_err());
-        assert!(path
-            .enclose_fade_coordinate_error(&fields[..1], 1, 2)
-            .is_err());
+        assert!(
+            path.enclose_fade_coordinate_error(&fields[..1], 1, 2)
+                .is_err()
+        );
         let mut reversed = fields.clone();
         reversed.reverse();
         assert!(path.enclose_fade_coordinate_error(&reversed, 1, 2).is_err());
@@ -122,10 +123,12 @@ mod tests {
             2,
         )
         .unwrap();
-        assert!(tilted
-            .enclose_fade_coordinate_error(&fields, 1, 2)
-            .unwrap()
-            .is_none());
+        assert!(
+            tilted
+                .enclose_fade_coordinate_error(&fields, 1, 2)
+                .unwrap()
+                .is_none()
+        );
         let planar = RootRigidPath::from_twists(
             &[
                 (

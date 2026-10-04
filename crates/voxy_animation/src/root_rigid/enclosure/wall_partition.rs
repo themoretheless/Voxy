@@ -150,9 +150,11 @@ mod tests {
         let intervals = partition.intervals();
         assert_eq!(intervals[0].start, 0.);
         assert_eq!(intervals.last().unwrap().end, 1.);
-        assert!(intervals
-            .windows(2)
-            .all(|pair| pair[0].end == pair[1].start));
+        assert!(
+            intervals
+                .windows(2)
+                .all(|pair| pair[0].end == pair[1].start)
+        );
         let guarded = intervals
             .iter()
             .find(|part| part.start <= 1. / 3. && part.end >= 1. / 3.)

@@ -34,7 +34,10 @@ impl RootRigidFadePlan {
     ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
         self.integrate_authored_common_enclosure(
             RootRigidEnclosure::from_transform(authored_to_common)?,
-            origin_tolerance, angular_tolerance, max_spans)
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )
     }
 
     /// Preserves an actor-owned common frame enclosure, including uncertainty
@@ -46,38 +49,84 @@ impl RootRigidFadePlan {
         angular_tolerance: f64,
         max_spans: usize,
     ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
-        self.integrate_authored_common_similarity(common,1.,origin_tolerance,angular_tolerance,max_spans)
+        self.integrate_authored_common_similarity(
+            common,
+            1.,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )
     }
 
     /// Assembles the field in common-frame units under a signed uniform scale.
     /// Common-frame translation is already in body units and is not rescaled.
     pub fn integrate_authored_common_similarity(
-        &self, common: RootRigidEnclosure, scale: f64,
-        origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+        &self,
+        common: RootRigidEnclosure,
+        scale: f64,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
     ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
-        self.integrate_authored_common_similarity_enclosed(common,
-            RootUniformScaleEnclosure::from_scale(scale)?,origin_tolerance,angular_tolerance,max_spans)
+        self.integrate_authored_common_similarity_enclosed(
+            common,
+            RootUniformScaleEnclosure::from_scale(scale)?,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )
     }
     /// Retains scale-product uncertainty from the root's ancestor chain.
     pub fn integrate_authored_common_similarity_enclosed(
-        &self, common: RootRigidEnclosure, scale: RootUniformScaleEnclosure,
-        origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+        &self,
+        common: RootRigidEnclosure,
+        scale: RootUniformScaleEnclosure,
+        origin_tolerance: f64,
+        angular_tolerance: f64,
+        max_spans: usize,
     ) -> Result<RootRigidCertifiedFadeInterval, AnimationError> {
-        let map = |factor| common.compose(&RootRigidEnclosure::from_transform(factor)?
-            .with_translation_scale_enclosed(scale)?);
+        let map = |factor| {
+            common.compose(
+                &RootRigidEnclosure::from_transform(factor)?
+                    .with_translation_scale_enclosed(scale)?,
+            )
+        };
         let source = match (&self.source_fade, self.source_factor) {
-            (Some(path), Some(factor)) => Some(RootRigidMappedPath::from_enclosed_similarity(path,map(factor)?,scale)?),
+            (Some(path), Some(factor)) => Some(RootRigidMappedPath::from_enclosed_similarity(
+                path,
+                map(factor)?,
+                scale,
+            )?),
             (None, None) => None,
             _ => return Err(AnimationError::InvalidRetargetBinding),
         };
         let target_frame = map(self.target_factor)?;
-        let target = RootRigidMappedPath::from_enclosed_similarity(&self.target_fade,target_frame,scale)?;
-        let completion = if self.tail_wall_seconds == 0. { None } else {
-            let frame = target_frame.compose(&self.target_fade.continuous_end_enclosure(max_spans)?.with_translation_scale_enclosed(scale)?)?;
-            Some((RootRigidMappedPath::from_enclosed_similarity(&self.target_tail,frame,scale)?,self.wall_seconds))
+        let target =
+            RootRigidMappedPath::from_enclosed_similarity(&self.target_fade, target_frame, scale)?;
+        let completion = if self.tail_wall_seconds == 0. {
+            None
+        } else {
+            let frame = target_frame.compose(
+                &self
+                    .target_fade
+                    .continuous_end_enclosure(max_spans)?
+                    .with_translation_scale_enclosed(scale)?,
+            )?;
+            Some((
+                RootRigidMappedPath::from_enclosed_similarity(&self.target_tail, frame, scale)?,
+                self.wall_seconds,
+            ))
         };
-        RootRigidCertifiedFadeInterval::integrate_paths_with_completion(source,target,
-            self.weights,self.fade_wall_seconds,completion,origin_tolerance,angular_tolerance,max_spans)
+        RootRigidCertifiedFadeInterval::integrate_paths_with_completion(
+            source,
+            target,
+            self.weights,
+            self.fade_wall_seconds,
+            completion,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
+        )
     }
 
     /// Exact snapshot admission for a staged candidate. Clip and frozen-pose
@@ -86,21 +135,26 @@ impl RootRigidFadePlan {
         let initial = &self.initial;
         if !Arc::ptr_eq(&initial.current, &animator.current)
             || !Arc::ptr_eq(&initial.motion_curve, &animator.motion_curve)
-            || initial.time != animator.time || initial.speed != animator.speed
-            || initial.motion_joint != animator.motion_joint {
+            || initial.time != animator.time
+            || initial.speed != animator.speed
+            || initial.motion_joint != animator.motion_joint
+        {
             return false;
         }
         match (&initial.transition, &animator.transition) {
             (None, None) => true,
-            (Some(a), Some(b)) => Arc::ptr_eq(&a.source, &b.source)
-                && Arc::ptr_eq(&a.source_curve, &b.source_curve)
-                && a.source_time == b.source_time && a.elapsed == b.elapsed
-                && a.duration == b.duration
-                && match (&a.source_pose, &b.source_pose) {
-                    (None, None) => true,
-                    (Some(a), Some(b)) => Arc::ptr_eq(a, b),
-                    _ => false,
-                },
+            (Some(a), Some(b)) => {
+                Arc::ptr_eq(&a.source, &b.source)
+                    && Arc::ptr_eq(&a.source_curve, &b.source_curve)
+                    && a.source_time == b.source_time
+                    && a.elapsed == b.elapsed
+                    && a.duration == b.duration
+                    && match (&a.source_pose, &b.source_pose) {
+                        (None, None) => true,
+                        (Some(a), Some(b)) => Arc::ptr_eq(a, b),
+                        _ => false,
+                    }
+            }
             _ => false,
         }
     }
@@ -114,7 +168,9 @@ impl RootRigidFadePlan {
         accepted_wall_seconds: f64,
     ) -> Result<(Animator, AnimatorFrame), AnimationError> {
         if !accepted_wall_seconds.is_finite()
-            || accepted_wall_seconds < 0. || accepted_wall_seconds > self.wall_seconds {
+            || accepted_wall_seconds < 0.
+            || accepted_wall_seconds > self.wall_seconds
+        {
             return Err(AnimationError::InvalidAnimationTimeStep);
         }
         let mut candidate = self.initial.clone();
@@ -138,14 +194,23 @@ impl RootRigidFadePlan {
             (None, None) => None,
             _ => return Err(AnimationError::InvalidRetargetBinding),
         };
-        let completion = if self.tail_wall_seconds == 0. { None } else {
-            Some((self.certified_target_tail_mapping(target_frame, max_spans)?,
-                self.wall_seconds))
+        let completion = if self.tail_wall_seconds == 0. {
+            None
+        } else {
+            Some((
+                self.certified_target_tail_mapping(target_frame, max_spans)?,
+                self.wall_seconds,
+            ))
         };
         RootRigidCertifiedFadeInterval::integrate_paths_with_completion(
-            source, RootRigidMappedPath::new(&self.target_fade, target_frame, 1.)?,
-            self.weights, self.fade_wall_seconds, completion,
-            origin_tolerance, angular_tolerance, max_spans,
+            source,
+            RootRigidMappedPath::new(&self.target_fade, target_frame, 1.)?,
+            self.weights,
+            self.fade_wall_seconds,
+            completion,
+            origin_tolerance,
+            angular_tolerance,
+            max_spans,
         )
     }
 
