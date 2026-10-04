@@ -68,6 +68,28 @@ fn quadrant_angle(y: f64, x: f64) -> Result<Scalar, AnimationError> {
     }
 }
 
+/// Positive acos at one exact stored argument via first-quadrant atan.
+pub(super) fn positive_acos_point(input: f64) -> Result<Scalar, AnimationError> {
+    if !input.is_finite() || !(0. ..=1.).contains(&input) {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    if input == 1. {
+        return Ok(Scalar::exact(0.));
+    }
+    if input == 0. {
+        return pi()?.div_positive(2.);
+    }
+    let x = Scalar::exact(input);
+    // Stable near one; subtracting a rounded x*x could lose the positive gap.
+    let y = Scalar::exact(1.)
+        .sub(x)?
+        .mul(Scalar::exact(1.).add(x)?)?
+        .sqrt_positive()?;
+    let lo = quadrant_angle(y.0, input)?;
+    let hi = quadrant_angle(y.1, input)?;
+    Ok(Scalar(lo.0, hi.1))
+}
+
 /// Constant spatial angular velocity of the exact normalized f32 source keys.
 /// Raw quaternion product scale cancels before logarithm/axis normalization.
 /// Ambiguous hemisphere or vanishing-axis corridors reject rather than pick
@@ -144,7 +166,7 @@ pub(crate) fn source_key_rotation_bounds(key: [f32; 4]) -> Result<[[f64; 2]; 4],
 
 // Alternating Taylor series with the first omitted term as uniform remainder.
 // No platform trigonometric evaluations; |x|<=2 keeps the tail decreasing.
-fn sine_cosine(x: Scalar) -> Result<(Scalar, Scalar), AnimationError> {
+pub(super) fn sine_cosine(x: Scalar) -> Result<(Scalar, Scalar), AnimationError> {
     if !x.is_finite() || x.0 < 0. || x.1 > 2. {
         return Err(AnimationError::InvalidRootRotationCurve);
     }

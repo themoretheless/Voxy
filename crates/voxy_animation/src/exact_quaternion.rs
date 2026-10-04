@@ -59,7 +59,21 @@ fn multiply(a: &[Sum; 4], b: [f64; 4]) -> [Sum; 4] {
     })
 }
 
-pub(super) fn coherent(target: Quat, correction: Quat, source: Quat, basis: Quat) -> bool {
+/// Exact sign of an original f32 dot product, including product underflow
+/// that would be lost by the runtime f32 dot. Finite near-unit inputs required.
+pub(crate) fn dot_sign(a: Quat, b: Quat) -> core::cmp::Ordering {
+    let mut sum = Sum::default();
+    for (a, b) in a.to_array().into_iter().zip(b.to_array()) {
+        sum.add(f64::from(a) * f64::from(b));
+    }
+    match sum.0.last() {
+        Some(v) if *v < 0. => core::cmp::Ordering::Less,
+        Some(_) => core::cmp::Ordering::Greater,
+        None => core::cmp::Ordering::Equal,
+    }
+}
+
+pub(crate) fn coherent(target: Quat, correction: Quat, source: Quat, basis: Quat) -> bool {
     let a = target.to_array().map(|x| {
         let mut sum = Sum::default();
         sum.add(f64::from(x));
@@ -79,7 +93,7 @@ pub(super) fn coherent(target: Quat, correction: Quat, source: Quat, basis: Quat
     })
 }
 
-pub(super) fn rotation_nonzero(q: Quat) -> [[bool; 3]; 3] {
+pub(crate) fn rotation_nonzero(q: Quat) -> [[bool; 3]; 3] {
     let q = q.to_array().map(f64::from);
     std::array::from_fn(|row| {
         std::array::from_fn(|column| {

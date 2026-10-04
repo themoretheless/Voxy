@@ -1,5 +1,6 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
+mod exact_quaternion;
 mod root_clock;
 mod root_curve;
 pub use root_clock::{RootCyclePhase, enclose_root_cycle_phase};
@@ -492,6 +493,171 @@ impl AnimationClip {
             .first()
             .map_or(self.rig[index].bind_local.rotation, |key| key.value);
         curve.absolute_source_pose_interval_enclosure(times, initial)
+    }
+
+    /// Uniform error of the actual f32 local translation sampler against the
+    /// real interpolant of original stored keys at the same f32 local time.
+    /// Held/default channels are exact. LINEAR covers one key interval; None
+    /// requires partitioning at keys or qualification of a different mode.
+    /// Clock conversion, loop wrapping and retargeting are separate obligations.
+    /// # Errors
+    /// Rejects unknown joints and invalid/out-of-clip local time intervals.
+    pub fn joint_translation_sample_error_bounds(
+        &self,
+        joint: u16,
+        times: [f32; 2],
+    ) -> Result<Option<[f64; 3]>, AnimationError> {
+        let index = usize::from(joint);
+        let track = self
+            .tracks
+            .get(index)
+            .ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        if times.iter().any(|v| !v.is_finite())
+            || times[0] < 0.
+            || times[1] > self.duration
+            || times[0] > times[1]
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let keys = &track.translations;
+        let Some(first) = keys.first() else {
+            return Ok(Some([0.; 3]));
+        };
+        if times[1] <= first.time || times[0] >= keys[keys.len() - 1].time {
+            return Ok(Some([0.; 3]));
+        }
+        let upper = keys.partition_point(|key| key.time <= times[0]);
+        if upper == 0 || times[1] > keys[upper].time {
+            return Ok(None);
+        }
+        let from = &keys[upper - 1];
+        let to = &keys[upper];
+        match self.interpolation[index].translation {
+            Interpolation::Linear if from.value != to.value => {
+                RootRigidEnclosure::source_linear_translation_sample_error(
+                    from.value.to_array(),
+                    to.value.to_array(),
+                    [from.time, to.time],
+                    times,
+                )
+                .map(Some)
+            }
+            Interpolation::Linear => Ok(Some([0.; 3])),
+            Interpolation::Step if times[1] < to.time || from.value == to.value => {
+                Ok(Some([0.; 3]))
+            }
+            _ => Ok(None),
+        }
+    }
+
+    /// Local LINEAR translation error including narrowing f64 time to f32.
+    /// Compares sampling at narrowed time with the real original-key curve at
+    /// the supplied local f64 time. The real and rounded interval must fit one
+    /// key segment. Clock accumulation, clamping/wrapping and blending remain
+    /// separate; this does not certify try_sample_clock across loop seams.
+    /// # Errors
+    /// Rejects unknown joints and invalid/out-of-clip intervals.
+    pub fn joint_translation_local_time_error_bounds(
+        &self,
+        joint: u16,
+        times: [f64; 2],
+    ) -> Result<Option<[f64; 3]>, AnimationError> {
+        let index = usize::from(joint);
+        let track = self
+            .tracks
+            .get(index)
+            .ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        if times.iter().any(|v| !v.is_finite())
+            || times[0] < 0.
+            || times[1] > f64::from(self.duration)
+            || times[0] > times[1]
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let rounded = times.map(|v| f64::from(v as f32));
+        let hull = [times[0].min(rounded[0]), times[1].max(rounded[1])];
+        let keys = &track.translations;
+        let Some(first) = keys.first() else {
+            return Ok(Some([0.; 3]));
+        };
+        if hull[1] <= f64::from(first.time) || hull[0] >= f64::from(keys[keys.len() - 1].time) {
+            return Ok(Some([0.; 3]));
+        }
+        let upper = keys.partition_point(|key| f64::from(key.time) <= hull[0]);
+        if upper == 0 || hull[1] > f64::from(keys[upper].time) {
+            return Ok(None);
+        }
+        let from = &keys[upper - 1];
+        let to = &keys[upper];
+        match self.interpolation[index].translation {
+            Interpolation::Linear if from.value != to.value => {
+                RootRigidEnclosure::source_linear_translation_local_time_error(
+                    from.value.to_array(),
+                    to.value.to_array(),
+                    [from.time, to.time],
+                    times,
+                )
+                .map(Some)
+            }
+            Interpolation::Linear => Ok(Some([0.; 3])),
+            Interpolation::Step if hull[1] < f64::from(to.time) || from.value == to.value => {
+                Ok(Some([0.; 3]))
+            }
+            _ => Ok(None),
+        }
+    }
+
+    /// Same-time error of held/default/STEP and stationary LINEAR quaternion
+    /// sampling against the original real unit source orientation. Constant
+    /// LINEAR qualifies both runtime normalizations and the raw first boundary.
+    /// Moving LINEAR/CUBICSPLINE and key crossings return None; local clocks,
+    /// wrapping and downstream retarget/scene arithmetic are separate.
+    /// # Errors
+    /// Rejects unknown joints, invalid local intervals and normalization overflow.
+    pub fn joint_rotation_sample_error_bounds(
+        &self,
+        joint: u16,
+        times: [f32; 2],
+    ) -> Result<Option<[f64; 4]>, AnimationError> {
+        let index = usize::from(joint);
+        let track = self
+            .tracks
+            .get(index)
+            .ok_or(AnimationError::InvalidRootMotionJoint(joint))?;
+        if times.iter().any(|v| !v.is_finite())
+            || times[0] < 0.
+            || times[1] > self.duration
+            || times[0] > times[1]
+        {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let keys = &track.rotations;
+        let q = if let Some(first) = keys.first() {
+            let last = &keys[keys.len() - 1];
+            if times[1] <= first.time {
+                first.value
+            } else if times[0] >= last.time {
+                last.value
+            } else {
+                let upper = keys.partition_point(|key| key.time <= times[0]);
+                if upper == 0 || times[1] >= keys[upper].time {
+                    return Ok(None);
+                }
+                match self.interpolation[index].rotation {
+                    Interpolation::Step => keys[upper - 1].value,
+                    Interpolation::Linear => {
+                        return RootRigidEnclosure::stationary_nlerp_sample_error_bounds([
+                            keys[upper - 1].value.to_array(),
+                            keys[upper].value.to_array(),
+                        ]);
+                    }
+                    Interpolation::CubicSpline => return Ok(None),
+                }
+            }
+        } else {
+            self.rig[index].bind_local.rotation
+        };
+        RootRigidEnclosure::stored_rotation_source_error(q.to_array()).map(Some)
     }
 
     /// Compiles one selected quaternion channel for ordered root rotation extraction.
@@ -1577,6 +1743,186 @@ impl std::error::Error for AnimationError {}
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn local_f64_time_narrowing_preserves_same_time_translation_error_and_key_boundaries() {
+        let rig = skeleton();
+        let mut tracks = vec![JointTrack::default(); 2];
+        tracks[0].translations = vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::new(1e6, -1e6, 0.1),
+            },
+            Vec3Key {
+                time: 0.5,
+                value: Vec3::new(-1e6, 1e6, -0.2),
+            },
+            Vec3Key {
+                time: 1.,
+                value: Vec3::ZERO,
+            },
+        ];
+        let clip = AnimationClip::new("local", 1., Playback::Clamp, tracks, &rig).unwrap();
+        let caps = clip
+            .joint_translation_local_time_error_bounds(0, [0., 0.5])
+            .unwrap()
+            .unwrap();
+        for step in 0..=17 {
+            let time = step as f64 / 34.;
+            let actual = clip.sample(&rig, time as f32).local()[0].translation;
+            println!(
+                "source_local_time_reference={{\"time\":{:?},\"actual\":{:?},\"caps\":{:?}}}",
+                time,
+                actual.to_array(),
+                caps
+            );
+        }
+        assert_eq!(
+            clip.joint_translation_local_time_error_bounds(0, [0.25, 0.75])
+                .unwrap(),
+            None
+        );
+        assert!(
+            clip.joint_translation_local_time_error_bounds(0, [0.5_f64.next_down(); 2])
+                .unwrap()
+                .is_some()
+        );
+        assert!(
+            clip.joint_translation_local_time_error_bounds(0, [0.5_f64.next_up(); 2])
+                .unwrap()
+                .is_some()
+        );
+        assert!(
+            clip.joint_translation_local_time_error_bounds(0, [0., f64::NAN])
+                .is_err()
+        );
+        assert!(
+            clip.joint_translation_local_time_error_bounds(0, [-1., 0.])
+                .is_err()
+        );
+        assert_eq!(
+            clip.joint_translation_local_time_error_bounds(1, [0., 1.])
+                .unwrap(),
+            Some([0.; 3])
+        );
+    }
+    #[test]
+    fn local_translation_sample_error_partition_and_held_channel_contract() {
+        let rig = skeleton();
+        let mut tracks = vec![JointTrack::default(); 2];
+        tracks[0].translations = vec![
+            Vec3Key {
+                time: 0.,
+                value: Vec3::ZERO,
+            },
+            Vec3Key {
+                time: 0.5,
+                value: Vec3::X,
+            },
+            Vec3Key {
+                time: 1.,
+                value: Vec3::Y,
+            },
+        ];
+        let linear =
+            AnimationClip::new("linear", 1., Playback::Clamp, tracks.clone(), &rig).unwrap();
+        assert_eq!(
+            linear
+                .joint_translation_sample_error_bounds(0, [0.25, 0.75])
+                .unwrap(),
+            None
+        );
+        assert!(
+            linear
+                .joint_translation_sample_error_bounds(0, [0., 0.5])
+                .unwrap()
+                .is_some()
+        );
+        assert!(
+            linear
+                .joint_translation_sample_error_bounds(0, [0.5, 1.])
+                .unwrap()
+                .is_some()
+        );
+        assert_eq!(
+            linear
+                .joint_translation_sample_error_bounds(1, [0., 1.])
+                .unwrap(),
+            Some([0.; 3])
+        );
+        let step = AnimationClip::new_with_interpolation(
+            "step",
+            1.,
+            Playback::Clamp,
+            tracks,
+            vec![
+                TrackInterpolation {
+                    translation: Interpolation::Step,
+                    ..TrackInterpolation::default()
+                },
+                TrackInterpolation::default(),
+            ],
+            &rig,
+        )
+        .unwrap();
+        assert_eq!(
+            step.joint_translation_local_time_error_bounds(0, [0.5_f64.next_down(); 2])
+                .unwrap(),
+            None
+        );
+        assert_eq!(
+            step.joint_translation_sample_error_bounds(0, [0., 0.25])
+                .unwrap(),
+            Some([0.; 3])
+        );
+        assert_eq!(
+            step.joint_translation_sample_error_bounds(0, [0., 0.5])
+                .unwrap(),
+            None
+        );
+        assert_eq!(
+            step.joint_translation_sample_error_bounds(0, [0.5, 0.75])
+                .unwrap(),
+            Some([0.; 3])
+        );
+        assert!(
+            step.joint_translation_sample_error_bounds(0, [0., f32::INFINITY])
+                .is_err()
+        );
+        assert!(
+            step.joint_translation_sample_error_bounds(0, [0., 1.1])
+                .is_err()
+        );
+        let constant = AnimationClip::new(
+            "constant",
+            1.,
+            Playback::Clamp,
+            vec![
+                JointTrack {
+                    translations: vec![
+                        Vec3Key {
+                            time: 0.,
+                            value: Vec3::splat(1e6),
+                        },
+                        Vec3Key {
+                            time: 1.,
+                            value: Vec3::splat(1e6),
+                        },
+                    ],
+                    ..JointTrack::default()
+                },
+                JointTrack::default(),
+            ],
+            &rig,
+        )
+        .unwrap();
+        assert_eq!(
+            constant
+                .joint_translation_sample_error_bounds(0, [0., 1.])
+                .unwrap(),
+            Some([0.; 3])
+        );
+    }
 
     #[test]
     fn rig_binding_accepts_exact_reconstruction_and_rejects_same_count_foreign_layouts() {

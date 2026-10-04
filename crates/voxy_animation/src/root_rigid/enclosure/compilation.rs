@@ -485,6 +485,702 @@ impl RoundedRange {
         Ok(Self { value, error })
     }
 }
+impl RoundedRange {
+    fn div_positive_f32(self, denominator: Self) -> Result<Self, AnimationError> {
+        let actual_denominator = expanded(denominator.value, denominator.error.1)?;
+        if denominator.value.0 <= 0. || actual_denominator.0 <= 0. {
+            return Err(AnimationError::InvalidRootRotationCurve);
+        }
+        let value = self.value.div_interval_positive(denominator.value)?;
+        let error = self.error.div_positive(actual_denominator.0)?.add(
+            Scalar::exact(absolute_upper(self.value))
+                .mul(denominator.error)?
+                .div_positive(denominator.value.0)?
+                .div_positive(actual_denominator.0)?,
+        )?;
+        Self { value, error }.rounded_f32()
+    }
+}
+
+pub(super) fn f32_positive_division_error(
+    numerator: [f64; 2],
+    numerator_error: f64,
+    denominator: [f64; 2],
+    denominator_error: f64,
+) -> Result<f64, AnimationError> {
+    if numerator
+        .iter()
+        .chain(denominator.iter())
+        .any(|v| !v.is_finite())
+        || numerator[0] > numerator[1]
+        || denominator[0] > denominator[1]
+        || [numerator_error, denominator_error]
+            .iter()
+            .any(|v| !v.is_finite() || *v < 0.)
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let result = RoundedRange {
+        value: Scalar(numerator[0], numerator[1]),
+        error: Scalar::exact(numerator_error),
+    }
+    .div_positive_f32(RoundedRange {
+        value: Scalar(denominator[0], denominator[1]),
+        error: Scalar::exact(denominator_error),
+    })?;
+    Ok(result.error.1)
+}
+
+#[cfg(test)]
+mod positive_division_tests {
+    use super::*;
+    #[test]
+    fn positive_f32_division_propagates_same_member_errors_and_rejects_zero_corridor() {
+        for numerator in [-1_f32, 0., 1.] {
+            for denominator in [0.5_f32, 1., 2.] {
+                for errors in [[0., 0.], [0.03125, 0.015625]] {
+                    for (n, d) in [
+                        ([-2., 2.], [0.25, 2.]),
+                        ([f64::from(numerator); 2], [f64::from(denominator); 2]),
+                    ] {
+                        let cap = f32_positive_division_error(n, errors[0], d, errors[1]).unwrap();
+                        if errors == [0., 0.] {
+                            assert!(cap < 1e-4);
+                        }
+                        let actual =
+                            (numerator + errors[0] as f32) / (denominator + errors[1] as f32);
+                        assert!(
+                            (f64::from(actual) - f64::from(numerator) / f64::from(denominator))
+                                .abs()
+                                <= cap
+                        );
+                        println!(
+                            "positive_division_reference={{\"numerator\":{:?},\"denominator\":{:?},\"actual\":{:?},\"cap\":{:?}}}",
+                            numerator, denominator, actual, cap
+                        );
+                    }
+                }
+            }
+        }
+        for denominator in [[0., 1.], [-1., 2.], [0., 0.]] {
+            assert!(f32_positive_division_error([-1., 1.], 0., denominator, 0.).is_err());
+        }
+        assert!(f32_positive_division_error([-1., 1.], 0., [0.25, 1.], 0.25).is_err());
+        assert!(f32_positive_division_error([-1., 1.], 0., [0.25, 1.], 0.5).is_err());
+        assert!(f32_positive_division_error([0., 1.], -1., [1., 2.], 0.).is_err());
+        assert!(f32_positive_division_error([0., f64::NAN], 0., [1., 2.], 0.).is_err());
+        assert!(
+            f32_positive_division_error(
+                [f64::from(f32::MAX); 2],
+                0.,
+                [f64::from(f32::from_bits(1)); 2],
+                0.
+            )
+            .is_err()
+        );
+    }
+}
+
+impl RoundedRange {
+    /// Add f32 operation rounding to the same-member f64 proof machinery.
+    fn rounded_f32(self) -> Result<Self, AnimationError> {
+        let actual = expanded(self.value, self.error.1)?;
+        let (cap, _) = RootRigidEnclosure::enclosed_f32_publication_error([actual.array(); 3])?;
+        Ok(Self {
+            value: self.value,
+            error: self.error.add(Scalar::exact(cap[0]))?,
+        })
+    }
+}
+
+/// Stationary original orientation with the actual normalized-lerp branch.
+/// Real proportionality is exact on original f32 keys; runtime branch remains
+/// independently checked because raw key norms can affect its threshold.
+pub(super) fn stationary_nlerp_sample_error(
+    keys: [[f32; 4]; 2],
+) -> Result<Option<[f64; 4]>, AnimationError> {
+    let [a, b] = keys.map(glam::Quat::from_array);
+    if !a.is_finite() || !b.is_finite() || !a.is_normalized() || !b.is_normalized() {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    for i in 0..4 {
+        for j in i + 1..4 {
+            if f64::from(keys[0][i]) * f64::from(keys[1][j])
+                != f64::from(keys[0][j]) * f64::from(keys[1][i])
+            {
+                return Ok(None);
+            }
+        }
+    }
+    if a.dot(b).abs() <= 1. - f32::EPSILON {
+        return Ok(None);
+    }
+    let flip = a.dot(b) < 0.;
+    let unit = super::linear_source::source_key_rotation_bounds(keys[0])?;
+    let alpha = RoundedRange {
+        value: Scalar(0., 1.),
+        error: Scalar::exact(0.),
+    };
+    let complement = RoundedRange::exact(1.).sub(alpha)?.rounded_f32()?;
+    let mut error = Scalar::exact(0.);
+    for axis in 0..4 {
+        let value = Scalar(unit[axis][0], unit[axis][1]);
+        let operand = |raw: f64| -> Result<RoundedRange, AnimationError> {
+            Ok(RoundedRange {
+                value,
+                error: Scalar::exact(absolute_upper(Scalar::exact(raw).sub(value)?)),
+            })
+        };
+        let first = operand(f64::from(keys[0][axis]))?;
+        let second = operand(f64::from(keys[1][axis]) * if flip { -1. } else { 1. })?;
+        let blend = first
+            .mul(complement)?
+            .rounded_f32()?
+            .add(second.mul(alpha)?.rounded_f32()?)?
+            .rounded_f32()?;
+        error = error.add(blend.error)?;
+    }
+    // Exact real unit keys coincide after the hemisphere flip; their real
+    // affine blend is that same unit quaternion for every parameter in [0,1].
+    let first = normalization_f32_uniform_error(error)?;
+    let total = first
+        .into_iter()
+        .try_fold(Scalar::exact(0.), |s, v| s.add(Scalar::exact(v)))?;
+    let mut result = normalization_f32_uniform_error(total)?;
+    // The clip returns its raw first key at the first-key boundary. Include
+    // that endpoint separately; a negative final authored key is not admitted
+    // across the next-key boundary by the clip interval selector.
+    for axis in 0..4 {
+        let raw_error = absolute_upper(
+            Scalar::exact(f64::from(keys[0][axis])).sub(Scalar(unit[axis][0], unit[axis][1]))?,
+        );
+        result[axis] = result[axis].max(raw_error);
+    }
+    Ok(Some(result))
+}
+
+#[cfg(test)]
+mod stationary_nlerp_tests {
+    use super::*;
+    #[test]
+    fn stationary_linear_keys_cover_both_runtime_normalizations() {
+        let rotations = [
+            glam::Quat::IDENTITY,
+            glam::Quat::from_xyzw(0.5, 0.5, 0.5, 0.5),
+            glam::Quat::from_euler(glam::EulerRot::XYZ, 0.2, -0.4, 0.7),
+            glam::Quat::from_xyzw(0., 0., 0., 1_f32.next_up()),
+        ];
+        for q in rotations {
+            for end in [q, -q] {
+                let caps = stationary_nlerp_sample_error([q.to_array(), end.to_array()])
+                    .unwrap()
+                    .unwrap();
+                for step in 0..=16 {
+                    let actual = q.slerp(end, step as f32 / 16.).normalize();
+                    println!(
+                        "stationary_nlerp_reference={{\"source\":{:?},\"actual\":{:?},\"caps\":{:?}}}",
+                        q.to_array(),
+                        actual.to_array(),
+                        caps
+                    );
+                }
+            }
+        }
+        assert_eq!(
+            stationary_nlerp_sample_error([
+                glam::Quat::IDENTITY.to_array(),
+                glam::Quat::from_rotation_y(0.001).to_array()
+            ])
+            .unwrap(),
+            None
+        );
+        assert_eq!(
+            stationary_nlerp_sample_error([[0., 0., 0., 1_f32.next_down()]; 2]).unwrap(),
+            None
+        );
+        assert!(stationary_nlerp_sample_error([[f32::NAN; 4]; 2]).is_err());
+    }
+}
+
+/// Complete spherical NEON SLERP plus the source sampler's final normalize.
+/// Original normalized keys/time define the same-time unit quaternion source.
+pub(super) fn neon_slerp_sample_error(
+    keys: [[f32; 4]; 2],
+    times: [f32; 2],
+    interval: [f32; 2],
+) -> Result<Option<[f64; 4]>, AnimationError> {
+    let alpha = rounded_f32_parameter(times, interval)?;
+    let Some((angle, angle_error)) = stored_slerp_key_angle_error(keys)? else {
+        return Ok(None);
+    };
+    let [a, b] = keys.map(glam::Quat::from_array);
+    let theta = 0.5 * a.angle_between(b);
+    if theta <= 0. || theta > core::f32::consts::FRAC_PI_2 {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    let angle = RoundedRange {
+        value: Scalar(angle[0], angle[1]),
+        error: Scalar::exact(angle_error),
+    };
+    let complementary = RoundedRange::exact(1.).sub(alpha)?.rounded_f32()?;
+    let sine = |argument: RoundedRange, domain: [f32; 2]| -> Result<RoundedRange, AnimationError> {
+        let ideal_argument = Scalar(argument.value.0.max(0.), argument.value.1);
+        let value = super::linear_source::sine_cosine(ideal_argument)?.0;
+        let error = argument
+            .error
+            .add(Scalar::exact(neon_slerp_sine_error(domain)?))?;
+        // Mathematical sin is globally 1-Lipschitz, so argument error transfers
+        // directly, separately from actual NEON same-argument evaluation error.
+        Ok(RoundedRange { value, error })
+    };
+    // The actual source parameter is in [0,1] by monotonic rounded subtraction
+    // and division on a validated key interval. Rounded multiplication retains
+    // arguments in [0,stored theta], including the rounded complementary lane.
+    let left = sine(angle.mul(complementary)?.rounded_f32()?, [0., theta])?;
+    let right = sine(angle.mul(alpha)?.rounded_f32()?, [0., theta])?;
+    let denominator = sine(angle, [theta, theta])?;
+    let unit = keys.map(super::linear_source::source_key_rotation_bounds);
+    let [unit_a, unit_b] = unit;
+    let unit_a = unit_a?;
+    let unit_b = unit_b?;
+    let flip = a.dot(b) < 0.;
+    let mut total = Scalar::exact(0.);
+    for axis in 0..4 {
+        let input =
+            |raw: f32, domain: [f64; 2], negate: bool| -> Result<RoundedRange, AnimationError> {
+                let mut value = Scalar(domain[0], domain[1]);
+                let mut raw = f64::from(raw);
+                if negate {
+                    value = Scalar(-value.1, -value.0);
+                    raw = -raw;
+                }
+                let error = Scalar::exact(absolute_upper(Scalar::exact(raw).sub(value)?));
+                Ok(RoundedRange { value, error })
+            };
+        let qa = input(keys[0][axis], unit_a[axis], false)?;
+        let qb = input(keys[1][axis], unit_b[axis], flip)?;
+        let numerator = qa
+            .mul(left)?
+            .rounded_f32()?
+            .add(qb.mul(right)?.rounded_f32()?)?
+            .rounded_f32()?;
+        let quotient = numerator.div_positive_f32(denominator)?;
+        total = total.add(quotient.error)?;
+    }
+    // Original short-arc sine interpolation of unit keys is unit. Retain that
+    // relational norm proof instead of inferring it from component interval boxes.
+    normalization_f32_uniform_error(total).map(Some)
+}
+
+#[cfg(all(test, target_arch = "aarch64"))]
+mod complete_neon_slerp_tests {
+    use super::*;
+    #[test]
+    fn complete_neon_slerp_source_error_covers_original_time_and_normalization() {
+        let _: core::arch::aarch64::float32x4_t = glam::Vec4::ZERO.into();
+        let h = core::f32::consts::FRAC_1_SQRT_2;
+        for initial in [
+            glam::Quat::IDENTITY,
+            glam::Quat::from_xyzw(0.5, 0.5, 0.5, 0.5),
+        ] {
+            for sign in [1., -1.] {
+                let end = initial * glam::Quat::from_xyzw(0., h, 0., h) * sign;
+                let keys = [initial.to_array(), end.to_array()];
+                for times in [[0., 1.], [0.1, 0.9]] {
+                    for interval in [
+                        times,
+                        [
+                            times[0] + (times[1] - times[0]) * 0.25,
+                            times[0] + (times[1] - times[0]) * 0.75,
+                        ],
+                    ] {
+                        let caps = neon_slerp_sample_error(keys, times, interval)
+                            .unwrap()
+                            .unwrap();
+                        assert!(caps.iter().all(|v| v.is_finite() && *v > 0. && *v < 0.001));
+                        for step in 0..=16 {
+                            let time = if step == 16 {
+                                interval[1]
+                            } else {
+                                interval[0] + (interval[1] - interval[0]) * (step as f32 / 16.)
+                            };
+                            let alpha = (time - times[0]) / (times[1] - times[0]);
+                            let actual = glam::Quat::from_array(keys[0])
+                                .slerp(glam::Quat::from_array(keys[1]), alpha)
+                                .normalize();
+                            println!(
+                                "complete_neon_slerp_reference={{\"initial\":{:?},\"times\":{:?},\"time\":{:?},\"actual\":{:?},\"caps\":{:?}}}",
+                                initial.to_array(),
+                                times,
+                                time,
+                                actual.to_array(),
+                                caps
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        assert_eq!(
+            neon_slerp_sample_error([[0., 0., 0., 1.]; 2], [0., 1.], [0., 1.]).unwrap(),
+            None
+        );
+        assert!(
+            neon_slerp_sample_error([[0., 0., 0., 1.], [0., h, 0., h]], [0., 1.], [0.5, 0.25])
+                .is_err()
+        );
+    }
+}
+
+/// Uniform glam 0.33.7 NEON sine error over a stored positive input domain.
+/// No range reduction/reflection is needed in [0,f32 FRAC_PI_2].
+pub(super) fn neon_slerp_sine_error(domain: [f32; 2]) -> Result<f64, AnimationError> {
+    if domain.iter().any(|v| !v.is_finite())
+        || domain[0] < 0.
+        || domain[1] < domain[0]
+        || domain[1] > core::f32::consts::FRAC_PI_2
+    {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    let x = RoundedRange {
+        value: Scalar(f64::from(domain[0]), f64::from(domain[1])),
+        error: Scalar::exact(0.),
+    };
+    // glam reduces by round(input * stored_inv_tau). The complete rounded
+    // quotient stays strictly between -1/2 and 1/2, so the integer is zero
+    // and subtracting its multiple of tau preserves the stored input exactly.
+    let quotient = x
+        .mul(RoundedRange::exact(f64::from(0.159_154_94_f32)))?
+        .rounded_f32()?;
+    if absolute_upper(expanded(quotient.value, quotient.error.1)?) >= 0.5 {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    // input <= the exact stored reflection threshold; the NEON selector
+    // retains the original reduced input on this whole domain.
+    let square = x.mul(x)?.rounded_f32()?;
+    let coefficients = [
+        1_f32,
+        -0.16666667,
+        0.008_333_331,
+        -0.00019840874,
+        2.752_556_2e-6,
+        -2.388_985_9e-8,
+    ];
+    let mut polynomial = RoundedRange::exact(f64::from(coefficients[5]));
+    for coefficient in coefficients[..5].iter().rev() {
+        polynomial = polynomial
+            .mul(square)?
+            .rounded_f32()?
+            .add(RoundedRange::exact(f64::from(*coefficient)))?
+            .rounded_f32()?;
+    }
+    let evaluated = polynomial.mul(x)?.rounded_f32()?;
+    let radius = Scalar::exact(f64::from(domain[1]));
+    let squared = radius.square()?;
+    let mut power = radius;
+    let denominators = [1., 6., 120., 5040., 362880., 39916800.];
+    let mut approximation = Scalar::exact(0.);
+    for i in 0..6 {
+        let taylor =
+            Scalar::exact(if i % 2 == 0 { 1. } else { -1. }).div_positive(denominators[i])?;
+        let delta = Scalar::exact(f64::from(coefficients[i])).sub(taylor)?;
+        approximation = approximation.add(Scalar::exact(absolute_upper(delta)).mul(power)?)?;
+        power = power.mul(squared)?;
+    }
+    // Taylor degree 12 (its even coefficient is zero), derivative bounded by
+    // one, gives the uniform x^13/13! remainder without a platform sine oracle.
+    approximation = approximation.add(power.div_positive(6227020800.)?)?;
+    evaluated.error.add(approximation).map(|v| v.1)
+}
+
+#[cfg(all(test, target_arch = "aarch64"))]
+mod neon_sine_tests {
+    use super::*;
+    #[test]
+    fn neon_slerp_sine_uniform_cap_covers_actual_vector_backend() {
+        let upper = core::f32::consts::FRAC_PI_2;
+        for domain in [
+            [0., upper],
+            [0., 0.01],
+            [0.25, 0.5],
+            [upper, upper],
+            [0., 0.],
+        ] {
+            let cap = neon_slerp_sine_error(domain).unwrap();
+            assert!(cap.is_finite() && cap >= 0. && cap < 1e-5);
+            for step in 0..=16 {
+                let input = if step == 16 {
+                    domain[1]
+                } else {
+                    domain[0] + (domain[1] - domain[0]) * (step as f32 / 16.)
+                };
+                let actual = glam::Vec4::splat(input).sin().x;
+                println!(
+                    "neon_sine_reference={{\"domain\":{:?},\"input\":{:?},\"actual\":{:?},\"cap\":{:?}}}",
+                    domain, input, actual, cap
+                );
+            }
+        }
+        for invalid in [[-1., 0.], [1., 0.], [0., upper.next_up()], [0., f32::NAN]] {
+            assert!(neon_slerp_sine_error(invalid).is_err());
+        }
+    }
+}
+
+/// Source-key half-angle versus actual stored-dot acos, after exact
+/// hemisphere qualification. None denotes glam's separate normalized lerp path.
+pub(super) fn stored_slerp_key_angle_error(
+    keys: [[f32; 4]; 2],
+) -> Result<Option<([f64; 2], f64)>, AnimationError> {
+    let [a, b] = keys.map(glam::Quat::from_array);
+    if !a.is_finite() || !b.is_finite() || !a.is_normalized() || !b.is_normalized() {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    let sign = crate::exact_quaternion::dot_sign(a, b);
+    let runtime = a.dot(b);
+    if sign == core::cmp::Ordering::Equal || (sign == core::cmp::Ordering::Less) != (runtime < 0.) {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    let runtime = runtime.abs();
+    if runtime > 1. - f32::EPSILON {
+        return Ok(None);
+    }
+    let mut dot = Scalar::exact(0.);
+    let mut norms = [Scalar::exact(0.); 2];
+    for axis in 0..4 {
+        let x = f64::from(keys[0][axis]);
+        let y = f64::from(keys[1][axis]);
+        dot = dot.add(Scalar::exact(x * y))?;
+        norms[0] = norms[0].add(Scalar::exact(x * x))?;
+        norms[1] = norms[1].add(Scalar::exact(y * y))?;
+    }
+    if sign == core::cmp::Ordering::Less {
+        dot = Scalar(-dot.1, -dot.0);
+    }
+    let normalized =
+        dot.div_interval_positive(norms[0].sqrt_positive()?.mul(norms[1].sqrt_positive()?)?)?;
+    // Exact sign plus Cauchy-Schwarz prove the true normalized dot is in [0,1].
+    let lo = super::linear_source::positive_acos_point(normalized.1.min(1.).max(0.))?;
+    let hi = super::linear_source::positive_acos_point(normalized.0.max(0.).min(1.))?;
+    let ideal = Scalar(lo.0, hi.1);
+    let (rounded_ideal, approximation) = stored_slerp_acos_error(runtime)?;
+    let shift = absolute_upper(Scalar(rounded_ideal[0], rounded_ideal[1]).sub(ideal)?);
+    let cap = Scalar::exact(shift).add(Scalar::exact(approximation))?.1;
+    Ok(Some((ideal.array(), cap)))
+}
+
+#[cfg(test)]
+mod slerp_branch_tests {
+    use super::*;
+    #[test]
+    fn original_hemisphere_and_dot_error_are_qualified_before_slerp_angle() {
+        let h = core::f32::consts::FRAC_1_SQRT_2;
+        let tiny = f32::from_bits(1);
+        let a = glam::Quat::from_xyzw(h, h, tiny, 0.);
+        let wrong = glam::Quat::from_xyzw(h, -h, -tiny, 0.);
+        assert_eq!(a.dot(wrong), 0.);
+        assert_eq!(
+            crate::exact_quaternion::dot_sign(a, wrong),
+            core::cmp::Ordering::Less
+        );
+        assert!(stored_slerp_key_angle_error([a.to_array(), wrong.to_array()]).is_err());
+        let positive = glam::Quat::from_xyzw(h, -h, tiny, 0.);
+        assert_eq!(a.dot(positive), 0.);
+        assert!(
+            stored_slerp_key_angle_error([a.to_array(), positive.to_array()])
+                .unwrap()
+                .is_some()
+        );
+        let rotations = [
+            glam::Quat::IDENTITY,
+            glam::Quat::from_rotation_y(0.3),
+            glam::Quat::from_euler(glam::EulerRot::XYZ, 0.2, -0.4, 0.7),
+        ];
+        for a in rotations {
+            for b in rotations {
+                for b in [b, -b] {
+                    let result =
+                        stored_slerp_key_angle_error([a.to_array(), b.to_array()]).unwrap();
+                    if let Some((ideal, cap)) = result {
+                        let actual = 0.5 * f64::from(a.angle_between(b));
+                        assert!(
+                            absolute_upper(
+                                Scalar::exact(actual)
+                                    .sub(Scalar(ideal[0], ideal[1]))
+                                    .unwrap()
+                            ) <= cap
+                        );
+                        println!(
+                            "slerp_key_angle_reference={{\"a\":{:?},\"b\":{:?},\"actual\":{:?},\"ideal\":{:?},\"cap\":{:?}}}",
+                            a.to_array(),
+                            b.to_array(),
+                            actual,
+                            ideal,
+                            cap
+                        );
+                    } else {
+                        assert!(a.dot(b).abs() > 1. - f32::EPSILON);
+                    }
+                }
+            }
+        }
+        assert!(stored_slerp_key_angle_error([[0.; 4]; 2]).is_err());
+    }
+}
+
+/// glam 0.33.7 positive acos minimax evaluation versus mathematical acos.
+/// Fixed stored input only; source-key dot and hemisphere selection are separate.
+pub(super) fn stored_slerp_acos_error(input: f32) -> Result<([f64; 2], f64), AnimationError> {
+    let ideal = super::linear_source::positive_acos_point(f64::from(input))?;
+    if input == 1. {
+        return Ok((ideal.array(), 0.));
+    }
+    let x = RoundedRange::exact(f64::from(input));
+    let coefficients = [
+        -0.001_262_491_1_f32,
+        0.006_670_09,
+        -0.017_088_126,
+        0.030_891_88,
+        -0.050_174_303,
+        0.088_978_99,
+        -0.214_598_8,
+        1.570_796_3,
+    ];
+    let mut polynomial = RoundedRange::exact(f64::from(coefficients[0]));
+    for coefficient in &coefficients[1..] {
+        polynomial = polynomial
+            .mul(x)?
+            .rounded_f32()?
+            .add(RoundedRange::exact(f64::from(*coefficient)))?
+            .rounded_f32()?;
+    }
+    let omx = RoundedRange::exact(1.).sub(x)?.rounded_f32()?;
+    let nominal = omx.value.sqrt_positive()?;
+    let raw = expanded(omx.value, omx.error.1)?.sqrt_positive()?;
+    let (rounding, _) = RootRigidEnclosure::enclosed_f32_publication_error([raw.array(); 3])?;
+    let root = RoundedRange {
+        value: nominal,
+        error: omx
+            .error
+            .div_positive(Scalar::exact(nominal.0).add(Scalar::exact(raw.0))?.0)?
+            .add(Scalar::exact(rounding[0]))?,
+    };
+    let evaluated = polynomial.mul(root)?.rounded_f32()?;
+    let approximation = absolute_upper(evaluated.value.sub(ideal)?);
+    let cap = evaluated.error.add(Scalar::exact(approximation))?.1;
+    Ok((ideal.array(), cap))
+}
+
+#[cfg(test)]
+mod slerp_acos_tests {
+    use super::*;
+    #[test]
+    fn stored_slerp_acos_caps_cover_glam_and_stable_endpoint_domains() {
+        for input in (0..=128)
+            .map(|i| i as f32 / 128.)
+            .chain([1_f32.next_down(), f32::from_bits(1)])
+        {
+            let (ideal, cap) = stored_slerp_acos_error(input).unwrap();
+            let q =
+                glam::Quat::from_xyzw((1. - f64::from(input).powi(2)).sqrt() as f32, 0., 0., input);
+            let actual = 0.5 * f64::from(glam::Quat::IDENTITY.angle_between(q));
+            assert!(cap.is_finite() && cap >= 0. && cap < 1e-5);
+            let discrepancy = Scalar::exact(actual)
+                .sub(Scalar(ideal[0], ideal[1]))
+                .unwrap();
+            assert!(absolute_upper(discrepancy) <= cap);
+            println!(
+                "slerp_acos_reference={{\"input\":{:?},\"actual\":{:?},\"ideal\":{:?},\"cap\":{:?}}}",
+                input, actual, ideal, cap
+            );
+        }
+        for input in [-1., 1_f32.next_up(), f32::NAN, f32::INFINITY] {
+            assert!(stored_slerp_acos_error(input).is_err());
+        }
+    }
+}
+
+pub(super) fn source_linear_translation_local_time_error(
+    from: [f32; 3],
+    to: [f32; 3],
+    keys: [f32; 2],
+    interval: [f64; 2],
+) -> Result<[f64; 3], AnimationError> {
+    let sampled = interval.map(|v| v as f32);
+    let sampling = source_linear_translation_sample_error(from, to, keys, sampled)?;
+    let (time_error, _) = RootRigidEnclosure::enclosed_f32_publication_error([interval; 3])?;
+    let duration = Scalar::exact(f64::from(keys[1])).sub(Scalar::exact(f64::from(keys[0])))?;
+    let mut result = [0.; 3];
+    for axis in 0..3 {
+        let difference =
+            Scalar::exact(f64::from(to[axis])).sub(Scalar::exact(f64::from(from[axis])))?;
+        let speed = Scalar::exact(absolute_upper(difference)).div_interval_positive(duration)?;
+        result[axis] = Scalar::exact(sampling[axis])
+            .add(speed.mul(Scalar::exact(time_error[0]))?)?
+            .1;
+    }
+    Ok(result)
+}
+
+fn rounded_f32_parameter(
+    times: [f32; 2],
+    interval: [f32; 2],
+) -> Result<RoundedRange, AnimationError> {
+    let times = times.map(f64::from);
+    let interval = interval.map(f64::from);
+    if interval.iter().chain(times.iter()).any(|v| !v.is_finite())
+        || interval[0] < times[0]
+        || interval[1] > times[1]
+        || interval[0] > interval[1]
+    {
+        return Err(AnimationError::InvalidSampleTime);
+    }
+    let denominator = Scalar::exact(times[1]).sub(Scalar::exact(times[0]))?;
+    let nominal = f64::from((times[1] as f32) - (times[0] as f32));
+    if denominator.0 <= 0. || !nominal.is_finite() || nominal <= 0. {
+        return Err(AnimationError::InvalidSampleTime);
+    }
+    let numerator = RoundedRange {
+        value: Scalar(interval[0], interval[1]),
+        error: Scalar::exact(0.),
+    }
+    .sub(RoundedRange::exact(times[0]))?
+    .rounded_f32()?;
+    let value = numerator.value.div_interval_positive(denominator)?;
+    let denominator_error = absolute_upper(denominator.sub(Scalar::exact(nominal))?);
+    let error = numerator.error.div_positive(nominal)?.add(
+        Scalar::exact(absolute_upper(numerator.value))
+            .mul(Scalar::exact(denominator_error))?
+            .div_positive(denominator.0)?
+            .div_positive(nominal)?,
+    )?;
+    let mut alpha = RoundedRange { value, error }.rounded_f32()?;
+    alpha.value.0 = alpha.value.0.max(0.);
+    alpha.value.1 = alpha.value.1.min(1.);
+    Ok(alpha)
+}
+
+pub(super) fn source_linear_translation_sample_error(
+    from: [f32; 3],
+    to: [f32; 3],
+    times: [f32; 2],
+    interval: [f32; 2],
+) -> Result<[f64; 3], AnimationError> {
+    let alpha = rounded_f32_parameter(times, interval)?;
+    let complement = RoundedRange::exact(1.).sub(alpha)?.rounded_f32()?;
+    let mut result = [0.; 3];
+    for axis in 0..3 {
+        let a = RoundedRange::exact(f64::from(from[axis]))
+            .mul(complement)?
+            .rounded_f32()?;
+        let b = RoundedRange::exact(f64::from(to[axis]))
+            .mul(alpha)?
+            .rounded_f32()?;
+        result[axis] = a.add(b)?.rounded_f32()?.error.1;
+    }
+    Ok(result)
+}
+
 fn rounded_parameter(times: [f64; 2], interval: [f64; 2]) -> Result<RoundedRange, AnimationError> {
     let denominator = Scalar::exact(times[1]).sub(Scalar::exact(times[0]))?;
     let nominal = times[1] - times[0];
@@ -998,6 +1694,107 @@ pub(super) fn normalization_uniform_error(discrepancy: Scalar) -> Result<[f64; 4
         result[i] = selection.add(Scalar::exact(rounding[i]))?.1;
     }
     Ok(result)
+}
+
+/// Actual f32 retarget Hamilton chain followed by f32 normalization. Fixed
+/// inputs retain their stored values; source_error relates the animated input
+/// to its ideal unit quaternion at the same time.
+fn f32_rounding_cap(domain: Scalar) -> Result<Scalar, AnimationError> {
+    let (axes, _) = RootRigidEnclosure::enclosed_f32_publication_error([domain.array(); 3])?;
+    Ok(Scalar::exact(axes[0]))
+}
+fn normalization_f32_uniform_error(raw_error: Scalar) -> Result<[f64; 4], AnimationError> {
+    if raw_error.1 > 0.25 {
+        return Err(AnimationError::InvalidRootRotationCurve);
+    }
+    // Relational norm proof: the exact ideal chain is unit even when every
+    // component interval contains zero. Do not infer norm from those boxes.
+    let lower = Scalar::exact(1.).sub(raw_error)?.0;
+    let upper = Scalar::exact(1.).add(raw_error)?.1;
+    let square_error = f32_rounding_cap(Scalar(0., Scalar::exact(upper).square()?.1))?;
+    let partial = Scalar::exact(upper)
+        .square()?
+        .add(square_error)?
+        .mul(Scalar::exact(8.))?
+        .1;
+    let dot_error = square_error
+        .mul(Scalar::exact(4.))?
+        .add(f32_rounding_cap(Scalar(0., partial))?.mul(Scalar::exact(3.))?)?;
+    let norm2 = expanded(Scalar(lower, upper).square()?, dot_error.1)?;
+    let sqrt = norm2.sqrt_positive()?;
+    let sqrt_error = f32_rounding_cap(sqrt)?;
+    let norm_error = dot_error
+        .div_positive(Scalar::exact(lower).add(Scalar::exact(sqrt.0))?.0)?
+        .add(sqrt_error)?;
+    let actual_norm = expanded(sqrt, sqrt_error.1)?;
+    let reciprocal = Scalar::exact(1.).div_interval_positive(actual_norm)?;
+    let reciprocal_error = norm_error
+        .div_positive(Scalar::exact(lower).mul(Scalar::exact(actual_norm.0))?.0)?
+        .add(f32_rounding_cap(reciprocal)?)?;
+    let actual_reciprocal = expanded(reciprocal, f32_rounding_cap(reciprocal)?.1)?;
+    let multiplication_error = f32_rounding_cap(Scalar(-upper, upper).mul(actual_reciprocal)?)?;
+    let normalization = Scalar::exact(upper)
+        .mul(reciprocal_error)?
+        .add(multiplication_error)?;
+    let selection = raw_error.mul(Scalar::exact(2.))?.div_positive(lower)?;
+    Ok([selection.add(normalization)?.1; 4])
+}
+
+pub(super) fn retarget_rotation_runtime_error(
+    target: [f32; 4],
+    correction: [f32; 4],
+    source_bind: [f32; 4],
+    source_error: [f64; 4],
+) -> Result<[f64; 4], AnimationError> {
+    fn sum(values: [f64; 4]) -> Result<Scalar, AnimationError> {
+        if values.iter().any(|v| !v.is_finite() || *v < 0.) {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        values
+            .into_iter()
+            .try_fold(Scalar::exact(0.), |s, v| s.add(Scalar::exact(v)))
+    }
+    fn fixed(q: [f32; 4]) -> Result<Scalar, AnimationError> {
+        let mut norm2 = Scalar::exact(0.);
+        for v in q {
+            norm2 = norm2.add(Scalar::exact(f64::from(v)).square()?)?;
+        }
+        let norm = norm2.sqrt_positive()?;
+        let mut error = Scalar::exact(0.);
+        for v in q {
+            let raw = Scalar::exact(f64::from(v));
+            let difference = raw.sub(raw.div_interval_positive(norm)?)?;
+            error = error.add(Scalar::exact(absolute_upper(difference)))?;
+        }
+        Ok(error)
+    }
+    fn product(a: Scalar, b: Scalar) -> Result<Scalar, AnimationError> {
+        let magnitude = Scalar::exact(1.).add(a)?.mul(Scalar::exact(1.).add(b)?)?.1;
+        let term_error = f32_rounding_cap(Scalar(-magnitude, magnitude))?;
+        let term_cap = Scalar::exact(magnitude).add(term_error)?;
+        // Four products and three additions per component. Bound every
+        // intermediate partial sum by eight rounded terms, including prior
+        // addition rounding (three full f32 spacings), covering left-
+        // associated scalar and pairwise SIMD trees; sign changes are exact.
+        let partial = term_cap.mul(Scalar::exact(8.))?.1;
+        let rounding = term_error
+            .mul(Scalar::exact(4.))?
+            .add(f32_rounding_cap(Scalar(-partial, partial))?.mul(Scalar::exact(3.))?)?;
+        // A unit quaternion has L1 norm at most two (Cauchy-Schwarz).
+        // Hamilton convolution therefore transports total errors by two,
+        // rather than multiplying each component's worst case by four.
+        a.mul(Scalar::exact(2.))?
+            .add(b.mul(Scalar::exact(2.))?)?
+            .add(a.mul(b)?)?
+            .add(rounding.mul(Scalar::exact(4.))?)
+    }
+    let target = fixed(target)?;
+    let correction = fixed(correction)?;
+    let bind = fixed(source_bind)?; // conjugation changes signs exactly
+    let delta = product(bind, sum(source_error)?)?;
+    let prefix = product(target, correction)?;
+    let raw_error = product(product(prefix, delta)?, correction)?;
+    normalization_f32_uniform_error(raw_error)
 }
 
 /// Uniform raw Hamilton product error; deliberately performs no normalization.

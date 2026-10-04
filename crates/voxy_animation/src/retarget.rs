@@ -2,9 +2,9 @@
 use super::{
     AnimationError, AnimatorFrame, Joint, MAX_JOINTS, Pose, Skeleton, Transform, rigs_match,
 };
+use crate::exact_quaternion as exact_basis;
 use glam::Quat;
 use std::sync::Arc;
-mod exact_basis;
 
 /// Axis corrections are authored, never inferred from bone names or lengths.
 #[derive(Clone, Debug)]
@@ -312,6 +312,49 @@ impl RetargetBinding {
             u16::try_from(joint.target).map_err(|_| AnimationError::InvalidRetargetBinding)?,
             bounds,
         ))
+    }
+    /// Uniform component discrepancy of the actual f32 retarget rotation from
+    /// its ideal unit-quaternion chain. source_error must qualify the incoming
+    /// animated quaternion against its same-time ideal unit source. Covers raw
+    /// fixed key norms, four Hamilton products and final f32 normalization.
+    /// Does not qualify source sampling, scale or ancestor/scene arithmetic.
+    /// # Errors
+    /// Rejects absent mappings, invalid errors and insufficient norm separation.
+    pub fn joint_rotation_evaluation_error_bounds(
+        &self,
+        source_joint: u16,
+        source_error: [f64; 4],
+    ) -> Result<(u16, [f64; 4]), AnimationError> {
+        let joint = self.mapped_joint(source_joint)?;
+        let error = crate::RootRigidEnclosure::retarget_rotation_evaluation_error(
+            self.target[joint.target].bind_local.rotation.to_array(),
+            joint.rotation_basis.to_array(),
+            self.source[joint.source].bind_local.rotation.to_array(),
+            source_error,
+        )?;
+        Ok((
+            u16::try_from(joint.target).map_err(|_| AnimationError::InvalidRetargetBinding)?,
+            error,
+        ))
+    }
+    /// Qualifies held/default/STEP and stationary LINEAR source sampling and actual retarget rotation
+    /// together, retaining the clip's full source-rig identity. None requires
+    /// moving source interpolation or key-partition qualification.
+    /// # Errors
+    /// Rejects foreign clips, absent mappings and invalid source intervals.
+    pub fn joint_rotation_clip_sample_error_bounds(
+        &self,
+        clip: &crate::AnimationClip,
+        source_joint: u16,
+        times: [f32; 2],
+    ) -> Result<Option<(u16, [f64; 4])>, AnimationError> {
+        if !rigs_match(&clip.rig, &self.source) {
+            return Err(AnimationError::SkeletonMismatch);
+        }
+        self.mapped_joint(source_joint)?;
+        clip.joint_rotation_sample_error_bounds(source_joint, times)?
+            .map(|error| self.joint_rotation_evaluation_error_bounds(source_joint, error))
+            .transpose()
     }
     /// Resolves the source mask corresponding to target parent-local axes.
     /// # Errors
@@ -693,6 +736,387 @@ mod tests {
         assert!(binding.apply_frame(&frame).is_err());
         frame.root_motion = Vec3::ZERO;
         assert_eq!(binding.apply_frame(&frame).unwrap().root_motion, Vec3::ZERO);
+    }
+    #[test]
+    fn held_original_rotation_sample_error_feeds_retarget_with_source_identity() {
+        let rig = |name: &str, rotation| {
+            Skeleton::new(vec![Joint {
+                name: name.into(),
+                parent: None,
+                bind_local: Transform {
+                    rotation,
+                    ..Transform::IDENTITY
+                },
+                inverse_bind: Mat4::IDENTITY,
+            }])
+            .unwrap()
+        };
+        let h = core::f32::consts::FRAC_1_SQRT_2;
+        let rotations = [
+            Quat::IDENTITY,
+            Quat::from_xyzw(0., 0., h, h),
+            Quat::from_euler(glam::EulerRot::XYZ, 0.2, -0.4, 0.7),
+            Quat::from_xyzw(0., 0., 0., 1_f32.next_up()),
+        ];
+        for source_q in rotations {
+            let source = rig("s", source_q);
+            for correction in rotations {
+                let target_q = -correction;
+                let target = rig("t", target_q);
+                let binding = RetargetBinding::new(
+                    &source,
+                    &target,
+                    &[RetargetJoint {
+                        source: "s".into(),
+                        target: "t".into(),
+                        rotation_basis: correction,
+                        translation_basis: Quat::IDENTITY,
+                        translation_scale: 1.,
+                    }],
+                )
+                .unwrap();
+                let tracks = vec![crate::JointTrack {
+                    rotations: vec![
+                        crate::QuatKey {
+                            time: 0.25,
+                            value: source_q,
+                        },
+                        crate::QuatKey {
+                            time: 0.75,
+                            value: correction,
+                        },
+                    ],
+                    ..crate::JointTrack::default()
+                }];
+                let clip = crate::AnimationClip::new_with_interpolation(
+                    "step",
+                    1.,
+                    crate::Playback::Clamp,
+                    tracks.clone(),
+                    vec![crate::TrackInterpolation {
+                        rotation: crate::Interpolation::Step,
+                        ..crate::TrackInterpolation::default()
+                    }],
+                    &source,
+                )
+                .unwrap();
+                for times in [[0., 0.1], [0.25, 0.5], [0.75, 1.]] {
+                    let source_error = clip
+                        .joint_rotation_sample_error_bounds(0, times)
+                        .unwrap()
+                        .unwrap();
+                    let (_, caps) = binding
+                        .joint_rotation_clip_sample_error_bounds(&clip, 0, times)
+                        .unwrap()
+                        .unwrap();
+                    let pose = clip.sample(&source, times[0]);
+                    let animated = pose.local()[0].rotation;
+                    let actual = binding.apply_pose(&pose).unwrap().local()[0].rotation;
+                    println!(
+                        "held_rotation_error_reference={{\"source_bind\":{:?},\"target_bind\":{:?},\"correction\":{:?},\"animated\":{:?},\"source_error\":{:?},\"actual\":{:?},\"caps\":{:?}}}",
+                        source_q.to_array(),
+                        target_q.to_array(),
+                        correction.to_array(),
+                        animated.to_array(),
+                        source_error,
+                        actual.to_array(),
+                        caps
+                    );
+                }
+                assert_eq!(
+                    binding
+                        .joint_rotation_clip_sample_error_bounds(&clip, 0, [0.5, 0.75])
+                        .unwrap(),
+                    None
+                );
+                let linear = crate::AnimationClip::new(
+                    "linear",
+                    1.,
+                    crate::Playback::Clamp,
+                    tracks,
+                    &source,
+                )
+                .unwrap();
+                let stationary = source_q
+                    .as_dquat()
+                    .normalize()
+                    .dot(correction.as_dquat().normalize())
+                    .abs()
+                    > 1. - 1e-12;
+                assert_eq!(
+                    binding
+                        .joint_rotation_clip_sample_error_bounds(&linear, 0, [0.25, 0.5])
+                        .unwrap()
+                        .is_some(),
+                    stationary
+                );
+                assert!(
+                    binding
+                        .joint_rotation_clip_sample_error_bounds(&linear, 0, [0., 0.1])
+                        .unwrap()
+                        .is_some()
+                );
+                let fallback = crate::AnimationClip::new(
+                    "fallback",
+                    1.,
+                    crate::Playback::Clamp,
+                    vec![crate::JointTrack::default()],
+                    &source,
+                )
+                .unwrap();
+                assert!(
+                    binding
+                        .joint_rotation_clip_sample_error_bounds(&fallback, 0, [0., 1.])
+                        .unwrap()
+                        .is_some()
+                );
+                let foreign = crate::AnimationClip::new(
+                    "foreign",
+                    1.,
+                    crate::Playback::Clamp,
+                    vec![crate::JointTrack::default()],
+                    &rig("foreign", source_q),
+                )
+                .unwrap();
+                assert!(
+                    binding
+                        .joint_rotation_clip_sample_error_bounds(&foreign, 0, [0., 1.])
+                        .is_err()
+                );
+                assert!(
+                    binding
+                        .joint_rotation_clip_sample_error_bounds(&clip, 1, [0., 1.])
+                        .is_err()
+                );
+                assert!(
+                    clip.joint_rotation_sample_error_bounds(0, [0., f32::NAN])
+                        .is_err()
+                );
+                assert!(
+                    clip.joint_rotation_sample_error_bounds(0, [0.5, 0.25])
+                        .is_err()
+                );
+            }
+        }
+    }
+    #[test]
+    fn original_linear_translation_sample_errors_feed_retarget_caps() {
+        let rig = |name: &str, translation| {
+            Skeleton::new(vec![Joint {
+                name: name.into(),
+                parent: None,
+                bind_local: Transform {
+                    translation,
+                    ..Transform::IDENTITY
+                },
+                inverse_bind: Mat4::IDENTITY,
+            }])
+            .unwrap()
+        };
+        let source = rig("s", Vec3::new(0.6, -0.2, 0.4));
+        let target = rig("t", Vec3::new(-1., 2., 3.));
+        let basis = Quat::from_euler(glam::EulerRot::XYZ, 0.2, -0.4, 0.7);
+        for keys in [[0., 1.], [0.1, 0.9], [0.125, 0.625]] {
+            for (from, to) in [
+                (Vec3::new(4., -2., 1.), Vec3::new(-8., 9., -9.)),
+                (Vec3::new(1e6, -1e6, 0.1), Vec3::new(-1e6, 1e6, -0.2)),
+                (
+                    Vec3::new(1e-30, -1e-30, 0.),
+                    Vec3::new(-2e-30, 3e-30, 1e-30),
+                ),
+            ] {
+                let clip = crate::AnimationClip::new(
+                    "source",
+                    keys[1],
+                    crate::Playback::Clamp,
+                    vec![crate::JointTrack {
+                        translations: vec![
+                            crate::Vec3Key {
+                                time: keys[0],
+                                value: from,
+                            },
+                            crate::Vec3Key {
+                                time: keys[1],
+                                value: to,
+                            },
+                        ],
+                        ..crate::JointTrack::default()
+                    }],
+                    &source,
+                )
+                .unwrap();
+                let source_caps = clip
+                    .joint_translation_sample_error_bounds(0, keys)
+                    .unwrap()
+                    .unwrap();
+                let domain = core::array::from_fn(|i| {
+                    [f64::from(from[i].min(to[i])), f64::from(from[i].max(to[i]))]
+                });
+                for scale in [2., 1e6] {
+                    let binding = RetargetBinding::new(
+                        &source,
+                        &target,
+                        &[RetargetJoint {
+                            source: "s".into(),
+                            target: "t".into(),
+                            rotation_basis: Quat::IDENTITY,
+                            translation_basis: basis,
+                            translation_scale: scale,
+                        }],
+                    )
+                    .unwrap();
+                    let (_, (caps, radius)) = binding
+                        .joint_translation_evaluation_error_bounds(0, domain, source_caps)
+                        .unwrap();
+                    for step in 0..=16 {
+                        let time = if step == 16 {
+                            keys[1]
+                        } else {
+                            keys[0] + (keys[1] - keys[0]) * (step as f32 / 16.)
+                        };
+                        let pose = clip.sample(&source, time);
+                        let actual_source = pose.local()[0].translation;
+                        let actual = binding.apply_pose(&pose).unwrap().local()[0].translation;
+                        println!(
+                            "source_linear_sample_reference={{\"from\":{:?},\"to\":{:?},\"keys\":{:?},\"time\":{:?},\"source_actual\":{:?},\"source_caps\":{:?},\"source_bind\":{:?},\"target_bind\":{:?},\"basis\":{:?},\"scale\":{:?},\"actual\":{:?},\"caps\":{:?},\"radius\":{:?}}}",
+                            from.to_array(),
+                            to.to_array(),
+                            keys,
+                            time,
+                            actual_source.to_array(),
+                            source_caps,
+                            source.joints()[0].bind_local.translation.to_array(),
+                            target.joints()[0].bind_local.translation.to_array(),
+                            basis.to_array(),
+                            scale,
+                            actual.to_array(),
+                            caps,
+                            radius
+                        );
+                    }
+                }
+                assert!(clip.joint_translation_sample_error_bounds(1, keys).is_err());
+                assert!(
+                    clip.joint_translation_sample_error_bounds(0, [keys[1], keys[0]])
+                        .is_err()
+                );
+                assert!(
+                    clip.joint_translation_sample_error_bounds(0, [0., f32::NAN])
+                        .is_err()
+                );
+                assert!(
+                    clip.joint_translation_sample_error_bounds(0, [-1., keys[1]])
+                        .is_err()
+                );
+                assert_eq!(
+                    clip.joint_translation_sample_error_bounds(0, [keys[1]; 2])
+                        .unwrap(),
+                    Some([0.; 3])
+                );
+                if keys[0] > 0. {
+                    assert_eq!(
+                        clip.joint_translation_sample_error_bounds(0, [0., keys[0]])
+                            .unwrap(),
+                        Some([0.; 3])
+                    );
+                    assert_eq!(
+                        clip.joint_translation_sample_error_bounds(0, [0., keys[1]])
+                            .unwrap(),
+                        None
+                    );
+                }
+            }
+        }
+    }
+    #[test]
+    fn uniform_rotation_caps_cover_actual_f32_chain_and_reject_unqualified_error() {
+        let rig = |name: &str, rotation| {
+            Skeleton::new(vec![Joint {
+                name: name.into(),
+                parent: None,
+                bind_local: Transform {
+                    rotation,
+                    ..Transform::IDENTITY
+                },
+                inverse_bind: Mat4::IDENTITY,
+            }])
+            .unwrap()
+        };
+        let h = core::f32::consts::FRAC_1_SQRT_2;
+        let rotations = [
+            Quat::IDENTITY,
+            Quat::from_xyzw(0., 0., h, h),
+            Quat::from_euler(glam::EulerRot::XYZ, 0.2, -0.4, 0.7),
+            Quat::from_xyzw(0., 0., 0., 1_f32.next_up()),
+        ];
+        for source_q in rotations {
+            for target_q in rotations {
+                let source = rig("s", source_q);
+                let target = rig("t", target_q);
+                for correction in rotations {
+                    let binding = RetargetBinding::new(
+                        &source,
+                        &target,
+                        &[RetargetJoint {
+                            source: "s".into(),
+                            target: "t".into(),
+                            rotation_basis: correction,
+                            translation_basis: Quat::IDENTITY,
+                            translation_scale: 1.,
+                        }],
+                    )
+                    .unwrap();
+                    for animated in rotations {
+                        let ideal_input = animated.as_dquat().normalize();
+                        let incoming = core::array::from_fn(|i| {
+                            (animated.as_dquat().to_array()[i] - ideal_input.to_array()[i]).abs()
+                                + 1e-15
+                        });
+                        let (joint, caps) = binding
+                            .joint_rotation_evaluation_error_bounds(0, incoming)
+                            .unwrap();
+                        assert_eq!(joint, 0);
+                        assert!(caps.iter().all(|v| *v > 0. && *v < 0.001));
+                        let mut pose = source.bind_pose();
+                        pose.local[0].rotation = animated;
+                        let actual = binding.apply_pose(&pose).unwrap().local()[0]
+                            .rotation
+                            .as_dquat();
+                        let c = correction.as_dquat().normalize();
+                        let ideal = (target_q.as_dquat().normalize()
+                            * c
+                            * (source_q.as_dquat().normalize().conjugate() * ideal_input)
+                            * c.conjugate())
+                        .normalize();
+                        for i in 0..4 {
+                            assert!((actual.to_array()[i] - ideal.to_array()[i]).abs() <= caps[i]);
+                        }
+                        println!(
+                            "retarget_rotation_error_reference={{\"source_bind\":{:?},\"target_bind\":{:?},\"correction\":{:?},\"animated\":{:?},\"source_error\":{:?},\"actual\":{:?},\"caps\":{:?}}}",
+                            source_q.to_array(),
+                            target_q.to_array(),
+                            correction.to_array(),
+                            animated.to_array(),
+                            incoming,
+                            actual.to_array(),
+                            caps
+                        );
+                    }
+                    assert!(
+                        binding
+                            .joint_rotation_evaluation_error_bounds(1, [0.; 4])
+                            .is_err()
+                    );
+                    for invalid in [[-1.; 4], [f64::NAN; 4], [f64::INFINITY; 4], [1.; 4]] {
+                        assert!(
+                            binding
+                                .joint_rotation_evaluation_error_bounds(0, invalid)
+                                .is_err()
+                        );
+                    }
+                }
+            }
+        }
     }
     #[test]
     fn uniform_translation_rounding_caps_exclude_motion_width_and_include_source_error() {
