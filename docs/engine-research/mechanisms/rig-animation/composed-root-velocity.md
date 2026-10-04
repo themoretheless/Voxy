@@ -1710,3 +1710,9 @@ The shared rotation helper now returns both reframe and body-orientation errors.
 The regression calls actual gameplay reframe_rotation and rotate_vector across moving noncommuting Y/X screw spans, a nonzero pivot, signed scale -2, unequal body extents and world coordinate 65536+5/512. Independent rational SE(3) exponentials and quaternion products transform all eight corners at five fractions per span, checking 240 axis and 80 L1 discrepancies without tolerance. This qualifies the body before grounding and relocation. Input clocks, source-field approximation, grounding and composed f32 scene publication remain separate obligations; ordinary App moving fades remain disabled. Evidence: artifacts/rig-physical-whole-body-uniform-error-2026-10-04/.
 
 Validation: 65 gameplay library and 46 gameplay integration tests pass. Independent rational checks pass for 240 axis and 80 L1 actual corner discrepancies. Formatting and diff checks pass.
+
+### Uniform post-snap reconstruction error (2026-10-04)
+
+RootScrewEnclosurePath::physical_post_snap_selection_error_bounds extends the pre-grounding physical-body bound through the stored snap-vector multiplication, center addition and current zero-anchor AABB reconstruction. It covers every selected stored snap fraction in [0,1]. The snap displacement is treated as physical intent; the bound qualifies numerical error relative to that selected displacement, not collision fraction selection or composed f32 scene publication.
+
+The gameplay regression calls the actual relocate and precise_center functions at five screw fractions and four snap fractions. Independent rational screw exponentials plus the exact selected stored displacement verify 60 axis and 20 L1 center discrepancies without tolerance. Gameplay validation passes 66 library and 46 integration tests. Evidence: artifacts/rig-post-snap-relocation-uniform-error-2026-10-04/.
