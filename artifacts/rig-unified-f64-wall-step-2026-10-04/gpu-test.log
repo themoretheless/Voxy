@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-9307c5efc2715376)
+
+running 1 test
+VOXY_HIERARCHY_CAPACITY_GPU owners=128 parts=256 sources=1 bytes=47296 cpu_pixels_equal=true stop_bytes=0
+test animated_models::tests::fixed_tick_hierarchy_owners_share_gpu_source_at_capacity ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 166 filtered out; finished in 38.11s
+

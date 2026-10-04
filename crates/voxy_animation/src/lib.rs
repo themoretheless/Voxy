@@ -1018,13 +1018,27 @@ impl Animator {
         axes: [bool; 3],
         max_spans: usize,
     ) -> Result<(AnimatorFrame, RootRigidPath), AnimationError> {
+        self.advance_with_root_rigid_motion_wall(skeleton, f64::from(dt), axes, max_spans)
+    }
+
+    /// Stages a frame and rigid path from the same f64 simulation wall interval.
+    /// Pose or path failure preserves all playback state.
+    /// # Errors
+    /// Rejects invalid steps, incompatible rigs, moving fades or path budget failures.
+    pub fn advance_with_root_rigid_motion_wall(
+        &mut self,
+        skeleton: &Skeleton,
+        dt: f64,
+        axes: [bool; 3],
+        max_spans: usize,
+    ) -> Result<(AnimatorFrame, RootRigidPath), AnimationError> {
         if self.transition.is_some() && dt != 0. && self.speed != 0. {
             return Err(AnimationError::RootRotationTransitionUnsupported);
         }
         let mut candidate = self.clone();
         let start = self.current.phase(self.time);
-        let frame = candidate.advance_candidate(skeleton, dt)?;
-        let end = start + f64::from(dt) * f64::from(self.speed);
+        let frame = candidate.advance_candidate_wall(skeleton, dt)?;
+        let end = start + dt * f64::from(self.speed);
         let path = self
             .current
             .root_rigid_curve(self.motion_joint)?
@@ -1126,10 +1140,22 @@ impl Animator {
         skeleton: &Skeleton,
         dt: f32,
     ) -> Result<AnimatorFrame, AnimationError> {
+        self.advance_wall(skeleton, f64::from(dt))
+    }
+
+    /// Advances by the fixed simulation's stored f64 wall step without narrowing.
+    /// Every error preserves the prior clock and transition state.
+    /// # Errors
+    /// Rejects invalid wall steps, incompatible rigs or numerical overflow.
+    pub fn advance_wall(
+        &mut self,
+        skeleton: &Skeleton,
+        dt: f64,
+    ) -> Result<AnimatorFrame, AnimationError> {
         // Clip references are shared; only the small clock/transition state is
         // staged. Failed pose or root-motion evaluation never publishes it.
         let mut candidate = self.clone();
-        let frame = candidate.advance_candidate(skeleton, dt)?;
+        let frame = candidate.advance_candidate_wall(skeleton, dt)?;
         *self = candidate;
         Ok(frame)
     }

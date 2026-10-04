@@ -1,0 +1,33 @@
+{
+  "scope": "Ordinary App fixed-step dispatch of owned original-source moving fade plans through mixed physics/animation transaction",
+  "editor_library_tests_passed": 155,
+  "default_ignored_gpu_tests": 11,
+  "explicit_rig_gpu_tests_passed": 9,
+  "unrun_font_ui_gpu_tests": 2,
+  "strict_first_target_phase_equals_fixed_dt": true,
+  "production_fixture": {
+    "source_translation_speed": 2,
+    "target_translation_speed": 4,
+    "source_y_rotation_endpoint": 0.25,
+    "target_y_rotation_endpoint": 0.5,
+    "final_tick_serial": 14,
+    "final_target_phase": 0.21666667101283868,
+    "final_world_translation": [
+      0.77501154,
+      0.0,
+      0.50608885
+    ],
+    "late_configuration_failure_rolls_back": true,
+    "authoring_restored_on_stop": true
+  },
+  "quality_targets": {
+    "origin_body_world_units": 0.0001,
+    "angular_radians": 0.0001
+  },
+  "limitations": [
+    "Retargeted moving owner fades remain unqualified",
+    "Ordinary non-fade playback still receives f32 dt; full wall-clock correspondence needs separate qualification",
+    "Native window presentation is not proven by headless App and offscreen GPU checks",
+    "Other GPU backends and CUDA are not qualified by these local runs"
+  ]
+}

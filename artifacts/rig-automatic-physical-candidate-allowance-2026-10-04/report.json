@@ -1,0 +1,20 @@
+{
+  "scope": "Uniform physical candidate evaluation allowance derived inside approximate/certified rigid sweep; supplemental caller allowances add outward",
+  "gameplay_library_tests": 69,
+  "gameplay_integration_tests": 46,
+  "editor_animation_runtime_tests": 20,
+  "strengthened_focused_regressions": 3,
+  "exact_polynomial_row_comparisons": 246,
+  "near_wall_fixture": {
+    "derived_radius": 1.8144347136655805e-11,
+    "wall_center": 0.500000000004536,
+    "accepted_displacement": 0.24999999896239053,
+    "zero_clearance_control_completes": true,
+    "automatic_allowance_completes": false
+  },
+  "limitations": [
+    "Does not enable ordinary editor fade dispatch",
+    "Does not prove original clip clock to displayed pose correspondence",
+    "Supported structural projection families only; general frames retain conservative numerical allowances"
+  ]
+}

@@ -2867,6 +2867,11 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
             |preview, _| {
                 assert!(
                     preview.motions[0]
+                        .physical_pose_evaluation_error_bounds()
+                        .is_some()
+                );
+                assert!(
+                    preview.motions[0]
                         .published_pose_evaluation_error_bounds()
                         .is_some()
                 );
@@ -2881,6 +2886,14 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
             .all(|v| v.is_finite() && *v >= 0. && *v <= radius)
     );
     assert!(radius < 1e-8);
+    let physical = receipts[0].physical_pose_evaluation_error_bounds().unwrap();
+    assert!(
+        physical
+            .0
+            .iter()
+            .all(|v| v.is_finite() && *v >= 0. && *v <= physical.1)
+    );
+    assert!(physical.1 < 1e-6);
     let (axes, radius) = receipts[0]
         .published_pose_evaluation_error_bounds()
         .unwrap();

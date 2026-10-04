@@ -1,0 +1,8 @@
+
+running 1 test
+MODEL PUBLISHED frames=0 first_x=0 asset=moving.glb
+PRODUCTION_FADE_DISPATCH (14, 0.21666666666666665, [0.77501154, 0.0, 0.50608885])
+test animation_runtime::tests::production_play_dispatches_moving_fade_and_preserves_late_failure ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 166 filtered out; finished in 0.56s
+

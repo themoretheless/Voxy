@@ -1,0 +1,7 @@
+{
+  "gameplay_library_tests": 66,
+  "gameplay_integration_tests": 46,
+  "scope": "Accepted physical affine body after ground snap and relocation, before callback; immutable canonical witness shared with scene receipt",
+  "not_uniform_interval_proof": true,
+  "production_moving_fades_enabled": false
+}

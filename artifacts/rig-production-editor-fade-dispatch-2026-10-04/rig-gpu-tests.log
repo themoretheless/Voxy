@@ -1,0 +1,15 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.19s
+     Running unittests src/lib.rs (target/debug/deps/voxy_editor-9307c5efc2715376)
+
+running 8 tests
+test animated_models::tests::animated_lod_views_budget_and_cpu_fallback ... ok
+test animated_models::tests::cpu_fallback_supports_mixed_primitives_and_removal ... ok
+test animated_models::tests::curved_root_rotation_collision_renders_once_with_in_place_gpu_palette ... ok
+test animated_models::tests::fixed_tick_hierarchy_owners_share_gpu_source_at_capacity ... ok
+test animated_models::tests::gpu_material_revision_failure_preserves_texture_storage ... ok
+test animated_models::tests::gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision ... ok
+test animated_models::tests::planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ok
+test animated_models::tests::retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 158 filtered out; finished in 72.73s
+

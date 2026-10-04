@@ -1,0 +1,12 @@
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 22.49s
+     Running unittests src/lib.rs (target/debug/deps/voxy_gameplay-f2a014491beec698)
+
+running 3 tests
+test angular_sweep::automatic_physical_allowance_tests::moving_projection_and_unproved_basis_do_not_get_zero_error ... ok
+test angular_sweep::automatic_physical_allowance_tests::stationary_coordinate_survives_actual_cache_reframe_pivot_and_body_update ... ok
+AUTOMATIC_PHYSICAL_MARGIN (1.8144347136655805e-11, 0.500000000004536, 0.24999999896239053)
+test angular_sweep::automatic_physical_allowance_tests::zero_requested_allowance_still_reserves_derived_body_error_before_wall ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 66 filtered out; finished in 0.00s
+

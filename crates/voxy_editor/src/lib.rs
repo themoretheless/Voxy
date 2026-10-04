@@ -1008,63 +1008,44 @@ impl App {
                             .map_err(|error| {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                             })?;
-                        let mut candidate = self
-                            .play
-                            .animations
-                            .prepare(
-                                access.read().map_err(|error| {
-                                    voxy_gameplay::GameplayFixedError::Motion(error.to_string())
-                                })?,
-                                &models,
-                                dt as f32,
-                            )
-                            .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
-                        if let Some(physics) = &mut self.play.physics {
+                        let candidate = if let Some(physics) = &mut self.play.physics {
                             access.require_write("character.physics").map_err(|error| {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                             })?;
                             access.require_write("player.input").map_err(|error| {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                             })?;
-                            if candidate.requires_pose_preparation() {
-                                let (_, corrected) = physics
-                                    .fixed_step_with_preparation(
-                                        access.write().map_err(|e| {
-                                            voxy_gameplay::GameplayFixedError::Motion(e.to_string())
-                                        })?,
-                                        &mut self.play.player_input,
-                                        dt,
-                                        candidate.motions(),
-                                        &candidate.trajectories(),
-                                        |preview, budget| {
-                                            candidate.clone().prepare_accepted_pose(preview, budget)
-                                        },
-                                    )
-                                    .map_err(|error| match error {
-                                        voxy_gameplay::CharacterTickError::Physics(error) => {
-                                            voxy_gameplay::GameplayFixedError::Physics(error)
-                                        }
-                                        voxy_gameplay::CharacterTickError::Preparation(error) => {
-                                            voxy_gameplay::GameplayFixedError::Motion(error)
-                                        }
-                                    })?;
-                                candidate = corrected;
-                            } else {
-                                physics
-                                    .fixed_step_with_motion_and_rigid_trajectories(
-                                        access.write().map_err(|error| {
-                                            voxy_gameplay::GameplayFixedError::Motion(
-                                                error.to_string(),
-                                            )
-                                        })?,
-                                        &mut self.play.player_input,
-                                        dt,
-                                        candidate.motions(),
-                                        &candidate.trajectories(),
-                                    )
-                                    .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
-                            }
+                            self.play
+                                .animations
+                                .fixed_step(
+                                    access.write().map_err(|error| {
+                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                    })?,
+                                    &models,
+                                    physics,
+                                    &mut self.play.player_input,
+                                    dt,
+                                )
+                                .map_err(|error| match error {
+                                    voxy_gameplay::CharacterTickError::Physics(error) => {
+                                        voxy_gameplay::GameplayFixedError::Physics(error)
+                                    }
+                                    voxy_gameplay::CharacterTickError::Preparation(error) => {
+                                        voxy_gameplay::GameplayFixedError::Motion(error)
+                                    }
+                                })?
                         } else {
+                            let candidate = self
+                                .play
+                                .animations
+                                .prepare_wall(
+                                    access.read().map_err(|error| {
+                                        voxy_gameplay::GameplayFixedError::Motion(error.to_string())
+                                    })?,
+                                    &models,
+                                    dt,
+                                )
+                                .map_err(voxy_gameplay::GameplayFixedError::Motion)?;
                             if candidate.requires_pose_preparation()
                                 || !candidate.motions().is_empty()
                                 || !candidate.trajectories().is_empty()
@@ -1077,7 +1058,8 @@ impl App {
                                 voxy_gameplay::GameplayFixedError::Motion(error.to_string())
                             })?;
                             self.play.player_input.finish_frame();
-                        }
+                            candidate
+                        };
                         self.play.animations = candidate;
                     } else if let Some(physics) = &mut self.play.physics {
                         physics

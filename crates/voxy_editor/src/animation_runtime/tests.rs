@@ -2385,6 +2385,7 @@ fn scene_fade_batch_stages_selection_without_advancing_and_rejects_late_owner() 
         )
         .unwrap();
     assert_eq!(receipts.len(), 2);
+    assert_eq!(accepted.serial(), runtime.serial() + 1);
     for owner in [first, second] {
         assert!(physics.accepted_pose(&scene, owner).unwrap().is_some());
         assert_eq!(accepted.owners[&owner].settings.clip, Some(1));
@@ -2500,4 +2501,249 @@ fn imported_model_retains_translation_and_rotation_compilation_proofs() {
             .unwrap()
             .is_none()
     );
+}
+
+#[test]
+fn production_play_dispatches_moving_fade_and_preserves_late_failure() {
+    let directory = std::env::temp_dir().join(format!(
+        "voxy-production-fade-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir(&directory).unwrap();
+    let original = gltf::binary::Glb::from_slice(include_bytes!(
+        "../../../voxy_render/examples/assets/animated-triangle.glb"
+    ))
+    .unwrap();
+    let mut json: serde_json::Value = serde_json::from_slice(&original.json).unwrap();
+    json["animations"][0]["name"] = "walk".into();
+    let mut bin = original.bin.as_ref().unwrap().to_vec();
+    let mut append = |values: &[f32], kind: &str| {
+        let offset = bin.len();
+        for value in values {
+            bin.extend(value.to_le_bytes());
+        }
+        let view = json["bufferViews"].as_array().unwrap().len();
+        json["bufferViews"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({
+                "buffer":0,"byteOffset":offset,"byteLength":bin.len()-offset
+            }));
+        let accessor = json["accessors"].as_array().unwrap().len();
+        json["accessors"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({
+                "bufferView":view,"componentType":5126,"count":2,"type":kind
+            }));
+        accessor
+    };
+    let target_translation = append(&[0., 0., 0., 4., 0., 0.], "VEC3");
+    let source_rotation = append(
+        &[
+            glam::Quat::IDENTITY.to_array(),
+            glam::Quat::from_rotation_y(0.25).to_array(),
+        ]
+        .concat(),
+        "VEC4",
+    );
+    let target_rotation = append(
+        &[
+            glam::Quat::IDENTITY.to_array(),
+            glam::Quat::from_rotation_y(0.5).to_array(),
+        ]
+        .concat(),
+        "VEC4",
+    );
+    json["buffers"][0]["byteLength"] = bin.len().into();
+    json["animations"][0]["samplers"]
+        .as_array_mut()
+        .unwrap()
+        .push(serde_json::json!({
+            "input":4,"output":source_rotation,"interpolation":"LINEAR"
+        }));
+    json["animations"][0]["channels"]
+        .as_array_mut()
+        .unwrap()
+        .push(serde_json::json!({
+            "sampler":1,"target":{"node":0,"path":"rotation"}
+        }));
+    let mut second = json["animations"][0].clone();
+    second["name"] = "run".into();
+    second["samplers"][0]["output"] = target_translation.into();
+    second["samplers"][1]["output"] = target_rotation.into();
+    json["animations"].as_array_mut().unwrap().push(second);
+    let bytes = gltf::binary::Glb {
+        header: original.header,
+        json: serde_json::to_vec(&json).unwrap().into(),
+        bin: Some(bin.into()),
+    }
+    .to_vec()
+    .unwrap();
+    let source = directory.join("moving.glb");
+    std::fs::write(&source, bytes).unwrap();
+    let mut app = crate::App::new(&source, false).unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+    while app.catalog.snapshot(&app.id).is_none() {
+        app.tick().unwrap();
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    app.edit_key(winit::keyboard::KeyCode::KeyD).unwrap();
+    let owner = app.instances[0];
+    app.scene
+        .insert_component(
+            owner,
+            voxy_gameplay::CharacterBody {
+                half_extents: [0.125; 3],
+                speed: 0.,
+                gravity: 0.,
+                jump_speed: 0.,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    app.scene
+        .insert_component(
+            owner,
+            ModelAnimation {
+                root_motion_rotation: true,
+                root_motion_axes: [true, false, false],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    app.scene
+        .insert_component(app.instances[1], ModelAnimation::default())
+        .unwrap();
+    app.commit_authoring().unwrap();
+    let authoring = app.authoring_document().unwrap();
+    app.toggle_play().unwrap();
+    let owner = app.instances[0];
+    let late = app.instances[1];
+    let dt = 1. / 60.;
+    app.advance_game(dt).unwrap();
+    assert!(app.play.animations.owners[&owner].root_reference.is_some());
+    let model = app
+        .catalog
+        .snapshot(&app.id)
+        .unwrap()
+        .value()
+        .animated
+        .as_ref()
+        .unwrap()
+        .clone();
+    let frame = app.play.animations.frame(owner, &model).unwrap();
+    let before = app.scene.local(owner).unwrap();
+    let phase = app.play.animations.clip_phase(owner).unwrap();
+    assert_eq!(phase, dt);
+    let late_phase = app.play.animations.clip_phase(late).unwrap();
+    let serial = app.play.animations.serial();
+    let settings = app
+        .scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap();
+    settings.clip = Some(1);
+    settings.transition_seconds = 0.125;
+    app.scene
+        .component_mut::<ModelAnimation>(late)
+        .unwrap()
+        .unwrap()
+        .clip = Some(999);
+    app.play
+        .player_input
+        .event(voxy_gameplay::JUMP, 1.)
+        .unwrap();
+    assert!(app.advance_game(dt).is_err());
+    assert_eq!(app.scene.local(owner).unwrap(), before);
+    assert_eq!(app.play.animations.clip_phase(owner).unwrap(), phase);
+    assert_eq!(app.play.animations.clip_phase(late).unwrap(), late_phase);
+    assert_eq!(app.play.animations.serial(), serial);
+    assert!(Arc::ptr_eq(
+        &frame,
+        &app.play.animations.frame(owner, &model).unwrap()
+    ));
+    assert!(app.play.player_input.state("jump").unwrap().pressed);
+    app.scene
+        .component_mut::<ModelAnimation>(late)
+        .unwrap()
+        .unwrap()
+        .clip = Some(0);
+    app.advance_game(dt).unwrap();
+    assert_eq!(app.play.animations.owners[&owner].settings.clip, Some(1));
+    assert!(app.play.animations.owners[&owner].playback.has_transition());
+    assert_eq!(app.play.animations.clip_phase(owner).unwrap(), dt);
+
+    assert!(app.scene.local(owner).unwrap().translation.x > before.translation.x);
+    assert!(!app.play.player_input.state("jump").unwrap().pressed);
+    for _ in 0..12 {
+        app.advance_game(dt).unwrap();
+    }
+    assert!(!app.play.animations.owners[&owner].playback.has_transition());
+    assert_eq!(app.play.animations.serial(), serial + 13);
+    let expected_target = (0..13).fold(0_f64, |phase, _| phase + dt);
+    let expected_ordinary = (0..14).fold(0_f64, |phase, _| phase + dt);
+    assert_eq!(
+        app.play.animations.clip_phase(owner).unwrap(),
+        expected_target
+    );
+    assert_eq!(
+        app.play.animations.clip_phase(late).unwrap(),
+        expected_ordinary
+    );
+    assert_eq!(
+        app.play
+            .animations
+            .frame(owner, &model)
+            .unwrap()
+            .pose
+            .local()[0]
+            .translation,
+        Vec3::ZERO
+    );
+    println!(
+        "PRODUCTION_FADE_DISPATCH {:?}",
+        (
+            app.play.animations.serial(),
+            app.play.animations.clip_phase(owner).unwrap(),
+            app.scene.local(owner).unwrap().translation.to_array()
+        )
+    );
+    app.toggle_play().unwrap();
+    assert_eq!(app.authoring_document().unwrap(), authoring);
+    drop(app);
+    std::fs::remove_dir_all(directory).unwrap();
+}
+
+#[test]
+fn wall_clock_preparation_retains_sub_f32_steps_and_failed_publication() {
+    let (mut scene, owner, model, models) = fixture();
+    let mut runtime = AnimationRuntime::default();
+    let dt = 1e-50_f64;
+    assert_eq!(dt as f32, 0.);
+    for _ in 0..16 {
+        runtime = runtime.prepare_wall(&scene, &models, dt).unwrap();
+    }
+    assert_eq!(
+        runtime.clip_phase(owner).unwrap(),
+        (0..16).fold(0_f64, |t, _| t + dt)
+    );
+    let frame = runtime.frame(owner, &model).unwrap();
+    let phase = runtime.clip_phase(owner).unwrap();
+    scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .speed = f32::NAN;
+    assert!(runtime.prepare_wall(&scene, &models, dt).is_err());
+    assert_eq!(runtime.clip_phase(owner).unwrap(), phase);
+    assert!(Arc::ptr_eq(&frame, &runtime.frame(owner, &model).unwrap()));
+    for invalid in [f64::NAN, f64::INFINITY, -1., 0.] {
+        assert!(runtime.prepare_wall(&scene, &models, invalid).is_err());
+    }
 }

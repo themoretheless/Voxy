@@ -1,0 +1,2 @@
+PASS: exact rational near-wall gap is inside derived allowance, accepted displacement precedes the endpoint, and accepted support remains separated; no tolerance
+PASS: 246 exact polynomial row comparisons for arbitrary axial sine/cosine, signed actor permutations and continuous coordinate-row actor; no tolerance

@@ -1,0 +1,25 @@
+{
+  "scope": "Original stored f64 fixed wall step passed through ordinary frames, rigid trajectories, fade playback and target/source contact intervals",
+  "animation_tests": 189,
+  "editor_tests": 156,
+  "default_gpu_tests_ignored": 11,
+  "explicit_hierarchy_gpu_tests": 1,
+  "final_target_phase": 0.21666666666666665,
+  "expected_f64_accumulation": 0.21666666666666665,
+  "previous_phase_with_f32_ordinary_steps": 0.21666667101283868,
+  "exact_phase_assertions": true,
+  "positive_sub_f32_wall_step": 1e-50,
+  "gpu": {
+    "owners": 128,
+    "parts": 256,
+    "shared_sources": 1,
+    "cpu_pixels_equal": true,
+    "source_bytes_after_stop": 0
+  },
+  "limitations": [
+    "Legacy f32 callers retain their supplied step precision",
+    "Display pose and palette formats remain f32",
+    "Does not prove arbitrary-speed real-valued accumulation or every interpolation/retarget case",
+    "GPU evidence is limited to the locally executed hardware case"
+  ]
+}
