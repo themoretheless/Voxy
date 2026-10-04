@@ -1,0 +1,25 @@
+{
+  "scope": "Original held/default/STEP source quaternion error automatically propagated through retarget rotation",
+  "animation_library_passed": 204,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "source_component_checks": 192,
+    "retarget_component_checks": 192,
+    "Hamilton_chains": 48,
+    "arithmetic": "Fraction original quaternions and integer square-root unit norm enclosures"
+  },
+  "verified": [
+    "Raw stored source quaternion versus ideal unit normalization",
+    "Source clip full rig identity retained through retarget bridge",
+    "Held first/last, source bind fallback and STEP intervals",
+    "Key crossings and moving LINEAR sampling remain unavailable",
+    "Invalid source time and missing mapping rejection"
+  ],
+  "limitations": [
+    "Moving SLERP and cubic quaternion sampling remain unqualified",
+    "Same stored f32 local time; clock conversion and wrapping are separate",
+    "Ancestor, palette and scene publication remain separate",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

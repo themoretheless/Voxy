@@ -1,0 +1,44 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 15.58s
+     Running unittests src/lib.rs (target/debug/deps/voxy_animation-1c86ad0fc320fa33)
+
+running 1 test
+positive_division_reference={"numerator":-1.0,"denominator":0.5,"actual":-2.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":-1.0,"denominator":0.5,"actual":-2.0,"cap":2.384185791015625e-7}
+positive_division_reference={"numerator":-1.0,"denominator":0.5,"actual":-1.8787879,"cap":0.6666676203409838}
+positive_division_reference={"numerator":-1.0,"denominator":0.5,"actual":-1.8787879,"cap":0.12903249648309537}
+positive_division_reference={"numerator":-1.0,"denominator":1.0,"actual":-1.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":-1.0,"denominator":1.0,"actual":-1.0,"cap":1.1920928955078125e-7}
+positive_division_reference={"numerator":-1.0,"denominator":1.0,"actual":-0.95384616,"cap":0.6666676203409838}
+positive_division_reference={"numerator":-1.0,"denominator":1.0,"actual":-0.95384616,"cap":0.04761916682833721}
+positive_division_reference={"numerator":-1.0,"denominator":2.0,"actual":-0.5,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":-1.0,"denominator":2.0,"actual":-0.5,"cap":5.960464477539063e-8}
+positive_division_reference={"numerator":-1.0,"denominator":2.0,"actual":-0.48062015,"cap":0.6666676203409838}
+positive_division_reference={"numerator":-1.0,"denominator":2.0,"actual":-0.48062015,"cap":0.019685098974723533}
+positive_division_reference={"numerator":0.0,"denominator":0.5,"actual":0.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":0.0,"denominator":0.5,"actual":0.0,"cap":0.0}
+positive_division_reference={"numerator":0.0,"denominator":0.5,"actual":0.060606062,"cap":0.6666676203409838}
+positive_division_reference={"numerator":0.0,"denominator":0.5,"actual":0.060606062,"cap":0.0645161364828387}
+positive_division_reference={"numerator":0.0,"denominator":1.0,"actual":0.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":0.0,"denominator":1.0,"actual":0.0,"cap":0.0}
+positive_division_reference={"numerator":0.0,"denominator":1.0,"actual":0.03076923,"cap":0.6666676203409838}
+positive_division_reference={"numerator":0.0,"denominator":1.0,"actual":0.03076923,"cap":0.031746035471322064}
+positive_division_reference={"numerator":0.0,"denominator":2.0,"actual":0.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":0.0,"denominator":2.0,"actual":0.0,"cap":0.0}
+positive_division_reference={"numerator":0.0,"denominator":2.0,"actual":0.015503876,"cap":0.6666676203409838}
+positive_division_reference={"numerator":0.0,"denominator":2.0,"actual":0.015503876,"cap":0.01574803335870815}
+positive_division_reference={"numerator":1.0,"denominator":0.5,"actual":2.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":1.0,"denominator":0.5,"actual":2.0,"cap":2.384185791015625e-7}
+positive_division_reference={"numerator":1.0,"denominator":0.5,"actual":2.0,"cap":0.6666676203409838}
+positive_division_reference={"numerator":1.0,"denominator":0.5,"actual":2.0,"cap":0.12903249648309537}
+positive_division_reference={"numerator":1.0,"denominator":1.0,"actual":1.0,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":1.0,"denominator":1.0,"actual":1.0,"cap":1.1920928955078125e-7}
+positive_division_reference={"numerator":1.0,"denominator":1.0,"actual":1.0153847,"cap":0.6666676203409838}
+positive_division_reference={"numerator":1.0,"denominator":1.0,"actual":1.0153847,"cap":0.04761916682833721}
+positive_division_reference={"numerator":1.0,"denominator":2.0,"actual":0.5,"cap":9.5367431640625e-7}
+positive_division_reference={"numerator":1.0,"denominator":2.0,"actual":0.5,"cap":5.960464477539063e-8}
+positive_division_reference={"numerator":1.0,"denominator":2.0,"actual":0.5116279,"cap":0.6666676203409838}
+positive_division_reference={"numerator":1.0,"denominator":2.0,"actual":0.5116279,"cap":0.019685098974723533}
+test root_rigid::enclosure::compilation::positive_division_tests::positive_f32_division_propagates_same_member_errors_and_rejects_zero_corridor ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 207 filtered out; finished in 0.00s

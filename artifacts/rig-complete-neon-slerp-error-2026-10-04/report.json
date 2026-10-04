@@ -1,0 +1,32 @@
+{
+  "scope": "Complete spherical glam 0.33.7 NEON SLERP and final f32 normalization against original unit keys and same-time original key fraction",
+  "animation_library_passed": 209,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "continuous_source_component_checks": 1088,
+    "time_initial_orientation_records": 272,
+    "arithmetic": "Fraction Machin pi and trigonometric Taylor remainder intervals"
+  },
+  "primitive_regression_checks": {
+    "original_position_and_chained_retarget": 2142,
+    "retarget_rotation_source_and_output": 2048
+  },
+  "maximum_fixture_component_cap": 1.6203004653283832e-05,
+  "verified": [
+    "Original key normalization and original normalized-key half-angle",
+    "Actual f32 affine source parameter and complementary lane",
+    "Hemisphere agreement and original angle discrepancy",
+    "Actual NEON sine, weighted products/addition and vector-sum division order",
+    "Positive denominator and relational raw quaternion norm separation",
+    "Final f32 normalization reused with retarget proof"
+  ],
+  "limitations": [
+    "NEON spherical path only; normalized lerp and other backends remain unavailable",
+    "Same stored f32 local time, not f64 narrowing, wrapping or clock accumulation",
+    "Caller must retain original clip/key/joint and backend ownership",
+    "Not yet registered as automatic moving source sampling dispatch",
+    "Moving crossfade blend, ancestor/palette and scene publication remain separate",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

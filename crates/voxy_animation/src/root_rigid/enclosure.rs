@@ -399,6 +399,107 @@ fn compose_components<S: EnclosureArithmetic>(
 }
 
 impl RootRigidEnclosure {
+    /// Error of a stationary original orientation sampled through glam's
+    /// normalized-lerp branch and the source sampler's outer normalize. Exact
+    /// original key proportionality and the actual branch are checked. None
+    /// leaves moving orientations or a different runtime branch unqualified.
+    /// # Errors
+    /// Rejects invalid keys and insufficient norm separation.
+    pub fn stationary_nlerp_sample_error_bounds(
+        keys: [[f32; 4]; 2],
+    ) -> Result<Option<[f64; 4]>, AnimationError> {
+        compilation::stationary_nlerp_sample_error(keys)
+    }
+    /// Complete spherical glam 0.33.7 NEON SLERP and final f32 normalize error
+    /// against original unit keys at the same stored f32 local time interval.
+    /// None denotes normalized lerp. Other backends, local time conversion,
+    /// loop wrapping and final scene publication remain separate obligations.
+    /// # Errors
+    /// Rejects invalid key/time domains, hemisphere disagreement and unproved
+    /// denominator/norm separation.
+    pub fn neon_slerp_sample_error_bounds(
+        keys: [[f32; 4]; 2],
+        times: [f32; 2],
+        interval: [f32; 2],
+    ) -> Result<Option<[f64; 4]>, AnimationError> {
+        compilation::neon_slerp_sample_error(keys, times, interval)
+    }
+    /// Uniform same-member f32 division error against the ideal quotient.
+    /// Supplied input errors must qualify actual f32 operands against the same
+    /// ideal numerator/denominator. Range width is not itself numerical error.
+    /// This is a division primitive; it does not certify assembled SLERP.
+    /// # Errors
+    /// Rejects invalid domains/errors, an unproved positive denominator and
+    /// quotient publication overflow.
+    pub fn enclosed_f32_positive_division_error(
+        numerator: [f64; 2],
+        numerator_error: f64,
+        denominator: [f64; 2],
+        denominator_error: f64,
+    ) -> Result<f64, AnimationError> {
+        compilation::f32_positive_division_error(
+            numerator,
+            numerator_error,
+            denominator,
+            denominator_error,
+        )
+    }
+    /// Uniform error of glam 0.33.7's NEON sine polynomial against mathematical
+    /// sin over stored f32 inputs in [0,f32 FRAC_PI_2]. Other backend sine paths,
+    /// incoming argument error and SLERP weight division remain separate.
+    /// # Errors
+    /// Rejects nonfinite, reversed or out-of-domain input intervals.
+    pub fn neon_slerp_sine_error_bounds(domain: [f32; 2]) -> Result<f64, AnimationError> {
+        compilation::neon_slerp_sine_error(domain)
+    }
+    /// Original unit-key half-angle enclosure and actual glam acos error cap.
+    /// Requires exact original and rounded runtime dot signs to select the same
+    /// hemisphere. None denotes normalized lerp; ambiguous/mismatched signs
+    /// reject. Sine weights, interpolation and normalization are still separate.
+    /// # Errors
+    /// Rejects invalid keys and unqualified hemisphere selection.
+    pub fn stored_slerp_key_angle_error_bounds(
+        keys: [[f32; 4]; 2],
+    ) -> Result<Option<([f64; 2], f64)>, AnimationError> {
+        compilation::stored_slerp_key_angle_error(keys)
+    }
+    /// Ideal mathematical acos enclosure and absolute error cap for glam's
+    /// positive acos approximation at one stored f32 input. This qualifies the
+    /// angle primitive only; original-key dot error, hemisphere selection,
+    /// sine weights and final SLERP normalization remain separate.
+    /// # Errors
+    /// Rejects nonfinite arguments and values outside [0,1].
+    pub fn stored_slerp_acos_error_bounds(input: f32) -> Result<([f64; 2], f64), AnimationError> {
+        compilation::stored_slerp_acos_error(input)
+    }
+    pub(crate) fn stored_rotation_source_error(q: [f32; 4]) -> Result<[f64; 4], AnimationError> {
+        let q = q.map(f64::from);
+        compilation::quaternion_normalization_error_bounds(q, q)
+    }
+    pub(crate) fn source_linear_translation_local_time_error(
+        from: [f32; 3],
+        to: [f32; 3],
+        keys: [f32; 2],
+        interval: [f64; 2],
+    ) -> Result<[f64; 3], AnimationError> {
+        compilation::source_linear_translation_local_time_error(from, to, keys, interval)
+    }
+    pub(crate) fn source_linear_translation_sample_error(
+        from: [f32; 3],
+        to: [f32; 3],
+        times: [f32; 2],
+        interval: [f32; 2],
+    ) -> Result<[f64; 3], AnimationError> {
+        compilation::source_linear_translation_sample_error(from, to, times, interval)
+    }
+    pub(crate) fn retarget_rotation_evaluation_error(
+        target: [f32; 4],
+        correction: [f32; 4],
+        source_bind: [f32; 4],
+        source_error: [f64; 4],
+    ) -> Result<[f64; 4], AnimationError> {
+        compilation::retarget_rotation_runtime_error(target, correction, source_bind, source_error)
+    }
     pub(crate) fn retarget_translation_evaluation_error(
         position: [[f64; 2]; 3],
         source_error: [f64; 3],

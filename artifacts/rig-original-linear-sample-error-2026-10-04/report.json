@@ -1,0 +1,28 @@
+{
+  "scope": "Original f32 LINEAR local translation sampler error and propagation through retarget translation",
+  "animation_library_passed": 202,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "original_sampler_axis_checks": 918,
+    "chained_retarget_axis_checks": 918,
+    "chained_retarget_L1_checks": 306,
+    "arithmetic": "Exact Fraction original key interpolation at stored f32 time and rational unit-basis rotation"
+  },
+  "verified": [
+    "Actual f32 key-time subtraction and alpha division",
+    "Actual Vec3::lerp complement, two products and sum",
+    "Large cancellation, tiny values and non-dyadic key times",
+    "Original authored position retained",
+    "Held/default and equal LINEAR key values exact",
+    "Cross-key intervals and STEP jumps require partitioning",
+    "Invalid local time intervals and unmapped joint rejection"
+  ],
+  "limitations": [
+    "One continuous LINEAR key interval at stored f32 local times",
+    "Clock conversion, clamping and loop wrapping are separate",
+    "CUBICSPLINE and animated quaternion sampler qualification remain separate",
+    "Ancestor, palette and scene publication remain separate",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

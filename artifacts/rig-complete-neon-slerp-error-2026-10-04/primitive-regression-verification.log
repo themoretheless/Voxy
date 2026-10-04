@@ -1,0 +1,7 @@
+Exact original-sampler axis checks: 918
+Exact chained-retarget axis checks: 918
+Exact chained-retarget L1 checks: 306
+
+Exact source-error component checks: 1024
+Exact retarget-rotation component checks: 1024
+Original Hamilton chains: 256

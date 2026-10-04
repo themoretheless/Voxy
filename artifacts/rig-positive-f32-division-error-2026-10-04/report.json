@@ -1,0 +1,20 @@
+{
+  "scope": "Uniform same-member actual f32 quotient error with uncertain positive denominator",
+  "animation_library_passed": 208,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference_checks": 36,
+  "verified": [
+    "Incoming numerator and denominator errors propagated against the same ideal values",
+    "Strict positivity proved for both ideal and possible actual denominators",
+    "Final f32 division rounding",
+    "Motion width excluded from error",
+    "Zero corridor, invalid inputs and publication overflow reject"
+  ],
+  "limitations": [
+    "Caller must qualify incoming operand errors",
+    "Division primitive only, not assembled SLERP source sampling",
+    "IEEE nearest rounding and gradual underflow assumed",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

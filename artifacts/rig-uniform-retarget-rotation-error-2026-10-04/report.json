@@ -1,0 +1,28 @@
+{
+  "scope": "Uniform same-time f32 retarget quaternion component error against ideal unit rotation chain",
+  "animation_library_passed": 200,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "Hamilton_chains": 256,
+    "source_error_component_checks": 1024,
+    "retarget_output_component_checks": 1024,
+    "arithmetic": "Fraction Hamilton products with integer-square-root rational norm enclosures at 192 fractional bits"
+  },
+  "maximum_fixture_component_cap": 0.0003049878106909051,
+  "verified": [
+    "Original fixed quaternion norm discrepancy",
+    "Four actual f32 Hamilton products",
+    "Scalar and pairwise SIMD addition tree error allowance",
+    "Final squared norm, square root, division or reciprocal and multiplication rounding",
+    "Relational nonzero norm proof",
+    "Invalid joint, negative/nonfinite input error and excessive norm uncertainty rejection"
+  ],
+  "limitations": [
+    "Caller must qualify incoming same-time unit quaternion component error",
+    "Default IEEE nearest rounding with gradual underflow; altered fast-math or flush-to-zero environments unqualified",
+    "Source sampling, scale, ancestor and final scene publication remain separate",
+    "Component caps are not angular error caps",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

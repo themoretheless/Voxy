@@ -1,0 +1,26 @@
+{
+  "scope": "Fixed positive f32 acos primitive used by glam SLERP, against mathematical acos",
+  "animation_library_passed": 205,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "ideal_acos_enclosure_checks": 131,
+    "actual_glam_discrepancy_checks": 131,
+    "arithmetic": "Fraction Machin pi, atan alternating remainders and integer-root rational enclosures"
+  },
+  "maximum_fixture_acos_cap": 5.947967705814457e-07,
+  "verified": [
+    "Original glam 0.33.7 degree-seven stored f32 coefficients",
+    "Horner and final root multiplication f32 rounding",
+    "Stable original acos argument near one",
+    "Endpoint and subnormal arguments",
+    "Invalid argument rejection"
+  ],
+  "limitations": [
+    "Fixed stored positive argument in [0,1] only",
+    "Original-key dot error and hemisphere/branch selection are separate",
+    "Backend sine weights and complete SLERP normalization remain unqualified",
+    "Default IEEE rounding and gradual underflow assumptions",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

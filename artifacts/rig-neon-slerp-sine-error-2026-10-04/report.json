@@ -1,0 +1,23 @@
+{
+  "scope": "Uniform actual glam 0.33.7 NEON sine discrepancy on positive SLERP argument domains",
+  "animation_library_passed": 207,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_discrepancy_checks": 85,
+  "maximum_fixture_cap": 1.0425917599816147e-06,
+  "verified": [
+    "Rounded range-reduction quotient remains below half so reduction integer is zero",
+    "Stored reflection threshold retains input",
+    "Actual stored minimax coefficients and x-square Horner rounding",
+    "Fused and unfused multiply/add covered conservatively",
+    "Coefficient discrepancy from Taylor sine polynomial plus uniform degree-12 remainder",
+    "Actual ARM Vec4::sin checked against independent Fraction sine bounds"
+  ],
+  "limitations": [
+    "NEON polynomial path only, not scalar/SSE/WASM or CUDA sine",
+    "Stored input domain [0,f32 FRAC_PI_2] only",
+    "Incoming argument discrepancy and SLERP weight division remain separate",
+    "IEEE nearest rounding and gradual underflow assumed",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

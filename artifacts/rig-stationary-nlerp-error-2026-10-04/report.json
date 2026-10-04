@@ -1,0 +1,7 @@
+{
+  "animation_tests_passed": 210,
+  "editor_tests_passed": 157,
+  "editor_tests_ignored": 11,
+  "exact_component_checks": 544,
+  "scope": "Original exactly proportional LINEAR keys selecting runtime NLERP; both normalizations; moving owner fades remain disabled"
+}

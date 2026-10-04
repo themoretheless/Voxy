@@ -1,0 +1,20 @@
+{
+  "scope": "Same-time original LINEAR position error including f64 local time narrowing to f32",
+  "animation_library_passed": 203,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_original_position_checks": 54,
+  "verified": [
+    "Full f32 time-spacing allowance multiplied by original-key coordinate speed",
+    "Original f32 sampler error added outward",
+    "Joint partition requires both real and rounded times to fit a continuous key interval",
+    "STEP discontinuity reached by narrowing is rejected",
+    "Held/default channels and boundary behavior"
+  ],
+  "limitations": [
+    "Local time only; clock accumulation, clamping and loop wrapping are separate",
+    "Quaternion sampling and cubic source evaluation remain separate",
+    "Ancestor/palette and final scene publication remain separate",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

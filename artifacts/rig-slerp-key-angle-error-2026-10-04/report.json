@@ -1,0 +1,25 @@
+{
+  "scope": "Original-key hemisphere agreement and actual stored-dot SLERP half-angle error",
+  "animation_library_passed": 206,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "original_unit_key_angle_checks": 12,
+    "actual_glam_angle_discrepancy_checks": 12,
+    "arithmetic": "Fraction original-key Gram determinant, integer roots and atan remainders"
+  },
+  "verified": [
+    "Original hemisphere sign from shared exact f32 quaternion predicates",
+    "Negative exact dot lost to zero by actual f32 dot rejects",
+    "Positive exact dot lost to zero remains bounded",
+    "Original key norm and actual rounded dot discrepancies",
+    "Normalized lerp branch distinguished from spherical branch",
+    "Exact quaternion predicates retain previous retarget coverage after module move"
+  ],
+  "limitations": [
+    "This qualifies a key-pair angle, not full moving SLERP",
+    "Normalized lerp, sine weights, affine time and final normalization remain separate",
+    "Near-orthogonal branch disagreement is rejected by the certificate; sampler behavior is unchanged",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

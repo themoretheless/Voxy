@@ -1,0 +1,93 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.92s
+     Running unittests src/lib.rs (target/debug/deps/voxy_animation-1c86ad0fc320fa33)
+
+running 1 test
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.0,"actual":0.0,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.09817477,"actual":0.09801714,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.19634955,"actual":0.19509032,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.2945243,"actual":0.2902847,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.3926991,"actual":0.38268346,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.49087387,"actual":0.47139674,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.5890486,"actual":0.55557024,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.68722343,"actual":0.63439333,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.7853982,"actual":0.70710677,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.88357294,"actual":0.77301043,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":0.98174775,"actual":0.83146966,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":1.0799226,"actual":0.8819213,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":1.1780972,"actual":0.9238795,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":1.276272,"actual":0.95694035,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":1.3744469,"actual":0.9807853,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":1.4726216,"actual":0.9951847,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 1.5707964],"input":1.5707964,"actual":1.0,"cap":1.0425917599816147e-6}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.0,"actual":0.0,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.000625,"actual":0.0006249999,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.00125,"actual":0.0012499996,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.001875,"actual":0.0018749989,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.0025,"actual":0.0024999974,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.0031249998,"actual":0.0031249947,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.00375,"actual":0.003749991,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.004375,"actual":0.004374986,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.005,"actual":0.004999979,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.0056249998,"actual":0.00562497,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.0062499996,"actual":0.006249959,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.006875,"actual":0.006874946,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.0075,"actual":0.0074999295,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.008125,"actual":0.00812491,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.00875,"actual":0.008749888,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.009374999,"actual":0.009374863,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.0, 0.01],"input":0.01,"actual":0.009999833,"cap":2.12346563480468e-9}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.25,"actual":0.24740396,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.265625,"actual":0.26251242,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.28125,"actual":0.27755675,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.296875,"actual":0.29253334,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.3125,"actual":0.30743852,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.328125,"actual":0.32226864,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.34375,"actual":0.33702007,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.359375,"actual":0.35168922,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.375,"actual":0.36627254,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.390625,"actual":0.38076642,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.40625,"actual":0.39516732,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.421875,"actual":0.40947178,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.4375,"actual":0.42367625,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.453125,"actual":0.4377773,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.46875,"actual":0.45177147,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.484375,"actual":0.46565536,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[0.25, 0.5],"input":0.5,"actual":0.47942555,"cap":6.662766957674642e-8}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[1.5707964, 1.5707964],"input":1.5707964,"actual":1.0,"cap":9.409707009642833e-7}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+neon_sine_reference={"domain":[0.0, 0.0],"input":0.0,"actual":0.0,"cap":0.0}
+test root_rigid::enclosure::compilation::neon_sine_tests::neon_slerp_sine_uniform_cap_covers_actual_vector_backend ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 206 filtered out; finished in 0.00s
