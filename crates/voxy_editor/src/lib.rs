@@ -976,7 +976,7 @@ impl App {
                                 let (_, corrected) = physics.fixed_step_with_preparation(
                                     access.write().map_err(|e| voxy_gameplay::GameplayFixedError::Motion(e.to_string()))?,
                                     &mut self.play.player_input, dt, candidate.motions(), &candidate.trajectories(),
-                                    |preview, budget| candidate.clone().correct_feet(preview, budget),
+                                    |preview, budget| candidate.clone().prepare_accepted_pose(preview, budget),
                                 ).map_err(|error| match error {
                                     voxy_gameplay::CharacterTickError::Physics(error) => voxy_gameplay::GameplayFixedError::Physics(error),
                                     voxy_gameplay::CharacterTickError::Preparation(error) => voxy_gameplay::GameplayFixedError::Motion(error),

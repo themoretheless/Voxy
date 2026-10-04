@@ -2143,11 +2143,21 @@ fn certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_prepara
     let fade = RootRigidCertifiedFadeInterval::integrate_paths(None,mapped,[0.,1.],dt,
         0.01,0.01,4096).unwrap();
     let request = CharacterCertifiedFadeMotion {owner:player,fade:&fade,scale:1.,
-        basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,coordinate_axis:1,evaluation_radius:0.};
+        basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,coordinate_axis:1,
+        evaluation_radius:0.002,evaluation_axes:Some([0.001,0.,0.001])};
     let mut physics = CharacterPhysics::new(&scene,1,1);
     let mut input = player_input().unwrap();
     input.event(JUMP,1.).unwrap();
     let before = scene.local(player).unwrap();
+    for axes in [[0.,-0.001,0.],[0.,f64::NAN,0.],[0.003,0.,0.]] {
+        let invalid = CharacterCertifiedFadeMotion {evaluation_axes:Some(axes),..request};
+        let error = physics.fixed_step_with_certified_fade_preparation(&mut scene,&mut input,
+            dt,&[invalid],|_,_| -> Result<(),()> {panic!("invalid bounds reached publication")}).unwrap_err();
+        assert_eq!(error,CharacterTickError::Physics(PhysicsError::InvalidMotion));
+        assert_eq!(scene.local(player).unwrap(),before);
+        assert!(physics.state(&scene,player).unwrap().is_none());
+        assert!(input.state("jump").unwrap().pressed);
+    }
     let result = physics.fixed_step_with_certified_fade_preparation(&mut scene,&mut input,
         dt,&[request],|preview,_| {
             assert_eq!(preview.motions.len(),1);
@@ -2196,7 +2206,7 @@ fn mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds() {
     let rigid = CharacterRigidTrajectoryMotion {owner:owners[1],trajectory:&ordinary,
         scale:1.,basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO};
     let certified = CharacterCertifiedFadeMotion {owner:owners[2],fade:&fade,
-        scale:1.,basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,coordinate_axis:1,evaluation_radius:0.};
+        scale:1.,basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
     let translations = [(owners[0],Vec3::X*0.125)];
     let mut physics = CharacterPhysics::new(&scene,3,0);
     let mut input = player_input().unwrap();

@@ -44,6 +44,8 @@ struct Curve {
     origin: DQuat,
     cycle: DQuat,
     constant: bool,
+    key_normalization_error: [f64;4],
+    cubic_control_error: Option<[f64;4]>,
 }
 
 /// Immutable compiled channel. Clones share coefficients; paths preserve key
@@ -466,10 +468,19 @@ impl RootRotationCurve {
         if keys.len() > MAX_ROOT_ROTATION_KEYS {
             return Err(AnimationError::RootRotationBudget);
         }
+        let fallback_source = fallback.to_array().map(f64::from);
         let fallback = double(fallback);
+        let mut key_normalization_error = crate::root_rigid::quaternion_normalization_error_bounds(
+            fallback_source,fallback.to_array())?;
+        let mut cubic_control_error = (mode==Interpolation::CubicSpline).then_some([0_f64;4]);
         let mut knots = Vec::with_capacity(keys.len());
         for (i, key) in keys.iter().enumerate() {
             let value = double(key.value);
+            let error = crate::root_rigid::quaternion_normalization_error_bounds(
+                key.value.to_array().map(f64::from),value.to_array())?;
+            for component in 0..4 {
+                key_normalization_error[component] = key_normalization_error[component].max(error[component]);
+            }
             let shape = if let Some(next) = keys.get(i + 1) {
                 match mode {
                     Interpolation::Step => Shape::Hold(value),
@@ -492,6 +503,15 @@ impl RootRotationCurve {
             } else {
                 Shape::Hold(value)
             };
+            if let Shape::Cubic(control) = &shape {
+                let next = &keys[i+1];
+                let error = crate::root_rigid::quaternion_cubic_control_error_bounds(
+                    [key.value.to_array().map(f64::from),next.value.to_array().map(f64::from)],
+                    [tangents[i][1].to_array().map(f64::from),tangents[i+1][0].to_array().map(f64::from)],
+                    [f64::from(key.time),f64::from(next.time)],control.map(|value|value.to_array()))?;
+                let bound = cubic_control_error.as_mut().ok_or(AnimationError::InvalidRootRotationCurve)?;
+                for axis in 0..4 {bound[axis]=bound[axis].max(error[axis]);}
+            }
             knots.push(Knot {
                 time: f64::from(key.time),
                 value,
@@ -517,7 +537,148 @@ impl RootRotationCurve {
             origin,
             cycle: (end * origin.conjugate()).normalize(),
             constant,
+            key_normalization_error,
+            cubic_control_error,
         })))
+    }
+
+    /// Enclosed errors of normalization from stored keys and bind fallback.
+    pub fn key_normalization_error_bounds(&self) -> [f64;4] {
+        self.0.key_normalization_error
+    }
+
+    /// Uniform raw quaternion polynomial error from stored-key cubic controls.
+    /// Normalization amplifies this according to a separate positive norm proof.
+    pub fn cubic_control_compilation_error_bounds(&self) -> Option<[f64;4]> {
+        self.0.cubic_control_error
+    }
+
+    /// Normalized source/cached polynomial discrepancy over complete key spans.
+    /// Fails when the simple convex-hull norm lower bound is insufficient.
+    pub fn cubic_normalized_compilation_error_bounds(&self)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        let Some(raw) = self.0.cubic_control_error else {return Ok(None);};
+        let mut result = self.0.key_normalization_error;
+        for knot in &self.0.knots {
+            if let Shape::Cubic(control) = &knot.shape {
+                let error = crate::root_rigid::quaternion_cubic_normalized_error_bounds(
+                    control.map(|q|q.to_array()),raw)?;
+                for axis in 0..4 {result[axis]=result[axis].max(error[axis]);}
+            }
+        }
+        Ok(Some(result))
+    }
+
+    /// Normalized discrepancy through stored-key cubic restriction, before
+    /// left/right frame composition and rounded runtime pose evaluation.
+    pub fn cubic_piece_compilation_error_bounds(&self,start:f64,end:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        if !start.is_finite() || !end.is_finite() || start<0. || end<=start || end>self.0.duration {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(raw) = self.0.cubic_control_error else {return Ok(None);};
+        let upper = self.0.knots.partition_point(|key|key.time<=start);
+        if upper==0 {
+            if self.0.knots.first().is_some_and(|key|end>key.time) {
+                return Err(AnimationError::InvalidSampleTime);
+            }
+            return Ok(Some(self.0.key_normalization_error));
+        }
+        let knot = &self.0.knots[upper-1];
+        let Some(next) = self.0.knots.get(upper) else {return Ok(Some(self.0.key_normalization_error));};
+        if end>next.time {return Err(AnimationError::InvalidSampleTime);}
+        let Shape::Cubic(control) = &knot.shape else {return Ok(Some(self.0.key_normalization_error));};
+        let duration = next.time-knot.time;
+        let Shape::Cubic(stored) = restrict(&knot.shape,(start-knot.time)/duration,(end-knot.time)/duration)?
+            else {return Err(AnimationError::InvalidRootRotationCurve);};
+        let error = crate::root_rigid::quaternion_cubic_restriction_error_bounds(
+            control.map(|value|value.to_array()),raw,[knot.time,next.time],[start,end],
+            stored.map(|value|value.to_array()))?;
+        Ok(Some(error))
+    }
+
+    /// Discrepancy of the actual local cubic sample from exact source keys.
+    /// The supplied phase is exact; clock/loop mapping is a separate obligation.
+    pub fn cubic_phase_evaluation_error_bounds(&self,phase:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        if !phase.is_finite() || phase<0. || phase>self.0.duration {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(raw) = self.0.cubic_control_error else {return Ok(None);};
+        let upper = self.0.knots.partition_point(|key|key.time<=phase);
+        if upper==0 {return Ok(Some(self.0.key_normalization_error));}
+        let from = &self.0.knots[upper-1];
+        let Some(to) = self.0.knots.get(upper) else {return Ok(Some(self.0.key_normalization_error));};
+        let Shape::Cubic(control) = &from.shape else {return Ok(Some(self.0.key_normalization_error));};
+        let evaluated = self.local(phase)?;
+        crate::root_rigid::quaternion_cubic_phase_evaluation_error_bounds(
+            control.map(|value|value.to_array()),raw,[from.time,to.time],phase,
+            evaluated.to_array()).map(Some)
+    }
+
+    /// Uniform actual cubic evaluation discrepancy over one closed key interval.
+    /// Exact supplied phases; no relative-frame or cycle composition included.
+    pub fn cubic_interval_evaluation_error_bounds(&self,start:f64,end:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        if !start.is_finite() || !end.is_finite() || start<0. || end<start || end>self.0.duration {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(raw)=self.0.cubic_control_error else {return Ok(None);};
+        let upper=self.0.knots.partition_point(|key|key.time<=start);
+        if upper==0 {
+            if self.0.knots.first().is_some_and(|key|end>key.time) {
+                return Err(AnimationError::InvalidSampleTime);
+            }
+            return Ok(Some(self.0.key_normalization_error));
+        }
+        let from=&self.0.knots[upper-1];
+        let Some(to)=self.0.knots.get(upper) else {return Ok(Some(self.0.key_normalization_error));};
+        if end>to.time {return Err(AnimationError::InvalidSampleTime);}
+        let Shape::Cubic(control)=&from.shape else {return Ok(Some(self.0.key_normalization_error));};
+        let mut error=crate::root_rigid::quaternion_cubic_interval_evaluation_error_bounds(
+            control.map(|value|value.to_array()),raw,[from.time,to.time],[start,end])?;
+        if end==to.time {
+            for axis in 0..4 {error[axis]=error[axis].max(self.0.key_normalization_error[axis]);}
+        }
+        Ok(Some(error))
+    }
+
+    /// Pointwise source-to-runtime cubic orientation relative to its first key.
+    /// Carries both sample and origin normalization through real composition.
+    pub fn cubic_relative_phase_evaluation_error_bounds(&self,phase:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        let Some(error)=self.cubic_phase_evaluation_error_bounds(phase)? else {return Ok(None);};
+        let local=self.local(phase)?;
+        let origin=self.0.origin.conjugate();
+        let evaluated=self.phase_rotation(phase)?;
+        crate::root_rigid::quaternion_composition_evaluation_error_bounds(
+            local.to_array(),error,origin.to_array(),self.0.key_normalization_error,
+            evaluated.to_array()).map(Some)
+    }
+
+    /// Pointwise cubic sample at an explicit cycle count and exact local phase.
+    /// Cycle/phase selection from wall time remains a separate proof obligation.
+    pub fn cubic_cycle_phase_evaluation_error_bounds(&self,cycles:u64,phase:f64)
+        -> Result<Option<[f64;4]>,AnimationError> {
+        if self.0.playback==Playback::Clamp && cycles!=0 {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(local_error)=self.cubic_phase_evaluation_error_bounds(phase)? else {return Ok(None);};
+        let initial=self.0.origin.conjugate();
+        let end=self.0.knots.last().map_or(self.0.fallback,|key|key.value);
+        let cycle_error=crate::root_rigid::quaternion_composition_evaluation_error_bounds(
+            end.to_array(),self.0.key_normalization_error,initial.to_array(),
+            self.0.key_normalization_error,self.0.cycle.to_array())?;
+        let (prefix,prefix_error)=power_with_error(self.0.cycle,cycle_error,cycles)?;
+        let local=self.local(phase)?;
+        // Match sample(): the intermediate product is not normalized.
+        let intermediate=prefix*local;
+        let intermediate_error=crate::root_rigid::quaternion_composition_evaluation_error_bounds(
+            prefix.to_array(),prefix_error,local.to_array(),local_error,intermediate.to_array())?;
+        let evaluated=(intermediate*initial).normalize();
+        crate::root_rigid::quaternion_composition_evaluation_error_bounds(
+            intermediate.to_array(),intermediate_error,initial.to_array(),
+            self.0.key_normalization_error,evaluated.to_array()).map(Some)
     }
 
     fn local(&self, time: f64) -> Result<DQuat, AnimationError> {
@@ -536,18 +697,11 @@ impl RootRotationCurve {
 
     #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     fn cycle_phase(&self, time: f64) -> Result<(u64, f64), AnimationError> {
-        if !time.is_finite() || time < 0. {
-            return Err(AnimationError::InvalidSampleTime);
-        }
-        if self.0.playback == Playback::Clamp {
-            return Ok((0, time.min(self.0.duration)));
-        }
-        let cycles = (time / self.0.duration).floor();
-        // Beyond exact integer f64 range there is no reliable authored loop index.
-        if cycles > 9_007_199_254_740_991. {
-            return Err(AnimationError::RootRotationBudget);
-        }
-        Ok((cycles as u64, time.rem_euclid(self.0.duration)))
+        let proof=crate::enclose_root_cycle_phase(time,self.0.duration as f32,self.0.playback)
+            .map_err(|error|if error==AnimationError::RootRigidBudget {
+                AnimationError::RootRotationBudget
+            } else {error})?;
+        Ok((proof.cycle(),proof.phase()))
     }
 
     pub(super) fn phase_rotation(&self, time: f64) -> Result<DQuat, AnimationError> {
@@ -844,6 +998,28 @@ fn log(mut q: DQuat) -> DVec3 {
         vector * (2. * length.atan2(q.w) / length)
     }
 }
+fn power_with_error(mut q:DQuat,mut error:[f64;4],mut n:u64)
+    -> Result<(DQuat,[f64;4]),AnimationError> {
+    let mut result=DQuat::IDENTITY;
+    let mut result_error=[0.;4];
+    while n!=0 {
+        if n&1!=0 {
+            let next=(result*q).normalize();
+            result_error=crate::root_rigid::quaternion_composition_evaluation_error_bounds(
+                result.to_array(),result_error,q.to_array(),error,next.to_array())?;
+            result=next;
+        }
+        n>>=1;
+        let next=(q*q).normalize();
+        if n!=0 {
+            error=crate::root_rigid::quaternion_composition_evaluation_error_bounds(
+                q.to_array(),error,q.to_array(),error,next.to_array())?;
+        }
+        q=next;
+    }
+    Ok((result,result_error))
+}
+
 fn power(mut q: DQuat, mut n: u64) -> DQuat {
     let mut result = DQuat::IDENTITY;
     while n != 0 {
@@ -1410,5 +1586,113 @@ mod tests {
             &animation.clone().root_rotation_curve(0).unwrap().0
         ));
         assert_eq!(accepted.path(0., 1., 1).unwrap().angular_travel_bound(), 0.);
+    }
+}
+
+#[cfg(test)]
+mod key_normalization_proof_tests {
+    use super::*;
+    #[test]
+    fn normalization_proof_preserves_exact_zero_key_components() {
+        let keys = [QuatKey {time:0.,value:Quat::from_xyzw(0.,0.7,0.,0.7)},
+            QuatKey {time:1.,value:Quat::from_xyzw(0.,1.,0.,0.)}];
+        for mode in [Interpolation::Step,Interpolation::Linear,Interpolation::CubicSpline] {
+            let curve = RootRotationCurve::new(&keys,mode,&[[Vec4::ZERO;2];2],
+                Quat::IDENTITY,1.,Playback::Clamp).unwrap();
+            let errors = curve.key_normalization_error_bounds();
+            assert_eq!(errors[0],0.);
+            assert_eq!(errors[2],0.);
+            let unit = 0.5_f64.sqrt();
+            let rounded = curve.0.knots[0].value;
+            assert!((rounded.y-unit).abs()<=errors[1]);
+            assert!((rounded.w-unit).abs()<=errors[3]);
+            assert!(errors.iter().all(|error|error.is_finite() && *error<1e-12));
+        }
+        assert!(crate::root_rigid::quaternion_normalization_error_bounds([0.;4],[0.;4]).is_err());
+        assert!(crate::root_rigid::quaternion_normalization_error_bounds([f64::NAN;4],[0.;4]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod cubic_compilation_proof_tests {
+    use super::*;
+    #[test]
+    fn cubic_controls_cover_duration_tangent_rounding_and_preserve_zero_axes() {
+        let keys = [QuatKey {time:0.,value:Quat::IDENTITY},
+            QuatKey {time:0.3,value:Quat::from_xyzw(0.,0.5,0.,0.5)}];
+        let tangents = [[Vec4::ZERO,Vec4::new(0.,0.1,0.,0.)],
+            [Vec4::new(0.,-0.2,0.,0.),Vec4::ZERO]];
+        let curve = RootRotationCurve::new(&keys,Interpolation::CubicSpline,&tangents,
+            Quat::IDENTITY,1.,Playback::Clamp).unwrap();
+        let error = curve.cubic_control_compilation_error_bounds().unwrap();
+        assert_eq!(error[0],0.);
+        assert_eq!(error[2],0.);
+        assert_eq!(error[3],0.);
+        assert!(error[1]>0. && error[1]<1e-12);
+        let normalized = curve.cubic_normalized_compilation_error_bounds().unwrap().unwrap();
+        let uniform=curve.cubic_interval_evaluation_error_bounds(0.,f64::from(keys[1].time)).unwrap().unwrap();
+        assert_eq!(uniform[0],0.);assert_eq!(uniform[2],0.);
+        assert!(uniform.iter().all(|value|value.is_finite() && *value<1e-12));
+        assert!(curve.cubic_interval_evaluation_error_bounds(0.,0.5).is_err());
+
+        let restricted = curve.cubic_piece_compilation_error_bounds(0.125,0.25).unwrap().unwrap();
+        assert_eq!(restricted[0],0.);
+        assert_eq!(restricted[2],0.);
+        assert!(restricted.iter().all(|value|value.is_finite() && *value<1e-12));
+        assert!(curve.cubic_piece_compilation_error_bounds(0.125,0.5).is_err());
+        for step in 0..=32 {
+            let phase = f64::from(keys[1].time)*f64::from(step)/32.;
+            let evaluation = curve.cubic_phase_evaluation_error_bounds(phase).unwrap().unwrap();
+            println!("CUBIC_UNIFORM_SAMPLE {:?}",(phase,curve.local(phase).unwrap().to_array(),uniform));
+
+            assert_eq!(evaluation[0],0.);
+            assert_eq!(evaluation[2],0.);
+            assert!(evaluation.iter().all(|error|error.is_finite() && *error<1e-12));
+        }
+        assert!(curve.cubic_phase_evaluation_error_bounds(f64::NAN).is_err());
+        assert!(curve.cubic_phase_evaluation_error_bounds(-0.1).is_err());
+
+
+        assert_eq!(normalized[0],0.);
+        assert_eq!(normalized[2],0.);
+        assert!(normalized.iter().all(|error|error.is_finite() && *error<1e-12));
+        let singular = [[0.,0.,0.,1.],[0.,0.,0.,1.],
+            [0.,0.,0.,-1.],[0.,0.,0.,-1.]];
+        assert!(crate::root_rigid::quaternion_cubic_normalized_error_bounds(singular,[0.;4]).is_err());
+        assert!(crate::root_rigid::quaternion_cubic_normalized_error_bounds([[0.,0.,0.,1.];4],[1.;4]).is_err());
+
+        let linear = RootRotationCurve::new(&keys,Interpolation::Linear,&[],
+            Quat::IDENTITY,1.,Playback::Clamp).unwrap();
+        assert!(linear.cubic_control_compilation_error_bounds().is_none());
+        assert!(crate::root_rigid::quaternion_cubic_control_error_bounds(
+            [[0.;4];2],[[0.;4];2],[1.,0.],[[0.;4];4]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod relative_phase_proof_tests {
+    use super::*;
+    #[test]
+    fn cubic_relative_phase_compares_nonidentity_origin_without_losing_axis_zeros() {
+        let keys=[QuatKey {time:0.,value:Quat::from_xyzw(0.,0.5,0.,0.5)},
+            QuatKey {time:1.,value:Quat::from_xyzw(0.,1.,0.,0.)}];
+        let curve=RootRotationCurve::new(&keys,Interpolation::CubicSpline,
+            &[[Vec4::ZERO;2];2],Quat::IDENTITY,1.,Playback::Loop).unwrap();
+        let error=curve.cubic_relative_phase_evaluation_error_bounds(0.5).unwrap().unwrap();
+        let actual=curve.phase_rotation(0.5).unwrap();
+        // Raw midpoint is (0,3/4,0,1/4); removing initial (0,1,0,1)/sqrt(2)
+        // gives the independent relative reference (0,1,0,2)/sqrt(5).
+        let expected=[0.,1./5_f64.sqrt(),0.,2./5_f64.sqrt()];
+        for axis in 0..4 {assert!((actual.to_array()[axis]-expected[axis]).abs()<=error[axis]);}
+        assert_eq!(error[0],0.);assert_eq!(error[2],0.);
+        assert!(error.iter().all(|value|value.is_finite() && *value<1e-12));
+        assert!(curve.cubic_relative_phase_evaluation_error_bounds(f64::NAN).is_err());
+        let cycle_error=curve.cubic_cycle_phase_evaluation_error_bounds(4,0.5).unwrap().unwrap();
+        let actual=curve.sample(4.5).unwrap().to_array();
+        for axis in 0..4 {assert!((actual[axis]+expected[axis]).abs()<=cycle_error[axis]);}
+        assert_eq!(cycle_error[0],0.);assert_eq!(cycle_error[2],0.);
+        assert!(cycle_error.iter().all(|value|value.is_finite() && *value<1e-11));
+        assert!(curve.cubic_cycle_phase_evaluation_error_bounds(1,f64::NAN).is_err());
+
     }
 }

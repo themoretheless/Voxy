@@ -64,6 +64,7 @@ pub(super) struct OwnerFadeFrame {
     pub scale: f64,
     pub coordinate_axis: usize,
     pub evaluation_radius: f64,
+    pub evaluation_axes: Option<[f64;3]>,
 }
 
 pub(super) struct AdmittedOwnerFade<'a> {
@@ -346,6 +347,55 @@ impl AnimationRuntime {
         Ok(candidate)
     }
 
+    /// Stage scene selections and compile every initialized rigid fade before any
+    /// clock advances. Quality limits are supplied by the caller; this does not
+    /// invent a production sampling-error allowance.
+    pub(super) fn prepare_scene_fades(
+        &self, scene: &SceneGraph, models: &BTreeMap<AssetId, Arc<ModelAsset>>,
+        dt: f64, origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+    ) -> Result<(Self, Vec<PreparedOwnerFade>), String> {
+        let mut candidate = self.clone();
+        let mut prepared = Vec::new();
+        for (owner, instance) in scene.active_components::<ModelInstance>() {
+            let Some(state) = candidate.owners.get(&owner) else { continue; };
+            if state.root_reference.is_none() { continue; }
+            let model = models.get(&instance.asset).ok_or("fade model is not loaded")?;
+            candidate = candidate.stage_owner_selection(scene, models, owner, model)?;
+            let state = &candidate.owners[&owner];
+            if state.root_reference.is_some() && state.playback.has_transition() {
+                if let Some(fade) = candidate.prepare_owner_fade(scene, models, owner, model,
+                    dt, origin_tolerance, angular_tolerance, max_spans)? {
+                    prepared.push(fade);
+                }
+            }
+        }
+        Ok((candidate, prepared))
+    }
+
+    /// Complete scene-driven selection, plan admission and physical publication
+    /// through the same mixed-tick transaction used by explicitly prepared fades.
+    pub(super) fn fixed_step_scene_fades(
+        &self, scene: &mut SceneGraph, models: &BTreeMap<AssetId, Arc<ModelAsset>>,
+        physics: &mut voxy_gameplay::CharacterPhysics, input: &mut voxy_input::InputMap,
+        dt: f64, origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
+        frames: &BTreeMap<NodeId, OwnerFadeFrame>,
+    ) -> Result<(Vec<voxy_gameplay::AppliedCharacterTrajectoryMotion>, Self),
+        voxy_gameplay::CharacterTickError<String>> {
+        let (candidate, plans) = self.prepare_scene_fades(scene, models, dt,
+            origin_tolerance, angular_tolerance, max_spans)
+            .map_err(voxy_gameplay::CharacterTickError::Preparation)?;
+        let requests = plans.iter().map(|plan| {
+            frames.get(&plan.owner).copied().map(|frame|(plan,frame))
+                .ok_or_else(||"fade evaluation frame is missing".to_string())
+        }).collect::<Result<Vec<_>,_>>()
+            .map_err(voxy_gameplay::CharacterTickError::Preparation)?;
+        if requests.len() != frames.len() {
+            return Err(voxy_gameplay::CharacterTickError::Preparation(
+                "fade evaluation frame has no active plan".into()));
+        }
+        candidate.fixed_step_owner_fades(scene, models, physics, input, dt, &requests)
+    }
+
     /// Revalidates scene admission and performs physics plus accepted-pose
     /// preparation without exposing an intervening scene mutation opportunity.
     pub(super) fn fixed_step_owner_fades(
@@ -362,9 +412,12 @@ impl AnimationRuntime {
             }
             prepared.admit_scene(scene, models)
         }).collect::<Result<Vec<_>, String>>().map_err(CharacterTickError::Preparation)?;
-        let requests = admitted.iter().zip(fades).map(|(admitted, (_, frame))|
-            admitted.request(frame.basis, frame.origin, frame.scale,
-                frame.coordinate_axis, frame.evaluation_radius)).collect::<Vec<_>>();
+        let requests = admitted.iter().zip(fades).map(|(admitted, (_, frame))| {
+            let mut request = admitted.request(frame.basis, frame.origin, frame.scale,
+                frame.coordinate_axis, frame.evaluation_radius);
+            request.evaluation_axes = frame.evaluation_axes;
+            request
+        }).collect::<Vec<_>>();
         let deferred = fades.iter().map(|(prepared, _)| prepared.owner).collect::<HashSet<_>>();
         let ordinary = self.prepare_deferred(scene, models, dt as f32, &deferred)
             .map_err(CharacterTickError::Preparation)?;
@@ -380,7 +433,7 @@ impl AnimationRuntime {
                         .ok_or("fade accepted pose disappeared")?;
                     candidate = candidate.accept_fade(&admitted.prepared.model, admitted, receipt, pose)?;
                 }
-                candidate.correct_feet(preview, budget)
+                candidate.prepare_accepted_pose(preview, budget)
             })
     }
 
@@ -408,9 +461,11 @@ impl AnimationRuntime {
         self.owners.values().any(|owner| owner.feet.is_some())
     }
     pub(super) fn requires_pose_preparation(&self) -> bool {
-        self.has_foot_placement() || self.owners.values().any(|owner| owner.root_reference.is_some())
+        self.has_foot_placement() || self.owners.values().any(|owner| owner.root_reference.is_some()
+            || (owner.settings.root_motion_rotation && owner.settings.clip.is_some()
+                && owner.retarget_binding.is_none()))
     }
-    pub(super) fn correct_feet(mut self, preview: &voxy_gameplay::CharacterTickPreview,
+    pub(super) fn prepare_accepted_pose(mut self, preview: &voxy_gameplay::CharacterTickPreview,
         budget: &mut voxy_gameplay::SupportQueryBudget) -> Result<Self, String> {
         for accepted in &preview.characters {
             let Some(owner) = self.owners.get_mut(&accepted.owner) else { continue; };
@@ -421,6 +476,16 @@ impl AnimationRuntime {
             reference.authored_to_body = reference.authored_to_body
                 .transported_body_reference(&reference.body_to_world,&body).map_err(|error| error.to_string())?;
             reference.body_to_world = body;
+        } else if owner.settings.root_motion_rotation && owner.settings.clip.is_some()
+            && owner.retarget_binding.is_none() {
+            let root = owner.settings.resolve_motion_joint(&owner.animation_model)?;
+            let (frame, scale) = constant_parent_similarity_enclosure(&owner.model, root)?;
+            let authored_to_body = owner.playback.reference_at_current_phase(
+                owner.settings.root_motion_axes, frame, scale)?;
+            let body_to_world = voxy_animation::RootRigidEnclosure::from_transform(voxy_animation::RootRigidTransform {
+                translation: accepted.physical_center, rotation: accepted.physical_rotation,
+            }).map_err(|error| error.to_string())?;
+            owner.root_reference = Some(RootReference { scale, body_to_world, authored_to_body });
         }
             let Some(feet) = &mut owner.feet else { continue; };
             owner.frame = Arc::new(feet.correct_at_phase(&owner.model, (*owner.frame).clone(),

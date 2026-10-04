@@ -202,6 +202,61 @@ impl RootScrewEnclosurePath<'_> {
 }
 
 impl RootRigidEnclosure {
+    /// Uniform rounding-only error for publishing any real coordinate in this
+    /// world box as IEEE-754 round-to-nearest f32. Does not cover earlier point
+    /// evaluation arithmetic. A caller may supply a whole-tick world enclosure.
+    pub fn enclosed_f32_publication_error(
+        world: [[f64;2];3],
+    ) -> Result<([f64;3],f64),AnimationError> {
+        let mut axes = [0.;3];
+        let mut radius = Scalar::exact(0.);
+        for axis in 0..3 {
+            let [lo,hi] = world[axis];
+            let magnitude = lo.abs().max(hi.abs());
+            if !lo.is_finite() || !hi.is_finite() || lo > hi
+                || magnitude > f64::from(f32::MAX) {
+                return Err(AnimationError::NumericalOverflow);
+            }
+            axes[axis] = if lo == hi {
+                let delta = Scalar::exact(lo).sub(Scalar::exact(f64::from(lo as f32)))?;
+                delta.0.abs().max(delta.1.abs())
+            } else {
+                let mut upper = magnitude as f32;
+                if f64::from(upper) < magnitude { upper = upper.next_up(); }
+                // One full adjacent spacing bounds nearest rounding across all
+                // smaller magnitudes, including subnormals and binade changes.
+                if upper == f32::MAX {
+                    f64::from(upper)-f64::from(upper.next_down())
+                } else {
+                    f64::from(upper.next_up())-f64::from(upper)
+                }
+            };
+            radius = radius.add(Scalar::exact(axes[axis]))?;
+        }
+        Ok((axes,radius.1))
+    }
+
+    /// Bounds the discrepancy between the exact enclosed similarity image and
+    /// a supplied, already evaluated world point (including f32 publication).
+    /// Returns world-axis absolute bounds and an outward L1 radius covering the
+    /// Euclidean discrepancy. This certifies this point/pose only, not all times
+    /// in a trajectory or upstream curve compilation.
+    pub fn enclosed_point_evaluation_error(
+        &self, point: [[f64;2];3], scale: f64, evaluated: DVec3,
+    ) -> Result<([f64;3],f64),AnimationError> {
+        if !evaluated.is_finite() { return Err(AnimationError::NumericalOverflow); }
+        let image = self.similarity_point_box_bounds(point,scale)?;
+        let mut axes = [0.;3];
+        let mut radius = Scalar::exact(0.);
+        for axis in 0..3 {
+            let delta = Scalar(image[axis][0],image[axis][1])
+                .sub(Scalar::exact(evaluated[axis]))?;
+            axes[axis] = delta.0.abs().max(delta.1.abs());
+            radius = radius.add(Scalar::exact(axes[axis]))?;
+        }
+        Ok((axes,radius.1))
+    }
+
     /// Outward image of every point in a coordinate box under this rigid frame.
     pub fn transform_point_box_bounds(
         &self,

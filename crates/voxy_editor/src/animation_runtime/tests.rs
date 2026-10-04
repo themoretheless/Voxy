@@ -764,7 +764,7 @@ fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
         assert!(Arc::ptr_eq(&before,&runtime.frame(owner,&model).unwrap()));
     }
     let frame_request = OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-        scale:1.,coordinate_axis:1,evaluation_radius:0.};
+        scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
     scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().root_motion_axes = [false;3];
     assert!(runtime.fixed_step_owner_fades(&mut scene,&models,&mut physics,&mut input,
         dt,&[(&staged,frame_request)]).is_err());
@@ -811,7 +811,7 @@ fn ordinary_preparation_transports_root_reference_without_foot_settings() {
     let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,1,0);
     let mut input = voxy_gameplay::player_input().unwrap();
     let (_,accepted) = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,
-        &[(owner,Vec3::X*0.25)],&[],|preview,budget| candidate.clone().correct_feet(preview,budget)).unwrap();
+        &[(owner,Vec3::X*0.25)],&[],|preview,budget| candidate.clone().prepare_accepted_pose(preview,budget)).unwrap();
     let reference = accepted.owners[&owner].root_reference.unwrap();
     for bounds in reference.body_to_world.compose(&reference.authored_to_body).unwrap().translation_bounds() {
         assert!(bounds[0]<=0. && bounds[1]>=0.);
@@ -913,7 +913,7 @@ fn owner_fade_operation_admits_all_owners_before_any_publication() {
     let a = runtime.prepare_owner_fade(&scene,&models,first,&model,dt,0.01,0.01,4096).unwrap().unwrap();
     let b = runtime.prepare_owner_fade(&scene,&models,second,&model,dt,0.01,0.01,4096).unwrap().unwrap();
     let frame = OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-        scale:1.,coordinate_axis:1,evaluation_radius:0.};
+        scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
     let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,3,0);
     let mut input = voxy_gameplay::player_input().unwrap();
     scene.component_mut::<ModelAnimation>(second).unwrap().unwrap().root_motion_axes=[false;3];
@@ -994,9 +994,9 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
     assert!(runtime.capture_owner_reference_from_parent(&scene,&models,&physics,owner,&model).is_err());
     assert!(runtime.owners[&owner].root_reference.is_none());
     runtime = physics.fixed_step_with_preparation(&mut scene,&mut input,1./120.,&[],&[],
-        |preview,budget|runtime.clone().correct_feet(preview,budget)).unwrap().1;
+        |preview,budget|runtime.clone().prepare_accepted_pose(preview,budget)).unwrap().1;
     assert!(physics.state(&scene,owner).unwrap().unwrap().grounded);
-    runtime = runtime.capture_owner_reference_from_parent(&scene,&models,&physics,owner,&model).unwrap();
+    assert!(runtime.owners[&owner].root_reference.is_some());
     scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().clip = Some(1);
     scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().transition_seconds = 0.125;
     let before_selection = runtime.frame(owner,&model).unwrap();
@@ -1029,7 +1029,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
     scene.component_mut::<ModelFootPlacement>(owner).unwrap().unwrap().feet[0].plant = true;
     let (receipts,accepted) = runtime.fixed_step_owner_fades(&mut scene,&models,&mut physics,
         &mut input,1./60.,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,
-            origin:Vec3::ZERO,scale:1.,coordinate_axis:1,evaluation_radius:0.})]).unwrap();
+            origin:Vec3::ZERO,scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
     assert!(receipts[0].complete);
     assert!(scene.local(owner).unwrap().translation.x>0.);
     assert!(scene.local(owner).unwrap().rotation != glam::Quat::IDENTITY);
@@ -1066,7 +1066,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
             physics = physics.with_angular_trajectory_query_budget(1).unwrap();
             assert!(accepted.fixed_step_owner_fades(&mut scene,&models,&mut physics,&mut input,
                 1./60.,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-                    scale:1.,coordinate_axis:1,evaluation_radius:0.})]).is_err());
+                    scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).is_err());
             assert_eq!(scene.local(owner).unwrap(),before_pose);
             assert!(Arc::ptr_eq(&before_frame,&accepted.frame(owner,&model).unwrap()));
             assert_eq!(accepted.clip_phase(owner).unwrap(),before_phase);
@@ -1076,7 +1076,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
         let prior_phase = accepted.clip_phase(owner).unwrap();
         let (receipts,next) = accepted.fixed_step_owner_fades(&mut scene,&models,&mut physics,&mut input,
             1./60.,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-                scale:1.,coordinate_axis:1,evaluation_radius:0.})]).unwrap();
+                scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
         if !receipts[0].complete {
             clipped = true;
             partial_advance |= next.clip_phase(owner).unwrap() > prior_phase;
@@ -1137,7 +1137,7 @@ fn signed_reference_scale_survives_body_transport_and_next_fade() {
                 .unwrap().unwrap();
             let (receipts,accepted) = runtime.fixed_step_owner_fades(&mut scene,&models,&mut physics,
                 &mut input,0.0625,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,
-                    origin:Vec3::ZERO,scale:1.,coordinate_axis:1,evaluation_radius:0.})]).unwrap();
+                    origin:Vec3::ZERO,scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
             assert!(receipts[0].complete);
             assert!((f64::from(scene.local(owner).unwrap().translation.x)-scale*2.*0.0625*f64::from(step)).abs()<1e-6);
             let reference = accepted.owners[&owner].root_reference.unwrap();
@@ -1189,4 +1189,144 @@ fn root_parent_capture_encloses_nested_reflections_and_rejects_moving_frames() {
     json["animations"][0]["channels"][0]["target"]["node"] = serde_json::json!(2);
     let moving = parse(&json);
     assert!(constant_parent_similarity_enclosure(&moving,moving.resolve_joint_name("root").unwrap()).is_err());
+}
+
+#[test]
+fn first_accepted_pose_bootstraps_root_reference_atomically_without_feet() {
+    let (mut scene,owner,model,models) = fixture();
+    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().root_motion_rotation = true;
+    scene.insert_component(owner,voxy_gameplay::CharacterBody {speed:0.,gravity:0.,..Default::default()}).unwrap();
+    let runtime = AnimationRuntime::default().prepare(&scene,&models,1./60.).unwrap();
+    assert!(!runtime.has_foot_placement());
+    assert!(runtime.requires_pose_preparation());
+    assert!(runtime.owners[&owner].root_reference.is_none());
+    let before = scene.local(owner).unwrap();
+    let frame = runtime.frame(owner,&model).unwrap();
+    let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,1,0);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let failed = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,
+        &[(owner,Vec3::X*0.25)],&[],|preview,budget| {
+            let candidate = runtime.clone().prepare_accepted_pose(preview,budget)?;
+            assert!(candidate.owners[&owner].root_reference.is_some());
+            Err::<AnimationRuntime,String>("reject after root initialization".into())
+        });
+    assert!(failed.is_err());
+    assert_eq!(scene.local(owner).unwrap(),before);
+    assert!(physics.accepted_pose(&scene,owner).unwrap().is_none());
+    assert!(runtime.owners[&owner].root_reference.is_none());
+    assert!(Arc::ptr_eq(&frame,&runtime.frame(owner,&model).unwrap()));
+    let (_,accepted) = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,
+        &[(owner,Vec3::X*0.25)],&[],|preview,budget|
+            runtime.clone().prepare_accepted_pose(preview,budget)).unwrap();
+    let reference = accepted.owners[&owner].root_reference.unwrap();
+    let pose = physics.accepted_pose(&scene,owner).unwrap().unwrap();
+    for (bound,value) in reference.body_to_world.translation_bounds().into_iter()
+        .zip(pose.physical_center.to_array()) {
+        assert!(bound[0] <= value && value <= bound[1]);
+    }
+    assert!(runtime.owners[&owner].root_reference.is_none());
+}
+
+#[test]
+fn scene_fade_batch_stages_selection_without_advancing_and_rejects_late_owner() {
+    let (mut scene,first,original,_) = fixture();
+    let mut asset = (*original).clone();
+    asset.animations.push(Arc::new(voxy_animation::AnimationClip::new("second",1.,
+        voxy_animation::Playback::Loop,vec![voxy_animation::JointTrack::default();
+            asset.skeleton.joints().len()],&asset.skeleton).unwrap()));
+    let model = Arc::new(asset);
+    let models = BTreeMap::from([(AssetId("rig".into()),model.clone())]);
+    let second = scene.spawn(None,voxy_scene::Transform {translation:Vec3::X*2.,..Default::default()}).unwrap();
+    scene.insert_component(second,ModelInstance {asset:AssetId("rig".into())}).unwrap();
+    for owner in [first,second] {
+        scene.insert_component(owner,voxy_gameplay::CharacterBody {speed:0.,gravity:0.,..Default::default()}).unwrap();
+        scene.insert_component(owner,ModelAnimation {root_motion_rotation:true,
+            root_motion_axes:[true,false,false],..Default::default()}).unwrap();
+    }
+    let mut runtime = AnimationRuntime::default().prepare(&scene,&models,1./60.).unwrap();
+    for owner in [first,second] {
+        runtime.initialize_root_reference(owner,&model,voxy_animation::RootRigidTransform {
+            translation:scene.local(owner).unwrap().translation.as_dvec3(),
+            ..voxy_animation::RootRigidTransform::IDENTITY},
+            voxy_animation::RootRigidEnclosure::IDENTITY).unwrap();
+        let settings = scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap();
+        settings.clip = Some(1);
+        settings.transition_seconds = 0.125;
+    }
+    let phase = runtime.clip_phase(first).unwrap();
+    let frame = runtime.frame(first,&model).unwrap();
+    let (candidate,plans) = runtime.prepare_scene_fades(&scene,&models,1./60.,0.01,0.01,4096).unwrap();
+    assert_eq!(plans.len(),2);
+    assert_eq!(candidate.clip_phase(first).unwrap(),0.);
+    assert_eq!(candidate.serial(),runtime.serial());
+    assert!(Arc::ptr_eq(&frame,&candidate.frame(first,&model).unwrap()));
+    assert_eq!(runtime.owners[&first].settings.clip,Some(0));
+    assert_eq!(candidate.owners[&first].settings.clip,Some(1));
+    scene.component_mut::<ModelAnimation>(second).unwrap().unwrap().clip = Some(99);
+    assert!(runtime.prepare_scene_fades(&scene,&models,1./60.,0.01,0.01,4096).is_err());
+    assert_eq!(runtime.owners[&first].settings.clip,Some(0));
+    assert_eq!(runtime.clip_phase(first).unwrap(),phase);
+    assert!(Arc::ptr_eq(&frame,&runtime.frame(first,&model).unwrap()));
+    scene.component_mut::<ModelAnimation>(second).unwrap().unwrap().clip = Some(1);
+    let request = OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
+        scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
+    let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,2,0);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let before = scene.local(first).unwrap();
+    assert!(runtime.fixed_step_scene_fades(&mut scene,&models,&mut physics,&mut input,
+        1./60.,0.01,0.01,4096,&BTreeMap::from([(first,request)])).is_err());
+    assert_eq!(scene.local(first).unwrap(),before);
+    assert!(physics.accepted_pose(&scene,first).unwrap().is_none());
+    let (receipts,accepted) = runtime.fixed_step_scene_fades(&mut scene,&models,
+        &mut physics,&mut input,1./60.,0.01,0.01,4096,
+        &BTreeMap::from([(first,request),(second,request)])).unwrap();
+    assert_eq!(receipts.len(),2);
+    for owner in [first,second] {
+        assert!(physics.accepted_pose(&scene,owner).unwrap().is_some());
+        assert_eq!(accepted.owners[&owner].settings.clip,Some(1));
+        assert!(accepted.clip_phase(owner).unwrap()>0.);
+        assert_eq!(runtime.owners[&owner].settings.clip,Some(0));
+    }
+    assert!(!Arc::ptr_eq(&frame,&accepted.frame(first,&model).unwrap()));
+}
+
+#[test]
+fn rigid_bind_pose_waits_for_clip_before_reference_bootstrap() {
+    let (mut scene,owner,model,models) = fixture();
+    scene.insert_component(owner,voxy_gameplay::CharacterBody {speed:0.,gravity:0.,..Default::default()}).unwrap();
+    scene.insert_component(owner,ModelAnimation {clip:None,root_motion_rotation:true,
+        root_motion_axes:[true,false,false],..Default::default()}).unwrap();
+    let runtime = AnimationRuntime::default().prepare(&scene,&models,1./60.).unwrap();
+    assert!(!runtime.requires_pose_preparation());
+    let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,1,0);
+    let mut input = voxy_gameplay::player_input().unwrap();
+    let (_,runtime) = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,
+        &[],&[],|preview,budget|runtime.clone().prepare_accepted_pose(preview,budget)).unwrap();
+    assert!(runtime.owners[&owner].root_reference.is_none());
+    assert_eq!(runtime.frame(owner,&model).unwrap().pose.local(),model.skeleton.bind_pose().local());
+    scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().clip = Some(0);
+    let candidate = runtime.prepare(&scene,&models,1./60.).unwrap();
+    assert!(candidate.requires_pose_preparation());
+    let (_,accepted) = physics.fixed_step_with_preparation(&mut scene,&mut input,1./60.,
+        candidate.motions(),&candidate.trajectories(),|preview,budget|
+            candidate.clone().prepare_accepted_pose(preview,budget)).unwrap();
+    assert!(accepted.owners[&owner].root_reference.is_some());
+    assert!(runtime.owners[&owner].root_reference.is_none());
+}
+
+#[test]
+fn imported_model_retains_translation_and_rotation_compilation_proofs() {
+    let (_,_,model,_) = fixture();
+    let clip = &model.animations[0];
+    let curve = clip.root_rigid_curve(0).unwrap();
+    assert!(curve.translation_compilation_error_bounds().unwrap().iter().all(|error|error.is_finite()));
+    assert!(curve.rotation_key_normalization_error_bounds().iter().all(|error|error.is_finite()));
+    for step in 0..=32 {
+        let phase = f64::from(clip.duration())*f64::from(step)/32.;
+        let error = curve.translation_phase_evaluation_error_bounds(phase).unwrap();
+        assert!(error.iter().all(|error|error.is_finite() && *error<1e-12));
+        assert_eq!(error[1],0.);
+        assert_eq!(error[2],0.);
+    }
+    assert!(curve.rotation_cubic_phase_evaluation_error_bounds(0.25).unwrap().is_none());
 }

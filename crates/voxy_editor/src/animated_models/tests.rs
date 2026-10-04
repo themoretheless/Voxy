@@ -1300,7 +1300,7 @@ fn planted_foot_gpu_acceptance(retarget: bool) {
     for _ in 0..4 {
         let candidate = runtime.prepare(&scene,&models,1. / 60.).unwrap();
         runtime = physics.fixed_step_with_preparation(&mut scene,&mut input,1. / 60.,
-            &[(first,Vec3::X*0.03)],&[],|preview,budget| candidate.clone().correct_feet(preview,budget)).unwrap().1;
+            &[(first,Vec3::X*0.03)],&[],|preview,budget| candidate.clone().prepare_accepted_pose(preview,budget)).unwrap().1;
     }
     let frame = runtime.frame(first,&model).unwrap();
     if retarget {

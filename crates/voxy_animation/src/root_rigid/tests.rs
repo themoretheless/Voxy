@@ -1987,3 +1987,92 @@ fn accumulated_scale_products_retain_outward_bounds_through_fade_assembly() {
         assert!(field.approximation().angular_error_bound<=0.01);
     }
 }
+
+#[test]
+fn point_evaluation_error_encloses_large_coordinate_publication_and_reflections() {
+    let frame = RootRigidEnclosure::from_transform(RootRigidTransform {
+        translation:DVec3::new(16777216.,0.,0.),
+        rotation:DQuat::from_xyzw(0.,1.,0.,0.),
+    }).unwrap();
+    let point = DVec3::new(1.,0.25,-0.5);
+    for scale in [-1.,0.5,2.] {
+        // An exact dyadic half-turn is diag(-1,1,-1); no trigonometric reference.
+        let exact = DVec3::new(16777216.-scale,scale*0.25,scale*0.5);
+        let published = exact.as_vec3().as_dvec3();
+        let (axes,radius) = frame.enclosed_point_evaluation_error(
+            point.to_array().map(|value|[value,value]),scale,published).unwrap();
+        let delta = exact-published;
+        for axis in 0..3 { assert!(delta[axis].abs() <= axes[axis]); }
+        assert!(delta.length() <= radius);
+        assert!(axes.iter().all(|value| *value <= radius));
+        if scale == -1. { assert!(axes[0] >= 1.); }
+    }
+    let zero = RootRigidEnclosure::IDENTITY.enclosed_point_evaluation_error(
+        [[0.,0.];3],1.,DVec3::ZERO).unwrap();
+    assert_eq!(zero,([0.;3],0.));
+    assert!(frame.enclosed_point_evaluation_error([[0.,0.];3],1.,DVec3::splat(f64::NAN)).is_err());
+    assert!(frame.enclosed_point_evaluation_error([[1.,-1.];3],1.,DVec3::ZERO).is_err());
+    assert!(frame.enclosed_point_evaluation_error([[0.,0.];3],f64::INFINITY,DVec3::ZERO).is_err());
+}
+
+#[test]
+fn f32_publication_box_bound_covers_binades_subnormals_and_fixed_axes() {
+    let ranges = [(-16777218.,16777218.),(0.,f64::from(f32::from_bits(8))),
+        (-1.0000001,1.0000001),(f64::from(f32::MAX.next_down()),f64::from(f32::MAX))];
+    for (lo,hi) in ranges {
+        let (axes,radius) = RootRigidEnclosure::enclosed_f32_publication_error(
+            [[lo,hi],[0.25,0.25],[0.,0.]]).unwrap();
+        assert_eq!(axes[1],0.);
+        assert_eq!(axes[2],0.);
+        for i in 0..=64 {
+            let value = lo*(1.-f64::from(i)/64.)+hi*(f64::from(i)/64.);
+            let error = (value-f64::from(value as f32)).abs();
+            assert!(error <= axes[0]);
+            assert!(error <= radius);
+        }
+    }
+    let (axes,radius) = RootRigidEnclosure::enclosed_f32_publication_error(
+        [[16777217.,16777217.],[0.,0.],[0.,0.]]).unwrap();
+    assert!(axes[0]>=1. && radius>=1.);
+    for invalid in [[[1.,-1.];3],[[0.,f64::INFINITY];3],[[f64::MAX,f64::MAX];3]] {
+        assert!(RootRigidEnclosure::enclosed_f32_publication_error(invalid).is_err());
+    }
+}
+
+#[test]
+fn whole_path_point_box_encloses_multiple_screw_spans_and_publication() {
+    let path = RootRigidPath::from_twists(&[
+        (RootRigidTwist {linear:DVec3::X*2.,angular:DVec3::Y*0.2},0.25),
+        (RootRigidTwist {linear:-DVec3::X,angular:-DVec3::Y*0.1},0.5)],2).unwrap();
+    let cache = path.prepare_screw_enclosures(2).unwrap();
+    let input = [[-0.25,0.5],[0.,0.],[-0.125,0.25]];
+    let hull = cache.whole_path_point_box_bounds(input).unwrap();
+    assert_eq!(hull[1],[0.,0.]);
+    let (errors,radius) = RootRigidEnclosure::enclosed_f32_publication_error(hull).unwrap();
+    assert_eq!(errors[1],0.);
+    for span in 0..2 {
+        for step in 0..=32 {
+            let pose = cache.sample(span,f64::from(step)/32.).unwrap();
+            let image = pose.transform_point_box_bounds(input).unwrap();
+            for axis in 0..3 {
+                assert!(hull[axis][0]<=image[axis][0]);
+                assert!(hull[axis][1]>=image[axis][1]);
+            }
+            for corner in 0..8 {
+                let point = DVec3::from_array(std::array::from_fn(|axis|
+                    input[axis][usize::from(corner&(1<<axis)!=0)]));
+                let nominal = path.spans()[span].sample(f64::from(step)/32.).unwrap();
+                let world = nominal.translation+nominal.rotation*point;
+                let rounded = world.as_vec3().as_dvec3();
+                let delta = world-rounded;
+                for axis in 0..3 {assert!(delta[axis].abs()<=errors[axis]);}
+                assert!(delta.length()<=radius);
+            }
+        }
+    }
+    assert!(cache.span_fraction_enclosure(0,[-0.1,1.]).is_err());
+    assert!(cache.span_fraction_enclosure(2,[0.,1.]).is_err());
+    assert!(cache.span_fraction_enclosure(0,[0.5,0.25]).is_err());
+    let empty = RootRigidPath::from_twists(&[],0).unwrap();
+    assert_eq!(empty.prepare_screw_enclosures(0).unwrap().whole_path_point_box_bounds([[0.,0.];3]).unwrap(),[[0.,0.];3]);
+}
