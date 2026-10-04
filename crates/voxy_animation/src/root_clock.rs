@@ -73,6 +73,18 @@ pub fn enclose_root_cycle_phase(time:f64,duration:f32,playback:Playback)
     };
     Ok(RootCyclePhase {cycle,phase,bounds})
 }
+/// Local endpoints for a partition containing no interior loop seam.
+pub(crate) fn root_segment_phases(start:f64,end:f64,duration:f32,playback:Playback)
+    ->Result<[f64;2],AnimationError> {
+    if end<start {return Err(AnimationError::InvalidSampleTime);}
+    let a=enclose_root_cycle_phase(start,duration,playback)?;
+    let b=enclose_root_cycle_phase(end,duration,playback)?;
+    let last=if b.cycle()==a.cycle() {b.phase()}
+        else if b.cycle()==a.cycle()+1 && b.phase()==0. {f64::from(duration)}
+        else {return Err(AnimationError::RootRigidBudget);};
+    if last<a.phase() {return Err(AnimationError::RootRigidBudget);}
+    Ok([a.phase(),last])
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -86,6 +98,18 @@ mod tests {
         assert!(proof.phase()>=0. && proof.phase()<f64::from(duration));
         assert_eq!(proof.exact_phase_bounds(),[proof.phase();2]);
         println!("ROOT_CLOCK_PROOF {:?}",(time,f64::from(duration),proof.cycle(),proof.phase(),proof.exact_phase_bounds()));
+    }
+    #[test]
+    fn segment_endpoints_use_exact_remainders_and_keep_seam_left_limit() {
+        let duration=0.1_f32;
+        let start=109951164416.09999;
+        assert_eq!(root_segment_phases(start,start,duration,Playback::Loop).unwrap(),
+            [0.0999908447265625;2]);
+        let d=f64::from(duration);
+        assert_eq!(root_segment_phases(d.next_down(),d,duration,Playback::Loop).unwrap(),
+            [d.next_down(),d]);
+        assert!(root_segment_phases(0.,d.next_up(),duration,Playback::Loop).is_err());
+        assert_eq!(root_segment_phases(2.,3.,duration,Playback::Clamp).unwrap(),[d,d]);
     }
     #[test]
     fn seam_neighbors_clamp_and_invalid_clocks_are_explicit() {

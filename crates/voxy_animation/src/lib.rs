@@ -13,7 +13,7 @@ pub use ik::{TwoBoneChain, TwoBoneResult, TwoBoneTarget};
 mod rigid_fade;
 pub use rigid_fade::RootRigidFadePlan;
 mod root_rigid;
-pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform, RootRigidVelocity, RootRigidTwist, RootRigidApproximation, RootTwistRateBounds, RootRigidIntegrationDomain, RootMotionInterval, RootMotionStep, RootMotionPartition, RootSpatialTwistBounds, RootRigidEnclosure, RootUniformScaleEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
+pub use root_rigid::{RootRigidCurve, RootRigidPath, RootRigidSpan, RootRigidTransform, RootRigidVelocity, RootRigidTwist, RootRigidApproximation, RootTwistRateBounds, RootRigidIntegrationDomain, RootMotionInterval, RootMotionStep, RootMotionPartition, RootSpatialTwistBounds, RootRigidEnclosure, RootUniformScaleEnclosure, RootTimeCutEnclosure, RootSourceScrewPointCertificate, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
 mod root_rotation;
 pub use root_rotation::{
     MAX_ROOT_ROTATION_CACHE_KEYS, MAX_ROOT_ROTATION_KEYS, MAX_ROOT_ROTATION_SPANS,

@@ -88,6 +88,31 @@ impl RootCurve {
         Ok(bound)
     }
 
+    pub(super) fn source_position_bounds(&self,start:f64,end:f64)
+        ->Result<[[f64;2];3],super::AnimationError> {
+        self.checked_piece(start,end)?;
+        let upper=self.knots.partition_point(|k|k.time<=start);
+        if upper==0 {return Ok([[0.;2];3]);}
+        let knot=&self.knots[upper-1];
+        let error=knot.compilation_error.clone()?;
+        let (coefficients,key_times,times)=if let Some(next)=self.knots.get(upper) {
+            (knot.coefficients,[knot.time,next.time],[start,end])
+        } else {([knot.value,DVec3::ZERO,DVec3::ZERO,DVec3::ZERO],[0.,1.],[0.,0.])};
+        crate::root_rigid::translation_source_position_bounds(coefficients,error,key_times,times)
+    }
+
+    pub(super) fn source_velocity_bounds(&self,start:f64,end:f64)
+        ->Result<[[f64;2];3],super::AnimationError> {
+        self.checked_piece(start,end)?;
+        let upper=self.knots.partition_point(|knot|knot.time<=start);
+        if upper==0 || upper==self.knots.len() || self.mode==Interpolation::Step {
+            return Ok([[0.;2];3]);
+        }
+        let knot=&self.knots[upper-1];let next=&self.knots[upper];
+        crate::root_rigid::translation_source_velocity_bounds(knot.coefficients,
+            knot.compilation_error.clone()?,[knot.time,next.time],[start,end])
+    }
+
     pub(super) fn piece_error_bounds(&self, start: f64, end: f64)
         -> Result<[f64;3],super::AnimationError> {
         if !start.is_finite() || !end.is_finite() || start<0. || end<start || end>self.duration {
@@ -208,6 +233,18 @@ impl RootCurve {
         }
         let values = [self.knots[index - 1].value, self.knots[index].value];
         (values[0] != values[1]).then_some(values)
+    }
+    /// A path partition must never silently restrict one polynomial across a key.
+    pub(super) fn checked_piece(&self,start:f64,end:f64)
+        ->Result<[DVec3;4],super::AnimationError> {
+        if !start.is_finite() || !end.is_finite() || start<0. || end<start || end>self.duration {
+            return Err(super::AnimationError::InvalidSampleTime);
+        }
+        let upper=self.knots.partition_point(|knot|knot.time<=start);
+        if self.knots.get(upper).is_some_and(|next|end>next.time) {
+            return Err(super::AnimationError::RootRigidBudget);
+        }
+        Ok(self.piece(start,end))
     }
     /// Exact Bernstein controls on a single key interval; the right endpoint
     /// remains the pre-event value for STEP, assigning the jump separately.
@@ -420,6 +457,10 @@ mod compilation_error_tests {
             assert_eq!(piece[1],0.);
             assert_eq!(piece[2],0.);
             assert!(curve.piece_error_bounds(0.125,0.875).is_err());
+            assert!(curve.checked_piece(0.125,0.875).is_err());
+            assert!(curve.checked_piece(0.125,0.75_f64.next_up()).is_err());
+            assert!(curve.checked_piece(0.125,0.75).is_ok());
+            assert!(curve.checked_piece(0.75,1.).is_ok());
             assert!(curve.piece_error_bounds(f64::NAN,0.5).is_err());
             let evaluation = curve.phase_evaluation_error_bounds(0.5).unwrap();
             assert_eq!(evaluation[1],0.);
@@ -463,5 +504,27 @@ mod uniform_evaluation_tests {
         }
         assert!(curve.interval_evaluation_error_bounds(0.,0.875).is_err());
         assert!(curve.interval_evaluation_error_bounds(f64::NAN,0.5).is_err());
+    }
+}
+
+#[cfg(test)]
+mod source_velocity_tests {
+    use super::*;
+    #[test]
+    fn source_derivative_covers_linear_and_cubic_and_preserves_zero_axes() {
+        let keys=[Vec3Key {time:0.,value:Vec3::ZERO},Vec3Key {time:1.,value:Vec3::X}];
+        for mode in [Interpolation::Step,Interpolation::Linear,Interpolation::CubicSpline] {
+            let curve=RootCurve::new(&keys,mode,&[[Vec3::ZERO;2];2],1.,Playback::Clamp);
+            let bounds=curve.source_velocity_bounds(0.,1.).unwrap();
+            assert_eq!(bounds[1..],[[0.;2];2]);
+            for i in 0..=64 {
+                let u=f64::from(i)/64.;
+                let exact=match mode {Interpolation::Step=>0.,Interpolation::Linear=>1.,
+                    Interpolation::CubicSpline=>6.*u*(1.-u)};
+                assert!(bounds[0][0]<=exact && bounds[0][1]>=exact);
+            }
+            assert!(curve.source_velocity_bounds(-1.,0.5).is_err());
+            assert_eq!(curve.source_velocity_bounds(1.,1.).unwrap(),[[0.;2];3]);
+        }
     }
 }

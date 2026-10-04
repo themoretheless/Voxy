@@ -1,0 +1,9 @@
+{
+  "editor_build": "passed",
+  "runtime_tests": 20,
+  "playback_tests": 8,
+  "foot_placement_tests": 17,
+  "common_frame_applied_once": true,
+  "ordinary_app_moving_fades": false,
+  "numeric_source_publication_proofs_wired_to_physics": false
+}

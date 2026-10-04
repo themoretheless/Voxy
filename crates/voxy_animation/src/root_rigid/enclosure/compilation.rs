@@ -391,6 +391,7 @@ pub(crate) fn quaternion_cubic_interval_evaluation_error_bounds(
         squared=squared.add(source.square()?)?;
         total=total.add(level[0][axis].error)?.add(Scalar::exact(raw_error[axis]))?;
     }
+    if squared.0<=0. {return Err(AnimationError::InvalidRootRotationCurve);}
     let norm=squared.sqrt_positive()?;
     if norm.0<=total.1 {return Err(AnimationError::InvalidRootRotationCurve);}
     let error=total.mul(Scalar::exact(2.))?.div_positive(norm.0)?
@@ -424,4 +425,258 @@ pub(crate) fn quaternion_composition_evaluation_error_bounds(
         result[axis]=absolute_upper(delta);
     }
     Ok(result)
+}
+
+/// Exact-source translation derivative over a single key interval.
+pub(crate) fn translation_source_velocity_bounds(coefficients:[DVec3;4],error:[f64;3],
+    key_times:[f64;2],times:[f64;2])->Result<[[f64;2];3],AnimationError> {
+    let dt=Scalar::exact(key_times[1]).sub(Scalar::exact(key_times[0]))?;
+    let u=Scalar(times[0],times[1]).sub(Scalar::exact(key_times[0]))?
+        .div_interval_positive(dt)?;
+    let u=Scalar(u.0.max(0.),u.1.min(1.));
+    let mut result=[[0.;2];3];
+    for axis in 0..3 {
+        let coefficient=|i:usize|->Result<Scalar,AnimationError> {
+            if error[axis]==0. {Ok(Scalar::exact(coefficients[i][axis]))}
+            else {Scalar::exact(coefficients[i][axis]).add(Scalar(-error[axis],error[axis]))}
+        };
+        let numerator=coefficient(3)?.mul(Scalar::exact(3.))?.mul(u)?
+            .add(coefficient(2)?.mul(Scalar::exact(2.))?)?.mul(u)?.add(coefficient(1)?)?;
+        result[axis]=numerator.div_interval_positive(dt)?.array();
+    }
+    Ok(result)
+}
+
+/// |omega| <= 2 |raw quaternion derivative| / |raw quaternion|.
+pub(crate) fn quaternion_cubic_source_speed_bound(control:[[f64;4];4],error:[f64;4],
+    times:[f64;2])->Result<f64,AnimationError> {
+    if control.iter().flatten().any(|v|!v.is_finite()) || error.iter().any(|v|!v.is_finite() || *v<0.) {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let dt=Scalar::exact(times[1]).sub(Scalar::exact(times[0]))?;
+    let mut source=[[Scalar::exact(0.);4];4];
+    for i in 0..4 {for axis in 0..4 {
+        source[i][axis]=if error[axis]==0. {Scalar::exact(control[i][axis])}
+            else {Scalar::exact(control[i][axis]).add(Scalar(-error[axis],error[axis]))?};
+    }}
+    let mut derivative_l1=Scalar::exact(0.);
+    for axis in 0..4 {
+        let mut bound=0_f64;
+        for i in 0..3 {
+            let derivative=source[i+1][axis].sub(source[i][axis])?.mul(Scalar::exact(3.))?
+                .div_interval_positive(dt)?;
+            bound=bound.max(derivative.0.abs().max(derivative.1.abs()));
+        }
+        derivative_l1=derivative_l1.add(Scalar::exact(bound))?;
+    }
+    // Bernstein subdivision proves a positive norm over every covered cell.
+    // Sampling a midpoint cannot establish this invariant.
+    let mut pending=vec![(source,0_u32)];let mut lower=f64::INFINITY;
+    let mut cells=0_usize;
+    while let Some((control,depth))=pending.pop() {
+        cells+=1;
+        if cells>8191 {return Err(AnimationError::RootRotationBudget);}
+        let mut squared=Scalar::exact(0.);
+        for axis in 0..4 {
+            let lo=control.iter().map(|q|q[axis].0).fold(f64::INFINITY,f64::min);
+            let hi=control.iter().map(|q|q[axis].1).fold(f64::NEG_INFINITY,f64::max);
+            let distance=if lo>0. {lo} else if hi<0. {-hi} else {0.};
+            squared=squared.add(Scalar::exact(distance).square()?)?;
+        }
+        if squared.0>0. {
+            let norm=squared.sqrt_positive()?;
+            if norm.0>0. {lower=lower.min(norm.0);continue;}
+        }
+        if depth==12 {return Err(AnimationError::InvalidRootRotationCurve);}
+        let (left,right)=split_controls(control,Scalar::exact(0.5))?;
+        pending.push((right,depth+1));pending.push((left,depth+1));
+    }
+    Ok(derivative_l1.mul(Scalar::exact(2.))?.div_positive(lower)?.1)
+}
+
+pub(crate) fn translation_source_position_bounds(coefficients:[DVec3;4],error:[f64;3],
+    key_times:[f64;2],times:[f64;2])->Result<[[f64;2];3],AnimationError> {
+    let dt=Scalar::exact(key_times[1]).sub(Scalar::exact(key_times[0]))?;
+    let u=Scalar(times[0],times[1]).sub(Scalar::exact(key_times[0]))?.div_interval_positive(dt)?;
+    let u=Scalar(u.0.max(0.),u.1.min(1.));
+    let mut result=[[0.;2];3];
+    for axis in 0..3 {
+        let c=|i:usize|->Result<Scalar,AnimationError> {
+            if error[axis]==0. {Ok(Scalar::exact(coefficients[i][axis]))}
+            else {Scalar::exact(coefficients[i][axis]).add(Scalar(-error[axis],error[axis]))}
+        };
+        result[axis]=c(3)?.mul(u)?.add(c(2)?)?.mul(u)?.add(c(1)?)?.mul(u)?.add(c(0)?)?.array();
+    }
+    Ok(result)
+}
+
+pub(super) fn stored_similarity_evaluation_error(q:[[f64;2];4],point:[[f64;2];3],
+    scale:[f64;2],offset:[[f64;2];3])->Result<[f64;3],AnimationError> {
+    if q.iter().chain(point.iter()).chain(std::iter::once(&scale)).chain(offset.iter())
+        .any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let input=|v:[f64;2]|RoundedRange {value:Scalar(v[0],v[1]),error:Scalar::exact(0.)};
+    let q=q.map(input);let p=point.map(input);let scale=input(scale);let offset=offset.map(input);
+    let rotated=rounded_rotate(q,p)?;
+    let mut result=[0.;3];
+    for axis in 0..3 {
+        result[axis]=rotated[axis].mul(scale)?.add(offset[axis])?.error.1;
+    }
+    Ok(result)
+}
+
+/// Uniform runtime (a*b).normalize() discrepancy from a real-unit source product.
+/// Each supplied error bounds a component of a/b against its real-unit source.
+pub(crate) fn quaternion_normalized_composition_uniform_error(a_error:[f64;4],
+    b:[f64;4],b_error:[f64;4])->Result<[f64;4],AnimationError> {
+    if b.iter().any(|v|!v.is_finite()) || a_error.iter().chain(b_error.iter()).any(|v|!v.is_finite() || *v<0.) {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let sum=|values:[f64;4]|->Result<Scalar,AnimationError> {
+        let mut total=Scalar::exact(0.);for value in values {total=total.add(Scalar::exact(value))?;} Ok(total)
+    };
+    let ea=sum(a_error)?;let eb=sum(b_error)?;
+    let cap=Scalar::exact(1.).add(ea)?.1;
+    let a=[RoundedRange {value:Scalar(-cap,cap),error:Scalar::exact(0.)};4];
+    let b=b.map(RoundedRange::exact);
+    let product=[
+        a[3].mul(b[0])?.add(a[0].mul(b[3])?)?.add(a[1].mul(b[2])?)?.sub(a[2].mul(b[1])?)?,
+        a[3].mul(b[1])?.sub(a[0].mul(b[2])?)?.add(a[1].mul(b[3])?)?.add(a[2].mul(b[0])?)?,
+        a[3].mul(b[2])?.add(a[0].mul(b[1])?)?.sub(a[1].mul(b[0])?)?.add(a[2].mul(b[3])?)?,
+        a[3].mul(b[3])?.sub(a[0].mul(b[0])?)?.sub(a[1].mul(b[1])?)?.sub(a[2].mul(b[2])?)?];
+    let mut discrepancy=ea.add(eb)?.add(ea.mul(eb)?)?;
+    for component in product {discrepancy=discrepancy.add(component.error)?;}
+    normalization_uniform_error(discrepancy)
+}
+
+fn normalization_uniform_error(discrepancy:Scalar)->Result<[f64;4],AnimationError> {
+    if discrepancy.1>0.25 {return Err(AnimationError::InvalidRootRotationCurve);}
+    // Actual raw product norm is [3/4,5/4]. Dot rounding preserves sqrt >=1/2.
+    let dot=Scalar::exact(rounding_error(Scalar(0.,2.))?).mul(Scalar::exact(4.))?
+        .add(Scalar::exact(rounding_error(Scalar(0.,8.))?).mul(Scalar::exact(3.))?)?;
+    if dot.1>=0.25 {return Err(AnimationError::NumericalOverflow);}
+    let norm_error=dot.div_positive(0.75)?.add(Scalar::exact(rounding_error(Scalar(0.,4.))?))?;
+    let reciprocal_error=norm_error.mul(Scalar::exact(4.))?
+        .add(Scalar::exact(rounding_error(Scalar(0.,2.))?))?;
+    let normalization=reciprocal_error.mul(Scalar::exact(1.25))?
+        .add(Scalar::exact(rounding_error(Scalar(-3.,3.))?))?;
+    let bound=discrepancy.mul(Scalar::exact(2.))?.div_positive(0.75)?.add(normalization)?.1;
+    Ok([bound;4])
+}
+
+/// Uniform raw Hamilton product error; deliberately performs no normalization.
+pub(crate) fn quaternion_composition_uniform_error(a_error:[f64;4],b_error:[f64;4])
+    ->Result<[f64;4],AnimationError> {
+    if a_error.iter().chain(b_error.iter()).any(|v|!v.is_finite() || *v<0.) {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let sum=|values:[f64;4]|->Result<Scalar,AnimationError> {
+        let mut result=Scalar::exact(0.);for value in values {result=result.add(Scalar::exact(value))?;} Ok(result)
+    };
+    let ea=sum(a_error)?;let eb=sum(b_error)?;
+    let domain=|error:Scalar|->Result<RoundedRange,AnimationError> {
+        let cap=Scalar::exact(1.).add(error)?.1;
+        Ok(RoundedRange {value:Scalar(-cap,cap),error:Scalar::exact(0.)})
+    };
+    let a=domain(ea)?;let b=domain(eb)?;
+    // Every Hamilton component has four products and three ordered additions
+    // or subtractions; symmetric input domains give the same absolute RN cap.
+    let term=a.mul(b)?;
+    let component=term.add(term)?.add(term)?.add(term)?;
+    let source_error=ea.add(eb)?.add(ea.mul(eb)?)?;
+    let bound=source_error.add(component.error)?.1;
+    Ok([bound;4])
+}
+
+fn rounded_rotate(q:[RoundedRange;4],p:[RoundedRange;3])
+    ->Result<[RoundedRange;3],AnimationError> {
+    let dot=|a:[RoundedRange;3],b:[RoundedRange;3]|->Result<RoundedRange,AnimationError> {
+        a[0].mul(b[0])?.add(a[1].mul(b[1])?)?.add(a[2].mul(b[2])?)
+    };
+    let b=[q[0],q[1],q[2]];
+    let first=q[3].mul(q[3])?.sub(dot(b,b)?)?;
+    let second=dot(p,b)?.mul(RoundedRange::exact(2.))?;
+    let third=q[3].mul(RoundedRange::exact(2.))?;
+    let cross=[b[1].mul(p[2])?.sub(p[1].mul(b[2])?)?,
+        b[2].mul(p[0])?.sub(p[2].mul(b[0])?)?,
+        b[0].mul(p[1])?.sub(p[0].mul(b[1])?)?];
+    Ok([p[0].mul(first)?.add(b[0].mul(second)?)?.add(cross[0].mul(third)?)?,
+        p[1].mul(first)?.add(b[1].mul(second)?)?.add(cross[1].mul(third)?)?,
+        p[2].mul(first)?.add(b[2].mul(second)?)?.add(cross[2].mul(third)?)?])
+}
+
+pub(super) fn root_phase_point_error(position:[[f64;2];3],position_error:[f64;3],
+    rotation:[[f64;2];4],rotation_error:[f64;4],origin:DVec3,bind:DVec3,
+    axes:[bool;3],point:[[f64;2];3])->Result<[f64;3],AnimationError> {
+    if point.iter().any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let mut p=[RoundedRange::exact(0.);3];
+    let mut pivot=p;let mut adjusted=p;
+    for i in 0..3 {
+        p[i]=RoundedRange {value:Scalar(position[i][0],position[i][1]),error:Scalar::exact(position_error[i])}
+            .add(RoundedRange::exact(origin[i]))?;
+        pivot[i]=if axes[i] {RoundedRange::exact(bind[i])} else {p[i]};
+        adjusted[i]=if axes[i] {p[i].sub(RoundedRange::exact(origin[i]).sub(RoundedRange::exact(bind[i]))?)?} else {p[i]};
+    }
+    let q=std::array::from_fn(|i|RoundedRange {value:Scalar(rotation[i][0],rotation[i][1]),error:Scalar::exact(rotation_error[i])});
+    let pivot_image=rounded_rotate(q,pivot)?;
+    let image=rounded_rotate(q,point.map(|v|RoundedRange {value:Scalar(v[0],v[1]),error:Scalar::exact(0.)}))?;
+    let mut result=[0.;3];
+    for i in 0..3 {result[i]=adjusted[i].sub(pivot_image[i])?.add(image[i])?.error.1;}
+    Ok(result)
+}
+
+pub(super) fn composed_rigid_point_error(prefix:&RootRigidEnclosure,prefix_t_error:[f64;3],prefix_q_error:[f64;4],
+    local:&RootRigidEnclosure,local_t_error:[f64;3],local_q_error:[f64;4],point:[[f64;2];3])
+    ->Result<[f64;3],AnimationError> {
+    if point.iter().any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let input=|bounds:[[f64;2];3],error:[f64;3]|std::array::from_fn(|i|
+        RoundedRange {value:Scalar(bounds[i][0],bounds[i][1]),error:Scalar::exact(error[i])});
+    let prefix_t=input(prefix.translation_bounds(),prefix_t_error);
+    let local_t=input(local.translation_bounds(),local_t_error);
+    let prefix_q=std::array::from_fn(|i|RoundedRange {
+        value:Scalar(prefix.rotation[i][0],prefix.rotation[i][1]),error:Scalar::exact(prefix_q_error[i])});
+    let translated=rounded_rotate(prefix_q,local_t)?;
+    let raw_error=quaternion_composition_uniform_error(prefix_q_error,local_q_error)?;
+    let mut discrepancy=Scalar::exact(0.);for value in raw_error {discrepancy=discrepancy.add(Scalar::exact(value))?;}
+    let q_error=normalization_uniform_error(discrepancy)?;
+    let source=prefix.compose(local)?;
+    let q=std::array::from_fn(|i|RoundedRange {
+        value:Scalar(source.rotation[i][0],source.rotation[i][1]),error:Scalar::exact(q_error[i])});
+    let image=rounded_rotate(q,point.map(|v|RoundedRange {value:Scalar(v[0],v[1]),error:Scalar::exact(0.)}))?;
+    let mut result=[0.;3];
+    for i in 0..3 {result[i]=prefix_t[i].add(translated[i])?.add(image[i])?.error.1;}
+    Ok(result)
+}
+
+pub(super) fn mapped_point_runtime_error(point:[[f64;2];3],point_error:[f64;3],frame:&RootRigidEnclosure,
+    scale:RootUniformScaleEnclosure,actual:RootRigidTransform,actual_scale:f64)
+    ->Result<([f64;3],[[f64;2];3]),AnimationError> {
+    actual.checked()?;
+    if !actual_scale.is_finite() {return Err(AnimationError::NumericalOverflow);}
+    let discrepancy=|source:Scalar,value:f64|->Result<Scalar,AnimationError> {
+        let delta=source.sub(Scalar::exact(value))?;Ok(Scalar::exact(absolute_upper(delta)))
+    };
+    let mut q=[RoundedRange::exact(0.);4];
+    for i in 0..4 {
+        let value=Scalar(frame.rotation[i][0],frame.rotation[i][1]);
+        q[i]=RoundedRange {value,error:discrepancy(value,actual.rotation.to_array()[i])?};
+    }
+    let p=std::array::from_fn(|i|RoundedRange {
+        value:Scalar(point[i][0],point[i][1]),error:Scalar::exact(point_error[i])});
+    let rotated=rounded_rotate(q,p)?;
+    let scale=RoundedRange {value:scale.value,error:discrepancy(scale.value,actual_scale)?};
+    let mut error=[0.;3];let mut actual_box=[[0.;2];3];
+    for i in 0..3 {
+        let value=Scalar(frame.translation[i][0],frame.translation[i][1]);
+        let offset=RoundedRange {value,error:discrepancy(value,actual.translation[i])?};
+        let mapped=rotated[i].mul(scale)?.add(offset)?;
+        error[i]=mapped.error.1;
+        actual_box[i]=expanded(mapped.value,mapped.error.1)?.array();
+    }
+    Ok((error,actual_box))
 }

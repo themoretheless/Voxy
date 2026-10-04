@@ -755,7 +755,7 @@ fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
             _ => state.root_reference.as_mut().unwrap().scale = voxy_animation::RootUniformScaleEnclosure::from_scale(2.).unwrap(),
         }
         let rejected = physics.fixed_step_with_certified_fade_preparation(&mut scene,&mut input,
-            dt,&[admitted.request(glam::DQuat::IDENTITY,Vec3::ZERO,1.,1,0.)],|preview,_budget| {
+            dt,&[admitted.request(1,0.)],|preview,_budget| {
                 stale.clone().accept_fade(&model,&admitted,&preview.motions[0],&preview.characters[0])
             });
         assert!(rejected.is_err());
@@ -763,8 +763,7 @@ fn accepted_physical_fade_uses_runtime_extraction_before_frame_publication() {
         assert!(physics.state(&scene,owner).unwrap().is_none());
         assert!(Arc::ptr_eq(&before,&runtime.frame(owner,&model).unwrap()));
     }
-    let frame_request = OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-        scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
+    let frame_request = OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
     scene.component_mut::<ModelAnimation>(owner).unwrap().unwrap().root_motion_axes = [false;3];
     assert!(runtime.fixed_step_owner_fades(&mut scene,&models,&mut physics,&mut input,
         dt,&[(&staged,frame_request)]).is_err());
@@ -912,8 +911,7 @@ fn owner_fade_operation_admits_all_owners_before_any_publication() {
     let dt = 1./60.;
     let a = runtime.prepare_owner_fade(&scene,&models,first,&model,dt,0.01,0.01,4096).unwrap().unwrap();
     let b = runtime.prepare_owner_fade(&scene,&models,second,&model,dt,0.01,0.01,4096).unwrap().unwrap();
-    let frame = OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-        scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
+    let frame = OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
     let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,3,0);
     let mut input = voxy_gameplay::player_input().unwrap();
     scene.component_mut::<ModelAnimation>(second).unwrap().unwrap().root_motion_axes=[false;3];
@@ -1028,8 +1026,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
     assert!(staged.admit_scene(&scene,&models).is_err());
     scene.component_mut::<ModelFootPlacement>(owner).unwrap().unwrap().feet[0].plant = true;
     let (receipts,accepted) = runtime.fixed_step_owner_fades(&mut scene,&models,&mut physics,
-        &mut input,1./60.,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,
-            origin:Vec3::ZERO,scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
+        &mut input,1./60.,&[(&staged,OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
     assert!(receipts[0].complete);
     assert!(scene.local(owner).unwrap().translation.x>0.);
     assert!(scene.local(owner).unwrap().rotation != glam::Quat::IDENTITY);
@@ -1065,8 +1062,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
             let before_body = physics.state(&scene,owner).unwrap().unwrap();
             physics = physics.with_angular_trajectory_query_budget(1).unwrap();
             assert!(accepted.fixed_step_owner_fades(&mut scene,&models,&mut physics,&mut input,
-                1./60.,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-                    scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).is_err());
+                1./60.,&[(&staged,OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).is_err());
             assert_eq!(scene.local(owner).unwrap(),before_pose);
             assert!(Arc::ptr_eq(&before_frame,&accepted.frame(owner,&model).unwrap()));
             assert_eq!(accepted.clip_phase(owner).unwrap(),before_phase);
@@ -1075,8 +1071,7 @@ fn certified_moving_fade_keeps_planted_sole_at_accepted_world_anchor() {
         }
         let prior_phase = accepted.clip_phase(owner).unwrap();
         let (receipts,next) = accepted.fixed_step_owner_fades(&mut scene,&models,&mut physics,&mut input,
-            1./60.,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-                scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
+            1./60.,&[(&staged,OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
         if !receipts[0].complete {
             clipped = true;
             partial_advance |= next.clip_phase(owner).unwrap() > prior_phase;
@@ -1135,9 +1130,13 @@ fn signed_reference_scale_survives_body_transport_and_next_fade() {
         for step in 1..=2 {
             let staged = runtime.prepare_owner_fade(&scene,&models,owner,&model,0.0625,0.001,0.001,4096)
                 .unwrap().unwrap();
+            let admitted=staged.admit_scene(&scene,&models).unwrap();
+            let request=admitted.request(1,0.);
+            assert_eq!(request.basis,glam::DQuat::IDENTITY);
+            assert_eq!(request.origin,Vec3::ZERO);
+            assert_eq!(request.scale,1.);
             let (receipts,accepted) = runtime.fixed_step_owner_fades(&mut scene,&models,&mut physics,
-                &mut input,0.0625,&[(&staged,OwnerFadeFrame {basis:glam::DQuat::IDENTITY,
-                    origin:Vec3::ZERO,scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
+                &mut input,0.0625,&[(&staged,OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None})]).unwrap();
             assert!(receipts[0].complete);
             assert!((f64::from(scene.local(owner).unwrap().translation.x)-scale*2.*0.0625*f64::from(step)).abs()<1e-6);
             let reference = accepted.owners[&owner].root_reference.unwrap();
@@ -1268,8 +1267,7 @@ fn scene_fade_batch_stages_selection_without_advancing_and_rejects_late_owner() 
     assert_eq!(runtime.clip_phase(first).unwrap(),phase);
     assert!(Arc::ptr_eq(&frame,&runtime.frame(first,&model).unwrap()));
     scene.component_mut::<ModelAnimation>(second).unwrap().unwrap().clip = Some(1);
-    let request = OwnerFadeFrame {basis:glam::DQuat::IDENTITY,origin:Vec3::ZERO,
-        scale:1.,coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
+    let request = OwnerFadeAdmission {coordinate_axis:1,evaluation_radius:0.,evaluation_axes:None};
     let mut physics = voxy_gameplay::CharacterPhysics::new(&scene,2,0);
     let mut input = voxy_gameplay::player_input().unwrap();
     let before = scene.local(first).unwrap();

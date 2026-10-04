@@ -1,0 +1,8 @@
+
+running 1 test
+SIMILARITY_ROUND_REFERENCE ([0.0, 0.0, 0.0, 1.0], [1e16, 0.0, 0.0], 1.0, [1.0, 0.0, 0.0], [1e16, 0.0, 0.0], [14.440892098500639, 0.0, 0.0])
+SIMILARITY_ROUND_REFERENCE ([0.0, 0.6, 0.0, 0.8], [1e16, 3.0, -7.0], -0.3, [1.0, 2.0, 1e16], [-839999999999997.5, 1.1, 1.288e16], [1.6992007221626442, 1.3855583347321968e-15, 5.059680288865061])
+test root_rigid::tests::stored_similarity_rounding_covers_lost_offsets_and_quaternion_polynomial ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 171 filtered out; finished in 0.00s
+

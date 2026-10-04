@@ -365,7 +365,7 @@ impl RootRigidPath {
                 segment_start=*segment_end;
             }
             if !angle_budget && error.origin_bound()<=origin_tolerance && error.angular_bound()<=angular_tolerance {
-                return Ok(RootRigidApproximation {path:Self {spans,duration,end:nominal_prefix},
+                return Ok(RootRigidApproximation {path:Self {spans,duration,end:nominal_prefix,translation_cuts:vec![]},
                     origin_error_bound:error.origin_bound(),angular_error_bound:error.angular_bound()});
             }
             if count==capacity {return Err(AnimationError::RootRigidBudget);}

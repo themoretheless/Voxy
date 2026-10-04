@@ -160,3 +160,34 @@ impl RootScrewEnclosurePath<'_> {
         self.coordinate_ranges.get(coordinate).copied().flatten()
     }
 }
+
+impl RootScrewEnclosurePath<'_> {
+    /// Canonical point images over a checked stored-time corridor, including holds.
+    pub fn point_box_bounds_between(&self,times:[f64;2],point:[[f64;2];3])
+        ->Result<[[f64;2];3],AnimationError> {
+        if times.iter().any(|t|!t.is_finite()) || times[0]<0. || times[1]<times[0]
+            || times[1]>self.path.duration() {return Err(AnimationError::InvalidSampleTime);}
+        RootRigidEnclosure::IDENTITY.transform_point_box_bounds(point)?;
+        let mut hull:Option<[[f64;2];3]>=None;
+        let mut add=|pose:RootRigidEnclosure|->Result<(),AnimationError> {
+            let image=pose.transform_point_box_bounds(point)?;
+            if let Some(old)=&mut hull {for axis in 0..3 {
+                old[axis][0]=old[axis][0].min(image[axis][0]);old[axis][1]=old[axis][1].max(image[axis][1]);
+            }} else {hull=Some(image);}
+            Ok(())
+        };
+        let mut previous=0.;
+        for (index,span) in self.path.spans.iter().enumerate() {
+            if previous<span.start() && times[0]<=span.start() && times[1]>=previous {add(self.prefixes[index])?;}
+            if span.end()>=times[0] && span.start()<=times[1] {
+                let (twist,_)=span.screw.ok_or(AnimationError::RootRotationTransitionUnsupported)?;
+                let mut elapsed=Scalar(times[0].max(span.start()),times[1].min(span.end()))
+                    .sub(Scalar::exact(span.start()))?;elapsed.0=elapsed.0.max(0.);
+                add(twist.increment_interval_enclosure(elapsed)?.compose(&self.prefixes[index])?)?;
+            }
+            previous=span.end();
+        }
+        if times[1]>=previous {add(*self.prefixes.last().ok_or(AnimationError::RootRigidBudget)?)?;}
+        hull.ok_or(AnimationError::RootRigidBudget)
+    }
+}

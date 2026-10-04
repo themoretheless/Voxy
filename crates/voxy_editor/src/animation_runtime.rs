@@ -57,11 +57,9 @@ pub(super) struct PreparedOwnerFade {
     retarget_profile: Option<crate::ModelRetarget>,
     feet_settings: Option<crate::ModelFootPlacement>,
 }
+/// Collision admission policy for a fade already expressed in body-local space.
 #[derive(Clone, Copy)]
-pub(super) struct OwnerFadeFrame {
-    pub basis: glam::DQuat,
-    pub origin: glam::Vec3,
-    pub scale: f64,
+pub(super) struct OwnerFadeAdmission {
     pub coordinate_axis: usize,
     pub evaluation_radius: f64,
     pub evaluation_axes: Option<[f64;3]>,
@@ -71,10 +69,11 @@ pub(super) struct AdmittedOwnerFade<'a> {
     prepared: &'a PreparedOwnerFade,
 }
 impl AdmittedOwnerFade<'_> {
-    pub(super) fn request(&self, basis: glam::DQuat, origin: glam::Vec3,
-        scale: f64, coordinate_axis: usize, evaluation_radius: f64,
+    /// Common-reference preparation already maps the field into body-local space.
+    pub(super) fn request(&self, coordinate_axis: usize, evaluation_radius: f64,
     ) -> voxy_gameplay::CharacterCertifiedFadeMotion<'_> {
-        self.prepared.motion.request(basis, origin, scale, coordinate_axis, evaluation_radius)
+        self.prepared.motion.request(glam::DQuat::IDENTITY,glam::Vec3::ZERO,1.,
+            coordinate_axis,evaluation_radius)
     }
 }
 impl PreparedOwnerFade {
@@ -378,7 +377,7 @@ impl AnimationRuntime {
         &self, scene: &mut SceneGraph, models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         physics: &mut voxy_gameplay::CharacterPhysics, input: &mut voxy_input::InputMap,
         dt: f64, origin_tolerance: f64, angular_tolerance: f64, max_spans: usize,
-        frames: &BTreeMap<NodeId, OwnerFadeFrame>,
+        frames: &BTreeMap<NodeId, OwnerFadeAdmission>,
     ) -> Result<(Vec<voxy_gameplay::AppliedCharacterTrajectoryMotion>, Self),
         voxy_gameplay::CharacterTickError<String>> {
         let (candidate, plans) = self.prepare_scene_fades(scene, models, dt,
@@ -401,7 +400,7 @@ impl AnimationRuntime {
     pub(super) fn fixed_step_owner_fades(
         &self, scene: &mut SceneGraph, models: &BTreeMap<AssetId, Arc<ModelAsset>>,
         physics: &mut voxy_gameplay::CharacterPhysics, input: &mut voxy_input::InputMap,
-        dt: f64, fades: &[(&PreparedOwnerFade, OwnerFadeFrame)],
+        dt: f64, fades: &[(&PreparedOwnerFade, OwnerFadeAdmission)],
     ) -> Result<(Vec<voxy_gameplay::AppliedCharacterTrajectoryMotion>, Self),
         voxy_gameplay::CharacterTickError<String>> {
         use voxy_gameplay::CharacterTickError;
@@ -413,8 +412,7 @@ impl AnimationRuntime {
             prepared.admit_scene(scene, models)
         }).collect::<Result<Vec<_>, String>>().map_err(CharacterTickError::Preparation)?;
         let requests = admitted.iter().zip(fades).map(|(admitted, (_, frame))| {
-            let mut request = admitted.request(frame.basis, frame.origin, frame.scale,
-                frame.coordinate_axis, frame.evaluation_radius);
+            let mut request = admitted.request(frame.coordinate_axis, frame.evaluation_radius);
             request.evaluation_axes = frame.evaluation_axes;
             request
         }).collect::<Vec<_>>();

@@ -2076,3 +2076,274 @@ fn whole_path_point_box_encloses_multiple_screw_spans_and_publication() {
     let empty = RootRigidPath::from_twists(&[],0).unwrap();
     assert_eq!(empty.prepare_screw_enclosures(0).unwrap().whole_path_point_box_bounds([[0.,0.];3]).unwrap(),[[0.,0.];3]);
 }
+
+#[test]
+fn root_time_cut_encloses_lost_key_and_cancellation() {
+    let proof=RootTimeCutEnclosure::new(1099511627776,0.1,0.03125,109951164416.).unwrap();
+    // The dyadic product is exactly the supplied origin in this fixture.
+    let bounds=proof.exact_source_bounds();
+    assert!(bounds[0]<=0.03125 && bounds[1]>=0.03125);
+    assert!((proof.evaluated()-0.03125).abs()<=proof.absolute_error_bound());
+    let lost=RootTimeCutEnclosure::new(1,1.,2_f64.powi(-60),1.).unwrap();
+    assert_eq!(lost.evaluated(),0.);
+    assert!(lost.exact_source_bounds()[0]<=2_f64.powi(-60));
+    assert!(lost.exact_source_bounds()[1]>=2_f64.powi(-60));
+    assert!(lost.absolute_error_bound()>=2_f64.powi(-60));
+    let bound=lost.continuous_motion_error(2.,3.,4.).unwrap();
+    assert!(bound[0]>=14.*lost.absolute_error_bound());
+    assert!(bound[1]>=3.*lost.absolute_error_bound());
+    assert_eq!(lost.continuous_motion_error(0.,0.,4.).unwrap(),[0.;2]);
+    assert_eq!(lost.continuous_motion_error(0.,3.,0.).unwrap()[0],0.);
+    assert!(lost.continuous_motion_error(-1.,0.,0.).is_err());
+    assert!(lost.continuous_motion_error(1.,f64::NAN,0.).is_err());
+    assert!(RootTimeCutEnclosure::new(u64::MAX,1.,0.,0.).is_err());
+    assert!(RootTimeCutEnclosure::new(0,1.,f64::NAN,0.).is_err());
+}
+
+#[test]
+fn translation_cut_metadata_survives_path_time_and_frame_changes() {
+    let (_,clip)=linear_turn(Vec3::ZERO);
+    let path=clip.root_rigid_curve(0).unwrap().path(0.25,1.5,[true;3],256).unwrap();
+    assert!(!path.translation_cut_enclosures().is_empty());
+    let original=path.translation_cut_enclosures();
+    let retimed=path.retimed(2.5).unwrap();
+    assert_eq!(original.len(),retimed.translation_cut_enclosures().len());
+    for (a,b) in original.iter().zip(retimed.translation_cut_enclosures()) {
+        let exact=a.evaluated()*2.;let bounds=b.exact_source_bounds();
+        assert!(bounds[0]<=exact && bounds[1]>=exact);
+    }
+    let transformed=path.transformed(DQuat::IDENTITY,2.,DVec3::X).unwrap();
+    for (a,b) in original.iter().zip(transformed.translation_cut_enclosures()) {
+        assert_eq!(a.exact_source_bounds(),b.exact_source_bounds());
+    }
+    let joined=path.append_spatial(&path,512).unwrap();
+    assert_eq!(joined.translation_cut_enclosures().len(),2*original.len());
+    for (a,b) in original.iter().zip(&joined.translation_cut_enclosures()[original.len()..]) {
+        let exact=a.evaluated()+path.duration();let bounds=b.exact_source_bounds();
+        assert!(bounds[0]<=exact && bounds[1]>=exact);
+    }
+}
+
+#[test]
+fn source_point_speed_accounts_for_bind_pivot_and_extraction_masks() {
+    let (_,clip)=clip(Vec3::X*2.,vec![Vec3Key {time:0.,value:Vec3::ZERO},
+        Vec3Key {time:1.,value:Vec3::X}],vec![QuatKey {time:0.,value:Quat::IDENTITY},
+        QuatKey {time:1.,value:Quat::from_rotation_y(std::f32::consts::FRAC_PI_2)}],
+        TrackInterpolation {translation:Interpolation::Linear,rotation:Interpolation::CubicSpline,
+            ..Default::default()},JointTangents {rotation:vec![[Vec4::ZERO;2];2],..Default::default()},Playback::Clamp);
+    let curve=clip.root_rigid_curve(0).unwrap();
+    let angular=curve.rotation_cubic_source_angular_speed_bound(0.,1.).unwrap().unwrap();
+    let selected=curve.source_point_speed_bound(0.,1.,[true;3],1.).unwrap().unwrap();
+    assert!(selected>=1.+angular*3.);
+    let unselected=curve.source_point_speed_bound(0.,1.,[false;3],1.).unwrap().unwrap();
+    assert!(unselected>=2.+angular*2.);
+    assert!(curve.source_point_speed_bound(0.,1.,[true;3],-1.).is_err());
+    let frame=RootRigidEnclosure::from_transform(RootRigidTransform {
+        rotation:DQuat::IDENTITY,translation:DVec3::X*10.}).unwrap();
+    for scale in [2.,-2.] {
+        let point=[[10.+scale,10.+scale],[0.,0.],[0.,0.]];
+        let mapped=curve.mapped_source_point_speed_bound([0.,1.],[true;3],&frame,
+            RootUniformScaleEnclosure::from_scale(scale).unwrap(),point).unwrap().unwrap();
+        assert!(mapped>=selected*scale.abs());
+    }
+    assert!(curve.mapped_source_point_speed_bound([0.,1.],[true;3],&frame,
+        RootUniformScaleEnclosure::from_scale(0.).unwrap(),[[0.;2];3]).is_err());
+}
+
+#[test]
+fn source_loop_enclosure_covers_exact_linear_motion_with_cubic_identity_rotation() {
+    let (_,clip)=clip(Vec3::X*2.,vec![Vec3Key {time:0.,value:Vec3::ZERO},
+        Vec3Key {time:1.,value:Vec3::X}],vec![QuatKey {time:0.,value:Quat::IDENTITY},
+        QuatKey {time:1.,value:Quat::IDENTITY}],
+        TrackInterpolation {translation:Interpolation::Linear,rotation:Interpolation::CubicSpline,
+            ..Default::default()},JointTangents {rotation:vec![[Vec4::ZERO;2];2],..Default::default()},Playback::Loop);
+    let curve=clip.root_rigid_curve(0).unwrap();
+    let candidate=RootRigidPath::from_twists(&[(RootRigidTwist {
+        linear:DVec3::X*2.,angular:DVec3::ZERO},1.)],1).unwrap();
+    let prepared=candidate.prepare_screw_enclosures(1).unwrap();
+    let (error,radius)=curve.source_screw_point_error([0.,1.],[true;3],[[0.;2];3],&prepared,4)
+        .unwrap().unwrap();
+    assert!(error[0]>=1. && error[0]<4.);
+    assert!(radius>=error[0]);
+    let matching=RootRigidPath::from_twists(&[(RootRigidTwist {linear:DVec3::X,angular:DVec3::ZERO},1.)],1).unwrap();
+    let matching=matching.prepare_screw_enclosures(1).unwrap();
+    let coarse=curve.source_screw_point_error_refined([0.,1.],[true;3],[[0.;2];3],&matching,4,1).unwrap().unwrap();
+    let refined=curve.source_screw_point_error_refined([0.,1.],[true;3],[[0.;2];3],&matching,4,16).unwrap().unwrap();
+    assert!(refined.1<coarse.1/4.);
+    let certificate=curve.certify_source_screw_point_error([0.,1.],[true;3],[[0.;2];3],&matching,0.2,128)
+        .unwrap().unwrap();
+    assert!(certificate.radius()<=0.2);
+    assert!(certificate.subdivisions()>1 && certificate.evaluated_cells()<=128);
+    assert!(std::ptr::eq(certificate.source(),&curve));
+    assert!(std::ptr::eq(certificate.candidate(),&matching));
+    let far=RootRigidEnclosure::from_transform(RootRigidTransform {
+        translation:DVec3::X*100_000_000.,rotation:DQuat::IDENTITY}).unwrap();
+    let (world_error,world_radius)=certificate.mapped_f32_geometric_error(&far,
+        RootUniformScaleEnclosure::from_scale(-2.).unwrap()).unwrap();
+    assert!(world_error[0]>=8.);
+    assert!(world_radius>=world_error[0]);
+
+    assert!(matches!(curve.certify_source_screw_point_error([0.,1.],[true;3],[[0.;2];3],&prepared,0.2,32),
+        Err(AnimationError::RootRigidBudget)));
+    assert!(curve.certify_source_screw_point_error([0.,1.],[true;3],[[0.;2];3],&matching,f64::NAN,32).is_err());
+
+
+    assert!(curve.source_screw_point_error([0.,0.5],[true;3],[[0.;2];3],&prepared,4).is_err());
+    for time in [0.,0.5,1.,3.5,16.25] {
+        let source=curve.source_sample_enclosure(time,[true;3]).unwrap().unwrap();
+        let position=source.translation_bounds();
+        assert!(position[0][0]<=time && position[0][1]>=time);
+        assert_eq!(position[1..],[[0.;2];2]);
+        let rotation=source.rotation_bounds();
+        assert!(rotation[3][0]<=1. && rotation[3][1]>=1.);
+    }
+    assert!(curve.source_sample_enclosure(f64::NAN,[true;3]).is_err());
+    assert!(curve.source_cycle_prefix_enclosure(u64::MAX,[true;3]).is_err());
+}
+
+#[test]
+fn source_turning_cycles_cover_analytic_half_turn_and_pivot() {
+    let (_,clip)=clip(Vec3::X*2.,vec![Vec3Key {time:0.,value:Vec3::ZERO},
+        Vec3Key {time:1.,value:Vec3::X}],vec![QuatKey {time:0.,value:Quat::IDENTITY},
+        QuatKey {time:1.,value:Quat::from_xyzw(0.,1.,0.,0.)}],
+        TrackInterpolation {translation:Interpolation::Linear,rotation:Interpolation::CubicSpline,
+            ..Default::default()},JointTangents {rotation:vec![[Vec4::ZERO;2];2],..Default::default()},Playback::Loop);
+    let curve=clip.root_rigid_curve(0).unwrap();
+    let point_box=[[1.,1.],[0.,0.],[0.,0.]];
+    let runtime_error=curve.phase_point_evaluation_error_bounds([0.5,0.5],[true;3],point_box).unwrap().unwrap();
+    let actual=curve.phase(0.5,[true;3]).unwrap();
+    let image=actual.translation+actual.rotation*DVec3::X;
+    let exact=DVec3::new(2.5,0.,1.);
+    for axis in 0..3 {assert!((image[axis]-exact[axis]).abs()<=runtime_error[axis]);}
+    assert!(runtime_error.iter().all(|e|e.is_finite() && *e<1e-9));
+    let angular=curve.rotation_cubic_source_angular_speed_bound(0.,1.).unwrap().unwrap();
+    // q(u)=(0,s(u),0,1-s(u)); |omega|=2*s'(u)/(s²+(1-s)²).
+    for i in 0..=64 {
+        let u=f64::from(i)/64.;let y=u*u*(3.-2.*u);
+        let exact=12.*u*(1.-u)/(y*y+(1.-y)*(1.-y));
+        assert!(exact<=angular);
+    }
+    assert!(curve.source_point_speed_bound(0.,1.,[true;3],1.).unwrap().unwrap().is_finite());
+    let delta=curve.source_delta_enclosure(0.5,1.5,[true;3]).unwrap().unwrap();
+    let translation=delta.translation_bounds();
+    assert!(translation[0][0]<=4. && translation[0][1]>=4.);
+    for axis in [1,2] {assert!(translation[axis][0]<=0. && translation[axis][1]>=0.);}
+    let pose=curve.path(0.5,1.5,[true;3],256).unwrap().end_transform();
+    let evaluated=pose.translation+pose.rotation*DVec3::X;
+    let (error,radius)=curve.source_delta_point_error([0.5,1.5],[true;3],
+        [[1.,1.],[0.,0.],[0.,0.]],evaluated).unwrap().unwrap();
+    let exact=DVec3::X*3.;
+    for axis in 0..3 {assert!((evaluated[axis]-exact[axis]).abs()<=error[axis]);}
+    assert!(radius<1e-10);
+    assert_eq!(curve.source_delta_enclosure(0.5,0.5,[true;3]).unwrap().unwrap().translation_bounds(),[[0.;2];3]);
+    assert!(curve.source_delta_enclosure(1.,0.5,[true;3]).is_err());
+    let interval=curve.source_delta_interval_enclosure(0.5,[0.5,1.],[true;3]).unwrap().unwrap();
+    for i in 0..=16 {
+        let time=0.5+f64::from(i)/32.;
+        let sample=curve.source_delta_enclosure(0.5,time,[true;3]).unwrap().unwrap();
+        // Point enclosures are separate roundings, so compare their midpoints as
+        // regression evidence; interval coverage itself follows the speed proof.
+        for axis in 0..3 {
+            let point=sample.translation_bounds()[axis];let value=(point[0]+point[1])*0.5;
+            let range=interval.translation_bounds()[axis];assert!(range[0]<=value && range[1]>=value);
+        }
+    }
+    assert!(curve.source_delta_interval_enclosure(0.5,[0.5,1.5],[true;3]).is_err());
+    let partition=curve.source_delta_partition(0.5,[0.5,2.5],[true;3],8).unwrap().unwrap();
+    assert_eq!(partition.iter().map(|(times,_)|*times).collect::<Vec<_>>(),
+        vec![[0.5,1.],[1.,2.],[2.,2.5]]);
+    assert!(curve.source_delta_partition(0.5,[0.5,2.5],[true;3],1).is_err());
+    for cycle in [0,1,4] {
+        let error=curve.cycle_point_evaluation_error_bounds(cycle,[0.5,0.5],[true;3],point_box).unwrap().unwrap();
+        let actual=curve.sample(cycle as f64+0.5,[true;3]).unwrap();
+        let point=actual.translation+actual.rotation*DVec3::X;
+        let exact=DVec3::new(2.5,0.,if cycle%2==0 {1.} else {-1.});
+        for axis in 0..3 {assert!((point[axis]-exact[axis]).abs()<=error[axis]);}
+        assert!(error.iter().all(|e|e.is_finite() && *e<1e-8));
+    }
+    let actual_frame=RootRigidTransform {rotation:DQuat::from_xyzw(0.,1.,0.,0.),translation:DVec3::X*100_000_000.};
+    let source_frame=RootRigidEnclosure::from_transform(actual_frame).unwrap();
+    let (wall_error,wall_radius)=curve.world_point_evaluation_error_bounds([0.25,2.75],[true;3],point_box,
+        &source_frame,RootUniformScaleEnclosure::from_scale(-0.5).unwrap(),actual_frame,-0.5,32).unwrap().unwrap();
+    assert!(wall_error[0]>=8. && wall_radius.is_finite());
+    assert!(curve.world_point_evaluation_error_bounds([0.25,2.75],[true;3],point_box,
+        &source_frame,RootUniformScaleEnclosure::from_scale(-0.5).unwrap(),actual_frame,-0.5,1).is_err());
+    for time in [0.25,0.5,1.,1.5,2.,2.75] {
+        let actual=curve.sample(time,[true;3]).unwrap();
+        let point=actual.translation+actual.rotation*DVec3::X;
+        let published=(-0.5*(actual_frame.rotation*point)+actual_frame.translation).as_vec3().as_dvec3();
+        println!("WALL_WORLD_POINT_REFERENCE {:?}",(time,published.to_array(),wall_error));
+    }
+
+    for cycle in [0,1,4] {
+        let uniform=curve.cycle_point_evaluation_error_bounds(cycle,[0.25,0.75],[true;3],point_box).unwrap().unwrap();
+        assert!(uniform.iter().all(|e|e.is_finite() && *e<1e-8));
+        let (world_error,world_radius)=curve.cycle_world_point_evaluation_error_bounds(cycle,[0.25,0.75],[true;3],point_box,
+            &source_frame,RootUniformScaleEnclosure::from_scale(-0.5).unwrap(),actual_frame,-0.5).unwrap().unwrap();
+        assert!(world_error[0]>=8. && world_radius.is_finite());
+
+        for index in 8..=24 {
+            let phase=f64::from(index)/32.;
+            let actual=curve.sample(cycle as f64+phase,[true;3]).unwrap();
+            let point=actual.translation+actual.rotation*DVec3::X;
+            println!("RIGID_CYCLE_POINT_REFERENCE {:?}",(cycle,phase,point.to_array(),uniform));
+            let published=(-0.5*(actual_frame.rotation*point)+actual_frame.translation).as_vec3().as_dvec3();
+            println!("RIGID_WORLD_POINT_REFERENCE {:?}",(cycle,phase,published.to_array(),world_error));
+        }
+    }
+    for cycle in 0..9 {
+        let time=f64::from(cycle)+0.5;
+        let source=curve.source_sample_enclosure(time,[true;3]).unwrap().unwrap();
+        let bounds=source.translation_bounds();
+        let exact=[2.5,0.,if cycle%2==0 {2.} else {-2.}];
+        for axis in 0..3 {assert!(bounds[axis][0]<=exact[axis] && bounds[axis][1]>=exact[axis]);}
+        println!("SOURCE_TURN_REFERENCE {:?}",(cycle,bounds,source.rotation_bounds()));
+    }
+}
+
+#[test]
+fn source_partition_unions_distinct_channel_keys_and_rejects_lost_boundaries() {
+    let (_,clip)=clip(Vec3::ZERO,vec![Vec3Key {time:0.,value:Vec3::ZERO},
+        Vec3Key {time:0.25,value:Vec3::X},Vec3Key {time:1.,value:Vec3::X*2.}],
+        vec![QuatKey {time:0.,value:Quat::IDENTITY},QuatKey {time:0.5,value:Quat::IDENTITY},
+            QuatKey {time:1.,value:Quat::IDENTITY}],
+        TrackInterpolation {translation:Interpolation::Linear,rotation:Interpolation::CubicSpline,
+            ..Default::default()},JointTangents {rotation:vec![[Vec4::ZERO;2];3],..Default::default()},Playback::Loop);
+    let curve=clip.root_rigid_curve(0).unwrap();
+    let cells=curve.source_delta_partition(0.,[0.,1.],[true;3],3).unwrap().unwrap();
+    assert_eq!(cells.iter().map(|(times,_)|*times).collect::<Vec<_>>(),
+        vec![[0.,0.25],[0.25,0.5],[0.5,1.]]);
+    let cells=curve.source_delta_partition(0.,[1.,2.],[true;3],3).unwrap().unwrap();
+    assert_eq!(cells.iter().map(|(times,_)|*times).collect::<Vec<_>>(),
+        vec![[1.,1.25],[1.25,1.5],[1.5,2.]]);
+    let tiny=2_f32.powi(-60);
+    let keys=[Vec3Key {time:0.,value:Vec3::ZERO},Vec3Key {time:tiny,value:Vec3::X},
+        Vec3Key {time:1.,value:Vec3::X*2.}];
+    let translation=Arc::new(RootCurve::new(&keys,Interpolation::Linear,&[],1.,Playback::Loop));
+    let rotation=RootRotationCurve::new(&[QuatKey {time:0.,value:Quat::IDENTITY},
+        QuatKey {time:1.,value:Quat::IDENTITY}],Interpolation::CubicSpline,
+        &[[Vec4::ZERO;2];2],Quat::IDENTITY,1.,Playback::Loop).unwrap();
+    let curve=RootRigidCurve::new(translation,rotation,Vec3::ZERO,Vec3::ZERO,1.,Playback::Loop).unwrap();
+    assert_eq!(1.+f64::from(tiny),1.);
+    assert!(matches!(curve.source_delta_partition(1.,[1.,1.5],[true;3],8),
+        Err(AnimationError::RootRigidBudget)));
+    assert!(curve.source_delta_partition(f64::NAN,[1.,1.],[true;3],8).is_err());
+    let step=RootRigidCurve::new(Arc::new(RootCurve::new(&keys,Interpolation::Step,&[],1.,Playback::Loop)),
+        curve.0.rotation.clone(),Vec3::ZERO,Vec3::ZERO,1.,Playback::Loop).unwrap();
+    assert!(matches!(step.source_phase_interval_enclosure([0.,f64::from(tiny)],[true;3]),
+        Err(AnimationError::RootRotationTransitionUnsupported)));
+
+}
+
+#[test]
+fn stored_similarity_rounding_covers_lost_offsets_and_quaternion_polynomial() {
+    for (q,p,scale,offset) in [(DQuat::IDENTITY,DVec3::X*1e16,1.,DVec3::X),
+        (DQuat::from_xyzw(0.,0.6,0.,0.8),DVec3::new(1e16,3.,-7.),-0.3,DVec3::new(1.,2.,1e16))] {
+        let actual=scale*(q*p)+offset;
+        let error=RootRigidEnclosure::stored_similarity_evaluation_error(q.to_array().map(|v|[v,v]),
+            p.to_array().map(|v|[v,v]),[scale,scale],offset.to_array().map(|v|[v,v])).unwrap();
+        assert!(error.iter().all(|v|v.is_finite() && *v>=0.));
+        if q==DQuat::IDENTITY {assert!(error[0]>=1.);}
+        println!("SIMILARITY_ROUND_REFERENCE {:?}",(q.to_array(),p.to_array(),scale,offset.to_array(),actual.to_array(),error));
+    }
+}

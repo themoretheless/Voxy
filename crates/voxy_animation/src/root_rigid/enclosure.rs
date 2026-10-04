@@ -4,7 +4,7 @@
 use super::*;
 mod twist;
 mod compilation;
-pub(crate) use compilation::{translation_coefficient_error_bounds,translation_piece_error_bounds,
+pub(crate) use compilation::{quaternion_composition_uniform_error,quaternion_normalized_composition_uniform_error,quaternion_cubic_source_speed_bound,translation_source_position_bounds,translation_source_velocity_bounds,translation_coefficient_error_bounds,translation_piece_error_bounds,
     quaternion_normalization_error_bounds,quaternion_cubic_control_error_bounds,
     quaternion_cubic_normalized_error_bounds,quaternion_cubic_restriction_error_bounds,
     quaternion_cubic_phase_evaluation_error_bounds,translation_phase_evaluation_error_bounds,translation_interval_evaluation_error_bounds,quaternion_cubic_interval_evaluation_error_bounds,quaternion_composition_evaluation_error_bounds};
@@ -28,6 +28,64 @@ pub use cache::RootScrewEnclosurePath;
 pub use rates::RootAngularDerivativeBounds;
 pub use accumulation::RootRigidErrorAccumulator;
 pub use twist::{RootRigidTwistEnclosure,RootTwistErrorBounds};
+
+/// Exact-source enclosure of a cycle/key boundary relative to a path origin.
+#[derive(Clone,Copy,Debug)]
+pub struct RootTimeCutEnclosure {
+    evaluated:f64,
+    source:[f64;2],
+    error:f64,
+}
+impl RootTimeCutEnclosure {
+    pub fn new(cycle:u64,duration:f32,key:f64,origin:f64)->Result<Self,AnimationError> {
+        if cycle>9007199254740991 || !duration.is_finite() || duration<=0.
+            || !key.is_finite() || key<0. || key>f64::from(duration)
+            || !origin.is_finite() || origin<0. {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let d=f64::from(duration);
+        let evaluated=(cycle as f64*d+key)-origin;
+        if !evaluated.is_finite() {return Err(AnimationError::NumericalOverflow);}
+        let source=Scalar::exact(cycle as f64).mul(Scalar::exact(d))?
+            .add(Scalar::exact(key))?.sub(Scalar::exact(origin))?;
+        let discrepancy=source.sub(Scalar::exact(evaluated))?;
+        Ok(Self {evaluated,source:source.array(),
+            error:discrepancy.0.abs().max(discrepancy.1.abs())})
+    }
+    fn mapped(self,source:Scalar,evaluated:f64)->Result<Self,AnimationError> {
+        if !evaluated.is_finite() {return Err(AnimationError::NumericalOverflow);}
+        let error=source.sub(Scalar::exact(evaluated))?;
+        Ok(Self {evaluated,source:source.array(),error:error.0.abs().max(error.1.abs())})
+    }
+    pub fn retimed(self,old_duration:f64,new_duration:f64)->Result<Self,AnimationError> {
+        if !old_duration.is_finite() || old_duration<=0. || !new_duration.is_finite() || new_duration<0. {
+            return Err(AnimationError::InvalidAnimationTimeStep);
+        }
+        self.mapped(Scalar(self.source[0],self.source[1]).div_positive(old_duration)?
+            .mul(Scalar::exact(new_duration))?,(self.evaluated/old_duration)*new_duration)
+    }
+    pub fn shifted(self,offset:f64)->Result<Self,AnimationError> {
+        if !offset.is_finite() || offset<0. {return Err(AnimationError::InvalidSampleTime);}
+        self.mapped(Scalar(self.source[0],self.source[1]).add(Scalar::exact(offset))?,self.evaluated+offset)
+    }
+    pub fn evaluated(self)->f64 {self.evaluated}
+    pub fn exact_source_bounds(self)->[f64;2] {self.source}
+    pub fn absolute_error_bound(self)->f64 {self.error}
+    /// Converts clock discrepancy to displacement for a continuous field.
+    /// Supplied speeds must bound the entire exact/evaluated time corridor,
+    /// in one fixed spatial frame. STEP impulses require separate event handling.
+    pub fn continuous_motion_error(self,linear_speed:f64,angular_speed:f64,point_radius:f64)
+        ->Result<[f64;2],AnimationError> {
+        if [linear_speed,angular_speed,point_radius].iter().any(|v|!v.is_finite() || *v<0.) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let dt=Scalar::exact(self.error);
+        let angular=dt.mul(Scalar::exact(angular_speed))?;
+        let point_speed=Scalar::exact(linear_speed)
+            .add(Scalar::exact(angular_speed).mul(Scalar::exact(point_radius))?)?;
+        Ok([dt.mul(point_speed)?.1,angular.1])
+    }
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct RootRigidEnclosure {
@@ -689,5 +747,457 @@ mod tests {
             })
             .is_err()
         );
+    }
+}
+
+impl RootRigidCurve {
+    /// Source point-speed cap for one translation/cubic-rotation key interval.
+    /// Includes extraction masks and moving pivots; no loop-prefix or parent-frame proof.
+    /// Radius bounds the fixed authored point relative to the local frame origin.
+    pub fn source_point_speed_bound(&self,start:f64,end:f64,axes:[bool;3],radius:f64)
+        ->Result<Option<f64>,AnimationError> {
+        if !radius.is_finite() || radius<0. {return Err(AnimationError::InvalidSampleTime);}
+        let velocity=self.0.translation.source_velocity_bounds(start,end)?;
+        let position=self.0.translation.source_position_bounds(start,end)?;
+        let Some(angular)=self.0.rotation.cubic_source_angular_speed_bound(start,end)? else {return Ok(None);};
+        let mut translation_speed=Scalar::exact(0.);
+        let mut pivot_radius=Scalar::exact(0.);
+        for axis in 0..3 {
+            let speed=velocity[axis][0].abs().max(velocity[axis][1].abs());
+            translation_speed=translation_speed.add(Scalar::exact(speed).mul(
+                Scalar::exact(if axes[axis] {1.} else {2.}))?)?;
+            let pivot=if axes[axis] {Scalar::exact(self.0.bind[axis])}
+                else {Scalar(position[axis][0],position[axis][1]).add(Scalar::exact(self.0.origin[axis]))?};
+            pivot_radius=pivot_radius.add(Scalar::exact(pivot.0.abs().max(pivot.1.abs())))?;
+        }
+        Ok(Some(translation_speed.add(Scalar::exact(angular).mul(
+            pivot_radius.add(Scalar::exact(radius))?)?)?.1))
+    }
+}
+
+impl RootRigidCurve {
+    /// Local source speed mapped through a fixed enclosed signed similarity.
+    /// The target box contains fixed points; moving parent frames are unsupported.
+    pub fn mapped_source_point_speed_bound(&self,times:[f64;2],axes:[bool;3],
+        frame:&RootRigidEnclosure,scale:RootUniformScaleEnclosure,points:[[f64;2];3])
+        ->Result<Option<f64>,AnimationError> {
+        let source=frame.inverse_similarity_point_box_bounds_enclosed(points,scale)?;
+        let mut radius=Scalar::exact(0.);
+        for axis in source {radius=radius.add(Scalar::exact(axis[0].abs().max(axis[1].abs())))?;}
+        let Some(speed)=self.source_point_speed_bound(times[0],times[1],axes,radius.1)? else {return Ok(None);};
+        Ok(Some(Scalar::exact(speed).mul(Scalar::exact(scale.absolute_upper()))?.1))
+    }
+}
+
+impl RootRigidCurve {
+    /// Source factor at an exact local phase, including the extraction pivot.
+    /// Cubic rotation only; the enclosure represents real unit rotations.
+    pub fn source_phase_enclosure(&self,phase:f64,axes:[bool;3])
+        ->Result<Option<RootRigidEnclosure>,AnimationError> {
+        let position=self.0.translation.source_position_bounds(phase,phase)?;
+        let Some(error)=self.0.rotation.cubic_relative_phase_evaluation_error_bounds(phase)? else {return Ok(None);};
+        let q=self.0.rotation.phase_rotation(phase)?.to_array();
+        let mut rotation=[Scalar::exact(0.);4];
+        for i in 0..4 {
+            rotation[i]=if error[i]==0. {Scalar::exact(q[i])}
+                else {Scalar::exact(q[i]).add(Scalar(-error[i],error[i]))?};
+        }
+        let mut adjusted=[Scalar::exact(0.);3];
+        let mut pivot=[Scalar::exact(0.);3];
+        for i in 0..3 {
+            let p=Scalar(position[i][0],position[i][1]).add(Scalar::exact(self.0.origin[i]))?;
+            pivot[i]=if axes[i] {Scalar::exact(self.0.bind[i])} else {p};
+            adjusted[i]=if axes[i] {p.sub(Scalar::exact(self.0.origin[i]).sub(Scalar::exact(self.0.bind[i]))?)?}
+                else {p};
+        }
+        let rotated=rotate(rotation,pivot)?;
+        for i in 0..3 {adjusted[i]=adjusted[i].sub(rotated[i])?;}
+        Ok(Some(RootRigidEnclosure {translation:adjusted.map(Scalar::array),rotation:rotation.map(Scalar::array)}))
+    }
+    /// Enclosed exact-source loop power. No floating quaternion renormalization.
+    pub fn source_cycle_prefix_enclosure(&self,cycles:u64,axes:[bool;3])
+        ->Result<Option<RootRigidEnclosure>,AnimationError> {
+        if cycles>9007199254740991 || (self.0.playback==Playback::Clamp && cycles!=0) {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let Some(mut base)=self.source_phase_enclosure(self.0.duration,axes)? else {return Ok(None);};
+        let mut power=cycles;let mut result=RootRigidEnclosure::IDENTITY;
+        while power!=0 {
+            if power&1!=0 {result=result.compose(&base)?;}
+            power>>=1;
+            if power!=0 {base=base.compose(&base)?;}
+        }
+        Ok(Some(result))
+    }
+    pub fn source_sample_enclosure(&self,time:f64,axes:[bool;3])
+        ->Result<Option<RootRigidEnclosure>,AnimationError> {
+        let clock=crate::enclose_root_cycle_phase(time,self.0.duration as f32,self.0.playback)?;
+        if clock.exact_phase_bounds()!=[clock.phase();2] {return Err(AnimationError::RootRigidBudget);}
+        let Some(phase)=self.source_phase_enclosure(clock.phase(),axes)? else {return Ok(None);};
+        if clock.cycle()==0 {return Ok(Some(phase));}
+        let Some(prefix)=self.source_cycle_prefix_enclosure(clock.cycle(),axes)? else {return Ok(None);};
+        Ok(Some(prefix.compose(&phase)?))
+    }
+}
+
+impl RootRigidCurve {
+    /// Source movement relative to the authored factor at the interval start.
+    /// Includes source loop powers and starting-frame inversion/composition.
+    pub fn source_delta_enclosure(&self,start:f64,end:f64,axes:[bool;3])
+        ->Result<Option<RootRigidEnclosure>,AnimationError> {
+        if end<start {return Err(AnimationError::InvalidSampleTime);}
+        let Some(a)=self.source_sample_enclosure(start,axes)? else {return Ok(None);};
+        if end==start {return Ok(Some(RootRigidEnclosure::IDENTITY));}
+        let Some(b)=self.source_sample_enclosure(end,axes)? else {return Ok(None);};
+        Ok(Some(a.inverse()?.compose(&b)?))
+    }
+    /// Pointwise source-versus-evaluated interval motion discrepancy.
+    /// This does not bound intermediate poses or certify a collision sweep.
+    pub fn source_delta_point_error(&self,times:[f64;2],axes:[bool;3],point:[[f64;2];3],evaluated:DVec3)
+        ->Result<Option<([f64;3],f64)>,AnimationError> {
+        let Some(source)=self.source_delta_enclosure(times[0],times[1],axes)? else {return Ok(None);};
+        Ok(Some(source.enclosed_point_evaluation_error(point,1.,evaluated)?))
+    }
+}
+
+impl RootRigidCurve {
+    /// Uniform source pose enclosure on one continuous local key interval.
+    /// Integrates proved speed caps rather than checking selected samples.
+    pub fn source_phase_interval_enclosure(&self,times:[f64;2],axes:[bool;3])
+        ->Result<Option<RootRigidEnclosure>,AnimationError> {
+        if self.0.translation.jump(times[1]).is_some() {return Err(AnimationError::RootRotationTransitionUnsupported);}
+        let Some(initial)=self.source_phase_enclosure(times[0],axes)? else {return Ok(None);};
+        let Some(speed)=self.source_point_speed_bound(times[0],times[1],axes,0.)? else {return Ok(None);};
+        let Some(angular)=self.0.rotation.cubic_source_angular_speed_bound(times[0],times[1])? else {return Ok(None);};
+        let elapsed=Scalar::exact(times[1]).sub(Scalar::exact(times[0]))?;
+        let position_error=elapsed.mul(Scalar::exact(speed))?.1;
+        let quaternion_error=elapsed.mul(Scalar::exact(angular))?.mul(Scalar::exact(0.5))?.1;
+        let mut result=initial;
+        for axis in 0..3 {
+            result.translation[axis]=Scalar(initial.translation[axis][0],initial.translation[axis][1])
+                .add(Scalar(-position_error,position_error))?.array();
+        }
+        for axis in 0..4 {
+            let expanded=Scalar(initial.rotation[axis][0],initial.rotation[axis][1])
+                .add(Scalar(-quaternion_error,quaternion_error))?;
+            result.rotation[axis]=[expanded.0.max(-1.),expanded.1.min(1.)];
+        }
+        Ok(Some(result))
+    }
+    /// Uniform interval motion from a fixed source reference time.
+    /// The requested interval must stay in one key interval and one loop cell;
+    /// its right endpoint may be the next seam. Reference can precede many loops.
+    pub fn source_delta_interval_enclosure(&self,reference:f64,times:[f64;2],axes:[bool;3])
+        ->Result<Option<RootRigidEnclosure>,AnimationError> {
+        if reference>times[0] {return Err(AnimationError::InvalidSampleTime);}
+        let phases=crate::root_clock::root_segment_phases(times[0],times[1],self.0.duration as f32,self.0.playback)?;
+        let clock=crate::enclose_root_cycle_phase(times[0],self.0.duration as f32,self.0.playback)?;
+        let Some(local)=self.source_phase_interval_enclosure(phases,axes)? else {return Ok(None);};
+        let Some(prefix)=self.source_cycle_prefix_enclosure(clock.cycle(),axes)? else {return Ok(None);};
+        let Some(initial)=self.source_sample_enclosure(reference,axes)? else {return Ok(None);};
+        Ok(Some(initial.inverse()?.compose(&prefix.compose(&local)?)?))
+    }
+}
+
+impl RootRigidCurve {
+    /// Uniform source-motion cells split at both channels' keys and loop seams.
+    /// Nonrepresentable authored boundaries reject rather than moving an event.
+    pub fn source_delta_partition(&self,reference:f64,times:[f64;2],axes:[bool;3],limit:usize)
+        ->Result<Option<Vec<([f64;2],RootRigidEnclosure)>>,AnimationError> {
+        if !reference.is_finite() || reference<0. || reference>times[0] || times[1]<times[0] || limit==0 || limit>MAX_ROOT_ROTATION_SPANS {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let first=crate::enclose_root_cycle_phase(times[0],self.0.duration as f32,self.0.playback)?;
+        let last=crate::enclose_root_cycle_phase(times[1],self.0.duration as f32,self.0.playback)?;
+        if last.cycle()-first.cycle()>limit as u64 {return Err(AnimationError::RootRigidBudget);}
+        let mut keys=self.0.translation.cuts(0.,self.0.duration,crate::MAX_ROOT_ROTATION_CACHE_KEYS)?;
+        keys.extend(self.0.rotation.phase_key_times());keys.push(self.0.duration);
+        keys.sort_by(f64::total_cmp);keys.dedup();
+        let mut cuts=vec![times[0],times[1]];
+        for cycle in first.cycle()..=last.cycle() {
+            for &key in &keys {
+                let absolute=cycle as f64*self.0.duration+key;
+                if absolute<times[0] || absolute>times[1] {continue;}
+                if self.0.playback==Playback::Loop {
+                    let clock=crate::enclose_root_cycle_phase(absolute,self.0.duration as f32,Playback::Loop)?;
+                    let expected=if key==self.0.duration {(cycle+1,0.)} else {(cycle,key)};
+                    if (clock.cycle(),clock.phase())!=expected || clock.exact_phase_bounds()!=[clock.phase();2] {
+                        return Err(AnimationError::RootRigidBudget);
+                    }
+                }
+                cuts.push(absolute);
+                if cuts.len()>2*(limit+1) {return Err(AnimationError::RootRigidBudget);}
+            }
+        }
+        cuts.sort_by(f64::total_cmp);cuts.dedup();
+        if cuts.len()-1>limit {return Err(AnimationError::RootRigidBudget);}
+        let mut result=Vec::with_capacity(cuts.len()-1);
+        for cell in cuts.windows(2) {
+            let times=[cell[0],cell[1]];
+            let Some(enclosure)=self.source_delta_interval_enclosure(reference,times,axes)? else {return Ok(None);};
+            result.push((times,enclosure));
+        }
+        Ok(Some(result))
+    }
+}
+
+impl RootRigidCurve {
+    /// Uniform geometric point discrepancy against a canonical screw reference.
+    /// Covers source compilation and loop factors, but not runtime evaluation,
+    /// world mapping, f32 publication or a velocity-blended fade of two clips.
+    /// Independent hull subtraction is conservative and may require refinement.
+    pub fn source_screw_point_error(&self,times:[f64;2],axes:[bool;3],point:[[f64;2];3],
+        candidate:&RootScrewEnclosurePath<'_>,limit:usize)
+        ->Result<Option<([f64;3],f64)>,AnimationError> {
+        if candidate.path().duration()!=times[1]-times[0] {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        self.source_screw_point_error_refined(times,axes,point,candidate,limit,1)
+
+    }
+}
+
+impl RootRigidCurve {
+    /// Synchronized source/candidate hull comparison with bounded subdivision.
+    /// Canonical candidate time is mapped affinely over the exact source duration.
+    pub fn source_screw_point_error_refined(&self,times:[f64;2],axes:[bool;3],point:[[f64;2];3],
+        candidate:&RootScrewEnclosurePath<'_>,limit:usize,subdivisions:usize)
+        ->Result<Option<([f64;3],f64)>,AnimationError> {
+        if subdivisions==0 || subdivisions>MAX_ROOT_ROTATION_SPANS || candidate.path().duration()!=times[1]-times[0] {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(partition)=self.source_delta_partition(times[0],times,axes,limit)? else {return Ok(None);};
+        if partition.len().checked_mul(subdivisions).is_none_or(|n|n>MAX_ROOT_ROTATION_SPANS) {
+            return Err(AnimationError::RootRigidBudget);
+        }
+        let mut error=[0_f64;3];
+        let duration=Scalar::exact(times[1]).sub(Scalar::exact(times[0]))?;
+        let mut compare=|source:RootRigidEnclosure,cell:[f64;2]|->Result<(),AnimationError> {
+            let source_box=source.transform_point_box_bounds(point)?;
+            let candidate_times=if times[0]==times[1] {[0.,0.]} else {
+                let mapped=Scalar(cell[0],cell[1]).sub(Scalar::exact(times[0]))?
+                    .div_interval_positive(duration)?.mul(Scalar::exact(candidate.path().duration()))?;
+                [mapped.0.max(0.),mapped.1.min(candidate.path().duration())]
+            };
+            let candidate_box=candidate.point_box_bounds_between(candidate_times,point)?;
+            for axis in 0..3 {
+                let delta=Scalar(source_box[axis][0],source_box[axis][1])
+                    .sub(Scalar(candidate_box[axis][0],candidate_box[axis][1]))?;
+                error[axis]=error[axis].max(delta.0.abs().max(delta.1.abs()));
+            }
+            Ok(())
+        };
+        if partition.is_empty() {compare(RootRigidEnclosure::IDENTITY,times)?;}
+        for (cell,_) in partition {
+            let mut start=cell[0];
+            for index in 1..=subdivisions {
+                let end=if index==subdivisions {cell[1]} else {cell[0]+(cell[1]-cell[0])*(index as f64/subdivisions as f64)};
+                if end<=start {return Err(AnimationError::RootRigidBudget);}
+                let Some(source)=self.source_delta_interval_enclosure(times[0],[start,end],axes)? else {return Ok(None);};
+                compare(source,[start,end])?;start=end;
+            }
+        }
+        let mut radius=Scalar::exact(0.);for axis in error {radius=radius.add(Scalar::exact(axis))?;}
+        Ok(Some((error,radius.1)))
+    }
+}
+
+/// Borrowed uniform geometric source/reference discrepancy proof.
+/// Runtime pose evaluation and world publication errors are separate obligations.
+#[derive(Debug)]
+pub struct RootSourceScrewPointCertificate<'a> {
+    source:&'a RootRigidCurve,
+    candidate:&'a RootScrewEnclosurePath<'a>,
+    times:[f64;2],
+    extraction_axes:[bool;3],
+    point:[[f64;2];3],
+    axis_error:[f64;3],
+    radius:f64,
+    subdivisions:usize,
+    evaluated_cells:usize,
+}
+impl<'a> RootSourceScrewPointCertificate<'a> {
+    pub fn source(&self)->&RootRigidCurve {self.source}
+    pub fn candidate(&self)->&RootScrewEnclosurePath<'a> {self.candidate}
+    pub fn times(&self)->[f64;2] {self.times}
+    pub fn extraction_axes(&self)->[bool;3] {self.extraction_axes}
+    pub fn point_bounds(&self)->[[f64;2];3] {self.point}
+    pub fn axis_error_bounds(&self)->[f64;3] {self.axis_error}
+    pub fn radius(&self)->f64 {self.radius}
+    pub fn subdivisions(&self)->usize {self.subdivisions}
+    pub fn evaluated_cells(&self)->usize {self.evaluated_cells}
+}
+impl RootRigidCurve {
+    /// Refines uniform geometric discrepancy until tolerance is proved.
+    /// Budget counts all source comparison cells across refinement attempts.
+    pub fn certify_source_screw_point_error<'a>(&'a self,times:[f64;2],axes:[bool;3],
+        point:[[f64;2];3],candidate:&'a RootScrewEnclosurePath<'a>,tolerance:f64,max_cells:usize)
+        ->Result<Option<RootSourceScrewPointCertificate<'a>>,AnimationError> {
+        if !tolerance.is_finite() || tolerance<0. || max_cells==0 || max_cells>MAX_ROOT_ROTATION_SPANS {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        let Some(partition)=self.source_delta_partition(times[0],times,axes,max_cells)? else {return Ok(None);};
+        let count=partition.len().max(1);
+        let mut subdivisions=1_usize;let mut evaluated_cells=0_usize;
+        loop {
+            let work=count.checked_mul(subdivisions).ok_or(AnimationError::RootRigidBudget)?;
+            evaluated_cells=evaluated_cells.checked_add(work).ok_or(AnimationError::RootRigidBudget)?;
+            if evaluated_cells>max_cells {return Err(AnimationError::RootRigidBudget);}
+            let Some((axis_error,radius))=self.source_screw_point_error_refined(times,axes,point,
+                candidate,max_cells,subdivisions)? else {return Ok(None);};
+            if radius<=tolerance {
+                return Ok(Some(RootSourceScrewPointCertificate {source:self,candidate,times,
+                    extraction_axes:axes,point,axis_error,radius,subdivisions,evaluated_cells}));
+            }
+            subdivisions=subdivisions.checked_mul(2).ok_or(AnimationError::RootRigidBudget)?;
+        }
+    }
+}
+
+impl RootSourceScrewPointCertificate<'_> {
+    /// Geometric discrepancy plus direct f32 rounding in a fixed common frame.
+    /// Does not include runtime quaternion/matrix evaluation before conversion.
+    pub fn mapped_f32_geometric_error(&self,frame:&RootRigidEnclosure,scale:RootUniformScaleEnclosure)
+        ->Result<([f64;3],f64),AnimationError> {
+        let (_,rotation)=frame.vectors();
+        let local=self.axis_error.map(|error|Scalar(-error,error));
+        let mut difference=rotate(rotation,local)?;
+        for axis in &mut difference {*axis=axis.mul(scale.value)?;}
+        let candidate=self.candidate.whole_path_point_box_bounds(self.point)?;
+        let world=frame.similarity_point_box_bounds_enclosed(candidate,scale)?;
+        let (publication,_)=RootRigidEnclosure::enclosed_f32_publication_error(world)?;
+        let mut axes=[0.;3];let mut radius=Scalar::exact(0.);
+        for axis in 0..3 {
+            axes[axis]=Scalar::exact(difference[axis].0.abs().max(difference[axis].1.abs()))
+                .add(Scalar::exact(publication[axis]))?.1;
+            radius=radius.add(Scalar::exact(axes[axis]))?;
+        }
+        Ok((axes,radius.1))
+    }
+}
+
+impl RootRigidEnclosure {
+    /// Uniform rounding cap for glam 0.33.7 DQuat*DVec3, then scale and offset.
+    /// Inputs are stored f64 values within these boxes. The reference is the exact
+    /// homogeneous quaternion polynomial, not a separately normalized rotation.
+    /// Quaternion compilation/normalization errors must be bounded separately.
+    pub fn stored_similarity_evaluation_error(q:[[f64;2];4],point:[[f64;2];3],scale:[f64;2],offset:[[f64;2];3])
+        ->Result<[f64;3],AnimationError> {
+        compilation::stored_similarity_evaluation_error(q,point,scale,offset)
+    }
+}
+
+impl RootRigidCurve {
+    /// Uniform source-to-runtime image error for phase() then translation+q*point.
+    /// One continuous shared local-key interval; loop prefix evaluation is separate.
+    pub fn phase_point_evaluation_error_bounds(&self,times:[f64;2],axes:[bool;3],point:[[f64;2];3])
+        ->Result<Option<[f64;3]>,AnimationError> {
+        let Some(source)=self.source_phase_interval_enclosure(times,axes)? else {return Ok(None);};
+        let position=self.0.translation.source_position_bounds(times[0],times[1])?;
+        let position_error=self.0.translation.interval_evaluation_error_bounds(times[0],times[1])?;
+        let Some(rotation_error)=self.0.rotation.cubic_relative_interval_evaluation_error_bounds(times[0],times[1])?
+            else {return Ok(None);};
+        Ok(Some(compilation::root_phase_point_error(position,position_error,source.rotation_bounds(),
+            rotation_error,self.0.origin,self.0.bind,axes,point)?))
+    }
+}
+
+impl RootRigidCurve {
+    /// Fixed runtime rigid loop-prefix discrepancy against its exact source.
+    pub fn cycle_prefix_evaluation_error_bounds(&self,cycles:u64,axes:[bool;3])
+        ->Result<Option<([f64;3],[f64;4])>,AnimationError> {
+        let Some(source)=self.source_cycle_prefix_enclosure(cycles,axes)? else {return Ok(None);};
+        let evaluated=power(self.phase(self.0.duration,axes)?,cycles)?;
+        let mut translation=[0.;3];let mut rotation=[0.;4];
+        for i in 0..3 {
+            let delta=Scalar(source.translation[i][0],source.translation[i][1])
+                .sub(Scalar::exact(evaluated.translation[i]))?;
+            translation[i]=delta.0.abs().max(delta.1.abs());
+        }
+        for i in 0..4 {
+            let delta=Scalar(source.rotation[i][0],source.rotation[i][1])
+                .sub(Scalar::exact(evaluated.rotation.to_array()[i]))?;
+            rotation[i]=delta.0.abs().max(delta.1.abs());
+        }
+        Ok(Some((translation,rotation)))
+    }
+    /// Uniform sample() then translation+rotation*point error at an explicit cycle.
+    /// Wall-clock phase and world/f32 publication remain separate.
+    pub fn cycle_point_evaluation_error_bounds(&self,cycles:u64,times:[f64;2],axes:[bool;3],point:[[f64;2];3])
+        ->Result<Option<[f64;3]>,AnimationError> {
+        let Some(prefix)=self.source_cycle_prefix_enclosure(cycles,axes)? else {return Ok(None);};
+        let Some((prefix_t_error,prefix_q_error))=self.cycle_prefix_evaluation_error_bounds(cycles,axes)? else {return Ok(None);};
+        let Some(local)=self.source_phase_interval_enclosure(times,axes)? else {return Ok(None);};
+        let Some(local_t_error)=self.phase_point_evaluation_error_bounds(times,axes,[[0.;2];3])? else {return Ok(None);};
+        let Some(local_q_error)=self.0.rotation.cubic_relative_interval_evaluation_error_bounds(times[0],times[1])?
+            else {return Ok(None);};
+        Ok(Some(compilation::composed_rigid_point_error(&prefix,prefix_t_error,prefix_q_error,
+            &local,local_t_error,local_q_error,point)?))
+    }
+}
+
+impl RootRigidCurve {
+    /// Uniform source-to-published point discrepancy for an explicit loop cell.
+    /// Matches sample point evaluation, then actual_scale*(actual_frame.rotation*p)
+    /// +actual_frame.translation, then direct f32 cast. Fixed source frames only.
+    pub fn cycle_world_point_evaluation_error_bounds(&self,cycles:u64,times:[f64;2],axes:[bool;3],
+        point:[[f64;2];3],source_frame:&RootRigidEnclosure,source_scale:RootUniformScaleEnclosure,
+        actual_frame:RootRigidTransform,actual_scale:f64)
+        ->Result<Option<([f64;3],f64)>,AnimationError> {
+        let Some(prefix)=self.source_cycle_prefix_enclosure(cycles,axes)? else {return Ok(None);};
+        let Some(local)=self.source_phase_interval_enclosure(times,axes)? else {return Ok(None);};
+        let source_point=prefix.compose(&local)?.transform_point_box_bounds(point)?;
+        let Some(point_error)=self.cycle_point_evaluation_error_bounds(cycles,times,axes,point)? else {return Ok(None);};
+        let (before_cast,actual_box)=compilation::mapped_point_runtime_error(source_point,point_error,
+            source_frame,source_scale,actual_frame,actual_scale)?;
+        let (publication,_)=RootRigidEnclosure::enclosed_f32_publication_error(actual_box)?;
+        let mut axes=[0.;3];let mut radius=Scalar::exact(0.);
+        for i in 0..3 {
+            axes[i]=Scalar::exact(before_cast[i]).add(Scalar::exact(publication[i]))?.1;
+            radius=radius.add(Scalar::exact(axes[i]))?;
+        }
+        Ok(Some((axes,radius.1)))
+    }
+}
+
+impl RootRigidCurve {
+    /// Uniform sample/map/f32 error on an absolute wall-clock interval.
+    /// Splits channel keys/loops and refines unresolved normalization domains.
+    /// Seam endpoints also certify the actual next-cycle sampling branch.
+    pub fn world_point_evaluation_error_bounds(&self,times:[f64;2],axes:[bool;3],point:[[f64;2];3],
+        source_frame:&RootRigidEnclosure,source_scale:RootUniformScaleEnclosure,
+        actual_frame:RootRigidTransform,actual_scale:f64,max_cells:usize)
+        ->Result<Option<([f64;3],f64)>,AnimationError> {
+        let Some(partition)=self.source_delta_partition(times[0],times,axes,max_cells)? else {return Ok(None);};
+        let mut pending:Vec<[f64;2]>=partition.into_iter().map(|(cell,_)|cell).collect();
+        if pending.is_empty() {pending.push(times);}
+        let mut result=[0_f64;3];let mut visited=0_usize;
+        let mut merge=|error:[f64;3]| {for i in 0..3 {result[i]=result[i].max(error[i]);}};
+        while let Some(cell)=pending.pop() {
+            visited+=1;if visited>max_cells {return Err(AnimationError::RootRigidBudget);}
+            let clock=crate::enclose_root_cycle_phase(cell[0],self.0.duration as f32,self.0.playback)?;
+            let phases=crate::root_clock::root_segment_phases(cell[0],cell[1],self.0.duration as f32,self.0.playback)?;
+            match self.cycle_world_point_evaluation_error_bounds(clock.cycle(),phases,axes,point,
+                source_frame,source_scale,actual_frame,actual_scale) {
+                Ok(Some((error,_)))=>merge(error),
+                Ok(None)=>return Ok(None),
+                Err(AnimationError::InvalidRootRotationCurve)=>{
+                    let mid=cell[0]+(cell[1]-cell[0])*0.5;
+                    if mid<=cell[0] || mid>=cell[1] {return Err(AnimationError::RootRigidBudget);}
+                    pending.push([mid,cell[1]]);pending.push([cell[0],mid]);continue;
+                },
+                Err(error)=>return Err(error),
+            }
+            let end_clock=crate::enclose_root_cycle_phase(cell[1],self.0.duration as f32,self.0.playback)?;
+            if end_clock.cycle()!=clock.cycle() {
+                visited+=1;if visited>max_cells {return Err(AnimationError::RootRigidBudget);}
+                let Some((error,_))=self.cycle_world_point_evaluation_error_bounds(end_clock.cycle(),
+                    [end_clock.phase();2],axes,point,source_frame,source_scale,actual_frame,actual_scale)?
+                    else {return Ok(None);};
+                merge(error);
+            }
+        }
+        let mut radius=Scalar::exact(0.);for error in result {radius=radius.add(Scalar::exact(error))?;}
+        Ok(Some((result,radius.1)))
     }
 }
