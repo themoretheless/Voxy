@@ -1,0 +1,11 @@
+{
+  "scope": "Uniform numerical bounds after selected ground snap and current zero-anchor AABB reconstruction",
+  "gameplay_unit_tests": 66,
+  "gameplay_integration_tests": 46,
+  "rational_axis_comparisons": 60,
+  "rational_L1_comparisons": 20,
+  "limitations": [
+    "Selected snap fraction is treated as physical intent; collision fraction selection is not qualified",
+    "Does not qualify composed f32 scene publication or production fade admission"
+  ]
+}
