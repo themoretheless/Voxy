@@ -7,8 +7,8 @@ use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
 mod integration;
 mod enclosure;
-pub(crate) use enclosure::{translation_coefficient_error_bounds,translation_piece_error_bounds,quaternion_normalization_error_bounds,quaternion_cubic_control_error_bounds,quaternion_cubic_normalized_error_bounds,quaternion_cubic_restriction_error_bounds,quaternion_cubic_phase_evaluation_error_bounds,translation_phase_evaluation_error_bounds,translation_interval_evaluation_error_bounds,quaternion_cubic_interval_evaluation_error_bounds,quaternion_composition_evaluation_error_bounds};
-pub use enclosure::{RootRigidEnclosure, RootUniformScaleEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
+pub(crate) use enclosure::{quaternion_composition_uniform_error,quaternion_normalized_composition_uniform_error,quaternion_cubic_source_speed_bound,translation_source_position_bounds,translation_source_velocity_bounds,translation_coefficient_error_bounds,translation_piece_error_bounds,quaternion_normalization_error_bounds,quaternion_cubic_control_error_bounds,quaternion_cubic_normalized_error_bounds,quaternion_cubic_restriction_error_bounds,quaternion_cubic_phase_evaluation_error_bounds,translation_phase_evaluation_error_bounds,translation_interval_evaluation_error_bounds,quaternion_cubic_interval_evaluation_error_bounds,quaternion_composition_evaluation_error_bounds};
+pub use enclosure::{RootRigidEnclosure, RootUniformScaleEnclosure, RootTimeCutEnclosure, RootSourceScrewPointCertificate, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
 mod blend;
 pub use blend::RootSpatialTwistBounds;
 mod partition;
@@ -370,11 +370,15 @@ fn bezier(c: [DVec3; 4], t: f64) -> DVec3 {
 }
 #[derive(Clone, Debug)]
 pub struct RootRigidPath {
+    translation_cuts: Vec<RootTimeCutEnclosure>,
     spans: Vec<RootRigidSpan>,
     duration: f64,
     end: RootRigidTransform,
 }
 impl RootRigidPath {
+    /// Enclosed translation-key and loop cut clocks. Not a total motion error certificate.
+    pub fn translation_cut_enclosures(&self)->&[RootTimeCutEnclosure] {&self.translation_cuts}
+
     /// Builds ordered, exact constant-spatial-twist segments in one fixed frame.
     /// This does not approximate or certify a time-varying velocity field.
     /// # Errors
@@ -398,7 +402,7 @@ impl RootRigidPath {
             spans.push(span);
             time = next;
         }
-        Ok(Self { spans, duration:time, end })
+        Ok(Self { spans, duration:time, end, translation_cuts:vec![] })
     }
     /// Changes total elapsed time while retaining every geometric span/event.
     /// Moving spans cannot collapse to zero duration; stationary paths can acquire
@@ -420,7 +424,8 @@ impl RootRigidPath {
             spans.push(RootRigidSpan { rotation, screw,
                 additive: original.additive, pivot: original.pivot });
         }
-        Ok(Self { spans, duration, end: self.end })
+        Ok(Self { spans, duration, end: self.end,translation_cuts:self.translation_cuts.iter()
+            .map(|cut|cut.retimed(self.duration,duration)).collect::<Result<_,_>>()? })
     }
     /// Appends a path expressed in the same fixed spatial frame.
     /// Each following sample left-composes this path's accepted endpoint.
@@ -445,7 +450,10 @@ impl RootRigidPath {
             if !pivot.iter().all(|v|v.is_finite()) {return Err(AnimationError::NumericalOverflow);}
             spans.push(RootRigidSpan {rotation,screw,pivot,additive:original.additive});
         }
-        Ok(Self {spans,duration,end:next.end.compose(prefix)?})
+        let mut translation_cuts=self.translation_cuts.clone();
+        translation_cuts.extend(next.translation_cuts.iter().map(|cut|cut.shifted(self.duration))
+            .collect::<Result<Vec<_>,_>>()?);
+        Ok(Self {spans,duration,end:next.end.compose(prefix)?,translation_cuts})
     }
     /// Changes coordinates by x_target = scale * basis * x_source + offset.
     /// Retains every ordered span, cubic coefficient and STEP event.
@@ -504,6 +512,7 @@ impl RootRigidPath {
         Ok(Self {
             spans,
             duration: self.duration,
+            translation_cuts:self.translation_cuts.clone(),
             end,
         })
     }
@@ -544,6 +553,24 @@ impl RootRigidCurve {
     /// separate proof obligations.
     pub fn translation_compilation_error_bounds(&self) -> Result<[f64;3],AnimationError> {
         self.0.translation.compilation_error_bounds()
+    }
+    /// Exact stored-key translation velocity on one key interval, before rotation
+    /// coupling or extraction masks. STEP impulses are separate from this derivative.
+    pub fn translation_source_velocity_bounds(&self,start:f64,end:f64)
+        ->Result<[[f64;2];3],AnimationError> {
+        self.0.translation.source_velocity_bounds(start,end)
+    }
+    pub fn rotation_cubic_cycle_interval_evaluation_error_bounds(&self,cycles:u64,start:f64,end:f64)
+        ->Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_cycle_interval_evaluation_error_bounds(cycles,start,end)
+    }
+    pub fn rotation_cubic_relative_interval_evaluation_error_bounds(&self,start:f64,end:f64)
+        ->Result<Option<[f64;4]>,AnimationError> {
+        self.0.rotation.cubic_relative_interval_evaluation_error_bounds(start,end)
+    }
+    pub fn rotation_cubic_source_angular_speed_bound(&self,start:f64,end:f64)
+        ->Result<Option<f64>,AnimationError> {
+        self.0.rotation.cubic_source_angular_speed_bound(start,end)
     }
     /// Componentwise error of cached quaternion key normalization only.
     /// Arc logarithms, cubic controls, interval restriction and cycle composition
@@ -742,6 +769,7 @@ impl RootRigidCurve {
         {
             return Ok(RootRigidPath {
                 spans: vec![],
+                translation_cuts:vec![],
                 duration: elapsed,
                 end: RootRigidTransform::IDENTITY,
             });
@@ -762,6 +790,7 @@ impl RootRigidCurve {
             .prefix(end, initial, cycle)?
             .0
             .compose(self.phase(self.cycle_phase(end)?.1, axes)?)?;
+        let mut translation_cuts=Vec::new();
         let mut cuts = vec![0., elapsed];
         cuts.extend(
             rotations
@@ -770,7 +799,8 @@ impl RootRigidCurve {
                 .flat_map(|span| [span.start(), span.end()]),
         );
         let loops = if self.0.playback == Playback::Loop {
-            (end / self.0.duration).floor() as usize
+            usize::try_from(self.cycle_phase(end)?.0)
+                .map_err(|_| AnimationError::RootRigidBudget)?
         } else {
             0
         };
@@ -789,14 +819,18 @@ impl RootRigidCurve {
                 {
                     return Err(AnimationError::RootRigidBudget);
                 }
-                let relative = absolute - start;
+                let proof = RootTimeCutEnclosure::new(n as u64,self.0.duration as f32,key,start)?;
+                let relative=proof.evaluated();
                 if relative > 0. && relative <= elapsed {
                     cuts.push(relative);
+                    translation_cuts.push(proof);
                 }
             }
-            let seam = base + self.0.duration - start;
+            let proof = RootTimeCutEnclosure::new(n as u64,self.0.duration as f32,self.0.duration,start)?;
+            let seam=proof.evaluated();
             if seam > 0. && seam < elapsed {
                 cuts.push(seam);
+                translation_cuts.push(proof);
             }
             if cuts.len() > 4 * max_spans + 4 {
                 return Err(AnimationError::RootRigidBudget);
@@ -825,17 +859,12 @@ impl RootRigidCurve {
                 .restricted(a, b)?;
             let interval_start = start + a;
             let (prefix, _) = self.prefix(interval_start, initial, cycle)?;
-            let base = if self.0.playback == Playback::Loop {
-                (interval_start / self.0.duration).floor() * self.0.duration
-            } else {
-                0.
-            };
-            let from = (start + a - base).min(self.0.duration);
-            let to = (start + b - base).min(self.0.duration);
+            let [from,to] = crate::root_clock::root_segment_phases(
+                interval_start,start+b,self.0.duration as f32,self.0.playback)?;
             let positions = self
                 .0
                 .translation
-                .piece(from, to)
+                .checked_piece(from, to)?
                 .map(|p| p + self.0.origin);
             spans.push(self.span(rotation, positions, prefix, axes));
             let absolute = start + b;
@@ -873,6 +902,7 @@ impl RootRigidCurve {
         Ok(RootRigidPath {
             spans,
             duration: elapsed,
+            translation_cuts,
             end: end_transform,
         })
     }

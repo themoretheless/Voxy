@@ -286,3 +286,38 @@ impl RootRigidEnclosure {
         Ok(mapped.map(Scalar::array))
     }
 }
+
+impl RootRigidEnclosure {
+    /// Inverse point-box image through a fixed signed uniform similarity.
+    pub fn inverse_similarity_point_box_bounds_enclosed(&self,point:[[f64;2];3],
+        scale:RootUniformScaleEnclosure)->Result<[[f64;2];3],AnimationError> {
+        if !scale.invertible() || point.iter().any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+            return Err(AnimationError::InvalidRetargetBinding);
+        }
+        let (translation,q)=self.vectors();
+        let mut difference=point.map(|v|Scalar(v[0],v[1]));
+        for axis in 0..3 {difference[axis]=difference[axis].sub(translation[axis])?;}
+        let inverse=[Scalar(-q[0].1,-q[0].0),Scalar(-q[1].1,-q[1].0),Scalar(-q[2].1,-q[2].0),q[3]];
+        let mut source=rotate(inverse,difference)?;
+        let positive=if scale.value.0>0. {scale.value} else {Scalar(-scale.value.1,-scale.value.0)};
+        for axis in &mut source {
+            *axis=axis.div_interval_positive(positive)?;
+            if scale.value.1<0. {*axis=Scalar(-axis.1,-axis.0);}
+        }
+        Ok(source.map(Scalar::array))
+    }
+}
+
+impl RootRigidEnclosure {
+    /// Exact enclosed similarity image; floating point evaluation is separate.
+    pub fn similarity_point_box_bounds_enclosed(&self,point:[[f64;2];3],scale:RootUniformScaleEnclosure)
+        ->Result<[[f64;2];3],AnimationError> {
+        if point.iter().any(|v|!v[0].is_finite() || !v[1].is_finite() || v[0]>v[1]) {
+            return Err(AnimationError::NumericalOverflow);
+        }
+        let (translation,rotation)=self.vectors();
+        let mut result=rotate(rotation,point.map(|v|Scalar(v[0],v[1])))?;
+        for axis in 0..3 {result[axis]=result[axis].mul(scale.value)?.add(translation[axis])?;}
+        Ok(result.map(Scalar::array))
+    }
+}
