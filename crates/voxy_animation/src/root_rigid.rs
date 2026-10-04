@@ -7,12 +7,12 @@ use glam::{DQuat, DVec3, Vec3};
 use std::sync::Arc;
 mod integration;
 mod enclosure;
-pub use enclosure::{RootRigidEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath};
+pub use enclosure::{RootRigidEnclosure, RootRigidTwistEnclosure, RootTwistErrorBounds, RootRigidErrorAccumulator, RootAngularDerivativeBounds, RootScrewEnclosurePath, RootRigidFieldInterval, RootRigidFadeFieldInterval, RootRigidCoordinateCertificate, RootRigidMappedField, RootRigidCertifiedFadeInterval, RootRigidFadeDomain, RootRigidWallInterval, RootRigidWallPartition, RootRigidMappedPath};
 mod blend;
 pub use blend::RootSpatialTwistBounds;
 mod partition;
 pub use partition::{RootMotionInterval, RootMotionStep, RootMotionPartition};
-pub use integration::{RootRigidApproximation, RootTwistRateBounds};
+pub use integration::{RootRigidApproximation, RootTwistRateBounds, RootRigidIntegrationDomain};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct RootRigidTransform {

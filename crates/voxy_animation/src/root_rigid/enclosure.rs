@@ -8,6 +8,17 @@ mod accumulation;
 mod rates;
 mod points;
 mod cache;
+mod fade;
+mod coordinate;
+mod integrated_fade;
+mod wall_partition;
+mod path_field;
+mod automatic_fade;
+pub use automatic_fade::RootRigidMappedPath;
+pub use wall_partition::{RootRigidWallInterval,RootRigidWallPartition};
+pub use integrated_fade::{RootRigidMappedField,RootRigidCertifiedFadeInterval,RootRigidFadeDomain};
+pub use coordinate::RootRigidCoordinateCertificate;
+pub use fade::{RootRigidFieldInterval, RootRigidFadeFieldInterval};
 pub use cache::RootScrewEnclosurePath;
 pub use rates::RootAngularDerivativeBounds;
 pub use accumulation::RootRigidErrorAccumulator;
@@ -32,13 +43,25 @@ impl Scalar {
         }
         Ok(result)
     }
+    fn is_zero(self) -> bool { self.0 == 0. && self.1 == 0. }
+    fn is_finite(self) -> bool { self.0.is_finite() && self.1.is_finite() }
     fn add(self, b: Self) -> Result<Self, AnimationError> {
+        if self.is_zero() && b.is_finite() { return Ok(b); }
+        if b.is_zero() && self.is_finite() { return Ok(self); }
         Self::rounded(self.0 + b.0, self.1 + b.1)
     }
     fn sub(self, b: Self) -> Result<Self, AnimationError> {
+        if b.is_zero() && self.is_finite() { return Ok(self); }
+        if self.is_zero() && b.is_finite() { return Ok(Self(-b.1, -b.0)); }
+        if self.is_finite() && self.0 == self.1 && self.0 == b.0 && b.0 == b.1 {
+            return Ok(Self::exact(0.));
+        }
         Self::rounded(self.0 - b.1, self.1 - b.0)
     }
     fn mul(self, b: Self) -> Result<Self, AnimationError> {
+        if (self.is_zero() && b.is_finite()) || (b.is_zero() && self.is_finite()) {
+            return Ok(Self::exact(0.));
+        }
         let values = [self.0 * b.0, self.0 * b.1, self.1 * b.0, self.1 * b.1];
         if values.iter().any(|v| !v.is_finite()) {
             return Err(AnimationError::NumericalOverflow);
@@ -49,6 +72,8 @@ impl Scalar {
         )
     }
     fn div_positive(self, b: f64) -> Result<Self, AnimationError> {
+        if !b.is_finite() || b <= 0. { return Err(AnimationError::NumericalOverflow); }
+        if self.is_zero() { return Ok(self); }
         Self::rounded(self.0 / b, self.1 / b)
     }
     fn sqrt_positive(self) -> Result<Self, AnimationError> {
@@ -58,9 +83,10 @@ impl Scalar {
         Self::rounded(self.0.sqrt(), self.1.sqrt())
     }
     fn div_interval_positive(self, b: Self) -> Result<Self, AnimationError> {
-        if b.0 <= 0. {
+        if !b.is_finite() || b.0 <= 0. {
             return Err(AnimationError::NumericalOverflow);
         }
+        if self.is_zero() { return Ok(self); }
         let values = [self.0 / b.0, self.0 / b.1, self.1 / b.0, self.1 / b.1];
         if values.iter().any(|v| !v.is_finite()) {
             return Err(AnimationError::NumericalOverflow);
@@ -71,6 +97,7 @@ impl Scalar {
         )
     }
     fn square(self) -> Result<Self, AnimationError> {
+        if self.is_zero() { return Ok(self); }
         let lo = if self.0 <= 0. && self.1 >= 0. {
             0.
         } else {
@@ -380,6 +407,24 @@ impl RootRigidPath {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn exact_zero_identities_preserve_constraints_without_masking_invalid_values() {
+        let z = Scalar::exact(0.);
+        let b = Scalar(-3., 7.);
+        assert_eq!(z.add(b).unwrap().array(), b.array());
+        assert_eq!(b.sub(z).unwrap().array(), b.array());
+        assert_eq!(z.sub(b).unwrap().array(), [-7., 3.]);
+        assert_eq!(z.mul(b).unwrap().array(), [0., 0.]);
+        assert_eq!(z.div_positive(3.).unwrap().array(), [0., 0.]);
+        assert_eq!(z.div_interval_positive(Scalar(2., 3.)).unwrap().array(), [0., 0.]);
+        assert_eq!(z.square().unwrap().array(), [0., 0.]);
+        assert_eq!(Scalar::exact(3.).sub(Scalar::exact(3.)).unwrap().array(), [0., 0.]);
+        let d = b.sub(b).unwrap();
+        assert!(d.0 < -10. && d.1 > 10.);
+        assert!(z.mul(Scalar::exact(f64::INFINITY)).is_err());
+        assert!(z.div_positive(0.).is_err());
+        assert!(z.div_interval_positive(Scalar::exact(f64::INFINITY)).is_err());
+    }
     #[test]
     fn small_angle_increment_enclosures_cover_axial_and_offset_pivot_motion() {
         for (linear, angular, dt) in [
