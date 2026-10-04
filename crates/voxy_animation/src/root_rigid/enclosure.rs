@@ -399,6 +399,23 @@ fn compose_components<S: EnclosureArithmetic>(
 }
 
 impl RootRigidEnclosure {
+    pub(crate) fn retarget_translation_evaluation_error(
+        position: [[f64; 2]; 3],
+        source_error: [f64; 3],
+        source_bind: DVec3,
+        target_bind: DVec3,
+        basis: DQuat,
+        scale: f64,
+    ) -> Result<([f64; 3], f64), AnimationError> {
+        compilation::retarget_translation_runtime_error(
+            position,
+            source_error,
+            source_bind,
+            target_bind,
+            basis,
+            scale,
+        )
+    }
     /// Combines this translation enclosure with a separately qualified unit
     /// rotation enclosure. Their independent product may lose correlation but
     /// includes every original combination; no unchecked quaternion boxes enter.
@@ -1252,6 +1269,36 @@ impl RootRigidCurve {
 }
 
 impl RootRigidCurve {
+    pub(crate) fn absolute_source_pose_interval_enclosure(
+        &self,
+        times: [f64; 2],
+        initial_rotation: glam::Quat,
+    ) -> Result<Option<RootRigidEnclosure>, AnimationError> {
+        let position = self
+            .0
+            .translation
+            .source_position_bounds(times[0], times[1])?;
+        let Some(relative) = self.source_phase_interval_enclosure(times, [true; 3])? else {
+            return Ok(None);
+        };
+        let initial = RootRigidEnclosure::from_transform(RootRigidTransform {
+            rotation: initial_rotation.as_dquat(),
+            ..RootRigidTransform::IDENTITY
+        })?;
+        let rotation = RootRigidEnclosure::IDENTITY
+            .with_rotation_from(relative)
+            .compose(&initial)?;
+        let mut translation = [[0.; 2]; 3];
+        for axis in 0..3 {
+            translation[axis] = Scalar(position[axis][0], position[axis][1])
+                .add(Scalar::exact(self.0.origin[axis]))?
+                .array();
+        }
+        Ok(Some(RootRigidEnclosure {
+            translation,
+            rotation: rotation.rotation,
+        }))
+    }
     /// Uniform source pose enclosure on one continuous local key interval.
     /// Integrates proved speed caps rather than checking selected samples.
     pub fn source_phase_interval_enclosure(

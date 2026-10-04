@@ -1,0 +1,26 @@
+{
+  "scope": "Uniform same-time retarget translation numerical discrepancy over an incoming source-position domain",
+  "animation_library_passed": 199,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "axis_discrepancy_checks": 324,
+    "L1_discrepancy_checks": 108,
+    "arithmetic": "Fraction homogeneous unit-quaternion rotation against actual f32 retarget output"
+  },
+  "verified": [
+    "Incoming source error propagation",
+    "Raw versus unit fixed basis discrepancy",
+    "Actual f64 subtraction, glam rotation, scale and addition rounding",
+    "Final f32 publication",
+    "Zero translation scale",
+    "Invalid domains, errors, mappings and publication overflow rejection",
+    "Motion domain width is not counted as numerical error"
+  ],
+  "limitations": [
+    "Caller must qualify original-source same-time error",
+    "Rotation and scale channels are excluded",
+    "Ancestor and final scene publication remain separate",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

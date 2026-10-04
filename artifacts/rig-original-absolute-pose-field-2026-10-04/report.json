@@ -1,0 +1,33 @@
+{
+  "scope": "Original clip absolute local pose interval producer with source-rig-retained retarget transport",
+  "animation_library_passed": 198,
+  "editor_library_passed": 157,
+  "default_gpu_ignored": 11,
+  "exact_rational_reference": {
+    "whole_interval_coordinate_checks": 72,
+    "interior_endpoint_coordinate_checks": 360,
+    "arithmetic": "Fraction Machin pi and alternating trigonometric remainder bounds"
+  },
+  "fixture": {
+    "source_bind_translation": [0.6, -0.2, 0.4],
+    "source_initial_translation": [4.0, -2.0, 1.0],
+    "source_bind_rotation": [1.0, 0.0, 0.0, 0.0],
+    "source_initial_rotation": [0.5, 0.5, 0.5, 0.5],
+    "source_rotation": "Original LINEAR quarter-turn about Y times initial rotation",
+    "translation_scales": [0.0, 2.0, 1000000.0],
+    "intervals": [[0.125, 0.25], [0.5, 0.625]]
+  },
+  "verified": [
+    "Foreign clip and unmapped joint rejection",
+    "Invalid reversed interval rejection",
+    "Missing channel bind fallback",
+    "Actual f32 output may exceed a tight ideal field and requires positive error allowance"
+  ],
+  "limitations": [
+    "Local continuous key intervals, not accumulated loop powers",
+    "Scale channels excluded",
+    "Uniform original-source floating evaluation and retarget error remain separate obligations",
+    "Final ancestor and scene publication qualification still required",
+    "Retargeted moving owner fades remain disabled"
+  ]
+}

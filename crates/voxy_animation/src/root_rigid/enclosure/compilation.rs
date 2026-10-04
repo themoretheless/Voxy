@@ -1225,6 +1225,58 @@ pub(super) fn mapped_point_runtime_error(
     Ok((error, actual_box))
 }
 
+pub(super) fn retarget_translation_runtime_error(
+    position: [[f64; 2]; 3],
+    source_error: [f64; 3],
+    source_bind: DVec3,
+    target_bind: DVec3,
+    basis: DQuat,
+    scale: f64,
+) -> Result<([f64; 3], f64), AnimationError> {
+    if position
+        .iter()
+        .any(|v| !v[0].is_finite() || !v[1].is_finite() || v[0] > v[1])
+        || source_error.iter().any(|v| !v.is_finite() || *v < 0.)
+        || !source_bind.is_finite()
+    {
+        return Err(AnimationError::NumericalOverflow);
+    }
+    let mut delta = [[0.; 2]; 3];
+    let mut delta_error = [0.; 3];
+    for axis in 0..3 {
+        let value = RoundedRange {
+            value: Scalar(position[axis][0], position[axis][1]),
+            error: Scalar::exact(source_error[axis]),
+        }
+        .sub(RoundedRange::exact(source_bind[axis]))?;
+        delta[axis] = value.value.array();
+        delta_error[axis] = value.error.1;
+    }
+    let actual = RootRigidTransform {
+        translation: target_bind,
+        rotation: basis,
+    };
+    let frame = RootRigidEnclosure::from_transform(actual)?;
+    let (evaluation, actual_box) = mapped_point_runtime_error(
+        delta,
+        delta_error,
+        &frame,
+        RootUniformScaleEnclosure::from_scale(scale)?,
+        actual,
+        scale,
+    )?;
+    let (publication, _) = RootRigidEnclosure::enclosed_f32_publication_error(actual_box)?;
+    let mut result = [0.; 3];
+    let mut radius = Scalar::exact(0.);
+    for axis in 0..3 {
+        result[axis] = Scalar::exact(evaluation[axis])
+            .add(Scalar::exact(publication[axis]))?
+            .1;
+        radius = radius.add(Scalar::exact(result[axis]))?;
+    }
+    Ok((result, radius.1))
+}
+
 /// Uniform rounding discrepancy of glam 0.33.7 DQuat::normalize against
 /// exact real normalization of the same stored quaternion. No source error.
 pub(super) fn stored_quaternion_normalization_error(
