@@ -13,6 +13,11 @@ pub(crate) enum Action {
     Select(usize),
     Field(usize),
     ResetField(usize),
+    PreviewSeek,
+    PreviewPhase(f64),
+    MarkerAdd([u8; 32]),
+    MarkerPreview(usize, [u8; 32]),
+    MarkerDelete(usize, [u8; 32]),
     ComponentPage(bool),
     CollectionChoice,
     CollectionPage(bool),
@@ -65,6 +70,7 @@ pub(crate) struct Panels {
     pub collection_deleted_resets: std::collections::BTreeSet<[u8; 32]>,
     pub collection_deleted_items: crate::component_collections::DeletedItems,
     pub deleted_page: usize,
+    pub preview_phase: Option<f64>,
     pub retarget_draft: bool,
     pub bone_picker: Option<(Vec<String>, usize)>,
     pub overridden_fields: std::collections::BTreeSet<usize>,
@@ -117,6 +123,7 @@ impl Panels {
             glyphs.insert(character, (glyph, region));
         }
         Ok(Self {
+            preview_phase: None,
             presented: false,
             retarget_draft: false,
             bone_picker: None,
@@ -498,13 +505,23 @@ impl Panels {
             {
                 values.clear();
                 let fields = crate::component_fields::fields(object)?;
+                let marker_token = crate::component_fields::marker_list_token(object)?;
                 for (row, (index, member)) in
                     fields.iter().enumerate().skip(page * 6).take(6).enumerate()
                 {
                     let y = 116.0 + row as f32 * 26.0;
-                    let text = field
-                        .filter(|(id, _)| *id == index)
-                        .map_or_else(|| member.display(), |(_, text)| text.into());
+                    let text = field.filter(|(id, _)| *id == index).map_or_else(
+                        || {
+                            if member.schema == "editor.model-animation.v1"
+                                && member.path == "/events"
+                            {
+                                format!("{} markers", member.value.as_array().map_or(0, Vec::len))
+                            } else {
+                                member.display()
+                            }
+                        },
+                        |(_, text)| text.into(),
+                    );
                     let overridden = !playing && self.overridden_fields.contains(&index);
                     let label_width: f32 = "Reset"
                         .chars()
@@ -524,10 +541,62 @@ impl Panels {
                                 .and_then(|value| value.parse::<usize>().ok())
                         })
                         .flatten();
+                    let marker_button = if !playing && member.schema == "editor.model-animation.v1"
+                    {
+                        let token = marker_token;
+                        if member.path == "/events" {
+                            Some(("Add", Action::MarkerAdd(token)))
+                        } else if member.path.starts_with("/events/")
+                            && member.path.ends_with("/name")
+                        {
+                            member
+                                .path
+                                .split('/')
+                                .nth(2)
+                                .and_then(|index| index.parse().ok())
+                                .map(|index| ("Remove", Action::MarkerDelete(index, token)))
+                        } else if member.path.starts_with("/events/")
+                            && member.path.ends_with("/phase")
+                        {
+                            member
+                                .path
+                                .split('/')
+                                .nth(2)
+                                .and_then(|index| index.parse().ok())
+                                .map(|index| ("Preview", Action::MarkerPreview(index, token)))
+                        } else {
+                            None
+                        }
+                    } else {
+                        None
+                    };
                     let width = right
                         - if overridden { button_width + 12.0 } else { 8.0 }
                         - if bone_choice { 42. } else { 0. }
-                        - if delete_pair.is_some() { 58. } else { 0. };
+                        - if delete_pair.is_some() { 58. } else { 0. }
+                        - if marker_button.is_some() { 72. } else { 0. };
+                    let marker_label = if member.schema == "editor.model-animation.v1"
+                        && member.path.starts_with("/events/")
+                    {
+                        member
+                            .path
+                            .split('/')
+                            .nth(2)
+                            .and_then(|index| index.parse::<usize>().ok())
+                            .map(|index| {
+                                format!(
+                                    "{} {}",
+                                    if member.path.ends_with("/name") {
+                                        "Name"
+                                    } else {
+                                        "Phase"
+                                    },
+                                    index + 1
+                                )
+                            })
+                    } else {
+                        None
+                    };
                     let foot_label = if member.schema == "editor.model-retarget.v1" {
                         retarget_field_label(&member.path)
                     } else {
@@ -542,7 +611,7 @@ impl Panels {
                     } else if member.schema == "editor.model-animation.v1"
                         && member.path == "/clip_name"
                     {
-                        "Animation clip name (empty uses index)".into()
+                        "Clip name"
                     } else if member.schema == "editor.model-animation.v1"
                         && member.path == "/transition_seconds"
                     {
@@ -572,6 +641,12 @@ impl Panels {
                         "editor.foot-placement.v1" | "editor.model-retarget.v1"
                     ) {
                         foot_label.as_deref().unwrap_or(member.path.as_str())
+                    } else if let Some(label) = marker_label.as_deref() {
+                        label
+                    } else if member.schema == "editor.model-animation.v1"
+                        && member.path == "/events"
+                    {
+                        ""
                     } else if member.path.is_empty() {
                         member.schema.as_str()
                     } else {
@@ -586,6 +661,18 @@ impl Panels {
                     )?;
                     self.regions
                         .push(([rx + 4.0, y, width, 25.0], Action::Field(index)));
+                    if let Some((label, action)) = marker_button {
+                        let rect = [rx + width + 4., y, 68., 25.];
+                        solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.0])?;
+                        self.text(
+                            &mut batch,
+                            label,
+                            Vec2::new(rect[0] + 3., y + 18.),
+                            62.,
+                            size,
+                        )?;
+                        self.regions.push((rect, action));
+                    }
                     if bone_choice {
                         let rect = [rx + width + 4., y, 38., 25.];
                         self.text(
@@ -627,11 +714,43 @@ impl Panels {
                 {
                     self.text(
                         &mut batch,
-                        &member.schema,
-                        Vec2::new(rx + 10.0, 270.0),
+                        if member.schema == "editor.model-animation.v1" {
+                            "Animation"
+                        } else {
+                            &member.schema
+                        },
+                        Vec2::new(rx + 10.0, 284.0),
                         right - 16.0,
                         size,
                     )?;
+                }
+                if !playing
+                    && !self.retarget_draft
+                    && fields
+                        .iter()
+                        .any(|field| field.schema == "editor.model-animation.v1")
+                {
+                    let rect = [rx + 8., 334., right - 16., 24.];
+                    solid(&mut batch, rect, [0.18, 0.24, 0.3, 1.])?;
+                    let phase = self.preview_phase.unwrap_or(0.);
+                    solid(
+                        &mut batch,
+                        [
+                            rect[0] + (rect[2] - 3.) * phase as f32,
+                            rect[1],
+                            3.,
+                            rect[3],
+                        ],
+                        [0.5, 0.8, 1., 1.],
+                    )?;
+                    self.text(
+                        &mut batch,
+                        &format!("Pose phase {phase:.3}"),
+                        Vec2::new(rect[0] + 6., rect[1] + 18.),
+                        rect[2] - 12.,
+                        size,
+                    )?;
+                    self.regions.push((rect, Action::PreviewSeek));
                 }
                 for (y, label, forward) in [
                     (280.0, "Previous fields", false),
@@ -1331,3 +1450,6 @@ fn retarget_field_label(path: &str) -> Option<String> {
         .is_none()
         .then(|| format!("Pair {pair}: {label}"))
 }
+
+#[cfg(test)]
+mod gpu_tests;

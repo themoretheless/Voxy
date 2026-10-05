@@ -2,6 +2,23 @@
 use glam::{Mat4, Vec2, Vec3};
 use voxy_render::{InvalidSceneCamera, SceneCamera, SceneProjection};
 
+// One wheel line is an editor sensitivity unit of 40 logical pixels.
+// PixelDelta arrives in physical pixels; normalize DPI before applying zoom.
+pub(crate) fn wheel_steps(delta: winit::event::MouseScrollDelta, scale: f64) -> f32 {
+    let value = match delta {
+        winit::event::MouseScrollDelta::LineDelta(_, y) => f64::from(y),
+        winit::event::MouseScrollDelta::PixelDelta(point) if scale.is_finite() && scale > 0. => {
+            point.y / scale / 40.
+        }
+        _ => return 0.,
+    };
+    if value.is_finite() {
+        value.clamp(-20., 20.) as f32
+    } else {
+        0.
+    }
+}
+
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ViewportCamera {
@@ -133,6 +150,45 @@ pub(crate) fn unproject(
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn wheel_pixel_units_match_lines_across_dpi_and_event_splitting() {
+        use winit::{dpi::PhysicalPosition, event::MouseScrollDelta};
+        let line = super::wheel_steps(MouseScrollDelta::LineDelta(0., 1.), 2.);
+        for scale in [1., 1.5, 2.] {
+            assert_eq!(
+                super::wheel_steps(
+                    MouseScrollDelta::PixelDelta(PhysicalPosition::new(0., 40. * scale)),
+                    scale
+                ),
+                line
+            );
+        }
+        let mut one = super::ViewportCamera::default();
+        let mut split = one.clone();
+        one.zoom(line);
+        for _ in 0..40 {
+            split.zoom(super::wheel_steps(
+                MouseScrollDelta::PixelDelta(PhysicalPosition::new(0., 2.)),
+                2.,
+            ));
+        }
+        assert!((one.distance - split.distance).abs() < 1e-5);
+        assert_eq!(
+            super::wheel_steps(
+                MouseScrollDelta::PixelDelta(PhysicalPosition::new(0., f64::NAN)),
+                2.
+            ),
+            0.
+        );
+        assert_eq!(
+            super::wheel_steps(
+                MouseScrollDelta::PixelDelta(PhysicalPosition::new(0., 40.)),
+                0.
+            ),
+            0.
+        );
+    }
+
     use super::*;
     #[test]
     fn both_projections_round_trip_after_orbit_pan_zoom() {

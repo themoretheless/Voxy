@@ -265,11 +265,15 @@ impl SceneMesh {
             return Err(SceneError::InvalidGeometry);
         }
         if vertices.iter().any(|v| {
-            v.position
-                .iter()
-                .chain(&v.uv)
-                .chain(&v.color)
-                .any(|value| !value.is_finite())
+            !(v.position[0].is_finite()
+                && v.position[1].is_finite()
+                && v.position[2].is_finite()
+                && v.uv[0].is_finite()
+                && v.uv[1].is_finite()
+                && v.color[0].is_finite()
+                && v.color[1].is_finite()
+                && v.color[2].is_finite()
+                && v.color[3].is_finite())
         }) {
             return Err(SceneError::NonFiniteVertex);
         }
@@ -2799,6 +2803,35 @@ mod tests {
         );
     }
     use super::*;
+
+    #[test]
+    fn mesh_admission_rejects_every_nonfinite_vertex_lane() {
+        let base = SceneVertex {
+            position: [0.; 3],
+            uv: [0.; 2],
+            color: [1.; 4],
+        };
+        for lane in 0..9 {
+            for value in [f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
+                let mut v = base;
+                match lane {
+                    0..=2 => v.position[lane] = value,
+                    3..=4 => v.uv[lane - 3] = value,
+                    _ => v.color[lane - 5] = value,
+                }
+                assert!(matches!(
+                    SceneMesh::new(vec![v; 3], vec![0, 1, 2]),
+                    Err(SceneError::NonFiniteVertex)
+                ));
+            }
+        }
+        let v = SceneVertex {
+            position: [f32::from_bits(1), -0., f32::MAX],
+            uv: [0.; 2],
+            color: [1.; 4],
+        };
+        assert!(SceneMesh::new(vec![v; 3], vec![0, 1, 2]).is_ok());
+    }
 
     #[test]
     fn rejects_malformed_mesh_and_non_finite_helper_input() {

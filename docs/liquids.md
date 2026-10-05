@@ -4501,3 +4501,311 @@ The renderer shows computed geometry with illustrative optical coefficients;
 it does not animate trajectories independently. Fully calibrated wet-impact
 response, resolved subparticle filaments and material measurements
 remain outstanding.
+
+### Atomic native liquid demonstration updates (2026-10-05)
+
+LiquidDemo now stages a complete display-frame update before publishing either reservoir, its emitter inventory, finite gas grid, deposited mixture film or accumulated reports. If any emission, liquid step, gas exchange, impact, coalescence or film solve rejects, the original state and fixed-step accumulator remain unchanged. Nonfinite and negative display steps reject before staging. The existing display-step cap and 120 Hz simulation cadence are retained.
+
+SurfaceFilm and FilmMixture support independent cloning of their numerical state and geometry caches for this transaction. The transaction belongs to the native demonstration; it does not establish whole-world liquid/material atomicity or calibrated physical parameters. The implementation copies the complete state, with full workload memory/time overhead still requiring measurement. The targeted regression injects an invalid second emitter after the first reservoir can advance, checks complete state preservation in both demo modes, repairs the emitter and accepts the next step. Existing successful jet/deposition and reservoir-spreading controls pass in the completed targeted run: three tests passed, none failed (57.83 seconds). Evidence: artifacts/native-liquid-atomic-2026-10-05/.
+
+A manual debug timing control (nine trials per mode, 100 clones per clone trial) measured median initial-state cloning at 5.004 us for reservoirs and 47.973 us for impacts. Initial direct/atomic step medians were 117.211/135.962 ms and 41.519/47.001 ms respectively. Those step differences do not isolate cloning cost: alternating order, caches and scheduling were not controlled. Each paired direct/atomic result matched completely in the control. These are initial-state debug measurements, not release frame-time or developed-spray qualification; allocation overhead remains unmeasured. Evidence: artifacts/native-liquid-atomic-2026-10-05/timing.json. Reproduce with the ignored measure_native_liquid_transaction_cost test.
+
+Substep display frames now publish only the accumulator while accumulated time is below 1/120 s, avoiding a full numerical-state clone when no physical subsystem runs. The regression accepts a quarter-step with unchanged liquid and emitter state, then rejects a second-emitter failure while preserving that accumulated time, repairs the emitter and completes a physical step. Both modes pass alongside successful spreading and jet/deposition controls: three passed, one manual timing control ignored. Evidence: artifacts/native-liquid-atomic-2026-10-05/fast-path-tests.log. This structural elimination is not a measured renderer frame-rate gain.
+
+GPU readback qualification after atomic update (2026-10-05): the existing liquid_snapshot --impacts scenario passes on Apple M4 Max / Metal through four diagnostic frames and 120 physical steps. Water/oil pixel counts are (0,0), (963,1047), (2541,2041), (4552,3464). The image was inspected: flight, impact fragments and deposited film geometry are visible. Initial empty surfaces are expected before the pulsed source starts. This is offscreen diagnostic rendering; it does not prove optical fluid shading, native-window presentation, calibrated fluid parameters or other GPU backends. The example now records adapter/backend/device type. Evidence: artifacts/native-liquid-atomic-2026-10-05/gpu-report.json and impacts-gpu.png.
+
+Optical impacts qualification gap (2026-10-05): liquid_snapshot --impacts --optical executes successfully on Metal, but its saved image does not prove complete liquid rendering. Inspection found that LiquidDemo::optical_scene exports only free liquid particles and the checker background; the owned deposited FilmMixture is omitted. The final deposited-film stage thus loses liquid visibility, although the physical inventory remains verified. The required correction is a geometry/thickness/material film optical path, preserving film ownership instead of inventing spherical particle volume. Evidence: artifacts/native-liquid-atomic-2026-10-05/optical-gap.json and impacts-optical-gpu.png.
+
+### Optical film prisms (2026-10-05, local verification)
+
+The optical producer now exports each wet `FilmMixture` cell as its substrate triangle extruded along the outward normal by its owned physical thickness. The screen-space renderer uploads these cells alongside free particles, intersects camera rays with all five prism half-spaces, and clips their intervals against near/far planes and opaque scene depth. Film and particle intervals share nearest-depth/material selection and additive optical path targets. Dry cells contribute no geometry; this creates no additional liquid inventory. Legacy particle-only updates clear the film count. Film capacity and geometry admission precede all GPU writes.
+
+Initial physical GPU regression passed on Apple M4 Max / Metal for one cell, additive cells, near clipping, an empty layer, and preservation after rejected upload. The expanded GPU test passed 21 central, oblique and outside-prism sample comparisons, including opaque obstacles before, within and behind the film. The physical impact snapshot passed, exporting 161 wet cells at impact and 232 after spreading; images were inspected. Positive f64 heights that quantize to zero in f32 are omitted only from rendering, with physical inventory retained; invalid heights are rejected. The conversion regression passed. Evidence: `artifacts/liquid-optical-film-2026-10-05/`. At this initial checkpoint, composition applied the nearest material to the summed path; the RGB integration below supersedes that absorption behavior. Other adapters and calibrated optical accuracy remain unverified.
+
+### RGB absorption integration (2026-10-05)
+
+Particle spheres and film prisms now accumulate dimensionless RGB optical depth in an additive `Rgba16Float` target: `tau = sum(absorption_i * path_i_metres)`. Composite transmission uses `exp(-tau)` rather than multiplying total path by the nearest material coefficients. Geometric path remains a separate `R16Float` target for refraction and diagnostics; nearest-surface IOR still determines the interface approximation. No simulation inventory changes.
+
+On Apple M4 Max / Metal, the GPU regression passed 27 path comparisons, 81 RGB absorption comparisons and 18 composed-color comparisons. Cases include mixed film coefficients, a distinct rear spherical droplet behind a film, sphere-only rays, central/oblique/outside rays, near clipping, opaque occlusion, and rejected upload preservation. White-background planar fixtures with nearest IOR=1 check the actual composite color against the exponential transmission and sRGB conversion. The physical impact snapshot passed with film cell counts `[0, 0, 161, 232]`; its active image was inspected. Evidence: `artifacts/liquid-rgb-absorption-2026-10-05/`.
+
+Scope: absorption along original straight camera rays. Internal interface refraction, continuous liquid density reconstruction, calibrated coefficients and other hardware remain unverified. Overlapping particle spheres still add their individual path contributions.
+
+### Enabled device limit admission (2026-10-05)
+
+The initial admission check covered two vertex-stage storage buffers, six fragment textures, one uniform buffer, seven bindings, two MRT targets (16 attachment bytes/sample), storage binding sizes and maximum buffer size; the instance path below supersedes its storage requirements. Synthetic limits cover WebGL2-style storage restrictions, texture/MRT budgets and buffer bounds. The synthetic regression passed; the Apple M4 Max / Metal GPU regression also passed its 27 path, 81 RGB absorption and 18 composed-color comparisons. Evidence: `artifacts/fluid-device-limits-2026-10-05/`. This provides bounded failure for these limits, not new backend support; format capabilities, downlevel flags and other adapters remain separate qualifications. A portable instance-vertex-buffer path could remove the storage-buffer requirement without changing the physical prism/sphere ray integrals.
+
+### Instance vertex transport and GLES translation (2026-10-05)
+
+The liquid renderer now uses a single instance-vertex-buffer path for spheres and triangular film prisms. Particle records use two vec4 attributes with a 32-byte stride; film records use four vec4 attributes with a 64-byte stride and flat fragment inputs. Both depth and path passes bind the appropriate instance buffer. Geometry requires no shader-storage resources. Enabled-device admission instead checks vertex buffers, four attributes, 64-byte stride, four interstage variables, six textures, one sampler, one uniform, eight bindings, MRT and maximum buffer size. WebGL2-style limits and explicit zero-storage limits pass the synthetic regression.
+
+A direct depth-texture load prevented GLSL output. Liquids now reuse the existing depth-sampling owner: native backends use nearest pixel-centred sampling, while GL uses its comparison-sampler reconstruction. All 14 geometry/filter/composite entry points validate and translate to GLES 3.00. The GLSL writer is enabled only as a dev dependency on the already locked Naga version; no package version upgrade was introduced.
+
+Final validation: 137 renderer library tests passed with 17 GPU tests ignored. The explicit Apple M4 Max / Metal test passed with zero enabled storage buffers, including 27 path, 81 RGB absorption and 18 composed-color comparisons. Evidence: `artifacts/fluid-vertex-instances-2026-10-05/`. Real WebGL driver execution, float render-target support and GL depth reconstruction accuracy remain unverified; translation is not runtime qualification.
+
+## Adapter format admission
+
+Use `ScreenSpaceFluidRenderer::new_with_adapter` with the adapter that created
+its device. It checks actual texture usages and blending, constrained by enabled
+device features, before allocating the fluid targets. Integer and depth output
+formats are rejected. The output color format must also support blending because
+`SceneRenderer` alpha-blends the background pass; the final fluid composition
+itself replaces color. R16Float and Rgba16Float optical targets need blending.
+Metadata mismatch is rejected, while equal adapter metadata does not establish
+physical identity. The legacy constructor retains compatibility without actual
+adapter format preflight.
+
+Metal checks and their scope are recorded in
+`artifacts/fluid-format-admission-2026-10-05/README.md`; other backends still need
+physical execution evidence.
+
+
+### Thermal surface-film ownership and vapor exchange
+
+`ThermalFilmMixture` owns the equal-density mixture and per-cell sensible energy.
+It derives wet-cell temperatures from component heat capacities and exposes
+read-only mixture access. Deposits, selective withdrawals, applied heat,
+advection and species diffusion stage coupled inventories before publication.
+Species diffusion carries heat with each donor species; Fourier conduction,
+viscous heating and substrate heat-transfer laws remain separate missing work.
+
+`exchange_solution_vapor` reuses the particle liquid's adaptive ideal-solution
+vapor integrator. The thermal film, externally owned lumped cell velocity and
+finite pure-vapor reservoir commit together after checking mass, energy and
+momentum. Only the configured solvent transfers; the other species remain.
+This includes evaporative cooling, condensation heat and velocity mixing.
+The adapter checks both bulk-volume and component mass ledgers and rejects a
+transfer that cannot change a donor inventory representably.
+
+CPU evidence: 11 existing liquid evaporation tests and six thermal film tests
+passed after the shared solver extraction. All three final film/vapor adapter
+regressions passed. Logs and pinned sources are in
+`artifacts/film-vapor-2026-10-05`. These tests do not qualify full drying or a
+rendered demo. Complete solvent exhaustion, dry-cell nucleation, automatic
+exposed-area detection, film mechanical motion/surface recoil remain unfinished. The existing impact
+demo now credits captured sensible heat to its thermal film and transports it
+with shear spreading. Four app regressions passed (one manual timing test
+ignored), and its Metal GPU snapshot matched the previous impact image exactly.
+Evidence is in `artifacts/native-thermal-film-2026-10-05`. The demo has not yet
+connected vapor exchange or complete drying. The existing constant-latent
+model requires solvent cp = vapor cv + gas constant and a prescribed temperature
+domain; general thermodynamic property laws remain open.
+
+
+Multi-cell vapor exchange now stages all participating film cells, their
+externally owned velocities and one shared pure-vapor reservoir. Models are
+borrowed and must describe compatible solvent/reference properties. Duplicate
+cell requests reject the batch. Forward and reverse half-interval sweeps give
+every interface total dt; local adaptive interface tolerances still do not bound
+the splitting error. Five regressions passed, including complete late rollback,
+global mass/energy/momentum, residue and a two-cell order-refinement fixture
+whose discrepancy decreased by more than threefold at each timestep halving.
+Evidence: `artifacts/film-vapor-symmetric-2026-10-05`. This API has not yet been
+connected to vapor exchange in the interactive impact demo.
+
+### In-plane film heat conduction
+
+`ThermalFilmMixture::conduct_heat` adds fixed-inventory Fourier exchange across wet neighboring mesh cells. Conductance uses supplied conductivity in W/(m K), shared-edge geometry and harmonic-mean film height. Exact pair relaxation is composed in symmetric sweeps; multi-cell accuracy requires refinement of `max_step`. Dry cells insulate. Energy is staged for the whole call. This does not provide substrate/ambient exchange, calibrated thermal properties or rendered evaporation, and is not enabled in the interactive demo. Validation evidence is tracked in `artifacts/film-conduction-2026-10-05`.
+
+### Finite substrate heat exchange
+
+`ThermalFilmMixture::exchange_substrate_heat` couples each wet cell to one externally owned finite substrate reservoir. Inputs are reservoir sensible energy (J), capacity (J/K), contact conductance (W/K) and elapsed time. Film and substrate use the same exact two-capacity relaxation as in-plane conduction and commit together after all cells validate. Dry cells insulate. Contact conductance must be supplied by the caller; calibrated contact laws, spatial solid conduction and coupling this to the interactive evaporation demo remain unfinished. Evidence: `artifacts/film-substrate-heat-2026-10-05`.
+
+### Coupled finite contact and vapor step
+
+`exchange_solution_vapor_with_substrate` stages film, externally owned substrate energies, liquid cell velocities and shared vapor as one transaction. Symmetric contact/vapor/contact composition reuses the existing heat kernel and adaptive vapor solver. Time-step refinement remains required for coupling error. This inherits the vapor model restrictions and does not yet implement full drying, dry nucleation, calibrated water properties or interactive demo integration. Tests/evidence: `artifacts/film-coupled-substrate-2026-10-05`.
+
+### Ordinary-water saturation properties (IAPWS)
+
+`liquid::water_saturation(T)` implements IAPWS SR1-86(1992), equations (1)-(4), (6), (7): pressure, analytic pressure derivative, liquid/vapor densities and enthalpies, with derived internal energies and vaporization enthalpy. Domain is 273.16–647.096 K inclusive; no extrapolation to ice or supercritical water. Verification uses the independently published Table 1 on page 7 and derivative/Clapeyron checks. Source: https://iapws.org/technical-guidance/release/Supp-sat . Execution evidence: `artifacts/water-thermodynamics-research-2026-10-05`. This saturation property model is not yet connected to the finite-cell evaporation solver: its off-saturation energy/EOS model, variable thermal inventory and drying boundary still require implementation and qualification.
+
+`water_saturation_temperature(p)` adds bracketed inversion of the same IAPWS pressure function within triple/critical bounds. It stops at exact pressure equality or adjacent representable temperatures. Regression covers seven round trips, the published normal-boiling point and rejection outside the coexistence pressure domain. Consult the artifact report for executed validation status.
+
+### IAPWS-95 homogeneous water state
+
+`water_homogeneous_state(T, rho)` derives pressure, u, h, s, cv, cp and sound speed from one Helmholtz potential using second-order forward differentiation. It includes all ideal and 56 residual terms from IAPWS R6-95(2018). Official Table 7 supplies eleven independent homogeneous-state verification points; caloric derivative and h=u+p/rho checks supplement those. Evidence and actual test state: `artifacts/water-helmholtz-2026-10-05`. Positive local stiffness/cv is checked, but does not replace global phase selection or melting-curve admission. Exact critical singularity, global stable-fluid domain admission and transport/demo integration remain unfinished. Subcritical coexistence and bracketed energy inversion are described below.
+
+### Seeded IAPWS-95 water coexistence
+
+`water_coexistence(T)` solves equal pressure and chemical potential using the IAPWS-95 potential for both homogeneous branches. SR1 liquid/vapor densities seed a damped Newton solve with scaled relative density increments. Densities are stored directly to preserve their native floating-point resolution. It rejects nonconvergence and collapsed equal-density roots; exact critical endpoint and ice coexistence are unsupported. Pressure residual tolerance is now 1e-6 Pa + 1e-12 relative and chemical-potential tolerance is 1e-12 R T J/kg. The residual potential and all derivative channels use compensated summation. If Newton stalls with relative updates below 1e-10, a bounded search of neighbouring liquid-density values can improve the same tolerance-scaled merit without relaxing publication criteria. Official Table 8 fixtures at 275, 450 and 625 K passed the strengthened equality gates, along with nine equilibrium and six homogeneous-state checks; current evidence is `artifacts/water-equilibrium-response-2026-10-05`. The original coexistence artifact records the earlier, looser bounds. This does not implement a general energy/volume flash or integrate drying/evaporation yet.
+
+`water_homogeneous_from_energy(rho, u, [Tlo, Thi])` adds safeguarded inversion of internal energy on a caller-selected homogeneous branch. It reuses the same EOS/cv; invalid sampled states and unbracketed energy reject. No phase flash or transport publication is performed here. Verification status: `artifacts/water-energy-inversion-2026-10-05`.
+
+### Subcritical water equilibrium energy flash
+
+`water_equilibrium_at_temperature(T,rho)` selects liquid, vapor or a specific-volume lever-rule mixture using the shared IAPWS-95 coexistence and homogeneous evaluators. `water_equilibrium_from_energy(rho,u,[Tlo,Thi])` recovers equilibrium temperature and phase fraction without inventing/removing inventory. This is not a finite-rate evaporation step, and particle/film demo integration, ice and supercritical states remain unfinished. Actual validation state: `artifacts/water-equilibrium-flash-2026-10-05`.
+
+`transfer_water_heat` applies prescribed signed joules between externally owned fixed-volume water and finite reservoir energies. Both commit only after initial/final equilibrium admission and representable balance checks; mass/volume are immutable arguments. It supplies no heat-transfer rate, mechanical pressure work or finite-rate evaporation law. Evidence: `artifacts/water-heat-reservoir-2026-10-05`.
+
+`exchange_water_contact_heat` provides finite contact conduction using q=G dt (T_reservoir_after-T_water_after). It reuses the shared monotone implicit heat kernel also used by existing latent-phase liquid conduction. Water uses IAPWS equilibrium energy decoding; the contact reservoir has supplied constant heat capacity. Both energy owners publish atomically. Backward-Euler accuracy needs dt refinement; contact parameters are not material calibration. Actual regression results: `artifacts/water-contact-heat-2026-10-05`.
+
+
+`water_equilibrium_from_entropy(rho,s,[Tlo,Thi])` shares bracketed inversion with the energy decoder and supplies a reversible-adiabatic state query. `change_water_volume_adiabatically` uses that query for a caller-prescribed volume: the water internal-energy change is balanced against an external mechanical work store, and volume plus both energy owners commit together. This covers closed equilibrium reversible work, not fluid/piston dynamics, entropy-producing shocks or finite-rate interface transfer. New execution status: `artifacts/water-entropy-inversion-2026-10-05` and `artifacts/water-volume-work-2026-10-05`.
+
+`water_homogeneous_response(T,rho)` exposes the homogeneous state and both pressure responses from one potential evaluation. The coexistence Newton solver reuses that density response. Derivative/caloric-sound identity fixtures and execution status are in `artifacts/water-pressure-response-2026-10-05`; this API does not supply two-phase acoustic response or integrate particle mechanics.
+
+`water_equilibrium_response(T,rho)` adds equilibrium mixture cv and isentropic sound speed through saturation/entropy/lever-rule derivatives. It reuses the already evaluated branch responses from coexistence. Homogeneous branches retain their pressure responses; strict two-phase interiors use zero isothermal pressure-density response. This assumes instantaneous phase equilibrium, not finite-relaxation/frozen-composition acoustics. Execution status and independent derivative checks: `artifacts/water-equilibrium-response-2026-10-05`. Particle mechanics/CFL integration remains unfinished.
+
+### Species mass boundaries for film phase transfer
+
+`FilmMixture::deposit_component_masses_batch` and `withdraw_component_masses_batch` accept kilograms per species and cell. Both directions return `FilmTransfer` receipts for actual representable quantities; `FilmWithdrawal` remains a compatibility alias. The vapor adapter uses these interfaces for condensation and evaporation. Every batch stages bulk and component inventories before publication; species-only growth below bulk resolution is rejected and unresolved additions report zero. Twenty relevant tests passed; hashes and logs are in `artifacts/film-mass-condensation-2026-10-05`. Internal inventories are still component volumes at constant density. Canonical mass storage, EOS-derived cell volume and pressure-work coupling remain unfinished.
+
+### Canonical film component mass
+
+FilmMixture now owns kilograms per species and cell. Component volume is a derived read-only cache; bulk volume follows total mass divided by the current common density. Advection, squeezing, diffusion, thermal capacity and vapor exchange use canonical masses. Whole-owner publication includes derived geometry and stages coupled body/energy state. A legacy volume deposit rejects positive species changes that round away, preserving incident particles during unresolved mixture capture. The primary six-target migration run passed 56 tests; the subsequent capture guard run passed 40 tests including direct canonical mass versus rounded volume projection. Pinned source hashes and separate logs are in `artifacts/film-canonical-mass-2026-10-05`. Earlier volume-storage notes describe the superseded implementation. Density remains constant; variable-density mechanics, pressure-work coupling and performance qualification remain unfinished.
+
+Pure-film admission now shares one atomic boundary for singleton deposits, batch deposits and source-rate additions. Unresolved positive volume or mass changes are rejected before publication, preserving incident particles. Source receipts report actual representable increments, with exact inventory-delta assertions in atomic-frame/contact tests. Fifty-one relevant tests passed on the unified production source; two existing expensive studies stayed ignored. Evidence: `artifacts/pure-film-capture-2026-10-05`. This does not enable variable-density mechanics.
+
+### Moving nozzle velocity
+
+`PulsedEmitter::source_velocity` is an explicit world-space nozzle velocity in
+m/s (zero by default). Pulse speed remains relative to the nozzle. Emitted
+particle velocity is `source_velocity + normalize(direction) * pulse.speed`.
+The source template velocity continues to be replaced. Nonfinite nozzle velocity
+or overflow in the composed particle velocity rejects the transaction without
+advancing time or modifying fluid. Aperture positions and source transforms
+remain caller-owned; this does not integrate nozzle trajectories or reaction
+forces on a finite-mass source. A Galilean boost control verifies unchanged
+particle masses/positions and actual momentum change equal to mass times boost.
+
+`PulsedEmitter::advance_with_reaction` emits through the same transactional path
+and returns `EmissionReaction`: the particle exchange ledger and opposite linear
+and angular momentum fluxes about an explicit world-space origin. Angular flux
+uses each actual aperture sample position and particle momentum. Optional species
+composition uses the existing complete-composition transaction. Invalid origins
+and angular overflow are rejected before fluid or source-time publication.
+
+These are reservoir momentum-loss receipts, not an automatic finite-body recoil
+solver. A source adapter must remove emitted mass, account its carried momentum
+and kinetic/thermal energy, and apply the receipt in its own whole-body
+transaction. Adding an impulse while retaining source mass would be incorrect.
+
+`advance_from_translating_source` supplies a first mass-changing source adapter
+using the existing `TranslatingBody`. It places a point nozzle at the source centre,
+uses current source velocity, removes emitted mass while retaining explicit dry
+mass, and derives final velocity from total momentum conservation. An explicit
+energy reserve pays the change in source kinetic energy plus emitted kinetic
+and thermal energy. Fluid, emitter time, source mass/velocity and reserve are
+staged and published together. Insufficient mass or energy preserves all owners.
+
+This adapter does not drift source position, update collision shape, distribute
+tank contents, rotate the source or support a finite-radius nozzle. It clones
+the fluid for staging and has not been qualified for extreme cancellation under
+large common Galilean velocities. The analytic finite-source control closes
+mass, momentum and total energy and proves recoil and late-failure rollback.
+
+Finite-source energy cost now uses source-frame emitted kinetic energy plus
+source recoil kinetic energy and emitted thermal energy. Common world-frame
+translation cancels analytically instead of subtracting large absolute energies.
+Source velocity update uses relative emitted momentum. Wholly unrepresentable
+nonzero jet velocity or recoil increments are rejected before publication.
+The energy-reserve regression compares common boosts 0, 1e6 and 1e12 m/s; it
+qualifies invariant reserve consumption, not full high-boost world momentum
+accuracy. Partial rounding of final world velocities still requires an explicit
+error budget or a relative-momentum owner.
+
+Finite-source admission now exposes `SourceAccuracy` absolute mass (kg), per-axis
+momentum (kg m/s) and energy (J) tolerances. Defaults are 1e-12, 1e-10 and 1e-10.
+The final represented mass and velocities are audited in relative coordinates,
+including the common-velocity amplification of mass/momentum rounding and actual
+reserve decrement. Exceeding any budget rejects all owners. Explicitly relaxed
+budgets are available through `advance_from_translating_source_with_accuracy`.
+
+The 1e12 m/s boost regression now proves rejection and complete rollback with
+default tolerances. A subsequent deliberately loose-budget diagnostic still
+compares nominal source-frame reserve consumption; it is not high-boost physical
+conservation qualification.
+
+Run `cargo run --release -p physics --example liquid_jet_film -- 0.001 capture finite`
+to exercise finite-source recoil with the existing jet/film path. The third
+argument selects `fixed` (default) or `finite`; response still supports capture,
+bounce and spray. Finite mode uses a point nozzle at the translating source centre
+and explicit source drift, with no source gravity. It prints remaining mass,
+velocity and energy reserve and audits total source/fluid/substrate momentum
+against the integrated fluid gravity impulse. This does not close whole-scene
+energy or validate physical jet breakup. All three finite modes and fixed capture
+completed successfully; finite spray created 72 numerical fragments.
+
+`liquid_snapshot OUTPUT.png --finite-source` now renders the existing two-fluid
+native scene with finite translating point sources. Orange octahedral markers
+show current source positions; each source begins with illustrative 100 kg mass,
+90 kg retained dry mass and a 1000 J emission reserve. The ordinary SceneRenderer
+shows the same particles generated by the conservative source adapter. Restart
+preserves finite-source mode and resets its mass/energy inventories. The frame
+transaction includes both sources, drift, fluid state and emission clocks.
+
+The targeted regression proves emission, recoil, inventory consumption, marker
+mesh construction, restart and late second-source failure rollback. A three-state
+GPU snapshot completed on Apple M4 Max / Metal and was visually inspected. This
+is illustrative point-source geometry, not calibrated nozzle flow or breakup.
+
+The existing interactive `liquids` example accepts `--finite-source`, routed
+through `SceneApp::with_finite_liquid_sources`. Space pauses, R restarts while
+retaining mode, and Esc exits. `--finite-source --smoke` exercises the normal
+window/presentation path and checks finite source mass, recoil and energy reserve
+alongside the existing fluid mass/spreading checks. Finite-source and impact
+modes are mutually exclusive. The final local run completed 120 presented frames
+and 242 fixed physics steps on Apple M4 Max / Metal, exit 0.
+
+Finite-source recoil is now checked against the continuous variable-mass solution
+`V = -u ln(M_initial / M_final)` for constant relative exhaust speed. Runs at
+16, 32 and 64 emission intervals retain total mass, momentum and energy within
+1e-12 in the selected fixture; endpoint velocity error decreases by approximately
+a factor of two per refinement (asserted ratio 1.9–2.1). The current source
+samples interval-start velocity and has first-order temporal accuracy. Exact
+transactional conservation therefore does not establish high-order trajectory
+accuracy. Midpoint source-velocity sampling remains a required improvement.
+
+Finite-source emission now samples the midpoint source velocity. A staged first
+emission derives actual emitted mass and relative exhaust momentum; the average
+source mass gives the midpoint recoil estimate, followed by a staged corrected
+emission. Only the corrected source/fluid states publish. Represented conservation
+budgets still apply. This currently repeats fluid staging and source validation;
+its cost has not been benchmarked.
+
+The continuous variable-mass endpoint-velocity control at 16/32/64 intervals now
+asserts second-order convergence (successive error ratios 3.8–4.2), with mass,
+momentum and energy closure in the same fixture. The selected high-boost diagnostic
+no longer claims exactly invariant reserve consumption: midpoint world velocities
+round. Strict admission still rejects the extreme case; relaxed-budget deviations
+are bounded separately. Source position drift and emitted position timing have
+not been qualified as second order. Updated CPU jet capture and native Metal
+smoke both pass; smoke presents 120 frames and advances 242 physics steps.
+
+Finite-source demonstrations now drift the source with the average pre-/post-
+emission velocity. The native frame rejects nonfinite source positions before
+publishing. The constant-flow analytic fixture now also checks position against
+`-u T [1 - M_final/(M_initial-M_final) ln(M_initial/M_final)]`; 16/32/64 intervals
+show second-order position and velocity convergence (ratios 3.8–4.2). This
+qualifies the selected source trajectory, not the spatial timing of all emitted
+particles or coupled jet convergence. Updated CPU capture and 120-frame Metal
+smoke pass. Midpoint source emission still uses double fluid staging.
+
+The midpoint predictor now calls the shared immutable `prepare_emission` builder
+to obtain particle inputs, interval end and aperture counter. It does not insert
+particles into a provisional fluid. The finite-source path retains one explicit
+fluid staging clone and one actual exchange, followed by represented conservation
+admission. Ordinary and species emitters use the same builder; corrected midpoint
+particles still undergo canonical exchange validation. This removes the first
+full-fluid clone/exchange, while retaining a second particle preparation. Thirteen
+focused emitter, species and native source transaction controls pass. No measured
+throughput improvement is claimed.
+
+Idle finite-source intervals now use a validated empty particle exchange without
+fluid staging. Empty exchanges validate pressure/species configuration and
+compute the existing zero ledger, retaining the owned particle arrays. The
+finite-source path publishes only its elapsed source time/configuration when no
+mass is emitted; body mass/velocity and energy reserve remain unchanged.
+
+The new regression verifies particle storage identity and contents, unchanged
+source mechanics/reserve, clock advance and invalid-composition rollback. Twenty-
+two release controls pass across emission, particle exchange, saturation and
+species. Existing material evaluation is still performed for the zero ledger,
+so this removes copying/rebuilding rather than proving constant-time cost.
+
+Emitter direction normalization now scales by the largest absolute component
+before evaluating vector length. Finite nonzero directions therefore avoid
+squaring overflow/underflow. The aperture regression compares directions scaled
+by 1e-300 and 1e300 with the same ordinary vector: particle masses match exactly,
+and aperture positions/velocities match within 1e-14. Zero direction still rejects
+without advancing source time or mutating fluid. Nine emitter release controls
+pass, including finite-source convergence and conservation admission.

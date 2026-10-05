@@ -1,6 +1,7 @@
 //! Audited anatomical tetrahedral mesh interchange, VXTM version 1, metres.
 use super::{Body, Material, Vec3, columns, cross, det, dot, sub};
 use std::collections::BTreeMap;
+mod ellipsoid;
 #[derive(Clone, Debug)]
 pub struct TetraMesh {
     pub points: Vec<Vec3>,
@@ -293,7 +294,7 @@ impl TetraMesh {
         mesh.validate_topology()?;
         Ok(mesh)
     }
-    fn validate_topology(&self) -> Result<(), &'static str> {
+    pub(super) fn validate_topology(&self) -> Result<(), &'static str> {
         let points = &self.points;
         let cells = &self.cells;
         let boundary = &self.boundary;

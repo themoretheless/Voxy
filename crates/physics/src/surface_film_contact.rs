@@ -107,93 +107,6 @@ pub(super) fn triangle_distance(a: [V; 3], b: [V; 3]) -> f64 {
     }
     result.sqrt()
 }
-#[derive(Debug, Clone)]
-struct Node {
-    lo: V,
-    hi: V,
-    children: Option<(Box<Node>, Box<Node>)>,
-    ids: Vec<usize>,
-}
-impl Node {
-    fn build(triangles: &[[V; 3]], mut ids: Vec<usize>) -> Self {
-        let lo = std::array::from_fn(|k| {
-            ids.iter()
-                .flat_map(|&i| triangles[i].iter().map(move |p| p[k]))
-                .fold(f64::INFINITY, f64::min)
-        });
-        let hi = std::array::from_fn(|k| {
-            ids.iter()
-                .flat_map(|&i| triangles[i].iter().map(move |p| p[k]))
-                .fold(f64::NEG_INFINITY, f64::max)
-        });
-        if ids.len() <= 8 {
-            return Self {
-                lo,
-                hi,
-                ids,
-                children: None,
-            };
-        }
-        let axis = (0..3)
-            .max_by(|&a, &b| (hi[a] - lo[a]).total_cmp(&(hi[b] - lo[b])))
-            .unwrap();
-        ids.sort_by(|&a, &b| {
-            triangles[a]
-                .iter()
-                .map(|p| p[axis] / 3.)
-                .sum::<f64>()
-                .total_cmp(&triangles[b].iter().map(|p| p[axis] / 3.).sum::<f64>())
-        });
-        let right = ids.split_off(ids.len() / 2);
-        let a = Self::build(triangles, ids);
-        let b = Self::build(triangles, right);
-        Self {
-            lo,
-            hi,
-            ids: Vec::new(),
-            children: Some((Box::new(a), Box::new(b))),
-        }
-    }
-    fn refit(&mut self, triangles: &[[V; 3]]) {
-        if let Some((a, b)) = &mut self.children {
-            a.refit(triangles);
-            b.refit(triangles);
-            self.lo = std::array::from_fn(|k| a.lo[k].min(b.lo[k]));
-            self.hi = std::array::from_fn(|k| a.hi[k].max(b.hi[k]));
-        } else {
-            self.lo = std::array::from_fn(|k| {
-                self.ids
-                    .iter()
-                    .flat_map(|&i| triangles[i].iter().map(move |p| p[k]))
-                    .fold(f64::INFINITY, f64::min)
-            });
-            self.hi = std::array::from_fn(|k| {
-                self.ids
-                    .iter()
-                    .flat_map(|&i| triangles[i].iter().map(move |p| p[k]))
-                    .fold(f64::NEG_INFINITY, f64::max)
-            });
-        }
-    }
-    fn query(&self, triangle: [V; 3], gap: f64, out: &mut Vec<usize>) {
-        for k in 0..3 {
-            let lo = triangle.iter().map(|p| p[k]).fold(f64::INFINITY, f64::min);
-            let hi = triangle
-                .iter()
-                .map(|p| p[k])
-                .fold(f64::NEG_INFINITY, f64::max);
-            if lo > self.hi[k] + gap || hi < self.lo[k] - gap {
-                return;
-            }
-        }
-        if let Some((a, b)) = &self.children {
-            a.query(triangle, gap, out);
-            b.query(triangle, gap, out);
-        } else {
-            out.extend(&self.ids);
-        }
-    }
-}
 pub(super) fn nearby(
     a: &[[V; 3]],
     b: &[[V; 3]],
@@ -205,12 +118,12 @@ pub(super) fn nearby(
 
 #[derive(Debug, Clone)]
 pub(super) struct ProximityIndex {
-    tree: Node,
+    tree: crate::triangle_index::TriangleIndex,
 }
 impl ProximityIndex {
     pub fn new(triangles: &[[V; 3]]) -> Self {
         Self {
-            tree: Node::build(triangles, (0..triangles.len()).collect()),
+            tree: crate::triangle_index::TriangleIndex::new(triangles),
         }
     }
     pub fn refit(&mut self, triangles: &[[V; 3]]) {

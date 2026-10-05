@@ -156,6 +156,26 @@ impl SceneSimulation {
     pub fn clock(&mut self) -> &mut SimulationClock {
         &mut self.clock
     }
+    /// Delivers an accepted animation occurrence to the owner's Rust behaviors.
+    /// Call only after publishing the matching animation/physics state.
+    pub fn animation_event(
+        &mut self,
+        scene: &mut SceneGraph,
+        owner: NodeId,
+        name: &str,
+        phase: f64,
+    ) -> Result<(), SimulationError> {
+        self.validate(scene)?;
+        if self.stopped {
+            return Err(SimulationError::Stopped);
+        }
+        self.behaviors.animation_event(scene, owner, name, phase);
+        // Hooks can change transforms or structure after the frame pose capture.
+        self.current = poses(scene);
+        self.previous
+            .retain(|owner, _| self.current.contains_key(owner));
+        Ok(())
+    }
     /// Applies admitted commands at the frame barrier, synchronizes lifecycle,
     /// executes bounded fixed ticks, then invokes the variable update once.
     /// Clock policy caps elapsed time at 100 ms and discards excess whole ticks.
@@ -188,6 +208,14 @@ impl SceneSimulation {
         elapsed: f64,
         mut fixed: impl FnMut(&mut SceneGraph, f64) -> Result<(), E>,
     ) -> Result<SimulationFrame, SimulationStepError<E>> {
+        self.advance_with_delivery(scene, elapsed, |scene, _, dt| fixed(scene, dt))
+    }
+    fn advance_with_delivery<E>(
+        &mut self,
+        scene: &mut SceneGraph,
+        elapsed: f64,
+        mut fixed: impl FnMut(&mut SceneGraph, &mut BehaviorRunner, f64) -> Result<(), E>,
+    ) -> Result<SimulationFrame, SimulationStepError<E>> {
         self.validate(scene)?;
         if self.stopped {
             return Err(SimulationError::Stopped.into());
@@ -201,7 +229,7 @@ impl SceneSimulation {
         for completed_steps in 0..time.steps {
             self.previous = poses(scene);
             self.behaviors.fixed_update(scene, self.step);
-            if let Err(error) = fixed(scene, self.step) {
+            if let Err(error) = fixed(scene, &mut self.behaviors, self.step) {
                 self.current = poses(scene);
                 self.previous.clone_from(&self.current);
                 return Err(SimulationStepError::System {
@@ -252,6 +280,32 @@ impl SceneSimulation {
     ) -> Result<SimulationFrame, SimulationStepError<crate::SystemFailure<E>>> {
         self.advance_with(scene, elapsed, |scene, dt| {
             plan.run_scene(scene, |system, access| execute(system, access, dt))
+        })
+    }
+    /// Delivers occurrences from accepted systems before the next fixed tick.
+    /// Earlier successful systems remain committed if a later system fails;
+    /// their occurrences are delivered before reporting that failure.
+    pub fn advance_scoped_with_animation_events<E>(
+        &mut self,
+        scene: &mut SceneGraph,
+        elapsed: f64,
+        plan: &crate::SchedulePlan,
+        mut execute: impl FnMut(
+            &str,
+            crate::SceneSystemAccess<'_>,
+            f64,
+        ) -> Result<Vec<(NodeId, std::sync::Arc<str>, f64)>, E>,
+    ) -> Result<SimulationFrame, SimulationStepError<crate::SystemFailure<E>>> {
+        self.advance_with_delivery(scene, elapsed, |scene, behaviors, dt| {
+            let mut events = Vec::new();
+            let result = plan.run_scene(scene, |system, access| {
+                events.extend(execute(system, access, dt)?);
+                Ok(())
+            });
+            for (owner, name, phase) in events {
+                behaviors.animation_event(scene, owner, &name, phase);
+            }
+            result
         })
     }
     /// Resets presentation history after a teleport or external scene edit.
@@ -614,5 +668,95 @@ mod tests {
             simulation.advance(&mut scene, 0.01),
             Err(SimulationError::Stopped)
         ));
+    }
+    #[test]
+    fn scoped_animation_delivery_precedes_next_tick_and_survives_later_system_failure() {
+        #[derive(Debug)]
+        struct Listener(Arc<Mutex<Vec<f32>>>);
+        impl Behavior for Listener {
+            fn fixed_update(&mut self, scene: &mut SceneGraph, owner: NodeId, _: f64) {
+                self.0
+                    .lock()
+                    .unwrap()
+                    .push(scene.local(owner).unwrap().translation.x);
+            }
+            fn animation_event(&mut self, scene: &mut SceneGraph, owner: NodeId, _: &str, _: f64) {
+                let mut local = scene.local(owner).unwrap();
+                local.translation.x += 1.;
+                scene.set_local(owner, local).unwrap();
+            }
+        }
+        let plan = crate::SchedulePlan::build(
+            &[
+                crate::SystemSpec {
+                    name: "animation".into(),
+                    phase: 0,
+                    after: vec![],
+                    access: vec![],
+                },
+                crate::SystemSpec {
+                    name: "late".into(),
+                    phase: 1,
+                    after: vec!["animation".into()],
+                    access: vec![],
+                },
+            ],
+            2,
+        )
+        .unwrap();
+        for fail in [false, true] {
+            let mut scene = SceneGraph::new(1);
+            let owner = scene.spawn(None, Transform::default()).unwrap();
+            let log = Arc::new(Mutex::new(Vec::new()));
+            let mut simulation = SceneSimulation::new(
+                &scene,
+                SimulationLimits {
+                    fixed_step: 0.01,
+                    max_steps: 8,
+                    max_behaviors: 1,
+                    max_commands: 1,
+                },
+            )
+            .unwrap();
+            simulation
+                .attach(&mut scene, owner, Listener(log.clone()))
+                .unwrap();
+            let result = simulation.advance_scoped_with_animation_events(
+                &mut scene,
+                0.03,
+                &plan,
+                |system, _, _| {
+                    if system == "animation" {
+                        Ok(vec![(owner, Arc::from("step"), 0.1)])
+                    } else if fail {
+                        Err("late failure")
+                    } else {
+                        Ok(vec![])
+                    }
+                },
+            );
+            if fail {
+                assert!(matches!(
+                    result,
+                    Err(SimulationStepError::System {
+                        completed_steps: 0,
+                        ..
+                    })
+                ));
+                assert_eq!(*log.lock().unwrap(), vec![0.]);
+                assert_eq!(scene.local(owner).unwrap().translation.x, 1.);
+            } else {
+                assert_eq!(result.unwrap().time.steps, 3);
+                assert_eq!(*log.lock().unwrap(), vec![0., 1., 2.]);
+                assert_eq!(scene.local(owner).unwrap().translation.x, 3.);
+            }
+            let result = simulation.advance_scoped_with_animation_events(
+                &mut scene,
+                0.,
+                &plan,
+                |_, _, _| -> Result<_, &'static str> { panic!("zero tick system") },
+            );
+            assert_eq!(result.unwrap().time.steps, 0);
+        }
     }
 }

@@ -1,42 +1,42 @@
 {
-  "repository": "https://github.com/bevyengine/bevy",
+  "repository": "bevyengine/bevy",
   "tag": "v0.19.1",
   "commit": "b56fc29d3016e641754765244b5ba3f9cc504671",
-  "files": [
+  "sources": [
     {
       "path": "crates/bevy_ecs/src/system/commands/mod.rs",
-      "local": "crates__bevy_ecs__src__system__commands__mod.rs",
       "url": "https://raw.githubusercontent.com/bevyengine/bevy/b56fc29d3016e641754765244b5ba3f9cc504671/crates/bevy_ecs/src/system/commands/mod.rs",
       "sha256": "a379a6828b061f0ef889b7a495f591282ac97f568e21d8355a14d33a3f7b3cc9",
-      "bytes": 111800
+      "bytes": 111800,
+      "file": "crates__bevy_ecs__src__system__commands__mod.rs"
     },
     {
       "path": "crates/bevy_ecs/src/world/command_queue.rs",
-      "local": "crates__bevy_ecs__src__world__command_queue.rs",
       "url": "https://raw.githubusercontent.com/bevyengine/bevy/b56fc29d3016e641754765244b5ba3f9cc504671/crates/bevy_ecs/src/world/command_queue.rs",
       "sha256": "1825f53bb9814a81be3a25bf423512c344c3196c39ef0968700f0748e5aa230a",
-      "bytes": 21168
+      "bytes": 21168,
+      "file": "crates__bevy_ecs__src__world__command_queue.rs"
     },
     {
       "path": "LICENSE-MIT",
-      "local": "LICENSE-MIT",
       "url": "https://raw.githubusercontent.com/bevyengine/bevy/b56fc29d3016e641754765244b5ba3f9cc504671/LICENSE-MIT",
       "sha256": "508a77d2e7b51d98adeed32648ad124b7b30241a8e70b2e72c99f92d8e5874d1",
-      "bytes": 1036
+      "bytes": 1036,
+      "file": "LICENSE-MIT"
     },
     {
       "path": "LICENSE-APACHE",
-      "local": "LICENSE-APACHE",
       "url": "https://raw.githubusercontent.com/bevyengine/bevy/b56fc29d3016e641754765244b5ba3f9cc504671/LICENSE-APACHE",
       "sha256": "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9",
-      "bytes": 10173
+      "bytes": 10173,
+      "file": "LICENSE-APACHE"
     },
     {
       "path": "crates/bevy_ecs/src/schedule/executor/mod.rs",
-      "local": "crates__bevy_ecs__src__schedule__executor__mod.rs",
       "url": "https://raw.githubusercontent.com/bevyengine/bevy/b56fc29d3016e641754765244b5ba3f9cc504671/crates/bevy_ecs/src/schedule/executor/mod.rs",
       "sha256": "4a73b3fba472fe85f9fa7f8ce6089006fb1a5abcc1ca809e57d64ca17231fed4",
-      "bytes": 29549
+      "bytes": 29549,
+      "file": "crates__bevy_ecs__src__schedule__executor__mod.rs"
     }
   ]
 }

@@ -114,8 +114,8 @@ fn compliant_link_matches_static_load_at_two_timesteps() {
             b.step(dt, [0.0, -9.81, 0.0], &[], 16).unwrap();
             time += dt;
         }
-        // Static extension = compliance * mass * gravity; damping introduces O(dt) bias.
-        assert!((-b.positions()[1][1] - 1.0981).abs() < 0.007);
+        // Static extension = compliance * mass * gravity, independent of damping.
+        assert!((-b.positions()[1][1] - 1.0981).abs() < 0.0001);
         assert_eq!(b.positions()[0], [0.0; 3]);
     }
 }

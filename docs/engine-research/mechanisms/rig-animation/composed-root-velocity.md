@@ -1918,3 +1918,33 @@ Validation: 209 animation library and 157 editor library tests pass; 11 GPU case
 Original exactly proportional f32 quaternion keys now qualify through the runtime normalized-lerp branch and the source sampler's second normalization. Exact cross products establish a constant real orientation; the actual rounded dot must select NLERP. Rounded affine blending and both normalizations propagate same-member component discrepancies. The first raw key boundary is included explicitly; the next key boundary stays separate, preserving opposite-sign endpoint behavior. Moving LINEAR and proportional keys selecting spherical interpolation remain unavailable through this provider.
 
 AnimationClip::joint_rotation_sample_error_bounds and the source-identity-checked retarget bridge admit this stationary case automatically. Independent Fraction normalization checks cover 544 actual output components across 136 records. Validation: 210 animation and 157 editor tests pass; 11 GPU cases ignored. Retargeted moving owner fades remain disabled. Evidence: artifacts/rig-stationary-nlerp-error-2026-10-04/.
+
+### Playback clock seam publication (2026-10-05)
+
+The runtime previously reduced the accumulated clock in f64, narrowed the local phase to f32, then applied f32 playback wrapping again. A phase strictly below duration can round to duration, so the second wrap published the first pose prematurely. Clock sampling now reduces once in f64 and feeds the rounded local phase directly into the shared validated local sampler. Public f32 sampling retains its playback behavior; rig identity and interpolated TRS validation share the same admission path.
+
+Regression checks use the original f64 predecessor of duration, an exact seam, a negative pre-seam time and invalid time. Through Animator::advance_wall, a zero step retains the final sampled pose and zero root displacement; the exact remaining step crosses the seam, publishes the first pose and preserves the small actual root displacement. These checks do not establish generic numerical error certificates across all loop seams.
+
+Validation: 211 animation and 157 editor library tests pass, with 11 GPU cases ignored. The final expanded seam regression separately passes after its last edit. Evidence: artifacts/rig-clock-seam-2026-10-05/.
+
+Additional rollback qualification: a loop clock initially at the f64 predecessor of duration accepts its zero-step endpoint pose, then rejects the cubic zero-quaternion pose reached after crossing the seam. Rejection preserves the original clock, shared clip identity and absent transition; a subsequent valid smaller step succeeds. The expanded existing invalid-cubic regression passes separately against the final source (2026-10-05); evidence: artifacts/rig-clock-seam-2026-10-05/rollback-tests.log.
+
+### Transition phase admission (2026-10-05)
+
+`Animator::transition_to_at_phase` now samples the requested target phase and admits its skin palette before replacing playback state. Valid endpoint keys alone cannot guarantee a valid cubic interpolated pose. Immediate switches and nonzero fades both reject a zero quaternion at the requested phase, preserving the previous clip, clocks and active fade. This checks the entry pose; later phases still use transactional frame admission and are not certified in advance.
+
+Validation: 211 animation tests and 157 editor tests passed; 11 GPU tests ignored. Evidence: `artifacts/rig-transition-phase-2026-10-05/`.
+
+### Playing owner initial palette admission (2026-10-05)
+
+`Animator::try_new` admits the selected clip at its initial source-rig phase and validates the skin palette before constructing playback. The editor uses this checked constructor for playing owners after rig compatibility checks. Finite local TRS and inverse-bind values can still overflow when composed; such a model now fails at owner creation. The existing infallible constructor remains available, and this does not certify later phases or bind-only owner creation.
+
+Regression checks reject an overflowing global bind hierarchy and an initially valid local animated pose whose inverse-bind palette overflows. Valid checked construction preserves the legacy pose, palette and root motion after advancing. Validation: 211 animation and 158 editor tests passed; 11 GPU tests ignored. Evidence: `artifacts/rig-initial-admission-2026-10-05/`.
+
+### Bind-only owner initial admission (2026-10-05)
+
+The no-clip branch of `ModelPlayback::new` now validates the bind-pose skin palette before constructing an owner. This closes the bind-only entry path left outside checked `Animator` construction. A finite local bind scale can overflow when multiplied by a finite inverse-bind matrix; rejection now occurs before owner creation. A valid no-clip model retains its bind pose when advanced. Validation: 159 editor tests passed; 11 GPU tests ignored. Evidence: `artifacts/rig-bind-admission-2026-10-05/`. Subsequent resource rebinding and hardware coverage are separate requirements.
+
+### Resource rebind skeleton boundary (2026-10-05)
+
+`ModelPlayback::rebind` now returns an error before mutation when the replacement authored skeleton differs. Unchanged model identity returns immediately; same-rig resource changes retain clocks and original clip sources, permitting subsequent validated reload fades. The normal runtime still stages selection in a candidate; it now propagates the rebind error instead of relying only on its outer compatibility checks. A rejected foreign rig during an active transition preserves the model Arc and subsequent pose, palette and root displacement against an unchanged control. Existing same-rig rebind and asset-bound fade receipt tests remain passing. Validation: 160 editor tests passed; 11 GPU tests ignored. Evidence: `artifacts/rig-rebind-admission-2026-10-05/`. Other resource metadata and GPU reload qualification remain separate.

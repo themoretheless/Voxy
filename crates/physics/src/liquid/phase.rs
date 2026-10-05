@@ -271,23 +271,16 @@ impl Transport {
         let hot_energy = self.energy(&particles[hot], &self.fields[hot], hot)?;
         let cold_energy = self.energy(&particles[cold], &self.fields[cold], cold)?;
         let inverse_rate = (1.0 / conductance) / dt;
-        let mut low = 0.0;
-        let mut high = hot_energy;
         // Solve implicit q = G*dt*(T_hot(E_hot-q)-T_cold(E_cold+q)).
         // Temperature is monotone in enthalpy, including the latent-heat plateau.
-        for _ in 0..80 {
-            let transfer = low + (high - low) * 0.5;
-            let hot_temperature = self.decode(&particles[hot], hot_energy - transfer, hot)?.0;
-            let cold_temperature = self
-                .decode(&particles[cold], cold_energy + transfer, cold)?
-                .0;
-            if transfer * inverse_rate > hot_temperature - cold_temperature {
-                high = transfer;
-            } else {
-                low = transfer;
-            }
-        }
-        let transfer = low;
+        let transfer =
+            super::transport::implicit_heat_transfer(0., hot_energy, inverse_rate, |transfer| {
+                let hot_temperature = self.decode(&particles[hot], hot_energy - transfer, hot)?.0;
+                let cold_temperature = self
+                    .decode(&particles[cold], cold_energy + transfer, cold)?
+                    .0;
+                Ok(hot_temperature - cold_temperature)
+            })?;
         self.set_energy(hot, &particles[hot], hot_energy - transfer)?;
         self.set_energy(cold, &particles[cold], cold_energy + transfer)?;
         Ok(())

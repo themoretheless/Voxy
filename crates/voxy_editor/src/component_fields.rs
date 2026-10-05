@@ -2,6 +2,14 @@
 use serde_json::Value;
 use voxy_scene::SceneObject;
 
+pub(crate) fn marker_list_token(object: &SceneObject) -> Result<[u8; 32], serde_json::Error> {
+    let events = object
+        .components
+        .get("editor.model-animation.v1")
+        .and_then(|value| value.get("events"));
+    Ok(*blake3::hash(&serde_json::to_vec(&(&object.id, events))?).as_bytes())
+}
+
 #[derive(Clone, Debug)]
 pub(crate) struct ComponentField {
     pub schema: String,
@@ -14,6 +22,7 @@ pub(crate) struct BoundComponentField {
     owner: voxy_scene::ObjectId,
     field: ComponentField,
     item: Option<(String, String, String, String)>,
+    marker_list: Option<Value>,
 }
 impl ComponentField {
     pub fn bind(
@@ -41,6 +50,9 @@ impl ComponentField {
             owner: object.id.clone(),
             field: self.clone(),
             item,
+            marker_list: (self.schema == "editor.model-animation.v1"
+                && self.path.starts_with("/events/"))
+            .then(|| object.components[&self.schema]["events"].clone()),
         })
     }
 }
@@ -65,6 +77,15 @@ impl BoundComponentField {
             .find(|object| object.id == self.owner)
             .ok_or("component edit owner disappeared")?;
         let mut field = self.field.clone();
+        if self.marker_list.as_ref().is_some_and(|expected| {
+            object
+                .components
+                .get(&field.schema)
+                .and_then(|value| value.get("events"))
+                != Some(expected)
+        }) {
+            return Err("animation marker list changed during editing".into());
+        }
         if let Some((path, id, member, key)) = &self.item {
             if member == &format!("/{}", key.replace('~', "~0").replace('/', "~1")) {
                 return Err("collection identity is immutable".into());
@@ -371,6 +392,198 @@ mod tests {
     }
 
     #[test]
+    fn animation_marker_list_is_editable_empty_and_undoable_through_panel() {
+        let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../voxy_render/examples/assets/animated-triangle.glb");
+        let mut app = App::new(&fixture, false).unwrap();
+        app.panel_action(panels::Action::Animation).unwrap();
+        let before = app.authoring_document().unwrap();
+        let index = fields(&before.objects[0])
+            .unwrap()
+            .iter()
+            .position(|field| {
+                field.schema == "editor.model-animation.v1" && field.path == "/events"
+            })
+            .unwrap();
+        app.inspector = InspectorMode::Components(index / 6);
+        app.panel_action(panels::Action::Field(index)).unwrap();
+        app.field_key(
+            KeyCode::KeyA,
+            Some(r#"[{"name":"step","phase":0.25},{"name":"land","phase":0.75}]"#),
+        )
+        .unwrap();
+        app.field_key(KeyCode::Enter, None).unwrap();
+        let edited = app.authoring_document().unwrap();
+        assert_eq!(
+            edited.objects[0].components["editor.model-animation.v1"]["events"]
+                .as_array()
+                .unwrap()
+                .len(),
+            2
+        );
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), before);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), edited);
+        assert!(
+            app.edit_component_field(index, r#"[{"name":"step","phase":1.1}]"#)
+                .is_err()
+        );
+        assert_eq!(app.authoring_document().unwrap(), edited);
+        let members = fields(&edited.objects[0]).unwrap();
+        let phase_index = members
+            .iter()
+            .position(|field| {
+                field.schema == "editor.model-animation.v1" && field.path == "/events/0/phase"
+            })
+            .unwrap();
+        app.inspector = InspectorMode::Components(phase_index / 6);
+        app.panel_action(panels::Action::Field(phase_index))
+            .unwrap();
+        app.field_key(KeyCode::Digit4, Some("0.4")).unwrap();
+        app.field_key(KeyCode::Enter, None).unwrap();
+        assert_eq!(
+            app.authoring_document().unwrap().objects[0].components["editor.model-animation.v1"]["events"]
+                [0]["phase"],
+            serde_json::json!(0.4)
+        );
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), edited);
+        let mut reordered = edited.clone();
+        reordered.objects[0]
+            .components
+            .get_mut("editor.model-animation.v1")
+            .unwrap()["events"][1]["phase"] = serde_json::json!(0.25);
+        let scalar = fields(&reordered.objects[0])
+            .unwrap()
+            .into_iter()
+            .find(|field| field.path == "/events/0/phase")
+            .unwrap();
+        let binding = scalar
+            .bind(
+                &reordered.objects[0],
+                &app.authoring.authoring_project.registry,
+            )
+            .unwrap();
+        reordered.objects[0]
+            .components
+            .get_mut("editor.model-animation.v1")
+            .unwrap()["events"]
+            .as_array_mut()
+            .unwrap()
+            .swap(0, 1);
+        let before_rejected = reordered.clone();
+        assert!(binding.replace(&mut reordered, "0.5").is_err());
+        assert_eq!(reordered, before_rejected);
+        let mut capacity = edited.objects[0].clone();
+        capacity
+            .components
+            .get_mut("editor.model-animation.v1")
+            .unwrap()["events"] =
+            Value::Array(vec![serde_json::json!({"name":"step","phase":0.25}); 4096]);
+        let exposed = fields(&capacity).unwrap();
+        assert_eq!(
+            exposed
+                .iter()
+                .filter(|field| field.path.starts_with("/events/"))
+                .count(),
+            8192
+        );
+        app.edit_component_field(index, "[]").unwrap();
+        assert!(
+            fields(&app.authoring_document().unwrap().objects[0])
+                .unwrap()
+                .iter()
+                .any(|field| field.path == "/events")
+        );
+        let empty = app.authoring_document().unwrap();
+        let token = marker_list_token(&empty.objects[0]).unwrap();
+        let mut panels = crate::panels::Panels::new().unwrap();
+        panels
+            .build(
+                &empty,
+                0,
+                glam::Vec2::new(800., 600.),
+                false,
+                None,
+                0,
+                false,
+                InspectorMode::Components(index / 6),
+                "Texture: none",
+                "Markers",
+                None,
+            )
+            .unwrap();
+        panels.frame_outcome(voxy_render::RenderOutcome::Presented);
+        let rect = panels
+            .regions
+            .iter()
+            .find(|(_, action)| *action == panels::Action::MarkerAdd(token))
+            .unwrap()
+            .0;
+        let action = panels
+            .hit(glam::Vec2::new(
+                rect[0] + rect[2] * 0.5,
+                rect[1] + rect[3] * 0.5,
+            ))
+            .unwrap();
+        assert_eq!(action, panels::Action::MarkerAdd(token));
+        app.panel_action(action).unwrap();
+        let added = app.authoring_document().unwrap();
+        assert_eq!(
+            added.objects[0].components["editor.model-animation.v1"]["events"],
+            serde_json::json!([{"name":"event","phase":0.5}])
+        );
+        assert!(
+            app.panel_action(panels::Action::MarkerDelete(0, token))
+                .is_err()
+        );
+        assert_eq!(app.authoring_document().unwrap(), added);
+        let token = marker_list_token(&added.objects[0]).unwrap();
+        let name_index = fields(&added.objects[0])
+            .unwrap()
+            .iter()
+            .position(|field| field.path == "/events/0/name")
+            .unwrap();
+        panels
+            .build(
+                &added,
+                0,
+                glam::Vec2::new(800., 600.),
+                false,
+                None,
+                0,
+                false,
+                InspectorMode::Components(name_index / 6),
+                "Texture: none",
+                "Markers",
+                None,
+            )
+            .unwrap();
+        panels.frame_outcome(voxy_render::RenderOutcome::Presented);
+        let rect = panels
+            .regions
+            .iter()
+            .find(|(_, action)| *action == panels::Action::MarkerDelete(0, token))
+            .unwrap()
+            .0;
+        assert_eq!(
+            panels.hit(glam::Vec2::new(
+                rect[0] + rect[2] * 0.5,
+                rect[1] + rect[3] * 0.5
+            )),
+            Some(panels::Action::MarkerDelete(0, token))
+        );
+        app.panel_action(panels::Action::MarkerDelete(0, token))
+            .unwrap();
+        assert_eq!(app.authoring_document().unwrap(), empty);
+        app.edit_key(KeyCode::KeyZ).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), added);
+        app.edit_key(KeyCode::KeyY).unwrap();
+        assert_eq!(app.authoring_document().unwrap(), empty);
+        app.stop_workers().unwrap();
+    }
+    #[test]
     fn animation_inspector_rejects_invalid_values_and_round_trips_bind_pose_history() {
         let fixture = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../voxy_render/examples/assets/animated-triangle.glb");
@@ -600,8 +813,17 @@ pub(crate) fn fields(object: &SceneObject) -> Result<Vec<ComponentField>, &'stat
         depth: usize,
         out: &mut Vec<ComponentField>,
     ) -> Result<(), &'static str> {
-        if depth > 32 || out.len() >= 4096 {
+        if depth > 32 || out.len() >= 16384 {
             return Err("component inspector capacity exceeded");
+        }
+        // Keep the marker list editable even when empty. Replacing the whole
+        // list uses the existing atomic component codec/history transaction.
+        if schema == "editor.model-animation.v1" && path == "/events" {
+            out.push(ComponentField {
+                schema: schema.into(),
+                path: path.clone(),
+                value: value.clone(),
+            });
         }
         match value {
             Value::Object(members) => {
@@ -755,6 +977,45 @@ impl ComponentField {
 }
 
 impl crate::App {
+    pub(super) fn edit_animation_marker(
+        &mut self,
+        remove: Option<usize>,
+        token: [u8; 32],
+    ) -> Result<(), Box<dyn std::error::Error>> {
+        if self.play.playing.is_some() {
+            return Err("stop play before editing markers".into());
+        }
+        let document = self.panel_document()?;
+        let object = document
+            .objects
+            .get(self.selected)
+            .ok_or("missing marker owner")?;
+        if marker_list_token(object)? != token {
+            return Err("animation marker list changed".into());
+        }
+        let field = fields(object)?
+            .into_iter()
+            .find(|field| field.schema == "editor.model-animation.v1" && field.path == "/events")
+            .ok_or("missing animation markers")?;
+        let mut events = field
+            .value
+            .as_array()
+            .ok_or("invalid animation markers")?
+            .clone();
+        if let Some(index) = remove {
+            if index >= events.len() {
+                return Err("missing animation marker".into());
+            }
+            events.remove(index);
+        } else {
+            if events.len() >= 4096 {
+                return Err("animation marker capacity exceeded".into());
+            }
+            events.push(serde_json::json!({"name":"event", "phase":0.5}));
+        }
+        let binding = field.bind(object, &self.authoring.authoring_project.registry)?;
+        self.commit_component_binding(&binding, &serde_json::to_string(&events)?)
+    }
     pub(super) fn reconcile_component_edit(
         &mut self,
         document: &voxy_scene::SceneDocument,
@@ -779,7 +1040,10 @@ impl crate::App {
                     field
                         .bind(object, &registry)
                         .ok()
-                        .filter(|current| current.identity() == binding.identity())
+                        .filter(|current| {
+                            current.identity() == binding.identity()
+                                && current.marker_list == binding.marker_list
+                        })
                         .map(|_| index)
                 })
         } else {

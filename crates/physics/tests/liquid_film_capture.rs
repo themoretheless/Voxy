@@ -182,6 +182,70 @@ fn mixed_film() -> physics::surface_film::FilmMixture {
     .unwrap()
 }
 #[test]
+fn unresolved_pure_capture_rolls_back_particle_batch_and_film() {
+    for earlier_mass in [None, Some(0.01)] {
+        let mut particles = Vec::new();
+        for mass in earlier_mass.into_iter().chain([1e-30]) {
+            particles.push(Particle {
+                position: [0.5, -0.1, 0.],
+                velocity: [0., -1., 0.],
+                mass,
+                material: 0,
+            });
+        }
+        let mut liquid = Liquid::new(particles, vec![Material::WATER], Config::default()).unwrap();
+        let mut film = film();
+        film.deposit(0, 0.00001).unwrap();
+        let before_liquid = format!("{liquid:?}");
+        let before_film = format!("{film:?}");
+        let paths = vec![[0.5, 0.1, 0.]; liquid.particles().len()];
+        let result = liquid.capture_surface_film(&paths, &mut film);
+        assert!(
+            result.is_err(),
+            "unresolved pure capture succeeded: {result:?}"
+        );
+        assert_eq!(format!("{liquid:?}"), before_liquid);
+        assert_eq!(format!("{film:?}"), before_film);
+    }
+}
+#[test]
+fn unresolved_mixture_capture_keeps_particle_and_film_inventory() {
+    let mut liquid = Liquid::new(
+        vec![Particle {
+            position: [0.5, -0.1, 0.],
+            velocity: [0., -1., 0.],
+            mass: 1e-30,
+            material: 0,
+        }],
+        vec![Material::WATER],
+        Config::default(),
+    )
+    .unwrap();
+    liquid
+        .configure_transport(
+            vec![LiquidField {
+                temperature: 300.,
+                concentration: 0.,
+            }],
+            vec![TransportMaterial::default()],
+        )
+        .unwrap();
+    liquid
+        .configure_species(vec!["aqueous".into(), "gel".into()], vec![vec![1., 0.]])
+        .unwrap();
+    let mut film = mixed_film();
+    let before_liquid = format!("{liquid:?}");
+    let before_film = format!("{film:?}");
+    assert!(
+        liquid
+            .capture_surface_mixture(&[[0.5, 0.1, 0.]], &mut film)
+            .is_err(),
+        "unresolved deposit must not remove the incident particle"
+    );
+    assert_eq!(format!("{liquid:?}"), before_liquid);
+    assert_eq!(format!("{film:?}"), before_film);
+}
+#[test]
 fn heterogeneous_capture_preserves_component_mass_and_external_energy_ledgers() {
     let mut l = mixed_fluid();
     let mut f = mixed_film();

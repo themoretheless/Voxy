@@ -3,7 +3,13 @@ pub(crate) fn shader(
     device: &wgpu::Device,
     source: &'static str,
 ) -> std::borrow::Cow<'static, str> {
-    if device.adapter_info().backend != wgpu::Backend::Gl {
+    shader_for_backend(device.adapter_info().backend, source)
+}
+pub(crate) fn shader_for_backend(
+    backend: wgpu::Backend,
+    source: &'static str,
+) -> std::borrow::Cow<'static, str> {
+    if backend != wgpu::Backend::Gl {
         return source.into();
     }
     let mut source = source
@@ -54,4 +60,12 @@ pub(crate) fn module(
         label: Some(label),
         source: wgpu::ShaderSource::Wgsl(shader(device, source)),
     })
+}
+
+pub(crate) fn sampler_binding_type(device: &wgpu::Device) -> wgpu::SamplerBindingType {
+    if device.adapter_info().backend == wgpu::Backend::Gl {
+        wgpu::SamplerBindingType::Comparison
+    } else {
+        wgpu::SamplerBindingType::NonFiltering
+    }
 }

@@ -177,14 +177,32 @@ impl ViscoelasticOgden {
             return Err("invalid constitutive timestep");
         }
         let (c, e, j) = strain(f)?;
-        let (eigen, vectors) = spectral(c)?;
+        // The exponent-two Ogden term is exactly isochoric neo-Hooke.
+        // Reuse its stable invariant instead of decomposing a symmetric tensor
+        // for every force/energy evaluation. Other exponents keep the spectral law.
+        let eigensystem = if self.terms.iter().any(|term| term.exponent != 2.) {
+            Some(spectral(c)?)
+        } else {
+            None
+        };
         let inv_t = transpose(inverse(f)?);
         let mut energy = 0.5 * self.bulk_pa * (j - 1.).powi(2);
         let mut p = inv_t.map(|r| r.map(|v| self.bulk_pa * (j - 1.) * j * v));
         let q = j.powf(-2. / 3.);
-        let logs = eigen.map(|v| 0.5 * v.ln());
-        let mean_log = logs.iter().sum::<f64>() / 3.;
+        let trace = c[0][0] + c[1][1] + c[2][2];
         for term in &self.terms {
+            if term.exponent == 2. {
+                energy += 0.5 * term.shear_pa * super::invariants::isochoric_excess(f, q, trace);
+                for i in 0..3 {
+                    for k in 0..3 {
+                        p[i][k] += term.shear_pa * (q * f[i][k] - trace / 3. * inv_t[i][k]);
+                    }
+                }
+                continue;
+            }
+            let (eigen, vectors) = eigensystem.ok_or("missing Ogden spectrum")?;
+            let logs = eigen.map(|v| 0.5 * v.ln());
+            let mean_log = logs.iter().sum::<f64>() / 3.;
             let powers = eigen.map(|v| v.powf(term.exponent * 0.5));
             let sum = powers.iter().sum::<f64>();
             // The normalized principal logs sum to zero. Summing exp(z)-1-z
@@ -272,6 +290,68 @@ impl ViscoelasticOgden {
         }
         self.memory = next;
         Ok(dissipation)
+    }
+    /// Stored Maxwell branch energy per reference volume (J/m³), excluding
+    /// equilibrium/bulk elasticity. Evaluated independently of the heat receipt.
+    /// # Errors
+    /// Invalid deformation or overflowing branch energy.
+    pub fn maxwell_energy_density(&self, f: Matrix) -> Result<f64, &'static str> {
+        let (_, strain, _) = strain(f)?;
+        let energy = self
+            .branches
+            .iter()
+            .zip(&self.memory)
+            .map(|(branch, memory)| {
+                branch.shear_pa
+                    * strain
+                        .iter()
+                        .flatten()
+                        .zip(memory.iter().flatten())
+                        .map(|(a, b)| (a - b).powi(2))
+                        .sum::<f64>()
+            })
+            .sum::<f64>();
+        if !energy.is_finite() {
+            return Err("Maxwell stored energy overflow");
+        }
+        Ok(energy)
+    }
+    /// Exact exponential Maxwell relaxation at a held deformation.
+    /// Returns nonnegative released branch energy per reference volume (J/m³).
+    /// The receipt uses the actual committed memory change; a rounded-away
+    /// history increment cannot generate nominal heat without stored-energy loss.
+    /// Equilibrium elasticity and bulk energy do not relax.
+    /// # Errors
+    /// Rejects invalid time/deformation or overflow without changing history.
+    pub fn relax_exact(&mut self, f: Matrix, dt: f64) -> Result<f64, &'static str> {
+        if !dt.is_finite() || dt <= 0. {
+            return Err("invalid exact relaxation timestep");
+        }
+        self.response(f, 0.)?;
+        let (_, e, _) = strain(f)?;
+        let mut next = self.memory.clone();
+        let mut released = 0.;
+        for ((branch, old), new) in self.branches.iter().zip(&self.memory).zip(&mut next) {
+            let fraction = -(-dt / branch.relaxation_seconds).exp_m1();
+            for i in 0..3 {
+                for k in 0..3 {
+                    let target = e[i][k];
+                    new[i][k] = (old[i][k] + fraction * (target - old[i][k]))
+                        .clamp(old[i][k].min(target), old[i][k].max(target));
+                    let before = target - old[i][k];
+                    let after = target - new[i][k];
+                    released += branch.shear_pa * (before - after) * (before + after);
+                }
+            }
+        }
+        if !released.is_finite()
+            || released < 0.
+            || next.iter().flatten().flatten().any(|v| !v.is_finite())
+        {
+            return Err("exact relaxation history overflow");
+        }
+        self.memory = next;
+        Ok(released)
     }
 }
 impl Body {

@@ -24,6 +24,7 @@ voxy_mesher = { path = "../voxy_mesher" }
 wgpu = { version = "30.0.1", features = ["noop"] }
 
 [dev-dependencies]
+naga = { version = "30.0.0", features = ["wgsl-in", "glsl-out"] }
 serde_json = "1.0"
 voxy_editor = { path = "../voxy_editor" }
 physics = { path = "../physics" }

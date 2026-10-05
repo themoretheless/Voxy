@@ -154,35 +154,55 @@ pub(crate) fn load(
             return Err("glTF accessor outside view".into());
         }
     }
-    let mut images = Vec::new();
-    for image in gltf.images() {
-        let data = match image.source() {
-            gltf::image::Source::View { view, .. } => buffers[view.buffer().index()]
-                [view.offset()..view.offset() + view.length()]
-                .to_vec(),
-            gltf::image::Source::Uri { uri, .. } => {
-                observe(provider, inputs, external(source, uri)?)?
-            }
-        };
-        images.push(
-            ImageAsset::decode(
-                &data,
-                ImageLimits {
-                    source_bytes: 16 * 1024 * 1024,
-                    dimension: 2048,
-                    pixel_bytes: 32 * 1024 * 1024
-                        - u64::try_from(
-                            images
-                                .iter()
-                                .map(|image: &ImageAsset| image.rgba().len())
-                                .sum::<usize>(),
-                        )
-                        .map_err(|e| e.to_string())?,
-                },
-            )
-            .map_err(|e| e.to_string())?,
-        );
-    }
+    let images = if gltf
+        .buffers()
+        .all(|buffer| matches!(buffer.source(), gltf::buffer::Source::Bin))
+        && gltf
+            .images()
+            .all(|image| matches!(image.source(), gltf::image::Source::View { .. }))
+    {
+        voxy_render::ModelAsset::decode_embedded_images(
+            &bytes,
+            ImageLimits {
+                source_bytes: 16 * 1024 * 1024,
+                dimension: 2048,
+                pixel_bytes: 32 * 1024 * 1024,
+            },
+            16,
+        )
+        .map_err(|error| error.to_string())?
+    } else {
+        let mut images = Vec::new();
+        for image in gltf.images() {
+            let data = match image.source() {
+                gltf::image::Source::View { view, .. } => buffers[view.buffer().index()]
+                    [view.offset()..view.offset() + view.length()]
+                    .to_vec(),
+                gltf::image::Source::Uri { uri, .. } => {
+                    observe(provider, inputs, external(source, uri)?)?
+                }
+            };
+            images.push(
+                ImageAsset::decode(
+                    &data,
+                    ImageLimits {
+                        source_bytes: 16 * 1024 * 1024,
+                        dimension: 2048,
+                        pixel_bytes: 32 * 1024 * 1024
+                            - u64::try_from(
+                                images
+                                    .iter()
+                                    .map(|image: &ImageAsset| image.rgba().len())
+                                    .sum::<usize>(),
+                            )
+                            .map_err(|e| e.to_string())?,
+                    },
+                )
+                .map_err(|e| e.to_string())?,
+            );
+        }
+        images
+    };
     if images.iter().map(|image| image.rgba().len()).sum::<usize>() > 32 * 1024 * 1024 {
         return Err("decoded image budget exceeded".into());
     }

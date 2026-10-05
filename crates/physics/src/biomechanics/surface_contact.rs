@@ -1,5 +1,7 @@
 //! Nonadjacent triangle barriers and conservative advancement of straight steps.
-use super::surface_distance::{PreparedTriangle, separation_lower_bound, triangle_distance};
+use super::surface_distance::{
+    PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+};
 use super::{Body, Vec3, add, cross, dot, scale, sub};
 #[derive(Clone, Debug)]
 pub struct TissueSurfaceContact {
@@ -109,22 +111,16 @@ impl TissueSurfaceContact {
             let a = fa.map(|i| x[i]);
             let b = fb.map(|i| x[i]);
             let closest = triangle_distance(a, b)?;
-            let gap = closest.distance - self.minimum_distance_m;
-            if gap <= 0. {
-                return Err("closed surface contact gap");
-            }
-            if gap >= self.activation_gap_m {
+            let (pair_energy, derivative) = barrier_response(
+                closest.distance,
+                self.minimum_distance_m,
+                self.activation_gap_m,
+                self.pair_stiffness_n_m,
+            )?;
+            energy += pair_energy;
+            if derivative == 0. {
                 continue;
             }
-            let offset = gap - self.activation_gap_m;
-            let logarithm = if gap < 0.5 * self.activation_gap_m {
-                (gap / self.activation_gap_m).ln()
-            } else {
-                (offset / self.activation_gap_m).ln_1p()
-            };
-            energy -= self.pair_stiffness_n_m * offset * offset * logarithm;
-            let derivative =
-                -self.pair_stiffness_n_m * (2. * offset * logarithm + offset * offset / gap);
             let g = scale(closest.delta, derivative / closest.distance);
             for k in 0..3 {
                 gradient[fa[k]] = add(gradient[fa[k]], scale(g, closest.a[k]));
@@ -140,61 +136,56 @@ impl TissueSurfaceContact {
         for (a, b) in self.candidates(start, Some(end), self.minimum_distance_m) {
             let fa = self.faces[a];
             let fb = self.faces[b];
-            let speed = |f: [usize; 3]| {
-                f.into_iter()
-                    .map(|i| {
-                        let d = sub(end[i], start[i]);
-                        dot(d, d).sqrt()
-                    })
-                    .fold(0_f64, f64::max)
-            };
-            let bound = speed(fa) + speed(fb);
-            let mut time = 0.;
-            let mut certified = false;
-            for _ in 0..128 {
-                let positions =
-                    |f: [usize; 3]| f.map(|i| add(start[i], scale(sub(end[i], start[i]), time)));
-                let a = positions(fa);
-                let b = positions(fb);
-                // Reject invalid geometry before a distance bound can certify it.
-                for triangle in [a, b] {
-                    let n = cross(sub(triangle[1], triangle[0]), sub(triangle[2], triangle[0]));
-                    let area_squared = dot(n, n);
-                    if !area_squared.is_finite() || area_squared <= 1e-30 {
-                        return false;
-                    }
-                }
-                let lower = separation_lower_bound(a, b);
-                if CULL && lower - self.minimum_distance_m > bound * (1. - time) {
-                    certified = true;
-                    break;
-                }
-                let Ok(closest) = triangle_distance(a, b) else {
-                    return false;
-                };
-                let gap = closest.distance - self.minimum_distance_m;
-                if gap <= 0. {
-                    return false;
-                }
-                if bound == 0. || gap > bound * (1. - time) {
-                    certified = true;
-                    break;
-                }
-                let next = time + 0.8 * gap / bound;
-                if !next.is_finite() || next <= time {
-                    return false;
-                }
-                time = next.min(1.);
-            }
-            if !certified {
+            if !triangle_pair_path_is_open::<CULL>(
+                fa.map(|node| start[node]),
+                fa.map(|node| end[node]),
+                fb.map(|node| start[node]),
+                fb.map(|node| end[node]),
+                self.minimum_distance_m,
+            ) {
                 return false;
             }
         }
         true
     }
 }
+// Shared triangle-minimum barrier for internal and prescribed external surfaces.
+// Coefficients are admitted by the owning contact configuration.
+pub(super) fn barrier_response(
+    distance: f64,
+    minimum: f64,
+    activation: f64,
+    stiffness: f64,
+) -> Result<(f64, f64), &'static str> {
+    barrier_response_gap(distance - minimum, activation, stiffness)
+}
+pub(super) fn barrier_response_gap(
+    gap: f64,
+    activation: f64,
+    stiffness: f64,
+) -> Result<(f64, f64), &'static str> {
+    if !gap.is_finite() || gap <= 0. {
+        return Err("closed surface contact gap");
+    }
+    if gap >= activation {
+        return Ok((0., 0.));
+    }
+    let offset = gap - activation;
+    let logarithm = if gap < 0.5 * activation {
+        (gap / activation).ln()
+    } else {
+        (offset / activation).ln_1p()
+    };
+    let energy = -stiffness * offset * offset * logarithm;
+    let derivative = -stiffness * (2. * offset * logarithm + offset * offset / gap);
+    if !energy.is_finite() || !derivative.is_finite() {
+        return Err("surface barrier response overflow");
+    }
+    Ok((energy, derivative))
+}
+
 type PrimitiveGeometry = (usize, [usize; 4], Vec3, [f64; 4], f64, f64, [Vec3; 4]);
-fn barrier_curvature(gap: f64, activation: f64, stiffness: f64) -> f64 {
+pub(super) fn barrier_curvature(gap: f64, activation: f64, stiffness: f64) -> f64 {
     let offset = gap - activation;
     let logarithm = if gap < 0.5 * activation {
         (gap / activation).ln()

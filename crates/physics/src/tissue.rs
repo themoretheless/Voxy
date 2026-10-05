@@ -1,6 +1,9 @@
 //! Compliant soft tissues in local metre/kilogram/second coordinates.
 #![allow(clippy::many_single_char_names)]
 use crate::strand::SphereCollider;
+#[path = "tissue_geometry.rs"]
+mod geometry;
+pub use geometry::ellipsoid;
 // Conventional scalar constraint notation follows the XPBD equations.
 type V = [f64; 3];
 fn add(a: V, b: V) -> V {
@@ -96,6 +99,7 @@ pub struct Tissue {
     edges: Vec<Edge>,
     tets: Vec<Tet>,
     material: Material,
+    bulk_modulus: Option<f64>,
     activation: f64,
     hardening: f64,
     surface: Vec<[usize; 3]>,
@@ -204,6 +208,7 @@ impl Tissue {
             edges: links,
             tets: cells,
             material,
+            bulk_modulus: None,
             activation: 0.0,
             hardening: 0.0,
             surface,
@@ -242,6 +247,29 @@ impl Tissue {
             return Err("invalid activation");
         }
         self.activation = value;
+        Ok(())
+    }
+    /// Sets a physical bulk modulus in Pa for the volume constraints.
+    /// Each cell uses compliance |V_rest| / K, giving elastic energy
+    /// K (V - V_rest)^2 / (2 |V_rest|). None restores legacy uniform compliance.
+    /// Edge compliance remains independently configured, so this does not make
+    /// the complete material constitutive law resolution independent.
+    /// # Errors
+    /// Rejects nonpositive/nonfinite modulus, missing volume cells, or
+    /// unrepresentable cell compliance, without changing the previous state.
+    pub fn set_bulk_modulus(&mut self, modulus: Option<f64>) -> Result<(), &'static str> {
+        if let Some(k) = modulus {
+            if !k.is_finite() || k <= 0. || self.tets.is_empty() {
+                return Err("invalid tissue bulk modulus");
+            }
+            if self.tets.iter().any(|t| {
+                let compliance = t.rest.abs() / k;
+                !compliance.is_finite() || compliance <= 0.
+            }) {
+                return Err("unrepresentable tissue bulk compliance");
+            }
+        }
+        self.bulk_modulus = modulus;
         Ok(())
     }
     /// Moves a pinned skeleton attachment without teleporting free tissue.
@@ -308,9 +336,11 @@ impl Tissue {
         let old = &self.positions;
         for i in 0..next.positions.len() {
             if next.weights[i] > 0.0 {
-                next.velocities[i] = mul(
-                    add(next.velocities[i], mul(acceleration, dt)),
-                    (-next.material.damping * dt).exp(),
+                // Decay stored momentum, then apply the external acceleration.
+                // Damping the acceleration too would bias static load balance.
+                next.velocities[i] = add(
+                    mul(next.velocities[i], (-next.material.damping * dt).exp()),
+                    mul(acceleration, dt),
                 );
                 next.positions[i] = add(next.positions[i], mul(next.velocities[i], dt));
             }
@@ -360,7 +390,10 @@ impl Tissue {
                 let gc = mul(cross(sub(d, a), sub(b, a)), 1.0 / 6.0);
                 let gd = mul(cross(sub(b, a), sub(c, a)), 1.0 / 6.0);
                 let gradients = [mul(add(add(gb, gc), gd), -1.0), gb, gc, gd];
-                let alpha = next.material.volume_compliance / (dt * dt);
+                let compliance = next
+                    .bulk_modulus
+                    .map_or(next.material.volume_compliance, |k| t.rest.abs() / k);
+                let alpha = compliance / (dt * dt);
                 let denom = alpha
                     + (0..4)
                         .map(|j| next.weights[t.ids[j]] * dot(gradients[j], gradients[j]))

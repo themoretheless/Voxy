@@ -19,7 +19,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         None
     };
     let impacts = std::env::args().any(|arg| arg == "--impacts");
-    let mut demo = if impacts {
+    let finite = std::env::args().any(|arg| arg == "--finite-source");
+    if finite && impacts {
+        return Err("finite-source and impacts modes are separate".into());
+    }
+    let mut demo = if finite {
+        liquid_demo::LiquidDemo::new_finite_sources()?
+    } else if impacts {
         liquid_demo::LiquidDemo::new_impacts()?
     } else {
         liquid_demo::LiquidDemo::new()?
@@ -27,6 +33,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = GraphicsOptions::default().create_instance();
     let adapter =
         pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))?;
+    let info = adapter.get_info();
+    println!(
+        "LIQUID GPU adapter={} backend={:?} device_type={:?}",
+        info.name, info.backend, info.device_type
+    );
     let (device, queue) =
         pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default()))?;
     let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
@@ -62,7 +73,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     };
     let transform = renderer.create_transform(&device, camera.view_projection()?)?;
-    let mut fluid = voxy_render::ScreenSpaceFluidRenderer::new(&device, format, 1024, 768, 8192)?;
+    let mut fluid = voxy_render::ScreenSpaceFluidRenderer::new_with_adapter(
+        &device, &adapter, format, 1024, 768, 8192,
+    )?;
     let target = |format, usage| {
         device.create_texture(&wgpu::TextureDescriptor {
             label: Some("liquid snapshot"),
@@ -110,10 +123,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         let mesh = if optical {
             let (mesh, particles) = demo.optical_scene()?;
-            fluid.update(
+            let films = demo.optical_film_triangles()?;
+            eprintln!("OPTICAL FILM frame={frame} cells={}", films.len());
+            fluid.update_with_film(
                 &queue,
                 camera,
                 &particles,
+                &films,
                 1.1,
                 voxy_render::FluidDepthFilter::Bilateral,
             )?;

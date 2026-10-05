@@ -1,5 +1,9 @@
 //! Validated skeletal animation sampling and skin-matrix generation.
 
+mod precision;
+pub use precision::{Pose64, Transform64};
+mod events;
+pub use events::{ClipEvent, ClipEventOccurrence, ClipEvents, EventTickError};
 mod exact_quaternion;
 mod root_clock;
 mod root_curve;
@@ -746,6 +750,30 @@ impl AnimationClip {
         if !time.is_finite() {
             return Err(AnimationError::InvalidSampleTime);
         }
+        let local_time = match self.playback {
+            Playback::Loop => time.rem_euclid(self.duration),
+            Playback::Clamp => time.clamp(0.0, self.duration),
+        };
+        self.try_sample_local(skeleton, local_time)
+    }
+
+    /// Samples a normalized authored phase without advancing a playback clock.
+    /// Phase 1 includes the final authored pose even for a looping clip.
+    /// This stateless preview does not emit animation events.
+    /// # Errors
+    /// Rejects phases outside [0,1], nonfinite phases and invalid poses/rigs.
+    pub fn try_sample_phase(
+        &self,
+        skeleton: &Skeleton,
+        phase: f64,
+    ) -> Result<Pose, AnimationError> {
+        if !phase.is_finite() || !(0. ..=1.).contains(&phase) {
+            return Err(AnimationError::InvalidSampleTime);
+        }
+        self.try_sample_local(skeleton, (phase * f64::from(self.duration)) as f32)
+    }
+
+    fn try_sample_local(&self, skeleton: &Skeleton, time: f32) -> Result<Pose, AnimationError> {
         if self.tracks.len() != skeleton.joints.len() {
             return Err(AnimationError::TrackCountMismatch {
                 expected: skeleton.joints.len(),
@@ -755,7 +783,7 @@ impl AnimationClip {
         if !self.is_compatible_with(skeleton) {
             return Err(AnimationError::SkeletonMismatch);
         }
-        let pose = self.sample(skeleton, time);
+        let pose = self.sample_local(time);
         for (joint, transform) in pose.local.iter().enumerate() {
             if !transform.is_valid() {
                 return Err(AnimationError::InvalidPose(joint));
@@ -776,8 +804,10 @@ impl AnimationClip {
         if !time.is_finite() {
             return Err(AnimationError::InvalidSampleTime);
         }
-        // Reduce before conversion so accumulated elapsed time never loses phase bits.
-        self.try_sample(skeleton, self.phase(time) as f32)
+        // Reduce once in the clock's precision. A phase just below the seam can
+        // round to duration in f32; wrapping it again would publish the first
+        // pose before the clock actually crosses the seam.
+        self.try_sample_local(skeleton, self.phase(time) as f32)
     }
 
     fn sample_local(&self, time: f32) -> Pose {
@@ -911,9 +941,9 @@ impl Pose {
                     return Err(AnimationError::InvalidPose(index));
                 }
                 let value = Transform {
-                    translation: a.translation.lerp(b.translation, weight),
+                    translation: lerp_vec3(a.translation, b.translation, weight),
                     rotation: a.rotation.slerp(b.rotation, weight).normalize(),
-                    scale: a.scale.lerp(b.scale, weight),
+                    scale: lerp_vec3(a.scale, b.scale, weight),
                 };
                 if value.is_valid() {
                     Ok(value)
@@ -1046,6 +1076,21 @@ impl AnimatorFrame {
 }
 
 impl Animator {
+    /// Creates playback after admitting its initial pose and skin palette.
+    /// This checks the entry frame; subsequent phases remain transactionally
+    /// checked by `advance_wall`.
+    /// # Errors
+    /// Rejects invalid initial interpolated TRS or overflowing hierarchy/palette.
+    pub fn try_new(initial: Arc<AnimationClip>) -> Result<Self, AnimationError> {
+        let skeleton = Skeleton {
+            joints: initial.rig.clone(),
+        };
+        initial
+            .try_sample_clock(&skeleton, 0.)?
+            .skin_matrices(&skeleton)?;
+        Ok(Self::new(initial))
+    }
+
     #[must_use]
     pub fn new(initial: Arc<AnimationClip>) -> Self {
         Self {
@@ -1268,6 +1313,13 @@ impl Animator {
         if !rigs_match(&self.current.rig, &next.rig) {
             return Err(AnimationError::SkeletonMismatch);
         }
+        // A clip may have valid keys but an invalid interpolated pose at the
+        // requested phase. Admit the displayed palette before publishing it.
+        let skeleton = Skeleton {
+            joints: self.current.rig.clone(),
+        };
+        next.try_sample_clock(&skeleton, next_time)?
+            .skin_matrices(&skeleton)?;
         let next_curve = next.motion_curve(self.motion_joint)?;
         if duration == 0.0 {
             self.motion_curve = next_curve;
@@ -1277,9 +1329,6 @@ impl Animator {
             return Ok(());
         }
         let source_pose = if let Some(transition) = &self.transition {
-            let skeleton = Skeleton {
-                joints: self.current.rig.clone(),
-            };
             let target = self.current.try_sample_clock(&skeleton, self.time)?;
             let sampled;
             let source = if let Some(pose) = &transition.source_pose {
@@ -1555,6 +1604,22 @@ fn validate_quat_keys(keys: &[QuatKey], duration: f32) -> Result<(), TrackError>
     Ok(())
 }
 
+// Keep render interpolation compatible; use wide arithmetic only on overflow.
+fn lerp_vec3(from: Vec3, to: Vec3, weight: f32) -> Vec3 {
+    if weight == 0. || from == to {
+        return from;
+    }
+    if weight == 1. {
+        return to;
+    }
+    let value = from.lerp(to, weight);
+    if value.is_finite() {
+        value
+    } else {
+        precision::linear_vector(from, to, f64::from(weight)).as_vec3()
+    }
+}
+
 fn sample_vec3(
     keys: &[Vec3Key],
     time: f32,
@@ -1562,47 +1627,18 @@ fn sample_vec3(
     mode: Interpolation,
     tangents: &[[Vec3; 2]],
 ) -> Vec3 {
-    let Some(first) = keys.first() else {
-        return fallback;
-    };
-    if time <= first.time {
-        return first.value;
+    if mode == Interpolation::Linear
+        && keys.len() > 1
+        && time > keys[0].time
+        && time < keys[keys.len() - 1].time
+    {
+        let upper = keys.partition_point(|key| key.time <= time);
+        let from = &keys[upper - 1];
+        let to = &keys[upper];
+        let alpha = (time - from.time) / (to.time - from.time);
+        return lerp_vec3(from.value, to.value, alpha);
     }
-    let last = &keys[keys.len() - 1];
-    if time >= last.time {
-        return last.value;
-    }
-    sample_segment(keys, time).map_or_else(
-        || first.value,
-        |(index, from, to, alpha)| match mode {
-            Interpolation::Step => from.value,
-            Interpolation::Linear => {
-                if from.value == to.value {
-                    from.value
-                } else {
-                    from.value.lerp(to.value, alpha)
-                }
-            }
-            Interpolation::CubicSpline => {
-                if alpha == 0.0
-                    || (from.value == to.value
-                        && tangents[index][1] == Vec3::ZERO
-                        && tangents[index + 1][0] == Vec3::ZERO)
-                {
-                    from.value
-                } else {
-                    hermite(
-                        from.value,
-                        to.value,
-                        tangents[index][1],
-                        tangents[index + 1][0],
-                        alpha,
-                        to.time - from.time,
-                    )
-                }
-            }
-        },
-    )
+    precision::sample_vector(keys, f64::from(time), fallback, mode, tangents).as_vec3()
 }
 
 fn sample_quat(
@@ -1612,56 +1648,34 @@ fn sample_quat(
     mode: Interpolation,
     tangents: &[[Vec4; 2]],
 ) -> Quat {
+    // Preserve exact authored f32 endpoint/step values for the render API.
     let Some(first) = keys.first() else {
         return fallback;
     };
     if time <= first.time {
         return first.value;
     }
-    let last = &keys[keys.len() - 1];
+    let last = keys.last().unwrap();
     if time >= last.time {
         return last.value;
     }
-    sample_segment(keys, time).map_or_else(
-        || first.value,
-        |(index, from, to, alpha)| match mode {
-            Interpolation::Step => from.value,
-            Interpolation::Linear => from.value.slerp(to.value, alpha).normalize(),
-            Interpolation::CubicSpline => {
-                if alpha == 0.0 {
-                    return from.value;
-                }
-                let value = hermite(
-                    Vec4::from_array(from.value.to_array()),
-                    Vec4::from_array(to.value.to_array()),
-                    tangents[index][1],
-                    tangents[index + 1][0],
-                    alpha,
-                    to.time - from.time,
-                );
-                let scale = value.abs().max_element();
-                if !value.is_finite() || scale == 0.0 {
-                    // The existing pose/palette admission rejects this invalid
-                    // sample before committing clocks or GPU resources.
-                    Quat::from_array([f32::NAN; 4])
-                } else {
-                    Quat::from_array((value / scale).normalize().to_array())
-                }
-            }
-        },
+    if mode == Interpolation::Step {
+        let upper = keys.partition_point(|key| key.time <= time);
+        return keys[upper - 1].value;
+    }
+    if mode == Interpolation::Linear {
+        let upper = keys.partition_point(|key| key.time <= time);
+        let from = &keys[upper - 1];
+        let to = &keys[upper];
+        let alpha = (time - from.time) / (to.time - from.time);
+        return from.value.slerp(to.value, alpha).normalize();
+    }
+    Quat::from_array(
+        precision::sample_rotation(keys, f64::from(time), fallback, mode, tangents)
+            .to_array()
+            .map(|v| v as f32),
     )
-}
-
-fn hermite<T>(from: T, to: T, outgoing: T, incoming: T, t: f32, duration: f32) -> T
-where
-    T: Copy + std::ops::Mul<f32, Output = T> + std::ops::Add<Output = T>,
-{
-    let t2 = t * t;
-    let t3 = t2 * t;
-    from * (2.0 * t3 - 3.0 * t2 + 1.0)
-        + outgoing * (duration * (t3 - 2.0 * t2 + t))
-        + to * (-2.0 * t3 + 3.0 * t2)
-        + incoming * (duration * (t3 - t2))
+    .normalize()
 }
 
 trait Timed {
@@ -1678,17 +1692,6 @@ impl Timed for QuatKey {
     fn time(&self) -> f32 {
         self.time
     }
-}
-
-fn sample_segment<T: Timed>(keys: &[T], time: f32) -> Option<(usize, &T, &T, f32)> {
-    let upper = keys.partition_point(|key| key.time() <= time);
-    if upper == 0 || upper == keys.len() {
-        return None;
-    }
-    let from = &keys[upper - 1];
-    let to = &keys[upper];
-    let alpha = (time - from.time()) / (to.time() - from.time());
-    Some((upper - 1, from, to, alpha))
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -2931,6 +2934,47 @@ mod tests {
             )
             .unwrap(),
         );
+        let mut looped = cubic.clone();
+        looped.playback = Playback::Loop;
+        let looped = Arc::new(looped);
+        let mut loop_player = Animator::new(looped.clone());
+        loop_player.time = 2_f64.next_down();
+        assert!(loop_player.advance_wall(&skeleton, 0.).is_ok());
+        let loop_clock = loop_player.time;
+        assert!(matches!(
+            loop_player.advance_wall(&skeleton, 1.),
+            Err(AnimationError::InvalidPose(0))
+        ));
+        assert_eq!(loop_player.time, loop_clock);
+        assert!(Arc::ptr_eq(&loop_player.current, &looped));
+        assert!(loop_player.transition.is_none());
+        assert!(loop_player.advance_wall(&skeleton, 0.25).is_ok());
+
+        for duration in [0., 2.] {
+            let mut player = Animator::new(valid.clone());
+            player.transition_to(valid.clone(), 2.).unwrap();
+            player.advance_wall(&skeleton, 0.25).unwrap();
+            let before = player.clone();
+            assert!(matches!(
+                player.transition_to_at_phase(Arc::new(cubic.clone()), duration, 0.5),
+                Err(AnimationError::InvalidPose(0))
+            ));
+            assert!(Arc::ptr_eq(&player.current, &before.current));
+            assert_eq!(player.time, before.time);
+            let after_transition = player.transition.as_ref().unwrap();
+            let before_transition = before.transition.as_ref().unwrap();
+            assert!(Arc::ptr_eq(
+                &after_transition.source,
+                &before_transition.source
+            ));
+            assert_eq!(after_transition.source_time, before_transition.source_time);
+            assert_eq!(after_transition.elapsed, before_transition.elapsed);
+            assert_eq!(after_transition.duration, before_transition.duration);
+            let recovered = player.advance_wall(&skeleton, 0.25).unwrap();
+            let expected = before.clone().advance_wall(&skeleton, 0.25).unwrap();
+            assert_eq!(recovered.skin_matrices, expected.skin_matrices);
+            assert_eq!(recovered.root_motion, expected.root_motion);
+        }
         let mut animator = Animator::new(valid);
         animator.transition_to(Arc::new(cubic), 2.0).unwrap();
         let before = animator.clone();
@@ -3171,6 +3215,166 @@ mod tests {
         assert_eq!(pose.local[0].rotation, rotation);
         assert_eq!(pose.local[0].translation, Vec3::ZERO);
         assert_eq!(pose.local[0].scale, Vec3::ONE);
+    }
+    #[test]
+    fn cubic_rotation_underflow_recovers_nonzero_curve_without_admitting_true_zero() {
+        let keys = [
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 1.,
+                value: -Quat::IDENTITY,
+            },
+        ];
+        // At the midpoint, endpoint terms cancel. The surviving tangent term
+        // is one eighth of the smallest positive f32, nonzero in f64.
+        let tangents = [
+            [Vec4::ZERO, Vec4::new(f32::from_bits(1), 0., 0., 0.)],
+            [Vec4::ZERO, Vec4::ZERO],
+        ];
+        let q = sample_quat(
+            &keys,
+            0.5,
+            Quat::IDENTITY,
+            Interpolation::CubicSpline,
+            &tangents,
+        );
+        assert!(q.is_finite() && q.is_normalized());
+        assert!((q * Vec3::Y).abs_diff_eq(-Vec3::Y, 1e-6));
+        assert!(
+            !sample_quat(
+                &keys,
+                0.5,
+                Quat::IDENTITY,
+                Interpolation::CubicSpline,
+                &[[Vec4::ZERO; 2]; 2]
+            )
+            .is_finite()
+        );
+    }
+    #[test]
+    fn cubic_rotation_recovers_large_amplitude_and_cancellation_but_rejects_zero() {
+        let keys = [
+            QuatKey {
+                time: 0.,
+                value: Quat::IDENTITY,
+            },
+            QuatKey {
+                time: 16.,
+                value: Quat::IDENTITY,
+            },
+        ];
+        let large = Vec4::new(3e38, 0., 0., 0.);
+        let cancelling = [[Vec4::ZERO, large], [large, Vec4::ZERO]];
+        assert_eq!(
+            sample_quat(
+                &keys,
+                8.,
+                Quat::IDENTITY,
+                Interpolation::CubicSpline,
+                &cancelling
+            ),
+            Quat::IDENTITY
+        );
+        let amplitude = [[Vec4::ZERO, large], [Vec4::ZERO, Vec4::ZERO]];
+        let q = sample_quat(
+            &keys,
+            8.,
+            Quat::IDENTITY,
+            Interpolation::CubicSpline,
+            &amplitude,
+        );
+        assert!(q.is_finite() && q.is_normalized());
+        assert!((q * Vec3::Y).abs_diff_eq(-Vec3::Y, 1e-6));
+        let opposite = [
+            keys[0],
+            QuatKey {
+                time: 16.,
+                value: -Quat::IDENTITY,
+            },
+        ];
+        assert!(
+            !sample_quat(
+                &opposite,
+                8.,
+                Quat::IDENTITY,
+                Interpolation::CubicSpline,
+                &[[Vec4::ZERO; 2]; 2]
+            )
+            .is_finite()
+        );
+    }
+    #[test]
+    fn cubic_vector_cancellation_recovers_finite_value_but_keeps_real_overflow() {
+        let keys = [
+            Vec3Key {
+                time: 0.,
+                value: Vec3::splat(2e38),
+            },
+            Vec3Key {
+                time: 4.,
+                value: Vec3::splat(2e38),
+            },
+        ];
+        let tangents = [
+            [Vec3::ZERO, Vec3::splat(3e38)],
+            [Vec3::splat(3e38), Vec3::ZERO],
+        ];
+        let sampled = sample_vec3(&keys, 2., Vec3::ZERO, Interpolation::CubicSpline, &tangents);
+        assert_eq!(sampled, Vec3::splat(2e38));
+        assert_eq!(
+            sample_vec3(&keys, 0., Vec3::ZERO, Interpolation::CubicSpline, &tangents),
+            keys[0].value
+        );
+        assert_eq!(
+            sample_vec3(&keys, 4., Vec3::ZERO, Interpolation::CubicSpline, &tangents),
+            keys[1].value
+        );
+        let overflow = [
+            [Vec3::ZERO, Vec3::splat(3e38)],
+            [Vec3::splat(-3e38), Vec3::ZERO],
+        ];
+        assert!(
+            !sample_vec3(&keys, 2., Vec3::ZERO, Interpolation::CubicSpline, &overflow).is_finite()
+        );
+    }
+    #[test]
+    fn large_finite_translation_blends_and_samples_without_spurious_overflow() {
+        let rig = Skeleton::new(vec![skeleton().joints()[0].clone()]).unwrap();
+        let mut a = rig.bind_pose();
+        let mut b = a.clone();
+        a.local[0].translation = Vec3::splat(2e38);
+        b.local[0].translation = Vec3::splat(-2e38);
+        let keys = [
+            Vec3Key {
+                time: 0.,
+                value: a.local[0].translation,
+            },
+            Vec3Key {
+                time: 1.,
+                value: b.local[0].translation,
+            },
+        ];
+        for weight in [0., 0.25, 0.5, 0.75, 1.] {
+            let blended = Pose::blend(&a, &b, weight).unwrap();
+            let sampled = sample_vec3(&keys, weight, Vec3::ZERO, Interpolation::Linear, &[]);
+            assert_eq!(sampled, blended.local[0].translation);
+            assert!(blended.skin_matrices(&rig).unwrap()[0].is_finite());
+        }
+        assert_eq!(
+            Pose::blend(&a, &b, 0.).unwrap().local[0].translation,
+            a.local[0].translation
+        );
+        assert_eq!(
+            Pose::blend(&a, &b, 1.).unwrap().local[0].translation,
+            b.local[0].translation
+        );
+        assert_eq!(
+            Pose::blend(&a, &b, 0.5).unwrap().local[0].translation,
+            Vec3::ZERO
+        );
     }
     #[test]
     fn pose_blend_uses_shortest_rotation_path() {
@@ -3445,6 +3649,39 @@ mod tests {
     }
 
     #[test]
+    fn clock_sampling_does_not_wrap_rounded_phase_before_loop_seam() {
+        let rig = skeleton();
+        let clip = root_clip(&rig, 2.);
+        let before = 1_f64.next_down();
+        assert_eq!(before as f32, 1.);
+        assert_eq!(
+            clip.try_sample_clock(&rig, before).unwrap().local()[0].translation,
+            Vec3::X * 2.
+        );
+        assert_eq!(
+            clip.try_sample_clock(&rig, 1.).unwrap().local()[0].translation,
+            Vec3::ZERO
+        );
+        assert_eq!(
+            clip.try_sample_clock(&rig, -f64::EPSILON).unwrap().local()[0].translation,
+            Vec3::X * 2.
+        );
+        let mut animator = Animator::new(clip.clone());
+        animator.time = before;
+        let last = animator.advance_wall(&rig, 0.).unwrap();
+        assert_eq!(last.pose.local()[0].translation, Vec3::X * 2.);
+        assert_eq!(last.root_motion, Vec3::ZERO);
+        let wrapped = animator.advance_wall(&rig, 1. - before).unwrap();
+        assert_eq!(wrapped.pose.local()[0].translation, Vec3::ZERO);
+        assert_eq!(wrapped.root_motion.x, (2. * (1. - before)) as f32);
+        assert_eq!(animator.time, 0.);
+        assert!(matches!(
+            clip.try_sample_clock(&rig, f64::NAN),
+            Err(AnimationError::InvalidSampleTime)
+        ));
+    }
+
+    #[test]
     fn bounded_clocks_preserve_small_ticks_after_long_elapsed_time_and_many_loops() {
         let rig = skeleton();
         let mut animator = Animator::new(root_clip(&rig, 2.));
@@ -3630,8 +3867,85 @@ mod tests {
             skeleton.bind_pose().skin_matrices(&skeleton),
             Err(AnimationError::InvalidPose(1))
         ));
+        let clip = AnimationClip::new(
+            "overflowing bind hierarchy",
+            1.,
+            Playback::Loop,
+            vec![JointTrack::default(); skeleton.joints().len()],
+            &skeleton,
+        )
+        .unwrap();
+        assert!(matches!(
+            Animator::try_new(Arc::new(clip)),
+            Err(AnimationError::InvalidPose(1))
+        ));
+        let valid_rig = self::skeleton();
+        let clip = root_clip(&valid_rig, 2.);
+        let mut checked = Animator::try_new(clip.clone()).unwrap();
+        let mut legacy = Animator::new(clip);
+        let checked_frame = checked.advance_wall(&valid_rig, 0.25).unwrap();
+        let legacy_frame = legacy.advance_wall(&valid_rig, 0.25).unwrap();
+        assert_eq!(checked_frame.pose, legacy_frame.pose);
+        assert_eq!(checked_frame.skin_matrices, legacy_frame.skin_matrices);
+        assert_eq!(checked_frame.root_motion, legacy_frame.root_motion);
     }
 }
 
 #[cfg(test)]
 mod rotation_runtime_tests;
+
+#[cfg(test)]
+mod authored_phase_preview_tests {
+    use super::*;
+    #[test]
+    fn preview_preserves_loop_endpoint_and_does_not_change_playback() {
+        let rig = Skeleton::new(vec![Joint {
+            name: Arc::from("root"),
+            parent: None,
+            bind_local: Transform::IDENTITY,
+            inverse_bind: Mat4::IDENTITY,
+        }])
+        .unwrap();
+        let clip = Arc::new(
+            AnimationClip::new(
+                "loop",
+                2.,
+                Playback::Loop,
+                vec![JointTrack {
+                    translations: vec![
+                        Vec3Key {
+                            time: 0.,
+                            value: Vec3::ZERO,
+                        },
+                        Vec3Key {
+                            time: 2.,
+                            value: Vec3::X,
+                        },
+                    ],
+                    ..Default::default()
+                }],
+                &rig,
+            )
+            .unwrap(),
+        );
+        let mut animator = Animator::try_new(clip.clone()).unwrap();
+        animator.advance_wall(&rig, 0.25).unwrap();
+        let phase = animator.phase_interval_wall(0.).unwrap();
+        for (p, x) in [(0., 0.), (0.25, 0.25), (0.5, 0.5), (1., 1.)] {
+            let pose = clip.try_sample_phase(&rig, p).unwrap();
+            assert_eq!(pose.local()[0].translation.x, x);
+            pose.skin_matrices(&rig).unwrap();
+        }
+        assert_eq!(
+            clip.try_sample(&rig, 2.).unwrap().local()[0].translation.x,
+            0.
+        );
+        for p in [f64::NAN, f64::INFINITY, -0.01, 1.01] {
+            assert_eq!(
+                clip.try_sample_phase(&rig, p),
+                Err(AnimationError::InvalidSampleTime)
+            );
+        }
+        assert_eq!(animator.phase_interval_wall(0.).unwrap(), phase);
+    }
+}

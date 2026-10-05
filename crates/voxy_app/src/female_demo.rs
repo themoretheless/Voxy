@@ -515,6 +515,13 @@ impl FemaleDemo {
             &serde_json::json!({"view":{"mode":if self.show_strain {"strain"} else if self.show_skin {"displacement"} else {"material"}},"skinShell":tissue_diagnostics::measurements(&self.skin,!self.secondary_only && !self.animation_only),"fluid":self.film.as_ref().map(|f| f.measurements()),
                 "tissueCageVolumesM3":self.regions.iter().map(|r| r.volume_m3()).collect::<Vec<_>>(),
                 "tissueCageMassesKg":self.regions.iter().map(|r| r.mass_kg()).collect::<Vec<_>>(),
+                "secondaryDynamics": {
+                    "enabled":self.secondary_only && !self.animation_only,
+                    "steps":self.steps,
+                    "rootDisplacementM":self.root_bob(self.time),
+                    "regionLocalDisplacementsM":self.regions.iter().map(|r| r.maximum_local_displacement(self.root_bob(self.time))).collect::<Vec<_>>(),
+                    "peakLocalDisplacementM":self.max_displacement
+                },
                 "tissueCageReferenceDensityKgM3":1000.,
                 "tissueCageOrder":["leftBreast","rightBreast","leftButtock","rightButtock"],
                 "anatomicalVolumeMeasurement":false,
@@ -1076,8 +1083,11 @@ impl FemaleDemo {
                 .into();
         }
         if self.secondary_only {
-            return "Voxy body physics | jumps then settling | arrows: orbit/zoom | Space: pause"
-                .into();
+            return format!(
+                "Voxy body physics | jumps then settling | steps {} | peak response {:.1} mm | arrows: orbit/zoom | Space: pause",
+                self.steps,
+                self.max_displacement * 1000.
+            );
         }
         if self.animation_only {
             return "Voxy skeletal animation | relaxed arm gesture | 6 s loop | B: skin details | Space: pause | arrows: orbit/zoom".into();
