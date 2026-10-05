@@ -1,0 +1,28 @@
+{
+  "profile": "debug, unoptimized",
+  "platform": "macOS-26.7.1-arm64-arm-64bit-Mach-O",
+  "records": [
+    {
+      "mode": "reservoirs",
+      "clone_median_ns": 5004,
+      "direct_step_median_ns": 117211084,
+      "atomic_step_median_ns": 135962042,
+      "trials": 9,
+      "state": "initial"
+    },
+    {
+      "mode": "impacts",
+      "clone_median_ns": 47973,
+      "direct_step_median_ns": 41519458,
+      "atomic_step_median_ns": 47001125,
+      "trials": 9,
+      "state": "initial"
+    }
+  ],
+  "limitations": [
+    "Initial states only; no developed spray/cloud/film",
+    "Alternating direct then atomic order; scheduler and cache noise not controlled",
+    "Difference between step medians does not isolate cloning overhead",
+    "No memory allocation or cross-hardware qualification"
+  ]
+}

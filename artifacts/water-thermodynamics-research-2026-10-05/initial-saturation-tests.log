@@ -1,0 +1,11 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.10s
+     Running tests/water_saturation.rs (target/debug/deps/water_saturation-92174406e8b8e808)
+
+running 3 tests
+test matches_iapws_sr1_1992_published_table_one ... ok
+test pressure_derivative_and_clapeyron_relation_hold_across_domain ... ok
+test rejects_outside_liquid_vapor_coexistence_domain ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,48 @@
+{
+  "goal_complete": false,
+  "tests_passed": 14,
+  "tests_failed": 0,
+  "tests_ignored": 0,
+  "successful_runs": [
+    {
+      "session": 85692,
+      "exit_code": 0,
+      "targets": {
+        "tissue_continuum_geometry": 3,
+        "tissue_geometry": 3
+      }
+    },
+    {
+      "session": 8355,
+      "exit_code": 0,
+      "targets": {
+        "tissue_demo": 8
+      }
+    }
+  ],
+  "initial_compile_failure": {
+    "session": 76074,
+    "exit_code": 101,
+    "reason": "test read private Element.volume; replaced with independent surface integral"
+  },
+  "single_geometry_owner": "biomechanics::TetraMesh::ellipsoid",
+  "positive_cell_and_outward_boundary_validation": true,
+  "fem_uniform_shear_energy_and_virtual_work_verified": true,
+  "fem_energy_test_refinement_levels": [
+    0,
+    1,
+    2
+  ],
+  "shared_nodal_masses_verified": true,
+  "moving_bone_support_work_coupling": false,
+  "mannequin_converted_to_fem": false,
+  "anatomical_calibration": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/tetra_mesh.rs": "d1c4b096069cea195ca79996ddeaa3136296c40cc5446733fa6b1b62336b9987",
+    "crates/physics/src/biomechanics/tetra_mesh/ellipsoid.rs": "4fa775dccc0f0584c4b6e76e2cee504e28a36d5396f13d7378a05422f5e61d58",
+    "crates/physics/src/tissue_geometry.rs": "8166971f9e65b60b182817208550950368a6387078634d6a317271f58fb7de98",
+    "crates/physics/tests/tissue_continuum_geometry.rs": "13f34306904927bbc45967df177156ea18ae4530072ebd200206950afdab804e",
+    "crates/physics/tests/tissue_geometry.rs": "b31cce3ad9807c01c5fea448c46f825871614f073d67f04d81d7880072b0087b",
+    "crates/voxy_app/src/tissue_demo.rs": "a7847a05ce618f27da6cc74b95d7a0b396c6ea45d364c19d6255536b87bc0a8e"
+  }
+}

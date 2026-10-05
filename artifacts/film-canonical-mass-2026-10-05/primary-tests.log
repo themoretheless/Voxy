@@ -1,0 +1,94 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 53.59s
+     Running tests/surface_film_mixture.rs (target/debug/deps/surface_film_mixture-4e2f5e367550bb5e)
+
+running 14 tests
+test dry_fill_extreme_donor_limiting_and_weighted_deposit_preserve_inventory ... ok
+test viscosity_configuration_is_atomic_bounded_and_explicitly_conflicts_with_rheology ... ok
+test invalid_driving_deposits_and_schema_are_atomic ... ok
+test late_mixture_patch_heat_failure_rolls_back_volume_composition_and_body ... ok
+test branched_outgoing_flux_uses_one_donor_budget_for_all_components ... ok
+test diffusion_handles_stiff_rates_dry_edges_and_invalid_controls ... ok
+test diffusion_matches_unequal_volume_pair_solution_and_preserves_volume ... ok
+test composition_viscosity_changes_shear_flow_and_tracks_diffusive_mixing ... ok
+test moving_mixture_patch_uses_local_viscous_drag_and_transports_composition ... ok
+test donor_composition_and_component_masses_follow_analytic_drainage ... ok
+test viscosity_feedback_is_recomputed_each_internal_interval ... ok
+test composition_transport_leaves_mechanical_solution_identical ... ok
+test multi_edge_diffusion_refines_quadratically_to_independent_graph_solution ... ok
+test mixture_patch_recomputes_state_and_retains_uniform_film_compatibility ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_squeeze.rs (target/debug/deps/surface_film_squeeze-dd671bb2880b8abf)
+
+running 7 tests
+test heterogeneous_viscosity_matches_independent_two_cell_resistance_network ... ok
+test late_gap_closure_restores_squeeze_volume_and_every_component ... ok
+test invalid_unfilled_sealed_and_nonconverged_queries_preserve_film ... ok
+test pressure_scales_with_viscosity_speed_and_inverse_gap_cubed ... ok
+test composed_squeeze_tracks_internal_mixing_and_vented_component_inventory ... ok
+test squeeze_transport_closes_volume_and_refines_to_continuous_pressure_work ... ok
+test equilateral_squeeze_pressure_refines_to_independent_cubic_solution ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/surface_film_squeeze_body.rs (target/debug/deps/surface_film_squeeze_body-268c2adc3829be68)
+
+running 4 tests
+test normal_pressure_feedback_matches_exponential_drag_and_conserves_ledgers ... ok
+test late_unrepresentable_heat_rolls_back_entire_body_and_film ... ok
+test heterogeneous_body_squeeze_preserves_each_vented_component ... ok
+test variable_gap_drag_converges_to_independent_continuous_solution ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 11 tests
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test late_invalid_substrate_rolls_back_both_owners_and_dry_cells_insulate ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test conduction_matches_two_cell_fourier_solution_without_inventory_motion ... ok
+test conduction_dry_cells_insulate_and_isothermal_cells_do_not_change ... ok
+test applied_heat_changes_temperature_and_rejects_late_overdraw ... ok
+test finite_substrate_exchange_matches_analytic_decay_and_conserves_total_heat ... ok
+test thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test conduction_on_four_cells_refines_and_preserves_global_heat_and_bounds ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_vapor.rs (target/debug/deps/surface_film_vapor-e6c1242d6e3bc7c9)
+
+running 9 tests
+test sub_inventory_resolution_flux_does_not_create_vapor_mass ... ok
+test coupled_vapor_failure_rolls_back_prior_substrate_heating_and_all_owners ... ok
+test invalid_vapor_exchange_preserves_all_three_owners ... ok
+test film_evaporation_and_condensation_preserve_mass_energy_momentum_and_residue ... ok
+test solvent_free_residue_stays_in_vacuum_and_accepts_condensation ... ok
+test hot_finite_substrate_feeds_evaporation_with_closed_mass_energy_and_momentum ... ok
+test shared_vapor_batch_matches_ordered_exchange_and_rolls_back_late_failure ... ok
+test substrate_vapor_coupling_refines_when_elapsed_time_is_subdivided ... ok
+test symmetric_shared_vapor_sweeps_refine_the_interface_order_error ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/surface_film_withdrawal.rs (target/debug/deps/surface_film_withdrawal-7500cd01898e1f33)
+
+running 11 tests
+test unrepresentable_transferred_mass_does_not_remove_volume ... ok
+test mass_depletion_does_not_overdraw_when_volume_roundtrip_rounds_up ... ok
+test species_change_below_bulk_resolution_is_rejected_without_ghost_parcel ... ok
+test kilogram_deposit_rejects_species_growth_below_bulk_resolution ... ok
+test kilogram_deposits_balance_species_and_bulk_across_repeated_cells ... ok
+test selective_removal_preserves_residue_and_bulk_species_ledger ... ok
+test kilogram_withdrawals_deplete_exactly_and_reject_late_overdraw_atomically ... ok
+test signed_zero_withdrawal_preserves_zero_inventory_representation ... ok
+test late_invalid_requests_and_repeated_overdraw_preserve_complete_state ... ok
+test zero_and_sub_ulp_flux_do_not_credit_phantom_mass ... ok
+test kilogram_deposit_late_failure_and_unresolved_flux_preserve_inventory ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

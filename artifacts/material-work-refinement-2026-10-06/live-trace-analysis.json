@@ -1,0 +1,17 @@
+{
+  "observed_bytes": 256847,
+  "quadrature_retry_reasons": {
+    "implicit contact work defect": 151,
+    "implicit contact path quadrature refinement": 107
+  },
+  "work_decompositions": 151,
+  "max_absolute_components_j": {
+    "non_surface_potential_defect_j": 3.0461744238152733e-15,
+    "prescribed_surface_defect_j": 0.00920633458443635,
+    "kinematic_defect_j": 1.2307634432006526e-09,
+    "arithmetic_remainder_j": 1.81517868871352e-15
+  },
+  "minimum_rejected_dt_s": 1.6276041666666666e-05,
+  "last_logged_step": 60,
+  "terminal_result_present": false
+}

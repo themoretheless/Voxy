@@ -1,0 +1,21 @@
+{
+  "passed": 22,
+  "failed": 0,
+  "targets": {
+    "emission": 8,
+    "exchange": 4,
+    "saturation": 5,
+    "species": 5
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "386b603bb4257bcecd253b726d3a4261c550157abdda66b40b650fab50b36f32",
+    "crates/physics/src/liquid/exchange.rs": "a3331eb0694b725a90b2609b800ac2a3af112f7b631ff314eeac81bf35ef5e16"
+  },
+  "goal_complete": false,
+  "performance_measurement": null,
+  "limitations": [
+    "empty ledger still evaluates materials",
+    "no new native GPU run",
+    "no broad engine completion"
+  ]
+}

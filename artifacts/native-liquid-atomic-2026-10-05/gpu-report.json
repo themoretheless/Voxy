@@ -1,0 +1,33 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "device_type": "IntegratedGpu",
+  "mode": "diagnostic impacts",
+  "physical_steps": 120,
+  "frames": 4,
+  "colored_pixels": [
+    [
+      0,
+      0
+    ],
+    [
+      963,
+      1047
+    ],
+    [
+      2541,
+      2041
+    ],
+    [
+      4552,
+      3464
+    ]
+  ],
+  "snapshot": "impacts-gpu.png",
+  "status": "pass",
+  "limits": [
+    "Offscreen GPU readback; native window presentation unproved",
+    "Diagnostic colors; optical fluid shader not exercised",
+    "Other hardware backends not verified by this run"
+  ]
+}

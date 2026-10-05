@@ -1,0 +1,23 @@
+{
+  "observed_line_search_rejections": 265,
+  "trial_counts": {
+    "gap_trials": 12652,
+    "volume_trials": 12652,
+    "safe_trials": 15,
+    "objective_trials": 15
+  },
+  "rejections_with_no_feasible_trials": 263,
+  "rejections_with_feasible_trials": 2,
+  "observed_source": "/tmp/voxy-material-refinement-full-480.log",
+  "terminal_result_present": false,
+  "last_logged_step": 120,
+  "scope": "partial trace, overlapping trial categories, no complete-run throughput claim",
+  "counter_semantics": {
+    "gap_trials": "trials passing internal gap-path admission",
+    "volume_trials": "trials also passing volume-path admission",
+    "safe_trials": "trials also passing prescribed-surface CCD",
+    "objective_trials": "safe trials with finite evaluated objective"
+  },
+  "derived_external_ccd_rejections": 12637,
+  "next_diagnostic": "capture rejected external-contact geometry and CCD bound near nonlinear failure; keep energy and CCD admission unchanged"
+}

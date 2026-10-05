@@ -1,4 +1,5 @@
 //! Native authoring viewport; IO/decoding is asynchronous, publication/upload is owner-only.
+mod animation_preview;
 mod audio_play;
 mod audio_reload;
 mod audio_session;
@@ -31,7 +32,7 @@ pub use retarget_profile::{ModelRetarget, RetargetJointProfile};
 mod animated_models;
 mod animation_smoke;
 mod scene_limits;
-pub use model_playback::ModelAnimation;
+pub use model_playback::{ModelAnimation, ModelAnimationEvent};
 mod import;
 mod material;
 mod scene3d_smoke;
@@ -434,6 +435,8 @@ impl App {
         scene.insert_component(model_node, ModelInstance { asset: id.clone() })?;
         let mut app = Self {
             authoring: authoring_session::AuthoringSession {
+                preview_seek: None,
+                animation_preview: None,
                 history: None,
                 settings_written: BTreeMap::new(),
                 scene_path: None,
@@ -991,7 +994,7 @@ impl App {
             if let Some(physics) = &mut self.play.physics {
                 physics.synchronize(&self.scene)?;
             }
-            let frame_result = simulation.advance_scoped(
+            let frame_result = simulation.advance_scoped_with_animation_events(
                 &mut self.scene,
                 elapsed,
                 animation_runtime::schedule()?,
@@ -1066,7 +1069,14 @@ impl App {
                             .run_scoped_system(system, access, &mut self.play.player_input, dt)
                             .map_err(voxy_gameplay::GameplayFixedError::Physics)?;
                     }
-                    Ok::<(), voxy_gameplay::GameplayFixedError>(())
+                    Ok::<_, voxy_gameplay::GameplayFixedError>(
+                        self.play
+                            .animations
+                            .take_events()
+                            .into_iter()
+                            .map(|(owner, event)| (owner, event.name, event.phase))
+                            .collect(),
+                    )
                 },
             );
             if let Err(voxy_scene::SimulationStepError::System {
@@ -1167,6 +1177,12 @@ impl App {
             if size.width > 0.0 && size.height > 0.0 {
                 let document = self.panel_document()?;
                 self.reconcile_component_edit(&document)?;
+                self.panels.as_mut().unwrap().preview_phase = self
+                    .authoring
+                    .animation_preview
+                    .as_ref()
+                    .filter(|preview| self.instances.get(self.selected) == Some(&preview.owner))
+                    .map(|preview| preview.phase);
                 self.panels.as_mut().unwrap().retarget_draft = self.retarget_draft.is_some();
                 self.panels.as_mut().unwrap().bone_picker = self
                     .retarget_picker
@@ -1353,7 +1369,10 @@ impl App {
         if views.is_empty() {
             return Ok(());
         }
-        let animation_requests = if self.play.playing.is_some() || self.standalone {
+        let animation_requests = if self.play.playing.is_some()
+            || self.standalone
+            || self.authoring.animation_preview.is_some()
+        {
             self.extraction
                 .instances()
                 .iter()
@@ -1378,9 +1397,14 @@ impl App {
                             speed: 1.0,
                             ..ModelAnimation::default()
                         });
+                    let frame = if self.play.playing.is_some() || self.standalone {
+                        self.play.animations.frame(instance.owner, &model)
+                    } else {
+                        Some(self.preview_animation_frame(instance.owner, &model, &settings)?)
+                    };
                     Some(animated_models::Request {
                         owner: instance.owner,
-                        frame: self.play.animations.frame(instance.owner, &model),
+                        frame,
                         model,
                         settings,
                         lod: published.animated_lod.clone(),
@@ -1397,7 +1421,10 @@ impl App {
             let other_live = graphics
                 .geometry_bytes()
                 .saturating_sub(graphics.animated_models.allocation_bytes());
-            if self.play.playing.is_none() && !self.standalone {
+            if self.play.playing.is_none()
+                && !self.standalone
+                && self.authoring.animation_preview.is_none()
+            {
                 graphics.animated_models.clear();
             } else {
                 for (owner, error) in graphics.animated_models.synchronize(
@@ -2017,6 +2044,7 @@ impl App {
         cursor: Vec2,
         viewport: Vec2,
     ) -> Result<(), Box<dyn std::error::Error>> {
+        self.authoring.preview_seek = None;
         if self.play.playing.is_none()
             && self
                 .panels
@@ -2031,7 +2059,27 @@ impl App {
             let point = cursor / window.scale_factor() as f32;
             let size = viewport / window.scale_factor() as f32;
             if let Some(action) = self.panel_target(point)? {
-                return self.panel_action(action);
+                if matches!(action, panels::Action::PreviewPhase(_)) {
+                    let rect = self
+                        .panels
+                        .as_ref()
+                        .unwrap()
+                        .regions
+                        .iter()
+                        .find(|(_, action)| *action == panels::Action::PreviewSeek)
+                        .ok_or("missing seek region")?
+                        .0;
+                    self.authoring.preview_seek = self
+                        .instances
+                        .get(self.selected)
+                        .copied()
+                        .map(|owner| (owner, rect));
+                }
+                let result = self.panel_action(action);
+                if result.is_err() {
+                    self.authoring.preview_seek = None;
+                }
+                return result;
             }
             if point.x < 150.0_f32.min(size.x * 0.25)
                 || point.x >= size.x - 180.0_f32.min(size.x * 0.3)
@@ -2660,6 +2708,7 @@ impl App {
     }
     // Do not carry captured activation between authoring and runtime sessions.
     fn clear_panel_interactions(&mut self) {
+        self.authoring.preview_seek = None;
         if let Some(panels) = &mut self.panels {
             panels.focus.cancel();
         }
@@ -2700,6 +2749,17 @@ impl App {
         }
         let action = panels.hit(point);
         panels.focus.pointer(action)?;
+        if action == Some(panels::Action::PreviewSeek) {
+            let rect = panels
+                .regions
+                .iter()
+                .find(|(_, action)| *action == panels::Action::PreviewSeek)
+                .ok_or("missing preview seek region")?
+                .0;
+            return Ok(Some(panels::Action::PreviewPhase(f64::from(
+                ((point.x - rect[0]) / rect[2]).clamp(0., 1.),
+            ))));
+        }
         Ok(action)
     }
     fn panel_key(
@@ -3239,6 +3299,15 @@ impl App {
                 Ok(())
             }
             panels::Action::ResetField(index) => self.reset_prefab_field(index),
+            panels::Action::PreviewSeek => self.preview_animation_phase(0.5, false),
+            panels::Action::PreviewPhase(phase) => self.preview_animation_phase(phase, false),
+            panels::Action::MarkerAdd(token) => self.edit_animation_marker(None, token),
+            panels::Action::MarkerPreview(index, token) => {
+                self.preview_animation_marker(index, token)
+            }
+            panels::Action::MarkerDelete(index, token) => {
+                self.edit_animation_marker(Some(index), token)
+            }
             panels::Action::Duplicate => self.edit_key(KeyCode::KeyD),
             panels::Action::Delete => self.edit_key(KeyCode::Delete),
             panels::Action::Resource => self.edit_key(KeyCode::KeyR),
@@ -3773,6 +3842,7 @@ impl App {
                 setup.configure(&mut actions)?;
             }
             self.play.playing = Some(authoring_before_play);
+            self.authoring.animation_preview = None;
             self.play.ui_actions = Some(actions);
             let simulation = SceneSimulation::new(
                 &self.scene,
@@ -3982,6 +4052,7 @@ impl ApplicationHandler for App {
                 Ok(())
             }
             WindowEvent::Resized(size) => self.finish_drag(false).and_then(|()| {
+                self.authoring.preview_seek = None;
                 self.camera_drag = None;
                 if let Some(panels) = &mut self.panels {
                     panels.invalidate_presentation();
@@ -3998,7 +4069,13 @@ impl ApplicationHandler for App {
                 let position = position.to_logical::<f32>(1.0);
                 let cursor = Vec2::new(position.x, position.y);
                 self.cursor = Some(cursor);
-                if let Some((button, previous)) = self.camera_drag {
+                if self.authoring.preview_seek.is_some() {
+                    let scale = self
+                        .window
+                        .as_ref()
+                        .map_or(1., |window| window.scale_factor() as f32);
+                    self.continue_preview_seek(cursor, scale)
+                } else if let Some((button, previous)) = self.camera_drag {
                     let delta = cursor - previous;
                     self.camera_drag = Some((button, cursor));
                     if button == MouseButton::Right {
@@ -4018,10 +4095,12 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::MouseWheel { delta, .. } => {
-                let y = match delta {
-                    winit::event::MouseScrollDelta::LineDelta(_, y) => y,
-                    winit::event::MouseScrollDelta::PixelDelta(position) => position.y as f32,
-                };
+                let y = camera::wheel_steps(
+                    delta,
+                    self.window
+                        .as_ref()
+                        .map_or(1., |window| window.scale_factor()),
+                );
                 if let (Some(cursor), Some(window)) = (self.cursor, &self.window)
                     && cursor.x / (window.scale_factor() as f32) < 150.0
                 {
@@ -4077,6 +4156,7 @@ impl ApplicationHandler for App {
                 Ok(())
             }),
             WindowEvent::CursorLeft { .. } => {
+                self.authoring.preview_seek = None;
                 self.camera_drag = None;
                 self.cursor = None;
                 self.game_ui_input.cancel();
@@ -4106,6 +4186,7 @@ impl ApplicationHandler for App {
                 button: MouseButton::Left,
                 ..
             } => {
+                self.authoring.preview_seek = None;
                 if let (Some(cursor), Some(window)) = (self.cursor, &self.window) {
                     let size = window.inner_size();
                     self.game_ui_pointer(
@@ -4124,6 +4205,7 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::Occluded(true) => {
+                self.authoring.preview_seek = None;
                 if let Some(panels) = &mut self.panels {
                     panels.invalidate_presentation();
                 }
@@ -4138,6 +4220,7 @@ impl ApplicationHandler for App {
             WindowEvent::Focused(focused) => {
                 self.play.player_input.set_focused(focused);
                 if !focused {
+                    self.authoring.preview_seek = None;
                     self.game_ui_input.cancel();
                     self.modifiers = winit::keyboard::ModifiersState::empty();
                     if let Some(panels) = &mut self.panels {

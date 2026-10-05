@@ -1,0 +1,8 @@
+{
+  "process": "neutral female_motion preview",
+  "capture": "one-second macOS sample of live process 93595",
+  "observation": "Main thread samples dominated by FemaleDemo::mesh and SceneMesh validation; iteration adapter chain prominent",
+  "change": "Replace chained per-vertex scalar iterators with direct nine-lane finite predicate; all validation retained",
+  "verification": "Focused finite vertex admission regression passed; no before/after performance measurement.",
+  "limits": "UI responsiveness and before/after performance not yet established"
+}

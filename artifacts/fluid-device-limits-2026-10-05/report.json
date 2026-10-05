@@ -1,0 +1,28 @@
+{
+  "status": "local_checks_passed",
+  "change": "Check enabled device binding, MRT and buffer limits before allocating liquid-renderer resources.",
+  "requirements": {
+    "storageBuffersPerVertexStage": 2,
+    "sampledTexturesPerFragmentStage": 6,
+    "uniformBuffers": 1,
+    "bindingsPerGroup": 7,
+    "colorAttachments": 2,
+    "colorBytesPerSample": 16
+  },
+  "pending": [],
+  "limits": [
+    "No new graphics API support implemented.",
+    "Texture-format capabilities and downlevel flags are separate qualification requirements.",
+    "Real WebGL/Vulkan/DirectX hardware not tested."
+  ],
+  "syntheticLimitsTest": {
+    "passed": 1
+  },
+  "metalGpuTest": {
+    "passed": 1,
+    "adapter": "Apple M4 Max",
+    "pathComparisons": 27,
+    "rgbAbsorptionComparisons": 81,
+    "composedColorComparisons": 18
+  }
+}

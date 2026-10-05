@@ -1,0 +1,27 @@
+{
+  "tests_passed": 5,
+  "tests_failed": 0,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "frames": 241,
+  "fps": 20,
+  "animation_seconds": 12,
+  "native_screen_verified": false,
+  "tissue_attachment_bones": [
+    0,
+    0,
+    3,
+    7
+  ],
+  "attachment_indices": [
+    3,
+    6
+  ],
+  "rotation_control_threshold_m": 0.001,
+  "cohort_transaction": "all four bodies per physics substep",
+  "scope": "coarse technical demo, not production character qualification",
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "24ec6530ca727651f9819f470c5549976bd12dfaa1b9c3b272e7097405ffd78e",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "e0f68393728c7a3c1342a7bc61d87e98f227d33f45f378ab6bf1da91fce54887"
+  }
+}

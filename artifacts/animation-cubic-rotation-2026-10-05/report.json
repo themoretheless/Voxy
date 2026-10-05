@@ -1,0 +1,19 @@
+{
+  "passed": 385,
+  "failed": 0,
+  "ignored": 0,
+  "targets": {
+    "voxy_animation": 214,
+    "voxy_editor_include_ignored": 171
+  },
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "5d1a62a7ac9cf4f2055ae639b6b85cb1b8a9db86cebd98e030a51ee6d429a7da"
+  },
+  "goal_complete": false,
+  "scope": "nonfinite cubic quaternion intermediate recovery using shared wide Hermite",
+  "limitations": [
+    "local GPU controls only",
+    "zero ordinary quaternion stays rejected",
+    "not broad hardware/CUDA or full engine parity"
+  ]
+}

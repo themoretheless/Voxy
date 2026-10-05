@@ -1,0 +1,18 @@
+{
+  "passed": 386,
+  "failed": 0,
+  "ignored": 0,
+  "targets": {
+    "voxy_animation": 215,
+    "voxy_editor_include_ignored": 171
+  },
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "204fa49d723b246950c894cd641578e1e8cdba799933c41eb137df67b7d4f65f"
+  },
+  "goal_complete": false,
+  "scope": "distinguish rounded-zero cubic quaternion from zero wide sample",
+  "limitations": [
+    "wide arithmetic not an exact singularity certificate",
+    "local GPU only, no broad backend/CUDA qualification"
+  ]
+}

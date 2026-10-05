@@ -1,0 +1,15 @@
+{
+  "tests": {
+    "state": "passed",
+    "passed": 3,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/water_equilibrium.rs": "d23f1f9f9690db73f3bd203d58dcd84c30f24b0a947c1316e89630e539c4dcd9",
+    "crates/physics/tests/water_equilibrium.rs": "1fd5afdaf8a0f0637bf397f8db8314f4bfbe604eb4b48569d6c8de10488a56f6"
+  },
+  "finite_rate_interface_kinetics": false,
+  "interactive_demo_integrated": false,
+  "goal_complete": false
+}

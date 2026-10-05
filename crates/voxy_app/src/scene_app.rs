@@ -151,6 +151,13 @@ impl SceneApp {
         self.strands = None;
         Ok(self)
     }
+    /// Shows finite point sources with mass depletion and energy-accounted recoil.
+    pub fn with_finite_liquid_sources(mut self) -> Result<Self, Box<dyn std::error::Error>> {
+        self = self.with_liquids()?;
+        self.liquids = Some(crate::liquid_demo::LiquidDemo::new_finite_sources()?);
+        self.liquid_optics = false;
+        Ok(self)
+    }
     /// Shows jets, impact spray and surface-film deposition for water and oil.
     pub fn with_liquid_impacts(mut self) -> Result<Self, Box<dyn std::error::Error>> {
         self = self.with_liquids()?;
@@ -647,7 +654,9 @@ impl SceneApp {
             window.set_title(&gravity.title());
         }
         if self.tissues.as_ref().is_some_and(|t| t.is_body()) {
-            window.set_title("Voxy body physics | front / rear | walk, jump, rest | Space: pause");
+            window.set_title(
+                "Voxy skeleton + soft tissues | front / rear | walk, jump, rest | Space: pause",
+            );
         } else if self.tissues.is_some() {
             window.set_title(
                 "Voxy tissues: skin | buttock | breast | lip | sphincter | penis — Space: pause",
@@ -766,7 +775,10 @@ impl SceneApp {
                 })?;
             } else if let Some(tissues) = &mut self.tissues {
                 tissues.advance(f64::from(dt))?;
-                if let Some(title) = tissues.biomechanics_title() {
+                if let Some(title) = tissues
+                    .body_motion_title()
+                    .or_else(|| tissues.biomechanics_title())
+                {
                     if let Some(window) = &self.window {
                         window.set_title(&title);
                     }
@@ -997,20 +1009,24 @@ impl SceneApp {
                     .as_ref()
                     .is_none_or(|f| f.size() != [size.width, size.height])
                 {
-                    r.liquid_renderer = Some(voxy_render::ScreenSpaceFluidRenderer::new(
-                        r.host.device(),
-                        r.host.color_format(),
-                        size.width,
-                        size.height,
-                        8192,
-                    )?);
+                    r.liquid_renderer =
+                        Some(voxy_render::ScreenSpaceFluidRenderer::new_with_adapter(
+                            r.host.device(),
+                            r.host.adapter(),
+                            r.host.color_format(),
+                            size.width,
+                            size.height,
+                            8192,
+                        )?);
                 }
                 let (mesh, particles) = liquids.optical_scene()?;
                 r.cube.update(r.host.queue(), &mesh)?;
-                r.liquid_renderer.as_mut().unwrap().update(
+                let films = liquids.optical_film_triangles()?;
+                r.liquid_renderer.as_mut().unwrap().update_with_film(
                     r.host.queue(),
                     camera,
                     &particles,
+                    &films,
                     1.1,
                     voxy_render::FluidDepthFilter::Bilateral,
                 )?;

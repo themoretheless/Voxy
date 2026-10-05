@@ -1,0 +1,50 @@
+{
+  "status": "failed full clip; experimental source archived; default restored to preceding qualified midpoint",
+  "oracle": "passed: 80 percent extension and 50 percent compression, same 0.02 s step and 1e-10 J budget",
+  "coarse_quadrature_defects_j": [
+    -6.548330304667616e-07,
+    5.946606222551054e-06
+  ],
+  "refinement": "same frozen partition and panel cap as prescribed contact; sampled gradient work is retained",
+  "physics_regression": {
+    "state": "passed",
+    "passed": 143,
+    "ignored": 5,
+    "log": "physics-tests.log"
+  },
+  "imported_full_clip": {
+    "state": "failed",
+    "exit_code": 101,
+    "rejected_step": 126,
+    "seconds": 367.68,
+    "error": "implicit contact nonlinear nonconvergence",
+    "log": "full-480-failed.log"
+  },
+  "region_parallelism": "passed: complete serial/parallel state identical after each of 8 imported steps",
+  "imported_68_steps": {
+    "state": "passed",
+    "seconds": 17.27,
+    "log": "imported-68-pass.log"
+  },
+  "localized_contact": {
+    "body_face": [
+      10,
+      7,
+      11
+    ],
+    "obstacle_face_index": 1308,
+    "obstacle_weights": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "pinned_weight": 0.0,
+    "last_reported_open_gap_m": 4.976194181423397e-08
+  },
+  "restoration_validation": {
+    "state": "passed",
+    "contact_tests": 30,
+    "seconds": 0.98,
+    "source": "exact pre-experiment file snapshots, hashes in restored-source-hashes.json"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "passed": 11,
+  "failed": 0,
+  "target": "voxy_app::tissue_demo::tests",
+  "test_seconds": 45.12,
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "d45757efb14aec7e8b42a45dd7a9c1367061c656c5d7a78f8426eed175ddf612"
+  },
+  "conductivity_w_m_k": 0.5,
+  "goal_complete": false,
+  "limitations": [
+    "illustrative uncalibrated material",
+    "cell-centred network lacks non-orthogonal correction",
+    "no automatic film coupling",
+    "no fresh GPU render"
+  ]
+}

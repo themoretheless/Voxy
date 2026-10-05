@@ -1,0 +1,11 @@
+{
+  "change": "ModelPlayback::rebind is fallible and rejects authored skeleton changes before replacing its model Arc.",
+  "editorTests": {
+    "passed": 160,
+    "failed": 0,
+    "ignored": 11
+  },
+  "regression": "A foreign rig replacement during active transition preserves resource identity and subsequent pose, palette and root displacement relative to an unchanged control.",
+  "compatibility": "Same authored rig resource replacement remains allowed; original clips and clocks retained. Identical model Arc returns immediately.",
+  "scope": "Skeleton compatibility boundary; no certification of all other model metadata or GPU resource reloading."
+}

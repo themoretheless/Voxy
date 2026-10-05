@@ -10,8 +10,24 @@ use physics::liquid::{
     DepositingImpact, DropletCoalescenceControl, DropletFlight, DropletFlightReport,
     DropletLifecycle, FilmImpactControl, FilmRebound, ImpactSpray, LiquidField, TransportMaterial,
 };
-use physics::surface_film::{FilmMixture, Material as FilmMaterial, SurfaceFilm};
+use physics::surface_film::{
+    FilmMixture, Material as FilmMaterial, SurfaceFilm, ThermalFilmMixture,
+};
 use voxy_render::{SceneMesh, SceneVertex};
+
+/// Convert physical height once to the renderer's world units. A positive f64
+/// height can round to zero in f32; omit only that unrepresentable render cell,
+/// retaining its physical volume. Never turn negative/invalid height into dry.
+fn optical_film_thickness(height: f64) -> Result<Option<f32>, &'static str> {
+    if !height.is_finite() || height < 0. {
+        return Err("invalid physical film thickness");
+    }
+    let world = (height * f64::from(1.1_f32)) as f32;
+    if !world.is_finite() {
+        return Err("film thickness exceeds render range");
+    }
+    Ok((world > 0.).then_some(world))
+}
 
 const IMPACT_GRAVITY: [f64; 3] = [0.0, -9.81, 0.0];
 const IMPACT_GAS: VaporCell = VaporCell {
@@ -36,9 +52,10 @@ fn impact_gas_grid() -> Result<FiniteDropletGasGrid, physics::liquid::Error> {
     )
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct ImpactFilm {
-    mixture: FilmMixture,
+    thermal: ThermalFilmMixture,
+    captured_sensible_energy: f64,
     points: Vec<[f64; 3]>,
     triangles: Vec<[usize; 3]>,
     captured: usize,
@@ -56,10 +73,11 @@ struct ImpactFilm {
     gas_wall_viscosity: GasGridWallViscosityReport,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub(crate) struct LiquidDemo {
     liquids: [Liquid; 2],
     emitters: [PulsedEmitter; 2],
+    finite_sources: Option<[(physics::liquid::TranslatingBody, f64); 2]>,
     emitted_mass: [f64; 2],
     films: Option<[ImpactFilm; 2]>,
     accumulator: f64,
@@ -125,11 +143,29 @@ impl LiquidDemo {
         Ok(Self {
             liquids: [make(Material::WATER)?, make(Material::OIL)?],
             emitters: [source(Material::WATER)?, source(Material::OIL)?],
+            finite_sources: None,
             emitted_mass: [0.0; 2],
             films: None,
             accumulator: 0.0,
             steps: 0,
         })
+    }
+    pub(crate) fn new_finite_sources() -> Result<Self, physics::liquid::Error> {
+        let mut demo = Self::new()?;
+        demo.finite_sources = Some(std::array::from_fn(|index| {
+            (
+                physics::liquid::TranslatingBody {
+                    position: demo.emitters[index].template.particle.position,
+                    velocity: [0.; 3],
+                    mass: 100.,
+                },
+                1000.,
+            )
+        }));
+        for emitter in &mut demo.emitters {
+            emitter.nozzle_radius = 0.;
+        }
+        Ok(demo)
     }
     pub(crate) fn new_impacts() -> Result<Self, physics::liquid::Error> {
         let mut demo = Self::new()?;
@@ -183,7 +219,13 @@ impl LiquidDemo {
             Ok((
                 liquid,
                 ImpactFilm {
-                    mixture,
+                    thermal: ThermalFilmMixture::new(
+                        mixture,
+                        vec![TransportMaterial::default().specific_heat],
+                        &vec![300.; triangles.len()],
+                    )
+                    .map_err(|_| physics::liquid::Error::InvalidConfig)?,
+                    captured_sensible_energy: 0.,
                     points,
                     triangles,
                     captured: 0,
@@ -215,17 +257,54 @@ impl LiquidDemo {
         Ok(demo)
     }
     pub(crate) fn restart(&self) -> Result<Self, physics::liquid::Error> {
-        if self.films.is_some() {
+        if self.finite_sources.is_some() {
+            Self::new_finite_sources()
+        } else if self.films.is_some() {
             Self::new_impacts()
         } else {
             Self::new()
         }
     }
     pub(crate) fn advance(&mut self, dt: f64) -> Result<(), physics::liquid::Error> {
+        if !dt.is_finite() || dt < 0.0 {
+            return Err(physics::liquid::Error::InvalidTimeStep);
+        }
+        let accumulated = self.accumulator + dt.min(0.1);
+        if accumulated < 1.0 / 120.0 {
+            // No physical subsystem runs yet, so only the clock is published.
+            self.accumulator = accumulated;
+            return Ok(());
+        }
+        let mut candidate = self.clone();
+        candidate.advance_candidate(dt)?;
+        *self = candidate;
+        Ok(())
+    }
+
+    fn advance_candidate(&mut self, dt: f64) -> Result<(), physics::liquid::Error> {
         self.accumulator += dt.min(0.1);
         while self.accumulator >= 1.0 / 120.0 {
             for (index, liquid) in self.liquids.iter_mut().enumerate() {
-                let emitted = if self.films.is_some() {
+                let emitted = if let Some(sources) = &mut self.finite_sources {
+                    let (body, reserve) = &mut sources[index];
+                    let old_velocity = body.velocity;
+                    let receipt = self.emitters[index].advance_from_translating_source(
+                        liquid,
+                        1. / 120.,
+                        body,
+                        90.,
+                        reserve,
+                        None,
+                    )?;
+                    for axis in 0..3 {
+                        body.position[axis] +=
+                            (0.5 * old_velocity[axis] + 0.5 * body.velocity[axis]) / 120.;
+                    }
+                    if body.position.iter().any(|p| !p.is_finite()) {
+                        return Err(physics::liquid::Error::NumericalFailure);
+                    }
+                    receipt.particles
+                } else if self.films.is_some() {
                     self.emitters[index].advance_with_species(liquid, 1.0 / 120.0, &[1.0])?
                 } else {
                     self.emitters[index].advance(liquid, 1.0 / 120.0)?
@@ -310,9 +389,9 @@ impl LiquidDemo {
                     let film = &mut films[index];
                     let radii = liquid.equivalent_sphere_radii()?;
                     let report = liquid
-                        .depositing_impact_spheres_surface_mixture_lifecycle(
+                        .depositing_impact_spheres_thermal_surface_mixture_lifecycle(
                             &previous,
-                            &mut film.mixture,
+                            &mut film.thermal,
                             DepositingImpact {
                                 capture_speed: 3.0,
                                 spray: ImpactSpray {
@@ -368,8 +447,15 @@ impl LiquidDemo {
                     }
                     let report = report.impact;
                     film.captured += report.deposition.capture.particles;
+                    film.captured_sensible_energy += report
+                        .deposition
+                        .capture
+                        .absorbed
+                        .thermal_energy
+                        .ok_or(physics::liquid::Error::InvalidTransport)?;
+
                     film.fragments += report.spray.fragments_created;
-                    film.mixture
+                    film.thermal
                         .step_with_surface_shear(
                             1.0 / 120.0,
                             [0.0; 3],
@@ -388,15 +474,42 @@ impl LiquidDemo {
         if self.steps < 120 {
             return Err("liquid smoke did not advance enough fixed steps");
         }
+        if let Some(sources) = &self.finite_sources {
+            for (index, (body, reserve)) in sources.iter().enumerate() {
+                if !body.mass.is_finite()
+                    || (body.mass + self.emitted_mass[index] - 100.).abs() > 1e-9
+                    || body.mass < 90.
+                    || !reserve.is_finite()
+                    || *reserve < 0.
+                    || *reserve >= 1000.
+                    || body.velocity.iter().any(|v| !v.is_finite())
+                    || body.velocity[0] <= 0.
+                    || body.velocity[1] <= 0.
+                {
+                    return Err("finite source mass, recoil or energy reserve failed");
+                }
+            }
+        }
         for (index, liquid) in self.liquids.iter().enumerate() {
             if let Some(films) = &self.films {
                 let film = &films[index];
                 let expected = if index == 0 { 5.0 } else { 4.0 };
                 if (self.emitted_mass[index] - expected).abs() > 1e-9
-                    || (liquid.mass() + film.mixture.film().total_mass() - expected).abs() > 1e-9
+                    || (liquid.mass() + film.thermal.mixture().film().total_mass() - expected).abs()
+                        > 1e-9
                 {
                     return Err("native impact mass ledger failed");
                 }
+                let stored_heat = film.thermal.energies_j().iter().sum::<f64>();
+                if !stored_heat.is_finite()
+                    || !film.captured_sensible_energy.is_finite()
+                    || (stored_heat - film.captured_sensible_energy).abs() > 1e-6
+                {
+                    return Err("native captured film heat ledger failed");
+                }
+                film.thermal
+                    .temperatures()
+                    .map_err(|_| "native film thermal state failed")?;
                 let gas = film
                     .gas_grid
                     .totals()
@@ -549,6 +662,51 @@ impl LiquidDemo {
         Ok((SceneMesh::new(vertices, indices)?, samples))
     }
 
+    /// Borrow exact per-cell film thickness; never mutate physical inventories.
+    pub(crate) fn optical_film_triangles(
+        &self,
+    ) -> Result<Vec<voxy_render::FluidRenderFilmTriangle>, &'static str> {
+        let mut result = Vec::new();
+        if let Some(films) = &self.films {
+            for (group, film) in films.iter().enumerate() {
+                let offset = if group == 0 { -1.25 } else { 1.25 };
+                let material = if group == 0 {
+                    [0.1, 0.04, 0.02, 1.333]
+                } else {
+                    [0.3, 3.0, 12.0, 1.47]
+                };
+                let thickness = film.thermal.mixture().film().thickness();
+                if thickness.len() != film.triangles.len() {
+                    return Err("film optical cell count mismatch");
+                }
+                for (cell, (face, h)) in film.triangles.iter().zip(thickness).enumerate() {
+                    let Some(world_thickness) = optical_film_thickness(h)? else {
+                        continue;
+                    };
+                    // The existing horizontal substrate indices point downward.
+                    // Optical prisms must extrude above the owned floor.
+                    let points = [face[0], face[2], face[1]].map(|i| {
+                        let p = film.points[i];
+                        [
+                            offset + p[0] as f32 * 1.1,
+                            p[1] as f32 * 1.1 - 0.9,
+                            p[2] as f32 * 1.1,
+                        ]
+                    });
+                    result.push(voxy_render::FluidRenderFilmTriangle::new(
+                        points,
+                            world_thickness,
+                        material,
+                    ).map_err(|error| {
+                        eprintln!("OPTICAL FILM rejected group={group} cell={cell} thickness_m={h} points={points:?}: {error}");
+                        error
+                    })?);
+                }
+            }
+        }
+        Ok(result)
+    }
+
     pub(crate) fn mesh(&self) -> Result<SceneMesh, Box<dyn std::error::Error>> {
         let mut vertices = Vec::new();
         let mut indices = Vec::new();
@@ -566,6 +724,26 @@ impl LiquidDemo {
         for (group, liquid) in self.liquids.iter().enumerate() {
             let offset = if group == 0 { -1.25 } else { 1.25 };
             let world = |p: [f64; 3]| [offset + p[0] * 1.1, p[1] * 2.0 - 0.9, p[2] * 1.5];
+            if let Some(sources) = &self.finite_sources {
+                let center = sources[group].0.position;
+                let points: [[f64; 3]; 6] = std::array::from_fn(|i| {
+                    let mut p = center;
+                    p[i / 2] += if i % 2 == 0 { 0.08 } else { -0.08 };
+                    world(p)
+                });
+                for face in [
+                    [0, 2, 4],
+                    [2, 1, 4],
+                    [1, 3, 4],
+                    [3, 0, 4],
+                    [2, 0, 5],
+                    [1, 2, 5],
+                    [3, 1, 5],
+                    [0, 3, 5],
+                ] {
+                    triangle(face.map(|i| points[i]), [0.95, 0.55, 0.1, 1.]);
+                }
+            }
             // Opaque floor and rear wall leave the particle movement visible.
             for quad in [
                 [
@@ -669,7 +847,11 @@ impl LiquidDemo {
             }
             if let Some(films) = &self.films {
                 let film = &films[group];
-                let heights = film.mixture.film().vertex_thickness(film.points.len())?;
+                let heights = film
+                    .thermal
+                    .mixture()
+                    .film()
+                    .vertex_thickness(film.points.len())?;
                 for face in &film.triangles {
                     // Hide numerical wetting traces thinner than 10 micrometres.
                     if face.iter().map(|&i| heights[i]).sum::<f64>() / 3.0 >= 1e-5 {
@@ -722,6 +904,120 @@ impl LiquidDemo {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn finite_source_visual_demo_emits_recoils_and_preserves_failed_frame() {
+        let mut demo = LiquidDemo::new_finite_sources().unwrap();
+        for _ in 0..15 {
+            demo.advance(1. / 120.).unwrap();
+        }
+        for (body, reserve) in demo.finite_sources.unwrap() {
+            assert!(body.mass < 100. && body.mass > 90.);
+            assert!(body.velocity[0] > 0. && body.velocity[1] > 0.);
+            assert!(reserve < 1000.);
+        }
+        demo.mesh().unwrap();
+        let restarted = demo.restart().unwrap();
+        assert!(restarted.finite_sources.is_some());
+        assert_eq!(restarted.steps, 0);
+        for (body, reserve) in restarted.finite_sources.unwrap() {
+            assert_eq!(body.mass, 100.);
+            assert_eq!(reserve, 1000.);
+        }
+        demo.emitters[1].direction = [f64::NAN; 3];
+        let before = format!("{demo:?}");
+        assert!(demo.advance(1. / 120.).is_err());
+        assert_eq!(before, format!("{demo:?}"));
+    }
+    #[test]
+    fn optical_film_conversion_omits_only_zero_quantized_height() {
+        assert_eq!(optical_film_thickness(0.).unwrap(), None);
+        assert_eq!(
+            optical_film_thickness(3.1547334616506297e-83).unwrap(),
+            None
+        );
+        let smallest = f32::from_bits(1);
+        assert_eq!(
+            optical_film_thickness(f64::from(smallest) / f64::from(1.1_f32)).unwrap(),
+            Some(smallest)
+        );
+        assert_eq!(
+            optical_film_thickness(0.003).unwrap(),
+            Some((0.003 * f64::from(1.1_f32)) as f32)
+        );
+        for invalid in [-3.1547334616506297e-83, f64::NAN, f64::INFINITY, f64::MAX] {
+            assert!(optical_film_thickness(invalid).is_err());
+        }
+    }
+    #[test]
+    #[ignore = "manual timing control; no performance threshold"]
+    fn measure_native_liquid_transaction_cost() {
+        use std::{hint::black_box, time::Instant};
+        for (mode, initial) in [
+            ("reservoirs", LiquidDemo::new().unwrap()),
+            ("impacts", LiquidDemo::new_impacts().unwrap()),
+        ] {
+            let mut clone_ns = Vec::new();
+            for _ in 0..9 {
+                let start = Instant::now();
+                for _ in 0..100 {
+                    drop(black_box(initial.clone()));
+                }
+                clone_ns.push(start.elapsed().as_nanos() / 100);
+            }
+            let mut direct_ns = Vec::new();
+            let mut atomic_ns = Vec::new();
+            for _ in 0..9 {
+                let mut direct = initial.clone();
+                let start = Instant::now();
+                direct.advance_candidate(1. / 120.).unwrap();
+                direct_ns.push(start.elapsed().as_nanos());
+                let mut atomic = initial.clone();
+                let start = Instant::now();
+                atomic.advance(1. / 120.).unwrap();
+                atomic_ns.push(start.elapsed().as_nanos());
+                assert_eq!(format!("{direct:?}"), format!("{atomic:?}"));
+            }
+            clone_ns.sort_unstable();
+            direct_ns.sort_unstable();
+            atomic_ns.sort_unstable();
+            println!(
+                "liquid_transaction_timing={{\"mode\":\"{mode}\",\"clone_median_ns\":{},\"direct_step_median_ns\":{},\"atomic_step_median_ns\":{},\"trials\":9,\"state\":\"initial\"}}",
+                clone_ns[4], direct_ns[4], atomic_ns[4]
+            );
+        }
+    }
+
+    #[test]
+    fn native_liquid_failure_preserves_both_reservoirs_and_clock() {
+        for mut demo in [
+            LiquidDemo::new().unwrap(),
+            LiquidDemo::new_impacts().unwrap(),
+        ] {
+            for dt in [f64::NAN, f64::INFINITY, -0.01] {
+                assert!(matches!(
+                    demo.advance(dt),
+                    Err(physics::liquid::Error::InvalidTimeStep)
+                ));
+                assert_eq!(demo.accumulator, 0.);
+                assert_eq!(demo.steps, 0);
+            }
+            let liquids = demo.liquids.clone();
+            let emitters = demo.emitters.clone();
+            demo.advance(1. / 480.).unwrap();
+            assert_eq!(demo.steps, 0);
+            assert_eq!(demo.accumulator, 1. / 480.);
+            assert_eq!(demo.liquids, liquids);
+            assert_eq!(demo.emitters, emitters);
+            demo.emitters[1].direction = [f64::NAN; 3];
+            let before = format!("{demo:?}");
+            assert!(demo.advance(1. / 120.).is_err());
+            assert_eq!(format!("{demo:?}"), before);
+            demo.emitters[1].direction = [-0.6, -0.8, 0.];
+            demo.advance(1. / 120.).unwrap();
+            assert_eq!(demo.steps, 1);
+        }
+    }
+
     #[test]
     fn native_jets_spray_deposit_and_preserve_mass_and_reset_mode() {
         let mut demo = LiquidDemo::new_impacts().unwrap();
@@ -777,7 +1073,9 @@ mod tests {
         assert!(reset.films.is_some());
         assert_eq!(reset.steps, 0);
         for film in reset.films.unwrap() {
-            assert_eq!(film.mixture.film().total_mass(), 0.0);
+            assert_eq!(film.thermal.mixture().film().total_mass(), 0.0);
+            assert_eq!(film.captured_sensible_energy, 0.);
+            assert!(film.thermal.energies_j().iter().all(|e| *e == 0.));
             assert_eq!(film.captured, 0);
             assert_eq!(film.fragments, 0);
             assert_eq!(film.merges, 0);

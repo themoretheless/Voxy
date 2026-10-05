@@ -1,0 +1,27 @@
+{
+  "successful_runs": [
+    "capture finite",
+    "bounce finite",
+    "spray finite",
+    "capture fixed"
+  ],
+  "source_sha256": {
+    "crates/physics/examples/liquid_jet_film.rs": "fc16fff04f340502a172a7d60f6c25dff2e036100281077e0336bfdb89d33327"
+  },
+  "finite_source": {
+    "initial_mass_kg": 0.01,
+    "final_mass_kg": 0.009000000000000006,
+    "velocity_y_m_s": 0.10591802590221577,
+    "remaining_energy_j": 0.9994947040987048,
+    "mass_residual_kg": 5.204170427930421e-18
+  },
+  "max_total_momentum_residual_kg_m_s": 6.071532165918825e-18,
+  "spray_fragments": 72,
+  "goal_complete": false,
+  "limitations": [
+    "CPU numerical demo without fresh GPU render",
+    "no whole-scene energy closure",
+    "no physical breakup convergence qualification",
+    "point nozzle with constrained rotation"
+  ]
+}

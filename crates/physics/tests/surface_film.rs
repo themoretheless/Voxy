@@ -13,6 +13,37 @@ fn patch(material: Material) -> SurfaceFilm {
     .unwrap()
 }
 #[test]
+fn deposit_receipt_tracks_actual_growth_and_late_unresolved_addition_rolls_back() {
+    let mut film = patch(Material::default());
+    film.deposit(0, 0.1).unwrap();
+    let before = film.total_volume();
+    let receipt = film.deposit_batch(&[(0, 0.02)]).unwrap();
+    let actual = film.total_volume() - before;
+    assert_ne!(
+        actual, 0.02,
+        "fixture must distinguish requested and actual volume"
+    );
+    assert_eq!(receipt, actual);
+    let before = format!("{film:?}");
+    assert_eq!(
+        film.deposit_batch(&[(0, 0.01), (0, 1e-30)]),
+        Err("film deposit volume change cannot be represented")
+    );
+    assert_eq!(format!("{film:?}"), before);
+    assert_eq!(
+        film.deposit(0, 1e-30),
+        Err("film deposit volume change cannot be represented")
+    );
+    assert_eq!(format!("{film:?}"), before);
+    assert_eq!(
+        film.add_sources(0.1, &[(0, 0.1), (0, 1e-29)]),
+        Err("film deposit volume change cannot be represented")
+    );
+    assert_eq!(format!("{film:?}"), before);
+    assert_eq!(film.deposit_batch(&[(0, -0.), (1, 0.)]).unwrap(), 0.);
+    assert_eq!(format!("{film:?}"), before);
+}
+#[test]
 fn gravity_moves_film_down_and_retains_volume() {
     let mut f = patch(Material {
         surface_tension: 0.,
@@ -946,12 +977,14 @@ fn atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass()
     let mut expected = patch(Material::default());
     expected.deposit(0, 1e-8).unwrap();
     expected.update_geometry(&points).unwrap();
-    expected.add_sources(0.01, &[(0, 1e-9)]).unwrap();
+    let before_source = expected.total_volume();
+    let expected_added = expected.add_sources(0.01, &[(0, 1e-9)]).unwrap();
+    assert_eq!(expected_added, expected.total_volume() - before_source);
     expected.step(0.01, [0., -9.81, 0.]).unwrap();
     let added = film
         .advance_on_geometry(&points, 0.01, &[(0, 1e-9)], [0., -9.81, 0.])
         .unwrap();
     assert_eq!(film.thickness(), expected.thickness());
-    assert!((added - 1e-11).abs() < 1e-25);
+    assert_eq!(added, expected_added);
     assert!((film.total_volume() - volume - added).abs() < 1e-20);
 }

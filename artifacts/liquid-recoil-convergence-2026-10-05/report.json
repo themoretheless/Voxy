@@ -1,0 +1,21 @@
+{
+  "passed": 7,
+  "failed": 0,
+  "target": "liquid::emission::tests",
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "0eabef8beb6d84ea1d875901cc6df253e5f01c60b4c4c6e1188cdb16cf66ef2b"
+  },
+  "refinement_steps": [
+    16,
+    32,
+    64
+  ],
+  "observed_order": "first order, asserted successive error ratio 1.9..2.1",
+  "closure_tolerance": 1e-12,
+  "goal_complete": false,
+  "limitations": [
+    "interval-start velocity sampling",
+    "midpoint trajectory update unfinished",
+    "point source with constrained rotation"
+  ]
+}

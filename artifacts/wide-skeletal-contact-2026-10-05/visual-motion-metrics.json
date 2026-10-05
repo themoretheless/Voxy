@@ -1,0 +1,42 @@
+{
+  "0": {
+    "samples": 41,
+    "max_secondary_offset_m": 0.0037656115909133537,
+    "final_energy_receipt": {
+      "mechanical_change_j": "-0.041336747455",
+      "support_work_j": "-0.012682340134",
+      "viscous_heat_j": "0.028655484842",
+      "numerical_defect_j": "0.000001077522"
+    }
+  },
+  "1": {
+    "samples": 41,
+    "max_secondary_offset_m": 0.0037635538795571933,
+    "final_energy_receipt": {
+      "mechanical_change_j": "-0.041923758924",
+      "support_work_j": "-0.012795533601",
+      "viscous_heat_j": "0.029132837971",
+      "numerical_defect_j": "0.000004612648"
+    }
+  },
+  "2": {
+    "samples": 41,
+    "max_secondary_offset_m": 0.008931523363173271,
+    "final_energy_receipt": {
+      "mechanical_change_j": "-0.124908015614",
+      "support_work_j": "0.164754623698",
+      "viscous_heat_j": "0.289654783035",
+      "numerical_defect_j": "-0.000007856277"
+    }
+  },
+  "3": {
+    "samples": 41,
+    "max_secondary_offset_m": 0.007300414496995427,
+    "final_energy_receipt": {
+      "mechanical_change_j": "0.248859872483",
+      "support_work_j": "0.458982045561",
+      "viscous_heat_j": "0.210125192562",
+      "numerical_defect_j": "0.000003019484"
+    }
+  }
+}

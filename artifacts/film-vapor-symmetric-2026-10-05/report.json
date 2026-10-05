@@ -1,0 +1,23 @@
+{
+  "state": "passed",
+  "source_sha256": {
+    "crates/physics/src/surface_film_thermal_vapor.rs": "3442f76d29afe2f366b2a26fad9c757a8d86fe17b7ff97bc18d83b0c11530dcd",
+    "crates/physics/tests/surface_film_vapor.rs": "95c5da2b36f46b951da3f2eeb133cffe5ec2b43bf8848cfe59ff6a86947b129d"
+  },
+  "goal_complete": false,
+  "session_id": 6070,
+  "tests_passed": 5,
+  "tests_failed": 0,
+  "exit_code": 0,
+  "debug_test_seconds": 0.01,
+  "refinement_fixture": {
+    "subintervals": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "order_gap_ratio_each_halving_greater_than": 3,
+    "passed": true
+  }
+}

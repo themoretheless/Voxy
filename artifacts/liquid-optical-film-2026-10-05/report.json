@@ -1,0 +1,48 @@
+{
+  "status": "local_checks_passed",
+  "representation": "Owned film cells rendered as triangular prisms; simulation inventory unchanged",
+  "initialGpuTest": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "passed": 1,
+    "cases": [
+      "single thickness",
+      "additive thickness",
+      "near clipping",
+      "empty layer",
+      "rejected upload preserves accepted snapshot"
+    ]
+  },
+  "pending": [],
+  "limitations": [
+    "No other hardware verified.",
+    "Mixed materials along one ray still use nearest material for composition.",
+    "Bilateral filtering and optical composition are not calibrated fluid optics."
+  ],
+  "expandedGpuTest": {
+    "passed": 1,
+    "sampleComparisons": 21,
+    "cases": [
+      "central and oblique rays",
+      "outside prism",
+      "near clipping",
+      "opaque in front, inside, behind",
+      "empty layer",
+      "rejected snapshot upload"
+    ]
+  },
+  "physicalImpactSnapshot": {
+    "passed": true,
+    "filmCellsByFrame": [
+      0,
+      0,
+      161,
+      232
+    ],
+    "offscreenOnly": true
+  },
+  "heightConversion": {
+    "regressionPassed": true,
+    "behavior": "Skip only heights quantized to zero in f32; preserve physical inventory; reject invalid heights."
+  }
+}

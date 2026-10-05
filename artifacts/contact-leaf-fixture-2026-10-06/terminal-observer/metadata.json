@@ -1,0 +1,8 @@
+{
+  "scope": "diagnostic-only isolated rejected candidate",
+  "full_clip_result": "failed step 126 nonlinear nonconvergence",
+  "duration_s": 200.16,
+  "source_sha256": "683e4ad877610ba008159564fa242091819308b4c3dda09e1d6f23d5a285dd4a",
+  "source_note": "includes subsequent terminal-only observer with exact obstacle triangle; full log was generated before that extension",
+  "default_solver_changed": false
+}

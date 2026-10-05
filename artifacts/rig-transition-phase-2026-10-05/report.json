@@ -1,0 +1,13 @@
+{
+  "change": "Validate target entry pose and skin palette before publishing transition selection",
+  "animationTests": {
+    "passed": 211,
+    "failed": 0
+  },
+  "editorTests": {
+    "passed": 157,
+    "failed": 0,
+    "ignored": 11
+  },
+  "scope": "Entry phase admission only; subsequent phases retain transactional frame validation"
+}

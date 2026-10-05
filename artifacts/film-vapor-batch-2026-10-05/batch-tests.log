@@ -1,0 +1,12 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.75s
+     Running tests/surface_film_vapor.rs (target/debug/deps/surface_film_vapor-e6c1242d6e3bc7c9)
+
+running 4 tests
+test invalid_vapor_exchange_preserves_all_three_owners ... ok
+test sub_inventory_resolution_flux_does_not_create_vapor_mass ... ok
+test film_evaporation_and_condensation_preserve_mass_energy_momentum_and_residue ... ok
+test shared_vapor_batch_matches_ordered_exchange_and_rolls_back_late_failure ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,44 @@
+{
+  "tissue_tests_passed": 7,
+  "tissue_tests_failed": 0,
+  "biomechanics_tests": {
+    "passed": 2,
+    "failed": 0,
+    "seconds_debug": 993.71
+  },
+  "gpu_regression": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "frames_seconds": [
+      0,
+      0.7,
+      4.5,
+      9
+    ],
+    "matches_previous_png_exactly": true,
+    "png_sha256": "580016018967ad86889a43bd4aa079c7e264197c0e875f165a52260abed8dff4"
+  },
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "a346408105fee954fe5a1a363b564ef5c1458fe63e5805a3e977c7c7fd6415cf",
+    "crates/voxy_app/src/biomechanics_demo.rs": "fbd9abcb8ba52ecb099d73e865e23b3c581a68b5ea43172850cc71d7140f1e50"
+  },
+  "goal_complete": false,
+  "debug_profile": {
+    "duration_seconds": 1,
+    "test_pid": 44348,
+    "hot_path": [
+      "Body::equilibrate",
+      "Body::evaluate",
+      "Element::response",
+      "Material::response_with_active_length"
+    ],
+    "production_benchmark": false
+  },
+  "rig_resource_change": {
+    "state": "compiled, seven tests passed, GPU snapshot verified",
+    "construction": "once per body demo",
+    "sharing": "immutable Arc<Skeleton> across staged frames",
+    "current_source_sha256": "a346408105fee954fe5a1a363b564ef5c1458fe63e5805a3e977c7c7fd6415cf",
+    "performance_gain_measured": false
+  }
+}

@@ -1,0 +1,12 @@
+   Compiling physics v0.1.0 (/tmp/voxy-contact-replay-20261006/crates/physics)
+    Finished `release` profile [optimized] target(s) in 7.10s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 2 tests
+COMPENSATED_GAP old=3.12250225675825277e-17 compensated=3.12226381079976669e-17 oracle=3.12226381079976361e-17
+COMPENSATED_GAP old=4.22838847269346729e-18 compensated=4.23438898245194204e-18 oracle=4.23438898245194204e-18
+test biomechanics::contact_precision::tests::compensated_gap_keeps_exact_closed_floor_closed ... ok
+test biomechanics::contact_precision::tests::captured_edge_gaps_agree_with_independent_decimal_oracle ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 105 filtered out; finished in 0.00s
+

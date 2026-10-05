@@ -1,0 +1,31 @@
+{
+  "reproduction": {
+    "exit_code": 101,
+    "failed_tests": 1,
+    "cause": "capture returned success for a transfer below wet-film inventory resolution"
+  },
+  "fix_tests": "passed",
+  "session_id": 67627,
+  "source_sha256": {
+    "crates/physics/src/surface_film_thermal.rs": "7ccaff66329cb57269440ee00a555dde4bad0d95220afb64909cdff021f25a32",
+    "crates/physics/tests/liquid_droplet_lifecycle.rs": "31fc221eb0456ae5d6c0edada0251f65bcb1ae706d902bb06feb3dd682399c1a"
+  },
+  "goal_complete": false,
+  "lifecycle_tests_passed": 24,
+  "sub_resolution_regression_passed": true,
+  "tests": {
+    "lifecycle": 24,
+    "thermal_film": 6,
+    "film_vapor": 5,
+    "failed": 0
+  },
+  "exit_code": 0,
+  "app_followup": {
+    "state": "passed",
+    "exit_code": 0,
+    "passed": 4,
+    "failed": 0,
+    "ignored": 1,
+    "seconds": 34.17
+  }
+}

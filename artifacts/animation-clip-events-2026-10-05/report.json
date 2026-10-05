@@ -1,0 +1,17 @@
+{
+  "passed": 217,
+  "failed": 0,
+  "ignored": 0,
+  "target": "voxy_animation",
+  "source_sha256": {
+    "crates/voxy_animation/src/events.rs": "224731ac3dd6b70ee589be00a05bda454c07863245723bfd15c2db3edfe96ad0",
+    "crates/voxy_animation/src/lib.rs": "c5c622085867ea04349ba85e22a1afb70fde453a065604593cc4e0d374686288"
+  },
+  "goal_complete": false,
+  "scope": "stateless target clip event preview",
+  "limitations": [
+    "no editor or audio dispatch hookup",
+    "crossfade source event policy unfinished",
+    "initial phase-zero events do not auto-fire"
+  ]
+}

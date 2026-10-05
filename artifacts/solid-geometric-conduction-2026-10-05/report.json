@@ -1,0 +1,20 @@
+{
+  "passed": 13,
+  "failed": 0,
+  "targets": {
+    "solid_film_binding": 5,
+    "solid_heat_conduction": 8
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/film_binding.rs": "ef1853b96151727679b15165ab9778f7cab499eeab9fac1195992091422c0c1e",
+    "crates/physics/tests/solid_film_binding.rs": "c4d20fc817c26a0d5fa132f45cc2ee25e4d3ce67cb02c5701679d53e7813ce18",
+    "crates/physics/tests/solid_heat_conduction.rs": "863f1afd73df364fe4343810c5c14c8604ad0990534cb752cf68e267b63a9c69"
+  },
+  "scope": "cell-centred monotone thermal network on admitted mechanical geometry",
+  "limitations": [
+    "non-orthogonal consistency correction missing",
+    "not automatically used by mannequin",
+    "not arbitrary-mesh continuum diffusion qualification"
+  ],
+  "goal_complete": false
+}

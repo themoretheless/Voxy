@@ -1,12 +1,32 @@
-//! Free-body finite-deformation elastic dynamics with velocity Verlet.
-use super::{Body, Vec3, cross, dot};
+//! Finite-deformation elastic dynamics with velocity Verlet and prescribed supports.
+use super::{Body, PrescribedTriangleSurface, Vec3, cross, dot};
+use std::sync::Arc;
+mod film_binding;
+mod implicit;
+mod supports;
+mod thermal;
+pub use film_binding::SolidFilmBinding;
+mod viscous;
+pub use supports::{DrivenSupportStep, SupportTarget};
+pub use viscous::ViscoelasticDynamicStep;
 #[derive(Clone, Debug)]
 pub struct InertialBody {
     body: Body,
     masses: Vec<f64>,
+    cell_masses: Vec<f64>,
+    thermal: Option<thermal::CellThermalState>,
     velocities: Vec<Vec3>,
     acceleration: Vec3,
     plane: Option<PlaneContact>,
+    prescribed_surface: Option<Arc<PrescribedTriangleSurface>>,
+}
+struct PotentialEvaluation {
+    potential_j: f64,
+    gradient: Vec<Vec3>,
+    contact_j: f64,
+    plane_offset_gradient: f64,
+    plane_rotation_gradient: Vec3,
+    surface_gradient: Vec<Vec3>,
 }
 /// Frictionless stationary halfspace `normal·x >= offset_m` with nodal penalty.
 /// Stiffness is N/m per boundary node and must be scaled with mesh refinement.
@@ -44,7 +64,7 @@ pub struct InertialDiagnostics {
     pub kinetic_j: f64,
     /// Elastic energy plus constant cavity/dead-load and acceleration potentials.
     pub potential_j: f64,
-    /// Contact spring energy, already included in `potential_j`.
+    /// Contact potential, already included in `potential_j`.
     pub contact_j: f64,
 }
 impl InertialBody {
@@ -54,19 +74,44 @@ impl InertialBody {
     /// # Errors
     /// Invalid density/velocity input, pins, history-dependent materials or overflow.
     pub fn new(body: Body, densities: &[f64], velocities: Vec<Vec3>) -> Result<Self, &'static str> {
+        Self::new_material_mode(body, densities, velocities, false)
+    }
+    fn new_material_mode(
+        body: Body,
+        densities: &[f64],
+        velocities: Vec<Vec3>,
+        allow_maxwell: bool,
+    ) -> Result<Self, &'static str> {
         if densities.len() != body.elements.len()
             || densities.iter().any(|d| !d.is_finite() || *d <= 0.)
             || velocities.len() != body.rest.len()
             || velocities.iter().flatten().any(|v| !v.is_finite())
             || body.pinned.contains(&true)
-            || body.elements.iter().any(|e| e.viscoelastic.is_some())
+            || body.elements.iter().any(|e| {
+                e.viscoelastic_hgo.is_some()
+                    || e.viscoelastic
+                        .as_ref()
+                        .is_some_and(|law| !allow_maxwell || law.trial_seconds != 0.)
+            })
         {
             return Err("invalid finite-deformation inertial input");
         }
+        let cell_masses: Vec<_> = body
+            .elements
+            .iter()
+            .zip(densities)
+            .map(|(cell, density)| cell.volume * density)
+            .collect();
+        if cell_masses
+            .iter()
+            .any(|mass| !mass.is_finite() || *mass <= 0.)
+        {
+            return Err("invalid finite-deformation cell mass");
+        }
         let mut masses = vec![0.; body.rest.len()];
-        for (cell, &density) in body.elements.iter().zip(densities) {
+        for (cell, &mass) in body.elements.iter().zip(&cell_masses) {
             for &node in &cell.nodes {
-                masses[node] += cell.volume * density / 4.;
+                masses[node] += mass / 4.;
             }
         }
         if masses.iter().any(|m| !m.is_finite() || *m <= 0.) {
@@ -75,22 +120,34 @@ impl InertialBody {
         let result = Self {
             body,
             masses,
+            cell_masses,
+            thermal: None,
             velocities,
             acceleration: [0.; 3],
             plane: None,
+            prescribed_surface: None,
         };
         result.diagnostics()?;
         Ok(result)
     }
     /// Construct dynamics with stationary fully fixed nodal supports retained.
     /// Initial velocities on fixed nodes must be exactly zero. Support reactions
-    /// do no work because these nodes never move. Moving supports are unsupported.
+    /// do no work while stationary. Use `step_with_support_targets` for prescribed
+    /// support motion after construction.
     /// # Errors
     /// Same checks as `new`, except stationary pins are accepted.
     pub fn new_with_fixed_supports(
+        body: Body,
+        densities: &[f64],
+        velocities: Vec<Vec3>,
+    ) -> Result<Self, &'static str> {
+        Self::new_supported_material_mode(body, densities, velocities, false)
+    }
+    fn new_supported_material_mode(
         mut body: Body,
         densities: &[f64],
         velocities: Vec<Vec3>,
+        allow_maxwell: bool,
     ) -> Result<Self, &'static str> {
         if velocities.len() != body.positions.len()
             || body
@@ -103,7 +160,7 @@ impl InertialBody {
         }
         let pins = body.pinned.clone();
         body.pinned.fill(false);
-        let mut result = Self::new(body, densities, velocities)?;
+        let mut result = Self::new_material_mode(body, densities, velocities, allow_maxwell)?;
         result.body.pinned = pins;
         Ok(result)
     }
@@ -115,6 +172,8 @@ impl InertialBody {
         &self,
         law: super::ActiveFiberVelocityLaw,
     ) -> Result<Vec<Vec3>, &'static str> {
+        self.require_time_independent_material()?;
+        self.require_stationary_supports()?;
         let gradient = self.evaluate()?.1;
         let correction = self.body.active_velocity_forces(&self.velocities, law)?;
         Ok(gradient
@@ -158,9 +217,50 @@ impl InertialBody {
         Ok(change)
     }
     fn evaluate(&self) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
-        let (mut energy, mut gradient) = self.body.evaluate(&self.body.positions)?;
+        self.evaluate_at(&self.body.positions)
+    }
+    /// Install/remove a prescribed triangle obstacle at the current body pose.
+    /// Returns the parameter-induced potential change; this is distinct from
+    /// actuator work during a subsequent motion step.
+    /// # Errors
+    /// A closed contact gap or invalid response leaves the previous owner intact.
+    pub fn set_prescribed_surface(
+        &mut self,
+        surface: Option<Arc<PrescribedTriangleSurface>>,
+    ) -> Result<f64, &'static str> {
+        let before = self.diagnostics()?.potential_j;
+        let mut candidate = self.clone();
+        candidate.prescribed_surface = surface;
+        let work = candidate.diagnostics()?.potential_j - before;
+        if !work.is_finite() {
+            return Err("prescribed surface parameter work overflow");
+        }
+        *self = candidate;
+        Ok(work)
+    }
+    #[must_use]
+    pub fn prescribed_surface(&self) -> Option<&PrescribedTriangleSurface> {
+        self.prescribed_surface.as_deref()
+    }
+    // Frozen constitutive history can be evaluated at trial positions without
+    // copying topology, materials, or thermal storage.
+    fn evaluate_at(&self, positions: &[Vec3]) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
+        self.evaluate_at_contacts(positions, self.plane, self.prescribed_surface.as_deref())
+            .map(|response| (response.potential_j, response.gradient, response.contact_j))
+    }
+    // The offset derivative is evaluated beside the same contact forces. It
+    // supplies independent actuator work for a translating prescribed obstacle.
+    fn evaluate_at_contacts(
+        &self,
+        positions: &[Vec3],
+        plane: Option<PlaneContact>,
+        surface: Option<&PrescribedTriangleSurface>,
+    ) -> Result<PotentialEvaluation, &'static str> {
+        let (mut energy, mut gradient) = self.body.evaluate(positions)?;
         let mut contact = 0.;
-        if let Some(plane) = self.plane {
+        let mut offset_gradient = 0.;
+        let mut rotation_gradient = [0.; 3];
+        if let Some(plane) = plane {
             let mut boundary = vec![false; self.masses.len()];
             for face in self.body.surface() {
                 for node in face {
@@ -171,12 +271,17 @@ impl InertialBody {
                 if !on_surface {
                     continue;
                 }
-                let gap = dot(plane.normal, self.body.positions[node]) - plane.offset_m;
+                let gap = dot(plane.normal, positions[node]) - plane.offset_m;
                 if !gap.is_finite() {
                     return Err("plane gap overflow");
                 }
                 if gap < 0. {
                     contact += 0.5 * plane.stiffness_n_m * gap * gap;
+                    offset_gradient -= plane.stiffness_n_m * gap;
+                    let moment = cross(plane.normal, positions[node]);
+                    for axis in 0..3 {
+                        rotation_gradient[axis] += plane.stiffness_n_m * gap * moment[axis];
+                    }
                     for (axis, value) in gradient[node].iter_mut().enumerate() {
                         *value += plane.stiffness_n_m * gap * plane.normal[axis];
                     }
@@ -184,10 +289,31 @@ impl InertialBody {
             }
             energy += contact;
         }
+        let mut surface_gradient = Vec::new();
+        if let Some(surface) = surface {
+            let response = surface.response(positions, &self.body.surface())?;
+            energy += response.potential_j;
+            contact += response.potential_j;
+            for (body_gradient, contact_gradient) in
+                gradient.iter_mut().zip(response.body_gradient_n)
+            {
+                for axis in 0..3 {
+                    body_gradient[axis] += contact_gradient[axis];
+                }
+            }
+            surface_gradient = response.obstacle_gradient_n;
+        }
         if !energy.is_finite() || gradient.iter().flatten().any(|v| !v.is_finite()) {
             return Err("contact evaluation overflow");
         }
-        Ok((energy, gradient, contact))
+        Ok(PotentialEvaluation {
+            potential_j: energy,
+            gradient,
+            contact_j: contact,
+            plane_offset_gradient: offset_gradient,
+            plane_rotation_gradient: rotation_gradient,
+            surface_gradient,
+        })
     }
     /// Set constant uniform acceleration in m/s², e.g. gravity. It is mass
     /// weighted and adds to existing dead loads. Returns the change in potential
@@ -213,6 +339,24 @@ impl InertialBody {
     /// Constitutive errors or overflowing energy/momentum.
     pub fn diagnostics(&self) -> Result<InertialDiagnostics, &'static str> {
         let (potential, _, contact) = self.evaluate()?;
+        self.diagnostics_from_potential(potential, contact)
+    }
+    // Reuse a force evaluation at this exact position/history. Velocities may
+    // have changed since evaluation; kinetic quantities are always read fresh.
+    fn diagnostics_from_potential(
+        &self,
+        potential: f64,
+        contact: f64,
+    ) -> Result<InertialDiagnostics, &'static str> {
+        self.diagnostics_at(potential, contact, &self.body.positions, &self.velocities)
+    }
+    fn diagnostics_at(
+        &self,
+        potential: f64,
+        contact: f64,
+        positions: &[Vec3],
+        velocities: &[Vec3],
+    ) -> Result<InertialDiagnostics, &'static str> {
         let mut result = InertialDiagnostics {
             mass_kg: self.masses.iter().sum(),
             momentum_kg_m_s: [0.; 3],
@@ -221,20 +365,10 @@ impl InertialBody {
             potential_j: potential,
             contact_j: contact,
         };
-        for ((&mass, &position), &rest) in self
-            .masses
-            .iter()
-            .zip(&self.body.positions)
-            .zip(&self.body.rest)
-        {
+        for ((&mass, &position), &rest) in self.masses.iter().zip(positions).zip(&self.body.rest) {
             result.potential_j -= mass * dot(self.acceleration, super::sub(position, rest));
         }
-        for ((&mass, &velocity), &position) in self
-            .masses
-            .iter()
-            .zip(&self.velocities)
-            .zip(&self.body.positions)
-        {
+        for ((&mass, &velocity), &position) in self.masses.iter().zip(velocities).zip(positions) {
             let momentum = velocity.map(|v| mass * v);
             let angular = cross(position, momentum);
             result.kinetic_j += 0.5 * mass * dot(velocity, velocity);
@@ -261,50 +395,11 @@ impl InertialBody {
     /// # Errors
     /// Invalid timestep/tolerance, inversion, constitutive failure or energy defect.
     pub fn step(&mut self, dt: f64, energy_tolerance_j: f64) -> Result<f64, &'static str> {
-        if !dt.is_finite()
-            || dt <= 0.
-            || !energy_tolerance_j.is_finite()
-            || energy_tolerance_j <= 0.
-        {
-            return Err("invalid finite-deformation inertial step");
-        }
-        let before = self.diagnostics()?;
-        let gradient = self.evaluate()?.1;
-        let mut candidate = self.clone();
-        for (node, force) in gradient.iter().enumerate() {
-            if self.body.pinned[node] {
-                continue;
-            }
-            for (axis, &component) in force.iter().enumerate() {
-                candidate.velocities[node][axis] -=
-                    0.5 * dt * (component / self.masses[node] - self.acceleration[axis]);
-                candidate.body.positions[node][axis] += dt * candidate.velocities[node][axis];
-            }
-        }
-        if !self
-            .body
-            .gap_path_is_open(&self.body.positions, &candidate.body.positions)
-        {
-            return Err("inertial tissue gap path crossing");
-        }
-        let gradient = candidate.evaluate()?.1;
-        for (node, force) in gradient.iter().enumerate() {
-            if self.body.pinned[node] {
-                continue;
-            }
-            for (axis, &component) in force.iter().enumerate() {
-                candidate.velocities[node][axis] -=
-                    0.5 * dt * (component / self.masses[node] - self.acceleration[axis]);
-            }
-        }
-        let after = candidate.diagnostics()?;
-        let defect =
-            (after.kinetic_j - before.kinetic_j) + (after.potential_j - before.potential_j);
-        if !defect.is_finite() || defect.abs() > energy_tolerance_j {
-            return Err("finite-deformation inertial energy defect");
-        }
-        *self = candidate;
-        Ok(defect)
+        self.require_time_independent_material()?;
+        self.require_stationary_supports()?;
+        Ok(self
+            .advance_supports(dt, energy_tolerance_j, None)?
+            .energy_defect_j)
     }
 }
 
@@ -319,6 +414,8 @@ impl InertialBody {
         &self,
         law: super::ActiveFiberVelocityLaw,
     ) -> Result<(Vec<Vec3>, f64), &'static str> {
+        self.require_time_independent_material()?;
+        self.require_stationary_supports()?;
         let gradient = self.evaluate()?.1;
         let correction = self.body.active_velocity_forces(&self.velocities, law)?;
         let acceleration = gradient

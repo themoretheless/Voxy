@@ -101,7 +101,7 @@ pub struct SolutionVaporInterface {
     pub molar_masses: Vec<f64>,
 }
 impl SolutionVaporInterface {
-    fn weights(&self, fractions: &[f64]) -> Result<(f64, f64), Error> {
+    pub(crate) fn weights(&self, fractions: &[f64]) -> Result<(f64, f64), Error> {
         if self.solvent >= self.molar_masses.len()
             || self.molar_masses.len() != fractions.len()
             || self.molar_masses.iter().any(|m| !positive(*m))
@@ -158,20 +158,20 @@ impl Default for VaporExchangeAccuracy {
         }
     }
 }
-#[derive(Clone, Copy)]
-struct State {
-    mass: f64,
-    solvent_mass: f64,
-    solvent_weight: f64,
-    solvent_specific_heat: f64,
-    solute_capacity: f64,
-    solute_weight: f64,
-    temperature: f64,
-    velocity: [f64; 3],
-    vapor: VaporCell,
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct State {
+    pub(crate) mass: f64,
+    pub(crate) solvent_mass: f64,
+    pub(crate) solvent_weight: f64,
+    pub(crate) solvent_specific_heat: f64,
+    pub(crate) solute_capacity: f64,
+    pub(crate) solute_weight: f64,
+    pub(crate) temperature: f64,
+    pub(crate) velocity: [f64; 3],
+    pub(crate) vapor: VaporCell,
 }
 impl State {
-    fn capacity(self) -> f64 {
+    pub(crate) fn capacity(self) -> f64 {
         self.solute_capacity + self.solvent_mass * self.solvent_specific_heat
     }
 }
@@ -336,24 +336,81 @@ impl Liquid {
 fn kinetic(velocity: [f64; 3]) -> f64 {
     0.5 * velocity.iter().map(|v| v * v).sum::<f64>()
 }
-fn advance(
-    mut state: State,
+pub(crate) fn advance(
+    state: State,
     interface: VaporInterface,
     dt: f64,
     accuracy: VaporExchangeAccuracy,
 ) -> Result<State, Error> {
+    if !positive(dt)
+        || !accuracy.relative_tolerance.is_finite()
+        || accuracy.relative_tolerance < 0.
+        || !positive(accuracy.mass_tolerance)
+        || !positive(accuracy.temperature_tolerance)
+        || accuracy.max_attempts == 0
+        || !positive(state.mass)
+        || !state.solvent_mass.is_finite()
+        || state.solvent_mass < 0.
+        || state.solvent_mass > state.mass
+        || !positive(state.solvent_weight)
+        || !positive(state.solvent_specific_heat)
+        || !state.solute_capacity.is_finite()
+        || state.solute_capacity < 0.
+        || !state.solute_weight.is_finite()
+        || state.solute_weight < 0.
+        || !positive(state.temperature)
+        || !finite(state.velocity)
+        || !positive(state.capacity())
+    {
+        return Err(Error::InvalidTransport);
+    }
+    let vapor_cp = state.vapor.specific_heat_cv + interface.curve.vapor_gas_constant;
+    if !positive(vapor_cp)
+        || (state.solvent_specific_heat - vapor_cp).abs()
+            > 64. * f64::EPSILON * state.solvent_specific_heat
+    {
+        return Err(Error::InvalidTransport);
+    }
+    state_flux(state, interface)?;
+    adaptive_midpoint(
+        state,
+        dt,
+        accuracy.max_attempts,
+        |state, step| trial(state, interface, step),
+        |start, coarse, fine| error(start, coarse, fine, accuracy),
+    )
+}
+
+/// Shared local step-doubling controller for interface constitutive models.
+/// Trial states are values; only the returned accepted state is published by
+/// the particle/film owner. The model supplies a midpoint trial and normalized
+/// local error (acceptance <= 1), including its caloric domain admission.
+pub(crate) fn adaptive_midpoint<S: Copy>(
+    mut state: S,
+    dt: f64,
+    max_attempts: usize,
+    trial: impl Fn(S, f64) -> Result<S, Error>,
+    error: impl Fn(S, S, S) -> Result<f64, Error>,
+) -> Result<S, Error> {
+    if !positive(dt) || max_attempts == 0 {
+        return Err(Error::InvalidTransport);
+    }
     let mut elapsed = 0.0;
     let mut step = dt;
-    for _ in 0..accuracy.max_attempts {
+    for _ in 0..max_attempts {
         let remaining = dt - elapsed;
         step = step.min(remaining);
         if step <= 0.0 || elapsed + step <= elapsed {
             return Err(Error::NumericalFailure);
         }
-        let attempts = trial(state, interface, step).and_then(|coarse| {
-            let half = trial(state, interface, 0.5 * step)?;
-            let fine = trial(half, interface, 0.5 * step)?;
-            Ok((fine, error(state, coarse, fine, accuracy)?))
+        let attempts = trial(state, step).and_then(|coarse| {
+            let half = trial(state, 0.5 * step)?;
+            let fine = trial(half, 0.5 * step)?;
+            let estimate = error(state, coarse, fine)?;
+            if !estimate.is_finite() || estimate < 0. {
+                return Err(Error::NumericalFailure);
+            }
+            Ok((fine, estimate))
         });
         match attempts {
             Ok((fine, estimate)) => {

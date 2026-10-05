@@ -1,7 +1,7 @@
 //! Explicit-buffer glTF import. No filesystem or network access is performed.
 use std::sync::Arc;
 
-use glam::{Mat4, Quat, Vec3};
+use glam::{DMat4, DVec3, Mat4, Quat, Vec3};
 use gltf::animation::util::ReadOutputs;
 use voxy_animation::{
     AnimationClip, Interpolation, Joint, JointTangents, JointTrack, Playback, QuatKey, Skeleton,
@@ -28,6 +28,13 @@ pub struct ModelPrimitive {
     pub geometry: ModelGeometry,
     pub color: [f32; 4],
     pub base_color_texture: Option<ModelTexture>,
+}
+
+/// Double-precision posed geometry in original primitive/vertex/index order.
+#[derive(Clone, Debug)]
+pub struct ModelSurface64 {
+    pub positions: Vec<[f64; 3]>,
+    pub indices: Vec<u32>,
 }
 
 /// A single mesh instance with its complete node hierarchy and optional skin.
@@ -94,11 +101,71 @@ impl ModelAsset {
         u16::try_from(index).map_err(|_| fail("motion bone index exceeds supported range"))
     }
 
+    /// Decode all embedded GLB images in document order with a shared pixel budget.
+    /// External image buffers and image URIs are rejected; callers retain ownership
+    /// of decoded images separately from skeleton/mesh data and GPU resources.
+    /// Mesh and skeleton validation remains the responsibility of `parse`.
+    /// # Errors
+    /// Invalid GLB, external resources, out-of-bounds views or exceeded budgets.
+    pub fn decode_embedded_images(
+        source: &[u8],
+        limits: crate::ImageLimits,
+        max_images: usize,
+    ) -> Result<Vec<crate::ImageAsset>, ModelError> {
+        if source.len() > limits.source_bytes {
+            return Err(fail("model image source budget exceeded"));
+        }
+        let gltf = gltf::Gltf::from_slice(source).map_err(|error| fail(error.to_string()))?;
+        if gltf.images().count() > max_images {
+            return Err(fail("model image count budget exceeded"));
+        }
+        let mut images = Vec::new();
+        let mut remaining = limits.pixel_bytes;
+        for image in gltf.images() {
+            let gltf::image::Source::View { view, .. } = image.source() else {
+                return Err(fail("external model image requires explicit import"));
+            };
+            if !matches!(view.buffer().source(), gltf::buffer::Source::Bin) {
+                return Err(fail("external image buffer requires explicit import"));
+            }
+            let blob = gltf
+                .blob
+                .as_deref()
+                .ok_or_else(|| fail("missing image buffer"))?;
+            if blob.len() < view.buffer().length() {
+                return Err(fail("truncated model image buffer"));
+            }
+            let end = view
+                .offset()
+                .checked_add(view.length())
+                .ok_or_else(|| fail("model image view overflow"))?;
+            if end > view.buffer().length() {
+                return Err(fail("model image view outside declared buffer"));
+            }
+            let bytes = blob
+                .get(view.offset()..end)
+                .ok_or_else(|| fail("model image view outside buffer"))?;
+            let decoded = crate::ImageAsset::decode(
+                bytes,
+                crate::ImageLimits {
+                    pixel_bytes: remaining,
+                    ..limits
+                },
+            )
+            .map_err(|error| fail(error.to_string()))?;
+            remaining = remaining
+                .checked_sub(decoded.rgba().len() as u64)
+                .ok_or_else(|| fail("model decoded image budget exceeded"))?;
+            images.push(decoded);
+        }
+        Ok(images)
+    }
+
     /// Imports GLB's embedded buffer, or glTF buffers provided in document order.
     ///
     /// # Errors
     /// Rejects budgets, malformed data, multiple mesh instances/skins, morph targets,
-    /// textured materials and non-linear animation. External URIs are never opened.
+    /// unsupported material features or interpolation. External URIs are never opened.
     // Node indices are bounded to MAX_JOINTS above.
     #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
     pub fn parse(
@@ -593,6 +660,28 @@ impl ModelAsset {
         }
     }
 
+    /// Stateless authored-phase preview, including the final pose of loop clips.
+    /// # Errors
+    /// Rejects invalid phase, missing clip and invalid sampled transforms.
+    pub fn sample_pose_phase(
+        &self,
+        clip: Option<usize>,
+        phase: f64,
+    ) -> Result<voxy_animation::Pose, ModelError> {
+        if !phase.is_finite() || !(0. ..=1.).contains(&phase) {
+            return Err(fail("animation phase must be between zero and one"));
+        }
+        match clip {
+            None => Ok(self.skeleton.bind_pose()),
+            Some(index) => self
+                .animations
+                .get(index)
+                .ok_or_else(|| fail("animation clip index out of range"))?
+                .try_sample_phase(&self.skeleton, phase)
+                .map_err(|error| fail(error.to_string())),
+        }
+    }
+
     /// Returns the mesh node's global transform for a sampled pose.
     /// # Errors
     /// Rejects a pose with the wrong joint count.
@@ -607,6 +696,97 @@ impl ModelAsset {
             parent = self.skeleton.joints()[usize::from(index)].parent;
         }
         Ok(matrix)
+    }
+
+    /// Sample existing authored keys for physical kinematics without f32 time rounding.
+    pub fn sample_pose_phase64(
+        &self,
+        clip: Option<usize>,
+        phase: f64,
+    ) -> Result<voxy_animation::Pose64, ModelError> {
+        if !phase.is_finite() || !(0. ..=1.).contains(&phase) {
+            return Err(fail("animation phase must be between zero and one"));
+        }
+        match clip {
+            None => Ok(self.skeleton.bind_pose64()),
+            Some(index) => self
+                .animations
+                .get(index)
+                .ok_or_else(|| fail("animation clip index out of range"))?
+                .try_sample_phase64(&self.skeleton, phase)
+                .map_err(|e| fail(e.to_string())),
+        }
+    }
+    /// Pose the same validated imported vertices and UNORM16 influences in f64.
+    /// No source topology, clock, asset or rendering resource is duplicated.
+    pub fn scene_surfaces64(
+        &self,
+        pose: &voxy_animation::Pose64,
+    ) -> Result<Vec<ModelSurface64>, ModelError> {
+        let global = pose
+            .global_matrices(&self.skeleton)
+            .map_err(|e| fail(e.to_string()))?;
+        let model = *global
+            .get(self.mesh_joint)
+            .ok_or_else(|| fail("mesh node outside pose"))?;
+        let palette: Vec<_> = global
+            .iter()
+            .zip(self.skeleton.joints())
+            .map(|(global, joint)| {
+                *global * DMat4::from_cols_array(&joint.inverse_bind.to_cols_array().map(f64::from))
+            })
+            .collect();
+        if palette.iter().any(|m| !m.is_finite()) {
+            return Err(fail("nonfinite wide skin palette"));
+        }
+        self.primitives
+            .iter()
+            .map(|primitive| {
+                let (positions, indices) = match &primitive.geometry {
+                    ModelGeometry::Static(mesh) => (
+                        mesh.vertices()
+                            .iter()
+                            .map(|v| {
+                                model
+                                    .transform_point3(DVec3::from_array(v.position.map(f64::from)))
+                                    .to_array()
+                            })
+                            .collect(),
+                        mesh.indices().to_vec(),
+                    ),
+                    ModelGeometry::Skinned(mesh) => {
+                        if palette.len() != usize::from(mesh.joint_count()) {
+                            return Err(fail("wide skin palette count mismatch"));
+                        }
+                        let positions =
+                            mesh.vertices()
+                                .iter()
+                                .map(|v| {
+                                    let mut skin = DMat4::ZERO;
+                                    for (joint, weight) in v.joints.into_iter().zip(v.weights) {
+                                        if weight != 0 {
+                                            let matrix =
+                                                palette.get(usize::from(joint)).ok_or_else(
+                                                    || fail("wide skin joint outside palette"),
+                                                )?;
+                                            skin += *matrix * (f64::from(weight) / 65535.);
+                                        }
+                                    }
+                                    Ok((skin
+                                        * DVec3::from_array(v.position.map(f64::from)).extend(1.))
+                                    .truncate()
+                                    .to_array())
+                                })
+                                .collect::<Result<Vec<_>, ModelError>>()?;
+                        (positions, mesh.indices().to_vec())
+                    }
+                };
+                if positions.iter().flatten().any(|v| !v.is_finite()) {
+                    return Err(fail("nonfinite wide posed vertex"));
+                }
+                Ok(ModelSurface64 { positions, indices })
+            })
+            .collect()
     }
 
     /// Palette for `Renderer::upload_skinned_mesh`. Use the instance transform as
@@ -1123,5 +1303,261 @@ mod import_tests {
         ] {
             assert!(ModelAsset::parse(TRIANGLE, &[&buffer], limits).is_err());
         }
+    }
+}
+
+#[cfg(test)]
+mod phase_preview_tests {
+    use super::*;
+    #[test]
+    fn imported_model_preview_validates_phase_and_builds_skin_palette() {
+        let model = ModelAsset::parse(
+            include_bytes!("../examples/assets/animated-triangle.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        for phase in [0., 0.25, 0.5, 1.] {
+            let pose = model.sample_pose_phase(Some(0), phase).unwrap();
+            assert_eq!(
+                pose,
+                model.animations[0]
+                    .try_sample_phase(&model.skeleton, phase)
+                    .unwrap()
+            );
+            assert!(
+                pose.skin_matrices(&model.skeleton)
+                    .unwrap()
+                    .iter()
+                    .all(|matrix| matrix.is_finite())
+            );
+            assert_eq!(
+                model.sample_pose_phase(None, phase).unwrap(),
+                model.skeleton.bind_pose()
+            );
+        }
+        for phase in [f64::NAN, f64::INFINITY, -1., 2.] {
+            assert!(model.sample_pose_phase(None, phase).is_err());
+            assert!(model.sample_pose_phase(Some(0), phase).is_err());
+        }
+        assert!(model.sample_pose_phase(Some(99), 0.5).is_err());
+    }
+}
+
+#[cfg(test)]
+mod cesium_character_tests {
+    use super::*;
+    #[test]
+    fn embedded_character_images_are_bounded_and_keep_material_indices() {
+        let source = include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb");
+        let images =
+            ModelAsset::decode_embedded_images(source, crate::ImageLimits::default(), 16).unwrap();
+        assert!(!images.is_empty());
+        let model = ModelAsset::parse(source, &[], ModelLimits::default()).unwrap();
+        for texture in model.primitives.iter().filter_map(|p| p.base_color_texture) {
+            let image = &images[texture.image];
+            assert!(image.width() > 1 && image.height() > 1);
+            assert!(
+                image
+                    .rgba()
+                    .chunks_exact(4)
+                    .any(|pixel| pixel != &image.rgba()[..4])
+            );
+        }
+        assert!(
+            ModelAsset::decode_embedded_images(source, crate::ImageLimits::default(), 0).is_err()
+        );
+        for limits in [
+            crate::ImageLimits {
+                source_bytes: source.len() - 1,
+                ..Default::default()
+            },
+            crate::ImageLimits {
+                dimension: 1,
+                ..Default::default()
+            },
+            crate::ImageLimits {
+                pixel_bytes: 1,
+                ..Default::default()
+            },
+        ] {
+            assert!(ModelAsset::decode_embedded_images(source, limits, 16).is_err());
+        }
+    }
+    #[test]
+    fn embedded_image_batch_rejects_external_views_and_shared_budget_overflow() {
+        let source = include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb");
+        let json_length = u32::from_le_bytes(source[12..16].try_into().unwrap()) as usize;
+        let document: serde_json::Value =
+            serde_json::from_slice(&source[20..20 + json_length]).unwrap();
+        let rebuild = |document: &serde_json::Value| {
+            let mut json = serde_json::to_vec(document).unwrap();
+            while json.len() % 4 != 0 {
+                json.push(b' ');
+            }
+            let tail = &source[20 + json_length..];
+            let mut result = source[..12].to_vec();
+            result[8..12].copy_from_slice(&((20 + json.len() + tail.len()) as u32).to_le_bytes());
+            result.extend_from_slice(&(json.len() as u32).to_le_bytes());
+            result.extend_from_slice(b"JSON");
+            result.extend(json);
+            result.extend_from_slice(tail);
+            result
+        };
+        let mut external = document.clone();
+        external["images"][0] = serde_json::json!({"uri":"unread-image.png"});
+        assert!(
+            ModelAsset::decode_embedded_images(
+                &rebuild(&external),
+                crate::ImageLimits::default(),
+                16
+            )
+            .unwrap_err()
+            .to_string()
+            .contains("external model image")
+        );
+        let mut invalid = document.clone();
+        let view = invalid["images"][0]["bufferView"].as_u64().unwrap() as usize;
+        invalid["bufferViews"][view]["byteOffset"] = serde_json::json!(source.len());
+        assert!(
+            ModelAsset::decode_embedded_images(
+                &rebuild(&invalid),
+                crate::ImageLimits::default(),
+                16
+            )
+            .is_err()
+        );
+        let image = ModelAsset::decode_embedded_images(source, crate::ImageLimits::default(), 16)
+            .unwrap()
+            .remove(0);
+        let limits = crate::ImageLimits {
+            pixel_bytes: image.rgba().len() as u64 * 2,
+            ..Default::default()
+        };
+        assert!(ModelAsset::decode_embedded_images(source, limits, 16).is_ok());
+        let mut repeated = document;
+        let duplicate = repeated["images"][0].clone();
+        repeated["images"].as_array_mut().unwrap().push(duplicate);
+        assert!(ModelAsset::decode_embedded_images(&rebuild(&repeated), limits, 16).is_err());
+    }
+    #[test]
+    fn pinned_character_imports_and_samples_complete_skinned_mesh() {
+        let model = ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        assert!(model.skeleton.joints().len() >= 15);
+        assert!(!model.animations.is_empty());
+        let mut previous = None;
+        let mut changed = false;
+        let mut vertex_count = 0;
+        for phase in [0., 0.125, 0.25, 0.5, 0.75, 1.] {
+            let pose = model.sample_pose_phase(Some(0), phase).unwrap();
+            let palette = pose.skin_matrices(&model.skeleton).unwrap();
+            assert!(palette.iter().all(|matrix| matrix.is_finite()));
+            let meshes = model.scene_meshes(&pose).unwrap();
+            let positions: Vec<_> = meshes
+                .iter()
+                .flat_map(|mesh| mesh.vertices().iter().map(|vertex| vertex.position))
+                .collect();
+            assert!(positions.iter().flatten().all(|value| value.is_finite()));
+            assert!(positions.len() > 1000);
+            if let Some(previous) = &previous {
+                changed |= previous != &positions;
+            }
+            vertex_count = positions.len();
+            previous = Some(positions);
+        }
+        assert!(changed);
+        println!(
+            "CHARACTER joints={} vertices={} clips={}",
+            model.skeleton.joints().len(),
+            vertex_count,
+            model.animations.len()
+        );
+    }
+}
+
+#[cfg(test)]
+mod wide_geometry_tests {
+    use super::*;
+    fn character() -> ModelAsset {
+        ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap()
+    }
+    #[test]
+    fn wide_character_geometry_preserves_topology_and_matches_render_precision() {
+        let model = character();
+        for phase in [0., 0.1375, 0.5, 1.] {
+            let wide = model
+                .scene_surfaces64(&model.sample_pose_phase64(Some(0), phase).unwrap())
+                .unwrap();
+            let render = model
+                .scene_meshes(&model.sample_pose_phase(Some(0), phase).unwrap())
+                .unwrap();
+            assert_eq!(wide.len(), render.len());
+            let mut maximum = 0.0_f64;
+            for (a, b) in wide.iter().zip(&render) {
+                assert_eq!(a.indices, b.indices());
+                assert_eq!(a.positions.len(), b.vertices().len());
+                for (p, v) in a.positions.iter().zip(b.vertices()) {
+                    maximum = maximum.max(
+                        (DVec3::from_array(*p) - DVec3::from_array(v.position.map(f64::from)))
+                            .length(),
+                    );
+                }
+            }
+            assert!(maximum < 2e-6, "phase={phase} maximum_error_m={maximum}");
+        }
+    }
+    #[test]
+    fn physical_character_motion_survives_a_sub_f32_phase_step() {
+        let model = character();
+        let phase = 0.1375;
+        let step = 0.5e-9;
+        let a = model
+            .scene_surfaces64(&model.sample_pose_phase64(Some(0), phase).unwrap())
+            .unwrap();
+        let b = model
+            .scene_surfaces64(&model.sample_pose_phase64(Some(0), phase + step).unwrap())
+            .unwrap();
+        let maximum = a
+            .iter()
+            .zip(&b)
+            .flat_map(|(a, b)| a.positions.iter().zip(&b.positions))
+            .map(|(a, b)| (DVec3::from_array(*a) - DVec3::from_array(*b)).length())
+            .fold(0., f64::max);
+        assert!(
+            maximum > 1e-10 && maximum < 1e-8,
+            "maximum_motion_m={maximum}"
+        );
+        let render_a = model
+            .scene_meshes(&model.sample_pose_phase(Some(0), phase).unwrap())
+            .unwrap();
+        let render_b = model
+            .scene_meshes(&model.sample_pose_phase(Some(0), phase + step).unwrap())
+            .unwrap();
+        assert!(render_a.iter().zip(&render_b).all(|(a, b)| {
+            a.vertices()
+                .iter()
+                .zip(b.vertices())
+                .all(|(a, b)| a.position == b.position)
+        }));
+    }
+    #[test]
+    fn wide_surface_rejects_foreign_rig_and_invalid_clip_phase() {
+        let model = character();
+        let mut joints = model.skeleton.joints().to_vec();
+        joints[0].name = "foreign".into();
+        let foreign = Skeleton::new(joints).unwrap();
+        assert!(model.scene_surfaces64(&foreign.bind_pose64()).is_err());
+        assert!(model.sample_pose_phase64(Some(usize::MAX), 0.).is_err());
+        assert!(model.sample_pose_phase64(None, f64::NAN).is_err());
     }
 }

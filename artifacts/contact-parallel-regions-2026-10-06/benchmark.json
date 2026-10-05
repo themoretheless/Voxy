@@ -1,0 +1,19 @@
+{
+  "fixture": "8 initial imported contact steps, common precomputed Pose64 samples",
+  "pairs_ns": [
+    [
+      997651208,
+      299073958
+    ],
+    [
+      962436125,
+      294732542
+    ],
+    [
+      1011880875,
+      291529708
+    ]
+  ],
+  "median_speed_ratio": 3.335800999430382,
+  "scope": "region-step calculation only; not full-clip or end-to-end speed"
+}

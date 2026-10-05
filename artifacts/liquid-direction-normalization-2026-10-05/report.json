@@ -1,0 +1,19 @@
+{
+  "passed": 9,
+  "failed": 0,
+  "target": "liquid::emission::tests",
+  "direction_scale_controls": [
+    1e-300,
+    1e+300
+  ],
+  "position_velocity_tolerance": 1e-14,
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "8f2104d5492dceb8c998f9f6689ce9b050af2e680391918bdeeec984dfe664dd"
+  },
+  "goal_complete": false,
+  "scope": "scaled normalization of finite nonzero emitter direction",
+  "limitations": [
+    "not broad physical jet qualification",
+    "no fresh GPU preview"
+  ]
+}

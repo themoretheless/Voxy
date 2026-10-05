@@ -1,0 +1,727 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics_voxel)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_rush v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_rush)
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_runtime)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gpu)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:197:19
+    |
+194 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+197 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+227 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+243 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+278 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+300 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+328 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+636 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+759 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+989 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: field `initial_energy_j` is never read
+  --> crates/voxy_app/src/tissue_demo.rs:43:9
+   |
+40 |     Continuum {
+   |     --------- field in this variant
+...
+43 |         initial_energy_j: f64,
+   |         ^^^^^^^^^^^^^^^^
+   |
+   = note: `DemoTissue` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `volumes` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:56:8
+   |
+49 | impl DemoTissue {
+   | --------------- method in this implementation
+...
+56 |     fn volumes(&self) -> Vec<f64> {
+   |        ^^^^^^^
+
+warning: multiple associated items are never used
+   --> crates/voxy_app/src/tissue_demo.rs:286:19
+    |
+107 | impl TissueDemo {
+    | --------------- associated items in this implementation
+...
+286 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+...
+294 |     pub(crate) fn body_energy_receipts(&self) -> Result<Vec<[f64; 4]>, &'static str> {
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+318 |     pub(crate) fn body_step_counts(&self) -> Vec<(u64, u64, usize)> {
+    |                   ^^^^^^^^^^^^^^^^
+...
+335 |     pub(crate) fn body_thermal_diagnostics(&self) -> Result<Vec<(f64, f64, f64)>, &'static str> {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^
+...
+428 |     pub(crate) fn advance_with_palette(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+438 |     pub(crate) fn bind_contact_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+444 |     pub(crate) fn bind_contact_surfaces(
+    |                   ^^^^^^^^^^^^^^^^^^^^^
+...
+466 |     pub(crate) fn advance_with_palette_and_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+480 |     pub(crate) fn advance_with_palette_and_surfaces(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+494 |     pub(crate) fn tissue_mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    |                   ^^^^^^^^^^^
+...
+814 |     fn advance_continuum(
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets` and `set_strain_fixture` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1018 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+
+warning: field `assembly_ms` is never read
+ --> crates/voxy_app/src/skin_light_diffusion.rs:6:5
+  |
+5 | struct Timings {
+  |        ------- field in this struct
+6 |     assembly_ms: f64,
+  |     ^^^^^^^^^^^
+  |
+  = note: `Timings` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: function `diffuse` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:11:15
+   |
+11 | pub(super) fn diffuse(
+   |               ^^^^^^^
+
+warning: function `diffuse_measured` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:70:4
+   |
+70 | fn diffuse_measured(
+   |    ^^^^^^^^^^^^^^^^
+
+warning: function `diffuse_measured_with_parallel` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:78:4
+   |
+78 | fn diffuse_measured_with_parallel(
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `status` is never used
+  --> crates/voxy_app/src/model_presentation.rs:36:8
+   |
+36 | pub fn status(parameters: &Path, current: &Value) -> Value {
+   |        ^^^^^^
+
+warning: function `atomic_json` is never used
+  --> crates/voxy_app/src/model_presentation.rs:82:4
+   |
+82 | fn atomic_json(path: &Path, value: &Value) -> Result<(), Box<dyn std::error::Error>> {
+   |    ^^^^^^^^^^^
+
+warning: function `request_film_state` is never used
+  --> crates/voxy_app/src/model_presentation.rs:95:8
+   |
+95 | pub fn request_film_state(parameters: &Path) -> Result<Value, Box<dyn std::error::Error>> {
+   |        ^^^^^^^^^^^^^^^^^^
+
+warning: function `film_state_status` is never used
+   --> crates/voxy_app/src/model_presentation.rs:150:8
+    |
+150 | pub fn film_state_status(parameters: &Path, id: &str) -> Result<Value, Box<dyn std::error::Error>> {
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: method `to_json` is never used
+  --> crates/voxy_app/src/view_settings.rs:15:12
+   |
+14 | impl ViewSettings {
+   | ----------------- method in this implementation
+15 |     pub fn to_json(&self) -> Value {
+   |            ^^^^^^^
+
+warning: function `deform` is never used
+   --> crates/voxy_app/src/female_face.rs:107:15
+    |
+107 | pub(crate) fn deform(vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose) {
+    |               ^^^^^^
+
+warning: method `append` is never used
+   --> crates/voxy_app/src/female_features.rs:236:12
+    |
+ 31 | impl FaceFeatures {
+    | ----------------- method in this implementation
+...
+236 |     pub fn append(
+    |            ^^^^^^
+
+warning: method `apply` is never used
+    --> crates/voxy_app/src/face_parameters.rs:2570:19
+     |
+2530 | impl FaceParameters {
+     | ------------------- method in this implementation
+...
+2570 |     pub(crate) fn apply(&self, vertices: &mut [SceneVertex], head: Mat4) {
+     |                   ^^^^^
+
+warning: method `restore_snapshot` is never used
+   --> crates/voxy_app/src/surface_film_preview.rs:345:12
+    |
+ 20 | impl FilmPreview {
+    | ---------------- method in this implementation
+...
+345 |     pub fn restore_snapshot(&mut self, snapshot: &serde_json::Value) -> Result<(), &'static str> {
+    |            ^^^^^^^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+warning: `voxy_app` (lib) generated 18 warnings
+warning: associated items `new` and `title` are never used
+  --> crates/voxy_app/examples/../src/biomechanics_demo.rs:14:19
+   |
+13 | impl BiomechanicsDemo {
+   | --------------------- associated items in this implementation
+14 |     pub(crate) fn new() -> Result<Self, &'static str> {
+   |                   ^^^
+...
+67 |     pub(crate) fn title(&self) -> String {
+   |                   ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: multiple associated items are never used
+   --> crates/voxy_app/examples/../src/tissue_demo.rs:136:19
+    |
+107 | impl TissueDemo {
+    | --------------- associated items in this implementation
+...
+136 |     pub(crate) fn biomechanics() -> Result<Self, &'static str> {
+    |                   ^^^^^^^^^^^^
+...
+142 |     pub(crate) fn biomechanics_title(&self) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^^
+...
+282 |     pub(crate) fn is_body(&self) -> bool {
+    |                   ^^^^^^^
+...
+379 |     pub(crate) fn body_motion_title(&self) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^
+...
+438 |     pub(crate) fn bind_contact_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+466 |     pub(crate) fn advance_with_palette_and_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+814 |     fn advance_continuum(
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: `voxy_app` (example "body_motion_snapshot") generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 22.92s
+     Running `/tmp/voxy-moving-supports-final-20261005/release/examples/body_motion_snapshot /tmp/voxy-gauss-diagnostic.png --cesium --contact`
+BODY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+IMPORTED support centers: [[-0.0990283414721489, 0.7890225052833557, 0.1306656002998352], [0.06097165495157242, 0.7890225052833557, 0.1306656002998352], [-0.08844652771949768, 0.4791085422039032, -0.05612833797931671], [0.047629572451114655, 0.4791243374347687, -0.056171491742134094]]
+CONTACT imported mesh: 3273 vertices, 4672 triangles
+IMPORTED support centers: [[-0.0990283414721489, 0.7890225052833557, 0.1306656002998352], [0.06097165495157242, 0.7890225052833557, 0.1306656002998352], [-0.08844652771949768, 0.4791085422039032, -0.05612833797931671], [0.047629572451114655, 0.4791243374347687, -0.056171491742134094]]
+CONTACT region 0: 4640 enabled, 32 excluded source triangles
+CONTACT region 1: 4557 enabled, 115 excluded source triangles
+CONTACT region 2: 4540 enabled, 132 excluded source triangles
+CONTACT region 3: 4515 enabled, 157 excluded source triangles
+frame t=0.00
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=1.32647507494754180e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=2.48417822770741203e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=4.83605900475359007e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.35189297393157126e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.69180842349792471e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.54212947635646014e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.81837105953097655e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.07931067397671043e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-7.91443174532474591e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.53992009316517198e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-9.75026475315277086e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.50570705962452522e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.28126394269637012e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.42778712600555657e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=2.17609043236255406e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.72694496791892149e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-2.65154679715204344e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.25938278103454770e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.48090676487814155e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.70255041903799764e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.01304546869900036e-5 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.17488924861706978e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.00933865500507824e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.49621796881500846e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.21060787832955397e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.60180101245813167e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.34714958942694718e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.18709393484572878e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.19874941706799376e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.82719932627081499e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.84670832913225258e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.73068544569079247e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.07592963971612021e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.49636540187222339e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.38187794026437349e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.35833505696932905e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.95480392825875526e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.68229234361930940e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.49148400363907996e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.48330966620270799e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.22856497681134513e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.38219395391511912e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.71179017569149650e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.20867313127995346e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.36104092976191771e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.56547917371657741e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.88513546834708906e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.23101107517666671e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.90330432506569380e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.29486793155141935e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.52636756600910317e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.09860617222945578e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.24753851482984146e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.25225705982354341e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.65800358354084842e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=3.73468157337589202e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.34765071166687278e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.32520705829012031e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.14996031930614606e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.21503198378653332e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.58075417875125623e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=4.52052229398675065e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.16858084908888671e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.73738172046298067e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.84231795286338418e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.76480901435388882e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.07406616723216075e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=3.77975331327176645e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.06322414550730571e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.26802949665783338e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.77320006436743327e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.33817379650279500e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=2.72134745293861613e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.01619415404578894e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.45607092891542322e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.16696062761454011e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.12014475956279469e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.65238152674378191e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.67833237427495163e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-3.86801435917592806e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=2.68322038240033194e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.33166201303471399e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.78731724123447175e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-5.50534191606950885e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.85975973404839579e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.67227022746563847e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.11235205644805513e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.00410285740457605e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.29920752461235378e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.03672263298316114e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.42914237872116345e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.13846463768718653e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.98444298388422879e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.19260542733135111e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.65122731996281402e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.50875154516466692e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.28006458000440659e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.32471350450447289e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.59701721133853880e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.58340306899082406e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.75133951679984534e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=2.05635439309327650e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.54569411226335518e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-2.25505872628603901e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.35307172252930030e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-4.68084830834714083e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.79470760369926552e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.43454402118187607e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.74946894678745890e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.88429945409513566e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.01985605860788553e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.02846186111893445e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.39932681897781208e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.84186958063221118e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.08744219027035172e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=1.76852300408391651e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.51434679568651909e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.39045880190682460e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.24753851482984146e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-3.92654635845285371e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.53467558642062230e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.97103356200378776e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.07660016854549667e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.18320572180352723e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.75387351811318126e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.34857306967068463e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.21754645096861225e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-3.59697887465648680e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=2.77555756156289135e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=5.05799294763832619e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.16333634234433703e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.17564459235013785e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.17164436275585615e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=7.15883727791383206e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.19874941706799376e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.07240441185379662e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.65122731996281402e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.09862083042591635e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.61056973849460761e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.82625582370741113e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.49148400363907996e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.35393549478841146e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.70543742858708924e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.30423363643029155e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.16622335189342863e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.89161065942872719e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.87890977618476995e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.15372459515850689e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.92481186439752605e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.02722724568821144e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.50774703622636252e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.24079090809659665e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.50774703622636252e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.87655383651031560e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.20417042793042128e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.47334116670095394e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.96817995129694623e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.05874210425821458e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.36680075380324695e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.50858760406091896e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.37764277552810199e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.56150938910643200e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.01985605860788553e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-3.09262864569247176e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.32343266690382677e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.95072840352495708e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.72170046117437181e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.88316657492365769e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.53196508098940853e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.31547758492919864e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.33427468862868182e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.36414966332215792e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.99817201515817544e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=5.52161254549488056e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.97106696084603783e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.07018387871318787e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.37603341292831882e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=1.32669605735370039e-5 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.29632761259168916e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.64706665101849170e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.15267082473735982e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.89174851822782736e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.77862107522986079e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.48100459942870216e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.39337629576175104e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.34088966578205948e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.61192499121021449e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.16117232435569706e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.30174862345411668e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.46716367164199946e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.38306378639052951e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.28087315576751182e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.52401006881364509e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.53019848875186026e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.69459540686223420e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.15385415363450461e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.32343266690382677e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.26122917383508781e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.85722573273505986e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.90116655408662405e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.14996031930614606e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-9.84052253356904050e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.55364912443911862e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.48136731749101780e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.24211750396741394e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.61632850264317907e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.35053772121596438e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.99086423784633926e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.61021673025885192e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.25335086342652502e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.02256656403909929e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.63438281055618140e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.59955121265187472e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.51622802947032342e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.41541334744721681e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.45781847798334713e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.38153202955704479e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.36191794978696423e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.03323208164607649e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.61891032565867402e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.88975179790962500e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.47673735274158394e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.47522097105179739e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.00705461849754085e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.42643187328994969e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.32868292967497537e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.54569411226335518e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.30532007453123333e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.63631954009113834e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.22299025078879109e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.09168445253505020e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.23780932066398963e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.53196508098940853e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.57318727358182930e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.49148400363907996e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.59512899647355944e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.51858905795121757e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.32133273592705863e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.49419450907029372e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.02901525634520852e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.00359302602060296e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.27807664908113558e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.26904605416167371e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.76557708630922100e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.97089045672815999e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.83055470476430060e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.33374517627504829e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.38236892510343323e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.08423056259921236e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.00318131090227336e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.23127548224255889e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=2.13918339791313583e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.04118709382183994e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=1.75826876692205397e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=2.52619106189122533e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=2.99375487180369992e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.94125140110268646e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.20265740651766795e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.55068700859090614e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.36680075380324695e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.20862796092885416e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.09575021068187084e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.01789863480891785e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.96817995129694623e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.27117413321401181e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.29090660172926164e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-7.22156182540734104e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.53806371820963950e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.00672742686664440e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.92092261036858325e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.19452599726434239e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.88144377749810587e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-7.33413839627545909e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=3.59141969635823344e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.18800658136962098e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.99291331335677180e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.83716099870233884e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.81927865669806721e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.87860227650847589e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.44811591673965978e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.80717526067459433e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.11743425413158093e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.88182169686204603e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.03069808033274057e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.57402104078441241e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.22043346051770385e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.73574776461588565e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.47522097105179739e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.27640341723161965e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.34240620492232310e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.12112392586491949e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.23940699853620018e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.09433720020361835e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.15267082473735982e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.11589589332244782e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.09575021068187084e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.32674926018455652e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.54027310140092766e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.35225958159540527e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.52943107967607261e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.69010848042966844e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.85245378842513908e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.37493227009688823e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.08901645002562697e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.32614317233504053e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-9.73196199318977079e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.34561783259346246e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-9.28628217409382950e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.76064978169121567e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.66157582091974820e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.38848479725295704e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.44614986984292937e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.47522097105179739e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.32919934243822158e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.49012875092347308e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.79659946778279456e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.04154010205759562e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.28145183236126703e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.95209342282754150e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.61769718344989027e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.92498836851540389e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=3.93896320483033691e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.52401006881364509e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.69350198945700514e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.10659223240672588e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.42697026879868094e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.35274000687882556e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=4.45017718937040785e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.73525298833044062e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.74869178857073670e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.55111512312578270e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.61171949794297964e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.14724981387493230e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=3.52541290694896592e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.50774703622636252e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.99580909035443610e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.44269490587723226e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.93036924752759864e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.41245582966025374e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.36663750053070410e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.33969569949110934e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.18789281155210102e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.93379751116684862e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.84224291437448243e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.64851681453160026e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.41513108379899821e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.30174862345411668e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.52698260784006878e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.77320006436743327e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.11133031419722017e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=3.88279903021371275e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.15974209800368167e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.51045754165757629e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-5.54816649775413673e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.05238212378245066e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.64960352804544552e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.09168445253505020e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.29891934606835635e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.03323208164607649e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-5.56448981393550812e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.04967161835123690e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.53811624821482207e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.51705730111773285e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.09148955457122865e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.22703321997786041e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.97961767175666714e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.02798757490152681e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.60470040986632378e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.09168445253505020e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.78542865361974989e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.29819108507564862e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.27776461672901931e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.44811591673965978e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.97965259466451315e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.44844763239013452e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.90717710532784146e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.50232602536393500e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.16490157660004501e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.40610308255584648e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=7.49808828186260268e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.27328831642637219e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=9.24932768923969473e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.32885367776625429e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=1.01308325863719295e-6 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.38306378639052951e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=9.97466134107852231e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.33545343722641086e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.13183239652300049e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.54298360683214142e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=6.15216551219481544e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.25024902026105522e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.67166668606465699e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.86535724902870115e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.52679215188771156e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.16080234103100111e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.04377220425164530e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.26380154741712403e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.88419212288297799e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.30886370021105281e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-6.02892192658015247e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.50503653079514876e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.53465072808748126e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.35731398479399878e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.51790195287946061e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.14453930844371854e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.12773077885269979e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.33156418319746805e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.19578727727559686e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.20417042793042128e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-4.11423203396533294e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.81927865669806721e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.16192178963709074e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.10217346602414956e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.64938718244028379e-5 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.28684084358244100e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.09736656095731860e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.25567003112348274e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.33855792590269285e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.50079426853045028e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.00536646204588132e-5 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.75964753721136447e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.79142289218840040e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.16486809917782175e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.54069045338676225e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.77591056979864703e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=1.53564089781961510e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.71695707666974773e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.15239044013020198e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.28717965676134272e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.84903883441432926e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.52265481609803821e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.06056751694867329e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.47522097105179739e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.78044238850800635e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=3.96004843500330495e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.05654797389575460e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.46081431342004731e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.26844515386587320e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.48064198191422491e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.65458115894565494e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.85433872318596826e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.51174867246180800e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.64766268405591898e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.29167279581019634e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.00901403688303049e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.42555078562731619e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.52333244245584165e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.20564415379992562e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.17029628874232650e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.94938291739632774e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.66322445678252295e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.47251046562058363e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.56995715057795326e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.15538133016857358e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.85797255591127741e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.48064198191422491e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.59896597360714887e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.43185288415237721e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.74761254300082225e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.42914237872116345e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.12611880168910206e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.01443504774545801e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.99499382849194395e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.41287934613388089e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.44184895832364002e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.94938291739632774e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.04627408174701708e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.37567330716413616e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.94552008423488054e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.35153996569581558e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.12039340613440741e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.41287934613388089e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.58405619354085569e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.16529161565144890e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.83985564180200623e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.80622015425349702e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.37559386483742008e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.41830035699630841e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.79973625015358508e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.20417042793042128e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.87808264030488348e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.33156418319746805e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.60703793000904938e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.89517280877205252e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-9.59237153069260329e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.79556173417494680e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.02650203121466832e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.82316791072701001e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.60166555696495544e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.85315997458823922e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-1.20043126246097143e-5 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.07101684862204527e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.75668562161536423e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.47522097105179739e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.41951731261018288e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.73118723018361997e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=-3.95583159021328790e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=4.75422652634893694e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.18414102599085425e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.11201324326915341e-17
+IMPLICIT_WORK_REJECTION dt=1.04166666666666665e-3 defect_j=1.70082258050402446e-6 budget_j=1.25000000000000010e-6 maximum_drift_roundoff_m=5.44133965316162538e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.35118713227681819e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.54027310140092766e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.83491146233186186e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.38848479725295704e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.56448420854729542e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.42101086242752217e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.68170570341380943e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.17706537361828367e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.44639618715636081e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.42914237872116345e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.50959217462880602e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.96817995129694623e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-9.59173430313542408e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.10659223240672588e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.28601227899250414e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.49148400363907996e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.35798167270096393e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.46979996018936987e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.57350669865302661e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.26380154741712403e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.79776748828602839e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.35595873207839190e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-7.44809647424196641e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.31801165604139925e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.03713733055378621e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.92769887394661765e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.13418143593145733e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.19874941706799376e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.00008192137866769e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.10388172697551212e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.55066428134273848e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.18248638448071119e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.07881778311470100e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=3.15231781650160414e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.21470651000743154e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.23669649310498642e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.11255863700673951e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.54027310140092766e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.80291041667647589e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.42101086242752217e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.17668765170156964e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.32343266690382677e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.51779971153953586e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.06322414550730571e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.22525848920453095e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.51858905795121757e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.79333667173903200e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.03611909119516810e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.08063266925878620e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.41558985156509465e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.00028589947970348e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.39119530268417080e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.55093629951308376e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=2.86771474622415923e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.88034985290810097e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.54027310140092766e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.45418903503232756e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.35595873207839190e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.40695147567149181e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.96022493912118279e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.82754305439697484e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.77591056979864703e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.23674930077094691e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.13623128803219942e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.00164366625571644e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.36680075380324695e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-3.46285610318408654e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.04154010205759562e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.43196179204102814e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.35053772121596438e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.40314476917585962e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.01443504774545801e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.68490291967238282e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.10659223240672588e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.88461127629607939e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.15538133016857358e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-9.82862236729997729e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.73796349376165438e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.00989089532599330e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.55111512312578270e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.43568996041113733e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.19332840620556624e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.32794824880631654e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.78675259152350208e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.79198779379579570e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.42625536917207185e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.56604968389153537e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.53485209053850014e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.56963230549109389e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.42982000507896689e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.43420257613202740e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.26380154741712403e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.33304972472119737e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=3.88957529379174716e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.56050648955630145e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.43438688546571314e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.49372931349131988e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.46166844389572859e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.09260753647666675e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.54027310140092766e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.04860233699940680e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.32343266690382677e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.74659271802878749e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.38306378639052951e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-6.04465344019146714e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.49943901581484340e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.84465413233647979e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.13835301813557466e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.41558985156509465e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.03036932830440342e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.33427468862868182e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.37762493709658357e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.48786699828334669e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.45895793846451483e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.34558820014519043e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.30716963431654420e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.81295636313105407e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.44811591673965978e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.84757275925648634e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.21501244965527633e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.46588138189765815e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.44811591673965978e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.77328370008731073e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.22043346051770385e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.92382508032293464e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.11996825544491685e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.33118013123309509e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.79759461324835712e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.55067846078354998e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.92769887394661765e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.64429548347305721e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.73254248289922685e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.46221330805246241e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.17164436275585615e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-8.08714646499675283e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.18248638448071119e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.47204681071738674e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.42101086242752217e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.20072275889174329e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.28801959218017004e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.16647129431249597e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.42101086242752217e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.01676595801928138e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.38848479725295704e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.39883470006708582e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.43727389501480474e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-5.22683740047875977e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.39932681897781208e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.55109739292639676e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.97106696084603783e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.97865199807328862e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.37493227009688823e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.47880806782713092e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.01646792681886833e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.09658202825902595e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.22585447138013137e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.60879057019480864e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.20688093336163504e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.24939519767503571e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.22720972409573825e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.16978104797334226e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.99275100429574792e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.91105463443850074e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.35053772121596438e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.98418166653852568e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.30716963431654420e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-6.55616781933265891e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.47522097105179739e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.29724304376593481e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.30174862345411668e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.34907208965929965e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.90059381963448004e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-3.14593686318107978e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.51858905795121757e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.91601352466293775e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.52401006881364509e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.07852224052542576e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.73525298833044062e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-3.32239594538394876e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.29090660172926164e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.09832850246656232e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.33427468862868182e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-4.10140633612290483e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.32343266690382677e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-4.04817464029960314e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.39932681897781208e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-3.17707290212838542e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.21501244965527633e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=-6.09051330881867255e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.99546150972696168e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-2.61449546510705150e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.20417042793042128e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.08523573355469999e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.66206934168766907e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.61719124440989137e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.32343266690382677e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.71715275765852149e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.29090660172926164e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.21546107545575030e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.45624743303330106e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=-1.05635233710234949e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.54027310140092766e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.62168307361882436e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.48674061913445588e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=9.00776193826086091e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.05238212378245066e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=6.95933734203013632e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.29361710716047540e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.13003484223809553e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.65935883625645531e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=8.05810578492771601e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.24871726342757050e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.10803442522275364e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.01318567414825791e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.20952152217121411e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.43168347756292635e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.04964422424289050e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.42896587460328561e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=7.42130485464204126e-7 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.58075417875125623e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.13538441544872204e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.41016884070266713e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.09314678215876115e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.51841255383333973e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=7.51099479323440178e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.74880551548650942e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.55722409844744680e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.37764277552810199e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.94744100338185078e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.14996031930614606e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.92580541107541175e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.53485209053850014e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.81570681165837200e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.88975179790962500e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=6.44903718741499099e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.25024902026105522e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=4.39924772228927896e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.14996031930614606e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.69985472607340699e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.22043346051770385e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=1.17791129194012162e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.04949511423335906e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.13176557933153488e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.38830829313507920e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.61689563816648596e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=5.14724981387493230e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.29896989322963491e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=3.88008852478249899e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.35072172312793001e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.99071812522233760e-17
+IMPLICIT_WORK_REJECTION dt=5.20833333333333326e-4 defect_j=2.26560348986115830e-6 budget_j=6.25000000000000051e-7 maximum_drift_roundoff_m=4.72983197746801309e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.10518164808329833e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.41558985156509465e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.61610178248210096e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.92363311579979701e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=8.30253795214069487e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.43727389501480474e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=7.19879919923536310e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.35866923750960567e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=5.55604156768081496e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.25567003112348274e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.68336728463519898e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.05238212378245066e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=3.78640418021878797e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=4.72983197746801309e-17
+IMPLICIT_WORK_REJECTION dt=2.60416666666666663e-4 defect_j=6.95774868661740327e-7 budget_j=3.12500000000000026e-7 maximum_drift_roundoff_m=5.28141983272001347e-17
+IMPLICIT_WORK_REJECTION dt=1.30208333333333332e-4 defect_j=6.86072325067612829e-5 budget_j=1.56250000000000013e-7 maximum_drift_roundoff_m=5.52401006881364509e-17
+IMPLICIT_WORK_REJECTION dt=6.51041666666666658e-5 defect_j=1.22281795317133674e-5 budget_j=7.81250000000000064e-8 maximum_drift_roundoff_m=5.20281517521481440e-17
+IMPLICIT_WORK_REJECTION dt=3.25520833333333329e-5 defect_j=1.08557309729396655e-6 budget_j=3.90625000000000032e-8 maximum_drift_roundoff_m=4.86501843584979943e-17
+IMPLICIT_WORK_REJECTION dt=1.62760416666666664e-5 defect_j=4.78613263027428092e-8 budget_j=1.95312500000000016e-8 maximum_drift_roundoff_m=4.91524748962197944e-17
+IMPLICIT_WORK_REJECTION dt=1.62760416666666664e-5 defect_j=1.97198919032968208e-4 budget_j=1.95312500000000016e-8 maximum_drift_roundoff_m=4.94616419219676140e-17
+IMPLICIT_WORK_REJECTION dt=8.13802083333333322e-6 defect_j=3.58537577666408550e-8 budget_j=9.76562500000000080e-9 maximum_drift_roundoff_m=4.41854736935205772e-17
+IMPLICIT_WORK_REJECTION dt=8.13802083333333322e-6 defect_j=6.53653858548472683e-5 budget_j=9.76562500000000080e-9 maximum_drift_roundoff_m=5.20505981252503830e-17
+IMPLICIT_WORK_REJECTION dt=4.06901041666666661e-6 defect_j=2.05571482356312757e-8 budget_j=4.88281250000000040e-9 maximum_drift_roundoff_m=5.52794877201837759e-17
+IMPLICIT_WORK_REJECTION dt=4.06901041666666661e-6 defect_j=1.20778287065203844e-5 budget_j=4.88281250000000040e-9 maximum_drift_roundoff_m=5.46501422403738307e-17
+IMPLICIT_WORK_REJECTION dt=2.03450520833333331e-6 defect_j=8.13587331530206230e-9 budget_j=2.44140625000000020e-9 maximum_drift_roundoff_m=5.40781832427403644e-17
+IMPLICIT_WORK_REJECTION dt=2.03450520833333331e-6 defect_j=1.09438345272116783e-6 budget_j=2.44140625000000020e-9 maximum_drift_roundoff_m=4.80301562411078464e-17
+IMPLICIT_WORK_REJECTION dt=1.01725260416666665e-6 defect_j=1.54440984561623681e-9 budget_j=1.22070312500000010e-9 maximum_drift_roundoff_m=5.41832153281998977e-17
+IMPLICIT_WORK_REJECTION dt=1.01725260416666665e-6 defect_j=4.85228341940671833e-8 budget_j=1.22070312500000010e-9 maximum_drift_roundoff_m=4.75295597692805549e-17
+IMPLICIT_WORK_REJECTION dt=5.08626302083333326e-7 defect_j=1.27016044863402684e-9 budget_j=6.10351562500000050e-10 maximum_drift_roundoff_m=5.37932625351076991e-17
+IMPLICIT_WORK_REJECTION dt=8.13802083333333322e-6 defect_j=9.93670936231486751e-4 budget_j=9.76562500000000080e-9 maximum_drift_roundoff_m=4.55703725622813582e-17
+IMPLICIT_WORK_REJECTION dt=1.01725260416666665e-6 defect_j=1.15905231302750955e-4 budget_j=1.22070312500000010e-9 maximum_drift_roundoff_m=5.38466785503439235e-17
+IMPLICIT_WORK_REJECTION dt=5.08626302083333326e-7 defect_j=3.32154812515803206e-8 budget_j=6.10351562500000050e-10 maximum_drift_roundoff_m=5.04855988760796563e-17
+IMPLICIT_WORK_REJECTION dt=2.54313151041666663e-7 defect_j=8.32128898962556859e-10 budget_j=3.05175781250000025e-10 maximum_drift_roundoff_m=5.15404063583174764e-17
+CONTACT_FEATURE before=Some(PrescribedContactFeature { distance_m: 0.00010043500715184961, gap_m: 4.350071518496065e-7, body_face: [3, 10, 15], obstacle_face_index: 3062, body_weights: [0.05640363428575812, 0.9435963657142419, 0.0], obstacle_weights: [0.13976504502373738, 0.0, 0.8602349549762627] }) pinned_weight=Some(0.05640363428575812)
+CONTACT_REJECTION dt=2.54313151041666663e-7 depth=12 budget_j=6.10351562500000050e-10 error=implicit contact work defect before=Ok(InertialDiagnostics { mass_kg: 1.5493889603929571, momentum_kg_m_s: [0.05034524476117833, 0.7360407165136562, -0.07078410020282691], angular_momentum_kg_m2_s: [0.05210863935105729, -0.01192021418237921, -0.08950513507307344], kinetic_j: 0.2517022558509294, potential_j: 2.147380391505299, contact_j: 0.0177791996368783 }) diagnostic_trial=Ok(ViscoelasticDynamicStep { support: DrivenSupportStep { support_work_j: 2.1830406171312224e-5, reaction_work_j: 2.1830433292312134e-5, pin_kinetic_work_j: -2.7120999909918973e-11, plane_work_j: 0.0, plane_translation_work_j: 0.0, plane_rotation_work_j: 0.0, surface_work_j: -0.00019491204937382826, energy_defect_j: 8.321288989625569e-10 }, viscous_heat_j: 3.3885395605213075e-7, relaxation_energy_defect_j: 1.3886787532879034e-17, thermal_energy_defect_j: 0.0, total_energy_defect_j: 8.321289128493444e-10 }) after=Ok(InertialDiagnostics { mass_kg: 1.5493889603929571, momentum_kg_m_s: [0.05017714371463731, 0.7348510825051944, -0.07088463206721225], angular_momentum_kg_m2_s: [0.0519274732295575, -0.011913328458500011, -0.08928310622709787], kinetic_j: 0.25084143855675545, potential_j: 2.148067789134444, contact_j: 0.018468154017891678 })
+CONTACT_FEATURE after=Ok(Some(PrescribedContactFeature { distance_m: 0.0001002969749734717, gap_m: 2.969749734716928e-7, body_face: [3, 10, 15], obstacle_face_index: 3062, body_weights: [0.056402477302652465, 0.9435975226973475, 0.0], obstacle_weights: [0.139765700621135, 0.0, 0.860234299378865] }))
+CONTACT_GAUSS_WORK work_j=6.88953638891566457e-4 quadrature_error_j=7.42121812678624149e-10 obstacle_work_j=-1.94912074890000905e-4
+CONTACT_PATH_WORK contact_energy_change_j=6.88954381013379136e-4 midpoint_work_j=6.80730412781144927e-4 simpson_work_j=6.88954911334108740e-4 midpoint_error_j=8.22396823223420833e-6 simpson_error_j=-5.30320729604655261e-10
+CONTACT_CONVERGENCE subdivisions=2 total_defect_j=1.52952773538862406e-11 maximum_leaf_defect_j=1.19321221062366686e-11 mechanical_leaf_budget_j=1.52587890625000012e-10
+CONTACT_CONVERGENCE subdivisions=4 total_defect_j=8.61951499499093303e-13 maximum_leaf_defect_j=8.10547904294377231e-13 mechanical_leaf_budget_j=7.62939453125000062e-11
+Error: "implicit contact work defect; rejected frame step=52 time_s=0.216666667; last committed energy receipts=Ok([[0.37338045841053213, 0.3867073029712426, 0.013327998829667178, 1.1542689564977387e-6], [0.3843802511760601, 0.3979323174793855, 0.013553148637914151, 1.0823345890610438e-6], [2.347815338546405, 2.4651084692718834, 0.11729065184175133, -2.4788837280092356e-6], [0.6651067509733464, 0.7102984039240542, 0.04519893205770091, 7.2791069923726355e-6]]); last committed refinement=[(339, 135, 1), (337, 133, 1), (774, 234, 3), (493, 153, 3)]"

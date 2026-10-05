@@ -1,0 +1,10 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 7.42s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 2 tests
+test biomechanics::prescribed_surface::restored_guess_tests::closed_fully_pinned_feature_cannot_be_restored ... ok
+test biomechanics::prescribed_surface::restored_guess_tests::shallow_closed_guess_restores_separation_without_moving_pins_or_source ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 91 filtered out; finished in 0.00s
+

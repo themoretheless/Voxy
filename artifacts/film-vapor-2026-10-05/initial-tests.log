@@ -1,0 +1,39 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 27.38s
+     Running tests/liquid_evaporation.rs (target/debug/deps/liquid_evaporation-de372edf7f18e271)
+
+running 11 tests
+test failed_interface_exchange_rolls_back_both_states ... ok
+test solvent_can_condense_into_an_initially_solvent_free_solution ... ok
+test ideal_solution_pressure_uses_moles_and_suppresses_evaporation ... ok
+test kinetic_flux_matches_formula_and_equilibrium_has_no_transfer ... ok
+test invalid_solution_model_or_accuracy_rolls_back_composition_and_vapor ... ok
+test evaporation_and_condensation_conserve_mass_momentum_energy ... ok
+test selective_evaporation_and_condensation_conserve_every_species_mass ... ok
+test selective_evaporation_with_component_capacities_conserves_total_energy ... ok
+test interface_tolerance_refinement_reduces_thermal_mass_error ... ok
+test finite_cell_feedback_matches_independent_thermal_mass_ode ... ok
+test composition_feedback_matches_independent_mass_thermal_ode ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 6 tests
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test applied_heat_changes_temperature_and_rejects_late_overdraw ... ok
+test thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_vapor.rs (target/debug/deps/surface_film_vapor-e6c1242d6e3bc7c9)
+
+running 2 tests
+test invalid_vapor_exchange_preserves_all_three_owners ... ok
+test film_evaporation_and_condensation_preserve_mass_energy_momentum_and_residue ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

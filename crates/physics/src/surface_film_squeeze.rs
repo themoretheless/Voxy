@@ -380,7 +380,7 @@ impl SurfaceFilm {
                         for k in 0..rows[i].len() {
                             let carried = (moved / self.volume[i]) * rows[i][k];
                             change[i][k] -= carried;
-                            vented[k] += carried * self.material.density;
+                            vented[k] += carried;
                         }
                     }
                 }
@@ -402,7 +402,12 @@ impl SurfaceFilm {
                 }
                 report.normal_impulse += step * pressure.normal_load;
                 report.dissipated_energy += step * pressure.dissipated_power;
-                report.vented_mass = report.vented_volume * self.material.density;
+                report.vented_mass = report
+                    .vented_component_masses
+                    .as_ref()
+                    .map_or(report.vented_volume * self.material.density, |masses| {
+                        masses.iter().sum()
+                    });
                 if [
                     report.vented_volume,
                     report.vented_mass,

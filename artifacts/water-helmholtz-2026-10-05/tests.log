@@ -1,0 +1,21 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 26.29s
+     Running tests/water_helmholtz.rs (target/debug/deps/water_helmholtz-b23acff72ad2995e)
+
+running 3 tests
+test rejects_invalid_inputs_and_unhandled_critical_singularity ... ok
+test caloric_derivative_matches_cv_without_independent_energy_fit ... ok
+test reproduces_all_iapws95_table_seven_homogeneous_states ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/water_saturation.rs (target/debug/deps/water_saturation-92174406e8b8e808)
+
+running 4 tests
+test rejects_outside_liquid_vapor_coexistence_domain ... ok
+test matches_iapws_sr1_1992_published_table_one ... ok
+test pressure_derivative_and_clapeyron_relation_hold_across_domain ... ok
+test inverse_pressure_recovers_temperatures_and_rejects_extrapolation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

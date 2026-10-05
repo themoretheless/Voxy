@@ -1,0 +1,21 @@
+{
+  "initial_tests": {
+    "passed": 8,
+    "failed": 0,
+    "exit_code": 0,
+    "includes_four_cell_refinement": false
+  },
+  "final_tests": {
+    "state": "passed",
+    "passed": 9,
+    "failed": 0,
+    "exit_code": 0,
+    "four_cell_refinement": "error reduced more than 3x per dt halving on fixture"
+  },
+  "source_sha256": {
+    "crates/physics/src/surface_film_thermal.rs": "1440c11c0fd219e88470f7f751d2a272cc4fde0eccbb46018fb5db584b21733e",
+    "crates/physics/tests/surface_film_thermal.rs": "0e000e7f7b316c9d0f29fa9dabcec2584e4e4ff63e0cc621edf28b09b22dcf36"
+  },
+  "interactive_demo_integrated": false,
+  "goal_complete": false
+}

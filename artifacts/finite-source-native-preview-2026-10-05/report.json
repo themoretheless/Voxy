@@ -1,0 +1,22 @@
+{
+  "targeted_tests_passed": 1,
+  "failed": 0,
+  "gpu": {
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "frames": 3,
+    "exit_code": 0
+  },
+  "source_sha256": {
+    "crates/voxy_app/src/liquid_demo.rs": "5b849e93531dcf66db13452544962488f4cdcdcd88fa7d3a148a35816d296d7e",
+    "crates/voxy_app/examples/liquid_snapshot.rs": "a676f56f1bb2d1c1ab7a6d5bfab7aa54b660c21595582428a16b2c0ac9b28a54"
+  },
+  "preview_sha256": "1ca3a31704b42aad31c12f0b1d4dae1be57b7e555b16ac33c4fe1660949323d5",
+  "preview_note": "render predates restart-only follow-up; rendering and numerical source paths unchanged",
+  "goal_complete": false,
+  "limitations": [
+    "illustrative point nozzles",
+    "no physical nozzle calibration or breakup convergence",
+    "no rotating source"
+  ]
+}

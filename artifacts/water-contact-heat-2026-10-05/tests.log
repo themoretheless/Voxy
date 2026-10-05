@@ -1,0 +1,44 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 40.16s
+     Running tests/liquid_phase.rs (target/debug/deps/liquid_phase-edfebbbe4ab89aa9)
+
+running 13 tests
+test invalid_phase_state_and_negative_energy_leave_all_state_unchanged ... ok
+test heating_and_cooling_use_latent_plateau_and_are_reversible ... ok
+test reservoir_total_enthalpy_overflow_is_atomic_even_when_each_particle_is_finite ... ok
+test zero_conductivity_and_same_plateau_temperature_do_not_exchange_heat ... ok
+test heat_injection_outside_property_domain_rolls_back_phase_and_temperature ... ok
+test reservoir_crosses_latent_plateau_with_exact_heating_and_cooling_times ... ok
+test cooling_releases_latent_heat_into_a_colder_particle ... ok
+test failed_outer_step_restores_already_exchanged_latent_heat ... ok
+test reservoir_property_failure_rolls_back_and_plateau_equilibrium_has_zero_flux ... ok
+test reservoir_exchange_is_partition_independent_and_leaves_motion_unchanged ... ok
+test conductive_transition_conserves_total_enthalpy_without_temperature_overshoot ... ok
+test implicit_heat_exchange_converges_toward_analytic_sensible_heat_solution ... ok
+test pressure_and_symmetric_viscous_heating_drive_latent_transition_with_energy_balance ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/liquid_transport.rs (target/debug/deps/liquid_transport-4a6c43386b2751b5)
+
+running 7 tests
+test overflowing_heat_capacity_is_rejected_without_publishing_fields ... ok
+test immiscible_groups_exchange_heat_but_keep_composition_separate ... ok
+test failure_after_transport_exchange_rolls_back_fields_and_motion ... ok
+test passive_fields_advect_with_particles_without_diffusion ... ok
+test heat_and_dissolved_mass_are_conserved_with_unequal_capacities ... ok
+test zero_conductivity_insulates_and_large_rates_do_not_overshoot ... ok
+test connected_cloud_converges_to_mass_weighted_mixture_without_losing_heat ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/water_equilibrium.rs (target/debug/deps/water_equilibrium-50dc8052f83a1f0d)
+
+running 4 tests
+test phase_selection_and_lever_rule_preserve_specific_volume_energy_and_entropy ... ok
+test fixed_volume_heating_crosses_full_vapor_boundary_without_dropping_mass ... ok
+test finite_heat_reservoir_drives_full_vapor_and_preserves_energy_on_failure ... ok
+test contact_conductance_obeys_implicit_heat_law_and_preserves_both_stores_on_error ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.95s
+

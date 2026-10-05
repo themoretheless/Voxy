@@ -1,0 +1,5 @@
+# Finite prescribed heat transfer to equilibrium water
+
+`transfer_water_heat(mass,volume,&mut water_E,&mut reservoir_E,Q,[Tlo,Thi])` borrows existing extensive energy owners. Mass and volume are prescribed and fixed. Positive Q heats water; negative Q heats the reservoir. Initial and resulting water states must admit through the shared equilibrium flash. Reservoir energy must remain nonnegative. The operation stages both stores, rejects asymmetric sub-resolution transfers and nonfinite/unbalanced changes, then commits both together. It returns the actual representable water energy increment and the admitted equilibrium state.
+
+Tests cover 10 g of water at bulk density 5 kg/m3, heating a two-phase 450 K state to full vapor at 465 K and reversing the heat exchange, total-energy preservation, exhausted reservoir, unsupported water energy, NaN heat and asymmetric tiny-transfer rollback. See log/report for executed results. This is prescribed heat, not a contact conductance/rate law. It does not include interface kinetics, mechanical motion, pressure work from changing volume or interactive demo integration.

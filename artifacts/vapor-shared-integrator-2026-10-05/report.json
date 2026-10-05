@@ -1,0 +1,41 @@
+{
+  "state": "passed",
+  "required_tests": [
+    "liquid_evaporation",
+    "surface_film_vapor"
+  ],
+  "source_sha256": {
+    "crates/physics/src/liquid/evaporation.rs": "34d6dbb2169a70f93e435d47f22d212a35c323b785d4fe995ad3636dfeee0559"
+  },
+  "iapws_interface_integrated": false,
+  "goal_complete": false,
+  "session_id": 63038,
+  "log": "/tmp/voxy-water-and-vapor-integrator-tests.log",
+  "targets": [
+    "water_equilibrium",
+    "liquid_evaporation",
+    "surface_film_vapor"
+  ],
+  "completed_targets": {
+    "liquid_evaporation": {
+      "passed": 11,
+      "failed": 0
+    },
+    "surface_film_vapor": {
+      "passed": 9,
+      "failed": 0
+    }
+  },
+  "pending_targets": [],
+  "constitutive_adapters_validation": {
+    "state": "passed",
+    "passed": 20,
+    "failed": 0,
+    "scope": "11 particle and 9 film tests on the shared-controller source hash"
+  },
+  "exit_code": 0,
+  "passed": 20,
+  "failed": 0,
+  "joint_water_tests_passed": 5,
+  "joint_total_passed": 25
+}

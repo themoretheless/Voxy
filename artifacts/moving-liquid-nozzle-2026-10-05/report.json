@@ -1,0 +1,18 @@
+{
+  "passed": 8,
+  "failed": 0,
+  "targets": {
+    "emission_unit": 3,
+    "liquid_species": 5
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "d0be1f64b2f4d1476c2240d27fea7198c927146b200032b2eee27f83c38e535b"
+  },
+  "goal_complete": false,
+  "limitations": [
+    "caller owns source transform trajectory",
+    "no finite-mass nozzle reaction",
+    "not resolved physical jet breakup qualification",
+    "no new GPU render"
+  ]
+}

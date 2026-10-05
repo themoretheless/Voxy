@@ -1,0 +1,20 @@
+{
+  "passed": 391,
+  "failed": 0,
+  "ignored": 0,
+  "targets": {
+    "voxy_animation": 219,
+    "voxy_editor_include_ignored": 172
+  },
+  "source_sha256": {
+    "crates/voxy_animation/src/events.rs": "eccc69308385b0587f0b3344845c33388edd5cd2d760d5521fbc239e7d978329",
+    "crates/voxy_editor/src/model_playback.rs": "0dfd88a605f886252f3201c00419ebfc64f0dad68c916d68fbe8055160fef9e7"
+  },
+  "goal_complete": false,
+  "scope": "owner playback event queue after frame consumer acceptance",
+  "limitations": [
+    "registration and drain APIs remain internal",
+    "scene NodeId delivery and authored event persistence pending",
+    "audio/game callbacks and crossfade source policy pending"
+  ]
+}

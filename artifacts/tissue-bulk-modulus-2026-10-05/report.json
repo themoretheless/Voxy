@@ -1,0 +1,53 @@
+{
+  "goal_complete": false,
+  "tests_passed": 28,
+  "tests_failed": 0,
+  "tests_ignored": 0,
+  "runs": [
+    {
+      "session": 17854,
+      "exit_code": 0,
+      "targets": {
+        "tissue_bulk_modulus": 2,
+        "tissue_geometry": 3,
+        "tissue_surface": 4,
+        "tissues": 11
+      }
+    },
+    {
+      "session": 71030,
+      "exit_code": 0,
+      "targets": {
+        "tissue_demo": 8
+      }
+    }
+  ],
+  "render_session": 64701,
+  "render_exit_code": 0,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "frames": 241,
+  "fps": 20,
+  "duration_s": 12,
+  "csv_records": 964,
+  "bulk_modulus_pa": 1000000.0,
+  "density_kg_m3": 1000,
+  "max_sampled_volume_relative_errors": [
+    0.0013241848391222222,
+    0.001325234247980478,
+    0.004643220131574366,
+    0.004155970415362198
+  ],
+  "material_bulk_energy_scales_with_cell_volume": true,
+  "full_resolution_independent_material_calibration": false,
+  "anatomical_calibration": false,
+  "damping_no_longer_attenuates_external_acceleration": true,
+  "analytic_static_extension_tolerance_m": 0.0001,
+  "source_sha256": {
+    "crates/physics/src/tissue.rs": "93a3c83ea959d9de7ae217cce8c9c195a5a00858c29f3d9ba9b48bc568563c03",
+    "crates/physics/tests/tissues.rs": "6e7ef7c362f27b116be473e02c512f64c4158aebbfff490598c6de3f8953992e",
+    "crates/physics/tests/tissue_bulk_modulus.rs": "b598d2fb5d3ba2b73a0fb00ce1f57883ae4663e1f0e8ac04a77f648fc650b20a",
+    "crates/voxy_app/src/tissue_demo.rs": "a7847a05ce618f27da6cc74b95d7a0b396c6ea45d364c19d6255536b87bc0a8e",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "573fc3a02a10f73657e728a9dc3b8d76ae85631a594efe6c640c41679cb2638e"
+  }
+}

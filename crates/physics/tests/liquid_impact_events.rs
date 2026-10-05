@@ -112,6 +112,20 @@ fn ledgers(
     report: &physics::liquid::FilmImpactEventReport,
 ) {
     let r = &report.impact;
+    assert_eq!(
+        report.deposited_thermal_energy.len(),
+        r.deposition.capture.particles
+    );
+    let carried = report
+        .deposited_thermal_energy
+        .iter()
+        .map(|(cell, energy)| {
+            assert!(*cell < film.fractions().len());
+            energy.unwrap()
+        })
+        .sum::<f64>();
+    assert!((carried - r.deposition.capture.absorbed.thermal_energy.unwrap()).abs() < 1e-9);
+
     assert!((after.mass() + film.film().total_mass() - before.mass()).abs() < 1e-15);
     for (k, m) in after.species_totals().unwrap().unwrap().iter().enumerate() {
         assert!(

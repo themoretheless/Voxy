@@ -830,3 +830,127 @@ fn fast_immersed_drop_is_rejected_without_tunneling_or_partial_deposition() {
     assert_eq!(l, before);
     assert_eq!(f.component_masses().unwrap(), inventory);
 }
+
+#[test]
+fn captures_report_thermal_energy_in_the_receiving_cell() {
+    let previous = [[-0.5, 0.1, 0.5], [0.5, 0.1, -0.5]];
+    let mut l = fluid(&previous, &[[0., -2., 0.]; 2]);
+    let initial = l.transport_totals().unwrap().unwrap().0;
+    let mut f = film();
+    let report = l
+        .depositing_impact_spheres_surface_mixture_lifecycle(
+            &previous,
+            &mut f,
+            model(3., 0.),
+            &[0.01; 2],
+            control(),
+            &DropletLifecycle::default(),
+        )
+        .unwrap();
+    assert_eq!(report.deposited_thermal_energy.len(), 2);
+    let mut heat = [0.; 2];
+    for (cell, energy) in report.deposited_thermal_energy {
+        heat[cell] += energy.unwrap();
+    }
+    assert!((heat[1] - 1e-6 * 4184. * 300.).abs() < 1e-12);
+    assert!((heat[0] - 1e-6 * 4184. * 400.).abs() < 1e-12);
+    assert!((heat.iter().sum::<f64>() - initial).abs() < 1e-12);
+    assert_eq!(l.mass(), 0.);
+}
+
+#[test]
+fn thermal_lifecycle_credits_receiving_cells_and_rolls_back_late_failure() {
+    let previous = [[-0.5, 0.1, 0.5], [0.5, 0.1, -0.5]];
+    let initial = fluid(&previous, &[[0., -2., 0.]; 2]);
+    let target =
+        physics::surface_film::ThermalFilmMixture::new(film(), vec![4184.; 2], &[300.; 2]).unwrap();
+    let mut rejected = initial.clone();
+    let mut rejected_film = target.clone();
+    let before_liquid = format!("{rejected:?}");
+    let before_film = format!("{rejected_film:?}");
+    let mut limited = control();
+    limited.max_events = 1;
+    assert!(
+        rejected
+            .depositing_impact_spheres_thermal_surface_mixture_lifecycle(
+                &previous,
+                &mut rejected_film,
+                model(3., 0.),
+                &[0.01; 2],
+                limited,
+                &DropletLifecycle::default()
+            )
+            .is_err()
+    );
+    assert_eq!(format!("{rejected:?}"), before_liquid);
+    assert_eq!(format!("{rejected_film:?}"), before_film);
+    let mut accepted = initial.clone();
+    let mut accepted_film = target;
+    let report = accepted
+        .depositing_impact_spheres_thermal_surface_mixture_lifecycle(
+            &previous,
+            &mut accepted_film,
+            model(3., 0.),
+            &[0.01; 2],
+            control(),
+            &DropletLifecycle::default(),
+        )
+        .unwrap();
+    assert_eq!(report.impact.deposition.capture.particles, 2);
+    let temperatures = accepted_film.temperatures().unwrap();
+    assert!((temperatures[0].unwrap() - 400.).abs() < 1e-10);
+    assert!((temperatures[1].unwrap() - 300.).abs() < 1e-10);
+    assert!(
+        (accepted_film.energies_j().iter().sum::<f64>()
+            - initial.transport_totals().unwrap().unwrap().0)
+            .abs()
+            < 1e-12
+    );
+    assert!((accepted_film.mixture().film().total_mass() - initial.mass()).abs() < 1e-15);
+}
+
+#[test]
+fn sub_inventory_resolution_capture_preserves_droplet_and_thermal_film() {
+    let previous = [[0.5, 0.1, -0.5]];
+    let mut l = Liquid::new(
+        vec![Particle {
+            position: [0.5, -0.1, -0.5],
+            velocity: [0., -2., 0.],
+            mass: 1e-30,
+            material: 0,
+        }],
+        vec![Material::WATER],
+        Config::default(),
+    )
+    .unwrap();
+    l.configure_transport(
+        vec![LiquidField {
+            temperature: 300.,
+            concentration: 0.,
+        }],
+        vec![TransportMaterial::default()],
+    )
+    .unwrap();
+    l.configure_species(vec!["a".into(), "b".into()], vec![vec![0.2, 0.8]])
+        .unwrap();
+    let mut base = film();
+    base.deposit(0, 0.001, &[0.2, 0.8]).unwrap();
+    base.deposit(1, 0.001, &[0.2, 0.8]).unwrap();
+    let mut target =
+        physics::surface_film::ThermalFilmMixture::new(base, vec![4184.; 2], &[300.; 2]).unwrap();
+    let before_liquid = format!("{l:?}");
+    let before_film = format!("{target:?}");
+    assert!(
+        l.depositing_impact_spheres_thermal_surface_mixture_lifecycle(
+            &previous,
+            &mut target,
+            model(3., 0.),
+            &[0.01],
+            control(),
+            &DropletLifecycle::default()
+        )
+        .is_err()
+    );
+    assert_eq!(format!("{l:?}"), before_liquid);
+    assert_eq!(format!("{target:?}"), before_film);
+}

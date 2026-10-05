@@ -1,0 +1,75 @@
+{
+  "state": "passed",
+  "session_id": 38351,
+  "log": "/tmp/voxy-pure-film-actual-source-receipt-tests.log",
+  "reproduction": {
+    "exit_code": 101,
+    "incident_mass_kg": 1e-30,
+    "claimed_deposited_volume_m3": 1e-33,
+    "returned_success": true,
+    "volume_change_resolved": false
+  },
+  "fix": "reject positive volume or mass additions that round away; return actual volume growth",
+  "required_targets": [
+    "liquid_film_capture",
+    "surface_film",
+    "surface_film_withdrawal",
+    "surface_film_atomic_contact"
+  ],
+  "mass_underflow_guard": "reject at raw deposit before invalid stock exists",
+  "variable_density_integrated": false,
+  "goal_complete": false,
+  "source_sha256": {
+    "crates/physics/src/surface_film.rs": "e885a6afdd2aa82a9495099d4d17cf7a6c85b34ea2499d46449873f19def33ba",
+    "crates/physics/tests/liquid_film_capture.rs": "3832a03912a70e3c27ab9f2d2a1e8ea6bc797873f317a5d9e559795f12dd16fc",
+    "crates/physics/tests/surface_film.rs": "880d41bee919528a3e371698982159759fe6a54f4c56af9cdc891c6ea0f4491b",
+    "crates/physics/tests/surface_film_withdrawal.rs": "979da86ceae6c0cd474165df489815e10ab1879b18394c83191feaff2e73c7fc",
+    "crates/physics/tests/surface_film_atomic_contact.rs": "52c904cbb30579dcf7116f5e92a16086766ca9a37a4486f8d5f8cadfbb7f8ca0"
+  },
+  "batch_only_guard": {
+    "exit_code": 101,
+    "passed": 50,
+    "failed": 1,
+    "ignored": 2,
+    "failure": "singleton deposit bypassed batch mass-underflow guard"
+  },
+  "ignored_targets": {
+    "concave_fold_accumulates_film_by_capillarity_without_mass_loss": "existing expensive anisotropic fold convergence study",
+    "gravity_substep_reuse_benchmark": "existing paired release benchmark"
+  },
+  "unified_deposit_initial": {
+    "exit_code": 101,
+    "passed": 48,
+    "failed": 3,
+    "ignored": 2,
+    "failure": "three integration assertions expected nominal source amount instead of actual stored increment",
+    "production_changes_after_run": false
+  },
+  "receipt_test_update": "exact inventory-delta equality replaces nominal-rate equality; rollback, geometry, mass and time-dependent conservation gates retained",
+  "completed_targets": {
+    "liquid_film_capture": {
+      "passed": 11,
+      "failed": 0
+    },
+    "surface_film_withdrawal": {
+      "passed": 12,
+      "failed": 0
+    },
+    "surface_film": {
+      "passed": 25,
+      "failed": 0,
+      "ignored": 2
+    },
+    "surface_film_atomic_contact": {
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "exit_code": 0,
+  "tests_passed": 51,
+  "tests_failed": 0,
+  "tests_ignored": 2,
+  "job_state": "terminal: targeted receipt rerun exit 0",
+  "production_source_unchanged_between_final_runs": true,
+  "next_required_work": "EOS-derived variable density with consistent pressure work and energy ownership"
+}

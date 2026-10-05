@@ -1,0 +1,21 @@
+{
+  "comparison": "Historical particle-only artifact with matching camera and stage steps; not an independently controlled current-source baseline",
+  "frames": [
+    {
+      "frame": 0,
+      "changedPixelsFromHistoricalParticleOnlyImage": 0
+    },
+    {
+      "frame": 1,
+      "changedPixelsFromHistoricalParticleOnlyImage": 0
+    },
+    {
+      "frame": 2,
+      "changedPixelsFromHistoricalParticleOnlyImage": 1146
+    },
+    {
+      "frame": 3,
+      "changedPixelsFromHistoricalParticleOnlyImage": 10359
+    }
+  ]
+}

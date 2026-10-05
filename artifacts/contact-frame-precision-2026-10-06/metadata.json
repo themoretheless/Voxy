@@ -1,0 +1,17 @@
+{
+  "scope": "selected feature frame sensitivity, not nonlinear checkpoint",
+  "world_pose_source": "compensated-trajectory full clip rejected step 134",
+  "translated_world_poses": 21,
+  "sign_changes": 0,
+  "maximum_absolute_gap_shift_m": 3.296393178407626e-18,
+  "maximum_relative_gap_shift": 3.9639593219579545,
+  "actual_latent_observer_result": "short clip passed 68 steps",
+  "observer_changes_mechanics": false,
+  "default_solver_changed": false,
+  "short_clip_duration_s": 41.88,
+  "actual_latent_poses_checked": 326,
+  "actual_latent_poses_unresolved": 0,
+  "actual_local_max_abs_gap_shift_m": 5.53072591834683e-17,
+  "actual_local_max_abs_selected_pair_energy_shift_j": 3.989249731369195e-11,
+  "observer_source_sha256": "f75637630aa1122cb99e9b2926254e2015e0e279ecf6dc5ef42a09ee11810816"
+}

@@ -1,0 +1,24 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 13.30s
+     Running unittests src/lib.rs (target/debug/deps/physics-74c936782d895dfe)
+
+running 2 tests
+test liquid::water_helmholtz::tests::water_helmholtz_matches_official_table_six_derivatives ... ok
+test liquid::water_helmholtz::tests::water_helmholtz_critical_density_axis_has_finite_derivatives_away_from_critical_temperature ... FAILED
+
+failures:
+
+---- liquid::water_helmholtz::tests::water_helmholtz_critical_density_axis_has_finite_derivatives_away_from_critical_temperature stdout ----
+
+thread 'liquid::water_helmholtz::tests::water_helmholtz_critical_density_axis_has_finite_derivatives_away_from_critical_temperature' (31577400) panicked at crates/physics/src/liquid/water_helmholtz.rs:282:13:
+assertion failed: ((o1.x + r1.x - o0.x - r0.x) / (2. * eps) - (ideal.xx + residual.xx)).abs() <
+    1e-4
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    liquid::water_helmholtz::tests::water_helmholtz_critical_density_axis_has_finite_derivatives_away_from_critical_temperature
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 56 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --lib`

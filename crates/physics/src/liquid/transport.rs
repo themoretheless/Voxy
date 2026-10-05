@@ -204,6 +204,120 @@ fn harmonic(a: f64, b: f64) -> f64 {
         2.0 * (min / (1.0 + min / a.max(b)))
     }
 }
+/// Monotone implicit heat balance q/(G dt) = temperature_difference(q).
+/// Both energy budgets are supplied by the caller; this function owns no state.
+pub(super) fn implicit_heat_transfer(
+    low: f64,
+    high: f64,
+    inverse_rate: f64,
+    difference: impl Fn(f64) -> Result<f64, Error>,
+) -> Result<f64, Error> {
+    if !low.is_finite()
+        || !high.is_finite()
+        || low > high
+        || inverse_rate.is_nan()
+        || inverse_rate < 0.
+    {
+        return Err(Error::NumericalFailure);
+    }
+    if inverse_rate.is_infinite() && low <= 0. && high >= 0. {
+        if !difference(0.)?.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        return Ok(0.);
+    }
+    let residual = |q: f64| -> Result<f64, Error> {
+        let delta = difference(q)?;
+        if !delta.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        let value = q * inverse_rate - delta;
+        if value.is_nan() {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(value)
+    };
+    monotone_root(low, high, residual)
+}
+
+/// Shared increasing-residual bracket solve. Constitutive callers choose the
+/// coordinate (heat or temperature); no inventory is owned here.
+pub(super) fn monotone_root(
+    mut low: f64,
+    mut high: f64,
+    residual: impl Fn(f64) -> Result<f64, Error>,
+) -> Result<f64, Error> {
+    if !low.is_finite() || !high.is_finite() || low > high {
+        return Err(Error::NumericalFailure);
+    }
+    let evaluate = |x| {
+        let value = residual(x)?;
+        if value.is_nan() {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(value)
+    };
+    let lower = evaluate(low)?;
+    let upper = evaluate(high)?;
+    if lower > 0. || upper < 0. {
+        return Err(Error::NumericalFailure);
+    }
+    if lower == 0. {
+        return Ok(low);
+    }
+    if upper == 0. {
+        return Ok(high);
+    }
+    for _ in 0..80 {
+        let q = if low < 0. && high > 0. {
+            0.5 * low + 0.5 * high
+        } else {
+            low + 0.5 * (high - low)
+        };
+        if q == low || q == high {
+            return Ok(low);
+        }
+        let value = evaluate(q)?;
+        if value == 0. {
+            return Ok(q);
+        }
+        if value > 0. {
+            high = q;
+        } else {
+            low = q;
+        }
+    }
+    Ok(low)
+}
+
+#[cfg(test)]
+mod implicit_heat_tests {
+    use super::*;
+
+    #[test]
+    fn subresolution_exchange_still_admits_temperature_difference() {
+        assert_eq!(
+            implicit_heat_transfer(-1., 1., f64::INFINITY, |_| Ok(f64::NAN)),
+            Err(Error::NumericalFailure)
+        );
+        assert_eq!(
+            implicit_heat_transfer(-1., 1., f64::INFINITY, |_| Ok(10.)),
+            Ok(0.)
+        );
+    }
+
+    #[test]
+    fn opposite_extreme_bounds_do_not_overflow_the_midpoint() {
+        let root = implicit_heat_transfer(-f64::MAX, f64::MAX, 0., |q| {
+            if !q.is_finite() {
+                return Err(Error::NumericalFailure);
+            }
+            Ok(-q)
+        })
+        .unwrap();
+        assert_eq!(root, 0.);
+    }
+}
 pub(super) fn exchange(
     a: f64,
     b: f64,

@@ -1,0 +1,47 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.64s
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/debug/deps/prescribed_surface_contact-c34f43556423eadd)
+
+running 30 tests
+test feature_forces_and_torques_are_equal_and_opposite ... ok
+test finite_triangle_has_no_infinite_plane_contact_outside_its_extent ... ok
+test co_translating_rig_supports_and_triangle_surface_balance_both_actuators ... ok
+test endpoint_disjoint_surface_motion_cannot_tunnel_through_body ... ok
+test authored_contact_domain_preserves_source_indices_and_motion_identity ... ok
+test both_feature_gradients_match_independent_energy_differences ... ok
+test malformed_geometry_and_changed_owner_reject_without_mutating_surface ... ok
+test nearest_contact_reports_reconstructible_features_and_closed_gaps_read_only ... ok
+test implicit_tiny_step_preserves_impulse_below_world_position_resolution ... ok
+test inertial_obstacle_motion_books_work_and_rejects_tunnelling_atomically ... ok
+test normal_contact_blocks_match_force_differences_and_preserve_rigid_nullspace ... ok
+test infeasible_velocity_predictor_keeps_original_error_and_entire_state ... ok
+test nonlinear_prescribed_dilation_rejects_midpoint_work_defect_without_contact ... ok
+test obstacle_work_is_independent_and_refines_towards_potential_change ... ok
+test initial_trajectory_rejects_crossing_missed_by_finite_gauss_samples_atomically ... ok
+test path_quadrature_resolves_submicrometre_contact_work_without_widening_budget ... ok
+test co_moving_body_has_feasible_predictor_when_stationary_guess_closes_gap ... ok
+test subnanometre_contact_energy_detects_endpoint_reconstruction_roundoff ... ok
+test implicit_midpoint_books_obstacle_work_and_keeps_rejection_atomic ... ok
+test implicit_maxwell_split_preserves_heat_work_and_rolls_back_every_owner ... ok
+test translated_oblique_contact_preserves_energy_and_feature_forces ... ok
+test implicit_midpoint_free_motion_solves_constant_acceleration_and_contact_force ... ok
+test stiff_supported_tetrahedron_converges_with_strict_midpoint_work ... ok
+test viscoelastic_surface_rejection_preserves_history_heat_and_obstacle_pose ... ok
+test path_averaged_force_is_gradient_of_search_objective_and_books_narrow_gap_work ... ok
+test loose_energy_budget_cannot_bypass_implicit_force_equilibrium ... ok
+test implicit_narrow_gap_preserves_integrated_endpoint_and_energy_balance ... ok
+test moving_contact_restores_a_guess_when_stationary_and_velocity_poses_are_closed ... ok
+test translating_triangle_obstacle_is_galilean_equivalent_in_actual_dynamics ... ok
+test implicit_moving_contact_is_galilean_equivalent_and_books_actuator_power ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.98s
+

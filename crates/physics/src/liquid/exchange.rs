@@ -75,6 +75,15 @@ impl Liquid {
         if remove.len() > self.particles.len() || add.len() > self.config.max_particles {
             return Err(Error::ParticleBudget);
         }
+        if remove.is_empty() && add.is_empty() {
+            self.validate_source_pressures(0, pressures)?;
+            self.validate_source_species(0, compositions)?;
+            let empty = self.exchange_totals(std::iter::empty())?;
+            return Ok(ParticleExchange {
+                added: empty,
+                removed: empty,
+            });
+        }
         let mut mask = vec![false; self.particles.len()];
         for &index in remove {
             let entry = mask.get_mut(index).ok_or(Error::InvalidParticle)?;

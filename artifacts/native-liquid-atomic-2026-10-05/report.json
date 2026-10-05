@@ -1,0 +1,6 @@
+{
+  "tests_passed": 3,
+  "tests_failed": 0,
+  "scope": "Native two-reservoir transaction, both failure modes and recovery, jet deposition mass controls and reservoir spreading",
+  "performance": "Clone overhead not measured"
+}

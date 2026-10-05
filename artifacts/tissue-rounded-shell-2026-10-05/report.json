@@ -1,0 +1,22 @@
+{
+  "tests_passed": 8,
+  "tests_failed": 0,
+  "test_session": 63132,
+  "render_session": 42041,
+  "render_exit_code": 0,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "frames": 241,
+  "fps": 20,
+  "duration_s": 12,
+  "secondary_motion_records": 964,
+  "subdivision_steps": 3,
+  "render_shell_is_inscribed": true,
+  "collision_surface_changed": false,
+  "calibrated_anatomical_model": false,
+  "goal_complete": false,
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "7b7de82c0928005296e7296c086d91c991f8980e3560b66240f3888de3a1fcae",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "989055f81cdb36e8d77acdcc420b17aacd241427699eea65362b21219ec8c4a6"
+  }
+}

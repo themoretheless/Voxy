@@ -1,0 +1,56 @@
+{
+  "workspace": "/tmp/voxy-contact-replay-20261006",
+  "physics_source": "archived material-work-refinement candidate, previously failed step 126",
+  "application_source": "current test-only geometry fixture capture",
+  "shared_read_only_inputs": [
+    "assets",
+    "docs",
+    "vendor"
+  ],
+  "source_hashes": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "26bff084e69d3923a523fd9ad32e18f40dfb995cb523c7c6f1b1bbf87d813ae4",
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "c048c545fde38314c55128cd386fb928f4c3a9f1bbd8dbbb6ac8184f471fb3f6",
+    "crates/physics/tests/prescribed_surface_contact.rs": "71c943d279ab4bb2c5bab0d026e761145dd163530858a2307a2e3d7764314459"
+  },
+  "fixture_scope": "external CCD geometry; constitutive Debug evidence is not a reloadable dynamics checkpoint",
+  "capture_job": {
+    "state": "completed expected failing candidate run",
+    "exit_code": 101,
+    "failed_step": 126,
+    "seconds": 212.62,
+    "log": "/tmp/voxy-contact-leaf-capture-run.log"
+  },
+  "additional_changes": [
+    "test-only terminal-leaf JSON capture",
+    "read-only contact parameter accessors"
+  ],
+  "compiled_source_hashes": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "26bff084e69d3923a523fd9ad32e18f40dfb995cb523c7c6f1b1bbf87d813ae4",
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "91d38a3f61ccbcb4e7f311aec92ebf256230ecb67fdf86af6dd84b8ee7ed61d2",
+    "crates/voxy_app/src/tissue_demo.rs": "5f03e9fde48ca8ac913ee2d9213a5fceecbd6012b0fe9f06bd3e87b1f96e9802"
+  },
+  "asset_sha256": "b7001eaeea8254bd44773bcd247e78696d94169388fbb2a1800fc69434e777d9",
+  "roundtrip_test": "passed: body/surface coordinates bit-exact at origins 0 and 1e6; same external CCD admission; complete original body unchanged",
+  "captured_leaf": {
+    "dt_s": 2.5431315104166666e-07,
+    "depth": 12,
+    "body_nodes": 19,
+    "surface_triangles": 4672,
+    "fixture": "assets/animation/contact-fixtures/vertex-1308-predictor.json",
+    "sha256": "264828f9da810e15effe0bc161ed9d28de1d9a97efd4342444eeb156afe052b5"
+  },
+  "direct_replay": {
+    "static_start_open": true,
+    "stationary_body_path_open": true,
+    "predictor_path_open": false,
+    "minimum_sample_gap_m": -4.2271796559919454e-08,
+    "seconds": 0.966657042,
+    "scope": "external CCD only; not full mechanical state replay"
+  },
+  "captured_regression": {
+    "state": "passed",
+    "seconds": 0.18,
+    "log": "captured-regression.log"
+  },
+  "next_action": "constrained nonlinear solve for free face versus vertex; do not weaken CCD for the penetrating predictor"
+}

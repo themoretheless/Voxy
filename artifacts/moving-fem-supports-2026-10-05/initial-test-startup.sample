@@ -1,0 +1,32 @@
+Analysis of sampling finite_inertia-7f17bab5902fcfcc (pid 87714) every 1 millisecond
+Process:         finite_inertia-7f17bab5902fcfcc [87714]
+Path:            /Users/USER/Documents/*/finite_inertia-7f17bab5902fcfcc
+Load Address:    0x102fd4000
+Identifier:      finite_inertia-7f17bab5902fcfcc
+Version:         ???
+Code Type:       ARM64
+Parent Process:  cargo [87172]
+Target Type:     live task
+
+Date/Time:       2026-10-05 10:57:06.448 +0400
+Launch Time:     2026-10-05 10:54:11.326 +0400
+OS Version:      macOS 26.7.1 (25G313)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         96K
+Physical footprint (peak):  96K
+Idle exit:                  untracked
+----
+
+Call graph:
+    804 Thread_32735797: Main Thread   DispatchQueue_<multiple>
+      804 _dyld_start  (in dyld) + 0  [0x10327c9c0]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        _dyld_start  (in dyld)        804
+
+Binary images description not available
+

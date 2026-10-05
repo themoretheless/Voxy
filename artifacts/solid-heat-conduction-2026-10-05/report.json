@@ -1,0 +1,44 @@
+{
+  "goal_complete": false,
+  "qualification_complete": true,
+  "scope": "shared finite-capacity transfer and explicit solid-cell thermal networks",
+  "tests": {
+    "solid_heat_conduction": 3,
+    "surface_film_thermal": 11,
+    "viscoelastic_inertia": 8,
+    "surface_film_vapor": 9,
+    "thermal_inventory_unit": 1,
+    "extreme_pair_transfer_unit": 1,
+    "unique_passed": 33,
+    "failed": 0,
+    "ignored": 0
+  },
+  "proven": [
+    "analytic two-cell exponential relaxation",
+    "closed sensible-energy conservation",
+    "pair entropy increase",
+    "network temperature maximum principle",
+    "second-order temporal refinement",
+    "full-owner rollback after successful first link and later overflow",
+    "representable transfer with overflowing/underflowing intermediates",
+    "film thermal/vapor regression compatibility"
+  ],
+  "historical_failure": {
+    "session_id": 67332,
+    "cause": "test incorrectly expected exact zero compensated energy defect to fail under a small positive tolerance",
+    "resolution": "independently prove first-link success and actual late second-link overflow; rollback fixture passed"
+  },
+  "source_sha256": {
+    "crates/physics/src/heat_exchange.rs": "673a57e1f6f9cdf28101753891f1d010767ceeb78f060e56870b7d40b875332e",
+    "crates/physics/src/surface_film_thermal.rs": "f7079ef10ff55c8d1f70491a4e8001bfd011b0d5c0afa2c49e85c5419f83b5f3",
+    "crates/physics/src/biomechanics/inertia/thermal.rs": "8917fa24934cb1b35a10bc8e672e599fb712c6bbc211c9a5f949a4b8f7ce93ea",
+    "crates/physics/tests/solid_heat_conduction.rs": "92f9b81e7a4416e022814ee7b03ef8d01d21a0393193c76932e2c7ba9bff15c4"
+  },
+  "limitations": [
+    "caller-supplied physical conductances, no automatic FEM discretization",
+    "not automatically applied in mannequin",
+    "solid/liquid joint transaction not connected",
+    "temperature-dependent material parameters remain absent",
+    "no new current GPU render or full goal completion"
+  ]
+}

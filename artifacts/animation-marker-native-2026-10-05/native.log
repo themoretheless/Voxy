@@ -1,0 +1,43 @@
+NATIVE REVIEW project=/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-50000-1791196746920414000 pid=50000
+METAL WINDOW number=58130 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=0 asset=animated-triangle.glb
+METAL WINDOW number=58130 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=4 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+MODEL PUBLISHED frames=23 first_x=0 asset=animated-triangle.glb
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Occluded(true) visible=Some(true) focused=Some(false)
+METAL WINDOW number=58130 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(false)
+METAL WINDOW number=58130 occlusion=8194 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=1026 draws=4 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=2086 draws=4 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=2157 draws=4 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=2233 draws=4 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=3463 draws=4 outcome=Presented positions=[(NodeId { scene: 1, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=4739 draws=4 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=5825 draws=4 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+METAL WINDOW number=58130 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=6793 draws=4 outcome=Presented positions=[(NodeId { scene: 13, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=7749 key=KeyZ
+EDITOR PRESENT frames=7749 draws=4 outcome=Presented positions=[(NodeId { scene: 14, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=8613 key=KeyY
+EDITOR PRESENT frames=8613 draws=4 outcome=Presented positions=[(NodeId { scene: 15, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=10047 key=KeyZ
+EDITOR PRESENT frames=10047 draws=4 outcome=Presented positions=[(NodeId { scene: 16, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=10059 key=F5
+EDITOR PRESENT frames=10059 draws=4 outcome=Presented positions=[(NodeId { scene: 16, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=11641 draws=4 outcome=Presented positions=[(NodeId { scene: 20, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=11669 key=F9
+EDITOR PRESENT frames=11669 draws=4 outcome=Presented positions=[(NodeId { scene: 23, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=14229 key=F6
+EDITOR PRESENT frames=14229 draws=3 outcome=Presented positions=[(NodeId { scene: 24, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+GAME UI GPU PUBLISHED draws=0
+EDITOR KEY frames=15219 key=F6
+EDITOR PRESENT frames=15219 draws=4 outcome=Presented positions=[(NodeId { scene: 25, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]

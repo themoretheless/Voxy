@@ -1,0 +1,18 @@
+{
+  "scope": "isolated experimental search metric, not enabled in default",
+  "enable_env": "VOXY_GEOMETRIC_CONTACT_METRIC",
+  "force_law_changed": false,
+  "admission_changed": false,
+  "files_sha256": {
+    "contact_metric.rs": "1c4e7e3baa04facc02d2264432e3bf72c75905016b137cdf01a207188f0484f3",
+    "prescribed_surface.rs": "c3fd745cc83df84b8e3b9cb5d1f9dc84d155afd25103073c5042178d0bc00827",
+    "inertia/implicit.rs": "82c5ae83a0b2ba99f22d58d1cd7304b3679d2f8023094425e6525a8ea708b88f",
+    "mod.rs": "d316eeac7ae6bf76172e2cbed66137ec428802b71b5ade24abf7441b4d543c43"
+  },
+  "short_clip_steps": 68,
+  "short_clip_result": "passed",
+  "short_clip_duration_s": 15.77,
+  "full_clip_result": "failed step 127: implicit contact nonlinear nonconvergence",
+  "full_clip_duration_s": 509.81,
+  "default_enabled": false
+}

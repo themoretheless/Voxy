@@ -1,0 +1,3 @@
+01c2587ab629a80219e8b5d182a7688ae1a7674b42a55290653e89f7290fc402  crates/voxy_editor/src/animation_preview.rs
+be87a63a7a5be80e3cbed04c8f98fa9c506557a6fe2b17ad888aeb44eea1dfbd  crates/voxy_editor/src/lib.rs
+5f6afc472e2b8605ffbae362b53d5ceb48c267ce125e10bec60bd6728844f027  crates/voxy_editor/src/panels.rs

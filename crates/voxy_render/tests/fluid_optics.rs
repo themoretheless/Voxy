@@ -77,9 +77,15 @@ fn sphere_path_scale_additivity_and_opaque_occlusion() {
             far: 10.,
         },
     };
-    let mut fluid =
-        ScreenSpaceFluidRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm, 128, 128, 8)
-            .unwrap();
+    let mut fluid = ScreenSpaceFluidRenderer::new_with_adapter(
+        &device,
+        &adapter,
+        wgpu::TextureFormat::Rgba8Unorm,
+        128,
+        128,
+        8,
+    )
+    .unwrap();
     let sphere = FluidRenderParticle {
         position_radius: [0., 0., 0., 0.4],
         absorption_ior: [0.1, 0.1, 0.1, 1.333],
@@ -189,7 +195,15 @@ fn sphere_path_scale_additivity_and_opaque_occlusion() {
         .unwrap();
     assert_eq!(render(&fluid, &[]), 0.0);
     assert!(
-        ScreenSpaceFluidRenderer::new(&device, wgpu::TextureFormat::Rgba8Unorm, 0, 128, 8).is_err()
+        ScreenSpaceFluidRenderer::new_with_adapter(
+            &device,
+            &adapter,
+            wgpu::TextureFormat::Rgba8Unorm,
+            0,
+            128,
+            8
+        )
+        .is_err()
     );
     assert!(pollster::block_on(scope.pop()).is_none());
 }

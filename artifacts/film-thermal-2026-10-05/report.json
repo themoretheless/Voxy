@@ -1,0 +1,50 @@
+{
+  "initial_thermal_tests_passed": 2,
+  "expanded_run": {
+    "state": "passed",
+    "session_id": 74798,
+    "source_sha256": {
+      "crates/physics/src/surface_film.rs": "2758a28eb4a3a23b9d7ed4a125da6201b990e35939c4bd2a9227071a15bb9e1c",
+      "crates/physics/src/surface_film_mixture.rs": "bada66858ec62620c55b974d301785701f0e27c57845e9b09c0156a18043eecf",
+      "crates/physics/src/surface_film_thermal.rs": "8fb245b40f4320b787a9145f47538c774b9e54b0e7178a404e61f22d2440714a",
+      "crates/physics/tests/surface_film_thermal.rs": "c3027afccb5681c8eb60de2fd4cf5829f926d36a967c5d3ff2e589f507b5be57"
+    },
+    "exit_code": 0,
+    "tests_passed": 25
+  },
+  "evaporation_implemented": false,
+  "goal_complete": false,
+  "diffusion_run": {
+    "state": "passed",
+    "source_sha256": {
+      "crates/physics/src/surface_film.rs": "2758a28eb4a3a23b9d7ed4a125da6201b990e35939c4bd2a9227071a15bb9e1c",
+      "crates/physics/src/surface_film_mixture.rs": "bffefb8e0942d5a92e4d7a6444eaaac166a040b2c1dc1dacbf0f21102287ddb0",
+      "crates/physics/src/surface_film_thermal.rs": "b82267b9f0711015b504658cc599aa21b2f1ff2c5aed24378fe0ea5221b0222d",
+      "crates/physics/tests/surface_film_thermal.rs": "e20b011402e6a5eef9ffae2e6bb7337496acb0f06068064d89feb90590ab10f4"
+    },
+    "session_id": 33439,
+    "exit_code": 0,
+    "tests_passed": 18
+  },
+  "thermal_deposit_extension": {
+    "state": "passed",
+    "test": "thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error",
+    "source_sha256": {
+      "crates/physics/src/surface_film.rs": "2758a28eb4a3a23b9d7ed4a125da6201b990e35939c4bd2a9227071a15bb9e1c",
+      "crates/physics/src/surface_film_mixture.rs": "bffefb8e0942d5a92e4d7a6444eaaac166a040b2c1dc1dacbf0f21102287ddb0",
+      "crates/physics/src/surface_film_thermal.rs": "9fad8493b1740978e839fb3abc432fc22ae662745b554259a367605de5a18a85",
+      "crates/physics/tests/surface_film_thermal.rs": "2fbfb9240642da8d2a51b17876fb86636a6946829480c8a8897007c58283cfaf"
+    },
+    "exit_code": 0,
+    "tests_passed": 5
+  },
+  "applied_heat_extension": {
+    "state": "passed",
+    "source_sha256": {
+      "crates/physics/src/surface_film_thermal.rs": "af1d3bf0c2426f7aecc70170e44ea1aa88f3cf1e9a9bb8f79d2f79785b9d971f",
+      "crates/physics/tests/surface_film_thermal.rs": "d027d9f613f3cb2b61edcd945d6c340ac0776ff755e2b73f966f4765c934ed63"
+    },
+    "tests_passed": 6,
+    "exit_code": 0
+  }
+}

@@ -1,0 +1,9 @@
+# Independent work-defect diagnostics
+
+Tracing on rejected implicit steps now decomposes the work defect into: potential excluding the prescribed surface (material/internal contact/fixed plane), prescribed surface potential, free-node kinematic residual, and arithmetic remainder. The origin identifies the body in parallel logs. Diagnostics only: no original error, force law, tolerance, timestep or publication change. A shared relative-endpoint helper retains the previous FMA/pin mapping without duplicated geometry logic.
+
+141 focused physics checks passed (95 library, 8 static equilibrium, 30 prescribed contact, 8 viscoelastic; 5 manual library tests ignored). A fully prescribed 5% uniform dilation of a 1 MPa tetrahedron rejects and preserves the complete state. An independent scalar oracle U(lambda)=K*V0*(lambda^3-1)^2/2 matches the native midpoint-work defect within 1e-10 J. The trace records 0.169632432725650872 J entirely in the non-surface potential; surface, free kinematic and remainder terms are zero. Thus this controlled case has a constitutive midpoint work defect, not a CCD or nonlinear free-node solve failure. It does not establish the dominant defect in the imported clip.
+
+A three-second late-stage parallel profile showed one remaining region worker (voxy-tissue-2), while the coordinator waited. This is snapshot evidence of unequal regional cost, not a whole-clip utilization measurement. The full parallel clip subsequently passed all 480 steps in 766.94 seconds using the pre-diagnostic solver; terminal evidence is preserved in the parallel-regions artifact.
+
+Next investigation: compare energy-consistent material path forces with the current midpoint potential on independent nonlinear oracles, then qualify trajectories and full contact before choosing a replacement. Real-time performance and the broad engine parity goal remain unfinished.

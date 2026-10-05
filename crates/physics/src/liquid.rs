@@ -8,6 +8,23 @@ use std::f64::consts::PI;
 #[path = "liquid/viscoelastic.rs"]
 mod viscoelastic;
 pub use viscoelastic::{Conformation, MaxwellFluid};
+#[path = "liquid/water_saturation.rs"]
+mod water_saturation;
+pub use water_saturation::{WaterSaturation, water_saturation, water_saturation_temperature};
+#[path = "liquid/water_helmholtz.rs"]
+mod water_helmholtz;
+pub use water_helmholtz::{
+    WaterCoexistence, WaterHomogeneousResponse, WaterHomogeneousState, water_coexistence,
+    water_homogeneous_from_energy, water_homogeneous_response, water_homogeneous_state,
+};
+#[path = "liquid/water_equilibrium.rs"]
+mod water_equilibrium;
+pub use water_equilibrium::{
+    WaterEquilibriumResponse, WaterEquilibriumState, WaterHeatContact,
+    change_water_volume_adiabatically, exchange_water_contact_heat, transfer_water_heat,
+    water_equilibrium_at_temperature, water_equilibrium_from_energy,
+    water_equilibrium_from_entropy, water_equilibrium_response,
+};
 
 /// Material coefficients in a consistent unit system (normally SI).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -1149,7 +1166,9 @@ pub use arrhenius::ArrheniusViscosity;
 
 #[path = "liquid/emission.rs"]
 mod emission;
-pub use emission::{EmissionPulse, PulsedEmitter, ViscosityProfile};
+pub use emission::{
+    EmissionPulse, EmissionReaction, PulsedEmitter, SourceAccuracy, ViscosityProfile,
+};
 
 #[path = "liquid/splitting.rs"]
 mod splitting;
@@ -1183,7 +1202,7 @@ mod saturation;
 pub use saturation::SaturationCurve;
 
 #[path = "liquid/evaporation.rs"]
-mod evaporation;
+pub(crate) mod evaporation;
 pub use evaporation::{SolutionVaporInterface, VaporCell, VaporExchangeAccuracy, VaporInterface};
 
 #[path = "liquid/mixture_properties.rs"]

@@ -1,0 +1,23 @@
+{
+  "scope": "isolated compensated numerical evaluation of unchanged barrier law",
+  "enable_env": "VOXY_COMPENSATED_CONTACT_GAP",
+  "geometric_metric_default_enabled": false,
+  "default_solver_changed": false,
+  "ccd_changed": false,
+  "files_sha256": {
+    "contact_precision.rs": "703bbc9148809d0650dfc82d8f69f233beb5f89bd162efb4b1fdee7b13e3f0f3",
+    "contact_metric.rs": "7d49c266d335aab1f50174def5c560cbde6a7754201f36148fae8eb4dc19a7fd",
+    "prescribed_surface.rs": "f3c102443fb254612432a1bdf7a77e2c8dccd01c14fd7cc42ab5df6177c40ab1",
+    "surface_contact.rs": "f5180af5f195316fa83f2b8b269439c8c837213d7f6ed11fffcf9d4d7cb7828d",
+    "mod.rs": "5260892663823427a0f6a2a309b34b43a794ea1eaf4841eab3c1d2e77649766d",
+    "inertia/implicit.rs": "82c5ae83a0b2ba99f22d58d1cd7304b3679d2f8023094425e6525a8ea708b88f"
+  },
+  "biomechanics_tests_passed": 55,
+  "biomechanics_manual_tests_ignored": 4,
+  "short_clip_steps": 68,
+  "short_clip_duration_s": 12.06,
+  "parallel_complete_state_steps": 8,
+  "parallel_complete_state_result": "bitwise equal",
+  "full_clip_result": "failed step 123: implicit contact nonlinear nonconvergence",
+  "full_clip_duration_s": 359.29
+}

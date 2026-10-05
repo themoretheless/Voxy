@@ -1,0 +1,28 @@
+{
+  "batch_calls": 25,
+  "fixture_triangles": 4096,
+  "pairs_ns": [
+    [
+      9025250,
+      6856583
+    ],
+    [
+      8569833,
+      6931458
+    ],
+    [
+      8946209,
+      6706167
+    ],
+    [
+      8457750,
+      6765292
+    ],
+    [
+      8418541,
+      6545917
+    ]
+  ],
+  "median_batch_speed_ratio": 1.2860751213313582,
+  "scope": "pose-preparation microbenchmark only; not whole-engine speed"
+}

@@ -1,0 +1,39 @@
+{
+  "state": "passed on pinned pressure-response source; subsequent cached coexistence plumbing is covered by the separate equilibrium-response validation",
+  "source_sha256": {
+    "crates/physics/src/liquid/water_helmholtz.rs": "c3b9769d7c0db58f591f0b790ca4d2ab87fad043b9e8791e7951ac5c609f30c0",
+    "crates/physics/src/liquid/water_coexistence.rs": "a617a95575b7f867772b1d23b5ec42abd544f76fa791996d18dffa06d13e6627",
+    "crates/physics/src/liquid.rs": "1b000241ff4f1629c6216e75a5dea2e08656c05a97cca35f4bef34081bc40f4f",
+    "crates/physics/tests/water_helmholtz.rs": "1a80927a27aed4860059eb98944d246536a78a433351c343c1614a78f5999af6"
+  },
+  "required_targets": [
+    "water_helmholtz",
+    "water_coexistence",
+    "water_equilibrium",
+    "water_helmholtz::tests"
+  ],
+  "mechanics_integrated": false,
+  "goal_complete": false,
+  "session_id": 14641,
+  "log": "/tmp/voxy-water-pressure-response-tests.log",
+  "joint_targets": [
+    "water_helmholtz",
+    "water_coexistence",
+    "water_equilibrium"
+  ],
+  "derivative_unit_gate_state": "passed",
+  "joint_tests_passed": 16,
+  "joint_tests_failed": 0,
+  "joint_exit_code": 0,
+  "completed_targets": {
+    "water_coexistence": 2,
+    "water_equilibrium": 8,
+    "water_helmholtz": 6
+  },
+  "source_scope": "pinned pressure response source before subsequent cached coexistence/equilibrium-response edits",
+  "derivative_unit_gate_session_id": 76887,
+  "derivative_unit_gate_log": "/tmp/voxy-water-response-derivative-unit-tests.log",
+  "derivative_unit_gate_exit_code": 0,
+  "derivative_unit_tests_passed": 2,
+  "derivative_unit_tests_failed": 0
+}

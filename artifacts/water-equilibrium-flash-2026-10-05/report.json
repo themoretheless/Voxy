@@ -1,0 +1,14 @@
+{
+  "state": "passed",
+  "source_sha256": {
+    "crates/physics/src/liquid/water_equilibrium.rs": "cfd2b0defe6e5c474ca13d518ad69545d5dcf8c65c156748a69cd564a9d8af30",
+    "crates/physics/tests/water_equilibrium.rs": "c65f5c15dec827a782c0ba26222ce7d793441066aa7c75888178ff8710b665c7"
+  },
+  "finite_rate_evaporation_integrated": false,
+  "goal_complete": false,
+  "tests": {
+    "passed": 2,
+    "failed": 0,
+    "exit_code": 0
+  }
+}

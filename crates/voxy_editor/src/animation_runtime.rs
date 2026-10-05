@@ -755,6 +755,38 @@ impl AnimationRuntime {
     pub(super) fn clear(&mut self) {
         *self = Self::default();
     }
+    /// Registers markers on the owner's animation source (including retargeting).
+    pub(super) fn set_clip_events(
+        &mut self,
+        owner: NodeId,
+        clip: usize,
+        events: Vec<voxy_animation::ClipEvent>,
+    ) -> Result<(), String> {
+        self.owners
+            .get_mut(&owner)
+            .ok_or("animation event owner is not loaded")?
+            .playback
+            .set_clip_events(clip, events)
+    }
+    /// Drain only the runtime adopted after the enclosing scene transaction.
+    /// Owner ordering is stable; occurrence ordering within an owner is retained.
+    pub(super) fn take_events(&mut self) -> Vec<(NodeId, voxy_animation::ClipEventOccurrence)> {
+        let mut owners: Vec<_> = self.owners.keys().copied().collect();
+        owners.sort();
+        let mut events = Vec::new();
+        for owner in owners {
+            for event in self
+                .owners
+                .get_mut(&owner)
+                .expect("existing owner")
+                .playback
+                .take_events()
+            {
+                events.push((owner, event));
+            }
+        }
+        events
+    }
     pub(super) fn motions(&self) -> &[(NodeId, glam::Vec3)] {
         &self.motions
     }
@@ -1250,7 +1282,7 @@ fn prepare_playback_selection(
                             .is_some_and(|(a, b)| a.name() == b.name())
                     })
         });
-    let playback = if current.is_none_or(|old| {
+    let mut playback = if current.is_none_or(|old| {
         !(compatible_model || reload_transition)
             || (!same_clip
                 && (settings.transition_seconds == 0.
@@ -1260,7 +1292,7 @@ fn prepare_playback_selection(
         ModelPlayback::new(animation_model.clone(), settings.clone())?
     } else {
         let mut playback = current.unwrap().playback.clone();
-        playback.rebind(animation_model.clone());
+        playback.rebind(animation_model.clone())?;
         if reload_transition {
             playback.reload_clip(
                 settings.clip.ok_or("missing reload target")?,
@@ -1277,10 +1309,18 @@ fn prepare_playback_selection(
         playback.set_root_motion_joint(settings.resolve_motion_joint(animation_model)?)?;
         playback
     };
+    if current.is_some_and(|old| {
+        (!settings.events.is_empty() || !old.settings.events.is_empty())
+            && (settings.events != old.settings.events
+                || settings.clip != old.settings.clip
+                || !Arc::ptr_eq(&old.animation_model, animation_model))
+    }) {
+        playback.bind_authored_events(settings)?;
+    }
     Ok((playback, same_clip, compatible_model, reload_transition))
 }
 
-fn prepare_displayed_frame(
+pub(super) fn prepare_displayed_frame(
     mut frame: AnimatorFrame,
     model: &ModelAsset,
     settings: &ModelAnimation,

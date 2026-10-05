@@ -1,0 +1,8 @@
+{
+  "exec_session": 34554,
+  "exit_code": 0,
+  "status": "pass",
+  "steps": 480,
+  "elapsed_seconds": 1051.94,
+  "execution": "sequential regions with normal pruning and instantaneous quadrature poses"
+}

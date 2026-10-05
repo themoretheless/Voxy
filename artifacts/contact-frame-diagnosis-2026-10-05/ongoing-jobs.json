@@ -1,0 +1,21 @@
+{
+  "cpu": {
+    "exec_session": 91623,
+    "status": "terminal_pass",
+    "exit_code": 0,
+    "steps": 480,
+    "elapsed_seconds": 1221.58,
+    "log": "full-clip-pass.log"
+  },
+  "gpu": {
+    "exec_session": 12276,
+    "status": "terminal_pass",
+    "exit_code": 0,
+    "simulated_seconds": 2,
+    "saved_frames": 41,
+    "simulation_and_render_seconds": 1357.988445542,
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "binary": "baseline qualified before normal pruning and instantaneous pose staging"
+  }
+}

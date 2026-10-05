@@ -1,0 +1,10 @@
+{
+  "change": "ModelPlayback owner creation now admits the bind-only skin palette when no clip is selected.",
+  "editorTests": {
+    "passed": 159,
+    "failed": 0,
+    "ignored": 11
+  },
+  "regression": "Valid bind-only model retains its pose after advance; finite local bind scale with overflowing inverse-bind palette rejects owner creation.",
+  "scope": "Initial bind-only owner construction; does not certify subsequent resource rebinding or hardware support."
+}

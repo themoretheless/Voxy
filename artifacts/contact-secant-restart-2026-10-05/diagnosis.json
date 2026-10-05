@@ -1,0 +1,6 @@
+{
+  "secant_restarts": 525,
+  "zero_safe_trial_rejections": 641,
+  "last_reported_committed_step": 60,
+  "rejected_step": 65
+}

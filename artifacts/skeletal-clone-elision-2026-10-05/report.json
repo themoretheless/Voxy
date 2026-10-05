@@ -1,0 +1,27 @@
+{
+  "goal_complete": false,
+  "qualification_complete": true,
+  "scope": "elide redundant adaptive-wrapper clones around atomic viscoelastic solver",
+  "accepted_steps": 1403385,
+  "rejected_steps": 509161,
+  "redundant_full_owner_clones_elided": 1403385,
+  "physical_trace_byte_identical_to_previous": true,
+  "physical_trace_samples": 964,
+  "step_counts_and_printed_energy_heat_work_offsets_identical": true,
+  "full_cycle_seconds": 12,
+  "current_wall_seconds": 54.961904333,
+  "previous_trace_wall_seconds": 57.62726025,
+  "timing_limits": "single local runs with other processes active; no controlled speedup/editor-FPS claim",
+  "tests": {
+    "passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "elapsed_s": 52.06,
+    "session_id": 49202,
+    "new_regression": "successful first refinement child then failed second child preserves full original state"
+  },
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "425edf74fa4aeb4b7464f11a65153d96590a1e5591bed04465b7bcdbef3223f4",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "92cabaa34c570514f260202aeace022e3cd83cdb9f0a003a44080691e37de549"
+  }
+}

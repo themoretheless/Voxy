@@ -152,5 +152,8 @@ mod tissue_contact;
 pub mod surface_film;
 
 mod surface_film_contact;
+mod triangle_index;
 
 pub mod suspension;
+
+mod heat_exchange;

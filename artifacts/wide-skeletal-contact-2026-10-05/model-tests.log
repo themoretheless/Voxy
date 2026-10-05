@@ -1,0 +1,107 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:197:19
+    |
+194 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+197 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+227 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+243 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+278 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+300 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+328 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+636 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+759 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+989 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+    Finished `release` profile [optimized] target(s) in 21.59s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_render-4937a88d07a24db1)
+
+running 19 tests
+test model::tests::authored_bone_names_survive_inserted_nodes_and_reject_ambiguity ... ok
+test model::tests::embedded_glb_matches_explicit_buffers ... ok
+test model::tests::weight_quantization_preserves_exact_sum ... ok
+test model::import_tests::rejects_geometry_and_combined_source_buffer_budgets ... ok
+test model::import_tests::imports_explicit_triangle_without_opening_uri ... ok
+test model::tests::imports_static_and_rejects_unsupported_and_broken_data ... ok
+test model::phase_preview_tests::imported_model_preview_validates_phase_and_builds_skin_palette ... ok
+test model::tests::sampled_instances_have_independent_clocks_and_reject_invalid_requests ... ok
+test model::tests::imports_skin_and_animation_and_deforms_vertex ... ok
+test model::tests::gltf_step_translation_holds_until_key_and_linear_keeps_interpolating ... ok
+test model::tests::gltf_mirrored_root_preserves_positions_and_inverse_transpose_normals ... ok
+test model::tests::cubic_gltf_triplets_preserve_nonzero_derivatives_and_bound_decoded_keys ... ok
+test model::tests::imported_fox_selects_animated_hip_instead_of_static_container ... ok
+test model::cesium_character_tests::pinned_character_imports_and_samples_complete_skinned_mesh ... ok
+test model::wide_geometry_tests::wide_surface_rejects_foreign_rig_and_invalid_clip_phase ... ok
+test model::wide_geometry_tests::physical_character_motion_survives_a_sub_f32_phase_step ... ok
+test model::wide_geometry_tests::wide_character_geometry_preserves_topology_and_matches_render_precision ... ok
+test model::cesium_character_tests::embedded_character_images_are_bounded_and_keep_material_indices ... ok
+test model::cesium_character_tests::embedded_image_batch_rejects_external_views_and_shared_budget_overflow ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 143 filtered out; finished in 0.03s
+

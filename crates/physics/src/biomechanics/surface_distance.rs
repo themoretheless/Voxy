@@ -1,5 +1,25 @@
 //! Closest features of disjoint triangles; crossing triangles have zero distance.
-use super::{Vec3, add, cross, dot, scale, sub};
+#[cfg(test)]
+use super::add;
+use super::{Vec3, cross, dot, sub};
+/// Interpolate from the nearer endpoint, retaining authored endpoints exactly.
+/// Fused multiply-add avoids a separately rounded displacement product.
+pub(super) fn trajectory_point(start: Vec3, end: Vec3, time: f64) -> Vec3 {
+    if time == 0. {
+        return start;
+    }
+    if time == 1. {
+        return end;
+    }
+    std::array::from_fn(|axis| {
+        if time <= 0.5 {
+            time.mul_add(end[axis] - start[axis], start[axis])
+        } else {
+            (1. - time).mul_add(start[axis] - end[axis], end[axis])
+        }
+    })
+}
+
 #[derive(Clone, Copy, Debug)]
 pub(super) struct Closest {
     pub a: [f64; 3],
@@ -7,11 +27,33 @@ pub(super) struct Closest {
     pub delta: Vec3,
     pub distance: f64,
 }
-fn point(t: [Vec3; 3], weights: [f64; 3]) -> Vec3 {
-    add(
-        add(scale(t[0], weights[0]), scale(t[1], weights[1])),
-        scale(t[2], weights[2]),
-    )
+// Evaluate an affine feature difference before adding a world origin.
+// Compensated products/sums retain small separations between oblique features.
+fn feature_delta(a: [Vec3; 3], b: [Vec3; 3], wa: [f64; 3], wb: [f64; 3]) -> Vec3 {
+    let anchor = sub(a[0], b[0]);
+    let edges = [
+        sub(a[1], a[0]),
+        sub(a[2], a[0]),
+        sub(b[1], b[0]),
+        sub(b[2], b[0]),
+    ];
+    let weights = [wa[1], wa[2], -wb[1], -wb[2]];
+    std::array::from_fn(|axis| {
+        let mut sum = anchor[axis];
+        let mut correction = 0.;
+        for (edge, weight) in edges.iter().zip(weights) {
+            let product = edge[axis] * weight;
+            let next = sum + product;
+            correction += if sum.abs() >= product.abs() {
+                (sum - next) + product
+            } else {
+                (product - next) + sum
+            };
+            correction += weight.mul_add(edge[axis], -product);
+            sum = next;
+        }
+        sum + correction
+    })
 }
 fn triangle_weights(t: [Vec3; 3], q: Vec3) -> [f64; 3] {
     let [a, b, c] = t;
@@ -82,14 +124,16 @@ fn edge_parameters(a: Vec3, b: Vec3, c: Vec3, d: Vec3) -> (f64, f64) {
 }
 pub(super) fn vertex_face_closest(p: Vec3, t: [Vec3; 3]) -> (Vec3, [f64; 3], f64) {
     let w = triangle_weights(t, p);
-    let delta = sub(p, point(t, w));
+    let delta = feature_delta([p; 3], t, [1., 0., 0.], w);
     (delta, w, dot(delta, delta).sqrt())
 }
 pub(super) fn edge_edge_closest(x: [Vec3; 4]) -> (Vec3, [f64; 4], f64) {
     let (s, t) = edge_parameters(x[0], x[1], x[2], x[3]);
-    let delta = sub(
-        add(scale(x[0], 1. - s), scale(x[1], s)),
-        add(scale(x[2], 1. - t), scale(x[3], t)),
+    let delta = feature_delta(
+        [x[0], x[1], x[0]],
+        [x[2], x[3], x[2]],
+        [1. - s, s, 0.],
+        [1. - t, t, 0.],
     );
     (delta, [1. - s, s, -(1. - t), -t], dot(delta, delta).sqrt())
 }
@@ -134,7 +178,7 @@ pub(super) fn triangle_distance(a: [Vec3; 3], b: [Vec3; 3]) -> Result<Closest, &
         distance: f64::INFINITY,
     };
     let mut consider = |wa: [f64; 3], wb: [f64; 3]| {
-        let delta = sub(point(a, wa), point(b, wb));
+        let delta = feature_delta(a, b, wa, wb);
         let distance = dot(delta, delta).sqrt();
         if distance < best.distance {
             best = Closest {
@@ -179,7 +223,7 @@ pub(super) fn triangle_primitive_distances(
     }
     let mut rows = Vec::new();
     let mut push = |wa, wb| {
-        let delta = sub(point(a, wa), point(b, wb));
+        let delta = feature_delta(a, b, wa, wb);
         rows.push(Closest {
             a: wa,
             b: wb,
@@ -240,6 +284,7 @@ pub(super) fn separation_lower_bound(a: [Vec3; 3], b: [Vec3; 3]) -> f64 {
     (bound - 64. * f64::EPSILON * scale).max(0.)
 }
 /// Geometry cached once per energy evaluation; never reused after deformation.
+#[derive(Debug)]
 pub(super) struct PreparedTriangle {
     points: [Vec3; 3],
     lo: Vec3,
@@ -319,5 +364,249 @@ mod lower_bound_tests {
                 assert!(bound < 1e-13);
             }
         }
+    }
+}
+
+/// Conservative advancement of two linearly moving triangle primitives.
+/// The fixed iteration budget rejects unresolved paths instead of admitting them.
+pub(super) fn triangle_pair_path_is_open<const CULL: bool>(
+    start_a: [Vec3; 3],
+    end_a: [Vec3; 3],
+    start_b: [Vec3; 3],
+    end_b: [Vec3; 3],
+    minimum: f64,
+) -> bool {
+    triangle_pair_path_rejection_time::<CULL>(start_a, end_a, start_b, end_b, minimum).is_none()
+}
+
+/// First sampled unresolved/closed time; None is a certified open path.
+/// Shares the exact advancement used by the boolean admission API.
+pub(super) fn triangle_pair_path_rejection_time<const CULL: bool>(
+    start_a: [Vec3; 3],
+    end_a: [Vec3; 3],
+    start_b: [Vec3; 3],
+    end_b: [Vec3; 3],
+    minimum: f64,
+) -> Option<f64> {
+    // Preserve the first rejection location used for quadrature refinement.
+    // Authored endpoints remain independently guarded in world coordinates.
+    if match triangle_distance(start_a, start_b) {
+        Ok(closest) => closest.distance <= minimum,
+        Err(_) => true,
+    } {
+        return Some(0.);
+    }
+    let endpoint_rejected = match triangle_distance(end_a, end_b) {
+        Ok(closest) => closest.distance <= minimum,
+        Err(_) => true,
+    };
+    // Subtract the linearly moving first vertex before interpolation. This
+    // preserves relative trajectories and avoids rounding away a narrow gap
+    // during a large common translation. The omitted translation is rigid.
+    let start_origin = start_a[0];
+    let end_origin = end_a[0];
+    let start_a = start_a.map(|p| sub(p, start_origin));
+    let end_a = end_a.map(|p| sub(p, end_origin));
+    let start_b = start_b.map(|p| sub(p, start_origin));
+    let end_b = end_b.map(|p| sub(p, end_origin));
+    let velocity_a: [Vec3; 3] = std::array::from_fn(|i| sub(end_a[i], start_a[i]));
+    let velocity_b: [Vec3; 3] = std::array::from_fn(|i| sub(end_b[i], start_b[i]));
+    // Feature velocities are convex combinations of vertex velocities. Their
+    // relative norm is bounded by the largest cross-pair relative velocity.
+    // Unlike summed absolute speeds this removes common rigid translation.
+    let mut bound = 0.0_f64;
+    let mut speed_scale = 0.0_f64;
+    for a in velocity_a {
+        speed_scale = speed_scale.max(dot(a, a).sqrt());
+        for b in velocity_b {
+            speed_scale = speed_scale.max(dot(b, b).sqrt());
+            let relative = sub(a, b);
+            bound = bound.max(dot(relative, relative).sqrt());
+        }
+    }
+    bound += 64. * f64::EPSILON * speed_scale;
+    let reject = |reason: &str, time: f64, gap: f64, steps: usize| {
+        if std::env::var_os("VOXY_CCD_REJECTION_TRACE").is_some() {
+            eprintln!(
+                "CCD_REJECTION reason={reason:?} time={time:.17e} gap_m={gap:.17e} relative_speed_bound_m={bound:.17e} steps={steps}"
+            );
+        }
+        Some(time)
+    };
+    let mut time = 0.;
+    let mut last_time = 0.;
+    let mut last_gap = f64::NAN;
+    for step in 0..128 {
+        let at = |start: [Vec3; 3], end: [Vec3; 3]| {
+            std::array::from_fn(|i| trajectory_point(start[i], end[i], time))
+        };
+        let a = at(start_a, end_a);
+        let b = at(start_b, end_b);
+        for triangle in [a, b] {
+            let n = cross(sub(triangle[1], triangle[0]), sub(triangle[2], triangle[0]));
+            let area = dot(n, n);
+            if !area.is_finite() || area <= 1e-30 {
+                return reject("degenerate triangle", time, f64::NAN, step + 1);
+            }
+        }
+        let lower = separation_lower_bound(a, b);
+        if CULL && lower - minimum > bound * (1. - time) {
+            return endpoint_rejected.then_some(1.);
+        }
+        let Ok(closest) = triangle_distance(a, b) else {
+            return reject("distance evaluation", time, f64::NAN, step + 1);
+        };
+        let gap = closest.distance - minimum;
+        last_time = time;
+        last_gap = gap;
+        if gap <= 0. {
+            return reject("closed gap", time, gap, step + 1);
+        }
+        if bound == 0. || gap > bound * (1. - time) {
+            return endpoint_rejected.then_some(1.);
+        }
+        let next = time + 0.8 * gap / bound;
+        if !next.is_finite() || next <= time {
+            return reject("time increment", time, gap, step + 1);
+        }
+        time = next.min(1.);
+    }
+    reject("iteration limit", last_time, last_gap, 128)
+}
+
+#[cfg(test)]
+mod relative_motion_tests {
+    use super::*;
+    #[test]
+    fn common_translation_preserves_a_narrow_open_gap() {
+        let a = [[-0.1, -0.1, 0.], [0.1, -0.1, 0.], [0., 0.1, 0.]];
+        let b = a.map(|p| [p[0], p[1], 0.000102]);
+        for shift in [[1., -2., 3.], [-100., 50., -7.]] {
+            let end_a = a.map(|p| add(p, shift));
+            let end_b = b.map(|p| add(p, shift));
+            // Both planes translate equally; exact separation is constant.
+            assert!(triangle_pair_path_is_open::<false>(
+                a, end_a, b, end_b, 0.0001
+            ));
+            assert!(triangle_pair_path_is_open::<true>(
+                a, end_a, b, end_b, 0.0001
+            ));
+        }
+    }
+    #[test]
+    fn relative_motion_still_rejects_a_swept_crossing() {
+        let a = [[-0.1, -0.1, 0.], [0.1, -0.1, 0.], [0., 0.1, 0.]];
+        let b = a.map(|p| [p[0], p[1], 0.001]);
+        let end_b = b.map(|p| [p[0], p[1], -0.001]);
+        for shift in [[0.; 3], [1., -2., 3.]] {
+            assert!(!triangle_pair_path_is_open::<true>(
+                a,
+                a.map(|p| add(p, shift)),
+                b,
+                end_b.map(|p| add(p, shift)),
+                0.0001
+            ));
+        }
+    }
+}
+
+#[cfg(test)]
+mod affine_precision_tests {
+    use super::*;
+    #[test]
+    fn oblique_vertex_face_keeps_small_separation_after_large_translation() {
+        let triangle = [[0., 0., 0.], [0.5, 0., 0.5], [0., 0.5, 0.5]];
+        let gap = 2.0_f64.powi(-20);
+        let p = [0.125, 0.125, 0.25 + gap];
+        let expected = gap / 3.0_f64.sqrt();
+        for shift in [[0.; 3], [1048576.; 3], [-1048576.; 3]] {
+            let (delta, weights, distance) =
+                vertex_face_closest(add(p, shift), triangle.map(|v| add(v, shift)));
+            assert!(
+                (distance - expected).abs() < 1e-15,
+                "distance={distance} expected={expected}"
+            );
+            assert!(weights.iter().all(|v| *v > 0.));
+            for (axis, sign) in [(0, -1.), (1, -1.), (2, 1.)] {
+                assert!((delta[axis] - sign * gap / 3.).abs() < 1e-15);
+            }
+        }
+    }
+    #[test]
+    fn oblique_triangle_and_edge_queries_share_affine_precision() {
+        let gap = 2.0_f64.powi(-20);
+        let b = [[0., 0., 0.], [0.5, 0., 0.5], [0., 0.5, 0.5]];
+        let a = [
+            [0.125, 0.125, 0.25 + gap],
+            [0.125, 0.125, 0.3],
+            [0.14, 0.125, 0.4],
+        ];
+        let edges = [
+            [0., 0., 0.],
+            [0.5, 0.5, 0.],
+            [0.25, 0., gap],
+            [0.25, 0.5, gap],
+        ];
+        for shift in [[0.; 3], [1048576.; 3]] {
+            let closest =
+                triangle_distance(a.map(|p| add(p, shift)), b.map(|p| add(p, shift))).unwrap();
+            assert!((closest.distance - gap / 3.0_f64.sqrt()).abs() < 1e-15);
+            let (_, _, distance) = edge_edge_closest(edges.map(|p| add(p, shift)));
+            assert!((distance - gap).abs() < 1e-15);
+        }
+    }
+}
+
+#[cfg(test)]
+mod trajectory_precision_tests {
+    use super::*;
+    #[test]
+    fn authored_endpoints_survive_large_displacement_cancellation() {
+        let start = [1e16, -1e16, 1.];
+        let end = [1., -1., 1e16];
+        assert_eq!(trajectory_point(start, end, 0.), start);
+        assert_eq!(trajectory_point(start, end, 1.), end);
+        // The old start + (end - start) loses both unit endpoints.
+        assert_ne!(add(start, sub(end, start)), end);
+    }
+    #[test]
+    fn reversed_trajectory_uses_identical_nearest_endpoint_arithmetic() {
+        let start = [1e16, -1e16, 3.];
+        let end = [1., -1., 1e16];
+        for t in [0., 0.125, 0.25, 0.75, 0.875, 1.] {
+            assert_eq!(
+                trajectory_point(start, end, t),
+                trajectory_point(end, start, 1. - t)
+            );
+        }
+    }
+}
+
+#[cfg(test)]
+mod moving_pair_frame_tests {
+    use super::*;
+    #[test]
+    fn large_common_translation_keeps_a_binary_narrow_gap_open() {
+        let a = [[0., 0., 1.], [0.25, 0., 1.], [0., 0.25, 1.]];
+        let distance = 2_f64.powi(-20);
+        let minimum = distance - 2_f64.powi(-40);
+        let b = a.map(|p| [p[0], p[1], p[2] + distance]);
+        let shift = [1048576.; 3];
+        let end_a = a.map(|p| add(p, shift));
+        let end_b = b.map(|p| add(p, shift));
+        assert_eq!(end_b[0][2] - end_a[0][2], distance);
+        assert!(triangle_pair_path_is_open::<true>(
+            a, end_a, b, end_b, minimum
+        ));
+        assert!(triangle_pair_path_is_open::<false>(
+            a, end_a, b, end_b, minimum
+        ));
+    }
+    #[test]
+    fn closed_authored_endpoint_remains_rejected_in_relative_frame() {
+        let a = [[0., 0., 1.], [0.25, 0., 1.], [0., 0.25, 1.]];
+        let b = a.map(|p| [p[0], p[1], p[2] + 0.01]);
+        let time = triangle_pair_path_rejection_time::<true>(a, a, b, a, 0.001).unwrap();
+        assert!((0. ..=1.).contains(&time));
     }
 }

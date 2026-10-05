@@ -1,0 +1,35 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 42.42s
+     Running tests/liquid_evaporation.rs (target/debug/deps/liquid_evaporation-de372edf7f18e271)
+
+running 11 tests
+test kinetic_flux_matches_formula_and_equilibrium_has_no_transfer ... ok
+test failed_interface_exchange_rolls_back_both_states ... ok
+test invalid_solution_model_or_accuracy_rolls_back_composition_and_vapor ... ok
+test solvent_can_condense_into_an_initially_solvent_free_solution ... ok
+test ideal_solution_pressure_uses_moles_and_suppresses_evaporation ... ok
+test evaporation_and_condensation_conserve_mass_momentum_energy ... ok
+test selective_evaporation_with_component_capacities_conserves_total_energy ... ok
+test selective_evaporation_and_condensation_conserve_every_species_mass ... ok
+test interface_tolerance_refinement_reduces_thermal_mass_error ... ok
+test finite_cell_feedback_matches_independent_thermal_mass_ode ... ok
+test composition_feedback_matches_independent_mass_thermal_ode ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_vapor.rs (target/debug/deps/surface_film_vapor-e6c1242d6e3bc7c9)
+
+running 9 tests
+test coupled_vapor_failure_rolls_back_prior_substrate_heating_and_all_owners ... ok
+test solvent_free_residue_stays_in_vacuum_and_accepts_condensation ... ok
+test film_evaporation_and_condensation_preserve_mass_energy_momentum_and_residue ... ok
+test sub_inventory_resolution_flux_does_not_create_vapor_mass ... ok
+test invalid_vapor_exchange_preserves_all_three_owners ... ok
+test shared_vapor_batch_matches_ordered_exchange_and_rolls_back_late_failure ... ok
+test hot_finite_substrate_feeds_evaporation_with_closed_mass_energy_and_momentum ... ok
+test substrate_vapor_coupling_refines_when_elapsed_time_is_subdivided ... ok
+test symmetric_shared_vapor_sweeps_refine_the_interface_order_error ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/water_equilibrium.rs (target/debug/deps/water_equilibrium-50dc8052f83a1f0d)

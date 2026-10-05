@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "objects": [
+    {
+      "id": "model-0",
+      "parent": null,
+      "name": "Model 1",
+      "active": true,
+      "translation": [
+        0.0,
+        0.0,
+        0.5
+      ],
+      "rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "components": {
+        "editor.model-animation.v1": {
+          "clip": 0,
+          "clip_name": "",
+          "events": [
+            {
+              "name": "event",
+              "phase": 0.25
+            }
+          ],
+          "root_motion_axes": [
+            false,
+            false,
+            false
+          ],
+          "root_motion_bone": "",
+          "root_motion_joint": 0,
+          "root_motion_rotation": false,
+          "speed": 1.0,
+          "transition_seconds": 0.0
+        },
+        "editor.model.v1": "CesiumMan.glb"
+      }
+    }
+  ]
+}

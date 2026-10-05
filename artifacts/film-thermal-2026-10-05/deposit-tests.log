@@ -1,0 +1,13 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 35.97s
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 5 tests
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

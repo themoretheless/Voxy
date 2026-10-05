@@ -1,0 +1,19 @@
+{
+  "scope": "fixed body and moving obstacle, independent scalar barrier endpoint oracle",
+  "source_sha256": "9f6a8fbcbb83a169a5f7098c735b33b92a3575e3614c0a8b01d4e6e2c0f61d5b",
+  "force_integrated_work_defect_j": 7.842133192825784e-12,
+  "action_reaction_relative_bound": 1e-12,
+  "full_clip_binary_note": "full clip compiled before this test-only addition; mechanics unchanged",
+  "library_contact_gate_results": [
+    {
+      "passed": 103,
+      "failed": 0,
+      "ignored": 6
+    },
+    {
+      "passed": 31,
+      "failed": 0,
+      "ignored": 0
+    }
+  ]
+}

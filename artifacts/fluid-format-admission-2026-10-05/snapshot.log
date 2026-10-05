@@ -1,0 +1,208 @@
+   Compiling voxy_render v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_render)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gpu)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:197:19
+    |
+194 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+197 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+227 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+243 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+278 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+300 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+328 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+636 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+957 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:155:19
+    |
+126 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+155 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade` and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:343:19
+    |
+310 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+343 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+551 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: `voxy_editor` (lib) generated 4 warnings
+warning: associated items `female_from_assets` and `set_strain_fixture` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1018 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: field `assembly_ms` is never read
+ --> crates/voxy_app/src/skin_light_diffusion.rs:6:5
+  |
+5 | struct Timings {
+  |        ------- field in this struct
+6 |     assembly_ms: f64,
+  |     ^^^^^^^^^^^
+  |
+  = note: `Timings` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: function `diffuse` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:11:15
+   |
+11 | pub(super) fn diffuse(
+   |               ^^^^^^^
+
+warning: function `diffuse_measured` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:70:4
+   |
+70 | fn diffuse_measured(
+   |    ^^^^^^^^^^^^^^^^
+
+warning: function `diffuse_measured_with_parallel` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:78:4
+   |
+78 | fn diffuse_measured_with_parallel(
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `status` is never used
+  --> crates/voxy_app/src/model_presentation.rs:36:8
+   |
+36 | pub fn status(parameters: &Path, current: &Value) -> Value {
+   |        ^^^^^^
+
+warning: function `atomic_json` is never used
+  --> crates/voxy_app/src/model_presentation.rs:82:4
+   |
+82 | fn atomic_json(path: &Path, value: &Value) -> Result<(), Box<dyn std::error::Error>> {
+   |    ^^^^^^^^^^^
+
+warning: function `request_film_state` is never used
+  --> crates/voxy_app/src/model_presentation.rs:95:8
+   |
+95 | pub fn request_film_state(parameters: &Path) -> Result<Value, Box<dyn std::error::Error>> {
+   |        ^^^^^^^^^^^^^^^^^^
+
+warning: function `film_state_status` is never used
+   --> crates/voxy_app/src/model_presentation.rs:150:8
+    |
+150 | pub fn film_state_status(parameters: &Path, id: &str) -> Result<Value, Box<dyn std::error::Error>> {
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: method `to_json` is never used
+  --> crates/voxy_app/src/view_settings.rs:15:12
+   |
+14 | impl ViewSettings {
+   | ----------------- method in this implementation
+15 |     pub fn to_json(&self) -> Value {
+   |            ^^^^^^^
+
+warning: function `deform` is never used
+   --> crates/voxy_app/src/female_face.rs:107:15
+    |
+107 | pub(crate) fn deform(vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose) {
+    |               ^^^^^^
+
+warning: method `append` is never used
+   --> crates/voxy_app/src/female_features.rs:236:12
+    |
+ 31 | impl FaceFeatures {
+    | ----------------- method in this implementation
+...
+236 |     pub fn append(
+    |            ^^^^^^
+
+warning: method `apply` is never used
+    --> crates/voxy_app/src/face_parameters.rs:2570:19
+     |
+2530 | impl FaceParameters {
+     | ------------------- method in this implementation
+...
+2570 |     pub(crate) fn apply(&self, vertices: &mut [SceneVertex], head: Mat4) {
+     |                   ^^^^^
+
+warning: method `restore_snapshot` is never used
+   --> crates/voxy_app/src/surface_film_preview.rs:345:12
+    |
+ 20 | impl FilmPreview {
+    | ---------------- method in this implementation
+...
+345 |     pub fn restore_snapshot(&mut self, snapshot: &serde_json::Value) -> Result<(), &'static str> {
+    |            ^^^^^^^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_app` (lib) generated 15 warnings
+warning: method `restart` is never used
+   --> crates/voxy_app/examples/../src/liquid_demo.rs:231:19
+    |
+ 82 | impl LiquidDemo {
+    | --------------- method in this implementation
+...
+231 |     pub(crate) fn restart(&self) -> Result<Self, physics::liquid::Error> {
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `voxy_app` (example "liquid_snapshot") generated 1 warning
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 32s
+     Running `target/debug/examples/liquid_snapshot artifacts/fluid-format-admission-2026-10-05/impacts-optical.png --impacts --optical`
+LIQUID GPU adapter=Apple M4 Max backend=Metal device_type=IntegratedGpu
+OPTICAL FILM frame=0 cells=0
+frame=0: water_pixels=0, oil_pixels=0
+OPTICAL FILM frame=1 cells=0
+frame=1: water_pixels=0, oil_pixels=0
+OPTICAL FILM frame=2 cells=161
+frame=2: water_pixels=0, oil_pixels=15
+OPTICAL FILM frame=3 cells=232
+frame=3: water_pixels=0, oil_pixels=0
+LIQUID SNAPSHOT PASS: artifacts/fluid-format-admission-2026-10-05/impacts-optical.png

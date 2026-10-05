@@ -1,0 +1,38 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 33.80s
+     Running tests/water_coexistence.rs (target/debug/deps/water_coexistence-95d81dede4f9a616)
+
+running 2 tests
+test rejects_ice_domain_and_unhandled_critical_endpoint ... ok
+test reproduces_iapws95_table_eight_coexistence_states ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/water_equilibrium.rs (target/debug/deps/water_equilibrium-50dc8052f83a1f0d)
+
+running 9 tests
+test phase_selection_and_lever_rule_preserve_specific_volume_energy_and_entropy ... ok
+test equilibrium_caloric_and_acoustic_response_matches_independent_state_derivatives ... FAILED
+test isentropic_energy_volume_derivative_matches_eos_pressure ... ok
+test entropy_inversion_recovers_both_phases_and_rejects_unbracketed_states ... ok
+test fixed_volume_heating_crosses_full_vapor_boundary_without_dropping_mass ... ok
+test finite_heat_reservoir_drives_full_vapor_and_preserves_energy_on_failure ... ok
+test contact_conductance_obeys_implicit_heat_law_and_preserves_both_stores_on_error ... ok
+test reversible_volume_work_balances_energy_and_preserves_all_owners_on_failure ... ok
+test contact_time_refinement_reduces_dynamic_error_without_losing_energy ... ok
+
+failures:
+
+---- equilibrium_caloric_and_acoustic_response_matches_independent_state_derivatives stdout ----
+
+thread 'equilibrium_caloric_and_acoustic_response_matches_independent_state_derivatives' (31932401) panicked at crates/physics/tests/water_equilibrium.rs:25:9:
+assertion failed: (pressure_t / response.pressure_temperature_pa_per_k - 1.).abs() < 1e-5
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    equilibrium_caloric_and_acoustic_response_matches_independent_state_derivatives
+
+test result: FAILED. 8 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.05s
+
+error: test failed, to rerun pass `-p physics --test water_equilibrium`

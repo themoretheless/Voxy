@@ -1,0 +1,16 @@
+{
+  "tests": {
+    "surface_film_advection": 2,
+    "surface_film_mixture": 14,
+    "surface_film_withdrawal": 6,
+    "failed": 0
+  },
+  "process_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/surface_film.rs": "22a7ec8ea2ef1b8b82240cd311b7fcacdb44110a08919b785c497f2aef9e7560",
+    "crates/physics/src/surface_film_mixture.rs": "858d8315747534e4a96950c3dc4f5972f72f6863c0c93d94c55ac19b70b87f38",
+    "crates/physics/tests/surface_film_withdrawal.rs": "3c949e7c6334a403fa1f9d014ef5921d4dfe8f063101c607fd72e120589ffd86"
+  },
+  "evaporation_implemented": false,
+  "goal_complete": false
+}

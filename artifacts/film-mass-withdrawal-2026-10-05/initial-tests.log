@@ -1,0 +1,30 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.48s
+     Running tests/surface_film_vapor.rs (target/debug/deps/surface_film_vapor-e6c1242d6e3bc7c9)
+
+running 9 tests
+test sub_inventory_resolution_flux_does_not_create_vapor_mass ... ok
+test invalid_vapor_exchange_preserves_all_three_owners ... ok
+test coupled_vapor_failure_rolls_back_prior_substrate_heating_and_all_owners ... ok
+test solvent_free_residue_stays_in_vacuum_and_accepts_condensation ... ok
+test film_evaporation_and_condensation_preserve_mass_energy_momentum_and_residue ... ok
+test hot_finite_substrate_feeds_evaporation_with_closed_mass_energy_and_momentum ... ok
+test shared_vapor_batch_matches_ordered_exchange_and_rolls_back_late_failure ... ok
+test substrate_vapor_coupling_refines_when_elapsed_time_is_subdivided ... ok
+test symmetric_shared_vapor_sweeps_refine_the_interface_order_error ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/surface_film_withdrawal.rs (target/debug/deps/surface_film_withdrawal-7500cd01898e1f33)
+
+running 7 tests
+test species_change_below_bulk_resolution_is_rejected_without_ghost_parcel ... ok
+test kilogram_withdrawals_deplete_exactly_and_reject_late_overdraw_atomically ... ok
+test signed_zero_withdrawal_preserves_zero_inventory_representation ... ok
+test zero_and_sub_ulp_flux_do_not_credit_phantom_mass ... ok
+test unrepresentable_transferred_mass_does_not_remove_volume ... ok
+test selective_removal_preserves_residue_and_bulk_species_ledger ... ok
+test late_invalid_requests_and_repeated_overdraw_preserve_complete_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,113 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 10.46s
+     Running tests/finite_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_contact-ed114ed20c033e90)
+
+running 3 tests
+test invalid_plane_parameters_fail_before_contact_is_installed ... ok
+test contact_energy_error_reduces_with_timestep_refinement ... ok
+penetration soft=1.4550009019954249e-3, stiff=7.231401946918653e-4; energy deviations 8.707385373230013e-6, 3.56767405101932e-5
+test frictionless_elastic_impact_rebounds_and_stiffer_contact_reduces_penetration ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/finite_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_inertia-c5242bdea988fe96)
+
+running 4 tests
+test uniform_acceleration_matches_ballistic_motion_and_potential_work ... ok
+test verlet_is_time_reversible_and_invalid_or_unstable_steps_are_atomic ... ok
+relative energy envelopes: coarse=3.4094160225039954e-6, fine=8.57339783055799e-7
+test dynamic_trajectory_is_covariant_under_rigid_coordinate_rotation_and_translation ... ok
+test finite_rotation_preserves_angular_momentum_and_energy_error_converges ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moving_fem_supports.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_fem_supports-3fec59876be184a1)
+
+running 7 tests
+test free_nodes_retain_inertia_and_support_work_defect_converges ... ok
+test huge_pin_kinetic_energy_cannot_erase_reaction_work_and_pass_the_guard ... ok
+test prescribed_translation_books_gravity_and_pin_acceleration_work ... ok
+test prescribed_shear_books_analytic_elastic_work_and_explicit_stopping ... ok
+test prescribed_trial_positions_drive_plane_contact_and_reaction_work ... ok
+test positive_endpoint_rotation_cannot_hide_mid_segment_collapse ... ok
+test invalid_targets_inversion_and_strict_work_guard_roll_back_all_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moving_plane_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_plane_contact-00e545d89e427de7)
+
+running 11 tests
+test co_translating_pins_and_plane_cancel_contact_actuator_work ... ok
+test endpoint_open_rotating_plane_cannot_hide_intermediate_contact ... ok
+test tiny_normal_rotation_cannot_round_independent_torque_work_to_zero ... ok
+test stationary_nodes_receive_independently_derived_plane_work ... ok
+test viscoelastic_moving_contact_keeps_actuator_work_separate_from_heat ... ok
+test moving_plane_rejection_rolls_back_offset_histories_and_heat ... ok
+test combined_plane_motion_is_covariant_under_world_rotation ... ok
+ROTATING PLANE work coarse=8.776097673971292e1, fine=8.776097883219852e1; errors=2.8338353388335236e-6,7.413497371544508e-7
+test rotating_plane_torque_work_converges_and_matches_potential_change ... ok
+test antipodal_motion_and_stiffness_change_reject_without_mutation ... ok
+MOVING PLANE convergence: coarse=2.902546217410651e-6, fine=7.256154465132281e-7
+test moving_contact_work_balance_converges_under_time_refinement ... ok
+MOVING PLANE actuator work=0.101928197409 J; defect=0.000000579880 J
+test translating_plane_is_galilean_equivalent_and_work_matches_momentum ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/prescribed_surface_contact-83c4d1ef52a3c97d)
+
+running 10 tests
+TRIANGLE SURFACE work defects coarse=9.28965376341016e-9, fine=1.1560812787224546e-9
+test finite_triangle_has_no_infinite_plane_contact_outside_its_extent ... ok
+test feature_forces_and_torques_are_equal_and_opposite ... ok
+test endpoint_disjoint_surface_motion_cannot_tunnel_through_body ... ok
+test malformed_geometry_and_changed_owner_reject_without_mutating_surface ... ok
+test obstacle_work_is_independent_and_refines_towards_potential_change ... ok
+test both_feature_gradients_match_independent_energy_differences ... ok
+test co_translating_rig_supports_and_triangle_surface_balance_both_actuators ... ok
+test inertial_obstacle_motion_books_work_and_rejects_tunnelling_atomically ... ok
+test viscoelastic_surface_rejection_preserves_history_heat_and_obstacle_pose ... ok
+DYNAMIC TRIANGLE SURFACE actuator work=1.916497584614464e-2, defect=-2.3943782551701036e-8
+test translating_triangle_obstacle_is_galilean_equivalent_in_actual_dynamics ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_contact-1b73d404c5e53680)
+
+running 10 tests
+test separating_tissue_groups_removes_only_the_cross_tissue_barrier ... ok
+test continuous_triangle_guard_rejects_tunnelling_with_disjoint_endpoints ... ok
+test crossing_triangle_is_rejected_and_invalid_configuration_is_atomic ... ok
+test primitive_candidates_are_unique_and_orientation_independent ... ok
+test edge_edge_closest_feature_distributes_balanced_contact_gradient ... ok
+test diagnostic_primitive_sum_has_consistent_gradient_and_balanced_force ... ok
+test vertex_face_energy_gradient_balances_force_and_torque_and_is_objective ... ok
+test unique_primitive_energy_matches_gradient ... ok
+test experimental_solver_law_preserves_other_forces_and_validates_gradients ... ok
+test normal_contact_preconditioning_is_optional_and_energy_preserving ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/viscoelastic_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/viscoelastic_inertia-53ebd10798e46967)
+
+running 8 tests
+test exact_relaxation_matches_analytic_energy_and_subdivision ... ok
+test hgo_stress_memory_is_not_admitted_as_passive_maxwell_dynamics ... ok
+test late_temperature_overflow_rolls_back_mechanics_memory_and_heat ... ok
+test free_node_moves_and_failed_driving_preserves_material_history ... ok
+test unrelated_large_gravity_potential_cannot_hide_or_block_maxwell_heat ... ok
+test maxwell_heat_updates_cell_temperature_and_failures_preserve_both_owners ... ok
+test driven_shear_then_hold_balances_work_heat_and_rollback ... ok
+test unforced_viscoelastic_motion_converges_under_time_refinement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

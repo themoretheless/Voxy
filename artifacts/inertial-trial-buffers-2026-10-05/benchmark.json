@@ -1,0 +1,15 @@
+{
+  "before_seconds": [
+    0.022188708,
+    0.022285375,
+    0.022434958
+  ],
+  "after_seconds": [
+    0.020078041,
+    0.020625166,
+    0.020143208
+  ],
+  "median_time_reduction_percent": 9.612434163661144,
+  "printed_numerical_records_identical": true,
+  "scope": "three sequential repeats of the existing 1000-step release benchmark; local CPU evidence only"
+}

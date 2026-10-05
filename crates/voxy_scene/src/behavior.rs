@@ -9,6 +9,16 @@ pub trait Behavior: Send + std::fmt::Debug {
     fn start(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
     fn update(&mut self, _scene: &mut SceneGraph, _owner: NodeId, _delta: f64) {}
     fn fixed_update(&mut self, _scene: &mut SceneGraph, _owner: NodeId, _delta: f64) {}
+    /// Called after the animation owner has committed its accepted frame.
+    /// Phase is the unwrapped target clip phase, including completed loops.
+    fn animation_event(
+        &mut self,
+        _scene: &mut SceneGraph,
+        _owner: NodeId,
+        _name: &str,
+        _phase: f64,
+    ) {
+    }
     fn on_disable(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
     /// Owner may already be invalid when a subtree has been removed.
     fn on_destroy(&mut self, _scene: &mut SceneGraph, _owner: NodeId) {}
@@ -118,6 +128,37 @@ impl BehaviorRunner {
     /// Start precedes the first update of either kind and runs exactly once.
     pub fn fixed_update(&mut self, scene: &mut SceneGraph, delta: f64) {
         self.dispatch(scene, delta, true);
+    }
+
+    /// Delivers to the active owner's attached behaviors in attachment order.
+    /// Removed/inactive owners and invalid event data are ignored.
+    pub fn animation_event(
+        &mut self,
+        scene: &mut SceneGraph,
+        owner: NodeId,
+        name: &str,
+        phase: f64,
+    ) {
+        if name.is_empty() || !phase.is_finite() || phase < 0. {
+            return;
+        }
+        self.sync(scene);
+        for entry in &mut self.entries {
+            if entry.owner != owner
+                || !entry.enabled
+                || scene.active_in_hierarchy(owner) != Ok(true)
+            {
+                continue;
+            }
+            if !entry.started {
+                entry.started = true;
+                entry.behavior.start(scene, owner);
+            }
+            if scene.active_in_hierarchy(owner) == Ok(true) {
+                entry.behavior.animation_event(scene, owner, name, phase);
+            }
+        }
+        self.sync(scene);
     }
 
     /// Dispatches disable/destroy for every owned behavior, then releases it.
@@ -245,5 +286,52 @@ mod tests {
         assert_eq!(*b.lock().unwrap(), vec!["awake", "destroy"]);
         assert!(runner.is_empty());
         assert_eq!(scene.len(), 2);
+    }
+    #[test]
+    fn animation_events_start_once_filter_owner_and_observe_hook_deactivation() {
+        #[derive(Debug)]
+        struct Listener(Arc<Mutex<Vec<&'static str>>>, bool);
+        impl Behavior for Listener {
+            fn start(&mut self, _: &mut SceneGraph, _: NodeId) {
+                self.0.lock().unwrap().push("start");
+            }
+            fn animation_event(
+                &mut self,
+                scene: &mut SceneGraph,
+                owner: NodeId,
+                name: &str,
+                phase: f64,
+            ) {
+                assert_eq!(name, "step");
+                assert_eq!(phase, 1.25);
+                self.0.lock().unwrap().push("event");
+                if self.1 {
+                    scene.set_active(owner, false).unwrap();
+                }
+            }
+        }
+        let mut scene = SceneGraph::new(2);
+        let owner = scene.spawn(None, Transform::default()).unwrap();
+        let other = scene.spawn(None, Transform::default()).unwrap();
+        let log = Arc::new(Mutex::new(Vec::new()));
+        let mut runner = BehaviorRunner::default();
+        runner
+            .attach(&mut scene, other, Listener(log.clone(), false))
+            .unwrap();
+        runner
+            .attach(&mut scene, owner, Listener(log.clone(), true))
+            .unwrap();
+        runner
+            .attach(&mut scene, owner, Listener(log.clone(), false))
+            .unwrap();
+        runner.animation_event(&mut scene, owner, "step", f64::NAN);
+        assert!(log.lock().unwrap().is_empty());
+        runner.animation_event(&mut scene, owner, "step", 1.25);
+        assert_eq!(*log.lock().unwrap(), vec!["start", "event"]);
+        runner.animation_event(&mut scene, owner, "step", 1.25);
+        assert_eq!(log.lock().unwrap().len(), 2);
+        scene.remove_subtree(owner).unwrap();
+        runner.animation_event(&mut scene, owner, "step", 1.25);
+        assert_eq!(runner.len(), 1);
     }
 }

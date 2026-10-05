@@ -3,6 +3,72 @@ use super::{Body, Equilibrium, Vec3, add, columns, det, dot, mm, scale, sub};
 fn inner(a: &[Vec3], b: &[Vec3]) -> f64 {
     a.iter().zip(b).map(|(a, b)| dot(*a, *b)).sum()
 }
+// Shared secant algebra; owners keep their own objective, constraints and admission.
+pub(super) type SecantPair = (Vec<Vec3>, Vec<Vec3>, f64);
+/// Rayleigh scaling of the initial positive inverse, using the latest secant.
+/// The owner supplies its inverse quadratic form without losing coupling.
+pub(super) fn secant_scale(
+    history: &[SecantPair],
+    inverse_quadratic: impl FnOnce(&[Vec3]) -> f64,
+) -> f64 {
+    let Some((s, y, _)) = history.last() else {
+        return 1.;
+    };
+    let denominator = inverse_quadratic(y);
+    let numerator = inner(s, y);
+    if denominator.is_finite() && denominator > 0. && numerator.is_finite() && numerator > 0. {
+        let ratio = numerator / denominator;
+        if ratio.is_finite() && ratio > 0. {
+            return ratio.clamp(1e-8, 1e8);
+        }
+    }
+    1.
+}
+pub(super) fn secant_direction(
+    history: &[SecantPair],
+    gradient: &[Vec3],
+    inverse: impl FnOnce(&[Vec3]) -> Vec<Vec3>,
+) -> Vec<Vec3> {
+    let mut q = gradient.to_vec();
+    let mut alphas = Vec::with_capacity(history.len());
+    for (s, y, rho) in history.iter().rev() {
+        let alpha = rho * inner(s, &q);
+        alphas.push(alpha);
+        for (q, y) in q.iter_mut().zip(y) {
+            *q = sub(*q, scale(*y, alpha));
+        }
+    }
+    let mut r = inverse(&q);
+    for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
+        let beta = rho * inner(y, &r);
+        for (r, s) in r.iter_mut().zip(s) {
+            *r = add(*r, scale(*s, alpha - beta));
+        }
+    }
+    r.iter().map(|r| scale(*r, -1.)).collect()
+}
+pub(super) fn push_secant(
+    history: &mut Vec<SecantPair>,
+    s: Vec<Vec3>,
+    y: Vec<Vec3>,
+    capacity: usize,
+) {
+    let sy = inner(&s, &y);
+    let reciprocal = 1. / sy;
+    let correlation_scale = (inner(&s, &s) * inner(&y, &y)).sqrt();
+    if sy.is_finite()
+        && reciprocal.is_finite()
+        && correlation_scale.is_finite()
+        && sy > 1e-12 * correlation_scale
+        && sy > 0.
+        && capacity > 0
+    {
+        if history.len() == capacity {
+            history.remove(0);
+        }
+        history.push((s, y, reciprocal));
+    }
+}
 fn free_gradient(body: &Body, mut gradient: Vec<Vec3>) -> Vec<Vec3> {
     for (g, pinned) in gradient.iter_mut().zip(&body.pinned) {
         if *pinned {
@@ -140,45 +206,25 @@ impl Body {
             if squared.sqrt() <= tolerance_n {
                 break;
             }
-            let mut q = gradient.clone();
-            let mut alphas = Vec::new();
-            for (s, y, rho) in history.iter().rev() {
-                let alpha = rho * inner(s, &q);
-                alphas.push(alpha);
-                for (q, y) in q.iter_mut().zip(y) {
-                    *q = sub(*q, scale(*y, alpha));
-                }
-            }
-            let mut gamma = 1.;
-            if let Some((s, y, _)) = history.last() {
-                let denominator: f64 = y
-                    .iter()
+            let gamma = secant_scale(&history, |y| {
+                y.iter()
                     .enumerate()
                     .filter(|(i, _)| !self.pinned[*i])
                     .map(|(i, y)| dot(*y, *y) / diagonal[i])
-                    .sum();
-                if denominator > 0. {
-                    gamma = (inner(s, y) / denominator).clamp(1e-8, 1e8);
-                }
-            }
-            let mut r: Vec<_> = q
-                .iter()
-                .enumerate()
-                .map(|(i, q)| {
-                    if self.pinned[i] {
-                        [0.; 3]
-                    } else {
-                        scale(*q, gamma / diagonal[i])
-                    }
-                })
-                .collect();
-            for ((s, y, rho), alpha) in history.iter().zip(alphas.into_iter().rev()) {
-                let beta = rho * inner(y, &r);
-                for (r, s) in r.iter_mut().zip(s) {
-                    *r = add(*r, scale(*s, alpha - beta));
-                }
-            }
-            let mut direction: Vec<_> = r.iter().map(|r| scale(*r, -1.)).collect();
+                    .sum()
+            });
+            let mut direction = secant_direction(&history, &gradient, |q| {
+                q.iter()
+                    .enumerate()
+                    .map(|(i, q)| {
+                        if self.pinned[i] {
+                            [0.; 3]
+                        } else {
+                            scale(*q, gamma / diagonal[i])
+                        }
+                    })
+                    .collect()
+            });
             let mut slope = inner(&gradient, &direction);
             if !slope.is_finite() || slope >= 0. {
                 history.clear();
@@ -234,13 +280,7 @@ impl Body {
                 .zip(&gradient)
                 .map(|(a, b)| sub(*a, *b))
                 .collect();
-            let sy = inner(&s, &y);
-            if sy.is_finite() && sy > 1e-12 * (inner(&s, &s) * inner(&y, &y)).sqrt() && sy > 0. {
-                if history.len() == 12 {
-                    history.remove(0);
-                }
-                history.push((s, y, 1. / sy));
-            }
+            push_secant(&mut history, s, y, 12);
             x = next;
             energy = e;
             gradient = next_gradient;
@@ -281,5 +321,85 @@ impl Body {
             min_j,
             max_j,
         })
+    }
+}
+
+#[cfg(test)]
+mod secant_tests {
+    use super::*;
+    fn product(a: [[f64; 3]; 3], x: Vec3) -> Vec3 {
+        a.map(|row| dot(row, x))
+    }
+    #[test]
+    fn two_loop_matches_independent_dense_inverse_bfgs_updates() {
+        let initial = [[2., 0.3, 0.], [0.3, 1., 0.2], [0., 0.2, 0.5]];
+        let stiffness = [[400., 99., 3.], [99., 40., 2.], [3., 2., 7.]];
+        let mut dense = initial;
+        let mut history = Vec::new();
+        for displacement in [
+            [0.01, -0.02, 0.03],
+            [-0.03, 0.01, 0.02],
+            [0.02, 0.03, -0.01],
+        ] {
+            let y = product(stiffness, displacement);
+            let rho = 1. / dot(displacement, y);
+            let left: [[f64; 3]; 3] = std::array::from_fn(|i| {
+                std::array::from_fn(|j| f64::from(i == j) - rho * displacement[i] * y[j])
+            });
+            let old = dense;
+            dense = std::array::from_fn(|i| {
+                std::array::from_fn(|j| {
+                    let mut value = rho * displacement[i] * displacement[j];
+                    for k in 0..3 {
+                        for l in 0..3 {
+                            value += left[i][k] * old[k][l] * left[j][l];
+                        }
+                    }
+                    value
+                })
+            });
+            push_secant(&mut history, vec![displacement], vec![y], 12);
+        }
+        assert_eq!(history.len(), 3);
+        let gradient = [0.7, -0.4, 0.2];
+        let actual = secant_direction(&history, &[gradient], |q| vec![product(initial, q[0])]);
+        let expected = product(dense, gradient).map(|v| -v);
+        for axis in 0..3 {
+            assert!((actual[0][axis] - expected[axis]).abs() < 1e-13);
+        }
+        assert!(dot(gradient, actual[0]) < 0.);
+    }
+    #[test]
+    fn secant_admission_rejects_bad_curvature_and_bounds_memory() {
+        let mut history = Vec::new();
+        for y in [[-1., 0., 0.], [0.; 3], [f64::NAN, 0., 0.], [1e-320, 0., 0.]] {
+            push_secant(&mut history, vec![[1., 0., 0.]], vec![y], 2);
+            assert!(history.is_empty());
+        }
+        for value in [1., 2., 3.] {
+            push_secant(
+                &mut history,
+                vec![[value, 0., 0.]],
+                vec![[value * 2., 0., 0.]],
+                2,
+            );
+        }
+        assert_eq!(history.len(), 2);
+        assert_eq!(history[0].0[0][0], 2.);
+        assert_eq!(history[1].0[0][0], 3.);
+    }
+    #[test]
+    fn secant_scale_rejects_invalid_quadratic_forms_and_bounds_positive_ratios() {
+        assert_eq!(
+            secant_scale(&[], |_| panic!("empty history must not query metric")),
+            1.
+        );
+        let history = vec![(vec![[1., 0., 0.]], vec![[2., 0., 0.]], 0.5)];
+        for invalid in [0., -1., f64::NAN, f64::INFINITY] {
+            assert_eq!(secant_scale(&history, |_| invalid), 1.);
+        }
+        assert_eq!(secant_scale(&history, |_| 4.), 0.5);
+        assert_eq!(secant_scale(&history, |_| 1e-20), 1e8);
+        assert_eq!(secant_scale(&history, |_| 1e20), 1e-8);
     }
 }

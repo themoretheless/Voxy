@@ -1,0 +1,34 @@
+{
+  "state": "verified scoped film vapor exchange",
+  "session_id": 85294,
+  "source_sha256": {
+    "crates/physics/src/liquid.rs": "3e84feaaf2484f5baa0c02cc381b08b84a91fc102a895b2b22e6e0e86c4889f1",
+    "crates/physics/src/liquid/evaporation.rs": "424ce5ea49dfcbf075c65adca726c7381e8c1249d64c5f06625ae6263e05a6c9",
+    "crates/physics/src/surface_film_thermal.rs": "e969f7f4c8a1d4b5a201744ea823f5835e30093c91e16fd133c7591dca0b272c",
+    "crates/physics/src/surface_film_thermal_vapor.rs": "996de0a339f3b91d1c03ed339b1c2da74ed4d7ec1f623fb053db088387d471e9",
+    "crates/physics/tests/surface_film_vapor.rs": "c2af177c296677f82fab2f6737751ee902f19dc56d1fe19c251b5f43338dded1"
+  },
+  "goal_complete": false,
+  "intermediate_results": {
+    "liquid_evaporation_passed": 11,
+    "surface_film_thermal_passed": 6,
+    "film_vapor": "running"
+  },
+  "pending_followup": {
+    "changes": [
+      "bulk film mass ledger check",
+      "reject nonfinite momentum tolerance scale",
+      "reject species change below bulk resolution"
+    ],
+    "source_sha256": {
+      "crates/physics/src/surface_film_thermal_vapor.rs": "ff3f963ddefb2a7ccde2017787c671d351539628737a971b785707480696ef55",
+      "crates/physics/tests/surface_film_vapor.rs": "f176a7c08461d3e8bbc4aa35447a21596fd81ce8f20b64f0531353345f5f85fb"
+    },
+    "tested": true,
+    "state": "passed",
+    "tests_passed": 3,
+    "exit_code": 0
+  },
+  "tests_passed": 19,
+  "exit_code": 0
+}

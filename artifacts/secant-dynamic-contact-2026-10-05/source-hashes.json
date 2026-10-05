@@ -1,0 +1,6 @@
+{
+  "crates/physics/src/biomechanics/lbfgs.rs": "dedad3ad028d3324ba8fbbbc3a63ebb53d9d1c7ea47c530a0225fffffa363c6b",
+  "crates/physics/src/biomechanics/inertia/implicit.rs": "f000f46d466ced44310c581df57ddd46f449c6be5781c10463f8a510d171760f",
+  "crates/physics/tests/prescribed_surface_contact.rs": "7bcff80ed2b1bc15b5ee20e142327479198241ea3055d713aa1902d9ea65c5aa",
+  "crates/voxy_app/examples/body_motion_snapshot.rs": "e5c765ba3fd4cf7ba09c68c7e024bd0e04bc02d70b9e033af025da980688248b"
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "clean isolated candidate, not promoted",
+  "source_directory": "/tmp/voxy-contact-production-20261006",
+  "experimental_algorithm_switches_removed": true,
+  "rejected_geometric_metric_removed": true,
+  "library_passed": 102,
+  "library_ignored": 6,
+  "contact_integration_passed": 31,
+  "cross_candidate_state_comparison": {
+    "scope": "8-step exported complete Debug state comparison",
+    "bytes_experimental": 16352547,
+    "bytes_clean": 16352547,
+    "equal": true,
+    "experimental_sha256": "8afbdfc78855f9d8772f248d08126deffcee858065f3f19471ce9dccb879bddf",
+    "clean_sha256": "8afbdfc78855f9d8772f248d08126deffcee858065f3f19471ce9dccb879bddf"
+  },
+  "full_clip_result": "passed 480 steps and original energy-ledger closure gate",
+  "default_solver_changed": false,
+  "files_sha256": {
+    "mod.rs": "0e628dc5e0ea0b84e6880c08baee05facd010856d1ecaa89feac2a147456e012",
+    "contact_precision.rs": "543b018327d5cb841f73a6b8b1bf3f96166ba7c5f42fadcaef9e3133928bddea",
+    "surface_contact.rs": "f5180af5f195316fa83f2b8b269439c8c837213d7f6ed11fffcf9d4d7cb7828d",
+    "prescribed_surface.rs": "5ad90846dd12cdabe5bda154b294d2d5ff304e75d7d266538dd4dba779282ddf",
+    "inertia/implicit.rs": "2cf2b33e9155b37045f08e9fe1b5294c64fe9eafc6c966d39765f715a0bde9e4"
+  },
+  "lbfgs_integration_passed": 8,
+  "viscoelastic_inertia_passed": 8,
+  "total_completed_library_integration_checks": 149,
+  "full_clip_duration_s": 750.55
+}

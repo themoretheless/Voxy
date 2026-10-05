@@ -1,0 +1,24 @@
+{
+  "render_tests_passed": 138,
+  "render_tests_ignored": 17,
+  "physical_gpu_tests_passed": 2,
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "zero_storage_stage_limit_film_test": true,
+  "unsupported_output_rejected_before_healthy_gpu_render": "Rgba32Float on the test device",
+  "snapshot_film_cells": [
+    0,
+    0,
+    161,
+    232
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/fluid_screen.rs": "31b8f801b610ad81dc021fb21faa1b4c022260a6b3b832a2dd540fcfccf4d14e",
+    "crates/voxy_app/src/scene_app.rs": "adbc95767da719b3db1567823bb66768dade3168310faa463517e2d27ca263dd",
+    "crates/voxy_app/examples/liquid_snapshot.rs": "383123dd5c36e8dd053b92ea06a013d996313b7b8b21310b66f36d6bc36605b6",
+    "crates/voxy_render/tests/fluid_optics.rs": "3972e3988a4336cb3324828903ec8e66ee0f6b64f2eec4d03ec4a91837a8fe94"
+  },
+  "other_hardware_verified": false,
+  "goal_complete": false,
+  "film_gpu_validation_scope_empty": true
+}

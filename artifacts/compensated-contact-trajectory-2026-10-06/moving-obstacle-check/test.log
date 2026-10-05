@@ -1,0 +1,10 @@
+   Compiling physics v0.1.0 (/tmp/voxy-contact-replay-20261006/crates/physics)
+    Finished `release` profile [optimized] target(s) in 17.36s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+MOVING_OBSTACLE_FORCE_WORK actual_gap=4.00000059684512614e-18 defect_j=7.84213319282578425e-12
+test biomechanics::prescribed_surface::index_tests::compensated_moving_obstacle_force_work_matches_scalar_endpoint_oracle ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+

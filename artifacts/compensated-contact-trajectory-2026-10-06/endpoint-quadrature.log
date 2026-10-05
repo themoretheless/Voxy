@@ -1,0 +1,14 @@
+   Compiling physics v0.1.0 (/tmp/voxy-contact-replay-20261006/crates/physics)
+    Finished `release` profile [optimized] target(s) in 7.86s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+ENDPOINT_QUADRATURE requested_gap=3.99999999999999992e-12 actual_gap=3.99999999756931596e-12 evaluated_panels=20 admitted=true work_defect_j=9.31184365726700491e-11 best_defect_j=9.31184365726700491e-11
+ENDPOINT_QUADRATURE_32 actual_gap=4.00000128505939578e-15 evaluated_panels=32 work_defect_j=2.54814077824128127e-10
+ENDPOINT_QUADRATURE requested_gap=4.00000000000000031e-15 actual_gap=4.00000128505939578e-15 evaluated_panels=40 admitted=true work_defect_j=9.26391272720872294e-11 best_defect_j=9.26391272720872294e-11
+ENDPOINT_QUADRATURE_32 actual_gap=3.99799551104029760e-18 evaluated_panels=32 work_defect_j=7.38867041417956560e-7
+ENDPOINT_QUADRATURE requested_gap=4.00000000000000029e-18 actual_gap=3.99799551104029760e-18 evaluated_panels=61 admitted=true work_defect_j=9.17759167273768384e-11 best_defect_j=9.17759167273768384e-11
+test biomechanics::prescribed_surface::index_tests::near_machine_precision_barrier_partition_diagnostic ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 106 filtered out; finished in 0.03s
+

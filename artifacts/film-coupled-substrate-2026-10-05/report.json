@@ -1,0 +1,29 @@
+{
+  "tests": {
+    "state": "passed",
+    "thermal_passed": 11,
+    "vapor_passed": 8,
+    "failed": 0,
+    "exit_code": 0,
+    "coupling_refinement": "error decreased more than 3x at each dt halving on synthetic fixture"
+  },
+  "source_sha256": {
+    "crates/physics/src/surface_film_thermal.rs": "0d7b1a07b040e146b767b6f86fd1d6b0be49124ab702734f991053c3fedccf98",
+    "crates/physics/src/surface_film_thermal_vapor.rs": "ac882d31e4d411584ba51bef41660878feff8e28fdbce50ec99706f0209f01f5",
+    "crates/physics/tests/surface_film_vapor.rs": "13b55d229584ba6c1703c6df3caa53d88f2cd8ff1dc0c4b95545cb531c5abf1b"
+  },
+  "interactive_demo_integrated": false,
+  "calibrated_water": false,
+  "complete_drying": false,
+  "goal_complete": false,
+  "post_compile_change": {
+    "change": "derive Debug for borrowed FilmSubstrateHeat",
+    "behavior_changed": false,
+    "current_thermal_source_sha256": "4c49c6bef5290f9f085d1c64d167914c0dd64d8311fa6720c3342ce44143cb83"
+  },
+  "additional_regression": {
+    "name": "solvent_free_residue_stays_in_vacuum_and_accepts_condensation",
+    "state": "not yet executed; added after current binary compiled",
+    "current_test_source_sha256": "27f0d712ddba63a24c17c8eddd5278e3f53816c15511acd20bf2af3d218beed7"
+  }
+}

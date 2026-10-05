@@ -1,0 +1,13 @@
+# CCD-guided quadrature and prepared trajectory admission
+
+The shared conservative advancement kernel now exposes the sampled rejection time without duplicating its boolean admission logic. If all nonlinear trials fail external CCD while internal gap and volume guards pass, the implicit solver bisects the quadrature interval containing the last rejection and restarts from unchanged state. Knots remain fixed during each solve; work/path retries share the existing 32-attempt bound. No collision, residual or energy tolerance was increased.
+
+A prepared obstacle-motion object binds immutable start/end geometry and its exact swept index. The implicit solver prepares it once per quadrature attempt and reuses it across nonlinear trials and final admission. A one-second native profile of the preceding implementation showed repeated swept-index builds in the line-search path. This change removes those repeated builds by construction; no overall speedup claim is made.
+
+Validation: 80 physics library tests passed (2 manual benchmarks ignored), 21 prescribed-contact and 8 viscoelastic tests passed; 19 tissue tests passed. New tests check a known crossing at time 0.45, interval-local refinement, invalid refinement times, constant index identity across repeated queries, and a cached source on the opposite side of the actual source (false-negative risk). Prepared admission matches fresh admission; changed owners remain rejected. A tracing-enabled regression checks failed observation, original rejection and complete state preservation.
+
+Both full imported runs still FAILED at step 65 (0.270833333 s) after 64 commits. The second run's actual terminal leaf rejection was contact quadrature nonconvergence. Final evaluated 32-panel defect was -2.9943217e-6 J versus 3.0517578125e-10 J budget. Initial nearest gap was 13.755945 nm; endpoint drift roundoff was about 5.47e-17 m. Six prefix frames do not qualify the two-second clip.
+
+The recorded second run's final stderr label was incorrectly replaced by a subsequent optional diagnostic subdivision's nonlinear failure. Diagnostic probes were then isolated inside a best-effort Result closure; failures now print separately and cannot replace the original rejection. The tracing-enabled fixture passes. The full clip was not rerun after this diagnostics-only correction.
+
+Next: compare the solved quadrature endpoint with the independently reconstructed impulse/drift endpoint at rejection and measure their contact-energy difference. The work defect is nonmonotonic under additional endpoint refinement; increasing attempt count alone is not established as a fix. All changes remain local, uncommitted and unpushed.

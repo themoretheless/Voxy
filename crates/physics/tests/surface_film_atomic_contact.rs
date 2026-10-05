@@ -56,6 +56,8 @@ fn successful_atomic_contact_matches_sequential_physics_and_source_mass() {
         p[0] += 0.001;
     }
     let before = atomic.total_mass();
+    let before_cell = atomic.state().cell_volumes_m3[0];
+    let expected_added = (before_cell + 0.01 * 1e-9) - before_cell;
     let density = atomic.material().density;
     let config = BridgeConfig::default();
     let (added, transferred) = atomic
@@ -71,7 +73,7 @@ fn successful_atomic_contact_matches_sequential_physics_and_source_mass() {
         atomic.state().cell_volumes_m3,
         sequential.state().cell_volumes_m3
     );
-    assert_eq!(added, 0.01 * 1e-9);
+    assert_eq!(added, expected_added);
     assert!((atomic.total_mass() - before - added * density).abs() < before * 1e-12);
 }
 
@@ -101,10 +103,12 @@ fn moving_surfaces_exchange_only_during_contact_and_preserve_source_mass() {
                 ]
             })
             .collect();
+        let before_cell = film.state().cell_volumes_m3[0];
+        let expected_added = (before_cell + 0.01 * 1e-9) - before_cell;
         let (added, transferred) = film
             .advance_on_geometry_with_contact(&points, 0.01, &[(0, 1e-9)], [0.; 3], Some(config))
             .unwrap();
-        assert!((added - 1e-11).abs() < 1e-25);
+        assert_eq!(added, expected_added);
         if gap > config.max_gap {
             assert_eq!(transferred, 0.);
             separated += 1;

@@ -1,0 +1,43 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 25.31s
+     Running tests/liquid_droplet_lifecycle.rs (target/debug/deps/liquid_droplet_lifecycle-893297fcccd19583)
+
+running 23 tests
+test invalid_free_surface_side_rolls_back_complete_liquid_and_film_inventory ... ok
+test growing_merged_sphere_cannot_penetrate_the_substrate ... ok
+test captures_report_thermal_energy_in_the_receiving_cell ... ok
+test engulfment_budget_failure_restores_all_prepared_deposits_and_components ... ok
+test merged_drop_can_fragment_into_unequal_children_after_wall_contact ... ok
+test fast_immersed_drop_is_rejected_without_tunneling_or_partial_deposition ... ok
+test droplets_merge_then_deposit_in_the_same_interval ... ok
+test growth_contact_can_capture_slow_merged_droplets_and_rolls_back_on_budget ... ok
+test growth_capture_does_not_accept_a_fast_merged_drop ... ok
+test ballistic_endpoint_mismatch_and_geometry_budget_roll_back ... ok
+test population_mask_keeps_sph_samples_out_of_unified_coalescence ... ok
+test late_failure_rolls_back_prepared_deposit_and_coalescence ... ok
+test newborn_fragment_flight_balances_external_work_and_impulse ... ok
+test ballistic_elastic_bounce_keeps_gravity_after_contact ... ok
+test prepared_deposition_raises_surface_and_engulfs_another_drop_in_same_call ... ok
+test same_acceleration_merge_follows_center_of_mass_parabola ... ok
+test ballistic_capture_uses_contact_velocity_and_only_precontact_external_work ... ok
+test simultaneous_wall_and_drop_contact_uses_wall_priority ... ok
+test slow_immersed_drop_is_captured_at_time_zero_with_all_ledgers ... ok
+test ballistic_curved_path_captures_even_when_endpoint_chord_misses ... ok
+test wall_rebound_changes_the_next_droplet_collision ... ok
+test reconstructed_wet_surface_captures_earlier_and_retains_component_inventory ... ok
+test thermal_lifecycle_credits_receiving_cells_and_rolls_back_late_failure ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 6 tests
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error ... ok
+test applied_heat_changes_temperature_and_rejects_late_overdraw ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

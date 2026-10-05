@@ -1,0 +1,19 @@
+{
+  "combined_cpu": {
+    "exec_session": 34554,
+    "status": "terminal_pass",
+    "log": "/tmp/voxy-instant-pose-full-clip.log",
+    "exit_code": 0
+  },
+  "normal_pruning_only_cpu": {
+    "exec_session": 52848,
+    "status": "terminal_pass",
+    "log": "/tmp/voxy-normal-pruning-full-clip.log",
+    "exit_code": 0
+  },
+  "baseline_gpu": {
+    "exec_session": 12276,
+    "status": "terminal_pass",
+    "exit_code": 0
+  }
+}

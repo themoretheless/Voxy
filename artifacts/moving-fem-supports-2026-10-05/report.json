@@ -1,0 +1,65 @@
+{
+  "goal_complete": false,
+  "final_source_qualified": true,
+  "qualification_scope": "prescribed-support work, Verlet path safety and existing muscle/inertia regression targets; moving mannequin not integrated",
+  "tests_passed": 20,
+  "tests_failed": 0,
+  "tests_ignored": 0,
+  "initial_debug_run": {
+    "session": 4531,
+    "exit_code": 0,
+    "targets": {
+      "finite_inertia": 4,
+      "moving_fem_supports_before_followups": 4,
+      "muscle_dynamics": 10
+    },
+    "muscle_target_elapsed_s": 1558.19
+  },
+  "failed_translation_followup": {
+    "session": 79979,
+    "exit_code": 101,
+    "reason": "roundoff-scale reaction work caused false unrepresentable-work rejection in zero-gravity rigid translation"
+  },
+  "final_debug_run": {
+    "session": 56327,
+    "exit_code": 0,
+    "targets": {
+      "finite_inertia": 4,
+      "moving_fem_supports": 6
+    }
+  },
+  "final_release_run": {
+    "session": 60590,
+    "exit_code": 0,
+    "targets": {
+      "finite_inertia": 4,
+      "moving_fem_supports": 6,
+      "muscle_dynamics": 10
+    },
+    "muscle_target_elapsed_s": 16.0
+  },
+  "earlier_final_debug_run": {
+    "session": 99792,
+    "exit_code": 0,
+    "status": "before adding zero-gravity translation fixture and tolerance-aware receipt correction"
+  },
+  "timing_is_controlled_benchmark": false,
+  "pin_kinetic_work_cancelled_analytically_in_defect": true,
+  "reaction_and_kinetic_work_components_retained_separately": true,
+  "lost_total_component_rejected_above_declared_energy_tolerance": true,
+  "linear_verlet_drift_determinant_minimum_checked": true,
+  "path_tests_include_cubic_interior_inversion_and_admissible_quarter_turn": true,
+  "moves_all_pins_with_no_free_node_teleport": true,
+  "all_failed_steps_atomic": true,
+  "moving_supports_combined_with_rate_dependent_muscle_step": false,
+  "moving_mannequin_converted_to_fem": false,
+  "anatomical_calibration": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia.rs": "ac876aa8a4fde3a7010beeb4ac8bfcd983937f61f63a28c4cac286bcff25553b",
+    "crates/physics/src/biomechanics/inertia/supports.rs": "cbf9dbe9fcfd816baac3768e8ef5285ac0006c00ad33ced03d51db1bd4281007",
+    "crates/physics/src/biomechanics/mod.rs": "d9789d244d76a58286ffa3b6e19486d28d3bd1df93b45093f9823a8c3425878b",
+    "crates/physics/tests/moving_fem_supports.rs": "4747b0444b955be889296d44b8572f07a1c1df734b5e6b23c011e70e574fdb4b",
+    "crates/physics/tests/finite_inertia.rs": "533ffe31cdda7575deb010e6c5e511acd8f9035be7d04213e1989a4c886e4736",
+    "crates/physics/tests/muscle_dynamics.rs": "f1b3ee977ee3aebc4871b4996b40a4bd57dd2937ece0e20aac04237d29c84080"
+  }
+}

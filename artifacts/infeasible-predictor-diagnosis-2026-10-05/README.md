@@ -1,0 +1,9 @@
+# Infeasible predictor and authored motion precision
+
+Optional read-only predictor observations retain all probe errors as printed Results and do not replace the original failure. The targeted rollback test was run with trace enabled and --nocapture; it exercises the observation and preserves the original closed-gap error plus the full inertial-owner snapshot.
+
+The full imported trace terminates at step 66 / 0.275 s. At dt=2.5431315104166666e-7 s the current-velocity predictor preserves internal gap and volume, but external CCD rejects at normalized time 2.539000808816514e-5. Its final nearest separation is 9.993702639278642e-5 m, which is 6.297360721358163e-8 m below the 1e-4 m floor. The half-dt probe predicts 3.148600479834982e-8 m below the floor. Both identify body face [10,7,11] and original obstacle face 1308. A feasible starting-pose restoration beyond simple current-velocity prediction is therefore needed; reducing the final admission checks is not justified.
+
+The existing example now supports --contact-motion-bench, sampling the same imported contact_positions provider without GPU or a physics solve. At t=0.275 s, maximum source-vertex speed estimates are 1.465389, 1.464985 and 1.462602 m/s for dt=1e-3,1e-4,1e-5 s; at 1e-7 s it becomes 3.793948 m/s, while 1e-8 and 1e-9 s leave all 3273 vertices unchanged. Current try_sample_phase casts local time to f32 and contact_positions converts already skinned f32 render vertices to f64. This measures staircase sampling. It does not prove this is the sole cause of the contact failure. A continuous physical motion provider must avoid that precision loss.
+
+The completed objective-selection tests remain 88 library (3 manual benchmarks ignored), 26 public contact, 8 viscoelastic and 19 tissue passes. This turn added observations and an actual motion measurement, not a qualified complete contact clip. No admission budgets or physical coefficients changed. All changes remain local and uncommitted.

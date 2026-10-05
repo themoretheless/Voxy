@@ -1,0 +1,72 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 45.63s
+     Running tests/liquid_film_capture.rs (target/debug/deps/liquid_film_capture-6469e86f1a497794)
+
+running 10 tests
+test first_surface_wins_and_parallel_starting_contact_does_not_capture ... ok
+test capture_failures_preserve_both_states_and_batch_deposits_are_atomic ... ok
+test intersection_captures_once_misses_remain_and_ledgers_close ... ok
+test mixed_capture_late_path_schema_and_batch_errors_preserve_both_states ... ok
+test late_spray_failure_restores_candidate_deposition_and_both_complete_states ... ok
+test unresolved_mixture_capture_keeps_particle_and_film_inventory ... ok
+test invalid_deposition_controls_roll_back_even_when_all_particles_would_stick ... ok
+test one_step_deposits_slow_mixture_and_sprays_fast_impacts_with_complete_ledgers ... ok
+test deposited_film_spreads_and_retains_captured_mass ... ok
+test heterogeneous_capture_preserves_component_mass_and_external_energy_ledgers ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_film_rebound.rs (target/debug/deps/liquid_film_rebound-b631c50bf81d8770)
+
+running 4 tests
+test oblique_rebound_closes_momentum_and_kinetic_energy_ledgers ... ok
+test underside_and_miss_work_and_invalid_controls_roll_back ... ok
+test elastic_and_stopping_limits_preserve_mass_and_composition ... ok
+test zero_restitution_contact_remains_detectable_under_gravity ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_atomic_contact.rs (target/debug/deps/surface_film_atomic_contact-5e4989e645df7ac6)
+
+running 3 tests
+test failed_contact_rolls_back_geometry_source_and_transport ... ok
+test successful_atomic_contact_matches_sequential_physics_and_source_mass ... ok
+test moving_surfaces_exchange_only_during_contact_and_preserve_source_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 11 tests
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test late_invalid_substrate_rolls_back_both_owners_and_dry_cells_insulate ... ok
+test conduction_dry_cells_insulate_and_isothermal_cells_do_not_change ... ok
+test applied_heat_changes_temperature_and_rejects_late_overdraw ... ok
+test finite_substrate_exchange_matches_analytic_decay_and_conserves_total_heat ... ok
+test thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test conduction_matches_two_cell_fourier_solution_without_inventory_motion ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test conduction_on_four_cells_refines_and_preserves_global_heat_and_bounds ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_withdrawal.rs (target/debug/deps/surface_film_withdrawal-7500cd01898e1f33)
+
+running 12 tests
+test unrepresentable_transferred_mass_does_not_remove_volume ... ok
+test mass_depletion_does_not_overdraw_when_volume_roundtrip_rounds_up ... ok
+test kilogram_deposit_rejects_species_growth_below_bulk_resolution ... ok
+test species_change_below_bulk_resolution_is_rejected_without_ghost_parcel ... ok
+test signed_zero_withdrawal_preserves_zero_inventory_representation ... ok
+test canonical_mass_survives_inexact_volume_projection_and_complete_removal ... ok
+test zero_and_sub_ulp_flux_do_not_credit_phantom_mass ... ok
+test selective_removal_preserves_residue_and_bulk_species_ledger ... ok
+test kilogram_withdrawals_deplete_exactly_and_reject_late_overdraw_atomically ... ok
+test kilogram_deposits_balance_species_and_bulk_across_repeated_cells ... ok
+test late_invalid_requests_and_repeated_overdraw_preserve_complete_state ... ok
+test kilogram_deposit_late_failure_and_unresolved_flux_preserve_inventory ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

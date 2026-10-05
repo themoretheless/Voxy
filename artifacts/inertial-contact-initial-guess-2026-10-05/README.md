@@ -1,0 +1,7 @@
+# Feasible inertial initial guess
+
+The previous closed-gap fallback passed imported steps 65 and 66 before rejecting step 67 with nonlinear nonconvergence (see ../feasible-contact-predictor-2026-10-05/render.log). The solver now tries current-velocity midpoint displacement at the first iteration whenever the stationary evaluation is valid or reports the specific closed-gap error. A candidate must differ, be finite, preserve internal gap and volume paths, pass external swept CCD and have a valid local force evaluation. Otherwise the original stationary evaluation/error remains. Probe errors do not replace the original result. This changes the initial guess, not physical coefficients, equilibrium equations, iterations or work/energy admission budgets.
+
+88 library tests pass (3 manual benchmarks ignored), 26 public contact and 8 viscoelastic tests pass. All 19 tissue tests pass, including the imported-rig motion regression. The final probe-error isolation was rechecked with all 26 public contact tests. The runtime/tissue binaries were built before that isolated Err-handling amendment; successful probe paths are identical.
+
+The full imported render terminated at step 66 / 0.275000000 s with closed surface contact gap, producing six prefix frames. This is worse than the closed-gap-only fallback, which reached step 67. Using every feasible velocity predictor is therefore not demonstrated beneficial on the complete example. All changes remain local and uncommitted.

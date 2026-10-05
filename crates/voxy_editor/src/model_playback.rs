@@ -3,10 +3,20 @@ use std::sync::Arc;
 use voxy_animation::{Animator, AnimatorFrame};
 use voxy_render::ModelAsset;
 
+/// Marker on the selected clip's normalized authored timeline.
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct ModelAnimationEvent {
+    pub name: String,
+    pub phase: f64,
+}
+
 /// Authored playback selection. `None` keeps the bind pose; zero speed pauses.
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct ModelAnimation {
+    #[serde(default)]
+    pub events: Vec<ModelAnimationEvent>,
     pub clip: Option<usize>,
     /// Exact unique clip name; empty retains legacy numeric selection.
     #[serde(default)]
@@ -28,6 +38,7 @@ pub struct ModelAnimation {
 impl Default for ModelAnimation {
     fn default() -> Self {
         Self {
+            events: Vec::new(),
             clip: Some(0),
             clip_name: String::new(),
             speed: 1.0,
@@ -71,6 +82,17 @@ impl ModelAnimation {
         clip_count: Option<usize>,
         joint_count: Option<usize>,
     ) -> Result<(), &'static str> {
+        if self.events.len() > 4096
+            || self.events.iter().any(|event| {
+                event.name.is_empty()
+                    || event.name.len() > 1024
+                    || event.name.contains('\0')
+                    || !event.phase.is_finite()
+                    || !(0. ..=1.).contains(&event.phase)
+            })
+        {
+            return Err("invalid model animation events");
+        }
         if !self.transition_seconds.is_finite() || !(0. ..=60.).contains(&self.transition_seconds) {
             return Err("invalid model animation transition duration");
         }
@@ -112,6 +134,8 @@ pub(crate) struct SourceContactInterval {
 pub(crate) struct ModelPlayback {
     model: Arc<ModelAsset>,
     animator: Option<Animator>,
+    event_tracks: std::collections::BTreeMap<usize, voxy_animation::ClipEvents>,
+    pending_events: Vec<voxy_animation::ClipEventOccurrence>,
     root_motion_joint: u16,
     contact_interval: Option<voxy_animation::AnimationPhaseInterval>,
     source_contact_interval: Option<SourceContactInterval>,
@@ -237,6 +261,9 @@ impl PreparedModelFadeMotion {
             .map_err(|error| error.to_string())?
             .map(|source| (source.snapshot.clone(), source.active_tick_fraction));
         let mut candidate = current.clone();
+        candidate
+            .pending_events
+            .extend(current.preview_events(wall)?);
         candidate.animator = Some(animator);
         candidate.contact_interval = Some(contact_interval);
         candidate.source_contact_interval = source;
@@ -397,8 +424,18 @@ impl ModelPlayback {
                                 == 1
                     })))
     }
-    pub(crate) fn rebind(&mut self, model: Arc<ModelAsset>) {
+    /// Replaces resource identity while retaining original clip sources/clocks.
+    /// Different clip revisions may subsequently enter a validated transition,
+    /// but an authored skeleton change requires construction of new playback.
+    pub(crate) fn rebind(&mut self, model: Arc<ModelAsset>) -> Result<(), String> {
+        if Arc::ptr_eq(&self.model, &model) {
+            return Ok(());
+        }
+        if self.model.skeleton.joints() != model.skeleton.joints() {
+            return Err("animation rebind skeleton changed".into());
+        }
         self.model = model;
+        Ok(())
     }
     pub(crate) fn new(
         model: Arc<ModelAsset>,
@@ -419,7 +456,8 @@ impl ModelPlayback {
                 if !clip.is_compatible_with(&model.skeleton) {
                     return Err("animation clip belongs to an incompatible rig".into());
                 }
-                let mut animator = Animator::new(clip.clone());
+                let mut animator =
+                    Animator::try_new(clip.clone()).map_err(|error| error.to_string())?;
                 animator
                     .set_speed(settings.speed)
                     .map_err(|error| error.to_string())?;
@@ -428,18 +466,95 @@ impl ModelPlayback {
                     .map_err(|error| error.to_string())?;
                 Some(animator)
             }
-            None => None,
+            None => {
+                model
+                    .skeleton
+                    .bind_pose()
+                    .skin_matrices(&model.skeleton)
+                    .map_err(|error| error.to_string())?;
+                None
+            }
         };
-        Ok(Self {
+        let mut playback = Self {
             model,
             animator,
+            event_tracks: Default::default(),
+            pending_events: Vec::new(),
             root_motion_joint,
             contact_interval: None,
             source_contact_interval: None,
             frozen_source_tick: None,
-        })
+        };
+        playback.bind_authored_events(&settings)?;
+        Ok(playback)
     }
 
+    pub(crate) fn bind_authored_events(&mut self, settings: &ModelAnimation) -> Result<(), String> {
+        let track = settings
+            .clip
+            .map(|index| {
+                let clip = self
+                    .model
+                    .animations
+                    .get(index)
+                    .ok_or("invalid event clip")?;
+                voxy_animation::ClipEvents::new(
+                    clip.clone(),
+                    settings
+                        .events
+                        .iter()
+                        .map(|event| voxy_animation::ClipEvent {
+                            name: Arc::from(event.name.as_str()),
+                            phase: event.phase,
+                        })
+                        .collect(),
+                )
+                .map(|track| (index, track))
+                .map_err(str::to_string)
+            })
+            .transpose()?;
+        self.event_tracks.clear();
+        if let Some((index, track)) = track {
+            self.event_tracks.insert(index, track);
+        }
+        Ok(())
+    }
+
+    pub(crate) fn set_clip_events(
+        &mut self,
+        index: usize,
+        events: Vec<voxy_animation::ClipEvent>,
+    ) -> Result<(), String> {
+        let clip = self
+            .model
+            .animations
+            .get(index)
+            .ok_or("invalid event clip")?;
+        let track =
+            voxy_animation::ClipEvents::new(clip.clone(), events).map_err(str::to_string)?;
+        self.event_tracks.insert(index, track);
+        Ok(())
+    }
+    pub(crate) fn take_events(&mut self) -> Vec<voxy_animation::ClipEventOccurrence> {
+        std::mem::take(&mut self.pending_events)
+    }
+    fn preview_events(&self, dt: f64) -> Result<Vec<voxy_animation::ClipEventOccurrence>, String> {
+        match self.animator.as_ref().and_then(|animator| {
+            self.event_tracks
+                .values()
+                .find(|track| track.matches_target(animator))
+                .map(|track| (animator, track))
+        }) {
+            Some((animator, track)) => track
+                .preview_target_tick(
+                    animator,
+                    dt,
+                    4096_usize.saturating_sub(self.pending_events.len()),
+                )
+                .map_err(str::to_string),
+            None => Ok(Vec::new()),
+        }
+    }
     pub(crate) fn set_root_motion_joint(&mut self, joint: u16) -> Result<(), String> {
         if usize::from(joint) >= self.model.skeleton.joints().len() {
             return Err("invalid model animation motion joint".into());
@@ -584,6 +699,7 @@ impl ModelPlayback {
             .map_err(|e| e.to_string())?
             .flatten()
             .map(|source| (source.snapshot.clone(), source.active_tick_fraction));
+        let events = self.preview_events(dt)?;
         let mut candidate = self.animator.clone();
         let mut path = None;
         let frame = if let Some(animator) = &mut candidate {
@@ -618,6 +734,7 @@ impl ModelPlayback {
         };
         let result = publish(&self.model, &frame, path.as_ref())?;
         self.animator = candidate;
+        self.pending_events.extend(events);
         self.contact_interval = interval;
         self.source_contact_interval = source_interval;
         self.frozen_source_tick = frozen_source_tick;
@@ -628,6 +745,29 @@ impl ModelPlayback {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn queued_clip_events_publish_after_consumer_and_drain_once() {
+        let mut playback = ModelPlayback::new(model(), ModelAnimation::default()).unwrap();
+        playback
+            .set_clip_events(
+                0,
+                vec![voxy_animation::ClipEvent {
+                    name: "step".into(),
+                    phase: 0.1,
+                }],
+            )
+            .unwrap();
+        assert!(
+            playback
+                .advance_with(0.25, |_, _| Err::<(), _>("consumer failure".into()))
+                .is_err()
+        );
+        assert!(playback.take_events().is_empty());
+        playback.advance_with(0.25, |_, _| Ok(())).unwrap();
+        assert_eq!(playback.take_events().len(), 1);
+        assert!(playback.take_events().is_empty());
+        assert!(playback.set_clip_events(99, vec![]).is_err());
+    }
     fn model() -> Arc<ModelAsset> {
         let glb = include_bytes!("../../voxy_render/examples/assets/animated-triangle.glb");
         Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap())
@@ -677,6 +817,87 @@ mod tests {
         Arc::make_mut(&mut asset).animations = vec![Arc::new(clip)];
         assert!(asset.sample_pose(Some(0), 0.).is_err());
         assert!(ModelPlayback::new(asset, ModelAnimation::default()).is_err());
+    }
+
+    #[test]
+    fn initial_palette_overflow_is_rejected_before_owner_creation() {
+        use voxy_animation::{AnimationClip, JointTrack, Playback, Skeleton, Transform, Vec3Key};
+        let mut asset = model();
+        let mut joints = asset.skeleton.joints().to_vec();
+        joints[0].bind_local = Transform::IDENTITY;
+        joints[0].inverse_bind = glam::Mat4::from_scale(glam::Vec3::splat(2.));
+        let rig = Skeleton::new(joints).unwrap();
+        assert!(rig.bind_pose().skin_matrices(&rig).is_ok());
+        let mut tracks = vec![JointTrack::default(); rig.joints().len()];
+        tracks[0].scales = vec![Vec3Key {
+            time: 0.,
+            value: glam::Vec3::splat(f32::MAX),
+        }];
+        let clip =
+            AnimationClip::new("initial overflow", 1., Playback::Loop, tracks, &rig).unwrap();
+        assert!(clip.try_sample(&rig, 0.).is_ok());
+        let mutable = Arc::make_mut(&mut asset);
+        mutable.skeleton = rig;
+        mutable.animations = vec![Arc::new(clip)];
+        assert_eq!(
+            ModelPlayback::new(asset, ModelAnimation::default())
+                .err()
+                .unwrap(),
+            voxy_animation::AnimationError::InvalidPose(0).to_string()
+        );
+    }
+
+    #[test]
+    fn bind_only_owner_admits_palette_before_creation() {
+        let mut asset = model();
+        let settings = ModelAnimation {
+            clip: None,
+            ..ModelAnimation::default()
+        };
+        let mut valid = ModelPlayback::new(asset.clone(), settings.clone()).unwrap();
+        let frame = valid
+            .advance_with(0.25, |_, frame| Ok(frame.pose.clone()))
+            .unwrap();
+        assert_eq!(frame, asset.skeleton.bind_pose());
+        let mut joints = asset.skeleton.joints().to_vec();
+        joints[0].bind_local = voxy_animation::Transform {
+            scale: glam::Vec3::splat(f32::MAX),
+            ..voxy_animation::Transform::IDENTITY
+        };
+        joints[0].inverse_bind = glam::Mat4::from_scale(glam::Vec3::splat(2.));
+        Arc::make_mut(&mut asset).skeleton = voxy_animation::Skeleton::new(joints).unwrap();
+        assert_eq!(
+            ModelPlayback::new(asset, settings).err().unwrap(),
+            voxy_animation::AnimationError::InvalidPose(0).to_string()
+        );
+    }
+
+    #[test]
+    fn foreign_rig_rebind_preserves_resource_and_active_playback() {
+        let asset = model();
+        let mut playback = ModelPlayback::new(asset.clone(), ModelAnimation::default()).unwrap();
+        playback.transition_to_clip(0, 0.5).unwrap();
+        playback.advance_with(0.1, |_, _| Ok(())).unwrap();
+        let mut control = playback.clone();
+        let mut replacement = asset.as_ref().clone();
+        let mut joints = replacement.skeleton.joints().to_vec();
+        joints[0].name = Arc::from("foreign root");
+        replacement.skeleton = voxy_animation::Skeleton::new(joints).unwrap();
+        assert!(playback.rebind(Arc::new(replacement)).is_err());
+        assert!(Arc::ptr_eq(&playback.model, &asset));
+        assert_eq!(playback.contact_phase(), control.contact_phase());
+        assert_eq!(playback.has_transition(), control.has_transition());
+        let take = |_: &ModelAsset, frame: &AnimatorFrame| {
+            Ok((
+                frame.pose.clone(),
+                frame.skin_matrices.clone(),
+                frame.root_motion,
+            ))
+        };
+        assert_eq!(
+            playback.advance_with(0.1, take).unwrap(),
+            control.advance_with(0.1, take).unwrap()
+        );
     }
 
     #[test]
@@ -979,7 +1200,7 @@ mod accepted_fade_tests {
         let replacement =
             Arc::new(ModelAsset::parse(glb, &[], voxy_render::ModelLimits::default()).unwrap());
         changed = playback.clone();
-        changed.rebind(replacement);
+        changed.rebind(replacement).unwrap();
         assert!(staged.accepted_frame(&changed, 0.0625).is_err());
         assert!(staged.accepted_frame(&playback, 0.).is_ok());
     }
@@ -990,13 +1211,17 @@ mod physical_fade_receipt_tests {
     use super::*;
     #[test]
     fn physical_receipt_prepares_only_bound_fade_and_failed_preparation_rolls_back() {
-        exercise_physical_fade_receipt(false);
+        exercise_physical_fade_receipt(false, false);
     }
     #[test]
     fn original_source_fade_preserves_asset_receipt_and_transactional_rollback() {
-        exercise_physical_fade_receipt(true);
+        exercise_physical_fade_receipt(true, false);
     }
-    fn exercise_physical_fade_receipt(original_sources: bool) {
+    #[test]
+    fn collision_limited_fade_emits_only_markers_in_accepted_prefix() {
+        exercise_physical_fade_receipt(true, true);
+    }
+    fn exercise_physical_fade_receipt(original_sources: bool, collision: bool) {
         use voxy_animation::RootRigidTransform;
         use voxy_gameplay::{CharacterBody, CharacterPhysics, CharacterTickError, player_input};
         use voxy_scene::{SceneGraph, Transform};
@@ -1049,7 +1274,33 @@ mod physical_fade_receipt_tests {
         let model = Arc::new(model);
         let mut playback = ModelPlayback::new(model, ModelAnimation::default()).unwrap();
         playback.transition_to_clip(0, 0.125).unwrap();
-        let mut scene = SceneGraph::new(1);
+        playback
+            .set_clip_events(
+                0,
+                vec![voxy_animation::ClipEvent {
+                    name: Arc::from("accepted-step"),
+                    phase: 0.01,
+                }],
+            )
+            .unwrap();
+        if collision {
+            playback
+                .set_clip_events(
+                    0,
+                    vec![
+                        voxy_animation::ClipEvent {
+                            name: Arc::from("accepted-step"),
+                            phase: 0.01,
+                        },
+                        voxy_animation::ClipEvent {
+                            name: Arc::from("deferred-step"),
+                            phase: 0.05,
+                        },
+                    ],
+                )
+                .unwrap();
+        }
+        let mut scene = SceneGraph::new(2);
         let owner = scene.spawn(None, Transform::default()).unwrap();
         scene
             .insert_component(
@@ -1061,6 +1312,25 @@ mod physical_fade_receipt_tests {
                 },
             )
             .unwrap();
+        if collision {
+            let wall = scene
+                .spawn(
+                    None,
+                    Transform {
+                        translation: glam::Vec3::new(0.13, 0., 0.),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+            scene
+                .insert_component(
+                    wall,
+                    voxy_gameplay::BoxCollider {
+                        half_extents: [0.05, 1., 1.],
+                    },
+                )
+                .unwrap();
+        }
         let dt = 0.0625;
         let build = || {
             let prepared = playback
@@ -1094,7 +1364,7 @@ mod physical_fade_receipt_tests {
         let staged = build();
         let other = build();
         let request = staged.request(glam::DQuat::IDENTITY, glam::Vec3::ZERO, 1., 1, 0.);
-        let mut physics = CharacterPhysics::new(&scene, 1, 0);
+        let mut physics = CharacterPhysics::new(&scene, 1, usize::from(collision));
         let mut input = player_input().unwrap();
         let before = scene.local(owner).unwrap();
         let result = physics.fixed_step_with_certified_fade_preparation(
@@ -1103,7 +1373,8 @@ mod physical_fade_receipt_tests {
             f64::from(dt),
             &[request],
             |preview, _| {
-                staged.accepted_frame(&playback, &preview.motions[0])?;
+                let (mut rejected, _) = staged.accepted_playback(&playback, &preview.motions[0])?;
+                assert_eq!(rejected.take_events().len(), 1);
                 assert!(
                     other
                         .accepted_frame(&playback, &preview.motions[0])
@@ -1116,6 +1387,7 @@ mod physical_fade_receipt_tests {
             result.unwrap_err(),
             CharacterTickError::Preparation("palette rejected".into())
         );
+        assert!(playback.take_events().is_empty());
         assert_eq!(scene.local(owner).unwrap(), before);
         assert!(physics.state(&scene, owner).unwrap().is_none());
         let (receipts, (candidate, frame)) = physics
@@ -1127,8 +1399,14 @@ mod physical_fade_receipt_tests {
                 |preview, _| staged.accepted_playback(&playback, &preview.motions[0]),
             )
             .unwrap();
-        assert!(receipts[0].complete);
-        if original_sources {
+        if collision {
+            assert!(!receipts[0].complete);
+            let phase = candidate.contact_phase().unwrap();
+            assert!(phase > 0.01 && phase < 0.05, "accepted phase {phase}");
+        } else {
+            assert!(receipts[0].complete);
+        }
+        if original_sources && !collision {
             assert_eq!(
                 scene.local(owner).unwrap().translation.x - before.translation.x,
                 dt
@@ -1145,6 +1423,17 @@ mod physical_fade_receipt_tests {
         assert!(candidate.source_contact_interval().is_some());
         assert!(playback.contact_interval().is_none());
         playback = candidate;
+        let events = playback.take_events();
+        assert_eq!(events.len(), 1);
+        assert_eq!(&*events[0].name, "accepted-step");
+        assert!(playback.take_events().is_empty());
         assert!(staged.accepted_frame(&playback, &receipts[0]).is_err());
+        if collision {
+            playback.advance_with(0.0625, |_, _| Ok(())).unwrap();
+            let events = playback.take_events();
+            assert_eq!(events.len(), 1);
+            assert_eq!(&*events[0].name, "deferred-step");
+            assert_eq!(events[0].phase, 0.05);
+        }
     }
 }

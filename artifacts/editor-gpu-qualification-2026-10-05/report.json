@@ -1,0 +1,33 @@
+{
+  "command": "cargo test --release -p voxy_editor --lib -- --ignored",
+  "passed": 11,
+  "failed": 0,
+  "ignored": 0,
+  "exit_code": 0,
+  "gpu_tests": [
+    "cpu_fallback_supports_mixed_primitives_and_removal",
+    "gpu_material_revision_failure_preserves_texture_storage",
+    "composed_root_motion_collision_renders_once_with_in_place_gpu_palette",
+    "curved_root_rotation_collision_renders_once_with_in_place_gpu_palette",
+    "planted_foot_gpu_matches_independent_locked_geometry_and_clears_resources",
+    "retargeted_foot_gpu_matches_independent_locked_geometry_and_clears_resources",
+    "animated_lod_views_budget_and_cpu_fallback",
+    "gpu_playback_shares_sources_matches_cpu_and_preserves_failed_revision",
+    "fixed_tick_hierarchy_owners_share_gpu_source_at_capacity",
+    "gpu_overlay_preserves_glyph_alpha_and_clip",
+    "gpu_font_reload_retains_last_good_and_recovers_through_actual_worker_and_watcher"
+  ],
+  "combined_unique_passed_with_prior_turn": 383,
+  "source_sha256": {
+    "crates/voxy_editor/src/animated_models/tests.rs": "f1bcdd2e719df05e2944e459f4b7e2d81ea3e4661efe0718a0025e3d23c5bf30",
+    "crates/voxy_editor/src/ui_draw/gpu_tests.rs": "5b966b6d163da96739fb8d6863c3e2c2474dcd60323af9d1fcc62b51aaa6495d",
+    "crates/voxy_editor/src/ui_live/gpu_reload_tests.rs": "55b803f7da5e4b14a27ff93bc185a870c041d63afb8b33a81f7bf2e1b1f0fd1f",
+    "crates/voxy_animation/src/lib.rs": "4497c62a73dc3f3ec84f2692d178819fdd5abbb9c24ce93604ce223f8c3e1b43"
+  },
+  "goal_complete": false,
+  "limitations": [
+    "local GPU acceptance only",
+    "no CUDA or broad vendor/backend matrix",
+    "does not prove full engine parity"
+  ]
+}

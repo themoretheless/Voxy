@@ -1,0 +1,24 @@
+{
+  "rendererOutcome": "Presented",
+  "frame": 86,
+  "simulationTime": 4.31546179223805,
+  "secondaryDynamics": {
+    "enabled": true,
+    "peakLocalDisplacementM": 0.00034971840850523366,
+    "regionLocalDisplacementsM": [
+      0.000119905323748484,
+      0.00011989982742204958,
+      0.00011496674478873616,
+      0.00011496202172136799
+    ],
+    "rootDisplacementM": 0.0,
+    "steps": 87
+  },
+  "limitations": [
+    "Presentation submission is not visual animation verification.",
+    "secondary_only bypasses skeletal pose deformation.",
+    "No clothed neutral demonstration has been implemented.",
+    "Physical and physiological calibration is unverified."
+  ],
+  "status": "incomplete"
+}

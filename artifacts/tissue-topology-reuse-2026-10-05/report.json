@@ -1,0 +1,15 @@
+{
+  "passed": 24,
+  "failed": 0,
+  "targets": {
+    "solid_film_binding": 5,
+    "solid_heat_conduction": 8,
+    "tissue_demo": 11
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/film_binding.rs": "bf8ec1fd15210ac6c59ac05d594d2eb6730dee57340eea194d585e71afa156b2",
+    "crates/voxy_app/src/tissue_demo.rs": "04dc0f3fa53010a44801d11b541c1145088fd5f978fe91c8aa95390986a59349"
+  },
+  "goal_complete": false,
+  "performance_claim": null
+}

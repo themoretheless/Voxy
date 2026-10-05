@@ -1,0 +1,29 @@
+{
+  "goal_complete": false,
+  "qualification_complete": true,
+  "scope": "held-pose Maxwell energy balance without full-body force assembly",
+  "physical_trace_samples": 964,
+  "physical_trace_byte_identical_to_previous": true,
+  "step_counts_identical": true,
+  "mechanical_energy_work_heat_identical": true,
+  "max_accumulated_defect_receipt_difference_j": 6.578866593750891e-11,
+  "full_body_assemblies_removed_per_split_step": 4,
+  "local_cycle_seconds": 12,
+  "previous_wall_seconds": 54.961904333,
+  "current_wall_seconds": 40.336831083,
+  "timing_limits": "single local observations with other processes active, no controlled speedup or editor-FPS claim",
+  "tests": {
+    "physics_passed": 39,
+    "app_passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "app_elapsed_s": 38.41,
+    "app_session_id": 19250,
+    "new_regression": "large unchanged gravity potential cannot hide or block small Maxwell heat"
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/viscoelastic.rs": "e1651aa3755e1789db86d4fff6be45990adda7645283b4bd9e782d2c505b417f",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "e67372c11c11a5dfdda9823f5b59f3de35548e1a23e66a3d8f30a7ccbc3d0c30",
+    "crates/physics/tests/viscoelastic_inertia.rs": "396e55165c4c95db9c3ebef4410ec46b5ca00a1f37134f74712a03f6afb43366"
+  }
+}

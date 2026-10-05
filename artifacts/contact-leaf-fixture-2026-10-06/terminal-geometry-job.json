@@ -1,0 +1,9 @@
+{
+  "session": 21216,
+  "state": "launching/running",
+  "log": "/tmp/voxy-contact-terminal-geometry.log",
+  "workspace": "/tmp/voxy-contact-replay-20261006",
+  "source_sha256": "ab1ee0e17e47230fc3feb955cf9c3e4927b5ae287122ab45ee1ae58aebea9932",
+  "scope": "same archived failed averaged-force integrator, diagnostic terminal geometry only; default midpoint unchanged",
+  "expected_case": "original step 126 failure; experiment not a fix"
+}

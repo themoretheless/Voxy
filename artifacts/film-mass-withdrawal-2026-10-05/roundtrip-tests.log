@@ -1,0 +1,16 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.39s
+     Running tests/surface_film_withdrawal.rs (target/debug/deps/surface_film_withdrawal-7500cd01898e1f33)
+
+running 8 tests
+test signed_zero_withdrawal_preserves_zero_inventory_representation ... ok
+test kilogram_withdrawals_deplete_exactly_and_reject_late_overdraw_atomically ... ok
+test selective_removal_preserves_residue_and_bulk_species_ledger ... ok
+test unrepresentable_transferred_mass_does_not_remove_volume ... ok
+test zero_and_sub_ulp_flux_do_not_credit_phantom_mass ... ok
+test species_change_below_bulk_resolution_is_rejected_without_ghost_parcel ... ok
+test mass_depletion_does_not_overdraw_when_volume_roundtrip_rounds_up ... ok
+test late_invalid_requests_and_repeated_overdraw_preserve_complete_state ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,7 +1,7 @@
 # Engine architecture research
 
 User scope: find 500 engine repositories, study the strongest mechanisms, and
-cover Stride3D/Unity/Godot features with an architecture suited to Voxy.
+cover UE (Unreal Engine)/Stride3D/Unity/Godot features with an architecture suited to Voxy.
 
 `collect.py` discovers public GitHub repositories and saves query URLs, fetch
 timestamps and repository IDs. `candidates.json` is discovery evidence, not a
@@ -27,6 +27,8 @@ state their workload, complexity cost and measurable acceptance criteria.
 
 ## Next source-review questions
 
+- UE: object/resource ownership, runtime/editor boundaries, animation/physics
+  update order and import/build dependencies; compare contracts before adoption.
 - Godot: scene/server/platform boundaries, editor resources and import pipeline.
 - Bevy: declared system access, scheduling and change detection costs.
 - WickedEngine / Filament: render resource lifetime and pass dependencies.
@@ -90,3 +92,5 @@ Stride3D/Unity/Godot feature coverage. Completion of the broad goal remains open
 Validation: normal and optimized Python runs produced identical audit results.
 An isolated fixture rejected README corruption, a missing classification mirror
 entry and an unpinned source URL. Original evidence was not modified.
+
+Audit refresh (2026-10-05): normalized the Bevy command mechanism manifest to the shared repository/sources/file schema without changing pinned commit, source URLs or digests. Normal and optimized audits agree: 1,428 pinned records, 500 accepted engine identities (52 derived), and 24 verified source files across five mechanism manifests. Evidence: artifacts/engine-corpus-audit-2026-10-05/audit.json. Review depth and broad feature coverage remain incomplete.

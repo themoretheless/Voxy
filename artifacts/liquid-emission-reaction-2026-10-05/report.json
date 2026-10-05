@@ -1,0 +1,18 @@
+{
+  "passed": 9,
+  "failed": 0,
+  "targets": {
+    "emission_unit": 4,
+    "liquid_species": 5
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "6b24e17291a9a4434bacb809f69fc67271c17dfd028c44159d34d72fdcc06b58"
+  },
+  "goal_complete": false,
+  "scope": "reservoir linear and angular momentum flux receipts",
+  "limitations": [
+    "no automatic mass-changing rigid body adapter",
+    "no resolved nozzle flow or breakup qualification",
+    "no fresh GPU render"
+  ]
+}

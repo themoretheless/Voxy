@@ -1,0 +1,22 @@
+{
+  "scope": "isolated averaged-force candidate only; default solver unchanged",
+  "mechanism": "on nonlinear exhaustion refine frozen quadrature only if independent work estimator exceeds existing budget; preserve 96 nonlinear iterations and bounded retries",
+  "source_sha256": "c2d96fa3b5e13abfd47362231a6980fba49abae3be9f6ac02d7aa3be338315e7",
+  "full_gate": {
+    "state": "failed",
+    "exit_code": 101,
+    "rejected_step": 71,
+    "seconds": 293.24,
+    "error": "implicit contact quadrature nonconvergence",
+    "log": "failed-full.log"
+  },
+  "observed_new_refinements": 46,
+  "research_reference": "https://ipc-sim.github.io/file/IPC-paper-350ppi.pdf",
+  "limitations": [
+    "candidate not qualified",
+    "no performance claim",
+    "geometry snapshot is not a complete mechanical checkpoint"
+  ],
+  "decision": "rejected; restore isolated averaged-force candidate; default midpoint unchanged",
+  "research_note": "IPC section 4.3 uses full projected barrier Hessians; normal rank-one Gauss-Newton is reported less efficient. This is a research lead, not proof of this engine failure."
+}

@@ -1,0 +1,15 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 6.80s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 2 tests
+test biomechanics::prescribed_surface::normal_pruning_tests::conservative_normal_pruning_matches_unpruned_features_and_errors ... ok
+NORMAL_PRUNING_BENCH unpruned_ns=31414417 pruned_ns=1462250
+NORMAL_PRUNING_BENCH unpruned_ns=31116875 pruned_ns=1450583
+NORMAL_PRUNING_BENCH unpruned_ns=31369167 pruned_ns=1427584
+NORMAL_PRUNING_BENCH unpruned_ns=30991791 pruned_ns=1396917
+NORMAL_PRUNING_BENCH unpruned_ns=31051250 pruned_ns=1427417
+test biomechanics::prescribed_surface::normal_pruning_tests::normal_pruning_microbenchmark ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 96 filtered out; finished in 0.16s
+

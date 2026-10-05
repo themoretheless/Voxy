@@ -1,0 +1,7 @@
+# Objective-selected feasible contact initial guess
+
+The unconditional feasible velocity guess reached only step 66 before closed-gap rejection, versus step 67 for the closed-gap-only fallback. This comparison is retained in ../inertial-contact-initial-guess-2026-10-05/render.log and ../feasible-contact-predictor-2026-10-05/render.log; neither was a complete qualified clip.
+
+Initial candidate selection now uses the same objective-value function as nonlinear line search, including material/contact potential, dead acceleration and inertia. For a valid stationary evaluation the feasible predictor is chosen only with strictly lower finite objective. The specifically closed-gap initial evaluation still allows a valid feasible predictor. Cached evaluations are reused for this comparison. Probe errors preserve the original result. Candidate CCD, internal gap and volume admission, nonlinear equilibrium and final independent world energy/work checks remain unchanged. No tolerances or physical coefficients were loosened.
+
+88 library tests pass (3 manual benchmarks ignored), 26 public prescribed-contact, 8 viscoelastic and all 19 tissue tests pass. git diff --check passes. The full imported render rejected step 66 / 0.275000000 s with closed surface contact gap, producing six prefix frames. Objective selection alone did not improve the previous unconditional-predictor outcome. Changes remain local and uncommitted.

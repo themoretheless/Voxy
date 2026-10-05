@@ -1,0 +1,6 @@
+{
+  "scope": "diagnostic constant-normal native contact path, not full nonlinear replay",
+  "source_sha256": "5d97b95cbab3fed78aad4e96099f96f99cd15d73041d63cd8f381eb5384a70e0",
+  "admission_tolerance_j": 1e-10,
+  "full_clip_binary_note": "full clip was compiled before these test-only additions; its mechanics unchanged"
+}

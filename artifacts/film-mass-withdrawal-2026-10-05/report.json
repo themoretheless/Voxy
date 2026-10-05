@@ -1,0 +1,38 @@
+{
+  "state": "passed",
+  "initial_targets": {
+    "surface_film_vapor": {
+      "passed": 9,
+      "failed": 0
+    },
+    "surface_film_withdrawal": {
+      "passed": 7,
+      "failed": 0
+    }
+  },
+  "roundtrip_session_id": 43925,
+  "roundtrip_log": "/tmp/voxy-film-mass-roundtrip-tests.log",
+  "canonical_inventory": "volume, constant density",
+  "evaporation_boundary": "species kilograms",
+  "condensation_boundary": "volume",
+  "iapws_integrated": false,
+  "variable_density_enabled": false,
+  "source_sha256": {
+    "crates/physics/src/surface_film_mixture.rs": "221d11513e0d1c051d0dbc9ad528ec96dc0c822c15049ae4c55e85986f410814",
+    "crates/physics/src/surface_film_thermal_vapor.rs": "103300094a3a33208043269454d348342d208fe6ed2aecf173082e77a87bec40",
+    "crates/physics/tests/surface_film_withdrawal.rs": "e039b679fab23ed4f7bc2667a2367bfc77269fa109b9222b62afff8a6c4c7c0b"
+  },
+  "tests_passed": 17,
+  "tests_failed": 0,
+  "roundtrip_exit_code": 0,
+  "current_targets": {
+    "surface_film_vapor": {
+      "passed": 9,
+      "failed": 0
+    },
+    "surface_film_withdrawal": {
+      "passed": 8,
+      "failed": 0
+    }
+  }
+}

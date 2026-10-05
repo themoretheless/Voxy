@@ -5,6 +5,8 @@ use voxy_assets::{AssetId, ImportedAsset};
 use voxy_scene::SceneHistory;
 #[derive(Debug)]
 pub(super) struct AuthoringSession {
+    pub(super) preview_seek: Option<(voxy_scene::NodeId, [f32; 4])>,
+    pub(super) animation_preview: Option<crate::animation_preview::Preview>,
     pub(super) history: Option<SceneHistory>,
     pub(super) settings_written: BTreeMap<String, [u8; 32]>,
     pub(super) scene_path: Option<std::path::PathBuf>,

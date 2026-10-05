@@ -1,0 +1,137 @@
+{
+  "goal_complete": false,
+  "qualification_complete": true,
+  "scope": "per-body temporal refinement predictor with unchanged step admission",
+  "baseline": {
+    "elapsed_s": 79.300348792,
+    "counts": [
+      [
+        35316,
+        23796,
+        3
+      ],
+      [
+        34231,
+        22711,
+        3
+      ],
+      [
+        701849,
+        690329,
+        8
+      ],
+      [
+        570222,
+        558702,
+        7
+      ]
+    ]
+  },
+  "predicted": {
+    "elapsed_s": 58.714974708,
+    "counts": [
+      [
+        35821,
+        14877,
+        3
+      ],
+      [
+        34756,
+        14252,
+        3
+      ],
+      [
+        733730,
+        263798,
+        8
+      ],
+      [
+        599078,
+        216234,
+        7
+      ]
+    ]
+  },
+  "predicted_with_trace": {
+    "elapsed_s": 57.62726025,
+    "counts": [
+      [
+        35821,
+        14877,
+        3
+      ],
+      [
+        34756,
+        14252,
+        3
+      ],
+      [
+        733730,
+        263798,
+        8
+      ],
+      [
+        599078,
+        216234,
+        7
+      ]
+    ]
+  },
+  "trial_count_reduction_percent": 27.476948652260237,
+  "wall_time_reduction_percent_single_pair": 25.958743432508957,
+  "timing_limits": "single local pair with other processes active; no controlled editor-FPS or universal performance claim",
+  "trajectory_comparison": {
+    "samples": 964,
+    "simulation_seconds": 12,
+    "sampling_hz": 20,
+    "reference": "artifacts/skeletal-continuum-2026-10-05/smooth-frames/secondary-motion.csv",
+    "bounds_m": 0.0001,
+    "volume_relative_bound": 0.0001,
+    "regions": [
+      {
+        "region": 0,
+        "max_sampled_offset_difference_m": 1.6839302369053699e-06,
+        "max_sampled_volume_difference_relative": 1.9172346815093468e-05
+      },
+      {
+        "region": 1,
+        "max_sampled_offset_difference_m": 2.0505622956788605e-06,
+        "max_sampled_volume_difference_relative": 2.096678163488789e-05
+      },
+      {
+        "region": 2,
+        "max_sampled_offset_difference_m": 8.312187130345268e-06,
+        "max_sampled_volume_difference_relative": 4.400611302757524e-05
+      },
+      {
+        "region": 3,
+        "max_sampled_offset_difference_m": 5.358268814232743e-06,
+        "max_sampled_volume_difference_relative": 5.749623149318782e-05
+      }
+    ]
+  },
+  "final_tests": {
+    "target": "voxy_app tissue_demo::tests",
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0,
+    "elapsed_s": 53.83,
+    "session_id": 67661
+  },
+  "instrumented_baseline_tests": {
+    "passed": 9,
+    "failed": 0,
+    "elapsed_s": 72.07,
+    "session_id": 53100
+  },
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "7ad493b227558a77025c9cc5cb8efb638ff2b1c08429371c70eaaa0b79282a7b",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "92cabaa34c570514f260202aeace022e3cd83cdb9f0a003a44080691e37de549"
+  },
+  "unchanged_admission": {
+    "energy_tolerance_j_per_pose_interval": 1e-05,
+    "maximum_total_depth": 8,
+    "work_heat_and_volume_path_guards": true,
+    "full_frame_atomicity": true
+  }
+}

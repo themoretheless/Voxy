@@ -1,0 +1,39 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/tmp/voxy-contact-production-20261006/crates/physics)
+    Finished `release` profile [optimized] target(s) in 4.15s
+     Running tests/lbfgs.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/lbfgs-fd16be7bc7e94b39)
+
+running 8 tests
+test accepted_coordinate_observer_is_bit_exact_and_reports_actual_energy ... ok
+test diagnostic_import_preserves_reference_and_is_atomic ... ok
+test inactive_contact_preconditioner_is_bit_exact ... ok
+test invalid_controls_preserve_geometry_and_zero_force_rest_converges ... ok
+test lbfgs_matches_elastic_contact_equilibrium_and_recovers_without_rebasing ... ok
+test observer_reports_accepted_iterates_without_changing_equilibrium ... ok
+test equilibrium_rejects_iteration_exhaustion_without_committing ... ok
+test bent_oval_wall_completes_contact_load_release_cycle ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.93s
+
+     Running tests/viscoelastic_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/viscoelastic_inertia-53ebd10798e46967)
+
+running 8 tests
+test exact_relaxation_matches_analytic_energy_and_subdivision ... ok
+test hgo_stress_memory_is_not_admitted_as_passive_maxwell_dynamics ... ok
+test driven_shear_then_hold_balances_work_heat_and_rollback ... ok
+test unrelated_large_gravity_potential_cannot_hide_or_block_maxwell_heat ... ok
+test free_node_moves_and_failed_driving_preserves_material_history ... ok
+test late_temperature_overflow_rolls_back_mechanics_memory_and_heat ... ok
+test maxwell_heat_updates_cell_temperature_and_failures_preserve_both_owners ... ok
+test unforced_viscoelastic_motion_converges_under_time_refinement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

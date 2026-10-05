@@ -1,0 +1,29 @@
+{
+  "emission_tests_passed": 7,
+  "failed": 0,
+  "velocity_and_position_error_ratio": [
+    3.8,
+    4.2
+  ],
+  "refinements": [
+    16,
+    32,
+    64
+  ],
+  "cpu_capture_exit": 0,
+  "native_smoke_exit": 0,
+  "native_frames": 120,
+  "native_steps": 242,
+  "gpu": "Apple M4 Max / Metal",
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "f975162e96e70d21e13a977f3f48cbeaca9b4c3f0196b46d5a2355ae227a7a6d",
+    "crates/physics/examples/liquid_jet_film.rs": "f3c50a7f261a5cbe68edd0fae4ded406afc05f0609cd71cdd5bc2145dcaefd54",
+    "crates/voxy_app/src/liquid_demo.rs": "c21a5b9e0a5bc1ed27ce75daa6dc3aaf947fb9c98741551deecbd21587f6fce6"
+  },
+  "goal_complete": false,
+  "limitations": [
+    "emitted-particle position timing not qualified",
+    "double source staging cost not measured",
+    "point source with constrained rotation"
+  ]
+}

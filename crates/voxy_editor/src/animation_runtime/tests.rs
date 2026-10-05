@@ -511,6 +511,18 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
         assert!(std::time::Instant::now() < deadline, "{:?}", app.error);
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
+    app.scene
+        .insert_component(
+            app.instances[0],
+            ModelAnimation {
+                events: vec![crate::ModelAnimationEvent {
+                    name: "saved-step".into(),
+                    phase: 0.001,
+                }],
+                ..Default::default()
+            },
+        )
+        .unwrap();
     app.expand_model().unwrap();
     let authored = app.authoring_document().unwrap();
     assert_eq!(authored.objects.len(), 151);
@@ -523,9 +535,34 @@ fn editor_expanded_rig_scene_survives_history_save_load_play_and_stop() {
     assert_eq!(app.authoring_document().unwrap(), authored);
     app.tick().unwrap(); // Exercise ordinary scene extraction above the former 128 cap.
     app.toggle_play().unwrap();
+    #[derive(Debug)]
+    struct EventListener(std::sync::Arc<std::sync::Mutex<Vec<(NodeId, String)>>>);
+    impl voxy_scene::Behavior for EventListener {
+        fn animation_event(&mut self, _: &mut SceneGraph, owner: NodeId, name: &str, _: f64) {
+            self.0.lock().unwrap().push((owner, name.into()));
+        }
+    }
+    let delivered = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+    let event_owner = app.instances[0];
+    app.play
+        .simulation
+        .as_mut()
+        .unwrap()
+        .attach(
+            &mut app.scene,
+            event_owner,
+            EventListener(delivered.clone()),
+        )
+        .unwrap();
+
     for _ in 0..3 {
         app.advance_game(1. / 60.).unwrap();
     }
+    assert_eq!(
+        *delivered.lock().unwrap(),
+        vec![(event_owner, "saved-step".into())]
+    );
+    assert!(app.play.animations.take_events().is_empty());
     assert_eq!(app.play.animations.owners.len(), 50);
     assert_eq!(app.play.animations.serial(), 3);
     let model = app
@@ -2932,5 +2969,95 @@ fn wall_clock_preparation_retains_sub_f32_steps_and_failed_publication() {
     assert!(Arc::ptr_eq(&frame, &runtime.frame(owner, &model).unwrap()));
     for invalid in [f64::NAN, f64::INFINITY, -1., 0.] {
         assert!(runtime.prepare_wall(&scene, &models, invalid).is_err());
+    }
+}
+
+#[test]
+fn owner_events_wait_for_runtime_adoption_and_drain_once() {
+    let (mut scene, owner, _, models) = fixture();
+    let mut runtime = AnimationRuntime::default()
+        .prepare_wall(&scene, &models, 0.01)
+        .unwrap();
+    runtime
+        .set_clip_events(
+            owner,
+            0,
+            vec![voxy_animation::ClipEvent {
+                name: Arc::from("step"),
+                phase: 0.04,
+            }],
+        )
+        .unwrap();
+    assert!(runtime.set_clip_events(owner, 99, vec![]).is_err());
+    let rejected = runtime.prepare_wall(&scene, &models, 0.0625).unwrap();
+    drop(rejected);
+    assert!(runtime.take_events().is_empty());
+    runtime = runtime.prepare_wall(&scene, &models, 0.0625).unwrap();
+    let events = runtime.take_events();
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].0, owner);
+    assert_eq!(&*events[0].1.name, "step");
+    assert!(runtime.take_events().is_empty());
+    runtime = runtime.prepare_wall(&scene, &models, 0.0625).unwrap();
+    assert!(runtime.take_events().is_empty());
+    scene.remove_subtree(owner).unwrap();
+    runtime.synchronize(&scene).unwrap();
+    assert!(runtime.set_clip_events(owner, 0, vec![]).is_err());
+    runtime.clear();
+    assert!(runtime.take_events().is_empty());
+}
+
+#[test]
+fn authored_events_round_trip_rebind_and_remove_without_replaying() {
+    let (mut scene, owner, model, mut models) = fixture();
+    let settings = ModelAnimation {
+        events: vec![crate::ModelAnimationEvent {
+            name: "step".into(),
+            phase: 0.1,
+        }],
+        ..Default::default()
+    };
+    let encoded = serde_json::to_vec(&settings).unwrap();
+    let decoded: ModelAnimation = serde_json::from_slice(&encoded).unwrap();
+    assert_eq!(settings, decoded);
+    let legacy: ModelAnimation = serde_json::from_str(r#"{"clip":0,"speed":1}"#).unwrap();
+    assert!(legacy.events.is_empty());
+    scene.insert_component(owner, decoded).unwrap();
+    let mut runtime = AnimationRuntime::default()
+        .prepare_wall(&scene, &models, 0.0625)
+        .unwrap();
+    assert!(runtime.take_events().is_empty());
+    let replacement = Arc::new(
+        ModelAsset::parse(
+            include_bytes!("../../../voxy_render/examples/assets/animated-triangle.glb"),
+            &[],
+            voxy_render::ModelLimits::default(),
+        )
+        .unwrap(),
+    );
+    assert!(!Arc::ptr_eq(&model, &replacement));
+    models.insert(AssetId("rig".into()), replacement);
+    runtime = runtime.prepare_wall(&scene, &models, 0.0625).unwrap();
+    let events = runtime.take_events();
+    assert_eq!(events.len(), 1);
+    assert_eq!(events[0].0, owner);
+    assert_eq!(events[0].1.phase, 0.1);
+    scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .events[0]
+        .phase = f64::NAN;
+    assert!(runtime.prepare_wall(&scene, &models, 0.0625).is_err());
+    assert!(runtime.take_events().is_empty());
+    scene
+        .component_mut::<ModelAnimation>(owner)
+        .unwrap()
+        .unwrap()
+        .events
+        .clear();
+    for _ in 0..20 {
+        runtime = runtime.prepare_wall(&scene, &models, 0.0625).unwrap();
+        assert!(runtime.take_events().is_empty());
     }
 }

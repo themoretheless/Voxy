@@ -1,0 +1,37 @@
+{
+  "state": "scoped CPU and GPU checks passed",
+  "session_id": 36857,
+  "source_sha256": {
+    "crates/voxy_app/src/liquid_demo.rs": "b09e65a855f34fafad56b8eb981d42450f0d8b6f738bb06efe5a57280833a5b0",
+    "crates/physics/src/surface_film_thermal.rs": "a6187d07a13a04872471e07cbe5f36de8350adf62a37c86a98a66ed4038bb492",
+    "crates/physics/src/surface_film_mixture.rs": "55b7a61f547932f117ebbf7043d19ef66bb2f4ca9ebe872ffc481878af4d14b2",
+    "crates/physics/src/liquid/film_impact_events.rs": "c95e85d23f343396305ed57b85f0011c9613728f0eb3329dc319af0023778149"
+  },
+  "gpu_snapshot_verified": true,
+  "evaporation_demo_integrated": false,
+  "goal_complete": false,
+  "build_seconds": 374,
+  "source_hashes_match": true,
+  "app_tests": {
+    "passed": 4,
+    "failed": 0,
+    "ignored": 1,
+    "runtime_seconds": 35.53
+  },
+  "gpu_run": {
+    "state": "passed",
+    "session_id": 27994,
+    "command": "cargo run -p voxy_app --example liquid_snapshot -- artifacts/native-thermal-film-2026-10-05/impacts-optical.png --impacts --optical",
+    "exit_code": 0,
+    "adapter": "Apple M4 Max",
+    "backend": "Metal",
+    "film_cells": [
+      0,
+      0,
+      161,
+      232
+    ],
+    "png_sha256": "b52b52d81bf7c18fdb7039515c15c94ad0c3147b66a7f852e591386b6d3103c6",
+    "matches_previous_png_exactly": true
+  }
+}

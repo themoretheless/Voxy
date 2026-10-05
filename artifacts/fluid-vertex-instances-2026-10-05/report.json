@@ -1,0 +1,33 @@
+{
+  "status": "local_checks_passed",
+  "mechanism": "One instance-vertex-buffer geometry path; no shader storage bindings. Shared GL depth sampling fallback reused.",
+  "glesTranslation": {
+    "passed": 1,
+    "entryPoints": 14,
+    "version": "GLES 3.00",
+    "driverExecution": false
+  },
+  "initialMetalTest": {
+    "passed": 1,
+    "deviceStorageBuffersPerStage": 0
+  },
+  "pending": [],
+  "limits": [
+    "No real WebGL or other adapter execution verified.",
+    "Float render-target format capabilities remain required.",
+    "GL depth reconstruction uses existing 24-step comparison sampler approximation."
+  ],
+  "rendererTests": {
+    "passed": 137,
+    "failed": 0,
+    "ignored": 17
+  },
+  "finalMetalTest": {
+    "passed": 1,
+    "adapter": "Apple M4 Max",
+    "deviceStorageBuffersPerStage": 0,
+    "pathComparisons": 27,
+    "rgbAbsorptionComparisons": 81,
+    "composedColorComparisons": 18
+  }
+}

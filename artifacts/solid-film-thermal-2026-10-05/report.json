@@ -1,0 +1,46 @@
+{
+  "goal_complete": false,
+  "qualification_complete": true,
+  "scope": "owned solid-cell and liquid-film heat exchange transaction",
+  "tests": {
+    "solid_heat_conduction": 7,
+    "surface_film_thermal": 11,
+    "surface_film_vapor": 9,
+    "viscoelastic_inertia": 8,
+    "unique_passed": 35,
+    "failed": 0,
+    "ignored": 0,
+    "final_session_id": 72681
+  },
+  "proven": [
+    "analytic unequal-capacity pair solution",
+    "joint closed thermal energy conservation",
+    "unchanged film mass/inventory during heat exchange",
+    "dry-cell insulation",
+    "bounded temperatures",
+    "symmetric temporal refinement",
+    "invalid contact rollback",
+    "rounding-loss rejection without phantom heat",
+    "late contact failure discards earlier successful changes in both owners"
+  ],
+  "architecture": {
+    "shared_pair_law": true,
+    "canonical_film_capacity_calculation": true,
+    "solid_books_opposite_actual_film_increment": true,
+    "one_candidate_per_owner_per_transaction": true,
+    "shared_checked_film_cell_heat_update": true
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/thermal.rs": "cdd65b256cdb63caf374f372c4cf63205403b2dde38277f6fef62137c2d057fc",
+    "crates/physics/src/surface_film_thermal.rs": "d8d9f7e13c0035310dc212ef7390207d93c691362d3a61006e865fb8fe2f674c",
+    "crates/physics/tests/solid_heat_conduction.rs": "8237d957cdcc51aa65fc9c238e5f779baf5a65da350fcac87aa206f4203a3b34"
+  },
+  "limitations": [
+    "caller-supplied contact list and physical conductance",
+    "not automatically run in mannequin",
+    "not yet a joint mechanics/film/vapor time step",
+    "temperature-dependent constitutive parameters incomplete",
+    "no new GPU render or broad hardware evidence",
+    "full user objective remains incomplete"
+  ]
+}

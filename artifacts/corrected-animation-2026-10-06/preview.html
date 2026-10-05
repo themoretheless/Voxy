@@ -1,0 +1,11 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><title>Скелетная анимация и мягкие ткани</title>
+<style>body{background:#101923;color:#eee;font:18px system-ui;max-width:850px;margin:24px auto;padding:16px}img{width:min(100%,640px);display:block}button,select,input{font:inherit;margin:8px}input{width:65%}pre{font:15px monospace;white-space:pre-wrap}</style>
+<h1>Скелетная анимация и мягкие ткани</h1><p>Импортированный скелет и четыре деформируемых объёма с контактом. Объёмы пока отображаются отдельно: деформация кожи персонажа ещё не связана с ними. Это воспроизведение заранее рассчитанных кадров.</p>
+<img id="frame" alt="Кадр движения персонажа и мягких тканей"><button id="play">Пауза</button><label>Скорость <select id="speed"><option value="0.25">¼×</option><option value="0.5">½×</option><option selected value="1">1×</option></select></label><input id="seek" type="range" min="0" max="40" step="1" value="0" aria-label="Кадр"><pre id="receipt"></pre>
+<script>
+const image=document.getElementById('frame'),seek=document.getElementById('seek'),play=document.getElementById('play'),speed=document.getElementById('speed'),receipt=document.getElementById('receipt');let index=0,running=true,last=0,rows=[];
+fetch('frames/secondary-motion.csv').then(r=>{if(!r.ok)throw Error('Расчёт ещё выполняется');return r.text()}).then(t=>{const lines=t.trim().split(/\r?\n/),heads=lines.shift().split(',');rows=lines.map(l=>Object.fromEntries(l.split(',').map((v,i)=>[heads[i],Number(v)])));show()}).catch(e=>receipt.textContent=e.message);
+function show(){image.src=`frames/frame-${String(index).padStart(4,'0')}.png`;seek.value=index;const t=index*.05;let text=`Время: ${t.toFixed(2)} с · кадр ${index+1}/41`;for(const r of rows.filter(r=>Math.abs(r.time_s-t)<1e-7)){const mm=1000*Math.hypot(r.offset_x_m,r.offset_y_m,r.offset_z_m);text+=`\nОбъём ${r.sample+1}: отклонение от движения кости ${mm.toFixed(2)} мм`;}receipt.textContent=text;}
+play.onclick=()=>{running=!running;play.textContent=running?'Пауза':'Воспроизвести';last=0};seek.oninput=()=>{index=Number(seek.value);show();last=0};speed.onchange=()=>last=0;
+function tick(now){if(running&&(!last||now-last>=50/Number(speed.value))){if(last)index=(index+1)%41;show();last=now;}requestAnimationFrame(tick);}show();requestAnimationFrame(tick);
+</script></html>

@@ -1,0 +1,22 @@
+{
+  "state": "passed",
+  "source_sha256": {
+    "crates/physics/src/liquid/water_coexistence.rs": "eaa2dec31f6d0d028bd7a5186c6b29990d9eca3eabee28e218b86548b7570d5c",
+    "crates/physics/src/liquid/water_helmholtz.rs": "07514df6241f629fd6bd93f0daa3e27ff6306dc3e4d862a6011107e6f2014461",
+    "crates/physics/tests/water_coexistence.rs": "3bc90428ead840226b0cb508144ab1c1c30e7f4bb1a2a454b3ddf54cb8bb44ee"
+  },
+  "official_table_eight_temperatures": [
+    275,
+    450,
+    625
+  ],
+  "transport_integrated": false,
+  "goal_complete": false,
+  "tests": {
+    "coexistence_passed": 2,
+    "homogeneous_passed": 5,
+    "saturation_passed": 4,
+    "failed": 0,
+    "exit_code": 0
+  }
+}

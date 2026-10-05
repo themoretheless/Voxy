@@ -1,0 +1,157 @@
+{
+  "state": "passed 17 integration and 2 potential derivative tests",
+  "source_sha256": {
+    "crates/physics/src/liquid/water_equilibrium.rs": "75852e562d65b2fe618b10760d460c9a3c24d6f90e6344bc0fc02e95294e767d",
+    "crates/physics/src/liquid/water_coexistence.rs": "50c63e501a9c32c0491f5028effdf01130258fafeee8df88ea9ce9e4c6155870",
+    "crates/physics/src/liquid/water_helmholtz.rs": "579295e4483d84f7412ea2d3a939c77485a81a164451e805e18181184dad899b",
+    "crates/physics/src/liquid.rs": "12ff58825166d41809bef47851aa16c8f603d7b655c3602ac1bcc6ebc5f43996",
+    "crates/physics/tests/water_equilibrium.rs": "97b374c1d7593ca22fa74d70e61ae21485e39c67628f61d8b6cd1e7e275d4f81"
+  },
+  "required_targets": [
+    "water_equilibrium",
+    "water_coexistence",
+    "water_helmholtz",
+    "water_helmholtz::tests"
+  ],
+  "relaxation_model": "instantaneous equilibrium",
+  "mechanics_integrated": false,
+  "goal_complete": false,
+  "derivative_unit_gate_state": "passed",
+  "derivative_unit_gate_session_id": 76887,
+  "derivative_unit_gate_exit_code": 0,
+  "derivative_unit_tests_passed": 2,
+  "derivative_unit_tests_failed": 0,
+  "session_id": 3914,
+  "joint_targets": [
+    "water_equilibrium",
+    "water_coexistence",
+    "water_helmholtz"
+  ],
+  "log": "/tmp/voxy-water-equilibrium-response-tests.log",
+  "exit_code": 101,
+  "completed_targets": {
+    "water_coexistence": {
+      "passed": 2,
+      "failed": 0
+    },
+    "water_equilibrium": {
+      "passed": 8,
+      "failed": 1
+    }
+  },
+  "not_run_target": "water_helmholtz",
+  "failure": "pressure-temperature derivative disagrees with finite difference beyond unchanged 1e-5 relative gate",
+  "diagnostic_state": "failed with explicit values",
+  "diagnostic_test_sha256": "bcb237292059864bf1229eac52fae127aa3c15aefb02cd60be43535083ebe6b0",
+  "diagnostic_session_id": 98557,
+  "diagnostic_log": "/tmp/voxy-water-equilibrium-response-diagnostic.log",
+  "diagnostic_exit_code": 101,
+  "diagnostic_values": {
+    "temperature_k": 300.0,
+    "density_kg_per_m3": 0.1,
+    "finite_difference_pressure_temperature": 207.90640426957907,
+    "analytic_pressure_temperature": 207.90345997879604,
+    "relative_error": 1.416181714009035e-05
+  },
+  "solver_hardening": {
+    "state": "strict phase gates passed with compensated sum and density-neighbour refinement",
+    "pressure_equality_bound": "1e-6 Pa + 1e-12 relative",
+    "chemical_equality_bound": "1e-12 R T J/kg",
+    "derivative_gate_unchanged": true,
+    "reason": "phase solve pressure uncertainty can contaminate small temperature differences; strengthen solver equality instead of relaxing derivative tolerance",
+    "session_id": 78416,
+    "log": "/tmp/voxy-water-equilibrium-response-hardened-tests.log"
+  },
+  "hardened_source_sha256": {
+    "crates/physics/src/liquid/water_coexistence.rs": "983b96078f401f6c95b1f78735f1391dab3eaf7b91a73b1fafc29d8b589fbfbc",
+    "crates/physics/tests/water_coexistence.rs": "37ac18f6c6b12c9f7fa6c993adb8877f1e91bee41ba95b5a7b6bebe0ec2e6261",
+    "crates/physics/tests/water_equilibrium.rs": "bcb237292059864bf1229eac52fae127aa3c15aefb02cd60be43535083ebe6b0"
+  },
+  "solver_hardening_initial": {
+    "state": "failed",
+    "pressure_equality_bound": "1e-6 Pa + 1e-12 relative",
+    "chemical_equality_bound": "1e-12 R T J/kg",
+    "derivative_gate_unchanged": true,
+    "reason": "phase solve pressure uncertainty can contaminate small temperature differences; strengthen solver equality instead of relaxing derivative tolerance",
+    "session_id": 78416,
+    "log": "/tmp/voxy-water-equilibrium-response-hardened-tests.log",
+    "exit_code": 101,
+    "completed_targets": {
+      "water_coexistence": {
+        "passed": 1,
+        "failed": 1
+      }
+    },
+    "failure": "NumericalFailure on Table 8 state; equilibrium/acoustic target not run"
+  },
+  "density_coordinate_fix": {
+    "state": "failed",
+    "coordinates": "actual positive densities, scaled relative Newton increments",
+    "strict_phase_equality_bounds_unchanged": true,
+    "example_density": 999.887406,
+    "density_ulp": 1.1368683772161603e-13,
+    "exp_log_increment": 9.094947017729282e-13,
+    "session_id": 12887,
+    "log": "/tmp/voxy-water-equilibrium-density-newton-tests.log",
+    "exit_code": 101,
+    "failure": "T=275 K: NumericalFailure; coordinate change alone did not restore convergence"
+  },
+  "current_source_sha256": {
+    "crates/physics/src/liquid/water_coexistence.rs": "111f9710568f841d9aa66c3e9554f1a60b6ab9f19921736a87f5c009afab1b02",
+    "crates/physics/tests/water_coexistence.rs": "097d3246d3ac97babfe547d078d9dd883f3773c8f6e4e14386cc68c1c4c7437f",
+    "crates/physics/tests/water_equilibrium.rs": "bcb237292059864bf1229eac52fae127aa3c15aefb02cd60be43535083ebe6b0",
+    "crates/physics/src/liquid/water_helmholtz.rs": "23acbfb01dea760b82c9ec5e2fa05a5eaa4e61bcc9f8e8f264c15e08576e0464",
+    "crates/physics/src/liquid/water_equilibrium.rs": "75852e562d65b2fe618b10760d460c9a3c24d6f90e6344bc0fc02e95294e767d"
+  },
+  "acceptance_scaled_merit": {
+    "state": "failed",
+    "session_id": 22865,
+    "log": "/tmp/voxy-water-merit-tests.log",
+    "strict_phase_equality_bounds_unchanged": true,
+    "hypothesis": "merit must reflect both publication tolerances rather than seed pressure scaling",
+    "exit_code": 101,
+    "failure": "T=275 K NumericalFailure"
+  },
+  "compensated_sum": {
+    "state": "failed alone",
+    "exit_code": 101,
+    "liquid_pressure_residual_pa": -4.126915314373036e-06,
+    "chemical_residual_j_per_kg": -5.122274160385132e-09
+  },
+  "density_neighbour_search": {
+    "state": "passed",
+    "session_id": 68697,
+    "log": "/tmp/voxy-water-density-neighbors-tests.log",
+    "strict_tolerances_unchanged": true,
+    "relative_newton_step_trigger": 1e-10,
+    "max_density_ulps_per_direction": 64,
+    "completed_targets": {
+      "water_coexistence": {
+        "passed": 2,
+        "failed": 0
+      },
+      "water_equilibrium": {
+        "passed": 9,
+        "failed": 0
+      },
+      "water_helmholtz": {
+        "passed": 6,
+        "failed": 0
+      }
+    },
+    "exit_code": 0
+  },
+  "post_integration_change": "removed temporary eprintln on convergence failure; numerical algorithm unchanged",
+  "current_derivative_unit_gate": {
+    "state": "passed",
+    "session_id": 27667,
+    "exit_code": 0,
+    "passed": 2,
+    "failed": 0,
+    "log": "compensated-derivative-unit-tests.log"
+  },
+  "total_current_tests_passed": 19,
+  "total_current_tests_failed": 0,
+  "hardware_scope": "CPU f64 on local macOS; no GPU/CUDA qualification",
+  "full_goal_achieved": false
+}

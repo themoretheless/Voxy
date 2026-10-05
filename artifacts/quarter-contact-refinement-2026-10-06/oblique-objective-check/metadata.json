@@ -1,0 +1,11 @@
+{
+  "scope": "moving tilted obstacle; finite-difference objective derivative vs independent averaged force",
+  "origins_m": [
+    0.0,
+    1000000.0
+  ],
+  "body_coordinates_tested": 9,
+  "relative_absolute_test_bound": "2e-5 * (1 + abs(expected))",
+  "source_sha256": "c8cc81646571ba300370d81377b63f943e9bb9abe0b324d62f581337478198e6",
+  "production_code_change": "none; test-only addition"
+}

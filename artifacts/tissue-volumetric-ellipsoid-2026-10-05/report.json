@@ -1,0 +1,46 @@
+{
+  "goal_complete": false,
+  "tests_passed": 18,
+  "tests_failed": 0,
+  "tests_ignored": 0,
+  "runs": [
+    {
+      "session": 4059,
+      "exit_code": 0,
+      "targets": {
+        "tissue_geometry": 3,
+        "tissue_surface": 4,
+        "tissues": 11
+      },
+      "geometry_status": "before final total-mass and topology guards"
+    },
+    {
+      "session": 43955,
+      "exit_code": 0,
+      "targets": {
+        "tissue_geometry": 3
+      },
+      "geometry_status": "final source incl total-mass overflow and manifold guards"
+    }
+  ],
+  "unchanged_solver_targets_passed": 15,
+  "final_geometry_tests_passed": 3,
+  "cells_by_refinement": [
+    8,
+    32,
+    128,
+    512
+  ],
+  "mass_from_discrete_cell_volume": true,
+  "pins_remove_integration_of_nodal_inertia": true,
+  "resolution_independent_material_calibration": false,
+  "body_demo_integrated": false,
+  "anatomical_calibration": false,
+  "source_sha256": {
+    "crates/physics/src/tissue.rs": "f25eca1a293840efb7baaf76426e9e62e8e98d589718531d34e054016e870324",
+    "crates/physics/src/tissue_geometry.rs": "6371fc4d493672a9e16a2a11b07a4399eb2a3c560490ed74802cc0fba725dc93",
+    "crates/physics/tests/tissue_geometry.rs": "b31cce3ad9807c01c5fea448c46f825871614f073d67f04d81d7880072b0087b",
+    "crates/physics/tests/tissue_surface.rs": "5b9dd0534268a9188c46f60cd70e33bfda5313b4e5f058a42d187ede083892b6",
+    "crates/physics/tests/tissues.rs": "bbc6c86e0cf132b2e76145129cbab8d26e46287cb591f77914dbc9cb630da920"
+  }
+}

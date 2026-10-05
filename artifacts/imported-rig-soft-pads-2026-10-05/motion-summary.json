@@ -1,0 +1,30 @@
+{
+  "frames": 41,
+  "duration_seconds": 2,
+  "regions": [
+    {
+      "sample": 0,
+      "max_secondary_offset_mm": 3.7656115909133536,
+      "max_relative_volume_change": 0.00030083762812327386,
+      "energy_receipt_closure_error_j": 1.0000265864859939e-12
+    },
+    {
+      "sample": 1,
+      "max_secondary_offset_mm": 3.7635538795571932,
+      "max_relative_volume_change": 0.0002993659834569229,
+      "energy_receipt_closure_error_j": 1.0000095907699072e-12
+    },
+    {
+      "sample": 2,
+      "max_secondary_offset_mm": 8.931523363173271,
+      "max_relative_volume_change": 0.001262265351368086,
+      "energy_receipt_closure_error_j": 1.000071437727584e-12
+    },
+    {
+      "sample": 3,
+      "max_secondary_offset_mm": 7.300414496995427,
+      "max_relative_volume_change": 0.00332837081787396,
+      "energy_receipt_closure_error_j": 1.000054132420955e-12
+    }
+  ]
+}

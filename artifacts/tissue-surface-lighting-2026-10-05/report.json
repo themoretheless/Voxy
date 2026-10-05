@@ -1,0 +1,19 @@
+{
+  "tests_passed": 7,
+  "tests_failed": 0,
+  "render_exit_code": 0,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "frames": 241,
+  "fps": 20,
+  "duration_s": 12,
+  "secondary_motion_records": 964,
+  "max_offset_from_rigid_bone_m": 0.03504247695154977,
+  "offset_includes_gravity_sag": true,
+  "native_window_verified": false,
+  "geometry": "coarse tetrahedral samples; illustrative materials",
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "4d607d44daa21c883a5b454d2be810d39e28ae449120aa9d2aee4374341d438c",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "989055f81cdb36e8d77acdcc420b17aacd241427699eea65362b21219ec8c4a6"
+  }
+}

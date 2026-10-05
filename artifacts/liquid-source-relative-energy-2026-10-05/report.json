@@ -1,0 +1,14 @@
+{
+  "passed": 6,
+  "failed": 0,
+  "target": "liquid::emission::tests",
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "7d4104e83525cd5f5fddffa25e5ec7d2a10a27a1144e401f8c0025e6a28aecf1"
+  },
+  "goal_complete": false,
+  "scope": "source-frame energy accounting and wholly rounded-away increment rejection",
+  "limitations": [
+    "high-boost full momentum closure not qualified",
+    "no rotating source or native demo hookup"
+  ]
+}

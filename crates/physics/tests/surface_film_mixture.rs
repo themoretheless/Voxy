@@ -34,6 +34,17 @@ fn near(a: f64, b: f64) {
         "{a} != {b}"
     );
 }
+fn same_height_to_roundoff(a: &[f64], b: &[f64]) {
+    assert_eq!(a.len(), b.len());
+    for (a, b) in a.iter().zip(b) {
+        // Canonical kilograms require a final division by density; independent
+        // volume transport has a different arithmetic path. Bound only rounding.
+        assert!(
+            (a - b).abs() <= 8. * f64::EPSILON * a.abs().max(b.abs()),
+            "{a} != {b}"
+        );
+    }
+}
 #[test]
 fn donor_composition_and_component_masses_follow_analytic_drainage() {
     let mut m = mixture([0.0005, 0.0002]);
@@ -129,7 +140,7 @@ fn composition_transport_leaves_mechanical_solution_identical() {
                     .unwrap();
             }
         }
-        assert_eq!(plain.thickness(), mixed.film().thickness());
+        same_height_to_roundoff(&plain.thickness(), &mixed.film().thickness());
         for (a, b) in old.into_iter().zip(mixed.component_masses().unwrap()) {
             near(a, b);
         }
@@ -479,7 +490,7 @@ fn mixture_patch_recomputes_state_and_retains_uniform_film_compatibility() {
         .unwrap();
     assert_eq!(a, b);
     assert_eq!(ra, rb);
-    assert_eq!(plain.thickness(), mixed.film().thickness());
+    same_height_to_roundoff(&plain.thickness(), &mixed.film().thickness());
 }
 #[test]
 fn late_mixture_patch_heat_failure_rolls_back_volume_composition_and_body() {

@@ -1,0 +1,33 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.68s
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/debug/deps/prescribed_surface_contact-c34f43556423eadd)
+
+running 1 test
+IMPLICIT_WORK_COMPONENTS origin=[0.0, 0.0, 0.1] dt=2.00000000000000004e-2 non_surface_potential_defect_j=-6.54833087310180417e-7 prescribed_surface_defect_j=0.00000000000000000e0 kinematic_defect_j=-0.00000000000000000e0 arithmetic_remainder_j=0.00000000000000000e0
+IMPLICIT_WORK_REJECTION dt=2.00000000000000004e-2 defect_j=-6.54833087310180417e-7 budget_j=1.00000000000000004e-10 maximum_kinematic_residual_m=0.00000000000000000e0
+IMPLICIT_QUADRATURE_RETRY attempt=0 panels=2 reason="implicit material path quadrature refinement"
+IMPLICIT_WORK_COMPONENTS origin=[0.0, 0.0, 0.1] dt=2.00000000000000004e-2 non_surface_potential_defect_j=-1.67989355759345926e-9 prescribed_surface_defect_j=0.00000000000000000e0 kinematic_defect_j=-0.00000000000000000e0 arithmetic_remainder_j=0.00000000000000000e0
+IMPLICIT_WORK_REJECTION dt=2.00000000000000004e-2 defect_j=-1.67989355759345926e-9 budget_j=1.00000000000000004e-10 maximum_kinematic_residual_m=0.00000000000000000e0
+IMPLICIT_QUADRATURE_RETRY attempt=1 panels=3 reason="implicit material path quadrature refinement"
+IMPLICIT_WORK_COMPONENTS origin=[0.0, 0.0, 0.1] dt=2.00000000000000004e-2 non_surface_potential_defect_j=5.94660620834019937e-6 prescribed_surface_defect_j=0.00000000000000000e0 kinematic_defect_j=-0.00000000000000000e0 arithmetic_remainder_j=0.00000000000000000e0
+IMPLICIT_WORK_REJECTION dt=2.00000000000000004e-2 defect_j=5.94660620834019937e-6 budget_j=1.00000000000000004e-10 maximum_kinematic_residual_m=0.00000000000000000e0
+IMPLICIT_QUADRATURE_RETRY attempt=0 panels=2 reason="implicit material path quadrature refinement"
+IMPLICIT_WORK_COMPONENTS origin=[0.0, 0.0, 0.1] dt=2.00000000000000004e-2 non_surface_potential_defect_j=1.96989731193752959e-8 prescribed_surface_defect_j=0.00000000000000000e0 kinematic_defect_j=-0.00000000000000000e0 arithmetic_remainder_j=0.00000000000000000e0
+IMPLICIT_WORK_REJECTION dt=2.00000000000000004e-2 defect_j=1.96989731193752959e-8 budget_j=1.00000000000000004e-10 maximum_kinematic_residual_m=0.00000000000000000e0
+IMPLICIT_QUADRATURE_RETRY attempt=1 panels=3 reason="implicit material path quadrature refinement"
+IMPLICIT_WORK_COMPONENTS origin=[0.0, 0.0, 0.1] dt=2.00000000000000004e-2 non_surface_potential_defect_j=3.91679577660397626e-10 prescribed_surface_defect_j=0.00000000000000000e0 kinematic_defect_j=-0.00000000000000000e0 arithmetic_remainder_j=0.00000000000000000e0
+IMPLICIT_WORK_REJECTION dt=2.00000000000000004e-2 defect_j=3.91679577660397626e-10 budget_j=1.00000000000000004e-10 maximum_kinematic_residual_m=0.00000000000000000e0
+IMPLICIT_QUADRATURE_RETRY attempt=2 panels=4 reason="implicit material path quadrature refinement"
+test nonlinear_uniaxial_support_work_refines_without_temporal_subdivision ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.02s
+

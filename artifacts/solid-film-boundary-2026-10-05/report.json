@@ -1,0 +1,25 @@
+{
+  "tests": {
+    "solid_film_binding": 4,
+    "solid_heat_conduction": 7,
+    "surface_film_thermal": 11,
+    "surface_film_vapor": 9,
+    "viscoelastic_inertia": 8
+  },
+  "total_passed": 39,
+  "failures": 0,
+  "goal_complete": false,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/film_binding.rs": "bade43663ef4fc043c3f56ed24d6f270699cf29402546aae1a511a558d7fa603",
+    "crates/physics/tests/solid_film_binding.rs": "6b5e24a5c4090d13a0db97b79a958048f82ceabf892d789c6f2d90579b7468af",
+    "crates/physics/src/surface_film_mixture.rs": "1cb5d0e0620a6bc6d96fcb3e6994ce4381b6f15560ffb9736edd2461ffb42bc4",
+    "crates/physics/src/surface_film_thermal.rs": "7e9d071a6b7b4b89faa880e58d4b01f267fabc524c343b78073f9b426f1401e7"
+  },
+  "limitations": [
+    "reference mesh compatibility is not runtime object identity",
+    "caller supplies physical areal resistance",
+    "explicit geometry refresh does not book wet-surface mechanical work",
+    "default mannequin does not execute film coupling",
+    "no new GPU render in this qualification"
+  ]
+}

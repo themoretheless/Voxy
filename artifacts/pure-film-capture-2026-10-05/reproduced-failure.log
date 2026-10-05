@@ -1,0 +1,19 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 12.00s
+     Running tests/liquid_film_capture.rs (target/debug/deps/liquid_film_capture-6469e86f1a497794)
+
+running 1 test
+
+thread 'unresolved_pure_capture_rolls_back_particle_batch_and_film' (32377071) panicked at crates/physics/tests/liquid_film_capture.rs:203:9:
+unresolved pure capture succeeded: Ok(FilmCapture { particles: 1, deposited_volume: 1e-33, absorbed: ExchangeTotals { mass: 1e-30, momentum: [0.0, -1e-30, 0.0], kinetic_energy: 5e-31, polymer_energy: 0.0, thermal_energy: None, dissolved_mass: None } })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test unresolved_pure_capture_rolls_back_particle_batch_and_film ... FAILED
+
+failures:
+
+failures:
+    unresolved_pure_capture_rolls_back_particle_batch_and_film
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test liquid_film_capture`

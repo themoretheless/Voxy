@@ -1,0 +1,53 @@
+{
+  "goal_complete": false,
+  "tests_passed": 8,
+  "tests_failed": 0,
+  "test_session": 4996,
+  "render_session": 80334,
+  "render_exit_code": 0,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "frames": 241,
+  "fps": 20,
+  "duration_s": 12,
+  "records": 964,
+  "physical_cells_per_region": 32,
+  "density_kg_m3": 1000,
+  "render_boundary_shrunk": false,
+  "volume_drift_test_limit": 0.05,
+  "volume_metrics": [
+    {
+      "region": 0,
+      "initial_volume_m3": 0.095347012947,
+      "max_sampled_volume_relative_error": 0.0037529053500491294,
+      "max_center_offset_from_rigid_bone_m": 0.27210557120164414
+    },
+    {
+      "region": 1,
+      "initial_volume_m3": 0.095347012947,
+      "max_sampled_volume_relative_error": 0.0037446933361034995,
+      "max_center_offset_from_rigid_bone_m": 0.2720973859653126
+    },
+    {
+      "region": 2,
+      "initial_volume_m3": 0.088990545417,
+      "max_sampled_volume_relative_error": 0.02062984251189104,
+      "max_center_offset_from_rigid_bone_m": 0.16830119072804514
+    },
+    {
+      "region": 3,
+      "initial_volume_m3": 0.088990545417,
+      "max_sampled_volume_relative_error": 0.016681676655016853,
+      "max_center_offset_from_rigid_bone_m": 0.17741513022665725
+    }
+  ],
+  "offset_includes_gravity_sag": true,
+  "anatomical_calibration": false,
+  "resolution_independent_material_calibration": false,
+  "test_to_render_change": "added read-only volume diagnostics and CSV column; dynamics and tests unchanged",
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "3090c31c72141415f7292dc50e3c78764cdcdd06fb54a582e5fb9a62b1357677",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "573fc3a02a10f73657e728a9dc3b8d76ae85631a594efe6c640c41679cb2638e",
+    "crates/physics/src/tissue_geometry.rs": "6371fc4d493672a9e16a2a11b07a4399eb2a3c560490ed74802cc0fba725dc93"
+  }
+}

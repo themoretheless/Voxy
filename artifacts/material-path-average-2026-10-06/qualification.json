@@ -1,0 +1,35 @@
+{
+  "status": "failed full imported clip",
+  "mechanism": "frozen path averaged internal forces, midpoint kinematics",
+  "analytic_dilation": "passed: old midpoint defect >0.1 J, new reaction work matches endpoint potential within 1e-10 J",
+  "gradient_oracle": "passed: prestressed tetrahedron, moving support, free-coordinate finite differences",
+  "physics_tests": {
+    "session": null,
+    "log": "/tmp/voxy-avf-physics.log",
+    "state": "passed",
+    "passed": 142,
+    "ignored": 5
+  },
+  "imported_68_steps": {
+    "state": "interrupted intentionally after full-source failure at step 126; current release 68-step gate supersedes this diagnostic",
+    "cargo_exit_code": 101,
+    "test_signal": "SIGINT (2)",
+    "last_logged_step": 60,
+    "log": "debug-68-interrupted.log"
+  },
+  "full_480_steps": {
+    "state": "failed",
+    "exit_code": 101,
+    "rejected_step": 126,
+    "error": "implicit contact nonlinear nonconvergence",
+    "seconds": 453.05,
+    "log": "full-480-failed.log"
+  },
+  "source": "https://arxiv.org/abs/1202.4555",
+  "limitations": [
+    "finite quadrature is not an unconditional exact conservation claim",
+    "not real time qualified",
+    "not integrated character skin"
+  ],
+  "release_build": "passed: 37.14 seconds"
+}

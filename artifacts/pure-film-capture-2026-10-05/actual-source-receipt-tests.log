@@ -1,0 +1,44 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 14.82s
+     Running tests/surface_film.rs (target/debug/deps/surface_film-d898b7ff8be2d27e)
+
+running 27 tests
+test concave_fold_accumulates_film_by_capillarity_without_mass_loss ... ignored, expensive anisotropic fold convergence study
+test gravity_substep_reuse_benchmark ... ignored, paired release benchmark for internal gravity reuse
+test gravity_parallel_to_shared_edge_has_no_spurious_cross_edge_flow ... ok
+test gravity_flux_uses_cross_edge_distance_on_skew_cells ... ok
+test material_replacement_conserves_mass_and_rejects_invalid_edits ... ok
+test contact_exchange_limits_multiple_receivers_and_preserves_total_volume ... ok
+test geometry_motion_retains_mass_and_invalid_input_is_atomic ... ok
+test material_edit_allows_roundoff_in_dry_cells_without_losing_bulk_mass ... ok
+test driving_pressure_matches_hydrostatic_potential_and_is_read_only ... ok
+test fixed_strip_measurement_clips_partial_triangles ... ok
+test atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass ... ok
+test conservative_remap_preserves_mass_and_uniform_refinement_thickness ... ok
+test deposit_receipt_tracks_actual_growth_and_late_unresolved_addition_rolls_back ... ok
+test conservative_remap_rejects_incomplete_and_invalid_maps_without_mutation ... ok
+test automatic_bridges_require_proximity_opposed_faces_and_matching_density ... ok
+test precursor_wetting_counts_added_liquid_and_keeps_uniform_layer_in_equilibrium ... ok
+test self_contact_excludes_shared_vertices_and_rejects_invalid_links_atomically ... ok
+test sources_are_explicit_and_atomic ... ok
+test self_bridges_require_film_to_span_gap_and_follow_geometry ... ok
+test self_contacts_share_a_limited_donor_without_losing_mass ... ok
+test wetting_diffusion_converges_to_analytic_two_cell_solution ... ok
+test equilibrium_and_wetting_are_conservative ... ok
+test gravity_moves_film_down_and_retains_volume ... ok
+test substrate_curvature_converges_on_anisotropic_cylindrical_graph ... ok
+test bridge_exchange_is_invariant_under_planar_mesh_refinement ... ok
+test self_contact_exchange_converges_to_analytic_uniform_plate_solution ... ok
+test self_contact_uniform_plate_transfer_is_mesh_invariant ... ok
+
+test result: ok. 25 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 2.44s
+
+     Running tests/surface_film_atomic_contact.rs (target/debug/deps/surface_film_atomic_contact-5e4989e645df7ac6)
+
+running 3 tests
+test failed_contact_rolls_back_geometry_source_and_transport ... ok
+test successful_atomic_contact_matches_sequential_physics_and_source_mass ... ok
+test moving_surfaces_exchange_only_during_contact_and_preserve_source_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

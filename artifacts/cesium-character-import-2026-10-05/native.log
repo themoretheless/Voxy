@@ -1,0 +1,25 @@
+NATIVE REVIEW project=/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-87982-1791200179163537000 pid=87982
+METAL WINDOW number=58954 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(true)
+MODEL PUBLISHED frames=0 first_x=0.04871461 asset=CesiumMan.glb
+METAL WINDOW number=58954 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+MODEL PUBLISHED frames=16 first_x=0.04871461 asset=CesiumMan.glb
+EDITOR PRESENT frames=1907 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=1987 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=2066 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=2145 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=3324 draws=3 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=4482 draws=3 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=8700 key=F6
+EDITOR PRESENT frames=8700 draws=3 outcome=Presented positions=[(NodeId { scene: 7, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+GAME UI GPU PUBLISHED draws=0
+EDITOR KEY frames=8924 key=F6
+EDITOR PRESENT frames=8924 draws=4 outcome=Presented positions=[(NodeId { scene: 8, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR KEY frames=9163 key=F5
+EDITOR PRESENT frames=9163 draws=4 outcome=Presented positions=[(NodeId { scene: 8, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]

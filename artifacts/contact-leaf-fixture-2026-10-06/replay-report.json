@@ -1,0 +1,768 @@
+{
+  "predictor_path_open": false,
+  "samples": [
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339757372716113,
+          0.5191456044542844,
+          0.3774568218185545
+        ],
+        "distance_m": 0.00010004976194181424,
+        "gap_m": 4.976194181423397e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.0
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339756896866387,
+          0.5191456024908333,
+          0.37745682854050283
+        ],
+        "distance_m": 0.00010004688588694746,
+        "gap_m": 4.688588694745058e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.03125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339756421016616,
+          0.5191456005273783,
+          0.3774568352624555
+        ],
+        "distance_m": 0.00010004400983218825,
+        "gap_m": 4.400983218824715e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.0625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.1033975594516669,
+          0.5191455985639204,
+          0.3774568419844127
+        ],
+        "distance_m": 0.00010004113377738849,
+        "gap_m": 4.113377738848101e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.09375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339755469316653,
+          0.5191455966004593,
+          0.37745684870637414
+        ],
+        "distance_m": 0.00010003825772260371,
+        "gap_m": 3.825772260370396e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339754993466588,
+          0.5191455946369942,
+          0.37745685542833995
+        ],
+        "distance_m": 0.00010003538166795752,
+        "gap_m": 3.5381667957515056e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.15625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.1033975451761634,
+          0.5191455926735262,
+          0.3774568621503104
+        ],
+        "distance_m": 0.00010003250561324692,
+        "gap_m": 3.250561324691099e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.1875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339754041766008,
+          0.519145590710055,
+          0.37745686887228497
+        ],
+        "distance_m": 0.00010002962955857538,
+        "gap_m": 2.962955857537886e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.21875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339753565915571,
+          0.5191455887465802,
+          0.37745687559426405
+        ],
+        "distance_m": 0.00010002675350396827,
+        "gap_m": 2.675350396826189e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.25
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339753090065074,
+          0.519145586783102,
+          0.3774568823162473
+        ],
+        "distance_m": 0.00010002387744941689,
+        "gap_m": 2.3877449416886466e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.28125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339752614214437,
+          0.5191455848196206,
+          0.37745688903823504
+        ],
+        "distance_m": 0.00010002100139485149,
+        "gap_m": 2.1001394851484175e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.3125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339752138363678,
+          0.519145582856136,
+          0.37745689576022723
+        ],
+        "distance_m": 0.00010001812534030667,
+        "gap_m": 1.8125340306668174e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.34375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339751662512892,
+          0.5191455808926474,
+          0.3774569024822237
+        ],
+        "distance_m": 0.00010001524928588985,
+        "gap_m": 1.524928588984224e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339751186661938,
+          0.519145578929156,
+          0.3774569092042246
+        ],
+        "distance_m": 0.00010001237323141567,
+        "gap_m": 1.2373231415662008e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.40625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339750710810891,
+          0.5191455769656613,
+          0.37745691592622976
+        ],
+        "distance_m": 0.00010000949717697866,
+        "gap_m": 9.49717697865636e-9,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.4375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339750234959777,
+          0.5191455750021629,
+          0.3774569226482394
+        ],
+        "distance_m": 0.00010000662112266309,
+        "gap_m": 6.6211226630813556e-9,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.46875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.1033974975910858,
+          0.5191455730386606,
+          0.3774569293702536
+        ],
+        "distance_m": 0.00010000374506838805,
+        "gap_m": 3.7450683880419595e-9,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.5
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339749283257221,
+          0.5191455710751558,
+          0.377456936092272
+        ],
+        "distance_m": 0.00010000086901404938,
+        "gap_m": 8.690140493734485e-10,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.53125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339748807405819,
+          0.5191455691116471,
+          0.3774569428142947
+        ],
+        "distance_m": 0.00009999799295983432,
+        "gap_m": -2.0070401656824624e-9,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.5625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339748331554238,
+          0.5191455671481358,
+          0.37745694953632186
+        ],
+        "distance_m": 0.00009999511690556789,
+        "gap_m": -4.883094432116004e-9,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.59375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339747855702575,
+          0.5191455651846208,
+          0.3774569562583534
+        ],
+        "distance_m": 0.00009999224085132525,
+        "gap_m": -7.759148674751307e-9,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339747379850861,
+          0.5191455632211022,
+          0.3774569629803892
+        ],
+        "distance_m": 0.00009998936479721,
+        "gap_m": -1.0635202790006408e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.65625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339746903998986,
+          0.5191455612575806,
+          0.37745696970242953
+        ],
+        "distance_m": 0.00009998648874303377,
+        "gap_m": -1.3511256966234329e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.6875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339746428147017,
+          0.5191455592940556,
+          0.37745697642447423
+        ],
+        "distance_m": 0.00009998361268890397,
+        "gap_m": -1.638731109603129e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.71875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339745952294976,
+          0.519145557330527,
+          0.3774569831465232
+        ],
+        "distance_m": 0.00009998073663485523,
+        "gap_m": -1.926336514477059e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.75
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339745476442802,
+          0.5191455553669954,
+          0.3774569898685766
+        ],
+        "distance_m": 0.00009997786058081196,
+        "gap_m": -2.2139419188048218e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.78125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.1033974500059055,
+          0.5191455534034601,
+          0.37745699659063436
+        ],
+        "distance_m": 0.0000999749845267859,
+        "gap_m": -2.5015473214100585e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.8125
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339744524738143,
+          0.5191455514399218,
+          0.37745700331269677
+        ],
+        "distance_m": 0.00009997210847277014,
+        "gap_m": -2.7891527229866584e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.84375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339744048885702,
+          0.5191455494763797,
+          0.3774570100347633
+        ],
+        "distance_m": 0.00009996923241890047,
+        "gap_m": -3.076758109953634e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339743573033122,
+          0.5191455475128346,
+          0.3774570167568342
+        ],
+        "distance_m": 0.00009996635636495341,
+        "gap_m": -3.364363504659103e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.90625
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339743097180437,
+          0.5191455455492862,
+          0.37745702347890947
+        ],
+        "distance_m": 0.00009996348031105253,
+        "gap_m": -3.651968894747225e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.9375
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339742621327691,
+          0.519145543585734,
+          0.37745703020098914
+        ],
+        "distance_m": 0.00009996060425727091,
+        "gap_m": -3.939574272909124e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 0.96875
+    },
+    {
+      "nearest": {
+        "body_face": [
+          10,
+          7,
+          11
+        ],
+        "body_weights": [
+          0.10339742145474795,
+          0.5191455416221789,
+          0.3774570369230732
+        ],
+        "distance_m": 0.00009995772820344009,
+        "gap_m": -4.2271796559919454e-8,
+        "obstacle_face_index": 1308,
+        "obstacle_weights": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "time_fraction": 1.0
+    }
+  ],
+  "sampling_note": "Discrete gap samples do not prove continuous path admission.",
+  "scope": "external-ccd-geometry-only",
+  "static_start_open": true,
+  "stationary_body_path_open": true
+}

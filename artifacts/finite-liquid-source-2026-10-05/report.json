@@ -1,0 +1,19 @@
+{
+  "passed": 10,
+  "failed": 0,
+  "targets": {
+    "emission_unit": 5,
+    "liquid_species": 5
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "153d3f02ba69a625e1ed9ccfac4b640efb952bbbbc6f1500914e57ec7eca1636"
+  },
+  "goal_complete": false,
+  "limitations": [
+    "point nozzle at translating source centre",
+    "no source pose integration or rotating inertia update",
+    "full-fluid staging clone",
+    "extreme Galilean cancellation not qualified",
+    "no native demo hookup"
+  ]
+}

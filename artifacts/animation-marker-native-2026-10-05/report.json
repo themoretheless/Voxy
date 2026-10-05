@@ -1,0 +1,27 @@
+{
+  "goal_complete": false,
+  "native_pid": 50000,
+  "project": "/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-50000-1791196746920414000",
+  "actions": [
+    "add animation component",
+    "Add marker",
+    "type phase 0.25 then Enter",
+    "Remove marker",
+    "Z undo restores phase 0.25",
+    "Y redo removes",
+    "Z restores",
+    "F5 saves",
+    "Remove then F9 reload restores",
+    "F6 Play: animation active, marker controls absent",
+    "F6 Stop: authoring marker phase restored, controls available"
+  ],
+  "saved_markers": [
+    [
+      {
+        "name": "event",
+        "phase": 0.25
+      }
+    ]
+  ],
+  "window_left_running": true
+}

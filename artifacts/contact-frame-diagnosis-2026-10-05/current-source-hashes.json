@@ -1,0 +1,4 @@
+{
+  "crates/physics/src/biomechanics/inertia/implicit.rs": "e69e27778e5521ad30a6e736ace78cf5565f9d34ee9bda96777706b10da4c4ab",
+  "crates/voxy_app/examples/body_motion_snapshot.rs": "d30b75e93417e77ca29367e38d8ced3563e484111d651090dda6732bedd2dfdb"
+}

@@ -1,0 +1,19 @@
+{
+  "passed": 384,
+  "failed": 0,
+  "targets": {
+    "voxy_animation": 213,
+    "voxy_editor_include_ignored": 171
+  },
+  "ignored": 0,
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "956483dd9e93b75602e87a827b4727eba33a4c795f195e00966eca5d46afd37f"
+  },
+  "goal_complete": false,
+  "scope": "finite cubic Vec3 sample recovery",
+  "limitations": [
+    "quaternion cubic arithmetic not changed",
+    "local GPU only, no CUDA matrix",
+    "not full engine completion"
+  ]
+}

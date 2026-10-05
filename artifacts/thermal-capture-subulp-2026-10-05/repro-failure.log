@@ -1,0 +1,24 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.49s
+     Running tests/liquid_droplet_lifecycle.rs (target/debug/deps/liquid_droplet_lifecycle-893297fcccd19583)
+
+running 1 test
+test sub_inventory_resolution_capture_preserves_droplet_and_thermal_film ... FAILED
+
+failures:
+
+---- sub_inventory_resolution_capture_preserves_droplet_and_thermal_film stdout ----
+
+thread 'sub_inventory_resolution_capture_preserves_droplet_and_thermal_film' (31342462) panicked at crates/physics/tests/liquid_droplet_lifecycle.rs:943:5:
+assertion failed: l.depositing_impact_spheres_thermal_surface_mixture_lifecycle(&previous,
+        &mut target, model(3., 0.), &[0.01], control(),
+        &DropletLifecycle::default()).is_err()
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    sub_inventory_resolution_capture_preserves_droplet_and_thermal_film
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test liquid_droplet_lifecycle`

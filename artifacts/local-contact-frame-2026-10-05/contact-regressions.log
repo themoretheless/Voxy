@@ -1,0 +1,117 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.80s
+     Running tests/biomechanics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/biomechanics-18bac477b8c8f71e)
+
+running 9 tests
+test near_rest_energy_retains_tiny_shear_instead_of_cancelling_to_zero ... ok
+test matrix_small_strain_shear_is_physical_and_fibers_are_directional ... ok
+test analytic_stress_matches_energy_gradient_and_rigid_rotation ... ok
+test calibration_recovers_material_and_detects_held_out_error ... ok
+test rejects_inversion_open_pressure_and_invalid_load_atomically ... ok
+test assembled_pressure_energy_gradient_and_force_balance ... ok
+test affine_patch_energy_is_exact_and_cavity_geometry_refines ... ok
+test specimens_have_noninverted_connected_volume_and_bonded_layers ... ok
+test pressure_expands_and_muscle_activation_contracts ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/finite_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_inertia-c5242bdea988fe96)
+
+running 4 tests
+test uniform_acceleration_matches_ballistic_motion_and_potential_work ... ok
+test verlet_is_time_reversible_and_invalid_or_unstable_steps_are_atomic ... ok
+test finite_rotation_preserves_angular_momentum_and_energy_error_converges ... ok
+test dynamic_trajectory_is_covariant_under_rigid_coordinate_rotation_and_translation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/quadratic_dynamic_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_dynamic_surface_contact-179a511da8d90e5f)
+
+running 9 tests
+test contact_parameters_and_rejected_steps_are_atomic ... ok
+test continuous_guard_rejects_small_drift_crossings_in_both_selection_modes ... ok
+test fast_surface_motion_is_rejected_even_with_loose_energy_tolerance ... ok
+test selected_bonded_faces_activate_only_after_full_fracture ... ok
+test unresolved_guard_is_rejected_and_safe_motion_matches_unguarded_dynamics ... ok
+test guarded_adaptive_interval_rolls_back_when_penalty_cannot_stop_approach ... ok
+test automatic_fragments_match_selected_contact_without_manual_pairs ... ok
+test adaptive_motion_guard_refines_and_common_translation_does_not_reduce_step ... ok
+test free_surface_contact_exchanges_impulse_and_energy_refines ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/quadratic_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_surface_contact-67d4670d58aebdea)
+
+running 5 tests
+test parallel_layers_match_analytic_energy_and_equal_opposite_resultants ... ok
+test singular_intersection_and_unresolved_projection_are_explicit_errors ... ok
+test split_target_surface_does_not_duplicate_contact_pressure ... ok
+test partially_active_contact_refines_against_independent_planar_integration ... ok
+test curved_pair_forces_match_energy_and_preserve_force_torque_and_objectivity ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running tests/surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_contact-1b73d404c5e53680)
+
+running 10 tests
+test primitive_candidates_are_unique_and_orientation_independent ... ok
+test diagnostic_primitive_sum_has_consistent_gradient_and_balanced_force ... ok
+test crossing_triangle_is_rejected_and_invalid_configuration_is_atomic ... ok
+test separating_tissue_groups_removes_only_the_cross_tissue_barrier ... ok
+test continuous_triangle_guard_rejects_tunnelling_with_disjoint_endpoints ... ok
+test edge_edge_closest_feature_distributes_balanced_contact_gradient ... ok
+test vertex_face_energy_gradient_balances_force_and_torque_and_is_objective ... ok
+test unique_primitive_energy_matches_gradient ... ok
+test experimental_solver_law_preserves_other_forces_and_validates_gradients ... ok
+test normal_contact_preconditioning_is_optional_and_energy_preserving ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tissue_continuum_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_continuum_geometry-29087454a20ee656)
+
+running 3 tests
+test rounded_fem_energy_and_virtual_work_match_uniform_shear ... ok
+test rounded_mesh_has_oriented_boundary_accepted_by_existing_refinement ... ok
+test continuum_and_compliant_owners_share_geometry_and_lumped_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tissue_gaps.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_gaps-0d6a643c670c0d95)
+
+running 5 tests
+test barrier_energy_gradient_is_objective_and_internal_forces_balance ... ok
+test inertial_path_cannot_jump_through_a_selected_pair ... ok
+test gaps_install_atomically_and_survive_assembly ... ok
+test compressed_equilibrium_keeps_clearance_and_resists_loading ... ok
+test removal_of_compression_recovers_reference_without_resetting_contact ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tissue_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_geometry-7f78b423269d0da4)
+
+running 3 tests
+test invalid_and_unrepresentable_geometry_is_rejected ... ok
+test pinned_axes_and_uniform_free_fall_use_existing_solver ... ok
+test refinement_preserves_axes_and_converges_volume_and_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tissue_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_surface-15e19bd39e3e9703)
+
+running 4 tests
+test affine_deformation_and_boundary_vertices ... ok
+test local_vertex_displacement_uses_barycentric_weight ... ok
+test rejects_bad_topology_outside_and_nonfinite_updates ... ok
+test reusable_buffer_is_atomic_and_matches_allocating_api ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

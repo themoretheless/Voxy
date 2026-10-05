@@ -1,0 +1,50 @@
+{
+  "state": "passed",
+  "source_sha256": {
+    "crates/physics/src/liquid/water_equilibrium.rs": "ae3f3d2d0a8ee37b17126ea91b4c22d06f9254c95d01169306bab30a9664a683",
+    "crates/physics/src/liquid/transport.rs": "7184a3672974e453408e54bc2434764ea5a213297f760c2e54cbd72f1cee024a",
+    "crates/physics/tests/water_equilibrium.rs": "7dac93dcc73554e67959488b513b7f76c4e655fd471bd997a953c38f5b0e0d98"
+  },
+  "required_targets": [
+    "water_equilibrium",
+    "liquid_phase",
+    "liquid_transport",
+    "implicit_heat_tests"
+  ],
+  "previous_debug_water_tests_seconds": 74.55,
+  "previous_debug_water_tests_count": 5,
+  "production_performance_measured": false,
+  "interactive_demo_integrated": false,
+  "goal_complete": false,
+  "session_id": 82944,
+  "log": "/tmp/voxy-water-direct-contact-tests.log",
+  "joint_targets": [
+    "water_equilibrium",
+    "liquid_phase",
+    "liquid_transport"
+  ],
+  "unit_guards_state": "passed",
+  "comparable_debug_baseline": {
+    "water_tests_count": 8,
+    "seconds": 74.77,
+    "artifact": "../water-volume-work-2026-10-05/tests.log"
+  },
+  "completed_targets": {
+    "liquid_phase": 13,
+    "liquid_transport": 7,
+    "water_equilibrium": 8
+  },
+  "pending_targets": [],
+  "exit_code": 0,
+  "passed": 28,
+  "failed": 0,
+  "water_debug_seconds": 3.92,
+  "debug_single_observation_ratio": 19.073979591836736,
+  "timing_scope": "same eight tests, unoptimized profile, test runtime excludes macOS binary-start delay; single before/after observation, not production benchmark",
+  "source_scope": "direct-temperature/root changes before subsequent homogeneous-response/coexistence edits",
+  "unit_guards_session_id": 66201,
+  "unit_guards_log": "/tmp/voxy-direct-contact-guards-tests.log",
+  "unit_guards_passed": 2,
+  "unit_guards_failed": 0,
+  "unit_guards_exit_code": 0
+}

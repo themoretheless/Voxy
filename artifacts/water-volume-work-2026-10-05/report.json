@@ -1,0 +1,18 @@
+{
+  "state": "passed",
+  "required_test": "water_equilibrium",
+  "source_sha256": {
+    "crates/physics/src/liquid/water_equilibrium.rs": "6976edbba08ea22c231a90e8a47169b3b8f4d7d68671806514fecbca749b14de",
+    "crates/physics/src/liquid.rs": "8673e69d8334b3f80351c6a32f2ec447047e4975426839bc5d8f9289b618c7a8",
+    "crates/physics/tests/water_equilibrium.rs": "7dac93dcc73554e67959488b513b7f76c4e655fd471bd997a953c38f5b0e0d98"
+  },
+  "mechanical_motion_integrated": false,
+  "goal_complete": false,
+  "session_id": 24162,
+  "log": "/tmp/voxy-water-entropy-volume-work-tests.log",
+  "exit_code": 0,
+  "passed": 8,
+  "failed": 0,
+  "test_seconds_debug": 74.77,
+  "source_scope": "pinned source before subsequent direct-temperature contact/root edits"
+}

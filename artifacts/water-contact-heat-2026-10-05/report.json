@@ -1,0 +1,105 @@
+{
+  "tests": {
+    "state": "passed",
+    "exit_code": 0,
+    "passed": 24,
+    "failed": 0,
+    "targets": {
+      "liquid_phase": 13,
+      "liquid_transport": 7,
+      "water_equilibrium": 4
+    },
+    "source_scope": "source_sha256 before subsequent kernel guard changes"
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/water_equilibrium.rs": "3f6631cb1adbd2d6998fd78baf9a709976cbf7cc1192c52f2d8851cb80a1bf52",
+    "crates/physics/src/liquid/transport.rs": "0553afa033a3ee3cc0ccad7d265d2e691b5a3bb21d3dade3b375362daf42d13f",
+    "crates/physics/src/liquid/phase.rs": "56f741df200e08db91212b3547ec847606bcff28f2d0c3bf5c33349c7bace8c9",
+    "crates/physics/tests/water_equilibrium.rs": "efe4fd49abfe9c9b76ef211f0ed31381eb52726033929b1f5714b4af435796a9"
+  },
+  "time_integrator": "backward Euler; refine dt for accuracy",
+  "shared_heat_kernel": true,
+  "interactive_demo_integrated": false,
+  "goal_complete": false,
+  "subsequent_kernel_guard_changes": {
+    "state": "passed",
+    "regressions": [
+      "reject nonfinite temperature difference at subresolution rate",
+      "finite midpoint with opposite-sign extreme bounds"
+    ],
+    "source_sha256": "b3583e6ca0dee1213b484aed31300ed5cb237cc905a9510d4d3028bfe757f816",
+    "session_id": 77487,
+    "passed": 2,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "time_refinement": {
+    "state": "passed",
+    "steps": [
+      4,
+      8,
+      16
+    ],
+    "reference_steps": 128,
+    "duration_seconds": 2,
+    "error_ratio_gate": 1.7,
+    "reason": "unchanged convergence ratio gate tested at finer temporal resolution",
+    "source_sha256": "bfbdc2da957d483ffaa5e8375c584f4b05caa51480e0a0216e6e68fe658d192d",
+    "session_id": 63038,
+    "log": "/tmp/voxy-water-and-vapor-integrator-tests.log",
+    "targets": [
+      "water_equilibrium",
+      "liquid_evaporation",
+      "surface_film_vapor"
+    ],
+    "exit_code": 0,
+    "water_tests_passed": 5,
+    "failed": 0,
+    "water_test_seconds_debug": 74.55,
+    "shared_process_total_passed": 25,
+    "source_scope": "finer-step fixture before entropy inversion and volume-work edits"
+  },
+  "time_refinement_initial": {
+    "state": "failed",
+    "steps": [
+      1,
+      2,
+      4
+    ],
+    "reference_steps": 64,
+    "duration_seconds": 2,
+    "requirement": "successive energy-error reductions exceed 1.7; conservation and no overshoot each substep",
+    "source_sha256": "993e732e7a76f84f642dacf1f2950ac4eee9397afcb92a9ecdac1f40e985e8f8",
+    "session_id": 20953,
+    "compiled_source_sha256": {
+      "crates/physics/src/liquid/water_equilibrium.rs": "3f6631cb1adbd2d6998fd78baf9a709976cbf7cc1192c52f2d8851cb80a1bf52",
+      "crates/physics/src/liquid/transport.rs": "b3583e6ca0dee1213b484aed31300ed5cb237cc905a9510d4d3028bfe757f816",
+      "crates/physics/src/liquid/phase.rs": "56f741df200e08db91212b3547ec847606bcff28f2d0c3bf5c33349c7bace8c9",
+      "crates/physics/tests/water_equilibrium.rs": "993e732e7a76f84f642dacf1f2950ac4eee9397afcb92a9ecdac1f40e985e8f8"
+    },
+    "completed_targets": {
+      "liquid_phase": 13,
+      "liquid_transport": 7
+    },
+    "pending_target": "water_equilibrium",
+    "exit_code": 101,
+    "passed": 4,
+    "failed": 1,
+    "energy_errors_j": [
+      105.63040954640019,
+      64.72734089958976,
+      36.2545568508358
+    ],
+    "ratios": [
+      1.6319287657786303,
+      1.785357387373432
+    ]
+  },
+  "debug_profile": {
+    "state": "sample completed on original finer-step contact validation",
+    "sample": "refinement-profile.sample",
+    "pid": 21344,
+    "production_benchmark": false,
+    "candidate_optimization": "avoid nested caloric inversion inside every scalar heat-root trial; preserve the contact law and current convergence tests"
+  }
+}

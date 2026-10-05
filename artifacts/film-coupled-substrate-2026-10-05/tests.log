@@ -1,0 +1,46 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: type does not implement `Debug`; consider adding `#[derive(Debug)]` or a manual implementation
+  --> crates/physics/src/surface_film_thermal.rs:18:1
+   |
+18 | / pub struct FilmSubstrateHeat<'a> {
+19 | |     pub energies_j: &'a mut [f64],
+20 | |     pub capacities_j_per_k: &'a [f64],
+21 | |     pub conductances_w_per_k: &'a [f64],
+22 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-debug-implementations`
+
+warning: `physics` (lib) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 24.07s
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 11 tests
+test conduction_matches_two_cell_fourier_solution_without_inventory_motion ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test thermal_deposit_mixes_by_heat_capacity_and_rolls_back_late_error ... ok
+test conduction_dry_cells_insulate_and_isothermal_cells_do_not_change ... ok
+test late_invalid_substrate_rolls_back_both_owners_and_dry_cells_insulate ... ok
+test finite_substrate_exchange_matches_analytic_decay_and_conserves_total_heat ... ok
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test applied_heat_changes_temperature_and_rejects_late_overdraw ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test conduction_on_four_cells_refines_and_preserves_global_heat_and_bounds ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film_vapor.rs (target/debug/deps/surface_film_vapor-e6c1242d6e3bc7c9)
+
+running 8 tests
+test coupled_vapor_failure_rolls_back_prior_substrate_heating_and_all_owners ... ok
+test invalid_vapor_exchange_preserves_all_three_owners ... ok
+test sub_inventory_resolution_flux_does_not_create_vapor_mass ... ok
+test film_evaporation_and_condensation_preserve_mass_energy_momentum_and_residue ... ok
+test hot_finite_substrate_feeds_evaporation_with_closed_mass_energy_and_momentum ... ok
+test shared_vapor_batch_matches_ordered_exchange_and_rolls_back_late_failure ... ok
+test substrate_vapor_coupling_refines_when_elapsed_time_is_subdivided ... ok
+test symmetric_shared_vapor_sweeps_refine_the_interface_order_error ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

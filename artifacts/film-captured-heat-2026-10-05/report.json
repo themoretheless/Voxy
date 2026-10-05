@@ -1,0 +1,28 @@
+{
+  "state": "ledger run passed",
+  "session_id": 15029,
+  "source_sha256": {
+    "crates/physics/src/liquid/film_impact_events.rs": "ebd07c2e3747fdf37fa27475b5d91c0144f0ce020ded80f75b26c6bb659c0ab5",
+    "crates/physics/tests/liquid_impact_events.rs": "0e5560800e8f4937241d0d5f3795824c9a543f12787992e4bf88ab41adcf3726",
+    "crates/physics/tests/liquid_droplet_lifecycle.rs": "914970d47a7270d74a7593cc88c0ef70a5326ab94a5d0fa1f955f295efbbe547"
+  },
+  "interactive_thermal_integration_complete": false,
+  "goal_complete": false,
+  "tests_passed": 32,
+  "exit_code": 0,
+  "thermal_capture_run": {
+    "state": "passed",
+    "source_sha256": {
+      "crates/physics/src/liquid/film_impact_events.rs": "c95e85d23f343396305ed57b85f0011c9613728f0eb3329dc319af0023778149",
+      "crates/physics/src/surface_film_thermal.rs": "88c23a33c1f9ea8301912c11947c76430c493a50ff041a365fa456f41d08688d",
+      "crates/physics/tests/liquid_droplet_lifecycle.rs": "f18a74b3849f4615af62e95d78901ea351fc0a38b5b55a683a6b89cd21a095ee"
+    },
+    "session_id": 74011,
+    "tests_passed": 29,
+    "exit_code": 0
+  },
+  "demo_migration": {
+    "state": "starting tests",
+    "source_sha256": "b09e65a855f34fafad56b8eb981d42450f0d8b6f738bb06efe5a57280833a5b0"
+  }
+}

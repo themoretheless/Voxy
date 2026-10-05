@@ -1,0 +1,19 @@
+{
+  "passed": 373,
+  "failed": 0,
+  "targets": {
+    "voxy_animation": 212,
+    "voxy_editor_default": 160,
+    "editor_gpu_playback_explicit": 1
+  },
+  "remaining_ignored_editor_gpu_tests": 10,
+  "source_sha256": {
+    "crates/voxy_animation/src/lib.rs": "4497c62a73dc3f3ec84f2692d178819fdd5abbb9c24ce93604ce223f8c3e1b43"
+  },
+  "goal_complete": false,
+  "scope": "finite vector interpolation in pose blend and linear tracks",
+  "limitations": [
+    "not full GPU or CUDA coverage",
+    "no new visual artifact"
+  ]
+}

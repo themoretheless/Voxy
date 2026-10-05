@@ -1,0 +1,40 @@
+{
+  "scope": "isolated quarter refinement, same 32 retries and 128 panels",
+  "enable_env": [
+    "VOXY_COMPENSATED_CONTACT_GAP",
+    "VOXY_COMPENSATED_CONTACT_TRAJECTORY",
+    "VOXY_CONTACT_QUARTER_REFINEMENT"
+  ],
+  "endpoint_case_panels": [
+    22,
+    52,
+    85
+  ],
+  "library_passed": 104,
+  "library_ignored": 6,
+  "contact_integration_passed": 31,
+  "short_clip_result": "passed 68 steps",
+  "full_clip_result": "passed all 480 steps and final energy receipts",
+  "default_solver_changed": false,
+  "files_sha256": {
+    "prescribed_surface.rs": "88a27a7bb6f486b608491b76c91bc9c67372b36174470df14a3459d0954810d3",
+    "surface_contact.rs": "f5180af5f195316fa83f2b8b269439c8c837213d7f6ed11fffcf9d4d7cb7828d",
+    "contact_precision.rs": "6b6b1217f0deb9517c5b638d776ddbb1d65d960bcd727d0dd8e0f9e0dc9bb001",
+    "contact_metric.rs": "7d49c266d335aab1f50174def5c560cbde6a7754201f36148fae8eb4dc19a7fd",
+    "inertia/implicit.rs": "82c5ae83a0b2ba99f22d58d1cd7304b3679d2f8023094425e6525a8ea708b88f",
+    "mod.rs": "5260892663823427a0f6a2a309b34b43a794ea1eaf4841eab3c1d2e77649766d"
+  },
+  "short_clip_duration_s": 22.38,
+  "parallel_complete_state_steps": 8,
+  "parallel_complete_state_result": "bitwise equal",
+  "parallel_complete_state_duration_s": 2.03,
+  "full_clip_files_sha256": {
+    "prescribed_surface.rs": "c8cc81646571ba300370d81377b63f943e9bb9abe0b324d62f581337478198e6",
+    "surface_contact.rs": "f5180af5f195316fa83f2b8b269439c8c837213d7f6ed11fffcf9d4d7cb7828d",
+    "contact_precision.rs": "6b6b1217f0deb9517c5b638d776ddbb1d65d960bcd727d0dd8e0f9e0dc9bb001",
+    "contact_metric.rs": "7d49c266d335aab1f50174def5c560cbde6a7754201f36148fae8eb4dc19a7fd",
+    "inertia/implicit.rs": "82c5ae83a0b2ba99f22d58d1cd7304b3679d2f8023094425e6525a8ea708b88f",
+    "mod.rs": "5260892663823427a0f6a2a309b34b43a794ea1eaf4841eab3c1d2e77649766d"
+  },
+  "full_clip_duration_s": 1317.68
+}

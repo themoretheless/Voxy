@@ -1,0 +1,314 @@
+    Blocking waiting for file lock on build directory
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics_voxel v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics_voxel)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+   Compiling voxy_rush v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_rush)
+   Compiling voxy_runtime v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_runtime)
+   Compiling voxy_gpu v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gpu)
+   Compiling voxy_editor v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_editor)
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:197:19
+    |
+194 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+197 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+227 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+243 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+278 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+300 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+328 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+636 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+759 |     pub(super) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+989 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:179:19
+    |
+150 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+179 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade`, `set_clip_events`, and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:370:19
+    |
+337 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+370 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+523 |     pub(crate) fn set_clip_events(
+    |                   ^^^^^^^^^^^^^^^
+...
+648 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+   Compiling voxy_app v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_app)
+warning: field `initial_energy_j` is never read
+  --> crates/voxy_app/src/tissue_demo.rs:43:9
+   |
+40 |     Continuum {
+   |     --------- field in this variant
+...
+43 |         initial_energy_j: f64,
+   |         ^^^^^^^^^^^^^^^^
+   |
+   = note: `DemoTissue` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `volumes` is never used
+  --> crates/voxy_app/src/tissue_demo.rs:56:8
+   |
+49 | impl DemoTissue {
+   | --------------- method in this implementation
+...
+56 |     fn volumes(&self) -> Vec<f64> {
+   |        ^^^^^^^
+
+warning: multiple associated items are never used
+   --> crates/voxy_app/src/tissue_demo.rs:286:19
+    |
+107 | impl TissueDemo {
+    | --------------- associated items in this implementation
+...
+286 |     pub(crate) fn body_volumes_m3(&self) -> Vec<f64> {
+    |                   ^^^^^^^^^^^^^^^
+...
+294 |     pub(crate) fn body_energy_receipts(&self) -> Result<Vec<[f64; 4]>, &'static str> {
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+318 |     pub(crate) fn body_step_counts(&self) -> Vec<(u64, u64, usize)> {
+    |                   ^^^^^^^^^^^^^^^^
+...
+335 |     pub(crate) fn body_thermal_diagnostics(&self) -> Result<Vec<(f64, f64, f64)>, &'static str> {
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^
+...
+428 |     pub(crate) fn advance_with_palette(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+438 |     pub(crate) fn bind_contact_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+444 |     pub(crate) fn bind_contact_surfaces(
+    |                   ^^^^^^^^^^^^^^^^^^^^^
+...
+466 |     pub(crate) fn advance_with_palette_and_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+480 |     pub(crate) fn advance_with_palette_and_surfaces(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+494 |     pub(crate) fn tissue_mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
+    |                   ^^^^^^^^^^^
+...
+814 |     fn advance_continuum(
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: associated items `female_from_assets` and `set_strain_fixture` are never used
+    --> crates/voxy_app/src/female_demo.rs:199:19
+     |
+ 195 | impl FemaleDemo {
+     | --------------- associated items in this implementation
+...
+ 199 |     pub(crate) fn female_from_assets(
+     |                   ^^^^^^^^^^^^^^^^^^
+...
+1018 |     pub(crate) fn set_strain_fixture(&mut self, x_stretch: f64) -> Result<(), &'static str> {
+     |                   ^^^^^^^^^^^^^^^^^^
+
+warning: field `assembly_ms` is never read
+ --> crates/voxy_app/src/skin_light_diffusion.rs:6:5
+  |
+5 | struct Timings {
+  |        ------- field in this struct
+6 |     assembly_ms: f64,
+  |     ^^^^^^^^^^^
+  |
+  = note: `Timings` has a derived impl for the trait `Debug`, but this is intentionally ignored during dead code analysis
+
+warning: function `diffuse` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:11:15
+   |
+11 | pub(super) fn diffuse(
+   |               ^^^^^^^
+
+warning: function `diffuse_measured` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:70:4
+   |
+70 | fn diffuse_measured(
+   |    ^^^^^^^^^^^^^^^^
+
+warning: function `diffuse_measured_with_parallel` is never used
+  --> crates/voxy_app/src/skin_light_diffusion.rs:78:4
+   |
+78 | fn diffuse_measured_with_parallel(
+   |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `status` is never used
+  --> crates/voxy_app/src/model_presentation.rs:36:8
+   |
+36 | pub fn status(parameters: &Path, current: &Value) -> Value {
+   |        ^^^^^^
+
+warning: function `atomic_json` is never used
+  --> crates/voxy_app/src/model_presentation.rs:82:4
+   |
+82 | fn atomic_json(path: &Path, value: &Value) -> Result<(), Box<dyn std::error::Error>> {
+   |    ^^^^^^^^^^^
+
+warning: function `request_film_state` is never used
+  --> crates/voxy_app/src/model_presentation.rs:95:8
+   |
+95 | pub fn request_film_state(parameters: &Path) -> Result<Value, Box<dyn std::error::Error>> {
+   |        ^^^^^^^^^^^^^^^^^^
+
+warning: function `film_state_status` is never used
+   --> crates/voxy_app/src/model_presentation.rs:150:8
+    |
+150 | pub fn film_state_status(parameters: &Path, id: &str) -> Result<Value, Box<dyn std::error::Error>> {
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: method `to_json` is never used
+  --> crates/voxy_app/src/view_settings.rs:15:12
+   |
+14 | impl ViewSettings {
+   | ----------------- method in this implementation
+15 |     pub fn to_json(&self) -> Value {
+   |            ^^^^^^^
+
+warning: function `deform` is never used
+   --> crates/voxy_app/src/female_face.rs:107:15
+    |
+107 | pub(crate) fn deform(vertices: &mut [SceneVertex], body_vertices: usize, pose: FacePose) {
+    |               ^^^^^^
+
+warning: method `append` is never used
+   --> crates/voxy_app/src/female_features.rs:236:12
+    |
+ 31 | impl FaceFeatures {
+    | ----------------- method in this implementation
+...
+236 |     pub fn append(
+    |            ^^^^^^
+
+warning: method `apply` is never used
+    --> crates/voxy_app/src/face_parameters.rs:2570:19
+     |
+2530 | impl FaceParameters {
+     | ------------------- method in this implementation
+...
+2570 |     pub(crate) fn apply(&self, vertices: &mut [SceneVertex], head: Mat4) {
+     |                   ^^^^^
+
+warning: method `restore_snapshot` is never used
+   --> crates/voxy_app/src/surface_film_preview.rs:345:12
+    |
+ 20 | impl FilmPreview {
+    | ---------------- method in this implementation
+...
+345 |     pub fn restore_snapshot(&mut self, snapshot: &serde_json::Value) -> Result<(), &'static str> {
+    |            ^^^^^^^^^^^^^^^^
+
+warning: method `topology` is never used
+   --> crates/voxy_app/src/fem_demo.rs:100:19
+    |
+ 56 | impl FemDemo {
+    | ------------ method in this implementation
+...
+100 |     pub(crate) fn topology(&self) -> Result<(usize, usize), Box<dyn std::error::Error>> {
+    |                   ^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+warning: `voxy_app` (lib) generated 18 warnings
+warning: associated items `new` and `title` are never used
+  --> crates/voxy_app/examples/../src/biomechanics_demo.rs:14:19
+   |
+13 | impl BiomechanicsDemo {
+   | --------------------- associated items in this implementation
+14 |     pub(crate) fn new() -> Result<Self, &'static str> {
+   |                   ^^^
+...
+67 |     pub(crate) fn title(&self) -> String {
+   |                   ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: multiple associated items are never used
+   --> crates/voxy_app/examples/../src/tissue_demo.rs:136:19
+    |
+107 | impl TissueDemo {
+    | --------------- associated items in this implementation
+...
+136 |     pub(crate) fn biomechanics() -> Result<Self, &'static str> {
+    |                   ^^^^^^^^^^^^
+...
+142 |     pub(crate) fn biomechanics_title(&self) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^^
+...
+282 |     pub(crate) fn is_body(&self) -> bool {
+    |                   ^^^^^^^
+...
+379 |     pub(crate) fn body_motion_title(&self) -> Option<String> {
+    |                   ^^^^^^^^^^^^^^^^^
+...
+438 |     pub(crate) fn bind_contact_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^
+...
+466 |     pub(crate) fn advance_with_palette_and_surface(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+814 |     fn advance_continuum(
+    |        ^^^^^^^^^^^^^^^^^
+
+warning: `voxy_app` (example "body_motion_snapshot") generated 2 warnings
+    Finished `release` profile [optimized] target(s) in 18.59s
+     Running `/tmp/voxy-moving-supports-final-20261005/release/examples/body_motion_snapshot artifacts/relative-motion-contact-2026-10-05/poses.png artifacts/relative-motion-contact-2026-10-05/frames --cesium --contact`
+BODY GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+IMPORTED support centers: [[-0.0990283414721489, 0.7890225052833557, 0.1306656002998352], [0.06097165495157242, 0.7890225052833557, 0.1306656002998352], [-0.08844652771949768, 0.4791085422039032, -0.05612833797931671], [0.047629572451114655, 0.4791243374347687, -0.056171491742134094]]
+CONTACT imported mesh: 3273 vertices, 4672 triangles
+IMPORTED support centers: [[-0.0990283414721489, 0.7890225052833557, 0.1306656002998352], [0.06097165495157242, 0.7890225052833557, 0.1306656002998352], [-0.08844652771949768, 0.4791085422039032, -0.05612833797931671], [0.047629572451114655, 0.4791243374347687, -0.056171491742134094]]
+CONTACT region 0: 4640 enabled, 32 excluded source triangles
+CONTACT region 1: 4557 enabled, 115 excluded source triangles
+CONTACT region 2: 4540 enabled, 132 excluded source triangles
+CONTACT region 3: 4515 enabled, 157 excluded source triangles
+frame t=0.00
+Error: "implicit contact line search failed; rejected frame step=65 time_s=0.270833333; last committed energy receipts=Ok([[0.3989505500587345, 0.41355241181685326, 0.014603650886242962, 1.789128122917606e-6], [0.41484564459295664, 0.4298854683315088, 0.015041483497350362, 1.6597587981846138e-6], [2.969737496618117, 3.203147055940588, 0.2334089249029069, -6.344195508769972e-7], [0.6209254085994087, 0.6752957269838727, 0.05436996604502146, -3.5233944323743184e-7]]); last committed refinement=[(437, 181, 1), (439, 183, 1), (3589, 257, 8), (692, 216, 3)]"

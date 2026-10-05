@@ -1,0 +1,32 @@
+Analysis of sampling water_equilibrium-50dc8052f83a1f0d (pid 8341) every 1 millisecond
+Process:         water_equilibrium-50dc8052f83a1f0d [8341]
+Path:            /Users/USER/Documents/*/water_equilibrium-50dc8052f83a1f0d
+Load Address:    0x100e38000
+Identifier:      water_equilibrium-50dc8052f83a1f0d
+Version:         ???
+Code Type:       ARM64
+Parent Process:  cargo [5007]
+Target Type:     live task
+
+Date/Time:       2026-10-05 06:58:29.297 +0400
+Launch Time:     2026-10-05 06:56:06.611 +0400
+OS Version:      macOS 26.7.1 (25G313)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         96K
+Physical footprint (peak):  96K
+Idle exit:                  untracked
+----
+
+Call graph:
+    777 Thread_31682125: Main Thread   DispatchQueue_<multiple>
+      777 _dyld_start  (in dyld) + 0  [0x100fec9c0]
+
+Total number in stack (recursive counted multiple, when >=5):
+
+Sort by top of stack, same collapsed (when >= 5):
+        _dyld_start  (in dyld)        777
+
+Binary images description not available
+

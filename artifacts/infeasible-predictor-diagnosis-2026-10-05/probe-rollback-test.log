@@ -1,0 +1,19 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 0.10s
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/prescribed_surface_contact-83c4d1ef52a3c97d)
+
+running 1 test
+IMPLICIT_STAGE_REJECTION stage="local contact quadrature" dt=1.00000000000000008e-5 error="closed surface contact gap"
+IMPLICIT_INFEASIBLE_PREDICTOR dt=1.00000000000000008e-5 internal_gap_open=true volume_open=true ccd=Ok(Some(1.0001000100037213e-5)) nearest=Ok(Some(PrescribedContactFeature { distance_m: 0.0, gap_m: -0.001, body_face: [0, 2, 1], obstacle_face_index: 0, body_weights: [0.0, 0.0, 0.0], obstacle_weights: [0.0, 0.0, 0.0] }))
+test infeasible_velocity_predictor_keeps_original_error_and_entire_state ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 25 filtered out; finished in 0.00s
+

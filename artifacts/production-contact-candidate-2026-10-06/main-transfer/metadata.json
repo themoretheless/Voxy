@@ -1,0 +1,38 @@
+{
+  "scope": "qualified numerical kernel active in primary worktree",
+  "files": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": {
+      "before_sha256": "591938a8a3530ce3156491e1e1470b79d867eb110c02b772232f48968de87d0b",
+      "candidate_sha256": "2cf2b33e9155b37045f08e9fe1b5294c64fe9eafc6c966d39765f715a0bde9e4"
+    },
+    "crates/physics/src/biomechanics/prescribed_surface.rs": {
+      "before_sha256": "099a82f8942f4cd83c927940bb93d8cd42628e90fe8e9bab123e33fac21d74b4",
+      "candidate_sha256": "5ad90846dd12cdabe5bda154b294d2d5ff304e75d7d266538dd4dba779282ddf"
+    },
+    "crates/physics/src/biomechanics/surface_contact.rs": {
+      "before_sha256": "5376e71e1c27a99874608c95837ba8fec877a4c772df024d30b7983ae92c58dd",
+      "candidate_sha256": "f5180af5f195316fa83f2b8b269439c8c837213d7f6ed11fffcf9d4d7cb7828d"
+    },
+    "crates/physics/tests/prescribed_surface_contact.rs": {
+      "before_sha256": "33b6e1b1bec92e0bd97f3fcf86873b17ef348c5ae3dcb4e15550a3c8f1cddbc1",
+      "candidate_sha256": "71c943d279ab4bb2c5bab0d026e761145dd163530858a2307a2e3d7764314459"
+    },
+    "crates/physics/src/biomechanics/contact_precision.rs": {
+      "before_sha256": null,
+      "candidate_sha256": "543b018327d5cb841f73a6b8b1bf3f96166ba7c5f42fadcaef9e3133928bddea"
+    }
+  },
+  "other_dirty_work_preserved": true,
+  "primary_checks": {
+    "physics_passed": 149,
+    "physics_manual_ignored": 6,
+    "example_collision_passed": 8,
+    "example_manual_ignored": 2,
+    "serial_parallel_complete_state_steps": 8,
+    "energy_audit_steps": 68,
+    "full_strengthened_audit": "running in clean candidate",
+    "primary_metal_render": "running",
+    "contact_fixture_roundtrip_passed": true,
+    "git_diff_check": "passed"
+  }
+}

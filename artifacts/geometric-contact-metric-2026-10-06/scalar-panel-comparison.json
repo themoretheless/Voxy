@@ -1,0 +1,53 @@
+{
+  "scope": "Scalar force-quadrature diagnostic; does not simulate native mesh dynamics.",
+  "results": [
+    {
+      "gap_m": 3.999999997569316e-12,
+      "mode": "global-time",
+      "panels": 20,
+      "admitted": true,
+      "work_defect_j": 9.3118440042117e-11,
+      "best_defect_j": 9.3118440042117e-11
+    },
+    {
+      "gap_m": 3.999999997569316e-12,
+      "mode": "panel-local-gap",
+      "panels": 20,
+      "admitted": true,
+      "work_defect_j": 9.311837238790144e-11,
+      "best_defect_j": 9.311837238790144e-11
+    },
+    {
+      "gap_m": 4.000001285059396e-15,
+      "mode": "global-time",
+      "panels": 40,
+      "admitted": true,
+      "work_defect_j": 9.263913074153418e-11,
+      "best_defect_j": 9.263913074153418e-11
+    },
+    {
+      "gap_m": 4.000001285059396e-15,
+      "mode": "panel-local-gap",
+      "panels": 40,
+      "admitted": true,
+      "work_defect_j": 9.264406256037638e-11,
+      "best_defect_j": 9.264406256037638e-11
+    },
+    {
+      "gap_m": 3.9979955110402976e-18,
+      "mode": "global-time",
+      "panels": 61,
+      "admitted": true,
+      "work_defect_j": 9.177592366627074e-11,
+      "best_defect_j": 9.177592366627074e-11
+    },
+    {
+      "gap_m": 3.9979955110402976e-18,
+      "mode": "panel-local-gap",
+      "panels": 60,
+      "admitted": true,
+      "work_defect_j": 9.226017172458967e-11,
+      "best_defect_j": 9.226017172458967e-11
+    }
+  ]
+}

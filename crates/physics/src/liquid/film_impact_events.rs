@@ -26,6 +26,10 @@ pub struct FilmImpactEventReport {
     pub events: usize,
     pub coalescence: super::DropletCoalescenceReport,
     pub flight: DropletFlightReport,
+    /// Captured thermal inventory in joules per event and receiving triangle.
+    /// None means liquid transport was disabled; energy includes any latent part.
+    /// The caller must assign this inventory to film heat or its substrate ledger.
+    pub deposited_thermal_energy: Vec<(usize, Option<f64>)>,
 }
 /// Prescribed constant acceleration of marked droplets, starting before the flow step.
 /// All marked droplets share the acceleration, so their relative paths stay linear.
@@ -152,6 +156,9 @@ fn prepare_capture(
         .exchange_particles(&[i], &[])
         .map_err(|_| "film event capture failed")?
         .removed;
+    report
+        .deposited_thermal_energy
+        .push((cell, removed.thermal_energy));
     add_totals(&mut report.impact.deposition.capture.absorbed, removed)?;
     report.impact.deposition.capture.particles += 1;
     Ok(())
@@ -244,6 +251,64 @@ impl Liquid {
             false,
         )
     }
+    /// Existing chronological lifecycle with captured sensible heat credited to
+    /// the receiving film cells. Liquid and thermal film commit together.
+    /// Captured kinetic energy and momentum retain the external substrate ledger.
+    /// Latent-phase/gas inputs are rejected until their film state is supported.
+    pub fn depositing_impact_spheres_thermal_surface_mixture_lifecycle(
+        &mut self,
+        previous: &[[f64; 3]],
+        film: &mut crate::surface_film::ThermalFilmMixture,
+        model: DepositingImpact,
+        radii: &[f64],
+        control: FilmImpactControl,
+        lifecycle: &DropletLifecycle,
+    ) -> Result<FilmImpactEventReport, &'static str> {
+        let fields = self
+            .transport
+            .as_ref()
+            .ok_or("thermal film capture requires liquid transport")?;
+        if self.gas_active()
+            || fields
+                .phase
+                .as_ref()
+                .is_some_and(|p| p.models.iter().any(Option::is_some))
+        {
+            return Err("thermal film capture does not support gas or latent phase state");
+        }
+        for (i, p) in self.particles.iter().enumerate() {
+            let capacities = fields
+                .species
+                .as_ref()
+                .and_then(|s| s.heat_capacities.as_deref());
+            let base = fields.materials[p.material].specific_heat;
+            if film.specific_heats().iter().enumerate().any(|(k, c)| {
+                let incoming = capacities.and_then(|v| v.get(k)).copied().unwrap_or(base);
+                !incoming.is_finite() || (incoming - c).abs() > 64. * f64::EPSILON * c
+            }) {
+                return Err("incident liquid and film heat capacities differ");
+            }
+            fields
+                .specific_heat(i, p.material)
+                .map_err(|_| "invalid incident heat capacity")?;
+        }
+        let mut candidate = self.clone();
+        let mut mixture = film.mixture().clone();
+        let report = candidate.depositing_impact_spheres_surface_mixture_lifecycle(
+            previous,
+            &mut mixture,
+            model,
+            radii,
+            control,
+            lifecycle,
+        )?;
+        let mut target = film.clone();
+        target.accept_captured_mixture(mixture, &report.deposited_thermal_energy)?;
+        *self = candidate;
+        *film = target;
+        Ok(report)
+    }
+
     /// Unified chronological wall impact and droplet coalescence. All paths advance
     /// to each event together; merges and fragments continue within the same interval.
     /// Coalescence controls must share dt and surface tension with this impact model.
@@ -427,6 +492,7 @@ impl Liquid {
             events: 0,
             coalescence: super::DropletCoalescenceReport::default(),
             flight: DropletFlightReport::default(),
+            deposited_thermal_energy: Vec::new(),
         };
         let mut deposits = Vec::new();
         let mut pair_checks = 0usize;

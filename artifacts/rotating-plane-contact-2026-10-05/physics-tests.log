@@ -1,0 +1,70 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.40s
+     Running tests/finite_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_contact-ed114ed20c033e90)
+
+running 3 tests
+test invalid_plane_parameters_fail_before_contact_is_installed ... ok
+test contact_energy_error_reduces_with_timestep_refinement ... ok
+penetration soft=1.4550009019954249e-3, stiff=7.231401946918653e-4; energy deviations 8.707385373230013e-6, 3.56767405101932e-5
+test frictionless_elastic_impact_rebounds_and_stiffer_contact_reduces_penetration ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/finite_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_inertia-c5242bdea988fe96)
+
+running 4 tests
+test uniform_acceleration_matches_ballistic_motion_and_potential_work ... ok
+test verlet_is_time_reversible_and_invalid_or_unstable_steps_are_atomic ... ok
+relative energy envelopes: coarse=3.4094160225039954e-6, fine=8.57339783055799e-7
+test finite_rotation_preserves_angular_momentum_and_energy_error_converges ... ok
+test dynamic_trajectory_is_covariant_under_rigid_coordinate_rotation_and_translation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moving_fem_supports.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_fem_supports-3fec59876be184a1)
+
+running 7 tests
+test free_nodes_retain_inertia_and_support_work_defect_converges ... ok
+test huge_pin_kinetic_energy_cannot_erase_reaction_work_and_pass_the_guard ... ok
+test prescribed_shear_books_analytic_elastic_work_and_explicit_stopping ... ok
+test prescribed_translation_books_gravity_and_pin_acceleration_work ... ok
+test prescribed_trial_positions_drive_plane_contact_and_reaction_work ... ok
+test positive_endpoint_rotation_cannot_hide_mid_segment_collapse ... ok
+test invalid_targets_inversion_and_strict_work_guard_roll_back_all_state ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/moving_plane_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_plane_contact-00e545d89e427de7)
+
+running 11 tests
+test endpoint_open_rotating_plane_cannot_hide_intermediate_contact ... ok
+test tiny_normal_rotation_cannot_round_independent_torque_work_to_zero ... ok
+test moving_plane_rejection_rolls_back_offset_histories_and_heat ... ok
+test co_translating_pins_and_plane_cancel_contact_actuator_work ... ok
+test stationary_nodes_receive_independently_derived_plane_work ... ok
+test viscoelastic_moving_contact_keeps_actuator_work_separate_from_heat ... ok
+test combined_plane_motion_is_covariant_under_world_rotation ... ok
+ROTATING PLANE work coarse=8.776097673971292e1, fine=8.776097883219852e1; errors=2.8338353388335236e-6,7.413497371544508e-7
+test rotating_plane_torque_work_converges_and_matches_potential_change ... ok
+test antipodal_motion_and_stiffness_change_reject_without_mutation ... ok
+MOVING PLANE convergence: coarse=2.902546217410651e-6, fine=7.256154465132281e-7
+test moving_contact_work_balance_converges_under_time_refinement ... ok
+MOVING PLANE actuator work=0.101928197409 J; defect=0.000000579880 J
+test translating_plane_is_galilean_equivalent_and_work_matches_momentum ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/viscoelastic_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/viscoelastic_inertia-53ebd10798e46967)
+
+running 8 tests
+test exact_relaxation_matches_analytic_energy_and_subdivision ... ok
+test hgo_stress_memory_is_not_admitted_as_passive_maxwell_dynamics ... ok
+test late_temperature_overflow_rolls_back_mechanics_memory_and_heat ... ok
+test unrelated_large_gravity_potential_cannot_hide_or_block_maxwell_heat ... ok
+test free_node_moves_and_failed_driving_preserves_material_history ... ok
+test maxwell_heat_updates_cell_temperature_and_failures_preserve_both_owners ... ok
+test driven_shear_then_hold_balances_work_heat_and_rollback ... ok
+test unforced_viscoelastic_motion_converges_under_time_refinement ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

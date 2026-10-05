@@ -1,0 +1,45 @@
+{
+  "tests": {
+    "state": "passed",
+    "helmholtz_passed": 3,
+    "saturation_passed": 4,
+    "failed": 0,
+    "exit_code": 0,
+    "table_seven_states_passed": 11,
+    "inverse_saturation_passed": true
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/water_helmholtz.rs": "56a5b8f892dd7f7ed432e00f0f143222d50fb50c225509351aba84296e441ea0",
+    "crates/physics/src/liquid/water_helmholtz_coefficients.rs": "b602d07da9c71e799ffa708e68055095645ef5c3fe3f49b51252ca6ea866fbad",
+    "crates/physics/tests/water_helmholtz.rs": "d653d9242450d24800917c64af6996a80ac437ebf0b0c4ef7ec0af5e42aae4df",
+    "crates/physics/src/liquid/water_saturation.rs": "d60c0a3e1981c5635ee3e1f610e00acfbbee0351c6742f660f6d17b64d9f8503",
+    "crates/physics/tests/water_saturation.rs": "87e467d7ea821f0664ab692c125460f930a059d7af7fd95de0abd0366881af44"
+  },
+  "table_seven_states": 11,
+  "transport_integrated": false,
+  "maxwell_coexistence_implemented": false,
+  "critical_singularity_supported": false,
+  "goal_complete": false,
+  "derivative_regressions": {
+    "state": "passed",
+    "official_table_six_values": 12,
+    "critical_density_axis_cases": 3,
+    "current_source_sha256": "07514df6241f629fd6bd93f0daa3e27ff6306dc3e4d862a6011107e6f2014461",
+    "session_id": 60730,
+    "passed": 2,
+    "failed": 1,
+    "official_table_six_passed": true,
+    "failed_test": "critical density axis finite difference comparison",
+    "initial_exit_code": 101,
+    "cause_evidence": "derivative-reference-diagnostic.json",
+    "corrected_test_executed": true,
+    "diagnostic_exit_code": 101,
+    "observed_rust_error_tau_1_3": 0.07315907848533243,
+    "last_compile_failure": {
+      "exit_code": 101,
+      "error": "E0282 closure argument type ambiguity",
+      "fix": "explicit f64 step parameter"
+    },
+    "exit_code": 0
+  }
+}

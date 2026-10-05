@@ -1,0 +1,18 @@
+{
+  "targeted_tests": {
+    "passed": 3,
+    "failed": 0
+  },
+  "gpu_backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "frames": 241,
+  "fps": 20,
+  "cycle_seconds": 12,
+  "native_screen_verified": false,
+  "tissue_drive": "root_translation",
+  "geometry": "coarse_neutral_mannequin",
+  "sources": {
+    "crates/voxy_app/src/tissue_demo.rs": "bd52ee5a5b7c317493cc703557fade38c37c6f08af28def14ee0e3b87cf11293",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "e0f68393728c7a3c1342a7bc61d87e98f227d33f45f378ab6bf1da91fce54887"
+  }
+}

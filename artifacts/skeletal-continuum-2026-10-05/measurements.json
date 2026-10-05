@@ -1,0 +1,38 @@
+[
+  {
+    "region": 0,
+    "initial_volume_m3": 0.095347012947,
+    "max_sampled_volume_relative_error": 0.0032867136820970977,
+    "max_sampled_heat_balance_residual_j": 2.0630162075180314e-12,
+    "final_viscous_heat_j": 635.382096826346,
+    "final_numerical_defect_j": 0.000845703958,
+    "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 7.69190750074219e-06
+  },
+  {
+    "region": 1,
+    "initial_volume_m3": 0.095347012947,
+    "max_sampled_volume_relative_error": 0.003294466195544077,
+    "max_sampled_heat_balance_residual_j": 3.957836445731e-12,
+    "final_viscous_heat_j": 629.000050133943,
+    "final_numerical_defect_j": 0.000764798979,
+    "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 6.9154639034541225e-06
+  },
+  {
+    "region": 2,
+    "initial_volume_m3": 0.088990545417,
+    "max_sampled_volume_relative_error": 0.009670776215240595,
+    "max_sampled_heat_balance_residual_j": 1.2768124610981063e-11,
+    "final_viscous_heat_j": 2342.396349342315,
+    "final_numerical_defect_j": 0.000182444923,
+    "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 1.0002135272023817e-05
+  },
+  {
+    "region": 3,
+    "initial_volume_m3": 0.088990545417,
+    "max_sampled_volume_relative_error": 0.009705743615265217,
+    "max_sampled_heat_balance_residual_j": 1.2053529967756896e-11,
+    "final_viscous_heat_j": 2409.608736173385,
+    "final_numerical_defect_j": 0.000223943052,
+    "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 7.225962288858235e-06
+  }
+]

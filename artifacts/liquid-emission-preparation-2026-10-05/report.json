@@ -1,0 +1,20 @@
+{
+  "passed": 13,
+  "failed": 0,
+  "targets": {
+    "emission": 7,
+    "liquid_species": 5,
+    "native_source_transaction": 1
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "e06289203e6ceb52f49f84671883dc6acb20cd6104b20196298cb126b3fd0b27"
+  },
+  "goal_complete": false,
+  "scope": "immutable preparation replaces provisional fluid exchange",
+  "performance_measurement": null,
+  "limitations": [
+    "two particle preparations retained",
+    "one explicit fluid staging clone plus exchange internal staging",
+    "no new GPU preview"
+  ]
+}

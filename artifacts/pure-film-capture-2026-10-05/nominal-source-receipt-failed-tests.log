@@ -1,0 +1,116 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.38s
+     Running tests/liquid_film_capture.rs (target/debug/deps/liquid_film_capture-6469e86f1a497794)
+
+running 11 tests
+test capture_failures_preserve_both_states_and_batch_deposits_are_atomic ... ok
+test heterogeneous_capture_preserves_component_mass_and_external_energy_ledgers ... ok
+test first_surface_wins_and_parallel_starting_contact_does_not_capture ... ok
+test invalid_deposition_controls_roll_back_even_when_all_particles_would_stick ... ok
+test intersection_captures_once_misses_remain_and_ledgers_close ... ok
+test mixed_capture_late_path_schema_and_batch_errors_preserve_both_states ... ok
+test unresolved_mixture_capture_keeps_particle_and_film_inventory ... ok
+test unresolved_pure_capture_rolls_back_particle_batch_and_film ... ok
+test deposited_film_spreads_and_retains_captured_mass ... ok
+test late_spray_failure_restores_candidate_deposition_and_both_complete_states ... ok
+test one_step_deposits_slow_mixture_and_sprays_fast_impacts_with_complete_ledgers ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/surface_film.rs (target/debug/deps/surface_film-d898b7ff8be2d27e)
+
+running 27 tests
+test concave_fold_accumulates_film_by_capillarity_without_mass_loss ... ignored, expensive anisotropic fold convergence study
+test gravity_substep_reuse_benchmark ... ignored, paired release benchmark for internal gravity reuse
+test fixed_strip_measurement_clips_partial_triangles ... ok
+test gravity_flux_uses_cross_edge_distance_on_skew_cells ... ok
+test gravity_parallel_to_shared_edge_has_no_spurious_cross_edge_flow ... ok
+test geometry_motion_retains_mass_and_invalid_input_is_atomic ... ok
+test driving_pressure_matches_hydrostatic_potential_and_is_read_only ... ok
+test contact_exchange_limits_multiple_receivers_and_preserves_total_volume ... ok
+test material_replacement_conserves_mass_and_rejects_invalid_edits ... ok
+test conservative_remap_preserves_mass_and_uniform_refinement_thickness ... ok
+test deposit_receipt_tracks_actual_growth_and_late_unresolved_addition_rolls_back ... ok
+test material_edit_allows_roundoff_in_dry_cells_without_losing_bulk_mass ... ok
+test conservative_remap_rejects_incomplete_and_invalid_maps_without_mutation ... ok
+test precursor_wetting_counts_added_liquid_and_keeps_uniform_layer_in_equilibrium ... ok
+test atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass ... FAILED
+test self_contact_excludes_shared_vertices_and_rejects_invalid_links_atomically ... ok
+test automatic_bridges_require_proximity_opposed_faces_and_matching_density ... ok
+test sources_are_explicit_and_atomic ... ok
+test self_bridges_require_film_to_span_gap_and_follow_geometry ... ok
+test self_contacts_share_a_limited_donor_without_losing_mass ... ok
+test wetting_diffusion_converges_to_analytic_two_cell_solution ... ok
+test gravity_moves_film_down_and_retains_volume ... ok
+test equilibrium_and_wetting_are_conservative ... ok
+test substrate_curvature_converges_on_anisotropic_cylindrical_graph ... ok
+test bridge_exchange_is_invariant_under_planar_mesh_refinement ... ok
+test self_contact_exchange_converges_to_analytic_uniform_plate_solution ... ok
+test self_contact_uniform_plate_transfer_is_mesh_invariant ... ok
+
+failures:
+
+---- atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass stdout ----
+
+thread 'atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass' (32420356) panicked at crates/physics/tests/surface_film.rs:986:5:
+assertion failed: (added - 1e-11).abs() < 1e-25
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    atomic_frame_rejects_post_source_overflow_without_changing_geometry_or_mass
+
+test result: FAILED. 24 passed; 1 failed; 2 ignored; 0 measured; 0 filtered out; finished in 2.48s
+
+error: test failed, to rerun pass `-p physics --test surface_film`
+     Running tests/surface_film_atomic_contact.rs (target/debug/deps/surface_film_atomic_contact-5e4989e645df7ac6)
+
+running 3 tests
+test failed_contact_rolls_back_geometry_source_and_transport ... ok
+test moving_surfaces_exchange_only_during_contact_and_preserve_source_mass ... FAILED
+test successful_atomic_contact_matches_sequential_physics_and_source_mass ... FAILED
+
+failures:
+
+---- moving_surfaces_exchange_only_during_contact_and_preserve_source_mass stdout ----
+
+thread 'moving_surfaces_exchange_only_during_contact_and_preserve_source_mass' (32423871) panicked at crates/physics/tests/surface_film_atomic_contact.rs:107:9:
+assertion failed: (added - 1e-11).abs() < 1e-25
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- successful_atomic_contact_matches_sequential_physics_and_source_mass stdout ----
+
+thread 'successful_atomic_contact_matches_sequential_physics_and_source_mass' (32423872) panicked at crates/physics/tests/surface_film_atomic_contact.rs:74:5:
+assertion `left == right` failed
+  left: 1.0000000000001413e-11
+ right: 1.0000000000000001e-11
+
+
+failures:
+    moving_surfaces_exchange_only_during_contact_and_preserve_source_mass
+    successful_atomic_contact_matches_sequential_physics_and_source_mass
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test surface_film_atomic_contact`
+     Running tests/surface_film_withdrawal.rs (target/debug/deps/surface_film_withdrawal-7500cd01898e1f33)
+
+running 12 tests
+test unrepresentable_incoming_mass_does_not_create_volume ... ok
+test kilogram_deposit_rejects_species_growth_below_bulk_resolution ... ok
+test kilogram_deposits_balance_species_and_bulk_across_repeated_cells ... ok
+test mass_depletion_does_not_overdraw_when_volume_roundtrip_rounds_up ... ok
+test selective_removal_preserves_residue_and_bulk_species_ledger ... ok
+test canonical_mass_survives_inexact_volume_projection_and_complete_removal ... ok
+test signed_zero_withdrawal_preserves_zero_inventory_representation ... ok
+test species_change_below_bulk_resolution_is_rejected_without_ghost_parcel ... ok
+test zero_and_sub_ulp_flux_do_not_credit_phantom_mass ... ok
+test kilogram_withdrawals_deplete_exactly_and_reject_late_overdraw_atomically ... ok
+test late_invalid_requests_and_repeated_overdraw_preserve_complete_state ... ok
+test kilogram_deposit_late_failure_and_unresolved_flux_preserve_inventory ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: 2 targets failed:
+    `-p physics --test surface_film`
+    `-p physics --test surface_film_atomic_contact`

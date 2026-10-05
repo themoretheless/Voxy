@@ -1,0 +1,50 @@
+{
+  "goal_complete": false,
+  "scope": "reuse exact-pose constitutive evaluation inside inertial support steps",
+  "benchmark": {
+    "steps_per_repeat": 1000,
+    "repeats": 3,
+    "tetrahedra": 32,
+    "before_seconds": [
+      0.037292958,
+      0.036951625,
+      0.037539667
+    ],
+    "after_seconds": [
+      0.033109167,
+      0.032939959,
+      0.032936291
+    ],
+    "median_time_reduction_percent": 11.6724422878979,
+    "printed_final_pose_velocity_energy_heat_work_defect_identical": true,
+    "full_energy_path_guards_enabled": true,
+    "limits": "single synthetic CPU fixture; no editor FPS or hardware-wide claim"
+  },
+  "physics_tests": {
+    "passed": 38,
+    "failed": 0,
+    "targets": {
+      "finite_inertia": 4,
+      "moving_fem_supports": 6,
+      "muscle_dynamics": 10,
+      "viscoelastic": 10,
+      "viscoelastic_inertia": 5,
+      "finite_contact": 3
+    }
+  },
+  "app_tests": {
+    "state": "passed",
+    "session_id": 67448,
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0,
+    "elapsed_s": 68.07
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia.rs": "f4c8c418c40aeb94e7329e4e56ae0d43165a65f1d511bf68b7d59960ae48246d",
+    "crates/physics/src/biomechanics/inertia/supports.rs": "8259d443728f88a5be3b8f5ff272e8b47b6f93336a2a532d0905f4a49f9b0712",
+    "crates/physics/examples/viscoelastic_step_bench.rs": "67d070e2022a1e25d9ed3f94059e22df8d5449e0c31b0236e9c594981df6fa2a"
+  },
+  "total_unique_tests_passed": 47,
+  "qualification_complete": true
+}

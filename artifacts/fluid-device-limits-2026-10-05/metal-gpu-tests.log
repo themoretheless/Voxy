@@ -1,0 +1,181 @@
+warning: multiple methods are never used
+   --> crates/voxy_editor/src/animation_runtime.rs:197:19
+    |
+194 | impl AnimationRuntime {
+    | --------------------- methods in this implementation
+...
+197 |     pub(super) fn initialize_root_reference(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+227 |     pub(super) fn initialize_root_reference_at_phase(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+243 |     fn initialize_root_reference_at_scaled_phase(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+278 |     pub(super) fn capture_owner_reference_with_scale(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+300 |     fn capture_owner_reference_with_similarity(
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+328 |     pub(super) fn capture_owner_reference_from_parent(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+636 |     pub(super) fn fixed_step_scene_fades(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+957 |     pub(super) fn prepare(
+    |                   ^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: associated function `new` is never used
+   --> crates/voxy_editor/src/foot_placement.rs:235:19
+    |
+228 | impl FootRuntime {
+    | ---------------- associated function in this implementation
+...
+235 |     pub(super) fn new(model: &ModelAsset, settings: ModelFootPlacement) -> Result<Self, String> {
+    |                   ^^^
+
+warning: method `bind_motion` is never used
+   --> crates/voxy_editor/src/model_playback.rs:155:19
+    |
+126 | impl PreparedModelFade {
+    | ---------------------- method in this implementation
+...
+155 |     pub(crate) fn bind_motion(
+    |                   ^^^^^^^^^^^
+
+warning: methods `prepare_certified_fade` and `advance_with_motion` are never used
+   --> crates/voxy_editor/src/model_playback.rs:343:19
+    |
+310 | impl ModelPlayback {
+    | ------------------ methods in this implementation
+...
+343 |     pub(crate) fn prepare_certified_fade(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+...
+551 |     pub(crate) fn advance_with_motion<T>(
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_editor` (lib) generated 4 warnings
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.14s
+     Running unittests src/lib.rs (target/debug/deps/voxy_render-24e1233fca352f7d)
+
+running 1 test
+test fluid_screen::film_gpu_tests::film_gpu_integrates_prism_thickness_and_near_clipping has been running for over 60 seconds
+FILM GPU AdapterInfo { name: "Apple M4 Max", vendor: 0, device: 0, device_type: IntegratedGpu, device_pci_bus_id: "", driver: "", driver_info: "", backend: Metal, subgroup_min_size: 4, subgroup_max_size: 64, transient_saves_memory: Some(true), limit_bucket: None }
+FILM count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=2 near=0.1 occluder=None pixel=16,16 actual_m=0.039978027 expected_m=0.04000698
+ABSORPTION channel=0 actual=0.041992188 expected=0.042007327
+ABSORPTION channel=1 actual=0.060791016 expected=0.06081061
+ABSORPTION channel=2 actual=0.0803833 expected=0.08041403
+FILM count=2 near=0.1 occluder=None pixel=24,16 actual_m=0.040985107 expected_m=0.04099997
+ABSORPTION channel=0 actual=0.043029785 expected=0.04304997
+ABSORPTION channel=1 actual=0.062316895 expected=0.062319957
+ABSORPTION channel=2 actual=0.08239746 expected=0.08240994
+FILM count=2 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=1.98 occluder=None pixel=16,16 actual_m=0.009994507 expected_m=0.010001744
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001744
+ABSORPTION channel=1 actual=0.00040006638 expected=0.00040006975
+ABSORPTION channel=2 actual=0.00020003319 expected=0.00020003488
+FILM count=1 near=1.98 occluder=None pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM count=1 near=1.98 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.1) pixel=16,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.1) pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(0.02) pixel=16,16 actual_m=0.009994507 expected_m=0.010001745
+ABSORPTION channel=0 actual=0.0009994507 expected=0.0010001746
+ABSORPTION channel=1 actual=0.00039982796 expected=0.00040006978
+ABSORPTION channel=2 actual=0.00019991398 expected=0.00020003489
+FILM count=1 near=0.1 occluder=Some(0.02) pixel=24,16 actual_m=0.010246277 expected_m=0.010249993
+ABSORPTION channel=0 actual=0.0010242462 expected=0.0010249993
+ABSORPTION channel=1 actual=0.00040984154 expected=0.00040999972
+ABSORPTION channel=2 actual=0.00020492077 expected=0.00020499986
+FILM count=1 near=0.1 occluder=Some(0.02) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=Some(-0.1) pixel=16,16 actual_m=0.019989014 expected_m=0.02000349
+ABSORPTION channel=0 actual=0.0019989014 expected=0.002000349
+ABSORPTION channel=1 actual=0.00080013275 expected=0.00080013956
+ABSORPTION channel=2 actual=0.00040006638 expected=0.00040006978
+FILM count=1 near=0.1 occluder=Some(-0.1) pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM count=1 near=0.1 occluder=Some(-0.1) pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=1 near=0.1 occluder=None pixel=16,16 actual_m=0.11022949 expected_m=0.11029862
+ABSORPTION channel=0 actual=0.09222412 expected=0.092295475
+ABSORPTION channel=1 actual=0.45214844 expected=0.45227578
+ABSORPTION channel=2 actual=0.90283203 expected=0.90335137
+FILM count=1 near=0.1 occluder=None pixel=24,16 actual_m=0.020492554 expected_m=0.020499986
+ABSORPTION channel=0 actual=0.0020484924 expected=0.0020499986
+ABSORPTION channel=1 actual=0.0008196831 expected=0.00081999943
+ABSORPTION channel=2 actual=0.00040984154 expected=0.00040999972
+FILM count=1 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=16,16 actual_m=0.090270996 expected_m=0.09029513
+ABSORPTION channel=0 actual=0.090270996 expected=0.09029513
+ABSORPTION channel=1 actual=0.45141602 expected=0.45147565
+ABSORPTION channel=2 actual=0.90283203 expected=0.9029513
+FILM count=0 near=0.1 occluder=None pixel=24,16 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+FILM count=0 near=0.1 occluder=None pixel=0,0 actual_m=0 expected_m=0
+ABSORPTION channel=0 actual=0 expected=0
+ABSORPTION channel=1 actual=0 expected=0
+ABSORPTION channel=2 actual=0 expected=0
+test fluid_screen::film_gpu_tests::film_gpu_integrates_prism_thickness_and_near_clipping ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 152 filtered out; finished in 79.49s
+

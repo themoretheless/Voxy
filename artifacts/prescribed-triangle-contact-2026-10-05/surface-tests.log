@@ -1,0 +1,29 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.84s
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/prescribed_surface_contact-83c4d1ef52a3c97d)
+
+running 10 tests
+TRIANGLE SURFACE work defects coarse=9.28965376341016e-9, fine=1.1560812787224546e-9
+test finite_triangle_has_no_infinite_plane_contact_outside_its_extent ... ok
+test feature_forces_and_torques_are_equal_and_opposite ... ok
+test endpoint_disjoint_surface_motion_cannot_tunnel_through_body ... ok
+test obstacle_work_is_independent_and_refines_towards_potential_change ... ok
+test malformed_geometry_and_changed_owner_reject_without_mutating_surface ... ok
+test both_feature_gradients_match_independent_energy_differences ... ok
+test co_translating_rig_supports_and_triangle_surface_balance_both_actuators ... ok
+test inertial_obstacle_motion_books_work_and_rejects_tunnelling_atomically ... ok
+test viscoelastic_surface_rejection_preserves_history_heat_and_obstacle_pose ... ok
+DYNAMIC TRIANGLE SURFACE actuator work=1.916497584614464e-2, defect=-2.3943782551701036e-8
+test translating_triangle_obstacle_is_galilean_equivalent_in_actual_dynamics ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

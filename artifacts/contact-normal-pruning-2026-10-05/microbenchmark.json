@@ -1,0 +1,30 @@
+{
+  "batch_calls": 500,
+  "fixture_obstacle_triangles": 256,
+  "pairs_ns": [
+    [
+      31414417,
+      1462250
+    ],
+    [
+      31116875,
+      1450583
+    ],
+    [
+      31369167,
+      1427584
+    ],
+    [
+      30991791,
+      1396917
+    ],
+    [
+      31051250,
+      1427417
+    ]
+  ],
+  "median_unpruned_ns": 31116875,
+  "median_pruned_ns": 1427584,
+  "median_batch_speed_ratio": 21.753453966150047,
+  "scope": "synthetic normal-stencil microbenchmark only, not whole-engine speed"
+}

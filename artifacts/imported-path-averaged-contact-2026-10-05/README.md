@@ -1,0 +1,11 @@
+# Consistent path-averaged prescribed contact
+
+Contact gradients are now integrated over simultaneous linear body/obstacle trajectories with three Gauss points (times 0.1127016653792583,0.5,0.8872983346207417; weights 5/18,4/9,5/18). Material/stationary-plane forces retain the midpoint rule. The nonlinear residual, reconstructed impulse, support reaction work and obstacle work all use the same averaged contact gradients. Work is still admitted independently against endpoint energy, never inferred from it.
+
+For the midpoint unknown y and endpoint x1=2y-x0, the line-search contact objective is sum weight/(2*time)*E(x0+time*(x1-x0), obstacle(time)). Its y-gradient equals the quadrature-averaged body gradient. This objective is numerical search machinery, not the physical energy reported in diagnostics. Positive frozen-feature contact blocks remain a preconditioner only. Path and volume guards still certify the published endpoint.
+
+Quadrature obstacle poses are prepared once per nonlinear step, retaining immutable source geometry/domain ownership, rather than rebuilding their BVHs on each residual and line-search evaluation. A 32-trajectory fixture verifies exact equality with fresh evaluation and independence from later next-pose replacement.
+
+Physics qualification: 20 prescribed-contact and 8 viscoelastic tests passed, before and after preparation refactor. Additional prepared-path unit test passed. New independent finite differences verify the search objective/gradient relationship; an 11-micrometre-gap moving-obstacle fixture verifies path work against endpoint contact energy. Existing actual dynamics, Galilean covariance, rollback and Maxwell thermal tests remain green.
+
+The full imported Metal clip run terminated with exit 1 and `implicit contact work defect` at frame 52 (0.216666667 s). It was launched before the pure preparation-cache refactor; its integration/quadrature arithmetic is the same. Five partial frames through .20 seconds exist, but no complete clip is qualified. The third region's admitted prefix used 774 leaves versus 1402 for the preceding midpoint-contact run; this is a subdivision count, not a runtime speed claim. Full tissue regression: 18 passed in 45.42 seconds. Next measure three-point quadrature error on the actual rejected path and nonlinear residual/endpoint consistency before choosing further changes.

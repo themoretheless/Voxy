@@ -1,0 +1,10 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "gpu_execution": "passed",
+  "optical_scene_completeness": "failed",
+  "evidence": "optical_scene exports liquid particles only; stored film mixtures omitted",
+  "visual": "Final deposited-film stage loses visible liquid in optical snapshot",
+  "required_next_change": "Render original film geometry, thickness and optical material in the shared optical path; do not replace film inventory with spherical particles",
+  "snapshot": "impacts-optical-gpu.png"
+}

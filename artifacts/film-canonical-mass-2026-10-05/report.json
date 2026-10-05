@@ -1,0 +1,111 @@
+{
+  "state": "primary mass migration and guarded mixture-capture gates passed on their pinned source revisions",
+  "session_id": 57713,
+  "log": "/tmp/voxy-canonical-film-mass-qualified-tests.log",
+  "canonical_inventory": "species kilograms",
+  "derived_geometry": "sum species mass / constant density",
+  "volume_cache": "read-only mass/density projection",
+  "initial_gate": {
+    "exit_code": 101,
+    "target": "surface_film_mixture",
+    "passed": 12,
+    "failed": 2,
+    "reason": "bitwise geometry comparison changes under mass/density projection"
+  },
+  "geometry_comparison_contract": {
+    "previous": "bitwise equality with independent volume implementation",
+    "current": "8 * f64::EPSILON relative, zero has exact equality; body and report comparisons unchanged",
+    "analytic_flow_and_mass_gates": "unchanged"
+  },
+  "completed_targets": {
+    "surface_film_mixture": {
+      "passed": 14,
+      "failed": 0
+    },
+    "surface_film_squeeze": {
+      "passed": 7,
+      "failed": 0
+    },
+    "surface_film_squeeze_body": {
+      "passed": 4,
+      "failed": 0
+    },
+    "surface_film_thermal": {
+      "passed": 11,
+      "failed": 0
+    },
+    "surface_film_vapor": {
+      "passed": 9,
+      "failed": 0
+    },
+    "surface_film_withdrawal": {
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "remaining_targets": [],
+  "additional_required_targets": [],
+  "iapws_integrated": false,
+  "variable_density_mechanics_enabled": false,
+  "performance_qualified": false,
+  "goal_complete": false,
+  "source_sha256": {
+    "crates/physics/src/surface_film_mixture.rs": "ebd75484209916dafb449cc7417b01ec609b9f744c39b9a165bf028ea0e1ca8b",
+    "crates/physics/src/surface_film_thermal.rs": "df4f15a901c797ba7826da5f5e65d445a67206431c7352e39baeb9380cc77d46",
+    "crates/physics/src/surface_film_thermal_vapor.rs": "342c164adcdc07db7620b7859336dd07486df39c3d2b4e52a23f605af55a4870",
+    "crates/physics/src/surface_film_squeeze.rs": "96125e50de46b5ebc2f07006e51cda3c7ddd62f0d58d88a2e9bcdce05adcd624",
+    "crates/physics/tests/surface_film_mixture.rs": "834e56e8326c63c8d6d22ed77ca629ed59d7af1713a583026f17fc94df7b423b",
+    "crates/physics/tests/surface_film_withdrawal.rs": "46db30a427e512cce112b32ee532754c30477e4aacf1533844e280e81e9a0fa0"
+  },
+  "confirmed_tests_passed": 56,
+  "confirmed_tests_failed": 0,
+  "job_state": "terminal: both primary and capture runs exit 0",
+  "exit_code": 0,
+  "capture_regression": {
+    "reproduction_state": "failed as expected on unguarded capture",
+    "exit_code": 101,
+    "test": "unresolved_mixture_capture_keeps_particle_and_film_inventory",
+    "incident_mass_kg": 1e-30,
+    "failure": "capture returned success despite sub-resolution mass deposit",
+    "fixture_setup_initial_error": "species configuration required transport initialization; corrected before reproduction",
+    "fix": "legacy volume deposit validates each positive species addition before committing",
+    "state": "passed",
+    "session_id": 18285,
+    "log": "/tmp/voxy-canonical-film-capture-tests.log",
+    "fix_exit_code": 0,
+    "fix_tests_passed": 40,
+    "fix_tests_failed": 0,
+    "completed_targets": {
+      "liquid_film_capture": {
+        "passed": 10,
+        "failed": 0
+      },
+      "liquid_film_rebound": {
+        "passed": 4,
+        "failed": 0
+      },
+      "surface_film_atomic_contact": {
+        "passed": 3,
+        "failed": 0
+      },
+      "surface_film_thermal": {
+        "passed": 11,
+        "failed": 0
+      },
+      "surface_film_withdrawal": {
+        "passed": 12,
+        "failed": 0
+      }
+    }
+  },
+  "current_source_sha256": {
+    "crates/physics/src/surface_film_mixture.rs": "3d8bc9116fe41330ae1c4602e9be5a48d905f6f5afdd9ad4e826b632fafef71b",
+    "crates/physics/tests/surface_film_withdrawal.rs": "7ae631ac6072299def035c91093511cacfc81aaebf051d3d85693067c89661c3",
+    "crates/physics/tests/liquid_film_capture.rs": "a93d30bc2bedc5e26a2c6e1f2abecef6f0bed91d569c846f48cf7cd6d388df4c"
+  },
+  "remaining_work": [
+    "variable-density EOS and pressure-work integration",
+    "performance qualification and removal of redundant transaction cloning"
+  ],
+  "pure_film_capture_followup": "../pure-film-capture-2026-10-05/report.json: guarded admission and actual receipts passed 51 tests; 2 existing tests ignored"
+}

@@ -1,0 +1,24 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.47s
+     Running tests/water_coexistence.rs (target/debug/deps/water_coexistence-95d81dede4f9a616)
+
+running 2 tests
+test rejects_ice_domain_and_unhandled_critical_endpoint ... ok
+test reproduces_iapws95_table_eight_coexistence_states ... FAILED
+
+failures:
+
+---- reproduces_iapws95_table_eight_coexistence_states stdout ----
+coexistence stalled T=275 rho=[999.8874061198464, 0.005506649185041198] residual=[-4.126915314373036e-6, -5.122274160385132e-9] pressure_bound=0.0000010006984511667007 chemical_bound=0.00000012691746375 change=[2.072402728902269e-15, -7.84931414593418e-15] norm=4.1240348774014
+
+thread 'reproduces_iapws95_table_eight_coexistence_states' (32108315) panicked at crates/physics/tests/water_coexistence.rs:26:61:
+T=275: NumericalFailure
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    reproduces_iapws95_table_eight_coexistence_states
+
+test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test water_coexistence`

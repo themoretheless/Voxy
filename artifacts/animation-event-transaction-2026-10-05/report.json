@@ -1,0 +1,17 @@
+{
+  "passed": 219,
+  "failed": 0,
+  "ignored": 0,
+  "target": "voxy_animation",
+  "source_sha256": {
+    "crates/voxy_animation/src/events.rs": "45b38f1768b4a1e2f2731867483b9feb300f83fca7e106b4c28074125ab38ee8",
+    "crates/voxy_animation/src/lib.rs": "e3ab1c4b865df78fd9fc8c0cf9608cf8f91aa7147612807f0aa4e29a1e502607"
+  },
+  "goal_complete": false,
+  "scope": "accepted animator frame plus target events in one result",
+  "limitations": [
+    "editor world transaction and audio callbacks not hooked",
+    "source crossfade event policy unfinished",
+    "not full engine parity"
+  ]
+}

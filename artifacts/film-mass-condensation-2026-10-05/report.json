@@ -1,0 +1,29 @@
+{
+  "state": "passed",
+  "exit_code": 0,
+  "session_id": 10504,
+  "tests_passed": 20,
+  "tests_failed": 0,
+  "targets": {
+    "surface_film_vapor": {
+      "passed": 9,
+      "failed": 0
+    },
+    "surface_film_withdrawal": {
+      "passed": 11,
+      "failed": 0
+    }
+  },
+  "boundary_units": "kg per species per cell",
+  "canonical_storage": "component volume with constant density",
+  "iapws_integrated": false,
+  "variable_density_mechanics": false,
+  "goal_complete": false,
+  "startup_delay_evidence": "startup.sample: live process at _dyld_start before tests; original process completed without restart",
+  "source_sha256": {
+    "crates/physics/src/surface_film_mixture.rs": "865cf61d263fa556cd00058f0db5cc28e76408c6e7167af4888734b13a1c169e",
+    "crates/physics/src/surface_film_thermal_vapor.rs": "a8d4c837f3be3e8d8dfeb24c783a5a0319e99939c624474a1e1288cf213780c3",
+    "crates/physics/src/surface_film.rs": "d05955cb03a8ebae21eb34540e9b32524ab12a402b3737260781419e3847e07b",
+    "crates/physics/tests/surface_film_withdrawal.rs": "b0c9589b6ca15254c11f783ac0590093f5c0faa57f82eadf435eee84ae4382c7"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "animation_library_passed": 211,
+  "editor_library_passed": 157,
+  "editor_gpu_ignored": 11,
+  "final_clock_seam_regression_passed": 1,
+  "scope": "Double loop reduction removed; original pre-seam phase preserved through f32 narrowing; animator zero-step and exact seam root displacement checked"
+}

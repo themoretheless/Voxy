@@ -1,0 +1,15 @@
+{
+  "tests": {
+    "state": "passed",
+    "thermal_passed": 11,
+    "vapor_passed": 5,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "source_sha256": {
+    "crates/physics/src/surface_film_thermal.rs": "d4a7ee5a390b7bbe7dc94a7fda87cc0447b9758b01f5a3294341e66a18ab6177",
+    "crates/physics/tests/surface_film_thermal.rs": "98484a624b9afc5ca98830fa4d5c81c6329372471398ecbefb1f58c376cd0712"
+  },
+  "interactive_demo_integrated": false,
+  "goal_complete": false
+}

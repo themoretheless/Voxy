@@ -1,0 +1,33 @@
+{
+  "status": "local_checks_passed",
+  "mechanism": "Accumulate RGB sigma_i * path_i in an additive target; composite transmission uses exp(-sum).",
+  "initialGpuTest": {
+    "passed": 1,
+    "adapter": "Apple M4 Max",
+    "backend": "Metal"
+  },
+  "pending": [],
+  "limits": [
+    "Original straight camera rays; no refraction at internal interfaces.",
+    "Screen-space geometry and studio lighting approximations retained.",
+    "Overlapping particle spheres add their path contributions; no continuous density reconstruction.",
+    "Other hardware and calibrated material coefficients unverified."
+  ],
+  "finalGpuTest": {
+    "passed": 1,
+    "pathComparisons": 27,
+    "rgbAbsorptionComparisons": 81,
+    "composedColorComparisons": 18,
+    "fixture": "Mixed film materials, film plus separate rear sphere, sphere alone, occlusion and near clipping"
+  },
+  "impactSnapshot": {
+    "passed": true,
+    "filmCellsByFrame": [
+      0,
+      0,
+      161,
+      232
+    ],
+    "offscreenOnly": true
+  }
+}

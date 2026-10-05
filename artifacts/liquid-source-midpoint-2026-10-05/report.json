@@ -1,0 +1,27 @@
+{
+  "emission_tests_passed": 7,
+  "failed": 0,
+  "convergence_steps": [
+    16,
+    32,
+    64
+  ],
+  "velocity_error_ratio_range": [
+    3.8,
+    4.2
+  ],
+  "cpu_jet_exit": 0,
+  "native_smoke_exit": 0,
+  "native_presented_frames": 120,
+  "native_fixed_steps": 242,
+  "gpu": "Apple M4 Max / Metal",
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "645551b0c599082c5feaf7b9a1b13d340903ecc29cb29e285cffa2197bb2c098"
+  },
+  "goal_complete": false,
+  "limitations": [
+    "double fluid staging not benchmarked",
+    "source position timing not second-order qualified",
+    "point translating source only"
+  ]
+}

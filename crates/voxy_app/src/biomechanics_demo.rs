@@ -1,10 +1,11 @@
 //! Load-controlled quasistatic FEM specimens; solver residual is visible.
 use physics::biomechanics::{Body, Equilibrium, penile_chambers, sphincter_layers};
+use std::sync::Arc;
 use voxy_render::{SceneMesh, SceneVertex};
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub(crate) struct BiomechanicsDemo {
     bodies: Vec<Body>,
-    surfaces: Vec<Vec<[usize; 3]>>,
+    surfaces: Arc<[Vec<[usize; 3]>]>,
     reports: Vec<Equilibrium>,
     phase: usize,
     hold: f64,
@@ -13,7 +14,7 @@ impl BiomechanicsDemo {
     pub(crate) fn new() -> Result<Self, &'static str> {
         let mut bodies: Vec<_> = penile_chambers()?.into_iter().collect();
         bodies.push(sphincter_layers()?);
-        let surfaces = bodies.iter().map(Body::surface).collect();
+        let surfaces = bodies.iter().map(Body::surface).collect::<Vec<_>>().into();
         let reports = bodies
             .iter_mut()
             .map(|b| b.equilibrate(1, 1e-4))

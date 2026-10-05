@@ -2630,6 +2630,7 @@ dependencies = [
  "gltf",
  "half",
  "image",
+ "naga",
  "openxr",
  "physics",
  "physics_voxel",

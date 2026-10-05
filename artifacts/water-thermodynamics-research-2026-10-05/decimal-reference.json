@@ -1,0 +1,33 @@
+{
+  "method": "Python Decimal 50 digits, separately transcribed IAPWS equations",
+  "rust_test_execution": false,
+  "rows": [
+    {
+      "temperature_k": 273.16,
+      "pressure_pa": 611.6570697405101,
+      "pressure_derivative_pa_per_k": 44.43669272091689,
+      "liquid_density_kg_per_m3": 999.7891346511478,
+      "vapor_density_kg_per_m3": 0.004854262596261357,
+      "liquid_enthalpy_j_per_kg": 0.6117861575952332,
+      "vapor_enthalpy_j_per_kg": 2500538.6045062584
+    },
+    {
+      "temperature_k": 373.1243,
+      "pressure_pa": 101325.0151696129,
+      "pressure_derivative_pa_per_k": 3616.4725454818813,
+      "liquid_density_kg_per_m3": 958.3652337840979,
+      "vapor_density_kg_per_m3": 0.5975863185878793,
+      "liquid_enthalpy_j_per_kg": 419054.4279374859,
+      "vapor_enthalpy_j_per_kg": 2675719.839829242
+    },
+    {
+      "temperature_k": 647.096,
+      "pressure_pa": 22064000.0,
+      "pressure_derivative_pa_per_k": 267985.58699346,
+      "liquid_density_kg_per_m3": 322.0,
+      "vapor_density_kg_per_m3": 322.0,
+      "liquid_enthalpy_j_per_kg": 2086574.1964807473,
+      "vapor_enthalpy_j_per_kg": 2086574.1964807473
+    }
+  ]
+}

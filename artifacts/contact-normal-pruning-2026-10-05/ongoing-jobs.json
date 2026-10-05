@@ -1,0 +1,14 @@
+{
+  "optimized_cpu": {
+    "exec_session": 52848,
+    "status": "terminal_pass",
+    "log": "/tmp/voxy-normal-pruning-full-clip.log",
+    "exit_code": 0
+  },
+  "baseline_gpu": {
+    "exec_session": 12276,
+    "status": "terminal_pass",
+    "log": "/tmp/voxy-contact-frame-gpu-render.log",
+    "exit_code": 0
+  }
+}

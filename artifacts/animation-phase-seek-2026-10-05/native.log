@@ -1,0 +1,41 @@
+NATIVE REVIEW project=/var/folders/jx/ps1h62vx3gdgly_ddwly4mqr0000gn/T/voxy-native-editor-review-79507-1791199568326105000 pid=79507
+METAL WINDOW number=58854 occlusion=8192 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=1 outcome=SkippedOccluded positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1280, height: 1360 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+MODEL PUBLISHED frames=0 first_x=0 asset=animated-triangle.glb
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+EDITOR WINDOW event=Focused(false) visible=Some(true) focused=Some(false)
+MODEL PUBLISHED frames=0 first_x=0 asset=animated-triangle.glb
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(false)
+METAL WINDOW number=58854 occlusion=8194 visible=true miniaturized=false key=false active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR PRESENT frames=0 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1284, height: 1364 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1308, height: 1372 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1356, height: 1392 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1368, height: 1398 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1788, height: 1568 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 1856, height: 1596 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 2284, height: 1772 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 2432, height: 1832 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 2952, height: 2044 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 3372, height: 2214 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 3616, height: 2314 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 3740, height: 2364 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 3900, height: 2428 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 4076, height: 2502 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 4104, height: 2514 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Resized(PhysicalSize { width: 4112, height: 2516 }) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Occluded(true) visible=Some(true) focused=Some(false)
+EDITOR WINDOW event=Occluded(false) visible=Some(true) focused=Some(false)
+EDITOR PRESENT frames=1209 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=1279 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=1351 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=1422 draws=4 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=2445 draws=3 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR PRESENT frames=3817 draws=3 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]
+EDITOR WINDOW event=Focused(true) visible=Some(true) focused=Some(true)
+METAL WINDOW number=58854 occlusion=8194 visible=true miniaturized=false key=true active_space=true main_thread=true class="NSKVONotifying_WinitWindow"
+EDITOR KEY frames=4784 key=F5
+EDITOR PRESENT frames=4784 draws=3 outcome=Presented positions=[(NodeId { scene: 5, slot: 0, generation: 0 }, Vec4(0.0, 0.0, 0.5, 1.0))]

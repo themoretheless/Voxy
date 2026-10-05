@@ -1,4 +1,4 @@
-//! Screen-space optical reconstruction of physical spherical liquid samples.
+//! Screen-space optical reconstruction of liquid spheres and owned film prisms.
 //! Simulation remains owned by the caller. Optical thickness is a ray integral,
 //! not another liquid mass reservoir. Single-sample perspective rendering only.
 use wgpu::util::DeviceExt;
@@ -9,6 +9,57 @@ use wgpu::util::DeviceExt;
 pub struct FluidRenderParticle {
     pub position_radius: [f32; 4],
     pub absorption_ior: [f32; 4],
+}
+
+/// An owned film cell represented by its substrate triangle and normal thickness.
+/// Positions and thickness use world units; absorption is per metre. This is a
+/// triangular prism, not a spherical particle or a second simulation inventory.
+#[repr(C)]
+#[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
+pub struct FluidRenderFilmTriangle {
+    pub(crate) a_thickness: [f32; 4],
+    pub(crate) b: [f32; 4],
+    pub(crate) c: [f32; 4],
+    pub(crate) absorption_ior: [f32; 4],
+}
+
+impl FluidRenderFilmTriangle {
+    /// Winding selects the outward extrusion normal. Dry cells should be omitted.
+    /// # Errors
+    /// Rejects nonfinite geometry, nonpositive thickness, degenerate or
+    /// unrepresentable f32 normals, and invalid optical material.
+    pub fn new(
+        points: [[f32; 3]; 3],
+        thickness: f32,
+        absorption_ior: [f32; 4],
+    ) -> Result<Self, &'static str> {
+        let [a, b, c] = points.map(glam::Vec3::from_array);
+        let normal = (b - a).cross(c - a);
+        let norm = normal.length();
+        if points
+            .iter()
+            .flatten()
+            .chain(absorption_ior.iter())
+            .any(|x| !x.is_finite())
+            || !thickness.is_finite()
+            || thickness <= 0.
+            || !norm.is_finite()
+            || norm == 0.
+            || absorption_ior[..3].iter().any(|x| *x < 0.)
+            || absorption_ior[3] < 1.
+            || points
+                .iter()
+                .any(|p| !(glam::Vec3::from_array(*p) + normal / norm * thickness).is_finite())
+        {
+            return Err("invalid fluid film geometry, thickness or material");
+        }
+        Ok(Self {
+            a_thickness: [a.x, a.y, a.z, thickness],
+            b: [b.x, b.y, b.z, 0.],
+            c: [c.x, c.y, c.z, 0.],
+            absorption_ior,
+        })
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -43,7 +94,7 @@ struct Target {
     view: wgpu::TextureView,
 }
 
-/// Owns reusable particle storage, scene background and fluid reconstruction targets.
+/// Owns particle and film storage, scene background and fluid reconstruction targets.
 /// `encode` produces final colour; it does not supply temporal motion vectors or
 /// write a combined scene/fluid depth for subsequent opaque draws.
 #[derive(Debug)]
@@ -53,11 +104,15 @@ pub struct ScreenSpaceFluidRenderer {
     count: u32,
     camera: wgpu::Buffer,
     particles: wgpu::Buffer,
+    films: wgpu::Buffer,
+    film_count: u32,
     particle_group: wgpu::BindGroup,
     filter_groups: [wgpu::BindGroup; 3],
     composite_group: wgpu::BindGroup,
     depth_pipeline: wgpu::RenderPipeline,
     thickness_pipeline: wgpu::RenderPipeline,
+    film_depth_pipeline: wgpu::RenderPipeline,
+    film_thickness_pipeline: wgpu::RenderPipeline,
     filter_pipelines: [wgpu::RenderPipeline; 2],
     composite_pipeline: wgpu::RenderPipeline,
     diagnostics: [wgpu::RenderPipeline; 2],
@@ -69,10 +124,145 @@ pub struct ScreenSpaceFluidRenderer {
     smooth_depth: Target,
     material: Target,
     thickness: Target,
+    optical_depth: Target,
+}
+
+// Check enabled device limits, not merely what its adapter advertises.
+// Geometry arrives through instance vertex buffers. Composition binds six
+// textures, and the nearest-depth pass writes two 8-byte targets.
+fn validate_device_limits(
+    limits: &wgpu::Limits,
+    width: u32,
+    height: u32,
+    capacity: usize,
+) -> Result<(u64, u64), &'static str> {
+    if limits.max_bind_groups < 1
+        || limits.max_bindings_per_bind_group < 8
+        || limits.max_sampled_textures_per_shader_stage < 6
+        || limits.max_samplers_per_shader_stage < 1
+        || limits.max_uniform_buffers_per_shader_stage < 1
+        || u64::from(limits.max_uniform_buffer_binding_size) < size_of::<CameraUniform>() as u64
+    {
+        return Err("fluid renderer device binding limits are insufficient");
+    }
+    if limits.max_vertex_buffers < 1
+        || limits.max_vertex_attributes < 4
+        || limits.max_vertex_buffer_array_stride < size_of::<FluidRenderFilmTriangle>() as u32
+        || limits.max_inter_stage_shader_variables < 4
+    {
+        return Err("fluid renderer device vertex limits are insufficient");
+    }
+    if limits.max_color_attachments < 2 || limits.max_color_attachment_bytes_per_sample < 16 {
+        return Err("fluid renderer device attachment limits are insufficient");
+    }
+    let particles = capacity
+        .checked_mul(size_of::<FluidRenderParticle>())
+        .ok_or("fluid capacity overflow")? as u64;
+    let films = capacity
+        .checked_mul(size_of::<FluidRenderFilmTriangle>())
+        .ok_or("fluid film capacity overflow")? as u64;
+    if width == 0
+        || height == 0
+        || width > limits.max_texture_dimension_2d
+        || height > limits.max_texture_dimension_2d
+        || capacity == 0
+        || capacity > u32::MAX as usize
+        || particles > limits.max_buffer_size
+        || films > limits.max_buffer_size
+        || size_of::<CameraUniform>() as u64 > limits.max_buffer_size
+    {
+        return Err("invalid fluid target or buffer capacity for device limits");
+    }
+    Ok((particles, films))
+}
+
+fn validate_float_output(
+    features: wgpu::Features,
+    output: wgpu::TextureFormat,
+) -> Result<(), &'static str> {
+    if !matches!(
+        output.sample_type(None, Some(features)),
+        Some(wgpu::TextureSampleType::Float { .. })
+    ) {
+        return Err("fluid renderer output must be a float color format");
+    }
+    Ok(())
+}
+
+fn validate_formats(
+    features: wgpu::Features,
+    output: wgpu::TextureFormat,
+    mut query: impl FnMut(wgpu::TextureFormat) -> wgpu::TextureFormatFeatures,
+) -> Result<(), &'static str> {
+    validate_float_output(features, output)?;
+    let sampled = wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING;
+    for (format, usage, blended) in [
+        // SceneRenderer alpha-blends the background pass into this format.
+        (output, sampled, true),
+        (wgpu::TextureFormat::Depth32Float, sampled, false),
+        (
+            wgpu::TextureFormat::Rg32Float,
+            sampled | wgpu::TextureUsages::COPY_SRC,
+            false,
+        ),
+        (
+            wgpu::TextureFormat::R16Float,
+            sampled | wgpu::TextureUsages::COPY_SRC,
+            true,
+        ),
+        (
+            wgpu::TextureFormat::Rgba16Float,
+            sampled | wgpu::TextureUsages::COPY_SRC,
+            true,
+        ),
+    ] {
+        let mut support = query(format);
+        if !features.contains(wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES) {
+            let guaranteed = format.guaranteed_format_features(features);
+            support.allowed_usages &= guaranteed.allowed_usages;
+            support.flags &= guaranteed.flags;
+        }
+        if !support.allowed_usages.contains(usage) {
+            return Err(
+                "fluid renderer texture usages unsupported by adapter or enabled device features",
+            );
+        }
+        if blended
+            && !support
+                .flags
+                .contains(wgpu::TextureFormatFeatureFlags::BLENDABLE)
+        {
+            return Err("fluid optical targets require blendable floating-point formats");
+        }
+    }
+    Ok(())
 }
 
 impl ScreenSpaceFluidRenderer {
-    /// Allocates a fixed particle budget and resolution. Recreate on resize/device recovery.
+    /// Checks actual format capabilities before creating GPU resources.
+    /// Pass the adapter which created this device. Metadata mismatch is rejected;
+    /// equal metadata alone is not proof of physical adapter identity.
+    /// # Errors
+    /// Rejects incompatible output/target formats, blending or device limits.
+    pub fn new_with_adapter(
+        device: &wgpu::Device,
+        adapter: &wgpu::Adapter,
+        format: wgpu::TextureFormat,
+        width: u32,
+        height: u32,
+        capacity: usize,
+    ) -> Result<Self, &'static str> {
+        if device.adapter_info() != adapter.get_info() {
+            return Err("fluid renderer adapter metadata differs from device");
+        }
+        validate_formats(device.features(), format, |f| {
+            adapter.get_texture_format_features(f)
+        })?;
+        Self::new(device, format, width, height, capacity)
+    }
+
+    /// Allocates fixed particle and film-cell budgets (`capacity` each) and resolution.
+    /// Recreate on resize/device recovery. Prefer `new_with_adapter` for format preflight.
     /// # Errors
     /// Rejects empty/excessive targets and particle buffers exceeding device limits.
     #[allow(clippy::too_many_lines)]
@@ -83,19 +273,9 @@ impl ScreenSpaceFluidRenderer {
         height: u32,
         capacity: usize,
     ) -> Result<Self, &'static str> {
-        let bytes = capacity
-            .checked_mul(size_of::<FluidRenderParticle>())
-            .ok_or("fluid capacity overflow")?;
-        if width == 0
-            || height == 0
-            || width > device.limits().max_texture_dimension_2d
-            || height > device.limits().max_texture_dimension_2d
-            || capacity == 0
-            || capacity > u32::MAX as usize
-            || bytes as u64 > u64::from(device.limits().max_storage_buffer_binding_size)
-        {
-            return Err("invalid fluid target or particle capacity");
-        }
+        validate_float_output(device.features(), format)?;
+        let (bytes, film_bytes) =
+            validate_device_limits(&device.limits(), width, height, capacity)?;
         let make_target = |label, format, extra| {
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some(label),
@@ -151,6 +331,11 @@ impl ScreenSpaceFluidRenderer {
             wgpu::TextureFormat::R16Float,
             sampled | wgpu::TextureUsages::COPY_SRC,
         );
+        let optical_depth = make_target(
+            "fluid integrated RGB optical depth",
+            wgpu::TextureFormat::Rgba16Float,
+            sampled | wgpu::TextureUsages::COPY_SRC,
+        );
         let camera = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("fluid camera"),
             contents: bytemuck::bytes_of(&<CameraUniform as bytemuck::Zeroable>::zeroed()),
@@ -158,8 +343,14 @@ impl ScreenSpaceFluidRenderer {
         });
         let particles = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("physical liquid render samples"),
-            size: bytes as u64,
-            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            size: bytes,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let films = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("physical liquid film cells"),
+            size: film_bytes,
+            usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
             mapped_at_creation: false,
         });
         let buffer_entry = |binding, visibility, ty| wgpu::BindGroupLayoutEntry {
@@ -195,16 +386,19 @@ impl ScreenSpaceFluidRenderer {
                 wgpu::TextureSampleType::Float { filterable: false },
             )
         };
+        let depth_sampler = crate::depth_sample::sampler(device);
+        let depth_sampler_entry = wgpu::BindGroupLayoutEntry {
+            binding: 7,
+            visibility: wgpu::ShaderStages::FRAGMENT,
+            ty: wgpu::BindingType::Sampler(crate::depth_sample::sampler_binding_type(device)),
+            count: None,
+        };
         let particle_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("fluid particles layout"),
             entries: &[
                 uniform(0),
-                buffer_entry(
-                    1,
-                    wgpu::ShaderStages::VERTEX,
-                    wgpu::BufferBindingType::Storage { read_only: true },
-                ),
                 texture_entry(2, wgpu::TextureSampleType::Depth),
+                depth_sampler_entry.clone(),
             ],
         });
         let filter_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -220,6 +414,8 @@ impl ScreenSpaceFluidRenderer {
                 float_texture(3),
                 float_texture(4),
                 texture_entry(5, wgpu::TextureSampleType::Depth),
+                float_texture(6),
+                depth_sampler_entry,
             ],
         });
         let camera_entry = wgpu::BindGroupEntry {
@@ -235,11 +431,11 @@ impl ScreenSpaceFluidRenderer {
             layout: &particle_layout,
             entries: &[
                 camera_entry.clone(),
-                wgpu::BindGroupEntry {
-                    binding: 1,
-                    resource: particles.as_entire_binding(),
-                },
                 texture_binding(2, &scene_depth.view),
+                wgpu::BindGroupEntry {
+                    binding: 7,
+                    resource: wgpu::BindingResource::Sampler(&depth_sampler),
+                },
             ],
         });
         let filter_groups = [&raw_depth.view, &ping_depth.view, &smooth_depth.view].map(|view| {
@@ -259,11 +455,19 @@ impl ScreenSpaceFluidRenderer {
                 texture_binding(3, &material.view),
                 texture_binding(4, &background.view),
                 texture_binding(5, &scene_depth.view),
+                texture_binding(6, &optical_depth.view),
+                wgpu::BindGroupEntry {
+                    binding: 7,
+                    resource: wgpu::BindingResource::Sampler(&depth_sampler),
+                },
             ],
         });
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("screen-space physical liquid"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("fluid_screen.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(crate::depth_sample::shader(
+                device,
+                include_str!("fluid_screen.wgsl"),
+            )),
         });
         let filter_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("fluid filter"),
@@ -271,8 +475,23 @@ impl ScreenSpaceFluidRenderer {
         });
         let composite_shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("fluid composition"),
-            source: wgpu::ShaderSource::Wgsl(include_str!("fluid_composite.wgsl").into()),
+            source: wgpu::ShaderSource::Wgsl(crate::depth_sample::shader(
+                device,
+                include_str!("fluid_composite.wgsl"),
+            )),
         });
+        let particle_attributes = wgpu::vertex_attr_array![0 => Float32x4, 1 => Float32x4];
+        let film_attributes = wgpu::vertex_attr_array![0 => Float32x4, 1 => Float32x4, 2 => Float32x4, 3 => Float32x4];
+        let particle_vertex = wgpu::VertexBufferLayout {
+            array_stride: size_of::<FluidRenderParticle>() as u64,
+            step_mode: wgpu::VertexStepMode::Instance,
+            attributes: &particle_attributes,
+        };
+        let film_vertex = wgpu::VertexBufferLayout {
+            array_stride: size_of::<FluidRenderFilmTriangle>() as u64,
+            step_mode: wgpu::VertexStepMode::Instance,
+            attributes: &film_attributes,
+        };
         let pipeline = |shader: &wgpu::ShaderModule,
                         label,
                         group_layout,
@@ -280,6 +499,11 @@ impl ScreenSpaceFluidRenderer {
                         fs,
                         targets: &[Option<wgpu::ColorTargetState>],
                         depth| {
+            let vertex_buffers = match vs {
+                "vs_particle" => vec![Some(particle_vertex.clone())],
+                "vs_film" => vec![Some(film_vertex.clone())],
+                _ => vec![],
+            };
             let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
                 label: Some(label),
                 bind_group_layouts: &[Some(group_layout)],
@@ -292,7 +516,7 @@ impl ScreenSpaceFluidRenderer {
                     module: shader,
                     entry_point: Some(vs),
                     compilation_options: Default::default(),
-                    buffers: &[],
+                    buffers: &vertex_buffers,
                 },
                 fragment: Some(wgpu::FragmentState {
                     module: shader,
@@ -346,7 +570,40 @@ impl ScreenSpaceFluidRenderer {
             &particle_layout,
             "vs_particle",
             "fs_thickness",
-            &[color_target(wgpu::TextureFormat::R16Float, Some(additive))],
+            &[
+                color_target(wgpu::TextureFormat::R16Float, Some(additive)),
+                color_target(wgpu::TextureFormat::Rgba16Float, Some(additive)),
+            ],
+            None,
+        );
+        let film_depth_pipeline = pipeline(
+            &shader,
+            "fluid film depth",
+            &particle_layout,
+            "vs_film",
+            "fs_film_depth",
+            &[
+                color_target(wgpu::TextureFormat::Rg32Float, None),
+                color_target(wgpu::TextureFormat::Rgba16Float, None),
+            ],
+            Some(wgpu::DepthStencilState {
+                format: wgpu::TextureFormat::Depth32Float,
+                depth_write_enabled: Some(true),
+                depth_compare: Some(wgpu::CompareFunction::Less),
+                stencil: Default::default(),
+                bias: Default::default(),
+            }),
+        );
+        let film_thickness_pipeline = pipeline(
+            &shader,
+            "fluid film thickness",
+            &particle_layout,
+            "vs_film",
+            "fs_film_thickness",
+            &[
+                color_target(wgpu::TextureFormat::R16Float, Some(additive)),
+                color_target(wgpu::TextureFormat::Rgba16Float, Some(additive)),
+            ],
             None,
         );
         let filter_pipelines = ["fs_filter_x", "fs_filter_y"].map(|fs| {
@@ -386,11 +643,15 @@ impl ScreenSpaceFluidRenderer {
             count: 0,
             camera,
             particles,
+            films,
+            film_count: 0,
             particle_group,
             filter_groups,
             composite_group,
             depth_pipeline,
             thickness_pipeline,
+            film_depth_pipeline,
+            film_thickness_pipeline,
             filter_pipelines,
             composite_pipeline,
             diagnostics,
@@ -402,6 +663,7 @@ impl ScreenSpaceFluidRenderer {
             smooth_depth,
             material,
             thickness,
+            optical_depth,
         })
     }
 
@@ -422,6 +684,37 @@ impl ScreenSpaceFluidRenderer {
         units_per_metre: f32,
         filter: FluidDepthFilter,
     ) -> Result<(), &'static str> {
+        self.update_with_film(queue, camera, particles, &[], units_per_metre, filter)
+    }
+
+    /// Uploads particles and physical triangular film prisms as one snapshot.
+    /// # Errors
+    /// Rejects invalid cells, camera, materials or capacity before any GPU write.
+    pub fn update_with_film(
+        &mut self,
+        queue: &wgpu::Queue,
+        camera: crate::SceneCamera,
+        particles: &[FluidRenderParticle],
+        films: &[FluidRenderFilmTriangle],
+        units_per_metre: f32,
+        filter: FluidDepthFilter,
+    ) -> Result<(), &'static str> {
+        if films.len() > self.capacity
+            || films.iter().any(|cell| {
+                FluidRenderFilmTriangle::new(
+                    [
+                        cell.a_thickness[..3].try_into().unwrap(),
+                        cell.b[..3].try_into().unwrap(),
+                        cell.c[..3].try_into().unwrap(),
+                    ],
+                    cell.a_thickness[3],
+                    cell.absorption_ior,
+                )
+                .is_err()
+            })
+        {
+            return Err("invalid fluid film cells or capacity");
+        }
         let crate::SceneProjection::Perspective { near, far, .. } = camera.projection else {
             return Err("fluid renderer requires perspective camera");
         };
@@ -465,6 +758,10 @@ impl ScreenSpaceFluidRenderer {
         if !particles.is_empty() {
             queue.write_buffer(&self.particles, 0, bytemuck::cast_slice(particles));
         }
+        if !films.is_empty() {
+            queue.write_buffer(&self.films, 0, bytemuck::cast_slice(films));
+        }
+        self.film_count = films.len() as u32;
         self.count = particles.len() as u32;
         Ok(())
     }
@@ -509,7 +806,7 @@ impl ScreenSpaceFluidRenderer {
                 })
             });
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("fluid physical sphere surface"),
+                label: Some("fluid physical sphere and film surfaces"),
                 color_attachments: &attachments,
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &self.particle_depth.view,
@@ -523,16 +820,36 @@ impl ScreenSpaceFluidRenderer {
             });
             pass.set_pipeline(&self.depth_pipeline);
             pass.set_bind_group(0, &self.particle_group, &[]);
+            pass.set_vertex_buffer(0, self.particles.slice(..));
             pass.draw(0..6, 0..self.count);
+            pass.set_pipeline(&self.film_depth_pipeline);
+            pass.set_vertex_buffer(0, self.films.slice(..));
+            pass.draw(0..6, 0..self.film_count);
         }
-        self.draw_pass(
-            encoder,
-            &self.thickness.view,
-            &self.thickness_pipeline,
-            &self.particle_group,
-            6,
-            self.count,
-        );
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("fluid particle and film ray thickness"),
+                color_attachments: &[&self.thickness.view, &self.optical_depth.view].map(|view| {
+                    Some(wgpu::RenderPassColorAttachment {
+                        view,
+                        resolve_target: None,
+                        depth_slice: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT),
+                            store: wgpu::StoreOp::Store,
+                        },
+                    })
+                }),
+                ..Default::default()
+            });
+            pass.set_bind_group(0, &self.particle_group, &[]);
+            pass.set_pipeline(&self.thickness_pipeline);
+            pass.set_vertex_buffer(0, self.particles.slice(..));
+            pass.draw(0..6, 0..self.count);
+            pass.set_pipeline(&self.film_thickness_pipeline);
+            pass.set_vertex_buffer(0, self.films.slice(..));
+            pass.draw(0..6, 0..self.film_count);
+        }
         for (source, target, axis) in [
             (0, &self.ping_depth.view, 0),
             (1, &self.smooth_depth.view, 1),
@@ -607,6 +924,11 @@ impl ScreenSpaceFluidRenderer {
         );
     }
 
+    /// Integrated dimensionless RGB absorption along the original camera ray.
+    #[must_use]
+    pub fn optical_depth_texture(&self) -> &wgpu::Texture {
+        &self.optical_depth.texture
+    }
     #[must_use]
     pub fn thickness_texture(&self) -> &wgpu::Texture {
         &self.thickness.texture
@@ -614,5 +936,529 @@ impl ScreenSpaceFluidRenderer {
     #[must_use]
     pub fn depth_radius_texture(&self) -> &wgpu::Texture {
         &self.smooth_depth.texture
+    }
+}
+
+#[cfg(test)]
+mod film_input_tests {
+    use super::*;
+    #[test]
+    fn format_admission_rejects_missing_blending_and_nonfloat_outputs() {
+        let features = wgpu::Features::empty();
+        let supported = |f: wgpu::TextureFormat| f.guaranteed_format_features(features);
+        assert!(validate_formats(features, wgpu::TextureFormat::Rgba8Unorm, supported).is_ok());
+        assert!(validate_formats(features, wgpu::TextureFormat::Rgba8Uint, supported).is_err());
+        assert!(validate_formats(features, wgpu::TextureFormat::Depth32Float, supported).is_err());
+        assert_eq!(
+            validate_formats(features, wgpu::TextureFormat::Rgba32Float, supported),
+            Err("fluid optical targets require blendable floating-point formats")
+        );
+        let optional_attachment = |f: wgpu::TextureFormat| {
+            let mut support = supported(f);
+            if f == wgpu::TextureFormat::Rgba8Snorm {
+                support.allowed_usages |= wgpu::TextureUsages::RENDER_ATTACHMENT;
+            }
+            support
+        };
+        assert!(
+            validate_formats(
+                features,
+                wgpu::TextureFormat::Rgba8Snorm,
+                optional_attachment
+            )
+            .is_err()
+        );
+        assert!(
+            validate_formats(
+                wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES,
+                wgpu::TextureFormat::Rgba8Snorm,
+                optional_attachment
+            )
+            .is_ok()
+        );
+        let no_blend = |f: wgpu::TextureFormat| {
+            let mut support = supported(f);
+            if f == wgpu::TextureFormat::R16Float {
+                support
+                    .flags
+                    .remove(wgpu::TextureFormatFeatureFlags::BLENDABLE);
+            }
+            support
+        };
+        assert_eq!(
+            validate_formats(features, wgpu::TextureFormat::Rgba8Unorm, no_blend),
+            Err("fluid optical targets require blendable floating-point formats")
+        );
+        let no_attachment = |f: wgpu::TextureFormat| {
+            let mut support = supported(f);
+            if f == wgpu::TextureFormat::Rg32Float {
+                support
+                    .allowed_usages
+                    .remove(wgpu::TextureUsages::RENDER_ATTACHMENT);
+            }
+            support
+        };
+        assert!(
+            validate_formats(features, wgpu::TextureFormat::Rgba8Unorm, no_attachment).is_err()
+        );
+    }
+    #[test]
+    fn device_limits_admit_vertex_instances_without_storage_and_reject_shortfalls() {
+        let supported = wgpu::Limits::default();
+        assert_eq!(
+            validate_device_limits(&supported, 32, 32, 2).unwrap(),
+            (64, 128)
+        );
+        assert_eq!(
+            validate_device_limits(&wgpu::Limits::downlevel_webgl2_defaults(), 32, 32, 2).unwrap(),
+            (64, 128)
+        );
+        let mut restricted = supported.clone();
+        restricted.max_sampled_textures_per_shader_stage = 5;
+        assert_eq!(
+            validate_device_limits(&restricted, 32, 32, 2),
+            Err("fluid renderer device binding limits are insufficient")
+        );
+        restricted = supported.clone();
+        restricted.max_color_attachment_bytes_per_sample = 15;
+        assert_eq!(
+            validate_device_limits(&restricted, 32, 32, 2),
+            Err("fluid renderer device attachment limits are insufficient")
+        );
+        restricted = supported.clone();
+        restricted.max_buffer_size = 100;
+        assert!(validate_device_limits(&restricted, 32, 32, 2).is_err());
+        restricted = supported;
+        restricted.max_storage_buffer_binding_size = 0;
+        restricted.max_storage_buffers_per_shader_stage = 0;
+        assert_eq!(
+            validate_device_limits(&restricted, 32, 32, 2).unwrap(),
+            (64, 128)
+        );
+        restricted.max_vertex_attributes = 3;
+        assert!(validate_device_limits(&restricted, 32, 32, 2).is_err());
+    }
+    #[test]
+    fn film_prism_admission_preserves_geometry_and_rejects_invalid_cells() {
+        let points = [[0., 0., 0.], [0., 0., 1.], [1., 0., 0.]];
+        let material = [0.1, 0.04, 0.02, 1.333];
+        let cell = FluidRenderFilmTriangle::new(points, 0.003, material).unwrap();
+        assert_eq!(cell.a_thickness, [0., 0., 0., 0.003]);
+        assert_eq!(cell.b[..3], points[1]);
+        assert_eq!(cell.c[..3], points[2]);
+        assert_eq!(cell.absorption_ior, material);
+        assert_eq!(std::mem::size_of::<FluidRenderFilmTriangle>(), 64);
+        for thickness in [0., -0.001, f32::NAN, f32::INFINITY] {
+            assert!(FluidRenderFilmTriangle::new(points, thickness, material).is_err());
+        }
+        assert!(FluidRenderFilmTriangle::new([points[0]; 3], 0.003, material).is_err());
+        assert!(FluidRenderFilmTriangle::new(points, 0.003, [-1., 0., 0., 1.]).is_err());
+        assert!(FluidRenderFilmTriangle::new(points, 0.003, [0., 0., 0., 0.9]).is_err());
+        let mut bad = points;
+        bad[0][0] = f32::NAN;
+        assert!(FluidRenderFilmTriangle::new(bad, 0.003, material).is_err());
+    }
+}
+
+#[cfg(test)]
+mod film_gpu_tests {
+    use super::*;
+
+    #[test]
+    #[ignore = "requires a physical GPU adapter"]
+    fn film_gpu_integrates_prism_thickness_and_near_clipping() {
+        let instance = crate::GraphicsOptions::default().create_instance();
+        let adapter =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+                .unwrap();
+        eprintln!("FILM GPU {:?}", adapter.get_info());
+        let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
+            required_limits: wgpu::Limits {
+                max_storage_buffers_per_shader_stage: 0,
+                max_storage_buffer_binding_size: 0,
+                ..wgpu::Limits::default()
+            },
+            ..wgpu::DeviceDescriptor::default()
+        }))
+        .unwrap();
+        assert_eq!(device.limits().max_storage_buffers_per_shader_stage, 0);
+        let scope = device.push_error_scope(wgpu::ErrorFilter::Validation);
+        // The shared scene pass alpha-blends even though fluid composition replaces color.
+        // Reject this before pipeline creation; the healthy render below checks recovery.
+        assert!(
+            ScreenSpaceFluidRenderer::new_with_adapter(
+                &device,
+                &adapter,
+                wgpu::TextureFormat::Rgba32Float,
+                32,
+                32,
+                2,
+            )
+            .is_err()
+        );
+        let format = wgpu::TextureFormat::Rgba8UnormSrgb;
+        let renderer = crate::SceneRenderer::new(&device, format);
+        let mut fluid =
+            ScreenSpaceFluidRenderer::new_with_adapter(&device, &adapter, format, 32, 32, 2)
+                .unwrap();
+        let output = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("film analytic output"),
+            size: wgpu::Extent3d {
+                width: 32,
+                height: 32,
+                depth_or_array_layers: 1,
+            },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        });
+        let readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("film thickness readback"),
+            size: 256 * 32,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let optical_readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("integrated absorption readback"),
+            size: 256 * 32,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let color_readback = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("absorption final color readback"),
+            size: 256 * 32,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let cell = FluidRenderFilmTriangle::new(
+            [[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
+            0.04,
+            [0.1, 0.04, 0.02, 1.0],
+        )
+        .unwrap();
+        let opaque = crate::SceneMesh::new(
+            [[-2., -2., 0.], [2., -2., 0.], [2., 2., 0.], [-2., 2., 0.]]
+                .map(|position| crate::SceneVertex {
+                    position,
+                    uv: [0.; 2],
+                    color: [1.; 4],
+                })
+                .to_vec(),
+            vec![0, 1, 2, 0, 2, 3],
+        )
+        .unwrap();
+        let mut geometry = renderer.reserve_geometry(&device, 4, 6).unwrap();
+        geometry.update(&queue, &opaque).unwrap();
+        let texture = renderer
+            .upload_texture(&device, &queue, 1, 1, &[255; 4])
+            .unwrap();
+        for (count, near, occluder_z, expected_axial, with_particle) in [
+            (1, 0.1, None, 0.02, false),
+            (2, 0.1, None, 0.04, false),
+            (1, 1.98, None, 0.01, false),
+            (0, 0.1, None, 0., false),
+            (1, 0.1, Some(0.1), 0., false),
+            (1, 0.1, Some(0.02), 0.01, false),
+            (1, 0.1, Some(-0.1), 0.02, false),
+            (1, 0.1, None, 0.02, true),
+            (0, 0.1, None, 0., true),
+        ] {
+            let camera = crate::SceneCamera {
+                eye: glam::Vec3::new(0., 0., 2.),
+                target: glam::Vec3::ZERO,
+                up: glam::Vec3::Y,
+                projection: crate::SceneProjection::Perspective {
+                    vertical_fov: 0.8,
+                    aspect: 1.,
+                    near,
+                    far: 10.,
+                },
+            };
+            let mut cells = vec![cell; count];
+            if count == 2 {
+                cells[1].absorption_ior = [2., 3., 4., 1.47];
+            }
+
+            let particles = if with_particle {
+                vec![FluidRenderParticle {
+                    position_radius: [0., 0., -0.3, 0.1],
+                    absorption_ior: [1., 5., 10., 1.],
+                }]
+            } else {
+                vec![]
+            };
+            fluid
+                .update_with_film(
+                    &queue,
+                    camera,
+                    &particles,
+                    &cells,
+                    2.,
+                    FluidDepthFilter::None,
+                )
+                .unwrap();
+            // Rejected uploads must not clear the accepted film snapshot.
+            assert!(
+                fluid
+                    .update_with_film(&queue, camera, &[], &[], f32::NAN, FluidDepthFilter::None)
+                    .is_err()
+            );
+            let transform = renderer
+                .create_transform(
+                    &device,
+                    camera.view_projection().unwrap()
+                        * glam::Mat4::from_translation(glam::Vec3::new(
+                            0.,
+                            0.,
+                            occluder_z.unwrap_or(0.),
+                        )),
+                )
+                .unwrap();
+            let draws = if occluder_z.is_some() {
+                vec![crate::SceneDraw {
+                    geometry: &geometry,
+                    texture: &texture,
+                    transform: &transform,
+                    overlay: false,
+                }]
+            } else {
+                vec![]
+            };
+            let mut encoder = device.create_command_encoder(&Default::default());
+            fluid.encode(
+                &renderer,
+                &mut encoder,
+                &output.create_view(&Default::default()),
+                wgpu::Color::WHITE,
+                &draws,
+            );
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo {
+                    texture: fluid.thickness_texture(),
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                wgpu::TexelCopyBufferInfo {
+                    buffer: &readback,
+                    layout: wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(256),
+                        rows_per_image: Some(32),
+                    },
+                },
+                wgpu::Extent3d {
+                    width: 32,
+                    height: 32,
+                    depth_or_array_layers: 1,
+                },
+            );
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo {
+                    texture: fluid.optical_depth_texture(),
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                wgpu::TexelCopyBufferInfo {
+                    buffer: &optical_readback,
+                    layout: wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(256),
+                        rows_per_image: Some(32),
+                    },
+                },
+                wgpu::Extent3d {
+                    width: 32,
+                    height: 32,
+                    depth_or_array_layers: 1,
+                },
+            );
+            encoder.copy_texture_to_buffer(
+                wgpu::TexelCopyTextureInfo {
+                    texture: &output,
+                    mip_level: 0,
+                    origin: wgpu::Origin3d::ZERO,
+                    aspect: wgpu::TextureAspect::All,
+                },
+                wgpu::TexelCopyBufferInfo {
+                    buffer: &color_readback,
+                    layout: wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(256),
+                        rows_per_image: Some(32),
+                    },
+                },
+                wgpu::Extent3d {
+                    width: 32,
+                    height: 32,
+                    depth_or_array_layers: 1,
+                },
+            );
+            queue.submit([encoder.finish()]);
+            let (tx, rx) = std::sync::mpsc::channel();
+            readback
+                .slice(..)
+                .map_async(wgpu::MapMode::Read, move |result| {
+                    tx.send(result).unwrap();
+                });
+            let (optical_tx, optical_rx) = std::sync::mpsc::channel();
+            optical_readback
+                .slice(..)
+                .map_async(wgpu::MapMode::Read, move |result| {
+                    optical_tx.send(result).unwrap();
+                });
+            let (color_tx, color_rx) = std::sync::mpsc::channel();
+            color_readback
+                .slice(..)
+                .map_async(wgpu::MapMode::Read, move |result| {
+                    color_tx.send(result).unwrap();
+                });
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+            rx.recv().unwrap().unwrap();
+            optical_rx.recv().unwrap().unwrap();
+            color_rx.recv().unwrap().unwrap();
+            let color_bytes = color_readback.slice(..).get_mapped_range().unwrap();
+            let optical_bytes = optical_readback.slice(..).get_mapped_range().unwrap();
+            let bytes = readback.slice(..).get_mapped_range().unwrap();
+            for (px, py, inside) in [(16, 16, true), (24, 16, true), (0, 0, false)] {
+                let offset = py * 256 + px * 2;
+                let actual =
+                    half::f16::from_bits(u16::from_le_bytes([bytes[offset], bytes[offset + 1]]))
+                        .to_f32();
+                let inverse = camera.view_projection().unwrap().inverse();
+                let x = ((px as f32 + 0.5) / 32.) * 2. - 1.;
+                let y = 1. - ((py as f32 + 0.5) / 32.) * 2.;
+                let start = inverse.project_point3(glam::Vec3::new(x, y, 0.));
+                let end = inverse.project_point3(glam::Vec3::new(x, y, 1.));
+                let direction = (end - start).normalize();
+                let film_path = if inside {
+                    expected_axial / direction.z.abs()
+                } else {
+                    0.
+                };
+                let centre = glam::Vec3::new(0., 0., -2.3);
+                let b = direction.dot(centre);
+                let discriminant = b * b - centre.length_squared() + 0.1_f32.powi(2);
+                let sphere_path = if with_particle && discriminant > 0. {
+                    discriminant.sqrt()
+                } else {
+                    0.
+                };
+                // World-space chord 2*sqrt(discriminant), divided by 2 units/m.
+                let expected = film_path + sphere_path;
+                eprintln!(
+                    "FILM count={count} near={near} occluder={occluder_z:?} pixel={px},{py} actual_m={actual} expected_m={expected}"
+                );
+                assert!((actual - expected).abs() <= expected.abs() * 0.003 + 0.000002);
+                for channel in 0..3 {
+                    let optical_offset = py * 256 + px * 8 + channel * 2;
+                    let tau = half::f16::from_bits(u16::from_le_bytes([
+                        optical_bytes[optical_offset],
+                        optical_bytes[optical_offset + 1],
+                    ]))
+                    .to_f32();
+                    let coefficient_sum: f32 =
+                        cells.iter().map(|c| c.absorption_ior[channel]).sum();
+                    let expected_tau = if count > 0 {
+                        film_path / count as f32 * coefficient_sum
+                    } else {
+                        0.
+                    } + [1., 5., 10.][channel] * sphere_path;
+                    eprintln!("ABSORPTION channel={channel} actual={tau} expected={expected_tau}");
+                    assert!((tau - expected_tau).abs() <= expected_tau.abs() * 0.004 + 0.000002);
+                    if inside && count > 0 && occluder_z.is_none() && !with_particle {
+                        // IOR=1 for the nearest planar layer eliminates interface
+                        // reflection/refraction; white background reveals exp(-tau).
+                        let linear = (-expected_tau).exp();
+                        let srgb = if linear <= 0.0031308 {
+                            12.92 * linear
+                        } else {
+                            1.055 * linear.powf(1. / 2.4) - 0.055
+                        };
+                        let actual_color =
+                            f32::from(color_bytes[py * 256 + px * 4 + channel]) / 255.;
+                        assert!(
+                            (actual_color - srgb).abs() < 0.012,
+                            "absorption composition actual={actual_color} expected={srgb}"
+                        );
+                    }
+                }
+            }
+            drop(bytes);
+            readback.unmap();
+            drop(optical_bytes);
+            optical_readback.unmap();
+            drop(color_bytes);
+            color_readback.unmap();
+        }
+        assert!(pollster::block_on(scope.pop()).is_none());
+    }
+}
+
+#[cfg(test)]
+mod shader_portability_tests {
+    #[test]
+    fn optical_shaders_translate_to_gles_without_storage_buffers() {
+        use naga::{ShaderStage, back::glsl, proc::BoundsCheckPolicies, valid};
+        let modules = [
+            ("geometry", include_str!("fluid_screen.wgsl")),
+            ("filter", include_str!("fluid_filter.wgsl")),
+            ("composite", include_str!("fluid_composite.wgsl")),
+        ];
+        let mut translated = 0;
+        for (name, source) in modules {
+            let source = crate::depth_sample::shader_for_backend(wgpu::Backend::Gl, source);
+            let module = naga::front::wgsl::parse_str(&source).unwrap();
+            assert!(
+                module
+                    .global_variables
+                    .iter()
+                    .all(|(_, v)| !matches!(v.space, naga::AddressSpace::Storage { .. }))
+            );
+            let info =
+                valid::Validator::new(valid::ValidationFlags::all(), valid::Capabilities::empty())
+                    .validate(&module)
+                    .unwrap();
+            let options = glsl::Options {
+                version: glsl::Version::new_gles(300),
+                ..Default::default()
+            };
+            for entry in &module.entry_points {
+                assert!(matches!(
+                    entry.stage,
+                    ShaderStage::Vertex | ShaderStage::Fragment
+                ));
+                let pipeline = glsl::PipelineOptions {
+                    shader_stage: entry.stage,
+                    entry_point: entry.name.clone(),
+                    multiview: None,
+                };
+                let mut output = String::new();
+                glsl::Writer::new(
+                    &mut output,
+                    &module,
+                    &info,
+                    &options,
+                    &pipeline,
+                    BoundsCheckPolicies::default(),
+                )
+                .unwrap()
+                .write()
+                .unwrap();
+                assert!(output.starts_with("#version 300 es"));
+                assert!(!output.contains(" buffer "));
+                eprintln!(
+                    "GLES300 {name}/{} translated_bytes={}",
+                    entry.name,
+                    output.len()
+                );
+                translated += 1;
+            }
+        }
+        assert_eq!(translated, 14);
     }
 }

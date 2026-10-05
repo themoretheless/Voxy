@@ -100,7 +100,7 @@ impl Default for BridgeConfig {
         }
     }
 }
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct SurfaceFilm {
     triangles: Vec<[usize; 3]>,
     area: Vec<f64>,
@@ -754,21 +754,18 @@ impl SurfaceFilm {
         if !dt.is_finite() || dt <= 0. || dt > 0.1 {
             return Err("invalid source timestep");
         }
-        let mut next = self.volume.clone();
-        let mut added = 0.;
+        let mut deposits = Vec::with_capacity(sources.len());
         for &(i, rate) in sources {
-            if i >= next.len() || !rate.is_finite() || rate < 0. {
+            if i >= self.volume.len() || !rate.is_finite() || rate < 0. {
                 return Err("invalid film source");
             }
             let amount = dt * rate;
-            next[i] += amount;
-            added += amount;
-            if !next[i].is_finite() || !added.is_finite() {
+            if !amount.is_finite() || (rate > 0. && amount == 0.) {
                 return Err("source overflow");
             }
+            deposits.push((i, amount));
         }
-        self.volume = next;
-        Ok(added)
+        self.deposit_batch(&deposits)
     }
     /// Current fluid mass in kilograms, using the configured material density.
     pub fn total_mass(&self) -> f64 {
@@ -823,7 +820,8 @@ impl SurfaceFilm {
         Ok(pressure)
     }
     /// Atomic deposits: all indices, accumulated volumes and total mass are checked
-    /// before any cell is changed. Returns added volume in cubic metres.
+    /// before any cell is changed. Returns actual added volume in cubic metres.
+    /// Positive additions that cannot change stored volume or mass are rejected.
     pub fn deposit_batch(&mut self, deposits: &[(usize, f64)]) -> Result<f64, &'static str> {
         let mut next = self.volume.clone();
         let mut added = 0.0;
@@ -831,8 +829,21 @@ impl SurfaceFilm {
             if cell >= next.len() || !volume.is_finite() || volume < 0.0 {
                 return Err("invalid film deposit");
             }
-            next[cell] += volume;
-            added += volume;
+            if volume == 0. {
+                continue;
+            }
+            let previous = next[cell];
+            next[cell] = previous + volume;
+            let actual = next[cell] - previous;
+            if actual == 0. {
+                return Err("film deposit volume change cannot be represented");
+            }
+            let before_mass = previous * self.material.density;
+            let after_mass = next[cell] * self.material.density;
+            if actual * self.material.density == 0. || after_mass == before_mass {
+                return Err("film deposit mass change cannot be represented");
+            }
+            added += actual;
             if !next[cell].is_finite() || !added.is_finite() {
                 return Err("film deposit overflow");
             }
@@ -845,6 +856,16 @@ impl SurfaceFilm {
         Ok(added)
     }
 
+    /// Stable triangle-cell identity in substrate vertex order.
+    pub fn triangles(&self) -> &[[usize; 3]] {
+        &self.triangles
+    }
+    pub fn cell_area_m2(&self, cell: usize) -> Result<f64, &'static str> {
+        self.area.get(cell).copied().ok_or("invalid film cell")
+    }
+    pub fn cell_points_m(&self, cell: usize) -> Result<[[f64; 3]; 3], &'static str> {
+        self.geometry.get(cell).copied().ok_or("invalid film cell")
+    }
     /// Unit normal of a triangle cell in the current geometry.
     pub fn cell_normal(&self, cell: usize) -> Result<[f64; 3], &'static str> {
         self.normals.get(cell).copied().ok_or("invalid film cell")
@@ -905,14 +926,7 @@ impl SurfaceFilm {
     }
 
     pub fn deposit(&mut self, cell: usize, volume_m3: f64) -> Result<(), &'static str> {
-        if cell >= self.volume.len()
-            || !volume_m3.is_finite()
-            || volume_m3 < 0.
-            || !(self.volume[cell] + volume_m3).is_finite()
-        {
-            return Err("invalid film deposit");
-        }
-        self.volume[cell] += volume_m3;
+        self.deposit_batch(&[(cell, volume_m3)])?;
         Ok(())
     }
     /// Pairwise donor-limited flow. Internal steps are at most 1 ms.
@@ -1011,6 +1025,7 @@ impl SurfaceFilm {
             velocity,
             None,
             None,
+            None,
         )
     }
 
@@ -1024,6 +1039,7 @@ impl SurfaceFilm {
         velocity: Option<&[[f64; 3]]>,
         components: Option<&mut Vec<Vec<f64>>>,
         component_viscosities: Option<&[f64]>,
+        energies: Option<&mut Vec<f64>>,
     ) -> Result<(), &'static str> {
         for field in [traction, velocity].into_iter().flatten() {
             if field.len() != self.volume.len()
@@ -1039,6 +1055,17 @@ impl SurfaceFilm {
         }
         if component_viscosities.is_some() && (components.is_none() || rheology.is_some()) {
             return Err("composition viscosity requires Newtonian component transport");
+        }
+        let mut energy = energies.as_deref().cloned();
+        if let Some(values) = &energy {
+            if values.len() != self.volume.len()
+                || values
+                    .iter()
+                    .zip(&self.volume)
+                    .any(|(e, v)| !e.is_finite() || *e < 0. || (*v == 0. && *e != 0.))
+            {
+                return Err("invalid film energy inventory");
+            }
         }
         let mut inventory = components.as_deref().cloned();
         if !max_substep.is_finite() || max_substep <= 0. || max_substep > 0.001 {
@@ -1167,6 +1194,7 @@ impl SurfaceFilm {
                 }
                 flux.push((a, b, amount));
             }
+            let mut energy_delta = energy.as_ref().map(|_| vec![0.; volume.len()]);
             let mut delta = vec![0.; volume.len()];
             let mut component_delta = inventory.as_ref().map(|rows| {
                 rows.iter()
@@ -1183,6 +1211,15 @@ impl SurfaceFilm {
                 let moved = amount * scale;
                 delta[a] -= moved;
                 delta[b] += moved;
+                if let (Some(values), Some(change)) = (&energy, &mut energy_delta) {
+                    let carried = if volume[donor] > 0. {
+                        moved / volume[donor] * values[donor]
+                    } else {
+                        0.
+                    };
+                    change[a] -= carried;
+                    change[b] += carried;
+                }
                 if let (Some(rows), Some(change)) = (&inventory, &mut component_delta) {
                     let fraction = if volume[donor] > 0.0 {
                         moved / volume[donor]
@@ -1206,6 +1243,15 @@ impl SurfaceFilm {
                     }
                 }
             }
+            if let (Some(values), Some(change)) = (&mut energy, energy_delta) {
+                for (e, d) in values.iter_mut().zip(change) {
+                    let next = *e + d;
+                    if !next.is_finite() || next < -16. * f64::EPSILON * *e {
+                        return Err("film energy transport overflow");
+                    }
+                    *e = next.max(0.);
+                }
+            }
             for (v, d) in volume.iter_mut().zip(delta) {
                 *v = (*v + d).max(0.);
                 if !v.is_finite() {
@@ -1214,6 +1260,9 @@ impl SurfaceFilm {
             }
         }
         self.volume = volume;
+        if let (Some(target), Some(energy)) = (energies, energy) {
+            *target = energy;
+        }
         if let (Some(target), Some(inventory)) = (components, inventory) {
             *target = inventory;
         }
@@ -1247,7 +1296,7 @@ pub use sliding_body::{SlidingAdvanceReport, SlidingBodyReport, SlidingPatch, Sl
 
 #[path = "surface_film_mixture.rs"]
 mod mixture;
-pub use mixture::FilmMixture;
+pub use mixture::{FilmMixture, FilmTransfer, FilmWithdrawal};
 
 #[path = "surface_film_squeeze.rs"]
 mod squeeze;
@@ -1265,3 +1314,7 @@ mod accelerated_sphere;
 #[path = "surface_film_free_surface.rs"]
 mod free_surface;
 pub use free_surface::FilmFreeSurface;
+
+#[path = "surface_film_thermal.rs"]
+mod thermal;
+pub use thermal::{FilmSubstrateHeat, ThermalFilmMixture, ThermalFilmWithdrawal};

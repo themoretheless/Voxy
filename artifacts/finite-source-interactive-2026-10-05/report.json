@@ -1,0 +1,19 @@
+{
+  "command": "cargo run --release -p voxy_app --example liquids -- --finite-source --smoke",
+  "exit_code": 0,
+  "presented_frames": 120,
+  "fixed_steps": 242,
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "source_sha256": {
+    "crates/voxy_app/src/scene_app.rs": "4bc0f5994922154056747c2b2c655511a6f12b7c08c92093f3108e2b80259831",
+    "crates/voxy_app/src/liquid_demo.rs": "60ebcf59ebb1337d3e13945ac3c22fdaae42e7465a93603c873790bbe3dbfd32",
+    "crates/voxy_app/examples/liquids.rs": "1650e84c0788d29056ed87666ff043923123d2a9301cd9a7ca9853cbe468f5fb"
+  },
+  "goal_complete": false,
+  "limitations": [
+    "illustrative point nozzles",
+    "no rotating source or finite aperture recoil",
+    "no broad GPU/CUDA coverage"
+  ]
+}

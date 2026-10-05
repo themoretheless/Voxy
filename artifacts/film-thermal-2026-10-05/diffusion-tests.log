@@ -1,0 +1,32 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 31.23s
+     Running tests/surface_film_mixture.rs (target/debug/deps/surface_film_mixture-4e2f5e367550bb5e)
+
+running 14 tests
+test viscosity_configuration_is_atomic_bounded_and_explicitly_conflicts_with_rheology ... ok
+test composition_viscosity_changes_shear_flow_and_tracks_diffusive_mixing ... ok
+test invalid_driving_deposits_and_schema_are_atomic ... ok
+test branched_outgoing_flux_uses_one_donor_budget_for_all_components ... ok
+test diffusion_matches_unequal_volume_pair_solution_and_preserves_volume ... ok
+test moving_mixture_patch_uses_local_viscous_drag_and_transports_composition ... ok
+test dry_fill_extreme_donor_limiting_and_weighted_deposit_preserve_inventory ... ok
+test diffusion_handles_stiff_rates_dry_edges_and_invalid_controls ... ok
+test late_mixture_patch_heat_failure_rolls_back_volume_composition_and_body ... ok
+test donor_composition_and_component_masses_follow_analytic_drainage ... ok
+test viscosity_feedback_is_recomputed_each_internal_interval ... ok
+test composition_transport_leaves_mechanical_solution_identical ... ok
+test multi_edge_diffusion_refines_quadratically_to_independent_graph_solution ... ok
+test mixture_patch_recomputes_state_and_retains_uniform_film_compatibility ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/surface_film_thermal.rs (target/debug/deps/surface_film_thermal-1e466b409f2f7aa1)
+
+running 4 tests
+test selective_transfer_carries_donor_heat_and_preserves_residue_temperature ... ok
+test late_invalid_withdrawal_preserves_heat_and_inventory ... ok
+test species_diffusion_carries_heat_and_preserves_isothermal_state ... ok
+test advection_carries_energy_to_dry_cells_and_refines_to_analytic_drainage ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

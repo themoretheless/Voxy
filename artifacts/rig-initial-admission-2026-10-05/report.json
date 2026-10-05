@@ -1,0 +1,22 @@
+{
+  "change": "Checked Animator::try_new admits initial source pose and skin palette; editor ModelPlayback owner creation uses it.",
+  "animationTests": {
+    "passed": 211,
+    "failed": 0
+  },
+  "editorTests": {
+    "passed": 158,
+    "failed": 0,
+    "ignored": 11
+  },
+  "regressions": [
+    "Finite local scales with overflowing global matrices rejected by checked construction.",
+    "Valid checked construction preserves sampled pose, palette and root motion relative to existing API.",
+    "Editor rejects a valid local initial pose with overflowing inverse-bind palette before owner creation."
+  ],
+  "limits": [
+    "Only initial frame checked during construction.",
+    "Later animation phases retain transactional admission.",
+    "Legacy infallible Animator::new API remains available; no global migration claim."
+  ]
+}

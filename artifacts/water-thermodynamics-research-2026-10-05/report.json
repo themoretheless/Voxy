@@ -1,0 +1,56 @@
+{
+  "primary_source": "https://iapws.org/technical-guidance/release/Supp-sat.download",
+  "pdf_sha256": "a10d38d73339b0713c86cfac88f9adcba137202167ccdfa1cd58238c438361d7",
+  "pdf_text_extraction": {
+    "state": "terminal",
+    "exit_code": 0,
+    "result": "scanned pages: text layer only title"
+  },
+  "implemented_water_properties": true,
+  "rag_wiki_query": "evaporation IAPWS water thermodynamics",
+  "rag_result": "search timeout budget exceeded after candidate retrieval",
+  "goal_complete": false,
+  "formula_review": {
+    "method": "pypdf embedded page images, vertical orientation corrected for inspection",
+    "pages": [
+      3,
+      4,
+      5,
+      7
+    ],
+    "equations": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      7
+    ],
+    "verification": "published Table 1, page 7"
+  },
+  "solver_integrated": false,
+  "tests": {
+    "state": "passed",
+    "passed": 3,
+    "failed": 0,
+    "exit_code": 0,
+    "includes_inverse": false
+  },
+  "source_sha256": {
+    "crates/physics/src/liquid/water_saturation.rs": "5e08fc6ae3d698bc9658249917a43375e936f87157c71900e322b0cb27ffc6b8",
+    "crates/physics/tests/water_saturation.rs": "23b2d84c67a893a219a7510c713e528ca53871cce33a8a22266f671111d9d472"
+  },
+  "inverse_pressure": {
+    "implemented": true,
+    "validation": "not yet executed: original three-test process still live",
+    "method": "bounded bisection on the same saturation property function",
+    "source_sha256": "d60c0a3e1981c5635ee3e1f610e00acfbbee0351c6742f660f6d17b64d9f8503",
+    "test_source_sha256": "87e467d7ea821f0664ab692c125460f930a059d7af7fd95de0abd0366881af44"
+  },
+  "independent_decimal_reference": {
+    "precision_digits": 50,
+    "published_table_matches_within_test_tolerances": true,
+    "file": "decimal-reference.json",
+    "proves_rust_execution": false
+  }
+}

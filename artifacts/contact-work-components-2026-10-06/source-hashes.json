@@ -1,0 +1,4 @@
+{
+  "crates/physics/src/biomechanics/inertia/implicit.rs": "591938a8a3530ce3156491e1e1470b79d867eb110c02b772232f48968de87d0b",
+  "crates/physics/tests/prescribed_surface_contact.rs": "33b6e1b1bec92e0bd97f3fcf86873b17ef348c5ae3dcb4e15550a3c8f1cddbc1"
+}

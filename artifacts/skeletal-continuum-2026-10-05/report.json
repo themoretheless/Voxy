@@ -1,0 +1,114 @@
+{
+  "scope": "neutral nine-joint skeleton with Ogden-Maxwell continuum tissues",
+  "goal_complete": false,
+  "qualification_complete": true,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/viscoelastic.rs": "652bfe8dfe948c80c99be90b160c709ea9019f5210c7734393b53286213c4638",
+    "crates/physics/src/biomechanics/inertia.rs": "adc324cf4b73512fd15652bb96a5dc3666eddd62568414390bc4d59a342b24d3",
+    "crates/physics/src/biomechanics/inertia/supports.rs": "e91c28c0c097631591035e95d414d81c4e2d22c6ef1598985003d40ce2edfecf",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "82e31f306bdf9354f8f206ffac16e3d7c95add7681e39f9abf7e46543d56364c",
+    "crates/physics/tests/viscoelastic_inertia.rs": "dca4305b8d332536112cc6052498432eda495be60183a87e264ab10791665915",
+    "crates/voxy_app/src/tissue_demo.rs": "885ebacab86f327323a80afe8634afa2b2000a2464ecac01fed813ee59839c14",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "74a4949280cca5fa4b5620ad691ead507994457667d6a2f78ae39f2df6815b7d"
+  },
+  "physics_release_tests": {
+    "passed": 35,
+    "failed": 0,
+    "targets": {
+      "finite_inertia": 4,
+      "moving_fem_supports": 6,
+      "muscle_dynamics": 10,
+      "viscoelastic": 10,
+      "viscoelastic_inertia": 5
+    }
+  },
+  "initial_app_tests": {
+    "passed": 8,
+    "failed": 0,
+    "elapsed_s": 313.34,
+    "source": "initial spectral sixteen-subdivision version"
+  },
+  "ledger_app_tests": {
+    "passed": 8,
+    "failed": 0,
+    "elapsed_s": 314.3,
+    "source": "spectral sixteen-subdivision with energy ledger"
+  },
+  "invariant_app_tests": {
+    "passed": 8,
+    "failed": 0,
+    "elapsed_s": 84.78,
+    "source": "invariant exponent-two four-subdivision version before smooth normals"
+  },
+  "final_app_tests": {
+    "state": "passed",
+    "passed": 9,
+    "failed": 0,
+    "ignored": 0,
+    "elapsed_s": 86.78,
+    "session_id": 72513
+  },
+  "final_gpu": {
+    "state": "passed",
+    "session_id": 83357,
+    "backend": "Metal",
+    "adapter": "Apple M4 Max",
+    "frames": 241,
+    "simulation_duration_s": 12,
+    "output_fps": 20,
+    "validation_errors": 0,
+    "physical_csv_identical_to_before_smooth_normals": true,
+    "preview": "motion-smooth.gif"
+  },
+  "native_window": {
+    "state": "live, GPU initialization confirmed; visually unverified because macOS is locked",
+    "session_id": 55222,
+    "visual_inspection": "unavailable because macOS is locked; CUA returned that explicit error"
+  },
+  "measurements": [
+    {
+      "region": 0,
+      "initial_volume_m3": 0.095347012947,
+      "max_sampled_volume_relative_error": 0.0032867136820970977,
+      "max_sampled_heat_balance_residual_j": 2.0630162075180314e-12,
+      "final_viscous_heat_j": 635.382096826346,
+      "final_numerical_defect_j": 0.000845703958,
+      "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 7.69190750074219e-06
+    },
+    {
+      "region": 1,
+      "initial_volume_m3": 0.095347012947,
+      "max_sampled_volume_relative_error": 0.003294466195544077,
+      "max_sampled_heat_balance_residual_j": 3.957836445731e-12,
+      "final_viscous_heat_j": 629.000050133943,
+      "final_numerical_defect_j": 0.000764798979,
+      "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 6.9154639034541225e-06
+    },
+    {
+      "region": 2,
+      "initial_volume_m3": 0.088990545417,
+      "max_sampled_volume_relative_error": 0.009670776215240595,
+      "max_sampled_heat_balance_residual_j": 1.2768124610981063e-11,
+      "final_viscous_heat_j": 2342.396349342315,
+      "final_numerical_defect_j": 0.000182444923,
+      "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 1.0002135272023817e-05
+    },
+    {
+      "region": 3,
+      "initial_volume_m3": 0.088990545417,
+      "max_sampled_volume_relative_error": 0.009705743615265217,
+      "max_sampled_heat_balance_residual_j": 1.2053529967756896e-11,
+      "final_viscous_heat_j": 2409.608736173385,
+      "final_numerical_defect_j": 0.000223943052,
+      "max_sampled_offset_difference_from_initial_16_subdivision_run_m": 7.225962288858235e-06
+    }
+  ],
+  "limitations": [
+    "illustrative uncalibrated material and geometry",
+    "released heat is diagnostic, no temperature owner",
+    "CPU physics, Metal-render evidence only",
+    "no real-time performance qualification",
+    "full engine research/parity/hardware/fluid/destruction objective remains incomplete"
+  ],
+  "total_final_unique_tests_passed": 44
+}

@@ -1,0 +1,20 @@
+{
+  "passed": 6,
+  "failed": 0,
+  "target": "liquid::emission::tests",
+  "source_sha256": {
+    "crates/physics/src/liquid/emission.rs": "fef0fd840a1ec51e0958084a326369a7f7e9a368a65df98686d8d5627332f854"
+  },
+  "goal_complete": false,
+  "defaults": {
+    "mass_kg": 1e-12,
+    "momentum_kg_m_s": 1e-10,
+    "energy_j": 1e-10
+  },
+  "scope": "actual represented finite-source conservation admission",
+  "limitations": [
+    "point translating source only",
+    "no relative momentum owner",
+    "no demo hookup"
+  ]
+}

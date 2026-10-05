@@ -1,0 +1,18 @@
+{
+  "0": {
+    "max_offset_mm": 5.471298545265192,
+    "final_numerical_defect_j": -7.9922329e-05
+  },
+  "1": {
+    "max_offset_mm": 5.4687973529576865,
+    "final_numerical_defect_j": -2.4003678e-05
+  },
+  "2": {
+    "max_offset_mm": 11.578313573822529,
+    "final_numerical_defect_j": 5.2907338e-05
+  },
+  "3": {
+    "max_offset_mm": 11.522716893309841,
+    "final_numerical_defect_j": 1.4487091e-05
+  }
+}

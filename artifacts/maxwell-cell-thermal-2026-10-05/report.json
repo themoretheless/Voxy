@@ -1,0 +1,58 @@
+{
+  "goal_complete": false,
+  "qualification_complete": true,
+  "scope": "cell-local Maxwell heat deposition with joint mechanical and thermal publication",
+  "thermal_specific_heat_j_per_kg_k": 3500.0,
+  "initial_kelvin": 310.15,
+  "final_regions_min_kelvin_max_kelvin_stored_j": [
+    [
+      310.1502684256139,
+      310.15801159073555,
+      635.3818059702586
+    ],
+    [
+      310.150263966285,
+      310.15793301406603,
+      628.9998526110952
+    ],
+    [
+      310.1520004208585,
+      310.1775607677884,
+      2342.3922936926356
+    ],
+    [
+      310.1519472300522,
+      310.17831265209173,
+      2409.6077199010633
+    ]
+  ],
+  "max_stored_heat_receipt_difference_j": 1.000444171950221e-11,
+  "mechanical_trace_byte_identical_to_previous": true,
+  "trace_samples": 964,
+  "simulation_seconds": 12,
+  "tests": {
+    "physics_integration_passed": 44,
+    "physics_thermal_unit_passed": 1,
+    "app_passed": 10,
+    "unique_passed": 55,
+    "failed": 0,
+    "ignored": 0,
+    "app_elapsed_s": 39.17,
+    "app_session_id": 21786
+  },
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia.rs": "aac1dea5d9efa3a27dedc11df7dc5c91a367b731354cfe0e32f69889be7a9be9",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "9fb559276fb876c57c059f52bf2c5b969a9bffef4c0940e3f59a26896e0b67f1",
+    "crates/physics/src/biomechanics/inertia/thermal.rs": "2941806e62792b9ffcb46c1517018cec8c8d52504587eb4cb1d7a06e96464eac",
+    "crates/physics/tests/viscoelastic_inertia.rs": "83d5c55985db5a1496727a489bd4e70bf25a1937d83dc37b31b499ff15782820",
+    "crates/voxy_app/src/tissue_demo.rs": "018cbf7f2ee78cae40e674eeb4d48f9a080ed99790d130506731646a3971a6d7"
+  },
+  "limitations": [
+    "no spatial thermal conduction",
+    "no liquid/air thermal exchange",
+    "no temperature-dependent material parameters",
+    "illustrative uncalibrated geometry and properties",
+    "no current GPU rerender or hardware-wide qualification",
+    "full thread objective incomplete"
+  ]
+}

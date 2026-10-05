@@ -1,0 +1,12 @@
+{
+  "initial_tests_passed": 4,
+  "final_run": "passed",
+  "final_source_sha256": {
+    "crates/physics/src/surface_film_thermal_vapor.rs": "5738545848fdf2753314c0402fca26a3f6974b0ec42cf12f6993b95695d074a1",
+    "crates/physics/tests/surface_film_vapor.rs": "22688a70872532a7b3093f6250afa98edbc6f5f6330c28e8f9e746d7c5e3add8"
+  },
+  "goal_complete": false,
+  "session_id": 77863,
+  "tests_passed": 4,
+  "exit_code": 0
+}
