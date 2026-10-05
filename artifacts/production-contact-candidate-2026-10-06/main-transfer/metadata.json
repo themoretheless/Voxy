@@ -30,9 +30,28 @@
     "example_manual_ignored": 2,
     "serial_parallel_complete_state_steps": 8,
     "energy_audit_steps": 68,
-    "full_strengthened_audit": "running in clean candidate",
-    "primary_metal_render": "running",
+    "full_strengthened_audit": {
+      "scope": "clean candidate kernel",
+      "steps": 480,
+      "passed": true,
+      "seconds": 1282.25,
+      "maximum_absolute_frame_error_sum_j": 5.680270006166435e-05,
+      "budget_per_body_j": 0.0048
+    },
+    "primary_metal_render": {
+      "passed": true,
+      "frames": 41,
+      "simulated_seconds": 2,
+      "seconds": 1416.077230833,
+      "unique_frame_sha256_count": 41
+    },
     "contact_fixture_roundtrip_passed": true,
     "git_diff_check": "passed"
+  },
+  "delivery_checks": {
+    "passed": 2295,
+    "failed": 0,
+    "manual_ignored": 65,
+    "format": "passed"
   }
 }

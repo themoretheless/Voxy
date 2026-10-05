@@ -1036,3 +1036,27 @@ serial/parallel complete-state equality. Two manual example tests are ignored.
 The strengthened energy audit was transferred without replacing other example
 CLI and fixture functionality. A separate strengthened 480-step audit and a fresh
 primary Metal render are still running; neither is reported as completed here.
+
+### Strengthened full-clip energy audit completed (2026-10-06)
+
+The cleaned candidate passes all 480 steps with the strengthened independent
+nominal-frame energy audit in 1282.25 s (uncontrolled concurrent execution).
+Absolute frame-error sums for the four bodies are approximately
+[2.99e-5, 2.69e-6, 5.68e-5, 3.12e-7] J, all below the 4.8e-3 J per-body
+budget. Reported numerical defects are not subtracted. Individual frame budgets
+and the original ledger closure also pass. This does not bound cancellation
+inside substeps or qualify real-time simulation. Raw results are preserved in
+`production-contact-candidate-2026-10-06/independent-energy-audit-480.{json,log}`.
+The primary Metal render remains pending at this point.
+
+### Primary Metal rendering and delivery checks completed (2026-10-06)
+
+The primary example completes its fresh Metal render: 41 distinct frames over
+two simulated seconds, plus volume/energy/motion CSV receipts and a four-pose
+strip. Simulation plus rendering took 1416.077 s in uncontrolled concurrent
+execution. This is not real-time performance. The interactive preview is
+`artifacts/corrected-animation-2026-10-06/preview.html`; deformable volumes are
+still displayed separately from the character skin. Delivery checks across
+physics, animation, scene, render, editor and application pass 2295 tests;
+65 explicitly ignored tests are not claimed as executed. Workspace formatting
+also passes.
