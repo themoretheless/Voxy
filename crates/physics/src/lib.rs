@@ -24,6 +24,7 @@ pub mod gravity_spheres;
 pub mod mass_properties;
 pub mod moisture;
 pub mod planar;
+pub mod rigid_motion;
 pub mod spin_path;
 pub mod strand;
 mod symmetric_eigen;

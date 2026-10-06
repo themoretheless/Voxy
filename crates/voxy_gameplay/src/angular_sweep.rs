@@ -6,7 +6,7 @@ use super::{
 use glam::{DQuat, DVec3};
 mod exact_gap;
 mod rigid_pair;
-pub(crate) use rigid_pair::{RigidBoxMotion, sweep_rigid_pair};
+pub(crate) use rigid_pair::{RigidBoxMotion, sweep_nominal_rigid_contact, sweep_rigid_pair};
 mod gap;
 type PointBoxes = [[[f64; 2]; 3]; 8];
 

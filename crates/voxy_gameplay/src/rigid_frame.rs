@@ -288,8 +288,20 @@ mod tests {
             .unwrap();
         assert_eq!(body.motion.velocity, [1., 0., 0.]);
         assert_eq!(body.spin.unwrap().angular_momentum, [0., 0., -0.5]);
-        body.spin.as_mut().unwrap().step([0.; 3], 0.005).unwrap();
-        body.motion.position[0] += 0.005;
+        let path = body
+            .prepare_motion(
+                [0.; 3],
+                [0.; 3],
+                0.005,
+                physics::spin_path::Config {
+                    max_angular_error_rad: 1e-5,
+                    min_step_s: 1e-9,
+                    max_arcs: 1024,
+                    max_trials: 4096,
+                },
+            )
+            .unwrap();
+        body = path.end();
         let mut scene = SceneGraph::new(1);
         let node = scene.spawn(None, Transform::default()).unwrap();
         let reports = publish_rigid_poses(
