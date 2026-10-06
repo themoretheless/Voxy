@@ -19,6 +19,105 @@ pub struct EmbeddedSurface {
     bindings: Vec<Binding>,
     vertex_count: usize,
 }
+/// Forces conjugate to x_skin = x_base + W (x_nodes - x_reference).
+/// The prescribed reference/base loads are separate from mechanical nodal loads.
+#[derive(Clone, Debug)]
+pub struct RelativeSurfaceLoads {
+    nodal: Vec<Point>,
+    reference: Vec<Point>,
+    base: Vec<Point>,
+}
+impl RelativeSurfaceLoads {
+    #[must_use]
+    pub fn nodal_forces_n(&self) -> &[Point] {
+        &self.nodal
+    }
+    #[must_use]
+    pub fn reference_forces_n(&self) -> &[Point] {
+        &self.reference
+    }
+    #[must_use]
+    pub fn base_forces_n(&self) -> &[Point] {
+        &self.base
+    }
+    /// Work done by an actuator against the skin load during prescribed motion.
+    /// Use path-averaged forces for finite steps; instantaneous forces alone do
+    /// not establish a finite-step energy balance for a nonlinear potential.
+    /// # Errors
+    /// Rejects mismatched/nonfinite displacements and overflowing work.
+    pub fn actuator_work_j(
+        &self,
+        reference_delta: &[Point],
+        base_delta: &[Point],
+    ) -> Result<f64, &'static str> {
+        if reference_delta.len() != self.reference.len()
+            || base_delta.len() != self.base.len()
+            || reference_delta
+                .iter()
+                .chain(base_delta)
+                .flatten()
+                .any(|x| !x.is_finite())
+        {
+            return Err("invalid prescribed skin displacement");
+        }
+        let work: f64 = self
+            .reference
+            .iter()
+            .zip(reference_delta)
+            .chain(self.base.iter().zip(base_delta))
+            .flat_map(|(f, d)| (0..3).map(move |i| -f[i] * d[i]))
+            .sum();
+        if !work.is_finite() {
+            return Err("prescribed skin work overflow");
+        }
+        Ok(work)
+    }
+    /// Physical load on the prescribed rig, as resultant N and moment N m.
+    /// Reference/base coordinates must correspond to this force evaluation.
+    /// # Errors
+    /// Rejects invalid positions, sizes, origin or overflowing wrench.
+    pub fn rig_wrench_about(
+        &self,
+        reference: &[Point],
+        base: &[Point],
+        origin: Point,
+    ) -> Result<(Point, Point), &'static str> {
+        if reference.len() != self.reference.len()
+            || base.len() != self.base.len()
+            || reference
+                .iter()
+                .chain(base)
+                .flatten()
+                .chain(origin.iter())
+                .any(|x| !x.is_finite())
+        {
+            return Err("invalid skin wrench geometry");
+        }
+        let mut resultant = [0.; 3];
+        let mut moment = [0.; 3];
+        for (f, p) in self
+            .reference
+            .iter()
+            .zip(reference)
+            .chain(self.base.iter().zip(base))
+        {
+            let r = sub(*p, origin);
+            let torque = [
+                r[1] * f[2] - r[2] * f[1],
+                r[2] * f[0] - r[0] * f[2],
+                r[0] * f[1] - r[1] * f[0],
+            ];
+            for i in 0..3 {
+                resultant[i] += f[i];
+                moment[i] += torque[i];
+            }
+        }
+        if resultant.iter().chain(&moment).any(|x| !x.is_finite()) {
+            return Err("skin wrench overflow");
+        }
+        Ok((resultant, moment))
+    }
+}
 impl EmbeddedSurface {
     /// All render vertices must lie inside the tetrahedral mesh (boundary allowed).
     /// Shared-face ties select the first cell. No extrapolation or nearest-cell fallback.
@@ -129,5 +228,109 @@ impl EmbeddedSurface {
             *point = evaluate(binding);
         }
         Ok(())
+    }
+    /// Adds embedded tissue displacement to an already posed render surface.
+    /// `reference` is the simulation mesh transported by the same skeletal pose;
+    /// `positions` is its physical state. Both retain the bind-time vertex order.
+    /// The skeletal transformation must already be present in `surface_reference`.
+    /// No extrapolation or closest-cell substitution is performed.
+    /// # Errors
+    /// Rejects incompatible buffers, nonfinite input and overflow atomically.
+    pub fn deform_relative_into(
+        &self,
+        reference: &[Point],
+        positions: &[Point],
+        surface_reference: &[Point],
+        output: &mut [Point],
+    ) -> Result<(), &'static str> {
+        if reference.len() != self.vertex_count
+            || positions.len() != self.vertex_count
+            || surface_reference.len() != self.bindings.len()
+            || output.len() != self.bindings.len()
+            || reference
+                .iter()
+                .chain(positions)
+                .chain(surface_reference)
+                .flatten()
+                .any(|x| !x.is_finite())
+        {
+            return Err("invalid relative embedding positions");
+        }
+        let evaluate = |binding: &Binding, base: Point| -> Point {
+            std::array::from_fn(|axis| {
+                let displacement: f64 = (0..4)
+                    .map(|i| {
+                        let node = binding.indices[i];
+                        (positions[node][axis] - reference[node][axis]) * binding.weights[i]
+                    })
+                    .sum();
+                base[axis] + displacement
+            })
+        };
+        for (binding, &base) in self.bindings.iter().zip(surface_reference) {
+            if evaluate(binding, base).iter().any(|x| !x.is_finite()) {
+                return Err("relative embedding overflow");
+            }
+        }
+        for ((binding, &base), point) in self.bindings.iter().zip(surface_reference).zip(output) {
+            *point = evaluate(binding, base);
+        }
+        Ok(())
+    }
+    /// Adds surface forces to simulation nodes using the transpose of the
+    /// displacement embedding. For fixed binding and skeletal reference this
+    /// preserves virtual work: f_surface dot dx_surface = f_nodes dot dx_nodes.
+    /// Existing nodal forces are retained. Every surface force is applied once.
+    /// This does not compute contact forces or the reaction on a moving rig.
+    /// # Errors
+    /// Rejects incompatible buffers, nonfinite forces and overflow. The nodal
+    /// buffer remains unchanged on any failure, including late accumulation overflow.
+    pub fn accumulate_forces_into(
+        &self,
+        surface_forces: &[Point],
+        nodal_forces: &mut [Point],
+    ) -> Result<(), &'static str> {
+        if surface_forces.len() != self.bindings.len()
+            || nodal_forces.len() != self.vertex_count
+            || surface_forces
+                .iter()
+                .chain(nodal_forces.iter())
+                .flatten()
+                .any(|x| !x.is_finite())
+        {
+            return Err("invalid embedded surface forces");
+        }
+        // Shared nodes receive several contributions; a private candidate makes
+        // publication atomic even when only the final contribution overflows.
+        let mut candidate = nodal_forces.to_vec();
+        for (binding, force) in self.bindings.iter().zip(surface_forces) {
+            for (&node, &weight) in binding.indices.iter().zip(&binding.weights) {
+                for (value, &component) in candidate[node].iter_mut().zip(force) {
+                    *value = weight.mul_add(component, *value);
+                    if !value.is_finite() {
+                        return Err("embedded force accumulation overflow");
+                    }
+                }
+            }
+        }
+        nodal_forces.copy_from_slice(&candidate);
+        Ok(())
+    }
+    /// Complete force chain rule for relative skin composition. Reference loads
+    /// are -W^T f, base loads are f, and mechanical nodal loads are W^T f.
+    /// # Errors
+    /// Rejects incompatible/nonfinite forces or overflowing transferred loads.
+    pub fn relative_loads(
+        &self,
+        surface_forces: &[Point],
+    ) -> Result<RelativeSurfaceLoads, &'static str> {
+        let mut nodal = vec![[0.; 3]; self.vertex_count];
+        self.accumulate_forces_into(surface_forces, &mut nodal)?;
+        let reference = nodal.iter().map(|p| p.map(|x| -x)).collect();
+        Ok(RelativeSurfaceLoads {
+            nodal,
+            reference,
+            base: surface_forces.to_vec(),
+        })
     }
 }

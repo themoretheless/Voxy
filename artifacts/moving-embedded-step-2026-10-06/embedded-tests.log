@@ -1,0 +1,32 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 0.64s
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 15 tests
+test embedded_normal_metric_is_symmetric_positive_and_preserves_tangent_nullspace ... ok
+test wrong_rest_contact_owner_is_rejected_atomically ... ok
+test embedded_contact_requires_actual_material_cell_membership ... ok
+test invalid_embedded_contact_topology_never_enters_evaluation ... ok
+test embedded_ccd_rejects_crossing_even_with_open_endpoints ... ok
+test simultaneous_comotion_uses_moving_ccd_instead_of_old_stationary_skin_guard ... ok
+test existing_inertial_step_rejects_embedded_tunnelling_without_mutating_state ... ok
+test simultaneous_tissue_rig_and_obstacle_motion_passes_work_budget ... ok
+test moving_skin_crossing_and_work_failure_preserve_complete_state ... ok
+test existing_step_books_moving_skin_rig_and_obstacle_work ... ok
+test existing_inertial_step_responds_to_embedded_contact_and_books_parameter_work_once ... ok
+MOVING_SKIN_REFINEMENT absolute_error_j=[0.0007888009226580204, 0.00019916276611866863, test staged_skin_motion_uses_actual_nodes_instead_of_rest_pose_for_admission ... ok
+4.9920292931404566e-5]
+test actual_contact_potential_matches_all_tissue_rig_and_obstacle_forces ... ok
+test existing_implicit_solver_includes_stationary_embedded_contact_in_averaged_material_path ... ok
+test moving_skin_energy_discrepancy_converges_under_time_refinement ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

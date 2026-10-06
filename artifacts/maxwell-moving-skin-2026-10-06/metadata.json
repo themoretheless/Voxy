@@ -1,0 +1,18 @@
+{
+  "scope": "moving embedded skin in existing explicit Maxwell/thermal transaction",
+  "passed_unique": 176,
+  "manual_ignored": 6,
+  "new_tests": [
+    "prestressed mechanical/heat/actuator balance",
+    "positive heat and thermal inventory increase",
+    "CCD rollback after first relaxation",
+    "mechanical work rejection after first relaxation rolls back history and heat"
+  ],
+  "material": "Ogden-Maxwell, held-history Verlet between two exact relaxation halves",
+  "budget_j": 1e-06,
+  "remaining": [
+    "implicit moving-skin Maxwell path",
+    "imported-character collision binding"
+  ],
+  "source_sha256": "5023a63806878d8e875295e414582b9297ddf994f23ae1cde923e8ed9f178bca"
+}

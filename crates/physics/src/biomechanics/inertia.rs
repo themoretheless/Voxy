@@ -27,6 +27,7 @@ struct PotentialEvaluation {
     plane_offset_gradient: f64,
     plane_rotation_gradient: Vec3,
     surface_gradient: Vec<Vec3>,
+    embedded_skin_work: super::EmbeddedSkinWork,
 }
 /// Frictionless stationary halfspace `normal·x >= offset_m` with nodal penalty.
 /// Stiffness is N/m per boundary node and must be scaled with mesh refinement.
@@ -238,6 +239,16 @@ impl InertialBody {
         *self = candidate;
         Ok(work)
     }
+    /// Stationary embedded skin contact uses the existing potential/CCD/step pipeline.
+    /// Returns parameter work at fixed mechanical state; not finite-time rig motion.
+    /// # Errors
+    /// Invalid owner, closed gap or nonfinite energy leaves the body unchanged.
+    pub fn set_stationary_embedded_contact(
+        &mut self,
+        contact: Option<super::StationaryEmbeddedContact>,
+    ) -> Result<f64, &'static str> {
+        self.body.set_stationary_embedded_contact(contact)
+    }
     #[must_use]
     pub fn prescribed_surface(&self) -> Option<&PrescribedTriangleSurface> {
         self.prescribed_surface.as_deref()
@@ -256,11 +267,28 @@ impl InertialBody {
         plane: Option<PlaneContact>,
         surface: Option<&PrescribedTriangleSurface>,
     ) -> Result<PotentialEvaluation, &'static str> {
-        let (mut energy, mut gradient) = self.body.evaluate(positions)?;
-        let mut contact = 0.;
+        self.evaluate_at_contacts_and_skin(
+            positions,
+            plane,
+            surface,
+            self.body.embedded_contact.as_ref(),
+        )
+    }
+    fn evaluate_at_contacts_and_skin(
+        &self,
+        positions: &[Vec3],
+        plane: Option<PlaneContact>,
+        surface: Option<&PrescribedTriangleSurface>,
+        skin: Option<&super::StationaryEmbeddedContact>,
+    ) -> Result<PotentialEvaluation, &'static str> {
+        let (mut energy, mut gradient, embedded_contact_j) = self
+            .body
+            .evaluate_with_embedded_contact_state(positions, skin)?;
+        let mut contact = embedded_contact_j;
         let mut offset_gradient = 0.;
         let mut rotation_gradient = [0.; 3];
         if let Some(plane) = plane {
+            let mut plane_contact_j = 0.;
             let mut boundary = vec![false; self.masses.len()];
             for face in self.body.surface() {
                 for node in face {
@@ -276,7 +304,7 @@ impl InertialBody {
                     return Err("plane gap overflow");
                 }
                 if gap < 0. {
-                    contact += 0.5 * plane.stiffness_n_m * gap * gap;
+                    plane_contact_j += 0.5 * plane.stiffness_n_m * gap * gap;
                     offset_gradient -= plane.stiffness_n_m * gap;
                     let moment = cross(plane.normal, positions[node]);
                     for axis in 0..3 {
@@ -287,7 +315,8 @@ impl InertialBody {
                     }
                 }
             }
-            energy += contact;
+            energy += plane_contact_j;
+            contact += plane_contact_j;
         }
         let mut surface_gradient = Vec::new();
         if let Some(surface) = surface {
@@ -313,6 +342,7 @@ impl InertialBody {
             plane_offset_gradient: offset_gradient,
             plane_rotation_gradient: rotation_gradient,
             surface_gradient,
+            embedded_skin_work: super::EmbeddedSkinWork::default(),
         })
     }
     /// Set constant uniform acceleration in m/s², e.g. gravity. It is mass

@@ -1,0 +1,25 @@
+{
+  "scope": "stationary embedded skin installed in existing Body potential and CCD; existing explicit and implicit InertialBody step qualification",
+  "passed": 161,
+  "manual_ignored": 6,
+  "integration_checks": [
+    "physical impulse from embedded contact",
+    "parameter work on installation/removal",
+    "no double counting with inactive and active plane",
+    "tunnelling rejection preserves complete state",
+    "rest and material-cell ownership",
+    "implicit averaged-material-path contact response"
+  ],
+  "not_qualified": [
+    "moving rig reference/base inside time step",
+    "imported character collision replacement",
+    "anatomically complete skin",
+    "hardware-wide production use"
+  ],
+  "source_sha256": {
+    "crates/physics/src/biomechanics/embedded_contact.rs": "434d32993908415f38a3e0ba2b9f993b5ba798566dc63f18e7bcd0793e424316",
+    "crates/physics/src/biomechanics/mod.rs": "f60a96689c8225ec3ddc5376196a5b9a2bd7c3b9b3e280297435c45981888a5b",
+    "crates/physics/src/biomechanics/inertia.rs": "c7a2951b123304de14420f3ddd064b8a22d21b7d874719c43f783f0550c036e8",
+    "crates/physics/src/biomechanics/tissue_gaps.rs": "3123501c8196a8290d50a29e2a5bd8537ba3a0258d7e5cf9bbf6ff97044842aa"
+  }
+}

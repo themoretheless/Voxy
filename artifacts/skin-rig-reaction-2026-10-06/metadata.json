@@ -1,0 +1,8 @@
+{
+  "scope": "relative surface conjugate loads and prescribed-motion work; not installed in implicit solver",
+  "tests_passed": 10,
+  "energy_fixture": "independent quadratic surface potential with moving nodes/reference/base; exact affine-path force average",
+  "moment_fixture": "offset skin; nodal plus rig moment equals surface moment",
+  "force_convention": "physical forces; actuator work is minus prescribed physical-force work",
+  "source_sha256": "4f284cdf0d58b2b50d590be6c8a01069d354f9a218837c9aa915f7a90d4f899d"
+}

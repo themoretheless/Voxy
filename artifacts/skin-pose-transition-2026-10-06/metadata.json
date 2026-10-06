@@ -1,0 +1,11 @@
+{
+  "scope": "owner-preserving staged prescribed skin poses and trial trajectory evaluation; not moving-rig implicit timestep",
+  "passed": 52,
+  "checks": [
+    "same binding and obstacle identity",
+    "actual mechanical state admission",
+    "atomic failed parameter installation",
+    "successful installation after actual inertial motion",
+    "integrated trajectory work budget"
+  ]
+}

@@ -80,6 +80,10 @@ impl Body {
     /// Exact closest approach of each selected pair along a straight nodal step.
     /// This guards the discrete integration/line-search path, not arbitrary surfaces.
     pub(super) fn gap_path_is_open(&self, start: &[Vec3], end: &[Vec3]) -> bool {
+        self.gap_path_is_open_without_embedded(start, end)
+            && self.embedded_contact_path_is_open(start, end)
+    }
+    pub(super) fn gap_path_is_open_without_embedded(&self, start: &[Vec3], end: &[Vec3]) -> bool {
         self.surface_path_is_open(start, end)
             && self.tissue_gaps.iter().all(|g| {
                 let [i, j] = g.nodes;

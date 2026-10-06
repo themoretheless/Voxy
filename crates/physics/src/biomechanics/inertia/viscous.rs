@@ -114,7 +114,9 @@ impl InertialBody {
             next_surface,
             dt,
             energy_tolerance_j,
+            None,
         )
+        .map(|(report, _)| report)
     }
     /// Transactional Maxwell/thermal split with implicit midpoint contact motion.
     /// # Errors
@@ -132,6 +134,27 @@ impl InertialBody {
             Some(next_surface),
             dt,
             energy_tolerance_j,
+            None,
+        )
+        .map(|(report, _)| report)
+    }
+    /// Maxwell/thermal transaction with moving embedded skin using shared Verlet mechanics.
+    /// # Errors
+    /// Any material, motion, CCD or work/heat failure preserves all state.
+    pub fn step_viscoelastic_with_embedded_skin_motion(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        next: super::super::StationaryEmbeddedContact,
+        dt: f64,
+        tolerance_j: f64,
+    ) -> Result<(ViscoelasticDynamicStep, super::super::EmbeddedSkinWork), &'static str> {
+        self.step_viscoelastic_contacts_impl::<false>(
+            targets,
+            None,
+            None,
+            dt,
+            tolerance_j,
+            Some(next),
         )
     }
     fn step_viscoelastic_contacts_impl<const IMPLICIT: bool>(
@@ -141,7 +164,8 @@ impl InertialBody {
         next_surface: Option<Arc<PrescribedTriangleSurface>>,
         dt: f64,
         energy_tolerance_j: f64,
-    ) -> Result<ViscoelasticDynamicStep, &'static str> {
+        next_skin: Option<super::super::StationaryEmbeddedContact>,
+    ) -> Result<(ViscoelasticDynamicStep, super::super::EmbeddedSkinWork), &'static str> {
         if !dt.is_finite()
             || dt * 0.5 <= 0.
             || !energy_tolerance_j.is_finite()
@@ -167,20 +191,27 @@ impl InertialBody {
         if first_defect.abs() + first_thermal_defect.abs() > 0.25 * energy_tolerance_j {
             return Err("viscoelastic relaxation energy defect");
         }
-        let support = if IMPLICIT {
-            candidate.advance_implicit_surface(
-                targets,
-                next_surface.ok_or("implicit step requires prescribed surface")?,
-                dt,
-                0.5 * energy_tolerance_j,
-            )?
+        let (support, skin_work) = if IMPLICIT {
+            if next_skin.is_some() {
+                return Err("implicit embedded skin motion not implemented");
+            }
+            (
+                candidate.advance_implicit_surface(
+                    targets,
+                    next_surface.ok_or("implicit step requires prescribed surface")?,
+                    dt,
+                    0.5 * energy_tolerance_j,
+                )?,
+                super::super::EmbeddedSkinWork::default(),
+            )
         } else {
-            candidate.advance_supports_with_contacts(
+            candidate.advance_supports_with_contact_motion(
                 dt,
                 0.5 * energy_tolerance_j,
                 targets,
                 next_plane,
                 next_surface,
+                next_skin,
             )?
         };
         let (second_heat, second_defect, second_thermal_defect) =
@@ -197,13 +228,16 @@ impl InertialBody {
             return Err("viscoelastic inertial work heat defect");
         }
         *self = candidate;
-        Ok(ViscoelasticDynamicStep {
-            support,
-            viscous_heat_j: heat,
-            relaxation_energy_defect_j: relaxation_defect,
-            thermal_energy_defect_j: thermal_defect,
-            total_energy_defect_j: total_defect,
-        })
+        Ok((
+            ViscoelasticDynamicStep {
+                support,
+                viscous_heat_j: heat,
+                relaxation_energy_defect_j: relaxation_defect,
+                thermal_energy_defect_j: thermal_defect,
+                total_energy_defect_j: total_defect,
+            },
+            skin_work,
+        ))
     }
     fn relax_maxwell(&mut self, dt: f64) -> Result<(f64, f64, f64), &'static str> {
         // Pose, external potentials and equilibrium elasticity are unchanged.

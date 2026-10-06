@@ -1,0 +1,17 @@
+{
+  "scope": "embedded triangle contact operator; not installed in implicit time stepping or imported character collision",
+  "tests_passed": 46,
+  "new_contact_tests": 5,
+  "independent_potential_coordinates": 42,
+  "reuse": [
+    "prescribed triangle barrier law",
+    "closest features",
+    "CCD",
+    "adaptive path quadrature",
+    "normal PSD metric"
+  ],
+  "finite_work_budget_j": 1e-10,
+  "preconditioner": "W-transpose M W; not full Hessian",
+  "trajectory_scope": "linear nodes/reference/base/obstacle",
+  "source_sha256": "76aa8bad0ee99e36734179483ec975daa703177a1a21c179dcab322a5e0def4f"
+}

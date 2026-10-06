@@ -1,0 +1,22 @@
+{
+  "scope": "moving embedded skin in shared velocity-Verlet step, time-independent material only",
+  "passed_unique": 174,
+  "manual_ignored": 6,
+  "work": "endpoint-trapezoid prescribed rig and obstacle work, checked against actual mechanical energy",
+  "temporal_refinement_absolute_errors_j": [
+    0.0007888009226580204,
+    0.00019916276611866863,
+    4.9920292931404566e-05
+  ],
+  "trajectory_scope": "linear over each discrete step",
+  "rollback": [
+    "CCD crossing",
+    "work budget failure"
+  ],
+  "comotion_qualified": true,
+  "not_integrated": [
+    "moving embedded skin in implicit Maxwell step",
+    "imported character collision binding"
+  ],
+  "source_sha256": "7bd69795ec3c2c5bed5eb6b6c3162790b3c68bfc9551adccecbe2486443e73ef"
+}

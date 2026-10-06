@@ -1,0 +1,13 @@
+{
+  "scope": "embedded surface force adjoint; not integrated collision dynamics",
+  "tests_passed": 9,
+  "independent_potential_derivative_coordinates": 12,
+  "virtual_work": true,
+  "resultant_and_moment_scope": "unshifted barycentric embedded surface",
+  "relative_offset_scope": "fixed skeletal reference only; rig reaction remains to integrate",
+  "atomic_late_overflow": true,
+  "source_sha256": {
+    "crates/physics/src/tissue_surface.rs": "e3115396e1ad2df51ce9602a742f2583eea81d3b545a74a297513dca63c264f8",
+    "crates/physics/tests/tissue_surface.rs": "35b749d486fce5eb1b2e9124ed9fe61e74b28331260c41dde0ac7401578636f0"
+  }
+}

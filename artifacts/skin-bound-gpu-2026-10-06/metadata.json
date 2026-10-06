@@ -1,0 +1,18 @@
+{
+  "scope": "partial eight-step GPU render qualification; not full clip",
+  "steps": 8,
+  "simulated_seconds": 0.03333333333333333,
+  "backend": "Metal",
+  "device": "Apple M4 Max",
+  "bound_vertices": 16,
+  "model_vertices": 3273,
+  "frames": 4,
+  "distinct_frame_sha256": [
+    "02e3a6ac3fc5f8fbd1934b99c20f6cb296a9f24b590d23be67eb4065961731b9",
+    "08c9aac762716a20f193402732954c86576101eccef42b30606b9a1ebe6875c2",
+    "e64df470be0d779786d348f7ff4b93e14b86740b31c5264ffa643bf15acd01da",
+    "90cdb18ffce4e75abf55bbf830b99d803cb7ac94544a5db8dd3d7d445beb72cb"
+  ],
+  "simulation_and_render_seconds": 0.408837042,
+  "skin_collision": "original prescribed skeletal surface; no coupled deformable collision"
+}

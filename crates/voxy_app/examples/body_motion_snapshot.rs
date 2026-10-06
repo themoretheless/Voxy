@@ -10,13 +10,53 @@ fn displayed_meshes(
     demo: &tissue_demo::TissueDemo,
     model: Option<&ModelAsset>,
     phase: f64,
+    skin: Option<(&tissue_demo::TissueSkinBinding, &[DMat4])>,
 ) -> Result<Vec<SceneMesh>, Box<dyn std::error::Error>> {
     let Some(model) = model else {
         return Ok(vec![demo.mesh()?]);
     };
     let pose = model.sample_pose_phase(Some(0), phase)?;
+    let deformed_skin = if let Some((binding, reference)) = skin {
+        let pose64 = model.sample_pose_phase64(Some(0), phase)?;
+        let current = pose64.skin_matrices(&model.skeleton)?;
+        if current.len() != reference.len() {
+            return Err("skin palette size changed".into());
+        }
+        let palette: Vec<_> = current
+            .iter()
+            .zip(reference)
+            .map(|(a, b)| *a * b.inverse())
+            .collect();
+        let surfaces = model.scene_surfaces64(&pose64)?;
+        let points: Vec<_> = surfaces.into_iter().flat_map(|s| s.positions).collect();
+        Some(demo.deform_skin(binding, &palette, &points)?)
+    } else {
+        None
+    };
+    let mut cursor = 0;
     let mut meshes = Vec::new();
     for mesh in model.scene_meshes(&pose)? {
+        let mesh = if let Some(points) = &deformed_skin {
+            let end = cursor + mesh.vertices().len();
+            let positions = points
+                .get(cursor..end)
+                .ok_or("skin render topology changed")?;
+            let vertices = mesh
+                .vertices()
+                .iter()
+                .zip(positions)
+                .map(|(v, p)| {
+                    let mut v = *v;
+                    v.position = p.map(|x| x as f32);
+                    v
+                })
+                .collect();
+            cursor = end;
+            SceneMesh::new(vertices, mesh.indices().to_vec())?
+        } else {
+            mesh
+        };
+
         let mut normals = vec![Vec3::ZERO; mesh.vertices().len()];
         for triangle in mesh.indices().chunks_exact(3) {
             let [a, b, c] = [
@@ -49,6 +89,9 @@ fn displayed_meshes(
             })
             .collect();
         meshes.push(SceneMesh::new(vertices, mesh.indices().to_vec())?);
+    }
+    if deformed_skin.as_ref().is_some_and(|p| cursor != p.len()) {
+        return Err("skin render vertex count changed".into());
     }
     meshes.push(demo.tissue_mesh()?);
     Ok(meshes)
@@ -353,6 +396,39 @@ fn contact_precision_report(
         serde_json::json!({"scope":"native-contact-coordinate-sensitivity","poses":reports,"note":"Adjacent-f64 perturbations and origin translation are diagnostic; they do not bound distance error or certify a continuous path."}),
     )
 }
+/// A limited capture changes observation duration, never the simulation timestep.
+fn capture_schedule(
+    cesium: bool,
+    frames: bool,
+    limit: Option<usize>,
+) -> Result<([usize; 4], Vec<usize>), &'static str> {
+    if let Some(end) = limit {
+        if !cesium || !(3..=480).contains(&end) {
+            return Err("capture steps require --cesium and a value in 3..=480");
+        }
+        let snapshots = [0, end / 3, 2 * end / 3, end];
+        let mut steps = snapshots.to_vec();
+        if frames {
+            steps.extend((0..=end / 12).map(|n| n * 12));
+        }
+        steps.sort_unstable();
+        steps.dedup();
+        return Ok((snapshots, steps));
+    }
+    let snapshots = if cesium {
+        [0, 120, 240, 480]
+    } else {
+        [0, 168, 1080, 2160]
+    };
+    let steps = if frames {
+        (0..=if cesium { 40 } else { 240 })
+            .map(|n| n * 12)
+            .collect()
+    } else {
+        snapshots.to_vec()
+    };
+    Ok((snapshots, steps))
+}
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)
@@ -526,15 +602,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .map_err(|error| voxy_render::ModelError(error.to_string()))
         })
         .transpose()?;
+    let limits: Vec<_> = remaining
+        .iter()
+        .filter_map(|a| a.strip_prefix("--capture-steps="))
+        .collect();
+    if limits.len() > 1 {
+        return Err("capture steps specified more than once".into());
+    }
+    let capture_limit = limits.first().map(|s| s.parse::<usize>()).transpose()?;
+    capture_schedule(cesium, false, capture_limit)?;
     if remaining.iter().any(|arg| {
         arg.starts_with("--")
             && arg != "--close-up"
             && arg != "--cesium"
             && arg != "--contact"
             && arg != "--wide-contact"
+            && !arg.starts_with("--capture-steps=")
     }) {
         return Err(
-            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact]"
+            "usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY] [--close-up] [--cesium] [--contact] [--wide-contact] [--capture-steps=N]"
                 .into(),
         );
     }
@@ -591,7 +677,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         None
     };
-    let meshes = displayed_meshes(&demo, imported.as_ref(), 0.)?;
+    let skin_binding = if let Some(model) = &imported {
+        let pose = model.sample_pose_phase64(Some(0), 0.)?;
+        let points: Vec<_> = model
+            .scene_surfaces64(&pose)?
+            .into_iter()
+            .flat_map(|s| s.positions)
+            .collect();
+        let binding = demo.bind_skin(&points)?;
+        println!(
+            "SKIN bound={} total={}",
+            binding.bound_vertex_count(),
+            points.len()
+        );
+        Some(binding)
+    } else {
+        None
+    };
+    let skin = skin_binding.as_ref().zip(reference64.as_deref());
+    let meshes = displayed_meshes(&demo, imported.as_ref(), 0., skin)?;
     let mut geometries = meshes
         .iter()
         .map(|mesh| renderer.reserve_geometry(&device, mesh.vertices().len(), mesh.indices().len()))
@@ -693,20 +797,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "time_s,sample,offset_x_m,offset_y_m,offset_z_m,volume_m3,mechanical_change_j,support_work_j,viscous_heat_j,numerical_defect_j\n",
     );
     let mut elapsed = 0;
-    let snapshots = if cesium {
-        [0, 120, 240, 480]
-    } else {
-        [0, 168, 1080, 2160]
-    };
-    let steps: Vec<usize> = if cesium && frame_directory.is_some() {
-        (0..=40).map(|frame| frame * 12).collect()
-    } else if frame_directory.is_some() {
-        (0..=240).map(|frame| frame * 12).collect()
-    } else {
-        snapshots.to_vec()
-    };
+    let (snapshots, steps) = capture_schedule(cesium, frame_directory.is_some(), capture_limit)?;
+    println!(
+        "CAPTURE final_step={} simulated_s={:.9} limited={}",
+        steps.last().unwrap(),
+        *steps.last().unwrap() as f64 / 240.,
+        capture_limit.is_some()
+    );
     let render_start = std::time::Instant::now();
-    for step in steps {
+    for (capture_index, step) in steps.into_iter().enumerate() {
         while elapsed < step {
             if cesium {
                 if let Some(reference) = &contact_reference {
@@ -776,6 +875,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &demo,
             imported.as_ref(),
             (step as f64 / (240. * duration)).min(1.),
+            skin,
         )?;
         if meshes.len() != geometries.len() {
             return Err("display primitive count changed".into());
@@ -832,7 +932,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let pixels = readback.slice(..).get_mapped_range()?;
         if let Some(directory) = &frame_directory {
             image::save_buffer(
-                directory.join(format!("frame-{:04}.png", step / 12)),
+                directory.join(format!("frame-{capture_index:04}.png")),
                 &pixels,
                 512,
                 512,
@@ -877,6 +977,67 @@ mod collision_tests {
     use super::*;
     use crate::tissue_demo::TissueDemo;
     use std::sync::Arc;
+    #[test]
+    fn limited_capture_keeps_all_checkpoints_and_rejects_invalid_scope() {
+        for end in [3, 8, 12, 479, 480] {
+            let (snapshots, steps) = capture_schedule(true, true, Some(end)).unwrap();
+            assert_eq!(steps.first(), Some(&0));
+            assert_eq!(steps.last(), Some(&end));
+            assert!(steps.windows(2).all(|p| p[0] < p[1]));
+            assert!(snapshots.windows(2).all(|p| p[0] < p[1]));
+            assert!(snapshots.iter().all(|s| steps.contains(s)));
+        }
+        assert!(capture_schedule(false, true, Some(8)).is_err());
+        for end in [0, 1, 2, 481, usize::MAX] {
+            assert!(capture_schedule(true, true, Some(end)).is_err());
+        }
+        assert_eq!(capture_schedule(true, true, None).unwrap().1.len(), 41);
+    }
+    #[test]
+    fn imported_skin_binding_reports_actual_contained_vertices() {
+        let model = ModelAsset::parse(
+            include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb"),
+            &[],
+            ModelLimits::default(),
+        )
+        .unwrap();
+        let pose = model.sample_pose_phase64(Some(0), 0.).unwrap();
+        let skin: Vec<_> = model
+            .scene_surfaces64(&pose)
+            .unwrap()
+            .into_iter()
+            .flat_map(|s| s.positions)
+            .collect();
+        let reference = model
+            .sample_pose_phase(Some(0), 0.)
+            .unwrap()
+            .skin_matrices(&model.skeleton)
+            .unwrap();
+        let mut demo = imported_tissues(&model, &reference).unwrap();
+        let binding = demo.bind_skin(&skin).unwrap();
+        eprintln!(
+            "IMPORTED_SKIN_BOUND vertices={} total={}",
+            binding.bound_vertex_count(),
+            skin.len()
+        );
+        let palette = vec![DMat4::IDENTITY; model.skeleton.joints().len()];
+        assert_eq!(demo.deform_skin(&binding, &palette, &skin).unwrap(), skin);
+        assert_eq!(binding.bound_vertex_count(), 16);
+        let reference64 = pose.skin_matrices(&model.skeleton).unwrap();
+        let before =
+            displayed_meshes(&demo, Some(&model), 0., Some((&binding, &reference64))).unwrap();
+        demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+            .unwrap();
+        let after =
+            displayed_meshes(&demo, Some(&model), 0., Some((&binding, &reference64))).unwrap();
+        let changed = before[..model.primitives.len()]
+            .iter()
+            .zip(&after)
+            .flat_map(|(a, b)| a.vertices().iter().zip(b.vertices()))
+            .filter(|(a, b)| a.position != b.position)
+            .count();
+        assert_eq!(changed, 16);
+    }
     #[test]
     fn captured_edge_contact_agrees_with_decimal_oracle_but_is_coordinate_sensitive() {
         let path = std::path::Path::new(concat!(
