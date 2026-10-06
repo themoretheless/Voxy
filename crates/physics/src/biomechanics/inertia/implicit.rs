@@ -1280,6 +1280,14 @@ impl InertialBody {
             (0.6699905217924281, 0.32607257743127305),
             (0.9305681557970262, 0.17392742256872693),
         ];
+        // Search potential subtracts the initial energy at every quadrature
+        // sample. Its cancellation scale survives that subtraction, even when
+        // the resulting objective is tiny. Endpoint energy admission is separate.
+        let baseline_roundoff_j = (128. * f64::EPSILON * initial.potential_j.abs())
+            * nodes
+                .iter()
+                .map(|(time, weight)| weight / (2. * time))
+                .sum::<f64>();
         let evaluate = |x: &[Vec3]| -> Result<_, &'static str> {
             let endpoint: Vec<Vec3> = (0..n)
                 .map(|i| {
@@ -1339,6 +1347,22 @@ impl InertialBody {
         {
             return Err("implicit support preconditioner overflow");
         }
+        let inverse_material = |g: &[Vec3]| {
+            preconditioned_direction(
+                &self.body.pinned,
+                g,
+                |v| rest_material_action(&self.body, &weight, v),
+                |r| {
+                    r.iter()
+                        .enumerate()
+                        .map(|(i, r)| r.map(|x| x * inverse_diagonal[i]))
+                        .collect()
+                },
+            )
+            .into_iter()
+            .map(|v| v.map(|x| -x))
+            .collect::<Vec<_>>()
+        };
         let mut history = Vec::new();
         let mut state = evaluate(&mid)?;
         let mut converged = false;
@@ -1359,11 +1383,15 @@ impl InertialBody {
                 break;
             }
             let scale = secant_scale(&history, |g| {
-                (0..n).map(|i| dot(g[i], g[i]) * inverse_diagonal[i]).sum()
+                g.iter()
+                    .zip(inverse_material(g))
+                    .map(|(g, v)| dot(*g, v))
+                    .sum()
             });
             let direction = secant_direction(&history, &state.1, |g| {
-                (0..n)
-                    .map(|i| g[i].map(|v| scale * inverse_diagonal[i] * v))
+                inverse_material(g)
+                    .into_iter()
+                    .map(|v| v.map(|x| scale * x))
                     .collect()
             });
             let slope: f64 = direction
@@ -1383,7 +1411,9 @@ impl InertialBody {
                     .map(|(x, d)| std::array::from_fn(|a| x[a] + alpha * d[a]))
                     .collect();
                 if let Ok(value) = evaluate(&trial) {
-                    let roundoff = 64. * f64::EPSILON * (state.2.abs() + value.2.abs());
+                    let roundoff = 64. * f64::EPSILON * state.2.abs()
+                        + 64. * f64::EPSILON * value.2.abs()
+                        + baseline_roundoff_j;
                     let resolved_descent = motion_tolerance.is_some()
                         && value.2 <= state.2 + roundoff
                         && value.3 < state.3;
@@ -1513,8 +1543,6 @@ fn coupled_contact_direction(
     pinned: &[bool],
     residual: &[Vec3],
 ) -> Vec<Vec3> {
-    let n = weight.len();
-    let inner = |a: &[Vec3], b: &[Vec3]| -> f64 { a.iter().zip(b).map(|(a, b)| dot(*a, *b)).sum() };
     let apply = |v: &[Vec3]| {
         let mut result: Vec<Vec3> = v
             .iter()
@@ -1544,17 +1572,80 @@ fn coupled_contact_direction(
         }
         result
     };
+    preconditioned_direction(pinned, residual, apply, |r| {
+        r.iter()
+            .zip(diagonal)
+            .map(|(r, d)| std::array::from_fn(|axis| r[axis] / d[axis]))
+            .collect()
+    })
+}
+
+// Rest isotropic elasticity plus inertia is only a search metric. Nonlinear
+// forces, anisotropy, memory and endpoint work remain in the real evaluator.
+fn rest_material_action(body: &super::super::Body, weight: &[f64], v: &[Vec3]) -> Vec<Vec3> {
+    let mut result: Vec<_> = v
+        .iter()
+        .enumerate()
+        .map(|(i, v)| {
+            if body.pinned[i] {
+                [0.; 3]
+            } else {
+                v.map(|x| weight[i] * x)
+            }
+        })
+        .collect();
+    for e in &body.elements {
+        let (mu, bulk) = e
+            .viscoelastic
+            .as_ref()
+            .map_or((e.material.shear_pa, e.material.bulk_pa), |m| {
+                m.rest_moduli()
+            });
+        let mut h = [[0.; 3]; 3];
+        for corner in 0..4 {
+            let node = e.nodes[corner];
+            if !body.pinned[node] {
+                for a in 0..3 {
+                    for b in 0..3 {
+                        h[a][b] += v[node][a] * e.gradients[corner][b];
+                    }
+                }
+            }
+        }
+        let trace = h[0][0] + h[1][1] + h[2][2];
+        let stress: [[f64; 3]; 3] = std::array::from_fn(|a| {
+            std::array::from_fn(|b| {
+                let sym = 0.5 * (h[a][b] + h[b][a]);
+                let dev = if a == b { sym - trace / 3. } else { sym };
+                2. * mu * dev + if a == b { bulk * trace } else { 0. }
+            })
+        });
+        for corner in 0..4 {
+            let node = e.nodes[corner];
+            if !body.pinned[node] {
+                for a in 0..3 {
+                    result[node][a] += e.volume * dot(stress[a], e.gradients[corner]);
+                }
+            }
+        }
+    }
+    result
+}
+
+// Shared SPD search solve; finite descent admission retains the diagonal fallback.
+fn preconditioned_direction(
+    pinned: &[bool],
+    residual: &[Vec3],
+    apply: impl Fn(&[Vec3]) -> Vec<Vec3>,
+    precondition: impl Fn(&[Vec3]) -> Vec<Vec3>,
+) -> Vec<Vec3> {
+    let n = residual.len();
+    let inner = |a: &[Vec3], b: &[Vec3]| -> f64 { a.iter().zip(b).map(|(a, b)| dot(*a, *b)).sum() };
     let mut r: Vec<Vec3> = residual
         .iter()
         .enumerate()
         .map(|(node, r)| if pinned[node] { [0.; 3] } else { r.map(|v| -v) })
         .collect();
-    let precondition = |r: &[Vec3]| -> Vec<Vec3> {
-        r.iter()
-            .zip(diagonal)
-            .map(|(r, d)| std::array::from_fn(|axis| r[axis] / d[axis]))
-            .collect()
-    };
     let mut z = precondition(&r);
     let fallback = z.clone();
     let mut search = z.clone();
@@ -1671,6 +1762,65 @@ mod tests {
         assert_eq!((alpha, norm), (0., 4.));
         assert!(project_branch_segment(&first, &second, &[0., 1.], &[false, true]).is_err());
         assert!(project_branch_segment(&first, &second, &[4., 1.], &[false]).is_err());
+    }
+    #[test]
+    fn rest_material_metric_matches_affine_energy_and_solves_coupled_system() {
+        use super::super::super::{Body, Material};
+        let points = vec![[0.; 3], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
+        let mut body = Body::new(
+            points.clone(),
+            vec![false; 4],
+            vec![(
+                [0, 1, 2, 3],
+                Material {
+                    shear_pa: 3.,
+                    bulk_pa: 11.,
+                    fibers: vec![],
+                },
+            )],
+        )
+        .unwrap();
+        let weight = vec![2.; 4];
+        let affine: Vec<Vec3> = points
+            .iter()
+            .map(|p| [0.2 * p[0] + 0.4 * p[1], -0.1 * p[1], 0.3 * p[2]])
+            .collect();
+        let action = rest_material_action(&body, &weight, &affine);
+        let quadratic: f64 = affine.iter().zip(&action).map(|(v, a)| dot(*v, *a)).sum();
+        // Independent affine strain: trace=.4, sym off-diagonal=.2.
+        let dev_squared = (0.2_f64 - 0.4 / 3.).powi(2)
+            + (-0.1_f64 - 0.4 / 3.).powi(2)
+            + (0.3_f64 - 0.4 / 3.).powi(2)
+            + 2. * 0.2_f64.powi(2);
+        let inertia: f64 = affine.iter().map(|v| 2. * dot(*v, *v)).sum();
+        assert!(
+            (quadratic - inertia - (6. * dev_squared + 11. * 0.4_f64.powi(2)) / 6.).abs() < 1e-14
+        );
+        let translation = vec![[0.7, -0.2, 0.1]; 4];
+        let translated = rest_material_action(&body, &weight, &translation);
+        for a in translated {
+            assert_eq!(a, [1.4, -0.4, 0.2]);
+        }
+        body.pinned[0] = true;
+        let residual = vec![
+            [1., 2., -1.],
+            [-0.2, 0.3, 0.8],
+            [0.4, -0.7, 0.1],
+            [0.8, -0.2, 0.6],
+        ];
+        let solve = preconditioned_direction(
+            &body.pinned,
+            &residual,
+            |v| rest_material_action(&body, &weight, v),
+            |r| r.iter().map(|r| r.map(|x| x / 2.)).collect(),
+        );
+        assert_eq!(solve[0], [0.; 3]);
+        let checked = rest_material_action(&body, &weight, &solve);
+        for i in 1..4 {
+            for a in 0..3 {
+                assert!((checked[i][a] + residual[i][a]).abs() < 1e-9);
+            }
+        }
     }
     #[test]
     fn averaged_material_search_gradient_matches_energy_differences() {

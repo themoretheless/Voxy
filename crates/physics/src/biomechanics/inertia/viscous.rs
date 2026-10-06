@@ -257,7 +257,8 @@ impl InertialBody {
         )
     }
     /// Refine a full linear support trajectory using full-step/two-half-step
-    /// differences in every node's position and velocity. The sums are error
+    /// differences in every node's position and free-node velocity. Prescribed
+    /// velocities are endpoint diagnostics, not integrated unknowns. The sums are error
     /// indicators, not certified global trajectory bounds. Accepted state is
     /// always the finer solution, with the original energy budget shared by
     /// its substeps. The entire interval, histories and heat publish together.
@@ -265,6 +266,46 @@ impl InertialBody {
     /// Invalid controls/targets, nonrefinable errors or an exhausted finite
     /// subdivision limit preserve the complete owner.
     pub fn step_viscoelastic_implicit_with_support_accuracy(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        dt: f64,
+        energy_tolerance_j: f64,
+        position_difference_budget_m: f64,
+        velocity_difference_budget_m_s: f64,
+        max_substeps: usize,
+    ) -> Result<ViscoelasticSupportAccuracyStep, &'static str> {
+        self.step_viscoelastic_support_accuracy::<true>(
+            targets,
+            dt,
+            energy_tolerance_j,
+            position_difference_budget_m,
+            velocity_difference_budget_m_s,
+            max_substeps,
+        )
+    }
+    /// Same transactional motion indicators with explicit velocity Verlet.
+    /// Only finer accepted states publish; work, heat and history guards remain.
+    /// # Errors
+    /// Invalid inputs, nonrefinable failure or exhausted subdivision preserves state.
+    pub fn step_viscoelastic_with_support_accuracy(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        dt: f64,
+        energy_tolerance_j: f64,
+        position_difference_budget_m: f64,
+        velocity_difference_budget_m_s: f64,
+        max_substeps: usize,
+    ) -> Result<ViscoelasticSupportAccuracyStep, &'static str> {
+        self.step_viscoelastic_support_accuracy::<false>(
+            targets,
+            dt,
+            energy_tolerance_j,
+            position_difference_budget_m,
+            velocity_difference_budget_m_s,
+            max_substeps,
+        )
+    }
+    fn step_viscoelastic_support_accuracy<const IMPLICIT: bool>(
         &mut self,
         targets: Option<&[SupportTarget]>,
         dt: f64,
@@ -342,7 +383,7 @@ impl InertialBody {
                     let mut coarse = fine.clone();
                     let endpoint = interpolate(index, count);
                     trial_steps += 1;
-                    coarse.step_viscoelastic_contacts_controlled::<true>(
+                    coarse.step_viscoelastic_contacts_controlled::<IMPLICIT>(
                         endpoint.as_deref(),
                         None,
                         None,
@@ -357,7 +398,7 @@ impl InertialBody {
                     for half_index in [2 * index - 1, 2 * index] {
                         let endpoint = interpolate(half_index, 2 * count);
                         trial_steps += 1;
-                        let (report, _) = fine.step_viscoelastic_contacts_controlled::<true>(
+                        let (report, _) = fine.step_viscoelastic_contacts_controlled::<IMPLICIT>(
                             endpoint.as_deref(),
                             None,
                             None,
@@ -386,7 +427,12 @@ impl InertialBody {
                         .velocities
                         .iter()
                         .zip(&fine.velocities)
-                        .map(|(&a, &b)| distance(a, b))
+                        .enumerate()
+                        // Prescribed nodes have exact trajectory endpoints. Their
+                        // diagnostic velocities come from endpoint differences:
+                        // rounding divided by finer dt is not integration error.
+                        .filter(|(node, _)| !self.body.pinned[*node])
+                        .map(|(_, (&a, &b))| distance(a, b))
                         .fold(0_f64, f64::max);
                     if !position_error.is_finite() || !velocity_error.is_finite() {
                         return Err("implicit support motion estimate overflow");
@@ -407,10 +453,18 @@ impl InertialBody {
                     | "implicit support nonlinear nonconvergence"
                     | "implicit support work defect"
                     | "implicit support path crossing"
+                    | "finite-deformation inertial support work defect"
+                    | "finite-deformation inertial energy defect"
+                    | "inertial tetrahedral path collapse"
+                    | "inertial tissue gap path crossing"
                     | "viscoelastic relaxation energy defect"
                     | "viscoelastic inertial work heat defect" => {
                         if 2 * count == max_substeps {
-                            return Err("implicit support accuracy subdivision limit");
+                            return Err(if IMPLICIT {
+                                "implicit support accuracy subdivision limit"
+                            } else {
+                                "explicit support accuracy subdivision limit"
+                            });
                         }
                         count *= 2;
                         continue;
