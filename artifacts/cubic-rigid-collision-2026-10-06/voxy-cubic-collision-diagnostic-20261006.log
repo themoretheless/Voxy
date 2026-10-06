@@ -1,0 +1,68 @@
+   Compiling voxy_animation v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_animation)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+   Compiling voxy_scene v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_scene)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:296:15
+    |
+296 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:367:15
+    |
+367 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:482:15
+    |
+482 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:720:9
+    |
+714 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+720 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+721 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+722 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: `voxy_gameplay` (lib) generated 4 warnings
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 13.23s
+     Running unittests src/lib.rs (target/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 1 test
+cubic query diagnostic: ContactWitness
+
+thread 'liquid_runtime::tests::cubic_collision_detects_inside_step_motion_and_preserves_world_feature' (1074876) panicked at crates/voxy_gameplay/src/liquid_runtime.rs:2342:76:
+called `Result::unwrap()` on an `Err` value: CollisionBackend
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test liquid_runtime::tests::cubic_collision_detects_inside_step_motion_and_preserves_world_feature ... FAILED
+
+failures:
+
+failures:
+    liquid_runtime::tests::cubic_collision_detects_inside_step_motion_and_preserves_world_feature
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 139 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

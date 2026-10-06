@@ -1,0 +1,21 @@
+{
+  "tests": {
+    "passed": 1934,
+    "failed": 0,
+    "ignored": 24
+  },
+  "full_test_exit_code": 0,
+  "consumer_check_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/rigid_motion.rs": "5341d7c32a100d19c18fffa028dade232933732a27e492277d2f6c7605f55b71",
+    "crates/physics/tests/rigid_motion.rs": "d036c74274f545b6b81f0ed6dcdb5712d076a3d0eac41c46a5a74815419de980",
+    "crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs": "4ca94c22fc012653d3cd0b8b9ee75538a1c8c6a49898a9905b72a137565604bd",
+    "crates/voxy_gameplay/src/convex.rs": "9a082d7297cc0b18fb207201837f64362464d5040cab11fe73504929fed64597",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "28e03df99d3f4175b6cd636ccf938586226d0d0e0a0eedb659c81d73451136a7"
+  },
+  "limitations": [
+    "Supported interval admission still rejects cubic paths",
+    "Reaction force rates not connected to finite scene stepping",
+    "No hardware or animation preview qualification in this milestone"
+  ]
+}
