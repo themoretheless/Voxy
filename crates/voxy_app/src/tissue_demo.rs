@@ -133,6 +133,26 @@ impl DemoTissue {
     }
 }
 #[derive(Debug)]
+struct SkinRegionBinding {
+    body: usize,
+    joint: usize,
+    vertices: Vec<usize>,
+    embedding: EmbeddedSurface,
+    rest: Vec<[f64; 3]>,
+    cells: Vec<[usize; 4]>,
+}
+/// Reference-space membership is fixed at binding, never selected from an animated pose.
+#[derive(Debug)]
+pub(crate) struct TissueSkinBinding {
+    regions: Vec<SkinRegionBinding>,
+    vertex_count: usize,
+}
+impl TissueSkinBinding {
+    pub(crate) fn bound_vertex_count(&self) -> usize {
+        self.regions.iter().map(|r| r.vertices.len()).sum()
+    }
+}
+#[derive(Debug)]
 pub(crate) struct TissueDemo {
     bodies: Vec<DemoTissue>,
     surfaces: Vec<EmbeddedSurface>,
@@ -544,6 +564,114 @@ impl TissueDemo {
             let (palette, surfaces) = sample(time)?;
             candidate.step_body_with_contact64(&palette, 0.5, Some(surfaces))
         })
+    }
+    /// Bind only contained skin vertices. Exterior vertices retain skeletal motion.
+    /// Overlapping ownership and invalid geometry are explicit errors.
+    pub(crate) fn bind_skin(&self, skin: &[[f64; 3]]) -> Result<TissueSkinBinding, &'static str> {
+        if skin.iter().flatten().any(|x| !x.is_finite()) {
+            return Err("nonfinite skin binding");
+        }
+        let mut owners = vec![false; skin.len()];
+        let mut regions = Vec::new();
+        for (body, tissue) in self.bodies.iter().enumerate() {
+            let DemoTissue::Continuum {
+                dynamics, cells, ..
+            } = tissue
+            else {
+                return Err("skin binding requires continuum tissue");
+            };
+            let rest = dynamics.body().rest_positions();
+            EmbeddedSurface::bind(rest, cells, &[])?;
+            let mut vertices = Vec::new();
+            let mut points = Vec::new();
+            for (index, &point) in skin.iter().enumerate() {
+                match EmbeddedSurface::bind(rest, cells, &[point]) {
+                    Ok(_) => {
+                        if owners[index] {
+                            return Err("overlapping skin tissue ownership");
+                        }
+                        owners[index] = true;
+                        vertices.push(index);
+                        points.push(point);
+                    }
+                    Err("surface vertex outside tetrahedral mesh") => {}
+                    Err(error) => return Err(error),
+                }
+            }
+            regions.push(SkinRegionBinding {
+                body,
+                joint: self
+                    .attachments
+                    .get(body)
+                    .ok_or("missing skin attachment")?
+                    .0,
+                vertices,
+                embedding: EmbeddedSurface::bind(rest, cells, &points)?,
+                rest: rest.to_vec(),
+                cells: cells.clone(),
+            });
+        }
+        Ok(TissueSkinBinding {
+            regions,
+            vertex_count: skin.len(),
+        })
+    }
+    /// Compose physical displacement with already posed skin; returns one atomic result.
+    pub(crate) fn deform_skin(
+        &self,
+        binding: &TissueSkinBinding,
+        palette: &[DMat4],
+        skin: &[[f64; 3]],
+    ) -> Result<Vec<[f64; 3]>, &'static str> {
+        if skin.len() != binding.vertex_count || skin.iter().flatten().any(|x| !x.is_finite()) {
+            return Err("invalid posed skin");
+        }
+        let mut output = skin.to_vec();
+        for region in &binding.regions {
+            let tissue = self
+                .bodies
+                .get(region.body)
+                .ok_or("skin body disappeared")?;
+            let DemoTissue::Continuum {
+                dynamics, cells, ..
+            } = tissue
+            else {
+                return Err("skin body changed mode");
+            };
+            if dynamics.body().rest_positions() != region.rest || cells != &region.cells {
+                return Err("skin body topology changed");
+            }
+            let joint = self
+                .attachments
+                .get(region.body)
+                .ok_or("skin attachment disappeared")?
+                .0;
+            if joint != region.joint {
+                return Err("skin attachment changed");
+            }
+            let matrix = palette.get(joint).ok_or("missing skin attachment joint")?;
+            let determinant = matrix.determinant();
+            if !matrix.is_finite() || !determinant.is_finite() || determinant == 0. {
+                return Err("invalid skin attachment matrix");
+            }
+            let reference: Vec<_> = region
+                .rest
+                .iter()
+                .map(|&p| matrix.transform_point3(DVec3::from_array(p)).to_array())
+                .collect();
+            let posed: Vec<_> = region.vertices.iter().map(|&i| skin[i]).collect();
+            let mut deformed = vec![[0.; 3]; posed.len()];
+            region.embedding.deform_relative_into(
+                &reference,
+                tissue.positions(),
+                &posed,
+                &mut deformed,
+            )?;
+            for (&index, point) in region.vertices.iter().zip(deformed) {
+                output[index] = point;
+            }
+        }
+        Ok(output)
     }
     /// World-space FEM surfaces, without the procedural mannequin display.
     pub(crate) fn tissue_mesh(&self) -> Result<SceneMesh, voxy_render::SceneError> {
@@ -1512,6 +1640,43 @@ impl TissueDemo {
 }
 #[cfg(test)]
 mod tests {
+
+    #[test]
+    fn skin_binding_rejects_overlap_reassigned_joint_and_singular_pose() {
+        let overlap = super::TissueDemo::body_at_centers([[0.; 3]; 4], [0, 0, 3, 7]);
+        assert!(overlap.bind_skin(&[[0.; 3]]).is_err());
+        let mut demo = super::TissueDemo::body();
+        let skin = [demo.bodies[0].positions()[1]];
+        let binding = demo.bind_skin(&skin).unwrap();
+        let mut palette = vec![glam::DMat4::IDENTITY; 8];
+        palette[0] = glam::DMat4::ZERO;
+        assert!(demo.deform_skin(&binding, &palette, &skin).is_err());
+        palette[0] = glam::DMat4::IDENTITY;
+        demo.attachments[0].0 = 1;
+        assert!(demo.deform_skin(&binding, &palette, &skin).is_err());
+    }
+    #[test]
+    fn bound_skin_follows_physical_node_and_keeps_exterior_vertices() {
+        let mut demo = super::TissueDemo::body();
+        let skin = [demo.bodies[0].positions()[1], [100., 100., 100.]];
+        let binding = demo.bind_skin(&skin).unwrap();
+        assert_eq!(binding.bound_vertex_count(), 1);
+        let palette = vec![glam::DMat4::IDENTITY; 8];
+        assert_eq!(demo.deform_skin(&binding, &palette, &skin).unwrap(), skin);
+        demo.step_body_with_contact64_workers(&palette, 0.5, None, 1)
+            .unwrap();
+        let result = demo.deform_skin(&binding, &palette, &skin).unwrap();
+        assert_eq!(result[1], skin[1]);
+        for axis in 0..3 {
+            assert!((result[0][axis] - demo.bodies[0].positions()[1][axis]).abs() < 1e-14);
+        }
+        assert_ne!(result[0], skin[0]);
+        assert!(demo.deform_skin(&binding, &palette[..1], &skin).is_err());
+        assert!(demo.deform_skin(&binding, &palette, &skin[..1]).is_err());
+        let other = super::TissueDemo::body_at_centers([[20.; 3]; 4], [0, 0, 3, 7]);
+        assert!(other.deform_skin(&binding, &palette, &skin).is_err());
+    }
+
     use super::*;
     #[test]
     fn contact_fixture_roundtrip_preserves_ccd_and_does_not_mutate_body() {

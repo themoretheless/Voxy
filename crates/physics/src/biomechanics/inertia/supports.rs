@@ -137,6 +137,24 @@ impl InertialBody {
         }
         Ok(())
     }
+    /// Existing velocity-Verlet step with simultaneous prescribed skin motion.
+    /// CCD uses linear nodal/reference/base/obstacle paths over this discrete step.
+    /// Endpoint-trapezoid actuator work is admitted against independently evaluated energy.
+    /// # Errors
+    /// Invalid owners/material, crossing or energy defect preserves all state.
+    pub fn step_with_embedded_skin_motion(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        next: super::super::StationaryEmbeddedContact,
+        dt: f64,
+        tolerance_j: f64,
+    ) -> Result<(DrivenSupportStep, super::super::EmbeddedSkinWork), &'static str> {
+        self.require_time_independent_material()?;
+        if targets.is_none() {
+            self.require_stationary_supports()?;
+        }
+        self.advance_supports_with_contact_motion(dt, tolerance_j, targets, None, None, Some(next))
+    }
     pub(super) fn advance_supports(
         &mut self,
         dt: f64,
@@ -162,6 +180,32 @@ impl InertialBody {
         next_motion: Option<PlaneContact>,
         next_surface_motion: Option<Arc<PrescribedTriangleSurface>>,
     ) -> Result<DrivenSupportStep, &'static str> {
+        self.advance_supports_with_contact_motion(
+            dt,
+            energy_tolerance_j,
+            targets,
+            next_motion,
+            next_surface_motion,
+            None,
+        )
+        .map(|(report, _)| report)
+    }
+    pub(super) fn advance_supports_with_contact_motion(
+        &mut self,
+        dt: f64,
+        energy_tolerance_j: f64,
+        targets: Option<&[SupportTarget]>,
+        next_motion: Option<PlaneContact>,
+        next_surface_motion: Option<Arc<PrescribedTriangleSurface>>,
+        next_skin_motion: Option<super::super::StationaryEmbeddedContact>,
+    ) -> Result<(DrivenSupportStep, super::super::EmbeddedSkinWork), &'static str> {
+        if let Some(next) = &next_skin_motion {
+            self.body
+                .embedded_contact
+                .as_ref()
+                .ok_or("skin motion requires installed contact")?
+                .same_owner(next)?;
+        }
         if let Some(next) = &next_surface_motion {
             self.prescribed_surface
                 .as_ref()
@@ -248,7 +292,13 @@ impl InertialBody {
                 positions[node][axis] += dt * velocities[node][axis];
             }
         }
-        if !self.body.gap_path_is_open(&self.body.positions, &positions) {
+        let gaps_open = if next_skin_motion.is_some() {
+            self.body
+                .gap_path_is_open_without_embedded(&self.body.positions, &positions)
+        } else {
+            self.body.gap_path_is_open(&self.body.positions, &positions)
+        };
+        if !gaps_open {
             return Err("inertial tissue gap path crossing");
         }
         if !self.volume_path_is_open(&positions) {
@@ -267,8 +317,21 @@ impl InertialBody {
                 return Err("inertial prescribed surface path crossing");
             }
         }
-        let final_response =
-            self.evaluate_at_contacts(&positions, next_plane, next_surface.map(AsRef::as_ref))?;
+        let skin_work = if let Some(next) = &next_skin_motion {
+            let current = self.body.embedded_contact.as_ref().unwrap();
+            current.certify_motion_to(next, &self.body.positions, &positions)?;
+            current.endpoint_motion_work(next, &self.body.positions, &positions)?
+        } else {
+            super::super::EmbeddedSkinWork::default()
+        };
+        let final_response = self.evaluate_at_contacts_and_skin(
+            &positions,
+            next_plane,
+            next_surface.map(AsRef::as_ref),
+            next_skin_motion
+                .as_ref()
+                .or(self.body.embedded_contact.as_ref()),
+        )?;
         let surface_work = if next_surface_motion.is_some() {
             self.prescribed_surface.as_ref().unwrap().motion_work(
                 next_surface.unwrap(),
@@ -278,6 +341,7 @@ impl InertialBody {
         } else {
             0.
         };
+        let surface_work = surface_work + skin_work.rig_work_j + skin_work.obstacle_work_j;
         let translation_work = if offset_increment == 0. {
             0.
         } else {
@@ -389,22 +453,28 @@ impl InertialBody {
                 "finite-deformation inertial energy defect"
             });
         }
+        if let Some(skin) = next_skin_motion {
+            self.body.embedded_contact = Some(skin);
+        }
         self.body.positions = positions;
         self.velocities = velocities;
         self.plane = next_plane;
         if let Some(surface) = next_surface_motion {
             self.prescribed_surface = Some(surface);
         }
-        Ok(DrivenSupportStep {
-            support_work_j: work,
-            reaction_work_j: reaction_work,
-            pin_kinetic_work_j: kinetic_work,
-            plane_work_j: plane_work,
-            plane_translation_work_j: translation_work,
-            plane_rotation_work_j: rotation_work,
-            surface_work_j: surface_work,
-            energy_defect_j: defect,
-        })
+        Ok((
+            DrivenSupportStep {
+                support_work_j: work,
+                reaction_work_j: reaction_work,
+                pin_kinetic_work_j: kinetic_work,
+                plane_work_j: plane_work,
+                plane_translation_work_j: translation_work,
+                plane_rotation_work_j: rotation_work,
+                surface_work_j: surface_work,
+                energy_defect_j: defect,
+            },
+            skin_work,
+        ))
     }
     // A rotating obstacle can enter and leave between force evaluations. Bound
     // the gap curvature along spherical normal motion and linear nodal drift.

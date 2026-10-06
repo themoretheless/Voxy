@@ -29,6 +29,41 @@ impl InertialBody {
         nodes: &[(f64, f64)],
         initial_potential_j: f64,
     ) -> Result<super::PotentialEvaluation, &'static str> {
+        self.average_material_path_with_skin(points, end, nodes, initial_potential_j, None)
+    }
+    // All material/contact gradients and prescribed skin work share one frozen quadrature.
+    fn average_material_path_with_skin(
+        &self,
+        points: &[Vec3],
+        end: &[Vec3],
+        nodes: &[(f64, f64)],
+        initial_potential_j: f64,
+        skin_motion: Option<(
+            &super::super::StationaryEmbeddedContact,
+            &[super::super::StationaryEmbeddedContact],
+        )>,
+    ) -> Result<super::PotentialEvaluation, &'static str> {
+        if points.len() != self.masses.len()
+            || end.len() != self.masses.len()
+            || nodes
+                .iter()
+                .any(|(t, w)| !t.is_finite() || *t <= 0. || *t > 1. || !w.is_finite() || *w <= 0.)
+        {
+            return Err("invalid material path quadrature");
+        }
+        if let Some((next, samples)) = skin_motion {
+            let current = self
+                .body
+                .stationary_embedded_contact()
+                .ok_or("skin path requires installed contact")?;
+            current.same_owner(next)?;
+            if samples.len() != nodes.len() {
+                return Err("skin quadrature sample count changed");
+            }
+            for sample in samples {
+                current.same_owner(sample)?;
+            }
+        }
         let mut average = super::PotentialEvaluation {
             potential_j: 0.,
             gradient: vec![[0.; 3]; self.masses.len()],
@@ -36,8 +71,9 @@ impl InertialBody {
             plane_offset_gradient: 0.,
             plane_rotation_gradient: [0.; 3],
             surface_gradient: Vec::new(),
+            embedded_skin_work: super::super::EmbeddedSkinWork::default(),
         };
-        for &(time, weight) in nodes {
+        for (sample_index, &(time, weight)) in nodes.iter().enumerate() {
             let world: Vec<Vec3> = self
                 .body
                 .positions
@@ -51,7 +87,19 @@ impl InertialBody {
                     }
                 })
                 .collect();
-            let value = self.evaluate_at_contacts(&world, self.plane, None)?;
+            let value = if let Some((next, samples)) = skin_motion {
+                let sample = &samples[sample_index];
+                let work = sample.sampled_motion_work(
+                    self.body.stationary_embedded_contact().unwrap(),
+                    next,
+                    &world,
+                )?;
+                average.embedded_skin_work.rig_work_j += weight * work.rig_work_j;
+                average.embedded_skin_work.obstacle_work_j += weight * work.obstacle_work_j;
+                self.evaluate_at_contacts_and_skin(&world, self.plane, None, Some(sample))?
+            } else {
+                self.evaluate_at_contacts(&world, self.plane, None)?
+            };
             average.potential_j += weight * (value.potential_j - initial_potential_j) / (2. * time);
             average.contact_j += weight * value.contact_j;
             average.plane_offset_gradient += weight * value.plane_offset_gradient;
@@ -66,6 +114,8 @@ impl InertialBody {
             }
         }
         if !average.potential_j.is_finite()
+            || !average.embedded_skin_work.rig_work_j.is_finite()
+            || !average.embedded_skin_work.obstacle_work_j.is_finite()
             || average.gradient.iter().flatten().any(|v| !v.is_finite())
         {
             return Err("averaged material evaluation overflow");

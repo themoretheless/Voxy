@@ -385,7 +385,7 @@ impl PreparedPrescribedContactPath {
     }
 }
 
-fn validate_faces(positions: &[Vec3], faces: &[[usize; 3]]) -> Result<(), &'static str> {
+pub(super) fn validate_faces(positions: &[Vec3], faces: &[[usize; 3]]) -> Result<(), &'static str> {
     if positions.is_empty()
         || positions.len() > 65536
         || faces.is_empty()

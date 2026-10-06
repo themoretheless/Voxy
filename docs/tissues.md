@@ -1060,3 +1060,193 @@ still displayed separately from the character skin. Delivery checks across
 physics, animation, scene, render, editor and application pass 2295 tests;
 65 explicitly ignored tests are not claimed as executed. Workspace formatting
 also passes.
+
+### Imported render-skin displacement binding (2026-10-06)
+
+`EmbeddedSurface::deform_relative_into` composes FEM displacement relative to
+the current skeletal reference with an already posed render surface. The
+application binds reference-space vertices only when they lie inside a valid
+tetrahedral region; exterior vertices retain ordinary skeletal motion.
+Overlapping region ownership is rejected, without nearest-cell extrapolation.
+Binding retains vertex count, rest topology and attachment joint and rejects
+stale topology, reassigned joints and singular/nonfinite poses. Deformation is
+published atomically. Normals are recomputed from the resulting render geometry.
+
+The Cesium example now uses this path. Its illustrative four volumes contain
+only 16 of the model's 3273 vertices; a physical step changes exactly those 16
+render vertices in the integration test. This is partial reference-space skin
+coverage, not a complete anatomically authored character. External collision
+sampling still uses the original prescribed skeletal surface; the display
+binding does not implement coupled deformable-skin collision or self-contact.
+Previously exported Metal frames predate this skin binding.
+
+### Fresh limited GPU qualification of bound skin (2026-10-06)
+
+The existing `body_motion_snapshot` runner accepts `--capture-steps=N` with
+`--cesium` (3..=480), retaining the 1/240 s physical timestep. Its output
+explicitly reports the limited duration; this does not replace the full clip
+qualification. Four observation checkpoints are always retained, and frame
+filenames use capture order to avoid collisions on short runs. Default full
+capture cadence and duration remain unchanged.
+
+The new bound-skin renderer completes an eight-step contact run on Apple M4 Max
+Metal with four distinct frames, 16 bound vertices and no GPU validation errors
+in 0.409 s of simulation plus rendering (uncontrolled run). Only the initial
+0.0333 s is covered. Images, motion receipts, metadata and interactive preview
+are under `artifacts/skin-bound-gpu-2026-10-06/`. This short observation cannot
+qualify later stiff contacts, full skin coverage, real-time operation or other
+hardware.
+
+### Embedded surface force adjoint (2026-10-06)
+
+`EmbeddedSurface::accumulate_forces_into` transfers forces using the transpose
+of the displacement map, retaining existing nodal loads. A private candidate
+prevents partial publication on nonfinite input or late shared-node overflow.
+Nine embedding tests pass, including an independent potential derivative over
+all 12 tetrahedron coordinates, virtual work, resultant and moment for the
+unshifted barycentric surface, and atomic accumulation failures.
+
+For relative skin composition the derivative is valid with skeletal reference
+and skin base fixed. An authored skin offset changes force lever arms; its
+reaction and prescribed-motion work must be carried by the rig before claiming
+fully coupled conservation. This API does not yet replace contact geometry or
+install new loads in the implicit integrator. Evidence is stored under
+`artifacts/skin-force-transfer-2026-10-06/`.
+
+### Relative-skin rig reaction and actuator work (2026-10-06)
+
+`RelativeSurfaceLoads` exposes physical loads on nodes, skeletal reference and
+skin base separately: W^T f, -W^T f and f. `actuator_work_j` returns minus the
+prescribed physical-force work, matching the energy-increase convention of the
+existing implicit ledger. Finite nonlinear steps require path-averaged loads;
+an instantaneous response is not a finite-step conservation certificate.
+`rig_wrench_about` evaluates the reference/base resultant and moment about an
+explicit origin. Ten embedding tests pass. A moving-reference/base fixture
+closes an independent quadratic potential with its exact path-average forces
+and balances offset skin moment against nodal plus rig moment.
+
+These mechanisms are not yet installed in implicit contact dynamics. Contact
+geometry, CCD, path quadrature and rig work must use the same embedded skin
+trajectory before claiming coupled deformable-skin collision. Evidence is under
+`artifacts/skin-rig-reaction-2026-10-06/`.
+
+### Embedded triangle contact operator (2026-10-06)
+
+`EmbeddedTriangleContact` binds a contained authored skin patch and reuses the
+existing prescribed-triangle barrier, closest features and CCD. Its response
+transfers physical forces onto tissue nodes, skeletal reference, skin base and
+obstacle. All 42 coordinates in the independent potential-difference fixture
+match those forces. CCD rejects an intervening crossing even when both endpoints
+are admissible. Linear node/reference/base motion yields a linear embedded skin
+trajectory; nonlinear rig motion requires sufficiently resolved segments.
+
+The finite-path response reuses adaptive contact quadrature, checks CCD first
+and enforces a requested signed work-discrepancy budget across mechanical and
+prescribed motions. Endpoint energy differences are estimators, not substituted
+work. Path-average response preserves the native midpoint objective. The normal
+metric maps the existing PSD frozen-feature blocks as W^T M W; it is explicitly
+not a full geometric Hessian. Symmetry, positive action and tangent nullspace
+pass. The new five tests plus 31 prescribed-contact and ten embedding tests pass.
+
+This operator does not yet advance the implicit mechanical state or replace
+collision sampling in the imported example. Its work budget proves the tested
+finite-path balance, not a global error bound for arbitrary meshes/materials.
+Evidence is under `artifacts/embedded-skin-contact-2026-10-06/`.
+
+### Stationary embedded contact in existing mechanical stepping (2026-10-06)
+
+`StationaryEmbeddedContact` is now an immutable body potential, installed through
+`Body`/`InertialBody::set_stationary_embedded_contact`. Reference nodes, skin base
+and obstacle are held fixed. Installation/removal returns separately booked
+parameter work at the current mechanical state, not finite-time rig motion.
+Rest-node identity and membership of embedded tetrahedra in the actual material
+mesh are required; failed installation leaves the entire body unchanged.
+
+The existing Body evaluation supplies embedded potential and its nodal gradient;
+InertialBody diagnostics include this contact exactly once alongside plane and
+other surface energies. Existing Body path admission includes embedded CCD, so
+quasistatic search, ordinary inertial steps and the implicit averaged material
+path reuse the same force and crossing guards. No second mechanical stepper was
+introduced. Integration tests establish a real contact impulse, parameter-work
+accounting, plane coexistence, complete-state rollback on swept crossing, owner
+rejection and implicit-step contact response/work admission. 161 focused physics
+tests pass; six manual tests remain ignored. Raw evidence is under
+`artifacts/stationary-embedded-step-2026-10-06/`.
+
+This does not integrate moving skeletal reference/base work during a timestep,
+replace imported-character collision sampling, or establish full skin coverage.
+The previously tested relative rig work and path response still need to enter
+the same implicit trajectory for moving coupled skin.
+
+### Owner-preserving skin pose transition (2026-10-06)
+
+`StationaryEmbeddedContact::with_pose` stages reference/base/obstacle updates
+while preserving binding and obstacle-law identities. `path_response_to` uses
+the actual trial body endpoints for embedded CCD and integrated-work admission.
+Construction validates reference geometry, while installation admits contact
+against current mechanical nodes. A rest-only gap check was removed because it
+incorrectly rejected prescribed poses admissible after actual body movement.
+Tests confirm atomic rejection before motion, successful installation after an
+ordinary inertial translation, owner/size rejection and trajectory work budget.
+52 contact/embedding tests pass; evidence is in
+`artifacts/skin-pose-transition-2026-10-06/`.
+
+Staging or separately installing a new pose does not integrate moving-rig work
+inside the implicit mechanical step; that integration remains pending.
+
+### Moving embedded skin in shared Verlet stepping (2026-10-06)
+
+`InertialBody::step_with_embedded_skin_motion` now stages an owner-preserving
+reference/base/obstacle pose through the existing velocity-Verlet pipeline.
+The initial and final forces use their respective skin poses. Endpoint-trapezoid
+rig and obstacle actuator work is reported separately and included once in
+`surface_work_j`; actual endpoint mechanical energy independently admits the
+step. Shared evaluation accepts a staged skin without cloning material state.
+
+For moving skin, the stationary embedded CCD check is replaced by the actual
+simultaneous linear skin/obstacle path; all other tissue, native surface and
+volume guards remain. No second stepper was introduced. Contact owner, positions
+and velocities commit together only after complete work admission. Crossing and
+energy-budget failures preserve the full previous state, including contact pose.
+Tests include simultaneous comotion that would fail the old stationary guard.
+
+174 unique focused tests pass, six manual tests remain ignored. Summed absolute
+energy discrepancies over one, two and four segments are approximately
+[7.888e-4, 1.992e-4, 4.992e-5] J, showing second-order convergence in the measured
+fixture. That convergence test intentionally uses a loose admission budget to
+measure truncation; production callers must use their actual budget and refine
+when rejected. Evidence is in `artifacts/moving-embedded-step-2026-10-06/`.
+This method requires time-independent material and linear discrete trajectories.
+Moving-skin integration into the implicit Maxwell path and imported-character
+collision authoring remain pending.
+
+### Explicit Maxwell/thermal moving-skin transaction (2026-10-06)
+
+`step_viscoelastic_with_embedded_skin_motion` now uses the existing Maxwell
+quarter/half/quarter admission budgets: exact half relaxation, shared frozen-
+history Verlet mechanics with moving embedded contact, then exact half relaxation.
+Rig/obstacle work is returned alongside the established mechanical/heat receipt.
+Only the complete candidate is committed; no independent material or thermal
+owner is introduced. Existing surface, plane and implicit APIs retain their
+public return types and dispatch through the shared transaction.
+
+A prestressed Ogden-Maxwell specimen releases positive heat, increases cell
+temperature, and closes independent mechanical-energy plus heat minus actuator
+work within the requested 1e-6 J budget. Both swept crossing and mechanical
+work rejection after the first relaxation preserve the entire pre-step state,
+including Maxwell history, contact pose and thermal inventory. 176 unique tests
+pass; six manual tests remain ignored. Evidence is under
+`artifacts/maxwell-moving-skin-2026-10-06/`.
+
+This is the explicit frozen-history Verlet branch, not the implicit moving-skin
+Maxwell branch. Imported-character collision integration and full skin coverage
+also remain pending.
+
+### Shared skin quadrature preparation (2026-10-06)
+
+The existing implicit material-path evaluator now has an internal staged-skin
+variant. It samples skin forces and rig/obstacle work on the same quadrature
+nodes; owner-preserving linear pose sampling retains exact endpoint descriptors.
+The production implicit step still calls the stationary variant. Moving-skin
+implicit stepping and independent qualification of the new quadrature variant
+remain unfinished; this preparation is saved with the completed explicit work.

@@ -46,7 +46,12 @@ mod lbfgs;
 mod surface_contact;
 pub use contact_mollifier::edge_contact_mollifier;
 mod contact_precision;
+mod embedded_contact;
 mod prescribed_surface;
+pub use embedded_contact::{
+    EmbeddedContactPathResponse, EmbeddedContactResponse, EmbeddedSkinWork,
+    EmbeddedTriangleContact, RelativeSkinPose, StationaryEmbeddedContact,
+};
 mod surface_distance;
 pub use prescribed_surface::{
     PrescribedContactFeature, PrescribedContactPathResponse, PrescribedContactStencil,
@@ -291,6 +296,7 @@ pub struct Body {
     tissue_gaps: Vec<TissueGap>,
     surface_contacts: Vec<TissueSurfaceContact>,
     surface_contact_law: SurfaceContactLaw,
+    embedded_contact: Option<StationaryEmbeddedContact>,
 }
 #[derive(Clone, Copy, Debug)]
 pub struct Equilibrium {
@@ -374,6 +380,7 @@ impl Body {
             tissue_gaps: Vec::new(),
             surface_contacts: Vec::new(),
             surface_contact_law: SurfaceContactLaw::TriangleMinimum,
+            embedded_contact: None,
             diagonal,
         })
     }
@@ -563,6 +570,20 @@ impl Body {
     /// # Errors
     /// Rejects invalid loads, inverted elements and nonfinite results.
     pub fn evaluate(&self, positions: &[Vec3]) -> Result<(f64, Vec<Vec3>), &'static str> {
+        self.evaluate_with_embedded_contact(positions)
+            .map(|(u, g, _)| (u, g))
+    }
+    fn evaluate_with_embedded_contact(
+        &self,
+        positions: &[Vec3],
+    ) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
+        self.evaluate_with_embedded_contact_state(positions, self.embedded_contact.as_ref())
+    }
+    fn evaluate_with_embedded_contact_state(
+        &self,
+        positions: &[Vec3],
+        contact: Option<&StationaryEmbeddedContact>,
+    ) -> Result<(f64, Vec<Vec3>, f64), &'static str> {
         if positions.len() != self.positions.len()
             || positions.iter().flatten().any(|x| !x.is_finite())
             || self.forces.iter().flatten().any(|x| !x.is_finite())
@@ -590,6 +611,9 @@ impl Body {
         energy += self.bond_energy_gradient(positions, &mut g)?;
         energy += self.gap_energy_gradient(positions, &mut g)?;
         energy += self.surface_energy_gradient(positions, &mut g)?;
+        let embedded_contact_j =
+            Self::embedded_contact_energy_gradient(contact, positions, &mut g)?;
+        energy += embedded_contact_j;
         for cavity in &self.cavities {
             if !cavity.pressure_pa.is_finite() {
                 return Err("invalid pressure");
@@ -614,7 +638,7 @@ impl Body {
         if !energy.is_finite() || g.iter().flatten().any(|x| !x.is_finite()) {
             return Err("load overflow");
         }
-        Ok((energy, g))
+        Ok((energy, g, embedded_contact_j))
     }
     /// Bounded preconditioned nonlinear conjugate gradient with Armijo line search. This solves static
     /// equilibrium: iteration count is NOT physiological time. Reports residual.
