@@ -168,3 +168,107 @@ fn long_precession_reserves_future_error_amplification_and_matches_rk4() {
         path.model_angular_error_rad()
     );
 }
+
+#[test]
+fn polynomial_torque_spherical_prefixes_match_integrated_momentum_and_analytic_attitude() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let law = TorquePolynomial {
+        value: [0., 0., 2.],
+        rate: [0., 0., -5.],
+        acceleration: [0., 0., 8.],
+    };
+    let initial = spin([2.; 3], [0., 0., 1.]);
+    let path = initial
+        .prepare_polynomial_path(law, 0.1, config(1e-4))
+        .unwrap();
+    assert!(path.segments().len() > 1);
+    for i in 0..=64 {
+        let t = 0.1 * i as f64 / 64.;
+        let state = path.sample(t).unwrap();
+        let impulse = 2. * t - 2.5 * t * t + (8. / 6.) * t * t * t;
+        assert!((state.angular_momentum[2] - 1. - impulse).abs() < 5e-14);
+        let angle = 0.5 * (t + t * t - (5. / 6.) * t * t * t + (8. / 24.) * t * t * t * t);
+        let oracle = [0., 0., (angle * 0.5).sin(), (angle * 0.5).cos()];
+        assert!(distance(state.orientation, oracle) <= path.model_angular_error_rad() + 1e-12);
+    }
+    let mut invalid = law;
+    invalid.rate[1] = f64::NAN;
+    assert!(
+        initial
+            .prepare_polynomial_path(invalid, 0.1, config(1e-4))
+            .is_err()
+    );
+    let mut budget = config(1e-4);
+    budget.max_arcs = 1;
+    assert_eq!(
+        initial.prepare_polynomial_path(law, 0.1, budget),
+        Err(PathError::Budget)
+    );
+    assert_eq!(initial, spin([2.; 3], [0., 0., 1.]));
+}
+
+#[test]
+fn polynomial_torque_anisotropic_model_bound_covers_independent_time_dependent_rk4() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let initial = spin([1., 2., 3.], [0.3, 0.5, 0.7]);
+    let law = TorquePolynomial {
+        value: [0.4, -0.2, 0.3],
+        rate: [-2., 3., 1.],
+        acceleration: [5., -4., 2.],
+    };
+    let path = initial
+        .prepare_polynomial_path(law, 0.1, config(1e-4))
+        .unwrap();
+    let finer = initial
+        .prepare_polynomial_path(law, 0.1, config(2e-5))
+        .unwrap();
+    let mut oracle = initial;
+    let h = 0.1 / 4096.;
+    let momentum = |t: f64| {
+        std::array::from_fn(|k| {
+            initial.angular_momentum[k]
+                + law.value[k] * t
+                + law.rate[k] * t * t / 2.
+                + law.acceleration[k] * t * t * t / 6.
+        })
+    };
+    for step in 0..=4096 {
+        let t = step as f64 * h;
+        if step % 32 == 0 {
+            let sample = path.sample(t).unwrap();
+            assert!(
+                distance(sample.orientation, oracle.orientation)
+                    <= path.model_angular_error_rad() + 1e-12
+            );
+            for k in 0..3 {
+                assert!((sample.angular_momentum[k] - momentum(t)[k]).abs() < 1e-13);
+            }
+        }
+        if step == 4096 {
+            break;
+        }
+        let q = oracle.orientation;
+        let evaluate = |at, q| {
+            derivative(
+                Spin {
+                    angular_momentum: momentum(at),
+                    ..oracle
+                },
+                q,
+            )
+        };
+        let k1 = evaluate(t, q);
+        let k2 = evaluate(t + h / 2., std::array::from_fn(|k| q[k] + h * k1[k] / 2.));
+        let k3 = evaluate(t + h / 2., std::array::from_fn(|k| q[k] + h * k2[k] / 2.));
+        let k4 = evaluate(t + h, std::array::from_fn(|k| q[k] + h * k3[k]));
+        let next: [f64; 4] =
+            std::array::from_fn(|k| q[k] + h * (k1[k] + 2. * k2[k] + 2. * k3[k] + k4[k]) / 6.);
+        let length = next.iter().map(|x| x * x).sum::<f64>().sqrt();
+        oracle.orientation = next.map(|x| x / length);
+        oracle.angular_momentum = momentum(t + h);
+    }
+    assert!(
+        distance(finer.end().orientation, oracle.orientation)
+            < distance(path.end().orientation, oracle.orientation)
+    );
+}

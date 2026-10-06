@@ -247,6 +247,17 @@ impl AffineBox {
             .map(|(center, _, tolerance)| (center, tolerance))
     }
 
+    /// Contact center with the emitting query's nominal floating gap budget.
+    pub(crate) fn contact_point_relative_with_error(
+        &self,
+        other: &AffineBox,
+        normal: DVec3,
+        error_m: f64,
+    ) -> Result<(DVec3, f64), super::PhysicsError> {
+        self.contact_patch_and_center_relative_with_error(other, normal, error_m)
+            .map(|(center, _, tolerance)| (center, tolerance))
+    }
+
     /// Admitted vertices of the shared contact patch, in this shape's frame.
     pub(crate) fn contact_patch_relative(
         &self,

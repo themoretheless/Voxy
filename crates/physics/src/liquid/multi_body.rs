@@ -145,6 +145,9 @@ pub trait LiquidBodyWorld {
         path: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<BodyGeometryHit, Error> {
+        if !path.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         let body = path.initial();
         if body.spin.is_some() || path.acceleration() != [0.; 3] {
             return Err(Error::CollisionBackend);
@@ -170,6 +173,9 @@ pub trait LiquidBodyWorld {
         second: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<BodyGeometryHit, Error> {
+        if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         let a = first.initial();
         let b = second.initial();
         if a.spin.is_some()
@@ -202,6 +208,9 @@ pub trait LiquidBodyWorld {
         path: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<BodyGeometryHit, Error> {
+        if !path.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         let body = path.initial();
         if body.spin.is_some() || path.acceleration() != [0.; 3] {
             return Err(Error::CollisionBackend);
@@ -228,6 +237,9 @@ pub trait LiquidBodyWorld {
         body: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, Error> {
+        if !particle.has_constant_acceleration() || !body.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         if particle.acceleration() != [0.; 3] || particle.initial().spin.is_some() {
             return Err(Error::CollisionBackend);
         }
@@ -240,6 +252,9 @@ pub trait LiquidBodyWorld {
         particle: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, Error> {
+        if !particle.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         if particle.acceleration() != [0.; 3] || particle.initial().spin.is_some() {
             return Err(Error::CollisionBackend);
         }
@@ -254,6 +269,9 @@ pub trait LiquidBodyWorld {
         path: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, Error> {
+        if !path.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         self.sweep_particle_rigid_contact(p, radius, index, path, budget)
             .map(Into::into)
     }
@@ -265,6 +283,9 @@ pub trait LiquidBodyWorld {
         second: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, Error> {
+        if !first.has_constant_acceleration() || !second.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         self.sweep_rigid_pair_contact(i, first, j, second, budget)
             .map(Into::into)
     }
@@ -274,6 +295,9 @@ pub trait LiquidBodyWorld {
         path: &crate::rigid_motion::RigidMotion,
         budget: usize,
     ) -> Result<RigidGeometryHit, Error> {
+        if !path.has_constant_acceleration() {
+            return Err(Error::CollisionBackend);
+        }
         self.sweep_rigid_environment_contact(index, path, budget)
             .map(Into::into)
     }
@@ -477,6 +501,16 @@ pub struct SupportedWorldReport {
     /// Signed work of reactions on the admitted nominal trajectories, not heat.
     pub reaction_work: f64,
     pub environment_reaction_impulse: [f64; 3],
+    /// Reaction angular impulse on finite bodies about the world origin.
+    /// Includes orbital COM motion and intrinsic COM torque; excludes impacts.
+    pub reaction_angular_impulse: [f64; 3],
+    /// Opposite moment transmitted to fixed geometry by support reactions.
+    /// Application points follow the admitted first-body COM with frozen arms.
+    pub environment_reaction_angular_impulse: [f64; 3],
+    /// Signed finite-body plus fixed-environment reaction angular impulse.
+    /// Retains error of the admitted frozen-arm model; never converted to heat.
+    pub reaction_angular_balance_residual: [f64; 3],
+
     pub supported_intervals: usize,
     pub support_points: usize,
     pub max_support_error_m: f64,
@@ -487,6 +521,8 @@ struct RigidWork {
     residual: f64,
     reaction: f64,
     environment_reaction_impulse: [f64; 3],
+    reaction_angular_impulse: [f64; 3],
+    environment_reaction_angular_impulse: [f64; 3],
     supported_intervals: usize,
     support_points: usize,
     max_support_error_m: f64,
@@ -765,6 +801,54 @@ fn solve_contact(
                 }
             }
         }
+        // Every reciprocal force uses the same world application point, which
+        // follows first COM with its initial world arm. The second COM arm
+        // evolves with relative translation; its torque must evolve too.
+        let mut reaction_torques: Vec<_> = support_report
+            .as_ref()
+            .and_then(|r| r.reaction.as_ref())
+            .map_or_else(
+                || {
+                    vec![
+                        crate::astrophysics_spin::TorquePolynomial::constant([0.; 3]);
+                        states.len()
+                    ]
+                },
+                |r| {
+                    r.wrenches
+                        .iter()
+                        .map(|w| crate::astrophysics_spin::TorquePolynomial::constant(w.torque))
+                        .collect()
+                },
+            );
+        if let Some(report) = &support_report {
+            if let Some(reaction) = &report.reaction {
+                for (support, force) in report.supports.iter().zip(&reaction.forces) {
+                    let Some(second) = support.second else {
+                        continue;
+                    };
+                    let first = support.first;
+                    let velocity = std::array::from_fn(|k| {
+                        states[first].motion.velocity[k] - states[second].motion.velocity[k]
+                    });
+                    let acceleration = std::array::from_fn(|k| {
+                        effective[first].force[k] / states[first].motion.mass
+                            - effective[second].force[k] / states[second].motion.mass
+                    });
+                    let moving = crate::astrophysics_spin::TorquePolynomial::moving_arm(
+                        [0.; 3],
+                        velocity,
+                        acceleration,
+                        force.map(|f| -f),
+                    )
+                    .map_err(|_| Error::NumericalFailure)?;
+                    for k in 0..3 {
+                        reaction_torques[second].rate[k] += moving.rate[k];
+                        reaction_torques[second].acceleration[k] += moving.acceleration[k];
+                    }
+                }
+            }
+        }
         let pair_supports = |i: usize, j: Option<usize>| -> Vec<RigidSupportPoint> {
             let Some(report) = &support_report else {
                 return Vec::new();
@@ -798,8 +882,14 @@ fn solve_contact(
                 } else {
                     effective[index - count]
                 };
+                let mut torque =
+                    crate::astrophysics_spin::TorquePolynomial::constant(wrench.torque);
+                if index >= count {
+                    torque.rate = reaction_torques[index - count].rate;
+                    torque.acceleration = reaction_torques[index - count].acceleration;
+                }
                 n.contact()
-                    .prepare_motion(wrench.force, wrench.torque, horizon, rotation)
+                    .prepare_motion_with_torque(wrench.force, torque, horizon, rotation)
                     .map_err(|_| Error::NumericalFailure)
             })
             .collect::<Result<_, _>>()?;
@@ -1001,8 +1091,18 @@ fn solve_contact(
                         r.wrenches[index - count]
                     });
                 let (rf, rt) = paths[index]
-                    .wrench_work(time, reaction.force, reaction.torque)
+                    .polynomial_wrench_work(time, reaction.force, reaction_torques[index - count])
                     .map_err(|_| Error::NumericalFailure)?;
+                let angular = paths[index]
+                    .polynomial_wrench_angular_impulse(
+                        time,
+                        reaction.force,
+                        reaction_torques[index - count],
+                    )
+                    .map_err(|_| Error::NumericalFailure)?;
+                for k in 0..3 {
+                    work.reaction_angular_impulse[k] += angular[k];
+                }
                 work.external += force + torque;
                 work.reaction += rf + rt;
                 work.residual += change.kinetic_energy_change - force - torque - rf - rt;
@@ -1034,12 +1134,44 @@ fn solve_contact(
                 return Err(Error::CollisionBudget);
             }
             work.max_support_error_m = work.max_support_error_m.max(support_error);
+            if let Some(reaction) = &report.reaction {
+                for (support, force) in report.supports.iter().zip(&reaction.forces) {
+                    if support.second.is_some() {
+                        continue;
+                    }
+                    let path = &paths[count + support.first];
+                    let center = path.initial().motion.position;
+                    let point = support.support.contact.point;
+                    let opposite_force = force.map(|f| -f);
+                    let torque = std::array::from_fn(|k| {
+                        let i = (k + 1) % 3;
+                        let j = (k + 2) % 3;
+                        (point[i] - center[i]) * opposite_force[j]
+                            - (point[j] - center[j]) * opposite_force[i]
+                    });
+                    let angular = path
+                        .wrench_angular_impulse(time, opposite_force, torque)
+                        .map_err(|_| Error::NumericalFailure)?;
+                    for k in 0..3 {
+                        work.environment_reaction_angular_impulse[k] += angular[k];
+                    }
+                }
+            }
             for k in 0..3 {
                 let impulse = report.environment_force[k] * time;
                 work.environment_reaction_impulse[k] += impulse;
                 ledger.environment_impulse[k] += impulse;
             }
-            if !work.reaction.is_finite() || !finite(work.environment_reaction_impulse) {
+            if !work.reaction.is_finite()
+                || !finite(work.environment_reaction_impulse)
+                || !finite(work.reaction_angular_impulse)
+                || !finite(work.environment_reaction_angular_impulse)
+                || !(0..3).all(|k| {
+                    (work.reaction_angular_impulse[k]
+                        + work.environment_reaction_angular_impulse[k])
+                        .is_finite()
+                })
+            {
                 return Err(Error::NumericalFailure);
             }
         }
@@ -1405,6 +1537,12 @@ impl Liquid {
         Ok(SupportedWorldReport {
             reaction_work: work.reaction,
             environment_reaction_impulse: work.environment_reaction_impulse,
+            reaction_angular_impulse: work.reaction_angular_impulse,
+            environment_reaction_angular_impulse: work.environment_reaction_angular_impulse,
+            reaction_angular_balance_residual: std::array::from_fn(|k| {
+                work.reaction_angular_impulse[k] + work.environment_reaction_angular_impulse[k]
+            }),
+
             supported_intervals: work.supported_intervals,
             support_points: work.support_points,
             max_support_error_m: work.max_support_error_m,

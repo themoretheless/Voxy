@@ -280,3 +280,87 @@ pub(super) fn assemble_reactions(
         queries,
     })
 }
+
+/// Read-only derivative of the assembled world network under constant gravity.
+#[derive(Clone, Debug, PartialEq)]
+pub struct RigidWorldReactionRates {
+    pub reactions: RigidWorldReactions,
+    pub rate: Option<crate::contact::NetworkReactionRate>,
+    /// Opposite fixed-world force derivative, newtons per second, not impulse.
+    pub environment_force_rate: [f64; 3],
+}
+impl Liquid {
+    /// Use the same snapshot geometry, owner indices and coupled baseline solve.
+    /// Common point motion follows first COM, matching supported stepping.
+    /// Edge Rate branches need a geometry second derivative and reject here.
+    pub fn rigid_world_reaction_rates(
+        &self,
+        bodies: &[ContactBody],
+        world: &impl LiquidBodyWorld,
+        additional: &[ContactWrench],
+        additional_rate: &[ContactWrench],
+        limits: DynamicWorldConfig,
+        config: crate::contact::ReactionRateConfig,
+    ) -> Result<RigidWorldReactionRates, Error> {
+        if additional_rate.len() != bodies.len()
+            || !config.jerk_tolerance.is_finite()
+            || config.jerk_tolerance <= 0.
+            || bodies.iter().zip(additional_rate).any(|(b, r)| {
+                !finite(r.force) || !finite(r.torque) || (b.spin.is_none() && r.torque != [0.; 3])
+            })
+        {
+            return Err(Error::InvalidCollision);
+        }
+        let external = world_wrenches(bodies, additional, self.config.gravity)?;
+        let reactions =
+            resolve_rigid_world_reactions(bodies, world, &external, limits, config.reaction)?;
+        let mut environment_force_rate = [0.; 3];
+        let rate = if let Some(baseline) = &reactions.reaction {
+            let motion = reactions
+                .supports
+                .iter()
+                .map(|s| {
+                    if matches!(s.support.plane, crate::contact::SupportPlane::Rate { .. }) {
+                        return Err(Error::CollisionBackend);
+                    }
+                    Ok(crate::contact::SupportMotion {
+                        point_velocity: bodies[s.first].motion.velocity,
+                        normal_acceleration: None,
+                    })
+                })
+                .collect::<Result<Vec<_>, Error>>()?;
+            let rate = crate::contact::resolve_rate_from_baseline(
+                bodies,
+                &reactions.supports,
+                &external,
+                additional_rate,
+                &motion,
+                config,
+                baseline.clone(),
+            )
+            .map_err(|e| match e {
+                crate::contact::Error::Budget => Error::CollisionBudget,
+                crate::contact::Error::InvalidInput => Error::InvalidCollision,
+                _ => Error::NumericalFailure,
+            })?;
+            for (s, f) in reactions.supports.iter().zip(&rate.forces_rate) {
+                if s.second.is_none() {
+                    for k in 0..3 {
+                        environment_force_rate[k] -= f[k];
+                    }
+                }
+            }
+            if !finite(environment_force_rate) {
+                return Err(Error::NumericalFailure);
+            }
+            Some(rate)
+        } else {
+            None
+        };
+        Ok(RigidWorldReactionRates {
+            reactions,
+            rate,
+            environment_force_rate,
+        })
+    }
+}

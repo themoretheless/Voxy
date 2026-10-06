@@ -47,6 +47,117 @@ fn advance(q: [f64; 4], omega: Vector, dt: f64) -> Result<[f64; 4], Error> {
     }
     Ok(next.map(|v| v / norm))
 }
+/// World torque τ(t) = value + rate*t + acceleration*t²/2.
+/// Coefficients are about COM and time is relative to the current interval.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct TorquePolynomial {
+    pub value: [f64; 3],
+    pub rate: [f64; 3],
+    pub acceleration: [f64; 3],
+}
+impl TorquePolynomial {
+    pub fn constant(value: [f64; 3]) -> Self {
+        Self {
+            value,
+            rate: [0.; 3],
+            acceleration: [0.; 3],
+        }
+    }
+    /// Moment of a constant world force on an application arm that translates
+    /// quadratically relative to COM. Arms and derivatives share world axes.
+    pub fn moving_arm(
+        arm: [f64; 3],
+        velocity: [f64; 3],
+        acceleration: [f64; 3],
+        force: [f64; 3],
+    ) -> Result<Self, Error> {
+        if arm
+            .iter()
+            .chain(&velocity)
+            .chain(&acceleration)
+            .chain(&force)
+            .any(|x| !x.is_finite())
+        {
+            return Err(Error::InvalidInput);
+        }
+        let result = Self {
+            value: cross(arm, force),
+            rate: cross(velocity, force),
+            acceleration: cross(acceleration, force),
+        };
+        result.validate().map_err(|_| Error::NumericalOverflow)?;
+        Ok(result)
+    }
+    fn validate(self) -> Result<(), Error> {
+        if self
+            .value
+            .iter()
+            .chain(&self.rate)
+            .chain(&self.acceleration)
+            .any(|x| !x.is_finite())
+        {
+            Err(Error::InvalidInput)
+        } else {
+            Ok(())
+        }
+    }
+    /// Exact polynomial angular impulse in nominal floating arithmetic.
+    pub fn impulse(self, time: f64) -> Result<[f64; 3], Error> {
+        self.validate()?;
+        if !time.is_finite() || time < 0. {
+            return Err(Error::InvalidInput);
+        }
+        let impulse: [f64; 3] = std::array::from_fn(|k| {
+            let rate = self.acceleration[k].mul_add(time / 3., self.rate[k]);
+            rate.mul_add(time * 0.5, self.value[k]) * time
+        });
+        if impulse.iter().any(|x| !x.is_finite()) {
+            Err(Error::NumericalOverflow)
+        } else {
+            Ok(impulse)
+        }
+    }
+    /// Rebase this law to a later interval without changing its world values.
+    pub fn shifted(self, time: f64) -> Result<Self, Error> {
+        self.validate()?;
+        if !time.is_finite() || time < 0. {
+            return Err(Error::InvalidInput);
+        }
+        let shifted = Self {
+            value: std::array::from_fn(|k| {
+                self.acceleration[k]
+                    .mul_add(time * 0.5, self.rate[k])
+                    .mul_add(time, self.value[k])
+            }),
+            rate: std::array::from_fn(|k| self.acceleration[k].mul_add(time, self.rate[k])),
+            acceleration: self.acceleration,
+        };
+        shifted.validate().map_err(|_| Error::NumericalOverflow)?;
+        Ok(shifted)
+    }
+    /// Triangle bound on |τ| and on the accumulated |τ| integral over a prefix.
+    /// Bounds support model error admission; they are not directed rounding.
+    pub(crate) fn envelopes(self, duration: f64) -> Result<(f64, f64), Error> {
+        self.validate()?;
+        if !duration.is_finite() || duration < 0. {
+            return Err(Error::InvalidInput);
+        }
+        let norm = |v: [f64; 3]| v[0].hypot(v[1]).hypot(v[2]);
+        let base = norm(self.value);
+        let rate = norm(self.rate);
+        let acceleration = norm(self.acceleration);
+        let maximum = base + rate * duration + (acceleration * (duration * 0.5)) * duration;
+        let integral = base * duration
+            + (rate * (duration * 0.5)) * duration
+            + ((acceleration * (duration / 6.)) * duration) * duration;
+        if !maximum.is_finite() || !integral.is_finite() {
+            Err(Error::NumericalOverflow)
+        } else {
+            Ok((maximum, integral))
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Spin {
     /// Body-to-world unit quaternion [x,y,z,w].
@@ -145,13 +256,26 @@ impl Spin {
     /// Prepare the same implicit midpoint step as a sampleable constant-axis arc.
     /// This arc is the numerical path, not an exact anisotropic free-spin orbit.
     pub fn prepare_arc(self, torque: Vector, dt: f64) -> Result<SpinArc, Error> {
+        self.prepare_polynomial_arc(TorquePolynomial::constant(torque), dt)
+    }
+
+    /// Same midpoint attitude integrator with exactly integrated polynomial
+    /// world angular momentum. Orientation remains an admitted numerical arc.
+    pub fn prepare_polynomial_arc(
+        self,
+        torque: TorquePolynomial,
+        dt: f64,
+    ) -> Result<SpinArc, Error> {
         self.validate()?;
-        if !dt.is_finite() || dt <= 0.0 || torque.iter().any(|v| !v.is_finite()) {
+        torque.validate()?;
+        if !dt.is_finite() || dt <= 0.0 {
             return Err(Error::InvalidInput);
         }
+        let midpoint_impulse = torque.impulse(dt * 0.5)?;
+        let end_impulse = torque.impulse(dt)?;
         let midpoint_momentum =
-            std::array::from_fn(|k| self.angular_momentum[k] + torque[k] * dt * 0.5);
-        let end_momentum = std::array::from_fn(|k| self.angular_momentum[k] + torque[k] * dt);
+            std::array::from_fn(|k| self.angular_momentum[k] + midpoint_impulse[k]);
+        let end_momentum = std::array::from_fn(|k| self.angular_momentum[k] + end_impulse[k]);
         let mut half = self;
         half.angular_momentum = midpoint_momentum;
         let mut converged = false;
@@ -192,7 +316,7 @@ impl Spin {
 pub struct SpinArc {
     start: Spin,
     end: Spin,
-    torque: Vector,
+    torque: TorquePolynomial,
     duration: f64,
     angular_velocity: Vector,
 }
@@ -209,7 +333,11 @@ impl SpinArc {
     pub fn angular_velocity(self) -> Vector {
         self.angular_velocity
     }
+    /// World torque at the beginning of the arc.
     pub fn torque(self) -> Vector {
+        self.torque.value
+    }
+    pub fn torque_polynomial(self) -> TorquePolynomial {
         self.torque
     }
     /// Sample the admitted arc; preserve accepted endpoints exactly.
@@ -223,11 +351,10 @@ impl SpinArc {
         if time == self.duration {
             return Ok(self.end);
         }
+        let impulse = self.torque.impulse(time)?;
         let state = Spin {
             orientation: advance(self.start.orientation, self.angular_velocity, time)?,
-            angular_momentum: std::array::from_fn(|k| {
-                self.start.angular_momentum[k] + self.torque[k] * time
-            }),
+            angular_momentum: std::array::from_fn(|k| self.start.angular_momentum[k] + impulse[k]),
             ..self.start
         };
         state.validate()?;

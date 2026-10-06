@@ -5825,3 +5825,163 @@ Nominal geometry bounds are not certified bounds on the exact rotational orbit.
 
 Full release physics/gameplay/editor regression: 1916 passed, 24 ignored.
 Qualification logs and source hashes: artifacts/supported-rigid-motion-2026-10-06.
+
+### Reaction angular impulse accounting (2026-10-06)
+
+`RigidMotion::wrench_angular_impulse` integrates world-origin orbital
+`r(t) × F` and intrinsic COM torque over the same nominal quadratic COM path,
+including event-clipped prefixes. Probe wrenches do not construct counterfactual
+paths. An independent sampled quadratic integral, total angular-momentum change,
+wrench decomposition and world-origin translation qualify the calculation.
+
+Supported reports now retain finite-body reaction angular impulse, opposite
+fixed-environment reaction angular impulse, and their signed balance residual.
+The environment application point follows the admitted first-body COM with its
+world arm. These fields cover continuous support reactions, not collision
+impulses, and are diagnostics rather than heat or an exact-trajectory certificate.
+A sliding frozen-arm pair independently exposes a 0.4 N m s spurious couple;
+an evolving reciprocal torque would cancel it. This supplies a conservation
+check for the required moving-application model but does not remove the current
+finite-body sliding or rotating-support admission restrictions.
+
+Qualification: 1918 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks and format/diff checks passed. Raw logs,
+including the initial test compile failure, are retained under
+artifacts/reaction-angular-impulse-2026-10-06. Changes are local.
+
+### Polynomial moving-arm torque trajectories (2026-10-06)
+
+`TorquePolynomial` represents world COM torque with value, first derivative and
+second derivative. `moving_arm` obtains these coefficients from a constant
+world force and a quadratically translating relative application arm. The same
+`SpinArc` and adaptive `SpinPath` now integrate polynomial angular momentum at
+every prefix. Orientation still follows the existing midpoint constant-axis
+arcs; admission uses complete torque and impulse envelopes, and retains the
+existing model-bound limitations rather than claiming exact rotational motion.
+Constant-torque APIs delegate to this shared path.
+
+`ContactBody::prepare_motion_with_torque` reuses `RigidMotion` with constant COM
+force and polynomial torque. Probe work integrates each polynomial angular
+impulse dotted with the admitted arc velocity. World-origin angular impulse
+includes both orbital motion and polynomial intrinsic torque. Impact remainders
+rebase the law to the event time, preserving its original time dependence.
+
+Analytic spherical rotation and an independent time-dependent anisotropic RK4
+oracle qualify momentum prefixes, attitude admission and refinement. A moving
+reciprocal application-point fixture cancels the spurious frozen-arm couple and
+closes the force-pair angular impulse on the same prepared paths. It qualifies
+wrench evolution, not scene contact admission. Scene support evolution still
+uses frozen wrenches: integrating the new law there requires evolving coupled
+reactions, patch ownership and contact transitions. No finite-body sliding or
+rotating-support admission restriction has been removed by this change.
+
+Qualification: 1922 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks and format/diff checks passed. Logs and
+source hashes: artifacts/polynomial-moving-arm-torque-2026-10-06. Changes are local.
+
+### Moving reciprocal support arms in the shared event loop (2026-10-06)
+
+Each continuous reciprocal reaction now acts at one common world point following
+the first body's COM with its initial world arm. The second body's COM torque
+evolves polynomially from relative velocity and acceleration. The same prepared
+paths integrate this torque, its signed work and world-origin angular impulse;
+external loads and the fixed-environment ledger keep their existing owners.
+
+Scene interval admission no longer rejects relative COM translation by itself.
+It still bounds the complete contact gap, spin excursion and application-point
+ownership on both affine volumes. Large rotation, patch-edge transitions or
+evolving coupled reaction magnitudes remain unresolved and can reject within
+the existing budgets; no position, velocity or angular momentum is snapped.
+
+A real affine-box/floor fixture qualifies a 2 kg sliding upper body over a 3 kg
+lower body for 0.0001 s. Moving load torque -20t gives the lower body -1e-7
+N m s angular momentum, while internal reaction angular impulse cancels and
+the floor receives -0.005 N s. The fixture uses the default geometry budget
+(1e-10 m). This is finite moving-arm integration, not qualification of sustained
+sliding, general rotating supports or complete edge-release evolution.
+
+Qualification: 1923 release physics/gameplay/editor tests passed, 24 ignored.
+All six supported-motion fixtures also passed after tightening the new fixture
+to the default geometry budget. App/editor all-target release checks and
+format/diff checks passed. Logs and source hashes:
+artifacts/moving-reciprocal-scene-supports-2026-10-06. Changes are local.
+
+### Coupled reaction tangent rates (2026-10-06)
+
+`resolve_normal_reaction_rate_network` obtains pressure derivatives through the
+same indexed mass/inertia constraint kernel as impulses and baseline reactions.
+Loaded points admit signed pressure derivatives. Zero-pressure points retain a
+nonnegative tangent cone; outgoing or already separating points stay unloaded.
+The derivative includes motion of common application arms, gyroscopic terms,
+rotating normal directions and rotating world inertia. `normal_gap_jerk` is the
+analytic directional derivative of the existing normal-gap acceleration formula.
+A geometry-owned Rate normal requires its second derivative and the unit-normal
+identity; no unknown normal acceleration is silently replaced with zero.
+
+Reports retain pressure/force derivatives, COM wrench derivatives, normal-gap
+jerks, solver residual and the first zero pressure in the linear strength model.
+That time is a branch limit, not a nonlinear trajectory or geometry certificate.
+The unchanged unilateral path retains its historical candidate ordering. Signed
+tangent solves use the same operator and bounds rather than a parallel solver.
+
+`Liquid::rigid_world_reaction_rates` reuses actual snapshot geometry and its
+coupled baseline without a second baseline solve. Additional load derivatives
+compose with constant configured gravity. Point motion follows first COM, matching
+the current supported-step application model. Edge Rate branches reject here
+until their geometric second derivative is supplied. Queries do not mutate fluid
+or body state; the fixed-world report is force derivative in N/s, not impulse.
+
+Analytic moving-stack pressure rates are -10/+10 N/s on the floor; their torque
+derivative cancels the moving upper load. Proper cyclic frame rotation and body
+reordering preserve this result. Pressure birth, unloading, outgoing supports,
+invalid normal accelerations and read-only rejection are exercised. An independent
+central directional difference checks anisotropic rotating gap jerk and its
+refinement. Actual affine scene geometry also redistributes floor pressure with
++20 N m/s moment derivative and near-zero total COM wrench derivatives.
+
+Finite stepping still holds reaction force magnitudes constant within each
+accepted interval. Sustained sliding requires integrating these changing forces
+in the shared COM trajectory, admitting full geometry paths, pressure zero
+transitions and ownership changes. This local tangent calculation does not claim
+that sustained sliding or general rotating support evolution is complete.
+
+Qualification: 1929 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks and format/diff checks passed. Raw logs
+include the initial scene-fixture configuration type error and subsequent passes.
+Qualification and current source hashes:
+artifacts/coupled-reaction-tangent-rates-2026-10-06. Changes are local.
+
+### Affine-force prepared COM trajectories (2026-10-06)
+
+`ContactBody::prepare_affine_motion` extends the existing `RigidMotion` owner
+with F(t)=F0+F1*t. It integrates quadratic velocity and cubic COM position, while
+rotation retains the shared polynomial-torque path. Probe work and world-origin
+angular impulse integrate the same actual nominal path. Impact remainders rebase
+both the force and torque laws to the event time. Signed integration discrepancy
+remains diagnostic and is never converted to heat.
+
+Admission validates finite force endpoints, cubic Bezier position controls and
+quadratic velocity controls, plus conservative total kinetic-energy envelopes.
+Invalid laws and an interior energy overflow with harmless endpoints reject
+before publication. These nominal floating checks are not real-arithmetic
+certificates. Legacy constant-force builders delegate with zero force derivative.
+`acceleration()` now explicitly means initial acceleration; parabolic consumers
+must first require `has_constant_acceleration()`.
+
+Independent three-node Gaussian integration checks force power and quartic
+orbital moment through all tested prefixes; analytic COM, momentum, energy,
+impact remainder and rollback fixtures also qualify the changing-force model.
+Current SceneBodyWorld, nominal angular sweeps and support interval admission
+explicitly reject cubic force paths, including zero initial acceleration. No
+legacy linear/parabolic shortcut may silently report a clear trajectory for one.
+
+The reaction-rate solve is not yet wired into finite scene evolution. That needs
+cubic COM geometry bounds, pressure-zero transitions and the common-point
+wrench law under changing forces. Sustained sliding and general rotating
+supports therefore remain unfinished.
+
+Qualification: 1932 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks and format/diff checks passed. Raw logs
+retain the initial scene test trait-import compile error and the passing rerun.
+Logs and current source hashes: artifacts/affine-force-rigid-trajectories-2026-10-06.
+Changes are local.

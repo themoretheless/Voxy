@@ -1,7 +1,7 @@
 //! Bounded adaptive paths over the existing Spin midpoint integrator.
 use crate::{
     astrophysics::Error,
-    astrophysics_spin::{Spin, SpinArc},
+    astrophysics_spin::{Spin, SpinArc, TorquePolynomial},
 };
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Config {
@@ -41,7 +41,10 @@ fn norm(v: [f64; 3]) -> f64 {
 fn local_bound(arc: SpinArc) -> Result<(f64, f64), PathError> {
     let dt = arc.duration();
     let initial = arc.start();
-    let torque = arc.torque();
+    let (maximum_torque, impulse_bound) = arc
+        .torque_polynomial()
+        .envelopes(dt)
+        .map_err(PathError::Integrator)?;
     let inverse_min = 1.
         / initial
             .inertia
@@ -49,7 +52,7 @@ fn local_bound(arc: SpinArc) -> Result<(f64, f64), PathError> {
             .copied()
             .fold(f64::INFINITY, f64::min);
     let inverse_max = 1. / initial.inertia.iter().copied().fold(0., f64::max);
-    let lmax = norm(initial.angular_momentum) + norm(torque) * dt;
+    let lmax = norm(initial.angular_momentum) + impulse_bound;
     let lipschitz = 2. * (inverse_min - inverse_max) * lmax;
     let midpoint = arc.sample(dt * 0.5).map_err(PathError::Integrator)?;
     let omega = arc.angular_velocity();
@@ -57,7 +60,7 @@ fn local_bound(arc: SpinArc) -> Result<(f64, f64), PathError> {
     let defect = norm(std::array::from_fn(|k| actual[k] - omega[k]));
     let guard = 512. * f64::EPSILON * (1. + inverse_min * lmax + norm(omega));
     let residual =
-        defect + guard + (lipschitz * norm(omega) + inverse_min * norm(torque)) * dt * 0.5;
+        defect + guard + (lipschitz * norm(omega) + inverse_min * maximum_torque) * dt * 0.5;
     let exponent = lipschitz * dt;
     let growth = exponent.exp();
     let integral = if exponent == 0. {
@@ -86,10 +89,27 @@ impl Spin {
         duration: f64,
         config: Config,
     ) -> Result<SpinPath, PathError> {
+        self.prepare_polynomial_path(TorquePolynomial::constant(torque), duration, config)
+    }
+
+    /// Prepare changing world torque through the same adaptive midpoint arcs.
+    /// Angular momentum integrates the polynomial at every prefix; attitude
+    /// admission includes the torque envelope over each complete interval.
+    pub fn prepare_polynomial_path(
+        self,
+        torque: TorquePolynomial,
+        duration: f64,
+        config: Config,
+    ) -> Result<SpinPath, PathError> {
         self.angular_velocity().map_err(PathError::Integrator)?;
         if !duration.is_finite()
             || duration <= 0.
-            || torque.iter().any(|v| !v.is_finite())
+            || torque
+                .value
+                .iter()
+                .chain(&torque.rate)
+                .chain(&torque.acceleration)
+                .any(|v| !v.is_finite())
             || !config.max_angular_error_rad.is_finite()
             || config.max_angular_error_rad <= 0.
             || !config.min_step_s.is_finite()
@@ -101,9 +121,9 @@ impl Spin {
         }
         let inverse_min = 1. / self.inertia.iter().copied().fold(f64::INFINITY, f64::min);
         let inverse_max = 1. / self.inertia.iter().copied().fold(0., f64::max);
-        let global_rate = 2.
-            * (inverse_min - inverse_max)
-            * (norm(self.angular_momentum) + norm(torque) * duration);
+        let (_, impulse_bound) = torque.envelopes(duration).map_err(PathError::Integrator)?;
+        let global_rate =
+            2. * (inverse_min - inverse_max) * (norm(self.angular_momentum) + impulse_bound);
         let reserve = (-global_rate * duration).exp();
         if !global_rate.is_finite() || reserve == 0. {
             return Err(PathError::NumericalBound);
@@ -134,7 +154,7 @@ impl Spin {
             }
             path.trials += 1;
             let trial = state
-                .prepare_arc(torque, step)
+                .prepare_polynomial_arc(torque.shifted(time).map_err(PathError::Integrator)?, step)
                 .map_err(PathError::Integrator)
                 .and_then(|arc| {
                     local_bound(arc).map(|(local, growth)| (arc, local + growth * error))

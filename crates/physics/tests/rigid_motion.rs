@@ -349,3 +349,413 @@ fn endpoint_event_remainder_below_subdivision_floor_is_admitted_with_same_error_
     strict.max_angular_error_rad = f64::MIN_POSITIVE;
     assert!(a.prepare_motion([0.; 3], [0.; 3], 1e-14, strict).is_err());
 }
+
+fn vector_add(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    std::array::from_fn(|k| a[k] + b[k])
+}
+fn vector_scale(a: [f64; 3], s: f64) -> [f64; 3] {
+    a.map(|x| x * s)
+}
+fn vector_cross(a: [f64; 3], b: [f64; 3]) -> [f64; 3] {
+    std::array::from_fn(|k| a[(k + 1) % 3] * b[(k + 2) % 3] - a[(k + 2) % 3] * b[(k + 1) % 3])
+}
+fn assert_vector_close(a: [f64; 3], b: [f64; 3], tolerance: f64) {
+    for k in 0..3 {
+        assert!((a[k] - b[k]).abs() < tolerance, "{a:?} != {b:?}");
+    }
+}
+#[test]
+fn angular_impulse_integrates_orbital_motion_and_preserves_frame_and_wrench_balance() {
+    let mut initial = body();
+    initial.motion.position = [2., -3., 5.];
+    initial.motion.velocity = [1., 4., -2.];
+    let force = [6., -2., 4.];
+    let torque = [1., 2., -3.];
+    let path = initial
+        .prepare_motion(force, torque, 0.2, config())
+        .unwrap();
+    let momentum = |b: ContactBody| {
+        vector_add(
+            vector_cross(
+                b.motion.position,
+                vector_scale(b.motion.velocity, b.motion.mass),
+            ),
+            b.spin.unwrap().angular_momentum,
+        )
+    };
+    let probe_force = [-3., 5., 2.];
+    let probe_torque = [4., -2., 1.];
+    let shift = [7., -11., 13.];
+    let mut moved = initial;
+    moved.motion.position = vector_add(initial.motion.position, shift);
+    let moved_path = moved.prepare_motion(force, torque, 0.2, config()).unwrap();
+    for i in 0..=32 {
+        let time = 0.2 * i as f64 / 32.;
+        let actual = path.wrench_angular_impulse(time, force, torque).unwrap();
+        assert_vector_close(
+            actual,
+            vector_add(
+                momentum(path.sample(time).unwrap()),
+                vector_scale(momentum(initial), -1.),
+            ),
+            2e-13,
+        );
+        // Simpson independently integrates this quadratic orbital integrand.
+        let rate = |t| {
+            vector_add(
+                vector_cross(path.sample(t).unwrap().motion.position, probe_force),
+                probe_torque,
+            )
+        };
+        let expected = vector_scale(
+            vector_add(
+                vector_add(rate(0.), vector_scale(rate(time * 0.5), 4.)),
+                rate(time),
+            ),
+            time / 6.,
+        );
+        let probe = path
+            .wrench_angular_impulse(time, probe_force, probe_torque)
+            .unwrap();
+        assert_vector_close(probe, expected, 2e-14);
+        let rest = path
+            .wrench_angular_impulse(
+                time,
+                vector_add(force, vector_scale(probe_force, -1.)),
+                vector_add(torque, vector_scale(probe_torque, -1.)),
+            )
+            .unwrap();
+        assert_vector_close(vector_add(probe, rest), actual, 2e-14);
+        let translated = moved_path
+            .wrench_angular_impulse(time, probe_force, probe_torque)
+            .unwrap();
+        assert_vector_close(
+            translated,
+            vector_add(probe, vector_scale(vector_cross(shift, probe_force), time)),
+            5e-14,
+        );
+    }
+    assert!(path.wrench_angular_impulse(-1., force, torque).is_err());
+    assert!(path.wrench_angular_impulse(0.3, force, torque).is_err());
+    assert!(
+        path.wrench_angular_impulse(0.1, [f64::NAN; 3], torque)
+            .is_err()
+    );
+}
+#[test]
+fn frozen_reciprocal_arms_expose_sliding_couple_instead_of_hiding_it() {
+    let mut first = body();
+    first.spin = None;
+    first.motion.position = [0., 1., 0.];
+    first.motion.velocity = [2., 0., 0.];
+    let mut second = first;
+    second.motion.position = [0.; 3];
+    second.motion.velocity = [0.; 3];
+    let a = first
+        .prepare_motion([0.; 3], [0.; 3], 0.2, config())
+        .unwrap();
+    let b = second
+        .prepare_motion([0.; 3], [0.; 3], 0.2, config())
+        .unwrap();
+    let residual = vector_add(
+        a.wrench_angular_impulse(0.2, [0., 10., 0.], [0.; 3])
+            .unwrap(),
+        b.wrench_angular_impulse(0.2, [0., -10., 0.], [0.; 3])
+            .unwrap(),
+    );
+    // Integral of relative travel 2t crossed with 10 N is 0.4 N m s.
+    assert_vector_close(residual, [0., 0., 0.4], 1e-14);
+    // A common moving world point needs an evolving second COM torque -20t.
+    assert!((residual[2] - 20. * 0.2_f64.powi(2) / 2.).abs() < 1e-14);
+}
+
+#[test]
+fn moving_reciprocal_application_preserves_angular_balance_and_uses_same_path_work() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let mut first = body();
+    first.motion.position = [0., 1., 0.];
+    first.motion.velocity = [2., 0., 0.];
+    first.spin.as_mut().unwrap().angular_momentum = [0.; 3];
+    let mut second = first;
+    second.motion.position = [0.; 3];
+    second.motion.velocity = [0.; 3];
+    let up = [0., 10., 0.];
+    let down = [0., -10., 0.];
+    let first_law = TorquePolynomial::moving_arm([0., -0.5, 0.], [0.; 3], [0.; 3], up).unwrap();
+    let second_law =
+        TorquePolynomial::moving_arm([0., 0.5, 0.], [2., 0., 0.], [0.; 3], down).unwrap();
+    // External COM loads cancel the reciprocal forces; keep their torque and
+    // moving application point. This fixture qualifies wrench evolution only.
+    let a = first
+        .prepare_motion_with_torque([0.; 3], first_law, 0.2, config())
+        .unwrap();
+    let b = second
+        .prepare_motion_with_torque([0.; 3], second_law, 0.2, config())
+        .unwrap();
+    for i in 0..=32 {
+        let t = 0.2 * i as f64 / 32.;
+        let impulse_a = a
+            .polynomial_wrench_angular_impulse(t, up, first_law)
+            .unwrap();
+        let impulse_b = b
+            .polynomial_wrench_angular_impulse(t, down, second_law)
+            .unwrap();
+        assert_vector_close(vector_add(impulse_a, impulse_b), [0.; 3], 2e-14);
+        assert!(
+            (b.sample(t).unwrap().spin.unwrap().angular_momentum[2] + 10. * t * t).abs() < 1e-13
+        );
+        let actual = b.work(t).unwrap();
+        let probe = b.polynomial_wrench_work(t, down, second_law).unwrap();
+        assert!((actual.force_work + actual.torque_work - probe.0 - probe.1).abs() < 1e-14);
+        assert!(actual.energy_residual.abs() < 1e-5);
+    }
+    // Polynomial acceleration is essential for a quadratically moving arm.
+    let accelerated =
+        TorquePolynomial::moving_arm([0.; 3], [2., 0., 0.], [6., 0., 0.], down).unwrap();
+    assert_vector_close(accelerated.impulse(0.2).unwrap(), [0., 0., -0.48], 1e-14);
+}
+
+#[test]
+fn impact_remainder_rebases_polynomial_torque_at_actual_event_time() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let mut a = body();
+    a.motion.velocity = [3., 0., 0.];
+    let mut b = body();
+    b.motion.velocity = [0.; 3];
+    let law = TorquePolynomial {
+        value: [0., 0., 1.],
+        rate: [0., 0., 3.],
+        acceleration: [0., 0., 4.],
+    };
+    let pa = a
+        .prepare_motion_with_torque([0.; 3], law, 0.1, config())
+        .unwrap();
+    let pb = b
+        .prepare_motion_with_torque([0.; 3], law, 0.1, config())
+        .unwrap();
+    let originals = (pa.clone(), pb.clone());
+    let event = physics::rigid_motion::prepare_impact(
+        &pa,
+        &pb,
+        0.04,
+        [1., 2., 3.],
+        [-1., 0., 0.],
+        0.5,
+        config(),
+    )
+    .unwrap();
+    let end_impulse = law.impulse(0.1).unwrap();
+    let event_impulse = law.impulse(0.04).unwrap();
+    for (state, path) in [
+        (event.first, event.first_remainder.unwrap()),
+        (event.second, event.second_remainder.unwrap()),
+    ] {
+        let expected = vector_add(
+            state.spin.unwrap().angular_momentum,
+            vector_add(end_impulse, vector_scale(event_impulse, -1.)),
+        );
+        assert_vector_close(path.end().spin.unwrap().angular_momentum, expected, 1e-13);
+    }
+    assert_eq!((pa, pb), originals);
+}
+
+#[test]
+fn affine_force_closes_cubic_com_work_momentum_and_independent_prefix_integrals() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let initial = body();
+    let force = [4., -2., 6.];
+    let rate = [-3., 5., 2.];
+    let zero = TorquePolynomial::constant([0.; 3]);
+    let path = initial
+        .prepare_affine_motion(force, rate, zero, 0.2, config())
+        .unwrap();
+    assert!(!path.has_constant_acceleration());
+    let momentum = |b: ContactBody| {
+        vector_add(
+            vector_cross(
+                b.motion.position,
+                vector_scale(b.motion.velocity, b.motion.mass),
+            ),
+            b.spin.unwrap().angular_momentum,
+        )
+    };
+    for i in 0..=32 {
+        let t = 0.2 * i as f64 / 32.;
+        let state = path.sample(t).unwrap();
+        for k in 0..3 {
+            let expected = initial.motion.position[k]
+                + initial.motion.velocity[k] * t
+                + force[k] / initial.motion.mass * t * t / 2.
+                + rate[k] / initial.motion.mass * t * t * t / 6.;
+            assert!((state.motion.position[k] - expected).abs() < 2e-14);
+            let impulse = force[k] * t + rate[k] * t * t / 2.;
+            assert!(
+                (initial.motion.mass * (state.motion.velocity[k] - initial.motion.velocity[k])
+                    - impulse)
+                    .abs()
+                    < 2e-14
+            );
+        }
+        let work = path.work(t).unwrap();
+        assert!(work.energy_residual.abs() < 2e-13);
+        let angular = path
+            .affine_wrench_angular_impulse(t, force, rate, zero)
+            .unwrap();
+        assert_vector_close(
+            angular,
+            vector_add(momentum(state), vector_scale(momentum(initial), -1.)),
+            3e-13,
+        );
+        // Three-node Gaussian quadrature independently integrates the quartic
+        // orbital rate and cubic power from sampled states.
+        let node = (3_f64 / 5.).sqrt();
+        let mut oracle = [0.; 3];
+        let mut power = 0.;
+        for (x, w) in [(-node, 5. / 9.), (0., 8. / 9.), (node, 5. / 9.)] {
+            let time = t * (x + 1.) / 2.;
+            let sample = path.sample(time).unwrap();
+            let f = vector_add(force, vector_scale(rate, time));
+            oracle = vector_add(
+                oracle,
+                vector_scale(vector_cross(sample.motion.position, f), w * t / 2.),
+            );
+            power += (0..3)
+                .map(|k| f[k] * sample.motion.velocity[k])
+                .sum::<f64>()
+                * w
+                * t
+                / 2.;
+        }
+        assert_vector_close(angular, oracle, 5e-14);
+        assert!((work.force_work - power).abs() < 1e-13);
+    }
+    assert_eq!(path.initial(), initial);
+}
+
+#[test]
+fn affine_force_impact_remainder_rebases_load_and_preserves_paths_on_failure() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let mut a = body();
+    a.motion.velocity = [3., 0., 0.];
+    let mut b = body();
+    b.motion.velocity = [0.; 3];
+    let zero = TorquePolynomial::constant([0.; 3]);
+    let rate = [2., 0., 0.];
+    let pa = a
+        .prepare_affine_motion([1., 0., 0.], rate, zero, 0.1, config())
+        .unwrap();
+    let pb = b
+        .prepare_affine_motion([1., 0., 0.], rate, zero, 0.1, config())
+        .unwrap();
+    let originals = (pa.clone(), pb.clone());
+    let event = physics::rigid_motion::prepare_impact(
+        &pa,
+        &pb,
+        0.04,
+        [1., 2., 3.],
+        [-1., 0., 0.],
+        0.5,
+        config(),
+    )
+    .unwrap();
+    for (state, remainder) in [
+        (event.first, event.first_remainder.unwrap()),
+        (event.second, event.second_remainder.unwrap()),
+    ] {
+        let force_at_event = 1. + 2. * 0.04;
+        let impulse = force_at_event * 0.06 + 2. * 0.06 * 0.06 / 2.;
+        assert!(
+            (remainder.end().motion.velocity[0]
+                - state.motion.velocity[0]
+                - impulse / state.motion.mass)
+                .abs()
+                < 1e-13
+        );
+        assert_eq!(remainder.jerk(), pa.jerk());
+    }
+    let mut invalid = config();
+    invalid.max_arcs = 0;
+    assert!(
+        physics::rigid_motion::prepare_impact(
+            &pa,
+            &pb,
+            0.04,
+            [1., 2., 3.],
+            [-1., 0., 0.],
+            0.5,
+            invalid
+        )
+        .is_err()
+    );
+    assert_eq!((pa, pb), originals);
+}
+
+#[test]
+fn affine_force_admission_rejects_nonfinite_laws_and_interior_energy_overflow() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let mut initial = body();
+    initial.spin = None;
+    let zero = TorquePolynomial::constant([0.; 3]);
+    let before = initial;
+    assert_eq!(
+        initial.prepare_affine_motion([0.; 3], [f64::NAN; 3], zero, 0.1, config()),
+        Err(Error::InvalidInput)
+    );
+    assert_eq!(
+        initial.prepare_affine_motion([0.; 3], [1e308, 0., 0.], zero, 2., config()),
+        Err(Error::NumericalFailure)
+    );
+    // Endpoints have low speed; the quadratic velocity has an unrepresentable
+    // kinetic-energy peak. The complete control hull rejects before publication.
+    initial.motion.mass = 1.;
+    initial.motion.position = [0.; 3];
+    initial.motion.velocity = [0.; 3];
+    assert_eq!(
+        initial.prepare_affine_motion([1e155, 0., 0.], [-2e155, 0., 0.], zero, 1., config()),
+        Err(Error::NumericalFailure)
+    );
+    assert_eq!(before, body_without_spin());
+}
+fn body_without_spin() -> ContactBody {
+    let mut b = body();
+    b.spin = None;
+    b
+}
+
+#[test]
+fn cubic_velocity_hull_covers_hidden_speed_peak_and_clipped_intervals() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let mut initial = body();
+    initial.spin = None;
+    initial.motion.velocity = [0.; 3];
+    let path = initial
+        .prepare_affine_motion(
+            [36., 0., 0.],
+            [-72., 0., 0.],
+            TorquePolynomial::constant([0.; 3]),
+            1.,
+            config(),
+        )
+        .unwrap();
+    assert_eq!(path.initial().motion.velocity[0], 0.);
+    assert_eq!(path.end().motion.velocity[0], 0.);
+    assert_eq!(path.sample(0.5).unwrap().motion.velocity[0], 4.5);
+    for (a, b) in [(0., 1.), (0.1, 0.7), (0.6, 1.)] {
+        let controls = path.velocity_controls(a, b).unwrap();
+        for i in 0..=64 {
+            let t = a + (b - a) * i as f64 / 64.;
+            let v = path.sample(t).unwrap().motion.velocity;
+            for k in 0..3 {
+                let lo = controls.iter().map(|p| p[k]).fold(f64::INFINITY, f64::min);
+                let hi = controls
+                    .iter()
+                    .map(|p| p[k])
+                    .fold(f64::NEG_INFINITY, f64::max);
+                assert!(v[k] >= lo - 1e-13 && v[k] <= hi + 1e-13);
+            }
+        }
+    }
+    assert!(path.velocity_controls(0.7, 0.1).is_err());
+    assert!(path.velocity_controls(0., 1.1).is_err());
+    assert!(path.acceleration_at(f64::NAN).is_err());
+}
