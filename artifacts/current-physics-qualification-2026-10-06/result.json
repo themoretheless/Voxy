@@ -1,0 +1,32 @@
+{
+  "physics": {
+    "passed": 1485,
+    "failed": 0,
+    "ignored": 11,
+    "exit_code": 0
+  },
+  "application_editor_renderer_all_targets": "release cargo check passed",
+  "corpus": {
+    "candidates": 1428,
+    "verified_pinned_records": 1428,
+    "mechanism_integrity": {
+      "manifests": 5,
+      "verified_sources": 24
+    },
+    "accepted_engine_identities": 500,
+    "derived_engine_identities": 52,
+    "review_depth_counts": {
+      "root_and_readme_only": 1428
+    },
+    "scope": "Saved identity/evidence integrity; not build, runtime or architectural parity proof."
+  },
+  "rag": {
+    "slug": "voxy-engine-roadmap",
+    "document_id": "b8cc7f31-f4ef-45a1-9ea8-83eaead6189f",
+    "revision": 1,
+    "content_checkpoint": "2026-09-05 at 4fb0f45",
+    "assessment": "stale relative to current checkout; not evidence of current remaining work"
+  },
+  "current_goal": "active and incomplete",
+  "scope": "full physics test suite and compilation, local corpus integrity; not editor/game feature parity or universal hardware acceptance"
+}

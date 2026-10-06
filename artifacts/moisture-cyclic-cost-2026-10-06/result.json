@@ -1,0 +1,34 @@
+{
+  "measurement": {
+    "before": {
+      "median_ns": 50721583,
+      "min_ns": 49932250,
+      "max_ns": 50821416,
+      "analytic_error": 1.2212453270876722e-15,
+      "mass_defect_kg": 2.609024107869118e-14,
+      "checksum": "1.49155347470206994e5"
+    },
+    "after": {
+      "median_ns": 697375,
+      "min_ns": 681542,
+      "max_ns": 809041,
+      "analytic_error": 1.2212453270876722e-15,
+      "mass_defect_kg": 2.609024107869118e-14,
+      "checksum": "1.49155347470206994e5"
+    }
+  },
+  "tests": {
+    "passed": 58,
+    "failed": 0,
+    "ignored": 1
+  },
+  "scope": "257-cell stiff periodic ring, 8 measurements after one warmup; no general real-time claim",
+  "moisture_positive_iterations": 256,
+  "Darcy_positive_iterations": 20000,
+  "source_sha256": {
+    "crates/physics/src/positive_transport.rs": "a71a1a9a1a831ad70af5753bfee7690dfdba0da1b1f9aa1e0f714c18be708466",
+    "crates/physics/src/moisture/transport.rs": "20c8d7e97eac594fbb2bc9176ff81af94cce332c7232b81f03b21da797a481c5",
+    "crates/physics/src/moisture/transport/krylov.rs": "f5b70d0c348f5bab1cea126f06676fcc45552437127c863bbd126b82d5613674",
+    "crates/physics/tests/moisture_sparse.rs": "af0949467805f90cd60f5fe1aadec15216404afab8195e68b3d0b01c412fb13d"
+  }
+}

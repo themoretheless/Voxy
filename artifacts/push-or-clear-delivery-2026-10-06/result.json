@@ -1,0 +1,15 @@
+{
+  "tests": {
+    "passed": 418,
+    "failed": 0,
+    "ignored": 35
+  },
+  "physics": {
+    "passed": 1485,
+    "failed": 0,
+    "ignored": 11
+  },
+  "consumers": "passed",
+  "format": "passed",
+  "diff_check": "source and docs passed; raw artifact logs retain original whitespace"
+}

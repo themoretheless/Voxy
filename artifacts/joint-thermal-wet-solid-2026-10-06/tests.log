@@ -1,0 +1,58 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 10.36s
+     Running tests/quadratic_wet_update.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_wet_update-6ce1b5c7c52139a2)
+
+running 11 tests
+test invalid_mass_remap_is_atomic ... ok
+test finite_supply_water_and_mechanics_commit_together_or_roll_back ... ok
+test temperature_changes_elastic_response_with_explicit_parameter_work ... ok
+test water_entrainment_and_drying_conserve_mass_momentum_and_energy ... ok
+test vapor_condensation_accounts_for_incoming_momentum_and_mixing_loss ... ok
+test vapor_drying_updates_solid_mass_and_rolls_back_mechanical_failure ... ok
+test elastic_parameter_work_and_support_impulse_are_explicit ... ok
+test whole_wet_dynamic_interval_rolls_back_water_if_motion_fails ... ok
+test vapor_motion_interval_commits_translation_or_rolls_back_every_owner ... ok
+test heated_vapor_and_loaded_body_publish_or_restore_all_four_owners ... ok
+test wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wear_wet.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wear_wet-2596a267d789f376)
+
+running 6 tests
+test coupled_network_removes_exhausted_cells_and_rolls_back_bad_graph ... ok
+test invalid_water_rolls_back_both_inventories ... ok
+test wet_rigid_partition_conserves_full_mechanical_inventory_and_rolls_back ... ok
+test partial_removal_cannot_silently_underflow_retained_water ... ok
+test wet_calibration_removes_material_and_its_water_conservatively ... ok
+test disappearing_top_layer_preserves_substrate_identity_and_calibration ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wet_cohesive.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wet_cohesive-33266e431d482dcc)
+
+running 3 tests
+test calibrated_heating_migrates_damage_without_erasing_fracture_work ... ok
+test wet_law_migration_preserves_fracture_work_and_rejects_healing ... ok
+test calibrated_wet_interface_has_lower_peak_and_fracture_work ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wet_material.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wet_material-ef0bf344b9712d97)
+
+running 3 tests
+test calibrated_wet_hardness_controls_wear_without_assumed_universal_softening ... ok
+test invalid_water_and_calibration_are_rejected ... ok
+test transported_water_changes_calibrated_material_and_actual_mass ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -91,3 +91,108 @@ the sparse iteration budget; the regression now matches its analytic solution,
 an independent reservoir bath, and atomic rejection of a late overflow. The 25
 focused moisture tests pass. Large connected stiff components can still exhaust
 the sparse iteration budget.
+
+Connected acyclic components larger than 128 cells now use positive leaf
+elimination and forward substitution in O(cells + links) storage and operations.
+The Schur update adds positive effective capacities instead of subtracting large
+diagonals, retaining the material capacity on stiff edges. Original small blocks
+retain their dense compatibility path. Cyclic components retain the bounded
+sparse iteration; stiff cyclic networks can still exhaust its iteration budget.
+All operator overflow, saturation and global balance gates remain transactional.
+
+A connected 257-cell chain with conductance 10000 previously failed to converge.
+It now matches the analytic backward-Euler Neumann mode. A heterogeneous
+129-cell branching network with two baths matches independent dense Gaussian
+elimination; a periodic cyclic network verifies the sparse fallback. Late bath
+overflow preserves the complete owner. 28 focused moisture tests pass. These
+checks qualify the numerical transport model, not material calibration or full
+liquid mechanics. Evidence: `artifacts/moisture-tree-2026-10-06/`.
+
+Cyclic networks that exhaust the positive Gauss-Seidel budget now retry a
+matrix-free, diagonally preconditioned conjugate-gradient solve of the symmetric
+activity operator `diag(capacity + bath exchange) + weighted graph Laplacian`.
+Positive capacities make this operator SPD. The PCG algorithm follows
+[Netlib Templates](https://www.netlib.org/templates/templates.html); it is specific
+to this symmetric moisture law and is not applied to arbitrary Darcy transport.
+
+Acceptance recomputes the actual residual, checks global inventory independently,
+and checks finite saturation bounds before the existing outer publication gates.
+The residual threshold includes an evaluation roundoff estimate with a hard
+relative ceiling of 1e-10; the independent inventory threshold remains 1e-12.
+A drifting recursive residual triggers a restart. No mass redistribution is used.
+The retry is bounded by min(4 * cells, 20000) iterations; extreme conditioning
+can still reject atomically. It currently runs after the original 20000 positive
+iterations, so these results do not establish real-time performance.
+
+A stiff 257-cell periodic ring previously failed and now matches its analytic
+backward-Euler diffusion mode. A heterogeneous 129-cell cyclic graph with baths
+matches independent dense Gaussian elimination. The initial heterogeneous PCG
+failure and residual diagnosis are retained alongside the final 30 passing
+moisture tests in `artifacts/moisture-cyclic-2026-10-06/`. This is numerical
+qualification of the calibrated activity model, not complete fluid physics.
+
+Moisture now limits its preliminary positive solve to 256 iterations before the
+PCG retry. The shared kernel exposes an internal budget parameter; Darcy keeps
+its original 20000-iteration behavior and numerical acceptance thresholds. The
+PCG and outer conservation/saturation gates are unchanged.
+
+On this host, the 257-cell stiff periodic-ring workload measured eight repetitions
+after one warmup: median 50.721583 ms before versus 0.697375 ms after, with the
+same 1.2212453270876722e-15 analytic error, 2.609024107869118e-14 kg mass defect
+and recorded checksum. This qualifies this workload only; it does not establish
+world-scale or real-time fluid performance. A localized unit-water inventory in
+an otherwise dry stiff ring matches the complete discrete Fourier solution and
+remains positive and conservative. 58 focused moisture/Darcy tests pass, with
+one timing test ignored in normal runs and executed separately. Evidence:
+`artifacts/moisture-cyclic-cost-2026-10-06/`.
+
+`FiniteQuadraticDynamics::apply_thermal_moisture_with_cohesion` applies accepted
+water and prescribed calibrated temperature fields to bulk inertia/elasticity
+and cohesive histories in one transaction. Cell temperatures and face
+temperatures are separate explicit inputs; they are not silently averaged.
+It delegates to the existing accepted-history migration and wet momentum/work
+accounting. Invalid late face migration rolls back all bulk changes as well.
+
+At identical wet inventory and opening, the regression remains one connected
+fragment under the cold interface law and splits into two under the calibrated
+hot law. Fracture dissipation is preserved; cooling/drying that would heal the
+accepted history is rejected with the complete state unchanged. Joint accepted
+state/reports match the existing individual operations. 23 focused wet-solid,
+cohesive and wear tests pass; evidence is in
+`artifacts/joint-thermal-wet-solid-2026-10-06/`. Temperature is prescribed here.
+Parameter work is reported explicitly rather than automatically charged to a
+thermal owner; this is not thermal expansion or a closed thermomechanical solve.
+
+`advance_heated_vapor_loaded_calibrated` connects the material thermal store
+to the joint temperature/water constitutive update and loaded motion. It shares
+one staged heat/inventory/motion implementation with the original API, whose
+laws remain temperature-independent. Every cell and interface uses the lumped
+material temperature after heat and water exchange, before subsequent free-body
+kinetic mixing-loss heat deposition. The final post-mixing temperature is also
+checked against every calibration domain before publication.
+
+An independent two-store conduction formula checks the temperature feedback
+and resulting elastic parameter work at a deformed pose. Out-of-domain laws,
+late invalid motion, and a post-mixing temperature-domain violation restore
+solid, material water, vapor and material heat together. The same mixing step
+commits with a wider valid calibration range. 29 focused wet-solid/vapor/cohesive
+tests pass; evidence: `artifacts/calibrated-heated-solid-2026-10-06/`.
+This remains first-order lumped splitting with explicit parameter work; there is
+no implicit debit of parameter work from heat, thermal expansion, or monolithic
+thermomechanical solve.
+
+The accumulated sparse transport, temperature-coupled wet solid and FEM preview
+changes were qualified together against the complete release physics suite:
+1485 passed, zero failed, 11 ignored. All targets of
+voxy_app, voxy_editor and voxy_render also pass release cargo check. Source
+digests and logs are retained in
+`artifacts/current-physics-qualification-2026-10-06/`. Full module regression and
+compilation do not establish editor/game feature parity or cross-hardware proof.
+
+The local research corpus audit verifies 1428 pinned identity records, 500
+classified engine repositories including 52 derived engines, and 24 source files
+across five selected mechanism manifests. Root/README verification does not
+establish architectural review of every engine. The RAG wiki
+`voxy-engine-roadmap` (b8cc7f31-f4ef-45a1-9ea8-83eaead6189f, revision 1) describes
+the 2026-09-05 checkout at 4fb0f45 and is historical context rather than current
+acceptance evidence. The overall requested engine goal remains incomplete.

@@ -1,0 +1,30 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "heated_and_wet_motion": "actual GPU readback passed",
+  "physical_motion": {
+    "interval_s": 0.25,
+    "substeps": 128,
+    "fragment_center_displacement_z_m": [
+      0.125,
+      -0.125
+    ],
+    "acceleration_z_m_s2": [
+      4,
+      -4
+    ],
+    "reported_heated_energy_defect_j": 7.468718352110493e-12
+  },
+  "acceptance": [
+    "analytic center and velocity within 1e-8",
+    "total momentum versus explicit external impulse within 1e-8",
+    "rendered fracture topology preserved",
+    "motion changes GPU pixels",
+    "CPU test rejects motion before fracture without mutation and preserves water/supplies/thermal owners"
+  ],
+  "scope": "two calibrated tetrahedra under explicit balanced external loads; CPU FEM rendered on GPU, not spontaneous separation or full destruction/hardware qualification",
+  "source_sha256": {
+    "crates/voxy_app/src/wet_fem_preview.rs": "08ff50ebf960d8ec5815e770a6e653aad344f7009be9edf5de1d9c51f4fee781",
+    "crates/voxy_app/examples/wet_fem_snapshot.rs": "8e61d62d790883dd14c018b85cd6715324a92f1836b92a6ade1151cafe0b7050"
+  }
+}

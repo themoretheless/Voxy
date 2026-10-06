@@ -1,0 +1,9 @@
+{
+  "before": "connected stiff chain: sparse transport did not converge",
+  "after": "28 focused tests passed, zero failed",
+  "source_sha256": {
+    "crates/physics/src/moisture/transport.rs": "289c642067b8d1dea795925b7a1656da40d263728b2c9673dbaff491d0bb551b",
+    "crates/physics/tests/moisture_sparse.rs": "6ce46e9afdb3ac824fc92592a3126674998dffb4ba3eb64601ee42afe46fddfb"
+  },
+  "scope": "positive direct acyclic transport; cyclic graphs retain sparse solver"
+}

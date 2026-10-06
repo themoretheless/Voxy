@@ -1,0 +1,30 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "heated": "passed actual GPU readback and validation",
+  "wet": "passed existing finite supply mode",
+  "before": {
+    "fragments": 1,
+    "exposed_faces": 6,
+    "triangles": 96
+  },
+  "heated_after": {
+    "fragments": 2,
+    "exposed_faces": 8,
+    "triangles": 128,
+    "blue_fragment_pixels": 9316,
+    "gold_fragment_pixels": 32595,
+    "material_temperature_k": 572.7227177179662,
+    "vapor_temperature_k": 572.7277282282034,
+    "accepted_motion_substeps": 1
+  },
+  "qualification": "two synthetic calibrated tetrahedra; CPU thermal/FEM physics with real GPU rendering; no full scene, CUDA, universal hardware, or material calibration claim",
+  "source_sha256": {
+    "crates/voxy_app/src/wet_fem_preview.rs": "11e8f9883f790d351ec2facca78884ee29416e94a705ee8126715360dc4143b1",
+    "crates/voxy_app/examples/wet_fem_snapshot.rs": "a21088a05500e4b138a5d1597bcefbccec724b38d1a26a6c0e1d953f19fa03d0"
+  },
+  "image_sha256": {
+    "heated.png": "4e1d45036ccc57a5ea66217fed51cd33aa3db18ced7b9af396825f4d5349bb8e",
+    "wet.png": "4e1d45036ccc57a5ea66217fed51cd33aa3db18ced7b9af396825f4d5349bb8e"
+  }
+}

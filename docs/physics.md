@@ -4589,3 +4589,84 @@ checks stored-energy work and preserved fracture energy, then rejects healing
 and out-of-domain temperatures. The focused cohesive/wet suite is pending.
 Neither thermal expansion nor a coupled temperature-dependent plastic/free-
 energy law is established by this empirical calibration.
+
+The existing `wet_fem_snapshot` also accepts `--heated`:
+
+```sh
+cargo run -p voxy_app --release --example wet_fem_snapshot -- /tmp/heated-fem.png --heated
+```
+
+This mode transfers heat from finite vapor to a material thermal store, evaluates
+calibrated temperature-dependent bulk/cohesive properties, and advances loaded
+motion through `advance_heated_vapor_loaded_calibrated`. Both thermal owners
+remain in the preview's accepted state. Water stays zero in this heat-only test;
+parameter work remains an explicit mechanical report. The fixture uses synthetic
+calibration endpoints, not measured properties of a named material.
+
+Current Apple M4 Max/Metal GPU readback passes both wet and heated modes. In
+heated mode, material reaches 572.7227177179662 K; the accepted FEM state changes
+from 1 fragment/6 exposed faces to 2 fragments/8 faces, and the image contains
+9316 pixels of the second fragment. The snapshot is visually inspected. CPU
+thermal/FEM physics is rendered by the existing GPU renderer; this does not
+qualify GPU physics, CUDA, other adapters, or full-scene fracture. Evidence and
+two-frame images: `artifacts/heated-fem-gpu-2026-10-06/`.
+
+Adding `--motion` to either wet or heated `wet_fem_snapshot` produces a third
+frame of loaded motion after accepted fracture. The diagnostic applies opposite
+constant accelerations through the exact consistent-mass nodal loads, rather
+than changing display coordinates. For the two fixed-volume fixture cells,
+density includes accepted water mass. Loads and resulting impulse are explicit;
+the separation is externally driven, not spontaneous fracture energy release.
+
+On the current Metal adapter, both wet and heated paths pass GPU readback. In
+the heated path, 0.25 s takes 128 accepted substeps: fragment centers move by
++0.125 and -0.125 m, matching 4 m/s² opposite accelerations. Position/velocity
+checks use 1e-8 tolerance; momentum is checked against the applied impulse.
+The reported energy defect is 7.468718352110493e-12 J. The third image differs
+from the fractured frame, confirming accepted physical coordinates reach the
+renderer. A CPU test also verifies failure before fracture leaves state intact
+and mechanical motion preserves water, supply and thermal owners. Images and
+logs: `artifacts/fem-fragment-motion-gpu-2026-10-06/`.
+
+Finite moving sources can now feed the existing impact/spray/film scenario.
+`LiquidDemo::new_finite_impacts` and `SceneApp::with_finite_liquid_impacts` share
+the existing liquid, finite gas and film owners; restart preserves the combined
+mode. Both `liquids` and `liquid_snapshot` accept `--finite-source --impacts`.
+
+```sh
+cargo run -p voxy_app --release --example liquids -- --finite-source --impacts
+cargo run -p voxy_app --release --example liquid_snapshot -- /tmp/finite-impacts.png --finite-source --impacts --optical
+```
+
+The finite source contains 10 kg of liquid plus 90 kg dry source mass. Its
+energy reserve includes the configured 300 K liquid sensible energy and 1000 J
+mechanical reserve. Species composition is supplied to the existing emission
+transaction. Energy tolerance accounts for f64 evaluation at this energy scale;
+cumulative emitted momentum/energy and remaining source inventories are checked
+independently. No replenishment or energy clipping is introduced. Later fluid,
+gas and film transfers retain their existing ledgers. This source-boundary
+ledger does not alone close all gravity/wall energy work of the full scene.
+
+Actual current Metal GPU readback passes diagnostic and optical rendering.
+Source masses end at 95/96 kg after emitting 5/4 kg, with zero reported source
+energy defects. Six CPU tests pass, one unrelated timing test is ignored; a
+second-source energy exhaustion restores the entire candidate frame. All app
+targets compile; native window presented-frame acceptance is not run here.
+Images, initial failure, logs and source digests:
+`artifacts/finite-source-impact-2026-10-06/`.
+
+Scene liquid authoring increment: `voxy_gameplay::LiquidSource` is registered as
+`game.liquid-source.v1`. Pulses retain explicit SI units, density, particle volume,
+aperture and world-space direction. Material identity is a durable asset name;
+the liquid owner supplies a resolved ephemeral material slot when preparing the
+existing `PulsedEmitter`. No runtime mass, energy or elapsed clock is serialized.
+Preparation bounds pulses to 4096, rejects invalid geometry/pulse values and
+empty material identity. Thermal/species fields are admitted at attachment.
+
+Registry component capture and JSON roundtrip preserve this configuration. An
+independent physics emission check verifies 1 kg emitted with 2 kg m/s momentum.
+The full gameplay library has 70 passing tests. The generic scene liquid runtime
+is still missing: shared authoring/play preflight returns an explicit attachment
+error for this component instead of silently running a scene without its source.
+This is a preparatory authoring contract, not completed editor/game fluid
+integration. Evidence: `artifacts/liquid-source-authoring-2026-10-06/`.

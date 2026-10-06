@@ -1,0 +1,17 @@
+{
+  "phase": "authoring contract and emitter preparation; scene runtime attachment remains required",
+  "schema": "game.liquid-source.v1",
+  "tests_passed": 70,
+  "verification": [
+    "registry captures source component",
+    "configuration JSON roundtrip",
+    "existing physics emitter emits 1 kg with 2 kg m/s momentum",
+    "invalid durations/directions/volumes rejected",
+    "play preflight explicitly rejects missing liquid runtime"
+  ],
+  "identity": "persistent material asset name; runtime material slot is supplied on preparation, not serialized",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_source.rs": "c1f9acd3861896ffc546c543b1b643bd59334d265a351e8d4962105fe2bc8c95",
+    "crates/voxy_gameplay/src/lib.rs": "77542cdca8472e4ea2a9eb15c16d8e0b1bc78269c653ae75845d88b187a746a3"
+  }
+}

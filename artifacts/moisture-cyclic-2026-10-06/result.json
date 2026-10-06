@@ -1,0 +1,11 @@
+{
+  "before": "stiff periodic cyclic network: sparse transport did not converge",
+  "after": "30 focused moisture tests passed",
+  "source_sha256": {
+    "crates/physics/src/moisture/transport.rs": "711f09c4ca20479c284b7f51ed0d320f13bd50cfec8c4088aa3d0f32c8611917",
+    "crates/physics/src/moisture/transport/krylov.rs": "f5b70d0c348f5bab1cea126f06676fcc45552437127c863bbd126b82d5613674",
+    "crates/physics/tests/moisture_sparse.rs": "41cf0543387844d9fad6e4954cbcb5be8f64f567fadb91fcd1a1361a8c8173d0"
+  },
+  "method_reference": "https://www.netlib.org/templates/templates.html",
+  "remaining": "bounded iterations and extreme conditioning; no real-time or material calibration claim"
+}

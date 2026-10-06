@@ -1,0 +1,16 @@
+{
+  "tests_passed": 23,
+  "tests_failed": 0,
+  "verified": [
+    "same wet inventory stays connected with cold face law and separates into two fragments with hot face law",
+    "joint accepted state/reports match existing separate bulk and cohesive updates",
+    "invalid field dimensions or temperature preserve full solid state",
+    "late cooling/drying healing rejection preserves mass, velocities, laws and histories",
+    "fracture dissipation is not reset by migration"
+  ],
+  "scope": "prescribed calibrated temperatures and accepted material water; parameter work is explicit, not automatically charged to heat stores; no thermal expansion or closed thermomechanical solution",
+  "source_sha256": {
+    "crates/physics/src/plasticity/mesh/quadratic/wet_update.rs": "c1135de8480001d97ac3b367cbfed5da7e3ac185e07f431c9d8da2190826df83",
+    "crates/physics/tests/quadratic_wet_update.rs": "0f5d9cc2895575c84fd4dc2370ab9a146491bc82eb2744190a72e6a9dbed2625"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "passed": 29,
+  "failed": 0,
+  "verified": [
+    "temperature feedback matches exact two-store conduction and calibrated elastic parameter work",
+    "post-exchange temperature outside calibration domain restores all four owners",
+    "late invalid motion restores heat/water/material stages",
+    "mixing-loss heat outside calibrated domain restores all owners; wider domain commits same interval",
+    "legacy temperature-independent API retains shared heat/mass/motion transaction"
+  ],
+  "scope": "lumped material temperature, first-order split, explicit material parameter work; no thermal expansion or monolithic thermomechanics",
+  "source_sha256": {
+    "crates/physics/src/plasticity/mesh/quadratic/wet_update.rs": "a9a49cde4037ac1e644162994d38bd6f99e4843db78f685da9f3b28d48ca83b2",
+    "crates/physics/tests/quadratic_wet_update.rs": "bcb3d7f053780dce7e70495238591d914f0b3c19ae2de6f4c2f3214c4e6572cd"
+  }
+}

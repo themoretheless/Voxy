@@ -20,10 +20,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let impacts = std::env::args().any(|arg| arg == "--impacts");
     let finite = std::env::args().any(|arg| arg == "--finite-source");
-    if finite && impacts {
-        return Err("finite-source and impacts modes are separate".into());
-    }
-    let mut demo = if finite {
+    let mut demo = if finite && impacts {
+        liquid_demo::LiquidDemo::new_finite_impacts()?
+    } else if finite {
         liquid_demo::LiquidDemo::new_finite_sources()?
     } else if impacts {
         liquid_demo::LiquidDemo::new_impacts()?

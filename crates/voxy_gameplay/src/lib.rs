@@ -3,6 +3,8 @@
 //! Characters collide with active static boxes, not with each other. Physics owns
 //! translations during ticks. A character may rotate; its scale and ancestor
 //! rotation/scale must be identity. Static boxes support affine transforms.
+mod liquid_source;
+pub use liquid_source::{LiquidPulse, LiquidSource};
 mod angular_sweep;
 mod foot_contact;
 mod staged_tick;
@@ -165,6 +167,7 @@ impl std::error::Error for PhysicsError {}
 /// # Errors
 /// Rejects duplicate schema names/types.
 pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), DocumentError> {
+    registry.register::<LiquidSource>("game.liquid-source.v1")?;
     registry.register::<CharacterBody>("game.character.v1")?;
     registry.register::<BoxCollider>("game.box.v1")?;
     registry.register::<AudioBus>("game.audio-bus.v1")?;
@@ -180,6 +183,14 @@ pub fn register_components(registry: &mut ComponentRegistry) -> Result<(), Docum
 /// # Errors
 /// Rejects invalid descriptor values or extraction budgets without changing scene.
 pub fn validate_game_descriptors(scene: &SceneGraph, capacity: usize) -> Result<(), String> {
+    for (_, source) in scene.components::<LiquidSource>() {
+        source
+            .prepare([0.; 3], 0)
+            .map_err(|e| format!("invalid game.liquid-source.v1: {e:?}"))?;
+    }
+    if scene.components::<LiquidSource>().next().is_some() {
+        return Err("game.liquid-source.v1 requires an attached scene liquid runtime".into());
+    }
     validate_behavior_descriptors(scene)?;
     extract_scene_audio(scene, capacity)?;
     extract_scene_ui(scene, [1.0, 1.0], capacity)?;

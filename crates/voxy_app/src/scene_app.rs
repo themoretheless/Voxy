@@ -165,6 +165,13 @@ impl SceneApp {
         self.liquid_optics = true;
         Ok(self)
     }
+    /// Finite energy/mass sources with recoil, impact spray and deposited film.
+    pub fn with_finite_liquid_impacts(mut self) -> Result<Self, Box<dyn std::error::Error>> {
+        self = self.with_liquids()?;
+        self.liquids = Some(crate::liquid_demo::LiquidDemo::new_finite_impacts()?);
+        self.liquid_optics = true;
+        Ok(self)
+    }
     /// Keeps the older particle mesh available for comparison.
     #[must_use]
     pub fn with_liquid_optics(mut self, enabled: bool) -> Self {

@@ -41,7 +41,7 @@ pub(super) fn saturations(
         groups.push(nodes);
     }
     if groups.len() == 1 {
-        return sparse(body, dt_s, reservoirs, added);
+        return large(body, dt_s, reservoirs, added);
     }
     let mut local_index = vec![0; n];
     let mut blocks: Vec<_> = groups
@@ -80,13 +80,102 @@ pub(super) fn saturations(
         let solution = if nodes.len() <= 128 {
             dense(&blocks[id], dt_s, &baths[id], &sources)?
         } else {
-            sparse(&blocks[id], dt_s, &baths[id], &sources)?
+            large(&blocks[id], dt_s, &baths[id], &sources)?
         };
         for (&node, saturation) in nodes.iter().zip(solution) {
             output[node] = saturation;
         }
     }
     Ok(output)
+}
+// Connected acyclic blocks admit positive leaf elimination without iteration.
+fn large(
+    body: &Body,
+    dt: f64,
+    baths: &[Reservoir],
+    added: &[f64],
+) -> Result<Vec<f64>, &'static str> {
+    let n = body.cells.len();
+    if body
+        .links
+        .iter()
+        .filter(|l| l.conductance_kg_s > 0.)
+        .count()
+        != n - 1
+    {
+        return sparse(body, dt, baths, added);
+    }
+    let mut graph = vec![Vec::new(); n];
+    for l in &body.links {
+        if l.conductance_kg_s == 0. {
+            continue;
+        }
+        let w = dt * l.conductance_kg_s;
+        if !w.is_finite() {
+            return Err("moisture tree operator overflow");
+        }
+        let [a, b] = l.cells;
+        graph[a].push((b, w));
+        graph[b].push((a, w));
+    }
+    let mut parent = vec![usize::MAX; n];
+    let mut weight = vec![0.; n];
+    let mut order = vec![0];
+    parent[0] = 0;
+    let mut cursor = 0;
+    while cursor < order.len() {
+        let u = order[cursor];
+        cursor += 1;
+        for &(v, w) in &graph[u] {
+            if parent[v] == usize::MAX {
+                parent[v] = u;
+                weight[v] = w;
+                order.push(v);
+            } else if v != parent[u] {
+                return sparse(body, dt, baths, added);
+            }
+        }
+    }
+    if order.len() != n {
+        return sparse(body, dt, baths, added);
+    }
+    let mut base: Vec<_> = body.cells.iter().map(|c| c.capacity_kg).collect();
+    let mut rhs: Vec<_> = body
+        .cells
+        .iter()
+        .zip(added)
+        .map(|(c, a)| c.water_kg + a)
+        .collect();
+    for r in baths {
+        let w = dt * r.conductance_kg_s;
+        base[r.cell] += w;
+        rhs[r.cell] += w * r.saturation;
+    }
+    if base.iter().chain(&rhs).any(|v| !v.is_finite()) {
+        return Err("moisture tree operator overflow");
+    }
+    // Store only positive Schur contributions. Avoid subtracting two large
+    // diagonal terms, which loses the small material capacity on stiff edges.
+    for &u in order.iter().skip(1).rev() {
+        let d = base[u] + weight[u];
+        if !d.is_finite() {
+            return Err("moisture tree operator overflow");
+        }
+        let ratio = weight[u] / d;
+        let p = parent[u];
+        base[p] += ratio * base[u];
+        rhs[p] += ratio * rhs[u];
+        if !base[p].is_finite() || !rhs[p].is_finite() {
+            return Err("moisture tree operator overflow");
+        }
+    }
+    let mut solution = vec![0.; n];
+    solution[0] = rhs[0] / base[0];
+    for &u in order.iter().skip(1) {
+        let d = base[u] + weight[u];
+        solution[u] = rhs[u] / d + (weight[u] / d) * solution[parent[u]];
+    }
+    Ok(solution)
 }
 fn sparse(
     body: &Body,
@@ -133,8 +222,16 @@ fn sparse(
     {
         return Err("moisture sparse operator overflow");
     }
-    let mass = crate::positive_transport::solve_mass(&rhs, &diagonal, &incoming, &external_out)
-        .map_err(|_| "moisture sparse transport did not converge")?;
+    let mass = match crate::positive_transport::solve_mass_with_budget(
+        &rhs,
+        &diagonal,
+        &incoming,
+        &external_out,
+        256,
+    ) {
+        Ok(mass) => mass,
+        Err(_) => return krylov::saturations(body, dt_s, reservoirs, added),
+    };
     Ok(mass
         .iter()
         .zip(&body.cells)
@@ -173,3 +270,5 @@ fn dense(
     }
     solve(matrix, rhs)
 }
+
+mod krylov;

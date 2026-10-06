@@ -79,6 +79,9 @@ pub(crate) struct LiquidDemo {
     emitters: [PulsedEmitter; 2],
     finite_sources: Option<[(physics::liquid::TranslatingBody, f64); 2]>,
     emitted_mass: [f64; 2],
+    initial_source_energy_j: [f64; 2],
+    emitted_source_energy_j: [f64; 2],
+    emitted_source_momentum: [[f64; 3]; 2],
     films: Option<[ImpactFilm; 2]>,
     accumulator: f64,
     pub(crate) steps: u64,
@@ -145,6 +148,9 @@ impl LiquidDemo {
             emitters: [source(Material::WATER)?, source(Material::OIL)?],
             finite_sources: None,
             emitted_mass: [0.0; 2],
+            initial_source_energy_j: [1000.; 2],
+            emitted_source_energy_j: [0.; 2],
+            emitted_source_momentum: [[0.; 3]; 2],
             films: None,
             accumulator: 0.0,
             steps: 0,
@@ -152,19 +158,30 @@ impl LiquidDemo {
     }
     pub(crate) fn new_finite_sources() -> Result<Self, physics::liquid::Error> {
         let mut demo = Self::new()?;
-        demo.finite_sources = Some(std::array::from_fn(|index| {
+        demo.enable_finite_sources(1000.);
+        Ok(demo)
+    }
+    fn enable_finite_sources(&mut self, energy_j: f64) {
+        self.finite_sources = Some(std::array::from_fn(|index| {
             (
                 physics::liquid::TranslatingBody {
-                    position: demo.emitters[index].template.particle.position,
+                    position: self.emitters[index].template.particle.position,
                     velocity: [0.; 3],
                     mass: 100.,
                 },
-                1000.,
+                energy_j,
             )
         }));
-        for emitter in &mut demo.emitters {
+        for emitter in &mut self.emitters {
             emitter.nozzle_radius = 0.;
         }
+        self.initial_source_energy_j = [energy_j; 2];
+    }
+    pub(crate) fn new_finite_impacts() -> Result<Self, physics::liquid::Error> {
+        let mut demo = Self::new_impacts()?;
+        // The source contains 10 kg liquid at 300 K plus mechanical energy.
+        let reserve = 10. * TransportMaterial::default().specific_heat * 300. + 1000.;
+        demo.enable_finite_sources(reserve);
         Ok(demo)
     }
     pub(crate) fn new_impacts() -> Result<Self, physics::liquid::Error> {
@@ -257,7 +274,9 @@ impl LiquidDemo {
         Ok(demo)
     }
     pub(crate) fn restart(&self) -> Result<Self, physics::liquid::Error> {
-        if self.finite_sources.is_some() {
+        if self.finite_sources.is_some() && self.films.is_some() {
+            Self::new_finite_impacts()
+        } else if self.finite_sources.is_some() {
             Self::new_finite_sources()
         } else if self.films.is_some() {
             Self::new_impacts()
@@ -288,14 +307,19 @@ impl LiquidDemo {
                 let emitted = if let Some(sources) = &mut self.finite_sources {
                     let (body, reserve) = &mut sources[index];
                     let old_velocity = body.velocity;
-                    let receipt = self.emitters[index].advance_from_translating_source(
-                        liquid,
-                        1. / 120.,
-                        body,
-                        90.,
-                        reserve,
-                        None,
-                    )?;
+                    let receipt = self.emitters[index]
+                        .advance_from_translating_source_with_accuracy(
+                            liquid,
+                            1. / 120.,
+                            body,
+                            90.,
+                            reserve,
+                            self.films.is_some().then_some(&[1.0][..]),
+                            physics::liquid::SourceAccuracy {
+                                energy_j: (64. * f64::EPSILON * reserve.abs()).max(1e-10),
+                                ..physics::liquid::SourceAccuracy::default()
+                            },
+                        )?;
                     for axis in 0..3 {
                         body.position[axis] +=
                             (0.5 * old_velocity[axis] + 0.5 * body.velocity[axis]) / 120.;
@@ -310,6 +334,12 @@ impl LiquidDemo {
                     self.emitters[index].advance(liquid, 1.0 / 120.0)?
                 };
                 self.emitted_mass[index] += emitted.added.mass;
+                self.emitted_source_energy_j[index] +=
+                    emitted.added.kinetic_energy + emitted.added.thermal_energy.unwrap_or(0.);
+                for axis in 0..3 {
+                    self.emitted_source_momentum[index][axis] += emitted.added.momentum[axis];
+                }
+
                 if let Some(films) = &mut self.films {
                     let radii = liquid.equivalent_sphere_radii()?;
                     let drag = liquid.exchange_marked_droplet_drag_grid(
@@ -476,12 +506,32 @@ impl LiquidDemo {
         }
         if let Some(sources) = &self.finite_sources {
             for (index, (body, reserve)) in sources.iter().enumerate() {
+                let kinetic = 0.5 * body.mass * body.velocity.iter().map(|v| v * v).sum::<f64>();
+                let energy_defect = kinetic + reserve + self.emitted_source_energy_j[index]
+                    - self.initial_source_energy_j[index];
+                let energy_tolerance =
+                    (256. * f64::EPSILON * self.initial_source_energy_j[index]).max(1e-9);
+                if !energy_defect.is_finite()
+                    || energy_defect.abs() > energy_tolerance
+                    || (0..3).any(|a| {
+                        (body.mass * body.velocity[a] + self.emitted_source_momentum[index][a])
+                            .abs()
+                            > 1e-8
+                    })
+                {
+                    return Err("finite source cumulative energy or momentum ledger failed");
+                }
+                println!(
+                    "FINITE SOURCE {index}: remaining_mass_kg={} emitted_mass_kg={} reserve_j={reserve} emitted_energy_j={} energy_defect_j={energy_defect}",
+                    body.mass, self.emitted_mass[index], self.emitted_source_energy_j[index]
+                );
+
                 if !body.mass.is_finite()
                     || (body.mass + self.emitted_mass[index] - 100.).abs() > 1e-9
                     || body.mass < 90.
                     || !reserve.is_finite()
                     || *reserve < 0.
-                    || *reserve >= 1000.
+                    || *reserve >= self.initial_source_energy_j[index]
                     || body.velocity.iter().any(|v| !v.is_finite())
                     || body.velocity[0] <= 0.
                     || body.velocity[1] <= 0.
@@ -927,6 +977,25 @@ mod tests {
         let before = format!("{demo:?}");
         assert!(demo.advance(1. / 120.).is_err());
         assert_eq!(before, format!("{demo:?}"));
+    }
+    #[test]
+    fn finite_source_impacts_preserve_species_ledgers_and_exhaustion_is_atomic() {
+        let mut demo = LiquidDemo::new_finite_impacts().unwrap();
+        for _ in 0..120 {
+            demo.advance(1. / 120.).unwrap();
+        }
+        demo.verify().unwrap();
+        let restarted = demo.restart().unwrap();
+        assert!(restarted.finite_sources.is_some() && restarted.films.is_some());
+        assert_eq!(restarted.emitted_source_energy_j, [0.; 2]);
+        let mut rejected = restarted;
+        for _ in 0..12 {
+            rejected.advance(1. / 120.).unwrap();
+        }
+        rejected.finite_sources.as_mut().unwrap()[1].1 = 0.;
+        let before = format!("{rejected:?}");
+        assert!(rejected.advance(1. / 120.).is_err());
+        assert_eq!(format!("{rejected:?}"), before);
     }
     #[test]
     fn optical_film_conversion_omits_only_zero_quantized_height() {

@@ -1,0 +1,112 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "release_renderer_lib": {
+    "passed": 162,
+    "failed": 0,
+    "ignored": 0
+  },
+  "explicit_physical_gpu_tests": [
+    {
+      "test": "gpu_legacy_normal_transport_matches_inverse_transpose",
+      "source": "crates/voxy_render/src/skinned_normal_gpu_tests.rs",
+      "reason": "requires GPU; production vertex-shader normal transport readback"
+    },
+    {
+      "test": "film_gpu_integrates_prism_thickness_and_near_clipping",
+      "source": "crates/voxy_render/src/fluid_screen.rs",
+      "reason": "requires a physical GPU adapter"
+    },
+    {
+      "test": "gpu_legacy_skin_raster_matches_cpu_and_retains_rejected_pose",
+      "source": "crates/voxy_render/src/renderer/legacy_skin_tests.rs",
+      "reason": "requires GPU; full production legacy skin raster and rejected-pose retention"
+    },
+    {
+      "test": "gpu_disjoint_views_preserve_both_regions_and_clear_gap",
+      "source": "crates/voxy_render/src/scene/multi_view_tests.rs",
+      "reason": "requires a real GPU adapter; run explicitly for multi-view acceptance"
+    },
+    {
+      "test": "gpu_disjoint_views_xray_keeps_nearest_internals_and_world_depth",
+      "source": "crates/voxy_render/src/scene/multi_view_tests.rs",
+      "reason": "requires a real GPU adapter; run explicitly for multi-view X-ray acceptance"
+    },
+    {
+      "test": "gpu_lod_upload_shares_streams_and_counts_all_index_buffers",
+      "source": "crates/voxy_render/src/scene/lod_geometry.rs",
+      "reason": "requires a real GPU adapter; run explicitly for LOD acceptance"
+    },
+    {
+      "test": "gpu_scene_skinning_independent_instances_and_last_good_pose",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; scene ABI deformation readback"
+    },
+    {
+      "test": "gpu_skeletal_lod_shares_pose_streams_and_rejects_failed_admission",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; skeletal LOD shared deformation streams"
+    },
+    {
+      "test": "gpu_reference_rig_full_clip_matches_cpu_positions",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; upstream 19-bone rig and host timing diagnostics"
+    },
+    {
+      "test": "gpu_fox_all_clips_match_cpu_and_render",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; 24-bone Fox with Survey, Walk and Run"
+    },
+    {
+      "test": "gpu_reference_rig_step_clips_match_cpu_and_render",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; STEP interpolation through the skeletal renderer"
+    },
+    {
+      "test": "gpu_fox_step_clips_match_cpu_and_render",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; intermediate STEP keys in Survey, Walk and Run"
+    },
+    {
+      "test": "gpu_reference_rig_cubic_clips_match_cpu_and_render",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; cubic rig pose and normal comparison"
+    },
+    {
+      "test": "gpu_mirrored_rig_matches_cpu_positions_normals_and_render",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; mirrored bind hierarchy and animated negative scale"
+    },
+    {
+      "test": "gpu_skin_normals_follow_inverse_transpose_and_keep_last_good",
+      "source": "crates/voxy_render/src/scene/skinning/tests.rs",
+      "reason": "requires GPU; affine skin normal tangency and rejected collapsed pose"
+    },
+    {
+      "test": "gpu_skeletal_lod_pose_switches_indices_and_preserves_shared_streams",
+      "source": "crates/voxy_render/src/renderer/skinned_lod/tests.rs",
+      "reason": "requires real GPU; explicit skeletal LOD color/depth acceptance"
+    }
+  ],
+  "explicit_cpu_profiles": [
+    {
+      "test": "profile_legacy_render_admission_reference_rigs",
+      "source": "crates/voxy_render/src/skinned_normal_gpu_tests.rs",
+      "reason": "release-mode CPU admission profiling; no FPS inference"
+    }
+  ],
+  "shader_reload": [
+    "syntax rejection preserves shader revision and accepted source",
+    "pipeline missing vertex entry rejection preserves shader and MSAA",
+    "subsequent custom-color multi-view GPU readback passes"
+  ],
+  "source_sha256": {
+    "crates/voxy_render/src/scene/multi_view_tests.rs": "69e782d91559f64a86f0567a67d6ed94b988d0f8c74169aa8e22ed0b02e2fbb2"
+  },
+  "not_qualified": [
+    "native window presentation",
+    "NVIDIA CUDA/RTX hardware",
+    "DirectX12 and other devices",
+    "all scene feature combinations or full graphics parity"
+  ]
+}

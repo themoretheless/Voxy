@@ -1,0 +1,18 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+error[E0599]: no method named `capture` found for struct `voxy_scene::SceneGraph` in the current scope
+  --> crates/voxy_gameplay/src/liquid_source.rs:92:30
+   |
+92 |         let document = scene.capture(&registry).unwrap();
+   |                              ^^^^^^^ method not found in `voxy_scene::SceneGraph`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `voxy_gameplay` (lib test) due to 1 previous error

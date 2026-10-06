@@ -1,0 +1,39 @@
+{
+  "adapter": "Apple M4 Max",
+  "backend": "Metal",
+  "gpu_modes": [
+    "finite-source impacts diagnostic passed",
+    "finite-source impacts optical passed"
+  ],
+  "CPU_tests": {
+    "passed": 6,
+    "ignored": 1,
+    "failed": 0
+  },
+  "source_inventory": [
+    {
+      "remaining_mass_kg": 95.0,
+      "emitted_mass_kg": 5.0,
+      "reported_energy_defect_j": 0.0
+    },
+    {
+      "remaining_mass_kg": 96.0,
+      "emitted_mass_kg": 4.0,
+      "reported_energy_defect_j": 0.0
+    }
+  ],
+  "verified": [
+    "cumulative source mass, momentum and energy",
+    "particle/film mass and captured thermal energy",
+    "finite gas exchange/flow ledgers",
+    "atomic second-source exhaustion",
+    "restart preserves combined mode"
+  ],
+  "scope": "CPU particle/film/gas models and real Metal GPU rendering; native integration compiled, native presented-frame acceptance not run; not complete liquid/hardware qualification",
+  "source_sha256": {
+    "crates/voxy_app/src/liquid_demo.rs": "bad19ec97df80085975f0c39289f8b6edf5bcfc47adddcad817e42ced6c22b38",
+    "crates/voxy_app/src/scene_app.rs": "5a9b4b99e6c8fccbc55e5ad8dcd419d6c363db8545179707b2b43c694efbe330",
+    "crates/voxy_app/examples/liquid_snapshot.rs": "7f3eb34826629772f714f2a00616fe0808e2ecf174b8f1fd296c110b95c42ed8",
+    "crates/voxy_app/examples/liquids.rs": "0b4dfed13ba34c4bc15a6492d53872c01abdae49c55f52905301b96debea146b"
+  }
+}
