@@ -278,6 +278,125 @@ fn wet_cohesive_update_breaks_dynamic_fragment_without_resetting_work() {
     )
     .unwrap();
     let before = dynamics.energy().unwrap();
+    // Joint thermal/wet migration reuses the admitted bulk and face laws, but
+    // publishes them together even when a late history migration rejects healing.
+    {
+        use physics::moisture::{ThermalCalibration, ThermalCohesiveCalibration};
+        let bulk_law =
+            ThermalCalibration::new(300., 600., crate::calibration(), crate::calibration())
+                .unwrap();
+        let face_law = ThermalCohesiveCalibration::new(
+            300.,
+            600.,
+            CohesiveCalibration::new(dry, dry).unwrap(),
+            calibration,
+        )
+        .unwrap();
+        let water = [Cell {
+            capacity_kg: 0.001,
+            water_kg: 0.001,
+        }; 2];
+        let dry_mass = [1. / 6.; 2];
+        let velocities = vec![[0.; 3]; n];
+        let mut cold = dynamics.clone();
+        let (_, cold_face) = cold
+            .apply_thermal_moisture_with_cohesion(
+                &water,
+                &dry_mass,
+                &[bulk_law; 2],
+                &[600.; 2],
+                &velocities,
+                &[face_law],
+                &[300.],
+                &[0.5],
+            )
+            .unwrap();
+        assert_eq!(cold_face.fragments_after, 1);
+        let mut joint = dynamics.clone();
+        let snapshot = format!("{joint:?}");
+        assert!(
+            joint
+                .apply_thermal_moisture_with_cohesion(
+                    &water,
+                    &dry_mass,
+                    &[bulk_law; 2],
+                    &[600.; 2],
+                    &velocities,
+                    &[face_law],
+                    &[601.],
+                    &[0.5]
+                )
+                .is_err()
+        );
+        assert_eq!(format!("{joint:?}"), snapshot);
+        assert!(
+            joint
+                .apply_thermal_moisture_with_cohesion(
+                    &water,
+                    &dry_mass,
+                    &[bulk_law; 2],
+                    &[600.],
+                    &velocities,
+                    &[face_law],
+                    &[600.],
+                    &[0.5]
+                )
+                .is_err()
+        );
+        assert_eq!(format!("{joint:?}"), snapshot);
+        let mut separate = dynamics.clone();
+        let expected_bulk = separate
+            .apply_thermal_moisture(&water, &dry_mass, &[bulk_law; 2], &[600.; 2], &velocities)
+            .unwrap();
+        let saturation = separate.cohesive_cell_saturations(&water, &[0.5]).unwrap();
+        let expected_face = separate
+            .apply_thermal_cohesive_moisture(&saturation, &[face_law], &[600.])
+            .unwrap();
+        let (bulk, face) = joint
+            .apply_thermal_moisture_with_cohesion(
+                &water,
+                &dry_mass,
+                &[bulk_law; 2],
+                &[600.; 2],
+                &velocities,
+                &[face_law],
+                &[600.],
+                &[0.5],
+            )
+            .unwrap();
+        assert_eq!(format!("{joint:?}"), format!("{separate:?}"));
+        assert_eq!(
+            format!("{bulk:?}{face:?}"),
+            format!("{expected_bulk:?}{expected_face:?}")
+        );
+        assert_eq!(face.fragments_before, 1);
+        assert_eq!(face.fragments_after, 2);
+        assert!((bulk.water_mass_change_kg - 0.002).abs() < 1e-12);
+        assert!(
+            (joint.energy().unwrap().fracture_dissipated_j - before.fracture_dissipated_j).abs()
+                < 1e-12
+        );
+        let accepted = format!("{joint:?}");
+        let dry_water = [Cell {
+            capacity_kg: 0.001,
+            water_kg: 0.,
+        }; 2];
+        assert!(
+            joint
+                .apply_thermal_moisture_with_cohesion(
+                    &dry_water,
+                    &dry_mass,
+                    &[bulk_law; 2],
+                    &[300.; 2],
+                    &velocities,
+                    &[face_law],
+                    &[300.],
+                    &[0.5]
+                )
+                .is_err()
+        );
+        assert_eq!(format!("{joint:?}"), accepted);
+    }
     let mut supplied = dynamics.clone();
     let mut network = physics::moisture::Body::new(
         vec![
@@ -825,4 +944,243 @@ fn temperature_changes_elastic_response_with_explicit_parameter_work() {
     );
     assert_eq!(snapshot, format!("{body:?}"));
     assert!((law.at_temperature(450.).unwrap().at(0.5).unwrap().young_pa - 56250.).abs() < 1e-10);
+}
+
+#[test]
+fn conducted_temperature_updates_loaded_solid_or_restores_all_owners() {
+    use physics::{
+        liquid::SaturationCurve,
+        moisture::{Body, MaterialThermalStore, ThermalCalibration, ThermalVapor},
+        plasticity::mesh::QuadraticAdvanceLimits,
+    };
+    let curve = SaturationCurve {
+        reference_temperature: 300.,
+        reference_pressure: 3500.,
+        latent_heat: 2.4e6,
+        vapor_gas_constant: 461.,
+        min_temperature: 280.,
+        max_temperature: 320.,
+    };
+    let mut solid = fixture(false, true);
+    let mut water = Body::new(
+        vec![Cell {
+            capacity_kg: 1.,
+            water_kg: 0.,
+        }],
+        vec![],
+    )
+    .unwrap();
+    let mut gas = ThermalVapor::new(310., 1000., 1., 0., curve).unwrap();
+    let mut thermal = MaterialThermalStore::new(2000., 300.).unwrap();
+    let hot = Calibration::new(
+        Properties {
+            young_pa: 5e4,
+            ..calibration().at(0.).unwrap()
+        },
+        Properties {
+            young_pa: 2.5e4,
+            ..calibration().at(1.).unwrap()
+        },
+    )
+    .unwrap();
+    let law = ThermalCalibration::new(300., 320., calibration(), hot).unwrap();
+    let interval = 1e-5;
+    let limits = QuadraticAdvanceLimits {
+        minimum_dt_s: 1e-8,
+        maximum_dt_s: interval,
+        max_attempts: 100,
+        energy_tolerance_j: 1e-8,
+    };
+    let original = format!("{solid:?}{water:?}{gas:?}{thermal:?}");
+    let narrow = ThermalCalibration::new(300., 300.000001, calibration(), hot).unwrap();
+    assert!(
+        solid
+            .advance_heated_vapor_loaded_calibrated(
+                interval,
+                &mut water,
+                &mut gas,
+                &mut thermal,
+                4200.,
+                100.,
+                &[],
+                &[1.],
+                &[narrow],
+                &[[0.; 3]; 10],
+                &[],
+                &[],
+                &[[0.; 3]; 10],
+                [0.; 3],
+                limits
+            )
+            .is_err()
+    );
+    assert_eq!(format!("{solid:?}{water:?}{gas:?}{thermal:?}"), original);
+    // Valid heat and constitutive stages followed by invalid motion still roll back.
+    assert!(
+        solid
+            .advance_heated_vapor_loaded_calibrated(
+                interval,
+                &mut water,
+                &mut gas,
+                &mut thermal,
+                4200.,
+                100.,
+                &[],
+                &[1.],
+                &[law],
+                &[[0.; 3]; 10],
+                &[],
+                &[],
+                &[],
+                [0.; 3],
+                limits
+            )
+            .is_err()
+    );
+    assert_eq!(format!("{solid:?}{water:?}{gas:?}{thermal:?}"), original);
+    let initial_elastic = solid.energy().unwrap().elastic_j;
+    let initial_heat = thermal.energy_j() + gas.accounted_energy_j();
+    let (_, _, bulk, _, motion) = solid
+        .advance_heated_vapor_loaded_calibrated(
+            interval,
+            &mut water,
+            &mut gas,
+            &mut thermal,
+            4200.,
+            100.,
+            &[],
+            &[1.],
+            &[law],
+            &[[0.; 3]; 10],
+            &[],
+            &[],
+            &[[0.; 3]; 10],
+            [0.; 3],
+            limits,
+        )
+        .unwrap();
+    let expected_t =
+        300. + 10. * 1000. / 3000. * (1. - (-interval * 100. * (1. / 1000. + 1. / 2000.)).exp());
+    assert!((thermal.temperature_k() - expected_t).abs() < 1e-11);
+    let young_ratio = 1. - 0.5 * (expected_t - 300.) / 20.;
+    assert!((bulk.elastic_parameter_work_j - initial_elastic * (young_ratio - 1.)).abs() < 1e-10);
+    assert!(bulk.elastic_parameter_work_j < 0.);
+    assert!((thermal.energy_j() + gas.accounted_energy_j() - initial_heat).abs() < 1e-8);
+    assert!(!motion.substeps.is_empty());
+}
+
+#[test]
+fn mixing_heat_outside_calibration_domain_restores_all_owners() {
+    use physics::{
+        liquid::SaturationCurve,
+        moisture::{Body, MaterialThermalStore, ThermalCalibration, ThermalVapor, VaporLink},
+        plasticity::mesh::QuadraticAdvanceLimits,
+    };
+    let curve = SaturationCurve {
+        reference_temperature: 300.,
+        reference_pressure: 3500.,
+        latent_heat: 2.4e6,
+        vapor_gas_constant: 461.,
+        min_temperature: 280.,
+        max_temperature: 320.,
+    };
+    let mut solid = fixture(false, false);
+    let mut water = Body::new(
+        vec![Cell {
+            capacity_kg: 1.,
+            water_kg: 0.,
+        }],
+        vec![],
+    )
+    .unwrap();
+    let mut gas = ThermalVapor::new(300., 1000., 1., 0.01, curve).unwrap();
+    let mut thermal = MaterialThermalStore::new(2000., 305.).unwrap();
+    let links = [VaporLink {
+        material_cell: 0,
+        conductance_kg_s: 0.1,
+    }];
+    let dt = 1e-5;
+    let mut reference_water = water.clone();
+    let mut reference_gas = gas.clone();
+    let mut reference_heat = thermal.clone();
+    reference_water
+        .advance_heated_vapor(
+            dt,
+            &mut reference_gas,
+            &mut reference_heat,
+            4200.,
+            100.,
+            &links,
+        )
+        .unwrap();
+    let pre_mix = reference_heat.temperature_k();
+    let mut reference_solid = solid.clone();
+    let (bulk, _) = reference_solid
+        .apply_moisture_with_cohesion(
+            reference_water.cells(),
+            &[1.],
+            &[calibration()],
+            &[[3., 0., 0.]; 10],
+            &[],
+            &[],
+        )
+        .unwrap();
+    assert!(bulk.kinetic_transfer_loss_j > 0.);
+    reference_heat
+        .deposit_heat(bulk.kinetic_transfer_loss_j)
+        .unwrap();
+    let post_mix = reference_heat.temperature_k();
+    assert!(post_mix > pre_mix);
+    let upper = (pre_mix + post_mix) * 0.5;
+    let narrow = ThermalCalibration::new(280., upper, calibration(), calibration()).unwrap();
+    let limits = QuadraticAdvanceLimits {
+        minimum_dt_s: 1e-8,
+        maximum_dt_s: dt,
+        max_attempts: 100,
+        energy_tolerance_j: 1e-8,
+    };
+    let original = format!("{solid:?}{water:?}{gas:?}{thermal:?}");
+    assert!(
+        solid
+            .advance_heated_vapor_loaded_calibrated(
+                dt,
+                &mut water,
+                &mut gas,
+                &mut thermal,
+                4200.,
+                100.,
+                &links,
+                &[1.],
+                &[narrow],
+                &[[3., 0., 0.]; 10],
+                &[],
+                &[],
+                &[[0.; 3]; 10],
+                [0.; 3],
+                limits
+            )
+            .is_err()
+    );
+    assert_eq!(format!("{solid:?}{water:?}{gas:?}{thermal:?}"), original);
+    let wide = ThermalCalibration::new(280., 320., calibration(), calibration()).unwrap();
+    solid
+        .advance_heated_vapor_loaded_calibrated(
+            dt,
+            &mut water,
+            &mut gas,
+            &mut thermal,
+            4200.,
+            100.,
+            &links,
+            &[1.],
+            &[wide],
+            &[[3., 0., 0.]; 10],
+            &[],
+            &[],
+            &[[0.; 3]; 10],
+            [0.; 3],
+            limits,
+        )
+        .unwrap();
+    assert!((thermal.temperature_k() - post_mix).abs() < 1e-11);
 }

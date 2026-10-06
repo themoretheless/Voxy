@@ -8020,3 +8020,22 @@ A deliberate actual device.destroy test passed: the device-loss callback was det
 Native presentation remains unresolved: the new mirror bundle and an additional always-on-top diagnostic both timed out with zero presentations. The installed AppKit NSWindow.h confirms NSWindowOcclusionStateVisible is 1UL << 1, so the existing Metal occlusion guard mask is correct; no guard bypass/vendor mutation was made. Visibility on the current Space versus AppKit occlusion still needs live confirmation. Full displayed animation, minimize/restore, actual UI activation and surface-loss recovery are not established by the private-target tests. Device-loss recovery has actual GPU acceptance as recorded above.
 
 The final curved rough scene PNG was captured from the private GPU display target at target/planar-curved-offscreen.png and inspected visually. A matched capture before stochastic-miss smoothing is retained at target/planar-curved-before-spatial-misses.png. On display-RGB crop [400,300]-[900,700], the average absolute adjacent-pixel difference (mean of horizontal/vertical differences, channels normalized from 8-bit to 0..1) changed from 0.0555150326452699 to 0.008328721861302504. Display mean RGB also changed from [0.8885751764698505,0.8503877450979896,0.8177292156862969] to [0.9381959215681925,0.8731460588234339,0.8217125098039367]. This is one display-image smoothness comparison, not temporal ghosting acceptance, unbiased radiance accuracy or a general noise/performance benchmark. Residual grain remains visible near the reflector edges. The final 135-reference numerical repeat and rebuilt VoxyPlanar local bundle completed successfully; source formatting/scoped whitespace checks passed.
+
+Current renderer GPU qualification (2026-10-06): all 162 release library tests
+pass with ignored tests explicitly enabled and one test thread. Physical GPU
+checks cover skeletal/legacy raster and normal transport, LOD shared streams,
+reference rig interpolation/mirroring, multi-view/X-ray and film thickness/near
+clipping on the current Apple M4 Max/Metal adapter. The ignored CPU admission
+profile is executed too; it does not establish frame rate.
+
+The multi-view readback now additionally rejects malformed WGSL and a valid
+module with a missing vertex entry while retaining the accepted custom shader,
+revision and MSAA variants. A subsequent GPU render must still show the custom
+color permutation. Module and pipeline errors return diagnostics without
+replacing the healthy pipelines. Evidence, explicit ignored-test inventory,
+Metal capabilities/device limits and source digest:
+`artifacts/renderer-current-gpu-2026-10-06/`.
+
+Adapter features remain distinct from enabled device features. This result does
+not qualify native presented frames, NVIDIA CUDA/RTX, DirectX12/other devices,
+all lighting/material/scene combinations, or complete graphics parity.

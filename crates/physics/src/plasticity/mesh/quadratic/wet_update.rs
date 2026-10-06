@@ -575,7 +575,7 @@ impl FiniteQuadraticDynamics {
     /// Atomic heat/water/material/motion interval with lumped temperatures.
     /// Thermal stores close water enthalpy; free-body water mixing loss heats
     /// material. Supported-body mixing loss, parameter work and other mechanical
-    /// dissipation remain report terms. Laws do not depend on temperature yet.
+    /// dissipation remain report terms. This entry point uses temperature-independent laws.
     #[allow(clippy::too_many_arguments)]
     pub fn advance_heated_vapor_loaded(
         &mut self,
@@ -590,6 +590,101 @@ impl FiniteQuadraticDynamics {
         bulk_calibration: &[crate::moisture::Calibration],
         incoming_velocity: &[Vec3],
         face_calibration: &[crate::moisture::CohesiveCalibration],
+        minus_weights: &[f64],
+        loads: &[Vec3],
+        acceleration: Vec3,
+        limits: super::QuadraticAdvanceLimits,
+    ) -> Result<
+        (
+            crate::moisture::VaporTransfer,
+            f64,
+            QuadraticWetUpdate,
+            QuadraticCohesiveWetUpdate,
+            super::QuadraticAdvance,
+        ),
+        &'static str,
+    > {
+        self.advance_heated_vapor_loaded_impl(
+            interval_s,
+            water,
+            vapor,
+            thermal,
+            water_specific_heat_j_kg_k,
+            conductance_w_k,
+            links,
+            dry_mass_kg,
+            HeatedWetCalibration::Moisture(bulk_calibration, face_calibration),
+            incoming_velocity,
+            minus_weights,
+            loads,
+            acceleration,
+            limits,
+        )
+    }
+
+    /// Same atomic heat/water/motion split with temperature-dependent laws.
+    /// All cells and interfaces use the lumped material temperature after heat
+    /// and water exchange, before subsequent mixing-loss heat deposition.
+    /// Parameter work remains explicit; this is not a monolithic thermal solve.
+    #[allow(clippy::too_many_arguments)]
+    pub fn advance_heated_vapor_loaded_calibrated(
+        &mut self,
+        interval_s: f64,
+        water: &mut crate::moisture::Body,
+        vapor: &mut crate::moisture::ThermalVapor,
+        thermal: &mut crate::moisture::MaterialThermalStore,
+        water_specific_heat_j_kg_k: f64,
+        conductance_w_k: f64,
+        links: &[crate::moisture::VaporLink],
+        dry_mass_kg: &[f64],
+        bulk_calibration: &[crate::moisture::ThermalCalibration],
+        incoming_velocity: &[Vec3],
+        face_calibration: &[crate::moisture::ThermalCohesiveCalibration],
+        minus_weights: &[f64],
+        loads: &[Vec3],
+        acceleration: Vec3,
+        limits: super::QuadraticAdvanceLimits,
+    ) -> Result<
+        (
+            crate::moisture::VaporTransfer,
+            f64,
+            QuadraticWetUpdate,
+            QuadraticCohesiveWetUpdate,
+            super::QuadraticAdvance,
+        ),
+        &'static str,
+    > {
+        self.advance_heated_vapor_loaded_impl(
+            interval_s,
+            water,
+            vapor,
+            thermal,
+            water_specific_heat_j_kg_k,
+            conductance_w_k,
+            links,
+            dry_mass_kg,
+            HeatedWetCalibration::Thermal(bulk_calibration, face_calibration),
+            incoming_velocity,
+            minus_weights,
+            loads,
+            acceleration,
+            limits,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn advance_heated_vapor_loaded_impl(
+        &mut self,
+        interval_s: f64,
+        water: &mut crate::moisture::Body,
+        vapor: &mut crate::moisture::ThermalVapor,
+        thermal: &mut crate::moisture::MaterialThermalStore,
+        water_specific_heat_j_kg_k: f64,
+        conductance_w_k: f64,
+        links: &[crate::moisture::VaporLink],
+        dry_mass_kg: &[f64],
+        calibration: HeatedWetCalibration<'_>,
+        incoming_velocity: &[Vec3],
         minus_weights: &[f64],
         loads: &[Vec3],
         acceleration: Vec3,
@@ -632,18 +727,44 @@ impl FiniteQuadraticDynamics {
             conductance_w_k,
             links,
         )?;
-        let (bulk, cohesive) = next.apply_moisture_with_cohesion(
-            next_water.cells(),
-            dry_mass_kg,
-            bulk_calibration,
-            incoming_velocity,
-            face_calibration,
-            minus_weights,
-        )?;
+        let (bulk, cohesive) = match calibration {
+            HeatedWetCalibration::Moisture(bulk, faces) => next.apply_moisture_with_cohesion(
+                next_water.cells(),
+                dry_mass_kg,
+                bulk,
+                incoming_velocity,
+                faces,
+                minus_weights,
+            )?,
+            HeatedWetCalibration::Thermal(bulk, faces) => {
+                let t = next_thermal.temperature_k();
+                next.apply_thermal_moisture_with_cohesion(
+                    next_water.cells(),
+                    dry_mass_kg,
+                    bulk,
+                    &vec![t; next_water.cells().len()],
+                    incoming_velocity,
+                    faces,
+                    &vec![t; faces.len()],
+                    minus_weights,
+                )?
+            }
+        };
         // Fully free-body mixing loss is deposited in the material store.
         // Supported-body loss includes constraint work and stays a report term.
         if next.inner.free_nodes.len() == next.inner.velocities.len() {
             next_thermal.deposit_heat(bulk.kinetic_transfer_loss_j)?;
+        }
+        // Mixing heat is a later split stage, but its final temperature must
+        // still be inside every admitted temperature calibration domain.
+        if let HeatedWetCalibration::Thermal(bulk, faces) = calibration {
+            let t = next_thermal.temperature_k();
+            for law in bulk {
+                law.at_temperature(t)?;
+            }
+            for law in faces {
+                law.at_temperature(t)?;
+            }
         }
         let final_kinetic = next.energy()?.kinetic_j;
         let final_thermal = next_vapor.accounted_energy_j() + next_thermal.energy_j();
@@ -720,4 +841,63 @@ impl FiniteQuadraticDynamics {
             .collect::<Result<Vec<_>, _>>()?;
         self.apply_cohesive_moisture(saturation, &laws)
     }
+}
+
+impl FiniteQuadraticDynamics {
+    /// Atomically apply calibrated temperature/water effects to bulk inertia,
+    /// elasticity and cohesive histories. Cell and interface temperatures are
+    /// explicit fields; no implicit averaging or extrapolation is performed.
+    /// Parameter work remains in the returned reports, not thermal-store heat.
+    /// # Errors
+    /// Invalid fields/laws or healing migration leaves the entire solid unchanged.
+    #[allow(clippy::too_many_arguments)]
+    pub fn apply_thermal_moisture_with_cohesion(
+        &mut self,
+        water: &[crate::moisture::Cell],
+        dry_mass_kg: &[f64],
+        bulk_calibration: &[crate::moisture::ThermalCalibration],
+        cell_temperatures_k: &[f64],
+        incoming_velocity: &[Vec3],
+        face_calibration: &[crate::moisture::ThermalCohesiveCalibration],
+        face_temperatures_k: &[f64],
+        minus_weights: &[f64],
+    ) -> Result<(QuadraticWetUpdate, QuadraticCohesiveWetUpdate), &'static str> {
+        if bulk_calibration.len() != water.len()
+            || cell_temperatures_k.len() != water.len()
+            || face_temperatures_k.len() != face_calibration.len()
+        {
+            return Err("invalid joint thermal wet calibration dimensions");
+        }
+        let bulk = bulk_calibration
+            .iter()
+            .zip(cell_temperatures_k)
+            .map(|(&law, &t)| law.at_temperature(t))
+            .collect::<Result<Vec<_>, _>>()?;
+        let faces = face_calibration
+            .iter()
+            .zip(face_temperatures_k)
+            .map(|(&law, &t)| law.at_temperature(t))
+            .collect::<Result<Vec<_>, _>>()?;
+        self.apply_moisture_with_cohesion(
+            water,
+            dry_mass_kg,
+            &bulk,
+            incoming_velocity,
+            &faces,
+            minus_weights,
+        )
+    }
+}
+
+// Internal dispatch preserves one heat/inventory/motion transaction.
+#[derive(Clone, Copy)]
+enum HeatedWetCalibration<'a> {
+    Moisture(
+        &'a [crate::moisture::Calibration],
+        &'a [crate::moisture::CohesiveCalibration],
+    ),
+    Thermal(
+        &'a [crate::moisture::ThermalCalibration],
+        &'a [crate::moisture::ThermalCohesiveCalibration],
+    ),
 }

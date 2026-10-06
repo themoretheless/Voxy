@@ -5,6 +5,17 @@ pub(crate) fn solve_mass(
     incoming: &[Vec<(usize, f64)>],
     external_out: &[f64],
 ) -> Result<Vec<f64>, &'static str> {
+    solve_mass_with_budget(rhs_mass, diagonal, incoming, external_out, 20_000)
+}
+/// Allow an owner with an independent solver to bound its positive warm-up.
+/// The Darcy owner retains the original default iteration budget.
+pub(crate) fn solve_mass_with_budget(
+    rhs_mass: &[f64],
+    diagonal: &[f64],
+    incoming: &[Vec<(usize, f64)>],
+    external_out: &[f64],
+    max_iterations: usize,
+) -> Result<Vec<f64>, &'static str> {
     let scale = rhs_mass.iter().copied().fold(0_f64, f64::max);
     if scale == 0. {
         return Ok(vec![0.; rhs_mass.len()]);
@@ -14,7 +25,7 @@ pub(crate) fn solve_mass(
     let mut mass = rhs.clone();
     // Positive Gauss-Seidel iteration for the conservative transport M-matrix.
     // No clipping or post-hoc mass redistribution is used.
-    for _ in 0..20_000 {
+    for _ in 0..max_iterations {
         for i in 0..mass.len() {
             mass[i] =
                 (rhs[i] + incoming[i].iter().map(|(j, c)| c * mass[*j]).sum::<f64>()) / diagonal[i];

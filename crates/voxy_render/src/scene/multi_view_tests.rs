@@ -67,6 +67,20 @@ fn gpu_disjoint_views_preserve_both_regions_and_clear_gap() {
     assert!(pollster::block_on(renderer.enable_msaa4(&device)).unwrap());
     assert!(!pollster::block_on(renderer.enable_msaa4(&device)).unwrap());
     assert_eq!(renderer.shader_revision(), revision);
+    // Both module parsing and later pipeline ABI admission must preserve the
+    // accepted custom shader, including its already enabled MSAA variants.
+    let missing_entry = custom.replace("fn vs_main(", "fn absent_vertex_entry(");
+    assert_ne!(missing_entry, custom);
+    for rejected in ["this is not WGSL", missing_entry.as_str()] {
+        let error = pollster::block_on(renderer.reload_shader(&device, rejected)).unwrap_err();
+        assert!(!error.to_string().is_empty());
+        assert_eq!(renderer.shader_revision(), revision);
+        assert!(!pollster::block_on(renderer.reload_shader(&device, &custom)).unwrap());
+        assert!(!pollster::block_on(renderer.enable_msaa4(&device)).unwrap());
+        eprintln!("REJECTED SCENE SHADER: {error}");
+    }
+    eprintln!("SHADER ROLLBACK GPU {:?}", adapter.get_info());
+
     let target = |format, usage, sample_count| {
         device.create_texture(&wgpu::TextureDescriptor {
             label: Some("multi-view pixels"),
