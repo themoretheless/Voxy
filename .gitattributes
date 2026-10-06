@@ -1,3 +1,7 @@
 
 # REACLIB records preserve fixed-width source fields.
 crates/physics/tests/data/*.reaclib whitespace=-blank-at-eol
+
+# Preserve raw diagnostic output and external patch context verbatim.
+artifacts/**/*.log -whitespace
+artifacts/general-tissue-mesher-2026-10-07/*.patch -whitespace

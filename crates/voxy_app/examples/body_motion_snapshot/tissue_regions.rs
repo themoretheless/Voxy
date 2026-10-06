@@ -76,6 +76,92 @@ fn digest_hex(digest: [u8; 32]) -> String {
     digest.iter().map(|byte| format!("{byte:02x}")).collect()
 }
 
+/// Observe an offline volume and audit all source vertices with the same native
+/// membership/binding provider as runtime. This publishes a report, not dynamics.
+pub(super) fn check_volume(
+    path: &Path,
+    model: &ModelAsset,
+    model_bytes: &'static [u8],
+) -> Result<ImportedAsset<Value>, Error> {
+    let path = path.canonicalize()?;
+    let files = FileInputs::new(path.parent().ok_or("missing volume directory")?)?;
+    let id = AssetId(
+        path.file_name()
+            .and_then(|n| n.to_str())
+            .ok_or("invalid volume filename")?
+            .into(),
+    );
+    if id.0 == MODEL_ID {
+        return Err("reserved tissue input identity".into());
+    }
+    let mut inputs = ImportInputs::new(2, 64 * 1024 * 1024);
+    let snapshot = inputs
+        .read(id, |id, limit| files.read(id, limit))
+        .map_err(|e| format!("volume observation: {e:?}"))?;
+    let source = inputs
+        .read(AssetId(MODEL_ID.into()), |_, limit| {
+            if model_bytes.len() > limit {
+                return Err("model input byte limit".into());
+            }
+            Ok(model_bytes.to_vec())
+        })
+        .map_err(|e| format!("model observation: {e:?}"))?;
+    let mut report = serde_json::json!({
+        "scope":"native phase-zero volume admission and full source skin membership; not animation dynamics",
+        "volume_blake3":digest_hex(snapshot.digest), "source_model_blake3":digest_hex(source.digest),
+        "volume_admitted":false, "complete_skin_binding":false,
+    });
+    let audit = (|| -> Result<(), Error> {
+        let mesh = TetraMesh::from_medit_volume(std::str::from_utf8(&snapshot.bytes)?)?;
+        report["volume_admitted"] = true.into();
+        report["volume_nodes"] = mesh.points.len().into();
+        report["volume_cells"] = mesh.cells.len().into();
+        report["volume_boundary_triangles"] = mesh.boundary.len().into();
+        let (skin, _) = super::contact_positions64(model, 0.)?;
+        report["source_vertices"] = skin.len().into();
+        let search = physics::tissue_surface::TetrahedralEmbedding::new(&mesh.points, &mesh.cells)?;
+        let contained = search.contains_points(&skin)?;
+        let exterior: Vec<_> = contained
+            .iter()
+            .enumerate()
+            .filter_map(|(i, &inside)| (!inside).then_some(i))
+            .collect();
+        report["bound_vertices"] = (skin.len() - exterior.len()).into();
+        report["exterior_source_vertices"] = serde_json::to_value(&exterior)?;
+        if exterior.is_empty() {
+            let binding = search.bind_relative(&skin, &contained)?;
+            let deformed = binding.deform(&mesh.points)?;
+            let max_error = deformed
+                .iter()
+                .flatten()
+                .zip(skin.iter().flatten())
+                .map(|(a, b)| (a - b).abs())
+                .fold(0_f64, f64::max);
+            if !max_error.is_finite() {
+                return Err("nonfinite bound source skin".into());
+            }
+            report["complete_skin_binding"] = true.into();
+            report["maximum_rest_component_error_m"] = max_error.into();
+        }
+        Ok(())
+    })();
+    if let Err(error) = audit {
+        report["admission_error"] = error.to_string().into();
+    }
+    inputs
+        .finish_observed(report, |id, limit| {
+            if id.0 == MODEL_ID {
+                if model_bytes.len() > limit {
+                    return Err("model input byte limit".into());
+                }
+                Ok(model_bytes.to_vec())
+            } else {
+                files.read(id, limit)
+            }
+        })
+        .map_err(|e| format!("volume audit inputs changed: {:?}", e.error).into())
+}
+
 fn explicit_material(
     mesh: TetraMesh,
     supports: Vec<usize>,
@@ -221,6 +307,7 @@ pub(super) fn load(
         None
     };
     let mut volumes = Vec::with_capacity(records.len());
+    let mut mesh_formats = Vec::with_capacity(records.len());
     let mut exclusions = Vec::with_capacity(records.len());
     for record in records {
         let mut allowed = vec![
@@ -232,6 +319,7 @@ pub(super) fn load(
         ];
         if explicit {
             allowed.extend([
+                "mesh_format",
                 "material",
                 "support_joint_overrides",
                 "support_joint_weights",
@@ -252,7 +340,25 @@ pub(super) fn load(
         if record["mesh_blake3"].as_str() != Some(digest_hex(bytes.digest).as_str()) {
             return Err("authored tissue volume digest mismatch".into());
         }
-        let mesh = TetraMesh::from_bytes(&bytes.bytes)?;
+        let format = match record.get("mesh_format") {
+            None => "vxtm-v1",
+            Some(value) => value.as_str().ok_or("invalid tissue mesh format")?,
+        };
+        let mesh = match format {
+            "vxtm-v1" => TetraMesh::from_bytes(&bytes.bytes)?,
+            "medit-volume-v1" => TetraMesh::from_medit_volume(std::str::from_utf8(&bytes.bytes)?)?,
+            "star-shaped-surface-v1" => {
+                let surface: Value = serde_json::from_slice(&bytes.bytes)?;
+                fields(&surface, &["points", "boundary", "interior"])?;
+                TetraMesh::from_star_shaped_surface(
+                    serde_json::from_value(surface["points"].clone())?,
+                    serde_json::from_value(surface["boundary"].clone())?,
+                    serde_json::from_value(surface["interior"].clone())?,
+                )?
+            }
+            _ => return Err("unsupported tissue mesh format".into()),
+        };
+        mesh_formats.push(format);
         let supports = if illustrative {
             serde_json::from_value::<[usize; 3]>(record["supports"].clone())?.to_vec()
         } else {
@@ -354,7 +460,8 @@ pub(super) fn load(
         "scope":"reference-space skin membership; not dynamic collision qualification",
         "source_vertices":source_positions.len(), "bound_vertices":binding.bound_vertex_count(),
         "tissue_owned_vertices":binding.tissue_owned_vertices(), "contract_supplied":regions.coverage.is_some(),
-        "regions": regions.volumes.iter().map(|spec| serde_json::json!({
+        "regions": regions.volumes.iter().zip(mesh_formats).map(|(spec, format)| serde_json::json!({
+            "mesh_format":format,
             "nodes":spec.mesh.points.len(), "cells":spec.mesh.cells.len(),
             "boundary_triangles":spec.mesh.boundary.len(), "supports":spec.supports.len(),
             "joint":spec.joint, "support_joint_overrides":spec.support_joint_overrides,
@@ -446,6 +553,141 @@ mod tests {
         let binding = demo.bind_skin(&positions).unwrap();
         assert!(binding.tissue_owned_vertices().contains(&666));
         eprintln!("NONCONVEX_IMPORT {}", imported.value().coverage_report);
+        let mut medit = format!(
+            "MeshVersionFormatted 1\nDimension 3\nVertices {}\n",
+            mesh.points.len()
+        );
+        for point in &mesh.points {
+            medit.push_str(&format!("{} {} {} 0\n", point[0], point[1], point[2]));
+        }
+        medit.push_str(&format!("Triangles 0\nTetrahedra {}\n", mesh.cells.len()));
+        for cell in &mesh.cells {
+            medit.push_str(&format!(
+                "{} {} {} {} 0\n",
+                cell[0] + 1,
+                cell[1] + 1,
+                cell[2] + 1,
+                cell[3] + 1
+            ));
+        }
+        medit.push_str("End\n");
+        std::fs::write(directory.join("volume.mesh"), &medit).unwrap();
+        let mut medit_manifest = value.clone();
+        medit_manifest["regions"][0]["mesh"] = "volume.mesh".into();
+        medit_manifest["regions"][0]["mesh_format"] = "medit-volume-v1".into();
+        medit_manifest["regions"][0]["mesh_blake3"] = hash(medit.as_bytes()).into();
+        std::fs::write(&manifest, serde_json::to_vec(&medit_manifest).unwrap()).unwrap();
+        let imported_medit = load(&manifest, &model, MODEL).unwrap();
+        assert_eq!(imported_medit.value().volumes[0].mesh.points, mesh.points);
+        assert_eq!(imported_medit.value().volumes[0].mesh.cells, mesh.cells);
+        assert_eq!(
+            imported_medit.value().volumes[0].mesh.boundary,
+            mesh.boundary
+        );
+        assert_eq!(
+            imported_medit.value().coverage_report["tissue_owned_vertices"],
+            imported.value().coverage_report["tissue_owned_vertices"]
+        );
+        assert_eq!(imported_medit.inputs().observations().len(), 3);
+        eprintln!(
+            "MEDIT_VOLUME_IMPORT {}",
+            imported_medit.value().coverage_report
+        );
+        let audit = check_volume(&directory.join("volume.mesh"), &model, MODEL).unwrap();
+        assert_eq!(audit.inputs().observations().len(), 2);
+        assert_eq!(audit.value()["volume_admitted"], true);
+        assert_eq!(audit.value()["complete_skin_binding"], false);
+        assert_eq!(audit.value()["bound_vertices"], 1);
+        assert_eq!(audit.value()["source_vertices"], 3273);
+        assert_eq!(
+            audit.value()["exterior_source_vertices"]
+                .as_array()
+                .unwrap()
+                .len(),
+            3272
+        );
+        std::fs::write(directory.join("invalid.mesh"), b"invalid volume").unwrap();
+        let rejected = check_volume(&directory.join("invalid.mesh"), &model, MODEL).unwrap();
+        assert_eq!(rejected.value()["volume_admitted"], false);
+        assert_eq!(rejected.value()["complete_skin_binding"], false);
+        assert_eq!(
+            rejected.value()["admission_error"],
+            "unsupported Medit tissue volume profile"
+        );
+        // Import the very same nonconvex source boundary directly, without a
+        // convex hull or a manually precomputed tetrahedral intermediate.
+        let surface = serde_json::json!({
+            "points":mesh.points, "boundary":mesh.boundary,
+            "interior":origin.map(|v| v + 0.005),
+        });
+        let surface_bytes = serde_json::to_vec_pretty(&surface).unwrap();
+        let surface_path = directory.join("surface.json");
+        std::fs::write(&surface_path, &surface_bytes).unwrap();
+        let mut star_manifest = value.clone();
+        star_manifest["regions"][0]["mesh"] = "surface.json".into();
+        star_manifest["regions"][0]["mesh_format"] = "star-shaped-surface-v1".into();
+        star_manifest["regions"][0]["mesh_blake3"] = hash(&surface_bytes).into();
+        std::fs::write(&manifest, serde_json::to_vec(&star_manifest).unwrap()).unwrap();
+        let star = load(&manifest, &model, MODEL).unwrap();
+        assert_eq!(star.inputs().observations().len(), 3);
+        let built = &star.value().volumes[0].mesh;
+        assert_eq!(&built.points[..mesh.points.len()], mesh.points);
+        assert_eq!(built.boundary, mesh.boundary);
+        assert_eq!(built.cells.len(), mesh.boundary.len());
+        assert!(
+            star.value().coverage_report["tissue_owned_vertices"]
+                .as_array()
+                .unwrap()
+                .contains(&serde_json::json!(666))
+        );
+        assert_eq!(
+            star.value().coverage_report["regions"][0]["mesh_format"],
+            "star-shaped-surface-v1"
+        );
+        eprintln!("STAR_SURFACE_IMPORT {}", star.value().coverage_report);
+        for format in [
+            serde_json::json!("unknown"),
+            Value::Null,
+            serde_json::json!(12),
+        ] {
+            let mut invalid = star_manifest.clone();
+            invalid["regions"][0]["mesh_format"] = format;
+            std::fs::write(&manifest, serde_json::to_vec(&invalid).unwrap()).unwrap();
+            assert!(load(&manifest, &model, MODEL).is_err());
+        }
+        let mut invalid_surface = surface.clone();
+        invalid_surface["interior"] = serde_json::json!(origin.map(|v| v - 1.));
+        let invalid_bytes = serde_json::to_vec(&invalid_surface).unwrap();
+        let mut invalid_manifest = star_manifest.clone();
+        invalid_manifest["regions"][0]["mesh_blake3"] = hash(&invalid_bytes).into();
+        std::fs::write(&manifest, serde_json::to_vec(&invalid_manifest).unwrap()).unwrap();
+        std::fs::write(&surface_path, &invalid_bytes).unwrap();
+        assert!(load(&manifest, &model, MODEL).is_err());
+        // A changed geometry file also rejects against the pinned digest.
+        std::fs::write(&manifest, serde_json::to_vec(&star_manifest).unwrap()).unwrap();
+        assert!(
+            load(&manifest, &model, MODEL)
+                .err()
+                .unwrap()
+                .to_string()
+                .contains("digest mismatch")
+        );
+        std::fs::write(&surface_path, &surface_bytes).unwrap();
+        if let Some(output) = std::env::var_os("VOXY_NONCONVEX_IMPORT_FIXTURE_DIR") {
+            let output = std::path::PathBuf::from(output);
+            std::fs::create_dir_all(&output).unwrap();
+            std::fs::write(output.join("surface.json"), &surface_bytes).unwrap();
+            std::fs::write(
+                output.join("star-regions.json"),
+                serde_json::to_vec_pretty(&star_manifest).unwrap(),
+            )
+            .unwrap();
+            std::fs::write(
+                output.join("star-coverage.json"),
+                serde_json::to_vec_pretty(&star.value().coverage_report).unwrap(),
+            )
+            .unwrap();
+        }
         let mut multi_bone = value.clone();
         multi_bone["regions"][0]["support_joint_overrides"] = serde_json::json!([
             {"node":supports[0],"joint":"leg_joint_R_1"}
@@ -486,6 +728,17 @@ mod tests {
             let output = std::path::PathBuf::from(output);
             std::fs::create_dir_all(&output).unwrap();
             std::fs::write(output.join("volume.vxtm"), &bytes).unwrap();
+            std::fs::write(output.join("volume.mesh"), &medit).unwrap();
+            std::fs::write(
+                output.join("medit-regions.json"),
+                serde_json::to_vec_pretty(&medit_manifest).unwrap(),
+            )
+            .unwrap();
+            std::fs::write(
+                output.join("volume-admission.json"),
+                serde_json::to_vec_pretty(audit.value()).unwrap(),
+            )
+            .unwrap();
             std::fs::write(
                 output.join("regions.json"),
                 serde_json::to_vec_pretty(&value).unwrap(),

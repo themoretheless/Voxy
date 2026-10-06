@@ -5,6 +5,7 @@ mod convex_surface;
 mod ellipsoid;
 mod lattice;
 mod manifold;
+mod medit;
 mod overlap;
 #[derive(Clone, Debug)]
 pub struct TetraMesh {

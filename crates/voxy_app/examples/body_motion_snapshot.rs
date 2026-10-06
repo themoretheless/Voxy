@@ -436,6 +436,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let path = std::env::args()
         .nth(1)
         .ok_or("usage: body_motion_snapshot OUTPUT.png [FRAME_DIRECTORY]")?;
+    if path == "--check-volume-json" {
+        let input = std::env::args()
+            .nth(2)
+            .ok_or("--check-volume-json requires a volume path")?;
+        if std::env::args().nth(3).is_some() {
+            return Err("unexpected volume audit argument".into());
+        }
+        const MODEL: &[u8] = include_bytes!("../../../assets/animation/cesium-man/CesiumMan.glb");
+        let model = ModelAsset::parse(MODEL, &[], ModelLimits::default())?;
+        let report = tissue_regions::check_volume(std::path::Path::new(&input), &model, MODEL)?;
+        println!("{}", serde_json::to_string_pretty(report.value())?);
+        if report.value()["complete_skin_binding"] != true {
+            return Err("volume does not admit complete source skin binding".into());
+        }
+        return Ok(());
+    }
     if path == "--contact-ulp-json" {
         let input = std::env::args()
             .nth(2)
@@ -1088,6 +1104,56 @@ mod collision_tests {
             .into_iter()
             .flat_map(|s| s.positions)
             .collect();
+        if let Some(directory) = std::env::var_os("VOXY_SOURCE_SKIN_FIXTURE_DIR") {
+            let directory = std::path::PathBuf::from(directory);
+            std::fs::create_dir_all(&directory).unwrap();
+            let (points, boundary) = contact_positions64(&model, 0.).unwrap();
+            assert_eq!(points, skin);
+            std::fs::write(
+                directory.join("source-surface.json"),
+                serde_json::to_vec_pretty(
+                    &serde_json::json!({"points":points,"boundary":boundary}),
+                )
+                .unwrap(),
+            )
+            .unwrap();
+            let mut aliases = std::collections::BTreeMap::<[u64; 3], Vec<usize>>::new();
+            for (i, p) in skin.iter().enumerate() {
+                aliases
+                    .entry(p.map(|x| if x == 0. { 0 } else { x.to_bits() }))
+                    .or_default()
+                    .push(i);
+            }
+            let aliases: Vec<_> = aliases.into_values().filter(|g| g.len() > 1).collect();
+            let mut maximum_scatter = 0_f64;
+            let mut worst = None;
+            for step in 0..=480 {
+                let phase = step as f64 / 480.;
+                let (points, faces) = contact_positions64(&model, phase).unwrap();
+                assert_eq!(faces, boundary);
+                for group in &aliases {
+                    for &node in &group[1..] {
+                        let scatter = (0..3)
+                            .map(|a| (points[node][a] - points[group[0]][a]).powi(2))
+                            .sum::<f64>()
+                            .sqrt();
+                        assert!(scatter.is_finite());
+                        if scatter > maximum_scatter {
+                            maximum_scatter = scatter;
+                            worst = Some((phase, group[0], node));
+                        }
+                    }
+                }
+            }
+            std::fs::write(directory.join("animated-aliases.json"), serde_json::to_vec_pretty(
+                &serde_json::json!({
+                    "scope":"native imported phase preview, 481 evenly spaced phases including endpoints",
+                    "duplicate_coordinate_groups":aliases.len(), "maximum_scatter_m":maximum_scatter,
+                    "worst_phase_and_vertex_pair":worst,
+                    "limits":"Sampled trajectory check; not a continuous seam equivalence certificate. No source vertices welded."
+                })
+            ).unwrap()).unwrap();
+        }
         let reference = model
             .sample_pose_phase(Some(0), 0.)
             .unwrap()
