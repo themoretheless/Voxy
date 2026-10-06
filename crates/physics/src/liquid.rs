@@ -1292,5 +1292,9 @@ pub use dynamic_world::{DynamicEnvironmentReport, DynamicLiquidEnvironment};
 #[path = "liquid/multi_body.rs"]
 mod multi_body;
 pub use multi_body::{
-    BodyGeometryHit, ContactWitness, LiquidBodyWorld, RigidGeometryHit, RigidWorldReport,
+    BodyGeometryHit, ContactWitness, LiquidBodyWorld, RigidGeometryHit, RigidSupportPoint,
+    RigidWorldReport, SupportedGeometryHit, SupportedWorldReport,
 };
+#[path = "liquid/support_world.rs"]
+mod support_world;
+pub use support_world::{RigidWorldReactions, SupportedWorldConfig, resolve_rigid_world_reactions};

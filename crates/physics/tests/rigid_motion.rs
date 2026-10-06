@@ -69,6 +69,43 @@ fn constant_wrench_closes_momentum_work_and_analytic_spherical_rotation() {
 }
 
 #[test]
+fn decomposed_wrenches_use_one_actual_path_and_preserve_signed_work() {
+    let path = body()
+        .prepare_motion([4., 0., 0.], [0., 0., 1.], 0.2, config())
+        .unwrap();
+    for i in 0..=32 {
+        let t = path.duration() * i as f64 / 32.;
+        let a = path.wrench_work(t, [8., -3., 0.], [0., 0., 3.]).unwrap();
+        let b = path.wrench_work(t, [-4., 3., 0.], [0., 0., -2.]).unwrap();
+        let total = path.work(t).unwrap();
+        assert!((a.0 + b.0 - total.force_work).abs() < 1e-13);
+        assert!((a.1 + b.1 - total.torque_work).abs() < 1e-13);
+        let dx = path.sample(t).unwrap().motion.position[0] - body().motion.position[0];
+        assert!((a.0 - (8. * dx + 3. * t)).abs() < 1e-13);
+        if t > 0. {
+            assert!(b.0 < 0. && b.1 < 0.);
+        }
+    }
+    let mut point = body();
+    point.spin = None;
+    let point = point
+        .prepare_motion([0.; 3], [0.; 3], 0.2, config())
+        .unwrap();
+    assert_eq!(
+        point.wrench_work(0.1, [0.; 3], [1., 0., 0.]),
+        Err(Error::InvalidInput)
+    );
+    assert_eq!(
+        path.wrench_work(0.1, [f64::NAN, 0., 0.], [0.; 3]),
+        Err(Error::InvalidInput)
+    );
+    assert_eq!(
+        path.wrench_work(0.3, [0.; 3], [0.; 3]),
+        Err(Error::InvalidInput)
+    );
+}
+
+#[test]
 fn off_center_impact_then_free_motion_preserves_total_angular_momentum() {
     let mut a = body();
     a.motion.position = [-1., 1., 0.];

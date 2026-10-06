@@ -41,6 +41,23 @@ impl From<BodyGeometryHit> for RigidGeometryHit {
         }
     }
 }
+/// Snapshot support point with its geometry-owned branch and world error budget.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RigidSupportPoint {
+    pub support: crate::contact::NormalSupport,
+    pub feature: Option<u64>,
+    pub tolerance_m: f64,
+    /// Explicit numerical geometry admission budget; never a position correction.
+    pub admission_error_m: f64,
+    /// Set from the solved normal force when preparing this interval.
+    pub carrying_reaction: bool,
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SupportedGeometryHit {
+    pub event: RigidGeometryHit,
+    /// Maximum admitted nominal support/ownership excursion in metres.
+    pub support_error_m: f64,
+}
 /// Geometry ownership stays with the backend; all fractions refer to this interval.
 pub trait LiquidBodyWorld {
     fn sweep_particle_body(
@@ -310,6 +327,81 @@ pub trait LiquidBodyWorld {
     ) -> Result<Vec<crate::contact::NormalSupport>, Error> {
         Err(Error::CollisionBackend)
     }
+    /// All admitted supporting patches for this pair at the supplied snapshots.
+    /// This is a geometry query, independent of velocity and future event time.
+    /// Implementors must distinguish touching, separated and overlapping shapes.
+    /// The default rejects: an event-only backend cannot prove an empty network.
+    fn rigid_pair_support_contacts(
+        &self,
+        _i: usize,
+        _first: &crate::contact::ContactBody,
+        _j: usize,
+        _second: &crate::contact::ContactBody,
+        _budget: usize,
+    ) -> Result<Vec<RigidSupportPoint>, Error> {
+        Err(Error::CollisionBackend)
+    }
+    /// All admitted patches against fixed geometry at this snapshot. Fixed walls
+    /// have no finite body index. Plane provenance must be resolved by geometry.
+    fn rigid_environment_support_contacts(
+        &self,
+        _index: usize,
+        _body: &crate::contact::ContactBody,
+        _budget: usize,
+    ) -> Result<Vec<RigidSupportPoint>, Error> {
+        Err(Error::CollisionBackend)
+    }
+    fn rigid_pair_support_contacts_with_error(
+        &self,
+        i: usize,
+        first: &crate::contact::ContactBody,
+        j: usize,
+        second: &crate::contact::ContactBody,
+        budget: usize,
+        error_m: f64,
+    ) -> Result<Vec<RigidSupportPoint>, Error> {
+        if error_m == 0. {
+            self.rigid_pair_support_contacts(i, first, j, second, budget)
+        } else {
+            Err(Error::CollisionBackend)
+        }
+    }
+    fn rigid_environment_support_contacts_with_error(
+        &self,
+        i: usize,
+        body: &crate::contact::ContactBody,
+        budget: usize,
+        error_m: f64,
+    ) -> Result<Vec<RigidSupportPoint>, Error> {
+        if error_m == 0. {
+            self.rigid_environment_support_contacts(i, body, budget)
+        } else {
+            Err(Error::CollisionBackend)
+        }
+    }
+    /// Admit active supporting branches over the whole prepared interval, and
+    /// search every other shape for collisions. Returning Clear cannot mean
+    /// that all geometry was skipped. Unproved support evolution must reject.
+    fn sweep_supported_rigid_pair_event(
+        &self,
+        _i: usize,
+        _first: &crate::rigid_motion::RigidMotion,
+        _j: usize,
+        _second: &crate::rigid_motion::RigidMotion,
+        _supports: &[RigidSupportPoint],
+        _budget: usize,
+    ) -> Result<SupportedGeometryHit, Error> {
+        Err(Error::CollisionBackend)
+    }
+    fn sweep_supported_rigid_environment_event(
+        &self,
+        _i: usize,
+        _body: &crate::rigid_motion::RigidMotion,
+        _supports: &[RigidSupportPoint],
+        _budget: usize,
+    ) -> Result<SupportedGeometryHit, Error> {
+        Err(Error::CollisionBackend)
+    }
     /// Contact-time geometry-owned normal patch for an inelastic rigid pair.
     /// Defaults preserve point-only backends; geometry can return up to 128 points.
     fn rigid_pair_patch(
@@ -379,10 +471,25 @@ pub struct RigidWorldReport {
     /// Nominal rotation integration and floating work discrepancy, not heat.
     pub integration_energy_residual: f64,
 }
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SupportedWorldReport {
+    pub rigid: RigidWorldReport,
+    /// Signed work of reactions on the admitted nominal trajectories, not heat.
+    pub reaction_work: f64,
+    pub environment_reaction_impulse: [f64; 3],
+    pub supported_intervals: usize,
+    pub support_points: usize,
+    pub max_support_error_m: f64,
+}
 #[derive(Default)]
 struct RigidWork {
     external: f64,
     residual: f64,
+    reaction: f64,
+    environment_reaction_impulse: [f64; 3],
+    supported_intervals: usize,
+    support_points: usize,
+    max_support_error_m: f64,
 }
 
 type CollisionEvent = (
@@ -567,6 +674,7 @@ pub(super) fn solve(
         &forces,
         [0.; 3],
         &mut work,
+        None,
     )?;
     for (body, state) in bodies.iter_mut().zip(rigid) {
         body.position = state.motion.position;
@@ -587,6 +695,7 @@ fn solve_contact(
     forces: &[crate::contact::ContactWrench],
     particle_acceleration: [f64; 3],
     work: &mut RigidWork,
+    supported: Option<super::SupportedWorldConfig>,
 ) -> Result<(), Error> {
     if forces.len() != bodies.len() {
         return Err(Error::InvalidCollision);
@@ -608,8 +717,75 @@ fn solve_contact(
         }))
         .collect();
     let mut remaining = dt;
+    let mut horizon = supported.map_or(dt, |c| dt.min(c.max_interval_s));
     let require_witness = bodies.iter().any(|body| body.spin.is_some());
-    while remaining > 0. {
+    'intervals: while remaining > 0. {
+        let states: Vec<_> = nodes[count..].iter().map(|n| n.contact()).collect();
+        let support_report = if let Some(c) = supported {
+            if states.is_empty() {
+                None
+            } else {
+                if ledger.queries >= config.max_queries {
+                    return Err(Error::CollisionBudget);
+                }
+                let limits = DynamicWorldConfig {
+                    max_queries: config.max_queries - ledger.queries,
+                    ..config
+                };
+                let report = super::support_world::assemble_reactions(
+                    &states,
+                    world,
+                    forces,
+                    limits,
+                    c.reaction,
+                    true,
+                    c.max_geometry_error_m,
+                )?;
+                ledger.queries += report.queries;
+                Some(report)
+            }
+        } else {
+            None
+        };
+        let active = support_report
+            .as_ref()
+            .is_some_and(|r| !r.supports.is_empty());
+        if !active {
+            horizon = remaining;
+        }
+        if active && work.supported_intervals >= supported.unwrap().max_intervals {
+            return Err(Error::CollisionBudget);
+        }
+        let mut effective = forces.to_vec();
+        if let Some(reaction) = support_report.as_ref().and_then(|r| r.reaction.as_ref()) {
+            for (w, r) in effective.iter_mut().zip(&reaction.wrenches) {
+                for k in 0..3 {
+                    w.force[k] += r.force[k];
+                    w.torque[k] += r.torque[k];
+                }
+            }
+        }
+        let pair_supports = |i: usize, j: Option<usize>| -> Vec<RigidSupportPoint> {
+            let Some(report) = &support_report else {
+                return Vec::new();
+            };
+            let Some(reaction) = &report.reaction else {
+                return Vec::new();
+            };
+            report
+                .supports
+                .iter()
+                .zip(&report.geometry)
+                .zip(&reaction.forces)
+                .filter(|((s, _), _)| s.first == i && s.second == j)
+                .map(|((_, geometry), force)| {
+                    let mut point = *geometry;
+                    point.carrying_reaction = *force != [0.; 3];
+                    point
+                })
+                .collect()
+        };
+        let mut support_error: f64 = 0.;
         let paths: Vec<_> = nodes
             .iter()
             .enumerate()
@@ -620,13 +796,14 @@ fn solve_contact(
                         torque: [0.; 3],
                     }
                 } else {
-                    forces[index - count]
+                    effective[index - count]
                 };
                 n.contact()
-                    .prepare_motion(wrench.force, wrench.torque, remaining, rotation)
+                    .prepare_motion(wrench.force, wrench.torque, horizon, rotation)
                     .map_err(|_| Error::NumericalFailure)
             })
             .collect::<Result<_, _>>()?;
+        let interval_duration = horizon;
         let mut earliest: Option<CollisionEvent> = None;
         let mut simultaneous = Vec::new();
         let mut admit = |first: usize,
@@ -664,7 +841,7 @@ fn solve_contact(
                 return Err(Error::InvalidCollision);
             }
             let normal = normal.map(|n| n / norm);
-            let time = remaining * fraction;
+            let time = interval_duration * fraction;
             let point = hit.witness.map_or(nodes[first].position, |w| w.point);
             let a = paths[first]
                 .sample(time)
@@ -733,40 +910,102 @@ fn solve_contact(
         for first in 0..bodies.len() {
             for second in first + 1..bodies.len() {
                 charge(ledger, config)?;
-                admit(
-                    count + first,
-                    Some(count + second),
-                    world.sweep_rigid_pair_event(
-                        first,
-                        &paths[count + first],
-                        second,
-                        &paths[count + second],
-                        config.contact.max_candidates,
-                    )?,
-                )?;
+                admit(count + first, Some(count + second), {
+                    let supports = pair_supports(first, Some(second));
+                    if supports.is_empty() {
+                        world.sweep_rigid_pair_event(
+                            first,
+                            &paths[count + first],
+                            second,
+                            &paths[count + second],
+                            config.contact.max_candidates,
+                        )?
+                    } else {
+                        match world.sweep_supported_rigid_pair_event(
+                            first,
+                            &paths[count + first],
+                            second,
+                            &paths[count + second],
+                            &supports,
+                            config.contact.max_candidates,
+                        ) {
+                            Ok(hit) => {
+                                if !hit.support_error_m.is_finite() || hit.support_error_m < 0. {
+                                    return Err(Error::InvalidCollision);
+                                }
+                                support_error = support_error.max(hit.support_error_m);
+                                hit.event
+                            }
+                            Err(Error::CollisionBudget)
+                                if horizon * 0.5 >= supported.unwrap().min_interval_s =>
+                            {
+                                horizon *= 0.5;
+                                continue 'intervals;
+                            }
+                            Err(e) => return Err(e),
+                        }
+                    }
+                })?;
             }
             if world.has_environment() {
                 charge(ledger, config)?;
-                admit(
-                    count + first,
-                    None,
-                    world.sweep_rigid_environment_event(
-                        first,
-                        &paths[count + first],
-                        config.contact.max_candidates,
-                    )?,
-                )?;
+                admit(count + first, None, {
+                    let supports = pair_supports(first, None);
+                    if supports.is_empty() {
+                        world.sweep_rigid_environment_event(
+                            first,
+                            &paths[count + first],
+                            config.contact.max_candidates,
+                        )?
+                    } else {
+                        match world.sweep_supported_rigid_environment_event(
+                            first,
+                            &paths[count + first],
+                            &supports,
+                            config.contact.max_candidates,
+                        ) {
+                            Ok(hit) => {
+                                if !hit.support_error_m.is_finite() || hit.support_error_m < 0. {
+                                    return Err(Error::InvalidCollision);
+                                }
+                                support_error = support_error.max(hit.support_error_m);
+                                hit.event
+                            }
+                            Err(Error::CollisionBudget)
+                                if horizon * 0.5 >= supported.unwrap().min_interval_s =>
+                            {
+                                horizon *= 0.5;
+                                continue 'intervals;
+                            }
+                            Err(e) => return Err(e),
+                        }
+                    }
+                })?;
             }
         }
         let fraction = earliest.map_or(1., |(_, _, f, _, _, _)| f);
         for (index, n) in nodes.iter_mut().enumerate() {
-            let time = remaining * fraction;
+            let time = interval_duration * fraction;
             if index >= count {
                 let change = paths[index]
                     .work(time)
                     .map_err(|_| Error::NumericalFailure)?;
-                work.external += change.force_work + change.torque_work;
-                work.residual += change.energy_residual;
+                let external = forces[index - count];
+                let (force, torque) = paths[index]
+                    .wrench_work(time, external.force, external.torque)
+                    .map_err(|_| Error::NumericalFailure)?;
+                let reaction = support_report
+                    .as_ref()
+                    .and_then(|r| r.reaction.as_ref())
+                    .map_or(crate::contact::ContactWrench::default(), |r| {
+                        r.wrenches[index - count]
+                    });
+                let (rf, rt) = paths[index]
+                    .wrench_work(time, reaction.force, reaction.torque)
+                    .map_err(|_| Error::NumericalFailure)?;
+                work.external += force + torque;
+                work.reaction += rf + rt;
+                work.residual += change.kinetic_energy_change - force - torque - rf - rt;
             }
             if index >= count || particle_acceleration != [0.; 3] {
                 n.update(
@@ -783,8 +1022,39 @@ fn solve_contact(
                 return Err(Error::NumericalFailure);
             }
         }
+        let time = interval_duration * fraction;
+        if active && time > 0. {
+            let report = support_report.as_ref().unwrap();
+            work.supported_intervals += 1;
+            work.support_points = work
+                .support_points
+                .checked_add(report.supports.len())
+                .ok_or(Error::CollisionBudget)?;
+            if work.support_points + ledger.contacts > config.max_contacts {
+                return Err(Error::CollisionBudget);
+            }
+            work.max_support_error_m = work.max_support_error_m.max(support_error);
+            for k in 0..3 {
+                let impulse = report.environment_force[k] * time;
+                work.environment_reaction_impulse[k] += impulse;
+                ledger.environment_impulse[k] += impulse;
+            }
+            if !work.reaction.is_finite() || !finite(work.environment_reaction_impulse) {
+                return Err(Error::NumericalFailure);
+            }
+        }
+        let next = if supported.is_none() {
+            remaining * (1. - fraction)
+        } else {
+            remaining - time
+        };
+        if time > 0. && next == remaining {
+            return Err(Error::CollisionBudget);
+        }
+        remaining = next.max(0.);
+        horizon = supported.map_or(remaining, |c| remaining.min(c.max_interval_s));
         let Some((first, second, _, normal, witness, feature)) = earliest else {
-            break;
+            continue;
         };
         if simultaneous.len() > 1
             && config.contact.restitution == 0.
@@ -793,11 +1063,13 @@ fn solve_contact(
                 .iter()
                 .all(|(first, second, ..)| *first >= count && second.is_none_or(|j| j >= count))
         {
+            if ledger.contacts + work.support_points + simultaneous.len() > config.max_contacts {
+                return Err(Error::CollisionBudget);
+            }
             resolve_rigid_events(&mut nodes, count, &simultaneous, world, config, ledger)?;
-            remaining *= 1. - fraction;
             continue;
         }
-        if ledger.contacts >= config.max_contacts {
+        if ledger.contacts + work.support_points >= config.max_contacts {
             return Err(Error::CollisionBudget);
         }
         ledger.contacts += 1;
@@ -931,7 +1203,6 @@ fn solve_contact(
         {
             return Err(Error::NumericalFailure);
         }
-        remaining *= 1. - fraction;
     }
     for (p, n) in particles.iter_mut().zip(&nodes) {
         p.position = n.position;
@@ -1021,6 +1292,50 @@ impl Liquid {
         rotation: crate::spin_path::Config,
         additional: &[crate::contact::ContactWrench],
     ) -> Result<RigidWorldReport, Error> {
+        self.step_rigid_forces(
+            dt, bodies, world, config, max_bodies, rotation, additional, None,
+        )
+        .map(|report| report.rigid)
+    }
+
+    /// Shared event loop with geometry-admitted constant-reaction intervals.
+    /// Unsupported evolving branches reject transactionally; velocities and Spin
+    /// are sampled from their real net-wrench paths, never clamped to rest.
+    pub fn step_with_supported_rigid_body_forces(
+        &mut self,
+        dt: f64,
+        bodies: &mut [crate::contact::ContactBody],
+        world: &impl LiquidBodyWorld,
+        config: DynamicWorldConfig,
+        max_bodies: usize,
+        rotation: crate::spin_path::Config,
+        additional: &[crate::contact::ContactWrench],
+        supported: super::SupportedWorldConfig,
+    ) -> Result<SupportedWorldReport, Error> {
+        supported.validate()?;
+        self.step_rigid_forces(
+            dt,
+            bodies,
+            world,
+            config,
+            max_bodies,
+            rotation,
+            additional,
+            Some(supported),
+        )
+    }
+
+    fn step_rigid_forces(
+        &mut self,
+        dt: f64,
+        bodies: &mut [crate::contact::ContactBody],
+        world: &impl LiquidBodyWorld,
+        config: DynamicWorldConfig,
+        max_bodies: usize,
+        rotation: crate::spin_path::Config,
+        additional: &[crate::contact::ContactWrench],
+        supported: Option<super::SupportedWorldConfig>,
+    ) -> Result<SupportedWorldReport, Error> {
         config.contact.validate()?;
         if additional.len() != bodies.len()
             || additional.iter().zip(bodies.iter()).any(|(w, b)| {
@@ -1041,17 +1356,7 @@ impl Liquid {
         let mut ledger = ContactLedger::default();
         let radius = self.config.particle_radius;
         let gravity = self.config.gravity;
-        let forces: Vec<_> = bodies
-            .iter()
-            .zip(additional)
-            .map(|(body, wrench)| crate::contact::ContactWrench {
-                force: std::array::from_fn(|k| wrench.force[k] + body.motion.mass * gravity[k]),
-                torque: wrench.torque,
-            })
-            .collect();
-        if forces.iter().any(|w| !finite(w.force)) {
-            return Err(Error::NumericalFailure);
-        }
+        let forces = super::support_world::world_wrenches(bodies, additional, gravity)?;
         let mut work = RigidWork::default();
         let empty = self.particles.is_empty();
         let fluid = candidate.advance(dt, None, |particles, time| {
@@ -1076,6 +1381,7 @@ impl Liquid {
                 &forces,
                 gravity,
                 &mut work,
+                supported,
             )
         })?;
         if empty {
@@ -1091,21 +1397,29 @@ impl Liquid {
                 &forces,
                 gravity,
                 &mut work,
+                supported,
             )?;
         }
         *self = candidate;
         bodies.copy_from_slice(&bodies_candidate);
-        Ok(RigidWorldReport {
-            external_work: work.external,
-            integration_energy_residual: work.residual,
-            world: DynamicEnvironmentReport {
-                dynamics: DynamicWorldReport {
-                    fluid,
-                    contacts: ledger.contacts,
-                    queries: ledger.queries,
-                    dissipated_energy: ledger.loss,
+        Ok(SupportedWorldReport {
+            reaction_work: work.reaction,
+            environment_reaction_impulse: work.environment_reaction_impulse,
+            supported_intervals: work.supported_intervals,
+            support_points: work.support_points,
+            max_support_error_m: work.max_support_error_m,
+            rigid: RigidWorldReport {
+                external_work: work.external,
+                integration_energy_residual: work.residual,
+                world: DynamicEnvironmentReport {
+                    dynamics: DynamicWorldReport {
+                        fluid,
+                        contacts: ledger.contacts,
+                        queries: ledger.queries,
+                        dissipated_energy: ledger.loss,
+                    },
+                    environment_impulse: ledger.environment_impulse,
                 },
-                environment_impulse: ledger.environment_impulse,
             },
         })
     }

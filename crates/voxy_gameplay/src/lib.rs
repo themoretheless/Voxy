@@ -8,7 +8,9 @@ pub use rigid_frame::{PreparedRigidPose, RigidBodyFrame, RigidPoseEdit, publish_
 mod liquid_body;
 pub use liquid_body::{LiquidBody, LiquidMassDistribution, LiquidMassPart};
 mod liquid_runtime;
-pub use liquid_runtime::{SceneLiquidRuntime, SceneLiquidStep};
+pub use liquid_runtime::{
+    SceneLiquidRuntime, SceneLiquidStep, SceneSupportReactions, SceneSupportedLiquidStep,
+};
 mod liquid_source;
 pub use liquid_source::{LiquidPulse, LiquidSource};
 mod angular_sweep;

@@ -127,10 +127,38 @@ impl RigidMotion {
     /// retains integrator/rounding discrepancy and is never dissipated energy.
     pub fn work(&self, time: f64) -> Result<MotionWork, Error> {
         let endpoint = self.sample(time)?;
+        let (force_work, torque_work) = self.wrench_work(time, self.force, self.torque)?;
+        let kinetic_energy_change = endpoint.energy().map_err(Error::Contact)?
+            - self.initial.energy().map_err(Error::Contact)?;
+        let energy_residual = kinetic_energy_change - force_work - torque_work;
+        if !kinetic_energy_change.is_finite() || !energy_residual.is_finite() {
+            return Err(Error::NumericalFailure);
+        }
+        Ok(MotionWork {
+            force_work,
+            torque_work,
+            kinetic_energy_change,
+            energy_residual,
+        })
+    }
+
+    /// Work of one constant world COM wrench on this actual prepared path.
+    /// Allows external and constraint work to be separated without recomputing
+    /// motion under either wrench alone. Torque uses the nominal spin arcs.
+    pub fn wrench_work(
+        &self,
+        time: f64,
+        force: [f64; 3],
+        torque: [f64; 3],
+    ) -> Result<(f64, f64), Error> {
+        if !force.iter().chain(&torque).all(|x| x.is_finite())
+            || (self.initial.spin.is_none() && torque != [0.; 3])
+        {
+            return Err(Error::InvalidInput);
+        }
+        let endpoint = self.sample(time)?;
         let force_work: f64 = (0..3)
-            .map(|k| {
-                self.force[k] * (endpoint.motion.position[k] - self.initial.motion.position[k])
-            })
+            .map(|k| force[k] * (endpoint.motion.position[k] - self.initial.motion.position[k]))
             .sum();
         let mut torque_work = 0.;
         if let Some(rotation) = &self.rotation {
@@ -140,29 +168,13 @@ impl RigidMotion {
                     break;
                 }
                 let omega = segment.arc.angular_velocity();
-                torque_work += (0..3).map(|k| self.torque[k] * omega[k]).sum::<f64>() * duration;
+                torque_work += (0..3).map(|k| torque[k] * omega[k]).sum::<f64>() * duration;
             }
         }
-        let kinetic_energy_change = endpoint.energy().map_err(Error::Contact)?
-            - self.initial.energy().map_err(Error::Contact)?;
-        let energy_residual = kinetic_energy_change - force_work - torque_work;
-        if [
-            force_work,
-            torque_work,
-            kinetic_energy_change,
-            energy_residual,
-        ]
-        .iter()
-        .any(|v| !v.is_finite())
-        {
+        if !force_work.is_finite() || !torque_work.is_finite() {
             return Err(Error::NumericalFailure);
         }
-        Ok(MotionWork {
-            force_work,
-            torque_work,
-            kinetic_energy_change,
-            energy_residual,
-        })
+        Ok((force_work, torque_work))
     }
 
     /// Sample the same prepared trajectory used for the accepted endpoint.
