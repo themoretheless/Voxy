@@ -1,5 +1,4 @@
 //! Midpoint kinematics and path-averaged forces with independently admitted work.
-#[cfg(test)]
 use super::super::lbfgs::secant_scale;
 use super::super::lbfgs::{SecantPair, push_secant, secant_direction};
 use super::{DrivenSupportStep, InertialBody, PrescribedTriangleSurface, SupportTarget, Vec3, dot};
@@ -1201,6 +1200,285 @@ impl InertialBody {
             },
             middle.embedded_skin_work,
         ))
+    }
+    /// Path-averaged implicit midpoint mechanics with prescribed supports.
+    /// Uses the same material quadrature and secant algebra as contact motion.
+    /// # Errors
+    /// Rejects external surface ownership, invalid targets, inadmissible paths,
+    /// nonlinear nonconvergence and independent endpoint work imbalance.
+    pub fn step_implicit_with_supports(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        dt: f64,
+        tolerance_j: f64,
+    ) -> Result<DrivenSupportStep, &'static str> {
+        self.step_implicit_supports_controlled(targets, dt, tolerance_j, None)
+    }
+    pub(super) fn step_implicit_supports_controlled(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        dt: f64,
+        tolerance_j: f64,
+        motion_tolerance: Option<(f64, f64)>,
+    ) -> Result<DrivenSupportStep, &'static str> {
+        if motion_tolerance
+            .is_some_and(|(p, v)| !p.is_finite() || p <= 0. || !v.is_finite() || v <= 0.)
+        {
+            return Err("invalid implicit nonlinear motion controls");
+        }
+        if !dt.is_finite()
+            || dt <= 0.
+            || !tolerance_j.is_finite()
+            || tolerance_j <= 0.
+            || self.prescribed_surface.is_some()
+        {
+            return Err("invalid implicit support step");
+        }
+        if targets.is_none() {
+            self.require_stationary_supports()?;
+        }
+        let n = self.masses.len();
+        let mut end = self.body.positions.clone();
+        if let Some(targets) = targets {
+            if targets.len() != self.body.pinned.iter().filter(|&&p| p).count() {
+                return Err("incomplete prescribed support targets");
+            }
+            let mut seen = vec![false; n];
+            for target in targets {
+                if target.node >= n
+                    || !self.body.pinned[target.node]
+                    || seen[target.node]
+                    || target.position_m.iter().any(|v| !v.is_finite())
+                {
+                    return Err("invalid prescribed support target");
+                }
+                seen[target.node] = true;
+                end[target.node] = target.position_m;
+            }
+        }
+        let weight: Vec<_> = self.masses.iter().map(|m| 4. * m / dt / dt).collect();
+        if weight.iter().any(|w| !w.is_finite() || *w <= 0.) {
+            return Err("implicit inertia overflow");
+        }
+        let initial = self.evaluate_at_contacts(&self.body.positions, self.plane, None)?;
+        let before = self.diagnostics()?;
+        let mut mid: Vec<Vec3> = (0..n)
+            .map(|i| {
+                std::array::from_fn(|a| {
+                    if self.body.pinned[i] {
+                        0.5 * (end[i][a] - self.body.positions[i][a])
+                    } else {
+                        0.5 * dt * self.velocities[i][a] + 0.25 * dt * dt * self.acceleration[a]
+                    }
+                })
+            })
+            .collect();
+        // Four-point Gauss rule; final energy/work is admitted independently.
+        let nodes = [
+            (0.06943184420297371, 0.17392742256872693),
+            (0.33000947820757187, 0.32607257743127305),
+            (0.6699905217924281, 0.32607257743127305),
+            (0.9305681557970262, 0.17392742256872693),
+        ];
+        let evaluate = |x: &[Vec3]| -> Result<_, &'static str> {
+            let endpoint: Vec<Vec3> = (0..n)
+                .map(|i| {
+                    std::array::from_fn(|a| {
+                        if self.body.pinned[i] {
+                            end[i][a]
+                        } else {
+                            self.body.positions[i][a] + 2. * x[i][a]
+                        }
+                    })
+                })
+                .collect();
+            if !self.volume_path_is_open(&endpoint)
+                || !self.body.gap_path_is_open(&self.body.positions, &endpoint)
+            {
+                return Err("implicit support path crossing");
+            }
+            let value = self.average_material_path(x, &end, &nodes, initial.potential_j)?;
+            let mut residual = value.gradient.clone();
+            let mut objective = value.potential_j;
+            let mut norm = 0.;
+            let mut impulse_work = 0.;
+            for i in 0..n {
+                objective -= self.masses[i] * dot(self.acceleration, x[i]);
+                if self.body.pinned[i] {
+                    residual[i] = [0.; 3];
+                    continue;
+                }
+                for a in 0..3 {
+                    let delta = x[i][a] - 0.5 * dt * self.velocities[i][a];
+                    objective += 0.5 * weight[i] * delta * delta;
+                    residual[i][a] += weight[i] * delta - self.masses[i] * self.acceleration[a];
+                    norm += residual[i][a].powi(2) / weight[i];
+                    impulse_work += 2.
+                        * residual[i][a]
+                        * (value.gradient[i][a] - self.masses[i] * self.acceleration[a])
+                        / weight[i];
+                }
+            }
+            if !objective.is_finite() || !norm.is_finite() || !impulse_work.is_finite() {
+                return Err("implicit residual overflow");
+            }
+            Ok((value, residual, objective, norm, impulse_work))
+        };
+        // Rest-configuration material stiffness is a search metric only.
+        // Residual, impulse work and endpoint energy admission still use inertia.
+        let inverse_diagonal: Vec<_> = weight
+            .iter()
+            .zip(&self.body.diagonal)
+            .map(|(&inertia, &stiffness)| {
+                let scale = inertia.max(stiffness);
+                (1. / scale) / (inertia / scale + stiffness / scale)
+            })
+            .collect();
+        if inverse_diagonal.len() != n
+            || inverse_diagonal.iter().any(|v| !v.is_finite() || *v <= 0.)
+        {
+            return Err("implicit support preconditioner overflow");
+        }
+        let mut history = Vec::new();
+        let mut state = evaluate(&mid)?;
+        let mut converged = false;
+        for _ in 0..256 {
+            let motion_resolved = motion_tolerance.is_none_or(|(position, velocity)| {
+                (0..n).filter(|&i| !self.body.pinned[i]).all(|i| {
+                    (0..3).all(|a| {
+                        let correction = state.1[i][a].abs() / weight[i];
+                        2. * correction <= position && 4. * correction / dt <= velocity
+                    })
+                })
+            });
+            if motion_resolved
+                && state.3 <= tolerance_j.min(1e-8) * 1e-4
+                && state.4.abs() <= tolerance_j.min(1e-8) * 0.125
+            {
+                converged = true;
+                break;
+            }
+            let scale = secant_scale(&history, |g| {
+                (0..n).map(|i| dot(g[i], g[i]) * inverse_diagonal[i]).sum()
+            });
+            let direction = secant_direction(&history, &state.1, |g| {
+                (0..n)
+                    .map(|i| g[i].map(|v| scale * inverse_diagonal[i] * v))
+                    .collect()
+            });
+            let slope: f64 = direction
+                .iter()
+                .zip(&state.1)
+                .map(|(d, g)| dot(*d, *g))
+                .sum();
+            if !slope.is_finite() || slope >= 0. {
+                return Err("implicit support search direction failed");
+            }
+            let mut accepted = None;
+            let mut alpha = 1.;
+            for _ in 0..40 {
+                let trial: Vec<Vec3> = mid
+                    .iter()
+                    .zip(&direction)
+                    .map(|(x, d)| std::array::from_fn(|a| x[a] + alpha * d[a]))
+                    .collect();
+                if let Ok(value) = evaluate(&trial) {
+                    let roundoff = 64. * f64::EPSILON * (state.2.abs() + value.2.abs());
+                    let resolved_descent = motion_tolerance.is_some()
+                        && value.2 <= state.2 + roundoff
+                        && value.3 < state.3;
+                    if value.2 <= state.2 + 1e-4 * alpha * slope || resolved_descent {
+                        accepted = Some((trial, value));
+                        break;
+                    }
+                }
+                alpha *= 0.5;
+            }
+            let (trial, value) = accepted.ok_or("implicit support line search failed")?;
+            let displacement = trial
+                .iter()
+                .zip(&mid)
+                .map(|(a, b)| super::super::sub(*a, *b))
+                .collect();
+            let gradient_change = value
+                .1
+                .iter()
+                .zip(&state.1)
+                .map(|(a, b)| super::super::sub(*a, *b))
+                .collect();
+            push_secant(&mut history, displacement, gradient_change, 8);
+            mid = trial;
+            state = value;
+        }
+        if !converged {
+            return Err("implicit support nonlinear nonconvergence");
+        }
+        let middle = state.0;
+        let mut velocity = self.velocities.clone();
+        let (mut reaction, mut pin_work) = (0., 0.);
+        for i in 0..n {
+            for a in 0..3 {
+                if self.body.pinned[i] {
+                    if targets.is_some() {
+                        velocity[i][a] = (end[i][a] - self.body.positions[i][a]) / dt;
+                    }
+                    reaction += (middle.gradient[i][a] - self.masses[i] * self.acceleration[a])
+                        * (end[i][a] - self.body.positions[i][a]);
+                    pin_work += 0.5
+                        * self.masses[i]
+                        * (velocity[i][a].powi(2) - self.velocities[i][a].powi(2));
+                } else {
+                    end[i][a] = self.body.positions[i][a] + 2. * mid[i][a];
+                    velocity[i][a] -=
+                        dt * (middle.gradient[i][a] / self.masses[i] - self.acceleration[a]);
+                }
+            }
+        }
+        let final_eval = self.evaluate_at_contacts(&end, self.plane, None)?;
+        let after = self.diagnostics_at(
+            final_eval.potential_j,
+            final_eval.contact_j,
+            &end,
+            &velocity,
+        )?;
+        let kinetic_change: f64 = (0..n)
+            .filter(|&i| !self.body.pinned[i])
+            .map(|i| {
+                0.5 * self.masses[i]
+                    * (dot(velocity[i], velocity[i]) - dot(self.velocities[i], self.velocities[i]))
+            })
+            .sum();
+        let defect = kinetic_change + after.potential_j - before.potential_j - reaction;
+        let support_work = reaction + pin_work;
+        let lost_work = if reaction != 0. && support_work == pin_work {
+            reaction.abs()
+        } else if pin_work != 0. && support_work == reaction {
+            pin_work.abs()
+        } else {
+            0.
+        };
+        if lost_work > tolerance_j {
+            return Err("unrepresentable implicit support work");
+        }
+        if [defect, reaction, pin_work, support_work]
+            .iter()
+            .any(|v| !v.is_finite())
+            || defect.abs() > tolerance_j
+        {
+            return Err("implicit support work defect");
+        }
+        self.body.positions = end;
+        self.velocities = velocity;
+        Ok(DrivenSupportStep {
+            support_work_j: support_work,
+            reaction_work_j: reaction,
+            pin_kinetic_work_j: pin_work,
+            plane_work_j: 0.,
+            plane_translation_work_j: 0.,
+            plane_rotation_work_j: 0.,
+            surface_work_j: 0.,
+            energy_defect_j: defect,
+        })
     }
 }
 

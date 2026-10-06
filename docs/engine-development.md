@@ -8144,3 +8144,183 @@ application/editor all-target release and formatting/diff checks. Reproduction
 and final qualification evidence/source hashes are in
 `artifacts/rig-exact-linear-rank-2026-10-06/`. GPU/editor visual and external
 import qualification remain unfinished.
+
+### Full character owner playback qualification (2026-10-07)
+
+The pinned CesiumMan GLB now passes through the editor's actual ModelPlayback
+owner for 240 frames at 60 Hz, crossing two authored clip cycles. Every frame
+validates the full skin palette and deforms the entire mesh (over 1000
+vertices), requiring finite output and actual motion. A second owner shares
+the same imported asset at zero speed and retains identical mesh positions.
+Eight deliberately rejected publication attempts are retried and compared
+exactly against a control owner, proving no clock drift on this fixture.
+
+The targeted test and complete model playback test group passed. Logs and
+source hash are in `artifacts/character-owner-playback-2026-10-07/`. This is
+CPU owner playback and mesh deformation evidence; it does not establish
+editor visual quality, GPU rendering of the character or all external rigs.
+
+### Current full character GPU capture (2026-10-07)
+
+The existing body_motion_snapshot entrypoint completed its full two-second
+CesiumMan clip on Apple M4 Max / Metal with 41 saved frames and no GPU
+validation rejection. The simulation uses the existing 1/240-second step.
+The complete run took 37.361641542 seconds (offline, not realtime).
+The image was inspected: the entire neutral character is visible and moves.
+The illustrative soft tissue attachment covers only 16 of 3273 skin vertices;
+this is not full anatomical attachment qualification. CPU deformation and
+GPU rasterization are used, not compute skinning. Captures, animation and
+energy receipt CSV are in `artifacts/character-gpu-current-2026-10-07/`.
+No editor UI, CUDA or other hardware qualification is inferred.
+
+### Character stage timing (2026-10-07)
+
+The existing capture entrypoint now reports separate wall-time accumulators
+for simulation, receipts, mesh deformation, combined upload/encode/GPU
+readback, and capture I/O. These counters do not alter the simulation step
+or admission limits. A full 480-step CesiumMan run with four checkpoints
+completed: simulation 46.063372791 s, receipts 0.000130917 s, deformation
+0.006581708 s, upload/encode/readback 0.050648625 s, capture I/O 0.000403708 s.
+Total was 46.121587208 s. Simulation dominates this fixture; these are host
+wall times, not GPU timestamps or a comparison establishing a speedup.
+The prior 41-capture run is a different capture schedule and host timing.
+Evidence and source hash: `artifacts/character-stage-profile-2026-10-07/`.
+
+### Constitutive profiling and rejected optimization (2026-10-07)
+
+A five-second native stack sample of the full character fixture identifies
+Ogden-Maxwell response, strain, matrix multiplication and pow among active
+CPU stacks. Sleeping helper-thread samples must not be counted as simulation
+CPU time. A candidate reused the strain's already computed volume coefficient
+in response; 18 constitutive/dynamic tests passed and the full clip image and
+step counts matched exactly. However, the candidate run took 72.211539250 s
+and the retained before binary took 58.230919125 s under changing shared-host
+load. This does not establish a causal regression or speedup. The candidate
+was reverted; the original production material implementation is retained.
+Profile, trial logs and rejected patch are preserved in
+`artifacts/constitutive-strain-reuse-2026-10-07/`.
+
+### Full clip rejection causes (2026-10-07)
+
+Opt-in `VOXY_REFINEMENT_DIAGNOSTICS` now aggregates original errors by
+refinement depth on the calling simulation thread. Diagnostics are drained
+after capture and do not replace admission rules, budgets or state rollback.
+The complete 480-step character run recorded 58,416 rejected explicit trials:
+all were `finite-deformation inertial support work defect`. Depth counts
+were 25, 13, 16, 31, 208, 8702, 23250 and 26171 at depths 0 through 7.
+Accepted steps remain 208,168 and maximum depth 8. The four-checkpoint image
+SHA256 exactly matches the pre-diagnostic image. No inference is made about
+other solver paths or all characters. This fixture motivates comparing an
+implicit moving-support integration path under the same work/heat budget,
+rather than loosening energy admission. Evidence:
+`artifacts/character-refinement-reasons-2026-10-07/`.
+
+### Implicit moving-support mechanics (2026-10-07, qualification in progress)
+
+A new support-only implicit midpoint path reuses material path evaluation
+and existing limited-memory secant algebra without manufacturing an external
+contact surface. It validates complete support targets, continuous volume and
+gap feasibility, inertia-scaled residual and impulse work, and independent
+endpoint work balance. Support reaction and pin kinetic work remain separate;
+unrepresentable summed work rejects before publication. The Maxwell/thermal
+transaction now exposes this path with rollback of the complete candidate.
+
+All 20 material/inertial tests passed, including driven supports with a free
+node, failed/inverted-target rollback and independent analytic free-body
+ballistics. The demo offers opt-in `VOXY_IMPLICIT_SUPPORTS` for comparison;
+default integration is unchanged. Full CesiumMan capture was started and
+remains unqualified until terminal results are inspected. No speedup or
+production-readiness claim is made. Test evidence and source hashes are in
+`artifacts/implicit-moving-supports-2026-10-07/`.
+
+Full implicit character qualification completed: all 480 source steps, 2067
+accepted mechanical substeps, 147 rejections and maximum depth 1. Rejections
+were 24 line-search failures and 123 nonlinear nonconvergence cases. Total
+time was 210.253948625 s. Fewer substeps do not establish a speedup: this
+run is slower than prior explicit captures. All 21 material/inertial tests
+passed, including temporal refinement convergence. The nonlinear search
+currently preconditions only with inertia; material stiffness must be
+considered before promoting this path. Final logs and image are retained
+in the same artifact directory.
+
+### Material-aware implicit support search (2026-10-07)
+
+The support-only implicit solver now uses inertia plus the existing rest
+material stiffness diagonal for its search metric, with the shared secant
+Rayleigh scaling. The inverse is formed with scaled sums to avoid overflowing
+an otherwise finite inertia/stiffness combination. Admission continues to
+use the original inertia-scaled residual, impulse work, path checks and
+endpoint work budget. No material or energy law was changed.
+
+The first search-metric trial exposed free-body ballistic position error
+against the analytic test. Initial free midpoint displacement now includes
+constant acceleration (dt*v/2 + dt²*a/4). The same strict ballistic test
+then passed, together with all 21 constitutive/inertial tests and temporal
+refinement convergence. The original failed test log is retained.
+
+The full 480-step CesiumMan clip completed in 23.685676458 s: 1934 accepted
+substeps, 10 rejections, maximum depth 2. Prior inertia-only implicit run
+was 210.253948625 s with 147 rejections. These are individual shared-host
+runs, not a broad benchmark or realtime qualification. Output was visually
+inspected; trajectories can differ between numerical integration choices.
+Default demo mode is unchanged. Final evidence and source hashes:
+`artifacts/material-preconditioned-supports-2026-10-07/`.
+
+### Complete-character motion accuracy audit (2026-10-07)
+
+The existing capture can now export every continuum node's position and
+velocity plus energy receipts via `VOXY_CAPTURE_NODE_STATE`. Motion CSV is
+also saved beside the output image. `VOXY_SUPPORT_MIN_DEPTH` (0..8) sets a
+minimum mechanical subdivision for diagnostic refinement; the source clip
+and outer support sampling remain fixed at 240 Hz. Default is unchanged.
+
+Seven complete implicit captures (minimum depths 0..6) and a complete
+explicit capture were compared at 0, 0.5, 1 and 2 seconds, all 76 tissue nodes.
+Early adjacent refinements did not converge monotonically despite closing
+energy receipts. At the final checkpoint depths 1/2 differed by 2.842846 mm
+and 1.293559 m/s. At depths 5/6 differences fell to 0.346359 mm and
+0.133274 m/s. Finest implicit versus explicit was 0.278649 mm and
+0.078741 m/s. This is motion accuracy evidence, not a continuous-path bound
+or production qualification at an established application tolerance.
+
+Depth 6 took 29.724654583 s (122880 accepted, no rejected steps); explicit
+took 29.767419458 s (208168 accepted, 58416 rejected). These individual
+shared-host measurements do not establish a general speedup. Fast coarse
+implicit runs must not be promoted solely by energy acceptance. The next
+admission work must control position and velocity error as well as energy.
+Complete numerical traces, counts and comparisons are retained in
+`artifacts/full-character-mechanical-refinement-2026-10-07/`.
+
+### Support motion accuracy admission (2026-10-07, full fixture pending)
+
+`step_viscoelastic_implicit_with_support_accuracy` compares a full step with
+two half steps at every coarse endpoint along the original linear support
+trajectory. It sums the maximum nodal position/velocity differences across
+the interval, publishes the finer state, partitions the unchanged energy
+budget and independently checks full-interval work/heat. Differences are
+raw error indicators, not certified global trajectory bounds. Limits and
+invalid inputs preserve coordinates, velocities, Maxwell histories and heat.
+Receipt addition is shared with the existing adaptive skin/contact path.
+
+The initial strict motion test exposed premature energy-only nonlinear
+stopping. Accuracy calls now also require displacement and velocity
+kinematic residual corrections to fit a share of the motion budgets. Tiny
+objective changes may use roundoff-sized acceptance only when the residual
+decreases; endpoint energy admission is unchanged. Default calls retain
+their previous nonlinear criteria. All 25 relevant tests passed: independent
+2048-step unforced Verlet reference, 4096-step prescribed-support reference,
+invalid-input/limit rollback including thermal state, and existing adaptive
+skin/contact interval rollback.
+
+Opt-in `VOXY_SUPPORT_MOTION_BUDGETS=position_m,velocity_m_s` allocates
+complete-frame indicator budgets across support segments; source sampling
+remains 240 Hz. `VOXY_SUPPORT_ACCURACY_TRACE` records actual segment dt,
+committed substeps, all trial calls, measured differences and budgets.
+Estimator trial work is separate from admitted-step counters.
+The first full-character diagnostic was intentionally stopped (exit 130):
+its warm-start depth did not actually try a coarser physical step after
+publishing half steps. Accuracy-mode warm start now subtracts two depth
+levels; every newly tried step still passes the same motion/energy admission.
+The corrected full run is in progress, not qualified. Tests, original
+failed/stopped diagnostics and hashes:
+`artifacts/support-motion-accuracy-2026-10-07/`.

@@ -18,6 +18,53 @@ pub struct ViscoelasticDynamicStep {
     /// Absolute defects of both relaxation/thermal stages and frozen mechanics.
     pub absolute_energy_defect_j: f64,
 }
+impl ViscoelasticDynamicStep {
+    fn add(&mut self, report: Self) {
+        self.support.support_work_j += report.support.support_work_j;
+        self.support.reaction_work_j += report.support.reaction_work_j;
+        self.support.pin_kinetic_work_j += report.support.pin_kinetic_work_j;
+        self.support.plane_work_j += report.support.plane_work_j;
+        self.support.plane_translation_work_j += report.support.plane_translation_work_j;
+        self.support.plane_rotation_work_j += report.support.plane_rotation_work_j;
+        self.support.surface_work_j += report.support.surface_work_j;
+        self.support.energy_defect_j += report.support.energy_defect_j;
+        self.viscous_heat_j += report.viscous_heat_j;
+        self.relaxation_energy_defect_j += report.relaxation_energy_defect_j;
+        self.thermal_energy_defect_j += report.thermal_energy_defect_j;
+        self.total_energy_defect_j += report.total_energy_defect_j;
+        self.absolute_energy_defect_j += report.absolute_energy_defect_j;
+    }
+    fn finite(&self) -> bool {
+        [
+            self.support.support_work_j,
+            self.support.reaction_work_j,
+            self.support.pin_kinetic_work_j,
+            self.support.plane_work_j,
+            self.support.plane_translation_work_j,
+            self.support.plane_rotation_work_j,
+            self.support.surface_work_j,
+            self.support.energy_defect_j,
+            self.viscous_heat_j,
+            self.relaxation_energy_defect_j,
+            self.thermal_energy_defect_j,
+            self.total_energy_defect_j,
+            self.absolute_energy_defect_j,
+        ]
+        .iter()
+        .all(|v| v.is_finite())
+    }
+}
+/// Accepted finer solution and raw summed full/half-step motion differences.
+/// Differences are numerical indicators, not certified global error bounds.
+#[derive(Clone, Copy, Debug)]
+pub struct ViscoelasticSupportAccuracyStep {
+    pub step: ViscoelasticDynamicStep,
+    pub substeps: usize,
+    /// All attempted coarse and fine calls, including discarded trials.
+    pub trial_steps: usize,
+    pub position_difference_sum_m: f64,
+    pub velocity_difference_sum_m_s: f64,
+}
 /// Receipt for one full interval admitted as equal implicit substeps.
 #[derive(Clone, Copy, Debug)]
 pub struct ViscoelasticAdaptiveStep {
@@ -129,6 +176,25 @@ impl InertialBody {
         )
         .map(|(report, _)| report)
     }
+    /// Transactional Maxwell/thermal split with implicit moving supports.
+    /// # Errors
+    /// Invalid inputs or nonlinear/work/heat rejection leave all state unchanged.
+    pub fn step_viscoelastic_implicit_with_supports(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        dt: f64,
+        energy_tolerance_j: f64,
+    ) -> Result<ViscoelasticDynamicStep, &'static str> {
+        self.step_viscoelastic_contacts_impl::<true>(
+            targets,
+            None,
+            None,
+            dt,
+            energy_tolerance_j,
+            None,
+        )
+        .map(|(report, _)| report)
+    }
     /// Transactional Maxwell/thermal split with implicit midpoint contact motion.
     /// # Errors
     /// Invalid material, nonlinear/path/work rejection rolls back all state.
@@ -189,6 +255,214 @@ impl InertialBody {
             tolerance_j,
             Some(next_skin),
         )
+    }
+    /// Refine a full linear support trajectory using full-step/two-half-step
+    /// differences in every node's position and velocity. The sums are error
+    /// indicators, not certified global trajectory bounds. Accepted state is
+    /// always the finer solution, with the original energy budget shared by
+    /// its substeps. The entire interval, histories and heat publish together.
+    /// # Errors
+    /// Invalid controls/targets, nonrefinable errors or an exhausted finite
+    /// subdivision limit preserve the complete owner.
+    pub fn step_viscoelastic_implicit_with_support_accuracy(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        dt: f64,
+        energy_tolerance_j: f64,
+        position_difference_budget_m: f64,
+        velocity_difference_budget_m_s: f64,
+        max_substeps: usize,
+    ) -> Result<ViscoelasticSupportAccuracyStep, &'static str> {
+        if !dt.is_finite()
+            || dt <= 0.
+            || !energy_tolerance_j.is_finite()
+            || energy_tolerance_j <= 0.
+            || !position_difference_budget_m.is_finite()
+            || position_difference_budget_m <= 0.
+            || !velocity_difference_budget_m_s.is_finite()
+            || velocity_difference_budget_m_s <= 0.
+            || !max_substeps.is_power_of_two()
+            || !(2..=4096).contains(&max_substeps)
+            || self.prescribed_surface.is_some()
+        {
+            return Err("invalid implicit support accuracy controls");
+        }
+        if let Some(targets) = targets {
+            let mut seen = vec![false; self.masses.len()];
+            if targets.len() != self.body.pinned.iter().filter(|&&p| p).count() {
+                return Err("incomplete prescribed support targets");
+            }
+            for target in targets {
+                if target.node >= seen.len()
+                    || !self.body.pinned[target.node]
+                    || seen[target.node]
+                    || target.position_m.iter().any(|v| !v.is_finite())
+                {
+                    return Err("invalid prescribed support target");
+                }
+                seen[target.node] = true;
+            }
+        } else {
+            self.require_stationary_supports()?;
+        }
+        let initial_potential = self
+            .evaluate_at_contacts(&self.body.positions, self.plane, None)?
+            .potential_j;
+        let interpolate = |index: usize, count: usize| {
+            targets.map(|targets| {
+                targets
+                    .iter()
+                    .map(|target| {
+                        let start = self.body.positions[target.node];
+                        SupportTarget {
+                            node: target.node,
+                            position_m: if index == count {
+                                target.position_m
+                            } else {
+                                std::array::from_fn(|a| {
+                                    start[a]
+                                        + index as f64 / count as f64
+                                            * (target.position_m[a] - start[a])
+                                })
+                            },
+                        }
+                    })
+                    .collect::<Vec<_>>()
+            })
+        };
+        let distance = |a: Vec3, b: Vec3| (a[0] - b[0]).hypot(a[1] - b[1]).hypot(a[2] - b[2]);
+        let mut count = 1;
+        let mut trial_steps = 0;
+        loop {
+            let mut fine = self.clone();
+            let mut sum: Option<ViscoelasticDynamicStep> = None;
+            let (mut position_error, mut velocity_error) = (0., 0.);
+            let attempt = (|| -> Result<(), &'static str> {
+                for index in 1..=count {
+                    let mut coarse = fine.clone();
+                    let endpoint = interpolate(index, count);
+                    trial_steps += 1;
+                    coarse.step_viscoelastic_contacts_controlled::<true>(
+                        endpoint.as_deref(),
+                        None,
+                        None,
+                        dt / count as f64,
+                        energy_tolerance_j / count as f64,
+                        None,
+                        Some((
+                            position_difference_budget_m / (16 * count) as f64,
+                            velocity_difference_budget_m_s / (16 * count) as f64,
+                        )),
+                    )?;
+                    for half_index in [2 * index - 1, 2 * index] {
+                        let endpoint = interpolate(half_index, 2 * count);
+                        trial_steps += 1;
+                        let (report, _) = fine.step_viscoelastic_contacts_controlled::<true>(
+                            endpoint.as_deref(),
+                            None,
+                            None,
+                            dt / (2 * count) as f64,
+                            energy_tolerance_j / (2 * count) as f64,
+                            None,
+                            Some((
+                                position_difference_budget_m / (32 * count) as f64,
+                                velocity_difference_budget_m_s / (32 * count) as f64,
+                            )),
+                        )?;
+                        if let Some(sum) = sum.as_mut() {
+                            sum.add(report);
+                        } else {
+                            sum = Some(report);
+                        }
+                    }
+                    position_error += coarse
+                        .body
+                        .positions
+                        .iter()
+                        .zip(&fine.body.positions)
+                        .map(|(&a, &b)| distance(a, b))
+                        .fold(0_f64, f64::max);
+                    velocity_error += coarse
+                        .velocities
+                        .iter()
+                        .zip(&fine.velocities)
+                        .map(|(&a, &b)| distance(a, b))
+                        .fold(0_f64, f64::max);
+                    if !position_error.is_finite() || !velocity_error.is_finite() {
+                        return Err("implicit support motion estimate overflow");
+                    }
+                    if position_error > position_difference_budget_m
+                        || velocity_error > velocity_difference_budget_m_s
+                    {
+                        return Err("implicit support motion difference exceeded");
+                    }
+                }
+                Ok(())
+            })();
+            if let Err(error) = attempt {
+                match error {
+                    "implicit support motion difference exceeded"
+                    | "implicit support line search failed"
+                    | "implicit support search direction failed"
+                    | "implicit support nonlinear nonconvergence"
+                    | "implicit support work defect"
+                    | "implicit support path crossing"
+                    | "viscoelastic relaxation energy defect"
+                    | "viscoelastic inertial work heat defect" => {
+                        if 2 * count == max_substeps {
+                            return Err("implicit support accuracy subdivision limit");
+                        }
+                        count *= 2;
+                        continue;
+                    }
+                    _ => return Err(error),
+                }
+            }
+            let sum = sum.ok_or("empty implicit support accuracy interval")?;
+            let final_potential = fine
+                .evaluate_at_contacts(&fine.body.positions, fine.plane, None)?
+                .potential_j;
+            let kinetic_change: f64 = self
+                .velocities
+                .iter()
+                .zip(&fine.velocities)
+                .zip(&self.masses)
+                .map(|((&old, &new), &mass)| {
+                    0.5 * mass
+                        * (0..3)
+                            .map(|a| (new[a] - old[a]) * (new[a] + old[a]))
+                            .sum::<f64>()
+                })
+                .sum();
+            let gravity_work: f64 = self
+                .body
+                .positions
+                .iter()
+                .zip(&fine.body.positions)
+                .zip(&self.masses)
+                .map(|((&old, &new), &mass)| {
+                    mass * super::super::dot(self.acceleration, sub(new, old))
+                })
+                .sum();
+            let independent = kinetic_change + (final_potential - initial_potential) - gravity_work
+                + sum.viscous_heat_j
+                - sum.support.support_work_j;
+            if !sum.finite()
+                || sum.absolute_energy_defect_j > energy_tolerance_j
+                || !independent.is_finite()
+                || independent.abs() > energy_tolerance_j
+            {
+                return Err("implicit support accuracy interval work heat defect");
+            }
+            *self = fine;
+            return Ok(ViscoelasticSupportAccuracyStep {
+                step: sum,
+                substeps: 2 * count,
+                trial_steps,
+                position_difference_sum_m: position_error,
+                velocity_difference_sum_m_s: velocity_error,
+            });
+        }
     }
     /// Retry the same full linear prescribed trajectory with 1,2,4,... substeps.
     /// Every substep uses the original solver and its share of the original budget.
@@ -303,21 +577,7 @@ impl InertialBody {
                         work.rig_work_j += skin_work.rig_work_j;
                         work.obstacle_work_j += skin_work.obstacle_work_j;
                         if let Some(sum) = sum.as_mut() {
-                            sum.support.support_work_j += report.support.support_work_j;
-                            sum.support.reaction_work_j += report.support.reaction_work_j;
-                            sum.support.pin_kinetic_work_j += report.support.pin_kinetic_work_j;
-                            sum.support.plane_work_j += report.support.plane_work_j;
-                            sum.support.plane_translation_work_j +=
-                                report.support.plane_translation_work_j;
-                            sum.support.plane_rotation_work_j +=
-                                report.support.plane_rotation_work_j;
-                            sum.support.surface_work_j += report.support.surface_work_j;
-                            sum.support.energy_defect_j += report.support.energy_defect_j;
-                            sum.viscous_heat_j += report.viscous_heat_j;
-                            sum.relaxation_energy_defect_j += report.relaxation_energy_defect_j;
-                            sum.thermal_energy_defect_j += report.thermal_energy_defect_j;
-                            sum.total_energy_defect_j += report.total_energy_defect_j;
-                            sum.absolute_energy_defect_j += report.absolute_energy_defect_j;
+                            sum.add(report);
                         } else {
                             sum = Some(report);
                         }
@@ -402,6 +662,26 @@ impl InertialBody {
         energy_tolerance_j: f64,
         next_skin: Option<super::super::StationaryEmbeddedContact>,
     ) -> Result<(ViscoelasticDynamicStep, super::super::EmbeddedSkinWork), &'static str> {
+        self.step_viscoelastic_contacts_controlled::<IMPLICIT>(
+            targets,
+            next_plane,
+            next_surface,
+            dt,
+            energy_tolerance_j,
+            next_skin,
+            None,
+        )
+    }
+    fn step_viscoelastic_contacts_controlled<const IMPLICIT: bool>(
+        &mut self,
+        targets: Option<&[SupportTarget]>,
+        next_plane: Option<PlaneContact>,
+        next_surface: Option<Arc<PrescribedTriangleSurface>>,
+        dt: f64,
+        energy_tolerance_j: f64,
+        next_skin: Option<super::super::StationaryEmbeddedContact>,
+        motion_tolerance: Option<(f64, f64)>,
+    ) -> Result<(ViscoelasticDynamicStep, super::super::EmbeddedSkinWork), &'static str> {
         if !dt.is_finite()
             || dt * 0.5 <= 0.
             || !energy_tolerance_j.is_finite()
@@ -428,13 +708,28 @@ impl InertialBody {
             return Err("viscoelastic relaxation energy defect");
         }
         let (support, skin_work) = if IMPLICIT {
-            candidate.advance_implicit_surface_and_skin(
-                targets,
-                next_surface.ok_or("implicit step requires prescribed surface")?,
-                next_skin,
-                dt,
-                0.5 * energy_tolerance_j,
-            )?
+            if let Some(surface) = next_surface {
+                candidate.advance_implicit_surface_and_skin(
+                    targets,
+                    surface,
+                    next_skin,
+                    dt,
+                    0.5 * energy_tolerance_j,
+                )?
+            } else {
+                if next_skin.is_some() {
+                    return Err("implicit skin step requires prescribed surface");
+                }
+                (
+                    candidate.step_implicit_supports_controlled(
+                        targets,
+                        dt,
+                        0.5 * energy_tolerance_j,
+                        motion_tolerance,
+                    )?,
+                    super::super::EmbeddedSkinWork::default(),
+                )
+            }
         } else {
             candidate.advance_supports_with_contact_motion(
                 dt,
