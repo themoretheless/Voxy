@@ -1,0 +1,183 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `release` profile [optimized] target(s) in 13.17s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 144 tests
+test angular_sweep::automatic_physical_allowance_tests::moving_projection_and_unproved_basis_do_not_get_zero_error ... ok
+test angular_sweep::gap::world_error_tests::world_corner_discrepancy_covers_exact_affine_shift_and_rejects_bad_boxes ... ok
+test angular_sweep::published_world_error_tests::canonical_witness_covers_f32_publication_and_ground_relocation ... ok
+test angular_sweep::gap::tests::advancement_never_exceeds_the_exact_gap_over_speed_step ... ok
+test angular_sweep::gap::tests::projection_gap_accounts_for_axis_norm_cancellation_and_clearance ... ok
+test angular_sweep::gap::publication_tests::proposed_pose_requires_proven_separation_and_counts_queries ... ok
+test angular_sweep::publication_error_tests::world_publication_bounds_cover_body_vertices_signed_scale_and_offset_origin ... ok
+test angular_sweep::exact_gap::tests::exact_gap_distinguishes_touching_from_adjacent_float_penetration ... ok
+test angular_sweep::automatic_physical_allowance_tests::stationary_coordinate_survives_actual_cache_reframe_pivot_and_body_update ... ok
+test angular_sweep::physical_body_error_tests::actual_controller_center_and_edges_fit_uniform_whole_body_caps ... ok
+test angular_sweep::directional_fade_tests::directional_fade_proof_admits_floor_contact_but_preserves_wall_and_evaluation_margin ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::nominal_fixed_axis_gap_covers_small_motion_but_not_a_closing_interval ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::reciprocal_accelerating_bodies_find_analytic_contact_and_reverse_normal ... ok
+test angular_sweep::automatic_physical_allowance_tests::zero_requested_allowance_still_reserves_derived_body_error_before_wall ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::separating_touch_is_not_an_impact_and_does_not_hide_accelerated_return ... ok
+test angular_sweep::gap::point_tests::enclosing_corner_gaps_do_not_assume_an_exact_rounded_pose ... ok
+test angular_sweep::directional_margin_tests::positive_directional_error_requires_a_proven_initial_gap_including_numeric_radius ... ok
+test angular_sweep::physical_rotation_error_tests::physical_controller_reframe_and_orientation_update_fit_uniform_rotation_caps ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::trajectory_point_witness_drives_off_center_reciprocal_impulse ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerating_com_reversal_finds_contact_with_identical_clear_endpoints ... ok
+test angular_sweep::rigid_pair::tests::translated_zero_arc_matches_exact_sweep_and_budget_errors_are_explicit ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::unresolved_rotating_face_touch_is_rejected_instead_of_declared_clear ... ok
+test angular_sweep::tests::budget_failure_is_explicit_and_tall_yaw_uses_perpendicular_radius ... ok
+test angular_sweep::tests::clearance_stops_before_nominal_contact_and_checks_stationary_envelopes ... ok
+test angular_sweep::rigid_pair::tests::transient_rotating_contact_is_found_with_both_endpoints_clear ... ok
+test angular_sweep::tests::grounded_yaw_and_turning_away_are_certified_over_the_whole_arc ... ok
+test angular_sweep::tests::middle_of_half_and_full_turn_hits_even_when_endpoints_are_clear ... ok
+test angular_sweep::tests::rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep ... ok
+test angular_sweep::tests::whole_body_clearance_accounts_for_pivot_signed_scale_and_evaluation_error ... ok
+test angular_sweep::tests::supported_screw_contact_survives_source_and_actor_axis_permutations ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test angular_sweep::tests::exact_conditional_screw_motion_preserves_floor_contact_and_jump ... ok
+test angular_sweep::rigid_pair::tests::rotating_pair_is_covariant_and_transports_world_witness ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test angular_sweep::tests::projection_extrema_bound_independent_quaternion_samples ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerated_rotating_shape_matches_independent_spherical_pose_scan ... ok
+test convex::contact_witness_tests::clear_separating_overlap_and_degenerate_inputs_are_explicit ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test convex::contact_witness_tests::clipped_partial_face_witness_is_not_midpoint_of_support_centers ... ok
+test convex::contact_witness_tests::clipped_face_patch_drives_shared_normal_manifold_without_collapsing_to_centroid ... ok
+test angular_sweep::automatic_fade_tests::automatically_discovered_key_guard_preserves_floor_during_translating_yaw_fade ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::two_torque_paths_merge_distinct_knots_and_keep_world_normal_reciprocal ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test convex::contact_witness_tests::geometric_witness_drives_shared_point_impulse_with_off_center_torque ... ok
+test convex::contact_witness_tests::witness_is_stable_under_uniform_scale_and_large_translation ... ok
+test convex::contact_witness_tests::rotated_sheared_and_edge_contacts_have_points_in_both_shapes ... ok
+test convex::coordinate_mapping_tests::signed_coordinate_rows_are_exact_without_rounded_matrix_comparison ... ok
+test convex::rotation_tests::unit_axis_rotation_preserves_fixed_coordinate_exactly ... ok
+test convex::tests::explicit_geometry_budget_preserves_near_face_patch_and_rejects_larger_errors ... ok
+test convex::tests::oriented_face_contact_is_analytic_and_invariant_to_extent_scale ... ok
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test convex::tests::snapshot_support_handles_sheared_face_and_invalid_shape ... ok
+test convex::tests::snapshot_support_reports_independent_corner_planes_without_duplicate_axes ... ok
+test convex::tests::snapshot_support_retains_source_and_distinguishes_gap_from_overlap_across_scales ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::admitted_precessing_path_is_swept_with_model_envelope_not_fake_impact ... ok
+test foot_contact::tests::acquisition_distance_validation_and_failed_budget_leave_published_state_intact ... ok
+test foot_contact::tests::contact_holds_surface_point_through_animation_drift_and_platform_transform ... ok
+test foot_contact::tests::missing_or_steep_support_releases_instead_of_transferring_a_planted_foot ... ok
+test foot_contact::tests::release_hysteresis_prevents_replanting_until_swing_and_landing_rearms ... ok
+test liquid_runtime::rigid_support::cubic_range_tests::cubic_support_range_covers_hidden_excursions_and_clipped_prefixes ... ok
+test liquid_runtime::rigid_support::edge_derivative_tests::edge_normal_second_derivative_matches_independent_rotations ... ok
+test liquid_runtime::tests::body_publication_overflow_and_initial_overlap_are_admitted_atomically ... ok
+test liquid_runtime::tests::common_acceleration_event_transports_the_real_world_witness_quadratically ... ok
+test liquid_runtime::tests::authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger ... ok
+test liquid_runtime::tests::common_gravity_preserves_particle_body_relative_motion_across_sph_substeps ... ok
+test liquid_runtime::tests::compound_candidates_are_bounded_and_invalid_extents_reject ... ok
+test angular_sweep::assembled_fade_tests::original_source_fade_assembly_and_collision_query_preserve_floor_and_wall ... ok
+test liquid_runtime::tests::child_only_compound_hits_another_body_and_shape_edits_reject_atomically ... ok
+test liquid_runtime::tests::compound_child_strikes_static_wall_and_balances_external_impulse ... ok
+test liquid_runtime::tests::authored_body_recoil_publishes_pose_and_failure_preserves_all_owners ... ok
+test liquid_runtime::tests::accelerated_nonspinning_body_uses_real_parabolic_wall_query_and_remainder ... ok
+test liquid_runtime::tests::authored_static_wall_reflects_a_spinning_body_with_boundary_impulse_balance ... ok
+test liquid_runtime::tests::compound_gap_is_not_filled_by_a_bounding_box ... ok
+test liquid_runtime::tests::cubic_supported_interval_admits_release_and_rejects_hidden_penetration ... ok
+test liquid_runtime::tests::compound_event_key_preserves_exact_shape_pair_and_support_source ... ok
+test liquid_runtime::tests::edge_event_source_rebuilds_normal_rate_from_post_impact_spin ... ok
+test liquid_runtime::tests::cubic_collision_detects_inside_step_motion_and_preserves_world_feature ... ok
+test liquid_runtime::tests::foreign_scene_edits_unresolved_material_and_budget_are_rejected ... ok
+test liquid_runtime::tests::environment_event_keeps_wall_identity_and_world_plane ... ok
+test liquid_runtime::tests::explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback ... ok
+test liquid_runtime::tests::later_body_publication_failure_preserves_all_scene_poses ... ok
+test liquid_runtime::tests::late_emission_and_physics_failures_roll_back_every_owner ... ok
+test liquid_runtime::tests::finite_translating_body_uses_scene_affine_template_and_recoils ... ok
+test liquid_runtime::tests::moving_body_contact_witness_is_transported_to_contact_time ... ok
+test liquid_runtime::tests::liquid_impulse_recoils_child_only_compound_owner ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test liquid_runtime::tests::moving_nozzle_transfers_world_velocity_and_admitted_preflight_succeeds ... ok
+test liquid_runtime::tests::multiple_scene_bodies_exchange_impulse_publish_and_pause_inactive_owner ... ok
+test liquid_runtime::tests::root_relative_compound_template_preserves_small_offsets_far_from_origin ... ok
+test liquid_runtime::tests::rotated_wall_uses_exact_geometry_and_oblique_normal ... ok
+test liquid_runtime::tests::scene_patch_solves_contact_velocities_but_free_rotation_requires_sustained_constraint ... ok
+test liquid_runtime::tests::scene_support_network_rejects_overlap_and_late_budgets_without_state_writes ... ok
+test liquid_runtime::tests::scene_geometry_particle_recoil_rotates_the_body_and_restores_on_budget_failure ... ok
+test liquid_runtime::tests::scene_geometry_and_shared_core_advance_real_off_center_rigid_collision ... ok
+test liquid_runtime::tests::scene_support_query_uses_authored_owners_gravity_and_all_corner_branches_read_only ... ok
+test liquid_runtime::tests::shared_world_emits_at_authored_origins_and_pauses_inactive_sources ... ok
+test liquid_runtime::tests::unresolved_resting_gravity_support_preserves_complete_public_state ... ok
+test liquid_runtime::tests::supported_motion_retains_small_spin_and_rejects_unresolved_real_rotation ... ok
+test liquid_source::tests::durable_source_prepares_existing_emission_and_rejects_invalid_configuration ... ok
+test liquid_runtime::tests::scene_support_network_transmits_beam_force_and_torque_to_finite_supports ... ok
+test liquid_runtime::tests::supported_motion_keeps_real_tangential_acceleration_and_separates_work ... ok
+test liquid_runtime::tests::real_simultaneous_rigid_faces_resolve_as_one_network ... ok
+test liquid_runtime::tests::supported_motion_finite_sliding_transmits_moving_arm_torque_without_internal_couple ... ok
+test liquid_runtime::tests::supported_motion_searches_other_walls_and_rolls_back_late_interval_budget ... ok
+test liquid_runtime::tests::supported_motion_scene_owner_publishes_and_restores_after_late_failure ... ok
+test liquid_runtime::tests::scene_support_network_is_covariant_under_a_proper_world_frame_permutation ... ok
+test liquid_runtime::tests::scene_support_network_discovers_all_stack_patches_and_load_paths ... ok
+test rigid_frame::tests::late_publication_overflow_duplicate_and_parented_owner_preserve_all_poses ... ok
+test rigid_frame::tests::quarter_turn_moves_pivot_around_fixed_com_and_converts_pivot_velocity ... ok
+test rigid_frame::tests::shared_off_center_impulse_spin_and_scene_publication_keep_physical_com ... ok
+test post_snap_relocation_error_tests::snap_and_actual_relocation_fit_numeric_bounds_relative_to_selected_fraction ... ok
+test rigid_frame::tests::stored_scaled_affine_points_obey_publication_residual_gate ... ok
+test support::tests::a_one_ulp_thickness_change_on_a_wide_platform_releases_the_old_face_anchor ... ok
+test support::tests::extreme_finite_inverse_face_vectors_keep_unit_normals_instead_of_zero_or_nan ... ok
+test support::tests::invalid_input_capacity_and_budget_failures_do_not_return_partial_ground ... ok
+test support::tests::nearest_contact_and_equal_distance_ties_use_stable_owner_identity ... ok
+test support::tests::removal_generation_reuse_activity_dimensions_and_foreign_scenes_release_or_reject_anchors ... ok
+test support::tests::shared_collision_snapshot_keeps_geometry_extents_and_scene_identity_from_one_revision ... ok
+test support::tests::sheared_reflected_support_normals_and_local_anchors_follow_parent_transforms ... ok
+test support::tests::support_queries_reuse_character_physics_dynamic_parent_restrictions ... ok
+test support::tests::touching_faces_endpoint_hits_parallel_misses_and_corner_normal_ties_are_defined ... ok
+test support::tests::unwalkable_first_hit_occludes_lower_ground_and_inside_origins_do_not_plant ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test angular_sweep::whole_tick_fade_tests::completion_keeps_floor_contact_and_wall_stops_motion_after_fade ... ok
+test liquid_runtime::tests::authored_rigid_owners_rotate_publish_persist_pause_and_rollback ... ok
+test liquid_runtime::tests::affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moments ... FAILED
+test liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping ... FAILED
+
+failures:
+
+---- liquid_runtime::tests::affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moments stdout ----
+rate horizon diagnostic horizon=0.00000000000000004198887677088075 rates=NetworkReactionRate { baseline: NetworkReaction { forces: [[1.0519199391008557e-17, 7.066017798321176, 1.0602287893347162e-17], [4.36782706611643e-18, 2.93398220168242, 4.402327430251351e-18], [4.367827066114556e-18, 2.933982201681161, 4.402327430249462e-18], [1.0421408190411919e-17, 7.000328924268111, 1.0503724264726542e-17], [0.0, 0.0, 0.0], [2.081394742593123e-33, 1.3981265826243682e-15, 2.0978351545968475e-33], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.3957135906752326e-16, 0.0615243810223912, 2.0196990125298963e-16], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [8.539373761290892e-18, 0.0037642370790994246, 5.648092935869262e-21], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [5.958620857600704e-22, 0.00040025594599188934, 1.3139450173173303e-18], [0.0, 4.9173611812331, 0.0], [0.0, 6.350841035518203, 0.0], [0.0, 9.54855919931838, 0.0], [0.0, 8.948828492184756, 0.0], [7.187072624944552e-18, 4.82774222619009, 7.243841498544939e-18], [8.378527205302454e-18, 5.628073026830332, 8.44470707806795e-18], [3.4552950031073814e-18, 2.321010856707994, 3.482587506678676e-18], [3.863409007364862e-18, 2.595151569383561, 3.893925100501931e-18], [1.6888241139843376e-18, 1.1344267566453254, -0.0], [2.121917330073926e-18, 1.425346650780708, -0.0], [8.727037594376558e-19, 0.5862176452439166, -0.0], [9.371440538432501e-19, 0.62950385460964, -0.0], [-0.0, 0.32079482414961663, 4.813402934164697e-19], [-0.0, 0.3954142986532326, 5.933039444740118e-19], [-0.0, 0.18481035804514703, 2.773008330282944e-19], [-0.0, 0.1859180245063502, 2.789628439440143e-19]], wrenches: [ContactWrench { force: [1.7778759040455136e-16, 20.000000000000348, 2.3320016138181737e-16], torque: [8.633112806447421e-13, -6.897174155540347e-18, -5.459134731181266e-13] }, ContactWrench { force: [-1.492826973064929e-16, 30.000000000000004, -2.0850419228316114e-16], torque: [-6.938893903907228e-16, 2.195324910659036e-17, 8.326672684688674e-17] }], normal_accelerations: [3.491693755092757e-13, 2.1267019054803234e-13, 1.331680830004925e-13, -3.3311019607508663e-15, 3.774834071189883e-15, 3.406858606063437e-15, 4.3983428669720284e-13, 3.0333510173595953e-13, 2.2383299418841969e-13, 8.733380922717631e-14, 4.3983428669720436e-13, 3.0333510173596104e-13, 2.238329941884212e-13, 8.733380922717781e-14, 3.4916937550927417e-13, 2.1267019054803085e-13, 1.33168083000491e-13, -3.331101960752364e-15, 4.0708177569589067e-16, 5.736152293896641e-16, 1.794860556477336e-15, 1.9613940101711096e-15, 4.0708177569589067e-16, 5.736152293896641e-16, 1.794860556477336e-15, 1.9613940101711096e-15, 4.0708177569589067e-16, 5.736152293896641e-16, 1.794860556477336e-15, 1.9613940101711096e-15, 4.0708177569589067e-16, 5.736152293896641e-16, 1.794860556477336e-15, 1.9613940101711096e-15], sweeps: 18, acceleration_residual: 3.519773836025209e-13, instantaneous_power: 2.8053331081243786e-13 }, forces_rate: [[8.85250813066578e-17, -11.863910029417145, 4.892144264063815e-17], [5.422883818585716e-17, 6.809588149084071, 3.7922445170768805e-17], [5.3968357719879316e-17, 6.634616695443402, 3.7659907235308104e-17], [1.4175305387454842e-16, 24.553794989346137, 1.029445231667549e-16], [4.783142672892641e-19, 0.32129604166889425, 4.820923510234904e-19], [-4.957014577814493e-17, -33.2975466396369, -4.996168785471522e-17], [0.0, 0.0, 0.0], [1.3913808502838342e-16, 0.06133338970978062, 2.0134292222602309e-16], [3.0567472263611817e-17, 0.013474432168622725, 4.423335414860006e-17], [1.7031274762564355e-14, 6.277699855405082, 2.4772321828614724e-14], [5.7388258518118496e-15, 2.5297289550444617, 3.795760984339734e-18], [8.490920444764264e-17, 0.03742878396861899, 5.61604505478997e-20], [1.9927335816347534e-15, 0.8784158940037072, 1.3180292583655774e-18], [-7.557152384416906e-15, -3.406510164110306, -5.075792634608456e-18], [3.5893370229926826e-18, 2.4110503419412566, 7.914904488037649e-15], [6.268217166699427e-21, 0.004210523293388579, 1.3822145946980101e-17], [1.5486655422543157e-18, 1.0402786256308931, 3.4149871612329036e-15], [-4.467461803928398e-18, -3.0049498435436757, -9.837444870639596e-15], [0.0, -8.911482859271953, 0.0], [0.0, 9.546364267419063, 0.0], [0.0, -0.559793337273328, 0.0], [0.0, 0.7905327214543098, 0.0], [7.183396493987464e-17, -0.48130861684076204, 4.486507602096145e-17], [8.42336248937206e-17, -0.23114140498505142, 5.279778224267947e-17], [3.4644773489150684e-17, -0.15784449850300958, 2.1679932870312527e-17], [3.870187548466856e-17, -0.1999201148061164, 2.420544781627853e-17], [1.703978228228418e-17, -0.005501685442666474, 0.0], [2.140896417449661e-17, -0.007323993102084099, 0.0], [8.872043886569703e-18, 0.041959126418662944, 0.0], [9.494299671451123e-18, 0.022988233277787935, 0.0], [0.0, 0.041850127395959974, 3.091986355863899e-18], [0.0, 0.04854416482798179, 3.806645061894596e-18], [0.0, 0.03212174351729417, 1.7933192073262043e-18], [0.0, 0.029956125914201884, 1.8005292214215463e-18]], wrenches_rate: [ContactWrench { force: [1.775035688188826e-14, 2.90878432451791e-13, 2.67022299103357e-14], torque: [6.799560914316771e-13, 2.1954474672589114e-16, -4.800049246966864e-13] }, ContactWrench { force: [-1.746412755306605e-14, -1.0755285551056204e-16, -2.654818919153896e-14], torque: [-1.6965595595053173e-15, 2.9946659078637108e-15, -6.040307143351242e-15] }], normal_jerks: [2.9037754364484554e-13, 1.7188638925651177e-13, 1.1996438089704995e-13, 1.4732265087161387e-15, 7.0794199690506794e-15, 7.322263087297827e-15, 1.3823710233347403e-12, 1.2638798689464063e-12, 1.2119578605869445e-12, 1.0934667061986107e-12, 1.3823710233347767e-12, 1.2638798689464429e-12, 1.211957860586981e-12, 1.0934667061986473e-12, 2.903775436448089e-13, 1.718863892564751e-13, 1.1996438089701328e-13, 1.4732265086794763e-15, 4.307896632009071e-15, -7.772717654693414e-15, 7.701015751019705e-15, -4.379598535682779e-15, 4.307896632009071e-15, -7.772717654693414e-15, 7.701015751019705e-15, -4.379598535682779e-15, 4.307896632009071e-15, -7.772717654693414e-15, 7.701015751019705e-15, -4.379598535682779e-15, 4.307896632009071e-15, -7.772717654693414e-15, 7.701015751019705e-15, -4.379598535682779e-15], sweeps: 3, jerk_residual: 1.3823710233347767e-12, positive_until_s: 4.198887677088075e-17 }
+
+thread 'liquid_runtime::tests::affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moments' (1581058) panicked at crates/voxy_gameplay/src/liquid_runtime.rs:2677:22:
+called `Result::unwrap()` on an `Err` value: CollisionBudget
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping stdout ----
+rate horizon diagnostic horizon=0.000000000000000010408340855860843 rates=NetworkReactionRate { baseline: NetworkReaction { forces: [[4.172247168360971e-15, 1.3959077555479558, 4.530101141006193e-14], [2.2469231098254226e-14, 7.517525373160917, 2.4396418842970834e-13], [2.571688520321614e-14, 8.604092244565711, 2.792262449973229e-13], [2.3684558920983256e-15, 0.7924137317473677, 2.571598543005876e-14], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [6.991156807431547e-15, 1.0865668711680971, 7.015084161095478e-14], [0.0, 0.0, 0.0], [3.8829836108172086e-15, 0.6034940238098737, 3.896273188591878e-14], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [1.0885880998267075e-16, 7.118099784350597, 3.2602494767391767e-16], [2.734721957624492e-16, 17.881900215448375, 8.190311682436825e-16], [2.734721957679692e-16, 17.88190021580932, 8.190311682602145e-16], [1.084464282434672e-16, 7.09113481597218, 3.2478989159561847e-16], [5.909825226931764e-28, 1.977248838651085e-13, 6.416711408348308e-27], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [4.982161772998051e-17, 0.01666880694667617, 5.409482185927687e-16], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [2.2801084440253848e-17, 0.0076285534678803765, 3.494048721628433e-19], [0.0, 0.0, 0.0], [3.712052116242857e-28, 2.4272502494132263e-11, 7.8770886404726115e-25], [2.6294334985176886e-30, 1.7193436178240868e-13, 5.579738671076557e-27], [4.079636968060191e-20, 0.0026676079802085595, 8.657114989776889e-17], [0.0, 18.559962899156172, 0.0], [0.0, 31.440037100613775, 0.0], [0.0, 31.44003710100374, 0.0], [0.0, 18.486250367980574, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [9.167993575395121e-19, 0.05994801256998512, 2.745753537236744e-18], [0.0, 0.0, -0.0], [8.07889607085855e-28, 5.2826581871438405e-11, -0.0], [0.0, 0.0, -0.0], [1.5598523456608638e-19, 0.010199619715698605, -0.0], [-0.0, 0.0, 0.0], [-0.0, 6.602774382792278e-13, 3.02421887564046e-29], [-0.0, 0.0, 0.0], [-0.0, 0.003564898906445447, 1.632803718194459e-19]], wrenches: [ContactWrench { force: [6.560095978017843e-14, 19.999999999999922, 7.033210037640255e-13], torque: [-7.72005029348044e-12, -1.7478375411615853e-15, -7.103675286890265e-12] }, ContactWrench { force: [-6.476404665188101e-14, 29.999999999999957, -7.004042578140897e-13], torque: [-3.3548378512065005e-12, 1.7305130848728922e-15, -2.9140400623116694e-12] }, ContactWrench { force: [-8.358403437045225e-16, 49.99999999999999, -2.913836916026752e-15], torque: [-5.383605887476772e-16, 1.7267073497516274e-17, 2.345611769052902e-14] }], normal_accelerations: [-3.035578380454158e-14, -2.9220798534070365e-13, 2.424699938375797e-13, -1.9382207698582536e-14, -1.9403034125988648e-14, -1.5603854967409106e-14, -2.0033762460753437e-14, -1.8722797696963617e-14, -3.035578380456566e-14, -2.9220798534072773e-13, 2.4246999383755556e-13, -1.9382207698606596e-14, -1.9403034126012708e-14, -1.5603854967433166e-14, -2.0033762460777497e-14, -1.8722797696987677e-14, -3.035578380454287e-14, -2.9220798534070496e-13, 2.424699938375784e-13, -1.9382207698583823e-14, -1.9403034125989935e-14, -1.5603854967410393e-14, -2.0033762460754724e-14, -1.8722797696964904e-14, -3.0355783804564366e-14, -2.9220798534072647e-13, 2.4246999383755687e-13, -1.9382207698605305e-14, -1.9403034126011418e-14, -1.5603854967431876e-14, -2.0033762460776206e-14, -1.8722797696986387e-14, -2.5814872700404262e-14, -2.0940838395054168e-13, 1.8382884546320527e-13, 2.353342130678798e-16, -2.5814872700444655e-14, -2.0940838395058207e-13, 1.8382884546316489e-13, 2.3533421302747786e-16, -2.5814872700404836e-14, -2.0940838395054223e-13, 1.8382884546320472e-13, 2.3533421306730414e-16, -2.5814872700444077e-14, -2.0940838395058151e-13, 1.8382884546316544e-13, 2.3533421302805353e-16, -2.1709129177475973e-15, -7.049055620895334e-16, -2.1372653809508675e-15, -6.712580252928036e-16, -2.1709129177475973e-15, -7.049055620895334e-16, -2.1372653809508675e-15, -6.712580252928036e-16, -2.1709129177475973e-15, -7.049055620895334e-16, -2.1372653809508675e-15, -6.712580252928036e-16, -2.1709129177475973e-15, -7.049055620895334e-16, -2.1372653809508675e-15, -6.712580252928036e-16], sweeps: 300, acceleration_residual: 2.9220798534072773e-13, instantaneous_power: 1.5080915242672654e-12 }, forces_rate: [[7.234066630239635e-14, 3.16693377533895e-12, 9.004071642389518e-13], [3.8958361845771435e-13, -2.8459043652693965e-13, 4.84905515886638e-12], [4.458931927452049e-13, -2.9001826436658045e-12, 5.54992711229521e-12], [4.106556261610499e-14, -1.028258020433485e-12, 5.111333455027954e-13], [3.5992744628868344e-26, 1.2042084120014317e-11, 3.9079845208507624e-25], [2.9987110795532496e-27, 1.0032780618412801e-12, 3.255910768193683e-26], [1.3898090311094695e-26, 4.649880812354718e-12, 1.509013062637666e-25], [1.6647805874923982e-26, 5.56985250296002e-12, 1.8075689513588744e-25], [4.358400783333331e-28, 6.773834478164006e-14, 4.373317484506606e-27], [1.2226631623395047e-13, -5.11290216705173e-14, 1.3930051320850992e-12], [2.768380154512703e-29, 4.30262150534974e-15, 2.7778549829077427e-28], [6.790837555898336e-14, -4.5841326779527665e-10, 7.736940032176163e-13], [2.634701435253339e-24, 4.0948577950965175e-10, 2.6437187459469223e-23], [5.429679109823728e-26, 8.438817214822874e-12, 5.448262279379344e-25], [1.04722435808342e-25, 1.627598014915305e-11, 1.0508085013477663e-24], [1.033605348356424e-27, 1.6064313250597152e-13, 1.0371428803272082e-26], [1.5253757708248614e-27, 2.370741816145457e-13, 7.693703372352006e-27], [1.1852719776842727e-28, 1.842151878079203e-14, 5.978284948719597e-28], [9.307591966801023e-31, 1.4465876478018516e-16, 4.69457120488611e-30], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [2.2033605588607738e-27, 3.424467015174988e-13, 1.111332885079693e-26], [0.0, 0.0, 0.0], [7.878413531455447e-28, 2.635878965505512e-13, 1.7017740253394692e-26], [2.5700602896339162e-28, 8.59864467697668e-14, 5.5514499549853495e-27], [4.473661832311489e-30, 1.4967519888989957e-15, 9.663317968755852e-29], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [2.5455284965503397e-27, 8.516568714453313e-13, 5.498460139081486e-26], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [2.877943917149484e-15, 1.2577110259367052e-12, 1.6422517221992132e-15], [7.229893863705994e-15, -6.855413969804411e-14, 4.1256209261883385e-15], [7.229893863851913e-15, -1.1474883164720139e-12, 4.125620926271565e-15], [2.867041616103974e-15, -3.6804946436981353e-13, 1.6360305020561086e-15], [1.2624263047417431e-26, 7.95436300555317e-13, 1.5335323559674697e-25], [3.0234297044056652e-28, 1.0115481663546526e-13, 3.2827495114726486e-27], [0.0, 0.0, 0.0], [8.638340149574728e-16, -7.535513760897161e-13, 1.0751937679560921e-14], [1.9607825641975993e-27, 6.560185621461803e-13, 3.004712266987977e-29], [6.624566125837819e-28, 2.2163795333894368e-13, 1.0151515759690314e-29], [0.0, 0.0, 0.0], [3.9533747025440734e-16, -7.224170380254215e-13, 1.760020995747017e-18], [8.801094109759641e-30, 5.754891689032997e-13, 1.8676192107423105e-26], [9.81458045258956e-27, 5.752493608166198e-14, 1.565844232230638e-23], [6.265866832291556e-29, -4.4834953800603954e-13, 9.635324616275238e-26], [1.0785499490806272e-18, -1.6932749198677035e-13, 1.7206963190844774e-15], [0.0, 1.4715584518339632e-12, 0.0], [0.0, 1.3902516428291446e-12, 0.0], [0.0, -3.683989089899713e-12, 0.0], [0.0, 6.851106414532579e-13, 0.0], [2.4221285508861788e-29, 1.5837902985047259e-12, 7.254115070593522e-29], [1.1088806683230215e-29, 7.25078957533814e-13, 3.3210243794157106e-29], [2.433694321366653e-32, 1.5913529669167742e-15, 7.288753789465292e-32], [2.4237791453843967e-17, -2.267376104546849e-12, 1.3830900081111647e-17], [2.292547439979253e-29, 1.4990593265467069e-12, 0.0], [2.1369883377798415e-26, 7.442879672564724e-13, 0.0], [0.0, 0.0, 0.0], [4.123844060507348e-18, -2.2019782020344407e-12, 0.0], [0.0, 1.4177330440928155e-12, 6.493535571560035e-29], [0.0, 7.750282150468578e-13, 1.878338789713595e-28], [0.0, 0.0, 0.0], [0.0, -2.152911102633919e-12, 8.224753157781331e-19]], wrenches_rate: [ContactWrench { force: [1.1390577319172269e-12, -1.1322645211311596e-14, 1.3977221916234948e-11], torque: [-2.122473008272146e-13, -3.455865103867044e-14, -2.751192884950924e-14] }, ContactWrench { force: [-1.1175927086212292e-12, -1.4419558389344882e-15, -1.395321799812266e-11], torque: [-5.950277746042958e-14, 3.420806275490279e-14, -4.412191516742269e-14] }, ContactWrench { force: [-2.143666166046198e-14, -4.0389678347315804e-28, -2.398926473688927e-14], torque: [-1.5777218104420236e-27, 3.510166668958799e-16, 6.310887241768094e-29] }], normal_jerks: [-1.0472999085342421e-14, -9.434874940472487e-15, -9.264663749183936e-16, 1.1165776995154075e-16, 1.109290258710085e-16, 9.667833050037117e-17, 8.885901206486121e-17, 1.0904351106753027e-16, -1.0472999082899239e-14, -9.434874938028804e-15, -9.26466372475313e-16, 1.1165777239512312e-16, 1.1092902831459087e-16, 9.667833294394632e-17, 8.885901450844384e-17, 1.090435135111114e-16, -1.0472999085413544e-14, -9.434874940543609e-15, -9.264663749896165e-16, 1.1165776988031758e-16, 1.1092902579978535e-16, 9.6678330429148e-17, 8.88590119936383e-17, 1.0904351099630712e-16, -1.0472999082828118e-14, -9.434874937957682e-15, -9.264663724040902e-16, 1.1165777246634629e-16, 1.1092902838581403e-16, 9.667833301516949e-17, 8.885901457966675e-17, 1.0904351358233457e-16, -9.613038930939337e-16, -3.7189235910577964e-15, 2.7576196981828026e-15, 2.189400833669093e-25, -9.613038933386826e-16, -3.718923591302801e-15, 2.7576196979380932e-15, -2.602540185584106e-26, -9.61303893126214e-16, -3.718923591090076e-15, 2.757619698150562e-15, 1.8669957350818272e-25, -9.613038933064022e-16, -3.718923591270521e-15, 2.7576196979703335e-15, 6.215108002885534e-27, -1.3265615041015887e-28, -1.2871161752247072e-28, -3.404807500629881e-29, -3.010354211861066e-29, -1.3170926321478598e-28, -1.2776644087041944e-28, -3.3101340470060204e-29, -2.9158518125693653e-29, -1.3113336105782045e-28, -1.271888281701323e-28, -3.252543831309469e-29, -2.858090542540654e-29, -1.3323205256712435e-28, -1.2928923022275783e-28, -3.4623977163264315e-29, -3.068115481889776e-29], sweeps: 1, jerk_residual: 1.0472999085413544e-14, positive_until_s: 0.3834828570294916 }
+
+thread 'liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping' (1581101) panicked at crates/voxy_gameplay/src/liquid_runtime.rs:2753:22:
+called `Result::unwrap()` on an `Err` value: CollisionBudget
+
+
+failures:
+    liquid_runtime::tests::affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moments
+    liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping
+
+test result: FAILED. 142 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.33s
+
+error: test failed, to rerun pass `-p voxy_gameplay --lib`

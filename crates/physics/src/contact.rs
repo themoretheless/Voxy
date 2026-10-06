@@ -329,7 +329,7 @@ fn solve_normal_network_constraints_with_bounds(
     lower_bounds: Option<&[f64]>,
 ) -> Result<ManifoldImpulse, Error> {
     if lower_bounds.is_some_and(|bounds| {
-        bounds.len() != contacts.len() || bounds.iter().any(|x| *x != 0. && *x != f64::NEG_INFINITY)
+        bounds.len() != contacts.len() || bounds.iter().any(|x| x.is_nan() || *x == f64::INFINITY)
     }) {
         return Err(Error::InvalidInput);
     }
@@ -509,7 +509,11 @@ fn solve_normal_network_constraints_with_bounds(
                 };
                 let candidates = [
                     (
-                        ri.max(lower(i) * si),
+                        if lower(j).is_finite() {
+                            (ri - correlation * lower(j) * sj).max(lower(i) * si)
+                        } else {
+                            f64::NAN
+                        },
                         if lower(j).is_finite() {
                             lower(j) * sj
                         } else {
@@ -522,15 +526,19 @@ fn solve_normal_network_constraints_with_bounds(
                         } else {
                             f64::NAN
                         },
-                        rj.max(lower(j) * sj),
+                        if lower(i).is_finite() {
+                            (rj - correlation * lower(i) * si).max(lower(j) * sj)
+                        } else {
+                            f64::NAN
+                        },
                     ),
                     (
                         (ri - correlation * rj) / determinant,
                         (rj - correlation * ri) / determinant,
                     ),
                 ];
-                // Finite bounds here are zero; these edge candidates preserve
-                // the old unilateral block solve exactly when no rates are used.
+                // Each edge minimizes the block objective with the other row
+                // on its bound. Zero bounds retain the unilateral candidates.
                 for (x, y) in candidates {
                     if x >= lower(i) * si && y >= lower(j) * sj && x.is_finite() && y.is_finite() {
                         let value = cost(x, y);
@@ -590,4 +598,4 @@ fn solve_normal_network_constraints_with_bounds(
     Err(Error::Budget)
 }
 
-pub(crate) use reaction::resolve_rate_from_baseline;
+pub(crate) use reaction::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};

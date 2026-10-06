@@ -1,0 +1,26 @@
+{
+  "tests": {
+    "passed": 1940,
+    "failed": 0,
+    "ignored": 24
+  },
+  "tests_exit_code": 0,
+  "consumers_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/contact.rs": "c046f4dcd22dcaadff6771390f89e0d41faa6e72aa19dccb9da0dc6f6e7d4835",
+    "crates/physics/src/contact/reaction.rs": "7a1f601421c6ed3df21e5966ca378d265a53db8410e814c70bf817d5e9154462",
+    "crates/physics/src/contact/reaction_rate.rs": "f423dd7b81a5cd3c2f7874e9ea1a7056db16f85514bda7079afae5dafb126890",
+    "crates/physics/src/liquid/multi_body.rs": "f8925a43d6111fea5836221e8fb280950dff8bd023464b8228a8ea96fc77ae1d",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "a58635811227f175f2eee48c0b1a38c5bf25580a13841dec2b8f16bef2adf99f"
+  },
+  "verified": [
+    "Long two-body pressure redistribution at two intervals",
+    "Three-body one-second hold and changed-load release in both modes",
+    "True one-point unloading time and rejection across it"
+  ],
+  "limits": [
+    "Affine mode remains opt-in",
+    "General nonlinear rotating branches not qualified",
+    "Loaded scene with nonzero aggregate COM jerk not yet qualified"
+  ]
+}

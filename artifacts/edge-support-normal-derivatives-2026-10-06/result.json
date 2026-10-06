@@ -1,0 +1,27 @@
+{
+  "focused_tests": {
+    "passed": 59,
+    "failed": 0,
+    "ignored": 0
+  },
+  "gameplay_full_tests": {
+    "passed": 142,
+    "failed": 2,
+    "ignored": 0
+  },
+  "consumer_check_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "993fc83dc5a7d4f814fafc55d4ebf616a2e8e6c705ad8f9672ccbc2a3bed4636",
+    "crates/physics/src/contact/reaction.rs": "eb7199167e8e04f5da2bb052fac79a4037dbb580bed5d058709e87c589cb0b92",
+    "crates/physics/src/liquid/multi_body.rs": "7e44115acc5e8f1384fb60d739d88b772fa40babce8d787271e10b9b83d656a0",
+    "crates/physics/src/liquid/support_world.rs": "39401abed4290dc769fe1ebc2620eb154c06f64480ad70eea77d753fdc44a7b9",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "a58635811227f175f2eee48c0b1a38c5bf25580a13841dec2b8f16bef2adf99f",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "e0512eb95da85c1b041bef7d7207771a9b00d4c0f1ae980e2dc2631d5d1844d0"
+  },
+  "unresolved": [
+    "Long affine supported sliding test fails at subminimum pressure branch event",
+    "Affine three-body stack hold/release test still fails",
+    "Full regression is not green; no push"
+  ],
+  "verified_pressure_branch_limit_s": 4.198887677088075e-17
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "Gameplay/editor integration, physics crate unchanged",
+  "tests": {
+    "passed": 361,
+    "failed": 0,
+    "ignored": 13
+  },
+  "test_exit_code": 0,
+  "consumers_exit_code": 0,
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "64aae8ff1d3d417073ebd970c7df1a5d15f5120b14fb92cde3c5c5474143eb6c",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "f02a7f5aa577efd0bb5a565a75c9cff54bb5e8d8a5a559de2f3b76fa8cd455f6"
+  },
+  "limitations": [
+    "Bezier hull may conservatively reject safe intervals",
+    "Force-rate integration into finite supported stepping incomplete",
+    "Sustained sliding and general rotating support laws incomplete"
+  ]
+}

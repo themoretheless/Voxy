@@ -176,6 +176,7 @@ fn polynomial_torque_spherical_prefixes_match_integrated_momentum_and_analytic_a
         value: [0., 0., 2.],
         rate: [0., 0., -5.],
         acceleration: [0., 0., 8.],
+        ..TorquePolynomial::constant([0.; 3])
     };
     let initial = spin([2.; 3], [0., 0., 1.]);
     let path = initial
@@ -215,6 +216,7 @@ fn polynomial_torque_anisotropic_model_bound_covers_independent_time_dependent_r
         value: [0.4, -0.2, 0.3],
         rate: [-2., 3., 1.],
         acceleration: [5., -4., 2.],
+        ..TorquePolynomial::constant([0.; 3])
     };
     let path = initial
         .prepare_polynomial_path(law, 0.1, config(1e-4))
@@ -271,4 +273,70 @@ fn polynomial_torque_anisotropic_model_bound_covers_independent_time_dependent_r
         distance(finer.end().orientation, oracle.orientation)
             < distance(path.end().orientation, oracle.orientation)
     );
+}
+
+#[test]
+fn cubic_arm_affine_force_quartic_torque_matches_direct_product_and_gaussian_impulse() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let arm = [0.3, -0.7, 0.2];
+    let v = [0.8, 0.1, -0.4];
+    let a = [-0.2, 0.5, 0.6];
+    let j = [0.9, -0.3, 0.7];
+    let f = [1.2, -2.1, 0.4];
+    let rate = [-0.6, 0.9, 1.3];
+    let law = TorquePolynomial::moving_affine_arm(arm, v, a, j, f, rate).unwrap();
+    assert!(law.snap.iter().any(|x| x.abs() > 0.1));
+    let direct = |t: f64| {
+        let r: [f64; 3] =
+            std::array::from_fn(|k| arm[k] + v[k] * t + a[k] * t * t / 2. + j[k] * t * t * t / 6.);
+        let force: [f64; 3] = std::array::from_fn(|k| f[k] + rate[k] * t);
+        std::array::from_fn::<_, 3, _>(|k| {
+            let i = (k + 1) % 3;
+            let h = (k + 2) % 3;
+            r[i] * force[h] - r[h] * force[i]
+        })
+    };
+    let initial = spin([2.; 3], [0.3, 0.5, 0.7]);
+    let path = initial
+        .prepare_polynomial_path(law, 0.1, config(1e-4))
+        .unwrap();
+    let shifted = law.shifted(0.04).unwrap();
+    for i in 0..=32 {
+        let t = 0.1 * i as f64 / 32.;
+        let expected = direct(t);
+        let actual = law.value_at(t).unwrap();
+        let rebased = shifted.value_at(t).unwrap();
+        let root = (3_f64 / 5.).sqrt();
+        let mut integral = [0.; 3];
+        for (node, weight) in [(-root, 5. / 9.), (0., 8. / 9.), (root, 5. / 9.)] {
+            let sample = direct(t * (node + 1.) / 2.);
+            for k in 0..3 {
+                integral[k] += sample[k] * weight * t / 2.;
+            }
+        }
+        let impulse = law.impulse(t).unwrap();
+        let state = path.sample(t).unwrap();
+        for k in 0..3 {
+            assert!((actual[k] - expected[k]).abs() < 1e-13);
+            assert!((rebased[k] - direct(t + 0.04)[k]).abs() < 1e-13);
+            assert!((impulse[k] - integral[k]).abs() < 1e-13);
+            assert!(
+                (state.angular_momentum[k] - initial.angular_momentum[k] - integral[k]).abs()
+                    < 1e-12
+            );
+        }
+    }
+    let legacy = TorquePolynomial::moving_arm(arm, v, a, f).unwrap();
+    assert_eq!(
+        legacy,
+        TorquePolynomial::moving_affine_arm(arm, v, a, [0.; 3], f, [0.; 3]).unwrap()
+    );
+    let mut invalid = law;
+    invalid.snap[1] = f64::NAN;
+    assert!(
+        initial
+            .prepare_polynomial_path(invalid, 0.1, config(1e-4))
+            .is_err()
+    );
+    assert!(TorquePolynomial::moving_affine_arm(arm, v, a, j, f, [f64::INFINITY; 3]).is_err());
 }

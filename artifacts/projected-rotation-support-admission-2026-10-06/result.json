@@ -1,0 +1,25 @@
+{
+  "test_scope": "Gameplay/editor release suites; physics core unchanged",
+  "tests": {
+    "passed": 365,
+    "failed": 0,
+    "ignored": 13
+  },
+  "tests_exit_code": 0,
+  "consumer_check_exit_code": 0,
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "8f0ba68dffc5872ffcecf78bab120570371c3f5cec7126479d9838f1ebd20c74",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "2f17ec5295c8e4c9099fca6ba2fed3aac561356b54ac7cb697c84285e3b5db89"
+  },
+  "qualified": [
+    "One second of genuine yaw on a vertex support, analytic attitude and floor impulse",
+    "Projected gap and ownership bounds across nominal path prefixes",
+    "Interior common point retained on a yawing face",
+    "Existing unsupported roll still rejects"
+  ],
+  "limits": [
+    "Nominal floating bounds rather than real-arithmetic certificates",
+    "Common application point still follows first COM with frozen world arm",
+    "General rolling and material-point advection not yet implemented"
+  ]
+}

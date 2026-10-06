@@ -1,7 +1,7 @@
 //! Principal-axis rigid rotation, with inertial angular momentum.
 use crate::astrophysics::Error;
 type Vector = [f64; 3];
-fn cross(a: Vector, b: Vector) -> Vector {
+pub(crate) fn cross(a: Vector, b: Vector) -> Vector {
     [
         a[1] * b[2] - a[2] * b[1],
         a[2] * b[0] - a[0] * b[2],
@@ -17,7 +17,7 @@ fn multiply(a: [f64; 4], b: [f64; 4]) -> [f64; 4] {
         a[3] * b[3] - a[0] * b[0] - a[1] * b[1] - a[2] * b[2],
     ]
 }
-fn rotate(q: [f64; 4], v: Vector) -> Vector {
+pub(crate) fn rotate(q: [f64; 4], v: Vector) -> Vector {
     let axis = [q[0], q[1], q[2]];
     let first = cross(axis, v);
     let second = cross(axis, first);
@@ -47,13 +47,15 @@ fn advance(q: [f64; 4], omega: Vector, dt: f64) -> Result<[f64; 4], Error> {
     }
     Ok(next.map(|v| v / norm))
 }
-/// World torque τ(t) = value + rate*t + acceleration*t²/2.
+/// World torque τ(t) = value + rate*t + acceleration*t²/2 + jerk*t³/6 + snap*t⁴/24.
 /// Coefficients are about COM and time is relative to the current interval.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct TorquePolynomial {
     pub value: [f64; 3],
     pub rate: [f64; 3],
     pub acceleration: [f64; 3],
+    pub jerk: [f64; 3],
+    pub snap: [f64; 3],
 }
 impl TorquePolynomial {
     pub fn constant(value: [f64; 3]) -> Self {
@@ -61,6 +63,8 @@ impl TorquePolynomial {
             value,
             rate: [0.; 3],
             acceleration: [0.; 3],
+            jerk: [0.; 3],
+            snap: [0.; 3],
         }
     }
     /// Moment of a constant world force on an application arm that translates
@@ -84,9 +88,48 @@ impl TorquePolynomial {
             value: cross(arm, force),
             rate: cross(velocity, force),
             acceleration: cross(acceleration, force),
+            ..Self::constant([0.; 3])
         };
         result.validate().map_err(|_| Error::NumericalOverflow)?;
         Ok(result)
+    }
+    /// Moment r(t) × F(t) for cubic world arm and affine force.
+    /// Derivative coefficients use the same factorial convention as this law.
+    pub fn moving_affine_arm(
+        arm: [f64; 3],
+        velocity: [f64; 3],
+        acceleration: [f64; 3],
+        jerk: [f64; 3],
+        force: [f64; 3],
+        force_rate: [f64; 3],
+    ) -> Result<Self, Error> {
+        if arm
+            .iter()
+            .chain(&velocity)
+            .chain(&acceleration)
+            .chain(&jerk)
+            .chain(&force)
+            .chain(&force_rate)
+            .any(|x| !x.is_finite())
+        {
+            return Err(Error::InvalidInput);
+        }
+        let add = |a: [f64; 3], b: [f64; 3], scale: f64| {
+            std::array::from_fn(|k| scale.mul_add(b[k], a[k]))
+        };
+        let result = Self {
+            value: cross(arm, force),
+            rate: add(cross(velocity, force), cross(arm, force_rate), 1.),
+            acceleration: add(cross(acceleration, force), cross(velocity, force_rate), 2.),
+            jerk: add(cross(jerk, force), cross(acceleration, force_rate), 3.),
+            snap: cross(jerk, force_rate).map(|x| x * 4.),
+        };
+        result.validate().map_err(|_| Error::NumericalOverflow)?;
+        Ok(result)
+    }
+    /// Evaluate the nominal world torque at a nonnegative time.
+    pub fn value_at(self, time: f64) -> Result<[f64; 3], Error> {
+        self.shifted(time).map(|law| law.value)
     }
     fn validate(self) -> Result<(), Error> {
         if self
@@ -94,6 +137,8 @@ impl TorquePolynomial {
             .iter()
             .chain(&self.rate)
             .chain(&self.acceleration)
+            .chain(&self.jerk)
+            .chain(&self.snap)
             .any(|x| !x.is_finite())
         {
             Err(Error::InvalidInput)
@@ -108,7 +153,14 @@ impl TorquePolynomial {
             return Err(Error::InvalidInput);
         }
         let impulse: [f64; 3] = std::array::from_fn(|k| {
-            let rate = self.acceleration[k].mul_add(time / 3., self.rate[k]);
+            let acceleration = if self.jerk == [0.; 3] && self.snap == [0.; 3] {
+                self.acceleration[k]
+            } else {
+                self.snap[k]
+                    .mul_add(time / 5., self.jerk[k])
+                    .mul_add(time / 4., self.acceleration[k])
+            };
+            let rate = acceleration.mul_add(time / 3., self.rate[k]);
             rate.mul_add(time * 0.5, self.value[k]) * time
         });
         if impulse.iter().any(|x| !x.is_finite()) {
@@ -125,12 +177,25 @@ impl TorquePolynomial {
         }
         let shifted = Self {
             value: std::array::from_fn(|k| {
-                self.acceleration[k]
+                self.snap[k]
+                    .mul_add(time / 4., self.jerk[k])
+                    .mul_add(time / 3., self.acceleration[k])
                     .mul_add(time * 0.5, self.rate[k])
                     .mul_add(time, self.value[k])
             }),
-            rate: std::array::from_fn(|k| self.acceleration[k].mul_add(time, self.rate[k])),
-            acceleration: self.acceleration,
+            rate: std::array::from_fn(|k| {
+                self.snap[k]
+                    .mul_add(time / 3., self.jerk[k])
+                    .mul_add(time * 0.5, self.acceleration[k])
+                    .mul_add(time, self.rate[k])
+            }),
+            acceleration: std::array::from_fn(|k| {
+                self.snap[k]
+                    .mul_add(time * 0.5, self.jerk[k])
+                    .mul_add(time, self.acceleration[k])
+            }),
+            jerk: std::array::from_fn(|k| self.snap[k].mul_add(time, self.jerk[k])),
+            snap: self.snap,
         };
         shifted.validate().map_err(|_| Error::NumericalOverflow)?;
         Ok(shifted)
@@ -146,10 +211,17 @@ impl TorquePolynomial {
         let base = norm(self.value);
         let rate = norm(self.rate);
         let acceleration = norm(self.acceleration);
-        let maximum = base + rate * duration + (acceleration * (duration * 0.5)) * duration;
+        let maximum = base
+            + rate * duration
+            + (acceleration * (duration * 0.5)) * duration
+            + ((norm(self.jerk) * (duration / 6.)) * duration) * duration
+            + (((norm(self.snap) * (duration / 24.)) * duration) * duration) * duration;
         let integral = base * duration
             + (rate * (duration * 0.5)) * duration
-            + ((acceleration * (duration / 6.)) * duration) * duration;
+            + ((acceleration * (duration / 6.)) * duration) * duration
+            + (((norm(self.jerk) * (duration / 24.)) * duration) * duration) * duration
+            + ((((norm(self.snap) * (duration / 120.)) * duration) * duration) * duration)
+                * duration;
         if !maximum.is_finite() || !integral.is_finite() {
             Err(Error::NumericalOverflow)
         } else {
@@ -223,6 +295,13 @@ impl Spin {
             return Err(Error::NumericalOverflow);
         }
         Ok(result)
+    }
+
+    /// Instantaneous world angular acceleration under a COM torque.
+    pub fn angular_acceleration(self, torque: Vector) -> Result<Vector, Error> {
+        let omega = self.angular_velocity()?;
+        let gyro = cross(omega, self.angular_momentum);
+        self.inverse_inertia(std::array::from_fn(|k| torque[k] - gyro[k]))
     }
 
     /// World-frame inertia, for gravity-gradient torque.

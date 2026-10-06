@@ -22,6 +22,9 @@ pub struct RigidWorldReactions {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SupportedWorldConfig {
     pub reaction: ReactionConfig,
+    /// Enable affine reaction forces with this normal jerk tolerance.
+    /// None retains the constant-reaction integration mode.
+    pub reaction_jerk_tolerance: Option<f64>,
     /// Accepted constant-reaction intervals are also geometry-admitted. This is
     /// a maximum integration interval, not a contact stiffness or rest threshold.
     pub max_interval_s: f64,
@@ -39,6 +42,7 @@ impl Default for SupportedWorldConfig {
                 acceleration_tolerance: 1e-12,
                 normal_velocity_tolerance: 1e-10,
             },
+            reaction_jerk_tolerance: None,
             max_interval_s: 0.01,
             min_interval_s: 1e-12,
             max_geometry_error_m: 1e-10,
@@ -49,7 +53,10 @@ impl Default for SupportedWorldConfig {
 impl SupportedWorldConfig {
     pub fn validate(self) -> Result<(), Error> {
         let r = self.reaction;
-        if !self.max_interval_s.is_finite()
+        if self
+            .reaction_jerk_tolerance
+            .is_some_and(|t| !t.is_finite() || t <= 0.)
+            || !self.max_interval_s.is_finite()
             || !self.min_interval_s.is_finite()
             || self.min_interval_s <= 0.
             || self.max_interval_s < self.min_interval_s
@@ -316,16 +323,23 @@ impl Liquid {
             resolve_rigid_world_reactions(bodies, world, &external, limits, config.reaction)?;
         let mut environment_force_rate = [0.; 3];
         let rate = if let Some(baseline) = &reactions.reaction {
+            let total: Vec<_> = external
+                .iter()
+                .zip(&baseline.wrenches)
+                .map(|(a, b)| ContactWrench {
+                    force: std::array::from_fn(|k| a.force[k] + b.force[k]),
+                    torque: std::array::from_fn(|k| a.torque[k] + b.torque[k]),
+                })
+                .collect();
             let motion = reactions
                 .supports
                 .iter()
-                .map(|s| {
-                    if matches!(s.support.plane, crate::contact::SupportPlane::Rate { .. }) {
-                        return Err(Error::CollisionBackend);
-                    }
+                .zip(&reactions.geometry)
+                .map(|(s, geometry)| {
                     Ok(crate::contact::SupportMotion {
                         point_velocity: bodies[s.first].motion.velocity,
-                        normal_acceleration: None,
+                        normal_acceleration: world
+                            .rigid_support_normal_acceleration(bodies, &total, *s, *geometry)?,
                     })
                 })
                 .collect::<Result<Vec<_>, Error>>()?;

@@ -1,0 +1,24 @@
+{
+  "tests": {
+    "passed": 1946,
+    "failed": 0,
+    "ignored": 24
+  },
+  "tests_exit_code": 0,
+  "consumer_check_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/rigid_motion.rs": "f3b15704b8286c3c1009eb5d7ca92f29e610f6c79b525f82375c19a9764f019a",
+    "crates/physics/tests/rigid_motion.rs": "b8166bcdd32591937bc4912943fe83199359c367983abdf935a01a8937d15044"
+  },
+  "qualified": [
+    "Independent sampled force-power and world-moment integrals",
+    "Changing spin arc rebasing and stationary arm",
+    "Small-angle prefixes and central force probes"
+  ],
+  "limits": [
+    "Read-only force probe on represented nominal arcs",
+    "Reciprocal moving-point pressure laws not connected",
+    "Persistent rolling remains unfinished",
+    "No directed rounding certificate"
+  ]
+}

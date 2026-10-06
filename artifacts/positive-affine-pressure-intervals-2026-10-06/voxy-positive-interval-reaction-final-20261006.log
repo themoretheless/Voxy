@@ -1,0 +1,163 @@
+    Blocking waiting for file lock on build directory
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `release` profile [optimized] target(s) in 16.97s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 144 tests
+test angular_sweep::automatic_physical_allowance_tests::moving_projection_and_unproved_basis_do_not_get_zero_error ... ok
+test angular_sweep::gap::world_error_tests::world_corner_discrepancy_covers_exact_affine_shift_and_rejects_bad_boxes ... ok
+test angular_sweep::gap::tests::advancement_never_exceeds_the_exact_gap_over_speed_step ... ok
+test angular_sweep::gap::tests::projection_gap_accounts_for_axis_norm_cancellation_and_clearance ... ok
+test angular_sweep::publication_error_tests::world_publication_bounds_cover_body_vertices_signed_scale_and_offset_origin ... ok
+test angular_sweep::exact_gap::tests::exact_gap_distinguishes_touching_from_adjacent_float_penetration ... ok
+test angular_sweep::gap::publication_tests::proposed_pose_requires_proven_separation_and_counts_queries ... ok
+test angular_sweep::gap::point_tests::enclosing_corner_gaps_do_not_assume_an_exact_rounded_pose ... ok
+test angular_sweep::physical_rotation_error_tests::physical_controller_reframe_and_orientation_update_fit_uniform_rotation_caps ... ok
+test angular_sweep::published_world_error_tests::canonical_witness_covers_f32_publication_and_ground_relocation ... ok
+test angular_sweep::automatic_physical_allowance_tests::stationary_coordinate_survives_actual_cache_reframe_pivot_and_body_update ... ok
+test angular_sweep::physical_body_error_tests::actual_controller_center_and_edges_fit_uniform_whole_body_caps ... ok
+test angular_sweep::automatic_physical_allowance_tests::zero_requested_allowance_still_reserves_derived_body_error_before_wall ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::nominal_fixed_axis_gap_covers_small_motion_but_not_a_closing_interval ... ok
+test angular_sweep::directional_margin_tests::positive_directional_error_requires_a_proven_initial_gap_including_numeric_radius ... ok
+test angular_sweep::directional_fade_tests::directional_fade_proof_admits_floor_contact_but_preserves_wall_and_evaluation_margin ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerating_com_reversal_finds_contact_with_identical_clear_endpoints ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::reciprocal_accelerating_bodies_find_analytic_contact_and_reverse_normal ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::separating_touch_is_not_an_impact_and_does_not_hide_accelerated_return ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::unresolved_rotating_face_touch_is_rejected_instead_of_declared_clear ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::trajectory_point_witness_drives_off_center_reciprocal_impulse ... ok
+test angular_sweep::rigid_pair::tests::translated_zero_arc_matches_exact_sweep_and_budget_errors_are_explicit ... ok
+test angular_sweep::rigid_pair::tests::transient_rotating_contact_is_found_with_both_endpoints_clear ... ok
+test angular_sweep::tests::budget_failure_is_explicit_and_tall_yaw_uses_perpendicular_radius ... ok
+test angular_sweep::tests::clearance_stops_before_nominal_contact_and_checks_stationary_envelopes ... ok
+test angular_sweep::tests::grounded_yaw_and_turning_away_are_certified_over_the_whole_arc ... ok
+test angular_sweep::tests::middle_of_half_and_full_turn_hits_even_when_endpoints_are_clear ... ok
+test angular_sweep::tests::rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep ... ok
+test angular_sweep::tests::supported_screw_contact_survives_source_and_actor_axis_permutations ... ok
+test angular_sweep::rigid_pair::tests::rotating_pair_is_covariant_and_transports_world_witness ... ok
+test angular_sweep::tests::exact_conditional_screw_motion_preserves_floor_contact_and_jump ... ok
+test angular_sweep::tests::whole_body_clearance_accounts_for_pivot_signed_scale_and_evaluation_error ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerated_rotating_shape_matches_independent_spherical_pose_scan ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test convex::contact_witness_tests::clear_separating_overlap_and_degenerate_inputs_are_explicit ... ok
+test convex::contact_witness_tests::clipped_partial_face_witness_is_not_midpoint_of_support_centers ... ok
+test convex::contact_witness_tests::geometric_witness_drives_shared_point_impulse_with_off_center_torque ... ok
+test angular_sweep::tests::projection_extrema_bound_independent_quaternion_samples ... ok
+test convex::contact_witness_tests::clipped_face_patch_drives_shared_normal_manifold_without_collapsing_to_centroid ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test convex::contact_witness_tests::witness_is_stable_under_uniform_scale_and_large_translation ... ok
+test convex::contact_witness_tests::rotated_sheared_and_edge_contacts_have_points_in_both_shapes ... ok
+test convex::coordinate_mapping_tests::signed_coordinate_rows_are_exact_without_rounded_matrix_comparison ... ok
+test convex::rotation_tests::unit_axis_rotation_preserves_fixed_coordinate_exactly ... ok
+test convex::tests::explicit_geometry_budget_preserves_near_face_patch_and_rejects_larger_errors ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test convex::tests::oriented_face_contact_is_analytic_and_invariant_to_extent_scale ... ok
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test convex::tests::snapshot_support_handles_sheared_face_and_invalid_shape ... ok
+test convex::tests::snapshot_support_reports_independent_corner_planes_without_duplicate_axes ... ok
+test convex::tests::snapshot_support_retains_source_and_distinguishes_gap_from_overlap_across_scales ... ok
+test foot_contact::tests::acquisition_distance_validation_and_failed_budget_leave_published_state_intact ... ok
+test foot_contact::tests::contact_holds_surface_point_through_animation_drift_and_platform_transform ... ok
+test foot_contact::tests::missing_or_steep_support_releases_instead_of_transferring_a_planted_foot ... ok
+test foot_contact::tests::release_hysteresis_prevents_replanting_until_swing_and_landing_rearms ... ok
+test liquid_runtime::rigid_support::cubic_range_tests::cubic_support_range_covers_hidden_excursions_and_clipped_prefixes ... ok
+test liquid_runtime::rigid_support::edge_derivative_tests::edge_normal_second_derivative_matches_independent_rotations ... ok
+test liquid_runtime::tests::authored_wall_patch_stops_a_rigid_body_and_closes_boundary_ledger ... ok
+test liquid_runtime::tests::common_acceleration_event_transports_the_real_world_witness_quadratically ... ok
+test liquid_runtime::tests::child_only_compound_hits_another_body_and_shape_edits_reject_atomically ... ok
+test liquid_runtime::tests::body_publication_overflow_and_initial_overlap_are_admitted_atomically ... ok
+test liquid_runtime::tests::authored_body_recoil_publishes_pose_and_failure_preserves_all_owners ... ok
+test liquid_runtime::tests::accelerated_nonspinning_body_uses_real_parabolic_wall_query_and_remainder ... ok
+test liquid_runtime::tests::common_gravity_preserves_particle_body_relative_motion_across_sph_substeps ... ok
+test liquid_runtime::tests::compound_candidates_are_bounded_and_invalid_extents_reject ... ok
+test liquid_runtime::tests::compound_child_strikes_static_wall_and_balances_external_impulse ... ok
+test liquid_runtime::tests::cubic_supported_interval_admits_release_and_rejects_hidden_penetration ... ok
+test liquid_runtime::tests::authored_static_wall_reflects_a_spinning_body_with_boundary_impulse_balance ... ok
+test liquid_runtime::tests::compound_gap_is_not_filled_by_a_bounding_box ... ok
+test liquid_runtime::tests::environment_event_keeps_wall_identity_and_world_plane ... ok
+test liquid_runtime::tests::edge_event_source_rebuilds_normal_rate_from_post_impact_spin ... ok
+test liquid_runtime::tests::compound_event_key_preserves_exact_shape_pair_and_support_source ... ok
+test liquid_runtime::tests::foreign_scene_edits_unresolved_material_and_budget_are_rejected ... ok
+test liquid_runtime::tests::later_body_publication_failure_preserves_all_scene_poses ... ok
+test liquid_runtime::tests::explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback ... ok
+test liquid_runtime::tests::finite_translating_body_uses_scene_affine_template_and_recoils ... ok
+test liquid_runtime::tests::liquid_impulse_recoils_child_only_compound_owner ... ok
+test liquid_runtime::tests::moving_body_contact_witness_is_transported_to_contact_time ... ok
+test liquid_runtime::tests::late_emission_and_physics_failures_roll_back_every_owner ... ok
+test angular_sweep::automatic_fade_tests::automatically_discovered_key_guard_preserves_floor_during_translating_yaw_fade ... ok
+test liquid_runtime::tests::moving_nozzle_transfers_world_velocity_and_admitted_preflight_succeeds ... ok
+test liquid_runtime::tests::multiple_scene_bodies_exchange_impulse_publish_and_pause_inactive_owner ... ok
+test liquid_runtime::tests::root_relative_compound_template_preserves_small_offsets_far_from_origin ... ok
+test liquid_runtime::tests::cubic_collision_detects_inside_step_motion_and_preserves_world_feature ... ok
+test liquid_runtime::tests::scene_patch_solves_contact_velocities_but_free_rotation_requires_sustained_constraint ... ok
+test liquid_runtime::tests::rotated_wall_uses_exact_geometry_and_oblique_normal ... ok
+test liquid_runtime::tests::scene_geometry_and_shared_core_advance_real_off_center_rigid_collision ... ok
+test liquid_runtime::tests::scene_support_network_rejects_overlap_and_late_budgets_without_state_writes ... ok
+test liquid_runtime::tests::shared_world_emits_at_authored_origins_and_pauses_inactive_sources ... ok
+test liquid_runtime::tests::scene_support_query_uses_authored_owners_gravity_and_all_corner_branches_read_only ... ok
+test liquid_runtime::tests::scene_geometry_particle_recoil_rotates_the_body_and_restores_on_budget_failure ... ok
+test liquid_runtime::tests::scene_support_network_transmits_beam_force_and_torque_to_finite_supports ... ok
+test liquid_runtime::tests::real_simultaneous_rigid_faces_resolve_as_one_network ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::two_torque_paths_merge_distinct_knots_and_keep_world_normal_reciprocal ... ok
+test liquid_runtime::tests::scene_support_network_is_covariant_under_a_proper_world_frame_permutation ... ok
+test liquid_runtime::tests::scene_support_network_discovers_all_stack_patches_and_load_paths ... ok
+test liquid_runtime::tests::supported_motion_retains_small_spin_and_rejects_unresolved_real_rotation ... ok
+test liquid_runtime::tests::unresolved_resting_gravity_support_preserves_complete_public_state ... ok
+test liquid_source::tests::durable_source_prepares_existing_emission_and_rejects_invalid_configuration ... ok
+test post_snap_relocation_error_tests::snap_and_actual_relocation_fit_numeric_bounds_relative_to_selected_fraction ... ok
+test liquid_runtime::tests::supported_motion_keeps_real_tangential_acceleration_and_separates_work ... ok
+test liquid_runtime::tests::supported_motion_finite_sliding_transmits_moving_arm_torque_without_internal_couple ... ok
+test liquid_runtime::tests::supported_motion_searches_other_walls_and_rolls_back_late_interval_budget ... ok
+test liquid_runtime::tests::supported_motion_scene_owner_publishes_and_restores_after_late_failure ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::admitted_precessing_path_is_swept_with_model_envelope_not_fake_impact ... ok
+test angular_sweep::assembled_fade_tests::original_source_fade_assembly_and_collision_query_preserve_floor_and_wall ... ok
+test rigid_frame::tests::late_publication_overflow_duplicate_and_parented_owner_preserve_all_poses ... ok
+test rigid_frame::tests::quarter_turn_moves_pivot_around_fixed_com_and_converts_pivot_velocity ... ok
+test rigid_frame::tests::shared_off_center_impulse_spin_and_scene_publication_keep_physical_com ... ok
+test rigid_frame::tests::stored_scaled_affine_points_obey_publication_residual_gate ... ok
+test support::tests::a_one_ulp_thickness_change_on_a_wide_platform_releases_the_old_face_anchor ... ok
+test support::tests::extreme_finite_inverse_face_vectors_keep_unit_normals_instead_of_zero_or_nan ... ok
+test support::tests::invalid_input_capacity_and_budget_failures_do_not_return_partial_ground ... ok
+test support::tests::nearest_contact_and_equal_distance_ties_use_stable_owner_identity ... ok
+test support::tests::removal_generation_reuse_activity_dimensions_and_foreign_scenes_release_or_reject_anchors ... ok
+test support::tests::shared_collision_snapshot_keeps_geometry_extents_and_scene_identity_from_one_revision ... ok
+test support::tests::sheared_reflected_support_normals_and_local_anchors_follow_parent_transforms ... ok
+test support::tests::support_queries_reuse_character_physics_dynamic_parent_restrictions ... ok
+test support::tests::touching_faces_endpoint_hits_parallel_misses_and_corner_normal_ties_are_defined ... ok
+test support::tests::unwalkable_first_hit_occludes_lower_ground_and_inside_origins_do_not_plant ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+test angular_sweep::whole_tick_fade_tests::completion_keeps_floor_contact_and_wall_stops_motion_after_fade ... ok
+test liquid_runtime::tests::affine_supported_sliding_reassembles_pressure_and_closes_long_interval_moments ... ok
+test liquid_runtime::tests::authored_rigid_owners_rotate_publish_persist_pause_and_rollback ... ok
+test liquid_runtime::tests::supported_motion_stack_holds_and_releases_under_changed_load_without_rest_clamping ... ok
+
+test result: ok. 144 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.83s
+

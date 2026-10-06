@@ -248,7 +248,30 @@ pub(crate) fn resolve_rate_from_baseline(
     config: ReactionRateConfig,
     baseline: NetworkReaction,
 ) -> Result<NetworkReactionRate, Error> {
-    if external.len() != bodies.len()
+    resolve_rate_from_baseline_interval(
+        bodies,
+        contacts,
+        external,
+        external_rate,
+        motion,
+        config,
+        baseline,
+        None,
+    )
+}
+
+pub(crate) fn resolve_rate_from_baseline_interval(
+    bodies: &[ContactBody],
+    contacts: &[NetworkSupport],
+    external: &[ContactWrench],
+    external_rate: &[ContactWrench],
+    motion: &[SupportMotion],
+    config: ReactionRateConfig,
+    baseline: NetworkReaction,
+    duration: Option<f64>,
+) -> Result<NetworkReactionRate, Error> {
+    if duration.is_some_and(|t| !t.is_finite() || t <= 0.)
+        || external.len() != bodies.len()
         || external_rate.len() != bodies.len()
         || motion.len() != contacts.len()
         || baseline.forces.len() != contacts.len()
@@ -368,7 +391,11 @@ pub(crate) fn resolve_rate_from_baseline(
         });
         indices.push(i);
         biases.push(jerk - linear);
-        lower.push(if strength > 0. { f64::NEG_INFINITY } else { 0. });
+        lower.push(if strength > 0. {
+            duration.map_or(f64::NEG_INFINITY, |t| (-strength / t).next_up())
+        } else {
+            0.
+        });
     }
     let (sweeps, mut residual) = if active.is_empty() {
         (0, 0.)
@@ -458,4 +485,93 @@ pub(crate) fn resolve_rate_from_baseline(
         jerk_residual: residual,
         positive_until_s: positive_until,
     })
+}
+
+#[cfg(test)]
+mod interval_tests {
+    use super::*;
+    #[test]
+    fn interval_bounds_preserve_true_unload_time_and_reject_crossing_it() {
+        let bodies = [ContactBody {
+            motion: crate::gravity::Body {
+                position: [0.; 3],
+                velocity: [0.; 3],
+                mass: 1.,
+            },
+            spin: None,
+        }];
+        let supports = [NetworkSupport {
+            first: 0,
+            second: None,
+            support: NormalSupport {
+                contact: NormalContact {
+                    point: [0.; 3],
+                    normal: [0., 1., 0.],
+                },
+                plane: SupportPlane::World,
+            },
+        }];
+        let external = [ContactWrench {
+            force: [0., -10., 0.],
+            torque: [0.; 3],
+        }];
+        let rate = [ContactWrench {
+            force: [0., 20., 0.],
+            torque: [0.; 3],
+        }];
+        let cfg = ReactionRateConfig {
+            reaction: ReactionConfig {
+                max_sweeps: 128,
+                acceleration_tolerance: 1e-11,
+                normal_velocity_tolerance: 1e-10,
+            },
+            jerk_tolerance: 1e-10,
+        };
+        let baseline =
+            resolve_normal_reaction_network(&bodies, &supports, &external, cfg.reaction).unwrap();
+        let motion = [SupportMotion {
+            point_velocity: [0.; 3],
+            normal_acceleration: None,
+        }];
+        let safe = resolve_rate_from_baseline_interval(
+            &bodies,
+            &supports,
+            &external,
+            &rate,
+            &motion,
+            cfg,
+            baseline.clone(),
+            Some(0.25),
+        )
+        .unwrap();
+        assert!((safe.forces_rate[0][1] + 20.).abs() < 1e-12);
+        assert!((safe.positive_until_s - 0.5).abs() < 1e-12);
+        assert_eq!(
+            resolve_rate_from_baseline_interval(
+                &bodies,
+                &supports,
+                &external,
+                &rate,
+                &motion,
+                cfg,
+                baseline.clone(),
+                Some(1.)
+            )
+            .unwrap_err(),
+            Error::Budget
+        );
+        assert!(
+            resolve_rate_from_baseline_interval(
+                &bodies,
+                &supports,
+                &external,
+                &rate,
+                &motion,
+                cfg,
+                baseline,
+                Some(f64::NAN)
+            )
+            .is_err()
+        );
+    }
 }

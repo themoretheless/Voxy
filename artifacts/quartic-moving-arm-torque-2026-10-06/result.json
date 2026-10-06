@@ -1,0 +1,20 @@
+{
+  "tests": {
+    "passed": 1937,
+    "failed": 0,
+    "ignored": 24
+  },
+  "tests_exit_code": 0,
+  "consumer_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "ef00209b0bf9d284fb7c92a913cf142119208fa40940af83b41f34ea70e7b350",
+    "crates/physics/src/rigid_motion.rs": "3d2a529be446bb72065418fdf4a02bb33f67029d1519aedf6611a4ae0249e6f4",
+    "crates/physics/tests/spin_path.rs": "4408a5cd751ce8ce859074c02a6dedc211412f4c12c8820ab59d7892886a3425",
+    "crates/physics/tests/rigid_motion.rs": "cb6321c359e75f6eccf581ce2d16517b8207ec30b1a4f938c2694a624c3ffef4"
+  },
+  "limits": [
+    "Finite support reaction rates are not connected to force interval laws",
+    "Orientation remains the admitted nominal adaptive midpoint path",
+    "Extended TorquePolynomial literals require higher derivative fields"
+  ]
+}

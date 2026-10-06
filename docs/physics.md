@@ -5973,8 +5973,8 @@ orbital moment through all tested prefixes; analytic COM, momentum, energy,
 impact remainder and rollback fixtures also qualify the changing-force model.
 At this milestone SceneBodyWorld and support interval admission rejected cubic
 force paths, including zero initial acceleration. Ordinary collision queries
-now support these paths as described below; supported interval admission still
-rejects them. Linear/parabolic shortcuts require constant acceleration.
+now support these paths as described below; support interval admission was
+extended in the subsequent cubic support milestone. Linear/parabolic shortcuts require constant acceleration.
 
 The reaction-rate solve is not yet wired into finite scene evolution. That needs
 cubic COM geometry bounds, pressure-zero transitions and the common-point
@@ -6005,12 +6005,313 @@ that returned point once into world coordinates. Neither body pose is snapped.
 Regression fixtures independently bisect analytic cubic crossings with both
 endpoints clear, cover zero initial acceleration without spin, retain world
 feature identity, enforce query budgets and unchanged input paths, and check a
-shifted compound part's contact time and world witness. Supported intervals
-still reject cubic COM paths, and reaction force rates are not yet connected
-to finite scene stepping. Sustained sliding and general rotating support
+shifted compound part's contact time and world witness. At this milestone
+supported intervals still rejected cubic COM paths; see the following extension.
+Reaction force rates are not yet connected to finite scene stepping. Sustained sliding and general rotating support
 remain unfinished.
 
 Qualification: 1934 release physics/gameplay/editor tests passed, 24 ignored.
 App/editor all-target release checks and format/diff checks passed. Raw logs,
 including the failing compound witness regression before correction, and source
 hashes are retained in artifacts/cubic-rigid-collision-2026-10-06.
+
+
+### Cubic supported-interval geometry admission (2026-10-06)
+
+The existing support backend now checks cubic relative COM displacement using
+its Bezier control hull. Normal gap and common-point ownership in each affine
+volume include relative jerk. Constant-acceleration paths retain the existing
+quadratic extremum check. Angular excursion depends on the shared spin path
+and no longer rejects merely because translational force changes.
+
+Loaded supports still require the entire interval to remain within the emitted
+geometry allowance; unloaded supports may separate but may not penetrate.
+The same cubic bounds enforce point ownership and preserve all rotation checks.
+No position snapping or artificial resting force is introduced. The hull can
+reject a safe cubic interval conservatively; subdivision is not implemented.
+
+A real floor fixture admits an unloaded cubic release, rejects that release
+while carrying a reaction, and rejects a cubic trajectory with both endpoints
+on the floor but interior penetration. An independently sampled range fixture
+covers clipped prefixes and hidden excursions; nonfinite hulls reject.
+Reaction force-rate integration into finite stepping remains unfinished,
+as do sustained sliding and general rotating support laws.
+
+Qualification: 361 release gameplay/editor tests passed, 13 ignored.
+App/editor all-target release checks, format and diff checks passed. Physics
+core was unchanged in this milestone. Raw logs retain the initial fixture
+missing-import compile error and subsequent passes, with current source hashes,
+in artifacts/cubic-supported-intervals-2026-10-06. Changes remain local.
+
+### Quartic moving-arm torque law (2026-10-06)
+
+`TorquePolynomial` now stores derivatives through fourth order, using the same
+factorial convention. `moving_affine_arm` constructs r(t) cross F(t) from a
+cubic world arm and affine world force. Its third derivative includes arm jerk
+crossed with force plus three times arm acceleration crossed with force rate;
+its fourth derivative is four times arm jerk crossed with force rate.
+Impulse integration, time rebasing, norm envelopes, prepared rotation paths
+and rigid work/angular-impulse probes all preserve the additional coefficients.
+Existing constant/quadratic builders retain zero higher derivatives. Literal
+constructors must now initialize the extra fields, normally with a constant
+base and struct update syntax; this is a source API extension.
+
+An independent direct-product fixture checks all prefixes, three-node Gaussian
+quadrature checks the quartic torque impulse, and prepared spherical spin paths
+preserve the independently integrated angular momentum. A shifted law matches
+the original at later times. Invalid high-order coefficients reject. Existing
+anisotropic spin, impact-remainder and rigid-motion fixtures remain applicable.
+These calculations qualify nominal floating polynomial integration, not an
+exact anisotropic orientation orbit or a real-arithmetic interval certificate.
+
+The finite supported event loop still uses constant force reactions. Its rate
+solver has not yet been wired to interval force laws, pressure-zero events and
+both reciprocal torque/impulse ledgers. This law supplies the required full
+moment polynomial for that integration rather than truncating moving-arm terms.
+
+Qualification: 1937 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw logs and source hashes: artifacts/quartic-moving-arm-torque-2026-10-06.
+Changes remain local.
+
+### Affine support reactions in the shared event loop (2026-10-06)
+
+`SupportedWorldConfig::reaction_jerk_tolerance` enables the existing coupled
+reaction-rate solver in supported finite stepping; `None` preserves the
+constant-reaction mode. The solver consumes the same geometry contacts and
+baseline reactions once per interval, with common points following first COM.
+The rate of each reaction force enters `prepare_affine_motion`; its common-point
+moment is constructed through fourth order for both finite owners. Initial
+moments retain the baseline solve, avoiding duplicate moving-arm derivatives.
+
+Reaction work and world-origin angular impulse use the same affine force laws
+and quartic moment laws on the actual prepared trajectories. Fixed-environment
+reaction impulse includes its force-rate integral, and the opposite angular
+impulse follows the same common point. Signed residuals remain diagnostics and
+are never converted into dissipated heat. A zero initial point load with a
+nonzero force rate counts as carrying pressure for geometry admission.
+
+The integration horizon is bounded by the rate solver's first pressure-zero
+limit. Contacts are reassembled after every completed interval or collision.
+A positive interval below the minimum budget fails transactionally; a complete
+nonlinear pressure branch transition algorithm is still unfinished. Explicit
+normal-rate branches without a geometry second derivative reject. General
+rotating support, sustained arbitrary sliding, and externally varying input
+force laws are not yet qualified by this integration.
+
+The actual two-body floor fixture compares the constant-reaction and affine
+modes. Both preserve the upper body's tangential motion; affine pressure
+redistribution cancels the lower body's moving-arm torque, with fixed-floor
+linear impulse, reaction work and angular balance checked independently.
+This qualifies the evolving pressure/moment path; the fixture's summed COM
+force derivative is zero and does not prove arbitrary nonzero COM jerk in a
+loaded scene. Cubic COM collision and support admission have separate fixtures.
+
+Qualification: 1937 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed. Raw
+logs and current source hashes: artifacts/affine-supported-reaction-stepping-2026-10-06.
+Changes remain local.
+
+
+### Geometry-owned edge normal acceleration and long-run qualification (2026-10-06)
+
+The support backend supplies second normal derivatives for the exact emitted
+SAT edge branch through `rigid_support_normal_acceleration`. Both snapshot
+reaction-rate queries and finite supported stepping use this callback.
+The scene differentiates both world edges, their cross product and its
+normalization using physical angular velocity and acceleration. The shared
+Spin angular-acceleration method supplies gyroscopic dynamics. Distinct SAT
+normals retain their provenance; no small rotation, velocity or load is clamped.
+Backends that cannot supply a Rate branch's derivative still reject explicitly.
+
+An independent centered-rotation fixture checks the first and second normal
+derivatives for two anisotropic spinning owners with applied torques, including
+the unit-normal second-derivative identity. The instantaneous reaction solver
+now targets half the final acceleration tolerance internally, reserving margin
+for independent physical residual verification. The final tolerance is retained.
+A small positive final time remainder is integrated; minimum subdivision limits
+apply only when a pressure branch actually truncates that interval.
+
+Qualification remains incomplete: the strengthened two-body sliding fixture
+covers 0.2 s and two interval sizes, and the existing one-second stack fixture
+now also exercises affine mode. Both affine long-run cases currently fail.
+After resolving missing normal derivatives and residual/remainder handling,
+sliding reaches a pressure branch event about 4.2e-17 s away and rejects the
+subminimum branch interval. A proper unilateral active-set transition remains
+required; ignoring the force, snapping motion or loosening admission is not a
+solution. These failing regressions remain visible rather than ignored.
+
+59 focused physics/geometry tests passed. The full gameplay library
+run passed 142 tests and failed 2; it is not a green full regression.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw failures, diagnostics, passing focused logs and current source hashes:
+artifacts/edge-support-normal-derivatives-2026-10-06. Changes remain local.
+
+### Pressure-positive affine reaction intervals (2026-10-06)
+
+The supported event loop now solves pressure derivatives against its proposed
+interval, with each loaded strength derivative bounded below by -pressure/dt.
+Zero-pressure points retain their unilateral derivative bound. A representable
+upward rounding of the finite lower bound avoids admitting a negative endpoint
+from division rounding. This is a nominal floating linear pressure model,
+not a real-arithmetic or nonlinear contact certificate.
+
+The existing indexed normal kernel now accepts finite signed lower bounds and
+minimizes each two-row block with the actual bound on the opposite row. The
+constant/unilateral candidates are retained at zero bounds. Snapshot tangent
+queries still use their original unbounded loaded derivatives; finite stepping
+uses the same solver and baseline with interval bounds, rather than creating a
+separate pressure system. Physical jerk residual verification remains required
+on points carrying pressure, even if a derivative bound is active.
+
+If the interval-bounded tangent solve is infeasible, the event loop halves the
+proposed interval within its existing budget and reassembles the same geometry.
+It does not erase a load or clamp motion. The existing pressure-zero limit and
+minimum budget rejection still apply to genuine unsatisfied branch transitions.
+
+The previously failing 0.2-second two-body sliding fixture now passes at two
+interval sizes, checking actual position, linear impulse, integrated opposite
+floor moment, reaction work and absence of manufactured dissipation. The
+one-second three-body stack hold followed by changed-load release also passes
+in constant and affine modes. A separate one-point ramp fixture verifies that
+a safe pressure prefix preserves the analytic unloading time, while a proposed
+interval crossing it is rejected; invalid durations reject as well.
+
+This resolves the demonstrated near-zero reaction redistribution failures.
+General nonlinear branch transitions, arbitrarily rotating long-lived supports
+and nonzero aggregate COM jerk under a loaded scene remain separately unproven.
+The affine integration mode remains opt-in.
+
+Qualification: 1940 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw initial failures and passing reruns, plus current source hashes:
+artifacts/positive-affine-pressure-intervals-2026-10-06. Changes remain local.
+
+
+### Directional rotational support admission (2026-10-06)
+
+Support admission now bounds rotational displacement in the emitted fixed world
+normal instead of rejecting every finite spin by total angle times radius.
+Each nominal spin arc contributes radius times |omega cross normal| times its
+duration. Common-point ownership uses both the actual arm excursion and the
+rotation of each affine row, retaining the smaller of these valid bounds.
+Relative cubic COM displacement remains bounded across the full interval.
+Only actual outward ownership excess is reported, so motion wholly inside a
+volume does not manufacture a support error.
+
+There is no axis-specific rest rule, angular-speed clamp, pose correction or
+change to the reaction force solver. Finite rotation about the supporting normal
+can now retain the plane and a valid common point. Projection bounds still
+reject intervals that cannot preserve the plane and point ownership. All these
+bounds apply to the nominal floating spin path, not an exact anisotropic orbit
+or directed real-arithmetic certificate.
+
+A scene cube balanced on its lowest vertex spins one radian around the vertical
+axis over ten 0.1-second outer steps, with at least 100 support intervals. Its
+attitude agrees with independent analytic yaw, height and angular momentum are
+preserved, and opposite floor impulse equals integrated weight without heat.
+A sampled arbitrary-axis spin fixture verifies projected gap and arm bounds
+through all nominal prefixes, while an interior frozen common point remains
+owned by a yawing face. Existing unresolved rolling geometry still rejects and
+preserves state. General rolling needs material-point advection and a different
+common-point wrench model; it is not qualified by this yaw case.
+
+365 release gameplay/editor tests passed, 13 ignored. Physics core
+was unchanged in this milestone. App/editor all-target release checks,
+formatting and diff checks passed. Raw logs retain the initial invalid outer
+step and missing test-config Default errors, followed by passing reruns.
+Logs and source hashes: artifacts/projected-rotation-support-admission-2026-10-06.
+Changes remain local.
+
+### Prepared material-point kinematics (2026-10-06)
+
+`RigidMotion::sample_material_point` follows a body-local point on the same
+prepared cubic COM and nominal rotation path. It returns world position,
+velocity, acceleration and jerk, with the owning spin-arc interval. Inside an
+arc these use its represented constant angular velocity, including centripetal
+acceleration and the third rotational derivative. Shared rotation/vector
+operations remain in physics; no renderer or second trajectory owner is added.
+
+This contract is deliberately distinct from `ContactBody::point_velocity`,
+which evaluates instantaneous physical velocity from angular momentum.
+With changing torque, the prepared midpoint arc velocity differs from that
+physical state velocity. Mixing them would make the point's reported derivatives
+inconsistent with its actual represented positions. Existing collision and
+reaction state-velocity APIs are unchanged. At interior arc knots derivatives
+are right-sided, and at the final endpoint they are left-sided; the nominal
+midpoint orientation path does not promise continuous velocity or acceleration
+across its knots. No exact physical angular-acceleration claim follows from
+these inside-arc point derivatives.
+
+An independent analytic spinning-point fixture combines cubic COM motion with
+constant spherical spin and checks every tested prefix through third order.
+Finite differences within changing-torque arcs verify position/velocity/
+acceleration derivatives independently. Knot-side ownership, final endpoint,
+nonrotating offsets, invalid inputs and immutable source paths are checked.
+
+Moving material-point reactions, their reciprocal torque laws and persistent
+rolling contact have not yet been connected to supported stepping. That requires
+work and moment integration on the same moving point, rather than substituting
+this sample into the current frozen-world-arm polynomial reaction model.
+
+Qualification: 1944 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw logs and current source hashes: artifacts/prepared-material-point-kinematics-2026-10-06.
+Changes remain local.
+
+### Material-point force work and moment integrals (2026-10-06)
+
+`RigidMotion::material_point_force_work` probes an affine world force at a
+body-local material point on the existing prepared path. It returns COM work,
+rotational work, their sum and angular impulse about the world origin. COM
+terms reuse the existing cubic/affine integrals. Each rotation arc integrates
+the zeroth and first time moments of its actual rotating arm using Rodrigues
+sine/cosine terms, with small-angle series to avoid cancellation. The arm is
+not frozen or replaced by a truncated torque polynomial. Its start pose and
+force law are rebased at every arc and every clipped prefix.
+
+Rotational work is the arc angular velocity dotted with its integrated COM
+moment, consistent with the already implemented material-point velocity.
+World-origin angular impulse combines the same rotating-arm moment with the
+COM orbital moment. These are nominal floating integrations on the represented
+midpoint arcs, not directed interval certificates or an exact physical orbit.
+The operation is read-only and does not apply the probe force to body dynamics.
+Noncentral forces on a point body with no spin degree of freedom reject.
+
+Independent composite Simpson integration of sampled point power and world
+moment checks constant spin, tiny-angle prefixes and cubic COM motion. Separate
+Gaussian quadrature inside every changing-torque arc checks arc rebasing without
+sampling derivative discontinuities at knots. Stationary arms, central probes,
+invalid point coordinates, point-body admission and immutable source paths are
+also covered.
+
+Material-point pressure forces still need reciprocal integration on both body
+paths and a self-consistent force/rotation preparation model before persistent
+rolling contact can use them. Supported stepping currently retains its frozen
+world-arm common points. This probe supplies the corresponding work/moment
+integrals without claiming that contact integration has been completed.
+
+Qualification: 1946 release physics/gameplay/editor tests passed, 24 ignored.
+App/editor all-target release checks, formatting and diff checks passed.
+Raw logs and source hashes: artifacts/material-point-force-work-2026-10-06.
+Changes remain local.
+
+### Reciprocal material-point work probes (2026-10-06)
+
+`RigidMotion::moving_material_point_force_work` evaluates force work on a
+receiver while the common world point follows a material point on a source
+path. The probe partitions the prefix at the union of both rotation paths'
+knots, integrates the source rotating arm and relative cubic COM displacement,
+and uses the receiver arc angular velocity for rotational work. The own-point
+probe delegates to this implementation. Opposite forces at the same point
+produce reciprocal angular impulses about the world origin.
+
+Independent Gaussian quadrature checks receiver material-velocity power on
+different spin axes and arc partitions; tiny prefixes and immutable source
+paths are covered. These are read-only nominal-path probes. Supported stepping
+still uses frozen world arms; self-consistent force/rotation preparation and
+persistent rolling contact remain incomplete.
+
+Delivery qualification: 1947 passed, 0 failed, 24 ignored.
+App/editor all-target release checks passed.
+Raw logs and source hashes: artifacts/push-or-clear-material-delivery-2026-10-06.

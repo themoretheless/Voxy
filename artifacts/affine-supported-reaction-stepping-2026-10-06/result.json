@@ -1,0 +1,21 @@
+{
+  "tests": {
+    "passed": 1937,
+    "failed": 0,
+    "ignored": 24
+  },
+  "tests_exit_code": 0,
+  "consumers_exit_code": 0,
+  "source_sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "06e1fa62a813821a0eee4b87e416324211a48595a30f3fc6dc835bce715e4351",
+    "crates/physics/src/liquid/support_world.rs": "2dceee40a6d4885e0d754a612c187884a8136d9a4604148902051dab0eca551c",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "f52fb7658c25bde715276495528dd04f5e7114622c68a7c26264a7d999ece74e"
+  },
+  "mode": "Opt-in SupportedWorldConfig.reaction_jerk_tolerance",
+  "limitations": [
+    "Nonlinear pressure-zero branch transitions incomplete",
+    "Normal Rate branches need geometry second derivatives",
+    "Nonzero aggregate COM force-rate loaded-scene case not yet qualified",
+    "General rotating support and arbitrary sustained sliding incomplete"
+  ]
+}

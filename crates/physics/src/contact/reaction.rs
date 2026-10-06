@@ -71,7 +71,7 @@ fn free_rates(body: ContactBody, wrench: ContactWrench) -> Result<(Vector, Vecto
             .angular_velocity()
             .map_err(|_| Error::NumericalFailure)?;
         let alpha = spin
-            .inverse_inertia(sub(wrench.torque, cross(omega, spin.angular_momentum)))
+            .angular_acceleration(wrench.torque)
             .map_err(|_| Error::NumericalFailure)?;
         (omega, alpha)
     } else {
@@ -348,7 +348,8 @@ pub fn resolve_normal_reaction_network(
             &active,
             ManifoldConfig {
                 max_sweeps: config.max_sweeps,
-                velocity_tolerance: config.acceleration_tolerance,
+                // Reserve margin for independent physical acceleration verification.
+                velocity_tolerance: config.acceleration_tolerance * 0.5,
             },
             &biases,
             false,
@@ -435,4 +436,4 @@ pub use rate::{
     resolve_normal_reaction_rate_network,
 };
 
-pub(crate) use rate::resolve_rate_from_baseline;
+pub(crate) use rate::{resolve_rate_from_baseline, resolve_rate_from_baseline_interval};
