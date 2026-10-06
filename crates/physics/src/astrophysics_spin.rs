@@ -47,6 +47,173 @@ fn advance(q: [f64; 4], omega: Vector, dt: f64) -> Result<[f64; 4], Error> {
     }
     Ok(next.map(|v| v / norm))
 }
+/// Zeroth and first time moments of a rotating arm on one constant-axis arc.
+pub(crate) fn rotating_arm_integrals(
+    arm: [f64; 3],
+    omega: [f64; 3],
+    dt: f64,
+) -> Result<([f64; 3], [f64; 3]), Error> {
+    let speed = omega[0].hypot(omega[1]).hypot(omega[2]);
+    if speed == 0. {
+        return Ok((arm.map(|r| r * dt), arm.map(|r| (r * (dt * 0.5)) * dt)));
+    }
+    let x = speed * dt;
+    if !x.is_finite() {
+        return Err(Error::NumericalOverflow);
+    }
+    let (c0, s0, c1, s1) = if x.abs() < 1e-3 {
+        let z = x * x;
+        (
+            1. + z * (-1. / 6. + z * (1. / 120. - z / 5040.)),
+            x * (0.5 + z * (-1. / 24. + z * (1. / 720. - z / 40320.))),
+            0.5 + z * (-1. / 8. + z * (1. / 144. - z / 5760.)),
+            x * (1. / 3. + z * (-1. / 30. + z * (1. / 840. - z / 45360.))),
+        )
+    } else {
+        let (sin, cos) = x.sin_cos();
+        let half = (x * 0.5).sin() / (x * 0.5);
+        (
+            sin / x,
+            2. * (x * 0.5).sin().powi(2) / x,
+            sin / x - 0.5 * half * half,
+            (sin / x - cos) / x,
+        )
+    };
+    let axis = omega.map(|w| w / speed);
+    let projection: f64 = (0..3).map(|k| axis[k] * arm[k]).sum();
+    let parallel = axis.map(|n| n * projection);
+    let tangent = cross(axis, arm);
+    let zero =
+        std::array::from_fn(|k| dt * (parallel[k] + (arm[k] - parallel[k]) * c0 + tangent[k] * s0));
+    let first = std::array::from_fn(|k| {
+        dt * (dt * (parallel[k] * 0.5 + (arm[k] - parallel[k]) * c1 + tangent[k] * s1))
+    });
+    Ok((zero, first))
+}
+
+/// An affine force on an arm rotating with a prescribed world angular velocity.
+/// The arm and force are rebased to the beginning of the owning arc.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub(crate) struct RotatingArmForce {
+    pub arm: Vector,
+    pub omega: Vector,
+    pub force: Vector,
+    pub rate: Vector,
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub(crate) struct ArcTorque {
+    pub polynomial: TorquePolynomial,
+    pub rotating: Option<RotatingArmForce>,
+}
+impl ArcTorque {
+    pub fn polynomial(law: TorquePolynomial) -> Self {
+        Self {
+            polynomial: law,
+            rotating: None,
+        }
+    }
+    pub fn validate(self) -> Result<(), Error> {
+        self.polynomial.validate()?;
+        if self.rotating.is_some_and(|r| {
+            r.arm
+                .iter()
+                .chain(&r.omega)
+                .chain(&r.force)
+                .chain(&r.rate)
+                .any(|x| !x.is_finite())
+        }) {
+            return Err(Error::InvalidInput);
+        }
+        Ok(())
+    }
+    pub fn shifted(self, time: f64) -> Result<Self, Error> {
+        self.validate()?;
+        let polynomial = self.polynomial.shifted(time)?;
+        let rotating = self
+            .rotating
+            .map(|r| {
+                let q = advance([0., 0., 0., 1.], r.omega, time)?;
+                Ok(RotatingArmForce {
+                    arm: rotate(q, r.arm),
+                    force: std::array::from_fn(|k| r.rate[k].mul_add(time, r.force[k])),
+                    ..r
+                })
+            })
+            .transpose()?;
+        let result = Self {
+            polynomial,
+            rotating,
+        };
+        result.validate().map_err(|_| Error::NumericalOverflow)?;
+        Ok(result)
+    }
+    pub fn add_polynomial(mut self, other: TorquePolynomial) -> Result<Self, Error> {
+        self.validate()?;
+        other.validate()?;
+        for (target, add) in [
+            (&mut self.polynomial.value, other.value),
+            (&mut self.polynomial.rate, other.rate),
+            (&mut self.polynomial.acceleration, other.acceleration),
+            (&mut self.polynomial.jerk, other.jerk),
+            (&mut self.polynomial.snap, other.snap),
+        ] {
+            for k in 0..3 {
+                target[k] += add[k];
+            }
+        }
+        self.validate().map_err(|_| Error::NumericalOverflow)?;
+        Ok(self)
+    }
+    pub fn impulse(self, time: f64) -> Result<Vector, Error> {
+        self.validate()?;
+        let mut result = self.polynomial.impulse(time)?;
+        if let Some(r) = self.rotating {
+            let (a0, a1) = rotating_arm_integrals(r.arm, r.omega, time)?;
+            let zero = cross(a0, r.force);
+            let first = cross(a1, r.rate);
+            for k in 0..3 {
+                result[k] += zero[k] + first[k];
+            }
+        }
+        if result.iter().any(|x| !x.is_finite()) {
+            return Err(Error::NumericalOverflow);
+        }
+        Ok(result)
+    }
+    pub fn value_at(self, time: f64) -> Result<Vector, Error> {
+        self.validate()?;
+        let mut result = self.polynomial.value_at(time)?;
+        if let Some(r) = self.rotating {
+            let q = advance([0., 0., 0., 1.], r.omega, time)?;
+            let arm = rotate(q, r.arm);
+            let force = std::array::from_fn(|k| r.rate[k].mul_add(time, r.force[k]));
+            let moment = cross(arm, force);
+            for k in 0..3 {
+                result[k] += moment[k];
+            }
+        }
+        if result.iter().any(|x| !x.is_finite()) {
+            return Err(Error::NumericalOverflow);
+        }
+        Ok(result)
+    }
+    pub fn envelopes(self, duration: f64) -> Result<(f64, f64), Error> {
+        self.validate()?;
+        let (mut maximum, mut integral) = self.polynomial.envelopes(duration)?;
+        if let Some(r) = self.rotating {
+            let norm = |v: Vector| v[0].hypot(v[1]).hypot(v[2]);
+            let radius = norm(r.arm);
+            maximum += radius * (norm(r.force) + norm(r.rate) * duration);
+            integral +=
+                radius * (norm(r.force) * duration + (norm(r.rate) * (duration * 0.5)) * duration);
+        }
+        if !maximum.is_finite() || !integral.is_finite() {
+            return Err(Error::NumericalOverflow);
+        }
+        Ok((maximum, integral))
+    }
+}
+
 /// World torque τ(t) = value + rate*t + acceleration*t²/2 + jerk*t³/6 + snap*t⁴/24.
 /// Coefficients are about COM and time is relative to the current interval.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -131,7 +298,7 @@ impl TorquePolynomial {
     pub fn value_at(self, time: f64) -> Result<[f64; 3], Error> {
         self.shifted(time).map(|law| law.value)
     }
-    fn validate(self) -> Result<(), Error> {
+    pub(crate) fn validate(self) -> Result<(), Error> {
         if self
             .value
             .iter()
@@ -345,26 +512,70 @@ impl Spin {
         torque: TorquePolynomial,
         dt: f64,
     ) -> Result<SpinArc, Error> {
+        self.prepare_forced_arc(ArcTorque::polynomial(torque), dt)
+    }
+
+    pub(crate) fn prepare_forced_arc(self, torque: ArcTorque, dt: f64) -> Result<SpinArc, Error> {
+        self.prepare_forced_arc_impl(torque, dt, None)
+    }
+
+    pub(crate) fn prepare_material_force_arc(
+        self,
+        torque: ArcTorque,
+        local: Vector,
+        dt: f64,
+    ) -> Result<SpinArc, Error> {
+        self.prepare_forced_arc_impl(torque, dt, Some(local))
+    }
+
+    fn prepare_forced_arc_impl(
+        self,
+        mut torque: ArcTorque,
+        dt: f64,
+        local: Option<Vector>,
+    ) -> Result<SpinArc, Error> {
         self.validate()?;
         torque.validate()?;
+        torque.value_at(0.)?;
         if !dt.is_finite() || dt <= 0.0 {
             return Err(Error::InvalidInput);
         }
+        if local.is_some_and(|point| point.iter().any(|x| !x.is_finite())) {
+            return Err(Error::InvalidInput);
+        }
+        let update = |mut law: ArcTorque, omega: Vector| -> Result<ArcTorque, Error> {
+            if let Some(local) = local {
+                let force = law.rotating.as_mut().ok_or(Error::InvalidInput)?;
+                force.arm = rotate(self.orientation, local);
+                force.omega = omega;
+            }
+            Ok(law)
+        };
+        torque = update(torque, self.angular_velocity()?)?;
         let midpoint_impulse = torque.impulse(dt * 0.5)?;
-        let end_impulse = torque.impulse(dt)?;
-        let midpoint_momentum =
-            std::array::from_fn(|k| self.angular_momentum[k] + midpoint_impulse[k]);
-        let end_momentum = std::array::from_fn(|k| self.angular_momentum[k] + end_impulse[k]);
         let mut half = self;
-        half.angular_momentum = midpoint_momentum;
+        half.angular_momentum =
+            std::array::from_fn(|k| self.angular_momentum[k] + midpoint_impulse[k]);
+        let inverse_min = 1. / self.inertia.iter().copied().fold(f64::INFINITY, f64::min);
         let mut converged = false;
         for _ in 0..32 {
-            let next = advance(self.orientation, half.angular_velocity()?, dt * 0.5)?;
-            let difference = next
+            let omega = half.angular_velocity()?;
+            let next = advance(self.orientation, omega, dt * 0.5)?;
+            let mut difference = next
                 .iter()
                 .zip(half.orientation)
                 .map(|(a, b)| (a - b).abs())
                 .fold(0.0_f64, f64::max);
+            if local.is_some() {
+                torque = update(torque, omega)?;
+                let impulse = torque.impulse(dt * 0.5)?;
+                let momentum: Vector =
+                    std::array::from_fn(|k| self.angular_momentum[k] + impulse[k]);
+                let delta: Vector = std::array::from_fn(|k| momentum[k] - half.angular_momentum[k]);
+                difference =
+                    difference.max((inverse_min * dt) * delta[0].hypot(delta[1]).hypot(delta[2]));
+                half.angular_momentum = momentum;
+            }
             half.orientation = next;
             if difference < 1e-13 {
                 converged = true;
@@ -374,9 +585,15 @@ impl Spin {
         if !converged {
             return Err(Error::NoConvergence);
         }
+        let omega = half.angular_velocity()?;
+        // The force law and the represented arm use the very same accepted
+        // omega, not the previous fixed-point iterate. The remaining midpoint
+        // defect is measured by adaptive admission.
+        torque = update(torque, omega)?;
+        let end_impulse = torque.impulse(dt)?;
         let next = Self {
-            orientation: advance(self.orientation, half.angular_velocity()?, dt)?,
-            angular_momentum: end_momentum,
+            orientation: advance(self.orientation, omega, dt)?,
+            angular_momentum: std::array::from_fn(|k| self.angular_momentum[k] + end_impulse[k]),
             ..self
         };
         next.validate()?;
@@ -385,7 +602,7 @@ impl Spin {
             end: next,
             torque,
             duration: dt,
-            angular_velocity: half.angular_velocity()?,
+            angular_velocity: omega,
         })
     }
 }
@@ -395,7 +612,7 @@ impl Spin {
 pub struct SpinArc {
     start: Spin,
     end: Spin,
-    torque: TorquePolynomial,
+    torque: ArcTorque,
     duration: f64,
     angular_velocity: Vector,
 }
@@ -414,10 +631,34 @@ impl SpinArc {
     }
     /// World torque at the beginning of the arc.
     pub fn torque(self) -> Vector {
-        self.torque.value
+        // Arc preparation validates all components at time zero.
+        self.torque.value_at(0.).expect("admitted torque")
     }
-    pub fn torque_polynomial(self) -> TorquePolynomial {
+    /// The complete torque law when it is polynomial. A rotating-arm force
+    /// returns None; torque_at/angular_impulse evaluate either complete law.
+    pub fn torque_polynomial(self) -> Option<TorquePolynomial> {
         self.torque
+            .rotating
+            .is_none()
+            .then_some(self.torque.polynomial)
+    }
+    pub fn torque_at(self, time: f64) -> Result<Vector, Error> {
+        if !time.is_finite() || !(0. ..=self.duration).contains(&time) {
+            return Err(Error::InvalidInput);
+        }
+        self.torque.value_at(time)
+    }
+    pub fn angular_impulse(self, time: f64) -> Result<Vector, Error> {
+        if !time.is_finite() || !(0. ..=self.duration).contains(&time) {
+            return Err(Error::InvalidInput);
+        }
+        self.torque.impulse(time)
+    }
+    pub(crate) fn forcing(self) -> ArcTorque {
+        self.torque
+    }
+    pub(crate) fn torque_envelopes(self) -> Result<(f64, f64), Error> {
+        self.torque.envelopes(self.duration)
     }
     /// Sample the admitted arc; preserve accepted endpoints exactly.
     pub fn sample(self, time: f64) -> Result<Spin, Error> {

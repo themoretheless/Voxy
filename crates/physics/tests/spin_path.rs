@@ -340,3 +340,73 @@ fn cubic_arm_affine_force_quartic_torque_matches_direct_product_and_gaussian_imp
     );
     assert!(TorquePolynomial::moving_affine_arm(arm, v, a, j, f, [f64::INFINITY; 3]).is_err());
 }
+
+#[test]
+fn every_torque_coefficient_rejects_nonfinite_before_adaptive_preparation() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let initial = spin([1., 2., 3.], [0.3, 0.5, 0.7]);
+    let saved = initial;
+    for coefficient in 0..5 {
+        for axis in 0..3 {
+            for invalid in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
+                let mut law = TorquePolynomial::constant([0.; 3]);
+                let field = match coefficient {
+                    0 => &mut law.value,
+                    1 => &mut law.rate,
+                    2 => &mut law.acceleration,
+                    3 => &mut law.jerk,
+                    _ => &mut law.snap,
+                };
+                field[axis] = invalid;
+                assert_eq!(
+                    initial.prepare_polynomial_path(law, 0.1, config(1e-4)),
+                    Err(PathError::InvalidInput)
+                );
+                assert_eq!(initial, saved);
+            }
+        }
+    }
+}
+
+#[test]
+fn higher_order_torque_attitude_bound_covers_independent_spherical_solution() {
+    use physics::astrophysics_spin::TorquePolynomial;
+    let initial = spin([2.; 3], [0., 0., 0.7]);
+    // Collinear spherical motion has a closed-form attitude, obtained by
+    // integrating the physical momentum twice, independently of arc sampling.
+    for (jerk, snap) in [(120., 0.), (0., 1200.), (-120., 1200.)] {
+        let law = TorquePolynomial {
+            jerk: [0., 0., jerk],
+            snap: [0., 0., snap],
+            ..TorquePolynomial::constant([0.; 3])
+        };
+        let duration = 0.3;
+        let coarse = initial
+            .prepare_polynomial_path(law, duration, config(2e-3))
+            .unwrap();
+        let fine = initial
+            .prepare_polynomial_path(law, duration, config(2e-4))
+            .unwrap();
+        assert!(fine.segments().len() > coarse.segments().len());
+        let exact = |t: f64| {
+            let angle = (0.7 * t + jerk * t.powi(5) / 120. + snap * t.powi(6) / 720.) / 2.;
+            [0., 0., (angle / 2.).sin(), (angle / 2.).cos()]
+        };
+        for path in [&coarse, &fine] {
+            for i in 0..=256 {
+                let t = duration * i as f64 / 256.;
+                let actual = path.sample(t).unwrap();
+                assert!(
+                    distance(actual.orientation, exact(t))
+                        <= path.model_angular_error_rad() + 1e-12
+                );
+                let momentum = 0.7 + jerk * t.powi(4) / 24. + snap * t.powi(5) / 120.;
+                assert!((actual.angular_momentum[2] - momentum).abs() < 1e-12);
+            }
+        }
+        assert!(
+            distance(fine.end().orientation, exact(duration))
+                < distance(coarse.end().orientation, exact(duration))
+        );
+    }
+}
