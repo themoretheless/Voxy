@@ -1,0 +1,12 @@
+{
+  "voxy-push-current-tests.log": {
+    "passed": 453,
+    "failed": 0,
+    "ignored": 0
+  },
+  "voxy-push-current-physics.log": {
+    "passed": 1615,
+    "failed": 0,
+    "ignored": 11
+  }
+}
