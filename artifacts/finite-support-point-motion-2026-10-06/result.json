@@ -1,0 +1,12 @@
+{
+  "rigid_world_tests": 10,
+  "reaction_rate_tests": 6,
+  "supported_gameplay_regression_tests": 10,
+  "scope": "finite common-point mechanics and admission protocol",
+  "scene_moving_feature_admission": "pending",
+  "sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "cf5dfe02d83316031a645ad9f8b16d30065024787eaf18abc41c34ac27f80372",
+    "crates/physics/src/liquid.rs": "b97d0bbec38839d504253404d1dcb53f8c4cb2af91bc209cc6ee858fa9e63ec3",
+    "crates/physics/tests/liquid_rigid_body_world.rs": "094c05f452b0f19c09aa499e7eb9b4bb0baffd27aa49d57a293d8447a4193c9f"
+  }
+}

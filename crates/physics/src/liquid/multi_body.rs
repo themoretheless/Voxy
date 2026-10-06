@@ -52,6 +52,22 @@ pub struct RigidSupportPoint {
     /// Set from the solved normal force when preparing this interval.
     pub carrying_reaction: bool,
 }
+/// Cubic world motion of a common support application point, starting at the
+/// support snapshot. Geometry must admit this same model over the full interval.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct RigidSupportPointMotion {
+    pub velocity: [f64; 3],
+    pub acceleration: [f64; 3],
+    pub jerk: [f64; 3],
+}
+impl RigidSupportPointMotion {
+    fn validate(self) -> Result<Self, Error> {
+        if !finite(self.velocity) || !finite(self.acceleration) || !finite(self.jerk) {
+            return Err(Error::InvalidCollision);
+        }
+        Ok(self)
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct SupportedGeometryHit {
     pub event: RigidGeometryHit,
@@ -341,6 +357,21 @@ pub trait LiquidBodyWorld {
             .ok_or(Error::InvalidCollision)
     }
 
+    /// Explicit finite-interval point model. None retains the existing point
+    /// following first COM. Called first with zero load rates and again with
+    /// solved rates; velocity and acceleration must agree between both calls.
+    /// A custom model requires the matching trajectory-admission callbacks.
+    fn rigid_support_point_motion(
+        &self,
+        _bodies: &[crate::contact::ContactBody],
+        _loads: &[crate::contact::ContactWrench],
+        _rates: &[crate::contact::ContactWrench],
+        _support: crate::contact::NetworkSupport,
+        _geometry: RigidSupportPoint,
+    ) -> Result<Option<RigidSupportPointMotion>, Error> {
+        Ok(None)
+    }
+
     /// Geometry-owned second derivative for the exact emitted normal branch.
     /// Non-edge owners are derived by the shared contact kernel.
     fn rigid_support_normal_acceleration(
@@ -461,6 +492,42 @@ pub trait LiquidBodyWorld {
     ) -> Result<SupportedGeometryHit, Error> {
         Err(Error::CollisionBackend)
     }
+    /// Admit the exact common-point polynomial used by reaction mechanics.
+    /// Legacy admission is valid only when every model is None.
+    fn sweep_supported_rigid_pair_point_motion(
+        &self,
+        i: usize,
+        first: &crate::rigid_motion::RigidMotion,
+        j: usize,
+        second: &crate::rigid_motion::RigidMotion,
+        supports: &[RigidSupportPoint],
+        motion: &[Option<RigidSupportPointMotion>],
+        budget: usize,
+    ) -> Result<SupportedGeometryHit, Error> {
+        if supports.len() != motion.len() {
+            return Err(Error::InvalidCollision);
+        }
+        if motion.iter().any(Option::is_some) {
+            return Err(Error::CollisionBackend);
+        }
+        self.sweep_supported_rigid_pair_event(i, first, j, second, supports, budget)
+    }
+    fn sweep_supported_rigid_environment_point_motion(
+        &self,
+        i: usize,
+        body: &crate::rigid_motion::RigidMotion,
+        supports: &[RigidSupportPoint],
+        motion: &[Option<RigidSupportPointMotion>],
+        budget: usize,
+    ) -> Result<SupportedGeometryHit, Error> {
+        if supports.len() != motion.len() {
+            return Err(Error::InvalidCollision);
+        }
+        if motion.iter().any(Option::is_some) {
+            return Err(Error::CollisionBackend);
+        }
+        self.sweep_supported_rigid_environment_event(i, body, supports, budget)
+    }
     /// Contact-time geometry-owned normal patch for an inelastic rigid pair.
     /// Defaults preserve point-only backends; geometry can return up to 128 points.
     fn rigid_pair_patch(
@@ -540,10 +607,10 @@ pub struct SupportedWorldReport {
     /// Includes orbital COM motion and intrinsic COM torque; excludes impacts.
     pub reaction_angular_impulse: [f64; 3],
     /// Opposite moment transmitted to fixed geometry by support reactions.
-    /// Application points follow the admitted first-body COM with frozen arms.
+    /// Uses the same admitted common-point motion as finite-body reactions.
     pub environment_reaction_angular_impulse: [f64; 3],
     /// Signed finite-body plus fixed-environment reaction angular impulse.
-    /// Retains error of the admitted frozen-arm model; never converted to heat.
+    /// Retains error of the admitted point model; never converted to heat.
     pub reaction_angular_balance_residual: [f64; 3],
 
     pub supported_intervals: usize,
@@ -840,6 +907,28 @@ fn solve_contact(
                 }
             }
         }
+        let zero_rates = vec![crate::contact::ContactWrench::default(); states.len()];
+        let initial_point_motion = if let Some(report) = &support_report {
+            report
+                .supports
+                .iter()
+                .zip(&report.geometry)
+                .map(|(support, geometry)| {
+                    world
+                        .rigid_support_point_motion(
+                            &states,
+                            &effective,
+                            &zero_rates,
+                            *support,
+                            *geometry,
+                        )?
+                        .map(RigidSupportPointMotion::validate)
+                        .transpose()
+                })
+                .collect::<Result<Vec<_>, Error>>()?
+        } else {
+            Vec::new()
+        };
         let support_rate = if let (Some(tolerance), Some(report)) = (
             supported.and_then(|c| c.reaction_jerk_tolerance),
             support_report.as_ref(),
@@ -849,9 +938,11 @@ fn solve_contact(
                     .supports
                     .iter()
                     .zip(&report.geometry)
-                    .map(|(s, geometry)| {
+                    .enumerate()
+                    .map(|(index, (s, geometry))| {
                         Ok(crate::contact::SupportMotion {
-                            point_velocity: states[s.first].motion.velocity,
+                            point_velocity: initial_point_motion[index]
+                                .map_or(states[s.first].motion.velocity, |m| m.velocity),
                             normal_acceleration: world.rigid_support_normal_acceleration(
                                 &states, &effective, *s, *geometry,
                             )?,
@@ -904,6 +995,38 @@ fn solve_contact(
             || vec![[0.; 3]; states.len()],
             |rate| rate.wrenches_rate.iter().map(|w| w.force).collect(),
         );
+        let final_rates = support_rate
+            .as_ref()
+            .map_or_else(|| zero_rates.clone(), |rate| rate.wrenches_rate.clone());
+        let point_motion = if let Some(report) = &support_report {
+            report
+                .supports
+                .iter()
+                .zip(&report.geometry)
+                .enumerate()
+                .map(|(index, (support, geometry))| {
+                    let motion = world
+                        .rigid_support_point_motion(
+                            &states,
+                            &effective,
+                            &final_rates,
+                            *support,
+                            *geometry,
+                        )?
+                        .map(RigidSupportPointMotion::validate)
+                        .transpose()?;
+                    match (initial_point_motion[index], motion) {
+                        (None, None) => {}
+                        (Some(a), Some(b))
+                            if a.velocity == b.velocity && a.acceleration == b.acceleration => {}
+                        _ => return Err(Error::InvalidCollision),
+                    }
+                    Ok(motion)
+                })
+                .collect::<Result<Vec<_>, Error>>()?
+        } else {
+            Vec::new()
+        };
         let mut reaction_torques: Vec<_> = support_report
             .as_ref()
             .and_then(|r| r.reaction.as_ref())
@@ -937,16 +1060,22 @@ fn solve_contact(
                             support.support.contact.point[k] - states[owner].motion.position[k]
                         });
                         let velocity = std::array::from_fn(|k| {
-                            states[support.first].motion.velocity[k]
+                            point_motion[index]
+                                .map_or(states[support.first].motion.velocity[k], |m| m.velocity[k])
                                 - states[owner].motion.velocity[k]
                         });
                         let acceleration = std::array::from_fn(|k| {
-                            effective[support.first].force[k] / states[support.first].motion.mass
-                                - effective[owner].force[k] / states[owner].motion.mass
+                            point_motion[index].map_or(
+                                effective[support.first].force[k]
+                                    / states[support.first].motion.mass,
+                                |m| m.acceleration[k],
+                            ) - effective[owner].force[k] / states[owner].motion.mass
                         });
                         let jerk = std::array::from_fn(|k| {
-                            force_rates[support.first][k] / states[support.first].motion.mass
-                                - force_rates[owner][k] / states[owner].motion.mass
+                            point_motion[index].map_or(
+                                force_rates[support.first][k] / states[support.first].motion.mass,
+                                |m| m.jerk[k],
+                            ) - force_rates[owner][k] / states[owner].motion.mass
                         });
                         let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
                             arm,
@@ -967,30 +1096,33 @@ fn solve_contact(
                 }
             }
         }
-        let pair_supports = |i: usize, j: Option<usize>| -> Vec<RigidSupportPoint> {
-            let Some(report) = &support_report else {
-                return Vec::new();
+        let pair_supports =
+            |i: usize,
+             j: Option<usize>|
+             -> (Vec<RigidSupportPoint>, Vec<Option<RigidSupportPointMotion>>) {
+                let Some(report) = &support_report else {
+                    return (Vec::new(), Vec::new());
+                };
+                let Some(reaction) = &report.reaction else {
+                    return (Vec::new(), Vec::new());
+                };
+                report
+                    .supports
+                    .iter()
+                    .zip(&report.geometry)
+                    .zip(&reaction.forces)
+                    .enumerate()
+                    .filter(|(_, ((s, _), _))| s.first == i && s.second == j)
+                    .map(|(index, ((_, geometry), force))| {
+                        let mut point = *geometry;
+                        point.carrying_reaction = *force != [0.; 3]
+                            || support_rate
+                                .as_ref()
+                                .is_some_and(|r| r.forces_rate[index] != [0.; 3]);
+                        (point, point_motion[index])
+                    })
+                    .unzip()
             };
-            let Some(reaction) = &report.reaction else {
-                return Vec::new();
-            };
-            report
-                .supports
-                .iter()
-                .zip(&report.geometry)
-                .zip(&reaction.forces)
-                .enumerate()
-                .filter(|(_, ((s, _), _))| s.first == i && s.second == j)
-                .map(|(index, ((_, geometry), force))| {
-                    let mut point = *geometry;
-                    point.carrying_reaction = *force != [0.; 3]
-                        || support_rate
-                            .as_ref()
-                            .is_some_and(|r| r.forces_rate[index] != [0.; 3]);
-                    point
-                })
-                .collect()
-        };
         let mut support_error: f64 = 0.;
         let paths: Vec<_> = nodes
             .iter()
@@ -1151,7 +1283,7 @@ fn solve_contact(
             for second in first + 1..bodies.len() {
                 charge(ledger, config)?;
                 admit(count + first, Some(count + second), {
-                    let supports = pair_supports(first, Some(second));
+                    let (supports, point_models) = pair_supports(first, Some(second));
                     if supports.is_empty() {
                         world.sweep_rigid_pair_event(
                             first,
@@ -1161,12 +1293,13 @@ fn solve_contact(
                             config.contact.max_candidates,
                         )?
                     } else {
-                        match world.sweep_supported_rigid_pair_event(
+                        match world.sweep_supported_rigid_pair_point_motion(
                             first,
                             &paths[count + first],
                             second,
                             &paths[count + second],
                             &supports,
+                            &point_models,
                             config.contact.max_candidates,
                         ) {
                             Ok(hit) => {
@@ -1190,7 +1323,7 @@ fn solve_contact(
             if world.has_environment() {
                 charge(ledger, config)?;
                 admit(count + first, None, {
-                    let supports = pair_supports(first, None);
+                    let (supports, point_models) = pair_supports(first, None);
                     if supports.is_empty() {
                         world.sweep_rigid_environment_event(
                             first,
@@ -1198,10 +1331,11 @@ fn solve_contact(
                             config.contact.max_candidates,
                         )?
                     } else {
-                        match world.sweep_supported_rigid_environment_event(
+                        match world.sweep_supported_rigid_environment_point_motion(
                             first,
                             &paths[count + first],
                             &supports,
+                            &point_models,
                             config.contact.max_candidates,
                         ) {
                             Ok(hit) => {
@@ -1324,9 +1458,17 @@ fn solve_contact(
                         .map_or([0.; 3], |r| r.forces_rate[index].map(|f| -f));
                     let law = crate::astrophysics_spin::TorquePolynomial::moving_affine_arm(
                         std::array::from_fn(|k| point[k] - center[k]),
-                        [0.; 3],
-                        [0.; 3],
-                        [0.; 3],
+                        point_motion[index].map_or([0.; 3], |m| {
+                            std::array::from_fn(|k| {
+                                m.velocity[k] - path.initial().motion.velocity[k]
+                            })
+                        }),
+                        point_motion[index].map_or([0.; 3], |m| {
+                            std::array::from_fn(|k| m.acceleration[k] - path.acceleration()[k])
+                        }),
+                        point_motion[index].map_or([0.; 3], |m| {
+                            std::array::from_fn(|k| m.jerk[k] - path.jerk()[k])
+                        }),
                         opposite_force,
                         opposite_rate,
                     )

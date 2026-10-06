@@ -1,0 +1,7 @@
+{
+  "support_tests_passed": 6,
+  "scene_query_tests_passed": 1,
+  "scope": "instantaneous clipped contact vertex velocity",
+  "source_sha256": "d409734ea17f59397ac43f7e35db5c9871ea6843a42014b3a8a0990a11b1834b",
+  "finite_supported_rotating_loads": "incomplete"
+}

@@ -536,6 +536,29 @@ impl Spin {
         self.inverse_inertia(std::array::from_fn(|k| torque[k] - gyro[k]))
     }
 
+    /// Instantaneous derivative of world angular acceleration. Includes the
+    /// changing orientation of anisotropic inertia and gyroscopic momentum.
+    pub fn angular_jerk(self, torque: Vector, torque_rate: Vector) -> Result<Vector, Error> {
+        if torque.iter().chain(&torque_rate).any(|v| !v.is_finite()) {
+            return Err(Error::InvalidInput);
+        }
+        let omega = self.angular_velocity()?;
+        let alpha = self.angular_acceleration(torque)?;
+        let gyro = cross(omega, self.angular_momentum);
+        let alpha_l = cross(alpha, self.angular_momentum);
+        let omega_torque = cross(omega, torque);
+        let omega_gyro = cross(omega, gyro);
+        let transformed = self.inverse_inertia(std::array::from_fn(|k| {
+            torque_rate[k] - alpha_l[k] - 2. * omega_torque[k] + omega_gyro[k]
+        }))?;
+        let rotation = cross(omega, alpha);
+        let result = std::array::from_fn(|k| rotation[k] + transformed[k]);
+        if result.iter().any(|v| !v.is_finite()) {
+            return Err(Error::NumericalOverflow);
+        }
+        Ok(result)
+    }
+
     /// World-frame inertia, for gravity-gradient torque.
     /// # Errors
     /// Invalid state or numerical overflow.
@@ -791,5 +814,50 @@ mod material_moment_arc_tests {
             assert!(shifted.value_at(t).unwrap()[2].abs() <= maximum + 1e-12);
             assert!(shifted.impulse(t).unwrap()[2].abs() <= bound + 1e-12);
         }
+    }
+}
+
+#[cfg(test)]
+mod angular_jerk_tests {
+    use super::*;
+    #[test]
+    fn angular_jerk_matches_independent_acceleration_difference() {
+        let state = Spin {
+            orientation: advance([0., 0., 0., 1.], [0.3, -0.2, 0.5], 0.7).unwrap(),
+            angular_momentum: [0.4, -0.7, 0.9],
+            inertia: [1., 1.7, 2.],
+        };
+        let torque = [0.2, 0.3, -0.1];
+        let rate = [-0.4, 0.1, 0.2];
+        let analytic = state.angular_jerk(torque, rate).unwrap();
+        let omega = state.angular_velocity().unwrap();
+        let at = |t: f64| {
+            let shifted = Spin {
+                orientation: advance(state.orientation, omega, t).unwrap(),
+                angular_momentum: std::array::from_fn(|k| {
+                    state.angular_momentum[k] + t * torque[k]
+                }),
+                ..state
+            };
+            shifted
+                .angular_acceleration(std::array::from_fn(|k| torque[k] + t * rate[k]))
+                .unwrap()
+        };
+        for h in [1e-3, 1e-4] {
+            let a = at(h);
+            let b = at(-h);
+            for k in 0..3 {
+                assert!(((a[k] - b[k]) / (2. * h) - analytic[k]).abs() < 1e-6);
+            }
+        }
+        let sphere = Spin {
+            inertia: [2.; 3],
+            ..state
+        };
+        let actual = sphere.angular_jerk(torque, rate).unwrap();
+        for k in 0..3 {
+            assert!((actual[k] - rate[k] / 2.).abs() < 1e-13);
+        }
+        assert!(state.angular_jerk(torque, [f64::NAN, 0., 0.]).is_err());
     }
 }

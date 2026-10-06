@@ -1,0 +1,17 @@
+{
+  "status": "blocked_by_regression",
+  "focused_geometry_passed": 18,
+  "focused_scene_passed": 1,
+  "full_gameplay_lib": {
+    "passed": 165,
+    "failed": 1
+  },
+  "failed_test": "liquid_runtime::tests::supported_face_yaw_uses_cubic_corner_motion_without_freezing_spin",
+  "failure": "CollisionBudget",
+  "consumer_check": "passed",
+  "push": "withheld",
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "3d12d57de431f817ea6074f675f6811231c4c643200d8c884344e4950fef436a",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "ef87342a26665c8aacfa4b30da5022762f41265215e10757dde6ad2d545a924e"
+  }
+}

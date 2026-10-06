@@ -1,0 +1,1290 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 1m 06s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/physics-b8ab5053a74b0b10)
+
+running 1 test
+test astrophysics_spin::angular_jerk_tests::angular_jerk_matches_independent_acceleration_difference ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 115 filtered out; finished in 0.00s
+
+     Running tests/anatomy_tet.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/anatomy_tet-9d740ac0e9be1dad)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/astrophysics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics-629023226c50937b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_atmosphere.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_atmosphere-fd7add7ce0e14588)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_binary.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_binary-9b0f5cd8dfaf4e7b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_column.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_column-7f36706637b6fb1c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_coupled.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_coupled-4593287369912679)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_eos.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_eos-09cd4fa0e03fbc43)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_evolution.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_evolution-e229361405757afe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_free_free.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_free_free-698fbc7a95703f00)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_gas.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_gas-8a34951fbb298f8e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_gas_gravity.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_gas_gravity-acbc033983112cfb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_ionized_evolution.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_ionized_evolution-79dcf34dc43dc579)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_nuclear.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_nuclear-929da83a0d93eff6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_opacity.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_opacity-e6bdd131a901f5e5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_radhydro.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_radhydro-faef16db7ed685c5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_radiation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_radiation-41181a31d075d450)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_reaclib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_reaclib-69cb0c5b2c02698f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_reactive.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_reactive-787acf9fb6b1b601)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_spherical.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_spherical-bd871ff817475f1d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_spherical_eos.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_spherical_eos-60aa2ff2fc163f64)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 16 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_spherical_radiation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_spherical_radiation-ad4d62a8a9170b2a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_star.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_star-c9a7768fb26620e8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_thermal.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_thermal-c40c013e78c91a24)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/astrophysics_tides.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/astrophysics_tides-e7395d15d8401ce4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/beam_accuracy.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/beam_accuracy-764779b210eb50c5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/biomechanics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/biomechanics-18bac477b8c8f71e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/boxes.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/boxes-89e0d2c2439d823f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/buoyancy.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/buoyancy-244c9b6997444802)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cell_poroelastic.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/cell_poroelastic-9591985dcc84f0ed)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/circulation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/circulation-f54f82b6b87a6447)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/cohesive.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/cohesive-4a750d081f10654d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/cohesive_mesh.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/cohesive_mesh-91c3277fb2654e25)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/cohesive_topology.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/cohesive_topology-b227575eb0dc6905)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/contact_network.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/contact_network-a2f5176967c39ef2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/convex_tissue_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/convex_tissue_surface-963aedaa4290be94)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+     Running tests/finite_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_contact-ed114ed20c033e90)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/finite_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_inertia-c5242bdea988fe96)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/finite_quadratic_dynamics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/finite_quadratic_dynamics-ab1bbb34873f7f7d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/fragment_impact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/fragment_impact-5b803096133ce1e1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/fragment_sweep.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/fragment_sweep-7f21a753f6dc21bb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/friction.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/friction-c551698f85c548fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/friction_mesh.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/friction_mesh-ba24a39da134e8ac)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/friction_slider.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/friction_slider-255f43dbcd47752d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/gauge_pressure.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/gauge_pressure-8f0bc1e7d16baf46)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/genital_folds.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/genital_folds-2a83b366c029064b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/gravity.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/gravity-b5d8a552fea56889)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/gravity_character.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/gravity_character-e67488cbc03508d0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/gravity_field.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/gravity_field-711c29b23164d267)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/gravity_spheres.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/gravity_spheres-d7dc7a6f8bf71820)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/hair.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/hair-ba8380f1b14b6ffd)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/hair_rebase.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/hair_rebase-1a34fa1bef8ae5ed)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/implicit_pore.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/implicit_pore-29fb825294728f54)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/inertial_tissue_assembly.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/inertial_tissue_assembly-dbe29e12885abff4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/lattice_tissue_volume.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/lattice_tissue_volume-8d8076b1a7460d4a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/lbfgs.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/lbfgs-fd16be7bc7e94b39)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid-48a2b203be9dd9ee)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 17 filtered out; finished in 0.00s
+
+     Running tests/liquid_adhesion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_adhesion-33735049fea15b5a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/liquid_ballistic_population.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_ballistic_population-f356733c674a6735)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/liquid_body_contacts.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_body_contacts-0cd0cdedeb7a25e3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid_boundary.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_boundary-21fa2be5e9d96502)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 43 filtered out; finished in 0.00s
+
+     Running tests/liquid_collision.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_collision-58fbd938609e4aa5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 40 filtered out; finished in 0.00s
+
+     Running tests/liquid_dissipation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_dissipation-e7851fd59c3e934a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_drag.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_drag-5c3c90f089ea9ef6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_finite_gas.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_finite_gas-4e93dc59ed5be1c0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_gas_grid.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_gas_grid-2ae7ec9e3585192e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_lifecycle.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_lifecycle-bfe6927759322a0a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_merge.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_merge-629c06cacec75d95)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_population.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_population-8b47ea79dd71a025)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/liquid_droplet_split.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_droplet_split-ec5dd61f4618e199)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/liquid_evaporation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_evaporation-62dad099298e3abb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/liquid_exchange.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_exchange-c414a7cd7ac312d0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/liquid_film_capture.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_film_capture-a69f87aee9fa02ae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/liquid_film_rebound.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_film_rebound-bd432bdf77f26b7a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/liquid_forcing.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_forcing-9898365589f54d2b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/liquid_gas.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_gas-f749a52275647ba0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/liquid_gas_grid_flow.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_gas_grid_flow-af35bfcd3c13118f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid_gas_grid_heat.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_gas_grid_heat-1cf72d143baaaa69)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/liquid_gas_grid_viscosity.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_gas_grid_viscosity-b6e0a573d6681a6a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/liquid_gas_grid_wall_viscosity.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_gas_grid_wall_viscosity-d7f89b88ec562420)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_geometry-b7b8b4221a159400)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/liquid_impact_events.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_impact_events-babcfaa2e0a1efe5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/liquid_impact_spray.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_impact_spray-a7893be1e423b60e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_heat.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_mixture_heat-43fb2538335ac8bb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_profile.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_mixture_profile-ce7268e8c11d7ffc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/liquid_mixture_properties.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_mixture_properties-b705203afc2e0463)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/liquid_multi_body_world.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_multi_body_world-b1d584cf90387ba0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/liquid_multi_rebound.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_multi_rebound-a777744049c52efb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/liquid_phase.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_phase-34fb3fd2a161a16d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/liquid_pressure_work.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_pressure_work-002c8e01d53ca45b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid_properties.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_properties-6b56ca2a130c0966)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+     Running tests/liquid_reaction.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_reaction-06875604bcf031d9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/liquid_reflecting.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_reflecting-425738931e9f761e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+     Running tests/liquid_rigid_body_world.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_rigid_body_world-ab4549bc636e607e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid_saturation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_saturation-c989678b9359ba0f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/liquid_species.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_species-4e84d7db033c2c85)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/liquid_sphere_deposition.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_sphere_deposition-692ecbf1132986fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/liquid_splash_onset.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_splash_onset-dd9483d930579bba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/liquid_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_surface-456cf82a2c085e1d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/liquid_surface_volume.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_surface_volume-e3e94f7c130869aa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/liquid_suspension.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_suspension-f1326773e83f87c3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/liquid_thixotropy.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_thixotropy-d5689d0805edcc5f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/liquid_transport.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_transport-87db397fece697cf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/liquid_viscoelastic.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_viscoelastic-a5592779ecb575c3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/lymph.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/lymph-1fa196a9621fb600)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 23 filtered out; finished in 0.00s
+
+     Running tests/mass_properties.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/mass_properties-af122015b8918c32)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/material_pair.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/material_pair-2b3b7980eb292ce4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/mixed_darcy.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/mixed_darcy-8ce3c46ab89999f9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 27 filtered out; finished in 0.00s
+
+     Running tests/moisture.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture-894a0e973d5ba074)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/moisture_partition.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_partition-f156cd63c695b2f6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/moisture_sparse.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_sparse-ca7340aab71c4c21)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/moisture_supply.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_supply-fafcb312c9566dd7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/moisture_vapor.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moisture_vapor-bfc6ef23a8ef9fd8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/moving_fem_supports.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_fem_supports-3fec59876be184a1)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/moving_plane_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/moving_plane_contact-00e545d89e427de7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/muscle_activation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/muscle_activation-9cad24b6258a2975)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/muscle_dynamics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/muscle_dynamics-55b8137f374f5954)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/myocardium.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/myocardium-7aaeee3bfd9969df)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/normal_manifold.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/normal_manifold-37e1ea3107e57907)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/normal_reactions.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/normal_reactions-9b9fa0c858fb1268)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/organ_coupling.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/organ_coupling-d92dd0eea3676a0e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/perfusion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/perfusion-71fca6d7c7b6b320)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/plastic_mesh.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/plastic_mesh-02c9dd1a2b882eab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/plastic_work.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/plastic_work-a82c3c5a4419d250)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/plasticity.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/plasticity-3a670d64831f4c6b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/poroelastic.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/poroelastic-3b2046b24d9d27bc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/prescribed_surface_contact-83c4d1ef52a3c97d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.00s
+
+     Running tests/quadratic_advance.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_advance-ca956288d0ef77a8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/quadratic_bending.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_bending-d2ff9708d5e43358)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/quadratic_closest.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_closest-5dd7659248f51215)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/quadratic_cohesive.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_cohesive-775695915638d50e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/quadratic_coulomb.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_coulomb-bcb6351b83d69e10)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/quadratic_coulomb_dynamics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_coulomb_dynamics-c58bd0aba4e38264)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/quadratic_dynamic_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_dynamic_surface_contact-179a511da8d90e5f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/quadratic_dynamics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_dynamics-aec6688bea291670)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/quadratic_finite.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_finite-ba3621db8492b667)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quadratic_fracture_work.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_fracture_work-def60c5072e03401)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/quadratic_friction.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_friction-bb184d31c06b53c4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/quadratic_friction_dynamics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_friction_dynamics-1ae2be306c5f27fb)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/quadratic_interface_mesh.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_interface_mesh-8ce63b6d8643bcb5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/quadratic_interface_work.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_interface_work-96685b32e63d8182)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quadratic_mass.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_mass-67dfbc74a9eed2d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/quadratic_normal_impact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_normal_impact-fd4e44829d877741)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/quadratic_patch.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_patch-d78614cb858e2d36)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/quadratic_plane.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_plane-22e2f1b10672da97)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/quadratic_render_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_render_surface-7697ea38e710ba8d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quadratic_rotation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_rotation-2a154cd9f414a550)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/quadratic_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_surface-607c4341894ed202)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/quadratic_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_surface_contact-67d4670d58aebdea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/quadratic_sweep.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_sweep-a6f8c479e09f21a2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/quadratic_wet_update.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_wet_update-6ce1b5c7c52139a2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 13 filtered out; finished in 0.00s
+
+     Running tests/quadratic_work.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/quadratic_work-5cac15bf8a59280e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/reaction_rates.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/reaction_rates-b3efa75ff892eeae)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/respiration.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/respiration-12678501c862088d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/rigid_motion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/rigid_motion-94c4116e568b448a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 30 filtered out; finished in 0.00s
+
+     Running tests/rigid_point_impulse.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/rigid_point_impulse-d3e8cfb579a3cfaf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/rigid_world_forces.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/rigid_world_forces-dee0043887d82054)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/secondary_motion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/secondary_motion-ea6f08dbb53d9f7d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/simultaneous_rigid_events.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/simultaneous_rigid_events-bc89381152676e1e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/skin.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/skin-028cc4772bc61ca8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 18 filtered out; finished in 0.00s
+
+     Running tests/skin_embedding.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/skin_embedding-e201ef6624eac831)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/skin_rebase.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/skin_rebase-375e768237f7cb4b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/soft_body.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/soft_body-5f01a249ad2a2d45)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/solid_dynamics.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/solid_dynamics-dc3c245720de3f2d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/solid_film_binding.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/solid_film_binding-6227320d46c0facf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/solid_heat_conduction.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/solid_heat_conduction-25bd8bd30b0d2543)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/solid_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/solid_surface-f8fc859de41d3718)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/spin_path.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/spin_path-dc4569f6970d6e6a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/strands.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/strands-1bec6b7c8f3cc76d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/stress.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/stress-936fda09d128c1a8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_contact-1b73d404c5e53680)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/surface_film.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film-018a5359f2d1e4e2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 27 filtered out; finished in 0.00s
+
+     Running tests/surface_film_accelerated_sphere.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_accelerated_sphere-354ea2b048972455)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/surface_film_advection.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_advection-4998989a4d8f6f65)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/surface_film_atomic_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_atomic_contact-925986334bb298e3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/surface_film_body.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_body-feb8b6ebb38043fe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/surface_film_checkpoint.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_checkpoint-35b6b74944b36aea)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/surface_film_free_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_free_surface-fd5a27552547ef78)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/surface_film_mixture.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_mixture-d21a511e733d5365)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+     Running tests/surface_film_rheology.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_rheology-0d64f752d5f4f38d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/surface_film_shear.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_shear-aa6e6896df54c4a5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/surface_film_sphere.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_sphere-d89333dbdf686820)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/surface_film_squeeze.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_squeeze-c3ffcd339d28066f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/surface_film_squeeze_body.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_squeeze_body-8d910e600a25c8b9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/surface_film_thermal.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_thermal-47e8a0646847d5cf)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/surface_film_vapor.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_vapor-299b2dc8bdd77f9b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/surface_film_withdrawal.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/surface_film_withdrawal-1b2a480374dbaa1e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
+
+     Running tests/suspension.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/suspension-6bd9d0e4739a4d91)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/tetrahedral_overlap.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tetrahedral_overlap-8d75dbe9807f7d94)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/tissue_assembly_history.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_assembly_history-62cee8fc85c5f62e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/tissue_bulk_modulus.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_bulk_modulus-ded6a751989c3604)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/tissue_continuum_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_continuum_geometry-29087454a20ee656)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/tissue_gaps.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_gaps-0d6a643c670c0d95)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/tissue_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_geometry-7f78b423269d0da4)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/tissue_surface.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissue_surface-15e19bd39e3e9703)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 14 filtered out; finished in 0.00s
+
+     Running tests/tissues.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/tissues-88418e6bdc43ae67)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 0.00s
+
+     Running tests/urogenital.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/urogenital-7457236ce2c91e28)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/viscoelastic.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/viscoelastic-d6ea7cb1fbaf782e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.00s
+
+     Running tests/viscoelastic_hgo_body.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/viscoelastic_hgo_body-2e7402b3154c71ce)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/viscoelastic_inertia.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/viscoelastic_inertia-53ebd10798e46967)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 0.00s
+
+     Running tests/wall_refinement.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wall_refinement-bda7ffbebb8a22aa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+
+     Running tests/water_coexistence.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/water_coexistence-d0fb16b43422a5d3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+     Running tests/water_equilibrium.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/water_equilibrium-577dcbcef28fa078)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 9 filtered out; finished in 0.00s
+
+     Running tests/water_helmholtz.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/water_helmholtz-a610548495e294c6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/water_saturation.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/water_saturation-1efa0e793bc760e0)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+
+     Running tests/wear.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wear-9725b7d993a70488)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/wear_column.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wear_column-6c77f336ce4c6170)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+
+     Running tests/wear_dust.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wear_dust-1338468da2cfaa2c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 7 filtered out; finished in 0.00s
+
+     Running tests/wear_suspension.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wear_suspension-4fa1b3342a2f2b43)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/wear_wet.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wear_wet-2596a267d789f376)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 6 filtered out; finished in 0.00s
+
+     Running tests/wet_cohesive.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wet_cohesive-33266e431d482dcc)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+
+     Running tests/wet_material.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/wet_material-ef0bf344b9712d97)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.00s
+

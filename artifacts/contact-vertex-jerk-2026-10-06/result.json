@@ -1,0 +1,12 @@
+{
+  "support_tests": 8,
+  "angular_jerk_tests": 1,
+  "reaction_rate_tests": 6,
+  "scope": "instantaneous geometry derivatives through jerk",
+  "finite_step_integration": "pending",
+  "sha256": {
+    "crates/physics/src/astrophysics_spin.rs": "685537a80e7b4c8af07e40df15a0f6dd684663067e831dacf83fcd0d2b4bc7d8",
+    "crates/physics/src/contact/reaction_rate.rs": "8e3519f7280fc74d631f1829976cb114d03da0ced9127f9263a46dc448a464a7",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "925614a5a5e9c4072774c3b4fd9e512707b8ca2fb83fb6e35b94f568d8095531"
+  }
+}

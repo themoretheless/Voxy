@@ -1,0 +1,36 @@
+{
+  "tests": {
+    "voxy-scene-point-model-gameplay-full-20261006.log": {
+      "passed": 204,
+      "failed": 0,
+      "ignored": 0
+    },
+    "voxy-scene-point-model-physics-regressions-20261006.log": {
+      "passed": 38,
+      "failed": 0,
+      "ignored": 0
+    },
+    "voxy-scene-point-model-geometry-final-20261006.log": {
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0
+    },
+    "voxy-scene-cubic-point-motion-20261006.log": {
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "scope": "nominal cubic common-point scene admission",
+  "full_gameplay_scope": "before final affine-normalization input gate; gate and current geometry covered by final focused run",
+  "remaining": [
+    "conservative rotating-normal gap admission",
+    "supported authored point loads",
+    "visual editor demonstration"
+  ],
+  "current_source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "9d029291ec509fe15dc9a444d1cb1c9f84f0fc1a5299dbbb8ddf46bef1f2de73",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "43e4b38b03fb40577d4999a9a1c69c51e0d81737c54eaaa194b158b2e70dc518",
+    "crates/physics/src/liquid/multi_body.rs": "cf5dfe02d83316031a645ad9f8b16d30065024787eaf18abc41c34ac27f80372"
+  }
+}

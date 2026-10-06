@@ -1,0 +1,31 @@
+{
+  "tests": {
+    "voxy-rotating-face-gap-20261006.log": {
+      "passed": 15,
+      "failed": 0,
+      "ignored": 0
+    },
+    "voxy-rotating-face-normal-scene-20261006.log": {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0
+    },
+    "voxy-moving-normal-gameplay-final-20261006.log": {
+      "passed": 209,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "consumer_check": "passed",
+  "scope": "whole-interval moving face-normal gap on accepted nominal paths",
+  "remaining": [
+    "normalized edge-cross normal gap",
+    "supported authored point loads",
+    "long-duration moving-normal qualification",
+    "visual editor/hardware validation"
+  ],
+  "source_sha256": {
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "1c34951dc8532a034cf941b677730241082d6231048b370cc27e737a31633cc6",
+    "crates/voxy_gameplay/src/liquid_runtime/rigid_support.rs": "79076622f440d1d0ef0f8fd27cc26b997ad3eb4387700af3acfcef0591eaad8d"
+  }
+}

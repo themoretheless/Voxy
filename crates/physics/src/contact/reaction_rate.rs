@@ -122,19 +122,8 @@ pub fn normal_gap_jerk(
         let (a, w, alpha) = free_rates(body, load)?;
         let adot = rate.force.map(|f| f / body.motion.mass);
         let alpha_dot = if let Some(spin) = body.spin {
-            let gyroscopic = sub(load.torque, cross(w, spin.angular_momentum));
-            let rhs = sub(
-                sub(
-                    sub(rate.torque, cross(alpha, spin.angular_momentum)),
-                    cross(w, load.torque),
-                ),
-                cross(w, gyroscopic),
-            );
-            add(
-                cross(w, alpha),
-                spin.inverse_inertia(rhs)
-                    .map_err(|_| Error::NumericalFailure)?,
-            )
+            spin.angular_jerk(load.torque, rate.torque)
+                .map_err(|_| Error::NumericalFailure)?
         } else {
             [0.; 3]
         };

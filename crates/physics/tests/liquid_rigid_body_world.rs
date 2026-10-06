@@ -765,3 +765,205 @@ fn reaction_rate_query_uses_geometry_owned_common_point_velocity() {
     assert_eq!(report.rate.as_ref().unwrap(), &expected);
     assert_eq!(liquid, saved);
 }
+
+struct CubicSupportWorld {
+    admit: bool,
+    invalid: bool,
+    nominal_work: std::cell::Cell<f64>,
+}
+impl LiquidBodyWorld for CubicSupportWorld {
+    fn sweep_particle_body(
+        &self,
+        p: &Particle,
+        r: f64,
+        i: usize,
+        b: &TranslatingBody,
+        t: f64,
+        n: usize,
+    ) -> Result<GeometryHit, Error> {
+        MovingSupportWorld.sweep_particle_body(p, r, i, b, t, n)
+    }
+    fn sweep_body_pair(
+        &self,
+        i: usize,
+        a: &TranslatingBody,
+        j: usize,
+        b: &TranslatingBody,
+        t: f64,
+        n: usize,
+    ) -> Result<GeometryHit, Error> {
+        MovingSupportWorld.sweep_body_pair(i, a, j, b, t, n)
+    }
+    fn sweep_particle_environment(
+        &self,
+        p: &Particle,
+        r: f64,
+        t: f64,
+        n: usize,
+    ) -> Result<GeometryHit, Error> {
+        MovingSupportWorld.sweep_particle_environment(p, r, t, n)
+    }
+    fn sweep_body_environment(
+        &self,
+        i: usize,
+        b: &TranslatingBody,
+        t: f64,
+        n: usize,
+    ) -> Result<GeometryHit, Error> {
+        MovingSupportWorld.sweep_body_environment(i, b, t, n)
+    }
+    fn rigid_environment_support_contacts_with_error(
+        &self,
+        i: usize,
+        b: &ContactBody,
+        n: usize,
+        _: f64,
+    ) -> Result<Vec<physics::liquid::RigidSupportPoint>, Error> {
+        let mut points = MovingSupportWorld.rigid_environment_support_contacts(i, b, n)?;
+        points[0].support.contact.point = [0.; 3];
+        Ok(points)
+    }
+    fn rigid_support_point_motion(
+        &self,
+        _: &[ContactBody],
+        _: &[physics::contact::ContactWrench],
+        _: &[physics::contact::ContactWrench],
+        _: physics::contact::NetworkSupport,
+        _: physics::liquid::RigidSupportPoint,
+    ) -> Result<Option<physics::liquid::RigidSupportPointMotion>, Error> {
+        Ok(Some(physics::liquid::RigidSupportPointMotion {
+            velocity: [0.5, 0., 0.],
+            acceleration: [0.1, 0., 0.],
+            jerk: [if self.invalid { f64::NAN } else { 0.2 }, 0., 0.],
+        }))
+    }
+    fn sweep_supported_rigid_environment_point_motion(
+        &self,
+        _: usize,
+        path: &physics::rigid_motion::RigidMotion,
+        supports: &[physics::liquid::RigidSupportPoint],
+        motion: &[Option<physics::liquid::RigidSupportPointMotion>],
+        _: usize,
+    ) -> Result<physics::liquid::SupportedGeometryHit, Error> {
+        if !self.admit {
+            return Err(Error::CollisionBackend);
+        }
+        assert_eq!(supports.len(), 1);
+        let m = motion[0].unwrap();
+        assert_eq!(m.velocity, [0.5, 0., 0.]);
+        assert_eq!(m.acceleration, [0.1, 0., 0.]);
+        assert_eq!(m.jerk, [0.2, 0., 0.]);
+        // This synthetic backend qualifies plumbing and polynomial mechanics,
+        // not finite scene geometry. It supplies its own point constraint.
+        let dt = path.duration();
+        let end = path.sample(dt).unwrap();
+        let expected = 9.81 * (0.15 * dt.powi(2) + 0.05 / 3. * dt.powi(3) + 0.2 / 24. * dt.powi(4));
+        assert!((end.spin.unwrap().angular_momentum[2] - expected).abs() < 1e-12);
+        let primitive =
+            |t: f64| 9.81 * (0.15 * t.powi(2) + 0.05 / 3. * t.powi(3) + 0.2 / 24. * t.powi(4));
+        let work: f64 = path
+            .rotation()
+            .unwrap()
+            .segments()
+            .iter()
+            .map(|segment| {
+                segment.arc.angular_velocity()[2]
+                    * (primitive(segment.end_s) - primitive(segment.start_s))
+            })
+            .sum();
+        self.nominal_work.set(work);
+        Ok(physics::liquid::SupportedGeometryHit {
+            event: BodyGeometryHit::from(GeometryHit::Clear).into(),
+            support_error_m: 0.,
+        })
+    }
+}
+#[test]
+fn finite_support_uses_one_cubic_point_for_torque_work_and_geometry_admission() {
+    use physics::{contact::ContactWrench, liquid::SupportedWorldConfig};
+    let mut liquid = fluid(Vec::new());
+    let mut bodies = [body([0.; 3], [0.2, 0., 0.], 0.)];
+    let dt: f64 = 0.01;
+    let loads = [ContactWrench {
+        force: [0., -9.81, 0.],
+        torque: [0.; 3],
+    }];
+    let world = CubicSupportWorld {
+        admit: true,
+        invalid: false,
+        nominal_work: std::cell::Cell::new(0.),
+    };
+    let report = liquid
+        .step_with_supported_rigid_body_forces(
+            dt,
+            &mut bodies,
+            &world,
+            config(),
+            1,
+            spin_path::Config {
+                max_angular_error_rad: 1e-8,
+                ..rotation()
+            },
+            &loads,
+            SupportedWorldConfig {
+                max_interval_s: dt,
+                reaction_jerk_tolerance: Some(1e-10),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+    let expected_l = 9.81 * (0.15 * dt.powi(2) + 0.05 / 3. * dt.powi(3) + 0.2 / 24. * dt.powi(4));
+    let expected_angle =
+        9.81 * (0.05 * dt.powi(3) + 0.05 / 12. * dt.powi(4) + 0.2 / 120. * dt.powi(5));
+    let spin = bodies[0].spin.unwrap();
+    assert!((spin.angular_momentum[2] - expected_l).abs() < 1e-12);
+    assert!((2. * spin.orientation[2].atan2(spin.orientation[3]) - expected_angle).abs() <= 1e-8);
+    assert!((bodies[0].motion.position[0] - 0.2 * dt).abs() < 1e-14);
+    assert!(bodies[0].motion.position[1].abs() < 1e-14);
+    for k in 0..3 {
+        assert!(
+            (report.reaction_angular_impulse[k] + report.environment_reaction_angular_impulse[k])
+                .abs()
+                < 1e-12
+        );
+    }
+    assert!((report.reaction_work - world.nominal_work.get()).abs() < 1e-18);
+    assert!(
+        (report.reaction_work + report.rigid.integration_energy_residual - expected_l.powi(2) / 2.)
+            .abs()
+            < 1e-14
+    );
+}
+#[test]
+fn custom_point_motion_requires_admission_and_rejects_invalid_models_atomically() {
+    use physics::{contact::ContactWrench, liquid::SupportedWorldConfig};
+    for (admit, invalid, expected) in [
+        (false, false, Error::CollisionBackend),
+        (true, true, Error::InvalidCollision),
+    ] {
+        let mut liquid = fluid(Vec::new());
+        let saved = liquid.clone();
+        let mut bodies = [body([0.; 3], [0.2, 0., 0.], 0.)];
+        let original = bodies;
+        let result = liquid.step_with_supported_rigid_body_forces(
+            0.01,
+            &mut bodies,
+            &CubicSupportWorld {
+                admit,
+                invalid,
+                nominal_work: std::cell::Cell::new(0.),
+            },
+            config(),
+            1,
+            rotation(),
+            &[ContactWrench {
+                force: [0., -9.81, 0.],
+                torque: [0.; 3],
+            }],
+            SupportedWorldConfig::default(),
+        );
+        assert_eq!(result, Err(expected));
+        assert_eq!(bodies, original);
+        assert_eq!(liquid, saved);
+    }
+}

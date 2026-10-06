@@ -1,0 +1,7 @@
+{
+  "support_tests_passed": 7,
+  "scene_query_tests_passed": 1,
+  "source_sha256": "a22a1172209461224c118cf93091cd5a107b64f4c3160daad0cf4a7681e014ec",
+  "scope": "instantaneous common clipped-vertex acceleration",
+  "finite_supported_trajectory": "not integrated"
+}
