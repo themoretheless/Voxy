@@ -340,3 +340,55 @@ fn moving_skin_reference_work_closes_independent_spring_energy_and_moment() {
             .is_err()
     );
 }
+
+#[test]
+fn mixed_surface_preserves_prescribed_vertices_and_virtual_work() {
+    let skin = [[0.25; 3], [2., 3., 4.]];
+    let binding =
+        EmbeddedSurface::bind_relative(&REST, &[[0, 1, 2, 3]], &skin, &[true, false]).unwrap();
+    assert!(EmbeddedSurface::bind_relative(&REST, &[[0, 1, 2, 3]], &skin, &[true, true]).is_err());
+    assert!(EmbeddedSurface::bind_relative(&REST, &[[0, 1, 2, 3]], &skin, &[true]).is_err());
+    let displacement = [
+        [0.1, 0.2, 0.3],
+        [-0.2, 0.1, 0.4],
+        [0.3, -0.1, 0.2],
+        [0.4, 0.3, -0.2],
+    ];
+    let nodes = std::array::from_fn::<_, 4, _>(|i| {
+        std::array::from_fn(|a| REST[i][a] + displacement[i][a])
+    });
+    let mut output = [[99.; 3]; 2];
+    binding
+        .deform_relative_into(&REST, &nodes, &skin, &mut output)
+        .unwrap();
+    assert_eq!(output[1].map(f64::to_bits), skin[1].map(f64::to_bits));
+    let directions = binding.deform_displacements(&displacement).unwrap();
+    assert_eq!(directions[1], [0.; 3]);
+    let forces = [[1., -2., 3.], [4., 5., -6.]];
+    let loads = binding.relative_loads(&forces).unwrap();
+    let surface_work: f64 = forces
+        .iter()
+        .zip(&directions)
+        .flat_map(|(f, d)| (0..3).map(move |a| f[a] * d[a]))
+        .sum();
+    let nodal_work: f64 = loads
+        .nodal_forces_n()
+        .iter()
+        .zip(&displacement)
+        .flat_map(|(f, d)| (0..3).map(move |a| f[a] * d[a]))
+        .sum();
+    assert!((surface_work - nodal_work).abs() < 1e-14);
+    assert_eq!(loads.base_forces_n(), forces);
+    // Without a base, absolute position publication would be ambiguous.
+    let saved = output;
+    assert!(binding.deform_into(&nodes, &mut output).is_err());
+    assert_eq!(output, saved);
+    let mut bad = nodes;
+    bad[3][2] = f64::NAN;
+    assert!(
+        binding
+            .deform_relative_into(&REST, &bad, &skin, &mut output)
+            .is_err()
+    );
+    assert_eq!(output, saved);
+}

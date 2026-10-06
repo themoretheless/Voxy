@@ -12,7 +12,7 @@ pub struct RelativeSkinPose<'a> {
 }
 #[derive(Clone, Debug)]
 pub struct EmbeddedTriangleContact {
-    embedding: EmbeddedSurface,
+    embedding: Arc<EmbeddedSurface>,
     rest: Vec<Vec3>,
     cells: Vec<[usize; 4]>,
     faces: Vec<[usize; 3]>,
@@ -44,13 +44,50 @@ impl EmbeddedTriangleContact {
         skin: &[Vec3],
         faces: Vec<[usize; 3]>,
     ) -> Result<Self, &'static str> {
+        Self::new_mixed(rest, cells, skin, faces, &vec![true; skin.len()])
+    }
+    /// Bind a fixed mixed surface: tissue-owned vertices use the relative FEM
+    /// displacement, other vertices retain their prescribed skeletal base pose.
+    /// The same triangle law, CCD and force chain rule cover mixed triangles.
+    /// # Errors
+    /// Invalid topology/ownership or exterior tissue-owned vertices.
+    pub fn new_mixed(
+        rest: &[Vec3],
+        cells: &[[usize; 4]],
+        skin: &[Vec3],
+        faces: Vec<[usize; 3]>,
+        tissue_owned: &[bool],
+    ) -> Result<Self, &'static str> {
         super::prescribed_surface::validate_faces(skin, &faces)?;
-        Ok(Self {
-            embedding: EmbeddedSurface::bind(rest, cells, skin)?,
-            rest: rest.to_vec(),
-            cells: cells.to_vec(),
+        Self::from_embedding(
+            Arc::new(EmbeddedSurface::bind_relative(
+                rest,
+                cells,
+                skin,
+                tissue_owned,
+            )?),
             faces,
-            vertex_count: skin.len(),
+        )
+    }
+    /// Reuse the exact immutable map used by the render skin. Authored reference
+    /// geometry belongs to the embedding; no rebinding or extrapolation occurs.
+    /// # Errors
+    /// Invalid/degenerate triangle topology in the authored skin geometry.
+    pub fn from_embedding(
+        embedding: Arc<EmbeddedSurface>,
+        faces: Vec<[usize; 3]>,
+    ) -> Result<Self, &'static str> {
+        let (rest, cells, skin) = embedding.reference_geometry();
+        super::prescribed_surface::validate_faces(skin, &faces)?;
+        let rest = rest.to_vec();
+        let cells = cells.to_vec();
+        let vertex_count = skin.len();
+        Ok(Self {
+            embedding,
+            rest,
+            cells,
+            faces,
+            vertex_count,
         })
     }
     /// All three pose components must keep their binding-time vertex order.
@@ -103,7 +140,7 @@ impl EmbeddedTriangleContact {
             return Err("embedded metric direction size changed");
         }
         let skin = self.positions(pose)?;
-        let surface_direction = self.embedding.deform(direction)?;
+        let surface_direction = self.embedding.deform_displacements(direction)?;
         let mut surface_action = vec![[0.; 3]; self.vertex_count];
         for stencil in obstacle.normal_stencils(&skin, &self.faces)? {
             let (action, _) = stencil.apply(

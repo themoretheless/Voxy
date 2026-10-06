@@ -1,0 +1,83 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 1.21s
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 27 tests
+test embedded_contact_requires_actual_material_cell_membership ... ok
+test embedded_ccd_rejects_crossing_even_with_open_endpoints ... ok
+test existing_inertial_step_responds_to_embedded_contact_and_books_parameter_work_once ... ok
+test actual_contact_potential_matches_all_tissue_rig_and_obstacle_forces ... ok
+test existing_step_books_moving_skin_rig_and_obstacle_work ... ok
+test existing_inertial_step_rejects_embedded_tunnelling_without_mutating_state ... ok
+test invalid_embedded_contact_topology_never_enters_evaluation ... ok
+test embedded_normal_metric_is_symmetric_positive_and_preserves_tangent_nullspace ... ok
+test existing_implicit_solver_includes_stationary_embedded_contact_in_averaged_material_path ... ok
+test moving_skin_crossing_and_work_failure_preserve_complete_state ... ok
+test moving_skin_maxwell_transaction_balances_mechanics_heat_and_actuator_work ... ok
+MOVING_SKIN_REFINEMENT absolute_error_j=[0.0007888009226580204, 0.00019916276611866863test moving_skin_failure_rolls_back_maxwell_history_and_thermal_storage ... , 4.9920292931404566e-5]
+ok
+PARALLEL_BRANCH_COUNTS t=0.046910077030668 counts=[1, 1, test same_pose_native_branch_bundles_preserve_selected_response_and_force_balance ... ok
+1]
+test implicit_moving_skin_admits_independent_energy_and_commits_pose_atomically ... ok
+test simultaneous_comotion_uses_moving_ccd_instead_of_old_stationary_skin_guard ... ok
+test wrong_rest_contact_owner_is_rejected_atomically ... ok
+test simultaneous_tissue_rig_and_obstacle_motion_passes_work_budget ... ok
+test staged_skin_motion_uses_actual_nodes_instead_of_rest_pose_for_admission ... ok
+test implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators ... ok
+test moving_skin_energy_discrepancy_converges_under_time_refinement ... ok
+PARALLEL_EVENT t=4.69100770306679973e-2 lower_z=2.86282828223452866e-9 upper_z=2.86282828223452908e-9 width_m=4.13590306276513837e-25 lower_slope_n=-7.11237391418205522e0 upper_slope_n=-3.55618695709103072e0 iterations=48
+PARALLEL_ONE_SIDED t=0.046910077030668 forward_n=-3.5561868727551627 backward_n=-7.112366806616421
+PARALLEL_SAMPLE t=0.046910077030668 fd_n=-5.334276839685792 gradient_n=-3.5561869570909264 error_n=-1.7780898825948657
+PARALLEL_BRANCH_COUNTS t=0.230765344947158 counts=[1, 1, 1]
+PARALLEL_EVENT t=2.30765344947158002e-1 lower_z=1.40831482476727335e-8 upper_z=1.40831482476727352e-8 width_m=1.65436122510605535e-24 lower_slope_n=-7.11240496427810687e0 upper_slope_n=-3.55620248213905565e0 iterations=47
+PARALLEL_ONE_SIDED t=0.230765344947158 forward_n=-3.5562025546553855 backward_n=-7.112379712959083
+PARALLEL_SAMPLE t=0.230765344947158 fd_n=-5.334291133807234 gradient_n=-3.556202482138688 error_n=-1.7780886516685461
+PARALLEL_BRANCH_COUNTS t=0.5 counts=[1, 1, 1]
+PARALLEL_EVENT t=5.00000000000000000e-1 lower_z=3.05140025703117949e-8 upper_z=3.05140025703118016e-8 width_m=6.61744490042422140e-24 lower_slope_n=-7.11245043374300323e0 upper_slope_n=-3.55622521687150384e0 iterations=44
+PARALLEL_ONE_SIDED t=0.5 forward_n=-3.556225175449512 backward_n=-7.112427036215507
+PARALLEL_SAMPLE t=0.5 fd_n=-5.33432610583251 gradient_n=-3.5562252168711677 error_n=-1.778100888961342
+PARALLEL_BRANCH_COUNTS t=0.769234655052842 counts=[1, 1, 1]
+PARALLEL_EVENT t=7.69234655052842053e-1 lower_z=4.69448578412909690e-8 upper_z=4.69448578412909757e-8 width_m=6.61744490042422140e-24 lower_slope_n=-7.11249590345837923e0 upper_slope_n=-3.55624795172919139e0 iterations=44
+PARALLEL_ONE_SIDED t=0.769234655052842 forward_n=-3.556260286252666 backward_n=-7.112496008820912
+PARALLEL_SAMPLE t=0.769234655052842 fd_n=-5.334378147536789 gradient_n=-7.11249590345874 error_n=1.7781177559219508
+PARALLEL_BRANCH_COUNTS t=0.953089922969332 counts=[1, 1, 1]
+PARALLEL_EVENT t=9.53089922969332037e-1 lower_z=5.81651795540763314e-8 upper_z=5.81651795540763380e-8 width_m=6.61744490042422140e-24 lower_slope_n=-7.11252695401332424e0 upper_slope_n=-3.55626347700666123e0 iterations=44
+PARALLEL_ONE_SIDED t=0.953089922969332 forward_n=-3.5563198219623615 backward_n=-7.11252723384348
+PARALLEL_SAMPLE t=0.953089922969332 fd_n=-5.334423527902921 gradient_n=-7.112526954014953 error_n=1.7781034261120325
+PARALLEL_GRADIENT h=1.00000000000000006e-9 maximum_error_n=5.05763246211286877e-1 worst=(2, 2, -5.334336791729122, -4.828573545517835)
+PARALLEL_GRADIENT h=1.00000000000000004e-10 maximum_error_n=5.05752629703613898e-1 worst=(2, 2, -5.334326175221449, -4.828573545517835)
+PARALLEL_GRADIENT h=9.99999999999999939e-12 maximum_error_n=5.05645631959615649e-1 worst=(2, 2, -5.334219177477451, -4.828573545517835)
+PARALLEL_GRADIENT h=9.99999999999999980e-13 maximum_error_n=5.04604797874029565e-1 worst=(2, 2, -5.3331783433918645, -4.828573545517835)
+test parallel_native_terminal_feature_kink_has_distinct_one_sided_derivatives ... ok
+test implicit_moving_skin_stiffness_sweep_and_work_rejection_are_transactional ... ok
+test implicit_maxwell_parallel_native_feature_limit_preserves_complete_state ... ok
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=2.45538196065534397e-10 adaptive=false intervals=512 duration_s=0.008 substeps=512 independent_defect_j=-1.43848981120839325e-10 absolute_defects_j=6.31235415446995510e-10
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=1.18706372678720042e-10 adaptive=false intervals=1024 duration_s=0.008 substeps=1024 independent_defect_j=-2.94486222923327420e-11 absolute_defects_j=3.01457532306510699e-10
+ADAPTIVE_PARALLEL substeps=64 nominal_dt_s=1e-3 independent_defect_j=-3.40563008780442002e-11 absolute_defects_j=9.62582485196909110e-11
+test adaptive_implicit_maxwell_admits_full_parallel_contact_interval_and_rolls_back_limit ... ok
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=6.79012503489518966e-11 adaptive=false intervals=2048 duration_s=0.008 substeps=2048 independent_defect_j=-5.09696022604614381e-12 absolute_defects_j=1.44408076250143007e-10
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=8.63162536903699096e-11 adaptive=false intervals=8192 duration_s=0.008 substeps=8192 independent_defect_j=-1.54068264426160915e-13 absolute_defects_j=5.73965917689409777e-11
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=9.11450074425682492e-11 adaptive=false intervals=4096 duration_s=0.008 substeps=4096 independent_defect_j=-6.20253846588393436e-12 absolute_defects_j=9.14722066769636203e-11
+TRAJECTORY_REJECTION intervals=8192 index=2 budget_j=0.00000008 accepted_kinematic_absolute_m=3.98907377089565538e-15 reason="implicit contact nonlinear nonconvergence"
+test fixed_parallel_contact_stricter_budget_rejection_preserves_failed_step ... ok
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=6.47936640900406841e-9 adaptive=true intervals=8 duration_s=0.008 substeps=512 independent_defect_j=-1.43848925606299962e-10 absolute_defects_j=6.31235183413433608e-10
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=8.63162536903699096e-11 adaptive=false intervals=8192 duration_s=0.008 substeps=8192 independent_defect_j=-1.54068264426160915e-13 absolute_defects_j=5.73965917689409777e-11
+FIXED_REFERENCE intervals=512 reference_intervals=8192 position_m=3.40820428109595906e-11 velocity_m_s=1.11351453760964822e-7
+FIXED_REFERENCE intervals=1024 reference_intervals=8192 position_m=3.00051739611919647e-12 velocity_m_s=5.60607666524098611e-7
+FIXED_REFERENCE intervals=2048 reference_intervals=8192 position_m=1.99032830015700345e-12 velocity_m_s=1.64496559312466096e-7
+FIXED_REFERENCE intervals=4096 reference_intervals=8192 position_m=2.72685418992035807e-13 velocity_m_s=2.46904389357233737e-8
+test fixed_implicit_parallel_contact_trajectory_records_refinement_limit ... ok
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=8.00082378819834791e-9 adaptive=true intervals=16 duration_s=0.008 substeps=306 independent_defect_j=2.12600978607215300e-11 absolute_defects_j=8.94994096478340262e-10
+CONTACT_TRAJECTORY budget_j=7.99999999999999964e-6 kinematic_absolute_m=8.72180877127545398e-9 adaptive=true intervals=32 duration_s=0.008 substeps=278 independent_defect_j=5.17615150502810650e-11 absolute_defects_j=8.72324366960868088e-10
+test adaptive_implicit_parallel_contact_trajectory_balances_heat_and_records_refinement_limit ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.72s

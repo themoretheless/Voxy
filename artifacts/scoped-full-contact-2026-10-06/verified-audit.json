@@ -1,0 +1,39 @@
+{
+  "scope": "published aggregate audit validation",
+  "steps": 480,
+  "bodies": [
+    {
+      "body": 0,
+      "absolute_frame_error_j": 2.989647989771928e-05,
+      "requested_budget_j": 0.0048000000000000004,
+      "rounding_allowance_j": 7.565965282974529e-11,
+      "final_unadjusted_balance_j": -5.00464877956075e-06,
+      "reported_ledger_residual_j": -9.260463828598443e-15
+    },
+    {
+      "body": 1,
+      "absolute_frame_error_j": 2.6927369719530176e-06,
+      "requested_budget_j": 0.0048000000000000004,
+      "rounding_allowance_j": 1.5852839230877886e-11,
+      "final_unadjusted_balance_j": 9.685677520594044e-07,
+      "reported_ledger_residual_j": 2.2312774830633274e-16
+    },
+    {
+      "body": 2,
+      "absolute_frame_error_j": 5.680270006166435e-05,
+      "requested_budget_j": 0.0048000000000000004,
+      "rounding_allowance_j": 1.5679677334914005e-10,
+      "final_unadjusted_balance_j": 1.9586773249730127e-05,
+      "reported_ledger_residual_j": 1.899904387460405e-14
+    },
+    {
+      "body": 3,
+      "absolute_frame_error_j": 3.1191835658929905e-07,
+      "requested_budget_j": 0.0048000000000000004,
+      "rounding_allowance_j": 2.192554504976066e-11,
+      "final_unadjusted_balance_j": -1.1714075735455576e-07,
+      "reported_ledger_residual_j": -1.8181191371201337e-15
+    }
+  ],
+  "independent_frame_reported_defect_subtracted": false
+}

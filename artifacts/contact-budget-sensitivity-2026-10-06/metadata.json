@@ -1,0 +1,13 @@
+{
+  "scope": "fixed 8192-step, 8 ms original parallel-contact trajectory under two budgets",
+  "original_budget_j": 8e-06,
+  "strict_budget_j": 8e-08,
+  "strict_rejection_step": 2,
+  "strict_rejection": "implicit contact nonlinear nonconvergence",
+  "strict_failed_step_full_rollback": true,
+  "original_nominal_trapezoidal_displacement_defects_sum_m": 8.631625369036991e-11,
+  "strict_accepted_prefix_displacement_defects_sum_m": 3.989073770895655e-15,
+  "velocity_budget_comparison": "unavailable because strict run rejects",
+  "tests_passed": 27,
+  "solver_threshold_changes": false
+}

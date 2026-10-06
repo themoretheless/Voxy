@@ -1,0 +1,30 @@
+{
+  "scope": "state-preserving dynamic FEM regional assembly and mixed skin coupling",
+  "status": "passed",
+  "tests_passed": 167,
+  "test_groups": [
+    105,
+    4,
+    10,
+    4,
+    5,
+    9,
+    30
+  ],
+  "manual_library_tests_ignored": 6,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/assembly.rs": "2bb45e6b3825be5e7bb870b961533f1b602ae5880c67d43990881e4ab78b6e1d",
+    "crates/physics/src/biomechanics/inertia/thermal.rs": "64b9f858b37c3bcac3469a98e40c6687edea0b445b035d5465529feb6149445e",
+    "crates/physics/src/biomechanics/tissue_bonds.rs": "574a38d8d8bbb96560df826a979fc7b1a940a62bb66b34b0d27605161fcfec75",
+    "crates/physics/src/biomechanics/inertia.rs": "60c79d4fcc38192ec27ac88e1f454fb5008e0ae84a84ba8e775beeac7f955bb2",
+    "crates/physics/src/biomechanics/mod.rs": "2f8ec983225fae33b5a88a364cbd52351581098f712730cef1e1e27bb5e5c200",
+    "crates/physics/tests/inertial_tissue_assembly.rs": "6f2a4c2240be96b633831d1966297f27bbee23bf7105ebb33f9791147de52b5f",
+    "crates/physics/tests/embedded_skin_contact.rs": "8bdc9167757dbd7b32c760ae8fc3d4aea6b8f10991416b658043c04c8311844d"
+  },
+  "format_and_diff_checks": "passed",
+  "not_proven": [
+    "imported example integration",
+    "global per-region native contact exclusions",
+    "fresh full imported clip for this source"
+  ]
+}

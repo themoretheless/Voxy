@@ -1,0 +1,61 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 10.38s
+     Running tests/inertial_tissue_assembly.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/inertial_tissue_assembly-dbe29e12885abff4)
+
+running 5 tests
+test assembly_does_not_silently_drop_installed_embedded_contact ... ok
+test inertial_assembly_preserves_histories_masses_moving_supports_and_heat ... ok
+test incompatible_inertial_assembly_preserves_all_source_owners ... ok
+test common_native_surface_is_retained_but_distinct_poses_are_rejected ... ok
+test inertial_assembly_remaps_distinct_regional_contact_masks_without_face_loss ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/prescribed_surface_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/prescribed_surface_contact-83c4d1ef52a3c97d)
+
+running 33 tests
+test feature_forces_and_torques_are_equal_and_opposite ... ok
+test endpoint_disjoint_surface_motion_cannot_tunnel_through_body ... ok
+test implicit_midpoint_books_obstacle_work_and_keeps_rejection_atomic ... ok
+test implicit_maxwell_split_preserves_heat_work_and_rolls_back_every_owner ... ok
+test implicit_midpoint_free_motion_solves_constant_acceleration_and_contact_force ... ok
+test co_translating_rig_supports_and_triangle_surface_balance_both_actuators ... ok
+test both_feature_gradients_match_independent_energy_differences ... ok
+test finite_triangle_has_no_infinite_plane_contact_outside_its_extent ... ok
+test co_moving_body_has_feasible_predictor_when_stationary_guess_closes_gap ... ok
+test implicit_tiny_step_preserves_impulse_below_world_position_resolution ... ok
+test infeasible_velocity_predictor_keeps_original_error_and_entire_state ... ok
+test inertial_obstacle_motion_books_work_and_rejects_tunnelling_atomically ... ok
+test initial_trajectory_rejects_crossing_missed_by_finite_gauss_samples_atomically ... ok
+test authored_contact_domain_preserves_source_indices_and_motion_identity ... ok
+test implicit_narrow_gap_preserves_integrated_endpoint_and_energy_balance ... ok
+test loose_energy_budget_cannot_bypass_implicit_force_equilibrium ... ok
+test malformed_geometry_and_changed_owner_reject_without_mutating_surface ... ok
+test nearest_contact_reports_reconstructible_features_and_closed_gaps_read_only ... ok
+test nonlinear_prescribed_dilation_integrates_material_work_without_contact ... ok
+test nonlinear_uniaxial_support_work_refines_without_temporal_subdivision ... ok
+test normal_contact_blocks_match_force_differences_and_preserve_rigid_nullspace ... ok
+test obstacle_work_is_independent_and_refines_towards_potential_change ... ok
+test path_averaged_force_is_gradient_of_search_objective_and_books_narrow_gap_work ... ok
+test path_quadrature_resolves_submicrometre_contact_work_without_widening_budget ... ok
+test subnanometre_contact_energy_detects_endpoint_reconstruction_roundoff ... ok
+test regional_exclusions_are_shared_by_ccd_forces_and_diagnostics ... ok
+test translated_oblique_contact_preserves_energy_and_feature_forces ... ok
+test viscoelastic_surface_rejection_preserves_history_heat_and_obstacle_pose ... ok
+test regional_body_domains_match_separate_contact_laws_and_path_work ... ok
+test stiff_supported_tetrahedron_converges_with_strict_midpoint_work ... ok
+test moving_contact_restores_a_guess_when_stationary_and_velocity_poses_are_closed ... ok
+test translating_triangle_obstacle_is_galilean_equivalent_in_actual_dynamics ... ok
+test implicit_moving_contact_is_galilean_equivalent_and_books_actuator_power ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

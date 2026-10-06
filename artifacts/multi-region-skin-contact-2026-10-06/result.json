@@ -1,0 +1,19 @@
+{
+  "scope": "two dynamic FEM regions sharing one mixed contact triangle",
+  "status": "passed",
+  "test": "shared_skin_triangle_couples_two_dynamic_fem_regions_in_existing_solver",
+  "test_source_sha256": "4b5340066c75f35ce948838b2ec6b35172db50cbe7eda9ca0e9e64415026d5e5",
+  "dynamic_regions": 2,
+  "cells": 2,
+  "nodal_derivative_checks": 24,
+  "independent_energy_defect_j": -2.69226836462598e-12,
+  "original_budget_j": 1e-08,
+  "off_diagonal_contact_metric_max": 134.09890561361385,
+  "rejection": "implicit initial contact trajectory inadmissible",
+  "full_state_rollback": true,
+  "not_proven": [
+    "imported character global assembly",
+    "multi-region Maxwell and thermal response",
+    "production mesh convergence"
+  ]
+}

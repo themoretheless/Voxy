@@ -1,0 +1,24 @@
+{
+  "scope": "mixed single-tissue and prescribed contact vertices",
+  "status": "focused tests passed",
+  "source_sha256": {
+    "crates/physics/src/tissue_surface.rs": "0990d042f359d7735ccc90951da6d6aa5b8b3d56b69f043de85e517578bd2c98",
+    "crates/physics/src/biomechanics/embedded_contact.rs": "a72671a91746b06d9c1e049a73e9ca3fc1ee6e3977af11668f417d9ed9a7fbbd",
+    "crates/physics/tests/tissue_surface.rs": "9b5c97b5db9e48bb3032157a204c5a2c46ed4fab5c2a9e97e31e27f8f4374eba",
+    "crates/physics/tests/embedded_skin_contact.rs": "a3e345ae6d86956f47ac67ecb4e73434f79784cc8db04b2a607cd1a0d1cbdb30"
+  },
+  "test_counts": {
+    "surface_and_contact": 39,
+    "additional_implicit_mixed": 1,
+    "physics_library": 104,
+    "app_skin": 3
+  },
+  "manual_library_tests_ignored": 6,
+  "format_check": "passed",
+  "diff_check": "passed",
+  "not_proven": [
+    "mixed contact integrated into imported example",
+    "multiple dynamic tissue owners per triangle",
+    "fresh full clip after this change"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "scope": "shared implicit moving embedded/native contact in Maxwell thermal transaction",
+  "tests_passed": 181,
+  "manual_tests_ignored": 6,
+  "time_step_s": 0.001,
+  "energy_budget_j": 1e-06,
+  "simultaneously_active_contacts": "tilted native and embedded skin",
+  "known_limit": "parallel native face nonlinear nonconvergence; rollback proven; cause not established",
+  "pending": [
+    "parallel feature convergence",
+    "long stiff trajectories",
+    "imported-character collision",
+    "full skin coverage"
+  ]
+}

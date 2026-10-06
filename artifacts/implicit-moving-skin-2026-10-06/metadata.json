@@ -1,0 +1,20 @@
+{
+  "scope": "time-independent implicit moving embedded contact in existing coupled native solver",
+  "stiffness_n_m": [
+    100,
+    10000,
+    1000000
+  ],
+  "time_step_s": 0.001,
+  "energy_budget_j": 1e-08,
+  "rollback_budget_j": 1e-30,
+  "native_contact_in_new_fixtures": "installed but inactive",
+  "tests_passed": 179,
+  "manual_tests_ignored": 6,
+  "pending": [
+    "implicit Maxwell moving skin",
+    "simultaneously active contacts",
+    "long stiff trajectories",
+    "imported character collision/full skin coverage"
+  ]
+}

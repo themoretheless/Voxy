@@ -21,8 +21,9 @@ pub use cell_poroelastic::{AdaptiveTissueExchangeConfig, CellPoreTissue, Lymphat
 pub use poroelastic::{PoreFluid, PoreTissue};
 mod inertia;
 pub use inertia::{
-    DrivenMuscleStep, DrivenSupportStep, InertialBody, InertialDiagnostics, MuscleDynamicStep,
-    PlaneContact, SolidFilmBinding, SupportTarget, ViscoelasticDynamicStep,
+    DrivenMuscleStep, DrivenSupportStep, InertialAssembly, InertialBody, InertialDiagnostics,
+    MuscleDynamicStep, PlaneContact, SolidFilmBinding, SupportTarget, ViscoelasticAdaptiveStep,
+    ViscoelasticDynamicStep,
 };
 mod invariants;
 mod myocardium;
@@ -54,8 +55,8 @@ pub use embedded_contact::{
 };
 mod surface_distance;
 pub use prescribed_surface::{
-    PrescribedContactFeature, PrescribedContactPathResponse, PrescribedContactStencil,
-    PrescribedSurfaceResponse, PrescribedTriangleSurface,
+    PrescribedContactBranch, PrescribedContactFeature, PrescribedContactPathResponse,
+    PrescribedContactStencil, PrescribedSurfaceResponse, PrescribedTriangleSurface,
 };
 pub use surface_contact::{SurfaceContactLaw, SurfacePrimitive, TissueSurfaceContact};
 mod tissue_gaps;

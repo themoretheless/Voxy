@@ -1,0 +1,27 @@
+{
+  "scope": "same original parallel-contact Maxwell trajectory; fixed and adaptive runners share one fixture",
+  "duration_s": 0.008,
+  "fixed_intervals": [
+    512,
+    1024,
+    2048,
+    4096,
+    8192
+  ],
+  "reference": "8192 numerical steps, not an exact oracle",
+  "position_discrepancies_m": [
+    3.408204281095959e-11,
+    3.0005173961191965e-12,
+    1.9903283001570035e-12,
+    2.726854189920358e-13
+  ],
+  "velocity_discrepancies_m_s": [
+    1.1135145376096482e-07,
+    5.606076665240986e-07,
+    1.644965593124661e-07,
+    2.4690438935723374e-08
+  ],
+  "convergence": "velocity nonmonotonic; not qualified",
+  "work_heat_ledger": "all five fixed runs pass original 8e-6 J aggregate budget",
+  "next": "investigate contact-branch and nonlinear-residual contributions to velocity accuracy"
+}

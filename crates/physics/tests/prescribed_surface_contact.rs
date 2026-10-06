@@ -1593,3 +1593,193 @@ fn nonlinear_uniaxial_support_work_refines_without_temporal_subdivision() {
         assert_eq!(receipt.surface_work_j, 0.);
     }
 }
+
+#[test]
+fn regional_body_domains_match_separate_contact_laws_and_path_work() {
+    let source = obstacle();
+    let positions: Vec<_> = source
+        .positions()
+        .iter()
+        .copied()
+        .chain(
+            source
+                .positions()
+                .iter()
+                .map(|p| [p[0], p[1], p[2] + 0.002]),
+        )
+        .collect();
+    let source =
+        PrescribedTriangleSurface::new(positions, vec![[0, 1, 2], [3, 4, 5]], 0.001, 0.03, 100.)
+            .unwrap();
+    let points: Vec<_> = body()
+        .into_iter()
+        .chain(body().into_iter().map(|p| [p[0] + 0.2, p[1], p[2]]))
+        .collect();
+    let faces = [[0, 1, 2], [3, 4, 5]];
+    let global = source
+        .with_body_contact_domains(vec![
+            (vec![faces[0]], vec![true, false]),
+            (vec![faces[1]], vec![false, true]),
+        ])
+        .unwrap();
+    let separate = [
+        source.with_contact_faces(vec![true, false]).unwrap(),
+        source.with_contact_faces(vec![false, true]).unwrap(),
+    ];
+    let full = global.response(&points, &faces).unwrap();
+    let mut energy = 0.;
+    let mut gradient = vec![[0.; 3]; 6];
+    let mut obstacle_gradient = vec![[0.; 3]; 6];
+    for i in 0..2 {
+        let r = separate[i].response(&points, &[faces[i]]).unwrap();
+        energy += r.potential_j;
+        for n in 0..6 {
+            for a in 0..3 {
+                gradient[n][a] += r.body_gradient_n[n][a];
+                obstacle_gradient[n][a] += r.obstacle_gradient_n[n][a];
+            }
+        }
+    }
+    assert_eq!(full.potential_j, energy);
+    assert_eq!(full.body_gradient_n, gradient);
+    assert_eq!(full.obstacle_gradient_n, obstacle_gradient);
+    assert!(source.response(&points, &faces).unwrap().potential_j > full.potential_j);
+    assert_eq!(
+        global.body_contact_faces([2, 0, 1]),
+        Some([true, false].as_slice())
+    );
+    let blocks = global.normal_stencils(&points, &faces).unwrap();
+    assert_eq!(blocks.len(), 2);
+    assert_eq!(blocks[0].obstacle_face_index, 0);
+    assert_eq!(blocks[1].obstacle_face_index, 1);
+    assert_eq!(
+        global
+            .contact_branch_bundles(&points, &faces)
+            .unwrap()
+            .len(),
+        2
+    );
+    let h = 1e-7;
+    for n in 0..6 {
+        for a in 0..3 {
+            let mut plus = points.clone();
+            let mut minus = points.clone();
+            plus[n][a] += h;
+            minus[n][a] -= h;
+            let fd = (global.response(&plus, &faces).unwrap().potential_j
+                - global.response(&minus, &faces).unwrap().potential_j)
+                / (2. * h);
+            assert!((fd - full.body_gradient_n[n][a]).abs() < 1e-6);
+        }
+    }
+    let end: Vec<_> = points
+        .iter()
+        .enumerate()
+        .map(|(i, p)| [p[0], p[1], p[2] + if i < 3 { 0.0003 } else { 0.0007 }])
+        .collect();
+    let obstacle_end: Vec<_> = global
+        .positions()
+        .iter()
+        .map(|p| [p[0], p[1], p[2] + 0.0001])
+        .collect();
+    let next = global.with_positions(obstacle_end.clone()).unwrap();
+    let path = global.path_response(&next, &points, &end, &faces).unwrap();
+    let mut body_sum = vec![[0.; 3]; 6];
+    let mut obstacle_sum = vec![[0.; 3]; 6];
+    for i in 0..2 {
+        let next = separate[i].with_positions(obstacle_end.clone()).unwrap();
+        let p = separate[i]
+            .path_response(&next, &points, &end, &[faces[i]])
+            .unwrap();
+        for n in 0..6 {
+            for a in 0..3 {
+                body_sum[n][a] += p.body_gradient_n[n][a];
+                obstacle_sum[n][a] += p.obstacle_gradient_n[n][a];
+            }
+        }
+    }
+    for n in 0..6 {
+        for a in 0..3 {
+            assert!((body_sum[n][a] - path.body_gradient_n[n][a]).abs() < 1e-12);
+            assert!((obstacle_sum[n][a] - path.obstacle_gradient_n[n][a]).abs() < 1e-12);
+        }
+    }
+    let work: f64 = points
+        .iter()
+        .zip(&end)
+        .zip(&path.body_gradient_n)
+        .chain(
+            global
+                .positions()
+                .iter()
+                .zip(&obstacle_end)
+                .zip(&path.obstacle_gradient_n),
+        )
+        .flat_map(|((a, b), g)| (0..3).map(move |axis| g[axis] * (b[axis] - a[axis])))
+        .sum();
+    let delta = next.response(&end, &faces).unwrap().potential_j - full.potential_j;
+    assert!((delta - work).abs() < 1e-10);
+    let rebound = global
+        .with_body_contact_domains(vec![
+            (vec![faces[0]], vec![true, false]),
+            (vec![faces[1]], vec![false, true]),
+        ])
+        .unwrap();
+    assert!(
+        global
+            .path_response(&rebound, &points, &end, &faces)
+            .is_err()
+    );
+}
+
+#[test]
+fn regional_exclusions_are_shared_by_ccd_forces_and_diagnostics() {
+    let source = obstacle();
+    let points: Vec<_> = body()
+        .into_iter()
+        .chain(body().into_iter().map(|p| [p[0] + 0.2, p[1], p[2]]))
+        .collect();
+    let faces = [[0, 1, 2], [3, 4, 5]];
+    let disabled = source
+        .with_body_contact_domains(vec![(vec![faces[0]], vec![false])])
+        .unwrap();
+    let mut end = points.clone();
+    for p in &mut end[..3] {
+        p[2] -= 0.1;
+    }
+    assert!(!source.path_is_open(&source, &points, &end, &faces).unwrap());
+    assert!(
+        disabled
+            .path_is_open(&disabled, &points, &end, &faces)
+            .unwrap()
+    );
+    let response = disabled.response(&points, &faces).unwrap();
+    assert_eq!(response.body_gradient_n[..3], [[0.; 3]; 3]);
+    assert_eq!(disabled.normal_stencils(&points, &faces).unwrap().len(), 1);
+    assert_eq!(
+        disabled
+            .contact_branch_bundles(&points, &faces)
+            .unwrap()
+            .len(),
+        1
+    );
+    assert_eq!(
+        disabled
+            .nearest_active_contact(&points, &faces)
+            .unwrap()
+            .unwrap()
+            .body_face,
+        faces[1]
+    );
+    let saved = format!("{source:?}");
+    for domains in [
+        vec![(vec![[0, 1, 2]], vec![])],
+        vec![(vec![], vec![true])],
+        vec![(vec![[0, 0, 2]], vec![true])],
+        vec![(vec![[0, 1, 65536]], vec![true])],
+        vec![(vec![[0, 1, 2], [2, 0, 1]], vec![true])],
+    ] {
+        assert!(source.with_body_contact_domains(domains).is_err());
+    }
+    assert_eq!(saved, format!("{source:?}"));
+}

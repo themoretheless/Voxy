@@ -1,0 +1,20 @@
+{
+  "scope": "read-only native closest-feature branch extraction at a single pose",
+  "retention": "identical evaluated distance and compensated gap bits; distinct barycentric coefficients",
+  "verified": [
+    "selected production response preserved",
+    "shared potential",
+    "force and torque balance per branch",
+    "unique feature after tilt",
+    "invalid topology rejection"
+  ],
+  "captured_failure_branch_counts": [
+    1,
+    1,
+    1
+  ],
+  "tests_passed": 158,
+  "manual_tests_ignored": 6,
+  "production_solver_mixing": false,
+  "pending": "locate branch event and qualify distance uncertainty; captured terminal pose has no bit-identical alternatives"
+}

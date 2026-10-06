@@ -1,0 +1,53 @@
+{
+  "status": "passed",
+  "scope": "current-source Metal run, global dynamics and render skin, native skeletal obstacle",
+  "exec_session_id": 61168,
+  "exit_code": 0,
+  "physical_steps": 48,
+  "simulation_s": 0.2,
+  "accepted_substeps": 192,
+  "rejected_substeps": 0,
+  "frames": 7,
+  "finite_csv_receipts": 7,
+  "independent_output_interval_balances_j": [
+    5.87700000817537e-09,
+    -5.695000040994991e-09,
+    -1.501000010395437e-08,
+    -1.4898999395329682e-08,
+    -2.365000500992309e-09,
+    1.0705999980986647e-07
+  ],
+  "sum_absolute_output_interval_error_j": 1.509059998593132e-07,
+  "reported_defect_subtracted": false,
+  "csv_quantization_allowance_per_interval_j": 3e-12,
+  "source_manifest_sha256": "0865ca36618f08c1b1a5942650d62b2e09d4bbce14cb08367604f9ea74f5904a",
+  "source_files": 1095,
+  "png_sha256": {
+    "frames/frame-0000.png": "02e3a6ac3fc5f8fbd1934b99c20f6cb296a9f24b590d23be67eb4065961731b9",
+    "frames/frame-0001.png": "4d64872b60b89a0c916eb757ca8d6183f2a7f643625ac7196d084b77fde253c3",
+    "frames/frame-0002.png": "b7a0d83dd2374f81cd338116384a84a3b1b5aca1a4f8a452025bd7617cc8460b",
+    "frames/frame-0003.png": "28196b30a4ce45c1db9ab51facd7ceea078e7329e94e946c1c2fa5968d49a1b4",
+    "frames/frame-0004.png": "ad42f548853cf8d4014d55f2e707f56a80272a200c7c5b772bf37b9e916de992",
+    "frames/frame-0005.png": "f68b71b3dc94eb000031643419040a3c8fa42c2a51c6427a74bce482fe0046c2",
+    "frames/frame-0006.png": "e1639ea4ab8699acaefd215844f054d9ded8f33cdd6d619c217ca5254f54d0b9"
+  },
+  "poses_sha256": "6fb98d5051d8448fbc77e81c5c4171c5e7e366ba16d1d2679e507c11997dc497",
+  "not_proven": [
+    "deformed imported skin contact forces",
+    "full assembled 480 clip",
+    "per-frame errors between sparse output intervals",
+    "production mesh convergence and visual accuracy",
+    "real-time and all-hardware performance"
+  ],
+  "render_image_size_px": [
+    2048,
+    512
+  ],
+  "render_non_background_bbox_px": [
+    204,
+    134,
+    1833,
+    397
+  ],
+  "distinct_frame_images": 7
+}

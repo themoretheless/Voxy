@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "full_app_tests": 40,
+  "full_app_tests_ignored": 2,
+  "full_app_snapshot_reference": "../assembled-skin-gpu-48-2026-10-06/result.json source_sha256",
+  "current_source_focused_tests": 3,
+  "current_source_manifest_reference": "../assembled-skin-final-gpu-2026-10-06/source-manifest.json",
+  "independent_controller_defect_j": 7.734310861169181e-10,
+  "controller_budget_j": 1e-05,
+  "format_and_diff_checks": "passed"
+}

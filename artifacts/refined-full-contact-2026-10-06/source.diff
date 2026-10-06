@@ -1,0 +1,1834 @@
+diff --git a/crates/physics/src/biomechanics/inertia.rs b/crates/physics/src/biomechanics/inertia.rs
+index 054d64c8..f6b017c5 100644
+--- a/crates/physics/src/biomechanics/inertia.rs
++++ b/crates/physics/src/biomechanics/inertia.rs
+@@ -8,7 +8,7 @@ mod thermal;
+ pub use film_binding::SolidFilmBinding;
+ mod viscous;
+ pub use supports::{DrivenSupportStep, SupportTarget};
+-pub use viscous::ViscoelasticDynamicStep;
++pub use viscous::{ViscoelasticAdaptiveStep, ViscoelasticDynamicStep};
+ #[derive(Clone, Debug)]
+ pub struct InertialBody {
+     body: Body,
+diff --git a/crates/physics/src/biomechanics/inertia/implicit.rs b/crates/physics/src/biomechanics/inertia/implicit.rs
+index 3e8c0259..287da3bb 100644
+--- a/crates/physics/src/biomechanics/inertia/implicit.rs
++++ b/crates/physics/src/biomechanics/inertia/implicit.rs
+@@ -138,6 +138,23 @@ impl InertialBody {
+         self.require_time_independent_material()?;
+         self.advance_implicit_surface(targets, next, dt, tolerance_j)
+     }
++    /// Advance native and embedded contact together through the shared implicit solver.
++    /// Embedded rig/obstacle work is included once in `surface_work_j`.
++    /// Time-independent material; both contact owners must already be installed.
++    /// # Errors
++    /// Invalid owners, crossing, nonlinear or quadrature nonconvergence, work defect.
++    pub fn step_implicit_with_surface_and_skin_motion(
++        &mut self,
++        targets: Option<&[SupportTarget]>,
++        next: Arc<PrescribedTriangleSurface>,
++        next_skin: super::super::StationaryEmbeddedContact,
++        dt: f64,
++        tolerance_j: f64,
++    ) -> Result<DrivenSupportStep, &'static str> {
++        self.require_time_independent_material()?;
++        self.advance_implicit_surface_and_skin(targets, next, Some(next_skin), dt, tolerance_j)
++            .map(|(report, _)| report)
++    }
+     pub(super) fn advance_implicit_surface(
+         &mut self,
+         targets: Option<&[SupportTarget]>,
+@@ -145,6 +162,17 @@ impl InertialBody {
+         dt: f64,
+         tolerance_j: f64,
+     ) -> Result<DrivenSupportStep, &'static str> {
++        self.advance_implicit_surface_and_skin(targets, next, None, dt, tolerance_j)
++            .map(|(report, _)| report)
++    }
++    pub(super) fn advance_implicit_surface_and_skin(
++        &mut self,
++        targets: Option<&[SupportTarget]>,
++        next: Arc<PrescribedTriangleSurface>,
++        next_skin: Option<super::super::StationaryEmbeddedContact>,
++        dt: f64,
++        tolerance_j: f64,
++    ) -> Result<(DrivenSupportStep, super::super::EmbeddedSkinWork), &'static str> {
+         let mut knots = vec![0., 1.];
+         for attempt in 0..32 {
+             match self.advance_implicit_surface_quadrature(
+@@ -153,6 +181,7 @@ impl InertialBody {
+                 dt,
+                 tolerance_j,
+                 &mut knots,
++                next_skin.as_ref(),
+             ) {
+                 Err(
+                     reason @ ("implicit contact work defect"
+@@ -167,6 +196,26 @@ impl InertialBody {
+                     }
+                     continue;
+                 }
++                Err(
++                    reason @ ("implicit contact nonlinear nonconvergence"
++                    | "implicit contact line search failed"),
++                ) if knots.len() - 1 <= 64 => {
++                    // Re-evaluate actual sampled forces; no force averaging across poses
++                    // or relaxation of nonlinear/work admission. Retry remains atomic.
++                    let mut refined = Vec::with_capacity(2 * knots.len() - 1);
++                    for panel in knots.windows(2) {
++                        refined.push(panel[0]);
++                        refined.push(0.5 * (panel[0] + panel[1]));
++                    }
++                    refined.push(1.);
++                    knots = refined;
++                    if std::env::var_os("VOXY_CONTACT_REJECTION_TRACE").is_some() {
++                        eprintln!(
++                            "IMPLICIT_NONLINEAR_QUADRATURE_RETRY attempt={attempt} panels={} reason={reason:?}",
++                            knots.len() - 1
++                        );
++                    }
++                }
+                 result => return result,
+             }
+         }
+@@ -179,7 +228,8 @@ impl InertialBody {
+         dt: f64,
+         tolerance_j: f64,
+         knots: &mut Vec<f64>,
+-    ) -> Result<DrivenSupportStep, &'static str> {
++        next_skin: Option<&super::super::StationaryEmbeddedContact>,
++    ) -> Result<(DrivenSupportStep, super::super::EmbeddedSkinWork), &'static str> {
+         if !dt.is_finite() || dt <= 0. || !tolerance_j.is_finite() || tolerance_j <= 0. {
+             return Err("invalid implicit inertial step");
+         }
+@@ -191,6 +241,26 @@ impl InertialBody {
+             .as_ref()
+             .ok_or("surface motion requires installed contact")?;
+         current.same_owner(&next)?;
++        if let Some(next_skin) = next_skin {
++            self.body
++                .stationary_embedded_contact()
++                .ok_or("skin motion requires installed contact")?
++                .same_owner(next_skin)?;
++        }
++        let skin_path_open = |endpoint: &[Vec3]| {
++            if let Some(next_skin) = next_skin {
++                self.body
++                    .gap_path_is_open_without_embedded(&self.body.positions, endpoint)
++                    && self
++                        .body
++                        .stationary_embedded_contact()
++                        .unwrap()
++                        .certify_motion_to(next_skin, &self.body.positions, endpoint)
++                        .is_ok()
++            } else {
++                self.body.gap_path_is_open(&self.body.positions, endpoint)
++            }
++        };
+         let n = self.masses.len();
+         let mut end = self.body.positions.clone();
+         if let Some(targets) = targets {
+@@ -250,6 +320,16 @@ impl InertialBody {
+         )?;
+         let local_path = local_current.prepare_path_partition(&local_next, knots)?;
+         let material_nodes: Vec<_> = local_path.quadrature_nodes().collect();
++        let skin_samples = next_skin
++            .map(|next_skin| {
++                let current_skin = self.body.stationary_embedded_contact().unwrap();
++                material_nodes
++                    .iter()
++                    .map(|(t, _)| current_skin.sample_linear_pose(next_skin, *t))
++                    .collect::<Result<Vec<_>, _>>()
++            })
++            .transpose()?;
++        let skin_motion = next_skin.zip(skin_samples.as_deref());
+         let initial_material_potential = self
+             .evaluate_at_contacts(&self.body.positions, self.plane, None)?
+             .potential_j;
+@@ -279,7 +359,7 @@ impl InertialBody {
+         let feasible_guess = |points: &[Vec3]| {
+             let endpoint = world_endpoint(points);
+             endpoint.iter().flatten().all(|v| v.is_finite())
+-                && self.body.gap_path_is_open(&self.body.positions, &endpoint)
++                && skin_path_open(&endpoint)
+                 && self.volume_path_is_open(&endpoint)
+                 && prepared_motion
+                     .rejection_time(&self.body.positions, &endpoint, &faces)
+@@ -297,11 +377,12 @@ impl InertialBody {
+                 let mut evaluation = observe_contact_stage(
+                     "world averaged material path",
+                     dt,
+-                    self.average_material_path(
++                    self.average_material_path_with_skin(
+                         points,
+                         &end,
+                         &material_nodes,
+                         initial_material_potential,
++                        skin_motion,
+                     ),
+                 )?;
+                 evaluation.potential_j += path.midpoint_objective_j;
+@@ -394,9 +475,7 @@ impl InertialBody {
+                         })
+                         .collect();
+                     if predicted_end.iter().flatten().all(|v| v.is_finite())
+-                        && self
+-                            .body
+-                            .gap_path_is_open(&self.body.positions, &predicted_end)
++                        && skin_path_open(&predicted_end)
+                         && self.volume_path_is_open(&predicted_end)
+                         && prepared_motion
+                             .rejection_time(&self.body.positions, &predicted_end, &faces)
+@@ -432,9 +511,7 @@ impl InertialBody {
+                             &predicted_end,
+                             &faces,
+                         );
+-                        let gap_open = self
+-                            .body
+-                            .gap_path_is_open(&self.body.positions, &predicted_end);
++                        let gap_open = skin_path_open(&predicted_end);
+                         let volume_open = self.volume_path_is_open(&predicted_end);
+                         eprintln!(
+                             "IMPLICIT_INFEASIBLE_PREDICTOR dt={dt:.17e} internal_gap_open={gap_open} volume_open={volume_open} ccd={ccd:?} nearest={nearest:?}"
+@@ -466,7 +543,7 @@ impl InertialBody {
+                     &self.body.pinned,
+                     &self.masses,
+                 ) {
+-                    if self.body.gap_path_is_open(&self.body.positions, &restored)
++                    if skin_path_open(&restored)
+                         && self.volume_path_is_open(&restored)
+                         && prepared_motion
+                             .rejection_time(&self.body.positions, &restored, &faces)
+@@ -701,7 +778,7 @@ impl InertialBody {
+                     break;
+                 }
+                 let endpoint = world_endpoint(&trial);
+-                let gap_open = self.body.gap_path_is_open(&self.body.positions, &endpoint);
++                let gap_open = skin_path_open(&endpoint);
+                 if gap_open {
+                     gap_trials += 1;
+                 }
+@@ -856,7 +933,7 @@ impl InertialBody {
+                 }
+             }
+         }
+-        if !self.body.gap_path_is_open(&self.body.positions, &end)
++        if !skin_path_open(&end)
+             || !self.volume_path_is_open(&end)
+             || prepared_motion
+                 .rejection_time(&self.body.positions, &end, &faces)?
+@@ -864,7 +941,8 @@ impl InertialBody {
+         {
+             return Err("implicit contact path crossing");
+         }
+-        let mut surface_work = 0.;
++        let mut surface_work =
++            middle.embedded_skin_work.rig_work_j + middle.embedded_skin_work.obstacle_work_j;
+         for (node, g) in middle.surface_gradient.iter().enumerate() {
+             surface_work += dot(
+                 *g,
+@@ -874,7 +952,12 @@ impl InertialBody {
+         let final_eval = observe_contact_stage(
+             "world final contact",
+             dt,
+-            self.evaluate_at_contacts(&end, self.plane, Some(&next)),
++            self.evaluate_at_contacts_and_skin(
++                &end,
++                self.plane,
++                Some(&next),
++                next_skin.or(self.body.stationary_embedded_contact()),
++            ),
+         )?;
+         let after = self.diagnostics_at(
+             final_eval.potential_j,
+@@ -1042,6 +1125,21 @@ impl InertialBody {
+                 *knots = refined;
+                 return Err("implicit contact work defect");
+             }
++            // Moving prescribed skin requires temporal refinement of its own samples.
++            // Endpoint energy remains the admission oracle; never correct forces from it.
++            if next_skin.is_some() {
++                if knots.len() - 1 <= 64 {
++                    let mut refined = Vec::with_capacity(2 * knots.len() - 1);
++                    for panel in knots.windows(2) {
++                        refined.push(panel[0]);
++                        refined.push(0.5 * (panel[0] + panel[1]));
++                    }
++                    refined.push(1.);
++                    *knots = refined;
++                    return Err("implicit material path quadrature refinement");
++                }
++                return Err("implicit midpoint work defect");
++            }
+             if let Some(refined) = observe_contact_stage(
+                 "material quadrature error estimator",
+                 dt,
+@@ -1071,19 +1169,26 @@ impl InertialBody {
+         if !support_work.is_finite() || lost_work > tolerance_j {
+             return Err("unrepresentable implicit support work");
+         }
++        let committed_skin = next_skin.cloned();
+         self.body.positions = end;
++        if let Some(skin) = committed_skin {
++            self.body.embedded_contact = Some(skin);
++        }
+         self.velocities = velocity;
+         self.prescribed_surface = Some(next);
+-        Ok(DrivenSupportStep {
+-            support_work_j: support_work,
+-            reaction_work_j: reaction,
+-            pin_kinetic_work_j: pin_work,
+-            plane_work_j: 0.,
+-            plane_translation_work_j: 0.,
+-            plane_rotation_work_j: 0.,
+-            surface_work_j: surface_work,
+-            energy_defect_j: defect,
+-        })
++        Ok((
++            DrivenSupportStep {
++                support_work_j: support_work,
++                reaction_work_j: reaction,
++                pin_kinetic_work_j: pin_work,
++                plane_work_j: 0.,
++                plane_translation_work_j: 0.,
++                plane_rotation_work_j: 0.,
++                surface_work_j: surface_work,
++                energy_defect_j: defect,
++            },
++            middle.embedded_skin_work,
++        ))
+     }
+ }
+ 
+@@ -1202,6 +1307,81 @@ fn coupled_contact_direction(
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    // Independent two-branch generalized-stationarity oracle. Kept test-only
++    // until exact coincident contact branches are available to the production solver.
++    fn project_branch_segment(
++        first: &[Vec3],
++        second: &[Vec3],
++        inertia: &[f64],
++        pinned: &[bool],
++    ) -> Result<(f64, f64), &'static str> {
++        if first.len() != second.len()
++            || first.len() != inertia.len()
++            || first.len() != pinned.len()
++            || inertia.iter().any(|w| !w.is_finite() || *w <= 0.)
++            || first.iter().chain(second).flatten().any(|v| !v.is_finite())
++        {
++            return Err("invalid branch projection");
++        }
++        let mut linear = 0.;
++        let mut quadratic = 0.;
++        for node in 0..first.len() {
++            if pinned[node] {
++                continue;
++            }
++            for axis in 0..3 {
++                let a = first[node][axis] / inertia[node].sqrt();
++                let delta = (second[node][axis] - first[node][axis]) / inertia[node].sqrt();
++                linear += a * delta;
++                quadratic += delta * delta;
++            }
++        }
++        if !linear.is_finite() || !quadratic.is_finite() {
++            return Err("branch projection overflow");
++        }
++        let alpha = if quadratic > 0. {
++            (-linear / quadratic).clamp(0., 1.)
++        } else {
++            0.
++        };
++        let mut norm = 0.;
++        for node in 0..first.len() {
++            if pinned[node] {
++                continue;
++            }
++            for axis in 0..3 {
++                let residual = (1. - alpha) * first[node][axis] + alpha * second[node][axis];
++                norm += residual * residual / inertia[node];
++            }
++        }
++        if !norm.is_finite() {
++            return Err("branch projection overflow");
++        }
++        Ok((alpha, norm))
++    }
++    #[test]
++    fn generalized_branch_projection_preserves_convexity_and_inertia_metric() {
++        let first = [[2., 1., 0.], [1e20; 3]];
++        let second = [[-1., 1., 0.], [-1e20; 3]];
++        let (alpha, norm) =
++            project_branch_segment(&first, &second, &[4., 1.], &[false, true]).unwrap();
++        assert!((alpha - 2. / 3.).abs() < 1e-15);
++        assert!((norm - 0.25).abs() < 1e-15);
++        // Independent dense search verifies the weighted minimum and ignores pin reaction.
++        for i in 0..=1000 {
++            let a = i as f64 / 1000.;
++            let reference = ((1. - a) * 2. - a).powi(2) / 4. + 0.25;
++            assert!(norm <= reference + 1e-15);
++        }
++        let (alpha, norm) =
++            project_branch_segment(&[[2., 0., 0.]], &[[1., 0., 0.]], &[1.], &[false]).unwrap();
++        assert_eq!((alpha, norm), (1., 1.)); // Same-sign branches cannot fabricate equilibrium.
++        let (alpha, norm) =
++            project_branch_segment(&[[2., 0., 0.]], &[[2., 0., 0.]], &[1.], &[false]).unwrap();
++        assert_eq!((alpha, norm), (0., 4.));
++        assert!(project_branch_segment(&first, &second, &[0., 1.], &[false, true]).is_err());
++        assert!(project_branch_segment(&first, &second, &[4., 1.], &[false]).is_err());
++    }
+     #[test]
+     fn averaged_material_search_gradient_matches_energy_differences() {
+         use super::super::super::{Body, Material};
+@@ -1273,6 +1453,151 @@ mod tests {
+         }
+     }
+     #[test]
++    fn moving_skin_shared_quadrature_matches_derivative_and_independent_work() {
++        use super::super::super::{
++            Body, EmbeddedTriangleContact, Material, StationaryEmbeddedContact,
++        };
++        use std::sync::Arc;
++        let rest = vec![[0., 0., 0.], [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]];
++        let base = vec![[0.1, 0.1, 0.015], [0.15, 0.1, 0.04], [0.1, 0.15, 0.04]];
++        let obstacle = Arc::new(
++            PrescribedTriangleSurface::new(
++                vec![[-1., -1., 0.], [1., -1., 0.], [0., 1., 0.]],
++                vec![[0, 1, 2]],
++                0.001,
++                0.03,
++                100.,
++            )
++            .unwrap(),
++        );
++        let current = StationaryEmbeddedContact::new(
++            Arc::new(
++                EmbeddedTriangleContact::new(&rest, &[[0, 1, 2, 3]], &base, vec![[0, 1, 2]])
++                    .unwrap(),
++            ),
++            rest.clone(),
++            base.clone(),
++            obstacle.clone(),
++        )
++        .unwrap();
++        let shift = |points: &[Vec3], z: f64| -> Vec<Vec3> {
++            points.iter().map(|p| [p[0], p[1], p[2] + z]).collect()
++        };
++        let next = current
++            .with_pose(
++                shift(&rest, 4e-6),
++                shift(&base, 1e-5),
++                Arc::new(
++                    obstacle
++                        .with_positions(shift(obstacle.positions(), 2e-6))
++                        .unwrap(),
++                ),
++            )
++            .unwrap();
++        assert_eq!(
++            format!("{:?}", current.sample_linear_pose(&next, 0.).unwrap()),
++            format!("{current:?}")
++        );
++        assert_eq!(
++            format!("{:?}", current.sample_linear_pose(&next, 1.).unwrap()),
++            format!("{next:?}")
++        );
++        for phase in [-0.1, 1.1, f64::NAN, f64::INFINITY] {
++            assert!(current.sample_linear_pose(&next, phase).is_err());
++        }
++        let body = Body::new(
++            rest.clone(),
++            vec![false; 4],
++            vec![(
++                [0, 1, 2, 3],
++                Material::from_young_poisson(300., 0.4).unwrap(),
++            )],
++        )
++        .unwrap();
++        let mut dynamics = InertialBody::new(body, &[1000.], vec![[0.; 3]; 4]).unwrap();
++        dynamics
++            .set_stationary_embedded_contact(Some(current.clone()))
++            .unwrap();
++        let before = format!("{dynamics:?}");
++        let path = obstacle
++            .prepare_path_partition(next.obstacle(), &[0., 0.25, 0.5, 0.75, 1.])
++            .unwrap();
++        let nodes: Vec<_> = path.quadrature_nodes().collect();
++        let samples: Vec<_> = nodes
++            .iter()
++            .map(|(t, _)| current.sample_linear_pose(&next, *t).unwrap())
++            .collect();
++        let initial = dynamics
++            .evaluate_at_contacts(&rest, None, None)
++            .unwrap()
++            .potential_j;
++        let points = [
++            [1e-6, -2e-6, 3e-6],
++            [-2e-6, 1e-6, 2e-6],
++            [1e-6, 3e-6, -1e-6],
++            [-1e-6, 2e-6, 4e-6],
++        ];
++        let end: Vec<_> = rest
++            .iter()
++            .zip(points)
++            .map(|(p, d)| std::array::from_fn(|a| p[a] + 2. * d[a]))
++            .collect();
++        let evaluate = |points: &[Vec3]| {
++            dynamics
++                .average_material_path_with_skin(
++                    points,
++                    &end,
++                    &nodes,
++                    initial,
++                    Some((&next, &samples)),
++                )
++                .unwrap()
++        };
++        let average = evaluate(&points);
++        for node in 0..4 {
++            for axis in 0..3 {
++                let mut plus = points;
++                let mut minus = points;
++                let h = 1e-7;
++                plus[node][axis] += h;
++                minus[node][axis] -= h;
++                let fd = (evaluate(&plus).potential_j - evaluate(&minus).potential_j) / (2. * h);
++                assert!(
++                    (fd - average.gradient[node][axis]).abs() < 1e-6 * (1. + fd.abs()),
++                    "node={node} axis={axis} fd={fd} gradient={}",
++                    average.gradient[node][axis]
++                );
++            }
++        }
++        let final_energy = dynamics
++            .evaluate_at_contacts_and_skin(&end, None, None, Some(&next))
++            .unwrap()
++            .potential_j;
++        let gradient_work: f64 = average
++            .gradient
++            .iter()
++            .zip(&points)
++            .flat_map(|(g, d)| (0..3).map(move |a| 2. * g[a] * d[a]))
++            .sum();
++        let work = average.embedded_skin_work;
++        assert!(work.rig_work_j.abs() > 1e-10 && work.obstacle_work_j.abs() > 1e-10);
++        let defect =
++            final_energy - initial - gradient_work - work.rig_work_j - work.obstacle_work_j;
++        assert!(defect.abs() < 1e-10, "independent defect={defect}");
++        assert!(
++            dynamics
++                .average_material_path_with_skin(
++                    &points,
++                    &end,
++                    &nodes,
++                    initial,
++                    Some((&next, &samples[..samples.len() - 1]))
++                )
++                .is_err()
++        );
++        assert_eq!(before, format!("{dynamics:?}"));
++    }
++    #[test]
+     fn coupled_direction_matches_rank_one_inverse_and_holds_pins() {
+         let normal = [0.6, 0.8, 0.];
+         let block = super::super::super::PrescribedContactStencil {
+diff --git a/crates/physics/src/biomechanics/inertia/viscous.rs b/crates/physics/src/biomechanics/inertia/viscous.rs
+index 10e6ed8a..0400f77d 100644
+--- a/crates/physics/src/biomechanics/inertia/viscous.rs
++++ b/crates/physics/src/biomechanics/inertia/viscous.rs
+@@ -15,6 +15,17 @@ pub struct ViscoelasticDynamicStep {
+     pub relaxation_energy_defect_j: f64,
+     pub thermal_energy_defect_j: f64,
+     pub total_energy_defect_j: f64,
++    /// Absolute defects of both relaxation/thermal stages and frozen mechanics.
++    pub absolute_energy_defect_j: f64,
++}
++/// Receipt for one full interval admitted as equal implicit substeps.
++#[derive(Clone, Copy, Debug)]
++pub struct ViscoelasticAdaptiveStep {
++    pub step: ViscoelasticDynamicStep,
++    pub skin_work: super::super::EmbeddedSkinWork,
++    pub substeps: usize,
++    /// Sum of absolute mechanical, relaxation and thermal defects; no cancellation.
++    pub absolute_energy_defect_j: f64,
+ }
+ impl InertialBody {
+     /// Creates dynamics with committed Ogden-Maxwell histories and initially
+@@ -157,6 +168,221 @@ impl InertialBody {
+             Some(next),
+         )
+     }
++    /// Atomic Maxwell/thermal split with shared implicit native and moving-skin contact.
++    /// Both contact owners must be installed. Embedded work is returned separately
++    /// and already included in the support receipt's surface work.
++    /// # Errors
++    /// Relaxation, heat, owner, CCD, nonlinear or work rejection preserves all state.
++    pub fn step_viscoelastic_implicit_with_surface_and_skin_motion(
++        &mut self,
++        targets: Option<&[SupportTarget]>,
++        next_surface: Arc<PrescribedTriangleSurface>,
++        next_skin: super::super::StationaryEmbeddedContact,
++        dt: f64,
++        tolerance_j: f64,
++    ) -> Result<(ViscoelasticDynamicStep, super::super::EmbeddedSkinWork), &'static str> {
++        self.step_viscoelastic_contacts_impl::<true>(
++            targets,
++            None,
++            Some(next_surface),
++            dt,
++            tolerance_j,
++            Some(next_skin),
++        )
++    }
++    /// Retry the same full linear prescribed trajectory with 1,2,4,... substeps.
++    /// Every substep uses the original solver and its share of the original budget.
++    /// Only the complete interval commits. This does not fix single-step feature kinks.
++    /// # Errors
++    /// Invalid owners/controls, crossing or exhausted subdivision preserves all state.
++    pub fn step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
++        &mut self,
++        targets: Option<&[SupportTarget]>,
++        next_surface: Arc<PrescribedTriangleSurface>,
++        next_skin: super::super::StationaryEmbeddedContact,
++        dt: f64,
++        tolerance_j: f64,
++        max_substeps: usize,
++    ) -> Result<ViscoelasticAdaptiveStep, &'static str> {
++        if !max_substeps.is_power_of_two()
++            || max_substeps > 256
++            || !dt.is_finite()
++            || dt <= 0.
++            || !tolerance_j.is_finite()
++            || tolerance_j <= 0.
++        {
++            return Err("invalid adaptive implicit controls");
++        }
++        let start_surface = self
++            .prescribed_surface
++            .as_ref()
++            .ok_or("surface motion requires installed contact")?
++            .clone();
++        start_surface.same_owner(&next_surface)?;
++        let start_skin = self
++            .body
++            .stationary_embedded_contact()
++            .ok_or("skin motion requires installed contact")?
++            .clone();
++        start_skin.same_owner(&next_skin)?;
++        if let Some(targets) = targets {
++            let mut seen = vec![false; self.masses.len()];
++            if targets.len() != self.body.pinned.iter().filter(|&&p| p).count() {
++                return Err("incomplete prescribed support targets");
++            }
++            for target in targets {
++                if target.node >= seen.len()
++                    || !self.body.pinned[target.node]
++                    || seen[target.node]
++                    || target.position_m.iter().any(|v| !v.is_finite())
++                {
++                    return Err("invalid prescribed support target");
++                }
++                seen[target.node] = true;
++            }
++        }
++        let initial = self.diagnostics()?;
++        let mut count = 1;
++        loop {
++            let mut candidate = self.clone();
++            let mut sum: Option<ViscoelasticDynamicStep> = None;
++            let mut work = super::super::EmbeddedSkinWork::default();
++            let mut absolute = 0.;
++            let mut rejection = None;
++            for index in 1..=count {
++                let phase = index as f64 / count as f64;
++                let surface = if index == count {
++                    next_surface.clone()
++                } else {
++                    Arc::new(
++                        start_surface.with_positions(
++                            start_surface
++                                .positions()
++                                .iter()
++                                .zip(next_surface.positions())
++                                .map(|(&a, &b)| {
++                                    super::super::surface_distance::trajectory_point(a, b, phase)
++                                })
++                                .collect(),
++                        )?,
++                    )
++                };
++                let skin = start_skin.sample_linear_pose(&next_skin, phase)?;
++                let staged_targets = targets.map(|targets| {
++                    targets
++                        .iter()
++                        .map(|target| SupportTarget {
++                            node: target.node,
++                            position_m: if index == count {
++                                target.position_m
++                            } else {
++                                super::super::surface_distance::trajectory_point(
++                                    self.body.positions[target.node],
++                                    target.position_m,
++                                    phase,
++                                )
++                            },
++                        })
++                        .collect::<Vec<_>>()
++                });
++                match candidate.step_viscoelastic_implicit_with_surface_and_skin_motion(
++                    staged_targets.as_deref(),
++                    surface,
++                    skin,
++                    dt / count as f64,
++                    tolerance_j / count as f64,
++                ) {
++                    Ok((report, skin_work)) => {
++                        absolute += report.absolute_energy_defect_j;
++                        work.rig_work_j += skin_work.rig_work_j;
++                        work.obstacle_work_j += skin_work.obstacle_work_j;
++                        if let Some(sum) = sum.as_mut() {
++                            sum.support.support_work_j += report.support.support_work_j;
++                            sum.support.reaction_work_j += report.support.reaction_work_j;
++                            sum.support.pin_kinetic_work_j += report.support.pin_kinetic_work_j;
++                            sum.support.plane_work_j += report.support.plane_work_j;
++                            sum.support.plane_translation_work_j +=
++                                report.support.plane_translation_work_j;
++                            sum.support.plane_rotation_work_j +=
++                                report.support.plane_rotation_work_j;
++                            sum.support.surface_work_j += report.support.surface_work_j;
++                            sum.support.energy_defect_j += report.support.energy_defect_j;
++                            sum.viscous_heat_j += report.viscous_heat_j;
++                            sum.relaxation_energy_defect_j += report.relaxation_energy_defect_j;
++                            sum.thermal_energy_defect_j += report.thermal_energy_defect_j;
++                            sum.total_energy_defect_j += report.total_energy_defect_j;
++                            sum.absolute_energy_defect_j += report.absolute_energy_defect_j;
++                        } else {
++                            sum = Some(report);
++                        }
++                    }
++                    Err(error) => {
++                        rejection = Some(error);
++                        break;
++                    }
++                }
++            }
++            if let Some(error) = rejection {
++                match error {
++                    "implicit contact nonlinear nonconvergence"
++                    | "implicit contact line search failed"
++                    | "implicit contact quadrature nonconvergence"
++                    | "implicit midpoint work defect"
++                    | "viscoelastic relaxation energy defect"
++                    | "viscoelastic inertial work heat defect" => {
++                        if count == max_substeps {
++                            return Err(error);
++                        }
++                        count *= 2;
++                        continue;
++                    }
++                    _ => return Err(error),
++                }
++            }
++            let sum = sum.ok_or("empty adaptive implicit interval")?;
++            let final_state = candidate.diagnostics()?;
++            let independent = final_state.kinetic_j - initial.kinetic_j + final_state.potential_j
++                - initial.potential_j
++                + sum.viscous_heat_j
++                - sum.support.support_work_j
++                - sum.support.plane_work_j
++                - sum.support.surface_work_j;
++            let finite_receipt = [
++                sum.support.support_work_j,
++                sum.support.reaction_work_j,
++                sum.support.pin_kinetic_work_j,
++                sum.support.plane_work_j,
++                sum.support.plane_translation_work_j,
++                sum.support.plane_rotation_work_j,
++                sum.support.surface_work_j,
++                sum.support.energy_defect_j,
++                sum.viscous_heat_j,
++                sum.relaxation_energy_defect_j,
++                sum.thermal_energy_defect_j,
++                sum.total_energy_defect_j,
++                sum.absolute_energy_defect_j,
++            ]
++            .iter()
++            .all(|v| v.is_finite());
++            if !finite_receipt
++                || !absolute.is_finite()
++                || absolute > tolerance_j
++                || !independent.is_finite()
++                || independent.abs() > tolerance_j
++                || !work.rig_work_j.is_finite()
++                || !work.obstacle_work_j.is_finite()
++            {
++                return Err("adaptive implicit interval work heat defect");
++            }
++            *self = candidate;
++            return Ok(ViscoelasticAdaptiveStep {
++                step: sum,
++                skin_work: work,
++                substeps: count,
++                absolute_energy_defect_j: absolute,
++            });
++        }
++    }
+     fn step_viscoelastic_contacts_impl<const IMPLICIT: bool>(
+         &mut self,
+         targets: Option<&[SupportTarget]>,
+@@ -192,18 +418,13 @@ impl InertialBody {
+             return Err("viscoelastic relaxation energy defect");
+         }
+         let (support, skin_work) = if IMPLICIT {
+-            if next_skin.is_some() {
+-                return Err("implicit embedded skin motion not implemented");
+-            }
+-            (
+-                candidate.advance_implicit_surface(
+-                    targets,
+-                    next_surface.ok_or("implicit step requires prescribed surface")?,
+-                    dt,
+-                    0.5 * energy_tolerance_j,
+-                )?,
+-                super::super::EmbeddedSkinWork::default(),
+-            )
++            candidate.advance_implicit_surface_and_skin(
++                targets,
++                next_surface.ok_or("implicit step requires prescribed surface")?,
++                next_skin,
++                dt,
++                0.5 * energy_tolerance_j,
++            )?
+         } else {
+             candidate.advance_supports_with_contact_motion(
+                 dt,
+@@ -223,7 +444,16 @@ impl InertialBody {
+         let relaxation_defect = first_defect + second_defect;
+         let thermal_defect = first_thermal_defect + second_thermal_defect;
+         let total_defect = support.energy_defect_j + relaxation_defect + thermal_defect;
+-        if !heat.is_finite() || !total_defect.is_finite() || total_defect.abs() > energy_tolerance_j
++        let absolute_defect = support.energy_defect_j.abs()
++            + first_defect.abs()
++            + first_thermal_defect.abs()
++            + second_defect.abs()
++            + second_thermal_defect.abs();
++        if !heat.is_finite()
++            || !total_defect.is_finite()
++            || total_defect.abs() > energy_tolerance_j
++            || !absolute_defect.is_finite()
++            || absolute_defect > energy_tolerance_j
+         {
+             return Err("viscoelastic inertial work heat defect");
+         }
+@@ -235,6 +465,7 @@ impl InertialBody {
+                 relaxation_energy_defect_j: relaxation_defect,
+                 thermal_energy_defect_j: thermal_defect,
+                 total_energy_defect_j: total_defect,
++                absolute_energy_defect_j: absolute_defect,
+             },
+             skin_work,
+         ))
+diff --git a/crates/physics/src/biomechanics/mod.rs b/crates/physics/src/biomechanics/mod.rs
+index 9b42a899..a306f485 100644
+--- a/crates/physics/src/biomechanics/mod.rs
++++ b/crates/physics/src/biomechanics/mod.rs
+@@ -22,7 +22,8 @@ pub use poroelastic::{PoreFluid, PoreTissue};
+ mod inertia;
+ pub use inertia::{
+     DrivenMuscleStep, DrivenSupportStep, InertialBody, InertialDiagnostics, MuscleDynamicStep,
+-    PlaneContact, SolidFilmBinding, SupportTarget, ViscoelasticDynamicStep,
++    PlaneContact, SolidFilmBinding, SupportTarget, ViscoelasticAdaptiveStep,
++    ViscoelasticDynamicStep,
+ };
+ mod invariants;
+ mod myocardium;
+@@ -54,8 +55,8 @@ pub use embedded_contact::{
+ };
+ mod surface_distance;
+ pub use prescribed_surface::{
+-    PrescribedContactFeature, PrescribedContactPathResponse, PrescribedContactStencil,
+-    PrescribedSurfaceResponse, PrescribedTriangleSurface,
++    PrescribedContactBranch, PrescribedContactFeature, PrescribedContactPathResponse,
++    PrescribedContactStencil, PrescribedSurfaceResponse, PrescribedTriangleSurface,
+ };
+ pub use surface_contact::{SurfaceContactLaw, SurfacePrimitive, TissueSurfaceContact};
+ mod tissue_gaps;
+diff --git a/crates/physics/src/biomechanics/prescribed_surface.rs b/crates/physics/src/biomechanics/prescribed_surface.rs
+index 06eb4337..084be011 100644
+--- a/crates/physics/src/biomechanics/prescribed_surface.rs
++++ b/crates/physics/src/biomechanics/prescribed_surface.rs
+@@ -62,6 +62,27 @@ impl PrescribedContactStencil {
+         )
+     }
+ }
++/// One nearest branch at the supplied pose. Bundles retain only bit-identical
++/// evaluated distance and compensated gap, never a geometric proximity tolerance.
++/// Floating-point equality is not a certificate of exact real-arithmetic activity.
++#[derive(Clone, Debug)]
++pub struct PrescribedContactBranch {
++    pub stencil: PrescribedContactStencil,
++    pub potential_j: f64,
++    pub gap_m: f64,
++    pub normal_derivative_n: f64,
++}
++impl PrescribedContactBranch {
++    /// Local potential derivatives, preserving matching body/obstacle coefficients.
++    #[must_use]
++    pub fn gradients(&self) -> ([Vec3; 3], [Vec3; 3]) {
++        let g = scale(self.stencil.normal, self.normal_derivative_n);
++        (
++            self.stencil.body_weights.map(|w| scale(g, w)),
++            self.stencil.obstacle_weights.map(|w| scale(g, -w)),
++        )
++    }
++}
+ /// Five-point Gauss averages along simultaneous linear feature trajectories.
+ #[derive(Clone, Debug)]
+ pub struct PrescribedContactPathResponse {
+@@ -736,6 +757,79 @@ impl PrescribedTriangleSurface {
+         }
+         Ok(stencils)
+     }
++    /// Enumerate nearest feature branches at one pose, grouped by source face pair.
++    /// The selected production branch is first. Additional branches must match
++    /// its evaluated distance and compensated gap exactly and have distinct weights.
++    /// This read-only diagnostic does not alter the potential or choose a mixture.
++    /// # Errors
++    /// Invalid triangles, closed gaps, barrier or geometry overflow.
++    pub fn contact_branch_bundles(
++        &self,
++        body: &[Vec3],
++        faces: &[[usize; 3]],
++    ) -> Result<Vec<Vec<PrescribedContactBranch>>, &'static str> {
++        validate_faces(body, faces)?;
++        let mut bundles = Vec::new();
++        for &face in faces {
++            let triangle = face.map(|i| body[i]);
++            let mut indices = Vec::new();
++            self.index.query_conservative(
++                TriangleBounds::triangle(triangle),
++                self.minimum + self.activation,
++                &mut indices,
++            );
++            indices.sort_unstable();
++            for index in indices {
++                if !self.contact_faces[index] {
++                    continue;
++                }
++                let obstacle = self.faces[index].map(|i| self.positions[i]);
++                let selected = triangle_distance(triangle, obstacle)?;
++                let gap = self.evaluated_gap(triangle, obstacle, selected)?;
++                let (potential, derivative) =
++                    barrier_response_gap(gap, self.activation, self.stiffness)?;
++                if derivative == 0. {
++                    continue;
++                }
++                let curvature = barrier_curvature(gap, self.activation, self.stiffness);
++                if !curvature.is_finite() || curvature < 0. {
++                    return Err("invalid coincident contact curvature");
++                }
++                let mut candidates = vec![selected];
++                candidates.extend(super::surface_distance::triangle_primitive_distances(
++                    triangle, obstacle,
++                )?);
++                let mut retained = Vec::new();
++                let mut weights = Vec::new();
++                for closest in candidates {
++                    if closest.distance.to_bits() != selected.distance.to_bits()
++                        || self.evaluated_gap(triangle, obstacle, closest)?.to_bits()
++                            != gap.to_bits()
++                        || weights.contains(&(closest.a, closest.b))
++                    {
++                        continue;
++                    }
++                    weights.push((closest.a, closest.b));
++                    retained.push(PrescribedContactBranch {
++                        stencil: PrescribedContactStencil {
++                            body_face: face,
++                            obstacle_face: self.faces[index],
++                            obstacle_face_index: index,
++                            body_weights: closest.a,
++                            obstacle_weights: closest.b,
++                            normal: scale(closest.delta, 1. / closest.distance),
++                            normal_curvature_n_m: curvature,
++                        },
++                        potential_j: potential,
++                        gap_m: gap,
++                        normal_derivative_n: derivative,
++                    });
++                }
++                bundles.push(retained);
++            }
++        }
++        Ok(bundles)
++    }
+     /// Inspect the nearest enabled pair inside the barrier activation range.
+     /// This read-only query also reports closed gaps without modifying geometry.
+     /// # Errors
+diff --git a/crates/physics/tests/embedded_skin_contact.rs b/crates/physics/tests/embedded_skin_contact.rs
+index 908dae27..2d881852 100644
+--- a/crates/physics/tests/embedded_skin_contact.rs
++++ b/crates/physics/tests/embedded_skin_contact.rs
+@@ -727,3 +727,859 @@ fn moving_skin_failure_rolls_back_maxwell_history_and_thermal_storage() {
+     );
+     assert_eq!(format!("{body:?}"), before);
+ }
++
++#[test]
++fn implicit_moving_skin_admits_independent_energy_and_commits_pose_atomically() {
++    use std::sync::Arc;
++    let start = stationary();
++    let mut body = inertial_skin([0.; 3]);
++    body.set_stationary_embedded_contact(Some(start.clone()))
++        .unwrap();
++    // Native owner is required by this coupled API. Isolate embedded work here.
++    let original = obstacle();
++    let far = Arc::new(
++        original
++            .with_positions(
++                original
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] + 10.])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    body.set_prescribed_surface(Some(far.clone())).unwrap();
++    let next = start
++        .with_pose(
++            REST.map(|p| [p[0], p[1], p[2] + 4e-7]).to_vec(),
++            SKIN.map(|p| [p[0], p[1], p[2] + 1e-6]).to_vec(),
++            Arc::new(
++                start
++                    .obstacle()
++                    .with_positions(
++                        start
++                            .obstacle()
++                            .positions()
++                            .iter()
++                            .map(|p| [p[0], p[1], p[2] + 2e-7])
++                            .collect(),
++                    )
++                    .unwrap(),
++            ),
++        )
++        .unwrap();
++    let before = body.diagnostics().unwrap();
++    let expected_pose = format!("{next:?}");
++    let result = body
++        .step_implicit_with_surface_and_skin_motion(None, far.clone(), next, 1e-3, 1e-8)
++        .unwrap();
++    let after = body.diagnostics().unwrap();
++    let defect = after.kinetic_j - before.kinetic_j + after.potential_j
++        - before.potential_j
++        - result.surface_work_j;
++    assert!(result.surface_work_j.abs() > 1e-10);
++    assert!(defect.abs() <= 1e-8);
++    assert!((defect - result.energy_defect_j).abs() < 1e-14);
++    assert_eq!(
++        expected_pose,
++        format!("{:?}", body.body().stationary_embedded_contact().unwrap())
++    );
++    let saved = format!("{body:?}");
++    let current = body.body().stationary_embedded_contact().unwrap().clone();
++    let crossing = current
++        .with_pose(
++            REST.to_vec(),
++            SKIN.map(|p| [p[0], p[1], p[2] - 0.1]).to_vec(),
++            Arc::new(current.obstacle().clone()),
++        )
++        .unwrap();
++    assert!(
++        body.step_implicit_with_surface_and_skin_motion(None, far, crossing, 1e-3, 1e-8)
++            .is_err()
++    );
++    assert_eq!(saved, format!("{body:?}"));
++}
++
++#[test]
++fn implicit_moving_skin_stiffness_sweep_and_work_rejection_are_transactional() {
++    use physics::biomechanics::StationaryEmbeddedContact;
++    use std::sync::Arc;
++    for stiffness in [100., 10_000., 1_000_000.] {
++        let skin_obstacle = Arc::new(
++            PrescribedTriangleSurface::new(
++                obstacle().positions().to_vec(),
++                vec![[0, 1, 2]],
++                0.001,
++                0.03,
++                stiffness,
++            )
++            .unwrap(),
++        );
++        let start = StationaryEmbeddedContact::new(
++            Arc::new(contact()),
++            REST.to_vec(),
++            SKIN.to_vec(),
++            skin_obstacle,
++        )
++        .unwrap();
++        let mut body = inertial_skin([0.; 3]);
++        body.set_stationary_embedded_contact(Some(start.clone()))
++            .unwrap();
++        let original = obstacle();
++        let far = Arc::new(
++            original
++                .with_positions(
++                    original
++                        .positions()
++                        .iter()
++                        .map(|p| [p[0], p[1], p[2] + 10.])
++                        .collect(),
++                )
++                .unwrap(),
++        );
++        body.set_prescribed_surface(Some(far.clone())).unwrap();
++        let next = start
++            .with_pose(
++                REST.to_vec(),
++                SKIN.map(|p| [p[0], p[1], p[2] + 1e-5]).to_vec(),
++                Arc::new(start.obstacle().clone()),
++            )
++            .unwrap();
++        let before = body.diagnostics().unwrap();
++        let result = body
++            .step_implicit_with_surface_and_skin_motion(None, far.clone(), next, 1e-3, 1e-8)
++            .unwrap_or_else(|e| panic!("stiffness={stiffness} {e}"));
++        let after = body.diagnostics().unwrap();
++        let defect = after.kinetic_j - before.kinetic_j + after.potential_j
++            - before.potential_j
++            - result.surface_work_j;
++        assert!(
++            defect.abs() <= 1e-8,
++            "stiffness={stiffness} defect={defect}"
++        );
++        let saved = format!("{body:?}");
++        let current = body.body().stationary_embedded_contact().unwrap().clone();
++        let next = current
++            .with_pose(
++                REST.to_vec(),
++                SKIN.map(|p| [p[0], p[1], p[2] + 0.005]).to_vec(),
++                Arc::new(current.obstacle().clone()),
++            )
++            .unwrap();
++        assert!(
++            body.step_implicit_with_surface_and_skin_motion(None, far, next, 1e-3, 1e-30)
++                .is_err()
++        );
++        assert_eq!(saved, format!("{body:?}"));
++    }
++}
++
++#[test]
++fn implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators() {
++    use std::sync::Arc;
++    let mut body = maxwell_skin();
++    // Tilted surface has a unique closest body vertex; both contacts are active.
++    let native = Arc::new(
++        PrescribedTriangleSurface::new(
++            vec![[-3., -3., 0.135], [3., -3., 0.015], [0., 3., -0.105]],
++            vec![[0, 1, 2]],
++            0.001,
++            0.03,
++            100.,
++        )
++        .unwrap(),
++    );
++    body.set_prescribed_surface(Some(native.clone())).unwrap();
++    let next_native = Arc::new(
++        native
++            .with_positions(
++                native
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] + 2e-7])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    let before = body.diagnostics().unwrap();
++    let thermal_before = body.maxwell_sensible_energy_j().unwrap()[0];
++    let start = body.body().stationary_embedded_contact().unwrap().clone();
++    let next = start
++        .with_pose(
++            REST.to_vec(),
++            SKIN.map(|p| [p[0], p[1], p[2] + 1e-6]).to_vec(),
++            Arc::new(
++                start
++                    .obstacle()
++                    .with_positions(
++                        start
++                            .obstacle()
++                            .positions()
++                            .iter()
++                            .map(|p| [p[0], p[1], p[2] + 1e-7])
++                            .collect(),
++                    )
++                    .unwrap(),
++            ),
++        )
++        .unwrap();
++    let expected = format!("{next:?}");
++    let (report, work) = body
++        .step_viscoelastic_implicit_with_surface_and_skin_motion(
++            None,
++            next_native,
++            next,
++            1e-3,
++            1e-6,
++        )
++        .unwrap();
++    let after = body.diagnostics().unwrap();
++    assert!(report.viscous_heat_j > 0.);
++    assert!(work.rig_work_j.abs() > 1e-10 && work.obstacle_work_j.abs() > 1e-10);
++    let native_work = report.support.surface_work_j - work.rig_work_j - work.obstacle_work_j;
++    assert!(native_work.abs() > 1e-10);
++    let independent = after.kinetic_j - before.kinetic_j + after.potential_j - before.potential_j
++        + report.viscous_heat_j
++        - report.support.surface_work_j;
++    assert!(independent.abs() <= 1e-6, "defect={independent}");
++    assert!((independent - report.total_energy_defect_j).abs() < 1e-9);
++    assert!(
++        (body.maxwell_sensible_energy_j().unwrap()[0] - thermal_before - report.viscous_heat_j)
++            .abs()
++            < 1e-9
++    );
++    assert!(body.maxwell_temperatures_kelvin().unwrap()[0] > 300.);
++    assert_eq!(
++        expected,
++        format!("{:?}", body.body().stationary_embedded_contact().unwrap())
++    );
++    // A crossing fails after the first relaxation, with every owner rolled back.
++    let saved = format!("{body:?}");
++    let current = body.body().stationary_embedded_contact().unwrap().clone();
++    let crossing = current
++        .with_pose(
++            REST.to_vec(),
++            SKIN.map(|p| [p[0], p[1], p[2] - 0.1]).to_vec(),
++            Arc::new(current.obstacle().clone()),
++        )
++        .unwrap();
++    let native = Arc::new(body.prescribed_surface().unwrap().clone());
++    let error = body
++        .step_viscoelastic_implicit_with_surface_and_skin_motion(None, native, crossing, 1e-3, 1e-6)
++        .unwrap_err();
++    assert_ne!(error, "viscoelastic relaxation energy defect");
++    assert_eq!(saved, format!("{body:?}"));
++}
++
++#[test]
++fn implicit_maxwell_parallel_native_feature_quadrature_closes_full_step() {
++    use std::sync::Arc;
++    let mut body = maxwell_skin();
++    let original = obstacle();
++    let native = Arc::new(
++        original
++            .with_positions(
++                original
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] - 0.015])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    body.set_prescribed_surface(Some(native.clone())).unwrap();
++    let next_native = Arc::new(
++        native
++            .with_positions(
++                native
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] + 2e-7])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    let start = body.body().stationary_embedded_contact().unwrap().clone();
++    let next = start
++        .with_pose(
++            REST.to_vec(),
++            SKIN.map(|p| [p[0], p[1], p[2] + 1e-6]).to_vec(),
++            Arc::new(
++                start
++                    .obstacle()
++                    .with_positions(
++                        start
++                            .obstacle()
++                            .positions()
++                            .iter()
++                            .map(|p| [p[0], p[1], p[2] + 1e-7])
++                            .collect(),
++                    )
++                    .unwrap(),
++            ),
++        )
++        .unwrap();
++    let before = body.diagnostics().unwrap();
++    let thermal_before = body.maxwell_sensible_energy_j().unwrap()[0];
++    let expected = format!("{next:?}");
++    let (report, work) = body
++        .step_viscoelastic_implicit_with_surface_and_skin_motion(
++            None,
++            next_native.clone(),
++            next,
++            1e-3,
++            1e-6,
++        )
++        .unwrap();
++    let after = body.diagnostics().unwrap();
++    let independent = after.kinetic_j - before.kinetic_j + after.potential_j - before.potential_j
++        + report.viscous_heat_j
++        - report.support.surface_work_j;
++    assert!(independent.abs() <= 1e-6);
++    assert!(report.absolute_energy_defect_j <= 1e-6);
++    assert!(
++        (body.maxwell_sensible_energy_j().unwrap()[0] - thermal_before - report.viscous_heat_j)
++            .abs()
++            < 1e-9
++    );
++    assert!(work.rig_work_j.abs() > 1e-10 && work.obstacle_work_j.abs() > 1e-10);
++    assert_eq!(
++        body.prescribed_surface().unwrap().positions(),
++        next_native.positions()
++    );
++    assert_eq!(
++        expected,
++        format!("{:?}", body.body().stationary_embedded_contact().unwrap())
++    );
++    eprintln!(
++        "REFINED_PARALLEL_FULL_STEP independent_defect_j={independent:.17e} absolute_defects_j={:.17e}",
++        report.absolute_energy_defect_j
++    );
++}
++
++#[test]
++fn parallel_native_terminal_feature_kink_has_distinct_one_sided_derivatives() {
++    let start = [[0., 0., 0.], [1., 0., 0.], [0.1, 1., 0.], [0., 0., 1.]];
++    let end = [
++        [
++            1.5988285628445842e-7,
++            1.5995303673943793e-7,
++            7.998402483563607e-8,
++        ],
++        [
++            1.00000000069816,
++            -1.6065113127211587e-7,
++            4.839065317682925e-8,
++        ],
++        [
++            0.09999983941879118,
++            1.0000000006980625,
++            6.102800645147528e-8,
++        ],
++        [
++            1.647786858593217e-13,
++            1.5289551000209675e-13,
++            1.0000000154309676,
++        ],
++    ];
++    let original = obstacle();
++    let current = original
++        .with_positions(
++            original
++                .positions()
++                .iter()
++                .map(|p| [p[0], p[1], p[2] - 0.015])
++                .collect(),
++        )
++        .unwrap();
++    let next = current
++        .with_positions(
++            current
++                .positions()
++                .iter()
++                .map(|p| [p[0], p[1], p[2] + 2e-7])
++                .collect(),
++        )
++        .unwrap();
++    let faces = maxwell_skin().body().surface();
++    let response = current.path_response(&next, &start, &end, &faces).unwrap();
++    for t in [
++        0.046910077030668_f64,
++        0.230765344947158,
++        0.5,
++        0.769234655052842,
++        0.953089922969332,
++    ] {
++        let world: Vec<[f64; 3]> = start
++            .iter()
++            .zip(end)
++            .map(|(a, b)| std::array::from_fn(|k| t.mul_add(b[k] - a[k], a[k])))
++            .collect();
++        let posed = current
++            .with_positions(
++                current
++                    .positions()
++                    .iter()
++                    .zip(next.positions())
++                    .map(|(a, b)| std::array::from_fn(|k| t.mul_add(b[k] - a[k], a[k])))
++                    .collect(),
++            )
++            .unwrap();
++        let r = posed.response(&world, &faces).unwrap();
++        let branch_counts: Vec<_> = posed
++            .contact_branch_bundles(&world, &faces)
++            .unwrap()
++            .iter()
++            .map(Vec::len)
++            .collect();
++        eprintln!("PARALLEL_BRANCH_COUNTS t={t} counts={branch_counts:?}");
++        let mut lower = world[2][2] - 1e-10;
++        let mut upper = world[2][2] + 1e-10;
++        let slope_at = |z: f64| {
++            let mut trial = world.clone();
++            trial[2][2] = z;
++            posed.response(&trial, &faces).unwrap().body_gradient_n[2][2]
++        };
++        assert!(slope_at(lower) < -5. && slope_at(upper) > -5.);
++        let mut iterations = 0;
++        for _ in 0..96 {
++            let middle = lower + 0.5 * (upper - lower);
++            if middle == lower || middle == upper {
++                break;
++            }
++            if slope_at(middle) < -5. {
++                lower = middle;
++            } else {
++                upper = middle;
++            }
++            iterations += 1;
++        }
++        assert_eq!(lower.next_up(), upper, "event bracket is not adjacent");
++        assert!(slope_at(upper) - slope_at(lower) > 3.);
++        eprintln!(
++            "PARALLEL_EVENT t={t:.17e} lower_z={lower:.17e} upper_z={upper:.17e} width_m={:.17e} lower_slope_n={:.17e} upper_slope_n={:.17e} iterations={iterations}",
++            upper - lower,
++            slope_at(lower),
++            slope_at(upper)
++        );
++        let mut plus = world.clone();
++        let mut minus = world;
++        let h = 1e-10;
++        plus[2][2] += h;
++        minus[2][2] -= h;
++        let plus_energy = posed.response(&plus, &faces).unwrap().potential_j;
++        let minus_energy = posed.response(&minus, &faces).unwrap().potential_j;
++        let forward = (plus_energy - r.potential_j) / h;
++        let backward = (r.potential_j - minus_energy) / h;
++        let fd = (forward + backward) * 0.5;
++        assert!((forward - backward).abs() > 3., "feature kink disappeared");
++        assert!(
++            r.body_gradient_n[2][2] >= forward.min(backward) - 1e-4
++                && r.body_gradient_n[2][2] <= forward.max(backward) + 1e-4
++        );
++        eprintln!("PARALLEL_ONE_SIDED t={t} forward_n={forward} backward_n={backward}");
++        eprintln!(
++            "PARALLEL_SAMPLE t={t} fd_n={fd} gradient_n={} error_n={}",
++            r.body_gradient_n[2][2],
++            fd - r.body_gradient_n[2][2]
++        );
++    }
++
++    for h in [1e-9, 1e-10, 1e-11, 1e-12] {
++        let mut maximum: f64 = 0.;
++        let mut worst = (0, 0, 0., 0.);
++        for node in 0..4 {
++            for axis in 0..3 {
++                let mut plus = end;
++                let mut minus = end;
++                // Search variable is midpoint displacement, endpoint derivative factor 2.
++                plus[node][axis] += 2. * h;
++                minus[node][axis] -= 2. * h;
++                let fd = (current
++                    .path_response(&next, &start, &plus, &faces)
++                    .unwrap()
++                    .midpoint_objective_j
++                    - current
++                        .path_response(&next, &start, &minus, &faces)
++                        .unwrap()
++                        .midpoint_objective_j)
++                    / (2. * h);
++                let error = (fd - response.body_gradient_n[node][axis]).abs();
++                if error > maximum {
++                    maximum = error;
++                    worst = (node, axis, fd, response.body_gradient_n[node][axis]);
++                }
++            }
++        }
++        assert!(
++            (0.4..0.6).contains(&maximum),
++            "known potential/gradient mismatch changed: {maximum}"
++        );
++        eprintln!("PARALLEL_GRADIENT h={h:.17e} maximum_error_n={maximum:.17e} worst={worst:?}");
++    }
++}
++
++#[test]
++fn same_pose_native_branch_bundles_preserve_selected_response_and_force_balance() {
++    let surface = obstacle();
++    let points = [[0., 0., 0.015], [0.2, 0., 0.015], [0., 0.2, 0.015]];
++    let faces = [[0, 1, 2]];
++    let before = format!("{surface:?}");
++    let bundles = surface.contact_branch_bundles(&points, &faces).unwrap();
++    assert_eq!(bundles.len(), 1);
++    assert!(bundles[0].len() >= 3);
++    let original = surface.response(&points, &faces).unwrap();
++    let selected = &bundles[0][0];
++    let (body, obstacle_gradient) = selected.gradients();
++    assert_eq!(
++        selected.potential_j.to_bits(),
++        original.potential_j.to_bits()
++    );
++    for node in 0..3 {
++        for axis in 0..3 {
++            assert!((body[node][axis] - original.body_gradient_n[node][axis]).abs() < 1e-14);
++            assert!(
++                (obstacle_gradient[node][axis] - original.obstacle_gradient_n[node][axis]).abs()
++                    < 1e-14
++            );
++        }
++    }
++    for branch in &bundles[0] {
++        assert_eq!(branch.gap_m.to_bits(), selected.gap_m.to_bits());
++        assert_eq!(branch.potential_j.to_bits(), selected.potential_j.to_bits());
++        let (g, b) = branch.gradients();
++        for axis in 0..3 {
++            let resultant: f64 = g.iter().chain(&b).map(|p| p[axis]).sum();
++            assert!(resultant.abs() < 1e-13);
++        }
++        let cross = |p: [f64; 3], f: [f64; 3]| {
++            [
++                p[1] * f[2] - p[2] * f[1],
++                p[2] * f[0] - p[0] * f[2],
++                p[0] * f[1] - p[1] * f[0],
++            ]
++        };
++        let mut torque = [0.; 3];
++        for (p, f) in points
++            .iter()
++            .zip(g)
++            .chain(surface.positions().iter().zip(b))
++        {
++            let t = cross(*p, f);
++            for axis in 0..3 {
++                torque[axis] += t[axis];
++            }
++        }
++        assert!(torque.iter().all(|t| t.abs() < 1e-13));
++    }
++    // A tilt selects a unique lower vertex; distant features are never bundled.
++    let tilted = [[0., 0., 0.015], [0.2, 0., 0.02], [0., 0.2, 0.025]];
++    let unique = surface.contact_branch_bundles(&tilted, &faces).unwrap();
++    assert_eq!(unique[0].len(), 1);
++    assert_eq!(before, format!("{surface:?}"));
++    assert!(
++        surface
++            .contact_branch_bundles(&points, &[[0, 1, 99]])
++            .is_err()
++    );
++}
++
++#[test]
++fn adaptive_implicit_maxwell_admits_full_parallel_contact_interval_and_rolls_back_limit() {
++    use std::sync::Arc;
++    let mut body = maxwell_skin();
++    let original = obstacle();
++    let native = Arc::new(
++        original
++            .with_positions(
++                original
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] - 0.015])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    body.set_prescribed_surface(Some(native.clone())).unwrap();
++    let next_native = Arc::new(
++        native
++            .with_positions(
++                native
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] + 2e-7])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    let start = body.body().stationary_embedded_contact().unwrap().clone();
++    let next = start
++        .with_pose(
++            REST.to_vec(),
++            SKIN.map(|p| [p[0], p[1], p[2] + 1e-6]).to_vec(),
++            Arc::new(
++                start
++                    .obstacle()
++                    .with_positions(
++                        start
++                            .obstacle()
++                            .positions()
++                            .iter()
++                            .map(|p| [p[0], p[1], p[2] + 1e-7])
++                            .collect(),
++                    )
++                    .unwrap(),
++            ),
++        )
++        .unwrap();
++    let saved = format!("{body:?}");
++    assert!(
++        body.step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
++            None,
++            next_native.clone(),
++            next.clone(),
++            1e-3,
++            1e-30,
++            1
++        )
++        .is_err()
++    );
++    assert_eq!(saved, format!("{body:?}"));
++    for invalid in [0, 3, 512] {
++        assert!(
++            body.step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
++                None,
++                next_native.clone(),
++                next.clone(),
++                1e-3,
++                1e-6,
++                invalid
++            )
++            .is_err()
++        );
++        assert_eq!(saved, format!("{body:?}"));
++    }
++    let before = body.diagnostics().unwrap();
++    let thermal_before = body.maxwell_sensible_energy_j().unwrap()[0];
++    let expected = format!("{next:?}");
++    let result = body
++        .step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
++            None,
++            next_native.clone(),
++            next,
++            1e-3,
++            1e-6,
++            256,
++        )
++        .unwrap();
++    let after = body.diagnostics().unwrap();
++    assert_eq!(result.substeps, 1);
++    assert!(result.absolute_energy_defect_j <= 1e-6);
++    let independent = after.kinetic_j - before.kinetic_j + after.potential_j - before.potential_j
++        + result.step.viscous_heat_j
++        - result.step.support.support_work_j
++        - result.step.support.surface_work_j;
++    assert!(independent.abs() <= 1e-6);
++    assert!(result.step.viscous_heat_j > 0.);
++    assert!(
++        (body.maxwell_sensible_energy_j().unwrap()[0]
++            - thermal_before
++            - result.step.viscous_heat_j)
++            .abs()
++            < 1e-9
++    );
++    assert_eq!(
++        body.prescribed_surface().unwrap().positions(),
++        next_native.positions()
++    );
++    assert_eq!(
++        expected,
++        format!("{:?}", body.body().stationary_embedded_contact().unwrap())
++    );
++    eprintln!(
++        "ADAPTIVE_PARALLEL substeps={} nominal_dt_s=1e-3 independent_defect_j={independent:.17e} absolute_defects_j={:.17e}",
++        result.substeps, result.absolute_energy_defect_j
++    );
++}
++
++fn parallel_contact_trajectory(intervals: usize, adaptive: bool) -> (Vec<[f64; 3]>, Vec<[f64; 3]>) {
++    parallel_contact_trajectory_with_budget(intervals, adaptive, 8e-6).unwrap()
++}
++fn parallel_contact_trajectory_with_budget(
++    intervals: usize,
++    adaptive: bool,
++    budget: f64,
++) -> Result<(Vec<[f64; 3]>, Vec<[f64; 3]>), (usize, &'static str)> {
++    use std::sync::Arc;
++    let mut body = maxwell_skin();
++    let original = obstacle();
++    let native = Arc::new(
++        original
++            .with_positions(
++                original
++                    .positions()
++                    .iter()
++                    .map(|p| [p[0], p[1], p[2] - 0.015])
++                    .collect(),
++            )
++            .unwrap(),
++    );
++    body.set_prescribed_surface(Some(native.clone())).unwrap();
++    let skin = body.body().stationary_embedded_contact().unwrap().clone();
++    let before = body.diagnostics().unwrap();
++    let thermal_before = body.maxwell_sensible_energy_j().unwrap()[0];
++    let mut heat = 0.;
++    let mut work = 0.;
++    let mut absolute = 0.;
++    let mut substeps = 0;
++    let duration = 0.008;
++    let mut kinematic_absolute = 0.;
++    for index in 1..=intervals {
++        let time = duration * index as f64 / intervals as f64;
++        let next_native = Arc::new(
++            native
++                .with_positions(
++                    native
++                        .positions()
++                        .iter()
++                        .map(|p| [p[0], p[1], p[2] + 2e-4 * time])
++                        .collect(),
++                )
++                .unwrap(),
++        );
++        let next = skin
++            .with_pose(
++                REST.to_vec(),
++                SKIN.map(|p| [p[0], p[1], p[2] + 1e-3 * time]).to_vec(),
++                Arc::new(
++                    skin.obstacle()
++                        .with_positions(
++                            skin.obstacle()
++                                .positions()
++                                .iter()
++                                .map(|p| [p[0], p[1], p[2] + 1e-4 * time])
++                                .collect(),
++                        )
++                        .unwrap(),
++                ),
++            )
++            .unwrap();
++        let snapshot = (budget < 8e-6).then(|| format!("{body:?}"));
++        let old_positions = body.body().positions().to_vec();
++        let old_velocities = body.velocities().to_vec();
++        let (result, substep_count) = if adaptive {
++            let result = body
++                .step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
++                    None,
++                    next_native,
++                    next,
++                    duration / intervals as f64,
++                    budget / intervals as f64,
++                    256,
++                )
++                .map_err(|e| {
++                    if let Some(before)=snapshot.as_ref() {assert_eq!(*before,format!("{body:?}"));}
++                    eprintln!("TRAJECTORY_REJECTION intervals={intervals} index={index} budget_j={budget} accepted_kinematic_absolute_m={kinematic_absolute:.17e} reason={e:?}");
++                    (index,e)
++                })?;
++            (result.step, result.substeps)
++        } else {
++            let (result, _) = body
++                .step_viscoelastic_implicit_with_surface_and_skin_motion(
++                    None,
++                    next_native,
++                    next,
++                    duration / intervals as f64,
++                    budget / intervals as f64,
++                )
++                .map_err(|e| {
++                    if let Some(before)=snapshot.as_ref() {assert_eq!(*before,format!("{body:?}"));}
++                    eprintln!("TRAJECTORY_REJECTION intervals={intervals} index={index} budget_j={budget} accepted_kinematic_absolute_m={kinematic_absolute:.17e} reason={e:?}");
++                    (index,e)
++                })?;
++            (result, 1)
++        };
++        for node in 0..old_positions.len() {
++            let norm = (0..3)
++                .map(|axis| {
++                    let dx = body.body().positions()[node][axis] - old_positions[node][axis];
++                    let midpoint_dx = 0.5
++                        * (body.velocities()[node][axis] + old_velocities[node][axis])
++                        * duration
++                        / intervals as f64;
++                    (dx - midpoint_dx).powi(2)
++                })
++                .sum::<f64>()
++                .sqrt();
++            kinematic_absolute += norm;
++        }
++        heat += result.viscous_heat_j;
++        work += result.support.support_work_j
++            + result.support.plane_work_j
++            + result.support.surface_work_j;
++        absolute += result.absolute_energy_defect_j;
++        substeps += substep_count;
++    }
++    let after = body.diagnostics().unwrap();
++    let independent =
++        after.kinetic_j - before.kinetic_j + after.potential_j - before.potential_j + heat - work;
++    assert!(independent.abs() <= budget);
++    assert!(absolute <= budget);
++    assert!((body.maxwell_sensible_energy_j().unwrap()[0] - thermal_before - heat).abs() < 1e-9);
++    assert!(heat > 0.);
++    eprintln!(
++        "CONTACT_TRAJECTORY budget_j={budget:.17e} kinematic_absolute_m={kinematic_absolute:.17e} adaptive={adaptive} intervals={intervals} duration_s={duration} substeps={substeps} independent_defect_j={independent:.17e} absolute_defects_j={absolute:.17e}"
++    );
++    Ok((body.body().positions().to_vec(), body.velocities().to_vec()))
++}
++fn trajectory_distance(
++    a: &(Vec<[f64; 3]>, Vec<[f64; 3]>),
++    b: &(Vec<[f64; 3]>, Vec<[f64; 3]>),
++) -> (f64, f64) {
++    let norm = |a: &[[f64; 3]], b: &[[f64; 3]]| {
++        a.iter()
++            .zip(b)
++            .flat_map(|(a, b)| (0..3).map(move |k| (a[k] - b[k]).powi(2)))
++            .sum::<f64>()
++            .sqrt()
++    };
++    (norm(&a.0, &b.0), norm(&a.1, &b.1))
++}
++#[test]
++fn adaptive_implicit_parallel_contact_trajectory_refines_with_contact_quadrature() {
++    let states = [8, 16, 32].map(|n| parallel_contact_trajectory(n, true));
++    let coarse = trajectory_distance(&states[0], &states[2]);
++    let fine = trajectory_distance(&states[1], &states[2]);
++    assert!(fine.0 < coarse.0);
++    eprintln!("UPDATED_ADAPTIVE_ERRORS coarse={coarse:?} fine={fine:?}");
++    assert!(fine.1 < coarse.1);
++}
++#[test]
++fn fixed_implicit_parallel_contact_trajectory_records_refinement_limit() {
++    let states = [512, 1024, 2048, 4096, 8192].map(|n| parallel_contact_trajectory(n, false));
++    for index in 0..4 {
++        let discrepancy = trajectory_distance(&states[index], &states[4]);
++        eprintln!(
++            "FIXED_REFERENCE intervals={} reference_intervals=8192 position_m={:.17e} velocity_m_s={:.17e}",
++            512 * (1 << index),
++            discrepancy.0,
++            discrepancy.1
++        );
++        assert!(discrepancy.0.is_finite() && discrepancy.1.is_finite());
++    }
++    // Fixed schedules exclude adaptive scheduling as the sole cause.
++    assert!(trajectory_distance(&states[1], &states[4]).1.is_finite());
++}
++
++#[test]
++fn fixed_parallel_contact_stricter_budget_comparison() {
++    let original = parallel_contact_trajectory_with_budget(8192, false, 8e-6).unwrap();
++    let strict = parallel_contact_trajectory_with_budget(8192, false, 8e-8).unwrap();
++    let reference = parallel_contact_trajectory_with_budget(16384, false, 8e-8).unwrap();
++    let original_error = trajectory_distance(&original, &reference);
++    let strict_error = trajectory_distance(&strict, &reference);
++    eprintln!(
++        "STRICT_BUDGET_ADMITTED original_error={original_error:?} strict_error={strict_error:?}"
++    );
++    assert!(strict_error.1.is_finite());
++}

@@ -7,6 +7,7 @@ use super::surface_distance::{
 };
 use super::{Vec3, add, cross, dot, scale, sub};
 use crate::triangle_index::{TriangleBounds, TriangleIndex};
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 #[derive(Clone, Debug)]
@@ -14,6 +15,7 @@ pub struct PrescribedTriangleSurface {
     positions: Arc<[Vec3]>,
     faces: Arc<[[usize; 3]]>,
     contact_faces: Arc<[bool]>,
+    body_contact_domains: Arc<BTreeMap<[usize; 3], Arc<[bool]>>>,
     minimum: f64,
     activation: f64,
     stiffness: f64,
@@ -59,6 +61,27 @@ impl PrescribedContactStencil {
         (
             self.body_weights.map(|weight| scale(value, weight)),
             self.obstacle_weights.map(|weight| scale(value, -weight)),
+        )
+    }
+}
+/// One nearest branch at the supplied pose. Bundles retain only bit-identical
+/// evaluated distance and compensated gap, never a geometric proximity tolerance.
+/// Floating-point equality is not a certificate of exact real-arithmetic activity.
+#[derive(Clone, Debug)]
+pub struct PrescribedContactBranch {
+    pub stencil: PrescribedContactStencil,
+    pub potential_j: f64,
+    pub gap_m: f64,
+    pub normal_derivative_n: f64,
+}
+impl PrescribedContactBranch {
+    /// Local potential derivatives, preserving matching body/obstacle coefficients.
+    #[must_use]
+    pub fn gradients(&self) -> ([Vec3; 3], [Vec3; 3]) {
+        let g = scale(self.stencil.normal, self.normal_derivative_n);
+        (
+            self.stencil.body_weights.map(|w| scale(g, w)),
+            self.stencil.obstacle_weights.map(|w| scale(g, -w)),
         )
     }
 }
@@ -466,6 +489,7 @@ impl PrescribedTriangleSurface {
             swept_from: None,
             positions: positions.into(),
             contact_faces: vec![true; faces.len()].into(),
+            body_contact_domains: Arc::new(BTreeMap::new()),
             faces: faces.into(),
             minimum: minimum_distance_m,
             activation: activation_gap_m,
@@ -552,6 +576,57 @@ impl PrescribedTriangleSurface {
     pub fn contact_faces(&self) -> &[bool] {
         &self.contact_faces
     }
+    /// Author fixed obstacle-face masks for groups of body triangles. This maps
+    /// regional exclusions into a global body node space without removing source
+    /// geometry or duplicating the contact law. Body triangle vertex order may
+    /// rotate/reverse; canonical node identities determine membership.
+    /// Unlisted body triangles retain the global obstacle mask. Listed triangles
+    /// require both their domain mask and the global mask to enable a pair.
+    /// This creates a new contact owner; pose staging retains that owner exactly.
+    /// # Errors
+    /// Wrong mask size, empty group, invalid/duplicate body triangle identities,
+    /// or more than the existing 131072 body-face/65536 node geometry budget.
+    pub fn with_body_contact_domains(
+        &self,
+        domains: Vec<(Vec<[usize; 3]>, Vec<bool>)>,
+    ) -> Result<Self, &'static str> {
+        let mut rows = BTreeMap::new();
+        for (faces, enabled) in domains {
+            if faces.is_empty() || enabled.len() != self.faces.len() {
+                return Err("invalid prescribed body contact domain");
+            }
+            let mask: Arc<[bool]> = enabled.into();
+            for mut face in faces {
+                face.sort_unstable();
+                if face[2] >= 65536
+                    || face.windows(2).any(|p| p[0] == p[1])
+                    || rows.insert(face, mask.clone()).is_some()
+                    || rows.len() > 131072
+                {
+                    return Err("invalid or duplicate prescribed body domain triangle");
+                }
+            }
+        }
+        Ok(Self {
+            body_contact_domains: Arc::new(rows),
+            ..self.clone()
+        })
+    }
+    #[must_use]
+    pub fn body_contact_faces(&self, mut face: [usize; 3]) -> Option<&[bool]> {
+        face.sort_unstable();
+        self.body_contact_domains.get(&face).map(AsRef::as_ref)
+    }
+    fn pair_enabled(&self, face: &[usize; 3], obstacle: usize) -> bool {
+        self.contact_faces[obstacle]
+            && (self.body_contact_domains.is_empty()
+                || self
+                    .body_contact_faces(*face)
+                    .is_none_or(|mask| mask[obstacle]))
+    }
+    pub(super) fn has_body_contact_domains(&self) -> bool {
+        !self.body_contact_domains.is_empty()
+    }
     pub fn minimum_distance_m(&self) -> f64 {
         self.minimum
     }
@@ -561,9 +636,23 @@ impl PrescribedTriangleSurface {
     pub fn pair_stiffness_n_m(&self) -> f64 {
         self.stiffness
     }
+    /// Whether a staged pose retains this exact geometry, law and domain owner.
+    /// Geometry positions may differ; no force evaluation or mutation is performed.
+    #[must_use]
+    pub fn same_contact_owner(&self, other: &Self) -> bool {
+        self.same_owner(other).is_ok()
+    }
     pub(super) fn same_owner(&self, other: &Self) -> Result<(), &'static str> {
+        self.same_geometry_owner(other)?;
+        if !Arc::ptr_eq(&self.contact_faces, &other.contact_faces)
+            || !Arc::ptr_eq(&self.body_contact_domains, &other.body_contact_domains)
+        {
+            return Err("prescribed surface identity or contact law changed");
+        }
+        Ok(())
+    }
+    pub(super) fn same_geometry_owner(&self, other: &Self) -> Result<(), &'static str> {
         if !Arc::ptr_eq(&self.faces, &other.faces)
-            || !Arc::ptr_eq(&self.contact_faces, &other.contact_faces)
             || self.minimum != other.minimum
             || self.activation != other.activation
             || self.stiffness != other.stiffness
@@ -691,7 +780,7 @@ impl PrescribedTriangleSurface {
             );
             candidates.sort_unstable();
             for index in candidates {
-                if !self.contact_faces[index] {
+                if !self.pair_enabled(&face, index) {
                     continue;
                 }
                 // Same conservative lower bound as force evaluation. Only
@@ -736,6 +825,79 @@ impl PrescribedTriangleSurface {
         }
         Ok(stencils)
     }
+    /// Enumerate nearest feature branches at one pose, grouped by source face pair.
+    /// The selected production branch is first. Additional branches must match
+    /// its evaluated distance and compensated gap exactly and have distinct weights.
+    /// This read-only diagnostic does not alter the potential or choose a mixture.
+    /// # Errors
+    /// Invalid triangles, closed gaps, barrier or geometry overflow.
+    pub fn contact_branch_bundles(
+        &self,
+        body: &[Vec3],
+        faces: &[[usize; 3]],
+    ) -> Result<Vec<Vec<PrescribedContactBranch>>, &'static str> {
+        validate_faces(body, faces)?;
+        let mut bundles = Vec::new();
+        for &face in faces {
+            let triangle = face.map(|i| body[i]);
+            let mut indices = Vec::new();
+            self.index.query_conservative(
+                TriangleBounds::triangle(triangle),
+                self.minimum + self.activation,
+                &mut indices,
+            );
+            indices.sort_unstable();
+            for index in indices {
+                if !self.pair_enabled(&face, index) {
+                    continue;
+                }
+                let obstacle = self.faces[index].map(|i| self.positions[i]);
+                let selected = triangle_distance(triangle, obstacle)?;
+                let gap = self.evaluated_gap(triangle, obstacle, selected)?;
+                let (potential, derivative) =
+                    barrier_response_gap(gap, self.activation, self.stiffness)?;
+                if derivative == 0. {
+                    continue;
+                }
+                let curvature = barrier_curvature(gap, self.activation, self.stiffness);
+                if !curvature.is_finite() || curvature < 0. {
+                    return Err("invalid coincident contact curvature");
+                }
+                let mut candidates = vec![selected];
+                candidates.extend(super::surface_distance::triangle_primitive_distances(
+                    triangle, obstacle,
+                )?);
+                let mut retained = Vec::new();
+                let mut weights = Vec::new();
+                for closest in candidates {
+                    if closest.distance.to_bits() != selected.distance.to_bits()
+                        || self.evaluated_gap(triangle, obstacle, closest)?.to_bits()
+                            != gap.to_bits()
+                        || weights.contains(&(closest.a, closest.b))
+                    {
+                        continue;
+                    }
+                    weights.push((closest.a, closest.b));
+                    retained.push(PrescribedContactBranch {
+                        stencil: PrescribedContactStencil {
+                            body_face: face,
+                            obstacle_face: self.faces[index],
+                            obstacle_face_index: index,
+                            body_weights: closest.a,
+                            obstacle_weights: closest.b,
+                            normal: scale(closest.delta, 1. / closest.distance),
+                            normal_curvature_n_m: curvature,
+                        },
+                        potential_j: potential,
+                        gap_m: gap,
+                        normal_derivative_n: derivative,
+                    });
+                }
+                bundles.push(retained);
+            }
+        }
+        Ok(bundles)
+    }
     /// Inspect the nearest enabled pair inside the barrier activation range.
     /// This read-only query also reports closed gaps without modifying geometry.
     /// # Errors
@@ -757,7 +919,7 @@ impl PrescribedTriangleSurface {
             );
             candidates.sort_unstable();
             for index in candidates {
-                if !self.contact_faces[index] {
+                if !self.pair_enabled(&face, index) {
                     continue;
                 }
                 let closest = triangle_distance(
@@ -889,7 +1051,7 @@ impl PrescribedTriangleSurface {
             }
             candidates.sort_unstable();
             for index in candidates {
-                if !self.contact_faces[index] {
+                if !self.pair_enabled(&face, index) {
                     continue;
                 }
                 let obstacle = &self.faces[index];
@@ -1013,7 +1175,7 @@ impl PrescribedTriangleSurface {
             );
             candidates.sort_unstable();
             for index in candidates {
-                if !self.contact_faces[index] {
+                if !self.pair_enabled(&face, index) {
                     continue;
                 }
                 let obstacle = &self.faces[index];

@@ -1,0 +1,14 @@
+{
+  "scope": "bounded shared implicit quadrature retry after nonlinear or line-search rejection",
+  "quadrature_cap_panels": 128,
+  "original_failure_accepted_panels": 16,
+  "original_full_step_s": 0.001,
+  "independent_full_step_defect_j": 1.4571549732452112e-12,
+  "absolute_full_step_defects_j": 1.4571484680321763e-12,
+  "time_substeps_for_original_fixture": 1,
+  "strict_budget_8192_steps_j": 8e-08,
+  "strict_trajectory": "admitted full 8 ms",
+  "tests_passed": 188,
+  "manual_tests_ignored": 6,
+  "known_limit": "fine fixed-grid velocities remain nonmonotonic; stricter budget does not improve comparison against 16384-step numerical trajectory"
+}

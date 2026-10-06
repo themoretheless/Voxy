@@ -1,0 +1,32 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 0.05s
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 1 test
+IMPLICIT_CONTACT_FRAME_DIFFERENCE dt=1.00000000000000002e-3 maximum_endpoint_roundoff_m=0.00000000000000000e0 maximum_force_difference_n=0.00000000000000000e0 objective_difference_j=0.00000000000000000e0
+IMPLICIT_NONLINEAR_LIMIT dt=1.00000000000000002e-3 weighted_residual_j=2.62410890097616112e-10 residual_budget_j=9.99999999999999980e-13 residual_impulse_work_j=5.06381435263456245e-10 impulse_work_budget_j=1.25000000000000003e-9 maximum_residual_n=1.69625643529055736e-1 maximum_direction_m=2.32406399855186199e-12 maximum_diagonal_n_m=1.66667486015677124e8 minimum_inertia_n_m=1.66666666666666657e8
+IMPLICIT_LAST_STEP alpha=1.95312500000000000e-3 maximum_applied_increment_m=4.53918749270262954e-15
+IMPLICIT_TERMINAL_GEOMETRY dt=1.00000000000000002e-3 body_start=[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [0.1, 1.0, 0.0], [0.0, 0.0, 1.0]] body_end=[[1.5988285628445842e-7, 1.5995303673943793e-7, 7.998402483563607e-8], [1.00000000069816, -1.6065113127211587e-7, 4.839065317682925e-8], [0.09999983941879118, 1.0000000006980625, 6.102800645147528e-8], [1.647786858593217e-13, 1.5289551000209675e-13, 1.0000000154309676]] nearest_end=Ok(Some(PrescribedContactFeature { distance_m: 0.014999864187339881, gap_m: 0.013999864187339882, body_face: [0, 2, 1], obstacle_face_index: 0, body_weights: [0.16666650976219144, 0.8333334902378086, 0.0], obstacle_weights: [0.0, 0.08333324137930309, 0.9166667586206969] })) obstacle_triangle_end=Some([[-1.0, -1.0, -0.014999799999999999], [1.0, -1.0, -0.014999799999999999], [0.0, 1.0, -0.014999799999999999]])
+IMPLICIT_FRAME_GEOMETRY dt=1.00000000000000002e-3 world_body=[[1.5988285628445842e-7, 1.5995303673943793e-7, 7.998402483563607e-8], [1.00000000069816, -1.6065113127211587e-7, 4.839065317682925e-8], [0.09999983941879118, 1.0000000006980625, 6.102800645147528e-8], [1.647786858593217e-13, 1.5289551000209675e-13, 1.0000000154309676]] local_body=[[1.5988285628445842e-7, 1.5995303673943793e-7, 7.998402483563607e-8], [1.00000000069816, -1.6065113127211587e-7, 4.839065317682925e-8], [0.09999983941879118, 1.0000000006980625, 6.102800645147528e-8], [1.647786858593217e-13, 1.5289551000209675e-13, 1.0000000154309676]] world_obstacle=Some([[-1.0, -1.0, -0.014999799999999999], [1.0, -1.0, -0.014999799999999999], [0.0, 1.0, -0.014999799999999999]]) local_obstacle=Some([[-1.0, -1.0, -0.014999799999999999], [1.0, -1.0, -0.014999799999999999], [0.0, 1.0, -0.014999799999999999]]) nearest_world=Ok(Some(PrescribedContactFeature { distance_m: 0.014999864187339881, gap_m: 0.013999864187339882, body_face: [0, 2, 1], obstacle_face_index: 0, body_weights: [0.16666650976219144, 0.8333334902378086, 0.0], obstacle_weights: [0.0, 0.08333324137930309, 0.9166667586206969] })) nearest_local=Ok(Some(PrescribedContactFeature { distance_m: 0.014999864187339881, gap_m: 0.013999864187339882, body_face: [0, 2, 1], obstacle_face_index: 0, body_weights: [0.16666650976219144, 0.8333334902378086, 0.0], obstacle_weights: [0.0, 0.08333324137930309, 0.9166667586206969] }))
+
+thread 'implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators' (41357832) panicked at crates/physics/tests/embedded_skin_contact.rs:935:10:
+called `Result::unwrap()` on an `Err` value: "implicit contact nonlinear nonconvergence"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators ... FAILED
+
+failures:
+
+failures:
+    implicit_maxwell_moving_skin_and_native_contact_balance_heat_and_both_actuators
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 19 filtered out; finished in 0.04s
+
+error: test failed, to rerun pass `-p physics --test embedded_skin_contact`

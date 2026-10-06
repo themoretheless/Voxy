@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "scope": "global body-face contact domains and state-preserving regional remapping",
+  "test_counts": [
+    5,
+    33,
+    105,
+    30,
+    7,
+    4,
+    1
+  ],
+  "tests_passed": 185,
+  "library_manual_tests_ignored": 6,
+  "source_sha256": {
+    "crates/physics/src/biomechanics/prescribed_surface.rs": "e93e832b64185c4715d8e446b78fdba7eca0fc01832b8e86db958400185df815",
+    "crates/physics/src/biomechanics/inertia/assembly.rs": "ee79127ad7d2741aa8a70521ccc3634df4a86239ee721ddfb3eb00a9fa5c2c31",
+    "crates/physics/tests/prescribed_surface_contact.rs": "e9528eda94ade67c631e3001188e6d0c0030654302991370c00a9e904e852106",
+    "crates/physics/tests/inertial_tissue_assembly.rs": "1e459084346cdd9138f3980952c16f7248091e01ae059aa85ad21c30613a3b66"
+  },
+  "imported_compatibility_steps": 72,
+  "format_and_diff_checks": "passed",
+  "not_proven": [
+    "imported example global dynamics and skin contact integration",
+    "current-source full 480 clip",
+    "GPU rendering for global skin contact"
+  ]
+}

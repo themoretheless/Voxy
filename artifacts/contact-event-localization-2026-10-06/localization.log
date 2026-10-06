@@ -1,0 +1,41 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 11.79s
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 1 test
+PARALLEL_BRANCH_COUNTS t=0.046910077030668 counts=[1, 1, 1]
+PARALLEL_EVENT t=4.69100770306679973e-2 lower_z=2.86282828223452866e-9 upper_z=2.86282828223452908e-9 width_m=4.13590306276513837e-25 lower_slope_n=-7.11237391418205522e0 upper_slope_n=-3.55618695709103072e0 iterations=48
+PARALLEL_ONE_SIDED t=0.046910077030668 forward_n=-3.5561868727551627 backward_n=-7.112366806616421
+PARALLEL_SAMPLE t=0.046910077030668 fd_n=-5.334276839685792 gradient_n=-3.5561869570909264 error_n=-1.7780898825948657
+PARALLEL_BRANCH_COUNTS t=0.230765344947158 counts=[1, 1, 1]
+PARALLEL_EVENT t=2.30765344947158002e-1 lower_z=1.40831482476727335e-8 upper_z=1.40831482476727352e-8 width_m=1.65436122510605535e-24 lower_slope_n=-7.11240496427810687e0 upper_slope_n=-3.55620248213905565e0 iterations=47
+PARALLEL_ONE_SIDED t=0.230765344947158 forward_n=-3.5562025546553855 backward_n=-7.112379712959083
+PARALLEL_SAMPLE t=0.230765344947158 fd_n=-5.334291133807234 gradient_n=-3.556202482138688 error_n=-1.7780886516685461
+PARALLEL_BRANCH_COUNTS t=0.5 counts=[1, 1, 1]
+PARALLEL_EVENT t=5.00000000000000000e-1 lower_z=3.05140025703117949e-8 upper_z=3.05140025703118016e-8 width_m=6.61744490042422140e-24 lower_slope_n=-7.11245043374300323e0 upper_slope_n=-3.55622521687150384e0 iterations=44
+PARALLEL_ONE_SIDED t=0.5 forward_n=-3.556225175449512 backward_n=-7.112427036215507
+PARALLEL_SAMPLE t=0.5 fd_n=-5.33432610583251 gradient_n=-3.5562252168711677 error_n=-1.778100888961342
+PARALLEL_BRANCH_COUNTS t=0.769234655052842 counts=[1, 1, 1]
+PARALLEL_EVENT t=7.69234655052842053e-1 lower_z=4.69448578412909690e-8 upper_z=4.69448578412909757e-8 width_m=6.61744490042422140e-24 lower_slope_n=-7.11249590345837923e0 upper_slope_n=-3.55624795172919139e0 iterations=44
+PARALLEL_ONE_SIDED t=0.769234655052842 forward_n=-3.556260286252666 backward_n=-7.112496008820912
+PARALLEL_SAMPLE t=0.769234655052842 fd_n=-5.334378147536789 gradient_n=-7.11249590345874 error_n=1.7781177559219508
+PARALLEL_BRANCH_COUNTS t=0.953089922969332 counts=[1, 1, 1]
+PARALLEL_EVENT t=9.53089922969332037e-1 lower_z=5.81651795540763314e-8 upper_z=5.81651795540763380e-8 width_m=6.61744490042422140e-24 lower_slope_n=-7.11252695401332424e0 upper_slope_n=-3.55626347700666123e0 iterations=44
+PARALLEL_ONE_SIDED t=0.953089922969332 forward_n=-3.5563198219623615 backward_n=-7.11252723384348
+PARALLEL_SAMPLE t=0.953089922969332 fd_n=-5.334423527902921 gradient_n=-7.112526954014953 error_n=1.7781034261120325
+PARALLEL_GRADIENT h=1.00000000000000006e-9 maximum_error_n=5.05763246211286877e-1 worst=(2, 2, -5.334336791729122, -4.828573545517835)
+PARALLEL_GRADIENT h=1.00000000000000004e-10 maximum_error_n=5.05752629703613898e-1 worst=(2, 2, -5.334326175221449, -4.828573545517835)
+PARALLEL_GRADIENT h=9.99999999999999939e-12 maximum_error_n=5.05645631959615649e-1 worst=(2, 2, -5.334219177477451, -4.828573545517835)
+PARALLEL_GRADIENT h=9.99999999999999980e-13 maximum_error_n=5.04604797874029565e-1 worst=(2, 2, -5.3331783433918645, -4.828573545517835)
+test parallel_native_terminal_feature_kink_has_distinct_one_sided_derivatives ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 22 filtered out; finished in 0.00s

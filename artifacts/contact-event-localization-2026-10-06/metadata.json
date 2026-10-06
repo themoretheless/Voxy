@@ -1,0 +1,55 @@
+{
+  "scope": "captured native feature switch localization; unchanged production solver",
+  "events": [
+    {
+      "t": 0.046910077030668,
+      "lower_z": 2.8628282822345287e-09,
+      "upper_z": 2.862828282234529e-09,
+      "width_m": 4.1359030627651384e-25,
+      "lower_slope_n": -7.112373914182055,
+      "upper_slope_n": -3.5561869570910307,
+      "iterations": 48.0
+    },
+    {
+      "t": 0.230765344947158,
+      "lower_z": 1.4083148247672734e-08,
+      "upper_z": 1.4083148247672735e-08,
+      "width_m": 1.6543612251060553e-24,
+      "lower_slope_n": -7.112404964278107,
+      "upper_slope_n": -3.5562024821390557,
+      "iterations": 47.0
+    },
+    {
+      "t": 0.5,
+      "lower_z": 3.0514002570311795e-08,
+      "upper_z": 3.05140025703118e-08,
+      "width_m": 6.617444900424222e-24,
+      "lower_slope_n": -7.112450433743003,
+      "upper_slope_n": -3.556225216871504,
+      "iterations": 44.0
+    },
+    {
+      "t": 0.769234655052842,
+      "lower_z": 4.694485784129097e-08,
+      "upper_z": 4.6944857841290976e-08,
+      "width_m": 6.617444900424222e-24,
+      "lower_slope_n": -7.112495903458379,
+      "upper_slope_n": -3.5562479517291914,
+      "iterations": 44.0
+    },
+    {
+      "t": 0.953089922969332,
+      "lower_z": 5.816517955407633e-08,
+      "upper_z": 5.816517955407634e-08,
+      "width_m": 6.617444900424222e-24,
+      "lower_slope_n": -7.112526954013324,
+      "upper_slope_n": -3.5562634770066612,
+      "iterations": 44.0
+    }
+  ],
+  "bracket_gate": "lower.next_up() == upper",
+  "gradient_jump_gate_n": 3.0,
+  "rejected_experiment": "compensated squared-distance ordering left nonconvergence and derivatives unchanged; sources restored",
+  "tests_passed": 23,
+  "pending": "qualify event-aware generalized stationarity with identical body/obstacle work ownership"
+}

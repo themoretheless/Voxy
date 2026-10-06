@@ -1,0 +1,29 @@
+{
+  "duration_s": 0.008,
+  "nominal_intervals": [
+    8,
+    16,
+    32
+  ],
+  "actual_substeps": [
+    512,
+    306,
+    278
+  ],
+  "interval_energy_budget_j": 8e-06,
+  "absolute_stage_defects_j": [
+    6.312351834134336e-10,
+    8.949940964783403e-10,
+    8.723243669608681e-10
+  ],
+  "position_discrepancies_m": [
+    1.1527778254454674e-10,
+    4.636349059557111e-11
+  ],
+  "velocity_discrepancies_m_s": [
+    7.612341772170471e-07,
+    1.0516251107641468e-06
+  ],
+  "convergence": "not qualified: velocity discrepancy is nonmonotonic under different adaptive schedules",
+  "next": "compare common fixed fine substep schedules and longer trajectories"
+}

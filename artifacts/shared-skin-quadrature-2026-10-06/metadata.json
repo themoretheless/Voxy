@@ -1,0 +1,9 @@
+{
+  "scope": "shared implicit material-path quadrature; production moving-skin implicit stepping pending",
+  "gradient_coordinates": 12,
+  "gradient_relative_absolute_tolerance": 1e-06,
+  "independent_energy_defect_limit_j": 1e-10,
+  "body_mutation": "none",
+  "tests_passed": 151,
+  "manual_tests_ignored": 6
+}

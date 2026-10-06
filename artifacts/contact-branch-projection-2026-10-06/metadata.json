@@ -1,0 +1,14 @@
+{
+  "scope": "test-only two-branch generalized-stationarity reference",
+  "minimized_quantity": "free-node residual squared divided by inertia",
+  "weight_constraint": "convex segment [0,1]",
+  "verified": [
+    "weighted minimum against independent dense search",
+    "pinned reactions excluded",
+    "same-sign branches do not manufacture equilibrium",
+    "identical branches",
+    "invalid dimensions/inertia rejection"
+  ],
+  "production_integration": false,
+  "pending": "extract exact co-active native contact features at identical pose; couple body/obstacle force and work weights"
+}

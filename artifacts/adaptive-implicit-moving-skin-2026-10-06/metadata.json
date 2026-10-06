@@ -1,0 +1,21 @@
+{
+  "scope": "full-interval transactional adaptive implicit Maxwell moving embedded/native contact",
+  "nominal_dt_s": 0.001,
+  "accepted_substeps": 64,
+  "energy_budget_j": 1e-06,
+  "independent_defect_j": -3.40563008780442e-11,
+  "absolute_stage_defects_j": 9.625824851969091e-11,
+  "max_substeps": 256,
+  "rollback_limits_verified": [
+    1,
+    32
+  ],
+  "tests_passed": 185,
+  "manual_tests_ignored": 6,
+  "single_step_feature_failure": "unchanged",
+  "pending": [
+    "generalized-stationarity feature event treatment",
+    "long trajectories and timestep convergence",
+    "imported character integration and full skin coverage"
+  ]
+}

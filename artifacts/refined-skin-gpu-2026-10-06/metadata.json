@@ -1,0 +1,23 @@
+{
+  "scope": "48-step partial Metal capture after nonlinear quadrature retry; not full clip",
+  "backend": "Metal",
+  "device": "Apple M4 Max",
+  "steps": 48,
+  "simulated_seconds": 0.2,
+  "frames": 7,
+  "frame_sha256": [
+    "02e3a6ac3fc5f8fbd1934b99c20f6cb296a9f24b590d23be67eb4065961731b9",
+    "4d64872b60b89a0c916eb757ca8d6183f2a7f643625ac7196d084b77fde253c3",
+    "b7a0d83dd2374f81cd338116384a84a3b1b5aca1a4f8a452025bd7617cc8460b",
+    "28196b30a4ce45c1db9ab51facd7ceea078e7329e94e946c1c2fa5968d49a1b4",
+    "ad42f548853cf8d4014d55f2e707f56a80272a200c7c5b772bf37b9e916de992",
+    "f68b71b3dc94eb000031643419040a3c8fa42c2a51c6427a74bce482fe0046c2",
+    "e1639ea4ab8699acaefd215844f054d9ded8f33cdd6d619c217ca5254f54d0b9"
+  ],
+  "finite_motion_receipts": 28,
+  "bound_vertices": 16,
+  "model_vertices": 3273,
+  "example_tests_passed": 37,
+  "manual_tests_ignored": 2,
+  "skin_collision": "original prescribed skeletal surface; moving embedded collision not integrated into imported example"
+}

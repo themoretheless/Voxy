@@ -16,9 +16,13 @@ impl Body {
     /// Combine tissues in their existing world coordinates and retain cell laws,
     /// states, cavities, dead loads and supports. Regions retain original identities.
     /// # Errors
-    /// Empty input, uniform-pressure storage, mixed dry/cell-stored parts or invalid state.
+    /// Empty input, uniform-pressure storage, mixed dry/cell-stored parts,
+    /// installed embedded skin contact requiring rebinding, or invalid state.
     /// Viscous branch memories and trial time are retained by cloning whole elements.
     pub fn assemble_tissues(parts: &[Body]) -> Result<TissueAssembly, &'static str> {
+        if parts.iter().any(|p| p.embedded_contact.is_some()) {
+            return Err("tissue assembly requires rebinding embedded skin contact");
+        }
         let cell_stored = parts.iter().any(|p| !p.cell_pore_fluids.is_empty());
         if parts.is_empty()
             || parts.iter().any(|p| {

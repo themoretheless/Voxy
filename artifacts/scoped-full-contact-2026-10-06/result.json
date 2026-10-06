@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "exec_session_id": 28729,
+  "exit_code": 0,
+  "steps": 480,
+  "duration_s": 540.4,
+  "source_files_checked": 1098,
+  "source_drift": [],
+  "completed_at_utc": "2026-10-06T01:05:50.286905+00:00",
+  "audit_sha256": "0830288f5bd2a2307bef062c580961be7515d3a452ea59ed2cef887fe6e64699",
+  "scope": "native-only imported contact qualification after moving-skin quadrature retry scoping",
+  "maximum_absolute_frame_error_j": 5.680270006166435e-05,
+  "not_proven": [
+    "deformed imported skin contact integration",
+    "full current-source GPU clip",
+    "trajectory convergence at all refinements",
+    "all hardware support"
+  ]
+}

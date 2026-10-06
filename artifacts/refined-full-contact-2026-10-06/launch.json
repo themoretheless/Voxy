@@ -1,0 +1,14 @@
+{
+  "scope": "full 480-step imported contact qualification on current source",
+  "status_at_launch": "running; terminal result unproven",
+  "exec_session_id": 48804,
+  "command": "cargo test --release -p voxy_app --example body_motion_snapshot wide_imported_contact_completes_full_clip -- --ignored --nocapture",
+  "target_dir": "/tmp/voxy-moving-supports-final-20261005",
+  "git_head": "5e779dd9dc6e74f010bb38140515adab4142c3b9",
+  "source_sha256": {
+    "crates/physics/src/biomechanics/inertia/implicit.rs": "8cdfbf8cc09eb3a3d1fd757ffe2cea058e49b249942ae5ce8ab61539e8456f0b",
+    "crates/physics/src/biomechanics/inertia/viscous.rs": "a433a0b17a14edc779e0c8e86d780d7c0b261f531e963a0354a706cf86a3558f",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "7841e32d36c248023fa8033d802ae7f71db293d18794a1f0036eabcb73c6f0ae",
+    "crates/voxy_app/src/tissue_demo.rs": "5bb57507acc9216166491a85c1f567eb0696545008f44ab0897902425fdd5d77"
+  }
+}

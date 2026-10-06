@@ -1,0 +1,36 @@
+{
+  "scope": "current imported skin/contact integration audit",
+  "source_sha256": {
+    "crates/voxy_app/src/tissue_demo.rs": "5bb57507acc9216166491a85c1f567eb0696545008f44ab0897902425fdd5d77",
+    "crates/voxy_app/examples/body_motion_snapshot.rs": "e0f0a0ed5f0cd92e92f294a4963e03f820b13dcb3164b436f81968b3d1f29154",
+    "crates/physics/src/biomechanics/embedded_contact.rs": "3eb6e498d46f23b9a384fd18f291114e82217a34e510211fe39a716e10c3582a"
+  },
+  "findings": [
+    {
+      "file": "crates/voxy_app/src/tissue_demo.rs",
+      "symbol": "TissueDemo::bind_skin",
+      "evidence": "Exterior vertices are skipped; fixed per-region ownership rejects overlap."
+    },
+    {
+      "file": "crates/voxy_app/examples/body_motion_snapshot.rs",
+      "symbol": "displayed_meshes",
+      "evidence": "Rendering composes FEM displacement with posed model vertices."
+    },
+    {
+      "file": "crates/voxy_app/examples/body_motion_snapshot.rs",
+      "symbol": "main contact_reference",
+      "evidence": "Native prescribed surfaces are constructed from contact_positions/contact_positions64 and installed independently of skin_binding."
+    },
+    {
+      "file": "crates/physics/src/biomechanics/embedded_contact.rs",
+      "symbol": "EmbeddedTriangleContact::new",
+      "evidence": "All supplied skin vertices must pass EmbeddedSurface::bind; partial imported ownership is not accepted."
+    }
+  ],
+  "unproven": [
+    "Full imported mesh collision through its physically deformed visible surface",
+    "Contact at mixed triangles spanning tissue and skeleton ownership",
+    "Mutual tissue-region contact"
+  ],
+  "next_required_invariant": "One fixed authored vertex ownership map must determine both rendering and force pullback, including mixed triangle vertices; preserve same contact law, CCD, actuator work and transactional admission."
+}

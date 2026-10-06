@@ -1,0 +1,46 @@
+{
+  "scope": "local identity and evidence integrity recheck; no remote refresh or runtime qualification",
+  "accepted_repositories": 500,
+  "non_derived_repositories": 448,
+  "derived_repositories": 52,
+  "source_review_depth": "root and README for 1428 records; selected mechanism sources only",
+  "mechanisms": [
+    {
+      "mechanism": "bevy-commands",
+      "repository": "bevyengine/bevy",
+      "commit": "b56fc29d3016e641754765244b5ba3f9cc504671",
+      "source_count": 5
+    },
+    {
+      "mechanism": "godot-lod",
+      "repository": "godotengine/godot",
+      "commit": "084a2caa05119b625a99b6b51d44b459a26362de",
+      "source_count": 9
+    },
+    {
+      "mechanism": "stride-content",
+      "repository": "stride3d/stride",
+      "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+      "source_count": 4
+    },
+    {
+      "mechanism": "stride-prefabs",
+      "repository": "stride3d/stride",
+      "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+      "source_count": 4
+    },
+    {
+      "mechanism": "stride-processors",
+      "repository": "stride3d/stride",
+      "commit": "a7fa31ced680c7d4a919f1fe233051cf508f6060",
+      "source_count": 2
+    }
+  ],
+  "not_proven": [
+    "architectural review of all 500 engines",
+    "feature parity with named engines",
+    "cross-hardware support",
+    "CUDA production support"
+  ],
+  "status_sha256": "b3eae1d175fcc8511705e9fb15ba24cb2a709bb892287aa7661b99f66361f3df"
+}

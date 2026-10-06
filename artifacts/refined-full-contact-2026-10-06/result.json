@@ -1,0 +1,9 @@
+{
+  "outcome": "failed",
+  "completed_requested_clip": false,
+  "rejected_nominal_step": 71,
+  "reason": "implicit contact quadrature nonconvergence",
+  "test_exit_code": 101,
+  "seconds": 248.49,
+  "scope": "unconditional nonlinear quadrature retry source snapshot; preserved failure evidence"
+}

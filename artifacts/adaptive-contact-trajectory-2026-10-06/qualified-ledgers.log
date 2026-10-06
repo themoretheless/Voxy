@@ -1,0 +1,21 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 1.21s
+     Running tests/embedded_skin_contact.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/embedded_skin_contact-ec5ff303cc9ec7d6)
+
+running 1 test
+ADAPTIVE_TRAJECTORY intervals=8 duration_s=0.008 substeps=512 independent_defect_j=-1.43848925606299962e-10 absolute_defects_j=6.31235183413433608e-10
+ADAPTIVE_TRAJECTORY intervals=16 duration_s=0.008 substeps=306 independent_defect_j=2.12600978607215300e-11 absolute_defects_j=8.94994096478340262e-10
+ADAPTIVE_TRAJECTORY intervals=32 duration_s=0.008 substeps=278 independent_defect_j=5.17615150502810650e-11 absolute_defects_j=8.72324366960868088e-10
+ADAPTIVE_REFINEMENT coarse_position_m=0.00000000011527778254454674 fine_position_m=0.00000000004636349059557111 coarse_velocity_m_s=0.0000007612341772170471 fine_velocity_m_s=0.0000010516251107641468
+test adaptive_implicit_parallel_contact_trajectory_balances_heat_and_records_refinement_limit ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 24 filtered out; finished in 7.08s
