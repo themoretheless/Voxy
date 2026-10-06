@@ -7,7 +7,7 @@ use physics::biomechanics::{
 #[cfg(test)]
 use physics::tissue::ellipsoid;
 use physics::tissue::{Tissue, TissueKind, sample};
-use physics::tissue_surface::EmbeddedSurface;
+use physics::tissue_surface::{EmbeddedSurface, TetrahedralEmbedding};
 use std::{collections::BTreeMap, sync::Arc};
 use voxy_animation::{Joint, Skeleton, Transform};
 use voxy_render::{SceneMesh, SceneVertex};
@@ -793,21 +793,19 @@ impl TissueDemo {
                 return Err("skin binding requires continuum tissue");
             };
             let rest = dynamics.body().rest_positions();
-            EmbeddedSurface::bind(rest, cells, &[])?;
+            let search = TetrahedralEmbedding::new(rest, cells)?;
             let mut vertices = Vec::new();
             let mut points = Vec::new();
-            for (index, &point) in skin.iter().enumerate() {
-                match EmbeddedSurface::bind(rest, cells, &[point]) {
-                    Ok(_) => {
-                        if owners[index] {
-                            return Err("overlapping skin tissue ownership");
-                        }
-                        owners[index] = true;
-                        vertices.push(index);
-                        points.push(point);
+            for (index, (&point, contained)) in
+                skin.iter().zip(search.contains_points(skin)?).enumerate()
+            {
+                if contained {
+                    if owners[index] {
+                        return Err("overlapping skin tissue ownership");
                     }
-                    Err("surface vertex outside tetrahedral mesh") => {}
-                    Err(error) => return Err(error),
+                    owners[index] = true;
+                    vertices.push(index);
+                    points.push(point);
                 }
             }
             regions.push(SkinRegionBinding {
@@ -818,7 +816,7 @@ impl TissueDemo {
                     .ok_or("missing skin attachment")?
                     .joint,
                 vertices,
-                embedding: EmbeddedSurface::bind(rest, cells, &points)?,
+                embedding: search.bind_relative(&points, &vec![true; points.len()])?,
                 rest: rest.to_vec(),
                 cells: cells.clone(),
             });

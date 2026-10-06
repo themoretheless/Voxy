@@ -97,7 +97,7 @@ impl EmbeddedTriangleContact {
         let mut skin = vec![[0.; 3]; self.vertex_count];
         self.embedding
             .deform_relative_into(pose.reference, pose.nodes, pose.base, &mut skin)?;
-        super::prescribed_surface::validate_faces(&skin, &self.faces)?;
+        super::prescribed_surface::validate_admitted_face_geometry(&skin, &self.faces)?;
         Ok(skin)
     }
     /// Contact potential and physical forces on tissue, rig and obstacle.

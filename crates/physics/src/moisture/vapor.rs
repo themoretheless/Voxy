@@ -79,6 +79,14 @@ impl Body {
         vapor: &mut VaporReservoir,
         links: &[VaporLink],
     ) -> Result<VaporTransfer, &'static str> {
+        let template = self.prepare_vapor_network(vapor, links)?;
+        self.advance_vapor_prepared(dt_s, vapor, template)
+    }
+    fn prepare_vapor_network(
+        &self,
+        vapor: &VaporReservoir,
+        links: &[VaporLink],
+    ) -> Result<Body, &'static str> {
         let n = self.cells.len();
         let mut cells = self.cells.clone();
         cells.push(vapor.cell);
@@ -92,7 +100,21 @@ impl Body {
                 conductance_kg_s: link.conductance_kg_s,
             });
         }
-        let mut network = Body::new(cells, network_links)?;
+        Body::new(cells, network_links)
+    }
+    fn advance_vapor_prepared(
+        &mut self,
+        dt_s: f64,
+        vapor: &mut VaporReservoir,
+        mut network: Body,
+    ) -> Result<VaporTransfer, &'static str> {
+        let n = self.cells.len();
+        if network.cells.len() != n + 1 {
+            return Err("vapor network owner size changed");
+        }
+        network.cells[..n].copy_from_slice(&self.cells);
+        network.cells[n] = vapor.cell;
+        super::validate_cells(&network.cells)?;
         network.advance(dt_s, &[])?;
         let changes: Vec<f64> = network.cells[..n]
             .iter()
@@ -212,9 +234,18 @@ impl Body {
         vapor: &mut ThermalVapor,
         links: &[VaporLink],
     ) -> Result<VaporTransfer, &'static str> {
+        let template = self.prepare_vapor_network(&vapor.reservoir, links)?;
+        self.advance_thermal_vapor_prepared(dt_s, vapor, template)
+    }
+    fn advance_thermal_vapor_prepared(
+        &mut self,
+        dt_s: f64,
+        vapor: &mut ThermalVapor,
+        template: Body,
+    ) -> Result<VaporTransfer, &'static str> {
         let mut next = self.clone();
         let mut gas = vapor.clone();
-        let transfer = next.advance_vapor(dt_s, &mut gas.reservoir, links)?;
+        let transfer = next.advance_vapor_prepared(dt_s, &mut gas.reservoir, template)?;
         let capacity = vapor_capacity(gas.curve, gas.temperature_k(), gas.volume_m3)?;
         if gas.water_kg() > capacity {
             return Err("thermal vapor supersaturation requires condensate model");
@@ -491,3 +522,6 @@ impl MaterialThermalStore {
         Ok(())
     }
 }
+
+mod adaptive;
+pub use adaptive::{ThermalVaporAccuracy, ThermalVaporStep};

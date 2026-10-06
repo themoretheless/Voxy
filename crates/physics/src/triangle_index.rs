@@ -30,113 +30,37 @@ impl TriangleBounds {
         }))
     }
 }
+// Pose-independent topology is shared; cloning a staged pose copies only bounds.
 #[derive(Clone, Debug)]
-struct Node {
+struct NodeTopology {
+    children: Option<(usize, usize)>,
+    ids: std::ops::Range<usize>,
+}
+#[derive(Clone, Copy, Debug)]
+struct NodeBounds {
     lo: V,
     hi: V,
     coordinate_scale: f64,
-    children: Option<(Box<Node>, Box<Node>)>,
-    ids: Vec<usize>,
 }
-impl Node {
-    fn build(bounds: &[TriangleBounds], mut ids: Vec<usize>) -> Self {
-        let lo = std::array::from_fn(|axis| {
-            ids.iter()
-                .map(|&i| bounds[i].lo[axis])
-                .fold(f64::INFINITY, f64::min)
-        });
-        let hi = std::array::from_fn(|axis| {
-            ids.iter()
-                .map(|&i| bounds[i].hi[axis])
-                .fold(f64::NEG_INFINITY, f64::max)
-        });
+impl NodeBounds {
+    fn new(lo: V, hi: V) -> Self {
         let coordinate_scale = lo
             .iter()
             .chain(&hi)
             .map(|v| v.abs())
             .fold(1e-12_f64, f64::max);
-        if ids.len() <= 8 {
-            return Self {
-                lo,
-                hi,
-                coordinate_scale,
-                children: None,
-                ids,
-            };
-        }
-        let axis = (0..3)
-            .max_by(|&a, &b| (hi[a] - lo[a]).total_cmp(&(hi[b] - lo[b])))
-            .unwrap();
-        ids.sort_by(|&a, &b| bounds[a].center[axis].total_cmp(&bounds[b].center[axis]));
-        let right = ids.split_off(ids.len() / 2);
         Self {
             lo,
             hi,
             coordinate_scale,
-            ids: Vec::new(),
-            children: Some((
-                Box::new(Self::build(bounds, ids)),
-                Box::new(Self::build(bounds, right)),
-            )),
-        }
-    }
-    fn refit(&mut self, bounds: &[TriangleBounds]) {
-        if let Some((a, b)) = &mut self.children {
-            a.refit(bounds);
-            b.refit(bounds);
-            self.lo = std::array::from_fn(|axis| a.lo[axis].min(b.lo[axis]));
-            self.hi = std::array::from_fn(|axis| a.hi[axis].max(b.hi[axis]));
-        } else {
-            self.lo = std::array::from_fn(|axis| {
-                self.ids
-                    .iter()
-                    .map(|&i| bounds[i].lo[axis])
-                    .fold(f64::INFINITY, f64::min)
-            });
-            self.hi = std::array::from_fn(|axis| {
-                self.ids
-                    .iter()
-                    .map(|&i| bounds[i].hi[axis])
-                    .fold(f64::NEG_INFINITY, f64::max)
-            });
-        }
-        self.coordinate_scale = self
-            .lo
-            .iter()
-            .chain(&self.hi)
-            .map(|v| v.abs())
-            .fold(1e-12_f64, f64::max);
-    }
-    fn query<const PAD: bool>(
-        &self,
-        bounds: TriangleBounds,
-        gap: f64,
-        query_scale: f64,
-        out: &mut Vec<usize>,
-    ) {
-        let padding = if PAD {
-            64. * f64::EPSILON * self.coordinate_scale.max(query_scale)
-        } else {
-            0.
-        };
-        let margin = gap + padding;
-        for axis in 0..3 {
-            if bounds.lo[axis] > self.hi[axis] + margin || bounds.hi[axis] < self.lo[axis] - margin
-            {
-                return;
-            }
-        }
-        if let Some((a, b)) = &self.children {
-            a.query::<PAD>(bounds, gap, query_scale, out);
-            b.query::<PAD>(bounds, gap, query_scale, out);
-        } else {
-            out.extend(&self.ids);
         }
     }
 }
 #[derive(Clone, Debug)]
 pub(crate) struct TriangleIndex {
-    tree: Node,
+    topology: std::sync::Arc<[NodeTopology]>,
+    ids: std::sync::Arc<[usize]>,
+    nodes: Vec<NodeBounds>,
 }
 impl TriangleIndex {
     pub(crate) fn new(triangles: &[[V; 3]]) -> Self {
@@ -149,8 +73,59 @@ impl TriangleIndex {
         )
     }
     pub(crate) fn from_bounds(bounds: &[TriangleBounds]) -> Self {
+        fn build(
+            bounds: &[TriangleBounds],
+            mut ids: Vec<usize>,
+            topology: &mut Vec<NodeTopology>,
+            leaves: &mut Vec<usize>,
+            nodes: &mut Vec<NodeBounds>,
+        ) -> usize {
+            let lo = std::array::from_fn(|axis| {
+                ids.iter()
+                    .map(|&i| bounds[i].lo[axis])
+                    .fold(f64::INFINITY, f64::min)
+            });
+            let hi = std::array::from_fn(|axis| {
+                ids.iter()
+                    .map(|&i| bounds[i].hi[axis])
+                    .fold(f64::NEG_INFINITY, f64::max)
+            });
+            let node = nodes.len();
+            nodes.push(NodeBounds::new(lo, hi));
+            topology.push(NodeTopology {
+                children: None,
+                ids: 0..0,
+            });
+            if ids.len() <= 8 {
+                let start = leaves.len();
+                leaves.extend(ids);
+                topology[node].ids = start..leaves.len();
+            } else {
+                let axis = (0..3)
+                    .max_by(|&a, &b| (hi[a] - lo[a]).total_cmp(&(hi[b] - lo[b])))
+                    .unwrap();
+                ids.sort_by(|&a, &b| bounds[a].center[axis].total_cmp(&bounds[b].center[axis]));
+                let right = ids.split_off(ids.len() / 2);
+                let a = build(bounds, ids, topology, leaves, nodes);
+                let b = build(bounds, right, topology, leaves, nodes);
+                topology[node].children = Some((a, b));
+            }
+            node
+        }
+        let mut topology = Vec::new();
+        let mut ids = Vec::new();
+        let mut nodes = Vec::new();
+        build(
+            bounds,
+            (0..bounds.len()).collect(),
+            &mut topology,
+            &mut ids,
+            &mut nodes,
+        );
         Self {
-            tree: Node::build(bounds, (0..bounds.len()).collect()),
+            topology: topology.into(),
+            ids: ids.into(),
+            nodes,
         }
     }
     pub(crate) fn refit(&mut self, triangles: &[[V; 3]]) {
@@ -163,12 +138,62 @@ impl TriangleIndex {
         );
     }
     pub(crate) fn refit_bounds(&mut self, bounds: &[TriangleBounds]) {
-        self.tree.refit(bounds);
+        // Preorder topology guarantees both children follow their parent.
+        for i in (0..self.nodes.len()).rev() {
+            let (lo, hi) = if let Some((a, b)) = self.topology[i].children {
+                (
+                    std::array::from_fn(|axis| self.nodes[a].lo[axis].min(self.nodes[b].lo[axis])),
+                    std::array::from_fn(|axis| self.nodes[a].hi[axis].max(self.nodes[b].hi[axis])),
+                )
+            } else {
+                let ids = &self.ids[self.topology[i].ids.clone()];
+                (
+                    std::array::from_fn(|axis| {
+                        ids.iter()
+                            .map(|&j| bounds[j].lo[axis])
+                            .fold(f64::INFINITY, f64::min)
+                    }),
+                    std::array::from_fn(|axis| {
+                        ids.iter()
+                            .map(|&j| bounds[j].hi[axis])
+                            .fold(f64::NEG_INFINITY, f64::max)
+                    }),
+                )
+            };
+            self.nodes[i] = NodeBounds::new(lo, hi);
+        }
+    }
+    fn visit<const PAD: bool>(
+        &self,
+        i: usize,
+        bounds: TriangleBounds,
+        gap: f64,
+        query_scale: f64,
+        out: &mut Vec<usize>,
+    ) {
+        let node = self.nodes[i];
+        let padding = if PAD {
+            64. * f64::EPSILON * node.coordinate_scale.max(query_scale)
+        } else {
+            0.
+        };
+        let margin = gap + padding;
+        for axis in 0..3 {
+            if bounds.lo[axis] > node.hi[axis] + margin || bounds.hi[axis] < node.lo[axis] - margin
+            {
+                return;
+            }
+        }
+        if let Some((a, b)) = self.topology[i].children {
+            self.visit::<PAD>(a, bounds, gap, query_scale, out);
+            self.visit::<PAD>(b, bounds, gap, query_scale, out);
+        } else {
+            out.extend(&self.ids[self.topology[i].ids.clone()]);
+        }
     }
     // Preserve thin-film traversal semantics; its narrow phase owns precision.
     pub(crate) fn query(&self, triangle: [V; 3], gap: f64, out: &mut Vec<usize>) {
-        self.tree
-            .query::<false>(TriangleBounds::triangle(triangle), gap, 0., out);
+        self.visit::<false>(0, TriangleBounds::triangle(triangle), gap, 0., out);
     }
     pub(crate) fn query_conservative(
         &self,
@@ -182,13 +207,44 @@ impl TriangleIndex {
             .chain(&bounds.hi)
             .map(|v| v.abs())
             .fold(1e-12_f64, f64::max);
-        self.tree.query::<true>(bounds, gap, query_scale, out);
+        self.visit::<true>(0, bounds, gap, query_scale, out);
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn staged_refit_shares_topology_without_mutating_source_bounds() {
+        let triangles: Vec<_> = (0..257)
+            .map(|i| {
+                let x = i as f64 * 2.;
+                [[x, 0., 0.], [x + 1., 0., 0.], [x, 1., 0.]]
+            })
+            .collect();
+        let source = TriangleIndex::new(&triangles);
+        let mut staged = source.clone();
+        assert!(std::sync::Arc::ptr_eq(&source.topology, &staged.topology));
+        assert!(std::sync::Arc::ptr_eq(&source.ids, &staged.ids));
+        assert_ne!(source.nodes.as_ptr(), staged.nodes.as_ptr());
+        let moved: Vec<_> = triangles
+            .iter()
+            .map(|t| t.map(|p| [p[0], p[1], p[2] + 100.]))
+            .collect();
+        staged.refit(&moved);
+        let mut original = Vec::new();
+        let mut changed = Vec::new();
+        source.query(triangles[0], 0., &mut original);
+        staged.query(triangles[0], 0., &mut changed);
+        assert!(original.contains(&0));
+        assert!(changed.is_empty());
+        staged.query(moved[0], 0., &mut changed);
+        assert_eq!(original, changed);
+        let empty = TriangleIndex::new(&[]);
+        let mut candidates = Vec::new();
+        empty.query(triangles[0], 0., &mut candidates);
+        assert!(candidates.is_empty());
+    }
     fn overlaps(a: TriangleBounds, b: TriangleBounds, gap: f64) -> bool {
         (0..3).all(|axis| a.lo[axis] <= b.hi[axis] + gap && a.hi[axis] >= b.lo[axis] - gap)
     }
@@ -272,7 +328,14 @@ mod tests {
 #[cfg(test)]
 mod cached_scale_tests {
     use super::*;
-    fn original_query(node: &Node, bounds: TriangleBounds, gap: f64, out: &mut Vec<usize>) {
+    fn original_query(
+        index: &TriangleIndex,
+        id: usize,
+        bounds: TriangleBounds,
+        gap: f64,
+        out: &mut Vec<usize>,
+    ) {
+        let node = index.nodes[id];
         let padding = 64.
             * f64::EPSILON
             * node
@@ -289,11 +352,11 @@ mod cached_scale_tests {
         }) {
             return;
         }
-        if let Some((a, b)) = &node.children {
-            original_query(a, bounds, gap, out);
-            original_query(b, bounds, gap, out);
+        if let Some((a, b)) = index.topology[id].children {
+            original_query(index, a, bounds, gap, out);
+            original_query(index, b, bounds, gap, out);
         } else {
-            out.extend(&node.ids);
+            out.extend(&index.ids[index.topology[id].ids.clone()]);
         }
     }
     fn fixture(offset: f64) -> Vec<[V; 3]> {
@@ -316,7 +379,7 @@ mod cached_scale_tests {
                 let bounds = TriangleBounds::triangle([[x, y, 0.001]; 3]);
                 for gap in [0., 0.001, 0.1] {
                     let mut expected = Vec::new();
-                    original_query(&index.tree, bounds, gap, &mut expected);
+                    original_query(&index, 0, bounds, gap, &mut expected);
                     let mut actual = Vec::new();
                     index.query_conservative(bounds, gap, &mut actual);
                     assert_eq!(actual, expected, "offset={offset}, query={i}, gap={gap}");
@@ -345,7 +408,7 @@ mod cached_scale_tests {
                     if cached {
                         index.query_conservative(bounds, 0.002, &mut out);
                     } else {
-                        original_query(&index.tree, bounds, 0.002, &mut out);
+                        original_query(&index, 0, bounds, 0.002, &mut out);
                     }
                     count += std::hint::black_box(out.len());
                 }

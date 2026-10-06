@@ -35,25 +35,33 @@ pub struct Transfer {
     pub reservoir_water_kg: Vec<f64>,
     pub mass_defect_kg: f64,
 }
+fn validate_cells(cells: &[Cell]) -> Result<(), &'static str> {
+    if cells.is_empty()
+        || cells.len() > 16_384
+        || cells.iter().any(|c| {
+            !c.capacity_kg.is_finite()
+                || c.capacity_kg <= 0.
+                || !c.water_kg.is_finite()
+                || c.water_kg < 0.
+                || c.water_kg > c.capacity_kg
+        })
+    {
+        return Err("invalid moisture cells");
+    }
+    if !cells.iter().map(|c| c.capacity_kg).sum::<f64>().is_finite() {
+        return Err("moisture capacity inventory overflow");
+    }
+    Ok(())
+}
 impl Body {
-    /// Construct a bounded dense implicit moisture network (up to 128 cells).
+    /// Construct a bounded implicit moisture network (up to 16384 cells).
+    /// Small networks use direct factorization; larger ones use sparse transport.
     /// # Errors
     /// Invalid inventories, indices, repeated/self links or conductances.
     pub fn new(cells: Vec<Cell>, links: Vec<Link>) -> Result<Self, &'static str> {
-        if cells.is_empty()
-            || cells.len() > 128
-            || cells.iter().any(|c| {
-                !c.capacity_kg.is_finite()
-                    || c.capacity_kg <= 0.
-                    || !c.water_kg.is_finite()
-                    || c.water_kg < 0.
-                    || c.water_kg > c.capacity_kg
-            })
-        {
-            return Err("invalid moisture cells");
-        }
-        if !cells.iter().map(|c| c.capacity_kg).sum::<f64>().is_finite() {
-            return Err("moisture capacity inventory overflow");
+        validate_cells(&cells)?;
+        if links.len() > 262_144 {
+            return Err("moisture link budget exceeded");
         }
         let mut seen = std::collections::BTreeSet::new();
         for link in &links {
@@ -110,31 +118,7 @@ impl Body {
         {
             return Err("invalid moisture step");
         }
-        let n = self.cells.len();
-        let mut matrix = vec![vec![0.; n]; n];
-        let mut rhs: Vec<_> = self
-            .cells
-            .iter()
-            .zip(added)
-            .map(|(c, a)| c.water_kg + a)
-            .collect();
-        for (i, c) in self.cells.iter().enumerate() {
-            matrix[i][i] = c.capacity_kg;
-        }
-        for link in &self.links {
-            let [a, b] = link.cells;
-            let exchange = dt_s * link.conductance_kg_s;
-            matrix[a][a] += exchange;
-            matrix[b][b] += exchange;
-            matrix[a][b] -= exchange;
-            matrix[b][a] -= exchange;
-        }
-        for r in reservoirs {
-            let exchange = dt_s * r.conductance_kg_s;
-            matrix[r.cell][r.cell] += exchange;
-            rhs[r.cell] += exchange * r.saturation;
-        }
-        let saturation = solve(matrix, rhs)?;
+        let saturation = transport::saturations(self, dt_s, reservoirs, added)?;
         let mut candidate = self.cells.clone();
         for (cell, &s) in candidate.iter_mut().zip(&saturation) {
             if !s.is_finite() || !(-1e-12..=1. + 1e-12).contains(&s) {
@@ -303,8 +287,10 @@ impl Body {
 
 mod vapor;
 pub use vapor::MaterialThermalStore;
-pub use vapor::ThermalVapor;
+pub use vapor::{ThermalVapor, ThermalVaporAccuracy, ThermalVaporStep};
 pub use vapor::{VaporLink, VaporReservoir, VaporTransfer};
 mod temperature;
 pub use cohesive::ThermalCohesiveCalibration;
 pub use temperature::ThermalCalibration;
+
+mod transport;

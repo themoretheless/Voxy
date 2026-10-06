@@ -33,6 +33,9 @@ mod female_hair;
 #[path = "../src/female_rig.rs"]
 mod female_rig;
 #[allow(dead_code)]
+#[path = "../src/female_transmission.rs"]
+mod female_transmission;
+#[allow(dead_code)]
 #[path = "../src/surface_film_preview.rs"]
 mod surface_film_preview;
 #[allow(dead_code)]

@@ -286,6 +286,16 @@ cargo run -p voxy_editor -- model.obj
 cargo run -p voxy_editor -- --manifest assets.json logical-id
 ```
 
+The same standalone entry point exposes native acceptance modes:
+
+```sh
+cargo run -p voxy_editor -- model.vmodel --lod-smoke
+cargo run -p voxy_editor -- animated-model.vmodel --animation-smoke
+```
+
+These require a visible native window and compatible acceptance fixtures. They
+check presented frames; an occluded surface times out and does not count as a pass.
+
 This entry point uses the editor's production dependencies and does not build
 the renderer examples' physics dev-dependencies.
 Hold the **left mouse button** on a model and drag to translate it in the
@@ -339,3 +349,11 @@ and cleans up behaviors on Stop/window close. A backend-independent integration
 example is available with `cargo run -p voxy_scene --example fixed_scene`.
 
 CUDA water is selectable with `cargo run -p voxy_app --features cuda --bin voxy_app -- --cuda-water --cuda-device 0`. It shares the selected CUDA context with motion/collision, uses synchronous ordered graph transfers and publishes through the existing revision-checked world plans. `--cuda-water` and `--gpu-water` are mutually exclusive. CPU world storage, snapshot construction and mesh generation remain; this is not GPU-resident water/world state. Compilation and option tests pass; physical NVIDIA execution and gameplay acceptance remain unverified.
+
+GPU capability discovery reports the adapter's `supported_features` and
+downlevel capabilities separately from the enabled features/limits of the
+created device. `gpu_probe` waits for its empty submission and explicitly reports
+that no shader workload ran. Actual compute execution/readback acceptance uses
+`VOXY_COMPUTE_BACKEND=metal cargo run -p voxy_render --example compute_smoke`
+(select another explicit backend on a compatible host). Supported adapter
+features are not automatically enabled on the device.

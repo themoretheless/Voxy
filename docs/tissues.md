@@ -2336,6 +2336,74 @@ shares geometry with published bindings, and offers reusable point membership.
 The overlap admission broad phase uses the same crate-private bounds index.
 Barycentric tolerances and original-cell ownership ties remain unchanged; the
 regression covers tolerated boundary roundoff and observable duplicate-cell ties.
-App membership loops still construct individual bindings; migration to the reusable
-API and a controlled performance comparison remain unfinished. No loading speed
-or complete physical-skin animation qualification is claimed by this delivery.
+Regional and assembled app membership loops now reuse one prepared index per
+volume instead of constructing an embedding for every source skin vertex.
+Regional publication reuses its prepared geometry too. Overlapping ownership
+remains an error and exterior vertices retain prescribed skeletal motion.
+
+A controlled release comparison uses 256 separated tetrahedra and 512 queries
+(256 contained, 256 exterior). Both paths select identical owners and the mixed
+relative rest pose remains exact. One local run measured 8573 us for repeated
+preparation/binding and 45 us for one preparation plus membership queries.
+This compares the prior app usage with the reusable API, not scalar search versus
+BVH, and is not a full import or realtime animation performance certificate.
+Complete physical-skin clip qualification remains unfinished.
+
+### Batched volume point location (2026-10-06)
+
+`TetrahedralEmbedding::contains_points` validates the entire query batch before
+returning membership and reuses candidate storage across points. Regional and
+assembled skin ownership use this API. Binding publication also reuses candidate
+storage across vertices; the immutable index remains safe for shared readers.
+No internal mutable cache or second resource owner was introduced.
+
+The nonconvex regression independently checks interior, exterior notch, outer
+boundary and vertex membership in an authored L-shaped lattice volume, then
+checks its affine displacement field and unchanged prescribed exterior vertex.
+An invalid late query rejects without changing subsequent valid results.
+
+The existing observed nonconvex VXTM fixture was rerun through the actual Metal
+renderer for 48 steps (0.2 simulated seconds, 192 accepted substeps). Exit was
+successful and the four-pose image was visually inspected. It binds 1 of 3273
+source vertices and enables 6 responsive triangles. Simulation plus rendering
+took 50.91 seconds on this host; this is not realtime or complete coverage.
+18 physics tests and 55 example tests passed (3 example tests ignored).
+
+### Flat pose-local triangle bounds (2026-10-06)
+
+A live 3-second CPU sample of the 48-step authored fixture showed recursive
+triangle-tree clone/drop and refit in the contact quadrature path. TriangleIndex
+now shares immutable preorder topology and leaf source IDs via Arc, while each
+staged pose owns a contiguous bounds vector. Reverse preorder refit combines
+children with the original operations; traversal keeps left-before-right source
+ordering, leaf threshold, padding and candidate semantics. An independent refit
+test proves that a staged pose cannot mutate source bounds.
+
+106 library tests and 77 contact/film integration tests passed (6 library tests
+ignored). The same actual Metal fixture produced byte-identical PNG output and
+192 accepted substeps before and after. One sequential sampled run measured
+49.59 versus 47.79 seconds for simulation/rendering; this is insufficient to
+qualify a general speedup. The fixture owns only 1/3273 source skin vertices.
+The before/after CPU samples and full receipts are retained under
+`artifacts/tissue-contact-profile-2026-10-06`. Full coverage, full physical-skin
+clip, realtime physics and other hardware remain unqualified.
+
+### Immutable contact topology admission (2026-10-06)
+
+Surface construction and arbitrary caller-supplied faces still use full budget,
+index, duplicate and geometric admission. Pose staging of private immutable
+validated faces checks the unchanged vertex count plus all coordinate finiteness,
+index safety and triangle area/overflow, without allocating a duplicate-face set
+again. Embedded skin pose publication uses the same geometric check; its private
+faces were fully admitted at construction. No external topology admission path
+was weakened.
+
+Regression compares staged errors with independent reconstruction for unused
+nonfinite vertices, late collapsed triangles and overflowing area, then checks
+source immutability, changed vertex-count rejection and external duplicate/index
+rejection. 173 physics tests passed, with 6 library tests ignored.
+
+Actual Metal execution completed 48 steps with 192 accepted substeps. The PNG
+was byte-identical to the prior flat-index fixture result. Simulation/rendering
+took 43.64 seconds in this single run; timing is observational, not a controlled
+general speedup guarantee. Coverage remains 1/3273 source skin vertices.
