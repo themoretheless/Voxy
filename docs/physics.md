@@ -6714,3 +6714,165 @@ underconstrained points are rejected. This latest helper compiles and existing
 support tests pass, but dedicated independent geometry-velocity qualification
 remains pending; finite supported advancement still uses frozen application
 arms and does not admit authored rotating point loads.
+
+### Contact-vertex velocity qualification (2026-10-06)
+
+Independent central differences now qualify instantaneous clipped-vertex
+velocity for a yawing rigid corner on a fixed plane and for a patch vertex
+whose tangential coordinates follow different translating bodies. The latter
+fixture is also transformed by an oblique affine map and a world translation,
+and swapping body order preserves velocity. These checks distinguish geometry
+ownership from either body's material-point velocity. Coincident incompatible
+slabs, interior points without a unique vertex, outside points and invalid body
+mass are rejected explicitly. Body state validation now precedes slab solving.
+
+Six focused support tests and the scene support-query regression pass. This is
+instantaneous geometry qualification, not finite-time contact topology tracking
+or qualification of supported rotating point-load advancement.
+
+### Clipped-vertex acceleration (2026-10-06)
+
+Velocity and acceleration use one active-slab constraint solver. For each
+rotating plane the acceleration right-hand side contains the material-point
+acceleration plus twice the normal-rate projection of material velocity minus
+clipped-vertex velocity. This includes sliding along the rotating surface;
+substituting either body's material acceleration would omit that contribution.
+
+Independent analytic plane intersections and central second differences cover
+a yawing face clipped by a fixed face, reciprocal owner order, and simultaneous
+COM force and angular torque. Nonfinite loads fail explicitly. Seven support
+tests and one scene-query regression pass. The acceleration helper is a local
+geometric derivative and is not yet consumed by finite supported advancement;
+that still requires a common-point trajectory, derivative bounds and topology
+admission consistent with reaction torque and work.
+
+### Clipped-vertex jerk and shared angular derivative (2026-10-06)
+
+`Spin::angular_jerk` now owns the world angular-acceleration derivative,
+including rotating anisotropic inverse inertia and gyroscopic momentum.
+Contact reaction-rate mechanics reuse it instead of duplicating the formula.
+Independent central acceleration differences cover an oriented anisotropic
+body; the spherical limit equals torque rate divided by inertia.
+
+The active-plane solver also computes common-point jerk using the first three
+normal derivatives and the common-point velocity and acceleration. Independent
+plane-intersection differences cover steady yaw and affine load rates, including
+reciprocal COM force contributions. Eight gameplay support tests, one angular
+jerk oracle and six reaction-rate integration tests pass. These instantaneous
+derivatives are ready for a cubic point model; finite supported advancement
+still requires matching point trajectory admission and error bounds.
+
+### Finite common-point motion plumbing (2026-10-06)
+
+Geometry can now supply `RigidSupportPointMotion`, a cubic common application
+point model with velocity, acceleration and jerk. The finite solver uses its
+velocity in the reaction-rate solve, its relative derivatives in both bodies'
+reaction torque polynomials, and the same polynomial in the fixed environment
+angular impulse ledger. Force work and torque work remain integrated on the
+accepted nominal body paths. The model is passed unchanged to dedicated
+whole-interval geometry admission callbacks. Legacy admission rejects custom
+point models; no model retains the established first-COM trajectory.
+
+The model is queried before and after reaction-rate solution. Geometry must
+retain identical velocity and acceleration, while jerk can depend on solved
+load rates. Nonfinite models, changed lower derivatives and missing custom
+admission fail transactionally. Existing callers retain their legacy model.
+
+An explicit synthetic backend qualifies point-model delivery, independently
+checks the resulting angular impulse polynomial, verifies attitude against its
+declared integration tolerance, integrates nominal torque work independently
+over accepted rotation arcs, and checks body/environment angular cancellation.
+It is a mechanics/protocol fixture, not a certificate for finite scene geometry.
+Ten rigid-world tests, six reaction-rate tests and ten gameplay supported-motion
+regressions pass. Scene active-slab derivatives are not enabled for finite
+advancement yet: their cubic remainder and contact topology still require
+whole-interval bounds and admission before the scene callback may opt in.
+
+### Scene common-point interval admission (2026-10-06)
+
+Scene support advancement now consumes geometry-owned common-point models.
+Shape-pair lookup is shared by snapshot velocity and finite point-model queries.
+The same per-point polynomial reaches the mechanical reaction/torque/work path
+and the scene admission callback; unsupported shape pairs still run their
+ordinary collision sweeps.
+
+For every affine slab and every accepted constant-angular-velocity spin arc,
+geometry bounds the cubic common point relative to the cubic COM path. The
+rotating slab projection retains its first three derivatives and an analytic
+fourth-derivative remainder. The remainder uses perpendicular components about
+the arc's rotation axis, so rotation-axis points do not acquire artificial
+angular excursion. Slab bounds preserve all active initial planes and ensure
+ownership inside both entire volumes. Floating pose evaluation has an explicit
+guard; no physical position or momentum is corrected. Unrepresentable affine
+normalization is rejected.
+
+Velocity still requires consistent coincident constraints. Acceleration and
+jerk are candidates from an independent active-plane basis: the pressure solve
+can leave small residuals in redundant derivatives. Those residuals are not
+clamped or ignored; their resulting distances against every original plane
+are bounded over the entire prepared interval using the existing geometry
+admission budget. Nondifferentiable velocity branches retain the existing
+common-point model only when its independent interval ownership check passes.
+
+Independent dense samples cover every prefix and multiple accelerated spin
+arcs. A trajectory that returns to the patch at the endpoint but leaves it
+inside the step rejects; inconsistent redundant-plane acceleration also
+rejects through interval admission. A scene cube rotates on its full bottom
+face for one second, selects nonzero cubic corner motion, retains height and
+angular momentum, balances support impulse, and reports no dissipated heat.
+
+Qualification: 204 full gameplay tests and 38 related physics tests passed;
+12 final geometry tests passed after adding the affine-normalization input gate.
+The full gameplay run preceded that last input-only gate. This does not
+qualify every rotating-normal contact: the existing normal-gap admission is
+still conservative and may reject physically valid evolving normal branches.
+Supported authored material-point loads remain explicitly unavailable. GPU,
+editor visual demonstration and the wider engine-parity goal are not proven
+by these mechanical tests.
+
+### Rotating face-normal gap admission (2026-10-06)
+
+Face-owned normal branches now bound SAT separation along the moving normal
+instead of the snapshot direction. The two accepted spin-arc timelines are
+merged; each interval uses constant nominal angular velocities, cubic relative
+COM translation and rotated affine centers/edges. Absolute projection ranges
+include radius sign crossings. Cubic rotating-vector bounds are shared with
+common-point slab admission.
+
+Two-vector projection derivatives are evaluated through the relative generator
+(delta angular velocity), preserving common rotation before rounding. Fourth
+derivatives use both an operator-norm bound and a projected bound. The latter
+preserves fixed-axis projection and co-rotation cancellation. A structurally
+stationary normal retains the existing qualified fixed-normal cubic/projection
+check, including zero-user-budget separation from a static plane.
+
+Independent Rodrigues samples qualify projection ranges. Dense nominal samples
+qualify rotating face gaps across both independently accelerated arc timelines.
+A co-rotating contact at a 4 ms interval is admitted within the existing 1e-10 m
+budget; the snapshot world axis would report more than 0.1 mm false penetration.
+An actual coupled scene step of a pressed pair also advances with rotating
+face normals, retains spin, closes internal angular impulse and reports no
+dissipated heat. This short step is not a long-duration qualification of every
+evolving contact.
+
+Qualification: all 209 gameplay tests passed; application/editor all-target
+release checks passed. Formatting and diff checks passed. Edge-cross normal
+branches still use their existing conservative bound; normalized cross-product
+interval admission and supported authored material-point loads remain open.
+No GPU/runtime editor visual proof is claimed by these checks.
+
+### Edge-normal admission: unqualified work saved (2026-10-06)
+
+Edge-cross branches now use merged spin-arc intervals, raw cross-product gap
+bounds and a strictly positive magnitude bound before normalization. Interior
+parallel-edge poles reject even when both endpoint crosses are nonzero.
+Independent sampled ranges, reciprocal owners and an actual edge-patch scene
+step pass 18 geometry checks and one focused scene check.
+
+The full gameplay library run has 165 passing tests and one regression:
+`supported_face_yaw_uses_cubic_corner_motion_without_freezing_spin` returns
+`CollisionBudget`. Application/editor all-target release checks pass. These
+changes are saved as unfinished work; delivery is withheld until the regression
+is resolved. Earlier qualification counts above apply to earlier source states.
+Logs and current source hashes are in
+`artifacts/rotating-edge-normal-2026-10-06/`.
