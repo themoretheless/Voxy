@@ -1,0 +1,10 @@
+{
+  "mesher_exit_code": 0,
+  "native_volume_admitted": true,
+  "volume_nodes": 278,
+  "volume_cells": 992,
+  "independent_volume_m3": 3.000000000000005e-06,
+  "analytic_L_union_volume_m3": 3e-06,
+  "absolute_volume_error_m3": 5.082197683525802e-21,
+  "source_skin_scope": "control region contains only source vertex 666; full character gate correctly exits 1"
+}

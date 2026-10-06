@@ -1,0 +1,108 @@
+{
+  "status": "bounded full-character diagnostic completed; native admission rejected nonmanifold boundary; production volume remains unqualified",
+  "native_geometry_tests_passed": 17,
+  "manifest_import_tests_passed": 1,
+  "manifest_volume_points_cells_boundary_skin_membership_identical_to_vxtm": true,
+  "mesher": {
+    "repository": "https://github.com/wildmeshing/fTetWild",
+    "commit": "8118f810478e0e65a7bf2d8cecdc5e203a876e97",
+    "license_file": "LICENSE.MPL2",
+    "checkout": "/tmp/voxy-ftetwild-review-20261007",
+    "binary": "/tmp/voxy-ftetwild-build-20261007/FloatTetwild_bin",
+    "configure_exit_code": 0,
+    "build_exit_code": 0,
+    "build_parallelism": 4,
+    "tbb_enabled": false,
+    "compatibility_patch": "libigl-cmake4-eigen.patch"
+  },
+  "owned_meshing_session": 60651,
+  "meshing_terminal_result": null,
+  "meshing_input": {
+    "source_vertices": 3273,
+    "geometric_vertices": 2338,
+    "triangles": 4672,
+    "coordinate_matching": "exact; source alias provenance retained; render model unchanged",
+    "input": "character-input.obj",
+    "ideal_edge_length_m": 0.06,
+    "relative_envelope": 1e-06,
+    "skip_simplify": true
+  },
+  "rag": {
+    "catalog_query": "tetrahedralization TetWild volumetric skin",
+    "relevant_catalog_matches": 0,
+    "wiki_search": "timeout budget exceeded after candidate retrieval",
+    "raw_lex_search_TetWild": []
+  },
+  "limits": [
+    "Volume mesher execution is not qualified until terminal result is observed",
+    "Native admission, full source containment, support/material authoring and character dynamics remain unverified",
+    "The Medit profile supports geometry with zero reference labels and empty triangle section, not every Medit variant",
+    "No anatomical calibration, runtime GPU acceleration or CUDA qualification"
+  ],
+  "volume_gate": {
+    "check_passed": true,
+    "regression_tests_passed": 1,
+    "partial_control_cli_exit_code": 1,
+    "partial_control_bound_vertices": 1,
+    "partial_control_total_vertices": 3273,
+    "partial_control_exterior_vertices": 3272,
+    "report": "partial-volume-command.json",
+    "input_observation_count": 2
+  },
+  "sampled_envelope_mesher": {
+    "owned_session": 60651,
+    "pid": 98952,
+    "terminal_result": null,
+    "live_profile": "mesher-live-sample.txt",
+    "observed_stage": "triangle insertion / surface marking, sampled geometric envelope checks"
+  },
+  "exact_envelope_variant": {
+    "configure_exit_code": 0,
+    "first_build_exit_code": 2,
+    "first_build_failure": "IndirectPredicates selected SSE on ARM64 based on pointer width",
+    "compatibility_patch": "fast-envelope-arm64-simd.patch",
+    "fix": "require SSE2 or x64 compiler support before selecting SIMD; retain upstream scalar interval path",
+    "owned_build_session": 50639,
+    "build_directory": "/tmp/voxy-ftetwild-exact-build-20261007",
+    "build_terminal_result": 0,
+    "band_tolerance_changed": false,
+    "control_result": "exact-control-result.json",
+    "control_mesher_exit_code": 0,
+    "control_native_volume_admitted": true,
+    "qualification_scope": "analytic nonconvex control volume; not whole character"
+  },
+  "exact_character_mesher": {
+    "owned_session": 78136,
+    "pid": 14292,
+    "terminal_result": 130,
+    "output": "character-volume-exact.mesh",
+    "input": "character-input.obj",
+    "ideal_edge_length_m": 0.06,
+    "relative_envelope": 1e-06,
+    "skip_simplify": true,
+    "observed_stage": "mesh optimization / smoothing",
+    "unfiltered_intermediate_nodes": 198350,
+    "unfiltered_intermediate_tetrahedra": 1128745,
+    "limits": "Intermediate counts precede inside/outside filtering; final file and native admission are unverified.",
+    "stopped_intentionally": true,
+    "stop_reason": "Intermediate mesh reached 2928315 tetrahedra, metric max_energy worsened from 51.7343 to 184.282, before native admission; candidate does not qualify for runtime.",
+    "last_observed_intermediate_nodes": 514013,
+    "last_observed_intermediate_tetrahedra": 2928315,
+    "final_volume_file_qualified": false
+  },
+  "bounded_character_mesher": {
+    "session": 73829,
+    "terminal_exit_code": 0,
+    "max_iterations": 2,
+    "native_gate_exit_code": 1,
+    "admission": {
+      "admission_error": "nonmanifold tetrahedral boundary vertex",
+      "complete_skin_binding": false,
+      "scope": "native phase-zero volume admission and full source skin membership; not animation dynamics",
+      "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+      "volume_admitted": false,
+      "volume_blake3": "6bb07586568ba26936bcc14f6be467073aefe4797c181a21835f6aa1ba051e25"
+    },
+    "production_qualified": false
+  }
+}

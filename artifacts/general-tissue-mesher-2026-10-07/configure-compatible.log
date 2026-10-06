@@ -1,0 +1,61 @@
+-- {fmt} version: 11.2.0
+-- Build type: Release
+-- Build spdlog: 1.15.3
+-- Build type: Release
+-- Creating target: igl::core (igl_core)
+-- Third-party: creating target 'Eigen3::Eigen'
+Cloning into 'eigen-src'...
+HEAD is now at 3147391d Change version to 3.4.0.
+-- Doxygen >= 1.7.0 not found, cannot generate documentation
+-- Forcing include of libigl module: predicates
+-- Creating target: igl::predicates (igl_predicates)
+-- Third-party: creating target 'predicates::predicates'
+Cloning into 'predicates-src'...
+HEAD is now at decb7bc Update CMakeLists.txt
+CMake Warning (deprecated) at /tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- Performing Test COMPILER_HAS_HIDDEN_VISIBILITY
+-- Performing Test COMPILER_HAS_HIDDEN_VISIBILITY - Success
+-- Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY
+-- Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY - Success
+-- Performing Test COMPILER_HAS_DEPRECATED_ATTR
+-- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success
+CMake Warning (author) at /opt/homebrew/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:493 (message):
+  The package name passed to find_package_handle_standard_args() (GMP) does
+  not match the name of the calling package (GMPfTetWild).  This can lead to
+  problems in calling code that expects find_package() result variables
+  (e.g., `_FOUND`) to follow a certain pattern.
+Call Stack (most recent call first):
+  cmake/FindGMPfTetWild.cmake:32 (FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+  CMakeLists.txt:84 (find_package)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Found GMP: /opt/homebrew/include
+-- GMP libs: /opt/homebrew/lib/libgmp.dylib /opt/homebrew/include
+CMake Warning (author) at /opt/homebrew/share/cmake/Modules/FetchContent.cmake:1386 (message):
+  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+  not set.  The policy's OLD behavior will be used.  When using a URL
+  download, the timestamps of extracted files should preferably be that of
+  the time of extraction, otherwise code that depends on the extracted
+  contents might not be rebuilt if the URL changes.  The OLD behavior
+  preserves the timestamps from the archive instead, but this is usually not
+  what you want.  Update your project to the NEW behavior or specify the
+  DOWNLOAD_EXTRACT_TIMESTAMP option with a value of true to avoid this
+  robustness issue.
+Call Stack (most recent call first):
+  tests/CMakeLists.txt:3 (FetchContent_Declare)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Performing Test HAVE_FLAG__ffile_prefix_map__tmp_voxy_ftetwild_build_20261007__deps_catch2_src__
+-- Performing Test HAVE_FLAG__ffile_prefix_map__tmp_voxy_ftetwild_build_20261007__deps_catch2_src__ - Success
+-- Configuring done (72.6s)
+-- Generating done (0.2s)
+-- Build files have been written to: /tmp/voxy-ftetwild-build-20261007

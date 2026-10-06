@@ -1,4 +1,4 @@
-//! Conforming radial tetrahedra for explicitly authored convex tissue boundaries.
+//! Shared radial fill for authored convex and star-shaped tissue boundaries.
 use super::super::{Vec3, cross, dot, sub};
 use super::TetraMesh;
 use std::collections::{BTreeMap, BTreeSet};
@@ -15,9 +15,34 @@ impl TetraMesh {
     /// Half-space checks use f64 without a permissive geometry tolerance; this is not
     /// an exact-arithmetic convexity certificate.
     pub fn from_convex_surface(
+        points: Vec<Vec3>,
+        boundary: Vec<[usize; 3]>,
+        interior: Vec3,
+    ) -> Result<Self, &'static str> {
+        Self::from_radial_surface(points, boundary, interior, true)
+    }
+    /// Fill an authored closed surface visible from a supplied interior point.
+    /// Concave surfaces are allowed; every outward face must see the center on
+    /// its strictly interior side. Source vertices and faces are retained, with
+    /// one radial tetrahedron per triangle. No hull or surface approximation is
+    /// introduced. The resulting mesh passes the ordinary overlap/manifold checks.
+    ///
+    /// # Errors
+    /// Invalid topology, a center outside the surface kernel, overlapping cells,
+    /// numerical degeneracy or existing mesh admission/resource limits.
+    /// This uses f64 geometry, not an exact-arithmetic visibility certificate.
+    pub fn from_star_shaped_surface(
+        points: Vec<Vec3>,
+        boundary: Vec<[usize; 3]>,
+        interior: Vec3,
+    ) -> Result<Self, &'static str> {
+        Self::from_radial_surface(points, boundary, interior, false)
+    }
+    fn from_radial_surface(
         mut points: Vec<Vec3>,
         boundary: Vec<[usize; 3]>,
         interior: Vec3,
+        require_convex: bool,
     ) -> Result<Self, &'static str> {
         if points.len() < 4
             || points.len() >= 1_000_000
@@ -59,13 +84,15 @@ impl TetraMesh {
             if !center_side.is_finite() || center_side >= 0. {
                 return Err("convex tissue center is not strictly interior");
             }
-            for (index, &point) in points.iter().enumerate() {
-                if face.contains(&index) {
-                    continue;
-                }
-                let side = dot(normal, sub(point, a));
-                if !side.is_finite() || side > 0. {
-                    return Err("tissue surface is not convex");
+            if require_convex {
+                for (index, &point) in points.iter().enumerate() {
+                    if face.contains(&index) {
+                        continue;
+                    }
+                    let side = dot(normal, sub(point, a));
+                    if !side.is_finite() || side > 0. {
+                        return Err("tissue surface is not convex");
+                    }
                 }
             }
             for vertex in face {
@@ -113,7 +140,11 @@ impl TetraMesh {
             cells,
             boundary,
         };
-        mesh.validate_topology()?;
+        if require_convex {
+            mesh.validate_topology()?;
+        } else {
+            mesh.validate()?;
+        }
         Ok(mesh)
     }
 }

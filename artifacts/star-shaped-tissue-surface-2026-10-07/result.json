@@ -1,0 +1,30 @@
+{
+  "status": "implemented; focused tests passed",
+  "api": "TetraMesh::from_star_shaped_surface",
+  "scope": "native surface-to-volume authoring for closed star-shaped concave boundaries",
+  "tests_passed": 15,
+  "source_boundary_fixture": {
+    "vertices": 98,
+    "triangles": 192,
+    "max_rest_embedding_component_error_m": 1.1102230246251565e-16,
+    "source_geometry_retained_exactly": true
+  },
+  "independent_checks": [
+    "concave corner volume .75 m3 and density 1000 kg/m3 -> mass 750 kg",
+    "surface/nodal virtual work agreement",
+    "affine displacement transfer for all source vertices",
+    "VXTM roundtrip preserves points, cells and faces",
+    "invalid center, open/inward/duplicate/unused boundary rejection",
+    "existing convex/lattice/overlap regression suites"
+  ],
+  "limits": [
+    "No general non-star-shaped tetrahedralization or anatomical fitting",
+    "All geometry admission remains f64, not exact predicates",
+    "Existing illustrative Cesium tissue coverage remains 16 of 3273",
+    "No full character dynamics or GPU performance claim"
+  ],
+  "sources": {
+    "crates/physics/src/biomechanics/tetra_mesh/convex_surface.rs": "8c7e2993fc3a444305bd77c9a2d17dec85b251b37eff4d635f9f0fd3d57cc2d3",
+    "crates/physics/tests/convex_tissue_surface.rs": "26502f28c2cd36097faec76499c11e64515cd7d538d660da3bcb0bffaf892a5b"
+  }
+}

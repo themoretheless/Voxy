@@ -1,0 +1,323 @@
+[  1%] Building CXX object _deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.o
+[  1%] Building C object _deps/predicates-build/CMakeFiles/predicates.dir/predicates.c.o
+[  1%] Built target igl_predicates
+[  1%] Built target CLI11
+[  1%] Building CXX object _deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.o
+[  1%] Built target igl_core
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:709:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+  709 | static int grow_expansion(elen, e, b, h)                /* e and h can be the same. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:746:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+  746 | static int grow_expansion_zeroelim(elen, e, b, h)       /* e and h can be the same. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:788:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+  788 | static int expansion_sum(elen, e, flen, f, h)
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:837:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+  837 | static int expansion_sum_zeroelim1(elen, e, flen, f, h)
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:897:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+  897 | static int expansion_sum_zeroelim2(elen, e, flen, f, h)
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:954:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+  954 | static int fast_expansion_sum(elen, e, flen, f, h)           /* h cannot be e or f. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1031:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1031 | static int fast_expansion_sum_zeroelim(elen, e, flen, f, h)  /* h cannot be e or f. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1116:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1116 | static int linear_expansion_sum(elen, e, flen, f, h)         /* h cannot be e or f. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1180:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1180 | static int linear_expansion_sum_zeroelim(elen, e, flen, f, h)/* h cannot be e or f. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1254:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1254 | static int scale_expansion(elen, e, b, h)            /* e and h cannot be the same. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1303:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1303 | static int scale_expansion_zeroelim(elen, e, b, h)   /* e and h cannot be the same. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1358:12: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1358 | static int compress(elen, e, h)                         /* e and h may be the same. */
+      |            ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1403:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1403 | static REAL estimate(elen, e)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1443:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1443 | static REAL orient2dfast(pa, pb, pc)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1457:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1457 | static REAL orient2dexact(pa, pb, pc)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1502:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1502 | static REAL orient2dslow(pa, pb, pc)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1546:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1546 | static REAL orient2dadapt(pa, pb, pc, detsum)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1630:6: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1630 | REAL orient2d(pa, pb, pc)
+      |      ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1695:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1695 | static REAL orient3dfast(pa, pb, pc, pd)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1720:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1720 | static REAL orient3dexact(pa, pb, pc, pd)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1801:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1801 | static REAL orient3dslow(pa, pb, pc, pd)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:1897:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 1897 | static REAL orient3dadapt(pa, pb, pc, pd, permanent)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:2302:6: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 2302 | REAL orient3d(pa, pb, pc, pd)
+      |      ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:2373:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 2373 | static REAL incirclefast(pa, pb, pc, pd)
+      |             ^
+[  1%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/libMeshb/sources/libmeshb7.c.o
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:2400:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 2400 | static REAL incircleexact(pa, pb, pc, pd)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:2502:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 2502 | static REAL incircleslow(pa, pb, pc, pd)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:2662:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 2662 | static REAL incircleadapt(pa, pb, pc, pd, permanent)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:3236:6: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 3236 | REAL incircle(pa, pb, pc, pd)
+      |      ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:3309:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 3309 | static REAL inspherefast(pa, pb, pc, pd, pe)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:3357:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 3357 | static REAL insphereexact(pa, pb, pc, pd, pe)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:3614:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 3614 | static REAL insphereslow(pa, pb, pc, pd, pe)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:3948:13: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 3948 | static REAL insphereadapt(pa, pb, pc, pd, pe, permanent)
+      |             ^
+/tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/predicates.c:4168:6: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C23 [-Wdeprecated-non-prototype]
+ 4168 | REAL insphere(pa, pb, pc, pd, pe)
+      |      ^
+33 warnings generated.
+[  1%] Linking C static library libpredicates.a
+[  1%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/rply/rply.c.o
+[  3%] Building CXX object _deps/exact_envelope-build/CMakeFiles/IndirectPredicates.dir/indirectPredicates/ip_filtered.cpp.o
+[  3%] Built target predicates
+[  3%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/adler32.c.o
+[  5%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/compress.c.o
+[  5%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/crc32.c.o
+[  5%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/deflate.c.o
+[  7%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/gzclose.c.o
+[  7%] Building CXX object _deps/exact_envelope-build/CMakeFiles/IndirectPredicates.dir/3rdparty/i_pred/numerics.cpp.o
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.cpp:15:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.h:2:
+/tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-build/include/indirectpredicates/numerics.h:41:19: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+   41 |                 fprintf(stderr, msg);
+      |                                 ^~~
+/tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-build/include/indirectpredicates/numerics.h:41:19: note: treat the string as an argument to avoid this
+   41 |                 fprintf(stderr, msg);
+      |                                 ^
+      |                                 "%s", 
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.cpp:15:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.h:2:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-build/include/indirectpredicates/numerics.h:74:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
+   14 | #error "This header is only meant to be used on x86 and x64 architecture"
+      |  ^
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.cpp:15:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.h:2:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-build/include/indirectpredicates/numerics.h:74:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:17:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/xmmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
+   14 | #error "This header is only meant to be used on x86 and x64 architecture"
+      |  ^
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.cpp:15:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.h:2:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-build/include/indirectpredicates/numerics.h:74:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:17:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/xmmintrin.h:17:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
+   14 | #error "This header is only meant to be used on x86 and x64 architecture"
+      |  ^
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:74:3: error: use of undeclared identifier '__builtin_ia32_emms'; did you mean '__builtin_isless'?
+   74 |   __builtin_ia32_emms();
+      |   ^~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/traits.h:158:10: note: '__builtin_isless' declared here
+  158 |   return __builtin_isless((type)__x, (type)__y);
+      |          ^
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.cpp:15:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/indirectPredicates/ip_filtered.h:2:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-build/include/indirectpredicates/numerics.h:74:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:17:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/xmmintrin.h:17:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:74:23: error: too few arguments to function call, expected 2, have 0
+   74 |   __builtin_ia32_emms();
+      |   ~~~~~~~~~~~~~~~~~~~~^
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:165:22: error: use of undeclared identifier '__builtin_ia32_packsswb128'
+  165 |     return __trunc64(__builtin_ia32_packsswb128(
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:191:22: error: use of undeclared identifier '__builtin_ia32_packssdw128'
+  191 |     return __trunc64(__builtin_ia32_packssdw128(
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:217:22: error: use of undeclared identifier '__builtin_ia32_packuswb128'
+  217 |     return __trunc64(__builtin_ia32_packuswb128(
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:707:22: error: use of undeclared identifier '__builtin_ia32_pmaddwd128'
+  707 |     return __trunc64(__builtin_ia32_pmaddwd128((__v8hi)__anyext128(__m1),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+[  7%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/gzlib.c.o
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:729:22: error: use of undeclared identifier '__builtin_ia32_pmulhw128'
+  729 |     return __trunc64(__builtin_ia32_pmulhw128((__v8hi)__anyext128(__m1),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:774:22: error: use of undeclared identifier '__builtin_ia32_psllw128'; did you mean '__builtin_arm_wsr128'?
+  774 |     return __trunc64(__builtin_ia32_psllw128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:774:46: error: cannot initialize a parameter of type 'const char *' with an rvalue of type '__v8hi' (vector of 8 'short' values)
+  774 |     return __trunc64(__builtin_ia32_psllw128((__v8hi)__anyext128(__m),
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  775 |                                              (__v8hi)__anyext128(__count)));
+      |                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:59:44: note: expanded from macro '__trunc64'
+   59 |   (__m64) __builtin_shufflevector((__v2di)(x), __extension__(__v2di){}, 0)
+      |                                            ^
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:797:22: error: use of undeclared identifier '__builtin_ia32_psllwi128'
+  797 |     return __trunc64(__builtin_ia32_psllwi128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:821:22: error: use of undeclared identifier '__builtin_ia32_pslld128'
+  821 |     return __trunc64(__builtin_ia32_pslld128((__v4si)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:844:22: error: use of undeclared identifier '__builtin_ia32_pslldi128'
+  844 |     return __trunc64(__builtin_ia32_pslldi128((__v4si)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:865:22: error: use of undeclared identifier '__builtin_ia32_psllq128'
+  865 |     return __trunc64(__builtin_ia32_psllq128((__v2di)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+[  7%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/gzread.c.o
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:886:22: error: use of undeclared identifier '__builtin_ia32_psllqi128'
+  886 |     return __trunc64(__builtin_ia32_psllqi128((__v2di)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:911:22: error: use of undeclared identifier '__builtin_ia32_psraw128'
+  911 |     return __trunc64(__builtin_ia32_psraw128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:935:22: error: use of undeclared identifier '__builtin_ia32_psrawi128'
+  935 |     return __trunc64(__builtin_ia32_psrawi128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+1 warning and 20 errors generated.
+make[3]: *** [_deps/exact_envelope-build/CMakeFiles/IndirectPredicates.dir/indirectPredicates/ip_filtered.cpp.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+[  7%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/gzwrite.c.o
+[  9%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/infback.c.o
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.cpp:35:
+/tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.h:41:19: warning: format string is not a string literal (potentially insecure) [-Wformat-security]
+   41 |                 fprintf(stderr, msg);
+      |                                 ^~~
+/tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.h:41:19: note: treat the string as an argument to avoid this
+   41 |                 fprintf(stderr, msg);
+      |                                 ^
+      |                                 "%s", 
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.cpp:35:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.h:74:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
+   14 | #error "This header is only meant to be used on x86 and x64 architecture"
+      |  ^
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.cpp:35:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.h:74:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:17:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/xmmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
+   14 | #error "This header is only meant to be used on x86 and x64 architecture"
+      |  ^
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.cpp:35:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.h:74:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:17:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/xmmintrin.h:17:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:14:2: error: "This header is only meant to be used on x86 and x64 architecture"
+   14 | #error "This header is only meant to be used on x86 and x64 architecture"
+      |  ^
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:74:3: error: use of undeclared identifier '__builtin_ia32_emms'; did you mean '__builtin_isless'?
+   74 |   __builtin_ia32_emms();
+      |   ^~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__math/traits.h:158:10: note: '__builtin_isless' declared here
+  158 |   return __builtin_isless((type)__x, (type)__y);
+      |          ^
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.cpp:35:
+In file included from /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/i_pred/numerics.h:74:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/emmintrin.h:17:
+In file included from /Library/Developer/CommandLineTools/usr/lib/clang/21/include/xmmintrin.h:17:
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:74:23: error: too few arguments to function call, expected 2, have 0
+   74 |   __builtin_ia32_emms();
+      |   ~~~~~~~~~~~~~~~~~~~~^
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:165:22: error: use of undeclared identifier '__builtin_ia32_packsswb128'
+  165 |     return __trunc64(__builtin_ia32_packsswb128(
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:191:22: error: use of undeclared identifier '__builtin_ia32_packssdw128'
+  191 |     return __trunc64(__builtin_ia32_packssdw128(
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:217:22: error: use of undeclared identifier '__builtin_ia32_packuswb128'
+  217 |     return __trunc64(__builtin_ia32_packuswb128(
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:707:22: error: use of undeclared identifier '__builtin_ia32_pmaddwd128'
+  707 |     return __trunc64(__builtin_ia32_pmaddwd128((__v8hi)__anyext128(__m1),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+[  9%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/inffast.c.o
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:729:22: error: use of undeclared identifier '__builtin_ia32_pmulhw128'
+  729 |     return __trunc64(__builtin_ia32_pmulhw128((__v8hi)__anyext128(__m1),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:774:22: error: use of undeclared identifier '__builtin_ia32_psllw128'; did you mean '__builtin_arm_wsr128'?
+  774 |     return __trunc64(__builtin_ia32_psllw128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:774:46: error: cannot initialize a parameter of type 'const char *' with an rvalue of type '__v8hi' (vector of 8 'short' values)
+  774 |     return __trunc64(__builtin_ia32_psllw128((__v8hi)__anyext128(__m),
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  775 |                                              (__v8hi)__anyext128(__count)));
+      |                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:59:44: note: expanded from macro '__trunc64'
+   59 |   (__m64) __builtin_shufflevector((__v2di)(x), __extension__(__v2di){}, 0)
+      |                                            ^
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:797:22: error: use of undeclared identifier '__builtin_ia32_psllwi128'
+  797 |     return __trunc64(__builtin_ia32_psllwi128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:821:22: error: use of undeclared identifier '__builtin_ia32_pslld128'
+  821 |     return __trunc64(__builtin_ia32_pslld128((__v4si)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+[  9%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/inflate.c.o
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:844:22: error: use of undeclared identifier '__builtin_ia32_pslldi128'
+  844 |     return __trunc64(__builtin_ia32_pslldi128((__v4si)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:865:22: error: use of undeclared identifier '__builtin_ia32_psllq128'
+  865 |     return __trunc64(__builtin_ia32_psllq128((__v2di)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+[ 10%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/inftrees.c.o
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:886:22: error: use of undeclared identifier '__builtin_ia32_psllqi128'
+  886 |     return __trunc64(__builtin_ia32_psllqi128((__v2di)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:911:22: error: use of undeclared identifier '__builtin_ia32_psraw128'
+  911 |     return __trunc64(__builtin_ia32_psraw128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/usr/lib/clang/21/include/mmintrin.h:935:22: error: use of undeclared identifier '__builtin_ia32_psrawi128'
+  935 |     return __trunc64(__builtin_ia32_psrawi128((__v8hi)__anyext128(__m),
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+1 warning and 20 errors generated.
+make[3]: *** [_deps/exact_envelope-build/CMakeFiles/IndirectPredicates.dir/3rdparty/i_pred/numerics.cpp.o] Error 1
+make[2]: *** [_deps/exact_envelope-build/CMakeFiles/IndirectPredicates.dir/all] Error 2
+make[2]: *** Waiting for unfinished jobs....
+[ 10%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/trees.c.o
+[ 10%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/uncompr.c.o
+[ 10%] Building C object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/zlib/zutil.c.o
+[ 12%] Building CXX object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/PoissonRecon/Factor.cpp.o
+[ 12%] Building CXX object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/PoissonRecon/Geometry.cpp.o
+[ 12%] Building CXX object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/PoissonRecon/MarchingCubes.cpp.o
+[ 14%] Building CXX object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/PoissonRecon/poisson_geogram.cpp.o
+[ 14%] Linking CXX static library libfmt.a
+[ 14%] Built target fmt
+[ 14%] Building CXX object _deps/geogram-build/src/lib/geogram/third_party/CMakeFiles/geogram_third_party.dir/xatlas/xatlas.cpp.o
+[ 14%] Built target geogram_third_party
+make[1]: *** [CMakeFiles/FloatTetwild_bin.dir/rule] Error 2
+make: *** [FloatTetwild_bin] Error 2

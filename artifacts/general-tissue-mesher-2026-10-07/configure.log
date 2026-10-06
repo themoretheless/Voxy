@@ -1,0 +1,22 @@
+-- {fmt} version: 11.2.0
+-- Build type: Release
+-- Build spdlog: 1.15.3
+-- Build type: Release
+-- Creating target: igl::core (igl_core)
+-- Third-party: creating target 'Eigen3::Eigen'
+CMake Error at /opt/homebrew/share/cmake/Modules/FetchContent.cmake:1966 (message):
+  Calling FetchContent_Populate(eigen) is deprecated, call
+  FetchContent_MakeAvailable(eigen) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(eigen) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/recipes/external/eigen.cmake:16 (FetchContent_Populate)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/igl/modules/core.cmake:23 (include)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/igl/igl_include.cmake:32 (include)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/igl/igl_include.cmake:54 (_igl_include_full)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/libigl.cmake:15 (igl_include)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/CMakeLists.txt:151 (include)
+
+
+-- Configuring incomplete, errors occurred!

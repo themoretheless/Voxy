@@ -1,0 +1,14 @@
+6 10 12 2 9 5 16 13 0 14 4 1 19 8 18 11 3 17 15 7 
+bbox_diag_length = 1.7844
+ideal_edge_length = 0.06
+stage = 2
+eps_input = 1.7844e-06
+eps = 9.87825e-07
+eps_simplification = 7.9026e-07
+eps_coplanar = 1.97565e-07
+dd = 1.1896e-06
+dd_simplification = 9.51679e-07
+#boundary_e1 = 0
+#boundary_e2 = 0
+#boundary_e1 = 0
+#boundary_e2 = 0

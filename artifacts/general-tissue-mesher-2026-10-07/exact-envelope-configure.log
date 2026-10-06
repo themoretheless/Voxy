@@ -1,0 +1,193 @@
+-- The C compiler identification is AppleClang 21.0.0.21000334
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test IS_SUPPORTED_-Wall
+-- Performing Test IS_SUPPORTED_-Wall - Success
+-- Performing Test IS_SUPPORTED_-Wextra
+-- Performing Test IS_SUPPORTED_-Wextra - Success
+-- Performing Test IS_SUPPORTED_-pedantic
+-- Performing Test IS_SUPPORTED_-pedantic - Success
+-- Performing Test IS_SUPPORTED_-Wunused
+-- Performing Test IS_SUPPORTED_-Wunused - Success
+-- Performing Test IS_SUPPORTED_-Wno-long-long
+-- Performing Test IS_SUPPORTED_-Wno-long-long - Success
+-- Performing Test IS_SUPPORTED_-Wpointer-arith
+-- Performing Test IS_SUPPORTED_-Wpointer-arith - Success
+-- Performing Test IS_SUPPORTED_-Wformat-2
+-- Performing Test IS_SUPPORTED_-Wformat-2 - Success
+-- Performing Test IS_SUPPORTED_-Wuninitialized
+-- Performing Test IS_SUPPORTED_-Wuninitialized - Success
+-- Performing Test IS_SUPPORTED_-Wcast-qual
+-- Performing Test IS_SUPPORTED_-Wcast-qual - Success
+-- Performing Test IS_SUPPORTED_-Wmissing-noreturn
+-- Performing Test IS_SUPPORTED_-Wmissing-noreturn - Success
+-- Performing Test IS_SUPPORTED_-Wmissing-format-attribute
+-- Performing Test IS_SUPPORTED_-Wmissing-format-attribute - Success
+-- Performing Test IS_SUPPORTED_-Wredundant-decls
+-- Performing Test IS_SUPPORTED_-Wredundant-decls - Success
+-- Performing Test IS_SUPPORTED_-Wno-unused-variable
+-- Performing Test IS_SUPPORTED_-Wno-unused-variable - Success
+-- Performing Test IS_SUPPORTED_-Wunused-but-set-variable
+-- Performing Test IS_SUPPORTED_-Wunused-but-set-variable - Success
+-- Performing Test IS_SUPPORTED_-Wno-unused-parameter
+-- Performing Test IS_SUPPORTED_-Wno-unused-parameter - Success
+-- Performing Test IS_SUPPORTED_-Wno-old-style-cast
+-- Performing Test IS_SUPPORTED_-Wno-old-style-cast - Success
+-- Performing Test IS_SUPPORTED_-Wshadow
+-- Performing Test IS_SUPPORTED_-Wshadow - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-null-sentinel
+-- Performing Test IS_SUPPORTED_-Wstrict-null-sentinel - Failed
+-- Performing Test IS_SUPPORTED_-Woverloaded-virtual
+-- Performing Test IS_SUPPORTED_-Woverloaded-virtual - Success
+-- Performing Test IS_SUPPORTED_-Wsign-promo
+-- Performing Test IS_SUPPORTED_-Wsign-promo - Success
+-- Performing Test IS_SUPPORTED_-Wstack-protector
+-- Performing Test IS_SUPPORTED_-Wstack-protector - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing-2
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing-2 - Success
+-- Performing Test IS_SUPPORTED_-Wswitch-default
+-- Performing Test IS_SUPPORTED_-Wswitch-default - Success
+-- Performing Test IS_SUPPORTED_-Wswitch-enum
+-- Performing Test IS_SUPPORTED_-Wswitch-enum - Success
+-- Performing Test IS_SUPPORTED_-Wswitch-unreachable
+-- Performing Test IS_SUPPORTED_-Wswitch-unreachable - Failed
+-- Performing Test IS_SUPPORTED_-Wcast-align
+-- Performing Test IS_SUPPORTED_-Wcast-align - Success
+-- Performing Test IS_SUPPORTED_-Wdisabled-optimization
+-- Performing Test IS_SUPPORTED_-Wdisabled-optimization - Success
+-- Performing Test IS_SUPPORTED_-Winvalid-pch
+-- Performing Test IS_SUPPORTED_-Winvalid-pch - Success
+-- Performing Test IS_SUPPORTED_-Wpacked
+-- Performing Test IS_SUPPORTED_-Wpacked - Success
+-- Performing Test IS_SUPPORTED_-Wno-padded
+-- Performing Test IS_SUPPORTED_-Wno-padded - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow-2
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow-2 - Success
+-- Performing Test IS_SUPPORTED_-Wctor-dtor-privacy
+-- Performing Test IS_SUPPORTED_-Wctor-dtor-privacy - Success
+-- Performing Test IS_SUPPORTED_-Wlogical-op
+-- Performing Test IS_SUPPORTED_-Wlogical-op - Failed
+-- Performing Test IS_SUPPORTED_-Wnoexcept
+-- Performing Test IS_SUPPORTED_-Wnoexcept - Failed
+-- Performing Test IS_SUPPORTED_-Wnon-virtual-dtor
+-- Performing Test IS_SUPPORTED_-Wnon-virtual-dtor - Success
+-- Performing Test IS_SUPPORTED_-Wdelete-non-virtual-dtor
+-- Performing Test IS_SUPPORTED_-Wdelete-non-virtual-dtor - Success
+-- Performing Test IS_SUPPORTED_-Wno-sign-compare
+-- Performing Test IS_SUPPORTED_-Wno-sign-compare - Success
+-- Performing Test IS_SUPPORTED_-Wno-error-stringop-overflow
+-- Performing Test IS_SUPPORTED_-Wno-error-stringop-overflow - Failed
+-- Performing Test IS_SUPPORTED_-Wnull-dereference
+-- Performing Test IS_SUPPORTED_-Wnull-dereference - Success
+-- Performing Test IS_SUPPORTED_-fdelete-null-pointer-checks
+-- Performing Test IS_SUPPORTED_-fdelete-null-pointer-checks - Success
+-- Performing Test IS_SUPPORTED_-Wduplicated-cond
+-- Performing Test IS_SUPPORTED_-Wduplicated-cond - Failed
+-- Performing Test IS_SUPPORTED_-Wmisleading-indentation
+-- Performing Test IS_SUPPORTED_-Wmisleading-indentation - Success
+-- Performing Test IS_SUPPORTED_-fno-omit-frame-pointer
+-- Performing Test IS_SUPPORTED_-fno-omit-frame-pointer - Success
+-- Performing Test IS_SUPPORTED_-fno-optimize-sibling-calls
+-- Performing Test IS_SUPPORTED_-fno-optimize-sibling-calls - Success
+-- {fmt} version: 11.2.0
+-- Build type: Release
+-- Performing Test HAS_NULLPTR_WARNING
+-- Performing Test HAS_NULLPTR_WARNING - Success
+-- Build spdlog: 1.15.3
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Build type: Release
+-- Looking for fwrite_unlocked
+-- Looking for fwrite_unlocked - not found
+-- Creating target: igl::core (igl_core)
+-- Third-party: creating target 'Eigen3::Eigen'
+-- Doxygen >= 1.7.0 not found, cannot generate documentation
+CMake Warning (deprecated) at /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/CMakeLists.txt:2 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+Cloning into 'tbb'...
+HEAD is now at 08b4341 Cache config date (#47). (#48)
+CMake Warning (deprecated) at /tmp/voxy-ftetwild-exact-build-20261007/_deps/exact_envelope-src/3rdparty/tbb/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- TBB: using libc++.
+Cloning into 'i_pred'...
+HEAD is now at e144a34 bugfix
+-- Forcing include of libigl module: predicates
+-- Creating target: igl::predicates (igl_predicates)
+-- Third-party: creating target 'predicates::predicates'
+CMake Warning (deprecated) at /tmp/voxy-ftetwild-build-20261007/_deps/predicates-src/CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- Performing Test COMPILER_HAS_HIDDEN_VISIBILITY
+-- Performing Test COMPILER_HAS_HIDDEN_VISIBILITY - Success
+-- Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY
+-- Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY - Success
+-- Performing Test COMPILER_HAS_DEPRECATED_ATTR
+-- Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success
+CMake Warning (author) at /opt/homebrew/share/cmake/Modules/FindPackageHandleStandardArgs.cmake:493 (message):
+  The package name passed to find_package_handle_standard_args() (GMP) does
+  not match the name of the calling package (GMPfTetWild).  This can lead to
+  problems in calling code that expects find_package() result variables
+  (e.g., `_FOUND`) to follow a certain pattern.
+Call Stack (most recent call first):
+  cmake/FindGMPfTetWild.cmake:32 (FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+  CMakeLists.txt:84 (find_package)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Found GMP: /opt/homebrew/include
+-- GMP libs: /opt/homebrew/lib/libgmp.dylib /opt/homebrew/include
+CMake Warning (author) at /opt/homebrew/share/cmake/Modules/FetchContent.cmake:1386 (message):
+  The DOWNLOAD_EXTRACT_TIMESTAMP option was not given and policy CMP0135 is
+  not set.  The policy's OLD behavior will be used.  When using a URL
+  download, the timestamps of extracted files should preferably be that of
+  the time of extraction, otherwise code that depends on the extracted
+  contents might not be rebuilt if the URL changes.  The OLD behavior
+  preserves the timestamps from the archive instead, but this is usually not
+  what you want.  Update your project to the NEW behavior or specify the
+  DOWNLOAD_EXTRACT_TIMESTAMP option with a value of true to avoid this
+  robustness issue.
+Call Stack (most recent call first):
+  tests/CMakeLists.txt:3 (FetchContent_Declare)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Performing Test HAVE_FLAG__ffile_prefix_map__tmp_voxy_ftetwild_build_20261007__deps_catch2_src__
+-- Performing Test HAVE_FLAG__ffile_prefix_map__tmp_voxy_ftetwild_build_20261007__deps_catch2_src__ - Success
+-- Configuring done (30.7s)
+-- Generating done (0.2s)
+-- Build files have been written to: /tmp/voxy-ftetwild-exact-build-20261007

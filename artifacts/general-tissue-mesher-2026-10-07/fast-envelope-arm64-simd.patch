@@ -1,0 +1,11 @@
+--- numerics.h
++++ numerics.h
+@@ -51,7 +51,7 @@
+ #endif
+ 
+ 	// 64-bit
+-#ifdef IS64BITPLATFORM
++#if defined(IS64BITPLATFORM) && (defined(__SSE2__) || defined(_M_X64))
+ #define USE_SIMD_INSTRUCTIONS
+ #endif
+ 

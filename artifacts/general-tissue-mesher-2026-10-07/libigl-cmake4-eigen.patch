@@ -1,0 +1,15 @@
+--- eigen.cmake
++++ eigen.cmake
+@@ -10,10 +10,11 @@
+     GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+     GIT_TAG tags/3.4.0
+     GIT_SHALLOW TRUE
++    SOURCE_SUBDIR voxy-download-only
+ )
+ FetchContent_GetProperties(eigen)
+ if(NOT eigen_POPULATED)
+-    FetchContent_Populate(eigen)
++    FetchContent_MakeAvailable(eigen)
+ endif()
+ 
+ add_library(Eigen3_Eigen INTERFACE)

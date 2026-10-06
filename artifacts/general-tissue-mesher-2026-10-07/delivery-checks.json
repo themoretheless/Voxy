@@ -1,0 +1,10 @@
+{
+  "physics_lib_passed": 112,
+  "physics_lib_ignored": 7,
+  "geometry_integration_passed": 17,
+  "authored_importer_passed": 2,
+  "cargo_fmt_all_check": "passed",
+  "native_full_character_gate": "expected rejection: nonmanifold tetrahedral boundary vertex",
+  "live_mesher_log": "excluded; character-meshing-delivery-snapshot.log preserves current observation",
+  "delivery_scope": "import functionality and qualification evidence; full-character production dynamics unfinished"
+}

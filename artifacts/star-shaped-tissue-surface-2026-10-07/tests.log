@@ -1,0 +1,45 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+     Running tests/convex_tissue_surface.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/convex_tissue_surface-c10850a9fe8f0c09)
+
+running 7 tests
+test star_surface_rejects_center_outside_kernel_and_invalid_boundaries ... ok
+test rejects_open_inward_nonconvex_and_unusable_source_geometry ... ok
+test complete_source_skin_embeds_and_affine_motion_preserves_exact_cube_mass ... ok
+test authored_volume_round_trips_existing_interchange_and_rejects_invalid_export ... ok
+test concave_star_surface_preserves_complete_skin_volume_and_reciprocal_loads ... ok
+test sheared_source_boundary_refines_conformingly_without_losing_volume ... ok
+STAR_SOURCE_SKIN vertices=98 triangles=192 max_rest_error_m=1.11022302462515654e-16
+test dense_concave_source_boundary_remains_complete_after_radial_fill ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/lattice_tissue_volume.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/lattice_tissue_volume-193a39329a809e1b)
+
+running 4 tests
+test malformed_lattice_inputs_are_rejected ... ok
+test anisotropic_shifted_cells_preserve_si_volume ... ok
+test edge_and_point_welds_are_rejected_but_separate_components_and_cavities_are_valid ... ok
+test nonconvex_lattice_union_preserves_cavity_boundary_and_analytic_volume ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/tetrahedral_overlap.rs (/tmp/voxy-contact-derivatives-20261006/debug/deps/tetrahedral_overlap-89ae4a1b32e50673)
+
+running 4 tests
+test overlap_detection_survives_rotation_translation_and_uniform_scale ... ok
+test separated_and_touching_cells_remain_admissible ... ok
+test thin_positive_volume_overlap_is_not_hidden_by_unrelated_wide_axes ... ok
+test overlapping_disconnected_cells_are_rejected_before_mass_or_embedding ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

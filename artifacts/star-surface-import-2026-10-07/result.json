@@ -1,0 +1,30 @@
+{
+  "status": "completed",
+  "import_tests_passed": 2,
+  "runtime_exit_code": 0,
+  "format": "star-shaped-surface-v1",
+  "source_fixture": "fixture/surface.json",
+  "observed_inputs": 3,
+  "fixture_nodes": 17,
+  "fixture_cells": 28,
+  "source_boundary_triangles": 28,
+  "source_bound_vertices": 1,
+  "source_vertices": 3273,
+  "source_owned_vertex": 666,
+  "responsive_source_triangles": 6,
+  "capture_steps": 3,
+  "simulated_seconds": 0.0125,
+  "accepted_substeps": 12,
+  "rejected_substeps": 0,
+  "node_checkpoints": 4,
+  "independent_endpoint_work_heat_balance_j": 9.907938449419817e-11,
+  "balance_subtracts_reported_defect": false,
+  "backend": "Metal",
+  "adapter": "Apple M4 Max",
+  "limits": [
+    "Regional illustrative authored import; no full character coverage or full clip qualification",
+    "Parameters are explicitly authored but not anatomically calibrated",
+    "CPU mechanics and skin deformation, GPU rasterization; no CUDA execution claim"
+  ],
+  "source_sha256": "cd6c6c31b70e8d43b7625ab7da28ce389cbb6ee734144359d37732ef1f1675cd"
+}

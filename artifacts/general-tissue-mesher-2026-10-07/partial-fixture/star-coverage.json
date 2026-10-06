@@ -1,0 +1,24 @@
+{
+  "bound_vertices": 1,
+  "contract_supplied": true,
+  "regions": [
+    {
+      "boundary_triangles": 28,
+      "cells": 28,
+      "density_kg_m3": 1200.0,
+      "joint": 12,
+      "mesh_format": "star-shaped-surface-v1",
+      "nodes": 17,
+      "specific_heat_j_kg_k": 2000.0,
+      "support_joint_overrides": [],
+      "support_joint_weights": [],
+      "supports": 6,
+      "temperature_kelvin": 295.0
+    }
+  ],
+  "scope": "reference-space skin membership; not dynamic collision qualification",
+  "source_vertices": 3273,
+  "tissue_owned_vertices": [
+    666
+  ]
+}

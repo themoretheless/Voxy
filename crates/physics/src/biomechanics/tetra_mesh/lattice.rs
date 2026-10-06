@@ -62,25 +62,6 @@ impl TetraMesh {
                 cells.push(tet);
             }
         }
-        let mut faces = BTreeMap::<[usize; 3], Vec<[usize; 3]>>::new();
-        for &[a, b, c, d] in &cells {
-            for face in [[b, c, d], [a, d, c], [a, b, d], [a, c, b]] {
-                let mut key = face;
-                key.sort_unstable();
-                faces.entry(key).or_default().push(face);
-            }
-        }
-        let boundary = faces
-            .into_values()
-            .filter(|faces| faces.len() == 1)
-            .map(|faces| faces[0])
-            .collect();
-        let mesh = Self {
-            points,
-            cells,
-            boundary,
-        };
-        mesh.validate()?;
-        Ok(mesh)
+        Self::from_tetrahedra(points, cells)
     }
 }

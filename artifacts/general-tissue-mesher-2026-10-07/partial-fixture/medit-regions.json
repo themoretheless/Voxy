@@ -1,0 +1,47 @@
+{
+  "coordinate_space": "scene_phase_0_metres",
+  "coverage": {
+    "minimum_bound_vertices": 1,
+    "required_vertices": [
+      666
+    ]
+  },
+  "material_profile": "authored-ogden-maxwell-v1",
+  "regions": [
+    {
+      "excluded_obstacle_faces": [],
+      "joint": "Skeleton_torso_joint_2",
+      "material": {
+        "bulk_pa": 2000000.0,
+        "density_kg_m3": 1200.0,
+        "maxwell_branches": [
+          {
+            "relaxation_seconds": 0.5,
+            "shear_pa": 20000.0
+          }
+        ],
+        "ogden_terms": [
+          {
+            "exponent": 2.0,
+            "shear_pa": 15000.0
+          }
+        ],
+        "specific_heat_j_kg_k": 2000.0,
+        "temperature_kelvin": 295.0
+      },
+      "mesh": "volume.mesh",
+      "mesh_blake3": "51eb5f001a28bba1742402b163076c6131bcf9f8185b4d55bb75bb90415f5bac",
+      "mesh_format": "medit-volume-v1",
+      "supports": [
+        0,
+        1,
+        4,
+        7,
+        12,
+        15
+      ]
+    }
+  ],
+  "source_model_blake3": "682520084eb4b49cfd0ad190a06d06e6c9db208ca702b82e21198ab53fe6301e",
+  "version": 2
+}

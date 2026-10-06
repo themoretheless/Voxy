@@ -1,0 +1,71 @@
+{
+  "status": "verified infeasible surface kernel",
+  "source_sha256": "63b5854b7858bb39e57233534ca82633536bd8d6b23ea6bf40cde596bef30959",
+  "source_triangle_indices": [
+    3641,
+    1192,
+    4272,
+    4140
+  ],
+  "source_vertex_indices": [
+    [
+      1226,
+      1664,
+      2336
+    ],
+    [
+      49,
+      1609,
+      1161
+    ],
+    [
+      368,
+      2390,
+      345
+    ],
+    [
+      2257,
+      98,
+      2258
+    ]
+  ],
+  "nonnegative_weights": [
+    {
+      "numerator": "629444624590190546511675036743765088939068339050824504079773126131024502461004121483920",
+      "denominator": "12511600165930705653730450903333638317620512235890211951254102338192463413481911411722961"
+    },
+    {
+      "numerator": "967045167133342765769200763046990761215518399665376376877849917911082648544827945262176",
+      "denominator": "12511600165930705653730450903333638317620512235890211951254102338192463413481911411722961"
+    },
+    {
+      "numerator": "23928806408490050083685563302155114510881406158988678500563425987419431530154838678825160",
+      "denominator": "37534800497792116961191352710000914952861536707670635853762307014577390240445734235168883"
+    },
+    {
+      "numerator": "8816524714131466940663162008473532891516370332533354710326011895031637257273399356105435",
+      "denominator": "37534800497792116961191352710000914952861536707670635853762307014577390240445734235168883"
+    }
+  ],
+  "weighted_plane_normal_exact": [
+    {
+      "numerator": "0",
+      "denominator": "1"
+    },
+    {
+      "numerator": "0",
+      "denominator": "1"
+    },
+    {
+      "numerator": "0",
+      "denominator": "1"
+    }
+  ],
+  "weighted_plane_offset_exact": {
+    "numerator": "-1250508193241192404250648652883016085193694989151307638513117834350960387757228267474485937964995938696156514733699458409441887183995",
+    "denominator": "27428586192205984421694580538099039400058786490867041346615336531000343679304178840807588257481271289001706565745087017351782419507707904"
+  },
+  "search_candidates_examined": 346,
+  "proof": "Interior must satisfy n_i dot x <= b_i for every outward face. These nonnegative weights yield sum(weight*n)=0 and sum(weight*b)<0, hence the selected four halfspaces have no common point.",
+  "scope": "Exact rational arithmetic on the binary f64 coordinates exported by native phase-zero preview; not a continuous animation or anatomical certificate."
+}

@@ -1,0 +1,133 @@
+-- The C compiler identification is AppleClang 21.0.0.21000334
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test IS_SUPPORTED_-Wall
+-- Performing Test IS_SUPPORTED_-Wall - Success
+-- Performing Test IS_SUPPORTED_-Wextra
+-- Performing Test IS_SUPPORTED_-Wextra - Success
+-- Performing Test IS_SUPPORTED_-pedantic
+-- Performing Test IS_SUPPORTED_-pedantic - Success
+-- Performing Test IS_SUPPORTED_-Wunused
+-- Performing Test IS_SUPPORTED_-Wunused - Success
+-- Performing Test IS_SUPPORTED_-Wno-long-long
+-- Performing Test IS_SUPPORTED_-Wno-long-long - Success
+-- Performing Test IS_SUPPORTED_-Wpointer-arith
+-- Performing Test IS_SUPPORTED_-Wpointer-arith - Success
+-- Performing Test IS_SUPPORTED_-Wformat-2
+-- Performing Test IS_SUPPORTED_-Wformat-2 - Success
+-- Performing Test IS_SUPPORTED_-Wuninitialized
+-- Performing Test IS_SUPPORTED_-Wuninitialized - Success
+-- Performing Test IS_SUPPORTED_-Wcast-qual
+-- Performing Test IS_SUPPORTED_-Wcast-qual - Success
+-- Performing Test IS_SUPPORTED_-Wmissing-noreturn
+-- Performing Test IS_SUPPORTED_-Wmissing-noreturn - Success
+-- Performing Test IS_SUPPORTED_-Wmissing-format-attribute
+-- Performing Test IS_SUPPORTED_-Wmissing-format-attribute - Success
+-- Performing Test IS_SUPPORTED_-Wredundant-decls
+-- Performing Test IS_SUPPORTED_-Wredundant-decls - Success
+-- Performing Test IS_SUPPORTED_-Wno-unused-variable
+-- Performing Test IS_SUPPORTED_-Wno-unused-variable - Success
+-- Performing Test IS_SUPPORTED_-Wunused-but-set-variable
+-- Performing Test IS_SUPPORTED_-Wunused-but-set-variable - Success
+-- Performing Test IS_SUPPORTED_-Wno-unused-parameter
+-- Performing Test IS_SUPPORTED_-Wno-unused-parameter - Success
+-- Performing Test IS_SUPPORTED_-Wno-old-style-cast
+-- Performing Test IS_SUPPORTED_-Wno-old-style-cast - Success
+-- Performing Test IS_SUPPORTED_-Wshadow
+-- Performing Test IS_SUPPORTED_-Wshadow - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-null-sentinel
+-- Performing Test IS_SUPPORTED_-Wstrict-null-sentinel - Failed
+-- Performing Test IS_SUPPORTED_-Woverloaded-virtual
+-- Performing Test IS_SUPPORTED_-Woverloaded-virtual - Success
+-- Performing Test IS_SUPPORTED_-Wsign-promo
+-- Performing Test IS_SUPPORTED_-Wsign-promo - Success
+-- Performing Test IS_SUPPORTED_-Wstack-protector
+-- Performing Test IS_SUPPORTED_-Wstack-protector - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing-2
+-- Performing Test IS_SUPPORTED_-Wstrict-aliasing-2 - Success
+-- Performing Test IS_SUPPORTED_-Wswitch-default
+-- Performing Test IS_SUPPORTED_-Wswitch-default - Success
+-- Performing Test IS_SUPPORTED_-Wswitch-enum
+-- Performing Test IS_SUPPORTED_-Wswitch-enum - Success
+-- Performing Test IS_SUPPORTED_-Wswitch-unreachable
+-- Performing Test IS_SUPPORTED_-Wswitch-unreachable - Failed
+-- Performing Test IS_SUPPORTED_-Wcast-align
+-- Performing Test IS_SUPPORTED_-Wcast-align - Success
+-- Performing Test IS_SUPPORTED_-Wdisabled-optimization
+-- Performing Test IS_SUPPORTED_-Wdisabled-optimization - Success
+-- Performing Test IS_SUPPORTED_-Winvalid-pch
+-- Performing Test IS_SUPPORTED_-Winvalid-pch - Success
+-- Performing Test IS_SUPPORTED_-Wpacked
+-- Performing Test IS_SUPPORTED_-Wpacked - Success
+-- Performing Test IS_SUPPORTED_-Wno-padded
+-- Performing Test IS_SUPPORTED_-Wno-padded - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow - Success
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow-2
+-- Performing Test IS_SUPPORTED_-Wstrict-overflow-2 - Success
+-- Performing Test IS_SUPPORTED_-Wctor-dtor-privacy
+-- Performing Test IS_SUPPORTED_-Wctor-dtor-privacy - Success
+-- Performing Test IS_SUPPORTED_-Wlogical-op
+-- Performing Test IS_SUPPORTED_-Wlogical-op - Failed
+-- Performing Test IS_SUPPORTED_-Wnoexcept
+-- Performing Test IS_SUPPORTED_-Wnoexcept - Failed
+-- Performing Test IS_SUPPORTED_-Wnon-virtual-dtor
+-- Performing Test IS_SUPPORTED_-Wnon-virtual-dtor - Success
+-- Performing Test IS_SUPPORTED_-Wdelete-non-virtual-dtor
+-- Performing Test IS_SUPPORTED_-Wdelete-non-virtual-dtor - Success
+-- Performing Test IS_SUPPORTED_-Wno-sign-compare
+-- Performing Test IS_SUPPORTED_-Wno-sign-compare - Success
+-- Performing Test IS_SUPPORTED_-Wno-error-stringop-overflow
+-- Performing Test IS_SUPPORTED_-Wno-error-stringop-overflow - Failed
+-- Performing Test IS_SUPPORTED_-Wnull-dereference
+-- Performing Test IS_SUPPORTED_-Wnull-dereference - Success
+-- Performing Test IS_SUPPORTED_-fdelete-null-pointer-checks
+-- Performing Test IS_SUPPORTED_-fdelete-null-pointer-checks - Success
+-- Performing Test IS_SUPPORTED_-Wduplicated-cond
+-- Performing Test IS_SUPPORTED_-Wduplicated-cond - Failed
+-- Performing Test IS_SUPPORTED_-Wmisleading-indentation
+-- Performing Test IS_SUPPORTED_-Wmisleading-indentation - Success
+-- Performing Test IS_SUPPORTED_-fno-omit-frame-pointer
+-- Performing Test IS_SUPPORTED_-fno-omit-frame-pointer - Success
+-- Performing Test IS_SUPPORTED_-fno-optimize-sibling-calls
+-- Performing Test IS_SUPPORTED_-fno-optimize-sibling-calls - Success
+-- {fmt} version: 11.2.0
+-- Build type: Release
+-- Performing Test HAS_NULLPTR_WARNING
+-- Performing Test HAS_NULLPTR_WARNING - Success
+-- Build spdlog: 1.15.3
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Build type: Release
+-- Looking for fwrite_unlocked
+-- Looking for fwrite_unlocked - not found
+-- Creating target: igl::core (igl_core)
+-- Third-party: creating target 'Eigen3::Eigen'
+CMake Error at /opt/homebrew/share/cmake/Modules/FetchContent.cmake:1966 (message):
+  Calling FetchContent_Populate(eigen) is deprecated, call
+  FetchContent_MakeAvailable(eigen) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(eigen) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/recipes/external/eigen.cmake:16 (FetchContent_Populate)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/igl/modules/core.cmake:23 (include)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/igl/igl_include.cmake:32 (include)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/igl/igl_include.cmake:54 (_igl_include_full)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/cmake/libigl.cmake:15 (igl_include)
+  /tmp/voxy-ftetwild-build-20261007/_deps/libigl-src/CMakeLists.txt:151 (include)
+
+
+-- Configuring incomplete, errors occurred!
