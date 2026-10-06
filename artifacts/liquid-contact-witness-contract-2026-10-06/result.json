@@ -1,0 +1,28 @@
+{
+  "checks": {
+    "final-physics-regression.log": {
+      "passed": 28,
+      "failed": 0,
+      "ignored": 0
+    },
+    "final-gameplay-regression.log": {
+      "passed": 153,
+      "failed": 0,
+      "ignored": 0
+    },
+    "editor-regression.log": {
+      "passed": 173,
+      "failed": 0,
+      "ignored": 13
+    }
+  },
+  "consumer_all_targets": "passed",
+  "format_diff": "passed",
+  "scope": "Geometry-owned world contact point retained through existing shared liquid/body earliest-event solver; moving-second transport and malformed-metadata rollback. Persistent Spin and angular body world are not enabled. Floating witness tolerance only.",
+  "sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "ffbb675f7c5ee8e2bfb97f108935faedbedee5a271ee69bab0dcf71a2f735766",
+    "crates/physics/src/liquid.rs": "5e579d20694c0ff7545756ced4dad1c35278d6c5898cb466b7c20b6853a5f7e6",
+    "crates/physics/tests/liquid_multi_body_world.rs": "bef3f4d91693ac01ce95380d90ef5bfa4be619d60a7b556e9031e2455eb7d73d",
+    "crates/voxy_gameplay/src/liquid_runtime.rs": "59eed8b481729ad67d97078b27cbf5332f8ec4fb5eb8424724ba48b6ad720ffd"
+  }
+}

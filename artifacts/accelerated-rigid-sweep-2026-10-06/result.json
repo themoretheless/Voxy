@@ -1,0 +1,10 @@
+{
+  "checks": {
+    "gameplay_unit_passed": 102,
+    "gameplay_integration_passed": 46,
+    "app_editor_all_targets": "passed",
+    "format_and_diff": "passed"
+  },
+  "source_sha256": "57111a8f4ae355defe83bc1692e2201d2e616aeca524c1808dfdf1899588eabc",
+  "scope": "Prepared accelerated COM plus SpinPath against static affine obstacles; possible-contact model prefix only. Not enabled in Play; reciprocal dynamic events and actual impact witnesses pending."
+}

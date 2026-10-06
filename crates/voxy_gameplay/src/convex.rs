@@ -124,6 +124,25 @@ impl AffineBox {
         other: &AffineBox,
         normal: DVec3,
     ) -> Result<(DVec3, f64), super::PhysicsError> {
+        self.contact_patch_and_center_relative(other, normal)
+            .map(|(center, _, tolerance)| (center, tolerance))
+    }
+
+    /// Admitted vertices of the shared contact patch, in this shape's frame.
+    pub(crate) fn contact_patch_relative(
+        &self,
+        other: &AffineBox,
+        normal: DVec3,
+    ) -> Result<(Vec<DVec3>, f64), super::PhysicsError> {
+        self.contact_patch_and_center_relative(other, normal)
+            .map(|(_, points, tolerance)| (points, tolerance))
+    }
+
+    fn contact_patch_and_center_relative(
+        &self,
+        other: &AffineBox,
+        normal: DVec3,
+    ) -> Result<(DVec3, Vec<DVec3>, f64), super::PhysicsError> {
         use super::PhysicsError;
         // All clipping happens in the obstacle-relative frame, not huge world coordinates.
         let a = AffineBox {
@@ -230,7 +249,7 @@ impl AffineBox {
         // A convex combination stays inside both shapes; it is not an area-weighted
         // pressure center or a complete contact manifold.
         let count = points.len() as f64;
-        let relative: DVec3 = points.into_iter().map(|p| p / count).sum();
+        let relative: DVec3 = points.iter().map(|p| *p / count).sum();
         if !contains(relative, &a, &planes_a)
             || !contains(relative, &b, &planes_b)
             || (normal.dot(relative) - plane).abs() > tolerance
@@ -242,8 +261,13 @@ impl AffineBox {
         if !point.is_finite() {
             return Err(PhysicsError::ContactWitness);
         }
+        let points: Vec<_> = points.into_iter().map(|p| self.center + p).collect();
+        if points.iter().any(|p| !p.is_finite()) {
+            return Err(PhysicsError::ContactWitness);
+        }
         Ok((
             point,
+            points,
             tolerance + 8. * f64::EPSILON * self.center.abs().max_element(),
         ))
     }
@@ -602,6 +626,64 @@ mod coordinate_mapping_tests {
 #[cfg(test)]
 mod contact_witness_tests {
     use super::*;
+    #[test]
+    fn clipped_face_patch_drives_shared_normal_manifold_without_collapsing_to_centroid() {
+        let wall = box_shape(DVec3::ZERO, DVec3::splat(0.5));
+        let shape = box_shape(DVec3::new(-1., 0., 0.), DVec3::splat(0.5));
+        let normal = -DVec3::X;
+        let (points, tolerance) = wall.contact_patch_relative(&shape, normal).unwrap();
+        assert_eq!(points.len(), 4);
+        for &point in &points {
+            on_shapes(
+                wall,
+                shape,
+                AffineContact {
+                    fraction: 0.,
+                    point,
+                    normal,
+                    tolerance,
+                },
+            );
+        }
+        let contacts: Vec<_> = points
+            .iter()
+            .map(|p| physics::contact::NormalContact {
+                point: p.to_array(),
+                normal: normal.to_array(),
+            })
+            .collect();
+        let mut body = physics::contact::ContactBody {
+            motion: physics::gravity::Body {
+                mass: 1.,
+                position: shape.center.to_array(),
+                velocity: [2., 0., 0.],
+            },
+            spin: Some(physics::astrophysics_spin::Spin {
+                orientation: [0., 0., 0., 1.],
+                angular_momentum: [0., 0., 0.5],
+                inertia: [1.; 3],
+            }),
+        };
+        let report = physics::contact::resolve_normal_manifold(
+            &mut body,
+            None,
+            &contacts,
+            physics::contact::ManifoldConfig {
+                max_sweeps: 1000,
+                velocity_tolerance: 1e-10,
+            },
+        )
+        .unwrap();
+        assert!(body.motion.velocity[0].abs() < 1e-10);
+        assert!(
+            body.spin
+                .unwrap()
+                .angular_momentum
+                .iter()
+                .all(|v| v.abs() < 2e-10)
+        );
+        assert!(report.kinetic_energy_change < 0.);
+    }
     fn box_shape(center: DVec3, half: DVec3) -> AffineBox {
         AffineBox {
             center,

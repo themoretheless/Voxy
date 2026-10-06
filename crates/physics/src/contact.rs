@@ -6,6 +6,7 @@ type Vector = [f64; 3];
 pub enum Error {
     InvalidInput,
     NumericalFailure,
+    Budget,
 }
 /// A contact-time snapshot. Position is the center of mass, not a scene pivot.
 /// A point particle has no intrinsic spin. Rigid inertia uses the existing Spin.
@@ -192,4 +193,123 @@ pub fn resolve_normal_impact(
         *second = b.expect("second staged");
     }
     Ok(report)
+}
+
+/// Geometry-owned contact point and normal, pointing toward the first body.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct NormalContact {
+    pub point: Vector,
+    pub normal: Vector,
+}
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ManifoldConfig {
+    pub max_sweeps: usize,
+    pub velocity_tolerance: f64,
+}
+#[derive(Clone, Debug, PartialEq)]
+pub struct ManifoldImpulse {
+    pub impulses: Vec<Vector>,
+    pub sweeps: usize,
+    pub velocity_residual: f64,
+    /// Actual floating kinetic-energy change; no heat deposition is inferred.
+    pub kinetic_energy_change: f64,
+}
+
+/// Frictionless, inelastic normal manifold for two rigid snapshots or a fixed
+/// boundary. Projected coordinate minimization includes translation and spin.
+/// All points must be admitted by geometry. Failure leaves both bodies unchanged.
+/// This is a velocity solve, not positional correction or a persistent cache.
+pub fn resolve_normal_manifold(
+    first: &mut ContactBody,
+    second: Option<&mut ContactBody>,
+    contacts: &[NormalContact],
+    config: ManifoldConfig,
+) -> Result<ManifoldImpulse, Error> {
+    if contacts.is_empty()
+        || contacts.len() > 128
+        || config.max_sweeps == 0
+        || !config.velocity_tolerance.is_finite()
+        || config.velocity_tolerance <= 0.
+    {
+        return Err(Error::InvalidInput);
+    }
+    let mut a = *first;
+    let mut b = second.as_deref().copied();
+    let before = a.energy()? + b.map_or(Ok(0.), ContactBody::energy)?;
+    if !before.is_finite() {
+        return Err(Error::NumericalFailure);
+    }
+    let mut points = Vec::with_capacity(contacts.len());
+    let mut inverse = Vec::with_capacity(contacts.len());
+    for contact in contacts {
+        let report = normal_impulse(&a, b.as_ref(), contact.point, contact.normal, 0.)?;
+        let norm = contact.normal[0]
+            .hypot(contact.normal[1])
+            .hypot(contact.normal[2]);
+        points.push(NormalContact {
+            point: contact.point,
+            normal: contact.normal.map(|v| v / norm),
+        });
+        inverse.push(report.inverse_effective_mass);
+    }
+    let speed =
+        |a: ContactBody, b: Option<ContactBody>, contact: NormalContact| -> Result<f64, Error> {
+            let relative = sub(
+                a.point_velocity(contact.point)?,
+                b.map_or(Ok([0.; 3]), |body| body.point_velocity(contact.point))?,
+            );
+            let value = dot(relative, contact.normal);
+            if !value.is_finite() {
+                return Err(Error::NumericalFailure);
+            }
+            Ok(value)
+        };
+    let mut strengths = vec![0.; points.len()];
+    for sweep in 1..=config.max_sweeps {
+        for (index, contact) in points.iter().copied().enumerate() {
+            let next = (strengths[index] - speed(a, b, contact)? / inverse[index]).max(0.);
+            if !next.is_finite() {
+                return Err(Error::NumericalFailure);
+            }
+            let delta = next - strengths[index];
+            let impulse = contact.normal.map(|n| n * delta);
+            a.apply_point_impulse(contact.point, impulse)?;
+            if let Some(body) = &mut b {
+                body.apply_point_impulse(contact.point, impulse.map(|v| -v))?;
+            }
+            strengths[index] = next;
+        }
+        let mut residual = 0_f64;
+        for (index, contact) in points.iter().copied().enumerate() {
+            let velocity = speed(a, b, contact)?;
+            residual = residual.max(if strengths[index] > 0. {
+                velocity.abs()
+            } else {
+                (-velocity).max(0.)
+            });
+        }
+        if residual <= config.velocity_tolerance {
+            let after = a.energy()? + b.map_or(Ok(0.), ContactBody::energy)?;
+            let change = after - before;
+            if !change.is_finite() || change > 128. * f64::EPSILON * (1. + before) {
+                return Err(Error::NumericalFailure);
+            }
+            let report = ManifoldImpulse {
+                impulses: points
+                    .iter()
+                    .zip(strengths.iter())
+                    .map(|(contact, strength)| contact.normal.map(|n| n * strength))
+                    .collect(),
+                sweeps: sweep,
+                velocity_residual: residual,
+                kinetic_energy_change: change,
+            };
+            *first = a;
+            if let Some(second) = second {
+                *second = b.expect("second staged");
+            }
+            return Ok(report);
+        }
+    }
+    Err(Error::Budget)
 }

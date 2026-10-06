@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "rigid_motion_passed": 6,
+    "rigid_point_impulse_passed": 5,
+    "spin_path_passed": 5,
+    "gameplay_unit_passed": 105,
+    "gameplay_integration_passed": 46,
+    "consumer_all_targets": "passed",
+    "format_diff": "passed"
+  },
+  "scope": "Fully staged point impulse and both post-impact remainder paths carrying original wrenches; geometric witness fixture integrated. Subsequent collision search and persistent angular Play ownership still required.",
+  "sha256": {
+    "crates/physics/src/rigid_motion.rs": "54b8448e274a4f5079886e01d005c4ef0b45b923f24afa720e1aa210335bb178",
+    "crates/physics/tests/rigid_motion.rs": "94c42e8c12aca6f5985356036f07c5deebb16b2a598369ca8018dffe5176638d",
+    "crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs": "5b992509961ba138740600f4befdc9fa020ef7d1cb6b6ab0d799ee9c47c3e121"
+  }
+}

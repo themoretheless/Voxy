@@ -1,0 +1,10 @@
+{
+  "checks": {
+    "gameplay_unit_passed": 105,
+    "gameplay_integration_passed": 46,
+    "app_editor_all_targets": "passed",
+    "format_diff": "passed"
+  },
+  "sha256": "edaa8d1c375941be64af7607becdcc6c6202358639106658cf59851551ba8561",
+  "scope": "Point witness on admitted nominal reciprocal COM/SpinPath trajectories, shared off-center impulse qualification, stationary initial-overlap rejection. Model orbit uncertainty remains separate; no persistent angular Play integration."
+}

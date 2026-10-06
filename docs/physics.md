@@ -5227,3 +5227,229 @@ The runtime exposes immutable frame metadata but still advances translating
 bodies. Persistent angular state, reciprocal rotating contact events and angular
 Play presentation remain unfinished. Logs are retained in
 `artifacts/rigid-com-publication-2026-10-06`, including earlier failed trials.
+
+### Prepared rigid COM motion (2026-10-06)
+
+`ContactBody::prepare_motion` now couples constant-world-force COM translation
+with the existing adaptive constant-world-torque `SpinPath`. It returns an immutable
+`RigidMotion`; samples and the cached endpoint carry one consistent ContactBody.
+Force is applied at COM and torque is about COM. Particles reject intrinsic torque.
+No alternative angular integrator or scene-owned mechanical solver is introduced.
+
+Preparation validates input, the full angular path, the translational endpoint and
+interior coordinate extrema. A reversing parabola can overflow inside its interval
+while its endpoints remain finite; such motion is rejected before publication.
+Translation uses fused multiply-add and half time to avoid needless time-squared
+overflow and preserve subnormal acceleration. Endpoint samples are exact cached
+values. These checks are floating arithmetic admission, not an interval certificate.
+
+Qualification covers analytic spherical rotation within the SpinPath model bound,
+constant force/torque momentum and work, two-body off-center elastic impact followed
+by free motion, budget failure, interior overflow, invalid samples and subnormal
+acceleration over a long interval. Torque momentum roundoff is assessed against
+the number of accepted arcs; interior attitude is not claimed analytically exact.
+The scene publication fixture now uses this prepared motion rather than separately
+advancing translation and Spin. Initial overly strict fixture failures are retained
+in artifacts/prepared-rigid-motion-2026-10-06 alongside final passing logs.
+
+The translating liquid owner has not been switched to angular motion. Rotating
+fluid/body event geometry, persistent angular ownership and contact constraints
+still require integration before angular Play behavior can be claimed.
+
+### Accelerated COM contact sweep (2026-10-06)
+
+`sweep_rigid_motion_static` samples the prepared COM parabola and SpinPath together
+through the existing angular advancement kernel. Each angular segment uses the
+maximum endpoint translational speed (the norm of affine velocity is convex) plus
+the angular-speed times shape-radius bound. Spinless motion uses one complete
+parabolic interval. It does not replace acceleration with an endpoint chord.
+
+The returned prefix denotes possible contact under the SpinPath model envelope
+and a floating coordinate guard; no physical contact witness or impulse is inferred.
+The guard is not a proved interval enclosure. Static affine obstacles and attached
+principal-frame shapes are validated before queries. Shared step/query budgets
+remain explicit. Reciprocal moving-obstacle events and Play ownership are pending.
+
+Qualification includes a translation reversal with identical clear endpoints and
+analytic first-contact time, a clear off-axis obstacle, exhausted budgets, and a
+rotating rod under acceleration whose endpoints are both clear. The rod prefix is
+compared with 20,000 independent analytic spherical-pose samples, using existing
+SAT only to detect their overlap. Full gameplay regression passes (102 unit tests
+and 46 integration tests). Logs: artifacts/accelerated-rigid-sweep-2026-10-06.
+
+### Reciprocal prepared rigid paths (2026-10-06)
+
+`sweep_rigid_motions` now evaluates two prepared constant-wrench COM/SpinPath
+trajectories over the union of their angular segment boundaries. Geometry is
+queried in the second body's principal frame and the returned normal is rotated
+back to world coordinates. The advancement bound includes maximum endpoint
+relative velocity, first-shape angular speed and rotation of the relative frame
+by the second body. Relative position is bounded using its interval-start norm
+and maximum relative speed. Both model shape-error envelopes contribute.
+
+This remains a possible-contact prefix under floating model bounds, including a
+coordinate guard; it does not certify an actual contact point or apply impulses.
+Inputs require equal durations and admitted finite affine shapes. Exhausted shared
+budgets return an explicit error. No angular Play owner has been activated yet.
+
+Tests compare two accelerating bodies with analytic contact time and verify
+normal reversal under participant exchange. A second fixture uses two nonzero
+world torques with different adaptive knot counts, acceleration, a rotating rod
+and a rotating box. Reciprocal prefixes agree within 1e-5 seconds and their world
+normals reverse within 1e-4. These are fixture tolerances, not universal guarantees.
+Logs: artifacts/reciprocal-rigid-path-2026-10-06. Physical witness refinement,
+persistent angular state and event response remain required for Play integration.
+
+### Point witness on prepared rigid trajectories (2026-10-06)
+
+`sweep_nominal_rigid_contact` reuses reciprocal trajectory advancement with a
+tighter contact tolerance and without the speculative model-clearance envelope.
+It samples both bodies at the returned time and clips an actual point on both
+affine contact surfaces in the second principal frame. The point and normal are
+transported to world coordinates; the two ContactBody snapshots are returned
+together with clipping tolerance and the separate trajectory model-error envelope.
+Initial penetration is rejected explicitly, including stationary overlapping bodies.
+
+This is a geometric witness on the admitted numerical trajectory, not a certified
+impact on the exact physical orbit. Model error has not disappeared. Persistent
+world ownership must decide admission, commit both mechanical states and prepare
+remaining motion after an impulse; this helper performs no publication or mutation.
+
+The qualification fixture checks an accelerated off-center face contact against
+analytic time and point, then applies the existing shared normal impact primitive.
+Linear and angular momenta close, restitution energy loss matches the report and
+the receiving body gains spin. Original prepared paths remain unchanged. The
+rotating two-torque fixture independently audits the witnessed point inside both
+posed affine shapes. Budget failure and initial penetration remain explicit errors.
+Logs: artifacts/rigid-trajectory-witness-2026-10-06. Angular Play integration and
+persistent contact manifolds remain unfinished.
+
+### Prepared impact and post-impact motion (2026-10-06)
+
+`rigid_motion::prepare_impact` samples two admitted trajectories at one witnessed
+time, applies the existing reciprocal normal impulse, and prepares both remaining
+trajectories from the post-impact snapshots. The original constant world forces
+and COM torques are retained explicitly in RigidMotion and carried into each
+remainder. Separating contacts and mismatched durations are rejected. Endpoint
+impacts return post-impact snapshots without constructing an invalid zero-duration
+path. All work is staged; failure of the second remainder leaves both inputs intact.
+
+`ImpactMotion` exposes the impulse ledger, post-impact snapshots and optional
+remainder paths. Its endpoint accessor returns both accepted final snapshots.
+Geometry must admit the point/normal/time before calling this function, and the
+world must search the new remainders for subsequent collisions before committing.
+No collision detection, scene publication or persistent ownership is hidden here.
+
+Qualification checks impulse energy balance, restarting from exactly the accepted
+snapshots, continuation of translational forces and angular torque, immutable input
+paths on late failure, separating-contact rejection and endpoint-impact handling.
+The actual geometric trajectory-witness fixture now uses prepare_impact and audits
+both resulting remainders, rather than stopping after an isolated impulse. Logs:
+artifacts/prepared-rigid-impact-2026-10-06. LiquidBodyWorld still exposes translating
+bodies and fraction/normal geometry; persistent angular fluid/scene coupling and
+contact manifolds remain unfinished.
+
+### Shared inelastic normal manifold (2026-10-06)
+
+`contact::resolve_normal_manifold` solves up to 128 geometrically admitted normal
+contacts between two ContactBody snapshots or a stationary boundary. Projected
+coordinate minimization uses existing point velocity, inverse effective mass and
+equal/opposite point impulses, including Spin inertia. Nonnegative normal impulse
+strengths are iterated until velocity complementarity meets the supplied tolerance.
+Iteration exhaustion, invalid input or excessive floating energy gain reject both
+staged participants. There is no warm-start cache, positional correction, friction
+or restitution in this inelastic velocity solve.
+
+The report contains per-point impulses, iteration count, velocity residual and
+actual floating kinetic-energy change. Tiny energy changes within the numerical
+guard retain their sign rather than being silently converted into heat. Residuals
+and energy checks are floating tests, not interval certificates. Persistent world
+ownership must still maintain contacts and apply external-load steps correctly.
+
+`AffineBox::contact_patch_relative` exposes the existing clipper's admitted shared
+patch vertices while preserving the prior centroid API. The same clipping and
+inside/support-plane checks qualify both outputs. The four-vertex face fixture
+feeds this patch into the shared manifold and stops translation and spin. Tests
+also cover analytic two-point support, reciprocal momenta/energy, duplicate and
+inactive contacts, late iteration failure, point validation, point ordering and a
+proper cyclic coordinate permutation. Logs: artifacts/normal-contact-manifold-2026-10-06.
+Angular Play ownership, persistent contact caches, friction and rotating fluid
+coupling remain unfinished.
+
+### Liquid body-world contact witness transport (2026-10-06)
+
+`LiquidBodyWorld` now has contact-bearing query methods returning BodyGeometryHit
+with an optional ContactWitness (world point and floating tolerance at contact time).
+Legacy query methods remain source compatible through default forwarding without
+a witness. SceneBodyWorld supplies witnesses for particle/body, body/body, and
+static-environment events. The existing shared earliest-event solver retains the
+witness with the selected event and passes its point into the shared normal impulse
+primitive. Invalid point/tolerance metadata rejects the transactional world step.
+
+Relative translation queries now transport the clipped point by the second body's
+displacement at TOI. Omitting that transport would leave the witness in the frozen
+obstacle frame. The moving-body fixture checks the analytic world point for both
+body/body and particle/body queries. Legacy and witnessed backends produce exactly
+the same translational state and ledger in the compatibility fixture. NaN points
+and negative tolerances preserve all bodies and fluid state on rejection. Earlier
+fixture interval/query-count and test scene-identity errors remain in raw logs.
+
+This is the contact-data path through the existing world, not activation of angular
+dynamics. TranslatingBody and Node still have no persistent Spin, and legacy
+backends lacking a witness cannot support angular impact. Geometry remains
+responsible for admission; the generic solver validates metadata, not the shapes.
+Tolerance is a floating geometric guard, not an interval certificate. Logs:
+artifacts/liquid-contact-witness-contract-2026-10-06.
+
+### Spin in the shared liquid/body event core (2026-10-06)
+
+`Liquid::step_with_rigid_body_world` now accepts ContactBody states, including
+existing Spin. Legacy translating-body and single-body dynamic-world calls adapt
+into the same solve_contact event loop. The loop prepares free COM/SpinPath
+trajectories, queries geometry at their contact-time poses, evaluates material
+point velocities, advances intrinsic rotation to each event, and applies the
+existing point impulse to both linear and angular momentum. Remaining paths are
+reprepared from post-impact states. Caller body arrays and liquid state commit
+only after the complete fixed interval succeeds.
+
+Angular query hooks receive prepared trajectories; legacy geometry defaults
+explicitly reject Spin. If any body has Spin, every contact requires a finite
+world witness. Existing heuristic tangential damping is rejected for Spin; this
+API presently supports frictionless normal response with restitution. External
+uniform gravity retains the existing liquid-step kick scheme, and free angular
+motion has zero applied torque between contacts. SpinPath model bounds apply to
+each prepared interval, not a certified global world trajectory.
+
+Five controlled mechanics fixtures qualify off-center body/body impact, fluid
+particle recoil, post-impact orientation, persistence across ticks, late backend
+failure, missing witness, invalid angular preparation, legacy-geometry rejection
+and rejection of unsupported tangential damping. The face callback prescribes
+the known initial face event and checks changed Spin before declaring the short
+separating remainder clear; it is not a production angular geometry backend.
+The previous reciprocal affine/trajectory witness qualifications remain separate.
+Momentum and energy close in the tested isolated body and fluid/body cases.
+
+SceneLiquidRuntime still invokes its translating adapter and does not yet persist
+Spin or publish angular poses. Production geometry handling of repeated/resting
+contacts, angular boundary diagnostics, friction and angular scene ownership
+remain unfinished. Logs: artifacts/shared-rigid-liquid-core-2026-10-06, including
+the initial compilation errors while adapting the shared single-body entry point.
+
+### Scene geometry queries for prepared rigid paths (2026-10-06)
+
+SceneBodyWorld now implements angular particle/body, reciprocal body/body and
+static-wall queries using the prepared nominal trajectories and clipped world
+contact witnesses. Spin-bearing templates must be in the principal COM frame;
+legacy translating templates retain their original root-relative frame.
+Initially separating contacts consume a bounded monotone gap prefix and repeat
+search afterwards, preserving later accelerated return collisions. Unresolved
+rotating resting/edge contacts reject explicitly. Derivative and curvature guards
+are floating bounds on nominal constant-axis arcs, not interval certificates.
+
+Real scene-backend fixtures cover off-center reciprocal impact, liquid recoil,
+rotation after impact, transactional budget rejection, and an authored static
+wall with linear boundary impulse and energy balance. Initial-touch fixtures
+check separation, static rest, accelerated return and unresolved rotating edges.
+Logs: artifacts/scene-rigid-geometry-2026-10-06. SceneLiquidRuntime still uses the
+translating adapter; persistent angular scene ownership and Play publication are
+not enabled by this change. Angular friction and resting manifolds remain open.

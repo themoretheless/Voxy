@@ -1,0 +1,9 @@
+{
+  "passed": 1860,
+  "failed": 0,
+  "ignored": 24,
+  "test_suites": 214,
+  "consumer_check": "passed",
+  "format": "passed",
+  "scope": "prepared rigid paths, point witnesses, normal manifolds and shared liquid angular contacts; angular SceneLiquidRuntime/Play ownership remains unfinished"
+}

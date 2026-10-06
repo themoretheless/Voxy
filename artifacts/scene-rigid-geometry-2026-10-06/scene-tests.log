@@ -1,0 +1,89 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:295:15
+    |
+295 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:364:15
+    |
+364 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motions` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:476:15
+    |
+476 | pub(crate) fn sweep_rigid_motions(
+    |               ^^^^^^^^^^^^^^^^^^^
+
+warning: fields `model_error_m`, `first`, and `second` are never read
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:657:9
+    |
+652 | pub(crate) struct RigidTrajectoryContact {
+    |                   ---------------------- fields in this struct
+...
+657 |     pub model_error_m: f64,
+    |         ^^^^^^^^^^^^^
+658 |     pub first: physics::contact::ContactBody,
+    |         ^^^^^
+659 |     pub second: physics::contact::ContactBody,
+    |         ^^^^^^
+    |
+    = note: `RigidTrajectoryContact` has derived impls for the traits `Debug` and `Clone`, but these are intentionally ignored during dead code analysis
+
+warning: method `contact_patch_relative` is never used
+   --> crates/voxy_gameplay/src/convex.rs:132:19
+    |
+ 80 | impl AffineBox {
+    | -------------- method in this implementation
+...
+132 |     pub(crate) fn contact_patch_relative(
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_gameplay` (lib) generated 5 warnings
+    Finished `release` profile [optimized] target(s) in 3.38s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 21 tests
+test liquid_runtime::tests::moving_body_contact_witness_is_transported_to_contact_time ... ok
+test liquid_runtime::tests::later_body_publication_failure_preserves_all_scene_poses ... ok
+test liquid_runtime::tests::compound_candidates_are_bounded_and_invalid_extents_reject ... ok
+test liquid_runtime::tests::foreign_scene_edits_unresolved_material_and_budget_are_rejected ... ok
+test liquid_runtime::tests::body_publication_overflow_and_initial_overlap_are_admitted_atomically ... ok
+test liquid_runtime::tests::root_relative_compound_template_preserves_small_offsets_far_from_origin ... ok
+test liquid_runtime::tests::late_emission_and_physics_failures_roll_back_every_owner ... ok
+test liquid_runtime::tests::authored_static_wall_reflects_a_spinning_body_with_boundary_impulse_balance ... ok
+test liquid_runtime::tests::compound_gap_is_not_filled_by_a_bounding_box ... ok
+test liquid_runtime::tests::moving_nozzle_transfers_world_velocity_and_admitted_preflight_succeeds ... ok
+test liquid_runtime::tests::multiple_scene_bodies_exchange_impulse_publish_and_pause_inactive_owner ... ok
+test liquid_runtime::tests::child_only_compound_hits_another_body_and_shape_edits_reject_atomically ... ok
+test liquid_runtime::tests::compound_child_strikes_static_wall_and_balances_external_impulse ... ok
+test liquid_runtime::tests::finite_translating_body_uses_scene_affine_template_and_recoils ... ok
+test liquid_runtime::tests::scene_geometry_and_shared_core_advance_real_off_center_rigid_collision ... ok
+test liquid_runtime::tests::explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback ... ok
+test liquid_runtime::tests::authored_body_recoil_publishes_pose_and_failure_preserves_all_owners ... ok
+test liquid_runtime::tests::rotated_wall_uses_exact_geometry_and_oblique_normal ... ok
+test liquid_runtime::tests::shared_world_emits_at_authored_origins_and_pauses_inactive_sources ... ok
+test liquid_runtime::tests::liquid_impulse_recoils_child_only_compound_owner ... ok
+test liquid_runtime::tests::scene_geometry_particle_recoil_rotates_the_body_and_restores_on_budget_failure ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 91 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/integration-a1054ba31f60c3c9)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 46 filtered out; finished in 0.00s
+

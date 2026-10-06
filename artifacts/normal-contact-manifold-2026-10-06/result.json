@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "normal_manifold_passed": 5,
+    "rigid_motion_passed": 6,
+    "rigid_point_impulse_passed": 5,
+    "spin_path_passed": 5,
+    "gameplay_unit_passed": 106,
+    "gameplay_integration_passed": 46,
+    "consumer_all_targets": "passed",
+    "format_diff": "passed"
+  },
+  "scope": "Shared frictionless inelastic normal manifold, including spin and reciprocal point impulses; clipped affine patch vertices qualified. Not a persistent contact cache or angular Play integration. Floating residual and energy checks only.",
+  "sha256": {
+    "crates/physics/src/contact.rs": "8d33d4799090e036fe6d5013b34b1c39bd246b9e97c00b357ed140cdb957b0a8",
+    "crates/physics/tests/normal_manifold.rs": "f493b3b5c6b0d721e0d30f442ccce10167570b91ccaf1cf6d383dc4e88a147e5",
+    "crates/voxy_gameplay/src/convex.rs": "c17be345f5b84e45a206c270bd5e5171888029bbd70513062cf4967ad7079691"
+  }
+}

@@ -224,3 +224,123 @@ fn late_second_body_failure_and_admission_budget_restore_all_owners() {
     assert_eq!(liquid, before);
     assert_eq!(bodies, bodies_before);
 }
+
+struct WitnessBoxes {
+    bad: u8,
+}
+impl LiquidBodyWorld for WitnessBoxes {
+    fn sweep_particle_body(
+        &self,
+        _: &Particle,
+        _: f64,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_pair(
+        &self,
+        i: usize,
+        a: &TranslatingBody,
+        j: usize,
+        b: &TranslatingBody,
+        dt: f64,
+        budget: usize,
+    ) -> Result<GeometryHit, Error> {
+        Boxes {
+            wall: false,
+            late_failure: false,
+        }
+        .sweep_body_pair(i, a, j, b, dt, budget)
+    }
+    fn sweep_particle_environment(
+        &self,
+        _: &Particle,
+        _: f64,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_environment(
+        &self,
+        _: usize,
+        _: &TranslatingBody,
+        _: f64,
+        _: usize,
+    ) -> Result<GeometryHit, Error> {
+        Ok(GeometryHit::Clear)
+    }
+    fn sweep_body_pair_contact(
+        &self,
+        i: usize,
+        a: &TranslatingBody,
+        j: usize,
+        b: &TranslatingBody,
+        dt: f64,
+        budget: usize,
+    ) -> Result<physics::liquid::BodyGeometryHit, Error> {
+        let geometry = self.sweep_body_pair(i, a, j, b, dt, budget)?;
+        let GeometryHit::Contact { fraction, normal } = geometry else {
+            return Ok(geometry.into());
+        };
+        let mut point = std::array::from_fn(|k| {
+            b.position[k] + normal[k] * 0.05 + b.velocity[k] * dt * fraction
+        });
+        if self.bad == 1 {
+            point[0] = f64::NAN;
+        }
+        Ok(physics::liquid::BodyGeometryHit {
+            geometry,
+            witness: Some(physics::liquid::ContactWitness {
+                point,
+                tolerance_m: if self.bad == 2 { -1. } else { 1e-12 },
+            }),
+        })
+    }
+}
+#[test]
+fn witnessed_body_contact_matches_legacy_and_malformed_witness_rolls_back() {
+    let initial = fluid(Vec::new());
+    let initial_bodies = [body(-0.2, 3.), body(0., 1.)];
+    let mut legacy = initial.clone();
+    let mut bodies = initial_bodies;
+    let legacy_report = legacy
+        .step_with_body_world(
+            0.1,
+            &mut bodies,
+            &Boxes {
+                wall: false,
+                late_failure: false,
+            },
+            elastic(),
+            2,
+        )
+        .unwrap();
+    let mut witnessed = initial.clone();
+    let mut witnessed_bodies = initial_bodies;
+    let report = witnessed
+        .step_with_body_world(
+            0.1,
+            &mut witnessed_bodies,
+            &WitnessBoxes { bad: 0 },
+            elastic(),
+            2,
+        )
+        .unwrap();
+    assert_eq!(report, legacy_report);
+    assert_eq!(witnessed_bodies, bodies);
+    assert_eq!(witnessed, legacy);
+    for bad in [1, 2] {
+        let mut fluid = initial.clone();
+        let mut bodies = initial_bodies;
+        assert_eq!(
+            fluid.step_with_body_world(0.1, &mut bodies, &WitnessBoxes { bad }, elastic(), 2),
+            Err(Error::InvalidCollision)
+        );
+        assert_eq!(fluid, initial);
+        assert_eq!(bodies, initial_bodies);
+    }
+}

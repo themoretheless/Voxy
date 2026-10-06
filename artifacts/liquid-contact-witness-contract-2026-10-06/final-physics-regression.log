@@ -1,0 +1,63 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+    Finished `release` profile [optimized] target(s) in 2.02s
+     Running tests/liquid_body_contacts.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_body_contacts-0cd0cdedeb7a25e3)
+
+running 8 tests
+test body_body_collision_works_with_an_empty_fluid ... ok
+test overlap_and_check_exhaustion_roll_back_fluid_and_bodies ... ok
+test contact_limit_after_an_actual_body_collision_restores_all_bodies ... ok
+test fast_particle_hits_moving_body_with_equal_opposite_impulse_and_no_tunnelling ... ok
+test inelastic_contact_accounts_for_lost_kinetic_energy ... ok
+test moving_body_pushes_a_stationary_fluid_particle_locally ... ok
+test oblique_spherical_contact_conserves_angular_momentum ... ok
+test a_fast_near_miss_does_not_generate_a_contact ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_geometry.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_geometry-b7b8b4221a159400)
+
+running 9 tests
+test empty_fluid_still_sweeps_body_against_environment ... ok
+test finite_body_then_static_wall_share_event_time_and_external_impulse ... ok
+test finite_oblique_body_malformed_hit_and_global_budget_roll_back_both_owners ... ok
+test finite_oblique_body_conserves_impulse_and_accounts_contact_loss ... ok
+test inelastic_recoil_against_wall_stays_bounded_and_closes_energy_ledger ... ok
+test irrelevant_large_coordinate_does_not_inflate_oblique_contact_separation ... ok
+test malformed_contact_after_advection_rolls_back_entire_fluid ... ok
+test oblique_restitution_preserves_tangent_and_expected_kinetic_loss ... ok
+test static_particle_event_precedes_body_event_and_late_backend_failure_rolls_back ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_multi_body_world.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_multi_body_world-b1d584cf90387ba0)
+
+running 4 tests
+test three_body_impulse_chain_uses_one_event_timeline_without_fluid ... ok
+test witnessed_body_contact_matches_legacy_and_malformed_witness_rolls_back ... ok
+test late_second_body_failure_and_admission_budget_restore_all_owners ... ok
+test fluid_recoil_body_pair_and_static_wall_preserve_boundary_balance ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/liquid_multi_rebound.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/liquid_multi_rebound-a777744049c52efb)
+
+running 7 tests
+test contact_budget_failure_rolls_back_all_particle_fields ... ok
+test four_elastic_contacts_match_independent_folded_corridor_path ... ok
+test inelastic_multiple_contacts_preserve_momentum_and_energy_ledgers ... ok
+test later_particle_budget_error_restores_earlier_particle_and_composition ... ok
+test orthogonal_corner_resolves_second_zero_time_contact ... ok
+test separating_initial_touch_does_not_mask_a_later_wall ... ok
+test subdivided_constant_force_free_path_matches_complete_multi_impact_step ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

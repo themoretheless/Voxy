@@ -1,0 +1,80 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+error[E0308]: mismatched types
+   --> crates/physics/src/liquid/dynamic_world.rs:600:30
+    |
+600 |         std::slice::from_mut(body),
+    |         -------------------- ^^^^ expected `&mut ContactBody`, found `&mut TranslatingBody`
+    |         |
+    |         arguments to this function are incorrect
+    |
+    = note: expected mutable reference `&mut ContactBody`
+               found mutable reference `&mut TranslatingBody`
+note: function defined here
+   --> /Users/themoretheless/.rustup/toolchains/nightly-2026-05-27-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/slice/raw.rs:211:14
+    |
+211 | pub const fn from_mut<T>(s: &mut T) -> &mut [T] {
+    |              ^^^^^^^^
+
+error[E0061]: this function takes 8 arguments but 7 arguments were supplied
+   --> crates/physics/src/liquid/dynamic_world.rs:598:5
+    |
+598 |       super::multi_body::solve(
+    |  _____^^^^^^^^^^^^^^^^^^^^^^^^-
+599 | |         particles,
+600 | |         std::slice::from_mut(body),
+601 | |         radius,
+...   |
+608 | |         },
+609 | |     )
+    | |_____- argument #8 of type `spin_path::Config` is missing
+    |
+note: function defined here
+   --> crates/physics/src/liquid/multi_body.rs:157:15
+    |
+157 | pub(super) fn solve(
+    |               ^^^^^
+...
+165 |     rotation: crate::spin_path::Config,
+    |     ----------------------------------
+help: provide the argument
+    |
+598 |     super::multi_body::solve(
+...
+608 |         },
+609 ~         /* spin_path::Config */,
+610 ~     )
+    |
+
+error[E0061]: this method takes 3 arguments but 4 arguments were supplied
+   --> crates/physics/src/liquid/multi_body.rs:284:27
+    |
+284 |                     world.sweep_rigid_environment_contact(
+    |                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+287 |                         remaining,
+    |                         --------- unexpected argument #3 of type `f64`
+    |
+note: method defined here
+   --> crates/physics/src/liquid/multi_body.rs:122:8
+    |
+122 |     fn sweep_rigid_environment_contact(&self, index:usize, path:&crate::rigid_motion::RigidMotion,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: remove the extra argument
+    |
+286 -                         &paths[count + first],
+287 -                         remaining,
+286 +                         &paths[count + first],
+    |
+
+Some errors have detailed explanations: E0061, E0308.
+For more information about an error, try `rustc --explain E0061`.
+warning: `physics` (lib) generated 1 warning
+error: could not compile `physics` (lib) due to 3 previous errors; 1 warning emitted

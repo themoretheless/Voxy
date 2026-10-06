@@ -1,0 +1,26 @@
+{
+  "checks": {
+    "final-physics-regression.log": {
+      "passed": 33,
+      "failed": 0,
+      "ignored": 0
+    },
+    "single-body-thermal-regression.log": {
+      "passed": 189,
+      "failed": 0,
+      "ignored": 7
+    },
+    "scene-regression.log": {
+      "passed": 326,
+      "failed": 0,
+      "ignored": 13
+    }
+  },
+  "consumer_all_targets": "passed",
+  "format_diff": "passed",
+  "scope": "Intrinsic Spin in the existing shared liquid/body earliest-event solver; translating and single-body adapters use same core. Controlled face-event mechanics qualification only; SceneLiquidRuntime angular geometry/ownership, resting contact, friction and angular boundary ledger pending.",
+  "sha256": {
+    "crates/physics/src/liquid/multi_body.rs": "ea19b4a2b73bbc7e2dde3a60ef811f96960fdaf3a363e88efdfa637abfcd1205",
+    "crates/physics/tests/liquid_rigid_body_world.rs": "320c834ae1f82e55afd51e6b1155ec749417274a382f4a7be3f4e421b7973809"
+  }
+}

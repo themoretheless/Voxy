@@ -1,0 +1,198 @@
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+warning: struct `SpinPathHit` is never constructed
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:288:19
+    |
+288 | pub(crate) struct SpinPathHit {
+    |                   ^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `sweep_spin_path_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:295:15
+    |
+295 | pub(crate) fn sweep_spin_path_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function `sweep_rigid_motion_static` is never used
+   --> crates/voxy_gameplay/src/angular_sweep/rigid_pair.rs:364:15
+    |
+364 | pub(crate) fn sweep_rigid_motion_static(
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: `voxy_gameplay` (lib) generated 3 warnings
+   Compiling voxy_gameplay v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/voxy_gameplay)
+    Finished `release` profile [optimized] target(s) in 0.47s
+     Running unittests src/lib.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/voxy_gameplay-1f220070b9ce49da)
+
+running 102 tests
+test angular_sweep::gap::tests::advancement_never_exceeds_the_exact_gap_over_speed_step ... ok
+test angular_sweep::automatic_physical_allowance_tests::moving_projection_and_unproved_basis_do_not_get_zero_error ... ok
+test angular_sweep::gap::world_error_tests::world_corner_discrepancy_covers_exact_affine_shift_and_rejects_bad_boxes ... ok
+test angular_sweep::gap::tests::projection_gap_accounts_for_axis_norm_cancellation_and_clearance ... ok
+test angular_sweep::gap::publication_tests::proposed_pose_requires_proven_separation_and_counts_queries ... ok
+test angular_sweep::gap::point_tests::enclosing_corner_gaps_do_not_assume_an_exact_rounded_pose ... ok
+test angular_sweep::exact_gap::tests::exact_gap_distinguishes_touching_from_adjacent_float_penetration ... ok
+test angular_sweep::physical_rotation_error_tests::physical_controller_reframe_and_orientation_update_fit_uniform_rotation_caps ... ok
+test angular_sweep::published_world_error_tests::canonical_witness_covers_f32_publication_and_ground_relocation ... ok
+test angular_sweep::automatic_physical_allowance_tests::stationary_coordinate_survives_actual_cache_reframe_pivot_and_body_update ... ok
+test angular_sweep::physical_body_error_tests::actual_controller_center_and_edges_fit_uniform_whole_body_caps ... ok
+test angular_sweep::automatic_physical_allowance_tests::zero_requested_allowance_still_reserves_derived_body_error_before_wall ... ok
+test angular_sweep::publication_error_tests::world_publication_bounds_cover_body_vertices_signed_scale_and_offset_origin ... ok
+test angular_sweep::directional_fade_tests::directional_fade_proof_admits_floor_contact_but_preserves_wall_and_evaluation_margin ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerating_com_reversal_finds_contact_with_identical_clear_endpoints ... ok
+test angular_sweep::directional_margin_tests::positive_directional_error_requires_a_proven_initial_gap_including_numeric_radius ... ok
+test angular_sweep::rigid_pair::tests::translated_zero_arc_matches_exact_sweep_and_budget_errors_are_explicit ... ok
+test angular_sweep::tests::budget_failure_is_explicit_and_tall_yaw_uses_perpendicular_radius ... ok
+test angular_sweep::tests::clearance_stops_before_nominal_contact_and_checks_stationary_envelopes ... ok
+test angular_sweep::rigid_pair::tests::transient_rotating_contact_is_found_with_both_endpoints_clear ... ok
+test angular_sweep::tests::grounded_yaw_and_turning_away_are_certified_over_the_whole_arc ... ok
+test angular_sweep::tests::middle_of_half_and_full_turn_hits_even_when_endpoints_are_clear ... ok
+test angular_sweep::tests::rigid_envelope_broadphase_retains_contacts_outside_the_nominal_sweep ... ok
+test angular_sweep::tests::exact_conditional_screw_motion_preserves_floor_contact_and_jump ... ok
+test audio_assets::tests::common_catalog_retains_failed_publication_and_scene_uses_successful_replacement ... ok
+test angular_sweep::rigid_pair::tests::rotating_pair_is_covariant_and_transports_world_witness ... ok
+test audio_assets::tests::saved_import_config_rejects_unknown_version_and_engine_cap_escape ... ok
+test audio_runtime::tests::authored_bus_changes_preserve_cursor_and_failed_preflight_preserves_gain ... ok
+test angular_sweep::tests::whole_body_clearance_accounts_for_pivot_signed_scale_and_evaluation_error ... ok
+test angular_sweep::tests::projection_extrema_bound_independent_quaternion_samples ... ok
+test angular_sweep::tests::supported_screw_contact_survives_source_and_actor_axis_permutations ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::accelerated_rotating_shape_matches_independent_spherical_pose_scan ... ok
+test audio_runtime::tests::same_asset_publications_reload_atomically_and_motion_keeps_cursor ... ok
+test audio_scene::tests::invalid_sources_and_competing_listeners_reject_without_mutation ... ok
+test audio_runtime::tests::scene_mixer_moves_pauses_preserves_on_failure_and_consumes_one_shots ... ok
+test behaviors::tests::live_admission_capacity_and_physics_conflicts_preserve_poses ... ok
+test behaviors::tests::batch_matches_legacy_activity_capture_deletion_and_reused_handles ... ok
+test audio_scene::tests::saved_audio_extracts_parent_motion_activity_and_generation_without_graph_borrow ... ok
+test behaviors::tests::inactive_motion_and_physics_ownership_use_existing_lifecycle ... ok
+test behaviors::tests::live_motion_and_grant_denial_do_not_double_apply_ticks ... ok
+test angular_sweep::automatic_fade_tests::automatically_discovered_key_guard_preserves_floor_during_translating_yaw_fade ... ok
+test angular_sweep::rigid_pair::spin_bridge_tests::admitted_precessing_path_is_swept_with_model_envelope_not_fake_impact ... ok
+test angular_sweep::assembled_fade_tests::original_source_fade_assembly_and_collision_query_preserve_floor_and_wall ... ok
+test convex::contact_witness_tests::clear_separating_overlap_and_degenerate_inputs_are_explicit ... ok
+test convex::contact_witness_tests::clipped_partial_face_witness_is_not_midpoint_of_support_centers ... ok
+test convex::contact_witness_tests::geometric_witness_drives_shared_point_impulse_with_off_center_torque ... ok
+test convex::contact_witness_tests::witness_is_stable_under_uniform_scale_and_large_translation ... ok
+test convex::contact_witness_tests::rotated_sheared_and_edge_contacts_have_points_in_both_shapes ... ok
+test convex::coordinate_mapping_tests::signed_coordinate_rows_are_exact_without_rounded_matrix_comparison ... ok
+test convex::rotation_tests::unit_axis_rotation_preserves_fixed_coordinate_exactly ... ok
+test audio_assets::tests::common_worker_decodes_wav_and_retains_observations ... ok
+test convex::tests::oriented_face_contact_is_analytic_and_invariant_to_extent_scale ... ok
+test convex::tests::overlap_recovery_and_slope_contact_are_bounded ... ok
+test convex::tests::rotated_thin_box_does_not_collide_with_empty_aabb_corner ... ok
+test foot_contact::tests::acquisition_distance_validation_and_failed_budget_leave_published_state_intact ... ok
+test foot_contact::tests::contact_holds_surface_point_through_animation_drift_and_platform_transform ... ok
+test foot_contact::tests::missing_or_steep_support_releases_instead_of_transferring_a_planted_foot ... ok
+test foot_contact::tests::release_hysteresis_prevents_replanting_until_swing_and_landing_rearms ... ok
+test liquid_runtime::tests::body_publication_overflow_and_initial_overlap_are_admitted_atomically ... ok
+test liquid_runtime::tests::compound_candidates_are_bounded_and_invalid_extents_reject ... ok
+test liquid_runtime::tests::child_only_compound_hits_another_body_and_shape_edits_reject_atomically ... ok
+test liquid_runtime::tests::compound_child_strikes_static_wall_and_balances_external_impulse ... ok
+test liquid_runtime::tests::authored_body_recoil_publishes_pose_and_failure_preserves_all_owners ... ok
+test liquid_runtime::tests::explicit_mass_distribution_admits_scaled_tensor_and_edits_rollback ... ok
+test liquid_runtime::tests::compound_gap_is_not_filled_by_a_bounding_box ... ok
+test liquid_runtime::tests::finite_translating_body_uses_scene_affine_template_and_recoils ... ok
+test liquid_runtime::tests::foreign_scene_edits_unresolved_material_and_budget_are_rejected ... ok
+test liquid_runtime::tests::later_body_publication_failure_preserves_all_scene_poses ... ok
+test liquid_runtime::tests::late_emission_and_physics_failures_roll_back_every_owner ... ok
+test liquid_runtime::tests::liquid_impulse_recoils_child_only_compound_owner ... ok
+test liquid_runtime::tests::moving_nozzle_transfers_world_velocity_and_admitted_preflight_succeeds ... ok
+test liquid_runtime::tests::root_relative_compound_template_preserves_small_offsets_far_from_origin ... ok
+test liquid_runtime::tests::multiple_scene_bodies_exchange_impulse_publish_and_pause_inactive_owner ... ok
+test liquid_runtime::tests::rotated_wall_uses_exact_geometry_and_oblique_normal ... ok
+test liquid_runtime::tests::shared_world_emits_at_authored_origins_and_pauses_inactive_sources ... ok
+test liquid_source::tests::durable_source_prepares_existing_emission_and_rejects_invalid_configuration ... ok
+test post_snap_relocation_error_tests::snap_and_actual_relocation_fit_numeric_bounds_relative_to_selected_fraction ... ok
+test rigid_frame::tests::late_publication_overflow_duplicate_and_parented_owner_preserve_all_poses ... ok
+test rigid_frame::tests::quarter_turn_moves_pivot_around_fixed_com_and_converts_pivot_velocity ... ok
+test rigid_frame::tests::shared_off_center_impulse_spin_and_scene_publication_keep_physical_com ... ok
+test rigid_frame::tests::stored_scaled_affine_points_obey_publication_residual_gate ... ok
+test support::tests::a_one_ulp_thickness_change_on_a_wide_platform_releases_the_old_face_anchor ... ok
+test support::tests::extreme_finite_inverse_face_vectors_keep_unit_normals_instead_of_zero_or_nan ... ok
+test support::tests::invalid_input_capacity_and_budget_failures_do_not_return_partial_ground ... ok
+test support::tests::nearest_contact_and_equal_distance_ties_use_stable_owner_identity ... ok
+test support::tests::removal_generation_reuse_activity_dimensions_and_foreign_scenes_release_or_reject_anchors ... ok
+test support::tests::shared_collision_snapshot_keeps_geometry_extents_and_scene_identity_from_one_revision ... ok
+test support::tests::sheared_reflected_support_normals_and_local_anchors_follow_parent_transforms ... ok
+test support::tests::support_queries_reuse_character_physics_dynamic_parent_restrictions ... ok
+test support::tests::touching_faces_endpoint_hits_parallel_misses_and_corner_normal_ties_are_defined ... ok
+test support::tests::unwalkable_first_hit_occludes_lower_ground_and_inside_origins_do_not_plant ... ok
+test audio_assets::tests::cached_wav_revalidates_inputs_and_repairs_corrupt_artifact ... ok
+test ui_actions::tests::application_callback_runs_once_at_barrier_and_rejects_expired_or_foreign_events ... ok
+test ui_actions::tests::failed_handler_and_full_barrier_discard_all_staged_scene_commands ... ok
+test ui_actions::tests::foreign_command_queue_rejects_before_callback_and_preserves_pending_event ... ok
+test ui_runtime::tests::invalid_refresh_preserves_last_good_and_action_changes_cancel_capture ... ok
+test ui_runtime::tests::shared_pointer_focus_disabled_occlusion_and_generation_replacement ... ok
+test ui_scene::tests::nested_layout_uses_ui_ancestry_clips_and_inherited_activity ... ok
+test ui_scene::tests::aggregate_text_budget_counts_inactive_elements_before_publication ... ok
+test ui_scene::tests::strict_registered_unicode_descriptors_round_trip_and_validate_bounds ... ok
+test audio_assets::tests::import_config_save_round_trip_and_invalid_edit_preserve_previous_file ... ok
+test angular_sweep::whole_tick_fade_tests::completion_keeps_floor_contact_and_wall_stops_motion_after_fade ... ok
+
+test result: ok. 102 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/integration.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/integration-a1054ba31f60c3c9)
+
+running 46 tests
+test character_step_read_only_grant_preserves_pose_and_pending_input ... ok
+test authored_axes_are_parent_local_and_conflicting_sources_are_atomic ... ok
+test angular_budget_and_invalid_requests_preserve_pose_state_and_input ... ok
+test animation_displacement_sweeps_slides_and_is_consumed_once ... ok
+test animation_ceiling_contact_removes_persistent_upward_velocity ... ok
+test animation_displacement_collides_vertically_and_with_affine_walls ... ok
+test bounded_recovery_failure_preserves_every_pose_and_input_edge ... ok
+test angular_ground_turn_preserves_jump_and_continuing_velocity ... ok
+test failure_in_later_body_preserves_all_poses_runtime_state_and_input ... ok
+test authored_character_rotation_uses_one_writer_and_complete_arc ... ok
+test composed_trajectory_frame_conversion_and_rejections_preserve_the_atomic_tick ... ok
+test durable_descriptors_reload_with_new_runtime_identity_and_no_velocity ... ok
+test failed_pose_preparation_preserves_physics_scene_and_pending_input ... ok
+test angular_iteration_budget_is_shared_across_ordered_spans ... ok
+test character_domain_denials_preserve_live_physics_pose_and_input ... ok
+test curved_grounded_yaw_preserves_jump_and_tall_body_avoids_sphere_speed_overestimate ... ok
+test horizontal_animation_during_jump_does_not_snap_back_to_floor ... ok
+test initial_penetration_is_an_explicit_error_without_partial_publication ... ok
+test invalid_animation_motion_preserves_all_owners_and_pending_input ... ok
+test noncommuting_curved_path_uses_body_basis_and_commits_once ... ok
+test noncommuting_offset_pivot_uses_body_basis_and_failure_is_atomic ... ok
+test one_tick_curved_trajectory_hits_before_equal_endpoints_and_retains_orientation ... ok
+test moving_pivot_yaw_keeps_a_grounded_tall_body_on_the_floor_without_advancement ... ok
+test offset_pivot_curved_turn_hits_on_center_arc_before_equal_endpoints ... ok
+test foot_contact_candidates_publish_only_after_character_tick_accepts ... ok
+test oriented_character_ignores_empty_enclosing_aabb_corner_and_slides_at_true_support ... ok
+test grounded_tangent_motion_is_not_blocked_by_time_zero_floor_contact ... ok
+test parent_activity_deletion_component_removal_and_reused_generation_reconcile ... ok
+test ordered_screw_trajectory_hits_wall_after_translation_and_budget_failure_is_atomic ... ok
+test ordered_full_turn_and_final_step_do_not_hide_a_collision ... ok
+test rigid_motion_preserves_winding_clips_mid_arc_and_retains_accepted_orientation ... ok
+test rigid_path_publication_reserve_keeps_rounded_pose_outside_wall_without_callback ... ok
+test rigid_preparation_stops_before_rounded_contact_and_preserves_callback_rollback ... ok
+test rotated_scaled_static_boxes_use_exact_sweeps_and_runtime_overlap_recovery ... ok
+test reflected_uniform_source_frame_sweeps_translation_and_rotation_together ... ok
+test looped_animation_drives_collisions_without_duplicate_pose_translation ... ok
+test support_failure_in_preparation_rolls_back_and_physics_failure_skips_preparation ... ok
+test swept_motion_hits_wall_without_tunneling_and_focus_cancels_intent ... ok
+test quick_tap_survives_render_only_frames_and_is_consumed_once_during_catch_up ... ok
+test tilted_character_floor_contact_jump_and_recovery_use_rotated_shape ... ok
+test trajectory_query_failure_after_another_body_stages_motion_is_atomic ... ok
+test translated_parent_teleport_resets_velocity_and_affine_dynamic_ancestors_fail ... ok
+test unknown_scheduled_system_preserves_scene_physics_and_input ... ok
+test simultaneous_translation_and_turn_clip_the_closed_curve_before_the_wall ... ok
+test certified_fade_transaction_preserves_floor_and_rolls_back_failed_pose_preparation ... ok
+test mixed_certified_fade_tick_rolls_back_and_retries_all_motion_kinds ... ok
+
+test result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests voxy_gameplay
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,16 @@
+{
+  "passed_tests": 18,
+  "checks": [
+    "physics rigid_motion, rigid_point_impulse and spin_path",
+    "gameplay rigid_frame",
+    "app/editor all-target consumer check",
+    "cargo fmt",
+    "git diff --check"
+  ],
+  "scope": "Prepared constant-wrench COM motion and existing adaptive SpinPath, shared scene pose fixture. Angular Play owner and reciprocal rotating events remain unfinished. Floating admission, not interval proof.",
+  "sha256": {
+    "crates/physics/src/rigid_motion.rs": "eb24effca94da7a017a1403b9896b389724aa7d1d5a481bfc97be4d4da97bb49",
+    "crates/physics/tests/rigid_motion.rs": "dd16bd279b24ca5404f2343d5806030a48fe1d475ef2fc17b55fafdde3fb3726",
+    "crates/voxy_gameplay/src/rigid_frame.rs": "4f7bfd13b8a37a8e7404105e86d0484d751169fa0cfd04a94c3e39e7d22b72ed"
+  }
+}

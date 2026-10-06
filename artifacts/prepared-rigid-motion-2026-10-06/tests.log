@@ -1,0 +1,33 @@
+   Compiling physics v0.1.0 (/Users/themoretheless/Documents/ChatGPT/Voxy/crates/physics)
+warning: unused import: `separation_lower_bound`
+ --> crates/physics/src/biomechanics/surface_contact.rs:3:23
+  |
+3 |     PreparedTriangle, separation_lower_bound, triangle_distance, triangle_pair_path_is_open,
+  |                       ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `physics` (lib) generated 1 warning (run `cargo fix --lib -p physics` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 12.32s
+     Running tests/rigid_motion.rs (/tmp/voxy-moving-supports-final-20261005/release/deps/rigid_motion-94c4116e568b448a)
+
+running 3 tests
+test preparation_rejects_budget_invalid_torque_and_interior_overflow_without_mutation ... ok
+test off_center_impact_then_free_motion_preserves_total_angular_momentum ... ok
+test constant_wrench_closes_momentum_work_and_analytic_spherical_rotation ... FAILED
+
+failures:
+
+---- constant_wrench_closes_momentum_work_and_analytic_spherical_rotation stdout ----
+
+thread 'constant_wrench_closes_momentum_work_and_analytic_spherical_rotation' (45966688) panicked at crates/physics/tests/rigid_motion.rs:47:9:
+assertion failed: (spin.orientation[2] - (angle / 2.).sin()).abs() < 1e-12
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    constant_wrench_closes_momentum_work_and_analytic_spherical_rotation
+
+test result: FAILED. 2 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p physics --test rigid_motion`
