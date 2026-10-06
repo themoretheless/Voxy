@@ -11,6 +11,8 @@ use physics::tissue_surface::EmbeddedSurface;
 use std::sync::Arc;
 use voxy_animation::{Joint, Skeleton, Transform};
 use voxy_render::{SceneMesh, SceneVertex};
+#[path = "tissue_demo/assembly.rs"]
+mod assembly;
 /// Test-harness fixture for external CCD replay. Constitutive Debug data is
 /// evidence only; this is deliberately not a persistent physics checkpoint.
 #[cfg(test)]
@@ -146,9 +148,13 @@ struct SkinRegionBinding {
 pub(crate) struct TissueSkinBinding {
     regions: Vec<SkinRegionBinding>,
     vertex_count: usize,
+    global: Option<Arc<assembly::GlobalSkinBinding>>,
 }
 impl TissueSkinBinding {
     pub(crate) fn bound_vertex_count(&self) -> usize {
+        if let Some(global) = &self.global {
+            return global.bound_count;
+        }
         self.regions.iter().map(|r| r.vertices.len()).sum()
     }
 }
@@ -157,6 +163,8 @@ pub(crate) struct TissueDemo {
     bodies: Vec<DemoTissue>,
     surfaces: Vec<EmbeddedSurface>,
     attachments: Vec<(usize, [(usize, [f64; 3]); 3])>,
+    assembled_regions: Option<Arc<assembly::AssembledRegions>>,
+    skin_contact_binding: Option<Arc<assembly::GlobalSkinBinding>>,
     body_rig: Option<Arc<Skeleton>>,
     body_mode: bool,
     biomechanics: Option<crate::biomechanics_demo::BiomechanicsDemo>,
@@ -185,6 +193,8 @@ impl TissueDemo {
                 .collect(),
             surfaces: Vec::new(),
             attachments: Vec::new(),
+            assembled_regions: None,
+            skin_contact_binding: None,
             body_rig: None,
             body_mode: false,
             biomechanics: None,
@@ -422,6 +432,30 @@ impl TissueDemo {
         self.secondary_offsets_for_palette(&self.body_palette())
     }
     pub(crate) fn secondary_offsets_for_palette(&self, palette: &[Mat4]) -> Vec<[f64; 3]> {
+        if let Some(layout) = &self.assembled_regions {
+            if let Some(DemoTissue::Continuum { dynamics, .. }) = self.bodies.first() {
+                let mut offset = [0.; 3];
+                let mut mass = 0.;
+                for ((joint, _), range) in self.attachments.iter().zip(&layout.node_ranges) {
+                    let matrix =
+                        DMat4::from_cols_array(&palette[*joint].to_cols_array().map(f64::from));
+                    for node in range.clone() {
+                        let reference = matrix
+                            .transform_point3(DVec3::from_array(
+                                dynamics.body().rest_positions()[node],
+                            ))
+                            .to_array();
+                        let weight = dynamics.masses()[node];
+                        for axis in 0..3 {
+                            offset[axis] += weight
+                                * (dynamics.body().positions()[node][axis] - reference[axis]);
+                        }
+                        mass += weight;
+                    }
+                }
+                return vec![offset.map(|v| v / mass)];
+            }
+        }
         self.bodies
             .iter()
             .zip(&self.attachments)
@@ -504,6 +538,9 @@ impl TissueDemo {
         &mut self,
         surfaces: &[Arc<PrescribedTriangleSurface>],
     ) -> Result<(), &'static str> {
+        if self.assembled_regions.is_some() {
+            return Err("bind regional contact before tissue assembly");
+        }
         if surfaces.len() != self.bodies.len() {
             return Err("tissue contact region count mismatch");
         }
@@ -568,6 +605,9 @@ impl TissueDemo {
     /// Bind only contained skin vertices. Exterior vertices retain skeletal motion.
     /// Overlapping ownership and invalid geometry are explicit errors.
     pub(crate) fn bind_skin(&self, skin: &[[f64; 3]]) -> Result<TissueSkinBinding, &'static str> {
+        if self.assembled_regions.is_some() {
+            return self.bind_assembled_skin(skin);
+        }
         if skin.iter().flatten().any(|x| !x.is_finite()) {
             return Err("nonfinite skin binding");
         }
@@ -614,6 +654,7 @@ impl TissueDemo {
         Ok(TissueSkinBinding {
             regions,
             vertex_count: skin.len(),
+            global: None,
         })
     }
     /// Compose physical displacement with already posed skin; returns one atomic result.
@@ -623,6 +664,9 @@ impl TissueDemo {
         palette: &[DMat4],
         skin: &[[f64; 3]],
     ) -> Result<Vec<[f64; 3]>, &'static str> {
+        if let Some(global) = &binding.global {
+            return self.deform_assembled_skin(global, palette, skin);
+        }
         if skin.len() != binding.vertex_count || skin.iter().flatten().any(|x| !x.is_finite()) {
             return Err("invalid posed skin");
         }
@@ -717,6 +761,8 @@ impl TissueDemo {
             bodies: self.bodies.clone(),
             surfaces: Vec::new(),
             attachments: self.attachments.clone(),
+            assembled_regions: self.assembled_regions.clone(),
+            skin_contact_binding: self.skin_contact_binding.clone(),
             body_rig: self.body_rig.clone(),
             body_mode: self.body_mode,
             biomechanics: self.biomechanics.clone(),
@@ -899,6 +945,9 @@ impl TissueDemo {
         next_surfaces: Option<Vec<Arc<PrescribedTriangleSurface>>>,
         max_workers: usize,
     ) -> Result<(), &'static str> {
+        if self.assembled_regions.is_some() {
+            return self.step_assembled_regions(palette, conductivity_w_m_k, next_surfaces);
+        }
         if next_surfaces
             .as_ref()
             .is_some_and(|surfaces| surfaces.len() != self.bodies.len())
@@ -1006,6 +1055,29 @@ impl TissueDemo {
         {
             return Err("nonfinite tissue attachment");
         }
+        Self::step_continuum_targets(body, &targets, conductivity_w_m_k, next_surface)
+    }
+    fn step_continuum_targets(
+        body: &mut DemoTissue,
+        targets: &[SupportTarget],
+        conductivity_w_m_k: f64,
+        next_surface: Option<&Arc<PrescribedTriangleSurface>>,
+    ) -> Result<(), &'static str> {
+        Self::step_continuum_targets_with_skin(
+            body,
+            targets,
+            conductivity_w_m_k,
+            next_surface,
+            None,
+        )
+    }
+    fn step_continuum_targets_with_skin(
+        body: &mut DemoTissue,
+        targets: &[SupportTarget],
+        conductivity_w_m_k: f64,
+        next_surface: Option<&Arc<PrescribedTriangleSurface>>,
+        next_skin: Option<&physics::biomechanics::StationaryEmbeddedContact>,
+    ) -> Result<(), &'static str> {
         let DemoTissue::Continuum {
             dynamics,
             ledger,
@@ -1031,6 +1103,7 @@ impl TissueDemo {
         // Start one level coarser than the previous frame's finest accepted
         // step; each trial still passes the unchanged work/heat/path checks.
         let start_surface = dynamics.prescribed_surface().cloned();
+        let start_skin = dynamics.body().stationary_embedded_contact().cloned();
         if next_surface.is_some() && start_surface.is_none() {
             return Err("surface motion requires installed contact");
         }
@@ -1077,13 +1150,40 @@ impl TissueDemo {
                         .map(Arc::new)
                 })
                 .transpose()?;
-            frame_receipt.add(Self::advance_continuum_contact(
-                dynamics,
-                &segment,
-                segment_surface,
-                1. / (240. * f64::from(subdivisions)),
-                initial_depth,
-            )?);
+            let dt = 1. / (240. * f64::from(subdivisions));
+            if let Some(next_skin) = next_skin {
+                let skin = start_skin
+                    .as_ref()
+                    .ok_or("missing installed skin contact")?
+                    .sample_linear_pose(next_skin, fraction)?;
+                let receipt = dynamics
+                    .step_viscoelastic_implicit_adaptive_with_surface_and_skin_motion(
+                        Some(&segment),
+                        segment_surface.ok_or("skin motion requires native integration pose")?,
+                        skin,
+                        dt,
+                        1e-5 * dt * 240.,
+                        256,
+                    )?;
+                frame_receipt.add(EnergyLedger {
+                    support_work_j: receipt.step.support.support_work_j,
+                    surface_work_j: receipt.step.support.surface_work_j,
+                    heat_j: receipt.step.viscous_heat_j,
+                    defect_j: receipt.step.total_energy_defect_j,
+                    conduction_defect_j: 0.,
+                    accepted_steps: receipt.substeps as u64,
+                    rejected_steps: u64::from(receipt.substeps.ilog2()),
+                    max_refinement_depth: initial_depth + receipt.substeps.ilog2() as usize,
+                });
+            } else {
+                frame_receipt.add(Self::advance_continuum_contact(
+                    dynamics,
+                    &segment,
+                    segment_surface,
+                    dt,
+                    initial_depth,
+                )?);
+            }
         }
         let links = binding.internal_heat_contacts(dynamics, &conductivity)?;
         frame_receipt.conduction_defect_j =

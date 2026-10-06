@@ -1,14 +1,16 @@
 //! Finite-deformation elastic dynamics with velocity Verlet and prescribed supports.
 use super::{Body, PrescribedTriangleSurface, Vec3, cross, dot};
 use std::sync::Arc;
+mod assembly;
 mod film_binding;
+pub use assembly::InertialAssembly;
 mod implicit;
 mod supports;
 mod thermal;
 pub use film_binding::SolidFilmBinding;
 mod viscous;
 pub use supports::{DrivenSupportStep, SupportTarget};
-pub use viscous::ViscoelasticDynamicStep;
+pub use viscous::{ViscoelasticAdaptiveStep, ViscoelasticDynamicStep};
 #[derive(Clone, Debug)]
 pub struct InertialBody {
     body: Body,
@@ -31,7 +33,7 @@ struct PotentialEvaluation {
 }
 /// Frictionless stationary halfspace `normal·x >= offset_m` with nodal penalty.
 /// Stiffness is N/m per boundary node and must be scaled with mesh refinement.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct PlaneContact {
     normal: Vec3,
     offset_m: f64,

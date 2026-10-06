@@ -8,6 +8,26 @@ pub(super) struct CellThermalState {
     correction_j: Vec<f64>,
 }
 impl CellThermalState {
+    pub(super) fn assemble(parts: &[&Self]) -> Self {
+        Self {
+            capacity_j_per_k: parts
+                .iter()
+                .flat_map(|p| p.capacity_j_per_k.iter().copied())
+                .collect(),
+            reference_kelvin: parts
+                .iter()
+                .flat_map(|p| p.reference_kelvin.iter().copied())
+                .collect(),
+            excess_j: parts
+                .iter()
+                .flat_map(|p| p.excess_j.iter().copied())
+                .collect(),
+            correction_j: parts
+                .iter()
+                .flat_map(|p| p.correction_j.iter().copied())
+                .collect(),
+        }
+    }
     pub(super) fn deposit(&mut self, cell: usize, heat: f64) -> Result<f64, &'static str> {
         if !heat.is_finite() {
             return Err("invalid Maxwell cell heat");
@@ -272,5 +292,32 @@ mod tests {
         let before = format!("{state:?}");
         assert!(state.deposit(0, 1e-300).is_err());
         assert_eq!(format!("{state:?}"), before);
+    }
+}
+
+#[cfg(test)]
+mod assembly_tests {
+    use super::CellThermalState;
+    #[test]
+    fn thermal_assembly_preserves_compensation_below_the_main_inventory_ulp() {
+        let first = CellThermalState {
+            capacity_j_per_k: vec![2.],
+            reference_kelvin: vec![300.],
+            excess_j: vec![1e20],
+            correction_j: vec![0.25],
+        };
+        let second = CellThermalState {
+            capacity_j_per_k: vec![3.],
+            reference_kelvin: vec![310.],
+            excess_j: vec![5.],
+            correction_j: vec![1e-20],
+        };
+        let merged = CellThermalState::assemble(&[&first, &second]);
+        assert_eq!(merged.capacity_j_per_k, vec![2., 3.]);
+        assert_eq!(merged.reference_kelvin, vec![300., 310.]);
+        assert_eq!(merged.excess_j, vec![1e20, 5.]);
+        assert_eq!(merged.correction_j, vec![0.25, 1e-20]);
+        assert_eq!(first.correction_j, vec![0.25]);
+        assert_eq!(second.correction_j, vec![1e-20]);
     }
 }

@@ -647,11 +647,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         tissue_demo::TissueDemo::body()
     };
     let contact_reference = if contact {
-        let sample = if wide_contact {
-            contact_positions64
-        } else {
-            contact_positions
-        };
+        let sample = contact_positions64;
         let (positions, faces) =
             sample(imported.as_ref().ok_or("missing imported character")?, 0.)?;
         println!(
@@ -677,6 +673,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         None
     };
+    if imported.is_some() {
+        demo.assemble_regions()?;
+        println!("TISSUE assembled regional dynamics into one global owner");
+    }
     let skin_binding = if let Some(model) = &imported {
         let pose = model.sample_pose_phase64(Some(0), 0.)?;
         let points: Vec<_> = model
@@ -694,6 +694,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         None
     };
+    if contact {
+        let count = demo.bind_skin_contact(
+            skin_binding
+                .as_ref()
+                .ok_or("missing physical skin binding")?,
+        )?;
+        println!(
+            "SKIN physical contact: {count} responsive triangles; native FEM envelope disabled"
+        );
+    }
     let skin = skin_binding.as_ref().zip(reference64.as_deref());
     let meshes = displayed_meshes(&demo, imported.as_ref(), 0., skin)?;
     let mut geometries = meshes
@@ -810,33 +820,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             if cesium {
                 if let Some(reference) = &contact_reference {
                     demo.advance_with_palette64_and_surfaces(1. / 240., |time| {
-                        if wide_contact {
-                            return imported_contact_sample64(
-                                imported.as_ref().ok_or("missing imported character")?,
-                                reference64.as_ref().ok_or("missing imported physical reference")?,
-                                reference,
-                                (time / duration).min(1.),
-                            );
-                        }
-                        let sample = contact_positions;
-                        let (positions, faces) = sample(
+                        imported_contact_sample64(
                             imported.as_ref().ok_or("missing imported character")?,
+                            reference64.as_ref().ok_or("missing imported physical reference")?,
+                            reference,
                             (time / duration).min(1.),
                         )
-                        .map_err(|_| "imported collision pose failed")?;
-                        if faces != reference[0].faces() {
-                            return Err("imported collision topology changed");
-                        }
-                        let surfaces = reference
-                            .iter()
-                            .map(|domain| {
-                                domain
-                                    .with_positions(positions.clone())
-                                    .map(std::sync::Arc::new)
-                            })
-                            .collect::<Result<Vec<_>, _>>()?;
-                        let palette = palette_at(time)?.iter().map(|m| DMat4::from_cols_array(&m.to_cols_array().map(f64::from))).collect();
-                        Ok((palette, surfaces))
                     }).map_err(|error| {
                         format!("{error}; rejected frame step={} time_s={:.9}; last committed energy receipts={:?}; last committed refinement={:?}", elapsed + 1, (elapsed + 1) as f64 / 240., demo.body_energy_receipts(), demo.body_step_counts())
                     })?;
@@ -1037,6 +1026,24 @@ mod collision_tests {
             .filter(|(a, b)| a.position != b.position)
             .count();
         assert_eq!(changed, 16);
+        let physical_skin = demo.deform_skin(&binding, &palette, &skin).unwrap();
+        demo.assemble_regions().unwrap();
+        let global_binding = demo.bind_skin(&skin).unwrap();
+        assert_eq!(global_binding.bound_vertex_count(), 16);
+        assert_eq!(
+            demo.deform_skin(&global_binding, &palette, &skin).unwrap(),
+            physical_skin
+        );
+        demo.step_body_with_contact64_workers(&palette, 0.5, None, 4)
+            .unwrap();
+        let global_meshes = displayed_meshes(
+            &demo,
+            Some(&model),
+            0.,
+            Some((&global_binding, &reference64)),
+        )
+        .unwrap();
+        assert_eq!(global_meshes.len(), after.len());
     }
     #[test]
     fn captured_edge_contact_agrees_with_decimal_oracle_but_is_coordinate_sensitive() {
@@ -1149,7 +1156,8 @@ mod collision_tests {
     }
     #[test]
     fn wide_imported_contact_preserves_open_path_and_energy() {
-        check_wide_imported_contact(68);
+        // Includes the native-only regression at nominal step 71.
+        check_wide_imported_contact(72);
     }
     #[test]
     #[ignore = "full 480-step imported contact qualification; run explicitly"]

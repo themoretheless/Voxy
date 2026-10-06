@@ -1,6 +1,7 @@
 //! Barycentric embedding of a render mesh in a coarse tetrahedral simulation.
 //! Binding is O(surface vertices * tetrahedra); deformation is O(surface vertices).
 type Point = [f64; 3];
+use std::sync::Arc;
 fn sub(a: Point, b: Point) -> Point {
     std::array::from_fn(|i| a[i] - b[i])
 }
@@ -16,8 +17,11 @@ struct Binding {
 /// Immutable rest-space attachment. The simulation must retain its vertex order.
 #[derive(Clone, Debug)]
 pub struct EmbeddedSurface {
-    bindings: Vec<Binding>,
+    bindings: Vec<Option<Binding>>,
     vertex_count: usize,
+    rest: Arc<[Point]>,
+    cells: Arc<[[usize; 4]]>,
+    surface: Arc<[Point]>,
 }
 /// Forces conjugate to x_skin = x_base + W (x_nodes - x_reference).
 /// The prescribed reference/base loads are separate from mechanical nodal loads.
@@ -128,6 +132,24 @@ impl EmbeddedSurface {
         cells: &[[usize; 4]],
         surface: &[Point],
     ) -> Result<Self, &'static str> {
+        Self::bind_relative(rest, cells, surface, &vec![true; surface.len()])
+    }
+    /// Bind the tissue-owned vertices of a mixed skeletal/tissue surface.
+    /// False entries retain their prescribed base pose and transfer no force to
+    /// this tissue. True entries must be contained; exterior extrapolation is
+    /// rejected. Ownership is authored and immutable, not inferred during motion.
+    /// Absolute deformation needs a base pose; use `deform_relative_into`.
+    /// # Errors
+    /// Invalid ownership size, geometry, cells or exterior tissue-owned vertices.
+    pub fn bind_relative(
+        rest: &[Point],
+        cells: &[[usize; 4]],
+        surface: &[Point],
+        tissue_owned: &[bool],
+    ) -> Result<Self, &'static str> {
+        if tissue_owned.len() != surface.len() {
+            return Err("invalid relative embedding ownership");
+        }
         if rest.is_empty()
             || cells.is_empty()
             || rest.iter().chain(surface).flatten().any(|x| !x.is_finite())
@@ -154,7 +176,11 @@ impl EmbeddedSurface {
             prepared.push((ids, a, b, c, det));
         }
         let mut bindings = Vec::with_capacity(surface.len());
-        for &point in surface {
+        for (&point, &owned) in surface.iter().zip(tissue_owned) {
+            if !owned {
+                bindings.push(None);
+                continue;
+            }
             let mut found = None;
             for &(indices, a, b, c, det) in &prepared {
                 let q = sub(point, rest[indices[0]]);
@@ -181,12 +207,20 @@ impl EmbeddedSurface {
                     break;
                 }
             }
-            bindings.push(found.ok_or("surface vertex outside tetrahedral mesh")?);
+            bindings.push(Some(
+                found.ok_or("surface vertex outside tetrahedral mesh")?,
+            ));
         }
         Ok(Self {
             bindings,
             vertex_count: rest.len(),
+            rest: rest.into(),
+            cells: cells.into(),
+            surface: surface.into(),
         })
+    }
+    pub(crate) fn reference_geometry(&self) -> (&[Point], &[[usize; 4]], &[Point]) {
+        (&self.rest, &self.cells, &self.surface)
     }
     /// Produces new render positions; caller-owned buffers remain unchanged on failure.
     /// Vertex order/count must match rest geometry. Normals must be recomputed by renderer.
@@ -206,13 +240,39 @@ impl EmbeddedSurface {
         positions: &[Point],
         output: &mut [Point],
     ) -> Result<(), &'static str> {
+        if self.bindings.iter().any(Option::is_none) {
+            return Err("mixed embedding requires prescribed base pose");
+        }
+        self.deform_displacements_into(positions, output)
+    }
+    /// Apply the linear tissue-displacement map W, with zero at prescribed vertices.
+    /// This also maps trial directions for contact preconditioning; it does not
+    /// supply absolute world positions for a mixed surface.
+    /// # Errors
+    /// Incompatible/nonfinite input or arithmetic overflow; output stays unchanged.
+    pub fn deform_displacements(
+        &self,
+        displacements: &[Point],
+    ) -> Result<Vec<Point>, &'static str> {
+        let mut output = vec![[0.; 3]; self.bindings.len()];
+        self.deform_displacements_into(displacements, &mut output)?;
+        Ok(output)
+    }
+    fn deform_displacements_into(
+        &self,
+        positions: &[Point],
+        output: &mut [Point],
+    ) -> Result<(), &'static str> {
         if positions.len() != self.vertex_count
             || output.len() != self.bindings.len()
             || positions.iter().flatten().any(|v| !v.is_finite())
         {
             return Err("invalid deformed embedding positions");
         }
-        let evaluate = |binding: &Binding| -> Point {
+        let evaluate = |binding: &Option<Binding>| -> Point {
+            let Some(binding) = binding else {
+                return [0.; 3];
+            };
             std::array::from_fn(|axis| {
                 (0..4)
                     .map(|i| positions[binding.indices[i]][axis] * binding.weights[i])
@@ -256,7 +316,10 @@ impl EmbeddedSurface {
         {
             return Err("invalid relative embedding positions");
         }
-        let evaluate = |binding: &Binding, base: Point| -> Point {
+        let evaluate = |binding: &Option<Binding>, base: Point| -> Point {
+            let Some(binding) = binding else {
+                return base;
+            };
             std::array::from_fn(|axis| {
                 let displacement: f64 = (0..4)
                     .map(|i| {
@@ -304,6 +367,9 @@ impl EmbeddedSurface {
         // publication atomic even when only the final contribution overflows.
         let mut candidate = nodal_forces.to_vec();
         for (binding, force) in self.bindings.iter().zip(surface_forces) {
+            let Some(binding) = binding else {
+                continue;
+            };
             for (&node, &weight) in binding.indices.iter().zip(&binding.weights) {
                 for (value, &component) in candidate[node].iter_mut().zip(force) {
                     *value = weight.mul_add(component, *value);
