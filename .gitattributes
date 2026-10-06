@@ -5,3 +5,8 @@ crates/physics/tests/data/*.reaclib whitespace=-blank-at-eol
 # Preserve raw diagnostic output and external patch context verbatim.
 artifacts/**/*.log -whitespace
 artifacts/general-tissue-mesher-2026-10-07/*.patch -whitespace
+
+artifacts/character-bind-pose-2026-10-07/*.edge -whitespace
+artifacts/character-bind-pose-2026-10-07/*.ele -whitespace
+artifacts/character-bind-pose-2026-10-07/*.face -whitespace
+artifacts/character-bind-pose-2026-10-07/*.node -whitespace
